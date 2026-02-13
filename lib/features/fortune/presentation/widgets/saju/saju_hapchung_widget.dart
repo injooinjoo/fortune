@@ -43,7 +43,8 @@ class SajuHapchungWidget extends StatelessWidget {
       relations,
       RelationType.combination,
     );
-    final inauspiciousRelations = StemBranchRelations.filterInauspicious(relations);
+    final inauspiciousRelations =
+        StemBranchRelations.filterInauspicious(relations);
 
     return AppCard(
       padding: const EdgeInsets.all(DSSpacing.md),
@@ -62,14 +63,16 @@ class SajuHapchungWidget extends StatelessWidget {
           if (combinationRelations.isNotEmpty) ...[
             _buildSectionHeader(context, RelationType.combination, isDark),
             const SizedBox(height: DSSpacing.sm),
-            ...combinationRelations.map((r) => _buildRelationItem(context, r, isDark)),
+            ...combinationRelations
+                .map((r) => _buildRelationItem(context, r, isDark)),
             const SizedBox(height: DSSpacing.md),
           ],
           // 충/형/파/해 섹션
           if (inauspiciousRelations.isNotEmpty) ...[
             _buildSectionHeader(context, null, isDark, isInauspicious: true),
             const SizedBox(height: DSSpacing.sm),
-            ...inauspiciousRelations.map((r) => _buildRelationItem(context, r, isDark)),
+            ...inauspiciousRelations
+                .map((r) => _buildRelationItem(context, r, isDark)),
           ],
           // 종합 해석
           if (relations.isNotEmpty) ...[
@@ -107,9 +110,7 @@ class SajuHapchungWidget extends StatelessWidget {
             Text(
               '合沖刑破害',
               style: context.labelSmall.copyWith(
-                color: isDark
-                    ? DSColors.textTertiary
-                    : DSColors.textSecondary,
+                color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -119,7 +120,8 @@ class SajuHapchungWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildRelationSummary(BuildContext context, List<SajuRelation> relations, bool isDark) {
+  Widget _buildRelationSummary(
+      BuildContext context, List<SajuRelation> relations, bool isDark) {
     final typeCounts = <RelationType, int>{};
     for (final relation in relations) {
       typeCounts[relation.type] = (typeCounts[relation.type] ?? 0) + 1;
@@ -131,9 +133,7 @@ class SajuHapchungWidget extends StatelessWidget {
         vertical: DSSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: isDark
-            ? DSColors.surface
-            : DSColors.backgroundSecondary,
+        color: isDark ? DSColors.surface : DSColors.backgroundSecondary,
         borderRadius: BorderRadius.circular(DSRadius.sm),
       ),
       child: Row(
@@ -168,7 +168,11 @@ class SajuHapchungWidget extends StatelessWidget {
                   type.hanja,
                   style: context.bodyMedium.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: count > 0 ? color : (isDark ? DSColors.textSecondary : DSColors.textTertiary),
+                    color: count > 0
+                        ? color
+                        : (isDark
+                            ? DSColors.textSecondary
+                            : DSColors.textTertiary),
                   ),
                 ),
                 // 한글 + 개수
@@ -179,8 +183,12 @@ class SajuHapchungWidget extends StatelessWidget {
                       type.korean,
                       style: context.labelTiny.copyWith(
                         color: count > 0
-                            ? (isDark ? DSColors.textTertiary : DSColors.textSecondary)
-                            : (isDark ? DSColors.textSecondary : DSColors.textTertiary),
+                            ? (isDark
+                                ? DSColors.textTertiary
+                                : DSColors.textSecondary)
+                            : (isDark
+                                ? DSColors.textSecondary
+                                : DSColors.textTertiary),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -201,7 +209,9 @@ class SajuHapchungWidget extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                             color: count > 0
                                 ? color
-                                : (isDark ? DSColors.textSecondary : DSColors.textTertiary),
+                                : (isDark
+                                    ? DSColors.textSecondary
+                                    : DSColors.textTertiary),
                           ),
                         ),
                       ),
@@ -281,7 +291,8 @@ class SajuHapchungWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildRelationItem(BuildContext context, SajuRelation relation, bool isDark) {
+  Widget _buildRelationItem(
+      BuildContext context, SajuRelation relation, bool isDark) {
     final color = relation.type.getColor(isDark: isDark);
 
     // 합충 데이터 조회
@@ -295,7 +306,8 @@ class SajuHapchungWidget extends StatelessWidget {
             hanja: relation.type.hanja,
             korean: relation.type.korean,
             meaning: hapchungData['meaning'] ?? '',
-            description: '${hapchungData['description'] ?? ''}\n\n📍 ${relation.name}\n${relation.description}',
+            description:
+                '${hapchungData['description'] ?? ''}\n\n📍 ${relation.name}\n${relation.description}',
             effect: hapchungData['effect'] ?? '',
             relationColor: color,
             realLife: hapchungData['realLife'],
@@ -304,165 +316,164 @@ class SajuHapchungWidget extends StatelessWidget {
         }
       },
       child: Container(
-      margin: const EdgeInsets.only(bottom: DSSpacing.xs),
-      padding: const EdgeInsets.all(DSSpacing.sm),
-      decoration: BoxDecoration(
-        color: isDark
-            ? DSColors.surface
-            : DSColors.background,
-        borderRadius: BorderRadius.circular(DSRadius.sm),
-        border: Border.all(
-          color: color.withValues(alpha: 0.3),
-          width: 1,
+        margin: const EdgeInsets.only(bottom: DSSpacing.xs),
+        padding: const EdgeInsets.all(DSSpacing.sm),
+        decoration: BoxDecoration(
+          color: isDark ? DSColors.surface : DSColors.background,
+          borderRadius: BorderRadius.circular(DSRadius.sm),
+          border: Border.all(
+            color: color.withValues(alpha: 0.3),
+            width: 1,
+          ),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              // 관계 한자 표시
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: DSSpacing.sm,
-                  vertical: DSSpacing.xs,
-                ),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(DSRadius.sm),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ...relation.hanjaCharacters.map((char) {
-                      return Text(
-                        char,
-                        style: context.bodyMedium.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: color,
-                        ),
-                      );
-                    }),
-                  ],
-                ),
-              ),
-              const SizedBox(width: DSSpacing.sm),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          relation.name,
-                          style: context.bodyMedium.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: color,
-                          ),
-                        ),
-                        const SizedBox(width: DSSpacing.xs),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 4,
-                            vertical: 1,
-                          ),
-                          decoration: BoxDecoration(
-                            color: color.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            relation.type.hanja,
-                            style: context.labelTiny.copyWith(
-                              fontSize: 9,
-                              fontWeight: FontWeight.bold,
-                              color: color,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (relation.positions != null &&
-                        relation.positions!.isNotEmpty)
-                      Text(
-                        relation.positions!.join(' - '),
-                        style: context.labelTiny.copyWith(
-                          color: isDark
-                              ? DSColors.textTertiary
-                              : DSColors.textSecondary,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              // 결과 오행 표시 (합의 경우)
-              if (relation.resultWuxing != null)
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                // 관계 한자 표시
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: DSSpacing.sm,
                     vertical: DSSpacing.xs,
                   ),
                   decoration: BoxDecoration(
-                    color: SajuColors.getWuxingBackgroundColor(
-                      relation.resultWuxing!,
-                      isDark: isDark,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: SajuColors.getWuxingColor(
-                        relation.resultWuxing!,
-                        isDark: isDark,
-                      ).withValues(alpha: 0.5),
-                      width: 1,
-                    ),
+                    color: color.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(DSRadius.sm),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.arrow_forward,
-                        size: 12,
+                      ...relation.hanjaCharacters.map((char) {
+                        return Text(
+                          char,
+                          style: context.bodyMedium.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: color,
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: DSSpacing.sm),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            relation.name,
+                            style: context.bodyMedium.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: color,
+                            ),
+                          ),
+                          const SizedBox(width: DSSpacing.xs),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 4,
+                              vertical: 1,
+                            ),
+                            decoration: BoxDecoration(
+                              color: color.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              relation.type.hanja,
+                              style: context.labelTiny.copyWith(
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                                color: color,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (relation.positions != null &&
+                          relation.positions!.isNotEmpty)
+                        Text(
+                          relation.positions!.join(' - '),
+                          style: context.labelTiny.copyWith(
+                            color: isDark
+                                ? DSColors.textTertiary
+                                : DSColors.textSecondary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                // 결과 오행 표시 (합의 경우)
+                if (relation.resultWuxing != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: DSSpacing.sm,
+                      vertical: DSSpacing.xs,
+                    ),
+                    decoration: BoxDecoration(
+                      color: SajuColors.getWuxingBackgroundColor(
+                        relation.resultWuxing!,
+                        isDark: isDark,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
                         color: SajuColors.getWuxingColor(
                           relation.resultWuxing!,
                           isDark: isDark,
-                        ),
+                        ).withValues(alpha: 0.5),
+                        width: 1,
                       ),
-                      const SizedBox(width: DSSpacing.xxs),
-                      Text(
-                        relation.resultWuxing!,
-                        style: context.labelMedium.copyWith(
-                          fontWeight: FontWeight.bold,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.arrow_forward,
+                          size: 12,
                           color: SajuColors.getWuxingColor(
                             relation.resultWuxing!,
                             isDark: isDark,
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: DSSpacing.xxs),
+                        Text(
+                          relation.resultWuxing!,
+                          style: context.labelMedium.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: SajuColors.getWuxingColor(
+                              relation.resultWuxing!,
+                              isDark: isDark,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.xs),
+            // 설명
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: DSSpacing.sm,
+                vertical: DSSpacing.xs,
+              ),
+              decoration: BoxDecoration(
+                color: context.colors.surfaceSecondary,
+                borderRadius: BorderRadius.circular(DSRadius.sm),
+              ),
+              child: Text(
+                relation.description,
+                style: context.labelTiny.copyWith(
+                  color:
+                      isDark ? DSColors.textTertiary : DSColors.textSecondary,
                 ),
-            ],
-          ),
-          const SizedBox(height: DSSpacing.xs),
-          // 설명
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: DSSpacing.sm,
-              vertical: DSSpacing.xs,
-            ),
-            decoration: BoxDecoration(
-              color: context.colors.surfaceSecondary,
-              borderRadius: BorderRadius.circular(DSRadius.sm),
-            ),
-            child: Text(
-              relation.description,
-              style: context.labelTiny.copyWith(
-                color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }
@@ -523,8 +534,7 @@ class SajuHapchungWidget extends StatelessWidget {
             child: Text(
               summaryText,
               style: context.labelTiny.copyWith(
-                color:
-                    isDark ? DSColors.textTertiary : DSColors.textSecondary,
+                color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
               ),
             ),
           ),
@@ -543,9 +553,9 @@ class SajuHapchungWidget extends StatelessWidget {
     final yearStem =
         (yearData?['cheongan'] as Map<String, dynamic>?)?['char'] as String? ??
             '';
-    final monthStem = (monthData?['cheongan']
-            as Map<String, dynamic>?)?['char'] as String? ??
-        '';
+    final monthStem =
+        (monthData?['cheongan'] as Map<String, dynamic>?)?['char'] as String? ??
+            '';
     final dayStem =
         (dayData?['cheongan'] as Map<String, dynamic>?)?['char'] as String? ??
             '';

@@ -52,7 +52,6 @@ class KoreanHolidays {
     DateTime(2024, 11, 11): '빼빼로데이',
     DateTime(2024, 12, 24): '크리스마스이브',
     DateTime(2024, 12, 31): '연말',
-    
     DateTime(2025, 2, 14): '발렌타인데이',
     DateTime(2025, 3, 14): '화이트데이',
     DateTime(2025, 4, 14): '블랙데이',
@@ -66,8 +65,8 @@ class KoreanHolidays {
   /// 공휴일인지 확인
   static bool isHoliday(DateTime date) {
     final normalizedDate = DateTime(date.year, date.month, date.day);
-    return _holidays2024.containsKey(normalizedDate) || 
-           _holidays2025.containsKey(normalizedDate);
+    return _holidays2024.containsKey(normalizedDate) ||
+        _holidays2025.containsKey(normalizedDate);
   }
 
   /// 특별한 날인지 확인 (기념일)
@@ -92,9 +91,9 @@ class KoreanHolidays {
   static Map<DateTime, String> getEventsForMonth(DateTime month) {
     final startOfMonth = DateTime(month.year, month.month, 1);
     final endOfMonth = DateTime(month.year, month.month + 1, 0);
-    
+
     final events = <DateTime, String>{};
-    
+
     // 공휴일 추가
     for (final holiday in _holidays2024.entries) {
       if (holiday.key.isAfter(startOfMonth.subtract(const Duration(days: 1))) &&
@@ -102,14 +101,14 @@ class KoreanHolidays {
         events[holiday.key] = holiday.value;
       }
     }
-    
+
     for (final holiday in _holidays2025.entries) {
       if (holiday.key.isAfter(startOfMonth.subtract(const Duration(days: 1))) &&
           holiday.key.isBefore(endOfMonth.add(const Duration(days: 1)))) {
         events[holiday.key] = holiday.value;
       }
     }
-    
+
     // 기념일 추가
     for (final special in _specialDays.entries) {
       if (special.key.isAfter(startOfMonth.subtract(const Duration(days: 1))) &&
@@ -117,7 +116,7 @@ class KoreanHolidays {
         events[special.key] = special.value;
       }
     }
-    
+
     return events;
   }
 
@@ -138,7 +137,7 @@ class KoreanHolidays {
   static String getDateDescription(DateTime date) {
     final holidayName = getHolidayName(date);
     final specialName = getSpecialDayName(date);
-    
+
     if (holidayName != null) {
       return holidayName;
     } else if (specialName != null) {

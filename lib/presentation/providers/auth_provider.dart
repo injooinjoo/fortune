@@ -212,10 +212,12 @@ final chatRestorationProvider = Provider<void>((ref) {
         try {
           Logger.info('[ChatRestoration] 대화 복원 시작...');
           final chatService = CharacterChatService();
-          final restoredConversations = await chatService.loadAllConversations();
+          final restoredConversations =
+              await chatService.loadAllConversations();
 
           if (restoredConversations.isNotEmpty) {
-            Logger.info('[ChatRestoration] ${restoredConversations.length}개 캐릭터 대화 복원 완료');
+            Logger.info(
+                '[ChatRestoration] ${restoredConversations.length}개 캐릭터 대화 복원 완료');
           } else {
             Logger.info('[ChatRestoration] 복원할 대화 없음');
           }

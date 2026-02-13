@@ -17,7 +17,8 @@ class ContentInteractionState with _$ContentInteractionState {
 }
 
 /// 콘텐츠 인터랙션 Notifier
-class ContentInteractionNotifier extends StateNotifier<ContentInteractionState> {
+class ContentInteractionNotifier
+    extends StateNotifier<ContentInteractionState> {
   final String contentKey;
   final UserInteractionService _service;
 
@@ -96,7 +97,8 @@ final contentInteractionProvider = StateNotifierProvider.family<
 );
 
 /// 여러 콘텐츠의 저장 상태 일괄 조회
-final savedContentKeysProvider = FutureProvider.family<Set<String>, List<String>>(
+final savedContentKeysProvider =
+    FutureProvider.family<Set<String>, List<String>>(
   (ref, contentKeys) async {
     final service = UserInteractionService();
     return service.getSavedStatusBatch(contentKeys);
@@ -104,7 +106,8 @@ final savedContentKeysProvider = FutureProvider.family<Set<String>, List<String>
 );
 
 /// 저장된 콘텐츠 목록 Provider
-final savedContentsProvider = FutureProvider.family<List<Map<String, dynamic>>, String?>(
+final savedContentsProvider =
+    FutureProvider.family<List<Map<String, dynamic>>, String?>(
   (ref, contentType) async {
     final service = UserInteractionService();
     return service.getSavedContents(contentType: contentType);

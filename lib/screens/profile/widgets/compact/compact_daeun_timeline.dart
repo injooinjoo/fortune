@@ -25,9 +25,8 @@ class CompactDaeunTimeline extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
-        color: isDark
-            ? context.colors.backgroundSecondary
-            : Colors.grey.shade50,
+        color:
+            isDark ? context.colors.backgroundSecondary : Colors.grey.shade50,
         borderRadius: BorderRadius.circular(DSRadius.sm),
         border: Border.all(
           color: isDark ? DSColors.border : DSColors.borderDark,
@@ -193,9 +192,7 @@ class CompactDaeunTimeline extends StatelessWidget {
             border: Border.all(
               color: isCurrent
                   ? DSColors.accent
-                  : (isDark
-                      ? DSColors.border
-                      : DSColors.borderDark),
+                  : (isDark ? DSColors.border : DSColors.borderDark),
               width: isCurrent ? 2 : 1,
             ),
           ),
@@ -232,9 +229,7 @@ class CompactDaeunTimeline extends StatelessWidget {
                 stemHanja.isNotEmpty ? stemHanja : stem,
                 style: context.bodyMedium.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: isPast
-                      ? stemColor.withValues(alpha: 0.4)
-                      : stemColor,
+                  color: isPast ? stemColor.withValues(alpha: 0.4) : stemColor,
                 ),
               ),
               // 지지
@@ -242,9 +237,8 @@ class CompactDaeunTimeline extends StatelessWidget {
                 branchHanja.isNotEmpty ? branchHanja : branch,
                 style: context.bodyMedium.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: isPast
-                      ? branchColor.withValues(alpha: 0.4)
-                      : branchColor,
+                  color:
+                      isPast ? branchColor.withValues(alpha: 0.4) : branchColor,
                 ),
               ),
             ],

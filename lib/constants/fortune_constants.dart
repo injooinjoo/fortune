@@ -2,10 +2,22 @@ import 'package:flutter/material.dart';
 
 // MBTI 타입
 const List<String> mbtiTypes = [
-  'ISTJ', 'ISFJ', 'INFJ', 'INTJ',
-  'ISTP', 'ISFP', 'INFP', 'INTP',
-  'ESTP', 'ESFP', 'ENFP', 'ENTP',
-  'ESTJ', 'ESFJ', 'ENFJ', 'ENTJ'
+  'ISTJ',
+  'ISFJ',
+  'INFJ',
+  'INTJ',
+  'ISTP',
+  'ISFP',
+  'INFP',
+  'INTP',
+  'ESTP',
+  'ESFP',
+  'ENFP',
+  'ENTP',
+  'ESTJ',
+  'ESFJ',
+  'ENFJ',
+  'ENTJ'
 ];
 
 // 성별 옵션
@@ -17,7 +29,7 @@ enum Gender {
   final String value;
   final String label;
   final IconData icon;
-  
+
   const Gender(this.value, this.label, this.icon);
 }
 
@@ -49,12 +61,12 @@ enum SubscriptionStatus {
   enterprise('enterprise');
 
   final String value;
-  
+
   const SubscriptionStatus(this.value);
-  
+
   static SubscriptionStatus fromString(String value) {
     return SubscriptionStatus.values.firstWhere(
-      (status) => status.value == value,
-      orElse: () => SubscriptionStatus.free);
+        (status) => status.value == value,
+        orElse: () => SubscriptionStatus.free);
   }
 }

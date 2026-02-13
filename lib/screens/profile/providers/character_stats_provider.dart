@@ -98,7 +98,8 @@ final sortedCharacterStatesProvider =
   }
 
   // 호감도 높은 순 정렬
-  states.sort((a, b) => b.$2.affinity.lovePoints.compareTo(a.$2.affinity.lovePoints));
+  states.sort(
+      (a, b) => b.$2.affinity.lovePoints.compareTo(a.$2.affinity.lovePoints));
 
   return states;
 });

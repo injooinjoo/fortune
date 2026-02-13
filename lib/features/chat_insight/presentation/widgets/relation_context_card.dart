@@ -35,8 +35,8 @@ class _RelationContextCardState extends State<RelationContextCard> {
               const SizedBox(width: DSSpacing.xs),
               Text(
                 '관계 설정',
-                style: typography.headingSmall
-                    .copyWith(color: colors.textPrimary),
+                style:
+                    typography.headingSmall.copyWith(color: colors.textPrimary),
               ),
             ],
           ),
@@ -44,8 +44,8 @@ class _RelationContextCardState extends State<RelationContextCard> {
 
           // Row 1: 상대
           Text('상대',
-              style: typography.labelMedium
-                  .copyWith(color: colors.textSecondary)),
+              style:
+                  typography.labelMedium.copyWith(color: colors.textSecondary)),
           const SizedBox(height: DSSpacing.xs),
           Wrap(
             spacing: DSSpacing.xs,
@@ -55,14 +55,11 @@ class _RelationContextCardState extends State<RelationContextCard> {
               return ChoiceChip(
                 label: Text(_relationLabel(type)),
                 selected: isSelected,
-                onSelected: (_) =>
-                    setState(() => _relationType = type),
-                selectedColor:
-                    colors.ctaBackground.withValues(alpha: 0.15),
+                onSelected: (_) => setState(() => _relationType = type),
+                selectedColor: colors.ctaBackground.withValues(alpha: 0.15),
                 backgroundColor: colors.surface,
                 labelStyle: typography.labelSmall.copyWith(
-                  color:
-                      isSelected ? colors.textPrimary : colors.textSecondary,
+                  color: isSelected ? colors.textPrimary : colors.textSecondary,
                 ),
                 side: BorderSide(
                   color: isSelected
@@ -76,8 +73,8 @@ class _RelationContextCardState extends State<RelationContextCard> {
 
           // Row 2: 기간
           Text('기간',
-              style: typography.labelMedium
-                  .copyWith(color: colors.textSecondary)),
+              style:
+                  typography.labelMedium.copyWith(color: colors.textSecondary)),
           const SizedBox(height: DSSpacing.xs),
           Wrap(
             spacing: DSSpacing.xs,
@@ -86,14 +83,11 @@ class _RelationContextCardState extends State<RelationContextCard> {
               return ChoiceChip(
                 label: Text(_dateRangeLabel(range)),
                 selected: isSelected,
-                onSelected: (_) =>
-                    setState(() => _dateRange = range),
-                selectedColor:
-                    colors.ctaBackground.withValues(alpha: 0.15),
+                onSelected: (_) => setState(() => _dateRange = range),
+                selectedColor: colors.ctaBackground.withValues(alpha: 0.15),
                 backgroundColor: colors.surface,
                 labelStyle: typography.labelSmall.copyWith(
-                  color:
-                      isSelected ? colors.textPrimary : colors.textSecondary,
+                  color: isSelected ? colors.textPrimary : colors.textSecondary,
                 ),
                 side: BorderSide(
                   color: isSelected
@@ -107,8 +101,8 @@ class _RelationContextCardState extends State<RelationContextCard> {
 
           // Row 3: 분석 깊이
           Text('분석',
-              style: typography.labelMedium
-                  .copyWith(color: colors.textSecondary)),
+              style:
+                  typography.labelMedium.copyWith(color: colors.textSecondary)),
           const SizedBox(height: DSSpacing.xs),
           Wrap(
             spacing: DSSpacing.xs,
@@ -117,14 +111,11 @@ class _RelationContextCardState extends State<RelationContextCard> {
               return ChoiceChip(
                 label: Text(_intensityLabel(intensity)),
                 selected: isSelected,
-                onSelected: (_) =>
-                    setState(() => _intensity = intensity),
-                selectedColor:
-                    colors.ctaBackground.withValues(alpha: 0.15),
+                onSelected: (_) => setState(() => _intensity = intensity),
+                selectedColor: colors.ctaBackground.withValues(alpha: 0.15),
                 backgroundColor: colors.surface,
                 labelStyle: typography.labelSmall.copyWith(
-                  color:
-                      isSelected ? colors.textPrimary : colors.textSecondary,
+                  color: isSelected ? colors.textPrimary : colors.textSecondary,
                 ),
                 side: BorderSide(
                   color: isSelected

@@ -71,7 +71,8 @@ class ThemeChips extends StatelessWidget {
           children: chips.asMap().entries.map((entry) {
             final index = entry.key;
             return Padding(
-              padding: EdgeInsets.only(right: index < chips.length - 1 ? spacing : 0),
+              padding: EdgeInsets.only(
+                  right: index < chips.length - 1 ? spacing : 0),
               child: entry.value,
             );
           }).toList(),
@@ -141,7 +142,9 @@ class _ThemeChip extends StatelessWidget {
 
     switch (style) {
       case ThemeChipStyle.filled:
-        return isDark ? DSColors.surfaceSecondaryDark : DSColors.surfaceSecondary;
+        return isDark
+            ? DSColors.surfaceSecondaryDark
+            : DSColors.surfaceSecondary;
       case ThemeChipStyle.outlined:
         return Colors.transparent;
       case ThemeChipStyle.subtle:

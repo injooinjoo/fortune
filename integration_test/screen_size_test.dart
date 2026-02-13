@@ -48,7 +48,8 @@ Future<bool> verifyBasicUIElements(WidgetTester tester) async {
 Future<bool> checkForOverflow(WidgetTester tester) async {
   // 오버플로우는 일반적으로 예외를 발생시키므로
   // 테스트가 크래시 없이 완료되면 오버플로우 없음
-  final hasOverflowIndicator = find.textContaining('OVERFLOWED').evaluate().isNotEmpty;
+  final hasOverflowIndicator =
+      find.textContaining('OVERFLOWED').evaluate().isNotEmpty;
   return !hasOverflowIndicator;
 }
 
@@ -110,7 +111,8 @@ void main() {
           find.byType(InkWell).evaluate().isNotEmpty;
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ SCR-001 PASSED: iPhone SE (375x667) - UI: $hasBasicUI, overflow: $noOverflow, text: $textReadable, nav: $navWorks, touch: $hasTouchTargets');
+      debugPrint(
+          '✅ SCR-001 PASSED: iPhone SE (375x667) - UI: $hasBasicUI, overflow: $noOverflow, text: $textReadable, nav: $navWorks, touch: $hasTouchTargets');
     });
 
     testWidgets('SCR-002: iPhone 15 (393x852) - 표준 화면', (tester) async {
@@ -137,7 +139,8 @@ void main() {
           find.byType(Container).evaluate().isNotEmpty;
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ SCR-002 PASSED: iPhone 15 (393x852) - UI: $hasBasicUI, overflow: $noOverflow, text: $textReadable, nav: $navWorks, cards: $hasCards, layout: $hasProperLayout');
+      debugPrint(
+          '✅ SCR-002 PASSED: iPhone 15 (393x852) - UI: $hasBasicUI, overflow: $noOverflow, text: $textReadable, nav: $navWorks, cards: $hasCards, layout: $hasProperLayout');
     });
 
     testWidgets('SCR-003: iPhone 15 Pro Max (430x932) - 대형 화면', (tester) async {
@@ -164,7 +167,8 @@ void main() {
       final hasImages = images.evaluate().isNotEmpty;
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ SCR-003 PASSED: iPhone 15 Pro Max (430x932) - UI: $hasBasicUI, overflow: $noOverflow, text: $textReadable, nav: $navWorks, scroll: $hasScrollableContent, images: $hasImages');
+      debugPrint(
+          '✅ SCR-003 PASSED: iPhone 15 Pro Max (430x932) - UI: $hasBasicUI, overflow: $noOverflow, text: $textReadable, nav: $navWorks, scroll: $hasScrollableContent, images: $hasImages');
     });
 
     testWidgets('SCR-004: iPad Mini (768x1024) - 태블릿 소형', (tester) async {
@@ -192,7 +196,8 @@ void main() {
       final cardCount = cards.evaluate().length;
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ SCR-004 PASSED: iPad Mini (768x1024) - UI: $hasBasicUI, overflow: $noOverflow, text: $textReadable, nav: $navWorks, grid: $hasGridLayout, wide: $hasWideLayout, cards: $cardCount');
+      debugPrint(
+          '✅ SCR-004 PASSED: iPad Mini (768x1024) - UI: $hasBasicUI, overflow: $noOverflow, text: $textReadable, nav: $navWorks, grid: $hasGridLayout, wide: $hasWideLayout, cards: $cardCount');
     });
 
     testWidgets('SCR-005: iPad Pro (1024x1366) - 태블릿 대형', (tester) async {
@@ -223,7 +228,8 @@ void main() {
       final imageCount = images.evaluate().length;
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ SCR-005 PASSED: iPad Pro (1024x1366) - UI: $hasBasicUI, overflow: $noOverflow, text: $textReadable, nav: $navWorks, expanded: $hasExpandedLayout, flexible: $hasFlexibleLayout, safeArea: $hasSafeArea, images: $imageCount');
+      debugPrint(
+          '✅ SCR-005 PASSED: iPad Pro (1024x1366) - UI: $hasBasicUI, overflow: $noOverflow, text: $textReadable, nav: $navWorks, expanded: $hasExpandedLayout, flexible: $hasFlexibleLayout, safeArea: $hasSafeArea, images: $imageCount');
     });
 
     testWidgets('SCR-006: Android Small (360x640) - 안드로이드 소형', (tester) async {
@@ -254,7 +260,8 @@ void main() {
       final canScroll = scrollable.evaluate().isNotEmpty;
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ SCR-006 PASSED: Android Small (360x640) - UI: $hasBasicUI, overflow: $noOverflow, text: $textReadable, nav: $navWorks, adaptiveText: $hasAdaptiveText, touch: $hasSufficientTouchTargets, scroll: $canScroll');
+      debugPrint(
+          '✅ SCR-006 PASSED: Android Small (360x640) - UI: $hasBasicUI, overflow: $noOverflow, text: $textReadable, nav: $navWorks, adaptiveText: $hasAdaptiveText, touch: $hasSufficientTouchTargets, scroll: $canScroll');
     });
   });
 }

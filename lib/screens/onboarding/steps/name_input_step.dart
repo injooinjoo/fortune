@@ -42,14 +42,14 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
     _nameController = TextEditingController(text: widget.initialName);
     _socialAuthService = SocialAuthService(Supabase.instance.client);
     _isValid = _nameController.text.isNotEmpty;
-    
+
     _nameController.addListener(() {
       setState(() {
         _isValid = _nameController.text.trim().isNotEmpty;
       });
       widget.onNameChanged(_nameController.text.trim());
     });
-    
+
     // 키보드 활성화 - 단일 접근으로 최적화
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && _focusNode.canRequestFocus) {
@@ -107,7 +107,7 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
             borderRadius: BorderRadius.circular(2),
           ),
         ),
-        
+
         // Content
         Expanded(
           child: SingleChildScrollView(
@@ -117,13 +117,11 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
                 // Title
                 Text(
                   '기존 계정으로 로그인하세요',
-                  style: typography.headingLarge.copyWith(
-                    
-                  ),
+                  style: typography.headingLarge.copyWith(),
                 ),
-                
+
                 const SizedBox(height: 40),
-                
+
                 // Loading indicator
                 if (_bottomSheetLoading)
                   const Padding(
@@ -136,43 +134,45 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
                   // TODO: Re-enable when ready for production rollout.
                   // See: .claude/docs/09-social-login-status.md for details.
                   _buildSocialLoginButton(
-                  context: context,
-                  label: 'Google로 계속하기',
-                  logoPath: 'assets/images/social/google.svg',
-                  onTap: () => _handleSocialLoginInBottomSheet('google', setBottomSheetState),
-                ),
-                const SizedBox(height: 12),
+                    context: context,
+                    label: 'Google로 계속하기',
+                    logoPath: 'assets/images/social/google.svg',
+                    onTap: () => _handleSocialLoginInBottomSheet(
+                        'google', setBottomSheetState),
+                  ),
+                  const SizedBox(height: 12),
 
-                _buildSocialLoginButton(
-                  context: context,
-                  label: 'Apple로 계속하기',
-                  logoPath: 'assets/images/social/apple.svg',
-                  onTap: () => _handleSocialLoginInBottomSheet('apple', setBottomSheetState),
-                ),
+                  _buildSocialLoginButton(
+                    context: context,
+                    label: 'Apple로 계속하기',
+                    logoPath: 'assets/images/social/apple.svg',
+                    onTap: () => _handleSocialLoginInBottomSheet(
+                        'apple', setBottomSheetState),
+                  ),
 
-                // ============================================
-                // TEMPORARILY HIDDEN: Kakao & Naver Login
-                // Reason: Focus on Google/Apple for initial launch
-                // Re-enable by uncommenting below when ready
-                // ============================================
-                // const SizedBox(height: 12),
-                // _buildSocialLoginButton(
-                //   context: context,
-                //   label: '카카오로 계속하기',
-                //   logoPath: 'assets/images/social/kakao.svg',
-                //   onTap: () => _handleSocialLoginInBottomSheet('kakao', setBottomSheetState),
-                // ),
-                // const SizedBox(height: 12),
-                // _buildSocialLoginButton(
-                //   context: context,
-                //   label: '네이버로 계속하기',
-                //   logoPath: 'assets/images/social/naver.svg',
-                //   onTap: () => _handleSocialLoginInBottomSheet('naver', setBottomSheetState),
-                // ),
-                ],  // Close the else block for loading
-                
+                  // ============================================
+                  // TEMPORARILY HIDDEN: Kakao & Naver Login
+                  // Reason: Focus on Google/Apple for initial launch
+                  // Re-enable by uncommenting below when ready
+                  // ============================================
+                  // const SizedBox(height: 12),
+                  // _buildSocialLoginButton(
+                  //   context: context,
+                  //   label: '카카오로 계속하기',
+                  //   logoPath: 'assets/images/social/kakao.svg',
+                  //   onTap: () => _handleSocialLoginInBottomSheet('kakao', setBottomSheetState),
+                  // ),
+                  // const SizedBox(height: 12),
+                  // _buildSocialLoginButton(
+                  //   context: context,
+                  //   label: '네이버로 계속하기',
+                  //   logoPath: 'assets/images/social/naver.svg',
+                  //   onTap: () => _handleSocialLoginInBottomSheet('naver', setBottomSheetState),
+                  // ),
+                ], // Close the else block for loading
+
                 const SizedBox(height: 30),
-                
+
                 // Terms text
                 Text(
                   '계속하면 서비스 이용약관 및\n개인정보 처리방침에 동의하는 것으로 간주됩니다.',
@@ -190,7 +190,8 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
     );
   }
 
-  Future<void> _handleSocialLoginInBottomSheet(String provider, StateSetter setBottomSheetState) async {
+  Future<void> _handleSocialLoginInBottomSheet(
+      String provider, StateSetter setBottomSheetState) async {
     // Debug: Show immediate feedback
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -199,17 +200,18 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
         duration: const Duration(seconds: 1),
       ),
     );
-    
+
     setBottomSheetState(() {
       _bottomSheetLoading = true;
     });
-    
+
     try {
       AuthResponse? response;
-      
+
       switch (provider) {
         case 'google':
-          response = await _socialAuthService.signInWithGoogle(context: context);
+          response =
+              await _socialAuthService.signInWithGoogle(context: context);
           break;
         case 'apple':
           response = await _socialAuthService.signInWithApple();
@@ -221,7 +223,7 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
           response = await _socialAuthService.signInWithNaver();
           break;
       }
-      
+
       // OAuth flows return null (handled by deep linking)
       // Direct auth flows return AuthResponse
       if (!mounted) return;
@@ -234,15 +236,14 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
         // For OAuth flows, close bottom sheet and let auth state listener handle navigation
         Navigator.pop(context);
       }
-      
     } catch (error) {
       Logger.error('소셜 로그인 실패: $provider', error);
-      
+
       if (mounted) {
         setBottomSheetState(() {
           _bottomSheetLoading = false;
         });
-        
+
         // Show detailed error message for debugging
         final errorMessage = error.toString();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -255,7 +256,7 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
       }
     }
   }
-  
+
   Widget _buildSocialLoginButton({
     required BuildContext context,
     required String label,
@@ -274,35 +275,35 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
         },
         borderRadius: BorderRadius.circular(DSRadius.md),
         child: Container(
-        width: double.infinity,
-        height: 52,
-        decoration: BoxDecoration(
-          color: colors.surface,
-          border: Border.all(
-            color: colors.border,
-            width: 1,
+          width: double.infinity,
+          height: 52,
+          decoration: BoxDecoration(
+            color: colors.surface,
+            border: Border.all(
+              color: colors.border,
+              width: 1,
+            ),
+            borderRadius: BorderRadius.circular(DSRadius.md),
           ),
-          borderRadius: BorderRadius.circular(DSRadius.md),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              logoPath,
-              width: 24,
-              height: 24,
-            ),
-            const SizedBox(width: 12),
-            Text(
-              label,
-              style: typography.buttonMedium.copyWith(
-                fontWeight: FontWeight.w600,
-                color: colors.textPrimary,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                logoPath,
+                width: 24,
+                height: 24,
               ),
-            ),
-          ],
+              const SizedBox(width: 12),
+              Text(
+                label,
+                style: typography.buttonMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: colors.textPrimary,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
       ),
     );
   }
@@ -346,60 +347,63 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24.0),
                       child: TextField(
-                          controller: _nameController,
-                          focusNode: _focusNode,
-                          style: typography.headingMedium.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: colors.textPrimary,
-                          ),
-                          textAlign: TextAlign.center,
-                          autofocus: true,
-                          keyboardType: TextInputType.name,
-                          textInputAction: TextInputAction.done,
-                          cursorColor: colors.accent,
-                          showCursor: true,
-                          enableInteractiveSelection: true,
-                          onTap: () {
-                            debugPrint('TextField 탭됨!');
-                            _focusNode.requestFocus();
-                            SystemChannels.textInput.invokeMethod('TextInput.show');
-                          },
-                          onSubmitted: (_) {
-                            if (_isValid) {
-                              widget.onNext();
-                            }
-                          },
-                          decoration: InputDecoration(
-                            hintText: '이름을 알려주세요',
-                            hintStyle: typography.headingMedium.copyWith(
-                              fontWeight: FontWeight.w400,
-                              color: colors.textTertiary,
-                            ),
-                            border: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            focusedErrorBorder: InputBorder.none,
-                            contentPadding: EdgeInsets.zero,
-                            fillColor: Colors.transparent,
-                            filled: true,
-                          ),
-                          textCapitalization: TextCapitalization.words,
-                          inputFormatters: [
-                            LengthLimitingTextInputFormatter(50),
-                          ],
+                        controller: _nameController,
+                        focusNode: _focusNode,
+                        style: typography.headingMedium.copyWith(
+                          fontWeight: FontWeight.w500,
+                          color: colors.textPrimary,
                         ),
+                        textAlign: TextAlign.center,
+                        autofocus: true,
+                        keyboardType: TextInputType.name,
+                        textInputAction: TextInputAction.done,
+                        cursorColor: colors.accent,
+                        showCursor: true,
+                        enableInteractiveSelection: true,
+                        onTap: () {
+                          debugPrint('TextField 탭됨!');
+                          _focusNode.requestFocus();
+                          SystemChannels.textInput
+                              .invokeMethod('TextInput.show');
+                        },
+                        onSubmitted: (_) {
+                          if (_isValid) {
+                            widget.onNext();
+                          }
+                        },
+                        decoration: InputDecoration(
+                          hintText: '이름을 알려주세요',
+                          hintStyle: typography.headingMedium.copyWith(
+                            fontWeight: FontWeight.w400,
+                            color: colors.textTertiary,
+                          ),
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          focusedErrorBorder: InputBorder.none,
+                          contentPadding: EdgeInsets.zero,
+                          fillColor: Colors.transparent,
+                          filled: true,
+                        ),
+                        textCapitalization: TextCapitalization.words,
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(50),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ),
-              
+
               // Next button - Show above keyboard when text is entered
               AnimatedPositioned(
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
-                bottom: _isValid ? (isKeyboardVisible ? keyboardHeight + 16 : 32) : -100,
+                bottom: _isValid
+                    ? (isKeyboardVisible ? keyboardHeight + 16 : 32)
+                    : -100,
                 left: 24,
                 right: 24,
                 child: AnimatedOpacity(
@@ -411,13 +415,15 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
                     child: ElevatedButton(
                       onPressed: _isValid ? widget.onNext : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: _isValid ? colors.ctaBackground : colors.border,
+                        backgroundColor:
+                            _isValid ? colors.ctaBackground : colors.border,
                         foregroundColor: colors.ctaForeground,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(DSRadius.lg),
                         ),
                         elevation: 0,
-                        textStyle: typography.headingSmall.copyWith(fontWeight: FontWeight.w700),
+                        textStyle: typography.headingSmall
+                            .copyWith(fontWeight: FontWeight.w700),
                       ),
                       child: Text(
                         '다음',
@@ -430,7 +436,7 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
                   ),
                 ),
               ),
-              
+
               // Bottom links - Only show when keyboard is NOT visible AND no text input
               if (!isKeyboardVisible && !_isValid)
                 Positioned(

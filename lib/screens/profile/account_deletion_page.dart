@@ -155,14 +155,13 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
           selectedColor: context.colors.accent.withValues(alpha: 0.1),
           backgroundColor: context.colors.surface,
           labelStyle: context.labelSmall.copyWith(
-            color: isSelected ? context.colors.accent : context.colors.textPrimary,
+            color:
+                isSelected ? context.colors.accent : context.colors.textPrimary,
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(999),
             side: BorderSide(
-              color: isSelected
-                  ? context.colors.accent
-                  : context.colors.border,
+              color: isSelected ? context.colors.accent : context.colors.border,
             ),
           ),
           onSelected: (selected) {
@@ -207,17 +206,14 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
             children: [
               _buildWarningBox(),
               const SizedBox(height: DSSpacing.lg),
-
               const SectionHeader(title: '탈퇴 시 삭제되는 정보'),
               _buildBullet('프로필 정보, 운세 기록, 맞춤 설정 등 서비스 이용 데이터'),
               _buildBullet('연결된 소셜 계정 정보 및 기기 내 저장 데이터'),
               const SizedBox(height: DSSpacing.md),
-
               const SectionHeader(title: '법령에 따른 보관'),
               _buildBullet('결제 정보: 전자상거래법에 따라 5년 보관'),
               _buildBullet('서비스 이용 기록: 통신비밀보호법에 따라 3개월 보관'),
               const SizedBox(height: DSSpacing.md),
-
               const SectionHeader(title: '탈퇴 전 확인'),
               _buildConfirmItem(
                 value: _ackDataLoss,
@@ -235,11 +231,9 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
                 text: '남은 토큰/프리미엄 혜택은 소멸됩니다.',
               ),
               const SizedBox(height: DSSpacing.md),
-
               const SectionHeader(title: '탈퇴 사유 (선택)'),
               _buildReasonChips(),
               const SizedBox(height: DSSpacing.md),
-
               const SectionHeader(title: '추가 의견 (선택)'),
               TextField(
                 controller: _feedbackController,
@@ -265,7 +259,6 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
                 ),
               ),
               const SizedBox(height: DSSpacing.md),
-
               const SectionHeader(title: '확인 문구 입력'),
               TextField(
                 controller: _confirmController,
@@ -298,7 +291,6 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
                 ),
               ),
               const SizedBox(height: DSSpacing.lg),
-
               if (!_isSignedIn)
                 Padding(
                   padding: const EdgeInsets.only(bottom: DSSpacing.md),
@@ -309,7 +301,6 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
                     ),
                   ),
                 ),
-
               DSButton.destructive(
                 text: '회원 탈퇴',
                 onPressed: _canSubmit ? _handleDeletion : null,

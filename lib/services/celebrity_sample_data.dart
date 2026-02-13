@@ -2,7 +2,6 @@ import 'package:fortune/data/models/celebrity.dart';
 
 /// Sample celebrity data for testing and development
 class CelebritySampleData {
-
   /// Get sample celebrities for each type
   static List<Celebrity> getSampleCelebrities() {
     return [
@@ -232,9 +231,8 @@ class CelebritySampleData {
   static List<Celebrity> searchCelebrities(String query) {
     final lowerQuery = query.toLowerCase();
     return getSampleCelebrities()
-        .where((celebrity) =>
-            celebrity.allNames.any((name) =>
-                name.toLowerCase().contains(lowerQuery)))
+        .where((celebrity) => celebrity.allNames
+            .any((name) => name.toLowerCase().contains(lowerQuery)))
         .toList();
   }
 
@@ -327,27 +325,37 @@ class CelebritySampleData {
     for (final celebrity in celebrities) {
       buffer.writeln('INSERT INTO public.celebrities (');
       buffer.writeln('  id, name, birth_date, gender, celebrity_type,');
-      buffer.writeln('  stage_name, legal_name, aliases, nationality, birth_place, birth_time,');
-      buffer.writeln('  active_from, agency_management, languages, external_ids, profession_data, notes');
+      buffer.writeln(
+          '  stage_name, legal_name, aliases, nationality, birth_place, birth_time,');
+      buffer.writeln(
+          '  active_from, agency_management, languages, external_ids, profession_data, notes');
       buffer.writeln(') VALUES (');
       buffer.writeln("  '${celebrity.id}',");
       buffer.writeln("  '${celebrity.name}',");
-      buffer.writeln("  '${celebrity.birthDate.toIso8601String().split('T')[0]}',");
+      buffer.writeln(
+          "  '${celebrity.birthDate.toIso8601String().split('T')[0]}',");
       buffer.writeln("  '${celebrity.gender.name}',");
       buffer.writeln("  '${celebrity.celebrityType.name}',");
-      buffer.writeln("  ${celebrity.stageName != null ? "'${celebrity.stageName}'" : 'NULL'},");
-      buffer.writeln("  ${celebrity.legalName != null ? "'${celebrity.legalName}'" : 'NULL'},");
-      buffer.writeln("  ARRAY[${celebrity.aliases.map((a) => "'$a'").join(', ')}],");
+      buffer.writeln(
+          "  ${celebrity.stageName != null ? "'${celebrity.stageName}'" : 'NULL'},");
+      buffer.writeln(
+          "  ${celebrity.legalName != null ? "'${celebrity.legalName}'" : 'NULL'},");
+      buffer.writeln(
+          "  ARRAY[${celebrity.aliases.map((a) => "'$a'").join(', ')}],");
       buffer.writeln("  '${celebrity.nationality}',");
-      buffer.writeln("  ${celebrity.birthPlace != null ? "'${celebrity.birthPlace}'" : 'NULL'},");
+      buffer.writeln(
+          "  ${celebrity.birthPlace != null ? "'${celebrity.birthPlace}'" : 'NULL'},");
       if (celebrity.birthTime != null) {
-        buffer.writeln("  '${celebrity.birthTime!.hour.toString().padLeft(2, '0')}:${celebrity.birthTime!.minute.toString().padLeft(2, '0')}',");
+        buffer.writeln(
+            "  '${celebrity.birthTime!.hour.toString().padLeft(2, '0')}:${celebrity.birthTime!.minute.toString().padLeft(2, '0')}',");
       } else {
         buffer.writeln("  '12:00',");
       }
       buffer.writeln('  ${celebrity.activeFrom},');
-      buffer.writeln("  ${celebrity.agencyManagement != null ? "'${celebrity.agencyManagement}'" : 'NULL'},");
-      buffer.writeln("  ARRAY[${celebrity.languages.map((l) => "'$l'").join(', ')}],");
+      buffer.writeln(
+          "  ${celebrity.agencyManagement != null ? "'${celebrity.agencyManagement}'" : 'NULL'},");
+      buffer.writeln(
+          "  ARRAY[${celebrity.languages.map((l) => "'$l'").join(', ')}],");
       buffer.writeln("  '${celebrity.externalIds?.toJson() ?? {}}'::jsonb,");
       buffer.writeln("  '${celebrity.professionData ?? {}}'::jsonb,");
       buffer.writeln("  '샘플 데이터'");

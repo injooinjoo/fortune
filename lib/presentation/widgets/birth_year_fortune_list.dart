@@ -43,7 +43,7 @@ class BirthYearFortuneList extends StatelessWidget {
             itemBuilder: (context, index) {
               final fortune = fortunes[index];
               final isCurrentUser = fortune.zodiacAnimal == currentUserZodiac;
-              
+
               return BirthYearFortuneCard(
                 fortune: fortune,
                 isHighlighted: isCurrentUser,
@@ -90,8 +90,8 @@ class BirthYearFortuneCard extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      DSColors.accentDark.withValues(alpha:0.1),
-                      DSColors.accentDark.withValues(alpha:0.05),
+                      DSColors.accentDark.withValues(alpha: 0.1),
+                      DSColors.accentDark.withValues(alpha: 0.05),
                     ],
                   )
                 : null,
@@ -114,10 +114,11 @@ class BirthYearFortuneCard extends StatelessWidget {
                         if (isHighlighted)
                           Text(
                             '나의 띠',
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: DSColors.accentDark,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: DSColors.accentDark,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                           ),
                       ],
                     ),
@@ -141,8 +142,9 @@ class BirthYearFortuneCard extends StatelessWidget {
                     vertical: AppSpacing.spacing1,
                   ),
                   decoration: BoxDecoration(
-                    color: DSColors.warning.withValues(alpha:0.2),
-                    borderRadius: BorderRadius.circular(AppDimensions.radiusXSmall),
+                    color: DSColors.warning.withValues(alpha: 0.2),
+                    borderRadius:
+                        BorderRadius.circular(AppDimensions.radiusXSmall),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -192,7 +194,7 @@ class BirthYearFortuneCard extends StatelessWidget {
       width: AppDimensions.buttonHeightMedium,
       height: AppDimensions.buttonHeightMedium,
       decoration: BoxDecoration(
-        color: DSColors.accentDark.withValues(alpha:0.1),
+        color: DSColors.accentDark.withValues(alpha: 0.1),
         shape: BoxShape.circle,
       ),
       child: Center(
@@ -236,16 +238,17 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
                     children: [
                       Text(
                         '${fortune.birthYear}년생 ${fortune.zodiacAnimal}띠',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                       ),
                       const SizedBox(height: AppSpacing.spacing1),
                       Text(
                         '특별 운세',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: DSColors.textSecondaryDark,
-                        ),
+                              color: DSColors.textSecondaryDark,
+                            ),
                       ),
                     ],
                   ),
@@ -262,10 +265,10 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
               Container(
                 padding: AppSpacing.paddingAll16,
                 decoration: BoxDecoration(
-                  color: DSColors.warning.withValues(alpha:0.1),
+                  color: DSColors.warning.withValues(alpha: 0.1),
                   borderRadius: AppDimensions.borderRadiusMedium,
                   border: Border.all(
-                    color: DSColors.warning.withValues(alpha:0.3),
+                    color: DSColors.warning.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(
@@ -283,9 +286,12 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
                         children: [
                           Text(
                             '특별 조언',
-                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                           ),
                           const SizedBox(height: AppSpacing.spacing1),
                           Text(
@@ -325,7 +331,7 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
       width: AppDimensions.buttonHeightLarge,
       height: AppDimensions.buttonHeightLarge,
       decoration: BoxDecoration(
-        color: DSColors.accentDark.withValues(alpha:0.1),
+        color: DSColors.accentDark.withValues(alpha: 0.1),
         shape: BoxShape.circle,
       ),
       child: Center(

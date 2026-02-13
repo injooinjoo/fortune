@@ -39,7 +39,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
     debugPrint('[TarotSelection] Card selected: $index');
     debugPrint('[TarotSelection] Current selection: $_selectedCards');
     debugPrint('[TarotSelection] Required cards: ${widget.requiredCards}');
-    
+
     if (_selectedCards.contains(index)) {
       // 카드 선택 해제
       setState(() {
@@ -51,8 +51,9 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
       setState(() {
         _selectedCards.add(index);
       });
-      debugPrint('[TarotSelection] Card $index selected (${_selectedCards.length}/${widget.requiredCards})');
-      
+      debugPrint(
+          '[TarotSelection] Card $index selected (${_selectedCards.length}/${widget.requiredCards})');
+
       // Check if selection is complete
       if (_selectedCards.length == widget.requiredCards) {
         debugPrint('[TarotSelection] Selection complete! Proceeding...');
@@ -73,7 +74,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
     setState(() {
       _isShuffling = true;
     });
-    
+
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
         setState(() {
@@ -89,7 +90,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
     debugPrint('Fortune cached');
     debugPrint('Fortune cached');
     debugPrint('[TarotSelection] requiredCards: ${widget.requiredCards}');
-    
+
     final theme = Theme.of(context);
     final fontScale = ref.watch(userSettingsProvider).fontScale;
 
@@ -98,11 +99,11 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
         // Header
         _buildHeader(theme, fontScale),
         const SizedBox(height: DSSpacing.lg),
-        
+
         // Progress indicator
         _buildProgressIndicator(theme),
         const SizedBox(height: 32),
-        
+
         // Card spread
         Expanded(
           child: AnimatedSwitcher(
@@ -120,7 +121,7 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
                   ),
           ),
         ),
-        
+
         // Action buttons
         _buildActionButtons(theme, fontScale),
       ],
@@ -243,11 +244,13 @@ class _TarotSelectionViewState extends ConsumerState<TarotSelectionView> {
           Expanded(
             child: UnifiedButton(
               text: '다시 선택',
-              onPressed: _selectedCards.isEmpty ? null : () {
-                setState(() {
-                  _selectedCards.clear();
-                });
-              },
+              onPressed: _selectedCards.isEmpty
+                  ? null
+                  : () {
+                      setState(() {
+                        _selectedCards.clear();
+                      });
+                    },
               style: UnifiedButtonStyle.primary,
               size: UnifiedButtonSize.medium,
               icon: const Icon(Icons.refresh),

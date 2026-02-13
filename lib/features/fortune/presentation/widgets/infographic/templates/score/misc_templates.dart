@@ -125,7 +125,8 @@ class MovingScoreTemplate extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.calendar_month_rounded, size: 16, color: context.colors.accent),
+                Icon(Icons.calendar_month_rounded,
+                    size: 16, color: context.colors.accent),
                 const SizedBox(width: DSSpacing.xs),
                 Text(
                   '추천 일자: ${luckyDates!.join(', ')}',
@@ -142,7 +143,8 @@ class MovingScoreTemplate extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: DSSpacing.xs),
                   child: Row(
                     children: [
-                      Icon(Icons.warning_amber_rounded, size: 14, color: context.colors.warning),
+                      Icon(Icons.warning_amber_rounded,
+                          size: 14, color: context.colors.warning),
                       const SizedBox(width: DSSpacing.xs),
                       Expanded(
                         child: Text(
@@ -205,7 +207,9 @@ class AvoidPeopleScoreTemplate extends StatelessWidget {
     final hasLuckyElements = luckyElements != null && luckyElements!.isNotEmpty;
     final hasTimeStrategy = timeStrategy != null && timeStrategy!.isNotEmpty;
 
-    if (!hasCategories && !hasLuckyElements && !hasTimeStrategy &&
+    if (!hasCategories &&
+        !hasLuckyElements &&
+        !hasTimeStrategy &&
         (targetTypes == null || targetTypes!.isEmpty)) {
       return const SizedBox.shrink();
     }
@@ -224,7 +228,9 @@ class AvoidPeopleScoreTemplate extends StatelessWidget {
         if (hasTimeStrategy) ...[
           _buildTimeStrategy(context),
         ],
-        if (!hasCategories && targetTypes != null && targetTypes!.isNotEmpty) ...[
+        if (!hasCategories &&
+            targetTypes != null &&
+            targetTypes!.isNotEmpty) ...[
           _buildTargetTypes(context),
         ],
       ],
@@ -262,7 +268,8 @@ class AvoidPeopleScoreTemplate extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.warning_amber_rounded, size: 16, color: context.colors.error),
+              Icon(Icons.warning_amber_rounded,
+                  size: 16, color: context.colors.error),
               const SizedBox(width: DSSpacing.xs),
               Text(
                 '오늘의 경계 대상',
@@ -287,7 +294,8 @@ class AvoidPeopleScoreTemplate extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: context.colors.surface,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: context.colors.error.withValues(alpha: 0.3)),
+                  border: Border.all(
+                      color: context.colors.error.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -333,7 +341,8 @@ class AvoidPeopleScoreTemplate extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.colors.success.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: context.colors.success.withValues(alpha: 0.2)),
+        border:
+            Border.all(color: context.colors.success.withValues(alpha: 0.2)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -341,7 +350,8 @@ class AvoidPeopleScoreTemplate extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.auto_awesome_rounded, size: 16, color: context.colors.success),
+              Icon(Icons.auto_awesome_rounded,
+                  size: 16, color: context.colors.success),
               const SizedBox(width: DSSpacing.xs),
               Text(
                 '오늘의 행운 요소',
@@ -366,7 +376,8 @@ class AvoidPeopleScoreTemplate extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: context.colors.surface,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: context.colors.success.withValues(alpha: 0.3)),
+                  border: Border.all(
+                      color: context.colors.success.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -398,8 +409,10 @@ class AvoidPeopleScoreTemplate extends StatelessWidget {
     };
 
     final validStrategies = timeStrategy!.entries
-        .where((e) => timeLabels.containsKey(e.key) &&
-               (e.value['caution']?.isNotEmpty == true || e.value['advice']?.isNotEmpty == true))
+        .where((e) =>
+            timeLabels.containsKey(e.key) &&
+            (e.value['caution']?.isNotEmpty == true ||
+                e.value['advice']?.isNotEmpty == true))
         .toList();
 
     if (validStrategies.isEmpty) return const SizedBox.shrink();
@@ -416,7 +429,8 @@ class AvoidPeopleScoreTemplate extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.schedule_rounded, size: 16, color: context.colors.accent),
+              Icon(Icons.schedule_rounded,
+                  size: 16, color: context.colors.accent),
               const SizedBox(width: DSSpacing.xs),
               Text(
                 '시간대별 가이드',
@@ -430,7 +444,8 @@ class AvoidPeopleScoreTemplate extends StatelessWidget {
           const SizedBox(height: DSSpacing.sm),
           ...validStrategies.map((entry) {
             final labelData = timeLabels[entry.key]!;
-            final advice = entry.value['advice'] ?? entry.value['caution'] ?? '';
+            final advice =
+                entry.value['advice'] ?? entry.value['caution'] ?? '';
             if (advice.isEmpty) return const SizedBox.shrink();
 
             return Padding(
@@ -449,7 +464,9 @@ class AvoidPeopleScoreTemplate extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
-                      advice.length > 30 ? '${advice.substring(0, 30)}...' : advice,
+                      advice.length > 30
+                          ? '${advice.substring(0, 30)}...'
+                          : advice,
                       style: context.typography.bodySmall.copyWith(
                         color: context.colors.textPrimary,
                       ),
@@ -478,7 +495,8 @@ class AvoidPeopleScoreTemplate extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.person_off_rounded, size: 16, color: context.colors.error),
+              Icon(Icons.person_off_rounded,
+                  size: 16, color: context.colors.error),
               const SizedBox(width: DSSpacing.xs),
               Text(
                 '주의 대상',
@@ -502,7 +520,8 @@ class AvoidPeopleScoreTemplate extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: context.colors.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: context.colors.error.withValues(alpha: 0.3)),
+                  border: Border.all(
+                      color: context.colors.error.withValues(alpha: 0.3)),
                 ),
                 child: Text(
                   type,
@@ -601,7 +620,8 @@ class PetScoreTemplate extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.sports_rounded, size: 14, color: context.colors.accent),
+                Icon(Icons.sports_rounded,
+                    size: 14, color: context.colors.accent),
                 const SizedBox(width: DSSpacing.xs),
                 Text(
                   '추천 활동: $luckyActivity',
@@ -618,7 +638,8 @@ class PetScoreTemplate extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: DSSpacing.xs),
                   child: Row(
                     children: [
-                      const Icon(Icons.favorite_rounded, size: 12, color: Colors.amber),
+                      const Icon(Icons.favorite_rounded,
+                          size: 12, color: Colors.amber),
                       const SizedBox(width: DSSpacing.xs),
                       Expanded(
                         child: Text(
@@ -686,7 +707,8 @@ class FamilyScoreTemplate extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.family_restroom_rounded, size: 16, color: Colors.brown),
+                const Icon(Icons.family_restroom_rounded,
+                    size: 16, color: Colors.brown),
                 const SizedBox(width: DSSpacing.xs),
                 Text(
                   '추천: $luckyActivity',
@@ -704,7 +726,8 @@ class FamilyScoreTemplate extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: DSSpacing.xs),
                   child: Row(
                     children: [
-                      const Icon(Icons.home_rounded, size: 12, color: Colors.brown),
+                      const Icon(Icons.home_rounded,
+                          size: 12, color: Colors.brown),
                       const SizedBox(width: DSSpacing.xs),
                       Expanded(
                         child: Text(

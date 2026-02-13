@@ -28,15 +28,22 @@ class FeatureExtractor {
     final timeline = _buildTimeline(messages);
     final patterns = _detectPatterns(messages, userMessages, otherMessages);
     final highlights = _buildHighlights(
-      messages, userMessages, otherMessages,
-      temperatureScore, stabilityScore, initiativeScore, riskScore,
+      messages,
+      userMessages,
+      otherMessages,
+      temperatureScore,
+      stabilityScore,
+      initiativeScore,
+      riskScore,
       patterns,
     );
     final triggers = _extractTriggers(messages, config.intensity);
     final guidance = _buildGuidance(patterns, config.relationType);
 
-    final dateFrom = messages.isNotEmpty ? messages.first.timestamp : DateTime.now();
-    final dateTo = messages.isNotEmpty ? messages.last.timestamp : DateTime.now();
+    final dateFrom =
+        messages.isNotEmpty ? messages.first.timestamp : DateTime.now();
+    final dateTo =
+        messages.isNotEmpty ? messages.last.timestamp : DateTime.now();
 
     return ChatInsightResult(
       analysisMeta: AnalysisMeta(
@@ -79,8 +86,13 @@ class FeatureExtractor {
       guidance: guidance,
       followupMemory: FollowupMemory(
         safeNotes: _buildSafeNotes(
-          config, messages.length, temperatureScore, stabilityScore,
-          initiativeScore, riskScore, patterns,
+          config,
+          messages.length,
+          temperatureScore,
+          stabilityScore,
+          initiativeScore,
+          riskScore,
+          patterns,
         ),
         userQuestions: [],
       ),
@@ -116,7 +128,8 @@ class FeatureExtractor {
     // 일별 메시지 수 계산
     final dailyCounts = <String, int>{};
     for (final msg in messages) {
-      final key = '${msg.timestamp.year}-${msg.timestamp.month}-${msg.timestamp.day}';
+      final key =
+          '${msg.timestamp.year}-${msg.timestamp.month}-${msg.timestamp.day}';
       dailyCounts[key] = (dailyCounts[key] ?? 0) + 1;
     }
 
@@ -124,7 +137,9 @@ class FeatureExtractor {
 
     final counts = dailyCounts.values.toList();
     final mean = counts.reduce((a, b) => a + b) / counts.length;
-    final variance = counts.map((c) => pow(c - mean, 2)).reduce((a, b) => a + b) / counts.length;
+    final variance =
+        counts.map((c) => pow(c - mean, 2)).reduce((a, b) => a + b) /
+            counts.length;
     final stdDev = sqrt(variance);
     final cv = mean > 0 ? stdDev / mean : 0; // 변동계수
 
@@ -149,9 +164,8 @@ class FeatureExtractor {
     DateTime? lastTime;
 
     for (final msg in allMessages) {
-      final gap = lastTime != null
-          ? msg.timestamp.difference(lastTime).inMinutes
-          : 999;
+      final gap =
+          lastTime != null ? msg.timestamp.difference(lastTime).inMinutes : 999;
 
       // 2시간 이상 공백 후 첫 메시지 = 대화 시작
       if (gap > 120 || lastSender == null) {
@@ -238,13 +252,16 @@ class FeatureExtractor {
 
   /// 평균 응답 시간 (분)
   static double _avgReplyTime(List<AnonymizedMessage> messages, String sender) {
-    final sorted = [...messages]..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+    final sorted = [...messages]
+      ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
     final replyTimes = <int>[];
 
     for (int i = 1; i < sorted.length; i++) {
       if (sorted[i].sender == sender && sorted[i - 1].sender != sender) {
-        final gap = sorted[i].timestamp.difference(sorted[i - 1].timestamp).inMinutes;
-        if (gap > 0 && gap < 1440) { // 24시간 이내만
+        final gap =
+            sorted[i].timestamp.difference(sorted[i - 1].timestamp).inMinutes;
+        if (gap > 0 && gap < 1440) {
+          // 24시간 이내만
           replyTimes.add(gap);
         }
       }
@@ -348,13 +365,16 @@ class FeatureExtractor {
       patterns.add(PatternItem(
         tag: '주말 공백',
         evidenceCount: weekendMsgs,
-        description: '주말 대화가 평일의 ${(weekendMsgs / max(weekdayMsgs, 1) * 100).round()}% 수준으로 적어요',
+        description:
+            '주말 대화가 평일의 ${(weekendMsgs / max(weekdayMsgs, 1) * 100).round()}% 수준으로 적어요',
       ));
     }
 
     // 감정 표현 패턴
     int emojiCount = 0;
-    final emojiPattern = RegExp(r'[\u{1F600}-\u{1F64F}\u{2764}\u{1F495}-\u{1F49F}❤️💕💗💓💖]', unicode: true);
+    final emojiPattern = RegExp(
+        r'[\u{1F600}-\u{1F64F}\u{2764}\u{1F495}-\u{1F49F}❤️💕💗💓💖]',
+        unicode: true);
     for (final msg in all) {
       if (emojiPattern.hasMatch(msg.text)) emojiCount++;
     }
@@ -429,7 +449,8 @@ class FeatureExtractor {
     final otherAvg = _avgReplyTime(all, 'B');
     if (otherAvg > userAvg * 2 && userAvg > 0) {
       redFlags.add(RedFlag(
-        text: '응답 시간 격차가 벌어지고 있어요 (A: ${userAvg.round()}분, B: ${otherAvg.round()}분)',
+        text:
+            '응답 시간 격차가 벌어지고 있어요 (A: ${userAvg.round()}분, B: ${otherAvg.round()}분)',
         severity: Severity.medium,
       ));
     }
@@ -477,11 +498,11 @@ class FeatureExtractor {
 
       if ((prev - curr).abs() > 0.5 && messages[i].text.length > 10) {
         triggers.add(TriggerItem(
-          maskedQuote: '${messages[i - 1].sender}: \'${_truncate(messages[i - 1].text, 30)}\' → '
+          maskedQuote:
+              '${messages[i - 1].sender}: \'${_truncate(messages[i - 1].text, 30)}\' → '
               '${messages[i].sender}: \'${_truncate(messages[i].text, 30)}\'',
-          whyItMatters: curr < prev
-              ? '대화 흐름에서 감정 톤이 급변한 지점이에요'
-              : '긍정적인 전환이 일어난 대화예요',
+          whyItMatters:
+              curr < prev ? '대화 흐름에서 감정 톤이 급변한 지점이에요' : '긍정적인 전환이 일어난 대화예요',
           time: messages[i].timestamp,
         ));
       }
@@ -631,23 +652,82 @@ class FeatureExtractor {
   // --- Keyword Dictionaries ---
 
   static const _positiveKeywords = [
-    '고마워', '감사', '사랑해', '좋아해', '보고싶', '보고 싶',
-    '행복', '기뻐', '좋아', '최고', '대단해', '잘했', '수고했',
-    '응원', '파이팅', '화이팅', '힘내', '걱정', '괜찮아',
-    '맛있', '재밌', '웃기', '귀여', '예쁘', '멋지',
-    'ㅋㅋ', 'ㅎㅎ', '하하', '히히', '❤', '♥', '💕',
+    '고마워',
+    '감사',
+    '사랑해',
+    '좋아해',
+    '보고싶',
+    '보고 싶',
+    '행복',
+    '기뻐',
+    '좋아',
+    '최고',
+    '대단해',
+    '잘했',
+    '수고했',
+    '응원',
+    '파이팅',
+    '화이팅',
+    '힘내',
+    '걱정',
+    '괜찮아',
+    '맛있',
+    '재밌',
+    '웃기',
+    '귀여',
+    '예쁘',
+    '멋지',
+    'ㅋㅋ',
+    'ㅎㅎ',
+    '하하',
+    '히히',
+    '❤',
+    '♥',
+    '💕',
   ];
 
   static const _negativeKeywords = [
-    '싫어', '짜증', '화나', '화 나', '미안', '슬퍼', '슬프',
-    '힘들', '지쳐', '지겨', '피곤', '귀찮', '싫다',
-    '걱정', '불안', '무서', '두려', '외로',
-    '그만', '됐어', '몰라', '아 진짜', '헐', '에휴',
+    '싫어',
+    '짜증',
+    '화나',
+    '화 나',
+    '미안',
+    '슬퍼',
+    '슬프',
+    '힘들',
+    '지쳐',
+    '지겨',
+    '피곤',
+    '귀찮',
+    '싫다',
+    '걱정',
+    '불안',
+    '무서',
+    '두려',
+    '외로',
+    '그만',
+    '됐어',
+    '몰라',
+    '아 진짜',
+    '헐',
+    '에휴',
   ];
 
   static const _careKeywords = [
-    '잘 자', '잘자', '좋은 꿈', '밥 먹었', '밥먹었',
-    '조심해', '조심히', '고마워', '수고했어', '수고',
-    '걱정돼', '괜찮아', '아프지 마', '건강', '따뜻하게',
+    '잘 자',
+    '잘자',
+    '좋은 꿈',
+    '밥 먹었',
+    '밥먹었',
+    '조심해',
+    '조심히',
+    '고마워',
+    '수고했어',
+    '수고',
+    '걱정돼',
+    '괜찮아',
+    '아프지 마',
+    '건강',
+    '따뜻하게',
   ];
 }

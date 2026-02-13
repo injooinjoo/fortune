@@ -37,7 +37,8 @@ class DocumentUploadBottomSheet extends StatefulWidget {
   }
 
   @override
-  State<DocumentUploadBottomSheet> createState() => _DocumentUploadBottomSheetState();
+  State<DocumentUploadBottomSheet> createState() =>
+      _DocumentUploadBottomSheetState();
 }
 
 class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
@@ -187,7 +188,8 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
                     type.displayName,
                     textAlign: TextAlign.center,
                     style: context.bodySmall.copyWith(
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                      fontWeight:
+                          isSelected ? FontWeight.w600 : FontWeight.w500,
                       color: isSelected
                           ? DSColors.success
                           : context.colors.textSecondary,
@@ -310,7 +312,9 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
       child: Row(
         children: [
           Icon(
-            _mimeType.contains('pdf') ? Icons.picture_as_pdf_rounded : Icons.image_rounded,
+            _mimeType.contains('pdf')
+                ? Icons.picture_as_pdf_rounded
+                : Icons.image_rounded,
             color: DSColors.success,
             size: 32,
           ),
@@ -320,7 +324,9 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  fileName.length > 25 ? '${fileName.substring(0, 22)}...' : fileName,
+                  fileName.length > 25
+                      ? '${fileName.substring(0, 22)}...'
+                      : fileName,
                   style: context.heading3.copyWith(
                     fontWeight: FontWeight.w600,
                     color: context.colors.textPrimary,
@@ -426,7 +432,9 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
         setState(() {
           _selectedFile = File(file.path ?? '');
           _base64Data = base64Encode(bytes);
-          _mimeType = file.extension == 'pdf' ? 'application/pdf' : 'image/${file.extension}';
+          _mimeType = file.extension == 'pdf'
+              ? 'application/pdf'
+              : 'image/${file.extension}';
         });
       }
     } catch (e) {

@@ -5,14 +5,18 @@ import '../../../theme/font_config.dart';
 
 // Legacy color helpers (ChatGPT style migration)
 class _LegacyColors {
-  static Color getGold(bool isDark) => isDark ? const Color(0xFFFFD700) : DSColors.warning;
-  static Color getHanjiBackground(bool isDark) => isDark ? DSColors.background : DSColors.backgroundDark;
+  static Color getGold(bool isDark) =>
+      isDark ? const Color(0xFFFFD700) : DSColors.warning;
+  static Color getHanjiBackground(bool isDark) =>
+      isDark ? DSColors.background : DSColors.backgroundDark;
   static const Color luckyRed = DSColors.error;
   static const Color healthLuck = DSColors.success;
 
   // Love colors (from DSLoveColors)
-  static Color getLovePrimary(bool isDark) => isDark ? const Color(0xFFE91E63) : const Color(0xFFD81B60);
-  static Color getLoveBackground(bool isDark) => isDark ? const Color(0xFF2D1D26) : const Color(0xFFFCE4EC);
+  static Color getLovePrimary(bool isDark) =>
+      isDark ? const Color(0xFFE91E63) : const Color(0xFFD81B60);
+  static Color getLoveBackground(bool isDark) =>
+      isDark ? const Color(0xFF2D1D26) : const Color(0xFFFCE4EC);
   static const Color rougePink = Color(0xFFE91E63);
 }
 
@@ -137,7 +141,8 @@ class FortuneHeader extends StatelessWidget {
                   else
                     const SizedBox(width: 44),
                   Expanded(
-                    child: _buildTitleSection(colors, CrossAxisAlignment.center),
+                    child:
+                        _buildTitleSection(colors, CrossAxisAlignment.center),
                   ),
                   if (trailing != null)
                     trailing!
@@ -250,7 +255,8 @@ class FortuneHeader extends StatelessWidget {
           SafeArea(
             bottom: false,
             child: Padding(
-              padding: padding.copyWith(top: padding.top + 8, bottom: padding.bottom + 8),
+              padding: padding.copyWith(
+                  top: padding.top + 8, bottom: padding.bottom + 8),
               child: Row(
                 children: [
                   if (onBackPressed != null || leading != null)
@@ -258,7 +264,8 @@ class FortuneHeader extends StatelessWidget {
                   else
                     const SizedBox(width: 44),
                   Expanded(
-                    child: _buildTitleSection(colors, CrossAxisAlignment.center),
+                    child:
+                        _buildTitleSection(colors, CrossAxisAlignment.center),
                   ),
                   if (trailing != null)
                     trailing!
@@ -388,7 +395,8 @@ class FortuneHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildTitleSection(_HeaderColors colors, CrossAxisAlignment alignment) {
+  Widget _buildTitleSection(
+      _HeaderColors colors, CrossAxisAlignment alignment) {
     return Column(
       crossAxisAlignment: alignment,
       mainAxisSize: MainAxisSize.min,
@@ -562,9 +570,8 @@ class FortuneHeader extends StatelessWidget {
       case FortuneHeaderColorScheme.health:
         return _HeaderColors(
           primary: _LegacyColors.healthLuck,
-          background: isDark
-              ? const Color(0xFF1D2D25)
-              : const Color(0xFFF0F8F5),
+          background:
+              isDark ? const Color(0xFF1D2D25) : const Color(0xFFF0F8F5),
           textColor: DSColors.getTextPrimary(brightness),
           sealColor: _LegacyColors.healthLuck,
         );

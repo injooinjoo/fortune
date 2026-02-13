@@ -3,11 +3,16 @@ import '../../data/repositories/repositories.dart';
 import '../../domain/models/models.dart';
 
 /// Repository Providers
-final trendContentRepositoryProvider = Provider((ref) => TrendContentRepository());
-final psychologyTestRepositoryProvider = Provider((ref) => PsychologyTestRepository());
-final idealWorldcupRepositoryProvider = Provider((ref) => IdealWorldcupRepository());
-final balanceGameRepositoryProvider = Provider((ref) => BalanceGameRepository());
-final trendSocialRepositoryProvider = Provider((ref) => TrendSocialRepository());
+final trendContentRepositoryProvider =
+    Provider((ref) => TrendContentRepository());
+final psychologyTestRepositoryProvider =
+    Provider((ref) => PsychologyTestRepository());
+final idealWorldcupRepositoryProvider =
+    Provider((ref) => IdealWorldcupRepository());
+final balanceGameRepositoryProvider =
+    Provider((ref) => BalanceGameRepository());
+final trendSocialRepositoryProvider =
+    Provider((ref) => TrendSocialRepository());
 
 /// 트렌드 콘텐츠 목록 State
 class TrendListState {
@@ -46,7 +51,8 @@ class TrendListState {
       isLoading: isLoading ?? this.isLoading,
       error: clearError ? null : (error ?? this.error),
       selectedType: clearType ? null : (selectedType ?? this.selectedType),
-      selectedCategory: clearCategory ? null : (selectedCategory ?? this.selectedCategory),
+      selectedCategory:
+          clearCategory ? null : (selectedCategory ?? this.selectedCategory),
       hasMore: hasMore ?? this.hasMore,
       page: page ?? this.page,
     );
@@ -79,7 +85,9 @@ class TrendListNotifier extends StateNotifier<TrendListState> {
         limit: limit,
       );
 
-      final newContents = refresh ? response.contents : [...state.contents, ...response.contents];
+      final newContents = refresh
+          ? response.contents
+          : [...state.contents, ...response.contents];
 
       state = state.copyWith(
         contents: newContents,

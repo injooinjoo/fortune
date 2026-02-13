@@ -22,7 +22,7 @@ class TokenPurchasePage extends ConsumerStatefulWidget {
 
 class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
   final InAppPurchaseService _purchaseService = InAppPurchaseService();
-  
+
   int? _selectedPackageIndex;
   bool _isProcessing = false;
   bool _isLoading = true;
@@ -96,15 +96,15 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
 
   Future<void> _initializeInAppPurchase() async {
     setState(() => _isLoading = true);
-    
+
     try {
       await _purchaseService.initialize();
       await _loadProducts();
     } catch (e) {
       Logger.error('인앱결제 초기화 실패', e);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('결제 시스템을 초기화할 수 없습니다')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('결제 시스템을 초기화할 수 없습니다')));
       }
     } finally {
       if (mounted) {
@@ -152,9 +152,9 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
           children: [
             const AppHeader(title: '토큰 구매'),
             Expanded(
-              child: _isLoading 
-                ? const Center(child: CircularProgressIndicator())
-                : _buildContent(),
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _buildContent(),
             ),
           ],
         ),
@@ -281,9 +281,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
               ),
             ],
           ),
-        ).animate()
-          .fadeIn(duration: 600.ms)
-          .slideX(begin: -0.1, end: 0);
+        ).animate().fadeIn(duration: 600.ms).slideX(begin: -0.1, end: 0);
       }
 
       // 그 외에는 0으로 표시
@@ -330,9 +328,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
             ),
           ],
         ),
-      ).animate()
-        .fadeIn(duration: 600.ms)
-        .slideX(begin: -0.1, end: 0);
+      ).animate().fadeIn(duration: 600.ms).slideX(begin: -0.1, end: 0);
     }
 
     return CustomCard(
@@ -354,8 +350,8 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                 children: [
                   Text(
                     tokenBalance.hasUnlimitedAccess
-                      ? '무제한'
-                      : '${tokenBalance.remainingTokens}',
+                        ? '무제한'
+                        : '${tokenBalance.remainingTokens}',
                     style: context.heading2.copyWith(
                       // 황색(Hwang) - 복/풍요를 상징
                       color: DSColors.warning,
@@ -376,17 +372,13 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
             ],
           ),
           Icon(
-            tokenBalance.hasUnlimitedAccess
-              ? Icons.all_inclusive
-              : Icons.toll,
+            tokenBalance.hasUnlimitedAccess ? Icons.all_inclusive : Icons.toll,
             size: 40,
             color: DSColors.warning.withValues(alpha: 0.3),
           ),
         ],
       ),
-    ).animate()
-      .fadeIn(duration: 600.ms)
-      .slideX(begin: -0.1, end: 0);
+    ).animate().fadeIn(duration: 600.ms).slideX(begin: -0.1, end: 0);
   }
 
   Widget _buildPackageList({bool useMockData = false}) {
@@ -436,7 +428,8 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
             productInfo = mockProducts[index];
             title = productInfo.title;
             description = productInfo.description;
-            price = '₩${productInfo.price.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}';
+            price =
+                '₩${productInfo.price.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}';
           } else {
             final product = _products[index];
             productInfo = InAppProducts.productDetails[product.id];
@@ -461,9 +454,10 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                   _selectedPackageIndex = index;
                 });
               },
-            ).animate()
-              .fadeIn(duration: 600.ms, delay: (index * 100).ms)
-              .slideX(begin: 0.1, end: 0),
+            )
+                .animate()
+                .fadeIn(duration: 600.ms, delay: (index * 100).ms)
+                .slideX(begin: 0.1, end: 0),
           );
         }),
       ],
@@ -488,29 +482,29 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
         decoration: BoxDecoration(
           // 황색(Hwang) - 복/풍요를 상징하는 전통 색상
           gradient: isSelected
-            ? LinearGradient(
-                colors: [
-                  DSColors.warning.withValues(alpha: 0.1),
-                  DSColors.warning.withValues(alpha: 0.05),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              )
-            : null,
+              ? LinearGradient(
+                  colors: [
+                    DSColors.warning.withValues(alpha: 0.1),
+                    DSColors.warning.withValues(alpha: 0.05),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                )
+              : null,
           border: Border.all(
             color: isSelected ? DSColors.warning : colors.border,
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(DSRadius.lg),
           boxShadow: isSelected
-            ? [
-                BoxShadow(
-                  color: DSColors.warning.withValues(alpha: 0.2),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ]
-            : null,
+              ? [
+                  BoxShadow(
+                    color: DSColors.warning.withValues(alpha: 0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
         ),
         padding: const EdgeInsets.all(DSSpacing.lg),
         child: Row(
@@ -520,8 +514,8 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
               height: 60,
               decoration: BoxDecoration(
                 color: isSelected
-                  ? DSColors.warning.withValues(alpha: 0.1)
-                  : colors.backgroundSecondary,
+                    ? DSColors.warning.withValues(alpha: 0.1)
+                    : colors.backgroundSecondary,
                 borderRadius: BorderRadius.circular(DSRadius.md),
               ),
               child: Center(
@@ -591,13 +585,9 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
       height: 56,
       decoration: BoxDecoration(
         // 비활성화 상태에서도 눈에 보이는 배경
-        color: isDisabled
-            ? colors.backgroundTertiary
-            : colors.ctaBackground,
+        color: isDisabled ? colors.backgroundTertiary : colors.ctaBackground,
         borderRadius: BorderRadius.circular(DSRadius.md),
-        border: isDisabled
-            ? Border.all(color: colors.border, width: 1)
-            : null,
+        border: isDisabled ? Border.all(color: colors.border, width: 1) : null,
       ),
       child: Material(
         color: Colors.transparent,
@@ -615,9 +605,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                     ),
                   )
                 : Text(
-                    _selectedPackageIndex == null
-                        ? '패키지를 선택해주세요'
-                        : '구매하기',
+                    _selectedPackageIndex == null ? '패키지를 선택해주세요' : '구매하기',
                     style: context.bodyLarge.copyWith(
                       color: isDisabled
                           ? colors.textSecondary
@@ -652,14 +640,14 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
           '• 구독은 언제든지 취소할 수 있습니다',
           '• 환불은 앱스토어/구글플레이 정책을 따릅니다'
         ].map((text) => Padding(
-          padding: const EdgeInsets.only(bottom: 4),
-          child: Text(
-            text,
-            style: context.labelSmall.copyWith(
-              color: colors.textSecondary,
-            ),
-          ),
-        )),
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Text(
+                text,
+                style: context.labelSmall.copyWith(
+                  color: colors.textSecondary,
+                ),
+              ),
+            )),
       ],
     );
   }

@@ -1,11 +1,11 @@
 // 소원 빌기 결과 데이터 모델 (용 테마 + 게이미피케이션)
 class WishFortuneResult {
   // 기존 필드
-  final String empathyMessage;    // 공감 메시지 (300자)
-  final String hopeMessage;       // 희망과 격려 (400자)
-  final List<String> advice;      // 구체적 조언 3개
-  final String encouragement;     // 응원 메시지 (200자)
-  final String specialWords;      // 신의 한마디 (50자)
+  final String empathyMessage; // 공감 메시지 (300자)
+  final String hopeMessage; // 희망과 격려 (400자)
+  final List<String> advice; // 구체적 조언 3개
+  final String encouragement; // 응원 메시지 (200자)
+  final String specialWords; // 신의 한마디 (50자)
 
   // 🆕 운의 흐름 (데이터 기반 느낌)
   final FortuneFlow? fortuneFlow;
@@ -17,10 +17,10 @@ class WishFortuneResult {
   final DragonMessage? dragonMessage;
 
   // 🆕 히스토리용 메타데이터
-  final String? id;               // DB ID
-  final String? wishText;         // 소원 내용
-  final String? category;         // 카테고리
-  final DateTime? createdAt;      // 생성 시간
+  final String? id; // DB ID
+  final String? wishText; // 소원 내용
+  final String? category; // 카테고리
+  final DateTime? createdAt; // 생성 시간
 
   WishFortuneResult({
     required this.empathyMessage,
@@ -41,7 +41,10 @@ class WishFortuneResult {
     return WishFortuneResult(
       empathyMessage: json['empathy_message'] as String? ?? '',
       hopeMessage: json['hope_message'] as String? ?? '',
-      advice: (json['advice'] as List<dynamic>?)?.map((e) => e as String).toList() ?? [],
+      advice: (json['advice'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
       encouragement: json['encouragement'] as String? ?? '',
       specialWords: json['special_words'] as String? ?? '',
       fortuneFlow: json['fortune_flow'] != null
@@ -51,7 +54,8 @@ class WishFortuneResult {
           ? LuckyMission.fromJson(json['lucky_mission'] as Map<String, dynamic>)
           : null,
       dragonMessage: json['dragon_message'] != null
-          ? DragonMessage.fromJson(json['dragon_message'] as Map<String, dynamic>)
+          ? DragonMessage.fromJson(
+              json['dragon_message'] as Map<String, dynamic>)
           : null,
       id: json['id'] as String?,
       wishText: json['wish_text'] as String?,
@@ -86,11 +90,11 @@ class WishFortuneResult {
 
 /// 운의 흐름 (데이터 기반 느낌)
 class FortuneFlow {
-  final String achievementLevel;   // "매우 높음" | "높음" | "보통" | "노력 필요"
-  final String luckyTiming;        // "오후 2시~4시" 형식
-  final List<String> keywords;     // 3개 해시태그 ["#인연", "#결단", "#기다림"]
-  final String helper;             // 도움이 되는 사람/행동
-  final String obstacle;           // 주의해야 할 행동
+  final String achievementLevel; // "매우 높음" | "높음" | "보통" | "노력 필요"
+  final String luckyTiming; // "오후 2시~4시" 형식
+  final List<String> keywords; // 3개 해시태그 ["#인연", "#결단", "#기다림"]
+  final String helper; // 도움이 되는 사람/행동
+  final String obstacle; // 주의해야 할 행동
 
   FortuneFlow({
     required this.achievementLevel,
@@ -104,7 +108,10 @@ class FortuneFlow {
     return FortuneFlow(
       achievementLevel: json['achievement_level'] as String? ?? '보통',
       luckyTiming: json['lucky_timing'] as String? ?? '',
-      keywords: (json['keywords'] as List<dynamic>?)?.map((e) => e as String).toList() ?? [],
+      keywords: (json['keywords'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
       helper: json['helper'] as String? ?? '',
       obstacle: json['obstacle'] as String? ?? '',
     );
@@ -123,12 +130,12 @@ class FortuneFlow {
 
 /// 행운의 미션 (게이미피케이션)
 class LuckyMission {
-  final String item;           // "주머니에 동전 하나"
-  final String itemReason;     // 왜 이 아이템인지
-  final String place;          // "탁 트인 공원"
-  final String placeReason;    // 왜 이 장소인지
-  final String color;          // "파란색"
-  final String colorReason;    // 왜 이 색상인지
+  final String item; // "주머니에 동전 하나"
+  final String itemReason; // 왜 이 아이템인지
+  final String place; // "탁 트인 공원"
+  final String placeReason; // 왜 이 장소인지
+  final String color; // "파란색"
+  final String colorReason; // 왜 이 색상인지
 
   LuckyMission({
     required this.item,
@@ -164,9 +171,9 @@ class LuckyMission {
 
 /// 용의 메시지 (스토리텔링)
 class DragonMessage {
-  final String pearlMessage;   // 여의주 메시지
-  final String wisdom;         // 용의 지혜
-  final String powerLine;      // 짧고 강렬한 한마디 (소원 키워드 포함)
+  final String pearlMessage; // 여의주 메시지
+  final String wisdom; // 용의 지혜
+  final String powerLine; // 짧고 강렬한 한마디 (소원 키워드 포함)
 
   DragonMessage({
     required this.pearlMessage,

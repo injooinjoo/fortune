@@ -58,8 +58,7 @@ class _TipTagGridState extends State<TipTagGrid>
     super.initState();
     final visibleCount = widget.tips.length.clamp(0, widget.maxVisibleTags);
     _controller = AnimationController(
-      duration:
-          widget.animationDuration + (widget.staggerDelay * visibleCount),
+      duration: widget.animationDuration + (widget.staggerDelay * visibleCount),
       vsync: this,
     );
 
@@ -92,7 +91,8 @@ class _TipTagGridState extends State<TipTagGrid>
           return _TipTag(tip: tip);
         }
 
-        final startTime = index * widget.staggerDelay.inMilliseconds /
+        final startTime = index *
+            widget.staggerDelay.inMilliseconds /
             _controller.duration!.inMilliseconds;
         final endTime = startTime +
             widget.animationDuration.inMilliseconds /
@@ -391,80 +391,78 @@ class TipTextMapper {
   /// 미리 정의된 매핑
   static final Map<String, TipTagData> _predefinedMappings = {
     // 연애/감정
-    '감정을 솔직하게 표현하세요': const TipTagData(
-        label: '감정표현', category: TipCategory.love),
-    '대화로 오해를 풀어보세요': const TipTagData(
-        label: '소통강화', category: TipCategory.love),
-    '상대방의 이야기를 경청하세요': const TipTagData(
-        label: '경청하기', category: TipCategory.love),
-    '먼저 연락해보세요': const TipTagData(
-        label: '먼저연락', category: TipCategory.love),
+    '감정을 솔직하게 표현하세요':
+        const TipTagData(label: '감정표현', category: TipCategory.love),
+    '대화로 오해를 풀어보세요':
+        const TipTagData(label: '소통강화', category: TipCategory.love),
+    '상대방의 이야기를 경청하세요':
+        const TipTagData(label: '경청하기', category: TipCategory.love),
+    '먼저 연락해보세요': const TipTagData(label: '먼저연락', category: TipCategory.love),
 
     // 직업/협업
-    '협업 시 의사소통에 주의하세요': const TipTagData(
-        label: '협업주의', category: TipCategory.career),
-    '회의 전 충분히 준비하세요': const TipTagData(
-        label: '회의준비', category: TipCategory.career),
-    '업무 우선순위를 정리하세요': const TipTagData(
-        label: '우선순위', category: TipCategory.career),
-    '새로운 프로젝트에 도전해보세요': const TipTagData(
-        label: '새도전', category: TipCategory.career),
+    '협업 시 의사소통에 주의하세요':
+        const TipTagData(label: '협업주의', category: TipCategory.career),
+    '회의 전 충분히 준비하세요':
+        const TipTagData(label: '회의준비', category: TipCategory.career),
+    '업무 우선순위를 정리하세요':
+        const TipTagData(label: '우선순위', category: TipCategory.career),
+    '새로운 프로젝트에 도전해보세요':
+        const TipTagData(label: '새도전', category: TipCategory.career),
 
     // 건강/운동
-    '오늘은 운동을 추천합니다': const TipTagData(
-        label: '운동권장', category: TipCategory.health),
-    '충분한 휴식이 필요합니다': const TipTagData(
-        label: '휴식필요', category: TipCategory.health),
-    '수분 섭취를 늘려보세요': const TipTagData(
-        label: '수분섭취', category: TipCategory.health),
-    '스트레칭으로 하루를 시작하세요': const TipTagData(
-        label: '스트레칭', category: TipCategory.health),
+    '오늘은 운동을 추천합니다':
+        const TipTagData(label: '운동권장', category: TipCategory.health),
+    '충분한 휴식이 필요합니다':
+        const TipTagData(label: '휴식필요', category: TipCategory.health),
+    '수분 섭취를 늘려보세요':
+        const TipTagData(label: '수분섭취', category: TipCategory.health),
+    '스트레칭으로 하루를 시작하세요':
+        const TipTagData(label: '스트레칭', category: TipCategory.health),
 
     // 재정/금전
-    '지출을 점검해보세요': const TipTagData(
-        label: '지출점검', category: TipCategory.money),
-    '충동구매를 피하세요': const TipTagData(
-        label: '충동구매주의', category: TipCategory.money),
-    '저축 계획을 세워보세요': const TipTagData(
-        label: '저축계획', category: TipCategory.money),
-    '투자는 신중하게 결정하세요': const TipTagData(
-        label: '신중투자', category: TipCategory.money),
+    '지출을 점검해보세요': const TipTagData(label: '지출점검', category: TipCategory.money),
+    '충동구매를 피하세요':
+        const TipTagData(label: '충동구매주의', category: TipCategory.money),
+    '저축 계획을 세워보세요':
+        const TipTagData(label: '저축계획', category: TipCategory.money),
+    '투자는 신중하게 결정하세요':
+        const TipTagData(label: '신중투자', category: TipCategory.money),
 
     // 시간/타이밍
-    '중요한 결정은 오후에 하세요': const TipTagData(
-        label: '오후결정', category: TipCategory.timing),
-    '오전에 중요한 일을 처리하세요': const TipTagData(
-        label: '오전집중', category: TipCategory.timing),
-    '저녁 시간을 활용하세요': const TipTagData(
-        label: '저녁활용', category: TipCategory.timing),
-    '서두르지 말고 천천히 진행하세요': const TipTagData(
-        label: '천천히', category: TipCategory.timing),
+    '중요한 결정은 오후에 하세요':
+        const TipTagData(label: '오후결정', category: TipCategory.timing),
+    '오전에 중요한 일을 처리하세요':
+        const TipTagData(label: '오전집중', category: TipCategory.timing),
+    '저녁 시간을 활용하세요':
+        const TipTagData(label: '저녁활용', category: TipCategory.timing),
+    '서두르지 말고 천천히 진행하세요':
+        const TipTagData(label: '천천히', category: TipCategory.timing),
 
     // 경고/주의
-    '구설수에 주의하세요': const TipTagData(
-        label: '구설주의', category: TipCategory.warning),
-    '갈등 상황을 피하세요': const TipTagData(
-        label: '갈등회피', category: TipCategory.warning),
-    '과로하지 않도록 주의하세요': const TipTagData(
-        label: '과로주의', category: TipCategory.warning),
-    '급한 결정은 피하세요': const TipTagData(
-        label: '급결정주의', category: TipCategory.warning),
+    '구설수에 주의하세요':
+        const TipTagData(label: '구설주의', category: TipCategory.warning),
+    '갈등 상황을 피하세요':
+        const TipTagData(label: '갈등회피', category: TipCategory.warning),
+    '과로하지 않도록 주의하세요':
+        const TipTagData(label: '과로주의', category: TipCategory.warning),
+    '급한 결정은 피하세요':
+        const TipTagData(label: '급결정주의', category: TipCategory.warning),
 
     // 긍정/행운
-    '좋은 기회가 올 수 있습니다': const TipTagData(
-        label: '기회포착', category: TipCategory.positive),
-    '긍정적인 마인드를 유지하세요': const TipTagData(
-        label: '긍정마인드', category: TipCategory.positive),
-    '오늘은 행운이 따릅니다': const TipTagData(
-        label: '행운의날', category: TipCategory.positive),
+    '좋은 기회가 올 수 있습니다':
+        const TipTagData(label: '기회포착', category: TipCategory.positive),
+    '긍정적인 마인드를 유지하세요':
+        const TipTagData(label: '긍정마인드', category: TipCategory.positive),
+    '오늘은 행운이 따릅니다':
+        const TipTagData(label: '행운의날', category: TipCategory.positive),
 
     // 행동/실행
-    '과감하게 도전해보세요': const TipTagData(
-        label: '과감도전', category: TipCategory.action),
-    '망설이지 말고 실행하세요': const TipTagData(
-        label: '즉시실행', category: TipCategory.action),
-    '새로운 시도를 두려워하지 마세요': const TipTagData(
-        label: '새시도', category: TipCategory.action),
+    '과감하게 도전해보세요':
+        const TipTagData(label: '과감도전', category: TipCategory.action),
+    '망설이지 말고 실행하세요':
+        const TipTagData(label: '즉시실행', category: TipCategory.action),
+    '새로운 시도를 두려워하지 마세요':
+        const TipTagData(label: '새시도', category: TipCategory.action),
   };
 
   /// 카테고리별 키워드 → 라벨 매핑

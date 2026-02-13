@@ -2,9 +2,9 @@ import 'dart:convert';
 
 /// 채팅 동기화 상태
 enum SyncStatus {
-  pending,   // 대기 중
-  syncing,   // 동기화 중
-  failed,    // 실패
+  pending, // 대기 중
+  syncing, // 동기화 중
+  failed, // 실패
   completed, // 완료
 }
 
@@ -12,13 +12,13 @@ enum SyncStatus {
 /// 오프라인 큐에 저장되어 나중에 DB로 동기화됨
 class ChatSyncItem {
   final String id;
-  final String chatId;      // characterId 또는 'general'
-  final String chatType;    // 'character' | 'general'
+  final String chatId; // characterId 또는 'general'
+  final String chatType; // 'character' | 'general'
   final List<Map<String, dynamic>> messages;
   final DateTime createdAt;
   final DateTime? lastAttemptAt;
   final int attemptCount;
-  final String? userId;     // null이면 게스트
+  final String? userId; // null이면 게스트
   final SyncStatus status;
   final String? errorMessage;
 
@@ -79,7 +79,8 @@ class ChatSyncItem {
 
   /// JSON 문자열에서 생성
   factory ChatSyncItem.fromJsonString(String jsonString) {
-    return ChatSyncItem.fromJson(jsonDecode(jsonString) as Map<String, dynamic>);
+    return ChatSyncItem.fromJson(
+        jsonDecode(jsonString) as Map<String, dynamic>);
   }
 
   /// 복사본 생성

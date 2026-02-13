@@ -74,7 +74,9 @@ class _VoiceSpectrumAnimationState extends State<VoiceSpectrumAnimation>
           final distanceFromCenter = (i - center).abs() / center;
           final centerBoost = 1.0 - (distanceFromCenter * 0.4);
 
-          targetHeight = (0.15 + randomVariation + (soundResponse * centerBoost)).clamp(0.1, 1.0);
+          targetHeight =
+              (0.15 + randomVariation + (soundResponse * centerBoost))
+                  .clamp(0.1, 1.0);
         } else {
           // iOS fallback: isSpeaking일 때 웨이브 애니메이션
           _fallbackPhase += 0.02;
@@ -93,7 +95,8 @@ class _VoiceSpectrumAnimationState extends State<VoiceSpectrumAnimation>
 
         // 부드러운 전환 (lerp)
         final lerpSpeed = isActive ? 0.25 : 0.5;
-        _barHeights[i] = _barHeights[i] + (_targetHeights[i] - _barHeights[i]) * lerpSpeed;
+        _barHeights[i] =
+            _barHeights[i] + (_targetHeights[i] - _barHeights[i]) * lerpSpeed;
       }
     });
   }
@@ -139,7 +142,9 @@ class _VoiceSpectrumAnimationState extends State<VoiceSpectrumAnimation>
               actualBarCount,
               (index) {
                 // barCount가 줄어들 수 있으므로 인덱스 맵핑
-                final mappedIndex = (index * widget.barCount / actualBarCount).floor().clamp(0, _barHeights.length - 1);
+                final mappedIndex = (index * widget.barCount / actualBarCount)
+                    .floor()
+                    .clamp(0, _barHeights.length - 1);
                 final height = _barHeights[mappedIndex] * 28; // 최대 28px
 
                 return Container(

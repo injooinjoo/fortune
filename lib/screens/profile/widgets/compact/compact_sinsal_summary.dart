@@ -24,9 +24,8 @@ class CompactSinsalSummary extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
-        color: isDark
-            ? context.colors.backgroundSecondary
-            : Colors.grey.shade50,
+        color:
+            isDark ? context.colors.backgroundSecondary : Colors.grey.shade50,
         borderRadius: BorderRadius.circular(DSRadius.sm),
         border: Border.all(
           color: isDark ? DSColors.border : DSColors.borderDark,

@@ -142,7 +142,9 @@ class CelebrityDatabase {
 
   // Get celebrities by category
   static List<Celebrity> getCelebritiesByCategory(CelebrityType celebrityType) {
-    return getAllCelebrities().where((celebrity) => celebrity.celebrityType == celebrityType).toList();
+    return getAllCelebrities()
+        .where((celebrity) => celebrity.celebrityType == celebrityType)
+        .toList();
   }
 
   // Search celebrities by name
@@ -150,7 +152,8 @@ class CelebrityDatabase {
     final lowercaseQuery = query.toLowerCase();
     return getAllCelebrities().where((celebrity) {
       return celebrity.name.toLowerCase().contains(lowercaseQuery) ||
-             celebrity.allNames.any((name) => name.toLowerCase().contains(lowercaseQuery));
+          celebrity.allNames
+              .any((name) => name.toLowerCase().contains(lowercaseQuery));
     }).toList();
   }
 }

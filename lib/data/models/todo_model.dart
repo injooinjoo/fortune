@@ -1,18 +1,18 @@
 import 'package:fortune/domain/entities/todo.dart';
 
 class TodoModel extends Todo {
-  const TodoModel({
-    required super.id,
-    required super.userId,
-    required super.title,
-    super.description,
-    required super.priority,
-    required super.status,
-    super.dueDate,
-    required super.tags,
-    required super.createdAt,
-    required super.updatedAt,
-    super.isDeleted});
+  const TodoModel(
+      {required super.id,
+      required super.userId,
+      required super.title,
+      super.description,
+      required super.priority,
+      required super.status,
+      super.dueDate,
+      required super.tags,
+      required super.createdAt,
+      required super.updatedAt,
+      super.isDeleted});
 
   factory TodoModel.fromJson(Map<String, dynamic> json) {
     // Validate and sanitize input data for security
@@ -34,20 +34,19 @@ class TodoModel extends Todo {
     }
 
     return TodoModel(
-      id: json['id'],
-      userId: json['user_id'],
-      title: title,
-      description: description,
-      priority: _parsePriority(json['priority'] as String? ?? 'medium'),
-      status: parseStatus(json['status'] as String? ?? 'pending'),
-      dueDate: json['due_date'] != null
-          ? DateTime.parse(json['due_date'] as String)
-          : null,
-      tags: _parseTags(json['tags']),
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
-      isDeleted: json['is_deleted'] as bool? ?? false
-    );
+        id: json['id'],
+        userId: json['user_id'],
+        title: title,
+        description: description,
+        priority: _parsePriority(json['priority'] as String? ?? 'medium'),
+        status: parseStatus(json['status'] as String? ?? 'pending'),
+        dueDate: json['due_date'] != null
+            ? DateTime.parse(json['due_date'] as String)
+            : null,
+        tags: _parseTags(json['tags']),
+        createdAt: DateTime.parse(json['created_at']),
+        updatedAt: DateTime.parse(json['updated_at']),
+        isDeleted: json['is_deleted'] as bool? ?? false);
   }
 
   Map<String, dynamic> toJson() {
@@ -62,22 +61,23 @@ class TodoModel extends Todo {
       'tags': tags,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
-      'is_deleted': isDeleted};
+      'is_deleted': isDeleted
+    };
   }
 
   factory TodoModel.fromEntity(Todo todo) {
     return TodoModel(
-      id: todo.id,
-      userId: todo.userId,
-      title: todo.title,
-      description: todo.description,
-      priority: todo.priority,
-      status: todo.status,
-      dueDate: todo.dueDate,
-      tags: todo.tags,
-      createdAt: todo.createdAt,
-      updatedAt: todo.updatedAt,
-      isDeleted: todo.isDeleted);
+        id: todo.id,
+        userId: todo.userId,
+        title: todo.title,
+        description: todo.description,
+        priority: todo.priority,
+        status: todo.status,
+        dueDate: todo.dueDate,
+        tags: todo.tags,
+        createdAt: todo.createdAt,
+        updatedAt: todo.updatedAt,
+        isDeleted: todo.isDeleted);
   }
 
   static TodoPriority _parsePriority(String priority) {

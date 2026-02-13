@@ -148,7 +148,8 @@ class SmartChipRecommender {
     }
 
     // 전체보기 버튼 추가
-    final viewAllChip = initialChips.where((c) => c.id == 'viewAll').firstOrNull;
+    final viewAllChip =
+        initialChips.where((c) => c.id == 'viewAll').firstOrNull;
     if (viewAllChip != null) {
       result.add(viewAllChip);
     }

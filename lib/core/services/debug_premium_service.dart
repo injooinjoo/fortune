@@ -12,7 +12,8 @@ class DebugPremiumService {
   static bool isTestAccount(String? email) {
     if (email == null || email.isEmpty) return false;
     final emailLower = email.toLowerCase();
-    return Environment.testEmailDomains.any((domain) => emailLower.endsWith(domain));
+    return Environment.testEmailDomains
+        .any((domain) => emailLower.endsWith(domain));
   }
 
   /// 기능 사용 가능 여부 (디버그 모드 또는 테스트 계정)
@@ -43,7 +44,8 @@ class DebugPremiumService {
   /// 프리미엄 오버라이드 설정 (true: 강제 프리미엄, false: 강제 일반, null: 오버라이드 해제)
   static Future<void> setOverride(bool? isPremium, {String? email}) async {
     if (!canUseFeature(email)) {
-      debugPrint('⚠️ [DebugPremiumService] Override is disabled for this account');
+      debugPrint(
+          '⚠️ [DebugPremiumService] Override is disabled for this account');
       return;
     }
 
@@ -78,14 +80,17 @@ class DebugPremiumService {
       'available': true,
       'enabled': enabled,
       'value': value,
-      'mode': kDebugMode ? 'debug' : (isTestAccount(email) ? 'test_account' : 'profile'),
+      'mode': kDebugMode
+          ? 'debug'
+          : (isTestAccount(email) ? 'test_account' : 'profile'),
     };
   }
 
   /// 프리미엄 토글 (현재 오버라이드 값의 반대로 설정)
   static Future<bool> togglePremium({String? email}) async {
     if (!canUseFeature(email)) {
-      debugPrint('⚠️ [DebugPremiumService] Toggle is disabled for this account');
+      debugPrint(
+          '⚠️ [DebugPremiumService] Toggle is disabled for this account');
       return false;
     }
 

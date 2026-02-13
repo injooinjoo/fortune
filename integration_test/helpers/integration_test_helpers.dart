@@ -185,8 +185,9 @@ Future<void> waitForLoadingToFinish(
   while (DateTime.now().isBefore(endTime)) {
     await tester.pump(pollInterval);
 
-    final hasLoading = find.byType(CircularProgressIndicator).evaluate().isNotEmpty ||
-        find.byType(LinearProgressIndicator).evaluate().isNotEmpty;
+    final hasLoading =
+        find.byType(CircularProgressIndicator).evaluate().isNotEmpty ||
+            find.byType(LinearProgressIndicator).evaluate().isNotEmpty;
 
     if (!hasLoading) {
       return;

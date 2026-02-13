@@ -9,10 +9,8 @@ class TimePeriod {
   final String label;
   final String? description;
 
-  const TimePeriod({
-    required this.value,
-    required this.label,
-    this.description});
+  const TimePeriod(
+      {required this.value, required this.label, this.description});
 }
 
 class BirthTimeEditDialog extends StatefulWidget {
@@ -34,18 +32,31 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
   bool _isLoading = false;
 
   static final List<TimePeriod> timePeriods = [
-    const TimePeriod(value: '자시', label: '자시 (23:00 - 01:00)', description: '23:00 - 01:00'),
-    const TimePeriod(value: '축시', label: '축시 (01:00 - 03:00)', description: '01:00 - 03:00'),
-    const TimePeriod(value: '인시', label: '인시 (03:00 - 05:00)', description: '03:00 - 05:00'),
-    const TimePeriod(value: '묘시', label: '묘시 (05:00 - 07:00)', description: '05:00 - 07:00'),
-    const TimePeriod(value: '진시', label: '진시 (07:00 - 09:00)', description: '07:00 - 09:00'),
-    const TimePeriod(value: '사시', label: '사시 (09:00 - 11:00)', description: '09:00 - 11:00'),
-    const TimePeriod(value: '오시', label: '오시 (11:00 - 13:00)', description: '11:00 - 13:00'),
-    const TimePeriod(value: '미시', label: '미시 (13:00 - 15:00)', description: '13:00 - 15:00'),
-    const TimePeriod(value: '신시', label: '신시 (15:00 - 17:00)', description: '15:00 - 17:00'),
-    const TimePeriod(value: '유시', label: '유시 (17:00 - 19:00)', description: '17:00 - 19:00'),
-    const TimePeriod(value: '술시', label: '술시 (19:00 - 21:00)', description: '19:00 - 21:00'),
-    const TimePeriod(value: '해시', label: '해시 (21:00 - 23:00)', description: '21:00 - 23:00')];
+    const TimePeriod(
+        value: '자시', label: '자시 (23:00 - 01:00)', description: '23:00 - 01:00'),
+    const TimePeriod(
+        value: '축시', label: '축시 (01:00 - 03:00)', description: '01:00 - 03:00'),
+    const TimePeriod(
+        value: '인시', label: '인시 (03:00 - 05:00)', description: '03:00 - 05:00'),
+    const TimePeriod(
+        value: '묘시', label: '묘시 (05:00 - 07:00)', description: '05:00 - 07:00'),
+    const TimePeriod(
+        value: '진시', label: '진시 (07:00 - 09:00)', description: '07:00 - 09:00'),
+    const TimePeriod(
+        value: '사시', label: '사시 (09:00 - 11:00)', description: '09:00 - 11:00'),
+    const TimePeriod(
+        value: '오시', label: '오시 (11:00 - 13:00)', description: '11:00 - 13:00'),
+    const TimePeriod(
+        value: '미시', label: '미시 (13:00 - 15:00)', description: '13:00 - 15:00'),
+    const TimePeriod(
+        value: '신시', label: '신시 (15:00 - 17:00)', description: '15:00 - 17:00'),
+    const TimePeriod(
+        value: '유시', label: '유시 (17:00 - 19:00)', description: '17:00 - 19:00'),
+    const TimePeriod(
+        value: '술시', label: '술시 (19:00 - 21:00)', description: '19:00 - 21:00'),
+    const TimePeriod(
+        value: '해시', label: '해시 (21:00 - 23:00)', description: '21:00 - 23:00')
+  ];
 
   @override
   void initState() {
@@ -55,7 +66,7 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
 
   void _handleSave() async {
     setState(() => _isLoading = true);
-    
+
     try {
       await widget.onSave(_selectedTime);
       if (mounted) {
@@ -86,11 +97,12 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-                        Text(
-                          '정확한 시간을 모르시면 선택하지 않으셔도 됩니다',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: context.colors.textSecondary),
-                          textAlign: TextAlign.center),
+          Text('정확한 시간을 모르시면 선택하지 않으셔도 됩니다',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(color: context.colors.textSecondary),
+              textAlign: TextAlign.center),
           const SizedBox(height: AppSpacing.spacing4),
           Container(
             constraints: const BoxConstraints(maxHeight: 400),
@@ -101,7 +113,7 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
                 if (index == 0) {
                   return _buildTimeOption(null, '선택 안함');
                 }
-                
+
                 final period = timePeriods[index - 1];
                 return _buildTimeOption(
                   period.value,
@@ -118,7 +130,7 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
 
   Widget _buildTimeOption(String? value, String label, {String? description}) {
     final isSelected = _selectedTime == value;
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: DSSpacing.xs),
       child: Material(
@@ -132,15 +144,16 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
           borderRadius: AppDimensions.borderRadiusSmall,
           child: Container(
             padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.spacing4,
-              vertical: AppSpacing.spacing3),
+                horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing3),
             decoration: BoxDecoration(
               border: Border.all(
                 color: isSelected ? DSColors.accentDark : DSColors.borderDark,
                 width: isSelected ? 2 : 1,
               ),
               borderRadius: AppDimensions.borderRadiusSmall,
-              color: isSelected ? DSColors.accentDark.withValues(alpha: 0.1) : null,
+              color: isSelected
+                  ? DSColors.accentDark.withValues(alpha: 0.1)
+                  : null,
             ),
             child: Row(
               children: [
@@ -150,7 +163,9 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: isSelected ? DSColors.accentDark : DSColors.textSecondaryDark,
+                      color: isSelected
+                          ? DSColors.accentDark
+                          : DSColors.textSecondaryDark,
                       width: 1,
                     ),
                   ),
@@ -172,18 +187,22 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        label,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: isSelected
-                              ? DSColors.accentDark
-                              : context.colors.textPrimary)),
+                      Text(label,
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(
+                                  color: isSelected
+                                      ? DSColors.accentDark
+                                      : context.colors.textPrimary)),
                       if (description != null) ...[
                         const SizedBox(height: AppSpacing.xxxSmall),
                         Text(
                           description,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: context.colors.textTertiary),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(color: context.colors.textTertiary),
                         ),
                       ],
                     ],

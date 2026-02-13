@@ -107,9 +107,7 @@ class _FortuneExplanationBottomSheetState
         return Container(
           height: MediaQuery.of(context).size.height * 0.9,
           decoration: BoxDecoration(
-            color: context.isDark
-                ? DSColors.surface
-                : DSColors.surfaceDark,
+            color: context.isDark ? DSColors.surface : DSColors.surfaceDark,
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
@@ -152,9 +150,7 @@ class _FortuneExplanationBottomSheetState
       width: 40,
       height: 4,
       decoration: BoxDecoration(
-        color: context.isDark
-            ? DSColors.border
-            : DSColors.borderDark,
+        color: context.isDark ? DSColors.border : DSColors.borderDark,
         borderRadius: BorderRadius.circular(2),
       ),
     );
@@ -412,9 +408,7 @@ class _FortuneExplanationBottomSheetState
           border: Border.all(
             color: isSelected
                 ? Theme.of(context).primaryColor
-                : (context.isDark
-                    ? DSColors.border
-                    : DSColors.borderDark),
+                : (context.isDark ? DSColors.border : DSColors.borderDark),
           ),
         ),
         child: Text(
@@ -565,9 +559,7 @@ class _FortuneExplanationBottomSheetState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: context.isDark
-            ? DSColors.surface
-            : DSColors.surfaceDark,
+        color: context.isDark ? DSColors.surface : DSColors.surfaceDark,
         boxShadow: [
           BoxShadow(
             color: (context.isDark
@@ -600,7 +592,8 @@ class _FortuneExplanationBottomSheetState
                     final fortuneRoute = _getFortuneRoute(widget.fortuneType);
 
                     // 운세 페이지로 이동
-                    Logger.debug('[FortuneExplanationBottomSheet] Navigating to $fortuneRoute');
+                    Logger.debug(
+                        '[FortuneExplanationBottomSheet] Navigating to $fortuneRoute');
                     if (context.mounted) {
                       context.go(fortuneRoute, extra: fortuneParams);
                     }

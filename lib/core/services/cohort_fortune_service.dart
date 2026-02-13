@@ -158,14 +158,16 @@ class CohortFortuneService {
         .replaceAll(
             '{{person2_birth}}', input['person2_birth_date'] as String? ?? '')
         .replaceAll('{{skills}}', _formatList(input['skills']))
-        .replaceAll('{{primaryConcern}}',
-            input['primaryConcern'] as String? ?? input['concern'] as String? ?? '')
+        .replaceAll(
+            '{{primaryConcern}}',
+            input['primaryConcern'] as String? ??
+                input['concern'] as String? ??
+                '')
         .replaceAll('{{concernedParts}}', _formatList(input['concernedParts']))
         .replaceAll('{{healthScore}}', '${input['healthScore'] ?? 70}')
         .replaceAll('{{question}}', input['question'] as String? ?? '')
         .replaceAll('{{sajuPillars}}', _formatSajuPillars(input['sajuData']))
-        .replaceAll(
-            '{{dreamContent}}', input['dream_content'] as String? ?? '')
+        .replaceAll('{{dreamContent}}', input['dream_content'] as String? ?? '')
         .replaceAll('{{specificSymbols}}', _extractDreamSymbols(input))
         .replaceAll('{{faceFeatures}}', _formatFaceFeatures(input))
         .replaceAll('{{datingStyles}}', _formatList(input['datingStyles']))
@@ -228,7 +230,12 @@ class CohortFortuneService {
     if (sajuData == null || sajuData is! Map) return '';
 
     final pillars = <String>[];
-    final pillarNames = ['yearPillar', 'monthPillar', 'dayPillar', 'timePillar'];
+    final pillarNames = [
+      'yearPillar',
+      'monthPillar',
+      'dayPillar',
+      'timePillar'
+    ];
 
     for (final name in pillarNames) {
       final pillar = sajuData[name] as Map?;

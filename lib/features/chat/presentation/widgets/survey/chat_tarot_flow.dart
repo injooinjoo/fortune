@@ -27,15 +27,15 @@ class _SelectedCard {
   });
 
   Map<String, dynamic> toJson() => {
-    'index': index,
-    'cardName': cardName,
-    'cardNameKr': cardNameKr,
-    'imagePath': imagePath,
-    'isReversed': isReversed,
-    'positionKey': positionKey,
-    'positionName': positionName,
-    'positionDesc': positionDesc,
-  };
+        'index': index,
+        'cardName': cardName,
+        'cardNameKr': cardNameKr,
+        'imagePath': imagePath,
+        'isReversed': isReversed,
+        'positionKey': positionKey,
+        'positionName': positionName,
+        'positionDesc': positionDesc,
+      };
 }
 
 /// 메이저 아르카나 카드 정보
@@ -59,28 +59,68 @@ class _MajorArcanaCard {
 
 /// 22장 메이저 아르카나 카드 데이터
 const List<_MajorArcanaCard> _majorArcanaCards = [
-  _MajorArcanaCard(index: 0, name: 'The Fool', nameKr: '바보', fileName: '00_fool.jpg'),
-  _MajorArcanaCard(index: 1, name: 'The Magician', nameKr: '마법사', fileName: '01_magician.jpg'),
-  _MajorArcanaCard(index: 2, name: 'The High Priestess', nameKr: '여사제', fileName: '02_high_priestess.jpg'),
-  _MajorArcanaCard(index: 3, name: 'The Empress', nameKr: '여황제', fileName: '03_empress.jpg'),
-  _MajorArcanaCard(index: 4, name: 'The Emperor', nameKr: '황제', fileName: '04_emperor.jpg'),
-  _MajorArcanaCard(index: 5, name: 'The Hierophant', nameKr: '교황', fileName: '05_hierophant.jpg'),
-  _MajorArcanaCard(index: 6, name: 'The Lovers', nameKr: '연인', fileName: '06_lovers.jpg'),
-  _MajorArcanaCard(index: 7, name: 'The Chariot', nameKr: '전차', fileName: '07_chariot.jpg'),
-  _MajorArcanaCard(index: 8, name: 'Strength', nameKr: '힘', fileName: '08_strength.jpg'),
-  _MajorArcanaCard(index: 9, name: 'The Hermit', nameKr: '은둔자', fileName: '09_hermit.jpg'),
-  _MajorArcanaCard(index: 10, name: 'Wheel of Fortune', nameKr: '운명의 수레바퀴', fileName: '10_wheel_of_fortune.jpg'),
-  _MajorArcanaCard(index: 11, name: 'Justice', nameKr: '정의', fileName: '11_justice.jpg'),
-  _MajorArcanaCard(index: 12, name: 'The Hanged Man', nameKr: '매달린 남자', fileName: '12_hanged_man.jpg'),
-  _MajorArcanaCard(index: 13, name: 'Death', nameKr: '죽음', fileName: '13_death.jpg'),
-  _MajorArcanaCard(index: 14, name: 'Temperance', nameKr: '절제', fileName: '14_temperance.jpg'),
-  _MajorArcanaCard(index: 15, name: 'The Devil', nameKr: '악마', fileName: '15_devil.jpg'),
-  _MajorArcanaCard(index: 16, name: 'The Tower', nameKr: '탑', fileName: '16_tower.jpg'),
-  _MajorArcanaCard(index: 17, name: 'The Star', nameKr: '별', fileName: '17_star.jpg'),
-  _MajorArcanaCard(index: 18, name: 'The Moon', nameKr: '달', fileName: '18_moon.jpg'),
-  _MajorArcanaCard(index: 19, name: 'The Sun', nameKr: '태양', fileName: '19_sun.jpg'),
-  _MajorArcanaCard(index: 20, name: 'Judgement', nameKr: '심판', fileName: '20_judgement.jpg'),
-  _MajorArcanaCard(index: 21, name: 'The World', nameKr: '세계', fileName: '21_world.jpg'),
+  _MajorArcanaCard(
+      index: 0, name: 'The Fool', nameKr: '바보', fileName: '00_fool.jpg'),
+  _MajorArcanaCard(
+      index: 1,
+      name: 'The Magician',
+      nameKr: '마법사',
+      fileName: '01_magician.jpg'),
+  _MajorArcanaCard(
+      index: 2,
+      name: 'The High Priestess',
+      nameKr: '여사제',
+      fileName: '02_high_priestess.jpg'),
+  _MajorArcanaCard(
+      index: 3, name: 'The Empress', nameKr: '여황제', fileName: '03_empress.jpg'),
+  _MajorArcanaCard(
+      index: 4, name: 'The Emperor', nameKr: '황제', fileName: '04_emperor.jpg'),
+  _MajorArcanaCard(
+      index: 5,
+      name: 'The Hierophant',
+      nameKr: '교황',
+      fileName: '05_hierophant.jpg'),
+  _MajorArcanaCard(
+      index: 6, name: 'The Lovers', nameKr: '연인', fileName: '06_lovers.jpg'),
+  _MajorArcanaCard(
+      index: 7, name: 'The Chariot', nameKr: '전차', fileName: '07_chariot.jpg'),
+  _MajorArcanaCard(
+      index: 8, name: 'Strength', nameKr: '힘', fileName: '08_strength.jpg'),
+  _MajorArcanaCard(
+      index: 9, name: 'The Hermit', nameKr: '은둔자', fileName: '09_hermit.jpg'),
+  _MajorArcanaCard(
+      index: 10,
+      name: 'Wheel of Fortune',
+      nameKr: '운명의 수레바퀴',
+      fileName: '10_wheel_of_fortune.jpg'),
+  _MajorArcanaCard(
+      index: 11, name: 'Justice', nameKr: '정의', fileName: '11_justice.jpg'),
+  _MajorArcanaCard(
+      index: 12,
+      name: 'The Hanged Man',
+      nameKr: '매달린 남자',
+      fileName: '12_hanged_man.jpg'),
+  _MajorArcanaCard(
+      index: 13, name: 'Death', nameKr: '죽음', fileName: '13_death.jpg'),
+  _MajorArcanaCard(
+      index: 14,
+      name: 'Temperance',
+      nameKr: '절제',
+      fileName: '14_temperance.jpg'),
+  _MajorArcanaCard(
+      index: 15, name: 'The Devil', nameKr: '악마', fileName: '15_devil.jpg'),
+  _MajorArcanaCard(
+      index: 16, name: 'The Tower', nameKr: '탑', fileName: '16_tower.jpg'),
+  _MajorArcanaCard(
+      index: 17, name: 'The Star', nameKr: '별', fileName: '17_star.jpg'),
+  _MajorArcanaCard(
+      index: 18, name: 'The Moon', nameKr: '달', fileName: '18_moon.jpg'),
+  _MajorArcanaCard(
+      index: 19, name: 'The Sun', nameKr: '태양', fileName: '19_sun.jpg'),
+  _MajorArcanaCard(
+      index: 20, name: 'Judgement', nameKr: '심판', fileName: '20_judgement.jpg'),
+  _MajorArcanaCard(
+      index: 21, name: 'The World', nameKr: '세계', fileName: '21_world.jpg'),
 ];
 
 /// 채팅 내 타로 플로우 위젯
@@ -137,7 +177,8 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
     final requiredCards = _selectedSpread!.cardCount;
 
     // 이미 선택된 카드인지 확인
-    final existingIndex = _selectedCards.indexWhere((c) => c.index == cardIndex);
+    final existingIndex =
+        _selectedCards.indexWhere((c) => c.index == cardIndex);
 
     if (existingIndex >= 0) {
       // 선택 해제
@@ -244,15 +285,19 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
         child: switch (_phase) {
-          _TarotFlowPhase.spreadSelection => _buildSpreadSelector(colors, typography),
-          _TarotFlowPhase.cardSelection => _buildCardSelector(colors, typography),
-          _TarotFlowPhase.confirmation => _buildConfirmation(colors, typography),
+          _TarotFlowPhase.spreadSelection =>
+            _buildSpreadSelector(colors, typography),
+          _TarotFlowPhase.cardSelection =>
+            _buildCardSelector(colors, typography),
+          _TarotFlowPhase.confirmation =>
+            _buildConfirmation(colors, typography),
         },
       ),
     );
   }
 
-  Widget _buildSpreadSelector(DSColorScheme colors, DSTypographyScheme typography) {
+  Widget _buildSpreadSelector(
+      DSColorScheme colors, DSTypographyScheme typography) {
     return Column(
       key: const ValueKey('spreadSelector'),
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -377,16 +422,19 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
     );
   }
 
-  Widget _buildCardSelector(DSColorScheme colors, DSTypographyScheme typography) {
+  Widget _buildCardSelector(
+      DSColorScheme colors, DSTypographyScheme typography) {
     final requiredCards = _selectedSpread?.cardCount ?? 1;
     final selectedCount = _selectedCards.length;
     final nextPositionIndex = selectedCount;
-    final nextPositionName = _selectedSpread != null && nextPositionIndex < requiredCards
-        ? _selectedSpread!.getPositionName(nextPositionIndex)
-        : null;
-    final nextPositionDesc = _selectedSpread != null && nextPositionIndex < requiredCards
-        ? _selectedSpread!.getPositionDescription(nextPositionIndex)
-        : null;
+    final nextPositionName =
+        _selectedSpread != null && nextPositionIndex < requiredCards
+            ? _selectedSpread!.getPositionName(nextPositionIndex)
+            : null;
+    final nextPositionDesc =
+        _selectedSpread != null && nextPositionIndex < requiredCards
+            ? _selectedSpread!.getPositionDescription(nextPositionIndex)
+            : null;
 
     return Column(
       key: const ValueKey('cardSelector'),
@@ -513,7 +561,8 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
   }
 
   /// 확인 단계 - 선택한 카드 미리보기 + 역방향 토글
-  Widget _buildConfirmation(DSColorScheme colors, DSTypographyScheme typography) {
+  Widget _buildConfirmation(
+      DSColorScheme colors, DSTypographyScheme typography) {
     return Column(
       key: const ValueKey('confirmation'),
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -557,7 +606,8 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
                     padding: EdgeInsets.only(
                       left: index == 0 ? 0 : DSSpacing.sm,
                     ),
-                    child: _buildConfirmationCard(colors, typography, card, index),
+                    child:
+                        _buildConfirmationCard(colors, typography, card, index),
                   );
                 }).toList(),
               ),
@@ -574,7 +624,8 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
                 onPressed: _goBackToCardSelection,
                 style: OutlinedButton.styleFrom(
                   foregroundColor: colors.textSecondary,
-                  side: BorderSide(color: colors.textSecondary.withValues(alpha: 0.3)),
+                  side: BorderSide(
+                      color: colors.textSecondary.withValues(alpha: 0.3)),
                   padding: const EdgeInsets.symmetric(vertical: DSSpacing.sm),
                 ),
                 child: const Text('다시 선택'),
@@ -709,7 +760,8 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
   }
 
   /// 부채골 스프레드 빌드
-  Widget _buildFanSpread(DSColorScheme colors, DSTypographyScheme typography, double maxWidth) {
+  Widget _buildFanSpread(
+      DSColorScheme colors, DSTypographyScheme typography, double maxWidth) {
     final requiredCards = _selectedSpread?.cardCount ?? 1;
     final selectedCount = _selectedCards.length;
     const cardWidth = 45.0;
@@ -750,7 +802,8 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
             left: x,
             top: y + yOffset,
             child: GestureDetector(
-              onTap: isDisabled && !isSelected ? null : () => _selectCard(index),
+              onTap:
+                  isDisabled && !isSelected ? null : () => _selectCard(index),
               child: Transform.rotate(
                 angle: angleRad * 0.6, // 카드 회전
                 alignment: Alignment.bottomCenter,
@@ -918,7 +971,9 @@ class _SpreadCard extends StatelessWidget {
                   children: List.generate(
                     spread.cardCount.clamp(1, 4),
                     (index) {
-                      final offset = (index - (spread.cardCount.clamp(1, 4) - 1) / 2) * 6.0;
+                      final offset =
+                          (index - (spread.cardCount.clamp(1, 4) - 1) / 2) *
+                              6.0;
                       return Transform.translate(
                         offset: Offset(offset, 0),
                         child: Container(

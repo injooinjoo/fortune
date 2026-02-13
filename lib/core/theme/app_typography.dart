@@ -98,9 +98,9 @@ class AppTypography {
 
   /// @deprecated Use TypographyUnified.labelMedium instead
   static TextStyle get overline => TypographyUnified.labelMedium.copyWith(
-    fontWeight: FontWeight.w600,
-    letterSpacing: 0.04,
-  );
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.04,
+      );
 
   // Numeric styles → TypographyUnified로 리다이렉트
   /// @deprecated Use TypographyUnified.numberXLarge instead
@@ -119,21 +119,21 @@ class AppTypography {
   /// @deprecated Build TextTheme manually with TypographyUnified instead
   static TextTheme getTextTheme({Color? color}) {
     return TextTheme(
-      displayLarge: displayLarge.copyWith(color: color),
-      displayMedium: displayMedium.copyWith(color: color),
-      displaySmall: displaySmall.copyWith(color: color),
-      headlineLarge: headlineLarge.copyWith(color: color),
-      headlineMedium: headlineMedium.copyWith(color: color),
-      headlineSmall: headlineSmall.copyWith(color: color),
-      titleLarge: titleLarge.copyWith(color: color),
-      titleMedium: titleMedium.copyWith(color: color),
-      titleSmall: titleSmall.copyWith(color: color),
-      bodyLarge: bodyLarge.copyWith(color: color),
-      bodyMedium: bodyMedium.copyWith(color: color),
-      bodySmall: bodySmall.copyWith(color: color),
-      labelLarge: labelLarge.copyWith(color: color),
-      labelMedium: labelMedium.copyWith(color: color),
-      labelSmall: labelSmall.copyWith(color: color));
+        displayLarge: displayLarge.copyWith(color: color),
+        displayMedium: displayMedium.copyWith(color: color),
+        displaySmall: displaySmall.copyWith(color: color),
+        headlineLarge: headlineLarge.copyWith(color: color),
+        headlineMedium: headlineMedium.copyWith(color: color),
+        headlineSmall: headlineSmall.copyWith(color: color),
+        titleLarge: titleLarge.copyWith(color: color),
+        titleMedium: titleMedium.copyWith(color: color),
+        titleSmall: titleSmall.copyWith(color: color),
+        bodyLarge: bodyLarge.copyWith(color: color),
+        bodyMedium: bodyMedium.copyWith(color: color),
+        bodySmall: bodySmall.copyWith(color: color),
+        labelLarge: labelLarge.copyWith(color: color),
+        labelMedium: labelMedium.copyWith(color: color),
+        labelSmall: labelSmall.copyWith(color: color));
   }
 
   // Responsive font size calculator

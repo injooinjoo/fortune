@@ -140,7 +140,8 @@ class _TimeSlotItem extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Center(
-                        child: Text(emoji, style: const TextStyle(fontSize: 28)),
+                        child:
+                            Text(emoji, style: const TextStyle(fontSize: 28)),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -198,7 +199,8 @@ class _TimeSlotItem extends StatelessWidget {
           color: colors.surface,
           borderRadius: BorderRadius.circular(12),
           border: isActive
-              ? Border.all(color: accentColor.withValues(alpha: 0.4), width: 1.5)
+              ? Border.all(
+                  color: accentColor.withValues(alpha: 0.4), width: 1.5)
               : Border.all(color: colors.border, width: 1),
         ),
         child: Row(
@@ -244,7 +246,8 @@ class _TimeSlotItem extends StatelessWidget {
                       if (isActive) ...[
                         const SizedBox(width: 6),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
                             color: accentColor.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(4),

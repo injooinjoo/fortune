@@ -6,19 +6,27 @@ class InfographicAssets {
   static const String _basePath = 'assets/images/infographic';
 
   // === Backgrounds ===
-  static const String bgPatternDaily = '$_basePath/backgrounds/bg_pattern_daily.png';
-  static const String bgPatternLove = '$_basePath/backgrounds/bg_pattern_love.png';
-  static const String bgPatternCareer = '$_basePath/backgrounds/bg_pattern_career.png';
-  static const String bgPatternHealth = '$_basePath/backgrounds/bg_pattern_health.png';
+  static const String bgPatternDaily =
+      '$_basePath/backgrounds/bg_pattern_daily.png';
+  static const String bgPatternLove =
+      '$_basePath/backgrounds/bg_pattern_love.png';
+  static const String bgPatternCareer =
+      '$_basePath/backgrounds/bg_pattern_career.png';
+  static const String bgPatternHealth =
+      '$_basePath/backgrounds/bg_pattern_health.png';
 
   // === Decorations ===
-  static const String decoCornerOrnament = '$_basePath/decorations/deco_corner_ornament.png';
-  static const String decoDividerLine = '$_basePath/decorations/deco_divider_line.png';
+  static const String decoCornerOrnament =
+      '$_basePath/decorations/deco_corner_ornament.png';
+  static const String decoDividerLine =
+      '$_basePath/decorations/deco_divider_line.png';
 
   // === Effects ===
   static const String scoreGlowGold = '$_basePath/effects/score_glow_gold.png';
-  static const String scoreGlowSilver = '$_basePath/effects/score_glow_silver.png';
-  static const String chipBgGradient = '$_basePath/effects/chip_bg_gradient.png';
+  static const String scoreGlowSilver =
+      '$_basePath/effects/score_glow_silver.png';
+  static const String chipBgGradient =
+      '$_basePath/effects/chip_bg_gradient.png';
 
   // === Category Icons ===
   static const String iconLove = '$_basePath/icons/icon_love.webp';

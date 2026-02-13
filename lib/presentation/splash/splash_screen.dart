@@ -37,10 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
             fontWeight: FontWeight.w400,
             color: context.colors.textPrimary,
           ),
-        )
-            .animate()
-            .fadeIn(duration: 800.ms)
-            .scale(
+        ).animate().fadeIn(duration: 800.ms).scale(
               begin: const Offset(0.8, 0.8),
               end: const Offset(1.0, 1.0),
               duration: 800.ms,

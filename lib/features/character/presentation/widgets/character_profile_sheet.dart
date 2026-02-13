@@ -40,7 +40,9 @@ class CharacterProfileSheet extends ConsumerWidget {
           scrollController: scrollController,
           onResetConversation: () {
             // 대화 초기화
-            ref.read(characterChatProvider(character.id).notifier).clearConversation();
+            ref
+                .read(characterChatProvider(character.id).notifier)
+                .clearConversation();
             Navigator.pop(context);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -110,7 +112,7 @@ class CharacterProfileSheet extends ConsumerWidget {
                           vertical: 5,
                         ),
                         decoration: BoxDecoration(
-                          color: character.accentColor.withValues(alpha:0.15),
+                          color: character.accentColor.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Text(
@@ -151,7 +153,8 @@ class CharacterProfileSheet extends ConsumerWidget {
                     bgColor: sectionBgColor,
                   ),
                   // 전문 분야 (운세 전문가인 경우)
-                  if (character.isFortuneExpert && character.specialties.isNotEmpty) ...[
+                  if (character.isFortuneExpert &&
+                      character.specialties.isNotEmpty) ...[
                     const SizedBox(height: 12),
                     _buildSpecialtiesSection(context, sectionBgColor),
                   ],
@@ -396,7 +399,8 @@ class CharacterProfileSheet extends ConsumerWidget {
     );
   }
 
-  Widget _buildAffinitySection(BuildContext context, WidgetRef ref, Color bgColor) {
+  Widget _buildAffinitySection(
+      BuildContext context, WidgetRef ref, Color bgColor) {
     final chatState = ref.watch(characterChatProvider(character.id));
     final affinity = chatState.affinity;
 
@@ -470,7 +474,8 @@ class CharacterProfileSheet extends ConsumerWidget {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: character.accentColor.withValues(alpha: 0.15),
+                            color:
+                                character.accentColor.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(

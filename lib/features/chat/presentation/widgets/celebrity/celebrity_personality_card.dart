@@ -35,7 +35,6 @@ class CelebrityPersonalityCard extends ConsumerStatefulWidget {
 
 class _CelebrityPersonalityCardState
     extends ConsumerState<CelebrityPersonalityCard> {
-
   @override
   void initState() {
     super.initState();
@@ -94,8 +93,7 @@ class _CelebrityPersonalityCardState
       _additionalInfo['lucky_factors'] as Map<String, dynamic>?;
 
   // 특별 메시지
-  String? get _specialMessage =>
-      _additionalInfo['special_message'] as String?;
+  String? get _specialMessage => _additionalInfo['special_message'] as String?;
 
   @override
   Widget build(BuildContext context) {
@@ -453,9 +451,7 @@ class _CelebrityPersonalityCardState
                 child: Text(
                   hasHap ? '${data['hap_type'] ?? '합'} 발견!' : '합 없음',
                   style: typography.labelSmall.copyWith(
-                    color: hasHap
-                        ? colors.success
-                        : colors.textSecondary,
+                    color: hasHap ? colors.success : colors.textSecondary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -535,15 +531,15 @@ class _CelebrityPersonalityCardState
                   ),
                   const SizedBox(height: DSSpacing.xs),
                   ...evidence.take(3).map((e) => Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: Text(
-                      '• $e',
-                      style: typography.bodySmall.copyWith(
-                        color: colors.textSecondary,
-                        height: 1.4,
-                      ),
-                    ),
-                  )),
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Text(
+                          '• $e',
+                          style: typography.bodySmall.copyWith(
+                            color: colors.textSecondary,
+                            height: 1.4,
+                          ),
+                        ),
+                      )),
                 ],
               ),
             ),
@@ -573,7 +569,8 @@ class _CelebrityPersonalityCardState
               if (data['best_year'] != null)
                 _buildTimingBadge(data['best_year'], DSColors.error, context),
               if (data['best_month'] != null)
-                _buildTimingBadge(data['best_month'], DSColors.success, context),
+                _buildTimingBadge(
+                    data['best_month'], DSColors.success, context),
             ],
           ),
           const SizedBox(height: DSSpacing.sm),
@@ -634,16 +631,20 @@ class _CelebrityPersonalityCardState
                 ),
               ),
               const SizedBox(width: DSSpacing.sm),
-              ...List.generate(10, (i) => Padding(
-                padding: const EdgeInsets.only(right: 2),
-                child: Icon(
-                  i < passionScore ? Icons.favorite : Icons.favorite_border,
-                  size: 14,
-                  color: i < passionScore
-                      ? DSColors.error
-                      : colors.textSecondary.withValues(alpha: 0.3),
-                ),
-              )),
+              ...List.generate(
+                  10,
+                  (i) => Padding(
+                        padding: const EdgeInsets.only(right: 2),
+                        child: Icon(
+                          i < passionScore
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          size: 14,
+                          color: i < passionScore
+                              ? DSColors.error
+                              : colors.textSecondary.withValues(alpha: 0.3),
+                        ),
+                      )),
             ],
           ),
           if (data['chemistry_type'] != null) ...[
@@ -757,7 +758,8 @@ class _CelebrityPersonalityCardState
     );
   }
 
-  Widget _buildAnalysisCard(BuildContext context, String title, String content, Color color) {
+  Widget _buildAnalysisCard(
+      BuildContext context, String title, String content, Color color) {
     final colors = context.colors;
     final typography = context.typography;
 
@@ -802,25 +804,28 @@ class _CelebrityPersonalityCardState
       title: '강점',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: _strengths!.take(4).map((strength) => Padding(
-          padding: const EdgeInsets.only(bottom: DSSpacing.xs),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('✅'),
-              const SizedBox(width: DSSpacing.xs),
-              Expanded(
-                child: Text(
-                  strength.toString(),
-                  style: typography.bodySmall.copyWith(
-                    color: colors.textSecondary,
-                    height: 1.4,
+        children: _strengths!
+            .take(4)
+            .map((strength) => Padding(
+                  padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('✅'),
+                      const SizedBox(width: DSSpacing.xs),
+                      Expanded(
+                        child: Text(
+                          strength.toString(),
+                          style: typography.bodySmall.copyWith(
+                            color: colors.textSecondary,
+                            height: 1.4,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ),
-            ],
-          ),
-        )).toList(),
+                ))
+            .toList(),
       ),
     );
   }
@@ -836,25 +841,28 @@ class _CelebrityPersonalityCardState
       title: '도전과제',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: _challenges!.take(3).map((challenge) => Padding(
-          padding: const EdgeInsets.only(bottom: DSSpacing.xs),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('⚠️'),
-              const SizedBox(width: DSSpacing.xs),
-              Expanded(
-                child: Text(
-                  challenge.toString(),
-                  style: typography.bodySmall.copyWith(
-                    color: colors.textSecondary,
-                    height: 1.4,
+        children: _challenges!
+            .take(3)
+            .map((challenge) => Padding(
+                  padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('⚠️'),
+                      const SizedBox(width: DSSpacing.xs),
+                      Expanded(
+                        child: Text(
+                          challenge.toString(),
+                          style: typography.bodySmall.copyWith(
+                            color: colors.textSecondary,
+                            height: 1.4,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ),
-            ],
-          ),
-        )).toList(),
+                ))
+            .toList(),
       ),
     );
   }
@@ -870,25 +878,28 @@ class _CelebrityPersonalityCardState
       title: '조언',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: _recommendations!.take(4).map((rec) => Padding(
-          padding: const EdgeInsets.only(bottom: DSSpacing.xs),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('🌟'),
-              const SizedBox(width: DSSpacing.xs),
-              Expanded(
-                child: Text(
-                  rec.toString(),
-                  style: typography.bodySmall.copyWith(
-                    color: colors.textSecondary,
-                    height: 1.4,
+        children: _recommendations!
+            .take(4)
+            .map((rec) => Padding(
+                  padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('🌟'),
+                      const SizedBox(width: DSSpacing.xs),
+                      Expanded(
+                        child: Text(
+                          rec.toString(),
+                          style: typography.bodySmall.copyWith(
+                            color: colors.textSecondary,
+                            height: 1.4,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ),
-            ],
-          ),
-        )).toList(),
+                ))
+            .toList(),
       ),
     );
   }
@@ -925,36 +936,38 @@ class _CelebrityPersonalityCardState
       child: Wrap(
         spacing: DSSpacing.sm,
         runSpacing: DSSpacing.sm,
-        children: items.map((item) => Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: DSSpacing.sm,
-            vertical: DSSpacing.xs,
-          ),
-          decoration: BoxDecoration(
-            color: DSColors.warning.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(DSRadius.sm),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                item.key,
-                style: typography.labelSmall.copyWith(
-                  color: DSColors.warning,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 10,
-                ),
-              ),
-              Text(
-                item.value,
-                style: typography.bodySmall.copyWith(
-                  color: colors.textSecondary,
-                ),
-              ),
-            ],
-          ),
-        )).toList(),
+        children: items
+            .map((item) => Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: DSSpacing.sm,
+                    vertical: DSSpacing.xs,
+                  ),
+                  decoration: BoxDecoration(
+                    color: DSColors.warning.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(DSRadius.sm),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        item.key,
+                        style: typography.labelSmall.copyWith(
+                          color: DSColors.warning,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 10,
+                        ),
+                      ),
+                      Text(
+                        item.value,
+                        style: typography.bodySmall.copyWith(
+                          color: colors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ))
+            .toList(),
       ),
     );
   }
@@ -1019,7 +1032,8 @@ class _CelebrityPersonalityCardState
   Widget _buildElementBadge(String element, BuildContext context) {
     final typography = context.typography;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
       decoration: BoxDecoration(
         gradient: _getElementGradient(element),
         borderRadius: BorderRadius.circular(DSRadius.sm),
@@ -1104,20 +1118,30 @@ class _CelebrityPersonalityCardState
 
   LinearGradient _getElementGradient(String element) {
     if (element.contains('木') || element.contains('목')) {
-      return LinearGradient(colors: [DSColors.success, DSColors.success.withValues(alpha: 0.8)]);
+      return LinearGradient(
+          colors: [DSColors.success, DSColors.success.withValues(alpha: 0.8)]);
     }
     if (element.contains('火') || element.contains('화')) {
-      return LinearGradient(colors: [DSColors.error, DSColors.error.withValues(alpha: 0.8)]);
+      return LinearGradient(
+          colors: [DSColors.error, DSColors.error.withValues(alpha: 0.8)]);
     }
     if (element.contains('土') || element.contains('토')) {
-      return LinearGradient(colors: [DSColors.warning, DSColors.warning.withValues(alpha: 0.8)]);
+      return LinearGradient(
+          colors: [DSColors.warning, DSColors.warning.withValues(alpha: 0.8)]);
     }
     if (element.contains('金') || element.contains('금')) {
-      return LinearGradient(colors: [DSColors.textSecondary, DSColors.textSecondary.withValues(alpha: 0.8)]);
+      return LinearGradient(colors: [
+        DSColors.textSecondary,
+        DSColors.textSecondary.withValues(alpha: 0.8)
+      ]);
     }
     if (element.contains('水') || element.contains('수')) {
-      return LinearGradient(colors: [DSColors.info, DSColors.info.withValues(alpha: 0.8)]);
+      return LinearGradient(
+          colors: [DSColors.info, DSColors.info.withValues(alpha: 0.8)]);
     }
-    return LinearGradient(colors: [DSColors.textSecondary, DSColors.textSecondary.withValues(alpha: 0.8)]);
+    return LinearGradient(colors: [
+      DSColors.textSecondary,
+      DSColors.textSecondary.withValues(alpha: 0.8)
+    ]);
   }
 }

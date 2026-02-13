@@ -65,7 +65,8 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
 
     if (widget.initialDate != null) {
       _yearController.text = widget.initialDate!.year.toString();
-      _monthController.text = widget.initialDate!.month.toString().padLeft(2, '0');
+      _monthController.text =
+          widget.initialDate!.month.toString().padLeft(2, '0');
       _dayController.text = widget.initialDate!.day.toString().padLeft(2, '0');
       _showMonth = true;
       _showDay = true;
@@ -75,7 +76,8 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
 
     if (widget.initialTime != null) {
       _timeController.text = '${widget.initialTime!.hour}';
-      _minuteController.text = widget.initialTime!.minute.toString().padLeft(2, '0'); // ✅ 분 초기화
+      _minuteController.text =
+          widget.initialTime!.minute.toString().padLeft(2, '0'); // ✅ 분 초기화
       _isTimeValid = true;
     }
 
@@ -100,7 +102,8 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
         Future.microtask(() {
           if (!mounted) return;
           if (_yearController.text.isNotEmpty) {
-            _yearController.text = _yearController.text.substring(0, _yearController.text.length - 1);
+            _yearController.text = _yearController.text
+                .substring(0, _yearController.text.length - 1);
           }
           _yearFocus.requestFocus();
         });
@@ -126,7 +129,8 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
         Future.microtask(() {
           if (!mounted) return;
           if (_monthController.text.isNotEmpty) {
-            _monthController.text = _monthController.text.substring(0, _monthController.text.length - 1);
+            _monthController.text = _monthController.text
+                .substring(0, _monthController.text.length - 1);
           }
           _monthFocus.requestFocus();
         });
@@ -166,11 +170,15 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
       final text = _timeController.text;
 
       // Backspace when empty → go back to day AND delete last digit
-      if (text.isEmpty && _prevTime.isNotEmpty && !_isTimeUnknown && _timeFocus.hasFocus) {
+      if (text.isEmpty &&
+          _prevTime.isNotEmpty &&
+          !_isTimeUnknown &&
+          _timeFocus.hasFocus) {
         Future.microtask(() {
           if (!mounted) return;
           if (_dayController.text.isNotEmpty) {
-            _dayController.text = _dayController.text.substring(0, _dayController.text.length - 1);
+            _dayController.text = _dayController.text
+                .substring(0, _dayController.text.length - 1);
           }
           _dayFocus.requestFocus();
         });
@@ -196,11 +204,15 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
       final text = _minuteController.text;
 
       // Backspace when empty → go back to hour AND delete last digit
-      if (text.isEmpty && _prevMinute.isNotEmpty && !_isTimeUnknown && _minuteFocus.hasFocus) {
+      if (text.isEmpty &&
+          _prevMinute.isNotEmpty &&
+          !_isTimeUnknown &&
+          _minuteFocus.hasFocus) {
         Future.microtask(() {
           if (!mounted) return;
           if (_timeController.text.isNotEmpty) {
-            _timeController.text = _timeController.text.substring(0, _timeController.text.length - 1);
+            _timeController.text = _timeController.text
+                .substring(0, _timeController.text.length - 1);
           }
           _timeFocus.requestFocus();
         });
@@ -253,13 +265,21 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
     final month = int.tryParse(_monthController.text);
     final day = int.tryParse(_dayController.text);
 
-    if (year != null && month != null && day != null &&
-        year >= 1900 && year <= DateTime.now().year &&
-        month >= 1 && month <= 12 &&
-        day >= 1 && day <= 31) {
+    if (year != null &&
+        month != null &&
+        day != null &&
+        year >= 1900 &&
+        year <= DateTime.now().year &&
+        month >= 1 &&
+        month <= 12 &&
+        day >= 1 &&
+        day <= 31) {
       try {
         final date = DateTime(year, month, day);
-        if (date.year == year && date.month == month && date.day == day && date.isBefore(DateTime.now())) {
+        if (date.year == year &&
+            date.month == month &&
+            date.day == day &&
+            date.isBefore(DateTime.now())) {
           setState(() {
             _isDateValid = true;
             if (!_showTime) {
@@ -282,7 +302,8 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
     if (hourText.isNotEmpty) {
       final hour = int.tryParse(hourText) ?? 0;
       // ✅ 분은 입력하지 않아도 0으로 처리 (선택적 입력)
-      final minute = minuteText.isNotEmpty ? (int.tryParse(minuteText) ?? 0) : 0;
+      final minute =
+          minuteText.isNotEmpty ? (int.tryParse(minuteText) ?? 0) : 0;
 
       if (hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59) {
         setState(() => _isTimeValid = true);
@@ -316,18 +337,21 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
     final typography = context.typography;
 
     // 캐싱된 스타일 사용 (null인 경우 폴백)
-    final inputStyle = _inputStyle ?? typography.displaySmall.copyWith(
-      color: colors.textPrimary,
-      fontWeight: FontWeight.w600,
-    );
-    final hintStyle = _hintStyle ?? typography.displaySmall.copyWith(
-      color: colors.textTertiary,
-      fontWeight: FontWeight.w600,
-    );
-    final labelStyle = _labelStyle ?? typography.displaySmall.copyWith(
-      color: colors.textSecondary,
-      fontWeight: FontWeight.w500,
-    );
+    final inputStyle = _inputStyle ??
+        typography.displaySmall.copyWith(
+          color: colors.textPrimary,
+          fontWeight: FontWeight.w600,
+        );
+    final hintStyle = _hintStyle ??
+        typography.displaySmall.copyWith(
+          color: colors.textTertiary,
+          fontWeight: FontWeight.w600,
+        );
+    final labelStyle = _labelStyle ??
+        typography.displaySmall.copyWith(
+          color: colors.textSecondary,
+          fontWeight: FontWeight.w500,
+        );
 
     return Scaffold(
       backgroundColor: colors.background,
@@ -345,7 +369,8 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
               children: [
                 Text(
                   '생년월일을 알려주세요',
-                  style: typography.headingSmall.copyWith(color: colors.textSecondary),
+                  style: typography.headingSmall
+                      .copyWith(color: colors.textSecondary),
                 ).animate().fadeIn(duration: 500.ms),
 
                 const SizedBox(height: 8),
@@ -472,11 +497,10 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                   const SizedBox(height: 48),
                   Text(
                     '태어난 시간을 알려주세요',
-                    style: typography.headingSmall.copyWith(color: colors.textSecondary),
+                    style: typography.headingSmall
+                        .copyWith(color: colors.textSecondary),
                   ).animate().fadeIn(duration: 400.ms),
-
                   const SizedBox(height: 24),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -500,7 +524,9 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                           decoration: InputDecoration(
                             hintText: '00',
                             hintStyle: hintStyle.copyWith(
-                              color: _isTimeUnknown ? colors.border : colors.textTertiary,
+                              color: _isTimeUnknown
+                                  ? colors.border
+                                  : colors.textTertiary,
                             ),
                             border: InputBorder.none,
                             enabledBorder: InputBorder.none,
@@ -533,7 +559,9 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                           decoration: InputDecoration(
                             hintText: '00',
                             hintStyle: hintStyle.copyWith(
-                              color: _isTimeUnknown ? colors.border : colors.textTertiary,
+                              color: _isTimeUnknown
+                                  ? colors.border
+                                  : colors.textTertiary,
                             ),
                             border: InputBorder.none,
                             enabledBorder: InputBorder.none,
@@ -548,9 +576,7 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                       Text('분', style: labelStyle),
                     ],
                   ).animate().fadeIn(duration: 400.ms),
-
                   const SizedBox(height: 20),
-
                   GestureDetector(
                     onTap: () {
                       setState(() {
@@ -560,7 +586,8 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                           _minuteController.clear(); // ✅ 분 컨트롤러도 초기화
                           _isTimeValid = true;
                           FocusScope.of(context).unfocus();
-                          widget.onBirthTimeChanged?.call(const TimeOfDay(hour: 12, minute: 0));
+                          widget.onBirthTimeChanged
+                              ?.call(const TimeOfDay(hour: 12, minute: 0));
                         } else {
                           _isTimeValid = false;
                           _timeFocus.requestFocus();
@@ -576,17 +603,24 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: _isTimeUnknown ? colors.accent : colors.textSecondary,
+                              color: _isTimeUnknown
+                                  ? colors.accent
+                                  : colors.textSecondary,
                               width: 2,
                             ),
-                            color: _isTimeUnknown ? colors.accent : Colors.transparent,
+                            color: _isTimeUnknown
+                                ? colors.accent
+                                : Colors.transparent,
                           ),
                           child: _isTimeUnknown
-                              ? const Icon(Icons.check, size: 14, color: Colors.white)
+                              ? const Icon(Icons.check,
+                                  size: 14, color: Colors.white)
                               : null,
                         ),
                         const SizedBox(width: 8),
-                        Text('모르겠어요', style: typography.bodyMedium.copyWith(color: colors.textSecondary)),
+                        Text('모르겠어요',
+                            style: typography.bodyMedium
+                                .copyWith(color: colors.textSecondary)),
                       ],
                     ),
                   ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
@@ -604,7 +638,8 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: colors.ctaBackground,
                         foregroundColor: colors.ctaForeground,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(DSRadius.md)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(DSRadius.md)),
                         elevation: 0,
                       ),
                       child: Text(

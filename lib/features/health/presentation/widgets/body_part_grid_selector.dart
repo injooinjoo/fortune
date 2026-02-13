@@ -51,7 +51,8 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
                   if (_selectedParts.isNotEmpty) ...[
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: context.colors.accent,
                         borderRadius: BorderRadius.circular(12),
@@ -100,14 +101,14 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
         ),
 
         // 선택된 부위 요약
-        if (_selectedParts.isNotEmpty)
-          _buildSelectedSummary(),
+        if (_selectedParts.isNotEmpty) _buildSelectedSummary(),
       ],
     );
   }
 
   Widget _buildBodyPartGrid() {
-    final bodyParts = BodyPart.values.where((part) => part != BodyPart.whole).toList();
+    final bodyParts =
+        BodyPart.values.where((part) => part != BodyPart.whole).toList();
 
     return Column(
       children: [
@@ -236,16 +237,16 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
                       color: Colors.white,
                       size: 16,
                     ),
-                  ).animate()
-                    .scale(duration: 200.ms, curve: Curves.elasticOut),
+                  ).animate().scale(duration: 200.ms, curve: Curves.elasticOut),
                 ),
             ],
           ),
         ),
       ),
-    ).animate(delay: (index * 50).ms)
-      .fadeIn(duration: 300.ms)
-      .slideY(begin: 0.1, end: 0);
+    )
+        .animate(delay: (index * 50).ms)
+        .fadeIn(duration: 300.ms)
+        .slideY(begin: 0.1, end: 0);
   }
 
   Widget _buildSelectedSummary() {
@@ -316,9 +317,7 @@ class _BodyPartGridSelectorState extends State<BodyPartGridSelector> {
           ),
         ],
       ),
-    ).animate()
-      .fadeIn(duration: 300.ms)
-      .slideY(begin: 0.1, end: 0);
+    ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1, end: 0);
   }
 
   IconData _getBodyPartIcon(BodyPart part) {

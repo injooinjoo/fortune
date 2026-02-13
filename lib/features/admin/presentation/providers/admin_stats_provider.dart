@@ -76,13 +76,16 @@ class AdminStatsNotifier extends StateNotifier<AdminStatsState> {
 }
 
 // Admin Stats Provider
-final adminStatsProvider = StateNotifierProvider<AdminStatsNotifier, AdminStatsState>((ref) {
+final adminStatsProvider =
+    StateNotifierProvider<AdminStatsNotifier, AdminStatsState>((ref) {
   final apiService = ref.watch(adminApiServiceProvider);
   return AdminStatsNotifier(apiService);
 });
 
 // Token Usage Stats Provider
-final tokenUsageStatsProvider = FutureProvider.family<TokenUsageDetailModel, Map<String, dynamic>>((ref, params) async {
+final tokenUsageStatsProvider =
+    FutureProvider.family<TokenUsageDetailModel, Map<String, dynamic>>(
+        (ref, params) async {
   final apiService = ref.watch(adminApiServiceProvider);
 
   return await apiService.getTokenUsageStats(

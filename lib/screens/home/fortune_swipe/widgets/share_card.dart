@@ -168,9 +168,10 @@ class _ShareCardState extends ConsumerState<ShareCard> {
             userName: widget.userName,
             date: widget.date ?? DateTime.now(),
           ),
-        ).animate()
-          .fadeIn(duration: 500.ms)
-          .scale(begin: const Offset(0.95, 0.95), duration: 500.ms, curve: Curves.easeOut),
+        ).animate().fadeIn(duration: 500.ms).scale(
+            begin: const Offset(0.95, 0.95),
+            duration: 500.ms,
+            curve: Curves.easeOut),
 
         const SizedBox(height: DSSpacing.md),
 
@@ -206,9 +207,10 @@ class _ShareCardState extends ConsumerState<ShareCard> {
               elevation: 0,
             ),
           ),
-        ).animate()
-          .fadeIn(duration: 500.ms, delay: 200.ms)
-          .slideY(begin: 0.1, duration: 500.ms, delay: 200.ms),
+        )
+            .animate()
+            .fadeIn(duration: 500.ms, delay: 200.ms)
+            .slideY(begin: 0.1, duration: 500.ms, delay: 200.ms),
       ],
     );
   }
@@ -265,7 +267,8 @@ class _TraditionalShareCardContent extends StatelessWidget {
 
           // 콘텐츠 (U06: 컴팩트한 패딩, 하단 여유 추가)
           Padding(
-            padding: const EdgeInsets.only(left: 14, right: 14, top: 12, bottom: 16),
+            padding:
+                const EdgeInsets.only(left: 14, right: 14, top: 12, bottom: 16),
             child: Column(
               children: [
                 // 날짜 & 사용자
@@ -325,8 +328,11 @@ class _TraditionalShareCardContent extends StatelessWidget {
   }
 
   Widget _buildDateUserRow(BuildContext context) {
-    final dateStr = '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}';
-    final displayName = userName != null && userName!.isNotEmpty ? '$userName님의 인사이트' : '오늘의 인사이트';
+    final dateStr =
+        '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}';
+    final displayName = userName != null && userName!.isNotEmpty
+        ? '$userName님의 인사이트'
+        : '오늘의 인사이트';
 
     return Text(
       '$dateStr  $displayName',
@@ -347,7 +353,8 @@ class _TraditionalShareCardContent extends StatelessWidget {
           decoration: BoxDecoration(
             color: _sealRed.withValues(alpha: 0.08),
             shape: BoxShape.circle,
-            border: Border.all(color: _sealRed.withValues(alpha: 0.3), width: 2),
+            border:
+                Border.all(color: _sealRed.withValues(alpha: 0.3), width: 2),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

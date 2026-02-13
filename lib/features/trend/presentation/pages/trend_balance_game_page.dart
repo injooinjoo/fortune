@@ -225,14 +225,10 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
                   ],
                 )
               : null,
-          color: isSelected
-              ? null
-              : context.colors.surface,
+          color: isSelected ? null : context.colors.surface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected
-                ? accentColor
-                : context.colors.border,
+            color: isSelected ? accentColor : context.colors.border,
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
@@ -339,7 +335,8 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
     } catch (e) {
       setState(() => _isSubmitting = false);
       if (mounted) {
-        Toast.show(context, message: '결과 저장 중 오류가 발생했습니다', type: ToastType.error);
+        Toast.show(context,
+            message: '결과 저장 중 오류가 발생했습니다', type: ToastType.error);
       }
     }
   }
@@ -390,7 +387,8 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
                             );
                           } catch (e) {
                             if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar( // ignore: use_build_context_synchronously
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                // ignore: use_build_context_synchronously
                                 const SnackBar(content: Text('공유에 실패했습니다')),
                               );
                             }
@@ -631,9 +629,7 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
               child: Text(
                 text,
                 style: context.bodySmall.copyWith(
-                  color: isSelected
-                      ? color
-                      : context.colors.textSecondary,
+                  color: isSelected ? color : context.colors.textSecondary,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),

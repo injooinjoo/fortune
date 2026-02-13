@@ -7,7 +7,8 @@ import '../../../../core/utils/logger.dart';
 /// 건강검진표/처방전/진단서 이미지를 GPT-4 Vision으로 분석하여
 /// 검사 항목 해석과 사주 기반 건강 조언을 제공합니다.
 class MedicalDocumentService {
-  static final MedicalDocumentService _instance = MedicalDocumentService._internal();
+  static final MedicalDocumentService _instance =
+      MedicalDocumentService._internal();
   factory MedicalDocumentService() => _instance;
   MedicalDocumentService._internal();
 
@@ -27,7 +28,8 @@ class MedicalDocumentService {
   }) async {
     Logger.info('[MedicalDocumentService] 문서 분석 시작');
     Logger.info('   - documentType: ${uploadResult.documentType.name}');
-    Logger.info('   - imageSize: ${uploadResult.base64Data?.length ?? 0} bytes');
+    Logger.info(
+        '   - imageSize: ${uploadResult.base64Data?.length ?? 0} bytes');
     Logger.info('   - hasBirthDate: ${birthDate != null}');
 
     try {
@@ -89,10 +91,12 @@ class MedicalDocumentService {
     MedicalDocumentType documentType,
   ) {
     // DocumentAnalysis 파싱
-    final documentAnalysisData = data['documentAnalysis'] as Map<String, dynamic>?;
+    final documentAnalysisData =
+        data['documentAnalysis'] as Map<String, dynamic>?;
     final documentAnalysis = documentAnalysisData != null
         ? DocumentAnalysis(
-            documentType: documentAnalysisData['documentType'] as String? ?? documentType.displayName,
+            documentType: documentAnalysisData['documentType'] as String? ??
+                documentType.displayName,
             documentDate: documentAnalysisData['documentDate'] as String?,
             institution: documentAnalysisData['institution'] as String?,
             summary: documentAnalysisData['summary'] as String? ?? '',
@@ -145,7 +149,8 @@ class MedicalDocumentService {
           );
 
     // HealthRecommendations 파싱
-    final recommendationsData = data['recommendations'] as Map<String, dynamic>?;
+    final recommendationsData =
+        data['recommendations'] as Map<String, dynamic>?;
     final recommendations = recommendationsData != null
         ? HealthRecommendations(
             urgent: _parseStringList(recommendationsData['urgent']),
@@ -173,7 +178,8 @@ class MedicalDocumentService {
           );
 
     return MedicalDocumentAnalysisResult(
-      id: data['id'] as String? ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      id: data['id'] as String? ??
+          DateTime.now().millisecondsSinceEpoch.toString(),
       fortuneType: 'health-document',
       documentAnalysis: documentAnalysis,
       testResults: testResults,
@@ -181,7 +187,8 @@ class MedicalDocumentService {
       healthScore: data['healthScore'] as int? ?? 70,
       recommendations: recommendations,
       healthRegimen: healthRegimen,
-      timestamp: DateTime.tryParse(data['timestamp'] as String? ?? '') ?? DateTime.now(),
+      timestamp: DateTime.tryParse(data['timestamp'] as String? ?? '') ??
+          DateTime.now(),
     );
   }
 

@@ -40,11 +40,13 @@ class SecondaryProfilesNotifier
           .order('created_at', ascending: true);
 
       final profiles = (response as List)
-          .map((json) => SecondaryProfile.fromJson(json as Map<String, dynamic>))
+          .map(
+              (json) => SecondaryProfile.fromJson(json as Map<String, dynamic>))
           .toList();
 
       state = AsyncValue.data(profiles);
-      developer.log('✅ SecondaryProfilesProvider: ${profiles.length}개 프로필 로드 완료');
+      developer
+          .log('✅ SecondaryProfilesProvider: ${profiles.length}개 프로필 로드 완료');
     } catch (e, st) {
       developer.log('❌ SecondaryProfilesProvider 로드 실패: $e');
       state = AsyncValue.error(e, st);
@@ -81,25 +83,30 @@ class SecondaryProfilesNotifier
 
       developer.log('➕ SecondaryProfilesProvider: 프로필 추가 - $name');
 
-      final response = await _supabase.from('secondary_profiles').insert({
-        'owner_id': userId,
-        'name': name,
-        'birth_date': birthDate,
-        'birth_time': birthTime,
-        'gender': gender,
-        'is_lunar': isLunar,
-        'relationship': relationship,
-        'family_relation': familyRelation,
-        'mbti': mbti,
-        'blood_type': bloodType,
-      }).select().single();
+      final response = await _supabase
+          .from('secondary_profiles')
+          .insert({
+            'owner_id': userId,
+            'name': name,
+            'birth_date': birthDate,
+            'birth_time': birthTime,
+            'gender': gender,
+            'is_lunar': isLunar,
+            'relationship': relationship,
+            'family_relation': familyRelation,
+            'mbti': mbti,
+            'blood_type': bloodType,
+          })
+          .select()
+          .single();
 
       final newProfile = SecondaryProfile.fromJson(response);
 
       // 목록에 추가
       state = state.whenData((profiles) => [...profiles, newProfile]);
 
-      developer.log('✅ SecondaryProfilesProvider: 프로필 추가 완료 - ${newProfile.id}');
+      developer
+          .log('✅ SecondaryProfilesProvider: 프로필 추가 완료 - ${newProfile.id}');
       return newProfile;
     } catch (e) {
       developer.log('❌ SecondaryProfilesProvider 추가 실패: $e');
@@ -112,21 +119,18 @@ class SecondaryProfilesNotifier
     try {
       developer.log('✏️ SecondaryProfilesProvider: 프로필 수정 - ${profile.name}');
 
-      await _supabase
-          .from('secondary_profiles')
-          .update({
-            'name': profile.name,
-            'birth_date': profile.birthDate,
-            'birth_time': profile.birthTime,
-            'gender': profile.gender,
-            'is_lunar': profile.isLunar,
-            'relationship': profile.relationship,
-            'family_relation': profile.familyRelation,
-            'mbti': profile.mbti,
-            'blood_type': profile.bloodType,
-            'avatar_index': profile.avatarIndex,
-          })
-          .eq('id', profile.id);
+      await _supabase.from('secondary_profiles').update({
+        'name': profile.name,
+        'birth_date': profile.birthDate,
+        'birth_time': profile.birthTime,
+        'gender': profile.gender,
+        'is_lunar': profile.isLunar,
+        'relationship': profile.relationship,
+        'family_relation': profile.familyRelation,
+        'mbti': profile.mbti,
+        'blood_type': profile.bloodType,
+        'avatar_index': profile.avatarIndex,
+      }).eq('id', profile.id);
 
       // 목록 업데이트
       state = state.whenData((profiles) =>
@@ -144,10 +148,7 @@ class SecondaryProfilesNotifier
     try {
       developer.log('🗑️ SecondaryProfilesProvider: 프로필 삭제 - $profileId');
 
-      await _supabase
-          .from('secondary_profiles')
-          .delete()
-          .eq('id', profileId);
+      await _supabase.from('secondary_profiles').delete().eq('id', profileId);
 
       // 목록에서 제거
       state = state.whenData(

@@ -93,7 +93,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ NAV-002 PASSED: Fortune tab navigation: $isOnFortuneScreen');
+      debugPrint(
+          '✅ NAV-002 PASSED: Fortune tab navigation: $isOnFortuneScreen');
     });
 
     testWidgets('NAV-003: 바텀 네비 트렌드 탭', (tester) async {
@@ -149,7 +150,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ NAV-004 PASSED: Premium tab navigation: $isOnPremiumScreen');
+      debugPrint(
+          '✅ NAV-004 PASSED: Premium tab navigation: $isOnPremiumScreen');
     });
 
     testWidgets('NAV-005: 바텀 네비 프로필 탭', (tester) async {
@@ -177,7 +179,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ NAV-005 PASSED: Profile tab navigation: $isOnProfileScreen');
+      debugPrint(
+          '✅ NAV-005 PASSED: Profile tab navigation: $isOnProfileScreen');
     });
 
     // ========================================================================
@@ -209,7 +212,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ NAV-006 PASSED: Deep link to daily fortune: $navigatedToDaily');
+      debugPrint(
+          '✅ NAV-006 PASSED: Deep link to daily fortune: $navigatedToDaily');
     });
 
     testWidgets('NAV-007: 딥링크 타로 페이지 접근', (tester) async {
@@ -269,7 +273,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ NAV-008 PASSED: Back navigation stack: $navigatedToSettings');
+      debugPrint(
+          '✅ NAV-008 PASSED: Back navigation stack: $navigatedToSettings');
     });
 
     testWidgets('NAV-009: 홈 버튼으로 홈 복귀', (tester) async {
@@ -330,7 +335,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ NAV-010 PASSED: iOS swipe back gesture: $navigatedToDetail');
+      debugPrint(
+          '✅ NAV-010 PASSED: iOS swipe back gesture: $navigatedToDetail');
     });
   });
 }

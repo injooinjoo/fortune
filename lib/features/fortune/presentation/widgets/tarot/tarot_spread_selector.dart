@@ -198,13 +198,9 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
       borderRadius: BorderRadius.circular(DSRadius.lg),
       child: Ink(
         decoration: BoxDecoration(
-          color: isSelected
-              ? color.withValues(alpha: 0.1)
-              : colors.surface,
+          color: isSelected ? color.withValues(alpha: 0.1) : colors.surface,
           border: Border.all(
-            color: isSelected
-                ? color
-                : colors.border,
+            color: isSelected ? color : colors.border,
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(DSRadius.lg),
@@ -240,7 +236,8 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                       height: 48,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: isSelected ? color : color.withValues(alpha: 0.1),
+                        color:
+                            isSelected ? color : color.withValues(alpha: 0.1),
                       ),
                       child: Icon(
                         icon,
@@ -262,9 +259,8 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                                 spread.displayName,
                                 style: typography.labelLarge.copyWith(
                                   fontWeight: FontWeight.w600,
-                                  color: isSelected
-                                      ? color
-                                      : colors.textPrimary,
+                                  color:
+                                      isSelected ? color : colors.textPrimary,
                                 ),
                               ),
                               const SizedBox(width: DSSpacing.sm),
@@ -275,14 +271,17 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: _getDifficultyColor(spread.difficulty).withValues(alpha: 0.15),
-                                  borderRadius: BorderRadius.circular(DSRadius.sm),
+                                  color: _getDifficultyColor(spread.difficulty)
+                                      .withValues(alpha: 0.15),
+                                  borderRadius:
+                                      BorderRadius.circular(DSRadius.sm),
                                 ),
                                 child: Text(
                                   spread.difficulty.label,
                                   style: typography.labelSmall.copyWith(
                                     fontWeight: FontWeight.w600,
-                                    color: _getDifficultyColor(spread.difficulty),
+                                    color:
+                                        _getDifficultyColor(spread.difficulty),
                                     fontSize: 10, // 예외: 초소형 난이도 배지
                                   ),
                                 ),
@@ -295,7 +294,8 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
                                 ),
                                 decoration: BoxDecoration(
                                   color: color.withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(DSRadius.md),
+                                  borderRadius:
+                                      BorderRadius.circular(DSRadius.md),
                                 ),
                                 child: Text(
                                   '${spread.cardCount}장',
@@ -518,7 +518,8 @@ class _TarotSpreadSelectorState extends State<TarotSpreadSelector>
   }) {
     // TarotHelper를 사용하여 카드 이미지 경로 생성
     final cardFileName = TarotHelper.getMajorArcanaFileName(cardIndex);
-    final imagePath = 'assets/images/tarot/decks/rider_waite/major/$cardFileName';
+    final imagePath =
+        'assets/images/tarot/decks/rider_waite/major/$cardFileName';
 
     return Container(
       width: width,

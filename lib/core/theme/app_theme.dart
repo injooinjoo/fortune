@@ -45,165 +45,172 @@ class AppTheme {
 
   static ThemeData lightTheme() {
     return ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.light,
-        primaryColor: primaryColor,
-        colorScheme: const ColorScheme.light(
-          primary: primaryColor,
-          secondary: secondaryColor,
-          tertiary: tertiaryColor,
-          error: errorColor,
-          surface: Color(0xFFF3F4F6),
-          // background is deprecated, use surface instead
+      useMaterial3: true,
+      brightness: Brightness.light,
+      primaryColor: primaryColor,
+      colorScheme: const ColorScheme.light(
+        primary: primaryColor,
+        secondary: secondaryColor,
+        tertiary: tertiaryColor,
+        error: errorColor,
+        surface: Color(0xFFF3F4F6),
+        // background is deprecated, use surface instead
+      ),
+      // ChatGPT 스타일 배경색 (라이트모드: 화이트)
+      scaffoldBackgroundColor: DSColors.backgroundDark,
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        iconTheme: const IconThemeData(color: Color(0xFF1F2937)),
+        titleTextStyle: TypographyUnified.heading4.copyWith(
+          color: const Color(0xFF1F2937),
         ),
-        // ChatGPT 스타일 배경색 (라이트모드: 화이트)
-        scaffoldBackgroundColor: DSColors.backgroundDark,
-        appBarTheme: AppBarTheme(
-          backgroundColor: Colors.transparent,
+      ),
+      fontFamily: TypographyUnified.fontFamilyKorean,
+      textTheme: TextTheme(
+        displayLarge: TypographyUnified.displayLarge,
+        displayMedium: TypographyUnified.displayMedium,
+        displaySmall: TypographyUnified.displaySmall,
+        headlineLarge: TypographyUnified.displaySmall,
+        headlineMedium: TypographyUnified.heading1,
+        headlineSmall: TypographyUnified.heading2,
+        titleLarge: TypographyUnified.heading2,
+        titleMedium: TypographyUnified.heading3,
+        titleSmall: TypographyUnified.bodyLarge,
+        bodyLarge: TypographyUnified.bodyLarge,
+        bodyMedium: TypographyUnified.bodyMedium,
+        bodySmall: TypographyUnified.bodySmall,
+        labelLarge: TypographyUnified.bodyMedium,
+        labelMedium: TypographyUnified.labelLarge,
+        labelSmall: TypographyUnified.labelMedium,
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white,
+          backgroundColor: primaryColor,
           elevation: 0,
-          systemOverlayStyle: SystemUiOverlayStyle.dark,
-          iconTheme: const IconThemeData(color: Color(0xFF1F2937)),
-          titleTextStyle: TypographyUnified.heading4.copyWith(
-            color: const Color(0xFF1F2937),
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
           ),
+          textStyle:
+              TypographyUnified.bodyLarge.copyWith(fontWeight: FontWeight.w600),
         ),
-        fontFamily: TypographyUnified.fontFamilyKorean,
-        textTheme: TextTheme(
-          displayLarge: TypographyUnified.displayLarge,
-          displayMedium: TypographyUnified.displayMedium,
-          displaySmall: TypographyUnified.displaySmall,
-          headlineLarge: TypographyUnified.displaySmall,
-          headlineMedium: TypographyUnified.heading1,
-          headlineSmall: TypographyUnified.heading2,
-          titleLarge: TypographyUnified.heading2,
-          titleMedium: TypographyUnified.heading3,
-          titleSmall: TypographyUnified.bodyLarge,
-          bodyLarge: TypographyUnified.bodyLarge,
-          bodyMedium: TypographyUnified.bodyMedium,
-          bodySmall: TypographyUnified.bodySmall,
-          labelLarge: TypographyUnified.bodyMedium,
-          labelMedium: TypographyUnified.labelLarge,
-          labelSmall: TypographyUnified.labelMedium,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: DSColors.backgroundDark,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: DSColors.borderDark, width: 1),
         ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: primaryColor,
-            elevation: 0,
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            textStyle: TypographyUnified.bodyLarge.copyWith(fontWeight: FontWeight.w600),
-          ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: DSColors.borderDark, width: 1),
         ),
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: DSColors.backgroundDark,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(color: DSColors.borderDark, width: 1),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(color: DSColors.borderDark, width: 1),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(color: DSColors.accentDark, width: 2),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(color: DSColors.error, width: 1),
-          ),
-          labelStyle: TypographyUnified.bodySmall.copyWith(color: DSColors.textSecondaryDark),
-          hintStyle: TypographyUnified.bodySmall.copyWith(color: DSColors.textDisabledDark),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: DSColors.accentDark, width: 2),
         ),
-        extensions: <ThemeExtension<dynamic>>[
-          FortuneThemeExtension.light,
-        ],
-        pageTransitionsTheme: const PageTransitionsTheme(
-          builders: {
-            TargetPlatform.android: _FastPageTransitionBuilder(),
-            TargetPlatform.iOS: _FastPageTransitionBuilder(),
-          },
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: DSColors.error, width: 1),
         ),
+        labelStyle: TypographyUnified.bodySmall
+            .copyWith(color: DSColors.textSecondaryDark),
+        hintStyle: TypographyUnified.bodySmall
+            .copyWith(color: DSColors.textDisabledDark),
+      ),
+      extensions: <ThemeExtension<dynamic>>[
+        FortuneThemeExtension.light,
+      ],
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: _FastPageTransitionBuilder(),
+          TargetPlatform.iOS: _FastPageTransitionBuilder(),
+        },
+      ),
     );
   }
 
   static ThemeData darkTheme() {
     return ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-        primaryColor: DSColors.accentDark,
-        colorScheme: const ColorScheme.dark(
-          primary: DSColors.accentDark,
-          secondary: secondaryColor,
-          tertiary: DSColors.textSecondaryDark,
-          error: DSColors.error,
-          surface: DSColors.textPrimaryDark,
-          // background is deprecated, use surface instead
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      primaryColor: DSColors.accentDark,
+      colorScheme: const ColorScheme.dark(
+        primary: DSColors.accentDark,
+        secondary: secondaryColor,
+        tertiary: DSColors.textSecondaryDark,
+        error: DSColors.error,
+        surface: DSColors.textPrimaryDark,
+        // background is deprecated, use surface instead
+      ),
+      // ChatGPT 스타일 다크모드 배경색 (다크모드: 블랙)
+      scaffoldBackgroundColor: DSColors.background,
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        iconTheme: const IconThemeData(color: DSColors.textPrimary),
+        titleTextStyle: TypographyUnified.heading4.copyWith(
+          color: DSColors.textPrimary,
         ),
-        // ChatGPT 스타일 다크모드 배경색 (다크모드: 블랙)
-        scaffoldBackgroundColor: DSColors.background,
-        appBarTheme: AppBarTheme(
-          backgroundColor: Colors.transparent,
+      ),
+      fontFamily: TypographyUnified.fontFamilyKorean,
+      textTheme:
+          TypographyUnified.materialTextTheme(brightness: Brightness.dark),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white,
+          backgroundColor: primaryColor,
           elevation: 0,
-          systemOverlayStyle: SystemUiOverlayStyle.light,
-          iconTheme: const IconThemeData(color: DSColors.textPrimary),
-          titleTextStyle: TypographyUnified.heading4.copyWith(
-            color: DSColors.textPrimary,
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
           ),
+          textStyle:
+              TypographyUnified.bodyLarge.copyWith(fontWeight: FontWeight.w600),
         ),
-        fontFamily: TypographyUnified.fontFamilyKorean,
-        textTheme: TypographyUnified.materialTextTheme(brightness: Brightness.dark),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: primaryColor,
-            elevation: 0,
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            textStyle: TypographyUnified.bodyLarge.copyWith(fontWeight: FontWeight.w600),
-          ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: DSColors.textPrimaryDark,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: Color(0xFF3B352E), width: 1),
         ),
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: DSColors.textPrimaryDark,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(color: Color(0xFF3B352E), width: 1),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(color: Color(0xFF3B352E), width: 1),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(color: DSColors.accentDark, width: 2),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(color: DSColors.error, width: 1),
-          ),
-          labelStyle: TypographyUnified.bodySmall.copyWith(color: DSColors.textDisabledDark),
-          hintStyle: TypographyUnified.bodySmall.copyWith(color: DSColors.textTertiaryDark),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: Color(0xFF3B352E), width: 1),
         ),
-        extensions: <ThemeExtension<dynamic>>[
-          FortuneThemeExtension.dark,
-        ],
-        pageTransitionsTheme: const PageTransitionsTheme(
-          builders: {
-            TargetPlatform.android: _FastPageTransitionBuilder(),
-            TargetPlatform.iOS: _FastPageTransitionBuilder(),
-          },
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: DSColors.accentDark, width: 2),
         ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: DSColors.error, width: 1),
+        ),
+        labelStyle: TypographyUnified.bodySmall
+            .copyWith(color: DSColors.textDisabledDark),
+        hintStyle: TypographyUnified.bodySmall
+            .copyWith(color: DSColors.textTertiaryDark),
+      ),
+      extensions: <ThemeExtension<dynamic>>[
+        FortuneThemeExtension.dark,
+      ],
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: _FastPageTransitionBuilder(),
+          TargetPlatform.iOS: _FastPageTransitionBuilder(),
+        },
+      ),
     );
   }
 }
@@ -223,11 +230,11 @@ class _FastPageTransitionBuilder extends PageTransitionsBuilder {
     const begin = Offset(1.0, 0.0);
     const end = Offset.zero;
     const curve = Curves.easeOutQuad;
-    
+
     final tween = Tween(begin: begin, end: end).chain(
       CurveTween(curve: curve),
     );
-    
+
     return SlideTransition(
       position: animation.drive(tween),
       child: child,

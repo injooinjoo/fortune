@@ -2,10 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// 음성 페이지 상태
 enum VoicePageState {
-  initial,    // 초기 화면 (Tip 표시)
-  recording,  // 녹음 중
+  initial, // 초기 화면 (Tip 표시)
+  recording, // 녹음 중
   processing, // API 호출 중
-  result,     // 결과 표시
+  result, // 결과 표시
 }
 
 /// 음성 페이지 상태 데이터
@@ -78,6 +78,7 @@ class DreamVoiceNotifier extends StateNotifier<DreamVoiceState> {
   }
 }
 
-final dreamVoiceProvider = StateNotifierProvider<DreamVoiceNotifier, DreamVoiceState>((ref) {
+final dreamVoiceProvider =
+    StateNotifierProvider<DreamVoiceNotifier, DreamVoiceState>((ref) {
   return DreamVoiceNotifier();
 });

@@ -56,7 +56,8 @@ class LoveScoreTemplate extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.favorite_rounded, size: 16, color: Colors.pinkAccent),
+                const Icon(Icons.favorite_rounded,
+                    size: 16, color: Colors.pinkAccent),
                 const SizedBox(width: DSSpacing.xs),
                 Text(
                   '새로운 인연 확률',
@@ -239,7 +240,8 @@ class BlindDateScoreTemplate extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.emoji_events_rounded, size: 18, color: Colors.pinkAccent),
+                    const Icon(Icons.emoji_events_rounded,
+                        size: 18, color: Colors.pinkAccent),
                     const SizedBox(width: DSSpacing.xs),
                     Text(
                       '성공 예측',
@@ -274,7 +276,8 @@ class BlindDateScoreTemplate extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.favorite_rounded, size: 14, color: Colors.pinkAccent),
+                    const Icon(Icons.favorite_rounded,
+                        size: 14, color: Colors.pinkAccent),
                     const SizedBox(width: DSSpacing.xs),
                     Flexible(
                       child: Text(
@@ -301,7 +304,8 @@ class BlindDateScoreTemplate extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.place_rounded, size: 14, color: context.colors.accent),
+                    Icon(Icons.place_rounded,
+                        size: 14, color: context.colors.accent),
                     const SizedBox(width: DSSpacing.xs),
                     Text(
                       '추천 장소: $luckyPlace',

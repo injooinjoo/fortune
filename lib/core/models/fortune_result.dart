@@ -74,10 +74,14 @@ class FortuneResult {
 
     return FortuneResult(
       id: json['id'] as String?,
-      type: json['fortune_type'] as String? ?? json['type'] as String? ?? 'unknown',
+      type: json['fortune_type'] as String? ??
+          json['type'] as String? ??
+          'unknown',
       title: json['title'] as String? ?? '운세 결과',
       summary: parsedSummary,
-      data: json['fortune_data'] as Map<String, dynamic>? ?? json['data'] as Map<String, dynamic>? ?? {},
+      data: json['fortune_data'] as Map<String, dynamic>? ??
+          json['data'] as Map<String, dynamic>? ??
+          {},
       score: json['score'] as int?,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'] as String)
@@ -104,7 +108,8 @@ class FortuneResult {
       'data': data,
       if (score != null) 'score': score,
       if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
-      if (lastViewedAt != null) 'last_viewed_at': lastViewedAt!.toIso8601String(),
+      if (lastViewedAt != null)
+        'last_viewed_at': lastViewedAt!.toIso8601String(),
       if (viewCount != null) 'view_count': viewCount,
       if (percentile != null) 'percentile': percentile,
       if (totalTodayViewers != null) 'total_today_viewers': totalTodayViewers,
@@ -161,9 +166,6 @@ class FortuneResult {
 
   @override
   int get hashCode {
-    return id.hashCode ^
-        type.hashCode ^
-        title.hashCode ^
-        score.hashCode;
+    return id.hashCode ^ type.hashCode ^ title.hashCode ^ score.hashCode;
   }
 }

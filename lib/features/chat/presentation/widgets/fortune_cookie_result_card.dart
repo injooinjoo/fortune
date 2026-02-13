@@ -24,23 +24,35 @@ class FortuneCookieResultCard extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<FortuneCookieResultCard> createState() => _FortuneCookieResultCardState();
+  ConsumerState<FortuneCookieResultCard> createState() =>
+      _FortuneCookieResultCardState();
 }
 
-class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCard> {
+class _FortuneCookieResultCardState
+    extends ConsumerState<FortuneCookieResultCard> {
   // Fortune 데이터에서 필요한 값 추출
   String get _message => widget.fortune.content;
-  String get _cookieType => widget.fortune.luckyItems?['cookie_type'] as String? ?? 'luck';
+  String get _cookieType =>
+      widget.fortune.luckyItems?['cookie_type'] as String? ?? 'luck';
   String get _emoji => widget.fortune.luckyItems?['emoji'] as String? ?? '🥠';
-  String get _luckyColor => widget.fortune.luckyItems?['lucky_color'] as String? ?? '골드';
-  String get _luckyColorHex => widget.fortune.luckyItems?['lucky_color_hex'] as String? ?? '#FFD700';
-  String get _luckyTime => widget.fortune.luckyItems?['lucky_time'] as String? ?? '12:00 ~ 14:00';
-  String get _luckyDirection => widget.fortune.luckyItems?['lucky_direction'] as String? ?? '동쪽';
-  String get _luckyItem => widget.fortune.luckyItems?['lucky_item'] as String? ?? '손수건';
-  String get _luckyItemColor => widget.fortune.luckyItems?['lucky_item_color'] as String? ?? '노란색';
-  String get _luckyPlace => widget.fortune.luckyItems?['lucky_place'] as String? ?? '통창 카페';
-  String get _actionMission => widget.fortune.luckyItems?['action_mission'] as String? ?? '';
-  int get _luckyNumber => widget.fortune.luckyItems?['lucky_number'] as int? ?? 7;
+  String get _luckyColor =>
+      widget.fortune.luckyItems?['lucky_color'] as String? ?? '골드';
+  String get _luckyColorHex =>
+      widget.fortune.luckyItems?['lucky_color_hex'] as String? ?? '#FFD700';
+  String get _luckyTime =>
+      widget.fortune.luckyItems?['lucky_time'] as String? ?? '12:00 ~ 14:00';
+  String get _luckyDirection =>
+      widget.fortune.luckyItems?['lucky_direction'] as String? ?? '동쪽';
+  String get _luckyItem =>
+      widget.fortune.luckyItems?['lucky_item'] as String? ?? '손수건';
+  String get _luckyItemColor =>
+      widget.fortune.luckyItems?['lucky_item_color'] as String? ?? '노란색';
+  String get _luckyPlace =>
+      widget.fortune.luckyItems?['lucky_place'] as String? ?? '통창 카페';
+  String get _actionMission =>
+      widget.fortune.luckyItems?['action_mission'] as String? ?? '';
+  int get _luckyNumber =>
+      widget.fortune.luckyItems?['lucky_number'] as int? ?? 7;
 
   // 골드 액센트 색상 (프리미엄 디자인)
   Color get _goldenAccent {
@@ -60,12 +72,17 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
 
   String get _cookieTypeName {
     switch (_cookieType) {
-      case 'love': return '사랑';
-      case 'wealth': return '재물';
-      case 'health': return '건강';
-      case 'wisdom': return '지혜';
+      case 'love':
+        return '사랑';
+      case 'wealth':
+        return '재물';
+      case 'health':
+        return '건강';
+      case 'wisdom':
+        return '지혜';
       case 'luck':
-      default: return '행운';
+      default:
+        return '행운';
     }
   }
 
@@ -124,24 +141,24 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
 
                   // 메시지 (핵심) - 「」 동양풍 따옴표
                   _buildMessage(theme, isDark)
-                    .animate()
-                    .fadeIn(duration: 600.ms, delay: 200.ms)
-                    .slideY(begin: 0.1, end: 0),
+                      .animate()
+                      .fadeIn(duration: 600.ms, delay: 200.ms)
+                      .slideY(begin: 0.1, end: 0),
 
                   const SizedBox(height: 20),
 
                   // 행운 요소 2x2 그리드
                   _buildLuckyElementsGrid(theme, isDark)
-                    .animate()
-                    .fadeIn(duration: 500.ms, delay: 400.ms),
+                      .animate()
+                      .fadeIn(duration: 500.ms, delay: 400.ms),
 
                   // 미션 섹션 (항상 표시)
                   if (_actionMission.isNotEmpty) ...[
                     const SizedBox(height: 16),
                     _buildMissionSection(theme, isDark)
-                      .animate()
-                      .fadeIn(duration: 400.ms, delay: 500.ms)
-                      .slideY(begin: 0.1, end: 0),
+                        .animate()
+                        .fadeIn(duration: 400.ms, delay: 500.ms)
+                        .slideY(begin: 0.1, end: 0),
                   ],
                 ],
               ),
@@ -181,10 +198,11 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
               ],
             ),
           )
-            .animate(onPlay: (c) => c.repeat(reverse: true))
-            .fadeIn(duration: 1500.ms, delay: delay.ms)
-            .fadeOut(duration: 1500.ms)
-            .scale(begin: const Offset(0.5, 0.5), end: const Offset(1.2, 1.2)),
+              .animate(onPlay: (c) => c.repeat(reverse: true))
+              .fadeIn(duration: 1500.ms, delay: delay.ms)
+              .fadeOut(duration: 1500.ms)
+              .scale(
+                  begin: const Offset(0.5, 0.5), end: const Offset(1.2, 1.2)),
         ),
       );
     }
@@ -204,13 +222,11 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
                 Text(
                   _emoji,
                   style: const TextStyle(fontSize: 28),
-                )
-                  .animate(onPlay: (c) => c.repeat(reverse: true))
-                  .scale(
-                    begin: const Offset(1, 1),
-                    end: const Offset(1.1, 1.1),
-                    duration: 1500.ms,
-                  ),
+                ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
+                      begin: const Offset(1, 1),
+                      end: const Offset(1.1, 1.1),
+                      duration: 1500.ms,
+                    ),
                 const SizedBox(width: 8),
                 Text(
                   '$_cookieTypeName 쿠키',
@@ -282,14 +298,12 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
           ),
         ],
       ),
-    )
-      .animate()
-      .scale(
-        begin: const Offset(0.8, 0.8),
-        end: const Offset(1, 1),
-        duration: 600.ms,
-        curve: Curves.elasticOut,
-      );
+    ).animate().scale(
+          begin: const Offset(0.8, 0.8),
+          end: const Offset(1, 1),
+          duration: 600.ms,
+          curve: Curves.elasticOut,
+        );
   }
 
   Widget _buildMessage(ThemeData theme, bool isDark) {
@@ -505,7 +519,8 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
                         color: colorDot,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: context.colors.textPrimary.withValues(alpha: isDark ? 0.24 : 0.12),
+                          color: context.colors.textPrimary
+                              .withValues(alpha: isDark ? 0.24 : 0.12),
                           width: 0.5,
                         ),
                       ),
@@ -516,7 +531,8 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
                     child: Text(
                       value,
                       style: context.labelMedium.copyWith(
-                        color: context.colors.textPrimary.withValues(alpha: 0.87),
+                        color:
+                            context.colors.textPrimary.withValues(alpha: 0.87),
                         fontWeight: FontWeight.w600,
                       ),
                       overflow: TextOverflow.ellipsis,
@@ -579,9 +595,9 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
                 size: 14,
                 color: _goldenAccent,
               )
-                .animate(onPlay: (c) => c.repeat(reverse: true))
-                .fadeIn(duration: 1200.ms)
-                .fadeOut(duration: 1200.ms),
+                  .animate(onPlay: (c) => c.repeat(reverse: true))
+                  .fadeIn(duration: 1200.ms)
+                  .fadeOut(duration: 1200.ms),
             ],
           ),
           Divider(
@@ -597,12 +613,9 @@ class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCar
           ),
         ],
       ),
-    )
-      .animate(onPlay: (c) => c.repeat(reverse: true))
-      .shimmer(
-        duration: 4000.ms,
-        color: _goldenAccent.withValues(alpha: 0.08),
-      );
+    ).animate(onPlay: (c) => c.repeat(reverse: true)).shimmer(
+          duration: 4000.ms,
+          color: _goldenAccent.withValues(alpha: 0.08),
+        );
   }
-
 }

@@ -87,9 +87,7 @@ class SajuPillarTablePro extends StatelessWidget {
             Text(
               '四柱命式',
               style: context.labelSmall.copyWith(
-                color: isDark
-                    ? DSColors.textTertiary
-                    : DSColors.textSecondary,
+                color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -144,12 +142,11 @@ class SajuPillarTablePro extends StatelessWidget {
     );
   }
 
-  Widget _buildHeaderRow(BuildContext context, List<Map<String, String>> pillars, bool isDark) {
+  Widget _buildHeaderRow(
+      BuildContext context, List<Map<String, String>> pillars, bool isDark) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark
-            ? DSColors.surface
-            : DSColors.backgroundSecondary,
+        color: isDark ? DSColors.surface : DSColors.backgroundSecondary,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(DSRadius.md),
           topRight: Radius.circular(DSRadius.md),
@@ -170,16 +167,12 @@ class SajuPillarTablePro extends StatelessWidget {
                 border: Border(
                   right: index < pillars.length - 1
                       ? BorderSide(
-                          color: isDark
-                              ? DSColors.border
-                              : DSColors.border,
+                          color: isDark ? DSColors.border : DSColors.border,
                           width: 1,
                         )
                       : BorderSide.none,
                 ),
-                color: isDay
-                    ? DSColors.accent.withValues(alpha: 0.15)
-                    : null,
+                color: isDay ? DSColors.accent.withValues(alpha: 0.15) : null,
               ),
               child: Column(
                 children: [
@@ -241,16 +234,12 @@ class SajuPillarTablePro extends StatelessWidget {
                 border: Border(
                   right: index < pillars.length - 1
                       ? BorderSide(
-                          color: isDark
-                              ? DSColors.border
-                              : DSColors.border,
+                          color: isDark ? DSColors.border : DSColors.border,
                           width: 1,
                         )
                       : BorderSide.none,
                 ),
-                color: isDay
-                    ? DSColors.accent.withValues(alpha: 0.08)
-                    : null,
+                color: isDay ? DSColors.accent.withValues(alpha: 0.08) : null,
               ),
               child: GestureDetector(
                 onTap: () => _showStemExplanation(context, stemData),
@@ -303,21 +292,18 @@ class SajuPillarTablePro extends StatelessWidget {
                 border: Border(
                   right: index < pillars.length - 1
                       ? BorderSide(
-                          color: isDark
-                              ? DSColors.border
-                              : DSColors.border,
+                          color: isDark ? DSColors.border : DSColors.border,
                           width: 1,
                         )
                       : BorderSide.none,
                 ),
-                color: isDay
-                    ? DSColors.accent.withValues(alpha: 0.08)
-                    : null,
+                color: isDay ? DSColors.accent.withValues(alpha: 0.08) : null,
               ),
               child: GestureDetector(
                 onTap: () => _showBranchExplanation(context, branchData),
                 behavior: HitTestBehavior.opaque,
-                child: _buildBranchCell(context, branchData, isDay, isGongMang, isDark),
+                child: _buildBranchCell(
+                    context, branchData, isDay, isGongMang, isDark),
               ),
             ),
           );
@@ -326,7 +312,8 @@ class SajuPillarTablePro extends StatelessWidget {
     );
   }
 
-  Widget _buildJijangganRow(BuildContext context, List<Map<String, String>> pillars, bool isDark) {
+  Widget _buildJijangganRow(
+      BuildContext context, List<Map<String, String>> pillars, bool isDark) {
     return Container(
       decoration: BoxDecoration(
         border: Border(
@@ -357,9 +344,7 @@ class SajuPillarTablePro extends StatelessWidget {
                   border: Border(
                     right: index < pillars.length - 1
                         ? BorderSide(
-                            color: isDark
-                                ? DSColors.border
-                                : DSColors.border,
+                            color: isDark ? DSColors.border : DSColors.border,
                             width: 1,
                           )
                         : BorderSide.none,
@@ -413,16 +398,12 @@ class SajuPillarTablePro extends StatelessWidget {
                 border: Border(
                   right: index < pillars.length - 1
                       ? BorderSide(
-                          color: isDark
-                              ? DSColors.border
-                              : DSColors.border,
+                          color: isDark ? DSColors.border : DSColors.border,
                           width: 1,
                         )
                       : BorderSide.none,
                 ),
-                color: isDark
-                    ? DSColors.surface
-                    : DSColors.backgroundSecondary,
+                color: isDark ? DSColors.surface : DSColors.backgroundSecondary,
                 borderRadius: index == 0
                     ? const BorderRadius.only(
                         bottomLeft: Radius.circular(DSRadius.md),
@@ -599,7 +580,8 @@ class SajuPillarTablePro extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: hiddenStems.map((stem) {
         final color = SajuColors.getWuxingColor(stem.wuxing, isDark: isDark);
-        final bgColor = SajuColors.getWuxingBackgroundColor(stem.wuxing, isDark: isDark);
+        final bgColor =
+            SajuColors.getWuxingBackgroundColor(stem.wuxing, isDark: isDark);
 
         return Container(
           margin: const EdgeInsets.symmetric(vertical: 2),
@@ -632,7 +614,8 @@ class SajuPillarTablePro extends StatelessWidget {
     );
   }
 
-  Widget _buildTwelveStageCell(BuildContext context, TwelveStage? stage, bool isDark) {
+  Widget _buildTwelveStageCell(
+      BuildContext context, TwelveStage? stage, bool isDark) {
     if (stage == null) {
       return const Center(child: Text('-'));
     }
@@ -718,9 +701,8 @@ class SajuPillarTablePro extends StatelessWidget {
                 Text(
                   '일간 日干',
                   style: context.labelTiny.copyWith(
-                    color: isDark
-                        ? DSColors.textTertiary
-                        : DSColors.textSecondary,
+                    color:
+                        isDark ? DSColors.textTertiary : DSColors.textSecondary,
                   ),
                 ),
                 const SizedBox(width: DSSpacing.xs + 2),
@@ -767,22 +749,18 @@ class SajuPillarTablePro extends StatelessWidget {
       return {};
     }
 
-    final yearBranch =
-        (sajuData['year']?['jiji'] as Map<String, dynamic>?)?['char']
-                as String? ??
-            '';
-    final monthBranch =
-        (sajuData['month']?['jiji'] as Map<String, dynamic>?)?['char']
-                as String? ??
-            '';
-    final dayBranch =
-        (sajuData['day']?['jiji'] as Map<String, dynamic>?)?['char']
-                as String? ??
-            '';
-    final hourBranch =
-        (sajuData['hour']?['jiji'] as Map<String, dynamic>?)?['char']
-                as String? ??
-            '';
+    final yearBranch = (sajuData['year']?['jiji']
+            as Map<String, dynamic>?)?['char'] as String? ??
+        '';
+    final monthBranch = (sajuData['month']?['jiji']
+            as Map<String, dynamic>?)?['char'] as String? ??
+        '';
+    final dayBranch = (sajuData['day']?['jiji']
+            as Map<String, dynamic>?)?['char'] as String? ??
+        '';
+    final hourBranch = (sajuData['hour']?['jiji']
+            as Map<String, dynamic>?)?['char'] as String? ??
+        '';
 
     return TwelveStageCalculator.calculateAll(
       ilGan: dayStem,
@@ -805,18 +783,15 @@ class SajuPillarTablePro extends StatelessWidget {
       return null;
     }
 
-    final yearBranch =
-        (sajuData['year']?['jiji'] as Map<String, dynamic>?)?['char']
-                as String? ??
-            '';
-    final monthBranch =
-        (sajuData['month']?['jiji'] as Map<String, dynamic>?)?['char']
-                as String? ??
-            '';
-    final hourBranch =
-        (sajuData['hour']?['jiji'] as Map<String, dynamic>?)?['char']
-                as String? ??
-            '';
+    final yearBranch = (sajuData['year']?['jiji']
+            as Map<String, dynamic>?)?['char'] as String? ??
+        '';
+    final monthBranch = (sajuData['month']?['jiji']
+            as Map<String, dynamic>?)?['char'] as String? ??
+        '';
+    final hourBranch = (sajuData['hour']?['jiji']
+            as Map<String, dynamic>?)?['char'] as String? ??
+        '';
 
     return GongMangCalculator.analyzeGongMang(
       dayStem: dayStem,

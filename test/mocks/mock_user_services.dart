@@ -170,7 +170,20 @@ class UserTestData {
   static String _getChineseZodiac(String birthDate) {
     final date = DateTime.parse(birthDate);
     final year = date.year;
-    final animals = ['쥐', '소', '호랑이', '토끼', '용', '뱀', '말', '양', '원숭이', '닭', '개', '돼지'];
+    final animals = [
+      '쥐',
+      '소',
+      '호랑이',
+      '토끼',
+      '용',
+      '뱀',
+      '말',
+      '양',
+      '원숭이',
+      '닭',
+      '개',
+      '돼지'
+    ];
     return animals[(year - 4) % 12];
   }
 

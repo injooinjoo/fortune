@@ -367,7 +367,8 @@ class _ProgressiveTimeInputState extends State<ProgressiveTimeInput> {
     super.initState();
 
     if (widget.initialTime != null) {
-      _hourController.text = widget.initialTime!.hour.toString().padLeft(2, '0');
+      _hourController.text =
+          widget.initialTime!.hour.toString().padLeft(2, '0');
       _minuteController.text =
           widget.initialTime!.minute.toString().padLeft(2, '0');
     }
@@ -430,7 +431,8 @@ class _ProgressiveTimeInputState extends State<ProgressiveTimeInput> {
 
     if (hourText.isNotEmpty) {
       final hour = int.tryParse(hourText) ?? 0;
-      final minute = minuteText.isNotEmpty ? (int.tryParse(minuteText) ?? 0) : 0;
+      final minute =
+          minuteText.isNotEmpty ? (int.tryParse(minuteText) ?? 0) : 0;
 
       if (hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59) {
         widget.onTimeChanged(TimeOfDay(hour: hour, minute: minute));

@@ -104,9 +104,12 @@ class ChatBubble extends StatelessWidget {
     final effectivePadding = padding ?? const EdgeInsets.all(16);
     final effectiveBackgroundColor =
         backgroundColor ?? colors.backgroundSecondary;
-    final effectiveBorderColor = borderColor ?? colors.surface.withValues(alpha: 0.1);
-    final effectiveTailColor =
-        tailColor ?? (useGlass ? DSColors.accentSecondary.withValues(alpha: 0.2) : effectiveBackgroundColor);
+    final effectiveBorderColor =
+        borderColor ?? colors.surface.withValues(alpha: 0.1);
+    final effectiveTailColor = tailColor ??
+        (useGlass
+            ? DSColors.accentSecondary.withValues(alpha: 0.2)
+            : effectiveBackgroundColor);
 
     // 화살표 위치에 따른 마진 계산
     final tailMargin = showTail

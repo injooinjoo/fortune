@@ -21,12 +21,13 @@ class FortuneInfographicWidgets {
     required String message,
     String? subtitle,
     double size = 280,
-  }) => ScoreWidgets.buildTossStyleMainScore(
-    score: score,
-    message: message,
-    subtitle: subtitle,
-    size: size,
-  );
+  }) =>
+      ScoreWidgets.buildTossStyleMainScore(
+        score: score,
+        message: message,
+        subtitle: subtitle,
+        size: size,
+      );
 
   /// Hero-style score chart (원형 점수 차트)
   static Widget buildHeroScoreChart({
@@ -34,21 +35,23 @@ class FortuneInfographicWidgets {
     required String title,
     double size = 200,
     Color? color,
-  }) => ScoreWidgets.buildHeroScoreChart(
-    score: score,
-    title: title,
-    size: size,
-    color: color,
-  );
+  }) =>
+      ScoreWidgets.buildHeroScoreChart(
+        score: score,
+        title: title,
+        size: size,
+        color: color,
+      );
 
   /// Mini statistics dashboard (토스 스타일)
   static Widget buildMiniStatsDashboard({
     required Map<String, dynamic> stats,
     required BuildContext context,
-  }) => ScoreWidgets.buildMiniStatsDashboard(
-    stats: stats,
-    context: context,
-  );
+  }) =>
+      ScoreWidgets.buildMiniStatsDashboard(
+        stats: stats,
+        context: context,
+      );
 
   // ========== Keyword Widgets ==========
 
@@ -58,23 +61,25 @@ class FortuneInfographicWidgets {
     double maxFontSize = 32,
     double minFontSize = 14,
     Map<String, double>? importance,
-  }) => KeywordWidgets.buildKeywordCloud(
-    keywords: keywords,
-    maxFontSize: maxFontSize,
-    minFontSize: minFontSize,
-    importance: importance,
-  );
+  }) =>
+      KeywordWidgets.buildKeywordCloud(
+        keywords: keywords,
+        maxFontSize: maxFontSize,
+        minFontSize: minFontSize,
+        importance: importance,
+      );
 
   /// 토스 스타일 키워드 섹션 (개선된 디자인)
   static Widget buildTossStyleKeywordSection({
     required List<String> keywords,
     required Map<String, double> importance,
     required BuildContext context,
-  }) => KeywordWidgets.buildTossStyleKeywordSection(
-    keywords: keywords,
-    importance: importance,
-    context: context,
-  );
+  }) =>
+      KeywordWidgets.buildTossStyleKeywordSection(
+        keywords: keywords,
+        importance: importance,
+        context: context,
+      );
 
   // ========== Lucky Item Widgets ==========
 
@@ -84,12 +89,13 @@ class FortuneInfographicWidgets {
     int crossAxisCount = 2,
     double? itemSize,
     List<Map<String, dynamic>>? luckyItems,
-  }) => LuckyItemWidgets.buildLuckyItemsGrid(
-    items: items,
-    crossAxisCount: crossAxisCount,
-    itemSize: itemSize,
-    luckyItems: luckyItems,
-  );
+  }) =>
+      LuckyItemWidgets.buildLuckyItemsGrid(
+        items: items,
+        crossAxisCount: crossAxisCount,
+        itemSize: itemSize,
+        luckyItems: luckyItems,
+      );
 
   /// Lucky tags with color, food, numbers, and direction
   static Widget buildTossStyleLuckyTags({
@@ -97,32 +103,35 @@ class FortuneInfographicWidgets {
     String? luckyFood,
     List<String>? luckyNumbers,
     String? luckyDirection,
-  }) => LuckyItemWidgets.buildTossStyleLuckyTags(
-    luckyColor: luckyColor,
-    luckyFood: luckyFood,
-    luckyNumbers: luckyNumbers,
-    luckyDirection: luckyDirection,
-  );
+  }) =>
+      LuckyItemWidgets.buildTossStyleLuckyTags(
+        luckyColor: luckyColor,
+        luckyFood: luckyFood,
+        luckyNumbers: luckyNumbers,
+        luckyDirection: luckyDirection,
+      );
 
   /// Lucky outfit (placeholder implementation)
   static Widget buildTossStyleLuckyOutfit({
     String? outfitDescription,
     List<String>? outfitItems,
     String? outfitStyle,
-  }) => LuckyItemWidgets.buildTossStyleLuckyOutfit(
-    outfitDescription: outfitDescription,
-    outfitItems: outfitItems,
-    outfitStyle: outfitStyle,
-  );
+  }) =>
+      LuckyItemWidgets.buildTossStyleLuckyOutfit(
+        outfitDescription: outfitDescription,
+        outfitItems: outfitItems,
+        outfitStyle: outfitStyle,
+      );
 
   /// Saju lucky items (placeholder implementation)
   static Widget buildSajuLuckyItems(
     Map<String, dynamic>? sajuInsight, {
     required bool isDarkMode,
-  }) => LuckyItemWidgets.buildSajuLuckyItems(
-    sajuInsight,
-    isDarkMode: isDarkMode,
-  );
+  }) =>
+      LuckyItemWidgets.buildSajuLuckyItems(
+        sajuInsight,
+        isDarkMode: isDarkMode,
+      );
 
   // ========== Category Widgets ==========
 
@@ -130,10 +139,11 @@ class FortuneInfographicWidgets {
   static Widget buildCategoryCards(
     Map<String, dynamic> categories, {
     required bool isDarkMode,
-  }) => CategoryWidgets.buildCategoryCards(
-    categories,
-    isDarkMode: isDarkMode,
-  );
+  }) =>
+      CategoryWidgets.buildCategoryCards(
+        categories,
+        isDarkMode: isDarkMode,
+      );
 
   /// Fortune summary with user profile information
   static Widget buildTossStyleFortuneSummary({
@@ -141,21 +151,23 @@ class FortuneInfographicWidgets {
     String? userZodiacAnimal,
     String? userZodiacSign,
     String? userMBTI,
-  }) => CategoryWidgets.buildTossStyleFortuneSummary(
-    fortuneSummary: fortuneSummary,
-    userZodiacAnimal: userZodiacAnimal,
-    userZodiacSign: userZodiacSign,
-    userMBTI: userMBTI,
-  );
+  }) =>
+      CategoryWidgets.buildTossStyleFortuneSummary(
+        fortuneSummary: fortuneSummary,
+        userZodiacAnimal: userZodiacAnimal,
+        userZodiacSign: userZodiacSign,
+        userMBTI: userMBTI,
+      );
 
   /// AI insights card with real data display
   static Widget buildAIInsightsCard({
     String? insight,
     List<String>? tips,
-  }) => CategoryWidgets.buildAIInsightsCard(
-    insight: insight,
-    tips: tips,
-  );
+  }) =>
+      CategoryWidgets.buildAIInsightsCard(
+        insight: insight,
+        tips: tips,
+      );
 
   // ========== Chart Widgets ==========
 
@@ -164,22 +176,24 @@ class FortuneInfographicWidgets {
     required Map<String, int> scores,
     double? size,
     Color? primaryColor,
-  }) => ChartWidgets.buildRadarChart(
-    scores: scores,
-    size: size,
-    primaryColor: primaryColor,
-  );
+  }) =>
+      ChartWidgets.buildRadarChart(
+        scores: scores,
+        size: size,
+        primaryColor: primaryColor,
+      );
 
   /// Timeline chart with real hourly data
   static Widget buildTimelineChart({
     required List<int> hourlyScores,
     required int currentHour,
     required double height,
-  }) => ChartWidgets.buildTimelineChart(
-    hourlyScores: hourlyScores,
-    currentHour: currentHour,
-    height: height,
-  );
+  }) =>
+      ChartWidgets.buildTimelineChart(
+        hourlyScores: hourlyScores,
+        currentHour: currentHour,
+        height: height,
+      );
 
   // ========== Misc Widgets ==========
 
@@ -187,52 +201,57 @@ class FortuneInfographicWidgets {
   static Widget buildActionChecklist(
     List<Map<String, dynamic>>? actions, {
     required bool isDarkMode,
-  }) => MiscWidgets.buildActionChecklist(
-    actions,
-    isDarkMode: isDarkMode,
-  );
+  }) =>
+      MiscWidgets.buildActionChecklist(
+        actions,
+        isDarkMode: isDarkMode,
+      );
 
   /// Weather fortune widget
   static Widget buildWeatherFortune(
     Map<String, dynamic>? weatherSummary,
     int score,
-  ) => MiscWidgets.buildWeatherFortune(
-    weatherSummary,
-    score,
-  );
+  ) =>
+      MiscWidgets.buildWeatherFortune(
+        weatherSummary,
+        score,
+      );
 
   /// Shareable card (placeholder implementation)
   static Widget buildShareableCard(Map<String, dynamic>? shareCard) =>
-    MiscWidgets.buildShareableCard(shareCard);
+      MiscWidgets.buildShareableCard(shareCard);
 
   /// Celebrity list (placeholder implementation)
   static Widget buildTossStyleCelebrityList({
     required String title,
     required String subtitle,
     required List<Map<String, dynamic>> celebrities,
-  }) => MiscWidgets.buildTossStyleCelebrityList(
-    title: title,
-    subtitle: subtitle,
-    celebrities: celebrities,
-  );
+  }) =>
+      MiscWidgets.buildTossStyleCelebrityList(
+        title: title,
+        subtitle: subtitle,
+        celebrities: celebrities,
+      );
 
   /// Age fortune card (placeholder implementation)
   static Widget buildTossStyleAgeFortuneCard({
     required int userAge,
     String? ageDescription,
     int? ageScore,
-  }) => MiscWidgets.buildTossStyleAgeFortuneCard(
-    userAge: userAge,
-    ageDescription: ageDescription,
-    ageScore: ageScore,
-  );
+  }) =>
+      MiscWidgets.buildTossStyleAgeFortuneCard(
+        userAge: userAge,
+        ageDescription: ageDescription,
+        ageScore: ageScore,
+      );
 
   /// Share section (placeholder implementation)
   static Widget buildTossStyleShareSection({
     VoidCallback? onShare,
     VoidCallback? onSaveImage,
-  }) => MiscWidgets.buildTossStyleShareSection(
-    onShare: onShare,
-    onSaveImage: onSaveImage,
-  );
+  }) =>
+      MiscWidgets.buildTossStyleShareSection(
+        onShare: onShare,
+        onSaveImage: onSaveImage,
+      );
 }

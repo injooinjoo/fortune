@@ -12,12 +12,14 @@ import '../../../../presentation/providers/providers.dart';
 // ============================================================================
 
 // Provider for dream entries
-final dreamEntriesProvider = StateNotifierProvider<DreamEntriesNotifier, List<DreamEntry>>(
+final dreamEntriesProvider =
+    StateNotifierProvider<DreamEntriesNotifier, List<DreamEntry>>(
   (ref) => DreamEntriesNotifier(),
 );
 
 // Provider for dream analysis
-final dreamAnalysisProvider = StateNotifierProvider.family<DreamAnalysisNotifier, AsyncValue<DreamAnalysis?>, String>(
+final dreamAnalysisProvider = StateNotifierProvider.family<
+    DreamAnalysisNotifier, AsyncValue<DreamAnalysis?>, String>(
   (ref, dreamId) => DreamAnalysisNotifier(ref, dreamId),
 );
 
@@ -25,8 +27,10 @@ final dreamAnalysisProvider = StateNotifierProvider.family<DreamAnalysisNotifier
 // Dream Interpretation Providers (꿈 해몽 - DreamInterpretationPage)
 // ============================================================================
 
-final dreamInterpretationProvider = StateNotifierProvider.family<DreamInterpretationNotifier, AsyncValue<DreamAnalysisResult?>, DreamInput>(
-  (ref, input) => DreamInterpretationNotifier(ref, input));
+final dreamInterpretationProvider = StateNotifierProvider.family<
+    DreamInterpretationNotifier,
+    AsyncValue<DreamAnalysisResult?>,
+    DreamInput>((ref, input) => DreamInterpretationNotifier(ref, input));
 
 class DreamEntriesNotifier extends StateNotifier<List<DreamEntry>> {
   DreamEntriesNotifier() : super([]) {
@@ -70,7 +74,8 @@ class DreamAnalysisNotifier extends StateNotifier<AsyncValue<DreamAnalysis?>> {
   final Ref ref;
   final String dreamId;
 
-  DreamAnalysisNotifier(this.ref, this.dreamId) : super(const AsyncValue.loading()) {
+  DreamAnalysisNotifier(this.ref, this.dreamId)
+      : super(const AsyncValue.loading()) {
     _analyzeDream();
   }
 
@@ -79,11 +84,11 @@ class DreamAnalysisNotifier extends StateNotifier<AsyncValue<DreamAnalysis?>> {
       // In real app, this would call the API
       await Future.delayed(const Duration(seconds: 2));
 
-      state = AsyncValue.data(
-        DreamAnalysis(
+      state = AsyncValue.data(DreamAnalysis(
           dreamType: '길몽',
           overallLuck: 85,
-          interpretation: '하늘을 나는 꿈은 자유와 성취를 상징합니다. 현재 당신이 추구하는 목표에 대한 강한 의지와 가능성을 나타냅니다.',
+          interpretation:
+              '하늘을 나는 꿈은 자유와 성취를 상징합니다. 현재 당신이 추구하는 목표에 대한 강한 의지와 가능성을 나타냅니다.',
           symbols: ['하늘', '비행', '자유', '성취'],
           advice: '이 시기에 새로운 도전을 시작하면 좋은 결과를 얻을 수 있습니다.'));
     } catch (e, stack) {
@@ -92,11 +97,13 @@ class DreamAnalysisNotifier extends StateNotifier<AsyncValue<DreamAnalysis?>> {
   }
 }
 
-class DreamInterpretationNotifier extends StateNotifier<AsyncValue<DreamAnalysisResult?>> {
+class DreamInterpretationNotifier
+    extends StateNotifier<AsyncValue<DreamAnalysisResult?>> {
   final Ref ref;
   final DreamInput input;
 
-  DreamInterpretationNotifier(this.ref, this.input) : super(const AsyncValue.loading()) {
+  DreamInterpretationNotifier(this.ref, this.input)
+      : super(const AsyncValue.loading()) {
     _analyzeDream();
   }
 

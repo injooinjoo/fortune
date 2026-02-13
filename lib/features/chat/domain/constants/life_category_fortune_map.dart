@@ -99,7 +99,12 @@ const Map<String, List<String>> subConcernFortuneMap = {
   'promotion': ['career', 'daily', 'tarot', 'coaching'],
   'exam_certification': ['exam', 'daily', 'coaching', 'breathing'],
   'career_path': ['talent', 'personalityDna', 'coaching', 'decision'],
-  'workplace_relations': ['compatibility', 'coaching', 'breathing', 'dailyReview'],
+  'workplace_relations': [
+    'compatibility',
+    'coaching',
+    'breathing',
+    'dailyReview'
+  ],
 
   // ============ 건강/웰빙 세부 ============
   'physical_health': ['health', 'exercise', 'biorhythm', 'daily'],

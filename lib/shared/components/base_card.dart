@@ -19,19 +19,19 @@ class BaseCard extends StatelessWidget {
   final Border? border;
   final Gradient? gradient;
 
-  const BaseCard({
-    super.key,
-    required this.child,
-    this.padding,
-    this.margin,
-    this.width,
-    this.height,
-    this.borderRadius,
-    this.boxShadow,
-    this.onTap,
-    this.backgroundColor,
-    this.border,
-    this.gradient});
+  const BaseCard(
+      {super.key,
+      required this.child,
+      this.padding,
+      this.margin,
+      this.width,
+      this.height,
+      this.borderRadius,
+      this.boxShadow,
+      this.onTap,
+      this.backgroundColor,
+      this.border,
+      this.gradient});
 
   @override
   Widget build(BuildContext context) {
@@ -41,26 +41,26 @@ class BaseCard extends StatelessWidget {
     final cardColor = backgroundColor ?? colors.surface;
 
     final Widget content = Container(
-      width: width,
-      height: height,
-      margin: margin,
-      decoration: BoxDecoration(
-        color: gradient != null ? null : cardColor,
-        gradient: gradient,
-        borderRadius: borderRadius ?? BorderRadius.circular(DSRadius.lg),
-        boxShadow: boxShadow ?? shadows.card,
-        border: border),
-      child: Padding(
-        padding: padding ?? const EdgeInsets.all(DSSpacing.lg),
-        child: child));
+        width: width,
+        height: height,
+        margin: margin,
+        decoration: BoxDecoration(
+            color: gradient != null ? null : cardColor,
+            gradient: gradient,
+            borderRadius: borderRadius ?? BorderRadius.circular(DSRadius.lg),
+            boxShadow: boxShadow ?? shadows.card,
+            border: border),
+        child: Padding(
+            padding: padding ?? const EdgeInsets.all(DSSpacing.lg),
+            child: child));
 
     if (onTap != null) {
       return Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: borderRadius ?? BorderRadius.circular(DSRadius.lg),
-          child: content));
+          color: Colors.transparent,
+          child: InkWell(
+              onTap: onTap,
+              borderRadius: borderRadius ?? BorderRadius.circular(DSRadius.lg),
+              child: content));
     }
 
     return content;
@@ -77,35 +77,36 @@ class PremiumCard extends StatelessWidget {
   final double? height;
   final VoidCallback? onTap;
 
-  const PremiumCard({
-    super.key,
-    required this.child,
-    this.padding,
-    this.margin,
-    this.width,
-    this.height,
-    this.onTap});
+  const PremiumCard(
+      {super.key,
+      required this.child,
+      this.padding,
+      this.margin,
+      this.width,
+      this.height,
+      this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final fortuneTheme = context.fortuneTheme;
-    
+
     return BaseCard(
-      padding: padding,
-      margin: margin,
-      width: width,
-      height: height,
-      onTap: onTap,
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          fortuneTheme.fortuneGradientStart,
-          fortuneTheme.fortuneGradientEnd]),
-      border: Border.all(
-        color: fortuneTheme.fortuneGradientStart.withValues(alpha: 0.3),
-        width: 1),
-      child: child);
+        padding: padding,
+        margin: margin,
+        width: width,
+        height: height,
+        onTap: onTap,
+        gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              fortuneTheme.fortuneGradientStart,
+              fortuneTheme.fortuneGradientEnd
+            ]),
+        border: Border.all(
+            color: fortuneTheme.fortuneGradientStart.withValues(alpha: 0.3),
+            width: 1),
+        child: child);
   }
 }
 
@@ -118,13 +119,13 @@ class InfoCard extends StatelessWidget {
   final Widget? trailing;
   final VoidCallback? onTap;
 
-  const InfoCard({
-    super.key,
-    required this.title,
-    this.subtitle,
-    this.leading,
-    this.trailing,
-    this.onTap});
+  const InfoCard(
+      {super.key,
+      required this.title,
+      this.subtitle,
+      this.leading,
+      this.trailing,
+      this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -138,16 +139,16 @@ class InfoCard extends StatelessWidget {
         children: [
           if (leading != null) ...[
             leading!,
-            const SizedBox(width: DSSpacing.md)],
+            const SizedBox(width: DSSpacing.md)
+          ],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: typography.bodyMedium.copyWith(
-                    color: colors.textPrimary,
-                    fontWeight: FontWeight.w600)),
+                Text(title,
+                    style: typography.bodyMedium.copyWith(
+                        color: colors.textPrimary,
+                        fontWeight: FontWeight.w600)),
                 if (subtitle != null) ...[
                   const SizedBox(height: DSSpacing.xxs),
                   Text(

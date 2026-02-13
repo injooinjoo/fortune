@@ -26,7 +26,8 @@ class ChatSurveyState {
     bool clearProgress = false,
   }) {
     return ChatSurveyState(
-      activeProgress: clearProgress ? null : (activeProgress ?? this.activeProgress),
+      activeProgress:
+          clearProgress ? null : (activeProgress ?? this.activeProgress),
       isCompleted: isCompleted ?? this.isCompleted,
       completedData: completedData ?? this.completedData,
       completedType: completedType ?? this.completedType,
@@ -40,7 +41,8 @@ class ChatSurveyNotifier extends StateNotifier<ChatSurveyState> {
 
   /// 설문 시작
   /// [initialAnswers]: 프로필에서 자동으로 가져온 값 (예: 성별)
-  void startSurvey(FortuneSurveyType type, {Map<String, dynamic>? initialAnswers}) {
+  void startSurvey(FortuneSurveyType type,
+      {Map<String, dynamic>? initialAnswers}) {
     final config = surveyConfigs[type];
     if (config == null) return;
 

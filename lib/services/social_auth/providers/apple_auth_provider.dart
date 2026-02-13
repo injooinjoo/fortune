@@ -26,7 +26,8 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
         return await _signInWithAppleOAuth();
       }
     } catch (error) {
-      Logger.warning('[AppleAuthProvider] Apple 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
+      Logger.warning(
+          '[AppleAuthProvider] Apple 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
       rethrow;
     }
   }
@@ -78,7 +79,8 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
           name: '${credential.givenName ?? ''} ${credential.familyName ?? ''}',
           provider: 'apple',
         ).catchError((error) {
-          Logger.warning('[AppleAuthProvider] 백그라운드 프로필 업데이트 실패 (선택적 기능, 나중에 재시도): $error');
+          Logger.warning(
+              '[AppleAuthProvider] 백그라운드 프로필 업데이트 실패 (선택적 기능, 나중에 재시도): $error');
         });
       }
 
@@ -86,7 +88,8 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
     } on SignInWithAppleAuthorizationException catch (e) {
       return _handleAppleError(e);
     } catch (error) {
-      Logger.warning('[AppleAuthProvider] 네이티브 Apple 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
+      Logger.warning(
+          '[AppleAuthProvider] 네이티브 Apple 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
 
       if (error.toString().contains('not available') ||
           error.toString().contains('simulator')) {
@@ -101,20 +104,26 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
       Logger.info('User canceled Apple Sign-In');
       return null;
     } else if (e.code == AuthorizationErrorCode.failed) {
-      Logger.warning('[AppleAuthProvider] Apple 로그인 인증 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $e');
+      Logger.warning(
+          '[AppleAuthProvider] Apple 로그인 인증 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $e');
       throw Exception('Apple 로그인 인증에 실패했습니다. 다시 시도해주세요.');
     } else if (e.code == AuthorizationErrorCode.invalidResponse) {
-      Logger.warning('[AppleAuthProvider] Apple 로그인 응답 오류 (선택적 기능, 다른 로그인 방법 사용 권장): $e');
+      Logger.warning(
+          '[AppleAuthProvider] Apple 로그인 응답 오류 (선택적 기능, 다른 로그인 방법 사용 권장): $e');
       throw Exception('Apple 서버 응답 오류가 발생했습니다.');
     } else if (e.code == AuthorizationErrorCode.notHandled) {
-      Logger.warning('[AppleAuthProvider] Apple 로그인 처리 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $e');
+      Logger.warning(
+          '[AppleAuthProvider] Apple 로그인 처리 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $e');
       throw Exception('Apple 로그인을 처리할 수 없습니다.');
     } else if (e.code == AuthorizationErrorCode.unknown) {
-      Logger.warning('[AppleAuthProvider] Apple 로그인 알 수 없는 오류 (선택적 기능, 다른 로그인 방법 사용 권장): ${e.code}');
-      Logger.warning('[AppleAuthProvider] Apple 로그인 에러 메시지 (선택적 기능, 다른 로그인 방법 사용 권장): ${e.message}');
+      Logger.warning(
+          '[AppleAuthProvider] Apple 로그인 알 수 없는 오류 (선택적 기능, 다른 로그인 방법 사용 권장): ${e.code}');
+      Logger.warning(
+          '[AppleAuthProvider] Apple 로그인 에러 메시지 (선택적 기능, 다른 로그인 방법 사용 권장): ${e.message}');
 
       if (e.message.contains('1000') || e.toString().contains('1000')) {
-        Logger.warning('[AppleAuthProvider] Apple 로그인 오류 1000 발생 (선택적 기능, 설정 확인 필요): 설정 문제 감지됨');
+        Logger.warning(
+            '[AppleAuthProvider] Apple 로그인 오류 1000 발생 (선택적 기능, 설정 확인 필요): 설정 문제 감지됨');
         throw Exception('Apple ID 설정을 확인해주세요');
       }
 
@@ -123,7 +132,8 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
       }
       throw Exception('알 수 없는 오류가 발생했습니다. (${e.code})');
     } else {
-      Logger.warning('[AppleAuthProvider] Apple 로그인 오류 (선택적 기능, 다른 로그인 방법 사용 권장): $e');
+      Logger.warning(
+          '[AppleAuthProvider] Apple 로그인 오류 (선택적 기능, 다른 로그인 방법 사용 권장): $e');
       throw Exception('Apple 로그인 중 오류가 발생했습니다.');
     }
   }
@@ -147,7 +157,8 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
       Logger.securityCheckpoint('Apple OAuth sign in initiated');
       return null;
     } catch (error) {
-      Logger.warning('[AppleAuthProvider] Apple OAuth 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
+      Logger.warning(
+          '[AppleAuthProvider] Apple OAuth 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
       rethrow;
     }
   }

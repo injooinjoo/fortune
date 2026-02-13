@@ -43,7 +43,10 @@ class StatsRadarChart extends StatelessWidget {
               RadarChartData(
                 dataSets: [
                   RadarDataSet(
-                    fillColor: Theme.of(context).colorScheme.primary.withValues(alpha: isDark ? 0.3 : 0.2),
+                    fillColor: Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: isDark ? 0.3 : 0.2),
                     borderColor: Theme.of(context).colorScheme.primary,
                     borderWidth: 2,
                     entryRadius: 4,

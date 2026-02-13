@@ -58,7 +58,6 @@ class DeepInterpretationPage extends StatelessWidget {
               ),
             ),
           ],
-
           if (tarotCardInfo?.spiritualMeaning != null) ...[
             const SizedBox(height: 32),
             Text(

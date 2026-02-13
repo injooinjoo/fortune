@@ -10,10 +10,8 @@ class BirthDateEditDialog extends StatefulWidget {
   final DateTime? initialDate;
   final Function(DateTime) onSave;
 
-  const BirthDateEditDialog({
-    super.key,
-    this.initialDate,
-    required this.onSave});
+  const BirthDateEditDialog(
+      {super.key, this.initialDate, required this.onSave});
 
   @override
   State<BirthDateEditDialog> createState() => _BirthDateEditDialogState();
@@ -31,7 +29,7 @@ class _BirthDateEditDialogState extends State<BirthDateEditDialog> {
 
   void _handleSave() async {
     setState(() => _isLoading = true);
-    
+
     try {
       await widget.onSave(_selectedDate);
       if (mounted) {
@@ -39,8 +37,7 @@ class _BirthDateEditDialogState extends State<BirthDateEditDialog> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text('오류가 발생했습니다: ${e.toString()}'),
             backgroundColor: DSColors.error));
       }
@@ -63,21 +60,18 @@ class _BirthDateEditDialogState extends State<BirthDateEditDialog> {
           Container(
             padding: AppSpacing.paddingAll16,
             decoration: BoxDecoration(
-              color: context.colors.surface,
-              borderRadius: AppDimensions.borderRadiusMedium,
-          border: Border.all(
-            color: DSColors.borderDark)),
+                color: context.colors.surface,
+                borderRadius: AppDimensions.borderRadiusMedium,
+                border: Border.all(color: DSColors.borderDark)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
-                  Icons.cake,
-                  color: DSColors.accentDark,
-                  size: AppDimensions.iconSizeSmall),
+                const Icon(Icons.cake,
+                    color: DSColors.accentDark,
+                    size: AppDimensions.iconSizeSmall),
                 const SizedBox(width: AppSpacing.spacing2),
-                Text(
-                  DateFormat('yyyy년 MM월 dd일').format(_selectedDate),
-                  style: Theme.of(context).textTheme.titleMedium),
+                Text(DateFormat('yyyy년 MM월 dd일').format(_selectedDate),
+                    style: Theme.of(context).textTheme.titleMedium),
               ],
             ),
           ),
@@ -85,14 +79,14 @@ class _BirthDateEditDialogState extends State<BirthDateEditDialog> {
           SizedBox(
             height: 300,
             child: CustomCalendarDatePicker(
-              initialDate: _selectedDate,
-              firstDate: DateTime(1900),
-              lastDate: DateTime.now(),
-              onDateChanged: (date) {
-                setState(() {
-                  _selectedDate = date;
-                });
-              }),
+                initialDate: _selectedDate,
+                firstDate: DateTime(1900),
+                lastDate: DateTime.now(),
+                onDateChanged: (date) {
+                  setState(() {
+                    _selectedDate = date;
+                  });
+                }),
           ),
         ],
       ),

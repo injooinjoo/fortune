@@ -22,8 +22,8 @@ class LandingLoadingScreen extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               '로그인 상태를 확인하고 있습니다...',
-              style: context.labelMedium.copyWith(
-                  color: context.colors.textSecondary),
+              style: context.labelMedium
+                  .copyWith(color: context.colors.textSecondary),
             ),
           ],
         ),

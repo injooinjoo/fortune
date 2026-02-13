@@ -24,13 +24,13 @@ class SajuElementChart extends StatefulWidget {
 class _SajuElementChartState extends State<SajuElementChart> {
   late Animation<double> _chartAnimation;
   late Animation<double> _titleAnimation;
-  
+
   int? _touchedIndex;
 
   @override
   void initState() {
     super.initState();
-    
+
     _titleAnimation = Tween<double>(
       begin: 0,
       end: 1,
@@ -38,7 +38,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
       parent: widget.animationController,
       curve: const Interval(0.3, 0.5, curve: Curves.easeOut),
     ));
-    
+
     _chartAnimation = Tween<double>(
       begin: 0,
       end: 1,
@@ -131,7 +131,8 @@ class _SajuElementChartState extends State<SajuElementChart> {
   Widget _buildPieChart(BuildContext context, bool isDark) {
     final colors = context.colors;
     final typography = context.typography;
-    final totalCount = widget.elementBalance.values.fold<double>(0, (sum, count) => sum + (count is num ? count.toDouble() : 0));
+    final totalCount = widget.elementBalance.values.fold<double>(
+        0, (sum, count) => sum + (count is num ? count.toDouble() : 0));
 
     if (totalCount == 0) {
       return SizedBox(
@@ -160,7 +161,8 @@ class _SajuElementChartState extends State<SajuElementChart> {
                   _touchedIndex = -1;
                   return;
                 }
-                _touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                _touchedIndex =
+                    pieTouchResponse.touchedSection!.touchedSectionIndex;
               });
 
               // 탭 시 바텀시트 표시
@@ -168,7 +170,8 @@ class _SajuElementChartState extends State<SajuElementChart> {
                   pieTouchResponse != null &&
                   pieTouchResponse.touchedSection != null) {
                 final elements = ['목', '화', '토', '금', '수'];
-                final touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                final touchedIndex =
+                    pieTouchResponse.touchedSection!.touchedSectionIndex;
                 if (touchedIndex >= 0 && touchedIndex < elements.length) {
                   final element = elements[touchedIndex];
                   final data = SajuExplanations.ohangElements[element];
@@ -209,7 +212,8 @@ class _SajuElementChartState extends State<SajuElementChart> {
   List<PieChartSectionData> _buildPieChartSections(BuildContext context) {
     final typography = context.typography;
     final elements = ['목', '화', '토', '금', '수'];
-    final totalCount = widget.elementBalance.values.fold<double>(0, (sum, count) => sum + (count is num ? count.toDouble() : 0));
+    final totalCount = widget.elementBalance.values.fold<double>(
+        0, (sum, count) => sum + (count is num ? count.toDouble() : 0));
 
     return elements.asMap().entries.map((entry) {
       final index = entry.key;
@@ -418,7 +422,8 @@ class _SajuElementChartState extends State<SajuElementChart> {
     );
   }
 
-  Widget _buildAnalysisItem(BuildContext context, String title, String element, String interpretation, Color color, IconData icon, bool isDark) {
+  Widget _buildAnalysisItem(BuildContext context, String title, String element,
+      String interpretation, Color color, IconData icon, bool isDark) {
     final colors = context.colors;
     final typography = context.typography;
     return Row(
@@ -454,7 +459,8 @@ class _SajuElementChartState extends State<SajuElementChart> {
                   ),
                   const SizedBox(width: 4),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
                     decoration: BoxDecoration(
                       color: color,
                       borderRadius: BorderRadius.circular(6),
@@ -498,7 +504,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
         maxElement = element;
       }
     });
-    
+
     final interpretations = {
       '목': '성장과 발전 욕구가 강하고 적극적인 성격입니다',
       '화': '열정적이고 활동적이며 리더십이 뛰어납니다',
@@ -506,7 +512,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
       '금': '원칙적이고 정의로우며 결단력이 있습니다',
       '수': '지혜롭고 유연하며 적응력이 뛰어납니다',
     };
-    
+
     return {
       'element': maxElement,
       'interpretation': interpretations[maxElement] ?? '균형잡힌 성격입니다',
@@ -524,7 +530,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
         minElement = element;
       }
     });
-    
+
     final interpretations = {
       '목': '새로운 도전과 성장이 필요한 시기입니다',
       '화': '열정과 적극성을 키워나가면 좋겠습니다',
@@ -532,7 +538,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
       '금': '원칙과 의지력을 강화하면 도움이 됩니다',
       '수': '유연함과 지혜를 기를 필요가 있습니다',
     };
-    
+
     return {
       'element': minElement,
       'interpretation': interpretations[minElement] ?? '보완이 필요합니다',

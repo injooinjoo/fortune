@@ -198,7 +198,6 @@ void main() {
         expect(find.text('주의사항'), findsOneWidget);
       });
     });
-
   });
 }
 
@@ -236,8 +235,11 @@ class _MockBiorhythmPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('바이오리듬', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                IconButton(icon: const Icon(Icons.calendar_today), onPressed: () {}),
+                const Text('바이오리듬',
+                    style:
+                        TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                IconButton(
+                    icon: const Icon(Icons.calendar_today), onPressed: () {}),
               ],
             ),
             const SizedBox(height: 16),
@@ -246,9 +248,11 @@ class _MockBiorhythmPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                IconButton(icon: const Icon(Icons.chevron_left), onPressed: () {}),
+                IconButton(
+                    icon: const Icon(Icons.chevron_left), onPressed: () {}),
                 const Text('2024년 12월 7일'),
-                IconButton(icon: const Icon(Icons.chevron_right), onPressed: () {}),
+                IconButton(
+                    icon: const Icon(Icons.chevron_right), onPressed: () {}),
               ],
             ),
             const SizedBox(height: 16),
@@ -257,9 +261,15 @@ class _MockBiorhythmPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ChoiceChip(label: const Text('주간'), selected: true, onSelected: (_) {}),
+                ChoiceChip(
+                    label: const Text('주간'),
+                    selected: true,
+                    onSelected: (_) {}),
                 const SizedBox(width: 8),
-                ChoiceChip(label: const Text('월간'), selected: false, onSelected: (_) {}),
+                ChoiceChip(
+                    label: const Text('월간'),
+                    selected: false,
+                    onSelected: (_) {}),
               ],
             ),
             const SizedBox(height: 24),
@@ -276,10 +286,26 @@ class _MockBiorhythmPage extends StatelessWidget {
             const SizedBox(height: 24),
 
             // 리듬 수치
-            _RhythmCard(title: '신체', value: physical, status: _getStatus(physical), color: Colors.red),
-            _RhythmCard(title: '감정', value: emotional, status: _getStatus(emotional), color: Colors.blue),
-            _RhythmCard(title: '지성', value: intellectual, status: _getStatus(intellectual), color: Colors.green),
-            _RhythmCard(title: '직관', value: intuitive, status: _getStatus(intuitive), color: Colors.purple),
+            _RhythmCard(
+                title: '신체',
+                value: physical,
+                status: _getStatus(physical),
+                color: Colors.red),
+            _RhythmCard(
+                title: '감정',
+                value: emotional,
+                status: _getStatus(emotional),
+                color: Colors.blue),
+            _RhythmCard(
+                title: '지성',
+                value: intellectual,
+                status: _getStatus(intellectual),
+                color: Colors.green),
+            _RhythmCard(
+                title: '직관',
+                value: intuitive,
+                status: _getStatus(intuitive),
+                color: Colors.purple),
 
             const SizedBox(height: 16),
             const Card(
@@ -296,7 +322,6 @@ class _MockBiorhythmPage extends StatelessWidget {
                 subtitle: Text('격한 운동은 피하세요'),
               ),
             ),
-
           ],
         ),
       ),
@@ -337,12 +362,15 @@ class _RhythmCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(title,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
                   Text(status, style: TextStyle(color: Colors.grey.shade600)),
                 ],
               ),
             ),
-            Text('$value%', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: color)),
+            Text('$value%',
+                style: TextStyle(
+                    fontSize: 24, fontWeight: FontWeight.bold, color: color)),
           ],
         ),
       ),

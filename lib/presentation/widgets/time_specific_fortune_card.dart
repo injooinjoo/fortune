@@ -61,7 +61,8 @@ class TimeSpecificFortuneCard extends StatelessWidget {
                         Text(
                           fortune.title,
                           style: theme.textTheme.bodyLarge?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                            color: theme.colorScheme.onSurface
+                                .withValues(alpha: 0.8),
                           ),
                         ),
                       ],
@@ -159,7 +160,8 @@ class TimeSpecificFortuneList extends StatefulWidget {
   });
 
   @override
-  State<TimeSpecificFortuneList> createState() => _TimeSpecificFortuneListState();
+  State<TimeSpecificFortuneList> createState() =>
+      _TimeSpecificFortuneListState();
 }
 
 class _TimeSpecificFortuneListState extends State<TimeSpecificFortuneList> {

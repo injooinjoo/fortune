@@ -65,8 +65,8 @@ class TriggerCardWidget extends StatelessWidget {
                           children: [
                             if (item.time != null)
                               Padding(
-                                padding:
-                                    const EdgeInsets.only(bottom: DSSpacing.xxs),
+                                padding: const EdgeInsets.only(
+                                    bottom: DSSpacing.xxs),
                                 child: Text(
                                   '${item.time!.month}/${item.time!.day} '
                                   '${item.time!.hour.toString().padLeft(2, '0')}:'

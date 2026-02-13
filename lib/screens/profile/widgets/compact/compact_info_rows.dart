@@ -65,9 +65,8 @@ class CompactJijangganRow extends StatelessWidget {
         vertical: DSSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: isDark
-            ? context.colors.backgroundSecondary
-            : Colors.grey.shade50,
+        color:
+            isDark ? context.colors.backgroundSecondary : Colors.grey.shade50,
         borderRadius: BorderRadius.circular(DSRadius.sm),
       ),
       child: Row(
@@ -157,7 +156,9 @@ class CompactTwelveStagesRow extends StatelessWidget {
 
   List<String> _calculateTwelveStages() {
     final dayData = sajuData['day'] as Map<String, dynamic>?;
-    final dayStem = (dayData?['cheongan'] as Map<String, dynamic>?)?['char'] as String? ?? '';
+    final dayStem =
+        (dayData?['cheongan'] as Map<String, dynamic>?)?['char'] as String? ??
+            '';
 
     if (dayStem.isEmpty) {
       return ['-', '-', '-', '-'];
@@ -195,9 +196,8 @@ class CompactTwelveStagesRow extends StatelessWidget {
         vertical: DSSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: isDark
-            ? context.colors.backgroundSecondary
-            : Colors.grey.shade50,
+        color:
+            isDark ? context.colors.backgroundSecondary : Colors.grey.shade50,
         borderRadius: BorderRadius.circular(DSRadius.sm),
       ),
       child: Row(
@@ -315,36 +315,66 @@ class CompactNapeumRow extends StatelessWidget {
   String _getNapeum(String stem, String branch) {
     // 60갑자 납음오행 테이블
     const napeumTable = {
-      '갑자': '해중금', '을축': '해중금',
-      '병인': '노중화', '정묘': '노중화',
-      '무진': '대림목', '기사': '대림목',
-      '경오': '노방토', '신미': '노방토',
-      '임신': '검봉금', '계유': '검봉금',
-      '갑술': '산두화', '을해': '산두화',
-      '병자': '간하수', '정축': '간하수',
-      '무인': '성두토', '기묘': '성두토',
-      '경진': '백납금', '신사': '백납금',
-      '임오': '양류목', '계미': '양류목',
-      '갑신': '천중수', '을유': '천중수',
-      '병술': '옥상토', '정해': '옥상토',
-      '무자': '벽력화', '기축': '벽력화',
-      '경인': '송백목', '신묘': '송백목',
-      '임진': '장류수', '계사': '장류수',
-      '갑오': '사중금', '을미': '사중금',
-      '병신': '산하화', '정유': '산하화',
-      '무술': '평지목', '기해': '평지목',
-      '경자': '벽상토', '신축': '벽상토',
-      '임인': '금박금', '계묘': '금박금',
-      '갑진': '복등화', '을사': '복등화',
-      '병오': '천하수', '정미': '천하수',
-      '무신': '대역토', '기유': '대역토',
-      '경술': '차천금', '신해': '차천금',
-      '임자': '상자목', '계축': '상자목',
-      '갑인': '대계수', '을묘': '대계수',
-      '병진': '사중토', '정사': '사중토',
-      '무오': '천상화', '기미': '천상화',
-      '경신': '석류목', '신유': '석류목',
-      '임술': '대해수', '계해': '대해수',
+      '갑자': '해중금',
+      '을축': '해중금',
+      '병인': '노중화',
+      '정묘': '노중화',
+      '무진': '대림목',
+      '기사': '대림목',
+      '경오': '노방토',
+      '신미': '노방토',
+      '임신': '검봉금',
+      '계유': '검봉금',
+      '갑술': '산두화',
+      '을해': '산두화',
+      '병자': '간하수',
+      '정축': '간하수',
+      '무인': '성두토',
+      '기묘': '성두토',
+      '경진': '백납금',
+      '신사': '백납금',
+      '임오': '양류목',
+      '계미': '양류목',
+      '갑신': '천중수',
+      '을유': '천중수',
+      '병술': '옥상토',
+      '정해': '옥상토',
+      '무자': '벽력화',
+      '기축': '벽력화',
+      '경인': '송백목',
+      '신묘': '송백목',
+      '임진': '장류수',
+      '계사': '장류수',
+      '갑오': '사중금',
+      '을미': '사중금',
+      '병신': '산하화',
+      '정유': '산하화',
+      '무술': '평지목',
+      '기해': '평지목',
+      '경자': '벽상토',
+      '신축': '벽상토',
+      '임인': '금박금',
+      '계묘': '금박금',
+      '갑진': '복등화',
+      '을사': '복등화',
+      '병오': '천하수',
+      '정미': '천하수',
+      '무신': '대역토',
+      '기유': '대역토',
+      '경술': '차천금',
+      '신해': '차천금',
+      '임자': '상자목',
+      '계축': '상자목',
+      '갑인': '대계수',
+      '을묘': '대계수',
+      '병진': '사중토',
+      '정사': '사중토',
+      '무오': '천상화',
+      '기미': '천상화',
+      '경신': '석류목',
+      '신유': '석류목',
+      '임술': '대해수',
+      '계해': '대해수',
     };
 
     final key = '$stem$branch';
@@ -364,9 +394,8 @@ class CompactNapeumRow extends StatelessWidget {
         vertical: DSSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: isDark
-            ? context.colors.backgroundSecondary
-            : Colors.grey.shade50,
+        color:
+            isDark ? context.colors.backgroundSecondary : Colors.grey.shade50,
         borderRadius: BorderRadius.circular(DSRadius.sm),
       ),
       child: Row(
@@ -451,9 +480,8 @@ class CompactSpecialInfoRow extends StatelessWidget {
         vertical: DSSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: isDark
-            ? context.colors.backgroundSecondary
-            : Colors.grey.shade50,
+        color:
+            isDark ? context.colors.backgroundSecondary : Colors.grey.shade50,
         borderRadius: BorderRadius.circular(DSRadius.sm),
       ),
       child: Row(
@@ -500,16 +528,66 @@ class CompactSpecialInfoRow extends StatelessWidget {
 
     // 공망 테이블 (일주별)
     const gongmangTable = {
-      '갑자': '술해', '을축': '술해', '병인': '술해', '정묘': '술해', '무진': '술해', '기사': '술해',
-      '갑오': '진사', '을미': '진사', '병신': '진사', '정유': '진사', '무술': '진사', '기해': '진사',
-      '갑인': '자축', '을묘': '자축', '병진': '자축', '정사': '자축', '무오': '자축', '기미': '자축',
-      '갑신': '오미', '을유': '오미', '병술': '오미', '정해': '오미', '무자': '오미', '기축': '오미',
-      '갑진': '인묘', '을사': '인묘', '병오': '인묘', '정미': '인묘', '무신': '인묘', '기유': '인묘',
-      '갑술': '신유', '을해': '신유', '병자': '신유', '정축': '신유', '무인': '신유', '기묘': '신유',
-      '경자': '신유', '신축': '신유', '임인': '신유', '계묘': '신유', '경오': '진사', '신미': '진사',
-      '임신': '진사', '계유': '진사', '경인': '자축', '신묘': '자축', '임진': '자축', '계사': '자축',
-      '경신': '오미', '신유': '오미', '임술': '오미', '계해': '오미', '경진': '인묘', '신사': '인묘',
-      '임오': '인묘', '계미': '인묘', '경술': '술해', '신해': '술해', '임자': '술해', '계축': '술해',
+      '갑자': '술해',
+      '을축': '술해',
+      '병인': '술해',
+      '정묘': '술해',
+      '무진': '술해',
+      '기사': '술해',
+      '갑오': '진사',
+      '을미': '진사',
+      '병신': '진사',
+      '정유': '진사',
+      '무술': '진사',
+      '기해': '진사',
+      '갑인': '자축',
+      '을묘': '자축',
+      '병진': '자축',
+      '정사': '자축',
+      '무오': '자축',
+      '기미': '자축',
+      '갑신': '오미',
+      '을유': '오미',
+      '병술': '오미',
+      '정해': '오미',
+      '무자': '오미',
+      '기축': '오미',
+      '갑진': '인묘',
+      '을사': '인묘',
+      '병오': '인묘',
+      '정미': '인묘',
+      '무신': '인묘',
+      '기유': '인묘',
+      '갑술': '신유',
+      '을해': '신유',
+      '병자': '신유',
+      '정축': '신유',
+      '무인': '신유',
+      '기묘': '신유',
+      '경자': '신유',
+      '신축': '신유',
+      '임인': '신유',
+      '계묘': '신유',
+      '경오': '진사',
+      '신미': '진사',
+      '임신': '진사',
+      '계유': '진사',
+      '경인': '자축',
+      '신묘': '자축',
+      '임진': '자축',
+      '계사': '자축',
+      '경신': '오미',
+      '신유': '오미',
+      '임술': '오미',
+      '계해': '오미',
+      '경진': '인묘',
+      '신사': '인묘',
+      '임오': '인묘',
+      '계미': '인묘',
+      '경술': '술해',
+      '신해': '술해',
+      '임자': '술해',
+      '계축': '술해',
     };
 
     final key = '$stem$branch';
@@ -528,11 +606,16 @@ class CompactSpecialInfoRow extends StatelessWidget {
 
     // 천을귀인 테이블 (일간별)
     const guiinTable = {
-      '갑': '축미', '을': '자신',
-      '병': '해유', '정': '해유',
-      '무': '축미', '기': '자신',
-      '경': '축미', '신': '인오',
-      '임': '묘사', '계': '묘사',
+      '갑': '축미',
+      '을': '자신',
+      '병': '해유',
+      '정': '해유',
+      '무': '축미',
+      '기': '자신',
+      '경': '축미',
+      '신': '인오',
+      '임': '묘사',
+      '계': '묘사',
     };
 
     return guiinTable[stem] ?? '-';

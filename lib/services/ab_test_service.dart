@@ -6,7 +6,8 @@ import '../core/utils/logger.dart';
 import '../core/services/resilient_service.dart';
 import '../models/ab_test_experiment.dart';
 import '../models/ab_test_variant.dart' show ABTestVariant, ControlVariant;
-import '../models/ab_test_result.dart' show ABTestResult, ConversionEvent, VariantResult;
+import '../models/ab_test_result.dart'
+    show ABTestResult, ConversionEvent, VariantResult;
 import 'analytics_service.dart';
 import 'remote_config_service.dart';
 
@@ -33,11 +34,11 @@ class ABTestService extends ResilientService {
   final Map<String, ABTestExperiment> _experiments = {};
   final Map<String, ABTestResult> _experimentResults = {};
   final Map<String, List<ConversionEvent>> _conversionEvents = {};
-  
+
   late SharedPreferences _prefs;
   bool _isInitialized = false;
   String? _userId;
-  
+
   // 실험 결과 추적을 위한 변수들
   final Map<String, int> _impressions = {};
   final Map<String, int> _conversions = {};
@@ -49,23 +50,19 @@ class ABTestService extends ResilientService {
   }) async {
     if (_isInitialized) return;
 
-    await safeExecute(
-      () async {
-        _prefs = prefs;
-        _userId = userId;
+    await safeExecute(() async {
+      _prefs = prefs;
+      _userId = userId;
 
-        // 저장된 변형 정보 로드
-        await _loadSavedVariants();
+      // 저장된 변형 정보 로드
+      await _loadSavedVariants();
 
-        // 실험 설정 로드
-        await _loadExperiments();
+      // 실험 설정 로드
+      await _loadExperiments();
 
-        _isInitialized = true;
-        Logger.info('ABTestService initialized with userId: $_userId');
-      },
-      'A/B 테스트 서비스 초기화',
-      'A/B 테스트 초기화 실패, 기본 설정 사용'
-    );
+      _isInitialized = true;
+      Logger.info('ABTestService initialized with userId: $_userId');
+    }, 'A/B 테스트 서비스 초기화', 'A/B 테스트 초기화 실패, 기본 설정 사용');
   }
 
   /// 사용자 ID 설정
@@ -76,70 +73,66 @@ class ABTestService extends ResilientService {
 
   /// 강화된 저장된 변형 정보 로드 (ResilientService 패턴)
   Future<void> _loadSavedVariants() async {
-    await safeExecute(
-      () async {
-        final keys = _prefs.getKeys().where((key) => key.startsWith('ab_variant_'));
+    await safeExecute(() async {
+      final keys =
+          _prefs.getKeys().where((key) => key.startsWith('ab_variant_'));
 
-        for (final key in keys) {
-          final variantData = _prefs.getString(key);
-          if (variantData != null) {
-            final experimentId = key.replaceFirst('ab_variant_', '');
-            // Remote Config에서 최신 변형 정보 가져오기
-            final variant = await _getVariantFromRemoteConfig(experimentId);
-            if (variant != null) {
-              _activeVariants[experimentId] = variant;
-            }
+      for (final key in keys) {
+        final variantData = _prefs.getString(key);
+        if (variantData != null) {
+          final experimentId = key.replaceFirst('ab_variant_', '');
+          // Remote Config에서 최신 변형 정보 가져오기
+          final variant = await _getVariantFromRemoteConfig(experimentId);
+          if (variant != null) {
+            _activeVariants[experimentId] = variant;
           }
         }
+      }
 
-        Logger.info('A/B 테스트 저장된 변형 ${_activeVariants.length}개 로드 완료');
-      },
-      '저장된 A/B 테스트 변형 로드',
-      '변형 로드 실패, 빈 상태로 시작'
-    );
+      Logger.info('A/B 테스트 저장된 변형 ${_activeVariants.length}개 로드 완료');
+    }, '저장된 A/B 테스트 변형 로드', '변형 로드 실패, 빈 상태로 시작');
   }
 
   /// 강화된 Remote Config에서 변형 정보 가져오기 (ResilientService 패턴)
-  Future<ABTestVariant?> _getVariantFromRemoteConfig(String experimentId) async {
-    return await safeExecuteWithNull(
-      () async {
-        final variantId = _remoteConfig.getValue('ab_${experimentId}_variant')?.asString();
-        if (variantId == null || variantId.isEmpty) {
-          throw Exception('Variant ID not found for experiment: $experimentId');
-        }
+  Future<ABTestVariant?> _getVariantFromRemoteConfig(
+      String experimentId) async {
+    return await safeExecuteWithNull(() async {
+      final variantId =
+          _remoteConfig.getValue('ab_${experimentId}_variant')?.asString();
+      if (variantId == null || variantId.isEmpty) {
+        throw Exception('Variant ID not found for experiment: $experimentId');
+      }
 
-        // 변형 파라미터 가져오기
-        final parameters = <String, dynamic>{};
-        final configKeys = [
-          'ab_${experimentId}_${variantId}_params',
-          'ab_${experimentId}_params',
-        ];
+      // 변형 파라미터 가져오기
+      final parameters = <String, dynamic>{};
+      final configKeys = [
+        'ab_${experimentId}_${variantId}_params',
+        'ab_${experimentId}_params',
+      ];
 
-        for (final key in configKeys) {
-          final value = _remoteConfig.getValue(key);
-          if (value != null) {
-            try {
-              final params = value.asString();
-              if (params.isNotEmpty) {
-                // JSON 파싱 시도
-                // 실제로는 json.decode를 사용해야 하지만 여기서는 간단히 처리
-                parameters[key] = params;
-              }
-            } catch (_) {
-              // 파싱 실패 시 무시
+      for (final key in configKeys) {
+        final value = _remoteConfig.getValue(key);
+        if (value != null) {
+          try {
+            final params = value.asString();
+            if (params.isNotEmpty) {
+              // JSON 파싱 시도
+              // 실제로는 json.decode를 사용해야 하지만 여기서는 간단히 처리
+              parameters[key] = params;
             }
+          } catch (_) {
+            // 파싱 실패 시 무시
           }
         }
+      }
 
-        return ABTestVariant(
-          id: variantId,
-          name: variantId,
-          parameters: parameters,
-        );
-      },
-      'Remote Config 변형 데이터 로드: $experimentId',
-      'Remote Config 연결 실패, 기본 변형 사용'
-    );
+      return ABTestVariant(
+        id: variantId,
+        name: variantId,
+        parameters: parameters,
+      );
+    }, 'Remote Config 변형 데이터 로드: $experimentId',
+        'Remote Config 연결 실패, 기본 변형 사용');
   }
 
   /// 실험 설정 로드
@@ -329,7 +322,8 @@ class ABTestService extends ResilientService {
     // 트래픽 할당 확인
     final random = Random(_userId?.hashCode ?? 0);
     if (random.nextDouble() > experiment.trafficAllocation) {
-      Logger.info('User not in traffic allocation for experiment: $experimentId');
+      Logger.info(
+          'User not in traffic allocation for experiment: $experimentId');
       return experiment.controlVariant ?? const ControlVariant(parameters: {});
     }
 
@@ -353,7 +347,7 @@ class ABTestService extends ResilientService {
   ABTestVariant _assignRandomVariant(ABTestExperiment experiment) {
     final random = Random(_userId?.hashCode ?? 0);
     final randomValue = random.nextDouble();
-    
+
     double cumulativeWeight = 0;
     for (final variant in experiment.variants) {
       cumulativeWeight += variant.weight / experiment.variants.length;
@@ -361,19 +355,20 @@ class ABTestService extends ResilientService {
         return variant;
       }
     }
-    
+
     return experiment.variants.last;
   }
 
   /// 변형 노출 추적
-  Future<void> _trackVariantExposure(String experimentId, ABTestVariant variant) async {
+  Future<void> _trackVariantExposure(
+      String experimentId, ABTestVariant variant) async {
     // 노출 카운트 증가
     final key = '${experimentId}_${variant.id}';
     _impressions[key] = (_impressions[key] ?? 0) + 1;
-    
+
     // 실험 결과 업데이트
     _updateExperimentResult(experimentId);
-    
+
     await _analytics.logEvent(
       'ab_test_exposure',
       parameters: {
@@ -391,50 +386,46 @@ class ABTestService extends ResilientService {
     String? conversionType,
     Map<String, dynamic>? additionalData,
   }) async {
-    await safeExecute(
-      () async {
-        final variant = _activeVariants[experimentId];
-        if (variant == null) {
-          throw Exception('활성 변형이 없는 실험: $experimentId');
-        }
+    await safeExecute(() async {
+      final variant = _activeVariants[experimentId];
+      if (variant == null) {
+        throw Exception('활성 변형이 없는 실험: $experimentId');
+      }
 
-        // 전환 카운트 증가
-        final key = '${experimentId}_${variant.id}';
-        _conversions[key] = (_conversions[key] ?? 0) + 1;
+      // 전환 카운트 증가
+      final key = '${experimentId}_${variant.id}';
+      _conversions[key] = (_conversions[key] ?? 0) + 1;
 
-        // 전환 이벤트 저장
-        _conversionEvents[experimentId] ??= [];
-        _conversionEvents[experimentId]!.add(
-          ConversionEvent(
-            variantId: variant.id,
-            conversionType: conversionType ?? 'default',
-            timestamp: DateTime.now(),
-            value: additionalData?['value'],
-            metadata: additionalData,
-          ),
-        );
+      // 전환 이벤트 저장
+      _conversionEvents[experimentId] ??= [];
+      _conversionEvents[experimentId]!.add(
+        ConversionEvent(
+          variantId: variant.id,
+          conversionType: conversionType ?? 'default',
+          timestamp: DateTime.now(),
+          value: additionalData?['value'],
+          metadata: additionalData,
+        ),
+      );
 
-        // 실험 결과 업데이트
-        _updateExperimentResult(experimentId);
+      // 실험 결과 업데이트
+      _updateExperimentResult(experimentId);
 
-        // Analytics 이벤트 전송
-        await _analytics.logEvent(
-          'ab_test_conversion',
-          parameters: {
-            'experiment_id': experimentId,
-            'variant_id': variant.id,
-            'variant_name': variant.name,
-            if (conversionType != null) 'conversion_type': conversionType,
-            if (_userId != null) 'user_id': _userId!,
-            ...?additionalData,
-          },
-        );
+      // Analytics 이벤트 전송
+      await _analytics.logEvent(
+        'ab_test_conversion',
+        parameters: {
+          'experiment_id': experimentId,
+          'variant_id': variant.id,
+          'variant_name': variant.name,
+          if (conversionType != null) 'conversion_type': conversionType,
+          if (_userId != null) 'user_id': _userId!,
+          ...?additionalData,
+        },
+      );
 
-        Logger.info('A/B 테스트 전환 추적 완료: $experimentId, 변형: ${variant.id}');
-      },
-      'A/B 테스트 전환 이벤트 추적: $experimentId',
-      '전환 추적 실패, 로컬 데이터만 저장'
-    );
+      Logger.info('A/B 테스트 전환 추적 완료: $experimentId, 변형: ${variant.id}');
+    }, 'A/B 테스트 전환 이벤트 추적: $experimentId', '전환 추적 실패, 로컬 데이터만 저장');
   }
 
   /// 특정 실험의 변형 파라미터 가져오기
@@ -467,66 +458,58 @@ class ABTestService extends ResilientService {
       return;
     }
 
-    await safeExecute(
-      () async {
-        final experiment = _experiments[experimentId];
-        if (experiment == null) {
-          throw Exception('실험을 찾을 수 없음: $experimentId');
-        }
+    await safeExecute(() async {
+      final experiment = _experiments[experimentId];
+      if (experiment == null) {
+        throw Exception('실험을 찾을 수 없음: $experimentId');
+      }
 
-        final variant = experiment.getVariant(variantId);
-        if (variant == null) {
-          throw Exception('변형을 찾을 수 없음: $variantId in $experimentId');
-        }
+      final variant = experiment.getVariant(variantId);
+      if (variant == null) {
+        throw Exception('변형을 찾을 수 없음: $variantId in $experimentId');
+      }
 
-        _activeVariants[experimentId] = variant;
-        await _prefs.setString('ab_variant_$experimentId', variant.id);
+      _activeVariants[experimentId] = variant;
+      await _prefs.setString('ab_variant_$experimentId', variant.id);
 
-        Logger.info('디버그 모드: 변형 강제 설정 완료 - $variantId for $experimentId');
-      },
-      '디버그 변형 강제 설정: $experimentId -> $variantId',
-      '변형 강제 설정 실패, 기존 변형 유지'
-    );
+      Logger.info('디버그 모드: 변형 강제 설정 완료 - $variantId for $experimentId');
+    }, '디버그 변형 강제 설정: $experimentId -> $variantId', '변형 강제 설정 실패, 기존 변형 유지');
   }
 
   /// 강화된 모든 실험 데이터 초기화 (ResilientService 패턴)
   Future<void> reset() async {
-    await safeExecute(
-      () async {
-        _activeVariants.clear();
-        _experimentResults.clear();
-        _conversionEvents.clear();
-        _impressions.clear();
-        _conversions.clear();
+    await safeExecute(() async {
+      _activeVariants.clear();
+      _experimentResults.clear();
+      _conversionEvents.clear();
+      _impressions.clear();
+      _conversions.clear();
 
-        // SharedPreferences에서 모든 A/B 테스트 데이터 삭제
-        final keys = _prefs.getKeys().where((key) => key.startsWith('ab_'));
-        for (final key in keys) {
-          await _prefs.remove(key);
-        }
+      // SharedPreferences에서 모든 A/B 테스트 데이터 삭제
+      final keys = _prefs.getKeys().where((key) => key.startsWith('ab_'));
+      for (final key in keys) {
+        await _prefs.remove(key);
+      }
 
-        Logger.info('A/B 테스트 서비스 초기화 완료');
-      },
-      'A/B 테스트 데이터 초기화',
-      '일부 데이터 초기화 실패, 메모리 데이터는 정리됨'
-    );
+      Logger.info('A/B 테스트 서비스 초기화 완료');
+    }, 'A/B 테스트 데이터 초기화', '일부 데이터 초기화 실패, 메모리 데이터는 정리됨');
   }
-  
+
   // ============ 실험 결과 분석 기능 ============
-  
+
   /// 실험 결과 업데이트
   void _updateExperimentResult(String experimentId) {
     final experiment = _experiments[experimentId];
     if (experiment == null) return;
-    
+
     final variantResults = <String, VariantResult>{};
-    
+
     for (final variant in experiment.variants) {
       final key = '${experimentId}_${variant.id}';
       final impressions = _impressions[key] ?? 0;
       final conversions = _conversions[key] ?? 0;
       final conversionRate = impressions > 0 ? conversions / impressions : 0.0;
-      
+
       variantResults[variant.id] = VariantResult(
         variantId: variant.id,
         variantName: variant.name,
@@ -535,12 +518,12 @@ class ABTestService extends ResilientService {
         conversionRate: conversionRate,
       );
     }
-    
+
     // 통계적 유의성 계산
     final controlResult = variantResults['control'];
     double? pValue;
     double? confidenceLevel;
-    
+
     if (controlResult != null && variantResults.length > 1) {
       // 간단한 Z-test 구현 (실제로는 더 정교한 통계 계산 필요)
       VariantResult? testVariant;
@@ -551,7 +534,7 @@ class ABTestService extends ResilientService {
       } catch (e) {
         testVariant = controlResult;
       }
-      
+
       if (controlResult.impressions >= 30 && testVariant.impressions >= 30) {
         final z = _calculateZScore(
           controlResult.conversionRate,
@@ -563,7 +546,7 @@ class ABTestService extends ResilientService {
         confidenceLevel = 1 - pValue;
       }
     }
-    
+
     _experimentResults[experimentId] = ABTestResult(
       experimentId: experimentId,
       experimentName: experiment.name,
@@ -575,16 +558,19 @@ class ABTestService extends ResilientService {
       lastUpdated: DateTime.now(),
     );
   }
-  
+
   /// Z-score 계산
   double _calculateZScore(
-    double p1, double p2, int n1, int n2,
+    double p1,
+    double p2,
+    int n1,
+    int n2,
   ) {
     final pooledP = ((p1 * n1) + (p2 * n2)) / (n1 + n2);
     final se = sqrt(pooledP * (1 - pooledP) * ((1 / n1) + (1 / n2)));
     return se > 0 ? (p2 - p1) / se : 0;
   }
-  
+
   /// P-value 계산 (간단한 근사치)
   double _calculatePValue(double z) {
     // 표준정규분포의 CDF를 사용한 간단한 근사
@@ -597,14 +583,14 @@ class ABTestService extends ResilientService {
     if (absZ > 1.5) return 0.134;
     return 0.5;
   }
-  
+
   /// 승자 변형 결정
   String? _determineWinner(Map<String, VariantResult> results) {
     if (results.isEmpty) return null;
-    
+
     String? winner;
     double maxRate = -1;
-    
+
     for (final result in results.values) {
       // 최소 30개 이상의 노출이 있어야 유효
       if (result.impressions >= 30 && result.conversionRate > maxRate) {
@@ -612,10 +598,10 @@ class ABTestService extends ResilientService {
         winner = result.variantId;
       }
     }
-    
+
     return winner;
   }
-  
+
   /// 실험 결과 가져오기
   ABTestResult? getExperimentResult(String experimentId) {
     return _experimentResults[experimentId];
@@ -625,19 +611,19 @@ class ABTestService extends ResilientService {
   Map<String, ABTestResult> getAllResults() {
     return Map.from(_experimentResults);
   }
-  
+
   /// 실험 자동 종료 (승자가 명확한 경우)
   Future<void> concludeExperiment(String experimentId) async {
     final result = _experimentResults[experimentId];
     if (result == null) return;
-    
+
     // 통계적 유의성이 95% 이상이고 충분한 샘플이 있는 경우
     if ((result.confidenceLevel ?? 0) >= 0.95) {
       final experiment = _experiments[experimentId];
       if (experiment != null && result.winningVariantId != null) {
         // 승자 변형을 100% 트래픽으로 설정
         await forceVariant(experimentId, result.winningVariantId!);
-        
+
         // Analytics에 실험 종료 이벤트 로그
         await _analytics.logEvent(
           'ab_test_concluded',
@@ -649,8 +635,9 @@ class ABTestService extends ResilientService {
             'total_conversions': result.totalConversions,
           },
         );
-        
-        Logger.info('Experiment $experimentId concluded. Winner: ${result.winningVariantId}');
+
+        Logger.info(
+            'Experiment $experimentId concluded. Winner: ${result.winningVariantId}');
       }
     }
   }
@@ -665,7 +652,7 @@ final abTestServiceProvider = Provider<ABTestService>((ref) {
 final abTestInitializerProvider = FutureProvider<void>((ref) async {
   final prefs = await SharedPreferences.getInstance();
   final abTestService = ref.watch(abTestServiceProvider);
-  
+
   // TODO: 실제 사용자 ID로 교체
   await abTestService.initialize(
     prefs: prefs,

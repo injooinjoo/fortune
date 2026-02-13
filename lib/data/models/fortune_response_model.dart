@@ -8,12 +8,12 @@ class FortuneResponseModel {
   final int? tokensUsed;
   final int? remainingTokens;
 
-  FortuneResponseModel({
-    required this.success,
-    this.message,
-    this.data,
-    this.tokensUsed,
-    this.remainingTokens});
+  FortuneResponseModel(
+      {required this.success,
+      this.message,
+      this.data,
+      this.tokensUsed,
+      this.remainingTokens});
 
   factory FortuneResponseModel.fromJson(Map<String, dynamic> json) {
     // Handle three cases:
@@ -29,17 +29,19 @@ class FortuneResponseModel {
     } else if (json['fortune'] != null) {
       // Edge Functions format - fortune field contains the actual fortune data
       fortuneData = FortuneData.fromJson(json['fortune']);
-    } else if (json.containsKey('overall_score') || json.containsKey('summary') || json.containsKey('advice')) {
+    } else if (json.containsKey('overall_score') ||
+        json.containsKey('summary') ||
+        json.containsKey('advice')) {
       // Direct fortune data format (Edge Functions fortune object)
       fortuneData = FortuneData.fromJson(json);
     }
 
     return FortuneResponseModel(
-      success: json['success'] ?? true,  // Default to true if not provided
-      message: json['message'],
-      data: fortuneData,
-      tokensUsed: json['tokensUsed'],
-      remainingTokens: json['remainingTokens']);
+        success: json['success'] ?? true, // Default to true if not provided
+        message: json['message'],
+        data: fortuneData,
+        tokensUsed: json['tokensUsed'],
+        remainingTokens: json['remainingTokens']);
   }
 
   Fortune toEntity() {
@@ -48,10 +50,8 @@ class FortuneResponseModel {
     }
 
     // Extract common fields
-    final overallScore = data!.score ?? 
-        data!.compatibilityScore ?? 
-        data!.energyLevel ?? 
-        75;
+    final overallScore =
+        data!.score ?? data!.compatibilityScore ?? data!.energyLevel ?? 75;
 
     // Build score breakdown based on type
     final scoreBreakdown = <String, dynamic>{};
@@ -139,29 +139,35 @@ class FortuneResponseModel {
       warnings: data!.caution != null ? [data!.caution!] : null,
       summary: data!.summary,
       // ✅ additionalInfo: metadata 전체를 전달하여 커리어/기타 운세 상세 데이터 접근 가능
-      additionalInfo: data!.metadata ?? {
-        if (data!.advice != null) 'advice': data!.advice,
-        if (data!.luckyColor != null) 'luckyColor': data!.luckyColor,
-        if (data!.luckyNumber != null) 'luckyNumber': data!.luckyNumber,
-        if (data!.score != null) 'score': data!.score,
-      },
-      detailedLuckyItems: detailedLuckyItems.isNotEmpty ? detailedLuckyItems : null,
+      additionalInfo: data!.metadata ??
+          {
+            if (data!.advice != null) 'advice': data!.advice,
+            if (data!.luckyColor != null) 'luckyColor': data!.luckyColor,
+            if (data!.luckyNumber != null) 'luckyNumber': data!.luckyNumber,
+            if (data!.score != null) 'score': data!.score,
+          },
+      detailedLuckyItems:
+          detailedLuckyItems.isNotEmpty ? detailedLuckyItems : null,
       greeting: data!.greeting,
       hexagonScores: data!.hexagonScores,
       timeSpecificFortunes: data!.timeSpecificFortunes != null
-          ? (data!.timeSpecificFortunes as List).map((item) => TimeSpecificFortune(
-              time: item['time'] ?? '',
-              title: item['title'] ?? '',
-              score: item['score'],
-              description: item['description'] ?? '',
-              recommendation: item['recommendation'])).toList()
+          ? (data!.timeSpecificFortunes as List)
+              .map((item) => TimeSpecificFortune(
+                  time: item['time'] ?? '',
+                  title: item['title'] ?? '',
+                  score: item['score'],
+                  description: item['description'] ?? '',
+                  recommendation: item['recommendation']))
+              .toList()
           : null,
       birthYearFortunes: data!.birthYearFortunes != null
-          ? (data!.birthYearFortunes as List).map((item) => BirthYearFortune(
-              birthYear: item['birthYear'] ?? '',
-              zodiacAnimal: item['zodiacAnimal'] ?? '',
-              description: item['description'] ?? '',
-              advice: item['advice'])).toList()
+          ? (data!.birthYearFortunes as List)
+              .map((item) => BirthYearFortune(
+                  birthYear: item['birthYear'] ?? '',
+                  zodiacAnimal: item['zodiacAnimal'] ?? '',
+                  description: item['description'] ?? '',
+                  advice: item['advice']))
+              .toList()
           : null,
       fiveElements: data!.fiveElements,
       specialTip: data!.specialTip,
@@ -177,7 +183,7 @@ class FortuneData {
   final String? content;
   final DateTime? createdAt;
   final Map<String, dynamic>? metadata;
-  
+
   // Daily fortune fields
   final int? score;
   final List<String>? keywords;
@@ -191,7 +197,7 @@ class FortuneData {
   final String? bestTime;
   final List<String>? compatibility;
   final Map<String, int>? elements;
-  
+
   // Saju fortune fields
   final String? fourPillars;
   final String? element;
@@ -203,7 +209,7 @@ class FortuneData {
   final String? yearlyFortune;
   final String? monthlyFortune;
   final Map<String, dynamic>? detailedAnalysis;
-  
+
   // MBTI fortune fields
   final String? mbtiType;
   final String? todayMood;
@@ -214,8 +220,8 @@ class FortuneData {
   final String? relationshipAdvice;
   final int? energyLevel;
   final int? stressLevel;
-  final String? todayTrap;  // 오늘의 함정 (위기감 유발 메시지)
-  
+  final String? todayTrap; // 오늘의 함정 (위기감 유발 메시지)
+
   // Compatibility fortune fields
   final int? compatibilityScore;
   final String? emotionalCompatibility;
@@ -224,18 +230,18 @@ class FortuneData {
   final String? longTermPotential;
   final List<String>? strengthsList;
   final List<String>? challenges;
-  
+
   // Additional lucky item fields
   final String? luckyDirection;
   final String? luckyFood;
   final String? luckyItem;
-  
+
   // Detailed lucky items
   final List<dynamic>? detailedLuckyNumbers;
   final List<dynamic>? detailedLuckyColors;
   final List<dynamic>? detailedLuckyFoods;
   final List<dynamic>? detailedLuckyItems;
-  
+
   // Enhanced fields for time-based fortunes
   final String? greeting;
   final Map<String, int>? hexagonScores;
@@ -319,15 +325,16 @@ class FortuneData {
     } else if (rawSummary is Map<String, dynamic>) {
       // Extract text from summary Map (moving fortune returns this format)
       summary = rawSummary['one_line'] as String? ??
-                rawSummary['final_message'] as String? ??
-                rawSummary['text'] as String?;
+          rawSummary['final_message'] as String? ??
+          rawSummary['text'] as String?;
     }
 
     String? advice = json['advice'];
     int? score = json['score'] ?? json['overall_score'] ?? json['overallScore'];
 
     // Career fortune: map careerScore and overallOutlook
-    if (json['fortuneType'] == 'career' || json['type'] == 'career' ||
+    if (json['fortuneType'] == 'career' ||
+        json['type'] == 'career' ||
         json['fortune_type'] == 'career' ||
         json['fortuneType']?.toString().startsWith('career') == true ||
         json['fortune_type']?.toString().startsWith('career') == true) {
@@ -338,7 +345,8 @@ class FortuneData {
 
       // Build content from career sections
       final contentParts = <String>[];
-      if (json['overallOutlook'] != null) contentParts.add(json['overallOutlook'] as String);
+      if (json['overallOutlook'] != null)
+        contentParts.add(json['overallOutlook'] as String);
 
       if (actionPlan != null) {
         if (actionPlan['immediate'] != null) {
@@ -375,13 +383,15 @@ class FortuneData {
     }
 
     // Love fortune: extract content from detailed fields
-    if (json['fortuneType'] == 'love' || json['type'] == 'love' ||
+    if (json['fortuneType'] == 'love' ||
+        json['type'] == 'love' ||
         json['fortune_type'] == 'love') {
       score ??= json['loveScore'] as int?;
       // Build comprehensive content from love fortune fields
       final mainMessage = json['mainMessage'] as String?;
       final loveProfile = json['loveProfile'] as Map<String, dynamic>?;
-      final detailedAnalysis = json['detailedAnalysis'] as Map<String, dynamic>?;
+      final detailedAnalysis =
+          json['detailedAnalysis'] as Map<String, dynamic>?;
       final todaysAdvice = json['todaysAdvice'] as Map<String, dynamic>?;
       final predictions = json['predictions'] as Map<String, dynamic>?;
       final actionPlan = json['actionPlan'] as Map<String, dynamic>?;
@@ -393,15 +403,24 @@ class FortuneData {
       if (mainMessage != null) contentParts.add(mainMessage);
 
       if (loveProfile != null) {
-        if (loveProfile['currentState'] != null) contentParts.add('\n\n💕 현재 연애 상태\n${loveProfile['currentState']}');
-        if (loveProfile['attractionPoints'] != null) contentParts.add('\n\n✨ 매력 포인트\n${loveProfile['attractionPoints']}');
-        if (loveProfile['loveStyle'] != null) contentParts.add('\n\n💝 연애 스타일\n${loveProfile['loveStyle']}');
+        if (loveProfile['currentState'] != null)
+          contentParts.add('\n\n💕 현재 연애 상태\n${loveProfile['currentState']}');
+        if (loveProfile['attractionPoints'] != null)
+          contentParts.add('\n\n✨ 매력 포인트\n${loveProfile['attractionPoints']}');
+        if (loveProfile['loveStyle'] != null)
+          contentParts.add('\n\n💝 연애 스타일\n${loveProfile['loveStyle']}');
       }
 
       if (detailedAnalysis != null) {
-        if (detailedAnalysis['emotionalState'] != null) contentParts.add('\n\n🌸 감정 상태\n${detailedAnalysis['emotionalState']}');
-        if (detailedAnalysis['relationshipDynamics'] != null) contentParts.add('\n\n💑 관계 역학\n${detailedAnalysis['relationshipDynamics']}');
-        if (detailedAnalysis['growthOpportunities'] != null) contentParts.add('\n\n🌱 성장 기회\n${detailedAnalysis['growthOpportunities']}');
+        if (detailedAnalysis['emotionalState'] != null)
+          contentParts
+              .add('\n\n🌸 감정 상태\n${detailedAnalysis['emotionalState']}');
+        if (detailedAnalysis['relationshipDynamics'] != null)
+          contentParts
+              .add('\n\n💑 관계 역학\n${detailedAnalysis['relationshipDynamics']}');
+        if (detailedAnalysis['growthOpportunities'] != null)
+          contentParts
+              .add('\n\n🌱 성장 기회\n${detailedAnalysis['growthOpportunities']}');
       }
 
       if (todaysAdvice != null) {
@@ -420,13 +439,17 @@ class FortuneData {
       }
 
       if (predictions != null) {
-        if (predictions['shortTerm'] != null) contentParts.add('\n\n📅 단기 예측\n${predictions['shortTerm']}');
-        if (predictions['longTerm'] != null) contentParts.add('\n\n🔮 장기 예측\n${predictions['longTerm']}');
+        if (predictions['shortTerm'] != null)
+          contentParts.add('\n\n📅 단기 예측\n${predictions['shortTerm']}');
+        if (predictions['longTerm'] != null)
+          contentParts.add('\n\n🔮 장기 예측\n${predictions['longTerm']}');
       }
 
       if (actionPlan != null) {
-        if (actionPlan['immediateAction'] != null) contentParts.add('\n\n⚡ 즉시 행동\n${actionPlan['immediateAction']}');
-        if (actionPlan['weeklyGoal'] != null) contentParts.add('\n\n🎯 이번 주 목표\n${actionPlan['weeklyGoal']}');
+        if (actionPlan['immediateAction'] != null)
+          contentParts.add('\n\n⚡ 즉시 행동\n${actionPlan['immediateAction']}');
+        if (actionPlan['weeklyGoal'] != null)
+          contentParts.add('\n\n🎯 이번 주 목표\n${actionPlan['weeklyGoal']}');
       }
 
       if (contentParts.isNotEmpty) {
@@ -466,19 +489,23 @@ class FortuneData {
       }
 
       if (zodiacAnimal != null) {
-        contentParts.add('\n\n🐉 띠 궁합\n${zodiacAnimal['person1']} ♥ ${zodiacAnimal['person2']}: ${zodiacAnimal['message']} (${zodiacAnimal['score']}점)');
+        contentParts.add(
+            '\n\n🐉 띠 궁합\n${zodiacAnimal['person1']} ♥ ${zodiacAnimal['person2']}: ${zodiacAnimal['message']} (${zodiacAnimal['score']}점)');
       }
 
       if (starSign != null) {
-        contentParts.add('\n\n⭐ 별자리 궁합\n${starSign['person1']} ♥ ${starSign['person2']}: ${starSign['message']} (${starSign['score']}점)');
+        contentParts.add(
+            '\n\n⭐ 별자리 궁합\n${starSign['person1']} ♥ ${starSign['person2']}: ${starSign['message']} (${starSign['score']}점)');
       }
 
       if (destinyNumber != null) {
-        contentParts.add('\n\n🔮 운명수: ${destinyNumber['number']} - ${destinyNumber['meaning']}');
+        contentParts.add(
+            '\n\n🔮 운명수: ${destinyNumber['number']} - ${destinyNumber['meaning']}');
       }
 
       if (ageDifference != null) {
-        contentParts.add('\n\n👫 나이 차이: ${ageDifference['years']}살 - ${ageDifference['message']}');
+        contentParts.add(
+            '\n\n👫 나이 차이: ${ageDifference['years']}살 - ${ageDifference['message']}');
       }
 
       if (personalityMatch != null) {
@@ -498,7 +525,8 @@ class FortuneData {
       }
 
       if (loveStyle != null) {
-        contentParts.add('\n\n💝 연애 스타일\n${loveStyle['person1']} × ${loveStyle['person2']}\n${loveStyle['조합분석'] ?? ''}');
+        contentParts.add(
+            '\n\n💝 연애 스타일\n${loveStyle['person1']} × ${loveStyle['person2']}\n${loveStyle['조합분석'] ?? ''}');
       }
 
       if (strengths != null && strengths.isNotEmpty) {
@@ -523,7 +551,8 @@ class FortuneData {
 
     // Avoid-people fortune: map caution-specific fields to metadata
     Map<String, dynamic>? metadata = json['metadata'];
-    if (json['fortuneType'] == 'avoid-people' || json['type'] == 'avoid-people' ||
+    if (json['fortuneType'] == 'avoid-people' ||
+        json['type'] == 'avoid-people' ||
         json['fortune_type'] == 'avoid-people') {
       score ??= json['score'] as int?;
       summary ??= (json['summary'] is Map)
@@ -533,15 +562,23 @@ class FortuneData {
       // Store all caution data in metadata for ChatFortuneResultCard access
       metadata = {
         ...?metadata,
-        if (json['cautionPeople'] != null) 'cautionPeople': json['cautionPeople'],
-        if (json['cautionObjects'] != null) 'cautionObjects': json['cautionObjects'],
-        if (json['cautionColors'] != null) 'cautionColors': json['cautionColors'],
-        if (json['cautionNumbers'] != null) 'cautionNumbers': json['cautionNumbers'],
-        if (json['cautionAnimals'] != null) 'cautionAnimals': json['cautionAnimals'],
-        if (json['cautionPlaces'] != null) 'cautionPlaces': json['cautionPlaces'],
+        if (json['cautionPeople'] != null)
+          'cautionPeople': json['cautionPeople'],
+        if (json['cautionObjects'] != null)
+          'cautionObjects': json['cautionObjects'],
+        if (json['cautionColors'] != null)
+          'cautionColors': json['cautionColors'],
+        if (json['cautionNumbers'] != null)
+          'cautionNumbers': json['cautionNumbers'],
+        if (json['cautionAnimals'] != null)
+          'cautionAnimals': json['cautionAnimals'],
+        if (json['cautionPlaces'] != null)
+          'cautionPlaces': json['cautionPlaces'],
         if (json['cautionTimes'] != null) 'cautionTimes': json['cautionTimes'],
-        if (json['cautionDirections'] != null) 'cautionDirections': json['cautionDirections'],
-        if (json['luckyElements'] != null) 'luckyElements': json['luckyElements'],
+        if (json['cautionDirections'] != null)
+          'cautionDirections': json['cautionDirections'],
+        if (json['luckyElements'] != null)
+          'luckyElements': json['luckyElements'],
         if (json['timeStrategy'] != null) 'timeStrategy': json['timeStrategy'],
         'fortuneType': 'avoid-people',
       };
@@ -551,7 +588,8 @@ class FortuneData {
       if (summary != null) contentParts.add(summary);
 
       // Add first caution person as preview (API uses 'type' and 'reason')
-      if (json['cautionPeople'] != null && (json['cautionPeople'] as List).isNotEmpty) {
+      if (json['cautionPeople'] != null &&
+          (json['cautionPeople'] as List).isNotEmpty) {
         final firstPerson = json['cautionPeople'][0];
         contentParts.add('\n\n👤 주요 경계 인물: ${firstPerson['type'] ?? ''}');
         if (firstPerson['reason'] != null) {
@@ -560,7 +598,8 @@ class FortuneData {
       }
 
       // Add first caution object as preview (API uses 'item' and 'reason')
-      if (json['cautionObjects'] != null && (json['cautionObjects'] as List).isNotEmpty) {
+      if (json['cautionObjects'] != null &&
+          (json['cautionObjects'] as List).isNotEmpty) {
         final firstObject = json['cautionObjects'][0];
         contentParts.add('\n\n📦 주요 경계 사물: ${firstObject['item'] ?? ''}');
         if (firstObject['reason'] != null) {
@@ -574,8 +613,10 @@ class FortuneData {
     }
 
     // Time fortune: map time-specific fields to metadata (경계대상 패턴 적용)
-    if (json['fortuneType'] == 'time' || json['type'] == 'time' ||
-        json['fortune_type'] == 'time' || json['type'] == 'time_based') {
+    if (json['fortuneType'] == 'time' ||
+        json['type'] == 'time' ||
+        json['fortune_type'] == 'time' ||
+        json['type'] == 'time_based') {
       score ??= json['score'] as int?;
       summary ??= json['summary'] as String?;
       advice ??= json['advice'] as String?;
@@ -585,12 +626,17 @@ class FortuneData {
         ...?metadata,
         if (json['timeSlots'] != null) 'timeSlots': json['timeSlots'],
         if (json['cautionTimes'] != null) 'cautionTimes': json['cautionTimes'],
-        if (json['cautionActivities'] != null) 'cautionActivities': json['cautionActivities'],
-        if (json['cautionPeople'] != null) 'cautionPeople': json['cautionPeople'],
-        if (json['cautionDirections'] != null) 'cautionDirections': json['cautionDirections'],
-        if (json['luckyElements'] != null) 'luckyElements': json['luckyElements'],
+        if (json['cautionActivities'] != null)
+          'cautionActivities': json['cautionActivities'],
+        if (json['cautionPeople'] != null)
+          'cautionPeople': json['cautionPeople'],
+        if (json['cautionDirections'] != null)
+          'cautionDirections': json['cautionDirections'],
+        if (json['luckyElements'] != null)
+          'luckyElements': json['luckyElements'],
         if (json['timeStrategy'] != null) 'timeStrategy': json['timeStrategy'],
-        if (json['traditionalElements'] != null) 'traditionalElements': json['traditionalElements'],
+        if (json['traditionalElements'] != null)
+          'traditionalElements': json['traditionalElements'],
         if (json['bestTime'] != null) 'bestTime': json['bestTime'],
         if (json['worstTime'] != null) 'worstTime': json['worstTime'],
         'fortuneType': 'time',
@@ -633,7 +679,8 @@ class FortuneData {
     }
 
     // Biorhythm fortune: map biorhythm-specific fields to metadata
-    if (json['fortuneType'] == 'biorhythm' || json['type'] == 'biorhythm' ||
+    if (json['fortuneType'] == 'biorhythm' ||
+        json['type'] == 'biorhythm' ||
         json['fortune_type'] == 'biorhythm') {
       score ??= json['overall_score'] as int?;
 
@@ -641,7 +688,7 @@ class FortuneData {
       if (json['summary'] is Map) {
         final summaryMap = json['summary'] as Map<String, dynamic>;
         summary ??= summaryMap['status_message'] as String? ??
-                    summaryMap['greeting'] as String?;
+            summaryMap['greeting'] as String?;
         score ??= summaryMap['overall_score'] as int?;
       } else {
         summary ??= json['summary'] as String?;
@@ -660,12 +707,18 @@ class FortuneData {
         if (physical != null) 'physical': physical,
         if (emotional != null) 'emotional': emotional,
         if (intellectual != null) 'intellectual': intellectual,
-        if (json['today_recommendation'] != null) 'today_recommendation': json['today_recommendation'],
-        if (json['weekly_forecast'] != null) 'weekly_forecast': json['weekly_forecast'],
-        if (json['important_dates'] != null) 'important_dates': json['important_dates'],
-        if (json['weekly_activities'] != null) 'weekly_activities': json['weekly_activities'],
-        if (json['personal_analysis'] != null) 'personal_analysis': json['personal_analysis'],
-        if (json['lifestyle_advice'] != null) 'lifestyle_advice': json['lifestyle_advice'],
+        if (json['today_recommendation'] != null)
+          'today_recommendation': json['today_recommendation'],
+        if (json['weekly_forecast'] != null)
+          'weekly_forecast': json['weekly_forecast'],
+        if (json['important_dates'] != null)
+          'important_dates': json['important_dates'],
+        if (json['weekly_activities'] != null)
+          'weekly_activities': json['weekly_activities'],
+        if (json['personal_analysis'] != null)
+          'personal_analysis': json['personal_analysis'],
+        if (json['lifestyle_advice'] != null)
+          'lifestyle_advice': json['lifestyle_advice'],
         if (json['health_tips'] != null) 'health_tips': json['health_tips'],
         if (json['greeting'] != null) 'greeting': json['greeting'],
         'fortuneType': 'biorhythm',
@@ -677,24 +730,35 @@ class FortuneData {
 
       // Add biorhythm summary
       if (physical != null) {
-        contentParts.add('\n\n💪 신체 리듬: ${physical['phase'] ?? ''} (${physical['score']}점)');
-        if (physical['status'] != null) contentParts.add('\n${physical['status']}');
+        contentParts.add(
+            '\n\n💪 신체 리듬: ${physical['phase'] ?? ''} (${physical['score']}점)');
+        if (physical['status'] != null)
+          contentParts.add('\n${physical['status']}');
       }
       if (emotional != null) {
-        contentParts.add('\n\n💖 감정 리듬: ${emotional['phase'] ?? ''} (${emotional['score']}점)');
-        if (emotional['status'] != null) contentParts.add('\n${emotional['status']}');
+        contentParts.add(
+            '\n\n💖 감정 리듬: ${emotional['phase'] ?? ''} (${emotional['score']}점)');
+        if (emotional['status'] != null)
+          contentParts.add('\n${emotional['status']}');
       }
       if (intellectual != null) {
-        contentParts.add('\n\n🧠 지성 리듬: ${intellectual['phase'] ?? ''} (${intellectual['score']}점)');
-        if (intellectual['status'] != null) contentParts.add('\n${intellectual['status']}');
+        contentParts.add(
+            '\n\n🧠 지성 리듬: ${intellectual['phase'] ?? ''} (${intellectual['score']}점)');
+        if (intellectual['status'] != null)
+          contentParts.add('\n${intellectual['status']}');
       }
 
       // Add advice from each rhythm
-      if (physical?['advice'] != null || emotional?['advice'] != null || intellectual?['advice'] != null) {
+      if (physical?['advice'] != null ||
+          emotional?['advice'] != null ||
+          intellectual?['advice'] != null) {
         contentParts.add('\n\n💡 오늘의 조언');
-        if (physical?['advice'] != null) contentParts.add('\n• 신체: ${physical!['advice']}');
-        if (emotional?['advice'] != null) contentParts.add('\n• 감정: ${emotional!['advice']}');
-        if (intellectual?['advice'] != null) contentParts.add('\n• 지성: ${intellectual!['advice']}');
+        if (physical?['advice'] != null)
+          contentParts.add('\n• 신체: ${physical!['advice']}');
+        if (emotional?['advice'] != null)
+          contentParts.add('\n• 감정: ${emotional!['advice']}');
+        if (intellectual?['advice'] != null)
+          contentParts.add('\n• 지성: ${intellectual!['advice']}');
       }
 
       if (contentParts.isNotEmpty) {
@@ -703,13 +767,15 @@ class FortuneData {
 
       // Set advice from today_recommendation or lifestyle_advice
       advice ??= json['today_recommendation'] as String? ??
-                 json['lifestyle_advice'] as String?;
+          json['lifestyle_advice'] as String?;
     }
 
     // Wealth/Money fortune: map wealth-specific fields to metadata
-    if (json['fortuneType'] == 'wealth' || json['type'] == 'wealth' ||
+    if (json['fortuneType'] == 'wealth' ||
+        json['type'] == 'wealth' ||
         json['fortune_type'] == 'wealth' ||
-        json['fortuneType'] == 'money' || json['type'] == 'money' ||
+        json['fortuneType'] == 'money' ||
+        json['type'] == 'money' ||
         json['fortune_type'] == 'money') {
       score ??= json['overallScore'] as int? ?? json['score'] as int?;
       summary ??= json['content'] as String?;
@@ -717,13 +783,19 @@ class FortuneData {
       // Store all wealth data in metadata for ChatFortuneResultCard access
       metadata = {
         ...?metadata,
-        if (json['wealthPotential'] != null) 'wealthPotential': json['wealthPotential'],
-        if (json['elementAnalysis'] != null) 'elementAnalysis': json['elementAnalysis'],
+        if (json['wealthPotential'] != null)
+          'wealthPotential': json['wealthPotential'],
+        if (json['elementAnalysis'] != null)
+          'elementAnalysis': json['elementAnalysis'],
         if (json['goalAdvice'] != null) 'goalAdvice': json['goalAdvice'],
-        if (json['cashflowInsight'] != null) 'cashflowInsight': json['cashflowInsight'],
-        if (json['concernResolution'] != null) 'concernResolution': json['concernResolution'],
-        if (json['investmentInsights'] != null) 'investmentInsights': json['investmentInsights'],
-        if (json['luckyElements'] != null) 'luckyElements': json['luckyElements'],
+        if (json['cashflowInsight'] != null)
+          'cashflowInsight': json['cashflowInsight'],
+        if (json['concernResolution'] != null)
+          'concernResolution': json['concernResolution'],
+        if (json['investmentInsights'] != null)
+          'investmentInsights': json['investmentInsights'],
+        if (json['luckyElements'] != null)
+          'luckyElements': json['luckyElements'],
         if (json['monthlyFlow'] != null) 'monthlyFlow': json['monthlyFlow'],
         if (json['actionItems'] != null) 'actionItems': json['actionItems'],
         if (json['surveyData'] != null) 'surveyData': json['surveyData'],
@@ -739,16 +811,22 @@ class FortuneData {
       final goalAdvice = json['goalAdvice'] as Map<String, dynamic>?;
       if (goalAdvice != null) {
         contentParts.add('\n\n🎯 ${goalAdvice['primaryGoal'] ?? '목표'} 달성 전략');
-        if (goalAdvice['strategy'] != null) contentParts.add('\n${goalAdvice['strategy']}');
-        if (goalAdvice['luckyTiming'] != null) contentParts.add('\n⏰ 유리한 시기: ${goalAdvice['luckyTiming']}');
-        if (goalAdvice['sajuAnalysis'] != null) contentParts.add('\n🔮 ${goalAdvice['sajuAnalysis']}');
+        if (goalAdvice['strategy'] != null)
+          contentParts.add('\n${goalAdvice['strategy']}');
+        if (goalAdvice['luckyTiming'] != null)
+          contentParts.add('\n⏰ 유리한 시기: ${goalAdvice['luckyTiming']}');
+        if (goalAdvice['sajuAnalysis'] != null)
+          contentParts.add('\n🔮 ${goalAdvice['sajuAnalysis']}');
       }
 
       // Concern resolution preview
-      final concernResolution = json['concernResolution'] as Map<String, dynamic>?;
+      final concernResolution =
+          json['concernResolution'] as Map<String, dynamic>?;
       if (concernResolution != null) {
-        contentParts.add('\n\n⚠️ ${concernResolution['primaryConcern'] ?? '고민'} 해결책');
-        if (concernResolution['analysis'] != null) contentParts.add('\n${concernResolution['analysis']}');
+        contentParts
+            .add('\n\n⚠️ ${concernResolution['primaryConcern'] ?? '고민'} 해결책');
+        if (concernResolution['analysis'] != null)
+          contentParts.add('\n${concernResolution['analysis']}');
         if (concernResolution['solution'] != null) {
           final solutions = concernResolution['solution'];
           if (solutions is List) {
@@ -763,7 +841,8 @@ class FortuneData {
       }
 
       // Investment insights preview
-      final investmentInsights = json['investmentInsights'] as Map<String, dynamic>?;
+      final investmentInsights =
+          json['investmentInsights'] as Map<String, dynamic>?;
       final surveyData = json['surveyData'] as Map<String, dynamic>?;
       final interests = surveyData?['interests'] as List? ?? [];
 
@@ -785,10 +864,14 @@ class FortuneData {
           if (insight != null) {
             final label = interestLabels[interest] ?? interest;
             final insightScore = insight['score'];
-            contentParts.add('\n\n$label ${insightScore != null ? "($insightScore점)" : ""}');
-            if (insight['analysis'] != null) contentParts.add('\n${insight['analysis']}');
-            if (insight['timing'] != null) contentParts.add('\n⏰ ${insight['timing']}');
-            if (insight['caution'] != null) contentParts.add('\n⚠️ ${insight['caution']}');
+            contentParts.add(
+                '\n\n$label ${insightScore != null ? "($insightScore점)" : ""}');
+            if (insight['analysis'] != null)
+              contentParts.add('\n${insight['analysis']}');
+            if (insight['timing'] != null)
+              contentParts.add('\n⏰ ${insight['timing']}');
+            if (insight['caution'] != null)
+              contentParts.add('\n⚠️ ${insight['caution']}');
           }
         }
       }
@@ -837,7 +920,7 @@ class FortuneData {
     final isMbtiData = json['fortuneType'] == 'mbti' ||
         json['type'] == 'mbti' ||
         json['fortune_type'] == 'mbti' ||
-        json['dimensions'] != null;  // dimensions 필드가 있으면 MBTI 데이터
+        json['dimensions'] != null; // dimensions 필드가 있으면 MBTI 데이터
 
     if (isMbtiData) {
       score ??= json['overallScore'] as int? ?? json['score'] as int?;
@@ -851,17 +934,21 @@ class FortuneData {
         if (json['overallScore'] != null) 'overallScore': json['overallScore'],
         if (json['luckyColor'] != null) 'luckyColor': json['luckyColor'],
         if (json['luckyNumber'] != null) 'luckyNumber': json['luckyNumber'],
-        if (json['mbtiDescription'] != null) 'mbtiDescription': json['mbtiDescription'],
-        if (json['cognitiveStrengths'] != null) 'cognitiveStrengths': json['cognitiveStrengths'],
+        if (json['mbtiDescription'] != null)
+          'mbtiDescription': json['mbtiDescription'],
+        if (json['cognitiveStrengths'] != null)
+          'cognitiveStrengths': json['cognitiveStrengths'],
         if (json['challenges'] != null) 'challenges': json['challenges'],
         'fortuneType': 'mbti',
       };
     }
 
     // Ex-lover fortune: map ex-lover specific fields to metadata
-    if (json['fortuneType'] == 'ex-lover' || json['type'] == 'ex-lover' ||
+    if (json['fortuneType'] == 'ex-lover' ||
+        json['type'] == 'ex-lover' ||
         json['fortune_type'] == 'ex-lover' ||
-        json['fortuneType'] == 'ex_lover' || json['type'] == 'ex_lover') {
+        json['fortuneType'] == 'ex_lover' ||
+        json['type'] == 'ex_lover') {
       score ??= json['score'] as int? ?? json['overallScore'] as int?;
       summary ??= json['summary'] as String? ?? json['content'] as String?;
 
@@ -870,24 +957,36 @@ class FortuneData {
         ...?metadata,
         // 핵심 인사이트 섹션들
         if (json['hardTruth'] != null) 'hardTruth': json['hardTruth'],
-        if (json['theirPerspective'] != null) 'theirPerspective': json['theirPerspective'],
-        if (json['strategicAdvice'] != null) 'strategicAdvice': json['strategicAdvice'],
-        if (json['emotionalPrescription'] != null) 'emotionalPrescription': json['emotionalPrescription'],
+        if (json['theirPerspective'] != null)
+          'theirPerspective': json['theirPerspective'],
+        if (json['strategicAdvice'] != null)
+          'strategicAdvice': json['strategicAdvice'],
+        if (json['emotionalPrescription'] != null)
+          'emotionalPrescription': json['emotionalPrescription'],
         // 재회 가능성 및 분석
-        if (json['reunion_possibility'] != null) 'reunion_possibility': json['reunion_possibility'],
-        if (json['reunionAssessment'] != null) 'reunionAssessment': json['reunionAssessment'],
+        if (json['reunion_possibility'] != null)
+          'reunion_possibility': json['reunion_possibility'],
+        if (json['reunionAssessment'] != null)
+          'reunionAssessment': json['reunionAssessment'],
         if (json['reunionCap'] != null) 'reunionCap': json['reunionCap'],
         // 관계 상태
-        if (json['contact_status'] != null) 'contact_status': json['contact_status'],
-        if (json['relationshipDepth'] != null) 'relationshipDepth': json['relationshipDepth'],
+        if (json['contact_status'] != null)
+          'contact_status': json['contact_status'],
+        if (json['relationshipDepth'] != null)
+          'relationshipDepth': json['relationshipDepth'],
         if (json['currentState'] != null) 'currentState': json['currentState'],
         // 메시지 및 조언
-        if (json['comfort_message'] != null) 'comfort_message': json['comfort_message'],
-        if (json['closingMessage'] != null) 'closingMessage': json['closingMessage'],
-        if (json['openingMessage'] != null) 'openingMessage': json['openingMessage'],
+        if (json['comfort_message'] != null)
+          'comfort_message': json['comfort_message'],
+        if (json['closingMessage'] != null)
+          'closingMessage': json['closingMessage'],
+        if (json['openingMessage'] != null)
+          'openingMessage': json['openingMessage'],
         // 분석 결과
-        if (json['breakupAnalysis'] != null) 'breakupAnalysis': json['breakupAnalysis'],
-        if (json['emotionalJourney'] != null) 'emotionalJourney': json['emotionalJourney'],
+        if (json['breakupAnalysis'] != null)
+          'breakupAnalysis': json['breakupAnalysis'],
+        if (json['emotionalJourney'] != null)
+          'emotionalJourney': json['emotionalJourney'],
         if (json['actionPlan'] != null) 'actionPlan': json['actionPlan'],
         'fortuneType': 'ex-lover',
       };
@@ -922,10 +1021,12 @@ class FortuneData {
       }
 
       // Reunion assessment
-      final reunionAssessment = json['reunionAssessment'] as Map<String, dynamic>?;
+      final reunionAssessment =
+          json['reunionAssessment'] as Map<String, dynamic>?;
       if (reunionAssessment != null) {
         if (reunionAssessment['probability'] != null) {
-          contentParts.add('\n\n📊 재회 가능성: ${reunionAssessment['probability']}%');
+          contentParts
+              .add('\n\n📊 재회 가능성: ${reunionAssessment['probability']}%');
         }
         if (reunionAssessment['analysis'] != null) {
           contentParts.add('\n${reunionAssessment['analysis']}');
@@ -942,7 +1043,8 @@ class FortuneData {
       }
 
       // Set advice
-      advice ??= json['closingMessage'] as String? ?? json['comfort_message'] as String?;
+      advice ??= json['closingMessage'] as String? ??
+          json['comfort_message'] as String?;
     }
 
     // Pet compatibility fortune: map pet-specific fields to metadata
@@ -960,20 +1062,28 @@ class FortuneData {
       metadata = {
         ...?metadata,
         if (json['pets_voice'] != null) 'pets_voice': json['pets_voice'],
-        if (json['bonding_mission'] != null) 'bonding_mission': json['bonding_mission'],
-        if (json['daily_condition'] != null) 'daily_condition': json['daily_condition'],
+        if (json['bonding_mission'] != null)
+          'bonding_mission': json['bonding_mission'],
+        if (json['daily_condition'] != null)
+          'daily_condition': json['daily_condition'],
         if (json['owner_bond'] != null) 'owner_bond': json['owner_bond'],
-        if (json['activity_recommendation'] != null) 'activity_recommendation': json['activity_recommendation'],
+        if (json['activity_recommendation'] != null)
+          'activity_recommendation': json['activity_recommendation'],
         if (json['care_tips'] != null) 'care_tips': json['care_tips'],
         if (json['health_check'] != null) 'health_check': json['health_check'],
-        if (json['weather_advice'] != null) 'weather_advice': json['weather_advice'],
-        if (json['special_message'] != null) 'special_message': json['special_message'],
+        if (json['weather_advice'] != null)
+          'weather_advice': json['weather_advice'],
+        if (json['special_message'] != null)
+          'special_message': json['special_message'],
         if (json['pet_info'] != null) 'pet_info': json['pet_info'],
         // ✅ 추가 pet 필드들 (API 응답에서 누락되었던 필드)
         if (json['today_story'] != null) 'today_story': json['today_story'],
-        if (json['breed_specific'] != null) 'breed_specific': json['breed_specific'],
-        if (json['health_insight'] != null) 'health_insight': json['health_insight'],
-        if (json['emotional_care'] != null) 'emotional_care': json['emotional_care'],
+        if (json['breed_specific'] != null)
+          'breed_specific': json['breed_specific'],
+        if (json['health_insight'] != null)
+          'health_insight': json['health_insight'],
+        if (json['emotional_care'] != null)
+          'emotional_care': json['emotional_care'],
         if (json['special_tips'] != null) 'special_tips': json['special_tips'],
         if (json['lucky_items'] != null) 'lucky_items': json['lucky_items'],
         if (json['greeting'] != null) 'greeting': json['greeting'],
@@ -1058,7 +1168,8 @@ class FortuneData {
       // 펫의 속마음
       final petsVoice = json['pets_voice'] as Map<String, dynamic>?;
       if (petsVoice != null && petsVoice['heartfelt_letter'] != null) {
-        contentParts.add('\n\n💌 반려동물의 속마음\n"${petsVoice['heartfelt_letter']}"');
+        contentParts
+            .add('\n\n💌 반려동물의 속마음\n"${petsVoice['heartfelt_letter']}"');
       }
 
       if (contentParts.isNotEmpty) {
@@ -1074,18 +1185,19 @@ class FortuneData {
     return FortuneData(
       id: json['id'],
       userId: json['userId'],
-      type: json['type'] ?? json['fortuneType'] ?? json['fortune_type'] ?? 'daily',
+      type: json['type'] ??
+          json['fortuneType'] ??
+          json['fortune_type'] ??
+          'daily',
       content: content,
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
-          : null,
+      createdAt:
+          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
       metadata: metadata,
 
       // Daily fortune fields - with fortune-specific mapping
       score: score,
-      keywords: json['keywords'] != null
-          ? List<String>.from(json['keywords'])
-          : null,
+      keywords:
+          json['keywords'] != null ? List<String>.from(json['keywords']) : null,
       summary: summary,
       luckyColor: json['luckyColor'] ?? json['lucky_items']?['color'],
       luckyNumber: json['luckyNumber'] ?? json['lucky_items']?['number'],
@@ -1102,9 +1214,9 @@ class FortuneData {
       elements: json['elements'] != null
           ? Map<String, int>.from(json['elements'])
           : null,
-      
+
       // Saju fortune fields,
-    fourPillars: json['fourPillars'],
+      fourPillars: json['fourPillars'],
       element: json['element'],
       personality: json['personality'],
       career: json['career'],
@@ -1114,9 +1226,9 @@ class FortuneData {
       yearlyFortune: json['yearlyFortune'],
       monthlyFortune: json['monthlyFortune'],
       detailedAnalysis: json['detailedAnalysis'],
-      
+
       // MBTI fortune fields,
-    mbtiType: json['mbtiType'],
+      mbtiType: json['mbtiType'],
       todayMood: json['todayMood'],
       strengths: json['strengths'],
       weaknesses: json['weaknesses'],
@@ -1130,33 +1242,34 @@ class FortuneData {
       todayTrap: json['todayTrap'] as String?,
 
       // Compatibility fortune fields,
-    compatibilityScore: json['compatibilityScore'],
+      compatibilityScore: json['compatibilityScore'],
       emotionalCompatibility: json['emotionalCompatibility'],
       communicationStyle: json['communicationStyle'],
       conflictResolution: json['conflictResolution'],
       longTermPotential: json['longTermPotential'],
-      strengthsList: json['strengthsList'] != null 
-          ? List<String>.from(json['strengthsList']) 
+      strengthsList: json['strengthsList'] != null
+          ? List<String>.from(json['strengthsList'])
           : null,
-      challenges: json['challenges'] != null 
-          ? List<String>.from(json['challenges']) 
+      challenges: json['challenges'] != null
+          ? List<String>.from(json['challenges'])
           : null,
-      
+
       // Additional lucky items,
-    luckyDirection: json['luckyDirection'] ?? json['lucky_items']?['direction'],
+      luckyDirection:
+          json['luckyDirection'] ?? json['lucky_items']?['direction'],
       luckyFood: json['luckyFood'] ?? json['lucky_items']?['food'],
       luckyItem: json['luckyItem'] ?? json['lucky_items']?['item'],
-      
+
       // Detailed lucky items,
-    detailedLuckyNumbers: json['detailedLuckyNumbers'],
+      detailedLuckyNumbers: json['detailedLuckyNumbers'],
       detailedLuckyColors: json['detailedLuckyColors'],
       detailedLuckyFoods: json['detailedLuckyFoods'],
       detailedLuckyItems: json['detailedLuckyItems'],
-      
+
       // Enhanced time-based fortune fields,
-    greeting: json['greeting'],
-      hexagonScores: json['hexagonScores'] != null 
-          ? Map<String, int>.from(json['hexagonScores']) 
+      greeting: json['greeting'],
+      hexagonScores: json['hexagonScores'] != null
+          ? Map<String, int>.from(json['hexagonScores'])
           : null,
       timeSpecificFortunes: json['timeSpecificFortunes'],
       birthYearFortunes: json['birthYearFortunes'],
@@ -1169,73 +1282,73 @@ class FortuneData {
   // Convert to domain entities
   DailyFortune? toDailyFortune() {
     if (type != 'daily' && type != 'today' && type != 'tomorrow') return null;
-    
+
     return DailyFortune(
-      score: score ?? 75,
-      keywords: keywords ?? ['행운', '기회', '성장'],
-      summary: summary ?? content ?? '',
-      luckyColor: luckyColor ?? '#8B5CF6',
-      luckyNumber: luckyNumber ?? 7,
-      energy: energy ?? 80,
-      mood: mood ?? '평온함',
-      advice: advice ?? '',
-      caution: caution ?? '',
-      bestTime: bestTime ?? '오후 2시-4시',
-      compatibility: compatibility?.join(', ') ?? '',
-      elements: FortuneElements(
-        love: elements?['love'] ?? 50,
-        career: elements?['career'] ?? 50,
-        money: elements?['money'] ?? 50,
-        health: elements?['health'] ?? 50));
+        score: score ?? 75,
+        keywords: keywords ?? ['행운', '기회', '성장'],
+        summary: summary ?? content ?? '',
+        luckyColor: luckyColor ?? '#8B5CF6',
+        luckyNumber: luckyNumber ?? 7,
+        energy: energy ?? 80,
+        mood: mood ?? '평온함',
+        advice: advice ?? '',
+        caution: caution ?? '',
+        bestTime: bestTime ?? '오후 2시-4시',
+        compatibility: compatibility?.join(', ') ?? '',
+        elements: FortuneElements(
+            love: elements?['love'] ?? 50,
+            career: elements?['career'] ?? 50,
+            money: elements?['money'] ?? 50,
+            health: elements?['health'] ?? 50));
   }
 
   SajuFortune? toSajuFortune() {
     if (type != 'saju' && type != 'traditional-saju') return null;
-    
+
     return SajuFortune(
-      fourPillars: fourPillars ?? '',
-      element: element ?? '',
-      personality: personality ?? '',
-      career: career ?? '',
-      wealth: wealth ?? '',
-      health: health ?? '',
-      relationship: relationship ?? '',
-      yearlyFortune: yearlyFortune ?? '',
-      monthlyFortune: monthlyFortune ?? '',
-      advice: advice ?? '',
-      detailedAnalysis: detailedAnalysis ?? {});
+        fourPillars: fourPillars ?? '',
+        element: element ?? '',
+        personality: personality ?? '',
+        career: career ?? '',
+        wealth: wealth ?? '',
+        health: health ?? '',
+        relationship: relationship ?? '',
+        yearlyFortune: yearlyFortune ?? '',
+        monthlyFortune: monthlyFortune ?? '',
+        advice: advice ?? '',
+        detailedAnalysis: detailedAnalysis ?? {});
   }
 
   MBTIFortune? toMBTIFortune() {
     if (type != 'mbti') return null;
-    
+
     return MBTIFortune(
-      mbtiType: mbtiType ?? '',
-      todayMood: todayMood ?? '',
-      strengths: strengths ?? '',
-      weaknesses: weaknesses ?? '',
-      advice: advice ?? '',
-      compatibility: compatibility?.join(', ') ?? '',
-      careerAdvice: careerAdvice ?? '',
-      relationshipAdvice: relationshipAdvice ?? '',
-      energyLevel: energyLevel ?? 70,
-      stressLevel: stressLevel ?? 30);
+        mbtiType: mbtiType ?? '',
+        todayMood: todayMood ?? '',
+        strengths: strengths ?? '',
+        weaknesses: weaknesses ?? '',
+        advice: advice ?? '',
+        compatibility: compatibility?.join(', ') ?? '',
+        careerAdvice: careerAdvice ?? '',
+        relationshipAdvice: relationshipAdvice ?? '',
+        energyLevel: energyLevel ?? 70,
+        stressLevel: stressLevel ?? 30);
   }
 
   CompatibilityFortune? toCompatibilityFortune() {
-    if (type != 'compatibility' && type != 'traditional-compatibility') return null;
-    
+    if (type != 'compatibility' && type != 'traditional-compatibility')
+      return null;
+
     return CompatibilityFortune(
-      compatibilityScore: compatibilityScore ?? 0,
-      summary: summary ?? content ?? '',
-      emotionalCompatibility: emotionalCompatibility ?? '',
-      communicationStyle: communicationStyle ?? '',
-      conflictResolution: conflictResolution ?? '',
-      longTermPotential: longTermPotential ?? '',
-      strengths: strengthsList ?? [],
-      challenges: challenges ?? [],
-      advice: advice ?? ''
-    );
+        compatibilityScore: compatibilityScore ?? 0,
+        summary: summary ?? content ?? '',
+        emotionalCompatibility: emotionalCompatibility ?? '',
+        communicationStyle: communicationStyle ?? '',
+        conflictResolution: conflictResolution ?? '',
+        longTermPotential: longTermPotential ?? '',
+        strengths: strengthsList ?? [],
+        challenges: challenges ?? [],
+        advice: advice ?? '');
   }
 
   Fortune toGeneralFortune() {

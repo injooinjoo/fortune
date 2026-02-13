@@ -56,15 +56,17 @@ class RadarCard extends StatelessWidget {
                   size: 180,
                   primaryColor: const Color(0xFF2E8B57), // 고유 색상 - 木(목) 전통 청록
                 ),
-              ).animate()
-                .fadeIn(duration: 600.ms)
-                .scale(begin: const Offset(0.95, 0.95), duration: 600.ms, curve: Curves.easeOut),
+              ).animate().fadeIn(duration: 600.ms).scale(
+                  begin: const Offset(0.95, 0.95),
+                  duration: 600.ms,
+                  curve: Curves.easeOut),
 
               const SizedBox(height: 12),
 
               // 영역별 점수 리스트 (심플하게)
               ...radarData.entries.map((entry) {
-                final areaColor = FortuneSwipeHelpers.getPulseScoreColor(entry.value.round());
+                final areaColor =
+                    FortuneSwipeHelpers.getPulseScoreColor(entry.value.round());
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Row(
@@ -90,7 +92,8 @@ class RadarCard extends StatelessWidget {
                             Container(
                               height: 4,
                               decoration: BoxDecoration(
-                                color: context.colors.textPrimary.withValues(alpha: 0.06),
+                                color: context.colors.textPrimary
+                                    .withValues(alpha: 0.06),
                                 borderRadius: BorderRadius.circular(2),
                               ),
                             ),
@@ -103,14 +106,13 @@ class RadarCard extends StatelessWidget {
                                   color: areaColor,
                                   borderRadius: BorderRadius.circular(2),
                                 ),
-                              ).animate()
-                                .scaleX(
-                                  begin: 0,
-                                  duration: 800.ms,
-                                  delay: 200.ms,
-                                  curve: Curves.easeOutCubic,
-                                  alignment: Alignment.centerLeft,
-                                ),
+                              ).animate().scaleX(
+                                    begin: 0,
+                                    duration: 800.ms,
+                                    delay: 200.ms,
+                                    curve: Curves.easeOutCubic,
+                                    alignment: Alignment.centerLeft,
+                                  ),
                             ),
                           ],
                         ),
@@ -136,9 +138,10 @@ class RadarCard extends StatelessWidget {
               }),
             ],
           ),
-        ).animate()
-          .fadeIn(duration: 400.ms)
-          .slideY(begin: 0.08, duration: 500.ms, curve: Curves.easeOut),
+        )
+            .animate()
+            .fadeIn(duration: 400.ms)
+            .slideY(begin: 0.08, duration: 500.ms, curve: Curves.easeOut),
       ],
     );
   }

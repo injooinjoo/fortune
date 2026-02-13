@@ -8,7 +8,7 @@ import '../../core/utils/logger.dart';
 class PreviewScreen extends StatefulWidget {
   final VoidCallback? onLoginSuccess;
   final VoidCallback? onContinueWithoutLogin;
-  
+
   const PreviewScreen({
     super.key,
     this.onLoginSuccess,
@@ -19,7 +19,8 @@ class PreviewScreen extends StatefulWidget {
   State<PreviewScreen> createState() => _PreviewScreenState();
 }
 
-class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateMixin {
+class _PreviewScreenState extends State<PreviewScreen>
+    with TickerProviderStateMixin {
   late final SocialAuthService _socialAuthService;
   bool _bottomSheetLoading = false;
   late AnimationController _fadeController;
@@ -29,17 +30,17 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
   void initState() {
     super.initState();
     _socialAuthService = SocialAuthService(Supabase.instance.client);
-    
+
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     _slideController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    
+
     // 애니메이션 시작
     _fadeController.forward();
     Future.delayed(const Duration(milliseconds: 200), () {
@@ -108,9 +109,9 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
                     color: colors.textPrimary,
                   ),
                 ),
-                
+
                 const SizedBox(height: 40),
-                
+
                 // Loading indicator
                 if (_bottomSheetLoading)
                   const Padding(
@@ -123,36 +124,40 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
                     context: context,
                     label: 'Google로 계속하기',
                     logoPath: 'assets/images/social/google.svg',
-                    onTap: () => _handleSocialLoginInBottomSheet('google', setBottomSheetState),
+                    onTap: () => _handleSocialLoginInBottomSheet(
+                        'google', setBottomSheetState),
                   ),
                   const SizedBox(height: 12),
-                  
+
                   _buildSocialLoginButton(
                     context: context,
                     label: 'Apple로 계속하기',
                     logoPath: 'assets/images/social/apple.svg',
-                    onTap: () => _handleSocialLoginInBottomSheet('apple', setBottomSheetState),
+                    onTap: () => _handleSocialLoginInBottomSheet(
+                        'apple', setBottomSheetState),
                   ),
                   const SizedBox(height: 12),
-                  
+
                   _buildSocialLoginButton(
                     context: context,
                     label: '카카오로 계속하기',
                     logoPath: 'assets/images/social/kakao.svg',
-                    onTap: () => _handleSocialLoginInBottomSheet('kakao', setBottomSheetState),
+                    onTap: () => _handleSocialLoginInBottomSheet(
+                        'kakao', setBottomSheetState),
                   ),
                   const SizedBox(height: 12),
-                  
+
                   _buildSocialLoginButton(
                     context: context,
                     label: '네이버로 계속하기',
                     logoPath: 'assets/images/social/naver.svg',
-                    onTap: () => _handleSocialLoginInBottomSheet('naver', setBottomSheetState),
+                    onTap: () => _handleSocialLoginInBottomSheet(
+                        'naver', setBottomSheetState),
                   ),
                 ],
-                
+
                 const SizedBox(height: 30),
-                
+
                 // Terms text
                 Text(
                   '계속하면 서비스 이용약관 및\n개인정보 처리방침에 동의하는 것으로 간주됩니다.',
@@ -170,7 +175,8 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
     );
   }
 
-  Future<void> _handleSocialLoginInBottomSheet(String provider, StateSetter setBottomSheetState) async {
+  Future<void> _handleSocialLoginInBottomSheet(
+      String provider, StateSetter setBottomSheetState) async {
     if (!mounted) return;
     setBottomSheetState(() {
       _bottomSheetLoading = true;
@@ -178,10 +184,11 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
 
     try {
       AuthResponse? response;
-      
+
       switch (provider) {
         case 'google':
-          response = await _socialAuthService.signInWithGoogle(context: context);
+          response =
+              await _socialAuthService.signInWithGoogle(context: context);
           break;
         case 'apple':
           response = await _socialAuthService.signInWithApple();
@@ -193,7 +200,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
           response = await _socialAuthService.signInWithNaver();
           break;
       }
-      
+
       // OAuth flows return null (handled by deep linking)
       // Direct auth flows return AuthResponse
       if (!mounted) return;
@@ -207,15 +214,14 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
         Navigator.pop(context);
         widget.onLoginSuccess?.call();
       }
-      
     } catch (error) {
       Logger.error('소셜 로그인 실패: $provider', error);
-      
+
       if (mounted) {
         setBottomSheetState(() {
           _bottomSheetLoading = false;
         });
-        
+
         // Show error message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -226,7 +232,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
       }
     }
   }
-  
+
   Widget _buildSocialLoginButton({
     required BuildContext context,
     required String label,
@@ -276,7 +282,8 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
       backgroundColor: colors.background,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+          padding:
+              const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
           child: Column(
             children: [
               const Spacer(),

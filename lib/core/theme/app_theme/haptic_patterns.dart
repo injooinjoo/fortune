@@ -10,19 +10,19 @@ class HapticPatterns {
   final HapticType error;
   final HapticType selection;
 
-  const HapticPatterns({
-    required this.buttonTap,
-    required this.success,
-    required this.warning,
-    required this.error,
-    required this.selection});
+  const HapticPatterns(
+      {required this.buttonTap,
+      required this.success,
+      required this.warning,
+      required this.error,
+      required this.selection});
 
   factory HapticPatterns.standard() => const HapticPatterns(
-        buttonTap: HapticType.light,
-        success: HapticType.medium,
-        warning: HapticType.medium,
-        error: HapticType.heavy,
-        selection: HapticType.selection);
+      buttonTap: HapticType.light,
+      success: HapticType.medium,
+      warning: HapticType.medium,
+      error: HapticType.heavy,
+      selection: HapticType.selection);
 
   static HapticPatterns lerp(HapticPatterns a, HapticPatterns b, double t) {
     return t < 0.5 ? a : b;
@@ -48,8 +48,4 @@ class HapticPatterns {
 }
 
 /// Haptic feedback types
-enum HapticType {
-  light,
-  medium,
-  heavy,
-  selection}
+enum HapticType { light, medium, heavy, selection }

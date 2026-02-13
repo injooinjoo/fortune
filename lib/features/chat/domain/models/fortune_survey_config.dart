@@ -2,28 +2,28 @@ import 'package:flutter/material.dart';
 
 /// 설문 입력 타입
 enum SurveyInputType {
-  chips,       // 단일 선택 칩
+  chips, // 단일 선택 칩
   multiSelect, // 다중 선택 칩
-  slider,      // 슬라이더
-  text,        // 텍스트 입력
+  slider, // 슬라이더
+  text, // 텍스트 입력
   textWithSkip, // 텍스트 입력 + "없음" 스킵 칩
-  grid,        // 그리드 선택
-  image,       // 이미지 업로드 (관상)
-  profile,        // 프로필 선택 (궁합)
-  familyProfile,  // 가족 프로필 선택 (가족운)
-  petProfile,     // 펫 프로필 선택 (반려동물)
-  voice,       // 음성/텍스트 입력 (꿈분석, 소원)
-  date,        // 날짜 선택 (바이오리듬, 스포츠) - 기존 다이얼로그
-  calendar,    // 인라인 캘린더 (기간별 운세) - 채팅 내 캘린더 표시
+  grid, // 그리드 선택
+  image, // 이미지 업로드 (관상)
+  profile, // 프로필 선택 (궁합)
+  familyProfile, // 가족 프로필 선택 (가족운)
+  petProfile, // 펫 프로필 선택 (반려동물)
+  voice, // 음성/텍스트 입력 (꿈분석, 소원)
+  date, // 날짜 선택 (바이오리듬, 스포츠) - 기존 다이얼로그
+  calendar, // 인라인 캘린더 (기간별 운세) - 채팅 내 캘린더 표시
   birthDateTime, // 생년월일+시간 롤링 피커 (사주용)
-  tarot,       // 타로 카드 선택 플로우
+  tarot, // 타로 카드 선택 플로우
   faceReading, // AI 관상 분석 플로우
-  ootdImage,   // OOTD 사진 입력 (촬영 가이드 포함)
+  ootdImage, // OOTD 사진 입력 (촬영 가이드 포함)
   investmentCategory, // 투자 카테고리 선택 (코인, 주식, ETF 등)
-  investmentTicker,   // 투자 종목 선택 (티커 검색)
+  investmentTicker, // 투자 종목 선택 (티커 검색)
   celebritySelection, // 유명인 선택 (검색 + 그리드)
-  matchSelection,     // 경기 선택 (스포츠 경기 목록)
-  location,           // 지역 선택 (GPS + 검색 + 드롭다운 + 지도)
+  matchSelection, // 경기 선택 (스포츠 경기 목록)
+  location, // 지역 선택 (GPS + 검색 + 드롭다운 + 지도)
 }
 
 /// 설문 선택지
@@ -49,9 +49,9 @@ class SurveyStep {
   final List<SurveyOption> options;
   final bool isRequired;
   final String? dependsOn; // 이전 답변에 따라 동적 표시
-  final double? minValue;  // slider용
-  final double? maxValue;  // slider용
-  final String? unit;      // slider용 단위
+  final double? minValue; // slider용
+  final double? maxValue; // slider용
+  final String? unit; // slider용 단위
   final Map<String, dynamic>? showWhen; // 조건부 표시: {'stepId': 'expectedValue'}
 
   const SurveyStep({
@@ -98,67 +98,67 @@ enum FortuneSurveyType {
   profileCreation, // 궁합용 프로필 생성 플로우
 
   // 기존 6개
-  career,   // 커리어/직업운
-  love,     // 연애운
-  talent,   // 적성/재능
-  daily,    // 오늘의 운세 (달력)
-  tarot,    // 타로
-  mbti,     // MBTI
+  career, // 커리어/직업운
+  love, // 연애운
+  talent, // 적성/재능
+  daily, // 오늘의 운세 (달력)
+  tarot, // 타로
+  mbti, // MBTI
 
   // 시간 기반 (2개)
-  newYear,       // 새해 운세
+  newYear, // 새해 운세
   dailyCalendar, // 기간별 운세 (캘린더)
 
   // 전통 분석 (3개)
-  traditional,  // 전통 사주 분석
-  faceReading,  // AI 관상 분석
-  talisman,     // 부적
+  traditional, // 전통 사주 분석
+  faceReading, // AI 관상 분석
+  talisman, // 부적
 
   // 성격/개성 (2개)
   personalityDna, // 성격 DNA
-  biorhythm,      // 바이오리듬
+  biorhythm, // 바이오리듬
 
   // 연애/관계 (4개 추가)
-  compatibility,  // 궁합
-  avoidPeople,    // 경계 대상
-  exLover,        // 재회 운세
-  blindDate,      // 소개팅 운세
+  compatibility, // 궁합
+  avoidPeople, // 경계 대상
+  exLover, // 재회 운세
+  blindDate, // 소개팅 운세
 
   // 재물 (1개)
-  money,          // 재물운 (프리미엄)
+  money, // 재물운 (프리미엄)
 
   // 라이프스타일 (4개)
-  luckyItems,     // 행운 아이템
-  lotto,          // 로또 번호
-  wish,           // 소원
-  fortuneCookie,  // 오늘의 메시지
+  luckyItems, // 행운 아이템
+  lotto, // 로또 번호
+  wish, // 소원
+  fortuneCookie, // 오늘의 메시지
 
   // 건강/스포츠 (3개)
-  health,         // 건강 운세
-  exercise,       // 운동 추천
-  sportsGame,     // 스포츠 경기
+  health, // 건강 운세
+  exercise, // 운동 추천
+  sportsGame, // 스포츠 경기
 
   // 인터랙티브 (4개)
-  dream,          // 꿈 해몽
-  celebrity,      // 유명인 궁합
-  pastLife,       // 전생탐험
-  gameEnhance,    // 게임 강화운세
+  dream, // 꿈 해몽
+  celebrity, // 유명인 궁합
+  pastLife, // 전생탐험
+  gameEnhance, // 게임 강화운세
 
   // 가족/반려동물 (4개)
-  pet,            // 반려동물 궁합
-  family,         // 가족 운세
-  naming,         // 작명
-  babyNickname,   // 태명 분석
+  pet, // 반려동물 궁합
+  family, // 가족 운세
+  naming, // 작명
+  babyNickname, // 태명 분석
 
   // 스타일/패션 (1개)
   ootdEvaluation, // OOTD 평가
 
   // 실용/결정 (2개)
-  exam,           // 시험운
-  moving,         // 이사/이직운
+  exam, // 시험운
+  moving, // 이사/이직운
 
   // 웰니스 (1개)
-  gratitude,      // 감사일기
+  gratitude, // 감사일기
 
   // 이미지 생성 (1개)
   yearlyEncounter, // 올해의 인연
@@ -224,9 +224,8 @@ class SurveyProgress {
 
   bool get isLastStep => currentStepIndex == config.steps.length - 1;
 
-  double get progress => config.steps.isEmpty
-      ? 0.0
-      : (currentStepIndex + 1) / config.steps.length;
+  double get progress =>
+      config.steps.isEmpty ? 0.0 : (currentStepIndex + 1) / config.steps.length;
 
   SurveyProgress copyWith({
     FortuneSurveyConfig? config,

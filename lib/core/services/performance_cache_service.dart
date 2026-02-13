@@ -6,7 +6,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 /// High-performance caching service with memory and disk layers
 class PerformanceCacheService {
-  static final PerformanceCacheService _instance = PerformanceCacheService._internal();
+  static final PerformanceCacheService _instance =
+      PerformanceCacheService._internal();
   factory PerformanceCacheService() => _instance;
   PerformanceCacheService._internal();
 
@@ -14,15 +15,15 @@ class PerformanceCacheService {
   final Map<String, CacheEntry> _memoryCache = {};
   static const int _maxMemoryCacheSize = 50;
   static const Duration _defaultTTL = Duration(hours: 24);
-  
+
   // Preload cache for adjacent MBTI types
   final Set<String> _preloadQueue = {};
   Timer? _preloadTimer;
-  
+
   // Cache statistics
   int _cacheHits = 0;
   int _cacheMisses = 0;
-  
+
   late SharedPreferences _prefs;
   bool _initialized = false;
 
@@ -30,10 +31,11 @@ class PerformanceCacheService {
     if (_initialized) return;
     _prefs = await SharedPreferences.getInstance();
     _initialized = true;
-    
+
     // Start preload timer
-    _preloadTimer = Timer.periodic(const Duration(seconds: 5), (_) => _processPreloadQueue());
-    
+    _preloadTimer = Timer.periodic(
+        const Duration(seconds: 5), (_) => _processPreloadQueue());
+
     // Clean expired cache on startup
     await _cleanExpiredCache();
   }
@@ -44,7 +46,7 @@ class PerformanceCacheService {
     T Function(Map<String, dynamic>)? fromJson,
   }) async {
     if (!_initialized) await initialize();
-    
+
     // Check memory cache first
     final memoryEntry = _memoryCache[key];
     if (memoryEntry != null && !memoryEntry.isExpired) {
@@ -53,7 +55,7 @@ class PerformanceCacheService {
       debugPrint('Cache hit: $key');
       return memoryEntry.data as T?;
     }
-    
+
     // Check disk cache
     final diskData = _prefs.getString('cache_$key');
     if (diskData != null) {
@@ -64,7 +66,7 @@ class PerformanceCacheService {
           // Promote to memory cache
           _addToMemoryCache(key, entry);
           debugPrint('Disk cache hit: $key');
-          
+
           if (fromJson != null) {
             return fromJson(entry.data);
           }
@@ -74,7 +76,7 @@ class PerformanceCacheService {
         debugPrint('Cache decode error: $e');
       }
     }
-    
+
     _cacheMisses++;
     debugPrint('Cache miss: $key');
     return null;
@@ -88,15 +90,15 @@ class PerformanceCacheService {
     Map<String, dynamic> Function(T)? toJson,
   }) async {
     if (!_initialized) await initialize();
-    
+
     final entry = CacheEntry(
       data: toJson != null ? toJson(data) : data,
       expiry: DateTime.now().add(ttl ?? _defaultTTL),
     );
-    
+
     // Add to memory cache
     _addToMemoryCache(key, entry);
-    
+
     // Persist to disk
     try {
       await _prefs.setString('cache_$key', json.encode(entry.toJson()));
@@ -109,7 +111,7 @@ class PerformanceCacheService {
   /// Preload adjacent MBTI types for smooth browsing
   void preloadAdjacentMBTI(String currentType) {
     if (!_initialized) return;
-    
+
     final adjacentTypes = _getAdjacentMBTITypes(currentType);
     for (final type in adjacentTypes) {
       _preloadQueue.add(type);
@@ -119,13 +121,13 @@ class PerformanceCacheService {
   /// Clear all cache
   Future<void> clearAll() async {
     if (!_initialized) await initialize();
-    
+
     _memoryCache.clear();
     final keys = _prefs.getKeys().where((key) => key.startsWith('cache_'));
     for (final key in keys) {
       await _prefs.remove(key);
     }
-    
+
     _cacheHits = 0;
     _cacheMisses = 0;
     debugPrint('📱 Cache cleared');
@@ -137,20 +139,22 @@ class PerformanceCacheService {
     return {
       'hits': _cacheHits,
       'misses': _cacheMisses,
-      'hitRate': total > 0 ? (_cacheHits / total * 100).toStringAsFixed(1) : '0.0',
+      'hitRate':
+          total > 0 ? (_cacheHits / total * 100).toStringAsFixed(1) : '0.0',
       'memoryCacheSize': _memoryCache.length,
-      'diskCacheKeys': _prefs.getKeys().where((k) => k.startsWith('cache_')).length,
+      'diskCacheKeys':
+          _prefs.getKeys().where((k) => k.startsWith('cache_')).length,
     };
   }
 
   // Private methods
-  
+
   void _addToMemoryCache(String key, CacheEntry entry) {
     // Evict oldest if at capacity
     if (_memoryCache.length >= _maxMemoryCacheSize) {
       _evictOldest();
     }
-    
+
     _memoryCache[key] = entry;
   }
 
@@ -163,7 +167,7 @@ class PerformanceCacheService {
 
   void _evictOldest() {
     if (_memoryCache.isEmpty) return;
-    
+
     final oldestKey = _memoryCache.keys.first;
     _memoryCache.remove(oldestKey);
     debugPrint('Cache evicted: $oldestKey');
@@ -172,7 +176,7 @@ class PerformanceCacheService {
   Future<void> _cleanExpiredCache() async {
     // Clean memory cache
     _memoryCache.removeWhere((key, entry) => entry.isExpired);
-    
+
     // Clean disk cache
     final keys = _prefs.getKeys().where((key) => key.startsWith('cache_'));
     for (final key in keys) {
@@ -199,7 +203,7 @@ class PerformanceCacheService {
       ['T', 'F'],
       ['J', 'P'],
     ];
-    
+
     for (int i = 0; i < 4; i++) {
       final chars = type.split('');
       final currentDim = chars[i];
@@ -207,21 +211,21 @@ class PerformanceCacheService {
       chars[i] = otherDim;
       types.add(chars.join());
     }
-    
+
     return types;
   }
 
   Future<void> _processPreloadQueue() async {
     if (_preloadQueue.isEmpty) return;
-    
+
     // Check network connectivity
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult.contains(ConnectivityResult.none)) return;
-    
+
     // Process one item from queue
     final type = _preloadQueue.first;
     _preloadQueue.remove(type);
-    
+
     // Trigger preload through provider/service
     debugPrint('Preloading MBTI type: $type');
   }
@@ -244,14 +248,14 @@ class CacheEntry {
   bool get isExpired => DateTime.now().isAfter(expiry);
 
   Map<String, dynamic> toJson() => {
-    'data': data,
-    'expiry': expiry.toIso8601String(),
-  };
+        'data': data,
+        'expiry': expiry.toIso8601String(),
+      };
 
   factory CacheEntry.fromJson(Map<String, dynamic> json) => CacheEntry(
-    data: json['data'],
-    expiry: DateTime.parse(json['expiry']),
-  );
+        data: json['data'],
+        expiry: DateTime.parse(json['expiry']),
+      );
 }
 
 /// Performance monitoring service
@@ -264,12 +268,13 @@ class PerformanceMonitor {
   Timer? _reportTimer;
 
   void startMonitoring() {
-    _reportTimer = Timer.periodic(const Duration(minutes: 5), (_) => _reportMetrics());
+    _reportTimer =
+        Timer.periodic(const Duration(minutes: 5), (_) => _reportMetrics());
   }
 
   void recordMetric(String name, int durationMs) {
     _metrics.putIfAbsent(name, () => []).add(durationMs);
-    
+
     // Keep only last 100 measurements
     if (_metrics[name]!.length > 100) {
       _metrics[name]!.removeAt(0);
@@ -278,15 +283,15 @@ class PerformanceMonitor {
 
   Map<String, dynamic> getMetrics() {
     final results = <String, dynamic>{};
-    
+
     _metrics.forEach((name, durations) {
       if (durations.isEmpty) return;
-      
+
       durations.sort();
       final avg = durations.reduce((a, b) => a + b) / durations.length;
       final p50 = durations[durations.length ~/ 2];
       final p95 = durations[(durations.length * 0.95).floor()];
-      
+
       results[name] = {
         'avg': avg.round(),
         'p50': p50,
@@ -294,7 +299,7 @@ class PerformanceMonitor {
         'count': durations.length,
       };
     });
-    
+
     return results;
   }
 
@@ -303,7 +308,8 @@ class PerformanceMonitor {
     if (metrics.isNotEmpty) {
       debugPrint('Metrics:');
       metrics.forEach((name, data) {
-        debugPrint('  $name: avg=${data['avg']}ms, p50=${data['p50']}ms, p95=${data['p95']}ms');
+        debugPrint(
+            '  $name: avg=${data['avg']}ms, p50=${data['p50']}ms, p95=${data['p95']}ms');
       });
     }
   }

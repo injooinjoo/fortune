@@ -7,10 +7,10 @@ class CacheService {
   static const String _fortuneBoxName = 'fortunes';
   static const String _settingsBoxName = 'settings';
   static const int _maxCacheSize = 50 * 1024 * 1024; // 50MB
-  
+
   late Box<CachedFortune> _fortuneBox;
   late Box _settingsBox;
-  
+
   static final CacheService _instance = CacheService._internal();
   factory CacheService() => _instance;
   CacheService._internal();
@@ -18,19 +18,19 @@ class CacheService {
   Future<void> initialize() async {
     try {
       await Hive.initFlutter();
-      
+
       // Register adapters
       if (!Hive.isAdapterRegistered(0)) {
         Hive.registerAdapter(CachedFortuneAdapter());
       }
-      
+
       // Open boxes
       _fortuneBox = await Hive.openBox<CachedFortune>(_fortuneBoxName);
       _settingsBox = await Hive.openBox(_settingsBoxName);
-      
+
       // Clean expired cache on startup
       await _cleanExpiredCache();
-      
+
       Logger.info('Cache service initialized successfully');
     } catch (e) {
       Logger.error('Failed to initialize cache service', e);
@@ -43,10 +43,10 @@ class CacheService {
     try {
       final cacheKey = _generateCacheKey(fortune.type, fortune.userId);
       final cachedFortune = CachedFortune.fromFortune(fortune);
-      
+
       await _fortuneBox.put(cacheKey, cachedFortune);
       await _enforceCacheSize();
-      
+
       Logger.debug('Fortune cached');
     } catch (e) {
       Logger.error('Failed to cache fortune', e);
@@ -57,17 +57,17 @@ class CacheService {
     try {
       final cacheKey = _generateCacheKey(fortuneType, userId);
       final cachedFortune = _fortuneBox.get(cacheKey);
-      
+
       if (cachedFortune == null) {
         return null;
       }
-      
+
       if (cachedFortune.isExpired) {
         await _fortuneBox.delete(cacheKey);
         Logger.debug('Fortune cached');
         return null;
       }
-      
+
       Logger.debug('Fortune cached');
       return cachedFortune.toFortune();
     } catch (e) {
@@ -79,13 +79,13 @@ class CacheService {
   Future<List<Fortune>> getAllCachedFortunes(String userId) async {
     try {
       final fortunes = <Fortune>[];
-      
+
       for (final cachedFortune in _fortuneBox.values) {
         if (cachedFortune.userId == userId && !cachedFortune.isExpired) {
           fortunes.add(cachedFortune.toFortune());
         }
       }
-      
+
       fortunes.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       return fortunes;
     } catch (e) {
@@ -166,7 +166,8 @@ class CacheService {
 
   String _generateDailyCalendarKey(String userId) {
     final today = DateTime.now();
-    final dateKey = '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+    final dateKey =
+        '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
     return '${userId}_daily_calendar_result_$dateKey';
   }
 
@@ -200,7 +201,7 @@ class CacheService {
   Future<int> getCacheSize() async {
     try {
       int totalSize = 0;
-      
+
       // Calculate fortune box size
       for (final fortune in _fortuneBox.values) {
         totalSize += fortune.content.length;
@@ -208,12 +209,12 @@ class CacheService {
           totalSize += fortune.additionalInfo.toString().length;
         }
       }
-      
+
       // Calculate settings box size
       for (final value in _settingsBox.values) {
         totalSize += value.toString().length;
       }
-      
+
       return totalSize;
     } catch (e) {
       Logger.error('Failed to calculate cache size', e);
@@ -234,20 +235,21 @@ class CacheService {
   // Private helper methods
   String _generateCacheKey(String fortuneType, String userId) {
     final today = DateTime.now();
-    final dateKey = '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+    final dateKey =
+        '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
     return '${userId}_${fortuneType}_$dateKey';
   }
 
   Future<void> _cleanExpiredCache() async {
     try {
       final keysToDelete = <dynamic>[];
-      
+
       _fortuneBox.toMap().forEach((key, value) {
         if (value.isExpired) {
           keysToDelete.add(key);
         }
       });
-      
+
       if (keysToDelete.isNotEmpty) {
         await _fortuneBox.deleteAll(keysToDelete);
         Logger.debug('Removed ${keysToDelete.length} expired cache entries');
@@ -260,30 +262,31 @@ class CacheService {
   Future<void> _enforceCacheSize() async {
     try {
       final currentSize = await getCacheSize();
-      
+
       if (currentSize > _maxCacheSize) {
         // Remove oldest entries until size is under limit
         final entries = _fortuneBox.toMap().entries.toList()
           ..sort((a, b) => a.value.createdAt.compareTo(b.value.createdAt));
-        
+
         int removedSize = 0;
         final keysToDelete = <dynamic>[];
-        
+
         for (final entry in entries) {
           if (currentSize - removedSize <= _maxCacheSize * 0.8) {
             break;
           }
-          
+
           keysToDelete.add(entry.key);
           removedSize += entry.value.content.length;
           if (entry.value.additionalInfo != null) {
             removedSize += entry.value.additionalInfo.toString().length;
           }
         }
-        
+
         if (keysToDelete.isNotEmpty) {
           await _fortuneBox.deleteAll(keysToDelete);
-          Logger.debug('Removed ${keysToDelete.length} entries to enforce cache size limit');
+          Logger.debug(
+              'Removed ${keysToDelete.length} entries to enforce cache size limit');
         }
       }
     } catch (e) {
@@ -292,8 +295,9 @@ class CacheService {
   }
 
   // Offline mode support
-  bool get isOffline => getSetting<bool>('isOffline', defaultValue: false) ?? false;
-  
+  bool get isOffline =>
+      getSetting<bool>('isOffline', defaultValue: false) ?? false;
+
   Future<void> setOfflineMode(bool offline) async {
     await setSetting('isOffline', offline);
   }
@@ -301,10 +305,11 @@ class CacheService {
   Future<Map<String, dynamic>> getOfflineStats() async {
     final totalCached = _fortuneBox.length;
     final cacheSize = await getCacheSize();
-    final oldestEntry = _fortuneBox.values.isEmpty 
-      ? null 
-      : _fortuneBox.values.reduce((a, b) => a.createdAt.isBefore(b.createdAt) ? a : b);
-    
+    final oldestEntry = _fortuneBox.values.isEmpty
+        ? null
+        : _fortuneBox.values
+            .reduce((a, b) => a.createdAt.isBefore(b.createdAt) ? a : b);
+
     return {
       'totalCached': totalCached,
       'cacheSize': cacheSize,

@@ -7,12 +7,12 @@ class BirthDatePreview extends StatelessWidget {
   final String birthDay;
   final String? birthTimePeriod;
 
-  const BirthDatePreview({
-    super.key,
-    required this.birthYear,
-    required this.birthMonth,
-    required this.birthDay,
-    this.birthTimePeriod});
+  const BirthDatePreview(
+      {super.key,
+      required this.birthYear,
+      required this.birthMonth,
+      required this.birthDay,
+      this.birthTimePeriod});
 
   @override
   Widget build(BuildContext context) {
@@ -20,17 +20,15 @@ class BirthDatePreview extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    final formattedDate = FortuneDateUtils.formatKoreanDate(
-      birthYear,
-      birthMonth,
-      birthDay);
+    final formattedDate =
+        FortuneDateUtils.formatKoreanDate(birthYear, birthMonth, birthDay);
 
     TimePeriod? selectedTimePeriod;
     if (birthTimePeriod != null) {
       selectedTimePeriod = timePeriods.cast<TimePeriod?>().firstWhere(
-        (period) => period?.value == birthTimePeriod,
-        orElse: () => null,
-      );
+            (period) => period?.value == birthTimePeriod,
+            orElse: () => null,
+          );
     }
 
     return Container(
@@ -38,24 +36,23 @@ class BirthDatePreview extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Theme.of(context).primaryColor.withValues(alpha: 0.2)),
+        border: Border.all(
+            color: Theme.of(context).primaryColor.withValues(alpha: 0.2)),
       ),
       child: Column(
         children: [
-          Text(
-            formattedDate,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w500,
-              color: Theme.of(context).primaryColor
-            ),
-            textAlign: TextAlign.center),
+          Text(formattedDate,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(context).primaryColor),
+              textAlign: TextAlign.center),
           if (selectedTimePeriod != null) ...[
             const SizedBox(height: 4),
-            Text(
-              selectedTimePeriod.label,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).primaryColor.withValues(alpha: 0.8)),
-              textAlign: TextAlign.center),
+            Text(selectedTimePeriod.label,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color:
+                        Theme.of(context).primaryColor.withValues(alpha: 0.8)),
+                textAlign: TextAlign.center),
           ],
         ],
       ),

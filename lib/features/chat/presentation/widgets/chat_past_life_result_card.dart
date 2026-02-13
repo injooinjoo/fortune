@@ -238,7 +238,8 @@ class _ChatPastLifeResultCardState
           top: DSSpacing.md,
           right: DSSpacing.md,
           child: FortuneActionButtons(
-            contentId: 'past_life_${widget.result.pastLifeName}_${DateTime.now().millisecondsSinceEpoch}',
+            contentId:
+                'past_life_${widget.result.pastLifeName}_${DateTime.now().millisecondsSinceEpoch}',
             contentType: 'past_life',
             fortuneType: 'pastLife',
             shareTitle: '${widget.result.pastLifeStatus} - 전생탐험',
@@ -506,5 +507,4 @@ class _ChatPastLifeResultCardState
         return '🎭';
     }
   }
-
 }

@@ -218,9 +218,11 @@ class RecommendedExercise {
       category: json['category'] as String? ?? '',
       description: json['description'] as String? ?? '',
       duration: json['duration'] as String? ?? '',
-      intensity: ExerciseIntensity.fromString(json['intensity'] as String? ?? 'medium'),
+      intensity: ExerciseIntensity.fromString(
+          json['intensity'] as String? ?? 'medium'),
       benefits: (json['benefits'] as List<dynamic>?)?.cast<String>() ?? [],
-      precautions: (json['precautions'] as List<dynamic>?)?.cast<String>() ?? [],
+      precautions:
+          (json['precautions'] as List<dynamic>?)?.cast<String>() ?? [],
     );
   }
 }
@@ -315,9 +317,11 @@ class GymRoutine {
               .toList() ??
           [],
       warmupDuration: warmup['duration'] as String? ?? '10분',
-      warmupActivities: (warmup['activities'] as List<dynamic>?)?.cast<String>() ?? [],
+      warmupActivities:
+          (warmup['activities'] as List<dynamic>?)?.cast<String>() ?? [],
       cooldownDuration: cooldown['duration'] as String? ?? '5분',
-      cooldownActivities: (cooldown['activities'] as List<dynamic>?)?.cast<String>() ?? [],
+      cooldownActivities:
+          (cooldown['activities'] as List<dynamic>?)?.cast<String>() ?? [],
     );
   }
 
@@ -541,10 +545,12 @@ class TodayRoutine {
           ? YogaRoutine.fromJson(json['yogaRoutine'] as Map<String, dynamic>)
           : null,
       cardioRoutine: json['cardioRoutine'] != null
-          ? CardioRoutine.fromJson(json['cardioRoutine'] as Map<String, dynamic>)
+          ? CardioRoutine.fromJson(
+              json['cardioRoutine'] as Map<String, dynamic>)
           : null,
       sportsRoutine: json['sportsRoutine'] != null
-          ? SportsRoutine.fromJson(json['sportsRoutine'] as Map<String, dynamic>)
+          ? SportsRoutine.fromJson(
+              json['sportsRoutine'] as Map<String, dynamic>)
           : null,
     );
   }
@@ -576,7 +582,8 @@ class WeeklyPlan {
     final scheduleData = json['schedule'] as Map<String, dynamic>? ?? {};
     return WeeklyPlan(
       summary: json['summary'] as String? ?? '',
-      schedule: scheduleData.map((key, value) => MapEntry(key, value.toString())),
+      schedule:
+          scheduleData.map((key, value) => MapEntry(key, value.toString())),
     );
   }
 
@@ -603,7 +610,8 @@ class InjuryPrevention {
     return InjuryPrevention(
       warnings: (json['warnings'] as List<dynamic>?)?.cast<String>() ?? [],
       stretches: (json['stretches'] as List<dynamic>?)?.cast<String>() ?? [],
-      recoveryTips: (json['recoveryTips'] as List<dynamic>?)?.cast<String>() ?? [],
+      recoveryTips:
+          (json['recoveryTips'] as List<dynamic>?)?.cast<String>() ?? [],
     );
   }
 }
@@ -710,9 +718,12 @@ class ExerciseFortuneResult {
 
   factory ExerciseFortuneResult.fromJson(Map<String, dynamic> json) {
     // 추천 운동 파싱
-    final recommendedExerciseData = json['recommendedExercise'] as Map<String, dynamic>?;
-    final primaryData = recommendedExerciseData?['primary'] as Map<String, dynamic>?;
-    final alternativesData = recommendedExerciseData?['alternatives'] as List<dynamic>? ?? [];
+    final recommendedExerciseData =
+        json['recommendedExercise'] as Map<String, dynamic>?;
+    final primaryData =
+        recommendedExerciseData?['primary'] as Map<String, dynamic>?;
+    final alternativesData =
+        recommendedExerciseData?['alternatives'] as List<dynamic>? ?? [];
 
     // 부상 이력 파싱
     final injuryHistoryData = json['injuryHistory'] as List<dynamic>? ?? [];
@@ -728,7 +739,8 @@ class ExerciseFortuneResult {
       score: json['score'] as int? ?? 70,
       content: json['content'] as String? ?? '',
       summary: json['summary'] as String? ?? '',
-      exerciseGoal: ExerciseGoal.fromApiValue(json['exerciseGoal'] as String? ?? 'strength'),
+      exerciseGoal: ExerciseGoal.fromApiValue(
+          json['exerciseGoal'] as String? ?? 'strength'),
       sportType: SportType.fromApiValue(json['sportType'] as String? ?? 'gym'),
       weeklyFrequency: json['weeklyFrequency'] as int? ?? 3,
       experienceLevel: ExperienceLevel.values.firstWhere(
@@ -741,8 +753,9 @@ class ExerciseFortuneResult {
         (e) => e.name == (json['preferredTime'] as String? ?? 'evening'),
         orElse: () => PreferredTime.evening,
       ),
-      primaryExercise:
-          primaryData != null ? RecommendedExercise.fromJson(primaryData) : null,
+      primaryExercise: primaryData != null
+          ? RecommendedExercise.fromJson(primaryData)
+          : null,
       alternatives: alternativesData
           .map((e) => AlternativeExercise.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -756,7 +769,8 @@ class ExerciseFortuneResult {
           ? WeeklyPlan.fromJson(json['weeklyPlan'] as Map<String, dynamic>)
           : null,
       injuryPrevention: json['injuryPrevention'] != null
-          ? InjuryPrevention.fromJson(json['injuryPrevention'] as Map<String, dynamic>)
+          ? InjuryPrevention.fromJson(
+              json['injuryPrevention'] as Map<String, dynamic>)
           : null,
       nutritionTip: json['nutritionTip'] != null
           ? NutritionTip.fromJson(json['nutritionTip'] as Map<String, dynamic>)
@@ -768,5 +782,4 @@ class ExerciseFortuneResult {
           : DateTime.now(),
     );
   }
-
 }

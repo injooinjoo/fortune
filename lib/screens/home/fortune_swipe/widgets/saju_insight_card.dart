@@ -14,10 +14,26 @@ class SajuInsightCard extends StatelessWidget {
 
   /// 사주 민화 이미지 목록 (4개)
   static const List<Map<String, String>> _sajuImages = [
-    {'image': 'assets/images/minhwa/minhwa_saju_dragon.webp', 'emoji': '🐉', 'label': '용 민화'},
-    {'image': 'assets/images/minhwa/minhwa_saju_fourguardians.webp', 'emoji': '🏯', 'label': '사신도 민화'},
-    {'image': 'assets/images/minhwa/minhwa_saju_tiger_dragon.webp', 'emoji': '🐅', 'label': '용호상박 민화'},
-    {'image': 'assets/images/minhwa/minhwa_saju_yin_yang.webp', 'emoji': '☯️', 'label': '음양 민화'},
+    {
+      'image': 'assets/images/minhwa/minhwa_saju_dragon.webp',
+      'emoji': '🐉',
+      'label': '용 민화'
+    },
+    {
+      'image': 'assets/images/minhwa/minhwa_saju_fourguardians.webp',
+      'emoji': '🏯',
+      'label': '사신도 민화'
+    },
+    {
+      'image': 'assets/images/minhwa/minhwa_saju_tiger_dragon.webp',
+      'emoji': '🐅',
+      'label': '용호상박 민화'
+    },
+    {
+      'image': 'assets/images/minhwa/minhwa_saju_yin_yang.webp',
+      'emoji': '☯️',
+      'label': '음양 민화'
+    },
   ];
 
   /// 오늘 날짜 기반 이미지 선택 (하루 동안 일관성 유지)
@@ -58,7 +74,9 @@ class SajuInsightCard extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: context.isDark ? DSColors.surface : DSColors.backgroundSecondaryDark,
+            color: context.isDark
+                ? DSColors.surface
+                : DSColors.backgroundSecondaryDark,
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
@@ -70,8 +88,14 @@ class SajuInsightCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: context.isDark
-                        ? [DSColors.surfaceSecondary, DSColors.surface] // 고유 색상(dark gradient start)
-                        : [DSColors.backgroundSecondaryDark, const Color(0xFFEDE8DC)], // 고유 색상(light gradient end)
+                          ? [
+                              DSColors.surfaceSecondary,
+                              DSColors.surface
+                            ] // 고유 색상(dark gradient start)
+                          : [
+                              DSColors.backgroundSecondaryDark,
+                              const Color(0xFFEDE8DC)
+                            ], // 고유 색상(light gradient end)
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
@@ -88,7 +112,8 @@ class SajuInsightCard extends StatelessWidget {
                         Text(
                           minhwaInfo['label']!,
                           style: context.labelSmall.copyWith(
-                            color: context.colors.textPrimary.withValues(alpha: 0.5),
+                            color: context.colors.textPrimary
+                                .withValues(alpha: 0.5),
                           ),
                         ),
                       ],
@@ -106,8 +131,12 @@ class SajuInsightCard extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                context.isDark ? DSColors.info.withValues(alpha: 0.7) : DSColors.info,
-                context.isDark ? DSColors.info.withValues(alpha: 0.5) : DSColors.info.withValues(alpha: 0.7),
+                context.isDark
+                    ? DSColors.info.withValues(alpha: 0.7)
+                    : DSColors.info,
+                context.isDark
+                    ? DSColors.info.withValues(alpha: 0.5)
+                    : DSColors.info.withValues(alpha: 0.7),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -119,10 +148,22 @@ class SajuInsightCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _SajuPillar(hanjaLabel: '時柱', koreanLabel: '시주', value: sajuData['hour_pillar'] ?? '○○'),
-                  _SajuPillar(hanjaLabel: '日柱', koreanLabel: '일주', value: sajuData['day_pillar'] ?? '○○'),
-                  _SajuPillar(hanjaLabel: '月柱', koreanLabel: '월주', value: sajuData['month_pillar'] ?? '○○'),
-                  _SajuPillar(hanjaLabel: '年柱', koreanLabel: '년주', value: sajuData['year_pillar'] ?? '○○'),
+                  _SajuPillar(
+                      hanjaLabel: '時柱',
+                      koreanLabel: '시주',
+                      value: sajuData['hour_pillar'] ?? '○○'),
+                  _SajuPillar(
+                      hanjaLabel: '日柱',
+                      koreanLabel: '일주',
+                      value: sajuData['day_pillar'] ?? '○○'),
+                  _SajuPillar(
+                      hanjaLabel: '月柱',
+                      koreanLabel: '월주',
+                      value: sajuData['month_pillar'] ?? '○○'),
+                  _SajuPillar(
+                      hanjaLabel: '年柱',
+                      koreanLabel: '년주',
+                      value: sajuData['year_pillar'] ?? '○○'),
                 ],
               ),
               const SizedBox(height: 16),
@@ -134,7 +175,7 @@ class SajuInsightCard extends StatelessWidget {
                 ),
                 child: Text(
                   FortuneTextCleaner.clean(sajuData['insight']?.toString() ??
-                  '당신의 사주는 균형잡힌 에너지를 가지고 있습니다. 오늘은 본래의 성향을 잘 활용하면 좋은 결과를 얻을 수 있습니다.'),
+                      '당신의 사주는 균형잡힌 에너지를 가지고 있습니다. 오늘은 본래의 성향을 잘 활용하면 좋은 결과를 얻을 수 있습니다.'),
                   style: context.labelLarge.copyWith(
                     color: context.colors.textPrimary,
                     height: 1.5,
@@ -151,9 +192,9 @@ class SajuInsightCard extends StatelessWidget {
 }
 
 class _SajuPillar extends StatelessWidget {
-  final String hanjaLabel;   // 時柱, 日柱, 月柱, 年柱
-  final String koreanLabel;  // 시주, 일주, 월주, 년주
-  final String value;        // 갑자, 을축 등
+  final String hanjaLabel; // 時柱, 日柱, 月柱, 年柱
+  final String koreanLabel; // 시주, 일주, 월주, 년주
+  final String value; // 갑자, 을축 등
 
   const _SajuPillar({
     required this.hanjaLabel,
@@ -231,7 +272,8 @@ class _SajuPillar extends StatelessWidget {
               if (element.isNotEmpty) ...[
                 const SizedBox(height: 4),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: elementColor.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(6),

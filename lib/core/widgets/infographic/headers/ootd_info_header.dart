@@ -45,7 +45,8 @@ class OotdInfoHeader extends StatelessWidget {
 
     return OotdInfoHeader(
       score: (data['score'] as num?)?.toInt() ?? 75,
-      grade: data['grade'] as String? ?? _calculateGrade((data['score'] as num?)?.toInt() ?? 75),
+      grade: data['grade'] as String? ??
+          _calculateGrade((data['score'] as num?)?.toInt() ?? 75),
       radarScores: data['radarScores'] as Map<String, dynamic>? ??
           data['categoryScores'] as Map<String, dynamic>?,
       hashtags: tags,
@@ -278,7 +279,8 @@ class _HexagonRadarPainter extends CustomPainter {
     _drawLabels(canvas, center, radius, entries);
   }
 
-  void _drawBackgroundHexagons(Canvas canvas, Offset center, double radius, int sides) {
+  void _drawBackgroundHexagons(
+      Canvas canvas, Offset center, double radius, int sides) {
     final bgPaint = Paint()
       ..color = backgroundColor
       ..style = PaintingStyle.stroke
@@ -310,7 +312,8 @@ class _HexagonRadarPainter extends CustomPainter {
     }
   }
 
-  void _drawDataPolygon(Canvas canvas, Offset center, double radius, List<MapEntry<String, dynamic>> entries) {
+  void _drawDataPolygon(Canvas canvas, Offset center, double radius,
+      List<MapEntry<String, dynamic>> entries) {
     final sides = entries.length;
     final dataPath = Path();
     final fillPaint = Paint()
@@ -350,7 +353,8 @@ class _HexagonRadarPainter extends CustomPainter {
     }
   }
 
-  void _drawLabels(Canvas canvas, Offset center, double radius, List<MapEntry<String, dynamic>> entries) {
+  void _drawLabels(Canvas canvas, Offset center, double radius,
+      List<MapEntry<String, dynamic>> entries) {
     final sides = entries.length;
     final textPainter = TextPainter(
       textDirection: TextDirection.ltr,

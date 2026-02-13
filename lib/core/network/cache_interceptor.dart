@@ -10,10 +10,10 @@ class CacheConfig {
   final bool cacheOnError;
   final List<int> validStatusCodes;
 
-  const CacheConfig({
-    required this.duration,
-    this.cacheOnError = true,
-    this.validStatusCodes = const [200]});
+  const CacheConfig(
+      {required this.duration,
+      this.cacheOnError = true,
+      this.validStatusCodes = const [200]});
 }
 
 /// API Response cache entry
@@ -25,56 +25,61 @@ class CacheEntry {
   final int statusCode;
   final Map<String, List<String>>? headers;
 
-  CacheEntry({
-    required this.key,
-    required this.data,
-    required this.createdAt,
-    required this.expiresAt,
-    required this.statusCode,
-    this.headers});
+  CacheEntry(
+      {required this.key,
+      required this.data,
+      required this.createdAt,
+      required this.expiresAt,
+      required this.statusCode,
+      this.headers});
 
   bool get isExpired => DateTime.now().isAfter(expiresAt);
 
   Map<String, dynamic> toJson() => {
-    'key': key,
-    'data': data,
-    'createdAt': createdAt.toIso8601String(),
-    'expiresAt': expiresAt.toIso8601String(),
-    'statusCode': statusCode,
-    'headers': null};
+        'key': key,
+        'data': data,
+        'createdAt': createdAt.toIso8601String(),
+        'expiresAt': expiresAt.toIso8601String(),
+        'statusCode': statusCode,
+        'headers': null
+      };
 
   factory CacheEntry.fromJson(Map<String, dynamic> json) => CacheEntry(
-    key: json['key'],
-    data: json['data'],
-    createdAt: DateTime.parse(json['createdAt']),
-    expiresAt: DateTime.parse(json['expiresAt']),
-    statusCode: json['statusCode'],
-    headers: json['headers']);
+      key: json['key'],
+      data: json['data'],
+      createdAt: DateTime.parse(json['createdAt']),
+      expiresAt: DateTime.parse(json['expiresAt']),
+      statusCode: json['statusCode'],
+      headers: json['headers']);
 }
 
 /// HTTP Cache Interceptor using Hive for persistence
 class CacheInterceptor extends Interceptor {
   static const String _cacheBoxName = 'api_cache';
   late Box<Map> _cacheBox;
-  
+
   // Default cache configurations for different endpoints
   final Map<RegExp, CacheConfig> _cacheConfigs = {
     // Fortune endpoints - cache for different durations based on type
     RegExp(r'/fortune/daily'): const CacheConfig(duration: Duration(hours: 6)),
-    RegExp(r'/fortune/tomorrow'): const CacheConfig(duration: Duration(hours: 6)),
+    RegExp(r'/fortune/tomorrow'):
+        const CacheConfig(duration: Duration(hours: 6)),
     RegExp(r'/fortune/weekly'): const CacheConfig(duration: Duration(days: 1)),
     RegExp(r'/fortune/monthly'): const CacheConfig(duration: Duration(days: 7)),
     RegExp(r'/fortune/yearly'): const CacheConfig(duration: Duration(days: 30)),
     RegExp(r'/fortune/saju'): const CacheConfig(duration: Duration(days: 7)),
-    RegExp(r'/fortune/.*'): const CacheConfig(duration: Duration(hours: 1)), // Default for other fortunes
-    
+    RegExp(r'/fortune/.*'): const CacheConfig(
+        duration: Duration(hours: 1)), // Default for other fortunes
+
     // User data - shorter cache
     RegExp(r'/user/profile'): const CacheConfig(duration: Duration(minutes: 5)),
-    RegExp(r'/user/token-balance'): const CacheConfig(duration: Duration(minutes: 1)),
-    
+    RegExp(r'/user/token-balance'):
+        const CacheConfig(duration: Duration(minutes: 1)),
+
     // Static data - longer cache
     RegExp(r'/config/.*'): const CacheConfig(duration: Duration(hours: 24)),
-    RegExp(r'/static/.*'): const CacheConfig(duration: Duration(days: 7))};
+    RegExp(r'/static/.*'): const CacheConfig(duration: Duration(days: 7))
+  };
 
   CacheInterceptor() {
     _initCache();
@@ -87,7 +92,8 @@ class CacheInterceptor extends Interceptor {
   }
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+  void onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
     // Only cache GET requests
     if (options.method != 'GET') {
       handler.next(options);
@@ -102,19 +108,18 @@ class CacheInterceptor extends Interceptor {
 
     // Generate cache key
     final cacheKey = _generateCacheKey(options);
-    
+
     // Try to get from cache
     final cachedData = await _getFromCache(cacheKey);
     if (cachedData != null) {
       // Return cached response
-      handler.resolve(
-        Response(
+      handler.resolve(Response(
           requestOptions: options,
           data: cachedData.data,
           statusCode: cachedData.statusCode,
-          headers: Headers.fromMap(cachedData.headers ?? <String, List<String>>{}),
-          extra: {'cached': true, 'cacheKey': cacheKey})
-      );
+          headers:
+              Headers.fromMap(cachedData.headers ?? <String, List<String>>{}),
+          extra: {'cached': true, 'cacheKey': cacheKey}));
       return;
     }
 
@@ -127,9 +132,8 @@ class CacheInterceptor extends Interceptor {
   void onResponse(Response response, ResponseInterceptorHandler handler) async {
     // Only cache successful responses
     final cacheConfig = _getCacheConfig(response.requestOptions.uri.path);
-    if (cacheConfig != null && 
+    if (cacheConfig != null &&
         cacheConfig.validStatusCodes.contains(response.statusCode)) {
-      
       final cacheKey = response.requestOptions.extra['cacheKey'] as String?;
       if (cacheKey != null) {
         await _saveToCache(cacheKey, response, cacheConfig);
@@ -149,14 +153,17 @@ class CacheInterceptor extends Interceptor {
         final cachedData = await _getFromCache(cacheKey, ignoreExpiry: true);
         if (cachedData != null) {
           // Return stale cached data on error
-          handler.resolve(
-            Response(
+          handler.resolve(Response(
               requestOptions: err.requestOptions,
               data: cachedData.data,
               statusCode: cachedData.statusCode,
-              headers: Headers.fromMap(cachedData.headers ?? <String, List<String>>{}),
-              extra: {'cached': true, 'stale': true, 'originalError': err.toString()})
-          );
+              headers: Headers.fromMap(
+                  cachedData.headers ?? <String, List<String>>{}),
+              extra: {
+                'cached': true,
+                'stale': true,
+                'originalError': err.toString()
+              }));
           return;
         }
       }
@@ -170,7 +177,7 @@ class CacheInterceptor extends Interceptor {
     final headers = options.headers.toString();
     final data = options.data?.toString() ?? '';
     final content = '$uri|$headers|$data';
-    
+
     // Use SHA256 to generate a unique key
     final bytes = utf8.encode(content);
     final digest = sha256.convert(bytes);
@@ -186,19 +193,20 @@ class CacheInterceptor extends Interceptor {
     return null;
   }
 
-  Future<CacheEntry?> _getFromCache(String key, {bool ignoreExpiry = false}) async {
+  Future<CacheEntry?> _getFromCache(String key,
+      {bool ignoreExpiry = false}) async {
     try {
       final cached = _cacheBox.get(key);
       if (cached == null) return null;
-      
+
       final entry = CacheEntry.fromJson(Map<String, dynamic>.from(cached));
-      
+
       if (!ignoreExpiry && entry.isExpired) {
         // Remove expired entry
         await _cacheBox.delete(key);
         return null;
       }
-      
+
       return entry;
     } catch (e) {
       // Handle cache corruption
@@ -207,17 +215,18 @@ class CacheInterceptor extends Interceptor {
     }
   }
 
-  Future<void> _saveToCache(String key, Response response, CacheConfig config) async {
+  Future<void> _saveToCache(
+      String key, Response response, CacheConfig config) async {
     try {
       final now = DateTime.now();
       final entry = CacheEntry(
-        key: key,
-        data: response.data,
-        createdAt: now,
-        expiresAt: now.add(config.duration),
-        statusCode: response.statusCode ?? 200,
-        headers: response.headers.map);
-      
+          key: key,
+          data: response.data,
+          createdAt: now,
+          expiresAt: now.add(config.duration),
+          statusCode: response.statusCode ?? 200,
+          headers: response.headers.map);
+
       await _cacheBox.put(key, entry.toJson());
     } catch (e) {
       // Ignore cache save errors
@@ -227,7 +236,7 @@ class CacheInterceptor extends Interceptor {
 
   Future<void> _cleanExpiredEntries() async {
     final keysToRemove = <String>[];
-    
+
     for (final key in _cacheBox.keys) {
       try {
         final cached = _cacheBox.get(key);
@@ -242,7 +251,7 @@ class CacheInterceptor extends Interceptor {
         keysToRemove.add(key as String);
       }
     }
-    
+
     for (final key in keysToRemove) {
       await _cacheBox.delete(key);
     }
@@ -257,13 +266,13 @@ class CacheInterceptor extends Interceptor {
   Future<void> clearCacheForPattern(String pattern) async {
     final regex = RegExp(pattern);
     final keysToRemove = <String>[];
-    
+
     for (final key in _cacheBox.keys) {
       if (regex.hasMatch(key as String)) {
         keysToRemove.add(key);
       }
     }
-    
+
     for (final key in keysToRemove) {
       await _cacheBox.delete(key);
     }
@@ -274,7 +283,7 @@ class CacheInterceptor extends Interceptor {
     int totalEntries = 0;
     int expiredEntries = 0;
     int totalSize = 0;
-    
+
     for (final key in _cacheBox.keys) {
       totalEntries++;
       try {
@@ -290,13 +299,14 @@ class CacheInterceptor extends Interceptor {
         // Ignore corrupted entries
       }
     }
-    
+
     return {
       'totalEntries': totalEntries,
       'expiredEntries': expiredEntries,
       'activeEntries': totalEntries - expiredEntries,
       'totalSizeBytes': totalSize,
-      'totalSizeMB': null};
+      'totalSizeMB': null
+    };
   }
 }
 
@@ -305,12 +315,10 @@ extension DioCacheExtension on Dio {
   void addCacheInterceptor() {
     interceptors.add(CacheInterceptor());
   }
-  
+
   /// Make a request without caching
-  Future<Response<T>> getNoCache<T>(
-    String path, {
-    Map<String, dynamic>? queryParameters,
-    Options? options}) {
+  Future<Response<T>> getNoCache<T>(String path,
+      {Map<String, dynamic>? queryParameters, Options? options}) {
     final opts = options ?? Options();
     opts.extra = {...opts.extra ?? {}, 'noCache': true};
     return get<T>(path, queryParameters: queryParameters, options: opts);

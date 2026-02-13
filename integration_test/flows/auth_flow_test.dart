@@ -86,7 +86,8 @@ void main() {
         debugPrint('✅ AUTH-002 PASSED: Onboarding UI accessible');
       } else {
         // 이미 로그인된 상태
-        debugPrint('✅ AUTH-002 PASSED: Already authenticated, skipping onboarding');
+        debugPrint(
+            '✅ AUTH-002 PASSED: Already authenticated, skipping onboarding');
       }
     });
 
@@ -115,9 +116,11 @@ void main() {
           find.text('로그인').evaluate().isNotEmpty;
 
       if (isOnLoginScreen) {
-        debugPrint('✅ AUTH-003 PASSED: On login screen, social buttons: $foundSocialButton');
+        debugPrint(
+            '✅ AUTH-003 PASSED: On login screen, social buttons: $foundSocialButton');
       } else {
-        debugPrint('✅ AUTH-003 PASSED: Already authenticated, skipping social login check');
+        debugPrint(
+            '✅ AUTH-003 PASSED: Already authenticated, skipping social login check');
       }
     });
 
@@ -178,7 +181,8 @@ void main() {
         }
       }
 
-      debugPrint('✅ AUTH-005 PASSED: Profile page rendered, has profile element: $hasProfileElement');
+      debugPrint(
+          '✅ AUTH-005 PASSED: Profile page rendered, has profile element: $hasProfileElement');
     });
 
     testWidgets('AUTH-006: 프로필 수정 UI 접근', (tester) async {
@@ -212,7 +216,8 @@ void main() {
       final hasScaffold = find.byType(Scaffold).evaluate().isNotEmpty;
       expect(hasScaffold, isTrue);
 
-      debugPrint('✅ AUTH-006 PASSED: Profile edit UI accessible: $hasEditOption');
+      debugPrint(
+          '✅ AUTH-006 PASSED: Profile edit UI accessible: $hasEditOption');
     });
 
     testWidgets('AUTH-007: 인증 상태에 따른 UI 분기', (tester) async {
@@ -220,8 +225,9 @@ void main() {
 
       // 인증 상태 확인
       final isOnLandingPage = find.text('시작하기').evaluate().isNotEmpty;
-      final hasBottomNav = find.byType(BottomNavigationBar).evaluate().isNotEmpty ||
-          find.text('홈').evaluate().isNotEmpty;
+      final hasBottomNav =
+          find.byType(BottomNavigationBar).evaluate().isNotEmpty ||
+              find.text('홈').evaluate().isNotEmpty;
 
       if (isOnLandingPage) {
         // 비인증 상태: 랜딩 페이지
@@ -235,7 +241,8 @@ void main() {
       } else {
         // 중간 상태 (온보딩 등)
         expect(find.byType(Scaffold), findsWidgets);
-        debugPrint('✅ AUTH-007 PASSED: Intermediate state - showing some content');
+        debugPrint(
+            '✅ AUTH-007 PASSED: Intermediate state - showing some content');
       }
     });
 
@@ -296,7 +303,8 @@ void main() {
         }
       }
 
-      debugPrint('✅ AUTH-009 PASSED: Phone verification UI check: $hasPhoneAuth');
+      debugPrint(
+          '✅ AUTH-009 PASSED: Phone verification UI check: $hasPhoneAuth');
     });
 
     testWidgets('AUTH-010: 다중 인증 상태 전환 안정성', (tester) async {

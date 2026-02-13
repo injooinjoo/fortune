@@ -50,7 +50,8 @@ class SmileChallengeCard extends StatelessWidget {
                 ]
               : [
                   DSColors.accent.withValues(alpha: isDark ? 0.15 : 0.1),
-                  DSColors.accentSecondary.withValues(alpha: isDark ? 0.12 : 0.08),
+                  DSColors.accentSecondary
+                      .withValues(alpha: isDark ? 0.12 : 0.08),
                 ],
         ),
         borderRadius: BorderRadius.circular(DSRadius.lg),
@@ -111,16 +112,13 @@ class SmileChallengeCard extends StatelessWidget {
               Text(
                 isChallengeComplete ? '미소 챌린지 달성!' : '미소 챌린지',
                 style: context.labelMedium.copyWith(
-                  color: isDark
-                      ? DSColors.textPrimaryDark
-                      : DSColors.textPrimary,
+                  color:
+                      isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
-                isChallengeComplete
-                    ? '이번 주도 잘 웃었어요'
-                    : '매일 웃으면 좋은 일이 생겨요',
+                isChallengeComplete ? '이번 주도 잘 웃었어요' : '매일 웃으면 좋은 일이 생겨요',
                 style: context.labelSmall.copyWith(
                   color: isDark
                       ? DSColors.textSecondaryDark
@@ -133,7 +131,8 @@ class SmileChallengeCard extends StatelessWidget {
         // 달성 배지
         if (isChallengeComplete)
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm + 2, vertical: DSSpacing.xs),
+            padding: const EdgeInsets.symmetric(
+                horizontal: DSSpacing.sm + 2, vertical: DSSpacing.xs),
             decoration: BoxDecoration(
               color: DSColors.success.withValues(alpha: isDark ? 0.25 : 0.2),
               borderRadius: BorderRadius.circular(DSRadius.md),
@@ -257,9 +256,7 @@ class SmileChallengeCard extends StatelessWidget {
         Text(
           '이번 주 미소 기록',
           style: context.labelSmall.copyWith(
-            color: isDark
-                ? DSColors.textSecondaryDark
-                : DSColors.textSecondary,
+            color: isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -309,9 +306,8 @@ class SmileChallengeCard extends StatelessWidget {
                     ? DSColors.borderDark.withValues(alpha: 0.4)
                     : DSColors.border.withValues(alpha: 0.3),
             shape: BoxShape.circle,
-            border: isToday
-                ? Border.all(color: DSColors.accent, width: 2)
-                : null,
+            border:
+                isToday ? Border.all(color: DSColors.accent, width: 2) : null,
           ),
           child: Center(
             child: hasScore

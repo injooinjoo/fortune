@@ -16,10 +16,14 @@ class MovingGenerator {
     Logger.info('[MovingGenerator] 📤 API 요청 준비');
     Logger.info('[MovingGenerator]   🌐 Edge Function: fortune-moving');
     Logger.info('[MovingGenerator]   👤 user_id: $userId');
-    Logger.info('[MovingGenerator]   📍 current_area: ${inputConditions['current_area']}');
-    Logger.info('[MovingGenerator]   📍 target_area: ${inputConditions['target_area']}');
-    Logger.info('[MovingGenerator]   📅 moving_period: ${inputConditions['moving_period']}');
-    Logger.info('[MovingGenerator]   🎯 purpose: ${inputConditions['purpose']}');
+    Logger.info(
+        '[MovingGenerator]   📍 current_area: ${inputConditions['current_area']}');
+    Logger.info(
+        '[MovingGenerator]   📍 target_area: ${inputConditions['target_area']}');
+    Logger.info(
+        '[MovingGenerator]   📅 moving_period: ${inputConditions['moving_period']}');
+    Logger.info(
+        '[MovingGenerator]   🎯 purpose: ${inputConditions['purpose']}');
 
     try {
       final requestBody = {
@@ -47,7 +51,8 @@ class MovingGenerator {
       Logger.info('[MovingGenerator]   ✅ Status: ${response.status}');
 
       if (response.status != 200) {
-        Logger.error('[MovingGenerator] ❌ API 호출 실패: status ${response.status}');
+        Logger.error(
+            '[MovingGenerator] ❌ API 호출 실패: status ${response.status}');
         throw Exception('Edge Function 호출 실패: ${response.status}');
       }
 

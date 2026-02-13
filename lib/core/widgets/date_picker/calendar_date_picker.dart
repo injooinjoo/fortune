@@ -66,7 +66,8 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
     super.didUpdateWidget(oldWidget);
 
     if (widget.selectedDate != null &&
-        !DatePickerUtils.isSameDay(widget.selectedDate, oldWidget.selectedDate)) {
+        !DatePickerUtils.isSameDay(
+            widget.selectedDate, oldWidget.selectedDate)) {
       setState(() {
         _focusedDay = widget.selectedDate!;
         _selectedDay = widget.selectedDate;
@@ -78,8 +79,8 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
     final normalizedDay = DatePickerUtils.normalizeDate(day);
 
     // 손없는날 체크
-    if (widget.auspiciousDays?.any((d) =>
-            DatePickerUtils.isSameDay(d, normalizedDay)) ??
+    if (widget.auspiciousDays
+            ?.any((d) => DatePickerUtils.isSameDay(d, normalizedDay)) ??
         false) {
       return DSColors.warning.withValues(alpha: 0.6);
     }
@@ -179,8 +180,8 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
 
   Widget? _buildDayDetails(DateTime day) {
     final normalizedDay = DatePickerUtils.normalizeDate(day);
-    final isAuspicious = widget.auspiciousDays?.any((d) =>
-            DatePickerUtils.isSameDay(d, normalizedDay)) ??
+    final isAuspicious = widget.auspiciousDays
+            ?.any((d) => DatePickerUtils.isSameDay(d, normalizedDay)) ??
         false;
     final luckyScore = widget.luckyScores?[normalizedDay];
     final holiday = widget.holidayMap?[normalizedDay];
@@ -220,7 +221,8 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
                 const SizedBox(width: AppSpacing.spacing1),
                 Text(
                   '손없는날 - 이사하기 매우 좋은 날',
-                  style: context.bodySmall.copyWith(fontWeight: FontWeight.w500),
+                  style:
+                      context.bodySmall.copyWith(fontWeight: FontWeight.w500),
                 ),
               ],
             ),
@@ -332,8 +334,8 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
               calendarBuilders: CalendarBuilders(
                 markerBuilder: (context, day, events) {
                   final normalizedDay = DatePickerUtils.normalizeDate(day);
-                  final isAuspicious = widget.auspiciousDays?.any((d) =>
-                          DatePickerUtils.isSameDay(d, normalizedDay)) ??
+                  final isAuspicious = widget.auspiciousDays?.any(
+                          (d) => DatePickerUtils.isSameDay(d, normalizedDay)) ??
                       false;
 
                   if (isAuspicious) {
@@ -402,7 +404,8 @@ class _CalendarDatePickerWidgetState extends State<CalendarDatePickerWidget> {
             ),
           ),
         ),
-        if (_selectedDay != null) _buildDayDetails(_selectedDay!) ?? const SizedBox.shrink(),
+        if (_selectedDay != null)
+          _buildDayDetails(_selectedDay!) ?? const SizedBox.shrink(),
         if (_buildLegend() != null) _buildLegend()!,
       ],
     );

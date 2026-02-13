@@ -6,7 +6,8 @@ import 'package:mocktail/mocktail.dart';
 
 // Mock dependencies
 class MockSupabaseFunctions extends Mock {
-  Future<Map<String, dynamic>> invoke(String functionName, {Map<String, dynamic>? body});
+  Future<Map<String, dynamic>> invoke(String functionName,
+      {Map<String, dynamic>? body});
 }
 
 void main() {
@@ -96,7 +97,8 @@ void main() {
         final cachedData = {
           'cacheKey': cacheKey,
           'cachedAt': DateTime.now().toIso8601String(),
-          'expiresAt': DateTime.now().add(const Duration(hours: 24)).toIso8601String(),
+          'expiresAt':
+              DateTime.now().add(const Duration(hours: 24)).toIso8601String(),
         };
 
         expect(cachedData['cacheKey'], contains('daily_fortune'));

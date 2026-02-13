@@ -292,14 +292,11 @@ class FortuneApiDecisionService {
         'talentInsights': data['talentInsights'],
       if (data['mentalModel'] != null) 'mentalModel': data['mentalModel'],
       if (data['weeklyPlan'] != null) 'weeklyPlan': data['weeklyPlan'],
-      if (data['collaboration'] != null)
-        'collaboration': data['collaboration'],
-      if (data['growthRoadmap'] != null)
-        'growthRoadmap': data['growthRoadmap'],
+      if (data['collaboration'] != null) 'collaboration': data['collaboration'],
+      if (data['growthRoadmap'] != null) 'growthRoadmap': data['growthRoadmap'],
       if (data['learningStrategy'] != null)
         'learningStrategy': data['learningStrategy'],
-      if (data['hexagonScores'] != null)
-        'hexagonScores': data['hexagonScores'],
+      if (data['hexagonScores'] != null) 'hexagonScores': data['hexagonScores'],
       if (data['resumeAnalysis'] != null)
         'resumeAnalysis': data['resumeAnalysis'],
       // 공통 필드 (description이 additionalInfo에도 필요한 경우)
@@ -329,8 +326,7 @@ class FortuneApiDecisionService {
     // 기존 운세 내용에서 이름/날짜만 교체
     final personalizedContent = fortune.content
         .replaceAll(RegExp(r'\b\w+님\b'), '$userName님')
-        .replaceAll(
-            RegExp(r'\d{4}년 \d{1,2}월 \d{1,2}일'),
+        .replaceAll(RegExp(r'\d{4}년 \d{1,2}월 \d{1,2}일'),
             '${DateTime.now().year}년 ${DateTime.now().month}월 ${DateTime.now().day}일');
 
     return Fortune(

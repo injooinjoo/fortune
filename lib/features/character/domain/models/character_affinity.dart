@@ -147,7 +147,8 @@ class CharacterAffinity {
     final todayDate = DateTime(today.year, today.month, today.day);
 
     // 일일 리셋 체크
-    final needsReset = lastDailyReset == null || !_isSameDay(lastDailyReset!, today);
+    final needsReset =
+        lastDailyReset == null || !_isSameDay(lastDailyReset!, today);
     var newDailyEarned = needsReset ? 0 : dailyPointsEarned;
 
     // 양수 포인트만 일일 한도 적용
@@ -350,7 +351,8 @@ class CharacterAffinity {
 
   factory CharacterAffinity.fromJson(Map<String, dynamic> json) {
     return CharacterAffinity(
-      lovePoints: json['lovePoints'] as int? ?? json['love_points'] as int? ?? 0,
+      lovePoints:
+          json['lovePoints'] as int? ?? json['love_points'] as int? ?? 0,
       phase: AffinityPhase.values.firstWhere(
         (p) => p.name == json['phase'],
         orElse: () => AffinityPhase.stranger,
@@ -360,9 +362,8 @@ class CharacterAffinity {
           : json['updated_at'] != null
               ? DateTime.tryParse(json['updated_at'] as String)
               : null,
-      totalMessages: json['totalMessages'] as int? ??
-          json['total_messages'] as int? ??
-          0,
+      totalMessages:
+          json['totalMessages'] as int? ?? json['total_messages'] as int? ?? 0,
       positiveInteractions: json['positiveInteractions'] as int? ??
           json['positive_interactions'] as int? ??
           0,
@@ -382,18 +383,17 @@ class CharacterAffinity {
           : json['last_daily_reset'] != null
               ? DateTime.tryParse(json['last_daily_reset'] as String)
               : null,
-      currentStreak: json['currentStreak'] as int? ??
-          json['current_streak'] as int? ??
-          0,
-      longestStreak: json['longestStreak'] as int? ??
-          json['longest_streak'] as int? ??
-          0,
+      currentStreak:
+          json['currentStreak'] as int? ?? json['current_streak'] as int? ?? 0,
+      longestStreak:
+          json['longestStreak'] as int? ?? json['longest_streak'] as int? ?? 0,
       lastChatDate: json['lastChatDate'] != null
           ? DateTime.tryParse(json['lastChatDate'] as String)
           : json['last_chat_date'] != null
               ? DateTime.tryParse(json['last_chat_date'] as String)
               : null,
-      phaseHistory: _parsePhaseHistory(json['phaseHistory'] ?? json['phase_history']),
+      phaseHistory:
+          _parsePhaseHistory(json['phaseHistory'] ?? json['phase_history']),
     );
   }
 
@@ -467,11 +467,15 @@ enum AffinityPhase {
   PhaseRequirement get requirements {
     return switch (this) {
       AffinityPhase.stranger => const PhaseRequirement(messages: 0, streak: 0),
-      AffinityPhase.acquaintance => const PhaseRequirement(messages: 3, streak: 0),
+      AffinityPhase.acquaintance =>
+        const PhaseRequirement(messages: 3, streak: 0),
       AffinityPhase.friend => const PhaseRequirement(messages: 20, streak: 3),
-      AffinityPhase.closeFriend => const PhaseRequirement(messages: 50, streak: 7),
-      AffinityPhase.romantic => const PhaseRequirement(messages: 100, streak: 14),
-      AffinityPhase.soulmate => const PhaseRequirement(messages: 200, streak: 30),
+      AffinityPhase.closeFriend =>
+        const PhaseRequirement(messages: 50, streak: 7),
+      AffinityPhase.romantic =>
+        const PhaseRequirement(messages: 100, streak: 14),
+      AffinityPhase.soulmate =>
+        const PhaseRequirement(messages: 200, streak: 30),
     };
   }
 }

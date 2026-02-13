@@ -47,12 +47,11 @@ class CompactPillarTable extends StatelessWidget {
     );
   }
 
-  Widget _buildHeaderRow(BuildContext context, List<Map<String, String>> pillars, bool isDark) {
+  Widget _buildHeaderRow(
+      BuildContext context, List<Map<String, String>> pillars, bool isDark) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark
-            ? DSColors.surface
-            : DSColors.backgroundSecondaryDark,
+        color: isDark ? DSColors.surface : DSColors.backgroundSecondaryDark,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(DSRadius.md),
           topRight: Radius.circular(DSRadius.md),
@@ -71,15 +70,11 @@ class CompactPillarTable extends StatelessWidget {
                 border: Border(
                   right: index < pillars.length - 1
                       ? BorderSide(
-                          color: isDark
-                              ? DSColors.border
-                              : DSColors.borderDark,
+                          color: isDark ? DSColors.border : DSColors.borderDark,
                         )
                       : BorderSide.none,
                 ),
-                color: isDay
-                    ? DSColors.accent.withValues(alpha: 0.15)
-                    : null,
+                color: isDay ? DSColors.accent.withValues(alpha: 0.15) : null,
               ),
               child: Column(
                 children: [
@@ -114,7 +109,8 @@ class CompactPillarTable extends StatelessWidget {
     );
   }
 
-  Widget _buildStemRow(BuildContext context, List<Map<String, String>> pillars, bool isDark) {
+  Widget _buildStemRow(
+      BuildContext context, List<Map<String, String>> pillars, bool isDark) {
     return Container(
       decoration: BoxDecoration(
         border: Border(
@@ -138,15 +134,11 @@ class CompactPillarTable extends StatelessWidget {
                 border: Border(
                   right: index < pillars.length - 1
                       ? BorderSide(
-                          color: isDark
-                              ? DSColors.border
-                              : DSColors.borderDark,
+                          color: isDark ? DSColors.border : DSColors.borderDark,
                         )
                       : BorderSide.none,
                 ),
-                color: isDay
-                    ? DSColors.accent.withValues(alpha: 0.08)
-                    : null,
+                color: isDay ? DSColors.accent.withValues(alpha: 0.08) : null,
               ),
               child: _buildStemCell(context, stemData, isDay, isDark),
             ),
@@ -156,7 +148,8 @@ class CompactPillarTable extends StatelessWidget {
     );
   }
 
-  Widget _buildBranchRow(BuildContext context, List<Map<String, String>> pillars, bool isDark) {
+  Widget _buildBranchRow(
+      BuildContext context, List<Map<String, String>> pillars, bool isDark) {
     return Container(
       decoration: BoxDecoration(
         border: Border(
@@ -180,15 +173,11 @@ class CompactPillarTable extends StatelessWidget {
                 border: Border(
                   right: index < pillars.length - 1
                       ? BorderSide(
-                          color: isDark
-                              ? DSColors.border
-                              : DSColors.borderDark,
+                          color: isDark ? DSColors.border : DSColors.borderDark,
                         )
                       : BorderSide.none,
                 ),
-                color: isDay
-                    ? DSColors.accent.withValues(alpha: 0.08)
-                    : null,
+                color: isDay ? DSColors.accent.withValues(alpha: 0.08) : null,
               ),
               child: _buildBranchCell(context, branchData, isDay, isDark),
             ),
@@ -198,15 +187,15 @@ class CompactPillarTable extends StatelessWidget {
     );
   }
 
-  Widget _buildTenshinRow(BuildContext context, List<Map<String, String>> pillars, bool isDark) {
+  Widget _buildTenshinRow(
+      BuildContext context, List<Map<String, String>> pillars, bool isDark) {
     // 십성 데이터 (임시 - 실제로는 sajuData에서 가져와야 함)
     final tenshinMap = _calculateTenshin();
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark
-            ? context.colors.backgroundSecondary
-            : Colors.grey.shade50,
+        color:
+            isDark ? context.colors.backgroundSecondary : Colors.grey.shade50,
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(DSRadius.md),
           bottomRight: Radius.circular(DSRadius.md),
@@ -226,9 +215,7 @@ class CompactPillarTable extends StatelessWidget {
                 border: Border(
                   right: index < pillars.length - 1
                       ? BorderSide(
-                          color: isDark
-                              ? DSColors.border
-                              : DSColors.borderDark,
+                          color: isDark ? DSColors.border : DSColors.borderDark,
                         )
                       : BorderSide.none,
                 ),
@@ -237,9 +224,7 @@ class CompactPillarTable extends StatelessWidget {
                 tenshin,
                 style: context.labelTiny.copyWith(
                   fontWeight: isDay ? FontWeight.bold : FontWeight.w500,
-                  color: isDay
-                      ? DSColors.accent
-                      : context.colors.textSecondary,
+                  color: isDay ? DSColors.accent : context.colors.textSecondary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -258,7 +243,8 @@ class CompactPillarTable extends StatelessWidget {
   ) {
     if (stemData == null) {
       return Center(
-        child: Text('-', style: context.bodyMedium.copyWith(color: Colors.grey)),
+        child:
+            Text('-', style: context.bodyMedium.copyWith(color: Colors.grey)),
       );
     }
 
@@ -306,7 +292,8 @@ class CompactPillarTable extends StatelessWidget {
   ) {
     if (branchData == null) {
       return Center(
-        child: Text('-', style: context.bodyMedium.copyWith(color: Colors.grey)),
+        child:
+            Text('-', style: context.bodyMedium.copyWith(color: Colors.grey)),
       );
     }
 
@@ -359,26 +346,34 @@ class CompactPillarTable extends StatelessWidget {
     final dayData = sajuData['day'];
     if (dayData == null) return {};
 
-    final dayStem = (dayData['cheongan'] as Map<String, dynamic>?)?['char'] as String? ?? '';
+    final dayStem =
+        (dayData['cheongan'] as Map<String, dynamic>?)?['char'] as String? ??
+            '';
     if (dayStem.isEmpty) return {};
 
     // 십성 계산 로직 (간략화)
     final Map<String, String> result = {};
 
     // 년주 천간의 십성
-    final yearStem = (sajuData['year']?['cheongan'] as Map<String, dynamic>?)?['char'] as String? ?? '';
+    final yearStem = (sajuData['year']?['cheongan']
+            as Map<String, dynamic>?)?['char'] as String? ??
+        '';
     if (yearStem.isNotEmpty) {
       result['year'] = _getTenshin(dayStem, yearStem);
     }
 
     // 월주 천간의 십성
-    final monthStem = (sajuData['month']?['cheongan'] as Map<String, dynamic>?)?['char'] as String? ?? '';
+    final monthStem = (sajuData['month']?['cheongan']
+            as Map<String, dynamic>?)?['char'] as String? ??
+        '';
     if (monthStem.isNotEmpty) {
       result['month'] = _getTenshin(dayStem, monthStem);
     }
 
     // 시주 천간의 십성
-    final hourStem = (sajuData['hour']?['cheongan'] as Map<String, dynamic>?)?['char'] as String? ?? '';
+    final hourStem = (sajuData['hour']?['cheongan']
+            as Map<String, dynamic>?)?['char'] as String? ??
+        '';
     if (hourStem.isNotEmpty) {
       result['hour'] = _getTenshin(dayStem, hourStem);
     }
@@ -390,20 +385,30 @@ class CompactPillarTable extends StatelessWidget {
   String _getTenshin(String dayStem, String targetStem) {
     // 천간 오행
     const stemElements = {
-      '갑': '목', '을': '목',
-      '병': '화', '정': '화',
-      '무': '토', '기': '토',
-      '경': '금', '신': '금',
-      '임': '수', '계': '수',
+      '갑': '목',
+      '을': '목',
+      '병': '화',
+      '정': '화',
+      '무': '토',
+      '기': '토',
+      '경': '금',
+      '신': '금',
+      '임': '수',
+      '계': '수',
     };
 
     // 음양
     const stemYinYang = {
-      '갑': '양', '을': '음',
-      '병': '양', '정': '음',
-      '무': '양', '기': '음',
-      '경': '양', '신': '음',
-      '임': '양', '계': '음',
+      '갑': '양',
+      '을': '음',
+      '병': '양',
+      '정': '음',
+      '무': '양',
+      '기': '음',
+      '경': '양',
+      '신': '음',
+      '임': '양',
+      '계': '음',
     };
 
     final dayElement = stemElements[dayStem] ?? '';

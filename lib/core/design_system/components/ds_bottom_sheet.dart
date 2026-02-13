@@ -158,7 +158,8 @@ class DSBottomSheet extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.only(
                   left: DSSpacing.bottomSheetPadding,
-                  right: showClose ? DSSpacing.xs : DSSpacing.bottomSheetPadding,
+                  right:
+                      showClose ? DSSpacing.xs : DSSpacing.bottomSheetPadding,
                   top: showHandle ? DSSpacing.xs : DSSpacing.md,
                   bottom: DSSpacing.sm,
                 ),
@@ -187,10 +188,7 @@ class DSBottomSheet extends StatelessWidget {
               ),
 
             // Content
-            if (isScrollable)
-              Flexible(child: content)
-            else
-              content,
+            if (isScrollable) Flexible(child: content) else content,
           ],
         ),
       ),
@@ -253,7 +251,8 @@ class _ActionSheetContent extends StatelessWidget {
         // Actions
         ...List.generate(actions.length, (index) {
           final action = actions[index];
-          final color = action.isDestructive ? colors.error : colors.textPrimary;
+          final color =
+              action.isDestructive ? colors.error : colors.textPrimary;
 
           return Column(
             children: [

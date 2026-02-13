@@ -49,7 +49,8 @@ class MockApiResponse<T> {
         responseTime: responseTime,
       );
 
-  factory MockApiResponse.error(String code, String message, {int statusCode = 400}) =>
+  factory MockApiResponse.error(String code, String message,
+          {int statusCode = 400}) =>
       MockApiResponse._(
         status: MockApiStatus.error,
         errorCode: code,
@@ -100,7 +101,8 @@ class MockEdgeFunctions {
   Duration _defaultDelay = const Duration(milliseconds: 300);
   bool _simulateNetworkDelay = true;
   MockApiResponse? _forcedNextResponse;
-  final Map<String, MockApiResponse Function(Map<String, dynamic>)> _customHandlers = {};
+  final Map<String, MockApiResponse Function(Map<String, dynamic>)>
+      _customHandlers = {};
 
   // 호출 기록
   final List<MockFunctionCall> _callHistory = [];
@@ -129,7 +131,8 @@ class MockEdgeFunctions {
   }
 
   /// 특정 함수에 대한 커스텀 핸들러 등록
-  void registerHandler(String functionName, MockApiResponse Function(Map<String, dynamic>) handler) {
+  void registerHandler(String functionName,
+      MockApiResponse Function(Map<String, dynamic>) handler) {
     _customHandlers[functionName] = handler;
   }
 
@@ -176,7 +179,8 @@ class MockEdgeFunctions {
 
     // 커스텀 핸들러가 있는 경우
     if (_customHandlers.containsKey(functionName)) {
-      return _customHandlers[functionName]!(params) as MockApiResponse<Map<String, dynamic>>;
+      return _customHandlers[functionName]!(params)
+          as MockApiResponse<Map<String, dynamic>>;
     }
 
     // 기본 Mock 응답 생성
@@ -234,7 +238,8 @@ class MockEdgeFunctions {
         return MockApiResponse.success(_mockBiorhythm(params));
 
       default:
-        return MockApiResponse.success(_mockGenericFortune(functionName, params));
+        return MockApiResponse.success(
+            _mockGenericFortune(functionName, params));
     }
   }
 
@@ -247,7 +252,8 @@ class MockEdgeFunctions {
       'type': 'daily',
       'date': DateTime.now().toIso8601String().split('T')[0],
       'score': score,
-      'summary': '오늘은 ${score >= 80 ? '매우 좋은' : score >= 60 ? '무난한' : '조심해야 할'} 하루입니다.',
+      'summary':
+          '오늘은 ${score >= 80 ? '매우 좋은' : score >= 60 ? '무난한' : '조심해야 할'} 하루입니다.',
       'overall': '전반적으로 ${score >= 80 ? '긍정적인 에너지가 넘치는' : '평온한'} 하루가 예상됩니다.',
       'love': '연애운: ${_random.nextInt(100)}점 - 소통이 중요한 시기입니다.',
       'money': '금전운: ${_random.nextInt(100)}점 - 지출을 관리하세요.',
@@ -262,7 +268,13 @@ class MockEdgeFunctions {
   }
 
   Map<String, dynamic> _mockTarotReading(Map<String, dynamic> params) {
-    final cards = ['The Fool', 'The Magician', 'The High Priestess', 'The Empress', 'The Emperor'];
+    final cards = [
+      'The Fool',
+      'The Magician',
+      'The High Priestess',
+      'The Empress',
+      'The Emperor'
+    ];
     return {
       'id': 'mock-tarot-${DateTime.now().millisecondsSinceEpoch}',
       'type': 'tarot',
@@ -343,7 +355,13 @@ class MockEdgeFunctions {
         'day': {'heavenly': '병', 'earthly': '인'},
         'hour': {'heavenly': '정', 'earthly': '묘'},
       },
-      'five_elements': {'wood': 2, 'fire': 3, 'earth': 1, 'metal': 2, 'water': 2},
+      'five_elements': {
+        'wood': 2,
+        'fire': 3,
+        'earth': 1,
+        'metal': 2,
+        'water': 2
+      },
       'overall_analysis': '균형 잡힌 사주입니다.',
       'career_advice': '창의적인 분야에서 두각을 나타낼 수 있습니다.',
       'love_advice': '올해 좋은 인연을 만날 가능성이 있습니다.',
@@ -436,7 +454,8 @@ class MockEdgeFunctions {
     };
   }
 
-  Map<String, dynamic> _mockGenericFortune(String functionName, Map<String, dynamic> params) {
+  Map<String, dynamic> _mockGenericFortune(
+      String functionName, Map<String, dynamic> params) {
     return {
       'id': 'mock-generic-${DateTime.now().millisecondsSinceEpoch}',
       'type': functionName,

@@ -273,7 +273,8 @@ class _MockFaceReadingPage extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            const Text('관상', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const Text('관상',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 24),
             Container(
               height: 300,
@@ -357,17 +358,26 @@ class _MockFaceReadingResult extends StatelessWidget {
 
             const SizedBox(height: 16),
             const Text('부위별 분석', style: TextStyle(fontWeight: FontWeight.bold)),
-            const Card(child: ListTile(title: Text('이마'), subtitle: Text('지혜와 관록의 상'))),
-            const Card(child: ListTile(title: Text('눈'), subtitle: Text('매력적인 눈'))),
-            const Card(child: ListTile(title: Text('코'), subtitle: Text('재물복이 있는 코'))),
-            const Card(child: ListTile(title: Text('입'), subtitle: Text('복이 있는 입'))),
-            const Card(child: ListTile(title: Text('턱'), subtitle: Text('의지가 강한 턱'))),
+            const Card(
+                child:
+                    ListTile(title: Text('이마'), subtitle: Text('지혜와 관록의 상'))),
+            const Card(
+                child: ListTile(title: Text('눈'), subtitle: Text('매력적인 눈'))),
+            const Card(
+                child: ListTile(title: Text('코'), subtitle: Text('재물복이 있는 코'))),
+            const Card(
+                child: ListTile(title: Text('입'), subtitle: Text('복이 있는 입'))),
+            const Card(
+                child: ListTile(title: Text('턱'), subtitle: Text('의지가 강한 턱'))),
 
             const SizedBox(height: 16),
             const Text('운세별 분석', style: TextStyle(fontWeight: FontWeight.bold)),
-            const Card(child: ListTile(title: Text('재물운'), trailing: Text('80점'))),
-            const Card(child: ListTile(title: Text('연애운'), trailing: Text('88점'))),
-            const Card(child: ListTile(title: Text('직업운'), trailing: Text('85점'))),
+            const Card(
+                child: ListTile(title: Text('재물운'), trailing: Text('80점'))),
+            const Card(
+                child: ListTile(title: Text('연애운'), trailing: Text('88점'))),
+            const Card(
+                child: ListTile(title: Text('직업운'), trailing: Text('85점'))),
 
             const SizedBox(height: 16),
             const Card(

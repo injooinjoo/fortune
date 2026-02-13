@@ -131,8 +131,7 @@ class _ChatInsightScreenState extends ConsumerState<ChatInsightScreen> {
             decoration: BoxDecoration(
               color: colors.surface,
               borderRadius: BorderRadius.circular(DSRadius.full),
-              border: Border.all(
-                  color: colors.border),
+              border: Border.all(color: colors.border),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -202,7 +201,8 @@ class _ChatInsightScreenState extends ConsumerState<ChatInsightScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.analytics_outlined, color: colors.textSecondary, size: 48),
+            Icon(Icons.analytics_outlined,
+                color: colors.textSecondary, size: 48),
             const SizedBox(height: DSSpacing.lg),
             Text(
               '분석 중...',
@@ -218,8 +218,7 @@ class _ChatInsightScreenState extends ConsumerState<ChatInsightScreen> {
             const SizedBox(height: DSSpacing.sm),
             Text(
               '${(_progress * 100).toInt()}%',
-              style:
-                  typography.bodySmall.copyWith(color: colors.textSecondary),
+              style: typography.bodySmall.copyWith(color: colors.textSecondary),
             ),
           ],
         ),
@@ -344,10 +343,8 @@ class _ChatInsightScreenState extends ConsumerState<ChatInsightScreen> {
       await _updateProgress(0.2);
       final senders = _parsedMessages!.map((m) => m.sender).toSet().toList();
       final userSender = senders.first;
-      final mapping =
-          Anonymizer.createSenderMapping(senders, userSender);
-      final anonymized =
-          Anonymizer.anonymize(_parsedMessages!, mapping);
+      final mapping = Anonymizer.createSenderMapping(senders, userSender);
+      final anonymized = Anonymizer.anonymize(_parsedMessages!, mapping);
 
       // Step 2: 로컬 분석 (80%)
       await _updateProgress(0.5);
@@ -480,8 +477,8 @@ class _SystemBubble extends StatelessWidget {
             Expanded(
               child: Text(
                 text,
-                style: typography.bodyMedium
-                    .copyWith(color: colors.textSecondary),
+                style:
+                    typography.bodyMedium.copyWith(color: colors.textSecondary),
               ),
             ),
           ],

@@ -66,7 +66,8 @@ class ChatMessageBubble extends ConsumerWidget {
     }
 
     // 사주 분석 결과 카드 표시
-    if (message.type == ChatMessageType.sajuResult && message.sajuData != null) {
+    if (message.type == ChatMessageType.sajuResult &&
+        message.sajuData != null) {
       return FortuneResultScrollWrapper(
         messageId: message.id,
         onRendered: onFortuneResultRendered,
@@ -204,13 +205,19 @@ class ChatMessageBubble extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
           child: ChatTarotResultCard(
             data: {
-              'question': additionalInfo['question'] ?? message.fortune!.content,
+              'question':
+                  additionalInfo['question'] ?? message.fortune!.content,
               'spreadType': additionalInfo['spreadType'] ?? 'single',
-              'spreadDisplayName': additionalInfo['spreadDisplayName'] ?? '타로 리딩',
+              'spreadDisplayName':
+                  additionalInfo['spreadDisplayName'] ?? '타로 리딩',
               'cards': additionalInfo['cards'] ?? [],
-              'overallReading': additionalInfo['overallReading'] ?? message.fortune!.content ?? '',
+              'overallReading': additionalInfo['overallReading'] ??
+                  message.fortune!.content ??
+                  '',
               'advice': additionalInfo['advice'] ?? '',
-              'energyLevel': additionalInfo['energyLevel'] ?? message.fortune!.overallScore ?? 75,
+              'energyLevel': additionalInfo['energyLevel'] ??
+                  message.fortune!.overallScore ??
+                  75,
             },
             question: additionalInfo['question'] as String?,
           ),
@@ -419,7 +426,8 @@ class ChatMessageBubble extends ConsumerWidget {
 
     // 운세 결과 카드 표시 (Fortune 객체가 있는 경우)
     // 전체 너비 사용, 중앙 정렬 (자석효과 제거)
-    if (message.fortune != null && message.type == ChatMessageType.fortuneResult) {
+    if (message.fortune != null &&
+        message.type == ChatMessageType.fortuneResult) {
       return FortuneResultScrollWrapper(
         messageId: message.id,
         onRendered: onFortuneResultRendered,
@@ -467,5 +475,4 @@ class ChatMessageBubble extends ConsumerWidget {
       ),
     );
   }
-
 }

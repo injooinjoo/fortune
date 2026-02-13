@@ -123,7 +123,8 @@ class FortuneTypeNames {
     'family-harmony': '가족 화합 가이드',
 
     // Naming (작명)
-    'naming': '이름 분석'};
+    'naming': '이름 분석'
+  };
 
   /// Get the Korean name for a fortune type
   /// Returns the type itself if not found in the mapping
@@ -133,24 +134,93 @@ class FortuneTypeNames {
 
   /// Get the category name for a fortune type
   static String getCategory(String fortuneType) {
-    if (['daily', 'today', 'tomorrow', 'daily_calendar', 'weekly', 'monthly'].contains(fortuneType)) {
+    if (['daily', 'today', 'tomorrow', 'daily_calendar', 'weekly', 'monthly']
+        .contains(fortuneType)) {
       return '일일 인사이트';
-    } else if (['saju', 'traditional-saju', 'saju-psychology', 'tojeong', 'salpuli', 'palmistry', 'physiognomy', 'face-reading', 'five-blessings'].contains(fortuneType)) {
+    } else if ([
+      'saju',
+      'traditional-saju',
+      'saju-psychology',
+      'tojeong',
+      'salpuli',
+      'palmistry',
+      'physiognomy',
+      'face-reading',
+      'five-blessings'
+    ].contains(fortuneType)) {
       return '전통 분석';
-    } else if (['mbti', 'personality', 'blood-type', 'zodiac', 'zodiac-animal', 'birth-season', 'birthdate', 'birthstone', 'biorhythm'].contains(fortuneType)) {
+    } else if ([
+      'mbti',
+      'personality',
+      'blood-type',
+      'zodiac',
+      'zodiac-animal',
+      'birth-season',
+      'birthdate',
+      'birthstone',
+      'biorhythm'
+    ].contains(fortuneType)) {
       return '성격/캐릭터';
-    } else if (['love', 'marriage', 'compatibility', 'traditional-compatibility', 'chemistry', 'couple-match', 'ex-lover', 'blind-date', 'celebrity-match', 'avoid-people', 'same-birthday-celebrity'].contains(fortuneType)) {
+    } else if ([
+      'love',
+      'marriage',
+      'compatibility',
+      'traditional-compatibility',
+      'chemistry',
+      'couple-match',
+      'ex-lover',
+      'blind-date',
+      'celebrity-match',
+      'avoid-people',
+      'same-birthday-celebrity'
+    ].contains(fortuneType)) {
       return '연애/관계';
-    } else if (['career', 'employment', 'business', 'startup', 'lucky-job', 'lucky-sidejob', 'lucky-exam'].contains(fortuneType)) {
+    } else if ([
+      'career',
+      'employment',
+      'business',
+      'startup',
+      'lucky-job',
+      'lucky-sidejob',
+      'lucky-exam'
+    ].contains(fortuneType)) {
       return '직업/사업';
-    } else if (['wealth', 'lucky-investment', 'lucky-realestate', 'lucky-stock', 'lucky-crypto', 'lucky-lottery'].contains(fortuneType)) {
+    } else if ([
+      'wealth',
+      'lucky-investment',
+      'lucky-realestate',
+      'lucky-stock',
+      'lucky-crypto',
+      'lucky-lottery'
+    ].contains(fortuneType)) {
       return '재물/투자';
     } else if (['health', 'moving', 'moving-date'].contains(fortuneType)) {
       return '건강/라이프';
-    } else if (['pet', 'pet-dog', 'pet-cat', 'pet-compatibility', 'children', 'parenting', 'pregnancy', 'family-harmony', 'naming'].contains(fortuneType)) {
+    } else if ([
+      'pet',
+      'pet-dog',
+      'pet-cat',
+      'pet-compatibility',
+      'children',
+      'parenting',
+      'pregnancy',
+      'family-harmony',
+      'naming'
+    ].contains(fortuneType)) {
       return '반려/육아';
     } else if (fortuneType.startsWith('lucky-')) {
-      if (['lucky-baseball', 'lucky-golf', 'lucky-tennis', 'lucky-running', 'lucky-cycling', 'lucky-swim', 'lucky-fishing', 'lucky-hiking', 'lucky-fitness', 'lucky-yoga'].contains(fortuneType)) {
+      if ([
+        'lucky-baseball',
+        'lucky-golf',
+        'lucky-tennis',
+        'lucky-running',
+        'lucky-cycling',
+        'lucky-swim',
+        'lucky-fishing',
+        'lucky-hiking',
+        'lucky-fitness',
+        'lucky-yoga'
+      ].contains(fortuneType)) {
         return '스포츠/활동';
       }
       return '럭키 아이템';
@@ -166,60 +236,27 @@ class FortuneTypeNames {
     // Define icons and colors for each category
     switch (category) {
       case '일일 인사이트':
-        return {
-          'name': name,
-          'icon': Icons.calendar_today,
-          'color': null};
+        return {'name': name, 'icon': Icons.calendar_today, 'color': null};
       case '전통 분석':
-        return {
-          'name': name,
-          'icon': Icons.auto_awesome,
-          'color': null};
+        return {'name': name, 'icon': Icons.auto_awesome, 'color': null};
       case '성격/캐릭터':
-        return {
-          'name': name,
-          'icon': Icons.psychology,
-          'color': null};
+        return {'name': name, 'icon': Icons.psychology, 'color': null};
       case '연애/관계':
-        return {
-          'name': name,
-          'icon': Icons.favorite,
-          'color': null};
+        return {'name': name, 'icon': Icons.favorite, 'color': null};
       case '직업/사업':
-        return {
-          'name': name,
-          'icon': Icons.work,
-          'color': null};
+        return {'name': name, 'icon': Icons.work, 'color': null};
       case '재물/투자':
-        return {
-          'name': name,
-          'icon': Icons.attach_money,
-          'color': null};
+        return {'name': name, 'icon': Icons.attach_money, 'color': null};
       case '건강/라이프':
-        return {
-          'name': name,
-          'icon': Icons.favorite_border,
-          'color': null};
+        return {'name': name, 'icon': Icons.favorite_border, 'color': null};
       case '스포츠/활동':
-        return {
-          'name': name,
-          'icon': Icons.sports,
-          'color': null};
+        return {'name': name, 'icon': Icons.sports, 'color': null};
       case '럭키 아이템':
-        return {
-          'name': name,
-          'icon': Icons.star,
-          'color': null};
+        return {'name': name, 'icon': Icons.star, 'color': null};
       case '반려/육아':
-        return {
-          'name': name,
-          'icon': Icons.family_restroom,
-          'color': null};
+        return {'name': name, 'icon': Icons.family_restroom, 'color': null};
       default:
-        return {
-          'name': name,
-          'icon': Icons.auto_awesome,
-          'color': null};
+        return {'name': name, 'icon': Icons.auto_awesome, 'color': null};
     }
   }
 
@@ -250,7 +287,8 @@ class FortuneTypeNames {
       'health': '/health-toss',
       'dream': '/interactive/dream',
       'tarot': '/tarot',
-      'naming': '/naming'};
+      'naming': '/naming'
+    };
 
     return routeMap[fortuneType] ?? '/fortune';
   }

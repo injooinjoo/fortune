@@ -43,7 +43,8 @@ class ChatMessageList extends ConsumerWidget {
   String? _findLastFortuneType(int currentIndex) {
     for (int i = currentIndex - 1; i >= 0; i--) {
       final msg = messages[i];
-      if (msg.type == ChatMessageType.fortuneResult && msg.fortuneType != null) {
+      if (msg.type == ChatMessageType.fortuneResult &&
+          msg.fortuneType != null) {
         return msg.fortuneType;
       }
     }
@@ -61,7 +62,8 @@ class ChatMessageList extends ConsumerWidget {
       // 수직 패딩만 적용 (수평 패딩은 개별 메시지에서 처리)
       // 운세 결과 카드가 전체 너비를 사용할 수 있도록 함
       // bottomPadding: 떠다니는 입력란 공간 확보
-      padding: EdgeInsets.fromLTRB(0, DSSpacing.md, 0, DSSpacing.md + bottomPadding),
+      padding:
+          EdgeInsets.fromLTRB(0, DSSpacing.md, 0, DSSpacing.md + bottomPadding),
       itemCount: messages.length + (isTyping ? 1 : 0),
       itemBuilder: (context, index) {
         // 타이핑 인디케이터 (현재 진행 중인 운세 타입 전달)
@@ -142,8 +144,9 @@ class _TypingIndicatorState extends State<_TypingIndicator>
   void initState() {
     super.initState();
     // 운세 타입별 맞춤 메시지 + 랜덤 셔플
-    _messages = List<String>.from(LoadingMessages.getMessages(widget.fortuneType))
-      ..shuffle(Random());
+    _messages =
+        List<String>.from(LoadingMessages.getMessages(widget.fortuneType))
+          ..shuffle(Random());
 
     _controller = AnimationController(
       duration: const Duration(milliseconds: 400),

@@ -183,7 +183,8 @@ void main() {
         );
 
         // 버튼들이 비활성화되어야 함
-        final googleButton = find.widgetWithText(ElevatedButton, 'Google로 계속하기');
+        final googleButton =
+            find.widgetWithText(ElevatedButton, 'Google로 계속하기');
         expect(googleButton, findsOneWidget);
       });
     });
@@ -277,8 +278,7 @@ void main() {
         for (final button in buttons.evaluate()) {
           final renderBox = button.renderObject as RenderBox;
           final size = renderBox.size;
-          expect(size.height >= 44, isTrue,
-              reason: '버튼 높이가 최소 44px 이상이어야 함');
+          expect(size.height >= 44, isTrue, reason: '버튼 높이가 최소 44px 이상이어야 함');
         }
       });
     });

@@ -64,30 +64,30 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
           // 인체 실루엣과 터치 가능한 영역들
           Container(
             height: 400,
-          margin: const EdgeInsets.symmetric(horizontal: 20),
-          decoration: BoxDecoration(
-            color: context.colors.surface,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Stack(
-              children: [
-                // 배경 인체 실루엣 (정적)
-                Center(
-                  child: SvgPicture.asset(
-                    'assets/images/health/body_outline.svg',
-                    height: 380,
-                    fit: BoxFit.fitHeight,
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            decoration: BoxDecoration(
+              color: context.colors.surface,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Stack(
+                children: [
+                  // 배경 인체 실루엣 (정적)
+                  Center(
+                    child: SvgPicture.asset(
+                      'assets/images/health/body_outline.svg',
+                      height: 380,
+                      fit: BoxFit.fitHeight,
+                    ),
                   ),
-                ),
 
-                // 터치 가능한 영역들 오버레이
-                _buildTouchableAreas(),
-              ],
+                  // 터치 가능한 영역들 오버레이
+                  _buildTouchableAreas(),
+                ],
+              ),
             ),
           ),
-        ),
 
           // 선택된 부위 리스트
           if (_selectedParts.isNotEmpty) ...[
@@ -99,9 +99,7 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
           const BottomButtonSpacing(),
         ],
       ),
-    ).animate()
-        .fadeIn(duration: 500.ms)
-        .slideY(begin: 0.1, end: 0);
+    ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.1, end: 0);
   }
 
   Widget _buildTouchableAreas() {
@@ -131,7 +129,8 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
           height: areaConfig['height'],
           decoration: BoxDecoration(
             color: _getAreaColor(part, isSelected, healthLevel),
-            borderRadius: BorderRadius.circular(areaConfig['borderRadius'] ?? 8),
+            borderRadius:
+                BorderRadius.circular(areaConfig['borderRadius'] ?? 8),
             border: Border.all(
               color: isSelected
                   ? context.colors.accent
@@ -171,10 +170,11 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
             ],
           ),
         ),
-      ).animate(target: isSelected ? 1 : 0)
-        .scale(end: const Offset(1.05, 1.05))
-        .then()
-        .scale(end: const Offset(1.0, 1.0)),
+      )
+          .animate(target: isSelected ? 1 : 0)
+          .scale(end: const Offset(1.05, 1.05))
+          .then()
+          .scale(end: const Offset(1.0, 1.0)),
     );
   }
 
@@ -182,38 +182,91 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
     // 인체 실루엣 기준으로 각 부위별 터치 영역 정의
     switch (part) {
       case BodyPart.head:
-        return {'left': 110.0, 'top': 30.0, 'width': 80.0, 'height': 90.0, 'borderRadius': 40.0};
+        return {
+          'left': 110.0,
+          'top': 30.0,
+          'width': 80.0,
+          'height': 90.0,
+          'borderRadius': 40.0
+        };
       case BodyPart.neck:
-        return {'left': 130.0, 'top': 110.0, 'width': 40.0, 'height': 25.0, 'borderRadius': 12.0};
+        return {
+          'left': 130.0,
+          'top': 110.0,
+          'width': 40.0,
+          'height': 25.0,
+          'borderRadius': 12.0
+        };
       case BodyPart.shoulders:
-        return {'left': 70.0, 'top': 125.0, 'width': 160.0, 'height': 50.0, 'borderRadius': 25.0};
+        return {
+          'left': 70.0,
+          'top': 125.0,
+          'width': 160.0,
+          'height': 50.0,
+          'borderRadius': 25.0
+        };
       case BodyPart.chest:
-        return {'left': 90.0, 'top': 130.0, 'width': 120.0, 'height': 80.0, 'borderRadius': 40.0};
+        return {
+          'left': 90.0,
+          'top': 130.0,
+          'width': 120.0,
+          'height': 80.0,
+          'borderRadius': 40.0
+        };
       case BodyPart.stomach:
-        return {'left': 100.0, 'top': 200.0, 'width': 100.0, 'height': 70.0, 'borderRadius': 35.0};
+        return {
+          'left': 100.0,
+          'top': 200.0,
+          'width': 100.0,
+          'height': 70.0,
+          'borderRadius': 35.0
+        };
       case BodyPart.back:
-        return {'left': 110.0, 'top': 150.0, 'width': 80.0, 'height': 100.0, 'borderRadius': 40.0};
+        return {
+          'left': 110.0,
+          'top': 150.0,
+          'width': 80.0,
+          'height': 100.0,
+          'borderRadius': 40.0
+        };
       case BodyPart.arms:
-        return {'left': 40.0, 'top': 160.0, 'width': 220.0, 'height': 90.0, 'borderRadius': 15.0};
+        return {
+          'left': 40.0,
+          'top': 160.0,
+          'width': 220.0,
+          'height': 90.0,
+          'borderRadius': 15.0
+        };
       case BodyPart.legs:
-        return {'left': 100.0, 'top': 290.0, 'width': 100.0, 'height': 200.0, 'borderRadius': 20.0};
+        return {
+          'left': 100.0,
+          'top': 290.0,
+          'width': 100.0,
+          'height': 200.0,
+          'borderRadius': 20.0
+        };
       case BodyPart.whole:
         return {'left': 0.0, 'top': 0.0, 'width': 0.0, 'height': 0.0};
     }
   }
 
-  Color _getAreaColor(BodyPart part, bool isSelected, HealthLevel? healthLevel) {
+  Color _getAreaColor(
+      BodyPart part, bool isSelected, HealthLevel? healthLevel) {
     if (healthLevel != null) {
       // 건강 상태가 있는 경우 (결과 화면에서)
       switch (healthLevel) {
         case HealthLevel.excellent:
-          return const Color(0xFF4CAF50).withValues(alpha: isSelected ? 0.8 : 0.3); // 고유 색상 - 건강 우수
+          return const Color(0xFF4CAF50)
+              .withValues(alpha: isSelected ? 0.8 : 0.3); // 고유 색상 - 건강 우수
         case HealthLevel.good:
-          return const Color(0xFF2196F3).withValues(alpha: isSelected ? 0.8 : 0.3); // 고유 색상 - 건강 양호
+          return const Color(0xFF2196F3)
+              .withValues(alpha: isSelected ? 0.8 : 0.3); // 고유 색상 - 건강 양호
         case HealthLevel.caution:
-          return const Color(0xFFFF9800).withValues(alpha: isSelected ? 0.8 : 0.3); // 고유 색상 - 건강 주의
+          return const Color(0xFFFF9800)
+              .withValues(alpha: isSelected ? 0.8 : 0.3); // 고유 색상 - 건강 주의
         case HealthLevel.warning:
-          return const Color(0xFFFF5722).withValues(alpha: isSelected ? 0.8 : 0.3); // 고유 색상 - 건강 경고
+          return const Color(0xFFFF5722)
+              .withValues(alpha: isSelected ? 0.8 : 0.3); // 고유 색상 - 건강 경고
       }
     }
 
@@ -263,7 +316,8 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
             runSpacing: 8,
             children: _selectedParts.map((part) {
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: context.colors.accent.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),

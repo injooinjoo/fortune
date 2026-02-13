@@ -29,12 +29,12 @@ class _HealthScoreCardState extends State<HealthScoreCard>
   @override
   void initState() {
     super.initState();
-    
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
-    
+
     _progressAnimation = Tween<double>(
       begin: 0.0,
       end: widget.score / 100.0,
@@ -42,7 +42,7 @@ class _HealthScoreCardState extends State<HealthScoreCard>
       parent: _animationController,
       curve: const Interval(0.0, 0.8, curve: Curves.easeOutCubic),
     ));
-    
+
     _scaleAnimation = Tween<double>(
       begin: 0.8,
       end: 1.0,
@@ -50,7 +50,7 @@ class _HealthScoreCardState extends State<HealthScoreCard>
       parent: _animationController,
       curve: const Interval(0.8, 1.0, curve: Curves.elasticOut),
     ));
-    
+
     // 애니메이션 시작
     _animationController.forward();
   }
@@ -104,14 +104,16 @@ class _HealthScoreCardState extends State<HealthScoreCard>
             color: _scoreColor.withValues(alpha: 0.2),
             width: 1.5,
           ),
-          boxShadow: context.isDark ? null : [
-            BoxShadow(
-              color: _scoreColor.withValues(alpha: 0.1),
-              offset: const Offset(0, 8),
-              blurRadius: 24,
-              spreadRadius: 0,
-            ),
-          ],
+          boxShadow: context.isDark
+              ? null
+              : [
+                  BoxShadow(
+                    color: _scoreColor.withValues(alpha: 0.1),
+                    offset: const Offset(0, 8),
+                    blurRadius: 24,
+                    spreadRadius: 0,
+                  ),
+                ],
         ),
         child: Column(
           children: [
@@ -123,7 +125,7 @@ class _HealthScoreCardState extends State<HealthScoreCard>
               ),
             ),
             const SizedBox(height: 24),
-            
+
             // 원형 점수 표시
             AnimatedBuilder(
               animation: _animationController,
@@ -140,13 +142,14 @@ class _HealthScoreCardState extends State<HealthScoreCard>
                         child: CustomPaint(
                           painter: _CircularProgressPainter(
                             progress: _progressAnimation.value,
-                            backgroundColor: context.colors.border.withValues(alpha: 0.3),
+                            backgroundColor:
+                                context.colors.border.withValues(alpha: 0.3),
                             progressColor: _scoreColor,
                             strokeWidth: 12,
                           ),
                         ),
                       ),
-                      
+
                       // 점수 텍스트
                       Column(
                         mainAxisSize: MainAxisSize.min,
@@ -177,9 +180,9 @@ class _HealthScoreCardState extends State<HealthScoreCard>
                 );
               },
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // 메인 메시지
             Container(
               padding: const EdgeInsets.all(16),
@@ -200,7 +203,7 @@ class _HealthScoreCardState extends State<HealthScoreCard>
                 textAlign: TextAlign.center,
               ),
             ),
-            
+
             // 탭 가이드 (선택적)
             if (widget.onTap != null) ...[
               const SizedBox(height: 16),
@@ -225,9 +228,7 @@ class _HealthScoreCardState extends State<HealthScoreCard>
           ],
         ),
       ),
-    ).animate()
-      .fadeIn(duration: 600.ms)
-      .slideY(begin: 0.1, end: 0);
+    ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1, end: 0);
   }
 }
 
@@ -282,13 +283,13 @@ class _CircularProgressPainter extends CustomPainter {
       final endAngle = startAngle + sweepAngle;
       final endPointX = center.dx + radius * math.cos(endAngle);
       final endPointY = center.dy + radius * math.sin(endAngle);
-      
+
       final endPointPaint = Paint()
         ..color = progressColor
         ..strokeWidth = strokeWidth + 4
         ..style = PaintingStyle.stroke
         ..strokeCap = StrokeCap.round;
-        
+
       canvas.drawPoints(
         ui.PointMode.points,
         [Offset(endPointX, endPointY)],
@@ -300,8 +301,8 @@ class _CircularProgressPainter extends CustomPainter {
   @override
   bool shouldRepaint(_CircularProgressPainter oldDelegate) {
     return oldDelegate.progress != progress ||
-           oldDelegate.backgroundColor != backgroundColor ||
-           oldDelegate.progressColor != progressColor ||
-           oldDelegate.strokeWidth != strokeWidth;
+        oldDelegate.backgroundColor != backgroundColor ||
+        oldDelegate.progressColor != progressColor ||
+        oldDelegate.strokeWidth != strokeWidth;
   }
 }

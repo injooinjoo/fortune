@@ -102,7 +102,9 @@ class FortuneCategory {
       'route': route,
       'type': type,
       'iconAsset': iconAsset,
-      'gradientColors': gradientColors.map((c) => '0x${c.toARGB32().toRadixString(16).toUpperCase()}').toList(),
+      'gradientColors': gradientColors
+          .map((c) => '0x${c.toARGB32().toRadixString(16).toUpperCase()}')
+          .toList(),
       'description': description,
       'category': category,
       'isNew': isNew,
@@ -113,7 +115,8 @@ class FortuneCategory {
   /// Hex 문자열을 Color로 파싱
   static Color _parseColor(String hex) {
     try {
-      final cleanHex = hex.replaceAll('#', '').replaceAll('0x', '').replaceAll('0X', '');
+      final cleanHex =
+          hex.replaceAll('#', '').replaceAll('0x', '').replaceAll('0X', '');
       return Color(int.parse('0xFF$cleanHex'.substring(0, 10)));
     } catch (e) {
       return DSColors.accentSecondary; // 기본색

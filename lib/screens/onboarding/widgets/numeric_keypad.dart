@@ -43,7 +43,8 @@ class NumericKeypad extends ConsumerWidget {
                 ),
               ),
               Expanded(
-                child: _buildNumberButton('0', typography, colors, onPressed: () => onNumberPressed('0')),
+                child: _buildNumberButton('0', typography, colors,
+                    onPressed: () => onNumberPressed('0')),
               ),
               Expanded(
                 child: _buildBackspaceButton(colors),
@@ -55,17 +56,21 @@ class NumericKeypad extends ConsumerWidget {
     );
   }
 
-  Widget _buildNumberRow(List<String> numbers, TypographyTheme typography, DSColorScheme colors) {
+  Widget _buildNumberRow(
+      List<String> numbers, TypographyTheme typography, DSColorScheme colors) {
     return Row(
-      children: numbers.map((number) =>
-        Expanded(
-          child: _buildNumberButton(number, typography, colors, onPressed: () => onNumberPressed(number)),
-        )
-      ).toList(),
+      children: numbers
+          .map((number) => Expanded(
+                child: _buildNumberButton(number, typography, colors,
+                    onPressed: () => onNumberPressed(number)),
+              ))
+          .toList(),
     );
   }
 
-  Widget _buildNumberButton(String number, TypographyTheme typography, DSColorScheme colors, {required VoidCallback onPressed}) {
+  Widget _buildNumberButton(
+      String number, TypographyTheme typography, DSColorScheme colors,
+      {required VoidCallback onPressed}) {
     return Container(
       height: 60,
       margin: const EdgeInsets.all(1),
@@ -73,10 +78,12 @@ class NumericKeypad extends ConsumerWidget {
         color: colors.surface,
         child: InkWell(
           onTap: () {
-            debugPrint('[NumericKeypad] Button $number pressed at ${DateTime.now()}');
+            debugPrint(
+                '[NumericKeypad] Button $number pressed at ${DateTime.now()}');
             DSHaptics.light();
             onPressed();
-            debugPrint('[NumericKeypad] onPressed callback executed for $number');
+            debugPrint(
+                '[NumericKeypad] onPressed callback executed for $number');
           },
           child: Container(
             decoration: BoxDecoration(
@@ -104,12 +111,16 @@ class NumericKeypad extends ConsumerWidget {
       child: Material(
         color: colors.surface,
         child: InkWell(
-          onTap: onBackspacePressed != null ? () {
-            debugPrint('[NumericKeypad] Backspace pressed at ${DateTime.now()}');
-            DSHaptics.light();
-            onBackspacePressed!();
-            debugPrint('[NumericKeypad] onBackspacePressed callback executed');
-          } : null,
+          onTap: onBackspacePressed != null
+              ? () {
+                  debugPrint(
+                      '[NumericKeypad] Backspace pressed at ${DateTime.now()}');
+                  DSHaptics.light();
+                  onBackspacePressed!();
+                  debugPrint(
+                      '[NumericKeypad] onBackspacePressed callback executed');
+                }
+              : null,
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(color: colors.border, width: 0.5),
@@ -118,7 +129,9 @@ class NumericKeypad extends ConsumerWidget {
               child: Icon(
                 Icons.backspace_outlined,
                 size: 24,
-                color: onBackspacePressed != null ? colors.textSecondary : colors.textTertiary,
+                color: onBackspacePressed != null
+                    ? colors.textSecondary
+                    : colors.textTertiary,
               ),
             ),
           ),

@@ -14,17 +14,14 @@ final cachedFortuneProvider =
     FutureProvider.family<dynamic, CachedFortuneParams>((ref, params) async {
   final cacheService = ref.watch(cacheServiceProvider);
   return await cacheService.getCachedFortune(
-    params.fortuneType,
-    params.parameters);
+      params.fortuneType, params.parameters);
 });
 
 class CachedFortuneParams {
   final String fortuneType;
   final Map<String, dynamic> parameters;
 
-  CachedFortuneParams({
-    required this.fortuneType,
-    required this.parameters});
+  CachedFortuneParams({required this.fortuneType, required this.parameters});
 
   @override
   bool operator ==(Object other) {

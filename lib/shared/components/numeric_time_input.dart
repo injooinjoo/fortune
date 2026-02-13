@@ -148,9 +148,8 @@ class _NumericTimeInputState extends State<NumericTimeInput> {
               ),
               prefixIcon: Icon(
                 Icons.access_time,
-                color: _focusNode.hasFocus
-                    ? colors.accent
-                    : colors.textTertiary,
+                color:
+                    _focusNode.hasFocus ? colors.accent : colors.textTertiary,
                 size: 20,
               ),
               suffixIcon: _controller.text.isNotEmpty
@@ -177,7 +176,8 @@ class _NumericTimeInputState extends State<NumericTimeInput> {
         ),
         if (_errorText != null)
           Padding(
-            padding: const EdgeInsets.only(top: DSSpacing.sm, left: DSSpacing.sm),
+            padding:
+                const EdgeInsets.only(top: DSSpacing.sm, left: DSSpacing.sm),
             child: Row(
               children: [
                 Icon(

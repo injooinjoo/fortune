@@ -4,10 +4,7 @@ abstract class AppException implements Exception {
   final String? code;
   final dynamic data;
 
-  const AppException({
-    required this.message,
-    this.code,
-    this.data});
+  const AppException({required this.message, this.code, this.data});
 
   @override
   String toString() =>
@@ -18,11 +15,8 @@ abstract class AppException implements Exception {
 class ServerException extends AppException {
   final int? statusCode;
 
-  const ServerException({
-    required super.message,
-    this.statusCode,
-    super.code,
-    super.data});
+  const ServerException(
+      {required super.message, this.statusCode, super.code, super.data});
 
   @override
   String toString() => 'ServerException: $message (${statusCode ?? 'Unknown'})';
@@ -49,9 +43,7 @@ class TokenException implements Exception {
   final String message;
   final int? remainingTokens;
 
-  TokenException({
-    required this.message,
-    this.remainingTokens});
+  TokenException({required this.message, this.remainingTokens});
 
   @override
   String toString() => 'TokenException: $message';
@@ -61,9 +53,7 @@ class AuthException implements Exception {
   final String message;
   final String? code;
 
-  AuthException({
-    required this.message,
-    this.code});
+  AuthException({required this.message, this.code});
 
   @override
   String toString() => 'AuthException: $message';
@@ -72,10 +62,7 @@ class AuthException implements Exception {
 class ValidationException extends AppException {
   final Map<String, dynamic>? errors;
 
-  const ValidationException({
-    required super.message,
-    this.errors,
-    super.code});
+  const ValidationException({required super.message, this.errors, super.code});
 
   @override
   String toString() => 'ValidationException: $message';
@@ -125,7 +112,8 @@ class InsufficientTokensException extends AppException {
     required String fortuneType,
     String message = '토큰가 부족합니다',
   }) {
-    return InsufficientTokensException(message, required, available, fortuneType);
+    return InsufficientTokensException(
+        message, required, available, fortuneType);
   }
 
   @override

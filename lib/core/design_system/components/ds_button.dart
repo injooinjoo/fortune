@@ -548,9 +548,8 @@ class _DSButtonState extends State<DSButton>
                 AnimatedContainer(
                   duration: DSAnimation.normal,
                   curve: Curves.easeInOut,
-                  width:
-                      (widget.width ?? MediaQuery.of(context).size.width) *
-                          _progressPercentage,
+                  width: (widget.width ?? MediaQuery.of(context).size.width) *
+                      _progressPercentage,
                   height: _height,
                   color: progressColor,
                 ),
@@ -597,12 +596,9 @@ class _DSButtonState extends State<DSButton>
     switch (widget.style) {
       case DSButtonStyle.primary:
         backgroundColor = isEnabled
-            ? (_isPressed
-                ? colors.backgroundTertiary
-                : colors.surfaceSecondary)
+            ? (_isPressed ? colors.backgroundTertiary : colors.surfaceSecondary)
             : colors.surfaceSecondary.withValues(alpha: 0.5);
-        foregroundColor =
-            isEnabled ? colors.textPrimary : colors.textDisabled;
+        foregroundColor = isEnabled ? colors.textPrimary : colors.textDisabled;
         break;
 
       case DSButtonStyle.secondary:
@@ -611,15 +607,13 @@ class _DSButtonState extends State<DSButton>
                 ? colors.backgroundTertiary
                 : colors.backgroundSecondary)
             : colors.backgroundSecondary.withValues(alpha: 0.5);
-        foregroundColor =
-            isEnabled ? colors.textPrimary : colors.textDisabled;
+        foregroundColor = isEnabled ? colors.textPrimary : colors.textDisabled;
         break;
 
       case DSButtonStyle.outline:
         backgroundColor =
             _isPressed ? colors.backgroundSecondary : Colors.transparent;
-        foregroundColor =
-            isEnabled ? colors.textPrimary : colors.textDisabled;
+        foregroundColor = isEnabled ? colors.textPrimary : colors.textDisabled;
         borderColor =
             isEnabled ? colors.border : colors.border.withValues(alpha: 0.5);
         break;
@@ -632,9 +626,7 @@ class _DSButtonState extends State<DSButton>
 
       case DSButtonStyle.destructive:
         backgroundColor = isEnabled
-            ? (_isPressed
-                ? colors.error.withValues(alpha: 0.9)
-                : colors.error)
+            ? (_isPressed ? colors.error.withValues(alpha: 0.9) : colors.error)
             : colors.error.withValues(alpha: 0.5);
         foregroundColor = DSColors.textPrimaryDark;
         break;
@@ -960,8 +952,8 @@ class _ThreeDotsLoadingState extends State<_ThreeDotsLoading>
                 width: 6,
                 height: 6,
                 decoration: BoxDecoration(
-                  color: widget.color
-                      .withValues(alpha: opacity.clamp(0.3, 1.0)),
+                  color:
+                      widget.color.withValues(alpha: opacity.clamp(0.3, 1.0)),
                   shape: BoxShape.circle,
                 ),
               ),

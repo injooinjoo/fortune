@@ -225,16 +225,23 @@ class _MockTraditionalSajuPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('전통 사주', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const Text('전통 사주',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 24),
             const Text('생년월일'),
             const TextField(decoration: InputDecoration(hintText: '선택해주세요')),
             const SizedBox(height: 16),
             Row(
               children: [
-                ChoiceChip(label: const Text('양력'), selected: true, onSelected: (_) {}),
+                ChoiceChip(
+                    label: const Text('양력'),
+                    selected: true,
+                    onSelected: (_) {}),
                 const SizedBox(width: 8),
-                ChoiceChip(label: const Text('음력'), selected: false, onSelected: (_) {}),
+                ChoiceChip(
+                    label: const Text('음력'),
+                    selected: false,
+                    onSelected: (_) {}),
               ],
             ),
             const SizedBox(height: 16),
@@ -250,9 +257,15 @@ class _MockTraditionalSajuPage extends StatelessWidget {
             const Text('성별'),
             Row(
               children: [
-                ChoiceChip(label: const Text('남성'), selected: true, onSelected: (_) {}),
+                ChoiceChip(
+                    label: const Text('남성'),
+                    selected: true,
+                    onSelected: (_) {}),
                 const SizedBox(width: 8),
-                ChoiceChip(label: const Text('여성'), selected: false, onSelected: (_) {}),
+                ChoiceChip(
+                    label: const Text('여성'),
+                    selected: false,
+                    onSelected: (_) {}),
               ],
             ),
             const SizedBox(height: 24),
@@ -283,9 +296,13 @@ class _MockTraditionalSajuResult extends StatelessWidget {
           children: [
             const Text('전통 사주 분석 결과', style: TextStyle(fontSize: 24)),
             const SizedBox(height: 16),
-            const Card(child: ListTile(title: Text('사주팔자'), subtitle: Text('경오 정축 갑자 기사'))),
-            const Card(child: ListTile(title: Text('대운'), subtitle: Text('현재 대운 정보'))),
-            const Card(child: ListTile(title: Text('세운'), subtitle: Text('올해의 운세'))),
+            const Card(
+                child: ListTile(
+                    title: Text('사주팔자'), subtitle: Text('경오 정축 갑자 기사'))),
+            const Card(
+                child: ListTile(title: Text('대운'), subtitle: Text('현재 대운 정보'))),
+            const Card(
+                child: ListTile(title: Text('세운'), subtitle: Text('올해의 운세'))),
             const Card(child: ListTile(title: Text('용신'), subtitle: Text('토'))),
           ],
         ),

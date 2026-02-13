@@ -65,9 +65,9 @@ void main() {
           return '해';
         }
 
-        expect(getHourBranch(9), '사');  // 09:00
+        expect(getHourBranch(9), '사'); // 09:00
         expect(getHourBranch(15), '신'); // 15:00
-        expect(getHourBranch(0), '자');  // 00:00
+        expect(getHourBranch(0), '자'); // 00:00
       });
     });
 
@@ -77,7 +77,8 @@ void main() {
         final elementData = elements['elements'] as Map<String, dynamic>;
 
         // 모든 오행이 포함되어야 함
-        expect(elementData.keys, containsAll(['wood', 'fire', 'earth', 'metal', 'water']));
+        expect(elementData.keys,
+            containsAll(['wood', 'fire', 'earth', 'metal', 'water']));
 
         // 퍼센티지 합계가 100%
         double totalPercentage = 0;
@@ -133,8 +134,22 @@ void main() {
 
         // 12간지 이름 확인
         final names = branches.map((b) => b['korean']).toList();
-        expect(names, containsAll(['쥐', '소', '호랑이', '토끼', '용', '뱀',
-          '말', '양', '원숭이', '닭', '개', '돼지']));
+        expect(
+            names,
+            containsAll([
+              '쥐',
+              '소',
+              '호랑이',
+              '토끼',
+              '용',
+              '뱀',
+              '말',
+              '양',
+              '원숭이',
+              '닭',
+              '개',
+              '돼지'
+            ]));
       });
 
       test('천간 음양 분류', () {
@@ -162,15 +177,25 @@ void main() {
         Map<String, List<String>> getElementTraits(String element) {
           switch (element) {
             case 'wood':
-              return {'traits': ['창의적', '진취적', '성장 지향']};
+              return {
+                'traits': ['창의적', '진취적', '성장 지향']
+              };
             case 'fire':
-              return {'traits': ['열정적', '활발', '리더십']};
+              return {
+                'traits': ['열정적', '활발', '리더십']
+              };
             case 'earth':
-              return {'traits': ['안정적', '신중', '포용력']};
+              return {
+                'traits': ['안정적', '신중', '포용력']
+              };
             case 'metal':
-              return {'traits': ['결단력', '정의로움', '완벽주의']};
+              return {
+                'traits': ['결단력', '정의로움', '완벽주의']
+              };
             case 'water':
-              return {'traits': ['지혜로움', '유연함', '감수성']};
+              return {
+                'traits': ['지혜로움', '유연함', '감수성']
+              };
             default:
               return {'traits': []};
           }

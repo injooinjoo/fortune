@@ -22,7 +22,8 @@ final tarotExampleQuestions = [
   '중요한 결정을 앞두고 있어요',
   '이번 달 금전운은 어떤가요?',
   '직장에서의 인간관계가 걱정돼요',
-  '새로운 시작을 앞두고 있어요'];
+  '새로운 시작을 앞두고 있어요'
+];
 
 // Chat message model
 class ChatMessage {
@@ -56,7 +57,8 @@ class TarotCardInfo {
 }
 
 // Chat messages provider
-final chatMessagesProvider = StateNotifierProvider<ChatMessagesNotifier, List<ChatMessage>>(
+final chatMessagesProvider =
+    StateNotifierProvider<ChatMessagesNotifier, List<ChatMessage>>(
   (ref) => ChatMessagesNotifier(),
 );
 
@@ -167,19 +169,19 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
       isLoading: true,
     ));
     _scrollToBottom();
-    
+
     // Start card drawing animation
     await Future.delayed(const Duration(seconds: 1));
-    
+
     messages.updateLastMessage(ChatMessage(
       text: '당신을 위한 카드를 뽑고 있습니다... ✨',
       isUser: false,
       timestamp: DateTime.now(),
       isLoading: true,
     ));
-    
+
     await Future.delayed(const Duration(seconds: 1));
-    
+
     messages.updateLastMessage(ChatMessage(
       text: '카드의 메시지를 해석하고 있습니다... 🔮',
       isUser: false,
@@ -190,31 +192,34 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
 
     try {
       // Check tokens (3 tokens for standard reading)
-      final hasEnoughTokens = await tokenService.checkAndConsumeTokens(3, 'tarot');
-      
+      final hasEnoughTokens =
+          await tokenService.checkAndConsumeTokens(3, 'tarot');
+
       if (!hasEnoughTokens) {
         messages.updateLastMessage(ChatMessage(
-          text: '토큰가 부족합니다. 토큰를 충전해주세요.',
-          isUser: false,
-          timestamp: DateTime.now()));
+            text: '토큰가 부족합니다. 토큰를 충전해주세요.',
+            isUser: false,
+            timestamp: DateTime.now()));
         setState(() => _isProcessing = false);
         return;
       }
 
       // Call API
-      final response = await apiService.post(
-        ApiEndpoints.generateFortune,
-        data: {
-          'type': 'tarot',
-          'userInfo': {
-            'question': text,
-            'spreadType': 'three', // Default to 3-card spread
-          }});
+      final response =
+          await apiService.post(ApiEndpoints.generateFortune, data: {
+        'type': 'tarot',
+        'userInfo': {
+          'question': text,
+          'spreadType': 'three', // Default to 3-card spread
+        }
+      });
 
       if (response['success'] == true) {
         final data = response['data'] ?? {};
-        final interpretation = FortuneTextCleaner.cleanNullable(data['interpretation'] as String?);
-        final advice = FortuneTextCleaner.cleanNullable(data['advice'] as String?);
+        final interpretation =
+            FortuneTextCleaner.cleanNullable(data['interpretation'] as String?);
+        final advice =
+            FortuneTextCleaner.cleanNullable(data['advice'] as String?);
         final cards = (data['cards'] as List<dynamic>?)?.map((card) {
           return TarotCardInfo(
             name: card['name'] ?? '',
@@ -244,34 +249,38 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
     }
   }
 
-  void _generateLocalTarotResult(String question, ChatMessagesNotifier messages) {
+  void _generateLocalTarotResult(
+      String question, ChatMessagesNotifier messages) {
     final random = Random();
     final List<TarotCardInfo> selectedCards = [];
     final List<int> usedIndices = [];
-    
+
     // 3장의 카드 선택 (과거, 현재, 미래)
     for (int i = 0; i < 3; i++) {
       int cardNumber;
       do {
-        cardNumber = TarotMetadata.majorArcana.keys.toList()[random.nextInt(TarotMetadata.majorArcana.length)];
+        cardNumber = TarotMetadata.majorArcana.keys
+            .toList()[random.nextInt(TarotMetadata.majorArcana.length)];
       } while (usedIndices.contains(cardNumber));
-      
+
       usedIndices.add(cardNumber);
       final card = TarotMetadata.majorArcana[cardNumber]!;
       final isReversed = random.nextInt(100) < 30; // 30% 확률로 역방향
-      
+
       selectedCards.add(TarotCardInfo(
         name: card.name,
         meaning: isReversed ? card.reversedMeaning : card.uprightMeaning,
-        imageUrl: 'assets/images/tarot/major_${cardNumber.toString().padLeft(2, '0')}.jpg',
+        imageUrl:
+            'assets/images/tarot/major_${cardNumber.toString().padLeft(2, '0')}.jpg',
         isReversed: isReversed,
       ));
     }
-    
+
     // 질문에 따른 해석 생성
-    final String interpretation = _generateInterpretation(question, selectedCards);
+    final String interpretation =
+        _generateInterpretation(question, selectedCards);
     final String advice = _generateAdvice(question, selectedCards);
-    
+
     messages.updateLastMessage(ChatMessage(
       text: '$interpretation\n\n💡 조언: $advice',
       isUser: false,
@@ -279,23 +288,26 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
       cards: selectedCards,
     ));
   }
-  
+
   String _generateInterpretation(String question, List<TarotCardInfo> cards) {
     String baseInterpretation = '';
-    
+
     // 3장 카드 스프레드 - 과거, 현재, 미래로 해석
     baseInterpretation += '📅 **과거의 영향**\n';
-    baseInterpretation += '카드: ${cards[0].name}${cards[0].isReversed ? " (역방향)" : ""}\n';
+    baseInterpretation +=
+        '카드: ${cards[0].name}${cards[0].isReversed ? " (역방향)" : ""}\n';
     baseInterpretation += '${cards[0].meaning}\n\n';
-    
+
     baseInterpretation += '⏰ **현재의 상황**\n';
-    baseInterpretation += '카드: ${cards[1].name}${cards[1].isReversed ? " (역방향)" : ""}\n';
+    baseInterpretation +=
+        '카드: ${cards[1].name}${cards[1].isReversed ? " (역방향)" : ""}\n';
     baseInterpretation += '${cards[1].meaning}\n\n';
-    
+
     baseInterpretation += '🌟 **미래의 가능성**\n';
-    baseInterpretation += '카드: ${cards[2].name}${cards[2].isReversed ? " (역방향)" : ""}\n';
+    baseInterpretation +=
+        '카드: ${cards[2].name}${cards[2].isReversed ? " (역방향)" : ""}\n';
     baseInterpretation += cards[2].meaning;
-    
+
     // 질문 키워드에 따른 추가 해석
     if (question.contains('연애') || question.contains('사랑')) {
       baseInterpretation = '❤️ **연애운 3장 타로 리딩**\n\n$baseInterpretation';
@@ -306,14 +318,14 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
     } else {
       baseInterpretation = '🎴 **종합 3장 타로 리딩**\n\n$baseInterpretation';
     }
-    
+
     return baseInterpretation;
   }
-  
+
   String _generateAdvice(String question, List<TarotCardInfo> cards) {
     // 카드 조합에 따른 조언 생성
     final List<String> adviceList = [];
-    
+
     for (var card in cards) {
       final metadata = TarotMetadata.majorArcana.values.firstWhere(
         (m) => m.name == card.name,
@@ -321,7 +333,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
       );
       adviceList.add(metadata.advice);
     }
-    
+
     // 랜덤하게 하나의 조언 선택 또는 조합
     return adviceList[Random().nextInt(adviceList.length)];
   }
@@ -332,32 +344,33 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
     final fontScale = ref.watch(userSettingsProvider).fontScale;
 
     return Scaffold(
-      backgroundColor: DSColors.backgroundDark,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Clean header
-            AppHeader(
+        backgroundColor: DSColors.backgroundDark,
+        body: SafeArea(
+            child: Column(children: [
+          // Clean header
+          AppHeader(
               title: '타로 리딩',
               showBackButton: true,
               backgroundColor: context.colors.surface,
               elevation: 0.5,
               actions: [
                 IconButton(
-                  icon: const Icon(Icons.style, size: 20),
-                  onPressed: () {
-                    context.pushNamed('interactive-tarot-deck-selection');
-                  },
-                  tooltip: '카드 변경')]),
-            
-            // Main content area
-            Expanded(
+                    icon: const Icon(Icons.style, size: 20),
+                    onPressed: () {
+                      context.pushNamed('interactive-tarot-deck-selection');
+                    },
+                    tooltip: '카드 변경')
+              ]),
+
+          // Main content area
+          Expanded(
               child: messages.isEmpty
                   ? _buildWelcomeView(fontScale)
                   : _buildChatView(messages, fontScale)),
-            
-            // Bottom input area
-            _buildInputArea(fontScale)])));
+
+          // Bottom input area
+          _buildInputArea(fontScale)
+        ])));
   }
 
   Widget _buildWelcomeView(double fontScale) {
@@ -367,48 +380,43 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(height: 40),
-          
+
           // Simple icon
           Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: context.colors.surface,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.auto_awesome,
-              size: 40,
-              color: DSColors.textPrimaryDark)),
-          
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: context.colors.surface,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.auto_awesome,
+                  size: 40, color: DSColors.textPrimaryDark)),
+
           const SizedBox(height: DSSpacing.lg),
-          
+
           // Welcome text
-          Text(
-            '타로 리딩에 오신 것을 환영합니다',
-            style: context.headingMedium.copyWith(
-              fontWeight: FontWeight.bold,
-              color: DSColors.textPrimaryDark)),
+          Text('타로 리딩에 오신 것을 환영합니다',
+              style: context.headingMedium.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: DSColors.textPrimaryDark)),
 
           const SizedBox(height: 12),
 
-          Text(
-            '궁금한 것을 물어보시면 타로 카드로 답변해 드릴게요',
-            style: context.labelMedium.copyWith(
-              color: DSColors.textSecondaryDark),
-            textAlign: TextAlign.center),
+          Text('궁금한 것을 물어보시면 타로 카드로 답변해 드릴게요',
+              style: context.labelMedium
+                  .copyWith(color: DSColors.textSecondaryDark),
+              textAlign: TextAlign.center),
 
           const SizedBox(height: 40),
 
           // Example questions
-          Text(
-            '이런 질문을 해보세요',
-            style: context.labelMedium.copyWith(
-              fontWeight: FontWeight.w600,
-              color: DSColors.textPrimaryDark)),
-          
+          Text('이런 질문을 해보세요',
+              style: context.labelMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: DSColors.textPrimaryDark)),
+
           const SizedBox(height: DSSpacing.md),
-          
+
           // Question grid
           Wrap(
             spacing: 12,
@@ -425,53 +433,52 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
 
   Widget _buildExampleCard(String question, double fontScale) {
     return Container(
-      constraints: BoxConstraints(
-        maxWidth: MediaQuery.of(context).size.width * 0.42),
-      child: Material(
-        color: context.colors.surface,
-        borderRadius: BorderRadius.circular(12),
-        child: InkWell(
-          onTap: () {
-            debugPrint('[TarotChat] Example question tapped: $question');
-            HapticFeedback.lightImpact();
-            _sendMessage(question);
-          },
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: DSColors.borderDark,
-                width: 1),
-            ),
-            child: Text(
-              question,
-              style: context.bodySmall.copyWith(
-                color: DSColors.textPrimaryDark,
-                fontWeight: FontWeight.w500,
-                height: 1.4),
-              textAlign: TextAlign.center)))));
+        constraints:
+            BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.42),
+        child: Material(
+            color: context.colors.surface,
+            borderRadius: BorderRadius.circular(12),
+            child: InkWell(
+                onTap: () {
+                  debugPrint('[TarotChat] Example question tapped: $question');
+                  HapticFeedback.lightImpact();
+                  _sendMessage(question);
+                },
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: DSColors.borderDark, width: 1),
+                    ),
+                    child: Text(question,
+                        style: context.bodySmall.copyWith(
+                            color: DSColors.textPrimaryDark,
+                            fontWeight: FontWeight.w500,
+                            height: 1.4),
+                        textAlign: TextAlign.center)))));
   }
 
   Widget _buildChatView(List<ChatMessage> messages, double fontScale) {
     return ListView.builder(
-      controller: _scrollController,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-      itemCount: messages.length,
-      itemBuilder: (context, index) {
-        final message = messages[index];
-        return _buildChatBubble(message, fontScale);
-      });
+        controller: _scrollController,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        itemCount: messages.length,
+        itemBuilder: (context, index) {
+          final message = messages[index];
+          return _buildChatBubble(message, fontScale);
+        });
   }
 
   Widget _buildChatBubble(ChatMessage message, double fontScale) {
     final isUser = message.isUser;
-    
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
-        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment:
+            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!isUser) ...[
@@ -479,11 +486,10 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: context.colors.surface,
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: DSColors.textSecondaryDark,
-                  width: 1)),
+                  color: context.colors.surface,
+                  shape: BoxShape.circle,
+                  border:
+                      Border.all(color: DSColors.textSecondaryDark, width: 1)),
               child: const Icon(
                 Icons.auto_awesome,
                 size: 18,
@@ -492,16 +498,16 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
             ),
             const SizedBox(width: DSSpacing.sm),
           ],
-          
           Flexible(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: isUser ? DSColors.textPrimaryDark : context.colors.surface,
+                color:
+                    isUser ? DSColors.textPrimaryDark : context.colors.surface,
                 borderRadius: BorderRadius.circular(16),
-                border: !isUser ? Border.all(
-                  color: DSColors.textSecondaryDark,
-                  width: 1) : null,
+                border: !isUser
+                    ? Border.all(color: DSColors.textSecondaryDark, width: 1)
+                    : null,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -516,14 +522,16 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              DSColors.textSecondaryDark),
+                                DSColors.textSecondaryDark),
                           ),
                         ),
                         const SizedBox(width: DSSpacing.sm),
                         Text(
                           message.text,
                           style: context.bodySmall.copyWith(
-                            color: isUser ? Colors.white : DSColors.textPrimaryDark,
+                            color: isUser
+                                ? Colors.white
+                                : DSColors.textPrimaryDark,
                           ),
                         ),
                       ],
@@ -536,7 +544,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                         height: 1.4,
                       ),
                     ),
-                  
+
                   // Display cards if available
                   if (message.cards != null && message.cards!.isNotEmpty) ...[
                     const SizedBox(height: 12),
@@ -553,7 +561,6 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
               ),
             ),
           ),
-          
           if (isUser) const SizedBox(width: DSSpacing.sm),
         ],
       ),
@@ -566,9 +573,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
       margin: const EdgeInsets.only(right: 8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: DSColors.borderDark,
-          width: 1),
+        border: Border.all(color: DSColors.borderDark, width: 1),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
@@ -630,16 +635,14 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
   Widget _buildInputArea(double fontScale) {
     return Container(
       padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: 12,
-        bottom: MediaQuery.of(context).padding.bottom + 12),
+          left: 16,
+          right: 16,
+          top: 12,
+          bottom: MediaQuery.of(context).padding.bottom + 12),
       decoration: BoxDecoration(
         color: context.colors.surface,
         border: const Border(
-          top: BorderSide(
-            color: DSColors.textSecondaryDark,
-            width: 1)),
+            top: BorderSide(color: DSColors.textSecondaryDark, width: 1)),
       ),
       child: UnifiedVoiceTextField(
         onSubmit: _sendMessage,

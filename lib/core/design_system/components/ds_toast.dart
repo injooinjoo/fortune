@@ -258,11 +258,10 @@ class _DSToastWidgetState extends State<_DSToastWidget>
             onTap: widget.onTap,
             onVerticalDragEnd: (details) {
               if (details.primaryVelocity != null) {
-                final isSwipingAway =
-                    (widget.position == DSToastPosition.top &&
-                            details.primaryVelocity! < 0) ||
-                        (widget.position == DSToastPosition.bottom &&
-                            details.primaryVelocity! > 0);
+                final isSwipingAway = (widget.position == DSToastPosition.top &&
+                        details.primaryVelocity! < 0) ||
+                    (widget.position == DSToastPosition.bottom &&
+                        details.primaryVelocity! > 0);
                 if (isSwipingAway) {
                   _dismiss();
                 }

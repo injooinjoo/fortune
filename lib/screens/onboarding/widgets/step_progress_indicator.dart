@@ -28,13 +28,16 @@ class StepProgressIndicator extends StatelessWidget {
           return Expanded(
             child: Container(
               height: 4,
-              margin: EdgeInsets.only(right: index < totalSteps - 1 ? DSSpacing.sm : 0),
+              margin: EdgeInsets.only(
+                  right: index < totalSteps - 1 ? DSSpacing.sm : 0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(2),
-                color: (isCompleted || isCurrent) ? colors.accent : colors.border,
+                color:
+                    (isCompleted || isCurrent) ? colors.accent : colors.border,
               ),
-            ).animate(delay: Duration(milliseconds: index * 100))
-             .scaleX(begin: 0, duration: 400.ms, curve: Curves.easeOut),
+            )
+                .animate(delay: Duration(milliseconds: index * 100))
+                .scaleX(begin: 0, duration: 400.ms, curve: Curves.easeOut),
           );
         }),
       ),
@@ -59,7 +62,8 @@ class TossStepIndicator extends ConsumerWidget {
     final typography = ref.watch(typographyThemeProvider);
     final colors = context.colors;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.lg, vertical: DSSpacing.md),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.lg, vertical: DSSpacing.md),
       child: Column(
         children: [
           // Progress bar
@@ -76,8 +80,8 @@ class TossStepIndicator extends ConsumerWidget {
             children: [
               Text(
                 stepTitles.isNotEmpty && currentStep <= stepTitles.length
-                  ? stepTitles[currentStep - 1]
-                  : '단계 $currentStep',
+                    ? stepTitles[currentStep - 1]
+                    : '단계 $currentStep',
                 style: typography.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
                   color: colors.textSecondary,

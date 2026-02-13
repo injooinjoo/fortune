@@ -5,11 +5,11 @@ import 'providers.dart';
 
 // Fortune Gauge State
 class FortuneGaugeState {
-  final int currentProgress;      // 0-10
-  final int totalTokens;       // 획득한 토큰 총 개수
-  final Set<String> todayViewed;  // 오늘 본 운세 타입들
-  final DateTime? lastResetDate;  // 일일 리셋용
-  final bool isAnimating;         // 애니메이션 진행 중 여부
+  final int currentProgress; // 0-10
+  final int totalTokens; // 획득한 토큰 총 개수
+  final Set<String> todayViewed; // 오늘 본 운세 타입들
+  final DateTime? lastResetDate; // 일일 리셋용
+  final bool isAnimating; // 애니메이션 진행 중 여부
   final bool isLoading;
   final String? error;
 
@@ -51,7 +51,8 @@ class FortuneGaugeNotifier extends StateNotifier<FortuneGaugeState> {
   final StorageService _storageService;
   final Ref ref;
 
-  FortuneGaugeNotifier(this._storageService, this.ref) : super(const FortuneGaugeState()) {
+  FortuneGaugeNotifier(this._storageService, this.ref)
+      : super(const FortuneGaugeState()) {
     loadProgress();
   }
 
@@ -69,15 +70,17 @@ class FortuneGaugeNotifier extends StateNotifier<FortuneGaugeState> {
             : null;
 
         final todayViewedList = (data['todayViewed'] as List<dynamic>?)
-            ?.map((e) => e.toString())
-            .toSet() ?? {};
+                ?.map((e) => e.toString())
+                .toSet() ??
+            {};
 
         // 날짜가 변경되었는지 확인
         final needsReset = _checkAndResetIfNeeded(lastResetDate);
 
         state = state.copyWith(
-          currentProgress: needsReset ? 0 : (data['currentProgress'] as int? ?? 0),
-          totalTokens: data['totalLuckyBags'] as int? ?? 0,  // 스토리지 키 유지 (하위호환)
+          currentProgress:
+              needsReset ? 0 : (data['currentProgress'] as int? ?? 0),
+          totalTokens: data['totalLuckyBags'] as int? ?? 0, // 스토리지 키 유지 (하위호환)
           todayViewed: needsReset ? {} : todayViewedList,
           lastResetDate: DateTime.now(),
           isLoading: false,
@@ -125,7 +128,8 @@ class FortuneGaugeNotifier extends StateNotifier<FortuneGaugeState> {
 
     try {
       // 새로운 운세 추가
-      final newTodayViewed = Set<String>.from(state.todayViewed)..add(fortuneType);
+      final newTodayViewed = Set<String>.from(state.todayViewed)
+        ..add(fortuneType);
       final newProgress = state.currentProgress + 1;
 
       state = state.copyWith(
@@ -142,7 +146,8 @@ class FortuneGaugeNotifier extends StateNotifier<FortuneGaugeState> {
         await _checkAndAwardToken();
       }
 
-      debugPrint('[FortuneGaugeProvider] Progress: $newProgress/10 (type: $fortuneType)');
+      debugPrint(
+          '[FortuneGaugeProvider] Progress: $newProgress/10 (type: $fortuneType)');
       return true;
     } catch (e) {
       debugPrint('[FortuneGaugeProvider] Error incrementing gauge: $e');
@@ -161,20 +166,21 @@ class FortuneGaugeNotifier extends StateNotifier<FortuneGaugeState> {
 
       // TokenProvider의 earnSouls 호출
       final success = await ref.read(tokenProvider.notifier).earnSouls(
-        fortuneType: 'gauge_reward',
-      );
+            fortuneType: 'gauge_reward',
+          );
 
       if (success) {
         // 토큰 개수 증가 + 게이지 리셋 (다음 사이클 시작)
         state = state.copyWith(
           currentProgress: 0,
-          todayViewed: {},  // 다음 사이클 위해 초기화
+          todayViewed: {}, // 다음 사이클 위해 초기화
           totalTokens: state.totalTokens + 1,
         );
 
         await _saveToStorage();
 
-        debugPrint('[FortuneGaugeProvider] Token awarded! Total: ${state.totalTokens}. Gauge reset to 0/10');
+        debugPrint(
+            '[FortuneGaugeProvider] Token awarded! Total: ${state.totalTokens}. Gauge reset to 0/10');
       } else {
         debugPrint('[FortuneGaugeProvider] Failed to award token');
       }
@@ -207,8 +213,8 @@ class FortuneGaugeNotifier extends StateNotifier<FortuneGaugeState> {
 
     // 날짜가 다르면 리셋 필요
     return now.year != lastReset.year ||
-           now.month != lastReset.month ||
-           now.day != lastReset.day;
+        now.month != lastReset.month ||
+        now.day != lastReset.day;
   }
 
   // 변경사항 저장
@@ -216,7 +222,7 @@ class FortuneGaugeNotifier extends StateNotifier<FortuneGaugeState> {
     try {
       final data = {
         'currentProgress': state.currentProgress,
-        'totalLuckyBags': state.totalTokens,  // 스토리지 키 유지 (하위호환)
+        'totalLuckyBags': state.totalTokens, // 스토리지 키 유지 (하위호환)
         'todayViewed': state.todayViewed.toList(),
         'lastResetDate': state.lastResetDate?.toIso8601String(),
       };
@@ -246,7 +252,8 @@ class FortuneGaugeNotifier extends StateNotifier<FortuneGaugeState> {
 }
 
 // Provider
-final fortuneGaugeProvider = StateNotifierProvider<FortuneGaugeNotifier, FortuneGaugeState>((ref) {
+final fortuneGaugeProvider =
+    StateNotifierProvider<FortuneGaugeNotifier, FortuneGaugeState>((ref) {
   final storageService = ref.watch(storageServiceProvider);
   return FortuneGaugeNotifier(storageService, ref);
 });

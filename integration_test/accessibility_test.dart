@@ -62,7 +62,8 @@ void main() {
 
       // 최소한 하나의 버튼이 있어야 함
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ A11Y-001 PASSED: Semantic labels - buttons: $totalButtons, semantics: ${semanticsWidgets.evaluate().length}');
+      debugPrint(
+          '✅ A11Y-001 PASSED: Semantic labels - buttons: $totalButtons, semantics: ${semanticsWidgets.evaluate().length}');
     });
 
     testWidgets('A11Y-002: 터치 타겟 크기 확인 (최소 44x44)', (tester) async {
@@ -73,10 +74,12 @@ void main() {
 
       if (bottomNav.evaluate().isNotEmpty) {
         // 바텀 네비 아이템은 기본적으로 충분한 크기를 가짐
-        final hasAdequateSize = true; // Flutter의 기본 BottomNavigationBar는 접근성 기준 충족
+        final hasAdequateSize =
+            true; // Flutter의 기본 BottomNavigationBar는 접근성 기준 충족
 
         expect(find.byType(Scaffold), findsWidgets);
-        debugPrint('✅ A11Y-002 PASSED: Touch target size - BottomNav adequate: $hasAdequateSize');
+        debugPrint(
+            '✅ A11Y-002 PASSED: Touch target size - BottomNav adequate: $hasAdequateSize');
       } else {
         expect(find.byType(Scaffold), findsWidgets);
         debugPrint('✅ A11Y-002 PASSED: Touch target size - no BottomNav found');
@@ -94,7 +97,8 @@ void main() {
       // WCAG 2.1 기준: 일반 텍스트 4.5:1, 큰 텍스트 3:1
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ A11Y-003 PASSED: Color contrast - text widgets present: $hasText');
+      debugPrint(
+          '✅ A11Y-003 PASSED: Color contrast - text widgets present: $hasText');
     });
 
     testWidgets('A11Y-004: 폰트 스케일 적용 확인', (tester) async {
@@ -131,7 +135,8 @@ void main() {
         }
       }
 
-      debugPrint('✅ A11Y-004 PASSED: Font scale - settings available: $hasFontSettings');
+      debugPrint(
+          '✅ A11Y-004 PASSED: Font scale - settings available: $hasFontSettings');
     });
 
     testWidgets('A11Y-005: 스크린 리더 호환성 확인', (tester) async {
@@ -151,7 +156,8 @@ void main() {
       );
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ A11Y-005 PASSED: Screen reader - tooltips: ${tooltips.evaluate().length}, exclude: ${excludeSemantics.evaluate().length}, merge: ${mergeSemantics.evaluate().length}');
+      debugPrint(
+          '✅ A11Y-005 PASSED: Screen reader - tooltips: ${tooltips.evaluate().length}, exclude: ${excludeSemantics.evaluate().length}, merge: ${mergeSemantics.evaluate().length}');
     });
 
     testWidgets('A11Y-006: 포커스 순서 확인', (tester) async {
@@ -171,7 +177,8 @@ void main() {
 
       // 포커스 순서가 논리적이면 크래시 없이 진행됨
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ A11Y-006 PASSED: Focus order - focusable widgets: ${focusableWidgets.evaluate().length}');
+      debugPrint(
+          '✅ A11Y-006 PASSED: Focus order - focusable widgets: ${focusableWidgets.evaluate().length}');
     });
 
     testWidgets('A11Y-007: 키보드 접근성 확인', (tester) async {
@@ -193,7 +200,8 @@ void main() {
       final hasButtons = buttons.evaluate().isNotEmpty;
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ A11Y-007 PASSED: Keyboard access - inputs: $hasInputFields, buttons: $hasButtons');
+      debugPrint(
+          '✅ A11Y-007 PASSED: Keyboard access - inputs: $hasInputFields, buttons: $hasButtons');
     });
 
     testWidgets('A11Y-008: 애니메이션 줄이기 옵션 확인', (tester) async {
@@ -228,7 +236,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ A11Y-008 PASSED: Animation reduction - settings: $hasAnimationSettings');
+      debugPrint(
+          '✅ A11Y-008 PASSED: Animation reduction - settings: $hasAnimationSettings');
     });
 
     testWidgets('A11Y-009: 다크 모드 가독성 확인', (tester) async {
@@ -263,7 +272,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ A11Y-009 PASSED: Dark mode readability - option: $hasDarkModeOption');
+      debugPrint(
+          '✅ A11Y-009 PASSED: Dark mode readability - option: $hasDarkModeOption');
     });
 
     testWidgets('A11Y-010: 에러 안내 접근성 확인', (tester) async {
@@ -292,7 +302,8 @@ void main() {
       final dialogs = find.byType(AlertDialog);
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ A11Y-010 PASSED: Error announcement - icons: $hasErrorIcons, snackbars: ${snackBars.evaluate().length}, dialogs: ${dialogs.evaluate().length}');
+      debugPrint(
+          '✅ A11Y-010 PASSED: Error announcement - icons: $hasErrorIcons, snackbars: ${snackBars.evaluate().length}, dialogs: ${dialogs.evaluate().length}');
     });
   });
 }

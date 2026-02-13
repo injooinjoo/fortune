@@ -11,10 +11,8 @@ import 'five_elements_explanation_bottom_sheet.dart';
 
 class FiveElementsWidget extends ConsumerWidget {
   final Map<String, dynamic>? userProfile;
-  
-  const FiveElementsWidget({
-    super.key,
-    required this.userProfile});
+
+  const FiveElementsWidget({super.key, required this.userProfile});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -35,7 +33,9 @@ class FiveElementsWidget extends ConsumerWidget {
       elementMap[key] = value is int ? value : (value as num).toInt();
     });
 
-    final total = elementMap.values.isEmpty ? 1 : elementMap.values.reduce((a, b) => a + b);
+    final total = elementMap.values.isEmpty
+        ? 1
+        : elementMap.values.reduce((a, b) => a + b);
 
     // Get dominant and lacking elements
     final sajuDisplayData = ref.watch(sajuDisplayDataProvider);
@@ -50,10 +50,10 @@ class FiveElementsWidget extends ConsumerWidget {
             : DSColors.backgroundDark,
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
-          color: theme.brightness == Brightness.dark
-              ? DSColors.surfaceSecondary
-              : theme.colorScheme.outline.withValues(alpha: 0.1),
-          width: 1),
+            color: theme.brightness == Brightness.dark
+                ? DSColors.surfaceSecondary
+                : theme.colorScheme.outline.withValues(alpha: 0.1),
+            width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,10 +63,9 @@ class FiveElementsWidget extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  Text(
-                    '나의 오행 분석',
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold)),
+                  Text('나의 오행 분석',
+                      style: theme.textTheme.titleLarge
+                          ?.copyWith(fontWeight: FontWeight.bold)),
                   const SizedBox(width: AppSpacing.spacing2),
                   Text(
                     '五行分析',
@@ -78,23 +77,21 @@ class FiveElementsWidget extends ConsumerWidget {
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.spacing2,
-                  vertical: AppSpacing.spacing1),
+                    horizontal: AppSpacing.spacing2,
+                    vertical: AppSpacing.spacing1),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                  borderRadius: AppDimensions.borderRadiusMedium),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                    borderRadius: AppDimensions.borderRadiusMedium),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      Icons.touch_app,
-                      size: 14,
-                      color: theme.colorScheme.primary),
+                    Icon(Icons.touch_app,
+                        size: 14, color: theme.colorScheme.primary),
                     const SizedBox(width: AppSpacing.spacing1),
                     Text(
                       '탭하여 상세보기',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.primary),
+                      style: theme.textTheme.labelSmall
+                          ?.copyWith(color: theme.colorScheme.primary),
                     ),
                   ],
                 ),
@@ -109,15 +106,17 @@ class FiveElementsWidget extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.spacing5),
-          
+
           // Five Elements Grid
-          _buildFiveElementsGrid(context, theme, elementMap, total, dominantElement, lackingElement),
-          
+          _buildFiveElementsGrid(context, theme, elementMap, total,
+              dominantElement, lackingElement),
+
           const SizedBox(height: AppSpacing.spacing6),
-          
+
           // Element balance bars
-          _buildElementBars(context, theme, elementMap, total, dominantElement, lackingElement),
-          
+          _buildElementBars(context, theme, elementMap, total, dominantElement,
+              lackingElement),
+
           // Balance advice
           if (dominantElement != null || lackingElement != null)
             _buildBalanceAdvice(theme, dominantElement, lackingElement),
@@ -125,7 +124,7 @@ class FiveElementsWidget extends ConsumerWidget {
       ),
     );
   }
-  
+
   Widget _buildEmptyState(BuildContext context, ThemeData theme) {
     return Container(
       padding: AppSpacing.paddingAll20,
@@ -135,21 +134,16 @@ class FiveElementsWidget extends ConsumerWidget {
             : DSColors.backgroundDark,
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
-          color: theme.brightness == Brightness.dark
-              ? DSColors.surfaceSecondary
-              : theme.colorScheme.outline.withValues(alpha: 0.1),
-          width: 1),
+            color: theme.brightness == Brightness.dark
+                ? DSColors.surfaceSecondary
+                : theme.colorScheme.outline.withValues(alpha: 0.1),
+            width: 1),
       ),
       child: Column(
         children: [
-          Icon(
-            Icons.bubble_chart,
-            color: theme.colorScheme.primary,
-            size: 48),
+          Icon(Icons.bubble_chart, color: theme.colorScheme.primary, size: 48),
           const SizedBox(height: AppSpacing.spacing4),
-          Text(
-            '오행 정보가 없습니다',
-            style: theme.textTheme.titleMedium),
+          Text('오행 정보가 없습니다', style: theme.textTheme.titleMedium),
           const SizedBox(height: AppSpacing.spacing2),
           Text(
             '사주 정보를 입력하면 오행 분석을 확인할 수 있습니다.',
@@ -162,23 +156,23 @@ class FiveElementsWidget extends ConsumerWidget {
       ),
     );
   }
-  
+
   Widget _buildFiveElementsGrid(
-    BuildContext context,
-    ThemeData theme,
-    Map<String, int> elementMap,
-    int total,
-    String? dominantElement,
-    String? lackingElement) {
+      BuildContext context,
+      ThemeData theme,
+      Map<String, int> elementMap,
+      int total,
+      String? dominantElement,
+      String? lackingElement) {
     final elements = ['목', '화', '토', '금', '수'];
-    
+
     return Container(
       padding: AppSpacing.paddingAll16,
       decoration: BoxDecoration(
-        color: theme.brightness == Brightness.dark
-            ? DSColors.surfaceSecondary
-            : theme.colorScheme.primary.withValues(alpha: 0.05),
-        borderRadius: AppDimensions.borderRadiusMedium),
+          color: theme.brightness == Brightness.dark
+              ? DSColors.surfaceSecondary
+              : theme.colorScheme.primary.withValues(alpha: 0.05),
+          borderRadius: AppDimensions.borderRadiusMedium),
       child: Column(
         children: [
           IntrinsicHeight(
@@ -186,7 +180,8 @@ class FiveElementsWidget extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: elements.take(3).map((element) {
                 final count = elementMap[element] ?? 0;
-                final percentage = total > 0 ? (count / total * 100).round() : 0;
+                final percentage =
+                    total > 0 ? (count / total * 100).round() : 0;
                 return Flexible(
                   child: Center(
                     child: _buildElementCircle(
@@ -212,7 +207,8 @@ class FiveElementsWidget extends ConsumerWidget {
                 const SizedBox(width: AppSpacing.spacing5),
                 ...elements.skip(3).map((element) {
                   final count = elementMap[element] ?? 0;
-                  final percentage = total > 0 ? (count / total * 100).round() : 0;
+                  final percentage =
+                      total > 0 ? (count / total * 100).round() : 0;
                   return Row(
                     children: [
                       _buildElementCircle(
@@ -236,28 +232,25 @@ class FiveElementsWidget extends ConsumerWidget {
       ),
     );
   }
-  
+
   Widget _buildElementCircle(
-    BuildContext context,
-    ThemeData theme,
-    String element,
-    int count,
-    int percentage,
-    int total,
-    bool isDominant,
-    bool isLacking) {
+      BuildContext context,
+      ThemeData theme,
+      String element,
+      int count,
+      int percentage,
+      int total,
+      bool isDominant,
+      bool isLacking) {
     final color = _getElementColor(element);
     // Constrain size to prevent overflow
     final size = min(75.0, 60.0 + (percentage / 10));
-    
+
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
-        FiveElementsExplanationBottomSheet.show(
-          context,
-          element: element,
-          elementCount: count,
-          totalCount: total);
+        FiveElementsExplanationBottomSheet.show(context,
+            element: element, elementCount: count, totalCount: total);
       },
       child: SizedBox(
         width: 85,
@@ -270,18 +263,21 @@ class FiveElementsWidget extends ConsumerWidget {
               width: size,
               height: size,
               decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.2),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: isDominant ? theme.colorScheme.primary : 
-                         isLacking ? theme.colorScheme.error : 
-                         color,
-                  width: isDominant || isLacking ? 3 : 2),
-                boxShadow: [
-                  BoxShadow(
-                    color: color.withValues(alpha: 0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2))]),
+                  color: color.withValues(alpha: 0.2),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                      color: isDominant
+                          ? theme.colorScheme.primary
+                          : isLacking
+                              ? theme.colorScheme.error
+                              : color,
+                      width: isDominant || isLacking ? 3 : 2),
+                  boxShadow: [
+                    BoxShadow(
+                        color: color.withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2))
+                  ]),
               child: Center(
                 child: Padding(
                   padding: DSSpacing.xs.all,
@@ -291,24 +287,27 @@ class FiveElementsWidget extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          _getElementHanja(element),
-                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            color: theme.brightness == Brightness.dark
-                                ? DSColors.textPrimary
-                                : null,
-                          )),
-                        Text(
-                          element,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: color)),
-                        Text(
-                          '$percentage%',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: theme.brightness == Brightness.dark
-                                ? DSColors.textSecondary
-                                : null,
-                          )),
+                        Text(_getElementHanja(element),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineMedium
+                                ?.copyWith(
+                                  color: theme.brightness == Brightness.dark
+                                      ? DSColors.textPrimary
+                                      : null,
+                                )),
+                        Text(element,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(color: color)),
+                        Text('$percentage%',
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: theme.brightness == Brightness.dark
+                                          ? DSColors.textSecondary
+                                          : null,
+                                    )),
                       ],
                     ),
                   ),
@@ -321,21 +320,22 @@ class FiveElementsWidget extends ConsumerWidget {
                 bottom: 0,
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.spacing1,
-                    vertical: AppSpacing.spacing0),
+                      horizontal: AppSpacing.spacing1,
+                      vertical: AppSpacing.spacing0),
                   decoration: BoxDecoration(
-                    color: isDominant ? 
-                           theme.colorScheme.primary.withValues(alpha: 0.2) :
-                           theme.colorScheme.error.withValues(alpha: 0.2),
-                    borderRadius: AppDimensions.borderRadiusSmall),
+                      color: isDominant
+                          ? theme.colorScheme.primary.withValues(alpha: 0.2)
+                          : theme.colorScheme.error.withValues(alpha: 0.2),
+                      borderRadius: AppDimensions.borderRadiusSmall),
                   child: Text(
                     isDominant ? '강함' : '부족',
                     style: theme.textTheme.labelSmall?.copyWith(
-                      color: isDominant ? 
-                             theme.colorScheme.primary :
-                             theme.colorScheme.error,
+                      color: isDominant
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.error,
                       fontWeight: FontWeight.bold,
-                      fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
+                      fontSize:
+                          Theme.of(context).textTheme.bodyMedium!.fontSize,
                     ),
                   ),
                 ),
@@ -345,41 +345,41 @@ class FiveElementsWidget extends ConsumerWidget {
       ),
     );
   }
-  
+
   Widget _buildElementBars(
-    BuildContext context,
-    ThemeData theme,
-    Map<String, int> elementMap,
-    int total,
-    String? dominantElement,
-    String? lackingElement) {
+      BuildContext context,
+      ThemeData theme,
+      Map<String, int> elementMap,
+      int total,
+      String? dominantElement,
+      String? lackingElement) {
     return Column(
       children: elementMap.entries.map((entry) {
         final percentage = total > 0 ? (entry.value / total * 100).round() : 0;
         final isDominant = entry.key == dominantElement;
         final isLacking = entry.key == lackingElement;
         final color = _getElementColor(entry.key);
-        
+
         return GestureDetector(
           onTap: () {
             HapticFeedback.lightImpact();
-            FiveElementsExplanationBottomSheet.show(
-              context,
-              element: entry.key,
-              elementCount: entry.value,
-              totalCount: total);
+            FiveElementsExplanationBottomSheet.show(context,
+                element: entry.key,
+                elementCount: entry.value,
+                totalCount: total);
           },
           child: Container(
-            margin: const EdgeInsets.only(
-              bottom: AppSpacing.small),
+            margin: const EdgeInsets.only(bottom: AppSpacing.small),
             padding: AppSpacing.paddingAll12,
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.05),
               borderRadius: AppDimensions.borderRadiusSmall,
               border: Border.all(
-                color: isDominant ? theme.colorScheme.primary.withValues(alpha: 0.3) :
-                       isLacking ? theme.colorScheme.error.withValues(alpha: 0.3) :
-                       color.withValues(alpha: 0.2)),
+                  color: isDominant
+                      ? theme.colorScheme.primary.withValues(alpha: 0.3)
+                      : isLacking
+                          ? theme.colorScheme.error.withValues(alpha: 0.3)
+                          : color.withValues(alpha: 0.2)),
             ),
             child: Column(
               children: [
@@ -389,8 +389,8 @@ class FiveElementsWidget extends ConsumerWidget {
                       width: AppDimensions.buttonHeightSmall,
                       height: AppDimensions.buttonHeightSmall,
                       decoration: BoxDecoration(
-                        color: color.withValues(alpha: 0.2),
-                        shape: BoxShape.circle),
+                          color: color.withValues(alpha: 0.2),
+                          shape: BoxShape.circle),
                       child: Center(
                         child: Text(
                           _getElementHanja(entry.key),
@@ -406,32 +406,38 @@ class FiveElementsWidget extends ConsumerWidget {
                           Row(
                             children: [
                               Text(
-                                '${_getElementName(entry.key)} (${entry.key})',
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.w600)),
+                                  '${_getElementName(entry.key)} (${entry.key})',
+                                  style: theme.textTheme.bodyMedium
+                                      ?.copyWith(fontWeight: FontWeight.w600)),
                               if (isDominant) ...[
                                 const SizedBox(width: AppSpacing.spacing2),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: AppSpacing.spacing1,
-                                    vertical: AppSpacing.spacing0),
-                                  decoration: BoxDecoration(
-                                    color: theme.colorScheme.primary.withValues(alpha: 0.2),
-                                    borderRadius: AppDimensions.borderRadiusMedium),
-                                  child: Text(
-                                    '강함',
-                                    style: theme.textTheme.labelSmall?.copyWith(
-                                      color: theme.colorScheme.primary,
-                                      fontWeight: FontWeight.bold)))],
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: AppSpacing.spacing1,
+                                        vertical: AppSpacing.spacing0),
+                                    decoration: BoxDecoration(
+                                        color: theme.colorScheme.primary
+                                            .withValues(alpha: 0.2),
+                                        borderRadius:
+                                            AppDimensions.borderRadiusMedium),
+                                    child: Text('강함',
+                                        style: theme.textTheme.labelSmall
+                                            ?.copyWith(
+                                                color:
+                                                    theme.colorScheme.primary,
+                                                fontWeight: FontWeight.bold)))
+                              ],
                               if (isLacking) ...[
                                 const SizedBox(width: AppSpacing.spacing2),
                                 Container(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: AppSpacing.spacing1,
-                                    vertical: AppSpacing.spacing0),
+                                      horizontal: AppSpacing.spacing1,
+                                      vertical: AppSpacing.spacing0),
                                   decoration: BoxDecoration(
-                                    color: theme.colorScheme.error.withValues(alpha: 0.2),
-                                    borderRadius: AppDimensions.borderRadiusMedium),
+                                      color: theme.colorScheme.error
+                                          .withValues(alpha: 0.2),
+                                      borderRadius:
+                                          AppDimensions.borderRadiusMedium),
                                   child: Text(
                                     '부족',
                                     style: theme.textTheme.labelSmall?.copyWith(
@@ -447,17 +453,17 @@ class FiveElementsWidget extends ConsumerWidget {
                           Row(
                             children: [
                               Expanded(
-                                child: LinearProgressIndicator(
-                                  value: percentage / 100,
-                                  backgroundColor: theme.colorScheme.outline.withValues(alpha: 0.1),
-                                  valueColor: AlwaysStoppedAnimation(color),
-                                  minHeight: 8)),
+                                  child: LinearProgressIndicator(
+                                      value: percentage / 100,
+                                      backgroundColor: theme.colorScheme.outline
+                                          .withValues(alpha: 0.1),
+                                      valueColor: AlwaysStoppedAnimation(color),
+                                      minHeight: 8)),
                               const SizedBox(width: AppSpacing.spacing3),
                               Text(
                                 '$percentage%',
                                 style: theme.textTheme.bodySmall?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: color),
+                                    fontWeight: FontWeight.bold, color: color),
                               ),
                             ],
                           ),
@@ -478,11 +484,11 @@ class FiveElementsWidget extends ConsumerWidget {
       }).toList(),
     );
   }
-  
-  Widget _buildBalanceAdvice(ThemeData theme, String? dominantElement, String? lackingElement) {
+
+  Widget _buildBalanceAdvice(
+      ThemeData theme, String? dominantElement, String? lackingElement) {
     return Container(
-      margin: const EdgeInsets.only(
-        top: AppSpacing.medium),
+      margin: const EdgeInsets.only(top: AppSpacing.medium),
       padding: AppSpacing.paddingAll16,
       decoration: BoxDecoration(
         color: theme.brightness == Brightness.dark
@@ -490,19 +496,18 @@ class FiveElementsWidget extends ConsumerWidget {
             : theme.colorScheme.outline.withValues(alpha: 0.05),
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
-          color: theme.brightness == Brightness.dark
-              ? DSColors.border
-              : theme.colorScheme.outline.withValues(alpha: 0.1)),
+            color: theme.brightness == Brightness.dark
+                ? DSColors.border
+                : theme.colorScheme.outline.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                Icons.tips_and_updates,
-                size: AppDimensions.iconSizeSmall,
-                color: theme.colorScheme.primary),
+              Icon(Icons.tips_and_updates,
+                  size: AppDimensions.iconSizeSmall,
+                  color: theme.colorScheme.primary),
               const SizedBox(width: AppSpacing.spacing2),
               Text(
                 '오행 균형 조언',
@@ -515,25 +520,23 @@ class FiveElementsWidget extends ConsumerWidget {
           const SizedBox(height: AppSpacing.spacing3),
           if (dominantElement != null)
             Padding(
-              padding: const EdgeInsets.only(
-                bottom: DSSpacing.xs),
+              padding: const EdgeInsets.only(bottom: DSSpacing.xs),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     width: 6,
                     height: AppSpacing.spacing1 * 1.5,
-                    margin: const EdgeInsets.only(
-                      top: DSSpacing.xs),
+                    margin: const EdgeInsets.only(top: DSSpacing.xs),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary,
-                      shape: BoxShape.circle),
+                        color: theme.colorScheme.primary,
+                        shape: BoxShape.circle),
                   ),
                   const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
-                      '${_getElementName(dominantElement)}($dominantElement)의 기운이 강합니다. 과도한 기운을 조절하여 균형을 맞추세요.',
-                      style: theme.textTheme.bodySmall),
+                        '${_getElementName(dominantElement)}($dominantElement)의 기운이 강합니다. 과도한 기운을 조절하여 균형을 맞추세요.',
+                        style: theme.textTheme.bodySmall),
                   ),
                 ],
               ),
@@ -545,17 +548,15 @@ class FiveElementsWidget extends ConsumerWidget {
                 Container(
                   width: 6,
                   height: AppSpacing.spacing1 * 1.5,
-                  margin: const EdgeInsets.only(
-                    top: DSSpacing.xs),
+                  margin: const EdgeInsets.only(top: DSSpacing.xs),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.error,
-                    shape: BoxShape.circle),
+                      color: theme.colorScheme.error, shape: BoxShape.circle),
                 ),
                 const SizedBox(width: AppSpacing.spacing2),
                 Expanded(
                   child: Text(
-                    '${_getElementName(lackingElement)}($lackingElement)의 기운이 부족합니다. 부족한 기운을 보충하여 조화를 이루세요.',
-                    style: theme.textTheme.bodySmall),
+                      '${_getElementName(lackingElement)}($lackingElement)의 기운이 부족합니다. 부족한 기운을 보충하여 조화를 이루세요.',
+                      style: theme.textTheme.bodySmall),
                 ),
               ],
             ),
@@ -563,14 +564,14 @@ class FiveElementsWidget extends ConsumerWidget {
           Text(
             '자세한 조언을 보려면 각 오행을 탭하세요.',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-              fontStyle: FontStyle.italic),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                fontStyle: FontStyle.italic),
           ),
         ],
       ),
     );
   }
-  
+
   Color _getElementColor(String element) {
     switch (element) {
       case '목':
@@ -587,7 +588,7 @@ class FiveElementsWidget extends ConsumerWidget {
         return DSColors.textSecondaryDark;
     }
   }
-  
+
   String _getElementHanja(String element) {
     switch (element) {
       case '목':
@@ -604,7 +605,7 @@ class FiveElementsWidget extends ConsumerWidget {
         return element;
     }
   }
-  
+
   String _getElementName(String element) {
     switch (element) {
       case '목':

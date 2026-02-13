@@ -59,102 +59,111 @@ class ZodiacFortuneCard extends StatelessWidget {
         const SizedBox(height: 16),
 
         ...zodiacFortunes.map((fortune) => Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: context.colors.surface,
-              borderRadius: BorderRadius.circular(12),
-              // 전통 금색 테두리 (내 띠 강조)
-              border: fortune['isUser'] == true
-                  ? Border.all(color: const Color(0xFFDAA520).withValues(alpha: 0.5), width: 2) // 고유 색상 - 전통 금색
-                  : Border.all(color: context.colors.border, width: 1),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: context.colors.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  // 전통 금색 테두리 (내 띠 강조)
+                  border: fortune['isUser'] == true
+                      ? Border.all(
+                          color: const Color(0xFFDAA520).withValues(alpha: 0.5),
+                          width: 2) // 고유 색상 - 전통 금색
+                      : Border.all(color: context.colors.border, width: 1),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: context.colors.textPrimary.withValues(alpha: 0.06),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        fortune['emoji'] as String? ?? '✨',
-                        style: const TextStyle(fontSize: 20),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: context.colors.textPrimary
+                                .withValues(alpha: 0.06),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            fortune['emoji'] as String? ?? '✨',
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                '${FortuneSwipeHelpers.getRepresentativeYears(fortune['name'] as String)}년생 ${fortune['name']}띠',
-                                style: context.bodySmall.copyWith(
-                                  color: context.colors.textPrimary,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              if (fortune['isUser'] == true) ...[
-                                const SizedBox(width: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    // 고유 색상 - 전통 금색 (귀한 것을 상징)
-                                    color: const Color(0xFFDAA520),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: Text(
-                                    '내 띠',
-                                    style: context.labelTiny.copyWith(
-                                      color: Colors.white,
+                              Row(
+                                children: [
+                                  Text(
+                                    '${FortuneSwipeHelpers.getRepresentativeYears(fortune['name'] as String)}년생 ${fortune['name']}띠',
+                                    style: context.bodySmall.copyWith(
+                                      color: context.colors.textPrimary,
                                       fontWeight: FontWeight.w600,
-                                      fontSize: 10, // 예외: 초소형 배지
                                     ),
                                   ),
-                                ),
-                              ],
+                                  if (fortune['isUser'] == true) ...[
+                                    const SizedBox(width: 8),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 6, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        // 고유 색상 - 전통 금색 (귀한 것을 상징)
+                                        color: const Color(0xFFDAA520),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Text(
+                                        '내 띠',
+                                        style: context.labelTiny.copyWith(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 10, // 예외: 초소형 배지
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
                             ],
                           ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: FortuneSwipeHelpers.getZodiacScoreColor(fortune['score'] as int).withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        '${fortune['score']}점',
-                        style: context.labelSmall.copyWith(
-                          color: FortuneSwipeHelpers.getZodiacScoreColor(fortune['score'] as int),
-                          fontWeight: FontWeight.w600,
                         ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: FortuneSwipeHelpers.getZodiacScoreColor(
+                                    fortune['score'] as int)
+                                .withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            '${fortune['score']}점',
+                            style: context.labelSmall.copyWith(
+                              color: FortuneSwipeHelpers.getZodiacScoreColor(
+                                  fortune['score'] as int),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    // U08: 점수 시각화 바 추가 - 가독성 개선
+                    _buildScoreBar(context, fortune['score'] as int),
+                    const SizedBox(height: 10),
+                    Text(
+                      fortune['description'] as String,
+                      style: context.labelTiny.copyWith(
+                        color:
+                            context.colors.textPrimary.withValues(alpha: 0.87),
+                        height: 1.5,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
-                // U08: 점수 시각화 바 추가 - 가독성 개선
-                _buildScoreBar(context, fortune['score'] as int),
-                const SizedBox(height: 10),
-                Text(
-                  fortune['description'] as String,
-                  style: context.labelTiny.copyWith(
-                    color: context.colors.textPrimary.withValues(alpha: 0.87),
-                    height: 1.5,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        )),
+              ),
+            )),
 
         // F01: 멀티프로필 추가 버튼
         const SizedBox(height: 12),
@@ -216,10 +225,13 @@ class ZodiacFortuneCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: context.isDark ? DSColors.surfaceSecondary : DSColors.backgroundSecondaryDark, // 배경
+          color: context.isDark
+              ? DSColors.surfaceSecondary
+              : DSColors.backgroundSecondaryDark, // 배경
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: const Color(0xFFDAA520).withValues(alpha: 0.3), // 고유 색상 - 전통 금색
+            color:
+                const Color(0xFFDAA520).withValues(alpha: 0.3), // 고유 색상 - 전통 금색
             width: 1,
           ),
         ),
@@ -229,7 +241,8 @@ class ZodiacFortuneCard extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: const Color(0xFFDAA520).withValues(alpha: 0.15), // 고유 색상 - 전통 금색
+                color: const Color(0xFFDAA520)
+                    .withValues(alpha: 0.15), // 고유 색상 - 전통 금색
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(

@@ -47,7 +47,6 @@ class TomorrowPreviewSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-
           Text(
             tomorrowPreview,
             style: context.heading3.copyWith(

@@ -36,15 +36,16 @@ class _FortuneLoadingScreenState extends State<FortuneLoadingScreen>
     super.initState();
 
     // 운세 타입별 맞춤 메시지 + 랜덤 셔플
-    _messages = List<String>.from(LoadingMessages.getMessages(widget.fortuneType))
-      ..shuffle(Random());
+    _messages =
+        List<String>.from(LoadingMessages.getMessages(widget.fortuneType))
+          ..shuffle(Random());
 
     // 메시지 전환 애니메이션
     _messageController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    
+
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -52,7 +53,7 @@ class _FortuneLoadingScreenState extends State<FortuneLoadingScreen>
       parent: _messageController,
       curve: Curves.easeInOut,
     ));
-    
+
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.3),
       end: Offset.zero,
@@ -60,13 +61,13 @@ class _FortuneLoadingScreenState extends State<FortuneLoadingScreen>
       parent: _messageController,
       curve: Curves.easeOutCubic,
     ));
-    
+
     // 첫 메시지 표시
     _messageController.forward();
-    
+
     // 메시지 롤링 시작
     _startMessageRolling();
-    
+
     // 완료 타이머 (설정된 경우)
     if (widget.duration != null) {
       Future.delayed(widget.duration!, () {
@@ -76,28 +77,28 @@ class _FortuneLoadingScreenState extends State<FortuneLoadingScreen>
       });
     }
   }
-  
+
   void _startMessageRolling() {
     Future.delayed(const Duration(seconds: 2), () {
       if (!mounted) return;
       _nextMessage();
     });
   }
-  
+
   void _nextMessage() async {
     // 페이드 아웃
     await _messageController.reverse();
-    
+
     if (!mounted) return;
-    
+
     // 다음 메시지로 변경
     setState(() {
       _currentMessageIndex = (_currentMessageIndex + 1) % _messages.length;
     });
-    
+
     // 페이드 인
     await _messageController.forward();
-    
+
     // 다음 롤링 예약
     if (mounted) {
       _startMessageRolling();
@@ -121,14 +122,14 @@ class _FortuneLoadingScreenState extends State<FortuneLoadingScreen>
             children: [
               // 상단 여백
               const Spacer(flex: 2),
-              
+
               // 로딩 비디오
               const LoadingVideoPlayer(
                 width: 150,
                 height: 150,
                 loop: true,
               ),
-              
+
               const SizedBox(height: DSSpacing.xxxxl),
 
               // 감성 메시지 (롤링 애니메이션)
@@ -145,7 +146,8 @@ class _FortuneLoadingScreenState extends State<FortuneLoadingScreen>
                         child: Text(
                           _messages[_currentMessageIndex],
                           style: context.bodyMedium.copyWith(
-                            color: context.colors.textPrimary.withValues(alpha: 0.7),
+                            color: context.colors.textPrimary
+                                .withValues(alpha: 0.7),
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -165,8 +167,7 @@ class _FortuneLoadingScreenState extends State<FortuneLoadingScreen>
                   color: context.colors.textPrimary.withValues(alpha: 0.3),
                   letterSpacing: 1.5,
                 ),
-              ).animate()
-                .fadeIn(delay: 1000.ms, duration: 800.ms),
+              ).animate().fadeIn(delay: 1000.ms, duration: 800.ms),
 
               const SizedBox(height: DSSpacing.xxxxl),
             ],

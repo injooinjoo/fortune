@@ -244,7 +244,10 @@ const loveSurveyConfig = FortuneSurveyConfig(
       inputType: SurveyInputType.multiSelect,
       options: _idealTypeFemaleOptions,
       isRequired: false,
-      showWhen: {'status': ['single', 'crush'], 'gender': ['male']},
+      showWhen: {
+        'status': ['single', 'crush'],
+        'gender': ['male']
+      },
     ),
     // 여성 → 남성 이상형 (남성상)
     SurveyStep(
@@ -253,7 +256,10 @@ const loveSurveyConfig = FortuneSurveyConfig(
       inputType: SurveyInputType.multiSelect,
       options: _idealTypeMaleOptions,
       isRequired: false,
-      showWhen: {'status': ['single', 'crush'], 'gender': ['female']},
+      showWhen: {
+        'status': ['single', 'crush'],
+        'gender': ['female']
+      },
     ),
     // 공통 성격 옵션
     SurveyStep(
@@ -262,7 +268,9 @@ const loveSurveyConfig = FortuneSurveyConfig(
       inputType: SurveyInputType.multiSelect,
       options: _idealTypePersonalityOptions,
       isRequired: false,
-      showWhen: {'status': ['single', 'crush']},
+      showWhen: {
+        'status': ['single', 'crush']
+      },
     ),
   ],
 );

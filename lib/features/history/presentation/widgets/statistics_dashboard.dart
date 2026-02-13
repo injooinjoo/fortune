@@ -11,114 +11,107 @@ class UserStatistics {
   final String mostFrequentCategory;
   final DateTime lastFortuneDate;
 
-  UserStatistics({
-    required this.totalCount,
-    required this.monthlyCount,
-    required this.averageScore,
-    required this.categoryCount,
-    required this.mostFrequentCategory,
-    required this.lastFortuneDate});
+  UserStatistics(
+      {required this.totalCount,
+      required this.monthlyCount,
+      required this.averageScore,
+      required this.categoryCount,
+      required this.mostFrequentCategory,
+      required this.lastFortuneDate});
 }
 
 class StatisticsDashboard extends StatelessWidget {
   final UserStatistics statistics;
   final double fontScale;
 
-  const StatisticsDashboard({
-    super.key,
-    required this.statistics,
-    required this.fontScale});
+  const StatisticsDashboard(
+      {super.key, required this.statistics, required this.fontScale});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Header
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '나의 운세 통계',
-                style: context.heading3.copyWith(
-                  fontWeight: FontWeight.bold)),
-              Text(
-                DateFormat('yyyy년 MM월').format(DateTime.now()),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Text('나의 운세 통계',
+                style: context.heading3.copyWith(fontWeight: FontWeight.bold)),
+            Text(DateFormat('yyyy년 MM월').format(DateTime.now()),
                 style: context.bodySmall.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))]),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))
+          ]),
           const SizedBox(height: 20),
-          
+
           // Quick Stats Grid
           GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
-            childAspectRatio: 1.2,
-            mainAxisSpacing: 16,
-            crossAxisSpacing: 16,
-            children: [
-              _buildStatCard(
-                context: context,
-                icon: Icons.calendar_today,
-                title: '총 운세 횟수',
-                value: '${statistics.totalCount}회',
-                color: DSColors.accentDark,
-                fontScale: fontScale),
-              _buildStatCard(
-                context: context,
-                icon: Icons.calendar_month,
-                title: '이번 달',
-                value: '${statistics.monthlyCount}회',
-                color: DSColors.textSecondaryDark,
-                fontScale: fontScale),
-              _buildStatCard(
-                context: context,
-                icon: Icons.star,
-                title: '평균 점수',
-                value: '${statistics.averageScore.toStringAsFixed(1)}점',
-                color: DSColors.success,
-                fontScale: fontScale),
-              _buildStatCard(
-                context: context,
-                icon: Icons.favorite,
-                title: '자주 본 운세',
-                value: statistics.mostFrequentCategory,
-                color: DSColors.error,
-                fontScale: fontScale)]),
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              childAspectRatio: 1.2,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              children: [
+                _buildStatCard(
+                    context: context,
+                    icon: Icons.calendar_today,
+                    title: '총 운세 횟수',
+                    value: '${statistics.totalCount}회',
+                    color: DSColors.accentDark,
+                    fontScale: fontScale),
+                _buildStatCard(
+                    context: context,
+                    icon: Icons.calendar_month,
+                    title: '이번 달',
+                    value: '${statistics.monthlyCount}회',
+                    color: DSColors.textSecondaryDark,
+                    fontScale: fontScale),
+                _buildStatCard(
+                    context: context,
+                    icon: Icons.star,
+                    title: '평균 점수',
+                    value: '${statistics.averageScore.toStringAsFixed(1)}점',
+                    color: DSColors.success,
+                    fontScale: fontScale),
+                _buildStatCard(
+                    context: context,
+                    icon: Icons.favorite,
+                    title: '자주 본 운세',
+                    value: statistics.mostFrequentCategory,
+                    color: DSColors.error,
+                    fontScale: fontScale)
+              ]),
           const SizedBox(height: 20),
-          
+
           // Personalized Insight
           GlassContainer(
             padding: const EdgeInsets.all(16),
-            gradient: LinearGradient(
-              colors: [
-                theme.colorScheme.primary.withValues(alpha: 0.1),
-                theme.colorScheme.secondary.withValues(alpha: 0.1)]),
+            gradient: LinearGradient(colors: [
+              theme.colorScheme.primary.withValues(alpha: 0.1),
+              theme.colorScheme.secondary.withValues(alpha: 0.1)
+            ]),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Icon(
-                      Icons.insights,
-                      size: 20,
-                      color: theme.colorScheme.primary),
+                    Icon(Icons.insights,
+                        size: 20, color: theme.colorScheme.primary),
                     const SizedBox(width: 8),
-                    Text(
-                      '오늘의 인사이트',
-                      style: context.labelMedium.copyWith(
-                        fontWeight: FontWeight.bold)),
+                    Text('오늘의 인사이트',
+                        style: context.labelMedium
+                            .copyWith(fontWeight: FontWeight.bold)),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Text(
                   _getPersonalizedInsight(statistics),
                   style: context.bodySmall.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
+                      color:
+                          theme.colorScheme.onSurface.withValues(alpha: 0.8)),
                 ),
               ],
             ),
@@ -128,42 +121,34 @@ class StatisticsDashboard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard({
-    required BuildContext context,
-    required IconData icon,
-    required String title,
-    required String value,
-    required Color color,
-    required double fontScale}) {
+  Widget _buildStatCard(
+      {required BuildContext context,
+      required IconData icon,
+      required String title,
+      required String value,
+      required Color color,
+      required double fontScale}) {
     final theme = Theme.of(context);
-    
+
     return GlassContainer(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+        padding: const EdgeInsets.all(16),
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              shape: BoxShape.circle),
-            child: Icon(
-              icon,
-              size: 24,
-              color: color)),
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
+              child: Icon(icon, size: 24, color: color)),
           const SizedBox(height: 8),
-          Text(
-            title,
-            style: context.labelMedium.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
-            textAlign: TextAlign.center),
+          Text(title,
+              style: context.labelMedium.copyWith(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+              textAlign: TextAlign.center),
           const SizedBox(height: 4),
-          Text(
-            value,
-            style: context.labelMedium.copyWith(
-              fontWeight: FontWeight.bold,
-              color: color),
-            textAlign: TextAlign.center)]));
+          Text(value,
+              style: context.labelMedium
+                  .copyWith(fontWeight: FontWeight.bold, color: color),
+              textAlign: TextAlign.center)
+        ]));
   }
 
   String _getPersonalizedInsight(UserStatistics statistics) {

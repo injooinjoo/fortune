@@ -36,11 +36,15 @@ class FortuneCookieGenerator {
         final savedVersion = json['version'] as int? ?? 1;
 
         // 날짜와 버전 모두 일치해야 저장된 쿠키 반환
-        if (json['date'] == today && json['result'] != null && savedVersion >= _dataVersion) {
-          Logger.info('[FortuneCookieGenerator] 🍪 오늘 저장된 쿠키 반환 (v$savedVersion)');
+        if (json['date'] == today &&
+            json['result'] != null &&
+            savedVersion >= _dataVersion) {
+          Logger.info(
+              '[FortuneCookieGenerator] 🍪 오늘 저장된 쿠키 반환 (v$savedVersion)');
           return FortuneResult.fromJson(json['result'] as Map<String, dynamic>);
         } else if (savedVersion < _dataVersion) {
-          Logger.info('[FortuneCookieGenerator] 🔄 구버전 쿠키 감지 (v$savedVersion → v$_dataVersion), 새로 생성');
+          Logger.info(
+              '[FortuneCookieGenerator] 🔄 구버전 쿠키 감지 (v$savedVersion → v$_dataVersion), 새로 생성');
         }
       } catch (e) {
         Logger.warning('[FortuneCookieGenerator] 저장된 데이터 파싱 실패: $e');
@@ -53,11 +57,13 @@ class FortuneCookieGenerator {
     final result = await generate({'cookie_type': randomType});
 
     // 저장 (버전 포함)
-    await prefs.setString(_storageKey, jsonEncode({
-      'date': today,
-      'version': _dataVersion,
-      'result': result.toJson(),
-    }));
+    await prefs.setString(
+        _storageKey,
+        jsonEncode({
+          'date': today,
+          'version': _dataVersion,
+          'result': result.toJson(),
+        }));
 
     Logger.info('[FortuneCookieGenerator] 🍪 새 쿠키 생성 및 저장 완료 (v$_dataVersion)');
     return result;
@@ -100,7 +106,8 @@ class FortuneCookieGenerator {
     Logger.info('[FortuneCookieGenerator]   🎨 행운의 색상: ${luckyColorData.$1}');
     Logger.info('[FortuneCookieGenerator]   ⏰ 행운의 시간: $luckyTime');
     Logger.info('[FortuneCookieGenerator]   🧭 행운의 방위: $luckyDirection');
-    Logger.info('[FortuneCookieGenerator]   🎁 럭키 아이템: ${luckyItemData.$1} (${luckyItemData.$2})');
+    Logger.info(
+        '[FortuneCookieGenerator]   🎁 럭키 아이템: ${luckyItemData.$1} (${luckyItemData.$2})');
     Logger.info('[FortuneCookieGenerator]   📍 행운 장소: $luckyPlace');
     Logger.info('[FortuneCookieGenerator]   💡 행동 미션: $actionMission');
     Logger.info('[FortuneCookieGenerator]   ⭐ 점수: $score');

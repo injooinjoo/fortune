@@ -17,7 +17,8 @@ class MultiSelectSurveyWidget extends StatefulWidget {
   });
 
   @override
-  State<MultiSelectSurveyWidget> createState() => _MultiSelectSurveyWidgetState();
+  State<MultiSelectSurveyWidget> createState() =>
+      _MultiSelectSurveyWidgetState();
 }
 
 class _MultiSelectSurveyWidgetState extends State<MultiSelectSurveyWidget> {

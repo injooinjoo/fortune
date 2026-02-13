@@ -71,8 +71,7 @@ class ProfileListSheet extends ConsumerWidget {
             _ProfileListTile(
               name: primaryProfile?.name ?? '나',
               subtitle: '본인',
-              initial: (primaryProfile?.name ?? '나')
-                  .substring(0, 1),
+              initial: (primaryProfile?.name ?? '나').substring(0, 1),
               isSelected: activeState.isPrimary,
               onTap: () {
                 ref.read(activeProfileProvider.notifier).switchToPrimary();

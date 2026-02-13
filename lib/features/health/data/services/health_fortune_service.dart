@@ -5,7 +5,8 @@ import '../../../../data/services/fortune_api_service.dart';
 import '../../../../domain/entities/fortune.dart';
 
 class HealthFortuneService {
-  static final HealthFortuneService _instance = HealthFortuneService._internal();
+  static final HealthFortuneService _instance =
+      HealthFortuneService._internal();
   factory HealthFortuneService() => _instance;
   HealthFortuneService._internal();
 
@@ -30,7 +31,8 @@ class HealthFortuneService {
           fortuneType: 'health',
           params: {
             'currentCondition': input.currentCondition?.name,
-            'concernedBodyParts': input.concernedBodyParts?.map((p) => p.name).toList() ?? [],
+            'concernedBodyParts':
+                input.concernedBodyParts?.map((p) => p.name).toList() ?? [],
           },
         );
 
@@ -42,7 +44,7 @@ class HealthFortuneService {
 
       // 기본 점수 계산 (현재 컨디션 기반)
       final int baseScore = _calculateBaseScore(input.currentCondition);
-      
+
       // 신체 부위별 건강 상태 생성
       final bodyPartHealthList = _generateBodyPartHealthList(
         input.concernedBodyParts ?? [],
@@ -50,13 +52,16 @@ class HealthFortuneService {
       );
 
       // 전체 점수 재조정
-      final overallScore = _calculateOverallScore(baseScore, bodyPartHealthList);
+      final overallScore =
+          _calculateOverallScore(baseScore, bodyPartHealthList);
 
       // 메인 메시지 생성
-      final mainMessage = _generateMainMessage(overallScore, input.concernedBodyParts);
+      final mainMessage =
+          _generateMainMessage(overallScore, input.concernedBodyParts);
 
       // 건강 관리 추천사항 생성
-      final recommendations = _generateRecommendations(overallScore, input.concernedBodyParts);
+      final recommendations =
+          _generateRecommendations(overallScore, input.concernedBodyParts);
 
       // 피해야 할 것들
       final avoidanceList = _generateAvoidanceList(overallScore);
@@ -80,13 +85,13 @@ class HealthFortuneService {
         tomorrowPreview: tomorrowPreview,
         additionalInfo: {
           'inputCondition': input.currentCondition?.name,
-          'concernedParts': input.concernedBodyParts?.map((p) => p.name).toList(),
+          'concernedParts':
+              input.concernedBodyParts?.map((p) => p.name).toList(),
         },
       );
 
       Logger.info('Health fortune generated successfully: ${result.id}');
       return result;
-
     } catch (e, stackTrace) {
       Logger.error('Failed to generate health fortune', e, stackTrace);
       rethrow;
@@ -95,7 +100,7 @@ class HealthFortuneService {
 
   int _calculateBaseScore(ConditionState? condition) {
     if (condition == null) return 75; // 기본 점수
-    
+
     switch (condition) {
       case ConditionState.excellent:
         return 90 + _random.nextInt(10);
@@ -115,10 +120,10 @@ class HealthFortuneService {
     int baseScore,
   ) {
     final List<BodyPartHealth> healthList = [];
-    
+
     for (final part in BodyPart.values) {
       if (part == BodyPart.whole) continue;
-      
+
       // 관심 부위는 점수를 낮게 설정
       int score;
       if (concernedParts.contains(part)) {
@@ -126,13 +131,13 @@ class HealthFortuneService {
       } else {
         score = baseScore + _random.nextInt(20) - 10;
       }
-      
+
       score = score.clamp(0, 100);
-      
+
       final level = _getHealthLevel(score);
       final description = _generateBodyPartDescription(part, score);
       final tips = _generateBodyPartTips(part, level);
-      
+
       healthList.add(BodyPartHealth(
         bodyPart: part,
         score: score,
@@ -141,7 +146,7 @@ class HealthFortuneService {
         specificTips: tips,
       ));
     }
-    
+
     return healthList;
   }
 
@@ -152,18 +157,19 @@ class HealthFortuneService {
     return HealthLevel.warning;
   }
 
-  int _calculateOverallScore(int baseScore, List<BodyPartHealth> bodyPartHealthList) {
-    final avgScore = bodyPartHealthList
-        .map((bph) => bph.score)
-        .reduce((a, b) => a + b) / bodyPartHealthList.length;
-    
+  int _calculateOverallScore(
+      int baseScore, List<BodyPartHealth> bodyPartHealthList) {
+    final avgScore =
+        bodyPartHealthList.map((bph) => bph.score).reduce((a, b) => a + b) /
+            bodyPartHealthList.length;
+
     // 기본 점수와 평균 점수의 가중 평균
     return ((baseScore * 0.6 + avgScore * 0.4).round()).clamp(0, 100);
   }
 
   String _generateMainMessage(int score, List<BodyPart>? concernedParts) {
     final messages = <String>[];
-    
+
     if (score >= 90) {
       messages.addAll([
         '오늘은 컨디션이 매우 좋은 날이에요! 활발한 활동을 즐겨보세요.',
@@ -257,7 +263,8 @@ class HealthFortuneService {
     return tipMap[part]?[level] ?? ['해당 부위 건강 관리에 신경써주세요'];
   }
 
-  List<HealthRecommendation> _generateRecommendations(int score, List<BodyPart>? concernedParts) {
+  List<HealthRecommendation> _generateRecommendations(
+      int score, List<BodyPart>? concernedParts) {
     final recommendations = <HealthRecommendation>[];
 
     // 점수 기반 추천
@@ -394,7 +401,8 @@ class HealthFortuneService {
 
   List<BodyPartHealth> _parseBodyPartHealthFromFortune(Fortune fortune) {
     // API 응답의 additionalInfo에서 신체 부위 정보 파싱
-    if (fortune.additionalInfo != null && fortune.additionalInfo!['bodyParts'] != null) {
+    if (fortune.additionalInfo != null &&
+        fortune.additionalInfo!['bodyParts'] != null) {
       final bodyPartsData = fortune.additionalInfo!['bodyParts'] as List;
       return bodyPartsData.map((data) {
         final partName = data['bodyPart'] as String;
@@ -441,7 +449,8 @@ class HealthFortuneService {
   }
 
   List<HealthRecommendation> _parseRecommendations(Fortune fortune) {
-    if (fortune.recommendations != null && fortune.recommendations!.isNotEmpty) {
+    if (fortune.recommendations != null &&
+        fortune.recommendations!.isNotEmpty) {
       return fortune.recommendations!.asMap().entries.map((entry) {
         return HealthRecommendation(
           type: HealthRecommendationType.lifestyle,
@@ -455,7 +464,8 @@ class HealthFortuneService {
   }
 
   List<String> _parseAvoidanceList(Fortune fortune) {
-    if (fortune.additionalInfo != null && fortune.additionalInfo!['avoidanceList'] != null) {
+    if (fortune.additionalInfo != null &&
+        fortune.additionalInfo!['avoidanceList'] != null) {
       return (fortune.additionalInfo!['avoidanceList'] as List).cast<String>();
     }
     return [];
@@ -463,13 +473,18 @@ class HealthFortuneService {
 
   HealthTimeline _parseTimeline(Fortune fortune) {
     // additionalInfo에서 시간대별 정보 파싱
-    if (fortune.additionalInfo != null && fortune.additionalInfo!['timeline'] != null) {
-      final timelineData = fortune.additionalInfo!['timeline'] as Map<String, dynamic>;
+    if (fortune.additionalInfo != null &&
+        fortune.additionalInfo!['timeline'] != null) {
+      final timelineData =
+          fortune.additionalInfo!['timeline'] as Map<String, dynamic>;
 
       return HealthTimeline(
-        morning: _parseTimeSlot(timelineData['morning'] as Map<String, dynamic>?, '오전'),
-        afternoon: _parseTimeSlot(timelineData['afternoon'] as Map<String, dynamic>?, '오후'),
-        evening: _parseTimeSlot(timelineData['evening'] as Map<String, dynamic>?, '저녁'),
+        morning: _parseTimeSlot(
+            timelineData['morning'] as Map<String, dynamic>?, '오전'),
+        afternoon: _parseTimeSlot(
+            timelineData['afternoon'] as Map<String, dynamic>?, '오후'),
+        evening: _parseTimeSlot(
+            timelineData['evening'] as Map<String, dynamic>?, '저녁'),
         bestTimeActivity: timelineData['bestTimeActivity'] as String?,
       );
     }
@@ -517,7 +532,8 @@ class HealthFortuneService {
   }
 
   String _parseTomorrowPreview(Fortune fortune) {
-    if (fortune.additionalInfo != null && fortune.additionalInfo!['tomorrowPreview'] != null) {
+    if (fortune.additionalInfo != null &&
+        fortune.additionalInfo!['tomorrowPreview'] != null) {
       return fortune.additionalInfo!['tomorrowPreview'] as String;
     }
     return '내일의 건강 상태를 예측하고 있어요.';

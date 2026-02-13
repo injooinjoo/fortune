@@ -50,8 +50,12 @@ class WeeklyTrendCard extends StatelessWidget {
             // 고유 색상 - 전통 목(木) 색상 그라데이션 (성장과 상승을 상징)
             gradient: LinearGradient(
               colors: [
-                context.isDark ? DSColors.success : const Color(0xFF3D9970), // 고유 색상 - 木 청록
-                context.isDark ? const Color(0xFF1E5F3C) : DSColors.success, // 고유 색상 - 木 진한
+                context.isDark
+                    ? DSColors.success
+                    : const Color(0xFF3D9970), // 고유 색상 - 木 청록
+                context.isDark
+                    ? const Color(0xFF1E5F3C)
+                    : DSColors.success, // 고유 색상 - 木 진한
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -98,7 +102,8 @@ class WeeklyTrendCard extends StatelessWidget {
         // 요일별 간단 정보
         LayoutBuilder(
           builder: (context, constraints) {
-            final itemWidth = (constraints.maxWidth - 48) / 7; // 48 = spacing * 6
+            final itemWidth =
+                (constraints.maxWidth - 48) / 7; // 48 = spacing * 6
             return Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -116,7 +121,8 @@ class WeeklyTrendCard extends StatelessWidget {
                         : context.colors.textPrimary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
                     border: score >= 80
-                        ? Border.all(color: DSColors.success, width: 1) // 좋은 날 강조
+                        ? Border.all(
+                            color: DSColors.success, width: 1) // 좋은 날 강조
                         : null,
                   ),
                   child: Column(

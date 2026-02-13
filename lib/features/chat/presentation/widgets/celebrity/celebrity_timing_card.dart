@@ -296,10 +296,12 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
           Row(
             children: [
               if (data['best_year'] != null)
-                _buildTimeBadge(context, '📅', data['best_year'], DSColors.info),
+                _buildTimeBadge(
+                    context, '📅', data['best_year'], DSColors.info),
               const SizedBox(width: DSSpacing.sm),
               if (data['best_month'] != null)
-                _buildTimeBadge(context, '🗓️', data['best_month'], DSColors.warning),
+                _buildTimeBadge(
+                    context, '🗓️', data['best_month'], DSColors.warning),
             ],
           ),
           if (data['best_day_type'] != null) ...[
@@ -337,7 +339,8 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
     );
   }
 
-  Widget _buildTimeBadge(BuildContext context, String emoji, String text, Color color) {
+  Widget _buildTimeBadge(
+      BuildContext context, String emoji, String text, Color color) {
     final typography = context.typography;
 
     return Container(
@@ -474,13 +477,15 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
         children: [
           _buildMilestoneItem(context, '💕', '연애 시작', data['dating_start']),
           _buildMilestoneItem(context, '💍', '진지한 약속', data['commitment']),
-          _buildMilestoneItem(context, '🎊', '결혼 운명의 때', data['marriage_timing']),
+          _buildMilestoneItem(
+              context, '🎊', '결혼 운명의 때', data['marriage_timing']),
         ],
       ),
     );
   }
 
-  Widget _buildMilestoneItem(BuildContext context, String emoji, String label, String? content) {
+  Widget _buildMilestoneItem(
+      BuildContext context, String emoji, String label, String? content) {
     if (content == null) return const SizedBox.shrink();
 
     final colors = context.colors;
@@ -640,9 +645,8 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
           ...dates.asMap().entries.take(3).map((entry) {
             final index = entry.key;
             final date = entry.value;
-            final significance = index < significances.length
-                ? significances[index]
-                : '';
+            final significance =
+                index < significances.length ? significances[index] : '';
             return Padding(
               padding: const EdgeInsets.only(bottom: DSSpacing.xs),
               child: Container(

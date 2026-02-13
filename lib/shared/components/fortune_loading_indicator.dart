@@ -57,9 +57,7 @@ class FortuneLoadingIndicator extends StatelessWidget {
                   shape: BoxShape.circle,
                   color: indicatorColor.withValues(alpha: 0.2),
                 ),
-              )
-                  .animate(onPlay: (controller) => controller.repeat())
-                  .scale(
+              ).animate(onPlay: (controller) => controller.repeat()).scale(
                     begin: const Offset(0.8, 0.8),
                     end: const Offset(1.2, 1.2),
                     duration: 1.5.seconds,

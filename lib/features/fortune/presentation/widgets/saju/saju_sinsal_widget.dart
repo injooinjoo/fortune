@@ -58,28 +58,32 @@ class SajuSinsalWidget extends StatelessWidget {
           ],
           // 길신 섹션
           if (luckySinsals.isNotEmpty) ...[
-            _buildSectionHeader(context, '길신', '吉神', SinsalCategory.lucky, isDark),
+            _buildSectionHeader(
+                context, '길신', '吉神', SinsalCategory.lucky, isDark),
             const SizedBox(height: DSSpacing.sm),
             ...luckySinsals.map((s) => _buildSinsalItem(context, s, isDark)),
             const SizedBox(height: DSSpacing.md),
           ],
           // 중립 섹션 (도화살 등)
           if (neutralSinsals.isNotEmpty) ...[
-            _buildSectionHeader(context, '중립', '中立', SinsalCategory.neutral, isDark),
+            _buildSectionHeader(
+                context, '중립', '中立', SinsalCategory.neutral, isDark),
             const SizedBox(height: DSSpacing.sm),
             ...neutralSinsals.map((s) => _buildSinsalItem(context, s, isDark)),
             const SizedBox(height: DSSpacing.md),
           ],
           // 흉신 섹션
           if (unluckySinsals.isNotEmpty) ...[
-            _buildSectionHeader(context, '흉신', '凶神', SinsalCategory.unlucky, isDark),
+            _buildSectionHeader(
+                context, '흉신', '凶神', SinsalCategory.unlucky, isDark),
             const SizedBox(height: DSSpacing.sm),
             ...unluckySinsals.map((s) => _buildSinsalItem(context, s, isDark)),
           ],
           // 종합 해석
           if (sinsals.isNotEmpty) ...[
             const SizedBox(height: DSSpacing.sm),
-            _buildSummary(context, luckySinsals.length, unluckySinsals.length, isDark),
+            _buildSummary(
+                context, luckySinsals.length, unluckySinsals.length, isDark),
           ],
         ],
       ),
@@ -107,9 +111,7 @@ class SajuSinsalWidget extends StatelessWidget {
             Text(
               '神殺',
               style: context.labelSmall.copyWith(
-                color: isDark
-                    ? DSColors.textTertiary
-                    : DSColors.textSecondary,
+                color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -219,7 +221,8 @@ class SajuSinsalWidget extends StatelessWidget {
       // 실용적 조언
       final seasonalTips = detailData['seasonalTips'] as Map<String, dynamic>?;
       if (seasonalTips != null) {
-        tips = '📅 시기별 팁:\n• 최적기: ${seasonalTips['best'] ?? ''}\n• 주의: ${seasonalTips['caution'] ?? ''}';
+        tips =
+            '📅 시기별 팁:\n• 최적기: ${seasonalTips['best'] ?? ''}\n• 주의: ${seasonalTips['caution'] ?? ''}';
       }
 
       // 커리어 팁
@@ -247,153 +250,153 @@ class SajuSinsalWidget extends StatelessWidget {
         );
       },
       child: Container(
-      margin: const EdgeInsets.only(bottom: DSSpacing.xs),
-      padding: const EdgeInsets.all(DSSpacing.sm),
-      decoration: BoxDecoration(
-        color: isDark
-            ? DSColors.surface
-            : DSColors.background,
-        borderRadius: BorderRadius.circular(DSRadius.sm),
-        border: Border.all(
-          color: color.withValues(alpha: 0.3),
-          width: 1,
+        margin: const EdgeInsets.only(bottom: DSSpacing.xs),
+        padding: const EdgeInsets.all(DSSpacing.sm),
+        decoration: BoxDecoration(
+          color: isDark ? DSColors.surface : DSColors.background,
+          borderRadius: BorderRadius.circular(DSRadius.sm),
+          border: Border.all(
+            color: color.withValues(alpha: 0.3),
+            width: 1,
+          ),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              // 한자 크게
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(DSRadius.sm),
-                ),
-                child: Center(
-                  child: Text(
-                    sinsal.hanja.length > 2
-                        ? sinsal.hanja.substring(0, 2)
-                        : sinsal.hanja,
-                    style: context.bodySmall.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: color,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                // 한자 크게
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(DSRadius.sm),
+                  ),
+                  child: Center(
+                    child: Text(
+                      sinsal.hanja.length > 2
+                          ? sinsal.hanja.substring(0, 2)
+                          : sinsal.hanja,
+                      style: context.bodySmall.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                      ),
                     ),
                   ),
                 ),
+                const SizedBox(width: DSSpacing.sm),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            sinsal.name,
+                            style: context.bodyMedium.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: color,
+                            ),
+                          ),
+                          const SizedBox(width: DSSpacing.xs),
+                          Text(
+                            sinsal.hanja,
+                            style: context.labelTiny.copyWith(
+                              color: isDark
+                                  ? DSColors.textTertiary
+                                  : DSColors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        sinsal.meaning,
+                        style: context.labelTiny.copyWith(
+                          color: isDark
+                              ? DSColors.textTertiary
+                              : DSColors.textSecondary,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 11, // 예외: 초소형 신살 의미
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // 위치 표시
+                if (sinsal.position != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      sinsal.position!,
+                      style: context.labelTiny.copyWith(
+                        color: color,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            if (showDetails) ...[
+              const SizedBox(height: DSSpacing.xs),
+              // 상세 설명
+              Text(
+                sinsal.description,
+                style: context.labelTiny.copyWith(
+                  color:
+                      isDark ? DSColors.textTertiary : DSColors.textSecondary,
+                  fontSize: 11, // 예외: 초소형 신살 설명
+                ),
               ),
-              const SizedBox(width: DSSpacing.sm),
-              Expanded(
-                child: Column(
+              const SizedBox(height: DSSpacing.xs),
+              // 해소/활용법
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: DSSpacing.sm,
+                  vertical: DSSpacing.xs,
+                ),
+                decoration: BoxDecoration(
+                  color: context.colors.surfaceSecondary,
+                  borderRadius: BorderRadius.circular(DSRadius.sm),
+                ),
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Text(
-                          sinsal.name,
-                          style: context.bodyMedium.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: color,
-                          ),
-                        ),
-                        const SizedBox(width: DSSpacing.xs),
-                        Text(
-                          sinsal.hanja,
-                          style: context.labelTiny.copyWith(
-                            color: isDark
-                                ? DSColors.textTertiary
-                                : DSColors.textSecondary,
-                          ),
-                        ),
-                      ],
+                    const Icon(
+                      Icons.lightbulb_outline,
+                      color: DSColors.warning,
+                      size: 12,
                     ),
-                    Text(
-                      sinsal.meaning,
-                      style: context.labelTiny.copyWith(
-                        color: isDark
-                            ? DSColors.textTertiary
-                            : DSColors.textSecondary,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 11, // 예외: 초소형 신살 의미
+                    const SizedBox(width: DSSpacing.xs),
+                    Expanded(
+                      child: Text(
+                        sinsal.remedy,
+                        style: context.labelTiny.copyWith(
+                          color: isDark
+                              ? DSColors.textTertiary
+                              : DSColors.textSecondary,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-              // 위치 표시
-              if (sinsal.position != null)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    sinsal.position!,
-                    style: context.labelTiny.copyWith(
-                      color: color,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
             ],
-          ),
-          if (showDetails) ...[
-            const SizedBox(height: DSSpacing.xs),
-            // 상세 설명
-            Text(
-              sinsal.description,
-              style: context.labelTiny.copyWith(
-                color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
-                fontSize: 11, // 예외: 초소형 신살 설명
-              ),
-            ),
-            const SizedBox(height: DSSpacing.xs),
-            // 해소/활용법
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: DSSpacing.sm,
-                vertical: DSSpacing.xs,
-              ),
-              decoration: BoxDecoration(
-                color: context.colors.surfaceSecondary,
-                borderRadius: BorderRadius.circular(DSRadius.sm),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Icon(
-                    Icons.lightbulb_outline,
-                    color: DSColors.warning,
-                    size: 12,
-                  ),
-                  const SizedBox(width: DSSpacing.xs),
-                  Expanded(
-                    child: Text(
-                      sinsal.remedy,
-                      style: context.labelTiny.copyWith(
-                        color: isDark
-                            ? DSColors.textTertiary
-                            : DSColors.textSecondary,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ],
-        ],
-      ),
+        ),
       ),
     );
   }
 
-  Widget _buildSummary(BuildContext context, int luckyCount, int unluckyCount, bool isDark) {
+  Widget _buildSummary(
+      BuildContext context, int luckyCount, int unluckyCount, bool isDark) {
     String summaryText;
     Color summaryColor;
     IconData summaryIcon;
@@ -448,8 +451,7 @@ class SajuSinsalWidget extends StatelessWidget {
             child: Text(
               summaryText,
               style: context.labelTiny.copyWith(
-                color:
-                    isDark ? DSColors.textTertiary : DSColors.textSecondary,
+                color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                 fontSize: 11, // 예외: 초소형 신살 요약
               ),
             ),
@@ -469,9 +471,9 @@ class SajuSinsalWidget extends StatelessWidget {
     final yearStem =
         (yearData?['cheongan'] as Map<String, dynamic>?)?['char'] as String? ??
             '';
-    final monthStem = (monthData?['cheongan']
-            as Map<String, dynamic>?)?['char'] as String? ??
-        '';
+    final monthStem =
+        (monthData?['cheongan'] as Map<String, dynamic>?)?['char'] as String? ??
+            '';
     final dayStem =
         (dayData?['cheongan'] as Map<String, dynamic>?)?['char'] as String? ??
             '';

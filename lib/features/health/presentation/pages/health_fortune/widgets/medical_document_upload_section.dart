@@ -3,7 +3,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/theme/font_config.dart';
 
-
 /// 전문 진단 서류 업로드 섹션
 /// 건강검진표, 처방전, 진단서 분석 기능으로 연결
 class MedicalDocumentUploadSection extends StatelessWidget {
@@ -28,7 +27,8 @@ class MedicalDocumentUploadSection extends StatelessWidget {
             end: Alignment.bottomRight,
             colors: [
               DSColors.success.withValues(alpha: 0.08),
-              const Color(0xFF3B82F6).withValues(alpha: 0.08), // 고유 색상 - 장식용 그라데이션 블루
+              const Color(0xFF3B82F6)
+                  .withValues(alpha: 0.08), // 고유 색상 - 장식용 그라데이션 블루
             ],
           ),
           borderRadius: BorderRadius.circular(16),
@@ -70,7 +70,8 @@ class MedicalDocumentUploadSection extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
                           color: DSColors.success,
                           borderRadius: BorderRadius.circular(4),

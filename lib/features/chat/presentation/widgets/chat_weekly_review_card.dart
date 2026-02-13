@@ -43,9 +43,8 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: context.isDark
-              ? [_darkBg1, _darkBg2]
-              : [_creamLight, _creamDark],
+          colors:
+              context.isDark ? [_darkBg1, _darkBg2] : [_creamLight, _creamDark],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
@@ -78,9 +77,9 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
                 children: [
                   // 헤더
                   _buildHeader(context)
-                    .animate()
-                    .fadeIn(duration: 500.ms)
-                    .slideY(begin: -0.1, end: 0),
+                      .animate()
+                      .fadeIn(duration: 500.ms)
+                      .slideY(begin: -0.1, end: 0),
 
                   const SizedBox(height: 16),
 
@@ -91,9 +90,9 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
 
                   // 이번 주 요약
                   _buildSummarySection(context)
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 200.ms)
-                    .slideX(begin: -0.05, end: 0),
+                      .animate()
+                      .fadeIn(duration: 400.ms, delay: 200.ms)
+                      .slideX(begin: -0.05, end: 0),
 
                   const SizedBox(height: 16),
 
@@ -111,8 +110,8 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
 
                   // 마무리 메시지
                   _buildClosingMessage(context)
-                    .animate()
-                    .fadeIn(duration: 500.ms, delay: 800.ms),
+                      .animate()
+                      .fadeIn(duration: 500.ms, delay: 800.ms),
 
                   const SizedBox(height: DSSpacing.sm),
                 ],
@@ -136,8 +135,8 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
           '📅',
           style: TextStyle(fontSize: 20),
         )
-          .animate(onPlay: (c) => c.repeat(reverse: true))
-          .rotate(begin: -0.03, end: 0.03, duration: 2500.ms),
+            .animate(onPlay: (c) => c.repeat(reverse: true))
+            .rotate(begin: -0.03, end: 0.03, duration: 2500.ms),
       ),
     );
 
@@ -152,9 +151,9 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
             color: Colors.orange.withValues(alpha: 0.4),
           ),
         )
-          .animate(onPlay: (c) => c.repeat(reverse: true))
-          .fadeIn(duration: 1800.ms)
-          .fadeOut(duration: 1800.ms),
+            .animate(onPlay: (c) => c.repeat(reverse: true))
+            .fadeIn(duration: 1800.ms)
+            .fadeOut(duration: 1800.ms),
       ),
     );
 
@@ -165,8 +164,10 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
     // 주간 범위 계산 (월~일)
     final weekStart = date.subtract(Duration(days: date.weekday - 1));
     final weekEnd = weekStart.add(const Duration(days: 6));
-    final formattedRange = '${DateFormat('M/d').format(weekStart)} - ${DateFormat('M/d').format(weekEnd)}';
-    final textColor = context.isDark ? context.colors.textPrimary : DSColors.textPrimary;
+    final formattedRange =
+        '${DateFormat('M/d').format(weekStart)} - ${DateFormat('M/d').format(weekEnd)}';
+    final textColor =
+        context.isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Row(
       children: [
@@ -274,7 +275,8 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
   }
 
   Widget _buildSummarySection(BuildContext context) {
-    final textColor = context.isDark ? context.colors.textPrimary : DSColors.textPrimary;
+    final textColor =
+        context.isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -322,7 +324,8 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
   }
 
   Widget _buildTrendsSection(BuildContext context) {
-    final textColor = context.isDark ? context.colors.textPrimary : DSColors.textPrimary;
+    final textColor =
+        context.isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -345,16 +348,19 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
           final index = entry.key;
           final trend = entry.value;
           return _buildTrendItem(context, index + 1, trend)
-            .animate()
-            .fadeIn(duration: 300.ms, delay: Duration(milliseconds: 400 + (index * 150)))
-            .slideX(begin: 0.1, end: 0);
+              .animate()
+              .fadeIn(
+                  duration: 300.ms,
+                  delay: Duration(milliseconds: 400 + (index * 150)))
+              .slideX(begin: 0.1, end: 0);
         }),
       ],
     );
   }
 
   Widget _buildTrendItem(BuildContext context, int index, String text) {
-    final textColor = context.isDark ? context.colors.textPrimary : DSColors.textPrimary;
+    final textColor =
+        context.isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -378,7 +384,8 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
                 '↗',
                 style: context.typography.bodyMedium.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: context.isDark ? _orangeAccent : Colors.orange.shade700,
+                  color:
+                      context.isDark ? _orangeAccent : Colors.orange.shade700,
                 ),
               ),
             ),
@@ -388,7 +395,8 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: context.colors.surface.withValues(alpha: context.isDark ? 0.05 : 0.6),
+                color: context.colors.surface
+                    .withValues(alpha: context.isDark ? 0.05 : 0.6),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
@@ -406,7 +414,8 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
   }
 
   Widget _buildActionsSection(BuildContext context) {
-    final textColor = context.isDark ? context.colors.textPrimary : DSColors.textPrimary;
+    final textColor =
+        context.isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -429,16 +438,19 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
           final index = entry.key;
           final action = entry.value;
           return _buildActionItem(context, index + 1, action)
-            .animate()
-            .fadeIn(duration: 300.ms, delay: Duration(milliseconds: 600 + (index * 150)))
-            .slideX(begin: 0.1, end: 0);
+              .animate()
+              .fadeIn(
+                  duration: 300.ms,
+                  delay: Duration(milliseconds: 600 + (index * 150)))
+              .slideX(begin: 0.1, end: 0);
         }),
       ],
     );
   }
 
   Widget _buildActionItem(BuildContext context, int index, String text) {
-    final textColor = context.isDark ? context.colors.textPrimary : DSColors.textPrimary;
+    final textColor =
+        context.isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -457,7 +469,8 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
                 '$index',
                 style: context.typography.labelSmall.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: context.isDark ? _orangeAccent : Colors.orange.shade700,
+                  color:
+                      context.isDark ? _orangeAccent : Colors.orange.shade700,
                 ),
               ),
             ),
@@ -467,7 +480,8 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: context.colors.surface.withValues(alpha: context.isDark ? 0.05 : 0.6),
+                color: context.colors.surface
+                    .withValues(alpha: context.isDark ? 0.05 : 0.6),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
                   color: _orangeAccent.withValues(alpha: 0.15),
@@ -488,7 +502,8 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
   }
 
   Widget _buildClosingMessage(BuildContext context) {
-    final textColor = context.isDark ? context.colors.textPrimary : DSColors.textPrimary;
+    final textColor =
+        context.isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Container(
       padding: const EdgeInsets.all(14),

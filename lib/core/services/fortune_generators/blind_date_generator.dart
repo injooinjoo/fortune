@@ -58,17 +58,24 @@ class BlindDateGenerator {
         : null;
 
     final userId = user?.id ?? 'anonymous';
-    final userName = userProfile?['name'] as String? ?? user?.userMetadata?['name'] as String? ?? inputConditions['name'] as String? ?? 'Guest';
+    final userName = userProfile?['name'] as String? ??
+        user?.userMetadata?['name'] as String? ??
+        inputConditions['name'] as String? ??
+        'Guest';
 
     // 📤 API 요청 준비
     Logger.info('[BlindDateGenerator] 📤 API 요청 준비');
     Logger.info('[BlindDateGenerator]   🌐 Edge Function: fortune-blind-date');
     Logger.info('[BlindDateGenerator]   👤 user_id: $userId');
     Logger.info('[BlindDateGenerator]   👤 name: $userName');
-    Logger.info('[BlindDateGenerator]   📅 meeting_date: ${inputConditions['meeting_date']}');
-    Logger.info('[BlindDateGenerator]   ⏰ meeting_time: ${inputConditions['meeting_time']}');
-    Logger.info('[BlindDateGenerator]   📍 meeting_type: ${inputConditions['meeting_type']}');
-    Logger.info('[BlindDateGenerator]   🤝 introducer: ${inputConditions['introducer']}');
+    Logger.info(
+        '[BlindDateGenerator]   📅 meeting_date: ${inputConditions['meeting_date']}');
+    Logger.info(
+        '[BlindDateGenerator]   ⏰ meeting_time: ${inputConditions['meeting_time']}');
+    Logger.info(
+        '[BlindDateGenerator]   📍 meeting_type: ${inputConditions['meeting_type']}');
+    Logger.info(
+        '[BlindDateGenerator]   🤝 introducer: ${inputConditions['introducer']}');
 
     try {
       final requestBody = {
@@ -108,11 +115,13 @@ class BlindDateGenerator {
 
       if (response.status != 200) {
         Logger.error('[BlindDateGenerator] ❌ API 호출 실패: ${response.data}');
-        throw Exception('Failed to generate blind date fortune: ${response.data}');
+        throw Exception(
+            'Failed to generate blind date fortune: ${response.data}');
       }
 
       final data = response.data as Map<String, dynamic>;
-      Logger.info('[BlindDateGenerator]   📦 Response data keys: ${data.keys.toList()}');
+      Logger.info(
+          '[BlindDateGenerator]   📦 Response data keys: ${data.keys.toList()}');
 
       // 🔄 파싱
       Logger.info('[BlindDateGenerator] 🔄 응답 데이터 파싱 중...');
@@ -160,7 +169,7 @@ class BlindDateGenerator {
         'meeting_type': inputConditions['meeting_type'],
         'confidence': inputConditions['confidence'],
         'has_photo_analysis': inputConditions['my_photos'] != null ||
-                             inputConditions['partner_photos'] != null,
+            inputConditions['partner_photos'] != null,
         'has_chat_analysis': inputConditions['chat_content'] != null,
       },
       score: score,

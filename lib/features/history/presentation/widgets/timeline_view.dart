@@ -10,11 +10,11 @@ class TimelineView extends StatelessWidget {
   final double fontScale;
   final Function(FortuneHistory) onItemTap;
 
-  const TimelineView({
-    super.key,
-    required this.history,
-    required this.fontScale,
-    required this.onItemTap});
+  const TimelineView(
+      {super.key,
+      required this.history,
+      required this.fontScale,
+      required this.onItemTap});
 
   @override
   Widget build(BuildContext context) {
@@ -27,46 +27,44 @@ class TimelineView extends StatelessWidget {
       final monthKey = DateFormat('yyyy-MM').format(item.createdAt);
       groupedByMonth.putIfAbsent(monthKey, () => []).add(item);
     }
-    
+
     // Sort months in descending order
     final sortedMonths = groupedByMonth.keys.toList()
       ..sort((a, b) => b.compareTo(a));
-    
+
     if (sortedMonths.isEmpty) {
       return const SizedBox.shrink();
     }
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '운세 타임라인',
-            style: context.heading3.copyWith(
-              fontWeight: FontWeight.bold,
-              color: colors.textPrimary)),
+          Text('운세 타임라인',
+              style: context.heading3.copyWith(
+                  fontWeight: FontWeight.bold, color: colors.textPrimary)),
           const SizedBox(height: 20),
           ...sortedMonths.map((monthKey) {
             final monthData = groupedByMonth[monthKey]!;
             final monthDate = DateTime.parse('$monthKey-01');
-            
+
             // Calculate average score for the month
             final scores = monthData
                 .where((item) => item.summary['score'] != null)
                 .map((item) => item.summary['score'] as int)
                 .toList();
-            final avgScore = scores.isEmpty 
-                ? 0 
+            final avgScore = scores.isEmpty
+                ? 0
                 : (scores.reduce((a, b) => a + b) / scores.length).round();
-            
+
             // Count fortune types
             final Map<String, int> typeCount = {};
             for (final item in monthData) {
               final type = FortuneTypeNames.getName(item.fortuneType);
               typeCount[type] = (typeCount[type] ?? 0) + 1;
             }
-            
+
             return Padding(
               padding: const EdgeInsets.only(bottom: 24),
               child: Column(
@@ -74,25 +72,27 @@ class TimelineView extends StatelessWidget {
                 children: [
                   // Month Header
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12)),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12)),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          DateFormat('yyyy년 MM월').format(monthDate),
-                          style: context.labelMedium.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: theme.colorScheme.primary)),
+                        Text(DateFormat('yyyy년 MM월').format(monthDate),
+                            style: context.labelMedium.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: theme.colorScheme.primary)),
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
-                                color: _getScoreColor(avgScore).withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(8)),
+                                  color: _getScoreColor(avgScore)
+                                      .withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(8)),
                               child: Text(
                                 '평균 $avgScore점',
                                 style: context.labelMedium.copyWith(
@@ -105,7 +105,8 @@ class TimelineView extends StatelessWidget {
                             Text(
                               '${monthData.length}회',
                               style: context.labelMedium.copyWith(
-                                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                                color: theme.colorScheme.onSurface
+                                    .withValues(alpha: 0.6),
                               ),
                             ),
                           ],
@@ -114,32 +115,34 @@ class TimelineView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  
+
                   // Fortune Type Summary
                   Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: typeCount.entries.map((entry) {
-                      return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.surface,
-                          border: Border.all(
-                            color: theme.colorScheme.outline.withValues(alpha: 0.2)),
-                          borderRadius: BorderRadius.circular(20)),
-                        child: Text(
-                          '${entry.key} ${entry.value}회',
-                          style: context.labelMedium.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7))));
-                    }).toList()),
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: typeCount.entries.map((entry) {
+                        return Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                                color: theme.colorScheme.surface,
+                                border: Border.all(
+                                    color: theme.colorScheme.outline
+                                        .withValues(alpha: 0.2)),
+                                borderRadius: BorderRadius.circular(20)),
+                            child: Text('${entry.key} ${entry.value}회',
+                                style: context.labelMedium.copyWith(
+                                    color: theme.colorScheme.onSurface
+                                        .withValues(alpha: 0.7))));
+                      }).toList()),
                   const SizedBox(height: 16),
-                  
+
                   // Fortune Items
                   Column(
                     children: monthData.map((item) {
                       final score = item.summary['score'] as int? ?? 0;
                       final content = item.summary['content'] as String? ?? '';
-                      
+
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12),
                         child: InkWell(
@@ -155,21 +158,27 @@ class TimelineView extends StatelessWidget {
                                   child: Column(
                                     children: [
                                       Text(
-                                        DateFormat('dd').format(item.createdAt),
-                                        style: context.heading3.copyWith(
-                                          fontWeight: FontWeight.bold)),
+                                          DateFormat('dd')
+                                              .format(item.createdAt),
+                                          style: context.heading3.copyWith(
+                                              fontWeight: FontWeight.bold)),
                                       Text(
-                                        DateFormat('E', 'ko').format(item.createdAt),
+                                        DateFormat('E', 'ko')
+                                            .format(item.createdAt),
                                         style: context.labelMedium.copyWith(
-                                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                                          color: theme.colorScheme.onSurface
+                                              .withValues(alpha: 0.6),
                                         ),
                                       ),
                                       const SizedBox(height: 4),
                                       Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 2),
                                         decoration: BoxDecoration(
-                                          color: _getScoreColor(score).withValues(alpha: 0.2),
-                                          borderRadius: BorderRadius.circular(8),
+                                          color: _getScoreColor(score)
+                                              .withValues(alpha: 0.2),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
                                         child: Text(
                                           '$score점',
@@ -186,7 +195,8 @@ class TimelineView extends StatelessWidget {
                                 // Content
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
@@ -198,7 +208,8 @@ class TimelineView extends StatelessWidget {
                                           Expanded(
                                             child: Text(
                                               item.title,
-                                              style: context.labelMedium.copyWith(
+                                              style:
+                                                  context.labelMedium.copyWith(
                                                 fontWeight: FontWeight.bold,
                                               ),
                                               overflow: TextOverflow.ellipsis,
@@ -210,7 +221,8 @@ class TimelineView extends StatelessWidget {
                                       Text(
                                         content,
                                         style: context.bodySmall.copyWith(
-                                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                                          color: theme.colorScheme.onSurface
+                                              .withValues(alpha: 0.7),
                                         ),
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
@@ -220,7 +232,8 @@ class TimelineView extends StatelessWidget {
                                 ),
                                 Icon(
                                   Icons.chevron_right,
-                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                                  color: theme.colorScheme.onSurface
+                                      .withValues(alpha: 0.3),
                                 ),
                               ],
                             ),
@@ -249,8 +262,9 @@ class TimelineView extends StatelessWidget {
       'career': '💼',
       'health': '🏥',
       'study': '📚',
-      'tarot': '🔮'};
-    
+      'tarot': '🔮'
+    };
+
     for (final entry in icons.entries) {
       if (fortuneType.contains(entry.key)) {
         return entry.value;

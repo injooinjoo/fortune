@@ -237,11 +237,14 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                                         Icon(
                                           zone.icon,
                                           color: zone.color,
-                                          size: size.width * zone.relativeSize * 0.35,
+                                          size: size.width *
+                                              zone.relativeSize *
+                                              0.35,
                                         ),
                                         if (hasData)
                                           Container(
-                                            margin: const EdgeInsets.only(top: 4),
+                                            margin:
+                                                const EdgeInsets.only(top: 4),
                                             width: 8,
                                             height: 8,
                                             decoration: const BoxDecoration(
@@ -259,7 +262,6 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                         ),
                       );
                     }),
-
                   ],
                 );
               },
@@ -297,7 +299,9 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
     final score = (ogwanData?['score'] as num?)?.toInt();
     final advice = ogwanData?['advice'] as String? ?? '';
 
-    final hasData = observation.isNotEmpty || interpretation.isNotEmpty || advice.isNotEmpty;
+    final hasData = observation.isNotEmpty ||
+        interpretation.isNotEmpty ||
+        advice.isNotEmpty;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
@@ -351,7 +355,8 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
               // 점수 배지
               if (score != null && score > 0) ...[
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: zone.color.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(16),
@@ -368,9 +373,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
               ],
               IconButton(
                 icon: const Icon(Icons.close, size: 20),
-                color: isDark
-                    ? DSColors.textSecondary
-                    : DSColors.textSecondary,
+                color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                 onPressed: () => setState(() => _selectedZone = null),
               ),
             ],
@@ -405,9 +408,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
               Text(
                 observation,
                 style: context.bodyMedium.copyWith(
-                  color: isDark
-                      ? DSColors.textPrimary
-                      : DSColors.textPrimary,
+                  color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                   height: 1.5,
                 ),
               ),
@@ -427,9 +428,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
               Text(
                 interpretation,
                 style: context.bodyMedium.copyWith(
-                  color: isDark
-                      ? DSColors.textPrimary
-                      : DSColors.textPrimary,
+                  color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                   height: 1.5,
                 ),
               ),
@@ -473,9 +472,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
             Text(
               '분석 데이터가 없습니다.',
               style: context.bodyMedium.copyWith(
-                color: isDark
-                    ? DSColors.textSecondary
-                    : DSColors.textSecondary,
+                color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                 fontStyle: FontStyle.italic,
               ),
             ),
@@ -505,9 +502,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
               border: Border.all(
                 color: isSelected
                     ? zone.color
-                    : (isDark
-                        ? DSColors.textTertiary
-                        : DSColors.textTertiary),
+                    : (isDark ? DSColors.textTertiary : DSColors.textTertiary),
                 width: isSelected ? 2 : 1,
               ),
             ),

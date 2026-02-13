@@ -97,7 +97,8 @@ class ChatSyncService {
       );
     });
 
-    Logger.info('[ChatSyncService] 동기화 예약됨: $timerKey (${_debounceDelay.inSeconds}초 후)');
+    Logger.info(
+        '[ChatSyncService] 동기화 예약됨: $timerKey (${_debounceDelay.inSeconds}초 후)');
   }
 
   /// 즉시 동기화 (앱 백그라운드 진입 시)

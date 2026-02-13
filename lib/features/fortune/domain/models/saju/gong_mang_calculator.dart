@@ -92,34 +92,97 @@ class GongMangCalculator {
   /// 천간 목록 (참조용)
   // ignore: unused_field
   static const List<String> _tianGan = [
-    '갑', '을', '병', '정', '무', '기', '경', '신', '임', '계'
+    '갑',
+    '을',
+    '병',
+    '정',
+    '무',
+    '기',
+    '경',
+    '신',
+    '임',
+    '계'
   ];
 
   /// 지지 목록 (참조용)
   // ignore: unused_field
   static const List<String> _diZhi = [
-    '자', '축', '인', '묘', '진', '사', '오', '미', '신', '유', '술', '해'
+    '자',
+    '축',
+    '인',
+    '묘',
+    '진',
+    '사',
+    '오',
+    '미',
+    '신',
+    '유',
+    '술',
+    '해'
   ];
 
   /// 순별 시작 천간-지지 조합
   static const Map<String, Xun> _xunMapping = {
-    '갑자': Xun.gapJa, '을축': Xun.gapJa, '병인': Xun.gapJa, '정묘': Xun.gapJa, '무진': Xun.gapJa,
-    '기사': Xun.gapJa, '경오': Xun.gapJa, '신미': Xun.gapJa, '임신': Xun.gapJa, '계유': Xun.gapJa,
-
-    '갑술': Xun.gapSul, '을해': Xun.gapSul, '병자': Xun.gapSul, '정축': Xun.gapSul, '무인': Xun.gapSul,
-    '기묘': Xun.gapSul, '경진': Xun.gapSul, '신사': Xun.gapSul, '임오': Xun.gapSul, '계미': Xun.gapSul,
-
-    '갑신': Xun.gapSin, '을유': Xun.gapSin, '병술': Xun.gapSin, '정해': Xun.gapSin, '무자': Xun.gapSin,
-    '기축': Xun.gapSin, '경인': Xun.gapSin, '신묘': Xun.gapSin, '임진': Xun.gapSin, '계사': Xun.gapSin,
-
-    '갑오': Xun.gapO, '을미': Xun.gapO, '병신': Xun.gapO, '정유': Xun.gapO, '무술': Xun.gapO,
-    '기해': Xun.gapO, '경자': Xun.gapO, '신축': Xun.gapO, '임인': Xun.gapO, '계묘': Xun.gapO,
-
-    '갑진': Xun.gapJin, '을사': Xun.gapJin, '병오': Xun.gapJin, '정미': Xun.gapJin, '무신': Xun.gapJin,
-    '기유': Xun.gapJin, '경술': Xun.gapJin, '신해': Xun.gapJin, '임자': Xun.gapJin, '계축': Xun.gapJin,
-
-    '갑인': Xun.gapIn, '을묘': Xun.gapIn, '병진': Xun.gapIn, '정사': Xun.gapIn, '무오': Xun.gapIn,
-    '기미': Xun.gapIn, '경신': Xun.gapIn, '신유': Xun.gapIn, '임술': Xun.gapIn, '계해': Xun.gapIn,
+    '갑자': Xun.gapJa,
+    '을축': Xun.gapJa,
+    '병인': Xun.gapJa,
+    '정묘': Xun.gapJa,
+    '무진': Xun.gapJa,
+    '기사': Xun.gapJa,
+    '경오': Xun.gapJa,
+    '신미': Xun.gapJa,
+    '임신': Xun.gapJa,
+    '계유': Xun.gapJa,
+    '갑술': Xun.gapSul,
+    '을해': Xun.gapSul,
+    '병자': Xun.gapSul,
+    '정축': Xun.gapSul,
+    '무인': Xun.gapSul,
+    '기묘': Xun.gapSul,
+    '경진': Xun.gapSul,
+    '신사': Xun.gapSul,
+    '임오': Xun.gapSul,
+    '계미': Xun.gapSul,
+    '갑신': Xun.gapSin,
+    '을유': Xun.gapSin,
+    '병술': Xun.gapSin,
+    '정해': Xun.gapSin,
+    '무자': Xun.gapSin,
+    '기축': Xun.gapSin,
+    '경인': Xun.gapSin,
+    '신묘': Xun.gapSin,
+    '임진': Xun.gapSin,
+    '계사': Xun.gapSin,
+    '갑오': Xun.gapO,
+    '을미': Xun.gapO,
+    '병신': Xun.gapO,
+    '정유': Xun.gapO,
+    '무술': Xun.gapO,
+    '기해': Xun.gapO,
+    '경자': Xun.gapO,
+    '신축': Xun.gapO,
+    '임인': Xun.gapO,
+    '계묘': Xun.gapO,
+    '갑진': Xun.gapJin,
+    '을사': Xun.gapJin,
+    '병오': Xun.gapJin,
+    '정미': Xun.gapJin,
+    '무신': Xun.gapJin,
+    '기유': Xun.gapJin,
+    '경술': Xun.gapJin,
+    '신해': Xun.gapJin,
+    '임자': Xun.gapJin,
+    '계축': Xun.gapJin,
+    '갑인': Xun.gapIn,
+    '을묘': Xun.gapIn,
+    '병진': Xun.gapIn,
+    '정사': Xun.gapIn,
+    '무오': Xun.gapIn,
+    '기미': Xun.gapIn,
+    '경신': Xun.gapIn,
+    '신유': Xun.gapIn,
+    '임술': Xun.gapIn,
+    '계해': Xun.gapIn,
   };
 
   /// 일주로부터 해당 순(旬) 찾기
@@ -135,7 +198,8 @@ class GongMangCalculator {
   }
 
   /// 특정 지지가 공망인지 확인
-  static bool isGongMang(String dayStem, String dayBranch, String targetBranch) {
+  static bool isGongMang(
+      String dayStem, String dayBranch, String targetBranch) {
     final gongMangBranches = calculateGongMang(dayStem, dayBranch);
     return gongMangBranches.contains(targetBranch);
   }
@@ -184,7 +248,8 @@ class GongMangCalculator {
 
     final buffer = StringBuffer();
     buffer.writeln('일주 기준 ${info.xun.korean}(${info.xun.hanja})입니다.');
-    buffer.writeln('공망 지지: ${info.gongMangString}(${info.gongMangHanjaString})');
+    buffer
+        .writeln('공망 지지: ${info.gongMangString}(${info.gongMangHanjaString})');
     buffer.writeln();
 
     for (final entry in info.foundInSaju.entries) {
@@ -193,13 +258,15 @@ class GongMangCalculator {
 
       switch (position) {
         case '년주':
-          buffer.writeln('• 년주 $branch이(가) 공망: 조상덕이 약하거나, 유년기에 어려움이 있을 수 있습니다.');
+          buffer
+              .writeln('• 년주 $branch이(가) 공망: 조상덕이 약하거나, 유년기에 어려움이 있을 수 있습니다.');
           break;
         case '월주':
           buffer.writeln('• 월주 $branch이(가) 공망: 부모의 도움이 약하거나, 청년기에 자립이 필요합니다.');
           break;
         case '시주':
-          buffer.writeln('• 시주 $branch이(가) 공망: 자녀와의 인연이 약하거나, 노년기에 독립적인 삶이 예상됩니다.');
+          buffer.writeln(
+              '• 시주 $branch이(가) 공망: 자녀와의 인연이 약하거나, 노년기에 독립적인 삶이 예상됩니다.');
           break;
       }
     }

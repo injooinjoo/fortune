@@ -16,7 +16,8 @@ class FaceReadingHistoryCalendar extends ConsumerStatefulWidget {
   final List<FaceReadingHistoryEntry> entries;
 
   /// 날짜 선택 콜백
-  final void Function(DateTime date, FaceReadingHistoryEntry? entry)? onDateSelected;
+  final void Function(DateTime date, FaceReadingHistoryEntry? entry)?
+      onDateSelected;
 
   /// 엔트리 상세보기 콜백
   final void Function(FaceReadingHistoryEntry entry)? onEntryTap;
@@ -202,8 +203,7 @@ class _FaceReadingHistoryCalendarState
             ),
           ),
           // 비교 모드 토글
-          if (widget.onCompareRequest != null)
-            _buildCompareToggle(),
+          if (widget.onCompareRequest != null) _buildCompareToggle(),
         ],
       ),
     );
@@ -365,9 +365,7 @@ class _FaceReadingHistoryCalendarState
         fontWeight: FontWeight.w600,
       ),
       titleTextStyle: context.labelLarge.copyWith(
-        color: context.isDark
-            ? DSColors.textPrimaryDark
-            : DSColors.textPrimary,
+        color: context.isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
         fontWeight: FontWeight.w600,
       ),
       leftChevronIcon: Icon(
@@ -412,7 +410,8 @@ class _FaceReadingHistoryCalendarState
           _selectedDay = selectedDay;
           _focusedDay = focusedDay;
         });
-      } else if (_compareDate == null && !_isSameDay(_selectedDay, selectedDay)) {
+      } else if (_compareDate == null &&
+          !_isSameDay(_selectedDay, selectedDay)) {
         setState(() {
           _compareDate = selectedDay;
         });
@@ -473,7 +472,8 @@ class _FaceReadingHistoryCalendarState
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: _getScoreColor(entry.overallFortuneScore).withValues(alpha: 0.15),
+              color: _getScoreColor(entry.overallFortuneScore)
+                  .withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(
@@ -644,7 +644,8 @@ class _FaceReadingHistoryCalendarState
       for (final entry in sortedEntries) {
         final entryDate = _normalizeDate(entry.createdAt);
         if (_isSameDay(entryDate, checkDate) ||
-            _isSameDay(entryDate, checkDate.subtract(const Duration(days: 1)))) {
+            _isSameDay(
+                entryDate, checkDate.subtract(const Duration(days: 1)))) {
           streakDays++;
           checkDate = entryDate.subtract(const Duration(days: 1));
         } else {

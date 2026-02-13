@@ -18,7 +18,8 @@ class OAuthWebViewBottomSheet extends StatefulWidget {
   });
 
   @override
-  State<OAuthWebViewBottomSheet> createState() => _OAuthWebViewBottomSheetState();
+  State<OAuthWebViewBottomSheet> createState() =>
+      _OAuthWebViewBottomSheetState();
 }
 
 class _OAuthWebViewBottomSheetState extends State<OAuthWebViewBottomSheet> {
@@ -90,7 +91,7 @@ class _OAuthWebViewBottomSheetState extends State<OAuthWebViewBottomSheet> {
               backgroundColor: colors.border,
               valueColor: AlwaysStoppedAnimation<Color>(colors.accent),
             ),
-          
+
           // WebView
           Expanded(
             child: Stack(
@@ -106,7 +107,8 @@ class _OAuthWebViewBottomSheetState extends State<OAuthWebViewBottomSheet> {
                     supportZoom: false,
                     useWideViewPort: true,
                     loadWithOverviewMode: true,
-                    userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
+                    userAgent:
+                        'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
                   ),
                   onWebViewCreated: (controller) {
                     webViewController = controller;
@@ -129,35 +131,38 @@ class _OAuthWebViewBottomSheetState extends State<OAuthWebViewBottomSheet> {
                       this.progress = progress / 100;
                     });
                   },
-                  shouldOverrideUrlLoading: (controller, navigationAction) async {
+                  shouldOverrideUrlLoading:
+                      (controller, navigationAction) async {
                     final url = navigationAction.request.url.toString();
                     Logger.info('OAuth navigation intercepted: $url');
-                    
+
                     // Check if this is our redirect URL (custom scheme or localhost)
-                    if (url.startsWith(widget.redirectUrlScheme) || 
-                        url.startsWith('http://localhost') || 
+                    if (url.startsWith(widget.redirectUrlScheme) ||
+                        url.startsWith('http://localhost') ||
                         url.startsWith('https://localhost')) {
                       Logger.info('OAuth redirect detected: $url');
-                      
+
                       final uri = Uri.parse(url);
-                      
+
                       // Check for authorization code in query parameters
                       final code = uri.queryParameters['code'];
                       if (code != null) {
-                        Logger.info('OAuth code received: ${code.substring(0, 10)}...');
+                        Logger.info(
+                            'OAuth code received: ${code.substring(0, 10)}...');
                         widget.onAuthCodeReceived(code);
                         return NavigationActionPolicy.CANCEL;
                       }
-                      
+
                       // Check for access token in fragment (for implicit flow or localhost)
                       if (uri.fragment.isNotEmpty) {
                         final fragment = uri.fragment;
-                        Logger.info('OAuth fragment received: ${fragment.substring(0, 20)}...');
+                        Logger.info(
+                            'OAuth fragment received: ${fragment.substring(0, 20)}...');
                         // Pass the complete URL so the service can extract the access token
                         widget.onAuthCodeReceived(url);
                         return NavigationActionPolicy.CANCEL;
                       }
-                      
+
                       // Check for error
                       final error = uri.queryParameters['error'];
                       if (error != null) {
@@ -166,7 +171,7 @@ class _OAuthWebViewBottomSheetState extends State<OAuthWebViewBottomSheet> {
                         return NavigationActionPolicy.CANCEL;
                       }
                     }
-                    
+
                     return NavigationActionPolicy.ALLOW;
                   },
                   onReceivedError: (controller, request, error) {
@@ -176,7 +181,7 @@ class _OAuthWebViewBottomSheetState extends State<OAuthWebViewBottomSheet> {
                     });
                   },
                 ),
-                
+
                 // Loading overlay
                 if (isLoading)
                   Container(
@@ -215,7 +220,7 @@ Future<String?> showOAuthBottomSheet(
   String redirectUrlScheme,
 ) async {
   String? authCode;
-  
+
   await showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
@@ -232,6 +237,6 @@ Future<String?> showOAuthBottomSheet(
       },
     ),
   );
-  
+
   return authCode;
 }

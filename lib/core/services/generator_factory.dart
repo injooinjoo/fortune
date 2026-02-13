@@ -115,7 +115,8 @@ class GeneratorFactory {
 
       case 'exam':
       case 'lucky_exam':
-        return await ExamGenerator.generate(input, _supabase, isPremium: isPremium);
+        return await ExamGenerator.generate(input, _supabase,
+            isPremium: isPremium);
 
       case 'health':
         return await HealthGenerator.generate(
@@ -232,7 +233,8 @@ class GeneratorFactory {
         title: '커리어 코칭',
         summary: {},
         data: fortune,
-        score: (fortune['health_score']?['overall_score'] as num?)?.toInt() ?? 70,
+        score:
+            (fortune['health_score']?['overall_score'] as num?)?.toInt() ?? 70,
         createdAt: DateTime.now(),
       );
     }
@@ -474,7 +476,9 @@ class GeneratorFactory {
       return FortuneResult(
         type: 'baby-nickname',
         title: '태명 이야기 - ${payload['nickname']}',
-        summary: {'message': fortune['babyMessage'] as String? ?? '아기가 메시지를 전해요'},
+        summary: {
+          'message': fortune['babyMessage'] as String? ?? '아기가 메시지를 전해요'
+        },
         data: fortune,
         createdAt: DateTime.now(),
       );

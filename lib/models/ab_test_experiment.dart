@@ -30,11 +30,11 @@ class ABTestExperiment extends Equatable {
   /// 실험이 현재 진행 중인지 확인
   bool get isRunning {
     if (!isActive) return false;
-    
+
     final now = DateTime.now();
     if (now.isBefore(startDate)) return false;
     if (endDate != null && now.isAfter(endDate!)) return false;
-    
+
     return true;
   }
 
@@ -66,11 +66,12 @@ class ABTestExperiment extends Equatable {
           .map((v) => ABTestVariant.fromJson(v as Map<String, dynamic>))
           .toList(),
       startDate: DateTime.parse(json['start_date'] as String),
-      endDate: json['end_date'] != null 
+      endDate: json['end_date'] != null
           ? DateTime.parse(json['end_date'] as String)
           : null,
       isActive: json['is_active'] as bool? ?? true,
-      trafficAllocation: (json['traffic_allocation'] as num?)?.toDouble() ?? 1.0,
+      trafficAllocation:
+          (json['traffic_allocation'] as num?)?.toDouble() ?? 1.0,
       targetAudience: (json['target_audience'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
@@ -121,7 +122,7 @@ enum ExperimentType {
 
   final String key;
   final String displayName;
-  
+
   const ExperimentType(this.key, this.displayName);
 }
 

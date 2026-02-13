@@ -7,11 +7,8 @@ class LoadingIndicator extends StatelessWidget {
   final Color? color;
   final double strokeWidth;
 
-  const LoadingIndicator({
-    super.key,
-    this.size = 40,
-    this.color,
-    this.strokeWidth = 3});
+  const LoadingIndicator(
+      {super.key, this.size = 40, this.color, this.strokeWidth = 3});
 
   @override
   Widget build(BuildContext context) {
@@ -208,9 +205,9 @@ class FortuneResultSkeleton extends StatelessWidget {
             child: Column(
               children: [
                 SkeletonLoader(
-                  width: 120,
-                  height: 120,
-                  borderRadius: BorderRadius.circular(60)),
+                    width: 120,
+                    height: 120,
+                    borderRadius: BorderRadius.circular(60)),
                 const SizedBox(height: DSSpacing.md),
                 const SkeletonLoader(width: 200, height: 24),
                 const SizedBox(height: DSSpacing.xs),
@@ -375,10 +372,10 @@ class GridSkeleton extends StatelessWidget {
     return GridView.builder(
       padding: padding ?? const EdgeInsets.all(DSSpacing.lg),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount,
-        childAspectRatio: childAspectRatio,
-        mainAxisSpacing: DSSpacing.md,
-        crossAxisSpacing: DSSpacing.md),
+          crossAxisCount: crossAxisCount,
+          childAspectRatio: childAspectRatio,
+          mainAxisSpacing: DSSpacing.md,
+          crossAxisSpacing: DSSpacing.md),
       itemCount: itemCount,
       itemBuilder: (context, index) {
         return DSCard.flat(

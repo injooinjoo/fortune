@@ -648,14 +648,17 @@ class FortuneCardImages {
   static String? getCategoryIcon(String category) {
     final icons = {
       'love': 'assets/images/fortune/icons/categories/icon_category_love.webp',
-      'money': 'assets/images/fortune/icons/categories/icon_category_money.webp',
+      'money':
+          'assets/images/fortune/icons/categories/icon_category_money.webp',
       'wealth':
           'assets/images/fortune/icons/categories/icon_category_money.webp',
-      'career': 'assets/images/fortune/icons/categories/icon_category_work.webp',
+      'career':
+          'assets/images/fortune/icons/categories/icon_category_work.webp',
       'work': 'assets/images/fortune/icons/categories/icon_category_work.webp',
       'health':
           'assets/images/fortune/icons/categories/icon_category_health.webp',
-      'study': 'assets/images/fortune/icons/categories/icon_category_study.webp',
+      'study':
+          'assets/images/fortune/icons/categories/icon_category_study.webp',
     };
     return icons[category];
   }

@@ -14,7 +14,6 @@ import '../../domain/models/psychology_test_models.dart';
 // Import providers
 import '../providers/psychology_test_providers.dart';
 
-
 class PsychologyTestPage extends ConsumerStatefulWidget {
   const PsychologyTestPage({super.key});
 
@@ -55,26 +54,21 @@ class _PsychologyTestPageState extends ConsumerState<PsychologyTestPage> {
 
   void _analyzeTest() {
     if (_nameController.text.isEmpty || _selectedBirthDate == null) {
-      Toast.show(
-        context,
-        message: '이름과 생년월일을 입력해주세요',
-        type: ToastType.warning);
+      Toast.show(context, message: '이름과 생년월일을 입력해주세요', type: ToastType.warning);
       return;
     }
 
     if (_answers.length < psychologyQuestions.length) {
-      Toast.show(
-        context,
-        message: '모든 질문에 답해주세요',
-        type: ToastType.warning);
+      Toast.show(context, message: '모든 질문에 답해주세요', type: ToastType.warning);
       return;
     }
 
     setState(() {
       _currentInput = PsychologyTestInput(
-        name: _nameController.text,
-        birthDate: '${_selectedBirthDate!.year}-${_selectedBirthDate!.month.toString().padLeft(2, '0')}-${_selectedBirthDate!.day.toString().padLeft(2, '0')}',
-        answers: Map.from(_answers));
+          name: _nameController.text,
+          birthDate:
+              '${_selectedBirthDate!.year}-${_selectedBirthDate!.month.toString().padLeft(2, '0')}-${_selectedBirthDate!.day.toString().padLeft(2, '0')}',
+          answers: Map.from(_answers));
       _showResult = true;
     });
   }
@@ -101,9 +95,9 @@ class _PsychologyTestPageState extends ConsumerState<PsychologyTestPage> {
         child: Column(
           children: [
             AppHeader(
-              title: '심리 테스트',
-              showBackButton: true,
-              showActions: !_showResult),
+                title: '심리 테스트',
+                showBackButton: true,
+                showActions: !_showResult),
             Expanded(
               child: _showResult && _currentInput != null
                   ? _TestResultView(
@@ -113,7 +107,8 @@ class _PsychologyTestPageState extends ConsumerState<PsychologyTestPage> {
                   : _TestInputView(
                       nameController: _nameController,
                       selectedBirthDate: _selectedBirthDate,
-                      onBirthDateChanged: (date) => setState(() => _selectedBirthDate = date),
+                      onBirthDateChanged: (date) =>
+                          setState(() => _selectedBirthDate = date),
                       currentQuestionIndex: _currentQuestionIndex,
                       answers: _answers,
                       onAnswerSelected: _selectAnswer,
@@ -211,7 +206,8 @@ class _TestInputView extends StatelessWidget {
                       labelText: '이름',
                       hintText: '이름을 입력하세요',
                       filled: true,
-                      fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
+                      fillColor:
+                          theme.colorScheme.surface.withValues(alpha: 0.5),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
@@ -230,9 +226,10 @@ class _TestInputView extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: GlassButton(
-                onPressed: nameController.text.isNotEmpty && selectedBirthDate != null
-                    ? () => onAnswerSelected('start', 'start')
-                    : null,
+                onPressed:
+                    nameController.text.isNotEmpty && selectedBirthDate != null
+                        ? () => onAnswerSelected('start', 'start')
+                        : null,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Text(
@@ -289,14 +286,18 @@ class _TestInputView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: DSSpacing.lg),
-                  ...psychologyQuestions[currentQuestionIndex].options.map((option) {
-                    final isSelected = answers[psychologyQuestions[currentQuestionIndex].id] == option.value;
+                  ...psychologyQuestions[currentQuestionIndex]
+                      .options
+                      .map((option) {
+                    final isSelected =
+                        answers[psychologyQuestions[currentQuestionIndex].id] ==
+                            option.value;
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: GlassButton(
                         onPressed: () => onAnswerSelected(
-                          psychologyQuestions[currentQuestionIndex].id,
-                          option.value),
+                            psychologyQuestions[currentQuestionIndex].id,
+                            option.value),
                         child: Container(
                           width: double.infinity,
                           padding: const EdgeInsets.all(16),
@@ -304,8 +305,10 @@ class _TestInputView extends StatelessWidget {
                             gradient: isSelected
                                 ? LinearGradient(
                                     colors: [
-                                      theme.colorScheme.primary.withValues(alpha: 0.2),
-                                      theme.colorScheme.secondary.withValues(alpha: 0.2),
+                                      theme.colorScheme.primary
+                                          .withValues(alpha: 0.2),
+                                      theme.colorScheme.secondary
+                                          .withValues(alpha: 0.2),
                                     ],
                                   )
                                 : null,
@@ -327,7 +330,8 @@ class _TestInputView extends StatelessWidget {
                                   border: Border.all(
                                     color: isSelected
                                         ? theme.colorScheme.primary
-                                        : theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                                        : theme.colorScheme.onSurface
+                                            .withValues(alpha: 0.3),
                                     width: 2,
                                   ),
                                 ),
@@ -349,7 +353,8 @@ class _TestInputView extends StatelessWidget {
                                 child: Text(
                                   option.label,
                                   style: context.labelMedium.copyWith(
-                                    fontWeight: isSelected ? FontWeight.bold : null,
+                                    fontWeight:
+                                        isSelected ? FontWeight.bold : null,
                                   ),
                                 ),
                               ),
@@ -457,37 +462,32 @@ class _TestResultView extends ConsumerWidget {
           children: [
             const LoadingIndicator(size: 60),
             const SizedBox(height: DSSpacing.lg),
-            Text(
-              '심리를 분석하고 있습니다...',
-              style: context.heading3),
+            Text('심리를 분석하고 있습니다...', style: context.heading3),
           ],
         ),
       ),
       error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.error_outline,
-                size: 64,
-                color: theme.colorScheme.error),
-              const SizedBox(height: DSSpacing.md),
-              Text(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 64, color: theme.colorScheme.error),
+            const SizedBox(height: DSSpacing.md),
+            Text(
                 error.toString().contains('토큰')
                     ? '토큰가 부족합니다'
                     : '심리 분석 중 오류가 발생했습니다',
                 style: theme.textTheme.titleLarge,
                 textAlign: TextAlign.center),
-              const SizedBox(height: DSSpacing.lg),
-              GlassButton(
-                onPressed: onReset,
-                child: const Padding(
+            const SizedBox(height: DSSpacing.lg),
+            GlassButton(
+              onPressed: onReset,
+              child: const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   child: Text('다시 시도')),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
+      ),
       data: (result) => result == null
           ? const SizedBox.shrink()
           : SingleChildScrollView(
@@ -499,8 +499,10 @@ class _TestResultView extends ConsumerWidget {
                     padding: const EdgeInsets.all(24),
                     gradient: LinearGradient(
                       colors: [
-                        _getLuckColor(result.overallLuck).withValues(alpha: 0.1),
-                        _getLuckColor(result.overallLuck).withValues(alpha: 0.05),
+                        _getLuckColor(result.overallLuck)
+                            .withValues(alpha: 0.1),
+                        _getLuckColor(result.overallLuck)
+                            .withValues(alpha: 0.05),
                       ],
                     ),
                     child: Column(
@@ -519,9 +521,11 @@ class _TestResultView extends ConsumerWidget {
                         ),
                         const SizedBox(height: DSSpacing.sm),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
-                            color: _getLuckColor(result.overallLuck).withValues(alpha: 0.2),
+                            color: _getLuckColor(result.overallLuck)
+                                .withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
@@ -544,7 +548,8 @@ class _TestResultView extends ConsumerWidget {
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.category_outlined, color: theme.colorScheme.primary),
+                            Icon(Icons.category_outlined,
+                                color: theme.colorScheme.primary),
                             const SizedBox(width: DSSpacing.sm),
                             Text(
                               '결과 유형',
@@ -561,8 +566,10 @@ class _TestResultView extends ConsumerWidget {
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
-                                theme.colorScheme.primary.withValues(alpha: 0.1),
-                                theme.colorScheme.secondary.withValues(alpha: 0.1),
+                                theme.colorScheme.primary
+                                    .withValues(alpha: 0.1),
+                                theme.colorScheme.secondary
+                                    .withValues(alpha: 0.1),
                               ],
                             ),
                             borderRadius: BorderRadius.circular(12),
@@ -577,17 +584,15 @@ class _TestResultView extends ConsumerWidget {
                           ),
                         ),
                         const SizedBox(height: DSSpacing.md),
-                        Text(
-                          '결과 요약',
-                          style: context.labelMedium.copyWith(
-                            fontWeight: FontWeight.bold,
-                          )),
+                        Text('결과 요약',
+                            style: context.labelMedium.copyWith(
+                              fontWeight: FontWeight.bold,
+                            )),
                         const SizedBox(height: DSSpacing.sm),
-                        Text(
-                          result.resultSummary,
-                          style: context.labelMedium.copyWith(
-                            height: 1.5,
-                          )),
+                        Text(result.resultSummary,
+                            style: context.labelMedium.copyWith(
+                              height: 1.5,
+                            )),
                       ],
                     ),
                   ),
@@ -600,21 +605,20 @@ class _TestResultView extends ConsumerWidget {
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.description_outlined, color: theme.colorScheme.primary),
+                            Icon(Icons.description_outlined,
+                                color: theme.colorScheme.primary),
                             const SizedBox(width: DSSpacing.sm),
-                            Text(
-                              '상세 분석',
-                              style: context.heading3.copyWith(
-                                fontWeight: FontWeight.bold,
-                              )),
+                            Text('상세 분석',
+                                style: context.heading3.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                )),
                           ],
                         ),
                         const SizedBox(height: DSSpacing.md),
-                        Text(
-                          result.resultDetails,
-                          style: context.labelMedium.copyWith(
-                            height: 1.5,
-                          )),
+                        Text(result.resultDetails,
+                            style: context.labelMedium.copyWith(
+                              height: 1.5,
+                            )),
                       ],
                     ),
                   ),
@@ -627,57 +631,59 @@ class _TestResultView extends ConsumerWidget {
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.lightbulb_outline, color: theme.colorScheme.primary),
+                            Icon(Icons.lightbulb_outline,
+                                color: theme.colorScheme.primary),
                             const SizedBox(width: DSSpacing.sm),
-                            Text(
-                              '조언',
-                              style: context.heading3.copyWith(
-                                fontWeight: FontWeight.bold,
-                              )),
-                          ],
-                        ),
-                        const SizedBox(height: DSSpacing.md),
-                        Text(
-                          result.advice,
-                          style: context.labelMedium.copyWith(
-                            height: 1.5,
-                          )),
-                        if (result.luckyElements.isNotEmpty) ...[
-                          const SizedBox(height: 20),
-                          Row(
-                            children: [
-                              Icon(Icons.star_outline, color: theme.colorScheme.secondary),
-                              const SizedBox(width: DSSpacing.sm),
-                              Text(
-                                '행운 요소',
-                                style: context.labelMedium.copyWith(
+                            Text('조언',
+                                style: context.heading3.copyWith(
                                   fontWeight: FontWeight.bold,
                                 )),
                           ],
                         ),
-                          const SizedBox(height: 12),
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: result.luckyElements.map((element) {
-                              return Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      theme.colorScheme.primary.withValues(alpha: 0.2),
-                                      theme.colorScheme.secondary.withValues(alpha: 0.2)]),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: theme.colorScheme.primary.withValues(alpha: 0.3)),
-                                ),
-                                child: Text(
-                                  element,
-                                  style: context.bodySmall.copyWith(
+                        const SizedBox(height: DSSpacing.md),
+                        Text(result.advice,
+                            style: context.labelMedium.copyWith(
+                              height: 1.5,
+                            )),
+                        if (result.luckyElements.isNotEmpty) ...[
+                          const SizedBox(height: 20),
+                          Row(
+                            children: [
+                              Icon(Icons.star_outline,
+                                  color: theme.colorScheme.secondary),
+                              const SizedBox(width: DSSpacing.sm),
+                              Text('행운 요소',
+                                  style: context.labelMedium.copyWith(
                                     fontWeight: FontWeight.bold,
                                   )),
-                              );
-                            }).toList()),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: result.luckyElements.map((element) {
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(colors: [
+                                      theme.colorScheme.primary
+                                          .withValues(alpha: 0.2),
+                                      theme.colorScheme.secondary
+                                          .withValues(alpha: 0.2)
+                                    ]),
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                        color: theme.colorScheme.primary
+                                            .withValues(alpha: 0.3)),
+                                  ),
+                                  child: Text(element,
+                                      style: context.bodySmall.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      )),
+                                );
+                              }).toList()),
                         ],
                       ],
                     ),
@@ -695,11 +701,10 @@ class _TestResultView extends ConsumerWidget {
                           children: [
                             Icon(Icons.refresh, size: 20 * fontScale),
                             const SizedBox(width: DSSpacing.sm),
-                            Text(
-                              '다시 테스트하기',
-                              style: context.heading3.copyWith(
-                                fontWeight: FontWeight.bold,
-                              )),
+                            Text('다시 테스트하기',
+                                style: context.heading3.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                )),
                           ],
                         ),
                       ),

@@ -134,7 +134,8 @@ class WuxingDistribution {
     final recs = <String>[];
 
     if (weak != null) {
-      recs.add('${weak!.korean}(${weak!.keyword}) 요소를 강화하세요: ${weak!.season}, ${weak!.direction} 방향, ${weak!.color.toARGB32().toRadixString(16)} 색상 활용');
+      recs.add(
+          '${weak!.korean}(${weak!.keyword}) 요소를 강화하세요: ${weak!.season}, ${weak!.direction} 방향, ${weak!.color.toARGB32().toRadixString(16)} 색상 활용');
     }
 
     if (balanceScore < 60) {
@@ -230,8 +231,8 @@ class _PentagonPainter extends CustomPainter {
   List<Offset> _calculatePentagonPoints(Offset center, double radius) {
     final points = <Offset>[];
     final types = [
-      WuxingType.wood,  // 12시
-      WuxingType.fire,  // 2시
+      WuxingType.wood, // 12시
+      WuxingType.fire, // 2시
       WuxingType.earth, // 5시
       WuxingType.metal, // 7시
       WuxingType.water, // 10시
@@ -265,7 +266,8 @@ class _PentagonPainter extends CustomPainter {
     canvas.drawPath(path, paint);
   }
 
-  void _drawGridLines(Canvas canvas, Offset center, double radius, List<Offset> dataPoints) {
+  void _drawGridLines(
+      Canvas canvas, Offset center, double radius, List<Offset> dataPoints) {
     final paint = Paint()
       ..color = Colors.grey.withValues(alpha: 0.2)
       ..style = PaintingStyle.stroke
@@ -304,7 +306,8 @@ class _PentagonPainter extends CustomPainter {
     }
   }
 
-  void _drawDataPentagon(Canvas canvas, Offset center, double radius, List<Offset> points) {
+  void _drawDataPentagon(
+      Canvas canvas, Offset center, double radius, List<Offset> points) {
     // 채워진 오각형
     final fillPaint = Paint()
       ..color = distribution.dominant.color.withValues(alpha: 0.3)
@@ -332,7 +335,8 @@ class _PentagonPainter extends CustomPainter {
     }
   }
 
-  void _drawLabels(Canvas canvas, Offset center, double radius, List<Offset> dataPoints) {
+  void _drawLabels(
+      Canvas canvas, Offset center, double radius, List<Offset> dataPoints) {
     final types = [
       WuxingType.wood,
       WuxingType.fire,
@@ -354,7 +358,8 @@ class _PentagonPainter extends CustomPainter {
 
       String text = '';
       if (showLabels && showValues) {
-        text = '${type.korean}(${type.chinese})\n${(percentage * 100).toStringAsFixed(0)}%';
+        text =
+            '${type.korean}(${type.chinese})\n${(percentage * 100).toStringAsFixed(0)}%';
       } else if (showLabels) {
         text = '${type.korean}(${type.chinese})';
       } else if (showValues) {
@@ -366,7 +371,6 @@ class _PentagonPainter extends CustomPainter {
           text: text,
           style: TextStyle(
             color: type.color,
-            
             fontWeight: FontWeight.bold,
           ),
         ),

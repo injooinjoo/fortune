@@ -11,7 +11,8 @@ class CacheService {
     'yearly': 8760,
     'zodiac': 720,
     'personality': 8760,
-    'default': 60};
+    'default': 60
+  };
 
   final SupabaseClient _supabase = Supabase.instance.client;
 
@@ -58,9 +59,9 @@ class CacheService {
     try {
       final userId = params['userId'];
       if (userId == null) return null;
-      
+
       final dateKey = _getDateKeyForType(fortuneType);
-      
+
       // DB에서 캐시된 운세 조회
       final response = await _supabase
           .from('fortune_cache')
@@ -69,12 +70,13 @@ class CacheService {
           .eq('fortune_type', fortuneType)
           .eq('fortune_date', dateKey)
           .maybeSingle();
-      
+
       if (response == null) {
-        debugPrint('No cached fortune found in DB for type: $fortuneType, date: $dateKey');
+        debugPrint(
+            'No cached fortune found in DB for type: $fortuneType, date: $dateKey');
         return null;
       }
-      
+
       // 만료 시간 체크
       final expiresAt = DateTime.parse(response['expires_at']);
       if (DateTime.now().isAfter(expiresAt)) {
@@ -82,7 +84,7 @@ class CacheService {
         await removeCachedFortune(fortuneType, params);
         return null;
       }
-      
+
       // JSON 데이터를 FortuneModel로 변환 (null safety)
       // DB 컬럼명이 result로 변경되었으므로 result를 우선으로 확인
       final fortuneDataRaw = response['result'] ?? response['fortune_data'];
@@ -102,38 +104,37 @@ class CacheService {
     }
   }
 
-  Future<bool> cacheFortune(
-    String fortuneType,
-    Map<String, dynamic> params,
-    FortuneModel fortune) async {
+  Future<bool> cacheFortune(String fortuneType, Map<String, dynamic> params,
+      FortuneModel fortune) async {
     try {
       final userId = params['userId'];
       if (userId == null) {
         debugPrint('❌ Cache save failed: userId is null');
         return false;
       }
-      
+
       final dateKey = _getDateKeyForType(fortuneType);
-      final duration = _cacheDuration[fortuneType] ?? _cacheDuration['default']!;
+      final duration =
+          _cacheDuration[fortuneType] ?? _cacheDuration['default']!;
       final expiryDate = DateTime.now().add(Duration(hours: duration));
-      
-      debugPrint('💾 Saving to cache: type=$fortuneType, userId=$userId, dateKey=$dateKey');
-      
+
+      debugPrint(
+          '💾 Saving to cache: type=$fortuneType, userId=$userId, dateKey=$dateKey');
+
       // DB에 운세 데이터 저장 (upsert) - result 컬럼만 사용
       final fortuneJson = fortune.toJson();
       await _supabase.from('fortune_cache').upsert({
         'user_id': userId,
         'fortune_type': fortuneType,
         'fortune_date': dateKey,
-        'result': fortuneJson,  // DB 컬럼명
-        'cache_key': '$userId:$fortuneType:$dateKey',  // 캐시 키
+        'result': fortuneJson, // DB 컬럼명
+        'cache_key': '$userId:$fortuneType:$dateKey', // 캐시 키
         'expires_at': expiryDate.toIso8601String(),
         'created_at': DateTime.now().toIso8601String(),
-      },
-      onConflict: 'user_id,fortune_type,fortune_date');
-      
+      }, onConflict: 'user_id,fortune_type,fortune_date');
+
       debugPrint('✅ Fortune cached to DB successfully');
-      
+
       // 저장 확인을 위해 다시 조회
       final verification = await _supabase
           .from('fortune_cache')
@@ -142,7 +143,7 @@ class CacheService {
           .eq('fortune_type', fortuneType)
           .eq('fortune_date', dateKey)
           .maybeSingle();
-      
+
       if (verification != null) {
         debugPrint('✅ Cache verification successful');
         return true;
@@ -163,9 +164,9 @@ class CacheService {
     try {
       final userId = params['userId'];
       if (userId == null) return;
-      
+
       final dateKey = _getDateKeyForType(fortuneType);
-      
+
       // DB에서 캐시 삭제
       await _supabase
           .from('fortune_cache')
@@ -173,7 +174,7 @@ class CacheService {
           .eq('user_id', userId)
           .eq('fortune_type', fortuneType)
           .eq('fortune_date', dateKey);
-          
+
       debugPrint('Removed cached fortune from DB');
     } catch (e) {
       debugPrint('DB cache delete error: $e');
@@ -187,9 +188,9 @@ class CacheService {
     try {
       final userId = params['userId'];
       if (userId == null) return;
-      
+
       final dateKey = _getDateKeyForType(fortuneType);
-      
+
       // DB에서 스토리 캐시 삭제
       await _supabase
           .from('fortune_stories')
@@ -197,7 +198,7 @@ class CacheService {
           .eq('user_id', userId)
           .eq('fortune_type', fortuneType)
           .eq('story_date', dateKey);
-          
+
       debugPrint('Removed cached story segments from DB');
     } catch (e) {
       debugPrint('DB story cache delete error: $e');
@@ -208,18 +209,12 @@ class CacheService {
     try {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) return;
-      
+
       // DB에서 사용자의 모든 캐시 삭제
-      await _supabase
-          .from('fortune_cache')
-          .delete()
-          .eq('user_id', userId);
-          
-      await _supabase
-          .from('fortune_stories')
-          .delete()
-          .eq('user_id', userId);
-          
+      await _supabase.from('fortune_cache').delete().eq('user_id', userId);
+
+      await _supabase.from('fortune_stories').delete().eq('user_id', userId);
+
       debugPrint('Cleared all cache from DB for user');
     } catch (e) {
       debugPrint('DB cache clear error: $e');
@@ -229,18 +224,18 @@ class CacheService {
   Future<void> cleanExpiredCache() async {
     try {
       final now = DateTime.now();
-      
+
       // DB에서 만료된 캐시 삭제
       await _supabase
           .from('fortune_cache')
           .delete()
           .lt('expires_at', now.toIso8601String());
-          
+
       await _supabase
           .from('fortune_stories')
           .delete()
           .lt('expires_at', now.toIso8601String());
-          
+
       debugPrint('Cleaned expired cache entries from DB');
     } catch (e) {
       debugPrint('DB cache cleanup error: $e');
@@ -253,24 +248,24 @@ class CacheService {
       if (userId == null) {
         return {'total': 0, 'valid': 0, 'expired': 0};
       }
-      
+
       final now = DateTime.now();
-      
+
       // DB에서 캐시 통계 조회
       final fortuneCacheResponse = await _supabase
           .from('fortune_cache')
           .select('expires_at')
           .eq('user_id', userId);
-          
+
       final storyCacheResponse = await _supabase
           .from('fortune_stories')
           .select('expires_at')
           .eq('user_id', userId);
-      
+
       int totalEntries = 0;
       int validCount = 0;
       int expiredCount = 0;
-      
+
       // Fortune cache 통계
       for (final entry in fortuneCacheResponse) {
         totalEntries++;
@@ -281,7 +276,7 @@ class CacheService {
           validCount++;
         }
       }
-          
+
       // Story cache 통계
       for (final entry in storyCacheResponse) {
         totalEntries++;
@@ -292,7 +287,7 @@ class CacheService {
           validCount++;
         }
       }
-          
+
       return {
         'total': totalEntries,
         'valid': validCount,
@@ -308,9 +303,9 @@ class CacheService {
     try {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) return [];
-      
+
       final now = DateTime.now();
-      
+
       // DB에서 특정 타입의 캐시된 운세들 조회
       final response = await _supabase
           .from('fortune_cache')
@@ -343,23 +338,22 @@ class CacheService {
     }
   }
 
-  Future<List<FortuneModel>> getAllCachedFortunesForUser(String userId, {bool includeExpired = false}) async {
+  Future<List<FortuneModel>> getAllCachedFortunesForUser(String userId,
+      {bool includeExpired = false}) async {
     try {
       final now = DateTime.now();
-      
+
       // DB에서 사용자의 모든 캐시된 운세 조회
-      var query = _supabase
-          .from('fortune_cache')
-          .select()
-          .eq('user_id', userId);
-      
+      var query =
+          _supabase.from('fortune_cache').select().eq('user_id', userId);
+
       // 만료되지 않은 것만 가져오기 (옵션)
       if (!includeExpired) {
         query = query.gte('expires_at', now.toIso8601String());
       }
-      
+
       final response = await query.order('created_at', ascending: false);
-      
+
       final fortunes = <FortuneModel>[];
       for (final entry in response) {
         try {
@@ -387,7 +381,7 @@ class CacheService {
     try {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) return false;
-      
+
       // DB에 캐시가 있는지 확인
       final response = await _supabase
           .from('fortune_cache')
@@ -395,7 +389,7 @@ class CacheService {
           .eq('user_id', userId)
           .limit(1)
           .maybeSingle();
-          
+
       return response != null;
     } catch (e) {
       debugPrint('DB cache check error: $e');
@@ -403,10 +397,11 @@ class CacheService {
     }
   }
 
-  Future<FortuneModel?> getMostRecentCachedFortune(String fortuneType, String userId) async {
+  Future<FortuneModel?> getMostRecentCachedFortune(
+      String fortuneType, String userId) async {
     try {
       final now = DateTime.now();
-      
+
       // DB에서 가장 최근의 캐시된 운세 조회
       final response = await _supabase
           .from('fortune_cache')
@@ -417,7 +412,7 @@ class CacheService {
           .order('created_at', ascending: false)
           .limit(1)
           .maybeSingle();
-      
+
       if (response == null) return null;
 
       try {
@@ -442,7 +437,8 @@ class CacheService {
     }
   }
 
-  Future<void> preloadForOffline(String userId, List<String> fortuneTypes) async {
+  Future<void> preloadForOffline(
+      String userId, List<String> fortuneTypes) async {
     try {
       // DB 기반에서는 preload가 필요 없음 (항상 온라인 DB 접근)
       debugPrint('Preloading not needed for DB-based cache');

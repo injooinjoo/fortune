@@ -47,18 +47,16 @@ class ChatInsightApiService {
         };
       }).toList();
 
-      final response = await _supabase.functions
-          .invoke(
-            'chat-insight-analyze',
-            body: {
-              'anonymized_messages': messages,
-              'relation_type': config.relationType.name,
-              'date_range': _dateRangeToString(config.dateRange),
-              'intensity': config.intensity.name,
-              'user_is': 'A',
-            },
-          )
-          .timeout(_analysisTimeout);
+      final response = await _supabase.functions.invoke(
+        'chat-insight-analyze',
+        body: {
+          'anonymized_messages': messages,
+          'relation_type': config.relationType.name,
+          'date_range': _dateRangeToString(config.dateRange),
+          'intensity': config.intensity.name,
+          'user_is': 'A',
+        },
+      ).timeout(_analysisTimeout);
 
       final data = response.data as Map<String, dynamic>;
       if (data['success'] != true) {
@@ -86,13 +84,20 @@ class ChatInsightApiService {
 
       return ChatInsightResult(
         analysisMeta: meta,
-        scores: InsightScores.fromJson(resultData['scores'] as Map<String, dynamic>),
-        highlights: InsightHighlights.fromJson(resultData['highlights'] as Map<String, dynamic>),
-        timeline: InsightTimeline.fromJson(resultData['timeline'] as Map<String, dynamic>),
-        patterns: InsightPatterns.fromJson(resultData['patterns'] as Map<String, dynamic>),
-        triggers: InsightTriggers.fromJson(resultData['triggers'] as Map<String, dynamic>),
-        guidance: InsightGuidance.fromJson(resultData['guidance'] as Map<String, dynamic>),
-        followupMemory: FollowupMemory.fromJson(resultData['followup_memory'] as Map<String, dynamic>),
+        scores: InsightScores.fromJson(
+            resultData['scores'] as Map<String, dynamic>),
+        highlights: InsightHighlights.fromJson(
+            resultData['highlights'] as Map<String, dynamic>),
+        timeline: InsightTimeline.fromJson(
+            resultData['timeline'] as Map<String, dynamic>),
+        patterns: InsightPatterns.fromJson(
+            resultData['patterns'] as Map<String, dynamic>),
+        triggers: InsightTriggers.fromJson(
+            resultData['triggers'] as Map<String, dynamic>),
+        guidance: InsightGuidance.fromJson(
+            resultData['guidance'] as Map<String, dynamic>),
+        followupMemory: FollowupMemory.fromJson(
+            resultData['followup_memory'] as Map<String, dynamic>),
       );
     } catch (e) {
       debugPrint('❌ chat-insight-analyze 에러: $e');
@@ -112,20 +117,18 @@ class ChatInsightApiService {
     }
 
     try {
-      final response = await _supabase.functions
-          .invoke(
-            'chat-insight-followup',
-            body: {
-              'analysis_result': {
-                'followup_memory': analysisResult.followupMemory.toJson(),
-                'scores': analysisResult.scores.toJson(),
-                'guidance': analysisResult.guidance.toJson(),
-              },
-              'user_question': question,
-              'conversation_history': conversationHistory,
-            },
-          )
-          .timeout(_followupTimeout);
+      final response = await _supabase.functions.invoke(
+        'chat-insight-followup',
+        body: {
+          'analysis_result': {
+            'followup_memory': analysisResult.followupMemory.toJson(),
+            'scores': analysisResult.scores.toJson(),
+            'guidance': analysisResult.guidance.toJson(),
+          },
+          'user_question': question,
+          'conversation_history': conversationHistory,
+        },
+      ).timeout(_followupTimeout);
 
       final data = response.data as Map<String, dynamic>;
       if (data['success'] != true) {
@@ -152,27 +155,26 @@ class ChatInsightApiService {
     }
 
     try {
-      final response = await _supabase.functions
-          .invoke(
-            'chat-insight-suggest',
-            body: {
-              'situation': situation,
-              'tone': tone,
-              'relation_type': relationType.name,
-              'analysis_context': {
-                'do_items': guidance.doList.map((g) => g.toJson()).toList(),
-                'dont_items': guidance.dontList.map((g) => g.toJson()).toList(),
-              },
-            },
-          )
-          .timeout(_suggestTimeout);
+      final response = await _supabase.functions.invoke(
+        'chat-insight-suggest',
+        body: {
+          'situation': situation,
+          'tone': tone,
+          'relation_type': relationType.name,
+          'analysis_context': {
+            'do_items': guidance.doList.map((g) => g.toJson()).toList(),
+            'dont_items': guidance.dontList.map((g) => g.toJson()).toList(),
+          },
+        },
+      ).timeout(_suggestTimeout);
 
       final data = response.data as Map<String, dynamic>;
       if (data['success'] != true) {
         throw Exception(data['error'] ?? '추천 문장 생성 실패');
       }
 
-      final suggestions = (data['data'] as Map<String, dynamic>)['suggestions'] as List<dynamic>?;
+      final suggestions = (data['data'] as Map<String, dynamic>)['suggestions']
+          as List<dynamic>?;
       if (suggestions == null) return null;
 
       return suggestions.map((s) {

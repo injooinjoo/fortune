@@ -3,18 +3,18 @@ import 'character_choice.dart';
 
 /// 메시지 유형
 enum CharacterChatMessageType {
-  user,       // 사용자 메시지
-  character,  // 캐릭터 응답
-  system,     // 시스템 메시지
-  narration,  // 나레이션 (소설체)
-  choice,     // 선택지 메시지
+  user, // 사용자 메시지
+  character, // 캐릭터 응답
+  system, // 시스템 메시지
+  narration, // 나레이션 (소설체)
+  choice, // 선택지 메시지
 }
 
 /// 메시지 전송/읽음 상태 (인스타그램 DM 스타일)
 enum MessageStatus {
-  sending,    // 전송 중
-  sent,       // 전송됨 (1 표시)
-  read,       // 읽음 (숫자 사라짐)
+  sending, // 전송 중
+  sent, // 전송됨 (1 표시)
+  read, // 읽음 (숫자 사라짐)
 }
 
 /// 캐릭터 채팅 메시지 모델
@@ -25,10 +25,10 @@ class CharacterChatMessage {
   final DateTime timestamp;
   final String? characterId;
   final ChoiceSet? choiceSet;
-  final MessageStatus status;  // 전송/읽음 상태
-  final DateTime? readAt;      // 읽음 시간
-  final int? affinityChange;   // 호감도 변경값 (게이미피케이션용)
-  final String? imageAsset;    // 이미지 에셋 경로 (점심 사진 등)
+  final MessageStatus status; // 전송/읽음 상태
+  final DateTime? readAt; // 읽음 시간
+  final int? affinityChange; // 호감도 변경값 (게이미피케이션용)
+  final String? imageAsset; // 이미지 에셋 경로 (점심 사진 등)
 
   CharacterChatMessage({
     String? id,
@@ -37,7 +37,7 @@ class CharacterChatMessage {
     DateTime? timestamp,
     this.characterId,
     this.choiceSet,
-    this.status = MessageStatus.read,  // 기본값: 읽음 (캐릭터 메시지용)
+    this.status = MessageStatus.read, // 기본값: 읽음 (캐릭터 메시지용)
     this.readAt,
     this.affinityChange,
     this.imageAsset,
@@ -49,7 +49,7 @@ class CharacterChatMessage {
     return CharacterChatMessage(
       type: CharacterChatMessageType.user,
       text: text,
-      status: MessageStatus.sent,  // 전송됨 (1 표시)
+      status: MessageStatus.sent, // 전송됨 (1 표시)
     );
   }
 
@@ -102,7 +102,8 @@ class CharacterChatMessage {
   }
 
   /// 선택지 메시지 생성
-  factory CharacterChatMessage.choice(ChoiceSet choiceSet, {String? situation}) {
+  factory CharacterChatMessage.choice(ChoiceSet choiceSet,
+      {String? situation}) {
     return CharacterChatMessage(
       type: CharacterChatMessageType.choice,
       text: situation ?? '선택지',
@@ -190,7 +191,7 @@ class CharacterChatMessage {
           : null,
       status: MessageStatus.values.firstWhere(
         (e) => e.name == json['status'],
-        orElse: () => MessageStatus.read,  // 기존 메시지는 읽음 처리
+        orElse: () => MessageStatus.read, // 기존 메시지는 읽음 처리
       ),
       readAt: json['readAt'] != null
           ? DateTime.tryParse(json['readAt'] as String)

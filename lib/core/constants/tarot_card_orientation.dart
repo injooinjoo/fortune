@@ -28,26 +28,25 @@ class TarotCardState {
   final CardOrientation orientation;
   final DateTime selectedAt;
 
-  TarotCardState({
-    required this.cardIndex,
-    required this.orientation,
-    required this.selectedAt});
+  TarotCardState(
+      {required this.cardIndex,
+      required this.orientation,
+      required this.selectedAt});
 
   // 랜덤하게 카드 방향 결정 (70% 정방향, 30% 역방향)
   static CardOrientation getRandomOrientation() {
     final random = math.Random();
-    return random.nextDouble() < 0.7 
-        ? CardOrientation.upright 
+    return random.nextDouble() < 0.7
+        ? CardOrientation.upright
         : CardOrientation.reversed;
   }
 
   // 카드 선택 시 상태 생성
   factory TarotCardState.fromSelection(int cardIndex) {
     return TarotCardState(
-      cardIndex: cardIndex,
-      orientation: getRandomOrientation(),
-      selectedAt: DateTime.now()
-    );
+        cardIndex: cardIndex,
+        orientation: getRandomOrientation(),
+        selectedAt: DateTime.now());
   }
 
   Map<String, dynamic> toJson() {
@@ -60,20 +59,18 @@ class TarotCardState {
 
   factory TarotCardState.fromJson(Map<String, dynamic> json) {
     return TarotCardState(
-      cardIndex: json['cardIndex'],
-      orientation: CardOrientation.values.firstWhere(
-        (e) => e.name == json['orientation'],
-        orElse: () => CardOrientation.upright),
-      selectedAt: DateTime.parse(json['selectedAt'])
-    );
+        cardIndex: json['cardIndex'],
+        orientation: CardOrientation.values.firstWhere(
+            (e) => e.name == json['orientation'],
+            orElse: () => CardOrientation.upright),
+        selectedAt: DateTime.parse(json['selectedAt']));
   }
 }
 
 // 카드 해석 확장
 extension TarotCardInterpretation on TarotCardState {
-  String getMeaning({
-    required String uprightMeaning,
-    required String reversedMeaning}) {
+  String getMeaning(
+      {required String uprightMeaning, required String reversedMeaning}) {
     return orientation == CardOrientation.upright
         ? uprightMeaning
         : reversedMeaning;

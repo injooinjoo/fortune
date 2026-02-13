@@ -101,7 +101,8 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                 ),
               ),
               ListTile(
-                leading: const Icon(Icons.camera_alt, color: DSColors.accentDark),
+                leading:
+                    const Icon(Icons.camera_alt, color: DSColors.accentDark),
                 title: const Text('카메라로 촬영'),
                 onTap: () {
                   Navigator.pop(context);
@@ -109,7 +110,8 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.photo_library, color: DSColors.accentDark),
+                leading:
+                    const Icon(Icons.photo_library, color: DSColors.accentDark),
                 title: const Text('갤러리에서 선택'),
                 onTap: () {
                   Navigator.pop(context);
@@ -118,7 +120,8 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
               ),
               if (_selectedPhotos.length < widget.maxPhotos)
                 ListTile(
-                  leading: const Icon(Icons.photo_library_outlined, color: DSColors.accentDark),
+                  leading: const Icon(Icons.photo_library_outlined,
+                      color: DSColors.accentDark),
                   title: const Text('여러 장 선택'),
                   onTap: () {
                     Navigator.pop(context);
@@ -140,7 +143,7 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
     }
 
     setState(() => _isLoading = true);
-    
+
     try {
       final XFile? photo = await _picker.pickImage(
         source: source,
@@ -148,7 +151,7 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
         maxWidth: 1920,
         maxHeight: 1920,
       );
-      
+
       if (photo != null) {
         setState(() {
           _selectedPhotos.add(photo);
@@ -164,24 +167,24 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
 
   Future<void> _pickMultipleImages() async {
     setState(() => _isLoading = true);
-    
+
     try {
       final List<XFile> photos = await _picker.pickMultiImage(
         imageQuality: 85,
         maxWidth: 1920,
         maxHeight: 1920,
       );
-      
+
       if (photos.isNotEmpty) {
         final remainingSlots = widget.maxPhotos - _selectedPhotos.length;
         final photosToAdd = photos.take(remainingSlots).toList();
-        
+
         setState(() {
           _selectedPhotos.addAll(photosToAdd);
         });
-        
+
         widget.onPhotosSelected(_selectedPhotos);
-        
+
         if (photos.length > remainingSlots) {
           _showMaxPhotosAlert();
         }
@@ -210,7 +213,8 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('확인', style: TextStyle(color: DSColors.accentDark)),
+            child:
+                const Text('확인', style: TextStyle(color: DSColors.accentDark)),
           ),
         ],
       ),
@@ -229,7 +233,7 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -263,7 +267,7 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
           ],
         ),
         const SizedBox(height: 12),
-        
+
         // Photo Grid
         SizedBox(
           height: 120,
@@ -278,7 +282,7 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                       if (_selectedPhotos.length >= widget.maxPhotos) {
                         return const SizedBox.shrink();
                       }
-                      
+
                       return Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: InkWell(
@@ -317,10 +321,10 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                         ),
                       );
                     }
-                    
+
                     // Photo Item
                     final photo = _selectedPhotos[index];
-                    
+
                     return Padding(
                       padding: const EdgeInsets.only(right: 8),
                       child: Stack(
@@ -331,7 +335,8 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: DSColors.accentDark.withValues(alpha: 0.3),
+                                color:
+                                    DSColors.accentDark.withValues(alpha: 0.3),
                                 width: 2,
                               ),
                             ),
@@ -341,7 +346,8 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                                   ? Image.network(
                                       photo.path,
                                       fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) {
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
                                         return Container(
                                           color: DSColors.surface,
                                           child: const Icon(
@@ -354,7 +360,8 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                                   : Image.file(
                                       File(photo.path),
                                       fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) {
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
                                         return Container(
                                           color: DSColors.surface,
                                           child: const Icon(
@@ -396,7 +403,8 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: DSColors.accentDark.withValues(alpha: 0.9),
+                                color:
+                                    DSColors.accentDark.withValues(alpha: 0.9),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
@@ -415,7 +423,7 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                   },
                 ),
         ),
-        
+
         // Helper Text
         if (_selectedPhotos.isEmpty)
           Padding(

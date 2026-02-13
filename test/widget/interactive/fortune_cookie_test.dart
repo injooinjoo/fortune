@@ -319,7 +319,8 @@ class _MockFortuneCookieScreen extends StatefulWidget {
   });
 
   @override
-  State<_MockFortuneCookieScreen> createState() => _MockFortuneCookieScreenState();
+  State<_MockFortuneCookieScreen> createState() =>
+      _MockFortuneCookieScreenState();
 }
 
 class _MockFortuneCookieScreenState extends State<_MockFortuneCookieScreen> {

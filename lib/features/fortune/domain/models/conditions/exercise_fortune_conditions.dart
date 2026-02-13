@@ -40,17 +40,28 @@ class ExerciseFortuneConditions extends FortuneConditions {
   /// inputConditions Map에서 ExerciseFortuneConditions 생성
   factory ExerciseFortuneConditions.fromInputData(Map<String, dynamic> data) {
     return ExerciseFortuneConditions(
-      exerciseGoal: data['exerciseGoal'] as String? ?? data['exercise_goal'] as String? ?? 'strength',
-      sportType: data['sportType'] as String? ?? data['sport_type'] as String? ?? 'gym',
-      weeklyFrequency: data['weeklyFrequency'] as int? ?? data['weekly_frequency'] as int? ?? 3,
-      experienceLevel: data['experienceLevel'] as String? ?? data['experience_level'] as String? ?? 'intermediate',
-      fitnessLevel: data['fitnessLevel'] as int? ?? data['fitness_level'] as int? ?? 3,
+      exerciseGoal: data['exerciseGoal'] as String? ??
+          data['exercise_goal'] as String? ??
+          'strength',
+      sportType: data['sportType'] as String? ??
+          data['sport_type'] as String? ??
+          'gym',
+      weeklyFrequency: data['weeklyFrequency'] as int? ??
+          data['weekly_frequency'] as int? ??
+          3,
+      experienceLevel: data['experienceLevel'] as String? ??
+          data['experience_level'] as String? ??
+          'intermediate',
+      fitnessLevel:
+          data['fitnessLevel'] as int? ?? data['fitness_level'] as int? ?? 3,
       injuryHistory: data['injuryHistory'] != null
           ? List<String>.from(data['injuryHistory'] as List)
           : data['injury_history'] != null
               ? List<String>.from(data['injury_history'] as List)
               : [],
-      preferredTime: data['preferredTime'] as String? ?? data['preferred_time'] as String? ?? 'evening',
+      preferredTime: data['preferredTime'] as String? ??
+          data['preferred_time'] as String? ??
+          'evening',
     );
   }
 

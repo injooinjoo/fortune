@@ -9,7 +9,8 @@ class CacheSettingsWidget extends ConsumerStatefulWidget {
   const CacheSettingsWidget({super.key});
 
   @override
-  ConsumerState<CacheSettingsWidget> createState() => _CacheSettingsWidgetState();
+  ConsumerState<CacheSettingsWidget> createState() =>
+      _CacheSettingsWidgetState();
 }
 
 class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
@@ -35,20 +36,21 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
 
   Future<void> _clearCache() async {
     final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('캐시 삭제'),
-        content: const Text('저장된 모든 인사이트 캐시를 삭제하시겠습니까?\n오프라인에서 인사이트를 확인할 수 없게 됩니다.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('취소')),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(
-              foregroundColor: DSColors.error),
-            child: const Text('삭제'))
-        ]));
+        context: context,
+        builder: (context) => AlertDialog(
+                title: const Text('캐시 삭제'),
+                content: const Text(
+                    '저장된 모든 인사이트 캐시를 삭제하시겠습니까?\n오프라인에서 인사이트를 확인할 수 없게 됩니다.'),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text('취소')),
+                  TextButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      style:
+                          TextButton.styleFrom(foregroundColor: DSColors.error),
+                      child: const Text('삭제'))
+                ]));
 
     if (confirm == true) {
       await _cacheService.clearAllCache();
@@ -76,10 +78,10 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
     try {
       final apiService = ref.read(fortuneApiServiceProvider);
       final userId = ref.read(currentUserProvider)?.id ?? '';
-      
+
       await apiService.preloadForOfflineUse(userId);
       await _loadCacheStats();
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('오프라인용 인사이트가 준비되었습니다')),
@@ -123,7 +125,7 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
               ],
             ),
             const SizedBox(height: AppSpacing.spacing4),
-            
+
             // Cache Statistics
             if (_cacheStats != null) ...[
               _buildStatRow('전체 캐시', '${_cacheStats!['total']}개'),
@@ -132,7 +134,7 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
               _buildStatRow('캐시 크기', _formatBytes(_cacheStats!['sizeInBytes'])),
               const Divider(height: 24),
             ],
-            
+
             // Actions
             _buildActionButton(
               icon: Icons.cloud_download,
@@ -168,7 +170,8 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
         children: [
           Text(
             label,
-            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
           Text(
             value,

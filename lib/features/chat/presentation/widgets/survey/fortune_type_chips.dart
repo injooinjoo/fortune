@@ -39,13 +39,10 @@ class FortuneTypeChips extends StatelessWidget {
           Row(
             children: [
               Text(
-                isAiRecommendation
-                    ? '✨ AI 추천'
-                    : '이런 인사이트가 궁금하신가요?',
+                isAiRecommendation ? '✨ AI 추천' : '이런 인사이트가 궁금하신가요?',
                 style: typography.labelSmall.copyWith(
-                  color: isAiRecommendation
-                      ? colors.accent
-                      : colors.textSecondary,
+                  color:
+                      isAiRecommendation ? colors.accent : colors.textSecondary,
                   fontWeight:
                       isAiRecommendation ? FontWeight.w600 : FontWeight.normal,
                 ),

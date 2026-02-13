@@ -63,7 +63,8 @@ void main() {
 
       // 앱이 정상 상태에서는 오프라인 UI가 보이지 않아야 함
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ OFF-001 PASSED: Offline detection UI available: $hasOfflineUI');
+      debugPrint(
+          '✅ OFF-001 PASSED: Offline detection UI available: $hasOfflineUI');
     });
 
     testWidgets('OFF-002: 캐시 데이터 표시 확인', (tester) async {
@@ -94,7 +95,8 @@ void main() {
       final hasFortuneList = fortuneContent.evaluate().isNotEmpty;
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ OFF-002 PASSED: Cached data display - home: $hasCachedContent, fortune list: $hasFortuneList');
+      debugPrint(
+          '✅ OFF-002 PASSED: Cached data display - home: $hasCachedContent, fortune list: $hasFortuneList');
     });
 
     testWidgets('OFF-003: 오프라인 안내 메시지 UI', (tester) async {
@@ -120,7 +122,8 @@ void main() {
 
       // 정상 상태에서는 오프라인 메시지가 없어야 함
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ OFF-003 PASSED: Offline message UI: $hasOfflineMessage (expected: false in online state)');
+      debugPrint(
+          '✅ OFF-003 PASSED: Offline message UI: $hasOfflineMessage (expected: false in online state)');
     });
 
     testWidgets('OFF-004: 네트워크 재연결 처리', (tester) async {
@@ -147,7 +150,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ OFF-004 PASSED: Reconnection handling - pull to refresh: $hasRefreshIndicator, refresh button: $hasRefreshOption');
+      debugPrint(
+          '✅ OFF-004 PASSED: Reconnection handling - pull to refresh: $hasRefreshIndicator, refresh button: $hasRefreshOption');
     });
 
     testWidgets('OFF-005: 오프라인 요청 큐잉 확인', (tester) async {
@@ -168,7 +172,8 @@ void main() {
 
       // 앱이 크래시 없이 동작하면 오프라인 처리 가능
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ OFF-005 PASSED: Offline request queuing - app stable during navigation');
+      debugPrint(
+          '✅ OFF-005 PASSED: Offline request queuing - app stable during navigation');
     });
 
     testWidgets('OFF-006: 온라인 복구 시 동기화', (tester) async {
@@ -199,7 +204,8 @@ void main() {
           find.textContaining('오늘').evaluate().isNotEmpty;
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ OFF-006 PASSED: Online sync - sync UI: $hasSyncUI, content loaded: $hasContent');
+      debugPrint(
+          '✅ OFF-006 PASSED: Online sync - sync UI: $hasSyncUI, content loaded: $hasContent');
     });
   });
 }

@@ -316,13 +316,7 @@ class TarotService {
         return contexts[position];
 
       case TarotSpreadType.relationship:
-        final contexts = [
-          '당신의 마음',
-          '상대방의 마음',
-          '과거의 연결',
-          '현재 관계',
-          '미래 전망'
-        ];
+        final contexts = ['당신의 마음', '상대방의 마음', '과거의 연결', '현재 관계', '미래 전망'];
         return contexts[position];
 
       case TarotSpreadType.celticCross:
@@ -369,15 +363,18 @@ class TarotService {
       case TarotSpreadType.relationship:
         buffer.writeln('관계의 다양한 측면을 살펴봅니다.');
         buffer.writeln('\n💕 관계 분석:');
-        buffer.writeln('두 사람의 마음이 ${cards[0].fullName}과(와) ${cards[1].fullName}로 나타나며,');
-        buffer.writeln('과거의 ${cards[2].fullName}이(가) 현재의 ${cards[3].fullName}을(를) 만들었습니다.');
+        buffer.writeln(
+            '두 사람의 마음이 ${cards[0].fullName}과(와) ${cards[1].fullName}로 나타나며,');
+        buffer.writeln(
+            '과거의 ${cards[2].fullName}이(가) 현재의 ${cards[3].fullName}을(를) 만들었습니다.');
         buffer.writeln('미래는 ${cards[4].fullName}의 에너지로 흘러갈 것입니다.');
         break;
 
       case TarotSpreadType.celticCross:
         buffer.writeln('켈틱 크로스 스프레드로 심층 분석합니다.');
         buffer.writeln('\n📊 종합 분석:');
-        buffer.writeln('현재 ${cards[0].fullName}의 상황에서 ${cards[1].fullName}의 도전을 마주하고 있습니다.');
+        buffer.writeln(
+            '현재 ${cards[0].fullName}의 상황에서 ${cards[1].fullName}의 도전을 마주하고 있습니다.');
         buffer.writeln('${cards[9].fullName}이(가) 최종적인 결과를 암시합니다.');
         break;
     }

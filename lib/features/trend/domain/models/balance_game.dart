@@ -65,10 +65,8 @@ class BalanceQuestionStats with _$BalanceQuestionStats {
   factory BalanceQuestionStats.fromJson(Map<String, dynamic> json) =>
       _$BalanceQuestionStatsFromJson(json);
 
-  double get percentageA =>
-      totalVotes > 0 ? (votesA / totalVotes) * 100 : 50.0;
-  double get percentageB =>
-      totalVotes > 0 ? (votesB / totalVotes) * 100 : 50.0;
+  double get percentageA => totalVotes > 0 ? (votesA / totalVotes) * 100 : 50.0;
+  double get percentageB => totalVotes > 0 ? (votesB / totalVotes) * 100 : 50.0;
   String get majorityChoice => votesA >= votesB ? 'A' : 'B';
 }
 

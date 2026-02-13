@@ -72,7 +72,8 @@ class UnifiedFortuneBaseWidget extends ConsumerStatefulWidget {
   ///   ],
   /// )
   /// ```
-  final Widget Function(BuildContext context, VoidCallback onSubmit) inputBuilder;
+  final Widget Function(BuildContext context, VoidCallback onSubmit)
+      inputBuilder;
 
   /// FortuneConditions 생성 함수
   ///
@@ -105,7 +106,8 @@ class UnifiedFortuneBaseWidget extends ConsumerStatefulWidget {
   ///   ],
   /// )
   /// ```
-  final Widget Function(BuildContext context, FortuneResult result) resultBuilder;
+  final Widget Function(BuildContext context, FortuneResult result)
+      resultBuilder;
 
   /// 데이터 소스 (기본값: API)
   final FortuneDataSource dataSource;
@@ -222,7 +224,8 @@ class _UnifiedFortuneBaseWidgetState
     // 2. 토큰 소비 후 운세 생성
     try {
       // 2-0. 토큰 소비
-      final consumed = await tokenNotifier.consumeTokens(fortuneType: widget.fortuneType);
+      final consumed =
+          await tokenNotifier.consumeTokens(fortuneType: widget.fortuneType);
       if (!consumed) {
         Logger.warning('[UnifiedFortuneBaseWidget] 토큰 소비 실패');
         // 토큰 부족 모달 표시
@@ -336,17 +339,20 @@ class _UnifiedFortuneBaseWidgetState
       backgroundColor: widget.appBarBackgroundColor ?? colors.background,
       appBar: widget.showAppBar
           ? AppBar(
-              backgroundColor: widget.appBarBackgroundColor ?? colors.background,
+              backgroundColor:
+                  widget.appBarBackgroundColor ?? colors.background,
               elevation: 0,
               scrolledUnderElevation: 0,
               automaticallyImplyLeading: false,
-              leading: _showResult ? null : IconButton(
-                icon: Icon(
-                  Icons.arrow_back_ios,
-                  color: colors.textPrimary,
-                ),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
+              leading: _showResult
+                  ? null
+                  : IconButton(
+                      icon: Icon(
+                        Icons.arrow_back_ios,
+                        color: colors.textPrimary,
+                      ),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
               title: Text(
                 widget.title,
                 style: typography.headingSmall.copyWith(
@@ -354,24 +360,26 @@ class _UnifiedFortuneBaseWidgetState
                 ),
               ),
               centerTitle: true,
-              actions: _showResult ? [
-                // 공유 버튼 (LinkedIn/TikTok 스타일)
-                IconButton(
-                  icon: Icon(
-                    Icons.share_outlined,
-                    color: colors.textPrimary,
-                  ),
-                  onPressed: _showShareDialog,
-                  tooltip: '공유하기',
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.close,
-                    color: colors.textPrimary,
-                  ),
-                  onPressed: () => context.go('/fortune'),
-                ),
-              ] : null,
+              actions: _showResult
+                  ? [
+                      // 공유 버튼 (LinkedIn/TikTok 스타일)
+                      IconButton(
+                        icon: Icon(
+                          Icons.share_outlined,
+                          color: colors.textPrimary,
+                        ),
+                        onPressed: _showShareDialog,
+                        tooltip: '공유하기',
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.close,
+                          color: colors.textPrimary,
+                        ),
+                        onPressed: () => context.go('/fortune'),
+                      ),
+                    ]
+                  : null,
             )
           : null,
       body: _showResult

@@ -10,10 +10,8 @@ class CategoryPieChart extends StatelessWidget {
   final List<FortuneHistory> history;
   final double fontScale;
 
-  const CategoryPieChart({
-    super.key,
-    required this.history,
-    required this.fontScale});
+  const CategoryPieChart(
+      {super.key, required this.history, required this.fontScale});
 
   @override
   Widget build(BuildContext context) {
@@ -22,27 +20,26 @@ class CategoryPieChart extends StatelessWidget {
     if (categoryData.isEmpty) {
       return const SizedBox.shrink();
     }
-    
+
     final sortedCategories = categoryData.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
-    
+
     final topCategories = sortedCategories.take(5).toList();
     final colors = [
       DSColors.accentDark,
       DSColors.textSecondaryDark,
       DSColors.success,
       DSColors.warning,
-      DSColors.error];
-    
+      DSColors.error
+    ];
+
     return SizedBox(
       height: 300,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '운세 유형별 분포',
-            style: context.heading3.copyWith(
-              fontWeight: FontWeight.bold)),
+          Text('운세 유형별 분포',
+              style: context.heading3.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           Expanded(
             child: Row(
@@ -53,8 +50,9 @@ class CategoryPieChart extends StatelessWidget {
                       sections: topCategories.asMap().entries.map((entry) {
                         final index = entry.key;
                         final category = entry.value;
-                        final percentage = (category.value / history.length * 100);
-                        
+                        final percentage =
+                            (category.value / history.length * 100);
+
                         return PieChartSectionData(
                           value: category.value.toDouble(),
                           title: '${percentage.toStringAsFixed(1)}%',
@@ -78,7 +76,7 @@ class CategoryPieChart extends StatelessWidget {
                   children: topCategories.asMap().entries.map((entry) {
                     final index = entry.key;
                     final category = entry.value;
-                    
+
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Row(
@@ -111,12 +109,12 @@ class CategoryPieChart extends StatelessWidget {
 
   Map<String, int> _groupHistoryByCategory(List<FortuneHistory> history) {
     final Map<String, int> categoryCount = {};
-    
+
     for (final item in history) {
       final category = FortuneTypeNames.getName(item.fortuneType);
       categoryCount[category] = (categoryCount[category] ?? 0) + 1;
     }
-    
+
     return categoryCount;
   }
 }
@@ -125,10 +123,8 @@ class MonthlyTrendChart extends StatelessWidget {
   final List<FortuneHistory> history;
   final double fontScale;
 
-  const MonthlyTrendChart({
-    super.key,
-    required this.history,
-    required this.fontScale});
+  const MonthlyTrendChart(
+      {super.key, required this.history, required this.fontScale});
 
   @override
   Widget build(BuildContext context) {
@@ -136,53 +132,53 @@ class MonthlyTrendChart extends StatelessWidget {
     final monthlyData = _groupHistoryByMonth(history);
     final months = monthlyData.keys.toList();
     final values = monthlyData.values.toList();
-    
+
     if (months.isEmpty) {
       return const SizedBox.shrink();
     }
-    
+
     final maxValue = values.reduce((a, b) => a > b ? a : b);
-    
+
     return SizedBox(
       height: 300,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '월별 운세 조회 추이',
-            style: context.heading3.copyWith(
-              fontWeight: FontWeight.bold)),
+          Text('월별 운세 조회 추이',
+              style: context.heading3.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           Expanded(
             child: LineChart(
               LineChartData(
                 gridData: FlGridData(
-                  show: true,
-                  drawVerticalLine: false,
-                  horizontalInterval: 5,
-                  getDrawingHorizontalLine: (value) {
-                    return FlLine(
-                      color: theme.colorScheme.outline.withValues(alpha: 0.1),
-                      strokeWidth: 1);
-                  }),
+                    show: true,
+                    drawVerticalLine: false,
+                    horizontalInterval: 5,
+                    getDrawingHorizontalLine: (value) {
+                      return FlLine(
+                          color:
+                              theme.colorScheme.outline.withValues(alpha: 0.1),
+                          strokeWidth: 1);
+                    }),
                 titlesData: FlTitlesData(
                   show: true,
                   rightTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false)),
+                      sideTitles: SideTitles(showTitles: false)),
                   topTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false)),
+                      sideTitles: SideTitles(showTitles: false)),
                   bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      getTitlesWidget: (value, meta) {
-                        if (value.toInt() >= 0 && value.toInt() < months.length) {
-                          return Text(
-                            months[value.toInt()],
-                            style: context.labelMedium.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6)));
-                        }
-                        return const Text('');
-                      })),
+                      sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) {
+                            if (value.toInt() >= 0 &&
+                                value.toInt() < months.length) {
+                              return Text(months[value.toInt()],
+                                  style: context.labelMedium.copyWith(
+                                      color: theme.colorScheme.onSurface
+                                          .withValues(alpha: 0.6)));
+                            }
+                            return const Text('');
+                          })),
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
@@ -190,7 +186,8 @@ class MonthlyTrendChart extends StatelessWidget {
                         return Text(
                           value.toInt().toString(),
                           style: context.labelMedium.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                            color: theme.colorScheme.onSurface
+                                .withValues(alpha: 0.6),
                           ),
                         );
                       },
@@ -215,7 +212,8 @@ class MonthlyTrendChart extends StatelessWidget {
                 lineBarsData: [
                   LineChartBarData(
                     spots: values.asMap().entries.map((entry) {
-                      return FlSpot(entry.key.toDouble(), entry.value.toDouble());
+                      return FlSpot(
+                          entry.key.toDouble(), entry.value.toDouble());
                     }).toList(),
                     isCurved: true,
                     color: theme.colorScheme.primary,
@@ -248,7 +246,7 @@ class MonthlyTrendChart extends StatelessWidget {
 
   Map<String, int> _groupHistoryByMonth(List<FortuneHistory> history) {
     final Map<String, int> monthlyCount = {};
-    
+
     // Get last 6 months
     final now = DateTime.now();
     for (int i = 5; i >= 0; i--) {
@@ -256,7 +254,7 @@ class MonthlyTrendChart extends StatelessWidget {
       final monthKey = DateFormat('M월').format(month);
       monthlyCount[monthKey] = 0;
     }
-    
+
     // Count history by month
     for (final item in history) {
       final monthKey = DateFormat('M월').format(item.createdAt);
@@ -264,7 +262,7 @@ class MonthlyTrendChart extends StatelessWidget {
         monthlyCount[monthKey] = monthlyCount[monthKey]! + 1;
       }
     }
-    
+
     return monthlyCount;
   }
 }

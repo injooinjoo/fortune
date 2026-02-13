@@ -48,7 +48,8 @@ class MatchInsightNotifier extends StateNotifier<MatchInsightState> {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      Logger.info('[MatchInsight] Generating insight for $homeTeam vs $awayTeam');
+      Logger.info(
+          '[MatchInsight] Generating insight for $homeTeam vs $awayTeam');
 
       final response = await _supabase.functions.invoke(
         'fortune-match-insight',
@@ -71,7 +72,8 @@ class MatchInsightNotifier extends StateNotifier<MatchInsightState> {
       final insight = MatchInsight.fromJson(data);
 
       state = state.copyWith(isLoading: false, result: insight);
-      Logger.info('[MatchInsight] Successfully generated insight. Score: ${insight.score}');
+      Logger.info(
+          '[MatchInsight] Successfully generated insight. Score: ${insight.score}');
 
       return insight;
     } catch (e, st) {
@@ -91,7 +93,8 @@ class MatchInsightNotifier extends StateNotifier<MatchInsightState> {
 }
 
 /// 경기 인사이트 Provider
-final matchInsightProvider = StateNotifierProvider<MatchInsightNotifier, MatchInsightState>(
+final matchInsightProvider =
+    StateNotifierProvider<MatchInsightNotifier, MatchInsightState>(
   (ref) => MatchInsightNotifier(),
 );
 

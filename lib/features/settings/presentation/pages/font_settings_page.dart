@@ -150,10 +150,13 @@ class FontSettingsPage extends ConsumerWidget {
                           inactiveColor: context.colors.divider,
                           onChanged: (value) {
                             // 스냅 포인트 변경 시에만 햅틱 피드백
-                            final oldStep = ((settings.fontScale - 0.85) / 0.05).round();
+                            final oldStep =
+                                ((settings.fontScale - 0.85) / 0.05).round();
                             final newStep = ((value - 0.85) / 0.05).round();
                             if (oldStep != newStep) {
-                              ref.read(fortuneHapticServiceProvider).sliderSnap();
+                              ref
+                                  .read(fortuneHapticServiceProvider)
+                                  .sliderSnap();
                             }
                             settingsNotifier.setFontScale(value);
                           },
@@ -216,8 +219,7 @@ class FontSettingsPage extends ConsumerWidget {
                     color: context.colors.border,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(DSRadius.md),
+                    borderRadius: BorderRadius.circular(DSRadius.md),
                   ),
                 ),
                 child: Text(
@@ -269,23 +271,17 @@ class _PresetButton extends StatelessWidget {
           vertical: DSSpacing.sm,
         ),
         decoration: BoxDecoration(
-          color: isSelected
-              ? DSColors.accentDark
-              : context.colors.surface,
+          color: isSelected ? DSColors.accentDark : context.colors.surface,
           borderRadius: BorderRadius.circular(DSRadius.smd),
           border: Border.all(
-            color: isSelected
-                ? DSColors.accentDark
-                : context.colors.border,
+            color: isSelected ? DSColors.accentDark : context.colors.border,
           ),
         ),
         child: Text(
           label,
           style: context.bodySmall.copyWith(
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-            color: isSelected
-                ? Colors.white
-                : context.colors.textPrimary,
+            color: isSelected ? Colors.white : context.colors.textPrimary,
           ),
         ),
       ),

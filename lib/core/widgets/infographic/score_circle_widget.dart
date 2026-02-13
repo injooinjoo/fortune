@@ -66,7 +66,9 @@ class ScoreCircleWidget extends StatelessWidget {
     final isDark = context.isDark;
     final effectiveScoreColor = scoreColor ?? _getScoreColor(isDark);
     final effectiveBgColor = backgroundColor ??
-        (isDark ? DSColors.backgroundSecondaryDark : DSColors.backgroundSecondary);
+        (isDark
+            ? DSColors.backgroundSecondaryDark
+            : DSColors.backgroundSecondary);
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -93,7 +95,9 @@ class ScoreCircleWidget extends StatelessWidget {
                 Text(
                   label!,
                   style: context.heading4.copyWith(
-                    color: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
+                    color: isDark
+                        ? DSColors.textPrimaryDark
+                        : DSColors.textPrimary,
                   ),
                 ),
               if (subtitle != null) ...[
@@ -101,7 +105,9 @@ class ScoreCircleWidget extends StatelessWidget {
                 Text(
                   subtitle!,
                   style: context.bodySmall.copyWith(
-                    color: isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
+                    color: isDark
+                        ? DSColors.textSecondaryDark
+                        : DSColors.textSecondary,
                   ),
                 ),
               ],
@@ -242,14 +248,18 @@ class _AnimatedScoreCircleState extends State<_AnimatedScoreCircle>
                     Text(
                       _animation.value.round().toString(),
                       style: context.numberLarge.copyWith(
-                        color: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
+                        color: isDark
+                            ? DSColors.textPrimaryDark
+                            : DSColors.textPrimary,
                         fontSize: widget.size * 0.28,
                       ),
                     ),
                     Text(
                       widget.scoreSuffix,
                       style: context.labelSmall.copyWith(
-                        color: isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
+                        color: isDark
+                            ? DSColors.textSecondaryDark
+                            : DSColors.textSecondary,
                         fontSize: widget.size * 0.12,
                       ),
                     ),

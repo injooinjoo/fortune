@@ -72,7 +72,8 @@ class DSTheme {
         error: colors.error,
         onError: colors.ctaForeground,
         outline: colors.border,
-        shadow: isDark ? Colors.black : DSColors.textPrimary.withValues(alpha: 0.1),
+        shadow:
+            isDark ? Colors.black : DSColors.textPrimary.withValues(alpha: 0.1),
       ),
 
       // App Bar Theme
@@ -86,9 +87,8 @@ class DSTheme {
           color: colors.textPrimary,
         ),
         iconTheme: IconThemeData(color: colors.textPrimary),
-        systemOverlayStyle: isDark
-            ? SystemUiOverlayStyle.light
-            : SystemUiOverlayStyle.dark,
+        systemOverlayStyle:
+            isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
       ),
 
       // Elevated Button Theme (for non-DS buttons)

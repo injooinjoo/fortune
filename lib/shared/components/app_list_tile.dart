@@ -39,19 +39,22 @@ class AppListTile extends StatelessWidget {
           Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap: isEnabled ? () {
-                if (onTap != null) {
-                  DSHaptics.light();
-                  onTap!();
-                }
-              } : null,
+              onTap: isEnabled
+                  ? () {
+                      if (onTap != null) {
+                        DSHaptics.light();
+                        onTap!();
+                      }
+                    }
+                  : null,
               splashColor: colors.accentSecondary.withValues(alpha: 0.1),
               highlightColor: colors.accentSecondary.withValues(alpha: 0.05),
               child: Padding(
-                padding: padding ?? const EdgeInsets.symmetric(
-                  horizontal: DSSpacing.lg,
-                  vertical: DSSpacing.md,
-                ),
+                padding: padding ??
+                    const EdgeInsets.symmetric(
+                      horizontal: DSSpacing.lg,
+                      vertical: DSSpacing.md,
+                    ),
                 child: Row(
                   children: [
                     if (leading != null) ...[
@@ -66,8 +69,8 @@ class AppListTile extends StatelessWidget {
                             title,
                             style: typography.bodyMedium.copyWith(
                               color: isEnabled
-                                ? colors.textPrimary
-                                : colors.textTertiary,
+                                  ? colors.textPrimary
+                                  : colors.textTertiary,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -97,7 +100,9 @@ class AppListTile extends StatelessWidget {
               height: 1,
               thickness: 1,
               color: colors.divider,
-              indent: leading != null ? DSSpacing.lg + 40 + DSSpacing.md : DSSpacing.lg,
+              indent: leading != null
+                  ? DSSpacing.lg + 40 + DSSpacing.md
+                  : DSSpacing.lg,
               endIndent: DSSpacing.lg,
             ),
         ],
@@ -157,12 +162,13 @@ class TossListSection extends StatelessWidget {
 
     return Container(
       color: colors.backgroundSecondary,
-      padding: padding ?? const EdgeInsets.fromLTRB(
-        DSSpacing.lg,
-        DSSpacing.md,
-        DSSpacing.lg,
-        DSSpacing.sm,
-      ),
+      padding: padding ??
+          const EdgeInsets.fromLTRB(
+            DSSpacing.lg,
+            DSSpacing.md,
+            DSSpacing.lg,
+            DSSpacing.sm,
+          ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -229,10 +235,12 @@ class TossComplexListTile extends StatelessWidget {
     return Material(
       color: colors.surface,
       child: InkWell(
-        onTap: onTap != null ? () {
-          DSHaptics.light();
-          onTap!();
-        } : null,
+        onTap: onTap != null
+            ? () {
+                DSHaptics.light();
+                onTap!();
+              }
+            : null,
         splashColor: colors.accentSecondary.withValues(alpha: 0.1),
         highlightColor: colors.accentSecondary.withValues(alpha: 0.05),
         child: Container(
@@ -284,14 +292,14 @@ class TossComplexListTile extends StatelessWidget {
                       Text(
                         value!,
                         style: value!.contains(RegExp(r'\d'))
-                          ? typography.numberMedium.copyWith(
-                              color: valueColor ?? colors.textPrimary,
-                              fontWeight: FontWeight.w600,
-                            )
-                          : typography.bodyMedium.copyWith(
-                              color: valueColor ?? colors.textPrimary,
-                              fontWeight: FontWeight.w600,
-                            ),
+                            ? typography.numberMedium.copyWith(
+                                color: valueColor ?? colors.textPrimary,
+                                fontWeight: FontWeight.w600,
+                              )
+                            : typography.bodyMedium.copyWith(
+                                color: valueColor ?? colors.textPrimary,
+                                fontWeight: FontWeight.w600,
+                              ),
                       ),
                     if (valueLabel != null) ...[
                       const SizedBox(height: DSSpacing.xxs),

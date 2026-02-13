@@ -44,12 +44,18 @@ class FiveElementsCard extends StatelessWidget {
   /// 오행 한자 추출
   String _getHanja(String element) {
     switch (element) {
-      case '목(木)': return '木';
-      case '화(火)': return '火';
-      case '토(土)': return '土';
-      case '금(金)': return '金';
-      case '수(水)': return '水';
-      default: return '';
+      case '목(木)':
+        return '木';
+      case '화(火)':
+        return '火';
+      case '토(土)':
+        return '土';
+      case '금(金)':
+        return '金';
+      case '수(水)':
+        return '水';
+      default:
+        return '';
     }
   }
 
@@ -180,8 +186,11 @@ class FiveElementsCard extends StatelessWidget {
                               color: color,
                               borderRadius: BorderRadius.circular(2),
                             ),
-                          ).animate()
-                            .scaleX(begin: 0, duration: 800.ms, curve: Curves.easeOutCubic, alignment: Alignment.centerLeft),
+                          ).animate().scaleX(
+                              begin: 0,
+                              duration: 800.ms,
+                              curve: Curves.easeOutCubic,
+                              alignment: Alignment.centerLeft),
                         ),
                       ],
                     ),
@@ -200,8 +209,14 @@ class FiveElementsCard extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: context.isDark
-                  ? [DSColors.success.withValues(alpha: 0.15), DSColors.info.withValues(alpha: 0.15)]
-                  : [DSColors.success.withValues(alpha: 0.08), DSColors.info.withValues(alpha: 0.08)],
+                  ? [
+                      DSColors.success.withValues(alpha: 0.15),
+                      DSColors.info.withValues(alpha: 0.15)
+                    ]
+                  : [
+                      DSColors.success.withValues(alpha: 0.08),
+                      DSColors.info.withValues(alpha: 0.08)
+                    ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),

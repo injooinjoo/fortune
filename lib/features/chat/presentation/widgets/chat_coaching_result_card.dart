@@ -46,9 +46,7 @@ class ChatCoachingResultCard extends ConsumerWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: isDark
-              ? [_darkBg1, _darkBg2]
-              : [_creamLight, _creamDark],
+          colors: isDark ? [_darkBg1, _darkBg2] : [_creamLight, _creamDark],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
@@ -81,9 +79,9 @@ class ChatCoachingResultCard extends ConsumerWidget {
                 children: [
                   // 헤더
                   _buildHeader(context, isDark)
-                    .animate()
-                    .fadeIn(duration: 500.ms)
-                    .slideY(begin: -0.1, end: 0),
+                      .animate()
+                      .fadeIn(duration: 500.ms)
+                      .slideY(begin: -0.1, end: 0),
 
                   const SizedBox(height: 16),
 
@@ -95,16 +93,16 @@ class ChatCoachingResultCard extends ConsumerWidget {
                   // 상황 요약
                   if (situation.isNotEmpty) ...[
                     _buildSituationSection(context, isDark)
-                      .animate()
-                      .fadeIn(duration: 400.ms, delay: 200.ms),
+                        .animate()
+                        .fadeIn(duration: 400.ms, delay: 200.ms),
                     const SizedBox(height: 16),
                   ],
 
                   // 코칭 어드바이스
                   _buildAdviceSection(context, isDark)
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 400.ms)
-                    .slideX(begin: -0.05, end: 0),
+                      .animate()
+                      .fadeIn(duration: 400.ms, delay: 400.ms)
+                      .slideX(begin: -0.05, end: 0),
 
                   const SizedBox(height: 20),
 
@@ -115,8 +113,8 @@ class ChatCoachingResultCard extends ConsumerWidget {
 
                   // 마무리 응원 메시지
                   _buildClosingMessage(context, isDark)
-                    .animate()
-                    .fadeIn(duration: 500.ms, delay: 800.ms),
+                      .animate()
+                      .fadeIn(duration: 500.ms, delay: 800.ms),
 
                   const SizedBox(height: 16),
                 ],
@@ -139,13 +137,11 @@ class ChatCoachingResultCard extends ConsumerWidget {
         child: const Text(
           '💫',
           style: TextStyle(fontSize: 20),
-        )
-          .animate(onPlay: (c) => c.repeat(reverse: true))
-          .scale(
-            begin: const Offset(0.9, 0.9),
-            end: const Offset(1.1, 1.1),
-            duration: 2000.ms,
-          ),
+        ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
+              begin: const Offset(0.9, 0.9),
+              end: const Offset(1.1, 1.1),
+              duration: 2000.ms,
+            ),
       ),
     );
 
@@ -160,9 +156,9 @@ class ChatCoachingResultCard extends ConsumerWidget {
             color: Colors.green.withValues(alpha: 0.5),
           ),
         )
-          .animate(onPlay: (c) => c.repeat(reverse: true))
-          .fadeIn(duration: 1500.ms)
-          .fadeOut(duration: 1500.ms),
+            .animate(onPlay: (c) => c.repeat(reverse: true))
+            .fadeIn(duration: 1500.ms)
+            .fadeOut(duration: 1500.ms),
       ),
     );
 
@@ -171,7 +167,8 @@ class ChatCoachingResultCard extends ConsumerWidget {
 
   Widget _buildHeader(BuildContext context, bool isDark) {
     final formattedDate = DateFormat('M월 d일 HH:mm').format(date);
-    final textColor = isDark ? context.colors.textPrimary : DSColors.textPrimary;
+    final textColor =
+        isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Row(
       children: [
@@ -279,7 +276,8 @@ class ChatCoachingResultCard extends ConsumerWidget {
   }
 
   Widget _buildSituationSection(BuildContext context, bool isDark) {
-    final textColor = isDark ? context.colors.textPrimary : DSColors.textPrimary;
+    final textColor =
+        isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -324,7 +322,8 @@ class ChatCoachingResultCard extends ConsumerWidget {
   }
 
   Widget _buildAdviceSection(BuildContext context, bool isDark) {
-    final textColor = isDark ? context.colors.textPrimary : DSColors.textPrimary;
+    final textColor =
+        isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -372,7 +371,8 @@ class ChatCoachingResultCard extends ConsumerWidget {
   }
 
   Widget _buildActionItems(BuildContext context, bool isDark) {
-    final textColor = isDark ? context.colors.textPrimary : DSColors.textPrimary;
+    final textColor =
+        isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -395,16 +395,20 @@ class ChatCoachingResultCard extends ConsumerWidget {
           final index = entry.key;
           final item = entry.value;
           return _buildActionItem(context, index + 1, item, isDark)
-            .animate()
-            .fadeIn(duration: 300.ms, delay: Duration(milliseconds: 600 + (index * 150)))
-            .slideX(begin: 0.1, end: 0);
+              .animate()
+              .fadeIn(
+                  duration: 300.ms,
+                  delay: Duration(milliseconds: 600 + (index * 150)))
+              .slideX(begin: 0.1, end: 0);
         }),
       ],
     );
   }
 
-  Widget _buildActionItem(BuildContext context, int index, String text, bool isDark) {
-    final textColor = isDark ? context.colors.textPrimary : DSColors.textPrimary;
+  Widget _buildActionItem(
+      BuildContext context, int index, String text, bool isDark) {
+    final textColor =
+        isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -433,7 +437,8 @@ class ChatCoachingResultCard extends ConsumerWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: context.colors.surface.withValues(alpha: isDark ? 0.05 : 0.6),
+                color: context.colors.surface
+                    .withValues(alpha: isDark ? 0.05 : 0.6),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
@@ -451,7 +456,8 @@ class ChatCoachingResultCard extends ConsumerWidget {
   }
 
   Widget _buildClosingMessage(BuildContext context, bool isDark) {
-    final textColor = isDark ? context.colors.textPrimary : DSColors.textPrimary;
+    final textColor =
+        isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Container(
       padding: const EdgeInsets.all(14),

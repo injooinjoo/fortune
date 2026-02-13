@@ -30,7 +30,8 @@ class FacebookAuthProvider extends BaseSocialAuthProvider {
 
       return null;
     } catch (error) {
-      Logger.warning('[FacebookAuthProvider] Facebook 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
+      Logger.warning(
+          '[FacebookAuthProvider] Facebook 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
       rethrow;
     }
   }

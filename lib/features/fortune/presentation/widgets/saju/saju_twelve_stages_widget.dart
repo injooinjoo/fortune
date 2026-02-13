@@ -37,7 +37,8 @@ class SajuTwelveStagesWidget extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    final totalStrength = stages.values.fold(0, (sum, stage) => sum + stage.strength);
+    final totalStrength =
+        stages.values.fold(0, (sum, stage) => sum + stage.strength);
     final strengthLevel = _getStrengthLevel(totalStrength);
 
     return AppCard(
@@ -54,7 +55,8 @@ class SajuTwelveStagesWidget extends StatelessWidget {
           _buildStagesTable(context, stages, isDark),
           const SizedBox(height: DSSpacing.md),
           // 신강/신약 판단
-          _buildStrengthIndicator(context, totalStrength, strengthLevel, isDark),
+          _buildStrengthIndicator(
+              context, totalStrength, strengthLevel, isDark),
           const SizedBox(height: DSSpacing.sm),
           // 각 운성 설명
           _buildStageDescriptions(context, stages, isDark),
@@ -100,7 +102,8 @@ class SajuTwelveStagesWidget extends StatelessWidget {
               Text(
                 '일간의 생명력 주기를 나타내는 12단계',
                 style: context.labelTiny.copyWith(
-                  color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
+                  color:
+                      isDark ? DSColors.textTertiary : DSColors.textSecondary,
                 ),
               ),
             ],
@@ -134,9 +137,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
           // 헤더
           Container(
             decoration: BoxDecoration(
-              color: isDark
-                  ? DSColors.surface
-                  : DSColors.backgroundSecondary,
+              color: isDark ? DSColors.surface : DSColors.backgroundSecondary,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(DSRadius.md),
                 topRight: Radius.circular(DSRadius.md),
@@ -157,16 +158,14 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                       border: Border(
                         right: index < pillars.length - 1
                             ? BorderSide(
-                                color: isDark
-                                    ? DSColors.border
-                                    : DSColors.border,
+                                color:
+                                    isDark ? DSColors.border : DSColors.border,
                                 width: 1,
                               )
                             : BorderSide.none,
                       ),
-                      color: isDay
-                          ? DSColors.accent.withValues(alpha: 0.1)
-                          : null,
+                      color:
+                          isDay ? DSColors.accent.withValues(alpha: 0.1) : null,
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -182,7 +181,8 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                         Text(
                           pillar['title']!,
                           style: context.labelSmall.copyWith(
-                            fontWeight: isDay ? FontWeight.bold : FontWeight.w600,
+                            fontWeight:
+                                isDay ? FontWeight.bold : FontWeight.w600,
                             color: isDay ? DSColors.accent : null,
                           ),
                         ),
@@ -203,21 +203,19 @@ class SajuTwelveStagesWidget extends StatelessWidget {
 
               return Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                   decoration: BoxDecoration(
                     border: Border(
                       right: index < pillars.length - 1
                           ? BorderSide(
-                              color: isDark
-                                  ? DSColors.border
-                                  : DSColors.border,
+                              color: isDark ? DSColors.border : DSColors.border,
                               width: 1,
                             )
                           : BorderSide.none,
                     ),
-                    color: isDay
-                        ? DSColors.accent.withValues(alpha: 0.05)
-                        : null,
+                    color:
+                        isDay ? DSColors.accent.withValues(alpha: 0.05) : null,
                     borderRadius: index == 0
                         ? const BorderRadius.only(
                             bottomLeft: Radius.circular(DSRadius.md),
@@ -238,7 +236,8 @@ class SajuTwelveStagesWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildStageCell(BuildContext context, TwelveStage? stage, bool isDay, bool isDark) {
+  Widget _buildStageCell(
+      BuildContext context, TwelveStage? stage, bool isDay, bool isDark) {
     if (stage == null) {
       return const Center(child: Text('-'));
     }
@@ -509,9 +508,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                     width: itemWidth,
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: isDark
-                          ? DSColors.surface
-                          : Colors.grey.shade50,
+                      color: isDark ? DSColors.surface : Colors.grey.shade50,
                       borderRadius: BorderRadius.circular(DSRadius.sm),
                     ),
                     child: Row(
@@ -558,7 +555,8 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                                       vertical: 1,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: stage.color.withValues(alpha: 0.15),
+                                      color:
+                                          stage.color.withValues(alpha: 0.15),
                                       borderRadius: BorderRadius.circular(3),
                                     ),
                                     child: Text(
@@ -576,7 +574,8 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                                     size: 10,
                                     color: isDark
                                         ? DSColors.textTertiary
-                                        : DSColors.textSecondary.withValues(alpha: 0.5),
+                                        : DSColors.textSecondary
+                                            .withValues(alpha: 0.5),
                                   ),
                                 ],
                               ),
@@ -615,22 +614,18 @@ class SajuTwelveStagesWidget extends StatelessWidget {
       return {};
     }
 
-    final yearBranch =
-        (sajuData['year']?['jiji'] as Map<String, dynamic>?)?['char']
-                as String? ??
-            '';
-    final monthBranch =
-        (sajuData['month']?['jiji'] as Map<String, dynamic>?)?['char']
-                as String? ??
-            '';
-    final dayBranch =
-        (sajuData['day']?['jiji'] as Map<String, dynamic>?)?['char']
-                as String? ??
-            '';
-    final hourBranch =
-        (sajuData['hour']?['jiji'] as Map<String, dynamic>?)?['char']
-                as String? ??
-            '';
+    final yearBranch = (sajuData['year']?['jiji']
+            as Map<String, dynamic>?)?['char'] as String? ??
+        '';
+    final monthBranch = (sajuData['month']?['jiji']
+            as Map<String, dynamic>?)?['char'] as String? ??
+        '';
+    final dayBranch = (sajuData['day']?['jiji']
+            as Map<String, dynamic>?)?['char'] as String? ??
+        '';
+    final hourBranch = (sajuData['hour']?['jiji']
+            as Map<String, dynamic>?)?['char'] as String? ??
+        '';
 
     return TwelveStageCalculator.calculateAll(
       ilGan: dayStem,

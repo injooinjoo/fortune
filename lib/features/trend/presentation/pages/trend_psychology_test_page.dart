@@ -178,8 +178,7 @@ class _TrendPsychologyTestPageState
               if (_currentQuestionIndex > 0)
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () =>
-                        setState(() => _currentQuestionIndex--),
+                    onPressed: () => setState(() => _currentQuestionIndex--),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       side: BorderSide(
@@ -201,9 +200,8 @@ class _TrendPsychologyTestPageState
               Expanded(
                 flex: 2,
                 child: ElevatedButton(
-                  onPressed: selectedOptionId != null
-                      ? () => _handleNext(test)
-                      : null,
+                  onPressed:
+                      selectedOptionId != null ? () => _handleNext(test) : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: DSColors.accentDark,
                     disabledBackgroundColor: context.colors.border,
@@ -255,9 +253,7 @@ class _TrendPsychologyTestPageState
               : context.colors.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected
-                ? DSColors.accentDark
-                : context.colors.border,
+            color: isSelected ? DSColors.accentDark : context.colors.border,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -293,9 +289,7 @@ class _TrendPsychologyTestPageState
               height: 24,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: isSelected
-                    ? DSColors.accentDark
-                    : Colors.transparent,
+                color: isSelected ? DSColors.accentDark : Colors.transparent,
                 border: Border.all(
                   color: isSelected
                       ? DSColors.accentDark
@@ -350,7 +344,8 @@ class _TrendPsychologyTestPageState
         );
 
         for (final entry in selectedOption.scoreMap.entries) {
-          scoreBreakdown[entry.key] = (scoreBreakdown[entry.key] ?? 0) + entry.value;
+          scoreBreakdown[entry.key] =
+              (scoreBreakdown[entry.key] ?? 0) + entry.value;
         }
       }
 
@@ -369,7 +364,8 @@ class _TrendPsychologyTestPageState
     } catch (e) {
       setState(() => _isSubmitting = false);
       if (mounted) {
-        Toast.show(context, message: '결과 저장 중 오류가 발생했습니다', type: ToastType.error);
+        Toast.show(context,
+            message: '결과 저장 중 오류가 발생했습니다', type: ToastType.error);
       }
     }
   }
@@ -420,7 +416,8 @@ class _TrendPsychologyTestPageState
                 const SizedBox(height: 24),
                 // Result title
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     color: DSColors.accentDark.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),

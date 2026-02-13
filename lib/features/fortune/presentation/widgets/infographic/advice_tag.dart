@@ -230,8 +230,7 @@ class AdviceTextMapper {
     }
 
     // 긍정 키워드
-    if (_containsAny(
-        lowerText, ['좋은', '행운', '기회', '성공', '발전', '긍정', '도전'])) {
+    if (_containsAny(lowerText, ['좋은', '행운', '기회', '성공', '발전', '긍정', '도전'])) {
       return AdviceSentiment.positive;
     }
 
@@ -273,16 +272,16 @@ class AdviceTextMapper {
   /// 미리 정의된 매핑
   static final Map<String, AdviceData> _predefinedMappings = {
     // 긍정
-    '유연한 태도로 변화에 대응하면 좋은 기회를 잡을 수 있습니다':
-        const AdviceData(keyword: '유연한 태도', sentiment: AdviceSentiment.positive),
+    '유연한 태도로 변화에 대응하면 좋은 기회를 잡을 수 있습니다': const AdviceData(
+        keyword: '유연한 태도', sentiment: AdviceSentiment.positive),
     '좋은 인연을 만날 수 있는 날입니다':
         const AdviceData(keyword: '좋은 인연', sentiment: AdviceSentiment.positive),
-    '새로운 시작에 좋은 날입니다':
-        const AdviceData(keyword: '새로운 시작', sentiment: AdviceSentiment.positive),
-    '긍정적인 마인드가 행운을 부릅니다':
-        const AdviceData(keyword: '긍정 마인드', sentiment: AdviceSentiment.positive),
-    '과감한 도전이 성공으로 이어집니다':
-        const AdviceData(keyword: '과감한 도전', sentiment: AdviceSentiment.positive),
+    '새로운 시작에 좋은 날입니다': const AdviceData(
+        keyword: '새로운 시작', sentiment: AdviceSentiment.positive),
+    '긍정적인 마인드가 행운을 부릅니다': const AdviceData(
+        keyword: '긍정 마인드', sentiment: AdviceSentiment.positive),
+    '과감한 도전이 성공으로 이어집니다': const AdviceData(
+        keyword: '과감한 도전', sentiment: AdviceSentiment.positive),
 
     // 중립
     '차분하게 상황을 지켜보세요':

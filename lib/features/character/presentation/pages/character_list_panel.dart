@@ -120,9 +120,10 @@ class CharacterListPanel extends ConsumerWidget {
             child: CircleAvatar(
               radius: 16,
               backgroundColor: Colors.grey[300],
-              backgroundImage: profileImageUrl != null && profileImageUrl.isNotEmpty
-                  ? NetworkImage(profileImageUrl)
-                  : null,
+              backgroundImage:
+                  profileImageUrl != null && profileImageUrl.isNotEmpty
+                      ? NetworkImage(profileImageUrl)
+                      : null,
               child: profileImageUrl == null || profileImageUrl.isEmpty
                   ? Icon(
                       Icons.person,
@@ -290,7 +291,8 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(context.l10n.leaveConversation),
-        content: Text(context.l10n.leaveConversationConfirm(CharacterLocalizer.getName(context, widget.character.id))),
+        content: Text(context.l10n.leaveConversationConfirm(
+            CharacterLocalizer.getName(context, widget.character.id))),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -299,7 +301,9 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
-              ref.read(characterChatProvider(widget.character.id).notifier).clearConversation();
+              ref
+                  .read(characterChatProvider(widget.character.id).notifier)
+                  .clearConversation();
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: Text(context.l10n.leave),
@@ -314,7 +318,8 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
     HapticFeedback.lightImpact();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(context.l10n.notificationOffMessage(CharacterLocalizer.getName(context, widget.character.id))),
+        content: Text(context.l10n.notificationOffMessage(
+            CharacterLocalizer.getName(context, widget.character.id))),
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 2),
       ),
@@ -386,7 +391,8 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.notifications_off_outlined, color: Colors.white, size: 22),
+                            const Icon(Icons.notifications_off_outlined,
+                                color: Colors.white, size: 22),
                             const SizedBox(height: 4),
                             Text(
                               context.l10n.muteNotification,
@@ -410,7 +416,8 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.exit_to_app, color: Colors.white, size: 22),
+                            const Icon(Icons.exit_to_app,
+                                color: Colors.white, size: 22),
                             const SizedBox(height: 4),
                             Text(
                               context.l10n.leave,
@@ -440,19 +447,22 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                   color: Theme.of(context).scaffoldBackgroundColor,
                   border: Border(
                     bottom: BorderSide(
-                      color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
+                      color:
+                          Theme.of(context).dividerColor.withValues(alpha: 0.1),
                       width: 1,
                     ),
                   ),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
                   children: [
                     // 아바타 (탭하면 프로필)
                     GestureDetector(
                       onTap: () {
                         HapticFeedback.lightImpact();
-                        context.push('/character/${widget.character.id}', extra: widget.character);
+                        context.push('/character/${widget.character.id}',
+                            extra: widget.character);
                       },
                       child: Stack(
                         clipBehavior: Clip.none,
@@ -460,9 +470,10 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                           CircleAvatar(
                             radius: 28,
                             backgroundColor: widget.character.accentColor,
-                            backgroundImage: widget.character.avatarAsset.isNotEmpty
-                                ? AssetImage(widget.character.avatarAsset)
-                                : null,
+                            backgroundImage:
+                                widget.character.avatarAsset.isNotEmpty
+                                    ? AssetImage(widget.character.avatarAsset)
+                                    : null,
                             child: widget.character.avatarAsset.isEmpty
                                 ? Text(
                                     widget.character.initial,
@@ -485,9 +496,11 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   shape: BoxShape.circle,
-                                  border: Border.all(color: Colors.grey[200]!, width: 1),
+                                  border: Border.all(
+                                      color: Colors.grey[200]!, width: 1),
                                 ),
-                                child: const Center(child: MiniTypingIndicator()),
+                                child:
+                                    const Center(child: MiniTypingIndicator()),
                               ),
                             ),
                           // 읽지 않은 메시지 빨간 점 (캐릭터가 마지막에 보낸 경우에만)
@@ -502,7 +515,8 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                   color: Colors.red,
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                    color: Theme.of(context)
+                                        .scaffoldBackgroundColor,
                                     width: 2,
                                   ),
                                 ),
@@ -521,7 +535,8 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                   color: const Color(0xFF4CAF50), // 초록색 (온라인)
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                    color: Theme.of(context)
+                                        .scaffoldBackgroundColor,
                                     width: 2,
                                   ),
                                 ),
@@ -539,12 +554,14 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                   color: widget.character.accentColor,
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                    color: Theme.of(context)
+                                        .scaffoldBackgroundColor,
                                     width: 2,
                                   ),
                                 ),
                                 child: const Center(
-                                  child: Icon(Icons.auto_awesome, size: 10, color: Colors.white),
+                                  child: Icon(Icons.auto_awesome,
+                                      size: 10, color: Colors.white),
                                 ),
                               ),
                             ),
@@ -562,25 +579,36 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                             children: [
                               Flexible(
                                 child: Text(
-                                  CharacterLocalizer.getName(context, widget.character.id),
+                                  CharacterLocalizer.getName(
+                                      context, widget.character.id),
                                   style: TextStyle(
                                     fontSize: 17,
-                                    fontWeight: showUnreadBadge ? FontWeight.bold : FontWeight.w600,
-                                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                                    fontWeight: showUnreadBadge
+                                        ? FontWeight.bold
+                                        : FontWeight.w600,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                               // 운세 전문가 카테고리 배지
-                              if (widget.character.isFortuneExpert && widget.character.specialtyCategory != null) ...[
+                              if (widget.character.isFortuneExpert &&
+                                  widget.character.specialtyCategory !=
+                                      null) ...[
                                 const SizedBox(width: 6),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 6, vertical: 2),
                                   decoration: BoxDecoration(
-                                    color: widget.character.accentColor.withValues(alpha: 0.15),
+                                    color: widget.character.accentColor
+                                        .withValues(alpha: 0.15),
                                     borderRadius: BorderRadius.circular(4),
                                     border: Border.all(
-                                      color: widget.character.accentColor.withValues(alpha: 0.3),
+                                      color: widget.character.accentColor
+                                          .withValues(alpha: 0.3),
                                     ),
                                   ),
                                   child: Text(
@@ -595,7 +623,8 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                               if (!hasConversation) ...[
                                 const SizedBox(width: 8),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 6, vertical: 2),
                                   decoration: BoxDecoration(
                                     color: widget.character.accentColor,
                                     borderRadius: BorderRadius.circular(4),
@@ -613,7 +642,11 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            CharacterLocalizer.getTags(context, widget.character.id).take(3).map((t) => '#$t').join(' '),
+                            CharacterLocalizer.getTags(
+                                    context, widget.character.id)
+                                .take(3)
+                                .map((t) => '#$t')
+                                .join(' '),
                             style: const TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
@@ -626,11 +659,17 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                           Text(
                             isTyping
                                 ? context.l10n.typing
-                                : (hasConversation ? chatState.lastMessagePreview : CharacterLocalizer.getShortDescription(context, widget.character.id)),
+                                : (hasConversation
+                                    ? chatState.lastMessagePreview
+                                    : CharacterLocalizer.getShortDescription(
+                                        context, widget.character.id)),
                             style: TextStyle(
                               fontSize: 14,
-                              fontWeight: isTyping ? FontWeight.w500 : FontWeight.w400,
-                              color: isTyping ? widget.character.accentColor : Colors.grey[600],
+                              fontWeight:
+                                  isTyping ? FontWeight.w500 : FontWeight.w400,
+                              color: isTyping
+                                  ? widget.character.accentColor
+                                  : Colors.grey[600],
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -644,19 +683,23 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                       crossAxisAlignment: CrossAxisAlignment.end,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        if (hasConversation && chatState.lastMessageTime != null)
+                        if (hasConversation &&
+                            chatState.lastMessageTime != null)
                           Text(
                             _formatTimestamp(chatState.lastMessageTime!),
                             style: TextStyle(
                               fontSize: 12,
-                              fontWeight: showUnreadBadge ? FontWeight.w600 : FontWeight.w400,
+                              fontWeight: showUnreadBadge
+                                  ? FontWeight.w600
+                                  : FontWeight.w400,
                               color: showUnreadBadge ? Colors.red : Colors.grey,
                             ),
                           ),
                         if (showUnreadBadge) ...[
                           const SizedBox(height: 4),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: Colors.red,
                               borderRadius: BorderRadius.circular(12),
@@ -819,7 +862,8 @@ class _NewMessageSheet extends ConsumerWidget {
                           ),
                     ),
                     subtitle: Text(
-                      CharacterLocalizer.getShortDescription(context, character.id),
+                      CharacterLocalizer.getShortDescription(
+                          context, character.id),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Colors.grey,
                           ),

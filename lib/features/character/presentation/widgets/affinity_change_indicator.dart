@@ -16,7 +16,8 @@ class AffinityChangeIndicator extends StatefulWidget {
   });
 
   @override
-  State<AffinityChangeIndicator> createState() => _AffinityChangeIndicatorState();
+  State<AffinityChangeIndicator> createState() =>
+      _AffinityChangeIndicatorState();
 }
 
 class _AffinityChangeIndicatorState extends State<AffinityChangeIndicator>
@@ -101,7 +102,7 @@ class _AffinityChangeIndicatorState extends State<AffinityChangeIndicator>
 
     final isPositive = widget.change > 0;
     final color = isPositive
-        ? const Color(0xFF4CAF50)  // 초록
+        ? const Color(0xFF4CAF50) // 초록
         : const Color(0xFFE53935); // 빨강
     final text = isPositive ? '+${widget.change}' : '${widget.change}';
 

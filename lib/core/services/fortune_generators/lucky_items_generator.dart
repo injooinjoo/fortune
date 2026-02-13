@@ -30,7 +30,8 @@ class LuckyItemsGenerator {
       'birthDate': inputConditions['birthDate'],
       if (inputConditions['birthTime'] != null)
         'birthTime': inputConditions['birthTime'],
-      if (inputConditions['gender'] != null) 'gender': inputConditions['gender'],
+      if (inputConditions['gender'] != null)
+        'gender': inputConditions['gender'],
       if (inputConditions['interests'] != null)
         'interests': inputConditions['interests'],
     };

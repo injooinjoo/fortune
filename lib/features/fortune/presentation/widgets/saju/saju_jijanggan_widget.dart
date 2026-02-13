@@ -69,9 +69,7 @@ class SajuJijangganWidget extends StatelessWidget {
             Text(
               '支藏干',
               style: context.labelSmall.copyWith(
-                color: isDark
-                    ? DSColors.textTertiary
-                    : DSColors.textSecondary,
+                color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -101,9 +99,7 @@ class SajuJijangganWidget extends StatelessWidget {
           // 헤더 (지지)
           Container(
             decoration: BoxDecoration(
-              color: isDark
-                  ? DSColors.surface
-                  : DSColors.backgroundSecondary,
+              color: isDark ? DSColors.surface : DSColors.backgroundSecondary,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(DSRadius.md),
                 topRight: Radius.circular(DSRadius.md),
@@ -126,16 +122,14 @@ class SajuJijangganWidget extends StatelessWidget {
                       border: Border(
                         right: index < pillars.length - 1
                             ? BorderSide(
-                                color: isDark
-                                    ? DSColors.border
-                                    : DSColors.border,
+                                color:
+                                    isDark ? DSColors.border : DSColors.border,
                                 width: 1,
                               )
                             : BorderSide.none,
                       ),
-                      color: isDay
-                          ? DSColors.accent.withValues(alpha: 0.1)
-                          : null,
+                      color:
+                          isDay ? DSColors.accent.withValues(alpha: 0.1) : null,
                     ),
                     child: Column(
                       children: [
@@ -176,16 +170,13 @@ class SajuJijangganWidget extends StatelessWidget {
                     border: Border(
                       right: index < pillars.length - 1
                           ? BorderSide(
-                              color: isDark
-                                  ? DSColors.border
-                                  : DSColors.border,
+                              color: isDark ? DSColors.border : DSColors.border,
                               width: 1,
                             )
                           : BorderSide.none,
                     ),
-                    color: isDay
-                        ? DSColors.accent.withValues(alpha: 0.05)
-                        : null,
+                    color:
+                        isDay ? DSColors.accent.withValues(alpha: 0.05) : null,
                     borderRadius: index == 0
                         ? const BorderRadius.only(
                             bottomLeft: Radius.circular(DSRadius.md),
@@ -249,7 +240,8 @@ class SajuJijangganWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildHiddenStemsCell(BuildContext context, String branch, bool isDark) {
+  Widget _buildHiddenStemsCell(
+      BuildContext context, String branch, bool isDark) {
     if (branch.isEmpty) {
       return const Center(child: Text('-'));
     }

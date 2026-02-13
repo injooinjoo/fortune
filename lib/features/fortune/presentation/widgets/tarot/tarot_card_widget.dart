@@ -46,12 +46,12 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
   @override
   void initState() {
     super.initState();
-    
+
     _flipController = AnimationController(
       duration: widget.flipDuration,
       vsync: this,
     );
-    
+
     _flipAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -94,7 +94,8 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
         width: widget.width,
         height: widget.height,
         transform: Matrix4.identity()
-          ..scaleByDouble(widget.isHovered ? 1.05 : 1.0, widget.isHovered ? 1.05 : 1.0, 1.0, 1.0),
+          ..scaleByDouble(widget.isHovered ? 1.05 : 1.0,
+              widget.isHovered ? 1.05 : 1.0, 1.0, 1.0),
         child: AnimatedBuilder(
           animation: _flipAnimation,
           builder: (context, child) {
@@ -106,8 +107,8 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                 ..rotateY(math.pi * _flipAnimation.value),
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(DSRadius.md),
-                  boxShadow: _buildBoxShadow()),
+                    borderRadius: BorderRadius.circular(DSRadius.md),
+                    boxShadow: _buildBoxShadow()),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(DSRadius.md),
                   child: isShowingFront
@@ -193,7 +194,8 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(DSRadius.md),
               border: Border.all(
-                color: Colors.amber.withValues(alpha: widget.isSelected ? 0.8 : 0.4),
+                color: Colors.amber
+                    .withValues(alpha: widget.isSelected ? 0.8 : 0.4),
                 width: widget.isSelected ? 3 : 2,
               ),
             ),
@@ -234,7 +236,8 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
 
   Widget _buildCardFront() {
     // 실제 타로 카드 이미지 표시
-    final imagePath = TarotHelper.getMajorArcanaImagePath(widget.deck.id, widget.cardIndex);
+    final imagePath =
+        TarotHelper.getMajorArcanaImagePath(widget.deck.id, widget.cardIndex);
 
     return Stack(
       fit: StackFit.expand,
@@ -315,9 +318,7 @@ class TarotCardBackPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..style = PaintingStyle.stroke
-     
-   
-    ..strokeWidth = isHighlighted ? 2.0 : 1.5;
+      ..strokeWidth = isHighlighted ? 2.0 : 1.5;
 
     // Draw mystical patterns
     final centerX = size.width / 2;
@@ -333,22 +334,25 @@ class TarotCardBackPainter extends CustomPainter {
     // Corner decorations
     paint.color = Colors.white.withValues(alpha: isHighlighted ? 0.5 : 0.3);
     const cornerSize = 15.0;
-    
+
     _drawCornerPattern(canvas, paint, 0, 0, cornerSize, false, false);
     _drawCornerPattern(canvas, paint, size.width, 0, cornerSize, true, false);
     _drawCornerPattern(canvas, paint, 0, size.height, cornerSize, false, true);
-    _drawCornerPattern(canvas, paint, size.width, size.height, cornerSize, true, true);
+    _drawCornerPattern(
+        canvas, paint, size.width, size.height, cornerSize, true, true);
 
     // Additional circles for highlighted state
     if (isHighlighted) {
       paint.color = Colors.white.withValues(alpha: 0.1);
       for (int i = 1; i <= 3; i++) {
-        canvas.drawCircle(Offset(centerX, centerY), size.width * 0.15 * i, paint);
+        canvas.drawCircle(
+            Offset(centerX, centerY), size.width * 0.15 * i, paint);
       }
     }
   }
 
-  void _drawStar(Canvas canvas, Paint paint, double cx, double cy, double radius) {
+  void _drawStar(
+      Canvas canvas, Paint paint, double cx, double cy, double radius) {
     final path = Path();
     const points = 8;
     for (int i = 0; i < points; i++) {
@@ -356,7 +360,7 @@ class TarotCardBackPainter extends CustomPainter {
       final r = i.isEven ? radius : radius * 0.6;
       final x = cx + r * math.cos(angle);
       final y = cy + r * math.sin(angle);
-      
+
       if (i == 0) {
         path.moveTo(x, y);
       } else {
@@ -371,21 +375,27 @@ class TarotCardBackPainter extends CustomPainter {
       double size, bool flipX, bool flipY) {
     final dx = flipX ? -1 : 1;
     final dy = flipY ? -1 : 1;
-    
+
     canvas.drawLine(Offset(x, y + dy * size), Offset(x, y), paint);
     canvas.drawLine(Offset(x, y), Offset(x + dx * size, y), paint);
-    
+
     // Add decorative arc
     final rect = Rect.fromCenter(
-      center: Offset(x + dx * size / 2, y + dy * size / 2),
-      width: size,
-      height: size);
+        center: Offset(x + dx * size / 2, y + dy * size / 2),
+        width: size,
+        height: size);
     canvas.drawArc(
-      rect,
-      flipX && !flipY ? math.pi : flipX && flipY ? math.pi / 2 : flipY ? 3 * math.pi / 2 : 0,
-      math.pi / 2,
-      false,
-      paint);
+        rect,
+        flipX && !flipY
+            ? math.pi
+            : flipX && flipY
+                ? math.pi / 2
+                : flipY
+                    ? 3 * math.pi / 2
+                    : 0,
+        math.pi / 2,
+        false,
+        paint);
   }
 
   @override

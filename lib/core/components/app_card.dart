@@ -38,12 +38,14 @@ class AppCard extends StatelessWidget {
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(_getBorderRadius()),
         child: InkWell(
-          onTap: onTap != null ? () {
-            if (enableHaptic) {
-              DSHaptics.light();
-            }
-            onTap!();
-          } : null,
+          onTap: onTap != null
+              ? () {
+                  if (enableHaptic) {
+                    DSHaptics.light();
+                  }
+                  onTap!();
+                }
+              : null,
           borderRadius: BorderRadius.circular(_getBorderRadius()),
           child: Padding(
             padding: padding ?? const EdgeInsets.all(DSSpacing.md),

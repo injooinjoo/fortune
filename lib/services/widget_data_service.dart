@@ -125,7 +125,8 @@ class WidgetDataService {
       );
 
       if (response.status != 200) {
-        Logger.warning('[WidgetDataService] fortune-daily 호출 실패: ${response.status}');
+        Logger.warning(
+            '[WidgetDataService] fortune-daily 호출 실패: ${response.status}');
         return null;
       }
 
@@ -143,7 +144,8 @@ class WidgetDataService {
     final fortuneData = data['fortune'] as Map<String, dynamic>? ?? data;
 
     return Fortune(
-      id: fortuneData['id'] as String? ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      id: fortuneData['id'] as String? ??
+          DateTime.now().millisecondsSinceEpoch.toString(),
       userId: fortuneData['userId'] as String? ?? '',
       type: 'daily',
       content: fortuneData['content'] as String? ?? '',
@@ -221,7 +223,8 @@ class WidgetDataService {
       );
 
       if (response.status != 200) {
-        Logger.warning('[WidgetDataService] fortune-biorhythm 호출 실패: ${response.status}');
+        Logger.warning(
+            '[WidgetDataService] fortune-biorhythm 호출 실패: ${response.status}');
         return;
       }
 
@@ -352,7 +355,9 @@ class WidgetDataService {
         key: key,
         name: _categoryNames[key] ?? key,
         score: catData['score'] as int? ?? 80,
-        message: catData['message'] as String? ?? catData['summary'] as String? ?? '',
+        message: catData['message'] as String? ??
+            catData['summary'] as String? ??
+            '',
         icon: _categoryIcons[key] ?? '✨',
       );
     }
@@ -410,10 +415,14 @@ class WidgetDataService {
   /// 시간 문자열에서 시간대 키 추출
   static String _getTimeSlotKey(String time) {
     // "06:00-12:00" 또는 "오전" 같은 형식 처리
-    if (time.contains('오전') || time.contains('morning') || time.contains('06')) {
+    if (time.contains('오전') ||
+        time.contains('morning') ||
+        time.contains('06')) {
       return 'morning';
     }
-    if (time.contains('오후') || time.contains('afternoon') || time.contains('12')) {
+    if (time.contains('오후') ||
+        time.contains('afternoon') ||
+        time.contains('12')) {
       return 'afternoon';
     }
     return 'evening';
@@ -429,16 +438,22 @@ class WidgetDataService {
 
       // 총운 위젯용
       await HomeWidget.saveWidgetData<int>('overall_score', data.overall.score);
-      await HomeWidget.saveWidgetData<String>('overall_grade', data.overall.grade);
-      await HomeWidget.saveWidgetData<String>('overall_message', data.overall.message);
+      await HomeWidget.saveWidgetData<String>(
+          'overall_grade', data.overall.grade);
+      await HomeWidget.saveWidgetData<String>(
+          'overall_message', data.overall.message);
 
       // 시간대 위젯용 (현재 시간대)
       final currentSlot = data.currentTimeSlot;
       if (currentSlot != null) {
-        await HomeWidget.saveWidgetData<String>('timeslot_name', currentSlot.name);
-        await HomeWidget.saveWidgetData<int>('timeslot_score', currentSlot.score);
-        await HomeWidget.saveWidgetData<String>('timeslot_message', currentSlot.message);
-        await HomeWidget.saveWidgetData<String>('timeslot_icon', currentSlot.icon);
+        await HomeWidget.saveWidgetData<String>(
+            'timeslot_name', currentSlot.name);
+        await HomeWidget.saveWidgetData<int>(
+            'timeslot_score', currentSlot.score);
+        await HomeWidget.saveWidgetData<String>(
+            'timeslot_message', currentSlot.message);
+        await HomeWidget.saveWidgetData<String>(
+            'timeslot_icon', currentSlot.icon);
       }
 
       // 로또 위젯용
@@ -449,8 +464,10 @@ class WidgetDataService {
 
       // 카테고리 위젯용 (모든 카테고리 저장)
       for (final entry in data.categories.entries) {
-        await HomeWidget.saveWidgetData<int>('cat_${entry.key}_score', entry.value.score);
-        await HomeWidget.saveWidgetData<String>('cat_${entry.key}_message', entry.value.message);
+        await HomeWidget.saveWidgetData<int>(
+            'cat_${entry.key}_score', entry.value.score);
+        await HomeWidget.saveWidgetData<String>(
+            'cat_${entry.key}_message', entry.value.message);
       }
 
       // 메타데이터
@@ -603,7 +620,8 @@ class WidgetDataService {
   }
 
   /// Supabase 캐시에서 위젯 데이터 조회 (백그라운드용)
-  static Future<WidgetCacheResult?> fetchFromSupabaseCache(String userId) async {
+  static Future<WidgetCacheResult?> fetchFromSupabaseCache(
+      String userId) async {
     try {
       final supabase = Supabase.instance.client;
 
@@ -613,7 +631,8 @@ class WidgetDataService {
       );
 
       if (response.status != 200) {
-        Logger.warning('[WidgetDataService] widget-cache 호출 실패: ${response.status}');
+        Logger.warning(
+            '[WidgetDataService] widget-cache 호출 실패: ${response.status}');
         return null;
       }
 
@@ -651,10 +670,12 @@ class WidgetDataService {
       }
 
       await _saveWidgetData(dataToSave);
-      await _saveEngagementState(dataToSave.displayState, dataToSave.engagementMessage);
+      await _saveEngagementState(
+          dataToSave.displayState, dataToSave.engagementMessage);
       await _notifyWidgets();
 
-      Logger.info('[WidgetDataService] saveWidgetDataWithEngagement 완료: ${dataToSave.displayState}');
+      Logger.info(
+          '[WidgetDataService] saveWidgetDataWithEngagement 완료: ${dataToSave.displayState}');
     } catch (e) {
       Logger.error('[WidgetDataService] saveWidgetDataWithEngagement 실패: $e');
     }
@@ -666,11 +687,14 @@ class WidgetDataService {
     String? engagementMessage,
   ) async {
     await HomeWidget.saveWidgetData<String>('display_state', state.name);
-    await HomeWidget.saveWidgetData<bool>('is_yesterday', state == WidgetDisplayState.yesterday);
-    await HomeWidget.saveWidgetData<bool>('is_empty', state == WidgetDisplayState.empty);
+    await HomeWidget.saveWidgetData<bool>(
+        'is_yesterday', state == WidgetDisplayState.yesterday);
+    await HomeWidget.saveWidgetData<bool>(
+        'is_empty', state == WidgetDisplayState.empty);
 
     if (engagementMessage != null) {
-      await HomeWidget.saveWidgetData<String>('engagement_message', engagementMessage);
+      await HomeWidget.saveWidgetData<String>(
+          'engagement_message', engagementMessage);
     }
   }
 
@@ -799,8 +823,10 @@ class WidgetCacheResult {
       lottoNumbers: data.lottoNumbers,
       updatedAt: now,
       validDate: data.fortuneDate,
-      displayState: isToday ? WidgetDisplayState.today : WidgetDisplayState.yesterday,
-      engagementMessage: isToday ? null : WidgetDataService.getEngagementMessage(),
+      displayState:
+          isToday ? WidgetDisplayState.today : WidgetDisplayState.yesterday,
+      engagementMessage:
+          isToday ? null : WidgetDataService.getEngagementMessage(),
     );
   }
 }

@@ -6,7 +6,8 @@ import '../../domain/services/smart_chip_recommender.dart';
 /// 스마트 추천 칩 Provider
 /// 현재 운세 타입을 받아 연관성 있는 추천 칩 반환
 final smartRecommendationProvider =
-    Provider.family<List<RecommendationChip>, String>((ref, currentFortuneType) {
+    Provider.family<List<RecommendationChip>, String>(
+        (ref, currentFortuneType) {
   final gaugeState = ref.watch(fortuneGaugeProvider);
   final recommender = SmartChipRecommender();
 

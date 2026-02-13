@@ -48,17 +48,16 @@ class FeatureFlagService {
     if (_initialized) return;
 
     try {
-      final response = await _supabase
-          .from('feature_flags')
-          .select()
-          .order('key');
+      final response =
+          await _supabase.from('feature_flags').select().order('key');
 
       _flags = {
         for (final row in response)
           row['key'] as String: FeatureFlag.fromJson(row),
       };
       _initialized = true;
-      Logger.debug('FeatureFlagService initialized with ${_flags.length} flags');
+      Logger.debug(
+          'FeatureFlagService initialized with ${_flags.length} flags');
     } catch (e) {
       Logger.error('Failed to load feature flags', e);
       _flags = {};

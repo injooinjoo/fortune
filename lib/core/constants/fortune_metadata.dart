@@ -113,9 +113,9 @@ enum FortuneType {
 
   final String key;
   final String displayName;
-  
+
   const FortuneType(this.key, this.displayName);
-  
+
   static FortuneType? fromKey(String key) {
     // 1. .key 속성으로 검색 (하이픈 형식: 'avoid-people')
     for (final type in FortuneType.values) {
@@ -144,19 +144,19 @@ class FortuneMetadata {
   final String? imagePath;
   final String description;
 
-  const FortuneMetadata({
-    required this.type,
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.primaryColor,
-    required this.secondaryColor,
-    required this.tokenCost,
-    this.inputFields = const [],
-    this.requiresBirthInfo = true,
-    this.requiresPartnerInfo = false,
-    this.imagePath,
-    required this.description});
+  const FortuneMetadata(
+      {required this.type,
+      required this.title,
+      required this.subtitle,
+      required this.icon,
+      required this.primaryColor,
+      required this.secondaryColor,
+      required this.tokenCost,
+      this.inputFields = const [],
+      this.requiresBirthInfo = true,
+      this.requiresPartnerInfo = false,
+      this.imagePath,
+      required this.description});
 }
 
 /// Fortune metadata repository
@@ -164,111 +164,102 @@ class FortuneMetadataRepository {
   static final Map<FortuneType, FortuneMetadata> _metadata = {
     // Daily Insights
     FortuneType.daily: const FortuneMetadata(
-      type: FortuneType.daily,
-      title: '오늘의 인사이트',
-      subtitle: '오늘 하루의 전체적인 가이드를 확인하세요',
-      icon: Icons.today,
-      primaryColor: Color(0xFF4A90E2),
-      secondaryColor: Color(0xFF5BA0F2),
-      tokenCost: 0,
-      description: '오늘 하루 동안의 전반적인 인사이트와 행운 지수를 확인할 수 있습니다.'
-    ),
-    
+        type: FortuneType.daily,
+        title: '오늘의 인사이트',
+        subtitle: '오늘 하루의 전체적인 가이드를 확인하세요',
+        icon: Icons.today,
+        primaryColor: Color(0xFF4A90E2),
+        secondaryColor: Color(0xFF5BA0F2),
+        tokenCost: 0,
+        description: '오늘 하루 동안의 전반적인 인사이트와 행운 지수를 확인할 수 있습니다.'),
+
     FortuneType.tomorrow: const FortuneMetadata(
-      type: FortuneType.tomorrow,
-      title: '내일의 인사이트',
-      subtitle: '내일의 가이드를 미리 확인하세요',
-      icon: Icons.event,
-      primaryColor: Color(0xFF7B68EE),
-      secondaryColor: Color(0xFF8B78FE),
-      tokenCost: 1,
-      description: '내일의 인사이트를 미리 확인하고 준비할 수 있습니다.'
-    ),
-    
+        type: FortuneType.tomorrow,
+        title: '내일의 인사이트',
+        subtitle: '내일의 가이드를 미리 확인하세요',
+        icon: Icons.event,
+        primaryColor: Color(0xFF7B68EE),
+        secondaryColor: Color(0xFF8B78FE),
+        tokenCost: 1,
+        description: '내일의 인사이트를 미리 확인하고 준비할 수 있습니다.'),
+
     FortuneType.weekly: const FortuneMetadata(
-      type: FortuneType.weekly,
-      title: '주간 인사이트',
-      subtitle: '이번 주 전체 가이드를 확인하세요',
-      icon: Icons.date_range,
-      primaryColor: Color(0xFF50C878),
-      secondaryColor: Color(0xFF60D888),
-      tokenCost: 2,
-      description: '이번 주 7일간의 전체적인 흐름을 파악할 수 있습니다.'
-    ),
-    
+        type: FortuneType.weekly,
+        title: '주간 인사이트',
+        subtitle: '이번 주 전체 가이드를 확인하세요',
+        icon: Icons.date_range,
+        primaryColor: Color(0xFF50C878),
+        secondaryColor: Color(0xFF60D888),
+        tokenCost: 2,
+        description: '이번 주 7일간의 전체적인 흐름을 파악할 수 있습니다.'),
+
     // Traditional
     FortuneType.saju: const FortuneMetadata(
-      type: FortuneType.saju,
-      title: '사주',
-      subtitle: '사주팔자로 보는 평생 운명',
-      icon: Icons.auto_awesome,
-      primaryColor: Color(0xFFDC143C),
-      secondaryColor: Color(0xFFEC254C),
-      tokenCost: 5,
-      requiresBirthInfo: true,
-      inputFields: ['birthTime'],
-      description: '생년월일시를 바탕으로 타고난 운명과 성격을 분석합니다.'
-    ),
-    
+        type: FortuneType.saju,
+        title: '사주',
+        subtitle: '사주팔자로 보는 평생 운명',
+        icon: Icons.auto_awesome,
+        primaryColor: Color(0xFFDC143C),
+        secondaryColor: Color(0xFFEC254C),
+        tokenCost: 5,
+        requiresBirthInfo: true,
+        inputFields: ['birthTime'],
+        description: '생년월일시를 바탕으로 타고난 운명과 성격을 분석합니다.'),
+
     // Love & Relationships
     FortuneType.love: const FortuneMetadata(
-      type: FortuneType.love,
-      title: '연애 인사이트',
-      subtitle: '연애와 관계에 대한 조언',
-      icon: Icons.favorite,
-      primaryColor: Color(0xFFFF69B4),
-      secondaryColor: Color(0xFFFF79C4),
-      tokenCost: 2,
-      description: '현재의 연애 상황과 미래의 인연에 대해 알아봅니다.'
-    ),
-    
+        type: FortuneType.love,
+        title: '연애 인사이트',
+        subtitle: '연애와 관계에 대한 조언',
+        icon: Icons.favorite,
+        primaryColor: Color(0xFFFF69B4),
+        secondaryColor: Color(0xFFFF79C4),
+        tokenCost: 2,
+        description: '현재의 연애 상황과 미래의 인연에 대해 알아봅니다.'),
+
     FortuneType.compatibility: const FortuneMetadata(
-      type: FortuneType.compatibility,
-      title: '궁합',
-      subtitle: '두 사람의 궁합을 확인하세요',
-      icon: Icons.favorite_border,
-      primaryColor: Color(0xFFFF6B6B),
-      secondaryColor: Color(0xFFFF7B7B),
-      tokenCost: 3,
-      requiresPartnerInfo: true,
-      description: '두 사람의 궁합과 관계 발전 가능성을 분석합니다.'
-    ),
-    
+        type: FortuneType.compatibility,
+        title: '궁합',
+        subtitle: '두 사람의 궁합을 확인하세요',
+        icon: Icons.favorite_border,
+        primaryColor: Color(0xFFFF6B6B),
+        secondaryColor: Color(0xFFFF7B7B),
+        tokenCost: 3,
+        requiresPartnerInfo: true,
+        description: '두 사람의 궁합과 관계 발전 가능성을 분석합니다.'),
+
     // Career & Wealth
     FortuneType.career: const FortuneMetadata(
-      type: FortuneType.career,
-      title: '커리어 가이드',
-      subtitle: '직장과 커리어에 대한 조언',
-      icon: Icons.work,
-      primaryColor: Color(0xFF4169E1),
-      secondaryColor: Color(0xFF5179F1),
-      tokenCost: 2,
-      description: '직장 생활과 커리어 발전에 대한 가이드를 확인합니다.'
-    ),
-    
+        type: FortuneType.career,
+        title: '커리어 가이드',
+        subtitle: '직장과 커리어에 대한 조언',
+        icon: Icons.work,
+        primaryColor: Color(0xFF4169E1),
+        secondaryColor: Color(0xFF5179F1),
+        tokenCost: 2,
+        description: '직장 생활과 커리어 발전에 대한 가이드를 확인합니다.'),
+
     FortuneType.wealth: const FortuneMetadata(
-      type: FortuneType.wealth,
-      title: '재물 가이드',
-      subtitle: '금전과 재물 관리 가이드',
-      icon: Icons.attach_money,
-      primaryColor: Color(0xFFFFD700),
-      secondaryColor: Color(0xFFFFE710),
-      tokenCost: 2,
-      description: '금전 관리와 재물 획득의 기회를 알아봅니다.'
-    ),
-    
+        type: FortuneType.wealth,
+        title: '재물 가이드',
+        subtitle: '금전과 재물 관리 가이드',
+        icon: Icons.attach_money,
+        primaryColor: Color(0xFFFFD700),
+        secondaryColor: Color(0xFFFFE710),
+        tokenCost: 2,
+        description: '금전 관리와 재물 획득의 기회를 알아봅니다.'),
+
     // Lucky Items
     FortuneType.luckyColor: const FortuneMetadata(
-      type: FortuneType.luckyColor,
-      title: '행운의 색상',
-      subtitle: '오늘의 행운을 가져다 줄 색상',
-      icon: Icons.palette,
-      primaryColor: Color(0xFF9C27B0),
-      secondaryColor: Color(0xFFAC37C0),
-      tokenCost: 1,
-      description: '오늘 당신에게 행운을 가져다 줄 색상을 알아봅니다.'
-    ),
-    
+        type: FortuneType.luckyColor,
+        title: '행운의 색상',
+        subtitle: '오늘의 행운을 가져다 줄 색상',
+        icon: Icons.palette,
+        primaryColor: Color(0xFF9C27B0),
+        secondaryColor: Color(0xFFAC37C0),
+        tokenCost: 1,
+        description: '오늘 당신에게 행운을 가져다 줄 색상을 알아봅니다.'),
+
     // Feng Shui (풍수지리)
     FortuneType.moving: const FortuneMetadata(
       type: FortuneType.moving,
@@ -299,28 +290,28 @@ class FortuneMetadataRepository {
     // Add more metadata for all fortune types...
     // This is a simplified version. In production, add all 80+ types
   };
-  
+
   static FortuneMetadata? getMetadata(FortuneType type) {
     return _metadata[type];
   }
-  
+
   static FortuneMetadata getMetadataOrDefault(FortuneType type) {
-    return _metadata[type] ?? FortuneMetadata(
-      type: type,
-      title: type.displayName,
-      subtitle: '${type.displayName}을 확인하세요',
-      icon: Icons.stars,
-      primaryColor: const Color(0xFF6C63FF),
-      secondaryColor: const Color(0xFF7C73FF),
-      tokenCost: 2,
-      description: '${type.displayName}에 대한 상세 정보를 확인할 수 있습니다.'
-    );
+    return _metadata[type] ??
+        FortuneMetadata(
+            type: type,
+            title: type.displayName,
+            subtitle: '${type.displayName}을 확인하세요',
+            icon: Icons.stars,
+            primaryColor: const Color(0xFF6C63FF),
+            secondaryColor: const Color(0xFF7C73FF),
+            tokenCost: 2,
+            description: '${type.displayName}에 대한 상세 정보를 확인할 수 있습니다.');
   }
-  
+
   static List<FortuneMetadata> getAllMetadata() {
     return _metadata.values.toList();
   }
-  
+
   static List<FortuneMetadata> getByCategory(FortuneCategory category) {
     switch (category) {
       case FortuneCategory.daily:
@@ -330,18 +321,20 @@ class FortuneMetadataRepository {
           _metadata[FortuneType.weekly]!,
           _metadata[FortuneType.monthly]!,
         ];
-      
+
       case FortuneCategory.love:
         return [
           _metadata[FortuneType.love]!,
           _metadata[FortuneType.marriage]!,
-          _metadata[FortuneType.compatibility]!];
-      
+          _metadata[FortuneType.compatibility]!
+        ];
+
       case FortuneCategory.career:
         return [
           _metadata[FortuneType.career]!,
           _metadata[FortuneType.wealth]!,
-          _metadata[FortuneType.business]!];
+          _metadata[FortuneType.business]!
+        ];
 
       case FortuneCategory.fengshui:
         return [

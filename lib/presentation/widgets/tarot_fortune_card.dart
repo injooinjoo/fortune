@@ -37,12 +37,16 @@ class TarotFortuneCard extends StatelessWidget {
             end: Alignment.bottomRight,
             colors: isDarkMode
                 ? gradientColors
-                : gradientColors.map((color) => Color.lerp(color, DSColors.textPrimary, 0.7)!).toList(),
+                : gradientColors
+                    .map((color) =>
+                        Color.lerp(color, DSColors.textPrimary, 0.7)!)
+                    .toList(),
           ),
           borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
           boxShadow: [
             BoxShadow(
-              color: gradientColors.first.withValues(alpha: isDarkMode ? 0.3 : 0.15),
+              color: gradientColors.first
+                  .withValues(alpha: isDarkMode ? 0.3 : 0.15),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -64,7 +68,8 @@ class TarotFortuneCard extends StatelessWidget {
                     child: GlassContainer(
                       width: 50,
                       height: AppSpacing.spacing12 * 1.04,
-                      borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
+                      borderRadius:
+                          BorderRadius.circular(AppDimensions.radiusLarge),
                       gradient: LinearGradient(
                         colors: [
                           DSColors.textPrimary.withValues(alpha: 0.2),
@@ -75,7 +80,9 @@ class TarotFortuneCard extends StatelessWidget {
                         child: Icon(
                           Icons.auto_awesome,
                           size: AppDimensions.iconSizeLarge,
-                          color: isDarkMode ? DSColors.textPrimary : theme.colorScheme.primary,
+                          color: isDarkMode
+                              ? DSColors.textPrimary
+                              : theme.colorScheme.primary,
                         ),
                       ),
                     ),
@@ -85,7 +92,9 @@ class TarotFortuneCard extends StatelessWidget {
                     title,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: isDarkMode ? DSColors.textPrimary : theme.colorScheme.onSurface,
+                      color: isDarkMode
+                          ? DSColors.textPrimary
+                          : theme.colorScheme.onSurface,
                       letterSpacing: -0.5,
                     ),
                     textAlign: TextAlign.center,
@@ -96,7 +105,9 @@ class TarotFortuneCard extends StatelessWidget {
                   Text(
                     description,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: (isDarkMode ? DSColors.textPrimary : theme.colorScheme.onSurface)
+                      color: (isDarkMode
+                              ? DSColors.textPrimary
+                              : theme.colorScheme.onSurface)
                           .withValues(alpha: 0.7),
                       fontWeight: FontWeight.w400,
                     ),
@@ -113,12 +124,15 @@ class TarotFortuneCard extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: DSColors.textPrimary.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
+                        borderRadius:
+                            BorderRadius.circular(AppDimensions.radiusXLarge),
                       ),
                       child: Text(
                         'Premium',
                         style: theme.textTheme.labelSmall?.copyWith(
-                          color: isDarkMode ? DSColors.textPrimary : theme.textTheme.bodyMedium?.color,
+                          color: isDarkMode
+                              ? DSColors.textPrimary
+                              : theme.textTheme.bodyMedium?.color,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

@@ -11,7 +11,7 @@ class TarotCardInfo {
   final String imagery;
   final String advice;
   final List<String> questions;
-  
+
   // Extended fields for rich content
   final String? story;
   final String? mythology;
@@ -27,32 +27,31 @@ class TarotCardInfo {
   final Map<String, String>? cardCombinations;
   final String? historicalContext;
   final String? artisticSymbolism;
-  
-  const TarotCardInfo({
-    required this.id,
-    required this.name,
-    required this.keywords,
-    required this.uprightMeaning,
-    required this.reversedMeaning,
-    required this.element,
-    this.astrology,
-    this.numerology,
-    required this.imagery,
-    required this.advice,
-    required this.questions,
-    this.story,
-    this.mythology,
-    this.psychologicalMeaning,
-    this.spiritualMeaning,
-    this.dailyApplications,
-    this.meditation,
-    this.affirmations,
-    this.colorSymbolism,
-    this.crystals,
-    this.timing,
-    this.healthMessage,
-    this.cardCombinations,
-    this.historicalContext,
-    this.artisticSymbolism});
-}
 
+  const TarotCardInfo(
+      {required this.id,
+      required this.name,
+      required this.keywords,
+      required this.uprightMeaning,
+      required this.reversedMeaning,
+      required this.element,
+      this.astrology,
+      this.numerology,
+      required this.imagery,
+      required this.advice,
+      required this.questions,
+      this.story,
+      this.mythology,
+      this.psychologicalMeaning,
+      this.spiritualMeaning,
+      this.dailyApplications,
+      this.meditation,
+      this.affirmations,
+      this.colorSymbolism,
+      this.crystals,
+      this.timing,
+      this.healthMessage,
+      this.cardCombinations,
+      this.historicalContext,
+      this.artisticSymbolism});
+}

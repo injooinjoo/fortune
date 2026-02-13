@@ -135,9 +135,7 @@ class _OotdPhotoInputState extends State<OotdPhotoInput> {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: isDark
-            ? colors.surface.withValues(alpha: 0.8)
-            : colors.surface,
+        color: isDark ? colors.surface.withValues(alpha: 0.8) : colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
           color: colors.border,

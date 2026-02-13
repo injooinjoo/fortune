@@ -12,7 +12,8 @@ class SocialAccountsScreen extends ConsumerStatefulWidget {
   const SocialAccountsScreen({super.key});
 
   @override
-  ConsumerState<SocialAccountsScreen> createState() => _SocialAccountsScreenState();
+  ConsumerState<SocialAccountsScreen> createState() =>
+      _SocialAccountsScreenState();
 }
 
 class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
@@ -94,7 +95,6 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
 
   Widget _buildProviderIcon(String provider, dynamic colors) {
     final assetPath = _getProviderAsset(provider);
-
 
     if (assetPath != null) {
       final isApple = provider == 'apple';

@@ -37,10 +37,12 @@ class KeywordWidgets {
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: FortuneInfographicHelpers.getKeywordColor(weight).withValues(alpha: 0.1),
+                color: FortuneInfographicHelpers.getKeywordColor(weight)
+                    .withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: FortuneInfographicHelpers.getKeywordColor(weight).withValues(alpha: 0.3),
+                  color: FortuneInfographicHelpers.getKeywordColor(weight)
+                      .withValues(alpha: 0.3),
                 ),
               ),
               child: Text(
@@ -48,7 +50,9 @@ class KeywordWidgets {
                 style: TextStyle(
                   fontSize: fontSize,
                   fontWeight: FontWeight.w600,
-                  color: isDark ? DSColors.textPrimary : FortuneInfographicHelpers.getKeywordColor(weight),
+                  color: isDark
+                      ? DSColors.textPrimary
+                      : FortuneInfographicHelpers.getKeywordColor(weight),
                 ),
               ),
             );
@@ -78,27 +82,27 @@ class KeywordWidgets {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: isDark
-            ? [
-                context.colors.surface,
-                context.colors.background,
-              ]
-            : [
-                DSColors.surfaceDark,
-                context.colors.surfaceSecondary,
-              ],
+              ? [
+                  context.colors.surface,
+                  context.colors.background,
+                ]
+              : [
+                  DSColors.surfaceDark,
+                  context.colors.surfaceSecondary,
+                ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isDark
-            ? DSColors.accentTertiary.withValues(alpha: 0.2)
-            : DSColors.accentDark.withValues(alpha: 0.1),
+              ? DSColors.accentTertiary.withValues(alpha: 0.2)
+              : DSColors.accentDark.withValues(alpha: 0.1),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
             color: isDark
-              ? DSColors.accentTertiary.withValues(alpha: 0.1)
-              : DSColors.accentDark.withValues(alpha: 0.08),
+                ? DSColors.accentTertiary.withValues(alpha: 0.1)
+                : DSColors.accentDark.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, 8),
             spreadRadius: 0,
@@ -116,13 +120,22 @@ class KeywordWidgets {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: isDark
-                      ? [DSColors.accentTertiary, DSColors.accentTertiary.withValues(alpha: 0.8)]
-                      : [DSColors.accentDark, DSColors.accentDark.withValues(alpha: 0.8)],
+                        ? [
+                            DSColors.accentTertiary,
+                            DSColors.accentTertiary.withValues(alpha: 0.8)
+                          ]
+                        : [
+                            DSColors.accentDark,
+                            DSColors.accentDark.withValues(alpha: 0.8)
+                          ],
                   ),
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: (isDark ? DSColors.accentTertiary : DSColors.accentDark).withValues(alpha: 0.3),
+                      color: (isDark
+                              ? DSColors.accentTertiary
+                              : DSColors.accentDark)
+                          .withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -142,7 +155,9 @@ class KeywordWidgets {
                     Text(
                       '오늘의 키워드',
                       style: TextStyle(
-                        color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
+                        color: isDark
+                            ? DSColors.textPrimary
+                            : DSColors.textPrimaryDark,
                         fontWeight: FontWeight.bold,
                         height: 1.2,
                       ),
@@ -151,7 +166,9 @@ class KeywordWidgets {
                     Text(
                       '당신을 위한 특별한 메시지',
                       style: TextStyle(
-                        color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
+                        color: isDark
+                            ? DSColors.textTertiary
+                            : DSColors.textSecondaryDark,
                         height: 1.3,
                       ),
                     ),
@@ -166,17 +183,15 @@ class KeywordWidgets {
           _buildEnhancedKeywordCloud(keywords, importance, isDark),
         ],
       ),
-    ).animate()
-      .fadeIn(duration: 800.ms, delay: 600.ms)
-      .slideY(begin: 0.1, curve: Curves.easeOut);
+    )
+        .animate()
+        .fadeIn(duration: 800.ms, delay: 600.ms)
+        .slideY(begin: 0.1, curve: Curves.easeOut);
   }
 
   /// 향상된 키워드 클라우드
   static Widget _buildEnhancedKeywordCloud(
-    List<String> keywords,
-    Map<String, double> importance,
-    bool isDark
-  ) {
+      List<String> keywords, Map<String, double> importance, bool isDark) {
     return Wrap(
       spacing: 12,
       runSpacing: 12,
@@ -194,43 +209,48 @@ class KeywordWidgets {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: isHighPriority
-                ? isDark
-                  ? [
-                      DSColors.accentTertiary.withValues(alpha: 0.2),
-                      DSColors.accentTertiary.withValues(alpha: 0.1),
-                    ]
-                  : [
-                      DSColors.accentDark.withValues(alpha: 0.15),
-                      DSColors.accentDark.withValues(alpha: 0.05),
-                    ]
-                : isDark
-                  ? [
-                      DSColors.toggleInactive.withValues(alpha: 0.3),
-                      DSColors.toggleInactive.withValues(alpha: 0.1),
-                    ]
-                  : [
-                      DSColors.backgroundSecondaryDark,
-                      DSColors.backgroundDark,
-                    ],
+                  ? isDark
+                      ? [
+                          DSColors.accentTertiary.withValues(alpha: 0.2),
+                          DSColors.accentTertiary.withValues(alpha: 0.1),
+                        ]
+                      : [
+                          DSColors.accentDark.withValues(alpha: 0.15),
+                          DSColors.accentDark.withValues(alpha: 0.05),
+                        ]
+                  : isDark
+                      ? [
+                          DSColors.toggleInactive.withValues(alpha: 0.3),
+                          DSColors.toggleInactive.withValues(alpha: 0.1),
+                        ]
+                      : [
+                          DSColors.backgroundSecondaryDark,
+                          DSColors.backgroundDark,
+                        ],
             ),
             borderRadius: BorderRadius.circular(isHighPriority ? 16 : 12),
             border: Border.all(
               color: isHighPriority
-                ? isDark
-                  ? DSColors.accentTertiary.withValues(alpha: 0.4)
-                  : DSColors.accentDark.withValues(alpha: 0.3)
-                : isDark
-                  ? DSColors.textDisabled.withValues(alpha: 0.5)
-                  : DSColors.borderDark,
+                  ? isDark
+                      ? DSColors.accentTertiary.withValues(alpha: 0.4)
+                      : DSColors.accentDark.withValues(alpha: 0.3)
+                  : isDark
+                      ? DSColors.textDisabled.withValues(alpha: 0.5)
+                      : DSColors.borderDark,
               width: isHighPriority ? 1.5 : 1,
             ),
-            boxShadow: isHighPriority ? [
-              BoxShadow(
-                color: (isDark ? DSColors.accentTertiary : DSColors.accentDark).withValues(alpha: 0.2),
-                blurRadius: 8,
-                offset: const Offset(0, 3),
-              ),
-            ] : null,
+            boxShadow: isHighPriority
+                ? [
+                    BoxShadow(
+                      color: (isDark
+                              ? DSColors.accentTertiary
+                              : DSColors.accentDark)
+                          .withValues(alpha: 0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ]
+                : null,
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -247,22 +267,24 @@ class KeywordWidgets {
                 keyword,
                 style: TextStyle(
                   fontSize: isHighPriority ? 16 : 14,
-                  fontWeight: isHighPriority ? FontWeight.bold : FontWeight.w600,
+                  fontWeight:
+                      isHighPriority ? FontWeight.bold : FontWeight.w600,
                   color: isHighPriority
-                    ? isDark
-                      ? DSColors.accentTertiary
-                      : DSColors.accentDark
-                    : isDark
-                      ? DSColors.textPrimary
-                      : DSColors.textPrimaryDark,
+                      ? isDark
+                          ? DSColors.accentTertiary
+                          : DSColors.accentDark
+                      : isDark
+                          ? DSColors.textPrimary
+                          : DSColors.textPrimaryDark,
                   height: 1.2,
                 ),
               ),
             ],
           ),
-        ).animate(delay: Duration(milliseconds: 100 * index))
-          .scale(begin: const Offset(0.8, 0.8), curve: Curves.elasticOut)
-          .fadeIn();
+        )
+            .animate(delay: Duration(milliseconds: 100 * index))
+            .scale(begin: const Offset(0.8, 0.8), curve: Curves.elasticOut)
+            .fadeIn();
       }).toList(),
     );
   }

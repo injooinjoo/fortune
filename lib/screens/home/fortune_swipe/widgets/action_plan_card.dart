@@ -28,17 +28,15 @@ class ActionPlanCard extends StatelessWidget {
             color: context.colors.textPrimary.withValues(alpha: 0.5),
           ),
         ),
-
         const SizedBox(height: 16),
-
         ...actions.map((action) => Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: _ActionItem(
-            title: action['title'] ?? '',
-            description: action['description'] ?? '',
-            priority: action['priority'] ?? 'medium',
-          ),
-        )),
+              padding: const EdgeInsets.only(bottom: 10),
+              child: _ActionItem(
+                title: action['title'] ?? '',
+                description: action['description'] ?? '',
+                priority: action['priority'] ?? 'medium',
+              ),
+            )),
       ],
     );
   }

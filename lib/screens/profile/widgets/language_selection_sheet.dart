@@ -81,7 +81,8 @@ class LanguageSelectionSheet extends ConsumerWidget {
                   language.nativeName,
                   style: context.bodyLarge.copyWith(
                     color: context.colors.textPrimary,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                    fontWeight:
+                        isSelected ? FontWeight.w600 : FontWeight.normal,
                   ),
                 ),
                 subtitle: Text(

@@ -40,18 +40,30 @@ class HealthFortuneConditions extends FortuneConditions {
   /// inputConditions Map에서 HealthFortuneConditions 생성
   factory HealthFortuneConditions.fromInputData(Map<String, dynamic> data) {
     return HealthFortuneConditions(
-      healthConcern: data['healthConcern'] as String? ?? data['current_condition'] as String? ?? '피로감',
+      healthConcern: data['healthConcern'] as String? ??
+          data['current_condition'] as String? ??
+          '피로감',
       symptoms: data['symptoms'] != null
           ? List<String>.from(data['symptoms'] as List)
           : data['concerned_body_parts'] != null
               ? List<String>.from(data['concerned_body_parts'] as List)
               : [],
-      sleepQuality: data['sleepQuality'] as int? ?? data['sleep_quality'] as int? ?? 3,
-      exerciseFrequency: data['exerciseFrequency'] as int? ?? data['exercise_frequency'] as int? ?? 3,
-      stressLevel: data['stressLevel'] as int? ?? data['stress_level'] as int? ?? 3,
-      mealRegularity: data['mealRegularity'] as int? ?? data['meal_regularity'] as int? ?? 3,
-      hasChronicCondition: data['hasChronicCondition'] as bool? ?? data['has_chronic_condition'] as bool? ?? false,
-      chronicCondition: data['chronicCondition'] as String? ?? data['chronic_condition'] as String? ?? '',
+      sleepQuality:
+          data['sleepQuality'] as int? ?? data['sleep_quality'] as int? ?? 3,
+      exerciseFrequency: data['exerciseFrequency'] as int? ??
+          data['exercise_frequency'] as int? ??
+          3,
+      stressLevel:
+          data['stressLevel'] as int? ?? data['stress_level'] as int? ?? 3,
+      mealRegularity: data['mealRegularity'] as int? ??
+          data['meal_regularity'] as int? ??
+          3,
+      hasChronicCondition: data['hasChronicCondition'] as bool? ??
+          data['has_chronic_condition'] as bool? ??
+          false,
+      chronicCondition: data['chronicCondition'] as String? ??
+          data['chronic_condition'] as String? ??
+          '',
     );
   }
 
@@ -94,7 +106,8 @@ class HealthFortuneConditions extends FortuneConditions {
       'stress_level': stressLevel.toString(),
       'meal_regularity': mealRegularity.toString(),
       'has_chronic': hasChronicCondition.toString(),
-      if (hasChronicCondition) 'chronic_hash': chronicCondition.hashCode.toString(),
+      if (hasChronicCondition)
+        'chronic_hash': chronicCondition.hashCode.toString(),
       // 날짜는 포함하지 않음 (매일 변경)
     };
   }

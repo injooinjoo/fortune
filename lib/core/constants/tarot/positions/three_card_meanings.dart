@@ -318,7 +318,8 @@ class ThreeCardMeanings {
 
     // === MINOR ARCANA - WANDS (22-35) ===
 
-    22: { // Ace of Wands
+    22: {
+      // Ace of Wands
       'upright': {
         'past': '새로운 열정이나 프로젝트가 시작되었습니다. 창조적 불꽃이 타올랐습니다.',
         'present': '새로운 영감과 에너지가 당신을 움직입니다. 이 열정을 따르세요.',
@@ -330,7 +331,8 @@ class ThreeCardMeanings {
         'future': '지연이나 좌절이 있을 수 있습니다. 인내가 필요합니다.',
       },
     },
-    23: { // Two of Wands
+    23: {
+      // Two of Wands
       'upright': {
         'past': '계획을 세우고 미래를 내다봤던 시기가 있었습니다.',
         'present': '결정을 내려야 할 때입니다. 세상으로 나아갈 준비를 하세요.',
@@ -342,7 +344,8 @@ class ThreeCardMeanings {
         'future': '준비 없이 행동하면 문제가 생길 수 있습니다.',
       },
     },
-    24: { // Three of Wands
+    24: {
+      // Three of Wands
       'upright': {
         'past': '노력의 결과가 나타나기 시작했고 확장의 기회가 있었습니다.',
         'present': '당신의 배가 돌아오고 있습니다. 기다리던 결과가 나타납니다.',
@@ -354,7 +357,8 @@ class ThreeCardMeanings {
         'future': '계획대로 되지 않을 수 있습니다. 대안을 준비하세요.',
       },
     },
-    25: { // Four of Wands
+    25: {
+      // Four of Wands
       'upright': {
         'past': '축하와 기쁨의 순간이 있었습니다. 중요한 이정표를 세웠습니다.',
         'present': '축하할 일이 있습니다. 조화와 기쁨이 당신을 감싸고 있습니다.',
@@ -366,7 +370,8 @@ class ThreeCardMeanings {
         'future': '축하할 일이 지연될 수 있습니다. 조화를 회복하세요.',
       },
     },
-    26: { // Five of Wands
+    26: {
+      // Five of Wands
       'upright': {
         'past': '경쟁이나 갈등의 시기가 있었습니다. 힘든 싸움을 겪었습니다.',
         'present': '경쟁이나 갈등 상황에 있습니다. 건강하게 대처하세요.',
@@ -378,7 +383,8 @@ class ThreeCardMeanings {
         'future': '갈등이 해소되거나 회피될 수 있습니다.',
       },
     },
-    27: { // Six of Wands
+    27: {
+      // Six of Wands
       'upright': {
         'past': '승리와 인정을 받았습니다. 성공의 기쁨을 누렸습니다.',
         'present': '성공이 찾아왔습니다. 당신의 노력이 인정받고 있습니다.',
@@ -390,7 +396,8 @@ class ThreeCardMeanings {
         'future': '성공이 지연되거나 인정이 늦을 수 있습니다.',
       },
     },
-    28: { // Seven of Wands
+    28: {
+      // Seven of Wands
       'upright': {
         'past': '자신의 입장을 지키기 위해 싸웠습니다. 도전에 맞섰습니다.',
         'present': '당신의 위치를 방어해야 합니다. 물러서지 마세요.',
@@ -402,7 +409,8 @@ class ThreeCardMeanings {
         'future': '무방비 상태가 될 수 있습니다. 힘을 비축하세요.',
       },
     },
-    29: { // Eight of Wands
+    29: {
+      // Eight of Wands
       'upright': {
         'past': '빠른 진전이 있었습니다. 상황이 급속히 전개되었습니다.',
         'present': '일이 빠르게 진행되고 있습니다. 기회를 놓치지 마세요.',
@@ -414,7 +422,8 @@ class ThreeCardMeanings {
         'future': '지연이 있을 수 있습니다. 서두르지 마세요.',
       },
     },
-    30: { // Nine of Wands
+    30: {
+      // Nine of Wands
       'upright': {
         'past': '힘든 시련을 견뎌냈습니다. 상처를 입었지만 포기하지 않았습니다.',
         'present': '지쳤지만 거의 다 왔습니다. 조금만 더 버티세요.',
@@ -426,7 +435,8 @@ class ThreeCardMeanings {
         'future': '휴식이 필요할 수 있습니다. 무리하지 마세요.',
       },
     },
-    31: { // Ten of Wands
+    31: {
+      // Ten of Wands
       'upright': {
         'past': '과중한 책임을 졌습니다. 혼자 너무 많은 것을 감당했습니다.',
         'present': '부담이 너무 큽니다. 일부를 내려놓거나 도움을 구하세요.',
@@ -438,7 +448,8 @@ class ThreeCardMeanings {
         'future': '부담이 줄어들 것입니다. 또는 내려놓아야 합니다.',
       },
     },
-    32: { // Page of Wands
+    32: {
+      // Page of Wands
       'upright': {
         'past': '새로운 아이디어에 대한 열정이 있었습니다. 탐험의 시작이었습니다.',
         'present': '새로운 모험에 대한 열정이 있습니다. 호기심을 따르세요.',
@@ -450,7 +461,8 @@ class ThreeCardMeanings {
         'future': '지연된 소식이나 좌절이 있을 수 있습니다.',
       },
     },
-    33: { // Knight of Wands
+    33: {
+      // Knight of Wands
       'upright': {
         'past': '열정적으로 행동했습니다. 모험을 감행했습니다.',
         'present': '대담하게 행동할 때입니다. 열정을 따르세요.',
@@ -462,7 +474,8 @@ class ThreeCardMeanings {
         'future': '속도를 조절해야 합니다. 충동을 피하세요.',
       },
     },
-    34: { // Queen of Wands
+    34: {
+      // Queen of Wands
       'upright': {
         'past': '자신감과 열정으로 이끌었습니다. 따뜻하게 영향력을 발휘했습니다.',
         'present': '자신감과 매력이 넘칩니다. 당당하게 빛나세요.',
@@ -474,7 +487,8 @@ class ThreeCardMeanings {
         'future': '자신감을 회복해야 좋은 결과가 옵니다.',
       },
     },
-    35: { // King of Wands
+    35: {
+      // King of Wands
       'upright': {
         'past': '비전을 가지고 이끌었습니다. 리더십을 발휘했습니다.',
         'present': '리더십과 비전이 필요합니다. 앞장서 이끄세요.',
@@ -489,7 +503,8 @@ class ThreeCardMeanings {
 
     // === MINOR ARCANA - CUPS (36-49) ===
 
-    36: { // Ace of Cups
+    36: {
+      // Ace of Cups
       'upright': {
         'past': '새로운 감정적 시작이 있었습니다. 사랑이나 기쁨이 솟아올랐습니다.',
         'present': '사랑과 감정의 풍요가 당신을 채웁니다. 마음을 열어두세요.',
@@ -501,7 +516,8 @@ class ThreeCardMeanings {
         'future': '감정적 성장을 위해 노력이 필요합니다.',
       },
     },
-    37: { // Two of Cups
+    37: {
+      // Two of Cups
       'upright': {
         'past': '깊은 연결이나 파트너십이 형성되었습니다.',
         'present': '조화로운 관계가 당신과 함께합니다. 연결을 소중히 하세요.',
@@ -513,7 +529,8 @@ class ThreeCardMeanings {
         'future': '관계에 주의가 필요할 수 있습니다.',
       },
     },
-    38: { // Three of Cups
+    38: {
+      // Three of Cups
       'upright': {
         'past': '친구들과 함께한 즐거운 시간이 있었습니다. 축하와 우정이 있었습니다.',
         'present': '축하와 기쁨의 시간입니다. 소중한 사람들과 함께하세요.',
@@ -525,7 +542,8 @@ class ThreeCardMeanings {
         'future': '사교 활동에 문제가 있을 수 있습니다.',
       },
     },
-    39: { // Four of Cups
+    39: {
+      // Four of Cups
       'upright': {
         'past': '무관심하거나 불만족했던 시기가 있었습니다.',
         'present': '주어진 것에 만족하지 못하고 있습니다. 눈앞의 기회를 보세요.',
@@ -537,7 +555,8 @@ class ThreeCardMeanings {
         'future': '새로운 관심이나 동기가 생길 것입니다.',
       },
     },
-    40: { // Five of Cups
+    40: {
+      // Five of Cups
       'upright': {
         'past': '상실과 슬픔을 경험했습니다. 엎질러진 것에 집중했습니다.',
         'present': '슬픔에 빠져 있지만 희망은 있습니다. 남은 것을 보세요.',
@@ -549,7 +568,8 @@ class ThreeCardMeanings {
         'future': '슬픔을 극복하고 새로운 시작을 할 것입니다.',
       },
     },
-    41: { // Six of Cups
+    41: {
+      // Six of Cups
       'upright': {
         'past': '순수하고 행복한 추억이 있습니다. 과거의 좋은 시절이 있었습니다.',
         'present': '향수나 과거와의 연결이 중요합니다. 순수함을 되찾으세요.',
@@ -561,7 +581,8 @@ class ThreeCardMeanings {
         'future': '과거에서 벗어나 앞으로 나아가야 합니다.',
       },
     },
-    42: { // Seven of Cups
+    42: {
+      // Seven of Cups
       'upright': {
         'past': '많은 선택지 앞에서 헤맸습니다. 환상에 빠졌을 수 있습니다.',
         'present': '선택이 너무 많습니다. 현실적으로 판단하세요.',
@@ -573,7 +594,8 @@ class ThreeCardMeanings {
         'future': '명확한 결정을 내릴 수 있을 것입니다.',
       },
     },
-    43: { // Eight of Cups
+    43: {
+      // Eight of Cups
       'upright': {
         'past': '익숙한 것을 떠났습니다. 더 나은 것을 찾아 길을 떠났습니다.',
         'present': '떠날 때가 왔습니다. 더 깊은 의미를 찾아 나서세요.',
@@ -585,7 +607,8 @@ class ThreeCardMeanings {
         'future': '결정의 시간이 다가오고 있습니다.',
       },
     },
-    44: { // Nine of Cups
+    44: {
+      // Nine of Cups
       'upright': {
         'past': '소원이 이루어진 적이 있습니다. 만족과 행복을 느꼈습니다.',
         'present': '만족과 기쁨의 시간입니다. 원하던 것이 이루어지고 있습니다.',
@@ -597,7 +620,8 @@ class ThreeCardMeanings {
         'future': '진정한 만족을 위해 내면의 작업이 필요합니다.',
       },
     },
-    45: { // Ten of Cups
+    45: {
+      // Ten of Cups
       'upright': {
         'past': '가정의 행복과 정서적 충만함을 경험했습니다.',
         'present': '가족의 조화와 감정적 완성이 있습니다. 행복을 누리세요.',
@@ -609,7 +633,8 @@ class ThreeCardMeanings {
         'future': '가정의 문제에 주의가 필요합니다.',
       },
     },
-    46: { // Page of Cups
+    46: {
+      // Page of Cups
       'upright': {
         'past': '감정적으로 새로운 것을 배웠습니다. 순수한 감정의 시작이 있었습니다.',
         'present': '감정적 메시지나 직관적 통찰이 옵니다. 열린 마음을 유지하세요.',
@@ -621,7 +646,8 @@ class ThreeCardMeanings {
         'future': '감정적 성숙이 필요합니다.',
       },
     },
-    47: { // Knight of Cups
+    47: {
+      // Knight of Cups
       'upright': {
         'past': '로맨틱한 제안이나 감정적 모험이 있었습니다.',
         'present': '사랑이나 창의적 기회가 다가옵니다. 마음을 따르세요.',
@@ -633,7 +659,8 @@ class ThreeCardMeanings {
         'future': '감정적 기만에 주의가 필요합니다.',
       },
     },
-    48: { // Queen of Cups
+    48: {
+      // Queen of Cups
       'upright': {
         'past': '감정적 지지와 직관으로 이끌었습니다.',
         'present': '공감과 직관이 당신을 인도합니다. 마음의 목소리를 들으세요.',
@@ -645,7 +672,8 @@ class ThreeCardMeanings {
         'future': '감정적 균형을 찾아야 합니다.',
       },
     },
-    49: { // King of Cups
+    49: {
+      // King of Cups
       'upright': {
         'past': '감정을 현명하게 다스렸습니다. 침착하게 대처했습니다.',
         'present': '감정적 균형과 성숙함이 있습니다. 현명하게 대처하세요.',
@@ -660,7 +688,8 @@ class ThreeCardMeanings {
 
     // === MINOR ARCANA - SWORDS (50-63) ===
 
-    50: { // Ace of Swords
+    50: {
+      // Ace of Swords
       'upright': {
         'past': '명확한 깨달음이 있었습니다. 진실이 밝혀졌습니다.',
         'present': '명료한 사고와 진실이 당신을 이끕니다. 결단을 내리세요.',
@@ -672,7 +701,8 @@ class ThreeCardMeanings {
         'future': '혼란을 극복해야 진전이 있습니다.',
       },
     },
-    51: { // Two of Swords
+    51: {
+      // Two of Swords
       'upright': {
         'past': '어려운 결정 앞에서 망설였습니다.',
         'present': '선택을 미루고 있습니다. 결정해야 할 때입니다.',
@@ -684,7 +714,8 @@ class ThreeCardMeanings {
         'future': '결정의 순간이 다가옵니다.',
       },
     },
-    52: { // Three of Swords
+    52: {
+      // Three of Swords
       'upright': {
         'past': '마음에 상처를 받았습니다. 슬픔을 경험했습니다.',
         'present': '슬픔이나 상처가 있습니다. 치유의 시간이 필요합니다.',
@@ -696,7 +727,8 @@ class ThreeCardMeanings {
         'future': '슬픔을 극복할 것입니다.',
       },
     },
-    53: { // Four of Swords
+    53: {
+      // Four of Swords
       'upright': {
         'past': '휴식과 회복의 시간이 있었습니다.',
         'present': '휴식이 필요합니다. 잠시 멈추고 재충전하세요.',
@@ -708,7 +740,8 @@ class ThreeCardMeanings {
         'future': '강제로 쉬거나 다시 움직여야 할 것입니다.',
       },
     },
-    54: { // Five of Swords
+    54: {
+      // Five of Swords
       'upright': {
         'past': '갈등에서 승리했지만 대가가 있었습니다.',
         'present': '갈등 중입니다. 이길 가치가 있는 싸움인지 생각하세요.',
@@ -720,7 +753,8 @@ class ThreeCardMeanings {
         'future': '갈등이 해소될 것입니다.',
       },
     },
-    55: { // Six of Swords
+    55: {
+      // Six of Swords
       'upright': {
         'past': '어려운 상황에서 벗어났습니다. 전환의 시기를 겪었습니다.',
         'present': '더 나은 곳으로 이동 중입니다. 힘든 시기를 뒤로하고 있습니다.',
@@ -732,7 +766,8 @@ class ThreeCardMeanings {
         'future': '변화를 받아들여야 진전이 있습니다.',
       },
     },
-    56: { // Seven of Swords
+    56: {
+      // Seven of Swords
       'upright': {
         'past': '전략적으로 행동했거나 속았습니다.',
         'present': '신중하게 행동하세요. 모든 것을 보여줄 필요는 없습니다.',
@@ -744,7 +779,8 @@ class ThreeCardMeanings {
         'future': '숨긴 것이 드러날 수 있습니다.',
       },
     },
-    57: { // Eight of Swords
+    57: {
+      // Eight of Swords
       'upright': {
         'past': '갇혀있다고 느꼈지만 탈출구는 있었습니다.',
         'present': '스스로를 제한하고 있습니다. 눈을 열면 길이 보입니다.',
@@ -756,7 +792,8 @@ class ThreeCardMeanings {
         'future': '해방의 기회가 올 것입니다.',
       },
     },
-    58: { // Nine of Swords
+    58: {
+      // Nine of Swords
       'upright': {
         'past': '걱정과 불안에 시달렸습니다.',
         'present': '불안이 당신을 괴롭히고 있습니다. 두려움은 실제보다 큽니다.',
@@ -768,7 +805,8 @@ class ThreeCardMeanings {
         'future': '불안이 해소될 것입니다.',
       },
     },
-    59: { // Ten of Swords
+    59: {
+      // Ten of Swords
       'upright': {
         'past': '최악의 상황을 겪었습니다. 하지만 그것이 바닥이었습니다.',
         'present': '끝이 왔습니다. 하지만 새로운 시작의 전제입니다.',
@@ -780,7 +818,8 @@ class ThreeCardMeanings {
         'future': '회복과 재건이 가능합니다.',
       },
     },
-    60: { // Page of Swords
+    60: {
+      // Page of Swords
       'upright': {
         'past': '호기심과 새로운 아이디어가 있었습니다.',
         'present': '새로운 정보나 아이디어가 옵니다. 열린 마음을 유지하세요.',
@@ -792,7 +831,8 @@ class ThreeCardMeanings {
         'future': '소통에 주의가 필요합니다.',
       },
     },
-    61: { // Knight of Swords
+    61: {
+      // Knight of Swords
       'upright': {
         'past': '빠르고 결단력 있게 행동했습니다.',
         'present': '신속하게 행동할 때입니다. 망설이지 마세요.',
@@ -804,7 +844,8 @@ class ThreeCardMeanings {
         'future': '성급한 결정에 주의하세요.',
       },
     },
-    62: { // Queen of Swords
+    62: {
+      // Queen of Swords
       'upright': {
         'past': '명석하게 판단했습니다. 직접적으로 소통했습니다.',
         'present': '명확한 사고와 직접적인 소통이 필요합니다.',
@@ -816,7 +857,8 @@ class ThreeCardMeanings {
         'future': '소통 방식을 재검토해야 합니다.',
       },
     },
-    63: { // King of Swords
+    63: {
+      // King of Swords
       'upright': {
         'past': '권위 있는 결정을 내렸습니다. 공정하게 판단했습니다.',
         'present': '논리와 공정함으로 결정할 때입니다.',
@@ -831,7 +873,8 @@ class ThreeCardMeanings {
 
     // === MINOR ARCANA - PENTACLES (64-77) ===
 
-    64: { // Ace of Pentacles
+    64: {
+      // Ace of Pentacles
       'upright': {
         'past': '물질적인 새로운 시작이 있었습니다.',
         'present': '재정적 기회가 왔습니다. 이 씨앗을 잘 가꾸세요.',
@@ -843,7 +886,8 @@ class ThreeCardMeanings {
         'future': '재정 계획을 세워야 합니다.',
       },
     },
-    65: { // Two of Pentacles
+    65: {
+      // Two of Pentacles
       'upright': {
         'past': '여러 가지를 저글링했습니다. 균형을 잡느라 바빴습니다.',
         'present': '균형을 유지하고 있습니다. 유연하게 대처하세요.',
@@ -855,7 +899,8 @@ class ThreeCardMeanings {
         'future': '단순화가 필요합니다.',
       },
     },
-    66: { // Three of Pentacles
+    66: {
+      // Three of Pentacles
       'upright': {
         'past': '협업으로 성과를 얻었습니다.',
         'present': '팀워크가 중요합니다. 함께 일하면 더 큰 것을 이룹니다.',
@@ -867,7 +912,8 @@ class ThreeCardMeanings {
         'future': '협업에 주의가 필요합니다.',
       },
     },
-    67: { // Four of Pentacles
+    67: {
+      // Four of Pentacles
       'upright': {
         'past': '안정을 추구하고 저축했습니다.',
         'present': '안정은 좋지만 집착은 피하세요.',
@@ -879,7 +925,8 @@ class ThreeCardMeanings {
         'future': '재정 습관을 재검토해야 합니다.',
       },
     },
-    68: { // Five of Pentacles
+    68: {
+      // Five of Pentacles
       'upright': {
         'past': '어려운 시기를 겪었습니다. 재정적 고통이 있었습니다.',
         'present': '어려움 속에 있지만 도움은 가까이 있습니다.',
@@ -891,7 +938,8 @@ class ThreeCardMeanings {
         'future': '상황이 나아질 것입니다.',
       },
     },
-    69: { // Six of Pentacles
+    69: {
+      // Six of Pentacles
       'upright': {
         'past': '관대함을 주거나 받았습니다.',
         'present': '나눔의 시간입니다. 균형 있게 주고받으세요.',
@@ -903,7 +951,8 @@ class ThreeCardMeanings {
         'future': '나눔의 동기를 점검해야 합니다.',
       },
     },
-    70: { // Seven of Pentacles
+    70: {
+      // Seven of Pentacles
       'upright': {
         'past': '심은 것이 자라기를 기다렸습니다.',
         'present': '인내가 필요합니다. 결과가 곧 나타납니다.',
@@ -915,7 +964,8 @@ class ThreeCardMeanings {
         'future': '전략을 바꿀 필요가 있을 수 있습니다.',
       },
     },
-    71: { // Eight of Pentacles
+    71: {
+      // Eight of Pentacles
       'upright': {
         'past': '기술을 열심히 연마했습니다.',
         'present': '꾸준한 노력이 숙련으로 이어지고 있습니다.',
@@ -927,7 +977,8 @@ class ThreeCardMeanings {
         'future': '품질에 주의가 필요합니다.',
       },
     },
-    72: { // Nine of Pentacles
+    72: {
+      // Nine of Pentacles
       'upright': {
         'past': '자립과 풍요를 이루었습니다.',
         'present': '성취를 누리세요. 당신은 이것을 벌었습니다.',
@@ -939,7 +990,8 @@ class ThreeCardMeanings {
         'future': '삶의 질에 주의가 필요합니다.',
       },
     },
-    73: { // Ten of Pentacles
+    73: {
+      // Ten of Pentacles
       'upright': {
         'past': '가족의 풍요와 안정이 있었습니다.',
         'present': '세대를 넘는 풍요입니다. 유산을 생각하세요.',
@@ -951,7 +1003,8 @@ class ThreeCardMeanings {
         'future': '유산이나 가족 문제에 주의가 필요합니다.',
       },
     },
-    74: { // Page of Pentacles
+    74: {
+      // Page of Pentacles
       'upright': {
         'past': '새로운 학습이나 기회가 시작되었습니다.',
         'present': '배움에 열려 있습니다. 기회를 잡으세요.',
@@ -963,7 +1016,8 @@ class ThreeCardMeanings {
         'future': '실천력을 기르세요.',
       },
     },
-    75: { // Knight of Pentacles
+    75: {
+      // Knight of Pentacles
       'upright': {
         'past': '꾸준히 노력했습니다. 신뢰할 수 있게 행동했습니다.',
         'present': '인내와 꾸준함이 중요합니다.',
@@ -975,7 +1029,8 @@ class ThreeCardMeanings {
         'future': '변화를 받아들여야 합니다.',
       },
     },
-    76: { // Queen of Pentacles
+    76: {
+      // Queen of Pentacles
       'upright': {
         'past': '실용적으로 돌보고 관리했습니다.',
         'present': '현명하게 가정과 재정을 관리하세요.',
@@ -987,7 +1042,8 @@ class ThreeCardMeanings {
         'future': '자기 관리에 주의가 필요합니다.',
       },
     },
-    77: { // King of Pentacles
+    77: {
+      // King of Pentacles
       'upright': {
         'past': '재정적 성공을 이루었습니다. 현명하게 관리했습니다.',
         'present': '물질적 안정과 리더십이 있습니다.',
@@ -1002,7 +1058,8 @@ class ThreeCardMeanings {
   };
 
   /// Get interpretation for a specific card, orientation, and position
-  static String? getInterpretation(int cardIndex, String orientation, String position) {
+  static String? getInterpretation(
+      int cardIndex, String orientation, String position) {
     return meanings[cardIndex]?[orientation]?[position];
   }
 }

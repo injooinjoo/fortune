@@ -518,7 +518,8 @@ class LottoNumberGenerator {
 
     // 꿈 상징 기반 방위 설명
     final symbolName = symbols.isNotEmpty ? symbols.first.toString() : '상징';
-    final directionDesc = '꿈 속 "$symbolName"이(가) $direction 방향의 기운과 연결됩니다. $placeType에서 구매하세요.';
+    final directionDesc =
+        '꿈 속 "$symbolName"이(가) $direction 방향의 기운과 연결됩니다. $placeType에서 구매하세요.';
 
     // 오행 기반 간판 색상
     final luckyColor = _elementColors[element] ?? '황색';
@@ -571,15 +572,18 @@ class LottoNumberGenerator {
     switch (sentiment) {
       case 'positive':
         avoidNumber = '4, 9 계열 (상극)';
-        wealthScore = 75 + (DateTime.now().millisecondsSinceEpoch % 20); // 75-94
+        wealthScore =
+            75 + (DateTime.now().millisecondsSinceEpoch % 20); // 75-94
         break;
       case 'negative':
         avoidNumber = '2, 7 계열 (상극)';
-        wealthScore = 50 + (DateTime.now().millisecondsSinceEpoch % 25); // 50-74
+        wealthScore =
+            50 + (DateTime.now().millisecondsSinceEpoch % 25); // 50-74
         break;
       default:
         avoidNumber = '없음 (균형 잡힌 상태)';
-        wealthScore = 60 + (DateTime.now().millisecondsSinceEpoch % 20); // 60-79
+        wealthScore =
+            60 + (DateTime.now().millisecondsSinceEpoch % 20); // 60-79
     }
 
     // 오행 설명
@@ -651,9 +655,18 @@ class LottoNumberGenerator {
   /// 시간대 인덱스 추출
   static int _getTimeIndex(String birthTime) {
     const timeMap = {
-      '자시': 0, '축시': 1, '인시': 2, '묘시': 3,
-      '진시': 4, '사시': 5, '오시': 6, '미시': 7,
-      '신시': 8, '유시': 9, '술시': 10, '해시': 11,
+      '자시': 0,
+      '축시': 1,
+      '인시': 2,
+      '묘시': 3,
+      '진시': 4,
+      '사시': 5,
+      '오시': 6,
+      '미시': 7,
+      '신시': 8,
+      '유시': 9,
+      '술시': 10,
+      '해시': 11,
     };
 
     for (final entry in timeMap.entries) {
@@ -665,7 +678,8 @@ class LottoNumberGenerator {
   }
 
   /// 주요 오행 계산
-  static String _calculateDominantElement(DateTime birthDate, String? birthTime) {
+  static String _calculateDominantElement(
+      DateTime birthDate, String? birthTime) {
     // 간단한 오행 계산 (실제로는 더 복잡한 사주 계산 필요)
     final yearElement = birthDate.year % 5;
     final monthElement = birthDate.month % 5;
@@ -676,7 +690,8 @@ class LottoNumberGenerator {
       timeElement = _getTimeIndex(birthTime) % 5;
     }
 
-    final totalElement = (yearElement + monthElement + dayElement + timeElement) % 5;
+    final totalElement =
+        (yearElement + monthElement + dayElement + timeElement) % 5;
 
     const elements = ['목(木)', '화(火)', '토(土)', '금(金)', '수(水)'];
     return elements[totalElement];
@@ -787,7 +802,8 @@ class LottoNumberGenerator {
   }
 
   /// 최적 타이밍 생성
-  static LuckyTiming _generateLuckyTiming(String dominantElement, DateTime now) {
+  static LuckyTiming _generateLuckyTiming(
+      String dominantElement, DateTime now) {
     // 오행과 상생하는 요일 찾기
     String luckyDay;
     String dayReason;
@@ -858,14 +874,22 @@ class LottoNumberGenerator {
   /// 요일 문자열을 weekday 숫자로 변환
   static int _getTargetWeekday(String dayName) {
     switch (dayName) {
-      case '월요일': return 1;
-      case '화요일': return 2;
-      case '수요일': return 3;
-      case '목요일': return 4;
-      case '금요일': return 5;
-      case '토요일': return 6;
-      case '일요일': return 7;
-      default: return 6;
+      case '월요일':
+        return 1;
+      case '화요일':
+        return 2;
+      case '수요일':
+        return 3;
+      case '목요일':
+        return 4;
+      case '금요일':
+        return 5;
+      case '토요일':
+        return 6;
+      case '일요일':
+        return 7;
+      default:
+        return 6;
     }
   }
 

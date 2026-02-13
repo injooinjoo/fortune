@@ -72,7 +72,8 @@ class WeatherService {
   }
 
   /// 도시 이름으로 날씨 가져오기 (캐싱 적용)
-  static Future<WeatherInfo> _getWeatherByCity(String city, String koreanName) async {
+  static Future<WeatherInfo> _getWeatherByCity(
+      String city, String koreanName) async {
     try {
       // 1. 캐시 확인
       final cachedWeather = await _getCachedWeather(koreanName);
@@ -100,14 +101,15 @@ class WeatherService {
     }
     return WeatherInfo.defaultWeather(cityName: koreanName);
   }
-  
+
   /// 캐시된 날씨 정보 가져오기
-  static Future<Map<String, dynamic>?> _getCachedWeather(String cityName) async {
+  static Future<Map<String, dynamic>?> _getCachedWeather(
+      String cityName) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final cacheKey = 'weather_cache_$cityName';
       final cachedString = prefs.getString(cacheKey);
-      
+
       if (cachedString != null) {
         return json.decode(cachedString);
       }
@@ -116,9 +118,10 @@ class WeatherService {
     }
     return null;
   }
-  
+
   /// 날씨 정보 캐싱
-  static Future<void> _cacheWeather(String cityName, Map<String, dynamic> weatherData) async {
+  static Future<void> _cacheWeather(
+      String cityName, Map<String, dynamic> weatherData) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final cacheKey = 'weather_cache_$cityName';
@@ -126,22 +129,22 @@ class WeatherService {
         'data': weatherData,
         'timestamp': DateTime.now().millisecondsSinceEpoch,
       };
-      
+
       await prefs.setString(cacheKey, json.encode(cacheData));
       debugPrint('✅ 날씨 정보 캐싱 완료: $cityName');
     } catch (e) {
       debugPrint('캐시 저장 오류: $e');
     }
   }
-  
+
   /// 캐시 유효성 검증 (30분)
   static bool _isCacheValid(dynamic timestamp) {
     if (timestamp == null) return false;
-    
+
     final cacheTime = DateTime.fromMillisecondsSinceEpoch(timestamp as int);
     final now = DateTime.now();
     final difference = now.difference(cacheTime);
-    
+
     // 30분 이내면 유효
     return difference.inMinutes < 30;
   }
@@ -149,16 +152,16 @@ class WeatherService {
 
 /// 날씨 정보 모델
 class WeatherInfo {
-  final String condition;       // 날씨 상태 (맑음, 흐림, 비, 눈 등)
-  final String description;     // 상세 설명
-  final double temperature;     // 현재 온도
-  final double feelsLike;       // 체감 온도
-  final double humidity;        // 습도
-  final double windSpeed;       // 풍속
-  final String cityName;        // 도시명
-  final DateTime sunrise;       // 일출 시간
-  final DateTime sunset;        // 일몰 시간
-  final String icon;           // 날씨 아이콘 코드
+  final String condition; // 날씨 상태 (맑음, 흐림, 비, 눈 등)
+  final String description; // 상세 설명
+  final double temperature; // 현재 온도
+  final double feelsLike; // 체감 온도
+  final double humidity; // 습도
+  final double windSpeed; // 풍속
+  final String cityName; // 도시명
+  final DateTime sunrise; // 일출 시간
+  final DateTime sunset; // 일몰 시간
+  final String icon; // 날씨 아이콘 코드
 
   WeatherInfo({
     required this.condition,
@@ -173,9 +176,11 @@ class WeatherInfo {
     required this.icon,
   });
 
-  factory WeatherInfo.fromJson(Map<String, dynamic> json, [String? cityNameOverride]) {
+  factory WeatherInfo.fromJson(Map<String, dynamic> json,
+      [String? cityNameOverride]) {
     // cityNameOverride가 제공되면 사용 (LocationManager로부터 받은 정확한 지역명)
-    final cityName = cityNameOverride ?? LocationMappings.toKorean(json['name'] ?? 'Seoul');
+    final cityName =
+        cityNameOverride ?? LocationMappings.toKorean(json['name'] ?? 'Seoul');
 
     return WeatherInfo(
       condition: json['weather'][0]['main'] ?? '맑음',
@@ -236,7 +241,7 @@ class WeatherInfo {
   /// 날씨에 따른 운세 키워드
   List<String> get fortuneKeywords {
     final List<String> keywords = [];
-    
+
     if (condition == 'Clear') {
       keywords.addAll(['밝은 기운', '긍정적 에너지', '새로운 시작']);
     } else if (condition == 'Rain') {
@@ -246,13 +251,13 @@ class WeatherInfo {
     } else if (condition == 'Snow') {
       keywords.addAll(['순수', '새로운 기회', '희망']);
     }
-    
+
     if (temperature > 25) {
       keywords.add('열정');
     } else if (temperature < 10) {
       keywords.add('인내');
     }
-    
+
     return keywords;
   }
 }

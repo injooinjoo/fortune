@@ -30,7 +30,7 @@ class Fortune extends Equatable {
   final Map<String, dynamic>? fiveElements;
   final String? specialTip;
   final String? period; // today, tomorrow, weekly, monthly, yearly
-  
+
   // Enhanced fields for comprehensive fortune output
   final Map<String, dynamic>? meta; // date, weekday, timezone, city
   final Map<String, dynamic>? weatherSummary; // weather integration
@@ -92,16 +92,18 @@ class Fortune extends Equatable {
   int get score => overallScore ?? 80;
   String get message => content;
   Map<String, dynamic>? get details => additionalInfo;
-  
+
   // Getters for lucky items
   String? get luckyColor => luckyItems?['color'] as String?;
   int? get luckyNumber => luckyItems?['number'] as int?;
   String? get luckyDirection => luckyItems?['direction'] as String?;
   String? get bestTime => luckyItems?['time'] as String?;
-  
+
   // Getters for common fields
-  String? get advice => metadata?['advice'] as String? ?? recommendations?.firstOrNull;
-  String? get caution => metadata?['caution'] as String? ?? warnings?.firstOrNull;
+  String? get advice =>
+      metadata?['advice'] as String? ?? recommendations?.firstOrNull;
+  String? get caution =>
+      metadata?['caution'] as String? ?? warnings?.firstOrNull;
 
   // ✅ copyWith 메서드 (블러 해제용)
   Fortune copyWith({
@@ -186,14 +188,17 @@ class Fortune extends Equatable {
 
   @override
   List<Object?> get props => [
-    id, userId, type, content, createdAt, metadata, tokenCost,
-    category, overallScore, description, scoreBreakdown, luckyItems, recommendations,
-    warnings, summary, additionalInfo, detailedLuckyItems, greeting, hexagonScores,
-    timeSpecificFortunes, birthYearFortunes, fiveElements, specialTip, period,
-    meta, weatherSummary, overall, categories, sajuInsight, personalActions,
-    notification, shareCard, uiBlocks, explain,
-    percentile, totalTodayViewers, isPercentileValid,  // ✅ 퍼센타일 필드 추가
-  ];
+        id, userId, type, content, createdAt, metadata, tokenCost,
+        category, overallScore, description, scoreBreakdown, luckyItems,
+        recommendations,
+        warnings, summary, additionalInfo, detailedLuckyItems, greeting,
+        hexagonScores,
+        timeSpecificFortunes, birthYearFortunes, fiveElements, specialTip,
+        period,
+        meta, weatherSummary, overall, categories, sajuInsight, personalActions,
+        notification, shareCard, uiBlocks, explain,
+        percentile, totalTodayViewers, isPercentileValid, // ✅ 퍼센타일 필드 추가
+      ];
 
   Map<String, dynamic> toJson() {
     return {
@@ -216,11 +221,15 @@ class Fortune extends Equatable {
       if (detailedLuckyItems != null) 'detailedLuckyItems': detailedLuckyItems,
       if (greeting != null) 'greeting': greeting,
       if (hexagonScores != null) 'hexagonScores': hexagonScores,
-      if (timeSpecificFortunes != null) 'timeSpecificFortunes': timeSpecificFortunes?.map((e) => e.toJson()).toList(),
-      if (birthYearFortunes != null) 'birthYearFortunes': birthYearFortunes?.map((e) => e.toJson()).toList(),
+      if (timeSpecificFortunes != null)
+        'timeSpecificFortunes':
+            timeSpecificFortunes?.map((e) => e.toJson()).toList(),
+      if (birthYearFortunes != null)
+        'birthYearFortunes': birthYearFortunes?.map((e) => e.toJson()).toList(),
       if (fiveElements != null) 'fiveElements': fiveElements,
       if (specialTip != null) 'specialTip': specialTip,
-      if (period != null) 'period': period};
+      if (period != null) 'period': period
+    };
   }
 }
 
@@ -239,25 +248,35 @@ class DailyFortune extends Equatable {
   final String compatibility;
   final FortuneElements elements;
 
-  const DailyFortune({
-    required this.score,
-    required this.keywords,
-    required this.summary,
-    required this.luckyColor,
-    required this.luckyNumber,
-    required this.energy,
-    required this.mood,
-    required this.advice,
-    required this.caution,
-    required this.bestTime,
-    required this.compatibility,
-    required this.elements});
+  const DailyFortune(
+      {required this.score,
+      required this.keywords,
+      required this.summary,
+      required this.luckyColor,
+      required this.luckyNumber,
+      required this.energy,
+      required this.mood,
+      required this.advice,
+      required this.caution,
+      required this.bestTime,
+      required this.compatibility,
+      required this.elements});
 
   @override
   List<Object?> get props => [
-    score, keywords, summary, luckyColor, luckyNumber, 
-    energy, mood, advice, caution, bestTime, compatibility, elements
-  ];
+        score,
+        keywords,
+        summary,
+        luckyColor,
+        luckyNumber,
+        energy,
+        mood,
+        advice,
+        caution,
+        bestTime,
+        compatibility,
+        elements
+      ];
 }
 
 // 운세 요소별 점수
@@ -267,11 +286,11 @@ class FortuneElements extends Equatable {
   final int money;
   final int health;
 
-  const FortuneElements({
-    required this.love,
-    required this.career,
-    required this.money,
-    required this.health});
+  const FortuneElements(
+      {required this.love,
+      required this.career,
+      required this.money,
+      required this.health});
 
   @override
   List<Object?> get props => [love, career, money, health];
@@ -291,24 +310,33 @@ class SajuFortune extends Equatable {
   final String advice;
   final Map<String, dynamic> detailedAnalysis;
 
-  const SajuFortune({
-    required this.fourPillars,
-    required this.element,
-    required this.personality,
-    required this.career,
-    required this.wealth,
-    required this.health,
-    required this.relationship,
-    required this.yearlyFortune,
-    required this.monthlyFortune,
-    required this.advice,
-    required this.detailedAnalysis});
+  const SajuFortune(
+      {required this.fourPillars,
+      required this.element,
+      required this.personality,
+      required this.career,
+      required this.wealth,
+      required this.health,
+      required this.relationship,
+      required this.yearlyFortune,
+      required this.monthlyFortune,
+      required this.advice,
+      required this.detailedAnalysis});
 
   @override
   List<Object?> get props => [
-    fourPillars, element, personality, career, wealth, 
-    health, relationship, yearlyFortune, monthlyFortune, advice, detailedAnalysis
-  ];
+        fourPillars,
+        element,
+        personality,
+        career,
+        wealth,
+        health,
+        relationship,
+        yearlyFortune,
+        monthlyFortune,
+        advice,
+        detailedAnalysis
+      ];
 }
 
 // MBTI 운세 엔티티
@@ -324,23 +352,31 @@ class MBTIFortune extends Equatable {
   final int energyLevel;
   final int stressLevel;
 
-  const MBTIFortune({
-    required this.mbtiType,
-    required this.todayMood,
-    required this.strengths,
-    required this.weaknesses,
-    required this.advice,
-    required this.compatibility,
-    required this.careerAdvice,
-    required this.relationshipAdvice,
-    required this.energyLevel,
-    required this.stressLevel});
+  const MBTIFortune(
+      {required this.mbtiType,
+      required this.todayMood,
+      required this.strengths,
+      required this.weaknesses,
+      required this.advice,
+      required this.compatibility,
+      required this.careerAdvice,
+      required this.relationshipAdvice,
+      required this.energyLevel,
+      required this.stressLevel});
 
   @override
   List<Object?> get props => [
-    mbtiType, todayMood, strengths, weaknesses, advice,
-    compatibility, careerAdvice, relationshipAdvice, energyLevel, stressLevel
-  ];
+        mbtiType,
+        todayMood,
+        strengths,
+        weaknesses,
+        advice,
+        compatibility,
+        careerAdvice,
+        relationshipAdvice,
+        energyLevel,
+        stressLevel
+      ];
 }
 
 // 궁합 운세 엔티티
@@ -355,40 +391,43 @@ class CompatibilityFortune extends Equatable {
   final List<String> challenges;
   final String advice;
 
-  const CompatibilityFortune({
-    required this.compatibilityScore,
-    required this.summary,
-    required this.emotionalCompatibility,
-    required this.communicationStyle,
-    required this.conflictResolution,
-    required this.longTermPotential,
-    required this.strengths,
-    required this.challenges,
-    required this.advice});
+  const CompatibilityFortune(
+      {required this.compatibilityScore,
+      required this.summary,
+      required this.emotionalCompatibility,
+      required this.communicationStyle,
+      required this.conflictResolution,
+      required this.longTermPotential,
+      required this.strengths,
+      required this.challenges,
+      required this.advice});
 
   @override
   List<Object?> get props => [
-    compatibilityScore, summary, emotionalCompatibility, communicationStyle,
-    conflictResolution, longTermPotential, strengths, challenges, advice
-  ];
+        compatibilityScore,
+        summary,
+        emotionalCompatibility,
+        communicationStyle,
+        conflictResolution,
+        longTermPotential,
+        strengths,
+        challenges,
+        advice
+      ];
 }
 
 // 운세 카테고리
 enum FortuneCategory {
-  
-  
-  daily,        // 일일/시간별
-  traditional,  // 전통 운세
-  personality,  // 성격/심리
-  love,         // 연애/결혼
-  career,       // 직업/사업
-  wealth,       // 재물/투자
-  lifestyle,    // 생활/건강
-  sports,       // 스포츠
-  lucky,        // 행운 아이템
-  special,      // 특별 운세
-  
-  
+  daily, // 일일/시간별
+  traditional, // 전통 운세
+  personality, // 성격/심리
+  love, // 연애/결혼
+  career, // 직업/사업
+  wealth, // 재물/투자
+  lifestyle, // 생활/건강
+  sports, // 스포츠
+  lucky, // 행운 아이템
+  special, // 특별 운세
 }
 
 // 운세 타입 정보
@@ -405,24 +444,33 @@ class FortuneTypeInfo extends Equatable {
   final bool isNew;
   final bool isPopular;
 
-  const FortuneTypeInfo({
-    required this.id,
-    required this.title,
-    required this.description,
-    required this.category,
-    required this.tokenCost,
-    required this.iconName,
-    required this.color,
-    required this.gradient,
-    this.isPremium = false,
-    this.isNew = false,
-    this.isPopular = false});
+  const FortuneTypeInfo(
+      {required this.id,
+      required this.title,
+      required this.description,
+      required this.category,
+      required this.tokenCost,
+      required this.iconName,
+      required this.color,
+      required this.gradient,
+      this.isPremium = false,
+      this.isNew = false,
+      this.isPopular = false});
 
   @override
   List<Object?> get props => [
-    id, title, description, category, tokenCost, 
-    iconName, color, gradient, isPremium, isNew, isPopular
-  ];
+        id,
+        title,
+        description,
+        category,
+        tokenCost,
+        iconName,
+        color,
+        gradient,
+        isPremium,
+        isNew,
+        isPopular
+      ];
 }
 
 // Time-specific fortune for hourly/daily/weekly breakdowns
@@ -433,12 +481,12 @@ class TimeSpecificFortune extends Equatable {
   final String description;
   final String? recommendation;
 
-  const TimeSpecificFortune({
-    required this.time,
-    required this.title,
-    required this.score,
-    required this.description,
-    this.recommendation});
+  const TimeSpecificFortune(
+      {required this.time,
+      required this.title,
+      required this.score,
+      required this.description,
+      this.recommendation});
 
   @override
   List<Object?> get props => [time, title, score, description, recommendation];
@@ -449,7 +497,8 @@ class TimeSpecificFortune extends Equatable {
       'title': title,
       'score': score,
       'description': null,
-      if (recommendation != null) 'recommendation': null};
+      if (recommendation != null) 'recommendation': null
+    };
   }
 }
 
@@ -460,11 +509,11 @@ class BirthYearFortune extends Equatable {
   final String description;
   final String? advice;
 
-  const BirthYearFortune({
-    required this.birthYear,
-    required this.zodiacAnimal,
-    required this.description,
-    this.advice});
+  const BirthYearFortune(
+      {required this.birthYear,
+      required this.zodiacAnimal,
+      required this.description,
+      this.advice});
 
   @override
   List<Object?> get props => [birthYear, zodiacAnimal, description, advice];
@@ -474,6 +523,7 @@ class BirthYearFortune extends Equatable {
       'birthYear': birthYear,
       'zodiacAnimal': zodiacAnimal,
       'description': null,
-      if (advice != null) 'advice': null};
+      if (advice != null) 'advice': null
+    };
   }
 }

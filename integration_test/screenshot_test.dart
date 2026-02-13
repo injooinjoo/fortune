@@ -185,7 +185,8 @@ Future<void> _captureScreenshot({
   final app = ProviderScope(
     overrides: [
       themeModeProvider.overrideWith(
-        (ref) => FixedThemeModeNotifier(isDarkMode ? ThemeMode.dark : ThemeMode.light),
+        (ref) => FixedThemeModeNotifier(
+            isDarkMode ? ThemeMode.dark : ThemeMode.light),
       ),
     ],
     child: const TestApp(),
@@ -302,10 +303,13 @@ Future<void> _generatePageIndex() async {
   buffer.writeln('<html><head>');
   buffer.writeln('<title>Fortune App Screenshots</title>');
   buffer.writeln('<style>');
-  buffer.writeln('body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 40px; background: #f5f5f5; }');
+  buffer.writeln(
+      'body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 40px; background: #f5f5f5; }');
   buffer.writeln('h1 { color: #333; }');
-  buffer.writeln('.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }');
-  buffer.writeln('.card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }');
+  buffer.writeln(
+      '.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }');
+  buffer.writeln(
+      '.card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }');
   buffer.writeln('.card img { width: 100%; height: auto; }');
   buffer.writeln('.card .label { padding: 12px; font-weight: 500; }');
   buffer.writeln('.mode-section { margin-bottom: 40px; }');
@@ -332,7 +336,8 @@ Future<void> _generatePageIndex() async {
   buffer.writeln('<h2 class="mode-title">🌙 Dark Mode</h2>');
   buffer.writeln('<div class="grid">');
   for (final page in pagesToCapture) {
-    buffer.writeln('<div class="card" style="background: #1a1a1a; color: white;">');
+    buffer.writeln(
+        '<div class="card" style="background: #1a1a1a; color: white;">');
     buffer.writeln('<img src="dark/${page.name}.png" alt="${page.name}">');
     buffer.writeln('<div class="label">${page.name}</div>');
     buffer.writeln('</div>');

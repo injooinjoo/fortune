@@ -222,7 +222,20 @@ class Celebrity {
   }
 
   String get chineseZodiac {
-    final zodiacAnimals = ['원숭이', '닭', '개', '돼지', '쥐', '소', '호랑이', '토끼', '용', '뱀', '말', '양'];
+    final zodiacAnimals = [
+      '원숭이',
+      '닭',
+      '개',
+      '돼지',
+      '쥐',
+      '소',
+      '호랑이',
+      '토끼',
+      '용',
+      '뱀',
+      '말',
+      '양'
+    ];
     return zodiacAnimals[birthDate.year % 12];
   }
 
@@ -251,11 +264,11 @@ class Celebrity {
   }
 
   List<String> get allNames => [
-    name,
-    if (stageName != null) stageName!,
-    if (legalName != null) legalName!,
-    ...aliases,
-  ];
+        name,
+        if (stageName != null) stageName!,
+        if (legalName != null) legalName!,
+        ...aliases,
+      ];
 
   /// 소속 정보 라벨 (그룹명, 팀명 등)
   /// 예: "IVE 멤버", "토트넘 선수", "T1 선수"
@@ -342,16 +355,25 @@ class Celebrity {
       aliases: (json['aliases'] as List<dynamic>?)?.cast<String>() ?? [],
       nationality: json['nationality'] as String? ?? '한국',
       birthPlace: json['birth_place'] as String?,
-      birthTime: json['birth_time'] != null ? _parseTime(json['birth_time'] as String) : null,
+      birthTime: json['birth_time'] != null
+          ? _parseTime(json['birth_time'] as String)
+          : null,
       activeFrom: json['active_from'] as int?,
       agencyManagement: json['agency_management'] as String?,
-      languages: (json['languages'] as List<dynamic>?)?.cast<String>() ?? ['한국어'],
-      externalIds: json['external_ids'] != null ? ExternalIds.fromJson(json['external_ids'] as Map<String, dynamic>) : null,
+      languages:
+          (json['languages'] as List<dynamic>?)?.cast<String>() ?? ['한국어'],
+      externalIds: json['external_ids'] != null
+          ? ExternalIds.fromJson(json['external_ids'] as Map<String, dynamic>)
+          : null,
       professionData: json['profession_data'] as Map<String, dynamic>?,
       notes: json['notes'] as String?,
       characterImageUrl: json['character_image_url'] as String?,
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : null,
-      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at'] as String) : null,
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : null,
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'] as String)
+          : null,
     );
   }
 
@@ -367,7 +389,9 @@ class Celebrity {
       'aliases': aliases,
       'nationality': nationality,
       if (birthPlace != null) 'birth_place': birthPlace,
-      'birth_time': birthTime != null ? '${birthTime!.hour.toString().padLeft(2, '0')}:${birthTime!.minute.toString().padLeft(2, '0')}' : null,
+      'birth_time': birthTime != null
+          ? '${birthTime!.hour.toString().padLeft(2, '0')}:${birthTime!.minute.toString().padLeft(2, '0')}'
+          : null,
       if (activeFrom != null) 'active_from': activeFrom,
       if (agencyManagement != null) 'agency_management': agencyManagement,
       'languages': languages,

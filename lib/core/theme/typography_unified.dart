@@ -486,7 +486,8 @@ extension TypographyUnifiedExtension on BuildContext {
 /// ```
 extension TextStyleThemeColor on TextStyle {
   /// Apply theme-aware text color
-  TextStyle withColor(BuildContext context, {Color? lightColor, Color? darkColor}) {
+  TextStyle withColor(BuildContext context,
+      {Color? lightColor, Color? darkColor}) {
     return TypographyUnified.withThemeColor(
       this,
       context,

@@ -61,7 +61,8 @@ class CategoryBarChart extends StatelessWidget {
         final index = entry.key;
         final category = entry.value;
         return Padding(
-          padding: EdgeInsets.only(bottom: index < categories.length - 1 ? spacing : 0),
+          padding: EdgeInsets.only(
+              bottom: index < categories.length - 1 ? spacing : 0),
           child: _CategoryBarItem(
             category: category,
             barHeight: barHeight,
@@ -160,8 +161,11 @@ class _CategoryBarItemState extends State<_CategoryBarItem>
   @override
   Widget build(BuildContext context) {
     final isDark = context.isDark;
-    final barColor = widget.category.color ?? _getScoreColor(widget.category.score, isDark);
-    final bgColor = isDark ? DSColors.backgroundSecondaryDark : DSColors.backgroundSecondary;
+    final barColor =
+        widget.category.color ?? _getScoreColor(widget.category.score, isDark);
+    final bgColor = isDark
+        ? DSColors.backgroundSecondaryDark
+        : DSColors.backgroundSecondary;
 
     return Row(
       children: [
@@ -182,7 +186,8 @@ class _CategoryBarItemState extends State<_CategoryBarItem>
           child: Text(
             widget.category.name,
             style: context.labelMedium.copyWith(
-              color: isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
+              color:
+                  isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
             ),
           ),
         ),
@@ -209,7 +214,8 @@ class _CategoryBarItemState extends State<_CategoryBarItem>
                       height: widget.barHeight,
                       decoration: BoxDecoration(
                         color: barColor,
-                        borderRadius: BorderRadius.circular(widget.barHeight / 2),
+                        borderRadius:
+                            BorderRadius.circular(widget.barHeight / 2),
                         boxShadow: [
                           BoxShadow(
                             color: barColor.withValues(alpha: 0.3),
@@ -237,7 +243,9 @@ class _CategoryBarItemState extends State<_CategoryBarItem>
                   (_animation.value * widget.maxScore).round().toString(),
                   textAlign: TextAlign.right,
                   style: context.numberSmall.copyWith(
-                    color: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
+                    color: isDark
+                        ? DSColors.textPrimaryDark
+                        : DSColors.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -293,7 +301,8 @@ class CategoryScore {
   }
 
   /// 운세 카테고리 목록에서 생성
-  static List<CategoryScore> fromFortuneCategories(Map<String, dynamic> categories) {
+  static List<CategoryScore> fromFortuneCategories(
+      Map<String, dynamic> categories) {
     final iconMap = {
       '연애': '❤️',
       '사랑': '❤️',

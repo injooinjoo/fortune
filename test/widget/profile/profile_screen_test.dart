@@ -467,7 +467,8 @@ class _MockProfileScreen extends StatelessWidget {
                             const Text('주 오행: '),
                             Text(
                               mainElement!,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -494,7 +495,8 @@ class _MockProfileScreen extends StatelessWidget {
                   return ListTile(
                     leading: const Icon(Icons.star),
                     title: Text('운세 $index'),
-                    subtitle: Text('${DateTime.now().subtract(Duration(days: index))}'),
+                    subtitle: Text(
+                        '${DateTime.now().subtract(Duration(days: index))}'),
                   );
                 },
               ),

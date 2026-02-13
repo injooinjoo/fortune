@@ -300,7 +300,8 @@ void main() {
           ),
         );
 
-        expect(find.byKey(const Key('personalized_recommendation')), findsOneWidget);
+        expect(find.byKey(const Key('personalized_recommendation')),
+            findsOneWidget);
       });
     });
 
@@ -551,7 +552,8 @@ class _MockTrendPageState extends State<_MockTrendPage>
               // 갱신 시간
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: Text('최근 갱신: ${DateTime.now().hour}:${DateTime.now().minute}'),
+                child: Text(
+                    '최근 갱신: ${DateTime.now().hour}:${DateTime.now().minute}'),
               ),
 
               // 탭별 콘텐츠
@@ -684,9 +686,12 @@ class _MockTrendPageState extends State<_MockTrendPage>
               const SizedBox(width: 8),
 
               // 순위 변동
-              if (rankChange > 0) const Icon(Icons.arrow_upward, color: Colors.red, size: 16),
-              if (rankChange < 0) const Icon(Icons.arrow_downward, color: Colors.blue, size: 16),
-              if (rankChange == 0) const Icon(Icons.remove, color: Colors.grey, size: 16),
+              if (rankChange > 0)
+                const Icon(Icons.arrow_upward, color: Colors.red, size: 16),
+              if (rankChange < 0)
+                const Icon(Icons.arrow_downward, color: Colors.blue, size: 16),
+              if (rankChange == 0)
+                const Icon(Icons.remove, color: Colors.grey, size: 16),
 
               const SizedBox(width: 12),
 
@@ -715,21 +720,27 @@ class _MockTrendPageState extends State<_MockTrendPage>
                         const SizedBox(width: 4),
                         if (fortune['is_hot'] == true)
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 4, vertical: 2),
                             decoration: BoxDecoration(
                               color: Colors.red,
                               borderRadius: BorderRadius.circular(4),
                             ),
-                            child: const Text('HOT', style: TextStyle(color: Colors.white, fontSize: 10)),
+                            child: const Text('HOT',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 10)),
                           ),
                         if (fortune['is_new'] == true)
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 4, vertical: 2),
                             decoration: BoxDecoration(
                               color: Colors.green,
                               borderRadius: BorderRadius.circular(4),
                             ),
-                            child: const Text('NEW', style: TextStyle(color: Colors.white, fontSize: 10)),
+                            child: const Text('NEW',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 10)),
                           ),
                       ],
                     ),

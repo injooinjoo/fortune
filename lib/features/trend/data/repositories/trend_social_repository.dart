@@ -126,18 +126,14 @@ class TrendSocialRepository {
       final comments = await Future.wait(
         commentsList.map((c) async {
           // 대댓글 조회
-          final repliesResponse = await _supabase
-              .from('trend_comments')
-              .select('''
+          final repliesResponse =
+              await _supabase.from('trend_comments').select('''
                 *,
                 profiles:user_id (nickname, profile_image_url)
-              ''')
-              .eq('parent_id', c['id'])
-              .order('created_at');
+              ''').eq('parent_id', c['id']).order('created_at');
 
-          final replies = (repliesResponse as List)
-              .map((r) => _parseComment(r))
-              .toList();
+          final replies =
+              (repliesResponse as List).map((r) => _parseComment(r)).toList();
 
           return _parseComment(c, replies: replies);
         }),
@@ -190,19 +186,15 @@ class TrendSocialRepository {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) throw Exception('User not authenticated');
 
-      final response = await _supabase
-          .from('trend_comments')
-          .insert({
-            'content_id': input.contentId,
-            'user_id': userId,
-            'content': input.text,
-            'parent_id': input.parentId,
-          })
-          .select('''
+      final response = await _supabase.from('trend_comments').insert({
+        'content_id': input.contentId,
+        'user_id': userId,
+        'content': input.text,
+        'parent_id': input.parentId,
+      }).select('''
             *,
             profiles:user_id (nickname, profile_image_url)
-          ''')
-          .single();
+          ''').single();
 
       return _parseComment(response);
     } catch (e) {

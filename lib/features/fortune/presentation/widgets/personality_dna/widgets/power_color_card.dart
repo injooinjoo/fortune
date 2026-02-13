@@ -116,7 +116,10 @@ class PowerColorCard extends StatelessWidget {
           Text(
             '이 색상은 당신의 에너지와 가장 잘 어울리는 파워 컬러입니다. 중요한 날이나 자신감이 필요할 때 이 색상을 활용해보세요!',
             style: context.bodyMedium.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: isDark ? 0.85 : 0.7),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: isDark ? 0.85 : 0.7),
               height: 1.5,
             ),
           ),

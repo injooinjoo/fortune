@@ -50,7 +50,8 @@ class CharacterChatLocalService {
         DateTime.now().toIso8601String(),
       );
 
-      Logger.info('Saved ${messages.length} messages for character: $characterId');
+      Logger.info(
+          'Saved ${messages.length} messages for character: $characterId');
       return true;
     } catch (e) {
       Logger.error('Failed to save conversation locally', e);
@@ -59,7 +60,8 @@ class CharacterChatLocalService {
   }
 
   /// 대화 불러오기 (로컬)
-  Future<List<CharacterChatMessage>> loadConversation(String characterId) async {
+  Future<List<CharacterChatMessage>> loadConversation(
+      String characterId) async {
     if (!isInitialized) {
       Logger.warning('CharacterChatLocalService not initialized');
       return [];
@@ -76,7 +78,8 @@ class CharacterChatLocalService {
           .map((m) => CharacterChatMessage.fromJson(m as Map<String, dynamic>))
           .toList();
 
-      Logger.info('Loaded ${messages.length} messages for character: $characterId');
+      Logger.info(
+          'Loaded ${messages.length} messages for character: $characterId');
       return messages;
     } catch (e) {
       Logger.error('Failed to load conversation locally', e);

@@ -122,10 +122,12 @@ class GlassContainer extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? DSColors.surface : DSColors.surfaceDark,
         borderRadius: borderRadius ?? BorderRadius.circular(12),
-        border: border ?? Border.all(
-          color: borderColor ?? (isDark ? DSColors.border : DSColors.borderDark),
-          width: borderWidth ?? 1,
-        ),
+        border: border ??
+            Border.all(
+              color: borderColor ??
+                  (isDark ? DSColors.border : DSColors.borderDark),
+              width: borderWidth ?? 1,
+            ),
       ),
       child: child,
     );

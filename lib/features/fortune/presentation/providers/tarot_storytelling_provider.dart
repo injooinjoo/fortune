@@ -32,11 +32,12 @@ final tarotInterpretationProvider =
 
     // Get card information
     final cardInfo = _getCardInfo(request.cardIndex);
-    final positionMeaning =
-        TarotHelper.getPositionDescription(request.spreadType, request.position);
+    final positionMeaning = TarotHelper.getPositionDescription(
+        request.spreadType, request.position);
 
     // 스프레드 타입 파싱
-    final spreadType = TarotPositionMeanings.parseSpreadType(request.spreadType);
+    final spreadType =
+        TarotPositionMeanings.parseSpreadType(request.spreadType);
     if (spreadType == null) {
       // 알 수 없는 스프레드 타입이면 기본 해석 사용
       return _generateLocalInterpretation(
@@ -112,8 +113,8 @@ final tarotFullInterpretationProvider =
           positionIndex: i,
           isReversed: isReversed,
         );
-        positionName = TarotPositionMeanings.getPositionDisplayName(
-            parsedSpreadType, i);
+        positionName =
+            TarotPositionMeanings.getPositionDisplayName(parsedSpreadType, i);
       }
 
       cardInterpretations.add({

@@ -62,8 +62,8 @@ class _NotificationSettingsPageState
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-              horizontal: DSSpacing.pageHorizontal),
+          padding:
+              const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

@@ -63,7 +63,8 @@ class _SoulEarnAnimationWidget extends StatefulWidget {
   });
 
   @override
-  State<_SoulEarnAnimationWidget> createState() => _SoulEarnAnimationWidgetState();
+  State<_SoulEarnAnimationWidget> createState() =>
+      _SoulEarnAnimationWidgetState();
 }
 
 class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
@@ -95,11 +96,13 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
     // Scale animation - starts big, then normal, then small
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween(begin: 0.0, end: 1.2).chain(CurveTween(curve: Curves.easeOut)),
+        tween: Tween(begin: 0.0, end: 1.2)
+            .chain(CurveTween(curve: Curves.easeOut)),
         weight: 20,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 1.2, end: 1.0).chain(CurveTween(curve: Curves.easeInOut)),
+        tween: Tween(begin: 1.2, end: 1.0)
+            .chain(CurveTween(curve: Curves.easeInOut)),
         weight: 20,
       ),
       TweenSequenceItem(
@@ -107,7 +110,8 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
         weight: 40,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 1.0, end: 0.3).chain(CurveTween(curve: Curves.easeIn)),
+        tween:
+            Tween(begin: 1.0, end: 0.3).chain(CurveTween(curve: Curves.easeIn)),
         weight: 20,
       ),
     ]).animate(_mainController);
@@ -183,45 +187,53 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
           children: [
             // Particles
             ..._particles.map((particle) => Positioned(
-              left: widget.startPosition.dx - 20,
-              top: widget.startPosition.dy - 20,
-              child: FadeTransition(
-                opacity: Tween<double>(
-                  begin: 0.0,
-                  end: 1.0,
-                ).animate(CurvedAnimation(
-                  parent: _particleController,
-                  curve: const Interval(
-                    0.0,
-                    0.6,
-                    curve: Curves.easeOut,
-                  ),
-                )),
-                child: Transform.translate(
-                  offset: Offset(
-                    math.cos(particle.angle) * particle.distance * _particleController.value,
-                    math.sin(particle.angle) * particle.distance * _particleController.value,
-                  ),
-                  child: Container(
-                    width: particle.size,
-                    height: particle.size,
-                    decoration: BoxDecoration(
-                      color: colors.accentTertiary.withValues(alpha: 0.8),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: colors.accentTertiary.withValues(alpha: 0.4),
-                          blurRadius: 4,
-                          spreadRadius: 1,
+                  left: widget.startPosition.dx - 20,
+                  top: widget.startPosition.dy - 20,
+                  child: FadeTransition(
+                    opacity: Tween<double>(
+                      begin: 0.0,
+                      end: 1.0,
+                    ).animate(CurvedAnimation(
+                      parent: _particleController,
+                      curve: const Interval(
+                        0.0,
+                        0.6,
+                        curve: Curves.easeOut,
+                      ),
+                    )),
+                    child: Transform.translate(
+                      offset: Offset(
+                        math.cos(particle.angle) *
+                            particle.distance *
+                            _particleController.value,
+                        math.sin(particle.angle) *
+                            particle.distance *
+                            _particleController.value,
+                      ),
+                      child: Container(
+                        width: particle.size,
+                        height: particle.size,
+                        decoration: BoxDecoration(
+                          color: colors.accentTertiary.withValues(alpha: 0.8),
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color:
+                                  colors.accentTertiary.withValues(alpha: 0.4),
+                              blurRadius: 4,
+                              spreadRadius: 1,
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ).animate(onPlay: (controller) => controller.repeat())
-                .shimmer(duration: 1000.ms, color: colors.textPrimary.withValues(alpha: 0.3))
-                .fadeOut(delay: particle.delay, duration: 400.ms)),
+                )
+                    .animate(onPlay: (controller) => controller.repeat())
+                    .shimmer(
+                        duration: 1000.ms,
+                        color: colors.textPrimary.withValues(alpha: 0.3))
+                    .fadeOut(delay: particle.delay, duration: 400.ms)),
 
             // Main soul animation
             Positioned(
@@ -248,9 +260,12 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
                           Icons.auto_awesome_rounded,
                           color: colors.accentTertiary,
                           size: 24,
-                        ).animate(onPlay: (controller) => controller.repeat())
+                        )
+                            .animate(
+                                onPlay: (controller) => controller.repeat())
                             .rotate(duration: 2000.ms)
-                            .shimmer(duration: 1500.ms, color: colors.textPrimary),
+                            .shimmer(
+                                duration: 1500.ms, color: colors.textPrimary),
                         const SizedBox(width: DSSpacing.sm),
                         Text(
                           '+${widget.soulAmount}',
@@ -258,17 +273,22 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
                             color: colors.accentTertiary,
                             fontWeight: FontWeight.bold,
                           ),
-                        ).animate()
+                        )
+                            .animate()
                             .fadeIn(delay: 200.ms, duration: 300.ms)
-                            .slideY(begin: 0.2, end: 0, delay: 200.ms, duration: 300.ms),
+                            .slideY(
+                                begin: 0.2,
+                                end: 0,
+                                delay: 200.ms,
+                                duration: 300.ms),
                       ],
                     ),
-                  ).animate()
-                      .custom(
+                  ).animate().custom(
                         duration: 1000.ms,
                         builder: (context, value, child) {
                           return Transform.translate(
-                            offset: Offset(0, math.sin(value * math.pi * 2) * 5),
+                            offset:
+                                Offset(0, math.sin(value * math.pi * 2) * 5),
                             child: child,
                           );
                         },

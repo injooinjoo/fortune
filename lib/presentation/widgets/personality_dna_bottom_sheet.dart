@@ -66,9 +66,7 @@ class _PersonalityDNABottomSheetState
     return Container(
       height: MediaQuery.of(context).size.height * 0.9,
       decoration: BoxDecoration(
-        color: context.isDark
-            ? DSColors.surface
-            : DSColors.surfaceDark,
+        color: context.isDark ? DSColors.surface : DSColors.surfaceDark,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
       ),
       child: Column(
@@ -79,9 +77,7 @@ class _PersonalityDNABottomSheetState
             height: 4,
             margin: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(
-              color: context.isDark
-                  ? DSColors.border
-                  : DSColors.borderDark,
+              color: context.isDark ? DSColors.border : DSColors.borderDark,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -290,18 +286,14 @@ class _PersonalityDNABottomSheetState
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: context.isDark
-            ? DSColors.surface
-            : DSColors.surfaceDark,
+        color: context.isDark ? DSColors.surface : DSColors.surfaceDark,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isSet
               ? (context.isDark
                   ? DSColors.accentDark.withValues(alpha: 0.3)
                   : DSColors.accentDark.withValues(alpha: 0.2))
-              : (context.isDark
-                  ? DSColors.border
-                  : DSColors.borderDark),
+              : (context.isDark ? DSColors.border : DSColors.borderDark),
         ),
       ),
       child: Row(
@@ -392,14 +384,10 @@ class _PersonalityDNABottomSheetState
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: context.isDark
-            ? DSColors.surface
-            : DSColors.surfaceDark,
+        color: context.isDark ? DSColors.surface : DSColors.surfaceDark,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: context.isDark
-              ? DSColors.border
-              : DSColors.borderDark,
+          color: context.isDark ? DSColors.border : DSColors.borderDark,
         ),
       ),
       child: Column(
@@ -477,14 +465,10 @@ class _PersonalityDNABottomSheetState
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: context.isDark
-            ? DSColors.surface
-            : DSColors.surfaceDark,
+        color: context.isDark ? DSColors.surface : DSColors.surfaceDark,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: context.isDark
-              ? DSColors.border
-              : DSColors.borderDark,
+          color: context.isDark ? DSColors.border : DSColors.borderDark,
         ),
       ),
       child: Column(
@@ -563,14 +547,10 @@ class _PersonalityDNABottomSheetState
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: context.isDark
-            ? DSColors.surface
-            : DSColors.surfaceDark,
+        color: context.isDark ? DSColors.surface : DSColors.surfaceDark,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: context.isDark
-              ? DSColors.border
-              : DSColors.borderDark,
+          color: context.isDark ? DSColors.border : DSColors.borderDark,
         ),
       ),
       child: Column(
@@ -648,14 +628,10 @@ class _PersonalityDNABottomSheetState
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: context.isDark
-            ? DSColors.surface
-            : DSColors.surfaceDark,
+        color: context.isDark ? DSColors.surface : DSColors.surfaceDark,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: context.isDark
-              ? DSColors.border
-              : DSColors.borderDark,
+          color: context.isDark ? DSColors.border : DSColors.borderDark,
         ),
       ),
       child: Column(

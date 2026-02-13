@@ -171,7 +171,9 @@ class SajuInfoHeader extends StatelessWidget {
               ),
               ...pillarOrder.map((key) {
                 final pillar = pillars![key] as Map<String, dynamic>?;
-                final sky = pillar?['sky'] as String? ?? pillar?['천간'] as String? ?? '-';
+                final sky = pillar?['sky'] as String? ??
+                    pillar?['천간'] as String? ??
+                    '-';
                 return Expanded(
                   child: Center(
                     child: Text(
@@ -200,7 +202,9 @@ class SajuInfoHeader extends StatelessWidget {
               ),
               ...pillarOrder.map((key) {
                 final pillar = pillars![key] as Map<String, dynamic>?;
-                final earth = pillar?['earth'] as String? ?? pillar?['지지'] as String? ?? '-';
+                final earth = pillar?['earth'] as String? ??
+                    pillar?['지지'] as String? ??
+                    '-';
                 return Expanded(
                   child: Center(
                     child: Text(

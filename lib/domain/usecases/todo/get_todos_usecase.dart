@@ -26,15 +26,15 @@ class GetTodosUseCase implements UseCase<List<Todo>, GetTodosParams> {
     }
 
     return repository.getTodos(
-      userId: params.userId,
-      status: params.status,
-      priority: params.priority,
-      dueBefore: params.dueBefore,
-      dueAfter: params.dueAfter,
-      tags: params.tags,
-      searchQuery: params.searchQuery,
-      limit: params.limit,
-      offset: params.offset);
+        userId: params.userId,
+        status: params.status,
+        priority: params.priority,
+        dueBefore: params.dueBefore,
+        dueAfter: params.dueAfter,
+        tags: params.tags,
+        searchQuery: params.searchQuery,
+        limit: params.limit,
+        offset: params.offset);
   }
 }
 
@@ -49,16 +49,16 @@ class GetTodosParams extends Equatable {
   final int? limit;
   final int? offset;
 
-  const GetTodosParams({
-    required this.userId,
-    this.status,
-    this.priority,
-    this.dueBefore,
-    this.dueAfter,
-    this.tags,
-    this.searchQuery,
-    this.limit = 50,
-    this.offset = 0});
+  const GetTodosParams(
+      {required this.userId,
+      this.status,
+      this.priority,
+      this.dueBefore,
+      this.dueAfter,
+      this.tags,
+      this.searchQuery,
+      this.limit = 50,
+      this.offset = 0});
 
   @override
   List<Object?> get props => [
@@ -70,5 +70,6 @@ class GetTodosParams extends Equatable {
         tags,
         searchQuery,
         limit,
-        offset];
+        offset
+      ];
 }

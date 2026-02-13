@@ -58,7 +58,7 @@ class PetNotifier extends StateNotifier<PetState> {
     if (state.isLoading) return;
 
     state = state.copyWith(isLoading: true, clearError: true);
-    
+
     try {
       final pets = await PetService.getUserPets(userId);
       state = state.copyWith(
@@ -66,7 +66,7 @@ class PetNotifier extends StateNotifier<PetState> {
         isLoading: false,
         clearError: true,
       );
-      
+
       Logger.info('Loaded ${pets.length} pets for user');
     } catch (e) {
       state = state.copyWith(
@@ -210,11 +210,12 @@ class PetNotifier extends StateNotifier<PetState> {
 
         state = state.copyWith(
           pets: updatedPets,
-          selectedPet: state.selectedPet?.id == petId ? updatedPet : state.selectedPet,
+          selectedPet:
+              state.selectedPet?.id == petId ? updatedPet : state.selectedPet,
           isUpdating: false,
           clearError: true,
         );
-        
+
         Logger.info('Pet updated successfully: ${updatedPet.name}');
         return true;
       } else {
@@ -242,18 +243,18 @@ class PetNotifier extends StateNotifier<PetState> {
 
     try {
       final success = await PetService.deletePet(petId);
-      
+
       if (success) {
         final updatedPets = state.pets.where((pet) => pet.id != petId).toList();
         final shouldClearSelected = state.selectedPet?.id == petId;
-        
+
         state = state.copyWith(
           pets: updatedPets,
           isLoading: false,
           clearSelectedPet: shouldClearSelected,
           clearError: true,
         );
-        
+
         Logger.info('Pet deleted successfully');
         return true;
       } else {
@@ -288,7 +289,9 @@ class PetNotifier extends StateNotifier<PetState> {
     String? userZodiacSign,
     String? userMbtiType,
   }) {
-    if (state.selectedPet == null || userZodiacSign == null || userMbtiType == null) {
+    if (state.selectedPet == null ||
+        userZodiacSign == null ||
+        userMbtiType == null) {
       return null;
     }
 

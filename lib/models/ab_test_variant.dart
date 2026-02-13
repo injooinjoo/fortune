@@ -85,7 +85,7 @@ class ABTestResult extends Equatable {
     if (additionalMetrics != null) {
       updatedMetrics.addAll(additionalMetrics);
     }
-    
+
     return ABTestResult(
       experimentId: experimentId,
       variantId: variantId,

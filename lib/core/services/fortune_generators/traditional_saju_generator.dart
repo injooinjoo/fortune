@@ -15,10 +15,13 @@ class TraditionalSajuGenerator {
 
     // 📤 API 요청 준비
     Logger.info('[TraditionalSajuGenerator] 📤 API 요청 준비');
-    Logger.info('[TraditionalSajuGenerator]   🌐 Edge Function: fortune-traditional-saju');
+    Logger.info(
+        '[TraditionalSajuGenerator]   🌐 Edge Function: fortune-traditional-saju');
     Logger.info('[TraditionalSajuGenerator]   👤 user_id: $userId');
-    Logger.info('[TraditionalSajuGenerator]   ❓ question: ${inputConditions['question']}');
-    Logger.info('[TraditionalSajuGenerator]   💎 isPremium: ${inputConditions['isPremium'] ?? false}');
+    Logger.info(
+        '[TraditionalSajuGenerator]   ❓ question: ${inputConditions['question']}');
+    Logger.info(
+        '[TraditionalSajuGenerator]   💎 isPremium: ${inputConditions['isPremium'] ?? false}');
 
     try {
       final requestBody = {
@@ -44,19 +47,22 @@ class TraditionalSajuGenerator {
       Logger.info('[TraditionalSajuGenerator]   ✅ Status: ${response.status}');
 
       if (response.status != 200) {
-        Logger.error('[TraditionalSajuGenerator] ❌ API 호출 실패: status ${response.status}');
+        Logger.error(
+            '[TraditionalSajuGenerator] ❌ API 호출 실패: status ${response.status}');
         throw Exception('Edge Function 호출 실패: ${response.status}');
       }
 
       final data = response.data as Map<String, dynamic>;
-      Logger.info('[TraditionalSajuGenerator]   📦 Response data keys: ${data.keys.toList()}');
+      Logger.info(
+          '[TraditionalSajuGenerator]   📦 Response data keys: ${data.keys.toList()}');
 
       // 🔄 파싱
       Logger.info('[TraditionalSajuGenerator] 🔄 응답 데이터 파싱 중...');
       final result = _convertToFortuneResult(data, inputConditions);
 
       Logger.info('[TraditionalSajuGenerator] ✅ 파싱 완료');
-      Logger.info('[TraditionalSajuGenerator]   📝 Question: ${result.data['question']}');
+      Logger.info(
+          '[TraditionalSajuGenerator]   📝 Question: ${result.data['question']}');
 
       return result;
     } catch (e, stackTrace) {

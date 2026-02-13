@@ -73,14 +73,16 @@ class MockPurchaseDetails {
     DateTime? purchaseDate,
     this.errorCode,
     this.errorMessage,
-  })  : purchaseId = purchaseId ?? 'mock-purchase-${DateTime.now().millisecondsSinceEpoch}',
+  })  : purchaseId = purchaseId ??
+            'mock-purchase-${DateTime.now().millisecondsSinceEpoch}',
         purchaseDate = purchaseDate ?? DateTime.now();
 }
 
 /// Mock InAppPurchase Service
 class MockInAppPurchaseService {
   // Singleton
-  static final MockInAppPurchaseService _instance = MockInAppPurchaseService._internal();
+  static final MockInAppPurchaseService _instance =
+      MockInAppPurchaseService._internal();
   factory MockInAppPurchaseService() => _instance;
   MockInAppPurchaseService._internal();
 
@@ -321,10 +323,10 @@ class MockInAppPurchaseService {
     final restoredPurchases = _purchaseHistory
         .where((p) => p.status == MockPurchaseResult.success)
         .where((p) {
-          final product = _products.where((prod) => prod.id == p.productId).firstOrNull;
-          return product?.isSubscription ?? false;
-        })
-        .toList();
+      final product =
+          _products.where((prod) => prod.id == p.productId).firstOrNull;
+      return product?.isSubscription ?? false;
+    }).toList();
 
     // 구독 상태 복원
     if (restoredPurchases.isNotEmpty) {

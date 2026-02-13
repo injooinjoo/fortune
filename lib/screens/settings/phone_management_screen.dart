@@ -12,7 +12,8 @@ class PhoneManagementScreen extends ConsumerStatefulWidget {
   const PhoneManagementScreen({super.key});
 
   @override
-  ConsumerState<PhoneManagementScreen> createState() => _PhoneManagementScreenState();
+  ConsumerState<PhoneManagementScreen> createState() =>
+      _PhoneManagementScreenState();
 }
 
 class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
@@ -73,7 +74,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
     final colors = context.colors;
     final typography = ref.watch(typographyThemeProvider);
     final hasPhone = userProfile?['phone'] != null &&
-                     userProfile!['phone'].toString().isNotEmpty;
+        userProfile!['phone'].toString().isNotEmpty;
 
     if (_showPhoneInput) {
       return PhoneStep(
@@ -115,17 +116,17 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
         onVerify: (otpCode) async {
           try {
             await _phoneAuthService.verifyOTP(
-              phoneNumber: _phoneNumber,
-              countryCode: _countryCode,
-              otpCode: otpCode);
+                phoneNumber: _phoneNumber,
+                countryCode: _countryCode,
+                otpCode: otpCode);
 
             // Update profile with new phone
             final user = supabase.auth.currentUser;
             if (user != null) {
               await _phoneAuthService.updateProfilePhone(
-                userId: user.id,
-                phoneNumber: _phoneNumber,
-                countryCode: _countryCode);
+                  userId: user.id,
+                  phoneNumber: _phoneNumber,
+                  countryCode: _countryCode);
             }
 
             setState(() {
@@ -241,7 +242,8 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
 
                   // Current phone number
                   Container(
-                    margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: DSSpacing.pageHorizontal),
                     padding: const EdgeInsets.all(DSSpacing.md),
                     decoration: BoxDecoration(
                       color: colors.surface,
@@ -292,8 +294,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                             if (userProfile?['phone_verified'] == true)
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4),
+                                    horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
                                   color: colors.success.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(12),
@@ -335,7 +336,8 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                               padding: const EdgeInsets.symmetric(
                                   vertical: DSSpacing.md),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(DSRadius.md),
+                                borderRadius:
+                                    BorderRadius.circular(DSRadius.md),
                               ),
                             ),
                             child: Text(

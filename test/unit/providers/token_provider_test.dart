@@ -259,7 +259,8 @@ void main() {
       expect(balance2.hasEnoughTokens, false);
 
       // 무제한 접근인 경우
-      final balance3 = createBalance(remainingTokens: 0, hasUnlimitedAccess: true);
+      final balance3 =
+          createBalance(remainingTokens: 0, hasUnlimitedAccess: true);
       expect(balance3.hasEnoughTokens, true);
     });
   });

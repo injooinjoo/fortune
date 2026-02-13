@@ -65,7 +65,9 @@ class SelectorModeToggle extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? context.colors.surface : context.colors.surface.withValues(alpha: 0.0),
+          color: isSelected
+              ? context.colors.surface
+              : context.colors.surface.withValues(alpha: 0.0),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(

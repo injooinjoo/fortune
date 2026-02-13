@@ -10,35 +10,37 @@ class UserStatistics {
   final Map<String, int> fortuneTypeCount;
   final int totalTokensUsed;
   final int totalTokensEarned;
-  UserStatistics({
-    required this.totalFortunes,
-    required this.consecutiveDays,
-    this.lastLogin,
-    this.favoriteFortuneType,
-    required this.fortuneTypeCount,
-    required this.totalTokensUsed,
-    required this.totalTokensEarned});
+  UserStatistics(
+      {required this.totalFortunes,
+      required this.consecutiveDays,
+      this.lastLogin,
+      this.favoriteFortuneType,
+      required this.fortuneTypeCount,
+      required this.totalTokensUsed,
+      required this.totalTokensEarned});
 
   factory UserStatistics.empty() {
     return UserStatistics(
-      totalFortunes: 0,
-      consecutiveDays: 0,
-      fortuneTypeCount: {},
-      totalTokensUsed: 0,
-      totalTokensEarned: 0);
+        totalFortunes: 0,
+        consecutiveDays: 0,
+        fortuneTypeCount: {},
+        totalTokensUsed: 0,
+        totalTokensEarned: 0);
   }
 
   factory UserStatistics.fromJson(Map<String, dynamic> json) {
     return UserStatistics(
-      totalFortunes: json['total_fortunes_viewed'] ?? 0,
-      consecutiveDays: json['consecutive_days'] ?? 0,
-      lastLogin: json['last_login'] != null ? DateTime.parse(json['last_login']) : null,
-      favoriteFortuneType: json['favorite_fortune_type'],
-      fortuneTypeCount: json['fortune_type_count'] != null
-          ? Map<String, int>.from(json['fortune_type_count'])
-          : {},
-      totalTokensUsed: json['total_tokens_spent'] ?? 0,
-      totalTokensEarned: json['total_tokens_earned'] ?? 0);
+        totalFortunes: json['total_fortunes_viewed'] ?? 0,
+        consecutiveDays: json['consecutive_days'] ?? 0,
+        lastLogin: json['last_login'] != null
+            ? DateTime.parse(json['last_login'])
+            : null,
+        favoriteFortuneType: json['favorite_fortune_type'],
+        fortuneTypeCount: json['fortune_type_count'] != null
+            ? Map<String, int>.from(json['fortune_type_count'])
+            : {},
+        totalTokensUsed: json['total_tokens_spent'] ?? 0,
+        totalTokensEarned: json['total_tokens_earned'] ?? 0);
   }
 
   Map<String, dynamic> toJson() {
@@ -49,7 +51,8 @@ class UserStatistics {
       'favorite_fortune_type': favoriteFortuneType,
       'fortune_type_count': fortuneTypeCount,
       'total_tokens_spent': totalTokensUsed,
-      'total_tokens_earned': totalTokensEarned};
+      'total_tokens_earned': totalTokensEarned
+    };
   }
 }
 
@@ -138,14 +141,15 @@ class UserStatisticsService {
       // If not found, create initial statistics
       return await _createInitialStatistics(userId);
     } catch (e) {
-      Logger.warning('[UserStatisticsService] 사용자 통계 조회 실패 (테이블 없음, 폴백 모드): $e');
-      
+      Logger.warning(
+          '[UserStatisticsService] 사용자 통계 조회 실패 (테이블 없음, 폴백 모드): $e');
+
       // Fallback to local storage
       final localStats = await _storageService.getUserStatistics();
       if (localStats != null) {
         return UserStatistics.fromJson(localStats);
       }
-      
+
       return UserStatistics.empty();
     }
   }
@@ -154,16 +158,17 @@ class UserStatisticsService {
     final initialStats = UserStatistics.empty();
 
     try {
-      Logger.info('🔧 [UserStatisticsService] Creating initial statistics', {
-        'userId': userId
-      });
+      Logger.info('🔧 [UserStatisticsService] Creating initial statistics',
+          {'userId': userId});
 
       await _supabase.from('user_statistics').insert({
         'user_id': userId,
         ...initialStats.toJson(),
-        'created_at': DateTime.now().toIso8601String()});
+        'created_at': DateTime.now().toIso8601String()
+      });
 
-      Logger.info('✅ [UserStatisticsService] Initial statistics created successfully');
+      Logger.info(
+          '✅ [UserStatisticsService] Initial statistics created successfully');
       return initialStats;
     } catch (e) {
       Logger.warning('[UserStatisticsService] 초기 통계 생성 실패 (테이블 없음, 폴백 모드): $e');
@@ -173,16 +178,15 @@ class UserStatisticsService {
 
   Future<void> incrementFortuneCount(String userId, String fortuneType) async {
     try {
-      Logger.info('🔧 [UserStatisticsService] Incrementing fortune count', {
-        'userId': userId,
-        'fortuneType': fortuneType
-      });
+      Logger.info('🔧 [UserStatisticsService] Incrementing fortune count',
+          {'userId': userId, 'fortuneType': fortuneType});
 
       final stats = await getUserStatistics(userId);
 
       // Update fortune counts
       final newFortuneTypeCount = Map<String, int>.from(stats.fortuneTypeCount);
-      newFortuneTypeCount[fortuneType] = (newFortuneTypeCount[fortuneType] ?? 0) + 1;
+      newFortuneTypeCount[fortuneType] =
+          (newFortuneTypeCount[fortuneType] ?? 0) + 1;
 
       // Find favorite fortune type
       String? favoriteType;
@@ -194,7 +198,8 @@ class UserStatisticsService {
         }
       });
 
-      Logger.debug('🔧 [UserStatisticsService] Updating statistics in database', {
+      Logger.debug(
+          '🔧 [UserStatisticsService] Updating statistics in database', {
         'newTotalFortunes': stats.totalFortunes + 1,
         'favoriteType': favoriteType,
         'typeCountKeys': newFortuneTypeCount.keys.toList()
@@ -205,7 +210,8 @@ class UserStatisticsService {
         'total_fortunes_viewed': stats.totalFortunes + 1,
         'fortune_type_count': newFortuneTypeCount,
         'favorite_fortune_type': favoriteType,
-        'updated_at': DateTime.now().toIso8601String()}).eq('user_id', userId);
+        'updated_at': DateTime.now().toIso8601String()
+      }).eq('user_id', userId);
 
       // TODO: Implement achievements when user_achievements table is created
 
@@ -213,12 +219,12 @@ class UserStatisticsService {
       await _storageService.saveUserStatistics({
         'total_fortunes_viewed': stats.totalFortunes + 1,
         'fortune_type_count': newFortuneTypeCount,
-        'favorite_fortune_type': favoriteType});
-
-      Logger.info('✅ [UserStatisticsService] Fortune count incremented successfully', {
-        'newTotal': stats.totalFortunes + 1,
-        'fortuneType': fortuneType
+        'favorite_fortune_type': favoriteType
       });
+
+      Logger.info(
+          '✅ [UserStatisticsService] Fortune count incremented successfully',
+          {'newTotal': stats.totalFortunes + 1, 'fortuneType': fortuneType});
     } catch (e) {
       Logger.warning('[UserStatisticsService] 운세 횟수 증가 실패 (테이블 없음, 무시): $e');
     }
@@ -229,17 +235,15 @@ class UserStatisticsService {
       final stats = await getUserStatistics(userId);
       final now = DateTime.now();
       final today = DateTime(now.year, now.month, now.day);
-      
+
       int newConsecutiveDays = stats.consecutiveDays;
-      
+
       if (stats.lastLogin != null) {
-        final lastLoginDate = DateTime(
-          stats.lastLogin!.year,
-          stats.lastLogin!.month,
-          stats.lastLogin!.day);
-        
+        final lastLoginDate = DateTime(stats.lastLogin!.year,
+            stats.lastLogin!.month, stats.lastLogin!.day);
+
         final daysDifference = today.difference(lastLoginDate).inDays;
-        
+
         if (daysDifference == 1) {
           // Consecutive day
           newConsecutiveDays++;
@@ -252,36 +256,39 @@ class UserStatisticsService {
         // First login
         newConsecutiveDays = 1;
       }
-      
-      if (stats.lastLogin == null || today.isAfter(DateTime(
-        stats.lastLogin!.year,
-        stats.lastLogin!.month,
-        stats.lastLogin!.day))) {
+
+      if (stats.lastLogin == null ||
+          today.isAfter(DateTime(stats.lastLogin!.year, stats.lastLogin!.month,
+              stats.lastLogin!.day))) {
         await _supabase.from('user_statistics').update({
           'consecutive_days': newConsecutiveDays,
           'last_login': now.toIso8601String(),
-          'updated_at': DateTime.now().toIso8601String()}).eq('user_id', userId);
+          'updated_at': DateTime.now().toIso8601String()
+        }).eq('user_id', userId);
 
         // TODO: Implement achievements when user_achievements table is created
 
         // Update local storage
         await _storageService.saveUserStatistics({
           'consecutive_days': newConsecutiveDays,
-          'last_login': now.toIso8601String()});
+          'last_login': now.toIso8601String()
+        });
       }
     } catch (e) {
       Logger.warning('[UserStatisticsService] 연속 일수 업데이트 실패 (테이블 없음, 무시): $e');
     }
   }
 
-  Future<void> updateTokenUsage(String userId, int tokensUsed, int tokensEarned) async {
+  Future<void> updateTokenUsage(
+      String userId, int tokensUsed, int tokensEarned) async {
     try {
       final stats = await getUserStatistics(userId);
 
       await _supabase.from('user_statistics').update({
         'total_tokens_spent': stats.totalTokensUsed + tokensUsed,
         'total_tokens_earned': stats.totalTokensEarned + tokensEarned,
-        'updated_at': DateTime.now().toIso8601String()}).eq('user_id', userId);
+        'updated_at': DateTime.now().toIso8601String()
+      }).eq('user_id', userId);
 
       // TODO: Implement achievements when user_achievements table is created
     } catch (e) {

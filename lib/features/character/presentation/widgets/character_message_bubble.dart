@@ -129,15 +129,15 @@ class CharacterMessageBubble extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // 이미지가 있으면 먼저 표시 (점심 사진 등)
-                if (message.hasImage)
-                  _buildImageBubble(context, colors),
+                if (message.hasImage) _buildImageBubble(context, colors),
                 // 텍스트 버블
                 if (message.text.isNotEmpty)
                   Stack(
                     clipBehavior: Clip.none,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 10),
                         decoration: BoxDecoration(
                           color: colors.surface,
                           borderRadius: BorderRadius.only(
@@ -157,7 +157,8 @@ class CharacterMessageBubble extends StatelessWidget {
                         child: _buildFormattedText(context, message.text),
                       ),
                       // 호감도 변경 인디케이터 (버블 우측 상단)
-                      if (message.affinityChange != null && message.affinityChange != 0)
+                      if (message.affinityChange != null &&
+                          message.affinityChange != 0)
                         Positioned(
                           top: -8,
                           right: -4,

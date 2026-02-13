@@ -6,13 +6,26 @@ class DirectionCalculator {
 
   /// 8방위 상수
   static const List<String> directions = [
-    '북', '동북', '동', '동남', '남', '서남', '서', '서북',
+    '북',
+    '동북',
+    '동',
+    '동남',
+    '남',
+    '서남',
+    '서',
+    '서북',
   ];
 
   /// 8방위 영문 (Edge Function 전송용)
   static const List<String> directionsEnglish = [
-    'north', 'northeast', 'east', 'southeast',
-    'south', 'southwest', 'west', 'northwest',
+    'north',
+    'northeast',
+    'east',
+    'southeast',
+    'south',
+    'southwest',
+    'west',
+    'northwest',
   ];
 
   /// 두 좌표 간 8방위 계산

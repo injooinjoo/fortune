@@ -218,9 +218,11 @@ class ExerciseScoreTemplate extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               if (intensity != null)
-                _buildInfoChip(context, icon: Icons.speed_rounded, label: intensity!),
+                _buildInfoChip(context,
+                    icon: Icons.speed_rounded, label: intensity!),
               if (duration != null)
-                _buildInfoChip(context, icon: Icons.timer_rounded, label: duration!),
+                _buildInfoChip(context,
+                    icon: Icons.timer_rounded, label: duration!),
             ],
           ),
           if (tips != null && tips!.isNotEmpty) ...[
@@ -236,9 +238,11 @@ class ExerciseScoreTemplate extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoChip(BuildContext context, {required IconData icon, required String label}) {
+  Widget _buildInfoChip(BuildContext context,
+      {required IconData icon, required String label}) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
       decoration: BoxDecoration(
         color: Colors.orange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),

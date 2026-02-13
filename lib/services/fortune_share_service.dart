@@ -54,7 +54,8 @@ class FortuneShareService {
   /// 위젯을 이미지로 캡처
   Future<Uint8List?> captureWidget(GlobalKey key) async {
     try {
-      final boundary = key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+      final boundary =
+          key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
       if (boundary == null) return null;
 
       final image = await boundary.toImage(pixelRatio: 3.0);
@@ -122,7 +123,8 @@ class FortuneShareService {
     try {
       switch (platform) {
         case SharePlatform.kakaoTalk:
-          await _shareToKakao(context, imageData, title, content, userName, fortuneType);
+          await _shareToKakao(
+              context, imageData, title, content, userName, fortuneType);
           break;
         case SharePlatform.instagram:
           await _shareToInstagram(context, imageData, title, content);
@@ -171,7 +173,8 @@ class FortuneShareService {
     final success = await _kakaoShareService.shareFortuneResult(
       context: context,
       title: title,
-      description: content.length > 200 ? '${content.substring(0, 197)}...' : content,
+      description:
+          content.length > 200 ? '${content.substring(0, 197)}...' : content,
       imageData: imageData,
       fortuneType: fortuneType,
     );
@@ -281,7 +284,8 @@ class FortuneShareService {
   Future<void> _saveToGallery(Uint8List imageData) async {
     try {
       final directory = await getApplicationDocumentsDirectory();
-      final imagePath = '${directory.path}/fortune_${DateTime.now().millisecondsSinceEpoch}.png';
+      final imagePath =
+          '${directory.path}/fortune_${DateTime.now().millisecondsSinceEpoch}.png';
       final imageFile = File(imagePath);
       await imageFile.writeAsBytes(imageData);
       debugPrint('[FortuneShareService] Saved to: $imagePath');
@@ -294,7 +298,8 @@ class FortuneShareService {
   /// 임시 파일로 이미지 저장
   Future<File> _saveImageToTemp(Uint8List imageData) async {
     final tempDir = await getTemporaryDirectory();
-    final tempFile = File('${tempDir.path}/fortune_${DateTime.now().millisecondsSinceEpoch}.png');
+    final tempFile = File(
+        '${tempDir.path}/fortune_${DateTime.now().millisecondsSinceEpoch}.png');
     await tempFile.writeAsBytes(imageData);
     return tempFile;
   }

@@ -347,7 +347,8 @@ class _ChatYearlyEncounterResultCardState
                 decoration: BoxDecoration(
                   color: DSColors.backgroundSecondary.withValues(alpha: 0.5),
                   border: Border.all(
-                      color: DSColors.textPrimary.withValues(alpha: 0.2), width: 1),
+                      color: DSColors.textPrimary.withValues(alpha: 0.2),
+                      width: 1),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -383,7 +384,8 @@ class _ChatYearlyEncounterResultCardState
                 decoration: BoxDecoration(
                   color: DSColors.backgroundSecondary.withValues(alpha: 0.5),
                   border: Border.all(
-                      color: DSColors.textPrimary.withValues(alpha: 0.2), width: 1),
+                      color: DSColors.textPrimary.withValues(alpha: 0.2),
+                      width: 1),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -434,8 +436,8 @@ class _ChatYearlyEncounterResultCardState
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: DSColors.backgroundSecondary.withValues(alpha: 0.5),
-        border:
-            Border.all(color: DSColors.textPrimary.withValues(alpha: 0.2), width: 1),
+        border: Border.all(
+            color: DSColors.textPrimary.withValues(alpha: 0.2), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

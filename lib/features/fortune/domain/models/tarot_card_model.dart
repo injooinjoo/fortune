@@ -49,7 +49,8 @@ enum TarotSpreadType {
   final TarotDifficulty difficulty;
   final String detailedDescription;
 
-  const TarotSpreadType(this.displayName, this.description, this.cardCount, this.difficulty, this.detailedDescription);
+  const TarotSpreadType(this.displayName, this.description, this.cardCount,
+      this.difficulty, this.detailedDescription);
 
   /// F11: 난이도순 정렬된 스프레드 목록
   static List<TarotSpreadType> get sortedByDifficulty {
@@ -207,11 +208,13 @@ class TarotCard {
 
   /// 카드 이미지 경로 생성
   String get imagePath {
-    final basePath = 'assets/images/tarot/decks/${deckType.path}/${category.path}/';
+    final basePath =
+        'assets/images/tarot/decks/${deckType.path}/${category.path}/';
 
     if (category == CardCategory.major) {
       // 메이저 아르카나: 00_fool.jpg, 01_magician.jpg 등
-      final fileName = '${number.toString().padLeft(2, '0')}_${_getCardFileName()}.jpg';
+      final fileName =
+          '${number.toString().padLeft(2, '0')}_${_getCardFileName()}.jpg';
       return basePath + fileName;
     } else {
       // 마이너 아르카나
@@ -224,7 +227,8 @@ class TarotCard {
         return basePath + fileName;
       } else {
         // 숫자 카드 (1-10): 01_of_cups.jpg, 02_of_cups.jpg 등
-        final fileName = '${number.toString().padLeft(2, '0')}_of_$suitName.jpg';
+        final fileName =
+            '${number.toString().padLeft(2, '0')}_of_$suitName.jpg';
         return basePath + fileName;
       }
     }
@@ -283,15 +287,15 @@ class TarotCard {
 
   /// JSON 변환
   Map<String, dynamic> toJson() => {
-    'deckType': deckType.path,
-    'category': category.path,
-    'number': number,
-    'cardName': cardName,
-    'cardNameKr': cardNameKr,
-    'isReversed': isReversed,
-    'positionKey': positionKey,
-    'positionMeaning': positionMeaning,
-  };
+        'deckType': deckType.path,
+        'category': category.path,
+        'number': number,
+        'cardName': cardName,
+        'cardNameKr': cardNameKr,
+        'isReversed': isReversed,
+        'positionKey': positionKey,
+        'positionMeaning': positionMeaning,
+      };
 
   factory TarotCard.fromJson(Map<String, dynamic> json) {
     return TarotCard(
@@ -345,20 +349,22 @@ class TarotSpreadResult {
       cards: cards ?? this.cards,
       question: question ?? this.question,
       timestamp: timestamp ?? this.timestamp,
-      overallInterpretation: overallInterpretation ?? this.overallInterpretation,
-      positionInterpretations: positionInterpretations ?? this.positionInterpretations,
+      overallInterpretation:
+          overallInterpretation ?? this.overallInterpretation,
+      positionInterpretations:
+          positionInterpretations ?? this.positionInterpretations,
     );
   }
 
   /// JSON 변환
   Map<String, dynamic> toJson() => {
-    'spreadType': spreadType.name,
-    'cards': cards.map((c) => c.toJson()).toList(),
-    'question': question,
-    'timestamp': timestamp.toIso8601String(),
-    'overallInterpretation': overallInterpretation,
-    'positionInterpretations': positionInterpretations,
-  };
+        'spreadType': spreadType.name,
+        'cards': cards.map((c) => c.toJson()).toList(),
+        'question': question,
+        'timestamp': timestamp.toIso8601String(),
+        'overallInterpretation': overallInterpretation,
+        'positionInterpretations': positionInterpretations,
+      };
 
   factory TarotSpreadResult.fromJson(Map<String, dynamic> json) {
     return TarotSpreadResult(

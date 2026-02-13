@@ -162,7 +162,8 @@ class ChatOotdResultCard extends ConsumerWidget {
     final colors = context.colors;
     final details = ootdData['details'] as Map<String, dynamic>? ?? {};
     final comment = details['overallComment'] as String? ??
-        ootdData['content'] as String? ?? '';
+        ootdData['content'] as String? ??
+        '';
 
     if (comment.isEmpty) return const SizedBox.shrink();
 
@@ -194,7 +195,8 @@ class ChatOotdResultCard extends ConsumerWidget {
   Widget _buildHighlightsSection(BuildContext context) {
     final colors = context.colors;
     final details = ootdData['details'] as Map<String, dynamic>? ?? {};
-    final highlights = (details['highlights'] as List<dynamic>?)?.cast<String>() ?? [];
+    final highlights =
+        (details['highlights'] as List<dynamic>?)?.cast<String>() ?? [];
 
     if (highlights.isEmpty) return const SizedBox.shrink();
 
@@ -221,21 +223,24 @@ class ChatOotdResultCard extends ConsumerWidget {
           ),
           const SizedBox(height: DSSpacing.xs),
           ...highlights.map((highlight) => Padding(
-            padding: const EdgeInsets.only(bottom: DSSpacing.xxs),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('•', style: context.bodyMedium.copyWith(color: colors.success)),
-                const SizedBox(width: DSSpacing.xs),
-                Expanded(
-                  child: Text(
-                    highlight,
-                    style: context.bodyMedium.copyWith(color: colors.textPrimary),
-                  ),
+                padding: const EdgeInsets.only(bottom: DSSpacing.xxs),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('•',
+                        style:
+                            context.bodyMedium.copyWith(color: colors.success)),
+                    const SizedBox(width: DSSpacing.xs),
+                    Expanded(
+                      child: Text(
+                        highlight,
+                        style: context.bodyMedium
+                            .copyWith(color: colors.textPrimary),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          )),
+              )),
         ],
       ),
     ).animate().fadeIn(duration: 400.ms, delay: 150.ms);
@@ -478,11 +483,11 @@ class ChatOotdResultCard extends ConsumerWidget {
           // 화면 너비가 좁으면 세로 배치, 넓으면 가로 배치
           final isNarrow = constraints.maxWidth < 320;
 
-          final celebWidget = celebMatch != null
-              ? _buildCelebCard(context, celebMatch)
-              : null;
+          final celebWidget =
+              celebMatch != null ? _buildCelebCard(context, celebMatch) : null;
           final recommendWidget = items.isNotEmpty
-              ? _buildRecommendCard(context, items.first as Map<String, dynamic>)
+              ? _buildRecommendCard(
+                  context, items.first as Map<String, dynamic>)
               : null;
 
           if (isNarrow) {

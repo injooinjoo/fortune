@@ -11,7 +11,8 @@ class TarotAnimatedFlowPage extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<TarotAnimatedFlowPage> createState() => _TarotAnimatedFlowPageState();
+  ConsumerState<TarotAnimatedFlowPage> createState() =>
+      _TarotAnimatedFlowPageState();
 }
 
 class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
@@ -56,7 +57,7 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
   void initState() {
     super.initState();
     _pageController = PageController();
-    
+
     _heroController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
@@ -131,12 +132,13 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
                   ),
                 ],
               ),
-            ).animate()
-              .fadeIn(duration: 1000.ms)
-              .scale(begin: const Offset(0.5, 0.5)),
-            
+            )
+                .animate()
+                .fadeIn(duration: 1000.ms)
+                .scale(begin: const Offset(0.5, 0.5)),
+
             const SizedBox(height: 40),
-            
+
             // Subtitle
             Text(
               'Discover your destiny through\nthe ancient wisdom of tarot',
@@ -145,12 +147,13 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
                 color: DSColors.accent.withValues(alpha: 0.8),
                 height: 1.6,
               ),
-            ).animate(delay: 500.ms)
-              .fadeIn(duration: 800.ms)
-              .slideY(begin: 0.3, end: 0),
-            
+            )
+                .animate(delay: 500.ms)
+                .fadeIn(duration: 800.ms)
+                .slideY(begin: 0.3, end: 0),
+
             const SizedBox(height: 60),
-            
+
             // Start button
             ElevatedButton(
               onPressed: () {
@@ -162,7 +165,8 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
               style: ElevatedButton.styleFrom(
                 backgroundColor: DSColors.accentTertiary.withValues(alpha: 0.8),
                 foregroundColor: DSColors.accent,
-                padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 20),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 60, vertical: 20),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
@@ -183,9 +187,10 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
                   ),
                 ],
               ),
-            ).animate(delay: 1000.ms)
-              .fadeIn(duration: 600.ms)
-              .scale(begin: const Offset(0.8, 0.8)),
+            )
+                .animate(delay: 1000.ms)
+                .fadeIn(duration: 600.ms)
+                .scale(begin: const Offset(0.8, 0.8)),
           ],
         ),
       ),
@@ -221,7 +226,7 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
                 ],
               ),
             ),
-            
+
             // Cards grid
             Expanded(
               child: Padding(
@@ -242,12 +247,14 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
                           color: DSColors.accentTertiary.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: DSColors.accentTertiary.withValues(alpha: 0.5),
+                            color:
+                                DSColors.accentTertiary.withValues(alpha: 0.5),
                             width: 2,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: DSColors.accentTertiary.withValues(alpha: 0.3),
+                              color: DSColors.accentTertiary
+                                  .withValues(alpha: 0.3),
                               blurRadius: 10,
                               offset: const Offset(0, 5),
                             ),
@@ -272,9 +279,10 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
                           ],
                         ),
                       ),
-                    ).animate(delay: (200 * index).ms)
-                      .fadeIn(duration: 600.ms)
-                      .scale(begin: const Offset(0.8, 0.8));
+                    )
+                        .animate(delay: (200 * index).ms)
+                        .fadeIn(duration: 600.ms)
+                        .scale(begin: const Offset(0.8, 0.8));
                   },
                 ),
               ),
@@ -287,7 +295,7 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
 
   Widget _buildCardReveal() {
     final cardData = _majorArcana[_selectedCardIndex!];
-    
+
     return Container(
       color: DSColors.background,
       child: Center(
@@ -302,7 +310,8 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Theme.of(context).primaryColor.withValues(alpha: 0.5),
+                    color:
+                        Theme.of(context).primaryColor.withValues(alpha: 0.5),
                     blurRadius: 30,
                     spreadRadius: 10,
                   ),
@@ -341,9 +350,9 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 40),
-            
+
             // Card info
             Text(
               cardData['name'] ?? 'Unknown Card',
@@ -364,9 +373,9 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
                 fontStyle: FontStyle.italic,
               ),
             ),
-            
+
             const SizedBox(height: 40),
-            
+
             // Metadata
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -376,18 +385,20 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
                 _buildMetadata(Icons.public, cardData['planet'] ?? ''),
               ],
             ),
-            
+
             const SizedBox(height: 60),
-            
+
             // Continue button
             ElevatedButton(
               onPressed: () {
                 // Navigate to detailed reading
-                context.push('/interactive/tarot/storytelling', extra: cardData);
+                context.push('/interactive/tarot/storytelling',
+                    extra: cardData);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).primaryColor,
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
@@ -429,7 +440,7 @@ class _TarotAnimatedFlowPageState extends ConsumerState<TarotAnimatedFlowPage>
     });
 
     _heroController.forward();
-    
+
     Future.delayed(const Duration(milliseconds: 500), () {
       _pageController?.nextPage(
         duration: const Duration(milliseconds: 800),

@@ -206,7 +206,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     Future(() async {
       try {
         debugPrint('🎁 [백그라운드] 프로필 완성 보너스 청구 중...');
-        final result = await ref.read(tokenProvider.notifier).claimProfileCompletionBonus();
+        final result = await ref
+            .read(tokenProvider.notifier)
+            .claimProfileCompletionBonus();
 
         if (result['bonusGranted'] == true) {
           debugPrint('🎁 프로필 완성 보너스 ${result['bonusAmount']}토큰 지급 완료!');

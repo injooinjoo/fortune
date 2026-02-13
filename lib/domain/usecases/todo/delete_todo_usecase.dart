@@ -19,9 +19,7 @@ class DeleteTodoUseCase implements UseCase<void, DeleteTodoParams> {
       return const Left(ValidationFailure('User ID cannot be empty'));
     }
 
-    return repository.deleteTodo(
-      todoId: params.todoId,
-      userId: params.userId);
+    return repository.deleteTodo(todoId: params.todoId, userId: params.userId);
   }
 }
 
@@ -29,9 +27,7 @@ class DeleteTodoParams extends Equatable {
   final String todoId;
   final String userId;
 
-  const DeleteTodoParams({
-    required this.todoId,
-    required this.userId});
+  const DeleteTodoParams({required this.todoId, required this.userId});
 
   @override
   List<Object> get props => [todoId, userId];

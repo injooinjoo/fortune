@@ -8,12 +8,16 @@ import '../core/utils/logger.dart';
 enum VersionCheckResult {
   /// 최신 버전
   upToDate,
+
   /// 선택적 업데이트 가능
   updateAvailable,
+
   /// 강제 업데이트 필요
   forceUpdateRequired,
+
   /// 점검 중
   maintenance,
+
   /// 체크 실패 (네트워크 오류 등)
   checkFailed,
 }
@@ -176,9 +180,11 @@ class AppVersionService {
       }
 
       // 2. 최소 버전 체크 (강제 업데이트)
-      final minCompare = _compareVersions(currentVersion, appSettings.minVersion);
+      final minCompare =
+          _compareVersions(currentVersion, appSettings.minVersion);
       if (minCompare < 0) {
-        Logger.info('[AppVersionService] 강제 업데이트 필요: $currentVersion < ${appSettings.minVersion}');
+        Logger.info(
+            '[AppVersionService] 강제 업데이트 필요: $currentVersion < ${appSettings.minVersion}');
         return VersionCheckInfo(
           result: VersionCheckResult.forceUpdateRequired,
           currentVersion: currentVersion,
@@ -187,9 +193,11 @@ class AppVersionService {
       }
 
       // 3. 최신 버전 체크 (선택적 업데이트)
-      final latestCompare = _compareVersions(currentVersion, appSettings.latestVersion);
+      final latestCompare =
+          _compareVersions(currentVersion, appSettings.latestVersion);
       if (latestCompare < 0) {
-        Logger.info('[AppVersionService] 업데이트 가능: $currentVersion < ${appSettings.latestVersion}');
+        Logger.info(
+            '[AppVersionService] 업데이트 가능: $currentVersion < ${appSettings.latestVersion}');
         return VersionCheckInfo(
           result: VersionCheckResult.updateAvailable,
           currentVersion: currentVersion,

@@ -175,7 +175,8 @@ class _CookieShardBreakWidgetState extends State<CookieShardBreakWidget>
                         shape: BoxShape.circle,
                         gradient: RadialGradient(
                           colors: [
-                            Colors.white.withValues(alpha: 0.8 - _breakAnimation.value * 2),
+                            Colors.white.withValues(
+                                alpha: 0.8 - _breakAnimation.value * 2),
                             Colors.white.withValues(alpha: 0),
                           ],
                         ),
@@ -201,8 +202,8 @@ class _CookieShardBreakWidgetState extends State<CookieShardBreakWidget>
 
       // 이동 계산 (포물선 + 중력)
       final dx = shard.velocity.dx * progress;
-      final dy = shard.velocity.dy * progress +
-                 (150 * progress * progress); // 중력 가속
+      final dy =
+          shard.velocity.dy * progress + (150 * progress * progress); // 중력 가속
 
       // 회전 계산
       final rotation = shard.rotation + shard.rotationSpeed * progress;
@@ -260,7 +261,7 @@ class _CookieShardBreakWidgetState extends State<CookieShardBreakWidget>
       // 위치 계산 (중력 적용)
       final dx = particle.velocity.dx * progress;
       final dy = particle.velocity.dy * progress +
-                 (particle.gravity * progress * progress);
+          (particle.gravity * progress * progress);
 
       // 페이드 아웃
       final opacity = (1 - normalizedProgress).clamp(0.0, 1.0);
@@ -395,9 +396,7 @@ class CookieShakeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!isShaking) return child;
 
-    return child
-        .animate(onPlay: (c) => c.repeat())
-        .shakeX(
+    return child.animate(onPlay: (c) => c.repeat()).shakeX(
           duration: 100.ms,
           hz: 10,
           amount: 5,

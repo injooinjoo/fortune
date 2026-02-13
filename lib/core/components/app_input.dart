@@ -66,12 +66,12 @@ class _TossTextFieldState extends State<TossTextField>
     super.initState();
     _focusNode = widget.focusNode ?? FocusNode();
     _focusNode.addListener(_onFocusChange);
-    
+
     _animationController = AnimationController(
       vsync: this,
       duration: DSAnimation.fast,
     );
-    
+
     _focusAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -95,7 +95,7 @@ class _TossTextFieldState extends State<TossTextField>
     setState(() {
       _hasFocus = _focusNode.hasFocus;
     });
-    
+
     if (_hasFocus) {
       _animationController.forward();
       if (widget.enableHaptic) {
@@ -109,7 +109,7 @@ class _TossTextFieldState extends State<TossTextField>
   @override
   Widget build(BuildContext context) {
     final hasError = widget.errorText != null;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -118,9 +118,7 @@ class _TossTextFieldState extends State<TossTextField>
           Text(
             widget.labelText!,
             style: context.bodySmall.copyWith(
-              color: hasError
-                  ? DSColors.error
-                  : context.colors.textSecondary,
+              color: hasError ? DSColors.error : context.colors.textSecondary,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -182,9 +180,7 @@ class _TossTextFieldState extends State<TossTextField>
           Text(
             widget.errorText ?? widget.helperText ?? '',
             style: context.labelMedium.copyWith(
-              color: hasError
-                  ? DSColors.error
-                  : context.colors.textDisabled,
+              color: hasError ? DSColors.error : context.colors.textDisabled,
             ),
           ).animate().fadeIn(duration: DSAnimation.fast),
         ],
@@ -318,14 +314,10 @@ class TossCheckbox extends StatelessWidget {
             width: 20,
             height: 20,
             decoration: BoxDecoration(
-              color: value
-                  ? context.colors.accent
-                  : context.colors.surface,
+              color: value ? context.colors.accent : context.colors.surface,
               borderRadius: BorderRadius.circular(DSRadius.xs),
               border: Border.all(
-                color: value
-                    ? context.colors.accent
-                    : context.colors.border,
+                color: value ? context.colors.accent : context.colors.border,
                 width: 2,
               ),
             ),

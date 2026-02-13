@@ -55,7 +55,8 @@ class CharacterChatResponse {
       response: json['response'] as String? ?? '응답을 받지 못했습니다.',
       emotionTag: json['emotionTag'] as String? ?? '일상',
       delaySec: json['delaySec'] as int? ?? 10,
-      affinityDelta: AffinityDelta.fromJson(json['affinityDelta'] as Map<String, dynamic>?),
+      affinityDelta: AffinityDelta.fromJson(
+          json['affinityDelta'] as Map<String, dynamic>?),
     );
   }
 }
@@ -74,9 +75,9 @@ class CharacterChatService {
     String? userName,
     String? userDescription,
     String? oocInstructions,
-    String? emojiFrequency,  // 캐릭터별 이모티콘 빈도
-    String? emoticonStyle,   // 이모티콘 스타일 (unicode/kakao/mixed/ogq)
-    String? characterName,   // 캐릭터 이름 (맥락용)
+    String? emojiFrequency, // 캐릭터별 이모티콘 빈도
+    String? emoticonStyle, // 이모티콘 스타일 (unicode/kakao/mixed/ogq)
+    String? characterName, // 캐릭터 이름 (맥락용)
     String? characterTraits, // 캐릭터 특성 요약 (말투, 호칭 등)
     String? clientTimestamp, // 현재 시간 (시간 인식용)
     Map<String, dynamic>? userProfile, // 유저 프로필 정보 (개인화용)
@@ -113,7 +114,8 @@ class CharacterChatService {
   }
 
   /// 대화 스레드 불러오기 (로컬 우선, 서버 백업)
-  Future<List<CharacterChatMessage>> loadConversation(String characterId) async {
+  Future<List<CharacterChatMessage>> loadConversation(
+      String characterId) async {
     // 1. 먼저 로컬에서 불러오기 (카카오톡 스타일)
     final localMessages = await _localService.loadConversation(characterId);
     if (localMessages.isNotEmpty) {
@@ -166,7 +168,8 @@ class CharacterChatService {
     List<CharacterChatMessage> messages,
   ) async {
     // 1. 로컬에 먼저 저장 (항상 - 카카오톡 스타일)
-    final localSaved = await _localService.saveConversation(characterId, messages);
+    final localSaved =
+        await _localService.saveConversation(characterId, messages);
     if (!localSaved) {
       Logger.warning('Failed to save conversation locally');
     }
@@ -241,7 +244,8 @@ class CharacterChatService {
         return result;
       }
 
-      final conversations = data['conversations'] as Map<String, dynamic>? ?? {};
+      final conversations =
+          data['conversations'] as Map<String, dynamic>? ?? {};
 
       for (final entry in conversations.entries) {
         final characterId = entry.key;
@@ -250,7 +254,8 @@ class CharacterChatService {
 
         if (messagesList.isNotEmpty) {
           final messages = messagesList
-              .map((m) => CharacterChatMessage.fromJson(m as Map<String, dynamic>))
+              .map((m) =>
+                  CharacterChatMessage.fromJson(m as Map<String, dynamic>))
               .toList();
 
           result[characterId] = messages;

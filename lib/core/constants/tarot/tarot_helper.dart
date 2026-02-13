@@ -107,7 +107,7 @@ class TarotHelper {
     // 수비학적 관련 카드 찾기
     final numerology = TarotMetadata.majorArcana[cardId]?.numerology ?? 0;
     final related = <String>[];
-    
+
     // 같은 숫자의 마이너 아르카나 카드들
     if (numerology > 0 && numerology <= 10) {
       related.add('$numerology of Wands');
@@ -115,17 +115,20 @@ class TarotHelper {
       related.add('$numerology of Swords');
       related.add('$numerology of Pentacles');
     }
-    
+
     // 수비학적 환원 (예: 13 Death -> 4 Emperor)
     if (numerology > 9) {
-      final reduced = numerology.toString().split('').map(int.parse).reduce((a, b) => a + b);
+      final reduced = numerology
+          .toString()
+          .split('')
+          .map(int.parse)
+          .reduce((a, b) => a + b);
       final reducedCard = TarotMetadata.majorArcana.values.firstWhere(
-        (card) => card.numerology == reduced,
-        orElse: () => TarotMetadata.majorArcana[0]!
-      );
+          (card) => card.numerology == reduced,
+          orElse: () => TarotMetadata.majorArcana[0]!);
       related.add(reducedCard.name);
     }
-    
+
     return related;
   }
 }

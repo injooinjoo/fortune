@@ -142,6 +142,7 @@ const Map<String, String> defaultWarnings = {
 List<MbtiDimensionFortune> parseDimensions(List<dynamic>? dimensionsJson) {
   if (dimensionsJson == null) return [];
   return dimensionsJson
-      .map((json) => MbtiDimensionFortune.fromJson(json as Map<String, dynamic>))
+      .map(
+          (json) => MbtiDimensionFortune.fromJson(json as Map<String, dynamic>))
       .toList();
 }

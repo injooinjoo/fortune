@@ -93,8 +93,7 @@ void main() {
       final inkWells = find.byType(InkWell);
       final gestureDetectors = find.byType(GestureDetector);
 
-      final hasInteractiveElements =
-          buttons.evaluate().isNotEmpty ||
+      final hasInteractiveElements = buttons.evaluate().isNotEmpty ||
           textButtons.evaluate().isNotEmpty ||
           inkWells.evaluate().isNotEmpty ||
           gestureDetectors.evaluate().isNotEmpty;
@@ -147,7 +146,8 @@ void main() {
       var crashed = false;
 
       try {
-        await startAppAndWait(tester, waitDuration: const Duration(seconds: 10));
+        await startAppAndWait(tester,
+            waitDuration: const Duration(seconds: 10));
       } catch (e) {
         crashed = true;
         debugPrint('TC006 FAILED: App crashed with error: $e');
@@ -180,7 +180,8 @@ void main() {
         reason: '앱 첫 렌더링이 10초 이내에 완료되어야 합니다',
       );
 
-      debugPrint('TC007 PASSED: App initial render time: ${stopwatch.elapsedMilliseconds}ms');
+      debugPrint(
+          'TC007 PASSED: App initial render time: ${stopwatch.elapsedMilliseconds}ms');
 
       // 백그라운드 Provider 정리를 위한 추가 대기
       // ThemeModeNotifier 등이 완전히 초기화되도록 함

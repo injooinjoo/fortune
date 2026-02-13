@@ -28,8 +28,7 @@ class CardImagePage extends StatelessWidget {
                 child: Container(
                   constraints: const BoxConstraints(maxWidth: 300),
                   decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.circular(DSRadius.lg),
+                    borderRadius: BorderRadius.circular(DSRadius.lg),
                     boxShadow: [
                       BoxShadow(
                         color: DSColors.accentSecondary.withValues(alpha: 0.3),
@@ -39,8 +38,7 @@ class CardImagePage extends StatelessWidget {
                     ],
                   ),
                   child: ClipRRect(
-                    borderRadius:
-                        BorderRadius.circular(DSRadius.lg),
+                    borderRadius: BorderRadius.circular(DSRadius.lg),
                     child: Image.asset(
                       'assets/images/tarot/$imagePath',
                       fit: BoxFit.contain,

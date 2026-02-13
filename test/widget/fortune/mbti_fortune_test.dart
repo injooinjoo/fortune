@@ -190,10 +190,22 @@ class _MockMBTIFortunePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mbtiTypes = [
-      'INTJ', 'INTP', 'ENTJ', 'ENTP',
-      'INFJ', 'INFP', 'ENFJ', 'ENFP',
-      'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
-      'ISTP', 'ISFP', 'ESTP', 'ESFP',
+      'INTJ',
+      'INTP',
+      'ENTJ',
+      'ENTP',
+      'INFJ',
+      'INFP',
+      'ENFJ',
+      'ENFP',
+      'ISTJ',
+      'ISFJ',
+      'ESTJ',
+      'ESFJ',
+      'ISTP',
+      'ISFP',
+      'ESTP',
+      'ESFP',
     ];
 
     return SafeArea(
@@ -202,7 +214,8 @@ class _MockMBTIFortunePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('MBTI 운세', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const Text('MBTI 운세',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 24),
             const Text('나의 MBTI를 선택해주세요'),
             const SizedBox(height: 16),
@@ -291,13 +304,15 @@ class _MockMBTIFortuneResult extends StatelessWidget {
             Center(
               child: Column(
                 children: [
-                  Text(mbtiType, style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold)),
-                  Text(_getMBTIName(mbtiType), style: const TextStyle(fontSize: 20)),
+                  Text(mbtiType,
+                      style: const TextStyle(
+                          fontSize: 48, fontWeight: FontWeight.bold)),
+                  Text(_getMBTIName(mbtiType),
+                      style: const TextStyle(fontSize: 20)),
                 ],
               ),
             ),
             const SizedBox(height: 24),
-
             const Card(
               child: ListTile(
                 title: Text('오늘의 운세'),
@@ -328,7 +343,6 @@ class _MockMBTIFortuneResult extends StatelessWidget {
                 subtitle: Text('과학자, 엔지니어, 전략 컨설턴트'),
               ),
             ),
-
             if (hasSajuData) ...[
               const SizedBox(height: 16),
               const Card(
@@ -338,7 +352,6 @@ class _MockMBTIFortuneResult extends StatelessWidget {
                 ),
               ),
             ],
-
           ],
         ),
       ),

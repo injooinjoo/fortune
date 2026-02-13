@@ -452,8 +452,8 @@ class _MedicalDocumentResultPageState
           // 오행 균형
           Row(
             children: [
-              _buildElementChip(
-                  '강함', saju.dominantElement, DSColors.accentSecondary, context),
+              _buildElementChip('강함', saju.dominantElement,
+                  DSColors.accentSecondary, context),
               const SizedBox(width: 8),
               _buildElementChip(
                   '약함', saju.weakElement, DSColors.error, context),
@@ -471,11 +471,11 @@ class _MedicalDocumentResultPageState
 
           // 취약/강한 장기
           if (saju.vulnerableOrgans.isNotEmpty)
-            _buildOrganList('주의 필요 장기', saju.vulnerableOrgans,
-                DSColors.error, context),
-          if (saju.strengthOrgans.isNotEmpty)
             _buildOrganList(
-                '튼튼한 장기', saju.strengthOrgans, DSColors.accentSecondary, context),
+                '주의 필요 장기', saju.vulnerableOrgans, DSColors.error, context),
+          if (saju.strengthOrgans.isNotEmpty)
+            _buildOrganList('튼튼한 장기', saju.strengthOrgans,
+                DSColors.accentSecondary, context),
 
           const SizedBox(height: 12),
           Container(
@@ -723,8 +723,7 @@ class _MedicalDocumentResultPageState
 
   Widget _buildDietAdvice(DietAdvice advice, BuildContext context) {
     final isRecommend = advice.isRecommend;
-    final color =
-        isRecommend ? DSColors.accentSecondary : DSColors.error;
+    final color = isRecommend ? DSColors.accentSecondary : DSColors.error;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),

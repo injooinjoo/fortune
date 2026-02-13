@@ -115,8 +115,6 @@ class _DreamInterpretationPageState
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       backgroundColor: context.colors.background,
       appBar: AppBar(
@@ -180,8 +178,6 @@ class _DreamInterpretationPageState
 
   /// F15: 초기 로딩 화면 (저장된 결과 확인 중)
   Widget _buildInitialLoadingView() {
-
-
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -215,8 +211,6 @@ class _DreamInterpretationPageState
 
   /// 버블 선택 화면
   Widget _buildBubbleSelectionView() {
-
-
     return Stack(
       children: [
         // 플로팅 버블들 (상단 입력 영역 공간 확보)
@@ -237,11 +231,11 @@ class _DreamInterpretationPageState
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: context.colors.surfaceSecondary
-                  .withValues(alpha: 0.98),
+              color: context.colors.surfaceSecondary.withValues(alpha: 0.98),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: const Color(0xFF8B5CF6).withValues(alpha: 0.3), // 고유 색상 - 꿈 해몽 테마
+                color: const Color(0xFF8B5CF6)
+                    .withValues(alpha: 0.3), // 고유 색상 - 꿈 해몽 테마
                 width: 1.5,
               ),
               boxShadow: [
@@ -253,7 +247,8 @@ class _DreamInterpretationPageState
                 ),
                 // 글로우 효과
                 BoxShadow(
-                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.15), // 고유 색상 - 꿈 해몽 글로우
+                  color: const Color(0xFF8B5CF6)
+                      .withValues(alpha: 0.15), // 고유 색상 - 꿈 해몽 글로우
                   blurRadius: 30,
                   spreadRadius: -5,
                 ),
@@ -284,16 +279,19 @@ class _DreamInterpretationPageState
                     borderRadius: BorderRadius.circular(16),
                     gradient: LinearGradient(
                       colors: [
-                        const Color(0xFF8B5CF6).withValues(alpha: 0.6), // 고유 색상 - 꿈 해몽 테마
+                        const Color(0xFF8B5CF6)
+                            .withValues(alpha: 0.6), // 고유 색상 - 꿈 해몽 테마
                         DSColors.accentSecondary.withValues(alpha: 0.6),
-                        const Color(0xFF8B5CF6).withValues(alpha: 0.6), // 고유 색상 - 꿈 해몽 테마
+                        const Color(0xFF8B5CF6)
+                            .withValues(alpha: 0.6), // 고유 색상 - 꿈 해몽 테마
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF8B5CF6).withValues(alpha: 0.25), // 고유 색상 - 꿈 해몽 글로우
+                        color: const Color(0xFF8B5CF6)
+                            .withValues(alpha: 0.25), // 고유 색상 - 꿈 해몽 글로우
                         blurRadius: 12,
                         spreadRadius: -2,
                       ),
@@ -337,8 +335,6 @@ class _DreamInterpretationPageState
 
   /// 로딩 화면
   Widget _buildLoadingView() {
-
-
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -387,7 +383,6 @@ class _DreamInterpretationPageState
     });
     _handleSubmit(topic);
   }
-
 
   // ==================== Result View ====================
 
@@ -463,10 +458,10 @@ class _DreamInterpretationPageState
   }
 
   Widget _buildSymbolsCard(FortuneResult result) {
-
     final symbols = (result.data['relatedSymbols'] as List<dynamic>?)
-        ?.map((e) => e.toString())
-        .toList() ?? [];
+            ?.map((e) => e.toString())
+            .toList() ??
+        [];
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -490,12 +485,15 @@ class _DreamInterpretationPageState
             runSpacing: 8,
             children: symbols.map((symbol) {
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.1), // 고유 색상 - 꿈 해몽 테마
+                  color: const Color(0xFF8B5CF6)
+                      .withValues(alpha: 0.1), // 고유 색상 - 꿈 해몽 테마
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: const Color(0xFF8B5CF6).withValues(alpha: 0.3), // 고유 색상 - 꿈 해몽 테마
+                    color: const Color(0xFF8B5CF6)
+                        .withValues(alpha: 0.3), // 고유 색상 - 꿈 해몽 테마
                   ),
                 ),
                 child: Text(
@@ -514,8 +512,8 @@ class _DreamInterpretationPageState
   }
 
   Widget _buildInterpretationCard(FortuneResult result) {
-
-    final interpretation = FortuneTextCleaner.clean(result.data['interpretation'] as String? ?? '해석 정보가 없습니다.');
+    final interpretation = FortuneTextCleaner.clean(
+        result.data['interpretation'] as String? ?? '해석 정보가 없습니다.');
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -547,8 +545,8 @@ class _DreamInterpretationPageState
   }
 
   Widget _buildAdviceCard(FortuneResult result) {
-
-    final advice = FortuneTextCleaner.clean(result.data['todayGuidance'] as String? ?? '조언 정보가 없습니다.');
+    final advice = FortuneTextCleaner.clean(
+        result.data['todayGuidance'] as String? ?? '조언 정보가 없습니다.');
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -617,7 +615,8 @@ class _DreamInterpretationPageState
       // 🎯 토큰 소비형 모델: 블러 처리 제거 (토큰 소비 후 바로 결과 표시)
 
       if (mounted) {
-        debugPrint('🌙 [DreamPage] 결과 설정 중: data keys=${result.data.keys.toList()}');
+        debugPrint(
+            '🌙 [DreamPage] 결과 설정 중: data keys=${result.data.keys.toList()}');
         setState(() {
           _fortuneResult = result;
           _showResult = true;
@@ -670,7 +669,8 @@ class _DreamInterpretationPageState
       conditions: conditions,
       isPremium: isPremium,
     );
-    debugPrint('🌙 [DreamPage] API 응답 받음: ${result.type}, score=${result.score}');
+    debugPrint(
+        '🌙 [DreamPage] API 응답 받음: ${result.type}, score=${result.score}');
     return result;
   }
 

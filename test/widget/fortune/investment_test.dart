@@ -220,17 +220,30 @@ class _MockInvestmentFortunePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('투자운', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const Text('투자운',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 24),
             const Text('관심 투자 유형을 선택해주세요'),
             const SizedBox(height: 16),
             Wrap(
               spacing: 8,
               children: [
-                ChoiceChip(label: const Text('주식'), selected: true, onSelected: (_) {}),
-                ChoiceChip(label: const Text('부동산'), selected: false, onSelected: (_) {}),
-                ChoiceChip(label: const Text('코인'), selected: false, onSelected: (_) {}),
-                ChoiceChip(label: const Text('펀드'), selected: false, onSelected: (_) {}),
+                ChoiceChip(
+                    label: const Text('주식'),
+                    selected: true,
+                    onSelected: (_) {}),
+                ChoiceChip(
+                    label: const Text('부동산'),
+                    selected: false,
+                    onSelected: (_) {}),
+                ChoiceChip(
+                    label: const Text('코인'),
+                    selected: false,
+                    onSelected: (_) {}),
+                ChoiceChip(
+                    label: const Text('펀드'),
+                    selected: false,
+                    onSelected: (_) {}),
               ],
             ),
             const SizedBox(height: 24),
@@ -268,13 +281,14 @@ class _MockInvestmentFortuneResult extends StatelessWidget {
             Center(
               child: Column(
                 children: [
-                  Text('$score점', style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold)),
+                  Text('$score점',
+                      style: const TextStyle(
+                          fontSize: 48, fontWeight: FontWeight.bold)),
                   const Text('투자 적합도'),
                 ],
               ),
             ),
             const SizedBox(height: 24),
-
             const Card(
               child: ListTile(
                 leading: Icon(Icons.access_time),
@@ -304,7 +318,6 @@ class _MockInvestmentFortuneResult extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-
             const Text('월별 투자운', style: TextStyle(fontWeight: FontWeight.bold)),
             Container(
               height: 100,
@@ -315,7 +328,6 @@ class _MockInvestmentFortuneResult extends StatelessWidget {
               ),
               child: const Center(child: Text('차트 영역')),
             ),
-
             const Card(
               child: ListTile(
                 title: Text('투자 전략'),
@@ -329,7 +341,6 @@ class _MockInvestmentFortuneResult extends StatelessWidget {
                 subtitle: Text('3월에는 큰 결정을 피하세요'),
               ),
             ),
-
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),

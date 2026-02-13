@@ -47,9 +47,7 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
   /// 메시지를 로컬에 저장 + DB 동기화 큐에 추가
   Future<void> _saveMessages() async {
     try {
-      final persistable = state.messages
-          .where((m) => m.isPersistable)
-          .toList();
+      final persistable = state.messages.where((m) => m.isPersistable).toList();
       // 최근 N개만 저장
       final toSave = persistable.length > _maxStoredMessages
           ? persistable.sublist(persistable.length - _maxStoredMessages)

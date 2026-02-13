@@ -20,7 +20,7 @@ class CallbackPage extends StatefulWidget {
 
 class _CallbackPageState extends State<CallbackPage> {
   final _storageService = StorageService();
-  
+
   @override
   void initState() {
     super.initState();
@@ -28,7 +28,7 @@ class _CallbackPageState extends State<CallbackPage> {
     debugPrint('URI: ${Uri.base}');
     _handleCallback();
   }
-  
+
   Future<void> _checkAndNavigate(User user) async {
     try {
       // Clean URL first
@@ -36,10 +36,10 @@ class _CallbackPageState extends State<CallbackPage> {
       if (kIsWeb && uri.queryParameters.containsKey('code')) {
         cleanUrlInBrowser('/');
       }
-      
+
       // Clear guest mode when user logs in
       await _storageService.clearGuestMode();
-      
+
       // First, try to sync profile from Supabase before checking local storage
       debugPrint('user: ${user.id}');
       try {
@@ -48,7 +48,7 @@ class _CallbackPageState extends State<CallbackPage> {
             .select()
             .eq('id', user.id)
             .maybeSingle();
-        
+
         if (response != null) {
           debugPrint('Supabase: ${response['onboarding_completed']}');
           // Save to local storage
@@ -56,7 +56,7 @@ class _CallbackPageState extends State<CallbackPage> {
           debugPrint('Profile synced from Supabase to local storage');
         } else {
           debugPrint('user: ${user.id}');
-          
+
           // Create profile automatically for OAuth users
           debugPrint('Creating new profile for OAuth user...');
           final profileData = {
@@ -65,28 +65,31 @@ class _CallbackPageState extends State<CallbackPage> {
             'primary_provider': user.appMetadata['provider'] ?? 'google',
             'linked_providers': [user.appMetadata['provider'] ?? 'google'],
             'created_at': DateTime.now().toIso8601String(),
-            'updated_at': DateTime.now().toIso8601String()};
-          
+            'updated_at': DateTime.now().toIso8601String()
+          };
+
           // Add additional info from user metadata if available
           if (user.userMetadata != null) {
             if (user.userMetadata?['full_name'] != null) {
               profileData['name'] = user.userMetadata?['full_name'];
             }
             if (user.userMetadata?['avatar_url'] != null) {
-              profileData['profile_image_url'] = user.userMetadata?['avatar_url'];
+              profileData['profile_image_url'] =
+                  user.userMetadata?['avatar_url'];
             }
           }
-          
+
           try {
             await Supabase.instance.client
                 .from('user_profiles')
                 .insert(profileData);
             debugPrint('Profile created successfully');
-            
+
             // Save to local storage
             await _storageService.saveUserProfile(profileData);
           } catch (insertError) {
-            debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
+            debugPrint(
+                'Supabase initialized with URL: ${Environment.supabaseUrl}');
             // Continue to onboarding even if profile creation fails
           }
         }
@@ -94,7 +97,7 @@ class _CallbackPageState extends State<CallbackPage> {
         debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
         // Continue even if sync fails - will check local storage
       }
-      
+
       // Chat-First: 모든 경우 /chat으로 이동 (온보딩은 채팅 내에서 처리)
       if (mounted) {
         context.go('/chat');
@@ -116,18 +119,19 @@ class _CallbackPageState extends State<CallbackPage> {
       debugPrint('Host: ${uri.host}');
       debugPrint('Path: ${uri.path}');
       debugPrint('parameters: ${uri.queryParameters}');
-      
+
       // Log current Supabase session
       final currentSession = Supabase.instance.client.auth.currentSession;
       debugPrint('exists: ${currentSession != null}');
       if (currentSession != null) {
         debugPrint('user: ${currentSession.user.email}');
       }
-      
+
       // Extract the code parameter
       final code = uri.queryParameters['code'];
-      debugPrint('code: ${code != null ? "present (${code.length} chars)" : "null"}');
-      
+      debugPrint(
+          'code: ${code != null ? "present (${code.length} chars)" : "null"}');
+
       // Check for custom URL scheme callback (com.beyond.fortune://auth-callback)
       if (uri.scheme == 'com.beyond.fortune' && uri.host == 'auth-callback') {
         debugPrint('Custom URL scheme callback detected: ${uri.toString()}');
@@ -136,19 +140,20 @@ class _CallbackPageState extends State<CallbackPage> {
           // Parse fragment parameters (OAuth often uses fragment instead of query)
           final fragmentParams = Uri.splitQueryString(uri.fragment);
           debugPrint('Fragment parameters: $fragmentParams');
-          
+
           // Check if we have access_token and refresh_token in fragment
           final accessToken = fragmentParams['access_token'];
           final refreshToken = fragmentParams['refresh_token'];
-          
+
           if (accessToken != null) {
             debugPrint('Access token found in fragment, creating session...');
             try {
               // Try different Supabase session creation methods
-              
+
               // Method 1: Use recoverSession (recommended for access tokens)
               try {
-                final response = await Supabase.instance.client.auth.recoverSession(accessToken);
+                final response = await Supabase.instance.client.auth
+                    .recoverSession(accessToken);
                 if (response.session != null && response.user != null) {
                   debugPrint('✅ Session recovered successfully from fragment!');
                   if (mounted) {
@@ -159,10 +164,11 @@ class _CallbackPageState extends State<CallbackPage> {
               } catch (recoverError) {
                 debugPrint('⚠️ recoverSession failed: $recoverError');
               }
-              
+
               // Method 2: Try refreshSession if available
               try {
-                final response = await Supabase.instance.client.auth.refreshSession(refreshToken);
+                final response = await Supabase.instance.client.auth
+                    .refreshSession(refreshToken);
                 if (response.session != null && response.user != null) {
                   debugPrint('✅ Session refreshed successfully!');
                   if (mounted) {
@@ -173,38 +179,48 @@ class _CallbackPageState extends State<CallbackPage> {
               } catch (refreshError) {
                 debugPrint('⚠️ refreshSession failed: $refreshError');
               }
-              
+
               // Method 3: Manual session creation using JWT parsing
               try {
                 // Parse JWT to get session information
                 final tokenParts = accessToken.split('.');
                 if (tokenParts.length == 3) {
                   final payload = tokenParts[1];
-                  final normalizedPayload = payload.padRight((payload.length + 3) & ~3, '=');
+                  final normalizedPayload =
+                      payload.padRight((payload.length + 3) & ~3, '=');
                   final decodedBytes = base64.decode(normalizedPayload);
                   final decodedPayload = utf8.decode(decodedBytes);
-                  final payloadJson = json.decode(decodedPayload) as Map<String, dynamic>;
-                  
+                  final payloadJson =
+                      json.decode(decodedPayload) as Map<String, dynamic>;
+
                   // Set token in auth headers manually
-                  Supabase.instance.client.auth.headers['Authorization'] = 'Bearer $accessToken';
-                  
+                  Supabase.instance.client.auth.headers['Authorization'] =
+                      'Bearer $accessToken';
+
                   // Force auth state update
                   final now = DateTime.now();
                   final user = User(
                     id: payloadJson['sub'] as String,
-                    appMetadata: payloadJson['app_metadata'] as Map<String, dynamic>? ?? {},
-                    userMetadata: payloadJson['user_metadata'] as Map<String, dynamic>? ?? {},
+                    appMetadata:
+                        payloadJson['app_metadata'] as Map<String, dynamic>? ??
+                            {},
+                    userMetadata:
+                        payloadJson['user_metadata'] as Map<String, dynamic>? ??
+                            {},
                     aud: payloadJson['aud'] as String? ?? 'authenticated',
                     email: payloadJson['email'] as String?,
                     phone: payloadJson['phone'] as String?,
                     createdAt: now.toIso8601String(),
                     updatedAt: now.toIso8601String(),
-                    emailConfirmedAt: payloadJson['email_verified'] == true ? now.toIso8601String() : null,
+                    emailConfirmedAt: payloadJson['email_verified'] == true
+                        ? now.toIso8601String()
+                        : null,
                     phoneConfirmedAt: null,
                     lastSignInAt: now.toIso8601String(),
                   );
-                  
-                  debugPrint('✅ Manual session created for user: ${user.email}');
+
+                  debugPrint(
+                      '✅ Manual session created for user: ${user.email}');
                   if (mounted) {
                     await _checkAndNavigate(user);
                     return;
@@ -213,15 +229,15 @@ class _CallbackPageState extends State<CallbackPage> {
               } catch (manualError) {
                 debugPrint('⚠️ Manual session creation failed: $manualError');
               }
-              
             } catch (fragmentError) {
-              debugPrint('❌ All session creation methods failed: $fragmentError');
+              debugPrint(
+                  '❌ All session creation methods failed: $fragmentError');
               // Continue with normal flow
             }
           }
         }
       }
-      
+
       // Extract error parameter if present
       final error = uri.queryParameters['error'];
       final errorDescription = uri.queryParameters['error_description'];
@@ -229,8 +245,7 @@ class _CallbackPageState extends State<CallbackPage> {
         debugPrint('OAuth Error: $error');
         debugPrint('Error Description: $errorDescription');
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('로그인 실패: ${errorDescription ?? error}'),
               backgroundColor: context.colors.error,
               duration: const Duration(seconds: 5)));
@@ -238,36 +253,36 @@ class _CallbackPageState extends State<CallbackPage> {
           return;
         }
       }
-      
+
       // Clean up the URL by removing the code parameter (web only,
       if (code != null && kIsWeb) {
         final cleanUrl = uri.toString().split('?')[0];
         cleanUrlInBrowser(cleanUrl);
         debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
       }
-      
+
       // Check current session before listening
       final initialSession = Supabase.instance.client.auth.currentSession;
       debugPrint('session: ${initialSession?.user.id}');
-      
+
       // Try to recover session from URL
       debugPrint('Attempting to recover session from URL...');
       try {
-        final response = await Supabase.instance.client.auth.getSessionFromUrl(uri);
+        final response =
+            await Supabase.instance.client.auth.getSessionFromUrl(uri);
         debugPrint('response: ${response.session.user.id}');
-        
+
         debugPrint('Session recovered successfully!');
         if (mounted) {
           // Check if user has completed onboarding
           await _checkAndNavigate(response.session.user);
           return;
         }
-            } catch (authError) {
+      } catch (authError) {
         debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
         if (authError.toString().contains('Invalid API key')) {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: const Text('Supabase API 키가 유효하지 않습니다. 관리자에게 문의하세요.'),
                 backgroundColor: context.colors.error,
                 duration: const Duration(seconds: 5)));
@@ -275,13 +290,14 @@ class _CallbackPageState extends State<CallbackPage> {
         }
         rethrow;
       }
-      
+
       // Listen for auth state changes
       bool sessionFound = false;
-      final authSub = Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      final authSub =
+          Supabase.instance.client.auth.onAuthStateChange.listen((data) {
         debugPrint('Auth state changed: ${data.event}');
         debugPrint('user: ${data.session?.user.id}');
-        
+
         if (data.session != null && !sessionFound) {
           sessionFound = true;
           debugPrint('Login successful via auth state change!');
@@ -290,22 +306,22 @@ class _CallbackPageState extends State<CallbackPage> {
           }
         }
       });
-      
+
       // Give auth state a moment to propagate
       debugPrint('Checking auth state...');
       await Future.delayed(const Duration(milliseconds: 1000));
-      
+
       // Final check
       final finalSession = Supabase.instance.client.auth.currentSession;
       debugPrint('check: ${finalSession?.user.id}');
-      
+
       if (finalSession == null && !sessionFound) {
         debugPrint('No session found after all attempts');
         if (mounted) {
           context.go('/?error=auth_failure&reason=no_session');
         }
       }
-      
+
       // Clean up
       authSub.cancel();
       debugPrint('=== END AUTH CALLBACK ===');
@@ -324,25 +340,24 @@ class _CallbackPageState extends State<CallbackPage> {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [colors.surface, colors.textPrimary, colors.surface])),
+            gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [colors.surface, colors.textPrimary, colors.surface])),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               FortuneCompassIcon(
-                size: 64,
-                color: colors.textPrimary.withValues(alpha: 0.87)),
+                  size: 64, color: colors.textPrimary.withValues(alpha: 0.87)),
               const SizedBox(height: AppSpacing.spacing6),
               const CircularProgressIndicator(),
               const SizedBox(height: AppSpacing.spacing4),
               Text(
                 '로그인 처리 중...',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: colors.textSecondary,
-                ),
+                      color: colors.textSecondary,
+                    ),
               ),
             ],
           ),

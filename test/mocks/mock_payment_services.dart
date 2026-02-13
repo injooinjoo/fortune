@@ -43,7 +43,8 @@ class PaymentTestData {
       'total_tokens': tokens + (bonusTokens ?? 0),
       'price': price,
       'currency': currency,
-      'price_string': '₩${price.toInt().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
+      'price_string':
+          '₩${price.toInt().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
       'is_popular': isPopular,
       'created_at': DateTime.now().toIso8601String(),
     };
@@ -66,15 +67,21 @@ class PaymentTestData {
       'description': description,
       'price': price,
       'currency': currency,
-      'price_string': '₩${price.toInt().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
+      'price_string':
+          '₩${price.toInt().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
       'period': period,
-      'period_string': period == 'monthly' ? '월' : period == 'yearly' ? '년' : period,
-      'features': features ?? [
-        '모든 운세 무제한',
-        '광고 제거',
-        '프리미엄 콘텐츠',
-        '우선 지원',
-      ],
+      'period_string': period == 'monthly'
+          ? '월'
+          : period == 'yearly'
+              ? '년'
+              : period,
+      'features': features ??
+          [
+            '모든 운세 무제한',
+            '광고 제거',
+            '프리미엄 콘텐츠',
+            '우선 지원',
+          ],
       'is_best_value': isBestValue,
       'created_at': DateTime.now().toIso8601String(),
     };
@@ -102,7 +109,8 @@ class PaymentTestData {
       'currency': currency,
       'status': status,
       'platform': platform,
-      'transaction_id': transactionId ?? 'txn_${DateTime.now().millisecondsSinceEpoch}',
+      'transaction_id':
+          transactionId ?? 'txn_${DateTime.now().millisecondsSinceEpoch}',
       'purchased_at': (purchasedAt ?? DateTime.now()).toIso8601String(),
       'created_at': DateTime.now().toIso8601String(),
     };
@@ -124,13 +132,13 @@ class PaymentTestData {
       'is_active': isActive,
       'plan': plan,
       'plan_name': plan == 'premium_monthly' ? '프리미엄 월간' : '프리미엄 연간',
-      'start_date': (startDate ?? now.subtract(const Duration(days: 15))).toIso8601String(),
-      'end_date': (endDate ?? now.add(const Duration(days: 15))).toIso8601String(),
+      'start_date': (startDate ?? now.subtract(const Duration(days: 15)))
+          .toIso8601String(),
+      'end_date':
+          (endDate ?? now.add(const Duration(days: 15))).toIso8601String(),
       'auto_renew': autoRenew,
       'status': status,
-      'days_remaining': endDate != null
-          ? endDate.difference(now).inDays
-          : 15,
+      'days_remaining': endDate != null ? endDate.difference(now).inDays : 15,
       'created_at': DateTime.now().toIso8601String(),
     };
   }
@@ -279,7 +287,14 @@ class PaymentTestData {
     String userId = 'test-user-id',
     int count = 10,
   }) {
-    final fortuneTypes = ['daily', 'love', 'career', 'tarot', 'dream', 'compatibility'];
+    final fortuneTypes = [
+      'daily',
+      'love',
+      'career',
+      'tarot',
+      'dream',
+      'compatibility'
+    ];
     return List.generate(count, (i) {
       return createTokenUsage(
         userId: userId,
@@ -328,7 +343,8 @@ class MockInAppPurchaseService extends Mock {
   }
 
   Future<Map<String, dynamic>> verifyPurchase(String transactionId) async {
-    return PaymentTestData.createVerificationResult(transactionId: transactionId);
+    return PaymentTestData.createVerificationResult(
+        transactionId: transactionId);
   }
 
   Future<bool> restorePurchases() async {

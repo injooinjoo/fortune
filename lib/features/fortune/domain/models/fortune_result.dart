@@ -15,9 +15,9 @@ class FortuneResult {
   final Map<String, dynamic>? luckyItems;
   final List<String>? recommendations;
   final Map<String, dynamic>? additionalInfo;
-  final int? percentile;  // ✅ 상위 퍼센타일 (예: 15 = 상위 15%)
-  final int? totalTodayViewers;  // ✅ 오늘 해당 운세를 본 총 인원수
-  final bool isPercentileValid;  // ✅ 퍼센타일 데이터 유효 여부
+  final int? percentile; // ✅ 상위 퍼센타일 (예: 15 = 상위 15%)
+  final int? totalTodayViewers; // ✅ 오늘 해당 운세를 본 총 인원수
+  final bool isPercentileValid; // ✅ 퍼센타일 데이터 유효 여부
 
   FortuneResult({
     this.id,
@@ -101,15 +101,21 @@ class FortuneResult {
       createdAt: map['createdAt'],
       mainFortune: map['mainFortune'],
       summary: map['summary'],
-      details: map['details'] != null ? Map<String, dynamic>.from(map['details']) : null,
-      result: map['result'] != null ? Map<String, dynamic>.from(map['result']) : null,
-      sections: map['sections'] != null ? Map<String, String>.from(map['sections']) : null,
-      overallScore: map['overallScore'],
-      scoreBreakdown: map['scoreBreakdown'] != null 
-          ? Map<String, int>.from(map['scoreBreakdown']) 
+      details: map['details'] != null
+          ? Map<String, dynamic>.from(map['details'])
           : null,
-      luckyItems: map['luckyItems'] != null 
-          ? Map<String, dynamic>.from(map['luckyItems']) 
+      result: map['result'] != null
+          ? Map<String, dynamic>.from(map['result'])
+          : null,
+      sections: map['sections'] != null
+          ? Map<String, String>.from(map['sections'])
+          : null,
+      overallScore: map['overallScore'],
+      scoreBreakdown: map['scoreBreakdown'] != null
+          ? Map<String, int>.from(map['scoreBreakdown'])
+          : null,
+      luckyItems: map['luckyItems'] != null
+          ? Map<String, dynamic>.from(map['luckyItems'])
           : null,
       recommendations: map['recommendations'] != null
           ? List<String>.from(map['recommendations'])
@@ -140,9 +146,9 @@ class FortuneResult {
       'luckyItems': luckyItems,
       'recommendations': recommendations,
       'additionalInfo': null,
-      'percentile': percentile,  // ✅ Added
-      'totalTodayViewers': totalTodayViewers,  // ✅ Added
-      'isPercentileValid': isPercentileValid,  // ✅ Added
+      'percentile': percentile, // ✅ Added
+      'totalTodayViewers': totalTodayViewers, // ✅ Added
+      'isPercentileValid': isPercentileValid, // ✅ Added
     };
   }
 }

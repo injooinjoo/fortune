@@ -55,7 +55,8 @@ class UnifiedVoiceBubbleInput extends StatefulWidget {
   });
 
   @override
-  State<UnifiedVoiceBubbleInput> createState() => _UnifiedVoiceBubbleInputState();
+  State<UnifiedVoiceBubbleInput> createState() =>
+      _UnifiedVoiceBubbleInputState();
 }
 
 class _UnifiedVoiceBubbleInputState extends State<UnifiedVoiceBubbleInput>
@@ -512,8 +513,7 @@ class _UnifiedVoiceBubbleInputState extends State<UnifiedVoiceBubbleInput>
   /// 수정 바텀시트
   void _showEditSheet() {
     final colors = context.colors;
-    final editController =
-        TextEditingController(text: widget.controller.text);
+    final editController = TextEditingController(text: widget.controller.text);
 
     showModalBottomSheet(
       context: context,

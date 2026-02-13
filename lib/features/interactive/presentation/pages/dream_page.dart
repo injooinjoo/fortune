@@ -25,7 +25,8 @@ class DreamPage extends ConsumerStatefulWidget {
   ConsumerState<DreamPage> createState() => _DreamPageState();
 }
 
-class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProviderStateMixin {
+class _DreamPageState extends ConsumerState<DreamPage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _isWriting = false;
   final _titleController = TextEditingController();
@@ -34,9 +35,31 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
   final List<String> _selectedTags = [];
 
   final List<String> _availableTags = [
-    '가족', '친구', '연인', '동물', '자연', '물', '불', '하늘',
-    '비행', '추락', '도망', '싸움', '죽음', '재물', '음식', '여행',
-    '학교', '직장', '집', '차', '돈', '보물', '괴물', '유명인'];
+    '가족',
+    '친구',
+    '연인',
+    '동물',
+    '자연',
+    '물',
+    '불',
+    '하늘',
+    '비행',
+    '추락',
+    '도망',
+    '싸움',
+    '죽음',
+    '재물',
+    '음식',
+    '여행',
+    '학교',
+    '직장',
+    '집',
+    '차',
+    '돈',
+    '보물',
+    '괴물',
+    '유명인'
+  ];
 
   @override
   void initState() {
@@ -54,7 +77,8 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
 
   void _saveDream() {
     if (_titleController.text.isEmpty || _contentController.text.isEmpty) {
-      Toast.show(context, message: '제목과 내용을 모두 입력해주세요', type: ToastType.warning);
+      Toast.show(context,
+          message: '제목과 내용을 모두 입력해주세요', type: ToastType.warning);
       return;
     }
 
@@ -68,7 +92,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
     );
 
     ref.read(dreamEntriesProvider.notifier).addEntry(newEntry);
-    
+
     setState(() {
       _isWriting = false;
       _titleController.clear();
@@ -92,12 +116,12 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
         actions: [
           if (!_isWriting)
             IconButton(
-              icon: const Icon(Icons.add_rounded),
-              onPressed: () {
-                setState(() {
-                  _isWriting = true;
-                });
-              }),
+                icon: const Icon(Icons.add_rounded),
+                onPressed: () {
+                  setState(() {
+                    _isWriting = true;
+                  });
+                }),
         ],
       ),
       body: _isWriting
@@ -106,7 +130,8 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
     );
   }
 
-  Widget _buildMainView(ThemeData theme, double fontSize, List<DreamEntry> entries) {
+  Widget _buildMainView(
+      ThemeData theme, double fontSize, List<DreamEntry> entries) {
     return Column(
       children: [
         // Tab Bar
@@ -119,8 +144,10 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
           child: TabBar(
             controller: _tabController,
             indicator: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [theme.colorScheme.primary, theme.colorScheme.secondary]),
+              gradient: LinearGradient(colors: [
+                theme.colorScheme.primary,
+                theme.colorScheme.secondary
+              ]),
               borderRadius: BorderRadius.circular(12),
             ),
             indicatorSize: TabBarIndicatorSize.tab,
@@ -131,7 +158,7 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
             ],
           ),
         ),
-        
+
         // Tab View
         Expanded(
           child: TabBarView(
@@ -146,28 +173,25 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
     );
   }
 
-  Widget _buildDreamList(ThemeData theme, double fontSize, List<DreamEntry> entries) {
+  Widget _buildDreamList(
+      ThemeData theme, double fontSize, List<DreamEntry> entries) {
     if (entries.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Lottie.asset(
-              'assets/lottie/moon.json',
-              width: 200,
-              height: 200,
-              repeat: true),
+            Lottie.asset('assets/lottie/moon.json',
+                width: 200, height: 200, repeat: true),
             const SizedBox(height: DSSpacing.lg),
-            Text(
-              '아직 기록된 꿈이 없어요',
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontSize: fontSize + 4)),
+            Text('아직 기록된 꿈이 없어요',
+                style: theme.textTheme.headlineSmall
+                    ?.copyWith(fontSize: fontSize + 4)),
             const SizedBox(height: DSSpacing.sm),
             Text(
               '오늘 밤 꾼 꿈을 기록해보세요',
               style: theme.textTheme.bodyLarge?.copyWith(
-                fontSize: fontSize,
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                  fontSize: fontSize,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
             ),
           ],
         ),
@@ -205,17 +229,18 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                     child: Text(
                       entry.title,
                       style: theme.textTheme.titleLarge?.copyWith(
-                        fontSize: fontSize + 2,
-                        fontWeight: FontWeight.bold),
+                          fontSize: fontSize + 2, fontWeight: FontWeight.bold),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   if (entry.luckScore > 0)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: _getLuckColor(entry.luckScore).withValues(alpha: 0.2),
+                        color: _getLuckColor(entry.luckScore)
+                            .withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -233,8 +258,8 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
               Text(
                 entry.content,
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  fontSize: fontSize,
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
+                    fontSize: fontSize,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -250,8 +275,9 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                   Text(
                     '${entry.date.year}년 ${entry.date.month}월 ${entry.date.day}일',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      fontSize: fontSize - 2,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                        fontSize: fontSize - 2,
+                        color:
+                            theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                   ),
                   const SizedBox(width: 16),
                   if (entry.tags.isNotEmpty) ...[
@@ -264,8 +290,9 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
                     Text(
                       entry.tags.take(3).join(', '),
                       style: theme.textTheme.bodySmall?.copyWith(
-                        fontSize: fontSize - 2,
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                          fontSize: fontSize - 2,
+                          color: theme.colorScheme.onSurface
+                              .withValues(alpha: 0.6)),
                     ),
                   ],
                 ],
@@ -301,8 +328,8 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
             Text(
               '기록한 꿈을 선택하면\n신령이 상세하게 해석해드립니다',
               style: theme.textTheme.bodyLarge?.copyWith(
-                fontSize: fontSize,
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+                  fontSize: fontSize,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
@@ -313,7 +340,8 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
               icon: const Icon(Icons.psychology_rounded),
               label: const Text('꿈 해몽 바로가기'),
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               ),
             ),
           ],
@@ -385,11 +413,9 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '내용',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontSize: fontSize + 2,
-                    fontWeight: FontWeight.bold)),
+                Text('내용',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                        fontSize: fontSize + 2, fontWeight: FontWeight.bold)),
                 const SizedBox(height: DSSpacing.sm),
                 UnifiedVoiceTextField(
                   controller: _contentController,
@@ -408,56 +434,54 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '태그',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontSize: fontSize + 2,
-                    fontWeight: FontWeight.bold)),
+                Text('태그',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                        fontSize: fontSize + 2, fontWeight: FontWeight.bold)),
                 const SizedBox(height: DSSpacing.sm),
                 Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: _availableTags.map((tag) {
-                    final isSelected = _selectedTags.contains(tag);
-                    return FilterChip(
-                      label: Text(tag),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                        setState(() {
-                          if (selected) {
-                            _selectedTags.add(tag);
-                          } else {
-                            _selectedTags.remove(tag);
-                          }
-                        });
-                      },
-                      selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
-                      checkmarkColor: theme.colorScheme.primary);
-                  }).toList()),
-                ],
-              ),
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: _availableTags.map((tag) {
+                      final isSelected = _selectedTags.contains(tag);
+                      return FilterChip(
+                          label: Text(tag),
+                          selected: isSelected,
+                          onSelected: (selected) {
+                            setState(() {
+                              if (selected) {
+                                _selectedTags.add(tag);
+                              } else {
+                                _selectedTags.remove(tag);
+                              }
+                            });
+                          },
+                          selectedColor:
+                              theme.colorScheme.primary.withValues(alpha: 0.2),
+                          checkmarkColor: theme.colorScheme.primary);
+                    }).toList()),
+              ],
             ),
+          ),
           const SizedBox(height: DSSpacing.lg),
           // Action Buttons
           Row(
             children: [
               Expanded(
                 child: OutlinedButton(
-                  onPressed: () {
-                    setState(() {
-                      _isWriting = false;
-                      _titleController.clear();
-                      _contentController.clear();
-                      _selectedTags.clear();
-                    });
-                  },
-                  child: const Text('취소')),
+                    onPressed: () {
+                      setState(() {
+                        _isWriting = false;
+                        _titleController.clear();
+                        _contentController.clear();
+                        _selectedTags.clear();
+                      });
+                    },
+                    child: const Text('취소')),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: _saveDream,
-                  child: const Text('저장')),
+                    onPressed: _saveDream, child: const Text('저장')),
               ),
             ],
           ),
@@ -468,11 +492,11 @@ class _DreamPageState extends ConsumerState<DreamPage> with SingleTickerProvider
 
   void _showDreamDetail(DreamEntry entry) {
     showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      barrierColor: DSColors.overlay,
-      builder: (context) => DreamDetailSheet(entry: entry));
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        barrierColor: DSColors.overlay,
+        builder: (context) => DreamDetailSheet(entry: entry));
   }
 
   Color _getLuckColor(int score) {
@@ -501,7 +525,6 @@ class DreamDetailSheet extends ConsumerWidget {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
-
         children: [
           // Handle
           Container(
@@ -521,17 +544,17 @@ class DreamDetailSheet extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Title and Date
-                  Text(
-                    entry.title,
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontSize: baseFontSize + 4,
-                      fontWeight: FontWeight.bold)),
+                  Text(entry.title,
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                          fontSize: baseFontSize + 4,
+                          fontWeight: FontWeight.bold)),
                   const SizedBox(height: DSSpacing.sm),
                   Text(
                     '${entry.date.year}년 ${entry.date.month}월 ${entry.date.day}일',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      fontSize: baseFontSize - 2,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                        fontSize: baseFontSize - 2,
+                        color:
+                            theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                   ),
                   const SizedBox(height: 20),
                   // Content
@@ -541,17 +564,14 @@ class DreamDetailSheet extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          '꿈 내용',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontSize: baseFontSize + 2,
-                            fontWeight: FontWeight.bold)),
+                        Text('꿈 내용',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                                fontSize: baseFontSize + 2,
+                                fontWeight: FontWeight.bold)),
                         const SizedBox(height: 12),
-                        Text(
-                          entry.content,
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            fontSize: baseFontSize,
-                            height: 1.6)),
+                        Text(entry.content,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                                fontSize: baseFontSize, height: 1.6)),
                       ],
                     ),
                   ),
@@ -564,20 +584,20 @@ class DreamDetailSheet extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            '태그',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontSize: baseFontSize + 2,
-                              fontWeight: FontWeight.bold)),
+                          Text('태그',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                  fontSize: baseFontSize + 2,
+                                  fontWeight: FontWeight.bold)),
                           const SizedBox(height: 12),
                           Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: entry.tags.map((tag) {
-                              return Chip(
-                                label: Text(tag),
-                                backgroundColor: theme.colorScheme.primaryContainer);
-                            }).toList()),
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: entry.tags.map((tag) {
+                                return Chip(
+                                    label: Text(tag),
+                                    backgroundColor:
+                                        theme.colorScheme.primaryContainer);
+                              }).toList()),
                         ],
                       ),
                     ),
@@ -592,104 +612,105 @@ class DreamDetailSheet extends ConsumerWidget {
                         padding: const EdgeInsets.all(16),
                         borderRadius: BorderRadius.circular(16),
                         gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            theme.colorScheme.primary.withValues(alpha: 0.1),
-                            theme.colorScheme.secondary.withValues(alpha: 0.1)]),
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              theme.colorScheme.primary.withValues(alpha: 0.1),
+                              theme.colorScheme.secondary.withValues(alpha: 0.1)
+                            ]),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.auto_awesome_rounded,
+                            Row(children: [
+                              Icon(Icons.auto_awesome_rounded,
                                   color: theme.colorScheme.primary),
-                                const SizedBox(width: DSSpacing.sm),
-                                Text(
-                                  '신령의 꿈 해석',
+                              const SizedBox(width: DSSpacing.sm),
+                              Text('신령의 꿈 해석',
                                   style: theme.textTheme.titleMedium?.copyWith(
-                                    fontSize: baseFontSize + 2,
-                                    fontWeight: FontWeight.bold))]),
+                                      fontSize: baseFontSize + 2,
+                                      fontWeight: FontWeight.bold))
+                            ]),
                             const SizedBox(height: DSSpacing.md),
                             // Dream Type and Score
                             Row(
                               children: [
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 6),
                                   decoration: BoxDecoration(
-                                    color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                                    color: theme.colorScheme.primary
+                                        .withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                                    analysis.dreamType,
-                                    style: TextStyle(
-                                      color: theme.colorScheme.primary,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: baseFontSize - 2)),
+                                  ),
+                                  child: Text(analysis.dreamType,
+                                      style: TextStyle(
+                                          color: theme.colorScheme.primary,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: baseFontSize - 2)),
                                 ),
                                 const SizedBox(width: 12),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 6),
                                   decoration: BoxDecoration(
-                                    color: _getLuckColor(analysis.overallLuck).withValues(alpha: 0.2),
+                                    color: _getLuckColor(analysis.overallLuck)
+                                        .withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  child: Text(
-                                    '운세 ${analysis.overallLuck}점',
-                                    style: TextStyle(
-                                      color: _getLuckColor(analysis.overallLuck),
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: baseFontSize - 2)),
+                                  child: Text('운세 ${analysis.overallLuck}점',
+                                      style: TextStyle(
+                                          color: _getLuckColor(
+                                              analysis.overallLuck),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: baseFontSize - 2)),
                                 ),
                               ],
                             ),
                             const SizedBox(height: DSSpacing.md),
                             // Interpretation
-                            Text(
-                              analysis.interpretation,
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                fontSize: baseFontSize,
-                                height: 1.6)),
+                            Text(analysis.interpretation,
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                    fontSize: baseFontSize, height: 1.6)),
                             const SizedBox(height: DSSpacing.md),
                             // Symbols
-                            Text(
-                              '주요 상징',
-                              style: theme.textTheme.titleSmall?.copyWith(
-                                fontSize: baseFontSize,
-                                fontWeight: FontWeight.bold)),
+                            Text('주요 상징',
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                    fontSize: baseFontSize,
+                                    fontWeight: FontWeight.bold)),
                             const SizedBox(height: DSSpacing.sm),
                             Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
-                              children: analysis.symbols.map((symbol) {
-                                return Chip(
-                                  label: Text(symbol),
-                                  backgroundColor: theme.colorScheme.secondaryContainer);
-                              }).toList()),
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: analysis.symbols.map((symbol) {
+                                  return Chip(
+                                      label: Text(symbol),
+                                      backgroundColor:
+                                          theme.colorScheme.secondaryContainer);
+                                }).toList()),
                             const SizedBox(height: DSSpacing.md),
                             // Advice
                             Container(
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: theme.colorScheme.tertiaryContainer.withValues(alpha: 0.3),
+                                color: theme.colorScheme.tertiaryContainer
+                                    .withValues(alpha: 0.3),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: theme.colorScheme.tertiary.withValues(alpha: 0.3)),
+                                    color: theme.colorScheme.tertiary
+                                        .withValues(alpha: 0.3)),
                               ),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Icon(
-                                    Icons.tips_and_updates_rounded,
-                                    color: theme.colorScheme.tertiary,
-                                    size: 20),
+                                  Icon(Icons.tips_and_updates_rounded,
+                                      color: theme.colorScheme.tertiary,
+                                      size: 20),
                                   const SizedBox(width: DSSpacing.sm),
                                   Expanded(
-                                    child: Text(
-                                      analysis.advice,
-                                      style: theme.textTheme.bodyMedium?.copyWith(
-                                        fontSize: baseFontSize - 1)),
+                                    child: Text(analysis.advice,
+                                        style: theme.textTheme.bodyMedium
+                                            ?.copyWith(
+                                                fontSize: baseFontSize - 1)),
                                   ),
                                 ],
                               ),
@@ -705,7 +726,7 @@ class DreamDetailSheet extends ConsumerWidget {
               ),
             ),
           ),
-          
+
           // Actions
           Padding(
             padding: const EdgeInsets.all(20),
@@ -713,25 +734,29 @@ class DreamDetailSheet extends ConsumerWidget {
               children: [
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: () {
-                      // Share dream
-                      Toast.show(context, message: '공유 기능은 준비 중입니다', type: ToastType.info);
-                    },
-                    icon: const Icon(Icons.share_rounded),
-                    label: const Text('공유하기')),
+                      onPressed: () {
+                        // Share dream
+                        Toast.show(context,
+                            message: '공유 기능은 준비 중입니다', type: ToastType.info);
+                      },
+                      icon: const Icon(Icons.share_rounded),
+                      label: const Text('공유하기')),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () {
-                      ref.read(dreamEntriesProvider.notifier).deleteEntry(entry.id);
-                      Navigator.of(context).pop();
-                      Toast.show(context, message: '꿈 일기가 삭제되었습니다', type: ToastType.success);
-                    },
-                    icon: const Icon(Icons.delete_rounded),
-                    label: const Text('삭제'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: theme.colorScheme.error)),
+                      onPressed: () {
+                        ref
+                            .read(dreamEntriesProvider.notifier)
+                            .deleteEntry(entry.id);
+                        Navigator.of(context).pop();
+                        Toast.show(context,
+                            message: '꿈 일기가 삭제되었습니다', type: ToastType.success);
+                      },
+                      icon: const Icon(Icons.delete_rounded),
+                      label: const Text('삭제'),
+                      style: OutlinedButton.styleFrom(
+                          foregroundColor: theme.colorScheme.error)),
                 ),
               ],
             ),

@@ -10,7 +10,7 @@ class FiveElementsExplanationBottomSheet extends StatefulWidget {
   final String element;
   final int elementCount;
   final int totalCount;
-  
+
   const FiveElementsExplanationBottomSheet({
     super.key,
     required this.element,
@@ -40,20 +40,21 @@ class FiveElementsExplanationBottomSheet extends StatefulWidget {
   }
 
   @override
-  State<FiveElementsExplanationBottomSheet> createState() => _FiveElementsExplanationBottomSheetState();
+  State<FiveElementsExplanationBottomSheet> createState() =>
+      _FiveElementsExplanationBottomSheetState();
 }
 
-class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplanationBottomSheet> 
+class _FiveElementsExplanationBottomSheetState
+    extends State<FiveElementsExplanationBottomSheet>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   final ScrollController _scrollController = ScrollController();
-  
+
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      vsync: this,
-      duration: AppAnimations.durationMedium);
+        vsync: this, duration: AppAnimations.durationMedium);
     _animationController.forward();
   }
 
@@ -103,77 +104,80 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
     final theme = Theme.of(context);
     final screenHeight = MediaQuery.of(context).size.height;
     final explanation = FiveElementsExplanations.getExplanation(widget.element);
-    
+
     if (explanation == null) {
       return Container();
     }
-    
+
     final elementColor = _getElementColor(widget.element);
-    final percentage = widget.totalCount > 0 ? (widget.elementCount / widget.totalCount * 100).round() : 0;
-    
+    final percentage = widget.totalCount > 0
+        ? (widget.elementCount / widget.totalCount * 100).round()
+        : 0;
+
     return AnimatedBuilder(
-      animation: _animationController,
-      builder: (context, child) {
-        return Container(
-          height: screenHeight * 0.85,
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(24),
-              topRight: Radius.circular(24),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: theme.brightness == Brightness.dark
-                    ? DSColors.textPrimary.withValues(alpha: 0.3)
-                    : DSColors.textPrimaryDark.withValues(alpha: 0.1),
-                blurRadius: 20,
-                offset: const Offset(0, -5),
+        animation: _animationController,
+        builder: (context, child) {
+          return Container(
+            height: screenHeight * 0.85,
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(24),
+                topRight: Radius.circular(24),
               ),
-            ],
-          ),
-          child: Column(
-            children: [
-              _buildHandle(context),
-              _buildHeader(theme, elementColor, explanation, percentage),
-              Expanded(
-                child: SingleChildScrollView(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildBasicInfo(theme, elementColor, explanation),
-                      const SizedBox(height: AppSpacing.spacing6),
-                      _buildCharacteristics(theme, elementColor, explanation),
-                      const SizedBox(height: AppSpacing.spacing6),
-                      _buildPersonality(theme, elementColor, explanation),
-                      const SizedBox(height: AppSpacing.spacing6),
-                      _buildBalanceAdvice(theme, elementColor, explanation, percentage),
-                      const SizedBox(height: AppSpacing.spacing6),
-                      _buildCompatibility(theme, elementColor, explanation),
-                      const SizedBox(height: AppSpacing.spacing6),
-                      _buildHealth(theme, elementColor, explanation),
-                      const SizedBox(height: AppSpacing.spacing6),
-                      _buildCareer(theme, elementColor, explanation),
-                      const SizedBox(height: AppSpacing.spacing6),
-                      _buildLuckyItems(theme, elementColor, explanation),
-                      const SizedBox(height: AppSpacing.spacing10),
-                    ],
-                  ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
+              boxShadow: [
+                BoxShadow(
+                  color: theme.brightness == Brightness.dark
+                      ? DSColors.textPrimary.withValues(alpha: 0.3)
+                      : DSColors.textPrimaryDark.withValues(alpha: 0.1),
+                  blurRadius: 20,
+                  offset: const Offset(0, -5),
                 ),
-              ),
-            ],
-          ),
-        );
-      });
+              ],
+            ),
+            child: Column(
+              children: [
+                _buildHandle(context),
+                _buildHeader(theme, elementColor, explanation, percentage),
+                Expanded(
+                  child: SingleChildScrollView(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.spacing5),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildBasicInfo(theme, elementColor, explanation),
+                        const SizedBox(height: AppSpacing.spacing6),
+                        _buildCharacteristics(theme, elementColor, explanation),
+                        const SizedBox(height: AppSpacing.spacing6),
+                        _buildPersonality(theme, elementColor, explanation),
+                        const SizedBox(height: AppSpacing.spacing6),
+                        _buildBalanceAdvice(
+                            theme, elementColor, explanation, percentage),
+                        const SizedBox(height: AppSpacing.spacing6),
+                        _buildCompatibility(theme, elementColor, explanation),
+                        const SizedBox(height: AppSpacing.spacing6),
+                        _buildHealth(theme, elementColor, explanation),
+                        const SizedBox(height: AppSpacing.spacing6),
+                        _buildCareer(theme, elementColor, explanation),
+                        const SizedBox(height: AppSpacing.spacing6),
+                        _buildLuckyItems(theme, elementColor, explanation),
+                        const SizedBox(height: AppSpacing.spacing10),
+                      ],
+                    ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
   }
 
   Widget _buildHandle(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(
-        top: AppSpacing.small,
-        bottom: DSSpacing.xs),
+      margin:
+          const EdgeInsets.only(top: AppSpacing.small, bottom: DSSpacing.xs),
       width: 40,
       height: 4,
       decoration: BoxDecoration(
@@ -185,14 +189,15 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
     );
   }
 
-  Widget _buildHeader(ThemeData theme, Color elementColor, Map<String, dynamic> explanation, int percentage) {
+  Widget _buildHeader(ThemeData theme, Color elementColor,
+      Map<String, dynamic> explanation, int percentage) {
     return Container(
       padding: AppSpacing.paddingAll20,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            elementColor.withValues(alpha:0.1),
-            elementColor.withValues(alpha:0.05),
+            elementColor.withValues(alpha: 0.1),
+            elementColor.withValues(alpha: 0.05),
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -213,7 +218,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                       borderRadius: AppDimensions.borderRadiusLarge,
                       boxShadow: [
                         BoxShadow(
-                          color: elementColor.withValues(alpha:0.3),
+                          color: elementColor.withValues(alpha: 0.3),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
@@ -222,34 +227,35 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          explanation['hanja'],
-                          style: Theme.of(context).textTheme.displaySmall),
-                        Text(
-                          explanation['name'],
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: theme.brightness == Brightness.dark
-                                ? DSColors.backgroundSecondaryDark
-                                : DSColors.textPrimary)),
+                        Text(explanation['hanja'],
+                            style: Theme.of(context).textTheme.displaySmall),
+                        Text(explanation['name'],
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                    color: theme.brightness == Brightness.dark
+                                        ? DSColors.backgroundSecondaryDark
+                                        : DSColors.textPrimary)),
                       ],
                     ),
-                  ).animate()
-                    .scale(
-                      begin: const Offset(0.8, 0.8),
-                      end: const Offset(1, 1),
-                      duration: 300.ms,
-                      curve: Curves.elasticOut,
-                    ),
+                  ).animate().scale(
+                        begin: const Offset(0.8, 0.8),
+                        end: const Offset(1, 1),
+                        duration: 300.ms,
+                        curve: Curves.elasticOut,
+                      ),
                   const SizedBox(width: AppSpacing.spacing4),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                        Text(
-                          '오행 (五行)',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha:0.6),
-                          ),
+                      Text(
+                        '오행 (五行)',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurface
+                              .withValues(alpha: 0.6),
                         ),
+                      ),
                       const SizedBox(height: AppSpacing.spacing1),
                       Text(
                         explanation['basicMeaning'],
@@ -273,8 +279,8 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                 icon: const Icon(Icons.close),
                 onPressed: () => Navigator.of(context).pop(),
                 style: IconButton.styleFrom(
-                  backgroundColor: theme.colorScheme.surface,
-                  shape: const CircleBorder()),
+                    backgroundColor: theme.colorScheme.surface,
+                    shape: const CircleBorder()),
               ),
             ],
           ),
@@ -283,28 +289,25 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
     );
   }
 
-  Widget _buildBasicInfo(ThemeData theme, Color elementColor, Map<String, dynamic> explanation) {
+  Widget _buildBasicInfo(
+      ThemeData theme, Color elementColor, Map<String, dynamic> explanation) {
     return Container(
       padding: AppSpacing.paddingAll16,
       decoration: BoxDecoration(
-        color: elementColor.withValues(alpha:0.05),
+        color: elementColor.withValues(alpha: 0.05),
         borderRadius: AppDimensions.borderRadiusMedium,
-        border: Border.all(
-          color: elementColor.withValues(alpha:0.2)),
+        border: Border.all(color: elementColor.withValues(alpha: 0.2)),
       ),
       child: Column(
         children: [
           Row(
             children: [
-              Icon(
-                _getElementIcon(widget.element),
-                color: elementColor,
-                size: AppDimensions.iconSizeMedium),
+              Icon(_getElementIcon(widget.element),
+                  color: elementColor, size: AppDimensions.iconSizeMedium),
               const SizedBox(width: AppSpacing.spacing2),
-              Text(
-                '기본 정보',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold)),
+              Text('기본 정보',
+                  style: theme.textTheme.titleMedium
+                      ?.copyWith(fontWeight: FontWeight.bold)),
             ],
           ),
           const SizedBox(height: AppSpacing.spacing4),
@@ -327,21 +330,23 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
           Text(
             label,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha:0.6)),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
           ),
           Text(
             value,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600),
+            style: theme.textTheme.bodyMedium
+                ?.copyWith(fontWeight: FontWeight.w600),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCharacteristics(ThemeData theme, Color elementColor, Map<String, dynamic> explanation) {
-    final characteristics = List<String>.from(explanation['characteristics'] ?? []);
-    
+  Widget _buildCharacteristics(
+      ThemeData theme, Color elementColor, Map<String, dynamic> explanation) {
+    final characteristics =
+        List<String>.from(explanation['characteristics'] ?? []);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -350,45 +355,40 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             Container(
               padding: AppSpacing.paddingAll8,
               decoration: BoxDecoration(
-                color: elementColor.withValues(alpha:0.1),
-                borderRadius: AppDimensions.borderRadiusSmall),
-              child: Icon(
-                Icons.star,
-                color: elementColor,
-                size: AppDimensions.iconSizeSmall),
+                  color: elementColor.withValues(alpha: 0.1),
+                  borderRadius: AppDimensions.borderRadiusSmall),
+              child: Icon(Icons.star,
+                  color: elementColor, size: AppDimensions.iconSizeSmall),
             ),
             const SizedBox(width: AppSpacing.spacing3),
-            Text(
-              '주요 특징',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold)),
+            Text('주요 특징',
+                style: theme.textTheme.titleLarge
+                    ?.copyWith(fontWeight: FontWeight.bold)),
           ],
         ),
         const SizedBox(height: AppSpacing.spacing4),
         ...characteristics.map((characteristic) => Padding(
-          padding: const EdgeInsets.only(bottom: DSSpacing.xs),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                Icons.check_circle,
-                size: AppDimensions.iconSizeSmall,
-                color: elementColor),
-              const SizedBox(width: AppSpacing.spacing2),
-              Expanded(
-                child: Text(
-                  characteristic,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    height: 1.5)),
+              padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.check_circle,
+                      size: AppDimensions.iconSizeSmall, color: elementColor),
+                  const SizedBox(width: AppSpacing.spacing2),
+                  Expanded(
+                    child: Text(characteristic,
+                        style:
+                            theme.textTheme.bodyMedium?.copyWith(height: 1.5)),
+                  ),
+                ],
               ),
-            ],
-          ),
-        )),
+            )),
       ],
     );
   }
 
-  Widget _buildPersonality(ThemeData theme, Color elementColor, Map<String, dynamic> explanation) {
+  Widget _buildPersonality(
+      ThemeData theme, Color elementColor, Map<String, dynamic> explanation) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -397,54 +397,52 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             Container(
               padding: AppSpacing.paddingAll8,
               decoration: BoxDecoration(
-                color: elementColor.withValues(alpha:0.1),
-                borderRadius: AppDimensions.borderRadiusSmall),
-              child: Icon(
-                Icons.psychology,
-                color: elementColor,
-                size: AppDimensions.iconSizeSmall),
+                  color: elementColor.withValues(alpha: 0.1),
+                  borderRadius: AppDimensions.borderRadiusSmall),
+              child: Icon(Icons.psychology,
+                  color: elementColor, size: AppDimensions.iconSizeSmall),
             ),
             const SizedBox(width: AppSpacing.spacing3),
-            Text(
-              '성격과 성향',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold)),
+            Text('성격과 성향',
+                style: theme.textTheme.titleLarge
+                    ?.copyWith(fontWeight: FontWeight.bold)),
           ],
         ),
         const SizedBox(height: AppSpacing.spacing4),
         Container(
           padding: AppSpacing.paddingAll16,
           decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: AppDimensions.borderRadiusMedium,
-          boxShadow: [
-            BoxShadow(
-              color: DSColors.textPrimaryDark.withValues(alpha:0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
+            color: theme.colorScheme.surface,
+            borderRadius: AppDimensions.borderRadiusMedium,
+            boxShadow: [
+              BoxShadow(
+                color: DSColors.textPrimaryDark.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Text(
+            explanation['personality'] ?? '',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              height: 1.6,
             ),
-          ],
-        ),
-                    child: Text(
-                      explanation['personality'] ?? '',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        height: 1.6,
-                      ),
-                    ),
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildBalanceAdvice(ThemeData theme, Color elementColor, Map<String, dynamic> explanation, int percentage) {
+  Widget _buildBalanceAdvice(ThemeData theme, Color elementColor,
+      Map<String, dynamic> explanation, int percentage) {
     final balanceAdvice = explanation['balanceAdvice'] as Map<String, dynamic>;
     final isExcess = percentage > 25;
     final isDeficient = percentage < 15;
-    
+
     String advice = '';
     String status = '';
     Color statusColor = elementColor;
-    
+
     if (isExcess) {
       advice = balanceAdvice['excess'] ?? '';
       status = '과다';
@@ -454,11 +452,12 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
       status = '부족';
       statusColor = DSColors.error;
     } else {
-      advice = '${explanation['name']}(${widget.element})의 기운이 적절한 균형을 이루고 있습니다. 현재의 조화로운 상태를 유지하면서 건강한 생활을 이어가세요.';
+      advice =
+          '${explanation['name']}(${widget.element})의 기운이 적절한 균형을 이루고 있습니다. 현재의 조화로운 상태를 유지하면서 건강한 생활을 이어가세요.';
       status = '균형';
       statusColor = DSColors.success;
     }
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -466,11 +465,11 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
           children: [
             Container(
               padding: AppSpacing.paddingAll8,
-        decoration: BoxDecoration(
-          color: DSColors.warning.withValues(alpha:0.1),
-          borderRadius: AppDimensions.borderRadiusSmall,
-        ),
-        child: const Icon(
+              decoration: BoxDecoration(
+                color: DSColors.warning.withValues(alpha: 0.1),
+                borderRadius: AppDimensions.borderRadiusSmall,
+              ),
+              child: const Icon(
                 Icons.balance,
                 color: DSColors.warning,
                 size: AppDimensions.iconSizeSmall,
@@ -480,14 +479,16 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             Text(
               '오행 균형 조언',
               style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(width: AppSpacing.spacing2),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.spacing2,
+                  vertical: AppSpacing.spacing1),
               decoration: BoxDecoration(
-        color: statusColor.withValues(alpha:0.2),
+                color: statusColor.withValues(alpha: 0.2),
                 borderRadius: AppDimensions.borderRadiusMedium,
               ),
               child: Text(
@@ -503,15 +504,15 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                statusColor.withValues(alpha:0.1),
-                statusColor.withValues(alpha:0.05),
+                statusColor.withValues(alpha: 0.1),
+                statusColor.withValues(alpha: 0.05),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: AppDimensions.borderRadiusMedium,
             border: Border.all(
-              color: statusColor.withValues(alpha:0.3),
+              color: statusColor.withValues(alpha: 0.3),
             ),
           ),
           child: Column(
@@ -519,23 +520,17 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             children: [
               Row(
                 children: [
-                  Icon(
-                    Icons.tips_and_updates,
-                    size: AppDimensions.iconSizeXSmall,
-                    color: statusColor),
+                  Icon(Icons.tips_and_updates,
+                      size: AppDimensions.iconSizeXSmall, color: statusColor),
                   const SizedBox(width: AppSpacing.spacing2),
-                  Text(
-                    '상태: $percentage%',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: statusColor,
-                      fontWeight: FontWeight.bold)),
-              ],
-            ),
+                  Text('상태: $percentage%',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                          color: statusColor, fontWeight: FontWeight.bold)),
+                ],
+              ),
               const SizedBox(height: AppSpacing.spacing2),
-              Text(
-                advice,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  height: 1.6)),
+              Text(advice,
+                  style: theme.textTheme.bodyMedium?.copyWith(height: 1.6)),
             ],
           ),
         ),
@@ -543,9 +538,10 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
     );
   }
 
-  Widget _buildCompatibility(ThemeData theme, Color elementColor, Map<String, dynamic> explanation) {
+  Widget _buildCompatibility(
+      ThemeData theme, Color elementColor, Map<String, dynamic> explanation) {
     final compatibility = explanation['compatibility'] as Map<String, dynamic>;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -553,19 +549,16 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
           children: [
             Container(
               padding: AppSpacing.paddingAll8,
-        decoration: BoxDecoration(
-      color: elementColor.withValues(alpha:0.1),
-                borderRadius: AppDimensions.borderRadiusSmall),
-      child: Icon(
-                Icons.sync,
-                color: elementColor,
-                size: AppDimensions.iconSizeSmall),
+              decoration: BoxDecoration(
+                  color: elementColor.withValues(alpha: 0.1),
+                  borderRadius: AppDimensions.borderRadiusSmall),
+              child: Icon(Icons.sync,
+                  color: elementColor, size: AppDimensions.iconSizeSmall),
             ),
             const SizedBox(width: AppSpacing.spacing3),
-            Text(
-              '다른 오행과의 관계',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold)),
+            Text('다른 오행과의 관계',
+                style: theme.textTheme.titleLarge
+                    ?.copyWith(fontWeight: FontWeight.bold)),
           ],
         ),
         const SizedBox(height: AppSpacing.spacing4),
@@ -573,21 +566,19 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
           final otherElement = entry.key;
           final relation = entry.value;
           final otherColor = _getElementColor(otherElement);
-          final isHarmonious = relation.contains('에너지를 받는') || relation.contains('에너지를 주는');
-          
+          final isHarmonious =
+              relation.contains('에너지를 받는') || relation.contains('에너지를 주는');
+
           return Container(
             margin: const EdgeInsets.only(bottom: AppSpacing.small),
             padding: AppSpacing.paddingAll12,
             decoration: BoxDecoration(
-      gradient: LinearGradient(
-                colors: [
-                  otherColor.withValues(alpha:0.05),
-                  otherColor.withValues(alpha:0.02)],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight),
-      borderRadius: AppDimensions.borderRadiusSmall,
-              border: Border.all(
-      color: otherColor.withValues(alpha:0.2)),
+              gradient: LinearGradient(colors: [
+                otherColor.withValues(alpha: 0.05),
+                otherColor.withValues(alpha: 0.02)
+              ], begin: Alignment.centerLeft, end: Alignment.centerRight),
+              borderRadius: AppDimensions.borderRadiusSmall,
+              border: Border.all(color: otherColor.withValues(alpha: 0.2)),
             ),
             child: Row(
               children: [
@@ -595,10 +586,10 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                   width: AppDimensions.buttonHeightSmall,
                   height: AppDimensions.buttonHeightSmall,
                   decoration: BoxDecoration(
-      color: otherColor.withValues(alpha:0.2),
+                    color: otherColor.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
-                ),
-      child: Center(
+                  ),
+                  child: Center(
                     child: Icon(
                       _getElementIcon(otherElement),
                       color: otherColor,
@@ -609,22 +600,25 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                 const SizedBox(width: AppSpacing.spacing3),
                 Expanded(
                   child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          Text(
-                            otherElement,
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: otherColor)),
+                          Text(otherElement,
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: otherColor)),
                           const SizedBox(width: AppSpacing.spacing2),
                           if (isHarmonious)
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing1, vertical: AppSpacing.spacing0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.spacing1,
+                                  vertical: AppSpacing.spacing0),
                               decoration: BoxDecoration(
-                                color: DSColors.success.withValues(alpha:0.2),
-                                borderRadius: BorderRadius.circular(AppDimensions.radiusMedium)),
+                                  color:
+                                      DSColors.success.withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(
+                                      AppDimensions.radiusMedium)),
                               child: Text(
                                 '상생',
                                 style: theme.textTheme.bodySmall,
@@ -632,10 +626,14 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                             )
                           else
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing1, vertical: AppSpacing.spacing0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.spacing1,
+                                  vertical: AppSpacing.spacing0),
                               decoration: BoxDecoration(
-                                color: DSColors.warning.withValues(alpha:0.2),
-                                borderRadius: BorderRadius.circular(AppDimensions.radiusMedium)),
+                                  color:
+                                      DSColors.warning.withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(
+                                      AppDimensions.radiusMedium)),
                               child: Text(
                                 '상극',
                                 style: theme.textTheme.bodySmall,
@@ -647,7 +645,8 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                       Text(
                         relation,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha:0.8),
+                          color: theme.colorScheme.onSurface
+                              .withValues(alpha: 0.8),
                         ),
                       ),
                     ],
@@ -661,136 +660,10 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
     );
   }
 
-  Widget _buildHealth(ThemeData theme, Color elementColor, Map<String, dynamic> explanation) {
+  Widget _buildHealth(
+      ThemeData theme, Color elementColor, Map<String, dynamic> explanation) {
     final healthTips = List<String>.from(explanation['health'] ?? []);
-    
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Container(
-              padding: AppSpacing.paddingAll8,
-        decoration: BoxDecoration(
-      color: DSColors.error.withValues(alpha:0.1),
-                borderRadius: AppDimensions.borderRadiusSmall),
-      child: const Icon(
-                Icons.favorite,
-                color: DSColors.error,
-                size: AppDimensions.iconSizeSmall),
-            ),
-            const SizedBox(width: AppSpacing.spacing3),
-            Text(
-              '건강 조언',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold)),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.spacing4),
-        Container(
-          padding: AppSpacing.paddingAll16,
-          decoration: BoxDecoration(
-            color: DSColors.error.withValues(alpha:0.05),
-            borderRadius: AppDimensions.borderRadiusMedium,
-            border: Border.all(
-              color: DSColors.error.withValues(alpha:0.2),
-            ),
-          ),
-          child: Column(
-            children: healthTips.map((tip) => Padding(
-              padding: const EdgeInsets.only(bottom: DSSpacing.xs),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Icon(
-                    Icons.health_and_safety,
-                    size: AppDimensions.iconSizeXSmall,
-                    color: DSColors.error,
-                  ),
-                  const SizedBox(width: AppSpacing.spacing2),
-                  Expanded(
-                    child: Text(
-                      tip,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        height: 1.4,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )).toList(),
-          ),
-        ),
-      ],
-    );
-  }
 
-  Widget _buildCareer(ThemeData theme, Color elementColor, Map<String, dynamic> explanation) {
-    final careers = List<String>.from(explanation['career'] ?? []);
-    
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Container(
-              padding: AppSpacing.paddingAll8,
-        decoration: BoxDecoration(
-      color: DSColors.accentDark.withValues(alpha:0.1),
-                borderRadius: AppDimensions.borderRadiusSmall),
-              child: const Icon(
-                Icons.work,
-                color: DSColors.accentDark,
-                size: AppDimensions.iconSizeSmall),
-            ),
-            const SizedBox(width: AppSpacing.spacing3),
-            Text(
-              '적합한 진로',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.spacing4),
-        Container(
-          padding: AppSpacing.paddingAll16,
-          decoration: BoxDecoration(
-            color: DSColors.accentDark.withValues(alpha:0.05),
-            borderRadius: AppDimensions.borderRadiusMedium,
-            border: Border.all(
-              color: DSColors.accentDark.withValues(alpha:0.2)),
-          ),
-          child: Column(
-            children: careers.map((career) => Padding(
-              padding: const EdgeInsets.only(bottom: DSSpacing.xs),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Icon(
-                    Icons.arrow_right,
-                    size: AppDimensions.iconSizeSmall,
-                    color: DSColors.accentDark,
-                  ),
-                  const SizedBox(width: AppSpacing.spacing2),
-                  Expanded(
-                    child: Text(
-                      career,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        height: 1.4),
-                    ),
-                  ),
-                ],
-              ),
-            )).toList(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLuckyItems(ThemeData theme, Color elementColor, Map<String, dynamic> explanation) {
-    final luckyItems = List<String>.from(explanation['luckyItems'] ?? []);
-    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -799,7 +672,136 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             Container(
               padding: AppSpacing.paddingAll8,
               decoration: BoxDecoration(
-                color: DSColors.warning.withValues(alpha:0.2),
+                  color: DSColors.error.withValues(alpha: 0.1),
+                  borderRadius: AppDimensions.borderRadiusSmall),
+              child: const Icon(Icons.favorite,
+                  color: DSColors.error, size: AppDimensions.iconSizeSmall),
+            ),
+            const SizedBox(width: AppSpacing.spacing3),
+            Text('건강 조언',
+                style: theme.textTheme.titleLarge
+                    ?.copyWith(fontWeight: FontWeight.bold)),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.spacing4),
+        Container(
+          padding: AppSpacing.paddingAll16,
+          decoration: BoxDecoration(
+            color: DSColors.error.withValues(alpha: 0.05),
+            borderRadius: AppDimensions.borderRadiusMedium,
+            border: Border.all(
+              color: DSColors.error.withValues(alpha: 0.2),
+            ),
+          ),
+          child: Column(
+            children: healthTips
+                .map((tip) => Padding(
+                      padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(
+                            Icons.health_and_safety,
+                            size: AppDimensions.iconSizeXSmall,
+                            color: DSColors.error,
+                          ),
+                          const SizedBox(width: AppSpacing.spacing2),
+                          Expanded(
+                            child: Text(
+                              tip,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                height: 1.4,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ))
+                .toList(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCareer(
+      ThemeData theme, Color elementColor, Map<String, dynamic> explanation) {
+    final careers = List<String>.from(explanation['career'] ?? []);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              padding: AppSpacing.paddingAll8,
+              decoration: BoxDecoration(
+                  color: DSColors.accentDark.withValues(alpha: 0.1),
+                  borderRadius: AppDimensions.borderRadiusSmall),
+              child: const Icon(Icons.work,
+                  color: DSColors.accentDark,
+                  size: AppDimensions.iconSizeSmall),
+            ),
+            const SizedBox(width: AppSpacing.spacing3),
+            Text(
+              '적합한 진로',
+              style: theme.textTheme.titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.spacing4),
+        Container(
+          padding: AppSpacing.paddingAll16,
+          decoration: BoxDecoration(
+            color: DSColors.accentDark.withValues(alpha: 0.05),
+            borderRadius: AppDimensions.borderRadiusMedium,
+            border:
+                Border.all(color: DSColors.accentDark.withValues(alpha: 0.2)),
+          ),
+          child: Column(
+            children: careers
+                .map((career) => Padding(
+                      padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(
+                            Icons.arrow_right,
+                            size: AppDimensions.iconSizeSmall,
+                            color: DSColors.accentDark,
+                          ),
+                          const SizedBox(width: AppSpacing.spacing2),
+                          Expanded(
+                            child: Text(
+                              career,
+                              style: theme.textTheme.bodyMedium
+                                  ?.copyWith(height: 1.4),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ))
+                .toList(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLuckyItems(
+      ThemeData theme, Color elementColor, Map<String, dynamic> explanation) {
+    final luckyItems = List<String>.from(explanation['luckyItems'] ?? []);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              padding: AppSpacing.paddingAll8,
+              decoration: BoxDecoration(
+                color: DSColors.warning.withValues(alpha: 0.2),
                 borderRadius: AppDimensions.borderRadiusSmall,
               ),
               child: const Icon(
@@ -820,41 +822,43 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
         const SizedBox(height: AppSpacing.spacing4),
         Container(
           padding: AppSpacing.paddingAll16,
-        decoration: BoxDecoration(
-      gradient: LinearGradient(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
               colors: [
-                DSColors.warning.withValues(alpha:0.1),
-                DSColors.warning.withValues(alpha:0.05)],
+                DSColors.warning.withValues(alpha: 0.1),
+                DSColors.warning.withValues(alpha: 0.05)
+              ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
+            ),
+            borderRadius: AppDimensions.borderRadiusMedium,
+            border: Border.all(color: DSColors.warning.withValues(alpha: 0.3)),
           ),
-      borderRadius: AppDimensions.borderRadiusMedium,
-            border: Border.all(
-              color: DSColors.warning.withValues(alpha:0.3)),
-        ),
           child: Column(
-            children: luckyItems.map((item) => Padding(
-              padding: const EdgeInsets.only(bottom: DSSpacing.xs),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Icon(
-                    Icons.stars,
-                    size: AppDimensions.iconSizeXSmall,
-                    color: DSColors.warning,
-                  ),
-                  const SizedBox(width: AppSpacing.spacing2),
-                  Expanded(
-                    child: Text(
-                      item,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        height: 1.4,
+            children: luckyItems
+                .map((item) => Padding(
+                      padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(
+                            Icons.stars,
+                            size: AppDimensions.iconSizeXSmall,
+                            color: DSColors.warning,
+                          ),
+                          const SizedBox(width: AppSpacing.spacing2),
+                          Expanded(
+                            child: Text(
+                              item,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                height: 1.4,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ),
-                ],
-              ),
-            )).toList(),
+                    ))
+                .toList(),
           ),
         ),
       ],

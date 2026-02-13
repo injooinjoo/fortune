@@ -96,25 +96,28 @@ class _FortuneCalendarViewState extends State<FortuneCalendarView> {
   }
 
   Widget _buildCalendarGrid() {
-    final firstDayOfMonth = DateTime(_currentMonth.year, _currentMonth.month, 1);
-    final lastDayOfMonth = DateTime(_currentMonth.year, _currentMonth.month + 1, 0);
-    final firstWeekday = firstDayOfMonth.weekday == 7 ? 0 : firstDayOfMonth.weekday;
-    
+    final firstDayOfMonth =
+        DateTime(_currentMonth.year, _currentMonth.month, 1);
+    final lastDayOfMonth =
+        DateTime(_currentMonth.year, _currentMonth.month + 1, 0);
+    final firstWeekday =
+        firstDayOfMonth.weekday == 7 ? 0 : firstDayOfMonth.weekday;
+
     final days = <Widget>[];
-    
+
     // 이전 달 빈 공간
     for (int i = 0; i < firstWeekday; i++) {
       days.add(Container());
     }
-    
+
     // 이번 달 날짜들
     for (int day = 1; day <= lastDayOfMonth.day; day++) {
       final date = DateTime(_currentMonth.year, _currentMonth.month, day);
       final fortuneForDate = _getFortuneForDate(date);
-      
+
       days.add(_buildCalendarDay(date, fortuneForDate));
     }
-    
+
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -129,33 +132,35 @@ class _FortuneCalendarViewState extends State<FortuneCalendarView> {
   Widget _buildCalendarDay(DateTime date, FortuneHistory? fortune) {
     final isToday = _isToday(date);
     final hasFortune = fortune != null;
-    
+
     Color backgroundColor = Colors.white.withValues(alpha: 0.0);
     Color textColor = context.colors.textPrimary;
-    
+
     if (isToday) {
       backgroundColor = context.colors.accent.withValues(alpha: 0.1);
       textColor = context.colors.accent;
     }
-    
+
     if (hasFortune) {
       final score = fortune.summary['score'] as int? ?? 0;
       backgroundColor = _getScoreColor(score).withValues(alpha: 0.2);
       textColor = _getScoreColor(score);
     }
-    
+
     return GestureDetector(
-      onTap: hasFortune && widget.onDateTap != null 
-        ? () => widget.onDateTap!(fortune)
-        : null,
+      onTap: hasFortune && widget.onDateTap != null
+          ? () => widget.onDateTap!(fortune)
+          : null,
       child: Container(
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(DSRadius.smd),
-          border: isToday ? Border.all(
-            color: context.colors.accent,
-            width: 1.5,
-          ) : null,
+          border: isToday
+              ? Border.all(
+                  color: context.colors.accent,
+                  width: 1.5,
+                )
+              : null,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -164,9 +169,8 @@ class _FortuneCalendarViewState extends State<FortuneCalendarView> {
               '${date.day}',
               style: context.heading3.copyWith(
                 color: textColor,
-                fontWeight: isToday || hasFortune 
-                  ? FontWeight.w700 
-                  : FontWeight.w500,
+                fontWeight:
+                    isToday || hasFortune ? FontWeight.w700 : FontWeight.w500,
               ),
             ),
             if (hasFortune) ...[
@@ -190,8 +194,8 @@ class _FortuneCalendarViewState extends State<FortuneCalendarView> {
     try {
       return widget.history.firstWhere((fortune) {
         return fortune.createdAt.year == date.year &&
-               fortune.createdAt.month == date.month &&
-               fortune.createdAt.day == date.day;
+            fortune.createdAt.month == date.month &&
+            fortune.createdAt.day == date.day;
       });
     } catch (e) {
       return null;
@@ -201,8 +205,8 @@ class _FortuneCalendarViewState extends State<FortuneCalendarView> {
   bool _isToday(DateTime date) {
     final now = DateTime.now();
     return date.year == now.year &&
-           date.month == now.month &&
-           date.day == now.day;
+        date.month == now.month &&
+        date.day == now.day;
   }
 
   Color _getScoreColor(int score) {

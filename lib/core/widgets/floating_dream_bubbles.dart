@@ -98,7 +98,8 @@ class _FloatingDreamBubblesState extends State<FloatingDreamBubbles> {
             child: GestureDetector(
               onTap: refreshBubbles,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: DSSpacing.lg, vertical: DSSpacing.sm + 4),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: DSSpacing.lg, vertical: DSSpacing.sm + 4),
                 decoration: BoxDecoration(
                   color: colors.surface.withValues(alpha: 0.9),
                   borderRadius: BorderRadius.circular(DSRadius.xl + 6),
@@ -128,9 +129,7 @@ class _FloatingDreamBubblesState extends State<FloatingDreamBubbles> {
                   ],
                 ),
               ),
-            )
-                .animate()
-                .fadeIn(delay: 500.ms, duration: 400.ms),
+            ).animate().fadeIn(delay: 500.ms, duration: 400.ms),
           ),
         ),
       ],
@@ -146,7 +145,8 @@ class _FloatingDreamBubblesState extends State<FloatingDreamBubbles> {
     final typography = context.typography;
 
     // 버블 위치 계산 (화면 전체에 분산)
-    final positions = _generateBubblePositions(screenSize, _displayedTopics.length);
+    final positions =
+        _generateBubblePositions(screenSize, _displayedTopics.length);
     final position = positions[index];
 
     // 버블 크기 (랜덤 variation)
@@ -207,7 +207,7 @@ class _FloatingDreamBubblesState extends State<FloatingDreamBubbles> {
     final availableWidth = screenSize.width - padding * 2;
     // 컴팩트 모드: 제한된 높이에 맞춤, 일반 모드: 상하단 여백
     final availableHeight = widget.isCompact
-        ? screenSize.height - 60  // 컴팩트: 하단 버튼 여백만
+        ? screenSize.height - 60 // 컴팩트: 하단 버튼 여백만
         : screenSize.height - 280;
 
     // 그리드 기반 배치 + 약간의 랜덤 오프셋
@@ -228,11 +228,13 @@ class _FloatingDreamBubblesState extends State<FloatingDreamBubbles> {
       final randomOffsetY = (_random.nextDouble() - 0.5) * (cellHeight * 0.4);
 
       final x = padding + col * cellWidth + cellWidth / 2 - 50 + randomOffsetX;
-      final y = topOffset + row * cellHeight + cellHeight / 2 - 50 + randomOffsetY;
+      final y =
+          topOffset + row * cellHeight + cellHeight / 2 - 50 + randomOffsetY;
 
       positions.add(Offset(
         x.clamp(10, screenSize.width - 110),
-        y.clamp(widget.isCompact ? 10 : 100, screenSize.height - (widget.isCompact ? 80 : 200)),
+        y.clamp(widget.isCompact ? 10 : 100,
+            screenSize.height - (widget.isCompact ? 80 : 200)),
       ));
     }
 

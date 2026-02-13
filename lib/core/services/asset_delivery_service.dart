@@ -17,7 +17,8 @@ import '../models/asset_pack.dart';
 /// - 자산 경로 해결 (로컬 vs CDN)
 /// - 다운로드 진행률 스트림
 class AssetDeliveryService {
-  static final AssetDeliveryService _instance = AssetDeliveryService._internal();
+  static final AssetDeliveryService _instance =
+      AssetDeliveryService._internal();
   factory AssetDeliveryService() => _instance;
   AssetDeliveryService._internal();
 
@@ -214,8 +215,7 @@ class AssetDeliveryService {
         .list(path: pack.storagePath!);
 
     if (files.isEmpty) {
-      debugPrint(
-          '📦 [AssetDeliveryService] ⚠️ 파일 없음: ${pack.storagePath}');
+      debugPrint('📦 [AssetDeliveryService] ⚠️ 파일 없음: ${pack.storagePath}');
       // 빈 팩도 설치 완료로 처리
       return;
     }
@@ -251,8 +251,7 @@ class AssetDeliveryService {
           totalBytes: totalCount,
         ));
       } catch (e) {
-        debugPrint(
-            '📦 [AssetDeliveryService] ⚠️ 파일 다운로드 실패: $remotePath - $e');
+        debugPrint('📦 [AssetDeliveryService] ⚠️ 파일 다운로드 실패: $remotePath - $e');
         // 개별 파일 실패는 무시하고 계속 진행
       }
     }
@@ -534,7 +533,8 @@ class AssetDeliveryService {
     }
 
     // 번들 자산 크기 (추정)
-    final bundledSize = AssetPackConfig.getEstimatedSizeByTier(AssetTier.bundled);
+    final bundledSize =
+        AssetPackConfig.getEstimatedSizeByTier(AssetTier.bundled);
 
     return StorageUsage(
       bundledSize: bundledSize,

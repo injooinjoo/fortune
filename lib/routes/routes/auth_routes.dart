@@ -13,25 +13,25 @@ final authRoutes = [
     redirect: (context, state) => '/chat',
   ),
   GoRoute(
-    path: '/splash',
-    name: 'splash',
-    pageBuilder: (context, state) => PageTransitions.noTransition(
-      context,
-      state,
-      const SplashScreen(),
-    )),
+      path: '/splash',
+      name: 'splash',
+      pageBuilder: (context, state) => PageTransitions.noTransition(
+            context,
+            state,
+            const SplashScreen(),
+          )),
   GoRoute(
-    path: '/signup',
-    name: 'signup',
-    builder: (context, state) => const SignupScreen()),
+      path: '/signup',
+      name: 'signup',
+      builder: (context, state) => const SignupScreen()),
   GoRoute(
-    path: '/auth/callback',
-    name: 'auth-callback',
-    builder: (context, state) => const CallbackPage()),
+      path: '/auth/callback',
+      name: 'auth-callback',
+      builder: (context, state) => const CallbackPage()),
   GoRoute(
-    path: '/onboarding',
-    name: 'onboarding',
-    builder: (context, state) => const OnboardingPage()),
+      path: '/onboarding',
+      name: 'onboarding',
+      builder: (context, state) => const OnboardingPage()),
   // GoRoute(
   //   path: '/onboarding/profile',
   //   name: 'onboarding-profile',

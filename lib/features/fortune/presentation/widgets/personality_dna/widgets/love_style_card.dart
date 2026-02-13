@@ -43,7 +43,10 @@ class LoveStyleCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [DSColors.accentSecondary, Color(0xFFFF8E9E)], // 고유 그라데이션 끝 색상
+                colors: [
+                  DSColors.accentSecondary,
+                  Color(0xFFFF8E9E)
+                ], // 고유 그라데이션 끝 색상
               ),
               borderRadius: BorderRadius.circular(20),
             ),

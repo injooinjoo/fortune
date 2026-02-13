@@ -69,10 +69,11 @@ class DSListTile extends StatelessWidget {
     final colors = context.colors;
     final typography = context.typography;
 
-    final effectivePadding = padding ?? const EdgeInsets.symmetric(
-      horizontal: DSSpacing.listItemHorizontal,
-      vertical: DSSpacing.listItemVertical,
-    );
+    final effectivePadding = padding ??
+        const EdgeInsets.symmetric(
+          horizontal: DSSpacing.listItemHorizontal,
+          vertical: DSSpacing.listItemVertical,
+        );
 
     final Widget content = Container(
       padding: effectivePadding,
@@ -108,18 +109,20 @@ class DSListTile extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: titleStyle ?? typography.bodyMedium.copyWith(
-                    color: colors.textPrimary,
-                  ),
+                  style: titleStyle ??
+                      typography.bodyMedium.copyWith(
+                        color: colors.textPrimary,
+                      ),
                   overflow: TextOverflow.ellipsis,
                 ),
                 if (subtitle != null) ...[
                   const SizedBox(height: 2),
                   Text(
                     subtitle!,
-                    style: subtitleStyle ?? typography.labelSmall.copyWith(
-                      color: colors.textSecondary,
-                    ),
+                    style: subtitleStyle ??
+                        typography.labelSmall.copyWith(
+                          color: colors.textSecondary,
+                        ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                   ),

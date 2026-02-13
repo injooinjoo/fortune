@@ -7,15 +7,18 @@ import '../../../theme/font_config.dart';
 /// Maps old DSLuckColors/DSLoveColors to DSColors equivalents
 class _ButtonColors {
   // Gold colors
-  static Color getGold(bool isDark) => isDark ? const Color(0xFFFFD700) : DSColors.warning;
+  static Color getGold(bool isDark) =>
+      isDark ? const Color(0xFFFFD700) : DSColors.warning;
   static const Color fortuneGoldDark = Color(0xFFB8860B);
 
   // Lucky red colors
-  static Color getLucky(bool isDark) => isDark ? DSColors.error : const Color(0xFFDC143C);
+  static Color getLucky(bool isDark) =>
+      isDark ? DSColors.error : const Color(0xFFDC143C);
   static const Color luckyRedDark = Color(0xFFB22222);
 
   // Love colors
-  static Color getPrimary(bool isDark) => isDark ? const Color(0xFFE91E63) : const Color(0xFFD81B60);
+  static Color getPrimary(bool isDark) =>
+      isDark ? const Color(0xFFE91E63) : const Color(0xFFD81B60);
   static const Color rougePinkDark = Color(0xFFC2185B);
 
   // Wealth/earth color
@@ -157,8 +160,9 @@ class _TraditionalButtonState extends State<TraditionalButton>
   /// Standard button - Hanji background with ink border
   Widget _buildStandardButton(
       bool isDark, _TraditionalButtonColors colors, bool isDisabled) {
-    final hanjiColor =
-        isDark ? DSColors.backgroundSecondary : DSColors.backgroundSecondaryDark;
+    final hanjiColor = isDark
+        ? DSColors.backgroundSecondary
+        : DSColors.backgroundSecondaryDark;
 
     return Container(
       width: widget.isExpanded ? double.infinity : widget.width,
@@ -182,8 +186,8 @@ class _TraditionalButtonState extends State<TraditionalButton>
                 ),
               ],
       ),
-      padding:
-          widget.padding ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      padding: widget.padding ??
+          const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: _buildContent(colors.primary, isDisabled),
     );
   }
@@ -217,8 +221,8 @@ class _TraditionalButtonState extends State<TraditionalButton>
                 ),
               ],
       ),
-      padding:
-          widget.padding ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      padding: widget.padding ??
+          const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: _buildContent(
         isDisabled
             ? Colors.white.withValues(alpha: 0.5)
@@ -246,8 +250,8 @@ class _TraditionalButtonState extends State<TraditionalButton>
           width: _isPressed ? 2 : 1.5,
         ),
       ),
-      padding:
-          widget.padding ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      padding: widget.padding ??
+          const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: _buildContent(
         isDisabled ? colors.primary.withValues(alpha: 0.3) : colors.primary,
         isDisabled,
@@ -318,9 +322,7 @@ class _TraditionalButtonState extends State<TraditionalButton>
           padding: widget.padding ??
               const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           child: _buildContent(
-            isDisabled
-                ? colors.primary.withValues(alpha: 0.3)
-                : colors.primary,
+            isDisabled ? colors.primary.withValues(alpha: 0.3) : colors.primary,
             isDisabled,
           ),
         ),
@@ -363,7 +365,8 @@ class _TraditionalButtonState extends State<TraditionalButton>
                 letterSpacing: 0.5,
               ),
             ),
-            if (widget.hanja != null && widget.style != TraditionalButtonStyle.seal) ...[
+            if (widget.hanja != null &&
+                widget.style != TraditionalButtonStyle.seal) ...[
               const SizedBox(height: 2),
               Text(
                 widget.hanja!,
@@ -473,37 +476,49 @@ class _InkBrushButtonPainter extends CustomPainter {
     // Top stroke - brush-like with thickness variation
     path.moveTo(size.width * 0.05, size.height * 0.15);
     path.quadraticBezierTo(
-      size.width * 0.3, size.height * 0.08,
-      size.width * 0.5, size.height * 0.12,
+      size.width * 0.3,
+      size.height * 0.08,
+      size.width * 0.5,
+      size.height * 0.12,
     );
     path.quadraticBezierTo(
-      size.width * 0.7, size.height * 0.16,
-      size.width * 0.95, size.height * 0.1,
+      size.width * 0.7,
+      size.height * 0.16,
+      size.width * 0.95,
+      size.height * 0.1,
     );
 
     // Bottom stroke
     path.moveTo(size.width * 0.08, size.height * 0.88);
     path.quadraticBezierTo(
-      size.width * 0.25, size.height * 0.92,
-      size.width * 0.5, size.height * 0.85,
+      size.width * 0.25,
+      size.height * 0.92,
+      size.width * 0.5,
+      size.height * 0.85,
     );
     path.quadraticBezierTo(
-      size.width * 0.75, size.height * 0.78,
-      size.width * 0.92, size.height * 0.9,
+      size.width * 0.75,
+      size.height * 0.78,
+      size.width * 0.92,
+      size.height * 0.9,
     );
 
     // Left stroke
     path.moveTo(size.width * 0.08, size.height * 0.2);
     path.quadraticBezierTo(
-      size.width * 0.04, size.height * 0.5,
-      size.width * 0.06, size.height * 0.8,
+      size.width * 0.04,
+      size.height * 0.5,
+      size.width * 0.06,
+      size.height * 0.8,
     );
 
     // Right stroke
     path.moveTo(size.width * 0.92, size.height * 0.15);
     path.quadraticBezierTo(
-      size.width * 0.96, size.height * 0.45,
-      size.width * 0.94, size.height * 0.85,
+      size.width * 0.96,
+      size.height * 0.45,
+      size.width * 0.94,
+      size.height * 0.85,
     );
 
     canvas.drawPath(path, paint);

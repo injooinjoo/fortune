@@ -51,17 +51,13 @@ class CelebritySajuService {
   /// 카테고리별 인기 유명인사 조회
   Future<List<CelebritySaju>> getPopularCelebrities([String? category]) async {
     try {
-      var query = _supabase
-          .from('celebrities')
-          .select();
+      var query = _supabase.from('celebrities').select();
 
       if (category != null && category.isNotEmpty) {
         query = query.eq('category', category);
       }
 
-      final response = await query
-          .order('name')
-          .limit(50);
+      final response = await query.order('name').limit(50);
 
       return (response as List)
           .map((data) => CelebritySaju.fromJson(data))
@@ -106,7 +102,8 @@ class CelebritySajuService {
   }
 
   /// 오행별 유명인사 조회 (같은 오행 성향)
-  Future<List<CelebritySaju>> getCelebritiesByElement(String dominantElement) async {
+  Future<List<CelebritySaju>> getCelebritiesByElement(
+      String dominantElement) async {
     try {
       final response = await _supabase
           .from('celebrities')
@@ -139,19 +136,19 @@ class CelebritySajuService {
         return [];
       }
 
-      final celebrities = (response as List)
-          .map((data) {
-            debugPrint('🎭 [CELEBRITY] 연예인: name=${data['name']}, type=${data['celebrity_type']}, birth_date=${data['birth_date']}');
-            return CelebritySaju.fromJson(data);
-          })
-          .toList();
+      final celebrities = (response as List).map((data) {
+        debugPrint(
+            '🎭 [CELEBRITY] 연예인: name=${data['name']}, type=${data['celebrity_type']}, birth_date=${data['birth_date']}');
+        return CelebritySaju.fromJson(data);
+      }).toList();
 
       // 날짜 기반 시드로 매일 다른 순서 (같은 날은 같은 순서)
       final today = DateTime.now();
       final seed = today.year * 10000 + today.month * 100 + today.day;
       celebrities.shuffle(Random(seed));
 
-      debugPrint('🎭 [CELEBRITY] 날짜 시드: $seed, 결과: ${celebrities.take(limit).map((c) => c.name).join(', ')}');
+      debugPrint(
+          '🎭 [CELEBRITY] 날짜 시드: $seed, 결과: ${celebrities.take(limit).map((c) => c.name).join(', ')}');
 
       return celebrities.take(limit).toList();
     } catch (e) {
@@ -168,7 +165,8 @@ class CelebritySajuService {
   /// 3. 천간 관계 분석 (합: +20, 충: -15)
   /// 4. 지지 관계 분석 (육합: +25, 충: -20, 해/파: -10)
   /// 5. 기본 점수 60점에서 가감
-  static int calculateDailyCompatibility(DateTime today, String celebrityBirthDate) {
+  static int calculateDailyCompatibility(
+      DateTime today, String celebrityBirthDate) {
     try {
       if (celebrityBirthDate.isEmpty) {
         return 50 + (today.day % 30);
@@ -195,7 +193,8 @@ class CelebritySajuService {
       int score = 60; // 기본 점수
 
       // 1. 천간 관계 분석
-      final stemRelation = StemBranchRelations.analyzeStemRelation(todayGanKr, celebGanKr);
+      final stemRelation =
+          StemBranchRelations.analyzeStemRelation(todayGanKr, celebGanKr);
       if (stemRelation != null) {
         if (stemRelation.type == RelationType.combination) {
           score += 20; // 천간합
@@ -205,7 +204,8 @@ class CelebritySajuService {
       }
 
       // 2. 지지 관계 분석
-      final branchRelations = StemBranchRelations.analyzeBranchRelation(todayZhiKr, celebZhiKr);
+      final branchRelations =
+          StemBranchRelations.analyzeBranchRelation(todayZhiKr, celebZhiKr);
       for (final relation in branchRelations) {
         switch (relation.type) {
           case RelationType.combination:
@@ -229,7 +229,8 @@ class CelebritySajuService {
         score += 10;
       }
 
-      debugPrint('🎭 [COMPATIBILITY] 오늘=$todayGanKr$todayZhiKr, 연예인=$celebGanKr$celebZhiKr → $score점');
+      debugPrint(
+          '🎭 [COMPATIBILITY] 오늘=$todayGanKr$todayZhiKr, 연예인=$celebGanKr$celebZhiKr → $score점');
 
       // 점수 범위 제한 (35% ~ 95%)
       return score.clamp(35, 95);
@@ -242,8 +243,16 @@ class CelebritySajuService {
   /// 한자 천간 → 한글 변환
   static String _hanjaToKoreanStem(String hanja) {
     const map = {
-      '甲': '갑', '乙': '을', '丙': '병', '丁': '정', '戊': '무',
-      '己': '기', '庚': '경', '辛': '신', '壬': '임', '癸': '계',
+      '甲': '갑',
+      '乙': '을',
+      '丙': '병',
+      '丁': '정',
+      '戊': '무',
+      '己': '기',
+      '庚': '경',
+      '辛': '신',
+      '壬': '임',
+      '癸': '계',
     };
     return map[hanja] ?? hanja;
   }
@@ -251,8 +260,18 @@ class CelebritySajuService {
   /// 한자 지지 → 한글 변환
   static String _hanjaToKoreanBranch(String hanja) {
     const map = {
-      '子': '자', '丑': '축', '寅': '인', '卯': '묘', '辰': '진', '巳': '사',
-      '午': '오', '未': '미', '申': '신', '酉': '유', '戌': '술', '亥': '해',
+      '子': '자',
+      '丑': '축',
+      '寅': '인',
+      '卯': '묘',
+      '辰': '진',
+      '巳': '사',
+      '午': '오',
+      '未': '미',
+      '申': '신',
+      '酉': '유',
+      '戌': '술',
+      '亥': '해',
     };
     return map[hanja] ?? hanja;
   }
@@ -313,7 +332,8 @@ class CelebritySajuService {
         score += 15;
       } else {
         // 천간합 관계 (+10점)
-        final stemRelation = StemBranchRelations.analyzeStemRelation(userGan, celebGan);
+        final stemRelation =
+            StemBranchRelations.analyzeStemRelation(userGan, celebGan);
         if (stemRelation?.type == RelationType.combination) {
           score += 10;
         }
@@ -324,7 +344,8 @@ class CelebritySajuService {
         score += 15;
       } else {
         // 지지육합 관계 (+10점)
-        final branchRelations = StemBranchRelations.analyzeBranchRelation(userZhi, celebZhi);
+        final branchRelations =
+            StemBranchRelations.analyzeBranchRelation(userZhi, celebZhi);
         for (final relation in branchRelations) {
           if (relation.type == RelationType.combination) {
             score += 10;
@@ -340,7 +361,8 @@ class CelebritySajuService {
       score += 20;
     }
 
-    debugPrint('🎭 [SIMILARITY] ${celebrity.name}: 오행=$score, 일주분석, 주오행=${celebrity.dominantElement} → 최종 $score점');
+    debugPrint(
+        '🎭 [SIMILARITY] ${celebrity.name}: 오행=$score, 일주분석, 주오행=${celebrity.dominantElement} → 최종 $score점');
 
     return score.clamp(0, 100);
   }
@@ -386,7 +408,8 @@ class CelebritySajuService {
         final celeb = CelebritySaju.fromJson(data);
 
         // birth_date 기반으로 사주 동적 계산
-        final calculatedSaju = _calculateCelebritySaju(celeb.birthDate, celeb.birthTime);
+        final calculatedSaju =
+            _calculateCelebritySaju(celeb.birthDate, celeb.birthTime);
         if (calculatedSaju == null) continue;
 
         final similarity = _calculateDynamicSimilarity(
@@ -406,7 +429,8 @@ class CelebritySajuService {
       }
 
       // 유사도 높은 순 정렬
-      results.sort((a, b) => (b['similarity'] as int).compareTo(a['similarity'] as int));
+      results.sort(
+          (a, b) => (b['similarity'] as int).compareTo(a['similarity'] as int));
 
       // 상위 후보들 중에서 날짜 기반으로 선택 (매일 다른 조합)
       final topCandidates = results.take(maxResults * 3).toList(); // 상위 9명
@@ -417,7 +441,8 @@ class CelebritySajuService {
       }
 
       final finalResults = topCandidates.take(maxResults).toList();
-      debugPrint('🎭 [SIMILARITY] 유사도 $minSimilarity점 이상: ${results.length}명, 반환: ${finalResults.map((r) => (r['celebrity'] as CelebritySaju).name).join(', ')}');
+      debugPrint(
+          '🎭 [SIMILARITY] 유사도 $minSimilarity점 이상: ${results.length}명, 반환: ${finalResults.map((r) => (r['celebrity'] as CelebritySaju).name).join(', ')}');
 
       // 최대 maxResults명 반환 (1~3명)
       return finalResults;
@@ -428,7 +453,8 @@ class CelebritySajuService {
   }
 
   /// birth_date 기반으로 유명인 사주 계산
-  Map<String, dynamic>? _calculateCelebritySaju(String birthDateStr, String birthTimeStr) {
+  Map<String, dynamic>? _calculateCelebritySaju(
+      String birthDateStr, String birthTimeStr) {
     try {
       if (birthDateStr.isEmpty) return null;
 
@@ -447,9 +473,8 @@ class CelebritySajuService {
       final monthZhi = _hanjaToKoreanBranch(birthLunar.getMonthZhi());
 
       // 오행 계산 (천간/지지에서 추출)
-      final elements = _calculateElements([
-        yearGan, yearZhi, monthGan, monthZhi, dayGan, dayZhi
-      ]);
+      final elements = _calculateElements(
+          [yearGan, yearZhi, monthGan, monthZhi, dayGan, dayZhi]);
 
       return {
         'dayPillar': dayPillar,
@@ -467,20 +492,32 @@ class CelebritySajuService {
 
     // 천간 → 오행
     const stemElements = {
-      '갑': '목', '을': '목',
-      '병': '화', '정': '화',
-      '무': '토', '기': '토',
-      '경': '금', '신': '금',
-      '임': '수', '계': '수',
+      '갑': '목',
+      '을': '목',
+      '병': '화',
+      '정': '화',
+      '무': '토',
+      '기': '토',
+      '경': '금',
+      '신': '금',
+      '임': '수',
+      '계': '수',
     };
 
     // 지지 → 오행
     const branchElements = {
-      '인': '목', '묘': '목',
-      '사': '화', '오': '화',
-      '진': '토', '술': '토', '축': '토', '미': '토',
-      '신': '금', '유': '금',
-      '해': '수', '자': '수',
+      '인': '목',
+      '묘': '목',
+      '사': '화',
+      '오': '화',
+      '진': '토',
+      '술': '토',
+      '축': '토',
+      '미': '토',
+      '신': '금',
+      '유': '금',
+      '해': '수',
+      '자': '수',
     };
 
     for (final stem in stems) {
@@ -527,7 +564,8 @@ class CelebritySajuService {
       if (userGan == celebGan) {
         score += 15;
       } else {
-        final stemRelation = StemBranchRelations.analyzeStemRelation(userGan, celebGan);
+        final stemRelation =
+            StemBranchRelations.analyzeStemRelation(userGan, celebGan);
         if (stemRelation?.type == RelationType.combination) {
           score += 10;
         }
@@ -537,7 +575,8 @@ class CelebritySajuService {
       if (userZhi == celebZhi) {
         score += 15;
       } else {
-        final branchRelations = StemBranchRelations.analyzeBranchRelation(userZhi, celebZhi);
+        final branchRelations =
+            StemBranchRelations.analyzeBranchRelation(userZhi, celebZhi);
         for (final relation in branchRelations) {
           if (relation.type == RelationType.combination) {
             score += 10;
@@ -602,11 +641,16 @@ class CelebritySajuService {
   /// 천간 → 오행 변환
   static String _getElementFromStem(String stem) {
     const stemToElement = {
-      '갑': '목', '을': '목',
-      '병': '화', '정': '화',
-      '무': '토', '기': '토',
-      '경': '금', '신': '금',
-      '임': '수', '계': '수',
+      '갑': '목',
+      '을': '목',
+      '병': '화',
+      '정': '화',
+      '무': '토',
+      '기': '토',
+      '경': '금',
+      '신': '금',
+      '임': '수',
+      '계': '수',
     };
     return stemToElement[stem] ?? '토';
   }
@@ -669,7 +713,11 @@ class CelebritySajuService {
   /// 상생 관계 확인 (목→화→토→금→수→목)
   static bool _isGenerating(String from, String to) {
     const generating = {
-      '목': '화', '화': '토', '토': '금', '금': '수', '수': '목',
+      '목': '화',
+      '화': '토',
+      '토': '금',
+      '금': '수',
+      '수': '목',
     };
     return generating[from] == to;
   }
@@ -677,7 +725,11 @@ class CelebritySajuService {
   /// 상극 관계 확인 (목→토→수→화→금→목)
   static bool _isOvercoming(String from, String to) {
     const overcoming = {
-      '목': '토', '토': '수', '수': '화', '화': '금', '금': '목',
+      '목': '토',
+      '토': '수',
+      '수': '화',
+      '화': '금',
+      '금': '목',
     };
     return overcoming[from] == to;
   }
@@ -722,11 +774,22 @@ class CelebritySajuService {
   }
 
   /// 행운의 숫자 계산
-  static String _calculateLuckyNumber(String todayZhi, CelebritySaju celebrity) {
+  static String _calculateLuckyNumber(
+      String todayZhi, CelebritySaju celebrity) {
     // 지지 → 숫자 매핑
     const zhiNumbers = {
-      '자': 1, '축': 2, '인': 3, '묘': 4, '진': 5, '사': 6,
-      '오': 7, '미': 8, '신': 9, '유': 10, '술': 11, '해': 12,
+      '자': 1,
+      '축': 2,
+      '인': 3,
+      '묘': 4,
+      '진': 5,
+      '사': 6,
+      '오': 7,
+      '미': 8,
+      '신': 9,
+      '유': 10,
+      '술': 11,
+      '해': 12,
     };
 
     final todayNum = zhiNumbers[todayZhi] ?? 1;
@@ -744,9 +807,18 @@ class CelebritySajuService {
   /// 지지 → 방향 변환
   static String _getDirectionFromBranch(String branch) {
     const branchDirections = {
-      '자': '북', '축': '북동', '인': '동북', '묘': '동',
-      '진': '동남', '사': '남동', '오': '남', '미': '남서',
-      '신': '서남', '유': '서', '술': '서북', '해': '북서',
+      '자': '북',
+      '축': '북동',
+      '인': '동북',
+      '묘': '동',
+      '진': '동남',
+      '사': '남동',
+      '오': '남',
+      '미': '남서',
+      '신': '서남',
+      '유': '서',
+      '술': '서북',
+      '해': '북서',
     };
     return branchDirections[branch] ?? '동';
   }
@@ -833,14 +905,16 @@ class CelebritySajuService {
     }
 
     // 방향 일치: +5점
-    if (_isDirectionMatch(userFortune.luckyDirection, celebLucky['direction'])) {
+    if (_isDirectionMatch(
+        userFortune.luckyDirection, celebLucky['direction'])) {
       similarity += 5;
     }
 
     // 시간대 일치: +5점
     final userTime = userFortune.bestTime;
     final celebTime = celebLucky['time'];
-    if (userTime != null && celebTime != null &&
+    if (userTime != null &&
+        celebTime != null &&
         (userTime.contains(celebTime) || celebTime.contains(userTime))) {
       similarity += 5;
     }
@@ -880,8 +954,10 @@ class CelebritySajuService {
     if (userNum == null || celebNum == null) return false;
 
     // 숫자 추출
-    final userNumbers = RegExp(r'\d+').allMatches(userNum).map((m) => m.group(0)).toSet();
-    final celebNumbers = RegExp(r'\d+').allMatches(celebNum).map((m) => m.group(0)).toSet();
+    final userNumbers =
+        RegExp(r'\d+').allMatches(userNum).map((m) => m.group(0)).toSet();
+    final celebNumbers =
+        RegExp(r'\d+').allMatches(celebNum).map((m) => m.group(0)).toSet();
 
     // 하나라도 일치하면 true
     return userNumbers.intersection(celebNumbers).isNotEmpty;
@@ -905,10 +981,12 @@ class CelebritySajuService {
     };
 
     for (final entry in adjacentDirs.entries) {
-      if (userDir.contains(entry.key) && entry.value.any((d) => celebDir.contains(d))) {
+      if (userDir.contains(entry.key) &&
+          entry.value.any((d) => celebDir.contains(d))) {
         return true;
       }
-      if (celebDir.contains(entry.key) && entry.value.any((d) => userDir.contains(d))) {
+      if (celebDir.contains(entry.key) &&
+          entry.value.any((d) => userDir.contains(d))) {
         return true;
       }
     }
@@ -965,7 +1043,8 @@ class CelebritySajuService {
       }
 
       // 3. 유사도 높은 순 정렬
-      results.sort((a, b) => (b['similarity'] as int).compareTo(a['similarity'] as int));
+      results.sort(
+          (a, b) => (b['similarity'] as int).compareTo(a['similarity'] as int));
 
       // 4. 상위 후보 중에서 날짜 기반으로 다양하게 선택 (매일 다른 조합)
       final topCandidates = results.take(maxResults * 3).toList();
@@ -976,7 +1055,8 @@ class CelebritySajuService {
 
       final finalResults = topCandidates.take(maxResults).toList();
 
-      debugPrint('🎭 [DAILY_SIMILAR] 유사도 $minSimilarity점 이상: ${results.length}명, '
+      debugPrint(
+          '🎭 [DAILY_SIMILAR] 유사도 $minSimilarity점 이상: ${results.length}명, '
           '반환: ${finalResults.map((r) => '${(r['celebrity'] as CelebritySaju).name}(${r['similarity']}점)').join(', ')}');
 
       return finalResults;

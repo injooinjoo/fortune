@@ -89,9 +89,9 @@ class TalentInputData {
   /// Phase 3 완료 여부
   bool get isPhase3Complete {
     return workStyle != null &&
-           energySource != null &&
-           problemSolving != null &&
-           preferredRole != null;
+        energySource != null &&
+        problemSolving != null &&
+        preferredRole != null;
   }
 
   /// 전체 완료 여부

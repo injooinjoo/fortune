@@ -11,7 +11,8 @@ class ThemeUtils {
 
   /// Get the appropriate gradient for the current theme
   static LinearGradient getPrimaryGradient(BuildContext context) {
-    final accentColor = isDarkMode(context) ? DSColors.accent : DSColors.accentDark;
+    final accentColor =
+        isDarkMode(context) ? DSColors.accent : DSColors.accentDark;
     return LinearGradient(
       begin: Alignment.topRight,
       end: Alignment.bottomLeft,
@@ -32,8 +33,8 @@ class ThemeUtils {
   static Border getCardBorder(BuildContext context) {
     return Border.all(
       color: isDarkMode(context)
-        ? DSColors.surfaceSecondary.withValues(alpha: 0.3)
-        : DSColors.borderDark.withValues(alpha: 0.5),
+          ? DSColors.surfaceSecondary.withValues(alpha: 0.3)
+          : DSColors.borderDark.withValues(alpha: 0.5),
       width: 1,
     );
   }
@@ -76,7 +77,8 @@ class ThemeUtils {
     final fortuneTheme = Theme.of(context).extension<FortuneThemeExtension>();
     return ShimmerColors(
       baseColor: fortuneTheme?.shimmerBase ?? DSColors.borderDark,
-      highlightColor: fortuneTheme?.shimmerHighlight ?? DSColors.borderDark.withValues(alpha: 0.3),
+      highlightColor: fortuneTheme?.shimmerHighlight ??
+          DSColors.borderDark.withValues(alpha: 0.3),
     );
   }
 
@@ -84,8 +86,10 @@ class ThemeUtils {
   static GlassColors getGlassColors(BuildContext context) {
     final fortuneTheme = Theme.of(context).extension<FortuneThemeExtension>();
     return GlassColors(
-      background: fortuneTheme?.glassBackground ?? DSColors.surfaceDark.withValues(alpha: 0.05),
-      border: fortuneTheme?.glassBorder ?? DSColors.surfaceDark.withValues(alpha: 0.1),
+      background: fortuneTheme?.glassBackground ??
+          DSColors.surfaceDark.withValues(alpha: 0.05),
+      border: fortuneTheme?.glassBorder ??
+          DSColors.surfaceDark.withValues(alpha: 0.1),
     );
   }
 }

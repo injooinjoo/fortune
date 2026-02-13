@@ -48,7 +48,8 @@ class FortuneCard extends StatelessWidget {
       title: title,
       onTap: onTap,
       leading: icon,
-      trailing: score != null ? _ScoreBadge(score: score, color: scoreColor) : null,
+      trailing:
+          score != null ? _ScoreBadge(score: score, color: scoreColor) : null,
       child: Builder(
         builder: (context) => Text(
           content,
@@ -75,15 +76,14 @@ class FortuneCard extends StatelessWidget {
       subtitle: description,
       onTap: onTap,
       showBorder: true,
-      backgroundColor: isSelected 
-          ? DSColors.accent.withValues(alpha: 0.05)
-          : null,
-      leading: icon != null 
+      backgroundColor:
+          isSelected ? DSColors.accent.withValues(alpha: 0.05) : null,
+      leading: icon != null
           ? Container(
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: isSelected 
+                color: isSelected
                     ? DSColors.accent.withValues(alpha: 0.1)
                     : DSColors.surface,
                 borderRadius: BorderRadius.circular(12),
@@ -100,7 +100,8 @@ class FortuneCard extends StatelessWidget {
           : badge != null
               ? Builder(
                   builder: (context) => Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: DSColors.accent.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
@@ -190,13 +191,13 @@ class FortuneCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = context.isDark;
-    
+
     final Widget cardContent = Container(
       margin: margin ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       decoration: BoxDecoration(
         color: backgroundColor ?? context.colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: showBorder 
+        border: showBorder
             ? Border.all(
                 color: isDark ? DSColors.border : DSColors.border,
                 width: 1,
@@ -229,7 +230,9 @@ class FortuneCard extends StatelessWidget {
                                 title!,
                                 style: context.headingSmall.copyWith(
                                   fontWeight: FontWeight.w600,
-                                  color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
+                                  color: isDark
+                                      ? DSColors.textPrimary
+                                      : DSColors.textPrimary,
                                 ),
                               ),
                               if (subtitle != null) ...[
@@ -237,7 +240,9 @@ class FortuneCard extends StatelessWidget {
                                 Text(
                                   subtitle!,
                                   style: context.bodySmall.copyWith(
-                                    color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
+                                    color: isDark
+                                        ? DSColors.textSecondary
+                                        : DSColors.textSecondary,
                                   ),
                                 ),
                               ],
@@ -250,7 +255,8 @@ class FortuneCard extends StatelessWidget {
                       ],
                     ],
                   ),
-                if ((title != null || leading != null || trailing != null) && child is! SizedBox)
+                if ((title != null || leading != null || trailing != null) &&
+                    child is! SizedBox)
                   const SizedBox(height: 16),
                 child,
               ],
@@ -296,7 +302,7 @@ class _ScoreBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scoreColor = color ?? _getScoreColor(score);
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(

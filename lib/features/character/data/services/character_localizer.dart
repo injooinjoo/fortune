@@ -226,7 +226,8 @@ class CharacterLocalizer {
   // ========== 호감도 시스템 ==========
 
   /// 호감도 단계 이름 (로컬라이즈)
-  static String getAffinityPhaseName(BuildContext context, AffinityPhase phase) {
+  static String getAffinityPhaseName(
+      BuildContext context, AffinityPhase phase) {
     final l10n = context.l10n;
     return switch (phase) {
       AffinityPhase.stranger => l10n.affinityPhaseStranger,
@@ -252,7 +253,8 @@ class CharacterLocalizer {
   }
 
   /// 단계별 해금 설명 (로컬라이즈)
-  static String getUnlockDescription(BuildContext context, AffinityPhase phase) {
+  static String getUnlockDescription(
+      BuildContext context, AffinityPhase phase) {
     final l10n = context.l10n;
     return switch (phase) {
       AffinityPhase.stranger => l10n.affinityUnlockStranger,

@@ -18,7 +18,8 @@ class ChatMatchInsightCard extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<ChatMatchInsightCard> createState() => _ChatMatchInsightCardState();
+  ConsumerState<ChatMatchInsightCard> createState() =>
+      _ChatMatchInsightCardState();
 }
 
 class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
@@ -163,7 +164,8 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
     );
   }
 
-  Widget _buildPredictionBar(DSColorScheme colors, DSTypographyScheme typography) {
+  Widget _buildPredictionBar(
+      DSColorScheme colors, DSTypographyScheme typography) {
     final prediction = insight.prediction;
     final winProb = prediction.winProbability;
 
@@ -246,7 +248,8 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
               runSpacing: DSSpacing.xs,
               children: prediction.keyFactors.map((factor) {
                 return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: colors.textSecondary.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(DSRadius.sm),
@@ -266,7 +269,8 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
     );
   }
 
-  Widget _buildTeamAnalysis(DSColorScheme colors, DSTypographyScheme typography) {
+  Widget _buildTeamAnalysis(
+      DSColorScheme colors, DSTypographyScheme typography) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
       child: Column(
@@ -347,7 +351,6 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
               ),
             ],
           ),
-
           if (team.strengths.isNotEmpty) ...[
             const SizedBox(height: DSSpacing.xs),
             Text(
@@ -359,7 +362,6 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
               overflow: TextOverflow.ellipsis,
             ),
           ],
-
           if (team.concerns.isNotEmpty) ...[
             const SizedBox(height: DSSpacing.xxs),
             Text(
@@ -376,7 +378,8 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
     );
   }
 
-  Widget _buildFortuneElements(DSColorScheme colors, DSTypographyScheme typography) {
+  Widget _buildFortuneElements(
+      DSColorScheme colors, DSTypographyScheme typography) {
     final elements = insight.fortuneElements;
     final itemData = <Map<String, String>>[
       {
@@ -562,10 +565,14 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
 
   String _normalizeLuckyTime(String value) {
     final lower = value.toLowerCase();
-    if (lower.contains('오전') || lower.contains('아침') || lower.contains('morning')) {
+    if (lower.contains('오전') ||
+        lower.contains('아침') ||
+        lower.contains('morning')) {
       return 'morning';
     }
-    if (lower.contains('오후') || lower.contains('점심') || lower.contains('afternoon')) {
+    if (lower.contains('오후') ||
+        lower.contains('점심') ||
+        lower.contains('afternoon')) {
       return 'afternoon';
     }
     if (lower.contains('저녁') || lower.contains('evening')) {
@@ -660,5 +667,4 @@ class _ChatMatchInsightCardState extends ConsumerState<ChatMatchInsightCard> {
     final minute = date.minute.toString().padLeft(2, '0');
     return '${date.month}/${date.day}($weekday) $hour:$minute';
   }
-
 }

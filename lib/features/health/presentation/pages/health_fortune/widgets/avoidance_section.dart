@@ -38,13 +38,13 @@ class AvoidanceSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: avoidanceList.map((item) {
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   color: DSColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),

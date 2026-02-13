@@ -41,12 +41,14 @@ class FortuneOptimizationService {
     required String userId,
     required String fortuneType,
     required FortuneConditions conditions,
-    required Future<Map<String, dynamic>> Function(Map<String, dynamic>) onAPICall,
+    required Future<Map<String, dynamic>> Function(Map<String, dynamic>)
+        onAPICall,
     Map<String, dynamic>? inputConditions,
   }) async {
     final conditionsHash = conditions.generateHash();
 
-    Logger.info('[FortuneOptimization] 🔮 운세 조회 시작: $fortuneType (hash: $conditionsHash)');
+    Logger.info(
+        '[FortuneOptimization] 🔮 운세 조회 시작: $fortuneType (hash: $conditionsHash)');
 
     try {
       // 1️⃣ 개인 캐시 확인
@@ -206,7 +208,8 @@ class FortuneOptimizationService {
     try {
       // Date 컬럼으로 조회 (unique constraint와 일치)
       final today = DateTime.now();
-      final todayDate = '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+      final todayDate =
+          '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
 
       final result = await _supabase
           .from('fortune_results')
@@ -350,7 +353,8 @@ class FortuneOptimizationService {
     required String fortuneType,
     required String conditionsHash,
     required FortuneConditions conditions,
-    required Future<Map<String, dynamic>> Function(Map<String, dynamic>) onAPICall,
+    required Future<Map<String, dynamic>> Function(Map<String, dynamic>)
+        onAPICall,
   }) async {
     debugPrint('  🔄 API 호출 준비');
 
@@ -397,7 +401,8 @@ class FortuneOptimizationService {
   }) async {
     try {
       final now = DateTime.now();
-      final today = '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+      final today =
+          '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
 
       final data = {
         'user_id': userId,
@@ -448,8 +453,7 @@ class FortuneOptimizationService {
     required String conditionsHash,
   }) async {
     try {
-      final response = await _supabase
-          .rpc('get_fortune_pool_size', params: {
+      final response = await _supabase.rpc('get_fortune_pool_size', params: {
         'p_fortune_type': fortuneType,
         'p_conditions_hash': conditionsHash,
       });
@@ -469,11 +473,11 @@ class FortuneOptimizationService {
     DateTime? endDate,
   }) async {
     try {
-      final start = startDate ?? DateTime.now().subtract(const Duration(days: 7));
+      final start =
+          startDate ?? DateTime.now().subtract(const Duration(days: 7));
       final end = endDate ?? DateTime.now();
 
-      final response = await _supabase
-          .rpc('get_fortune_api_stats', params: {
+      final response = await _supabase.rpc('get_fortune_api_stats', params: {
         'p_start_date': start.toIso8601String().split('T')[0],
         'p_end_date': end.toIso8601String().split('T')[0],
       });

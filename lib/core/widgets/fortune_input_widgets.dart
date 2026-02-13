@@ -43,7 +43,8 @@ class FortuneInputWidgets {
     required ValueChanged<DateTime> onDateSelected,
     DateTime? firstDate,
     DateTime? lastDate,
-    UnifiedDatePickerMode mode = UnifiedDatePickerMode.wheel, // wheel 모드가 기존 동작과 가장 유사
+    UnifiedDatePickerMode mode =
+        UnifiedDatePickerMode.wheel, // wheel 모드가 기존 동작과 가장 유사
     bool showAge = false,
   }) {
     return UnifiedDatePicker(
@@ -173,9 +174,7 @@ class FortuneInputWidgets {
                 ),
                 const SizedBox(width: DSSpacing.sm + 4),
                 Text(
-                  selectedHour != null
-                      ? '$selectedHour시'
-                      : '시간을 선택해주세요',
+                  selectedHour != null ? '$selectedHour시' : '시간을 선택해주세요',
                   style: typography.bodyMedium.copyWith(
                     color: selectedHour != null
                         ? colors.textPrimary
@@ -234,22 +233,17 @@ class FortuneInputWidgets {
                   vertical: DSSpacing.sm + 4,
                 ),
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? colors.accent
-                      : colors.surfaceSecondary,
+                  color: isSelected ? colors.accent : colors.surfaceSecondary,
                   borderRadius: BorderRadius.circular(DSRadius.md),
                   border: Border.all(
-                    color: isSelected
-                        ? colors.accent
-                        : colors.border,
+                    color: isSelected ? colors.accent : colors.border,
                   ),
                 ),
                 child: Text(
                   entry.value,
                   style: typography.bodyMedium.copyWith(
-                    color: isSelected
-                        ? colors.ctaForeground
-                        : colors.textPrimary,
+                    color:
+                        isSelected ? colors.ctaForeground : colors.textPrimary,
                     fontWeight:
                         isSelected ? FontWeight.w600 : FontWeight.normal,
                   ),

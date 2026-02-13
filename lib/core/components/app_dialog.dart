@@ -319,8 +319,9 @@ class _TossSuccessDialog extends StatelessWidget {
           height: 72,
           decoration: BoxDecoration(
             color: (Theme.of(context).brightness == Brightness.light
-                ? DSColors.success
-                : DSColors.success).withValues(alpha: 0.1),
+                    ? DSColors.success
+                    : DSColors.success)
+                .withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(
@@ -330,9 +331,7 @@ class _TossSuccessDialog extends StatelessWidget {
                 ? DSColors.success
                 : DSColors.success,
           ),
-        )
-            .animate()
-            .scale(
+        ).animate().scale(
               begin: const Offset(0, 0),
               end: const Offset(1, 1),
               duration: DSAnimation.slow,
@@ -392,8 +391,9 @@ class _TossErrorDialog extends StatelessWidget {
           height: 72,
           decoration: BoxDecoration(
             color: (Theme.of(context).brightness == Brightness.light
-                ? DSColors.error
-                : DSColors.error).withValues(alpha: 0.1),
+                    ? DSColors.error
+                    : DSColors.error)
+                .withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(
@@ -403,9 +403,8 @@ class _TossErrorDialog extends StatelessWidget {
                 ? DSColors.error
                 : DSColors.error,
           ),
-        )
-            .animate()
-            .shake(duration: DSAnimation.normal, hz: 2, offset: const Offset(4, 0)),
+        ).animate().shake(
+            duration: DSAnimation.normal, hz: 2, offset: const Offset(4, 0)),
         const SizedBox(height: DSSpacing.lg),
         Text(
           title,

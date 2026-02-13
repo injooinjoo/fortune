@@ -67,7 +67,6 @@ class PracticalGuidePage extends StatelessWidget {
               ),
             ),
           ],
-
           if (tarotCardInfo?.meditation != null) ...[
             const SizedBox(height: 32),
             Text(
@@ -99,7 +98,6 @@ class PracticalGuidePage extends StatelessWidget {
               ),
             ),
           ],
-
           if (tarotCardInfo?.affirmations != null) ...[
             const SizedBox(height: 32),
             Text(

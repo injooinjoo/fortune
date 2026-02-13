@@ -61,7 +61,8 @@ class FortuneActionButtons extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<FortuneActionButtons> createState() => _FortuneActionButtonsState();
+  ConsumerState<FortuneActionButtons> createState() =>
+      _FortuneActionButtonsState();
 }
 
 class _FortuneActionButtonsState extends ConsumerState<FortuneActionButtons>
@@ -98,7 +99,8 @@ class _FortuneActionButtonsState extends ConsumerState<FortuneActionButtons>
     final defaultColor = context.colors.textTertiary;
     final iconColor = widget.iconColor ?? defaultColor;
 
-    final interactionState = ref.watch(contentInteractionProvider(widget.contentId));
+    final interactionState =
+        ref.watch(contentInteractionProvider(widget.contentId));
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -133,7 +135,9 @@ class _FortuneActionButtonsState extends ConsumerState<FortuneActionButtons>
     }
 
     // 상태 토글
-    await ref.read(contentInteractionProvider(widget.contentId).notifier).toggleSave(
+    await ref
+        .read(contentInteractionProvider(widget.contentId).notifier)
+        .toggleSave(
           contentType: widget.contentType,
         );
   }
@@ -269,7 +273,9 @@ class LikeOnlyButton extends ConsumerWidget {
     return GestureDetector(
       onTap: () async {
         HapticFeedback.lightImpact();
-        await ref.read(contentInteractionProvider(contentId).notifier).toggleSave(
+        await ref
+            .read(contentInteractionProvider(contentId).notifier)
+            .toggleSave(
               contentType: contentType,
             );
       },

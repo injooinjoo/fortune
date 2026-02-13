@@ -51,204 +51,202 @@ class FaceZoneDetailCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: AppCard(
-          style: AppCardStyle.filled,
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 헤더: 아이콘 + 제목 + 점수
-              Row(
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      icon,
-                      color: color,
-                      size: 24,
-                    ),
+        style: AppCardStyle.filled,
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 헤더: 아이콘 + 제목 + 점수
+            Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: context.labelLarge.copyWith(
-                            color: isDark
-                                ? DSColors.textPrimary
-                                : DSColors.textPrimary,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: DSSpacing.xxs),
-                        Text(
-                          subtitle,
-                          style: context.labelSmall.copyWith(
-                            color: isDark
-                                ? DSColors.textSecondary
-                                : DSColors.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
+                  child: Icon(
+                    icon,
+                    color: color,
+                    size: 24,
                   ),
-                  // 점수 배지
-                  if (score > 0)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: color.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        '$score점',
-                        style: context.labelSmall.copyWith(
-                          color: color,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: context.labelLarge.copyWith(
+                          color: isDark
+                              ? DSColors.textPrimary
+                              : DSColors.textPrimary,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                    ),
-                ],
-              ),
-
-              // 점수 게이지 바
-              if (score > 0) ...[
-                const SizedBox(height: DSSpacing.md),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    value: score / 100,
-                    backgroundColor: color.withValues(alpha: 0.1),
-                    valueColor: AlwaysStoppedAnimation<Color>(color),
-                    minHeight: 6,
+                      const SizedBox(height: DSSpacing.xxs),
+                      Text(
+                        subtitle,
+                        style: context.labelSmall.copyWith(
+                          color: isDark
+                              ? DSColors.textSecondary
+                              : DSColors.textSecondary,
+                        ),
+                      ),
+                    ],
                   ),
+                ),
+                // 점수 배지
+                if (score > 0)
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      '$score점',
+                      style: context.labelSmall.copyWith(
+                        color: color,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+
+            // 점수 게이지 바
+            if (score > 0) ...[
+              const SizedBox(height: DSSpacing.md),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  value: score / 100,
+                  backgroundColor: color.withValues(alpha: 0.1),
+                  valueColor: AlwaysStoppedAnimation<Color>(color),
+                  minHeight: 6,
+                ),
+              ),
+            ],
+
+            // 오관 형식 (observation, interpretation, advice)
+            if (observation.isNotEmpty || interpretation.isNotEmpty) ...[
+              // 관찰 내용
+              if (observation.isNotEmpty) ...[
+                const SizedBox(height: DSSpacing.md),
+                _buildDetailSection(
+                  context: context,
+                  title: '관찰',
+                  content: observation,
+                  color: color,
+                  isDark: isDark,
                 ),
               ],
 
-              // 오관 형식 (observation, interpretation, advice)
-              if (observation.isNotEmpty || interpretation.isNotEmpty) ...[
-                // 관찰 내용
-                if (observation.isNotEmpty) ...[
-                  const SizedBox(height: DSSpacing.md),
-                  _buildDetailSection(
-                    context: context,
-                    title: '관찰',
-                    content: observation,
-                    color: color,
-                    isDark: isDark,
+              // 관상학적 해석
+              if (interpretation.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                _buildDetailSection(
+                  context: context,
+                  title: '해석',
+                  content: interpretation,
+                  color: color,
+                  isDark: isDark,
+                ),
+              ],
+            ]
+            // 삼정 형식 (description, period, peakAge)
+            else if (description.isNotEmpty) ...[
+              const SizedBox(height: DSSpacing.md),
+              if (period.isNotEmpty) ...[
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                ],
-
-                // 관상학적 해석
-                if (interpretation.isNotEmpty) ...[
-                  const SizedBox(height: 12),
-                  _buildDetailSection(
-                    context: context,
-                    title: '해석',
-                    content: interpretation,
-                    color: color,
-                    isDark: isDark,
-                  ),
-                ],
-              ]
-              // 삼정 형식 (description, period, peakAge)
-              else if (description.isNotEmpty) ...[
-                const SizedBox(height: DSSpacing.md),
-                if (period.isNotEmpty) ...[
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
+                  child: Text(
+                    period,
+                    style: context.labelSmall.copyWith(
+                      color: color,
+                      fontWeight: FontWeight.w600,
                     ),
-                    child: Text(
-                      period,
+                  ),
+                ),
+                const SizedBox(height: 12),
+              ],
+              Text(
+                description,
+                style: context.bodyMedium.copyWith(
+                  color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
+                  height: 1.6,
+                ),
+              ),
+              if (peakAge.isNotEmpty) ...[
+                const SizedBox(height: DSSpacing.sm),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.star_outline,
+                      color: color,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      '전성기: $peakAge',
                       style: context.labelSmall.copyWith(
                         color: color,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                ],
-                Text(
-                  description,
-                  style: context.bodyMedium.copyWith(
-                    color: isDark
-                        ? DSColors.textPrimary
-                        : DSColors.textPrimary,
-                    height: 1.6,
-                  ),
-                ),
-                if (peakAge.isNotEmpty) ...[
-                  const SizedBox(height: DSSpacing.sm),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.star_outline,
-                        color: color,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        '전성기: $peakAge',
-                        style: context.labelSmall.copyWith(
-                          color: color,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ],
-
-              // 개운 조언
-              if (advice.isNotEmpty) ...[
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: color.withValues(alpha: 0.2),
-                    ),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Icons.tips_and_updates_outlined,
-                        color: color,
-                        size: 18,
-                      ),
-                      const SizedBox(width: DSSpacing.sm),
-                      Expanded(
-                        child: Text(
-                          advice,
-                          style: context.bodyMedium.copyWith(
-                            color: isDark
-                                ? DSColors.textPrimary
-                                : DSColors.textPrimary,
-                            height: 1.6,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  ],
                 ),
               ],
             ],
-          ),
+
+            // 개운 조언
+            if (advice.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: color.withValues(alpha: 0.2),
+                  ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.tips_and_updates_outlined,
+                      color: color,
+                      size: 18,
+                    ),
+                    const SizedBox(width: DSSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        advice,
+                        style: context.bodyMedium.copyWith(
+                          color: isDark
+                              ? DSColors.textPrimary
+                              : DSColors.textPrimary,
+                          height: 1.6,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
         ),
+      ),
     ).animate().fadeIn(duration: 500.ms, delay: (100 * animationIndex).ms);
   }
 
@@ -273,9 +271,7 @@ class FaceZoneDetailCard extends StatelessWidget {
         Text(
           content,
           style: context.bodyMedium.copyWith(
-            color: isDark
-                ? DSColors.textPrimary
-                : DSColors.textPrimary,
+            color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
             height: 1.6,
           ),
         ),

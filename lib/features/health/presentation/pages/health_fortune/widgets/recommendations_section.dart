@@ -29,7 +29,6 @@ class RecommendationsSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-
           ...recommendations.map((rec) {
             return Container(
               margin: const EdgeInsets.only(bottom: 12),

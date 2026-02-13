@@ -161,7 +161,8 @@ class _ChatPetRegistrationFormState
               const Spacer(),
               if (widget.onCancel != null)
                 IconButton(
-                  icon: Icon(Icons.close, size: 20, color: colors.textSecondary),
+                  icon:
+                      Icon(Icons.close, size: 20, color: colors.textSecondary),
                   onPressed: widget.onCancel,
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
@@ -246,7 +247,8 @@ class _ChatPetRegistrationFormState
               style: ElevatedButton.styleFrom(
                 backgroundColor: colors.ctaBackground,
                 foregroundColor: colors.ctaForeground,
-                disabledBackgroundColor: colors.textSecondary.withValues(alpha: 0.3),
+                disabledBackgroundColor:
+                    colors.textSecondary.withValues(alpha: 0.3),
                 padding: const EdgeInsets.symmetric(vertical: DSSpacing.sm),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(DSRadius.md),
@@ -258,7 +260,8 @@ class _ChatPetRegistrationFormState
                       height: 20,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(colors.ctaForeground),
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(colors.ctaForeground),
                       ),
                     )
                   : Text(
@@ -333,7 +336,9 @@ class _ChatPetRegistrationFormState
               decoration: BoxDecoration(
                 color: isSelected
                     ? colors.accentSecondary.withValues(alpha: 0.2)
-                    : (isDark ? colors.background : colors.textPrimary.withValues(alpha: 0.05)),
+                    : (isDark
+                        ? colors.background
+                        : colors.textPrimary.withValues(alpha: 0.05)),
                 borderRadius: BorderRadius.circular(DSRadius.lg),
                 border: Border.all(
                   color: isSelected
@@ -353,7 +358,8 @@ class _ChatPetRegistrationFormState
                       color: isSelected
                           ? colors.accentSecondary
                           : colors.textPrimary,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                      fontWeight:
+                          isSelected ? FontWeight.w600 : FontWeight.w500,
                     ),
                   ),
                   if (isSelected) ...[

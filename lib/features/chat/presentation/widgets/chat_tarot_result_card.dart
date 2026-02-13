@@ -30,7 +30,7 @@ class ChatTarotResultCard extends ConsumerStatefulWidget {
 
 class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
     with TickerProviderStateMixin {
-  bool _isDetailExpanded = true;  // 기본값: 열린 상태
+  bool _isDetailExpanded = true; // 기본값: 열린 상태
 
   // 타이핑 섹션 관리
   int _currentTypingSection = 0;
@@ -192,8 +192,8 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
     );
   }
 
-  Widget _buildFlippableCard(DSColorScheme colors, DSTypographyScheme typography,
-      Map<String, dynamic> card, int index) {
+  Widget _buildFlippableCard(DSColorScheme colors,
+      DSTypographyScheme typography, Map<String, dynamic> card, int index) {
     final cardNameKr = card['cardNameKr'] as String? ?? '카드';
     final imagePath = card['imagePath'] as String? ?? '';
     final isReversed = card['isReversed'] as bool? ?? false;
@@ -210,7 +210,8 @@ class _ChatTarotResultCardState extends ConsumerState<ChatTarotResultCard>
         positionIndex: index,
         isReversed: isReversed,
       );
-      if (hardcodedInterpretation != null && hardcodedInterpretation.isNotEmpty) {
+      if (hardcodedInterpretation != null &&
+          hardcodedInterpretation.isNotEmpty) {
         interpretation = hardcodedInterpretation;
       }
     }

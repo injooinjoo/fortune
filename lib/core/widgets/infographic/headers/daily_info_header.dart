@@ -82,13 +82,17 @@ class DailyInfoHeader extends StatelessWidget {
           _buildScoreSection(context),
 
           // 카테고리 차트
-          if (showCategories && categories != null && categories!.isNotEmpty) ...[
+          if (showCategories &&
+              categories != null &&
+              categories!.isNotEmpty) ...[
             const SizedBox(height: DSSpacing.md),
             _buildCategorySection(context),
           ],
 
           // 행운 요소
-          if (showLuckyItems && luckyItems != null && luckyItems!.isNotEmpty) ...[
+          if (showLuckyItems &&
+              luckyItems != null &&
+              luckyItems!.isNotEmpty) ...[
             const SizedBox(height: DSSpacing.md),
             _buildLuckySection(context),
           ],

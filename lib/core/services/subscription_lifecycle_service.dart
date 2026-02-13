@@ -39,13 +39,16 @@ class SubscriptionLifecycleService with WidgetsBindingObserver {
   }
 
   void _onAppResumed() {
-    Logger.info('[SubscriptionLifecycleService] App resumed - checking subscription status');
+    Logger.info(
+        '[SubscriptionLifecycleService] App resumed - checking subscription status');
 
     try {
       // 구독 상태 확인
       _ref.read(subscriptionProvider.notifier).checkSubscriptionStatus();
     } catch (e) {
-      Logger.error('[SubscriptionLifecycleService] Failed to check subscription status', e);
+      Logger.error(
+          '[SubscriptionLifecycleService] Failed to check subscription status',
+          e);
     }
   }
 
@@ -60,7 +63,8 @@ class SubscriptionLifecycleService with WidgetsBindingObserver {
 }
 
 /// SubscriptionLifecycleService Provider
-final subscriptionLifecycleServiceProvider = Provider<SubscriptionLifecycleService>((ref) {
+final subscriptionLifecycleServiceProvider =
+    Provider<SubscriptionLifecycleService>((ref) {
   final service = SubscriptionLifecycleService(ref);
 
   // Provider가 생성될 때 초기화

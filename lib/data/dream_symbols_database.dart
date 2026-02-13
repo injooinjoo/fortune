@@ -31,7 +31,7 @@ class DreamSymbolsDatabase {
       'modern': '재생과 변화. 새로운 기회의 도래',
       'advice': '준비된 자에게 기회가 옵니다. 실력을 갖추세요'
     },
-    
+
     // 흉몽
     '이빨빠짐': {
       'category': '신체',
@@ -47,7 +47,7 @@ class DreamSymbolsDatabase {
       'modern': '억압된 분노나 스트레스의 표출',
       'advice': '감정 관리를 하고 안전에 주의하세요'
     },
-    
+
     // 태몽
     '호랑이': {
       'category': '동물',
@@ -89,7 +89,7 @@ class DreamSymbolsDatabase {
       'integration': '내면의 순수함을 회복하라',
       'question': '나의 순수한 열정은 무엇인가?',
     },
-    
+
     // 프로이트의 상징
     '터널': {
       'category': '장소',
@@ -163,25 +163,25 @@ class DreamSymbolsDatabase {
         return cultural[culture.toLowerCase()]!;
       }
     }
-    
+
     // 한국 전통 해석
     if (koreanTraditionalSymbols.containsKey(symbol)) {
       final traditional = koreanTraditionalSymbols[symbol]!;
       return '${traditional['traditional']} (전통적 해석)\n${traditional['modern']} (현대적 해석)';
     }
-    
+
     // 서양 심리학적 해석
     if (westernPsychologicalSymbols.containsKey(symbol)) {
       final psychological = westernPsychologicalSymbols[symbol]!;
       return '${psychological['meaning']}\n${psychological['integration']}';
     }
-    
+
     // 현대적 해석
     if (modernInterpretations.containsKey(symbol)) {
       final modern = modernInterpretations[symbol]!;
       return modern['meaning'] as String;
     }
-    
+
     return '이 상징에 대한 구체적인 해석은 개인의 경험과 문화적 배경에 따라 다를 수 있습니다.';
   }
 

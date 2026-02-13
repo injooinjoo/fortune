@@ -425,7 +425,8 @@ class _MockPsychologyTestScreen extends StatelessWidget {
                     const SizedBox(height: 8),
                     const Text(
                       '친구들과 함께 있을 때 당신은?',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 24),
                     _AnswerOption(
@@ -538,7 +539,7 @@ class _TestCard extends StatelessWidget {
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            color: color.withValues(alpha:0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(Icons.psychology, color: color),
@@ -556,7 +557,8 @@ class _TestCard extends StatelessWidget {
                 ),
                 child: Text(
                   badge!,
-                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 10, fontWeight: FontWeight.bold),
                 ),
               ),
             ],

@@ -186,12 +186,12 @@ class _CategoryBarItem extends StatelessWidget {
           child: AnimatedBuilder(
             animation: animation,
             builder: (context, _) {
-              final animatedProgress = progress *
-                  _getDelayedProgress(animation.value, delay);
+              final animatedProgress =
+                  progress * _getDelayedProgress(animation.value, delay);
               return Container(
                 height: barHeight,
                 decoration: BoxDecoration(
-                  color: context.colors.border.withValues(alpha:0.3),
+                  color: context.colors.border.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(barHeight / 2),
                 ),
                 child: FractionallySizedBox(
@@ -199,7 +199,8 @@ class _CategoryBarItem extends StatelessWidget {
                   widthFactor: animatedProgress.clamp(0, 1),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: category.color ?? _getProgressColor(context, progress),
+                      color: category.color ??
+                          _getProgressColor(context, progress),
                       borderRadius: BorderRadius.circular(barHeight / 2),
                       gradient: category.gradient,
                     ),
@@ -294,9 +295,9 @@ class _CompactCategoryItem extends StatelessWidget {
         AnimatedBuilder(
           animation: animation,
           builder: (context, _) {
-            final animatedValue = (category.value *
-                    _getDelayedProgress(animation.value, delay))
-                .round();
+            final animatedValue =
+                (category.value * _getDelayedProgress(animation.value, delay))
+                    .round();
             return Text(
               '$animatedValue',
               style: context.typography.bodySmall.copyWith(
@@ -319,7 +320,7 @@ class _CompactCategoryItem extends StatelessWidget {
                   progress * _getDelayedProgress(animation.value, delay);
               return Container(
                 decoration: BoxDecoration(
-                  color: context.colors.border.withValues(alpha:0.3),
+                  color: context.colors.border.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: FractionallySizedBox(
@@ -327,7 +328,8 @@ class _CompactCategoryItem extends StatelessWidget {
                   heightFactor: animatedProgress.clamp(0, 1),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: category.color ?? _getProgressColor(context, progress),
+                      color: category.color ??
+                          _getProgressColor(context, progress),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -392,8 +394,10 @@ class DailyFortuneCategories {
   }) {
     return [
       CategoryData(label: '연애', value: love, icon: Icons.favorite_rounded),
-      CategoryData(label: '재물', value: money, icon: Icons.monetization_on_rounded),
-      CategoryData(label: '건강', value: health, icon: Icons.favorite_border_rounded),
+      CategoryData(
+          label: '재물', value: money, icon: Icons.monetization_on_rounded),
+      CategoryData(
+          label: '건강', value: health, icon: Icons.favorite_border_rounded),
       CategoryData(label: '학업', value: study, icon: Icons.school_rounded),
       CategoryData(label: '대인', value: social, icon: Icons.people_rounded),
     ];

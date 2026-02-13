@@ -445,23 +445,20 @@ class SinsalDetailDataProvider {
   static List<String> get allSinsals => sinsalData.keys.toList();
 
   /// 길신만 가져오기
-  static List<String> get luckySinsals =>
-      sinsalData.entries
-          .where((e) => e.value['category'] == 'lucky')
-          .map((e) => e.key)
-          .toList();
+  static List<String> get luckySinsals => sinsalData.entries
+      .where((e) => e.value['category'] == 'lucky')
+      .map((e) => e.key)
+      .toList();
 
   /// 흉신만 가져오기
-  static List<String> get unluckySinsals =>
-      sinsalData.entries
-          .where((e) => e.value['category'] == 'unlucky')
-          .map((e) => e.key)
-          .toList();
+  static List<String> get unluckySinsals => sinsalData.entries
+      .where((e) => e.value['category'] == 'unlucky')
+      .map((e) => e.key)
+      .toList();
 
   /// 중립 신살만 가져오기
-  static List<String> get neutralSinsals =>
-      sinsalData.entries
-          .where((e) => e.value['category'] == 'neutral')
-          .map((e) => e.key)
-          .toList();
+  static List<String> get neutralSinsals => sinsalData.entries
+      .where((e) => e.value['category'] == 'neutral')
+      .map((e) => e.key)
+      .toList();
 }

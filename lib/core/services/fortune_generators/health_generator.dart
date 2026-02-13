@@ -31,8 +31,10 @@ class HealthGenerator {
       final healthContext = await surveyService.getHealthFortuneContext();
       Logger.info('[HealthGenerator] 개인화 컨텍스트 로드');
       Logger.info('   - birthDate: ${healthContext['birthDate']}');
-      Logger.info('   - sajuData: ${healthContext['sajuData'] != null ? '있음' : '없음'}');
-      Logger.info('   - previousSurvey: ${healthContext['previousSurvey'] != null ? '있음' : '없음'}');
+      Logger.info(
+          '   - sajuData: ${healthContext['sajuData'] != null ? '있음' : '없음'}');
+      Logger.info(
+          '   - previousSurvey: ${healthContext['previousSurvey'] != null ? '있음' : '없음'}');
 
       // API Payload 구성 (기존 + 개인화 데이터)
       final payload = {
@@ -85,21 +87,27 @@ class HealthGenerator {
         overallHealth = overallHealthRaw;
       } else if (overallHealthRaw is Map) {
         // Map인 경우 첫 번째 값 사용 또는 전체 내용 조합
-        overallHealth = (overallHealthRaw as Map<String, dynamic>).values.join(' ');
+        overallHealth =
+            (overallHealthRaw as Map<String, dynamic>).values.join(' ');
       } else {
         overallHealth = '건강하십니다.';
       }
 
       // ✅ 오행 조언 데이터 로깅
       final elementAdvice = data['element_advice'] as Map<String, dynamic>?;
-      final personalizedFeedback = data['personalized_feedback'] as Map<String, dynamic>?;
+      final personalizedFeedback =
+          data['personalized_feedback'] as Map<String, dynamic>?;
       if (elementAdvice != null) {
-        Logger.info('[HealthGenerator] 오행 조언: 부족=${elementAdvice['lacking_element']}, 강함=${elementAdvice['dominant_element']}');
+        Logger.info(
+            '[HealthGenerator] 오행 조언: 부족=${elementAdvice['lacking_element']}, 강함=${elementAdvice['dominant_element']}');
       }
       if (personalizedFeedback != null) {
-        final improvements = (personalizedFeedback['improvements'] as List?)?.length ?? 0;
-        final concerns = (personalizedFeedback['concerns'] as List?)?.length ?? 0;
-        Logger.info('[HealthGenerator] 개인화 피드백: 개선 $improvements개, 주의 $concerns개');
+        final improvements =
+            (personalizedFeedback['improvements'] as List?)?.length ?? 0;
+        final concerns =
+            (personalizedFeedback['concerns'] as List?)?.length ?? 0;
+        Logger.info(
+            '[HealthGenerator] 개인화 피드백: 개선 $improvements개, 주의 $concerns개');
       }
 
       final result = FortuneResult(
@@ -109,7 +117,11 @@ class HealthGenerator {
         summary: {
           'score': healthScore,
           'message': overallHealth,
-          'emoji': healthScore >= 80 ? '💚' : healthScore >= 60 ? '💛' : '🧡',
+          'emoji': healthScore >= 80
+              ? '💚'
+              : healthScore >= 60
+                  ? '💛'
+                  : '🧡',
           // ✅ 오행 정보 요약 추가
           if (elementAdvice != null) ...{
             'lacking_element': elementAdvice['lacking_element'],
@@ -154,6 +166,7 @@ class HealthGenerator {
           chronicCondition: conditions.chronicCondition,
         ))
         .then((_) => Logger.info('[HealthGenerator] 설문 저장 완료'))
-        .catchError((e) => Logger.warning('[HealthGenerator] 설문 저장 실패 (무시): $e'));
+        .catchError(
+            (e) => Logger.warning('[HealthGenerator] 설문 저장 실패 (무시): $e'));
   }
 }

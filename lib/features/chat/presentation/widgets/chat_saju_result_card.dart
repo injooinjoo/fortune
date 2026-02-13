@@ -435,5 +435,4 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
       ],
     );
   }
-
 }

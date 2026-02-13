@@ -13,11 +13,12 @@ class TestAccountService {
   // Toggle premium status for test accounts
   Future<bool> togglePremium(String userId, bool enabled) async {
     try {
-      final response = await _supabase.rpc(
-        'toggle_test_account_premium',
-        params: {
-          'user_id': userId,  // This is the auth user ID which is same as profile ID
-          'enabled': null});
+      final response =
+          await _supabase.rpc('toggle_test_account_premium', params: {
+        'user_id':
+            userId, // This is the auth user ID which is same as profile ID
+        'enabled': null
+      });
 
       if (response == null) {
         throw Exception('Failed to toggle premium status');
@@ -32,10 +33,8 @@ class TestAccountService {
   // Check if user is a test account
   Future<bool> isTestAccount(String email) async {
     try {
-      final response = await _supabase.rpc(
-        'is_test_account',
-        params: {
-          'user_email': email});
+      final response =
+          await _supabase.rpc('is_test_account', params: {'user_email': email});
 
       return response == true;
     } catch (e) {

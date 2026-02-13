@@ -37,7 +37,6 @@ class BodyPartHealthSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-
           ...concernedParts.map((bph) {
             return Container(
               margin: const EdgeInsets.only(bottom: 16),
@@ -63,7 +62,8 @@ class BodyPartHealthSection extends StatelessWidget {
                       ),
                       const Spacer(),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: Color(bph.level.colorValue),
                           borderRadius: BorderRadius.circular(12),

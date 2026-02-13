@@ -115,7 +115,7 @@ class ImageTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.surfaceSecondary.withValues(alpha:0.5),
+        color: context.colors.surfaceSecondary.withValues(alpha: 0.5),
         borderRadius: DSRadius.mdBorder,
       ),
       child: Text(
@@ -294,7 +294,7 @@ class _TarotCard extends StatelessWidget {
               vertical: 2,
             ),
             decoration: BoxDecoration(
-              color: context.colors.textTertiary.withValues(alpha:0.2),
+              color: context.colors.textTertiary.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
@@ -358,18 +358,17 @@ class DreamImageTemplate extends StatelessWidget {
 
   Widget _buildBadge(BuildContext context) {
     final color = isGoodDream ? context.colors.success : context.colors.error;
-    final icon = isGoodDream
-        ? Icons.wb_sunny_rounded
-        : Icons.nights_stay_rounded;
+    final icon =
+        isGoodDream ? Icons.wb_sunny_rounded : Icons.nights_stay_rounded;
     final label = isGoodDream ? '길몽' : '흉몽';
 
     return Container(
       padding: const EdgeInsets.all(DSSpacing.lg),
       decoration: BoxDecoration(
-        color: color.withValues(alpha:0.1),
+        color: color.withValues(alpha: 0.1),
         shape: BoxShape.circle,
         border: Border.all(
-          color: color.withValues(alpha:0.3),
+          color: color.withValues(alpha: 0.3),
           width: 2,
         ),
       ),
@@ -416,7 +415,7 @@ class DreamImageTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.accent.withValues(alpha:0.1),
+        color: context.colors.accent.withValues(alpha: 0.1),
         borderRadius: DSRadius.mdBorder,
       ),
       child: Row(
@@ -545,7 +544,7 @@ class PastLifeImageTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.accent.withValues(alpha:0.1),
+        color: context.colors.accent.withValues(alpha: 0.1),
         borderRadius: DSRadius.mdBorder,
       ),
       child: Row(
@@ -617,10 +616,10 @@ class WishImageTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.lg),
       decoration: BoxDecoration(
-        color: color.withValues(alpha:0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: DSRadius.lgBorder,
         border: Border.all(
-          color: color.withValues(alpha:0.3),
+          color: color.withValues(alpha: 0.3),
           width: 2,
         ),
       ),
@@ -646,9 +645,7 @@ class WishImageTemplate extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: List.generate(5, (index) {
               return Icon(
-                index < stars
-                    ? Icons.star_rounded
-                    : Icons.star_outline_rounded,
+                index < stars ? Icons.star_rounded : Icons.star_outline_rounded,
                 size: 24,
                 color: index < stars ? color : context.colors.textTertiary,
               );
@@ -663,7 +660,7 @@ class WishImageTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.surfaceSecondary.withValues(alpha:0.5),
+        color: context.colors.surfaceSecondary.withValues(alpha: 0.5),
         borderRadius: DSRadius.mdBorder,
       ),
       child: Column(
@@ -843,7 +840,7 @@ class FaceReadingImageTemplate extends StatelessWidget {
             vertical: DSSpacing.xs,
           ),
           decoration: BoxDecoration(
-            color: context.colors.surfaceSecondary.withValues(alpha:0.5),
+            color: context.colors.surfaceSecondary.withValues(alpha: 0.5),
             borderRadius: DSRadius.mdBorder,
           ),
           child: Column(
@@ -888,7 +885,7 @@ class FaceReadingImageTemplate extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(DSSpacing.md),
             decoration: BoxDecoration(
-              color: context.colors.surfaceSecondary.withValues(alpha:0.5),
+              color: context.colors.surfaceSecondary.withValues(alpha: 0.5),
               borderRadius: DSRadius.mdBorder,
             ),
             child: Column(
@@ -936,7 +933,7 @@ class FaceReadingImageTemplate extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(DSSpacing.md),
             decoration: BoxDecoration(
-              color: context.colors.surfaceSecondary.withValues(alpha:0.5),
+              color: context.colors.surfaceSecondary.withValues(alpha: 0.5),
               borderRadius: DSRadius.mdBorder,
             ),
             child: Row(
@@ -971,7 +968,7 @@ class FaceReadingImageTemplate extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(DSSpacing.sm),
             decoration: BoxDecoration(
-              color: context.colors.accent.withValues(alpha:0.1),
+              color: context.colors.accent.withValues(alpha: 0.1),
               borderRadius: DSRadius.smBorder,
             ),
             child: Row(
@@ -1083,7 +1080,7 @@ class TalismanImageTemplate extends StatelessWidget {
             borderRadius: DSRadius.lgBorder,
             boxShadow: [
               BoxShadow(
-                color: context.colors.accent.withValues(alpha:0.3),
+                color: context.colors.accent.withValues(alpha: 0.3),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),

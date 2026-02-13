@@ -80,9 +80,9 @@ class TestAuthService {
 
       // Create or get test account
       final testEmail = const String.fromEnvironment('TEST_ACCOUNT_EMAIL',
-                                                    defaultValue: 'test@fortune.com');
+          defaultValue: 'test@fortune.com');
       final testPassword = const String.fromEnvironment('TEST_ACCOUNT_PASSWORD',
-                                                        defaultValue: 'Test123!@#');
+          defaultValue: 'Test123!@#');
 
       debugPrint('🔧 Test: Attempting auto-login with $testEmail');
 
@@ -109,9 +109,11 @@ class TestAuthService {
       if (response.user != null) {
         // Store test session info
         await prefs.setString(_testUserIdKey, response.user!.id);
-        await prefs.setString(_testSessionKey, response.session?.accessToken ?? '');
+        await prefs.setString(
+            _testSessionKey, response.session?.accessToken ?? '');
 
-        debugPrint('🔧 Test: Auto-login successful for user ${response.user!.id}');
+        debugPrint(
+            '🔧 Test: Auto-login successful for user ${response.user!.id}');
         return true;
       }
 
@@ -180,7 +182,7 @@ class TestAuthService {
 
     final currentUser = _supabase.auth.currentUser;
     return currentUser?.userMetadata?['test_account'] == true ||
-           currentUser?.email?.contains('test') == true;
+        currentUser?.email?.contains('test') == true;
   }
 
   /// Mock fortune response for testing
@@ -204,7 +206,8 @@ class TestAuthService {
     if (isTestMode()) {
       debugPrint('🔧 Test: Test mode enabled');
       debugPrint('🔧 Test: Bypass auth: ${_shouldBypassAuth()}');
-      debugPrint('🔧 Test: Test account: ${const String.fromEnvironment('TEST_ACCOUNT_EMAIL')}');
+      debugPrint(
+          '🔧 Test: Test account: ${const String.fromEnvironment('TEST_ACCOUNT_EMAIL')}');
     }
   }
 }

@@ -25,12 +25,36 @@ class OverallCard extends StatefulWidget {
 class _OverallCardState extends State<OverallCard> {
   /// 인사이트 민화 이미지 목록 (6개)
   static const List<Map<String, String>> _overallImages = [
-    {'image': 'assets/images/minhwa/minhwa_overall_tiger.webp', 'emoji': '🐅', 'label': '호랑이 민화'},
-    {'image': 'assets/images/minhwa/minhwa_overall_dragon.webp', 'emoji': '🐉', 'label': '용 민화'},
-    {'image': 'assets/images/minhwa/minhwa_overall_moon.webp', 'emoji': '🌕', 'label': '보름달 민화'},
-    {'image': 'assets/images/minhwa/minhwa_overall_phoenix.webp', 'emoji': '🦅', 'label': '봉황 민화'},
-    {'image': 'assets/images/minhwa/minhwa_overall_sunrise.webp', 'emoji': '🌅', 'label': '일출 민화'},
-    {'image': 'assets/images/minhwa/minhwa_overall_turtle.webp', 'emoji': '🐢', 'label': '거북이 민화'},
+    {
+      'image': 'assets/images/minhwa/minhwa_overall_tiger.webp',
+      'emoji': '🐅',
+      'label': '호랑이 민화'
+    },
+    {
+      'image': 'assets/images/minhwa/minhwa_overall_dragon.webp',
+      'emoji': '🐉',
+      'label': '용 민화'
+    },
+    {
+      'image': 'assets/images/minhwa/minhwa_overall_moon.webp',
+      'emoji': '🌕',
+      'label': '보름달 민화'
+    },
+    {
+      'image': 'assets/images/minhwa/minhwa_overall_phoenix.webp',
+      'emoji': '🦅',
+      'label': '봉황 민화'
+    },
+    {
+      'image': 'assets/images/minhwa/minhwa_overall_sunrise.webp',
+      'emoji': '🌅',
+      'label': '일출 민화'
+    },
+    {
+      'image': 'assets/images/minhwa/minhwa_overall_turtle.webp',
+      'emoji': '🐢',
+      'label': '거북이 민화'
+    },
   ];
 
   /// 오늘 날짜 기반 이미지 선택 (하루 동안 일관성 유지)
@@ -66,7 +90,9 @@ class _OverallCardState extends State<OverallCard> {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               // 다크모드에서 더 밝은 배경으로 가독성 개선
-              color: context.isDark ? DSColors.surfaceSecondary : context.colors.surface, // 다크 모달 배경
+              color: context.isDark
+                  ? DSColors.surfaceSecondary
+                  : context.colors.surface, // 다크 모달 배경
               borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
@@ -89,7 +115,8 @@ class _OverallCardState extends State<OverallCard> {
                       onPressed: () => Navigator.of(ctx).pop(),
                       icon: Icon(
                         Icons.close,
-                        color: context.colors.textPrimary.withValues(alpha: 0.5),
+                        color:
+                            context.colors.textPrimary.withValues(alpha: 0.5),
                       ),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
@@ -108,7 +135,8 @@ class _OverallCardState extends State<OverallCard> {
                     child: Text(
                       widget.fullDescription,
                       style: ctx.bodyMedium.copyWith(
-                        color: context.colors.textPrimary.withValues(alpha: 0.8),
+                        color:
+                            context.colors.textPrimary.withValues(alpha: 0.8),
                         height: 1.8,
                       ),
                     ),
@@ -137,7 +165,9 @@ class _OverallCardState extends State<OverallCard> {
           margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: context.isDark ? DSColors.surface : DSColors.backgroundSecondaryDark,
+            color: context.isDark
+                ? DSColors.surface
+                : DSColors.backgroundSecondaryDark,
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
@@ -149,8 +179,14 @@ class _OverallCardState extends State<OverallCard> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: context.isDark
-                        ? [DSColors.surfaceSecondary, DSColors.surface] // 고유 색상(dark gradient start)
-                        : [DSColors.backgroundSecondaryDark, const Color(0xFFEDE8DC)], // 고유 색상(light gradient end)
+                          ? [
+                              DSColors.surfaceSecondary,
+                              DSColors.surface
+                            ] // 고유 색상(dark gradient start)
+                          : [
+                              DSColors.backgroundSecondaryDark,
+                              const Color(0xFFEDE8DC)
+                            ], // 고유 색상(light gradient end)
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
@@ -167,7 +203,8 @@ class _OverallCardState extends State<OverallCard> {
                         Text(
                           minhwaInfo['label']!,
                           style: context.labelMedium.copyWith(
-                            color: context.colors.textPrimary.withValues(alpha: 0.5),
+                            color: context.colors.textPrimary
+                                .withValues(alpha: 0.5),
                           ),
                         ),
                       ],
@@ -177,9 +214,10 @@ class _OverallCardState extends State<OverallCard> {
               },
             ),
           ),
-        ).animate()
-          .fadeIn(duration: 600.ms)
-          .scale(begin: const Offset(0.95, 0.95), duration: 600.ms, curve: Curves.easeOut),
+        ).animate().fadeIn(duration: 600.ms).scale(
+            begin: const Offset(0.95, 0.95),
+            duration: 600.ms,
+            curve: Curves.easeOut),
 
         // 헤더 (카드 제목 - category_detail_card와 통일)
         Row(
@@ -239,9 +277,10 @@ class _OverallCardState extends State<OverallCard> {
                     ),
                   ),
                 ],
-              ).animate()
-                .fadeIn(duration: 500.ms)
-                .scale(begin: const Offset(0.9, 0.9), duration: 500.ms, curve: Curves.easeOut),
+              ).animate().fadeIn(duration: 500.ms).scale(
+                  begin: const Offset(0.9, 0.9),
+                  duration: 500.ms,
+                  curve: Curves.easeOut),
 
               const SizedBox(height: DSSpacing.md),
 
@@ -265,21 +304,21 @@ class _OverallCardState extends State<OverallCard> {
                         color: scoreColor,
                         borderRadius: BorderRadius.circular(1.5),
                       ),
-                    ).animate()
-                      .scaleX(
-                        begin: 0,
-                        duration: 1000.ms,
-                        curve: Curves.easeOutCubic,
-                        alignment: Alignment.centerLeft,
-                      ),
+                    ).animate().scaleX(
+                          begin: 0,
+                          duration: 1000.ms,
+                          curve: Curves.easeOutCubic,
+                          alignment: Alignment.centerLeft,
+                        ),
                   ),
                 ],
               ),
             ],
           ),
-        ).animate()
-          .fadeIn(duration: 400.ms)
-          .slideY(begin: 0.08, duration: 500.ms, curve: Curves.easeOut),
+        )
+            .animate()
+            .fadeIn(duration: 400.ms)
+            .slideY(begin: 0.08, duration: 500.ms, curve: Curves.easeOut),
 
         const SizedBox(height: 12),
 
@@ -303,9 +342,11 @@ class _OverallCardState extends State<OverallCard> {
               ),
             ),
           ),
-        ).animate()
-          .fadeIn(duration: 500.ms, delay: 300.ms)
-          .slideY(begin: 0.06, duration: 500.ms, delay: 300.ms, curve: Curves.easeOut),
+        ).animate().fadeIn(duration: 500.ms, delay: 300.ms).slideY(
+            begin: 0.06,
+            duration: 500.ms,
+            delay: 300.ms,
+            curve: Curves.easeOut),
 
         const SizedBox(height: 10),
 
@@ -359,9 +400,11 @@ class _OverallCardState extends State<OverallCard> {
               ],
             ),
           ),
-        ).animate()
-          .fadeIn(duration: 500.ms, delay: 400.ms)
-          .slideY(begin: 0.06, duration: 500.ms, delay: 400.ms, curve: Curves.easeOut),
+        ).animate().fadeIn(duration: 500.ms, delay: 400.ms).slideY(
+            begin: 0.06,
+            duration: 500.ms,
+            delay: 400.ms,
+            curve: Curves.easeOut),
       ],
     );
   }

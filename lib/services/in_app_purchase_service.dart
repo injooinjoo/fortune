@@ -11,14 +11,15 @@ import '../core/constants/in_app_products.dart';
 import '../shared/components/toast.dart';
 
 class InAppPurchaseService {
-  static final InAppPurchaseService _instance = InAppPurchaseService._internal();
+  static final InAppPurchaseService _instance =
+      InAppPurchaseService._internal();
   factory InAppPurchaseService() => _instance;
   InAppPurchaseService._internal();
 
   final InAppPurchase _inAppPurchase = InAppPurchase.instance;
   final ApiClient _apiClient = ApiClient();
   // final TokenService _tokenService = TokenService();
-  
+
   StreamSubscription<List<PurchaseDetails>>? _subscription;
   List<ProductDetails> _products = [];
   bool _isAvailable = false;
@@ -36,34 +37,40 @@ class InAppPurchaseService {
   bool get isAvailable => _isAvailable;
   bool get purchasePending => _purchasePending;
   List<ProductDetails> get products => _products;
-  
+
   // UI callbacks
   BuildContext? _context;
   void Function()? onPurchaseStarted;
   void Function(String message)? onPurchaseSuccess;
+
   /// 결제 완료 시 상품 정보와 함께 호출되는 콜백
   /// productId: 상품 ID, productName: 상품명, tokenAmount: 토큰 수량
-  void Function(String productId, String productName, int tokenAmount)? onPurchaseCompleted;
+  void Function(String productId, String productName, int tokenAmount)?
+      onPurchaseCompleted;
+
   /// 구독 활성화 완료 시 호출되는 콜백
   void Function(String productId, bool isSubscription)? onSubscriptionActivated;
   void Function(String error)? onPurchaseError;
   void Function()? onPurchaseCanceled;
+
   /// 구매 복원 완료 시 호출되는 콜백
   /// [hasRestoredItems]: 복원된 항목이 있는지 여부
   /// [restoredCount]: 복원된 항목 수
   void Function(bool hasRestoredItems, int restoredCount)? onRestoreCompleted;
-  
+
   // Set context for UI notifications
   void setContext(BuildContext context) {
     _context = context;
   }
-  
+
   // Set UI callbacks
   void setCallbacks({
     void Function()? onPurchaseStarted,
     void Function(String message)? onPurchaseSuccess,
-    void Function(String productId, String productName, int tokenAmount)? onPurchaseCompleted,
-    void Function(String productId, bool isSubscription)? onSubscriptionActivated,
+    void Function(String productId, String productName, int tokenAmount)?
+        onPurchaseCompleted,
+    void Function(String productId, bool isSubscription)?
+        onSubscriptionActivated,
     void Function(String error)? onPurchaseError,
     void Function()? onPurchaseCanceled,
     void Function(bool hasRestoredItems, int restoredCount)? onRestoreCompleted,
@@ -76,7 +83,7 @@ class InAppPurchaseService {
     this.onPurchaseCanceled = onPurchaseCanceled;
     this.onRestoreCompleted = onRestoreCompleted;
   }
-  
+
   // 초기화
   Future<void> initialize() async {
     try {
@@ -86,36 +93,38 @@ class InAppPurchaseService {
         Logger.error('인앱 결제를 사용할 수 없습니다.');
         return;
       }
-      
+
       // 구매 업데이트 리스너 설정
-      final Stream<List<PurchaseDetails>> purchaseUpdated = 
+      final Stream<List<PurchaseDetails>> purchaseUpdated =
           _inAppPurchase.purchaseStream;
       _subscription = purchaseUpdated.listen(
         _onPurchaseUpdate,
         onDone: _onPurchaseDone,
-        onError: _onPurchaseError,);
-      
+        onError: _onPurchaseError,
+      );
+
       // 상품 정보 로드
       await loadProducts();
-      
+
       // iOS에서 미완료 거래 처리
       if (!kIsWeb && Platform.isIOS) {
         final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition =
-            _inAppPurchase.getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
+            _inAppPurchase
+                .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
         await iosPlatformAddition.setDelegate(InAppPurchaseStoreKitDelegate());
       }
-      
+
       Logger.info('인앱 결제 서비스 초기화 완료');
     } catch (e) {
       Logger.error('인앱 결제 초기화 실패', e);
     }
   }
-  
+
   // 상품 정보 로드
   Future<void> loadProducts() async {
     try {
-      final ProductDetailsResponse response = await _inAppPurchase.queryProductDetails(
-        InAppProducts.allProductIds.toSet());
+      final ProductDetailsResponse response = await _inAppPurchase
+          .queryProductDetails(InAppProducts.allProductIds.toSet());
 
       if (response.error != null) {
         Logger.error('오류: ${response.error}');
@@ -139,40 +148,39 @@ class InAppPurchaseService {
       Logger.error('상품 정보 로드 실패', e);
     }
   }
-  
+
   // 구매 처리
   Future<bool> purchaseProduct(String productId) async {
     if (!_isAvailable) {
       throw Exception('인앱 결제를 사용할 수 없습니다.');
     }
-    
+
     if (_purchasePending) {
       throw Exception('이미 구매가 진행 중입니다.');
     }
-    
+
     // 상품 찾기
     ProductDetails? productDetails;
     try {
-      productDetails = _products.firstWhere(
-        (product) => product.id == productId);
+      productDetails =
+          _products.firstWhere((product) => product.id == productId);
     } catch (e) {
       throw Exception('상품을 찾을 수 없습니다: $productId');
     }
-    
+
     // 구매 파라미터 설정
-    final PurchaseParam purchaseParam = PurchaseParam(
-      productDetails: productDetails);
-    
+    final PurchaseParam purchaseParam =
+        PurchaseParam(productDetails: productDetails);
+
     try {
       _purchasePending = true;
-      
+
       // 소모성 상품인지 구독 상품인지 확인
       if (_isConsumable(productId)) {
-        return await _inAppPurchase.buyConsumable(
-          purchaseParam: purchaseParam);
+        return await _inAppPurchase.buyConsumable(purchaseParam: purchaseParam);
       } else {
         return await _inAppPurchase.buyNonConsumable(
-          purchaseParam: purchaseParam);
+            purchaseParam: purchaseParam);
       }
     } catch (e) {
       _purchasePending = false;
@@ -180,14 +188,14 @@ class InAppPurchaseService {
       throw Exception('구매를 시작할 수 없습니다.');
     }
   }
-  
+
   // 구매 업데이트 처리
   void _onPurchaseUpdate(List<PurchaseDetails> purchaseDetailsList) {
     for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
       _handlePurchaseUpdate(purchaseDetails);
     }
   }
-  
+
   // 개별 구매 처리
   Future<void> _handlePurchaseUpdate(PurchaseDetails purchaseDetails) async {
     final purchaseId = purchaseDetails.purchaseID;
@@ -195,10 +203,14 @@ class InAppPurchaseService {
     Logger.info('status: ${purchaseDetails.status}');
     Logger.info('purchaseID: $purchaseId');
     Logger.info('productID: ${purchaseDetails.productID}');
-    Logger.info('pendingCompletePurchase: ${purchaseDetails.pendingCompletePurchase}');
-    Logger.info('verificationData.source: ${purchaseDetails.verificationData.source}');
-    Logger.info('verificationData.localVerificationData 길이: ${purchaseDetails.verificationData.localVerificationData.length}');
-    Logger.info('verificationData.serverVerificationData 길이: ${purchaseDetails.verificationData.serverVerificationData.length}');
+    Logger.info(
+        'pendingCompletePurchase: ${purchaseDetails.pendingCompletePurchase}');
+    Logger.info(
+        'verificationData.source: ${purchaseDetails.verificationData.source}');
+    Logger.info(
+        'verificationData.localVerificationData 길이: ${purchaseDetails.verificationData.localVerificationData.length}');
+    Logger.info(
+        'verificationData.serverVerificationData 길이: ${purchaseDetails.verificationData.serverVerificationData.length}');
     Logger.info('============================================');
 
     switch (purchaseDetails.status) {
@@ -216,7 +228,8 @@ class InAppPurchaseService {
             _processedPurchaseIds.add(purchaseId);
           }
           // 복원 시 카운트 증가
-          if (purchaseDetails.status == PurchaseStatus.restored && _isRestoring) {
+          if (purchaseDetails.status == PurchaseStatus.restored &&
+              _isRestoring) {
             _restoredCount++;
             Logger.info('복원된 구매 카운트: $_restoredCount');
           }
@@ -240,7 +253,7 @@ class InAppPurchaseService {
       await _inAppPurchase.completePurchase(purchaseDetails);
     }
   }
-  
+
   // 상품 전달
   Future<void> _deliverProduct(PurchaseDetails purchaseDetails) async {
     try {
@@ -265,7 +278,8 @@ class InAppPurchaseService {
       Logger.info('✅ 구매 검증 성공! 토큰 추가 처리 시작...');
 
       // 토큰 상품인 경우 토큰 추가
-      final productInfo = InAppProducts.productDetails[purchaseDetails.productID];
+      final productInfo =
+          InAppProducts.productDetails[purchaseDetails.productID];
       Logger.info('📦 productInfo 조회 결과:');
       Logger.info('   - productID: ${purchaseDetails.productID}');
       Logger.info('   - productInfo 존재: ${productInfo != null}');
@@ -274,28 +288,29 @@ class InAppPurchaseService {
         Logger.info('   - points: ${productInfo.points}');
       }
 
-      if (productInfo != null && !productInfo.isSubscription && productInfo.points > 0) {
+      if (productInfo != null &&
+          !productInfo.isSubscription &&
+          productInfo.points > 0) {
         Logger.info('✅ 토큰 상품 확인! ${productInfo.points}개 토큰 추가 완료 (서버에서 처리됨)');
       } else {
         Logger.info('⚠️ 토큰 상품 아님 또는 조건 미충족');
       }
-      
+
       // 구독 상품인 경우 구독 활성화
       if (_isSubscription(purchaseDetails.productID)) {
         await _activateSubscription(purchaseDetails);
       }
-      
+
       _purchasePending = false;
-      
+
       // 성공 알림
       _showSuccessNotification(purchaseDetails.productID);
-      
     } catch (e) {
       Logger.error('상품 전달 실패', e);
       _purchasePending = false;
     }
   }
-  
+
   // 구매 검증
   Future<bool> _verifyPurchase(PurchaseDetails purchaseDetails) async {
     try {
@@ -303,13 +318,15 @@ class InAppPurchaseService {
       if (!kIsWeb && Platform.isAndroid) {
         // Android 영수증 데이터
         verificationData['platform'] = 'android';
-        verificationData['purchaseToken'] = purchaseDetails.verificationData.serverVerificationData;
+        verificationData['purchaseToken'] =
+            purchaseDetails.verificationData.serverVerificationData;
         verificationData['productId'] = purchaseDetails.productID;
         verificationData['orderId'] = purchaseDetails.purchaseID;
       } else if (!kIsWeb && Platform.isIOS) {
         // iOS 영수증 데이터
         verificationData['platform'] = 'ios';
-        verificationData['receipt'] = purchaseDetails.verificationData.serverVerificationData;
+        verificationData['receipt'] =
+            purchaseDetails.verificationData.serverVerificationData;
         verificationData['productId'] = purchaseDetails.productID;
         verificationData['transactionId'] = purchaseDetails.purchaseID;
       }
@@ -317,14 +334,16 @@ class InAppPurchaseService {
       Logger.info('========== 🔍 구매 검증 요청 ==========');
       Logger.info('platform: ${verificationData['platform']}');
       Logger.info('productId: ${verificationData['productId']}');
-      Logger.info('transactionId/orderId: ${verificationData['transactionId'] ?? verificationData['orderId']}');
-      Logger.info('receipt 길이: ${(verificationData['receipt'] ?? verificationData['purchaseToken'] ?? '').toString().length}');
+      Logger.info(
+          'transactionId/orderId: ${verificationData['transactionId'] ?? verificationData['orderId']}');
+      Logger.info(
+          'receipt 길이: ${(verificationData['receipt'] ?? verificationData['purchaseToken'] ?? '').toString().length}');
       Logger.info('=========================================');
 
       // 서버에 검증 요청
       final response = await _apiClient.post<Map<String, dynamic>>(
-        '/payment-verify-purchase',
-        data: verificationData);
+          '/payment-verify-purchase',
+          data: verificationData);
 
       Logger.info('========== ✅ 구매 검증 응답 ==========');
       Logger.info('전체 응답: $response');
@@ -334,7 +353,6 @@ class InAppPurchaseService {
       Logger.info('=========================================');
 
       return response['valid'] ?? false;
-
     } catch (e, stackTrace) {
       Logger.error('========== ❌ 구매 검증 오류 ==========');
       Logger.error('오류: $e');
@@ -343,16 +361,16 @@ class InAppPurchaseService {
       return false;
     }
   }
-  
+
   // 구독 활성화
   Future<void> _activateSubscription(PurchaseDetails purchaseDetails) async {
     try {
-      await _apiClient.post(
-        '/subscription-activate',
-        data: {
-          'productId': purchaseDetails.productID,
-          'purchaseId': purchaseDetails.purchaseID,
-          'platform': kIsWeb ? 'web' : (!kIsWeb && Platform.isIOS ? 'ios' : 'android')});
+      await _apiClient.post('/subscription-activate', data: {
+        'productId': purchaseDetails.productID,
+        'purchaseId': purchaseDetails.purchaseID,
+        'platform':
+            kIsWeb ? 'web' : (!kIsWeb && Platform.isIOS ? 'ios' : 'android')
+      });
 
       Logger.info('구독 활성화되었습니다: ${purchaseDetails.productID}');
 
@@ -362,7 +380,7 @@ class InAppPurchaseService {
       Logger.error('구독 활성화 실패', e);
     }
   }
-  
+
   // 구매 복원
   Future<void> restorePurchases() async {
     try {
@@ -394,21 +412,21 @@ class InAppPurchaseService {
   // 구독 상태 확인
   Future<bool> isSubscriptionActive() async {
     try {
-      final response = await _apiClient.get<Map<String, dynamic>>(
-        '/subscription-status');
-      
+      final response =
+          await _apiClient.get<Map<String, dynamic>>('/subscription-status');
+
       return response['active'] ?? false;
     } catch (e) {
       Logger.error('구독 상태 확인 실패', e);
       return false;
     }
   }
-  
+
   // 상품 목록 가져오기
   List<ProductDetails> getProducts() {
     return _products;
   }
-  
+
   // 특정 상품 가져오기
   ProductDetails? getProduct(String productId) {
     try {
@@ -417,7 +435,7 @@ class InAppPurchaseService {
       return null;
     }
   }
-  
+
   // 소모성 상품인지 확인
   bool _isConsumable(String productId) {
     final productInfo = InAppProducts.productDetails[productId];
@@ -429,38 +447,32 @@ class InAppPurchaseService {
     final productInfo = InAppProducts.productDetails[productId];
     return productInfo != null && productInfo.isSubscription;
   }
-  
+
   // UI 알림 메서드들
   void _showPendingUI() {
     Logger.info('구매가 진행 중입니다...');
-    
+
     // Show loading UI using callback or toast
     if (onPurchaseStarted != null) {
       onPurchaseStarted!();
     } else if (_context != null) {
-      Toast.show(
-        _context!,
-        message: '구매가 진행 중입니다...',
-        type: ToastType.info);
+      Toast.show(_context!, message: '구매가 진행 중입니다...', type: ToastType.info);
     }
   }
-  
+
   void _handleError(IAPError error) {
     Logger.error('오류: ${error.code} - ${error.message}');
     _purchasePending = false;
-    
+
     // Show error UI using callback or toast
     final errorMessage = _getErrorMessage(error.code);
     if (onPurchaseError != null) {
       onPurchaseError!(errorMessage);
     } else if (_context != null) {
-      Toast.show(
-        _context!,
-        message: errorMessage,
-        type: ToastType.error);
+      Toast.show(_context!, message: errorMessage, type: ToastType.error);
     }
   }
-  
+
   void _showSuccessNotification(String productId) {
     Logger.info('구매 완료 - productId: $productId');
 
@@ -497,13 +509,10 @@ class InAppPurchaseService {
     if (onPurchaseSuccess != null) {
       onPurchaseSuccess!(message);
     } else if (_context != null) {
-      Toast.show(
-        _context!,
-        message: message,
-        type: ToastType.success);
+      Toast.show(_context!, message: message, type: ToastType.success);
     }
   }
-  
+
   // Helper method to get user-friendly error messages
   String _getErrorMessage(String errorCode) {
     switch (errorCode) {
@@ -555,15 +564,15 @@ class InAppPurchaseService {
         return '구매 중 오류가 발생했습니다. 다시 시도해주세요';
     }
   }
-  
+
   void _onPurchaseDone() {
     _subscription?.cancel();
   }
-  
+
   void _onPurchaseError(dynamic error) {
     Logger.error('구매 스트림 오류', error);
   }
-  
+
   // 리소스 정리
   void dispose() {
     _subscription?.cancel();
@@ -574,11 +583,10 @@ class InAppPurchaseService {
 class InAppPurchaseStoreKitDelegate extends SKPaymentQueueDelegateWrapper {
   @override
   bool shouldContinueTransaction(
-    SKPaymentTransactionWrapper transaction,
-    SKStorefrontWrapper storefront) {
+      SKPaymentTransactionWrapper transaction, SKStorefrontWrapper storefront) {
     return true;
   }
-  
+
   @override
   bool shouldShowPriceConsent() {
     return false;

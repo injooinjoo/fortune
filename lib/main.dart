@@ -134,12 +134,15 @@ void main() async {
         Logger.warning('Chat Sync Service initialization failed: $e');
       }
     } else {
-      debugPrint('⚠️ [STARTUP] Supabase connection failed, offline mode enabled');
-      Logger.warning('Supabase connection failed (optional feature, using offline mode)');
+      debugPrint(
+          '⚠️ [STARTUP] Supabase connection failed, offline mode enabled');
+      Logger.warning(
+          'Supabase connection failed (optional feature, using offline mode)');
     }
   } catch (e) {
     debugPrint('❌ [STARTUP] Supabase initialization error: $e');
-    Logger.warning('Supabase initialization failed (optional feature, using offline mode): $e');
+    Logger.warning(
+        'Supabase initialization failed (optional feature, using offline mode): $e');
   }
 
   // Initialize Firebase Remote Config (synchronously to ensure Firebase is ready)
@@ -150,7 +153,8 @@ void main() async {
     Logger.info('Remote Config initialized successfully');
   } catch (e) {
     debugPrint('⚠️ [STARTUP] Remote Config initialization failed: $e');
-    Logger.warning('Remote Config initialization failed (using default values): $e');
+    Logger.warning(
+        'Remote Config initialization failed (using default values): $e');
   }
 
   // Initialize Social Login SDKs with error handling
@@ -239,7 +243,8 @@ void main() async {
       Logger.info('FCM Service initialized successfully');
     } catch (e) {
       debugPrint('⚠️ [STARTUP] FCM Service initialization failed: $e');
-      Logger.warning('FCM Service initialization failed (optional feature): $e');
+      Logger.warning(
+          'FCM Service initialization failed (optional feature): $e');
     }
   }
 
@@ -252,7 +257,8 @@ void main() async {
       Logger.info('Deep Link Service initialized successfully');
     } catch (e) {
       debugPrint('⚠️ [STARTUP] Deep Link Service initialization failed: $e');
-      Logger.warning('Deep Link Service initialization failed (optional feature): $e');
+      Logger.warning(
+          'Deep Link Service initialization failed (optional feature): $e');
     }
   }
 

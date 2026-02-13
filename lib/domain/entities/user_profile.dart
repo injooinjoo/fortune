@@ -21,26 +21,26 @@ class UserProfile extends Equatable {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  const UserProfile({
-    required this.id,
-    required this.email,
-    required this.name,
-    this.birthdate,
-    this.birthTime,
-    this.isLunar = false,
-    this.gender,
-    this.mbti,
-    this.bloodType,
-    this.zodiacSign,
-    this.zodiacAnimal,
-    required this.onboardingCompleted,
-    this.isPremium = false,
-    this.premiumExpiry,
-    this.tokenBalance = 0,
-    this.preferences,
-    this.sajuCalculated = false,
-    required this.createdAt,
-    required this.updatedAt});
+  const UserProfile(
+      {required this.id,
+      required this.email,
+      required this.name,
+      this.birthdate,
+      this.birthTime,
+      this.isLunar = false,
+      this.gender,
+      this.mbti,
+      this.bloodType,
+      this.zodiacSign,
+      this.zodiacAnimal,
+      required this.onboardingCompleted,
+      this.isPremium = false,
+      this.premiumExpiry,
+      this.tokenBalance = 0,
+      this.preferences,
+      this.sajuCalculated = false,
+      required this.createdAt,
+      required this.updatedAt});
 
   // 프로필 완성도 계산
   double get completionPercentage {
@@ -84,19 +84,29 @@ class UserProfile extends Equatable {
   // 띠 계산 (12간지)
   String? calculateZodiacAnimal() {
     if (birthdate == null) return null;
-    
+
     const animals = [
-      '쥐', '소', '호랑이', '토끼', '용', '뱀',
-      '말', '양', '원숭이', '닭', '개', '돼지'
+      '쥐',
+      '소',
+      '호랑이',
+      '토끼',
+      '용',
+      '뱀',
+      '말',
+      '양',
+      '원숭이',
+      '닭',
+      '개',
+      '돼지'
     ];
-    
+
     // 음력 변환이 필요한 경우 처리 (간단한 근사치)
     final int year = birthdate!.year;
     if (isLunar) {
       // 음력->양력 변환 로직 필요
       // 여기서는 간단히 처리
     }
-    
+
     // 1900년이 쥐띠 시작
     final index = (year - 1900) % 12;
     return '${animals[index]}띠';
@@ -105,10 +115,10 @@ class UserProfile extends Equatable {
   // 별자리 계산
   String? calculateZodiacSign() {
     if (birthdate == null) return null;
-    
+
     final month = birthdate!.month;
     final day = birthdate!.day;
-    
+
     if ((month == 3 && day >= 21) || (month == 4 && day <= 19)) return '양자리';
     if ((month == 4 && day >= 20) || (month == 5 && day <= 20)) return '황소자리';
     if ((month == 5 && day >= 21) || (month == 6 && day <= 20)) return '쌍둥이자리';
@@ -134,56 +144,72 @@ class UserProfile extends Equatable {
       'bloodType': bloodType,
       'zodiacSign': zodiacSign,
       'zodiacAnimal': null,
-      ...?preferences};
+      ...?preferences
+    };
   }
 
-  UserProfile copyWith({
-    String? id,
-    String? email,
-    String? name,
-    DateTime? birthdate,
-    String? birthTime,
-    bool? isLunar,
-    String? gender,
-    String? mbti,
-    String? bloodType,
-    String? zodiacSign,
-    String? zodiacAnimal,
-    bool? onboardingCompleted,
-    bool? isPremium,
-    DateTime? premiumExpiry,
-    int? tokenBalance,
-    Map<String, dynamic>? preferences,
-    bool? sajuCalculated,
-    DateTime? createdAt,
-    DateTime? updatedAt}) {
+  UserProfile copyWith(
+      {String? id,
+      String? email,
+      String? name,
+      DateTime? birthdate,
+      String? birthTime,
+      bool? isLunar,
+      String? gender,
+      String? mbti,
+      String? bloodType,
+      String? zodiacSign,
+      String? zodiacAnimal,
+      bool? onboardingCompleted,
+      bool? isPremium,
+      DateTime? premiumExpiry,
+      int? tokenBalance,
+      Map<String, dynamic>? preferences,
+      bool? sajuCalculated,
+      DateTime? createdAt,
+      DateTime? updatedAt}) {
     return UserProfile(
-      id: id ?? this.id,
-      email: email ?? this.email,
-      name: name ?? this.name,
-      birthdate: birthdate ?? this.birthdate,
-      birthTime: birthTime ?? this.birthTime,
-      isLunar: isLunar ?? this.isLunar,
-      gender: gender ?? this.gender,
-      mbti: mbti ?? this.mbti,
-      bloodType: bloodType ?? this.bloodType,
-      zodiacSign: zodiacSign ?? this.zodiacSign,
-      zodiacAnimal: zodiacAnimal ?? this.zodiacAnimal,
-      onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
-      isPremium: isPremium ?? this.isPremium,
-      premiumExpiry: premiumExpiry ?? this.premiumExpiry,
-      tokenBalance: tokenBalance ?? this.tokenBalance,
-      preferences: preferences ?? this.preferences,
-      sajuCalculated: sajuCalculated ?? this.sajuCalculated,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt);
+        id: id ?? this.id,
+        email: email ?? this.email,
+        name: name ?? this.name,
+        birthdate: birthdate ?? this.birthdate,
+        birthTime: birthTime ?? this.birthTime,
+        isLunar: isLunar ?? this.isLunar,
+        gender: gender ?? this.gender,
+        mbti: mbti ?? this.mbti,
+        bloodType: bloodType ?? this.bloodType,
+        zodiacSign: zodiacSign ?? this.zodiacSign,
+        zodiacAnimal: zodiacAnimal ?? this.zodiacAnimal,
+        onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
+        isPremium: isPremium ?? this.isPremium,
+        premiumExpiry: premiumExpiry ?? this.premiumExpiry,
+        tokenBalance: tokenBalance ?? this.tokenBalance,
+        preferences: preferences ?? this.preferences,
+        sajuCalculated: sajuCalculated ?? this.sajuCalculated,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt);
   }
 
   @override
   List<Object?> get props => [
-    id, email, name, birthdate, birthTime, isLunar, gender,
-    mbti, bloodType, zodiacSign, zodiacAnimal, onboardingCompleted,
-    isPremium, premiumExpiry, tokenBalance, preferences, sajuCalculated, 
-    createdAt, updatedAt
-  ];
+        id,
+        email,
+        name,
+        birthdate,
+        birthTime,
+        isLunar,
+        gender,
+        mbti,
+        bloodType,
+        zodiacSign,
+        zodiacAnimal,
+        onboardingCompleted,
+        isPremium,
+        premiumExpiry,
+        tokenBalance,
+        preferences,
+        sajuCalculated,
+        createdAt,
+        updatedAt
+      ];
 }

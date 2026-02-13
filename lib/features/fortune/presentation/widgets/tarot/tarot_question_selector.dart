@@ -27,10 +27,10 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  
+
   final TextEditingController _customController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-  
+
   // 템플릿 질문들
   static const List<Map<String, dynamic>> _templateQuestions = [
     {
@@ -63,12 +63,12 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
   @override
   void initState() {
     super.initState();
-    
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    
+
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -76,7 +76,7 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
-    
+
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.1),
       end: Offset.zero,
@@ -84,9 +84,9 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
       parent: _animationController,
       curve: Curves.easeOutCubic,
     ));
-    
+
     _animationController.forward();
-    
+
     // 기존 커스텀 질문이 있으면 텍스트 필드에 설정
     if (widget.customQuestion != null) {
       _customController.text = widget.customQuestion!;
@@ -103,12 +103,13 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('🟠 TarotQuestionSelector build - selectedQuestion: ${widget.selectedQuestion}');
+    debugPrint(
+        '🟠 TarotQuestionSelector build - selectedQuestion: ${widget.selectedQuestion}');
     final isDark = context.isDark;
     final colors = context.colors;
     final typography = context.typography;
     final hasSelection = widget.selectedQuestion != null ||
-                        (widget.customQuestion?.isNotEmpty == true);
+        (widget.customQuestion?.isNotEmpty == true);
     final hasCustomInput = widget.customQuestion?.isNotEmpty == true;
 
     return FadeTransition(
@@ -154,8 +155,10 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                   // 템플릿 질문들
                   ...List.generate(_templateQuestions.length, (index) {
                     final question = _templateQuestions[index];
-                    final isSelected = widget.selectedQuestion == question['question'];
-                    debugPrint('🔶 Question "${question['question']}" - isSelected: $isSelected');
+                    final isSelected =
+                        widget.selectedQuestion == question['question'];
+                    debugPrint(
+                        '🔶 Question "${question['question']}" - isSelected: $isSelected');
 
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 12),
@@ -166,10 +169,13 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                         isSelected: isSelected,
                         isDark: isDark,
                         onTap: () {
-                          debugPrint('🔵 Question tapped: ${question['question']}');
+                          debugPrint(
+                              '🔵 Question tapped: ${question['question']}');
                           _focusNode.unfocus();
-                          widget.onQuestionSelected(question['question'] as String);
-                          debugPrint('🔵 onQuestionSelected called with: ${question['question']}');
+                          widget.onQuestionSelected(
+                              question['question'] as String);
+                          debugPrint(
+                              '🔵 onQuestionSelected called with: ${question['question']}');
                           // 템플릿 질문을 선택하면 커스텀 입력 완전히 초기화
                           _customController.clear();
                           // widget.onCustomQuestionChanged(''); // 제거 - 이게 _selectedQuestion을 null로 만듦
@@ -222,12 +228,14 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                       onChanged: (value) {
                         widget.onCustomQuestionChanged(value);
                         // 커스텀 질문을 입력하면 템플릿 선택 해제
-                        if (value.isNotEmpty && widget.selectedQuestion != null) {
+                        if (value.isNotEmpty &&
+                            widget.selectedQuestion != null) {
                           widget.onQuestionSelected('');
                         }
                       },
                       decoration: InputDecoration(
-                        hintText: '궁금한 것을 자유롭게 입력해주세요\n예: 새로운 직장에서 잘 적응할 수 있을까요?',
+                        hintText:
+                            '궁금한 것을 자유롭게 입력해주세요\n예: 새로운 직장에서 잘 적응할 수 있을까요?',
                         hintStyle: TextStyle(
                           color: colors.textTertiary,
                           height: 1.4,
@@ -274,9 +282,7 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
       borderRadius: BorderRadius.circular(DSRadius.md),
       child: Ink(
         decoration: BoxDecoration(
-          color: isSelected
-              ? color.withValues(alpha: 0.1)
-              : colors.surface,
+          color: isSelected ? color.withValues(alpha: 0.1) : colors.surface,
           border: Border.all(
             color: isSelected ? color : colors.border,
             width: isSelected ? 2 : 1,
@@ -308,9 +314,7 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
                   height: 40,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: isSelected
-                        ? color
-                        : color.withValues(alpha: 0.1),
+                    color: isSelected ? color : color.withValues(alpha: 0.1),
                   ),
                   child: Icon(
                     icon,

@@ -311,7 +311,8 @@ class _StorageManagementWidgetState extends State<StorageManagementWidget> {
               Icon(
                 Icons.cloud_download_outlined,
                 size: 48,
-                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                color:
+                    theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
               ),
               const SizedBox(height: 8),
               Text(

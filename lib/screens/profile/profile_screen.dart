@@ -475,7 +475,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       : null,
                 ),
                 // 로컬 스토리지 이름 우선 (사용자가 직접 입력한 이름), DB 이름 폴백
-                title: localProfile?['name'] ?? userProfile?['name'] ?? context.l10n.user,
+                title: localProfile?['name'] ??
+                    userProfile?['name'] ??
+                    context.l10n.user,
                 subtitle: _formatProfileSubtitle(),
                 trailing: Icon(
                   Icons.chevron_right,
@@ -582,7 +584,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   icon: Icons.visibility_outlined,
                   title: context.l10n.totalExplorations,
                   trailing: Text(
-                    context.l10n.timesCount(userStats?['total_fortunes_viewed'] ?? 0),
+                    context.l10n
+                        .timesCount(userStats?['total_fortunes_viewed'] ?? 0),
                     style: context.bodyMedium.copyWith(
                       color: _getSecondaryTextColor(context),
                     ),
@@ -635,7 +638,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
               ),
               child: Theme(
-                data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                data: Theme.of(context)
+                    .copyWith(dividerColor: Colors.transparent),
                 child: ExpansionTile(
                   initiallyExpanded: false,
                   tilePadding: const EdgeInsets.symmetric(
@@ -666,7 +670,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       title: context.l10n.birthdate,
                       trailing: Text(
                         _formatBirthDate(
-                            (userProfile ?? localProfile)?['birth_date'], context),
+                            (userProfile ?? localProfile)?['birth_date'],
+                            context),
                         style: context.bodyMedium.copyWith(
                           color: _getSecondaryTextColor(context),
                         ),
@@ -678,7 +683,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       icon: Icons.access_time_outlined,
                       title: context.l10n.birthTime,
                       trailing: Text(
-                        (userProfile ?? localProfile)?['birth_time'] ?? context.l10n.notEntered,
+                        (userProfile ?? localProfile)?['birth_time'] ??
+                            context.l10n.notEntered,
                         style: context.bodyMedium.copyWith(
                           color: _getSecondaryTextColor(context),
                         ),
@@ -690,7 +696,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       icon: Icons.pets_outlined,
                       title: context.l10n.chineseZodiac,
                       trailing: Text(
-                        (userProfile ?? localProfile)?['chinese_zodiac'] ?? context.l10n.notEntered,
+                        (userProfile ?? localProfile)?['chinese_zodiac'] ??
+                            context.l10n.notEntered,
                         style: context.bodyMedium.copyWith(
                           color: _getSecondaryTextColor(context),
                         ),
@@ -701,7 +708,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       icon: Icons.stars_outlined,
                       title: context.l10n.zodiacSign,
                       trailing: Text(
-                        (userProfile ?? localProfile)?['zodiac_sign'] ?? context.l10n.notEntered,
+                        (userProfile ?? localProfile)?['zodiac_sign'] ??
+                            context.l10n.notEntered,
                         style: context.bodyMedium.copyWith(
                           color: _getSecondaryTextColor(context),
                         ),
@@ -713,7 +721,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       title: context.l10n.bloodType,
                       trailing: Text(
                         (userProfile ?? localProfile)?['blood_type'] != null
-                            ? context.l10n.bloodTypeFormat((userProfile ?? localProfile)!['blood_type'])
+                            ? context.l10n.bloodTypeFormat(
+                                (userProfile ?? localProfile)!['blood_type'])
                             : context.l10n.notEntered,
                         style: context.bodyMedium.copyWith(
                           color: _getSecondaryTextColor(context),
@@ -885,7 +894,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        ref.watch(userSettingsProvider).hapticEnabled ? 'ON' : 'OFF',
+                        ref.watch(userSettingsProvider).hapticEnabled
+                            ? 'ON'
+                            : 'OFF',
                         style: context.bodyMedium.copyWith(
                           color: ref.watch(userSettingsProvider).hapticEnabled
                               ? context.colors.accent
@@ -1090,8 +1101,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       children: [
         SectionHeader(title: context.l10n.aiCharacterChat),
         Container(
-          margin: const EdgeInsets.symmetric(
-              horizontal: DSSpacing.pageHorizontal),
+          margin:
+              const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
           decoration: BoxDecoration(
             color: context.colors.surface,
             borderRadius: BorderRadius.circular(DSRadius.md),
@@ -1124,14 +1135,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         : null,
                   ),
                   title: stats.topCharacter!.name,
-                  subtitle: '${stats.topPhaseName} · ${stats.topLoveEmoji} ${stats.topAffinityPercent}%',
+                  subtitle:
+                      '${stats.topPhaseName} · ${stats.topLoveEmoji} ${stats.topAffinityPercent}%',
                   trailing: Icon(
                     Icons.chevron_right,
                     color: _getSecondaryTextColor(context),
                   ),
                   onTap: () {
                     ref.read(fortuneHapticServiceProvider).buttonTap();
-                    context.push('/character/${stats.topCharacter!.id}', extra: stats.topCharacter);
+                    context.push('/character/${stats.topCharacter!.id}',
+                        extra: stats.topCharacter);
                   },
                 )
               else

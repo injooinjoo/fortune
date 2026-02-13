@@ -187,7 +187,8 @@ class ParseResult {
   });
 
   bool get isSuccess => error == null;
-  bool get hasWarning => error == ParseError.tooFewMessages || error == ParseError.groupChat;
+  bool get hasWarning =>
+      error == ParseError.tooFewMessages || error == ParseError.groupChat;
 
   String get errorMessage {
     switch (error) {

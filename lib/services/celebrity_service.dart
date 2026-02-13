@@ -141,11 +141,8 @@ class CelebrityService {
   /// Get celebrity by ID
   Future<Celebrity?> getCelebrityById(String id) async {
     try {
-      final response = await _supabase
-          .from('celebrities')
-          .select()
-          .eq('id', id)
-          .single();
+      final response =
+          await _supabase.from('celebrities').select().eq('id', id).single();
 
       return Celebrity.fromJson(response);
     } catch (e) {
@@ -214,10 +211,8 @@ class CelebrityService {
         orConditions.add('legal_name.ilike.$pattern');
       }
 
-      var queryBuilder = _supabase
-          .from('celebrities')
-          .select()
-          .or(orConditions.join(','));
+      var queryBuilder =
+          _supabase.from('celebrities').select().or(orConditions.join(','));
 
       if (type != null) {
         queryBuilder = queryBuilder.eq('celebrity_type', type.name);
@@ -231,11 +226,10 @@ class CelebrityService {
         queryBuilder = queryBuilder.eq('nationality', nationality);
       }
 
-      final response = await queryBuilder
-          .order('name')
-          .limit(limit);
+      final response = await queryBuilder.order('name').limit(limit);
 
-      final List<Celebrity> results = response.map((json) => Celebrity.fromJson(json)).toList();
+      final List<Celebrity> results =
+          response.map((json) => Celebrity.fromJson(json)).toList();
 
       // 그룹명으로 추가 검색 (profession_data에서)
       if (results.length < limit) {
@@ -343,9 +337,7 @@ class CelebrityService {
         queryBuilder = queryBuilder.eq('celebrity_type', type.name);
       }
 
-      final response = await queryBuilder
-          .order('name')
-          .limit(limit);
+      final response = await queryBuilder.order('name').limit(limit);
 
       return response.map((json) => Celebrity.fromJson(json)).toList();
     } catch (e) {
@@ -355,7 +347,8 @@ class CelebrityService {
   }
 
   /// Get celebrities with same birthday
-  Future<List<Celebrity>> getCelebritiesWithSameBirthday(DateTime birthDate) async {
+  Future<List<Celebrity>> getCelebritiesWithSameBirthday(
+      DateTime birthDate) async {
     try {
       final dateString = birthDate.toIso8601String().split('T')[0];
       final response = await _supabase
@@ -372,7 +365,8 @@ class CelebrityService {
   }
 
   /// Get celebrities with external links
-  Future<List<Celebrity>> getCelebritiesWithExternalLinks(String platform) async {
+  Future<List<Celebrity>> getCelebritiesWithExternalLinks(
+      String platform) async {
     try {
       final response = await _supabase
           .from('celebrities')
@@ -407,7 +401,8 @@ class CelebrityService {
   /// Get streamers by platform
   Future<List<Celebrity>> getStreamersByPlatform(String platform) async {
     try {
-      final response = await _supabase.rpc('get_streamers_by_platform', params: {
+      final response =
+          await _supabase.rpc('get_streamers_by_platform', params: {
         'platform': platform,
         'limit_count': 50,
       });
@@ -437,7 +432,8 @@ class CelebrityService {
   /// Get business leaders by industry
   Future<List<Celebrity>> getBusinessLeadersByIndustry(String industry) async {
     try {
-      final response = await _supabase.rpc('get_business_leaders_by_industry', params: {
+      final response =
+          await _supabase.rpc('get_business_leaders_by_industry', params: {
         'industry_name': industry,
         'limit_count': 50,
       });
@@ -452,7 +448,8 @@ class CelebrityService {
   /// Get idol members by group
   Future<List<Celebrity>> getIdolMembersByGroup(String groupName) async {
     try {
-      final response = await _supabase.rpc('get_idol_members_by_group', params: {
+      final response =
+          await _supabase.rpc('get_idol_members_by_group', params: {
         'group_name': groupName,
         'limit_count': 50,
       });
@@ -467,7 +464,8 @@ class CelebrityService {
   /// Get solo singers by genre
   Future<List<Celebrity>> getSoloSingersByGenre(String genre) async {
     try {
-      final response = await _supabase.rpc('get_solo_singers_by_genre', params: {
+      final response =
+          await _supabase.rpc('get_solo_singers_by_genre', params: {
         'genre': genre,
         'limit_count': 50,
       });
@@ -599,9 +597,7 @@ class CelebrityService {
   /// Get celebrity analytics
   Future<List<Map<String, dynamic>>> getCelebrityAnalytics() async {
     try {
-      final response = await _supabase
-          .from('celebrity_analytics')
-          .select();
+      final response = await _supabase.from('celebrity_analytics').select();
 
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {

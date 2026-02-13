@@ -9,14 +9,15 @@ import 'storage_service.dart';
 
 /// 운세 히스토리 관리 서비스
 class FortuneHistoryService {
-  static final FortuneHistoryService _instance = FortuneHistoryService._internal();
+  static final FortuneHistoryService _instance =
+      FortuneHistoryService._internal();
   factory FortuneHistoryService() => _instance;
   FortuneHistoryService._internal();
 
   static const String _tableName = 'fortune_history';
   final _supabase = Supabase.instance.client;
   final _uuid = const Uuid();
-  
+
   // 중복 호출 방지를 위한 캐시
   List<int>? _cachedDailyScores;
   DateTime? _lastCacheTime;
@@ -46,18 +47,19 @@ class FortuneHistoryService {
 
       // 같은 날 같은 타입의 운세가 이미 있는지 확인
       final existingFortune = await _supabase
-        .from(_tableName)
-        .select('id')
-        .eq('user_id', userId)
-        .eq('fortune_type', fortuneType)
-        .gte('created_at', todayStart.toIso8601String())
-        .lt('created_at', todayEnd.toIso8601String())
-        .maybeSingle();
+          .from(_tableName)
+          .select('id')
+          .eq('user_id', userId)
+          .eq('fortune_type', fortuneType)
+          .gte('created_at', todayStart.toIso8601String())
+          .lt('created_at', todayEnd.toIso8601String())
+          .maybeSingle();
 
       // 이미 오늘 같은 타입의 운세가 있으면 UPDATE
       if (existingFortune != null) {
         final existingId = existingFortune['id'] as String;
-        Logger.debug('[FortuneHistoryService] Updating existing $fortuneType fortune for today: $existingId');
+        Logger.debug(
+            '[FortuneHistoryService] Updating existing $fortuneType fortune for today: $existingId');
 
         await _supabase.from(_tableName).update({
           'title': title,
@@ -70,7 +72,8 @@ class FortuneHistoryService {
           'mood': mood,
         }).eq('id', existingId);
 
-        Logger.info('[FortuneHistoryService] Fortune updated for today: $fortuneType ($existingId)');
+        Logger.info(
+            '[FortuneHistoryService] Fortune updated for today: $fortuneType ($existingId)');
         return existingId;
       }
 
@@ -95,11 +98,10 @@ class FortuneHistoryService {
         'mood': mood,
       };
 
-      await _supabase
-        .from(_tableName)
-        .insert(historyData);
+      await _supabase.from(_tableName).insert(historyData);
 
-      Logger.info('[FortuneHistoryService] Fortune saved to history: $fortuneType ($fortuneId)');
+      Logger.info(
+          '[FortuneHistoryService] Fortune saved to history: $fortuneType ($fortuneId)');
 
       // 통계 업데이트 (새로운 저장 시에만)
       try {
@@ -108,15 +110,16 @@ class FortuneHistoryService {
           StorageService(),
         );
         await statsService.incrementFortuneCount(userId, fortuneType);
-        Logger.info('[FortuneHistoryService] Statistics updated for $fortuneType');
+        Logger.info(
+            '[FortuneHistoryService] Statistics updated for $fortuneType');
       } catch (e) {
         Logger.warning('[FortuneHistoryService] 통계 업데이트 실패 (무시): $e');
       }
 
       return fortuneId;
-
     } catch (error) {
-      Logger.warning('[FortuneHistoryService] 운세 히스토리 저장 실패 (테이블 없음, 폴백 모드): $error');
+      Logger.warning(
+          '[FortuneHistoryService] 운세 히스토리 저장 실패 (테이블 없음, 폴백 모드): $error');
       return null;
     }
   }
@@ -124,12 +127,14 @@ class FortuneHistoryService {
   /// 운세 조회수 증가
   Future<void> incrementViewCount(String fortuneId) async {
     try {
-      await _supabase.rpc('increment_fortune_view_count', 
-        params: {'fortune_id': fortuneId});
-      
-      Logger.debug('[FortuneHistoryService] View count incremented: $fortuneId');
+      await _supabase.rpc('increment_fortune_view_count',
+          params: {'fortune_id': fortuneId});
+
+      Logger.debug(
+          '[FortuneHistoryService] View count incremented: $fortuneId');
     } catch (error) {
-      Logger.warning('[FortuneHistoryService] 조회수 증가 실패 (RPC 함수 없음, 무시): $error');
+      Logger.warning(
+          '[FortuneHistoryService] 조회수 증가 실패 (RPC 함수 없음, 무시): $error');
     }
   }
 
@@ -137,13 +142,14 @@ class FortuneHistoryService {
   Future<void> updateShareStatus(String fortuneId, bool isShared) async {
     try {
       await _supabase
-        .from(_tableName)
-        .update({'is_shared': isShared})
-        .eq('id', fortuneId);
-      
-      Logger.debug('[FortuneHistoryService] Share status updated: $fortuneId -> $isShared');
+          .from(_tableName)
+          .update({'is_shared': isShared}).eq('id', fortuneId);
+
+      Logger.debug(
+          '[FortuneHistoryService] Share status updated: $fortuneId -> $isShared');
     } catch (error) {
-      Logger.warning('[FortuneHistoryService] 공유 상태 업데이트 실패 (테이블 없음, 무시): $error');
+      Logger.warning(
+          '[FortuneHistoryService] 공유 상태 업데이트 실패 (테이블 없음, 무시): $error');
     }
   }
 
@@ -151,31 +157,35 @@ class FortuneHistoryService {
   Future<void> recordActualResult(String fortuneId, String actualResult) async {
     try {
       await _supabase
-        .from(_tableName)
-        .update({'actual_result': actualResult})
-        .eq('id', fortuneId);
-      
-      Logger.debug('[FortuneHistoryService] Actual result recorded: $fortuneId');
+          .from(_tableName)
+          .update({'actual_result': actualResult}).eq('id', fortuneId);
+
+      Logger.debug(
+          '[FortuneHistoryService] Actual result recorded: $fortuneId');
     } catch (error) {
-      Logger.warning('[FortuneHistoryService] 실제 결과 기록 실패 (테이블 없음, 무시): $error');
+      Logger.warning(
+          '[FortuneHistoryService] 실제 결과 기록 실패 (테이블 없음, 무시): $error');
     }
   }
 
   /// 운세 타입과 결과를 기반으로 태그 자동 생성
   List<String> _generateTags(String fortuneType, Map<String, dynamic> summary) {
     final tags = <String>[];
-    
+
     // 운세 타입 기반 태그
     if (fortuneType.contains('love')) tags.add('연애');
-    if (fortuneType.contains('money') || fortuneType.contains('wealth')) tags.add('금전');
-    if (fortuneType.contains('career') || fortuneType.contains('job')) tags.add('직업');
+    if (fortuneType.contains('money') || fortuneType.contains('wealth'))
+      tags.add('금전');
+    if (fortuneType.contains('career') || fortuneType.contains('job'))
+      tags.add('직업');
     if (fortuneType.contains('health')) tags.add('건강');
-    if (fortuneType.contains('daily') || fortuneType.contains('today')) tags.add('일일');
+    if (fortuneType.contains('daily') || fortuneType.contains('today'))
+      tags.add('일일');
     if (fortuneType.contains('weekly')) tags.add('주간');
     if (fortuneType.contains('monthly')) tags.add('월간');
     if (fortuneType.contains('moving')) tags.add('이사');
     if (fortuneType.contains('wish')) tags.add('소원');
-    
+
     // 점수 기반 태그
     final score = summary['score'] as int?;
     if (score != null) {
@@ -204,89 +214,86 @@ class FortuneHistoryService {
       if (userId == null) return [];
 
       final response = await _supabase
-        .from(_tableName)
-        .select()
-        .eq('user_id', userId)
-        .order('created_at', ascending: false)
-        .limit(limit);
+          .from(_tableName)
+          .select()
+          .eq('user_id', userId)
+          .order('created_at', ascending: false)
+          .limit(limit);
 
       return (response as List)
-        .map((json) => FortuneHistory.fromJson(json))
-        .toList();
-
+          .map((json) => FortuneHistory.fromJson(json))
+          .toList();
     } catch (error) {
-      Logger.warning('[FortuneHistoryService] 최근 히스토리 조회 실패 (테이블 없음, 빈 목록 반환): $error');
+      Logger.warning(
+          '[FortuneHistoryService] 최근 히스토리 조회 실패 (테이블 없음, 빈 목록 반환): $error');
       return [];
     }
   }
 
   /// 일일 운세 히스토리만 가져오기 (월별)
-  Future<List<FortuneHistory>> getDailyFortuneHistory({
-    DateTime? year,
-    DateTime? month,
-    int limit = 31
-  }) async {
+  Future<List<FortuneHistory>> getDailyFortuneHistory(
+      {DateTime? year, DateTime? month, int limit = 31}) async {
     try {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) return [];
 
       var query = _supabase
-        .from(_tableName)
-        .select()
-        .eq('user_id', userId)
-        .eq('fortune_type', 'daily');
+          .from(_tableName)
+          .select()
+          .eq('user_id', userId)
+          .eq('fortune_type', 'daily');
 
       // 월별 필터링
       if (month != null) {
         final startOfMonth = DateTime(month.year, month.month, 1);
         final endOfMonth = DateTime(month.year, month.month + 1, 0, 23, 59, 59);
         query = query
-          .gte('created_at', startOfMonth.toIso8601String())
-          .lte('created_at', endOfMonth.toIso8601String());
+            .gte('created_at', startOfMonth.toIso8601String())
+            .lte('created_at', endOfMonth.toIso8601String());
       }
       // 연도별 필터링
       else if (year != null) {
         final startOfYear = DateTime(year.year, 1, 1);
         final endOfYear = DateTime(year.year, 12, 31, 23, 59, 59);
         query = query
-          .gte('created_at', startOfYear.toIso8601String())
-          .lte('created_at', endOfYear.toIso8601String());
+            .gte('created_at', startOfYear.toIso8601String())
+            .lte('created_at', endOfYear.toIso8601String());
       }
 
-      final response = await query
-        .order('created_at', ascending: false)
-        .limit(limit);
+      final response =
+          await query.order('created_at', ascending: false).limit(limit);
 
       return (response as List)
-        .map((json) => FortuneHistory.fromJson(json))
-        .toList();
-
+          .map((json) => FortuneHistory.fromJson(json))
+          .toList();
     } catch (error) {
-      Logger.warning('[FortuneHistoryService] 일일 운세 히스토리 조회 실패 (테이블 없음, 빈 목록 반환): $error');
+      Logger.warning(
+          '[FortuneHistoryService] 일일 운세 히스토리 조회 실패 (테이블 없음, 빈 목록 반환): $error');
       return [];
     }
   }
 
   /// 특정 운세 타입의 히스토리 가져오기
-  Future<List<FortuneHistory>> getHistoryByType(String fortuneType, {int limit = 50}) async {
+  Future<List<FortuneHistory>> getHistoryByType(String fortuneType,
+      {int limit = 50}) async {
     try {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) return [];
 
       final response = await _supabase
-        .from(_tableName)
-        .select()
-        .eq('user_id', userId)
-        .eq('fortune_type', fortuneType)
-        .order('created_at', ascending: false)
-        .limit(limit);
+          .from(_tableName)
+          .select()
+          .eq('user_id', userId)
+          .eq('fortune_type', fortuneType)
+          .order('created_at', ascending: false)
+          .limit(limit);
 
       return (response as List)
-        .map((json) => FortuneHistory.fromJson(json))
-        .toList();
-
+          .map((json) => FortuneHistory.fromJson(json))
+          .toList();
     } catch (error) {
-      Logger.warning('[FortuneHistoryService] 타입별 히스토리 조회 실패 (테이블 없음, 빈 목록 반환): $error');
+      Logger.warning(
+          '[FortuneHistoryService] 타입별 히스토리 조회 실패 (테이블 없음, 빈 목록 반환): $error');
       return [];
     }
   }
@@ -305,33 +312,33 @@ class FortuneHistoryService {
 
       // 이미 오늘 일일 운세가 저장되어 있는지 확인
       final existingFortune = await _supabase
-        .from(_tableName)
-        .select('id')
-        .eq('user_id', userId)
-        .eq('fortune_type', 'daily')
-        .gte('created_at', DateTime(now.year, now.month, now.day).toIso8601String())
-        .lt('created_at', DateTime(now.year, now.month, now.day + 1).toIso8601String())
-        .maybeSingle();
-      
+          .from(_tableName)
+          .select('id')
+          .eq('user_id', userId)
+          .eq('fortune_type', 'daily')
+          .gte('created_at',
+              DateTime(now.year, now.month, now.day).toIso8601String())
+          .lt('created_at',
+              DateTime(now.year, now.month, now.day + 1).toIso8601String())
+          .maybeSingle();
+
       // 이미 오늘 운세가 있으면 업데이트
       if (existingFortune != null) {
-        Logger.debug('[FortuneHistoryService] Updating existing daily fortune for today');
-        await _supabase
-          .from(_tableName)
-          .update({
-            'title': title,
-            'summary': summary,
-            'metadata': metadata,
-            'tags': tags ?? _generateTags('daily', summary),
-            'view_count': 1,
-            'last_viewed_at': now.toIso8601String(),
-          })
-          .eq('id', existingFortune['id']);
-        
+        Logger.debug(
+            '[FortuneHistoryService] Updating existing daily fortune for today');
+        await _supabase.from(_tableName).update({
+          'title': title,
+          'summary': summary,
+          'metadata': metadata,
+          'tags': tags ?? _generateTags('daily', summary),
+          'view_count': 1,
+          'last_viewed_at': now.toIso8601String(),
+        }).eq('id', existingFortune['id']);
+
         Logger.info('[FortuneHistoryService] Daily fortune updated for today');
         return existingFortune['id'] as String;
       }
-      
+
       // 새로운 운세 저장
       final historyId = _uuid.v4();
       final fortuneHistory = FortuneHistory(
@@ -348,11 +355,10 @@ class FortuneHistoryService {
         lastViewedAt: now,
       );
 
-      await _supabase
-        .from(_tableName)
-        .insert(fortuneHistory.toJson());
+      await _supabase.from(_tableName).insert(fortuneHistory.toJson());
 
-      Logger.info('[FortuneHistoryService] Daily fortune saved: $title ($historyId)');
+      Logger.info(
+          '[FortuneHistoryService] Daily fortune saved: $title ($historyId)');
 
       // 통계 업데이트 (새로운 운세 저장 시에만)
       try {
@@ -361,15 +367,16 @@ class FortuneHistoryService {
           StorageService(),
         );
         await statsService.incrementFortuneCount(userId, 'daily');
-        Logger.info('[FortuneHistoryService] Statistics updated for daily fortune');
+        Logger.info(
+            '[FortuneHistoryService] Statistics updated for daily fortune');
       } catch (e) {
         Logger.warning('[FortuneHistoryService] 통계 업데이트 실패 (무시): $e');
       }
 
       return historyId;
-
     } catch (error) {
-      Logger.warning('[FortuneHistoryService] 일일 운세 저장 실패 (테이블 없음, 폴백 모드): $error');
+      Logger.warning(
+          '[FortuneHistoryService] 일일 운세 저장 실패 (테이블 없음, 폴백 모드): $error');
       return null;
     }
   }
@@ -381,14 +388,13 @@ class FortuneHistoryService {
       if (userId == null) return false;
 
       await _supabase
-        .from(_tableName)
-        .delete()
-        .eq('id', fortuneId)
-        .eq('user_id', userId); // 보안: 자신의 기록만 삭제
+          .from(_tableName)
+          .delete()
+          .eq('id', fortuneId)
+          .eq('user_id', userId); // 보안: 자신의 기록만 삭제
 
       Logger.info('[FortuneHistoryService] Fortune deleted: $fortuneId');
       return true;
-
     } catch (error) {
       Logger.warning('[FortuneHistoryService] 운세 삭제 실패 (테이블 없음, 무시): $error');
       return false;
@@ -403,7 +409,8 @@ class FortuneHistoryService {
     try {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) {
-        Logger.warning('[FortuneHistoryService] User not authenticated for cache lookup');
+        Logger.warning(
+            '[FortuneHistoryService] User not authenticated for cache lookup');
         return null;
       }
 
@@ -425,21 +432,25 @@ class FortuneHistoryService {
           .maybeSingle();
 
       if (response == null) {
-        Logger.debug('[FortuneHistoryService] No cached fortune found for $fortuneType');
+        Logger.debug(
+            '[FortuneHistoryService] No cached fortune found for $fortuneType');
         return null;
       }
 
       // 조건 해시 비교 (metadata에 저장된 해시와 비교)
       final savedHash = response['metadata']?['conditions_hash'] as String?;
       if (savedHash != null && savedHash != conditionsHash) {
-        Logger.debug('[FortuneHistoryService] Conditions hash mismatch for $fortuneType');
+        Logger.debug(
+            '[FortuneHistoryService] Conditions hash mismatch for $fortuneType');
         return null;
       }
 
-      Logger.info('[FortuneHistoryService] Cache HIT for $fortuneType (hash: $conditionsHash)');
+      Logger.info(
+          '[FortuneHistoryService] Cache HIT for $fortuneType (hash: $conditionsHash)');
       return FortuneHistory.fromJson(response);
     } catch (error) {
-      Logger.warning('[FortuneHistoryService] Cache lookup failed (fallback to API): $error');
+      Logger.warning(
+          '[FortuneHistoryService] Cache lookup failed (fallback to API): $error');
       return null;
     }
   }
@@ -515,11 +526,12 @@ class FortuneHistoryService {
     final now = DateTime.now();
     if (_cachedDailyScores != null && _lastCacheTime != null) {
       if (now.difference(_lastCacheTime!).compareTo(_cacheValidDuration) < 0) {
-        Logger.info('[FortuneHistoryService] Using cached 7 days scores: $_cachedDailyScores');
+        Logger.info(
+            '[FortuneHistoryService] Using cached 7 days scores: $_cachedDailyScores');
         return _cachedDailyScores!;
       }
     }
-    
+
     try {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) {
@@ -534,27 +546,31 @@ class FortuneHistoryService {
       });
 
       final List<int> scores = List.filled(7, 0);
-      
+
       if (response is List && response.isNotEmpty) {
         for (final item in response) {
           final dayOffset = item['day_offset'] as int?;
           final score = item['score'] as int?;
-          
-          if (dayOffset != null && dayOffset >= 0 && dayOffset < 7 && score != null) {
+
+          if (dayOffset != null &&
+              dayOffset >= 0 &&
+              dayOffset < 7 &&
+              score != null) {
             scores[dayOffset] = score;
           }
         }
       }
-      
+
       // 캐시에 저장
       _cachedDailyScores = scores;
       _lastCacheTime = now;
-      
-      Logger.info('[FortuneHistoryService] Retrieved 7 days scores from history DB: $scores');
-      return scores;
 
+      Logger.info(
+          '[FortuneHistoryService] Retrieved 7 days scores from history DB: $scores');
+      return scores;
     } catch (error) {
-      Logger.warning('[FortuneHistoryService] 7일 점수 조회 실패 (RPC 함수 없음, 폴백 데이터 사용): $error');
+      Logger.warning(
+          '[FortuneHistoryService] 7일 점수 조회 실패 (RPC 함수 없음, 폴백 데이터 사용): $error');
       _cachedDailyScores = List.filled(7, 0);
       _lastCacheTime = now;
       return _cachedDailyScores!;

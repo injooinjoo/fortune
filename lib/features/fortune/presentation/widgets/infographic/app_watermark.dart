@@ -59,7 +59,7 @@ class AppWatermark extends StatelessWidget {
         vertical: padding * 0.5,
       ),
       decoration: BoxDecoration(
-        color: context.colors.textPrimary.withValues(alpha:0.1),
+        color: context.colors.textPrimary.withValues(alpha: 0.1),
         borderRadius: DSRadius.smBorder,
       ),
       child: Row(
@@ -149,14 +149,14 @@ class AppWatermark extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            context.colors.accent.withValues(alpha:0.8),
-            context.colors.accentSecondary.withValues(alpha:0.8),
+            context.colors.accent.withValues(alpha: 0.8),
+            context.colors.accentSecondary.withValues(alpha: 0.8),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: context.colors.accent.withValues(alpha:0.3),
+            color: context.colors.accent.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -289,8 +289,7 @@ extension WatermarkPositionExtension on WatermarkPosition {
       this == WatermarkPosition.bottomCenter;
 
   bool get isLeft =>
-      this == WatermarkPosition.topLeft ||
-      this == WatermarkPosition.bottomLeft;
+      this == WatermarkPosition.topLeft || this == WatermarkPosition.bottomLeft;
 
   bool get isRight =>
       this == WatermarkPosition.topRight ||
@@ -331,10 +330,8 @@ class DateWatermark extends StatelessWidget {
     return switch (dateFormat) {
       DateWatermarkFormat.short =>
         '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}',
-      DateWatermarkFormat.long =>
-        '${date.year}년 ${date.month}월 ${date.day}일',
-      DateWatermarkFormat.monthDay =>
-        '${date.month}월 ${date.day}일',
+      DateWatermarkFormat.long => '${date.year}년 ${date.month}월 ${date.day}일',
+      DateWatermarkFormat.monthDay => '${date.month}월 ${date.day}일',
     };
   }
 
@@ -348,7 +345,7 @@ class DateWatermark extends StatelessWidget {
         vertical: padding * 0.5,
       ),
       decoration: BoxDecoration(
-        color: context.colors.textPrimary.withValues(alpha:0.1),
+        color: context.colors.textPrimary.withValues(alpha: 0.1),
         borderRadius: DSRadius.smBorder,
       ),
       child: Row(

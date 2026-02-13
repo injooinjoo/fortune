@@ -105,7 +105,8 @@ class TokenNotifier extends StateNotifier<TokenState> {
     for (int i = 0; i < 5; i++) {
       final user = ref.read(userProvider).value;
       if (user != null) {
-        Logger.info('🔄 [TokenNotifier] User ready, loading token data (attempt ${i + 1})');
+        Logger.info(
+            '🔄 [TokenNotifier] User ready, loading token data (attempt ${i + 1})');
         await loadTokenData();
         return;
       }
@@ -147,9 +148,11 @@ class TokenNotifier extends StateNotifier<TokenState> {
         isLoading: false,
       );
 
-      Logger.info('✅ [TokenNotifier] Token data loaded: balance=${balance.remainingTokens}, subscription=${subscription?.isActive}');
+      Logger.info(
+          '✅ [TokenNotifier] Token data loaded: balance=${balance.remainingTokens}, subscription=${subscription?.isActive}');
     } catch (e, stackTrace) {
-      Logger.error('❌ [TokenNotifier] Failed to load token data', e, stackTrace);
+      Logger.error(
+          '❌ [TokenNotifier] Failed to load token data', e, stackTrace);
       state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
@@ -340,7 +343,8 @@ class TokenNotifier extends StateNotifier<TokenState> {
         throw const UnauthorizedException('로그인이 필요합니다');
       }
 
-      final result = await _apiService.claimProfileCompletionBonus(userId: user.id);
+      final result =
+          await _apiService.claimProfileCompletionBonus(userId: user.id);
 
       if (result['bonusGranted'] == true && result['balance'] != null) {
         state = state.copyWith(
@@ -434,11 +438,13 @@ final canConsumeTokensProvider = Provider.family<bool, int>((ref, amount) {
   return ref.watch(tokenProvider).canConsumeTokens(amount);
 });
 
-final tokenConsumptionRateProvider = Provider.family<int, String>((ref, fortuneType) {
+final tokenConsumptionRateProvider =
+    Provider.family<int, String>((ref, fortuneType) {
   return ref.watch(tokenProvider).getTokensForFortuneType(fortuneType);
 });
 
-final tokenHistoryProvider = FutureProvider<List<TokenTransaction>>((ref) async {
+final tokenHistoryProvider =
+    FutureProvider<List<TokenTransaction>>((ref) async {
   final tokenNotifier = ref.read(tokenProvider.notifier);
   await tokenNotifier.loadTokenHistory();
   return ref.watch(tokenProvider).history;

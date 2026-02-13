@@ -132,7 +132,8 @@ class ExternalIds {
     this.x,
   });
 
-  factory ExternalIds.fromJson(Map<String, dynamic> json) => _$ExternalIdsFromJson(json);
+  factory ExternalIds.fromJson(Map<String, dynamic> json) =>
+      _$ExternalIdsFromJson(json);
   Map<String, dynamic> toJson() => _$ExternalIdsToJson(this);
 }
 
@@ -166,7 +167,8 @@ class ProGamerData implements ProfessionData {
     this.retired = false,
   });
 
-  factory ProGamerData.fromJson(Map<String, dynamic> json) => _$ProGamerDataFromJson(json);
+  factory ProGamerData.fromJson(Map<String, dynamic> json) =>
+      _$ProGamerDataFromJson(json);
   @override
   Map<String, dynamic> toJson() => _$ProGamerDataToJson(this);
 }
@@ -192,7 +194,8 @@ class StreamerData implements ProfessionData {
     this.avgViewersBucket,
   });
 
-  factory StreamerData.fromJson(Map<String, dynamic> json) => _$StreamerDataFromJson(json);
+  factory StreamerData.fromJson(Map<String, dynamic> json) =>
+      _$StreamerDataFromJson(json);
   @override
   Map<String, dynamic> toJson() => _$StreamerDataToJson(this);
 }
@@ -218,7 +221,8 @@ class PoliticianData implements ProfessionData {
     this.ideologyTags = const [],
   });
 
-  factory PoliticianData.fromJson(Map<String, dynamic> json) => _$PoliticianDataFromJson(json);
+  factory PoliticianData.fromJson(Map<String, dynamic> json) =>
+      _$PoliticianDataFromJson(json);
   @override
   Map<String, dynamic> toJson() => _$PoliticianDataToJson(this);
 }
@@ -242,7 +246,8 @@ class BusinessData implements ProfessionData {
     this.notableVentures = const [],
   });
 
-  factory BusinessData.fromJson(Map<String, dynamic> json) => _$BusinessDataFromJson(json);
+  factory BusinessData.fromJson(Map<String, dynamic> json) =>
+      _$BusinessDataFromJson(json);
   @override
   Map<String, dynamic> toJson() => _$BusinessDataToJson(this);
 }
@@ -266,7 +271,8 @@ class SoloSingerData implements ProfessionData {
     this.notableTracks = const [],
   });
 
-  factory SoloSingerData.fromJson(Map<String, dynamic> json) => _$SoloSingerDataFromJson(json);
+  factory SoloSingerData.fromJson(Map<String, dynamic> json) =>
+      _$SoloSingerDataFromJson(json);
   @override
   Map<String, dynamic> toJson() => _$SoloSingerDataToJson(this);
 }
@@ -275,7 +281,8 @@ class SoloSingerData implements ProfessionData {
 @JsonSerializable()
 class IdolMemberData implements ProfessionData {
   final String? groupName;
-  final List<String> position; // vocal, rap, dance, center, leader, maknae, visual
+  final List<String>
+      position; // vocal, rap, dance, center, leader, maknae, visual
   final String? debutDate;
   final String? label;
   final String? fandomName;
@@ -292,7 +299,8 @@ class IdolMemberData implements ProfessionData {
     this.soloActivities = const [],
   });
 
-  factory IdolMemberData.fromJson(Map<String, dynamic> json) => _$IdolMemberDataFromJson(json);
+  factory IdolMemberData.fromJson(Map<String, dynamic> json) =>
+      _$IdolMemberDataFromJson(json);
   @override
   Map<String, dynamic> toJson() => _$IdolMemberDataToJson(this);
 }
@@ -314,7 +322,8 @@ class ActorData implements ProfessionData {
     this.awards = const [],
   });
 
-  factory ActorData.fromJson(Map<String, dynamic> json) => _$ActorDataFromJson(json);
+  factory ActorData.fromJson(Map<String, dynamic> json) =>
+      _$ActorDataFromJson(json);
   @override
   Map<String, dynamic> toJson() => _$ActorDataToJson(this);
 }
@@ -342,7 +351,8 @@ class AthleteData implements ProfessionData {
     this.recordsPersonalBests = const [],
   });
 
-  factory AthleteData.fromJson(Map<String, dynamic> json) => _$AthleteDataFromJson(json);
+  factory AthleteData.fromJson(Map<String, dynamic> json) =>
+      _$AthleteDataFromJson(json);
   @override
   Map<String, dynamic> toJson() => _$AthleteDataToJson(this);
 }
@@ -447,7 +457,20 @@ class Celebrity {
   }
 
   String get chineseZodiac {
-    final zodiacAnimals = ['원숭이', '닭', '개', '돼지', '쥐', '소', '호랑이', '토끼', '용', '뱀', '말', '양'];
+    final zodiacAnimals = [
+      '원숭이',
+      '닭',
+      '개',
+      '돼지',
+      '쥐',
+      '소',
+      '호랑이',
+      '토끼',
+      '용',
+      '뱀',
+      '말',
+      '양'
+    ];
     return zodiacAnimals[birthDate.year % 12];
   }
 
@@ -456,13 +479,14 @@ class Celebrity {
 
   // Get all possible names for search
   List<String> get allNames => [
-    name,
-    if (stageName != null) stageName!,
-    if (legalName != null) legalName!,
-    ...aliases,
-  ];
+        name,
+        if (stageName != null) stageName!,
+        if (legalName != null) legalName!,
+        ...aliases,
+      ];
 
-  factory Celebrity.fromJson(Map<String, dynamic> json) => _$CelebrityFromJson(json);
+  factory Celebrity.fromJson(Map<String, dynamic> json) =>
+      _$CelebrityFromJson(json);
   Map<String, dynamic> toJson() => _$CelebrityToJson(this);
 
   Celebrity copyWith({
@@ -570,6 +594,7 @@ class CelebrityFilter {
     this.groupName,
   });
 
-  factory CelebrityFilter.fromJson(Map<String, dynamic> json) => _$CelebrityFilterFromJson(json);
+  factory CelebrityFilter.fromJson(Map<String, dynamic> json) =>
+      _$CelebrityFilterFromJson(json);
   Map<String, dynamic> toJson() => _$CelebrityFilterToJson(this);
 }

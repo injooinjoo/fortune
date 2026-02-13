@@ -32,8 +32,10 @@ class ExLoverGenerator {
     Logger.info('[ExLoverGenerator]   🌐 Edge Function: fortune-ex-lover');
     Logger.info('[ExLoverGenerator]   👤 user_id: $userId');
     Logger.info('[ExLoverGenerator]   💔 name: $userName');
-    Logger.info('[ExLoverGenerator]   📅 relationship_duration: ${inputConditions['relationship_duration']}');
-    Logger.info('[ExLoverGenerator]   💭 breakup_detail: ${inputConditions['breakup_detail']}');
+    Logger.info(
+        '[ExLoverGenerator]   📅 relationship_duration: ${inputConditions['relationship_duration']}');
+    Logger.info(
+        '[ExLoverGenerator]   💭 breakup_detail: ${inputConditions['breakup_detail']}');
 
     try {
       final requestBody = {
@@ -95,8 +97,8 @@ class ExLoverGenerator {
 
       return result;
     } catch (e, stackTrace) {
-      Logger.error(
-          '❌ [ExLoverGenerator] Failed to generate ex-lover fortune', e, stackTrace);
+      Logger.error('❌ [ExLoverGenerator] Failed to generate ex-lover fortune',
+          e, stackTrace);
       rethrow;
     }
   }

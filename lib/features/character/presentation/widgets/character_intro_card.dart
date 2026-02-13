@@ -49,7 +49,8 @@ class CharacterIntroCard extends StatelessWidget {
             spacing: 8,
             runSpacing: 4,
             alignment: WrapAlignment.center,
-            children: CharacterLocalizer.getTags(context, character.id).map((tag) {
+            children:
+                CharacterLocalizer.getTags(context, character.id).map((tag) {
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
@@ -135,7 +136,8 @@ class CharacterIntroCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  CharacterLocalizer.getPersonality(context, character.id).trim(),
+                  CharacterLocalizer.getPersonality(context, character.id)
+                      .trim(),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         height: 1.6,
                       ),

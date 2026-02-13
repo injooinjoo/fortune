@@ -45,9 +45,9 @@ class AdminNavigationCard extends StatelessWidget {
                 size: 28,
               ),
             ).animate().scale(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOutBack,
-            ),
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOutBack,
+                ),
             const SizedBox(width: 16),
             Expanded(
               child: Column(

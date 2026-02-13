@@ -62,24 +62,23 @@ final redisStatsProvider =
 // Computed providers for specific Redis stats
 final redisConnectionStatusProvider = Provider<bool>((ref) {
   return ref.watch(redisStatsProvider).maybeWhen(
-        data: (stats) => stats.connection.connected,
-        orElse: () => false);
+      data: (stats) => stats.connection.connected, orElse: () => false);
 });
 
 final redisCacheHitRateProvider = Provider<double>((ref) {
-  return ref.watch(redisStatsProvider).maybeWhen(
-        data: (stats) => stats.cache.hitRate,
-        orElse: () => 0.0);
+  return ref
+      .watch(redisStatsProvider)
+      .maybeWhen(data: (stats) => stats.cache.hitRate, orElse: () => 0.0);
 });
 
 final redisOperationStatsProvider = Provider<RedisOperationStats?>((ref) {
-  return ref.watch(redisStatsProvider).maybeWhen(
-        data: (stats) => stats.operations,
-        orElse: () => null);
+  return ref
+      .watch(redisStatsProvider)
+      .maybeWhen(data: (stats) => stats.operations, orElse: () => null);
 });
 
 final redisRateLimitsProvider = Provider<Map<String, RateLimitInfo>>((ref) {
-  return ref.watch(redisStatsProvider).maybeWhen(
-        data: (stats) => stats.rateLimits,
-        orElse: () => {});
+  return ref
+      .watch(redisStatsProvider)
+      .maybeWhen(data: (stats) => stats.rateLimits, orElse: () => {});
 });

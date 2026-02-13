@@ -328,9 +328,11 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildInfoChip(context, '🏛️', data['era'] ?? '', DSColors.warning),
+                _buildInfoChip(
+                    context, '🏛️', data['era'] ?? '', DSColors.warning),
                 const SizedBox(width: DSSpacing.sm),
-                _buildInfoChip(context, '📍', data['location'] ?? '', DSColors.warning),
+                _buildInfoChip(
+                    context, '📍', data['location'] ?? '', DSColors.warning),
               ],
             ),
           ],
@@ -339,7 +341,8 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
     );
   }
 
-  Widget _buildInfoChip(BuildContext context, String emoji, String text, Color color) {
+  Widget _buildInfoChip(
+      BuildContext context, String emoji, String text, Color color) {
     final typography = context.typography;
 
     return Container(
@@ -414,23 +417,23 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
             ),
             const SizedBox(height: DSSpacing.xs),
             ...keyEvents.take(3).map((event) => Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('🌟', style: TextStyle(fontSize: 12)),
-                  const SizedBox(width: DSSpacing.xs),
-                  Expanded(
-                    child: Text(
-                      event.toString(),
-                      style: typography.bodySmall.copyWith(
-                        color: colors.textSecondary,
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('🌟', style: TextStyle(fontSize: 12)),
+                      const SizedBox(width: DSSpacing.xs),
+                      Expanded(
+                        child: Text(
+                          event.toString(),
+                          style: typography.bodySmall.copyWith(
+                            color: colors.textSecondary,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            )),
+                )),
           ],
           if (data['emotional_bond'] != null) ...[
             const SizedBox(height: DSSpacing.sm),
@@ -578,23 +581,23 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
             ),
             const SizedBox(height: DSSpacing.xs),
             ...signs.take(3).map((sign) => Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('✨', style: TextStyle(fontSize: 12)),
-                  const SizedBox(width: DSSpacing.xs),
-                  Expanded(
-                    child: Text(
-                      sign.toString(),
-                      style: typography.bodySmall.copyWith(
-                        color: colors.textSecondary,
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('✨', style: TextStyle(fontSize: 12)),
+                      const SizedBox(width: DSSpacing.xs),
+                      Expanded(
+                        child: Text(
+                          sign.toString(),
+                          style: typography.bodySmall.copyWith(
+                            color: colors.textSecondary,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            )),
+                )),
           ],
           if (data['deja_vu_moments'] != null) ...[
             const SizedBox(height: DSSpacing.sm),
@@ -717,23 +720,23 @@ class _CelebrityPastLifeCardState extends ConsumerState<CelebrityPastLifeCard> {
             ),
             const SizedBox(height: DSSpacing.xs),
             ...lessons.take(2).map((lesson) => Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('📖', style: TextStyle(fontSize: 12)),
-                  const SizedBox(width: DSSpacing.xs),
-                  Expanded(
-                    child: Text(
-                      lesson.toString(),
-                      style: typography.bodySmall.copyWith(
-                        color: colors.textSecondary,
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('📖', style: TextStyle(fontSize: 12)),
+                      const SizedBox(width: DSSpacing.xs),
+                      Expanded(
+                        child: Text(
+                          lesson.toString(),
+                          style: typography.bodySmall.copyWith(
+                            color: colors.textSecondary,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            )),
+                )),
           ],
           if (data['rewards'] != null) ...[
             const SizedBox(height: DSSpacing.sm),

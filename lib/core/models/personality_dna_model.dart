@@ -39,9 +39,12 @@ class Compatibility {
 
   factory Compatibility.fromJson(Map<String, dynamic> json) {
     return Compatibility(
-      friend: CompatibilityType.fromJson(json['friend'] as Map<String, dynamic>? ?? {}),
-      lover: CompatibilityType.fromJson(json['lover'] as Map<String, dynamic>? ?? {}),
-      colleague: CompatibilityType.fromJson(json['colleague'] as Map<String, dynamic>? ?? {}),
+      friend: CompatibilityType.fromJson(
+          json['friend'] as Map<String, dynamic>? ?? {}),
+      lover: CompatibilityType.fromJson(
+          json['lover'] as Map<String, dynamic>? ?? {}),
+      colleague: CompatibilityType.fromJson(
+          json['colleague'] as Map<String, dynamic>? ?? {}),
     );
   }
 
@@ -212,7 +215,8 @@ class PersonalityStats {
     };
   }
 
-  List<int> get values => [charisma, intelligence, creativity, leadership, empathy];
+  List<int> get values =>
+      [charisma, intelligence, creativity, leadership, empathy];
   List<String> get labels => ['카리스마', '지능', '창의력', '리더십', '공감력'];
 }
 
@@ -296,7 +300,7 @@ class PersonalityDNA {
   final List<Color> gradientColors;
   final Map<String, int> scores;
   final String todaysFortune;
-  
+
   // 새로운 재미있는 필드들 (Edge Function 응답 구조)
   final String? todayHighlight;
   final LoveStyle? loveStyle;
@@ -352,7 +356,7 @@ class PersonalityDNA {
   /// 인기 순위에 따른 색상 반환 (토스 블루 계열)
   Color get popularityColor {
     if (popularityRank == null) return const Color(0xFF9E9E9E);
-    
+
     if (popularityRank! <= 10) {
       return const Color(0xFF1F4EF5); // 토스 블루
     } else if (popularityRank! <= 50) {
@@ -365,7 +369,7 @@ class PersonalityDNA {
   /// 인기 순위 텍스트 반환
   String get popularityText {
     if (popularityRank == null) return '순위 미정';
-    
+
     if (popularityRank! <= 10) {
       return 'TOP ${popularityRank!}위';
     } else if (popularityRank! <= 50) {
@@ -376,7 +380,8 @@ class PersonalityDNA {
   }
 
   /// API 응답에서 PersonalityDNA 생성
-  factory PersonalityDNA.fromApiResponse(Map<String, dynamic> json, {
+  factory PersonalityDNA.fromApiResponse(
+    Map<String, dynamic> json, {
     required String mbti,
     required String bloodType,
     required String zodiac,
@@ -398,25 +403,25 @@ class PersonalityDNA {
       scores: scores,
       todaysFortune: json['todaysFortune'] ?? '',
       todayHighlight: json['todayHighlight'] as String?,
-      loveStyle: json['loveStyle'] != null 
+      loveStyle: json['loveStyle'] != null
           ? LoveStyle.fromJson(json['loveStyle'])
           : null,
-      workStyle: json['workStyle'] != null 
+      workStyle: json['workStyle'] != null
           ? WorkStyle.fromJson(json['workStyle'])
           : null,
-      dailyMatching: json['dailyMatching'] != null 
+      dailyMatching: json['dailyMatching'] != null
           ? DailyMatching.fromJson(json['dailyMatching'])
           : null,
-      compatibility: json['compatibility'] != null 
+      compatibility: json['compatibility'] != null
           ? Compatibility.fromJson(json['compatibility'])
           : null,
-      powerColor: json['powerColor'] != null 
+      powerColor: json['powerColor'] != null
           ? PowerColor.fromJson(json['powerColor'])
           : null,
-      stats: json['stats'] != null 
+      stats: json['stats'] != null
           ? PersonalityStats.fromJson(json['stats'])
           : null,
-      celebrity: json['celebrity'] != null 
+      celebrity: json['celebrity'] != null
           ? Celebrity.fromJson(json['celebrity'])
           : null,
       funnyFact: json['funnyFact'] as String?,

@@ -7,16 +7,17 @@ class CustomCalendarDatePicker extends StatefulWidget {
   final Function(DateTime) onDateChanged;
   final Function()? onConfirm;
 
-  const CustomCalendarDatePicker({
-    super.key,
-    required this.initialDate,
-    required this.firstDate,
-    required this.lastDate,
-    required this.onDateChanged,
-    this.onConfirm});
+  const CustomCalendarDatePicker(
+      {super.key,
+      required this.initialDate,
+      required this.firstDate,
+      required this.lastDate,
+      required this.onDateChanged,
+      this.onConfirm});
 
   @override
-  State<CustomCalendarDatePicker> createState() => _CustomCalendarDatePickerState();
+  State<CustomCalendarDatePicker> createState() =>
+      _CustomCalendarDatePickerState();
 }
 
 class _CustomCalendarDatePickerState extends State<CustomCalendarDatePicker> {
@@ -32,17 +33,17 @@ class _CustomCalendarDatePickerState extends State<CustomCalendarDatePicker> {
   Widget build(BuildContext context) {
     // 임시로 기본 날짜 선택기 사용
     return Theme(
-      data: Theme.of(context).copyWith(
-        colorScheme: Theme.of(context).colorScheme),
-      child: CalendarDatePicker(
-        initialDate: _selectedDate,
-        firstDate: widget.firstDate,
-        lastDate: widget.lastDate,
-        onDateChanged: (date) {
-          setState(() {
-            _selectedDate = date;
-          });
-          widget.onDateChanged(date);
-        }));
+        data: Theme.of(context)
+            .copyWith(colorScheme: Theme.of(context).colorScheme),
+        child: CalendarDatePicker(
+            initialDate: _selectedDate,
+            firstDate: widget.firstDate,
+            lastDate: widget.lastDate,
+            onDateChanged: (date) {
+              setState(() {
+                _selectedDate = date;
+              });
+              widget.onDateChanged(date);
+            }));
   }
 }

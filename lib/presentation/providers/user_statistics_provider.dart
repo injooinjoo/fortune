@@ -13,11 +13,11 @@ final userStatisticsServiceProvider = Provider<UserStatisticsService>((ref) {
 final userStatisticsProvider = FutureProvider<UserStatistics?>((ref) async {
   final service = ref.watch(userStatisticsServiceProvider);
   final userId = Supabase.instance.client.auth.currentUser?.id;
-  
+
   if (userId == null) {
     return null;
   }
-  
+
   try {
     return await service.getUserStatistics(userId);
   } catch (e) {
@@ -26,11 +26,13 @@ final userStatisticsProvider = FutureProvider<UserStatistics?>((ref) async {
   }
 });
 
-class UserStatisticsNotifier extends StateNotifier<AsyncValue<UserStatistics?>> {
+class UserStatisticsNotifier
+    extends StateNotifier<AsyncValue<UserStatistics?>> {
   final UserStatisticsService _service;
   final String? _userId;
 
-  UserStatisticsNotifier(this._service, this._userId) : super(const AsyncValue.loading()) {
+  UserStatisticsNotifier(this._service, this._userId)
+      : super(const AsyncValue.loading()) {
     _loadStatistics();
   }
 
@@ -90,7 +92,9 @@ class UserStatisticsNotifier extends StateNotifier<AsyncValue<UserStatistics?>> 
   }
 }
 
-final userStatisticsNotifierProvider = StateNotifierProvider<UserStatisticsNotifier, AsyncValue<UserStatistics?>>((ref) {
+final userStatisticsNotifierProvider =
+    StateNotifierProvider<UserStatisticsNotifier, AsyncValue<UserStatistics?>>(
+        (ref) {
   final service = ref.watch(userStatisticsServiceProvider);
   final userId = Supabase.instance.client.auth.currentUser?.id;
   return UserStatisticsNotifier(service, userId);
@@ -100,16 +104,16 @@ final userStatisticsNotifierProvider = StateNotifierProvider<UserStatisticsNotif
 final favoriteFortuneTypeProvider = Provider<String?>((ref) {
   final statsAsync = ref.watch(userStatisticsNotifierProvider);
   return statsAsync.when(
-    data: (stats) => stats?.favoriteFortuneType,
-    loading: () => null,
-    error: (_, __) => null);
+      data: (stats) => stats?.favoriteFortuneType,
+      loading: () => null,
+      error: (_, __) => null);
 });
 
 // Helper provider to get fortune access counts
 final fortuneTypeCountsProvider = Provider<Map<String, int>>((ref) {
   final statsAsync = ref.watch(userStatisticsNotifierProvider);
   return statsAsync.when(
-    data: (stats) => stats?.fortuneTypeCount ?? {},
-    loading: () => {},
-    error: (_, __) => {});
+      data: (stats) => stats?.fortuneTypeCount ?? {},
+      loading: () => {},
+      error: (_, __) => {});
 });

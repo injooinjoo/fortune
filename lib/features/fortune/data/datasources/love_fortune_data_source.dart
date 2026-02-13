@@ -67,7 +67,8 @@ class LoveFortuneDataSource {
         summary: {
           'mainMessage': data['mainMessage'] ?? '',
           'loveScore': data['loveScore'] ?? 70,
-          'relationshipStatus': data['personalInfo']?['relationshipStatus'] ?? '',
+          'relationshipStatus':
+              data['personalInfo']?['relationshipStatus'] ?? '',
         },
       );
     } catch (e, stackTrace) {

@@ -188,122 +188,136 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
   );
 
   @override
-  FortuneThemeExtension copyWith({
-    Color? scoreExcellent,
-    Color? scoreGood,
-    Color? scoreFair,
-    Color? scorePoor,
-    Color? fortuneGradientStart,
-    Color? fortuneGradientEnd,
-    Color? glassBackground,
-    Color? glassBorder,
-    Color? subtitleText,
-    Color? dividerColor,
-    Color? shimmerBase,
-    Color? shimmerHighlight,
-    Color? errorColor,
-    Color? successColor,
-    Color? warningColor,
-    Color? cardBackground,
-    Color? cardSurface,
-    Color? shadowColor,
-    Color? primaryText,
-    Color? secondaryText,
-    MicroInteractions? microInteractions,
-    AnimationDurations? animationDurations,
-    AnimationCurves? animationCurves,
-    LoadingStates? loadingStates,
-    ErrorStates? errorStates,
-    HapticPatterns? hapticPatterns,
-    FormStyles? formStyles,
-    BottomSheetStyles? bottomSheetStyles,
-    CardStyles? cardStyles,
-    DialogStyles? dialogStyles,
-    DataVisualization? dataVisualization,
-    SocialSharingStyles? socialSharing,
-    ButtonStyle? ctaButtonStyle}) {
+  FortuneThemeExtension copyWith(
+      {Color? scoreExcellent,
+      Color? scoreGood,
+      Color? scoreFair,
+      Color? scorePoor,
+      Color? fortuneGradientStart,
+      Color? fortuneGradientEnd,
+      Color? glassBackground,
+      Color? glassBorder,
+      Color? subtitleText,
+      Color? dividerColor,
+      Color? shimmerBase,
+      Color? shimmerHighlight,
+      Color? errorColor,
+      Color? successColor,
+      Color? warningColor,
+      Color? cardBackground,
+      Color? cardSurface,
+      Color? shadowColor,
+      Color? primaryText,
+      Color? secondaryText,
+      MicroInteractions? microInteractions,
+      AnimationDurations? animationDurations,
+      AnimationCurves? animationCurves,
+      LoadingStates? loadingStates,
+      ErrorStates? errorStates,
+      HapticPatterns? hapticPatterns,
+      FormStyles? formStyles,
+      BottomSheetStyles? bottomSheetStyles,
+      CardStyles? cardStyles,
+      DialogStyles? dialogStyles,
+      DataVisualization? dataVisualization,
+      SocialSharingStyles? socialSharing,
+      ButtonStyle? ctaButtonStyle}) {
     return FortuneThemeExtension(
-      scoreExcellent: scoreExcellent ?? this.scoreExcellent,
-      scoreGood: scoreGood ?? this.scoreGood,
-      scoreFair: scoreFair ?? this.scoreFair,
-      scorePoor: scorePoor ?? this.scorePoor,
-      fortuneGradientStart: fortuneGradientStart ?? this.fortuneGradientStart,
-      fortuneGradientEnd: fortuneGradientEnd ?? this.fortuneGradientEnd,
-      glassBackground: glassBackground ?? this.glassBackground,
-      glassBorder: glassBorder ?? this.glassBorder,
-      subtitleText: subtitleText ?? this.subtitleText,
-      dividerColor: dividerColor ?? this.dividerColor,
-      shimmerBase: shimmerBase ?? this.shimmerBase,
-      shimmerHighlight: shimmerHighlight ?? this.shimmerHighlight,
-      errorColor: errorColor ?? this.errorColor,
-      successColor: successColor ?? this.successColor,
-      warningColor: warningColor ?? this.warningColor,
-      cardBackground: cardBackground ?? this.cardBackground,
-      cardSurface: cardSurface ?? this.cardSurface,
-      shadowColor: shadowColor ?? this.shadowColor,
-      primaryText: primaryText ?? this.primaryText,
-      secondaryText: secondaryText ?? this.secondaryText,
-      microInteractions: microInteractions ?? this.microInteractions,
-      animationDurations: animationDurations ?? this.animationDurations,
-      animationCurves: animationCurves ?? this.animationCurves,
-      loadingStates: loadingStates ?? this.loadingStates,
-      errorStates: errorStates ?? this.errorStates,
-      hapticPatterns: hapticPatterns ?? this.hapticPatterns,
-      formStyles: formStyles ?? this.formStyles,
-      bottomSheetStyles: bottomSheetStyles ?? this.bottomSheetStyles,
-      cardStyles: cardStyles ?? this.cardStyles,
-      dialogStyles: dialogStyles ?? this.dialogStyles,
-      dataVisualization: dataVisualization ?? this.dataVisualization,
-      socialSharing: socialSharing ?? this.socialSharing,
-      ctaButtonStyle: ctaButtonStyle ?? this.ctaButtonStyle);
+        scoreExcellent: scoreExcellent ?? this.scoreExcellent,
+        scoreGood: scoreGood ?? this.scoreGood,
+        scoreFair: scoreFair ?? this.scoreFair,
+        scorePoor: scorePoor ?? this.scorePoor,
+        fortuneGradientStart: fortuneGradientStart ?? this.fortuneGradientStart,
+        fortuneGradientEnd: fortuneGradientEnd ?? this.fortuneGradientEnd,
+        glassBackground: glassBackground ?? this.glassBackground,
+        glassBorder: glassBorder ?? this.glassBorder,
+        subtitleText: subtitleText ?? this.subtitleText,
+        dividerColor: dividerColor ?? this.dividerColor,
+        shimmerBase: shimmerBase ?? this.shimmerBase,
+        shimmerHighlight: shimmerHighlight ?? this.shimmerHighlight,
+        errorColor: errorColor ?? this.errorColor,
+        successColor: successColor ?? this.successColor,
+        warningColor: warningColor ?? this.warningColor,
+        cardBackground: cardBackground ?? this.cardBackground,
+        cardSurface: cardSurface ?? this.cardSurface,
+        shadowColor: shadowColor ?? this.shadowColor,
+        primaryText: primaryText ?? this.primaryText,
+        secondaryText: secondaryText ?? this.secondaryText,
+        microInteractions: microInteractions ?? this.microInteractions,
+        animationDurations: animationDurations ?? this.animationDurations,
+        animationCurves: animationCurves ?? this.animationCurves,
+        loadingStates: loadingStates ?? this.loadingStates,
+        errorStates: errorStates ?? this.errorStates,
+        hapticPatterns: hapticPatterns ?? this.hapticPatterns,
+        formStyles: formStyles ?? this.formStyles,
+        bottomSheetStyles: bottomSheetStyles ?? this.bottomSheetStyles,
+        cardStyles: cardStyles ?? this.cardStyles,
+        dialogStyles: dialogStyles ?? this.dialogStyles,
+        dataVisualization: dataVisualization ?? this.dataVisualization,
+        socialSharing: socialSharing ?? this.socialSharing,
+        ctaButtonStyle: ctaButtonStyle ?? this.ctaButtonStyle);
   }
 
   @override
-  FortuneThemeExtension lerp(ThemeExtension<FortuneThemeExtension>? other, double t) {
+  FortuneThemeExtension lerp(
+      ThemeExtension<FortuneThemeExtension>? other, double t) {
     if (other is! FortuneThemeExtension) {
       return this;
     }
     return FortuneThemeExtension(
-      scoreExcellent: Color.lerp(scoreExcellent, other.scoreExcellent, t)!,
-      scoreGood: Color.lerp(scoreGood, other.scoreGood, t)!,
-      scoreFair: Color.lerp(scoreFair, other.scoreFair, t)!,
-      scorePoor: Color.lerp(scorePoor, other.scorePoor, t)!,
-      fortuneGradientStart: Color.lerp(fortuneGradientStart, other.fortuneGradientStart, t)!,
-      fortuneGradientEnd: Color.lerp(fortuneGradientEnd, other.fortuneGradientEnd, t)!,
-      glassBackground: Color.lerp(glassBackground, other.glassBackground, t)!,
-      glassBorder: Color.lerp(glassBorder, other.glassBorder, t)!,
-      subtitleText: Color.lerp(subtitleText, other.subtitleText, t)!,
-      dividerColor: Color.lerp(dividerColor, other.dividerColor, t)!,
-      shimmerBase: Color.lerp(shimmerBase, other.shimmerBase, t)!,
-      shimmerHighlight: Color.lerp(shimmerHighlight, other.shimmerHighlight, t)!,
-      errorColor: Color.lerp(errorColor, other.errorColor, t)!,
-      successColor: Color.lerp(successColor, other.successColor, t)!,
-      warningColor: Color.lerp(warningColor, other.warningColor, t)!,
-      cardBackground: Color.lerp(cardBackground, other.cardBackground, t)!,
-      cardSurface: Color.lerp(cardSurface, other.cardSurface, t)!,
-      shadowColor: Color.lerp(shadowColor, other.shadowColor, t)!,
-      primaryText: Color.lerp(primaryText, other.primaryText, t)!,
-      secondaryText: Color.lerp(secondaryText, other.secondaryText, t)!,
-      microInteractions: MicroInteractions.lerp(microInteractions, other.microInteractions, t),
-      animationDurations: AnimationDurations.lerp(animationDurations, other.animationDurations, t),
-      animationCurves: AnimationCurves.lerp(animationCurves, other.animationCurves, t),
-      loadingStates: LoadingStates.lerp(loadingStates, other.loadingStates, t),
-      errorStates: ErrorStates.lerp(errorStates, other.errorStates, t),
-      hapticPatterns: HapticPatterns.lerp(hapticPatterns, other.hapticPatterns, t),
-      formStyles: FormStyles.lerp(formStyles, other.formStyles, t),
-      bottomSheetStyles: BottomSheetStyles.lerp(bottomSheetStyles, other.bottomSheetStyles, t),
-      cardStyles: CardStyles.lerp(cardStyles, other.cardStyles, t),
-      dialogStyles: DialogStyles.lerp(dialogStyles, other.dialogStyles, t),
-      dataVisualization: DataVisualization.lerp(dataVisualization, other.dataVisualization, t),
-      socialSharing: SocialSharingStyles.lerp(socialSharing, other.socialSharing, t),
-      ctaButtonStyle: ButtonStyle.lerp(ctaButtonStyle, other.ctaButtonStyle, t));
+        scoreExcellent: Color.lerp(scoreExcellent, other.scoreExcellent, t)!,
+        scoreGood: Color.lerp(scoreGood, other.scoreGood, t)!,
+        scoreFair: Color.lerp(scoreFair, other.scoreFair, t)!,
+        scorePoor: Color.lerp(scorePoor, other.scorePoor, t)!,
+        fortuneGradientStart:
+            Color.lerp(fortuneGradientStart, other.fortuneGradientStart, t)!,
+        fortuneGradientEnd:
+            Color.lerp(fortuneGradientEnd, other.fortuneGradientEnd, t)!,
+        glassBackground: Color.lerp(glassBackground, other.glassBackground, t)!,
+        glassBorder: Color.lerp(glassBorder, other.glassBorder, t)!,
+        subtitleText: Color.lerp(subtitleText, other.subtitleText, t)!,
+        dividerColor: Color.lerp(dividerColor, other.dividerColor, t)!,
+        shimmerBase: Color.lerp(shimmerBase, other.shimmerBase, t)!,
+        shimmerHighlight:
+            Color.lerp(shimmerHighlight, other.shimmerHighlight, t)!,
+        errorColor: Color.lerp(errorColor, other.errorColor, t)!,
+        successColor: Color.lerp(successColor, other.successColor, t)!,
+        warningColor: Color.lerp(warningColor, other.warningColor, t)!,
+        cardBackground: Color.lerp(cardBackground, other.cardBackground, t)!,
+        cardSurface: Color.lerp(cardSurface, other.cardSurface, t)!,
+        shadowColor: Color.lerp(shadowColor, other.shadowColor, t)!,
+        primaryText: Color.lerp(primaryText, other.primaryText, t)!,
+        secondaryText: Color.lerp(secondaryText, other.secondaryText, t)!,
+        microInteractions: MicroInteractions.lerp(
+            microInteractions, other.microInteractions, t),
+        animationDurations: AnimationDurations.lerp(
+            animationDurations, other.animationDurations, t),
+        animationCurves:
+            AnimationCurves.lerp(animationCurves, other.animationCurves, t),
+        loadingStates:
+            LoadingStates.lerp(loadingStates, other.loadingStates, t),
+        errorStates: ErrorStates.lerp(errorStates, other.errorStates, t),
+        hapticPatterns:
+            HapticPatterns.lerp(hapticPatterns, other.hapticPatterns, t),
+        formStyles: FormStyles.lerp(formStyles, other.formStyles, t),
+        bottomSheetStyles: BottomSheetStyles.lerp(
+            bottomSheetStyles, other.bottomSheetStyles, t),
+        cardStyles: CardStyles.lerp(cardStyles, other.cardStyles, t),
+        dialogStyles: DialogStyles.lerp(dialogStyles, other.dialogStyles, t),
+        dataVisualization: DataVisualization.lerp(
+            dataVisualization, other.dataVisualization, t),
+        socialSharing:
+            SocialSharingStyles.lerp(socialSharing, other.socialSharing, t),
+        ctaButtonStyle:
+            ButtonStyle.lerp(ctaButtonStyle, other.ctaButtonStyle, t));
   }
 }
 
 /// Extension method to easily access theme extension
 extension FortuneThemeExtensionGetter on BuildContext {
   FortuneThemeExtension get fortuneTheme {
-    return Theme.of(this).extension<FortuneThemeExtension>() ?? FortuneThemeExtension.light;
+    return Theme.of(this).extension<FortuneThemeExtension>() ??
+        FortuneThemeExtension.light;
   }
 
   /// TOSS design system shortcuts

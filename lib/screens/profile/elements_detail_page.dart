@@ -281,7 +281,8 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
               // 오행 균형 섹션
               _buildSectionHeader('오행 균형'),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+                margin: const EdgeInsets.symmetric(
+                    horizontal: DSSpacing.pageHorizontal),
                 decoration: BoxDecoration(
                   color: context.colors.surface,
                   borderRadius: BorderRadius.circular(12),
@@ -314,7 +315,8 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
               // 오행 설명 섹션
               _buildSectionHeader('오행 의미'),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+                margin: const EdgeInsets.symmetric(
+                    horizontal: DSSpacing.pageHorizontal),
                 decoration: BoxDecoration(
                   color: context.colors.surface,
                   borderRadius: BorderRadius.circular(12),
@@ -359,7 +361,8 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
 
               // 안내 메시지
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: DSSpacing.pageHorizontal),
                 child: Container(
                   padding: const EdgeInsets.all(DSSpacing.md),
                   decoration: BoxDecoration(

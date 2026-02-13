@@ -23,7 +23,7 @@ class AppBottomSheet {
     if (enableHaptic) {
       HapticFeedback.mediumImpact();
     }
-    
+
     return showModalBottomSheet<T>(
       context: context,
       isDismissible: isDismissible,
@@ -135,11 +135,11 @@ class _AppBottomSheetWrapper extends StatelessWidget {
         ],
       ),
     ).animate().slideY(
-      begin: 1,
-      end: 0,
-      duration: DSAnimation.normal,
-      curve: Curves.easeOutCubic,
-    );
+          begin: 1,
+          end: 0,
+          duration: DSAnimation.normal,
+          curve: Curves.easeOutCubic,
+        );
   }
 }
 
@@ -181,9 +181,9 @@ class _TossSelectionBottomSheet<T> extends StatelessWidget {
             ],
             const SizedBox(height: DSSpacing.md),
             ...options.map((option) => _OptionItem(
-              option: option,
-              onTap: () => Navigator.of(context).pop(option.value),
-            )),
+                  option: option,
+                  onTap: () => Navigator.of(context).pop(option.value),
+                )),
           ],
         ),
       ),

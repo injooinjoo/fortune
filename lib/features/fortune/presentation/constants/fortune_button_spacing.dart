@@ -6,40 +6,40 @@ class FortuneButtonSpacing {
   static const double pagePadding = 20.0;
   static const double pageHorizontalPadding = 20.0;
   static const double pageVerticalPadding = 20.0;
-  
+
   // 하단 고정 버튼 영역
   static const double bottomButtonAreaPadding = 16.0;
   static const double bottomSafeAreaPadding = 20.0;
-  
+
   // 버튼 주변 간격
   static const double buttonTopSpacing = 32.0; // 콘텐츠와 버튼 사이
   static const double buttonBottomSpacing = 20.0; // 버튼과 하단 사이
-  
+
   // 버튼 간 간격
   static const double buttonHorizontalGap = 12.0; // 가로 배치 버튼 간격
   static const double buttonVerticalGap = 16.0; // 세로 배치 버튼 간격
-  
+
   // 섹션 간격
   static const double sectionGap = 32.0; // 섹션 간 간격
   static const double subsectionGap = 24.0; // 서브섹션 간 간격
-  
+
   // 버튼 그룹 패딩
   static EdgeInsets get bottomFixedPadding => const EdgeInsets.fromLTRB(
-    pageHorizontalPadding,
-    bottomButtonAreaPadding,
-    pageHorizontalPadding,
-    bottomSafeAreaPadding,
-  );
-  
+        pageHorizontalPadding,
+        bottomButtonAreaPadding,
+        pageHorizontalPadding,
+        bottomSafeAreaPadding,
+      );
+
   static EdgeInsets get inlineButtonPadding => const EdgeInsets.symmetric(
-    horizontal: pageHorizontalPadding,
-  );
-  
+        horizontal: pageHorizontalPadding,
+      );
+
   // 하단 고정 버튼 컨테이너 데코레이션
   static BoxDecoration get bottomButtonDecoration => const BoxDecoration(
-    color: Colors.white,
-  );
-  
+        color: Colors.white,
+      );
+
   // Safe Area 포함 하단 패딩 계산
   static EdgeInsets bottomFixedPaddingWithSafeArea(BuildContext context) {
     final bottomInset = MediaQuery.of(context).padding.bottom;
@@ -56,13 +56,13 @@ class FortuneButtonSpacing {
 enum FortuneButtonPosition {
   /// 하단 고정 (주요 CTA)
   bottomFixed,
-  
+
   /// 스크롤 내부 인라인
   inline,
-  
+
   /// 플로팅 액션 버튼
   floating,
-  
+
   /// 병렬 배치 (2개 이상)
   parallel,
 }
@@ -86,7 +86,7 @@ class FortuneButtonPositionHelper {
       ),
     );
   }
-  
+
   /// 인라인 버튼 래퍼
   static Widget inline({
     required Widget child,
@@ -104,7 +104,7 @@ class FortuneButtonPositionHelper {
       ),
     );
   }
-  
+
   /// 병렬 버튼 래퍼 (2개)
   static Widget parallel({
     required Widget leftButton,
@@ -119,7 +119,7 @@ class FortuneButtonPositionHelper {
       ],
     );
   }
-  
+
   /// 병렬 버튼 래퍼 (3개 이상)
   static Widget parallelMultiple({
     required List<Widget> buttons,

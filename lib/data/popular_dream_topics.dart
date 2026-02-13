@@ -48,7 +48,8 @@ class PopularDreamTopics {
     DreamTopic(id: 'fighting', emoji: '🥊', title: '싸우는 꿈', category: '행동'),
 
     // 👨‍👩‍👧 사람 관련 (10개)
-    DreamTopic(id: 'dead_person', emoji: '👻', title: '돌아가신 분 꿈', category: '사람'),
+    DreamTopic(
+        id: 'dead_person', emoji: '👻', title: '돌아가신 분 꿈', category: '사람'),
     DreamTopic(id: 'baby', emoji: '👶', title: '아기 꿈', category: '사람'),
     DreamTopic(id: 'ex', emoji: '💔', title: '전 애인 꿈', category: '사람'),
     DreamTopic(id: 'celebrity', emoji: '⭐', title: '연예인 꿈', category: '사람'),

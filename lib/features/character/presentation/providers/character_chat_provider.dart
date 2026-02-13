@@ -57,13 +57,15 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       final messages = await _localService.loadConversation(_characterId);
       if (messages.isNotEmpty && mounted) {
         // 마지막으로 읽은 시간 이후의 캐릭터 메시지 수 계산
-        final lastReadTime = await _localService.getLastReadTimestamp(_characterId);
+        final lastReadTime =
+            await _localService.getLastReadTimestamp(_characterId);
         int unread = 0;
         if (lastReadTime != null) {
-          unread = messages.where((m) =>
-            m.type == CharacterChatMessageType.character &&
-            m.timestamp.isAfter(lastReadTime)
-          ).length;
+          unread = messages
+              .where((m) =>
+                  m.type == CharacterChatMessageType.character &&
+                  m.timestamp.isAfter(lastReadTime))
+              .length;
         }
         state = state.copyWith(messages: messages, unreadCount: unread);
       }
@@ -105,7 +107,8 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
             if (profile.mbti != null) 'mbti': profile.mbti,
             if (profile.bloodType != null) 'bloodType': profile.bloodType,
             if (profile.zodiacSign != null) 'zodiacSign': profile.zodiacSign,
-            if (profile.chineseZodiac != null) 'zodiacAnimal': profile.chineseZodiac,
+            if (profile.chineseZodiac != null)
+              'zodiacAnimal': profile.chineseZodiac,
           };
         },
         orElse: () => null,
@@ -141,8 +144,8 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       messages: [...state.messages, message],
       isTyping: false,
       isProcessing: false,
-      isCharacterTyping: false,  // DM 목록에서 "입력 중..." 해제
-      unreadCount: state.unreadCount + 1,  // 읽지 않은 메시지 증가
+      isCharacterTyping: false, // DM 목록에서 "입력 중..." 해제
+      unreadCount: state.unreadCount + 1, // 읽지 않은 메시지 증가
     );
 
     // 🆕 채팅방에 없으면 푸시 알림 + 진동 (카카오톡 스타일)
@@ -302,7 +305,8 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       await Future.delayed(typingDelay);
 
       // 메시지 추가
-      final msg = CharacterChatMessage.character(response.response, _characterId);
+      final msg =
+          CharacterChatMessage.character(response.response, _characterId);
       state = state.copyWith(
         messages: [...state.messages, msg],
         isTyping: false,
@@ -391,7 +395,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   void setTyping(bool typing) {
     state = state.copyWith(
       isTyping: typing,
-      isCharacterTyping: typing,  // DM 목록용
+      isCharacterTyping: typing, // DM 목록용
     );
   }
 
@@ -401,7 +405,8 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     final lastUserIdx = messages.lastIndexWhere(
       (m) => m.type == CharacterChatMessageType.user,
     );
-    if (lastUserIdx >= 0 && messages[lastUserIdx].status == MessageStatus.sent) {
+    if (lastUserIdx >= 0 &&
+        messages[lastUserIdx].status == MessageStatus.sent) {
       messages[lastUserIdx] = messages[lastUserIdx].copyWith(
         status: MessageStatus.read,
         readAt: DateTime.now(),
@@ -452,7 +457,9 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   }
 
   /// 호감도 업데이트 (동적 포인트 지원)
-  void updateAffinityWithPoints(int points, [AffinityInteractionType interactionType = AffinityInteractionType.neutral]) {
+  void updateAffinityWithPoints(int points,
+      [AffinityInteractionType interactionType =
+          AffinityInteractionType.neutral]) {
     final previousPhase = state.affinity.phase;
     final newAffinity = state.affinity.addPointsWithTracking(
       points,
@@ -461,12 +468,14 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     state = state.copyWith(affinity: newAffinity);
 
     // 단계 전환 감지
-    if (newAffinity.phase != previousPhase && newAffinity.phase.index > previousPhase.index) {
+    if (newAffinity.phase != previousPhase &&
+        newAffinity.phase.index > previousPhase.index) {
       _onPhaseTransition(previousPhase, newAffinity.phase);
     }
 
     // 백그라운드에서 저장 (debounced)
-    _affinityService.saveAffinity(_characterId, newAffinity, syncToServer: true);
+    _affinityService.saveAffinity(_characterId, newAffinity,
+        syncToServer: true);
   }
 
   /// 단계 전환 시 호출
@@ -585,7 +594,8 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   /// 첫 메시지로 대화 시작 (unreadCount 증가 없이 - 사용자가 채팅방에 있으므로)
   void startConversation(String firstMessage) {
     if (state.messages.isEmpty) {
-      final message = CharacterChatMessage.character(firstMessage, _characterId);
+      final message =
+          CharacterChatMessage.character(firstMessage, _characterId);
       state = state.copyWith(
         messages: [...state.messages, message],
         // unreadCount는 증가시키지 않음 - 사용자가 이미 채팅방에 있음
@@ -595,7 +605,8 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
   /// 운세 상담 요청 (운세 전문가 캐릭터용)
   /// 실제 운세 API를 호출하여 상세한 운세 데이터를 가져온 후, 캐릭터가 전달
-  Future<void> sendFortuneRequest(String fortuneType, String requestMessage) async {
+  Future<void> sendFortuneRequest(
+      String fortuneType, String requestMessage) async {
     // 🪙 토큰 소비 체크 (4토큰/메시지)
     final hasUnlimitedAccess = _ref.read(hasUnlimitedTokensProvider);
     if (!hasUnlimitedAccess) {
@@ -833,9 +844,8 @@ $emojiInstruction
       if (value is List) {
         formattedValue = value.join(', ');
       } else if (value is Map) {
-        formattedValue = value.entries
-            .map((e) => '${e.key}: ${e.value}')
-            .join(', ');
+        formattedValue =
+            value.entries.map((e) => '${e.key}: ${e.value}').join(', ');
       } else {
         formattedValue = value.toString();
       }
@@ -871,9 +881,10 @@ $emojiInstruction
       // 유저 ID 가져오기
       final profileAsync = _ref.read(userProfileProvider);
       final userId = profileAsync.maybeWhen(
-        data: (profile) => profile?.id,
-        orElse: () => null,
-      ) ?? 'guest';
+            data: (profile) => profile?.id,
+            orElse: () => null,
+          ) ??
+          'guest';
 
       final fortune = await apiService.getFortune(
         userId: userId,
@@ -889,7 +900,8 @@ $emojiInstruction
 
       return fortune;
     } catch (e) {
-      Logger.warning('[CharacterChat] Fortune API failed, using fallback', {'error': e.toString()});
+      Logger.warning('[CharacterChat] Fortune API failed, using fallback',
+          {'error': e.toString()});
       return null;
     }
   }
@@ -977,7 +989,8 @@ $emojiInstruction
     }
 
     // 추천 사항
-    if (fortune.recommendations != null && fortune.recommendations!.isNotEmpty) {
+    if (fortune.recommendations != null &&
+        fortune.recommendations!.isNotEmpty) {
       buffer.writeln('💡 추천 사항:');
       for (final rec in fortune.recommendations!) {
         buffer.writeln('  - $rec');
@@ -1072,7 +1085,8 @@ $emojiInstruction
 
   /// 선택지 메시지 추가
   void addChoiceMessage(ChoiceSet choiceSet, {String? situation}) {
-    final message = CharacterChatMessage.choice(choiceSet, situation: situation);
+    final message =
+        CharacterChatMessage.choice(choiceSet, situation: situation);
     state = state.copyWith(
       messages: [...state.messages, message],
       isTyping: false,

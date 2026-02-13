@@ -7,7 +7,7 @@ class FortuneHistoryChart extends StatelessWidget {
   final List<int> fortuneScores;
   final bool isLoading;
   final VoidCallback? onRefresh;
-  
+
   const FortuneHistoryChart({
     super.key,
     required this.fortuneScores,
@@ -33,76 +33,78 @@ class FortuneHistoryChart extends StatelessWidget {
             width: 1,
           ),
         ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '인사이트 히스토리',
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '인사이트 히스토리',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              Row(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        '최근 7일',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                        ),
-                      ),
-                      if (fortuneScores.isEmpty)
+                Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
                         Text(
-                          '예상 인사이트',
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            color: theme.colorScheme.primary.withValues(alpha: 0.7),
+                          '최근 7일',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurface
+                                .withValues(alpha: 0.6),
                           ),
                         ),
+                        if (fortuneScores.isEmpty)
+                          Text(
+                            '예상 인사이트',
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: theme.colorScheme.primary
+                                  .withValues(alpha: 0.7),
+                            ),
+                          ),
+                      ],
+                    ),
+                    if (onRefresh != null) ...[
+                      const SizedBox(width: AppSpacing.spacing2),
+                      IconButton(
+                        icon: Icon(
+                          Icons.refresh,
+                          size: AppDimensions.iconSizeSmall,
+                          color: theme.colorScheme.primary,
+                        ),
+                        onPressed: onRefresh,
+                        constraints: const BoxConstraints(
+                          minWidth: 32,
+                          minHeight: 32,
+                        ),
+                        padding: EdgeInsets.zero,
+                      ),
                     ],
-                  ),
-                  if (onRefresh != null) ...[
-                    const SizedBox(width: AppSpacing.spacing2),
-                    IconButton(
-                      icon: Icon(
-                        Icons.refresh,
-                        size: AppDimensions.iconSizeSmall,
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.spacing5),
+
+            // 차트
+            SizedBox(
+              height: 200,
+              child: isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(
                         color: theme.colorScheme.primary,
                       ),
-                      onPressed: onRefresh,
-                      constraints: const BoxConstraints(
-                        minWidth: 32,
-                        minHeight: 32,
-                      ),
-                      padding: EdgeInsets.zero,
-                    ),
-                  ],
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.spacing5),
-          
-          // 차트
-          SizedBox(
-            height: 200,
-            child: isLoading
-                ? Center(
-                    child: CircularProgressIndicator(
-                      color: theme.colorScheme.primary,
-                    ),
-                  )
-                : _buildChart(context, _getDisplayScores()),
-          ),
-          
-          const SizedBox(height: AppSpacing.spacing5),
-          _buildStatistics(context, _getDisplayScores()),
-        ],
-      ),
+                    )
+                  : _buildChart(context, _getDisplayScores()),
+            ),
+
+            const SizedBox(height: AppSpacing.spacing5),
+            _buildStatistics(context, _getDisplayScores()),
+          ],
+        ),
       ),
     );
   }
@@ -125,7 +127,8 @@ class FortuneHistoryChart extends StatelessWidget {
       final weekendBonus = isWeekend ? 5 : 0;
 
       // 자연스러운 변동 (-10 ~ +15)
-      final variation = (DateTime.now().millisecondsSinceEpoch * (i + 1)) % 26 - 10;
+      final variation =
+          (DateTime.now().millisecondsSinceEpoch * (i + 1)) % 26 - 10;
       final dayScore = (baseScore + weekendBonus + variation).clamp(45, 85);
 
       randomScores.add(dayScore);
@@ -138,9 +141,8 @@ class FortuneHistoryChart extends StatelessWidget {
     final theme = Theme.of(context);
 
     // 최근 7일 데이터만 사용
-    final recentScores = scores.length > 7
-        ? scores.sublist(scores.length - 7)
-        : scores;
+    final recentScores =
+        scores.length > 7 ? scores.sublist(scores.length - 7) : scores;
 
     return LineChart(
       LineChartData(
@@ -230,12 +232,12 @@ class FortuneHistoryChart extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildStatistics(BuildContext context, List<int> scores) {
     final average = scores.reduce((a, b) => a + b) / scores.length;
     final highest = scores.reduce((a, b) => a > b ? a : b);
     final lowest = scores.reduce((a, b) => a < b ? a : b);
-    
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -261,7 +263,8 @@ class FortuneHistoryChart extends StatelessWidget {
     );
   }
 
-  Widget _buildStatItem(BuildContext context, String label, String value, IconData icon) {
+  Widget _buildStatItem(
+      BuildContext context, String label, String value, IconData icon) {
     final theme = Theme.of(context);
 
     return Column(

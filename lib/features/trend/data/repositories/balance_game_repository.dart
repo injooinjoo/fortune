@@ -76,8 +76,7 @@ class BalanceGameRepository {
 
       return getGameSetById(gameSetResponse['id']);
     } catch (e) {
-      debugPrint(
-          '❌ [BalanceGameRepository] getGameSetByContentId error: $e');
+      debugPrint('❌ [BalanceGameRepository] getGameSetByContentId error: $e');
       return null;
     }
   }
@@ -193,8 +192,7 @@ class BalanceGameRepository {
         final userChoice = answers[question.id];
         if (userChoice == null) continue;
 
-        final majorityChoice =
-            question.votesA >= question.votesB ? 'A' : 'B';
+        final majorityChoice = question.votesA >= question.votesB ? 'A' : 'B';
         final isMajority = userChoice == majorityChoice;
         if (isMajority) majorityMatchCount++;
 
@@ -247,18 +245,15 @@ class BalanceGameRepository {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) return [];
 
-      var query = _supabase
-          .from('user_balance_results')
-          .select()
-          .eq('user_id', userId);
+      var query =
+          _supabase.from('user_balance_results').select().eq('user_id', userId);
 
       if (gameSetId != null) {
         query = query.eq('game_set_id', gameSetId);
       }
 
-      final response = await query
-          .order('completed_at', ascending: false)
-          .limit(limit);
+      final response =
+          await query.order('completed_at', ascending: false).limit(limit);
 
       return (response as List).map((json) {
         return UserBalanceResult(
@@ -279,8 +274,7 @@ class BalanceGameRepository {
   }
 
   /// 질문별 통계 조회
-  Future<List<BalanceQuestionStats>> getQuestionStats(
-      String gameSetId) async {
+  Future<List<BalanceQuestionStats>> getQuestionStats(String gameSetId) async {
     try {
       final response = await _supabase
           .from('balance_game_questions')

@@ -23,7 +23,8 @@ class SettingsListTile extends ConsumerWidget {
     this.onTap,
     this.showBadge = false,
     this.isLast = false,
-  }) : assert(icon == null || leading == null, 'Cannot provide both icon and leading widget');
+  }) : assert(icon == null || leading == null,
+            'Cannot provide both icon and leading widget');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

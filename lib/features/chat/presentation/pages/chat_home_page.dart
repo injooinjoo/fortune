@@ -212,7 +212,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   /// 딥링크로 전달된 fortuneType 확인 및 자동 칩 선택
   Future<void> _checkPendingDeepLink() async {
     try {
-      final pendingFortuneType = await DeepLinkService.consumePendingFortuneType();
+      final pendingFortuneType =
+          await DeepLinkService.consumePendingFortuneType();
       if (pendingFortuneType == null) return;
 
       debugPrint('🔗 [DeepLink] Pending fortune type: $pendingFortuneType');
@@ -606,7 +607,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   }
 
   /// 운세 결과 카드 헤더로 스크롤 (1회만, ChatScrollService 위임)
-  void _handleFortuneResultRendered(String messageId, BuildContext cardContext) {
+  void _handleFortuneResultRendered(
+      String messageId, BuildContext cardContext) {
     _scrollService.scrollToFortuneResult(
       messageId: messageId,
       cardContext: cardContext,
@@ -836,7 +838,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       // 인사 메시지 생성 및 표시
       final userProfileAsync = ref.read(userProfileNotifierProvider);
       final userProfile = userProfileAsync.valueOrNull;
-      final greeting = _buildGreetingMessage(userProfile, FortuneSurveyType.dream);
+      final greeting =
+          _buildGreetingMessage(userProfile, FortuneSurveyType.dream);
 
       Future.delayed(const Duration(milliseconds: 300), () {
         chatNotifier.addAiMessage(greeting);
@@ -1328,9 +1331,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       // 토큰 소비 (무제한 이용권이 아닌 경우만)
       if (!hasUnlimitedAccess) {
         await ref.read(tokenProvider.notifier).consumeTokens(
-          fortuneType: 'free-chat',
-          amount: 1,
-        );
+              fortuneType: 'free-chat',
+              amount: 1,
+            );
       }
 
       // AI 호출 (사용자 프로필 정보 포함)
@@ -3508,7 +3511,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       case FortuneSurveyType.wish:
         // survey step id: 'wishContent', 'category', 'bokchae'
         // 🧧 복채 토큰 차감 (설문에서 선택한 경우)
-        final bokchaeAmount = int.tryParse(answers['bokchae']?.toString() ?? '0') ?? 0;
+        final bokchaeAmount =
+            int.tryParse(answers['bokchae']?.toString() ?? '0') ?? 0;
         if (bokchaeAmount > 0) {
           final tokenNotifier = ref.read(tokenProvider.notifier);
           await tokenNotifier.consumeTokens(
@@ -3856,9 +3860,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         final resolvedExamDate = rawExamDate.isNotEmpty
             ? rawExamDate
             : (examType == 'csat'
-                ? _getCsatDate(DateTime.now())
-                    .toIso8601String()
-                    .split('T')[0]
+                ? _getCsatDate(DateTime.now()).toIso8601String().split('T')[0]
                 : DateTime.now().toIso8601String().split('T')[0]);
         return apiService.getFortune(
           userId: userId,
@@ -4646,7 +4648,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           key: const ValueKey('onboarding-life-category'),
           child: OnboardingLifeCategorySelector(
             onSelect: (category) {
-              ref.read(onboardingChatProvider.notifier).submitLifeCategory(category);
+              ref
+                  .read(onboardingChatProvider.notifier)
+                  .submitLifeCategory(category);
               _scrollToBottom();
             },
           ),
@@ -4658,7 +4662,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           child: OnboardingSubConcernSelector(
             category: onboardingState.primaryLifeCategory!,
             onSelect: (concernId) {
-              ref.read(onboardingChatProvider.notifier).submitSubConcern(concernId);
+              ref
+                  .read(onboardingChatProvider.notifier)
+                  .submitSubConcern(concernId);
               _scrollToBottom();
             },
           ),
@@ -4708,7 +4714,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
               ref.read(onboardingChatProvider.notifier).confirmOnboarding();
               _scrollToBottom();
               // AI 메시지 추가 후 추가 스크롤 (300ms 지연으로 메시지 추가됨)
-              Future.delayed(const Duration(milliseconds: 500), _scrollToBottom);
+              Future.delayed(
+                  const Duration(milliseconds: 500), _scrollToBottom);
             },
             onRestart: () {
               ref.read(onboardingChatProvider.notifier).restartOnboarding();
@@ -4806,10 +4813,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           inputType == SurveyInputType.textWithSkip ||
           inputType == SurveyInputType.voice) {
         // 꿈해몽 dreamContent 단계는 FloatingDreamTopicsWidget(350px) 표시
-        final isDreamContent =
-            surveyState.activeProgress?.config.fortuneType ==
-                    FortuneSurveyType.dream &&
-                surveyState.activeProgress?.currentStep.id == 'dreamContent';
+        final isDreamContent = surveyState.activeProgress?.config.fortuneType ==
+                FortuneSurveyType.dream &&
+            surveyState.activeProgress?.currentStep.id == 'dreamContent';
         if (isDreamContent) {
           padding += 350; // FloatingDreamTopicsWidget 높이
         } else {
@@ -4905,7 +4911,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     });
 
     // 운세 패널에서 선택된 칩 감시 → 바로 설문 시작
-    ref.listen<RecommendationChip?>(pendingFortuneChipProvider, (previous, next) {
+    ref.listen<RecommendationChip?>(pendingFortuneChipProvider,
+        (previous, next) {
       if (next != null) {
         // 선택된 칩으로 설문 시작
         _handleChipTap(next);
@@ -4987,324 +4994,339 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
                     children: [
                       // 메인 콘텐츠 (메시지 영역)
                       AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 200),
-                      switchInCurve: Curves.easeOutCubic,
-                      switchOutCurve: Curves.easeInCubic,
-                      transitionBuilder: (child, animation) =>
-                          FadeTransition(opacity: animation, child: child),
-                      child: chatState.isEmpty
-                          ? ChatWelcomeView(
-                              key: const ValueKey('chat-welcome'),
-                              onChipTap: _handleChipTap,
-                              bottomPadding: _calculateBottomPadding(
-                                surveyState,
-                                onboardingState,
-                                surveyOptions: surveyOptions,
+                        duration: const Duration(milliseconds: 200),
+                        switchInCurve: Curves.easeOutCubic,
+                        switchOutCurve: Curves.easeInCubic,
+                        transitionBuilder: (child, animation) =>
+                            FadeTransition(opacity: animation, child: child),
+                        child: chatState.isEmpty
+                            ? ChatWelcomeView(
+                                key: const ValueKey('chat-welcome'),
+                                onChipTap: _handleChipTap,
+                                bottomPadding: _calculateBottomPadding(
+                                  surveyState,
+                                  onboardingState,
+                                  surveyOptions: surveyOptions,
+                                ),
+                              )
+                            : ChatMessageList(
+                                key: const ValueKey('chat-messages'),
+                                scrollController: _scrollController,
+                                messages: chatState.messages,
+                                isTyping: chatState.isTyping,
+                                onChipTap: _handleChipTap,
+                                onViewAllTap: _handleViewAllTap,
+                                bottomPadding: _calculateBottomPadding(
+                                  surveyState,
+                                  onboardingState,
+                                  surveyOptions: surveyOptions,
+                                ),
+                                onTypingIndicatorRendered: _scrollToBottom,
+                                onFortuneResultRendered:
+                                    _handleFortuneResultRendered,
                               ),
-                            )
-                          : ChatMessageList(
-                              key: const ValueKey('chat-messages'),
-                              scrollController: _scrollController,
-                              messages: chatState.messages,
-                              isTyping: chatState.isTyping,
-                              onChipTap: _handleChipTap,
-                              onViewAllTap: _handleViewAllTap,
-                              bottomPadding: _calculateBottomPadding(
-                                surveyState,
-                                onboardingState,
-                                surveyOptions: surveyOptions,
-                              ),
-                              onTypingIndicatorRendered: _scrollToBottom,
-                              onFortuneResultRendered:
-                                  _handleFortuneResultRendered,
-                            ),
-                    ),
-
-                    // 프로필 아이콘 (투명 오버레이 - 좌측) - 온보딩 중에는 숨김
-                    if (onboardingState.currentStep == OnboardingStep.completed)
-                      const Positioned(
-                        left: DSSpacing.md,
-                        top: DSSpacing.sm,
-                        child: ProfileHeaderIcon(),
                       ),
 
-                    // 상단 우측 버튼 영역 (게스트 로그인 + 초기화) - 온보딩 중에는 숨김
-                    if (onboardingState.currentStep == OnboardingStep.completed)
+                      // 프로필 아이콘 (투명 오버레이 - 좌측) - 온보딩 중에는 숨김
+                      if (onboardingState.currentStep ==
+                          OnboardingStep.completed)
+                        const Positioned(
+                          left: DSSpacing.md,
+                          top: DSSpacing.sm,
+                          child: ProfileHeaderIcon(),
+                        ),
+
+                      // 상단 우측 버튼 영역 (게스트 로그인 + 초기화) - 온보딩 중에는 숨김
+                      if (onboardingState.currentStep ==
+                          OnboardingStep.completed)
+                        Positioned(
+                          right: DSSpacing.sm,
+                          top: DSSpacing.xs,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // 게스트 로그인 버튼 (심플 버전)
+                              const GuestLoginBanner(),
+                              const SizedBox(width: DSSpacing.xs),
+                              // 초기화 버튼
+                              InkWell(
+                                onTap: () {
+                                  ref
+                                      .read(chatMessagesProvider.notifier)
+                                      .clearConversation();
+                                  ref
+                                      .read(chatSurveyProvider.notifier)
+                                      .cancelSurvey();
+                                  _textController.clear();
+                                  setState(() {
+                                    _detectedIntents = [];
+                                  });
+                                },
+                                borderRadius:
+                                    BorderRadius.circular(DSRadius.full),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(DSSpacing.xs),
+                                  child: Icon(
+                                    Icons.refresh,
+                                    size: 18,
+                                    color: colors.textTertiary,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                      // 떠다니는 하단 영역 (설문 + 칩 + 입력란)
                       Positioned(
-                        right: DSSpacing.sm,
-                        top: DSSpacing.xs,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // 게스트 로그인 버튼 (심플 버전)
-                            const GuestLoginBanner(),
-                            const SizedBox(width: DSSpacing.xs),
-                            // 초기화 버튼
-                            InkWell(
-                              onTap: () {
-                                ref
-                                    .read(chatMessagesProvider.notifier)
-                                    .clearConversation();
-                                ref
-                                    .read(chatSurveyProvider.notifier)
-                                    .cancelSurvey();
-                                _textController.clear();
-                                setState(() {
-                                  _detectedIntents = [];
-                                });
-                              },
-                              borderRadius: BorderRadius.circular(DSRadius.full),
-                              child: Padding(
-                                padding: const EdgeInsets.all(DSSpacing.xs),
-                                child: Icon(
-                                  Icons.refresh,
-                                  size: 18,
-                                  color: colors.textTertiary,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        child: SafeArea(
+                          top: false,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // 설문 입력 영역 (inputType에 따라 다른 위젯) - 슬라이드 업 애니메이션
+                              AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 300),
+                                switchInCurve: Curves.easeOutCubic,
+                                switchOutCurve: Curves.easeInCubic,
+                                transitionBuilder: (child, animation) {
+                                  return SlideTransition(
+                                    position: Tween<Offset>(
+                                      begin: const Offset(0, 1),
+                                      end: Offset.zero,
+                                    ).animate(animation),
+                                    child: child,
+                                  );
+                                },
+                                child: surveyState.isActive
+                                    ? KeyedSubtree(
+                                        key: ValueKey(surveyState.activeProgress
+                                                ?.currentStep.id ??
+                                            'survey'),
+                                        child: _buildSurveyInputWidget(
+                                              surveyState,
+                                              surveyOptions,
+                                            ) ??
+                                            const SizedBox.shrink(),
+                                      )
+                                    : const SizedBox.shrink(),
+                              ),
+
+                              // 온보딩 날짜+시간 피커 (birthDate 단계에서 표시)
+                              AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 300),
+                                switchInCurve: Curves.easeOutCubic,
+                                switchOutCurve: Curves.easeInCubic,
+                                transitionBuilder: (child, animation) {
+                                  return SlideTransition(
+                                    position: Tween<Offset>(
+                                      begin: const Offset(0, 1),
+                                      end: Offset.zero,
+                                    ).animate(animation),
+                                    child: child,
+                                  );
+                                },
+                                child: isOnboardingPickerStep
+                                    ? KeyedSubtree(
+                                        key:
+                                            const ValueKey('onboarding-picker'),
+                                        child: ChatBirthDatetimePicker(
+                                          hintText: '생년월일과 태어난 시간을 선택하세요',
+                                          onSelected: (result) {
+                                            if (result.isUnknown) {
+                                              // 날짜 모름 - 기본값으로 처리
+                                              ref
+                                                  .read(onboardingChatProvider
+                                                      .notifier)
+                                                  .submitBirthDateTime(
+                                                    DateTime(1990, 1, 1),
+                                                    null,
+                                                  );
+                                            } else if (result.year != null &&
+                                                result.month != null &&
+                                                result.day != null) {
+                                              final date = DateTime(
+                                                result.year!,
+                                                result.month!,
+                                                result.day!,
+                                              );
+                                              final time = result.hour != null
+                                                  ? TimeOfDay(
+                                                      hour: result.hour!,
+                                                      minute:
+                                                          result.minute ?? 0,
+                                                    )
+                                                  : null;
+                                              ref
+                                                  .read(onboardingChatProvider
+                                                      .notifier)
+                                                  .submitBirthDateTime(
+                                                      date, time);
+                                            }
+                                            _scrollToBottom();
+                                          },
+                                        ),
+                                      )
+                                    : const SizedBox.shrink(),
+                              ),
+
+                              // 온보딩 성별/MBTI/혈액형/확인/로그인 선택
+                              AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 300),
+                                switchInCurve: Curves.easeOutCubic,
+                                switchOutCurve: Curves.easeInCubic,
+                                transitionBuilder: (child, animation) {
+                                  return SlideTransition(
+                                    position: Tween<Offset>(
+                                      begin: const Offset(0, 1),
+                                      end: Offset.zero,
+                                    ).animate(animation),
+                                    child: child,
+                                  );
+                                },
+                                child:
+                                    _buildOnboardingChipInput(onboardingState),
+                              ),
+
+                              // 추천 운세 칩 (텍스트 입력 시 - 키워드 기반 + AI 추천)
+                              if (!surveyState.isActive &&
+                                  (_detectedIntents.isNotEmpty ||
+                                      _isLoadingRecommendations))
+                                FortuneTypeChips(
+                                  intents: _detectedIntents,
+                                  onSelect: _handleFortuneTypeSelect,
+                                  isLoading: _isLoadingRecommendations,
+                                ),
+
+                              // 토큰 잔액 표시 (무제한 아닐 때만)
+                              _buildTokenBalanceIndicator(),
+
+                              // 텍스트 입력란 (선택형 설문/온보딩 시 슬라이드 아웃)
+                              IgnorePointer(
+                                ignoring: shouldHideInput,
+                                child: ClipRect(
+                                  child: AnimatedSlide(
+                                    offset: shouldHideInput
+                                        ? const Offset(0, 1)
+                                        : Offset.zero,
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeOutCubic,
+                                    child: AnimatedOpacity(
+                                      opacity: shouldHideInput ? 0.0 : 1.0,
+                                      duration:
+                                          const Duration(milliseconds: 200),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: DSSpacing.md,
+                                        ),
+                                        child: UnifiedVoiceTextField(
+                                          controller: _textController,
+                                          hintText: isOnboardingNameStep
+                                              ? '이름을 입력하세요'
+                                              : isTextInputStep
+                                                  ? '텍스트를 입력하세요...'
+                                                  : surveyState.isActive
+                                                      ? '위 선택지에서 골라주세요'
+                                                      : _randomPlaceholder,
+                                          onSubmit: isOnboardingNameStep
+                                              ? _handleOnboardingNameSubmit
+                                              : isTextInputStep
+                                                  ? _handleTextSurveySubmit
+                                                  : surveyState.isActive
+                                                      ? (_) {}
+                                                      : _handleSendMessage,
+                                          enabled: !shouldHideInput &&
+                                              (!surveyState.isActive ||
+                                                  isTextInputStep ||
+                                                  isOnboardingNameStep),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+
+                              // 바로 로그인하기 버튼 (온보딩 이름 입력 단계에서만 표시)
+                              if (isOnboardingNameStep)
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: DSSpacing.md,
+                                    bottom: DSSpacing.sm,
+                                  ),
+                                  child: GestureDetector(
+                                    onTap: () =>
+                                        _showSocialLoginBottomSheet(context),
+                                    child: Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: '이미 계정이 있으신가요? ',
+                                            style: context.typography.bodySmall
+                                                .copyWith(
+                                              color: colors.textSecondary,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: '바로 로그인하기',
+                                            style: context.typography.bodySmall
+                                                .copyWith(
+                                              color: colors.accent,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
                       ),
 
-                    // 떠다니는 하단 영역 (설문 + 칩 + 입력란)
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      child: SafeArea(
-                        top: false,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // 설문 입력 영역 (inputType에 따라 다른 위젯) - 슬라이드 업 애니메이션
-                            AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 300),
-                              switchInCurve: Curves.easeOutCubic,
-                              switchOutCurve: Curves.easeInCubic,
-                              transitionBuilder: (child, animation) {
-                                return SlideTransition(
-                                  position: Tween<Offset>(
-                                    begin: const Offset(0, 1),
-                                    end: Offset.zero,
-                                  ).animate(animation),
-                                  child: child,
-                                );
-                              },
-                              child: surveyState.isActive
-                                  ? KeyedSubtree(
-                                      key: ValueKey(
-                                          surveyState.activeProgress?.currentStep.id ??
-                                              'survey'),
-                                      child: _buildSurveyInputWidget(
-                                            surveyState,
-                                            surveyOptions,
-                                          ) ??
-                                          const SizedBox.shrink(),
-                                    )
-                                  : const SizedBox.shrink(),
-                            ),
-
-                            // 온보딩 날짜+시간 피커 (birthDate 단계에서 표시)
-                            AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 300),
-                              switchInCurve: Curves.easeOutCubic,
-                              switchOutCurve: Curves.easeInCubic,
-                              transitionBuilder: (child, animation) {
-                                return SlideTransition(
-                                  position: Tween<Offset>(
-                                    begin: const Offset(0, 1),
-                                    end: Offset.zero,
-                                  ).animate(animation),
-                                  child: child,
-                                );
-                              },
-                              child: isOnboardingPickerStep
-                                  ? KeyedSubtree(
-                                      key: const ValueKey('onboarding-picker'),
-                                      child: ChatBirthDatetimePicker(
-                                        hintText: '생년월일과 태어난 시간을 선택하세요',
-                                        onSelected: (result) {
-                                          if (result.isUnknown) {
-                                            // 날짜 모름 - 기본값으로 처리
-                                            ref
-                                                .read(onboardingChatProvider.notifier)
-                                                .submitBirthDateTime(
-                                                  DateTime(1990, 1, 1),
-                                                  null,
-                                                );
-                                          } else if (result.year != null &&
-                                              result.month != null &&
-                                              result.day != null) {
-                                            final date = DateTime(
-                                              result.year!,
-                                              result.month!,
-                                              result.day!,
-                                            );
-                                            final time = result.hour != null
-                                                ? TimeOfDay(
-                                                    hour: result.hour!,
-                                                    minute: result.minute ?? 0,
-                                                  )
-                                                : null;
-                                            ref
-                                                .read(onboardingChatProvider.notifier)
-                                                .submitBirthDateTime(date, time);
-                                          }
-                                          _scrollToBottom();
-                                        },
-                                      ),
-                                    )
-                                  : const SizedBox.shrink(),
-                            ),
-
-                            // 온보딩 성별/MBTI/혈액형/확인/로그인 선택
-                            AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 300),
-                              switchInCurve: Curves.easeOutCubic,
-                              switchOutCurve: Curves.easeInCubic,
-                              transitionBuilder: (child, animation) {
-                                return SlideTransition(
-                                  position: Tween<Offset>(
-                                    begin: const Offset(0, 1),
-                                    end: Offset.zero,
-                                  ).animate(animation),
-                                  child: child,
-                                );
-                              },
-                              child: _buildOnboardingChipInput(onboardingState),
-                            ),
-
-                            // 추천 운세 칩 (텍스트 입력 시 - 키워드 기반 + AI 추천)
-                            if (!surveyState.isActive &&
-                                (_detectedIntents.isNotEmpty ||
-                                    _isLoadingRecommendations))
-                              FortuneTypeChips(
-                                intents: _detectedIntents,
-                                onSelect: _handleFortuneTypeSelect,
-                                isLoading: _isLoadingRecommendations,
-                              ),
-
-                            // 토큰 잔액 표시 (무제한 아닐 때만)
-                            _buildTokenBalanceIndicator(),
-
-                            // 텍스트 입력란 (선택형 설문/온보딩 시 슬라이드 아웃)
-                            IgnorePointer(
-                              ignoring: shouldHideInput,
-                              child: ClipRect(
-                                child: AnimatedSlide(
-                                  offset: shouldHideInput
-                                      ? const Offset(0, 1)
-                                      : Offset.zero,
-                                  duration: const Duration(milliseconds: 300),
-                                  curve: Curves.easeOutCubic,
-                                  child: AnimatedOpacity(
-                                    opacity: shouldHideInput ? 0.0 : 1.0,
-                                    duration: const Duration(milliseconds: 200),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: DSSpacing.md,
-                                      ),
-                                      child: UnifiedVoiceTextField(
-                                        controller: _textController,
-                                        hintText: isOnboardingNameStep
-                                            ? '이름을 입력하세요'
-                                            : isTextInputStep
-                                                ? '텍스트를 입력하세요...'
-                                                : surveyState.isActive
-                                                    ? '위 선택지에서 골라주세요'
-                                                    : _randomPlaceholder,
-                                        onSubmit: isOnboardingNameStep
-                                            ? _handleOnboardingNameSubmit
-                                            : isTextInputStep
-                                                ? _handleTextSurveySubmit
-                                                : surveyState.isActive
-                                                    ? (_) {}
-                                                    : _handleSendMessage,
-                                        enabled: !shouldHideInput &&
-                                            (!surveyState.isActive ||
-                                                isTextInputStep ||
-                                                isOnboardingNameStep),
+                      // 포춘쿠키 애니메이션 오버레이
+                      if (_showCookieAnimation)
+                        Positioned.fill(
+                          child: GestureDetector(
+                            onTap: () {}, // 배경 탭 방지
+                            child: Container(
+                              color: colors.background.withValues(alpha: 0.95),
+                              child: Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Text(
+                                      '🥠',
+                                      style: TextStyle(fontSize: 32),
+                                    ),
+                                    const SizedBox(height: DSSpacing.md),
+                                    Text(
+                                      '쿠키가 열리고 있어요!',
+                                      style:
+                                          context.typography.bodyLarge.copyWith(
+                                        color: colors.textPrimary,
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
-                                  ),
-                                ),
-                              ),
-                            ),
-
-                            // 바로 로그인하기 버튼 (온보딩 이름 입력 단계에서만 표시)
-                            if (isOnboardingNameStep)
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  top: DSSpacing.md,
-                                  bottom: DSSpacing.sm,
-                                ),
-                                child: GestureDetector(
-                                  onTap: () => _showSocialLoginBottomSheet(context),
-                                  child: Text.rich(
-                                    TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: '이미 계정이 있으신가요? ',
-                                          style: context.typography.bodySmall.copyWith(
-                                            color: colors.textSecondary,
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: '바로 로그인하기',
-                                          style: context.typography.bodySmall.copyWith(
-                                            color: colors.accent,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ],
+                                    const SizedBox(height: DSSpacing.xl),
+                                    CookieShardBreakWidget(
+                                      imagePath:
+                                          'assets/images/fortune_cards/fortune_cookie_fortune.webp',
+                                      size: 220,
+                                      accentColor: DSColors.accentSecondary,
+                                      onBreakComplete:
+                                          _onCookieAnimationComplete,
                                     ),
-                                    textAlign: TextAlign.center,
-                                  ),
+                                  ],
                                 ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    // 포춘쿠키 애니메이션 오버레이
-                    if (_showCookieAnimation)
-                      Positioned.fill(
-                        child: GestureDetector(
-                          onTap: () {}, // 배경 탭 방지
-                          child: Container(
-                            color: colors.background.withValues(alpha: 0.95),
-                            child: Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Text(
-                                    '🥠',
-                                    style: TextStyle(fontSize: 32),
-                                  ),
-                                  const SizedBox(height: DSSpacing.md),
-                                  Text(
-                                    '쿠키가 열리고 있어요!',
-                                    style: context.typography.bodyLarge.copyWith(
-                                      color: colors.textPrimary,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  const SizedBox(height: DSSpacing.xl),
-                                  CookieShardBreakWidget(
-                                    imagePath:
-                                        'assets/images/fortune_cards/fortune_cookie_fortune.webp',
-                                    size: 220,
-                                    accentColor: DSColors.accentSecondary,
-                                    onBreakComplete: _onCookieAnimationComplete,
-                                  ),
-                                ],
                               ),
                             ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),

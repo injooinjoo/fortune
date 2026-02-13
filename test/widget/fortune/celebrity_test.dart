@@ -226,17 +226,30 @@ class _MockCelebrityFortunePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('유명인 운세', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const Text('유명인 운세',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 24),
 
             // 카테고리
             Wrap(
               spacing: 8,
               children: [
-                ChoiceChip(label: const Text('연예인'), selected: false, onSelected: (_) {}),
-                ChoiceChip(label: const Text('스포츠'), selected: true, onSelected: (_) {}),
-                ChoiceChip(label: const Text('정치인'), selected: false, onSelected: (_) {}),
-                ChoiceChip(label: const Text('기업인'), selected: false, onSelected: (_) {}),
+                ChoiceChip(
+                    label: const Text('연예인'),
+                    selected: false,
+                    onSelected: (_) {}),
+                ChoiceChip(
+                    label: const Text('스포츠'),
+                    selected: true,
+                    onSelected: (_) {}),
+                ChoiceChip(
+                    label: const Text('정치인'),
+                    selected: false,
+                    onSelected: (_) {}),
+                ChoiceChip(
+                    label: const Text('기업인'),
+                    selected: false,
+                    onSelected: (_) {}),
               ],
             ),
             const SizedBox(height: 16),
@@ -309,12 +322,15 @@ class _MockCelebrityFortuneResult extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    const CircleAvatar(radius: 40, child: Icon(Icons.person, size: 40)),
+                    const CircleAvatar(
+                        radius: 40, child: Icon(Icons.person, size: 40)),
                     const SizedBox(width: 16),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(celebrityName, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                        Text(celebrityName,
+                            style: const TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.bold)),
                         const Text('1992년 7월 8일'),
                         const Text('축구선수'),
                       ],
@@ -351,7 +367,8 @@ class _MockCelebrityFortuneResult extends StatelessWidget {
             ),
 
             const SizedBox(height: 16),
-            const Text('같은 생일 유명인', style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text('같은 생일 유명인',
+                style: TextStyle(fontWeight: FontWeight.bold)),
             const ListTile(
               leading: CircleAvatar(child: Text('A')),
               title: Text('유명인 A'),
@@ -360,7 +377,6 @@ class _MockCelebrityFortuneResult extends StatelessWidget {
               leading: CircleAvatar(child: Text('B')),
               title: Text('유명인 B'),
             ),
-
           ],
         ),
       ),

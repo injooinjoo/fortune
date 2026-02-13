@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 
 /// 페이지 전환 애니메이션 유틸리티
 class PageTransitions {
-
   /// 부드러운 슬라이드 전환 (기본 애니메이션)
   static CustomTransitionPage<T> slideTransition<T extends Object?>(
     BuildContext context,

@@ -20,10 +20,10 @@ class CelebritySajuInfoWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha:0.3),
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha:0.3),
+          color: theme.colorScheme.outline.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -34,12 +34,12 @@ class CelebritySajuInfoWidget extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 24,
-                backgroundColor: theme.colorScheme.primary.withValues(alpha:0.2),
+                backgroundColor:
+                    theme.colorScheme.primary.withValues(alpha: 0.2),
                 child: Text(
                   celebrity.name.isNotEmpty ? celebrity.name[0] : '?',
                   style: TextStyle(
                     color: theme.colorScheme.primary,
-                    
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -59,7 +59,8 @@ class CelebritySajuInfoWidget extends StatelessWidget {
                     Text(
                       '${celebrity.category} • ${celebrity.age}세',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha:0.7),
+                        color:
+                            theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                     if (celebrity.agency.isNotEmpty) ...[
@@ -67,7 +68,8 @@ class CelebritySajuInfoWidget extends StatelessWidget {
                       Text(
                         celebrity.agency,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha:0.5),
+                          color: theme.colorScheme.onSurface
+                              .withValues(alpha: 0.5),
                         ),
                       ),
                     ],
@@ -76,12 +78,12 @@ class CelebritySajuInfoWidget extends StatelessWidget {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // 사주 정보
           _buildSajuInfo(theme),
-          
+
           if (showDetailedInfo) ...[
             const SizedBox(height: 16),
             _buildDetailedInfo(theme),
@@ -103,13 +105,13 @@ class CelebritySajuInfoWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        
+
         // 사주 문자열
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: theme.colorScheme.primary.withValues(alpha:0.1),
+            color: theme.colorScheme.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
@@ -122,9 +124,9 @@ class CelebritySajuInfoWidget extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         // 오행 분포
         _buildElementDistribution(theme),
       ],
@@ -165,21 +167,21 @@ class CelebritySajuInfoWidget extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8),
-        
+
         // 오행 바차트
         Row(
           children: elementCounts.entries.map((entry) {
             final element = entry.key;
             final count = entry.value;
             final percentage = total > 0 ? (count / total) : 0.0;
-            
+
             return Expanded(
               flex: (percentage * 100).toInt().clamp(1, 100),
               child: Container(
                 height: 24,
                 margin: const EdgeInsets.only(right: 1),
                 decoration: BoxDecoration(
-                  color: _getElementColor(element).withValues(alpha:0.8),
+                  color: _getElementColor(element).withValues(alpha: 0.8),
                   borderRadius: BorderRadius.circular(2),
                 ),
                 child: Center(
@@ -213,7 +215,7 @@ class CelebritySajuInfoWidget extends StatelessWidget {
             Icons.cake,
           ),
         ],
-        
+
         // 출생지 정보
         if (celebrity.birthPlace.isNotEmpty) ...[
           _buildInfoRow(
@@ -223,7 +225,7 @@ class CelebritySajuInfoWidget extends StatelessWidget {
             Icons.location_on,
           ),
         ],
-        
+
         // 현재 대운 정보
         if (celebrity.daeunInfo != null) ...[
           _buildInfoRow(
@@ -233,7 +235,7 @@ class CelebritySajuInfoWidget extends StatelessWidget {
             Icons.trending_up,
           ),
         ],
-        
+
         // 십신 정보 (간단히)
         if (celebrity.tenGods != null) ...[
           _buildTenGodsInfo(theme),
@@ -242,7 +244,8 @@ class CelebritySajuInfoWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(ThemeData theme, String label, String value, IconData icon) {
+  Widget _buildInfoRow(
+      ThemeData theme, String label, String value, IconData icon) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -250,13 +253,13 @@ class CelebritySajuInfoWidget extends StatelessWidget {
           Icon(
             icon,
             size: 16,
-            color: theme.colorScheme.onSurface.withValues(alpha:0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
           const SizedBox(width: 8),
           Text(
             '$label: ',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha:0.6),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
           Expanded(
@@ -275,7 +278,7 @@ class CelebritySajuInfoWidget extends StatelessWidget {
   Widget _buildTenGodsInfo(ThemeData theme) {
     final tenGods = celebrity.tenGods!;
     final godsList = <String>[];
-    
+
     tenGods.forEach((key, value) {
       if (value is List && value.isNotEmpty) {
         godsList.addAll(value.cast<String>());
@@ -291,13 +294,13 @@ class CelebritySajuInfoWidget extends StatelessWidget {
           Icon(
             Icons.psychology,
             size: 16,
-            color: theme.colorScheme.onSurface.withValues(alpha:0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
           const SizedBox(width: 8),
           Text(
             '십신: ',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha:0.6),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
           Expanded(

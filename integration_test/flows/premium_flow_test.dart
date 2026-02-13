@@ -50,7 +50,8 @@ void main() {
       await startAppAndWait(tester, waitDuration: const Duration(seconds: 10));
 
       // 토큰 잔액 표시 확인
-      final hasTokenDisplay = await PaymentTestHelpers.verifyTokenBalanceDisplay(tester);
+      final hasTokenDisplay =
+          await PaymentTestHelpers.verifyTokenBalanceDisplay(tester);
 
       // 토큰 표시가 있으면 성공, 없어도 크래시가 없으면 성공
       expect(find.byType(Scaffold), findsWidgets);
@@ -106,7 +107,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ PREM-003 PASSED: Token purchase page accessible: $hasTokenPurchaseUI');
+      debugPrint(
+          '✅ PREM-003 PASSED: Token purchase page accessible: $hasTokenPurchaseUI');
     });
 
     testWidgets('PREM-004: 토큰 패키지 선택 UI', (tester) async {
@@ -134,7 +136,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ PREM-004 PASSED: Token package selection UI: $hasPackageOptions');
+      debugPrint(
+          '✅ PREM-004 PASSED: Token package selection UI: $hasPackageOptions');
     });
 
     testWidgets('PREM-005: 구매 취소 플로우', (tester) async {
@@ -188,7 +191,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ PREM-006 PASSED: Subscription page displayed: $hasSubscriptionUI');
+      debugPrint(
+          '✅ PREM-006 PASSED: Subscription page displayed: $hasSubscriptionUI');
     });
 
     testWidgets('PREM-007: 구독 옵션 선택 UI', (tester) async {
@@ -238,7 +242,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ PREM-008 PASSED: Subscription status displayed (premium: $isPremium, badge: $hasPremiumBadge)');
+      debugPrint(
+          '✅ PREM-008 PASSED: Subscription status displayed (premium: $isPremium, badge: $hasPremiumBadge)');
     });
 
     testWidgets('PREM-009: 구매 복원 버튼 확인', (tester) async {
@@ -281,7 +286,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ PREM-009 PASSED: Restore purchases button: $hasRestoreButton');
+      debugPrint(
+          '✅ PREM-009 PASSED: Restore purchases button: $hasRestoreButton');
     });
 
     // ========================================================================

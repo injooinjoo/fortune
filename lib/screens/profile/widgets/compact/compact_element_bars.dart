@@ -16,14 +16,14 @@ class CompactElementBars extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = context.isDark;
     final elements = _getElementCounts();
-    final maxCount = elements.values.fold<int>(0, (max, v) => v > max ? v : max);
+    final maxCount =
+        elements.values.fold<int>(0, (max, v) => v > max ? v : max);
 
     return Container(
       padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
-        color: isDark
-            ? context.colors.backgroundSecondary
-            : Colors.grey.shade50,
+        color:
+            isDark ? context.colors.backgroundSecondary : Colors.grey.shade50,
         borderRadius: BorderRadius.circular(DSRadius.sm),
         border: Border.all(
           color: isDark ? DSColors.border : DSColors.borderDark,
@@ -88,7 +88,8 @@ class CompactElementBars extends StatelessWidget {
     required bool isDark,
   }) {
     final color = SajuColors.getWuxingColor(element, isDark: isDark);
-    final bgColor = SajuColors.getWuxingBackgroundColor(element, isDark: isDark);
+    final bgColor =
+        SajuColors.getWuxingBackgroundColor(element, isDark: isDark);
     final ratio = count / maxCount;
 
     // 한자 매핑
@@ -155,9 +156,7 @@ class CompactElementBars extends StatelessWidget {
               '$count',
               style: context.labelTiny.copyWith(
                 fontWeight: FontWeight.bold,
-                color: count == 0
-                    ? context.colors.textTertiary
-                    : color,
+                color: count == 0 ? context.colors.textTertiary : color,
               ),
               textAlign: TextAlign.right,
             ),

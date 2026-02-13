@@ -102,7 +102,9 @@ class ActiveProfileNotifier extends StateNotifier<ActiveProfileState> {
           type: 'secondary',
           secondaryProfileId: profile.id,
         );
-    _ref.read(userProfileNotifierProvider.notifier).applySecondaryProfile(profile);
+    _ref
+        .read(userProfileNotifierProvider.notifier)
+        .applySecondaryProfile(profile);
   }
 
   /// 초기화 (로그아웃 시 등)

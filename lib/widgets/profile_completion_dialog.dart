@@ -5,17 +5,19 @@ import '../core/design_system/design_system.dart';
 
 class ProfileCompletionDialog extends StatelessWidget {
   final List<String> missingFields;
-  
+
   const ProfileCompletionDialog({
     super.key,
     required this.missingFields,
   });
 
-  static Future<void> show(BuildContext context, List<String> missingFields) async {
+  static Future<void> show(
+      BuildContext context, List<String> missingFields) async {
     return showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => ProfileCompletionDialog(missingFields: missingFields),
+      builder: (context) =>
+          ProfileCompletionDialog(missingFields: missingFields),
     );
   }
 
@@ -43,16 +45,15 @@ class ProfileCompletionDialog extends StatelessWidget {
                 size: 32,
                 color: DSColors.accentDark,
               ),
-            ).animate()
-              .scale(
-                begin: const Offset(0.8, 0.8),
-                end: const Offset(1, 1),
-                duration: 400.ms,
-                curve: Curves.easeOutBack,
-              ),
-            
+            ).animate().scale(
+                  begin: const Offset(0.8, 0.8),
+                  end: const Offset(1, 1),
+                  duration: 400.ms,
+                  curve: Curves.easeOutBack,
+                ),
+
             const SizedBox(height: 20),
-            
+
             // Title
             Text(
               '인사이트가 정확하려면\n정보가 더 필요합니다',
@@ -61,12 +62,13 @@ class ProfileCompletionDialog extends StatelessWidget {
                 height: 1.4,
               ),
               textAlign: TextAlign.center,
-            ).animate()
-              .fadeIn(delay: 200.ms, duration: 400.ms)
-              .slideY(begin: 0.1, end: 0, delay: 200.ms, duration: 400.ms),
-            
+            )
+                .animate()
+                .fadeIn(delay: 200.ms, duration: 400.ms)
+                .slideY(begin: 0.1, end: 0, delay: 200.ms, duration: 400.ms),
+
             const SizedBox(height: 12),
-            
+
             // Subtitle
             Text(
               _buildSubtitleText(),
@@ -75,43 +77,50 @@ class ProfileCompletionDialog extends StatelessWidget {
                 height: 1.5,
               ),
               textAlign: TextAlign.center,
-            ).animate()
-              .fadeIn(delay: 300.ms, duration: 400.ms)
-              .slideY(begin: 0.1, end: 0, delay: 300.ms, duration: 400.ms),
-            
+            )
+                .animate()
+                .fadeIn(delay: 300.ms, duration: 400.ms)
+                .slideY(begin: 0.1, end: 0, delay: 300.ms, duration: 400.ms),
+
             const SizedBox(height: 24),
-            
+
             // Missing fields chip list
             if (missingFields.isNotEmpty)
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: missingFields.map((field) => 
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: DSColors.backgroundSecondaryDark,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      field,
-                      style: context.labelLarge.copyWith(
-                        color: DSColors.textSecondaryDark,
-                      ),
-                    ),
-                  ).animate()
-                    .fadeIn(delay: (400 + missingFields.indexOf(field) * 50).ms, duration: 300.ms)
-                    .scale(
-                      begin: const Offset(0.8, 0.8),
-                      end: const Offset(1, 1),
-                      delay: (400 + missingFields.indexOf(field) * 50).ms,
-                      duration: 300.ms,
-                    )
-                ).toList(),
+                children: missingFields
+                    .map((field) => Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: DSColors.backgroundSecondaryDark,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            field,
+                            style: context.labelLarge.copyWith(
+                              color: DSColors.textSecondaryDark,
+                            ),
+                          ),
+                        )
+                            .animate()
+                            .fadeIn(
+                                delay: (400 + missingFields.indexOf(field) * 50)
+                                    .ms,
+                                duration: 300.ms)
+                            .scale(
+                              begin: const Offset(0.8, 0.8),
+                              end: const Offset(1, 1),
+                              delay:
+                                  (400 + missingFields.indexOf(field) * 50).ms,
+                              duration: 300.ms,
+                            ))
+                    .toList(),
               ),
-            
+
             const SizedBox(height: 24),
-            
+
             // CTA Button
             SizedBox(
               width: double.infinity,
@@ -138,12 +147,13 @@ class ProfileCompletionDialog extends StatelessWidget {
                   ),
                 ),
               ),
-            ).animate()
-              .fadeIn(delay: 500.ms, duration: 400.ms)
-              .slideY(begin: 0.2, end: 0, delay: 500.ms, duration: 400.ms),
-            
+            )
+                .animate()
+                .fadeIn(delay: 500.ms, duration: 400.ms)
+                .slideY(begin: 0.2, end: 0, delay: 500.ms, duration: 400.ms),
+
             const SizedBox(height: 12),
-            
+
             // Skip button (optional)
             TextButton(
               onPressed: () {
@@ -155,21 +165,18 @@ class ProfileCompletionDialog extends StatelessWidget {
                   color: DSColors.textTertiaryDark,
                 ),
               ),
-            ).animate()
-              .fadeIn(delay: 600.ms, duration: 400.ms),
+            ).animate().fadeIn(delay: 600.ms, duration: 400.ms),
           ],
         ),
       ),
-    ).animate()
-      .fadeIn(duration: 300.ms)
-      .scale(
-        begin: const Offset(0.95, 0.95),
-        end: const Offset(1, 1),
-        duration: 300.ms,
-        curve: Curves.easeOut,
-      );
+    ).animate().fadeIn(duration: 300.ms).scale(
+          begin: const Offset(0.95, 0.95),
+          end: const Offset(1, 1),
+          duration: 300.ms,
+          curve: Curves.easeOut,
+        );
   }
-  
+
   String _buildSubtitleText() {
     if (missingFields.length == 1) {
       return '${missingFields.first}을(를) 입력하면\n더 정확한 인사이트를 확인할 수 있어요';

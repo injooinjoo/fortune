@@ -68,7 +68,8 @@ class _CharacterChoiceWidgetState extends State<CharacterChoiceWidget>
 
     HapticFeedback.mediumImpact();
     if (widget.choiceSet.defaultChoiceIndex != null &&
-        widget.choiceSet.defaultChoiceIndex! < widget.choiceSet.choices.length) {
+        widget.choiceSet.defaultChoiceIndex! <
+            widget.choiceSet.choices.length) {
       final defaultChoice =
           widget.choiceSet.choices[widget.choiceSet.defaultChoiceIndex!];
       _selectChoice(defaultChoice);

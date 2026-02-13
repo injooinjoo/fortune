@@ -77,7 +77,8 @@ class SocialAuthService {
 
       Logger.securityCheckpoint('User signed out');
     } catch (error) {
-      Logger.warning('[SocialAuthService] 로그아웃 실패 (선택적 기능, 수동 로그아웃 가능): $error');
+      Logger.warning(
+          '[SocialAuthService] 로그아웃 실패 (선택적 기능, 수동 로그아웃 가능): $error');
       rethrow;
     }
   }
@@ -130,7 +131,8 @@ class SocialAuthService {
           return false;
       }
     } catch (e) {
-      Logger.warning('[SocialAuthService] 계정 연결 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $provider - $e');
+      Logger.warning(
+          '[SocialAuthService] 계정 연결 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $provider - $e');
       return false;
     }
   }
@@ -153,7 +155,8 @@ class SocialAuthService {
 
       return [];
     } catch (e) {
-      Logger.warning('[SocialAuthService] 연결된 계정 조회 실패 (선택적 기능, 비어 있는 목록 반환): $e');
+      Logger.warning(
+          '[SocialAuthService] 연결된 계정 조회 실패 (선택적 기능, 비어 있는 목록 반환): $e');
       return [];
     }
   }
@@ -183,12 +186,14 @@ class SocialAuthService {
 
       Logger.securityCheckpoint('Provider unlinked: $provider');
     } catch (e) {
-      Logger.warning('[SocialAuthService] 계정 연결 해제 실패 (선택적 기능, 수동 연결 해제 가능): $e');
+      Logger.warning(
+          '[SocialAuthService] 계정 연결 해제 실패 (선택적 기능, 수동 연결 해제 가능): $e');
       rethrow;
     }
   }
 
-  Future<void> _updateLinkedProviders(String userId, String provider, bool isAdding) async {
+  Future<void> _updateLinkedProviders(
+      String userId, String provider, bool isAdding) async {
     try {
       final profile = await _supabase
           .from('user_profiles')
@@ -211,7 +216,8 @@ class SocialAuthService {
         'updated_at': null,
       }).eq('id', userId);
     } catch (e) {
-      Logger.warning('[SocialAuthService] 연결된 제공자 업데이트 실패 (선택적 기능, 수동 업데이트 가능): $e');
+      Logger.warning(
+          '[SocialAuthService] 연결된 제공자 업데이트 실패 (선택적 기능, 수동 업데이트 가능): $e');
     }
   }
 }

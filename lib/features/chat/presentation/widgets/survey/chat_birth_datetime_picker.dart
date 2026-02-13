@@ -20,7 +20,8 @@ class ChatBirthDatetimePicker extends StatefulWidget {
   });
 
   @override
-  State<ChatBirthDatetimePicker> createState() => _ChatBirthDatetimePickerState();
+  State<ChatBirthDatetimePicker> createState() =>
+      _ChatBirthDatetimePickerState();
 }
 
 class _ChatBirthDatetimePickerState extends State<ChatBirthDatetimePicker> {
@@ -110,7 +111,8 @@ class _ChatBirthDatetimePickerState extends State<ChatBirthDatetimePicker> {
       width: double.infinity,
       decoration: BoxDecoration(
         color: isDark ? colors.background : colors.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(DSRadius.lg)),
+        borderRadius:
+            const BorderRadius.vertical(top: Radius.circular(DSRadius.lg)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -250,13 +252,16 @@ class _ChatBirthDatetimePickerState extends State<ChatBirthDatetimePicker> {
           ),
 
           // SafeArea 패딩 (최소값으로 제한)
-          SizedBox(height: MediaQuery.of(context).padding.bottom.clamp(0, DSSpacing.sm)),
+          SizedBox(
+              height:
+                  MediaQuery.of(context).padding.bottom.clamp(0, DSSpacing.sm)),
         ],
       ),
     );
   }
 
-  Widget _buildColumnHeader(String label, double flex, DSColorScheme colors, DSTypographyScheme typography) {
+  Widget _buildColumnHeader(String label, double flex, DSColorScheme colors,
+      DSTypographyScheme typography) {
     return Expanded(
       flex: (flex * 10).toInt(),
       child: Center(
@@ -271,7 +276,8 @@ class _ChatBirthDatetimePickerState extends State<ChatBirthDatetimePicker> {
     );
   }
 
-  Widget _buildYearPicker(DSColorScheme colors, DSTypographyScheme typography, bool isDark) {
+  Widget _buildYearPicker(
+      DSColorScheme colors, DSTypographyScheme typography, bool isDark) {
     final years = List.generate(
       _endYear - _startYear + 1,
       (i) => _startYear + i,
@@ -288,16 +294,19 @@ class _ChatBirthDatetimePickerState extends State<ChatBirthDatetimePicker> {
           _updateDay();
         });
       },
-      children: years.map((year) => _buildPickerItem(
-        '$year',
-        year == _selectedYear,
-        colors,
-        typography,
-      )).toList(),
+      children: years
+          .map((year) => _buildPickerItem(
+                '$year',
+                year == _selectedYear,
+                colors,
+                typography,
+              ))
+          .toList(),
     );
   }
 
-  Widget _buildMonthPicker(DSColorScheme colors, DSTypographyScheme typography, bool isDark) {
+  Widget _buildMonthPicker(
+      DSColorScheme colors, DSTypographyScheme typography, bool isDark) {
     return CupertinoPicker(
       scrollController: _monthController,
       itemExtent: 36,
@@ -309,16 +318,19 @@ class _ChatBirthDatetimePickerState extends State<ChatBirthDatetimePicker> {
           _updateDay();
         });
       },
-      children: List.generate(12, (i) => _buildPickerItem(
-        '${i + 1}',
-        (i + 1) == _selectedMonth,
-        colors,
-        typography,
-      )),
+      children: List.generate(
+          12,
+          (i) => _buildPickerItem(
+                '${i + 1}',
+                (i + 1) == _selectedMonth,
+                colors,
+                typography,
+              )),
     );
   }
 
-  Widget _buildDayPicker(DSColorScheme colors, DSTypographyScheme typography, bool isDark) {
+  Widget _buildDayPicker(
+      DSColorScheme colors, DSTypographyScheme typography, bool isDark) {
     final maxDay = _daysInMonth(_selectedYear, _selectedMonth);
 
     return CupertinoPicker(
@@ -329,16 +341,19 @@ class _ChatBirthDatetimePickerState extends State<ChatBirthDatetimePicker> {
         DSHaptics.selection();
         setState(() => _selectedDay = index + 1);
       },
-      children: List.generate(maxDay, (i) => _buildPickerItem(
-        '${i + 1}',
-        (i + 1) == _selectedDay,
-        colors,
-        typography,
-      )),
+      children: List.generate(
+          maxDay,
+          (i) => _buildPickerItem(
+                '${i + 1}',
+                (i + 1) == _selectedDay,
+                colors,
+                typography,
+              )),
     );
   }
 
-  Widget _buildHourPicker(DSColorScheme colors, DSTypographyScheme typography, bool isDark) {
+  Widget _buildHourPicker(
+      DSColorScheme colors, DSTypographyScheme typography, bool isDark) {
     // 0: 모름, 1-24: 0시-23시
     final items = ['?', ...List.generate(24, (i) => '$i')];
 
@@ -352,18 +367,26 @@ class _ChatBirthDatetimePickerState extends State<ChatBirthDatetimePicker> {
           _selectedHour = index == 0 ? null : index - 1;
         });
       },
-      children: items.asMap().entries.map((e) => _buildPickerItem(
-        e.value,
-        e.key == 0 ? _selectedHour == null : _selectedHour == e.key - 1,
-        colors,
-        typography,
-      )).toList(),
+      children: items
+          .asMap()
+          .entries
+          .map((e) => _buildPickerItem(
+                e.value,
+                e.key == 0 ? _selectedHour == null : _selectedHour == e.key - 1,
+                colors,
+                typography,
+              ))
+          .toList(),
     );
   }
 
-  Widget _buildMinutePicker(DSColorScheme colors, DSTypographyScheme typography, bool isDark) {
+  Widget _buildMinutePicker(
+      DSColorScheme colors, DSTypographyScheme typography, bool isDark) {
     // 0: 모름, 1-60: 0분-59분 (1분 단위)
-    final items = ['?', ...List.generate(60, (i) => i.toString().padLeft(2, '0'))];
+    final items = [
+      '?',
+      ...List.generate(60, (i) => i.toString().padLeft(2, '0'))
+    ];
 
     return CupertinoPicker(
       scrollController: _minuteController,
@@ -379,18 +402,23 @@ class _ChatBirthDatetimePickerState extends State<ChatBirthDatetimePicker> {
           }
         });
       },
-      children: items.asMap().entries.map((e) => _buildPickerItem(
-        e.value,
-        e.key == 0
-            ? _selectedMinute == null
-            : _selectedMinute == (e.key - 1),
-        colors,
-        typography,
-      )).toList(),
+      children: items
+          .asMap()
+          .entries
+          .map((e) => _buildPickerItem(
+                e.value,
+                e.key == 0
+                    ? _selectedMinute == null
+                    : _selectedMinute == (e.key - 1),
+                colors,
+                typography,
+              ))
+          .toList(),
     );
   }
 
-  Widget _buildPickerItem(String text, bool isSelected, DSColorScheme colors, DSTypographyScheme typography) {
+  Widget _buildPickerItem(String text, bool isSelected, DSColorScheme colors,
+      DSTypographyScheme typography) {
     return Center(
       child: Text(
         text,

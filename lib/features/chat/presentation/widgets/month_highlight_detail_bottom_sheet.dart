@@ -58,7 +58,8 @@ class MonthHighlightDetailBottomSheet extends StatelessWidget {
     final score = (monthData['score'] as num?)?.toInt() ?? 70;
     final advice = monthData['advice'] as String? ?? '';
     final energyLevel = monthData['energyLevel'] as String? ?? 'Medium';
-    final bestDays = (monthData['bestDays'] as List<dynamic>?)?.cast<String>() ?? [];
+    final bestDays =
+        (monthData['bestDays'] as List<dynamic>?)?.cast<String>() ?? [];
     final recommendedAction = monthData['recommendedAction'] as String? ?? '';
     final avoidAction = monthData['avoidAction'] as String? ?? '';
 
@@ -92,7 +93,8 @@ class MonthHighlightDetailBottomSheet extends StatelessWidget {
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: isCurrentMonth
                         ? colors.accent.withValues(alpha: 0.1)
@@ -105,7 +107,8 @@ class MonthHighlightDetailBottomSheet extends StatelessWidget {
                   child: Text(
                     '$monthNum월',
                     style: typography.headingSmall.copyWith(
-                      color: isCurrentMonth ? colors.accent : colors.textPrimary,
+                      color:
+                          isCurrentMonth ? colors.accent : colors.textPrimary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -122,7 +125,8 @@ class MonthHighlightDetailBottomSheet extends StatelessWidget {
                 ),
                 // 점수 뱃지
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: energyColor.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
@@ -158,7 +162,8 @@ class MonthHighlightDetailBottomSheet extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
                           color: energyColor.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
@@ -312,20 +317,24 @@ class MonthHighlightDetailBottomSheet extends StatelessWidget {
                         Expanded(
                           child: Wrap(
                             spacing: 6,
-                            children: bestDays.map((day) => Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: colors.accent.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                day,
-                                style: typography.labelSmall.copyWith(
-                                  color: colors.accent,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            )).toList(),
+                            children: bestDays
+                                .map((day) => Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: colors.accent
+                                            .withValues(alpha: 0.1),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        day,
+                                        style: typography.labelSmall.copyWith(
+                                          color: colors.accent,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ))
+                                .toList(),
                           ),
                         ),
                       ],

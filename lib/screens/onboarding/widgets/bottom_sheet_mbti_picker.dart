@@ -10,7 +10,7 @@ class BottomSheetMbtiPicker extends ConsumerWidget {
   final String option2;
   final String? selectedOption;
   final Function(String) onOptionSelected;
-  
+
   const BottomSheetMbtiPicker({
     super.key,
     required this.dimension,
@@ -77,7 +77,8 @@ class BottomSheetMbtiPicker extends ConsumerWidget {
         color: colors.background,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(fortuneTheme.bottomSheetStyles.borderRadius),
-          topRight: Radius.circular(fortuneTheme.bottomSheetStyles.borderRadius),
+          topRight:
+              Radius.circular(fortuneTheme.bottomSheetStyles.borderRadius),
         ),
       ),
       child: Column(
@@ -89,13 +90,15 @@ class BottomSheetMbtiPicker extends ConsumerWidget {
             height: fortuneTheme.bottomSheetStyles.handleHeight,
             decoration: BoxDecoration(
               color: colors.divider,
-              borderRadius: BorderRadius.circular(fortuneTheme.bottomSheetStyles.handleHeight / 2),
+              borderRadius: BorderRadius.circular(
+                  fortuneTheme.bottomSheetStyles.handleHeight / 2),
             ),
           ),
 
           // Header
           Padding(
-            padding: EdgeInsets.all(fortuneTheme.formStyles.inputPadding.horizontal),
+            padding:
+                EdgeInsets.all(fortuneTheme.formStyles.inputPadding.horizontal),
             child: Text(
               dimension,
               style: context.typography.headingLarge.copyWith(
@@ -107,12 +110,15 @@ class BottomSheetMbtiPicker extends ConsumerWidget {
           // Options
           Expanded(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: fortuneTheme.formStyles.inputPadding.horizontal * 1.5),
+              padding: EdgeInsets.symmetric(
+                  horizontal:
+                      fortuneTheme.formStyles.inputPadding.horizontal * 1.5),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _buildOption(context, ref, option1),
-                  SizedBox(height: fortuneTheme.formStyles.inputPadding.horizontal),
+                  SizedBox(
+                      height: fortuneTheme.formStyles.inputPadding.horizontal),
                   _buildOption(context, ref, option2),
                 ],
               ),
@@ -139,7 +145,8 @@ class BottomSheetMbtiPicker extends ConsumerWidget {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           width: double.infinity,
-          padding: EdgeInsets.all(fortuneTheme.formStyles.inputPadding.horizontal * 1.25),
+          padding: EdgeInsets.all(
+              fortuneTheme.formStyles.inputPadding.horizontal * 1.25),
           decoration: BoxDecoration(
             color: isSelected
                 ? colors.textPrimary.withValues(alpha: 0.1)
@@ -167,7 +174,9 @@ class BottomSheetMbtiPicker extends ConsumerWidget {
                             : colors.textPrimary,
                       ),
                     ),
-                    SizedBox(height: fortuneTheme.formStyles.inputPadding.vertical * 0.3),
+                    SizedBox(
+                        height: fortuneTheme.formStyles.inputPadding.vertical *
+                            0.3),
                     Text(
                       _getDescription(option),
                       style: context.typography.bodyMedium.copyWith(

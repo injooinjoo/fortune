@@ -86,10 +86,12 @@ void main() {
         final sajuData = UserTestData.createSajuData();
         final elements = sajuData['elements'] as Map<String, dynamic>;
 
-        expect(elements.keys, containsAll(['wood', 'fire', 'earth', 'metal', 'water']));
+        expect(elements.keys,
+            containsAll(['wood', 'fire', 'earth', 'metal', 'water']));
 
         // 총합이 8이어야 함 (사주팔자)
-        final total = elements.values.fold<int>(0, (sum, val) => sum + (val as int));
+        final total =
+            elements.values.fold<int>(0, (sum, val) => sum + (val as int));
         expect(total, 8);
       });
 
@@ -97,15 +99,19 @@ void main() {
         final sajuData = UserTestData.createSajuData();
 
         expect(sajuData['main_element'], isNotNull);
-        expect(['wood', 'fire', 'earth', 'metal', 'water'], contains(sajuData['main_element']));
+        expect(['wood', 'fire', 'earth', 'metal', 'water'],
+            contains(sajuData['main_element']));
       });
     });
 
     group('별자리 & 띠 계산', () {
       test('별자리 자동 계산', () {
-        final profile1 = UserTestData.createUserProfile(birthDate: '1990-01-15');
-        final profile2 = UserTestData.createUserProfile(birthDate: '1990-07-23');
-        final profile3 = UserTestData.createUserProfile(birthDate: '1990-03-21');
+        final profile1 =
+            UserTestData.createUserProfile(birthDate: '1990-01-15');
+        final profile2 =
+            UserTestData.createUserProfile(birthDate: '1990-07-23');
+        final profile3 =
+            UserTestData.createUserProfile(birthDate: '1990-03-21');
 
         expect(profile1['zodiac_sign'], '염소자리');
         expect(profile2['zodiac_sign'], '사자자리');
@@ -113,9 +119,12 @@ void main() {
       });
 
       test('띠 자동 계산', () {
-        final profile1990 = UserTestData.createUserProfile(birthDate: '1990-01-15');
-        final profile1988 = UserTestData.createUserProfile(birthDate: '1988-05-20');
-        final profile2000 = UserTestData.createUserProfile(birthDate: '2000-12-25');
+        final profile1990 =
+            UserTestData.createUserProfile(birthDate: '1990-01-15');
+        final profile1988 =
+            UserTestData.createUserProfile(birthDate: '1988-05-20');
+        final profile2000 =
+            UserTestData.createUserProfile(birthDate: '2000-12-25');
 
         expect(profile1990['chinese_zodiac'], '말');
         expect(profile1988['chinese_zodiac'], '용');
@@ -145,7 +154,8 @@ void main() {
       test('운세 타입별 필터링', () {
         final history = UserTestData.createFortuneHistory(count: 10);
 
-        final dailyFortunes = history.where((h) => h['type'] == 'daily').toList();
+        final dailyFortunes =
+            history.where((h) => h['type'] == 'daily').toList();
         final loveFortunes = history.where((h) => h['type'] == 'love').toList();
 
         expect(dailyFortunes, isNotEmpty);

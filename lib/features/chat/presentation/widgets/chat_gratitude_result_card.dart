@@ -47,9 +47,7 @@ class ChatGratitudeResultCard extends ConsumerWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: isDark
-              ? [_darkBg1, _darkBg2]
-              : [_creamLight, _creamDark],
+          colors: isDark ? [_darkBg1, _darkBg2] : [_creamLight, _creamDark],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
@@ -82,9 +80,9 @@ class ChatGratitudeResultCard extends ConsumerWidget {
                 children: [
                   // 헤더 (날짜 + 이모지)
                   _buildHeader(context, isDark)
-                    .animate()
-                    .fadeIn(duration: 500.ms)
-                    .slideY(begin: -0.1, end: 0),
+                      .animate()
+                      .fadeIn(duration: 500.ms)
+                      .slideY(begin: -0.1, end: 0),
 
                   const SizedBox(height: 16),
 
@@ -95,30 +93,30 @@ class ChatGratitudeResultCard extends ConsumerWidget {
 
                   // 감사 항목들
                   _buildGratitudeItem(context, 1, gratitude1, isDark)
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 200.ms)
-                    .slideX(begin: -0.05, end: 0),
+                      .animate()
+                      .fadeIn(duration: 400.ms, delay: 200.ms)
+                      .slideX(begin: -0.05, end: 0),
 
                   const SizedBox(height: 12),
 
                   _buildGratitudeItem(context, 2, gratitude2, isDark)
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 400.ms)
-                    .slideX(begin: -0.05, end: 0),
+                      .animate()
+                      .fadeIn(duration: 400.ms, delay: 400.ms)
+                      .slideX(begin: -0.05, end: 0),
 
                   const SizedBox(height: 12),
 
                   _buildGratitudeItem(context, 3, gratitude3, isDark)
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 600.ms)
-                    .slideX(begin: -0.05, end: 0),
+                      .animate()
+                      .fadeIn(duration: 400.ms, delay: 600.ms)
+                      .slideX(begin: -0.05, end: 0),
 
                   const SizedBox(height: 20),
 
                   // 마무리 메시지
                   _buildClosingMessage(context, isDark)
-                    .animate()
-                    .fadeIn(duration: 500.ms, delay: 800.ms),
+                      .animate()
+                      .fadeIn(duration: 500.ms, delay: 800.ms),
 
                   const SizedBox(height: 16),
                 ],
@@ -145,13 +143,11 @@ class ChatGratitudeResultCard extends ConsumerWidget {
             fontSize: 20,
             color: baseColor.withValues(alpha: 0.3),
           ),
-        )
-          .animate(onPlay: (c) => c.repeat(reverse: true))
-          .scale(
-            begin: const Offset(0.9, 0.9),
-            end: const Offset(1.1, 1.1),
-            duration: 2000.ms,
-          ),
+        ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
+              begin: const Offset(0.9, 0.9),
+              end: const Offset(1.1, 1.1),
+              duration: 2000.ms,
+            ),
       ),
     );
 
@@ -167,9 +163,9 @@ class ChatGratitudeResultCard extends ConsumerWidget {
             color: baseColor.withValues(alpha: 0.25),
           ),
         )
-          .animate(onPlay: (c) => c.repeat(reverse: true))
-          .fadeIn(duration: 1500.ms)
-          .fadeOut(duration: 1500.ms),
+            .animate(onPlay: (c) => c.repeat(reverse: true))
+            .fadeIn(duration: 1500.ms)
+            .fadeOut(duration: 1500.ms),
       ),
     );
 
@@ -324,10 +320,12 @@ class ChatGratitudeResultCard extends ConsumerWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
-              color: context.colors.surface.withValues(alpha: isDark ? 0.05 : 0.6),
+              color:
+                  context.colors.surface.withValues(alpha: isDark ? 0.05 : 0.6),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: (isDark ? _pinkAccent : _goldAccent).withValues(alpha: 0.2),
+                color:
+                    (isDark ? _pinkAccent : _goldAccent).withValues(alpha: 0.2),
               ),
             ),
             child: Text(
@@ -393,5 +391,4 @@ class ChatGratitudeResultCard extends ConsumerWidget {
       ),
     );
   }
-
 }

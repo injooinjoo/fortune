@@ -23,7 +23,8 @@ class TarotGenerator {
     Map<String, dynamic> inputConditions,
   ) async {
     // 1. 조건 추출
-    final spreadTypeStr = inputConditions['spread_type'] as String? ?? 'threeCard';
+    final spreadTypeStr =
+        inputConditions['spread_type'] as String? ?? 'threeCard';
     final deckTypeStr = inputConditions['deck_type'] as String? ?? 'riderWaite';
     final question = inputConditions['question'] as String? ?? '오늘의 운세는 어떤가요?';
 

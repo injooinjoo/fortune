@@ -78,7 +78,8 @@ class RarityCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: rarityData.color.withValues(alpha: isDark ? 0.4 : 0.3),
+                      color: rarityData.color
+                          .withValues(alpha: isDark ? 0.4 : 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -123,7 +124,8 @@ class RarityCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: rarityData.percentage / 100,
-              backgroundColor: rarityData.color.withValues(alpha: isDark ? 0.3 : 0.2),
+              backgroundColor:
+                  rarityData.color.withValues(alpha: isDark ? 0.3 : 0.2),
               valueColor: AlwaysStoppedAnimation(rarityData.color),
               minHeight: 8,
             ),
@@ -132,7 +134,10 @@ class RarityCard extends StatelessWidget {
           Text(
             '전국 $mbti 유형 중 상위 ${rarityData.percentage.toStringAsFixed(1)}%',
             style: context.labelLarge.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: isDark ? 0.75 : 0.6),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: isDark ? 0.75 : 0.6),
             ),
           ),
         ],

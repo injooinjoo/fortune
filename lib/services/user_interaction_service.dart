@@ -6,7 +6,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 /// - 공유 기록
 /// - 저장된 콘텐츠 조회
 class UserInteractionService {
-  static final UserInteractionService _instance = UserInteractionService._internal();
+  static final UserInteractionService _instance =
+      UserInteractionService._internal();
   factory UserInteractionService() => _instance;
   UserInteractionService._internal();
 
@@ -44,10 +45,7 @@ class UserInteractionService {
 
       if (existing != null) {
         // 이미 저장됨 → 삭제 (취소)
-        await _supabase
-            .from(_tableName)
-            .delete()
-            .eq('id', existing['id']);
+        await _supabase.from(_tableName).delete().eq('id', existing['id']);
         debugPrint('[UserInteractionService] Save removed: $contentKey');
         return false;
       } else {
@@ -107,7 +105,8 @@ class UserInteractionService {
 
       await _supabase.from(_tableName).insert(insertData);
 
-      debugPrint('[UserInteractionService] Share recorded: $contentKey on $platform');
+      debugPrint(
+          '[UserInteractionService] Share recorded: $contentKey on $platform');
     } catch (e) {
       debugPrint('[UserInteractionService] recordShare error: $e');
       // 공유 기록 실패는 무시 (공유 자체는 진행)

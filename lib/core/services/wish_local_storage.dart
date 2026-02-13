@@ -47,7 +47,8 @@ class WishLocalStorage {
     try {
       final List<dynamic> jsonList = jsonDecode(jsonString);
       return jsonList
-          .map((json) => WishFortuneResult.fromJson(json as Map<String, dynamic>))
+          .map((json) =>
+              WishFortuneResult.fromJson(json as Map<String, dynamic>))
           .toList();
     } catch (e) {
       // 파싱 실패 시 빈 리스트 반환

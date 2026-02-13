@@ -10,7 +10,7 @@ class NativeAuthCallbackHandler {
   static Future<void> handleAuthSuccess(BuildContext context, User user) async {
     try {
       Logger.info('user: ${user.id}');
-      
+
       // Chat-First: 모든 경우 /chat으로 이동 (온보딩은 채팅 내에서 처리)
       if (context.mounted) {
         Logger.info('Redirecting to chat');
@@ -23,7 +23,7 @@ class NativeAuthCallbackHandler {
       }
     }
   }
-  
+
   static void handleAuthError(BuildContext context, String error) {
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(

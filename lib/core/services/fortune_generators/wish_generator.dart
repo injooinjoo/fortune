@@ -31,8 +31,10 @@ class WishGenerator {
     Logger.info('[WishGenerator] 📤 API 요청 준비');
     Logger.info('[WishGenerator]   🌐 Edge Function: analyze-wish');
     Logger.info('[WishGenerator]   👤 user_id: $userId');
-    Logger.info('[WishGenerator]   ✨ wish_text: ${inputConditions['wish_text']}');
-    Logger.info('[WishGenerator]   📂 category: ${inputConditions['category']}');
+    Logger.info(
+        '[WishGenerator]   ✨ wish_text: ${inputConditions['wish_text']}');
+    Logger.info(
+        '[WishGenerator]   📂 category: ${inputConditions['category']}');
 
     try {
       final requestBody = {
@@ -70,10 +72,17 @@ class WishGenerator {
       }
 
       final wishData = data['data'] as Map<String, dynamic>;
-      Logger.info('[WishGenerator]   📦 Response data keys: ${wishData.keys.toList()}');
+      Logger.info(
+          '[WishGenerator]   📦 Response data keys: ${wishData.keys.toList()}');
 
       // ✅ 필수 필드 검증 (기존)
-      const requiredFields = ['empathy_message', 'hope_message', 'advice', 'encouragement', 'special_words'];
+      const requiredFields = [
+        'empathy_message',
+        'hope_message',
+        'advice',
+        'encouragement',
+        'special_words'
+      ];
       for (final field in requiredFields) {
         if (!wishData.containsKey(field)) {
           Logger.error('[WishGenerator] ❌ 필수 필드 누락: $field');
@@ -87,7 +96,11 @@ class WishGenerator {
       }
 
       // 🆕 확장 필드 검증 (새 필드 - 경고만 로그)
-      const enhancedFields = ['fortune_flow', 'lucky_mission', 'dragon_message'];
+      const enhancedFields = [
+        'fortune_flow',
+        'lucky_mission',
+        'dragon_message'
+      ];
       for (final field in enhancedFields) {
         if (!wishData.containsKey(field)) {
           Logger.warning('[WishGenerator] ⚠️ 확장 필드 누락: $field');
@@ -97,7 +110,8 @@ class WishGenerator {
       // 🐉 용의 메시지 로깅
       if (wishData.containsKey('dragon_message')) {
         final dragonMsg = wishData['dragon_message'] as Map<String, dynamic>?;
-        Logger.info('[WishGenerator]   🐉 power_line: ${dragonMsg?['power_line'] ?? 'N/A'}');
+        Logger.info(
+            '[WishGenerator]   🐉 power_line: ${dragonMsg?['power_line'] ?? 'N/A'}');
       }
 
       // 🎯 행운 미션 로깅

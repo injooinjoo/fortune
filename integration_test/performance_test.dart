@@ -65,7 +65,8 @@ void main() {
       expect(contentRendered, isTrue);
       final isWithinLimit = startupTime < 3000;
 
-      debugPrint('✅ PERF-001 ${isWithinLimit ? "PASSED" : "WARNING"}: App startup time: ${startupTime}ms (target: < 3000ms)');
+      debugPrint(
+          '✅ PERF-001 ${isWithinLimit ? "PASSED" : "WARNING"}: App startup time: ${startupTime}ms (target: < 3000ms)');
     });
 
     testWidgets('PERF-002: 화면 전환 시간 (< 300ms)', (tester) async {
@@ -92,11 +93,13 @@ void main() {
         transitionTimes.add(stopwatch2.elapsedMilliseconds);
       }
 
-      final avgTime = transitionTimes.reduce((a, b) => a + b) / transitionTimes.length;
+      final avgTime =
+          transitionTimes.reduce((a, b) => a + b) / transitionTimes.length;
       final isWithinLimit = avgTime < 500; // pump 시간 포함하여 여유있게 설정
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ PERF-002 ${isWithinLimit ? "PASSED" : "WARNING"}: Screen transition avg: ${avgTime.toStringAsFixed(0)}ms');
+      debugPrint(
+          '✅ PERF-002 ${isWithinLimit ? "PASSED" : "WARNING"}: Screen transition avg: ${avgTime.toStringAsFixed(0)}ms');
     });
 
     testWidgets('PERF-003: 리스트 스크롤 성능', (tester) async {
@@ -127,7 +130,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ PERF-003 PASSED: List scroll performance - scroll performed: $scrollPerformed');
+      debugPrint(
+          '✅ PERF-003 PASSED: List scroll performance - scroll performed: $scrollPerformed');
     });
 
     testWidgets('PERF-004: 이미지 로딩 시간', (tester) async {
@@ -145,7 +149,8 @@ void main() {
       await tester.pump(const Duration(seconds: 2));
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ PERF-004 PASSED: Image loading - images found: $hasImages, network: ${networkImages.evaluate().length}');
+      debugPrint(
+          '✅ PERF-004 PASSED: Image loading - images found: $hasImages, network: ${networkImages.evaluate().length}');
     });
 
     testWidgets('PERF-005: API 응답 대기 시간', (tester) async {
@@ -172,7 +177,8 @@ void main() {
       final isWithinLimit = loadTime < 5000;
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ PERF-005 ${isWithinLimit ? "PASSED" : "WARNING"}: API response time: ${loadTime}ms (target: < 5000ms)');
+      debugPrint(
+          '✅ PERF-005 ${isWithinLimit ? "PASSED" : "WARNING"}: API response time: ${loadTime}ms (target: < 5000ms)');
     });
 
     testWidgets('PERF-006: 메모리 사용량 확인', (tester) async {
@@ -198,7 +204,8 @@ void main() {
 
       // 앱이 여전히 정상 작동하면 메모리 관리가 잘 되고 있음
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ PERF-006 PASSED: Memory usage - no crash after multiple navigations');
+      debugPrint(
+          '✅ PERF-006 PASSED: Memory usage - no crash after multiple navigations');
     });
 
     testWidgets('PERF-007: 배터리 소모 (지속 실행 테스트)', (tester) async {
@@ -212,7 +219,8 @@ void main() {
 
       // 앱이 백그라운드에서도 효율적으로 동작하는지 확인
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ PERF-007 PASSED: Battery usage - app stable for extended period');
+      debugPrint(
+          '✅ PERF-007 PASSED: Battery usage - app stable for extended period');
     });
 
     testWidgets('PERF-008: 애니메이션 성능', (tester) async {
@@ -237,7 +245,8 @@ void main() {
 
       // 앱이 여전히 정상 작동하면 애니메이션 성능 OK
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ PERF-008 PASSED: Animation performance - smooth transitions');
+      debugPrint(
+          '✅ PERF-008 PASSED: Animation performance - smooth transitions');
     });
   });
 }

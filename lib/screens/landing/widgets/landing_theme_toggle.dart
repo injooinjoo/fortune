@@ -32,9 +32,7 @@ class LandingThemeToggle extends ConsumerWidget {
           height: 40,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(
-                color: context.colors.border,
-                width: 1),
+            border: Border.all(color: context.colors.border, width: 1),
           ),
           child: Icon(
               context.isDark

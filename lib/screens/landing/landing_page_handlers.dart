@@ -237,8 +237,7 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
                 height: 20,
                 child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                        Colors.white)),
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
               ),
               SizedBox(width: 16),
               Text('Google 로그인 진행 중...'),
@@ -315,8 +314,7 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
                 height: 20,
                 child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                        Colors.white)),
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
               ),
               SizedBox(width: 16),
               Text('카카오 로그인 진행 중...'),

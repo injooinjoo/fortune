@@ -145,8 +145,8 @@ class FortuneHeroSection extends StatelessWidget {
                                     Text(
                                       '점',
                                       style: context.bodySmall.copyWith(
-                                        color:
-                                            colors.textPrimary.withValues(alpha: 0.8),
+                                        color: colors.textPrimary
+                                            .withValues(alpha: 0.8),
                                       ),
                                     ),
                                   ],

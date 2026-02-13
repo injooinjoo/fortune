@@ -107,8 +107,8 @@ class SajuElementData {
 
     return SajuElementData(
       elementBalance: balance,
-      lackingElement: json['lacking_element'] as String? ??
-          json['weak_element'] as String?,
+      lackingElement:
+          json['lacking_element'] as String? ?? json['weak_element'] as String?,
       dominantElement: json['dominant_element'] as String? ??
           json['strong_element'] as String?,
     );

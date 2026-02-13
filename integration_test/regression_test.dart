@@ -78,7 +78,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ REG-001 PASSED: Home screen rendering - basic UI: $hasBasicUI, content: $hasContent');
+      debugPrint(
+          '✅ REG-001 PASSED: Home screen rendering - basic UI: $hasBasicUI, content: $hasContent');
     });
 
     testWidgets('REG-002: 운세 목록 38개 운세 접근', (tester) async {
@@ -118,11 +119,11 @@ void main() {
       // 카드나 리스트 아이템 수 확인
       final cards = find.byType(Card);
       final listTiles = find.byType(ListTile);
-      final totalItems = cards.evaluate().length +
-          listTiles.evaluate().length;
+      final totalItems = cards.evaluate().length + listTiles.evaluate().length;
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ REG-002 PASSED: Fortune list - types found: $foundFortuneTypes, scrollable: $hasScrollableList, items: $totalItems');
+      debugPrint(
+          '✅ REG-002 PASSED: Fortune list - types found: $foundFortuneTypes, scrollable: $hasScrollableList, items: $totalItems');
     });
 
     testWidgets('REG-003: 프로필 정보 표시', (tester) async {
@@ -167,7 +168,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ REG-003 PASSED: Profile display - elements: $foundElements, login prompt: $hasLoginPrompt');
+      debugPrint(
+          '✅ REG-003 PASSED: Profile display - elements: $foundElements, login prompt: $hasLoginPrompt');
     });
 
     testWidgets('REG-004: 설정 항목 표시', (tester) async {
@@ -209,7 +211,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ REG-004 PASSED: Settings display - page found: $hasSettingsPage, items: $settingsItemCount');
+      debugPrint(
+          '✅ REG-004 PASSED: Settings display - page found: $hasSettingsPage, items: $settingsItemCount');
     });
 
     testWidgets('REG-005: 결제 플로우', (tester) async {
@@ -260,7 +263,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ REG-005 PASSED: Payment flow - elements: $foundPaymentElements, buttons: $hasPurchaseButton, prices: $foundPriceOptions');
+      debugPrint(
+          '✅ REG-005 PASSED: Payment flow - elements: $foundPaymentElements, buttons: $hasPurchaseButton, prices: $foundPriceOptions');
     });
 
     testWidgets('REG-006: 타로 카드 선택', (tester) async {
@@ -307,7 +311,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ REG-006 PASSED: Tarot card selection - found: $foundTarot, UI: $hasTarotUI');
+      debugPrint(
+          '✅ REG-006 PASSED: Tarot card selection - found: $foundTarot, UI: $hasTarotUI');
     });
 
     testWidgets('REG-007: 궁합 입력 폼', (tester) async {
@@ -355,7 +360,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ REG-007 PASSED: Compatibility input form - found: $foundCompatibility, form: $hasInputForm');
+      debugPrint(
+          '✅ REG-007 PASSED: Compatibility input form - found: $foundCompatibility, form: $hasInputForm');
     });
 
     testWidgets('REG-008: 히스토리 운세 기록', (tester) async {
@@ -402,7 +408,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ REG-008 PASSED: History records - menu: $hasHistoryMenu, content: $hasHistoryContent');
+      debugPrint(
+          '✅ REG-008 PASSED: History records - menu: $hasHistoryMenu, content: $hasHistoryContent');
     });
 
     testWidgets('REG-009: 공유 기능', (tester) async {
@@ -451,7 +458,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ REG-009 PASSED: Share feature - button: $hasShareButton, text: $hasShareText');
+      debugPrint(
+          '✅ REG-009 PASSED: Share feature - button: $hasShareButton, text: $hasShareText');
     });
 
     testWidgets('REG-010: 다크모드 테마 전환', (tester) async {
@@ -491,7 +499,8 @@ void main() {
         final switches = find.byType(Switch);
         final hasSwitches = switches.evaluate().isNotEmpty;
 
-        debugPrint('✅ REG-010 PASSED: Dark mode - option found: $hasDarkModeOption, switches: $hasSwitches');
+        debugPrint(
+            '✅ REG-010 PASSED: Dark mode - option found: $hasDarkModeOption, switches: $hasSwitches');
       } else {
         debugPrint('✅ REG-010 PASSED: Dark mode - settings icon not found');
       }

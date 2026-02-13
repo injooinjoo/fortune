@@ -214,7 +214,8 @@ class SyncQueueLocalService {
         final key = '${item.chatType}_${item.chatId}';
         await _box!.put(key, updatedItem.toJsonString());
       }
-      Logger.info('[SyncQueueLocalService] ${guestItems.length}개 게스트 항목에 userId 할당');
+      Logger.info(
+          '[SyncQueueLocalService] ${guestItems.length}개 게스트 항목에 userId 할당');
       return true;
     } catch (e) {
       Logger.error('[SyncQueueLocalService] userId 할당 실패', e);

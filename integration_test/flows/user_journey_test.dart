@@ -54,7 +54,8 @@ void main() {
         await tester.pump(const Duration(seconds: 3));
 
         // 온보딩 화면 요소 확인
-        final hasOnboardingContent = find.byType(Scaffold).evaluate().isNotEmpty;
+        final hasOnboardingContent =
+            find.byType(Scaffold).evaluate().isNotEmpty;
         expect(hasOnboardingContent, isTrue);
 
         debugPrint('✅ JOUR-001 PASSED: New user journey - on onboarding');
@@ -75,7 +76,8 @@ void main() {
         }
 
         expect(find.byType(Scaffold), findsWidgets);
-        debugPrint('✅ JOUR-001 PASSED: New user journey - already authenticated, on home: $isOnHome');
+        debugPrint(
+            '✅ JOUR-001 PASSED: New user journey - already authenticated, on home: $isOnHome');
       }
     });
 
@@ -83,7 +85,8 @@ void main() {
       await startAppAndWait(tester, waitDuration: const Duration(seconds: 10));
 
       // 1. 앱 시작 - 홈 화면
-      final hasBottomNav = find.byType(BottomNavigationBar).evaluate().isNotEmpty;
+      final hasBottomNav =
+          find.byType(BottomNavigationBar).evaluate().isNotEmpty;
 
       if (!hasBottomNav) {
         // 로그인되지 않은 상태
@@ -113,7 +116,8 @@ void main() {
           find.byIcon(Icons.share_outlined).evaluate().isNotEmpty;
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ JOUR-002 PASSED: Daily user journey - fortune: $hasDailyFortune, share: $hasShareOption');
+      debugPrint(
+          '✅ JOUR-002 PASSED: Daily user journey - fortune: $hasDailyFortune, share: $hasShareOption');
     });
 
     testWidgets('JOUR-003: 구매 사용자 여정 (토큰 충전)', (tester) async {
@@ -145,7 +149,8 @@ void main() {
       final hasPurchaseButton = purchaseButtons.evaluate().isNotEmpty;
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ JOUR-003 PASSED: Purchase user journey - options: $hasPurchaseOption, button: $hasPurchaseButton');
+      debugPrint(
+          '✅ JOUR-003 PASSED: Purchase user journey - options: $hasPurchaseOption, button: $hasPurchaseButton');
     });
 
     testWidgets('JOUR-004: 탐색 여정 (운세 목록 브라우징)', (tester) async {
@@ -189,7 +194,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ JOUR-004 PASSED: Browse journey - list: $hasFortuneList, detail: $navigatedToDetail');
+      debugPrint(
+          '✅ JOUR-004 PASSED: Browse journey - list: $hasFortuneList, detail: $navigatedToDetail');
     });
 
     testWidgets('JOUR-005: 설정 변경 여정', (tester) async {
@@ -225,9 +231,11 @@ void main() {
           }
         }
 
-        debugPrint('✅ JOUR-005 PASSED: Settings journey - access: $hasSettingsAccess, items: $hasSettingsItems');
+        debugPrint(
+            '✅ JOUR-005 PASSED: Settings journey - access: $hasSettingsAccess, items: $hasSettingsItems');
       } else {
-        debugPrint('✅ JOUR-005 PASSED: Settings journey - settings icon not found on this screen');
+        debugPrint(
+            '✅ JOUR-005 PASSED: Settings journey - settings icon not found on this screen');
       }
 
       expect(find.byType(Scaffold), findsWidgets);
@@ -276,7 +284,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ JOUR-006 PASSED: History journey - menu: $hasHistoryMenu, content: $hasHistoryContent');
+      debugPrint(
+          '✅ JOUR-006 PASSED: History journey - menu: $hasHistoryMenu, content: $hasHistoryContent');
     });
 
     testWidgets('JOUR-007: 구독 여정', (tester) async {
@@ -321,7 +330,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ JOUR-007 PASSED: Subscription journey - options: $hasSubscriptionOptions, benefits: $hasBenefitInfo');
+      debugPrint(
+          '✅ JOUR-007 PASSED: Subscription journey - options: $hasSubscriptionOptions, benefits: $hasBenefitInfo');
     });
 
     testWidgets('JOUR-008: 공유 여정', (tester) async {
@@ -360,7 +370,8 @@ void main() {
             }
           }
 
-          debugPrint('✅ JOUR-008 PASSED: Share journey - button: $hasShareButton, options: $hasShareOptions');
+          debugPrint(
+              '✅ JOUR-008 PASSED: Share journey - button: $hasShareButton, options: $hasShareOptions');
           break;
         }
       }
@@ -377,7 +388,8 @@ void main() {
           }
         }
 
-        debugPrint('✅ JOUR-008 PASSED: Share journey - share button on fortune page: $hasShareButton');
+        debugPrint(
+            '✅ JOUR-008 PASSED: Share journey - share button on fortune page: $hasShareButton');
       }
 
       expect(find.byType(Scaffold), findsWidgets);

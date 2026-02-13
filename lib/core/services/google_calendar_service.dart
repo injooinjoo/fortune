@@ -14,7 +14,8 @@ import 'device_calendar_service.dart';
 /// 2. Google Calendar 앱만 사용하는 사용자
 /// 3. 더 정확한 Google Calendar 데이터가 필요한 경우
 class GoogleCalendarService {
-  static final GoogleCalendarService _instance = GoogleCalendarService._internal();
+  static final GoogleCalendarService _instance =
+      GoogleCalendarService._internal();
   factory GoogleCalendarService() => _instance;
   GoogleCalendarService._internal();
 
@@ -99,13 +100,15 @@ class GoogleCalendarService {
 
       Logger.info('[GoogleCalendar] ${calendars.length}개 캘린더 발견');
 
-      return calendars.map((cal) => GoogleCalendarInfo(
-        id: cal.id ?? '',
-        name: cal.summary ?? '이름 없음',
-        color: cal.backgroundColor,
-        isPrimary: cal.primary ?? false,
-        accessRole: cal.accessRole ?? 'reader',
-      )).toList();
+      return calendars
+          .map((cal) => GoogleCalendarInfo(
+                id: cal.id ?? '',
+                name: cal.summary ?? '이름 없음',
+                color: cal.backgroundColor,
+                isPrimary: cal.primary ?? false,
+                accessRole: cal.accessRole ?? 'reader',
+              ))
+          .toList();
     } catch (e) {
       Logger.error('[GoogleCalendar] 캘린더 목록 조회 실패', e);
       return [];
@@ -163,7 +166,8 @@ class GoogleCalendarService {
         }
       }
 
-      Logger.info('[GoogleCalendar] ${allEvents.length}개 이벤트 발견 (${startDate.toString().substring(0, 10)} ~ ${endDate.toString().substring(0, 10)})');
+      Logger.info(
+          '[GoogleCalendar] ${allEvents.length}개 이벤트 발견 (${startDate.toString().substring(0, 10)} ~ ${endDate.toString().substring(0, 10)})');
 
       return allEvents;
     } catch (e) {

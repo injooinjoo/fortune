@@ -120,9 +120,9 @@ class CloudBubble extends StatelessWidget {
     );
 
     // Add corner decorations if asset provided and border is visible
-    final brdColor = borderColor ?? DSColors.getBorder(isDark ? Brightness.dark : Brightness.light);
+    final brdColor = borderColor ??
+        DSColors.getBorder(isDark ? Brightness.dark : Brightness.light);
     if (cornerAsset != null && brdColor != Colors.transparent) {
-
       bubble = Stack(
         clipBehavior: Clip.none,
         children: [

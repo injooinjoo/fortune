@@ -21,27 +21,34 @@ class ChatInsightResult {
 
   factory ChatInsightResult.fromJson(Map<String, dynamic> json) {
     return ChatInsightResult(
-      analysisMeta: AnalysisMeta.fromJson(json['analysis_meta'] as Map<String, dynamic>),
+      analysisMeta:
+          AnalysisMeta.fromJson(json['analysis_meta'] as Map<String, dynamic>),
       scores: InsightScores.fromJson(json['scores'] as Map<String, dynamic>),
-      highlights: InsightHighlights.fromJson(json['highlights'] as Map<String, dynamic>),
-      timeline: InsightTimeline.fromJson(json['timeline'] as Map<String, dynamic>),
-      patterns: InsightPatterns.fromJson(json['patterns'] as Map<String, dynamic>),
-      triggers: InsightTriggers.fromJson(json['triggers'] as Map<String, dynamic>),
-      guidance: InsightGuidance.fromJson(json['guidance'] as Map<String, dynamic>),
-      followupMemory: FollowupMemory.fromJson(json['followup_memory'] as Map<String, dynamic>),
+      highlights: InsightHighlights.fromJson(
+          json['highlights'] as Map<String, dynamic>),
+      timeline:
+          InsightTimeline.fromJson(json['timeline'] as Map<String, dynamic>),
+      patterns:
+          InsightPatterns.fromJson(json['patterns'] as Map<String, dynamic>),
+      triggers:
+          InsightTriggers.fromJson(json['triggers'] as Map<String, dynamic>),
+      guidance:
+          InsightGuidance.fromJson(json['guidance'] as Map<String, dynamic>),
+      followupMemory: FollowupMemory.fromJson(
+          json['followup_memory'] as Map<String, dynamic>),
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'analysis_meta': analysisMeta.toJson(),
-    'scores': scores.toJson(),
-    'highlights': highlights.toJson(),
-    'timeline': timeline.toJson(),
-    'patterns': patterns.toJson(),
-    'triggers': triggers.toJson(),
-    'guidance': guidance.toJson(),
-    'followup_memory': followupMemory.toJson(),
-  };
+        'analysis_meta': analysisMeta.toJson(),
+        'scores': scores.toJson(),
+        'highlights': highlights.toJson(),
+        'timeline': timeline.toJson(),
+        'patterns': patterns.toJson(),
+        'triggers': triggers.toJson(),
+        'guidance': guidance.toJson(),
+        'followup_memory': followupMemory.toJson(),
+      };
 }
 
 // --- Analysis Meta ---
@@ -72,10 +79,10 @@ class PrivacyConfig {
   }
 
   Map<String, dynamic> toJson() => {
-    'local_only': localOnly,
-    'server_sent': serverSent,
-    'original_stored': originalStored,
-  };
+        'local_only': localOnly,
+        'server_sent': serverSent,
+        'original_stored': originalStored,
+      };
 
   PrivacyConfig copyWith({
     bool? localOnly,
@@ -121,26 +128,29 @@ class AnalysisMeta {
       relationType: _parseRelationType(json['relation_type'] as String),
       range: _parseDateRange(json['range'] as String),
       intensity: _parseIntensity(json['intensity'] as String),
-      privacy: PrivacyConfig.fromJson(json['privacy'] as Map<String, dynamic>? ?? {}),
+      privacy: PrivacyConfig.fromJson(
+          json['privacy'] as Map<String, dynamic>? ?? {}),
       messageCount: json['message_count'] as int,
-      dateFrom: DateTime.parse(dateRange['from'] as String? ?? DateTime.now().toIso8601String()),
-      dateTo: DateTime.parse(dateRange['to'] as String? ?? DateTime.now().toIso8601String()),
+      dateFrom: DateTime.parse(
+          dateRange['from'] as String? ?? DateTime.now().toIso8601String()),
+      dateTo: DateTime.parse(
+          dateRange['to'] as String? ?? DateTime.now().toIso8601String()),
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'created_at': createdAt.toIso8601String(),
-    'relation_type': relationType.name,
-    'range': _dateRangeToString(range),
-    'intensity': intensity.name,
-    'privacy': privacy.toJson(),
-    'message_count': messageCount,
-    'date_range_actual': {
-      'from': dateFrom.toIso8601String().split('T').first,
-      'to': dateTo.toIso8601String().split('T').first,
-    },
-  };
+        'id': id,
+        'created_at': createdAt.toIso8601String(),
+        'relation_type': relationType.name,
+        'range': _dateRangeToString(range),
+        'intensity': intensity.name,
+        'privacy': privacy.toJson(),
+        'message_count': messageCount,
+        'date_range_actual': {
+          'from': dateFrom.toIso8601String().split('T').first,
+          'to': dateTo.toIso8601String().split('T').first,
+        },
+      };
 
   static RelationType _parseRelationType(String value) {
     return RelationType.values.firstWhere(
@@ -206,10 +216,10 @@ class ScoreItem {
   }
 
   Map<String, dynamic> toJson() => {
-    'value': value,
-    'label': label,
-    'trend': trend.name,
-  };
+        'value': value,
+        'label': label,
+        'trend': trend.name,
+      };
 }
 
 class InsightScores {
@@ -227,26 +237,28 @@ class InsightScores {
 
   factory InsightScores.fromJson(Map<String, dynamic> json) {
     return InsightScores(
-      temperature: ScoreItem.fromJson(json['temperature'] as Map<String, dynamic>),
+      temperature:
+          ScoreItem.fromJson(json['temperature'] as Map<String, dynamic>),
       stability: ScoreItem.fromJson(json['stability'] as Map<String, dynamic>),
-      initiative: ScoreItem.fromJson(json['initiative'] as Map<String, dynamic>),
+      initiative:
+          ScoreItem.fromJson(json['initiative'] as Map<String, dynamic>),
       risk: ScoreItem.fromJson(json['risk'] as Map<String, dynamic>),
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'temperature': temperature.toJson(),
-    'stability': stability.toJson(),
-    'initiative': initiative.toJson(),
-    'risk': risk.toJson(),
-  };
+        'temperature': temperature.toJson(),
+        'stability': stability.toJson(),
+        'initiative': initiative.toJson(),
+        'risk': risk.toJson(),
+      };
 
   List<MapEntry<String, ScoreItem>> get entries => [
-    MapEntry('온도', temperature),
-    MapEntry('안정성', stability),
-    MapEntry('주도권', initiative),
-    MapEntry('위험도', risk),
-  ];
+        MapEntry('온도', temperature),
+        MapEntry('안정성', stability),
+        MapEntry('주도권', initiative),
+        MapEntry('위험도', risk),
+      ];
 }
 
 // --- Highlights ---
@@ -320,10 +332,10 @@ class InsightHighlights {
   }
 
   Map<String, dynamic> toJson() => {
-    'summary_bullets': summaryBullets,
-    'red_flags': redFlags.map((e) => e.toJson()).toList(),
-    'green_flags': greenFlags.map((e) => e.toJson()).toList(),
-  };
+        'summary_bullets': summaryBullets,
+        'red_flags': redFlags.map((e) => e.toJson()).toList(),
+        'green_flags': greenFlags.map((e) => e.toJson()).toList(),
+      };
 }
 
 // --- Timeline ---
@@ -342,9 +354,9 @@ class TimelinePoint {
   }
 
   Map<String, dynamic> toJson() => {
-    't': time.toIso8601String().split('T').first,
-    'sentiment': sentiment,
-  };
+        't': time.toIso8601String().split('T').first,
+        'sentiment': sentiment,
+      };
 }
 
 class TimelineEvent {
@@ -361,9 +373,9 @@ class TimelineEvent {
   }
 
   Map<String, dynamic> toJson() => {
-    't': time.toIso8601String().split('T').first,
-    'label': label,
-  };
+        't': time.toIso8601String().split('T').first,
+        'label': label,
+      };
 }
 
 class InsightTimeline {
@@ -395,10 +407,10 @@ class InsightTimeline {
   }
 
   Map<String, dynamic> toJson() => {
-    'points': points.map((e) => e.toJson()).toList(),
-    'dips': dips.map((e) => e.toJson()).toList(),
-    'spikes': spikes.map((e) => e.toJson()).toList(),
-  };
+        'points': points.map((e) => e.toJson()).toList(),
+        'dips': dips.map((e) => e.toJson()).toList(),
+        'spikes': spikes.map((e) => e.toJson()).toList(),
+      };
 }
 
 // --- Patterns ---
@@ -423,10 +435,10 @@ class PatternItem {
   }
 
   Map<String, dynamic> toJson() => {
-    'tag': tag,
-    'evidence_count': evidenceCount,
-    'description': description,
-  };
+        'tag': tag,
+        'evidence_count': evidenceCount,
+        'description': description,
+      };
 }
 
 class InsightPatterns {
@@ -444,8 +456,8 @@ class InsightPatterns {
   }
 
   Map<String, dynamic> toJson() => {
-    'items': items.map((e) => e.toJson()).toList(),
-  };
+        'items': items.map((e) => e.toJson()).toList(),
+      };
 }
 
 // --- Triggers ---
@@ -465,15 +477,16 @@ class TriggerItem {
     return TriggerItem(
       maskedQuote: json['masked_quote'] as String,
       whyItMatters: json['why_it_matters'] as String,
-      time: json['time'] != null ? DateTime.parse(json['time'] as String) : null,
+      time:
+          json['time'] != null ? DateTime.parse(json['time'] as String) : null,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'masked_quote': maskedQuote,
-    'why_it_matters': whyItMatters,
-    if (time != null) 'time': time!.toIso8601String(),
-  };
+        'masked_quote': maskedQuote,
+        'why_it_matters': whyItMatters,
+        if (time != null) 'time': time!.toIso8601String(),
+      };
 }
 
 class InsightTriggers {
@@ -491,8 +504,8 @@ class InsightTriggers {
   }
 
   Map<String, dynamic> toJson() => {
-    'items': items.map((e) => e.toJson()).toList(),
-  };
+        'items': items.map((e) => e.toJson()).toList(),
+      };
 }
 
 // --- Guidance ---
@@ -511,9 +524,9 @@ class GuidanceItem {
   }
 
   Map<String, dynamic> toJson() => {
-    'text': text,
-    'expected_effect': expectedEffect,
-  };
+        'text': text,
+        'expected_effect': expectedEffect,
+      };
 }
 
 class InsightGuidance {
@@ -536,9 +549,9 @@ class InsightGuidance {
   }
 
   Map<String, dynamic> toJson() => {
-    'do': doList.map((e) => e.toJson()).toList(),
-    'dont': dontList.map((e) => e.toJson()).toList(),
-  };
+        'do': doList.map((e) => e.toJson()).toList(),
+        'dont': dontList.map((e) => e.toJson()).toList(),
+      };
 }
 
 // --- Followup Memory ---
@@ -560,9 +573,9 @@ class FollowupMemory {
   }
 
   Map<String, dynamic> toJson() => {
-    'safe_notes': safeNotes,
-    'user_questions': userQuestions,
-  };
+        'safe_notes': safeNotes,
+        'user_questions': userQuestions,
+      };
 }
 
 // --- Analysis Config (UI에서 사용) ---

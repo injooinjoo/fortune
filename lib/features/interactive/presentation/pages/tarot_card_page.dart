@@ -16,7 +16,8 @@ import '../../../fortune/presentation/widgets/tarot/tarot_selection_view.dart';
 import '../../../fortune/presentation/widgets/tarot/tarot_result_view.dart';
 
 /// Provider to manage the tarot reading state
-final tarotReadingStateProvider = StateNotifierProvider.autoDispose<TarotReadingStateNotifier, TarotReadingState>(
+final tarotReadingStateProvider = StateNotifierProvider.autoDispose<
+    TarotReadingStateNotifier, TarotReadingState>(
   (ref) => TarotReadingStateNotifier(),
 );
 
@@ -38,13 +39,13 @@ class TarotReadingState {
     this.isLoading = false,
   });
 
-  TarotReadingState copyWith({
-    TarotReadingStep? currentStep,
-    String? question,
-    String? spreadType,
-    List<int>? selectedCards,
-    Map<String, dynamic>? readingResult,
-    bool? isLoading}) {
+  TarotReadingState copyWith(
+      {TarotReadingStep? currentStep,
+      String? question,
+      String? spreadType,
+      List<int>? selectedCards,
+      Map<String, dynamic>? readingResult,
+      bool? isLoading}) {
     return TarotReadingState(
       currentStep: currentStep ?? this.currentStep,
       question: question ?? this.question,
@@ -56,11 +57,7 @@ class TarotReadingState {
   }
 }
 
-enum TarotReadingStep {
-  
-  input, selection, result
-  
-}
+enum TarotReadingStep { input, selection, result }
 
 class TarotReadingStateNotifier extends StateNotifier<TarotReadingState> {
   TarotReadingStateNotifier() : super(TarotReadingState());
@@ -125,8 +122,9 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
     debugPrint('[TarotCardPage] === initState ===');
     debugPrint('[TarotCardPage] widget.extra: ${widget.extra}');
     debugPrint('[TarotCardPage] widget.spreadType: ${widget.spreadType}');
-    debugPrint('[TarotCardPage] widget.initialQuestion: ${widget.initialQuestion}');
-    
+    debugPrint(
+        '[TarotCardPage] widget.initialQuestion: ${widget.initialQuestion}');
+
     // Initialize from parameters
     if (widget.extra != null) {
       final extra = widget.extra!;
@@ -134,15 +132,17 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
       if (deckId != null) {
         selectedDeck = TarotDeckMetadata.availableDecks[deckId];
       }
-      
-      final question = extra['question'] as String? ?? widget.initialQuestion ?? '';
-      final spreadType = extra['spreadType'] as String? ?? widget.spreadType ?? 'three';
-      
+
+      final question =
+          extra['question'] as String? ?? widget.initialQuestion ?? '';
+      final spreadType =
+          extra['spreadType'] as String? ?? widget.spreadType ?? 'three';
+
       // Set initial state
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ref.read(tarotReadingStateProvider.notifier).setQuestion(question);
         ref.read(tarotReadingStateProvider.notifier).setSpreadType(spreadType);
-        
+
         // Skip directly to selection if we have a question
         if (extra['skipSpreadSelection'] == true && question.isNotEmpty) {
           ref.read(tarotReadingStateProvider.notifier).proceedToSelection();
@@ -157,13 +157,13 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
     debugPrint('[TarotCardPage] === didChangeDependencies ===');
     debugPrint('Fortune cached');
     debugPrint('Fortune cached');
-    
+
     // Check for deck selection
     if (!_hasCheckedDeck) {
       _hasCheckedDeck = true;
       selectedDeck ??= ref.watch(currentTarotDeckProvider);
       debugPrint('Fortune cached');
-      
+
       if (selectedDeck == null) {
         // Navigate to deck selection
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -224,7 +224,8 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
     try {
       final userId = Supabase.instance.client.auth.currentUser?.id;
       if (userId == null) {
-        debugPrint('❌ User not authenticated, skipping tarot fortune history save');
+        debugPrint(
+            '❌ User not authenticated, skipping tarot fortune history save');
         return;
       }
 
@@ -236,7 +237,8 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
         'question': question,
         'spreadType': spreadType,
         'selectedCards': selectedCards,
-        'interpretation': fortuneData['interpretation'] ?? fortuneData['summary'],
+        'interpretation':
+            fortuneData['interpretation'] ?? fortuneData['summary'],
         'advice': fortuneData['advice'],
         'score': fortuneData['score'] ?? 75, // 타로는 점수가 없을 수 있음
       };
@@ -289,16 +291,12 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
     try {
       // Check token balance
       final tokenCost = _getTokenCost(state.spreadType);
-      final hasEnoughTokens = await tokenService.checkAndConsumeTokens(
-        tokenCost,
-        'tarot');
+      final hasEnoughTokens =
+          await tokenService.checkAndConsumeTokens(tokenCost, 'tarot');
       if (!mounted) return;
 
       if (!hasEnoughTokens) {
-        Toast.show(
-          context,
-          message: '토큰가 부족합니다',
-          type: ToastType.error);
+        Toast.show(context, message: '토큰가 부족합니다', type: ToastType.error);
         stateNotifier.setLoading(false);
         return;
       }
@@ -309,7 +307,8 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
         data: {
           'type': 'tarot',
           'userInfo': {
-            'question': state.question.isEmpty ? '오늘의 운세를 봐주세요' : state.question,
+            'question':
+                state.question.isEmpty ? '오늘의 운세를 봐주세요' : state.question,
             'spreadType': state.spreadType,
             'selectedCards': selectedCards,
             'deckId': selectedDeck?.id ?? 'rider_waite',
@@ -335,10 +334,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
       }
     } catch (e) {
       if (!mounted) return;
-      Toast.show(
-        context,
-        message: '타로 리딩 중 오류가 발생했습니다',
-        type: ToastType.error);
+      Toast.show(context, message: '타로 리딩 중 오류가 발생했습니다', type: ToastType.error);
       stateNotifier.setLoading(false);
     }
   }
@@ -350,7 +346,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
     final state = ref.watch(tarotReadingStateProvider);
     debugPrint('step: ${state.currentStep}');
     debugPrint('Fortune cached');
-    
+
     // Show loading if no deck selected
     if (selectedDeck == null) {
       debugPrint('[TarotCardPage] No deck selected, showing loading');
@@ -385,7 +381,8 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
   }
 
   Widget _buildCurrentStep(TarotReadingState state) {
-    debugPrint('[TarotCardPage] _buildCurrentStep - step: ${state.currentStep}');
+    debugPrint(
+        '[TarotCardPage] _buildCurrentStep - step: ${state.currentStep}');
     switch (state.currentStep) {
       case TarotReadingStep.input:
         return Padding(
@@ -394,7 +391,9 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
             key: const ValueKey('input'),
             initialQuestion: state.question,
             onQuestionChanged: (question) {
-              ref.read(tarotReadingStateProvider.notifier).setQuestion(question);
+              ref
+                  .read(tarotReadingStateProvider.notifier)
+                  .setQuestion(question);
             },
             onProceed: () {
               ref.read(fortuneHapticServiceProvider).pageSnap();
@@ -411,11 +410,13 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
           spreadType: state.spreadType,
           onSelectionComplete: (selectedCards) {
             ref.read(fortuneHapticServiceProvider).cardSelect();
-            ref.read(tarotReadingStateProvider.notifier).setSelectedCards(selectedCards);
+            ref
+                .read(tarotReadingStateProvider.notifier)
+                .setSelectedCards(selectedCards);
             _performReading(selectedCards);
           },
         );
-        
+
       case TarotReadingStep.result:
         return TarotResultView(
           key: const ValueKey('result'),

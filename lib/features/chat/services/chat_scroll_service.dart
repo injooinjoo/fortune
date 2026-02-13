@@ -97,8 +97,8 @@ class ChatScrollService {
         if (scrollableState == null) return;
 
         if (!scrollableState.context.mounted) return;
-        final scrollableRenderObject =
-            scrollableState.context.findRenderObject(); // ignore: use_build_context_synchronously
+        final scrollableRenderObject = scrollableState.context
+            .findRenderObject(); // ignore: use_build_context_synchronously
         if (scrollableRenderObject is! RenderBox) return;
 
         // 카드의 위치 계산 (스크롤 뷰 기준)

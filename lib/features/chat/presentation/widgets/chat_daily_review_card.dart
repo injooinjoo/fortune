@@ -45,9 +45,7 @@ class ChatDailyReviewCard extends ConsumerWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: isDark
-              ? [_darkBg1, _darkBg2]
-              : [_creamLight, _creamDark],
+          colors: isDark ? [_darkBg1, _darkBg2] : [_creamLight, _creamDark],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
@@ -80,9 +78,9 @@ class ChatDailyReviewCard extends ConsumerWidget {
                 children: [
                   // 헤더
                   _buildHeader(context)
-                    .animate()
-                    .fadeIn(duration: 500.ms)
-                    .slideY(begin: -0.1, end: 0),
+                      .animate()
+                      .fadeIn(duration: 500.ms)
+                      .slideY(begin: -0.1, end: 0),
 
                   const SizedBox(height: 16),
 
@@ -93,24 +91,24 @@ class ChatDailyReviewCard extends ConsumerWidget {
 
                   // 오늘의 하이라이트
                   _buildHighlightSection(context)
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 200.ms)
-                    .slideX(begin: -0.05, end: 0),
+                      .animate()
+                      .fadeIn(duration: 400.ms, delay: 200.ms)
+                      .slideX(begin: -0.05, end: 0),
 
                   const SizedBox(height: 16),
 
                   // 오늘 배운 점
                   _buildLearningSection(context)
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 400.ms)
-                    .slideX(begin: -0.05, end: 0),
+                      .animate()
+                      .fadeIn(duration: 400.ms, delay: 400.ms)
+                      .slideX(begin: -0.05, end: 0),
 
                   const SizedBox(height: 16),
 
                   // 내일을 위한 한 마디
                   _buildTomorrowSection(context)
-                    .animate()
-                    .fadeIn(duration: 500.ms, delay: 600.ms),
+                      .animate()
+                      .fadeIn(duration: 500.ms, delay: 600.ms),
 
                   const SizedBox(height: 16),
                 ],
@@ -134,9 +132,9 @@ class ChatDailyReviewCard extends ConsumerWidget {
           '🌙',
           style: TextStyle(fontSize: 20),
         )
-          .animate(onPlay: (c) => c.repeat(reverse: true))
-          .fadeIn(duration: 2000.ms)
-          .fade(duration: 2000.ms, begin: 1.0, end: 0.6),
+            .animate(onPlay: (c) => c.repeat(reverse: true))
+            .fadeIn(duration: 2000.ms)
+            .fade(duration: 2000.ms, begin: 1.0, end: 0.6),
       ),
     );
 
@@ -150,13 +148,11 @@ class ChatDailyReviewCard extends ConsumerWidget {
           style: context.typography.bodyMedium.copyWith(
             color: Colors.amber.withValues(alpha: 0.5),
           ),
-        )
-          .animate(onPlay: (c) => c.repeat(reverse: true))
-          .scale(
-            begin: const Offset(0.8, 0.8),
-            end: const Offset(1.2, 1.2),
-            duration: 1500.ms,
-          ),
+        ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
+              begin: const Offset(0.8, 0.8),
+              end: const Offset(1.2, 1.2),
+              duration: 1500.ms,
+            ),
       ),
     );
 
@@ -166,7 +162,8 @@ class ChatDailyReviewCard extends ConsumerWidget {
   Widget _buildHeader(BuildContext context) {
     final isDark = context.isDark;
     final formattedDate = DateFormat('M월 d일 (E)', 'ko').format(date);
-    final textColor = isDark ? context.colors.textPrimary : DSColors.textPrimary;
+    final textColor =
+        isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Row(
       children: [
@@ -275,7 +272,8 @@ class ChatDailyReviewCard extends ConsumerWidget {
 
   Widget _buildHighlightSection(BuildContext context) {
     final isDark = context.isDark;
-    final textColor = isDark ? context.colors.textPrimary : DSColors.textPrimary;
+    final textColor =
+        isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -324,7 +322,8 @@ class ChatDailyReviewCard extends ConsumerWidget {
 
   Widget _buildLearningSection(BuildContext context) {
     final isDark = context.isDark;
-    final textColor = isDark ? context.colors.textPrimary : DSColors.textPrimary;
+    final textColor =
+        isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -366,7 +365,8 @@ class ChatDailyReviewCard extends ConsumerWidget {
 
   Widget _buildTomorrowSection(BuildContext context) {
     final isDark = context.isDark;
-    final textColor = isDark ? context.colors.textPrimary : DSColors.textPrimary;
+    final textColor =
+        isDark ? context.colors.textPrimary : DSColors.textPrimary;
 
     return Container(
       padding: const EdgeInsets.all(16),

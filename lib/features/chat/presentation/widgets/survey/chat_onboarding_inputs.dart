@@ -264,10 +264,22 @@ class OnboardingMbtiSelector extends StatelessWidget {
   });
 
   static const List<String> mbtiTypes = [
-    'ISTJ', 'ISFJ', 'INFJ', 'INTJ',
-    'ISTP', 'ISFP', 'INFP', 'INTP',
-    'ESTP', 'ESFP', 'ENFP', 'ENTP',
-    'ESTJ', 'ESFJ', 'ENFJ', 'ENTJ',
+    'ISTJ',
+    'ISFJ',
+    'INFJ',
+    'INTJ',
+    'ISTP',
+    'ISFP',
+    'INFP',
+    'INTP',
+    'ESTP',
+    'ESFP',
+    'ENFP',
+    'ENTP',
+    'ESTJ',
+    'ESFJ',
+    'ENFJ',
+    'ENTJ',
   ];
 
   @override
@@ -409,7 +421,8 @@ class OnboardingConfirmationCard extends StatelessWidget {
                   },
                   style: OutlinedButton.styleFrom(
                     foregroundColor: colors.textSecondary,
-                    side: BorderSide(color: colors.textSecondary.withValues(alpha: 0.3)),
+                    side: BorderSide(
+                        color: colors.textSecondary.withValues(alpha: 0.3)),
                     padding: const EdgeInsets.symmetric(vertical: DSSpacing.sm),
                   ),
                   child: Text('처음부터', style: typography.labelLarge),

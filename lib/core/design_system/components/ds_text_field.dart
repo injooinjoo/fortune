@@ -215,7 +215,8 @@ class _DSTextFieldState extends State<DSTextField> {
               prefixIcon: widget.leadingIcon != null
                   ? Icon(
                       widget.leadingIcon,
-                      color: _isFocused ? colors.textPrimary : colors.textTertiary,
+                      color:
+                          _isFocused ? colors.textPrimary : colors.textTertiary,
                       size: 20,
                     )
                   : null,

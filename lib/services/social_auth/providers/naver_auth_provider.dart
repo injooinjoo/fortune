@@ -17,15 +17,14 @@ class NaverAuthProvider extends BaseSocialAuthProvider {
     try {
       Logger.info('Starting Naver Sign-In process (Native)');
 
-      final initResult = await _naverChannel
-          .invokeMethod('initializeNaver')
-          .timeout(
-            const Duration(seconds: 10),
-            onTimeout: () {
-              Logger.warning('Naver SDK initialization timed out');
-              throw TimeoutException('Naver SDK initialization timed out');
-            },
-          );
+      final initResult =
+          await _naverChannel.invokeMethod('initializeNaver').timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          Logger.warning('Naver SDK initialization timed out');
+          throw TimeoutException('Naver SDK initialization timed out');
+        },
+      );
       Logger.info('Naver SDK initialization: $initResult');
 
       final loginResult = await _naverChannel.invokeMethod('loginWithNaver');
@@ -42,7 +41,8 @@ class NaverAuthProvider extends BaseSocialAuthProvider {
       }
 
       Logger.info('Got Naver access token, calling Edge Function');
-      Logger.info('Access token (first 10 chars): ${accessToken.substring(0, 10 > accessToken.length ? accessToken.length : 10)}...');
+      Logger.info(
+          'Access token (first 10 chars): ${accessToken.substring(0, 10 > accessToken.length ? accessToken.length : 10)}...');
 
       final response = await supabase.functions.invoke(
         'naver-oauth',
@@ -53,8 +53,10 @@ class NaverAuthProvider extends BaseSocialAuthProvider {
       Logger.info('Edge Function response data: ${response.data}');
 
       if (response.status != 200) {
-        Logger.warning('[NaverAuthProvider] Naver OAuth Edge Function 실패 (선택적 기능, 다른 로그인 방법 사용 권장): ${response.status}');
-        Logger.warning('[NaverAuthProvider] Naver OAuth 응답 데이터 (선택적 기능, 다른 로그인 방법 사용 권장): ${response.data}');
+        Logger.warning(
+            '[NaverAuthProvider] Naver OAuth Edge Function 실패 (선택적 기능, 다른 로그인 방법 사용 권장): ${response.status}');
+        Logger.warning(
+            '[NaverAuthProvider] Naver OAuth 응답 데이터 (선택적 기능, 다른 로그인 방법 사용 권장): ${response.data}');
 
         final errorData = response.data as Map<String, dynamic>?;
         final errorMessage = errorData?['error']?.toString() ?? '';
@@ -65,14 +67,17 @@ class NaverAuthProvider extends BaseSocialAuthProvider {
           );
         }
 
-        throw Exception('Naver OAuth failed: Status ${response.status}, Data: ${response.data}');
+        throw Exception(
+            'Naver OAuth failed: Status ${response.status}, Data: ${response.data}');
       }
 
       final data = response.data as Map<String, dynamic>;
 
       if (data['success'] != true) {
-        Logger.warning('[NaverAuthProvider] Naver OAuth 실패 (선택적 기능, 다른 로그인 방법 사용 권장): ${data['error'] ?? 'Unknown error'}');
-        Logger.warning('[NaverAuthProvider] Naver OAuth 전체 응답 데이터 (선택적 기능, 다른 로그인 방법 사용 권장): $data');
+        Logger.warning(
+            '[NaverAuthProvider] Naver OAuth 실패 (선택적 기능, 다른 로그인 방법 사용 권장): ${data['error'] ?? 'Unknown error'}');
+        Logger.warning(
+            '[NaverAuthProvider] Naver OAuth 전체 응답 데이터 (선택적 기능, 다른 로그인 방법 사용 권장): $data');
 
         final errorMessage = data['error']?.toString() ?? '';
         if (errorMessage.contains('already been registered')) {
@@ -95,13 +100,16 @@ class NaverAuthProvider extends BaseSocialAuthProvider {
             final authResponse = await supabase.auth.setSession(refreshToken);
 
             if (authResponse.session != null) {
-              Logger.securityCheckpoint('Naver: ${authResponse.session?.user.id}');
+              Logger.securityCheckpoint(
+                  'Naver: ${authResponse.session?.user.id}');
               return authResponse;
             }
           }
-          Logger.warning('Failed to set session with tokens, falling back to magic link');
+          Logger.warning(
+              'Failed to set session with tokens, falling back to magic link');
         } catch (e) {
-          Logger.warning('Session setting failed: $e, falling back to magic link');
+          Logger.warning(
+              'Session setting failed: $e, falling back to magic link');
         }
       }
 
@@ -128,7 +136,8 @@ class NaverAuthProvider extends BaseSocialAuthProvider {
         throw Exception('No session URL returned from Naver OAuth');
       }
 
-      Logger.info('Got session URL from Edge Function, processing via getSessionFromUrl...');
+      Logger.info(
+          'Got session URL from Edge Function, processing via getSessionFromUrl...');
 
       final uri = Uri.parse(sessionUrl);
       final sessionResponse = await supabase.auth.getSessionFromUrl(uri);
@@ -140,7 +149,8 @@ class NaverAuthProvider extends BaseSocialAuthProvider {
         user: sessionResponse.session.user,
       );
     } catch (error) {
-      Logger.warning('[NaverAuthProvider] Naver 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
+      Logger.warning(
+          '[NaverAuthProvider] Naver 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
       rethrow;
     }
   }
@@ -150,7 +160,8 @@ class NaverAuthProvider extends BaseSocialAuthProvider {
     try {
       await _naverChannel.invokeMethod('logoutNaver');
     } catch (e) {
-      Logger.warning('[NaverAuthProvider] Naver 연결 해제 실패 (선택적 기능, 수동 연결 해제 가능): $e');
+      Logger.warning(
+          '[NaverAuthProvider] Naver 연결 해제 실패 (선택적 기능, 수동 연결 해제 가능): $e');
     }
   }
 }

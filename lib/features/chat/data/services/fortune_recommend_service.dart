@@ -132,8 +132,9 @@ class FortuneRecommendService {
         // 1️⃣ 전체 쿼리에 키워드가 포함 (가장 높은 점수)
         if (normalizedQuery.contains(lowerKeyword)) {
           final score = normalizedQuery == lowerKeyword ? 0.98 : 0.90;
-          matchScores[fortuneType] =
-              (matchScores[fortuneType] ?? 0) < score ? score : matchScores[fortuneType]!;
+          matchScores[fortuneType] = (matchScores[fortuneType] ?? 0) < score
+              ? score
+              : matchScores[fortuneType]!;
           continue;
         }
 
@@ -143,8 +144,9 @@ class FortuneRecommendService {
             // "소개팅인데" contains "소개팅" → 0.85
             // "내일" → "내일"이 키워드에 없더라도 비슷한 패턴 매칭
             final score = word == lowerKeyword ? 0.88 : 0.80;
-            matchScores[fortuneType] =
-                (matchScores[fortuneType] ?? 0) < score ? score : matchScores[fortuneType]!;
+            matchScores[fortuneType] = (matchScores[fortuneType] ?? 0) < score
+                ? score
+                : matchScores[fortuneType]!;
           }
         }
       }

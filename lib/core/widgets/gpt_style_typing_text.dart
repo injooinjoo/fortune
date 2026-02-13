@@ -80,7 +80,8 @@ class _GptStyleTypingTextState extends State<GptStyleTypingText>
       vsync: this,
     )..repeat(reverse: true);
 
-    _cursorAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_cursorController);
+    _cursorAnimation =
+        Tween<double>(begin: 0.0, end: 1.0).animate(_cursorController);
 
     if (widget.startTyping) {
       _startTyping();
@@ -136,7 +137,8 @@ class _GptStyleTypingTextState extends State<GptStyleTypingText>
     }
 
     // 랜덤 딜레이 (40~80ms)
-    final delay = Random().nextInt(widget.maxDelay - widget.minDelay) + widget.minDelay;
+    final delay =
+        Random().nextInt(widget.maxDelay - widget.minDelay) + widget.minDelay;
 
     _typingTimer = Timer(Duration(milliseconds: delay), () {
       if (!mounted) return;
@@ -253,7 +255,8 @@ class GptStyleTypingParagraphs extends StatefulWidget {
   });
 
   @override
-  State<GptStyleTypingParagraphs> createState() => _GptStyleTypingParagraphsState();
+  State<GptStyleTypingParagraphs> createState() =>
+      _GptStyleTypingParagraphsState();
 }
 
 class _GptStyleTypingParagraphsState extends State<GptStyleTypingParagraphs> {
@@ -333,7 +336,8 @@ class _TypingLoadingIndicatorState extends State<TypingLoadingIndicator>
       vsync: this,
     )..repeat(reverse: true);
 
-    _cursorAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_cursorController);
+    _cursorAnimation =
+        Tween<double>(begin: 0.0, end: 1.0).animate(_cursorController);
   }
 
   @override
@@ -355,9 +359,10 @@ class _TypingLoadingIndicatorState extends State<TypingLoadingIndicator>
         if (widget.loadingText != null && widget.loadingText!.isNotEmpty) ...[
           Text(
             widget.loadingText!,
-            style: widget.loadingTextStyle ?? effectiveStyle.copyWith(
-              color: textColor.withValues(alpha: 0.6),
-            ),
+            style: widget.loadingTextStyle ??
+                effectiveStyle.copyWith(
+                  color: textColor.withValues(alpha: 0.6),
+                ),
           ),
           const SizedBox(height: 8),
         ],

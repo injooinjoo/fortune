@@ -58,13 +58,10 @@ class LandingMainContent extends StatelessWidget {
           // Custom button to avoid AnimatedDefaultTextStyle lerp issues
           _TraditionalSealButton(
             onPressed: onStartPressed,
-          )
-              .animate()
-              .fadeIn(delay: 600.ms, duration: 600.ms)
-              .scale(
-                  begin: const Offset(0.9, 0.9),
-                  end: const Offset(1.0, 1.0),
-                  duration: 400.ms),
+          ).animate().fadeIn(delay: 600.ms, duration: 600.ms).scale(
+              begin: const Offset(0.9, 0.9),
+              end: const Offset(1.0, 1.0),
+              duration: 400.ms),
         ],
       ),
     );

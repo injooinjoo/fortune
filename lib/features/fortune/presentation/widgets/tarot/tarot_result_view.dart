@@ -33,6 +33,7 @@ class TarotResultView extends ConsumerStatefulWidget {
     if (_isPremiumMessage(text)) return null;
     return text;
   }
+
   final List<int> selectedCards;
   final TarotDeck selectedDeck;
   final String? question;
@@ -42,16 +43,16 @@ class TarotResultView extends ConsumerStatefulWidget {
   final VoidCallback? onNewReading;
   final VoidCallback? onShare;
 
-  const TarotResultView({
-    super.key,
-    required this.selectedCards,
-    required this.selectedDeck,
-    this.question,
-    required this.spreadType,
-    this.readingResult,
-    this.isLoading = false,
-    this.onNewReading,
-    this.onShare});
+  const TarotResultView(
+      {super.key,
+      required this.selectedCards,
+      required this.selectedDeck,
+      this.question,
+      required this.spreadType,
+      this.readingResult,
+      this.isLoading = false,
+      this.onNewReading,
+      this.onShare});
 
   @override
   ConsumerState<TarotResultView> createState() => _TarotResultViewState();
@@ -66,11 +67,9 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
   void initState() {
     super.initState();
     _entranceController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this);
+        duration: const Duration(milliseconds: 800), vsync: this);
     _entranceAnimation = CurvedAnimation(
-      parent: _entranceController,
-      curve: Curves.easeOutCubic);
+        parent: _entranceController, curve: Curves.easeOutCubic);
     _entranceController.forward();
   }
 
@@ -93,7 +92,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
       ),
       category: CardCategory.major,
       number: cardIndex % 22,
-      cardName: cardInfo?.name.split(' (').last.replaceAll(')', '') ?? 'Unknown',
+      cardName:
+          cardInfo?.name.split(' (').last.replaceAll(')', '') ?? 'Unknown',
       cardNameKr: cardInfo?.name.split(' (').first ?? '알 수 없는 카드',
       isReversed: false, // TODO: 역방향 정보가 있으면 여기 반영
       positionKey: _getPositionLabel(index),
@@ -102,8 +102,9 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
 
     // API 해석 결과 가져오기
     final interpretation = widget.readingResult != null &&
-        widget.readingResult!['cardInterpretations'] != null
-        ? widget.readingResult!['cardInterpretations'][index] as Map<String, dynamic>?
+            widget.readingResult!['cardInterpretations'] != null
+        ? widget.readingResult!['cardInterpretations'][index]
+            as Map<String, dynamic>?
         : _generateCardInterpretation(cardIndex, index);
 
     TarotCardDetailModal.show(
@@ -121,56 +122,55 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
 
     if (widget.isLoading) {
       return const LoadingStateWidget(
-        message: '타로 카드를 해석하고 있습니다...\n당신의 질문에 맞는 답변을 준비 중입니다');
+          message: '타로 카드를 해석하고 있습니다...\n당신의 질문에 맞는 답변을 준비 중입니다');
     }
 
     return AnimatedBuilder(
-      animation: _entranceAnimation,
-      builder: (context, child) {
-        final opacityValue = _entranceAnimation.value;
-        return Opacity(
-          opacity: opacityValue.clamp(0.0, 1.0),
-          child: Transform.translate(
-            offset: Offset(0, 20 * (1 - _entranceAnimation.value)),
-            child: Column(
-              children: [
-                // Header
-                _buildHeader(theme, fontScale),
-                const SizedBox(height: DSSpacing.lg),
+        animation: _entranceAnimation,
+        builder: (context, child) {
+          final opacityValue = _entranceAnimation.value;
+          return Opacity(
+              opacity: opacityValue.clamp(0.0, 1.0),
+              child: Transform.translate(
+                  offset: Offset(0, 20 * (1 - _entranceAnimation.value)),
+                  child: Column(children: [
+                    // Header
+                    _buildHeader(theme, fontScale),
+                    const SizedBox(height: DSSpacing.lg),
 
-                // Selected cards display
-                _buildCardsDisplay(theme, fontScale),
-                const SizedBox(height: DSSpacing.xl),
-                
-                // Reading result
-                if (widget.readingResult != null)
-                  Expanded(
-                    child: _buildReadingResult(theme, fontScale)),
-                
-                // Action buttons
-                _buildActionButtons(theme, fontScale)])));
-      });
+                    // Selected cards display
+                    _buildCardsDisplay(theme, fontScale),
+                    const SizedBox(height: DSSpacing.xl),
+
+                    // Reading result
+                    if (widget.readingResult != null)
+                      Expanded(child: _buildReadingResult(theme, fontScale)),
+
+                    // Action buttons
+                    _buildActionButtons(theme, fontScale)
+                  ])));
+        });
   }
 
   Widget _buildHeader(ThemeData theme, double fontScale) {
     final isDark = theme.brightness == Brightness.dark;
-    return Column(
-      children: [
-        // 덱 소개 섹션
-        _buildDeckIntroSection(theme),
-        const SizedBox(height: DSSpacing.lg),
-        Text(
-          '타로 리딩 결과',
-          style: context.typography.headingLarge.copyWith(
-            fontWeight: FontWeight.bold)),
-        if (widget.question != null && widget.question!.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.sm),
-          Text(
-            widget.question!,
+    return Column(children: [
+      // 덱 소개 섹션
+      _buildDeckIntroSection(theme),
+      const SizedBox(height: DSSpacing.lg),
+      Text('타로 리딩 결과',
+          style: context.typography.headingLarge
+              .copyWith(fontWeight: FontWeight.bold)),
+      if (widget.question != null && widget.question!.isNotEmpty) ...[
+        const SizedBox(height: DSSpacing.sm),
+        Text(widget.question!,
             style: context.typography.labelLarge.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: isDark ? 0.8 : 0.7),
-              fontStyle: FontStyle.italic),
-            textAlign: TextAlign.center)]]);
+                color: theme.colorScheme.onSurface
+                    .withValues(alpha: isDark ? 0.8 : 0.7),
+                fontStyle: FontStyle.italic),
+            textAlign: TextAlign.center)
+      ]
+    ]);
   }
 
   /// 덱 소개 섹션 빌드
@@ -206,7 +206,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
               Text(
                 '오늘의 타로카드는',
                 style: context.typography.labelLarge.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: isDark ? 0.8 : 0.7),
+                  color: theme.colorScheme.onSurface
+                      .withValues(alpha: isDark ? 0.8 : 0.7),
                 ),
               ),
             ],
@@ -225,7 +226,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
           Text(
             deck.koreanName,
             style: context.typography.labelMedium.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: isDark ? 0.7 : 0.6),
+              color: theme.colorScheme.onSurface
+                  .withValues(alpha: isDark ? 0.7 : 0.6),
             ),
           ),
           const SizedBox(height: DSSpacing.lg),
@@ -237,7 +239,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(showcaseCards.length, (index) {
                 final cardIndex = showcaseCards[index];
-                final imagePath = TarotHelper.getMajorArcanaImagePath(deck.id, cardIndex);
+                final imagePath =
+                    TarotHelper.getMajorArcanaImagePath(deck.id, cardIndex);
 
                 // 가운데 카드가 약간 위로
                 final isCenter = index == 1;
@@ -257,7 +260,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                         borderRadius: BorderRadius.circular(DSRadius.md),
                         boxShadow: [
                           BoxShadow(
-                            color: deck.primaryColor.withValues(alpha: isDark ? 0.4 : 0.3),
+                            color: deck.primaryColor
+                                .withValues(alpha: isDark ? 0.4 : 0.3),
                             blurRadius: isCenter ? 15 : 10,
                             spreadRadius: isCenter ? 2 : 1,
                             offset: const Offset(0, 5),
@@ -276,8 +280,10 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                   colors: [
-                                    deck.primaryColor.withValues(alpha: isDark ? 0.6 : 0.5),
-                                    deck.secondaryColor.withValues(alpha: isDark ? 0.6 : 0.5),
+                                    deck.primaryColor
+                                        .withValues(alpha: isDark ? 0.6 : 0.5),
+                                    deck.secondaryColor
+                                        .withValues(alpha: isDark ? 0.6 : 0.5),
                                   ],
                                 ),
                               ),
@@ -333,7 +339,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
   }) {
     final isDark = context.isDark;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm + 4, vertical: 6),
+      padding:
+          const EdgeInsets.symmetric(horizontal: DSSpacing.sm + 4, vertical: 6),
       decoration: BoxDecoration(
         color: color.withValues(alpha: isDark ? 0.15 : 0.1),
         borderRadius: BorderRadius.circular(DSRadius.md),
@@ -369,17 +376,19 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
 
           return Padding(
             padding: EdgeInsets.only(
-              left: index == 0 ? DSSpacing.md : DSSpacing.sm,
-              right: index == widget.selectedCards.length - 1 ? DSSpacing.md : DSSpacing.sm),
+                left: index == 0 ? DSSpacing.md : DSSpacing.sm,
+                right: index == widget.selectedCards.length - 1
+                    ? DSSpacing.md
+                    : DSSpacing.sm),
             child: Column(
               children: [
                 TarotCardWidget(
-                  cardIndex: cardIndex,
-                  deck: widget.selectedDeck,
-                  width: 100,
-                  height: 150,
-                  showFront: true, // 항상 앞면 표시
-                  onTap: () => _showCardDetail(index)),
+                    cardIndex: cardIndex,
+                    deck: widget.selectedDeck,
+                    width: 100,
+                    height: 150,
+                    showFront: true, // 항상 앞면 표시
+                    onTap: () => _showCardDetail(index)),
                 const SizedBox(height: DSSpacing.sm),
                 Text(
                   _getPositionLabel(index),
@@ -409,8 +418,10 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
             padding: const EdgeInsets.all(DSSpacing.lg),
             gradient: LinearGradient(
               colors: [
-                theme.colorScheme.primary.withValues(alpha: isDark ? 0.15 : 0.1),
-                theme.colorScheme.secondary.withValues(alpha: isDark ? 0.15 : 0.1),
+                theme.colorScheme.primary
+                    .withValues(alpha: isDark ? 0.15 : 0.1),
+                theme.colorScheme.secondary
+                    .withValues(alpha: isDark ? 0.15 : 0.1),
               ],
             ),
             child: Column(
@@ -418,10 +429,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
               children: [
                 Row(
                   children: [
-                    Icon(
-                      Icons.auto_awesome,
-                      color: theme.colorScheme.primary,
-                      size: 24),
+                    Icon(Icons.auto_awesome,
+                        color: theme.colorScheme.primary, size: 24),
                     const SizedBox(width: DSSpacing.sm),
                     Text(
                       '당신의 질문에 대한 답',
@@ -433,9 +442,11 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                 ),
                 const SizedBox(height: DSSpacing.md),
                 Builder(builder: (context) {
-                  final overallText = result != null && result['overallInterpretation'] != null
-                      ? TarotResultView._filterPremiumText(result['overallInterpretation']?.toString())
-                      : null;
+                  final overallText =
+                      result != null && result['overallInterpretation'] != null
+                          ? TarotResultView._filterPremiumText(
+                              result['overallInterpretation']?.toString())
+                          : null;
                   return Text(
                     overallText ?? _generateDefaultInterpretation(),
                     style: context.typography.labelLarge.copyWith(
@@ -451,7 +462,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
           // Individual card interpretations - 스토리텔링 스타일
           Row(
             children: [
-              Icon(Icons.auto_stories, color: theme.colorScheme.primary, size: 24),
+              Icon(Icons.auto_stories,
+                  color: theme.colorScheme.primary, size: 24),
               const SizedBox(width: DSSpacing.sm),
               Text(
                 '카드별 상세 해석',
@@ -464,13 +476,15 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
           const SizedBox(height: DSSpacing.md),
           ...List.generate(widget.selectedCards.length, (index) {
             final cardIndex = widget.selectedCards[index];
-            final interpretation = result != null && result['cardInterpretations'] != null
-                ? result['cardInterpretations'][index]
-                : _generateCardInterpretation(cardIndex, index);
+            final interpretation =
+                result != null && result['cardInterpretations'] != null
+                    ? result['cardInterpretations'][index]
+                    : _generateCardInterpretation(cardIndex, index);
             if (interpretation == null) return const SizedBox.shrink();
 
             final cardInfo = TarotMetadata.majorArcana[cardIndex % 22];
-            final imagePath = TarotHelper.getMajorArcanaImagePath(widget.selectedDeck.id, cardIndex);
+            final imagePath = TarotHelper.getMajorArcanaImagePath(
+                widget.selectedDeck.id, cardIndex);
 
             return Padding(
               padding: const EdgeInsets.only(bottom: DSSpacing.lg),
@@ -481,9 +495,11 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                   children: [
                     // 위치 배지
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withValues(alpha: isDark ? 0.2 : 0.15),
+                        color: theme.colorScheme.primary
+                            .withValues(alpha: isDark ? 0.2 : 0.15),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -504,7 +520,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                         borderRadius: BorderRadius.circular(DSRadius.lg),
                         boxShadow: [
                           BoxShadow(
-                            color: widget.selectedDeck.primaryColor.withValues(alpha: isDark ? 0.4 : 0.3),
+                            color: widget.selectedDeck.primaryColor
+                                .withValues(alpha: isDark ? 0.4 : 0.3),
                             blurRadius: 20,
                             spreadRadius: 2,
                             offset: const Offset(0, 8),
@@ -523,8 +540,10 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                   colors: [
-                                    widget.selectedDeck.primaryColor.withValues(alpha: isDark ? 0.6 : 0.5),
-                                    widget.selectedDeck.secondaryColor.withValues(alpha: isDark ? 0.6 : 0.5),
+                                    widget.selectedDeck.primaryColor
+                                        .withValues(alpha: isDark ? 0.6 : 0.5),
+                                    widget.selectedDeck.secondaryColor
+                                        .withValues(alpha: isDark ? 0.6 : 0.5),
                                   ],
                                 ),
                               ),
@@ -539,7 +558,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                                   const SizedBox(height: DSSpacing.sm + 4),
                                   Text(
                                     cardInfo?.name ?? 'Card ${cardIndex + 1}',
-                                    style: context.typography.bodyMedium.copyWith(
+                                    style:
+                                        context.typography.bodyMedium.copyWith(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -570,23 +590,32 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                         spacing: DSSpacing.sm,
                         runSpacing: DSSpacing.xs,
                         alignment: WrapAlignment.center,
-                        children: cardInfo!.keywords.map((keyword) => Container(
-                          padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm + 4, vertical: DSSpacing.xs),
-                          decoration: BoxDecoration(
-                            color: widget.selectedDeck.primaryColor.withValues(alpha: isDark ? 0.15 : 0.1),
-                            borderRadius: BorderRadius.circular(DSRadius.md),
-                            border: Border.all(
-                              color: widget.selectedDeck.primaryColor.withValues(alpha: isDark ? 0.3 : 0.2),
-                            ),
-                          ),
-                          child: Text(
-                            keyword,
-                            style: context.typography.labelSmall.copyWith(
-                              color: widget.selectedDeck.primaryColor,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        )).toList(),
+                        children: cardInfo!.keywords
+                            .map((keyword) => Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: DSSpacing.sm + 4,
+                                      vertical: DSSpacing.xs),
+                                  decoration: BoxDecoration(
+                                    color: widget.selectedDeck.primaryColor
+                                        .withValues(alpha: isDark ? 0.15 : 0.1),
+                                    borderRadius:
+                                        BorderRadius.circular(DSRadius.md),
+                                    border: Border.all(
+                                      color: widget.selectedDeck.primaryColor
+                                          .withValues(
+                                              alpha: isDark ? 0.3 : 0.2),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    keyword,
+                                    style:
+                                        context.typography.labelSmall.copyWith(
+                                      color: widget.selectedDeck.primaryColor,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ))
+                            .toList(),
                       ),
                     ],
                     const SizedBox(height: DSSpacing.lg),
@@ -597,7 +626,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                         gradient: LinearGradient(
                           colors: [
                             theme.colorScheme.primary.withValues(alpha: 0.0),
-                            theme.colorScheme.primary.withValues(alpha: isDark ? 0.4 : 0.3),
+                            theme.colorScheme.primary
+                                .withValues(alpha: isDark ? 0.4 : 0.3),
                             theme.colorScheme.primary.withValues(alpha: 0.0),
                           ],
                         ),
@@ -606,11 +636,17 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                     const SizedBox(height: DSSpacing.lg),
                     // 해석 내용 - 스토리텔링 포맷 (프리미엄 잠금 메시지 필터링)
                     Builder(builder: (context) {
-                      final rawText = interpretation['interpretation'] ?? interpretation['meaning'] ?? '';
-                      final interpretationText = TarotResultView._filterPremiumText(rawText.toString());
-                      if (interpretationText == null || interpretationText.isEmpty) {
+                      final rawText = interpretation['interpretation'] ??
+                          interpretation['meaning'] ??
+                          '';
+                      final interpretationText =
+                          TarotResultView._filterPremiumText(
+                              rawText.toString());
+                      if (interpretationText == null ||
+                          interpretationText.isEmpty) {
                         // 프리미엄 메시지면 기본 해석 생성
-                        final fallback = _generateCardInterpretation(cardIndex, index);
+                        final fallback =
+                            _generateCardInterpretation(cardIndex, index);
                         return Text(
                           fallback['interpretation'] ?? '',
                           style: context.typography.bodyMedium.copyWith(
@@ -636,11 +672,14 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                         children: [
                           if (cardInfo.element.isNotEmpty)
                             _buildInfoChip(
-                              icon: TarotHelper.getElementIcon(cardInfo.element),
+                              icon:
+                                  TarotHelper.getElementIcon(cardInfo.element),
                               label: cardInfo.element,
-                              color: TarotHelper.getElementColor(cardInfo.element),
+                              color:
+                                  TarotHelper.getElementColor(cardInfo.element),
                             ),
-                          if (cardInfo.astrology != null && cardInfo.astrology!.isNotEmpty)
+                          if (cardInfo.astrology != null &&
+                              cardInfo.astrology!.isNotEmpty)
                             _buildInfoChip(
                               icon: Icons.stars,
                               label: cardInfo.astrology!,
@@ -654,17 +693,21 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
               ),
             );
           }),
-          
+
           // Advice (프리미엄 잠금 메시지가 아닌 경우만 표시)
-          if (result != null && result['advice'] != null &&
-              !TarotResultView._isPremiumMessage(result['advice'].toString())) ...[
+          if (result != null &&
+              result['advice'] != null &&
+              !TarotResultView._isPremiumMessage(
+                  result['advice'].toString())) ...[
             const SizedBox(height: DSSpacing.md),
             GlassContainer(
               padding: const EdgeInsets.all(DSSpacing.lg),
               gradient: LinearGradient(
                 colors: [
-                  theme.colorScheme.secondary.withValues(alpha: isDark ? 0.15 : 0.1),
-                  theme.colorScheme.primary.withValues(alpha: isDark ? 0.15 : 0.1),
+                  theme.colorScheme.secondary
+                      .withValues(alpha: isDark ? 0.15 : 0.1),
+                  theme.colorScheme.primary
+                      .withValues(alpha: isDark ? 0.15 : 0.1),
                 ],
               ),
               child: Column(
@@ -672,10 +715,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                 children: [
                   Row(
                     children: [
-                      Icon(
-                        Icons.lightbulb_outline,
-                        color: theme.colorScheme.secondary,
-                        size: 24),
+                      Icon(Icons.lightbulb_outline,
+                          color: theme.colorScheme.secondary, size: 24),
                       const SizedBox(width: DSSpacing.sm),
                       Text(
                         '조언',
@@ -763,15 +804,17 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
     }
 
     final cards = widget.selectedCards.map((index) {
-      final cardInfo = TarotMetadata.majorArcana[index % 22]; // Major Arcana만 사용
+      final cardInfo =
+          TarotMetadata.majorArcana[index % 22]; // Major Arcana만 사용
       return cardInfo;
     }).toList();
 
     String interpretation = '';
-    
+
     if (widget.spreadType == 'three' && cards.length >= 3) {
       // 3장 스프레드 해석
-      interpretation = '''당신의 과거는 ${cards[0]?.name ?? '알 수 없는 카드'}가 나타내듯이, ${cards[0]?.keywords.join(', ') ?? '신비로운 에너지'}와 관련이 있습니다.
+      interpretation =
+          '''당신의 과거는 ${cards[0]?.name ?? '알 수 없는 카드'}가 나타내듯이, ${cards[0]?.keywords.join(', ') ?? '신비로운 에너지'}와 관련이 있습니다.
       
 현재 당신은 ${cards[1]?.name ?? '알 수 없는 카드'}의 영향 하에 있으며, ${cards[1]?.uprightMeaning ?? '중요한 전환점'}을 경험하고 있습니다.
 
@@ -779,7 +822,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
     } else if (cards.isNotEmpty) {
       // 단일 카드 또는 기타 스프레드
       final firstCard = cards[0];
-      interpretation = '''${firstCard?.name ?? '선택하신 카드'}는 ${firstCard?.keywords.join(', ') ?? '깊은 의미'}를 상징합니다.
+      interpretation =
+          '''${firstCard?.name ?? '선택하신 카드'}는 ${firstCard?.keywords.join(', ') ?? '깊은 의미'}를 상징합니다.
 
 ${firstCard?.uprightMeaning ?? '이 카드는 당신에게 중요한 메시지를 전달하고 있습니다.'}
 
@@ -795,7 +839,8 @@ $interpretation''';
     return interpretation;
   }
 
-  Map<String, dynamic> _generateCardInterpretation(int cardIndex, int position) {
+  Map<String, dynamic> _generateCardInterpretation(
+      int cardIndex, int position) {
     final cardInfo = TarotMetadata.majorArcana[cardIndex % 22];
     if (cardInfo == null) {
       return {
@@ -866,7 +911,8 @@ $interpretation''';
   }) {
     final isDark = context.isDark;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm + 2, vertical: 6),
+      padding:
+          const EdgeInsets.symmetric(horizontal: DSSpacing.sm + 2, vertical: 6),
       decoration: BoxDecoration(
         color: color.withValues(alpha: isDark ? 0.15 : 0.1),
         borderRadius: BorderRadius.circular(DSRadius.md),

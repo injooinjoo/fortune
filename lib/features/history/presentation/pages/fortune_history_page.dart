@@ -27,7 +27,7 @@ class FortuneHistoryPage extends ConsumerStatefulWidget {
   ConsumerState<FortuneHistoryPage> createState() => _FortuneHistoryPageState();
 }
 
-class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> 
+class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final String _selectedFilter = 'all';
@@ -37,7 +37,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 5, vsync: this);
-    
+
     // Load fortune history
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(fortuneHistoryProvider.notifier).loadHistory();
@@ -76,14 +76,14 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
           if (history.isEmpty) {
             return _buildEmptyState(fontScale);
           }
-          
+
           final filteredHistory = _filterHistory(history);
           final statistics = _calculateStatistics(filteredHistory);
-          
+
           return Column(
             children: [
               const SizedBox(height: DSSpacing.lg),
-              
+
               // 토스 스타일 탭 바
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: DSSpacing.lg),
@@ -101,9 +101,9 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: DSSpacing.lg),
-              
+
               // 이번 달 요약 카드 (토스 스타일)
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: DSSpacing.lg),
@@ -195,9 +195,9 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: DSSpacing.lg),
-              
+
               // 탭별 컨텐츠
               Expanded(
                 child: TabBarView(
@@ -205,13 +205,13 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                   children: [
                     // Timeline Tab
                     _buildTimelineView(filteredHistory),
-                    
+
                     // Statistics Tab
                     _buildStatisticsView(statistics, fontScale),
-                    
+
                     // Charts Tab
                     _buildChartsView(filteredHistory, fontScale),
-                    
+
                     // Daily Fortune Calendar Tab
                     _buildDailyFortuneCalendar(filteredHistory),
 
@@ -309,23 +309,24 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
 
   List<FortuneHistory> _filterHistory(List<FortuneHistory> history) {
     var filtered = history;
-    
+
     // Apply date range filter
     if (_selectedDateRange != null) {
       filtered = filtered.where((item) {
         return item.createdAt.isAfter(_selectedDateRange!.start) &&
-               item.createdAt.isBefore(_selectedDateRange!.end.add(const Duration(days: 1)));
+            item.createdAt
+                .isBefore(_selectedDateRange!.end.add(const Duration(days: 1)));
       }).toList();
     }
-    
+
     // Apply category filter
     if (_selectedFilter != 'all') {
       filtered = filtered.where((item) {
         switch (_selectedFilter) {
           case 'daily':
-            return item.fortuneType.contains('daily') || 
-                   item.fortuneType.contains('today') || 
-                   item.fortuneType.contains('tomorrow');
+            return item.fortuneType.contains('daily') ||
+                item.fortuneType.contains('today') ||
+                item.fortuneType.contains('tomorrow');
           case 'weekly':
             return item.fortuneType.contains('weekly');
           case 'monthly':
@@ -333,17 +334,17 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
           case 'love':
             return item.fortuneType.contains('love');
           case 'money':
-            return item.fortuneType.contains('money') || 
-                   item.fortuneType.contains('finance');
+            return item.fortuneType.contains('money') ||
+                item.fortuneType.contains('finance');
           case 'career':
-            return item.fortuneType.contains('career') || 
-                   item.fortuneType.contains('work');
+            return item.fortuneType.contains('career') ||
+                item.fortuneType.contains('work');
           default:
             return true;
         }
       }).toList();
     }
-    
+
     return filtered;
   }
 
@@ -353,7 +354,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
     final now = DateTime.now();
     final monthlyData = filteredHistory.where((item) {
       return item.createdAt.year == now.year &&
-             item.createdAt.month == now.month;
+          item.createdAt.month == now.month;
     }).toList();
 
     // Calculate average score
@@ -428,13 +429,16 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
       averageScore: statistics.averageScore,
       categoryCount: statistics.typeCounts,
       mostFrequentCategory: statistics.mostFrequentCategory,
-      lastFortuneDate: DateTime.now(), // You can get this from the most recent history item
+      lastFortuneDate:
+          DateTime.now(), // You can get this from the most recent history item
     );
     return StatisticsDashboard(statistics: userStats, fontScale: fontScale);
   }
 
-  Widget _buildChartsView(List<FortuneHistory> filteredHistory, double fontScale) {
-    return FortuneCharts(filteredHistory: filteredHistory, fontScale: fontScale);
+  Widget _buildChartsView(
+      List<FortuneHistory> filteredHistory, double fontScale) {
+    return FortuneCharts(
+        filteredHistory: filteredHistory, fontScale: fontScale);
   }
 
   Widget _buildDailyFortuneCalendar(List<FortuneHistory> filteredHistory) {

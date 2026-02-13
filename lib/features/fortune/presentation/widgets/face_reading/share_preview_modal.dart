@@ -164,9 +164,8 @@ class _SharePreviewModalState extends State<SharePreviewModal> {
             onPressed: () => Navigator.of(context).pop(),
             icon: Icon(
               Icons.close,
-              color: isDark
-                  ? DSColors.textSecondaryDark
-                  : DSColors.textSecondary,
+              color:
+                  isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
             ),
           ),
         ],

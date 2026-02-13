@@ -174,7 +174,7 @@ class _AppToastOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
-    
+
     return Positioned(
       left: DSSpacing.md,
       right: DSSpacing.md,
@@ -275,7 +275,7 @@ class _AppToastItemState extends State<_AppToastItem>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     final colors = _getColors(isDark);
     final icon = _getIcon();
 
@@ -354,36 +354,52 @@ class _AppToastItemState extends State<_AppToastItem>
           backgroundColor: isDark
               ? DSColors.success.withValues(alpha: 0.9)
               : DSColors.success.withValues(alpha: 0.08),
-          iconColor: isDark ? DSColors.success.withValues(alpha: 0.5) : DSColors.success.withValues(alpha: 0.9),
+          iconColor: isDark
+              ? DSColors.success.withValues(alpha: 0.5)
+              : DSColors.success.withValues(alpha: 0.9),
           textColor: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
-          actionColor: isDark ? DSColors.success.withValues(alpha: 0.5) : DSColors.success.withValues(alpha: 0.9),
+          actionColor: isDark
+              ? DSColors.success.withValues(alpha: 0.5)
+              : DSColors.success.withValues(alpha: 0.9),
         );
       case AppToastType.error:
         return _ToastColors(
           backgroundColor: isDark
               ? DSColors.error.withValues(alpha: 0.9)
               : DSColors.error.withValues(alpha: 0.08),
-          iconColor: isDark ? DSColors.error.withValues(alpha: 0.5) : DSColors.error.withValues(alpha: 0.9),
+          iconColor: isDark
+              ? DSColors.error.withValues(alpha: 0.5)
+              : DSColors.error.withValues(alpha: 0.9),
           textColor: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
-          actionColor: isDark ? DSColors.error.withValues(alpha: 0.5) : DSColors.error.withValues(alpha: 0.9),
+          actionColor: isDark
+              ? DSColors.error.withValues(alpha: 0.5)
+              : DSColors.error.withValues(alpha: 0.9),
         );
       case AppToastType.warning:
         return _ToastColors(
           backgroundColor: isDark
               ? DSColors.warning.withValues(alpha: 0.9)
               : DSColors.warning.withValues(alpha: 0.08),
-          iconColor: isDark ? DSColors.warning.withValues(alpha: 0.5) : DSColors.warning.withValues(alpha: 0.9),
+          iconColor: isDark
+              ? DSColors.warning.withValues(alpha: 0.5)
+              : DSColors.warning.withValues(alpha: 0.9),
           textColor: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
-          actionColor: isDark ? DSColors.warning.withValues(alpha: 0.5) : DSColors.warning.withValues(alpha: 0.9),
+          actionColor: isDark
+              ? DSColors.warning.withValues(alpha: 0.5)
+              : DSColors.warning.withValues(alpha: 0.9),
         );
       case AppToastType.info:
         return _ToastColors(
           backgroundColor: isDark
               ? DSColors.textTertiaryDark.withValues(alpha: 0.9)
               : DSColors.textTertiaryDark.withValues(alpha: 0.08),
-          iconColor: isDark ? DSColors.textTertiaryDark.withValues(alpha: 0.5) : DSColors.textTertiaryDark.withValues(alpha: 0.9),
+          iconColor: isDark
+              ? DSColors.textTertiaryDark.withValues(alpha: 0.5)
+              : DSColors.textTertiaryDark.withValues(alpha: 0.9),
           textColor: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
-          actionColor: isDark ? DSColors.accentDark.withValues(alpha: 0.5) : DSColors.accentDark.withValues(alpha: 0.9),
+          actionColor: isDark
+              ? DSColors.accentDark.withValues(alpha: 0.5)
+              : DSColors.accentDark.withValues(alpha: 0.9),
         );
     }
   }

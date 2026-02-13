@@ -137,14 +137,16 @@ class FashionImageService {
     required FashionImageRequest request,
   }) async {
     try {
-      Logger.info('[FashionImage] 🎨 Generating fashion image: ${request.styleType.displayName}');
+      Logger.info(
+          '[FashionImage] 🎨 Generating fashion image: ${request.styleType.displayName}');
 
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) {
         throw Exception('User not authenticated');
       }
 
-      Logger.info('[FashionImage] 📝 Style: ${request.styleType.id}, Gender: ${request.gender}');
+      Logger.info(
+          '[FashionImage] 📝 Style: ${request.styleType.id}, Gender: ${request.gender}');
 
       // Edge Function 호출
       final response = await _supabase.functions.invoke(
@@ -178,7 +180,8 @@ class FashionImageService {
         createdAt: DateTime.now(),
       );
     } catch (e, stackTrace) {
-      Logger.error('[FashionImage] ❌ Failed to generate fashion image: $e', e, stackTrace);
+      Logger.error('[FashionImage] ❌ Failed to generate fashion image: $e', e,
+          stackTrace);
       rethrow;
     }
   }
@@ -186,9 +189,11 @@ class FashionImageService {
   /// 사용자의 패션 이미지 목록 조회
   ///
   /// [limit] - 최대 조회 개수 (기본값: 20)
-  Future<List<FashionImageResult>> getUserFashionImages({int limit = 20}) async {
+  Future<List<FashionImageResult>> getUserFashionImages(
+      {int limit = 20}) async {
     try {
-      Logger.info('[FashionImage] 📋 Fetching user fashion images (limit: $limit)');
+      Logger.info(
+          '[FashionImage] 📋 Fetching user fashion images (limit: $limit)');
 
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) {
@@ -217,7 +222,8 @@ class FashionImageService {
 
       return images;
     } catch (e, stackTrace) {
-      Logger.error('[FashionImage] ❌ Failed to fetch images: $e', e, stackTrace);
+      Logger.error(
+          '[FashionImage] ❌ Failed to fetch images: $e', e, stackTrace);
       rethrow;
     }
   }
@@ -228,7 +234,8 @@ class FashionImageService {
     int limit = 10,
   }) async {
     try {
-      Logger.info('[FashionImage] 📋 Fetching images for: ${styleType.displayName}');
+      Logger.info(
+          '[FashionImage] 📋 Fetching images for: ${styleType.displayName}');
 
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) {
@@ -254,17 +261,20 @@ class FashionImageService {
               ))
           .toList();
 
-      Logger.info('[FashionImage] ✅ Found ${images.length} images for ${styleType.displayName}');
+      Logger.info(
+          '[FashionImage] ✅ Found ${images.length} images for ${styleType.displayName}');
 
       return images;
     } catch (e, stackTrace) {
-      Logger.error('[FashionImage] ❌ Failed to fetch images by style: $e', e, stackTrace);
+      Logger.error('[FashionImage] ❌ Failed to fetch images by style: $e', e,
+          stackTrace);
       rethrow;
     }
   }
 
   /// 오늘 생성한 패션 이미지 조회
-  Future<FashionImageResult?> getTodaysFashionImage(FashionStyleType styleType) async {
+  Future<FashionImageResult?> getTodaysFashionImage(
+      FashionStyleType styleType) async {
     try {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) return null;
@@ -329,12 +339,15 @@ class FashionImageService {
             .from('fashion-images')
             .remove(['$userId/$fileName']);
       } catch (storageError) {
-        Logger.error('[FashionImage] ⚠️ Storage delete failed (may already be deleted): $storageError', storageError);
+        Logger.error(
+            '[FashionImage] ⚠️ Storage delete failed (may already be deleted): $storageError',
+            storageError);
       }
 
       Logger.info('[FashionImage] ✅ Fashion image deleted');
     } catch (e, stackTrace) {
-      Logger.error('[FashionImage] ❌ Failed to delete fashion image: $e', e, stackTrace);
+      Logger.error(
+          '[FashionImage] ❌ Failed to delete fashion image: $e', e, stackTrace);
       rethrow;
     }
   }

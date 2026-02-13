@@ -105,23 +105,27 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
           Text(
             '당신의 얼굴을 분석합니다',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+                  fontWeight: FontWeight.bold,
+                ),
           ),
           const SizedBox(height: DSSpacing.sm),
           Text(
             '정면 사진을 업로드하면 관상을 분석해드립니다.\n'
             '개인정보는 안전하게 보호되며 분석 후 즉시 삭제됩니다.',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-            ),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.6),
+                ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: DSSpacing.md),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+              color:
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -136,18 +140,16 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                 Text(
                   '$_requiredTokens 토큰 필요',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ],
             ),
           ),
         ],
       ),
-    ).animate()
-      .fadeIn(duration: 600.ms)
-      .slideY(begin: 0.1, end: 0);
+    ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1, end: 0);
   }
 
   Widget _buildImageSection() {
@@ -156,60 +158,67 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
       child: GlassContainer(
         height: 300,
         child: _selectedImage != null
-          ? Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: Image.file(
-                    _selectedImage!,
-                    width: double.infinity,
-                    height: double.infinity,
-                    fit: BoxFit.cover,
+            ? Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.file(
+                      _selectedImage!,
+                      width: double.infinity,
+                      height: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ),
-                if (!_isAnalyzing)
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: IconButton(
-                      onPressed: _removeImage,
-                      icon: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.54),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: const Icon(
-                          Icons.close,
-                          color: Colors.white,
-                          size: 20,
+                  if (!_isAnalyzing)
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: IconButton(
+                        onPressed: _removeImage,
+                        icon: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.54),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: 20,
+                          ),
                         ),
                       ),
                     ),
+                ],
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.add_photo_alternate,
+                    size: 64,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.3),
                   ),
-              ],
-            )
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.add_photo_alternate,
-                  size: 64,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
-                ),
-                const SizedBox(height: DSSpacing.md),
-                Text(
-                  '탭하여 사진 선택',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                  const SizedBox(height: DSSpacing.md),
+                  Text(
+                    '탭하여 사진 선택',
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.6),
+                        ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
       ),
-    ).animate()
-      .fadeIn(duration: 600.ms, delay: 100.ms)
-      .slideY(begin: 0.1, end: 0);
+    )
+        .animate()
+        .fadeIn(duration: 600.ms, delay: 100.ms)
+        .slideY(begin: 0.1, end: 0);
   }
 
   Widget _buildActionButtons() {
@@ -252,20 +261,20 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
           GlassButton(
             onPressed: _isAnalyzing ? null : _analyzeImage,
             width: double.infinity,
-            child: _isAnalyzing 
-              ? const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                    SizedBox(width: 8),
-                    Text('분석 중...'),
-                  ],
-                )
-              : const Text('관상 분석 시작'),
+            child: _isAnalyzing
+                ? const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                      SizedBox(width: 8),
+                      Text('분석 중...'),
+                    ],
+                  )
+                : const Text('관상 분석 시작'),
           ),
           const SizedBox(height: 12),
           GlassButton(
@@ -275,9 +284,10 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
           ),
         ],
       ],
-    ).animate()
-      .fadeIn(duration: 600.ms, delay: 200.ms)
-      .slideY(begin: 0.1, end: 0);
+    )
+        .animate()
+        .fadeIn(duration: 600.ms, delay: 200.ms)
+        .slideY(begin: 0.1, end: 0);
   }
 
   Widget _buildResultSection() {
@@ -296,15 +306,16 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
               Text(
                 '관상 분석 결과',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
             ],
           ),
           const SizedBox(height: DSSpacing.md),
 
           // ✅ 닮은꼴 유명인 캐러셀
-          if (_similarCelebrities != null && _similarCelebrities!.isNotEmpty) ...[
+          if (_similarCelebrities != null &&
+              _similarCelebrities!.isNotEmpty) ...[
             CelebrityMatchCarousel(
               celebrities: _similarCelebrities!,
             ),
@@ -314,8 +325,8 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
           Text(
             _analysisResult!,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              height: 1.6,
-            ),
+                  height: 1.6,
+                ),
           ),
           const SizedBox(height: DSSpacing.lg),
           Row(
@@ -344,9 +355,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
           ),
         ],
       ),
-    ).animate()
-      .fadeIn(duration: 600.ms)
-      .slideY(begin: 0.1, end: 0);
+    ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1, end: 0);
   }
 
   void _showImagePicker() {
@@ -355,7 +364,8 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
     // ✅ 프로필 사진 정보 가져오기
     final userProfileAsync = ref.read(userProfileProvider);
     final profileImageUrl = userProfileAsync.valueOrNull?.profileImageUrl;
-    final hasProfileImage = profileImageUrl != null && profileImageUrl.isNotEmpty;
+    final hasProfileImage =
+        profileImageUrl != null && profileImageUrl.isNotEmpty;
 
     showModalBottomSheet(
       context: context,
@@ -381,7 +391,10 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: const Center(
@@ -396,7 +409,10 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Icon(
@@ -410,8 +426,11 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                   subtitle: Text(
                     '빠르게 분석을 시작해보세요',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-                    ),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.6),
+                        ),
                   ),
                   onTap: _isLoadingProfileImage
                       ? null
@@ -423,10 +442,14 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
               if (hasProfileImage)
                 Divider(
                   height: 1,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.1),
                 ),
               ListTile(
-                leading: Icon(Icons.camera_alt, color: Theme.of(context).colorScheme.primary),
+                leading: Icon(Icons.camera_alt,
+                    color: Theme.of(context).colorScheme.primary),
                 title: const Text('카메라로 촬영'),
                 onTap: () {
                   Navigator.pop(context);
@@ -434,7 +457,8 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.photo_library, color: Theme.of(context).colorScheme.primary),
+                leading: Icon(Icons.photo_library,
+                    color: Theme.of(context).colorScheme.primary),
                 title: const Text('갤러리에서 선택'),
                 onTap: () {
                   Navigator.pop(context);
@@ -442,7 +466,11 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.arrow_back_ios, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
+                leading: Icon(Icons.arrow_back_ios,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.6)),
                 title: const Text('취소'),
                 onTap: () => Navigator.pop(context),
               ),
@@ -471,10 +499,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
       }
 
       final XFile? image = await _picker.pickImage(
-        source: source,
-        maxWidth: 1024,
-        maxHeight: 1024,
-        imageQuality: 85);
+          source: source, maxWidth: 1024, maxHeight: 1024, imageQuality: 85);
 
       if (image != null) {
         setState(() {
@@ -486,8 +511,8 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
     } catch (e) {
       Logger.error('이미지 선택 실패', e);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('이미지를 선택할 수 없습니다')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('이미지를 선택할 수 없습니다')));
       }
     }
   }
@@ -541,7 +566,9 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
   Future<void> _analyzeImage() async {
     // 토큰 확인
     final tokenBalance = ref.read(tokenBalanceProvider);
-    if (tokenBalance == null || (tokenBalance.remainingTokens < _requiredTokens && !tokenBalance.hasUnlimitedAccess)) {
+    if (tokenBalance == null ||
+        (tokenBalance.remainingTokens < _requiredTokens &&
+            !tokenBalance.hasUnlimitedAccess)) {
       _showInsufficientTokensModal();
       return;
     }
@@ -552,15 +579,15 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
     try {
       // TODO: 실제 API 호출로 대체
       await Future.delayed(const Duration(seconds: 3));
-      
+
       // 토큰 차감
-      await ref.read(tokenProvider.notifier).consumeTokens(
-        fortuneType: 'face_reading',
-        amount: _requiredTokens);
+      await ref
+          .read(tokenProvider.notifier)
+          .consumeTokens(fortuneType: 'face_reading', amount: _requiredTokens);
 
       // 토큰 잔액 새로고침
       ref.invalidate(tokenBalanceProvider);
-      
+
       setState(() {
         _analysisResult = '''
 당신의 관상 분석 결과입니다.
@@ -611,15 +638,15 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
 
         _isAnalyzing = false;
       });
-      
+
       HapticUtils.success();
     } catch (e) {
       Logger.error('관상 분석 실패', e);
       setState(() => _isAnalyzing = false);
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('분석에 실패했습니다. 다시 시도해주세요.')));
+            const SnackBar(content: Text('분석에 실패했습니다. 다시 시도해주세요.')));
       }
     }
   }
@@ -636,8 +663,8 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
   void _shareResult() {
     HapticUtils.lightImpact();
     // TODO: 공유 기능 구현
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('공유 기능은 준비 중입니다')));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('공유 기능은 준비 중입니다')));
   }
 
   void _showPermissionDeniedDialog(String permission) {

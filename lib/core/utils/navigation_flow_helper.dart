@@ -46,7 +46,8 @@ class NavigationFlowHelper {
     Map<String, dynamic>? extra,
     bool canSkipAd = false,
   }) async {
-    await navigate(context: context, destinationRoute: destinationRoute, extra: extra);
+    await navigate(
+        context: context, destinationRoute: destinationRoute, extra: extra);
   }
 
   @Deprecated('Use replace() instead')
@@ -58,7 +59,8 @@ class NavigationFlowHelper {
     Map<String, dynamic>? extra,
     bool canSkipAd = false,
   }) async {
-    await replace(context: context, destinationRoute: destinationRoute, extra: extra);
+    await replace(
+        context: context, destinationRoute: destinationRoute, extra: extra);
   }
 
   @Deprecated('Use executeCallback() instead')

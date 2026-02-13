@@ -228,7 +228,8 @@ class _MockCompatibilityPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('궁합', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const Text('궁합',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 24),
 
             // 나의 정보
@@ -238,16 +239,23 @@ class _MockCompatibilityPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('나의 정보', style: TextStyle(fontWeight: FontWeight.bold)),
+                    const Text('나의 정보',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
                     const Text('생년월일'),
                     const TextField(),
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        ChoiceChip(label: const Text('남'), selected: true, onSelected: (_) {}),
+                        ChoiceChip(
+                            label: const Text('남'),
+                            selected: true,
+                            onSelected: (_) {}),
                         const SizedBox(width: 8),
-                        ChoiceChip(label: const Text('여'), selected: false, onSelected: (_) {}),
+                        ChoiceChip(
+                            label: const Text('여'),
+                            selected: false,
+                            onSelected: (_) {}),
                       ],
                     ),
                   ],
@@ -263,16 +271,23 @@ class _MockCompatibilityPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('상대방 정보', style: TextStyle(fontWeight: FontWeight.bold)),
+                    const Text('상대방 정보',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
                     const Text('생년월일'),
                     const TextField(),
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        ChoiceChip(label: const Text('남'), selected: false, onSelected: (_) {}),
+                        ChoiceChip(
+                            label: const Text('남'),
+                            selected: false,
+                            onSelected: (_) {}),
                         const SizedBox(width: 8),
-                        ChoiceChip(label: const Text('여'), selected: true, onSelected: (_) {}),
+                        ChoiceChip(
+                            label: const Text('여'),
+                            selected: true,
+                            onSelected: (_) {}),
                       ],
                     ),
                   ],
@@ -319,23 +334,34 @@ class _MockCompatibilityResult extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-
-            Text('$score점', style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold)),
-            if (grade != null) Text(grade!, style: const TextStyle(fontSize: 20)),
+            Text('$score점',
+                style:
+                    const TextStyle(fontSize: 48, fontWeight: FontWeight.bold)),
+            if (grade != null)
+              Text(grade!, style: const TextStyle(fontSize: 20)),
             const SizedBox(height: 24),
-
-            const Card(child: ListTile(title: Text('성격 궁합'), trailing: Text('85점'))),
-            const Card(child: ListTile(title: Text('연애 궁합'), trailing: Text('90점'))),
-            const Card(child: ListTile(title: Text('결혼 궁합'), trailing: Text('82점'))),
-            const Card(child: ListTile(title: Text('금전 궁합'), trailing: Text('78점'))),
+            const Card(
+                child: ListTile(title: Text('성격 궁합'), trailing: Text('85점'))),
+            const Card(
+                child: ListTile(title: Text('연애 궁합'), trailing: Text('90점'))),
+            const Card(
+                child: ListTile(title: Text('결혼 궁합'), trailing: Text('82점'))),
+            const Card(
+                child: ListTile(title: Text('금전 궁합'), trailing: Text('78점'))),
             const SizedBox(height: 16),
-
-            const Card(child: ListTile(title: Text('오행 상성'), subtitle: Text('목-화 상생'))),
+            const Card(
+                child:
+                    ListTile(title: Text('오행 상성'), subtitle: Text('목-화 상생'))),
             const SizedBox(height: 16),
-
-            const Card(child: ListTile(title: Text('강점'), subtitle: Text('서로를 보완하는 관계'))),
-            const Card(child: ListTile(title: Text('주의점'), subtitle: Text('의사소통에 주의'))),
-            const Card(child: ListTile(title: Text('관계 조언'), subtitle: Text('서로의 차이를 인정하세요'))),
+            const Card(
+                child:
+                    ListTile(title: Text('강점'), subtitle: Text('서로를 보완하는 관계'))),
+            const Card(
+                child:
+                    ListTile(title: Text('주의점'), subtitle: Text('의사소통에 주의'))),
+            const Card(
+                child: ListTile(
+                    title: Text('관계 조언'), subtitle: Text('서로의 차이를 인정하세요'))),
           ],
         ),
       ),

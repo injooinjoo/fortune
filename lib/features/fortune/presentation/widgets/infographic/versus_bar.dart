@@ -106,8 +106,7 @@ class _VersusBarState extends State<VersusBar>
   }
 
   double get _total => widget.leftValue + widget.rightValue;
-  double get _leftRatio =>
-      _total > 0 ? widget.leftValue / _total : 0.5;
+  double get _leftRatio => _total > 0 ? widget.leftValue / _total : 0.5;
 
   @override
   Widget build(BuildContext context) {
@@ -191,13 +190,13 @@ class _VersusBarState extends State<VersusBar>
         AnimatedBuilder(
           animation: _animation,
           builder: (context, _) {
-            final animatedLeftRatio = _leftRatio * _animation.value +
-                0.5 * (1 - _animation.value);
+            final animatedLeftRatio =
+                _leftRatio * _animation.value + 0.5 * (1 - _animation.value);
             return Container(
               height: widget.height,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(widget.height / 2),
-                color: context.colors.border.withValues(alpha:0.2),
+                color: context.colors.border.withValues(alpha: 0.2),
               ),
               child: Stack(
                 children: [
@@ -249,7 +248,7 @@ class _VersusBarState extends State<VersusBar>
                       child: Container(
                         width: 2,
                         height: widget.height,
-                        color: context.colors.surface.withValues(alpha:0.5),
+                        color: context.colors.surface.withValues(alpha: 0.5),
                       ),
                     ),
 
@@ -389,8 +388,7 @@ class _MultiVersusBarState extends State<MultiVersusBar>
     super.dispose();
   }
 
-  double get _total =>
-      widget.items.fold(0, (sum, item) => sum + item.value);
+  double get _total => widget.items.fold(0, (sum, item) => sum + item.value);
 
   @override
   Widget build(BuildContext context) {
@@ -405,7 +403,7 @@ class _MultiVersusBarState extends State<MultiVersusBar>
               height: widget.height,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(widget.height / 2),
-                color: context.colors.border.withValues(alpha:0.2),
+                color: context.colors.border.withValues(alpha: 0.2),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(widget.height / 2),
@@ -419,8 +417,7 @@ class _MultiVersusBarState extends State<MultiVersusBar>
                     return Expanded(
                       flex: (animatedRatio * 1000).round().clamp(1, 1000),
                       child: Container(
-                        color: item.color ??
-                            _getDefaultColor(context, index),
+                        color: item.color ?? _getDefaultColor(context, index),
                       ),
                     );
                   }).toList(),
@@ -610,7 +607,7 @@ class _CompatibilityBarState extends State<CompatibilityBar>
               return Container(
                 height: widget.height,
                 decoration: BoxDecoration(
-                  color: context.colors.border.withValues(alpha:0.3),
+                  color: context.colors.border.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(widget.height / 2),
                 ),
                 child: FractionallySizedBox(
@@ -636,8 +633,7 @@ class _CompatibilityBarState extends State<CompatibilityBar>
             child: AnimatedBuilder(
               animation: _animation,
               builder: (context, _) {
-                final animatedScore =
-                    (widget.score * _animation.value).round();
+                final animatedScore = (widget.score * _animation.value).round();
                 return Text(
                   '$animatedScore',
                   style: context.typography.bodySmall.copyWith(

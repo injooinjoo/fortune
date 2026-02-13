@@ -377,9 +377,7 @@ class _MockNameInputStepState extends State<_MockNameInputStep> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: _controller.text.isNotEmpty
-                  ? widget.onNext
-                  : null,
+              onPressed: _controller.text.isNotEmpty ? widget.onNext : null,
               child: const Text('다음'),
             ),
           ),

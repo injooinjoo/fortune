@@ -155,7 +155,8 @@ class FollowUpScheduler {
     if (pattern == null) return null;
 
     final currentAttempt = (_attemptCounts[characterId] ?? 0) + 1;
-    final expectedDelay = pattern.getFollowUpDelay(attemptNumber: currentAttempt);
+    final expectedDelay =
+        pattern.getFollowUpDelay(attemptNumber: currentAttempt);
     final elapsed = DateTime.now().difference(lastActivity);
 
     final remaining = expectedDelay - elapsed;

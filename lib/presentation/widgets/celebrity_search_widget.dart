@@ -15,7 +15,8 @@ class CelebritySearchWidget extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<CelebritySearchWidget> createState() => _CelebritySearchWidgetState();
+  ConsumerState<CelebritySearchWidget> createState() =>
+      _CelebritySearchWidgetState();
 }
 
 class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
@@ -34,7 +35,7 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
       _currentQuery = query;
       _showSuggestions = query.isNotEmpty;
     });
-    
+
     if (query.isNotEmpty) {
       ref.read(searchQueryProvider.notifier).state = query;
     }
@@ -118,7 +119,7 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
     if (_currentQuery.isEmpty) {
       // 빈 검색어일 때 인기 연예인 표시
       final popularCelebrities = ref.watch(popularCelebritiesProvider(null));
-      
+
       return popularCelebrities.when(
         data: (celebrities) => _buildCelebrityList(
           celebrities.take(6).toList(),
@@ -135,7 +136,7 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
     } else {
       // 검색 결과 표시
       final searchResults = ref.watch(celebritySearchProvider(_currentQuery));
-      
+
       return searchResults.when(
         data: (celebrities) => celebrities.isEmpty
             ? _buildNoResultsWidget()
@@ -151,7 +152,8 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
     }
   }
 
-  Widget _buildCelebrityList(List<CelebritySaju> celebrities, {required String title}) {
+  Widget _buildCelebrityList(List<CelebritySaju> celebrities,
+      {required String title}) {
     final theme = Theme.of(context);
 
     return Container(
@@ -164,7 +166,7 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
         ),
         boxShadow: [
           BoxShadow(
-            color: DSColors.textPrimaryDark.withValues(alpha:0.1),
+            color: DSColors.textPrimaryDark.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -196,7 +198,7 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
               ],
             ),
           ),
-          
+
           const Divider(height: 1),
 
           // 연예인 목록
@@ -223,7 +225,7 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       leading: CircleAvatar(
-        backgroundColor: DSColors.accentDark.withValues(alpha:0.2),
+        backgroundColor: DSColors.accentDark.withValues(alpha: 0.2),
         child: Text(
           celebrity.name.isNotEmpty ? celebrity.name[0] : '?',
           style: const TextStyle(
@@ -246,7 +248,7 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
           Text(
             '사주: ${celebrity.sajuString}',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: DSColors.accentDark.withValues(alpha:0.8),
+              color: DSColors.accentDark.withValues(alpha: 0.8),
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -255,7 +257,8 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
       trailing: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: _getElementColor(celebrity.dominantElement).withValues(alpha:0.2),
+          color: _getElementColor(celebrity.dominantElement)
+              .withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(6),
         ),
         child: Text(
@@ -312,10 +315,10 @@ class _CelebritySearchWidgetState extends ConsumerState<CelebritySearchWidget> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: DSColors.error.withValues(alpha:0.1),
+        color: DSColors.error.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: DSColors.error.withValues(alpha:0.3),
+          color: DSColors.error.withValues(alpha: 0.3),
         ),
       ),
       child: Column(

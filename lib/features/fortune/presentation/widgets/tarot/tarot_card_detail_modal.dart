@@ -85,12 +85,14 @@ class TarotCardDetailModal extends StatelessWidget {
                       const SizedBox(height: DSSpacing.md),
 
                       // 원소 & 점성술 정보
-                      if (cardInfo != null) _buildElementInfo(context, cardInfo),
+                      if (cardInfo != null)
+                        _buildElementInfo(context, cardInfo),
 
                       const SizedBox(height: DSSpacing.md),
 
                       // 키워드 칩
-                      if (cardInfo != null) _buildKeywordChips(context, cardInfo),
+                      if (cardInfo != null)
+                        _buildKeywordChips(context, cardInfo),
 
                       const SizedBox(height: DSSpacing.lg),
 
@@ -100,10 +102,12 @@ class TarotCardDetailModal extends StatelessWidget {
                       const SizedBox(height: DSSpacing.md),
 
                       // 정방향/역방향 의미
-                      if (cardInfo != null) _buildMeaningSection(context, cardInfo),
+                      if (cardInfo != null)
+                        _buildMeaningSection(context, cardInfo),
 
                       // 접이식 상세 정보 섹션들
-                      if (cardInfo != null) ..._buildExpandableSections(context, cardInfo),
+                      if (cardInfo != null)
+                        ..._buildExpandableSections(context, cardInfo),
 
                       const SizedBox(height: 40),
                     ],
@@ -137,7 +141,8 @@ class TarotCardDetailModal extends StatelessWidget {
                 ),
                 const SizedBox(height: DSSpacing.xs),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
                     color: card.isReversed
                         ? DSColors.error.withValues(alpha: 0.1)
@@ -421,7 +426,9 @@ class TarotCardDetailModal extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: isHighlighted ? color.withValues(alpha: 0.2) : color.withValues(alpha: 0.1),
+            color: isHighlighted
+                ? color.withValues(alpha: 0.2)
+                : color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(DSRadius.sm),
           ),
           child: Icon(icon, size: 16, color: color),
@@ -455,7 +462,8 @@ class TarotCardDetailModal extends StatelessWidget {
   }
 
   /// 접이식 상세 정보 섹션들
-  List<Widget> _buildExpandableSections(BuildContext context, TarotCardInfo cardInfo) {
+  List<Widget> _buildExpandableSections(
+      BuildContext context, TarotCardInfo cardInfo) {
     final sections = <Widget>[];
 
     // 카드 스토리
@@ -469,7 +477,8 @@ class TarotCardDetailModal extends StatelessWidget {
     }
 
     // 심리학적 의미
-    if (cardInfo.psychologicalMeaning != null && cardInfo.psychologicalMeaning!.isNotEmpty) {
+    if (cardInfo.psychologicalMeaning != null &&
+        cardInfo.psychologicalMeaning!.isNotEmpty) {
       sections.add(_buildExpandableSection(
         context,
         icon: Icons.psychology,
@@ -479,7 +488,8 @@ class TarotCardDetailModal extends StatelessWidget {
     }
 
     // 영적 의미
-    if (cardInfo.spiritualMeaning != null && cardInfo.spiritualMeaning!.isNotEmpty) {
+    if (cardInfo.spiritualMeaning != null &&
+        cardInfo.spiritualMeaning!.isNotEmpty) {
       sections.add(_buildExpandableSection(
         context,
         icon: Icons.self_improvement,
@@ -499,7 +509,8 @@ class TarotCardDetailModal extends StatelessWidget {
     }
 
     // 일상 적용
-    if (cardInfo.dailyApplications != null && cardInfo.dailyApplications!.isNotEmpty) {
+    if (cardInfo.dailyApplications != null &&
+        cardInfo.dailyApplications!.isNotEmpty) {
       sections.add(_buildExpandableListSection(
         context,
         icon: Icons.lightbulb_outline,
@@ -529,7 +540,8 @@ class TarotCardDetailModal extends StatelessWidget {
     }
 
     // 색상 상징
-    if (cardInfo.colorSymbolism != null && cardInfo.colorSymbolism!.isNotEmpty) {
+    if (cardInfo.colorSymbolism != null &&
+        cardInfo.colorSymbolism!.isNotEmpty) {
       sections.add(_buildExpandableSection(
         context,
         icon: Icons.palette,

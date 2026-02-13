@@ -143,8 +143,11 @@ class InteractionSummary {
     return InteractionSummary(
       totalSessions: json['total_sessions'] as int? ?? 0,
       avgConfidence: (json['avg_confidence'] as num?)?.toDouble() ?? 0.0,
-      positiveOutcomeRate: (json['positive_outcome_rate'] as num?)?.toDouble() ?? 0.0,
-      mostDiscussedTopics: (json['most_discussed_topics'] as List<dynamic>?)?.cast<String>() ?? [],
+      positiveOutcomeRate:
+          (json['positive_outcome_rate'] as num?)?.toDouble() ?? 0.0,
+      mostDiscussedTopics:
+          (json['most_discussed_topics'] as List<dynamic>?)?.cast<String>() ??
+              [],
       lastUpdated: json['last_updated'] != null
           ? DateTime.parse(json['last_updated'] as String)
           : null,
@@ -152,12 +155,12 @@ class InteractionSummary {
   }
 
   Map<String, dynamic> toJson() => {
-    'total_sessions': totalSessions,
-    'avg_confidence': avgConfidence,
-    'positive_outcome_rate': positiveOutcomeRate,
-    'most_discussed_topics': mostDiscussedTopics,
-    'last_updated': lastUpdated?.toIso8601String(),
-  };
+        'total_sessions': totalSessions,
+        'avg_confidence': avgConfidence,
+        'positive_outcome_rate': positiveOutcomeRate,
+        'most_discussed_topics': mostDiscussedTopics,
+        'last_updated': lastUpdated?.toIso8601String(),
+      };
 }
 
 /// 설정 설명
@@ -237,25 +240,36 @@ class UserCoachPreferences {
     this.updatedAt,
     this.descriptions,
     this.isNew = false,
-  }) : interactionSummary = interactionSummary ?? InteractionSummary(),
-       createdAt = createdAt ?? DateTime.now();
+  })  : interactionSummary = interactionSummary ?? InteractionSummary(),
+        createdAt = createdAt ?? DateTime.now();
 
   factory UserCoachPreferences.fromJson(Map<String, dynamic> json) {
     return UserCoachPreferences(
       userId: json['user_id'] as String,
-      tonePreference: TonePreference.fromString(json['tone_preference'] as String? ?? 'adaptive'),
-      responseLength: ResponseLength.fromString(json['response_length'] as String? ?? 'balanced'),
-      decisionStyle: DecisionStyle.fromString(json['decision_style'] as String? ?? 'balanced'),
-      relationshipStatus: RelationshipStatus.fromString(json['relationship_status'] as String?),
+      tonePreference: TonePreference.fromString(
+          json['tone_preference'] as String? ?? 'adaptive'),
+      responseLength: ResponseLength.fromString(
+          json['response_length'] as String? ?? 'balanced'),
+      decisionStyle: DecisionStyle.fromString(
+          json['decision_style'] as String? ?? 'balanced'),
+      relationshipStatus:
+          RelationshipStatus.fromString(json['relationship_status'] as String?),
       ageGroup: AgeGroup.fromString(json['age_group'] as String?),
       occupationType: json['occupation_type'] as String?,
-      preferredCategories: (json['preferred_categories'] as List<dynamic>?)?.cast<String>() ?? ['dating', 'career', 'lifestyle'],
-      followUpReminderEnabled: json['follow_up_reminder_enabled'] as bool? ?? true,
+      preferredCategories:
+          (json['preferred_categories'] as List<dynamic>?)?.cast<String>() ??
+              ['dating', 'career', 'lifestyle'],
+      followUpReminderEnabled:
+          json['follow_up_reminder_enabled'] as bool? ?? true,
       followUpDays: json['follow_up_days'] as int? ?? 7,
-      pushNotificationEnabled: json['push_notification_enabled'] as bool? ?? true,
-      communityAnonymousPrefix: AnonymousPrefixType.fromString(json['community_anonymous_prefix'] as String? ?? 'animal'),
-      communityParticipationEnabled: json['community_participation_enabled'] as bool? ?? true,
-      interactionSummary: InteractionSummary.fromJson(json['interaction_summary'] as Map<String, dynamic>?),
+      pushNotificationEnabled:
+          json['push_notification_enabled'] as bool? ?? true,
+      communityAnonymousPrefix: AnonymousPrefixType.fromString(
+          json['community_anonymous_prefix'] as String? ?? 'animal'),
+      communityParticipationEnabled:
+          json['community_participation_enabled'] as bool? ?? true,
+      interactionSummary: InteractionSummary.fromJson(
+          json['interaction_summary'] as Map<String, dynamic>?),
       metadata: json['metadata'] as Map<String, dynamic>?,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'] as String)
@@ -264,47 +278,49 @@ class UserCoachPreferences {
           ? DateTime.parse(json['updated_at'] as String)
           : null,
       descriptions: json['descriptions'] != null
-          ? PreferenceDescriptions.fromJson(json['descriptions'] as Map<String, dynamic>)
+          ? PreferenceDescriptions.fromJson(
+              json['descriptions'] as Map<String, dynamic>)
           : null,
       isNew: json['isNew'] as bool? ?? false,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'user_id': userId,
-    'tone_preference': tonePreference.value,
-    'response_length': responseLength.value,
-    'decision_style': decisionStyle.value,
-    'relationship_status': relationshipStatus?.value,
-    'age_group': ageGroup?.value,
-    'occupation_type': occupationType,
-    'preferred_categories': preferredCategories,
-    'follow_up_reminder_enabled': followUpReminderEnabled,
-    'follow_up_days': followUpDays,
-    'push_notification_enabled': pushNotificationEnabled,
-    'community_anonymous_prefix': communityAnonymousPrefix.value,
-    'community_participation_enabled': communityParticipationEnabled,
-    'interaction_summary': interactionSummary.toJson(),
-    'metadata': metadata,
-    'created_at': createdAt.toIso8601String(),
-    'updated_at': updatedAt?.toIso8601String(),
-  };
+        'user_id': userId,
+        'tone_preference': tonePreference.value,
+        'response_length': responseLength.value,
+        'decision_style': decisionStyle.value,
+        'relationship_status': relationshipStatus?.value,
+        'age_group': ageGroup?.value,
+        'occupation_type': occupationType,
+        'preferred_categories': preferredCategories,
+        'follow_up_reminder_enabled': followUpReminderEnabled,
+        'follow_up_days': followUpDays,
+        'push_notification_enabled': pushNotificationEnabled,
+        'community_anonymous_prefix': communityAnonymousPrefix.value,
+        'community_participation_enabled': communityParticipationEnabled,
+        'interaction_summary': interactionSummary.toJson(),
+        'metadata': metadata,
+        'created_at': createdAt.toIso8601String(),
+        'updated_at': updatedAt?.toIso8601String(),
+      };
 
   /// 업데이트용 JSON (변경된 필드만)
   Map<String, dynamic> toUpdateJson() => {
-    'tone_preference': tonePreference.value,
-    'response_length': responseLength.value,
-    'decision_style': decisionStyle.value,
-    if (relationshipStatus != null) 'relationship_status': relationshipStatus!.value,
-    if (ageGroup != null) 'age_group': ageGroup!.value,
-    if (occupationType != null) 'occupation_type': occupationType,
-    'preferred_categories': preferredCategories,
-    'follow_up_reminder_enabled': followUpReminderEnabled,
-    'follow_up_days': followUpDays,
-    'push_notification_enabled': pushNotificationEnabled,
-    'community_anonymous_prefix': communityAnonymousPrefix.value,
-    'community_participation_enabled': communityParticipationEnabled,
-  };
+        'tone_preference': tonePreference.value,
+        'response_length': responseLength.value,
+        'decision_style': decisionStyle.value,
+        if (relationshipStatus != null)
+          'relationship_status': relationshipStatus!.value,
+        if (ageGroup != null) 'age_group': ageGroup!.value,
+        if (occupationType != null) 'occupation_type': occupationType,
+        'preferred_categories': preferredCategories,
+        'follow_up_reminder_enabled': followUpReminderEnabled,
+        'follow_up_days': followUpDays,
+        'push_notification_enabled': pushNotificationEnabled,
+        'community_anonymous_prefix': communityAnonymousPrefix.value,
+        'community_participation_enabled': communityParticipationEnabled,
+      };
 
   UserCoachPreferences copyWith({
     String? userId,
@@ -336,11 +352,15 @@ class UserCoachPreferences {
       ageGroup: ageGroup ?? this.ageGroup,
       occupationType: occupationType ?? this.occupationType,
       preferredCategories: preferredCategories ?? this.preferredCategories,
-      followUpReminderEnabled: followUpReminderEnabled ?? this.followUpReminderEnabled,
+      followUpReminderEnabled:
+          followUpReminderEnabled ?? this.followUpReminderEnabled,
       followUpDays: followUpDays ?? this.followUpDays,
-      pushNotificationEnabled: pushNotificationEnabled ?? this.pushNotificationEnabled,
-      communityAnonymousPrefix: communityAnonymousPrefix ?? this.communityAnonymousPrefix,
-      communityParticipationEnabled: communityParticipationEnabled ?? this.communityParticipationEnabled,
+      pushNotificationEnabled:
+          pushNotificationEnabled ?? this.pushNotificationEnabled,
+      communityAnonymousPrefix:
+          communityAnonymousPrefix ?? this.communityAnonymousPrefix,
+      communityParticipationEnabled:
+          communityParticipationEnabled ?? this.communityParticipationEnabled,
       interactionSummary: interactionSummary ?? this.interactionSummary,
       metadata: metadata ?? this.metadata,
       createdAt: createdAt ?? this.createdAt,
@@ -380,7 +400,8 @@ class AIPromptContext {
       responseLength: json['response_length'] as String? ?? 'balanced',
       decisionStyle: json['decision_style'] as String? ?? 'balanced',
       userContext: json['user_context'] as Map<String, dynamic>? ?? {},
-      interactionHistory: json['interaction_history'] as Map<String, dynamic>? ?? {},
+      interactionHistory:
+          json['interaction_history'] as Map<String, dynamic>? ?? {},
     );
   }
 }

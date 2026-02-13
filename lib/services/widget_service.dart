@@ -61,13 +61,15 @@ class WidgetService {
         final storedUserId = await WidgetDataService.loadStoredUserId();
         if (storedUserId != null) {
           _cachedUserId = storedUserId;
-          Logger.info('[WidgetService] 저장된 사용자 ID 로드: ${storedUserId.substring(0, 8)}...');
+          Logger.info(
+              '[WidgetService] 저장된 사용자 ID 로드: ${storedUserId.substring(0, 8)}...');
         }
       }
 
       // 2. 사용자 ID가 있으면 Supabase 캐시 조회 시도
       if (_cachedUserId != null) {
-        final cacheResult = await WidgetDataService.fetchFromSupabaseCache(_cachedUserId!);
+        final cacheResult =
+            await WidgetDataService.fetchFromSupabaseCache(_cachedUserId!);
 
         if (cacheResult != null && cacheResult.hasData) {
           // Supabase 캐시에서 데이터 로드 성공
@@ -170,7 +172,8 @@ class WidgetService {
       await HomeWidget.saveWidgetData<String>('overall_grade', grade);
       await HomeWidget.saveWidgetData<String>('overall_message', message);
       if (description != null) {
-        await HomeWidget.saveWidgetData<String>('overall_description', description);
+        await HomeWidget.saveWidgetData<String>(
+            'overall_description', description);
       }
 
       await _updateLastUpdated();
@@ -230,7 +233,8 @@ class WidgetService {
     required List<int> numbers,
   }) async {
     try {
-      await HomeWidget.saveWidgetData<String>('lotto_numbers', numbers.join(', '));
+      await HomeWidget.saveWidgetData<String>(
+          'lotto_numbers', numbers.join(', '));
 
       await _updateLastUpdated();
       await _notifyWidget(lottoWidgetName);
@@ -267,7 +271,8 @@ class WidgetService {
 
       // 카테고리 위젯은 사용자가 선택한 카테고리에 따라 업데이트
       // 저장된 선택 카테고리 확인
-      final selectedCategory = await HomeWidget.getWidgetData<String>('selected_category') ?? 'love';
+      final selectedCategory =
+          await HomeWidget.getWidgetData<String>('selected_category') ?? 'love';
       final categoryData = data.categories[selectedCategory];
       if (categoryData != null) {
         await updateCategoryWidget(
@@ -403,7 +408,8 @@ class WidgetService {
   /// 선택된 카테고리 조회
   static Future<String> getSelectedCategory() async {
     try {
-      return await HomeWidget.getWidgetData<String>('selected_category') ?? 'love';
+      return await HomeWidget.getWidgetData<String>('selected_category') ??
+          'love';
     } catch (e) {
       return 'love';
     }

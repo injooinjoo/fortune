@@ -257,7 +257,8 @@ class _MockDreamFortunePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('꿈 해몽', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const Text('꿈 해몽',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 24),
             TextField(
               maxLines: 4,
@@ -322,7 +323,8 @@ class _MockDreamFortuneResult extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('해몽 결과', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const Text('해몽 결과',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
             Center(
               child: Container(

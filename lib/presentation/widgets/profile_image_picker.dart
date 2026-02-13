@@ -10,21 +10,21 @@ class ProfileImagePicker extends StatefulWidget {
   final String? currentImageUrl;
   final Function(XFile) onImageSelected;
   final bool isLoading;
-  
+
   const ProfileImagePicker({
     super.key,
     this.currentImageUrl,
     required this.onImageSelected,
     this.isLoading = false,
   });
-  
+
   @override
   State<ProfileImagePicker> createState() => _ProfileImagePickerState();
 }
 
 class _ProfileImagePickerState extends State<ProfileImagePicker> {
   XFile? _selectedImage;
-  
+
   Future<void> _showImageSourceDialog() async {
     if (!kIsWeb && Platform.isIOS) {
       showCupertinoModalPopup(
@@ -84,16 +84,16 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
       );
     }
   }
-  
+
   Future<void> _pickImage(ImageSource source) async {
     XFile? image;
-    
+
     if (source == ImageSource.camera) {
       image = await SupabaseStorageService.pickImageFromCamera();
     } else {
       image = await SupabaseStorageService.pickImageFromGallery();
     }
-    
+
     if (image != null && SupabaseStorageService.validateImageFile(image)) {
       setState(() {
         _selectedImage = image;
@@ -110,10 +110,10 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
       }
     }
   }
-  
+
   Widget _buildProfileImage() {
     final theme = Theme.of(context);
-    
+
     // If there's a selected image, show it
     if (_selectedImage != null) {
       return ClipOval(
@@ -125,7 +125,7 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
         ),
       );
     }
-    
+
     // If there's a current image URL, show it
     if (widget.currentImageUrl != null && widget.currentImageUrl!.isNotEmpty) {
       return ClipOval(
@@ -162,8 +162,8 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: theme.colorScheme.surfaceContainerHighest),
+                  shape: BoxShape.circle,
+                  color: theme.colorScheme.surfaceContainerHighest),
               child: Center(
                 child: CircularProgressIndicator(
                   value: loadingProgress.expectedTotalBytes != null
@@ -177,7 +177,7 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
         ),
       );
     }
-    
+
     // Default profile icon
     return Container(
       width: 120,
@@ -200,11 +200,11 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
       ),
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Center(
       child: Stack(
         children: [

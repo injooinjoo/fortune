@@ -110,8 +110,10 @@ class ScreenAnalyzer {
       String usageType = 'unused';
       if (isInRoute) {
         usageType = 'route';
-      } else if (isInMaterialRoute) usageType = 'material_route';
-      else if (isDialog) usageType = 'dialog';
+      } else if (isInMaterialRoute)
+        usageType = 'material_route';
+      else if (isDialog)
+        usageType = 'dialog';
       else if (isWidget) usageType = 'widget';
 
       final isUsed = usageType != 'unused';
@@ -225,9 +227,15 @@ class ScreenAnalyzer {
 
         // showDialog, showBottomSheet, showModalBottomSheet 패턴
         final patterns = [
-          RegExp(r'showDialog\s*\([^)]*builder:\s*\([^)]*\)\s*=>\s*(?:const\s+)?(\w+)', multiLine: true),
-          RegExp(r'showModalBottomSheet\s*\([^)]*builder:\s*\([^)]*\)\s*=>\s*(?:const\s+)?(\w+)', multiLine: true),
-          RegExp(r'showBottomSheet\s*\([^)]*builder:\s*\([^)]*\)\s*=>\s*(?:const\s+)?(\w+)', multiLine: true),
+          RegExp(
+              r'showDialog\s*\([^)]*builder:\s*\([^)]*\)\s*=>\s*(?:const\s+)?(\w+)',
+              multiLine: true),
+          RegExp(
+              r'showModalBottomSheet\s*\([^)]*builder:\s*\([^)]*\)\s*=>\s*(?:const\s+)?(\w+)',
+              multiLine: true),
+          RegExp(
+              r'showBottomSheet\s*\([^)]*builder:\s*\([^)]*\)\s*=>\s*(?:const\s+)?(\w+)',
+              multiLine: true),
         ];
 
         for (var pattern in patterns) {
@@ -279,7 +287,8 @@ class ScreenInfo {
   final String widgetType;
   final bool isUsed;
   final bool isWidgetComponent;
-  final String usageType; // 'route', 'material_route', 'dialog', 'widget', 'unused'
+  final String
+      usageType; // 'route', 'material_route', 'dialog', 'widget', 'unused'
 
   ScreenInfo({
     required this.className,
@@ -309,13 +318,13 @@ class ScreenInfo {
   }
 
   Map<String, dynamic> toJson() => {
-    'className': className,
-    'relativePath': relativePath,
-    'widgetType': widgetType,
-    'isUsed': isUsed,
-    'isWidgetComponent': isWidgetComponent,
-    'usageType': usageType,
-  };
+        'className': className,
+        'relativePath': relativePath,
+        'widgetType': widgetType,
+        'isUsed': isUsed,
+        'isWidgetComponent': isWidgetComponent,
+        'usageType': usageType,
+      };
 }
 
 class AnalysisResult {
@@ -340,21 +349,25 @@ class AnalysisResult {
       screens.where((s) => s.isWidgetComponent).toList();
 
   Map<String, dynamic> toJson() => {
-    'summary': {
-      'total_screens': totalScreens,
-      'used_screens': usedScreens,
-      'unused_screens': unusedScreens,
-      'widget_components': widgetComponents,
-    },
-    'screens': screens.map((s) => s.toJson()).toList(),
-    'unused_list': unusedScreensList.map((s) => {
-      'class': s.className,
-      'file': s.relativePath,
-    }).toList(),
-    'widget_components_list': widgetComponentsList.map((s) => {
-      'class': s.className,
-      'file': s.relativePath,
-      'usage_type': s.usageType,
-    }).toList(),
-  };
+        'summary': {
+          'total_screens': totalScreens,
+          'used_screens': usedScreens,
+          'unused_screens': unusedScreens,
+          'widget_components': widgetComponents,
+        },
+        'screens': screens.map((s) => s.toJson()).toList(),
+        'unused_list': unusedScreensList
+            .map((s) => {
+                  'class': s.className,
+                  'file': s.relativePath,
+                })
+            .toList(),
+        'widget_components_list': widgetComponentsList
+            .map((s) => {
+                  'class': s.className,
+                  'file': s.relativePath,
+                  'usage_type': s.usageType,
+                })
+            .toList(),
+      };
 }

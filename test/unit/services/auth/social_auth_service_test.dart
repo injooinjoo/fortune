@@ -137,10 +137,14 @@ void main() {
           return metadata?['provider'] as String? ?? 'unknown';
         }
 
-        expect(getProviderType(AuthTestData.createGoogleUser().userMetadata), 'google');
-        expect(getProviderType(AuthTestData.createKakaoUser().userMetadata), 'kakao');
-        expect(getProviderType(AuthTestData.createAppleUser().userMetadata), 'apple');
-        expect(getProviderType(AuthTestData.createNaverUser().userMetadata), 'naver');
+        expect(getProviderType(AuthTestData.createGoogleUser().userMetadata),
+            'google');
+        expect(getProviderType(AuthTestData.createKakaoUser().userMetadata),
+            'kakao');
+        expect(getProviderType(AuthTestData.createAppleUser().userMetadata),
+            'apple');
+        expect(getProviderType(AuthTestData.createNaverUser().userMetadata),
+            'naver');
       });
 
       test('Linked Providers 관리', () {

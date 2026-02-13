@@ -32,7 +32,6 @@ class StoryPage extends StatelessWidget {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 24),
-
           GlassContainer(
             padding: const EdgeInsets.all(24),
             gradient: LinearGradient(
@@ -46,7 +45,6 @@ class StoryPage extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
-
           if (tarotCardInfo.mythology != null) ...[
             const SizedBox(height: 32),
             Text(
@@ -68,7 +66,6 @@ class StoryPage extends StatelessWidget {
               ),
             )
           ],
-
           if (tarotCardInfo.historicalContext != null) ...[
             const SizedBox(height: 32),
             Text(

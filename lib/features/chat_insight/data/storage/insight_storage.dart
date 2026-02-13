@@ -33,8 +33,7 @@ class InsightStorage {
     try {
       final jsonList = jsonDecode(raw) as List<dynamic>;
       return jsonList
-          .map((e) =>
-              ChatInsightResult.fromJson(e as Map<String, dynamic>))
+          .map((e) => ChatInsightResult.fromJson(e as Map<String, dynamic>))
           .toList();
     } catch (_) {
       return [];
@@ -80,8 +79,7 @@ class InsightStorage {
     if (raw == null || raw.isEmpty) return const PrivacyConfig();
 
     try {
-      return PrivacyConfig.fromJson(
-          jsonDecode(raw) as Map<String, dynamic>);
+      return PrivacyConfig.fromJson(jsonDecode(raw) as Map<String, dynamic>);
     } catch (_) {
       return const PrivacyConfig();
     }

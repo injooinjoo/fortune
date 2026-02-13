@@ -34,7 +34,8 @@ class AppConstants {
     'palm_reading',
     'dream',
     'name',
-    'compatibility'];
+    'compatibility'
+  ];
 
   // Limits
   static const int maxDailyFortunes = 10;

@@ -19,14 +19,11 @@ class ScoreWidgets {
         width: double.infinity,
         padding: const EdgeInsets.all(32),
         decoration: BoxDecoration(
-          color: context.isDark
-              ? DSColors.surfaceSecondary
-              : DSColors.surfaceDark,
+          color:
+              context.isDark ? DSColors.surfaceSecondary : DSColors.surfaceDark,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: context.isDark
-                ? DSColors.border
-                : context.colors.border,
+            color: context.isDark ? DSColors.border : context.colors.border,
             width: 1,
           ),
         ),
@@ -44,9 +41,13 @@ class ScoreWidgets {
                 letterSpacing: -4,
                 height: 1.0,
               ),
-            ).animate()
-              .scale(begin: const Offset(0.8, 0.8), duration: 800.ms, curve: Curves.elasticOut)
-              .fadeIn(duration: 600.ms),
+            )
+                .animate()
+                .scale(
+                    begin: const Offset(0.8, 0.8),
+                    duration: 800.ms,
+                    curve: Curves.elasticOut)
+                .fadeIn(duration: 600.ms),
 
             const SizedBox(height: 24),
 
@@ -60,9 +61,10 @@ class ScoreWidgets {
                 fontWeight: FontWeight.w500,
               ),
               textAlign: TextAlign.center,
-            ).animate()
-              .fadeIn(duration: 800.ms, delay: 400.ms)
-              .slideY(begin: 0.3, curve: Curves.easeOut),
+            )
+                .animate()
+                .fadeIn(duration: 800.ms, delay: 400.ms)
+                .slideY(begin: 0.3, curve: Curves.easeOut),
 
             // 사자성어 설명 (있을 경우)
             if (subtitle != null) ...[
@@ -76,9 +78,10 @@ class ScoreWidgets {
                   fontWeight: FontWeight.w400,
                 ),
                 textAlign: TextAlign.center,
-              ).animate()
-                .fadeIn(duration: 800.ms, delay: 600.ms)
-                .slideY(begin: 0.3, curve: Curves.easeOut),
+              )
+                  .animate()
+                  .fadeIn(duration: 800.ms, delay: 600.ms)
+                  .slideY(begin: 0.3, curve: Curves.easeOut),
             ],
           ],
         ),
@@ -110,9 +113,8 @@ class ScoreWidgets {
                 child: CircularProgressIndicator(
                   value: score / 100.0,
                   strokeWidth: 8,
-                  backgroundColor: isDark
-                      ? DSColors.border
-                      : DSColors.borderDark,
+                  backgroundColor:
+                      isDark ? DSColors.border : DSColors.borderDark,
                   valueColor: AlwaysStoppedAnimation<Color>(chartColor),
                 ),
               ),
@@ -124,23 +126,31 @@ class ScoreWidgets {
                     style: TextStyle(
                       fontSize: size * 0.2,
                       fontWeight: FontWeight.bold,
-                      color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
+                      color: isDark
+                          ? DSColors.textPrimary
+                          : DSColors.textPrimaryDark,
                     ),
                   ),
                   Text(
                     title,
                     style: TextStyle(
                       fontSize: size * 0.08,
-                      color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
+                      color: isDark
+                          ? DSColors.textTertiary
+                          : DSColors.textSecondaryDark,
                     ),
                   ),
                 ],
               ),
             ],
           ),
-        ).animate()
-          .scale(begin: const Offset(0.8, 0.8), duration: 800.ms, curve: Curves.elasticOut)
-          .fadeIn(duration: 600.ms);
+        )
+            .animate()
+            .scale(
+                begin: const Offset(0.8, 0.8),
+                duration: 800.ms,
+                curve: Curves.elasticOut)
+            .fadeIn(duration: 600.ms);
       },
     );
   }
@@ -153,14 +163,11 @@ class ScoreWidgets {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: context.isDark
-            ? DSColors.surfaceSecondary
-            : DSColors.surfaceDark,
+        color:
+            context.isDark ? DSColors.surfaceSecondary : DSColors.surfaceDark,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: context.isDark
-              ? DSColors.border
-              : DSColors.borderDark,
+          color: context.isDark ? DSColors.border : DSColors.borderDark,
           width: 1,
         ),
       ),
@@ -179,7 +186,8 @@ class ScoreWidgets {
               Expanded(
                 child: _buildStatItem(
                   title: '등급',
-                  value: FortuneInfographicHelpers.getScoreGrade(stats['totalScore'] ?? 0),
+                  value: FortuneInfographicHelpers.getScoreGrade(
+                      stats['totalScore'] ?? 0),
                   context: context,
                 ),
               ),
@@ -195,9 +203,10 @@ class ScoreWidgets {
           ),
         ],
       ),
-    ).animate()
-      .fadeIn(duration: 800.ms, delay: 700.ms)
-      .slideY(begin: 0.1, curve: Curves.easeOut);
+    )
+        .animate()
+        .fadeIn(duration: 800.ms, delay: 700.ms)
+        .slideY(begin: 0.1, curve: Curves.easeOut);
   }
 
   static Widget _buildStatItem({

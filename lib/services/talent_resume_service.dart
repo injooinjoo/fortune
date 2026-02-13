@@ -43,7 +43,8 @@ class TalentResumeInfo {
 
   String get formattedSize {
     if (sizeBytes < 1024) return '$sizeBytes B';
-    if (sizeBytes < 1024 * 1024) return '${(sizeBytes / 1024).toStringAsFixed(1)} KB';
+    if (sizeBytes < 1024 * 1024)
+      return '${(sizeBytes / 1024).toStringAsFixed(1)} KB';
     return '${(sizeBytes / (1024 * 1024)).toStringAsFixed(1)} MB';
   }
 
@@ -147,21 +148,25 @@ class TalentResumeService extends ResilientService {
       }
 
       // 사용자 폴더 내 파일 목록 조회
-      final files = await _supabase.storage.from(_bucketName).list(path: userId);
+      final files =
+          await _supabase.storage.from(_bucketName).list(path: userId);
 
       if (files.isEmpty) {
         return null;
       }
 
       // 가장 최신 파일 반환 (resume_*.pdf 형식)
-      final resumeFiles = files.where((f) => f.name.startsWith('resume_') && f.name.endsWith('.pdf')).toList();
+      final resumeFiles = files
+          .where((f) => f.name.startsWith('resume_') && f.name.endsWith('.pdf'))
+          .toList();
 
       if (resumeFiles.isEmpty) {
         return null;
       }
 
       // 가장 최신 파일 선택 (타임스탬프 기준)
-      resumeFiles.sort((a, b) => (b.createdAt ?? '').compareTo(a.createdAt ?? ''));
+      resumeFiles
+          .sort((a, b) => (b.createdAt ?? '').compareTo(a.createdAt ?? ''));
       final latestFile = resumeFiles.first;
 
       Logger.info('저장된 이력서 조회: $userId/${latestFile.name}');
@@ -181,7 +186,8 @@ class TalentResumeService extends ResilientService {
   Future<Uint8List?> downloadResume(String storagePath) async {
     return await safeExecuteWithNull(
       () async {
-        final bytes = await _supabase.storage.from(_bucketName).download(storagePath);
+        final bytes =
+            await _supabase.storage.from(_bucketName).download(storagePath);
         Logger.info('이력서 다운로드 성공: $storagePath');
         return bytes;
       },
@@ -207,7 +213,8 @@ class TalentResumeService extends ResilientService {
   /// 기존 이력서 모두 삭제 (내부용)
   Future<void> _deleteExistingResumes(String userId) async {
     try {
-      final files = await _supabase.storage.from(_bucketName).list(path: userId);
+      final files =
+          await _supabase.storage.from(_bucketName).list(path: userId);
 
       if (files.isNotEmpty) {
         final filePaths = files.map((f) => '$userId/${f.name}').toList();
@@ -223,7 +230,10 @@ class TalentResumeService extends ResilientService {
   bool _isPdfFile(Uint8List bytes) {
     if (bytes.length < 4) return false;
     // PDF magic number: %PDF (0x25 0x50 0x44 0x46)
-    return bytes[0] == 0x25 && bytes[1] == 0x50 && bytes[2] == 0x44 && bytes[3] == 0x46;
+    return bytes[0] == 0x25 &&
+        bytes[1] == 0x50 &&
+        bytes[2] == 0x44 &&
+        bytes[3] == 0x46;
   }
 
   /// PDF 텍스트 추출 (간단한 방식)
@@ -244,7 +254,8 @@ class TalentResumeService extends ResilientService {
       for (final match in matches) {
         final streamContent = match.group(1) ?? '';
         // ASCII 텍스트만 추출
-        final printable = streamContent.replaceAll(RegExp(r'[^\x20-\x7E\n\r]'), ' ').trim();
+        final printable =
+            streamContent.replaceAll(RegExp(r'[^\x20-\x7E\n\r]'), ' ').trim();
         if (printable.isNotEmpty && printable.length > 10) {
           textBuffer.writeln(printable);
         }

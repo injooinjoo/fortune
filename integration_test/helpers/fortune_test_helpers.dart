@@ -35,7 +35,8 @@ class FortuneTestHelpers {
 
     try {
       // 운세 페이지로 이동
-      final navigated = await NavigationHelpers.goToFortuneByText(tester, fortuneName);
+      final navigated =
+          await NavigationHelpers.goToFortuneByText(tester, fortuneName);
       if (!navigated) {
         result.error = '운세 페이지로 이동 실패';
         return result;
@@ -111,11 +112,12 @@ class FortuneTestHelpers {
       await tester.pump(const Duration(milliseconds: 500));
 
       // 로딩 인디케이터가 없으면 완료
-      final hasLoading = find.byType(CircularProgressIndicator).evaluate().isNotEmpty ||
-          find.byType(LinearProgressIndicator).evaluate().isNotEmpty ||
-          find.textContaining('로딩').evaluate().isNotEmpty ||
-          find.textContaining('생성 중').evaluate().isNotEmpty ||
-          find.textContaining('분석 중').evaluate().isNotEmpty;
+      final hasLoading =
+          find.byType(CircularProgressIndicator).evaluate().isNotEmpty ||
+              find.byType(LinearProgressIndicator).evaluate().isNotEmpty ||
+              find.textContaining('로딩').evaluate().isNotEmpty ||
+              find.textContaining('생성 중').evaluate().isNotEmpty ||
+              find.textContaining('분석 중').evaluate().isNotEmpty;
 
       if (!hasLoading) {
         return;
@@ -149,7 +151,8 @@ class FortuneTestHelpers {
   // ==========================================================================
 
   /// 오늘의 운세 생성
-  static Future<FortuneTestResult> generateDailyFortune(WidgetTester tester) async {
+  static Future<FortuneTestResult> generateDailyFortune(
+      WidgetTester tester) async {
     return generateFortune(tester, fortuneName: '오늘의 운세');
   }
 
@@ -255,7 +258,8 @@ class FortuneTestHelpers {
   }
 
   /// 궁합 결과 생성
-  static Future<FortuneTestResult> generateCompatibility(WidgetTester tester) async {
+  static Future<FortuneTestResult> generateCompatibility(
+      WidgetTester tester) async {
     return generateFortune(tester, fortuneName: '궁합');
   }
 
@@ -293,7 +297,8 @@ class FortuneTestHelpers {
   }
 
   /// 꿈해몽 결과 생성
-  static Future<FortuneTestResult> generateDreamInterpretation(WidgetTester tester) async {
+  static Future<FortuneTestResult> generateDreamInterpretation(
+      WidgetTester tester) async {
     await enterDreamContent(tester);
     return generateFortune(tester, fortuneName: '꿈해몽');
   }
@@ -338,10 +343,22 @@ class FortuneTestHelpers {
   }
 
   static const List<String> _allMbtiTypes = [
-    'INTJ', 'INTP', 'ENTJ', 'ENTP',
-    'INFJ', 'INFP', 'ENFJ', 'ENFP',
-    'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
-    'ISTP', 'ISFP', 'ESTP', 'ESFP',
+    'INTJ',
+    'INTP',
+    'ENTJ',
+    'ENTP',
+    'INFJ',
+    'INFP',
+    'ENFJ',
+    'ENFP',
+    'ISTJ',
+    'ISFJ',
+    'ESTJ',
+    'ESFJ',
+    'ISTP',
+    'ISFP',
+    'ESTP',
+    'ESFP',
   ];
 
   // ==========================================================================
@@ -450,7 +467,8 @@ class FortuneTestHelpers {
     final blurWidget = find.byKey(const Key('blur_wrapper'));
     final blurredContent = find.textContaining('구매');
 
-    return blurWidget.evaluate().isNotEmpty || blurredContent.evaluate().isNotEmpty;
+    return blurWidget.evaluate().isNotEmpty ||
+        blurredContent.evaluate().isNotEmpty;
   }
 
   /// 공유 버튼 존재 확인

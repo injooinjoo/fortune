@@ -137,7 +137,8 @@ class TarotInfoHeader extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('💬', style: TextStyle(fontSize: 14, color: colors.textSecondary)),
+          Text('💬',
+              style: TextStyle(fontSize: 14, color: colors.textSecondary)),
           const SizedBox(width: 8),
           Expanded(
             child: Text(

@@ -113,8 +113,7 @@ class _TimelineCardWidgetState extends State<TimelineCardWidget> {
   Widget _buildPointDetail(BuildContext context, TimelinePoint point) {
     final colors = context.colors;
     final typography = context.typography;
-    final date =
-        '${point.time.month}/${point.time.day}';
+    final date = '${point.time.month}/${point.time.day}';
     final sentimentLabel = point.sentiment >= 0 ? '긍정적' : '부정적';
 
     return Container(
@@ -147,12 +146,13 @@ class _TimelineCardWidgetState extends State<TimelineCardWidget> {
           Icon(icon, size: 14, color: color),
           const SizedBox(width: DSSpacing.xs),
           Text(date,
-              style: typography.labelSmall.copyWith(color: colors.textTertiary)),
+              style:
+                  typography.labelSmall.copyWith(color: colors.textTertiary)),
           const SizedBox(width: DSSpacing.xs),
           Expanded(
             child: Text(event.label,
-                style: typography.bodySmall
-                    .copyWith(color: colors.textSecondary)),
+                style:
+                    typography.bodySmall.copyWith(color: colors.textSecondary)),
           ),
         ],
       ),
@@ -217,8 +217,7 @@ class _SparklinePainter extends CustomPainter {
     // Draw dots
     for (var i = 0; i < points.length; i++) {
       final x = i * segmentWidth;
-      final y =
-          padding + (1 - (points[i].sentiment + 1) / 2) * chartHeight;
+      final y = padding + (1 - (points[i].sentiment + 1) / 2) * chartHeight;
 
       final isSelected = i == selectedIndex;
       dotPaint.color = isSelected ? lineColor : dotColor.withValues(alpha: 0.5);

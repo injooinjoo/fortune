@@ -52,10 +52,8 @@ class ExerciseGenerator {
             'birthDate': userProfile['birth_date'],
           if (userProfile['birth_time'] != null)
             'birthTime': userProfile['birth_time'],
-          if (userProfile['gender'] != null)
-            'gender': userProfile['gender'],
-          if (userProfile['name'] != null)
-            'name': userProfile['name'],
+          if (userProfile['gender'] != null) 'gender': userProfile['gender'],
+          if (userProfile['name'] != null) 'name': userProfile['name'],
         },
       };
 
@@ -95,7 +93,8 @@ class ExerciseGenerator {
       final fitnessScore = data['fitnessScore'] as int? ?? 75;
 
       // 추천 운동 정보 추출
-      final recommendedExercise = data['recommendedExercise'] as Map<String, dynamic>?;
+      final recommendedExercise =
+          data['recommendedExercise'] as Map<String, dynamic>?;
       final exerciseName = recommendedExercise?['name'] as String? ?? '오늘의 운동';
 
       // 종목별 emoji 설정
@@ -107,7 +106,8 @@ class ExerciseGenerator {
         title: '오늘의 운동 - $exerciseName',
         summary: {
           'score': fitnessScore,
-          'message': recommendedExercise?['reason'] as String? ?? '오늘도 건강한 하루 되세요!',
+          'message':
+              recommendedExercise?['reason'] as String? ?? '오늘도 건강한 하루 되세요!',
           'emoji': sportEmoji,
           'sport_type': conditions.sportType,
           'exercise_goal': conditions.exerciseGoal,

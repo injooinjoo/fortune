@@ -42,7 +42,8 @@ class CareerGenerator {
     SupabaseClient supabase,
   ) async {
     final userId = supabase.auth.currentUser?.id ?? 'unknown';
-    final careerType = inputConditions['career_type'] as String? ?? 'career-future';
+    final careerType =
+        inputConditions['career_type'] as String? ?? 'career-future';
 
     // 📤 API 요청 준비
     Logger.info('[CareerGenerator] 📤 API 요청 준비');
@@ -50,7 +51,8 @@ class CareerGenerator {
     Logger.info('[CareerGenerator]   👤 user_id: $userId');
     Logger.info('[CareerGenerator]   💼 career_type: $careerType');
     Logger.info('[CareerGenerator]   🎯 goal: ${inputConditions['goal']}');
-    Logger.info('[CareerGenerator]   📅 time_horizon: ${inputConditions['time_horizon']}');
+    Logger.info(
+        '[CareerGenerator]   📅 time_horizon: ${inputConditions['time_horizon']}');
 
     try {
       final requestBody = {
@@ -104,7 +106,8 @@ class CareerGenerator {
       }
 
       final data = response.data as Map<String, dynamic>;
-      Logger.info('[CareerGenerator]   📦 Response data keys: ${data.keys.toList()}');
+      Logger.info(
+          '[CareerGenerator]   📦 Response data keys: ${data.keys.toList()}');
 
       // 🔄 파싱
       Logger.info('[CareerGenerator] 🔄 응답 데이터 파싱 중...');

@@ -131,8 +131,10 @@ class PastLifeResult {
     return PastLifeResult(
       id: json['id'] ?? '',
       pastLifeStatus: json['pastLifeStatus'] ?? json['past_life_status'] ?? '',
-      pastLifeStatusEn: json['pastLifeStatusEn'] ?? json['past_life_status_en'] ?? '',
-      pastLifeGender: json['pastLifeGender'] ?? json['past_life_gender'] ?? 'male',
+      pastLifeStatusEn:
+          json['pastLifeStatusEn'] ?? json['past_life_status_en'] ?? '',
+      pastLifeGender:
+          json['pastLifeGender'] ?? json['past_life_gender'] ?? 'male',
       pastLifeEra: json['pastLifeEra'] ?? json['past_life_era'] ?? '',
       pastLifeName: json['pastLifeName'] ?? json['past_life_name'] ?? '',
       story: json['story'] ?? json['story_text'] ?? '',
@@ -146,7 +148,8 @@ class PastLifeResult {
               ? DateTime.parse(json['created_at'])
               : DateTime.now(),
       scenarioId: json['scenarioId'] ?? json['scenario_id'] ?? '',
-      scenarioCategory: json['scenarioCategory'] ?? json['scenario_category'] ?? '',
+      scenarioCategory:
+          json['scenarioCategory'] ?? json['scenario_category'] ?? '',
       scenarioTrait: json['scenarioTrait'] ?? json['scenario_trait'] ?? '',
       chapters: parsedChapters,
       faceFeatures: json['faceFeatures'] ?? json['face_features'],

@@ -65,10 +65,10 @@ class OptionAnalysis {
   }
 
   Map<String, dynamic> toJson() => {
-    'option': option,
-    'pros': pros,
-    'cons': cons,
-  };
+        'option': option,
+        'pros': pros,
+        'cons': cons,
+      };
 }
 
 /// 결정 기록 모델
@@ -123,7 +123,8 @@ class DecisionReceipt {
     return DecisionReceipt(
       id: json['id'] as String,
       userId: json['user_id'] as String,
-      decisionType: DecisionType.fromString(json['decision_type'] as String? ?? 'lifestyle'),
+      decisionType: DecisionType.fromString(
+          json['decision_type'] as String? ?? 'lifestyle'),
       question: json['question'] as String? ?? '',
       chosenOption: json['chosen_option'] as String? ?? '',
       reasoning: json['reasoning'] as String?,
@@ -133,7 +134,8 @@ class DecisionReceipt {
       aiRecommendation: json['ai_recommendation'] as String?,
       confidenceLevel: json['confidence_level'] as int?,
       emotionalState: json['emotional_state'] as String?,
-      outcomeStatus: OutcomeStatus.fromString(json['outcome_status'] as String? ?? 'pending'),
+      outcomeStatus: OutcomeStatus.fromString(
+          json['outcome_status'] as String? ?? 'pending'),
       outcomeNotes: json['outcome_notes'] as String?,
       outcomeRating: json['outcome_rating'] as int?,
       outcomeRecordedAt: json['outcome_recorded_at'] != null
@@ -154,28 +156,28 @@ class DecisionReceipt {
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'user_id': userId,
-    'decision_type': decisionType.value,
-    'question': question,
-    'chosen_option': chosenOption,
-    'reasoning': reasoning,
-    'options_analyzed': optionsAnalyzed?.map((e) => e.toJson()).toList(),
-    'ai_recommendation': aiRecommendation,
-    'confidence_level': confidenceLevel,
-    'emotional_state': emotionalState,
-    'outcome_status': outcomeStatus.value,
-    'outcome_notes': outcomeNotes,
-    'outcome_rating': outcomeRating,
-    'outcome_recorded_at': outcomeRecordedAt?.toIso8601String(),
-    'follow_up_date': followUpDate?.toIso8601String(),
-    'follow_up_sent': followUpSent,
-    'follow_up_count': followUpCount,
-    'tags': tags,
-    'metadata': metadata,
-    'created_at': createdAt.toIso8601String(),
-    'updated_at': updatedAt?.toIso8601String(),
-  };
+        'id': id,
+        'user_id': userId,
+        'decision_type': decisionType.value,
+        'question': question,
+        'chosen_option': chosenOption,
+        'reasoning': reasoning,
+        'options_analyzed': optionsAnalyzed?.map((e) => e.toJson()).toList(),
+        'ai_recommendation': aiRecommendation,
+        'confidence_level': confidenceLevel,
+        'emotional_state': emotionalState,
+        'outcome_status': outcomeStatus.value,
+        'outcome_notes': outcomeNotes,
+        'outcome_rating': outcomeRating,
+        'outcome_recorded_at': outcomeRecordedAt?.toIso8601String(),
+        'follow_up_date': followUpDate?.toIso8601String(),
+        'follow_up_sent': followUpSent,
+        'follow_up_count': followUpCount,
+        'tags': tags,
+        'metadata': metadata,
+        'created_at': createdAt.toIso8601String(),
+        'updated_at': updatedAt?.toIso8601String(),
+      };
 
   DecisionReceipt copyWith({
     String? id,
@@ -307,7 +309,8 @@ class DecisionStats {
       avgOutcomeRating: (json['avg_outcome_rating'] as num?)?.toDouble(),
       mostCommonType: json['most_common_type'] as String?,
       decisionsByType: (json['decisions_by_type'] as Map<String, dynamic>?)
-          ?.map((k, v) => MapEntry(k, v as int)) ?? {},
+              ?.map((k, v) => MapEntry(k, v as int)) ??
+          {},
     );
   }
 }

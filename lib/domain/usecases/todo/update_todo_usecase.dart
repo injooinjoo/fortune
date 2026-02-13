@@ -18,12 +18,14 @@ class UpdateTodoUseCase implements UseCase<Todo, UpdateTodoParams> {
         return const Left(ValidationFailure('Title cannot be empty'));
       }
       if (params.title!.length > 200) {
-        return const Left(ValidationFailure('Title cannot exceed 200 characters'));
+        return const Left(
+            ValidationFailure('Title cannot exceed 200 characters'));
       }
     }
 
     if (params.description != null && params.description!.length > 1000) {
-      return const Left(ValidationFailure('Description cannot exceed 1000 characters'));
+      return const Left(
+          ValidationFailure('Description cannot exceed 1000 characters'));
     }
 
     if (params.tags != null && params.tags!.length > 10) {
@@ -35,24 +37,22 @@ class UpdateTodoUseCase implements UseCase<Todo, UpdateTodoParams> {
       final now = DateTime.now();
       final today = DateTime(now.year, now.month, now.day);
       final dueDay = DateTime(
-        params.dueDate!.year,
-        params.dueDate!.month,
-        params.dueDate!.day);
-      
+          params.dueDate!.year, params.dueDate!.month, params.dueDate!.day);
+
       if (dueDay.isBefore(today)) {
         return const Left(ValidationFailure('Due date cannot be in the past'));
       }
     }
 
     return repository.updateTodo(
-      todoId: params.todoId,
-      userId: params.userId,
-      title: params.title?.trim(),
-      description: params.description?.trim(),
-      priority: params.priority,
-      status: params.status,
-      dueDate: params.dueDate,
-      tags: params.tags?.where((tag) => tag.trim().isNotEmpty).toList());
+        todoId: params.todoId,
+        userId: params.userId,
+        title: params.title?.trim(),
+        description: params.description?.trim(),
+        priority: params.priority,
+        status: params.status,
+        dueDate: params.dueDate,
+        tags: params.tags?.where((tag) => tag.trim().isNotEmpty).toList());
   }
 }
 
@@ -66,24 +66,17 @@ class UpdateTodoParams extends Equatable {
   final DateTime? dueDate;
   final List<String>? tags;
 
-  const UpdateTodoParams({
-    required this.todoId,
-    required this.userId,
-    this.title,
-    this.description,
-    this.priority,
-    this.status,
-    this.dueDate,
-    this.tags});
+  const UpdateTodoParams(
+      {required this.todoId,
+      required this.userId,
+      this.title,
+      this.description,
+      this.priority,
+      this.status,
+      this.dueDate,
+      this.tags});
 
   @override
-  List<Object?> get props => [
-        todoId,
-        userId,
-        title,
-        description,
-        priority,
-        status,
-        dueDate,
-        tags];
+  List<Object?> get props =>
+      [todoId, userId, title, description, priority, status, dueDate, tags];
 }

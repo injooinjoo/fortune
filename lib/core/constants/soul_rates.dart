@@ -190,10 +190,10 @@ enum SoulActionType {
 
 /// 토큰 카테고리
 enum TokenCategory {
-  basic,        // 기본 (1-2 토큰)
+  basic, // 기본 (1-2 토큰)
   intermediate, // 중급 (3-5 토큰)
-  premium,      // 프리미엄 (8-15 토큰)
-  ultra,        // 울트라 (20-50 토큰)
+  premium, // 프리미엄 (8-15 토큰)
+  ultra, // 울트라 (20-50 토큰)
 }
 
 /// 토큰 거래 결과

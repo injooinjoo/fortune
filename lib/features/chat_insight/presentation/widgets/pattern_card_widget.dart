@@ -63,10 +63,8 @@ class _PatternCardWidgetState extends State<PatternCardWidget> {
                   decoration: BoxDecoration(
                     color: colors.surface,
                     borderRadius: BorderRadius.circular(DSRadius.sm),
-                    border: isExpanded
-                        ? Border.all(
-                            color: colors.border)
-                        : null,
+                    border:
+                        isExpanded ? Border.all(color: colors.border) : null,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,9 +100,7 @@ class _PatternCardWidgetState extends State<PatternCardWidget> {
                           ),
                           const Spacer(),
                           Icon(
-                            isExpanded
-                                ? Icons.expand_less
-                                : Icons.expand_more,
+                            isExpanded ? Icons.expand_less : Icons.expand_more,
                             size: 18,
                             color: colors.textTertiary,
                           ),

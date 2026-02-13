@@ -36,7 +36,8 @@ abstract class ResilientService {
     try {
       await operation();
     } catch (e) {
-      Logger.warning('[$serviceName] $operationName 실패 (선택적 기능, $fallbackMessage): $e');
+      Logger.warning(
+          '[$serviceName] $operationName 실패 (선택적 기능, $fallbackMessage): $e');
     }
   }
 
@@ -62,7 +63,8 @@ abstract class ResilientService {
     try {
       return await operation();
     } catch (e) {
-      Logger.warning('[$serviceName] $operationName 실패 (선택적 기능, $fallbackMessage): $e');
+      Logger.warning(
+          '[$serviceName] $operationName 실패 (선택적 기능, $fallbackMessage): $e');
       return null;
     }
   }
@@ -92,7 +94,8 @@ abstract class ResilientService {
     try {
       return await operation();
     } catch (e) {
-      Logger.warning('[$serviceName] $operationName 실패 (선택적 기능, $fallbackMessage): $e');
+      Logger.warning(
+          '[$serviceName] $operationName 실패 (선택적 기능, $fallbackMessage): $e');
       return fallbackValue;
     }
   }
@@ -120,7 +123,8 @@ abstract class ResilientService {
       await operation();
       return true;
     } catch (e) {
-      Logger.warning('[$serviceName] $operationName 실패 (선택적 기능, $fallbackMessage): $e');
+      Logger.warning(
+          '[$serviceName] $operationName 실패 (선택적 기능, $fallbackMessage): $e');
       return false;
     }
   }
@@ -150,11 +154,13 @@ abstract class ResilientService {
     try {
       return await operation();
     } catch (e) {
-      Logger.warning('[$serviceName] $operationName 실패 (선택적 기능, $fallbackMessage): $e');
+      Logger.warning(
+          '[$serviceName] $operationName 실패 (선택적 기능, $fallbackMessage): $e');
       try {
         return await fallback();
       } catch (fallbackError) {
-        Logger.warning('[$serviceName] $operationName fallback도 실패: $fallbackError');
+        Logger.warning(
+            '[$serviceName] $operationName fallback도 실패: $fallbackError');
         rethrow;
       }
     }
@@ -175,7 +181,8 @@ abstract class ResilientService {
     try {
       return operation();
     } catch (e) {
-      Logger.warning('[$serviceName] $operationName 실패 (선택적 기능, $fallbackMessage): $e');
+      Logger.warning(
+          '[$serviceName] $operationName 실패 (선택적 기능, $fallbackMessage): $e');
       return fallbackValue;
     }
   }
@@ -199,13 +206,15 @@ abstract class ResilientService {
     try {
       final hasPermission = await permissionCheck();
       if (!hasPermission) {
-        Logger.warning('[$serviceName] $operationName 권한 없음 (선택적 기능, $permissionMessage): 권한 없음');
+        Logger.warning(
+            '[$serviceName] $operationName 권한 없음 (선택적 기능, $permissionMessage): 권한 없음');
         return fallbackValue;
       }
 
       return await operation();
     } catch (e) {
-      Logger.warning('[$serviceName] $operationName 실패 (선택적 기능, $fallbackMessage): $e');
+      Logger.warning(
+          '[$serviceName] $operationName 실패 (선택적 기능, $fallbackMessage): $e');
       return fallbackValue;
     }
   }
@@ -228,11 +237,13 @@ abstract class ResilientService {
       } catch (e) {
         if (i == operations.length - 1) {
           // 마지막 시도도 실패
-          Logger.warning('[$serviceName] $operationName 모든 시도 실패 (선택적 기능, $fallbackMessage): $e');
+          Logger.warning(
+              '[$serviceName] $operationName 모든 시도 실패 (선택적 기능, $fallbackMessage): $e');
           return fallbackValue;
         }
         // 다음 시도로 계속
-        Logger.warning('[$serviceName] $operationName 시도 ${i + 1} 실패, 다음 시도 진행: $e');
+        Logger.warning(
+            '[$serviceName] $operationName 시도 ${i + 1} 실패, 다음 시도 진행: $e');
       }
     }
 
@@ -256,14 +267,16 @@ abstract class ResilientService {
     String fallbackMessage,
   ) async {
     if (!condition) {
-      Logger.warning('[$serviceName] $operationName 조건 불만족 (선택적 기능, $conditionMessage): 조건 불만족');
+      Logger.warning(
+          '[$serviceName] $operationName 조건 불만족 (선택적 기능, $conditionMessage): 조건 불만족');
       return fallbackValue;
     }
 
     try {
       return await operation();
     } catch (e) {
-      Logger.warning('[$serviceName] $operationName 실패 (선택적 기능, $fallbackMessage): $e');
+      Logger.warning(
+          '[$serviceName] $operationName 실패 (선택적 기능, $fallbackMessage): $e');
       return fallbackValue;
     }
   }

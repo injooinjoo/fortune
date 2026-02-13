@@ -21,17 +21,24 @@ class AvoidPeopleGenerator {
         : null;
 
     final userId = user?.id ?? 'anonymous';
-    final userName = userProfile?['name'] as String? ?? user?.userMetadata?['name'] as String? ?? 'Guest';
+    final userName = userProfile?['name'] as String? ??
+        user?.userMetadata?['name'] as String? ??
+        'Guest';
 
     // 📤 API 요청 준비
     Logger.info('[AvoidPeopleGenerator] 📤 API 요청 준비');
-    Logger.info('[AvoidPeopleGenerator]   🌐 Edge Function: fortune-avoid-people');
+    Logger.info(
+        '[AvoidPeopleGenerator]   🌐 Edge Function: fortune-avoid-people');
     Logger.info('[AvoidPeopleGenerator]   👤 user_id: $userId');
     Logger.info('[AvoidPeopleGenerator]   👤 name: $userName');
-    Logger.info('[AvoidPeopleGenerator]   🏢 environment: ${inputConditions['environment']}');
-    Logger.info('[AvoidPeopleGenerator]   📅 important_schedule: ${inputConditions['important_schedule']}');
-    Logger.info('[AvoidPeopleGenerator]   😊 mood_level: ${inputConditions['mood_level']}');
-    Logger.info('[AvoidPeopleGenerator]   😰 stress_level: ${inputConditions['stress_level']}');
+    Logger.info(
+        '[AvoidPeopleGenerator]   🏢 environment: ${inputConditions['environment']}');
+    Logger.info(
+        '[AvoidPeopleGenerator]   📅 important_schedule: ${inputConditions['important_schedule']}');
+    Logger.info(
+        '[AvoidPeopleGenerator]   😊 mood_level: ${inputConditions['mood_level']}');
+    Logger.info(
+        '[AvoidPeopleGenerator]   😰 stress_level: ${inputConditions['stress_level']}');
 
     try {
       final requestBody = {
@@ -43,7 +50,8 @@ class AvoidPeopleGenerator {
         'stress_level': inputConditions['stress_level'],
         'social_fatigue': inputConditions['social_fatigue'],
         'has_important_decision': inputConditions['has_important_decision'],
-        'has_sensitive_conversation': inputConditions['has_sensitive_conversation'],
+        'has_sensitive_conversation':
+            inputConditions['has_sensitive_conversation'],
         'has_team_project': inputConditions['has_team_project'],
       };
 
@@ -63,12 +71,14 @@ class AvoidPeopleGenerator {
       Logger.info('[AvoidPeopleGenerator]   ✅ Status: ${response.status}');
 
       if (response.status != 200) {
-        Logger.error('[AvoidPeopleGenerator] ❌ API 호출 실패: status ${response.status}');
+        Logger.error(
+            '[AvoidPeopleGenerator] ❌ API 호출 실패: status ${response.status}');
         throw Exception('Edge Function 호출 실패: ${response.status}');
       }
 
       final data = response.data as Map<String, dynamic>;
-      Logger.info('[AvoidPeopleGenerator]   📦 Response data keys: ${data.keys.toList()}');
+      Logger.info(
+          '[AvoidPeopleGenerator]   📦 Response data keys: ${data.keys.toList()}');
 
       // 🔄 파싱
       Logger.info('[AvoidPeopleGenerator] 🔄 응답 데이터 파싱 중...');

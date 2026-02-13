@@ -74,10 +74,22 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
 
   // MBTI 목록
   static const List<String> _mbtiTypes = [
-    'ISTJ', 'ISFJ', 'INFJ', 'INTJ',
-    'ISTP', 'ISFP', 'INFP', 'INTP',
-    'ESTP', 'ESFP', 'ENFP', 'ENTP',
-    'ESTJ', 'ESFJ', 'ENFJ', 'ENTJ',
+    'ISTJ',
+    'ISFJ',
+    'INFJ',
+    'INTJ',
+    'ISTP',
+    'ISFP',
+    'INFP',
+    'INTP',
+    'ESTP',
+    'ESFP',
+    'ENFP',
+    'ENTP',
+    'ESTJ',
+    'ESFJ',
+    'ENFJ',
+    'ENTJ',
   ];
 
   // 혈액형 목록
@@ -152,8 +164,8 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child:
-                        Text(widget.title ?? '프로필 추가', style: context.typography.headingLarge),
+                    child: Text(widget.title ?? '프로필 추가',
+                        style: context.typography.headingLarge),
                   ),
                   IconButton(
                     onPressed: () => Navigator.pop(context),
@@ -566,9 +578,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
               Text(
                 label,
                 style: context.typography.bodyMedium.copyWith(
-                  color: isSelected
-                      ? colors.textPrimary
-                      : colors.textPrimary,
+                  color: isSelected ? colors.textPrimary : colors.textPrimary,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 ),
               ),
@@ -616,18 +626,19 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
     setState(() => _isLoading = true);
 
     try {
-      final newProfile =
-          await ref.read(secondaryProfilesProvider.notifier).addProfile(
-                name: _nameController.text.trim(),
-                birthDate: _formatDateString(_birthDate!),
-                birthTime: _birthTime,
-                gender: _gender,
-                isLunar: _isLunar,
-                relationship: _relationship,
-                familyRelation: _relationship == 'family' ? _familyRelation : null,
-                mbti: _mbti,
-                bloodType: _bloodType,
-              );
+      final newProfile = await ref
+          .read(secondaryProfilesProvider.notifier)
+          .addProfile(
+            name: _nameController.text.trim(),
+            birthDate: _formatDateString(_birthDate!),
+            birthTime: _birthTime,
+            gender: _gender,
+            isLunar: _isLunar,
+            relationship: _relationship,
+            familyRelation: _relationship == 'family' ? _familyRelation : null,
+            mbti: _mbti,
+            bloodType: _bloodType,
+          );
 
       if (mounted) {
         Navigator.pop(context, newProfile); // 성공 시 생성된 프로필 반환

@@ -84,7 +84,8 @@ class SocialLoginBottomSheet {
                             colors: colors),
 
                         // Safe area bottom padding
-                        SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
+                        SizedBox(
+                            height: MediaQuery.of(context).padding.bottom + 8),
                       ],
                     ),
                   ),
@@ -99,7 +100,10 @@ class SocialLoginBottomSheet {
 
   /// 소셜 로그인 버튼 빌더
   static Widget _buildSocialButton(
-      {required BuildContext context, required VoidCallback? onPressed, required String type, required DSColorScheme colors}) {
+      {required BuildContext context,
+      required VoidCallback? onPressed,
+      required String type,
+      required DSColorScheme colors}) {
     Widget icon;
     String text;
 

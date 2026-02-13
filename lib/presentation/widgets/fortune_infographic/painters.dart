@@ -29,7 +29,8 @@ class TimelineChartPainter extends CustomPainter {
 
     for (int i = 0; i < hourlyScores.length; i++) {
       final x = padding + (i / (hourlyScores.length - 1)) * chartWidth;
-      final normalizedScore = (hourlyScores[i] - minScore) / (maxScore - minScore);
+      final normalizedScore =
+          (hourlyScores[i] - minScore) / (maxScore - minScore);
       final y = padding + chartHeight - (normalizedScore * chartHeight);
       points.add(Offset(x, y));
     }
@@ -40,8 +41,10 @@ class TimelineChartPainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          (isDark ? DSColors.accent : DSColors.accentDark).withValues(alpha: 0.1),
-          (isDark ? DSColors.accent : DSColors.accentDark).withValues(alpha: 0.05),
+          (isDark ? DSColors.accent : DSColors.accentDark)
+              .withValues(alpha: 0.1),
+          (isDark ? DSColors.accent : DSColors.accentDark)
+              .withValues(alpha: 0.05),
         ],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
@@ -81,7 +84,8 @@ class TimelineChartPainter extends CustomPainter {
             points[i - 1].dx + (points[i].dx - points[i - 1].dx) * 0.5,
             points[i].dy,
           );
-          linePath.cubicTo(cp1.dx, cp1.dy, cp2.dx, cp2.dy, points[i].dx, points[i].dy);
+          linePath.cubicTo(
+              cp1.dx, cp1.dy, cp2.dx, cp2.dy, points[i].dx, points[i].dy);
         } else {
           linePath.lineTo(points[i].dx, points[i].dy);
         }
@@ -110,7 +114,8 @@ class TimelineChartPainter extends CustomPainter {
 
         // Draw current hour indicator line
         final indicatorPaint = Paint()
-          ..color = (isDark ? DSColors.accent : DSColors.accentDark).withValues(alpha: 0.3)
+          ..color = (isDark ? DSColors.accent : DSColors.accentDark)
+              .withValues(alpha: 0.3)
           ..strokeWidth = 1.0
           ..style = PaintingStyle.stroke;
 
@@ -127,7 +132,8 @@ class TimelineChartPainter extends CustomPainter {
 
     // Draw horizontal reference lines
     final gridPaint = Paint()
-      ..color = (isDark ? DSColors.textTertiary : DSColors.borderDark).withValues(alpha: 0.3)
+      ..color = (isDark ? DSColors.textTertiary : DSColors.borderDark)
+          .withValues(alpha: 0.3)
       ..strokeWidth = 0.5
       ..style = PaintingStyle.stroke;
 
@@ -145,8 +151,8 @@ class TimelineChartPainter extends CustomPainter {
   @override
   bool shouldRepaint(TimelineChartPainter oldDelegate) {
     return oldDelegate.hourlyScores != hourlyScores ||
-           oldDelegate.currentHour != currentHour ||
-           oldDelegate.isDark != isDark;
+        oldDelegate.currentHour != currentHour ||
+        oldDelegate.isDark != isDark;
   }
 }
 
@@ -176,7 +182,8 @@ class RadarChartPainter extends CustomPainter {
 
     // Draw background grid
     final gridPaint = Paint()
-      ..color = (isDark ? DSColors.textTertiary : DSColors.borderDark).withValues(alpha: 0.3)
+      ..color = (isDark ? DSColors.textTertiary : DSColors.borderDark)
+          .withValues(alpha: 0.3)
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
 
@@ -293,7 +300,7 @@ class RadarChartPainter extends CustomPainter {
   @override
   bool shouldRepaint(RadarChartPainter oldDelegate) {
     return oldDelegate.scores != scores ||
-           oldDelegate.isDark != isDark ||
-           oldDelegate.primaryColor != primaryColor;
+        oldDelegate.isDark != isDark ||
+        oldDelegate.primaryColor != primaryColor;
   }
 }

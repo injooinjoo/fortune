@@ -6,11 +6,7 @@ import 'package:fortune/core/design_system/design_system.dart';
 import '../glassmorphism/glass_container.dart';
 import 'token_balance_widget.dart';
 
-enum FontSize {
-  
-  small, medium, large
-  
-}
+enum FontSize { small, medium, large }
 
 extension FontSizeExtension on FontSize {
   double get value {
@@ -23,7 +19,7 @@ extension FontSizeExtension on FontSize {
         return 18.0;
     }
   }
-  
+
   FontSize operator +(int value) {
     if (this == FontSize.small && value > 0) return FontSize.medium;
     if (this == FontSize.medium && value > 0) return FontSize.large;
@@ -31,7 +27,7 @@ extension FontSizeExtension on FontSize {
     if (this == FontSize.medium && value < 0) return FontSize.small;
     return this;
   }
-  
+
   FontSize operator -(int value) {
     return this + (-value);
   }
@@ -56,25 +52,25 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   final Color? backgroundColor;
   final Color? foregroundColor;
 
-  const AppHeader({
-    super.key,
-    this.title,
-    this.showBackButton = true,
-    this.showCloseButton = false,
-    this.showShareButton = false,
-    this.showFontSizeSelector = false,
-    this.showTokenBalance = true,
-    this.showActions = true,
-    this.onBackPressed,
-    this.onClosePressed,
-    this.onSharePressed,
-    this.onFontSizeChanged,
-    this.currentFontSize = FontSize.medium,
-    this.actions,
-    this.centerTitle = false,
-    this.elevation = 0,
-    this.backgroundColor,
-    this.foregroundColor});
+  const AppHeader(
+      {super.key,
+      this.title,
+      this.showBackButton = true,
+      this.showCloseButton = false,
+      this.showShareButton = false,
+      this.showFontSizeSelector = false,
+      this.showTokenBalance = true,
+      this.showActions = true,
+      this.onBackPressed,
+      this.onClosePressed,
+      this.onSharePressed,
+      this.onFontSizeChanged,
+      this.currentFontSize = FontSize.medium,
+      this.actions,
+      this.centerTitle = false,
+      this.elevation = 0,
+      this.backgroundColor,
+      this.foregroundColor});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -95,14 +91,13 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     } else {
       final currentUrl = GoRouterState.of(context).uri.toString();
       try {
-        await Share.share(
-          '포춘 - 신점 운세 서비스\n$currentUrl',
-        subject: '포춘에서 나의 운세를 확인해보세요!');
+        await Share.share('포춘 - 신점 운세 서비스\n$currentUrl',
+            subject: '포춘에서 나의 운세를 확인해보세요!');
       } catch (e) {
         await Clipboard.setData(ClipboardData(text: currentUrl));
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('링크가 복사되었습니다')));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text('링크가 복사되었습니다')));
         }
       }
     }
@@ -128,48 +123,49 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                 children: [
                   if (showBackButton)
                     IconButton(
-                      icon: Icon(
-                        Icons.arrow_back_ios_rounded,
-                        color: foregroundColor ?? colors.textPrimary),
-                      onPressed: () => _handleBack(context)),
+                        icon: Icon(Icons.arrow_back_ios_rounded,
+                            color: foregroundColor ?? colors.textPrimary),
+                        onPressed: () => _handleBack(context)),
                   if (title != null)
                     Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: DSSpacing.xs),
-                        child: Text(
-                          title!,
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            color: foregroundColor ?? colors.textPrimary),
-                          textAlign: centerTitle ? TextAlign.center : TextAlign.left,
-                          overflow: TextOverflow.ellipsis)))
+                        child: Padding(
+                            padding: const EdgeInsets.only(right: DSSpacing.xs),
+                            child: Text(title!,
+                                style: theme.textTheme.headlineSmall?.copyWith(
+                                    color:
+                                        foregroundColor ?? colors.textPrimary),
+                                textAlign: centerTitle
+                                    ? TextAlign.center
+                                    : TextAlign.left,
+                                overflow: TextOverflow.ellipsis)))
                   else
                     const Spacer(),
                   if (showFontSizeSelector) ...[
                     _FontSizeSelector(
-                      currentSize: currentFontSize,
-                      onSizeChanged: onFontSizeChanged),
-                    const SizedBox(width: DSSpacing.xs)],
+                        currentSize: currentFontSize,
+                        onSizeChanged: onFontSizeChanged),
+                    const SizedBox(width: DSSpacing.xs)
+                  ],
                   if (showShareButton)
                     IconButton(
-                      icon: Icon(
-                        Icons.share_rounded,
-                        color: foregroundColor ?? colors.textPrimary),
-                      onPressed: () => _handleShare(context)),
+                        icon: Icon(Icons.share_rounded,
+                            color: foregroundColor ?? colors.textPrimary),
+                        onPressed: () => _handleShare(context)),
                   if (showCloseButton)
                     IconButton(
-                      icon: Icon(
-                        Icons.close,
-                        color: foregroundColor ?? colors.textPrimary),
-                      onPressed: () {
-                        if (onClosePressed != null) {
-                          onClosePressed!();
-                        } else {
-                          GoRouter.of(context).go('/fortune');
-                        }
-                      }),
+                        icon: Icon(Icons.close,
+                            color: foregroundColor ?? colors.textPrimary),
+                        onPressed: () {
+                          if (onClosePressed != null) {
+                            onClosePressed!();
+                          } else {
+                            GoRouter.of(context).go('/fortune');
+                          }
+                        }),
                   if (showTokenBalance) ...[
                     const TokenBalanceWidget(),
-                    const SizedBox(width: DSSpacing.xs)],
+                    const SizedBox(width: DSSpacing.xs)
+                  ],
                   if (showActions && actions != null) ...actions!,
                 ],
               ),
@@ -185,32 +181,29 @@ class _FontSizeSelector extends StatelessWidget {
   final FontSize currentSize;
   final Function(FontSize)? onSizeChanged;
 
-  const _FontSizeSelector({
-    required this.currentSize,
-    this.onSizeChanged});
+  const _FontSizeSelector({required this.currentSize, this.onSizeChanged});
 
   @override
   Widget build(BuildContext context) {
     return GlassContainer(
       padding: const EdgeInsets.symmetric(
-        horizontal: DSSpacing.sm,
-        vertical: DSSpacing.xxs),
+          horizontal: DSSpacing.sm, vertical: DSSpacing.xxs),
       borderRadius: BorderRadius.circular(DSRadius.xl),
       blur: 10,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           _SizeButton(
-            label: '가',
-            size: FontSize.small,
-            isSelected: currentSize == FontSize.small,
-            onTap: () => onSizeChanged?.call(FontSize.small)),
+              label: '가',
+              size: FontSize.small,
+              isSelected: currentSize == FontSize.small,
+              onTap: () => onSizeChanged?.call(FontSize.small)),
           const SizedBox(width: DSSpacing.xs),
           _SizeButton(
-            label: '가',
-            size: FontSize.medium,
-            isSelected: currentSize == FontSize.medium,
-            onTap: () => onSizeChanged?.call(FontSize.medium)),
+              label: '가',
+              size: FontSize.medium,
+              isSelected: currentSize == FontSize.medium,
+              onTap: () => onSizeChanged?.call(FontSize.medium)),
           const SizedBox(width: DSSpacing.xs),
           _SizeButton(
             label: '가',
@@ -230,11 +223,11 @@ class _SizeButton extends StatelessWidget {
   final bool isSelected;
   final VoidCallback? onTap;
 
-  const _SizeButton({
-    required this.label,
-    required this.size,
-    required this.isSelected,
-    this.onTap});
+  const _SizeButton(
+      {required this.label,
+      required this.size,
+      required this.isSelected,
+      this.onTap});
 
   double get fontSize {
     switch (size) {
@@ -256,13 +249,12 @@ class _SizeButton extends StatelessWidget {
       borderRadius: BorderRadius.circular(DSRadius.md),
       child: Container(
         padding: const EdgeInsets.symmetric(
-          horizontal: DSSpacing.xs,
-          vertical: DSSpacing.xxs),
+            horizontal: DSSpacing.xs, vertical: DSSpacing.xxs),
         decoration: BoxDecoration(
-          color: isSelected
-              ? colors.accent.withValues(alpha: 0.2)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(DSRadius.md)),
+            color: isSelected
+                ? colors.accent.withValues(alpha: 0.2)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(DSRadius.md)),
         child: Text(
           label,
           style: TextStyle(

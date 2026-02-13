@@ -15,22 +15,27 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
   Future<AuthResponse?> signIn() async {
     try {
       Logger.info('=== KAKAO SIGN-IN STARTED ===');
-      Logger.info('Platform: ${kIsWeb ? 'Web' : (Platform.isIOS ? 'iOS' : 'Android')}');
+      Logger.info(
+          'Platform: ${kIsWeb ? 'Web' : (Platform.isIOS ? 'iOS' : 'Android')}');
 
       if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
         Logger.info('Using native Kakao SDK for mobile platform');
         final result = await _signInWithKakaoNative();
-        Logger.info('Native Kakao result: ${result != null ? 'Success' : 'Null/OAuth flow'}');
+        Logger.info(
+            'Native Kakao result: ${result != null ? 'Success' : 'Null/OAuth flow'}');
         return result;
       } else {
         Logger.info('Using Kakao OAuth for web platform');
         final result = await _signInWithKakaoOAuth();
-        Logger.info('OAuth Kakao result: ${result != null ? 'Success' : 'Null/OAuth flow'}');
+        Logger.info(
+            'OAuth Kakao result: ${result != null ? 'Success' : 'Null/OAuth flow'}');
         return result;
       }
     } catch (error) {
-      Logger.warning('[KakaoAuthProvider] Kakao 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
-      Logger.warning('[KakaoAuthProvider] Kakao 로그인 에러 타입 (선택적 기능, 다른 로그인 방법 사용 권장): ${error.runtimeType}');
+      Logger.warning(
+          '[KakaoAuthProvider] Kakao 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
+      Logger.warning(
+          '[KakaoAuthProvider] Kakao 로그인 에러 타입 (선택적 기능, 다른 로그인 방법 사용 권장): ${error.runtimeType}');
       rethrow;
     }
   }
@@ -55,7 +60,8 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
       final kakaoUser = await kakao.UserApi.instance.me();
       Logger.info('Kakao user info retrieved: ${kakaoUser.id}');
 
-      final String email = kakaoUser.kakaoAccount?.email ?? 'kakao_${kakaoUser.id}@kakao.local';
+      final String email =
+          kakaoUser.kakaoAccount?.email ?? 'kakao_${kakaoUser.id}@kakao.local';
       final String nickname = kakaoUser.kakaoAccount?.profile?.nickname ??
           (kakaoUser.kakaoAccount?.name ?? '사용자');
 
@@ -73,13 +79,15 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
               'id': kakaoUser.id.toString(),
               'email': email,
               'nickname': nickname,
-              'profile_image_url': kakaoUser.kakaoAccount?.profile?.profileImageUrl,
+              'profile_image_url':
+                  kakaoUser.kakaoAccount?.profile?.profileImageUrl,
             }
           },
         );
 
         if (response.status != 200) {
-          Logger.warning('[KakaoAuthProvider] Kakao OAuth Edge Function 실패 (선택적 기능, 대체 인증 방법 사용): ${response.status}');
+          Logger.warning(
+              '[KakaoAuthProvider] Kakao OAuth Edge Function 실패 (선택적 기능, 대체 인증 방법 사용): ${response.status}');
           throw Exception('Kakao OAuth failed: ${response.data}');
         }
 
@@ -113,11 +121,13 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
           }
 
           if (currentSession == null) {
-            Logger.warning('Failed to set session from Edge Function, falling back...');
+            Logger.warning(
+                'Failed to set session from Edge Function, falling back...');
             throw Exception('Failed to set session from Kakao OAuth');
           }
         } else {
-          Logger.info('No session from Edge Function, falling back to manual auth...');
+          Logger.info(
+              'No session from Edge Function, falling back to manual auth...');
           throw Exception('No session returned from Kakao OAuth');
         }
 
@@ -125,12 +135,14 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
 
         return AuthResponse(session: currentSession, user: currentSession.user);
       } catch (edgeFunctionError) {
-        Logger.warning('[KakaoAuthProvider] Kakao Edge Function 실패, 수동 사용자 생성으로 대체 (선택적 기능, 대체 인증 방법 사용): $edgeFunctionError');
+        Logger.warning(
+            '[KakaoAuthProvider] Kakao Edge Function 실패, 수동 사용자 생성으로 대체 (선택적 기능, 대체 인증 방법 사용): $edgeFunctionError');
 
         return await _fallbackManualAuth(kakaoUser, email, nickname);
       }
     } catch (error) {
-      Logger.warning('[KakaoAuthProvider] 네이티브 Kakao 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
+      Logger.warning(
+          '[KakaoAuthProvider] 네이티브 Kakao 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
       rethrow;
     }
   }
@@ -154,7 +166,8 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
           provider: 'kakao',
         );
 
-        final sessionResponse = await _createManualSession(existingUser, kakaoId: kakaoUser.id.toString());
+        final sessionResponse = await _createManualSession(existingUser,
+            kakaoId: kakaoUser.id.toString());
         return sessionResponse;
       } else {
         final password = 'kakao_oauth_${kakaoUser.id}_secure2024';
@@ -172,7 +185,8 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
         );
 
         if (signUpResponse.user != null) {
-          Logger.securityCheckpoint('Kakao new user: ${signUpResponse.user?.id}');
+          Logger.securityCheckpoint(
+              'Kakao new user: ${signUpResponse.user?.id}');
 
           await AuthProviderUtils.updateUserProfile(
             supabase: supabase,
@@ -202,7 +216,8 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
         }
 
         if (signUpResponse.user != null) {
-          Logger.info('Kakao user created successfully, but session creation pending');
+          Logger.info(
+              'Kakao user created successfully, but session creation pending');
           return AuthResponse(
             session: null,
             user: signUpResponse.user,
@@ -212,7 +227,8 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
         return signUpResponse;
       }
     } catch (fallbackError) {
-      Logger.warning('[KakaoAuthProvider] Kakao 대체 인증 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $fallbackError');
+      Logger.warning(
+          '[KakaoAuthProvider] Kakao 대체 인증 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $fallbackError');
       throw Exception('Kakao authentication failed: $fallbackError');
     }
   }
@@ -235,7 +251,8 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
     }
   }
 
-  Future<AuthResponse?> _createManualSession(User user, {String? kakaoId}) async {
+  Future<AuthResponse?> _createManualSession(User user,
+      {String? kakaoId}) async {
     final effectiveKakaoId = kakaoId ??
         user.userMetadata?['kakao_id'] ??
         user.appMetadata['provider_id'] ??
@@ -246,7 +263,8 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
 
       final password = 'kakao_oauth_${effectiveKakaoId}_secure2024';
 
-      Logger.info('Attempting to sign in existing Kakao user with email: ${user.email}');
+      Logger.info(
+          'Attempting to sign in existing Kakao user with email: ${user.email}');
 
       final signInResponse = await supabase.auth.signInWithPassword(
         email: user.email!,
@@ -264,7 +282,8 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
       Logger.warning('[KakaoAuthProvider] 수동 세션 생성 실패 (선택적 기능, 재시도 권장): $e');
 
       try {
-        final legacyPassword = 'kakao_oauth_${effectiveKakaoId}_${user.createdAt.replaceAll(RegExp(r'[^0-9]'), '')}';
+        final legacyPassword =
+            'kakao_oauth_${effectiveKakaoId}_${user.createdAt.replaceAll(RegExp(r'[^0-9]'), '')}';
 
         Logger.info('Trying legacy password pattern for Kakao user');
         final legacySignIn = await supabase.auth.signInWithPassword(
@@ -277,7 +296,8 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
           return legacySignIn;
         }
       } catch (legacyError) {
-        Logger.warning('[KakaoAuthProvider] 레거시 비밀번호 로그인도 실패 (선택적 기능, 새 인증 필요): $legacyError');
+        Logger.warning(
+            '[KakaoAuthProvider] 레거시 비밀번호 로그인도 실패 (선택적 기능, 새 인증 필요): $legacyError');
       }
       return null;
     }
@@ -302,7 +322,8 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
       Logger.securityCheckpoint('Kakao OAuth sign in initiated');
       return null;
     } catch (error) {
-      Logger.warning('[KakaoAuthProvider] Kakao OAuth 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
+      Logger.warning(
+          '[KakaoAuthProvider] Kakao OAuth 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
       rethrow;
     }
   }
@@ -312,7 +333,8 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
     try {
       await kakao.UserApi.instance.unlink();
     } catch (e) {
-      Logger.warning('[KakaoAuthProvider] Kakao 연결 해제 실패 (선택적 기능, 수동 연결 해제 가능): $e');
+      Logger.warning(
+          '[KakaoAuthProvider] Kakao 연결 해제 실패 (선택적 기능, 수동 연결 해제 가능): $e');
     }
   }
 }

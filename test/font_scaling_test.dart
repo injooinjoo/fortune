@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fortune/core/theme/font_size_system.dart';
 import 'package:fortune/core/theme/typography_unified.dart';
+
 void main() {
   group('FontSizeSystem Tests', () {
     tearDown(() {
@@ -14,7 +15,8 @@ void main() {
     test('Setting scale factor updates scaled sizes', () {
       FontSizeSystem.setScaleFactor(1.5);
       expect(FontSizeSystem.scaleFactor, 1.5);
-      expect(FontSizeSystem.displayLargeScaled, FontSizeSystem.displayLarge * 1.5);
+      expect(
+          FontSizeSystem.displayLargeScaled, FontSizeSystem.displayLarge * 1.5);
       expect(FontSizeSystem.bodyMediumScaled, FontSizeSystem.bodyMedium * 1.5);
     });
 
@@ -34,10 +36,9 @@ void main() {
 
     test('TypographyUnified uses scaled sizes', () {
       FontSizeSystem.setScaleFactor(1.2);
-      
+
       final style = TypographyUnified.heading1;
       expect(style.fontSize, FontSizeSystem.heading1 * 1.2);
     });
   });
-
 }

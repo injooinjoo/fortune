@@ -13,7 +13,8 @@ import '../../core/services/test_auth_service.dart';
 
 /// State management for LandingPage
 /// Extracted from _LandingPageState to separate concerns
-mixin LandingPageState<T extends StatefulWidget> on State<T>, WidgetsBindingObserver {
+mixin LandingPageState<T extends StatefulWidget>
+    on State<T>, WidgetsBindingObserver {
   bool _isCheckingAuth = true;
   bool _isAuthProcessing = false;
   SocialAuthService? _socialAuthService;
@@ -45,7 +46,8 @@ mixin LandingPageState<T extends StatefulWidget> on State<T>, WidgetsBindingObse
       _isSupabaseAvailable = true;
       debugPrint('✅ [LandingPage] Supabase client initialized successfully');
     } catch (e) {
-      debugPrint('⚠️ [LandingPage] Supabase client not available, using offline mode: $e');
+      debugPrint(
+          '⚠️ [LandingPage] Supabase client not available, using offline mode: $e');
       _isSupabaseAvailable = false;
       _socialAuthService = null;
     }
@@ -86,7 +88,8 @@ mixin LandingPageState<T extends StatefulWidget> on State<T>, WidgetsBindingObse
       }
 
       if (!_isSupabaseAvailable) {
-        debugPrint('⚠️ [LandingPage] Skipping auth check - Supabase not available');
+        debugPrint(
+            '⚠️ [LandingPage] Skipping auth check - Supabase not available');
         return;
       }
 
@@ -193,7 +196,8 @@ mixin LandingPageState<T extends StatefulWidget> on State<T>, WidgetsBindingObse
   }
 
   void resetAuthProcessing() {
-    debugPrint('🔄 _resetAuthProcessing called - _isAuthProcessing: $_isAuthProcessing');
+    debugPrint(
+        '🔄 _resetAuthProcessing called - _isAuthProcessing: $_isAuthProcessing');
     if (mounted) {
       setState(() {
         _isAuthProcessing = false;
@@ -229,8 +233,10 @@ mixin LandingPageState<T extends StatefulWidget> on State<T>, WidgetsBindingObse
       final userMetadata = user.userMetadata;
       final kakaoId = userMetadata?['kakao_id'];
 
-      debugPrint('🟡 [Kakao Profile Update] Current metadata name: ${userMetadata?['name']}');
-      debugPrint('🟡 [Kakao Profile Update] Current metadata nickname: ${userMetadata?['nickname']}');
+      debugPrint(
+          '🟡 [Kakao Profile Update] Current metadata name: ${userMetadata?['name']}');
+      debugPrint(
+          '🟡 [Kakao Profile Update] Current metadata nickname: ${userMetadata?['nickname']}');
       debugPrint('🟡 [Kakao Profile Update] Kakao ID: $kakaoId');
 
       if (kakaoId == null) {
@@ -243,15 +249,16 @@ mixin LandingPageState<T extends StatefulWidget> on State<T>, WidgetsBindingObse
         final kakaoNickname = kakaoUser.kakaoAccount?.profile?.nickname ??
             (kakaoUser.kakaoAccount?.name ?? '사용자');
 
-        debugPrint('🟡 [Kakao Profile Update] Retrieved nickname from Kakao SDK: $kakaoNickname');
+        debugPrint(
+            '🟡 [Kakao Profile Update] Retrieved nickname from Kakao SDK: $kakaoNickname');
 
         if (kakaoNickname != '사용자') {
           await Supabase.instance.client
               .from('user_profiles')
-              .update({'name': kakaoNickname})
-              .eq('id', user.id);
+              .update({'name': kakaoNickname}).eq('id', user.id);
 
-          debugPrint('🟡 [Kakao Profile Update] Updated Supabase profile name to: $kakaoNickname');
+          debugPrint(
+              '🟡 [Kakao Profile Update] Updated Supabase profile name to: $kakaoNickname');
 
           final localProfile = await _storageService.getUserProfile();
           if (localProfile != null) {
@@ -260,10 +267,12 @@ mixin LandingPageState<T extends StatefulWidget> on State<T>, WidgetsBindingObse
             debugPrint('🟡 [Kakao Profile Update] Updated local profile name');
           }
         } else {
-          debugPrint('🟡 [Kakao Profile Update] Kakao nickname is still default, not updating');
+          debugPrint(
+              '🟡 [Kakao Profile Update] Kakao nickname is still default, not updating');
         }
       } catch (kakaoError) {
-        debugPrint('🟡 [Kakao Profile Update] Error fetching from Kakao SDK: $kakaoError');
+        debugPrint(
+            '🟡 [Kakao Profile Update] Error fetching from Kakao SDK: $kakaoError');
         debugPrint('🟡 [Kakao Profile Update] Falling back to metadata');
       }
     } catch (e) {
@@ -273,7 +282,8 @@ mixin LandingPageState<T extends StatefulWidget> on State<T>, WidgetsBindingObse
 
   Future<void> syncProfileFromSupabase() async {
     if (!_isSupabaseAvailable) {
-      debugPrint('⚠️ [LandingPage] Skipping profile sync - Supabase not available');
+      debugPrint(
+          '⚠️ [LandingPage] Skipping profile sync - Supabase not available');
       return;
     }
 
@@ -357,12 +367,14 @@ mixin LandingPageState<T extends StatefulWidget> on State<T>, WidgetsBindingObse
 
       if (insertError.toString().contains('linked_providers') ||
           insertError.toString().contains('primary_provider')) {
-        debugPrint('Social auth columns not found, creating profile without them...');
+        debugPrint(
+            'Social auth columns not found, creating profile without them...');
         try {
           await Supabase.instance.client
               .from('user_profiles')
               .insert(profileData);
-          debugPrint('Profile created successfully without social auth columns');
+          debugPrint(
+              'Profile created successfully without social auth columns');
 
           await _storageService.saveUserProfile(profileData);
         } catch (fallbackError) {
@@ -376,11 +388,13 @@ mixin LandingPageState<T extends StatefulWidget> on State<T>, WidgetsBindingObse
 
   Future<void> checkAuthState() async {
     if (!_isSupabaseAvailable) {
-      debugPrint('⚠️ [LandingPage] Skipping auth state check - Supabase not available');
+      debugPrint(
+          '⚠️ [LandingPage] Skipping auth state check - Supabase not available');
       return;
     }
 
-    debugPrint('🔍 _checkAuthState: Starting auth check, _isCheckingAuth is $_isCheckingAuth');
+    debugPrint(
+        '🔍 _checkAuthState: Starting auth check, _isCheckingAuth is $_isCheckingAuth');
     try {
       final session = Supabase.instance.client.auth.currentSession;
 
@@ -443,8 +457,7 @@ mixin LandingPageState<T extends StatefulWidget> on State<T>, WidgetsBindingObse
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(message),
-            backgroundColor: context.colors.error));
+            content: Text(message), backgroundColor: context.colors.error));
 
         if (kIsWeb) {
           final cleanUrl = uri.path;

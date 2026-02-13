@@ -31,16 +31,17 @@ class TokenApiService {
       final totalUsed = data['totalUsed'] ?? 0;
       final isUnlimited = data['isUnlimited'] ?? false;
 
-      Logger.info('파싱된 값: balance=$balance, totalPurchased=$totalPurchased, totalUsed=$totalUsed, isUnlimited=$isUnlimited');
+      Logger.info(
+          '파싱된 값: balance=$balance, totalPurchased=$totalPurchased, totalUsed=$totalUsed, isUnlimited=$isUnlimited');
       Logger.info('==========================================');
 
       return TokenBalance(
-        userId: userId,
-        totalTokens: totalPurchased,
-        usedTokens: totalUsed,
-        remainingTokens: balance,
-        lastUpdated: DateTime.now(),
-        hasUnlimitedAccess: isUnlimited);
+          userId: userId,
+          totalTokens: totalPurchased,
+          usedTokens: totalUsed,
+          remainingTokens: balance,
+          lastUpdated: DateTime.now(),
+          hasUnlimitedAccess: isUnlimited);
     } on DioException catch (e, stackTrace) {
       Logger.error('========== ❌ 토큰 잔액 조회 오류 ==========');
       Logger.error('statusCode: ${e.response?.statusCode}');
@@ -55,45 +56,41 @@ class TokenApiService {
         // Return default token balance for users without profiles
         // This allows the app to continue functioning while profile is being created
         return TokenBalance(
-          userId: userId,
-          totalTokens: 0,
-          usedTokens: 0,
-          remainingTokens: 0,
-          lastUpdated: DateTime.now(),
-          hasUnlimitedAccess: false);
+            userId: userId,
+            totalTokens: 0,
+            usedTokens: 0,
+            remainingTokens: 0,
+            lastUpdated: DateTime.now(),
+            hasUnlimitedAccess: false);
       }
       throw _handleDioError(e);
     }
   }
 
   // 토큰 소비 (프리미엄 운세용)
-  Future<TokenBalance> consumeTokens({
-    required String userId,
-    required String fortuneType,
-    required int amount,
-    String? referenceId}) async {
+  Future<TokenBalance> consumeTokens(
+      {required String userId,
+      required String fortuneType,
+      required int amount,
+      String? referenceId}) async {
     try {
       // 새로운 soul-consume 엔드포인트 사용
       // ApiClient.post() returns the data directly
-      final data = await _apiClient.post(
-        '/soul-consume',
-        data: {
-          'fortuneType': fortuneType,
-          'referenceId': null});
+      final data = await _apiClient.post('/soul-consume',
+          data: {'fortuneType': fortuneType, 'referenceId': null});
 
       return TokenBalance(
-        userId: userId,
-        totalTokens: data['balance']['totalTokens'],
-        usedTokens: data['balance']['usedTokens'],
-        remainingTokens: data['balance']['remainingTokens'],
-        lastUpdated: DateTime.parse(data['balance']['lastUpdated']),
-        hasUnlimitedAccess: data['balance']['hasUnlimitedAccess']);
+          userId: userId,
+          totalTokens: data['balance']['totalTokens'],
+          usedTokens: data['balance']['usedTokens'],
+          remainingTokens: data['balance']['remainingTokens'],
+          lastUpdated: DateTime.parse(data['balance']['lastUpdated']),
+          hasUnlimitedAccess: data['balance']['hasUnlimitedAccess']);
     } on DioException catch (e) {
-      if (e.response?.statusCode == 400 && 
+      if (e.response?.statusCode == 400 &&
           e.response?.data['code'] == 'INSUFFICIENT_TOKENS') {
         throw InsufficientTokensException(
-          e.response?.data['message'] ?? '토큰가 부족합니다'
-        );
+            e.response?.data['message'] ?? '토큰가 부족합니다');
       }
       throw _handleDioError(e);
     }
@@ -106,18 +103,18 @@ class TokenApiService {
 
       return (data['packages'] as List)
           .map((json) => TokenPackage(
-                id: json['id'],
-                name: json['name'],
-                tokens: json['tokens'],
-                price: (json['price'] as num).toDouble(),
-                originalPrice: json['originalPrice'] != null 
-                    ? (json['originalPrice'] as num).toDouble() 
-                    : null,
-                currency: json['currency'] ?? 'KRW',
-                badge: json['badge'],
-                bonusTokens: json['bonusTokens'],
-                description: json['description'],
-                isPopular: json['isPopular']))
+              id: json['id'],
+              name: json['name'],
+              tokens: json['tokens'],
+              price: (json['price'] as num).toDouble(),
+              originalPrice: json['originalPrice'] != null
+                  ? (json['originalPrice'] as num).toDouble()
+                  : null,
+              currency: json['currency'] ?? 'KRW',
+              badge: json['badge'],
+              bonusTokens: json['bonusTokens'],
+              description: json['description'],
+              isPopular: json['isPopular']))
           .toList();
     } on DioException catch (e) {
       throw _handleDioError(e);
@@ -125,15 +122,11 @@ class TokenApiService {
   }
 
   // 토큰 구매
-  Future<Map<String, dynamic>> purchaseTokens({
-    required String packageId,
-    required String paymentMethodId}) async {
+  Future<Map<String, dynamic>> purchaseTokens(
+      {required String packageId, required String paymentMethodId}) async {
     try {
-      final data = await _apiClient.post(
-        '/token-purchase',
-        data: {
-          'packageId': packageId,
-          'paymentMethodId': null});
+      final data = await _apiClient.post('/token-purchase',
+          data: {'packageId': packageId, 'paymentMethodId': null});
 
       return data;
     } on DioException catch (e) {
@@ -142,32 +135,30 @@ class TokenApiService {
   }
 
   // 토큰 거래 내역 조회
-  Future<List<TokenTransaction>> getTokenHistory({
-    required String userId,
-    int? limit,
-    int? offset}) async {
+  Future<List<TokenTransaction>> getTokenHistory(
+      {required String userId, int? limit, int? offset}) async {
     try {
       final queryParams = {
         if (limit != null) 'limit': null,
-        if (offset != null) 'offset': null};
+        if (offset != null) 'offset': null
+      };
 
-      final data = await _apiClient.get(
-        '/token-history',
-        queryParameters: queryParams);
+      final data =
+          await _apiClient.get('/token-history', queryParameters: queryParams);
 
       // Handle the response format from the backend
       final transactions = data['transactions'] as List? ?? [];
-      
+
       return transactions
           .map((json) => TokenTransaction(
-                id: json['id'],
-                userId: userId,
-                amount: json['amount'],
-                type: json['type'],
-                description: json['description'],
-                referenceId: json['referenceId'],
-                createdAt: DateTime.parse(json['createdAt']),
-                balanceAfter: json['balanceAfter']))
+              id: json['id'],
+              userId: userId,
+              amount: json['amount'],
+              type: json['type'],
+              description: json['description'],
+              referenceId: json['referenceId'],
+              createdAt: DateTime.parse(json['createdAt']),
+              balanceAfter: json['balanceAfter']))
           .toList();
     } on DioException catch (e) {
       throw _handleDioError(e);
@@ -208,7 +199,8 @@ class TokenApiService {
   };
 
   // 구독 정보 조회
-  Future<UnlimitedSubscription?> getSubscription({required String userId}) async {
+  Future<UnlimitedSubscription?> getSubscription(
+      {required String userId}) async {
     try {
       final data = await _apiClient.get('/subscription-status');
 
@@ -225,14 +217,16 @@ class TokenApiService {
       final productId = data['productId'];
 
       return UnlimitedSubscription(
-        id: productId ?? 'subscription',
-        userId: userId,
-        startDate: DateTime.now(), // 시작일은 정확히 알 수 없음
-        endDate: expiresAt != null ? DateTime.parse(expiresAt) : DateTime.now().add(const Duration(days: 30)),
-        status: 'active',
-        plan: productId ?? 'premium',
-        price: 0, // 가격 정보는 별도 조회 필요
-        currency: 'KRW');
+          id: productId ?? 'subscription',
+          userId: userId,
+          startDate: DateTime.now(), // 시작일은 정확히 알 수 없음
+          endDate: expiresAt != null
+              ? DateTime.parse(expiresAt)
+              : DateTime.now().add(const Duration(days: 30)),
+          status: 'active',
+          plan: productId ?? 'premium',
+          price: 0, // 가격 정보는 별도 조회 필요
+          currency: 'KRW');
     } on DioException catch (e) {
       // Handle CORS/network errors gracefully
       if (e.type == DioExceptionType.connectionError ||
@@ -254,18 +248,17 @@ class TokenApiService {
       final data = await _apiClient.post('/token-daily-claim');
 
       return TokenBalance(
-        userId: userId,
-        totalTokens: data['balance']['totalTokens'],
-        usedTokens: data['balance']['usedTokens'],
-        remainingTokens: data['balance']['remainingTokens'],
-        lastUpdated: DateTime.parse(data['balance']['lastUpdated']),
-        hasUnlimitedAccess: data['balance']['hasUnlimitedAccess']);
+          userId: userId,
+          totalTokens: data['balance']['totalTokens'],
+          usedTokens: data['balance']['usedTokens'],
+          remainingTokens: data['balance']['remainingTokens'],
+          lastUpdated: DateTime.parse(data['balance']['lastUpdated']),
+          hasUnlimitedAccess: data['balance']['hasUnlimitedAccess']);
     } on DioException catch (e) {
       if (e.response?.statusCode == 400 &&
           e.response?.data['code'] == 'ALREADY_CLAIMED') {
         throw AlreadyClaimedException(
-          e.response?.data['message'] ?? '이미 오늘의 무료 토큰를 받으셨습니다'
-        );
+            e.response?.data['message'] ?? '이미 오늘의 무료 토큰를 받으셨습니다');
       }
       throw _handleDioError(e);
     }
@@ -308,24 +301,22 @@ class TokenApiService {
   }
 
   // 토큰 획득 (출석 체크, 공유 등)
-  Future<TokenBalance> rewardTokensForAdView({
-    required String userId,
-    required String fortuneType,
-    int rewardAmount = 1}) async {
+  Future<TokenBalance> rewardTokensForAdView(
+      {required String userId,
+      required String fortuneType,
+      int rewardAmount = 1}) async {
     try {
       // 새로운 soul-earn 엔드포인트 사용
-      final data = await _apiClient.post(
-        '/soul-earn',
-        data: {
-          'fortuneType': fortuneType});
+      final data = await _apiClient
+          .post('/soul-earn', data: {'fortuneType': fortuneType});
 
       return TokenBalance(
-        userId: userId,
-        totalTokens: data['balance']['totalTokens'],
-        usedTokens: data['balance']['usedTokens'],
-        remainingTokens: data['balance']['remainingTokens'],
-        lastUpdated: DateTime.parse(data['balance']['lastUpdated']),
-        hasUnlimitedAccess: data['balance']['hasUnlimitedAccess']);
+          userId: userId,
+          totalTokens: data['balance']['totalTokens'],
+          usedTokens: data['balance']['usedTokens'],
+          remainingTokens: data['balance']['remainingTokens'],
+          lastUpdated: DateTime.parse(data['balance']['lastUpdated']),
+          hasUnlimitedAccess: data['balance']['hasUnlimitedAccess']);
     } on DioException catch (e) {
       throw _handleDioError(e);
     }
@@ -338,17 +329,17 @@ class TokenApiService {
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
         return const NetworkException('연결 시간이 초과되었습니다');
-        
+
       case DioExceptionType.connectionError:
         return const NetworkException('네트워크 연결을 확인해주세요');
-        
+
       case DioExceptionType.cancel:
         return const NetworkException('요청이 취소되었습니다');
-        
+
       case DioExceptionType.badResponse:
         final statusCode = error.response?.statusCode;
         final message = error.response?.data?['message'] ?? '오류가 발생했습니다';
-        
+
         switch (statusCode) {
           case 401:
             return const UnauthorizedException();
@@ -357,11 +348,12 @@ class TokenApiService {
           case 404:
             return const NotFoundException();
           case 500:
-            return const ServerException(message: '서버 오류가 발생했습니다', statusCode: 500);
+            return const ServerException(
+                message: '서버 오류가 발생했습니다', statusCode: 500);
           default:
             return ServerException(message: message, statusCode: statusCode);
         }
-        
+
       default:
         return const UnknownException();
     }

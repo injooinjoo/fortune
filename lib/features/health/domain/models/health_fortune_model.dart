@@ -122,7 +122,7 @@ enum HealthRecommendationType {
 /// 시간대별 건강 컨디션
 class HealthTimeline {
   final HealthTimeSlot morning; // 오전 (06-12시)
-  final HealthTimeSlot afternoon; // 오후 (12-18시)  
+  final HealthTimeSlot afternoon; // 오후 (12-18시)
   final HealthTimeSlot evening; // 저녁 (18-24시)
   final String? bestTimeActivity; // 최적의 활동 시간
 

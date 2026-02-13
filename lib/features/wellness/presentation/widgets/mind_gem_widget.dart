@@ -78,12 +78,10 @@ class _MindGemWidgetState extends State<MindGemWidget>
             size: Size(widget.size, widget.size),
             painter: _MindGemPainter(
               level: widget.level,
-              glowIntensity: widget.animate
-                  ? (_pulseAnimation.value - 0.95) / 0.1
-                  : 0.5,
-              rotationAngle: widget.level >= 3
-                  ? _rotateAnimation.value * 0.1
-                  : 0,
+              glowIntensity:
+                  widget.animate ? (_pulseAnimation.value - 0.95) / 0.1 : 0.5,
+              rotationAngle:
+                  widget.level >= 3 ? _rotateAnimation.value * 0.1 : 0,
             ),
           ),
         );
@@ -232,7 +230,8 @@ class _MindGemPainter extends CustomPainter {
     // 외부 글로우
     for (int i = 3; i >= 1; i--) {
       final glowPaint = Paint()
-        ..color = const Color(0xFFAB47BC).withValues(alpha: 0.15 * glowIntensity * i)
+        ..color =
+            const Color(0xFFAB47BC).withValues(alpha: 0.15 * glowIntensity * i)
         ..style = PaintingStyle.fill;
       canvas.drawCircle(center, radius * (0.7 + i * 0.1), glowPaint);
     }
@@ -269,7 +268,8 @@ class _MindGemPainter extends CustomPainter {
             HSLColor.fromAHSL(0.2 * glowIntensity * i, 45, 1.0, 0.6).toColor(),
             Colors.transparent,
           ],
-        ).createShader(Rect.fromCircle(center: center, radius: radius * (0.6 + i * 0.15)));
+        ).createShader(
+            Rect.fromCircle(center: center, radius: radius * (0.6 + i * 0.15)));
       canvas.drawCircle(center, radius * (0.6 + i * 0.15), glowPaint);
     }
 
@@ -342,7 +342,8 @@ class _MindGemPainter extends CustomPainter {
   }
 
   /// 내부 빛 그리기
-  void _drawInnerLight(Canvas canvas, Offset center, double radius, Color color) {
+  void _drawInnerLight(
+      Canvas canvas, Offset center, double radius, Color color) {
     final innerPaint = Paint()
       ..shader = RadialGradient(
         colors: [
@@ -383,7 +384,8 @@ class _MindGemPainter extends CustomPainter {
 
     for (int i = 0; i < 12; i++) {
       final rayPaint = Paint()
-        ..color = colors[i % colors.length].withValues(alpha: 0.4 * glowIntensity)
+        ..color =
+            colors[i % colors.length].withValues(alpha: 0.4 * glowIntensity)
         ..strokeWidth = 1.5
         ..style = PaintingStyle.stroke;
 
@@ -491,7 +493,8 @@ class GemLevelInfo extends StatelessWidget {
             '다음 단계까지 $sessionsToNext회 남음',
             style: TextStyle(
               fontSize: 14,
-              color: isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
+              color:
+                  isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
             ),
           )
         else

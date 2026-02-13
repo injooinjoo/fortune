@@ -39,12 +39,13 @@ class DSSectionHeader extends StatelessWidget {
     final colors = context.colors;
     final typography = context.typography;
 
-    final effectivePadding = padding ?? const EdgeInsets.only(
-      left: DSSpacing.pageHorizontal,
-      right: DSSpacing.pageHorizontal,
-      top: DSSpacing.sectionHeaderTop,
-      bottom: DSSpacing.sectionHeaderBottom,
-    );
+    final effectivePadding = padding ??
+        const EdgeInsets.only(
+          left: DSSpacing.pageHorizontal,
+          right: DSSpacing.pageHorizontal,
+          top: DSSpacing.sectionHeaderTop,
+          bottom: DSSpacing.sectionHeaderBottom,
+        );
 
     return Padding(
       padding: effectivePadding,
@@ -99,10 +100,11 @@ class DSPageHeader extends StatelessWidget {
     final colors = context.colors;
     final typography = context.typography;
 
-    final effectivePadding = padding ?? const EdgeInsets.symmetric(
-      horizontal: DSSpacing.pageHorizontal,
-      vertical: DSSpacing.md,
-    );
+    final effectivePadding = padding ??
+        const EdgeInsets.symmetric(
+          horizontal: DSSpacing.pageHorizontal,
+          vertical: DSSpacing.md,
+        );
 
     return Padding(
       padding: effectivePadding,

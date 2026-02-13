@@ -32,7 +32,8 @@ class BreathingTimerWidget extends ConsumerWidget {
                   progress: state.progress,
                   phase: state.currentPhase,
                   primaryColor: DSColors.accent,
-                  backgroundColor: isDark ? DSColors.surfaceDark : DSColors.surface,
+                  backgroundColor:
+                      isDark ? DSColors.surfaceDark : DSColors.surface,
                 ),
               ),
               // 중앙 텍스트
@@ -52,7 +53,9 @@ class BreathingTimerWidget extends ConsumerWidget {
                     style: TextStyle(
                       fontSize: 64,
                       fontWeight: FontWeight.w300,
-                      color: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
+                      color: isDark
+                          ? DSColors.textPrimaryDark
+                          : DSColors.textPrimary,
                       fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),
@@ -60,7 +63,9 @@ class BreathingTimerWidget extends ConsumerWidget {
                   Text(
                     _formatTime(state.totalSecondsRemaining),
                     style: context.bodyMedium.copyWith(
-                      color: isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
+                      color: isDark
+                          ? DSColors.textSecondaryDark
+                          : DSColors.textSecondary,
                     ),
                   ),
                 ],
@@ -97,7 +102,9 @@ class BreathingTimerWidget extends ConsumerWidget {
                   HapticFeedback.lightImpact();
                   ref.read(breathingTimerProvider.notifier).reset();
                 },
-                color: isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
+                color: isDark
+                    ? DSColors.textSecondaryDark
+                    : DSColors.textSecondary,
               ),
               const SizedBox(width: 24),
               _ControlButton(
@@ -289,8 +296,9 @@ class BreathingPatternSelector extends ConsumerWidget {
                   ? null
                   : () {
                       HapticFeedback.selectionClick();
-                      ref.read(selectedBreathingPatternProvider.notifier).state =
-                          pattern;
+                      ref
+                          .read(selectedBreathingPatternProvider.notifier)
+                          .state = pattern;
                       ref
                           .read(breathingTimerProvider.notifier)
                           .setPattern(pattern);
@@ -302,12 +310,16 @@ class BreathingPatternSelector extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: isSelected
                       ? DSColors.accent
-                      : isDark ? DSColors.surfaceDark : DSColors.surface,
+                      : isDark
+                          ? DSColors.surfaceDark
+                          : DSColors.surface,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: isSelected
                         ? DSColors.accent
-                        : isDark ? DSColors.borderDark : DSColors.border,
+                        : isDark
+                            ? DSColors.borderDark
+                            : DSColors.border,
                   ),
                 ),
                 child: Text(
@@ -316,8 +328,12 @@ class BreathingPatternSelector extends ConsumerWidget {
                     color: isSelected
                         ? Colors.white
                         : isDisabled
-                            ? (isDark ? DSColors.textSecondaryDark : DSColors.textSecondary)
-                            : (isDark ? DSColors.textPrimaryDark : DSColors.textPrimary),
+                            ? (isDark
+                                ? DSColors.textSecondaryDark
+                                : DSColors.textSecondary)
+                            : (isDark
+                                ? DSColors.textPrimaryDark
+                                : DSColors.textPrimary),
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                   ),
                 ),
@@ -385,12 +401,16 @@ class MeditationDurationSelector extends ConsumerWidget {
                   decoration: BoxDecoration(
                     color: isSelected
                         ? DSColors.accent
-                        : isDark ? DSColors.surfaceDark : DSColors.surface,
+                        : isDark
+                            ? DSColors.surfaceDark
+                            : DSColors.surface,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isSelected
                           ? DSColors.accent
-                          : isDark ? DSColors.borderDark : DSColors.border,
+                          : isDark
+                              ? DSColors.borderDark
+                              : DSColors.border,
                     ),
                   ),
                   child: Center(
@@ -400,8 +420,12 @@ class MeditationDurationSelector extends ConsumerWidget {
                         color: isSelected
                             ? Colors.white
                             : isDisabled
-                                ? (isDark ? DSColors.textSecondaryDark : DSColors.textSecondary)
-                                : (isDark ? DSColors.textPrimaryDark : DSColors.textPrimary),
+                                ? (isDark
+                                    ? DSColors.textSecondaryDark
+                                    : DSColors.textSecondary)
+                                : (isDark
+                                    ? DSColors.textPrimaryDark
+                                    : DSColors.textPrimary),
                         fontWeight:
                             isSelected ? FontWeight.w600 : FontWeight.w400,
                       ),

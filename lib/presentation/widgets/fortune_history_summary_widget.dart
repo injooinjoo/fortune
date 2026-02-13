@@ -8,17 +8,19 @@ import '../../core/utils/logger.dart';
 
 class FortuneHistorySummaryWidget extends StatefulWidget {
   final String userId;
-  
+
   const FortuneHistorySummaryWidget({
     super.key,
     required this.userId,
   });
 
   @override
-  State<FortuneHistorySummaryWidget> createState() => _FortuneHistorySummaryWidgetState();
+  State<FortuneHistorySummaryWidget> createState() =>
+      _FortuneHistorySummaryWidgetState();
 }
 
-class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidget> {
+class _FortuneHistorySummaryWidgetState
+    extends State<FortuneHistorySummaryWidget> {
   final supabase = Supabase.instance.client;
   List<double> recentScores = [];
   Map<String, dynamic>? recentFortunes;
@@ -45,7 +47,7 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
           .eq('user_id', widget.userId)
           .order('created_at', ascending: false)
           .limit(7);
-      
+
       // Load recent fortunes
       final response = await supabase
           .from('fortunes')
@@ -53,7 +55,7 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
           .eq('user_id', widget.userId)
           .order('created_at', ascending: false)
           .limit(3);
-      
+
       if (mounted) {
         setState(() {
           recentScores = (scoreResponse as List<dynamic>?)
@@ -88,11 +90,11 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
         ),
       );
     }
-    
+
     final spots = recentScores.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value.toDouble());
     }).toList();
-    
+
     return Container(
       height: 120,
       padding: const EdgeInsets.only(
@@ -128,7 +130,10 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
               ),
               belowBarData: BarAreaData(
                 show: true,
-                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                color: Theme.of(context)
+                    .colorScheme
+                    .primary
+                    .withValues(alpha: 0.1),
               ),
             ),
           ],
@@ -141,7 +146,7 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final fortuneTheme = context.fortuneTheme;
-    
+
     return Container(
       padding: AppSpacing.paddingAll20,
       decoration: BoxDecoration(
@@ -174,9 +179,7 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
               ),
             ],
           ),
-          
           const SizedBox(height: AppSpacing.spacing4),
-          
           if (isLoading)
             Center(
               child: CircularProgressIndicator(
@@ -208,16 +211,16 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
             ),
             const SizedBox(height: AppSpacing.spacing3),
             _buildChart(context),
-            
+
             const SizedBox(height: AppSpacing.spacing5),
-            
+
             // Recent fortunes
             Text(
               '최근 운세',
               style: theme.textTheme.titleMedium,
             ),
             const SizedBox(height: AppSpacing.spacing3),
-            
+
             if (recentFortunes != null && recentFortunes!['data'].isNotEmpty)
               Column(
                 children: [
@@ -240,11 +243,11 @@ class _FortuneHistorySummaryWidgetState extends State<FortuneHistorySummaryWidge
       ),
     );
   }
-  
+
   Widget _buildFortuneItem(BuildContext context, Map<String, dynamic> fortune) {
     final theme = Theme.of(context);
     final fortuneTheme = context.fortuneTheme;
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.spacing3),
       padding: AppSpacing.paddingAll16,

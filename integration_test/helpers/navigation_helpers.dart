@@ -97,7 +97,8 @@ class NavigationHelpers {
       return false;
     }
 
-    return tapBottomNavTab(tester, NavTab.values[index], waitDuration: waitDuration);
+    return tapBottomNavTab(tester, NavTab.values[index],
+        waitDuration: waitDuration);
   }
 
   /// 현재 선택된 탭 확인
@@ -181,7 +182,8 @@ class NavigationHelpers {
   /// 시스템 뒤로가기 시뮬레이션 (Android)
   static Future<void> simulateSystemBack(WidgetTester tester) async {
     // Navigator.maybePop 호출
-    final navigatorState = tester.state<NavigatorState>(find.byType(Navigator).first);
+    final navigatorState =
+        tester.state<NavigatorState>(find.byType(Navigator).first);
     await navigatorState.maybePop();
     await tester.pump(const Duration(milliseconds: 500));
     debugPrint('✅ Simulated system back');

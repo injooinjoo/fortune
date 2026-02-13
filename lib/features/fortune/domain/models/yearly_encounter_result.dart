@@ -82,9 +82,8 @@ class YearlyEncounterResult {
     }
 
     // 새 필드 또는 하위호환 필드 파싱
-    final encounterSpotTitle = json['encounterSpotTitle'] ??
-        json['encounter_spot_title'] ??
-        '첫 만남';
+    final encounterSpotTitle =
+        json['encounterSpotTitle'] ?? json['encounter_spot_title'] ?? '첫 만남';
     final encounterSpotStory = json['encounterSpotStory'] ??
         json['encounter_spot_story'] ??
         json['encounterSpot'] ??

@@ -205,7 +205,8 @@ void main() {
 
     group('구독 취소', () {
       test('구독 취소가 성공해야 함', () async {
-        final result = await mockSubscriptionService.cancelSubscription('test-user-id');
+        final result =
+            await mockSubscriptionService.cancelSubscription('test-user-id');
 
         expect(result, isTrue);
       });
@@ -250,7 +251,8 @@ void main() {
       });
 
       test('커스텀 토큰 잔액이 생성되어야 함', () {
-        final balance = PaymentTestData.createTokenBalance(remainingTokens: 500);
+        final balance =
+            PaymentTestData.createTokenBalance(remainingTokens: 500);
 
         expect(balance['remaining_tokens'], equals(500));
       });
@@ -309,7 +311,8 @@ void main() {
       test('다양한 상태의 구매 기록이 생성되어야 함', () {
         final pending = PaymentTestData.createPurchaseRecord(status: 'pending');
         final failed = PaymentTestData.createPurchaseRecord(status: 'failed');
-        final refunded = PaymentTestData.createPurchaseRecord(status: 'refunded');
+        final refunded =
+            PaymentTestData.createPurchaseRecord(status: 'refunded');
 
         expect(pending['status'], equals('pending'));
         expect(failed['status'], equals('failed'));

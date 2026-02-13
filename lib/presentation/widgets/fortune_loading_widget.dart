@@ -7,7 +7,7 @@ import '../../core/components/fortune_loading_screen.dart';
 class FortuneLoadingWidget extends StatelessWidget {
   final String? message;
   final String fortuneType;
-  
+
   const FortuneLoadingWidget({
     super.key,
     this.message,
@@ -26,7 +26,7 @@ class FortuneLoadingWidget extends StatelessWidget {
 class SimpleLoadingIndicator extends StatelessWidget {
   final double size;
   final Color? color;
-  
+
   const SimpleLoadingIndicator({
     super.key,
     this.size = 24,
@@ -41,7 +41,7 @@ class SimpleLoadingIndicator extends StatelessWidget {
       child: CircularProgressIndicator(
         strokeWidth: 2.5,
         valueColor: AlwaysStoppedAnimation<Color>(
-          color ?? Theme.of(context).colorScheme.primary),
+            color ?? Theme.of(context).colorScheme.primary),
       ),
     );
   }
@@ -63,9 +63,9 @@ class _FortuneSkeletonLoaderState extends State<FortuneSkeletonLoader>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: AppAnimations.durationSkeleton,
-      vsync: this)..repeat();
-    
+        duration: AppAnimations.durationSkeleton, vsync: this)
+      ..repeat();
+
     _animation = Tween<double>(
       begin: 0.3,
       end: 0.7,
@@ -91,7 +91,10 @@ class _FortuneSkeletonLoaderState extends State<FortuneSkeletonLoader>
             Container(
               height: AppSpacing.spacing24 * 2.08,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: _animation.value),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurfaceVariant
+                    .withValues(alpha: _animation.value),
                 borderRadius: AppDimensions.borderRadiusMedium,
               ),
             ),
@@ -100,8 +103,12 @@ class _FortuneSkeletonLoaderState extends State<FortuneSkeletonLoader>
               height: AppSpacing.spacing5,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: _animation.value),
-                borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurfaceVariant
+                    .withValues(alpha: _animation.value),
+                borderRadius:
+                    AppDimensions.borderRadius(AppDimensions.radiusXxSmall),
               ),
             ),
             const SizedBox(height: AppSpacing.spacing2),
@@ -109,8 +116,12 @@ class _FortuneSkeletonLoaderState extends State<FortuneSkeletonLoader>
               height: 20,
               width: AppSpacing.spacing24 * 2.08,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: _animation.value),
-                borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurfaceVariant
+                    .withValues(alpha: _animation.value),
+                borderRadius:
+                    AppDimensions.borderRadius(AppDimensions.radiusXxSmall),
               ),
             ),
           ],

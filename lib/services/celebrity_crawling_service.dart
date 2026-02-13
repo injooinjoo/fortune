@@ -23,7 +23,7 @@ class CelebrityCrawlingService {
       }
 
       final data = response.data as Map<String, dynamic>;
-      
+
       if (data['error'] != null) {
         throw Exception(data['error']);
       }
@@ -31,9 +31,8 @@ class CelebrityCrawlingService {
       return CrawlingResult(
         success: true,
         message: data['message'] ?? '성공',
-        celebrity: data['data'] != null 
-          ? Celebrity.fromJson(data['data'])
-          : null,
+        celebrity:
+            data['data'] != null ? Celebrity.fromJson(data['data']) : null,
         updated: data['updated'] ?? false,
       );
     } catch (e) {
@@ -58,27 +57,26 @@ class CelebrityCrawlingService {
 
     for (int i = 0; i < names.length; i++) {
       final name = names[i];
-      
+
       // 진행 상황 알림
       onProgress?.call(i + 1, names.length, name);
-      
+
       try {
         final result = await crawlCelebrityInfo(
           name: name,
           forceUpdate: forceUpdate,
         );
-        
+
         results.add(result);
-        
+
         if (result.success) {
           successCount++;
         } else {
           failureCount++;
         }
-        
+
         // 서버 부하 방지를 위한 딜레이
         await Future.delayed(const Duration(seconds: 1));
-        
       } catch (e) {
         results.add(CrawlingResult(
           success: false,
@@ -114,7 +112,7 @@ class CelebrityCrawlingService {
       if (celebrity.name.isEmpty) {
         issues.add('이름이 비어있습니다');
       }
-      
+
       if (celebrity.notes?.isEmpty ?? true) {
         issues.add('설명이 비어있습니다');
       }
@@ -161,7 +159,7 @@ class CelebrityCrawlingService {
         final sortedData = List<Map<String, dynamic>>.from(response)
           ..sort((a, b) => DateTime.parse(b['crawled_at'])
               .compareTo(DateTime.parse(a['crawled_at'])));
-        
+
         lastCrawledAt = DateTime.parse(sortedData.first['crawled_at']);
       }
 
@@ -169,7 +167,8 @@ class CelebrityCrawlingService {
         totalCelebrities: totalCount,
         crawledCelebrities: crawledCount,
         lastCrawledAt: lastCrawledAt,
-        crawlingPercentage: totalCount > 0 ? (crawledCount / totalCount) * 100 : 0,
+        crawlingPercentage:
+            totalCount > 0 ? (crawledCount / totalCount) * 100 : 0,
       );
     } catch (e) {
       throw Exception('통계 조회 실패: ${e.toString()}');
@@ -206,7 +205,8 @@ class BatchCrawlingResult {
     required this.failureCount,
   });
 
-  double get successRate => totalCount > 0 ? (successCount / totalCount) * 100 : 0;
+  double get successRate =>
+      totalCount > 0 ? (successCount / totalCount) * 100 : 0;
 }
 
 /// 데이터 검증 결과 클래스

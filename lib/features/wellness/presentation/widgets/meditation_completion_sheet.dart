@@ -142,9 +142,7 @@ class _MeditationCompletionSheetState
                         width: 40,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: isDark
-                              ? DSColors.borderDark
-                              : DSColors.border,
+                          color: isDark ? DSColors.borderDark : DSColors.border,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -366,7 +364,8 @@ class _MeditationCompletionSheetState
     );
   }
 
-  Map<String, String> _getEncouragementMessages(MeditationStatistics statistics) {
+  Map<String, String> _getEncouragementMessages(
+      MeditationStatistics statistics) {
     final hour = DateTime.now().hour;
     final totalMinutes = statistics.totalMinutes;
 

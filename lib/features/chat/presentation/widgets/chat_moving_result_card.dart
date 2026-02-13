@@ -23,7 +23,8 @@ class ChatMovingResultCard extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<ChatMovingResultCard> createState() => _ChatMovingResultCardState();
+  ConsumerState<ChatMovingResultCard> createState() =>
+      _ChatMovingResultCardState();
 }
 
 class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
@@ -154,11 +155,14 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
                     ),
                     // 좋아요 + 공유 버튼
                     FortuneActionButtons(
-                      contentId: widget.fortune.id.isNotEmpty ? widget.fortune.id : 'moving_${DateTime.now().millisecondsSinceEpoch}',
+                      contentId: widget.fortune.id.isNotEmpty
+                          ? widget.fortune.id
+                          : 'moving_${DateTime.now().millisecondsSinceEpoch}',
                       contentType: 'moving',
                       fortuneType: 'moving',
                       shareTitle: '이사운 분석 결과',
-                      shareContent: data['overall_fortune'] as String? ?? widget.fortune.content,
+                      shareContent: data['overall_fortune'] as String? ??
+                          widget.fortune.content,
                       iconSize: 20,
                       iconColor: colors.textPrimary.withValues(alpha: 0.9),
                     ),
@@ -229,12 +233,15 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
     final typography = context.typography;
 
     // settlement_index 추출
-    final settlementData = data['settlement_index'] as Map<String, dynamic>? ?? {};
+    final settlementData =
+        data['settlement_index'] as Map<String, dynamic>? ?? {};
     final settlementScore = (settlementData['score'] as num?)?.toInt() ?? 75;
-    final settlementDesc = settlementData['description'] as String? ?? '정착 분석 중';
+    final settlementDesc =
+        settlementData['description'] as String? ?? '정착 분석 중';
 
     // neighborhood_chemistry 추출
-    final chemistryData = data['neighborhood_chemistry'] as Map<String, dynamic>? ?? {};
+    final chemistryData =
+        data['neighborhood_chemistry'] as Map<String, dynamic>? ?? {};
     final chemistryScore = (chemistryData['score'] as num?)?.toInt() ?? 70;
     final chemistryDesc = chemistryData['description'] as String? ?? '동네 분석 중';
     final vibeMatch = chemistryData['vibe_match'] as String? ?? '';
@@ -278,7 +285,9 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
             label: '이웃 케미',
             emoji: '🤝',
             score: chemistryScore,
-            description: vibeMatch.isNotEmpty ? '$vibeMatch - $chemistryDesc' : chemistryDesc,
+            description: vibeMatch.isNotEmpty
+                ? '$vibeMatch - $chemistryDesc'
+                : chemistryDesc,
             color: _getScoreColor(chemistryScore),
           ),
 
@@ -373,17 +382,20 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
     );
   }
 
-  Widget _buildDirectionSection(BuildContext context, Map<String, dynamic> data) {
+  Widget _buildDirectionSection(
+      BuildContext context, Map<String, dynamic> data) {
     final colors = context.colors;
     final typography = context.typography;
 
-    final directionData = data['direction_analysis'] as Map<String, dynamic>? ?? {};
+    final directionData =
+        data['direction_analysis'] as Map<String, dynamic>? ?? {};
     if (directionData.isEmpty) return const SizedBox.shrink();
 
     final direction = directionData['direction'] ?? '';
     final element = directionData['element'] ?? '';
     final meaning = directionData['direction_meaning'] ?? '';
-    final compatibility = (directionData['compatibility'] as num?)?.toInt() ?? 0;
+    final compatibility =
+        (directionData['compatibility'] as num?)?.toInt() ?? 0;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
@@ -404,7 +416,8 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
               if (direction.isNotEmpty) ...[
                 const Spacer(),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: colors.accent.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(DSRadius.sm),
@@ -451,8 +464,10 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
                       Expanded(
                         child: LinearProgressIndicator(
                           value: compatibility / 100,
-                          backgroundColor: colors.textSecondary.withValues(alpha: 0.1),
-                          valueColor: AlwaysStoppedAnimation(_getScoreColor(compatibility)),
+                          backgroundColor:
+                              colors.textSecondary.withValues(alpha: 0.1),
+                          valueColor: AlwaysStoppedAnimation(
+                              _getScoreColor(compatibility)),
                           minHeight: 6,
                           borderRadius: BorderRadius.circular(3),
                         ),
@@ -550,7 +565,8 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
     );
   }
 
-  Widget _buildFengShuiSection(BuildContext context, Map<String, dynamic> data) {
+  Widget _buildFengShuiSection(
+      BuildContext context, Map<String, dynamic> data) {
     final colors = context.colors;
     final typography = context.typography;
 
@@ -562,7 +578,10 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
       {'emoji': '🛋️', 'label': '거실', 'text': fengShui['living_room']},
       {'emoji': '🛏️', 'label': '침실', 'text': fengShui['bedroom']},
       {'emoji': '🍳', 'label': '부엌', 'text': fengShui['kitchen']},
-    ].where((tip) => tip['text'] != null && (tip['text'] as String).isNotEmpty).toList();
+    ]
+        .where(
+            (tip) => tip['text'] != null && (tip['text'] as String).isNotEmpty)
+        .toList();
 
     if (tips.isEmpty) return const SizedBox.shrink();
 
@@ -592,7 +611,8 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(tip['emoji'] as String, style: const TextStyle(fontSize: 14)),
+                    Text(tip['emoji'] as String,
+                        style: const TextStyle(fontSize: 14)),
                     const SizedBox(width: 6),
                     Text(
                       '${tip['label']}: ',
@@ -620,7 +640,8 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
     );
   }
 
-  Widget _buildLuckyItemsSection(BuildContext context, Map<String, dynamic> data) {
+  Widget _buildLuckyItemsSection(
+      BuildContext context, Map<String, dynamic> data) {
     final colors = context.colors;
     final typography = context.typography;
 
@@ -631,7 +652,8 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
     final itemsColors = luckyItems['colors'] as List<dynamic>? ?? [];
     final plants = luckyItems['plants'] as List<dynamic>? ?? [];
 
-    if (items.isEmpty && itemsColors.isEmpty && plants.isEmpty) return const SizedBox.shrink();
+    if (items.isEmpty && itemsColors.isEmpty && plants.isEmpty)
+      return const SizedBox.shrink();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
@@ -656,9 +678,12 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
             spacing: DSSpacing.xs,
             runSpacing: DSSpacing.xs,
             children: [
-              ...items.map((item) => _buildLuckyChip(context, '✨', item.toString())),
-              ...itemsColors.map((c) => _buildLuckyChip(context, '🎨', c.toString())),
-              ...plants.map((p) => _buildLuckyChip(context, '🪴', p.toString())),
+              ...items.map(
+                  (item) => _buildLuckyChip(context, '✨', item.toString())),
+              ...itemsColors
+                  .map((c) => _buildLuckyChip(context, '🎨', c.toString())),
+              ...plants
+                  .map((p) => _buildLuckyChip(context, '🪴', p.toString())),
             ],
           ),
           const SizedBox(height: DSSpacing.md),
@@ -822,7 +847,9 @@ class _ChecklistItemTile extends StatelessWidget {
                 color: isChecked ? colors.accent : Colors.transparent,
                 borderRadius: BorderRadius.circular(6),
                 border: Border.all(
-                  color: isChecked ? colors.accent : colors.textSecondary.withValues(alpha: 0.3),
+                  color: isChecked
+                      ? colors.accent
+                      : colors.textSecondary.withValues(alpha: 0.3),
                   width: 2,
                 ),
               ),
@@ -846,11 +873,11 @@ class _ChecklistItemTile extends StatelessWidget {
                   Text(
                     task,
                     style: typography.bodySmall.copyWith(
-                      color: isChecked
-                          ? colors.textSecondary
-                          : colors.textPrimary,
+                      color:
+                          isChecked ? colors.textSecondary : colors.textPrimary,
                       decoration: isChecked ? TextDecoration.lineThrough : null,
-                      fontWeight: isChecked ? FontWeight.normal : FontWeight.w500,
+                      fontWeight:
+                          isChecked ? FontWeight.normal : FontWeight.w500,
                     ),
                   ),
                   if (reason.isNotEmpty) ...[

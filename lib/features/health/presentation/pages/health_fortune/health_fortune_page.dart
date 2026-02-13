@@ -11,7 +11,8 @@ import '../../widgets/health_score_card.dart';
 import '../../widgets/health_timeline_chart.dart';
 import '../../../domain/models/health_fortune_model.dart';
 import '../../../data/services/health_fortune_service.dart';
-import '../../../../../core/widgets/unified_button.dart' show UnifiedButton, BottomButtonSpacing;
+import '../../../../../core/widgets/unified_button.dart'
+    show UnifiedButton, BottomButtonSpacing;
 import '../../../../../core/widgets/unified_button_enums.dart';
 import '../../../../../shared/components/toast.dart';
 import '../../../../../presentation/providers/providers.dart';
@@ -262,7 +263,6 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
             });
           },
         ),
-
         Expanded(
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
@@ -327,7 +327,8 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
           const SizedBox(height: 20),
 
           if (_fortuneResult!.tomorrowPreview != null)
-            TomorrowPreviewSection(tomorrowPreview: _fortuneResult!.tomorrowPreview!),
+            TomorrowPreviewSection(
+                tomorrowPreview: _fortuneResult!.tomorrowPreview!),
 
           const SizedBox(height: 40),
 
@@ -505,7 +506,10 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
         onPressed: _generateHealthFortune,
         isEnabled: !_isLoading,
         isLoading: _isLoading,
-        icon: _isLoading ? null : const Icon(Icons.auto_awesome_rounded, size: 20, color: Colors.white),
+        icon: _isLoading
+            ? null
+            : const Icon(Icons.auto_awesome_rounded,
+                size: 20, color: Colors.white),
       );
     }
 

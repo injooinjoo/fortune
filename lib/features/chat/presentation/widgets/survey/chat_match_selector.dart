@@ -136,7 +136,8 @@ class _ChatMatchSelectorState extends ConsumerState<ChatMatchSelector> {
   SportsGame? _selectedGame;
 
   /// 선택된 종목 (String → SportType)
-  SportType? get _selectedSportType => sportTypeFromString(widget.selectedSport);
+  SportType? get _selectedSportType =>
+      sportTypeFromString(widget.selectedSport);
 
   /// 필터링된 지역 목록 (선택된 종목의 리그가 있는 지역만)
   List<SportsRegion> get _filteredRegions {
@@ -242,8 +243,7 @@ class _ChatMatchSelectorState extends ConsumerState<ChatMatchSelector> {
     );
   }
 
-  Widget _buildBreadcrumb(
-      DSColorScheme colors, DSTypographyScheme typography) {
+  Widget _buildBreadcrumb(DSColorScheme colors, DSTypographyScheme typography) {
     final parts = <String>[];
 
     if (_selectedRegion != null) {

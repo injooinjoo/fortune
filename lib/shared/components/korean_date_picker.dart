@@ -23,9 +23,8 @@ class KoreanDatePicker extends StatefulWidget {
     this.showAge = true,
     this.minDate,
     this.maxDate,
-  }) : assert(
-          onDateSelected != null || onDateChanged != null,
-          'Either onDateSelected or onDateChanged must be provided');
+  }) : assert(onDateSelected != null || onDateChanged != null,
+            'Either onDateSelected or onDateChanged must be provided');
 
   @override
   State<KoreanDatePicker> createState() => _KoreanDatePickerState();
@@ -104,7 +103,6 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
               ),
             ),
           ),
-
         GestureDetector(
           onTap: () {
             DSHaptics.light();
@@ -156,7 +154,6 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
             ),
           ),
         ),
-
         AnimatedContainer(
           duration: DSAnimation.durationMedium,
           height: isExpanded ? null : 0,
@@ -246,9 +243,9 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                           ],
                         ),
                       ).animate().fadeIn().scale(
-                        begin: const Offset(0.8, 0.8),
-                        end: const Offset(1, 1),
-                      ),
+                            begin: const Offset(0.8, 0.8),
+                            end: const Offset(1, 1),
+                          ),
                     ],
                   ],
                 ),
@@ -406,8 +403,8 @@ class BirthDatePreview extends StatelessWidget {
         ),
       ),
     ).animate().fadeIn().scale(
-      begin: const Offset(0.9, 0.9),
-      end: const Offset(1, 1),
-    );
+          begin: const Offset(0.9, 0.9),
+          end: const Offset(1, 1),
+        );
   }
 }

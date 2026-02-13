@@ -23,10 +23,10 @@ enum CelebrityMasterCategory {
   other('기타', 'other');
 
   const CelebrityMasterCategory(this.displayName, this.code);
-  
+
   final String displayName;
   final String code;
-  
+
   static CelebrityMasterCategory fromCode(String code) {
     return CelebrityMasterCategory.values.firstWhere(
       (category) => category.code == code,
@@ -45,21 +45,21 @@ enum CelebritySubcategory {
   trot('트로트', 'trot'),
   rock('록/메탈', 'rock'),
   indie('인디', 'indie'),
-  
+
   // 배우 세부 카테고리
   movieActor('영화배우', 'movie_actor'),
   dramaActor('드라마배우', 'drama_actor'),
   musicalActor('뮤지컬배우', 'musical_actor'),
   voiceActor('성우', 'voice_actor'),
   childActor('아역배우', 'child_actor'),
-  
+
   // 스트리머 세부 카테고리
   twitchStreamer('트위치 스트리머', 'twitch_streamer'),
   afreecaTVStreamer('아프리카TV BJ', 'afreecatv_streamer'),
   chzzkStreamer('치지직 스트리머', 'chzzk_streamer'),
   gameStreamer('게임 스트리머', 'game_streamer'),
   talkStreamer('토크 스트리머', 'talk_streamer'),
-  
+
   // 유튜버 세부 카테고리
   entertainmentYoutuber('엔터테인먼트 유튜버', 'entertainment_youtuber'),
   gameYoutuber('게임 유튜버', 'game_youtuber'),
@@ -68,7 +68,7 @@ enum CelebritySubcategory {
   beautyYoutuber('뷰티 유튜버', 'beauty_youtuber'),
   fashionYoutuber('패션 유튜버', 'fashion_youtuber'),
   techYoutuber('테크 유튜버', 'tech_youtuber'),
-  
+
   // 정치인 세부 카테고리
   president('대통령', 'president'),
   primeMinister('총리', 'prime_minister'),
@@ -77,12 +77,12 @@ enum CelebritySubcategory {
   partyLeader('당대표', 'party_leader'),
   governor('시도지사', 'governor'),
   mayor('시장/구청장', 'mayor'),
-  
+
   // 기업인 세부 카테고리
   chaeboCEO('대기업 회장/CEO', 'chaebo_ceo'),
   startupFounder('스타트업 대표', 'startup_founder'),
   techCEO('IT기업 CEO', 'tech_ceo'),
-  
+
   // 운동선수 세부 카테고리
   footballPlayer('축구선수', 'football_player'),
   baseballPlayer('야구선수', 'baseball_player'),
@@ -94,15 +94,15 @@ enum CelebritySubcategory {
   trackAthlete('육상선수', 'track_athlete'),
   martialArtist('격투기선수', 'martial_artist'),
   esportsPlayer('E스포츠선수', 'esports_player'),
-  
+
   // 기타
   none('없음', 'none');
 
   const CelebritySubcategory(this.displayName, this.code);
-  
+
   final String displayName;
   final String code;
-  
+
   static CelebritySubcategory fromCode(String code) {
     return CelebritySubcategory.values.firstWhere(
       (subcategory) => subcategory.code == code,
@@ -120,12 +120,12 @@ class CelebrityMasterListItem {
   final CelebritySubcategory? subcategory;
   final int popularityRank;
   final int? searchVolume;
-  final String? lastActive;  // 최근 활동 시기
-  final bool isCrawled;      // 상세정보 크롤링 여부
-  final int crawlPriority;   // 크롤링 우선순위
+  final String? lastActive; // 최근 활동 시기
+  final bool isCrawled; // 상세정보 크롤링 여부
+  final int crawlPriority; // 크롤링 우선순위
   final String? description; // 간단한 설명
   final List<String>? keywords; // 검색 키워드
-  final String? platform;    // 주요 활동 플랫폼 (유튜브, 트위치 등)
+  final String? platform; // 주요 활동 플랫폼 (유튜브, 트위치 등)
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -147,9 +147,9 @@ class CelebrityMasterListItem {
     required this.updatedAt,
   });
 
-  factory CelebrityMasterListItem.fromJson(Map<String, dynamic> json) => 
+  factory CelebrityMasterListItem.fromJson(Map<String, dynamic> json) =>
       _$CelebrityMasterListItemFromJson(json);
-  
+
   Map<String, dynamic> toJson() => _$CelebrityMasterListItemToJson(this);
 
   CelebrityMasterListItem copyWith({
@@ -206,9 +206,9 @@ class CelebrityCategoryList {
     required this.celebrities,
   });
 
-  factory CelebrityCategoryList.fromJson(Map<String, dynamic> json) => 
+  factory CelebrityCategoryList.fromJson(Map<String, dynamic> json) =>
       _$CelebrityCategoryListFromJson(json);
-  
+
   Map<String, dynamic> toJson() => _$CelebrityCategoryListToJson(this);
 }
 
@@ -216,7 +216,7 @@ class CelebrityCategoryList {
 class CrawlPriorityCalculator {
   static int calculatePriority(CelebrityMasterListItem celebrity) {
     int priority = 0;
-    
+
     // 카테고리별 가중치
     final categoryWeight = {
       CelebrityMasterCategory.singer: 1.5,
@@ -230,14 +230,14 @@ class CrawlPriorityCalculator {
       CelebrityMasterCategory.influencer: 1.1,
       CelebrityMasterCategory.broadcaster: 1.2,
     };
-    
+
     // 인기도 순위 기반 점수 (1위=100점, 100위=1점)
     priority += (101 - celebrity.popularityRank) * 10;
-    
+
     // 카테고리 가중치 적용
     final weight = categoryWeight[celebrity.category] ?? 1.0;
     priority = (priority * weight).round();
-    
+
     // 검색량 보너스
     if (celebrity.searchVolume != null) {
       if (celebrity.searchVolume! > 1000000) {
@@ -248,7 +248,7 @@ class CrawlPriorityCalculator {
         priority += 20;
       }
     }
-    
+
     // 최근 활동 보너스
     if (celebrity.lastActive != null) {
       final now = DateTime.now();
@@ -262,7 +262,7 @@ class CrawlPriorityCalculator {
         }
       }
     }
-    
+
     return priority;
   }
 }

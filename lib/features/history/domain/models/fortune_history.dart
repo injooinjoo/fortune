@@ -7,7 +7,7 @@ class FortuneHistory extends Equatable {
   final String title;
   final Map<String, dynamic> summary;
   final DateTime createdAt;
-  
+
   // 새로 추가되는 필드들 (옵셔널)
   final Map<String, dynamic>? metadata; // 사용자 입력 정보, 설정값 등
   final Map<String, dynamic>? detailedResult; // 상세 운세 결과
@@ -44,13 +44,14 @@ class FortuneHistory extends Equatable {
       summary: json['summary'] as Map<String, dynamic>,
       createdAt: DateTime.parse(json['created_at'] as String),
       metadata: json['metadata'] as Map<String, dynamic>?,
-      detailedResult: json['fortune_data'] as Map<String, dynamic>? ?? json['detailed_result'] as Map<String, dynamic>?,
+      detailedResult: json['fortune_data'] as Map<String, dynamic>? ??
+          json['detailed_result'] as Map<String, dynamic>?,
       tags: (json['tags'] as List?)?.cast<String>(),
       viewCount: json['view_count'] as int?,
       isShared: json['is_shared'] as bool?,
-      lastViewedAt: json['last_viewed_at'] != null 
-        ? DateTime.parse(json['last_viewed_at'] as String)
-        : null,
+      lastViewedAt: json['last_viewed_at'] != null
+          ? DateTime.parse(json['last_viewed_at'] as String)
+          : null,
       mood: json['mood'] as String?,
       actualResult: json['actual_result'] as String?,
     );
@@ -69,7 +70,8 @@ class FortuneHistory extends Equatable {
       if (tags != null) 'tags': tags,
       if (viewCount != null) 'view_count': viewCount,
       if (isShared != null) 'is_shared': isShared,
-      if (lastViewedAt != null) 'last_viewed_at': lastViewedAt!.toIso8601String(),
+      if (lastViewedAt != null)
+        'last_viewed_at': lastViewedAt!.toIso8601String(),
       if (mood != null) 'mood': mood,
       if (actualResult != null) 'actual_result': actualResult,
     };
@@ -112,8 +114,19 @@ class FortuneHistory extends Equatable {
 
   @override
   List<Object?> get props => [
-    id, userId, fortuneType, title, summary, createdAt,
-    metadata, detailedResult, tags, viewCount, isShared,
-    lastViewedAt, mood, actualResult,
-  ];
+        id,
+        userId,
+        fortuneType,
+        title,
+        summary,
+        createdAt,
+        metadata,
+        detailedResult,
+        tags,
+        viewCount,
+        isShared,
+        lastViewedAt,
+        mood,
+        actualResult,
+      ];
 }

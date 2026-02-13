@@ -44,13 +44,13 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
           setState(() => _isLoading = false);
           // 구독 상태 업데이트 (상세 정보 포함)
           await ref.read(subscriptionProvider.notifier).setActive(
-            true,
-            plan: _selectedPlan,
-            expiresAt: _calculateExpirationDate(_selectedPlan),
-            productId: _selectedPlan == 'pro'
-                ? InAppProducts.proSubscription
-                : InAppProducts.maxSubscription,
-          );
+                true,
+                plan: _selectedPlan,
+                expiresAt: _calculateExpirationDate(_selectedPlan),
+                productId: _selectedPlan == 'pro'
+                    ? InAppProducts.proSubscription
+                    : InAppProducts.maxSubscription,
+              );
           if (!mounted) return;
           Toast.show(context, message: message, type: ToastType.success);
           Navigator.of(context).pop(); // 구독 완료 후 이전 화면으로
@@ -113,236 +113,238 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
       body: Stack(
         children: [
           SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(
-            horizontal: DSSpacing.pageHorizontal),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: DSSpacing.md),
+            padding: const EdgeInsets.symmetric(
+                horizontal: DSSpacing.pageHorizontal),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: DSSpacing.md),
 
-            // 구독자: 프리미엄 상태 카드
-            if (isSubscriber) ...[
-              _buildActiveSubscriptionCard(subscriptionState),
-              const SizedBox(height: DSSpacing.xl),
-            ],
+                // 구독자: 프리미엄 상태 카드
+                if (isSubscriber) ...[
+                  _buildActiveSubscriptionCard(subscriptionState),
+                  const SizedBox(height: DSSpacing.xl),
+                ],
 
-            // 비구독자: 프리미엄 소개 배너 + 플랜 선택
-            if (!isSubscriber) ...[
-              // Premium Benefits - 황색(Hwang) 그라데이션으로 복/풍요의 느낌
-              Container(
-                padding: const EdgeInsets.all(DSSpacing.lg),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      DSColors.warning.withValues(alpha: 0.8),
-                      DSColors.warning,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(DSRadius.lg),
-                  boxShadow: [
-                    BoxShadow(
-                      color: DSColors.warning.withValues(alpha: 0.3),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.workspace_premium,
-                          color: colors.textPrimary,
-                          size: 32,
+                // 비구독자: 프리미엄 소개 배너 + 플랜 선택
+                if (!isSubscriber) ...[
+                  // Premium Benefits - 황색(Hwang) 그라데이션으로 복/풍요의 느낌
+                  Container(
+                    padding: const EdgeInsets.all(DSSpacing.lg),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          DSColors.warning.withValues(alpha: 0.8),
+                          DSColors.warning,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(DSRadius.lg),
+                      boxShadow: [
+                        BoxShadow(
+                          color: DSColors.warning.withValues(alpha: 0.3),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
                         ),
-                        const SizedBox(width: DSSpacing.md),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.workspace_premium,
+                              color: colors.textPrimary,
+                              size: 32,
+                            ),
+                            const SizedBox(width: DSSpacing.md),
+                            Text(
+                              '프리미엄운세',
+                              style: context.heading2.copyWith(
+                                color: colors.textPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: DSSpacing.md),
                         Text(
-                          '프리미엄운세',
-                          style: context.heading2.copyWith(
-                            color: colors.textPrimary,
+                          '무제한 운세와 프리미엄 기능을 경험하세요',
+                          style: context.bodySmall.copyWith(
+                            color: colors.textPrimary.withValues(alpha: 0.9),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: DSSpacing.md),
-                    Text(
-                      '무제한 운세와 프리미엄 기능을 경험하세요',
-                      style: context.bodySmall.copyWith(
-                        color: colors.textPrimary.withValues(alpha: 0.9),
-                      ),
+                  ),
+
+                  const SizedBox(height: DSSpacing.xl),
+
+                  // Plan Selection
+                  Text(
+                    '구독 플랜 선택',
+                    style: context.labelSmall.copyWith(
+                      color: colors.textSecondary,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.5,
                     ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: DSSpacing.xl),
-
-              // Plan Selection
-              Text(
-                '구독 플랜 선택',
-                style: context.labelSmall.copyWith(
-                  color: colors.textSecondary,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.5,
-                ),
-              ),
-
-              const SizedBox(height: DSSpacing.md),
-
-              // Free Plan
-              _buildPlanCard(
-                id: 'free',
-                title: '무료',
-                price: '₩0',
-                period: '',
-                badge: '지금',
-              ),
-
-              const SizedBox(height: DSSpacing.md),
-
-              // Pro Plan
-              _buildPlanCard(
-                id: 'pro',
-                title: 'Pro 구독',
-                price: '₩4,500',
-                period: '/ 월',
-                badge: null,
-                subtitle: '매월 30,000 토큰',
-              ),
-
-              const SizedBox(height: DSSpacing.md),
-
-              // Max Plan
-              _buildPlanCard(
-                id: 'max',
-                title: 'Max 구독',
-                price: '₩12,900',
-                period: '/ 월',
-                badge: '인기',
-                subtitle: '매월 100,000 토큰',
-              ),
-
-              const SizedBox(height: DSSpacing.xl),
-            ],
-
-            // 공통: Premium Features
-            Text(
-              '프리미엄운세 혜택',
-              style: context.labelSmall.copyWith(
-                color: colors.textSecondary,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.5,
-              ),
-            ),
-
-            const SizedBox(height: DSSpacing.md),
-
-            Container(
-              decoration: BoxDecoration(
-                color: colors.surface,
-                borderRadius: BorderRadius.circular(DSRadius.md),
-                border: Border.all(
-                  color: colors.border,
-                  width: 1,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: colors.textPrimary.withValues(alpha: 0.04),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
                   ),
+
+                  const SizedBox(height: DSSpacing.md),
+
+                  // Free Plan
+                  _buildPlanCard(
+                    id: 'free',
+                    title: '무료',
+                    price: '₩0',
+                    period: '',
+                    badge: '지금',
+                  ),
+
+                  const SizedBox(height: DSSpacing.md),
+
+                  // Pro Plan
+                  _buildPlanCard(
+                    id: 'pro',
+                    title: 'Pro 구독',
+                    price: '₩4,500',
+                    period: '/ 월',
+                    badge: null,
+                    subtitle: '매월 30,000 토큰',
+                  ),
+
+                  const SizedBox(height: DSSpacing.md),
+
+                  // Max Plan
+                  _buildPlanCard(
+                    id: 'max',
+                    title: 'Max 구독',
+                    price: '₩12,900',
+                    period: '/ 월',
+                    badge: '인기',
+                    subtitle: '매월 100,000 토큰',
+                  ),
+
+                  const SizedBox(height: DSSpacing.xl),
                 ],
-              ),
-              child: Column(
-                children: [
-                  _buildFeatureItem(
-                    icon: Icons.all_inclusive,
-                    title: '무제한 운세',
-                    subtitle: '모든 운세를 무제한으로 확인',
-                  ),
-                  _buildFeatureItem(
-                    icon: Icons.all_inclusive,
-                    title: '월간 토큰',
-                    subtitle: 'Pro: 30,000개 / Max: 100,000개 매월 지급',
-                  ),
-                  _buildFeatureItem(
-                    icon: Icons.star,
-                    title: '프리미엄 운세',
-                    subtitle: '더 상세한 프리미엄 운세',
-                  ),
-                  _buildFeatureItem(
-                    icon: Icons.priority_high,
-                    title: '우선 지원',
-                    subtitle: '고객센터 우선 응대',
-                    isLast: true,
-                  ),
-                ],
-              ),
-            ),
 
-            const SizedBox(height: DSSpacing.xxl),
-
-            // Terms
-            Center(
-              child: Text(
-                '구독은 언제든 해지 가능합니다\n자동 갱신되며 해지 전까지 요금이 청구됩니다',
-                textAlign: TextAlign.center,
-                style: context.labelSmall.copyWith(
-                  color: colors.textSecondary,
-                ),
-              ),
-            ),
-
-            const SizedBox(height: DSSpacing.lg),
-
-            // Subscription Management & Restore Buttons (Apple 심사 필수)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextButton.icon(
-                  onPressed: () => _showSubscriptionManagementGuide(context),
-                  icon: Icon(
-                    Icons.settings_outlined,
-                    size: 16,
+                // 공통: Premium Features
+                Text(
+                  '프리미엄운세 혜택',
+                  style: context.labelSmall.copyWith(
                     color: colors.textSecondary,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.5,
                   ),
-                  label: Text(
-                    '구독 관리',
-                    style: context.bodySmall.copyWith(
+                ),
+
+                const SizedBox(height: DSSpacing.md),
+
+                Container(
+                  decoration: BoxDecoration(
+                    color: colors.surface,
+                    borderRadius: BorderRadius.circular(DSRadius.md),
+                    border: Border.all(
+                      color: colors.border,
+                      width: 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: colors.textPrimary.withValues(alpha: 0.04),
+                        blurRadius: 10,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      _buildFeatureItem(
+                        icon: Icons.all_inclusive,
+                        title: '무제한 운세',
+                        subtitle: '모든 운세를 무제한으로 확인',
+                      ),
+                      _buildFeatureItem(
+                        icon: Icons.all_inclusive,
+                        title: '월간 토큰',
+                        subtitle: 'Pro: 30,000개 / Max: 100,000개 매월 지급',
+                      ),
+                      _buildFeatureItem(
+                        icon: Icons.star,
+                        title: '프리미엄 운세',
+                        subtitle: '더 상세한 프리미엄 운세',
+                      ),
+                      _buildFeatureItem(
+                        icon: Icons.priority_high,
+                        title: '우선 지원',
+                        subtitle: '고객센터 우선 응대',
+                        isLast: true,
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: DSSpacing.xxl),
+
+                // Terms
+                Center(
+                  child: Text(
+                    '구독은 언제든 해지 가능합니다\n자동 갱신되며 해지 전까지 요금이 청구됩니다',
+                    textAlign: TextAlign.center,
+                    style: context.labelSmall.copyWith(
                       color: colors.textSecondary,
                     ),
                   ),
                 ),
-                Container(
-                  width: 1,
-                  height: 16,
-                  color: colors.border,
-                  margin: const EdgeInsets.symmetric(horizontal: DSSpacing.sm),
-                ),
-                TextButton.icon(
-                  onPressed: _isLoading ? null : _restorePurchases,
-                  icon: Icon(
-                    Icons.refresh,
-                    size: 16,
-                    color: colors.accent,
-                  ),
-                  label: Text(
-                    '구매 복원',
-                    style: context.bodySmall.copyWith(
-                      color: colors.accent,
+
+                const SizedBox(height: DSSpacing.lg),
+
+                // Subscription Management & Restore Buttons (Apple 심사 필수)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton.icon(
+                      onPressed: () =>
+                          _showSubscriptionManagementGuide(context),
+                      icon: Icon(
+                        Icons.settings_outlined,
+                        size: 16,
+                        color: colors.textSecondary,
+                      ),
+                      label: Text(
+                        '구독 관리',
+                        style: context.bodySmall.copyWith(
+                          color: colors.textSecondary,
+                        ),
+                      ),
                     ),
-                  ),
+                    Container(
+                      width: 1,
+                      height: 16,
+                      color: colors.border,
+                      margin:
+                          const EdgeInsets.symmetric(horizontal: DSSpacing.sm),
+                    ),
+                    TextButton.icon(
+                      onPressed: _isLoading ? null : _restorePurchases,
+                      icon: Icon(
+                        Icons.refresh,
+                        size: 16,
+                        color: colors.accent,
+                      ),
+                      label: Text(
+                        '구매 복원',
+                        style: context.bodySmall.copyWith(
+                          color: colors.accent,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
+
+                const SizedBox(height: 100), // FloatingBottomButton 공간 확보
               ],
             ),
-
-            const SizedBox(height: 100), // FloatingBottomButton 공간 확보
-          ],
-        ),
           ),
 
           // Floating Bottom Button (구독자가 아닌 경우에만 표시)
@@ -355,7 +357,9 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                       : _selectedPlan == 'pro'
                           ? 'Pro 구독 시작하기 - ₩4,500/월'
                           : 'Max 구독 시작하기 - ₩12,900/월',
-              onPressed: _selectedPlan == 'free' || _isLoading ? null : _startSubscription,
+              onPressed: _selectedPlan == 'free' || _isLoading
+                  ? null
+                  : _startSubscription,
               isEnabled: _selectedPlan != 'free' && !_isLoading,
             ),
 

@@ -153,9 +153,8 @@ class _NumericDateInputState extends State<NumericDateInput> {
               ),
               prefixIcon: Icon(
                 Icons.calendar_today,
-                color: _focusNode.hasFocus
-                    ? colors.accent
-                    : colors.textTertiary,
+                color:
+                    _focusNode.hasFocus ? colors.accent : colors.textTertiary,
                 size: 20,
               ),
               suffixIcon: _controller.text.isNotEmpty
@@ -182,7 +181,8 @@ class _NumericDateInputState extends State<NumericDateInput> {
         ),
         if (_errorText != null)
           Padding(
-            padding: const EdgeInsets.only(top: DSSpacing.sm, left: DSSpacing.sm),
+            padding:
+                const EdgeInsets.only(top: DSSpacing.sm, left: DSSpacing.sm),
             child: Row(
               children: [
                 Icon(

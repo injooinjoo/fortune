@@ -26,7 +26,8 @@ class MockAuthResponse extends Mock implements AuthResponse {}
 
 class MockStorageService extends Mock implements StorageService {}
 
-class MockBaseSocialAuthProvider extends Mock implements BaseSocialAuthProvider {}
+class MockBaseSocialAuthProvider extends Mock
+    implements BaseSocialAuthProvider {}
 
 // ============================================
 // Test Data Factory - Auth
@@ -44,11 +45,12 @@ class AuthTestData {
     when(() => mockUser.id).thenReturn(id);
     when(() => mockUser.email).thenReturn(email);
     when(() => mockUser.phone).thenReturn(phone);
-    when(() => mockUser.userMetadata).thenReturn(userMetadata ?? {
-      'full_name': 'Test User',
-      'name': 'Test User',
-      'avatar_url': 'https://example.com/avatar.png',
-    });
+    when(() => mockUser.userMetadata).thenReturn(userMetadata ??
+        {
+          'full_name': 'Test User',
+          'name': 'Test User',
+          'avatar_url': 'https://example.com/avatar.png',
+        });
     when(() => mockUser.appMetadata).thenReturn({});
     when(() => mockUser.aud).thenReturn('authenticated');
     when(() => mockUser.createdAt).thenReturn(DateTime.now().toIso8601String());

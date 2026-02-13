@@ -97,7 +97,8 @@ void main() {
           accessToken: 'new-access-token',
           refreshToken: 'new-refresh-token',
         );
-        final authResponse = AuthTestData.createMockAuthResponse(session: newSession);
+        final authResponse =
+            AuthTestData.createMockAuthResponse(session: newSession);
 
         when(() => mockGoTrueClient.refreshSession())
             .thenAnswer((_) async => authResponse);

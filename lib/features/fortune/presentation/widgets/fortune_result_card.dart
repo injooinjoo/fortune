@@ -26,7 +26,7 @@ class FortuneResultCard extends ConsumerWidget {
   final bool showRecommendations;
   final bool showWarnings;
   final Widget? customContent;
-  
+
   const FortuneResultCard({
     super.key,
     required this.fortune,
@@ -51,7 +51,7 @@ class FortuneResultCard extends ConsumerWidget {
         children: [
           // 헤더 - 인사이트 제목과 날짜
           _buildHeader(context, isDark),
-          
+
           // 점수 표시 (옵션)
           if (showScore && fortune.overallScore != null)
             _buildScoreSection(context, isDark)
@@ -60,41 +60,47 @@ class FortuneResultCard extends ConsumerWidget {
                 .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1)),
 
           // 헥사곤 차트 및 카테고리 카드 제거 - 동양화 스타일 단순화
-          
+
           // 메인 운세 내용
           _buildMainContent(context, isDark)
               .animate()
               .fadeIn(duration: 600.ms, delay: 400.ms)
               .slideY(begin: 0.1, end: 0),
-          
+
           // 커스텀 컨텐츠 (옵션)
           if (customContent != null)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: DSSpacing.sm + 4),
               child: customContent!,
             ),
-          
+
           // 행운 아이템 (옵션)
-          if (showLuckyItems && fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty)
+          if (showLuckyItems &&
+              fortune.luckyItems != null &&
+              fortune.luckyItems!.isNotEmpty)
             _buildLuckyItemsSection(context, isDark)
                 .animate()
                 .fadeIn(duration: 600.ms, delay: 600.ms)
                 .slideY(begin: 0.1, end: 0),
-          
+
           // 추천 사항 (옵션)
-          if (showRecommendations && fortune.recommendations != null && fortune.recommendations!.isNotEmpty)
+          if (showRecommendations &&
+              fortune.recommendations != null &&
+              fortune.recommendations!.isNotEmpty)
             _buildRecommendationsSection(context, isDark)
                 .animate()
                 .fadeIn(duration: 600.ms, delay: 800.ms)
                 .slideY(begin: 0.1, end: 0),
-          
+
           // 주의 사항 (옵션)
-          if (showWarnings && fortune.warnings != null && fortune.warnings!.isNotEmpty)
+          if (showWarnings &&
+              fortune.warnings != null &&
+              fortune.warnings!.isNotEmpty)
             _buildWarningsSection(context, isDark)
                 .animate()
                 .fadeIn(duration: 600.ms, delay: 1000.ms)
                 .slideY(begin: 0.1, end: 0),
-          
+
           // 액션 버튼
           _buildActionButtons(context, ref)
               .animate()
@@ -106,14 +112,15 @@ class FortuneResultCard extends ConsumerWidget {
       ),
     );
   }
-  
+
   Widget _buildHeader(BuildContext context, bool isDark) {
     final colors = context.colors;
     final score = fortune.overallScore ?? 70;
     final heroImage = FortuneCardImages.getHeroImage(fortune.type, score);
     final mascotImage = FortuneCardImages.getMascotImage(fortune.type, score);
     final caption = FortuneCardImages.instagramCaptions[fortune.type] ??
-        FortuneCardImages.instagramCaptions[fortune.type.replaceAll('_', '-')] ??
+        FortuneCardImages
+            .instagramCaptions[fortune.type.replaceAll('_', '-')] ??
         FortuneCardImages.instagramCaptions['default'];
     final summary = fortune.summary ?? fortune.greeting;
     final dateLabel = DateTime.now().toString().split(' ')[0];
@@ -274,7 +281,7 @@ class FortuneResultCard extends ConsumerWidget {
       ),
     );
   }
-  
+
   /// 점수 섹션 - 낙관(도장) 스타일
   /// 동양화 디자인: 붉은 인장 안에 점수 표시
   Widget _buildScoreSection(BuildContext context, bool isDark) {
@@ -371,7 +378,8 @@ class FortuneResultCard extends ConsumerWidget {
   }
 
   /// 섹션 헤더 - 먹 세로선 스타일
-  Widget _buildSectionHeader(BuildContext context, String title, Color meokColor) {
+  Widget _buildSectionHeader(
+      BuildContext context, String title, Color meokColor) {
     return Row(
       children: [
         Container(
@@ -393,7 +401,7 @@ class FortuneResultCard extends ConsumerWidget {
       ],
     );
   }
-  
+
   /// 행운 아이템 섹션 - 동양화 스타일
   /// 개별 색상 제거, 먹색으로 통일
   Widget _buildLuckyItemsSection(BuildContext context, bool isDark) {
@@ -463,11 +471,13 @@ class FortuneResultCard extends ConsumerWidget {
           Wrap(
             spacing: DSSpacing.sm,
             runSpacing: DSSpacing.sm,
-            children: items.map((item) => _buildSimpleLuckyItem(
-              context: context,
-              item: item,
-              meokColor: meokColor,
-            )).toList(),
+            children: items
+                .map((item) => _buildSimpleLuckyItem(
+                      context: context,
+                      item: item,
+                      meokColor: meokColor,
+                    ))
+                .toList(),
           ),
         ],
       ),
@@ -574,7 +584,8 @@ class FortuneResultCard extends ConsumerWidget {
   Widget _buildRecommendationsSection(BuildContext context, bool isDark) {
     return FortuneCard(
       title: '추천 사항',
-      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.lg, vertical: DSSpacing.sm + 4),
+      margin: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.lg, vertical: DSSpacing.sm + 4),
       child: Column(
         children: fortune.recommendations!.map((recommendation) {
           return Padding(
@@ -592,7 +603,9 @@ class FortuneResultCard extends ConsumerWidget {
                   child: Text(
                     FortuneTextCleaner.clean(recommendation),
                     style: context.bodySmall.copyWith(
-                      color: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
+                      color: isDark
+                          ? DSColors.textPrimaryDark
+                          : DSColors.textPrimary,
                       height: 1.5,
                     ),
                   ),
@@ -604,11 +617,12 @@ class FortuneResultCard extends ConsumerWidget {
       ),
     );
   }
-  
+
   Widget _buildWarningsSection(BuildContext context, bool isDark) {
     return FortuneCard(
       title: '주의 사항',
-      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.lg, vertical: DSSpacing.sm + 4),
+      margin: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.lg, vertical: DSSpacing.sm + 4),
       backgroundColor: DSColors.warning.withValues(alpha: isDark ? 0.08 : 0.05),
       child: Column(
         children: fortune.warnings!.map((warning) {
@@ -627,7 +641,9 @@ class FortuneResultCard extends ConsumerWidget {
                   child: Text(
                     FortuneTextCleaner.clean(warning),
                     style: context.bodySmall.copyWith(
-                      color: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
+                      color: isDark
+                          ? DSColors.textPrimaryDark
+                          : DSColors.textPrimary,
                       height: 1.5,
                     ),
                   ),
@@ -639,7 +655,7 @@ class FortuneResultCard extends ConsumerWidget {
       ),
     );
   }
-  
+
   Widget _buildActionButtons(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.all(DSSpacing.lg),
@@ -694,7 +710,7 @@ class FortuneResultCard extends ConsumerWidget {
     if (score >= 40) return '조심이 필요한 날';
     return '신중한 하루를 보내세요';
   }
-  
+
   String _getScoreDescription(int score) {
     if (score >= 90) return '오늘은 모든 일이 술술 풀리는 최고의 날입니다!';
     if (score >= 80) return '좋은 기운이 가득한 날, 적극적으로 행동해보세요.';

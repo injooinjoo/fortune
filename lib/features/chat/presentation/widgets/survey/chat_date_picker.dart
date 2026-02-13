@@ -87,11 +87,12 @@ class _ChatDatePickerState extends State<ChatDatePicker> {
     final colors = context.colors;
     final typography = context.typography;
 
-    final defaultQuickOptions = widget.quickOptions ?? [
-      QuickDateOption.today(),
-      QuickDateOption.tomorrow(),
-      QuickDateOption.thisWeekend(),
-    ];
+    final defaultQuickOptions = widget.quickOptions ??
+        [
+          QuickDateOption.today(),
+          QuickDateOption.tomorrow(),
+          QuickDateOption.thisWeekend(),
+        ];
 
     return Container(
       width: double.infinity,
@@ -213,9 +214,7 @@ class _QuickDateChip extends StatelessWidget {
               Text(
                 option.label,
                 style: typography.labelMedium.copyWith(
-                  color: isSelected
-                      ? colors.textPrimary
-                      : colors.textPrimary,
+                  color: isSelected ? colors.textPrimary : colors.textPrimary,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 ),
               ),
@@ -322,7 +321,8 @@ class QuickDateOption {
       getDate: () {
         final now = DateTime.now();
         final daysUntilSaturday = (DateTime.saturday - now.weekday) % 7;
-        return now.add(Duration(days: daysUntilSaturday == 0 ? 7 : daysUntilSaturday));
+        return now.add(
+            Duration(days: daysUntilSaturday == 0 ? 7 : daysUntilSaturday));
       },
     );
   }
@@ -333,7 +333,8 @@ class QuickDateOption {
         getDate: () => DateTime.now().add(const Duration(days: 7)),
       );
 
-  factory QuickDateOption.custom(String label, DateTime date, {String? emoji}) =>
+  factory QuickDateOption.custom(String label, DateTime date,
+          {String? emoji}) =>
       QuickDateOption(
         label: label,
         emoji: emoji,

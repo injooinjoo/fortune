@@ -69,11 +69,15 @@ class LoveFortuneConditions extends FortuneConditions {
       relationshipStatus: json['relationshipStatus'] as String,
       datingStyles: List<String>.from(json['datingStyles'] ?? []),
       valueImportance: Map<String, int>.from(json['valueImportance'] ?? {}),
-      preferredAgeRange: Map<String, int>.from(json['preferredAgeRange'] ?? {'min': 20, 'max': 30}),
-      preferredPersonality: List<String>.from(json['preferredPersonality'] ?? []),
-      preferredMeetingPlaces: List<String>.from(json['preferredMeetingPlaces'] ?? []),
+      preferredAgeRange: Map<String, int>.from(
+          json['preferredAgeRange'] ?? {'min': 20, 'max': 30}),
+      preferredPersonality:
+          List<String>.from(json['preferredPersonality'] ?? []),
+      preferredMeetingPlaces:
+          List<String>.from(json['preferredMeetingPlaces'] ?? []),
       relationshipGoal: json['relationshipGoal'] as String? ?? 'casual',
-      appearanceConfidence: (json['appearanceConfidence'] as num?)?.toDouble() ?? 5.0,
+      appearanceConfidence:
+          (json['appearanceConfidence'] as num?)?.toDouble() ?? 5.0,
       charmPoints: List<String>.from(json['charmPoints'] ?? []),
       lifestyle: json['lifestyle'] as String? ?? 'employee',
       hobbies: List<String>.from(json['hobbies'] ?? []),
@@ -86,13 +90,15 @@ class LoveFortuneConditions extends FortuneConditions {
   factory LoveFortuneConditions.fromInputData(Map<String, dynamic> data) {
     // valueImportance의 double 값을 int로 변환
     final Map<String, int> convertedValueImportance = {};
-    final rawValueImportance = data['valueImportance'] as Map<String, dynamic>? ?? {};
+    final rawValueImportance =
+        data['valueImportance'] as Map<String, dynamic>? ?? {};
     rawValueImportance.forEach((key, value) {
       convertedValueImportance[key] = (value as num).round();
     });
 
     // preferredAgeRange 변환 (이미 int일 수도 있음)
-    final rawAgeRange = data['preferredAgeRange'] as Map<String, dynamic>? ?? {'min': 20, 'max': 30};
+    final rawAgeRange = data['preferredAgeRange'] as Map<String, dynamic>? ??
+        {'min': 20, 'max': 30};
     final Map<String, int> convertedAgeRange = {
       'min': (rawAgeRange['min'] as num).toInt(),
       'max': (rawAgeRange['max'] as num).toInt(),
@@ -105,10 +111,13 @@ class LoveFortuneConditions extends FortuneConditions {
       datingStyles: List<String>.from(data['datingStyles'] ?? []),
       valueImportance: convertedValueImportance,
       preferredAgeRange: convertedAgeRange,
-      preferredPersonality: List<String>.from(data['preferredPersonality'] ?? []),
-      preferredMeetingPlaces: List<String>.from(data['preferredMeetingPlaces'] ?? []),
+      preferredPersonality:
+          List<String>.from(data['preferredPersonality'] ?? []),
+      preferredMeetingPlaces:
+          List<String>.from(data['preferredMeetingPlaces'] ?? []),
       relationshipGoal: data['relationshipGoal'] as String? ?? 'casual',
-      appearanceConfidence: (data['appearanceConfidence'] as num?)?.toDouble() ?? 5.0,
+      appearanceConfidence:
+          (data['appearanceConfidence'] as num?)?.toDouble() ?? 5.0,
       charmPoints: List<String>.from(data['charmPoints'] ?? []),
       lifestyle: data['lifestyle'] as String? ?? 'employee',
       hobbies: List<String>.from(data['hobbies'] ?? []),

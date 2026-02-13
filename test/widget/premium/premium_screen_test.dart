@@ -692,7 +692,9 @@ class _SubscriptionOption extends StatelessWidget {
           children: [
             Radio<String>(
               value: title.toLowerCase(),
-              groupValue: isSelected ? title.toLowerCase() : '', // ignore: deprecated_member_use
+              groupValue: isSelected
+                  ? title.toLowerCase()
+                  : '', // ignore: deprecated_member_use
               onChanged: (_) => onTap(), // ignore: deprecated_member_use
             ),
             const SizedBox(width: 8),

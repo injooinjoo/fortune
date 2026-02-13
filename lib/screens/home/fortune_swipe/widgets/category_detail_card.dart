@@ -21,34 +21,114 @@ class CategoryDetailCard extends StatelessWidget {
   /// 카테고리별 민화 이미지 목록 (각 4개씩)
   static const Map<String, List<Map<String, String>>> _categoryImages = {
     'love': [
-      {'image': 'assets/images/minhwa/minhwa_love_mandarin.webp', 'emoji': '🦆', 'label': '원앙 민화'},
-      {'image': 'assets/images/minhwa/minhwa_love_butterfly.webp', 'emoji': '🦋', 'label': '나비 민화'},
-      {'image': 'assets/images/minhwa/minhwa_love_magpie_bridge.webp', 'emoji': '🌉', 'label': '오작교 민화'},
-      {'image': 'assets/images/minhwa/minhwa_love_peony.webp', 'emoji': '🌺', 'label': '모란 민화'},
+      {
+        'image': 'assets/images/minhwa/minhwa_love_mandarin.webp',
+        'emoji': '🦆',
+        'label': '원앙 민화'
+      },
+      {
+        'image': 'assets/images/minhwa/minhwa_love_butterfly.webp',
+        'emoji': '🦋',
+        'label': '나비 민화'
+      },
+      {
+        'image': 'assets/images/minhwa/minhwa_love_magpie_bridge.webp',
+        'emoji': '🌉',
+        'label': '오작교 민화'
+      },
+      {
+        'image': 'assets/images/minhwa/minhwa_love_peony.webp',
+        'emoji': '🌺',
+        'label': '모란 민화'
+      },
     ],
     'money': [
-      {'image': 'assets/images/minhwa/minhwa_money_carp.webp', 'emoji': '🐟', 'label': '잉어 민화'},
-      {'image': 'assets/images/minhwa/minhwa_money_pig.webp', 'emoji': '🐷', 'label': '돼지 민화'},
-      {'image': 'assets/images/minhwa/minhwa_money_toad.webp', 'emoji': '🐸', 'label': '두꺼비 민화'},
-      {'image': 'assets/images/minhwa/minhwa_money_treasure.webp', 'emoji': '💰', 'label': '보물 민화'},
+      {
+        'image': 'assets/images/minhwa/minhwa_money_carp.webp',
+        'emoji': '🐟',
+        'label': '잉어 민화'
+      },
+      {
+        'image': 'assets/images/minhwa/minhwa_money_pig.webp',
+        'emoji': '🐷',
+        'label': '돼지 민화'
+      },
+      {
+        'image': 'assets/images/minhwa/minhwa_money_toad.webp',
+        'emoji': '🐸',
+        'label': '두꺼비 민화'
+      },
+      {
+        'image': 'assets/images/minhwa/minhwa_money_treasure.webp',
+        'emoji': '💰',
+        'label': '보물 민화'
+      },
     ],
     'work': [
-      {'image': 'assets/images/minhwa/minhwa_work_crane.webp', 'emoji': '🦢', 'label': '학 민화'},
-      {'image': 'assets/images/minhwa/minhwa_work_bamboo.webp', 'emoji': '🎋', 'label': '대나무 민화'},
-      {'image': 'assets/images/minhwa/minhwa_work_eagle.webp', 'emoji': '🦅', 'label': '독수리 민화'},
-      {'image': 'assets/images/minhwa/minhwa_work_waterfall.webp', 'emoji': '🌊', 'label': '폭포 민화'},
+      {
+        'image': 'assets/images/minhwa/minhwa_work_crane.webp',
+        'emoji': '🦢',
+        'label': '학 민화'
+      },
+      {
+        'image': 'assets/images/minhwa/minhwa_work_bamboo.webp',
+        'emoji': '🎋',
+        'label': '대나무 민화'
+      },
+      {
+        'image': 'assets/images/minhwa/minhwa_work_eagle.webp',
+        'emoji': '🦅',
+        'label': '독수리 민화'
+      },
+      {
+        'image': 'assets/images/minhwa/minhwa_work_waterfall.webp',
+        'emoji': '🌊',
+        'label': '폭포 민화'
+      },
     ],
     'study': [
-      {'image': 'assets/images/minhwa/minhwa_study_magpie.webp', 'emoji': '🐦', 'label': '까치 민화'},
-      {'image': 'assets/images/minhwa/minhwa_study_brush.webp', 'emoji': '🖌️', 'label': '문방사우 민화'},
-      {'image': 'assets/images/minhwa/minhwa_study_owl.webp', 'emoji': '🦉', 'label': '부엉이 민화'},
-      {'image': 'assets/images/minhwa/minhwa_study_plum.webp', 'emoji': '🌸', 'label': '매화 민화'},
+      {
+        'image': 'assets/images/minhwa/minhwa_study_magpie.webp',
+        'emoji': '🐦',
+        'label': '까치 민화'
+      },
+      {
+        'image': 'assets/images/minhwa/minhwa_study_brush.webp',
+        'emoji': '🖌️',
+        'label': '문방사우 민화'
+      },
+      {
+        'image': 'assets/images/minhwa/minhwa_study_owl.webp',
+        'emoji': '🦉',
+        'label': '부엉이 민화'
+      },
+      {
+        'image': 'assets/images/minhwa/minhwa_study_plum.webp',
+        'emoji': '🌸',
+        'label': '매화 민화'
+      },
     ],
     'health': [
-      {'image': 'assets/images/minhwa/minhwa_health_deer.webp', 'emoji': '🦌', 'label': '사슴 민화'},
-      {'image': 'assets/images/minhwa/minhwa_health_crane_turtle.webp', 'emoji': '🐢', 'label': '학과 거북 민화'},
-      {'image': 'assets/images/minhwa/minhwa_health_mountain.webp', 'emoji': '⛰️', 'label': '산수 민화'},
-      {'image': 'assets/images/minhwa/minhwa_health_pine.webp', 'emoji': '🌲', 'label': '소나무 민화'},
+      {
+        'image': 'assets/images/minhwa/minhwa_health_deer.webp',
+        'emoji': '🦌',
+        'label': '사슴 민화'
+      },
+      {
+        'image': 'assets/images/minhwa/minhwa_health_crane_turtle.webp',
+        'emoji': '🐢',
+        'label': '학과 거북 민화'
+      },
+      {
+        'image': 'assets/images/minhwa/minhwa_health_mountain.webp',
+        'emoji': '⛰️',
+        'label': '산수 민화'
+      },
+      {
+        'image': 'assets/images/minhwa/minhwa_health_pine.webp',
+        'emoji': '🌲',
+        'label': '소나무 민화'
+      },
     ],
   };
 
@@ -80,7 +160,9 @@ class CategoryDetailCard extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: context.isDark ? DSColors.surface : DSColors.backgroundSecondaryDark,
+            color: context.isDark
+                ? DSColors.surface
+                : DSColors.backgroundSecondaryDark,
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
@@ -92,8 +174,14 @@ class CategoryDetailCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: context.isDark
-                        ? [DSColors.surfaceSecondary, DSColors.surface] // 고유 색상(dark gradient start)
-                        : [DSColors.backgroundSecondaryDark, const Color(0xFFEDE8DC)], // 고유 색상(light gradient end)
+                          ? [
+                              DSColors.surfaceSecondary,
+                              DSColors.surface
+                            ] // 고유 색상(dark gradient start)
+                          : [
+                              DSColors.backgroundSecondaryDark,
+                              const Color(0xFFEDE8DC)
+                            ], // 고유 색상(light gradient end)
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
@@ -110,7 +198,8 @@ class CategoryDetailCard extends StatelessWidget {
                         Text(
                           minhwaInfo['label']!,
                           style: context.labelSmall.copyWith(
-                            color: context.colors.textPrimary.withValues(alpha: 0.5),
+                            color: context.colors.textPrimary
+                                .withValues(alpha: 0.5),
                           ),
                         ),
                       ],
@@ -120,9 +209,10 @@ class CategoryDetailCard extends StatelessWidget {
               },
             ),
           ),
-        ).animate()
-          .fadeIn(duration: 500.ms)
-          .scale(begin: const Offset(0.95, 0.95), duration: 500.ms, curve: Curves.easeOut),
+        ).animate().fadeIn(duration: 500.ms).scale(
+            begin: const Offset(0.95, 0.95),
+            duration: 500.ms,
+            curve: Curves.easeOut),
 
         // 헤더 (가운데 정렬)
         Row(
@@ -205,8 +295,11 @@ class CategoryDetailCard extends StatelessWidget {
                         color: scoreColor,
                         borderRadius: BorderRadius.circular(2),
                       ),
-                    ).animate()
-                      .scaleX(begin: 0, duration: 800.ms, curve: Curves.easeOutCubic, alignment: Alignment.centerLeft),
+                    ).animate().scaleX(
+                        begin: 0,
+                        duration: 800.ms,
+                        curve: Curves.easeOutCubic,
+                        alignment: Alignment.centerLeft),
                   ),
                 ],
               ),
@@ -223,9 +316,10 @@ class CategoryDetailCard extends StatelessWidget {
               ),
             ],
           ),
-        ).animate()
-          .fadeIn(duration: 400.ms)
-          .slideY(begin: 0.08, duration: 500.ms, curve: Curves.easeOut),
+        )
+            .animate()
+            .fadeIn(duration: 400.ms)
+            .slideY(begin: 0.08, duration: 500.ms, curve: Curves.easeOut),
       ],
     );
   }

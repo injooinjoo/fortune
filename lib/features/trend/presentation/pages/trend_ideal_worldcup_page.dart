@@ -258,7 +258,8 @@ class _TrendIdealWorldcupPageState
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      begin: isTop ? Alignment.topCenter : Alignment.bottomCenter,
+                      begin:
+                          isTop ? Alignment.topCenter : Alignment.bottomCenter,
                       end: isTop ? Alignment.bottomCenter : Alignment.topCenter,
                       colors: [
                         Colors.transparent,
@@ -298,9 +299,8 @@ class _TrendIdealWorldcupPageState
 
   void _selectCandidate(WorldcupCandidate winner, bool isTop) {
     final matchIndex = _currentMatchIndex * 2;
-    final loser = isTop
-        ? _currentRound[matchIndex + 1]
-        : _currentRound[matchIndex];
+    final loser =
+        isTop ? _currentRound[matchIndex + 1] : _currentRound[matchIndex];
 
     setState(() {
       // Record match result
@@ -355,7 +355,8 @@ class _TrendIdealWorldcupPageState
     } catch (e) {
       setState(() => _isSubmitting = false);
       if (mounted) {
-        Toast.show(context, message: '결과 저장 중 오류가 발생했습니다', type: ToastType.error);
+        Toast.show(context,
+            message: '결과 저장 중 오류가 발생했습니다', type: ToastType.error);
       }
     }
   }
@@ -440,7 +441,8 @@ class _TrendIdealWorldcupPageState
                                   end: Alignment.bottomCenter,
                                   colors: [
                                     Colors.transparent,
-                                    context.colors.background.withValues(alpha: 0.7),
+                                    context.colors.background
+                                        .withValues(alpha: 0.7),
                                   ],
                                 ),
                               ),

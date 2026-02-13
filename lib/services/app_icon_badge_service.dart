@@ -60,7 +60,8 @@ class AppIconBadgeService extends ResilientService {
 
         // 배지 설정 시간 기록
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString(_lastBadgeSetKey, DateTime.now().toIso8601String());
+        await prefs.setString(
+            _lastBadgeSetKey, DateTime.now().toIso8601String());
 
         Logger.info('앱 아이콘 배지 표시됨');
       },

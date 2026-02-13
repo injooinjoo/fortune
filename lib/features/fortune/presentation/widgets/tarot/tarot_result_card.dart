@@ -29,36 +29,36 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
   late AnimationController _cardController;
   late AnimationController _contentController;
   late AnimationController _shimmerController;
-  
+
   late Animation<double> _cardFlipAnimation;
   late Animation<double> _cardScaleAnimation;
   late Animation<double> _contentFadeAnimation;
   late Animation<Offset> _contentSlideAnimation;
-  
+
   bool _isCardFlipped = false;
 
   @override
   void initState() {
     super.initState();
-    
+
     // 카드 뒤집기 애니메이션
     _cardController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
-    
+
     // 내용 표시 애니메이션
     _contentController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     // 반짝임 효과
     _shimmerController = AnimationController(
       duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
-    
+
     _cardFlipAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -66,7 +66,7 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
       parent: _cardController,
       curve: Curves.easeInOut,
     ));
-    
+
     _cardScaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
         tween: Tween<double>(begin: 1.0, end: 1.1),
@@ -80,7 +80,7 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
       parent: _cardController,
       curve: Curves.easeInOut,
     ));
-    
+
     _contentFadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -88,7 +88,7 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
       parent: _contentController,
       curve: Curves.easeIn,
     ));
-    
+
     _contentSlideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.1),
       end: Offset.zero,
@@ -96,7 +96,7 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
       parent: _contentController,
       curve: Curves.easeOutCubic,
     ));
-    
+
     // 순차적으로 애니메이션 시작
     _startAnimations();
   }
@@ -105,7 +105,7 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
     // 0.5초 후 카드 뒤집기 시작
     await Future.delayed(const Duration(milliseconds: 500));
     _cardController.forward();
-    
+
     // 카드 뒤집기 중간 지점에서 상태 변경
     _cardController.addListener(() {
       if (_cardController.value >= 0.5 && !_isCardFlipped) {
@@ -114,7 +114,7 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
         });
       }
     });
-    
+
     // 카드 뒤집기 완료 후 내용 표시
     _cardController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
@@ -123,7 +123,7 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
         });
       }
     });
-    
+
     // 반짝임 효과 시작
     Future.delayed(const Duration(milliseconds: 800), () {
       _shimmerController.repeat();
@@ -139,7 +139,8 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
   }
 
   // 동양화 스타일 - 테마 색상 (DSColors 사용)
-  static Color _getPrimaryColor(BuildContext context) => context.colors.textPrimary;
+  static Color _getPrimaryColor(BuildContext context) =>
+      context.colors.textPrimary;
   static Color _getSecondaryColor(BuildContext context) => DSColors.info;
 
   @override
@@ -157,10 +158,12 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
             width: double.infinity,
             padding: const EdgeInsets.all(DSSpacing.cardPadding),
             decoration: BoxDecoration(
-              color: _getPrimaryColor(context).withValues(alpha: isDark ? 0.15 : 0.1),
+              color: _getPrimaryColor(context)
+                  .withValues(alpha: isDark ? 0.15 : 0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: _getPrimaryColor(context).withValues(alpha: isDark ? 0.3 : 0.2),
+                color: _getPrimaryColor(context)
+                    .withValues(alpha: isDark ? 0.3 : 0.2),
               ),
             ),
             child: Column(
@@ -194,7 +197,7 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
           ),
 
           const SizedBox(height: DSSpacing.xl),
-          
+
           // 타로 카드
           Center(
             child: AnimatedBuilder(
@@ -219,7 +222,7 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
               },
             ),
           ),
-          
+
           const SizedBox(height: DSSpacing.xl),
 
           // 카드 이름 + 액션 버튼
@@ -247,7 +250,8 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
                     const SizedBox(width: DSSpacing.sm),
                     // 좋아요 + 공유 버튼
                     FortuneActionButtons(
-                      contentId: 'tarot_${widget.result['cardName']}_${DateTime.now().millisecondsSinceEpoch}',
+                      contentId:
+                          'tarot_${widget.result['cardName']}_${DateTime.now().millisecondsSinceEpoch}',
                       contentType: 'tarot',
                       shareTitle: '타로 카드: ${widget.result['cardName']}',
                       shareContent: widget.result['interpretation'] ?? '',
@@ -272,40 +276,48 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
                   spacing: DSSpacing.sm,
                   runSpacing: DSSpacing.sm,
                   alignment: WrapAlignment.center,
-                  children: (widget.result['keywords'] as List<String>).map(
-                    (keyword) => Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: DSSpacing.sm,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: _getPrimaryColor(context).withValues(alpha: isDark ? 0.15 : 0.1),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: _getPrimaryColor(context).withValues(alpha: isDark ? 0.3 : 0.2),
-                        ),
-                      ),
-                      child: Builder(builder: (context) {
-                        final typography = context.typography;
-                        return Text(
-                          keyword,
-                          style: typography.bodySmall.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: _getPrimaryColor(context),
+                  children: (widget.result['keywords'] as List<String>)
+                      .map(
+                        (keyword) => Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: DSSpacing.sm,
+                            vertical: 6,
                           ),
-                        );
-                      }),
-                    ),
-                  ).toList(),
+                          decoration: BoxDecoration(
+                            color: _getPrimaryColor(context)
+                                .withValues(alpha: isDark ? 0.15 : 0.1),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: _getPrimaryColor(context)
+                                  .withValues(alpha: isDark ? 0.3 : 0.2),
+                            ),
+                          ),
+                          child: Builder(builder: (context) {
+                            final typography = context.typography;
+                            return Text(
+                              keyword,
+                              style: typography.bodySmall.copyWith(
+                                fontWeight: FontWeight.w500,
+                                color: _getPrimaryColor(context),
+                              ),
+                            );
+                          }),
+                        ),
+                      )
+                      .toList(),
                 ),
               ),
             ),
 
           const SizedBox(height: DSSpacing.xl),
-          
+
           // 해석 (프리미엄 잠금 메시지가 아닌 경우만 표시)
-          if (!((widget.result['interpretation'] ?? '').toString().contains('프리미엄') ||
-                (widget.result['interpretation'] ?? '').toString().contains('🔒')))
+          if (!((widget.result['interpretation'] ?? '')
+                  .toString()
+                  .contains('프리미엄') ||
+              (widget.result['interpretation'] ?? '')
+                  .toString()
+                  .contains('🔒')))
             FadeTransition(
               opacity: _contentFadeAnimation,
               child: SlideTransition(
@@ -343,7 +355,7 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
             ),
 
           const SizedBox(height: DSSpacing.xl + DSSpacing.md),
-          
+
           // 액션 버튼들
           FadeTransition(
             opacity: _contentFadeAnimation,
@@ -480,7 +492,7 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
                 );
               },
             ),
-            
+
             // 반짝임 효과
             AnimatedBuilder(
               animation: _shimmerController,
@@ -490,7 +502,8 @@ class _TarotResultCardState extends ConsumerState<TarotResultCard>
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       gradient: LinearGradient(
-                        begin: Alignment(-1.0 + _shimmerController.value * 2, -1.0),
+                        begin: Alignment(
+                            -1.0 + _shimmerController.value * 2, -1.0),
                         end: Alignment(1.0 + _shimmerController.value * 2, 1.0),
                         colors: [
                           Colors.white.withValues(alpha: 0.0),
@@ -572,9 +585,9 @@ ${widget.result['interpretation']}
 
 포춘 앱에서 더 많은 운세를 확인해보세요!
 ''';
-    
+
     Clipboard.setData(ClipboardData(text: shareText));
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('결과가 클립보드에 복사되었습니다'),

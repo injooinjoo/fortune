@@ -181,7 +181,7 @@ class _MockTarotResultWidget extends StatelessWidget {
         children: [
           Container(
             height: 200,
-            color: Colors.purple.withValues(alpha:0.1),
+            color: Colors.purple.withValues(alpha: 0.1),
             child: const Center(child: Text('선택한 카드')),
           ),
           const Padding(

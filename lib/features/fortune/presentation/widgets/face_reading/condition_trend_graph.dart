@@ -325,7 +325,8 @@ class _ConditionTrendGraphState extends ConsumerState<ConditionTrendGraph>
         enabled: true,
         touchTooltipData: LineTouchTooltipData(
           tooltipRoundedRadius: 12,
-          tooltipPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          tooltipPadding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           getTooltipItems: (touchedSpots) {
             return touchedSpots.map((spot) {
               final index = spot.x.toInt();
@@ -367,7 +368,8 @@ class _ConditionTrendGraphState extends ConsumerState<ConditionTrendGraph>
       final (color, _) = _getMetricStyle(metric);
       final isHighlighted =
           _selectedMetric == null || _selectedMetric == metric;
-      final effectiveColor = isHighlighted ? color : color.withValues(alpha: 0.3);
+      final effectiveColor =
+          isHighlighted ? color : color.withValues(alpha: 0.3);
 
       bars.add(LineChartBarData(
         spots: _generateSpots(conditions, metric),
@@ -388,7 +390,8 @@ class _ConditionTrendGraphState extends ConsumerState<ConditionTrendGraph>
               radius: 4,
               color: effectiveColor,
               strokeWidth: 2,
-              strokeColor: context.isDark ? DSColors.surfaceDark : DSColors.surface,
+              strokeColor:
+                  context.isDark ? DSColors.surfaceDark : DSColors.surface,
             );
           },
         ),

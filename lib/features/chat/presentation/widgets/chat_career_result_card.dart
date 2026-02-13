@@ -592,12 +592,12 @@ class ChatCareerResultCard extends ConsumerWidget {
               color: DSColors.info,
             ),
           if (shortTerm.isNotEmpty)
-              _ActionPlanItem(
-                label: '단기',
-                items: shortTerm.take(2).cast<String>().toList(),
-                color: DSColors.info,
-              ),
-            if (longTerm.isNotEmpty)
+            _ActionPlanItem(
+              label: '단기',
+              items: shortTerm.take(2).cast<String>().toList(),
+              color: DSColors.info,
+            ),
+          if (longTerm.isNotEmpty)
             _ActionPlanItem(
               label: '장기',
               items: longTerm.take(2).cast<String>().toList(),

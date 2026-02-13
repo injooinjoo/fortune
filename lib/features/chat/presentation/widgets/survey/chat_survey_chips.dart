@@ -95,9 +95,7 @@ class _SurveyChip extends StatelessWidget {
                 Icon(
                   option.icon,
                   size: 16,
-                  color: isSelected
-                      ? colors.textPrimary
-                      : colors.textSecondary,
+                  color: isSelected ? colors.textPrimary : colors.textSecondary,
                 ),
                 const SizedBox(width: DSSpacing.xs),
               ],

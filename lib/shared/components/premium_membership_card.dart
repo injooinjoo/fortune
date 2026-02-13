@@ -23,7 +23,8 @@ class PremiumMembershipCard extends ConsumerWidget {
         const SectionHeader(title: '토큰'),
         // 컨테이너 (다른 섹션과 동일한 스타일)
         Container(
-          margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+          margin:
+              const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
           decoration: BoxDecoration(
             color: context.colors.surface,
             borderRadius: BorderRadius.circular(DSRadius.md),

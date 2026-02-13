@@ -8,7 +8,8 @@ import '../../../../../../services/health_data_service.dart';
 
 /// Health 액센트 색상 (건강 도메인)
 const Color _healthAccent = Color(0xFF38A169); // 고유 색상 - Health 앱 연동 액센트
-const Color _healthAccentLight = Color(0xFF68D391); // 고유 색상 - Health 앱 연동 액센트 라이트
+const Color _healthAccentLight =
+    Color(0xFF68D391); // 고유 색상 - Health 앱 연동 액센트 라이트
 
 class HealthAppConnectionSection extends StatelessWidget {
   final bool isPremium;
@@ -30,7 +31,8 @@ class HealthAppConnectionSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final typography = context.typography;
     final platformName = Platform.isIOS ? 'Apple Health' : 'Google Fit';
-    final platformIcon = Platform.isIOS ? Icons.favorite_rounded : Icons.fitness_center_rounded;
+    final platformIcon =
+        Platform.isIOS ? Icons.favorite_rounded : Icons.fitness_center_rounded;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -76,9 +78,7 @@ class HealthAppConnectionSection extends StatelessWidget {
                 ),
                 child: Icon(
                   platformIcon,
-                  color: isPremium
-                      ? _healthAccent
-                      : DSColors.textSecondary,
+                  color: isPremium ? _healthAccent : DSColors.textSecondary,
                   size: 20,
                 ),
               ),
@@ -194,9 +194,7 @@ class HealthAppConnectionSection extends StatelessWidget {
           ],
         ],
       ),
-    ).animate()
-      .fadeIn(duration: 400.ms)
-      .slideY(begin: -0.1, end: 0);
+    ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.1, end: 0);
   }
 }
 
@@ -262,7 +260,8 @@ class ConnectedHealthDataSummary extends StatelessWidget {
                 ),
               if (healthSummary.averageSleepHours != null)
                 HealthDataChip(
-                  text: '😴 ${healthSummary.averageSleepHours!.toStringAsFixed(1)}시간',
+                  text:
+                      '😴 ${healthSummary.averageSleepHours!.toStringAsFixed(1)}시간',
                 ),
               if (healthSummary.averageHeartRate != null)
                 HealthDataChip(
@@ -289,9 +288,9 @@ class ConnectedHealthDataSummary extends StatelessWidget {
 
   String _formatNumber(int number) {
     return number.toString().replaceAllMapped(
-      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-      (m) => '${m[1]},',
-    );
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (m) => '${m[1]},',
+        );
   }
 }
 

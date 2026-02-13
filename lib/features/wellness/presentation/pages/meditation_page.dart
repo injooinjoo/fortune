@@ -45,7 +45,8 @@ class _MeditationPageState extends ConsumerState<MeditationPage> {
   }
 
   /// 타이머 상태에 따라 배경 음악 제어
-  void _handleTimerStateChange(BreathingTimerState? previous, BreathingTimerState current) {
+  void _handleTimerStateChange(
+      BreathingTimerState? previous, BreathingTimerState current) {
     final soundService = ref.read(meditationSoundServiceProvider);
 
     // 시작: 재생
@@ -54,11 +55,14 @@ class _MeditationPageState extends ConsumerState<MeditationPage> {
       _hasShownCompletion = false; // 새 세션 시작 시 플래그 리셋
     }
     // 일시정지: 일시정지
-    else if (!current.isRunning && _wasRunning && current.totalSecondsRemaining > 0) {
+    else if (!current.isRunning &&
+        _wasRunning &&
+        current.totalSecondsRemaining > 0) {
       soundService.pause();
     }
     // 종료/리셋: 정지
-    else if (!current.isRunning && current.totalSecondsRemaining == current.totalDurationSeconds) {
+    else if (!current.isRunning &&
+        current.totalSecondsRemaining == current.totalDurationSeconds) {
       soundService.stop();
     }
     // 시간 끝남: 정지 + 완료 화면 표시
@@ -138,7 +142,9 @@ class _MeditationPageState extends ConsumerState<MeditationPage> {
                   _getGuideText(timerState),
                   key: ValueKey(timerState.isRunning),
                   style: context.bodyLarge.copyWith(
-                    color: isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
+                    color: isDark
+                        ? DSColors.textSecondaryDark
+                        : DSColors.textSecondary,
                     height: 1.6,
                   ),
                   textAlign: TextAlign.center,
@@ -175,7 +181,8 @@ class _MeditationPageState extends ConsumerState<MeditationPage> {
   }
 
   String _getGuideText(BreathingTimerState state) {
-    if (!state.isRunning && state.totalSecondsRemaining == state.totalDurationSeconds) {
+    if (!state.isRunning &&
+        state.totalSecondsRemaining == state.totalDurationSeconds) {
       return '편안한 자세로 앉아\n호흡에 집중해보세요';
     }
     if (state.isRunning) {
@@ -217,7 +224,8 @@ class _MeditationPageState extends ConsumerState<MeditationPage> {
                 '호흡 명상 팁',
                 style: context.bodyLarge.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
+                  color:
+                      isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
                 ),
               ),
             ],
@@ -229,7 +237,8 @@ class _MeditationPageState extends ConsumerState<MeditationPage> {
             '• 눈을 감거나 한 점을 바라보세요\n'
             '• 호흡에만 집중하고 잡념을 흘려보내세요',
             style: context.bodyMedium.copyWith(
-              color: isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
+              color:
+                  isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
               height: 1.6,
             ),
           ),
@@ -266,7 +275,9 @@ class _MeditationPageState extends ConsumerState<MeditationPage> {
             child: Text(
               '계속하기',
               style: context.bodyMedium.copyWith(
-                color: isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
+                color: isDark
+                    ? DSColors.textSecondaryDark
+                    : DSColors.textSecondary,
               ),
             ),
           ),

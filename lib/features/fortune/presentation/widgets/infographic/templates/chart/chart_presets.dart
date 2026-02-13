@@ -86,7 +86,7 @@ class SajuChartTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.surfaceSecondary.withValues(alpha:0.5),
+        color: context.colors.surfaceSecondary.withValues(alpha: 0.5),
         borderRadius: DSRadius.mdBorder,
       ),
       child: CategoryBarChart(
@@ -103,7 +103,7 @@ class SajuChartTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.surfaceSecondary.withValues(alpha:0.5),
+        color: context.colors.surfaceSecondary.withValues(alpha: 0.5),
         borderRadius: DSRadius.mdBorder,
       ),
       child: Column(
@@ -124,7 +124,8 @@ class SajuChartTemplate extends StatelessWidget {
                 ],
                 if (geukguk != null && yongshin != null)
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: DSSpacing.sm),
                     child: Text(
                       '·',
                       style: TextStyle(color: context.colors.textTertiary),
@@ -226,7 +227,8 @@ class _SajuPillarWidget extends StatelessWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: _getElementColor(pillar.heavenlyStemElement).withValues(alpha:0.2),
+            color: _getElementColor(pillar.heavenlyStemElement)
+                .withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: _getElementColor(pillar.heavenlyStemElement),
@@ -248,7 +250,8 @@ class _SajuPillarWidget extends StatelessWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: _getElementColor(pillar.earthlyBranchElement).withValues(alpha:0.2),
+            color: _getElementColor(pillar.earthlyBranchElement)
+                .withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: _getElementColor(pillar.earthlyBranchElement),
@@ -313,7 +316,7 @@ class MbtiChartTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.surfaceSecondary.withValues(alpha:0.5),
+        color: context.colors.surfaceSecondary.withValues(alpha: 0.5),
         borderRadius: DSRadius.mdBorder,
       ),
       child: Column(
@@ -341,7 +344,7 @@ class MbtiChartTemplate extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(DSSpacing.md),
             decoration: BoxDecoration(
-              color: context.colors.accent.withValues(alpha:0.1),
+              color: context.colors.accent.withValues(alpha: 0.1),
               borderRadius: DSRadius.mdBorder,
             ),
             child: Row(
@@ -370,7 +373,7 @@ class MbtiChartTemplate extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(DSSpacing.sm),
             decoration: BoxDecoration(
-              color: context.colors.warning.withValues(alpha:0.1),
+              color: context.colors.warning.withValues(alpha: 0.1),
               borderRadius: DSRadius.smBorder,
             ),
             child: Row(
@@ -426,9 +429,8 @@ class _MbtiDimensionBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isLeft = dimension.value >= 50;
-    final progress = isLeft
-        ? (dimension.value - 50) / 50
-        : (50 - dimension.value) / 50;
+    final progress =
+        isLeft ? (dimension.value - 50) / 50 : (50 - dimension.value) / 50;
 
     return Row(
       children: [
@@ -438,9 +440,8 @@ class _MbtiDimensionBar extends StatelessWidget {
           child: Text(
             dimension.leftLabel,
             style: context.typography.labelMedium.copyWith(
-              color: isLeft
-                  ? context.colors.accent
-                  : context.colors.textTertiary,
+              color:
+                  isLeft ? context.colors.accent : context.colors.textTertiary,
               fontWeight: isLeft ? FontWeight.w700 : FontWeight.w400,
             ),
           ),
@@ -455,7 +456,7 @@ class _MbtiDimensionBar extends StatelessWidget {
               return Container(
                 height: 8,
                 decoration: BoxDecoration(
-                  color: context.colors.border.withValues(alpha:0.3),
+                  color: context.colors.border.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Stack(
@@ -465,22 +466,26 @@ class _MbtiDimensionBar extends StatelessWidget {
                       child: Container(
                         width: 2,
                         height: 8,
-                        color: context.colors.textTertiary.withValues(alpha:0.5),
+                        color:
+                            context.colors.textTertiary.withValues(alpha: 0.5),
                       ),
                     ),
                     // 진행 바 - Align + 직접 너비 지정으로 semantics 에러 방지
                     // isLeft=true (value>=50): 바가 왼쪽(T 방향)에 채워짐
                     // isLeft=false (value<50): 바가 오른쪽(F 방향)에 채워짐
                     Align(
-                      alignment: isLeft ? Alignment.centerLeft : Alignment.centerRight,
+                      alignment:
+                          isLeft ? Alignment.centerLeft : Alignment.centerRight,
                       child: Container(
                         width: barWidth,
                         height: 8,
                         decoration: BoxDecoration(
                           color: context.colors.accent,
                           borderRadius: BorderRadius.horizontal(
-                            left: isLeft ? const Radius.circular(4) : Radius.zero,
-                            right: isLeft ? Radius.zero : const Radius.circular(4),
+                            left:
+                                isLeft ? const Radius.circular(4) : Radius.zero,
+                            right:
+                                isLeft ? Radius.zero : const Radius.circular(4),
                           ),
                         ),
                       ),
@@ -499,9 +504,8 @@ class _MbtiDimensionBar extends StatelessWidget {
           child: Text(
             dimension.rightLabel,
             style: context.typography.labelMedium.copyWith(
-              color: !isLeft
-                  ? context.colors.accent
-                  : context.colors.textTertiary,
+              color:
+                  !isLeft ? context.colors.accent : context.colors.textTertiary,
               fontWeight: !isLeft ? FontWeight.w700 : FontWeight.w400,
             ),
             textAlign: TextAlign.end,
@@ -573,7 +577,7 @@ class BiorhythmChartTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.surfaceSecondary.withValues(alpha:0.5),
+        color: context.colors.surfaceSecondary.withValues(alpha: 0.5),
         borderRadius: DSRadius.mdBorder,
       ),
       child: Column(
@@ -608,7 +612,7 @@ class BiorhythmChartTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.surfaceSecondary.withValues(alpha:0.5),
+        color: context.colors.surfaceSecondary.withValues(alpha: 0.5),
         borderRadius: DSRadius.mdBorder,
       ),
       child: Column(
@@ -751,7 +755,7 @@ class _BiorhythmBar extends StatelessWidget {
         Container(
           height: 12,
           decoration: BoxDecoration(
-            color: context.colors.border.withValues(alpha:0.3),
+            color: context.colors.border.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(6),
           ),
           child: FractionallySizedBox(
@@ -845,7 +849,7 @@ class CompatibilityChartTemplate extends StatelessWidget {
               color: context.colors.surfaceSecondary,
               shape: BoxShape.circle,
               border: Border.all(
-                color: context.colors.accent.withValues(alpha:0.3),
+                color: context.colors.accent.withValues(alpha: 0.3),
                 width: 2,
               ),
             ),
@@ -893,7 +897,7 @@ class CompatibilityChartTemplate extends StatelessWidget {
               color: context.colors.surfaceSecondary,
               shape: BoxShape.circle,
               border: Border.all(
-                color: context.colors.accentSecondary.withValues(alpha:0.3),
+                color: context.colors.accentSecondary.withValues(alpha: 0.3),
                 width: 2,
               ),
             ),
@@ -915,7 +919,7 @@ class CompatibilityChartTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.surfaceSecondary.withValues(alpha:0.5),
+        color: context.colors.surfaceSecondary.withValues(alpha: 0.5),
         borderRadius: DSRadius.mdBorder,
       ),
       child: Column(
@@ -939,7 +943,7 @@ class CompatibilityChartTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.pinkAccent.withValues(alpha:0.1),
+        color: Colors.pinkAccent.withValues(alpha: 0.1),
         borderRadius: DSRadius.mdBorder,
       ),
       child: Row(
@@ -1052,7 +1056,7 @@ class SportsChartTemplate extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(DSSpacing.md),
           decoration: BoxDecoration(
-            color: context.colors.surfaceSecondary.withValues(alpha:0.5),
+            color: context.colors.surfaceSecondary.withValues(alpha: 0.5),
             borderRadius: DSRadius.mdBorder,
           ),
           child: Column(
@@ -1111,7 +1115,7 @@ class SportsChartTemplate extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(DSSpacing.sm),
             decoration: BoxDecoration(
-              color: context.colors.accent.withValues(alpha:0.1),
+              color: context.colors.accent.withValues(alpha: 0.1),
               borderRadius: DSRadius.smBorder,
             ),
             child: Row(
@@ -1136,7 +1140,7 @@ class SportsChartTemplate extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(DSSpacing.sm),
           decoration: BoxDecoration(
-            color: context.colors.warning.withValues(alpha:0.1),
+            color: context.colors.warning.withValues(alpha: 0.1),
             borderRadius: DSRadius.smBorder,
           ),
           child: Row(
@@ -1235,7 +1239,7 @@ class PersonalityDnaChartTemplate extends StatelessWidget {
             color: context.colors.surfaceSecondary,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: context.colors.border.withValues(alpha:0.3),
+              color: context.colors.border.withValues(alpha: 0.3),
             ),
           ),
           child: Column(
@@ -1267,7 +1271,7 @@ class PersonalityDnaChartTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.accent.withValues(alpha:0.1),
+        color: context.colors.accent.withValues(alpha: 0.1),
         borderRadius: DSRadius.mdBorder,
       ),
       child: Column(
@@ -1326,7 +1330,7 @@ class PersonalityDnaChartTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.surfaceSecondary.withValues(alpha:0.5),
+        color: context.colors.surfaceSecondary.withValues(alpha: 0.5),
         borderRadius: DSRadius.mdBorder,
       ),
       child: Row(
@@ -1424,7 +1428,7 @@ class TalentChartTemplate extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(DSSpacing.md),
           decoration: BoxDecoration(
-            color: context.colors.accent.withValues(alpha:0.1),
+            color: context.colors.accent.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Column(
@@ -1487,7 +1491,7 @@ class TalentChartTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.surfaceSecondary.withValues(alpha:0.5),
+        color: context.colors.surfaceSecondary.withValues(alpha: 0.5),
         borderRadius: DSRadius.mdBorder,
       ),
       child: Column(
@@ -1518,7 +1522,7 @@ class TalentChartTemplate extends StatelessWidget {
           child: Container(
             height: 12,
             decoration: BoxDecoration(
-              color: context.colors.border.withValues(alpha:0.3),
+              color: context.colors.border.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(6),
             ),
             child: FractionallySizedBox(
@@ -1553,7 +1557,7 @@ class TalentChartTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.accent.withValues(alpha:0.1),
+        color: context.colors.accent.withValues(alpha: 0.1),
         borderRadius: DSRadius.mdBorder,
       ),
       child: Row(
@@ -1646,8 +1650,8 @@ class InvestmentChartTemplate extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Colors.amber.withValues(alpha:0.2),
-                Colors.orange.withValues(alpha:0.2),
+                Colors.amber.withValues(alpha: 0.2),
+                Colors.orange.withValues(alpha: 0.2),
               ],
             ),
             shape: BoxShape.circle,
@@ -1679,7 +1683,8 @@ class InvestmentChartTemplate extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.trending_up_rounded, size: 16, color: context.colors.success),
+                  Icon(Icons.trending_up_rounded,
+                      size: 16, color: context.colors.success),
                   const SizedBox(width: DSSpacing.xs),
                   Text(
                     '유망: $topSector',
@@ -1695,7 +1700,8 @@ class InvestmentChartTemplate extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.trending_down_rounded, size: 16, color: context.colors.error),
+                  Icon(Icons.trending_down_rounded,
+                      size: 16, color: context.colors.error),
                   const SizedBox(width: DSSpacing.xs),
                   Text(
                     '주의: $bottomSector',
@@ -1717,7 +1723,7 @@ class InvestmentChartTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.surfaceSecondary.withValues(alpha:0.5),
+        color: context.colors.surfaceSecondary.withValues(alpha: 0.5),
         borderRadius: DSRadius.mdBorder,
       ),
       child: Column(
@@ -1752,7 +1758,7 @@ class InvestmentChartTemplate extends StatelessWidget {
           child: Container(
             height: 10,
             decoration: BoxDecoration(
-              color: context.colors.border.withValues(alpha:0.3),
+              color: context.colors.border.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(5),
             ),
             child: FractionallySizedBox(
@@ -1792,7 +1798,7 @@ class InvestmentChartTemplate extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(DSSpacing.md),
             decoration: BoxDecoration(
-              color: Colors.amber.withValues(alpha:0.1),
+              color: Colors.amber.withValues(alpha: 0.1),
               borderRadius: DSRadius.mdBorder,
             ),
             child: Row(
@@ -1820,7 +1826,7 @@ class InvestmentChartTemplate extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(DSSpacing.sm),
             decoration: BoxDecoration(
-              color: context.colors.warning.withValues(alpha:0.1),
+              color: context.colors.warning.withValues(alpha: 0.1),
               borderRadius: DSRadius.smBorder,
             ),
             child: Row(

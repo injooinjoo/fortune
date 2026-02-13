@@ -174,7 +174,8 @@ class UserSettingsNotifier extends StateNotifier<UserSettings> {
 }
 
 /// 사용자 설정 Provider
-final userSettingsProvider = StateNotifierProvider<UserSettingsNotifier, UserSettings>((ref) {
+final userSettingsProvider =
+    StateNotifierProvider<UserSettingsNotifier, UserSettings>((ref) {
   return UserSettingsNotifier();
 });
 

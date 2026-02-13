@@ -7,58 +7,55 @@ class FormatUtils {
   static final DateFormat _dateFormatFull = DateFormat('yyyy년 M월 d일', 'ko_KR');
   static final DateFormat _dateFormatMedium = DateFormat('M월 d일', 'ko_KR');
   static final DateFormat _dateFormatWeekday = DateFormat('EEEE', 'ko_KR');
-  
+
   // Time formatters
   static final DateFormat _timeFormat24 = DateFormat('HH:mm', 'ko_KR');
   static final DateFormat _timeFormat12 = DateFormat('h:mm', 'ko_KR');
   static final DateFormat _timeFormatSeconds = DateFormat('HH:mm:ss', 'ko_KR');
-  
+
   // Number formatters
   static final NumberFormat _numberFormat = NumberFormat('#,###', 'ko_KR');
   static final NumberFormat _decimalFormat = NumberFormat('#,##0.0#', 'ko_KR');
-  static final NumberFormat _currencyFormat = NumberFormat.currency(
-    locale: 'ko_KR',
-    symbol: '₩',
-    decimalDigits: 0
-  );
-  
+  static final NumberFormat _currencyFormat =
+      NumberFormat.currency(locale: 'ko_KR', symbol: '₩', decimalDigits: 0);
+
   /// Format date based on context and relative time
   static String formatDate(DateTime date, {bool showYear = true}) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
     final dateOnly = DateTime(date.year, date.month, date.day);
-    
+
     // Today
     if (dateOnly == today) {
       return '오늘';
     }
-    
+
     // Yesterday
     if (dateOnly == yesterday) {
       return '어제';
     }
-    
+
     // This week (within 7 days,
-    if (dateOnly.isAfter(today.subtract(const Duration(days: 7))) && 
+    if (dateOnly.isAfter(today.subtract(const Duration(days: 7))) &&
         dateOnly.isBefore(today)) {
       return _dateFormatWeekday.format(date);
     }
-    
+
     // This year
     if (date.year == now.year && !showYear) {
       return _dateFormatMedium.format(date);
     }
-    
+
     // Other dates
     return _dateFormatFull.format(date);
   }
-  
+
   /// Format relative time (e.g., "3분 전", "1시간 전",
   static String formatRelativeTime(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    
+
     if (difference.inSeconds < 60) {
       return '방금';
     } else if (difference.inMinutes < 60) {
@@ -78,7 +75,7 @@ class FormatUtils {
       return '$years년 전';
     }
   }
-  
+
   /// Format time (24-hour or 12-hour based on settings,
   static String formatTime(DateTime time, {bool use24Hour = true}) {
     if (use24Hour) {
@@ -87,17 +84,17 @@ class FormatUtils {
       return _timeFormat12.format(time);
     }
   }
-  
+
   /// Format time with seconds
   static String formatTimeWithSeconds(DateTime time) {
     return _timeFormatSeconds.format(time);
   }
-  
+
   /// Format number with thousand separators
   static String formatNumber(num number) {
     return _numberFormat.format(number);
   }
-  
+
   /// Format decimal number (max 2 decimal places,
   static String formatDecimal(double number, {int? decimalPlaces}) {
     if (decimalPlaces != null) {
@@ -105,7 +102,7 @@ class FormatUtils {
     }
     return _decimalFormat.format(number);
   }
-  
+
   /// Format large numbers with abbreviations (K, M, B,
   static String formatCompactNumber(num number) {
     if (number >= 1000000000) {
@@ -119,7 +116,7 @@ class FormatUtils {
     }
     return formatNumber(number);
   }
-  
+
   /// Format currency (Korean Won,
   static String formatCurrency(num amount) {
     if (amount >= 100000000) {
@@ -139,7 +136,7 @@ class FormatUtils {
     }
     return _currencyFormat.format(amount);
   }
-  
+
   /// Format percentage
   static String formatPercent(double value, {int decimalPlaces = 0}) {
     if (decimalPlaces == 0) {
@@ -147,7 +144,7 @@ class FormatUtils {
     }
     return '${(value * 100).toStringAsFixed(decimalPlaces)}%';
   }
-  
+
   /// Format file size
   static String formatFileSize(int bytes) {
     if (bytes < 1024) {
@@ -160,23 +157,23 @@ class FormatUtils {
       return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
     }
   }
-  
+
   /// Format duration (e.g., "1:23:45" or "23:45",
   static String formatDuration(Duration duration) {
     final hours = duration.inHours;
     final minutes = duration.inMinutes.remainder(60);
     final seconds = duration.inSeconds.remainder(60);
-    
+
     if (hours > 0) {
       return '$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
     }
     return '$minutes:${seconds.toString().padLeft(2, '0')}';
   }
-  
+
   /// Format phone number (Korean format,
   static String formatPhoneNumber(String phoneNumber) {
     final cleaned = phoneNumber.replaceAll(RegExp(r'[^\d]'), '');
-    
+
     if (cleaned.length == 11) {
       // 010-1234-5678
       return '${cleaned.substring(0, 3)}-${cleaned.substring(3, 7)}-${cleaned.substring(7)}';
@@ -189,35 +186,35 @@ class FormatUtils {
     }
     return phoneNumber;
   }
-  
+
   /// Format birth date (YYYY-MM-DD,
   static String formatBirthDate(DateTime date) {
     return DateFormat('yyyy-MM-dd').format(date);
   }
-  
+
   /// Format month and year (e.g., "2024년 1월",
   static String formatMonthYear(DateTime date) {
     return DateFormat('yyyy년 M월', 'ko_KR').format(date);
   }
-  
+
   /// Format day of week (e.g., "월요일",
   static String formatDayOfWeek(DateTime date) {
     return _dateFormatWeekday.format(date);
   }
-  
+
   /// Check if date is today
   static bool isToday(DateTime date) {
     final now = DateTime.now();
-    return date.year == now.year && 
-           date.month == now.month && 
-           date.day == now.day;
+    return date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day;
   }
-  
+
   /// Check if date is yesterday
   static bool isYesterday(DateTime date) {
     final yesterday = DateTime.now().subtract(const Duration(days: 1));
-    return date.year == yesterday.year && 
-           date.month == yesterday.month && 
-           date.day == yesterday.day;
+    return date.year == yesterday.year &&
+        date.month == yesterday.month &&
+        date.day == yesterday.day;
   }
 }

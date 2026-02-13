@@ -3,7 +3,7 @@ import 'behavior_pattern.dart';
 
 /// 캐릭터 유형
 enum CharacterType {
-  story,   // 스토리/로맨스 캐릭터
+  story, // 스토리/로맨스 캐릭터
   fortune, // 운세 전문가 캐릭터
 }
 
@@ -22,17 +22,17 @@ class AiCharacter {
   final String? oocInstructions;
   final Map<String, String>? npcProfiles;
   final Color accentColor;
-  final List<String> galleryAssets;  // 갤러리 이미지 에셋들
-  final String? coverImage;           // 커버 이미지
+  final List<String> galleryAssets; // 갤러리 이미지 에셋들
+  final String? coverImage; // 커버 이미지
 
   // 운세 전문가 캐릭터용 필드
-  final CharacterType characterType;        // 캐릭터 유형: story | fortune
-  final List<String> specialties;           // 전문 운세 타입 목록 (예: ['daily', 'weekly'])
-  final String? specialtyCategory;          // 전문 카테고리 (예: 'lifestyle', 'love')
-  final bool canCallFortune;                // 운세 호출 가능 여부
+  final CharacterType characterType; // 캐릭터 유형: story | fortune
+  final List<String> specialties; // 전문 운세 타입 목록 (예: ['daily', 'weekly'])
+  final String? specialtyCategory; // 전문 카테고리 (예: 'lifestyle', 'love')
+  final bool canCallFortune; // 운세 호출 가능 여부
 
   // 행동 패턴 (페르소나 차별화)
-  final BehaviorPattern behaviorPattern;    // Follow-up, 이모티콘, 응답 속도 등
+  final BehaviorPattern behaviorPattern; // Follow-up, 이모티콘, 응답 속도 등
 
   const AiCharacter({
     required this.id,
@@ -50,7 +50,7 @@ class AiCharacter {
     required this.accentColor,
     this.galleryAssets = const [],
     this.coverImage,
-    this.characterType = CharacterType.story,  // 기본값: 스토리 캐릭터
+    this.characterType = CharacterType.story, // 기본값: 스토리 캐릭터
     this.specialties = const [],
     this.specialtyCategory,
     this.canCallFortune = false,

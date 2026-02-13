@@ -1064,7 +1064,6 @@ class _ChatGameEnhanceResultCardState
             ],
           ),
           const SizedBox(height: DSSpacing.md),
-
           ...roadmap.asMap().entries.map((entry) {
             final index = entry.key;
             final item = entry.value as Map<String, dynamic>;
@@ -1268,7 +1267,6 @@ class _ChatGameEnhanceResultCardState
               ],
             ),
             const SizedBox(height: DSSpacing.sm),
-
             Wrap(
               spacing: DSSpacing.sm,
               runSpacing: DSSpacing.sm,

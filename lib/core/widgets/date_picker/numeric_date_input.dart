@@ -58,7 +58,8 @@ class _NumericDateInputState extends State<NumericDateInput> {
     // 초기값 설정
     if (widget.selectedDate != null) {
       final date = widget.selectedDate!;
-      _rawInput = '${date.year}${date.month.toString().padLeft(2, '0')}${date.day.toString().padLeft(2, '0')}';
+      _rawInput =
+          '${date.year}${date.month.toString().padLeft(2, '0')}${date.day.toString().padLeft(2, '0')}';
       _controller.text = _formatDisplay(_rawInput);
       _prevDisplayText = _controller.text;
     }
@@ -76,9 +77,11 @@ class _NumericDateInputState extends State<NumericDateInput> {
     super.didUpdateWidget(oldWidget);
 
     if (widget.selectedDate != null &&
-        !DatePickerUtils.isSameDay(widget.selectedDate, oldWidget.selectedDate)) {
+        !DatePickerUtils.isSameDay(
+            widget.selectedDate, oldWidget.selectedDate)) {
       final date = widget.selectedDate!;
-      _rawInput = '${date.year}${date.month.toString().padLeft(2, '0')}${date.day.toString().padLeft(2, '0')}';
+      _rawInput =
+          '${date.year}${date.month.toString().padLeft(2, '0')}${date.day.toString().padLeft(2, '0')}';
       _controller.text = _formatDisplay(_rawInput);
       _prevDisplayText = _controller.text;
     }

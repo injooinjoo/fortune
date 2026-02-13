@@ -94,7 +94,8 @@ class SpeechRecognitionService {
         // 영구 거부된 경우 설정으로 안내
         if (micPermission.isPermanentlyDenied) {
           statusNotifier.value = '설정에서 마이크 권한을 활성화해주세요';
-          debugPrint('🎤 [STT] Microphone permanently denied, opening settings...');
+          debugPrint(
+              '🎤 [STT] Microphone permanently denied, opening settings...');
           await openAppSettings();
           return false;
         }
@@ -119,7 +120,8 @@ class SpeechRecognitionService {
           // 영구 거부된 경우 설정으로 안내
           if (speechPermission.isPermanentlyDenied) {
             statusNotifier.value = '설정에서 음성 인식 권한을 활성화해주세요';
-            debugPrint('🎤 [STT] Speech permanently denied, opening settings...');
+            debugPrint(
+                '🎤 [STT] Speech permanently denied, opening settings...');
             await openAppSettings();
             return false;
           }
@@ -138,37 +140,37 @@ class SpeechRecognitionService {
       }
 
       // 음성 인식 초기화
-      _isInitialized = await _speech.initialize(
-        onStatus: (status) {
-          statusNotifier.value = _getStatusMessage(status);
-          debugPrint('🎤 [STT] Status: $status');
+      _isInitialized = await _speech.initialize(onStatus: (status) {
+        statusNotifier.value = _getStatusMessage(status);
+        debugPrint('🎤 [STT] Status: $status');
 
-          // 음성 인식이 종료되면 상태 업데이트
-          if (status == 'done' || status == 'notListening') {
-            _isListening = false;
-            isListeningNotifier.value = false;
-            debugPrint('🎤 [STT] Listening stopped automatically (status: $status)');
-          }
-        },
-        onError: (error) {
-          debugPrint('🎤 [STT] Error: ${error.errorMsg}');
-
-          // error_no_match는 침묵 타임아웃 - 자동 재시작 시도
-          if (error.errorMsg == 'error_no_match') {
-            debugPrint('🎤 [STT] No match detected - attempting auto-restart...');
-            if (_onNoMatchCallback != null) {
-              _onNoMatchCallback!();
-              return; // 상태 변경하지 않고 재시작 콜백 호출
-            }
-          }
-
-          // 다른 에러는 기존 로직
-          statusNotifier.value = '오류: ${error.errorMsg}';
+        // 음성 인식이 종료되면 상태 업데이트
+        if (status == 'done' || status == 'notListening') {
           _isListening = false;
           isListeningNotifier.value = false;
-        });
+          debugPrint(
+              '🎤 [STT] Listening stopped automatically (status: $status)');
+        }
+      }, onError: (error) {
+        debugPrint('🎤 [STT] Error: ${error.errorMsg}');
 
-      debugPrint('🎤 [STT] Initialize result: $_isInitialized, isAvailable: ${_speech.isAvailable}');
+        // error_no_match는 침묵 타임아웃 - 자동 재시작 시도
+        if (error.errorMsg == 'error_no_match') {
+          debugPrint('🎤 [STT] No match detected - attempting auto-restart...');
+          if (_onNoMatchCallback != null) {
+            _onNoMatchCallback!();
+            return; // 상태 변경하지 않고 재시작 콜백 호출
+          }
+        }
+
+        // 다른 에러는 기존 로직
+        statusNotifier.value = '오류: ${error.errorMsg}';
+        _isListening = false;
+        isListeningNotifier.value = false;
+      });
+
+      debugPrint(
+          '🎤 [STT] Initialize result: $_isInitialized, isAvailable: ${_speech.isAvailable}');
 
       if (!_isInitialized) {
         statusNotifier.value = '음성 인식을 초기화할 수 없습니다';
@@ -181,14 +183,15 @@ class SpeechRecognitionService {
       return false;
     }
   }
-  
+
   Future<void> startListening({
     required Function(String) onResult,
     Function(String)? onPartialResult,
     Function()? onNoMatch,
     String locale = 'ko-KR',
   }) async {
-    debugPrint('🎤 [STT] startListening called, isInitialized: $_isInitialized, isListening: $_isListening');
+    debugPrint(
+        '🎤 [STT] startListening called, isInitialized: $_isInitialized, isListening: $_isListening');
 
     // 콜백 저장 (error_no_match 시 자동 재시작용)
     _onNoMatchCallback = onNoMatch;
@@ -215,7 +218,8 @@ class SpeechRecognitionService {
 
       await _speech.listen(
         onResult: (result) {
-          debugPrint('🎤 [STT] onResult called: finalResult=${result.finalResult}, recognizedWords="${result.recognizedWords}"');
+          debugPrint(
+              '🎤 [STT] onResult called: finalResult=${result.finalResult}, recognizedWords="${result.recognizedWords}"');
           // Partial result 처리
           if (!result.finalResult) {
             // 현재까지 인식된 부분적인 텍스트
@@ -226,10 +230,12 @@ class SpeechRecognitionService {
           } else {
             // Final result 처리
             final finalText = result.recognizedWords;
-            debugPrint('🎤 [STT] Final result: "$finalText" (lastFinalResult: "$lastFinalResult")');
+            debugPrint(
+                '🎤 [STT] Final result: "$finalText" (lastFinalResult: "$lastFinalResult")');
             if (finalText != lastFinalResult && finalText.isNotEmpty) {
               lastFinalResult = finalText;
-              debugPrint('🎤 [STT] Calling onResult callback with: "$finalText"');
+              debugPrint(
+                  '🎤 [STT] Calling onResult callback with: "$finalText"');
               onResult(finalText);
               // Final result 후 recognizedText 초기화
               recognizedTextNotifier.value = '';
@@ -246,7 +252,7 @@ class SpeechRecognitionService {
         },
         localeId: locale,
         listenFor: const Duration(seconds: 60), // 30 → 60초 (더 긴 발화 지원)
-        pauseFor: const Duration(seconds: 8),   // 3 → 8초 (핵심! 침묵 타임아웃 증가)
+        pauseFor: const Duration(seconds: 8), // 3 → 8초 (핵심! 침묵 타임아웃 증가)
         listenOptions: stt.SpeechListenOptions(
           partialResults: true,
           onDevice: false,
@@ -257,7 +263,8 @@ class SpeechRecognitionService {
       _isListening = true;
       isListeningNotifier.value = true;
       statusNotifier.value = '듣고 있습니다...';
-      debugPrint('🎤 [STT] listen() completed, _speech.isListening: ${_speech.isListening}');
+      debugPrint(
+          '🎤 [STT] listen() completed, _speech.isListening: ${_speech.isListening}');
     } catch (e) {
       debugPrint('🎤 [STT] startListening error: $e');
       statusNotifier.value = '음성 인식을 시작할 수 없습니다';
@@ -265,7 +272,7 @@ class SpeechRecognitionService {
       isListeningNotifier.value = false;
     }
   }
-  
+
   Future<void> stopListening() async {
     debugPrint('🎤 [STT] stopListening called, _isListening: $_isListening');
     if (!_isListening) return;
@@ -302,7 +309,7 @@ class SpeechRecognitionService {
       debugPrint('🎤 [STT] cancelListening error: $e');
     }
   }
-  
+
   String _getStatusMessage(String status) {
     switch (status) {
       case 'listening':
@@ -315,11 +322,11 @@ class SpeechRecognitionService {
         return status;
     }
   }
-  
+
   bool get isListening => _isListening;
   bool get isAvailable => _speech.isAvailable;
   bool get isInitialized => _isInitialized;
-  
+
   void dispose() {
     isListeningNotifier.dispose();
     recognizedTextNotifier.dispose();

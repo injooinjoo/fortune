@@ -48,7 +48,8 @@ class FortuneTestData {
       'advice': '적극적으로 다가가세요',
       'meeting_time': relationshipStatus == 'single' ? '봄에 좋은 인연이 있습니다' : null,
       'meeting_place': relationshipStatus == 'single' ? '동호회, 모임' : null,
-      'relationship_advice': relationshipStatus == 'dating' ? '서로의 시간을 존중하세요' : null,
+      'relationship_advice':
+          relationshipStatus == 'dating' ? '서로의 시간을 존중하세요' : null,
       'created_at': DateTime.now().toIso8601String(),
     };
   }
@@ -159,7 +160,8 @@ class FortuneTestData {
       'best_match': ['ENFP', 'ENTP'],
       'worst_match': ['ESFP', 'ISFP'],
       'recommended_jobs': ['과학자', '엔지니어', '전략 컨설턴트'],
-      'saju_integration': hasSajuData ? '사주의 목(木) 기운과 INTJ의 전략적 성향이 조화롭게 어우러집니다' : null,
+      'saju_integration':
+          hasSajuData ? '사주의 목(木) 기운과 INTJ의 전략적 성향이 조화롭게 어우러집니다' : null,
       'created_at': DateTime.now().toIso8601String(),
     };
   }

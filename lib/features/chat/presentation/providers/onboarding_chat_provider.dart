@@ -106,7 +106,9 @@ class OnboardingState {
   }) {
     return OnboardingState(
       currentStep: currentStep ?? this.currentStep,
-      primaryLifeCategory: clearLifeCategory ? null : (primaryLifeCategory ?? this.primaryLifeCategory),
+      primaryLifeCategory: clearLifeCategory
+          ? null
+          : (primaryLifeCategory ?? this.primaryLifeCategory),
       subConcern: clearSubConcern ? null : (subConcern ?? this.subConcern),
       name: name ?? this.name,
       birthDate: birthDate ?? this.birthDate,
@@ -157,26 +159,30 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
   /// 로그인 후 온보딩 상태 재확인
   /// 온보딩 단계에 따라 다르게 처리
   Future<void> _recheckOnboardingAfterLogin() async {
-    debugPrint('🔍 [_recheckOnboardingAfterLogin] currentStep: ${state.currentStep}');
+    debugPrint(
+        '🔍 [_recheckOnboardingAfterLogin] currentStep: ${state.currentStep}');
 
     // 온보딩 단계에 따라 처리
     switch (state.currentStep) {
       case OnboardingStep.welcome:
       case OnboardingStep.name:
         // ✅ 초기 단계에서 "바로 로그인하기" 클릭 → handleEarlyLogin
-        debugPrint('🔐 [_recheckOnboardingAfterLogin] Early login detected, calling handleEarlyLogin');
+        debugPrint(
+            '🔐 [_recheckOnboardingAfterLogin] Early login detected, calling handleEarlyLogin');
         await handleEarlyLogin();
         break;
 
       case OnboardingStep.loginPrompt:
         // ✅ 온보딩 완료 후 로그인 유도 단계 → skipLoginPrompt
-        debugPrint('🔐 [_recheckOnboardingAfterLogin] Login prompt step, calling skipLoginPrompt');
+        debugPrint(
+            '🔐 [_recheckOnboardingAfterLogin] Login prompt step, calling skipLoginPrompt');
         skipLoginPrompt();
         break;
 
       default:
         // ✅ 다른 단계 (birthDate, birthTime, gender 등) → 상태 체크만
-        debugPrint('🔐 [_recheckOnboardingAfterLogin] Other step, calling _checkOnboardingStatus');
+        debugPrint(
+            '🔐 [_recheckOnboardingAfterLogin] Other step, calling _checkOnboardingStatus');
         state = state.copyWith(isCheckingStatus: true);
         await _checkOnboardingStatus();
         break;
@@ -375,7 +381,8 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
     final concerns = category != null ? subConcernsByCategory[category] : null;
     final selectedConcern = concerns?.firstWhere(
       (c) => c.id == concernId,
-      orElse: () => SubConcern(id: concernId, label: concernId, category: category!),
+      orElse: () =>
+          SubConcern(id: concernId, label: concernId, category: category!),
     );
 
     chatNotifier.addUserMessage(selectedConcern?.label ?? concernId);
@@ -715,7 +722,10 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
       final concerns = subConcernsByCategory[state.primaryLifeCategory];
       final concern = concerns?.firstWhere(
         (c) => c.id == state.subConcern,
-        orElse: () => SubConcern(id: '', label: state.subConcern!, category: state.primaryLifeCategory!),
+        orElse: () => SubConcern(
+            id: '',
+            label: state.subConcern!,
+            category: state.primaryLifeCategory!),
       );
       subConcernLabel = concern?.label ?? state.subConcern!;
     }
@@ -886,8 +896,7 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
 
       // 관심 분야에 맞는 완료 메시지
       final categoryMessage = _getCategoryWelcomeMessage();
-      chatNotifier.addAiMessage(
-          '감사합니다, ${state.name}님! 🎉\n$categoryMessage');
+      chatNotifier.addAiMessage('감사합니다, ${state.name}님! 🎉\n$categoryMessage');
 
       // 관심 분야에 맞는 추천 칩 표시
       final recommendedChips = _getRecommendedChipsForCategory();
@@ -958,7 +967,8 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
   /// 온보딩 초기 단계에서 로그인 시 호출
   /// (이름 입력 전에 "바로 로그인하기"를 통해 로그인한 경우)
   Future<void> handleEarlyLogin() async {
-    debugPrint('🔐 [handleEarlyLogin] Checking existing profile after login...');
+    debugPrint(
+        '🔐 [handleEarlyLogin] Checking existing profile after login...');
 
     try {
       final client = _ref.read(supabaseClientProvider);
@@ -978,7 +988,8 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
 
       if (profile != null && profile['onboarding_completed'] == true) {
         // 기존 프로필이 있고 온보딩 완료된 사용자 → 온보딩 건너뛰기
-        debugPrint('✅ [handleEarlyLogin] Existing profile found, skipping onboarding');
+        debugPrint(
+            '✅ [handleEarlyLogin] Existing profile found, skipping onboarding');
 
         // 프로필 새로고침
         _ref.read(userProfileNotifierProvider.notifier).refresh();
@@ -991,9 +1002,8 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
         );
 
         final chatNotifier = _ref.read(chatMessagesProvider.notifier);
-        chatNotifier.addAiMessage(
-          '${profile['name']}님, 다시 오셨군요! 반가워요 ✨\n무엇이 궁금하세요?'
-        );
+        chatNotifier
+            .addAiMessage('${profile['name']}님, 다시 오셨군요! 반가워요 ✨\n무엇이 궁금하세요?');
         chatNotifier.addSystemMessage(chipIds: [
           'daily_fortune',
           'love_fortune',
@@ -1002,7 +1012,8 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
         ]);
       } else {
         // 기존 프로필이 없거나 온보딩 미완료 → 온보딩 계속
-        debugPrint('🔄 [handleEarlyLogin] No complete profile, continuing onboarding');
+        debugPrint(
+            '🔄 [handleEarlyLogin] No complete profile, continuing onboarding');
 
         // 소셜 로그인에서 이름 가져오기
         final socialName = user.userMetadata?['full_name'] as String? ??

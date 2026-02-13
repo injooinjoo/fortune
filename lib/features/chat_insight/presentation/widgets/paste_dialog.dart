@@ -81,8 +81,8 @@ class _PasteDialogState extends State<PasteDialog> {
                 const SizedBox(height: DSSpacing.xs),
                 Text(
                   '카카오톡 > 채팅방 > ⋯ > 대화 내보내기 > 텍스트만',
-                  style: typography.bodySmall
-                      .copyWith(color: colors.textTertiary),
+                  style:
+                      typography.bodySmall.copyWith(color: colors.textTertiary),
                 ),
                 const SizedBox(height: DSSpacing.md),
 
@@ -98,8 +98,7 @@ class _PasteDialogState extends State<PasteDialog> {
                       style: typography.bodySmall
                           .copyWith(color: colors.textPrimary),
                       decoration: InputDecoration(
-                        hintText:
-                            '여기에 카카오톡 대화를 붙여넣어 주세요...\n\n'
+                        hintText: '여기에 카카오톡 대화를 붙여넣어 주세요...\n\n'
                             '예시:\n'
                             '2026년 1월 4일 오후 2:30, 이름 : 메시지',
                         hintStyle: typography.bodySmall
@@ -107,12 +106,10 @@ class _PasteDialogState extends State<PasteDialog> {
                         filled: true,
                         fillColor: colors.surface,
                         border: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(DSRadius.md),
+                          borderRadius: BorderRadius.circular(DSRadius.md),
                           borderSide: BorderSide.none,
                         ),
-                        contentPadding:
-                            const EdgeInsets.all(DSSpacing.md),
+                        contentPadding: const EdgeInsets.all(DSSpacing.md),
                       ),
                     ),
                   ),

@@ -34,105 +34,91 @@ class AnalyticsService extends ResilientService {
   Future<void> initialize() async {
     if (_isInitialized) return;
 
-    await safeExecute(
-      () async {
-        // 기능 플래그 확인
-        if (!Environment.enableAnalytics) {
-          Logger.info('Analytics are disabled via feature flag');
-          return;
-        }
+    await safeExecute(() async {
+      // 기능 플래그 확인
+      if (!Environment.enableAnalytics) {
+        Logger.info('Analytics are disabled via feature flag');
+        return;
+      }
 
-        // Firebase Analytics 초기화
-        _analytics = FirebaseAnalytics.instance;
-        _observer = FirebaseAnalyticsObserver(analytics: _analytics!);
+      // Firebase Analytics 초기화
+      _analytics = FirebaseAnalytics.instance;
+      _observer = FirebaseAnalyticsObserver(analytics: _analytics!);
 
-        // 수집 설정
-        await _analytics!.setAnalyticsCollectionEnabled(!kDebugMode);
+      // 수집 설정
+      await _analytics!.setAnalyticsCollectionEnabled(!kDebugMode);
 
-        _isInitialized = true;
-        Logger.info('Firebase Analytics initialized successfully');
+      _isInitialized = true;
+      Logger.info('Firebase Analytics initialized successfully');
 
-        // 앱 시작 이벤트 로깅
-        await logEvent('app_open');
-      },
-      'Firebase Analytics 초기화',
-      '분석 기능 비활성화 (앱은 정상 작동)'
-    );
+      // 앱 시작 이벤트 로깅
+      await logEvent('app_open');
+    }, 'Firebase Analytics 초기화', '분석 기능 비활성화 (앱은 정상 작동)');
   }
 
   /// 사용자 속성 설정 (ResilientService 패턴)
-  Future<void> setUserProperties({
-    String? userId,
-    bool? isPremium,
-    String? userType,
-    String? gender,
-    String? birthYear}) async {
+  Future<void> setUserProperties(
+      {String? userId,
+      bool? isPremium,
+      String? userType,
+      String? gender,
+      String? birthYear}) async {
     if (!_isInitialized || _analytics == null) return;
 
-    await safeExecute(
-      () async {
-        if (userId != null) {
-          await _analytics!.setUserId(id: userId);
-        }
+    await safeExecute(() async {
+      if (userId != null) {
+        await _analytics!.setUserId(id: userId);
+      }
 
-        if (isPremium != null) {
-          await _analytics!.setUserProperty(
-            name: 'is_premium',
-            value: isPremium.toString(),
-          );
-        }
+      if (isPremium != null) {
+        await _analytics!.setUserProperty(
+          name: 'is_premium',
+          value: isPremium.toString(),
+        );
+      }
 
-        if (userType != null) {
-          await _analytics!.setUserProperty(
-            name: 'user_type',
-            value: userType,
-          );
-        }
+      if (userType != null) {
+        await _analytics!.setUserProperty(
+          name: 'user_type',
+          value: userType,
+        );
+      }
 
-        if (gender != null) {
-          await _analytics!.setUserProperty(
-            name: 'gender',
-            value: gender,
-          );
-        }
+      if (gender != null) {
+        await _analytics!.setUserProperty(
+          name: 'gender',
+          value: gender,
+        );
+      }
 
-        if (birthYear != null) {
-          await _analytics!.setUserProperty(
-            name: 'birth_year',
-            value: birthYear,
-          );
-        }
+      if (birthYear != null) {
+        await _analytics!.setUserProperty(
+          name: 'birth_year',
+          value: birthYear,
+        );
+      }
 
-        Logger.info('User properties set successfully');
-      },
-      '사용자 속성 설정',
-      '분석 속성 설정 생략 (기능은 정상 작동)'
-    );
+      Logger.info('User properties set successfully');
+    }, '사용자 속성 설정', '분석 속성 설정 생략 (기능은 정상 작동)');
   }
 
   /// 커스텀 이벤트 로깅 (ResilientService 패턴)
-  Future<void> logEvent(
-    String name, {
-    Map<String, dynamic>? parameters}) async {
+  Future<void> logEvent(String name, {Map<String, dynamic>? parameters}) async {
     if (!_isInitialized || _analytics == null) return;
 
-    await safeExecute(
-      () async {
-        // 파라미터를 Map<String, Object>로 변환
-        final Map<String, Object>? safeParameters = parameters?.map((key, value) {
-          final Object safeValue = value ?? '';
-          return MapEntry(key, safeValue);
-        });
+    await safeExecute(() async {
+      // 파라미터를 Map<String, Object>로 변환
+      final Map<String, Object>? safeParameters = parameters?.map((key, value) {
+        final Object safeValue = value ?? '';
+        return MapEntry(key, safeValue);
+      });
 
-        await _analytics!.logEvent(
-          name: name,
-          parameters: safeParameters,
-        );
-        Logger.info('Event logged: $name', parameters);
-      },
-      '이벤트 로깅: $name',
-      '분석 이벤트 생략 (기능은 정상 작동)'
-    );
+      await _analytics!.logEvent(
+        name: name,
+        parameters: safeParameters,
+      );
+      Logger.info('Event logged: $name', parameters);
+    }, '이벤트 로깅: $name', '분석 이벤트 생략 (기능은 정상 작동)');
   }
 
   /// Log fortune recommendation impression
@@ -177,11 +163,11 @@ class AnalyticsService extends ResilientService {
   }
 
   /// Log recommendation effectiveness
-  Future<void> logRecommendationEffectiveness({
-    required String fortuneType,
-    required bool visited,
-    required double personalScore,
-    required double popularityScore}) async {
+  Future<void> logRecommendationEffectiveness(
+      {required String fortuneType,
+      required bool visited,
+      required double personalScore,
+      required double popularityScore}) async {
     await logEvent(
       'recommendation_effectiveness',
       parameters: {
@@ -194,34 +180,28 @@ class AnalyticsService extends ResilientService {
     );
   }
 
-
   /// 화면 뷰 로깅 (ResilientService 패턴)
-  Future<void> logScreenView({
-    required String screenName,
-    String? screenClass}) async {
+  Future<void> logScreenView(
+      {required String screenName, String? screenClass}) async {
     if (!_isInitialized || _analytics == null) return;
 
-    await safeExecute(
-      () async {
-        await _analytics!.logScreenView(
-          screenName: screenName,
-          screenClass: screenClass ?? screenName,
-        );
+    await safeExecute(() async {
+      await _analytics!.logScreenView(
+        screenName: screenName,
+        screenClass: screenClass ?? screenName,
+      );
 
-        Logger.info('Screen view logged: $screenName');
-      },
-      '화면 뷰 로깅: $screenName',
-      '분석 화면 추적 생략 (기능은 정상 작동)'
-    );
+      Logger.info('Screen view logged: $screenName');
+    }, '화면 뷰 로깅: $screenName', '분석 화면 추적 생략 (기능은 정상 작동)');
   }
 
   /// Log fortune generation event
-  Future<void> logFortuneGeneration({
-    required String fortuneType,
-    required bool success,
-    String? source,
-    int? responseTimeMs,
-    Map<String, dynamic>? additionalParams}) async {
+  Future<void> logFortuneGeneration(
+      {required String fortuneType,
+      required bool success,
+      String? source,
+      int? responseTimeMs,
+      Map<String, dynamic>? additionalParams}) async {
     await logEvent('fortune_generation', parameters: {
       'fortune_type': fortuneType,
       'success': success,
@@ -232,12 +212,12 @@ class AnalyticsService extends ResilientService {
   }
 
   /// Log token purchase event
-  Future<void> logTokenPurchase({
-    required String packageId,
-    required double price,
-    required String currency,
-    required int tokenAmount,
-    bool success = true}) async {
+  Future<void> logTokenPurchase(
+      {required String packageId,
+      required double price,
+      required String currency,
+      required int tokenAmount,
+      bool success = true}) async {
     await logEvent('purchase', parameters: {
       'item_id': packageId,
       'price': price,
@@ -249,10 +229,10 @@ class AnalyticsService extends ResilientService {
   }
 
   /// Log token consumption event
-  Future<void> logTokenConsumption({
-    required String fortuneType,
-    required int tokenAmount,
-    int? remainingTokens}) async {
+  Future<void> logTokenConsumption(
+      {required String fortuneType,
+      required int tokenAmount,
+      int? remainingTokens}) async {
     await logEvent('token_consumed', parameters: {
       'fortune_type': fortuneType,
       'token_amount': tokenAmount,
@@ -261,10 +241,8 @@ class AnalyticsService extends ResilientService {
   }
 
   /// Log ad events
-  Future<void> logAdImpression({
-    required String adType,
-    String? adUnitId,
-    String? placement}) async {
+  Future<void> logAdImpression(
+      {required String adType, String? adUnitId, String? placement}) async {
     await logEvent('ad_impression', parameters: {
       'ad_type': adType,
       if (adUnitId != null) 'ad_unit_id': adUnitId,
@@ -272,10 +250,8 @@ class AnalyticsService extends ResilientService {
     });
   }
 
-  Future<void> logAdClick({
-    required String adType,
-    String? adUnitId,
-    String? placement}) async {
+  Future<void> logAdClick(
+      {required String adType, String? adUnitId, String? placement}) async {
     await logEvent('ad_click', parameters: {
       'ad_type': adType,
       if (adUnitId != null) 'ad_unit_id': adUnitId,
@@ -283,10 +259,10 @@ class AnalyticsService extends ResilientService {
     });
   }
 
-  Future<void> logAdReward({
-    required String adType,
-    required int rewardAmount,
-    String? rewardType}) async {
+  Future<void> logAdReward(
+      {required String adType,
+      required int rewardAmount,
+      String? rewardType}) async {
     await logEvent('ad_reward_earned', parameters: {
       'ad_type': adType,
       'reward_amount': rewardAmount,
@@ -295,10 +271,10 @@ class AnalyticsService extends ResilientService {
   }
 
   /// Log user engagement
-  Future<void> logUserEngagement({
-    required String action,
-    String? target,
-    Map<String, dynamic>? additionalParams}) async {
+  Future<void> logUserEngagement(
+      {required String action,
+      String? target,
+      Map<String, dynamic>? additionalParams}) async {
     await logEvent('user_engagement', parameters: {
       'action': action,
       if (target != null) 'target': target,
@@ -307,11 +283,11 @@ class AnalyticsService extends ResilientService {
   }
 
   /// Log error events
-  Future<void> logError({
-    required String errorType,
-    String? errorMessage,
-    String? screen,
-    Map<String, dynamic>? additionalParams}) async {
+  Future<void> logError(
+      {required String errorType,
+      String? errorMessage,
+      String? screen,
+      Map<String, dynamic>? additionalParams}) async {
     await logEvent('app_error', parameters: {
       'error_type': errorType,
       if (errorMessage != null) 'error_message': errorMessage,
@@ -321,10 +297,10 @@ class AnalyticsService extends ResilientService {
   }
 
   /// Log share events
-  Future<void> logShare({
-    required String contentType,
-    required String method,
-    String? itemId}) async {
+  Future<void> logShare(
+      {required String contentType,
+      required String method,
+      String? itemId}) async {
     await logEvent('share', parameters: {
       'content_type': contentType,
       'method': method,
@@ -341,15 +317,13 @@ class AnalyticsService extends ResilientService {
     await logEvent('tutorial_complete');
   }
 
-  Future<void> logSignUp({
-    required String method}) async {
+  Future<void> logSignUp({required String method}) async {
     await logEvent('sign_up', parameters: {
       'method': method,
     });
   }
 
-  Future<void> logLogin({
-    required String method}) async {
+  Future<void> logLogin({required String method}) async {
     await logEvent('login', parameters: {
       'method': method,
     });
@@ -359,15 +333,11 @@ class AnalyticsService extends ResilientService {
   Future<void> reset() async {
     if (!_isInitialized || _analytics == null) return;
 
-    await safeExecute(
-      () async {
-        await _analytics!.setUserId(id: null);
-        await _analytics!.resetAnalyticsData();
-        Logger.info('Analytics reset successfully');
-      },
-      'Analytics 데이터 초기화',
-      '분석 초기화 생략 (로그아웃은 정상 진행)'
-    );
+    await safeExecute(() async {
+      await _analytics!.setUserId(id: null);
+      await _analytics!.resetAnalyticsData();
+      Logger.info('Analytics reset successfully');
+    }, 'Analytics 데이터 초기화', '분석 초기화 생략 (로그아웃은 정상 진행)');
   }
 
   // ============ A/B Testing Analytics Events ============
@@ -511,18 +481,14 @@ class AnalyticsService extends ResilientService {
   }) async {
     if (!_isInitialized || _analytics == null) return;
 
-    await safeExecute(
-      () async {
-        await _analytics!.setUserProperty(
-          name: 'ab_$experimentId',
-          value: variantId,
-        );
+    await safeExecute(() async {
+      await _analytics!.setUserProperty(
+        name: 'ab_$experimentId',
+        value: variantId,
+      );
 
-        Logger.info('Set A/B test user property: $experimentId = $variantId');
-      },
-      'A/B 테스트 사용자 속성 설정: $experimentId',
-      'A/B 테스트 분석 속성 생략 (실험 기능은 정상 작동)'
-    );
+      Logger.info('Set A/B test user property: $experimentId = $variantId');
+    }, 'A/B 테스트 사용자 속성 설정: $experimentId', 'A/B 테스트 분석 속성 생략 (실험 기능은 정상 작동)');
   }
 
   /// Log experiment started event

@@ -11,7 +11,8 @@ import '../../features/fortune/domain/entities/fortune_category.dart';
 import 'providers.dart';
 
 /// State notifier for managing fortune recommendations
-class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<FortuneCardScore>>> {
+class FortuneRecommendationNotifier
+    extends StateNotifier<AsyncValue<List<FortuneCardScore>>> {
   final Ref ref;
   final Dio _dio;
   DateTime? _lastFetchTime;
@@ -27,16 +28,16 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
     // Setup Dio interceptors
     _dio.options.baseUrl = EdgeFunctionsEndpoints.currentBaseUrl;
     _dio.options.headers['Content-Type'] = 'application/json';
-    
+
     // Add auth interceptor
-    _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) async {
-        final token = await ref.read(authTokenProvider.future);
-        if (token != null) {
-          options.headers['Authorization'] = 'Bearer $token';
-        }
-        handler.next(options);
-      }));
+    _dio.interceptors
+        .add(InterceptorsWrapper(onRequest: (options, handler) async {
+      final token = await ref.read(authTokenProvider.future);
+      if (token != null) {
+        options.headers['Authorization'] = 'Bearer $token';
+      }
+      handler.next(options);
+    }));
 
     // Fetch recommendations on initialization
     fetchRecommendations();
@@ -65,17 +66,17 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
 
       // TODO: Fortune Recommendations API is not implemented yet
       // Temporarily disable API call to prevent errors
-      Logger.info('Fortune Recommendations API disabled - using empty fallback');
+      Logger.info(
+          'Fortune Recommendations API disabled - using empty fallback');
       state = const AsyncValue.data([]);
       _lastFetchTime = DateTime.now();
 
       // Log analytics event for monitoring
-      await AnalyticsService.instance.logEvent(
-        'fortune_recommendations_disabled',
-        parameters: {
-          'reason': 'api_not_implemented',
-          'timestamp': DateTime.now().toIso8601String(),
-        });
+      await AnalyticsService.instance
+          .logEvent('fortune_recommendations_disabled', parameters: {
+        'reason': 'api_not_implemented',
+        'timestamp': DateTime.now().toIso8601String(),
+      });
 
       // TODO: Uncomment when API is implemented
       /*
@@ -109,7 +110,8 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
     } catch (error) {
       // This catch block should not be reached since API is disabled above
       // But keeping it for future API implementation
-      Logger.warning('Fortune recommendations API disabled - using empty fallback');
+      Logger.warning(
+          'Fortune recommendations API disabled - using empty fallback');
       // Provide empty data instead of error state to prevent UI blocking
       state = const AsyncValue.data([]);
     }
@@ -139,25 +141,26 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
       // Update local user profile preferences
       final userProfile = ref.read(userProfileProvider).value;
       if (userProfile?.fortunePreferences != null) {
-        final updatedPreferences = userProfile!.fortunePreferences!.recordVisit(
-          fortuneType,
-          category);
+        final updatedPreferences =
+            userProfile!.fortunePreferences!.recordVisit(fortuneType, category);
 
         // Update user profile with new preferences
-        final updatedProfile = userProfile.copyWith(
-          fortunePreferences: updatedPreferences);
+        final updatedProfile =
+            userProfile.copyWith(fortunePreferences: updatedPreferences);
 
         // Update the provider
-        ref.read(profile_notifier.userProfileNotifierProvider.notifier).updateProfile(updatedProfile);
+        ref
+            .read(profile_notifier.userProfileNotifierProvider.notifier)
+            .updateProfile(updatedProfile);
       }
 
       // Log visit to analytics
-      await AnalyticsService.instance.logEvent(
-        'fortune_card_visit',
-        parameters: {
-          'fortune_type': fortuneType,
-          'category': category,
-          'source': 'recommendation'});
+      await AnalyticsService.instance.logEvent('fortune_card_visit',
+          parameters: {
+            'fortune_type': fortuneType,
+            'category': category,
+            'source': 'recommendation'
+          });
 
       // Optionally refresh recommendations after visit
       // This helps to update personal scores based on new visit data
@@ -174,8 +177,8 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
     try {
       final userProfile = ref.read(userProfileProvider).value;
       if (userProfile?.fortunePreferences != null) {
-        final currentFavorites = List<String>.from(
-          userProfile!.fortunePreferences!.favorites);
+        final currentFavorites =
+            List<String>.from(userProfile!.fortunePreferences!.favorites);
 
         if (currentFavorites.contains(fortuneType)) {
           currentFavorites.remove(fortuneType);
@@ -183,13 +186,15 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
           currentFavorites.add(fortuneType);
         }
 
-        final updatedPreferences = userProfile.fortunePreferences!.copyWith(
-          favorites: currentFavorites);
+        final updatedPreferences = userProfile.fortunePreferences!
+            .copyWith(favorites: currentFavorites);
 
-        final updatedProfile = userProfile.copyWith(
-          fortunePreferences: updatedPreferences);
+        final updatedProfile =
+            userProfile.copyWith(fortunePreferences: updatedPreferences);
 
-        ref.read(profile_notifier.userProfileNotifierProvider.notifier).updateProfile(updatedProfile);
+        ref
+            .read(profile_notifier.userProfileNotifierProvider.notifier)
+            .updateProfile(updatedProfile);
 
         // Refresh recommendations to reflect favorite status
         await fetchRecommendations(forceRefresh: true);
@@ -207,57 +212,62 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
 }
 
 /// Main provider for fortune recommendations
-final fortuneRecommendationProvider = StateNotifierProvider<FortuneRecommendationNotifier, AsyncValue<List<FortuneCardScore>>>((ref) => FortuneRecommendationNotifier(ref));
+final fortuneRecommendationProvider = StateNotifierProvider<
+        FortuneRecommendationNotifier, AsyncValue<List<FortuneCardScore>>>(
+    (ref) => FortuneRecommendationNotifier(ref));
 
 /// Provider for getting recommendations by category
-final fortuneRecommendationsByCategoryProvider = Provider.family<List<FortuneCardScore>, String>(
-  (ref, category) {
-    final recommendations = ref.watch(fortuneRecommendationProvider);
-    return recommendations.maybeWhen(
-      data: (scores) => scores.filterByCategory(category),
-      orElse: () => []);
-  });
+final fortuneRecommendationsByCategoryProvider =
+    Provider.family<List<FortuneCardScore>, String>((ref, category) {
+  final recommendations = ref.watch(fortuneRecommendationProvider);
+  return recommendations.maybeWhen(
+      data: (scores) => scores.filterByCategory(category), orElse: () => []);
+});
 
 /// Provider for getting top recommendations
-final topFortuneRecommendationsProvider = Provider.family<List<FortuneCardScore>, int>(
-  (ref, count) {
-    final recommendations = ref.watch(fortuneRecommendationProvider);
-    return recommendations.maybeWhen(
-      data: (scores) => scores.getTopRecommendations(count),
-      orElse: () => []);
-  });
+final topFortuneRecommendationsProvider =
+    Provider.family<List<FortuneCardScore>, int>((ref, count) {
+  final recommendations = ref.watch(fortuneRecommendationProvider);
+  return recommendations.maybeWhen(
+      data: (scores) => scores.getTopRecommendations(count), orElse: () => []);
+});
 
 /// Provider to convert FortuneCardScore to FortuneCategory
-final fortuneCategoryFromScoreProvider = Provider.family<FortuneCategory?, FortuneCardScore>(
-  (ref, score) {
-    // Map category to gradient colors (using DSColors tokens - ChatGPT monochrome style)
-    final categoryGradients = {
-      'love': [DSColors.accentSecondary, DSColors.accentSecondary],
-      'career': [DSColors.accentSecondary, DSColors.accentSecondary],
-      'money': [DSColors.warning, const Color(0xFFD97706)], // 고유 색상: gradient end
-      'health': [DSColors.success, const Color(0xFF059669)], // 고유 색상: gradient end
-      'traditional': [DSColors.accentSecondary, DSColors.accentSecondary],
-      'lifestyle': [DSColors.accentSecondary, DSColors.accentSecondary],
-      'interactive': [DSColors.accentSecondary, DSColors.accentSecondary],
-      'petFamily': null};
+final fortuneCategoryFromScoreProvider =
+    Provider.family<FortuneCategory?, FortuneCardScore>((ref, score) {
+  // Map category to gradient colors (using DSColors tokens - ChatGPT monochrome style)
+  final categoryGradients = {
+    'love': [DSColors.accentSecondary, DSColors.accentSecondary],
+    'career': [DSColors.accentSecondary, DSColors.accentSecondary],
+    'money': [DSColors.warning, const Color(0xFFD97706)], // 고유 색상: gradient end
+    'health': [
+      DSColors.success,
+      const Color(0xFF059669)
+    ], // 고유 색상: gradient end
+    'traditional': [DSColors.accentSecondary, DSColors.accentSecondary],
+    'lifestyle': [DSColors.accentSecondary, DSColors.accentSecondary],
+    'interactive': [DSColors.accentSecondary, DSColors.accentSecondary],
+    'petFamily': null
+  };
 
-    // Map category to icons
-    final categoryIcons = {
-      'love': Icons.favorite_rounded,
-      'career': Icons.work_rounded,
-      'money': Icons.attach_money_rounded,
-      'health': Icons.health_and_safety_rounded,
-      'traditional': Icons.auto_awesome_rounded,
-      'lifestyle': Icons.calendar_today_rounded,
-      'interactive': Icons.touch_app_rounded,
-      'petFamily': null};
+  // Map category to icons
+  final categoryIcons = {
+    'love': Icons.favorite_rounded,
+    'career': Icons.work_rounded,
+    'money': Icons.attach_money_rounded,
+    'health': Icons.health_and_safety_rounded,
+    'traditional': Icons.auto_awesome_rounded,
+    'lifestyle': Icons.calendar_today_rounded,
+    'interactive': Icons.touch_app_rounded,
+    'petFamily': null
+  };
 
-    final gradients = categoryGradients[score.category] ??
-        [DSColors.accentSecondary, DSColors.accentSecondary];
-    
-    final icon = categoryIcons[score.category] ?? Icons.star_rounded;
+  final gradients = categoryGradients[score.category] ??
+      [DSColors.accentSecondary, DSColors.accentSecondary];
 
-    return FortuneCategory(
+  final icon = categoryIcons[score.category] ?? Icons.star_rounded;
+
+  return FortuneCategory(
       title: score.title,
       route: score.route,
       type: score.fortuneType,
@@ -267,7 +277,7 @@ final fortuneCategoryFromScoreProvider = Provider.family<FortuneCategory?, Fortu
       category: score.category,
       isNew: score.isNew,
       isPremium: score.isPremium);
-  });
+});
 
 /// Provider for checking if recommendations are ready
 final recommendationsReadyProvider = Provider<bool>((ref) {
@@ -280,4 +290,3 @@ final recommendationsLoadingProvider = Provider<bool>((ref) {
   final recommendations = ref.watch(fortuneRecommendationProvider);
   return recommendations.isLoading;
 });
-

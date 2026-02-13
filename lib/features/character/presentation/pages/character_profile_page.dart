@@ -26,7 +26,8 @@ class CharacterProfilePage extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<CharacterProfilePage> createState() => _CharacterProfilePageState();
+  ConsumerState<CharacterProfilePage> createState() =>
+      _CharacterProfilePageState();
 }
 
 class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
@@ -99,7 +100,8 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
                       alignment: Alignment.centerLeft,
                       child: Text(
                         CharacterLocalizer.getName(context, _character.id),
-                        style: context.heading4.copyWith(fontWeight: FontWeight.bold),
+                        style: context.heading4
+                            .copyWith(fontWeight: FontWeight.bold),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -109,7 +111,10 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
                       child: Wrap(
                         spacing: 6,
                         runSpacing: 4,
-                        children: CharacterLocalizer.getTags(context, _character.id).take(5).map((tag) {
+                        children:
+                            CharacterLocalizer.getTags(context, _character.id)
+                                .take(5)
+                                .map((tag) {
                           return Text(
                             '#$tag',
                             style: context.bodySmall.copyWith(
@@ -125,7 +130,8 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        CharacterLocalizer.getShortDescription(context, _character.id),
+                        CharacterLocalizer.getShortDescription(
+                            context, _character.id),
                         style: context.bodyMedium.copyWith(
                           color: isDark ? Colors.grey[400] : Colors.grey[600],
                         ),
@@ -172,7 +178,8 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
   }
 
   /// 프로필 헤더 (아바타 + 통계)
-  Widget _buildProfileHeader(BuildContext context, int messageCount, dynamic affinity) {
+  Widget _buildProfileHeader(
+      BuildContext context, int messageCount, dynamic affinity) {
     return Row(
       children: [
         // 큰 아바타
@@ -231,7 +238,8 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
               ),
               _buildStatColumn(
                 context,
-                count: CharacterLocalizer.getAffinityPhaseName(context, affinity.phase),
+                count: CharacterLocalizer.getAffinityPhaseName(
+                    context, affinity.phase),
                 label: context.l10n.relationship,
                 isText: true,
               ),
@@ -374,7 +382,8 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
           context: context,
           icon: Icons.auto_stories,
           title: context.l10n.worldview,
-          content: CharacterLocalizer.getWorldview(context, _character.id).trim(),
+          content:
+              CharacterLocalizer.getWorldview(context, _character.id).trim(),
           bgColor: sectionBgColor!,
         ),
         const SizedBox(height: 12),
@@ -383,11 +392,13 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
           context: context,
           icon: Icons.person,
           title: context.l10n.characterLabel,
-          content: CharacterLocalizer.getPersonality(context, _character.id).trim(),
+          content:
+              CharacterLocalizer.getPersonality(context, _character.id).trim(),
           bgColor: sectionBgColor,
         ),
         // NPC 프로필
-        if (_character.npcProfiles != null && _character.npcProfiles!.isNotEmpty) ...[
+        if (_character.npcProfiles != null &&
+            _character.npcProfiles!.isNotEmpty) ...[
           const SizedBox(height: 12),
           _buildNpcSection(context, sectionBgColor),
         ],
@@ -573,7 +584,8 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
       builder: (ctx) => AlertDialog(
         title: Text(context.l10n.resetConversation),
         content: Text(
-          context.l10n.resetConversationConfirm(CharacterLocalizer.getName(context, _character.id)),
+          context.l10n.resetConversationConfirm(
+              CharacterLocalizer.getName(context, _character.id)),
         ),
         actions: [
           TextButton(
@@ -583,10 +595,13 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
-              ref.read(characterChatProvider(_character.id).notifier).clearConversation();
+              ref
+                  .read(characterChatProvider(_character.id).notifier)
+                  .clearConversation();
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(context.l10n.conversationResetSuccess(CharacterLocalizer.getName(context, _character.id))),
+                  content: Text(context.l10n.conversationResetSuccess(
+                      CharacterLocalizer.getName(context, _character.id))),
                   behavior: SnackBarBehavior.floating,
                 ),
               );
@@ -614,7 +629,8 @@ class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => tabBar.preferredSize.height;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
       color: bgColor,
       child: tabBar,

@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Theme mode state provider
-final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>((ref) {
+final themeModeProvider =
+    StateNotifierProvider<ThemeModeNotifier, ThemeMode>((ref) {
   return ThemeModeNotifier();
 });
 
@@ -19,7 +20,7 @@ class ThemeModeNotifier extends StateNotifier<ThemeMode> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final savedTheme = prefs.getString(_themeKey);
-      
+
       if (savedTheme != null) {
         switch (savedTheme) {
           case 'light':
@@ -37,7 +38,7 @@ class ThemeModeNotifier extends StateNotifier<ThemeMode> {
         // If no saved preference, default to light theme (Claude-style neutral)
         state = ThemeMode.light;
       }
-      
+
       // Force a rebuild after loading to ensure correct theme is applied
       WidgetsBinding.instance.addPostFrameCallback((_) {
         state = state; // Trigger state change to force rebuild
@@ -50,11 +51,11 @@ class ThemeModeNotifier extends StateNotifier<ThemeMode> {
   // Set theme mode and save preference
   Future<void> setThemeMode(ThemeMode mode) async {
     state = mode;
-    
+
     try {
       final prefs = await SharedPreferences.getInstance();
       String themeString;
-      
+
       switch (mode) {
         case ThemeMode.light:
           themeString = 'light';
@@ -66,7 +67,7 @@ class ThemeModeNotifier extends StateNotifier<ThemeMode> {
           themeString = 'system';
           break;
       }
-      
+
       await prefs.setString(_themeKey, themeString);
     } catch (e) {
       debugPrint('Error loading theme preference: $e');

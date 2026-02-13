@@ -19,9 +19,12 @@ class TimeBasedGenerator {
     Logger.info('[TimeBasedGenerator]   🌐 Edge Function: fortune-daily');
     Logger.info('[TimeBasedGenerator]   👤 user_id: $userId');
     Logger.info('[TimeBasedGenerator]   📅 date: ${inputConditions['date']}');
-    Logger.info('[TimeBasedGenerator]   ⏰ period: ${inputConditions['period'] ?? 'daily'}');
-    Logger.info('[TimeBasedGenerator]   🎉 is_holiday: ${inputConditions['is_holiday'] ?? false}');
-    Logger.info('[TimeBasedGenerator]   🏷️ holiday_name: ${inputConditions['holiday_name']}');
+    Logger.info(
+        '[TimeBasedGenerator]   ⏰ period: ${inputConditions['period'] ?? 'daily'}');
+    Logger.info(
+        '[TimeBasedGenerator]   🎉 is_holiday: ${inputConditions['is_holiday'] ?? false}');
+    Logger.info(
+        '[TimeBasedGenerator]   🏷️ holiday_name: ${inputConditions['holiday_name']}');
 
     try {
       // ✅ LocationManager에서 현재 위치 가져오기
@@ -51,9 +54,12 @@ class TimeBasedGenerator {
 
       Logger.info('[TimeBasedGenerator] 📡 API 호출 중...');
       if (inputConditions['category'] != null) {
-        Logger.info('[TimeBasedGenerator]   🎯 이벤트 카테고리: ${inputConditions['category']}');
-        Logger.info('[TimeBasedGenerator]   💭 사용자 질문: ${inputConditions['question'] ?? '없음'}');
-        Logger.info('[TimeBasedGenerator]   😊 감정 상태: ${inputConditions['emotion'] ?? '없음'}');
+        Logger.info(
+            '[TimeBasedGenerator]   🎯 이벤트 카테고리: ${inputConditions['category']}');
+        Logger.info(
+            '[TimeBasedGenerator]   💭 사용자 질문: ${inputConditions['question'] ?? '없음'}');
+        Logger.info(
+            '[TimeBasedGenerator]   😊 감정 상태: ${inputConditions['emotion'] ?? '없음'}');
       }
 
       // Edge Function 호출
@@ -70,12 +76,14 @@ class TimeBasedGenerator {
       Logger.info('[TimeBasedGenerator]   ✅ Status: ${response.status}');
 
       if (response.status != 200) {
-        Logger.error('[TimeBasedGenerator] ❌ API 호출 실패: status ${response.status}');
+        Logger.error(
+            '[TimeBasedGenerator] ❌ API 호출 실패: status ${response.status}');
         throw Exception('Edge Function 호출 실패: ${response.status}');
       }
 
       final data = response.data as Map<String, dynamic>;
-      Logger.info('[TimeBasedGenerator]   📦 Response data keys: ${data.keys.toList()}');
+      Logger.info(
+          '[TimeBasedGenerator]   📦 Response data keys: ${data.keys.toList()}');
 
       // 🔄 파싱
       Logger.info('[TimeBasedGenerator] 🔄 응답 데이터 파싱 중...');
@@ -103,7 +111,8 @@ class TimeBasedGenerator {
       summary: apiData['summary'] as Map<String, dynamic>? ?? {},
       data: apiData['data'] as Map<String, dynamic>? ?? apiData,
       score: (apiData['score'] as num?)?.toInt() ??
-             (apiData['overallScore'] as num?)?.toInt() ?? 50,
+          (apiData['overallScore'] as num?)?.toInt() ??
+          50,
     );
   }
 }

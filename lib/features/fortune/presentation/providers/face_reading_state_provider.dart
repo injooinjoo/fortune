@@ -144,9 +144,10 @@ class FaceReadingStateNotifier extends StateNotifier<FaceReadingState> {
         'overall_fortune_score': result.overallScore,
         'category_scores': {
           'loveScore': (result.simplifiedSibigung?.items ?? [])
-              .where((e) => e.palaceId == 'love')
-              .map((e) => e.score)
-              .firstOrNull ?? 50,
+                  .where((e) => e.palaceId == 'love')
+                  .map((e) => e.score)
+                  .firstOrNull ??
+              50,
           // 다른 카테고리 점수들도 추가...
         },
       });
@@ -176,8 +177,8 @@ class FaceReadingStateNotifier extends StateNotifier<FaceReadingState> {
           .single();
 
       // 히스토리에서 결과 재구성
-      final faceCondition =
-          FaceCondition.fromJson(response['face_condition'] as Map<String, dynamic>);
+      final faceCondition = FaceCondition.fromJson(
+          response['face_condition'] as Map<String, dynamic>);
       final emotionAnalysis = EmotionAnalysis.fromJson(
           response['emotion_analysis'] as Map<String, dynamic>);
       final priorityInsights = (response['priority_insights'] as List)

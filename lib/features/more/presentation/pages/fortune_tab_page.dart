@@ -190,8 +190,7 @@ class _FortuneTabPageState extends ConsumerState<FortuneTabPage> {
                         const SizedBox(width: DSSpacing.sm),
                     itemBuilder: (context, index) {
                       final feature = _interactiveFeatures[index];
-                      return _buildInteractiveCard(
-                          feature, colors, typography);
+                      return _buildInteractiveCard(feature, colors, typography);
                     },
                   ),
                 ),

@@ -111,9 +111,10 @@ class FortuneAccessService {
     CohortFortuneService? cohortService,
     Ref? ref,
   })  : _supabase = supabase,
-        _optimizationService =
-            optimizationService ?? FortuneOptimizationService(supabase: supabase),
-        _cohortService = cohortService ?? CohortFortuneService(supabase: supabase),
+        _optimizationService = optimizationService ??
+            FortuneOptimizationService(supabase: supabase),
+        _cohortService =
+            cohortService ?? CohortFortuneService(supabase: supabase),
         _ref = ref;
 
   /// 운세 접근 가능 여부 확인 (통합)
@@ -200,10 +201,12 @@ class FortuneAccessService {
     required FortuneConditions conditions,
     required Map<String, dynamic> inputConditions,
     required bool isPremium,
-    required Future<Map<String, dynamic>> Function(Map<String, dynamic>) onAPICall,
+    required Future<Map<String, dynamic>> Function(Map<String, dynamic>)
+        onAPICall,
   }) async {
     final conditionsHash = conditions.generateHash();
-    Logger.info('[FortuneAccess] 🚀 운세 조회 실행: $fortuneType (hash: $conditionsHash)');
+    Logger.info(
+        '[FortuneAccess] 🚀 운세 조회 실행: $fortuneType (hash: $conditionsHash)');
 
     // ===== STEP 1: 프리미엄 체크 =====
     // (이미 checkAccess에서 확인됨, isPremium 플래그로 전달)
@@ -388,7 +391,8 @@ class FortuneAccessService {
     required bool isPremium,
     required String fortuneType,
   }) {
-    final score = cached.resultData['score'] ?? cached.resultData['overallScore'];
+    final score =
+        cached.resultData['score'] ?? cached.resultData['overallScore'];
     final title =
         cached.resultData['title'] as String? ?? _getDefaultTitle(fortuneType);
 

@@ -24,9 +24,8 @@ class CompactRelationsBadges extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
-        color: isDark
-            ? context.colors.backgroundSecondary
-            : Colors.grey.shade50,
+        color:
+            isDark ? context.colors.backgroundSecondary : Colors.grey.shade50,
         borderRadius: BorderRadius.circular(DSRadius.sm),
         border: Border.all(
           color: isDark ? DSColors.border : DSColors.borderDark,
@@ -150,7 +149,8 @@ class CompactRelationsBadges extends StatelessWidget {
     return relations;
   }
 
-  Widget _buildRelationBadge(BuildContext context, Map<String, dynamic> relation, bool isDark) {
+  Widget _buildRelationBadge(
+      BuildContext context, Map<String, dynamic> relation, bool isDark) {
     final color = relation['color'] as Color;
     final type = relation['type'] as String;
     final hanja = relation['hanja'] as String;

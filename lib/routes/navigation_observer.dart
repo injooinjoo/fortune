@@ -13,7 +13,7 @@ class NavigationObserver extends NavigatorObserver {
 
     final routeName = route!.settings.name!;
     final shouldShow = _shouldShowNavigationBar(routeName);
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(navigationVisibilityProvider.notifier).setVisibility(shouldShow);
     });

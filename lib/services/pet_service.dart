@@ -10,7 +10,7 @@ class PetService {
   static Future<List<PetProfile>> getUserPets(String userId) async {
     try {
       Logger.info('Loading pets for user: $userId');
-      
+
       final response = await _client
           .from(_tableName)
           .select()
@@ -19,7 +19,7 @@ class PetService {
           .timeout(const Duration(seconds: 10)); // 10초 타임아웃 추가
 
       Logger.info('Pet query response received: ${response.length} pets');
-      
+
       return (response as List)
           .map((json) => PetProfile.fromJson(json))
           .toList();
@@ -32,11 +32,8 @@ class PetService {
   /// 특정 반려동물 조회
   static Future<PetProfile?> getPet(String petId) async {
     try {
-      final response = await _client
-          .from(_tableName)
-          .select()
-          .eq('id', petId)
-          .maybeSingle();
+      final response =
+          await _client.from(_tableName).select().eq('id', petId).maybeSingle();
 
       if (response == null) return null;
       return PetProfile.fromJson(response);
@@ -59,7 +56,8 @@ class PetService {
     bool? isNeutered,
   }) async {
     try {
-      Logger.info('Creating pet: name=$name, species=$species, age=$age, gender=$gender, userId=$userId');
+      Logger.info(
+          'Creating pet: name=$name, species=$species, age=$age, gender=$gender, userId=$userId');
 
       final petData = {
         'user_id': userId,
@@ -81,7 +79,8 @@ class PetService {
           .single()
           .timeout(const Duration(seconds: 10));
 
-      Logger.info('✅ Pet created successfully: ${response['name']} (ID: ${response['id']})');
+      Logger.info(
+          '✅ Pet created successfully: ${response['name']} (ID: ${response['id']})');
       return PetProfile.fromJson(response);
     } catch (e) {
       Logger.warning('[PetService] 반려동물 등록 실패 (선택적 기능, null 반환): $e');
@@ -133,10 +132,7 @@ class PetService {
   /// 반려동물 삭제
   static Future<bool> deletePet(String petId) async {
     try {
-      await _client
-          .from(_tableName)
-          .delete()
-          .eq('id', petId);
+      await _client.from(_tableName).delete().eq('id', petId);
 
       Logger.info('Pet deleted successfully');
       return true;
@@ -163,7 +159,8 @@ class PetService {
   }
 
   /// 반려동물 이름 중복 확인 (같은 사용자 내에서)
-  static Future<bool> isPetNameExists(String userId, String name, {String? excludePetId}) async {
+  static Future<bool> isPetNameExists(String userId, String name,
+      {String? excludePetId}) async {
     try {
       var query = _client
           .from(_tableName)
@@ -190,7 +187,7 @@ class PetService {
     required String userMbtiType,
   }) {
     int baseScore = 70;
-    
+
     // 동물별 기본 점수 조정
     switch (PetSpecies.fromString(pet.species)) {
       case PetSpecies.dog:

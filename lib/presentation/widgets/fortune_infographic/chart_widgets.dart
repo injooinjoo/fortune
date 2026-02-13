@@ -26,23 +26,26 @@ class ChartWidgets {
               color: isDark ? DSColors.border : DSColors.borderDark,
             ),
           ),
-          child: scores.isNotEmpty ?
-            CustomPaint(
-              size: Size((size ?? 200) - 32, (size ?? 200) - 32),
-              painter: RadarChartPainter(
-                scores: scores,
-                isDark: isDark,
-                primaryColor: primaryColor ?? (isDark ? DSColors.accent : DSColors.accentDark),
-              ),
-            ) :
-            Center(
-              child: Text(
-                '레이더 차트 준비 중...',
-                style: TextStyle(
-                  color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
+          child: scores.isNotEmpty
+              ? CustomPaint(
+                  size: Size((size ?? 200) - 32, (size ?? 200) - 32),
+                  painter: RadarChartPainter(
+                    scores: scores,
+                    isDark: isDark,
+                    primaryColor: primaryColor ??
+                        (isDark ? DSColors.accent : DSColors.accentDark),
+                  ),
+                )
+              : Center(
+                  child: Text(
+                    '레이더 차트 준비 중...',
+                    style: TextStyle(
+                      color: isDark
+                          ? DSColors.textTertiary
+                          : DSColors.textSecondaryDark,
+                    ),
+                  ),
                 ),
-              ),
-            ),
         );
       },
     );
@@ -75,7 +78,8 @@ class _InteractiveTimelineChart extends StatefulWidget {
   });
 
   @override
-  State<_InteractiveTimelineChart> createState() => _InteractiveTimelineChartState();
+  State<_InteractiveTimelineChart> createState() =>
+      _InteractiveTimelineChartState();
 }
 
 class _InteractiveTimelineChartState extends State<_InteractiveTimelineChart> {
@@ -106,7 +110,8 @@ class _InteractiveTimelineChartState extends State<_InteractiveTimelineChart> {
               Text(
                 _touchedHour != null ? '$displayHour시' : '현재 $displayHour시',
                 style: TextStyle(
-                  color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
+                  color:
+                      isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -156,7 +161,9 @@ class _InteractiveTimelineChartState extends State<_InteractiveTimelineChart> {
                 Text(
                   '${i.toString().padLeft(2, '0')}:00',
                   style: TextStyle(
-                    color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
+                    color: isDark
+                        ? DSColors.textTertiary
+                        : DSColors.textSecondaryDark,
                   ),
                 ),
             ],
@@ -173,7 +180,8 @@ class _InteractiveTimelineChartState extends State<_InteractiveTimelineChart> {
 
     // Calculate which hour was touched
     final relativeX = position.dx - 8.0; // Internal chart padding
-    final hourIndex = ((relativeX / chartWidth) * widget.hourlyScores.length).round();
+    final hourIndex =
+        ((relativeX / chartWidth) * widget.hourlyScores.length).round();
 
     if (hourIndex >= 0 && hourIndex < widget.hourlyScores.length) {
       setState(() {

@@ -15,7 +15,8 @@ class HolidayInfo with _$HolidayInfo {
     DateTime? createdAt,
   }) = _HolidayInfo;
 
-  factory HolidayInfo.fromJson(Map<String, dynamic> json) => _$HolidayInfoFromJson(json);
+  factory HolidayInfo.fromJson(Map<String, dynamic> json) =>
+      _$HolidayInfoFromJson(json);
 }
 
 @freezed
@@ -29,7 +30,8 @@ class AuspiciousDayInfo with _$AuspiciousDayInfo {
     DateTime? createdAt,
   }) = _AuspiciousDayInfo;
 
-  factory AuspiciousDayInfo.fromJson(Map<String, dynamic> json) => _$AuspiciousDayInfoFromJson(json);
+  factory AuspiciousDayInfo.fromJson(Map<String, dynamic> json) =>
+      _$AuspiciousDayInfoFromJson(json);
 }
 
 @freezed
@@ -49,5 +51,6 @@ class CalendarEventInfo with _$CalendarEventInfo {
     @Default(0) int deviceEventCount,
   }) = _CalendarEventInfo;
 
-  factory CalendarEventInfo.fromJson(Map<String, dynamic> json) => _$CalendarEventInfoFromJson(json);
+  factory CalendarEventInfo.fromJson(Map<String, dynamic> json) =>
+      _$CalendarEventInfoFromJson(json);
 }

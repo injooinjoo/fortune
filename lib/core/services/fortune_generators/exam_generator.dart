@@ -31,10 +31,14 @@ class ExamGenerator {
     Logger.info('[ExamGenerator] 📤 API 요청 준비');
     Logger.info('[ExamGenerator]   🌐 Edge Function: generate-fortune');
     Logger.info('[ExamGenerator]   👤 user_id: $userId');
-    Logger.info('[ExamGenerator]   📝 exam_type: ${inputConditions['exam_type']}');
-    Logger.info('[ExamGenerator]   📅 exam_date: ${inputConditions['exam_date']}');
-    Logger.info('[ExamGenerator]   📚 study_period: ${inputConditions['study_period']}');
-    Logger.info('[ExamGenerator]   💪 confidence: ${inputConditions['confidence']}');
+    Logger.info(
+        '[ExamGenerator]   📝 exam_type: ${inputConditions['exam_type']}');
+    Logger.info(
+        '[ExamGenerator]   📅 exam_date: ${inputConditions['exam_date']}');
+    Logger.info(
+        '[ExamGenerator]   📚 study_period: ${inputConditions['study_period']}');
+    Logger.info(
+        '[ExamGenerator]   💪 confidence: ${inputConditions['confidence']}');
 
     try {
       final requestBody = {
@@ -46,8 +50,10 @@ class ExamGenerator {
         'difficulty': inputConditions['difficulty'],
         // 리뉴얼 필드
         'exam_category': inputConditions['exam_category'],
-        if (inputConditions['exam_sub_type'] != null) 'exam_sub_type': inputConditions['exam_sub_type'],
-        if (inputConditions['target_score'] != null) 'target_score': inputConditions['target_score'],
+        if (inputConditions['exam_sub_type'] != null)
+          'exam_sub_type': inputConditions['exam_sub_type'],
+        if (inputConditions['target_score'] != null)
+          'target_score': inputConditions['target_score'],
         'preparation_status': inputConditions['preparation_status'],
         'time_point': inputConditions['time_point'],
         'isPremium': isPremium,
@@ -71,17 +77,24 @@ class ExamGenerator {
       }
 
       final data = response.data as Map<String, dynamic>;
-      Logger.info('[ExamGenerator]   📦 Response data keys: ${data.keys.toList()}');
+      Logger.info(
+          '[ExamGenerator]   📦 Response data keys: ${data.keys.toList()}');
 
       // 🔍 응답 데이터 상세 로깅
       final fortuneData = data['data'] as Map<String, dynamic>? ?? {};
-      Logger.info('[ExamGenerator]   📋 Fortune data keys: ${fortuneData.keys.toList()}');
-      Logger.info('[ExamGenerator]   🔍 pass_possibility: ${fortuneData['pass_possibility']}');
-      Logger.info('[ExamGenerator]   🔍 focus_subject: ${fortuneData['focus_subject']}');
-      Logger.info('[ExamGenerator]   🔍 study_methods: ${fortuneData['study_methods']}');
+      Logger.info(
+          '[ExamGenerator]   📋 Fortune data keys: ${fortuneData.keys.toList()}');
+      Logger.info(
+          '[ExamGenerator]   🔍 pass_possibility: ${fortuneData['pass_possibility']}');
+      Logger.info(
+          '[ExamGenerator]   🔍 focus_subject: ${fortuneData['focus_subject']}');
+      Logger.info(
+          '[ExamGenerator]   🔍 study_methods: ${fortuneData['study_methods']}');
       Logger.info('[ExamGenerator]   🔍 cautions: ${fortuneData['cautions']}');
-      Logger.info('[ExamGenerator]   🔍 dday_advice: ${fortuneData['dday_advice']}');
-      Logger.info('[ExamGenerator]   🔍 positive_message: ${fortuneData['positive_message']}');
+      Logger.info(
+          '[ExamGenerator]   🔍 dday_advice: ${fortuneData['dday_advice']}');
+      Logger.info(
+          '[ExamGenerator]   🔍 positive_message: ${fortuneData['positive_message']}');
 
       // 🔄 파싱
       Logger.info('[ExamGenerator] 🔄 응답 데이터 파싱 중...');

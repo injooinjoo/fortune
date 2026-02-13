@@ -34,7 +34,8 @@ class FortuneListPanel extends ConsumerWidget {
                     chip: chip,
                     onTap: () {
                       // 선택된 칩을 Provider에 저장
-                      ref.read(pendingFortuneChipProvider.notifier).state = chip;
+                      ref.read(pendingFortuneChipProvider.notifier).state =
+                          chip;
                       onFortuneSelected(chip);
                     },
                   );

@@ -142,7 +142,10 @@ class CompatibilityCard extends StatelessWidget {
           Text(
             type.description,
             style: context.labelLarge.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: isDark ? 0.9 : 0.8),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: isDark ? 0.9 : 0.8),
               height: 1.4,
             ),
             textAlign: TextAlign.center,

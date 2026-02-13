@@ -146,13 +146,12 @@ class BreathingTimerNotifier extends StateNotifier<BreathingTimerState> {
       _moveToNextPhase();
     }
 
-    final phaseSecondsRemaining = (_currentPhaseTotalSeconds -
-            (_phaseElapsedMs / 1000).floor())
-        .clamp(0, _currentPhaseTotalSeconds)
-        .toInt();
+    final phaseSecondsRemaining =
+        (_currentPhaseTotalSeconds - (_phaseElapsedMs / 1000).floor())
+            .clamp(0, _currentPhaseTotalSeconds)
+            .toInt();
     final progress =
-        (_phaseElapsedMs / (_currentPhaseTotalSeconds * 1000))
-            .clamp(0.0, 1.0);
+        (_phaseElapsedMs / (_currentPhaseTotalSeconds * 1000)).clamp(0.0, 1.0);
 
     if (newTotalSeconds <= 0) {
       _timer?.cancel();

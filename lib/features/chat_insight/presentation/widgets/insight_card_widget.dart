@@ -79,7 +79,8 @@ class _InsightCardWidgetState extends State<InsightCardWidget> {
                 padding: const EdgeInsets.only(top: DSSpacing.xs),
                 child: Text(
                   _isExpanded ? '접기' : '더 보기',
-                  style: typography.bodySmall.copyWith(color: colors.accentSecondary),
+                  style: typography.bodySmall
+                      .copyWith(color: colors.accentSecondary),
                 ),
               ),
             ),

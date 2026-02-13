@@ -32,7 +32,6 @@ class RelationshipsPage extends StatelessWidget {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 24),
-
           ...tarotCardInfo!.cardCombinations!.entries.map(
             (entry) => Container(
               margin: const EdgeInsets.only(bottom: 16),
@@ -73,7 +72,6 @@ class RelationshipsPage extends StatelessWidget {
               ),
             ),
           ),
-
           if (tarotCardInfo.colorSymbolism != null) ...[
             const SizedBox(height: 32),
             Text(
@@ -95,7 +93,6 @@ class RelationshipsPage extends StatelessWidget {
               ),
             ),
           ],
-
           if (tarotCardInfo.crystals != null) ...[
             const SizedBox(height: 32),
             Text(

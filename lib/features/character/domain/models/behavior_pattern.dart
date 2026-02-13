@@ -4,7 +4,7 @@ import 'dart:math';
 class ProactiveMessage {
   final String text;
   final String? imageAsset;
-  final String category;  // 'lunch', 'morning', 'night' 등
+  final String category; // 'lunch', 'morning', 'night' 등
 
   const ProactiveMessage({
     required this.text,
@@ -283,7 +283,7 @@ EMOTICON STYLE (혼합):
 예시: "진짜?? 😆 ㅋㅋㅋ", "고마워 ^^ 💕", "대박 ✨"''';
 
       case EmoticonStyle.unicode:
-        return '';  // 기존 동작 (유니코드 이모지만)
+        return ''; // 기존 동작 (유니코드 이모지만)
     }
   }
 

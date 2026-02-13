@@ -168,9 +168,7 @@ class _GaugeIncrementWidgetState extends State<_GaugeIncrementWidget>
                       ),
                     ],
                   ),
-                )
-                    .animate()
-                    .shimmer(
+                ).animate().shimmer(
                       duration: 1000.ms,
                       color: colors.accentTertiary.withValues(alpha: 0.3),
                     ),

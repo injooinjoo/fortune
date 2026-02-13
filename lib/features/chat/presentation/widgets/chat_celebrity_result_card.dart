@@ -352,7 +352,8 @@ class _ChatCelebrityResultCardState
           return Container(
             margin: const EdgeInsets.only(bottom: DSSpacing.xs),
             decoration: BoxDecoration(
-              color: context.isDark ? colors.backgroundSecondary : colors.surface,
+              color:
+                  context.isDark ? colors.backgroundSecondary : colors.surface,
               borderRadius: BorderRadius.circular(DSRadius.md),
               border: Border.all(
                 color: colors.textPrimary.withValues(alpha: 0.1),

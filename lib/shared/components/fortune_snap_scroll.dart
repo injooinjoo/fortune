@@ -33,7 +33,8 @@ class FortuneSnapScrollView extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<FortuneSnapScrollView> createState() => _FortuneSnapScrollViewState();
+  ConsumerState<FortuneSnapScrollView> createState() =>
+      _FortuneSnapScrollViewState();
 }
 
 class _FortuneSnapScrollViewState extends ConsumerState<FortuneSnapScrollView>
@@ -72,7 +73,8 @@ class _FortuneSnapScrollViewState extends ConsumerState<FortuneSnapScrollView>
     final now = DateTime.now();
     final timeDiff = now.difference(_lastScrollTime).inMilliseconds;
     if (timeDiff > 0) {
-      final velocity = (_scrollController.offset - _lastScrollPosition) / timeDiff * 1000;
+      final velocity =
+          (_scrollController.offset - _lastScrollPosition) / timeDiff * 1000;
       _lastScrollPosition = _scrollController.offset;
       _lastScrollTime = now;
 
@@ -153,7 +155,8 @@ class _FortuneSnapScrollViewState extends ConsumerState<FortuneSnapScrollView>
   double _calculateCardOpacity(int index) {
     if (!widget.enableFadeEffect) return 1.0;
 
-    final scrollOffset = _scrollController.hasClients ? _scrollController.offset : 0;
+    final scrollOffset =
+        _scrollController.hasClients ? _scrollController.offset : 0;
     final cardOffset = _getCardOffset(index);
     final cardHeight = widget.cards[index].totalHeight;
 
@@ -180,7 +183,8 @@ class _FortuneSnapScrollViewState extends ConsumerState<FortuneSnapScrollView>
 
     // Card is entering from bottom (fade in - 더 일찍 시작)
     if (cardTop > fadeInThreshold) {
-      final fadeInProgress = 1.0 - ((cardTop - fadeInThreshold) / (viewportHeight - fadeInThreshold));
+      final fadeInProgress = 1.0 -
+          ((cardTop - fadeInThreshold) / (viewportHeight - fadeInThreshold));
       return Curves.fastOutSlowIn.transform(fadeInProgress.clamp(0.0, 1.0));
     }
 
@@ -196,14 +200,16 @@ class _FortuneSnapScrollViewState extends ConsumerState<FortuneSnapScrollView>
     // 위로 스크롤 중 (카드가 위로 올라감)
     if (cardTop < fadeOutThreshold && cardBottom > centerPoint) {
       // 카드 상단이 임계점을 넘으면 페이드 아웃 시작
-      final fadeProgress = (cardTop - fadeOutThreshold).abs() / (centerPoint - fadeOutThreshold);
+      final fadeProgress =
+          (cardTop - fadeOutThreshold).abs() / (centerPoint - fadeOutThreshold);
       return Curves.easeInOut.transform((1.0 - fadeProgress).clamp(0.0, 1.0));
     }
 
     // 아래로 스크롤 중 (카드가 아래로 내려감)
     if (cardBottom > fadeInThreshold && cardTop < centerPoint) {
       // 카드 하단이 임계점을 넘으면 페이드 아웃 시작
-      final fadeProgress = (cardBottom - fadeInThreshold) / (viewportHeight - fadeInThreshold);
+      final fadeProgress =
+          (cardBottom - fadeInThreshold) / (viewportHeight - fadeInThreshold);
       return Curves.easeInOut.transform((1.0 - fadeProgress).clamp(0.0, 1.0));
     }
 
@@ -226,7 +232,8 @@ class _FortuneSnapScrollViewState extends ConsumerState<FortuneSnapScrollView>
         return false;
       },
       child: Container(
-        color: widget.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
+        color:
+            widget.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
         child: SingleChildScrollView(
           controller: _scrollController,
           physics: const ClampingScrollPhysics(),
@@ -279,7 +286,8 @@ class FortuneSnapCard extends StatelessWidget {
     this.onTap,
   });
 
-  double get totalHeight => imageHeight + 150 + contentPadding * 2; // Approximate height
+  double get totalHeight =>
+      imageHeight + 150 + contentPadding * 2; // Approximate height
 
   @override
   Widget build(BuildContext context) {
@@ -379,7 +387,8 @@ class FortunePageSnapView extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<FortunePageSnapView> createState() => _FortunePageSnapViewState();
+  ConsumerState<FortunePageSnapView> createState() =>
+      _FortunePageSnapViewState();
 }
 
 class _FortunePageSnapViewState extends ConsumerState<FortunePageSnapView> {

@@ -44,7 +44,6 @@ class LandingPage extends ConsumerStatefulWidget {
 
 class _LandingPageState extends ConsumerState<LandingPage>
     with WidgetsBindingObserver, LandingPageState, LandingPageHandlers {
-
   @override
   Widget build(BuildContext context) {
     debugPrint(

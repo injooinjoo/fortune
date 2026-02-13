@@ -8,7 +8,8 @@ import '../../../theme/font_config.dart';
 /// Maps old DSLuckColors/DSLoveColors to DSColors equivalents
 class _SealColors {
   // Gold colors
-  static Color getGold(bool isDark) => isDark ? const Color(0xFFFFD700) : DSColors.warning;
+  static Color getGold(bool isDark) =>
+      isDark ? const Color(0xFFFFD700) : DSColors.warning;
 
   // Level colors based on score (fortune grade)
   static String getLevelHanja(int score) {
@@ -256,7 +257,8 @@ class _SealStampWidgetState extends State<SealStampWidget>
       case SealStampColorScheme.gold:
         return _SealColors.getGold(isDark);
       case SealStampColorScheme.blue:
-        return DSColors.getAccentSecondary(brightness); // sealBlue -> accentSecondary
+        return DSColors.getAccentSecondary(
+            brightness); // sealBlue -> accentSecondary
       case SealStampColorScheme.black:
         return DSColors.getTextPrimary(brightness); // inkBlack -> textPrimary
       case SealStampColorScheme.love:
@@ -719,9 +721,8 @@ class DaySeal extends StatelessWidget {
     return SealStampWidget(
       text: isLucky ? '吉' : '凶',
       shape: SealStampShape.organic,
-      colorScheme: isLucky
-          ? SealStampColorScheme.vermilion
-          : SealStampColorScheme.black,
+      colorScheme:
+          isLucky ? SealStampColorScheme.vermilion : SealStampColorScheme.black,
       size: size,
       animated: animated,
       showInkBleed: true,

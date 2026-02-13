@@ -214,21 +214,15 @@ class TarotPositionMeanings {
           '희망과 두려움',
           '최종 결과',
         ];
-        return positionIndex < names.length
-            ? names[positionIndex]
-            : '알 수 없음';
+        return positionIndex < names.length ? names[positionIndex] : '알 수 없음';
 
       case TarotSpreadType.threeCard:
         const names = ['과거', '현재', '미래'];
-        return positionIndex < names.length
-            ? names[positionIndex]
-            : '알 수 없음';
+        return positionIndex < names.length ? names[positionIndex] : '알 수 없음';
 
       case TarotSpreadType.relationship:
         const names = ['당신', '상대방', '관계', '도전', '조언'];
-        return positionIndex < names.length
-            ? names[positionIndex]
-            : '알 수 없음';
+        return positionIndex < names.length ? names[positionIndex] : '알 수 없음';
 
       case TarotSpreadType.single:
         return '일반 해석';

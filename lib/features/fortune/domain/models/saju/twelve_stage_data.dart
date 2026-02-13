@@ -53,7 +53,6 @@ class TwelveStageDataProvider {
         '함께 갈 동료를 미리 확보하면 좋아요',
       ],
     },
-
     '목욕': {
       'emoji': '🛁',
       'title': '성장통',
@@ -98,7 +97,6 @@ class TwelveStageDataProvider {
         '이 시기를 잘 넘기면 더 단단해져요',
       ],
     },
-
     '관대': {
       'emoji': '👔',
       'title': '준비 완료',
@@ -143,7 +141,6 @@ class TwelveStageDataProvider {
         '무대에 설 준비를 해두세요',
       ],
     },
-
     '건록': {
       'emoji': '🏆',
       'title': '전성기',
@@ -188,7 +185,6 @@ class TwelveStageDataProvider {
         '감사하는 마음을 유지하세요',
       ],
     },
-
     '제왕': {
       'emoji': '👑',
       'title': '최고점',
@@ -233,7 +229,6 @@ class TwelveStageDataProvider {
         '건강과 인간관계를 소홀히 하지 마세요',
       ],
     },
-
     '쇠': {
       'emoji': '📉',
       'title': '쇠퇴의 시작',
@@ -278,7 +273,6 @@ class TwelveStageDataProvider {
         '다음 사이클을 준비하세요',
       ],
     },
-
     '병': {
       'emoji': '🏥',
       'title': '기운 약화',
@@ -323,7 +317,6 @@ class TwelveStageDataProvider {
         '작은 것에 감사하는 마음을 가지세요',
       ],
     },
-
     '사': {
       'emoji': '🌙',
       'title': '활동 정지',
@@ -368,7 +361,6 @@ class TwelveStageDataProvider {
         '조용히 에너지를 모으세요',
       ],
     },
-
     '묘': {
       'emoji': '📦',
       'title': '저장의 시간',
@@ -413,7 +405,6 @@ class TwelveStageDataProvider {
         '때가 되면 꺼낼 준비를 해두세요',
       ],
     },
-
     '절': {
       'emoji': '🌑',
       'title': '완전한 소멸',
@@ -458,7 +449,6 @@ class TwelveStageDataProvider {
         '내면의 씨앗을 믿으세요',
       ],
     },
-
     '태': {
       'emoji': '🤰',
       'title': '새 생명의 잉태',
@@ -503,7 +493,6 @@ class TwelveStageDataProvider {
         '좋은 환경을 만들어주세요',
       ],
     },
-
     '양': {
       'emoji': '🍼',
       'title': '양육과 준비',

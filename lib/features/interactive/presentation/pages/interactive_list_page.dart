@@ -93,10 +93,14 @@ class InteractiveListPage extends ConsumerWidget {
                     final feature = interactiveFeatures[index];
                     return _InteractiveFeatureCard(
                       feature: feature,
-                      onTap: feature.isAvailable ? () {
-                        ref.read(fortuneHapticServiceProvider).selection();
-                        context.go(feature.route);
-                      } : null,
+                      onTap: feature.isAvailable
+                          ? () {
+                              ref
+                                  .read(fortuneHapticServiceProvider)
+                                  .selection();
+                              context.go(feature.route);
+                            }
+                          : null,
                     );
                   },
                 ),

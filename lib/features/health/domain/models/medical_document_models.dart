@@ -37,7 +37,8 @@ class MedicalDocumentUploadResult {
   String get fileSizeDisplay {
     if (fileSizeBytes == null) return '';
     if (fileSizeBytes! < 1024) return '$fileSizeBytes B';
-    if (fileSizeBytes! < 1024 * 1024) return '${(fileSizeBytes! / 1024).toStringAsFixed(1)} KB';
+    if (fileSizeBytes! < 1024 * 1024)
+      return '${(fileSizeBytes! / 1024).toStringAsFixed(1)} KB';
     return '${(fileSizeBytes! / (1024 * 1024)).toStringAsFixed(1)} MB';
   }
 }
@@ -92,13 +93,13 @@ class TestItem {
   }
 
   Map<String, dynamic> toJson() => {
-    'name': name,
-    'value': value,
-    'unit': unit,
-    'status': status.name,
-    'normalRange': normalRange,
-    'interpretation': interpretation,
-  };
+        'name': name,
+        'value': value,
+        'unit': unit,
+        'status': status.name,
+        'normalRange': normalRange,
+        'interpretation': interpretation,
+      };
 }
 
 /// 검사 카테고리
@@ -115,22 +116,24 @@ class TestCategory {
     return TestCategory(
       category: json['category'] ?? '',
       items: (json['items'] as List<dynamic>?)
-          ?.map((e) => TestItem.fromJson(e as Map<String, dynamic>))
-          .toList() ?? [],
+              ?.map((e) => TestItem.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'category': category,
-    'items': items.map((e) => e.toJson()).toList(),
-  };
+        'category': category,
+        'items': items.map((e) => e.toJson()).toList(),
+      };
 
   /// 카테고리 내 주의/경고 항목 수
-  int get cautionCount => items.where((e) =>
-    e.status == TestItemStatus.caution ||
-    e.status == TestItemStatus.warning ||
-    e.status == TestItemStatus.critical
-  ).length;
+  int get cautionCount => items
+      .where((e) =>
+          e.status == TestItemStatus.caution ||
+          e.status == TestItemStatus.warning ||
+          e.status == TestItemStatus.critical)
+      .length;
 }
 
 /// 사주 건강 분석
@@ -154,9 +157,11 @@ class SajuHealthAnalysis {
   factory SajuHealthAnalysis.fromJson(Map<String, dynamic> json) {
     final elementBalance = json['elementBalance'] ?? json;
     return SajuHealthAnalysis(
-      dominantElement: elementBalance['dominant'] ?? json['dominantElement'] ?? '',
+      dominantElement:
+          elementBalance['dominant'] ?? json['dominantElement'] ?? '',
       weakElement: elementBalance['weak'] ?? json['weakElement'] ?? '',
-      elementDescription: elementBalance['description'] ?? json['elementDescription'] ?? '',
+      elementDescription:
+          elementBalance['description'] ?? json['elementDescription'] ?? '',
       vulnerableOrgans: List<String>.from(json['vulnerableOrgans'] ?? []),
       strengthOrgans: List<String>.from(json['strengthOrgans'] ?? []),
       sajuAdvice: json['sajuAdvice'] ?? '',
@@ -164,13 +169,13 @@ class SajuHealthAnalysis {
   }
 
   Map<String, dynamic> toJson() => {
-    'dominantElement': dominantElement,
-    'weakElement': weakElement,
-    'elementDescription': elementDescription,
-    'vulnerableOrgans': vulnerableOrgans,
-    'strengthOrgans': strengthOrgans,
-    'sajuAdvice': sajuAdvice,
-  };
+        'dominantElement': dominantElement,
+        'weakElement': weakElement,
+        'elementDescription': elementDescription,
+        'vulnerableOrgans': vulnerableOrgans,
+        'strengthOrgans': strengthOrgans,
+        'sajuAdvice': sajuAdvice,
+      };
 }
 
 /// 건강 권장사항
@@ -194,10 +199,10 @@ class HealthRecommendations {
   }
 
   Map<String, dynamic> toJson() => {
-    'urgent': urgent,
-    'general': general,
-    'lifestyle': lifestyle,
-  };
+        'urgent': urgent,
+        'general': general,
+        'lifestyle': lifestyle,
+      };
 
   bool get hasUrgent => urgent.isNotEmpty;
 }
@@ -223,10 +228,10 @@ class DietAdvice {
   }
 
   Map<String, dynamic> toJson() => {
-    'type': type,
-    'items': items,
-    'reason': reason,
-  };
+        'type': type,
+        'items': items,
+        'reason': reason,
+      };
 
   bool get isRecommend => type == 'recommend';
 }
@@ -255,11 +260,11 @@ class ExerciseAdvice {
   }
 
   Map<String, dynamic> toJson() => {
-    'type': type,
-    'frequency': frequency,
-    'duration': duration,
-    'benefit': benefit,
-  };
+        'type': type,
+        'frequency': frequency,
+        'duration': duration,
+        'benefit': benefit,
+      };
 }
 
 /// 양생법
@@ -277,20 +282,22 @@ class HealthRegimen {
   factory HealthRegimen.fromJson(Map<String, dynamic> json) {
     return HealthRegimen(
       diet: (json['diet'] as List<dynamic>?)
-          ?.map((e) => DietAdvice.fromJson(e as Map<String, dynamic>))
-          .toList() ?? [],
+              ?.map((e) => DietAdvice.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
       exercise: (json['exercise'] as List<dynamic>?)
-          ?.map((e) => ExerciseAdvice.fromJson(e as Map<String, dynamic>))
-          .toList() ?? [],
+              ?.map((e) => ExerciseAdvice.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
       lifestyle: List<String>.from(json['lifestyle'] ?? []),
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'diet': diet.map((e) => e.toJson()).toList(),
-    'exercise': exercise.map((e) => e.toJson()).toList(),
-    'lifestyle': lifestyle,
-  };
+        'diet': diet.map((e) => e.toJson()).toList(),
+        'exercise': exercise.map((e) => e.toJson()).toList(),
+        'lifestyle': lifestyle,
+      };
 }
 
 /// 문서 분석 정보
@@ -317,11 +324,11 @@ class DocumentAnalysis {
   }
 
   Map<String, dynamic> toJson() => {
-    'documentType': documentType,
-    'documentDate': documentDate,
-    'institution': institution,
-    'summary': summary,
-  };
+        'documentType': documentType,
+        'documentDate': documentDate,
+        'institution': institution,
+        'summary': summary,
+      };
 }
 
 /// 의료 문서 분석 결과
@@ -353,13 +360,17 @@ class MedicalDocumentAnalysisResult {
     return MedicalDocumentAnalysisResult(
       id: data['id'] ?? DateTime.now().millisecondsSinceEpoch.toString(),
       fortuneType: data['fortuneType'] ?? 'health-document',
-      documentAnalysis: DocumentAnalysis.fromJson(data['documentAnalysis'] ?? {}),
+      documentAnalysis:
+          DocumentAnalysis.fromJson(data['documentAnalysis'] ?? {}),
       testResults: (data['testResults'] as List<dynamic>?)
-          ?.map((e) => TestCategory.fromJson(e as Map<String, dynamic>))
-          .toList() ?? [],
-      sajuAnalysis: SajuHealthAnalysis.fromJson(data['sajuHealthAnalysis'] ?? data['sajuAnalysis'] ?? {}),
+              ?.map((e) => TestCategory.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      sajuAnalysis: SajuHealthAnalysis.fromJson(
+          data['sajuHealthAnalysis'] ?? data['sajuAnalysis'] ?? {}),
       healthScore: data['healthScore'] ?? 70,
-      recommendations: HealthRecommendations.fromJson(data['recommendations'] ?? {}),
+      recommendations:
+          HealthRecommendations.fromJson(data['recommendations'] ?? {}),
       healthRegimen: HealthRegimen.fromJson(data['healthRegimen'] ?? {}),
       timestamp: data['timestamp'] != null
           ? DateTime.parse(data['timestamp'])
@@ -368,22 +379,24 @@ class MedicalDocumentAnalysisResult {
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'fortuneType': fortuneType,
-    'documentAnalysis': documentAnalysis.toJson(),
-    'testResults': testResults.map((e) => e.toJson()).toList(),
-    'sajuAnalysis': sajuAnalysis.toJson(),
-    'healthScore': healthScore,
-    'recommendations': recommendations.toJson(),
-    'healthRegimen': healthRegimen.toJson(),
-    'timestamp': timestamp.toIso8601String(),
-  };
+        'id': id,
+        'fortuneType': fortuneType,
+        'documentAnalysis': documentAnalysis.toJson(),
+        'testResults': testResults.map((e) => e.toJson()).toList(),
+        'sajuAnalysis': sajuAnalysis.toJson(),
+        'healthScore': healthScore,
+        'recommendations': recommendations.toJson(),
+        'healthRegimen': healthRegimen.toJson(),
+        'timestamp': timestamp.toIso8601String(),
+      };
 
   /// 총 검사 항목 수
-  int get totalTestItems => testResults.fold(0, (sum, cat) => sum + cat.items.length);
+  int get totalTestItems =>
+      testResults.fold(0, (sum, cat) => sum + cat.items.length);
 
   /// 주의/경고 항목 수
-  int get cautionItemCount => testResults.fold(0, (sum, cat) => sum + cat.cautionCount);
+  int get cautionItemCount =>
+      testResults.fold(0, (sum, cat) => sum + cat.cautionCount);
 
   /// 건강 점수 등급
   String get scoreGrade {

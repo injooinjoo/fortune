@@ -392,9 +392,7 @@ class _MockDreamInterpretationScreenState
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      color: widget.fortune == '대길'
-                          ? Colors.red
-                          : Colors.blue,
+                      color: widget.fortune == '대길' ? Colors.red : Colors.blue,
                     ),
                   ),
                 ),
@@ -413,7 +411,8 @@ class _MockDreamInterpretationScreenState
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 8),
-                      Text('돼지는 재물과 풍요를 상징합니다. 이 꿈은 가까운 시일 내에 금전적 행운이 찾아올 것을 암시합니다.'),
+                      Text(
+                          '돼지는 재물과 풍요를 상징합니다. 이 꿈은 가까운 시일 내에 금전적 행운이 찾아올 것을 암시합니다.'),
                     ],
                   ),
                 ),
@@ -442,7 +441,6 @@ class _MockDreamInterpretationScreenState
                   ),
                 ),
               ),
-
             ],
           ),
         ),

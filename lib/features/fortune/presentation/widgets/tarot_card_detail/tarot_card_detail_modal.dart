@@ -121,8 +121,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                   children: [
                     // Handle
                     Container(
-                      margin: const EdgeInsets.only(
-                          top: 8),
+                      margin: const EdgeInsets.only(top: 8),
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
@@ -252,8 +251,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                     SafeArea(
                       top: false,
                       child: Padding(
-                        padding:
-                            const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(16),
                         child: SizedBox(
                           width: double.infinity,
                           child: UnifiedButton(

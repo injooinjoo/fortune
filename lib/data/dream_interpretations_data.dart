@@ -6,7 +6,8 @@ import '../core/models/fortune_result.dart';
 /// API 호출 없이 즉시 결과를 제공합니다.
 class DreamInterpretationData {
   final String dreamId;
-  final String dreamType; // prophetic, anxiety, wish-fulfillment, processing, symbolic
+  final String
+      dreamType; // prophetic, anxiety, wish-fulfillment, processing, symbolic
   final String interpretation;
   final String todayGuidance;
   final String psychologicalState;

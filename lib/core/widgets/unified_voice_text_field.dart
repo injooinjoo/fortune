@@ -388,7 +388,8 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
 
         // 오른쪽: 전송 버튼 (hasText 또는 recording/transcribing 상태에서)
         if (widget.showSendButton &&
-            (_state == VoiceInputState.hasText || isRecordingOrTranscribing)) ...[
+            (_state == VoiceInputState.hasText ||
+                isRecordingOrTranscribing)) ...[
           const SizedBox(width: 8),
           _buildSendButton(isDark),
         ],

@@ -289,7 +289,8 @@ class PaymentTestHelpers {
       result.navigatedToPage = true;
 
       // 2. 옵션 선택
-      final selected = await selectSubscriptionOption(tester, isMonthly: isMonthly);
+      final selected =
+          await selectSubscriptionOption(tester, isMonthly: isMonthly);
       if (!selected) {
         result.error = '구독 옵션 선택 실패';
         return result;
@@ -551,7 +552,8 @@ class PaymentTestHelpers {
   }
 
   /// Mock 프리미엄 상태 설정
-  static void setMockPremiumStatus(MockInAppPurchaseService mock, bool isPremium) {
+  static void setMockPremiumStatus(
+      MockInAppPurchaseService mock, bool isPremium) {
     mock.setSubscriptionStatus(isPremium);
   }
 }

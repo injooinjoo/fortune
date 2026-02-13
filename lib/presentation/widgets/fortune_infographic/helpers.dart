@@ -105,23 +105,48 @@ class FortuneInfographicHelpers {
   static String getDefaultCategoryShort(String key, int score) {
     switch (key) {
       case 'love':
-        return score >= 70 ? '순조로운 연애운' : score >= 50 ? '평범한 연애운' : '조심스러운 연애운';
+        return score >= 70
+            ? '순조로운 연애운'
+            : score >= 50
+                ? '평범한 연애운'
+                : '조심스러운 연애운';
       case 'money':
-        return score >= 70 ? '안정적인 금전운' : score >= 50 ? '보통의 금전운' : '신중한 소비 필요';
+        return score >= 70
+            ? '안정적인 금전운'
+            : score >= 50
+                ? '보통의 금전운'
+                : '신중한 소비 필요';
       case 'work':
       case 'career':
-        return score >= 70 ? '발전하는 직장운' : score >= 50 ? '평범한 직장운' : '주의가 필요한 시기';
+        return score >= 70
+            ? '발전하는 직장운'
+            : score >= 50
+                ? '평범한 직장운'
+                : '주의가 필요한 시기';
       case 'study':
-        return score >= 70 ? '향상되는 학업운' : score >= 50 ? '평범한 학업운' : '집중력 관리 필요';
+        return score >= 70
+            ? '향상되는 학업운'
+            : score >= 50
+                ? '평범한 학업운'
+                : '집중력 관리 필요';
       case 'health':
-        return score >= 70 ? '건강한 컨디션' : score >= 50 ? '보통의 건강상태' : '건강 관리 필요';
+        return score >= 70
+            ? '건강한 컨디션'
+            : score >= 50
+                ? '보통의 건강상태'
+                : '건강 관리 필요';
       default:
-        return score >= 70 ? '좋은 운세' : score >= 50 ? '보통 운세' : '주의 필요';
+        return score >= 70
+            ? '좋은 운세'
+            : score >= 50
+                ? '보통 운세'
+                : '주의 필요';
     }
   }
 
   /// Get default fortune summary
-  static String getDefaultFortuneSummary(String? zodiacAnimal, String? zodiacSign, String? mbti) {
+  static String getDefaultFortuneSummary(
+      String? zodiacAnimal, String? zodiacSign, String? mbti) {
     final elements = <String>[];
 
     if (zodiacAnimal != null) {

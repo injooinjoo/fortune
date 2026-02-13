@@ -17,9 +17,9 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
   final _storageService = StorageService();
   Map<String, dynamic>? userProfile;
   Map<String, dynamic>? localProfile;
-  Map<String, dynamic>? userSaju;  // 사주 데이터
+  Map<String, dynamic>? userSaju; // 사주 데이터
   bool isLoading = true;
-  bool isCalculatingSaju = false;  // 사주 계산 중 여부
+  bool isCalculatingSaju = false; // 사주 계산 중 여부
 
   @override
   void initState() {
@@ -146,7 +146,8 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
 
     try {
       final birthTimeHHmm = _convertBirthTimeToHHmm(profile!['birth_time']);
-      debugPrint('Calculating saju for user: $userId, birthTime: $birthTimeHHmm');
+      debugPrint(
+          'Calculating saju for user: $userId, birthTime: $birthTimeHHmm');
 
       final response = await supabase.functions.invoke(
         'calculate-saju',
@@ -266,7 +267,7 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-        scrolledUnderElevation: 0,
+          scrolledUnderElevation: 0,
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios, color: _textColor),
             onPressed: () => context.pop(),
@@ -315,7 +316,8 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
               // 기본 정보 섹션
               _buildSectionHeader('기본 정보'),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+                margin: const EdgeInsets.symmetric(
+                    horizontal: DSSpacing.pageHorizontal),
                 decoration: BoxDecoration(
                   color: _cardColor,
                   borderRadius: BorderRadius.circular(12),
@@ -350,7 +352,8 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
               // 사주 팔자 섹션
               _buildSectionHeader('사주 팔자'),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+                margin: const EdgeInsets.symmetric(
+                    horizontal: DSSpacing.pageHorizontal),
                 decoration: BoxDecoration(
                   color: _cardColor,
                   borderRadius: BorderRadius.circular(12),
@@ -386,7 +389,8 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
               if (userSaju != null) ...[
                 _buildSectionHeader('오행 균형'),
                 Container(
-                  margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: DSSpacing.pageHorizontal),
                   decoration: BoxDecoration(
                     color: _cardColor,
                     borderRadius: BorderRadius.circular(12),
@@ -438,7 +442,8 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
               // 십이지 정보 섹션
               _buildSectionHeader('십이지 정보'),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+                margin: const EdgeInsets.symmetric(
+                    horizontal: DSSpacing.pageHorizontal),
                 decoration: BoxDecoration(
                   color: _cardColor,
                   borderRadius: BorderRadius.circular(12),
@@ -467,7 +472,8 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
               // 사주 재계산 버튼 (사주 데이터가 없는 경우)
               if (userSaju == null)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: DSSpacing.pageHorizontal),
                   child: SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -493,7 +499,8 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
                               height: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
                               ),
                             )
                           : const Text(
@@ -507,12 +514,12 @@ class _SajuDetailPageState extends ConsumerState<SajuDetailPage> {
                   ),
                 ),
 
-              if (userSaju == null)
-                const SizedBox(height: DSSpacing.lg),
+              if (userSaju == null) const SizedBox(height: DSSpacing.lg),
 
               // 안내 메시지
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: DSSpacing.pageHorizontal),
                 child: Container(
                   padding: const EdgeInsets.all(DSSpacing.md),
                   decoration: BoxDecoration(

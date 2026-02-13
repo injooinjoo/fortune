@@ -24,7 +24,8 @@ class GuidanceCardWidget extends StatelessWidget {
           // 헤더
           Row(
             children: [
-              Icon(Icons.lightbulb_outline, color: colors.textSecondary, size: 20),
+              Icon(Icons.lightbulb_outline,
+                  color: colors.textSecondary, size: 20),
               const SizedBox(width: DSSpacing.xs),
               Text(
                 '행동 가이드',

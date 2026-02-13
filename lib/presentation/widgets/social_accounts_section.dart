@@ -12,7 +12,7 @@ class SocialAccountsSection extends StatefulWidget {
   final String? primaryProvider;
   final Function(List<String>) onProvidersChanged;
   final SocialAuthService socialAuthService;
-  
+
   const SocialAccountsSection({
     super.key,
     required this.linkedProviders,
@@ -20,7 +20,7 @@ class SocialAccountsSection extends StatefulWidget {
     required this.onProvidersChanged,
     required this.socialAuthService,
   });
-  
+
   @override
   State<SocialAccountsSection> createState() => _SocialAccountsSectionState();
 }
@@ -28,7 +28,7 @@ class SocialAccountsSection extends StatefulWidget {
 class _SocialAccountsSectionState extends State<SocialAccountsSection> {
   bool _isLinking = false;
   String? _linkingProvider;
-  
+
   final Map<String, SocialProviderInfo> _providers = {
     'google': const SocialProviderInfo(
       name: 'Google',
@@ -55,20 +55,20 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
       color: Color(0xFF03C75A), // 브랜드 고유 색상 - Naver
     ),
   };
-  
+
   bool _isProviderLinked(String provider) {
     return widget.linkedProviders?.contains(provider) ?? false;
   }
-  
+
   Future<void> _linkProvider(String provider) async {
     setState(() {
       _isLinking = true;
       _linkingProvider = provider;
     });
-    
+
     try {
       bool success = false;
-      
+
       switch (provider) {
         case 'google':
           final result = await widget.socialAuthService.signInWithGoogle();
@@ -87,14 +87,15 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
           success = result != null;
           break;
       }
-      
+
       if (success) {
-        final updatedProviders = List<String>.from(widget.linkedProviders ?? []);
+        final updatedProviders =
+            List<String>.from(widget.linkedProviders ?? []);
         if (!updatedProviders.contains(provider)) {
           updatedProviders.add(provider);
         }
         widget.onProvidersChanged(updatedProviders);
-        
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -123,7 +124,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
       }
     }
   }
-  
+
   Future<void> _unlinkProvider(String provider) async {
     // Don't allow unlinking the primary provider
     if (provider == widget.primaryProvider) {
@@ -135,7 +136,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
       );
       return;
     }
-    
+
     // Confirm before unlinking
     final shouldUnlink = await showDialog<bool>(
       context: context,
@@ -154,14 +155,14 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
         ],
       ),
     );
-    
+
     if (shouldUnlink != true) return;
-    
+
     setState(() {
       _isLinking = true;
       _linkingProvider = provider;
     });
-    
+
     try {
       // Call disconnect method based on provider
       switch (provider) {
@@ -175,11 +176,11 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
           await widget.socialAuthService.disconnectNaver();
           break;
       }
-      
+
       final updatedProviders = List<String>.from(widget.linkedProviders ?? []);
       updatedProviders.remove(provider);
       widget.onProvidersChanged(updatedProviders);
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -207,14 +208,14 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
       }
     }
   }
-  
+
   Widget _buildProviderButton(String provider) {
     final theme = Theme.of(context);
     final providerInfo = _providers[provider]!;
     final isLinked = _isProviderLinked(provider);
     final isPrimary = provider == widget.primaryProvider;
     final isProcessing = _isLinking && _linkingProvider == provider;
-    
+
     return GlassContainer(
       padding: AppSpacing.paddingAll12,
       child: Row(
@@ -232,7 +233,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
             ),
           ),
           const SizedBox(width: AppSpacing.spacing3),
-          
+
           // Provider name and status
           Expanded(
             child: Column(
@@ -266,7 +267,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
               ],
             ),
           ),
-          
+
           // Action button
           if (isProcessing)
             const SizedBox(
@@ -276,7 +277,8 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
             )
           else if (isLinked && !isPrimary)
             IconButton(
-              icon: const Icon(Icons.link_off, size: AppDimensions.iconSizeSmall),
+              icon:
+                  const Icon(Icons.link_off, size: AppDimensions.iconSizeSmall),
               onPressed: () => _unlinkProvider(provider),
               tooltip: '연결 해제',
             )
@@ -289,7 +291,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
       ),
     );
   }
-  
+
   Widget _buildProviderIcon(SocialProviderInfo providerInfo) {
     switch (providerInfo.iconType) {
       case SocialIconType.asset:
@@ -323,8 +325,11 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
         return Icon(
           providerInfo.iconData as IconData,
           size: AppDimensions.iconSizeMedium,
-          color: providerInfo.iconType == SocialIconType.icon && providerInfo.name == 'Apple'
-              ? (context.isDark ? DSColors.textPrimary : DSColors.textPrimaryDark)
+          color: providerInfo.iconType == SocialIconType.icon &&
+                  providerInfo.name == 'Apple'
+              ? (context.isDark
+                  ? DSColors.textPrimary
+                  : DSColors.textPrimaryDark)
               : providerInfo.color,
         );
       case SocialIconType.text:
@@ -339,9 +344,9 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
             child: Text(
               providerInfo.iconData as String,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
           ),
         );
@@ -351,7 +356,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -369,10 +374,12 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
           ),
         ),
         const SizedBox(height: AppSpacing.spacing4),
-        ...(_providers.keys.map((provider) => Padding(
-          padding: const EdgeInsets.only(bottom: DSSpacing.xs),
-          child: _buildProviderButton(provider),
-        )).toList()),
+        ...(_providers.keys
+            .map((provider) => Padding(
+                  padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+                  child: _buildProviderButton(provider),
+                ))
+            .toList()),
       ],
     );
   }
@@ -390,7 +397,7 @@ class SocialProviderInfo {
   final SocialIconType iconType;
   final dynamic iconData;
   final Color color;
-  
+
   const SocialProviderInfo({
     required this.name,
     required this.iconType,

@@ -407,9 +407,7 @@ class WellnessPage extends ConsumerWidget {
                   Text(
                     entry.value,
                     style: context.labelLarge.copyWith(
-                      color: isToday
-                          ? colors.accent
-                          : colors.textTertiary,
+                      color: isToday ? colors.accent : colors.textTertiary,
                       fontWeight: isToday ? FontWeight.w600 : FontWeight.w400,
                     ),
                   ),
@@ -424,17 +422,13 @@ class WellnessPage extends ConsumerWidget {
                           : isPast
                               ? colors.accent.withValues(alpha: 0.2)
                               : colors.surfaceSecondary,
-                      border: isToday
-                          ? null
-                          : Border.all(color: colors.border),
+                      border: isToday ? null : Border.all(color: colors.border),
                     ),
                     child: isPast || isToday
                         ? Icon(
                             Icons.check_rounded,
                             size: 16,
-                            color: isToday
-                                ? Colors.white
-                                : colors.accent,
+                            color: isToday ? Colors.white : colors.accent,
                           )
                         : null,
                   ),

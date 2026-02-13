@@ -38,7 +38,9 @@ class _ChatCelebritySelectorState extends ConsumerState<ChatCelebritySelector> {
     });
 
     if (query.isNotEmpty) {
-      ref.read(celebritySearchProvider.notifier).search(query: query, limit: 20);
+      ref
+          .read(celebritySearchProvider.notifier)
+          .search(query: query, limit: 20);
     } else {
       ref.read(celebritySearchProvider.notifier).clear();
     }

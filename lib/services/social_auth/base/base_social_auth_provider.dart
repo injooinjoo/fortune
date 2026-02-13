@@ -53,7 +53,8 @@ class AuthProviderUtils {
       if (existingProfile == null) {
         existingProfile = await supabase
             .from('user_profiles')
-            .select('linked_providers, primary_provider, name, profile_image_url')
+            .select(
+                'linked_providers, primary_provider, name, profile_image_url')
             .eq('id', userId)
             .maybeSingle();
 
@@ -78,7 +79,8 @@ class AuthProviderUtils {
         );
       }
     } catch (error) {
-      Logger.warning('[AuthProviderUtils] 사용자 프로필 업데이트 실패 (선택적 기능, 로그인은 계속): $error');
+      Logger.warning(
+          '[AuthProviderUtils] 사용자 프로필 업데이트 실패 (선택적 기능, 로그인은 계속): $error');
     }
   }
 
@@ -101,7 +103,8 @@ class AuthProviderUtils {
       await supabase.from('user_profiles').insert(profileData);
       Logger.info('Profile created successfully');
     } catch (insertError) {
-      Logger.warning('[AuthProviderUtils] 소셜 인증으로 프로필 생성 실패 (선택적 기능, 기본 프로필로 계속): $insertError');
+      Logger.warning(
+          '[AuthProviderUtils] 소셜 인증으로 프로필 생성 실패 (선택적 기능, 기본 프로필로 계속): $insertError');
 
       if (_isSchemaError(insertError)) {
         await _createMinimalProfile(supabase, profileData, now, name);
@@ -114,9 +117,9 @@ class AuthProviderUtils {
   static bool _isSchemaError(dynamic error) {
     final errorStr = error.toString();
     return errorStr.contains('linked_providers') ||
-           errorStr.contains('primary_provider') ||
-           errorStr.contains('profile_image_url') ||
-           errorStr.contains('avatar_url');
+        errorStr.contains('primary_provider') ||
+        errorStr.contains('profile_image_url') ||
+        errorStr.contains('avatar_url');
   }
 
   static Future<void> _createMinimalProfile(
@@ -139,7 +142,8 @@ class AuthProviderUtils {
       await supabase.from('user_profiles').insert(minimalProfile);
       Logger.info('Minimal profile created successfully');
     } catch (fallbackError) {
-      Logger.warning('[AuthProviderUtils] 최소 프로필 생성 실패 (선택적 기능, 로그인은 계속): $fallbackError');
+      Logger.warning(
+          '[AuthProviderUtils] 최소 프로필 생성 실패 (선택적 기능, 로그인은 계속): $fallbackError');
     }
   }
 
@@ -157,7 +161,9 @@ class AuthProviderUtils {
     // Update name if needed
     if (name != null && name.isNotEmpty) {
       final currentName = existingProfile['name'] as String?;
-      if (currentName == null || currentName == '사용자' || currentName.startsWith('kakao_')) {
+      if (currentName == null ||
+          currentName == '사용자' ||
+          currentName.startsWith('kakao_')) {
         Logger.info('Updating name from "$currentName" to "$name"');
         updates['name'] = name;
       }
@@ -165,7 +171,8 @@ class AuthProviderUtils {
 
     // Update profile image
     if (photoUrl != null) {
-      final shouldUpdate = provider == 'google' || existingProfile['profile_image_url'] == null;
+      final shouldUpdate =
+          provider == 'google' || existingProfile['profile_image_url'] == null;
       if (shouldUpdate) {
         updates['profile_image_url'] = photoUrl;
       }
@@ -186,10 +193,7 @@ class AuthProviderUtils {
     }
 
     if (updates.length > 1) {
-      await supabase
-          .from('user_profiles')
-          .update(updates)
-          .eq('id', userId);
+      await supabase.from('user_profiles').update(updates).eq('id', userId);
 
       profileCache.updateFields(userId, updates);
     }

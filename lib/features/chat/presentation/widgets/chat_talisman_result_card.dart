@@ -26,51 +26,51 @@ class ChatTalismanResultCard extends ConsumerWidget {
     return Stack(
       children: [
         Container(
-      width: double.infinity,
-      margin: const EdgeInsets.symmetric(
-        horizontal: DSSpacing.md,
-        vertical: DSSpacing.xs,
-      ),
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(DSRadius.xl),
-        border: Border.all(
-          color: colors.textPrimary.withValues(alpha: 0.1),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // 부적 이미지 (9:16 비율)
-          _buildTalismanImage(context),
-
-          // 하단 정보
-          Padding(
-            padding: const EdgeInsets.all(DSSpacing.lg),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // 카테고리 태그
-                _buildCategoryTag(context),
-                const SizedBox(height: DSSpacing.md),
-
-                // 짧은 설명 (효능 + 사용법)
-                Text(
-                  shortDescription,
-                  style: typography.bodyMedium.copyWith(
-                    color: colors.textSecondary,
-                    height: 1.6,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+          width: double.infinity,
+          margin: const EdgeInsets.symmetric(
+            horizontal: DSSpacing.md,
+            vertical: DSSpacing.xs,
+          ),
+          decoration: BoxDecoration(
+            color: colors.surface,
+            borderRadius: BorderRadius.circular(DSRadius.xl),
+            border: Border.all(
+              color: colors.textPrimary.withValues(alpha: 0.1),
             ),
           ),
-        ],
-      ),
-    ),
-    // 좋아요 + 공유 버튼 (우상단)
-    Positioned(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // 부적 이미지 (9:16 비율)
+              _buildTalismanImage(context),
+
+              // 하단 정보
+              Padding(
+                padding: const EdgeInsets.all(DSSpacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // 카테고리 태그
+                    _buildCategoryTag(context),
+                    const SizedBox(height: DSSpacing.md),
+
+                    // 짧은 설명 (효능 + 사용법)
+                    Text(
+                      shortDescription,
+                      style: typography.bodyMedium.copyWith(
+                        color: colors.textSecondary,
+                        height: 1.6,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        // 좋아요 + 공유 버튼 (우상단)
+        Positioned(
           top: DSSpacing.sm,
           right: DSSpacing.sm + DSSpacing.md,
           child: FortuneActionButtons(

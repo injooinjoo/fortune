@@ -250,8 +250,7 @@ class _ImageOptionChip extends StatelessWidget {
             vertical: DSSpacing.xs,
           ),
           decoration: BoxDecoration(
-            color:
-                colors.textPrimary.withValues(alpha: 0.1),
+            color: colors.textPrimary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(DSRadius.lg),
             border: Border.all(
               color: colors.textPrimary.withValues(alpha: 0.3),

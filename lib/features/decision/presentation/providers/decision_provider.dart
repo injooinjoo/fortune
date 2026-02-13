@@ -174,7 +174,8 @@ class DecisionReceiptsNotifier extends StateNotifier<DecisionReceiptsState> {
 
 /// 결정 기록 목록 Provider
 final decisionReceiptsProvider =
-    StateNotifierProvider<DecisionReceiptsNotifier, DecisionReceiptsState>((ref) {
+    StateNotifierProvider<DecisionReceiptsNotifier, DecisionReceiptsState>(
+        (ref) {
   final service = ref.watch(decisionServiceProvider);
   return DecisionReceiptsNotifier(service);
 });
@@ -263,7 +264,8 @@ class PendingFollowUpsNotifier extends StateNotifier<PendingFollowUpsState> {
 
 /// 팔로업 대기 Provider
 final pendingFollowUpsProvider =
-    StateNotifierProvider<PendingFollowUpsNotifier, PendingFollowUpsState>((ref) {
+    StateNotifierProvider<PendingFollowUpsNotifier, PendingFollowUpsState>(
+        (ref) {
   final service = ref.watch(decisionServiceProvider);
   return PendingFollowUpsNotifier(service);
 });
@@ -439,7 +441,8 @@ class CoachPreferencesNotifier extends StateNotifier<CoachPreferencesState> {
 
 /// 코치 설정 Provider
 final coachPreferencesProvider =
-    StateNotifierProvider<CoachPreferencesNotifier, CoachPreferencesState>((ref) {
+    StateNotifierProvider<CoachPreferencesNotifier, CoachPreferencesState>(
+        (ref) {
   final service = ref.watch(decisionServiceProvider);
   return CoachPreferencesNotifier(service);
 });
@@ -466,7 +469,8 @@ final decisionStatsProvider = FutureProvider.family<DecisionStats?, String>(
 // ========================================
 
 /// 결정 패턴 분석 Provider (FutureProvider)
-final decisionPatternsProvider = FutureProvider.family<DecisionPatternAnalysis?, String>(
+final decisionPatternsProvider =
+    FutureProvider.family<DecisionPatternAnalysis?, String>(
   (ref, userId) async {
     final service = ref.watch(decisionServiceProvider);
     try {
@@ -564,7 +568,8 @@ class DecisionAnalysisNotifier extends StateNotifier<DecisionAnalysisState> {
 
 /// 결정 분석 Provider
 final decisionAnalysisProvider =
-    StateNotifierProvider<DecisionAnalysisNotifier, DecisionAnalysisState>((ref) {
+    StateNotifierProvider<DecisionAnalysisNotifier, DecisionAnalysisState>(
+        (ref) {
   final service = ref.watch(decisionServiceProvider);
   return DecisionAnalysisNotifier(service);
 });

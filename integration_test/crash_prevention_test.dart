@@ -52,7 +52,8 @@ void main() {
       var crashed = false;
 
       try {
-        await startAppAndWait(tester, waitDuration: const Duration(seconds: 10));
+        await startAppAndWait(tester,
+            waitDuration: const Duration(seconds: 10));
       } catch (e) {
         crashed = true;
         debugPrint('❌ CRASH-001 FAILED: $e');
@@ -177,10 +178,12 @@ void main() {
         final textFormFields = find.byType(TextFormField);
 
         if (textFields.evaluate().isNotEmpty) {
-          await tester.enterText(textFields.first, '테스트 🎉✨🔮 <script>alert("xss")</script> "\'');
+          await tester.enterText(
+              textFields.first, '테스트 🎉✨🔮 <script>alert("xss")</script> "\'');
           await tester.pump();
         } else if (textFormFields.evaluate().isNotEmpty) {
-          await tester.enterText(textFormFields.first, '테스트 🎉✨🔮 <script>alert("xss")</script> "\'');
+          await tester.enterText(textFormFields.first,
+              '테스트 🎉✨🔮 <script>alert("xss")</script> "\'');
           await tester.pump();
         }
 
@@ -226,7 +229,13 @@ void main() {
       var crashed = false;
       try {
         // 여러 페이지 순회하며 Null 처리 확인
-        final tabs = [NavTab.home, NavTab.fortune, NavTab.trend, NavTab.premium, NavTab.profile];
+        final tabs = [
+          NavTab.home,
+          NavTab.fortune,
+          NavTab.trend,
+          NavTab.premium,
+          NavTab.profile
+        ];
 
         for (final tab in tabs) {
           await NavigationHelpers.tapBottomNavTab(tester, tab);
@@ -263,7 +272,8 @@ void main() {
       }
 
       expect(crashed, isFalse, reason: '잘못된 딥링크 처리 시 크래시가 없어야 합니다');
-      debugPrint('✅ CRASH-009 PASSED: Invalid deep link handling without crash');
+      debugPrint(
+          '✅ CRASH-009 PASSED: Invalid deep link handling without crash');
     });
 
     // ========================================================================
@@ -384,7 +394,8 @@ void main() {
       }
 
       expect(crashed, isFalse, reason: '네비게이션 중 상태 변경 시 크래시가 없어야 합니다');
-      debugPrint('✅ CRASH-014 PASSED: Navigation during state change without crash');
+      debugPrint(
+          '✅ CRASH-014 PASSED: Navigation during state change without crash');
     });
 
     testWidgets('CRASH-015: 결제 페이지 접근/이탈 시 크래시 없음', (tester) async {

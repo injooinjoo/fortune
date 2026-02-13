@@ -197,10 +197,12 @@ class _ScoreCircleState extends State<ScoreCircle>
                               animation: _animation,
                               builder: (context, _) {
                                 final displayScore =
-                                    (_animation.value * widget.maxScore).round();
+                                    (_animation.value * widget.maxScore)
+                                        .round();
                                 return Text(
                                   '$displayScore',
-                                  style: context.typography.displayLarge.copyWith(
+                                  style:
+                                      context.typography.displayLarge.copyWith(
                                     fontSize: widget.size * 0.28,
                                     fontWeight: FontWeight.w800,
                                     color: context.colors.textPrimary,
@@ -220,7 +222,8 @@ class _ScoreCircleState extends State<ScoreCircle>
                             ],
 
                             // 상위 퍼센타일
-                            if (widget.showPercentile && widget.percentile != null)
+                            if (widget.showPercentile &&
+                                widget.percentile != null)
                               Text(
                                 '상위 ${widget.percentile}%',
                                 style: context.typography.labelSmall.copyWith(
@@ -366,7 +369,8 @@ class MiniScoreCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bgColor = backgroundColor ?? _getScoreColor(context).withValues(alpha:0.15);
+    final bgColor =
+        backgroundColor ?? _getScoreColor(context).withValues(alpha: 0.15);
     final fgColor = textColor ?? _getScoreColor(context);
 
     return Container(

@@ -89,29 +89,29 @@ class InAppProducts {
 
   // Get all consumable product IDs
   static List<String> get consumableIds => [
-    points300,
-    points600,
-    points1200,
-    points3000,
-  ];
+        points300,
+        points600,
+        points1200,
+        points3000,
+      ];
 
   // Get all subscription product IDs
   static List<String> get subscriptionIds => [
-    proSubscription,
-    maxSubscription,
-  ];
+        proSubscription,
+        maxSubscription,
+      ];
 
   // Get all non-consumable product IDs (평생 소유)
   static List<String> get nonConsumableIds => [
-    premiumSajuLifetime,
-  ];
+        premiumSajuLifetime,
+      ];
 
   // Get all product IDs
   static List<String> get allProductIds => [
-    ...consumableIds,
-    ...subscriptionIds,
-    ...nonConsumableIds,
-  ];
+        ...consumableIds,
+        ...subscriptionIds,
+        ...nonConsumableIds,
+      ];
 
   // Legacy product IDs (마이그레이션 기간용)
   static const String tokens10 = 'com.beyond.fortune.tokens10';
@@ -175,7 +175,8 @@ class ProductInfo {
       const proTokens = 30000;
       final proPricePerToken = proPrice / proTokens;
       final maxPricePerToken = price / points;
-      return (((proPricePerToken - maxPricePerToken) / proPricePerToken) * 100).round();
+      return (((proPricePerToken - maxPricePerToken) / proPricePerToken) * 100)
+          .round();
     }
     return 0;
   }

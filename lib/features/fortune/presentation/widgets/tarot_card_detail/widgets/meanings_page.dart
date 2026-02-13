@@ -53,8 +53,7 @@ class MeaningsPage extends StatelessWidget {
             const SizedBox(height: 8),
             ...cardInfo['relatedCards'].map<Widget>(
               (card) => Padding(
-                padding:
-                    const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.only(bottom: 8),
                 child: Row(
                   children: [
                     const Icon(Icons.link,

@@ -117,7 +117,8 @@ class DailyTokenClaimWidget extends ConsumerStatefulWidget {
   const DailyTokenClaimWidget({super.key});
 
   @override
-  ConsumerState<DailyTokenClaimWidget> createState() => _DailyTokenClaimWidgetState();
+  ConsumerState<DailyTokenClaimWidget> createState() =>
+      _DailyTokenClaimWidgetState();
 }
 
 class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget> {

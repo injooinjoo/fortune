@@ -19,10 +19,8 @@ class TrendContentRepository {
     bool ascending = false,
   }) async {
     try {
-      var query = _supabase
-          .from('trend_contents')
-          .select()
-          .eq('is_active', true);
+      var query =
+          _supabase.from('trend_contents').select().eq('is_active', true);
 
       if (type != null) {
         query = query.eq('type', type.name);
@@ -64,11 +62,8 @@ class TrendContentRepository {
   /// 단일 콘텐츠 조회
   Future<TrendContent?> getContentById(String id) async {
     try {
-      final response = await _supabase
-          .from('trend_contents')
-          .select()
-          .eq('id', id)
-          .single();
+      final response =
+          await _supabase.from('trend_contents').select().eq('id', id).single();
 
       return TrendContent.fromJson(_snakeToCamel(response));
     } catch (e) {
@@ -107,18 +102,15 @@ class TrendContentRepository {
     int limit = 10,
   }) async {
     try {
-      var query = _supabase
-          .from('trend_contents')
-          .select()
-          .eq('is_active', true);
+      var query =
+          _supabase.from('trend_contents').select().eq('is_active', true);
 
       if (type != null) {
         query = query.eq('type', type.name);
       }
 
-      final response = await query
-          .order('participant_count', ascending: false)
-          .limit(limit);
+      final response =
+          await query.order('participant_count', ascending: false).limit(limit);
 
       return (response as List)
           .map((json) => TrendContent.fromJson(_snakeToCamel(json)))

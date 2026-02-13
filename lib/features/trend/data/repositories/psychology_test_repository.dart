@@ -67,8 +67,7 @@ class PsychologyTestRepository {
                 title: r['title'],
                 description: r['description'],
                 imageUrl: r['image_url'],
-                characteristics:
-                    List<String>.from(r['characteristics'] ?? []),
+                characteristics: List<String>.from(r['characteristics'] ?? []),
                 compatibleWith: r['compatible_with'],
                 incompatibleWith: r['incompatible_with'],
                 additionalInfo:
@@ -202,8 +201,8 @@ class PsychologyTestRepository {
               List<String>.from(resultResponse['characteristics'] ?? []),
           compatibleWith: resultResponse['compatible_with'],
           incompatibleWith: resultResponse['incompatible_with'],
-          additionalInfo:
-              Map<String, dynamic>.from(resultResponse['additional_info'] ?? {}),
+          additionalInfo: Map<String, dynamic>.from(
+              resultResponse['additional_info'] ?? {}),
           selectionCount: resultResponse['selection_count'] ?? 0,
         ),
         answers: answers,
@@ -227,21 +226,17 @@ class PsychologyTestRepository {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) return [];
 
-      var query = _supabase
-          .from('user_psychology_results')
-          .select('''
+      var query = _supabase.from('user_psychology_results').select('''
             *,
             psychology_test_results (*)
-          ''')
-          .eq('user_id', userId);
+          ''').eq('user_id', userId);
 
       if (testId != null) {
         query = query.eq('test_id', testId);
       }
 
-      final response = await query
-          .order('completed_at', ascending: false)
-          .limit(limit);
+      final response =
+          await query.order('completed_at', ascending: false).limit(limit);
 
       return (response as List).map((json) {
         final resultJson = json['psychology_test_results'];
@@ -300,9 +295,8 @@ class PsychologyTestRepository {
           resultId: r['id'],
           resultTitle: r['title'],
           count: count,
-          percentage: totalParticipants > 0
-              ? (count / totalParticipants) * 100
-              : 0,
+          percentage:
+              totalParticipants > 0 ? (count / totalParticipants) * 100 : 0,
         );
       }).toList();
 

@@ -70,7 +70,8 @@ class LuckyItemsCompact extends StatelessWidget {
         final index = entry.key;
         final item = entry.value;
         return Padding(
-          padding: EdgeInsets.only(right: index < items.length - 1 ? spacing : 0),
+          padding:
+              EdgeInsets.only(right: index < items.length - 1 ? spacing : 0),
           child: _LuckyItemChip(
             item: item,
             showLabel: showLabel,
@@ -158,7 +159,8 @@ class _LuckyItemChip extends StatelessWidget {
           Text(
             item.label,
             style: context.labelSmall.copyWith(
-              color: isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
+              color:
+                  isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
               fontSize: 10,
             ),
           ),
@@ -279,7 +281,19 @@ class LuckyItem {
   static String _getNumberIcon(String value) {
     final num = int.tryParse(value);
     if (num != null && num >= 0 && num <= 10) {
-      const numbers = ['0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
+      const numbers = [
+        '0️⃣',
+        '1️⃣',
+        '2️⃣',
+        '3️⃣',
+        '4️⃣',
+        '5️⃣',
+        '6️⃣',
+        '7️⃣',
+        '8️⃣',
+        '9️⃣',
+        '🔟'
+      ];
       return numbers[num];
     }
     return '🔢';
@@ -301,7 +315,8 @@ class LuckyItem {
   static String _getTimeIcon(String value) {
     final v = value.toLowerCase();
     if (v.contains('새벽') || v.contains('dawn')) return '🌃';
-    if (v.contains('아침') || v.contains('오전') || v.contains('morning')) return '🌅';
+    if (v.contains('아침') || v.contains('오전') || v.contains('morning'))
+      return '🌅';
     if (v.contains('정오') || v.contains('낮') || v.contains('noon')) return '☀️';
     if (v.contains('오후') || v.contains('afternoon')) return '🌤️';
     if (v.contains('저녁') || v.contains('evening')) return '🌆';

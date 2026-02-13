@@ -44,10 +44,11 @@ class _ABTestWidgetState extends ConsumerState<ABTestWidget> {
 
       // AB 테스트 서비스 초기화 대기
       await ref.read(abTestInitializerProvider.future);
-      
+
       // 변형 가져오기
-      final variant = await ref.read(abTestServiceProvider).getVariant(widget.experimentId);
-      
+      final variant =
+          await ref.read(abTestServiceProvider).getVariant(widget.experimentId);
+
       setState(() {
         _variant = variant;
         _isLoading = false;
@@ -66,18 +67,17 @@ class _ABTestWidgetState extends ConsumerState<ABTestWidget> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return widget.loadingWidget ?? 
-             const Center(child: CircularProgressIndicator());
+      return widget.loadingWidget ??
+          const Center(child: CircularProgressIndicator());
     }
 
     if (_error != null) {
-      return widget.errorWidget ?? 
-             Center(child: Text('Error: $_error'));
+      return widget.errorWidget ?? Center(child: Text('Error: $_error'));
     }
 
     if (_variant == null) {
-      return widget.errorWidget ?? 
-             const Center(child: Text('No variant assigned'));
+      return widget.errorWidget ??
+          const Center(child: Text('No variant assigned'));
     }
 
     return widget.builder(context, _variant!);
@@ -134,14 +134,12 @@ class ABTestSwitchWidget extends ConsumerWidget {
 
     return variantAsync.when(
       data: (variant) {
-        return variants[variant.id] ?? 
-               defaultWidget ?? 
-               const SizedBox.shrink();
+        return variants[variant.id] ?? defaultWidget ?? const SizedBox.shrink();
       },
-      loading: () => loadingWidget ?? 
-                     const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => defaultWidget ?? 
-                               Center(child: Text('Error: $error')),
+      loading: () =>
+          loadingWidget ?? const Center(child: CircularProgressIndicator()),
+      error: (error, stack) =>
+          defaultWidget ?? Center(child: Text('Error: $error')),
     );
   }
 }
@@ -197,10 +195,10 @@ class ABTestConversionTracker extends ConsumerWidget {
       onTap: () async {
         // 전환 이벤트 추적
         await ref.read(abTestServiceProvider).trackConversion(
-          experimentId: experimentId,
-          conversionType: conversionType,
-          additionalData: additionalData,
-        );
+              experimentId: experimentId,
+              conversionType: conversionType,
+              additionalData: additionalData,
+            );
       },
       child: child,
     );

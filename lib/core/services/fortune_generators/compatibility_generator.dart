@@ -17,10 +17,13 @@ class CompatibilityGenerator {
 
     // 📤 API 요청 준비
     Logger.info('[CompatibilityGenerator] 📤 API 요청 준비');
-    Logger.info('[CompatibilityGenerator]   🌐 Edge Function: fortune-compatibility');
+    Logger.info(
+        '[CompatibilityGenerator]   🌐 Edge Function: fortune-compatibility');
     Logger.info('[CompatibilityGenerator]   👤 user_id: $userId');
-    Logger.info('[CompatibilityGenerator]   👤 person1: ${person1['name']} (${person1['birth_date']})');
-    Logger.info('[CompatibilityGenerator]   👤 person2: ${person2['name']} (${person2['birth_date']})');
+    Logger.info(
+        '[CompatibilityGenerator]   👤 person1: ${person1['name']} (${person1['birth_date']})');
+    Logger.info(
+        '[CompatibilityGenerator]   👤 person2: ${person2['name']} (${person2['birth_date']})');
 
     try {
       final requestBody = {
@@ -50,12 +53,14 @@ class CompatibilityGenerator {
       Logger.info('[CompatibilityGenerator]   ✅ Status: ${response.status}');
 
       if (response.status != 200) {
-        Logger.error('[CompatibilityGenerator] ❌ API 호출 실패: status ${response.status}');
+        Logger.error(
+            '[CompatibilityGenerator] ❌ API 호출 실패: status ${response.status}');
         throw Exception('Edge Function 호출 실패: ${response.status}');
       }
 
       final data = response.data as Map<String, dynamic>;
-      Logger.info('[CompatibilityGenerator]   📦 Response data keys: ${data.keys.toList()}');
+      Logger.info(
+          '[CompatibilityGenerator]   📦 Response data keys: ${data.keys.toList()}');
 
       // 🔄 파싱
       Logger.info('[CompatibilityGenerator] 🔄 응답 데이터 파싱 중...');
@@ -83,7 +88,8 @@ class CompatibilityGenerator {
       summary: apiData['summary'] as Map<String, dynamic>? ?? {},
       data: apiData['data'] as Map<String, dynamic>? ?? apiData,
       score: (apiData['score'] as num?)?.toInt() ??
-             (apiData['overallScore'] as num?)?.toInt() ?? 75,
+          (apiData['overallScore'] as num?)?.toInt() ??
+          75,
     );
   }
 }

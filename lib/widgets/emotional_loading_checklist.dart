@@ -14,7 +14,7 @@ class EmotionalLoadingChecklist extends ConsumerStatefulWidget {
   final VoidCallback? onPreviewComplete;
   final bool isLoggedIn;
   final bool isApiComplete;
-  
+
   const EmotionalLoadingChecklist({
     super.key,
     this.onComplete,
@@ -24,10 +24,12 @@ class EmotionalLoadingChecklist extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<EmotionalLoadingChecklist> createState() => _EmotionalLoadingChecklistState();
+  ConsumerState<EmotionalLoadingChecklist> createState() =>
+      _EmotionalLoadingChecklistState();
 }
 
-class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChecklist> {
+class _EmotionalLoadingChecklistState
+    extends ConsumerState<EmotionalLoadingChecklist> {
   // dispose에서 사용할 notifier 참조 저장
   NavigationVisibilityNotifier? _navigationNotifier;
 
@@ -169,14 +171,14 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: isDark
-            ? [
-                const Color(0xFF1a1a2e),
-                const Color(0xFF0f1624),
-              ]
-            : [
-                context.colors.background,
-                const Color(0xFFF5F5F5),
-              ],
+              ? [
+                  const Color(0xFF1a1a2e),
+                  const Color(0xFF0f1624),
+                ]
+              : [
+                  context.colors.background,
+                  const Color(0xFFF5F5F5),
+                ],
         ),
       ),
       child: SafeArea(
@@ -198,13 +200,15 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
                       repeatForever: true,
                       pause: const Duration(milliseconds: 300),
                       onNext: _onTextNext,
-                      animatedTexts: _shuffledMessages.map((step) =>
-                        RotateAnimatedText(
-                          step.title,
-                          duration: const Duration(milliseconds: 2000),
-                          rotateOut: true,
-                        ),
-                      ).toList(),
+                      animatedTexts: _shuffledMessages
+                          .map(
+                            (step) => RotateAnimatedText(
+                              step.title,
+                              duration: const Duration(milliseconds: 2000),
+                              rotateOut: true,
+                            ),
+                          )
+                          .toList(),
                     ),
                   ),
                 ),
@@ -220,13 +224,15 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
                     child: AnimatedTextKit(
                       repeatForever: true,
                       pause: const Duration(milliseconds: 300),
-                      animatedTexts: _shuffledMessages.map((step) =>
-                        RotateAnimatedText(
-                          step.subtitle,
-                          duration: const Duration(milliseconds: 2000),
-                          rotateOut: true,
-                        ),
-                      ).toList(),
+                      animatedTexts: _shuffledMessages
+                          .map(
+                            (step) => RotateAnimatedText(
+                              step.subtitle,
+                              duration: const Duration(milliseconds: 2000),
+                              rotateOut: true,
+                            ),
+                          )
+                          .toList(),
                     ),
                   ),
                 ),
@@ -242,6 +248,6 @@ class _EmotionalLoadingChecklistState extends ConsumerState<EmotionalLoadingChec
 class LoadingStep {
   final String title;
   final String subtitle;
-  
+
   const LoadingStep(this.title, this.subtitle);
 }

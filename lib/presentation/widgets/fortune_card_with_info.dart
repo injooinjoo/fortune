@@ -48,56 +48,57 @@ class FortuneCardWithInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        FortuneCard(
-          icon: icon,
-          title: title,
-          description: description,
-          onTap: onTap,
-          badge: badge,
-          iconColor: iconColor,
-          backgroundColor: backgroundColor,
-          emoji: emoji,
-          gradient: gradient,
-        ),
-        if (showInfoButton)
-          Positioned(
-            top: 8,
-            right: 8,
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () => _showFortuneInfo(context),
-                borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
-                child: Container(
-                  width: 36,
-                  height: AppSpacing.spacing9,
-                  decoration: BoxDecoration(
-                    color: context.isDark
-                        ? DSColors.textPrimary.withValues(alpha: 0.9)
-                        : DSColors.backgroundSecondaryDark.withValues(alpha: 0.9),
-                    borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
-                    boxShadow: [
-                      BoxShadow(
-                        color: context.isDark
-                            ? DSColors.textPrimary.withValues(alpha: 0.3)
-                            : DSColors.textPrimaryDark.withValues(alpha: 0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    Icons.info_outline,
-                    size: AppDimensions.iconSizeSmall,
-                    color: gradient?.first ?? iconColor ?? Theme.of(context).colorScheme.primary,
-                  ),
+    return Stack(children: [
+      FortuneCard(
+        icon: icon,
+        title: title,
+        description: description,
+        onTap: onTap,
+        badge: badge,
+        iconColor: iconColor,
+        backgroundColor: backgroundColor,
+        emoji: emoji,
+        gradient: gradient,
+      ),
+      if (showInfoButton)
+        Positioned(
+          top: 8,
+          right: 8,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => _showFortuneInfo(context),
+              borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
+              child: Container(
+                width: 36,
+                height: AppSpacing.spacing9,
+                decoration: BoxDecoration(
+                  color: context.isDark
+                      ? DSColors.textPrimary.withValues(alpha: 0.9)
+                      : DSColors.backgroundSecondaryDark.withValues(alpha: 0.9),
+                  borderRadius:
+                      BorderRadius.circular(AppDimensions.radiusXLarge),
+                  boxShadow: [
+                    BoxShadow(
+                      color: context.isDark
+                          ? DSColors.textPrimary.withValues(alpha: 0.3)
+                          : DSColors.textPrimaryDark.withValues(alpha: 0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  Icons.info_outline,
+                  size: AppDimensions.iconSizeSmall,
+                  color: gradient?.first ??
+                      iconColor ??
+                      Theme.of(context).colorScheme.primary,
                 ),
               ),
             ),
           ),
-      ]
-    );
+        ),
+    ]);
   }
 }

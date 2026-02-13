@@ -151,10 +151,10 @@ class AnonymizedMessage {
   });
 
   Map<String, dynamic> toJson() => {
-    'sender': sender,
-    'text': text,
-    'timestamp': timestamp.toIso8601String(),
-  };
+        'sender': sender,
+        'text': text,
+        'timestamp': timestamp.toIso8601String(),
+      };
 }
 
 /// 익명화 결과

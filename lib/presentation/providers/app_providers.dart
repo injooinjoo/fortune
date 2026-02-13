@@ -7,8 +7,9 @@ import 'font_size_provider.dart';
 Future<List<Override>> initializeProviders() async {
   // Initialize SharedPreferences
   final sharedPreferences = await SharedPreferences.getInstance();
-  
+
   return [
     // Override the sharedPreferencesProvider with actual instance
-    sharedPreferencesProvider.overrideWithValue(sharedPreferences)];
+    sharedPreferencesProvider.overrideWithValue(sharedPreferences)
+  ];
 }

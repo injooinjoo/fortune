@@ -46,13 +46,14 @@ class FortuneCompletionHelper {
         GaugeIncrementOverlay.show(
           context: context,
           fromProgress: previousProgress,
-          toProgress: expectedProgress,  // 리셋 전 값 (10 포함)
+          toProgress: expectedProgress, // 리셋 전 값 (10 포함)
         );
       }
 
       // 3. 10개 달성 시 축하 화면 (토큰 지급 후 자동 리셋됨)
       if (reachedTen && context.mounted) {
-        await Future.delayed(const Duration(milliseconds: 1600)); // 게이지 오버레이 끝난 후
+        await Future.delayed(
+            const Duration(milliseconds: 1600)); // 게이지 오버레이 끝난 후
         if (context.mounted) {
           TokenCelebrationOverlay.show(context: context);
         }

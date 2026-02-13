@@ -10,56 +10,56 @@ class ProfileFieldEditDialog extends StatelessWidget {
   final VoidCallback? onSave;
   final bool isLoading;
 
-  const ProfileFieldEditDialog({
-    super.key,
-    required this.title,
-    required this.content,
-    this.onSave,
-    this.isLoading = false});
+  const ProfileFieldEditDialog(
+      {super.key,
+      required this.title,
+      required this.content,
+      this.onSave,
+      this.isLoading = false});
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: AppDimensions.borderRadiusLarge),
-      child: Padding(
-        padding: AppSpacing.paddingAll24,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              title,
-              style: Theme.of(context).textTheme.headlineMedium,
-              textAlign: TextAlign.center),
-            const SizedBox(height: AppSpacing.spacing6),
-            content,
-            const SizedBox(height: AppSpacing.spacing6),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: isLoading ? null : () => Navigator.of(context).pop(),
-                  child: Text(
-                    '취소',
-                    style: AppTypography.button)),
-                const SizedBox(width: AppSpacing.spacing3),
-                ElevatedButton(
-                  onPressed: isLoading ? null : onSave,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: DSColors.accentDark,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: AppDimensions.borderRadiusSmall),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.spacing6,
-                      vertical: AppSpacing.spacing3)),
-                  child: isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(DSColors.textPrimary)))
-                      : const Text('저장'))])])));
+        shape: RoundedRectangleBorder(
+            borderRadius: AppDimensions.borderRadiusLarge),
+        child: Padding(
+            padding: AppSpacing.paddingAll24,
+            child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(title,
+                      style: Theme.of(context).textTheme.headlineMedium,
+                      textAlign: TextAlign.center),
+                  const SizedBox(height: AppSpacing.spacing6),
+                  content,
+                  const SizedBox(height: AppSpacing.spacing6),
+                  Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                    TextButton(
+                        onPressed: isLoading
+                            ? null
+                            : () => Navigator.of(context).pop(),
+                        child: Text('취소', style: AppTypography.button)),
+                    const SizedBox(width: AppSpacing.spacing3),
+                    ElevatedButton(
+                        onPressed: isLoading ? null : onSave,
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: DSColors.accentDark,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: AppDimensions.borderRadiusSmall),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.spacing6,
+                                vertical: AppSpacing.spacing3)),
+                        child: isLoading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        DSColors.textPrimary)))
+                            : const Text('저장'))
+                  ])
+                ])));
   }
 }

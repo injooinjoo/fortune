@@ -11,15 +11,14 @@ class AdminApiService {
 
   AdminApiService(this._apiClient);
 
-  Future<AdminStatsModel> getAdminStats({
-    DateTime? startDate,
-    DateTime? endDate}) async {
+  Future<AdminStatsModel> getAdminStats(
+      {DateTime? startDate, DateTime? endDate}) async {
     try {
-      final response = await _apiClient.get(
-        '/api/admin/token-stats',
-        queryParameters: {
-          if (startDate != null) 'startDate': null,
-          if (endDate != null) 'endDate': null});
+      final response = await _apiClient.get('/api/admin/token-stats',
+          queryParameters: {
+            if (startDate != null) 'startDate': null,
+            if (endDate != null) 'endDate': null
+          });
 
       return AdminStatsModel.fromJson(response.data);
     } on DioException catch (e) {
@@ -28,17 +27,15 @@ class AdminApiService {
     }
   }
 
-  Future<TokenUsageDetailModel> getTokenUsageStats({
-    DateTime? startDate,
-    DateTime? endDate,
-    String period = '7d'}) async {
+  Future<TokenUsageDetailModel> getTokenUsageStats(
+      {DateTime? startDate, DateTime? endDate, String period = '7d'}) async {
     try {
-      final response = await _apiClient.get(
-        '/api/admin/token-usage',
-        queryParameters: {
-          if (startDate != null) 'startDate': null,
-          if (endDate != null) 'endDate': endDate.toIso8601String(),
-          'period': null});
+      final response =
+          await _apiClient.get('/api/admin/token-usage', queryParameters: {
+        if (startDate != null) 'startDate': null,
+        if (endDate != null) 'endDate': endDate.toIso8601String(),
+        'period': null
+      });
 
       return TokenUsageDetailModel.fromJson(response.data);
     } on DioException catch (e) {
@@ -67,7 +64,7 @@ class AdminApiService {
       case DioExceptionType.badResponse:
         final statusCode = e.response?.statusCode ?? 0;
         final message = e.response?.data['message'] ?? '알 수 없는 오류가 발생했습니다.';
-        
+
         if (statusCode == 401) {
           return const UnauthorizedException('관리자 권한이 필요합니다.');
         } else if (statusCode == 403) {

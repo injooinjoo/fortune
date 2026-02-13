@@ -8,21 +8,21 @@ class CelebritySaju {
   final String birthPlace;
   final String category;
   final String agency;
-  
+
   // 사주 기둥들
   final String yearPillar;
   final String monthPillar;
   final String dayPillar;
   final String hourPillar;
   final String sajuString;
-  
+
   // 오행 개수
   final int woodCount;
   final int fireCount;
   final int earthCount;
   final int metalCount;
   final int waterCount;
-  
+
   // 전체 사주 데이터
   final Map<String, dynamic>? fullSajuData;
   final String dataSource;
@@ -122,7 +122,8 @@ class CelebritySaju {
     final birth = DateTime.parse(birthDate);
     final now = DateTime.now();
     int age = now.year - birth.year;
-    if (now.month < birth.month || (now.month == birth.month && now.day < birth.day)) {
+    if (now.month < birth.month ||
+        (now.month == birth.month && now.day < birth.day)) {
       age--;
     }
     return age;
@@ -152,8 +153,9 @@ class CelebritySaju {
       '금': metalCount,
       '수': waterCount,
     };
-    
-    final maxEntry = elements.entries.reduce((a, b) => a.value > b.value ? a : b);
+
+    final maxEntry =
+        elements.entries.reduce((a, b) => a.value > b.value ? a : b);
     return maxEntry.key;
   }
 
@@ -161,7 +163,7 @@ class CelebritySaju {
   Map<String, double> get elementDistribution {
     final total = woodCount + fireCount + earthCount + metalCount + waterCount;
     if (total == 0) return {'목': 0, '화': 0, '토': 0, '금': 0, '수': 0};
-    
+
     return {
       '목': (woodCount / total * 100).roundToDouble(),
       '화': (fireCount / total * 100).roundToDouble(),
@@ -176,7 +178,7 @@ class CelebritySaju {
     return fullSajuData?['tenGods'];
   }
 
-  /// 대운 정보 (fullSajuData에서 추출)  
+  /// 대운 정보 (fullSajuData에서 추출)
   Map<String, dynamic>? get daeunInfo {
     return fullSajuData?['daeunInfo'];
   }
@@ -185,7 +187,7 @@ class CelebritySaju {
   String get currentDaeunPeriod {
     final daeun = daeunInfo;
     if (daeun == null) return '정보 없음';
-    
+
     final startAge = daeun['startAge']?.toString() ?? '';
     final endAge = daeun['endAge']?.toString() ?? '';
     return '$startAge-$endAge세';

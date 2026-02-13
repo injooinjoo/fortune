@@ -14,25 +14,25 @@ class TokenMonitorService {
 
   Timer? _timer;
   final SupabaseClient _supabase = Supabase.instance.client;
-  
+
   // Check token every 4 minutes (tokens typically last 1 hour,
   static const Duration _checkInterval = Duration(minutes: 4);
-  
+
   // Refresh if token expires within 10 minutes
   static const int _refreshThresholdSeconds = 600;
 
   /// Start monitoring auth tokens
   void startMonitoring() {
     stopMonitoring(); // Stop any existing timer
-    
+
     // Initial check
     _checkAndRefreshToken();
-    
+
     // Set up periodic check
     _timer = Timer.periodic(_checkInterval, (_) {
       _checkAndRefreshToken();
     });
-    
+
     debugPrint('Token monitor service started');
   }
 
@@ -47,7 +47,7 @@ class TokenMonitorService {
   Future<void> _checkAndRefreshToken() async {
     try {
       final session = _supabase.auth.currentSession;
-      
+
       if (session == null) {
         debugPrint('No active session to monitor');
         return;
@@ -61,18 +61,19 @@ class TokenMonitorService {
 
       final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
       final timeUntilExpiry = expiresAt - now;
-      
-      debugPrint('Token expires in ${timeUntilExpiry}s (${(timeUntilExpiry / 60).toStringAsFixed(1)} minutes)');
-      
+
+      debugPrint(
+          'Token expires in ${timeUntilExpiry}s (${(timeUntilExpiry / 60).toStringAsFixed(1)} minutes)');
+
       if (timeUntilExpiry < _refreshThresholdSeconds) {
         debugPrint('Token expiring soon, refreshing...');
-        
+
         try {
           final response = await _supabase.auth.refreshSession();
-          
+
           if (response.session != null) {
             debugPrint('Token refreshed successfully via monitor service');
-            
+
             // Notify listeners about the refresh
             _notifyTokenRefreshed();
           } else {
@@ -80,10 +81,10 @@ class TokenMonitorService {
           }
         } catch (e) {
           debugPrint('Error refreshing token: $e');
-          
+
           // If refresh fails, it might mean the refresh token is also expired
           // In this case, the user will need to re-authenticate
-          if (e.toString().contains('refresh_token') || 
+          if (e.toString().contains('refresh_token') ||
               e.toString().contains('invalid') ||
               e.toString().contains('expired')) {
             _handleAuthExpired();
@@ -114,10 +115,10 @@ class TokenMonitorService {
   int? getTokenLifetime() {
     final session = _supabase.auth.currentSession;
     if (session?.expiresAt == null) return null;
-    
+
     final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     final lifetime = session!.expiresAt! - now;
-    
+
     return lifetime > 0 ? lifetime : 0;
   }
 
@@ -125,7 +126,7 @@ class TokenMonitorService {
   bool needsRefresh() {
     final lifetime = getTokenLifetime();
     if (lifetime == null) return false;
-    
+
     return lifetime < _refreshThresholdSeconds;
   }
 

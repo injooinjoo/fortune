@@ -24,7 +24,8 @@ enum CalendarSource {
 /// 사용자가 선택한 소스에서 이벤트를 가져오고,
 /// 두 소스를 동시에 사용할 수도 있습니다.
 class UnifiedCalendarService {
-  static final UnifiedCalendarService _instance = UnifiedCalendarService._internal();
+  static final UnifiedCalendarService _instance =
+      UnifiedCalendarService._internal();
   factory UnifiedCalendarService() => _instance;
   UnifiedCalendarService._internal();
 
@@ -53,7 +54,8 @@ class UnifiedCalendarService {
       _deviceEnabled = prefs.getBool(_prefKeyDeviceEnabled) ?? true;
 
       // Google Calendar 자동 재연결 시도
-      final wasGoogleConnected = prefs.getBool(_prefKeyGoogleConnected) ?? false;
+      final wasGoogleConnected =
+          prefs.getBool(_prefKeyGoogleConnected) ?? false;
       if (wasGoogleConnected) {
         Logger.info('[UnifiedCalendar] Google Calendar 자동 재연결 시도...');
         final connected = await _googleService.connect();
@@ -64,7 +66,8 @@ class UnifiedCalendarService {
         }
       }
 
-      Logger.info('[UnifiedCalendar] 초기화 완료 - device: $_deviceEnabled, google: $isGoogleConnected');
+      Logger.info(
+          '[UnifiedCalendar] 초기화 완료 - device: $_deviceEnabled, google: $isGoogleConnected');
     } catch (e) {
       Logger.error('[UnifiedCalendar] 초기화 실패', e);
     }
@@ -123,7 +126,8 @@ class UnifiedCalendarService {
       try {
         final hasPermission = await _deviceService.requestCalendarPermission();
         if (hasPermission) {
-          final deviceEvents = await _deviceService.getEventSummariesForDate(date);
+          final deviceEvents =
+              await _deviceService.getEventSummariesForDate(date);
           for (final event in deviceEvents) {
             final key = '${event.title}_${event.startTime}';
             if (!seenTitles.contains(key)) {
@@ -163,7 +167,8 @@ class UnifiedCalendarService {
       return a.startTime!.compareTo(b.startTime!);
     });
 
-    Logger.info('[UnifiedCalendar] ${date.toString().substring(0, 10)}: 총 ${allEvents.length}개 이벤트');
+    Logger.info(
+        '[UnifiedCalendar] ${date.toString().substring(0, 10)}: 총 ${allEvents.length}개 이벤트');
     return allEvents;
   }
 
@@ -205,7 +210,8 @@ class UnifiedCalendarService {
       }
     }
 
-    Logger.info('[UnifiedCalendar] 범위 조회: ${eventsByDate.length}일에 이벤트 (${startDate.toString().substring(0, 10)} ~ ${endDate.toString().substring(0, 10)})');
+    Logger.info(
+        '[UnifiedCalendar] 범위 조회: ${eventsByDate.length}일에 이벤트 (${startDate.toString().substring(0, 10)} ~ ${endDate.toString().substring(0, 10)})');
     return eventsByDate;
   }
 
@@ -251,9 +257,8 @@ class UnifiedCalendarService {
     sources.add(ConnectedCalendarSource(
       source: CalendarSource.google,
       name: 'Google Calendar',
-      description: isGoogleConnected
-          ? googleEmail ?? 'Google 계정'
-          : 'Google 계정으로 직접 연동',
+      description:
+          isGoogleConnected ? googleEmail ?? 'Google 계정' : 'Google 계정으로 직접 연동',
       isConnected: isGoogleConnected,
     ));
 

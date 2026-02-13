@@ -74,7 +74,8 @@ void main() {
 
       // 홈 화면이 정상적으로 렌더링되어야 함
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ FORT-001 PASSED: Daily fortune home card: $hasFortuneContent');
+      debugPrint(
+          '✅ FORT-001 PASSED: Daily fortune home card: $hasFortuneContent');
     });
 
     testWidgets('FORT-002: 타로 카드 선택 → 결과 플로우', (tester) async {
@@ -134,7 +135,8 @@ void main() {
           find.byType(TextFormField).evaluate().isNotEmpty;
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ FORT-003 PASSED: Compatibility fortune accessible: $foundCompatibility, hasForm: $hasInputForm');
+      debugPrint(
+          '✅ FORT-003 PASSED: Compatibility fortune accessible: $foundCompatibility, hasForm: $hasInputForm');
     });
 
     testWidgets('FORT-004: MBTI 운세 선택 → 결과', (tester) async {
@@ -194,7 +196,8 @@ void main() {
           find.byType(TextFormField).evaluate().isNotEmpty;
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ FORT-005 PASSED: Dream interpretation accessible: $foundDream, hasInput: $hasTextField');
+      debugPrint(
+          '✅ FORT-005 PASSED: Dream interpretation accessible: $foundDream, hasInput: $hasTextField');
     });
 
     testWidgets('FORT-006: 사주 분석 생년월일시 입력', (tester) async {
@@ -335,7 +338,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ FORT-010 PASSED: Talisman generation accessible: $foundTalisman');
+      debugPrint(
+          '✅ FORT-010 PASSED: Talisman generation accessible: $foundTalisman');
     });
 
     // ========================================================================
@@ -388,7 +392,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ FORT-012 PASSED: History feature available: $hasHistoryOption');
+      debugPrint(
+          '✅ FORT-012 PASSED: History feature available: $hasHistoryOption');
     });
 
     testWidgets('FORT-013: 블러 처리 (미결제 시)', (tester) async {
@@ -494,7 +499,8 @@ void main() {
 
       // 에러가 없으면 정상 상태
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ FORT-016 PASSED: Error handling UI check (error present: $hasErrorUI)');
+      debugPrint(
+          '✅ FORT-016 PASSED: Error handling UI check (error present: $hasErrorUI)');
     });
 
     testWidgets('FORT-017: 재시도 버튼 확인', (tester) async {
@@ -568,7 +574,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ FORT-019 PASSED: Face reading accessible: $foundFaceReading');
+      debugPrint(
+          '✅ FORT-019 PASSED: Face reading accessible: $foundFaceReading');
     });
 
     testWidgets('FORT-020: 바이오리듬 차트 페이지 접근', (tester) async {
@@ -611,7 +618,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ FORT-020 PASSED: Biorhythm chart accessible: $foundBiorhythm, hasChart: $hasChartContent');
+      debugPrint(
+          '✅ FORT-020 PASSED: Biorhythm chart accessible: $foundBiorhythm, hasChart: $hasChartContent');
     });
   });
 }

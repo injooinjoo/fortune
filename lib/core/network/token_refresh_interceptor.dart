@@ -6,28 +6,27 @@ import 'package:flutter/foundation.dart';
 class TokenRefreshInterceptor extends Interceptor {
   final Dio dio;
   final SupabaseClient supabase;
-  
+
   // Track ongoing refresh to prevent multiple simultaneous refreshes
   static Future<void>? _refreshTokenFuture;
   static DateTime? _lastRefreshTime;
   static const Duration _minRefreshInterval = Duration(seconds: 30);
 
-  TokenRefreshInterceptor({
-    required this.dio,
-    required this.supabase});
+  TokenRefreshInterceptor({required this.dio, required this.supabase});
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+  void onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
     // Check if we have a valid session
     final session = supabase.auth.currentSession;
-    
+
     if (session != null) {
       // Check if token is about to expire (within 5 minutes,
       final expiresAt = session.expiresAt;
       if (expiresAt != null) {
         final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
         final timeUntilExpiry = expiresAt - now;
-        
+
         if (timeUntilExpiry < 300) {
           // Token expires in less than 5 minutes, refresh it
           debugPrint('Token expires soon, refreshing proactively...');
@@ -36,7 +35,8 @@ class TokenRefreshInterceptor extends Interceptor {
             // Update the header with new token
             final newSession = supabase.auth.currentSession;
             if (newSession != null) {
-              options.headers['Authorization'] = 'Bearer ${newSession.accessToken}';
+              options.headers['Authorization'] =
+                  'Bearer ${newSession.accessToken}';
             }
           } catch (e) {
             debugPrint('Token refresh failed: $e');
@@ -44,11 +44,11 @@ class TokenRefreshInterceptor extends Interceptor {
           }
         }
       }
-      
+
       // Add the current token to headers
       options.headers['Authorization'] = 'Bearer ${session.accessToken}';
     }
-    
+
     handler.next(options);
   }
 
@@ -58,29 +58,28 @@ class TokenRefreshInterceptor extends Interceptor {
       // Token might be expired, try to refresh
       try {
         debugPrint('Got 401, attempting token refresh...');
-        
+
         // Wait for any ongoing refresh to complete
         if (_refreshTokenFuture != null) {
           await _refreshTokenFuture;
         } else {
           await _refreshToken();
         }
-        
+
         // Retry the original request with new token
         final session = supabase.auth.currentSession;
         if (session != null) {
           final options = err.requestOptions;
           options.headers['Authorization'] = 'Bearer ${session.accessToken}';
-          
+
           try {
             final response = await dio.fetch(options);
             handler.resolve(response);
             return;
           } catch (retryError) {
             // Retry failed, pass through the error
-            handler.next(DioException(
-              requestOptions: options,
-              error: retryError));
+            handler
+                .next(DioException(requestOptions: options, error: retryError));
             return;
           }
         }
@@ -90,7 +89,7 @@ class TokenRefreshInterceptor extends Interceptor {
         _handleAuthFailure();
       }
     }
-    
+
     handler.next(err);
   }
 
@@ -99,7 +98,8 @@ class TokenRefreshInterceptor extends Interceptor {
     if (_lastRefreshTime != null) {
       final timeSinceLastRefresh = DateTime.now().difference(_lastRefreshTime!);
       if (timeSinceLastRefresh < _minRefreshInterval) {
-        debugPrint('Skipping refresh, recently refreshed ${timeSinceLastRefresh.inSeconds}s ago');
+        debugPrint(
+            'Skipping refresh, recently refreshed ${timeSinceLastRefresh.inSeconds}s ago');
         return;
       }
     }
@@ -110,7 +110,7 @@ class TokenRefreshInterceptor extends Interceptor {
     }
 
     _refreshTokenFuture = _performRefresh();
-    
+
     try {
       await _refreshTokenFuture;
     } finally {
@@ -121,10 +121,10 @@ class TokenRefreshInterceptor extends Interceptor {
   Future<void> _performRefresh() async {
     try {
       debugPrint('Refreshing auth token...');
-      
+
       // Supabase handles token refresh automatically
       final response = await supabase.auth.refreshSession();
-      
+
       if (response.session != null) {
         _lastRefreshTime = DateTime.now();
         debugPrint('Token refreshed successfully');
@@ -148,8 +148,6 @@ class TokenRefreshInterceptor extends Interceptor {
 /// Extension to easily add token refresh interceptor to Dio
 extension DioTokenRefresh on Dio {
   void addTokenRefreshInterceptor(SupabaseClient supabase) {
-    interceptors.add(TokenRefreshInterceptor(
-      dio: this,
-      supabase: supabase));
+    interceptors.add(TokenRefreshInterceptor(dio: this, supabase: supabase));
   }
 }

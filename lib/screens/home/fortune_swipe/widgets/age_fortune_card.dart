@@ -45,7 +45,8 @@ class AgeFortuneCard extends StatelessWidget {
                 gradient: LinearGradient(
                   colors: [
                     DSColors.accentSecondary.withValues(alpha: 0.15),
-                    const Color(0xFFA78BFA).withValues(alpha: 0.1), // 고유 색상: 밝은 보라
+                    const Color(0xFFA78BFA)
+                        .withValues(alpha: 0.1), // 고유 색상: 밝은 보라
                   ],
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -86,8 +87,14 @@ class AgeFortuneCard extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: context.isDark
-                ? [const Color(0xFF2D2440), context.colors.surface] // 고유 색상: 다크 보라 그라디언트
-                : [const Color(0xFFF5F0FF), const Color(0xFFEDE9FE)], // 고유 색상: 라이트 보라 그라디언트
+                  ? [
+                      const Color(0xFF2D2440),
+                      context.colors.surface
+                    ] // 고유 색상: 다크 보라 그라디언트
+                  : [
+                      const Color(0xFFF5F0FF),
+                      const Color(0xFFEDE9FE)
+                    ], // 고유 색상: 라이트 보라 그라디언트
             ),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
@@ -96,7 +103,8 @@ class AgeFortuneCard extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: DSColors.accentSecondary.withValues(alpha: context.isDark ? 0.2 : 0.1),
+                color: DSColors.accentSecondary
+                    .withValues(alpha: context.isDark ? 0.2 : 0.1),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -109,7 +117,8 @@ class AgeFortuneCard extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: DSColors.accentSecondary,
                       borderRadius: BorderRadius.circular(20),
@@ -125,7 +134,8 @@ class AgeFortuneCard extends StatelessWidget {
                   if (zodiacAnimal != null && zodiacAnimal.isNotEmpty) ...[
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
                         color: DSColors.warning.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),

@@ -5,18 +5,14 @@ class AppHeader extends StatelessWidget {
   final List<Widget>? actions;
   final bool showBackButton;
 
-  const AppHeader({
-    super.key,
-    this.title,
-    this.actions,
-    this.showBackButton = true});
+  const AppHeader(
+      {super.key, this.title, this.actions, this.showBackButton = true});
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(title ?? 'ZPZG'),
-      automaticallyImplyLeading: showBackButton,
-      actions: actions
-    );
+        title: Text(title ?? 'ZPZG'),
+        automaticallyImplyLeading: showBackButton,
+        actions: actions);
   }
 }

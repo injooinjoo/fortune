@@ -20,8 +20,7 @@ class ToggleTodoStatusUseCase implements UseCase<void, ToggleTodoStatusParams> {
     }
 
     return repository.toggleTodoStatus(
-      todoId: params.todoId,
-      userId: params.userId);
+        todoId: params.todoId, userId: params.userId);
   }
 }
 
@@ -29,9 +28,7 @@ class ToggleTodoStatusParams extends Equatable {
   final String todoId;
   final String userId;
 
-  const ToggleTodoStatusParams({
-    required this.todoId,
-    required this.userId});
+  const ToggleTodoStatusParams({required this.todoId, required this.userId});
 
   @override
   List<Object> get props => [todoId, userId];

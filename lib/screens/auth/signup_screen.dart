@@ -21,50 +21,46 @@ class _SignupScreenState extends State<SignupScreen> {
   Future<void> _handleSignup() async {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
       setState(() => _isLoading = true);
-      
+
       final values = _formKey.currentState!.value;
       final email = values['email'] as String;
       final password = values['password'] as String;
       final name = values['name'] as String;
-      
+
       try {
         final supabase = Supabase.instance.client;
-        
+
         // 회원가입
-        final response = await supabase.auth.signUp(
-          email: email,
-          password: password,
-          data: {'name': name});
-        
+        final response = await supabase.auth
+            .signUp(email: email, password: password, data: {'name': name});
+
         if (!mounted) return;
-        
+
         if (response.user != null) {
           // 프로필 생성
           await supabase.from('user_profiles').insert({
             'id': response.user!.id,
             'name': name,
             'email': email,
-            'created_at': DateTime.now().toIso8601String()});
+            'created_at': DateTime.now().toIso8601String()
+          });
           if (!mounted) return;
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: const Text('회원가입이 완료되었습니다!'),
               backgroundColor: context.colors.success));
-          
+
           // Chat-First: 온보딩은 채팅 내에서 처리
           context.go('/chat');
         }
       } on AuthException catch (error) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(error.message),
             backgroundColor: context.colors.error));
       } catch (error) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: const Text('회원가입 중 오류가 발생했습니다.'),
             backgroundColor: context.colors.error));
       } finally {
@@ -80,8 +76,8 @@ class _SignupScreenState extends State<SignupScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/chat')),
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => context.go('/chat')),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -89,106 +85,110 @@ class _SignupScreenState extends State<SignupScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                '회원가입',
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                      fontWeight: FontWeight.bold)),
+              Text('회원가입',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineLarge
+                      ?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
-              Text(
-                'Fortune과 함께 운명을 만나보세요',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: context.colors.textSecondary)),
+              Text('Fortune과 함께 운명을 만나보세요',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(color: context.colors.textSecondary)),
               const SizedBox(height: 32),
               FormBuilder(
                 key: _formKey,
                 child: Column(
                   children: [
                     FormBuilderTextField(
-                      name: 'name',
-                      decoration: const InputDecoration(
-                        labelText: '이름',
-                        prefixIcon: Icon(Icons.person_outline)),
-                      validator: FormBuilderValidators.compose([
-                        FormBuilderValidators.required(
-                          errorText: '이름을 입력해주세요'),
-                        FormBuilderValidators.minLength(
-                          2,
-                          errorText: '이름은 2자 이상이어야 합니다')])),
+                        name: 'name',
+                        decoration: const InputDecoration(
+                            labelText: '이름',
+                            prefixIcon: Icon(Icons.person_outline)),
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(
+                              errorText: '이름을 입력해주세요'),
+                          FormBuilderValidators.minLength(2,
+                              errorText: '이름은 2자 이상이어야 합니다')
+                        ])),
                     const SizedBox(height: 16),
                     FormBuilderTextField(
-                      name: 'email',
-                      decoration: const InputDecoration(
-                        labelText: '이메일',
-                        prefixIcon: Icon(Icons.email_outlined)),
-                      keyboardType: TextInputType.emailAddress,
-                      validator: FormBuilderValidators.compose([
-                        FormBuilderValidators.required(
-                          errorText: '이메일을 입력해주세요'),
-                        FormBuilderValidators.email(
-                          errorText: '올바른 이메일 형식이 아닙니다')])),
+                        name: 'email',
+                        decoration: const InputDecoration(
+                            labelText: '이메일',
+                            prefixIcon: Icon(Icons.email_outlined)),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(
+                              errorText: '이메일을 입력해주세요'),
+                          FormBuilderValidators.email(
+                              errorText: '올바른 이메일 형식이 아닙니다')
+                        ])),
                     const SizedBox(height: 16),
                     FormBuilderTextField(
-                      name: 'password',
-                      decoration: InputDecoration(
-                        labelText: '비밀번호',
-                        prefixIcon: const Icon(Icons.lock_outline),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscurePassword
-                                ? Icons.visibility_off
-                                : Icons.visibility),
-                          onPressed: () {
-                            setState(() {
-                              _obscurePassword = !_obscurePassword;
-                            });
-                          })),
-                      obscureText: _obscurePassword,
-                      validator: FormBuilderValidators.compose([
-                        FormBuilderValidators.required(
-                          errorText: '비밀번호를 입력해주세요'),
-                        FormBuilderValidators.minLength(
-                          6,
-                          errorText: '비밀번호는 6자 이상이어야 합니다')])),
+                        name: 'password',
+                        decoration: InputDecoration(
+                            labelText: '비밀번호',
+                            prefixIcon: const Icon(Icons.lock_outline),
+                            suffixIcon: IconButton(
+                                icon: Icon(_obscurePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscurePassword = !_obscurePassword;
+                                  });
+                                })),
+                        obscureText: _obscurePassword,
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(
+                              errorText: '비밀번호를 입력해주세요'),
+                          FormBuilderValidators.minLength(6,
+                              errorText: '비밀번호는 6자 이상이어야 합니다')
+                        ])),
                     const SizedBox(height: 16),
                     FormBuilderTextField(
-                      name: 'confirmPassword',
-                      decoration: InputDecoration(
-                        labelText: '비밀번호 확인',
-                        prefixIcon: const Icon(Icons.lock_outline),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscureConfirmPassword
-                                ? Icons.visibility_off
-                                : Icons.visibility),
-                          onPressed: () {
-                            setState(() {
-                              _obscureConfirmPassword = !_obscureConfirmPassword;
-                            });
-                          })),
-                      obscureText: _obscureConfirmPassword,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return '비밀번호를 다시 입력해주세요';
-                        }
-                        if (value != _formKey.currentState?.fields['password']?.value) {
-                          return '비밀번호가 일치하지 않습니다';
-                        }
-                        return null;
-                      }),
+                        name: 'confirmPassword',
+                        decoration: InputDecoration(
+                            labelText: '비밀번호 확인',
+                            prefixIcon: const Icon(Icons.lock_outline),
+                            suffixIcon: IconButton(
+                                icon: Icon(_obscureConfirmPassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscureConfirmPassword =
+                                        !_obscureConfirmPassword;
+                                  });
+                                })),
+                        obscureText: _obscureConfirmPassword,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return '비밀번호를 다시 입력해주세요';
+                          }
+                          if (value !=
+                              _formKey
+                                  .currentState?.fields['password']?.value) {
+                            return '비밀번호가 일치하지 않습니다';
+                          }
+                          return null;
+                        }),
                     const SizedBox(height: 24),
                     SizedBox(
                       height: 48.0,
                       child: ElevatedButton(
-                        onPressed: _isLoading ? null : _handleSignup,
-                        child: _isLoading
-                            ? SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    context.colors.ctaForeground)))
-                            : const Text('회원가입')),
+                          onPressed: _isLoading ? null : _handleSignup,
+                          child: _isLoading
+                              ? SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          context.colors.ctaForeground)))
+                              : const Text('회원가입')),
                     ),
                     const SizedBox(height: 16),
                     TextButton(

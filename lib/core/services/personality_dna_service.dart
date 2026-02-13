@@ -10,7 +10,6 @@ import 'unified_fortune_service.dart';
 /// - 직접 Edge Function 호출 → UnifiedFortuneService 경유
 /// - 캐시/Cohort Pool/DB 풀 자동 적용
 class PersonalityDNAService {
-
   /// API를 통한 DNA 조합 생성
   ///
   /// ✅ 최적화 플로우:
@@ -70,8 +69,10 @@ class PersonalityDNAService {
       );
 
       // dailyFortune이 API 응답에 포함되어 있지 않으면 수동으로 파싱
-      if (personalityDNA.dailyFortune == null && result.data['dailyFortune'] != null) {
-        final dailyFortuneData = result.data['dailyFortune'] as Map<String, dynamic>;
+      if (personalityDNA.dailyFortune == null &&
+          result.data['dailyFortune'] != null) {
+        final dailyFortuneData =
+            result.data['dailyFortune'] as Map<String, dynamic>;
         return personalityDNA.copyWith(
           dailyFortune: DailyFortune.fromJson(dailyFortuneData),
         );
@@ -104,17 +105,17 @@ class PersonalityDNAService {
       zodiac: zodiac,
       zodiacAnimal: zodiacAnimal,
     );
-    
+
     // 조합에 따른 DNA 정보 가져오기
     final dnaInfo = _getDNAInfo(combinationKey, mbti, bloodType, zodiacAnimal);
-    
+
     // 새로운 재미있는 콘텐츠 생성
     final loveStyle = _generateLoveStyle(mbti);
     final workStyle = _generateWorkStyle(mbti);
     final dailyMatching = _generateDailyMatching(mbti);
     final compatibility = _generateCompatibility(mbti);
     final celebrity = _generateCelebrity(mbti);
-    
+
     return PersonalityDNA(
       mbti: mbti,
       bloodType: bloodType,
@@ -147,31 +148,33 @@ class PersonalityDNAService {
   }
 
   /// 점수 생성
-  static Map<String, int> _generateScores(String mbti, String bloodType, String zodiacAnimal) {
+  static Map<String, int> _generateScores(
+      String mbti, String bloodType, String zodiacAnimal) {
     final mbtiInfo = _getMBTIInfo(mbti);
     final bloodInfo = _getBloodTypeInfo(bloodType);
     final animalInfo = _getZodiacAnimalInfo(zodiacAnimal);
-    
+
     return <String, int>{
       mbtiInfo['primaryStat']: 80 + (DateTime.now().millisecond % 20),
       bloodInfo['primaryStat']: 75 + (DateTime.now().microsecond % 25),
       animalInfo['primaryStat']: 70 + (DateTime.now().second % 30),
     };
   }
-  
+
   /// 조합에 따른 DNA 정보 생성
-  static Map<String, dynamic> _getDNAInfo(String combinationKey, String mbti, String bloodType, String zodiacAnimal) {
+  static Map<String, dynamic> _getDNAInfo(String combinationKey, String mbti,
+      String bloodType, String zodiacAnimal) {
     // 특정 조합에 대한 정의
     final specificCombinations = _getSpecificCombinations();
-    
+
     if (specificCombinations.containsKey(combinationKey)) {
       return specificCombinations[combinationKey]!;
     }
-    
+
     // 일반적인 조합 규칙으로 생성
     return _generateGenericDNA(mbti, bloodType, zodiacAnimal);
   }
-  
+
   /// 특별한 조합들 정의
   static Map<String, Map<String, dynamic>> _getSpecificCombinations() {
     return {
@@ -182,7 +185,8 @@ class PersonalityDNAService {
         'traits': ['절대 카리스마', '강력한 추진력', '천부적 리더십'],
         'colors': [const Color(0xFFFF6B6B), const Color(0xFFFFE66D)],
         'scores': {'리더십': 98, '결단력': 95, '야망': 97, '자신감': 94},
-        'todaysFortune': '용의 기운이 당신을 감싸며 모든 도전에서 승리할 것입니다. 오늘은 중대한 결정을 내리기 최적의 날입니다.'
+        'todaysFortune':
+            '용의 기운이 당신을 감싸며 모든 도전에서 승리할 것입니다. 오늘은 중대한 결정을 내리기 최적의 날입니다.'
       },
       'INFP-A-토끼': {
         'title': '몽상가 예술가 DNA',
@@ -213,50 +217,53 @@ class PersonalityDNAService {
       },
     };
   }
-  
+
   /// 일반적인 조합 규칙으로 DNA 생성
-  static Map<String, dynamic> _generateGenericDNA(String mbti, String bloodType, String zodiacAnimal) {
+  static Map<String, dynamic> _generateGenericDNA(
+      String mbti, String bloodType, String zodiacAnimal) {
     final mbtiInfo = _getMBTIInfo(mbti);
     final bloodInfo = _getBloodTypeInfo(bloodType);
     final animalInfo = _getZodiacAnimalInfo(zodiacAnimal);
-    
+
     // 조합 제목 생성
     final title = '${mbtiInfo['adjective']} ${animalInfo['adjective']}형 DNA';
-    
+
     // 특성 조합
     final traits = <String>[
       mbtiInfo['trait'],
       bloodInfo['trait'],
       animalInfo['trait'],
     ];
-    
+
     // 색상 조합
     final colors = <Color>[
       mbtiInfo['color'],
       animalInfo['color'],
     ];
-    
+
     // 점수 생성 (랜덤 + 특성 보정)
     final scores = <String, int>{
       mbtiInfo['primaryStat']: 80 + (DateTime.now().millisecond % 20),
       bloodInfo['primaryStat']: 75 + (DateTime.now().microsecond % 25),
       animalInfo['primaryStat']: 70 + (DateTime.now().second % 30),
     };
-    
+
     // 운세 메시지 생성
-    final todaysFortune = '${animalInfo['name']}의 기운과 $mbti의 특성이 조화롭게 어우러져 ${bloodInfo['personality']} 하루를 만들어갈 것입니다.';
-    
+    final todaysFortune =
+        '${animalInfo['name']}의 기운과 $mbti의 특성이 조화롭게 어우러져 ${bloodInfo['personality']} 하루를 만들어갈 것입니다.';
+
     return {
       'title': title,
       'emoji': animalInfo['emoji'],
-      'description': '${mbtiInfo['description']}과 ${animalInfo['description']}의 완벽한 조화!',
+      'description':
+          '${mbtiInfo['description']}과 ${animalInfo['description']}의 완벽한 조화!',
       'traits': traits,
       'colors': colors,
       'scores': scores,
       'todaysFortune': todaysFortune,
     };
   }
-  
+
   /// MBTI별 정보
   static Map<String, dynamic> _getMBTIInfo(String mbti) {
     final mbtiMap = {
@@ -373,10 +380,10 @@ class PersonalityDNAService {
         'primaryStat': '예술성'
       },
     };
-    
+
     return mbtiMap[mbti] ?? mbtiMap['ENTJ']!;
   }
-  
+
   /// 혈액형별 정보
   static Map<String, dynamic> _getBloodTypeInfo(String bloodType) {
     final bloodMap = {
@@ -401,10 +408,10 @@ class PersonalityDNAService {
         'primaryStat': '균형감'
       },
     };
-    
+
     return bloodMap[bloodType] ?? bloodMap['O']!;
   }
-  
+
   /// 띠별 정보
   static Map<String, dynamic> _getZodiacAnimalInfo(String animal) {
     final animalMap = {
@@ -517,34 +524,65 @@ class PersonalityDNAService {
         'primaryStat': '포용력'
       },
     };
-    
+
     return animalMap[animal] ?? animalMap['용']!;
   }
-  
+
   /// 12지 목록
   static const List<String> zodiacAnimals = [
-    '쥐', '소', '호랑이', '토끼', '용', '뱀',
-    '말', '양', '원숭이', '닭', '개', '돼지'
+    '쥐',
+    '소',
+    '호랑이',
+    '토끼',
+    '용',
+    '뱀',
+    '말',
+    '양',
+    '원숭이',
+    '닭',
+    '개',
+    '돼지'
   ];
-  
+
   /// MBTI 목록
   static const List<String> mbtiTypes = [
-    'INTJ', 'INTP', 'ENTJ', 'ENTP',
-    'INFJ', 'INFP', 'ENFJ', 'ENFP',
-    'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
-    'ISTP', 'ISFP', 'ESTP', 'ESFP'
+    'INTJ',
+    'INTP',
+    'ENTJ',
+    'ENTP',
+    'INFJ',
+    'INFP',
+    'ENFJ',
+    'ENFP',
+    'ISTJ',
+    'ISFJ',
+    'ESTJ',
+    'ESFJ',
+    'ISTP',
+    'ISFP',
+    'ESTP',
+    'ESFP'
   ];
-  
+
   /// 혈액형 목록
   static const List<String> bloodTypes = ['A', 'B', 'O', 'AB'];
-  
+
   /// 별자리 목록
   static const List<String> zodiacSigns = [
-    '양자리', '황소자리', '쌍둥이자리', '게자리',
-    '사자자리', '처녀자리', '천칭자리', '전갈자리',
-    '사수자리', '염소자리', '물병자리', '물고기자리'
+    '양자리',
+    '황소자리',
+    '쌍둥이자리',
+    '게자리',
+    '사자자리',
+    '처녀자리',
+    '천칭자리',
+    '전갈자리',
+    '사수자리',
+    '염소자리',
+    '물병자리',
+    '물고기자리'
   ];
-  
+
   /// 연애 스타일 생성
   static LoveStyle _generateLoveStyle(String mbti) {
     final loveStyles = {
@@ -579,15 +617,16 @@ class PersonalityDNAService {
         afterBreakup: '오랫동안 그리워하며 그 사람만의 특별함을 기억합니다.',
       ),
     };
-    
-    return loveStyles[mbti] ?? LoveStyle(
-      title: '$mbti만의 특별한 사랑',
-      description: '$mbti 특유의 매력적인 연애 스타일을 가지고 있습니다.',
-      whenDating: '$mbti의 특성을 살린 따뜻한 연애를 합니다.',
-      afterBreakup: '$mbti 나름의 방식으로 이별을 받아들이고 성장합니다.',
-    );
+
+    return loveStyles[mbti] ??
+        LoveStyle(
+          title: '$mbti만의 특별한 사랑',
+          description: '$mbti 특유의 매력적인 연애 스타일을 가지고 있습니다.',
+          whenDating: '$mbti의 특성을 살린 따뜻한 연애를 합니다.',
+          afterBreakup: '$mbti 나름의 방식으로 이별을 받아들이고 성장합니다.',
+        );
   }
-  
+
   /// 업무 스타일 생성
   static WorkStyle _generateWorkStyle(String mbti) {
     final workStyles = {
@@ -610,15 +649,16 @@ class PersonalityDNAService {
         workHabit: '완벽주의 성향으로 세심하게 계획을 세우고 실행합니다.',
       ),
     };
-    
-    return workStyles[mbti] ?? WorkStyle(
-      title: '$mbti형 직장인',
-      asBoss: '$mbti의 특성을 살린 리더십을 발휘합니다.',
-      atCompanyDinner: '$mbti만의 매력으로 동료들과 소통합니다.',
-      workHabit: '$mbti 특유의 업무 처리 방식을 가지고 있습니다.',
-    );
+
+    return workStyles[mbti] ??
+        WorkStyle(
+          title: '$mbti형 직장인',
+          asBoss: '$mbti의 특성을 살린 리더십을 발휘합니다.',
+          atCompanyDinner: '$mbti만의 매력으로 동료들과 소통합니다.',
+          workHabit: '$mbti 특유의 업무 처리 방식을 가지고 있습니다.',
+        );
   }
-  
+
   /// 일상 매칭 생성
   static DailyMatching _generateDailyMatching(String mbti) {
     final dailyMatchings = {
@@ -648,91 +688,145 @@ class PersonalityDNAService {
         weekendActivity: '친구들과의 즐거운 모임',
       ),
     };
-    
-    return dailyMatchings[mbti] ?? DailyMatching(
-      cafeMenu: '$mbti가 좋아할만한 특별한 메뉴',
-      netflixGenre: '$mbti 취향저격 장르',
-      weekendActivity: '$mbti만의 완벽한 주말',
-    );
+
+    return dailyMatchings[mbti] ??
+        DailyMatching(
+          cafeMenu: '$mbti가 좋아할만한 특별한 메뉴',
+          netflixGenre: '$mbti 취향저격 장르',
+          weekendActivity: '$mbti만의 완벽한 주말',
+        );
   }
-  
+
   /// 궁합 생성
   static Compatibility _generateCompatibility(String mbti) {
     final compatibilities = {
       'ENTJ': const Compatibility(
-        friend: CompatibilityType(mbti: 'ENTP', description: '서로의 아이디어를 발전시켜주는 완벽한 브레인 파트너'),
-        lover: CompatibilityType(mbti: 'INFP', description: '당신의 강함을 부드럽게 받아주는 따뜻한 연인'),
-        colleague: CompatibilityType(mbti: 'INTJ', description: '전략적 사고를 공유하는 최고의 업무 파트너'),
+        friend: CompatibilityType(
+            mbti: 'ENTP', description: '서로의 아이디어를 발전시켜주는 완벽한 브레인 파트너'),
+        lover: CompatibilityType(
+            mbti: 'INFP', description: '당신의 강함을 부드럽게 받아주는 따뜻한 연인'),
+        colleague: CompatibilityType(
+            mbti: 'INTJ', description: '전략적 사고를 공유하는 최고의 업무 파트너'),
       ),
       'ENTP': const Compatibility(
-        friend: CompatibilityType(mbti: 'ENFP', description: '끝없는 에너지와 재미를 함께하는 절친'),
-        lover: CompatibilityType(mbti: 'INFJ', description: '당신의 자유로운 영혼을 이해해주는 이상적인 파트너'),
-        colleague: CompatibilityType(mbti: 'ENTJ', description: '혁신적인 아이디어를 현실로 만드는 드림팀'),
+        friend: CompatibilityType(
+            mbti: 'ENFP', description: '끝없는 에너지와 재미를 함께하는 절친'),
+        lover: CompatibilityType(
+            mbti: 'INFJ', description: '당신의 자유로운 영혼을 이해해주는 이상적인 파트너'),
+        colleague: CompatibilityType(
+            mbti: 'ENTJ', description: '혁신적인 아이디어를 현실로 만드는 드림팀'),
       ),
       'INTJ': const Compatibility(
-        friend: CompatibilityType(mbti: 'INFJ', description: '깊이 있는 대화를 나눌 수 있는 지적인 친구'),
-        lover: CompatibilityType(mbti: 'ENFP', description: '당신의 세계에 활기를 불어넣어주는 특별한 사람'),
-        colleague: CompatibilityType(mbti: 'ENTJ', description: '큰 그림을 그려나가는 완벽한 비즈니스 파트너'),
+        friend: CompatibilityType(
+            mbti: 'INFJ', description: '깊이 있는 대화를 나눌 수 있는 지적인 친구'),
+        lover: CompatibilityType(
+            mbti: 'ENFP', description: '당신의 세계에 활기를 불어넣어주는 특별한 사람'),
+        colleague: CompatibilityType(
+            mbti: 'ENTJ', description: '큰 그림을 그려나가는 완벽한 비즈니스 파트너'),
       ),
     };
-    
+
     // 기본값 설정
     final defaultFriends = ['ENFP', 'ENTP', 'ESFP'];
     final defaultLovers = ['INFJ', 'INFP', 'ENFJ'];
     final defaultColleagues = ['ENTJ', 'ESTJ', 'INTJ'];
-    
-    return compatibilities[mbti] ?? Compatibility(
-      friend: CompatibilityType(mbti: defaultFriends[mbti.hashCode % 3], description: '서로를 이해하고 응원하는 좋은 친구'),
-      lover: CompatibilityType(mbti: defaultLovers[mbti.hashCode % 3], description: '마음이 통하는 이상적인 연인'),
-      colleague: CompatibilityType(mbti: defaultColleagues[mbti.hashCode % 3], description: '업무에서 시너지를 내는 파트너'),
-    );
+
+    return compatibilities[mbti] ??
+        Compatibility(
+          friend: CompatibilityType(
+              mbti: defaultFriends[mbti.hashCode % 3],
+              description: '서로를 이해하고 응원하는 좋은 친구'),
+          lover: CompatibilityType(
+              mbti: defaultLovers[mbti.hashCode % 3],
+              description: '마음이 통하는 이상적인 연인'),
+          colleague: CompatibilityType(
+              mbti: defaultColleagues[mbti.hashCode % 3],
+              description: '업무에서 시너지를 내는 파트너'),
+        );
   }
-  
+
   /// 유명인 생성
   static Celebrity _generateCelebrity(String mbti) {
     final celebrities = {
-      'ENTJ': const Celebrity(name: '스티브 잡스', reason: '혁신적인 비전과 강력한 리더십으로 세상을 바꾼 CEO'),
-      'ENTP': const Celebrity(name: '로버트 다우니 주니어', reason: '창의적이고 매력적인 아이디어로 사람들을 매혹시키는 배우'),
-      'INTJ': const Celebrity(name: '일론 머스크', reason: '미래를 내다보는 전략적 사고로 혁신을 만들어내는 기업가'),
-      'INFP': const Celebrity(name: '박보검', reason: '순수하고 따뜻한 매력으로 많은 사람들에게 사랑받는 배우'),
-      'ENFP': const Celebrity(name: '유재석', reason: '긍정적인 에너지와 사람들을 즐겁게 하는 재능을 가진 MC'),
-      'INFJ': const Celebrity(name: '손흥민', reason: '겸손하면서도 목표를 향한 강한 의지를 가진 축구선수'),
+      'ENTJ': const Celebrity(
+          name: '스티브 잡스', reason: '혁신적인 비전과 강력한 리더십으로 세상을 바꾼 CEO'),
+      'ENTP': const Celebrity(
+          name: '로버트 다우니 주니어', reason: '창의적이고 매력적인 아이디어로 사람들을 매혹시키는 배우'),
+      'INTJ': const Celebrity(
+          name: '일론 머스크', reason: '미래를 내다보는 전략적 사고로 혁신을 만들어내는 기업가'),
+      'INFP': const Celebrity(
+          name: '박보검', reason: '순수하고 따뜻한 매력으로 많은 사람들에게 사랑받는 배우'),
+      'ENFP': const Celebrity(
+          name: '유재석', reason: '긍정적인 에너지와 사람들을 즐겁게 하는 재능을 가진 MC'),
+      'INFJ':
+          const Celebrity(name: '손흥민', reason: '겸손하면서도 목표를 향한 강한 의지를 가진 축구선수'),
       'ISFJ': const Celebrity(name: '아이유', reason: '타인을 배려하고 완벽주의적인 성향을 가진 가수'),
-      'ISFP': const Celebrity(name: '방탄소년단 지민', reason: '예술적 감각과 섬세한 감성을 가진 아티스트'),
+      'ISFP':
+          const Celebrity(name: '방탄소년단 지민', reason: '예술적 감각과 섬세한 감성을 가진 아티스트'),
       'ESFJ': const Celebrity(name: '송혜교', reason: '따뜻하고 사교적인 매력으로 사랑받는 배우'),
-      'ESFP': const Celebrity(name: '박나래', reason: '활발하고 재미있는 성격으로 분위기를 이끄는 연예인'),
-      'ESTJ': const Celebrity(name: '정우성', reason: '책임감 있고 신뢰할 수 있는 리더십을 보여주는 배우'),
+      'ESFP':
+          const Celebrity(name: '박나래', reason: '활발하고 재미있는 성격으로 분위기를 이끄는 연예인'),
+      'ESTJ':
+          const Celebrity(name: '정우성', reason: '책임감 있고 신뢰할 수 있는 리더십을 보여주는 배우'),
       'ESTP': const Celebrity(name: '강호동', reason: '즉흥적이고 에너지 넘치는 매력을 가진 MC'),
-      'ISTJ': const Celebrity(name: '김연아', reason: '완벽을 추구하고 성실함으로 목표를 달성한 피겨 선수'),
+      'ISTJ':
+          const Celebrity(name: '김연아', reason: '완벽을 추구하고 성실함으로 목표를 달성한 피겨 선수'),
       'ISTP': const Celebrity(name: '정우성', reason: '조용하지만 확고한 자신만의 철학을 가진 배우'),
-      'ENFJ': const Celebrity(name: '오프라 윈프리', reason: '사람들에게 영감을 주고 이끄는 카리스마적 리더'),
-      'INTP': const Celebrity(name: '빌 게이츠', reason: '논리적 사고와 혁신적 아이디어로 세상을 바꾼 기업가'),
+      'ENFJ':
+          const Celebrity(name: '오프라 윈프리', reason: '사람들에게 영감을 주고 이끄는 카리스마적 리더'),
+      'INTP': const Celebrity(
+          name: '빌 게이츠', reason: '논리적 사고와 혁신적 아이디어로 세상을 바꾼 기업가'),
     };
-    
-    return celebrities[mbti] ?? Celebrity(
-      name: '당신과 닮은 유명인',
-      reason: '$mbti 특유의 매력을 가진 특별한 사람',
-    );
+
+    return celebrities[mbti] ??
+        Celebrity(
+          name: '당신과 닮은 유명인',
+          reason: '$mbti 특유의 매력을 가진 특별한 사람',
+        );
   }
-  
+
   /// MBTI 인구 비율 반환
   static String _getMBTIPopulation(String mbti) {
     final populations = {
-      'ENTJ': '2-4', 'ENTP': '3-5', 'INTJ': '1-3', 'INTP': '3-5',
-      'ENFJ': '2-5', 'ENFP': '7-9', 'INFJ': '1-3', 'INFP': '4-5',
-      'ESTJ': '8-12', 'ESTP': '4-10', 'ISTJ': '11-14', 'ISTP': '5-9',
-      'ESFJ': '9-13', 'ESFP': '4-9', 'ISFJ': '9-14', 'ISFP': '5-9',
+      'ENTJ': '2-4',
+      'ENTP': '3-5',
+      'INTJ': '1-3',
+      'INTP': '3-5',
+      'ENFJ': '2-5',
+      'ENFP': '7-9',
+      'INFJ': '1-3',
+      'INFP': '4-5',
+      'ESTJ': '8-12',
+      'ESTP': '4-10',
+      'ISTJ': '11-14',
+      'ISTP': '5-9',
+      'ESFJ': '9-13',
+      'ESFP': '4-9',
+      'ISFJ': '9-14',
+      'ISFP': '5-9',
     };
     return populations[mbti] ?? '5-8';
   }
-  
+
   /// MBTI 인기 순위 반환
   static int _getMBTIPopularityRank(String mbti) {
     final ranks = {
-      'ENTJ': 15, 'ENTP': 8, 'INTJ': 12, 'INTP': 10,
-      'ENFJ': 6, 'ENFP': 3, 'INFJ': 7, 'INFP': 5,
-      'ESTJ': 14, 'ESTP': 9, 'ISTJ': 16, 'ISTP': 11,
-      'ESFJ': 13, 'ESFP': 4, 'ISFJ': 2, 'ISFP': 1,
+      'ENTJ': 15,
+      'ENTP': 8,
+      'INTJ': 12,
+      'INTP': 10,
+      'ENFJ': 6,
+      'ENFP': 3,
+      'INFJ': 7,
+      'INFP': 5,
+      'ESTJ': 14,
+      'ESTP': 9,
+      'ISTJ': 16,
+      'ISTP': 11,
+      'ESFJ': 13,
+      'ESFP': 4,
+      'ISFJ': 2,
+      'ISFP': 1,
     };
     return ranks[mbti] ?? 8;
   }

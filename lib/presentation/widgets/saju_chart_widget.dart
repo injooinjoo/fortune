@@ -11,10 +11,8 @@ import 'saju_loading_widget.dart';
 
 class SajuChartWidget extends ConsumerStatefulWidget {
   final Map<String, dynamic>? userProfile;
-  
-  const SajuChartWidget({
-    super.key,
-    required this.userProfile});
+
+  const SajuChartWidget({super.key, required this.userProfile});
 
   @override
   ConsumerState<SajuChartWidget> createState() => _SajuChartWidgetState();
@@ -34,14 +32,14 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
     debugPrint('=== SAJU INITIALIZATION START ===');
     debugPrint('Timestamp: ${DateTime.now().toIso8601String()}');
     debugPrint('data: ${widget.userProfile}');
-    
+
     try {
       final sajuNotifier = ref.read(sajuProvider.notifier);
-      
+
       debugPrint('1: Fetching user Saju from database...');
       await sajuNotifier.fetchUserSaju();
       debugPrint('Step 1 completed');
-      
+
       // If no Saju data exists and we have birth info, calculate it
       final sajuState = ref.read(sajuProvider);
       debugPrint('state:');
@@ -49,15 +47,17 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
       debugPrint('exists: ${sajuState.sajuData != null}');
       debugPrint('- error: ${sajuState.error}');
       debugPrint('- isCached: ${sajuState.isCached}');
-      
-      if (sajuState.sajuData == null && !sajuState.isLoading && widget.userProfile != null) {
+
+      if (sajuState.sajuData == null &&
+          !sajuState.isLoading &&
+          widget.userProfile != null) {
         debugPrint('No Saju data found, checking birth info...');
         final birthDate = widget.userProfile!['birth_date'];
         final birthTime = widget.userProfile!['birth_time'];
-        
+
         debugPrint('Fortune cached');
         debugPrint('Fortune cached');
-        
+
         if (birthDate != null) {
           debugPrint('2: Calculating Saju with birth info...');
           debugPrint('with:');
@@ -65,15 +65,14 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
           debugPrint('birthTime: $birthTime');
           debugPrint('Fortune cached');
           debugPrint('- isLunar: false');
-          
+
           await sajuNotifier.calculateAndSaveSaju(
-            birthDate: DateTime.parse(birthDate),
-            birthTime: birthTime,
-            isLunar: false
-          );
-          
+              birthDate: DateTime.parse(birthDate),
+              birthTime: birthTime,
+              isLunar: false);
+
           debugPrint('Step 2 completed');
-          
+
           // Check final state
           final finalState = ref.read(sajuProvider);
           debugPrint('state:');
@@ -97,7 +96,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
       debugPrint('trace:');
       debugPrint(stackTrace.toString());
     }
-    
+
     debugPrint('=== SAJU INITIALIZATION END ===');
   }
 
@@ -105,29 +104,26 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final sajuState = ref.watch(sajuProvider);
-    
+
     if (sajuState.isLoading) {
       return const SajuLoadingWidget();
     }
-    
+
     if (sajuState.error != null) {
       return Container(
         padding: AppSpacing.paddingAll20,
         decoration: BoxDecoration(
-          color: theme.colorScheme.errorContainer,
-          borderRadius: AppDimensions.borderRadiusMedium),
+            color: theme.colorScheme.errorContainer,
+            borderRadius: AppDimensions.borderRadiusMedium),
         child: Column(
           children: [
-            Icon(
-              Icons.error_outline,
-              color: theme.colorScheme.onErrorContainer,
-              size: 48),
+            Icon(Icons.error_outline,
+                color: theme.colorScheme.onErrorContainer, size: 48),
             const SizedBox(height: AppSpacing.spacing4),
-            Text(
-              sajuState.error!,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onErrorContainer),
-              textAlign: TextAlign.center),
+            Text(sajuState.error!,
+                style: theme.textTheme.bodyMedium
+                    ?.copyWith(color: theme.colorScheme.onErrorContainer),
+                textAlign: TextAlign.center),
             const SizedBox(height: AppSpacing.spacing4),
             ElevatedButton(
               onPressed: _initializeSaju,
@@ -137,68 +133,60 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
         ),
       );
     }
-    
+
     final sajuData = sajuState.sajuData;
-    
+
     if (sajuData == null) {
       return Container(
         padding: AppSpacing.paddingAll20,
         decoration: BoxDecoration(
-          color: context.colors.surface,
-          borderRadius: AppDimensions.borderRadiusMedium,
-          border: Border.all(
-            color: theme.colorScheme.outline.withValues(alpha: 0.1),
-            width: 1)),
+            color: context.colors.surface,
+            borderRadius: AppDimensions.borderRadiusMedium,
+            border: Border.all(
+                color: theme.colorScheme.outline.withValues(alpha: 0.1),
+                width: 1)),
         child: Column(
           children: [
-            Icon(
-              Icons.info_outline,
-              color: theme.colorScheme.primary,
-              size: 48),
+            Icon(Icons.info_outline,
+                color: theme.colorScheme.primary, size: 48),
             const SizedBox(height: AppSpacing.spacing4),
-            Text(
-              '사주 정보가 없습니다',
-              style: theme.textTheme.titleMedium),
+            Text('사주 정보가 없습니다', style: theme.textTheme.titleMedium),
             const SizedBox(height: AppSpacing.spacing2),
             Text(
               '생년월일시를 입력하면 정확한 사주팔자를 계산해드립니다.',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
               textAlign: TextAlign.center,
             ),
           ],
         ),
       );
     }
-    
+
     return Container(
       padding: AppSpacing.paddingAll20,
       decoration: BoxDecoration(
-        color: context.colors.surface,
-        borderRadius: AppDimensions.borderRadiusMedium,
-        border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: 0.1),
-          width: 1)),
+          color: context.colors.surface,
+          borderRadius: AppDimensions.borderRadiusMedium,
+          border: Border.all(
+              color: theme.colorScheme.outline.withValues(alpha: 0.1),
+              width: 1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '나의 사주팔자',
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold)),
-              IconButton(
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Text('나의 사주팔자',
+                style: theme.textTheme.titleLarge
+                    ?.copyWith(fontWeight: FontWeight.bold)),
+            IconButton(
                 onPressed: () {
                   HapticFeedback.lightImpact();
                   _initializeSaju();
                 },
-                icon: Icon(
-                  Icons.refresh,
-                  color: theme.colorScheme.primary))]),
+                icon: Icon(Icons.refresh, color: theme.colorScheme.primary))
+          ]),
           const SizedBox(height: AppSpacing.spacing6),
-          
+
           // Four Pillars
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -209,19 +197,20 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
               _buildPillar(context, '년주\n年柱', sajuData['year']),
             ],
           ),
-          
+
           const SizedBox(height: AppSpacing.spacing6),
-          
+
           // Summary info
           _buildSummaryInfo(context, sajuData),
         ],
       ),
     );
   }
-  
-  Widget _buildPillar(BuildContext context, String title, Map<String, dynamic>? pillarData) {
+
+  Widget _buildPillar(
+      BuildContext context, String title, Map<String, dynamic>? pillarData) {
     final theme = Theme.of(context);
-    
+
     if (pillarData == null) {
       return Column(
         children: [
@@ -249,59 +238,64 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
         ],
       );
     }
-    
+
     final heavenlyStem = pillarData['heavenly_stem'] ?? {};
     final earthlyBranch = pillarData['earthly_branch'] ?? {};
-    
+
     // NOTE: SajuElementExplanationBottomSheet 기능은 향후 구현 예정 (saju_element_explanation_bottom_sheet.dart.skip 참조)
     return Column(
       children: [
-          Text(
-            title,
-            style: theme.textTheme.labelMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-            ),
+        Text(
+          title,
+          style: theme.textTheme.labelMedium?.copyWith(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
-          const SizedBox(height: AppSpacing.spacing2),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
+        ),
+        const SizedBox(height: AppSpacing.spacing2),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  _getColorForElement(heavenlyStem['element'] ?? '').withValues(alpha: 0.8),
-                  _getColorForElement(earthlyBranch['element'] ?? '').withValues(alpha: 0.6)]),
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    _getColorForElement(heavenlyStem['element'] ?? '')
+                        .withValues(alpha: 0.8),
+                    _getColorForElement(earthlyBranch['element'] ?? '')
+                        .withValues(alpha: 0.6)
+                  ]),
               borderRadius: AppDimensions.borderRadiusSmall,
               boxShadow: [
                 BoxShadow(
-                  color: _getColorForElement(heavenlyStem['element'] ?? '').withValues(alpha: 0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4))]),
-            child: Column(
-              children: [
-                Text(
-                  heavenlyStem['character'] ?? '',
+                    color: _getColorForElement(heavenlyStem['element'] ?? '')
+                        .withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4))
+              ]),
+          child: Column(
+            children: [
+              Text(heavenlyStem['character'] ?? '',
                   style: AppTypography.headlineMedium.copyWith(
-                    color: theme.colorScheme.onPrimary,
-                    fontWeight: FontWeight.bold)),
-                Text(
-                  earthlyBranch['character'] ?? '',
-                  style: AppTypography.headlineMedium.copyWith(
-                    color: theme.colorScheme.onPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
+                      color: theme.colorScheme.onPrimary,
+                      fontWeight: FontWeight.bold)),
+              Text(
+                earthlyBranch['character'] ?? '',
+                style: AppTypography.headlineMedium.copyWith(
+                  color: theme.colorScheme.onPrimary,
+                  fontWeight: FontWeight.bold,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
+        ),
       ],
     );
   }
 
-  Widget _buildSummaryInfo(BuildContext context, Map<String, dynamic> sajuData) {
+  Widget _buildSummaryInfo(
+      BuildContext context, Map<String, dynamic> sajuData) {
     final theme = Theme.of(context);
-    
+
     return Container(
       padding: AppSpacing.paddingAll16,
       decoration: BoxDecoration(
@@ -314,35 +308,32 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '오행 구성',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold)),
+          Text('오행 구성',
+              style: theme.textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: AppSpacing.spacing4),
           _buildElementBalance(sajuData['element_balance'] ?? {}),
-          
           const SizedBox(height: AppSpacing.spacing6),
-          
-          Text(
-            '주요 특성',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold)),
+          Text('주요 특성',
+              style: theme.textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: AppSpacing.spacing4),
           _buildCharacteristics(sajuData['characteristics'] ?? {}),
         ],
       ),
     );
   }
-  
+
   Widget _buildElementBalance(Map<String, dynamic> elementBalance) {
     final elements = ['wood', 'fire', 'earth', 'metal', 'water'];
     final elementNames = {
       'wood': '목(木)',
-      'fire': '화(火)', 
+      'fire': '화(火)',
       'earth': '토(土)',
       'metal': '금(金)',
-      'water': '수(水)'};
-    
+      'water': '수(水)'
+    };
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: elements.map((element) {
@@ -353,8 +344,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: _getColorForElement(element),
-                shape: BoxShape.circle),
+                  color: _getColorForElement(element), shape: BoxShape.circle),
               child: Center(
                 child: Text(
                   count.toString(),
@@ -375,11 +365,11 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
       }).toList(),
     );
   }
-  
+
   Widget _buildCharacteristics(Map<String, dynamic> characteristics) {
     final theme = Theme.of(context);
     final items = <Widget>[];
-    
+
     characteristics.forEach((key, value) {
       if (value != null && value.toString().isNotEmpty) {
         items.add(
@@ -388,10 +378,8 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  Icons.check_circle,
-                  color: theme.colorScheme.primary,
-                  size: 16),
+                Icon(Icons.check_circle,
+                    color: theme.colorScheme.primary, size: 16),
                 const SizedBox(width: AppSpacing.spacing2),
                 Expanded(
                   child: Text(
@@ -405,12 +393,11 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
         );
       }
     });
-    
+
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: items);
+        crossAxisAlignment: CrossAxisAlignment.start, children: items);
   }
-  
+
   Color _getColorForElement(String? element) {
     switch (element?.toLowerCase()) {
       case 'wood':

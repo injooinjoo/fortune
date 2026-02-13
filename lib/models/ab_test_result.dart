@@ -24,12 +24,14 @@ class ABTestResult extends Equatable {
 
   /// 전체 노출 수
   int get totalImpressions {
-    return variantResults.values.fold(0, (sum, result) => sum + result.impressions);
+    return variantResults.values
+        .fold(0, (sum, result) => sum + result.impressions);
   }
 
   /// 전체 전환 수
   int get totalConversions {
-    return variantResults.values.fold(0, (sum, result) => sum + result.conversions);
+    return variantResults.values
+        .fold(0, (sum, result) => sum + result.conversions);
   }
 
   /// 전체 전환율
@@ -46,7 +48,9 @@ class ABTestResult extends Equatable {
   /// Control 대비 최고 성과 변형의 개선율
   double? get uplift {
     final controlResult = variantResults['control'];
-    if (controlResult == null || winningVariantId == null || winningVariantId == 'control') {
+    if (controlResult == null ||
+        winningVariantId == null ||
+        winningVariantId == 'control') {
       return null;
     }
 
@@ -55,8 +59,9 @@ class ABTestResult extends Equatable {
       return null;
     }
 
-    return ((winnerResult.conversionRate - controlResult.conversionRate) / 
-            controlResult.conversionRate) * 100;
+    return ((winnerResult.conversionRate - controlResult.conversionRate) /
+            controlResult.conversionRate) *
+        100;
   }
 
   /// JSON으로 변환

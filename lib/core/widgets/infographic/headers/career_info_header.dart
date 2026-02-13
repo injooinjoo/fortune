@@ -51,8 +51,10 @@ class CareerInfoHeader extends StatelessWidget {
       prediction: data['prediction'] as String? ?? data['summary'] as String?,
       strengths: data['strengths'] as Map<String, dynamic>? ??
           data['skillAnalysis'] as Map<String, dynamic>?,
-      luckyPeriod: data['luckyPeriod'] as String? ?? data['bestTiming'] as String?,
-      cautionPeriod: data['cautionPeriod'] as String? ?? data['riskTiming'] as String?,
+      luckyPeriod:
+          data['luckyPeriod'] as String? ?? data['bestTiming'] as String?,
+      cautionPeriod:
+          data['cautionPeriod'] as String? ?? data['riskTiming'] as String?,
     );
   }
 

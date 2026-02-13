@@ -45,8 +45,12 @@ class ConditionOption extends StatelessWidget {
               width: 24,
               height: 24,
               decoration: BoxDecoration(
-                color: isSelected ? context.colors.accent : Colors.white.withValues(alpha: 0.0),
-                border: isSelected ? null : Border.all(color: context.colors.border, width: 2),
+                color: isSelected
+                    ? context.colors.accent
+                    : Colors.white.withValues(alpha: 0.0),
+                border: isSelected
+                    ? null
+                    : Border.all(color: context.colors.border, width: 2),
                 shape: BoxShape.circle,
               ),
               child: isSelected
@@ -62,7 +66,9 @@ class ConditionOption extends StatelessWidget {
                     condition.displayName,
                     style: context.bodyLarge.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isSelected ? context.colors.accent : context.colors.textPrimary,
+                      color: isSelected
+                          ? context.colors.accent
+                          : context.colors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -84,9 +90,10 @@ class ConditionOption extends StatelessWidget {
           ],
         ),
       ),
-    ).animate(delay: (index * 100).ms)
-      .fadeIn(duration: 500.ms)
-      .slideX(begin: -0.1, end: 0);
+    )
+        .animate(delay: (index * 100).ms)
+        .fadeIn(duration: 500.ms)
+        .slideX(begin: -0.1, end: 0);
   }
 
   String _getConditionDescription(ConditionState condition) {

@@ -11,19 +11,24 @@ final charactersProvider = Provider<List<AiCharacter>>((ref) {
 
 /// 스토리 캐릭터만 (로맨스/스토리)
 final storyCharactersProvider = Provider<List<AiCharacter>>((ref) {
-  return defaultCharacters.where((c) => c.characterType == CharacterType.story).toList();
+  return defaultCharacters
+      .where((c) => c.characterType == CharacterType.story)
+      .toList();
 });
 
 /// 운세 전문가 캐릭터만
 final fortuneCharactersProvider = Provider<List<AiCharacter>>((ref) {
-  return fortuneCharacters.where((c) => c.characterType == CharacterType.fortune).toList();
+  return fortuneCharacters
+      .where((c) => c.characterType == CharacterType.fortune)
+      .toList();
 });
 
 /// 캐릭터 목록 탭
 enum CharacterListTab { story, fortune }
 
 /// 현재 선택된 캐릭터 목록 탭 (스토리가 기본값)
-final characterListTabProvider = StateProvider<CharacterListTab>((ref) => CharacterListTab.story);
+final characterListTabProvider =
+    StateProvider<CharacterListTab>((ref) => CharacterListTab.story);
 
 /// 현재 탭에 맞는 캐릭터 목록
 final currentTabCharactersProvider = Provider<List<AiCharacter>>((ref) {
@@ -38,7 +43,8 @@ final currentTabCharactersProvider = Provider<List<AiCharacter>>((ref) {
 
 /// 선택된 운세 칩 Provider (FortuneListPanel에서 선택 시 설정)
 /// ChatHomePage에서 감시하고 설문 시작 후 null로 리셋
-final pendingFortuneChipProvider = StateProvider<RecommendationChip?>((ref) => null);
+final pendingFortuneChipProvider =
+    StateProvider<RecommendationChip?>((ref) => null);
 
 /// 현재 선택된 캐릭터 Provider
 final selectedCharacterProvider = StateProvider<AiCharacter?>((ref) => null);
@@ -60,11 +66,13 @@ final characterByIdProvider = Provider.family<AiCharacter?, String>((ref, id) {
 });
 
 /// 운세 타입으로 전문 캐릭터 찾기
-final fortuneExpertByTypeProvider = Provider.family<AiCharacter?, String>((ref, fortuneType) {
+final fortuneExpertByTypeProvider =
+    Provider.family<AiCharacter?, String>((ref, fortuneType) {
   return findFortuneExpert(fortuneType);
 });
 
 /// 카테고리로 전문 캐릭터 찾기
-final categoryExpertProvider = Provider.family<AiCharacter?, String>((ref, category) {
+final categoryExpertProvider =
+    Provider.family<AiCharacter?, String>((ref, category) {
   return findCategoryExpert(category);
 });

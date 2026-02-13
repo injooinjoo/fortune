@@ -68,7 +68,8 @@ void main() {
 
       // 앱이 정상적으로 실행되어야 함 (네트워크 에러가 없는 정상 상태)
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ ERR-001 PASSED: Network error UI available: $hasNetworkErrorUI');
+      debugPrint(
+          '✅ ERR-001 PASSED: Network error UI available: $hasNetworkErrorUI');
     });
 
     testWidgets('ERR-002: 서버 에러 (500) 처리', (tester) async {
@@ -140,7 +141,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ ERR-004 PASSED: Auth expired handling UI: $hasAuthExpiredUI');
+      debugPrint(
+          '✅ ERR-004 PASSED: Auth expired handling UI: $hasAuthExpiredUI');
     });
 
     testWidgets('ERR-005: 권한 없음 (403) 처리', (tester) async {
@@ -199,7 +201,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ ERR-006 PASSED: Not found / empty state UI: $hasNotFoundUI');
+      debugPrint(
+          '✅ ERR-006 PASSED: Not found / empty state UI: $hasNotFoundUI');
     });
 
     testWidgets('ERR-007: 잘못된 입력 유효성 검증', (tester) async {
@@ -215,7 +218,8 @@ void main() {
 
       bool hasInputValidation = false;
 
-      if (inputFields.evaluate().isNotEmpty || formFields.evaluate().isNotEmpty) {
+      if (inputFields.evaluate().isNotEmpty ||
+          formFields.evaluate().isNotEmpty) {
         // 빈 값으로 제출 시도
         final submitButtons = find.byType(ElevatedButton);
         if (submitButtons.evaluate().isNotEmpty) {
@@ -240,7 +244,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ ERR-007 PASSED: Input validation check: $hasInputValidation');
+      debugPrint(
+          '✅ ERR-007 PASSED: Input validation check: $hasInputValidation');
     });
 
     testWidgets('ERR-008: 결제 실패 처리', (tester) async {
@@ -269,7 +274,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ ERR-008 PASSED: Payment failure UI available: $hasPaymentUI');
+      debugPrint(
+          '✅ ERR-008 PASSED: Payment failure UI available: $hasPaymentUI');
     });
 
     testWidgets('ERR-009: 파일 업로드 실패 처리', (tester) async {
@@ -347,7 +353,8 @@ void main() {
       final hasPullToRefresh = refreshIndicator.evaluate().isNotEmpty;
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ ERR-011 PASSED: Retry logic - button: $hasRetryOption, pull: $hasPullToRefresh');
+      debugPrint(
+          '✅ ERR-011 PASSED: Retry logic - button: $hasRetryOption, pull: $hasPullToRefresh');
     });
 
     testWidgets('ERR-012: 에러 리포팅 시스템 확인', (tester) async {
@@ -386,7 +393,8 @@ void main() {
       }
 
       expect(find.byType(Scaffold), findsWidgets);
-      debugPrint('✅ ERR-012 PASSED: Error reporting system check: $hasReportOption');
+      debugPrint(
+          '✅ ERR-012 PASSED: Error reporting system check: $hasReportOption');
     });
   });
 }

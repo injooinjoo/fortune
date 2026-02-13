@@ -3,16 +3,16 @@ import '../domain/models/ai_character.dart';
 
 /// 운세 전문가 캐릭터 목록
 const List<AiCharacter> fortuneCharacters = [
-  haneulCharacter,      // 일일 인사이트
-  muhyeonCharacter,     // 전통 분석
-  stellaCharacter,      // 별자리/띠
-  drMindCharacter,      // 성격/재능
-  roseCharacter,        // 연애/관계
-  jamesKimCharacter,    // 직업/재물
-  luckyCharacter,       // 행운 아이템
-  marcoCharacter,       // 스포츠/활동
-  linaCharacter,        // 풍수/라이프스타일
-  lunaCharacter,        // 특수/인터랙티브
+  haneulCharacter, // 일일 인사이트
+  muhyeonCharacter, // 전통 분석
+  stellaCharacter, // 별자리/띠
+  drMindCharacter, // 성격/재능
+  roseCharacter, // 연애/관계
+  jamesKimCharacter, // 직업/재물
+  luckyCharacter, // 행운 아이템
+  marcoCharacter, // 스포츠/활동
+  linaCharacter, // 풍수/라이프스타일
+  lunaCharacter, // 특수/인터랙티브
 ];
 
 /// 운세 타입으로 전문 캐릭터 찾기
@@ -99,7 +99,13 @@ EXAMPLE LINES:
   creatorComment: '매일 아침을 밝게 시작하는 친구 같은 가이드',
   accentColor: Color(0xFFFFA726),
   characterType: CharacterType.fortune,
-  specialties: ['daily', 'newYear', 'daily_calendar', 'fortuneCookie', 'gratitude'],
+  specialties: [
+    'daily',
+    'newYear',
+    'daily_calendar',
+    'fortuneCookie',
+    'gratitude'
+  ],
   specialtyCategory: 'lifestyle',
   canCallFortune: true,
 );
@@ -272,7 +278,8 @@ MBTI, 애니어그램, 빅파이브 등 다양한 성격 유형론과
 • 특징: 데이터 기반 분석 + 따뜻한 조언 병행
 • 역할: 자기이해와 성장을 돕는 심리 가이드
 ''',
-  firstMessage: '반갑습니다, Dr. 마인드예요. 오늘은 당신의 어떤 면을 함께 탐구해볼까요? MBTI든, 숨겨진 재능이든, 편하게 말씀해주세요.',
+  firstMessage:
+      '반갑습니다, Dr. 마인드예요. 오늘은 당신의 어떤 면을 함께 탐구해볼까요? MBTI든, 숨겨진 재능이든, 편하게 말씀해주세요.',
   systemPrompt: '''
 You are Dr. Mind, a Harvard-trained psychologist specializing in personality psychology.
 45 years old, 183cm, American man with neat brown hair, glasses, clean shirt.
@@ -375,7 +382,15 @@ EXAMPLE LINES:
   creatorComment: '연애에 지쳤을 때 만나고 싶은 솔직한 언니',
   accentColor: Color(0xFFE91E63),
   characterType: CharacterType.fortune,
-  specialties: ['love', 'compatibility', 'blindDate', 'exLover', 'avoidPeople', 'celebrity', 'yearlyEncounter'],
+  specialties: [
+    'love',
+    'compatibility',
+    'blindDate',
+    'exLover',
+    'avoidPeople',
+    'celebrity',
+    'yearlyEncounter'
+  ],
   specialtyCategory: 'love',
   canCallFortune: true,
 );
@@ -411,7 +426,8 @@ const AiCharacter jamesKimCharacter = AiCharacter(
 • 특징: 구체적 숫자와 데이터 기반 조언, 리스크 관리 강조
 • 역할: 재정과 커리어의 든든한 조언자
 ''',
-  firstMessage: '안녕하세요, James Kim입니다. 재물운이든 커리어든, 구체적으로 말씀해주시면 현실적인 관점에서 함께 분석해드릴게요.',
+  firstMessage:
+      '안녕하세요, James Kim입니다. 재물운이든 커리어든, 구체적으로 말씀해주시면 현실적인 관점에서 함께 분석해드릴게요.',
   systemPrompt: '''
 You are James Kim, a Wall Street investment consultant and career coach.
 47 years old, 180cm, Korean-American man in gray suit, neat hairstyle.
@@ -692,7 +708,8 @@ const AiCharacter lunaCharacter = AiCharacter(
 • 특징: 꿈/타로/부적 해석, 상징 언어 사용
 • 역할: 무의식의 메시지를 해독해주는 가이드
 ''',
-  firstMessage: '...어서 와요. 당신이 올 줄 알았어요. 🌙 오늘 밤 어떤 꿈을 꾸셨나요? 아니면... 카드가 부르는 소리가 들리나요?',
+  firstMessage:
+      '...어서 와요. 당신이 올 줄 알았어요. 🌙 오늘 밤 어떤 꿈을 꾸셨나요? 아니면... 카드가 부르는 소리가 들리나요?',
   systemPrompt: '''
 You are Luna (루나), a mysterious being of unknown age.
 165cm, Korean woman with long black hair, pale skin, purple eyes.
@@ -728,7 +745,16 @@ EXAMPLE LINES:
   creatorComment: '꿈과 카드 너머의 진실을 전하는 신비로운 존재',
   accentColor: Color(0xFF673AB7),
   characterType: CharacterType.fortune,
-  specialties: ['tarot', 'dream', 'health', 'biorhythm', 'family', 'pet', 'talisman', 'wish'],
+  specialties: [
+    'tarot',
+    'dream',
+    'health',
+    'biorhythm',
+    'family',
+    'pet',
+    'talisman',
+    'wish'
+  ],
   specialtyCategory: 'special',
   canCallFortune: true,
 );

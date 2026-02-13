@@ -308,20 +308,24 @@ class ChatMessage {
       personalityDna: personalityDna ?? this.personalityDna,
       talismanImageUrl: talismanImageUrl ?? this.talismanImageUrl,
       talismanCategoryName: talismanCategoryName ?? this.talismanCategoryName,
-      talismanShortDescription: talismanShortDescription ?? this.talismanShortDescription,
+      talismanShortDescription:
+          talismanShortDescription ?? this.talismanShortDescription,
       gratitude1: gratitude1 ?? this.gratitude1,
       gratitude2: gratitude2 ?? this.gratitude2,
       gratitude3: gratitude3 ?? this.gratitude3,
       gratitudeDate: gratitudeDate ?? this.gratitudeDate,
-      yearlyEncounterResult: yearlyEncounterResult ?? this.yearlyEncounterResult,
+      yearlyEncounterResult:
+          yearlyEncounterResult ?? this.yearlyEncounterResult,
       // AI 코칭/저널링 필드
       coachingSituation: coachingSituation ?? this.coachingSituation,
       coachingAdvice: coachingAdvice ?? this.coachingAdvice,
       coachingActionItems: coachingActionItems ?? this.coachingActionItems,
       decisionQuestion: decisionQuestion ?? this.decisionQuestion,
       decisionOptions: decisionOptions ?? this.decisionOptions,
-      decisionRecommendation: decisionRecommendation ?? this.decisionRecommendation,
-      decisionConfidenceFactors: decisionConfidenceFactors ?? this.decisionConfidenceFactors,
+      decisionRecommendation:
+          decisionRecommendation ?? this.decisionRecommendation,
+      decisionConfidenceFactors:
+          decisionConfidenceFactors ?? this.decisionConfidenceFactors,
       decisionNextSteps: decisionNextSteps ?? this.decisionNextSteps,
       decisionType: decisionType ?? this.decisionType,
       decisionReceiptId: decisionReceiptId ?? this.decisionReceiptId,

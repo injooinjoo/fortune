@@ -107,15 +107,31 @@ class SinsalData {
   /// 문창귀인(文昌貴人) - 학문, 시험 합격
   /// 기준: 일간
   static const Map<String, String> _munChangGuiin = {
-    '갑': '사', '을': '오', '병': '신', '정': '유', '무': '신',
-    '기': '유', '경': '해', '신': '자', '임': '인', '계': '묘',
+    '갑': '사',
+    '을': '오',
+    '병': '신',
+    '정': '유',
+    '무': '신',
+    '기': '유',
+    '경': '해',
+    '신': '자',
+    '임': '인',
+    '계': '묘',
   };
 
   /// 학당귀인(學堂貴人) - 학업 성취
   /// 기준: 일간
   static const Map<String, String> _hakDangGuiin = {
-    '갑': '해', '을': '인', '병': '사', '정': '신', '무': '사',
-    '기': '신', '경': '해', '신': '인', '임': '신', '계': '해',
+    '갑': '해',
+    '을': '인',
+    '병': '사',
+    '정': '신',
+    '무': '사',
+    '기': '신',
+    '경': '해',
+    '신': '인',
+    '임': '신',
+    '계': '해',
   };
 
   /// 월덕귀인(月德貴人) - 월간의 길한 기운
@@ -131,9 +147,18 @@ class SinsalData {
   /// 천의성(天醫星) - 건강, 의료 행운
   /// 기준: 월지
   static const Map<String, String> _cheonUiSeong = {
-    '인': '축', '묘': '인', '진': '묘', '사': '진',
-    '오': '사', '미': '오', '신': '미', '유': '신',
-    '술': '유', '해': '술', '자': '해', '축': '자',
+    '인': '축',
+    '묘': '인',
+    '진': '묘',
+    '사': '진',
+    '오': '사',
+    '미': '오',
+    '신': '미',
+    '유': '신',
+    '술': '유',
+    '해': '술',
+    '자': '해',
+    '축': '자',
   };
 
   // ============================================================
@@ -183,9 +208,18 @@ class SinsalData {
   /// 백호살(白虎殺) - 질병, 사고
   /// 기준: 년지
   static const Map<String, String> _baekHoSal = {
-    '자': '오', '축': '미', '인': '신', '묘': '유',
-    '진': '술', '사': '해', '오': '자', '미': '축',
-    '신': '인', '유': '묘', '술': '진', '해': '사',
+    '자': '오',
+    '축': '미',
+    '인': '신',
+    '묘': '유',
+    '진': '술',
+    '사': '해',
+    '오': '자',
+    '미': '축',
+    '신': '인',
+    '유': '묘',
+    '술': '진',
+    '해': '사',
   };
 
   // ============================================================
@@ -193,7 +227,8 @@ class SinsalData {
   // ============================================================
 
   /// 천을귀인 확인
-  static Sinsal? checkCheonEulGuiin(String dayStem, String targetBranch, String position) {
+  static Sinsal? checkCheonEulGuiin(
+      String dayStem, String targetBranch, String position) {
     final branches = _cheonEulGuiin[dayStem];
     if (branches != null && branches.contains(targetBranch)) {
       return Sinsal(
@@ -212,7 +247,8 @@ class SinsalData {
   }
 
   /// 문창귀인 확인
-  static Sinsal? checkMunChangGuiin(String dayStem, String targetBranch, String position) {
+  static Sinsal? checkMunChangGuiin(
+      String dayStem, String targetBranch, String position) {
     if (_munChangGuiin[dayStem] == targetBranch) {
       return Sinsal(
         name: '문창귀인',
@@ -230,7 +266,8 @@ class SinsalData {
   }
 
   /// 학당귀인 확인
-  static Sinsal? checkHakDangGuiin(String dayStem, String targetBranch, String position) {
+  static Sinsal? checkHakDangGuiin(
+      String dayStem, String targetBranch, String position) {
     if (_hakDangGuiin[dayStem] == targetBranch) {
       return Sinsal(
         name: '학당귀인',
@@ -248,7 +285,8 @@ class SinsalData {
   }
 
   /// 월덕귀인 확인
-  static Sinsal? checkWolDeokGuiin(String monthBranch, String targetStem, String position) {
+  static Sinsal? checkWolDeokGuiin(
+      String monthBranch, String targetStem, String position) {
     if (_wolDeokGuiin[monthBranch] == targetStem) {
       return Sinsal(
         name: '월덕귀인',
@@ -266,7 +304,8 @@ class SinsalData {
   }
 
   /// 천의성 확인
-  static Sinsal? checkCheonUiSeong(String monthBranch, String targetBranch, String position) {
+  static Sinsal? checkCheonUiSeong(
+      String monthBranch, String targetBranch, String position) {
     if (_cheonUiSeong[monthBranch] == targetBranch) {
       return Sinsal(
         name: '천의성',
@@ -284,7 +323,8 @@ class SinsalData {
   }
 
   /// 역마살 확인
-  static Sinsal? checkYeokMaSal(String baseBranch, String targetBranch, String position) {
+  static Sinsal? checkYeokMaSal(
+      String baseBranch, String targetBranch, String position) {
     if (_yeokMaSal[baseBranch] == targetBranch) {
       return Sinsal(
         name: '역마살',
@@ -302,7 +342,8 @@ class SinsalData {
   }
 
   /// 도화살 확인
-  static Sinsal? checkDoHwaSal(String baseBranch, String targetBranch, String position) {
+  static Sinsal? checkDoHwaSal(
+      String baseBranch, String targetBranch, String position) {
     if (_doHwaSal[baseBranch] == targetBranch) {
       return Sinsal(
         name: '도화살',
@@ -320,7 +361,8 @@ class SinsalData {
   }
 
   /// 겁살 확인
-  static Sinsal? checkGeopSal(String baseBranch, String targetBranch, String position) {
+  static Sinsal? checkGeopSal(
+      String baseBranch, String targetBranch, String position) {
     if (_geopSal[baseBranch] == targetBranch) {
       return Sinsal(
         name: '겁살',
@@ -338,7 +380,8 @@ class SinsalData {
   }
 
   /// 망신살 확인
-  static Sinsal? checkMangSinSal(String baseBranch, String targetBranch, String position) {
+  static Sinsal? checkMangSinSal(
+      String baseBranch, String targetBranch, String position) {
     if (_mangSinSal[baseBranch] == targetBranch) {
       return Sinsal(
         name: '망신살',
@@ -356,7 +399,8 @@ class SinsalData {
   }
 
   /// 백호살 확인
-  static Sinsal? checkBaekHoSal(String yearBranch, String targetBranch, String position) {
+  static Sinsal? checkBaekHoSal(
+      String yearBranch, String targetBranch, String position) {
     if (_baekHoSal[yearBranch] == targetBranch) {
       return Sinsal(
         name: '백호살',
@@ -444,25 +488,29 @@ class SinsalData {
 
         // 역마살
         final yeokMa = checkYeokMaSal(baseBranch, targetBranch, pos);
-        if (yeokMa != null && !results.any((s) => s.name == '역마살' && s.foundIn == targetBranch)) {
+        if (yeokMa != null &&
+            !results.any((s) => s.name == '역마살' && s.foundIn == targetBranch)) {
           results.add(yeokMa);
         }
 
         // 도화살
         final doHwa = checkDoHwaSal(baseBranch, targetBranch, pos);
-        if (doHwa != null && !results.any((s) => s.name == '도화살' && s.foundIn == targetBranch)) {
+        if (doHwa != null &&
+            !results.any((s) => s.name == '도화살' && s.foundIn == targetBranch)) {
           results.add(doHwa);
         }
 
         // 겁살
         final geop = checkGeopSal(baseBranch, targetBranch, pos);
-        if (geop != null && !results.any((s) => s.name == '겁살' && s.foundIn == targetBranch)) {
+        if (geop != null &&
+            !results.any((s) => s.name == '겁살' && s.foundIn == targetBranch)) {
           results.add(geop);
         }
 
         // 망신살
         final mangSin = checkMangSinSal(baseBranch, targetBranch, pos);
-        if (mangSin != null && !results.any((s) => s.name == '망신살' && s.foundIn == targetBranch)) {
+        if (mangSin != null &&
+            !results.any((s) => s.name == '망신살' && s.foundIn == targetBranch)) {
           results.add(mangSin);
         }
       }
@@ -480,7 +528,8 @@ class SinsalData {
   }
 
   /// 카테고리별 필터링
-  static List<Sinsal> filterByCategory(List<Sinsal> sinsals, SinsalCategory category) {
+  static List<Sinsal> filterByCategory(
+      List<Sinsal> sinsals, SinsalCategory category) {
     return sinsals.where((s) => s.category == category).toList();
   }
 

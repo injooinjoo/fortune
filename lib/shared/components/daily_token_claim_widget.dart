@@ -16,7 +16,8 @@ class DailyTokenClaimWidget extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<DailyTokenClaimWidget> createState() => _DailyTokenClaimWidgetState();
+  ConsumerState<DailyTokenClaimWidget> createState() =>
+      _DailyTokenClaimWidgetState();
 }
 
 class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
@@ -71,7 +72,8 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
   }
 
   Future<void> _checkClaimAvailability() async {
-    final lastClaimDate = await SecureStorage.getString('last_daily_claim_date');
+    final lastClaimDate =
+        await SecureStorage.getString('last_daily_claim_date');
     final today = DateTime.now();
     final todayString = '${today.year}-${today.month}-${today.day}';
 
@@ -165,7 +167,6 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
             ),
             const SizedBox(height: DSSpacing.sm),
           ],
-
           AnimatedBuilder(
             animation: _animationController,
             builder: (context, child) {
@@ -183,13 +184,15 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
     );
   }
 
-  Widget _buildClaimButton(DSColorScheme colors, DSTypographyScheme typography) {
+  Widget _buildClaimButton(
+      DSColorScheme colors, DSTypographyScheme typography) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: _canClaim && !_isLoading ? _claimDailyTokens : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: _canClaim ? colors.accentTertiary : colors.surfaceSecondary,
+          backgroundColor:
+              _canClaim ? colors.accentTertiary : colors.surfaceSecondary,
           disabledBackgroundColor: colors.surfaceSecondary,
           foregroundColor: _canClaim ? colors.surface : colors.textTertiary,
           padding: EdgeInsets.symmetric(

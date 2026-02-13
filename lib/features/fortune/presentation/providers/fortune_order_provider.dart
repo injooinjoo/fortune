@@ -5,19 +5,19 @@ import '../../domain/entities/fortune_category.dart';
 
 /// 정렬 옵션 Enum
 enum SortOption {
-  recommended,      // 추천순 (인기 + 조회수 + 즐겨찾기 복합)
-  recentlyViewed,   // 최근 조회순
-  availableFirst,   // 조회 가능순 (오늘 아직 안 본 것)
-  favoriteFirst,    // 즐겨찾기 우선
+  recommended, // 추천순 (인기 + 조회수 + 즐겨찾기 복합)
+  recentlyViewed, // 최근 조회순
+  availableFirst, // 조회 가능순 (오늘 아직 안 본 것)
+  favoriteFirst, // 즐겨찾기 우선
 }
 
 /// 운세 순서 관리 상태
 class FortuneOrderState {
-  final List<String> customOrder;        // 사용자가 드래그로 정한 순서 (운세 type)
-  final Set<String> favorites;           // 즐겨찾기 운세 타입들
-  final SortOption currentSort;          // 현재 정렬 옵션
+  final List<String> customOrder; // 사용자가 드래그로 정한 순서 (운세 type)
+  final Set<String> favorites; // 즐겨찾기 운세 타입들
+  final SortOption currentSort; // 현재 정렬 옵션
   final Map<String, DateTime> lastViewed; // 마지막 조회 시간
-  final Map<String, int> viewCount;      // 누적 조회수 (인기순 정렬용)
+  final Map<String, int> viewCount; // 누적 조회수 (인기순 정렬용)
 
   FortuneOrderState({
     List<String>? customOrder,
@@ -122,9 +122,8 @@ class FortuneOrderNotifier extends StateNotifier<FortuneOrderState> {
     await prefs.setString(_prefKeyLastViewed, lastViewedString);
 
     // 누적 조회수
-    final viewCountString = state.viewCount.entries
-        .map((e) => '${e.key}=${e.value}')
-        .join('&');
+    final viewCountString =
+        state.viewCount.entries.map((e) => '${e.key}=${e.value}').join('&');
     await prefs.setString(_prefKeyViewCount, viewCountString);
   }
 
@@ -176,7 +175,8 @@ class FortuneOrderNotifier extends StateNotifier<FortuneOrderState> {
   /// 운세 데이터를 위젯에 캐시
   /// 새 위젯 시스템에서는 fortune-daily 기반이므로 별도 캐시 불필요
   /// daily fortune 조회 시 WidgetDataService.fetchAndSaveForWidget() 호출
-  Future<void> cacheFortuneForWidget(String fortuneType, Fortune fortune) async {
+  Future<void> cacheFortuneForWidget(
+      String fortuneType, Fortune fortune) async {
     // 새 위젯 시스템은 fortune-daily 기반이므로
     // daily fortune 조회 시점에 WidgetDataService에서 처리
     // 이 메서드는 호환성을 위해 유지하되 동작하지 않음
@@ -235,13 +235,14 @@ class FortuneOrderNotifier extends StateNotifier<FortuneOrderState> {
     final notViewedToday = !category.hasViewedToday;
 
     return (views * 10) +
-           (isFavorite ? 100 : 0) +
-           (isNewCategory ? 50 : 0) +
-           (notViewedToday ? 30 : 0);
+        (isFavorite ? 100 : 0) +
+        (isNewCategory ? 50 : 0) +
+        (notViewedToday ? 30 : 0);
   }
 
   /// 최근 조회순 정렬
-  List<FortuneCategory> _sortByRecentlyViewed(List<FortuneCategory> categories) {
+  List<FortuneCategory> _sortByRecentlyViewed(
+      List<FortuneCategory> categories) {
     final sorted = List<FortuneCategory>.from(categories);
     sorted.sort((a, b) {
       final aTime = state.lastViewed[a.type];
@@ -258,7 +259,8 @@ class FortuneOrderNotifier extends StateNotifier<FortuneOrderState> {
   }
 
   /// 조회 가능순 정렬 (오늘 아직 안 본 것이 먼저)
-  List<FortuneCategory> _sortByAvailableFirst(List<FortuneCategory> categories) {
+  List<FortuneCategory> _sortByAvailableFirst(
+      List<FortuneCategory> categories) {
     final sorted = List<FortuneCategory>.from(categories);
     sorted.sort((a, b) {
       final aAvailable = isAvailableToday(a.type);
@@ -274,14 +276,17 @@ class FortuneOrderNotifier extends StateNotifier<FortuneOrderState> {
 
   /// 즐겨찾기 우선 정렬
   List<FortuneCategory> _sortByFavoriteFirst(List<FortuneCategory> categories) {
-    final favorites = categories.where((c) => state.favorites.contains(c.type)).toList();
-    final others = categories.where((c) => !state.favorites.contains(c.type)).toList();
+    final favorites =
+        categories.where((c) => state.favorites.contains(c.type)).toList();
+    final others =
+        categories.where((c) => !state.favorites.contains(c.type)).toList();
 
     return [...favorites, ...others];
   }
 }
 
 /// Provider 정의
-final fortuneOrderProvider = StateNotifierProvider<FortuneOrderNotifier, FortuneOrderState>((ref) {
+final fortuneOrderProvider =
+    StateNotifierProvider<FortuneOrderNotifier, FortuneOrderState>((ref) {
   return FortuneOrderNotifier();
 });

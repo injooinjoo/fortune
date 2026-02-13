@@ -11,13 +11,14 @@ class CelebrityCrawlingPage extends ConsumerStatefulWidget {
   const CelebrityCrawlingPage({super.key});
 
   @override
-  ConsumerState<CelebrityCrawlingPage> createState() => _CelebrityCrawlingPageState();
+  ConsumerState<CelebrityCrawlingPage> createState() =>
+      _CelebrityCrawlingPageState();
 }
 
 class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _batchController = TextEditingController();
-  
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -56,15 +57,15 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
             // 통계 카드
             _buildStatsCard(crawlingStats),
             const SizedBox(height: 24),
-            
+
             // 단일 크롤링 섹션
             _buildSingleCrawlingSection(crawlingState),
             const SizedBox(height: 32),
-            
+
             // 일괄 크롤링 섹션
             _buildBatchCrawlingSection(crawlingState),
             const SizedBox(height: 32),
-            
+
             // 크롤링 상태
             _buildCrawlingStatus(crawlingState),
           ],
@@ -95,7 +96,6 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
             ],
           ),
           const SizedBox(height: 16),
-          
           statsAsync.when(
             data: (stats) => Column(
               children: [
@@ -182,7 +182,6 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
             ],
           ),
           const SizedBox(height: 16),
-          
           TextField(
             controller: _nameController,
             decoration: InputDecoration(
@@ -199,15 +198,14 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
             ),
           ),
           const SizedBox(height: 16),
-          
           Row(
             children: [
               Expanded(
                 child: UnifiedButton(
                   text: '크롤링 시작',
-                  onPressed: state.status == CrawlingStatus.crawling 
-                    ? null 
-                    : _crawlSingle,
+                  onPressed: state.status == CrawlingStatus.crawling
+                      ? null
+                      : _crawlSingle,
                   isLoading: state.status == CrawlingStatus.crawling,
                 ),
               ),
@@ -215,9 +213,9 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               Expanded(
                 child: UnifiedButton(
                   text: '강제 업데이트',
-                  onPressed: state.status == CrawlingStatus.crawling 
-                    ? null 
-                    : () => _crawlSingle(forceUpdate: true),
+                  onPressed: state.status == CrawlingStatus.crawling
+                      ? null
+                      : () => _crawlSingle(forceUpdate: true),
                   style: UnifiedButtonStyle.secondary,
                 ),
               ),
@@ -250,7 +248,6 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
             ],
           ),
           const SizedBox(height: 16),
-          
           TextField(
             controller: _batchController,
             maxLines: 4,
@@ -268,15 +265,14 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
             ),
           ),
           const SizedBox(height: 16),
-          
           Row(
             children: [
               Expanded(
                 child: UnifiedButton(
                   text: '일괄 크롤링',
-                  onPressed: state.status == CrawlingStatus.crawling 
-                    ? null 
-                    : _crawlBatch,
+                  onPressed: state.status == CrawlingStatus.crawling
+                      ? null
+                      : _crawlBatch,
                   isLoading: state.status == CrawlingStatus.crawling,
                 ),
               ),
@@ -302,7 +298,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
 
     Color statusColor;
     IconData statusIcon;
-    
+
     switch (state.status) {
       case CrawlingStatus.crawling:
         statusColor = context.colors.accent;
@@ -342,7 +338,6 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
             ],
           ),
           const SizedBox(height: 12),
-          
           if (state.message != null)
             Text(
               state.message!,
@@ -350,7 +345,6 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
                 color: DSColors.textSecondaryDark,
               ),
             ),
-          
           if (state.current != null && state.total != null) ...[
             const SizedBox(height: 12),
             Row(
@@ -377,7 +371,6 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               valueColor: AlwaysStoppedAnimation(statusColor),
             ),
           ],
-          
           if (state.result != null) ...[
             const SizedBox(height: 16),
             Row(
@@ -401,7 +394,6 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               ],
             ),
           ],
-          
           if (state.status != CrawlingStatus.crawling) ...[
             const SizedBox(height: 16),
             UnifiedButton(
@@ -449,9 +441,9 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
     }
 
     ref.read(crawlingResultProvider.notifier).crawlSingleCelebrity(
-      name,
-      forceUpdate: forceUpdate,
-    );
+          name,
+          forceUpdate: forceUpdate,
+        );
   }
 
   void _crawlBatch() {
@@ -482,7 +474,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
   void _loadSampleNames() {
     const sampleNames = [
       '차은우',
-      '김유정', 
+      '김유정',
       '박보영',
       '이민호',
       '수지',
@@ -490,7 +482,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
       '김태리',
       '정해인',
     ];
-    
+
     _batchController.text = sampleNames.join('\n');
   }
 
@@ -509,6 +501,6 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
 
   String _formatDateTime(DateTime dateTime) {
     return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')} '
-           '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+        '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 }

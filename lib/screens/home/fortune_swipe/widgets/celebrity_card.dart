@@ -51,12 +51,15 @@ class CelebrityCard extends ConsumerWidget {
               children: celebDataList.map((data) {
                 final celeb = data['celebrity'] as CelebritySaju;
                 // 오늘 운세 유사도 (100점 만점)
-                final similarity = (data['similarity'] ?? data['compatibility']) as int;
+                final similarity =
+                    (data['similarity'] ?? data['compatibility']) as int;
 
                 // 설명 생성 (한글 카테고리 또는 출생년도)
                 final description = celeb.categoryKorean.isNotEmpty
                     ? celeb.categoryKorean
-                    : (celeb.birthDate.isNotEmpty ? '${celeb.birthDate.substring(0, 4)}년생' : '');
+                    : (celeb.birthDate.isNotEmpty
+                        ? '${celeb.birthDate.substring(0, 4)}년생'
+                        : '');
 
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 10),

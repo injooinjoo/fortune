@@ -22,38 +22,36 @@ class WorryBeadPage extends ConsumerStatefulWidget {
   ConsumerState<WorryBeadPage> createState() => _WorryBeadPageState();
 }
 
-class _WorryBeadPageState extends ConsumerState<WorryBeadPage> 
+class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
     with TickerProviderStateMixin {
   final TextEditingController _worryController = TextEditingController();
   late AnimationController _rotationController;
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
-  
+
   bool _isSpinning = false;
   bool _hasWorry = false;
   String? _adviceResult;
   int _spinCount = 0;
-  
+
   // 걱정 염주 사용에 필요한 토큰 수
   static const int _requiredTokens = 2;
-  
+
   // 염주 구슬 개수
   static const int _beadCount = 108;
 
   @override
   void initState() {
     super.initState();
-    _rotationController = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this);
+    _rotationController =
+        AnimationController(duration: const Duration(seconds: 2), vsync: this);
 
     _pulseController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
-      vsync: this)..repeat(reverse: true);
+        duration: const Duration(milliseconds: 1500), vsync: this)
+      ..repeat(reverse: true);
 
-    _pulseAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.1).animate(CurvedAnimation(
+    _pulseAnimation =
+        Tween<double>(begin: 1.0, end: 1.1).animate(CurvedAnimation(
       parent: _pulseController,
       curve: Curves.easeInOut,
     ));
@@ -114,23 +112,23 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
     return GlassContainer(
       child: Column(
         children: [
-          const Icon(
-            Icons.self_improvement,
-            size: 48,
-            color: AppTheme.primaryColor),
+          const Icon(Icons.self_improvement,
+              size: 48, color: AppTheme.primaryColor),
           const SizedBox(height: DSSpacing.md),
           Text(
             '걱정을 내려놓으세요',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+                  fontWeight: FontWeight.bold,
+                ),
           ),
           const SizedBox(height: DSSpacing.sm),
           Text(
             '마음속 걱정을 적고 염주를 돌리면\n'
             '마음의 평안과 함께 조언을 드립니다.',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppTheme.textSecondaryColor),
+            style: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.copyWith(color: AppTheme.textSecondaryColor),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: DSSpacing.md),
@@ -143,26 +141,21 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
-                  Icons.toll,
-                  size: 16,
-                  color: AppTheme.primaryColor),
+                const Icon(Icons.toll, size: 16, color: AppTheme.primaryColor),
                 const SizedBox(width: DSSpacing.xs),
                 Text(
                   '$_requiredTokens 토큰 필요',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppTheme.primaryColor,
-                    fontWeight: FontWeight.bold,
-                  ),
+                        color: AppTheme.primaryColor,
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ],
             ),
           ),
         ],
       ),
-    ).animate()
-      .fadeIn(duration: 600.ms)
-      .slideY(begin: 0.1, end: 0);
+    ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1, end: 0);
   }
 
   Widget _buildWorryInput() {
@@ -173,8 +166,8 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
           Text(
             '무엇이 걱정되시나요?',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+                  fontWeight: FontWeight.bold,
+                ),
           ),
           const SizedBox(height: 12),
           UnifiedVoiceTextField(
@@ -189,9 +182,10 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
           ),
         ],
       ),
-    ).animate()
-      .fadeIn(duration: 600.ms, delay: 100.ms)
-      .slideY(begin: 0.1, end: 0);
+    )
+        .animate()
+        .fadeIn(duration: 600.ms, delay: 100.ms)
+        .slideY(begin: 0.1, end: 0);
   }
 
   Widget _buildWorryBead() {
@@ -234,7 +228,8 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
                             color: AppTheme.primaryColor,
                             boxShadow: [
                               BoxShadow(
-                                color: AppTheme.primaryColor.withValues(alpha: 0.5),
+                                color: AppTheme.primaryColor
+                                    .withValues(alpha: 0.5),
                                 blurRadius: 4,
                               ),
                             ],
@@ -277,9 +272,10 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
           );
         },
       ),
-    ).animate()
-      .fadeIn(duration: 600.ms, delay: 200.ms)
-      .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1));
+    )
+        .animate()
+        .fadeIn(duration: 600.ms, delay: 200.ms)
+        .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1));
   }
 
   Widget _buildActionButton() {
@@ -289,8 +285,8 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
           Text(
             '염주를 $_spinCount번 돌렸습니다...',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppTheme.primaryColor,
-            ),
+                  color: AppTheme.primaryColor,
+                ),
           ),
         const SizedBox(height: DSSpacing.sm),
         SizedBox(
@@ -341,8 +337,8 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
               Text(
                 '마음의 조언',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
             ],
           ),
@@ -350,8 +346,8 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
           Text(
             _adviceResult!,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              height: 1.6,
-            ),
+                  height: 1.6,
+                ),
           ),
           const SizedBox(height: DSSpacing.lg),
           Row(
@@ -388,9 +384,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
           ),
         ],
       ),
-    ).animate()
-      .fadeIn(duration: 600.ms)
-      .slideY(begin: 0.1, end: 0);
+    ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1, end: 0);
   }
 
   Future<void> _startSpinning() async {
@@ -408,16 +402,16 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
       _spinCount = 0;
       _adviceResult = null;
     });
-    
+
     ref.read(fortuneHapticServiceProvider).cardSelect();
 
     // 염주 회전 애니메이션
     _rotationController.repeat();
-    
+
     // 3-5초 동안 회전
     final duration = 3 + math.Random().nextInt(3);
     final timer = Stream.periodic(const Duration(milliseconds: 500), (i) => i);
-    
+
     await for (final _ in timer.take(duration * 2)) {
       if (mounted) {
         setState(() {
@@ -426,30 +420,28 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
         ref.read(fortuneHapticServiceProvider).beadRotateTick();
       }
     }
-    
+
     // 회전 멈추기
     await _rotationController.animateTo(
-      _rotationController.value.ceil().toDouble(),
-      duration: const Duration(seconds: 1),
-      curve: Curves.easeOut);
+        _rotationController.value.ceil().toDouble(),
+        duration: const Duration(seconds: 1),
+        curve: Curves.easeOut);
     _rotationController.stop();
-    
+
     try {
       // 토큰 차감
       final userId = ref.read(userProvider).value?.id;
       if (userId != null) {
         await ref.read(tokenApiServiceProvider).consumeTokens(
-          userId: userId,
-          fortuneType: 'worry_bead',
-          amount: _requiredTokens);
+            userId: userId, fortuneType: 'worry_bead', amount: _requiredTokens);
       }
 
       // 토큰 잔액 새로고침
       ref.invalidate(tokenBalanceProvider);
-      
+
       // TODO: 실제 API 호출로 대체
       await Future.delayed(const Duration(seconds: 1));
-      
+
       setState(() {
         _adviceResult = '''
 【걱정을 놓아주세요】
@@ -477,7 +469,7 @@ class _WorryBeadPageState extends ConsumerState<WorryBeadPage>
     } catch (e) {
       Logger.error('걱정 염주 실패', e);
       setState(() => _isSpinning = false);
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('조언을 받는데 실패했습니다. 다시 시도해주세요.')),

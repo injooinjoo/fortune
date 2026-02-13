@@ -101,16 +101,23 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
           ],
         ],
       ),
-    ).animate()
-      .fadeIn(duration: 600.ms)
-      .slideY(begin: 0.1, end: 0);
+    ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1, end: 0);
   }
 
   LineChartData _createLineChartData() {
     final spots = [
-      FlSpot(0, widget.timeline.morning.conditionScore.toDouble() * _chartAnimation.value),
-      FlSpot(1, widget.timeline.afternoon.conditionScore.toDouble() * _chartAnimation.value),
-      FlSpot(2, widget.timeline.evening.conditionScore.toDouble() * _chartAnimation.value),
+      FlSpot(
+          0,
+          widget.timeline.morning.conditionScore.toDouble() *
+              _chartAnimation.value),
+      FlSpot(
+          1,
+          widget.timeline.afternoon.conditionScore.toDouble() *
+              _chartAnimation.value),
+      FlSpot(
+          2,
+          widget.timeline.evening.conditionScore.toDouble() *
+              _chartAnimation.value),
     ];
 
     return LineChartData(
@@ -128,7 +135,8 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
       ),
       titlesData: FlTitlesData(
         show: true,
-        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        rightTitles:
+            const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
@@ -142,13 +150,19 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
               Widget text;
               switch (value.toInt()) {
                 case 0:
-                  text = Text('오전', style: style.copyWith(color: context.colors.textSecondary));
+                  text = Text('오전',
+                      style:
+                          style.copyWith(color: context.colors.textSecondary));
                   break;
                 case 1:
-                  text = Text('오후', style: style.copyWith(color: context.colors.textSecondary));
+                  text = Text('오후',
+                      style:
+                          style.copyWith(color: context.colors.textSecondary));
                   break;
                 case 2:
-                  text = Text('저녁', style: style.copyWith(color: context.colors.textSecondary));
+                  text = Text('저녁',
+                      style:
+                          style.copyWith(color: context.colors.textSecondary));
                   break;
                 default:
                   text = const Text('');
@@ -228,7 +242,8 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
         touchTooltipData: LineTouchTooltipData(
           getTooltipColor: (touchedSpot) => context.colors.accent,
           tooltipRoundedRadius: 8,
-          tooltipPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          tooltipPadding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           getTooltipItems: (List<LineBarSpot> touchedSpots) {
             return touchedSpots.map((LineBarSpot touchedSpot) {
               String timeLabel;
@@ -302,7 +317,8 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
                 : context.colors.backgroundSecondary,
             borderRadius: BorderRadius.circular(12),
             border: isHighlighted
-                ? Border.all(color: context.colors.accent.withValues(alpha: 0.3))
+                ? Border.all(
+                    color: context.colors.accent.withValues(alpha: 0.3))
                 : null,
           ),
           child: Row(
@@ -354,7 +370,8 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
               ),
 
               // 추천사항 아이콘
-              if (timeSlot.recommendations != null && timeSlot.recommendations!.isNotEmpty)
+              if (timeSlot.recommendations != null &&
+                  timeSlot.recommendations!.isNotEmpty)
                 Icon(
                   Icons.lightbulb_outline_rounded,
                   color: context.colors.accent,
@@ -362,9 +379,10 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
                 ),
             ],
           ),
-        ).animate(delay: (300 + index * 100).ms)
-          .fadeIn(duration: 500.ms)
-          .slideX(begin: -0.1, end: 0);
+        )
+            .animate(delay: (300 + index * 100).ms)
+            .fadeIn(duration: 500.ms)
+            .slideX(begin: -0.1, end: 0);
       }).toList(),
     );
   }

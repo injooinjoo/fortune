@@ -246,8 +246,8 @@ class CohortHelpers {
     if (breakupDate == null) return '1년이상';
 
     final now = DateTime.now();
-    final months = (now.year - breakupDate.year) * 12 +
-        (now.month - breakupDate.month);
+    final months =
+        (now.year - breakupDate.year) * 12 + (now.month - breakupDate.month);
 
     if (months < 1) return '1개월내';
     if (months < 6) return '1-6개월';
@@ -472,8 +472,7 @@ class CohortHelpers {
     final age = input['age'] as int? ?? _calculateAge(birthDate);
     return {
       'ageGroup': getAgeGroup(age),
-      'riskTolerance':
-          classifyRiskTolerance(input['riskTolerance'] as String?),
+      'riskTolerance': classifyRiskTolerance(input['riskTolerance'] as String?),
       'element': getElementFromBirthDate(birthDate),
     };
   }

@@ -10,9 +10,9 @@ class SubscriptionState {
   final bool isLoading;
   final String? error;
   final DateTime? lastChecked;
-  final String? plan;           // 'monthly' | 'yearly'
-  final DateTime? expiresAt;    // 만료일
-  final String? productId;      // 상품 ID
+  final String? plan; // 'monthly' | 'yearly'
+  final DateTime? expiresAt; // 만료일
+  final String? productId; // 상품 ID
 
   const SubscriptionState({
     this.isActive = false,
@@ -58,7 +58,8 @@ class SubscriptionNotifier extends StateNotifier<SubscriptionState> {
   final Ref _ref;
   Timer? _expirationCheckTimer;
 
-  SubscriptionNotifier(this._purchaseService, this._ref) : super(const SubscriptionState()) {
+  SubscriptionNotifier(this._purchaseService, this._ref)
+      : super(const SubscriptionState()) {
     // 초기 상태 확인
     checkSubscriptionStatus();
     // 만료 체크 타이머 시작
@@ -86,9 +87,11 @@ class SubscriptionNotifier extends StateNotifier<SubscriptionState> {
 
     // 마지막 체크 후 24시간 지났으면 서버 확인
     if (state.lastChecked != null) {
-      final hoursSinceLastCheck = DateTime.now().difference(state.lastChecked!).inHours;
+      final hoursSinceLastCheck =
+          DateTime.now().difference(state.lastChecked!).inHours;
       if (hoursSinceLastCheck >= 24) {
-        Logger.info('24 hours since last check, refreshing subscription status...');
+        Logger.info(
+            '24 hours since last check, refreshing subscription status...');
         checkSubscriptionStatus();
       }
     }
@@ -141,7 +144,8 @@ class SubscriptionNotifier extends StateNotifier<SubscriptionState> {
       productId: productId,
       lastChecked: DateTime.now(),
     );
-    Logger.info('Subscription status set to: $isActive, plan: $plan, expiresAt: $expiresAt');
+    Logger.info(
+        'Subscription status set to: $isActive, plan: $plan, expiresAt: $expiresAt');
 
     // TokenProvider 동기화 (구독 활성화 시)
     if (isActive) {
@@ -167,7 +171,8 @@ final inAppPurchaseServiceProvider = Provider<InAppPurchaseService>((ref) {
 });
 
 /// 구독 상태 Provider
-final subscriptionProvider = StateNotifierProvider<SubscriptionNotifier, SubscriptionState>((ref) {
+final subscriptionProvider =
+    StateNotifierProvider<SubscriptionNotifier, SubscriptionState>((ref) {
   final purchaseService = ref.watch(inAppPurchaseServiceProvider);
   return SubscriptionNotifier(purchaseService, ref);
 });

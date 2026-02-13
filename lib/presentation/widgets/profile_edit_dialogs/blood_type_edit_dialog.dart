@@ -65,8 +65,8 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
           Text(
             '혈액형을 선택해주세요',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: context.colors.textSecondary,
-            ),
+                  color: context.colors.textSecondary,
+                ),
           ),
           const SizedBox(height: AppSpacing.spacing5),
           GridView.builder(
@@ -112,7 +112,8 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
               width: isSelected ? 2 : 1,
             ),
             borderRadius: AppDimensions.borderRadiusSmall,
-            color: isSelected ? DSColors.accentDark.withValues(alpha: 0.1) : null,
+            color:
+                isSelected ? DSColors.accentDark.withValues(alpha: 0.1) : null,
           ),
           child: Center(
             child: Row(
@@ -129,10 +130,8 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
                 Text(
                   label,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: isSelected
-                        ? context.colors.textPrimary
-                        : null,
-                  ),
+                        color: isSelected ? context.colors.textPrimary : null,
+                      ),
                 ),
               ],
             ),

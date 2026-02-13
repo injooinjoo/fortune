@@ -7,7 +7,8 @@ import '../../../../core/design_system/design_system.dart';
 /// - 좌측: iOS 스타일 백 버튼 (arrow_back_ios)
 /// - 중앙: 페이지 제목 (heading3 폰트)
 /// - 우측: 옵션(필요 시)
-class StandardFortuneAppBar extends StatelessWidget implements PreferredSizeWidget {
+class StandardFortuneAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
   final String title;
   final VoidCallback? onBackPressed;
   final List<Widget>? actions;

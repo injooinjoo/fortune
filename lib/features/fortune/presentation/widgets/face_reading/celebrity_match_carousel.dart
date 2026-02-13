@@ -121,7 +121,8 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                 ),
                 // 페이지 인디케이터
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: DSColors.warning.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -200,8 +201,7 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
             .toList() ??
         (celebrity['similar_parts']?.toString().split(',') ?? []);
     final characterImageUrl = celebrity['character_image_url']?.toString();
-    final reason =
-        celebrity['reason']?.toString() ?? '비슷한 관상 특징을 가지고 있습니다.';
+    final reason = celebrity['reason']?.toString() ?? '비슷한 관상 특징을 가지고 있습니다.';
 
     // 타입별 색상
     final Color accentColor = _getAccentColor(type);
@@ -356,7 +356,10 @@ class _CelebrityMatchCarouselState extends State<CelebrityMatchCarousel> {
                         ? [DSColors.warning, const Color(0xFFFFA500)]
                         : index == 1
                             ? [const Color(0xFFC0C0C0), const Color(0xFF808080)]
-                            : [const Color(0xFFCD7F32), const Color(0xFF8B4513)],
+                            : [
+                                const Color(0xFFCD7F32),
+                                const Color(0xFF8B4513)
+                              ],
                   ),
                   shape: BoxShape.circle,
                 ),

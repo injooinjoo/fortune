@@ -318,7 +318,6 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                   ),
                 ),
                 const SizedBox(height: DSSpacing.lg),
-
                 _buildSectionCard(
                   title: '기본 정보',
                   child: Column(
@@ -462,7 +461,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                                         .selection();
                                     setState(() => _gender = gender);
                                   },
-                                  borderRadius: BorderRadius.circular(DSRadius.smd),
+                                  borderRadius:
+                                      BorderRadius.circular(DSRadius.smd),
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: DSSpacing.md),
@@ -480,7 +480,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                                         const SizedBox(height: DSSpacing.sm),
                                         Text(
                                           gender.label,
-                                          style: typography.labelMedium.copyWith(
+                                          style:
+                                              typography.labelMedium.copyWith(
                                             color: isSelected
                                                 ? colors.ctaForeground
                                                 : colors.textPrimary,
@@ -508,8 +509,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: context.colors.ctaBackground,
                     foregroundColor: context.colors.ctaForeground,
-                    disabledBackgroundColor: context.colors.ctaBackground
-                        .withValues(alpha: 0.5),
+                    disabledBackgroundColor:
+                        context.colors.ctaBackground.withValues(alpha: 0.5),
                     minimumSize: const Size(double.infinity, 56),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(DSRadius.md),

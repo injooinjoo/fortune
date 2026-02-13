@@ -376,7 +376,9 @@ class _TappableCardState extends State<_TappableCard> {
       child: AnimatedScale(
         scale: _isPressed ? DSAnimation.tapScale : 1.0, // Claude standard: 0.98
         duration: _isPressed ? DSAnimation.cardTap : DSAnimation.cardRelease,
-        curve: _isPressed ? DSAnimation.cardTapCurve : DSAnimation.cardReleaseCurve,
+        curve: _isPressed
+            ? DSAnimation.cardTapCurve
+            : DSAnimation.cardReleaseCurve,
         child: widget.child,
       ),
     );

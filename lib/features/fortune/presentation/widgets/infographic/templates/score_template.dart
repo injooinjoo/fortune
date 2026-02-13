@@ -160,7 +160,7 @@ class ScoreTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.surfaceSecondary.withValues(alpha:0.5),
+        color: context.colors.surfaceSecondary.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -225,7 +225,7 @@ class ScoreTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.surfaceSecondary.withValues(alpha:0.5),
+        color: context.colors.surfaceSecondary.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
       ),
       child: CategoryBarChart(
@@ -243,7 +243,7 @@ class ScoreTemplate extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.surfaceSecondary.withValues(alpha:0.5),
+        color: context.colors.surfaceSecondary.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -280,4 +280,3 @@ class ScoreTemplate extends StatelessWidget {
     );
   }
 }
-

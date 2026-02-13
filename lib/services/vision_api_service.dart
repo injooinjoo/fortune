@@ -5,107 +5,110 @@ import '../core/utils/logger.dart';
 
 /// 이미지 분석 결과 모델
 class ImageAnalysisResult {
-    final List<FaceDetection> faces;
-    final List<String> labels;
-    final List<DominantColor> colors;
-    final SafeSearchAnnotation safeSearch;
-    final String? webDetection;
-    final EmotionalAnalysis? emotionalAnalysis;
-    final StyleAnalysis? styleAnalysis;
+  final List<FaceDetection> faces;
+  final List<String> labels;
+  final List<DominantColor> colors;
+  final SafeSearchAnnotation safeSearch;
+  final String? webDetection;
+  final EmotionalAnalysis? emotionalAnalysis;
+  final StyleAnalysis? styleAnalysis;
 
-    ImageAnalysisResult({
-      required this.faces,
-      required this.labels,
-      required this.colors,
-      required this.safeSearch,
-      this.webDetection,
-      this.emotionalAnalysis,
-      this.styleAnalysis,
-    });
+  ImageAnalysisResult({
+    required this.faces,
+    required this.labels,
+    required this.colors,
+    required this.safeSearch,
+    this.webDetection,
+    this.emotionalAnalysis,
+    this.styleAnalysis,
+  });
 }
 
 /// 얼굴 감지 정보
 class FaceDetection {
-    final String emotion; // joy, sorrow, anger, surprise
-    final double confidence;
-    final int? age;
-    final String? gender;
-    final Map<String, double> emotions;
+  final String emotion; // joy, sorrow, anger, surprise
+  final double confidence;
+  final int? age;
+  final String? gender;
+  final Map<String, double> emotions;
 
-    FaceDetection({
-      required this.emotion,
-      required this.confidence,
-      this.age,
-      this.gender,
-      required this.emotions,
-    });
+  FaceDetection({
+    required this.emotion,
+    required this.confidence,
+    this.age,
+    this.gender,
+    required this.emotions,
+  });
 }
 
 /// 주요 색상 정보
 class DominantColor {
-    final int red;
-    final int green;
-    final int blue;
-    final double score;
-    final double pixelFraction;
+  final int red;
+  final int green;
+  final int blue;
+  final double score;
+  final double pixelFraction;
 
-    DominantColor({
-      required this.red,
-      required this.green,
-      required this.blue,
-      required this.score,
-      required this.pixelFraction,
-    });
+  DominantColor({
+    required this.red,
+    required this.green,
+    required this.blue,
+    required this.score,
+    required this.pixelFraction,
+  });
 
-    String get hexColor => '#${red.toRadixString(16).padLeft(2, '0')}'
-        '${green.toRadixString(16).padLeft(2, '0')}'
-        '${blue.toRadixString(16).padLeft(2, '0')}';
+  String get hexColor => '#${red.toRadixString(16).padLeft(2, '0')}'
+      '${green.toRadixString(16).padLeft(2, '0')}'
+      '${blue.toRadixString(16).padLeft(2, '0')}';
 }
 
 /// 안전 검색 주석
 class SafeSearchAnnotation {
-    final String adult;
-    final String violence;
-    final String racy;
+  final String adult;
+  final String violence;
+  final String racy;
 
-    SafeSearchAnnotation({
-      required this.adult,
-      required this.violence,
-      required this.racy,
-    });
+  SafeSearchAnnotation({
+    required this.adult,
+    required this.violence,
+    required this.racy,
+  });
 
-    bool get isSafe => 
-        adult != 'LIKELY' && adult != 'VERY_LIKELY' &&
-        violence != 'LIKELY' && violence != 'VERY_LIKELY' &&
-        racy != 'LIKELY' && racy != 'VERY_LIKELY';
+  bool get isSafe =>
+      adult != 'LIKELY' &&
+      adult != 'VERY_LIKELY' &&
+      violence != 'LIKELY' &&
+      violence != 'VERY_LIKELY' &&
+      racy != 'LIKELY' &&
+      racy != 'VERY_LIKELY';
 }
 
 /// 감정 분석 결과
 class EmotionalAnalysis {
-    final String dominantEmotion;
-    final Map<String, double> emotionScores;
-    final String moodDescription;
+  final String dominantEmotion;
+  final Map<String, double> emotionScores;
+  final String moodDescription;
 
-    EmotionalAnalysis({
-      required this.dominantEmotion,
-      required this.emotionScores,
-      required this.moodDescription,
-    });
+  EmotionalAnalysis({
+    required this.dominantEmotion,
+    required this.emotionScores,
+    required this.moodDescription,
+  });
 }
 
 /// 스타일 분석 결과
 class StyleAnalysis {
-    final String fashionStyle;
-    final List<String> detectedItems;
-    final String colorPalette;
-    final String overallVibe;
+  final String fashionStyle;
+  final List<String> detectedItems;
+  final String colorPalette;
+  final String overallVibe;
 
-    StyleAnalysis({
-      required this.fashionStyle,
-      required this.detectedItems,
-      required this.colorPalette,
-      required this.overallVibe,
-    });
+  StyleAnalysis({
+    required this.fashionStyle,
+    required this.detectedItems,
+    required this.colorPalette,
+    required this.overallVibe,
+  });
 }
 
 /// Vision API를 사용한 이미지 분석 서비스
@@ -116,7 +119,8 @@ class VisionApiService {
 
   // Google Cloud Vision API 키 (실제 사용시 환경변수로 관리)
   static const String _apiKey = 'YOUR_GOOGLE_CLOUD_VISION_API_KEY';
-  static const String _baseUrl = 'https://vision.googleapis.com/v1/images:annotate';
+  static const String _baseUrl =
+      'https://vision.googleapis.com/v1/images:annotate';
 
   /// 이미지 분석 실행
   Future<ImageAnalysisResult?> analyzeImage(XFile imageFile) async {
@@ -129,9 +133,7 @@ class VisionApiService {
       final request = {
         'requests': [
           {
-            'image': {
-              'content': base64Image
-            },
+            'image': {'content': base64Image},
             'features': [
               {'type': 'FACE_DETECTION', 'maxResults': 10},
               {'type': 'LABEL_DETECTION', 'maxResults': 20},
@@ -157,7 +159,8 @@ class VisionApiService {
         // 결과 파싱
         return _parseAnalysisResult(responses);
       } else {
-        Logger.warning('[VisionAPIService] Vision API 요청 실패 (이미지 분석 불가): ${response.statusCode}');
+        Logger.warning(
+            '[VisionAPIService] Vision API 요청 실패 (이미지 분석 불가): ${response.statusCode}');
         return null;
       }
     } catch (e) {
@@ -171,14 +174,14 @@ class VisionApiService {
     List<XFile> imageFiles,
   ) async {
     final results = <ImageAnalysisResult>[];
-    
+
     for (final imageFile in imageFiles) {
       final result = await analyzeImage(imageFile);
       if (result != null) {
         results.add(result);
       }
     }
-    
+
     return results;
   }
 
@@ -341,10 +344,20 @@ class VisionApiService {
     // 패션 관련 라벨 추출
     final fashionItems = <String>[];
     final fashionKeywords = [
-      'clothing', 'fashion', 'dress', 'shirt', 'pants', 'jeans',
-      'suit', 'casual', 'formal', 'style', 'outfit', 'accessories'
+      'clothing',
+      'fashion',
+      'dress',
+      'shirt',
+      'pants',
+      'jeans',
+      'suit',
+      'casual',
+      'formal',
+      'style',
+      'outfit',
+      'accessories'
     ];
-    
+
     for (final label in labels) {
       for (final keyword in fashionKeywords) {
         if (label.toLowerCase().contains(keyword)) {
@@ -360,10 +373,10 @@ class VisionApiService {
         labels.any((l) => l.toLowerCase().contains('suit'))) {
       fashionStyle = '포멀';
     } else if (labels.any((l) => l.toLowerCase().contains('sports')) ||
-               labels.any((l) => l.toLowerCase().contains('athletic'))) {
+        labels.any((l) => l.toLowerCase().contains('athletic'))) {
       fashionStyle = '스포티';
     } else if (labels.any((l) => l.toLowerCase().contains('vintage')) ||
-               labels.any((l) => l.toLowerCase().contains('retro'))) {
+        labels.any((l) => l.toLowerCase().contains('retro'))) {
       fashionStyle = '빈티지';
     }
 
@@ -371,10 +384,11 @@ class VisionApiService {
     String colorPalette = '모노톤';
     if (colors.isNotEmpty) {
       final avgBrightness = colors.fold<double>(
-        0,
-        (sum, color) => sum + (color.red + color.green + color.blue) / 3,
-      ) / colors.length;
-      
+            0,
+            (sum, color) => sum + (color.red + color.green + color.blue) / 3,
+          ) /
+          colors.length;
+
       if (avgBrightness > 200) {
         colorPalette = '밝은 톤';
       } else if (avgBrightness < 100) {
@@ -389,7 +403,7 @@ class VisionApiService {
     if (labels.any((l) => l.toLowerCase().contains('outdoor'))) {
       overallVibe = '활동적인';
     } else if (labels.any((l) => l.toLowerCase().contains('night')) ||
-               labels.any((l) => l.toLowerCase().contains('party'))) {
+        labels.any((l) => l.toLowerCase().contains('party'))) {
       overallVibe = '화려한';
     } else if (labels.any((l) => l.toLowerCase().contains('nature'))) {
       overallVibe = '자연친화적인';
@@ -410,7 +424,7 @@ class VisionApiService {
   }) async {
     // 내 사진 분석
     final myResults = await analyzeMultipleImages(myPhotos);
-    
+
     // 상대방 사진 분석 (있는 경우)
     List<ImageAnalysisResult>? partnerResults;
     if (partnerPhotos != null && partnerPhotos.isNotEmpty) {
@@ -429,7 +443,7 @@ class VisionApiService {
     // 내 스타일 분석
     final myStyle = _aggregateStyleAnalysis(myResults);
     final myEmotion = _aggregateEmotionalAnalysis(myResults);
-    
+
     // 상대방 스타일 분석 (있는 경우)
     String? partnerStyle;
     String? partnerEmotion;
@@ -464,26 +478,24 @@ class VisionApiService {
   /// 스타일 종합 분석
   String _aggregateStyleAnalysis(List<ImageAnalysisResult> results) {
     final styles = <String, int>{};
-    
+
     for (final result in results) {
       if (result.styleAnalysis != null) {
         final style = result.styleAnalysis!.fashionStyle;
         styles[style] = (styles[style] ?? 0) + 1;
       }
     }
-    
+
     if (styles.isEmpty) return '캐주얼';
-    
+
     // 가장 많이 나온 스타일 반환
-    return styles.entries
-        .reduce((a, b) => a.value > b.value ? a : b)
-        .key;
+    return styles.entries.reduce((a, b) => a.value > b.value ? a : b).key;
   }
 
   /// 감정 종합 분석
   String _aggregateEmotionalAnalysis(List<ImageAnalysisResult> results) {
     final emotions = <String, double>{};
-    
+
     for (final result in results) {
       if (result.emotionalAnalysis != null) {
         result.emotionalAnalysis!.emotionScores.forEach((emotion, score) {
@@ -491,18 +503,17 @@ class VisionApiService {
         });
       }
     }
-    
+
     if (emotions.isEmpty) return '차분한';
-    
+
     // 평균 감정 계산
-    final avgEmotions = emotions.map((key, value) => 
-        MapEntry(key, value / results.length));
-    
+    final avgEmotions =
+        emotions.map((key, value) => MapEntry(key, value / results.length));
+
     // 주요 감정을 성격으로 변환
-    final dominantEmotion = avgEmotions.entries
-        .reduce((a, b) => a.value > b.value ? a : b)
-        .key;
-    
+    final dominantEmotion =
+        avgEmotions.entries.reduce((a, b) => a.value > b.value ? a : b).key;
+
     switch (dominantEmotion) {
       case 'joy':
         return '밝고 긍정적인';
@@ -528,21 +539,21 @@ class VisionApiService {
       // 상대방 정보가 없으면 내 정보만으로 기본 점수
       return 60 + (myEmotion.contains('긍정') ? 10 : 0);
     }
-    
+
     int score = 50;
-    
+
     // 스타일 호환성
     if (myStyle == partnerStyle) {
       score += 20; // 같은 스타일
     } else if (_areStylesCompatible(myStyle, partnerStyle)) {
       score += 10; // 호환되는 스타일
     }
-    
+
     // 성격 호환성
     if (_arePersonalitiesCompatible(myEmotion, partnerEmotion)) {
       score += 30;
     }
-    
+
     return score.clamp(0, 100);
   }
 
@@ -554,7 +565,7 @@ class VisionApiService {
       '스포티': ['캐주얼'],
       '빈티지': ['캐주얼'],
     };
-    
+
     return compatible[style1]?.contains(style2) ?? false;
   }
 
@@ -564,10 +575,10 @@ class VisionApiService {
     if (personality1.contains('긍정') && personality2.contains('차분')) return true;
     if (personality1.contains('활발') && personality2.contains('안정')) return true;
     if (personality1.contains('열정') && personality2.contains('사색')) return true;
-    
+
     // 비슷한 성격도 좋음
     if (personality1 == personality2) return true;
-    
+
     return false;
   }
 
@@ -579,7 +590,7 @@ class VisionApiService {
     final tips = <String>[];
     final topics = <String>[];
     final styleRecs = <String>[];
-    
+
     // 내 분석 결과 기반 조언
     for (final result in myResults) {
       // 감정 기반 조언
@@ -591,7 +602,7 @@ class VisionApiService {
           tips.add('좀 더 편안하게 웃어보세요');
         }
       }
-      
+
       // 라벨 기반 대화 주제
       for (final label in result.labels) {
         if (label.toLowerCase().contains('travel')) {
@@ -604,7 +615,7 @@ class VisionApiService {
           topics.add('운동/건강');
         }
       }
-      
+
       // 스타일 조언
       if (result.styleAnalysis != null) {
         final style = result.styleAnalysis!.fashionStyle;
@@ -615,12 +626,12 @@ class VisionApiService {
         }
       }
     }
-    
+
     // 중복 제거
     final uniqueTips = tips.toSet().toList();
     final uniqueTopics = topics.toSet().toList();
     final uniqueStyleRecs = styleRecs.toSet().toList();
-    
+
     // 기본 조언 추가
     if (uniqueTips.isEmpty) {
       uniqueTips.addAll([
@@ -629,7 +640,7 @@ class VisionApiService {
         '긍정적인 에너지 보여주기',
       ]);
     }
-    
+
     if (uniqueTopics.isEmpty) {
       uniqueTopics.addAll([
         '취미와 관심사',
@@ -637,7 +648,7 @@ class VisionApiService {
         '좋아하는 음식',
       ]);
     }
-    
+
     if (uniqueStyleRecs.isEmpty) {
       uniqueStyleRecs.addAll([
         '깔끔하고 단정한 스타일',
@@ -645,7 +656,7 @@ class VisionApiService {
         '편안한 신발 착용',
       ]);
     }
-    
+
     return DateAdvice(
       firstImpressionTips: uniqueTips,
       conversationTopics: uniqueTopics,

@@ -45,9 +45,7 @@ class ChatDecisionResultCard extends ConsumerWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: isDark
-              ? [_darkBg1, _darkBg2]
-              : [_creamLight, _creamDark],
+          colors: isDark ? [_darkBg1, _darkBg2] : [_creamLight, _creamDark],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
@@ -80,9 +78,9 @@ class ChatDecisionResultCard extends ConsumerWidget {
                 children: [
                   // 헤더
                   _buildHeader(context)
-                    .animate()
-                    .fadeIn(duration: 500.ms)
-                    .slideY(begin: -0.1, end: 0),
+                      .animate()
+                      .fadeIn(duration: 500.ms)
+                      .slideY(begin: -0.1, end: 0),
 
                   const SizedBox(height: 16),
 
@@ -93,8 +91,8 @@ class ChatDecisionResultCard extends ConsumerWidget {
 
                   // 질문
                   _buildQuestionSection(context)
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 200.ms),
+                      .animate()
+                      .fadeIn(duration: 400.ms, delay: 200.ms),
 
                   const SizedBox(height: 20),
 
@@ -105,9 +103,12 @@ class ChatDecisionResultCard extends ConsumerWidget {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: _buildOptionCard(context, index + 1, option)
-                        .animate()
-                        .fadeIn(duration: 400.ms, delay: Duration(milliseconds: 400 + (index * 200)))
-                        .slideX(begin: -0.05, end: 0),
+                          .animate()
+                          .fadeIn(
+                              duration: 400.ms,
+                              delay:
+                                  Duration(milliseconds: 400 + (index * 200)))
+                          .slideX(begin: -0.05, end: 0),
                     );
                   }),
 
@@ -115,8 +116,8 @@ class ChatDecisionResultCard extends ConsumerWidget {
 
                   // AI 추천
                   _buildRecommendation(context)
-                    .animate()
-                    .fadeIn(duration: 500.ms, delay: 800.ms),
+                      .animate()
+                      .fadeIn(duration: 500.ms, delay: 800.ms),
 
                   const SizedBox(height: 16),
                 ],
@@ -140,8 +141,8 @@ class ChatDecisionResultCard extends ConsumerWidget {
           '⚖️',
           style: TextStyle(fontSize: 20),
         )
-          .animate(onPlay: (c) => c.repeat(reverse: true))
-          .rotate(begin: -0.05, end: 0.05, duration: 2000.ms),
+            .animate(onPlay: (c) => c.repeat(reverse: true))
+            .rotate(begin: -0.05, end: 0.05, duration: 2000.ms),
       ),
     );
 
@@ -157,9 +158,9 @@ class ChatDecisionResultCard extends ConsumerWidget {
             color: Colors.amber.withValues(alpha: 0.5),
           ),
         )
-          .animate(onPlay: (c) => c.repeat(reverse: true))
-          .fadeIn(duration: 1200.ms)
-          .fadeOut(duration: 1200.ms),
+            .animate(onPlay: (c) => c.repeat(reverse: true))
+            .fadeIn(duration: 1200.ms)
+            .fadeOut(duration: 1200.ms),
       ),
     );
 
@@ -324,7 +325,8 @@ class ChatDecisionResultCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildOptionCard(BuildContext context, int index, Map<String, dynamic> option) {
+  Widget _buildOptionCard(
+      BuildContext context, int index, Map<String, dynamic> option) {
     final typography = context.typography;
     final isDark = context.isDark;
     final textColor = isDark ? Colors.white : DSColors.textPrimary;
@@ -355,7 +357,8 @@ class ChatDecisionResultCard extends ConsumerWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: _purpleAccent.withValues(alpha: isDark ? 0.3 : 0.2),
                   borderRadius: BorderRadius.circular(8),
@@ -393,16 +396,18 @@ class ChatDecisionResultCard extends ConsumerWidget {
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: pros.map((pro) => Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
-                      child: Text(
-                        '• $pro',
-                        style: context.bodySmall.copyWith(
-                          color: Colors.green.shade600,
-                          height: 1.4,
-                        ),
-                      ),
-                    )).toList(),
+                    children: pros
+                        .map((pro) => Padding(
+                              padding: const EdgeInsets.only(bottom: 4),
+                              child: Text(
+                                '• $pro',
+                                style: context.bodySmall.copyWith(
+                                  color: Colors.green.shade600,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ))
+                        .toList(),
                   ),
                 ),
               ],
@@ -420,16 +425,18 @@ class ChatDecisionResultCard extends ConsumerWidget {
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: cons.map((con) => Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
-                      child: Text(
-                        '• $con',
-                        style: context.bodySmall.copyWith(
-                          color: Colors.orange.shade700,
-                          height: 1.4,
-                        ),
-                      ),
-                    )).toList(),
+                    children: cons
+                        .map((con) => Padding(
+                              padding: const EdgeInsets.only(bottom: 4),
+                              child: Text(
+                                '• $con',
+                                style: context.bodySmall.copyWith(
+                                  color: Colors.orange.shade700,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ))
+                        .toList(),
                   ),
                 ),
               ],

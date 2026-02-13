@@ -99,13 +99,15 @@ class KakaoShareService extends ResilientService {
 
         if (isAvailable) {
           // 카카오톡 앱으로 공유
-          final uri = await ShareClient.instance.shareDefault(template: template);
+          final uri =
+              await ShareClient.instance.shareDefault(template: template);
           await ShareClient.instance.launchKakaoTalk(uri);
           Logger.info('카카오톡 공유 성공');
           return true;
         } else {
           // 웹 브라우저로 공유 (앱 미설치)
-          final uri = await WebSharerClient.instance.makeDefaultUrl(template: template);
+          final uri =
+              await WebSharerClient.instance.makeDefaultUrl(template: template);
           await launchBrowserTab(uri);
           Logger.info('카카오톡 웹 공유 성공');
           return true;
@@ -123,7 +125,8 @@ class KakaoShareService extends ResilientService {
       () async {
         // 임시 파일로 저장
         final tempDir = await getTemporaryDirectory();
-        final tempFile = File('${tempDir.path}/kakao_share_${DateTime.now().millisecondsSinceEpoch}.png');
+        final tempFile = File(
+            '${tempDir.path}/kakao_share_${DateTime.now().millisecondsSinceEpoch}.png');
         await tempFile.writeAsBytes(imageData);
 
         try {
@@ -132,7 +135,8 @@ class KakaoShareService extends ResilientService {
             image: tempFile,
           );
 
-          Logger.info('카카오 이미지 업로드 성공: ${imageUploadResult.infos.original.url}');
+          Logger.info(
+              '카카오 이미지 업로드 성공: ${imageUploadResult.infos.original.url}');
           return Uri.parse(imageUploadResult.infos.original.url);
         } finally {
           // 임시 파일 삭제
@@ -160,7 +164,9 @@ class KakaoShareService extends ResilientService {
     return await shareFortuneResult(
       context: context,
       title: title,
-      description: shareText.length > 200 ? '${shareText.substring(0, 197)}...' : shareText,
+      description: shareText.length > 200
+          ? '${shareText.substring(0, 197)}...'
+          : shareText,
     );
   }
 

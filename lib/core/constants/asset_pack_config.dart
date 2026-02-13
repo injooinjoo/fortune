@@ -63,9 +63,8 @@ class AssetPackConfig {
     // snake_case를 Title Case로 변환
     return deckId
         .split('_')
-        .map((word) => word.isEmpty
-            ? ''
-            : '${word[0].toUpperCase()}${word.substring(1)}')
+        .map((word) =>
+            word.isEmpty ? '' : '${word[0].toUpperCase()}${word.substring(1)}')
         .join(' ');
   }
 

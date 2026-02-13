@@ -49,7 +49,8 @@ class LoveGenerator {
       // 🎯 토큰 소비형 모델: 블러 처리 제거
       // 점수 및 메시지 추출
       final loveScore = data['loveScore'] as int? ?? 70;
-      final mainMessage = data['mainMessage'] as String? ?? '새로운 사랑의 기회가 찾아올 것입니다.';
+      final mainMessage =
+          data['mainMessage'] as String? ?? '새로운 사랑의 기회가 찾아올 것입니다.';
 
       final result = FortuneResult(
         id: 'love-${DateTime.now().millisecondsSinceEpoch}',
@@ -58,7 +59,11 @@ class LoveGenerator {
         summary: {
           'score': loveScore,
           'message': mainMessage,
-          'emoji': loveScore >= 80 ? '💕' : loveScore >= 60 ? '💖' : '💗',
+          'emoji': loveScore >= 80
+              ? '💕'
+              : loveScore >= 60
+                  ? '💖'
+                  : '💗',
         },
         data: data,
         score: loveScore,

@@ -203,15 +203,25 @@ class _MockCareerCoachingPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('직업 코칭', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const Text('직업 코칭',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 24),
             const Text('현재 상태'),
             Wrap(
               spacing: 8,
               children: [
-                ChoiceChip(label: const Text('취업 준비'), selected: true, onSelected: (_) {}),
-                ChoiceChip(label: const Text('재직 중'), selected: false, onSelected: (_) {}),
-                ChoiceChip(label: const Text('이직 고민'), selected: false, onSelected: (_) {}),
+                ChoiceChip(
+                    label: const Text('취업 준비'),
+                    selected: true,
+                    onSelected: (_) {}),
+                ChoiceChip(
+                    label: const Text('재직 중'),
+                    selected: false,
+                    onSelected: (_) {}),
+                ChoiceChip(
+                    label: const Text('이직 고민'),
+                    selected: false,
+                    onSelected: (_) {}),
               ],
             ),
             const SizedBox(height: 16),
@@ -268,10 +278,19 @@ class _MockCareerCoachingResult extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            const Card(child: ListTile(title: Text('적성 분석'), subtitle: Text('당신은 창의적인 분야에 적합합니다'))),
-            const Card(child: ListTile(title: Text('추천 직업'), subtitle: Text('디자이너, 마케터, 기획자'))),
-            const Card(child: ListTile(title: Text('커리어 조언'), subtitle: Text('지금이 도전할 때입니다'))),
-            const Card(child: ListTile(title: Text('시기별 조언'), subtitle: Text('상반기에 집중하세요'))),
+            const Card(
+                child: ListTile(
+                    title: Text('적성 분석'),
+                    subtitle: Text('당신은 창의적인 분야에 적합합니다'))),
+            const Card(
+                child: ListTile(
+                    title: Text('추천 직업'), subtitle: Text('디자이너, 마케터, 기획자'))),
+            const Card(
+                child: ListTile(
+                    title: Text('커리어 조언'), subtitle: Text('지금이 도전할 때입니다'))),
+            const Card(
+                child: ListTile(
+                    title: Text('시기별 조언'), subtitle: Text('상반기에 집중하세요'))),
             if (strengths.isNotEmpty) ...[
               const SizedBox(height: 16),
               const Text('강점', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -285,7 +304,8 @@ class _MockCareerCoachingResult extends StatelessWidget {
               const Text('개선점', style: TextStyle(fontWeight: FontWeight.bold)),
               Wrap(
                 spacing: 8,
-                children: improvements.map((s) => Chip(label: Text(s))).toList(),
+                children:
+                    improvements.map((s) => Chip(label: Text(s))).toList(),
               ),
             ],
           ],

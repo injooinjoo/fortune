@@ -16,7 +16,7 @@ class RouteObserverLogger extends RouteObserver<PageRoute<dynamic>> {
   RouteObserverLogger._internal();
 
   final Map<String, VisitInfo> _visits = {};
-  String? _logFilePath;  // Will be initialized with app directory
+  String? _logFilePath; // Will be initialized with app directory
 
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
@@ -214,20 +214,20 @@ class VisitInfo {
   }
 
   Map<String, dynamic> toJson() => {
-    'screen_name': screenName,
-    'route_name': routeName,
-    'first_visit': firstVisit.toIso8601String(),
-    'last_visit': lastVisit.toIso8601String(),
-    'visit_count': visitCount,
-  };
+        'screen_name': screenName,
+        'route_name': routeName,
+        'first_visit': firstVisit.toIso8601String(),
+        'last_visit': lastVisit.toIso8601String(),
+        'visit_count': visitCount,
+      };
 
   factory VisitInfo.fromJson(Map<String, dynamic> json) => VisitInfo(
-    screenName: json['screen_name'] as String,
-    routeName: json['route_name'] as String,
-    firstVisit: DateTime.parse(json['first_visit'] as String),
-    lastVisit: DateTime.parse(json['last_visit'] as String),
-    visitCount: json['visit_count'] as int,
-  );
+        screenName: json['screen_name'] as String,
+        routeName: json['route_name'] as String,
+        firstVisit: DateTime.parse(json['first_visit'] as String),
+        lastVisit: DateTime.parse(json['last_visit'] as String),
+        visitCount: json['visit_count'] as int,
+      );
 }
 
 /// RouteObserver 사용 예시:

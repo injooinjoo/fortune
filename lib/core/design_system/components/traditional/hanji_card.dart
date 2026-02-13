@@ -186,63 +186,43 @@ class _HanjiColors {
         );
       case HanjiColorScheme.love:
         return _HanjiColors(
-          background: isDark
-              ? const Color(0xFF2D2528)
-              : const Color(0xFFFDF8F6),
+          background:
+              isDark ? const Color(0xFF2D2528) : const Color(0xFFFDF8F6),
           border: isDark
               ? const Color(0xFFE8A4B8).withValues(alpha: 0.3)
               : const Color(0xFFD4526E).withValues(alpha: 0.15),
-          accent: isDark
-              ? const Color(0xFFE8A4B8)
-              : const Color(0xFFD4526E),
-          ink: isDark
-              ? const Color(0xFFD4D0C8)
-              : const Color(0xFF2C2C2C),
+          accent: isDark ? const Color(0xFFE8A4B8) : const Color(0xFFD4526E),
+          ink: isDark ? const Color(0xFFD4D0C8) : const Color(0xFF2C2C2C),
         );
       case HanjiColorScheme.luck:
         return _HanjiColors(
-          background: isDark
-              ? const Color(0xFF2D2820)
-              : const Color(0xFFFDF8E8),
+          background:
+              isDark ? const Color(0xFF2D2820) : const Color(0xFFFDF8E8),
           border: isDark
               ? const Color(0xFFD4AF37).withValues(alpha: 0.3)
               : const Color(0xFFB7950B).withValues(alpha: 0.15),
-          accent: isDark
-              ? const Color(0xFFD4AF37)
-              : const Color(0xFFB7950B),
-          ink: isDark
-              ? const Color(0xFFD4D0C8)
-              : const Color(0xFF2C2C2C),
+          accent: isDark ? const Color(0xFFD4AF37) : const Color(0xFFB7950B),
+          ink: isDark ? const Color(0xFFD4D0C8) : const Color(0xFF2C2C2C),
         );
       case HanjiColorScheme.biorhythm:
         return _HanjiColors(
-          background: isDark
-              ? const Color(0xFF2A2520)
-              : const Color(0xFFF5F0E6),
+          background:
+              isDark ? const Color(0xFF2A2520) : const Color(0xFFF5F0E6),
           border: isDark
               ? const Color(0xFFD4D0C8).withValues(alpha: 0.3)
               : const Color(0xFF2C2C2C).withValues(alpha: 0.15),
-          accent: isDark
-              ? const Color(0xFFD4AF37)
-              : const Color(0xFFB7950B),
-          ink: isDark
-              ? const Color(0xFFD4D0C8)
-              : const Color(0xFF2C2C2C),
+          accent: isDark ? const Color(0xFFD4AF37) : const Color(0xFFB7950B),
+          ink: isDark ? const Color(0xFFD4D0C8) : const Color(0xFF2C2C2C),
         );
       case HanjiColorScheme.health:
         return _HanjiColors(
-          background: isDark
-              ? const Color(0xFF202D28)
-              : const Color(0xFFF0F8F5),
+          background:
+              isDark ? const Color(0xFF202D28) : const Color(0xFFF0F8F5),
           border: isDark
               ? const Color(0xFF68D391).withValues(alpha: 0.3)
               : const Color(0xFF38A169).withValues(alpha: 0.15),
-          accent: isDark
-              ? const Color(0xFF68D391)
-              : const Color(0xFF38A169),
-          ink: isDark
-              ? const Color(0xFFD4D0C8)
-              : const Color(0xFF2C2C2C),
+          accent: isDark ? const Color(0xFF68D391) : const Color(0xFF38A169),
+          ink: isDark ? const Color(0xFFD4D0C8) : const Color(0xFF2C2C2C),
         );
       case HanjiColorScheme.custom:
         // Return fortune as default, custom colors should be passed directly
@@ -356,7 +336,8 @@ class _HanjiCardPainter extends CustomPainter {
     const margin = 8.0;
 
     // Top-left corner (L shape with curve)
-    _drawCornerCurve(canvas, const Offset(margin, margin), cornerSize, 0, paint);
+    _drawCornerCurve(
+        canvas, const Offset(margin, margin), cornerSize, 0, paint);
 
     // Top-right corner
     _drawCornerCurve(
@@ -656,7 +637,8 @@ class HanjiSectionCard extends StatelessWidget {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                      color: (accentColor ?? colors.accent).withValues(alpha: 0.15),
+                      color: (accentColor ?? colors.accent)
+                          .withValues(alpha: 0.15),
                       shape: BoxShape.circle,
                     ),
                     child: Center(

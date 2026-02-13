@@ -15,7 +15,8 @@ class CharacterAffinityService {
   final SupabaseClient _supabase = Supabase.instance.client;
 
   // 싱글톤
-  static final CharacterAffinityService _instance = CharacterAffinityService._internal();
+  static final CharacterAffinityService _instance =
+      CharacterAffinityService._internal();
   factory CharacterAffinityService() => _instance;
   CharacterAffinityService._internal();
 
@@ -50,7 +51,8 @@ class CharacterAffinityService {
       final json = jsonDecode(jsonString) as Map<String, dynamic>;
       final affinity = CharacterAffinity.fromJson(json);
 
-      Logger.info('Loaded affinity for $characterId: ${affinity.lovePoints}pts');
+      Logger.info(
+          'Loaded affinity for $characterId: ${affinity.lovePoints}pts');
       return affinity;
     } catch (e) {
       Logger.error('Failed to load affinity locally', e);
@@ -59,7 +61,8 @@ class CharacterAffinityService {
   }
 
   /// 호감도 저장 (로컬)
-  Future<bool> saveAffinityLocal(String characterId, CharacterAffinity affinity) async {
+  Future<bool> saveAffinityLocal(
+      String characterId, CharacterAffinity affinity) async {
     if (!isInitialized) {
       Logger.warning('CharacterAffinityService not initialized');
       return false;
@@ -113,7 +116,8 @@ class CharacterAffinityService {
       }
 
       final affinity = CharacterAffinity.fromJson(response);
-      Logger.info('Loaded affinity from server for $characterId: ${affinity.lovePoints}pts');
+      Logger.info(
+          'Loaded affinity from server for $characterId: ${affinity.lovePoints}pts');
       return affinity;
     } catch (e) {
       Logger.error('Failed to load affinity from server', e);
@@ -122,7 +126,8 @@ class CharacterAffinityService {
   }
 
   /// 호감도 저장 (서버)
-  Future<bool> saveAffinityToServer(String characterId, CharacterAffinity affinity) async {
+  Future<bool> saveAffinityToServer(
+      String characterId, CharacterAffinity affinity) async {
     try {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) {
@@ -139,7 +144,8 @@ class CharacterAffinityService {
           .from('user_character_affinity')
           .upsert(data, onConflict: 'user_id,character_id');
 
-      Logger.info('Saved affinity to server for $characterId: ${affinity.lovePoints}pts');
+      Logger.info(
+          'Saved affinity to server for $characterId: ${affinity.lovePoints}pts');
       return true;
     } catch (e) {
       Logger.error('Failed to save affinity to server', e);
@@ -187,7 +193,8 @@ class CharacterAffinityService {
       // 백그라운드에서 서버 동기화
       saveAffinityToServer(characterId, affinity).then((success) {
         if (!success) {
-          Logger.warning('Server sync failed for $characterId, will retry later');
+          Logger.warning(
+              'Server sync failed for $characterId, will retry later');
         }
       });
     }
@@ -219,7 +226,8 @@ class CharacterAffinityService {
     final previousPhase = affinity.phase;
 
     // 포인트 추가
-    affinity = affinity.addPointsWithTracking(points, interactionType: interactionType);
+    affinity = affinity.addPointsWithTracking(points,
+        interactionType: interactionType);
 
     // 저장
     await saveAffinity(characterId, affinity);
@@ -233,7 +241,8 @@ class CharacterAffinityService {
       );
 
       // 단계 상승 시 phaseHistory에 기록 (이미 addPointsWithTracking에서 처리됨)
-      Logger.info('Phase transition: ${previousPhase.displayName} → ${affinity.phase.displayName}');
+      Logger.info(
+          'Phase transition: ${previousPhase.displayName} → ${affinity.phase.displayName}');
     }
 
     return AffinityUpdateResult(
@@ -264,7 +273,8 @@ class CharacterAffinityService {
 
     if (updated != affinity) {
       await saveAffinity(characterId, updated);
-      Logger.info('Applied streak bonus for $characterId: ${updated.currentStreak} days');
+      Logger.info(
+          'Applied streak bonus for $characterId: ${updated.currentStreak} days');
     }
 
     return updated;
@@ -314,7 +324,8 @@ class CharacterAffinityService {
   }
 
   /// 단계 전환 조건 충족 여부 확인
-  bool canTransitionToPhase(CharacterAffinity affinity, AffinityPhase targetPhase) {
+  bool canTransitionToPhase(
+      CharacterAffinity affinity, AffinityPhase targetPhase) {
     // 포인트 조건
     if (affinity.lovePoints < targetPhase.minPoints) return false;
 

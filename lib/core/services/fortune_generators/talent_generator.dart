@@ -37,13 +37,17 @@ class TalentGenerator {
     Logger.info('[TalentGenerator] 📤 API 요청 준비');
     Logger.info('[TalentGenerator]   🌐 Edge Function: fortune-talent');
     Logger.info('[TalentGenerator]   👤 user_id: $userId');
-    Logger.info('[TalentGenerator]   🎯 concern_areas: ${inputConditions['concern_areas']}');
-    Logger.info('[TalentGenerator]   💡 interest_areas: ${inputConditions['interest_areas']}');
+    Logger.info(
+        '[TalentGenerator]   🎯 concern_areas: ${inputConditions['concern_areas']}');
+    Logger.info(
+        '[TalentGenerator]   💡 interest_areas: ${inputConditions['interest_areas']}');
 
     try {
       // TalentInputData를 Edge Function 형식으로 변환
       final requestBody = {
-        'talentArea': (inputConditions['concern_areas'] as List<dynamic>?)?.first ?? '커리어 발전',
+        'talentArea':
+            (inputConditions['concern_areas'] as List<dynamic>?)?.first ??
+                '커리어 발전',
         'currentSkills': [
           if (inputConditions['current_occupation'] != null)
             inputConditions['current_occupation'],
@@ -51,7 +55,9 @@ class TalentGenerator {
             inputConditions['self_strengths'],
           ...?inputConditions['interest_areas'],
         ],
-        'goals': (inputConditions['concern_areas'] as List<dynamic>?)?.join(', ') ?? '재능 발견',
+        'goals':
+            (inputConditions['concern_areas'] as List<dynamic>?)?.join(', ') ??
+                '재능 발견',
         'experience': inputConditions['current_occupation'] ?? '경험 없음',
         'timeAvailable': inputConditions['work_style'] ?? '보통',
         'challenges': [
@@ -84,7 +90,8 @@ class TalentGenerator {
       }
 
       final data = response.data as Map<String, dynamic>;
-      Logger.info('[TalentGenerator]   📦 Response data keys: ${data.keys.toList()}');
+      Logger.info(
+          '[TalentGenerator]   📦 Response data keys: ${data.keys.toList()}');
 
       // 🔄 파싱
       Logger.info('[TalentGenerator] 🔄 응답 데이터 파싱 중...');

@@ -9,10 +9,7 @@ class MbtiEditDialog extends StatefulWidget {
   final String? initialMbti;
   final Function(String?) onSave;
 
-  const MbtiEditDialog({
-    super.key,
-    this.initialMbti,
-    required this.onSave});
+  const MbtiEditDialog({super.key, this.initialMbti, required this.onSave});
 
   @override
   State<MbtiEditDialog> createState() => _MbtiEditDialogState();
@@ -30,7 +27,7 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
 
   void _handleSave() async {
     setState(() => _isLoading = true);
-    
+
     try {
       await widget.onSave(_selectedMbti?.toLowerCase());
       if (mounted) {
@@ -64,8 +61,8 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
           Text(
             'MBTI 성격 유형을 선택해주세요',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: context.colors.textSecondary,
-            ),
+                  color: context.colors.textSecondary,
+                ),
           ),
           const SizedBox(height: AppSpacing.spacing2),
           InkWell(
@@ -75,9 +72,9 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
             child: Text(
               'MBTI를 모르시나요? 테스트 하러 가기 →',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: DSColors.accentDark,
-                decoration: TextDecoration.underline,
-              ),
+                    color: DSColors.accentDark,
+                    decoration: TextDecoration.underline,
+                  ),
             ),
           ),
           const SizedBox(height: AppSpacing.spacing5),
@@ -87,18 +84,19 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
               child: Column(
                 children: [
                   GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                      crossAxisSpacing: 8,
-                      mainAxisSpacing: 8,
-                      childAspectRatio: 1.8),
-                    itemCount: mbtiTypes.length,
-                    itemBuilder: (context, index) {
-                      final mbti = mbtiTypes[index];
-                      return _buildMbtiOption(mbti);
-                    }),
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 4,
+                              crossAxisSpacing: 8,
+                              mainAxisSpacing: 8,
+                              childAspectRatio: 1.8),
+                      itemCount: mbtiTypes.length,
+                      itemBuilder: (context, index) {
+                        final mbti = mbtiTypes[index];
+                        return _buildMbtiOption(mbti);
+                      }),
                   const SizedBox(height: AppSpacing.spacing3),
                   _buildMbtiOption(null, '선택 안함'),
                 ],
@@ -113,7 +111,7 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
   Widget _buildMbtiOption(String? value, [String? customLabel]) {
     final isSelected = _selectedMbti == value;
     final label = customLabel ?? value ?? '';
-    
+
     return Material(
       color: Colors.white.withValues(alpha: 0.0),
       child: InkWell(
@@ -126,20 +124,23 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
         child: Container(
           padding: AppSpacing.paddingVertical8,
           decoration: BoxDecoration(
-            border: Border.all(
-              color: isSelected ? DSColors.accentDark : DSColors.borderDark,
-              width: isSelected ? 2 : 1),
-            borderRadius: AppDimensions.borderRadiusSmall,
-            color: isSelected ? DSColors.accentDark.withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.0)),
+              border: Border.all(
+                  color: isSelected ? DSColors.accentDark : DSColors.borderDark,
+                  width: isSelected ? 2 : 1),
+              borderRadius: AppDimensions.borderRadiusSmall,
+              color: isSelected
+                  ? DSColors.accentDark.withValues(alpha: 0.1)
+                  : Colors.white.withValues(alpha: 0.0)),
           child: Center(
             child: Text(
               label,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: isSelected
-                    ? context.colors.textPrimary
-                    : context.colors.textSecondary,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
+                    color: isSelected
+                        ? context.colors.textPrimary
+                        : context.colors.textSecondary,
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
             ),
           ),
         ),

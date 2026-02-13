@@ -57,7 +57,8 @@ class _WheelDatePickerState extends State<WheelDatePicker> {
     super.didUpdateWidget(oldWidget);
 
     if (widget.selectedDate != null &&
-        !DatePickerUtils.isSameDay(widget.selectedDate, oldWidget.selectedDate)) {
+        !DatePickerUtils.isSameDay(
+            widget.selectedDate, oldWidget.selectedDate)) {
       setState(() {
         _tempDate = widget.selectedDate!;
       });
@@ -137,7 +138,8 @@ class _WheelDatePickerState extends State<WheelDatePicker> {
                 child: Column(
                   children: [
                     Text(
-                      DatePickerUtils.formatKorean(_tempDate, showWeekday: true),
+                      DatePickerUtils.formatKorean(_tempDate,
+                          showWeekday: true),
                       style: context.headingSmall,
                     ),
                     if (widget.showAge) ...[
@@ -309,7 +311,6 @@ class _WheelDatePickerState extends State<WheelDatePicker> {
               ),
             ),
           ),
-
         InkWell(
           onTap: _showWheelPicker,
           borderRadius: AppDimensions.borderRadiusLarge,

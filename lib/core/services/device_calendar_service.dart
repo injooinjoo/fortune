@@ -33,7 +33,6 @@ class DeviceCalendarService {
       // 거부된 경우
       Logger.warning('[DeviceCalendar] ❌ 캘린더 권한 거부됨 - 설정에서 수동 허용 필요');
       return false;
-
     } catch (e) {
       Logger.error('[DeviceCalendar] 권한 요청 실패', e);
       return false;
@@ -111,7 +110,8 @@ class DeviceCalendarService {
         }
       }
 
-      Logger.info('[DeviceCalendar] ${CalendarEventSummary.formatDate(date)}에 ${allEvents.length}개 이벤트 발견');
+      Logger.info(
+          '[DeviceCalendar] ${CalendarEventSummary.formatDate(date)}에 ${allEvents.length}개 이벤트 발견');
 
       return allEvents;
     } catch (e) {
@@ -121,7 +121,8 @@ class DeviceCalendarService {
   }
 
   /// 특정 날짜의 이벤트를 간단한 형식으로 변환
-  Future<List<CalendarEventSummary>> getEventSummariesForDate(DateTime date) async {
+  Future<List<CalendarEventSummary>> getEventSummariesForDate(
+      DateTime date) async {
     final events = await getEventsForDate(date);
 
     return events.map((event) {

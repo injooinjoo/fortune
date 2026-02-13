@@ -131,8 +131,8 @@ class MissionProgressNotifier extends StateNotifier<MissionProgressState> {
     state = state.copyWith(isLoading: true);
 
     try {
-      final response = await _supabase.rpc('get_user_mission_status',
-          params: {'p_user_id': userId});
+      final response = await _supabase
+          .rpc('get_user_mission_status', params: {'p_user_id': userId});
 
       if (response == null) {
         state = state.copyWith(isLoading: false);
@@ -140,8 +140,7 @@ class MissionProgressNotifier extends StateNotifier<MissionProgressState> {
       }
 
       final missions = (response as List)
-          .map((data) =>
-              MissionProgress.fromJson(data as Map<String, dynamic>))
+          .map((data) => MissionProgress.fromJson(data as Map<String, dynamic>))
           .toList();
 
       state = state.copyWith(

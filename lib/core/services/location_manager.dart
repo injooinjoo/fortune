@@ -36,7 +36,9 @@ class LocationManager {
   Future<LocationInfo> getCurrentLocation({bool forceRefresh = false}) async {
     try {
       // 1. 메모리 캐시 확인 (강제 새로고침 아닐 때)
-      if (!forceRefresh && _currentLocation != null && _currentLocation!.isValid()) {
+      if (!forceRefresh &&
+          _currentLocation != null &&
+          _currentLocation!.isValid()) {
         // GPS 캐시인 경우, 권한이 여전히 있는지 확인
         if (_currentLocation!.isFromGPS) {
           final hasPermission = await hasLocationPermission();
@@ -46,11 +48,13 @@ class LocationManager {
             // SharedPreferences 캐시도 정리
             await clearCache();
           } else {
-            developer.log('🎯 LocationManager: 메모리 캐시 사용 - ${_currentLocation!.cityName}');
+            developer.log(
+                '🎯 LocationManager: 메모리 캐시 사용 - ${_currentLocation!.cityName}');
             return _currentLocation!;
           }
         } else {
-          developer.log('🎯 LocationManager: 메모리 캐시 사용 - ${_currentLocation!.cityName}');
+          developer.log(
+              '🎯 LocationManager: 메모리 캐시 사용 - ${_currentLocation!.cityName}');
           return _currentLocation!;
         }
       }
@@ -72,7 +76,8 @@ class LocationManager {
             }
           }
           _currentLocation = cachedLocation;
-          developer.log('💾 LocationManager: 캐시 사용 - ${cachedLocation.cityName}');
+          developer
+              .log('💾 LocationManager: 캐시 사용 - ${cachedLocation.cityName}');
           return cachedLocation;
         }
       }
@@ -170,12 +175,14 @@ class LocationManager {
         return place.locality!;
       }
       // administrativeArea (광역시/도)
-      if (place.administrativeArea != null && place.administrativeArea!.isNotEmpty) {
+      if (place.administrativeArea != null &&
+          place.administrativeArea!.isNotEmpty) {
         return LocationMappings.extractDistrict(place.administrativeArea!);
       }
     } else {
       // 해외 위치인 경우
-      final String cityName = place.locality ?? place.administrativeArea ?? 'Unknown';
+      final String cityName =
+          place.locality ?? place.administrativeArea ?? 'Unknown';
       // 영문 → 한글 변환
       return LocationMappings.toKorean(cityName);
     }
@@ -190,7 +197,8 @@ class LocationManager {
       final parts = <String>[];
 
       // 시/도
-      if (place.administrativeArea != null && place.administrativeArea!.isNotEmpty) {
+      if (place.administrativeArea != null &&
+          place.administrativeArea!.isNotEmpty) {
         parts.add(place.administrativeArea!);
       }
 

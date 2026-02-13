@@ -8,10 +8,10 @@ part 'partner_recommendation_model.g.dart';
 class PartnerRecommendationModel extends HiveObject {
   @HiveField(0)
   final List<String> best;
-  
+
   @HiveField(1)
   final List<String> good;
-  
+
   @HiveField(2)
   final List<String> avoid;
 
@@ -21,9 +21,9 @@ class PartnerRecommendationModel extends HiveObject {
     required this.avoid,
   });
 
-  factory PartnerRecommendationModel.fromJson(Map<String, dynamic> json) => 
+  factory PartnerRecommendationModel.fromJson(Map<String, dynamic> json) =>
       _$PartnerRecommendationModelFromJson(json);
-  
+
   Map<String, dynamic> toJson() => _$PartnerRecommendationModelToJson(this);
 }
 
@@ -32,10 +32,10 @@ class PartnerRecommendationModel extends HiveObject {
 class PartnerRecommendationsModel extends HiveObject {
   @HiveField(0)
   final PartnerRecommendationModel byZodiacAnimal;
-  
+
   @HiveField(1)
   final PartnerRecommendationModel byZodiacSign;
-  
+
   @HiveField(2)
   final PartnerRecommendationModel byMBTI;
 
@@ -45,8 +45,8 @@ class PartnerRecommendationsModel extends HiveObject {
     required this.byMBTI,
   });
 
-  factory PartnerRecommendationsModel.fromJson(Map<String, dynamic> json) => 
+  factory PartnerRecommendationsModel.fromJson(Map<String, dynamic> json) =>
       _$PartnerRecommendationsModelFromJson(json);
-  
+
   Map<String, dynamic> toJson() => _$PartnerRecommendationsModelToJson(this);
 }

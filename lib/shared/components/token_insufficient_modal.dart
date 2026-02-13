@@ -16,7 +16,8 @@ class TokenInsufficientModal extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<TokenInsufficientModal> createState() => _TokenInsufficientModalState();
+  ConsumerState<TokenInsufficientModal> createState() =>
+      _TokenInsufficientModalState();
 
   static Future<bool> show({
     required BuildContext context,
@@ -38,7 +39,8 @@ class TokenInsufficientModal extends ConsumerStatefulWidget {
   }
 }
 
-class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal> {
+class _TokenInsufficientModalState
+    extends ConsumerState<TokenInsufficientModal> {
   /// 다음 무료 토큰 지급 시간 (자정)
   String _getNextResetTime() {
     final now = DateTime.now();
@@ -116,7 +118,8 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
 
               // 남은 시간 안내
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                 decoration: BoxDecoration(
                   color: colors.backgroundSecondary,
                   borderRadius: BorderRadius.circular(16),
@@ -185,7 +188,9 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                       subtitle: '일 1회',
                       isPrimary: false,
                       onTap: () async {
-                        final result = await ref.read(tokenProvider.notifier).claimDailyTokens();
+                        final result = await ref
+                            .read(tokenProvider.notifier)
+                            .claimDailyTokens();
                         if (result && context.mounted) {
                           Navigator.of(context).pop(true);
                         } else if (context.mounted) {
@@ -320,7 +325,8 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                         ),
                         const SizedBox(width: 8),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(4),

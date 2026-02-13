@@ -10,7 +10,7 @@ class EmotionalLoadingChecklistOptimized extends ConsumerStatefulWidget {
   final VoidCallback? onPreviewComplete;
   final bool isLoggedIn;
   final bool isApiComplete;
-  
+
   const EmotionalLoadingChecklistOptimized({
     super.key,
     this.onComplete,
@@ -20,17 +20,18 @@ class EmotionalLoadingChecklistOptimized extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<EmotionalLoadingChecklistOptimized> createState() => _EmotionalLoadingChecklistOptimizedState();
+  ConsumerState<EmotionalLoadingChecklistOptimized> createState() =>
+      _EmotionalLoadingChecklistOptimizedState();
 }
 
-class _EmotionalLoadingChecklistOptimizedState extends ConsumerState<EmotionalLoadingChecklistOptimized> 
+class _EmotionalLoadingChecklistOptimizedState
+    extends ConsumerState<EmotionalLoadingChecklistOptimized>
     with TickerProviderStateMixin {
-  
   // 애니메이션 컨트롤러 최소화
   late AnimationController _scrollController;
   late AnimationController _checkController; // 하나의 체크 컨트롤러만 사용
   late Animation<double> _checkAnimation;
-  
+
   // 로딩 메시지는 핵심만 12개로 줄임
   static const List<LoadingStep> _coreLoadingMessages = [
     LoadingStep('오늘의 날씨 확인 중', '하늘의 기운을 읽고 있어요'),
@@ -46,56 +47,56 @@ class _EmotionalLoadingChecklistOptimizedState extends ConsumerState<EmotionalLo
     LoadingStep('오늘의 조언 준비 중', '현명한 말씀을 준비하고 있어요'),
     LoadingStep('마지막 행운 체크 중', '모든 준비가 완료되었는지 확인하고 있어요'),
   ];
-  
+
   int _currentStep = 0;
   bool _isCompleted = false;
-  
+
   @override
   void initState() {
     super.initState();
-    
+
     // 네비게이션 바 숨기기
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(navigationVisibilityProvider.notifier).hide();
     });
-    
+
     // 애니메이션 컨트롤러 초기화
     _scrollController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     _checkController = AnimationController(
       duration: const Duration(milliseconds: 400),
       vsync: this,
     );
-    
+
     // 애니메이션 생성
     _checkAnimation = CurvedAnimation(
       parent: _checkController,
       curve: Curves.elasticOut,
     );
-    
+
     _startAnimation();
   }
 
   @override
   void didUpdateWidget(covariant EmotionalLoadingChecklistOptimized oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     // API 완료 신호가 오면 로딩 완료 처리
     if (widget.isApiComplete && !oldWidget.isApiComplete && !_isCompleted) {
       _completeLoading();
     }
   }
-  
+
   void _completeLoading() {
     if (_isCompleted || !mounted) return;
-    
+
     setState(() {
       _isCompleted = true;
     });
-    
+
     debugPrint('✅ Loading animation completed by API');
     if (widget.isLoggedIn) {
       widget.onComplete?.call();
@@ -103,10 +104,10 @@ class _EmotionalLoadingChecklistOptimizedState extends ConsumerState<EmotionalLo
       widget.onPreviewComplete?.call();
     }
   }
-  
+
   void _startAnimation() async {
     await Future.delayed(const Duration(milliseconds: 500));
-    
+
     while (!_isCompleted && mounted && !widget.isApiComplete) {
       for (int i = 0; i < _coreLoadingMessages.length; i++) {
         if (_isCompleted || !mounted || widget.isApiComplete) {
@@ -115,20 +116,20 @@ class _EmotionalLoadingChecklistOptimizedState extends ConsumerState<EmotionalLo
           }
           return;
         }
-        
+
         // 현재 단계 업데이트
         if (mounted) {
           setState(() {
             _currentStep = i;
           });
-          
+
           // 체크 애니메이션 실행
           _checkController.forward();
         }
-        
+
         // 잠시 대기
         await Future.delayed(const Duration(milliseconds: 1500));
-        
+
         // API 완료 체크
         if (_isCompleted || !mounted || widget.isApiComplete) {
           if (widget.isApiComplete && !_isCompleted) {
@@ -136,7 +137,7 @@ class _EmotionalLoadingChecklistOptimizedState extends ConsumerState<EmotionalLo
           }
           return;
         }
-        
+
         // 다음 스텝으로 스크롤 (마지막이 아닌 경우)
         if (i < _coreLoadingMessages.length - 1) {
           _scrollController.forward();
@@ -145,7 +146,7 @@ class _EmotionalLoadingChecklistOptimizedState extends ConsumerState<EmotionalLo
           _checkController.reset();
         }
       }
-      
+
       // 한 사이클 완료 후 초기화
       if (!_isCompleted && mounted && !widget.isApiComplete) {
         setState(() {
@@ -156,22 +157,22 @@ class _EmotionalLoadingChecklistOptimizedState extends ConsumerState<EmotionalLo
       }
     }
   }
-  
+
   @override
   void dispose() {
     _scrollController.dispose();
     _checkController.dispose();
-    
+
     // 네비게이션 바 복원
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         ref.read(navigationVisibilityProvider.notifier).show();
       }
     });
-    
+
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final isDark = context.isDark;
@@ -182,14 +183,14 @@ class _EmotionalLoadingChecklistOptimizedState extends ConsumerState<EmotionalLo
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: isDark
-            ? [
-                const Color(0xFF1a1a2e),
-                const Color(0xFF0f1624),
-              ]
-            : [
-                context.colors.background,
-                const Color(0xFFF5F5F5),
-              ],
+              ? [
+                  const Color(0xFF1a1a2e),
+                  const Color(0xFF0f1624),
+                ]
+              : [
+                  context.colors.background,
+                  const Color(0xFFF5F5F5),
+                ],
         ),
       ),
       child: SafeArea(
@@ -228,7 +229,7 @@ class _OptimizedLoadingList extends StatelessWidget {
     required this.currentStep,
     required this.checkAnimation,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -238,12 +239,12 @@ class _OptimizedLoadingList extends StatelessWidget {
         final step = entry.value;
         final isCompleted = index < currentStep;
         final isActive = index == currentStep;
-        
+
         // 가시성 최적화 - 현재 단계 주변만 표시
         if ((index - currentStep).abs() > 2) {
           return const SizedBox(height: 80); // 빈 공간 유지
         }
-        
+
         double opacity = 1.0;
         if (index < currentStep - 1) {
           opacity = 0.3;
@@ -256,7 +257,7 @@ class _OptimizedLoadingList extends StatelessWidget {
         } else {
           opacity = 0.2;
         }
-        
+
         return AnimatedOpacity(
           duration: const Duration(milliseconds: 300),
           opacity: opacity,
@@ -289,7 +290,7 @@ class _OptimizedStepItem extends StatelessWidget {
     required this.isActive,
     this.checkAnimation,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -303,40 +304,44 @@ class _OptimizedStepItem extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: isCompleted
-              ? const Color(0xFF52C41A).withValues(alpha: 0.15)
-              : Colors.transparent,
+                ? const Color(0xFF52C41A).withValues(alpha: 0.15)
+                : Colors.transparent,
             border: Border.all(
               color: isCompleted
-                ? const Color(0xFF52C41A)
-                : isActive
-                  ? context.colors.textPrimary.withValues(alpha: 0.5)
-                  : context.colors.textPrimary.withValues(alpha: 0.2),
-              width: isCompleted ? 2.5 : isActive ? 2 : 1.5,
+                  ? const Color(0xFF52C41A)
+                  : isActive
+                      ? context.colors.textPrimary.withValues(alpha: 0.5)
+                      : context.colors.textPrimary.withValues(alpha: 0.2),
+              width: isCompleted
+                  ? 2.5
+                  : isActive
+                      ? 2
+                      : 1.5,
             ),
           ),
           child: checkAnimation != null
-            ? AnimatedBuilder(
-                animation: checkAnimation!,
-                builder: (context, child) {
-                  return Transform.scale(
-                    scale: checkAnimation!.value,
-                    child: isCompleted || checkAnimation!.value > 0.5
-                      ? Icon(
-                          Icons.check,
-                          size: isActive ? 18 : 16,
-                          color: const Color(0xFF52C41A),
-                        )
-                      : null,
-                  );
-                },
-              )
-            : (isCompleted
-                ? Icon(
-                    Icons.check,
-                    size: isActive ? 18 : 16,
-                    color: const Color(0xFF52C41A),
-                  )
-                : null),
+              ? AnimatedBuilder(
+                  animation: checkAnimation!,
+                  builder: (context, child) {
+                    return Transform.scale(
+                      scale: checkAnimation!.value,
+                      child: isCompleted || checkAnimation!.value > 0.5
+                          ? Icon(
+                              Icons.check,
+                              size: isActive ? 18 : 16,
+                              color: const Color(0xFF52C41A),
+                            )
+                          : null,
+                    );
+                  },
+                )
+              : (isCompleted
+                  ? Icon(
+                      Icons.check,
+                      size: isActive ? 18 : 16,
+                      color: const Color(0xFF52C41A),
+                    )
+                  : null),
         ),
 
         const SizedBox(width: 20),
@@ -353,8 +358,8 @@ class _OptimizedStepItem extends StatelessWidget {
                   fontSize: isActive ? 18 : 16,
                   fontWeight: isActive ? FontWeight.w500 : FontWeight.w400,
                   color: isCompleted || isActive
-                    ? (context.colors.textPrimary)
-                    : context.colors.textPrimary.withValues(alpha: 0.5),
+                      ? (context.colors.textPrimary)
+                      : context.colors.textPrimary.withValues(alpha: 0.5),
                 ),
                 child: Text(step.title),
               ),
@@ -367,8 +372,8 @@ class _OptimizedStepItem extends StatelessWidget {
                     step.subtitle,
                     style: TypographyUnified.bodySmall.copyWith(
                       fontWeight: FontWeight.w300,
-                      color: (context.colors.textPrimary)
-                          .withValues(alpha: 0.6),
+                      color:
+                          (context.colors.textPrimary).withValues(alpha: 0.6),
                     ),
                   ),
                 ),
@@ -384,6 +389,6 @@ class _OptimizedStepItem extends StatelessWidget {
 class LoadingStep {
   final String title;
   final String subtitle;
-  
+
   const LoadingStep(this.title, this.subtitle);
 }

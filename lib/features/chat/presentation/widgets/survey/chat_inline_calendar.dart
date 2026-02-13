@@ -12,8 +12,10 @@ class ChatInlineCalendar extends StatefulWidget {
   final void Function(DateTime date) onDateSelected;
   final void Function(DateTime date, List<CalendarEventSummary> events)?
       onDateConfirmed;
+
   /// 다중 날짜 선택 시 콜백
-  final void Function(List<DateTime> dates, Map<DateTime, List<CalendarEventSummary>> eventsMap)?
+  final void Function(List<DateTime> dates,
+          Map<DateTime, List<CalendarEventSummary>> eventsMap)?
       onMultipleDatesConfirmed;
   final String? hintText;
   final DateTime? initialDate;
@@ -24,8 +26,10 @@ class ChatInlineCalendar extends StatefulWidget {
   final bool isCalendarSynced;
   final Future<List<CalendarEventSummary>> Function(DateTime date)?
       onLoadEvents;
+
   /// 다중 날짜 선택 모드 활성화
   final bool allowMultipleDates;
+
   /// 최대 선택 가능 날짜 수
   final int maxSelectableDates;
 
@@ -53,8 +57,10 @@ class ChatInlineCalendar extends StatefulWidget {
 class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
   late DateTime _currentMonth;
   DateTime? _selectedDate;
+
   /// 다중 날짜 선택을 위한 Set
   final Set<DateTime> _selectedDates = {};
+
   /// 날짜별 이벤트 맵
   final Map<DateTime, List<CalendarEventSummary>> _eventsPerDate = {};
   List<CalendarEventSummary> _deviceEvents = [];
@@ -111,7 +117,8 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
           return;
         }
         _selectedDate = _selectedDates.isNotEmpty ? _selectedDates.last : null;
-        _showEvents = widget.showEventsAfterSelection && _selectedDates.isNotEmpty;
+        _showEvents =
+            widget.showEventsAfterSelection && _selectedDates.isNotEmpty;
       });
 
       // 새로 추가된 날짜에 대해 이벤트 로드
@@ -310,7 +317,8 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
           ],
 
           // 확인 버튼 (단일 또는 다중 선택)
-          if (_selectedDate != null || (widget.allowMultipleDates && _selectedDates.isNotEmpty)) ...[
+          if (_selectedDate != null ||
+              (widget.allowMultipleDates && _selectedDates.isNotEmpty)) ...[
             const SizedBox(height: DSSpacing.sm),
             _buildConfirmButton(context),
           ],
@@ -500,7 +508,8 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
               '${date.day}',
               style: typography.labelMedium.copyWith(
                 color: textColor,
-                fontWeight: isSelected || isToday ? FontWeight.w600 : FontWeight.w400,
+                fontWeight:
+                    isSelected || isToday ? FontWeight.w600 : FontWeight.w400,
               ),
             ),
             // 다중 선택 시 순서 표시 배지
@@ -665,7 +674,8 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
 
     // 다중 날짜 선택 모드: 모든 날짜의 이벤트 통합 표시
     if (widget.allowMultipleDates && _selectedDates.length > 1) {
-      final totalEvents = _eventsPerDate.values.fold<int>(0, (sum, events) => sum + events.length);
+      final totalEvents = _eventsPerDate.values
+          .fold<int>(0, (sum, events) => sum + events.length);
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -713,7 +723,9 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
             )
           else
             // 날짜별로 이벤트 그룹화해서 표시
-            ..._eventsPerDate.entries.where((e) => e.value.isNotEmpty).map((entry) {
+            ..._eventsPerDate.entries
+                .where((e) => e.value.isNotEmpty)
+                .map((entry) {
               final date = entry.key;
               final events = entry.value;
               return Column(
@@ -874,7 +886,8 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
                         ],
                       ),
                     ],
-                    if (event.location != null && event.location!.isNotEmpty) ...[
+                    if (event.location != null &&
+                        event.location!.isNotEmpty) ...[
                       const SizedBox(height: 2),
                       Row(
                         children: [
@@ -916,7 +929,8 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
     // 다중 날짜 선택 모드
     if (widget.allowMultipleDates && _selectedDates.isNotEmpty) {
       final count = _selectedDates.length;
-      final totalEvents = _eventsPerDate.values.fold<int>(0, (sum, events) => sum + events.length);
+      final totalEvents = _eventsPerDate.values
+          .fold<int>(0, (sum, events) => sum + events.length);
 
       if (count == 1) {
         final dateStr = _formatDate(_selectedDates.first);

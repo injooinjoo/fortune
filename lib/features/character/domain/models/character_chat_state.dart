@@ -11,8 +11,8 @@ class CharacterChatState {
   final bool isInitialized;
   final String? error;
   final CharacterAffinity affinity;
-  final int unreadCount;           // 읽지 않은 캐릭터 메시지 수
-  final bool isCharacterTyping;    // 캐릭터가 타이핑 중 (DM 목록용)
+  final int unreadCount; // 읽지 않은 캐릭터 메시지 수
+  final bool isCharacterTyping; // 캐릭터가 타이핑 중 (DM 목록용)
 
   const CharacterChatState({
     required this.characterId,
@@ -28,7 +28,8 @@ class CharacterChatState {
   });
 
   /// 마지막 메시지 텍스트 (DM 미리보기용)
-  String? get lastMessageText => messages.isNotEmpty ? messages.last.text : null;
+  String? get lastMessageText =>
+      messages.isNotEmpty ? messages.last.text : null;
 
   /// 마지막 메시지 시간
   DateTime? get lastMessageTime =>
@@ -46,9 +47,9 @@ class CharacterChatState {
 
   /// 정렬 우선순위 계산 (DM 목록용)
   int get sortPriority {
-    if (isCharacterTyping) return 0;  // 입력 중 최상위
-    if (unreadCount > 0) return 1;    // 새 메시지 있음
-    return 2;                          // 일반
+    if (isCharacterTyping) return 0; // 입력 중 최상위
+    if (unreadCount > 0) return 1; // 새 메시지 있음
+    return 2; // 일반
   }
 
   CharacterChatState copyWith({

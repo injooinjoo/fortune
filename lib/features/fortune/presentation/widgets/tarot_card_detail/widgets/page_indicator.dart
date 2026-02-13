@@ -14,16 +14,7 @@ class TarotPageIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pageNames = [
-      '이미지',
-      '스토리',
-      '상징',
-      '의미',
-      '심화해석',
-      '실천',
-      '관계',
-      '조언'
-    ];
+    final pageNames = ['이미지', '스토리', '상징', '의미', '심화해석', '실천', '관계', '조언'];
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -55,8 +46,7 @@ class TarotPageIndicator extends StatelessWidget {
                     );
                   },
                   child: Container(
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 4 * 1.5),
+                    margin: const EdgeInsets.symmetric(horizontal: 4 * 1.5),
                     child: Column(
                       children: [
                         AnimatedContainer(
@@ -72,8 +62,7 @@ class TarotPageIndicator extends StatelessWidget {
                               color: isActive
                                   ? DSColors.accentSecondary
                                       .withValues(alpha: 0.5)
-                                  : Colors.white
-                                      .withValues(alpha: 0.3),
+                                  : Colors.white.withValues(alpha: 0.3),
                               width: 2,
                             ),
                             boxShadow: isActive
@@ -93,8 +82,7 @@ class TarotPageIndicator extends StatelessWidget {
                               style: TextStyle(
                                 color: isActive
                                     ? Colors.white
-                                    : Colors.white
-                                        .withValues(alpha: 0.7),
+                                    : Colors.white.withValues(alpha: 0.7),
                                 fontWeight: isActive
                                     ? FontWeight.bold
                                     : FontWeight.normal,
@@ -106,14 +94,12 @@ class TarotPageIndicator extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           pageNames[index],
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(
-                                fontWeight: isActive
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: isActive
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                  ),
                         ),
                       ],
                     ),

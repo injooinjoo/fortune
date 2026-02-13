@@ -99,10 +99,14 @@ class StemBranchRelations {
 
   /// 천간 충 매핑
   static const Map<String, String> cheonGanChung = {
-    '갑': '경', '경': '갑',
-    '을': '신', '신': '을',
-    '병': '임', '임': '병',
-    '정': '계', '계': '정',
+    '갑': '경',
+    '경': '갑',
+    '을': '신',
+    '신': '을',
+    '병': '임',
+    '임': '병',
+    '정': '계',
+    '계': '정',
   };
 
   // ============================================================
@@ -155,12 +159,18 @@ class StemBranchRelations {
 
   /// 지지충 역매핑 (편의용)
   static const Map<String, String> _chungPairs = {
-    '자': '오', '오': '자',
-    '축': '미', '미': '축',
-    '인': '신', '신': '인',
-    '묘': '유', '유': '묘',
-    '진': '술', '술': '진',
-    '사': '해', '해': '사',
+    '자': '오',
+    '오': '자',
+    '축': '미',
+    '미': '축',
+    '인': '신',
+    '신': '인',
+    '묘': '유',
+    '유': '묘',
+    '진': '술',
+    '술': '진',
+    '사': '해',
+    '해': '사',
   };
 
   // ============================================================
@@ -193,12 +203,18 @@ class StemBranchRelations {
   // ============================================================
 
   static const Map<String, String> jiJiPa = {
-    '자': '유', '유': '자',
-    '축': '진', '진': '축',
-    '인': '해', '해': '인',
-    '묘': '오', '오': '묘',
-    '사': '신', '신': '사',
-    '미': '술', '술': '미',
+    '자': '유',
+    '유': '자',
+    '축': '진',
+    '진': '축',
+    '인': '해',
+    '해': '인',
+    '묘': '오',
+    '오': '묘',
+    '사': '신',
+    '신': '사',
+    '미': '술',
+    '술': '미',
   };
 
   // ============================================================
@@ -216,12 +232,18 @@ class StemBranchRelations {
 
   /// 육해 역매핑
   static const Map<String, String> _haePairs = {
-    '자': '미', '미': '자',
-    '축': '오', '오': '축',
-    '인': '사', '사': '인',
-    '묘': '진', '진': '묘',
-    '신': '해', '해': '신',
-    '유': '술', '술': '유',
+    '자': '미',
+    '미': '자',
+    '축': '오',
+    '오': '축',
+    '인': '사',
+    '사': '인',
+    '묘': '진',
+    '진': '묘',
+    '신': '해',
+    '해': '신',
+    '유': '술',
+    '술': '유',
   };
 
   // ============================================================
@@ -272,14 +294,16 @@ class StemBranchRelations {
   }
 
   /// 두 지지의 관계 분석
-  static List<SajuRelation> analyzeBranchRelation(String branch1, String branch2) {
+  static List<SajuRelation> analyzeBranchRelation(
+      String branch1, String branch2) {
     final relations = <SajuRelation>[];
 
     // 육합 확인
     final yukHapKey1 = '$branch1$branch2';
     final yukHapKey2 = '$branch2$branch1';
 
-    if (jiJiYukHap.containsKey(yukHapKey1) || jiJiYukHap.containsKey(yukHapKey2)) {
+    if (jiJiYukHap.containsKey(yukHapKey1) ||
+        jiJiYukHap.containsKey(yukHapKey2)) {
       final data = jiJiYukHap[yukHapKey1] ?? jiJiYukHap[yukHapKey2]!;
       relations.add(SajuRelation(
         type: RelationType.combination,
@@ -508,12 +532,30 @@ class StemBranchRelations {
   // ============================================================
 
   static const Map<String, String> _stemToHanja = {
-    '갑': '甲', '을': '乙', '병': '丙', '정': '丁', '무': '戊',
-    '기': '己', '경': '庚', '신': '辛', '임': '壬', '계': '癸',
+    '갑': '甲',
+    '을': '乙',
+    '병': '丙',
+    '정': '丁',
+    '무': '戊',
+    '기': '己',
+    '경': '庚',
+    '신': '辛',
+    '임': '壬',
+    '계': '癸',
   };
 
   static const Map<String, String> _branchToHanja = {
-    '자': '子', '축': '丑', '인': '寅', '묘': '卯', '진': '辰', '사': '巳',
-    '오': '午', '미': '未', '신': '申', '유': '酉', '술': '戌', '해': '亥',
+    '자': '子',
+    '축': '丑',
+    '인': '寅',
+    '묘': '卯',
+    '진': '辰',
+    '사': '巳',
+    '오': '午',
+    '미': '未',
+    '신': '申',
+    '유': '酉',
+    '술': '戌',
+    '해': '亥',
   };
 }

@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../core/design_system/design_system.dart';
 
-enum ToastType {
-  success, error, warning, info
-}
+enum ToastType { success, error, warning, info }
 
 class Toast {
   static OverlayEntry? _currentToast;
 
-  static void show(
-    BuildContext context, {
-    required String message,
-    ToastType type = ToastType.info,
-    Duration duration = const Duration(seconds: 3),
-    VoidCallback? onTap}) {
+  static void show(BuildContext context,
+      {required String message,
+      ToastType type = ToastType.info,
+      Duration duration = const Duration(seconds: 3),
+      VoidCallback? onTap}) {
     // Remove any existing toast
     _currentToast?.remove();
     _currentToast = null;

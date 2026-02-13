@@ -224,7 +224,8 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
                         left: constraints.maxWidth * area.relativeRect.left,
                         top: constraints.maxHeight * area.relativeRect.top,
                         width: constraints.maxWidth * area.relativeRect.width,
-                        height: constraints.maxHeight * area.relativeRect.height,
+                        height:
+                            constraints.maxHeight * area.relativeRect.height,
                         child: GestureDetector(
                           onTap: () => onZoneTap(dataKey),
                           child: Container(
@@ -306,9 +307,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
               child: Text(
                 '관상 분석 결과',
                 style: context.labelLarge.copyWith(
-                  color: isDark
-                      ? DSColors.textPrimary
-                      : DSColors.textPrimary,
+                  color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -348,8 +347,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
     return CustomPaint(
       size: Size(constraints.maxWidth * 0.8, constraints.maxHeight * 0.9),
       painter: _FaceOutlinePainter(
-        color:
-            isDark ? DSColors.textTertiary : DSColors.textTertiary,
+        color: isDark ? DSColors.textTertiary : DSColors.textTertiary,
       ),
     );
   }

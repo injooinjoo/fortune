@@ -31,7 +31,9 @@ class TrendInsightBanner extends ConsumerWidget {
     final isDark = context.isDark;
     final trackerState = ref.watch(faceConditionTrackerProvider);
     final trendDirection = ref.watch(conditionTrendDirectionProvider);
-    final trendInsight = customInsight ?? ref.watch(conditionTrendInsightProvider) ?? '이번 주 트렌드를 분석 중이에요';
+    final trendInsight = customInsight ??
+        ref.watch(conditionTrendInsightProvider) ??
+        '이번 주 트렌드를 분석 중이에요';
 
     // 트렌드 방향에 따른 스타일
     final (color, icon, emoji) = _getTrendStyle(trendDirection);

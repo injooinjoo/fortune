@@ -13,7 +13,7 @@ class TokenBalanceWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tokenState = ref.watch(tokenProvider);
     final balance = tokenState.balance;
-    
+
     if (balance == null && !tokenState.isLoading) {
       return const SizedBox.shrink();
     }
@@ -28,9 +28,7 @@ class TokenBalanceWidget extends ConsumerWidget {
       child: GlassContainer(
         key: tokenBalanceGlobalKey,
         padding: const EdgeInsets.symmetric(
-          horizontal: DSSpacing.sm,
-          vertical: DSSpacing.xs
-        ),
+            horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
         borderRadius: BorderRadius.circular(DSRadius.lg),
         blur: 10,
         child: Row(
@@ -50,7 +48,7 @@ class TokenBalanceWidget extends ConsumerWidget {
               ),
             ),
             const SizedBox(width: DSSpacing.xs),
-            
+
             // Balance or Loading
             if (tokenState.isLoading)
               SizedBox(
@@ -97,30 +95,26 @@ class FullTokenBalanceWidget extends ConsumerWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(DSSpacing.lg),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              colors.accentTertiary.withValues(alpha: 0.1),
-              colors.accentTertiary.withValues(alpha: 0.05)]),
-          borderRadius: BorderRadius.circular(DSRadius.lg),
-          border: Border.all(
-            color: colors.accentTertiary.withValues(alpha: 0.2),
-            width: 1)),
+            gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  colors.accentTertiary.withValues(alpha: 0.1),
+                  colors.accentTertiary.withValues(alpha: 0.05)
+                ]),
+            borderRadius: BorderRadius.circular(DSRadius.lg),
+            border: Border.all(
+                color: colors.accentTertiary.withValues(alpha: 0.2), width: 1)),
         child: Column(
           children: [
             // Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '토큰 잔액',
-                  style: typography.headingSmall.copyWith(
-                    color: colors.textPrimary)),
-                Icon(
-                  Icons.add_circle_outline,
-                  color: colors.accentTertiary,
-                  size: 24)]),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Text('토큰 잔액',
+                  style: typography.headingSmall
+                      .copyWith(color: colors.textPrimary)),
+              Icon(Icons.add_circle_outline,
+                  color: colors.accentTertiary, size: 24)
+            ]),
             const SizedBox(height: DSSpacing.sm),
 
             // Balance Display
@@ -136,32 +130,28 @@ class FullTokenBalanceWidget extends ConsumerWidget {
                 ),
               )
             else
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(DSSpacing.sm),
-                    decoration: BoxDecoration(
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Container(
+                  padding: const EdgeInsets.all(DSSpacing.sm),
+                  decoration: BoxDecoration(
                       color: colors.accentTertiary.withValues(alpha: 0.1),
                       shape: BoxShape.circle),
-                    child: Icon(
-                      Icons.auto_awesome,
-                      size: 32,
-                      color: colors.accentTertiary,
-                    ),
+                  child: Icon(
+                    Icons.auto_awesome,
+                    size: 32,
+                    color: colors.accentTertiary,
                   ),
-                  const SizedBox(width: DSSpacing.sm),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        balance?.toString() ?? '0',
-                        style: typography.numberLarge.copyWith(
-                          color: colors.textPrimary)),
-                      Text(
-                        '토큰',
-                        style: typography.bodySmall.copyWith(
-                          color: colors.textSecondary))])]),
+                ),
+                const SizedBox(width: DSSpacing.sm),
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(balance?.toString() ?? '0',
+                      style: typography.numberLarge
+                          .copyWith(color: colors.textPrimary)),
+                  Text('토큰',
+                      style: typography.bodySmall
+                          .copyWith(color: colors.textSecondary))
+                ])
+              ]),
 
             const SizedBox(height: DSSpacing.md),
 
@@ -195,10 +185,9 @@ class TokenBalanceStats extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '토큰 사용 통계',
-            style: typography.headingSmall.copyWith(
-              color: colors.textPrimary)),
+          Text('토큰 사용 통계',
+              style:
+                  typography.headingSmall.copyWith(color: colors.textPrimary)),
           const SizedBox(height: DSSpacing.sm),
 
           // Stats rows - TODO: Add these fields to TokenState

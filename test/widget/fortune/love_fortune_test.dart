@@ -166,7 +166,6 @@ void main() {
         expect(find.text('관계 발전'), findsOneWidget);
       });
     });
-
   });
 }
 
@@ -189,7 +188,8 @@ class _MockLoveFortunePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('연애운', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const Text('연애운',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 24),
             const Text('연애 상태'),
             Wrap(

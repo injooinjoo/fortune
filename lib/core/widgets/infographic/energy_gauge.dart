@@ -85,7 +85,9 @@ class EnergyGauge extends StatelessWidget {
                 Text(
                   label!,
                   style: context.labelMedium.copyWith(
-                    color: isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
+                    color: isDark
+                        ? DSColors.textSecondaryDark
+                        : DSColors.textSecondary,
                   ),
                 ),
               const Spacer(),
@@ -93,7 +95,9 @@ class EnergyGauge extends StatelessWidget {
                 Text(
                   showPercent ? '${_percentage.round()}%' : '$value/$maxValue',
                   style: context.numberSmall.copyWith(
-                    color: isDark ? DSColors.textPrimaryDark : DSColors.textPrimary,
+                    color: isDark
+                        ? DSColors.textPrimaryDark
+                        : DSColors.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -108,7 +112,9 @@ class EnergyGauge extends StatelessWidget {
           height: height,
           color: color ?? _getValueColor(isDark),
           backgroundColor: backgroundColor ??
-              (isDark ? DSColors.backgroundSecondaryDark : DSColors.backgroundSecondary),
+              (isDark
+                  ? DSColors.backgroundSecondaryDark
+                  : DSColors.backgroundSecondary),
           animate: animate,
           animationDuration: animationDuration,
           useGradient: useGradient,
@@ -190,7 +196,8 @@ class _AnimatedGaugeBarState extends State<_AnimatedGaugeBar>
   @override
   void didUpdateWidget(_AnimatedGaugeBar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.value != widget.value || oldWidget.maxValue != widget.maxValue) {
+    if (oldWidget.value != widget.value ||
+        oldWidget.maxValue != widget.maxValue) {
       _animation = Tween<double>(
         begin: _animation.value,
         end: widget.value / widget.maxValue,
@@ -337,7 +344,8 @@ class _GaugeBox extends StatelessWidget {
           Text(
             label,
             style: context.labelMedium.copyWith(
-              color: isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
+              color:
+                  isDark ? DSColors.textSecondaryDark : DSColors.textSecondary,
             ),
           ),
           const SizedBox(height: 12),

@@ -77,9 +77,7 @@ class _ProfileVerificationPageState
               Icon(
                 icon,
                 size: 22,
-                color: isSelected
-                    ? context.colors.accent
-                    : _secondaryTextColor,
+                color: isSelected ? context.colors.accent : _secondaryTextColor,
               ),
               const SizedBox(width: DSSpacing.md),
 
@@ -110,7 +108,8 @@ class _ProfileVerificationPageState
               Radio<String>(
                 value: method,
                 groupValue: _selectedMethod, // ignore: deprecated_member_use
-                onChanged: (value) { // ignore: deprecated_member_use
+                onChanged: (value) {
+                  // ignore: deprecated_member_use
                   if (value != null) {
                     setState(() {
                       _selectedMethod = value;

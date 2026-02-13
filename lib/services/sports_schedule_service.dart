@@ -2,7 +2,8 @@ import 'dart:math';
 import '../core/services/resilient_service.dart';
 import '../core/utils/logger.dart';
 import '../features/fortune/domain/models/sports_schedule.dart';
-import '../core/constants/sports_teams.dart' show getTeamsBySport, getTeamsByLeague;
+import '../core/constants/sports_teams.dart'
+    show getTeamsBySport, getTeamsByLeague;
 
 /// 스포츠 경기 일정 서비스
 ///
@@ -11,7 +12,8 @@ import '../core/constants/sports_teams.dart' show getTeamsBySport, getTeamsByLea
 /// - 12시간 캐싱
 /// - Mock 데이터 fallback
 class SportsScheduleService extends ResilientService {
-  static final SportsScheduleService _instance = SportsScheduleService._internal();
+  static final SportsScheduleService _instance =
+      SportsScheduleService._internal();
   factory SportsScheduleService() => _instance;
   SportsScheduleService._internal();
 
@@ -28,40 +30,39 @@ class SportsScheduleService extends ResilientService {
   static const Duration _cacheDuration = Duration(hours: 12);
 
   /// 종목별 경기 일정 조회
-  Future<List<SportsGame>> getSchedule(SportType sport, {DateTime? from, DateTime? to}) async {
-    final cacheKey = '${sport.name}_${from?.toIso8601String()}_${to?.toIso8601String()}';
+  Future<List<SportsGame>> getSchedule(SportType sport,
+      {DateTime? from, DateTime? to}) async {
+    final cacheKey =
+        '${sport.name}_${from?.toIso8601String()}_${to?.toIso8601String()}';
 
-    return await safeExecuteWithFallbackFunction(
-      () async {
-        // 캐시 확인
-        if (_isCacheValid(cacheKey)) {
-          Logger.info('[$serviceName] Cache hit: $cacheKey');
-          return _cache[cacheKey]!;
-        }
+    return await safeExecuteWithFallbackFunction(() async {
+      // 캐시 확인
+      if (_isCacheValid(cacheKey)) {
+        Logger.info('[$serviceName] Cache hit: $cacheKey');
+        return _cache[cacheKey]!;
+      }
 
-        // TODO: 실제 API 연동 시 구현
-        // - KBO: 네이버 스포츠 크롤링 또는 KBO 공식 API
-        // - K리그: 네이버 스포츠 또는 K리그 공식
-        // - KBL: 네이버 스포츠
-        // - V리그: 네이버 스포츠
-        // - LCK: Liquipedia API 또는 LoL Esports API
+      // TODO: 실제 API 연동 시 구현
+      // - KBO: 네이버 스포츠 크롤링 또는 KBO 공식 API
+      // - K리그: 네이버 스포츠 또는 K리그 공식
+      // - KBL: 네이버 스포츠
+      // - V리그: 네이버 스포츠
+      // - LCK: Liquipedia API 또는 LoL Esports API
 
-        // 현재는 Mock 데이터 사용
-        final schedule = _generateMockSchedule(sport, from, to);
+      // 현재는 Mock 데이터 사용
+      final schedule = _generateMockSchedule(sport, from, to);
 
-        // 캐시 업데이트
-        _updateCache(cacheKey, schedule);
+      // 캐시 업데이트
+      _updateCache(cacheKey, schedule);
 
-        return schedule;
-      },
-      () async {
-        // Fallback: Mock 데이터
-        Logger.warning('[$serviceName] Using fallback mock data for ${sport.name}');
-        return _generateMockSchedule(sport, from, to);
-      },
-      '${sport.displayName} 일정 조회',
-      '${sport.displayName} API 연결 실패, 샘플 일정 데이터 제공'
-    );
+      return schedule;
+    }, () async {
+      // Fallback: Mock 데이터
+      Logger.warning(
+          '[$serviceName] Using fallback mock data for ${sport.name}');
+      return _generateMockSchedule(sport, from, to);
+    }, '${sport.displayName} 일정 조회',
+        '${sport.displayName} API 연결 실패, 샘플 일정 데이터 제공');
   }
 
   /// 특정 팀의 경기 일정 조회
@@ -72,9 +73,9 @@ class SportsScheduleService extends ResilientService {
     DateTime? to,
   }) async {
     final allGames = await getSchedule(sport, from: from, to: to);
-    return allGames.where((game) =>
-      game.homeTeam == teamName || game.awayTeam == teamName
-    ).toList();
+    return allGames
+        .where((game) => game.homeTeam == teamName || game.awayTeam == teamName)
+        .toList();
   }
 
   /// 오늘의 경기 조회
@@ -103,39 +104,36 @@ class SportsScheduleService extends ResilientService {
     final nextWeek = today.add(const Duration(days: 7));
     final cacheKey = 'league_${league}_${today.toIso8601String()}';
 
-    return await safeExecuteWithFallbackFunction(
-      () async {
-        // 캐시 확인
-        if (_isCacheValid(cacheKey)) {
-          Logger.info('[$serviceName] Cache hit: $cacheKey');
-          return _cache[cacheKey]!;
-        }
+    return await safeExecuteWithFallbackFunction(() async {
+      // 캐시 확인
+      if (_isCacheValid(cacheKey)) {
+        Logger.info('[$serviceName] Cache hit: $cacheKey');
+        return _cache[cacheKey]!;
+      }
 
-        // 리그에 맞는 종목 찾기
-        final sport = _getSportTypeByLeague(league);
-        if (sport == null) {
-          Logger.warning('[$serviceName] Unknown league: $league');
-          return [];
-        }
+      // 리그에 맞는 종목 찾기
+      final sport = _getSportTypeByLeague(league);
+      if (sport == null) {
+        Logger.warning('[$serviceName] Unknown league: $league');
+        return [];
+      }
 
-        // Mock 데이터 생성 (리그별 필터링)
-        final schedule = _generateMockScheduleByLeague(sport, league, today, nextWeek);
+      // Mock 데이터 생성 (리그별 필터링)
+      final schedule =
+          _generateMockScheduleByLeague(sport, league, today, nextWeek);
 
-        // 캐시 업데이트
-        _updateCache(cacheKey, schedule);
+      // 캐시 업데이트
+      _updateCache(cacheKey, schedule);
 
-        return schedule;
-      },
-      () async {
-        // Fallback: Mock 데이터
-        Logger.warning('[$serviceName] Using fallback mock data for league $league');
-        final sport = _getSportTypeByLeague(league);
-        if (sport == null) return [];
-        return _generateMockScheduleByLeague(sport, league, today, nextWeek);
-      },
-      '$league 일정 조회',
-      '$league API 연결 실패, 샘플 일정 데이터 제공'
-    );
+      return schedule;
+    }, () async {
+      // Fallback: Mock 데이터
+      Logger.warning(
+          '[$serviceName] Using fallback mock data for league $league');
+      final sport = _getSportTypeByLeague(league);
+      if (sport == null) return [];
+      return _generateMockScheduleByLeague(sport, league, today, nextWeek);
+    }, '$league 일정 조회', '$league API 연결 실패, 샘플 일정 데이터 제공');
   }
 
   /// 리그로 종목 타입 찾기
@@ -176,20 +174,26 @@ class SportsScheduleService extends ResilientService {
     final games = <SportsGame>[];
 
     // 7일간의 경기 생성 (하루 2-4경기)
-    for (var day = from; day.isBefore(to); day = day.add(const Duration(days: 1))) {
+    for (var day = from;
+        day.isBefore(to);
+        day = day.add(const Duration(days: 1))) {
       final gamesPerDay = random.nextInt(3) + 2; // 2-4경기
       final usedTeams = <String>{};
 
-      for (var i = 0; i < gamesPerDay && usedTeams.length < teams.length - 1; i++) {
+      for (var i = 0;
+          i < gamesPerDay && usedTeams.length < teams.length - 1;
+          i++) {
         // 홈팀 선택 (아직 사용되지 않은 팀)
-        final availableTeams = teams.where((t) => !usedTeams.contains(t.name)).toList();
+        final availableTeams =
+            teams.where((t) => !usedTeams.contains(t.name)).toList();
         if (availableTeams.length < 2) break;
 
         final homeTeam = availableTeams[random.nextInt(availableTeams.length)];
         usedTeams.add(homeTeam.name);
 
         // 어웨이팀 선택
-        final awayAvailable = availableTeams.where((t) => t.name != homeTeam.name).toList();
+        final awayAvailable =
+            availableTeams.where((t) => t.name != homeTeam.name).toList();
         final awayTeam = awayAvailable[random.nextInt(awayAvailable.length)];
         usedTeams.add(awayTeam.name);
 
@@ -204,7 +208,9 @@ class SportsScheduleService extends ResilientService {
           awayTeam: awayTeam.name,
           gameTime: gameTime,
           venue: _getVenue(sport, homeTeam.name),
-          status: gameTime.isBefore(now) ? GameStatus.finished : GameStatus.scheduled,
+          status: gameTime.isBefore(now)
+              ? GameStatus.finished
+              : GameStatus.scheduled,
           league: league,
           season: '2024',
         ));
@@ -256,20 +262,26 @@ class SportsScheduleService extends ResilientService {
     final games = <SportsGame>[];
 
     // 7일간의 경기 생성 (하루 2-4경기)
-    for (var day = startDate; day.isBefore(endDate); day = day.add(const Duration(days: 1))) {
+    for (var day = startDate;
+        day.isBefore(endDate);
+        day = day.add(const Duration(days: 1))) {
       final gamesPerDay = random.nextInt(3) + 2; // 2-4경기
       final usedTeams = <String>{};
 
-      for (var i = 0; i < gamesPerDay && usedTeams.length < teams.length - 1; i++) {
+      for (var i = 0;
+          i < gamesPerDay && usedTeams.length < teams.length - 1;
+          i++) {
         // 홈팀 선택 (아직 사용되지 않은 팀)
-        final availableTeams = teams.where((t) => !usedTeams.contains(t.name)).toList();
+        final availableTeams =
+            teams.where((t) => !usedTeams.contains(t.name)).toList();
         if (availableTeams.length < 2) break;
 
         final homeTeam = availableTeams[random.nextInt(availableTeams.length)];
         usedTeams.add(homeTeam.name);
 
         // 어웨이팀 선택
-        final awayAvailable = availableTeams.where((t) => t.name != homeTeam.name).toList();
+        final awayAvailable =
+            availableTeams.where((t) => t.name != homeTeam.name).toList();
         final awayTeam = awayAvailable[random.nextInt(awayAvailable.length)];
         usedTeams.add(awayTeam.name);
 
@@ -284,7 +296,9 @@ class SportsScheduleService extends ResilientService {
           awayTeam: awayTeam.name,
           gameTime: gameTime,
           venue: _getVenue(sport, homeTeam.name),
-          status: gameTime.isBefore(now) ? GameStatus.finished : GameStatus.scheduled,
+          status: gameTime.isBefore(now)
+              ? GameStatus.finished
+              : GameStatus.scheduled,
           league: sport.league,
           season: '2024',
         ));
@@ -409,7 +423,8 @@ class SportsScheduleService extends ResilientService {
   }
 
   /// Static 호환성 래퍼
-  static Future<List<SportsGame>> getScheduleStatic(SportType sport, {DateTime? from, DateTime? to}) {
+  static Future<List<SportsGame>> getScheduleStatic(SportType sport,
+      {DateTime? from, DateTime? to}) {
     return _instance.getSchedule(sport, from: from, to: to);
   }
 

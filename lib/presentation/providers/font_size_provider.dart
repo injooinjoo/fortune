@@ -52,7 +52,8 @@ final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
   throw UnimplementedError('sharedPreferencesProvider must be overridden');
 });
 
-final fontSizeProvider = StateNotifierProvider<FontSizeNotifier, FontSize>((ref) {
+final fontSizeProvider =
+    StateNotifierProvider<FontSizeNotifier, FontSize>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
   return FontSizeNotifier(prefs);
 });

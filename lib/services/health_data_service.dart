@@ -118,53 +118,69 @@ class HealthDataService {
     DateTime yesterday,
   ) {
     // 걸음 수
-    final stepsData = data.where((d) => d.type == HealthDataType.STEPS).toList();
+    final stepsData =
+        data.where((d) => d.type == HealthDataType.STEPS).toList();
     final avgSteps = _calculateAverageDailyValue(stepsData, 7);
     final todaySteps = _getTodayValue(stepsData);
 
     // 수면 시간
-    final sleepData = data.where((d) =>
-      d.type == HealthDataType.SLEEP_ASLEEP ||
-      d.type == HealthDataType.SLEEP_IN_BED
-    ).toList();
+    final sleepData = data
+        .where((d) =>
+            d.type == HealthDataType.SLEEP_ASLEEP ||
+            d.type == HealthDataType.SLEEP_IN_BED)
+        .toList();
     final avgSleep = _calculateAverageSleepHours(sleepData, 7);
     final lastNightSleep = _getLastNightSleep(sleepData);
 
     // 심박수
-    final heartRateData = data.where((d) => d.type == HealthDataType.HEART_RATE).toList();
+    final heartRateData =
+        data.where((d) => d.type == HealthDataType.HEART_RATE).toList();
     final avgHeartRate = _calculateAverageValue(heartRateData);
-    final restingHeartRateData = data.where((d) => d.type == HealthDataType.RESTING_HEART_RATE).toList();
+    final restingHeartRateData =
+        data.where((d) => d.type == HealthDataType.RESTING_HEART_RATE).toList();
     final restingHeartRate = _getLatestValue(restingHeartRateData);
 
     // 활동 칼로리
-    final caloriesData = data.where((d) => d.type == HealthDataType.ACTIVE_ENERGY_BURNED).toList();
+    final caloriesData = data
+        .where((d) => d.type == HealthDataType.ACTIVE_ENERGY_BURNED)
+        .toList();
     final avgCalories = _calculateAverageDailyValue(caloriesData, 7);
     final todayCalories = _getTodayValue(caloriesData);
 
     // 걸은 거리
-    final distanceData = data.where((d) => d.type == HealthDataType.DISTANCE_WALKING_RUNNING).toList();
+    final distanceData = data
+        .where((d) => d.type == HealthDataType.DISTANCE_WALKING_RUNNING)
+        .toList();
     final avgDistance = _calculateAverageDailyValue(distanceData, 7);
 
     // 체중
-    final weightData = data.where((d) => d.type == HealthDataType.WEIGHT).toList();
+    final weightData =
+        data.where((d) => d.type == HealthDataType.WEIGHT).toList();
     final latestWeight = _getLatestValue(weightData);
 
     // 혈압
-    final systolicData = data.where((d) => d.type == HealthDataType.BLOOD_PRESSURE_SYSTOLIC).toList();
-    final diastolicData = data.where((d) => d.type == HealthDataType.BLOOD_PRESSURE_DIASTOLIC).toList();
+    final systolicData = data
+        .where((d) => d.type == HealthDataType.BLOOD_PRESSURE_SYSTOLIC)
+        .toList();
+    final diastolicData = data
+        .where((d) => d.type == HealthDataType.BLOOD_PRESSURE_DIASTOLIC)
+        .toList();
     final latestSystolic = _getLatestValue(systolicData);
     final latestDiastolic = _getLatestValue(diastolicData);
 
     // 혈당
-    final glucoseData = data.where((d) => d.type == HealthDataType.BLOOD_GLUCOSE).toList();
+    final glucoseData =
+        data.where((d) => d.type == HealthDataType.BLOOD_GLUCOSE).toList();
     final latestGlucose = _getLatestValue(glucoseData);
 
     // 산소포화도
-    final oxygenData = data.where((d) => d.type == HealthDataType.BLOOD_OXYGEN).toList();
+    final oxygenData =
+        data.where((d) => d.type == HealthDataType.BLOOD_OXYGEN).toList();
     final latestOxygen = _getLatestValue(oxygenData);
 
     // 운동 횟수
-    final workoutData = data.where((d) => d.type == HealthDataType.WORKOUT).toList();
+    final workoutData =
+        data.where((d) => d.type == HealthDataType.WORKOUT).toList();
     final workoutCount = workoutData.length;
 
     return HealthSummary(
@@ -208,7 +224,8 @@ class HealthDataService {
     // 날짜별로 그룹화
     final dailyTotals = <DateTime, double>{};
     for (final point in data) {
-      final date = DateTime(point.dateFrom.year, point.dateFrom.month, point.dateFrom.day);
+      final date = DateTime(
+          point.dateFrom.year, point.dateFrom.month, point.dateFrom.day);
       final value = _extractNumericValue(point);
       if (value != null) {
         dailyTotals[date] = (dailyTotals[date] ?? 0) + value;
@@ -226,13 +243,12 @@ class HealthDataService {
     final today = DateTime.now();
     final todayStart = DateTime(today.year, today.month, today.day);
 
-    final todayData = data.where((d) => d.dateFrom.isAfter(todayStart)).toList();
+    final todayData =
+        data.where((d) => d.dateFrom.isAfter(todayStart)).toList();
     if (todayData.isEmpty) return null;
 
-    final values = todayData
-        .map(_extractNumericValue)
-        .whereType<double>()
-        .toList();
+    final values =
+        todayData.map(_extractNumericValue).whereType<double>().toList();
 
     if (values.isEmpty) return null;
 
@@ -246,7 +262,8 @@ class HealthDataService {
     // 날짜별로 그룹화
     final dailySleep = <DateTime, double>{};
     for (final point in data) {
-      final date = DateTime(point.dateFrom.year, point.dateFrom.month, point.dateFrom.day);
+      final date = DateTime(
+          point.dateFrom.year, point.dateFrom.month, point.dateFrom.day);
       final minutes = point.dateTo.difference(point.dateFrom).inMinutes;
       dailySleep[date] = (dailySleep[date] ?? 0) + minutes;
     }
@@ -263,15 +280,18 @@ class HealthDataService {
     final yesterday = DateTime(today.year, today.month, today.day - 1);
     final todayStart = DateTime(today.year, today.month, today.day);
 
-    final lastNightData = data.where((d) =>
-      d.dateFrom.isAfter(yesterday) && d.dateTo.isBefore(todayStart.add(const Duration(hours: 12)))
-    ).toList();
+    final lastNightData = data
+        .where((d) =>
+            d.dateFrom.isAfter(yesterday) &&
+            d.dateTo.isBefore(todayStart.add(const Duration(hours: 12))))
+        .toList();
 
     if (lastNightData.isEmpty) return null;
 
-    final totalMinutes = lastNightData.fold(0, (sum, point) =>
-      sum + point.dateTo.difference(point.dateFrom).inMinutes
-    );
+    final totalMinutes = lastNightData.fold(
+        0,
+        (sum, point) =>
+            sum + point.dateTo.difference(point.dateFrom).inMinutes);
 
     return totalMinutes / 60;
   }
@@ -388,7 +408,8 @@ class HealthSummary {
       'blood_oxygen': bloodOxygen?.toStringAsFixed(1),
 
       // 메타데이터
-      'data_period': '${dataStartDate.toString().split(' ')[0]} ~ ${dataEndDate.toString().split(' ')[0]}',
+      'data_period':
+          '${dataStartDate.toString().split(' ')[0]} ~ ${dataEndDate.toString().split(' ')[0]}',
     };
   }
 
@@ -397,7 +418,8 @@ class HealthSummary {
     final lines = <String>[];
 
     if (averageDailySteps != null) {
-      lines.add('일평균 걸음 수: ${averageDailySteps!.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}보');
+      lines.add(
+          '일평균 걸음 수: ${averageDailySteps!.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}보');
     }
     if (averageSleepHours != null) {
       lines.add('일평균 수면 시간: ${averageSleepHours!.toStringAsFixed(1)}시간');

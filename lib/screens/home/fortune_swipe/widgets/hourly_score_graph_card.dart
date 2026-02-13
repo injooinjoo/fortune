@@ -65,12 +65,13 @@ class HourlyScoreGraphCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: const Center(
-                      child: Text('吉', style: TextStyle(
-                        color: _goodFortuneGreen,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: FontConfig.primary,
-                      )),
+                      child: Text('吉',
+                          style: TextStyle(
+                            color: _goodFortuneGreen,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: FontConfig.primary,
+                          )),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -115,12 +116,13 @@ class HourlyScoreGraphCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: const Center(
-                      child: Text('凶', style: TextStyle(
-                        color: _badFortunRed,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: FontConfig.primary,
-                      )),
+                      child: Text('凶',
+                          style: TextStyle(
+                            color: _badFortunRed,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: FontConfig.primary,
+                          )),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -181,9 +183,12 @@ class HourlyScoreGraphCard extends StatelessWidget {
                 },
               ),
               titlesData: FlTitlesData(
-                leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                leftTitles:
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                topTitles:
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                rightTitles:
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
@@ -210,14 +215,21 @@ class HourlyScoreGraphCard extends StatelessWidget {
                   // 고유 색상: 그래프 그라디언트 라인
                   gradient: LinearGradient(
                     colors: context.isDark
-                      ? [const Color(0xFF64B5F6), const Color(0xFF81C784)] // 고유 색상: 다크모드 파랑→녹색
-                      : [const Color(0xFF1E88E5), const Color(0xFF43A047)], // 고유 색상: 라이트모드 파랑→녹색
+                        ? [
+                            const Color(0xFF64B5F6),
+                            const Color(0xFF81C784)
+                          ] // 고유 색상: 다크모드 파랑→녹색
+                        : [
+                            const Color(0xFF1E88E5),
+                            const Color(0xFF43A047)
+                          ], // 고유 색상: 라이트모드 파랑→녹색
                   ),
                   barWidth: 4,
                   dotData: FlDotData(
                     show: true,
                     checkToShowDot: (spot, barData) {
-                      return spot.x.toInt() == bestHour || spot.x.toInt() == worstHour;
+                      return spot.x.toInt() == bestHour ||
+                          spot.x.toInt() == worstHour;
                     },
                     getDotPainter: (spot, percent, barData, index) {
                       final isBest = spot.x.toInt() == bestHour;
@@ -235,14 +247,18 @@ class HourlyScoreGraphCard extends StatelessWidget {
                     // 고유 색상: 그래프 영역 그라디언트
                     gradient: LinearGradient(
                       colors: context.isDark
-                        ? [
-                            const Color(0xFF64B5F6).withValues(alpha: 0.45), // 고유 색상
-                            const Color(0xFF81C784).withValues(alpha: 0.15), // 고유 색상
-                          ]
-                        : [
-                            const Color(0xFF1E88E5).withValues(alpha: 0.35), // 고유 색상
-                            const Color(0xFF43A047).withValues(alpha: 0.12), // 고유 색상
-                          ],
+                          ? [
+                              const Color(0xFF64B5F6)
+                                  .withValues(alpha: 0.45), // 고유 색상
+                              const Color(0xFF81C784)
+                                  .withValues(alpha: 0.15), // 고유 색상
+                            ]
+                          : [
+                              const Color(0xFF1E88E5)
+                                  .withValues(alpha: 0.35), // 고유 색상
+                              const Color(0xFF43A047)
+                                  .withValues(alpha: 0.12), // 고유 색상
+                            ],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),

@@ -115,7 +115,9 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                 )
               else
                 SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal, vertical: DSSpacing.sm),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: DSSpacing.pageHorizontal,
+                      vertical: DSSpacing.sm),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
@@ -129,7 +131,8 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                             ),
                           );
                         }
-                        return _buildContentCard(trendState.contents[index], colors)
+                        return _buildContentCard(
+                                trendState.contents[index], colors)
                             .animate()
                             .fadeIn(
                               delay: Duration(milliseconds: 50 * index),
@@ -152,7 +155,8 @@ class _TrendPageState extends ConsumerState<TrendPage> {
   Widget _buildHeader(DSColorScheme colors) {
     final typography = context.typography;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal, vertical: DSSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.pageHorizontal, vertical: DSSpacing.sm),
       child: Row(
         children: [
           // 좌측: 프로필 아이콘
@@ -185,7 +189,8 @@ class _TrendPageState extends ConsumerState<TrendPage> {
       height: 48,
       child: ListView(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+        padding:
+            const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
         children: [
           _buildFilterChip(
             label: '전체',
@@ -239,26 +244,21 @@ class _TrendPageState extends ConsumerState<TrendPage> {
       },
       child: AnimatedContainer(
         duration: DSAnimation.durationFast,
-        padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+        padding: const EdgeInsets.symmetric(
+            horizontal: DSSpacing.md, vertical: DSSpacing.sm),
         decoration: BoxDecoration(
           // Korean Traditional: Vermilion for selected, hanji-like for unselected
-          color: isSelected
-              ? colors.accentSecondary
-              : colors.surfaceSecondary,
+          color: isSelected ? colors.accentSecondary : colors.surfaceSecondary,
           borderRadius: BorderRadius.circular(DSRadius.lg),
           border: Border.all(
-            color: isSelected
-                ? colors.accentSecondary
-                : colors.border,
+            color: isSelected ? colors.accentSecondary : colors.border,
             width: 1,
           ),
         ),
         child: Text(
           label,
           style: typography.labelMedium.copyWith(
-            color: isSelected
-                ? colors.ctaForeground
-                : colors.textSecondary,
+            color: isSelected ? colors.ctaForeground : colors.textSecondary,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
           ),
         ),
@@ -310,7 +310,8 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                       children: [
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: DSSpacing.sm + 4, vertical: DSSpacing.xs),
+                              horizontal: DSSpacing.sm + 4,
+                              vertical: DSSpacing.xs),
                           decoration: BoxDecoration(
                             color: colors.surface.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(DSRadius.lg),
@@ -327,7 +328,8 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                         if (content.isPremium)
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: DSSpacing.sm, vertical: DSSpacing.xs),
+                                horizontal: DSSpacing.sm,
+                                vertical: DSSpacing.xs),
                             decoration: BoxDecoration(
                               color: colors.accentTertiary, // Gold accent
                               borderRadius: BorderRadius.circular(DSRadius.sm),
@@ -379,8 +381,8 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                     // Stats
                     Row(
                       children: [
-                        _buildStatItem(
-                            Icons.people_outline, '${content.participantCount}명 참여'),
+                        _buildStatItem(Icons.people_outline,
+                            '${content.participantCount}명 참여'),
                         const SizedBox(width: DSSpacing.md),
                         _buildStatItem(
                             Icons.favorite_outline, '${content.likeCount}'),
@@ -442,11 +444,20 @@ class _TrendPageState extends ConsumerState<TrendPage> {
   List<Color> _getGradientColors(TrendContentType type) {
     switch (type) {
       case TrendContentType.psychologyTest:
-        return [const Color(0xFF8134AF), const Color(0xFF515BD4)]; // 고유 색상: 심리테스트 브랜드 그라디언트
+        return [
+          const Color(0xFF8134AF),
+          const Color(0xFF515BD4)
+        ]; // 고유 색상: 심리테스트 브랜드 그라디언트
       case TrendContentType.idealWorldcup:
-        return [const Color(0xFFF58529), const Color(0xFFDD2A7B)]; // 고유 색상: 이상형 월드컵 브랜드 그라디언트
+        return [
+          const Color(0xFFF58529),
+          const Color(0xFFDD2A7B)
+        ]; // 고유 색상: 이상형 월드컵 브랜드 그라디언트
       case TrendContentType.balanceGame:
-        return [const Color(0xFF00C9B7), const Color(0xFF00B4D8)]; // 고유 색상: 밸런스 게임 브랜드 그라디언트
+        return [
+          const Color(0xFF00C9B7),
+          const Color(0xFF00B4D8)
+        ]; // 고유 색상: 밸런스 게임 브랜드 그라디언트
     }
   }
 

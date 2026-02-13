@@ -409,7 +409,8 @@ class _MockTokenPurchaseScreen extends StatefulWidget {
   });
 
   @override
-  State<_MockTokenPurchaseScreen> createState() => _MockTokenPurchaseScreenState();
+  State<_MockTokenPurchaseScreen> createState() =>
+      _MockTokenPurchaseScreenState();
 }
 
 class _MockTokenPurchaseScreenState extends State<_MockTokenPurchaseScreen> {
@@ -470,7 +471,8 @@ class _MockTokenPurchaseScreenState extends State<_MockTokenPurchaseScreen> {
                         color: Colors.amber.shade50,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.monetization_on, color: Colors.amber),
+                      child: const Icon(Icons.monetization_on,
+                          color: Colors.amber),
                     ),
                     const SizedBox(width: 16),
                     Column(
@@ -677,7 +679,8 @@ class _TokenPackageCard extends StatelessWidget {
             children: [
               Radio<String>(
                 value: id,
-                groupValue: isSelected ? id : '', // ignore: deprecated_member_use
+                groupValue:
+                    isSelected ? id : '', // ignore: deprecated_member_use
                 onChanged: (_) => onTap(), // ignore: deprecated_member_use
               ),
               const SizedBox(width: 8),

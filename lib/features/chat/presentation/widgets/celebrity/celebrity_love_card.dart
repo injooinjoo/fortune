@@ -295,7 +295,9 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
           // 점수 바
           Row(
             children: [
-              Expanded(child: _buildHeartProgressBar(context, score.toDouble(), 100)),
+              Expanded(
+                  child:
+                      _buildHeartProgressBar(context, score.toDouble(), 100)),
               const SizedBox(width: DSSpacing.sm),
               Text(
                 '${score.toInt()}점',
@@ -544,7 +546,8 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
     );
   }
 
-  Widget _buildJealousyCard(BuildContext context, String label, String level, Color color) {
+  Widget _buildJealousyCard(
+      BuildContext context, String label, String level, Color color) {
     final typography = context.typography;
 
     return Container(
@@ -641,23 +644,23 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
           if (challenges.isNotEmpty) ...[
             const SizedBox(height: DSSpacing.sm),
             ...challenges.take(2).map((challenge) => Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('⚠️', style: TextStyle(fontSize: 12)),
-                  const SizedBox(width: DSSpacing.xs),
-                  Expanded(
-                    child: Text(
-                      challenge.toString(),
-                      style: typography.labelSmall.copyWith(
-                        color: colors.textSecondary,
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('⚠️', style: TextStyle(fontSize: 12)),
+                      const SizedBox(width: DSSpacing.xs),
+                      Expanded(
+                        child: Text(
+                          challenge.toString(),
+                          style: typography.labelSmall.copyWith(
+                            color: colors.textSecondary,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            )),
+                )),
           ],
         ],
       ),
@@ -798,7 +801,8 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
     );
   }
 
-  Widget _buildHeartProgressBar(BuildContext context, double value, double max) {
+  Widget _buildHeartProgressBar(
+      BuildContext context, double value, double max) {
     return Container(
       height: 8,
       decoration: BoxDecoration(

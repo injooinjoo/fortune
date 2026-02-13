@@ -17,14 +17,14 @@ class TalismanShareService {
       final codec = await ui.instantiateImageCodec(imageData);
       final frame = await codec.getNextFrame();
       final image = frame.image;
-      
+
       // Create a canvas to draw on
       final recorder = ui.PictureRecorder();
       final canvas = Canvas(recorder);
-      
+
       // Draw the original image
       canvas.drawImage(image, Offset.zero, Paint());
-      
+
       // Add watermark text
       final textPainter = TextPainter(
         text: TextSpan(
@@ -37,14 +37,12 @@ class TalismanShareService {
         textDirection: TextDirection.ltr,
       );
       textPainter.layout();
-      
+
       // Position watermark at bottom right
-      final watermarkPosition = Offset(
-        image.width - textPainter.width - 20,
-        image.height - textPainter.height - 20
-      );
+      final watermarkPosition = Offset(image.width - textPainter.width - 20,
+          image.height - textPainter.height - 20);
       textPainter.paint(canvas, watermarkPosition);
-      
+
       // Add date
       final datePainter = TextPainter(
         text: TextSpan(
@@ -56,25 +54,23 @@ class TalismanShareService {
         textDirection: TextDirection.ltr,
       );
       datePainter.layout();
-      
-      final datePosition = Offset(
-        20,
-        image.height - datePainter.height - 20
-      );
+
+      final datePosition = Offset(20, image.height - datePainter.height - 20);
       datePainter.paint(canvas, datePosition);
-      
+
       // Convert to image
       final picture = recorder.endRecording();
       final newImage = await picture.toImage(image.width, image.height);
-      final byteData = await newImage.toByteData(format: ui.ImageByteFormat.png);
-      
+      final byteData =
+          await newImage.toByteData(format: ui.ImageByteFormat.png);
+
       return byteData!.buffer.asUint8List();
     } catch (e) {
       debugPrint('Fortune cached');
       return imageData; // Return original if watermarking fails
     }
   }
-  
+
   // Share talisman to different platforms
   Future<void> shareTalisman({
     required Uint8List imageData,
@@ -114,7 +110,7 @@ class TalismanShareService {
       rethrow;
     }
   }
-  
+
   // Save to gallery
   Future<void> saveToGallery(Uint8List imageData) async {
     try {
@@ -123,10 +119,11 @@ class TalismanShareService {
       if (!status.isGranted && !Platform.isIOS) {
         throw Exception('Storage permission denied');
       }
-      
+
       // Save to app's document directory (AGP 8.x workaround)
       final directory = await getApplicationDocumentsDirectory();
-      final imagePath = '${directory.path}/talisman_${DateTime.now().millisecondsSinceEpoch}.png';
+      final imagePath =
+          '${directory.path}/talisman_${DateTime.now().millisecondsSinceEpoch}.png';
       final imageFile = File(imagePath);
       await imageFile.writeAsBytes(imageData);
     } catch (e) {
@@ -134,30 +131,29 @@ class TalismanShareService {
       rethrow;
     }
   }
-  
+
   // Share to KakaoTalk
-  Future<void> _shareToKakao(Uint8List imageData, String type, String userName) async {
+  Future<void> _shareToKakao(
+      Uint8List imageData, String type, String userName) async {
     // Save image temporarily
     final tempFile = await _saveImageToTemp(imageData);
-    
+
     // Share using share_plus
-    await Share.shareXFiles(
-      [XFile(tempFile.path)],
-      text: '$userName님의 $type이 완성되었습니다! 🎯\n\n#부적 #인사이트 #FortuneApp'
-    );
-    
+    await Share.shareXFiles([XFile(tempFile.path)],
+        text: '$userName님의 $type이 완성되었습니다! 🎯\n\n#부적 #인사이트 #FortuneApp');
+
     // Clean up
     await tempFile.delete();
   }
-  
+
   // Share to Instagram
   Future<void> _shareToInstagram(Uint8List imageData, String type) async {
     final tempFile = await _saveImageToTemp(imageData);
-    
+
     // Instagram requires saving to gallery first on iOS
     if (Platform.isIOS) {
       await saveToGallery(imageData);
-      
+
       // Open Instagram
       final url = Uri.parse('instagram://library');
       if (await canLaunchUrl(url)) {
@@ -165,76 +161,66 @@ class TalismanShareService {
       }
     } else {
       // Android can share directly
-      await Share.shareXFiles(
-        [XFile(tempFile.path)],
-        text: '오늘의 $type 🎯\n\n#부적 #인사이트 #행운 #FortuneApp'
-      );
+      await Share.shareXFiles([XFile(tempFile.path)],
+          text: '오늘의 $type 🎯\n\n#부적 #인사이트 #행운 #FortuneApp');
     }
-    
+
     await tempFile.delete();
   }
-  
+
   // Share to Facebook
   Future<void> _shareToFacebook(Uint8List imageData, String type) async {
     final tempFile = await _saveImageToTemp(imageData);
-    
-    await Share.shareXFiles(
-      [XFile(tempFile.path)],
-      text: '나만의 $type을 만들었어요! 🎯\n\n#부적 #인사이트 #FortuneApp'
-    );
-    
+
+    await Share.shareXFiles([XFile(tempFile.path)],
+        text: '나만의 $type을 만들었어요! 🎯\n\n#부적 #인사이트 #FortuneApp');
+
     await tempFile.delete();
   }
-  
+
   // Share to Twitter/X
   Future<void> _shareToTwitter(Uint8List imageData, String type) async {
     final tempFile = await _saveImageToTemp(imageData);
-    
-    await Share.shareXFiles(
-      [XFile(tempFile.path)],
-      text: '나만의 $type 완성! 🎯\n\n#부적 #인사이트 #FortuneApp #행운'
-    );
-    
+
+    await Share.shareXFiles([XFile(tempFile.path)],
+        text: '나만의 $type 완성! 🎯\n\n#부적 #인사이트 #FortuneApp #행운');
+
     await tempFile.delete();
   }
-  
+
   // Share to WhatsApp
   Future<void> _shareToWhatsApp(Uint8List imageData, String type) async {
     final tempFile = await _saveImageToTemp(imageData);
-    
-    await Share.shareXFiles(
-      [XFile(tempFile.path)],
-      text: '오늘의 $type입니다 🎯'
-    );
-    
+
+    await Share.shareXFiles([XFile(tempFile.path)], text: '오늘의 $type입니다 🎯');
+
     await tempFile.delete();
   }
-  
+
   // Copy text to clipboard
   Future<void> _copyText(String type, String userName) async {
     final text = '$userName님의 $type이 완성되었습니다!\n\n'
         '이 부적은 당신의 소원을 이루어주고 행운을 가져다 줄 것입니다. 🎯\n\n'
         'Fortune App에서 나만의 부적을 만들어보세요!';
-    
+
     await Clipboard.setData(ClipboardData(text: text));
   }
-  
+
   // Generic share
   Future<void> _shareGeneric(Uint8List imageData, String type) async {
     final tempFile = await _saveImageToTemp(imageData);
-    
-    await Share.shareXFiles(
-      [XFile(tempFile.path)],
-      text: '나만의 $type을 만들었어요! 🎯\n\nFortune App에서 당신만의 부적을 만들어보세요!'
-    );
-    
+
+    await Share.shareXFiles([XFile(tempFile.path)],
+        text: '나만의 $type을 만들었어요! 🎯\n\nFortune App에서 당신만의 부적을 만들어보세요!');
+
     await tempFile.delete();
   }
-  
+
   // Save image to temporary directory
   Future<File> _saveImageToTemp(Uint8List imageData) async {
     final tempDir = await getTemporaryDirectory();
-    final tempFile = File('${tempDir.path}/talisman_${DateTime.now().millisecondsSinceEpoch}.png');
+    final tempFile = File(
+        '${tempDir.path}/talisman_${DateTime.now().millisecondsSinceEpoch}.png');
     await tempFile.writeAsBytes(imageData);
     return tempFile;
   }

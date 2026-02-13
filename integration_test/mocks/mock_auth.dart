@@ -120,8 +120,10 @@ class MockSession {
   bool get isExpired => DateTime.now().isAfter(expiresAt);
 
   factory MockSession.forUser(MockUser user) => MockSession(
-        accessToken: 'mock-access-token-${DateTime.now().millisecondsSinceEpoch}',
-        refreshToken: 'mock-refresh-token-${DateTime.now().millisecondsSinceEpoch}',
+        accessToken:
+            'mock-access-token-${DateTime.now().millisecondsSinceEpoch}',
+        refreshToken:
+            'mock-refresh-token-${DateTime.now().millisecondsSinceEpoch}',
         expiresAt: DateTime.now().add(const Duration(hours: 1)),
         user: user,
       );
@@ -281,7 +283,8 @@ class MockAuthService {
   }
 
   /// 회원가입
-  Future<MockAuthResult> signUp(String email, String password, {Map<String, dynamic>? metadata}) async {
+  Future<MockAuthResult> signUp(String email, String password,
+      {Map<String, dynamic>? metadata}) async {
     _updateStatus(MockAuthStatus.authenticating);
     await Future.delayed(_simulatedDelay);
 

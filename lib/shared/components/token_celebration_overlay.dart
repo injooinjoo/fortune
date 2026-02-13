@@ -88,15 +88,18 @@ class _TokenCelebrationWidgetState extends State<_TokenCelebrationWidget>
     // Bounce scale animation (0.8 -> 1.2 -> 1.0)
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween(begin: 0.0, end: 0.8).chain(CurveTween(curve: Curves.easeOut)),
+        tween: Tween(begin: 0.0, end: 0.8)
+            .chain(CurveTween(curve: Curves.easeOut)),
         weight: 10,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 0.8, end: 1.2).chain(CurveTween(curve: Curves.easeOut)),
+        tween: Tween(begin: 0.8, end: 1.2)
+            .chain(CurveTween(curve: Curves.easeOut)),
         weight: 15,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 1.2, end: 1.0).chain(CurveTween(curve: Curves.elasticOut)),
+        tween: Tween(begin: 1.2, end: 1.0)
+            .chain(CurveTween(curve: Curves.elasticOut)),
         weight: 25,
       ),
       TweenSequenceItem(
@@ -104,7 +107,8 @@ class _TokenCelebrationWidgetState extends State<_TokenCelebrationWidget>
         weight: 30,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 1.0, end: 0.0).chain(CurveTween(curve: Curves.easeIn)),
+        tween:
+            Tween(begin: 1.0, end: 0.0).chain(CurveTween(curve: Curves.easeIn)),
         weight: 20,
       ),
     ]).animate(_mainController);
@@ -182,53 +186,54 @@ class _TokenCelebrationWidgetState extends State<_TokenCelebrationWidget>
 
             // Particles
             ..._particles.map((particle) => Positioned(
-              left: size.width / 2 - 10,
-              top: size.height / 2 - 10,
-              child: FadeTransition(
-                opacity: Tween<double>(
-                  begin: 0.0,
-                  end: 1.0,
-                ).animate(CurvedAnimation(
-                  parent: _particleController,
-                  curve: const Interval(
-                    0.0,
-                    0.6,
-                    curve: Curves.easeOut,
-                  ),
-                )),
-                child: Transform.translate(
-                  offset: Offset(
-                    math.cos(particle.angle) *
-                        particle.distance *
-                        _particleController.value,
-                    math.sin(particle.angle) *
-                        particle.distance *
-                        _particleController.value,
-                  ),
-                  child: Container(
-                    width: particle.size,
-                    height: particle.size,
-                    decoration: BoxDecoration(
-                      color: colors.accentTertiary.withValues(alpha: 0.9),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: colors.accentTertiary.withValues(alpha: 0.5),
-                          blurRadius: 6,
-                          spreadRadius: 2,
+                  left: size.width / 2 - 10,
+                  top: size.height / 2 - 10,
+                  child: FadeTransition(
+                    opacity: Tween<double>(
+                      begin: 0.0,
+                      end: 1.0,
+                    ).animate(CurvedAnimation(
+                      parent: _particleController,
+                      curve: const Interval(
+                        0.0,
+                        0.6,
+                        curve: Curves.easeOut,
+                      ),
+                    )),
+                    child: Transform.translate(
+                      offset: Offset(
+                        math.cos(particle.angle) *
+                            particle.distance *
+                            _particleController.value,
+                        math.sin(particle.angle) *
+                            particle.distance *
+                            _particleController.value,
+                      ),
+                      child: Container(
+                        width: particle.size,
+                        height: particle.size,
+                        decoration: BoxDecoration(
+                          color: colors.accentTertiary.withValues(alpha: 0.9),
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color:
+                                  colors.accentTertiary.withValues(alpha: 0.5),
+                              blurRadius: 6,
+                              spreadRadius: 2,
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-              )
-                  .animate(onPlay: (controller) => controller.repeat())
-                  .shimmer(
-                    duration: 1000.ms,
-                    color: colors.textPrimary.withValues(alpha: 0.4),
                   )
-                  .fadeOut(delay: particle.delay, duration: 500.ms),
-            )),
+                      .animate(onPlay: (controller) => controller.repeat())
+                      .shimmer(
+                        duration: 1000.ms,
+                        color: colors.textPrimary.withValues(alpha: 0.4),
+                      )
+                      .fadeOut(delay: particle.delay, duration: 500.ms),
+                )),
 
             // Main token icon and text
             Center(
@@ -251,7 +256,8 @@ class _TokenCelebrationWidgetState extends State<_TokenCelebrationWidget>
                           '💰',
                           style: TextStyle(fontSize: 80),
                         )
-                            .animate(onPlay: (controller) => controller.repeat())
+                            .animate(
+                                onPlay: (controller) => controller.repeat())
                             .rotate(
                               duration: 2000.ms,
                               begin: -0.05,

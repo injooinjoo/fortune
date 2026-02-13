@@ -25,7 +25,8 @@ class MiscWidgets {
         child: Text(
           '액션 체크리스트 준비 중...',
           style: TextStyle(
-            color: isDarkMode ? DSColors.textTertiary : DSColors.textSecondaryDark,
+            color:
+                isDarkMode ? DSColors.textTertiary : DSColors.textSecondaryDark,
           ),
         ),
       ),
@@ -65,7 +66,9 @@ class MiscWidgets {
                     '날씨 운세',
                     style: context.headingSmall.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
+                      color: isDark
+                          ? DSColors.textPrimary
+                          : DSColors.textPrimaryDark,
                     ),
                   ),
                 ],
@@ -81,7 +84,8 @@ class MiscWidgets {
               if (weatherSummary?['temperature'] != null) ...[
                 const SizedBox(height: 12),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: DSColors.accentDark.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -97,9 +101,10 @@ class MiscWidgets {
               ],
             ],
           ),
-        ).animate()
-          .fadeIn(duration: 600.ms)
-          .slideY(begin: 0.1, curve: Curves.easeOut);
+        )
+            .animate()
+            .fadeIn(duration: 600.ms)
+            .slideY(begin: 0.1, curve: Curves.easeOut);
       },
     );
   }
@@ -124,7 +129,8 @@ class MiscWidgets {
             child: Text(
               '공유 카드 준비 중...',
               style: TextStyle(
-                color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
+                color:
+                    isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
               ),
             ),
           ),
@@ -182,14 +188,18 @@ class MiscWidgets {
                         Text(
                           title,
                           style: TextStyle(
-                            color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
+                            color: isDark
+                                ? DSColors.textPrimary
+                                : DSColors.textPrimaryDark,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         Text(
                           subtitle,
                           style: TextStyle(
-                            color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
+                            color: isDark
+                                ? DSColors.textTertiary
+                                : DSColors.textSecondaryDark,
                           ),
                         ),
                       ],
@@ -201,34 +211,39 @@ class MiscWidgets {
               // Celebrity avatars placeholder
               Expanded(
                 child: celebrities.isEmpty
-                  ? Center(
-                      child: Text(
-                        '유사 사주 연예인 준비 중...',
-                        style: TextStyle(
-                          color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
+                    ? Center(
+                        child: Text(
+                          '유사 사주 연예인 준비 중...',
+                          style: TextStyle(
+                            color: isDark
+                                ? DSColors.textTertiary
+                                : DSColors.textSecondaryDark,
+                          ),
                         ),
-                      ),
-                    )
-                  : Row(
-                      children: celebrities.take(4).map((celeb) {
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8),
-                          child: CircleAvatar(
-                            radius: 20,
-                            backgroundColor: isDark
-                                ? DSColors.border
-                                : DSColors.borderDark,
-                            child: Text(
-                              (celeb['name'] as String?)?.substring(0, 1) ?? '?',
-                              style: TextStyle(
-                                color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
-                                fontWeight: FontWeight.bold,
+                      )
+                    : Row(
+                        children: celebrities.take(4).map((celeb) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: CircleAvatar(
+                              radius: 20,
+                              backgroundColor: isDark
+                                  ? DSColors.border
+                                  : DSColors.borderDark,
+                              child: Text(
+                                (celeb['name'] as String?)?.substring(0, 1) ??
+                                    '?',
+                                style: TextStyle(
+                                  color: isDark
+                                      ? DSColors.textPrimary
+                                      : DSColors.textPrimaryDark,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
+                          );
+                        }).toList(),
+                      ),
               ),
             ],
           ),
@@ -271,13 +286,16 @@ class MiscWidgets {
                     '$userAge세 운세',
                     style: context.labelMedium.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
+                      color: isDark
+                          ? DSColors.textPrimary
+                          : DSColors.textPrimaryDark,
                     ),
                   ),
                   if (ageScore != null) ...[
                     const Spacer(),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: DSColors.accentDark.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(6),
@@ -297,7 +315,9 @@ class MiscWidgets {
               Text(
                 ageDescription ?? '나이별 운세 정보를 준비 중입니다.',
                 style: context.bodySmall.copyWith(
-                  color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
+                  color: isDark
+                      ? DSColors.textTertiary
+                      : DSColors.textSecondaryDark,
                   height: 1.4,
                 ),
               ),
@@ -340,7 +360,9 @@ class MiscWidgets {
                     '운세 공유하기',
                     style: context.labelMedium.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
+                      color: isDark
+                          ? DSColors.textPrimary
+                          : DSColors.textPrimaryDark,
                     ),
                   ),
                 ],

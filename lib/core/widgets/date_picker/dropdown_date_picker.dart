@@ -56,7 +56,8 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
 
   late List<int> years;
   List<int> get months => DatePickerUtils.generateMonths();
-  List<int> get days => DatePickerUtils.generateDays(selectedYear, selectedMonth);
+  List<int> get days =>
+      DatePickerUtils.generateDays(selectedYear, selectedMonth);
 
   @override
   void initState() {
@@ -84,7 +85,8 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
 
     // selectedDate가 외부에서 변경되면 동기화
     if (widget.selectedDate != null &&
-        !DatePickerUtils.isSameDay(widget.selectedDate, oldWidget.selectedDate)) {
+        !DatePickerUtils.isSameDay(
+            widget.selectedDate, oldWidget.selectedDate)) {
       final date = widget.selectedDate!;
       setState(() {
         selectedYear = date.year;
@@ -143,7 +145,6 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
               ),
             ),
           ),
-
         GestureDetector(
           onTap: () {
             setState(() {
@@ -198,7 +199,6 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
             ),
           ),
         ),
-
         AnimatedContainer(
           duration: AppAnimations.durationMedium,
           height: isExpanded ? null : 0,
