@@ -152,7 +152,7 @@ jobs:
     - name: Setup iOS Simulator
       run: |
         xcrun simctl list devices
-        DEVICE_ID=$(xcrun simctl list devices | grep "iPhone 15" | grep -v "Pro" | head -1 | awk -F '[()]' '{print $2}')
+        DEVICE_ID=$(xcrun simctl list devices | grep "iPhone 16" | grep -v "Pro" | head -1 | awk -F '[()]' '{print $2}')
         echo "Using device: $DEVICE_ID"
         xcrun simctl boot "$DEVICE_ID" || true
     

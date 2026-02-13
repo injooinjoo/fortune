@@ -227,7 +227,7 @@ jobs:
       run: |
         # Start iOS simulator
         xcrun simctl list devices
-        xcrun simctl boot "iPhone 15" || true
+        xcrun simctl boot "iPhone 16" || true
         
         # Run integration tests
         flutter test integration_test/app_test.dart
