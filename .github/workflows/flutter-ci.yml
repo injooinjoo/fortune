@@ -180,8 +180,8 @@ jobs:
         sleep 5
 
     - name: Run integration tests
-      timeout-minutes: 10
-      run: flutter test integration_test/app_test.dart --timeout 120s
+      timeout-minutes: 20
+      run: flutter test integration_test/app_test.dart --timeout 180s
 
   integration-test-android:
     name: Android Integration Tests

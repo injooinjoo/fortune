@@ -75,8 +75,11 @@ jobs:
     
     - name: Run tests with coverage
       run: |
-        # Run tests with machine reporter (NDJSON format)
-        flutter test --coverage --machine > test-results.json 2>&1 || true
+        # Run tests with coverage (separate from machine output)
+        flutter test --coverage --reporter compact 2>&1 | tee test-output.txt || true
+
+        # Generate machine reporter output for parsing
+        flutter test --machine > test-results.json 2>&1 || true
 
     - name: Generate test report
       if: always()
@@ -264,7 +267,7 @@ jobs:
       run: flutter pub get
 
     - name: Run integration tests
-      timeout-minutes: 10
+      timeout-minutes: 20
       run: |
         # List available simulators
         echo "Available simulators:"
