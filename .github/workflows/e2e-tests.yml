@@ -68,8 +68,8 @@ jobs:
       - name: Run Smoke Tests
         run: |
           # Playwright webServer 설정이 자동으로 서버를 시작함
-          # testDir이 ./playwright/tests로 설정되어 있으므로 파일명만 지정
-          npx playwright test smoke.spec.js \
+          # CLI는 cwd 기준 경로를 사용
+          npx playwright test ./playwright/tests/smoke.spec.js \
             --project=chromium \
             --reporter=html,json,github
         env:
