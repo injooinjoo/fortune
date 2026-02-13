@@ -67,22 +67,19 @@ jobs:
 
       - name: Run Smoke Tests
         run: |
-          # 수동으로 서버 시작 (Playwright webServer 대신)
+          # 수동으로 서버 시작
           npx serve build/web -l 3000 &
           SERVER_PID=$!
 
-          # 서버 준비 대기
-          echo "Waiting for server to be ready..."
+          echo "Waiting for server..."
           npx wait-on http://localhost:3000 --timeout 60000
 
-          # 스모크 테스트 실행 (grep으로 필터)
-          npx playwright test --grep "Smoke" \
+          # 전체 테스트 실행 (smoke.spec.js만)
+          npx playwright test smoke \
             --project=chromium \
             --reporter=html,json,github || TEST_RESULT=$?
 
-          # 서버 종료
           kill $SERVER_PID 2>/dev/null || true
-
           exit ${TEST_RESULT:-0}
         env:
           CI: true

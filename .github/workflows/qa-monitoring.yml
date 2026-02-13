@@ -77,7 +77,7 @@ jobs:
           npx wait-on http://localhost:3000 --timeout 60000
 
           # 스모크 테스트 실행
-          npx playwright test --grep "Smoke" \
+          npx playwright test smoke \
             --project=chromium \
             --reporter=json \
             --output=test-results.json || true
