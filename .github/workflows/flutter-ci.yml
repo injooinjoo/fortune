@@ -65,9 +65,24 @@ jobs:
         channel: 'stable'
         cache: true
     
+    - name: Setup test environment
+      run: |
+        # Create .env from .env.test for CI
+        cp .env.test .env
+        # Create missing asset directories
+        mkdir -p assets/images/character/lunch
+        mkdir -p assets/decorations
+        mkdir -p assets/icons/traditional
+        mkdir -p assets/animations
+        # Add placeholder files to empty directories
+        touch assets/images/character/lunch/.gitkeep
+        touch assets/decorations/.gitkeep
+        touch assets/icons/traditional/.gitkeep
+        touch assets/animations/.gitkeep
+
     - name: Get dependencies
       run: flutter pub get
-    
+
     - name: Run tests with coverage
       run: flutter test --coverage --test-randomize-ordering-seed random
     

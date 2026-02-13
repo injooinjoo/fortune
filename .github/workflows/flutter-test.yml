@@ -42,9 +42,24 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-flutter-
     
+    - name: Setup test environment
+      run: |
+        # Create .env from .env.test for CI
+        cp .env.test .env
+        # Create missing asset directories
+        mkdir -p assets/images/character/lunch
+        mkdir -p assets/decorations
+        mkdir -p assets/icons/traditional
+        mkdir -p assets/animations
+        # Add placeholder files
+        touch assets/images/character/lunch/.gitkeep
+        touch assets/decorations/.gitkeep
+        touch assets/icons/traditional/.gitkeep
+        touch assets/animations/.gitkeep
+
     - name: Get dependencies
       run: flutter pub get
-    
+
     - name: Analyze code
       run: flutter analyze --no-fatal-infos --no-fatal-warnings
       continue-on-error: true

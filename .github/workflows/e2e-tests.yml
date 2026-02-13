@@ -53,6 +53,12 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      - name: Setup test environment
+        run: |
+          cp .env.test .env
+          mkdir -p assets/images/character/lunch assets/decorations assets/icons/traditional assets/animations
+          touch assets/images/character/lunch/.gitkeep assets/decorations/.gitkeep assets/icons/traditional/.gitkeep assets/animations/.gitkeep
+
       - name: Get Flutter dependencies
         run: flutter pub get
 
