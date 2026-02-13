@@ -4,22 +4,22 @@ on:
   push:
     branches: [ main, master, develop ]
     paths:
-      - 'fortune_flutter/**'
+      - 'lib/**'
+      - 'test/**'
+      - 'pubspec.yaml'
       - '.github/workflows/flutter-test.yml'
   pull_request:
     branches: [ main, master, develop ]
     paths:
-      - 'fortune_flutter/**'
+      - 'lib/**'
+      - 'test/**'
+      - 'pubspec.yaml'
       - '.github/workflows/flutter-test.yml'
 
 jobs:
   test:
     name: Test Flutter App
     runs-on: ubuntu-latest
-    
-    defaults:
-      run:
-        working-directory: fortune_flutter
     
     steps:
     - name: Checkout code
@@ -36,8 +36,8 @@ jobs:
       with:
         path: |
           ~/.pub-cache
-          fortune_flutter/.dart_tool
-          fortune_flutter/build
+          .dart_tool
+          build
         key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}
         restore-keys: |
           ${{ runner.os }}-flutter-
@@ -93,21 +93,21 @@ jobs:
       with:
         name: test-results
         path: |
-          fortune_flutter/test-results.json
-          fortune_flutter/test-results.xml
+          test-results.json
+          test-results.xml
     
     - name: Publish test results
       if: always()
       uses: EnricoMi/publish-unit-test-result-action@v2
       with:
-        files: fortune_flutter/test-results.xml
+        files: test-results.xml
         check_name: Flutter Test Results
         comment_title: Flutter Test Results
     
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
-        file: ./fortune_flutter/coverage/lcov.info
+        file: ./coverage/lcov.info
         flags: flutter
         name: flutter-coverage
         fail_ci_if_error: false
@@ -155,8 +155,8 @@ jobs:
       with:
         name: coverage-report
         path: |
-          fortune_flutter/coverage/html/
-          fortune_flutter/coverage-summary.txt
+          coverage/html/
+          coverage-summary.txt
     
     - name: Create coverage badge
       if: success()
@@ -193,10 +193,6 @@ jobs:
     name: Integration Tests
     runs-on: macos-latest
     
-    defaults:
-      run:
-        working-directory: fortune_flutter
-    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -224,7 +220,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: integration-test-results
-        path: fortune_flutter/integration-test-results.json
+        path: integration-test-results.json
 
   build:
     name: Build Flutter App
@@ -234,10 +230,6 @@ jobs:
     strategy:
       matrix:
         platform: [web, android]
-    
-    defaults:
-      run:
-        working-directory: fortune_flutter
     
     steps:
     - name: Checkout code
@@ -276,9 +268,9 @@ jobs:
       with:
         name: ${{ matrix.platform }}-build
         path: |
-          fortune_flutter/build/web/
-          fortune_flutter/build/app/outputs/flutter-apk/
-          fortune_flutter/build/app/outputs/bundle/
+          build/web/
+          build/app/outputs/flutter-apk/
+          build/app/outputs/bundle/
 
   deploy-preview:
     name: Deploy Preview (Web)

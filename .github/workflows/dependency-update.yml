@@ -16,7 +16,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update Flutter dependencies
-        working-directory: ./fortune_flutter
+        working-directory: .
         run: |
           flutter pub upgrade --major-versions
           flutter pub outdated
@@ -59,7 +59,7 @@ jobs:
           npm audit --production >> $GITHUB_STEP_SUMMARY || true
 
       - name: Run Flutter dependency audit
-        working-directory: ./fortune_flutter
+        working-directory: .
         run: |
           flutter pub outdated
           echo "## Flutter Outdated Packages" >> $GITHUB_STEP_SUMMARY
