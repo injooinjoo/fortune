@@ -4,11 +4,15 @@ allprojects {
         mavenCentral()
     }
 
-    // Force minimum AndroidX Core version for lStar attribute compatibility
+    // Force AndroidX versions for stripe_android and lStar compatibility
     configurations.all {
         resolutionStrategy {
-            force 'androidx.core:core:1.9.0'
-            force 'androidx.core:core-ktx:1.9.0'
+            force 'androidx.core:core:1.13.0'
+            force 'androidx.core:core-ktx:1.13.0'
+            force 'androidx.fragment:fragment:1.6.2'
+            force 'androidx.fragment:fragment-ktx:1.6.2'
+            force 'androidx.activity:activity:1.8.2'
+            force 'androidx.activity:activity-ktx:1.8.2'
         }
     }
 }
