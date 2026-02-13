@@ -1,0 +1,1 @@
+test('intentional fail', () => fail());

@@ -17,6 +17,9 @@ import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../../../../core/constants/soul_rates.dart';
 import '../../../../services/app_icon_badge_service.dart';
+import '../../../../data/services/fortune_api/fortune_api_service.dart';
+import '../../../../domain/entities/fortune.dart';
+import '../../../../core/utils/logger.dart';
 import 'active_chat_provider.dart';
 
 /// 캐릭터별 채팅 상태 Provider (family)
@@ -591,6 +594,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   }
 
   /// 운세 상담 요청 (운세 전문가 캐릭터용)
+  /// 실제 운세 API를 호출하여 상세한 운세 데이터를 가져온 후, 캐릭터가 전달
   Future<void> sendFortuneRequest(String fortuneType, String requestMessage) async {
     // 🪙 토큰 소비 체크 (4토큰/메시지)
     final hasUnlimitedAccess = _ref.read(hasUnlimitedTokensProvider);
@@ -622,6 +626,10 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     setTyping(true);
 
     try {
+      // 🆕 실제 운세 API 호출하여 상세 데이터 가져오기
+      final fortuneData = await _fetchFortuneData(fortuneType, {});
+      final fortuneDataContext = _formatFortuneDataForContext(fortuneData);
+
       // 메시지 히스토리 준비
       final messagesWithoutCurrent = state.messages.length > 1
           ? state.messages.sublist(0, state.messages.length - 1)
@@ -636,14 +644,18 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       // 이모티콘 빈도 지시문 추가
       final emojiInstruction = _character.behaviorPattern.getEmojiInstruction();
 
-      // 운세 상담 컨텍스트를 포함한 API 호출
+      // 운세 상담 컨텍스트를 포함한 API 호출 (실제 운세 데이터 포함)
       final fortuneContext = '''
 [운세 상담 요청]
 - 운세 타입: $fortuneType
 - 사용자 요청: $requestMessage
 
-당신의 전문 분야인 $fortuneType에 대해 사용자에게 친절하고 상세한 운세 상담을 제공해주세요.
+[실제 운세 분석 결과]
+$fortuneDataContext
+
+위의 실제 운세 분석 결과를 바탕으로 사용자에게 운세를 전달해주세요.
 캐릭터의 말투와 성격을 유지하면서 운세 정보를 자연스럽게 전달해주세요.
+점수, 행운 아이템, 추천 사항 등 실제 데이터를 활용하여 구체적으로 이야기해주세요.
 
 $emojiInstruction
 ''';
@@ -684,11 +696,13 @@ $emojiInstruction
               : AffinityInteractionType.neutral;
       updateAffinityWithPoints(affinityPoints, interactionType);
     } catch (e) {
+      Logger.error('[CharacterChat] Fortune request failed', e);
       setError(e.toString());
     }
   }
 
   /// 운세 상담 요청 (설문 답변 포함 - 캐릭터가 설문 결과 기반으로 상담)
+  /// 실제 운세 API를 호출하여 상세한 운세 데이터를 가져온 후, 캐릭터가 전달
   Future<void> sendFortuneRequestWithAnswers(
     String fortuneType,
     String requestMessage,
@@ -724,6 +738,10 @@ $emojiInstruction
     setTyping(true);
 
     try {
+      // 🆕 실제 운세 API 호출하여 상세 데이터 가져오기 (설문 답변 포함)
+      final fortuneData = await _fetchFortuneData(fortuneType, surveyAnswers);
+      final fortuneDataContext = _formatFortuneDataForContext(fortuneData);
+
       // 메시지 히스토리 준비
       final messagesWithoutCurrent = state.messages.length > 1
           ? state.messages.sublist(0, state.messages.length - 1)
@@ -741,7 +759,7 @@ $emojiInstruction
       // 설문 답변을 사람이 읽기 쉬운 형식으로 변환
       final answersDescription = _formatSurveyAnswers(surveyAnswers);
 
-      // 운세 상담 컨텍스트 (설문 답변 포함)
+      // 운세 상담 컨텍스트 (설문 답변 + 실제 운세 데이터 포함)
       final fortuneContext = '''
 [운세 상담 요청]
 - 운세 타입: $fortuneType
@@ -749,8 +767,12 @@ $emojiInstruction
 - 사용자 설문 답변:
 $answersDescription
 
-위 설문 답변을 바탕으로 사용자에게 개인화된 운세 상담을 제공해주세요.
+[실제 운세 분석 결과]
+$fortuneDataContext
+
+위의 실제 운세 분석 결과를 바탕으로 사용자에게 운세를 전달해주세요.
 캐릭터의 말투와 성격을 유지하면서 설문 답변 내용을 자연스럽게 반영해주세요.
+점수, 행운 아이템, 추천 사항 등 실제 데이터를 활용하여 구체적으로 이야기해주세요.
 사용자가 선택한 내용을 언급하면서 더 친근하고 맞춤화된 조언을 해주세요.
 
 $emojiInstruction
@@ -792,6 +814,7 @@ $emojiInstruction
               : AffinityInteractionType.neutral;
       updateAffinityWithPoints(affinityPoints, interactionType);
     } catch (e) {
+      Logger.error('[CharacterChat] Fortune request with answers failed', e);
       setError(e.toString());
     }
   }
@@ -819,6 +842,166 @@ $emojiInstruction
 
       buffer.writeln('  - $key: $formattedValue');
     }
+    return buffer.toString();
+  }
+
+  /// 🆕 운세 API 호출하여 Fortune 데이터 가져오기
+  Future<Fortune?> _fetchFortuneData(
+    String fortuneType,
+    Map<String, dynamic> answers,
+  ) async {
+    try {
+      final apiService = _ref.read(fortuneApiServiceProvider);
+      final userProfile = _getUserProfileMap();
+
+      // fortuneType을 API 타입으로 매핑
+      final apiFortuneType = _mapToApiFortuneType(fortuneType);
+
+      // 사용자 프로필 정보 추가
+      final params = <String, dynamic>{
+        ...answers,
+        if (userProfile != null) ...userProfile,
+      };
+
+      Logger.info('[CharacterChat] Calling fortune API', {
+        'fortuneType': apiFortuneType,
+        'hasParams': params.isNotEmpty,
+      });
+
+      // 유저 ID 가져오기
+      final profileAsync = _ref.read(userProfileProvider);
+      final userId = profileAsync.maybeWhen(
+        data: (profile) => profile?.id,
+        orElse: () => null,
+      ) ?? 'guest';
+
+      final fortune = await apiService.getFortune(
+        userId: userId,
+        fortuneType: apiFortuneType,
+        params: params,
+      );
+
+      Logger.info('[CharacterChat] Fortune API success', {
+        'fortuneType': apiFortuneType,
+        'hasContent': fortune.content.isNotEmpty,
+        'score': fortune.overallScore,
+      });
+
+      return fortune;
+    } catch (e) {
+      Logger.warning('[CharacterChat] Fortune API failed, using fallback', {'error': e.toString()});
+      return null;
+    }
+  }
+
+  /// fortuneType 문자열을 API fortuneType으로 매핑
+  String _mapToApiFortuneType(String fortuneType) {
+    const mapping = {
+      'daily': 'daily',
+      'newYear': 'new_year',
+      'daily_calendar': 'daily_calendar',
+      'career': 'career',
+      'love': 'love',
+      'compatibility': 'compatibility',
+      'tarot': 'tarot',
+      'mbti': 'mbti',
+      'traditional': 'saju',
+      'faceReading': 'face-reading',
+      'biorhythm': 'biorhythm',
+      'money': 'money',
+      'luckyItems': 'lucky-items',
+      'lotto': 'lotto',
+      'health': 'health',
+      'dream': 'dream',
+      'pastLife': 'past-life',
+      'gameEnhance': 'game-enhance',
+      'pet': 'pet',
+      'family': 'family',
+      'naming': 'naming',
+    };
+    return mapping[fortuneType] ?? fortuneType;
+  }
+
+  /// 🆕 Fortune 데이터를 캐릭터 컨텍스트용 텍스트로 변환
+  String _formatFortuneDataForContext(Fortune? fortune) {
+    if (fortune == null) {
+      return '(운세 데이터를 가져오지 못했습니다. 일반적인 조언을 제공해주세요.)';
+    }
+
+    final buffer = StringBuffer();
+
+    // 기본 운세 내용
+    if (fortune.content.isNotEmpty) {
+      buffer.writeln('📌 운세 내용: ${fortune.content}');
+    }
+
+    // 전체 점수
+    if (fortune.overallScore != null) {
+      buffer.writeln('⭐ 전체 점수: ${fortune.overallScore}점');
+    }
+
+    // 설명
+    if (fortune.description != null && fortune.description!.isNotEmpty) {
+      buffer.writeln('📝 설명: ${fortune.description}');
+    }
+
+    // 요약
+    if (fortune.summary != null && fortune.summary!.isNotEmpty) {
+      buffer.writeln('📋 요약: ${fortune.summary}');
+    }
+
+    // 육각형 점수 (연애, 재물, 건강 등)
+    if (fortune.hexagonScores != null && fortune.hexagonScores!.isNotEmpty) {
+      buffer.writeln('📊 세부 점수:');
+      fortune.hexagonScores!.forEach((key, value) {
+        buffer.writeln('  - $key: $value점');
+      });
+    }
+
+    // 점수 세부 분류
+    if (fortune.scoreBreakdown != null && fortune.scoreBreakdown!.isNotEmpty) {
+      buffer.writeln('📈 점수 분석:');
+      fortune.scoreBreakdown!.forEach((key, value) {
+        buffer.writeln('  - $key: $value');
+      });
+    }
+
+    // 행운 아이템
+    if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty) {
+      buffer.writeln('🍀 행운 아이템:');
+      fortune.luckyItems!.forEach((key, value) {
+        if (value != null && value.toString().isNotEmpty) {
+          buffer.writeln('  - $key: $value');
+        }
+      });
+    }
+
+    // 추천 사항
+    if (fortune.recommendations != null && fortune.recommendations!.isNotEmpty) {
+      buffer.writeln('💡 추천 사항:');
+      for (final rec in fortune.recommendations!) {
+        buffer.writeln('  - $rec');
+      }
+    }
+
+    // 주의 사항
+    if (fortune.warnings != null && fortune.warnings!.isNotEmpty) {
+      buffer.writeln('⚠️ 주의 사항:');
+      for (final warning in fortune.warnings!) {
+        buffer.writeln('  - $warning');
+      }
+    }
+
+    // 특별 팁
+    if (fortune.specialTip != null && fortune.specialTip!.isNotEmpty) {
+      buffer.writeln('✨ 특별 팁: ${fortune.specialTip}');
+    }
+
+    // 인사말 (있으면)
+    if (fortune.greeting != null && fortune.greeting!.isNotEmpty) {
+      buffer.writeln('👋 인사말: ${fortune.greeting}');
+    }
+
     return buffer.toString();
   }
 
