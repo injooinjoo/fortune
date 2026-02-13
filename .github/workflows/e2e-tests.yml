@@ -123,23 +123,26 @@ jobs:
         with:
           script: |
             const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = [
+              '## ❌ E2E 테스트 실패',
+              '',
+              '스모크 테스트에서 실패가 감지되었습니다.',
+              '',
+              '**상세 정보:**',
+              `- 실행 ID: \`${context.runId}\``,
+              `- 커밋: \`${context.sha.substring(0, 7)}\``,
+              '',
+              `[🔍 테스트 결과 확인](${runUrl})`,
+              '',
+              '---',
+              '*이 코멘트는 자동으로 생성되었습니다.*'
+            ].join('\n');
 
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: `## ❌ E2E 테스트 실패
-
-스모크 테스트에서 실패가 감지되었습니다.
-
-**상세 정보:**
-- 실행 ID: \`${context.runId}\`
-- 커밋: \`${context.sha.substring(0, 7)}\`
-
-[🔍 테스트 결과 확인](${runUrl})
-
----
-*이 코멘트는 자동으로 생성되었습니다.*`
+              body: body
             });
 
   # =====================================================

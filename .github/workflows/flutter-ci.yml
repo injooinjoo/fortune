@@ -354,13 +354,7 @@ jobs:
   notify-slack:
     name: Slack Notification
     needs: [analyze, test, build-web, build-android]
-    if: |
-      always() && (
-        needs.analyze.result == 'failure' ||
-        needs.test.result == 'failure' ||
-        needs.build-web.result == 'failure' ||
-        needs.build-android.result == 'failure'
-      )
+    if: always() && (needs.analyze.result == 'failure' || needs.test.result == 'failure' || needs.build-web.result == 'failure' || needs.build-android.result == 'failure')
     uses: ./.github/workflows/slack-notify.yml
     with:
       workflow_name: "Flutter CI/CD"

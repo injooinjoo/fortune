@@ -351,52 +351,56 @@ jobs:
             const edgeTotal = '${{ needs.edge-function-health.outputs.total }}';
             const failedFunctions = '${{ needs.edge-function-health.outputs.failed_functions }}';
 
-            let body = `## 🚨 QA 모니터링 실패 보고서
+            const smokeStatus = smokeResults.failed === '0' ? '✅' : '❌';
+            const perfStatus = parseInt(perfScore) >= 50 ? '✅' : '❌';
+            const edgeStatus = edgeHealthy === edgeTotal ? '✅' : '⚠️';
 
-**일시:** ${date}
-**실행 ID:** \`${context.runId}\`
-
-### 테스트 결과
-
-| 항목 | 결과 | 상태 |
-|------|------|------|
-| Smoke Tests | ${smokeResults.passed}/${smokeResults.total} passed | ${smokeResults.failed === '0' ? '✅' : '❌'} |
-| Performance | ${perfScore}/100 | ${parseInt(perfScore) >= 50 ? '✅' : '❌'} |
-| Edge Functions | ${edgeHealthy}/${edgeTotal} healthy | ${edgeHealthy === edgeTotal ? '✅' : '⚠️'} |
-
-`;
+            let bodyLines = [
+              '## 🚨 QA 모니터링 실패 보고서',
+              '',
+              `**일시:** ${date}`,
+              `**실행 ID:** \`${context.runId}\``,
+              '',
+              '### 테스트 결과',
+              '',
+              '| 항목 | 결과 | 상태 |',
+              '|------|------|------|',
+              `| Smoke Tests | ${smokeResults.passed}/${smokeResults.total} passed | ${smokeStatus} |`,
+              `| Performance | ${perfScore}/100 | ${perfStatus} |`,
+              `| Edge Functions | ${edgeHealthy}/${edgeTotal} healthy | ${edgeStatus} |`,
+              ''
+            ];
 
             if (smokeResults.failed !== '0') {
-              body += `### ❌ Smoke Test 실패
-${smokeResults.failed}개의 라우트 테스트가 실패했습니다.
-
-`;
+              bodyLines.push('### ❌ Smoke Test 실패');
+              bodyLines.push(`${smokeResults.failed}개의 라우트 테스트가 실패했습니다.`);
+              bodyLines.push('');
             }
 
             if (parseInt(perfScore) < 50) {
-              body += `### ❌ 성능 저하
-Performance score가 ${perfScore}점으로 기준(50점) 미달입니다.
-
-`;
+              bodyLines.push('### ❌ 성능 저하');
+              bodyLines.push(`Performance score가 ${perfScore}점으로 기준(50점) 미달입니다.`);
+              bodyLines.push('');
             }
 
             if (failedFunctions && failedFunctions.trim()) {
-              body += `### ⚠️ Edge Function 이상
-다음 함수들이 응답하지 않습니다:
-\`\`\`
-${failedFunctions}
-\`\`\`
-
-`;
+              bodyLines.push('### ⚠️ Edge Function 이상');
+              bodyLines.push('다음 함수들이 응답하지 않습니다:');
+              bodyLines.push('```');
+              bodyLines.push(failedFunctions);
+              bodyLines.push('```');
+              bodyLines.push('');
             }
 
-            body += `### 조치 방법
-1. [워크플로우 로그 확인](${runUrl})
-2. 실패한 테스트 분석
-3. 문제 수정 후 재테스트
+            bodyLines.push('### 조치 방법');
+            bodyLines.push(`1. [워크플로우 로그 확인](${runUrl})`);
+            bodyLines.push('2. 실패한 테스트 분석');
+            bodyLines.push('3. 문제 수정 후 재테스트');
+            bodyLines.push('');
+            bodyLines.push('---');
+            bodyLines.push('*이 이슈는 QA 모니터링 파이프라인에서 자동 생성되었습니다.*');
 
----
-*이 이슈는 QA 모니터링 파이프라인에서 자동 생성되었습니다.*`;
+            const body = bodyLines.join('\n');
 
             // 동일한 날짜의 이슈가 이미 있는지 확인
             const existingIssues = await github.rest.issues.listForRepo({
