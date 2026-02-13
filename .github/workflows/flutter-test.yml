@@ -133,11 +133,13 @@ jobs:
         sudo apt-get install -y lcov
 
         # 생성된 파일 제외 (freezed, g.dart, gen.dart)
+        # --ignore-errors unused: 매칭되지 않는 패턴 무시
         lcov --remove coverage/lcov.info \
           '*.freezed.dart' \
           '*.g.dart' \
           '*.gen.dart' \
           '*/generated/*' \
+          --ignore-errors unused \
           -o coverage/lcov.info
 
         # Generate HTML coverage report
