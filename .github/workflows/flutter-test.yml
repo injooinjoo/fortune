@@ -17,6 +17,11 @@ on:
       - '.github/workflows/flutter-test.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
 jobs:
   test:
     name: Test Flutter App
