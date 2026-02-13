@@ -35,8 +35,8 @@ void main() {
 
       expect(
         startButton.evaluate().isNotEmpty ||
-        zpzgText.evaluate().isNotEmpty ||
-        fortuneText.evaluate().isNotEmpty,
+            zpzgText.evaluate().isNotEmpty ||
+            fortuneText.evaluate().isNotEmpty,
         isTrue,
         reason: '랜딩 페이지가 표시되어야 합니다',
       );
