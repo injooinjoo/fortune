@@ -211,6 +211,44 @@ jobs:
         mkdir -p assets/images/character/lunch assets/decorations assets/icons/traditional assets/animations
         touch assets/images/character/lunch/.gitkeep assets/decorations/.gitkeep assets/icons/traditional/.gitkeep assets/animations/.gitkeep
 
+    - name: Setup Google Services
+      env:
+        GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+      run: |
+        if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+          echo "Using google-services.json from secret"
+          echo "$GOOGLE_SERVICES_JSON" | base64 -d > android/app/google-services.json
+        else
+          echo "Creating placeholder google-services.json for CI build"
+          cat > android/app/google-services.json << 'EOFGS'
+        {
+          "project_info": {
+            "project_number": "000000000000",
+            "project_id": "placeholder-project",
+            "storage_bucket": "placeholder-project.appspot.com"
+          },
+          "client": [
+            {
+              "client_info": {
+                "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+                "android_client_info": {
+                  "package_name": "com.beyond.fortune"
+                }
+              },
+              "oauth_client": [],
+              "api_key": [
+                {
+                  "current_key": "placeholder_api_key"
+                }
+              ],
+              "services": {}
+            }
+          ],
+          "configuration_version": "1"
+        }
+        EOFGS
+        fi
+
     - name: Get dependencies
       run: flutter pub get
 
@@ -292,6 +330,44 @@ jobs:
         cp .env.test .env
         mkdir -p assets/images/character/lunch assets/decorations assets/icons/traditional assets/animations
         touch assets/images/character/lunch/.gitkeep assets/decorations/.gitkeep assets/icons/traditional/.gitkeep assets/animations/.gitkeep
+
+    - name: Setup Google Services
+      env:
+        GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+      run: |
+        if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+          echo "Using google-services.json from secret"
+          echo "$GOOGLE_SERVICES_JSON" | base64 -d > android/app/google-services.json
+        else
+          echo "Creating placeholder google-services.json for CI build"
+          cat > android/app/google-services.json << 'EOFGS'
+        {
+          "project_info": {
+            "project_number": "000000000000",
+            "project_id": "placeholder-project",
+            "storage_bucket": "placeholder-project.appspot.com"
+          },
+          "client": [
+            {
+              "client_info": {
+                "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+                "android_client_info": {
+                  "package_name": "com.beyond.fortune"
+                }
+              },
+              "oauth_client": [],
+              "api_key": [
+                {
+                  "current_key": "placeholder_api_key"
+                }
+              ],
+              "services": {}
+            }
+          ],
+          "configuration_version": "1"
+        }
+        EOFGS
+        fi
 
     - name: Get dependencies
       run: flutter pub get
