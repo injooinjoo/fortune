@@ -71,15 +71,11 @@ jobs:
       - name: Run Smoke Tests
         id: test
         run: |
-          npx serve build/web -l 3000 &
-          npx wait-on http://localhost:3000 --timeout 60000
-
+          # Playwright webServer 설정이 자동으로 서버를 시작함
           npx playwright test playwright/tests/smoke.spec.js \
             --project=chromium \
             --reporter=json \
             --output=test-results.json || true
-
-          pkill -f "serve build/web" || true
         env:
           CI: true
 
