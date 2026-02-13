@@ -77,69 +77,57 @@ jobs:
       if: always()
       run: |
         # Convert Flutter test results (NDJSON) to JUnit format
-        python3 -c "
-import json
-import sys
-import xml.etree.ElementTree as ET
+        cat > convert_results.py << 'EOFPY'
+        import json
+        import xml.etree.ElementTree as ET
 
-testsuite = ET.Element('testsuite')
-testsuite.set('name', 'FlutterTests')
-testsuite.set('tests', '0')
-testsuite.set('failures', '0')
-testsuite.set('errors', '0')
+        testsuite = ET.Element('testsuite')
+        testsuite.set('name', 'FlutterTests')
+        test_count = 0
+        failure_count = 0
+        tests_map = {}
 
-test_count = 0
-failure_count = 0
-tests_map = {}
+        try:
+            with open('test-results.json', 'r') as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        event = json.loads(line)
+                        event_type = event.get('type', '')
+                        if event_type == 'testStart':
+                            test_id = event.get('test', {}).get('id')
+                            test_name = event.get('test', {}).get('name', 'Unknown')
+                            tests_map[test_id] = {'name': test_name}
+                        elif event_type == 'testDone':
+                            test_id = event.get('testID')
+                            result = event.get('result', '')
+                            hidden = event.get('hidden', False)
+                            if not hidden and test_id in tests_map:
+                                test_info = tests_map[test_id]
+                                testcase = ET.SubElement(testsuite, 'testcase')
+                                testcase.set('name', test_info['name'])
+                                testcase.set('classname', 'FlutterTest')
+                                testcase.set('time', str(event.get('time', 0) / 1000))
+                                test_count += 1
+                                if result != 'success':
+                                    failure = ET.SubElement(testcase, 'failure')
+                                    failure.set('message', 'Test failed')
+                                    failure_count += 1
+                    except json.JSONDecodeError:
+                        continue
+        except FileNotFoundError:
+            print('test-results.json not found, creating empty report')
 
-try:
-    with open('test-results.json', 'r') as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                event = json.loads(line)
-                event_type = event.get('type', '')
-
-                # Track test starts
-                if event_type == 'testStart':
-                    test_id = event.get('test', {}).get('id')
-                    test_name = event.get('test', {}).get('name', 'Unknown')
-                    tests_map[test_id] = {'name': test_name, 'time': 0}
-
-                # Track test completions
-                elif event_type == 'testDone':
-                    test_id = event.get('testID')
-                    result = event.get('result', '')
-                    hidden = event.get('hidden', False)
-
-                    if not hidden and test_id in tests_map:
-                        test_info = tests_map[test_id]
-                        testcase = ET.SubElement(testsuite, 'testcase')
-                        testcase.set('name', test_info['name'])
-                        testcase.set('classname', 'FlutterTest')
-                        testcase.set('time', str(event.get('time', 0) / 1000))
-                        test_count += 1
-
-                        if result != 'success':
-                            failure = ET.SubElement(testcase, 'failure')
-                            failure.set('message', 'Test failed')
-                            failure_count += 1
-
-            except json.JSONDecodeError:
-                continue
-
-except FileNotFoundError:
-    print('test-results.json not found, creating empty report')
-
-testsuite.set('tests', str(test_count))
-testsuite.set('failures', str(failure_count))
-
-tree = ET.ElementTree(testsuite)
-tree.write('test-results.xml', encoding='unicode')
-print(f'Generated test-results.xml with {test_count} tests, {failure_count} failures')
-        "
+        testsuite.set('tests', str(test_count))
+        testsuite.set('failures', str(failure_count))
+        testsuite.set('errors', '0')
+        tree = ET.ElementTree(testsuite)
+        tree.write('test-results.xml', encoding='unicode')
+        print(f'Generated test-results.xml with {test_count} tests, {failure_count} failures')
+        EOFPY
+        python3 convert_results.py
     
     - name: Upload test results
       if: always()
