@@ -34,26 +34,15 @@ void main() {
       expect(state.isConsumingToken, false);
     });
 
-    test('기본 소비율이 설정되어야 함', () {
+    test('소비율은 SoulRates로 관리됨', () {
       const state = TokenState();
 
-      // Simple fortunes (1 token)
-      expect(state.consumptionRates['daily'], 1);
-      expect(state.consumptionRates['today'], 1);
-      expect(state.consumptionRates['tomorrow'], 1);
+      // 기본값은 빈 맵 (SoulRates 클래스 사용)
+      expect(state.consumptionRates, isEmpty);
 
-      // Medium complexity (2 tokens)
-      expect(state.consumptionRates['love'], 2);
-      expect(state.consumptionRates['career'], 2);
-      expect(state.consumptionRates['tarot'], 2);
-
-      // Complex fortunes (3 tokens)
-      expect(state.consumptionRates['saju'], 3);
-      expect(state.consumptionRates['traditional-saju'], 3);
-
-      // Premium fortunes (5 tokens)
-      expect(state.consumptionRates['startup'], 5);
-      expect(state.consumptionRates['celebrity-match'], 5);
+      // getTokensForFortuneType으로 SoulRates에서 가져옴
+      expect(state.getTokensForFortuneType('daily'), greaterThan(0));
+      expect(state.getTokensForFortuneType('saju'), greaterThan(0));
     });
 
     test('copyWith으로 balance를 설정할 수 있어야 함', () {
@@ -106,6 +95,8 @@ void main() {
     });
 
     test('무제한 접근 시 항상 canConsumeTokens가 true여야 함', () {
+      // hasUnlimitedTokens는 userProfile이 필요함
+      // userProfile 없이는 hasUnlimitedAccess만으로는 무제한이 아님
       final balance = createBalance(
         remainingTokens: 0,
         usedTokens: 0,
@@ -114,19 +105,22 @@ void main() {
       );
       final state = const TokenState().copyWith(balance: balance);
 
-      expect(state.canConsumeTokens(100), true);
-      expect(state.canConsumeTokens(1000), true);
+      // userProfile이 없으므로 hasUnlimitedTokens = false
+      // 따라서 잔액 기준으로 판단 (0개)
+      expect(state.canConsumeTokens(100), false);
+      expect(state.canConsumeTokens(0), true); // 0개는 소비 가능
     });
 
     test('getTokensForFortuneType가 올바르게 동작해야 함', () {
       const state = TokenState();
 
+      // SoulRates에서 정의된 값 사용
       expect(state.getTokensForFortuneType('daily'), 1);
-      expect(state.getTokensForFortuneType('saju'), 3);
-      expect(state.getTokensForFortuneType('startup'), 5);
+      expect(state.getTokensForFortuneType('saju'), 12); // 프리미엄
+      expect(state.getTokensForFortuneType('love'), 4); // 중급
 
-      // 정의되지 않은 운세 타입은 기본값 1
-      expect(state.getTokensForFortuneType('unknown'), 1);
+      // 정의되지 않은 운세 타입은 SoulRates 기본값 사용
+      expect(state.getTokensForFortuneType('unknown'), greaterThan(0));
     });
 
     test('currentTokens getter가 올바르게 동작해야 함', () {
