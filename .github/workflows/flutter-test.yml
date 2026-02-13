@@ -131,13 +131,21 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y lcov
-        
+
+        # 생성된 파일 제외 (freezed, g.dart, gen.dart)
+        lcov --remove coverage/lcov.info \
+          '*.freezed.dart' \
+          '*.g.dart' \
+          '*.gen.dart' \
+          '*/generated/*' \
+          -o coverage/lcov.info
+
         # Generate HTML coverage report
         genhtml coverage/lcov.info -o coverage/html
-        
+
         # Generate coverage summary
         lcov --summary coverage/lcov.info > coverage-summary.txt
-        
+
         # Extract coverage percentage
         COVERAGE=$(lcov --summary coverage/lcov.info 2>&1 | grep -E "lines\.+:" | sed -E 's/.*lines\.+:\ +([0-9.]+)%.*/\1/')
         echo "Test coverage: $COVERAGE%"
@@ -173,17 +181,9 @@ jobs:
           coverage/html/
           coverage-summary.txt
     
-    - name: Create coverage badge
-      if: success()
-      uses: schneegans/dynamic-badges-action@v1.6.0
-      with:
-        auth: ${{ secrets.GIST_SECRET }}
-        gistID: your-gist-id-here
-        filename: flutter-coverage.json
-        label: Coverage
-        message: ${{ env.COVERAGE }}%
-        color: ${{ env.COVERAGE_COLOR }}
-    
+    # 커버리지 뱃지는 Codecov에서 제공 (위 단계에서 이미 업로드됨)
+    # Gist 기반 뱃지는 제거 - GIST_SECRET 설정 불필요
+
     - name: Comment PR with results
       if: github.event_name == 'pull_request' && always()
       uses: actions/github-script@v6

@@ -226,9 +226,13 @@ jobs:
           FAILED_LIST=""
           TOTAL=${#FUNCTIONS[@]}
 
-          # Supabase URL이 설정되지 않은 경우 기본값 사용
+          # Supabase URL이 설정되지 않은 경우 건너뛰기
           if [ -z "$SUPABASE_URL" ]; then
-            SUPABASE_URL="https://hayjukwfcsdmppairazc.supabase.co"
+            echo "::warning::SUPABASE_URL secret이 설정되지 않았습니다. Edge Function 헬스체크를 건너뜁니다."
+            echo "healthy=0" >> $GITHUB_OUTPUT
+            echo "total=${#FUNCTIONS[@]}" >> $GITHUB_OUTPUT
+            echo "failed_functions=SKIPPED_NO_URL" >> $GITHUB_OUTPUT
+            exit 0
           fi
 
           for func in "${FUNCTIONS[@]}"; do

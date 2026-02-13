@@ -1,0 +1,14 @@
+# lcov configuration file for Fortune Flutter App
+# Generated files should be excluded from coverage calculations
+
+# HTML report settings
+genhtml_num_spaces = 4
+
+# Exclusion markers in code
+lcov_excl_line = LCOV_EXCL_LINE
+lcov_excl_br_line = LCOV_EXCL_BR_LINE
+lcov_excl_start = LCOV_EXCL_START
+lcov_excl_stop = LCOV_EXCL_STOP
+
+# Branch coverage settings
+lcov_branch_coverage = 0

@@ -90,6 +90,15 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y lcov
+
+        # 생성된 파일 제외 (freezed, g.dart, gen.dart)
+        lcov --remove coverage/lcov.info \
+          '*.freezed.dart' \
+          '*.g.dart' \
+          '*.gen.dart' \
+          '*/generated/*' \
+          -o coverage/lcov.info
+
         lcov --summary coverage/lcov.info
     
     - name: Upload coverage reports
