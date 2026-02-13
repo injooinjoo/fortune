@@ -100,7 +100,7 @@ jobs:
   notify-slack:
     name: Slack Notification
     needs: [generate-zodiac-fortunes]
-    if: always() && failure()
+    if: always() && needs.generate-zodiac-fortunes.result == 'failure'
     uses: ./.github/workflows/slack-notify.yml
     with:
       workflow_name: "Daily Zodiac Fortune Generator"

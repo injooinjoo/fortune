@@ -350,16 +350,22 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # Slack 알림 (모든 job 실패/취소 시 단일 알림)
+  # Slack 알림 (핵심 job 실패/취소 시 단일 알림)
   notify-slack:
     name: Slack Notification
-    needs: [analyze, test, integration-test-ios, integration-test-android, build-web, build-android, build-ios, deploy-web-preview, release]
-    if: always() && (failure() || cancelled())
+    needs: [analyze, test, build-web, build-android]
+    if: |
+      always() && (
+        needs.analyze.result == 'failure' ||
+        needs.test.result == 'failure' ||
+        needs.build-web.result == 'failure' ||
+        needs.build-android.result == 'failure'
+      )
     uses: ./.github/workflows/slack-notify.yml
     with:
       workflow_name: "Flutter CI/CD"
-      job_status: ${{ contains(needs.*.result, 'failure') && 'failure' || 'cancelled' }}
-      failed_jobs: "${{ needs.analyze.result == 'failure' && 'analyze ' || '' }}${{ needs.test.result == 'failure' && 'test ' || '' }}${{ needs.integration-test-ios.result == 'failure' && 'integration-test-ios ' || '' }}${{ needs.integration-test-android.result == 'failure' && 'integration-test-android ' || '' }}${{ needs.build-web.result == 'failure' && 'build-web ' || '' }}${{ needs.build-android.result == 'failure' && 'build-android ' || '' }}${{ needs.build-ios.result == 'failure' && 'build-ios ' || '' }}"
-      pr_number: ${{ github.event.pull_request.number || '' }}
+      job_status: "failure"
+      failed_jobs: "${{ needs.analyze.result == 'failure' && 'analyze ' || '' }}${{ needs.test.result == 'failure' && 'test ' || '' }}${{ needs.build-web.result == 'failure' && 'build-web ' || '' }}${{ needs.build-android.result == 'failure' && 'build-android ' || '' }}"
+      pr_number: "${{ github.event.pull_request.number || '' }}"
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

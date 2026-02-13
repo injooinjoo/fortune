@@ -187,14 +187,14 @@ jobs:
   # =====================================================
   notify-slack:
     name: Slack Notification
-    needs: [smoke-tests, comment-on-failure, test-summary]
-    if: always() && failure()
+    needs: [smoke-tests]
+    if: always() && needs.smoke-tests.result == 'failure'
     uses: ./.github/workflows/slack-notify.yml
     with:
       workflow_name: "E2E Tests"
       job_status: "failure"
       failed_jobs: "smoke-tests"
-      pr_number: ${{ github.event.pull_request.number || '' }}
+      pr_number: "${{ github.event.pull_request.number || '' }}"
       custom_message: "50+ 라우트 스모크 테스트 실패"
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

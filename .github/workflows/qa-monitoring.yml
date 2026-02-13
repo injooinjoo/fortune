@@ -436,8 +436,8 @@ ${failedFunctions}
   # =====================================================
   notify-slack:
     name: Slack Notification
-    needs: [smoke-tests, performance-tests, edge-function-health, aggregate-and-notify]
-    if: always() && failure()
+    needs: [smoke-tests, performance-tests, edge-function-health]
+    if: always() && (needs.smoke-tests.result == 'failure' || needs.performance-tests.result == 'failure' || needs.edge-function-health.result == 'failure')
     uses: ./.github/workflows/slack-notify.yml
     with:
       workflow_name: "QA Monitoring"
