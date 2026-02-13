@@ -373,6 +373,8 @@ jobs:
       run: flutter pub get
 
     - name: Build APK
+      env:
+        GRADLE_OPTS: "-Xmx4g -XX:MaxMetaspaceSize=2g -XX:+HeapDumpOnOutOfMemoryError -Dorg.gradle.daemon=false"
       run: flutter build apk --debug
 
     # Note: Release builds require signing keystore, skip App Bundle in CI
