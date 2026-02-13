@@ -1,0 +1,15 @@
+{
+  "name": "fortune-character-generator",
+  "version": "1.0.0",
+  "description": "AI Character Image Generator using Gemini API",
+  "main": "generate_character_images.js",
+  "scripts": {
+    "generate": "node generate_character_images.js",
+    "generate:luts": "node generate_character_images.js luts",
+    "generate:jung": "node generate_character_images.js jung_tae_yoon",
+    "list": "node generate_character_images.js --list"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0"
+  }
+}

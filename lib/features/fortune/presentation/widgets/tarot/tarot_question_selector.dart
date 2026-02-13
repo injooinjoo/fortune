@@ -36,27 +36,27 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
     {
       'question': '언제 돈이 들어올까요?',
       'icon': Icons.attach_money,
-      'color': Color(0xFF10B981),
+      'color': DSColors.warning,
     },
     {
       'question': '연애운은 어떨까요?',
       'icon': Icons.favorite,
-      'color': Color(0xFFEC4899),
+      'color': DSColors.accentSecondary,
     },
     {
       'question': '취업이 언제 될까요?',
       'icon': Icons.work,
-      'color': Color(0xFF3B82F6),
+      'color': DSColors.accentSecondary,
     },
     {
       'question': '건강은 어떨까요?',
       'icon': Icons.favorite_border,
-      'color': Color(0xFFF59E0B),
+      'color': DSColors.success,
     },
     {
       'question': '새로운 기회가 올까요?',
       'icon': Icons.auto_awesome,
-      'color': Color(0xFF8B5CF6),
+      'color': DSColors.accentSecondary,
     },
   ];
 
@@ -104,7 +104,7 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
   @override
   Widget build(BuildContext context) {
     debugPrint('🟠 TarotQuestionSelector build - selectedQuestion: ${widget.selectedQuestion}');
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final colors = context.colors;
     final typography = context.typography;
     final hasSelection = widget.selectedQuestion != null ||
@@ -270,7 +270,7 @@ class _TarotQuestionSelectorState extends State<TarotQuestionSelector>
     final typography = context.typography;
 
     return Material(
-      color: Colors.white.withValues(alpha: 0.0),
+      color: Colors.transparent,
       borderRadius: BorderRadius.circular(DSRadius.md),
       child: Ink(
         decoration: BoxDecoration(

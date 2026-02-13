@@ -82,7 +82,7 @@ class _ChatSurveySliderState extends State<ChatSurveySlider> {
                 vertical: DSSpacing.xs,
               ),
               decoration: BoxDecoration(
-                color: colors.accentSecondary.withValues(alpha: 0.1),
+                color: colors.textPrimary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.md),
               ),
               child: Text(
@@ -90,7 +90,7 @@ class _ChatSurveySliderState extends State<ChatSurveySlider> {
                     ? '${_currentValue.round()}${widget.unit}'
                     : _currentValue.round().toString(),
                 style: typography.headingSmall.copyWith(
-                  color: colors.accentSecondary,
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -100,10 +100,10 @@ class _ChatSurveySliderState extends State<ChatSurveySlider> {
           // 슬라이더
           SliderTheme(
             data: SliderThemeData(
-              activeTrackColor: colors.accentSecondary,
-              inactiveTrackColor: colors.accentSecondary.withValues(alpha: 0.2),
-              thumbColor: colors.accentSecondary,
-              overlayColor: colors.accentSecondary.withValues(alpha: 0.2),
+              activeTrackColor: colors.textPrimary,
+              inactiveTrackColor: colors.textPrimary.withValues(alpha: 0.2),
+              thumbColor: colors.textPrimary,
+              overlayColor: colors.textPrimary.withValues(alpha: 0.1),
               trackHeight: 6,
               thumbShape: const RoundSliderThumbShape(
                 enabledThumbRadius: 10,
@@ -156,8 +156,8 @@ class _ChatSurveySliderState extends State<ChatSurveySlider> {
               child: ElevatedButton(
                 onPressed: _handleSubmit,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: colors.accentSecondary,
-                  foregroundColor: Colors.white,
+                  backgroundColor: colors.ctaBackground,
+                  foregroundColor: colors.ctaForeground,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(DSRadius.md),
@@ -166,7 +166,7 @@ class _ChatSurveySliderState extends State<ChatSurveySlider> {
                 child: Text(
                   '확인',
                   style: typography.labelMedium.copyWith(
-                    color: Colors.white,
+                    color: colors.ctaForeground,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

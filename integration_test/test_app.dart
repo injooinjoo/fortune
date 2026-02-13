@@ -1,10 +1,10 @@
-/// Test App Bootstrap
-/// Integration Test를 위한 앱 초기화 모듈
-///
-/// 주요 기능:
-/// - 테스트 모드 환경 변수 로드
-/// - Mock provider overrides 적용
-/// - Firebase/Social SDK 초기화 스킵
+// Test App Bootstrap
+// Integration Test를 위한 앱 초기화 모듈
+//
+// 주요 기능:
+// - 테스트 모드 환경 변수 로드
+// - Mock provider overrides 적용
+// - Firebase/Social SDK 초기화 스킵
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
@@ -13,7 +13,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:fortune/core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/theme/ds_theme.dart';
 import 'package:fortune/core/theme/font_size_system.dart';
 import 'package:fortune/routes/route_config.dart';
 import 'package:fortune/presentation/providers/theme_provider.dart';
@@ -35,7 +35,7 @@ Future<void> initializeTestApp({
 
   // Load test environment
   try {
-    await dotenv.dotenv.load(fileName: ".env.test");
+    await dotenv.dotenv.load(fileName: '.env.test');
     debugPrint('🧪 [TEST] Test environment loaded');
   } catch (e) {
     debugPrint('🧪 [TEST] Failed to load .env.test, using defaults: $e');
@@ -110,8 +110,8 @@ class TestApp extends ConsumerWidget {
 
     return MaterialApp.router(
       title: 'Fortune Test',
-      theme: TossDesignSystem.lightTheme(fontScale: userSettings.fontScale),
-      darkTheme: TossDesignSystem.darkTheme(fontScale: userSettings.fontScale),
+      theme: DSTheme.light(fontScale: userSettings.fontScale),
+      darkTheme: DSTheme.dark(fontScale: userSettings.fontScale),
       themeMode: themeMode,
       debugShowCheckedModeBanner: false,
       routerConfig: router,

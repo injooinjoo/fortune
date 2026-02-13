@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 /// Helper methods for fortune infographic widgets
 class FortuneInfographicHelpers {
@@ -14,32 +14,38 @@ class FortuneInfographicHelpers {
     return 'D';
   }
 
-  /// Get keyword color based on weight
+  /// Get keyword color based on weight (ChatGPT 스타일)
   static Color getKeywordColor(double weight) {
-    if (weight >= 0.8) return const Color(0xFF00D2FF);
-    if (weight >= 0.6) return const Color(0xFF0066FF);
-    if (weight >= 0.4) return const Color(0xFF7C4DFF);
-    if (weight >= 0.2) return const Color(0xFFFF6B35);
-    return const Color(0xFFFF4757);
+    if (weight >= 0.8) return DSColors.success; // 대대길
+    if (weight >= 0.6) return DSColors.info; // 대길
+    if (weight >= 0.4) return DSColors.accentSecondary; // 길
+    if (weight >= 0.2) return DSColors.warning; // 평
+    return DSColors.error; // 소흉
   }
 
-  /// Get lucky item color based on type
+  /// Get lucky item color based on type (ChatGPT 스타일)
   static Color getLuckyItemColor(String type) {
     switch (type.toLowerCase()) {
       case 'color':
       case '색상':
-        return const Color(0xFFFF6B35);
+        return DSColors.accentSecondary;
       case 'food':
       case '음식':
-        return const Color(0xFF00D2FF);
+        return DSColors.warning;
       case 'item':
       case '아이템':
-        return const Color(0xFF7C4DFF);
+        return DSColors.info;
       case 'number':
       case '숫자':
-        return const Color(0xFF0066FF);
+        return DSColors.success;
+      case 'direction':
+      case '방향':
+        return DSColors.info;
+      case 'place':
+      case '장소':
+        return DSColors.accentSecondary;
       default:
-        return TossDesignSystem.tossBlue;
+        return DSColors.warning;
     }
   }
 
@@ -66,13 +72,13 @@ class FortuneInfographicHelpers {
   /// Get category score color
   static Color getCategoryScoreColor(int score, bool isDarkMode) {
     if (score >= 80) {
-      return isDarkMode ? TossDesignSystem.primaryGreen : TossDesignSystem.successGreen;
+      return DSColors.success;
     } else if (score >= 60) {
-      return isDarkMode ? TossDesignSystem.primaryBlue : TossDesignSystem.tossBlue;
+      return DSColors.accentDark;
     } else if (score >= 40) {
-      return isDarkMode ? TossDesignSystem.primaryYellow : TossDesignSystem.warningOrange;
+      return DSColors.warning;
     } else {
-      return isDarkMode ? TossDesignSystem.primaryRed : TossDesignSystem.errorRed;
+      return DSColors.error;
     }
   }
 

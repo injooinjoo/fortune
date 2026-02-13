@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
-import '../../../../presentation/widgets/ads/interstitial_ad_helper.dart';
-import '../../../../core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 class BottomTarotDeckWidget extends ConsumerStatefulWidget {
   final Function(int) onCardSelected;
@@ -154,27 +153,17 @@ class _BottomTarotDeckWidgetState extends ConsumerState<BottomTarotDeckWidget>
       child: Transform(
         alignment: Alignment.bottomCenter,
         transform: Matrix4.identity()
-          ..translate(x * fanProgress, y * fanProgress, zIndex.toDouble())
+          ..translateByDouble(x * fanProgress, y * fanProgress, zIndex.toDouble(), 0.0)
           ..rotateZ(angle * 0.3 * fanProgress)
-          ..scale(scale * fanProgress),
+          ..scaleByDouble(scale * fanProgress, scale * fanProgress, 1.0, 1.0),
         child: Opacity(
           opacity: (0.3 + fanProgress * 0.7).clamp(0.0, 1.0),
           child: GestureDetector(
             onTap: () {
               if (isCenter) {
                 HapticFeedback.mediumImpact();
-                // Show ad before selecting card
-                InterstitialAdHelper.showInterstitialAdWithCallback(
-                  ref,
-                  onAdCompleted: () async {
-                    // Select card after ad is completed or skipped
-                    widget.onCardSelected(index);
-                  },
-                  onAdFailed: () async {
-                    // If ad fails, still select the card
-                    widget.onCardSelected(index);
-                  },
-                );
+                // 카드 선택
+                widget.onCardSelected(index);
               } else {
                 // Animate to this card
                 _animateToCard(index);
@@ -220,12 +209,12 @@ class _BottomTarotDeckWidgetState extends ConsumerState<BottomTarotDeckWidget>
         borderRadius: BorderRadius.circular(8),
         boxShadow: isCenter ? [
           BoxShadow(
-            color: TossDesignSystem.tossBlue.withValues(alpha: 0.6),
+            color: DSColors.accentDark.withValues(alpha: 0.6),
             blurRadius: 20,
             spreadRadius: 5),
         ] : [
           BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha: 0.3),
+            color: DSColors.background.withValues(alpha: 0.3),
             blurRadius: 5,
             offset: const Offset(0, 3)),
         ],
@@ -241,9 +230,9 @@ class _BottomTarotDeckWidgetState extends ConsumerState<BottomTarotDeckWidget>
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Color(0xFF1E3A5F),
-                    Color(0xFF0D1B2A),
-                    Color(0xFF415A77),
+                    Color(0xFF1E3A5F), // 고유 색상 - 타로 카드 뒷면 그라데이션
+                    Color(0xFF0D1B2A), // 고유 색상 - 타로 카드 뒷면 그라데이션
+                    Color(0xFF415A77), // 고유 색상 - 타로 카드 뒷면 그라데이션
                   ],
                 ),
               ),
@@ -263,8 +252,8 @@ class _BottomTarotDeckWidgetState extends ConsumerState<BottomTarotDeckWidget>
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
                   color: isCenter
-                      ? TossDesignSystem.white.withValues(alpha: 0.5)
-                      : TossDesignSystem.white.withValues(alpha: 0.2),
+                      ? DSColors.accent.withValues(alpha: 0.5)
+                      : DSColors.accent.withValues(alpha: 0.2),
                   width: isCenter ? 2 : 1),
               ),
             ),
@@ -290,7 +279,7 @@ class TarotCardBackPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     
     // Draw stars pattern
-    paint.color = TossDesignSystem.white.withValues(alpha: isHighlighted ? 0.4 : 0.2);
+    paint.color = DSColors.accent.withValues(alpha: isHighlighted ? 0.4 : 0.2);
     
     // Center star
     _drawStar(canvas, center, size.width * 0.15, paint);

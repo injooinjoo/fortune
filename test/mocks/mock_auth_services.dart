@@ -1,5 +1,5 @@
-/// Mock Auth Services - 인증 관련 Mock 클래스
-/// Phase 1: 인증 & 온보딩 테스트용
+// Mock Auth Services - 인증 관련 Mock 클래스
+// Phase 1: 인증 & 온보딩 테스트용
 
 import 'package:mocktail/mocktail.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';

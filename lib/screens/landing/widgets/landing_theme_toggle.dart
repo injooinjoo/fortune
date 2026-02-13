@@ -37,7 +37,7 @@ class LandingThemeToggle extends ConsumerWidget {
                 width: 1),
           ),
           child: Icon(
-              Theme.of(context).brightness == Brightness.dark
+              context.isDark
                   ? Icons.light_mode_outlined
                   : Icons.dark_mode_outlined,
               size: 24,

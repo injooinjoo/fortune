@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_dimensions.dart';
 import '../../shared/glassmorphism/glass_container.dart';
@@ -37,7 +37,7 @@ class TarotFortuneCard extends StatelessWidget {
             end: Alignment.bottomRight,
             colors: isDarkMode
                 ? gradientColors
-                : gradientColors.map((color) => Color.lerp(color, TossDesignSystem.grayDark900, 0.7)!).toList(),
+                : gradientColors.map((color) => Color.lerp(color, DSColors.textPrimary, 0.7)!).toList(),
           ),
           borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
           boxShadow: [
@@ -49,7 +49,7 @@ class TarotFortuneCard extends StatelessWidget {
           ],
         ),
         child: Material(
-          color: TossDesignSystem.white.withValues(alpha: 0.0),
+          color: Colors.white.withValues(alpha: 0.0),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
@@ -67,15 +67,15 @@ class TarotFortuneCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
                       gradient: LinearGradient(
                         colors: [
-                          TossDesignSystem.grayDark900.withValues(alpha: 0.2),
-                          TossDesignSystem.grayDark900.withValues(alpha: 0.1),
+                          DSColors.textPrimary.withValues(alpha: 0.2),
+                          DSColors.textPrimary.withValues(alpha: 0.1),
                         ],
                       ),
                       child: Center(
                         child: Icon(
                           Icons.auto_awesome,
                           size: AppDimensions.iconSizeLarge,
-                          color: isDarkMode ? TossDesignSystem.white : theme.colorScheme.primary,
+                          color: isDarkMode ? DSColors.textPrimary : theme.colorScheme.primary,
                         ),
                       ),
                     ),
@@ -85,18 +85,18 @@ class TarotFortuneCard extends StatelessWidget {
                     title,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: isDarkMode ? TossDesignSystem.white : theme.colorScheme.onSurface,
+                      color: isDarkMode ? DSColors.textPrimary : theme.colorScheme.onSurface,
                       letterSpacing: -0.5,
                     ),
                     textAlign: TextAlign.center,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: TossDesignSystem.spacingXS),
+                  const SizedBox(height: DSSpacing.xs),
                   Text(
                     description,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: (isDarkMode ? TossDesignSystem.white : theme.colorScheme.onSurface)
+                      color: (isDarkMode ? DSColors.textPrimary : theme.colorScheme.onSurface)
                           .withValues(alpha: 0.7),
                       fontWeight: FontWeight.w400,
                     ),
@@ -112,13 +112,13 @@ class TarotFortuneCard extends StatelessWidget {
                         vertical: AppSpacing.spacing1,
                       ),
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.grayDark900.withValues(alpha: 0.2),
+                        color: DSColors.textPrimary.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
                       ),
                       child: Text(
                         'Premium',
                         style: theme.textTheme.labelSmall?.copyWith(
-                          color: isDarkMode ? TossDesignSystem.white : theme.textTheme.bodyMedium?.color,
+                          color: isDarkMode ? DSColors.textPrimary : theme.textTheme.bodyMedium?.color,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

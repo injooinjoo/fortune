@@ -269,8 +269,8 @@ class ABTestService extends ResilientService {
     registerExperiment(
       ABTestExperiment(
         id: 'token_pricing_test',
-        name: '복주머니 가격 테스트',
-        description: '복주머니 패키지 가격과 보너스 비율 테스트',
+        name: '토큰 가격 테스트',
+        description: '토큰 패키지 가격과 보너스 비율 테스트',
         variants: [
           const ControlVariant(parameters: {
             'base_price': 1000,

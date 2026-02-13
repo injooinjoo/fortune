@@ -223,9 +223,9 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
             child: Transform(
               alignment: Alignment.center,
               transform: Matrix4.identity()
-                ..translate(translateX, translateY, zIndex)
+                ..translateByDouble(translateX, translateY, zIndex, 0.0)
                 ..rotateZ(isSelected ? 0 : position.rotation * fanProgress) // 선택된 카드는 회전 해제
-                ..scale(scale, scale),
+                ..scaleByDouble(scale, scale, 1.0, 1.0),
               child: AnimatedOpacity(
                 duration: const Duration(milliseconds: 200),
                 opacity: isSelected || isHovered || isDragging
@@ -301,8 +301,8 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
               return Transform(
                 alignment: Alignment.center,
                 transform: Matrix4.identity()
-                  ..translate(offset * progress, offset * progress, index.toDouble())
-                  ..scale(1.0 - (index * 0.02), 1.0 - (index * 0.02)),
+                  ..translateByDouble(offset * progress, offset * progress, index.toDouble(), 0.0)
+                  ..scaleByDouble(1.0 - (index * 0.02), 1.0 - (index * 0.02), 1.0, 1.0),
                 child: Opacity(
                   opacity: (isTop ? 1.0 : 0.8 * progress).clamp(0.0, 1.0),
                   child: TarotCardWidget(

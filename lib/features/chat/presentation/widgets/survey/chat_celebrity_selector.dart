@@ -48,7 +48,7 @@ class _ChatCelebritySelectorState extends ConsumerState<ChatCelebritySelector> {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     // 검색 결과 또는 인기 연예인
     final searchResults = ref.watch(celebritySearchProvider);
@@ -256,21 +256,21 @@ class _CelebrityCard extends StatelessWidget {
   Color _getTypeColor() {
     switch (celebrity.celebrityType) {
       case CelebrityType.actor:
-        return const Color(0xFFE91E63);
+        return DSColors.accentSecondary;
       case CelebrityType.soloSinger:
-        return const Color(0xFF9C27B0);
+        return DSColors.error;
       case CelebrityType.idolMember:
-        return const Color(0xFF673AB7);
+        return DSColors.info;
       case CelebrityType.athlete:
-        return const Color(0xFF2196F3);
+        return DSColors.success;
       case CelebrityType.streamer:
-        return const Color(0xFF00BCD4);
+        return DSColors.warning;
       case CelebrityType.proGamer:
-        return const Color(0xFF009688);
+        return DSColors.info;
       case CelebrityType.politician:
-        return const Color(0xFF607D8B);
+        return DSColors.textPrimary;
       case CelebrityType.business:
-        return const Color(0xFF795548);
+        return DSColors.warning;
     }
   }
 
@@ -278,7 +278,7 @@ class _CelebrityCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Material(
       color: Colors.transparent,

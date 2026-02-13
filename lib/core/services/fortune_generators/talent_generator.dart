@@ -111,16 +111,6 @@ class TalentGenerator {
     final content = fortuneData['content'] as String? ?? '';
     final description = fortuneData['description'] as String? ?? '';
 
-    // ✅ 블러 정보 추출 (Edge Function의 fortune 객체에서)
-    final isBlurred = fortuneData['isBlurred'] as bool? ?? false;
-    final blurredSections = (fortuneData['blurredSections'] as List<dynamic>?)
-        ?.map((e) => e.toString())
-        .toList() ?? [];
-
-    Logger.info('[TalentGenerator] 🔒 블러 정보:');
-    Logger.info('[TalentGenerator]   - isBlurred: $isBlurred');
-    Logger.info('[TalentGenerator]   - blurredSections: $blurredSections');
-
     return FortuneResult(
       type: 'talent',
       title: '재능 발견 운세',
@@ -146,8 +136,6 @@ class TalentGenerator {
       },
       score: overallScore,
       createdAt: DateTime.now(),
-      isBlurred: isBlurred, // ✅ 블러 상태 전달
-      blurredSections: blurredSections, // ✅ 블러된 섹션 목록 전달
     );
   }
 }

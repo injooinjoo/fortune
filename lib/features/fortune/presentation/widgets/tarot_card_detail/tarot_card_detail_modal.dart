@@ -34,6 +34,7 @@ class TarotCardDetailModal extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: DSColors.overlay,
       builder: (context) => TarotCardDetailModal(
         cardIndex: cardIndex,
         position: position,

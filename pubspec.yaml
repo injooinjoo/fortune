@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+22
+version: 1.0.4+55
 
 environment:
   sdk: ">=3.5.3 <4.0.0"
@@ -29,6 +29,8 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   flutter:
+    sdk: flutter
+  flutter_localizations:
     sdk: flutter
 
   # UI & Icons
@@ -121,17 +123,13 @@ dependencies:
   file_picker: ^8.1.2 # PDF/문서 선택용
   screenshot: ^3.0.0
   camera: ^0.11.0+2 # 실시간 카메라 프리뷰
-  google_mlkit_face_mesh_detection: ^0.3.0 # Face Mesh 시각화
   image: ^4.3.0 # 이미지 처리
   # image_gallery_saver: ^2.0.3  # AGP 8.x compatibility issue
   path_provider: ^2.1.5
 
+
   # Payment
   pay: ^2.0.0
-
-  # Ads
-  google_mobile_ads: ^6.0.0
-  app_tracking_transparency: ^2.0.6 # iOS ATT (App Tracking Transparency)
 
   # Charts & Visualizations
   percent_indicator: ^4.2.3
@@ -182,6 +180,8 @@ dependencies:
   googleapis: ^13.2.0 # Google Calendar API
   sign_in_with_apple: ^6.1.3
   kakao_flutter_sdk_user: ^1.9.0
+  kakao_flutter_sdk_share: ^1.9.0  # 카카오톡 공유 (카카오링크)
+  social_share_plugin: ^0.4.2+2  # 인스타그램 직접 공유
   # flutter_naver_login: ^2.1.1  # Replaced with native iOS implementation
   crypto: ^3.0.3 # For SHA256 hashing in Apple Sign In
 
@@ -231,6 +231,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  generate: true
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -243,9 +244,75 @@ flutter:
     - assets/images/
     - assets/videos/
     - assets/images/social/
+    - assets/images/chat/
+    - assets/images/chat/backgrounds/
     - assets/images/face_reading/
     - assets/images/fortune_entry/
+    - assets/images/fortune/
     - assets/images/fortune/categories/
+    - assets/images/fortune/bg/
+    - assets/images/fortune/heroes/daily/
+    - assets/images/fortune/heroes/love/
+    - assets/images/fortune/heroes/career/
+    - assets/images/fortune/heroes/health/
+    - assets/images/fortune/heroes/investment/
+    - assets/images/fortune/heroes/tarot/
+    - assets/images/fortune/heroes/dream/
+    - assets/images/fortune/heroes/exam/
+    - assets/images/fortune/heroes/compatibility/
+    - assets/images/fortune/heroes/mbti/
+    - assets/images/fortune/heroes/past-life/
+    - assets/images/fortune/heroes/wish/
+    - assets/images/fortune/icons/categories/
+    - assets/images/fortune/icons/lucky/
+    - assets/images/fortune/icons/section/
+    - assets/images/fortune/icons/career/
+    - assets/images/fortune/icons/health/
+    - assets/images/fortune/icons/dream/
+    - assets/images/fortune/icons/wealth/
+    - assets/images/fortune/icons/investment/
+    - assets/images/fortune/icons/exam/
+    - assets/images/fortune/icons/talent/
+    - assets/images/fortune/icons/blind-date/
+    - assets/images/fortune/icons/past-life/
+    - assets/images/fortune/icons/family/
+    - assets/images/fortune/icons/exercise/
+    - assets/images/fortune/icons/moving/
+    - assets/images/fortune/icons/naming/
+    - assets/images/fortune/icons/biorhythm/
+    - assets/images/fortune/icons/ootd/
+    - assets/images/fortune/icons/avoid-people/
+    - assets/images/fortune/icons/ex-lover/
+    - assets/images/fortune/icons/celebrity/
+    - assets/images/fortune/icons/fengshui/
+    - assets/images/fortune/mascot/daily/
+    - assets/images/fortune/career/
+    - assets/images/fortune/health/
+    - assets/images/fortune/dream/
+    - assets/images/fortune/wealth/
+    - assets/images/fortune/investment/
+    - assets/images/fortune/exam/
+    - assets/images/fortune/talent/
+    - assets/images/fortune/blind-date/
+    - assets/images/fortune/past-life/
+    - assets/images/fortune/family/
+    - assets/images/fortune/exercise/
+    - assets/images/fortune/moving/
+    - assets/images/fortune/naming/
+    - assets/images/fortune/biorhythm/
+    - assets/images/fortune/ootd/
+    - assets/images/fortune/avoid-people/
+    - assets/images/fortune/ex-lover/
+    - assets/images/fortune/celebrity/
+    - assets/images/fortune/fengshui/
+    - assets/images/fortune/mbti/characters/
+    - assets/images/fortune/zodiac/
+    - assets/images/fortune/talisman/
+    - assets/images/fortune/items/lucky/
+    - assets/images/fortune/items/lucky/korean/
+    - assets/images/fortune/saju/elements/
+    - assets/images/fortune/pets/
+    - assets/images/fortune/tarot/
     - assets/images/tarot/
     - assets/images/tarot/decks/
     - assets/images/tarot/decks/rider_waite/
@@ -299,6 +366,33 @@ flutter:
     - assets/images/fortune_cards/
     - assets/images/health/
     - assets/images/mbti/
+    - assets/images/character/
+    - assets/images/character/_base/
+    - assets/images/character/avatars/
+    - assets/images/character/gallery/
+    - assets/images/character/gallery/luts/
+    - assets/images/character/gallery/jung_tae_yoon/
+    - assets/images/character/gallery/seo_yoonjae/
+    - assets/images/character/gallery/kang_harin/
+    - assets/images/character/gallery/jayden_angel/
+    - assets/images/character/gallery/ciel_butler/
+    - assets/images/character/gallery/lee_doyoon/
+    - assets/images/character/gallery/han_seojun/
+    - assets/images/character/gallery/baek_hyunwoo/
+    - assets/images/character/gallery/min_junhyuk/
+    # Lunch Photo Assets (Proactive Message)
+    - assets/images/character/lunch/
+    # Fortune Expert Character Galleries
+    - assets/images/character/gallery/fortune_haneul/
+    - assets/images/character/gallery/fortune_muhyeon/
+    - assets/images/character/gallery/fortune_stella/
+    - assets/images/character/gallery/fortune_dr_mind/
+    - assets/images/character/gallery/fortune_rose/
+    - assets/images/character/gallery/fortune_james_kim/
+    - assets/images/character/gallery/fortune_lucky/
+    - assets/images/character/gallery/fortune_marco/
+    - assets/images/character/gallery/fortune_lina/
+    - assets/images/character/gallery/fortune_luna/
     - assets/fonts/
     # Korean Traditional Assets
     - assets/images/minhwa/
@@ -309,6 +403,12 @@ flutter:
     - assets/animations/
     # Sound Effects
     - assets/sounds/
+    # Infographic Assets
+    - assets/images/infographic/
+    - assets/images/infographic/backgrounds/
+    - assets/images/infographic/decorations/
+    - assets/images/infographic/effects/
+    - assets/images/infographic/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -329,6 +429,14 @@ flutter:
     - family: NotoSansKR
       fonts:
         - asset: assets/fonts/NotoSansKR/NotoSansKR-VariableFont_wght.ttf
+    - family: GmarketSans
+      fonts:
+        - asset: assets/fonts/GmarketSans/GmarketSansTTFLight.ttf
+          weight: 300
+        - asset: assets/fonts/GmarketSans/GmarketSansTTFMedium.ttf
+          weight: 500
+        - asset: assets/fonts/GmarketSans/GmarketSansTTFBold.ttf
+          weight: 700
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
@@ -353,17 +461,16 @@ flutter_launcher_icons:
 
 # Splash Screen Configuration
 flutter_native_splash:
-  color: "#F5F0E6" # 크림색 한지 배경
-  color_dark: "#1A1A1A" # 다크 모드 배경
-  image: "assets/images/zpzg_logo_light.png" # 知 로고 (라이트)
-  image_dark: "assets/images/zpzg_logo_dark.png" # 知 로고 (다크)
+  color: "#F7F3E9" # 미색 (Misaek) 한지 배경
+  color_dark: "#1C1C1C" # 흑색 (Heuk) 다크 모드 배경
+  # 이미지 없음 - LaunchScreen.storyboard에서 '知' 텍스트 레이블 사용
 
   # Android 12+ specific
   android_12:
-    color: "#F5F0E6"
-    color_dark: "#1A1A1A"
-    icon_background_color: "#F5F0E6"
-    icon_background_color_dark: "#1A1A1A"
+    color: "#F7F3E9"
+    color_dark: "#1C1C1C"
+    icon_background_color: "#F7F3E9"
+    icon_background_color_dark: "#1C1C1C"
 
   # Platform specific options
   android: true

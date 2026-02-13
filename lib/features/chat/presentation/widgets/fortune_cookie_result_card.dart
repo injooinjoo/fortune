@@ -1,10 +1,9 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:share_plus/share_plus.dart';
-import '../../../../core/theme/obangseok_colors.dart';
-import '../../../../core/theme/typography_unified.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/widgets/fortune_action_buttons.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../domain/entities/fortune.dart';
 
 /// 포춘쿠키 결과 인라인 카드 (프리미엄 버전)
@@ -16,7 +15,7 @@ import '../../../../domain/entities/fortune.dart';
 /// - 행운 요소 2x2 그리드
 /// - 행동 미션 (골드 shimmer)
 /// - 공유 기능
-class FortuneCookieResultCard extends StatefulWidget {
+class FortuneCookieResultCard extends ConsumerStatefulWidget {
   final Fortune fortune;
 
   const FortuneCookieResultCard({
@@ -25,10 +24,10 @@ class FortuneCookieResultCard extends StatefulWidget {
   });
 
   @override
-  State<FortuneCookieResultCard> createState() => _FortuneCookieResultCardState();
+  ConsumerState<FortuneCookieResultCard> createState() => _FortuneCookieResultCardState();
 }
 
-class _FortuneCookieResultCardState extends State<FortuneCookieResultCard> {
+class _FortuneCookieResultCardState extends ConsumerState<FortuneCookieResultCard> {
   // Fortune 데이터에서 필요한 값 추출
   String get _message => widget.fortune.content;
   String get _cookieType => widget.fortune.luckyItems?['cookie_type'] as String? ?? 'luck';
@@ -45,8 +44,8 @@ class _FortuneCookieResultCardState extends State<FortuneCookieResultCard> {
 
   // 골드 액센트 색상 (프리미엄 디자인)
   Color get _goldenAccent {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return isDark ? ObangseokColors.hwangLight : ObangseokColors.hwang;
+    final isDark = context.isDark;
+    return isDark ? DSColors.warning : DSColors.warning;
   }
 
   // 실제 행운 색상 (행운 컬러 칩에 사용)
@@ -55,7 +54,7 @@ class _FortuneCookieResultCardState extends State<FortuneCookieResultCard> {
       final hex = _luckyColorHex.replaceFirst('#', '');
       return Color(int.parse('FF$hex', radix: 16));
     } catch (e) {
-      return ObangseokColors.hwang;
+      return DSColors.warning;
     }
   }
 
@@ -84,12 +83,12 @@ class _FortuneCookieResultCardState extends State<FortuneCookieResultCard> {
           end: Alignment.bottomRight,
           colors: isDark
               ? [
-                  const Color(0xFF1E1E1E),
-                  const Color(0xFF2A2520),
+                  DSColors.background,
+                  DSColors.backgroundSecondary,
                 ]
               : [
-                  ObangseokColors.misaek,
-                  ObangseokColors.misaekDark,
+                  DSColors.backgroundSecondary,
+                  DSColors.background,
                 ],
         ),
         borderRadius: BorderRadius.circular(20),
@@ -144,13 +143,6 @@ class _FortuneCookieResultCardState extends State<FortuneCookieResultCard> {
                       .fadeIn(duration: 400.ms, delay: 500.ms)
                       .slideY(begin: 0.1, end: 0),
                   ],
-
-                  const SizedBox(height: 16),
-
-                  // 공유 버튼
-                  _buildShareButton(theme, isDark)
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 600.ms),
                 ],
               ),
             ),
@@ -223,7 +215,7 @@ class _FortuneCookieResultCardState extends State<FortuneCookieResultCard> {
                 Text(
                   '$_cookieTypeName 쿠키',
                   style: context.heading4.copyWith(
-                    color: isDark ? Colors.white : const Color(0xFF2C1810),
+                    color: isDark ? Colors.white : DSColors.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -246,6 +238,17 @@ class _FortuneCookieResultCardState extends State<FortuneCookieResultCard> {
 
         // 오른쪽: 원형 점수
         _buildCircularScore(widget.fortune.score, isDark),
+        const SizedBox(width: 8),
+        // 좋아요 + 공유 버튼
+        FortuneActionButtons(
+          contentId: widget.fortune.id,
+          contentType: 'cookie',
+          fortuneType: 'fortuneCookie',
+          shareTitle: '$_cookieTypeName 포춘쿠키',
+          shareContent: _message,
+          iconSize: 18,
+          iconColor: _goldenAccent,
+        ),
       ],
     );
   }
@@ -293,9 +296,7 @@ class _FortuneCookieResultCardState extends State<FortuneCookieResultCard> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.05)
-            : Colors.white.withValues(alpha: 0.7),
+        color: context.colors.surface.withValues(alpha: isDark ? 0.05 : 0.7),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: _goldenAccent.withValues(alpha: 0.3),
@@ -310,15 +311,19 @@ class _FortuneCookieResultCardState extends State<FortuneCookieResultCard> {
         ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // 동양풍 여는 따옴표
-          Text(
-            '「',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w300,
-              color: _goldenAccent.withValues(alpha: 0.7),
-              height: 0.8,
+          // 동양풍 여는 따옴표 (왼쪽 정렬)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              '「',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w300,
+                color: _goldenAccent.withValues(alpha: 0.7),
+                height: 0.8,
+              ),
             ),
           ),
           const SizedBox(height: 8),
@@ -327,7 +332,7 @@ class _FortuneCookieResultCardState extends State<FortuneCookieResultCard> {
           Text(
             _message,
             style: context.bodyLarge.copyWith(
-              color: isDark ? Colors.white : const Color(0xFF2C1810),
+              color: isDark ? Colors.white : DSColors.textPrimary,
               height: 1.7,
               fontWeight: FontWeight.w500,
             ),
@@ -335,14 +340,17 @@ class _FortuneCookieResultCardState extends State<FortuneCookieResultCard> {
           ),
 
           const SizedBox(height: 8),
-          // 동양풍 닫는 따옴표
-          Text(
-            '」',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w300,
-              color: _goldenAccent.withValues(alpha: 0.7),
-              height: 0.8,
+          // 동양풍 닫는 따옴표 (오른쪽 정렬)
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              '」',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w300,
+                color: _goldenAccent.withValues(alpha: 0.7),
+                height: 0.8,
+              ),
             ),
           ),
         ],
@@ -351,14 +359,12 @@ class _FortuneCookieResultCardState extends State<FortuneCookieResultCard> {
   }
 
   Widget _buildLuckyElementsGrid(ThemeData theme, bool isDark) {
-    final borderColor = isDark ? Colors.white : Colors.black;
+    final borderColor = context.colors.textPrimary;
 
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.05)
-            : Colors.white.withValues(alpha: 0.5),
+        color: context.colors.surface.withValues(alpha: isDark ? 0.05 : 0.5),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: borderColor.withValues(alpha: 0.08),
@@ -483,9 +489,7 @@ class _FortuneCookieResultCardState extends State<FortuneCookieResultCard> {
               Text(
                 label,
                 style: context.labelSmall.copyWith(
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.5)
-                      : Colors.black.withValues(alpha: 0.5),
+                  color: context.colors.textPrimary.withValues(alpha: 0.5),
                   fontSize: 10,
                 ),
               ),
@@ -501,7 +505,7 @@ class _FortuneCookieResultCardState extends State<FortuneCookieResultCard> {
                         color: colorDot,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: isDark ? Colors.white24 : Colors.black12,
+                          color: context.colors.textPrimary.withValues(alpha: isDark ? 0.24 : 0.12),
                           width: 0.5,
                         ),
                       ),
@@ -512,9 +516,7 @@ class _FortuneCookieResultCardState extends State<FortuneCookieResultCard> {
                     child: Text(
                       value,
                       style: context.labelMedium.copyWith(
-                        color: isDark
-                            ? Colors.white.withValues(alpha: 0.87)
-                            : Colors.black.withValues(alpha: 0.87),
+                        color: context.colors.textPrimary.withValues(alpha: 0.87),
                         fontWeight: FontWeight.w600,
                       ),
                       overflow: TextOverflow.ellipsis,
@@ -589,7 +591,7 @@ class _FortuneCookieResultCardState extends State<FortuneCookieResultCard> {
           Text(
             _actionMission,
             style: context.bodySmall.copyWith(
-              color: isDark ? Colors.white70 : Colors.black87,
+              color: context.colors.textPrimary.withValues(alpha: 0.87),
               height: 1.5,
             ),
           ),
@@ -603,65 +605,4 @@ class _FortuneCookieResultCardState extends State<FortuneCookieResultCard> {
       );
   }
 
-  Widget _buildShareButton(ThemeData theme, bool isDark) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        GestureDetector(
-          onTap: _shareFortune,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  _goldenAccent.withValues(alpha: 0.3),
-                  _goldenAccent.withValues(alpha: 0.2),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.share_rounded,
-                  size: 14,
-                  color: _goldenAccent,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  '공유',
-                  style: context.labelSmall.copyWith(
-                    color: _goldenAccent,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _shareFortune() {
-    HapticFeedback.mediumImpact();
-
-    final shareText = '''
-🥠 $_cookieTypeName 포춘쿠키
-
-「$_message」
-
-⏰ 행운의 시간: $_luckyTime
-🧭 행운의 방위: $_luckyDirection
-🎨 행운의 컬러: $_luckyColor
-🎲 행운의 숫자: $_luckyNumber
-🎁 럭키 아이템: $_luckyItemColor $_luckyItem
-📍 행운 장소: $_luckyPlace
-
-${_actionMission.isNotEmpty ? '💡 오늘의 미션\n$_actionMission\n\n' : ''}#포춘쿠키 #오늘의운세
-''';
-
-    Share.share(shareText);
-  }
 }

@@ -1,5 +1,5 @@
-/// Investment Fortune Page - Widget Test
-/// 투자운 페이지 UI 테스트
+// Investment Fortune Page - Widget Test
+// 투자운 페이지 UI 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -188,23 +188,6 @@ void main() {
       });
     });
 
-    group('블러 처리', () {
-      testWidgets('무료 사용자는 일부 콘텐츠 블러', (tester) async {
-        await tester.pumpWidget(
-          const ProviderScope(
-            child: MaterialApp(
-              home: Scaffold(
-                body: _MockInvestmentFortuneResult(isBlurred: true),
-              ),
-            ),
-          ),
-        );
-
-        await tester.pumpAndSettle();
-        expect(find.text('상세 분석 보기'), findsOneWidget);
-      });
-    });
-
     group('면책 조항', () {
       testWidgets('투자 면책 조항이 표시되어야 함', (tester) async {
         await tester.pumpWidget(
@@ -267,11 +250,9 @@ class _MockInvestmentFortunePage extends StatelessWidget {
 
 class _MockInvestmentFortuneResult extends StatelessWidget {
   final int score;
-  final bool isBlurred;
 
   const _MockInvestmentFortuneResult({
     this.score = 68,
-    this.isBlurred = false,
   });
 
   @override
@@ -361,16 +342,6 @@ class _MockInvestmentFortuneResult extends StatelessWidget {
                 style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
             ),
-
-            if (isBlurred) ...[
-              const SizedBox(height: 16),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('상세 분석 보기'),
-                ),
-              ),
-            ],
           ],
         ),
       ),

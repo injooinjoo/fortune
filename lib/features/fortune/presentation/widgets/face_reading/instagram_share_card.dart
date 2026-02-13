@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/design_system/design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
 
 /// 인스타그램 공유 카드
 /// 1:1 비율, 감성 디자인으로 SNS 공유에 최적화
@@ -29,9 +28,6 @@ class InstagramShareCard extends StatelessWidget {
   /// 그라데이션 색상
   final List<Color>? gradientColors;
 
-  /// 다크 모드 여부
-  final bool isDark;
-
   const InstagramShareCard({
     super.key,
     this.size = 375,
@@ -40,7 +36,6 @@ class InstagramShareCard extends StatelessWidget {
     required this.todayQuote,
     this.userName,
     this.gradientColors,
-    this.isDark = false,
   });
 
   @override
@@ -84,7 +79,7 @@ class InstagramShareCard extends StatelessWidget {
 
                 // 중앙 인사이트
                 _buildMainInsight(context),
-                const SizedBox(height: 24),
+                const SizedBox(height: DSSpacing.lg),
 
                 // 매력 포인트
                 _buildCharmPoint(context),
@@ -125,7 +120,7 @@ class InstagramShareCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text('✨', style: TextStyle(fontSize: 14)),
-              const SizedBox(width: 6),
+              const SizedBox(width: DSSpacing.xs + 2),
               Text(
                 '오늘의 나',
                 style: context.labelMedium.copyWith(
@@ -163,7 +158,7 @@ class InstagramShareCard extends StatelessWidget {
             height: 0.5,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: DSSpacing.sm),
         Text(
           insightMessage,
           style: context.heading3.copyWith(
@@ -198,7 +193,7 @@ class InstagramShareCard extends StatelessWidget {
             ),
             child: const Text('💫', style: TextStyle(fontSize: 18)),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: DSSpacing.sm + 4),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,7 +204,7 @@ class InstagramShareCard extends StatelessWidget {
                     color: DSColors.textSecondary,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: DSSpacing.xxs),
                 Text(
                   charmPoint,
                   style: context.bodyMedium.copyWith(
@@ -238,7 +233,7 @@ class InstagramShareCard extends StatelessWidget {
             height: 1.4,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: DSSpacing.md),
         Row(
           children: [
             // 앱 로고 (간단하게)
@@ -305,7 +300,6 @@ class EmotionShareCard extends StatelessWidget {
   final String emotionEmoji;
   final String message;
   final int emotionPercentage;
-  final bool isDark;
 
   const EmotionShareCard({
     super.key,
@@ -314,7 +308,6 @@ class EmotionShareCard extends StatelessWidget {
     required this.emotionEmoji,
     required this.message,
     required this.emotionPercentage,
-    this.isDark = false,
   });
 
   @override
@@ -342,7 +335,7 @@ class EmotionShareCard extends StatelessWidget {
               emotionEmoji,
               style: const TextStyle(fontSize: 64),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: DSSpacing.lg),
 
             // 감정 라벨
             Container(
@@ -359,7 +352,7 @@ class EmotionShareCard extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: DSSpacing.lg - 4),
 
             // 퍼센티지
             Text(
@@ -369,7 +362,7 @@ class EmotionShareCard extends StatelessWidget {
                 fontWeight: FontWeight.w700,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: DSSpacing.md),
 
             // 메시지
             Text(

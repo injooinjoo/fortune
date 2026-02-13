@@ -145,15 +145,15 @@ enum PetSpecies {
   String? get imagePath {
     switch (this) {
       case PetSpecies.dog:
-        return 'assets/images/fortune/categories/pet_dog.png';
+        return 'assets/images/fortune/categories/pet_dog.webp';
       case PetSpecies.cat:
-        return 'assets/images/fortune/categories/pet_cat.png';
+        return 'assets/images/fortune/categories/pet_cat.webp';
       default:
         // 나머지는 아직 생성되지 않음
         return null;
       // 추후 생성 예정:
-      // case PetSpecies.rabbit: return 'assets/images/fortune/categories/pet_rabbit.png';
-      // case PetSpecies.hamster: return 'assets/images/fortune/categories/pet_hamster.png';
+      // case PetSpecies.rabbit: return 'assets/images/fortune/categories/pet_rabbit.webp';
+      // case PetSpecies.hamster: return 'assets/images/fortune/categories/pet_hamster.webp';
     }
   }
 

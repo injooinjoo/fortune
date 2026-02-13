@@ -4,14 +4,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/models/fortune_result.dart';
 import '../../../fortune/domain/models/conditions/dream_fortune_conditions.dart';
 import '../../../../core/theme/font_config.dart';
-import '../../../../core/theme/fortune_design_system.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../presentation/providers/token_provider.dart';
-import '../../../../core/widgets/blurred_fortune_content.dart';
 import '../../../../core/services/debug_premium_service.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../core/widgets/floating_dream_bubbles.dart';
@@ -24,7 +22,6 @@ import '../../../../services/storage_service.dart';
 ///
 /// **개선 사항**:
 /// - ✅ UnifiedFortuneService 사용 (72% API 비용 절감)
-/// - ✅ BlurredFortuneContent 사용 (자동 블러/광고 처리)
 /// - ✅ FortuneResult 모델 사용 (일관성)
 class DreamInterpretationPage extends ConsumerStatefulWidget {
   const DreamInterpretationPage({super.key});
@@ -118,16 +115,12 @@ class _DreamInterpretationPageState
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+
 
     return Scaffold(
-      backgroundColor: isDark
-          ? TossDesignSystem.backgroundDark
-          : TossDesignSystem.backgroundLight,
+      backgroundColor: context.colors.background,
       appBar: AppBar(
-        backgroundColor: isDark
-            ? TossDesignSystem.backgroundDark
-            : TossDesignSystem.backgroundLight,
+        backgroundColor: context.colors.background,
         elevation: 0,
         scrolledUnderElevation: 0,
         automaticallyImplyLeading: !_showResult,
@@ -136,18 +129,14 @@ class _DreamInterpretationPageState
             : IconButton(
                 icon: Icon(
                   Icons.arrow_back_ios,
-                  color: isDark
-                      ? TossDesignSystem.textPrimaryDark
-                      : TossDesignSystem.textPrimaryLight,
+                  color: context.colors.textPrimary,
                 ),
                 onPressed: () => Navigator.of(context).pop(),
               ),
         title: Text(
           _showResult ? '꿈 해몽 결과' : '꿈 해몽',
-          style: DSTypography.headingSmall.copyWith(
-            color: isDark
-                ? TossDesignSystem.textPrimaryDark
-                : TossDesignSystem.textPrimaryLight,
+          style: context.headingSmall.copyWith(
+            color: context.colors.textPrimary,
           ),
         ),
         centerTitle: true,
@@ -156,9 +145,7 @@ class _DreamInterpretationPageState
                 IconButton(
                   icon: Icon(
                     Icons.close,
-                    color: isDark
-                        ? TossDesignSystem.textPrimaryDark
-                        : TossDesignSystem.textPrimaryLight,
+                    color: context.colors.textPrimary,
                   ),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
@@ -193,7 +180,7 @@ class _DreamInterpretationPageState
 
   /// F15: 초기 로딩 화면 (저장된 결과 확인 중)
   Widget _buildInitialLoadingView() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+
 
     return Center(
       child: Column(
@@ -203,24 +190,22 @@ class _DreamInterpretationPageState
             '🌙',
             style: TextStyle(fontSize: FontConfig.emojiMedium),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           const SizedBox(
             width: 32,
             height: 32,
             child: CircularProgressIndicator(
               strokeWidth: 2,
               valueColor: AlwaysStoppedAnimation<Color>(
-                Color(0xFF8B5CF6),
+                Color(0xFF8B5CF6), // 고유 색상 - 꿈 해몽 테마
               ),
             ),
           ),
           const SizedBox(height: 12),
           Text(
             '꿈 해몽 준비 중...',
-            style: DSTypography.bodyMedium.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textSecondaryDark
-                  : TossDesignSystem.textSecondaryLight,
+            style: context.bodyMedium.copyWith(
+              color: context.colors.textSecondary,
             ),
           ),
         ],
@@ -230,7 +215,7 @@ class _DreamInterpretationPageState
 
   /// 버블 선택 화면
   Widget _buildBubbleSelectionView() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+
 
     return Stack(
       children: [
@@ -252,13 +237,11 @@ class _DreamInterpretationPageState
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: (isDark
-                      ? TossDesignSystem.surfaceBackgroundDark
-                      : TossDesignSystem.white)
+              color: context.colors.surfaceSecondary
                   .withValues(alpha: 0.98),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+                color: const Color(0xFF8B5CF6).withValues(alpha: 0.3), // 고유 색상 - 꿈 해몽 테마
                 width: 1.5,
               ),
               boxShadow: [
@@ -270,7 +253,7 @@ class _DreamInterpretationPageState
                 ),
                 // 글로우 효과
                 BoxShadow(
-                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.15),
+                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.15), // 고유 색상 - 꿈 해몽 글로우
                   blurRadius: 30,
                   spreadRadius: -5,
                 ),
@@ -281,23 +264,19 @@ class _DreamInterpretationPageState
                 // 안내 문구
                 Text(
                   '🌙 어떤 꿈을 꾸셨나요?',
-                  style: DSTypography.headingSmall.copyWith(
-                    color: isDark
-                        ? TossDesignSystem.textPrimaryDark
-                        : TossDesignSystem.textPrimaryLight,
+                  style: context.headingSmall.copyWith(
+                    color: context.colors.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   '꿈 내용을 입력하거나 아래 버블을 선택하세요',
-                  style: DSTypography.bodySmall.copyWith(
-                    color: isDark
-                        ? TossDesignSystem.textSecondaryDark
-                        : TossDesignSystem.textSecondaryLight,
+                  style: context.bodySmall.copyWith(
+                    color: context.colors.textSecondary,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: DSSpacing.md),
 
                 // 텍스트 입력바 (그라데이션 테두리)
                 Container(
@@ -305,16 +284,16 @@ class _DreamInterpretationPageState
                     borderRadius: BorderRadius.circular(16),
                     gradient: LinearGradient(
                       colors: [
-                        const Color(0xFF8B5CF6).withValues(alpha: 0.6),
-                        const Color(0xFF6366F1).withValues(alpha: 0.6),
-                        const Color(0xFF8B5CF6).withValues(alpha: 0.6),
+                        const Color(0xFF8B5CF6).withValues(alpha: 0.6), // 고유 색상 - 꿈 해몽 테마
+                        DSColors.accentSecondary.withValues(alpha: 0.6),
+                        const Color(0xFF8B5CF6).withValues(alpha: 0.6), // 고유 색상 - 꿈 해몽 테마
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF8B5CF6).withValues(alpha: 0.25),
+                        color: const Color(0xFF8B5CF6).withValues(alpha: 0.25), // 고유 색상 - 꿈 해몽 글로우
                         blurRadius: 12,
                         spreadRadius: -2,
                       ),
@@ -323,9 +302,7 @@ class _DreamInterpretationPageState
                   padding: const EdgeInsets.all(2), // 테두리 두께
                   child: Container(
                     decoration: BoxDecoration(
-                      color: isDark
-                          ? TossDesignSystem.backgroundDark
-                          : TossDesignSystem.white,
+                      color: context.colors.background,
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: UnifiedVoiceTextField(
@@ -360,7 +337,7 @@ class _DreamInterpretationPageState
 
   /// 로딩 화면
   Widget _buildLoadingView() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+
 
     return Center(
       child: Column(
@@ -372,13 +349,11 @@ class _DreamInterpretationPageState
               _selectedTopic!.emoji,
               style: const TextStyle(fontSize: FontConfig.emojiXLarge),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: DSSpacing.md),
             Text(
               '${_selectedTopic!.title} 해몽 중...',
-              style: DSTypography.headingSmall.copyWith(
-                color: isDark
-                    ? TossDesignSystem.textPrimaryDark
-                    : TossDesignSystem.textPrimaryLight,
+              style: context.headingSmall.copyWith(
+                color: context.colors.textPrimary,
               ),
             ),
           ],
@@ -389,17 +364,15 @@ class _DreamInterpretationPageState
             child: CircularProgressIndicator(
               strokeWidth: 3,
               valueColor: AlwaysStoppedAnimation<Color>(
-                TossDesignSystem.tossBlue,
+                DSColors.accentDark,
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Text(
             '신령이 꿈을 풀이하고 있어요',
-            style: DSTypography.bodyMedium.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textSecondaryDark
-                  : TossDesignSystem.textSecondaryLight,
+            style: context.bodyMedium.copyWith(
+              color: context.colors.textSecondary,
             ),
           ),
         ],
@@ -425,27 +398,18 @@ class _DreamInterpretationPageState
         children: [
           // 종합 운세 카드
           _buildOverallCard(result),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
 
-          // 꿈 상징 (블러 대상)
-          BlurredFortuneContent(
-            fortuneResult: result,
-            child: _buildSymbolsCard(result),
-          ),
-          const SizedBox(height: 16),
+          // 꿈 상징
+          _buildSymbolsCard(result),
+          const SizedBox(height: DSSpacing.md),
 
-          // 해석 (블러 대상)
-          BlurredFortuneContent(
-            fortuneResult: result,
-            child: _buildInterpretationCard(result),
-          ),
-          const SizedBox(height: 16),
+          // 해석
+          _buildInterpretationCard(result),
+          const SizedBox(height: DSSpacing.md),
 
-          // 조언 (블러 대상)
-          BlurredFortuneContent(
-            fortuneResult: result,
-            child: _buildAdviceCard(result),
-          ),
+          // 조언
+          _buildAdviceCard(result),
 
           const SizedBox(height: 100),
         ],
@@ -461,8 +425,8 @@ class _DreamInterpretationPageState
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [
-            Color(0xFF8B5CF6),
-            Color(0xFF6366F1),
+            Color(0xFF8B5CF6), // 고유 색상 - 꿈 해몽 테마
+            DSColors.accentSecondary,
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -473,22 +437,22 @@ class _DreamInterpretationPageState
         children: [
           Text(
             '${result.data['dreamType'] ?? '길몽'} 📖',
-            style: DSTypography.headingMedium.copyWith(
+            style: context.headingMedium.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             '행운 점수',
-            style: DSTypography.bodySmall.copyWith(
+            style: context.bodySmall.copyWith(
               color: Colors.white.withValues(alpha: 0.8),
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: DSSpacing.xs),
           Text(
             '$score점',
-            style: DSTypography.displayMedium.copyWith(
+            style: context.displayMedium.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w700,
             ),
@@ -499,7 +463,7 @@ class _DreamInterpretationPageState
   }
 
   Widget _buildSymbolsCard(FortuneResult result) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     final symbols = (result.data['relatedSymbols'] as List<dynamic>?)
         ?.map((e) => e.toString())
         .toList() ?? [];
@@ -507,9 +471,7 @@ class _DreamInterpretationPageState
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark
-            ? TossDesignSystem.surfaceBackgroundDark
-            : TossDesignSystem.surfaceBackgroundLight,
+        color: context.colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -517,14 +479,12 @@ class _DreamInterpretationPageState
         children: [
           Text(
             '🔮 주요 상징',
-            style: DSTypography.headingSmall.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textPrimaryDark
-                  : TossDesignSystem.textPrimaryLight,
+            style: context.headingSmall.copyWith(
+              color: context.colors.textPrimary,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -532,16 +492,16 @@ class _DreamInterpretationPageState
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.1),
+                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.1), // 고유 색상 - 꿈 해몽 테마
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+                    color: const Color(0xFF8B5CF6).withValues(alpha: 0.3), // 고유 색상 - 꿈 해몽 테마
                   ),
                 ),
                 child: Text(
                   symbol,
-                  style: DSTypography.bodySmall.copyWith(
-                    color: const Color(0xFF8B5CF6),
+                  style: context.bodySmall.copyWith(
+                    color: const Color(0xFF8B5CF6), // 고유 색상 - 꿈 해몽 테마
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -554,15 +514,13 @@ class _DreamInterpretationPageState
   }
 
   Widget _buildInterpretationCard(FortuneResult result) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     final interpretation = FortuneTextCleaner.clean(result.data['interpretation'] as String? ?? '해석 정보가 없습니다.');
 
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark
-            ? TossDesignSystem.surfaceBackgroundDark
-            : TossDesignSystem.surfaceBackgroundLight,
+        color: context.colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -570,20 +528,16 @@ class _DreamInterpretationPageState
         children: [
           Text(
             '📖 꿈 해석',
-            style: DSTypography.headingSmall.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textPrimaryDark
-                  : TossDesignSystem.textPrimaryLight,
+            style: context.headingSmall.copyWith(
+              color: context.colors.textPrimary,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Text(
             interpretation,
-            style: DSTypography.bodyMedium.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textSecondaryDark
-                  : TossDesignSystem.textSecondaryLight,
+            style: context.bodyMedium.copyWith(
+              color: context.colors.textSecondary,
               height: 1.6,
             ),
           ),
@@ -593,15 +547,13 @@ class _DreamInterpretationPageState
   }
 
   Widget _buildAdviceCard(FortuneResult result) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     final advice = FortuneTextCleaner.clean(result.data['todayGuidance'] as String? ?? '조언 정보가 없습니다.');
 
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark
-            ? TossDesignSystem.surfaceBackgroundDark
-            : TossDesignSystem.surfaceBackgroundLight,
+        color: context.colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -609,20 +561,16 @@ class _DreamInterpretationPageState
         children: [
           Text(
             '💡 조언',
-            style: DSTypography.headingSmall.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textPrimaryDark
-                  : TossDesignSystem.textPrimaryLight,
+            style: context.headingSmall.copyWith(
+              color: context.colors.textPrimary,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Text(
             advice,
-            style: DSTypography.bodyMedium.copyWith(
-              color: isDark
-                  ? TossDesignSystem.textSecondaryDark
-                  : TossDesignSystem.textSecondaryLight,
+            style: context.bodyMedium.copyWith(
+              color: context.colors.textSecondary,
               height: 1.6,
             ),
           ),
@@ -641,7 +589,7 @@ class _DreamInterpretationPageState
       // 프리미엄 상태 확인
       final tokenState = ref.read(tokenProvider);
       final premiumOverride = await DebugPremiumService.getOverrideValue();
-      final isPremium = premiumOverride ?? tokenState.hasUnlimitedAccess;
+      final isPremium = premiumOverride ?? tokenState.hasUnlimitedTokens;
       debugPrint('🌙 [DreamPage] isPremium: $isPremium');
 
       FortuneResult result;
@@ -653,7 +601,6 @@ class _DreamInterpretationPageState
         if (hardcodedData != null) {
           debugPrint('🌙 [DreamPage] 하드코딩 데이터 사용: ${topic.id}');
           result = hardcodedData.toFortuneResult(
-            isPremium: isPremium,
             dreamTitle: topic.title,
           );
         } else {
@@ -667,16 +614,10 @@ class _DreamInterpretationPageState
         result = await _callDreamApi(topic, isPremium);
       }
 
-      // 일반 사용자는 블러 적용
-      if (!isPremium) {
-        result = result.copyWith(
-          isBlurred: true,
-          blurredSections: ['relatedSymbols', 'interpretation', 'todayGuidance'],
-        );
-      }
+      // 🎯 토큰 소비형 모델: 블러 처리 제거 (토큰 소비 후 바로 결과 표시)
 
       if (mounted) {
-        debugPrint('🌙 [DreamPage] 결과 설정 중: isBlurred=${result.isBlurred}, data keys=${result.data.keys.toList()}');
+        debugPrint('🌙 [DreamPage] 결과 설정 중: data keys=${result.data.keys.toList()}');
         setState(() {
           _fortuneResult = result;
           _showResult = true;

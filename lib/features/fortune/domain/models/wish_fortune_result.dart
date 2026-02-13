@@ -1,4 +1,4 @@
-/// 소원 빌기 결과 데이터 모델 (용 테마 + 게이미피케이션)
+// 소원 빌기 결과 데이터 모델 (용 테마 + 게이미피케이션)
 class WishFortuneResult {
   // 기존 필드
   final String empathyMessage;    // 공감 메시지 (300자)
@@ -16,6 +16,12 @@ class WishFortuneResult {
   // 🆕 용의 메시지 (스토리텔링)
   final DragonMessage? dragonMessage;
 
+  // 🆕 히스토리용 메타데이터
+  final String? id;               // DB ID
+  final String? wishText;         // 소원 내용
+  final String? category;         // 카테고리
+  final DateTime? createdAt;      // 생성 시간
+
   WishFortuneResult({
     required this.empathyMessage,
     required this.hopeMessage,
@@ -25,6 +31,10 @@ class WishFortuneResult {
     this.fortuneFlow,
     this.luckyMission,
     this.dragonMessage,
+    this.id,
+    this.wishText,
+    this.category,
+    this.createdAt,
   });
 
   factory WishFortuneResult.fromJson(Map<String, dynamic> json) {
@@ -43,6 +53,12 @@ class WishFortuneResult {
       dragonMessage: json['dragon_message'] != null
           ? DragonMessage.fromJson(json['dragon_message'] as Map<String, dynamic>)
           : null,
+      id: json['id'] as String?,
+      wishText: json['wish_text'] as String?,
+      category: json['category'] as String?,
+      createdAt: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at'] as String)
+          : null,
     );
   }
 
@@ -56,6 +72,10 @@ class WishFortuneResult {
       if (fortuneFlow != null) 'fortune_flow': fortuneFlow!.toJson(),
       if (luckyMission != null) 'lucky_mission': luckyMission!.toJson(),
       if (dragonMessage != null) 'dragon_message': dragonMessage!.toJson(),
+      if (id != null) 'id': id,
+      if (wishText != null) 'wish_text': wishText,
+      if (category != null) 'category': category,
+      if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
     };
   }
 
@@ -169,4 +189,40 @@ class DragonMessage {
       'power_line': powerLine,
     };
   }
+}
+
+/// 소원 히스토리 응답 모델
+class WishHistoryResponse {
+  final List<WishFortuneResult> wishes;
+  final int total;
+  final int remainingToday;
+  final int dailyLimit;
+
+  WishHistoryResponse({
+    required this.wishes,
+    required this.total,
+    required this.remainingToday,
+    this.dailyLimit = 3,
+  });
+
+  factory WishHistoryResponse.fromJson(Map<String, dynamic> json) {
+    final wishesJson = json['wishes'] as List<dynamic>? ?? [];
+    return WishHistoryResponse(
+      wishes: wishesJson
+          .map((e) => WishFortuneResult.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      total: json['total'] as int? ?? 0,
+      remainingToday: json['remaining_today'] as int? ?? 0,
+      dailyLimit: json['daily_limit'] as int? ?? 3,
+    );
+  }
+
+  /// 히스토리가 비어있는지 확인
+  bool get isEmpty => wishes.isEmpty;
+
+  /// 히스토리가 있는지 확인
+  bool get isNotEmpty => wishes.isNotEmpty;
+
+  /// 오늘 소원을 더 빌 수 있는지 확인
+  bool get canMakeWishToday => remainingToday > 0;
 }

@@ -94,104 +94,32 @@ class _FortuneTypeChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final chipColor = _getColorForType(intent.type);
     final label = _getLabelForType(intent.type);
-    final emoji = _getEmojiForType(intent.type);
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          DSHaptics.light();
-          onTap();
-        },
-        borderRadius: BorderRadius.circular(DSRadius.lg),
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: DSSpacing.sm,
-            vertical: DSSpacing.xs,
-          ),
-          decoration: BoxDecoration(
-            color: chipColor.withValues(alpha: isDark ? 0.2 : 0.1),
-            borderRadius: BorderRadius.circular(DSRadius.lg),
-            border: Border.all(
-              color: chipColor.withValues(alpha: 0.3),
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(emoji, style: const TextStyle(fontSize: 14)),
-              const SizedBox(width: DSSpacing.xs),
-              Text(
-                label,
-                style: typography.labelMedium.copyWith(
-                  color: colors.textPrimary,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
+    return GestureDetector(
+      onTap: () {
+        DSHaptics.light();
+        onTap();
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md,
+          vertical: DSSpacing.sm,
+        ),
+        decoration: BoxDecoration(
+          color: colors.surfaceSecondary,
+          borderRadius: BorderRadius.circular(DSRadius.md),
+        ),
+        child: Text(
+          label,
+          style: typography.labelMedium.copyWith(
+            color: colors.textPrimary,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ),
     );
-  }
-
-  Color _getColorForType(FortuneSurveyType type) {
-    switch (type) {
-      case FortuneSurveyType.profileCreation:
-        return const Color(0xFF9E9E9E); // 그레이 (유틸리티)
-      case FortuneSurveyType.career:
-        return const Color(0xFF4A90D9); // 블루
-      case FortuneSurveyType.love:
-      case FortuneSurveyType.compatibility:
-      case FortuneSurveyType.exLover:
-      case FortuneSurveyType.blindDate:
-      case FortuneSurveyType.celebrity:
-      case FortuneSurveyType.family:
-        return const Color(0xFFE91E63); // 핑크
-      case FortuneSurveyType.talent:
-      case FortuneSurveyType.tarot:
-      case FortuneSurveyType.traditional:
-      case FortuneSurveyType.faceReading:
-      case FortuneSurveyType.personalityDna:
-      case FortuneSurveyType.dream:
-      case FortuneSurveyType.pastLife:
-      case FortuneSurveyType.wish:
-      case FortuneSurveyType.naming:
-      case FortuneSurveyType.babyNickname:
-        return const Color(0xFF9C27B0); // 퍼플
-      case FortuneSurveyType.daily:
-      case FortuneSurveyType.luckyItems:
-      case FortuneSurveyType.fortuneCookie:
-      case FortuneSurveyType.pet:
-        return const Color(0xFFFF9800); // 오렌지
-      case FortuneSurveyType.mbti:
-      case FortuneSurveyType.biorhythm:
-      case FortuneSurveyType.health:
-      case FortuneSurveyType.exercise:
-      case FortuneSurveyType.sportsGame:
-        return const Color(0xFF00BCD4); // 시안
-      case FortuneSurveyType.newYear:
-      case FortuneSurveyType.dailyCalendar:
-      case FortuneSurveyType.money:
-      case FortuneSurveyType.lotto:
-        return const Color(0xFFFFB800); // 골드
-      case FortuneSurveyType.avoidPeople:
-        return const Color(0xFFFF5252); // 레드
-      case FortuneSurveyType.ootdEvaluation:
-        return const Color(0xFFE91E63); // 핑크
-      case FortuneSurveyType.talisman:
-        return const Color(0xFF9C27B0); // 퍼플
-      case FortuneSurveyType.exam:
-        return const Color(0xFF4A90D9); // 블루
-      case FortuneSurveyType.moving:
-        return const Color(0xFF4CAF50); // 그린
-      case FortuneSurveyType.gratitude:
-        return const Color(0xFFFFC107); // 앰버
-    }
   }
 
   String _getLabelForType(FortuneSurveyType type) {
@@ -270,85 +198,10 @@ class _FortuneTypeChip extends StatelessWidget {
         return '이사운';
       case FortuneSurveyType.gratitude:
         return '감사일기';
-    }
-  }
-
-  String _getEmojiForType(FortuneSurveyType type) {
-    switch (type) {
-      case FortuneSurveyType.profileCreation:
-        return '✍️';
-      case FortuneSurveyType.career:
-        return '💼';
-      case FortuneSurveyType.love:
-        return '💕';
-      case FortuneSurveyType.talent:
-        return '🌟';
-      case FortuneSurveyType.daily:
-        return '🌅';
-      case FortuneSurveyType.tarot:
-        return '🃏';
-      case FortuneSurveyType.mbti:
-        return '🧠';
-      case FortuneSurveyType.newYear:
-        return '🎊';
-      case FortuneSurveyType.dailyCalendar:
-        return '📅';
-      case FortuneSurveyType.traditional:
-        return '📿';
-      case FortuneSurveyType.faceReading:
-        return '🎭';
-      case FortuneSurveyType.personalityDna:
-        return '🧬';
-      case FortuneSurveyType.biorhythm:
-        return '📊';
-      case FortuneSurveyType.compatibility:
-        return '💞';
-      case FortuneSurveyType.avoidPeople:
-        return '⚠️';
-      case FortuneSurveyType.exLover:
-        return '🔄';
-      case FortuneSurveyType.blindDate:
-        return '💘';
-      case FortuneSurveyType.money:
-        return '💰';
-      case FortuneSurveyType.luckyItems:
-        return '🍀';
-      case FortuneSurveyType.lotto:
-        return '🎰';
-      case FortuneSurveyType.wish:
-        return '🌠';
-      case FortuneSurveyType.fortuneCookie:
-        return '🥠';
-      case FortuneSurveyType.health:
-        return '💊';
-      case FortuneSurveyType.exercise:
-        return '🏃';
-      case FortuneSurveyType.sportsGame:
-        return '🏆';
-      case FortuneSurveyType.dream:
-        return '💭';
-      case FortuneSurveyType.pastLife:
-        return '🔮';
-      case FortuneSurveyType.celebrity:
-        return '⭐';
-      case FortuneSurveyType.pet:
-        return '🐾';
-      case FortuneSurveyType.family:
-        return '👨‍👩‍👧‍👦';
-      case FortuneSurveyType.naming:
-        return '📝';
-      case FortuneSurveyType.babyNickname:
-        return '👶';
-      case FortuneSurveyType.ootdEvaluation:
-        return '👗';
-      case FortuneSurveyType.talisman:
-        return '🧿';
-      case FortuneSurveyType.exam:
-        return '📚';
-      case FortuneSurveyType.moving:
-        return '🏠';
-      case FortuneSurveyType.gratitude:
-        return '✨';
+      case FortuneSurveyType.yearlyEncounter:
+        return '올해의 인연';
+      case FortuneSurveyType.gameEnhance:
+        return '강화운세';
     }
   }
 }

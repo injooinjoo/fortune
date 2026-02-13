@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,7 +11,6 @@ import '../../widgets/health_score_card.dart';
 import '../../widgets/health_timeline_chart.dart';
 import '../../../domain/models/health_fortune_model.dart';
 import '../../../data/services/health_fortune_service.dart';
-import '../../../../../core/theme/obangseok_colors.dart';
 import '../../../../../core/widgets/unified_button.dart' show UnifiedButton, BottomButtonSpacing;
 import '../../../../../core/widgets/unified_button_enums.dart';
 import '../../../../../shared/components/toast.dart';
@@ -64,12 +64,10 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? ObangseokColors.hanjiBackgroundDark
-          : ObangseokColors.hanjiBackground,
+      backgroundColor: context.colors.background,
       appBar: _buildAppBar(isDark),
       body: SafeArea(
         child: Stack(
@@ -98,16 +96,14 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
 
   PreferredSizeWidget _buildAppBar(bool isDark) {
     return AppBar(
-      backgroundColor: isDark
-          ? ObangseokColors.hanjiBackgroundDark
-          : ObangseokColors.hanjiBackground,
+      backgroundColor: context.colors.background,
       elevation: 0,
       scrolledUnderElevation: 0,
       leading: IconButton(
         onPressed: () => context.pop(),
         icon: Icon(
           Icons.arrow_back_ios,
-          color: ObangseokColors.getMeok(context),
+          color: context.colors.textPrimary,
           size: 20,
         ),
       ),
@@ -117,7 +113,7 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
           fontFamily: 'NanumMyeongjo',
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          color: ObangseokColors.getMeok(context),
+          color: context.colors.textPrimary,
         ),
       ),
       centerTitle: true,
@@ -126,7 +122,7 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
 
   Widget _buildConditionSelectionPage(bool isDark) {
     final tokenState = ref.watch(tokenProvider);
-    final isPremium = tokenState.hasUnlimitedAccess;
+    final isPremium = tokenState.hasUnlimitedTokens;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -141,7 +137,7 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
               fontFamily: 'NanumMyeongjo',
               fontSize: 24,
               fontWeight: FontWeight.w700,
-              color: ObangseokColors.getMeok(context),
+              color: context.colors.textPrimary,
               height: 1.3,
             ),
           ),
@@ -154,16 +150,13 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
               fontFamily: 'Pretendard',
               fontSize: 15,
               fontWeight: FontWeight.w400,
-              color: isDark
-                  ? ObangseokColors.baekMuted
-                  : ObangseokColors.meokFaded,
+              color: context.colors.textSecondary,
             ),
           ),
 
           const SizedBox(height: 24),
 
           HealthAppConnectionSection(
-            isDark: isDark,
             isPremium: isPremium,
             isLoadingHealthData: _isLoadingHealthData,
             healthSummary: _healthSummary,
@@ -175,7 +168,6 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
 
           // 전문 진단 서류 업로드 섹션
           MedicalDocumentUploadSection(
-            isDark: isDark,
             tokenCost: 3,
             onTap: _showDocumentUploadSheet,
           ),
@@ -187,7 +179,6 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
             return ConditionOption(
               condition: condition,
               index: index,
-              isDark: isDark,
               isSelected: _currentCondition == condition,
               onTap: () {
                 setState(() {
@@ -305,8 +296,6 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -319,14 +308,12 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
             BodyPartHealthSection(
               bodyPartHealthList: _fortuneResult!.bodyPartHealthList,
               selectedBodyParts: _selectedBodyParts,
-              isDark: isDark,
             ),
             const SizedBox(height: 20),
           ],
 
           RecommendationsSection(
             recommendations: _fortuneResult!.recommendations,
-            isDark: isDark,
           ),
 
           const SizedBox(height: 20),
@@ -367,6 +354,50 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
                   ),
                 ),
               ],
+            ),
+          ),
+
+          // 의료 면책 조항
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: context.colors.surfaceSecondary.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: context.colors.border.withOpacity(0.3),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        size: 16,
+                        color: context.colors.textSecondary,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '안내',
+                        style: context.labelSmall.copyWith(
+                          color: context.colors.textSecondary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '이 콘텐츠는 오락 목적으로 제공되며, 의료 조언이 아닙니다. 건강 문제가 있으시면 전문 의료인과 상담하세요.',
+                    style: context.bodySmall.copyWith(
+                      color: context.colors.textSecondary,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
 
@@ -429,7 +460,7 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
     final fortuneService = UnifiedFortuneService(Supabase.instance.client);
 
     final tokenState = ref.read(tokenProvider);
-    final isPremium = tokenState.hasUnlimitedAccess;
+    final isPremium = tokenState.hasUnlimitedTokens;
 
     final inputConditions = <String, dynamic>{
       'current_condition': _currentCondition?.name ?? 'good',

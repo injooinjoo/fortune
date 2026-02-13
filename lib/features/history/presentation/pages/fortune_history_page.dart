@@ -5,8 +5,6 @@ import 'package:intl/intl.dart';
 import '../../../../core/components/app_card.dart';
 import '../../../../core/widgets/unified_button.dart';
 import '../../../../core/widgets/unified_button_enums.dart';
-import '../../../../core/theme/fortune_theme.dart';
-import '../../../../core/theme/typography_unified.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../core/providers/user_settings_provider.dart';
@@ -18,6 +16,9 @@ import '../widgets/fortune_charts.dart';
 import '../widgets/timeline_view.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../widgets/fortune_calendar_view.dart';
+import '../../../chat_insight/data/storage/insight_storage.dart';
+import '../../../chat_insight/data/models/chat_insight_result.dart';
+import '../../../chat_insight/presentation/widgets/insight_history_card.dart';
 
 class FortuneHistoryPage extends ConsumerStatefulWidget {
   const FortuneHistoryPage({super.key});
@@ -35,7 +36,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
     
     // Load fortune history
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -59,7 +60,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
     return Scaffold(
       backgroundColor: colors.background,
       appBar: AppHeader(
-        title: '운세 기록',
+        title: '인사이트 기록',
         showBackButton: true,
         centerTitle: true,
         onBackPressed: () => Navigator.of(context).pop(),
@@ -81,11 +82,11 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
           
           return Column(
             children: [
-              const SizedBox(height: TossTheme.spacingL),
+              const SizedBox(height: DSSpacing.lg),
               
               // 토스 스타일 탭 바
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: TossTheme.spacingL),
+                margin: const EdgeInsets.symmetric(horizontal: DSSpacing.lg),
                 child: Row(
                   children: [
                     _buildTabButton(0, '타임라인'),
@@ -94,18 +95,20 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                     const SizedBox(width: DSSpacing.sm),
                     _buildTabButton(2, '차트'),
                     const SizedBox(width: DSSpacing.sm),
-                    _buildTabButton(3, '일일운세'),
+                    _buildTabButton(3, '일일인사이트'),
+                    const SizedBox(width: DSSpacing.sm),
+                    _buildTabButton(4, '대화분석'),
                   ],
                 ),
               ),
               
-              const SizedBox(height: TossTheme.spacingL),
+              const SizedBox(height: DSSpacing.lg),
               
               // 이번 달 요약 카드 (토스 스타일)
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: TossTheme.spacingL),
+                margin: const EdgeInsets.symmetric(horizontal: DSSpacing.lg),
                 child: AppCard(
-                  padding: const EdgeInsets.all(TossTheme.spacingL),
+                  padding: const EdgeInsets.all(DSSpacing.lg),
                   child: Column(
                     children: [
                       Row(
@@ -126,7 +129,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                           ),
                         ],
                       ),
-                      const SizedBox(height: TossTheme.spacingM),
+                      const SizedBox(height: DSSpacing.md),
                       Row(
                         children: [
                           Expanded(
@@ -193,7 +196,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                 ),
               ),
               
-              const SizedBox(height: TossTheme.spacingL),
+              const SizedBox(height: DSSpacing.lg),
               
               // 탭별 컨텐츠
               Expanded(
@@ -211,6 +214,9 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                     
                     // Daily Fortune Calendar Tab
                     _buildDailyFortuneCalendar(filteredHistory),
+
+                    // Chat Insight History Tab
+                    _buildChatInsightHistory(),
                   ],
                 ),
               ),
@@ -218,10 +224,10 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
           );
         },
         loading: () => const Center(child: LoadingIndicator()),
-        error: (error, stack) => const Center(
+        error: (error, stack) => Center(
           child: Text(
-            '운세 기록을 불러올 수 없습니다',
-            style: DSTypography.labelMedium,
+            '인사이트 기록을 불러올 수 없습니다',
+            style: context.labelMedium,
           ),
         ),
       ),
@@ -246,7 +252,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
         ),
         child: Text(
           label,
-          style: DSTypography.labelMedium.copyWith(
+          style: context.labelMedium.copyWith(
             fontWeight: FontWeight.w600,
             color: isSelected ? Colors.white : colors.textSecondary,
           ),
@@ -260,36 +266,36 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
     final colors = context.colors;
     return Center(
       child: Container(
-        margin: const EdgeInsets.all(TossTheme.spacingXL),
+        margin: const EdgeInsets.all(DSSpacing.xl),
         child: AppCard(
-          padding: const EdgeInsets.all(TossTheme.spacingXL),
+          padding: const EdgeInsets.all(DSSpacing.xl),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 '📜',
-                style: DSTypography.displayLarge,
+                style: context.displayLarge,
               ),
-              const SizedBox(height: TossTheme.spacingL),
+              const SizedBox(height: DSSpacing.lg),
               Text(
-                '아직 운세 기록이 없어요',
+                '아직 인사이트 기록이 없어요',
                 style: context.heading2.copyWith(
                   fontWeight: FontWeight.w700,
                   color: colors.textPrimary,
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: TossTheme.spacingS),
+              const SizedBox(height: DSSpacing.sm),
               Text(
-                '운세를 보고 나면 여기에 기록됩니다',
+                '인사이트를 보고 나면 여기에 기록됩니다',
                 style: context.bodyMedium.copyWith(
                   color: colors.textSecondary,
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: TossTheme.spacingL),
+              const SizedBox(height: DSSpacing.lg),
               UnifiedButton(
-                text: '운세 보러 가기',
+                text: '인사이트 보러 가기',
                 onPressed: () => Navigator.of(context).pop(),
                 size: UnifiedButtonSize.large,
                 width: double.infinity,
@@ -433,6 +439,58 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
 
   Widget _buildDailyFortuneCalendar(List<FortuneHistory> filteredHistory) {
     return FortuneCalendarView(history: filteredHistory);
+  }
+
+  Widget _buildChatInsightHistory() {
+    return FutureBuilder<List<ChatInsightResult>>(
+      future: InsightStorage.loadAll(),
+      builder: (context, snapshot) {
+        final colors = context.colors;
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: LoadingIndicator());
+        }
+
+        final results = snapshot.data ?? [];
+        if (results.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.chat_outlined, color: colors.textTertiary, size: 48),
+                const SizedBox(height: DSSpacing.md),
+                Text(
+                  '대화 분석 기록이 없어요',
+                  style: context.heading2.copyWith(color: colors.textSecondary),
+                ),
+                const SizedBox(height: DSSpacing.xs),
+                Text(
+                  '카톡 대화를 분석하면 여기에 기록됩니다',
+                  style: context.bodySmall.copyWith(color: colors.textTertiary),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return ListView.separated(
+          padding: const EdgeInsets.all(DSSpacing.md),
+          itemCount: results.length,
+          separatorBuilder: (_, __) => const SizedBox(height: DSSpacing.sm),
+          itemBuilder: (context, index) {
+            final result = results[index];
+            return InsightHistoryCard(
+              result: result,
+              onTap: () => context.push('/chat-insight'),
+              onDelete: () async {
+                await InsightStorage.delete(result.analysisMeta.id);
+                setState(() {}); // rebuild to refresh FutureBuilder
+              },
+            );
+          },
+        );
+      },
+    );
   }
 
   void _showFilterOptions() {

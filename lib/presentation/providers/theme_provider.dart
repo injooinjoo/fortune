@@ -34,7 +34,7 @@ class ThemeModeNotifier extends StateNotifier<ThemeMode> {
             break;
         }
       } else {
-        // If no saved preference, default to light theme
+        // If no saved preference, default to light theme (Claude-style neutral)
         state = ThemeMode.light;
       }
       

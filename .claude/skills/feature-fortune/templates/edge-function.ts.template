@@ -48,8 +48,6 @@ interface {{typePascal}}Response {
     direction?: string
   }
   percentile?: number
-  is_blurred: boolean
-  blurred_sections: string[]
 }
 
 serve(async (req) => {
@@ -106,8 +104,6 @@ serve(async (req) => {
     const response: {{typePascal}}Response = {
       ...result,
       percentile,
-      is_blurred: false,  // 서버에서는 항상 전체 반환, 클라이언트에서 블러 처리
-      blurred_sections: [{{blurredSectionsList}}]
     }
 
     return new Response(

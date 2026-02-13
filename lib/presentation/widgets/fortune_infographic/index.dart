@@ -1,6 +1,6 @@
-/// Fortune Infographic Widgets Module
-///
-/// This module provides all infographic widgets for fortune completion pages.
+// Fortune Infographic Widgets Module
+//
+// This module provides all infographic widgets for fortune completion pages.
 library;
 
 export 'helpers.dart';

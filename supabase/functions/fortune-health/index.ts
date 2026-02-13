@@ -430,12 +430,6 @@ serve(async (req) => {
       const percentileData = await calculatePercentile(supabase, 'health', score)
       const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
 
-      // Blur 처리
-      resultWithPercentile.isBlurred = !isPremium
-      resultWithPercentile.blurredSections = !isPremium
-        ? ['recommendations', 'cautions', 'element_advice', 'personalized_feedback']
-        : []
-
       return new Response(JSON.stringify({ success: true, data: resultWithPercentile }), {
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
@@ -480,27 +474,43 @@ serve(async (req) => {
 - 식단에 ${ELEMENT_ORGAN_MAP[elementAnalysis.lacking]?.foods.slice(0, 3).join(', ')} 포함 권장
 ` : ''
 
-      const systemPrompt = `당신은 **현대의학 + 한의학 통합 건강코치**입니다.
-삼성서울병원 가정의학과 15년, 한방내과 10년 경력을 보유하고 있습니다.
+      const systemPrompt = `당신은 친근한 건강 친구이자 웰니스 코치예요! 💪✨
+어려운 의학 용어 대신 쉽고 재밌게, 친구처럼 건강 조언을 해줘요.
+
+## 스타일 가이드 🏃‍♀️
+- 딱딱한 의사 선생님 NO! 옆집 건강 덕후 친구처럼
+- "~해요", "~거예요" 친근한 말투
+- 무서운 경고보다 "이렇게 하면 좋아져요!" 희망 메시지
+- 오늘 당장 할 수 있는 쉬운 것부터!
+
+## 톤 예시
+❌ "수면 부족으로 인한 피로 누적이 우려됩니다"
+✅ "요즘 잠이 부족한 것 같아요! 😴 오늘 밤은 30분만 일찍 자보는 거 어때요?"
+
+❌ "규칙적인 운동이 필요합니다"
+✅ "점심 먹고 10분만 걸어봐요! 🚶 그것만으로도 오후가 달라질 거예요 ✨"
+
+🚨 [최우선 규칙] 모든 응답은 반드시 한국어로 작성하세요!
+- JSON 값: 반드시 한국어 문장 (영어 문장 절대 금지)
+- 의학 용어는 쉽게 풀어서!
 ${elementSection}
 
-📱 **가독성 최우선 규칙** (모바일 화면 최적화):
-- 모든 텍스트에 **줄바꿈(\\n\\n)** 필수! 긴 문장 덩어리 금지!
-- 핵심 포인트마다 **이모지** 사용 (📊💡✨⚠️💪🍽️🎯)
-- **불릿 포인트(•)** 적극 활용
-- 1문장 = 1포인트 원칙
+📱 **가독성 규칙** (읽기 편하게!):
+- 줄바꿈(\\n\\n)으로 숨 쉴 틈 주기
+- 이모지로 포인트 강조 📊💡✨⚠️💪🍽️🎯
+- 1문장 = 1포인트 (길게 늘어지지 않게)
 
-🎯 **핵심 원칙**:
-1. **구체적 수치와 시간 제시**: "운동하세요" ❌ → "오후 3시, 15분간 걷기" ✅
-2. **이유 설명 필수**: 모든 조언에 "왜"를 포함
-3. **실천 가능한 액션**: 바로 따라할 수 있는 구체적 방법
-4. **경고와 격려 균형**: 무서운 경고만 ❌, 희망적 조언과 함께
-${elementAnalysis ? `5. **오행 기반 조언**: ${elementAnalysis.lacking} 기운 보충 음식/활동 우선 추천` : ''}
+🎯 **조언 원칙**:
+1. **구체적으로**: "운동하세요" ❌ → "점심 후 회사 주변 10분 산책!" ✅
+2. **이유도 같이**: 왜 좋은지 한 줄 설명
+3. **오늘 바로 할 수 있는 것**: 거창한 계획 X, 소소한 실천 O
+4. **격려 위주**: 잔소리보다 응원! 💪
+${elementAnalysis ? `5. **오행 맞춤**: ${elementAnalysis.lacking} 기운 보충 음식 추천` : ''}
 
-⚠️ **절대 금지**:
-- "건강하십니다", "좋습니다", "주의하세요" 같은 막연한 표현
-- 줄바꿈 없이 500자 이상 이어쓰기
-- 이모지 없는 긴 텍스트 블록`
+⚠️ **금지**:
+- "~하십시오", "~해야 합니다" 같은 명령조
+- 무서운 경고만 하기 (희망 메시지 필수!)
+- 줄바꿈 없이 장문 쓰기`
 
       // 건강앱 데이터 섹션 생성
       const healthAppSection = hasHealthAppData ? `
@@ -767,12 +777,6 @@ ${elementAnalysis ? `- ${elementAnalysis.lacking} 오행 부족 → ${ELEMENT_OR
 
       const parsedResponse = JSON.parse(response.content)
 
-      // ✅ 항상 전체 데이터 반환 (Flutter에서 블러 처리)
-      const isBlurred = !isPremium
-      const blurredSections = isBlurred
-        ? ['body_part_advice', 'cautions', 'recommended_activities', 'diet_advice', 'exercise_advice', 'health_keyword']
-        : []
-
       // ✅ 표준화된 필드명 사용
       const overallHealthText = parsedResponse.전반적인건강운 || parsedResponse.overall_health || '건강하십니다.'
 
@@ -832,10 +836,8 @@ ${elementAnalysis ? `- ${elementAnalysis.lacking} 오행 부족 → ${ELEMENT_OR
         recommended_activities: parsedResponse.추천활동 || parsedResponse.recommended_activities || [], // 블러 대상
         diet_advice: parsedResponse.식습관조언 || parsedResponse.diet_advice, // 블러 대상
         exercise_advice: parsedResponse.운동조언 || parsedResponse.exercise_advice, // 블러 대상
-        health_keyword: parsedResponse.건강키워드 || parsedResponse.health_keyword || '건강', // 블러 대상
+        health_keyword: parsedResponse.건강키워드 || parsedResponse.health_keyword || '건강',
         timestamp: new Date().toISOString(),
-        isBlurred, // ✅ 블러 상태
-        blurredSections, // ✅ 블러된 섹션 목록
         hasHealthAppData, // ✅ 건강앱 데이터 사용 여부
         healthAppDataSummary: hasHealthAppData ? {
           steps: health_app_data!.today_steps,

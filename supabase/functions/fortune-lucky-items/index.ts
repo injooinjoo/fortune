@@ -30,8 +30,6 @@
  * - element: string - 오행 (목, 화, 토, 금, 수)
  * - score: number - 행운 점수 (0-100)
  * - advice: string - 조언
- * - isBlurred: boolean - 블러 상태
- * - blurredSections: string[] - 블러된 섹션 목록
  *
  * @example
  * // Request
@@ -105,8 +103,6 @@ interface LuckyItemsResponse {
     score: number;
     advice: string;
     timestamp: string;
-    isBlurred?: boolean; // ✅ 블러 상태
-    blurredSections?: string[]; // ✅ 블러된 섹션 목록
   };
   error?: string;
 }
@@ -193,12 +189,6 @@ serve(async (req) => {
         interests,
       })
 
-      // ✅ Blur 로직 적용
-      const isBlurred = !isPremium
-      const blurredSections = isBlurred
-        ? ['fashion', 'food', 'jewelry', 'material', 'places', 'relationships', 'advice']
-        : []
-
       // ✅ Percentile 계산
       const percentileData = await calculatePercentile(supabaseClient, 'lucky-items', personalizedResult.score || 75)
       const resultWithPercentile = addPercentileToResult({
@@ -206,9 +196,7 @@ serve(async (req) => {
         fortuneType: 'lucky-items',
         selectedCategory: interests?.[0] || 'fashion',
         selectedCategoryLabel: categoryFocusMap[interests?.[0] || 'fashion'] || 'fashion',
-        timestamp: new Date().toISOString(),
-        isBlurred,
-        blurredSections,
+        timestamp: new Date().toISOString()
       }, percentileData)
 
       return new Response(
@@ -401,12 +389,6 @@ ${interests && interests.length > 0 ? `- 관심사: ${interests.join(', ')}` : '
       throw new Error('LLM 응답을 파싱할 수 없습니다')
     }
 
-    // ✅ Blur 로직 적용
-    const isBlurred = !isPremium
-    const blurredSections = isBlurred
-      ? ['fashion', 'food', 'jewelry', 'material', 'places', 'relationships', 'advice']
-      : []
-
     // ✅ 헬퍼 함수: 객체 배열 → 문자열 배열 정규화 (하위 호환성)
     const normalizeToStringArray = (items: any[]): string[] => {
       if (!items || !Array.isArray(items)) return [];
@@ -475,8 +457,6 @@ ${interests && interests.length > 0 ? `- 관심사: ${interests.join(', ')}` : '
       relationships: normalizeToStringArray(fortuneData.relationships),
       lucky_advice: normalizeAdvice(fortuneData.advice),
       timestamp: new Date().toISOString(),
-      isBlurred,
-      blurredSections,
 
       // ✅ 신규 상세 필드 (reason 포함된 원본 객체)
       colorDetail: fortuneData.color,

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/theme/fortune_design_system.dart';
 import '../../../../core/constants/fortune_type_names.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../domain/models/fortune_history.dart';
-import '../../../../core/theme/typography_unified.dart';
 
 class TimelineView extends StatelessWidget {
   final List<FortuneHistory> history;
@@ -262,9 +260,9 @@ class TimelineView extends StatelessWidget {
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return TossDesignSystem.successGreen;
-    if (score >= 60) return TossDesignSystem.tossBlue;
-    if (score >= 40) return TossDesignSystem.warningOrange;
-    return TossDesignSystem.errorRed;
+    if (score >= 80) return DSColors.success;
+    if (score >= 60) return DSColors.accentDark;
+    if (score >= 40) return DSColors.warning;
+    return DSColors.error;
   }
 }

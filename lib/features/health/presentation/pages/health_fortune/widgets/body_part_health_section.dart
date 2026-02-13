@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/fortune_theme.dart';
-import '../../../../../../core/theme/fortune_design_system.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../domain/models/health_fortune_model.dart';
 
 class BodyPartHealthSection extends StatelessWidget {
   final List<BodyPartHealth> bodyPartHealthList;
   final List<BodyPart> selectedBodyParts;
-  final bool isDark;
 
   const BodyPartHealthSection({
     super.key,
     required this.bodyPartHealthList,
     required this.selectedBodyParts,
-    required this.isDark,
   });
 
   @override
@@ -27,24 +24,16 @@ class BodyPartHealthSection extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha: 0.04),
-            offset: const Offset(0, 2),
-            blurRadius: 16,
-            spreadRadius: 0,
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '관심 부위 상태',
-            style: TossTheme.heading3.copyWith(
-              color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+            style: context.heading3.copyWith(
+              color: context.colors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -67,9 +56,9 @@ class BodyPartHealthSection extends StatelessWidget {
                     children: [
                       Text(
                         bph.bodyPart.displayName,
-                        style: TossTheme.body1.copyWith(
+                        style: context.bodyLarge.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: isDark ? TossDesignSystem.textPrimaryDark : TossTheme.textBlack,
+                          color: context.colors.textPrimary,
                         ),
                       ),
                       const Spacer(),
@@ -81,8 +70,8 @@ class BodyPartHealthSection extends StatelessWidget {
                         ),
                         child: Text(
                           '${bph.score}점',
-                          style: TossTheme.caption.copyWith(
-                            color: TossDesignSystem.white,
+                          style: context.bodySmall.copyWith(
+                            color: Colors.white,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -92,8 +81,8 @@ class BodyPartHealthSection extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     bph.description,
-                    style: TossTheme.body3.copyWith(
-                      color: isDark ? TossDesignSystem.textSecondaryDark : TossTheme.textGray600,
+                    style: context.buttonMedium.copyWith(
+                      color: context.colors.textSecondary,
                       height: 1.4,
                     ),
                   ),

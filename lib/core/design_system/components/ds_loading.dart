@@ -131,7 +131,7 @@ class DSLoadingOverlay extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: colors.surface,
                       borderRadius: BorderRadius.circular(16),
-                      boxShadow: [context.shadows.modal],
+                      boxShadow: context.shadows.modal,
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,

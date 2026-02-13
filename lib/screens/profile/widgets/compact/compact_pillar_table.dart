@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/fortune_theme.dart';
-import '../../../../core/theme/fortune_design_system.dart';
-import '../../../../core/theme/saju_colors.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 압축된 사주 4주 테이블
 ///
@@ -19,7 +16,7 @@ class CompactPillarTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     final pillars = [
       {'title': '시주', 'hanja': '時柱', 'key': 'hour'},
@@ -30,9 +27,9 @@ class CompactPillarTable extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(TossTheme.radiusM),
+        borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
-          color: isDark ? TossDesignSystem.borderDark : TossTheme.borderPrimary,
+          color: isDark ? DSColors.border : DSColors.borderDark,
         ),
       ),
       child: Column(
@@ -54,11 +51,11 @@ class CompactPillarTable extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: isDark
-            ? TossDesignSystem.cardBackgroundDark
-            : TossTheme.backgroundSecondary,
+            ? DSColors.surface
+            : DSColors.backgroundSecondaryDark,
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(TossTheme.radiusM),
-          topRight: Radius.circular(TossTheme.radiusM),
+          topLeft: Radius.circular(DSRadius.md),
+          topRight: Radius.circular(DSRadius.md),
         ),
       ),
       child: Row(
@@ -75,13 +72,13 @@ class CompactPillarTable extends StatelessWidget {
                   right: index < pillars.length - 1
                       ? BorderSide(
                           color: isDark
-                              ? TossDesignSystem.borderDark
-                              : TossTheme.borderPrimary,
+                              ? DSColors.border
+                              : DSColors.borderDark,
                         )
                       : BorderSide.none,
                 ),
                 color: isDay
-                    ? TossTheme.brandBlue.withValues(alpha: 0.15)
+                    ? DSColors.accent.withValues(alpha: 0.15)
                     : null,
               ),
               child: Column(
@@ -91,10 +88,10 @@ class CompactPillarTable extends StatelessWidget {
                     style: context.labelTiny.copyWith(
                       fontWeight: FontWeight.bold,
                       color: isDay
-                          ? TossTheme.brandBlue
+                          ? DSColors.accent
                           : (isDark
-                              ? TossDesignSystem.grayDark600
-                              : TossDesignSystem.gray700),
+                              ? DSColors.textTertiary
+                              : DSColors.textSecondaryDark),
                     ),
                   ),
                   Text(
@@ -102,10 +99,10 @@ class CompactPillarTable extends StatelessWidget {
                     style: context.labelTiny.copyWith(
                       fontSize: 9,
                       color: isDay
-                          ? TossTheme.brandBlue
+                          ? DSColors.accent
                           : (isDark
-                              ? TossTheme.textGray400
-                              : TossTheme.textGray600),
+                              ? DSColors.textDisabled
+                              : DSColors.textSecondaryDark),
                     ),
                   ),
                 ],
@@ -122,7 +119,7 @@ class CompactPillarTable extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: isDark ? TossDesignSystem.borderDark : TossTheme.borderPrimary,
+            color: isDark ? DSColors.border : DSColors.borderDark,
           ),
         ),
       ),
@@ -142,13 +139,13 @@ class CompactPillarTable extends StatelessWidget {
                   right: index < pillars.length - 1
                       ? BorderSide(
                           color: isDark
-                              ? TossDesignSystem.borderDark
-                              : TossTheme.borderPrimary,
+                              ? DSColors.border
+                              : DSColors.borderDark,
                         )
                       : BorderSide.none,
                 ),
                 color: isDay
-                    ? TossTheme.brandBlue.withValues(alpha: 0.08)
+                    ? DSColors.accent.withValues(alpha: 0.08)
                     : null,
               ),
               child: _buildStemCell(context, stemData, isDay, isDark),
@@ -164,7 +161,7 @@ class CompactPillarTable extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: isDark ? TossDesignSystem.borderDark : TossTheme.borderPrimary,
+            color: isDark ? DSColors.border : DSColors.borderDark,
           ),
         ),
       ),
@@ -184,13 +181,13 @@ class CompactPillarTable extends StatelessWidget {
                   right: index < pillars.length - 1
                       ? BorderSide(
                           color: isDark
-                              ? TossDesignSystem.borderDark
-                              : TossTheme.borderPrimary,
+                              ? DSColors.border
+                              : DSColors.borderDark,
                         )
                       : BorderSide.none,
                 ),
                 color: isDay
-                    ? TossTheme.brandBlue.withValues(alpha: 0.08)
+                    ? DSColors.accent.withValues(alpha: 0.08)
                     : null,
               ),
               child: _buildBranchCell(context, branchData, isDay, isDark),
@@ -208,11 +205,11 @@ class CompactPillarTable extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.black.withValues(alpha: 0.2)
+            ? context.colors.backgroundSecondary
             : Colors.grey.shade50,
         borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(TossTheme.radiusM),
-          bottomRight: Radius.circular(TossTheme.radiusM),
+          bottomLeft: Radius.circular(DSRadius.md),
+          bottomRight: Radius.circular(DSRadius.md),
         ),
       ),
       child: Row(
@@ -230,8 +227,8 @@ class CompactPillarTable extends StatelessWidget {
                   right: index < pillars.length - 1
                       ? BorderSide(
                           color: isDark
-                              ? TossDesignSystem.borderDark
-                              : TossTheme.borderPrimary,
+                              ? DSColors.border
+                              : DSColors.borderDark,
                         )
                       : BorderSide.none,
                 ),
@@ -241,8 +238,8 @@ class CompactPillarTable extends StatelessWidget {
                 style: context.labelTiny.copyWith(
                   fontWeight: isDay ? FontWeight.bold : FontWeight.w500,
                   color: isDay
-                      ? TossTheme.brandBlue
-                      : (isDark ? Colors.white70 : Colors.black54),
+                      ? DSColors.accent
+                      : context.colors.textSecondary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -278,7 +275,7 @@ class CompactPillarTable extends StatelessWidget {
           style: context.heading3.copyWith(
             fontSize: isDay ? 24 : 20,
             fontWeight: FontWeight.bold,
-            color: isDay ? TossTheme.brandBlue : color,
+            color: isDay ? DSColors.accent : color,
           ),
         ),
         const SizedBox(height: 2),
@@ -327,14 +324,14 @@ class CompactPillarTable extends StatelessWidget {
           style: context.heading3.copyWith(
             fontSize: isDay ? 24 : 20,
             fontWeight: FontWeight.bold,
-            color: isDay ? TossTheme.brandBlue : color,
+            color: isDay ? DSColors.accent : color,
           ),
         ),
         Text(
           animal,
           style: context.labelTiny.copyWith(
             fontSize: 8,
-            color: isDark ? Colors.white60 : Colors.black45,
+            color: context.colors.textSecondary,
           ),
         ),
         const SizedBox(height: 2),

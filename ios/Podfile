@@ -90,14 +90,11 @@ post_install do |installer|
       end
     end
 
-    # Note: flutter_inappwebview has known crash on iOS 18.4+ simulators
-    # See: https://github.com/pichillilorenzo/flutter_inappwebview/issues/2636
-    # Workaround: Use iOS 17.x simulator or physical device
-    if target.name == 'flutter_inappwebview_ios'
-      target.build_configurations.each do |config|
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
-      end
+    # Fix architectures for Apple Silicon Macs
+    target.build_configurations.each do |config|
+      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = ""
     end
+
   end
   
   # Fix Xcode 15 compatibility issues and deployment targets
@@ -109,8 +106,10 @@ post_install do |installer|
     end
   end
   
-  # Fix specific pod deployment targets
+  # Fix specific pod deployment targets and architectures
   installer.pods_project.build_configurations.each do |config|
     config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+    config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = ""
   end
+
 end

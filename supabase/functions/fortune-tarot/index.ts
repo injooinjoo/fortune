@@ -112,6 +112,22 @@ const SPREAD_NAMES: Record<string, string> = {
   celticCross: '켈틱 크로스',
 }
 
+// 사용 가능한 타로 덱 목록 (메이저 아르카나 22장 완비)
+const AVAILABLE_DECKS = [
+  'rider_waite',
+  'thoth',
+  'ancient_italian',
+  'before_tarot',
+  'after_tarot',
+  'golden_dawn_cicero',
+]
+
+// 랜덤 덱 선택
+function getRandomDeck(): string {
+  const randomIndex = Math.floor(Math.random() * AVAILABLE_DECKS.length)
+  return AVAILABLE_DECKS[randomIndex]
+}
+
 // 카드 이미지 경로 생성
 function getCardImagePath(cardIndex: number, deck: string = 'rider_waite'): string {
   const card = MAJOR_ARCANA[cardIndex]
@@ -151,7 +167,25 @@ function buildStorytellingPrompt(
 `
     : ''
 
-  return `당신은 숙련된 타로 마스터입니다. 카드들이 전하는 이야기를 감성적이면서도 구체적으로 들려주세요.
+  return `당신은 신비로운 타로 세계의 안내자예요! ✨
+카드들이 속삭이는 이야기를 마치 친한 친구에게 들려주듯이, 따뜻하고 흥미진진하게 전해주세요.
+
+## 스타일 가이드 🎴
+- 신비로운 분위기는 유지하되, 딱딱하지 않게!
+- "~해요", "~거예요" 같은 친근한 말투 사용
+- 카드가 전하는 메시지를 마치 드라마 스토리처럼 흥미롭게!
+- 이모지는 핵심 포인트에만 센스있게 ✨🌙💫
+- 조언은 "~해보세요"처럼 부드럽게
+
+## 응답 톤 예시
+❌ "이 카드는 새로운 시작을 의미합니다"
+✅ "지금 당신 앞에 새로운 문이 열리고 있어요! 🚪✨"
+
+❌ "조심해야 할 시기입니다"
+✅ "살짝 속도 조절이 필요한 타이밍이에요. 괜찮아요, 잠깐 쉬어가는 것도 전략이니까! 💪"
+
+❌ "연애운이 상승합니다"
+✅ "오 설레는 기운이 느껴져요! 💕 누군가와의 특별한 순간이 다가오고 있을지도?"
 
 ## 질문자 정보
 - 질문/주제: "${question}"
@@ -168,13 +202,13 @@ ${storyGuide}
   "cardInterpretations": [
     {
       "positionKey": "string (위치 키)",
-      "interpretation": "string (이 위치에서 이 카드의 의미, 3-4문장. 이전 카드와의 연결점 언급)"
+      "interpretation": "string (이 위치에서 이 카드의 의미. 친근하게 3-4문장. 이전 카드와의 연결점도 자연스럽게!)"
     }
   ],
-  "overallReading": "string (${cards.length}장의 카드가 하나로 연결되어 전하는 이야기. 6-8문장으로 드라마틱하게 서술. 시작-전개-결말 구조)",
-  "storyTitle": "string (이 리딩을 한 문장으로 요약한 제목)",
-  "guidance": "string (질문에 대한 핵심 방향성, 2-3문장)",
-  "advice": "string (구체적이고 실천 가능한 조언, 3-4문장)",
+  "overallReading": "string (${cards.length}장의 카드가 들려주는 이야기! 마치 미니 드라마처럼 6-8문장으로. 시작-전개-결말 구조로 흥미진진하게!)",
+  "storyTitle": "string (이 리딩을 한 문장으로! 센스있는 제목)",
+  "guidance": "string (핵심 방향성을 친근하게 2-3문장)",
+  "advice": "string (바로 실천할 수 있는 조언! 3-4문장, ~해보세요 톤으로)",
   "energyLevel": number (1-100, 현재 에너지/기운 점수),
   "keyThemes": ["string", "string", "string"] (3개의 핵심 키워드),
   "luckyElement": "string (행운의 원소/색상)",
@@ -182,11 +216,11 @@ ${storyGuide}
   "timeFrame": "string (이 리딩의 유효 기간, 예: '향후 2-3주')"
 }
 
-중요:
-1. 각 카드 해석에서 이전 카드와의 연결점을 자연스럽게 언급하세요
-2. overallReading은 모든 카드를 관통하는 하나의 연속된 이야기여야 합니다
-3. 정방향/역방향에 따라 의미가 크게 달라집니다
-4. 반드시 유효한 JSON만 출력하세요`
+## 중요 (기술적 사항)
+1. 각 카드 해석에서 이전 카드와의 연결점을 자연스럽게 언급해주세요
+2. overallReading은 마치 한 편의 미니 드라마처럼! 시작-전개-결말 구조로
+3. 정방향/역방향에 따라 뉘앙스가 확~ 달라져요
+4. 반드시 유효한 JSON만 출력해주세요`
 }
 
 // ===== 메인 핸들러 =====
@@ -211,9 +245,12 @@ serve(async (req: Request) => {
     const userId = body.userId
     const question = body.question || tarotSelection.question || body.answers?.purpose || body.purpose || 'guidance'
     const spreadType = body.spreadType || tarotSelection.spreadType || 'single'
-    const deck = body.deck || tarotSelection.deck || 'rider_waite'
+    // 덱이 명시되지 않으면 랜덤 선택
+    const deck = body.deck || tarotSelection.deck || getRandomDeck()
     const userName = body.name
     const birthDate = body.birthDate
+    // 프리미엄 사용자 여부 (블러 처리용)
+    const isPremium = body.isPremium ?? false
 
     // 카드 인덱스 추출 (여러 형식 및 위치 지원)
     let cardIndices: number[] = []
@@ -295,8 +332,6 @@ serve(async (req: Request) => {
             data: {
               ...resultWithPercentile,
               timestamp: new Date().toISOString(),
-              isBlurred: false,
-              blurredSections: [],
             },
             cohortHit: true,
           }),
@@ -395,31 +430,29 @@ serve(async (req: Request) => {
       }
     })
 
-    // 프리미엄 체크는 클라이언트에서 - 서버는 항상 전체 데이터 반환
-    // (블러 처리는 클라이언트가 결정)
+    // 기본 응답 데이터 구성
+    const baseData = {
+      question,
+      spreadType,
+      spreadDisplayName: SPREAD_NAMES[spreadType] || spreadType,
+      spreadName: SPREAD_NAMES[spreadType] || spreadType,
+      deckName: 'Rider-Waite',
+      cards: cardResults,
+      overallReading: parsedResponse.overallReading || '',
+      storyTitle: parsedResponse.storyTitle || '',
+      guidance: parsedResponse.guidance || '',
+      advice: parsedResponse.advice || '',
+      energyLevel: parsedResponse.energyLevel || 70,
+      keyThemes: parsedResponse.keyThemes || [],
+      luckyElement: parsedResponse.luckyElement || '',
+      focusAreas: parsedResponse.focusAreas || [],
+      timeFrame: parsedResponse.timeFrame || '',
+      timestamp: new Date().toISOString(),
+    }
+
     const response = {
       success: true,
-      data: {
-        question,
-        spreadType,
-        spreadDisplayName: SPREAD_NAMES[spreadType] || spreadType,
-        spreadName: SPREAD_NAMES[spreadType] || spreadType,
-        deckName: 'Rider-Waite',
-        cards: cardResults,
-        overallReading: parsedResponse.overallReading || '',
-        storyTitle: parsedResponse.storyTitle || '',
-        guidance: parsedResponse.guidance || '',
-        advice: parsedResponse.advice || '',
-        energyLevel: parsedResponse.energyLevel || 70,
-        keyThemes: parsedResponse.keyThemes || [],
-        luckyElement: parsedResponse.luckyElement || '',
-        focusAreas: parsedResponse.focusAreas || [],
-        timeFrame: parsedResponse.timeFrame || '',
-        timestamp: new Date().toISOString(),
-        // 블러 항상 false - 프리미엄 사용자는 다 볼 수 있어야 함
-        isBlurred: false,
-        blurredSections: [],
-      },
+      data: baseData,
     }
 
     // 사용량 로깅 - llmResult는 LLMResponse 타입
@@ -432,8 +465,9 @@ serve(async (req: Request) => {
     }).catch(console.error)
 
     // ===== Cohort Pool 저장 (fire-and-forget) =====
+    // 블러 없는 원본 데이터 저장 (조회 시 사용자별 블러 처리)
     if (Object.keys(cohortData).length > 0) {
-      saveToCohortPool(supabaseClient, 'tarot', cohortHash, cohortData, response.data)
+      saveToCohortPool(supabaseClient, 'tarot', cohortHash, cohortData, baseData)
         .catch(e => console.error('[Tarot] Cohort 저장 오류:', e))
     }
 
@@ -455,3 +489,4 @@ serve(async (req: Request) => {
     )
   }
 })
+

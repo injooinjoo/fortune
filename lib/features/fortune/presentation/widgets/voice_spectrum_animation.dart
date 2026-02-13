@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 /// ChatGPT 스타일 음성 웨이브폼 애니메이션
 /// 많은 얇은 바가 실시간 소리에 반응
@@ -118,7 +119,7 @@ class _VoiceSpectrumAnimationState extends State<VoiceSpectrumAnimation>
       return const SizedBox.shrink();
     }
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     // ChatGPT 스타일: 회색 웨이브폼
     final barColor = isDark ? Colors.grey[400]! : Colors.grey[600]!;
 

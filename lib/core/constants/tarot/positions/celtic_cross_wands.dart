@@ -1,5 +1,5 @@
-/// Celtic Cross 스프레드 - Wands (14장) 해석
-/// 카드 인덱스: 22-35 (Ace ~ King of Wands)
+// Celtic Cross 스프레드 - Wands (14장) 해석
+// 카드 인덱스: 22-35 (Ace ~ King of Wands)
 
 class CelticCrossWands {
   static const Map<int, Map<String, Map<String, String>>> meanings = {

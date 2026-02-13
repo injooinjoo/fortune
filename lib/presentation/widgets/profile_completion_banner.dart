@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_dimensions.dart';
 import '../../core/theme/app_animations.dart';
@@ -122,12 +122,12 @@ class _ProfileCompletionBannerState extends State<ProfileCompletionBanner>
         direction: DismissDirection.endToStart,
         onDismissed: (_) => _dismissBanner(),
         background: Container(
-          color: TossDesignSystem.white.withValues(alpha: 0.0),
+          color: Colors.white.withValues(alpha: 0.0),
           alignment: Alignment.centerRight,
           padding: const EdgeInsets.only(right: AppSpacing.spacing4),
           child: Icon(
             Icons.close,
-            color: TossDesignSystem.gray900.withValues(alpha: 0.54)),
+            color: DSColors.textPrimaryDark.withValues(alpha: 0.54)),
         ),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
@@ -135,7 +135,7 @@ class _ProfileCompletionBannerState extends State<ProfileCompletionBanner>
             onTap: () => context.push('/profile/edit'),
             child: GlassContainer(
               padding: AppSpacing.paddingAll16,
-              borderColor: TossDesignSystem.gray900.withValues(alpha: 0.12),
+              borderColor: DSColors.textPrimaryDark.withValues(alpha: 0.12),
               child: Row(
                 children: [
                   // Progress Indicator
@@ -148,11 +148,11 @@ class _ProfileCompletionBannerState extends State<ProfileCompletionBanner>
                         CircularProgressIndicator(
                           value: _completionPercentage,
                           strokeWidth: 4,
-                          backgroundColor: TossDesignSystem.gray600,
+                          backgroundColor: DSColors.textSecondaryDark,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            _completionPercentage < 0.5 
-                                ? TossDesignSystem.gray900.withValues(alpha: 0.54)
-                                : TossDesignSystem.gray900.withValues(alpha: 0.87),
+                            _completionPercentage < 0.5
+                                ? DSColors.textPrimaryDark.withValues(alpha: 0.54)
+                                : DSColors.textPrimaryDark.withValues(alpha: 0.87),
                           ),
                         ),
                         Text(
@@ -179,9 +179,7 @@ class _ProfileCompletionBannerState extends State<ProfileCompletionBanner>
                               ? '더 정확한 운세를 위해 프로필을 확인해주세요'
                               : '정보: ${_missingFields.take(2).join(', ')}${_missingFields.length > 2 ? ' 외 ${_missingFields.length - 2}개' : ''}',
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).brightness == Brightness.dark
-                                ? TossDesignSystem.gray300
-                                : TossDesignSystem.gray900,
+                            color: context.colors.textSecondary,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -194,9 +192,7 @@ class _ProfileCompletionBannerState extends State<ProfileCompletionBanner>
                   Icon(
                     Icons.arrow_forward_ios,
                     size: AppDimensions.iconSizeXSmall,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? TossDesignSystem.gray400
-                        : TossDesignSystem.gray600,
+                    color: context.colors.textTertiary,
                   ),
                 ],
               ),

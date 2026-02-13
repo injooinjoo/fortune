@@ -1,8 +1,8 @@
-/// 오행(五行) 모델 및 시각화 위젯
-///
-/// 오행: 목(木), 화(火), 토(土), 금(金), 수(水)
-/// - 사주에서 추출된 오행 분포를 모델링
-/// - 오각형 차트로 시각화
+// 오행(五行) 모델 및 시각화 위젯
+//
+// 오행: 목(木), 화(火), 토(土), 금(金), 수(水)
+// - 사주에서 추출된 오행 분포를 모델링
+// - 오각형 차트로 시각화
 library;
 
 import 'package:flutter/material.dart';
@@ -11,11 +11,11 @@ import 'dart:math' as math;
 
 /// 오행 타입
 enum WuxingType {
-  wood('목', '木', Color(0xFF4CAF50), '성장', '봄', '동쪽'),
-  fire('화', '火', Color(0xFFF44336), '열정', '여름', '남쪽'),
-  earth('토', '土', Color(0xFFFF9800), '안정', '환절기', '중앙'),
-  metal('금', '金', Color(0xFFC0C0C0), '결단', '가을', '서쪽'),
-  water('수', '水', Color(0xFF2196F3), '지혜', '겨울', '북쪽');
+  wood('목', '木', DSColors.success, '성장', '봄', '동쪽'),
+  fire('화', '火', DSColors.error, '열정', '여름', '남쪽'),
+  earth('토', '土', DSColors.warning, '안정', '환절기', '중앙'),
+  metal('금', '金', DSColors.surface, '결단', '가을', '서쪽'),
+  water('수', '水', DSColors.info, '지혜', '겨울', '북쪽');
 
   final String korean;
   final String chinese;
@@ -401,20 +401,11 @@ class WuxingDetailCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -422,9 +413,9 @@ class WuxingDetailCard extends StatelessWidget {
           // 제목
           Text(
             '오행 분포 분석',
-            style: DSTypography.headingSmall.copyWith(
+            style: context.headingSmall.copyWith(
               fontWeight: FontWeight.w700,
-              color: isDark ? Colors.white : Colors.black87,
+              color: context.colors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -443,15 +434,15 @@ class WuxingDetailCard extends StatelessWidget {
             children: [
               Text(
                 '균형 점수',
-                style: DSTypography.bodySmall.copyWith(
+                style: context.bodySmall.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: isDark ? Colors.white70 : Colors.black54,
+                  color: context.colors.textSecondary,
                 ),
               ),
               const Spacer(),
               Text(
                 '${distribution.balanceScore.toStringAsFixed(0)}점',
-                style: DSTypography.labelMedium.copyWith(
+                style: context.labelMedium.copyWith(
                   fontWeight: FontWeight.w700,
                   color: distribution.balanceScore >= 60
                       ? Colors.green
@@ -467,9 +458,9 @@ class WuxingDetailCard extends StatelessWidget {
           // 설명
           Text(
             distribution.description,
-            style: DSTypography.bodySmall.copyWith(
+            style: context.bodySmall.copyWith(
               height: 1.5,
-              color: isDark ? Colors.white70 : Colors.black87,
+              color: context.colors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -478,9 +469,9 @@ class WuxingDetailCard extends StatelessWidget {
           if (distribution.recommendations.isNotEmpty) ...[
             Text(
               '추천 사항',
-              style: DSTypography.bodySmall.copyWith(
+              style: context.bodySmall.copyWith(
                 fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white70 : Colors.black54,
+                color: context.colors.textSecondary,
               ),
             ),
             const SizedBox(height: 8),
@@ -491,16 +482,16 @@ class WuxingDetailCard extends StatelessWidget {
                     children: [
                       Text(
                         '• ',
-                        style: DSTypography.bodySmall.copyWith(
-                          color: isDark ? Colors.white70 : Colors.black87,
+                        style: context.bodySmall.copyWith(
+                          color: context.colors.textPrimary,
                         ),
                       ),
                       Expanded(
                         child: Text(
                           rec,
-                          style: DSTypography.bodySmall.copyWith(
+                          style: context.bodySmall.copyWith(
                             height: 1.4,
-                            color: isDark ? Colors.white70 : Colors.black87,
+                            color: context.colors.textPrimary,
                           ),
                         ),
                       ),

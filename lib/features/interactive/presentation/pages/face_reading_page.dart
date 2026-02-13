@@ -9,13 +9,12 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../core/theme/fortune_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../../../../shared/components/token_insufficient_modal.dart';
-import '../../../../services/ad_service.dart'; // ✅ 광고 서비스
 import '../../../fortune/presentation/widgets/face_reading/celebrity_match_carousel.dart'; // ✅ 닮은꼴 캐러셀
 
 class FaceReadingPage extends ConsumerStatefulWidget {
@@ -27,7 +26,6 @@ class FaceReadingPage extends ConsumerStatefulWidget {
 
 class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
   final ImagePicker _picker = ImagePicker();
-  final AdService _adService = AdService(); // ✅ 광고 서비스
   File? _selectedImage;
   bool _isAnalyzing = false;
   String? _analysisResult;
@@ -44,15 +42,12 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
   @override
   void initState() {
     super.initState();
-    // ✅ 페이지 진입 시 인터스티셜 광고 표시
-    _showEntryAd();
     // ✅ 로그인 사용자 프로필 사진 자동 로드
     _loadDefaultProfileImage();
   }
 
   /// 로그인 사용자 프로필 사진 자동 로드
   Future<void> _loadDefaultProfileImage() async {
-    // 광고 표시 후 약간의 딜레이
     await Future.delayed(const Duration(milliseconds: 500));
 
     if (!mounted) return;
@@ -62,24 +57,6 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
 
     if (profileImageUrl != null && profileImageUrl.isNotEmpty) {
       await _useProfileImage(profileImageUrl);
-    }
-  }
-
-  /// 페이지 진입 시 광고 표시
-  Future<void> _showEntryAd() async {
-    try {
-      // 광고가 준비되어 있으면 표시
-      if (_adService.isInterstitialAdReady) {
-        await _adService.showInterstitialAd();
-      } else {
-        // 광고 로드 후 표시
-        await _adService.loadInterstitialAd();
-        if (_adService.isInterstitialAdReady) {
-          await _adService.showInterstitialAd();
-        }
-      }
-    } catch (e) {
-      Logger.error('[FaceReadingPage] 광고 표시 실패', e);
     }
   }
 
@@ -97,9 +74,9 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                 child: Column(
                   children: [
                     _buildInstructions(),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: DSSpacing.lg),
                     _buildImageSection(),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: DSSpacing.lg),
                     _buildActionButtons(),
                     if (_analysisResult != null) ...[
                       const SizedBox(height: 32),
@@ -124,14 +101,14 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
             size: 48,
             color: Theme.of(context).colorScheme.primary,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Text(
             '당신의 얼굴을 분석합니다',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             '정면 사진을 업로드하면 관상을 분석해드립니다.\n'
             '개인정보는 안전하게 보호되며 분석 후 즉시 삭제됩니다.',
@@ -140,7 +117,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
@@ -155,9 +132,9 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                   size: 16,
                   color: Theme.of(context).colorScheme.primary,
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: DSSpacing.xs),
                 Text(
-                  '$_requiredTokens 복주머니 필요',
+                  '$_requiredTokens 토큰 필요',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.bold,
@@ -199,12 +176,12 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                       icon: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: TossDesignSystem.black.withValues(alpha: 0.54),
+                          color: Colors.black.withValues(alpha: 0.54),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: const Icon(
                           Icons.close,
-                          color: TossDesignSystem.white,
+                          color: Colors.white,
                           size: 20,
                         ),
                       ),
@@ -220,7 +197,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                   size: 64,
                   color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: DSSpacing.md),
                 Text(
                   '탭하여 사진 선택',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -315,7 +292,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
                 color: Theme.of(context).colorScheme.primary,
                 size: 24,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '관상 분석 결과',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -324,15 +301,14 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
 
           // ✅ 닮은꼴 유명인 캐러셀
           if (_similarCelebrities != null && _similarCelebrities!.isNotEmpty) ...[
             CelebrityMatchCarousel(
               celebrities: _similarCelebrities!,
-              isBlurred: false,
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: DSSpacing.lg),
           ],
 
           Text(
@@ -341,7 +317,7 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
               height: 1.6,
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: DSSpacing.lg),
           Row(
             children: [
               Expanded(
@@ -383,7 +359,8 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: TossDesignSystem.transparent,
+      backgroundColor: Colors.transparent,
+      barrierColor: DSColors.overlay,
       builder: (context) => GlassContainer(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         child: SafeArea(
@@ -690,7 +667,8 @@ class _FaceReadingPageState extends ConsumerState<FaceReadingPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: TossDesignSystem.transparent,
+      backgroundColor: Colors.transparent,
+      barrierColor: DSColors.overlay,
       builder: (context) => const TokenInsufficientModal(
         requiredTokens: _requiredTokens,
         fortuneType: 'face-reading',

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../tokens/ds_colors.dart';
 import '../tokens/ds_animation.dart';
 import '../utils/ds_haptics.dart';
 import '../theme/ds_extensions.dart';
@@ -133,18 +132,6 @@ class _DSToggleState extends State<DSToggle>
                       decoration: BoxDecoration(
                         color: colors.toggleThumb,
                         shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: DSColors.textPrimary.withValues(alpha: 0.15),
-                            blurRadius: 8,
-                            offset: const Offset(0, 3),
-                          ),
-                          BoxShadow(
-                            color: DSColors.textPrimary.withValues(alpha: 0.06),
-                            blurRadius: 1,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
                       ),
                     ),
                   ),

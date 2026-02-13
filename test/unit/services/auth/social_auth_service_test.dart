@@ -1,8 +1,7 @@
-/// Social Auth Service - Unit Test
-/// 소셜 로그인 서비스 테스트
+// Social Auth Service - Unit Test
+// 소셜 로그인 서비스 테스트
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import '../../../mocks/mock_auth_services.dart';
 
 void main() {

@@ -2,16 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/widgets/unified_blur_wrapper.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
-import '../../../../core/utils/fortune_completion_helper.dart';
-import '../../../../core/utils/subscription_snackbar.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../presentation/providers/subscription_provider.dart';
-import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/widgets/hexagon_chart.dart';
-import '../../../../services/ad_service.dart';
 import '../../../../shared/widgets/smart_image.dart';
+import '../../../../core/widgets/fortune_action_buttons.dart';
+import '../../../../core/constants/fortune_card_images.dart';
 
 /// 채팅용 유명인 궁합 결과 카드
 ///
@@ -40,8 +36,6 @@ class ChatCelebrityResultCard extends ConsumerStatefulWidget {
 
 class _ChatCelebrityResultCardState
     extends ConsumerState<ChatCelebrityResultCard> {
-  bool _isBlurred = false;
-  List<String> _blurredSections = [];
   final Set<String> _expandedSections = {};
 
   // 데이터 추출
@@ -62,42 +56,11 @@ class _ChatCelebrityResultCardState
   @override
   void initState() {
     super.initState();
-    // 블러 제거 - 모든 콘텐츠 바로 표시
-    _isBlurred = false;
-    _blurredSections = [];
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         ref.read(fortuneHapticServiceProvider).mysticalReveal();
       }
     });
-  }
-
-  Future<void> _showAdAndUnblur() async {
-    final adService = AdService();
-
-    await adService.showRewardedAd(
-      onUserEarnedReward: (ad, reward) async {
-        await ref.read(fortuneHapticServiceProvider).premiumUnlock();
-
-        if (mounted) {
-          FortuneCompletionHelper.onFortuneViewed(context, ref, 'celebrity');
-        }
-
-        setState(() {
-          _isBlurred = false;
-          _blurredSections = [];
-        });
-
-        if (mounted) {
-          final tokenState = ref.read(tokenProvider);
-          SubscriptionSnackbar.showAfterAd(
-            context,
-            hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
-          );
-        }
-      },
-    );
   }
 
   void _toggleSection(String section) {
@@ -113,62 +76,40 @@ class _ChatCelebrityResultCardState
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isPremium = ref.watch(isPremiumProvider);
-
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(
         vertical: DSSpacing.sm,
         horizontal: DSSpacing.md,
       ),
-      decoration: BoxDecoration(
-        color: isDark ? colors.backgroundSecondary : colors.surface,
-        borderRadius: BorderRadius.circular(DSRadius.lg),
-        border: Border.all(
-          color: colors.textPrimary.withValues(alpha: 0.1),
+      child: DSCard.flat(
+        padding: EdgeInsets.zero,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 1. 헤더 (유명인 + 점수)
+            _buildHeader(context).animate().fadeIn(duration: 400.ms),
+
+            // 2. 육각형 차트 (무료)
+            if (widget.fortune.hexagonScores != null)
+              _buildHexagonChart(context)
+                  .animate()
+                  .fadeIn(duration: 500.ms, delay: 100.ms),
+
+            // 3. 메인 메시지 (무료)
+            _buildMainMessage(context)
+                .animate()
+                .fadeIn(duration: 500.ms, delay: 200.ms),
+
+            // 4. 블러 섹션들 (접히는 형태)
+            _buildBlurredSections(context)
+                .animate()
+                .fadeIn(duration: 500.ms, delay: 300.ms),
+
+            const SizedBox(height: DSSpacing.sm),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: colors.textPrimary.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // 1. 헤더 (유명인 + 점수)
-          _buildHeader(context).animate().fadeIn(duration: 400.ms),
-
-          // 2. 육각형 차트 (무료)
-          if (widget.fortune.hexagonScores != null)
-            _buildHexagonChart(context)
-                .animate()
-                .fadeIn(duration: 500.ms, delay: 100.ms),
-
-          // 3. 메인 메시지 (무료)
-          _buildMainMessage(context)
-              .animate()
-              .fadeIn(duration: 500.ms, delay: 200.ms),
-
-          // 4. 블러 섹션들 (접히는 형태)
-          _buildBlurredSections(context, isDark)
-              .animate()
-              .fadeIn(duration: 500.ms, delay: 300.ms),
-
-          // 5. 언락 버튼 (블러 상태 + 비구독자)
-          if (_isBlurred && !isPremium)
-            _buildUnlockButton(context)
-                .animate()
-                .fadeIn(duration: 500.ms, delay: 400.ms),
-
-          const SizedBox(height: DSSpacing.sm),
-        ],
       ),
     );
   }
@@ -177,97 +118,133 @@ class _ChatCelebrityResultCardState
     final colors = context.colors;
     final typography = context.typography;
     final score = widget.fortune.score;
+    final heroImage = FortuneCardImages.getHeroImage('compatibility', score);
 
-    return Container(
-      padding: const EdgeInsets.all(DSSpacing.md),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            const Color(0xFFE91E63).withValues(alpha: 0.15),
-            const Color(0xFF9C27B0).withValues(alpha: 0.1),
-          ],
-        ),
-      ),
-      child: Row(
+    return SizedBox(
+      height: 180,
+      child: Stack(
+        fit: StackFit.expand,
         children: [
-          // 유명인 아바타
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: const Color(0xFFE91E63).withValues(alpha: 0.2),
-              border: Border.all(
-                color: const Color(0xFFE91E63).withValues(alpha: 0.4),
-                width: 2,
+          // 1. 프리미엄 배경
+          SmartImage(
+            path: heroImage,
+            fit: BoxFit.cover,
+            errorWidget: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    DSColors.error.withValues(alpha: 0.2),
+                    DSColors.info.withValues(alpha: 0.15),
+                  ],
+                ),
               ),
             ),
-            child: ClipOval(
-              child: widget.celebrityImageUrl != null
-                  ? SmartImage(
-                      path: widget.celebrityImageUrl!,
-                      width: 56,
-                      height: 56,
-                      fit: BoxFit.cover,
-                      errorWidget: _buildDefaultAvatar(),
-                    )
-                  : _buildDefaultAvatar(),
-            ),
           ),
-          const SizedBox(width: DSSpacing.md),
-
-          // 이름 + 관계
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${widget.celebrityName ?? '유명인'}과의 궁합',
-                  style: typography.headingSmall.copyWith(
-                    color: colors.textPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  _getConnectionTypeLabel(widget.connectionType),
-                  style: typography.labelSmall.copyWith(
-                    color: colors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // 점수 배지
+          // 2. 오버레이
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: DSSpacing.sm,
-              vertical: DSSpacing.xs,
-            ),
             decoration: BoxDecoration(
-              color: _getScoreColor(score),
-              borderRadius: BorderRadius.circular(DSRadius.full),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  colors.background.withValues(alpha: 0.6),
+                ],
+              ),
             ),
-            child: Column(
+          ),
+          // 3. 내용
+          Positioned(
+            left: DSSpacing.md,
+            right: DSSpacing.md,
+            bottom: DSSpacing.md,
+            child: Row(
               children: [
-                Text(
-                  '$score',
-                  style: typography.headingMedium.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                // 유명인 아바타 (작게)
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: colors.surface.withValues(alpha: 0.2),
+                    border: Border.all(
+                      color: colors.surface.withValues(alpha: 0.5),
+                      width: 2,
+                    ),
+                  ),
+                  child: ClipOval(
+                    child: widget.celebrityImageUrl != null
+                        ? SmartImage(
+                            path: widget.celebrityImageUrl!,
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                            errorWidget: _buildDefaultAvatar(),
+                          )
+                        : _buildDefaultAvatar(),
                   ),
                 ),
-                Text(
-                  '점',
-                  style: typography.labelSmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.9),
-                    fontSize: 10,
+                const SizedBox(width: DSSpacing.sm),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${widget.celebrityName ?? '유명인'}과의 궁합',
+                        style: typography.headingSmall.copyWith(
+                          color: colors.textPrimary,
+                          fontWeight: FontWeight.bold,
+                          shadows: [
+                            Shadow(
+                              color: colors.background.withValues(alpha: 0.5),
+                              blurRadius: 8,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        _getConnectionTypeLabel(widget.connectionType),
+                        style: typography.labelSmall.copyWith(
+                          color: colors.textPrimary.withValues(alpha: 0.8),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: _getScoreColor(score).withValues(alpha: 0.9),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '$score점',
+                    style: typography.labelMedium.copyWith(
+                      color: colors.surface,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
+            ),
+          ),
+          Positioned(
+            top: DSSpacing.sm,
+            right: DSSpacing.sm,
+            child: FortuneActionButtons(
+              contentId: widget.fortune.id,
+              contentType: 'celebrity',
+              fortuneType: 'celebrity',
+              shareTitle: '${widget.celebrityName ?? '유명인'}과의 궁합',
+              shareContent: widget.fortune.message.isNotEmpty
+                  ? widget.fortune.message
+                  : widget.fortune.content,
+              iconSize: 20,
+              iconColor: colors.textPrimary,
             ),
           ),
         ],
@@ -327,7 +304,7 @@ class _ChatCelebrityResultCardState
     );
   }
 
-  Widget _buildBlurredSections(BuildContext context, bool isDark) {
+  Widget _buildBlurredSections(BuildContext context) {
     final colors = context.colors;
 
     final sections = <_SectionData>[
@@ -335,28 +312,28 @@ class _ChatCelebrityResultCardState
         _SectionData(
           key: 'saju_analysis',
           title: '사주 분석',
-          emoji: '🎴',
+          iconKey: 'advice',
           content: _buildSajuContent(context),
         ),
       if (_intimateCompatibility != null)
         _SectionData(
           key: 'intimate_compatibility',
           title: '속궁합 분석',
-          emoji: '💕',
+          iconKey: 'relationship',
           content: _buildIntimateContent(context),
         ),
       if (_pastLife != null)
         _SectionData(
           key: 'past_life',
           title: '전생 인연',
-          emoji: '🌙',
+          iconKey: 'rest',
           content: _buildPastLifeContent(context),
         ),
       if (_destinedTiming != null)
         _SectionData(
           key: 'destined_timing',
           title: '운명의 시기',
-          emoji: '⏰',
+          iconKey: 'timing',
           content: _buildDestinedTimingContent(context),
         ),
     ];
@@ -371,14 +348,11 @@ class _ChatCelebrityResultCardState
       child: Column(
         children: sections.map((section) {
           final isExpanded = _expandedSections.contains(section.key);
-          final isBlurredSection = _blurredSections.contains(section.key);
 
           return Container(
             margin: const EdgeInsets.only(bottom: DSSpacing.xs),
             decoration: BoxDecoration(
-              color: isDark
-                  ? colors.backgroundSecondary
-                  : colors.surface,
+              color: context.isDark ? colors.backgroundSecondary : colors.surface,
               borderRadius: BorderRadius.circular(DSRadius.md),
               border: Border.all(
                 color: colors.textPrimary.withValues(alpha: 0.1),
@@ -396,9 +370,12 @@ class _ChatCelebrityResultCardState
                       padding: const EdgeInsets.all(DSSpacing.sm),
                       child: Row(
                         children: [
-                          Text(section.emoji,
-                              style: const TextStyle(fontSize: 18)),
-                          const SizedBox(width: DSSpacing.xs),
+                          Image.asset(
+                            FortuneCardImages.getSectionIcon(section.iconKey),
+                            width: 32,
+                            height: 32,
+                          ),
+                          const SizedBox(width: DSSpacing.sm),
                           Expanded(
                             child: Text(
                               section.title,
@@ -424,20 +401,14 @@ class _ChatCelebrityResultCardState
 
                 // 내용 (펼쳤을 때)
                 if (isExpanded)
-                  UnifiedBlurWrapper(
-                    isBlurred: _isBlurred && isBlurredSection,
-                    blurredSections: _blurredSections,
-                    sectionKey: section.key,
-                    fortuneType: 'celebrity',
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                        DSSpacing.sm,
-                        0,
-                        DSSpacing.sm,
-                        DSSpacing.sm,
-                      ),
-                      child: section.content,
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      DSSpacing.sm,
+                      0,
+                      DSSpacing.sm,
+                      DSSpacing.sm,
                     ),
+                    child: section.content,
                   ),
               ],
             ),
@@ -472,8 +443,7 @@ class _ChatCelebrityResultCardState
     final colors = context.colors;
     final typography = context.typography;
 
-    final description =
-        _intimateCompatibility?['description'] as String? ?? '';
+    final description = _intimateCompatibility?['description'] as String? ?? '';
     final score = _intimateCompatibility?['score'] as int?;
 
     return Column(
@@ -527,13 +497,13 @@ class _ChatCelebrityResultCardState
               vertical: 2,
             ),
             decoration: BoxDecoration(
-              color: const Color(0xFF9C27B0).withValues(alpha: 0.1),
+              color: DSColors.info.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
               connection,
               style: typography.labelSmall.copyWith(
-                color: const Color(0xFF9C27B0),
+                color: DSColors.info,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -597,7 +567,7 @@ class _ChatCelebrityResultCardState
         vertical: 2,
       ),
       decoration: BoxDecoration(
-        color: const Color(0xFF2196F3).withValues(alpha: 0.1),
+        color: DSColors.info.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(
@@ -613,7 +583,7 @@ class _ChatCelebrityResultCardState
           Text(
             value,
             style: typography.labelSmall.copyWith(
-              color: const Color(0xFF2196F3),
+              color: DSColors.info,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -650,54 +620,13 @@ class _ChatCelebrityResultCardState
     );
   }
 
-  Widget _buildUnlockButton(BuildContext context) {
-    final typography = context.typography;
-
-    return Padding(
-      padding: const EdgeInsets.all(DSSpacing.md),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: _showAdAndUnblur,
-          borderRadius: BorderRadius.circular(DSRadius.md),
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: DSSpacing.md,
-              vertical: DSSpacing.sm,
-            ),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
-              ),
-              borderRadius: BorderRadius.circular(DSRadius.md),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('🔮', style: TextStyle(fontSize: 18)),
-                const SizedBox(width: DSSpacing.xs),
-                Text(
-                  '궁합 분석 모두 보기',
-                  style: typography.labelMedium.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildDefaultAvatar() {
     return Container(
-      color: const Color(0xFFE91E63).withValues(alpha: 0.3),
+      color: DSColors.error.withValues(alpha: 0.3),
       child: const Icon(
         Icons.star,
         size: 28,
-        color: Color(0xFFE91E63),
+        color: DSColors.error,
       ),
     );
   }
@@ -718,24 +647,25 @@ class _ChatCelebrityResultCardState
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 90) return const Color(0xFFE91E63);
-    if (score >= 80) return const Color(0xFF9C27B0);
-    if (score >= 70) return const Color(0xFF2196F3);
-    if (score >= 60) return const Color(0xFF4CAF50);
-    return const Color(0xFF607D8B);
+    // ChatGPT monochrome style - semantic colors
+    if (score >= 90) return DSColors.error;
+    if (score >= 80) return DSColors.info;
+    if (score >= 70) return DSColors.info;
+    if (score >= 60) return DSColors.info;
+    return DSColors.warning;
   }
 }
 
 class _SectionData {
   final String key;
   final String title;
-  final String emoji;
+  final String iconKey;
   final Widget content;
 
   _SectionData({
     required this.key,
     required this.title,
-    required this.emoji,
+    required this.iconKey,
     required this.content,
   });
 }

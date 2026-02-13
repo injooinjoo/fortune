@@ -1,5 +1,5 @@
-/// Compatibility Page - Widget Test
-/// 궁합 페이지 UI 테스트
+// Compatibility Page - Widget Test
+// 궁합 페이지 UI 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -183,23 +183,6 @@ void main() {
       });
     });
 
-    group('블러 처리', () {
-      testWidgets('무료 사용자는 일부 콘텐츠 블러', (tester) async {
-        await tester.pumpWidget(
-          const ProviderScope(
-            child: MaterialApp(
-              home: Scaffold(
-                body: _MockCompatibilityResult(isBlurred: true),
-              ),
-            ),
-          ),
-        );
-
-        await tester.pumpAndSettle();
-        expect(find.text('프리미엄 잠금 해제'), findsOneWidget);
-      });
-    });
-
     group('인터랙션', () {
       testWidgets('분석하기 버튼이 있어야 함', (tester) async {
         await tester.pumpWidget(
@@ -315,12 +298,10 @@ class _MockCompatibilityPage extends StatelessWidget {
 class _MockCompatibilityResult extends StatelessWidget {
   final int score;
   final String? grade;
-  final bool isBlurred;
 
   const _MockCompatibilityResult({
     this.score = 85,
     this.grade,
-    this.isBlurred = false,
   });
 
   @override
@@ -355,14 +336,6 @@ class _MockCompatibilityResult extends StatelessWidget {
             const Card(child: ListTile(title: Text('강점'), subtitle: Text('서로를 보완하는 관계'))),
             const Card(child: ListTile(title: Text('주의점'), subtitle: Text('의사소통에 주의'))),
             const Card(child: ListTile(title: Text('관계 조언'), subtitle: Text('서로의 차이를 인정하세요'))),
-
-            if (isBlurred) ...[
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {},
-                child: const Text('프리미엄 잠금 해제'),
-              ),
-            ],
           ],
         ),
       ),

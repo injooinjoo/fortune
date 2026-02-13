@@ -478,7 +478,7 @@ class _ChatMatchSelectorState extends ConsumerState<ChatMatchSelector> {
 
     final matchListAsync =
         ref.watch(matchListByLeagueProvider(_selectedLeague!.id));
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Column(
       key: const ValueKey('match'),

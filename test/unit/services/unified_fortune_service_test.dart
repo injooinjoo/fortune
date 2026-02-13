@@ -1,5 +1,5 @@
-/// UnifiedFortuneService - Unit Test
-/// 운세 서비스 핵심 로직 테스트
+// UnifiedFortuneService - Unit Test
+// 운세 서비스 핵심 로직 테스트
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -11,12 +11,6 @@ class MockSupabaseFunctions extends Mock {
 
 void main() {
   group('UnifiedFortuneService 테스트', () {
-    late MockSupabaseFunctions mockFunctions;
-
-    setUp(() {
-      mockFunctions = MockSupabaseFunctions();
-    });
-
     group('운세 생성 요청', () {
       test('필수 파라미터가 포함되어야 함', () {
         // 운세 생성 시 필요한 파라미터 검증
@@ -93,42 +87,6 @@ void main() {
         expect(errorResponse['success'], isFalse);
         expect(errorResponse['error'], isNotNull);
         expect(errorResponse['errorCode'], 'INSUFFICIENT_TOKENS');
-      });
-    });
-
-    group('블러/프리미엄 상태 관리', () {
-      test('무료 사용자는 일부 콘텐츠가 블러 처리됨', () {
-        final fortuneResult = {
-          'isBlurred': true,
-          'sections': [
-            {'key': 'summary', 'isBlurred': false},
-            {'key': 'detail', 'isBlurred': true},
-            {'key': 'advice', 'isBlurred': true},
-          ],
-        };
-
-        expect(fortuneResult['isBlurred'], isTrue);
-
-        final sections = fortuneResult['sections'] as List;
-        final blurredSections = sections.where((s) => s['isBlurred'] == true);
-        expect(blurredSections.length, 2);
-      });
-
-      test('프리미엄 사용자는 모든 콘텐츠 접근 가능', () {
-        final premiumResult = {
-          'isBlurred': false,
-          'sections': [
-            {'key': 'summary', 'isBlurred': false},
-            {'key': 'detail', 'isBlurred': false},
-            {'key': 'advice', 'isBlurred': false},
-          ],
-        };
-
-        expect(premiumResult['isBlurred'], isFalse);
-
-        final sections = premiumResult['sections'] as List;
-        final allUnblurred = sections.every((s) => s['isBlurred'] == false);
-        expect(allUnblurred, isTrue);
       });
     });
 

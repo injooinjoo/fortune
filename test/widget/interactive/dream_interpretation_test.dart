@@ -1,5 +1,5 @@
-/// Dream Interpretation Interactive - Widget Test
-/// 꿈 해몽 인터랙티브 기능 UI 테스트
+// Dream Interpretation Interactive - Widget Test
+// 꿈 해몽 인터랙티브 기능 UI 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -273,26 +273,6 @@ void main() {
       });
     });
 
-    group('블러 처리', () {
-      testWidgets('무료 사용자는 상세 해석이 블러 처리되어야 함', (tester) async {
-        await tester.pumpWidget(
-          const ProviderScope(
-            child: MaterialApp(
-              home: Scaffold(
-                body: _MockDreamInterpretationScreen(
-                  hasResult: true,
-                  isBlurred: true,
-                ),
-              ),
-            ),
-          ),
-        );
-
-        await tester.pumpAndSettle();
-        expect(find.text('전체 해석 보기'), findsOneWidget);
-      });
-    });
-
     group('테마 지원', () {
       testWidgets('라이트 테마에서 올바르게 렌더링', (tester) async {
         await tester.pumpWidget(
@@ -333,7 +313,6 @@ class _MockDreamInterpretationScreen extends StatefulWidget {
   final String dreamContent;
   final bool hasResult;
   final String fortune;
-  final bool isBlurred;
   final bool isLoading;
   final bool isRecording;
   final bool showHistory;
@@ -343,7 +322,6 @@ class _MockDreamInterpretationScreen extends StatefulWidget {
     this.dreamContent = '',
     this.hasResult = false,
     this.fortune = '길몽',
-    this.isBlurred = false,
     this.isLoading = false,
     this.isRecording = false,
     this.showHistory = false,
@@ -465,15 +443,6 @@ class _MockDreamInterpretationScreenState
                 ),
               ),
 
-              if (widget.isBlurred) ...[
-                const SizedBox(height: 24),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    child: const Text('전체 해석 보기'),
-                  ),
-                ),
-              ],
             ],
           ),
         ),
@@ -598,7 +567,7 @@ class _LuckyNumberBall extends StatelessWidget {
     return Container(
       width: 40,
       height: 40,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.amber,
         shape: BoxShape.circle,
       ),

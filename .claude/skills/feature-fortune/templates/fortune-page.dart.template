@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/theme/toss_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/theme/typography_unified.dart';
-import '../../../../shared/widgets/unified_blur_wrapper.dart';
 import '../../../../shared/widgets/entertainment_disclaimer.dart';
-import '../../../../shared/widgets/cross_platform_ad_widget.dart';
 import '../../domain/models/{{type}}_conditions.dart';
 import '../../domain/models/{{type}}_result.dart';
 import '../providers/{{type}}_provider.dart';
@@ -34,8 +32,8 @@ class _{{typePascal}}FortunePageState extends ConsumerState<{{typePascal}}Fortun
 
     return Scaffold(
       backgroundColor: isDark
-          ? TossDesignSystem.backgroundDark
-          : TossDesignSystem.backgroundLight,
+          ? DSColors.background
+          : DSColors.backgroundDark,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
@@ -78,7 +76,7 @@ class _{{typePascal}}FortunePageState extends ConsumerState<{{typePascal}}Fortun
             child: ElevatedButton(
               onPressed: _onSubmit,
               style: ElevatedButton.styleFrom(
-                backgroundColor: TossDesignSystem.tossBlue,
+                backgroundColor: DSColors.accent,
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
               child: Text(
@@ -106,14 +104,11 @@ class _{{typePascal}}FortunePageState extends ConsumerState<{{typePascal}}Fortun
           // 섹션별 결과
           ...result.sections.map((section) => Padding(
             padding: const EdgeInsets.only(bottom: 16),
-            child: _buildSectionCard(section, result.isBlurred, isDark),
+            child: _buildSectionCard(section, isDark),
           )),
 
           // 조언
-          UnifiedBlurWrapper(
-            isBlurred: result.isBlurred && result.blurredSections.contains('advice'),
-            child: _buildAdviceCard(result.advice, isDark),
-          ),
+          _buildAdviceCard(result.advice, isDark),
 
           const SizedBox(height: 16),
 
@@ -121,9 +116,6 @@ class _{{typePascal}}FortunePageState extends ConsumerState<{{typePascal}}Fortun
           const EntertainmentDisclaimer(),
 
           const SizedBox(height: 16),
-
-          // 광고
-          const CrossPlatformAdWidget(),
         ],
       ),
     );
@@ -134,8 +126,8 @@ class _{{typePascal}}FortunePageState extends ConsumerState<{{typePascal}}Fortun
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: isDark
-            ? TossDesignSystem.cardDark
-            : TossDesignSystem.cardLight,
+            ? DSColors.surface
+            : DSColors.surfaceDark,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -144,15 +136,15 @@ class _{{typePascal}}FortunePageState extends ConsumerState<{{typePascal}}Fortun
             '종합 점수',
             style: context.bodyMedium.copyWith(
               color: isDark
-                  ? TossDesignSystem.textSecondaryDark
-                  : TossDesignSystem.textSecondaryLight,
+                  ? DSColors.textSecondary
+                  : DSColors.textSecondaryDark,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             '$score점',
             style: context.heading1.copyWith(
-              color: TossDesignSystem.tossBlue,
+              color: DSColors.accent,
             ),
           ),
         ],
@@ -160,25 +152,22 @@ class _{{typePascal}}FortunePageState extends ConsumerState<{{typePascal}}Fortun
     );
   }
 
-  Widget _buildSectionCard(FortuneSection section, bool isBlurred, bool isDark) {
-    return UnifiedBlurWrapper(
-      isBlurred: isBlurred,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: isDark
-              ? TossDesignSystem.cardDark
-              : TossDesignSystem.cardLight,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(section.title, style: context.heading3),
-            const SizedBox(height: 8),
-            Text(section.content, style: context.bodyMedium),
-          ],
-        ),
+  Widget _buildSectionCard(FortuneSection section, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark
+            ? DSColors.surface
+            : DSColors.surfaceDark,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(section.title, style: context.heading3),
+          const SizedBox(height: 8),
+          Text(section.content, style: context.bodyMedium),
+        ],
       ),
     );
   }
@@ -187,7 +176,7 @@ class _{{typePascal}}FortunePageState extends ConsumerState<{{typePascal}}Fortun
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: TossDesignSystem.tossBlue.withOpacity(0.1),
+        color: DSColors.accent.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -209,7 +198,7 @@ class _{{typePascal}}FortunePageState extends ConsumerState<{{typePascal}}Fortun
           Icon(
             Icons.error_outline,
             size: 48,
-            color: TossDesignSystem.errorColor,
+            color: DSColors.error,
           ),
           const SizedBox(height: 16),
           Text(error, style: context.bodyMedium),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/theme/fortune_design_system.dart';
+import '../../core/design_system/design_system.dart';
 import '../../services/storage_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -70,69 +70,35 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
     }
   }
 
-  bool _isDarkMode(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark;
-  }
-
-  Color _getTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark900
-        : TossDesignSystem.gray900;
-  }
-
-  Color _getSecondaryTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark400
-        : TossDesignSystem.gray600;
-  }
-
-  Color _getBackgroundColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark50
-        : TossDesignSystem.gray50;
-  }
-
-  Color _getCardColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark100
-        : TossDesignSystem.white;
-  }
-
-  Color _getDividerColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark200
-        : TossDesignSystem.gray200;
-  }
-
   Color _getElementColor(String element) {
     switch (element) {
       case '木 (木)':
-        return const Color(0xFF4CAF50); // 녹색 (나무)
+        return DSColors.success; // Wood - green
       case '火 (火)':
-        return const Color(0xFFF44336); // 빨강 (불)
+        return DSColors.error; // Fire - red
       case '土 (土)':
-        return const Color(0xFFFF9800); // 주황 (흙)
+        return DSColors.warning; // Earth - yellow/gold
       case '金 (金)':
-        return const Color(0xFF9E9E9E); // 회색 (금속)
+        return DSColors.textSecondaryDark; // Metal - gray/silver
       case '水 (水)':
-        return const Color(0xFF2196F3); // 파랑 (물)
+        return DSColors.info; // Water - blue
       default:
-        return TossDesignSystem.gray400;
+        return DSColors.textDisabledDark;
     }
   }
 
   Widget _buildSectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-        TossDesignSystem.marginHorizontal,
-        TossDesignSystem.spacingL,
-        TossDesignSystem.marginHorizontal,
-        TossDesignSystem.spacingS,
+        DSSpacing.pageHorizontal,
+        DSSpacing.lg,
+        DSSpacing.pageHorizontal,
+        DSSpacing.sm,
       ),
       child: Text(
         title,
-        style: TossDesignSystem.caption.copyWith(
-          color: _getSecondaryTextColor(context),
+        style: context.labelMedium.copyWith(
+          color: context.colors.textSecondary,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
         ),
@@ -148,13 +114,13 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: TossDesignSystem.marginHorizontal,
-        vertical: TossDesignSystem.spacingM,
+        horizontal: DSSpacing.pageHorizontal,
+        vertical: DSSpacing.md,
       ),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: isLast ? Colors.transparent : _getDividerColor(context),
+            color: isLast ? Colors.transparent : context.colors.border,
             width: 0.5,
           ),
         ),
@@ -167,27 +133,27 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
             children: [
               Text(
                 element,
-                style: TossDesignSystem.body2.copyWith(
-                  color: _getTextColor(context),
+                style: context.bodyMedium.copyWith(
+                  color: context.colors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
                 '$percentage%',
-                style: TossDesignSystem.body2.copyWith(
+                style: context.bodyMedium.copyWith(
                   color: color,
                   fontWeight: FontWeight.w700,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: TossDesignSystem.spacingS),
+          const SizedBox(height: DSSpacing.sm),
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: percentage / 100,
               minHeight: 8,
-              backgroundColor: _getDividerColor(context),
+              backgroundColor: context.colors.border,
               valueColor: AlwaysStoppedAnimation<Color>(color),
             ),
           ),
@@ -204,13 +170,13 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: TossDesignSystem.marginHorizontal,
-        vertical: TossDesignSystem.spacingM,
+        horizontal: DSSpacing.pageHorizontal,
+        vertical: DSSpacing.md,
       ),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: isLast ? Colors.transparent : _getDividerColor(context),
+            color: isLast ? Colors.transparent : context.colors.border,
             width: 0.5,
           ),
         ),
@@ -228,30 +194,30 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
             child: Center(
               child: Text(
                 element.split(' ')[0],
-                style: TossDesignSystem.body2.copyWith(
+                style: context.bodyMedium.copyWith(
                   color: color,
                   fontWeight: FontWeight.w700,
                 ),
               ),
             ),
           ),
-          const SizedBox(width: TossDesignSystem.spacingM),
+          const SizedBox(width: DSSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   element,
-                  style: TossDesignSystem.body2.copyWith(
-                    color: _getTextColor(context),
+                  style: context.bodyMedium.copyWith(
+                    color: context.colors.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   description,
-                  style: TossDesignSystem.caption.copyWith(
-                    color: _getSecondaryTextColor(context),
+                  style: context.labelMedium.copyWith(
+                    color: context.colors.textSecondary,
                   ),
                 ),
               ],
@@ -266,42 +232,42 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
   Widget build(BuildContext context) {
     if (isLoading) {
       return Scaffold(
-        backgroundColor: _getBackgroundColor(context),
+        backgroundColor: context.colors.background,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: _getTextColor(context)),
+            icon: Icon(Icons.arrow_back, color: context.colors.textPrimary),
             onPressed: () => context.pop(),
           ),
           title: Text(
             '오행 분석',
-            style: TossDesignSystem.heading4.copyWith(
-              color: _getTextColor(context),
+            style: context.heading3.copyWith(
+              color: context.colors.textPrimary,
             ),
           ),
         ),
         body: const Center(
           child: CircularProgressIndicator(
-            color: TossDesignSystem.tossBlue,
+            color: DSColors.accentDark,
           ),
         ),
       );
     }
 
     return Scaffold(
-      backgroundColor: _getBackgroundColor(context),
+      backgroundColor: context.colors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: _getTextColor(context)),
+          icon: Icon(Icons.arrow_back, color: context.colors.textPrimary),
           onPressed: () => context.pop(),
         ),
         title: Text(
           '오행 분석',
-          style: TossDesignSystem.heading4.copyWith(
-            color: _getTextColor(context),
+          style: context.heading3.copyWith(
+            color: context.colors.textPrimary,
           ),
         ),
       ),
@@ -310,26 +276,19 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: TossDesignSystem.spacingM),
+              const SizedBox(height: DSSpacing.md),
 
               // 오행 균형 섹션
               _buildSectionHeader('오행 균형'),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+                margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
                 decoration: BoxDecoration(
-                  color: _getCardColor(context),
+                  color: context.colors.surface,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: _getDividerColor(context),
+                    color: context.colors.border,
                     width: 1,
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: TossDesignSystem.black.withValues(alpha: 0.04),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
                 ),
                 child: Column(
                   children: _elementsBalance.entries
@@ -355,21 +314,14 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
               // 오행 설명 섹션
               _buildSectionHeader('오행 의미'),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+                margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
                 decoration: BoxDecoration(
-                  color: _getCardColor(context),
+                  color: context.colors.surface,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: _getDividerColor(context),
+                    color: context.colors.border,
                     width: 1,
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: TossDesignSystem.black.withValues(alpha: 0.04),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
                 ),
                 child: Column(
                   children: [
@@ -403,30 +355,30 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
                 ),
               ),
 
-              const SizedBox(height: TossDesignSystem.spacingXXL),
+              const SizedBox(height: DSSpacing.xxl),
 
               // 안내 메시지
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: TossDesignSystem.marginHorizontal),
+                padding: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
                 child: Container(
-                  padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+                  padding: const EdgeInsets.all(DSSpacing.md),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                    color: DSColors.accentDark.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
                     children: [
                       const Icon(
                         Icons.info_outline,
-                        color: TossDesignSystem.tossBlue,
+                        color: DSColors.accentDark,
                         size: 20,
                       ),
-                      const SizedBox(width: TossDesignSystem.spacingS),
+                      const SizedBox(width: DSSpacing.sm),
                       Expanded(
                         child: Text(
                           '오행 분석은 사주 팔자를 기반으로 계산됩니다. 정확한 분석을 위해 프로필 정보를 완성해주세요.',
-                          style: TossDesignSystem.caption.copyWith(
-                            color: TossDesignSystem.tossBlue,
+                          style: context.labelMedium.copyWith(
+                            color: DSColors.accentDark,
                           ),
                         ),
                       ),
@@ -435,7 +387,7 @@ class _ElementsDetailPageState extends ConsumerState<ElementsDetailPage> {
                 ),
               ),
 
-              const SizedBox(height: TossDesignSystem.spacingXXL),
+              const SizedBox(height: DSSpacing.xxl),
             ],
           ),
         ),

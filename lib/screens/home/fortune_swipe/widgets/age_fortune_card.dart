@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 🎂 나이대별 운세 카드
 ///
@@ -10,12 +10,10 @@ import '../../../../core/theme/typography_unified.dart';
 /// - zodiacAnimal: 띠 (선택)
 class AgeFortuneCard extends StatelessWidget {
   final Map<String, dynamic>? ageFortune;
-  final bool isDark;
 
   const AgeFortuneCard({
     super.key,
     required this.ageFortune,
-    required this.isDark,
   });
 
   @override
@@ -46,8 +44,8 @@ class AgeFortuneCard extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    const Color(0xFF8B5CF6).withValues(alpha: 0.15),
-                    const Color(0xFFA78BFA).withValues(alpha: 0.1),
+                    DSColors.accentSecondary.withValues(alpha: 0.15),
+                    const Color(0xFFA78BFA).withValues(alpha: 0.1), // 고유 색상: 밝은 보라
                   ],
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -62,14 +60,14 @@ class AgeFortuneCard extends StatelessWidget {
                   Text(
                     '나이대별 운세',
                     style: context.heading3.copyWith(
-                      color: isDark ? Colors.white : Colors.black87,
+                      color: context.colors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     '같은 연령대의 특별한 메시지',
                     style: context.bodySmall.copyWith(
-                      color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+                      color: context.colors.textSecondary,
                     ),
                   ),
                 ],
@@ -87,18 +85,18 @@ class AgeFortuneCard extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: isDark
-                ? [const Color(0xFF2D2440), const Color(0xFF1C1C1E)]
-                : [const Color(0xFFF5F0FF), const Color(0xFFEDE9FE)],
+              colors: context.isDark
+                ? [const Color(0xFF2D2440), context.colors.surface] // 고유 색상: 다크 보라 그라디언트
+                : [const Color(0xFFF5F0FF), const Color(0xFFEDE9FE)], // 고유 색상: 라이트 보라 그라디언트
             ),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+              color: DSColors.accentSecondary.withValues(alpha: 0.3),
               width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF8B5CF6).withValues(alpha: isDark ? 0.2 : 0.1),
+                color: DSColors.accentSecondary.withValues(alpha: context.isDark ? 0.2 : 0.1),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -113,7 +111,7 @@ class AgeFortuneCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF8B5CF6),
+                      color: DSColors.accentSecondary,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -129,17 +127,17 @@ class AgeFortuneCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFDAA520).withValues(alpha: 0.2),
+                        color: DSColors.warning.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: const Color(0xFFDAA520).withValues(alpha: 0.5),
+                          color: DSColors.warning.withValues(alpha: 0.5),
                           width: 1,
                         ),
                       ),
                       child: Text(
                         '$zodiacAnimal띠',
                         style: context.labelSmall.copyWith(
-                          color: const Color(0xFFDAA520),
+                          color: DSColors.warning,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -155,7 +153,7 @@ class AgeFortuneCard extends StatelessWidget {
                 Text(
                   title,
                   style: context.heading2.copyWith(
-                    color: isDark ? Colors.white : Colors.black87,
+                    color: context.colors.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -167,9 +165,7 @@ class AgeFortuneCard extends StatelessWidget {
                 Text(
                   description,
                   style: context.bodyMedium.copyWith(
-                    color: isDark
-                      ? Colors.white.withValues(alpha: 0.85)
-                      : Colors.black.withValues(alpha: 0.75),
+                    color: context.colors.textPrimary.withValues(alpha: 0.85),
                     height: 1.6,
                   ),
                 ),
@@ -184,9 +180,7 @@ class AgeFortuneCard extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: isDark
-              ? Colors.white.withValues(alpha: 0.05)
-              : Colors.black.withValues(alpha: 0.03),
+            color: context.colors.surface.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
@@ -194,14 +188,14 @@ class AgeFortuneCard extends StatelessWidget {
               Icon(
                 Icons.lightbulb_outline,
                 size: 18,
-                color: const Color(0xFF8B5CF6).withValues(alpha: 0.8),
+                color: DSColors.accentSecondary.withValues(alpha: 0.8),
               ),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   '같은 나이대의 사람들과 비슷한 고민과 기회가 있을 수 있어요',
                   style: context.labelSmall.copyWith(
-                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
+                    color: context.colors.textSecondary,
                     height: 1.4,
                   ),
                 ),

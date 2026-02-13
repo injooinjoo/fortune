@@ -128,7 +128,7 @@ class _ChatPetRegistrationFormState
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Container(
       margin: const EdgeInsets.symmetric(
@@ -244,8 +244,8 @@ class _ChatPetRegistrationFormState
             child: ElevatedButton(
               onPressed: _isValid && !_isSubmitting ? _submit : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: colors.accentSecondary,
-                foregroundColor: Colors.white,
+                backgroundColor: colors.ctaBackground,
+                foregroundColor: colors.ctaForeground,
                 disabledBackgroundColor: colors.textSecondary.withValues(alpha: 0.3),
                 padding: const EdgeInsets.symmetric(vertical: DSSpacing.sm),
                 shape: RoundedRectangleBorder(
@@ -253,18 +253,18 @@ class _ChatPetRegistrationFormState
                 ),
               ),
               child: _isSubmitting
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        valueColor: AlwaysStoppedAnimation<Color>(colors.ctaForeground),
                       ),
                     )
                   : Text(
                       '등록하기',
                       style: typography.labelLarge.copyWith(
-                        color: Colors.white,
+                        color: colors.ctaForeground,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -307,7 +307,7 @@ class _ChatPetRegistrationFormState
   }) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Wrap(
       spacing: DSSpacing.xs,

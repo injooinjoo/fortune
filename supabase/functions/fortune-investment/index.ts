@@ -268,15 +268,6 @@ serve(async (req) => {
       const percentileData = await calculatePercentile(supabaseClient, 'investment', personalizedResult.overallScore || 70)
       const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
 
-      // 블러 상태 적용
-      if (!isPremium) {
-        resultWithPercentile.isBlurred = true
-        resultWithPercentile.blurredSections = ['timing', 'outlook', 'risks', 'luckyItems']
-      } else {
-        resultWithPercentile.isBlurred = false
-        resultWithPercentile.blurredSections = []
-      }
-
       return new Response(
         JSON.stringify({
           fortune: resultWithPercentile,
@@ -308,15 +299,9 @@ serve(async (req) => {
     console.log('💎 [Step 2] 캐시 결과:', cachedResult ? '캐시 있음' : '캐시 없음')
 
     if (cachedResult) {
-      // 캐시된 결과도 블러 상태 업데이트
-      const cachedFortune = { ...cachedResult.result }
-      if (isPremium && cachedFortune.isBlurred) {
-        cachedFortune.isBlurred = false
-        cachedFortune.blurredSections = []
-      }
       return new Response(
         JSON.stringify({
-          fortune: cachedFortune,
+          fortune: cachedResult.result,
           cached: true,
           tokensUsed: 0
         }),
@@ -447,14 +432,6 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
       throw new Error(`JSON 파싱 실패: ${parseError.message}`)
     }
 
-    // 블러 로직 (프리미엄 아니면 주요 섹션 블러)
-    // ✅ 변경: 실제 데이터는 그대로 반환하고 isBlurred/blurredSections만 설정
-    // 클라이언트에서 UI 블러 처리 (광고 시청 후 해제 가능)
-    const isBlurred = !isPremium
-    const blurredSections = isBlurred
-      ? ['timing', 'outlook', 'risks', 'marketMood', 'advice', 'psychologyTip']
-      : []
-
     // C03: 재물운 이미지 프롬프트 (한국 전통 스타일)
     const wealthImagePrompt = generateWealthImagePrompt(fortuneData.overallScore, categoryLabel)
 
@@ -516,9 +493,7 @@ ${new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 
       metadata: {
         categoryLabel,
         hasSajuData: !!sajuData
-      },
-      isBlurred,
-      blurredSections
+      }
     }
 
     // Percentile 계산

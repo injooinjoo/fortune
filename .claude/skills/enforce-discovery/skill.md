@@ -228,8 +228,7 @@ Discovery 보고서 완료
 |----------|------|------|
 | 상태관리 | `*_notifier.dart` | StateNotifier 패턴 |
 | UI 컴포넌트 | `core/widgets/` | 공통 위젯 |
-| 디자인 | `TossDesignSystem` | 색상, 간격 |
+| 디자인 | `DSColors` | 색상, 간격 |
 | 타이포 | `context.heading1` 등 | 폰트 스타일 |
-| 블러 | `UnifiedBlurWrapper` | 블러 처리 |
 | API | `*_api_service.dart` | API 호출 패턴 |
 | 모델 | `@freezed` 클래스 | 데이터 모델 |

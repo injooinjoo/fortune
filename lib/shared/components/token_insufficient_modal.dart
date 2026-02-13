@@ -1,10 +1,8 @@
-// This modal is used for premium features that require souls
-// Premium fortunes consume souls while regular fortunes give souls
+// 토큰 부족 모달 - 프리미엄 기능 이용 시 토큰 부족할 때 표시 (풀스크린)
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/design_system/design_system.dart';
-import '../glassmorphism/glass_container.dart';
 import '../../presentation/providers/token_provider.dart';
 
 class TokenInsufficientModal extends ConsumerStatefulWidget {
@@ -25,9 +23,12 @@ class TokenInsufficientModal extends ConsumerStatefulWidget {
     required int requiredTokens,
     required String fortuneType,
   }) async {
-    final result = await showDialog<bool>(
+    final result = await showModalBottomSheet<bool>(
       context: context,
-      barrierDismissible: false,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      isDismissible: true,
+      enableDrag: true,
       builder: (context) => TokenInsufficientModal(
         requiredTokens: requiredTokens,
         fortuneType: fortuneType,
@@ -37,334 +38,320 @@ class TokenInsufficientModal extends ConsumerStatefulWidget {
   }
 }
 
-class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _fadeAnimation;
+class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal> {
+  /// 다음 무료 토큰 지급 시간 (자정)
+  String _getNextResetTime() {
+    final now = DateTime.now();
+    final tomorrow = DateTime(now.year, now.month, now.day + 1);
+    final hoursLeft = tomorrow.difference(now).inHours;
+    final minutesLeft = tomorrow.difference(now).inMinutes % 60;
 
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: DSAnimation.durationMedium,
-    );
-    _scaleAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutBack,
-    ));
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeIn,
-    ));
-    _animationController.forward();
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
+    if (hoursLeft > 0) {
+      return '$hoursLeft시간 $minutesLeft분';
+    } else {
+      return '$minutesLeft분';
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final typography = context.typography;
-    final tokenState = ref.watch(tokenProvider);
-    final remainingTokens = tokenState.balance?.remainingTokens ?? 0;
+    final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
 
-    return FadeTransition(
-      opacity: _fadeAnimation,
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: Dialog(
-          backgroundColor: Colors.transparent,
-          child: GlassContainer(
-            width: MediaQuery.of(context).size.width * 0.9 > 400
-                ? 400
-                : MediaQuery.of(context).size.width * 0.9,
-            padding: const EdgeInsets.all(DSSpacing.lg),
-            borderRadius: BorderRadius.circular(DSRadius.lg),
-            blur: 20,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Icon
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: colors.error.withValues(alpha: 0.2),
-                  ),
-                  child: Icon(
-                    Icons.auto_awesome_outlined,
-                    size: 40,
-                    color: colors.error,
-                  ),
+    return Container(
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 20,
+            offset: const Offset(0, -4),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(24, 12, 24, bottomPadding + 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 드래그 핸들
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: colors.divider,
+                  borderRadius: BorderRadius.circular(2),
                 ),
-                const SizedBox(height: DSSpacing.lg),
+              ),
+              const SizedBox(height: 24),
 
-                // Title
-                Text(
-                  '복주머니가 부족합니다',
-                  style: typography.headingMedium.copyWith(
-                    color: colors.textPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
+              // 토큰 아이콘
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: colors.accent.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
                 ),
-                const SizedBox(height: DSSpacing.sm),
-
-                // Description
-                Text(
-                  '이 프리미엄 운세를 보려면 ${widget.requiredTokens}개의 복주머니가 필요합니다.',
-                  style: typography.bodyMedium.copyWith(
-                    color: colors.textSecondary,
-                  ),
-                  textAlign: TextAlign.center,
+                child: Icon(
+                  Icons.toll_outlined,
+                  size: 32,
+                  color: colors.accent,
                 ),
-                const SizedBox(height: DSSpacing.lg),
+              ),
+              const SizedBox(height: 20),
 
-                // Current Balance
-                Container(
-                  padding: const EdgeInsets.all(DSSpacing.md),
-                  decoration: BoxDecoration(
-                    color: colors.surface.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(DSRadius.md),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildTokenInfo(
-                        label: '보유 복주머니',
-                        value: '$remainingTokens개',
-                        color: colors.accent,
-                      ),
-                      Container(
-                        width: 1,
-                        height: 40,
-                        color: colors.divider,
-                      ),
-                      _buildTokenInfo(
-                        label: '필요 복주머니',
-                        value: '${widget.requiredTokens}개',
-                        color: colors.error,
-                      ),
-                      Container(
-                        width: 1,
-                        height: 40,
-                        color: colors.divider,
-                      ),
-                      _buildTokenInfo(
-                        label: '부족',
-                        value: '${widget.requiredTokens - remainingTokens}개',
-                        color: colors.error,
-                      ),
-                    ],
-                  ),
+              // Title
+              Text(
+                '토큰을 모두 소진했어요',
+                style: context.headingMedium.copyWith(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.w600,
                 ),
-                const SizedBox(height: DSSpacing.xl),
+              ),
+              const SizedBox(height: 12),
 
-                // Options
-                Text(
-                  '복주머니를 얻으시겠습니까?',
-                  style: typography.bodyMedium.copyWith(
-                    color: colors.textPrimary,
-                  ),
+              // 남은 시간 안내
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                decoration: BoxDecoration(
+                  color: colors.backgroundSecondary,
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                const SizedBox(height: DSSpacing.lg),
-
-                // Action Buttons
-                Row(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(
-                      child: _buildActionButton(
-                        icon: Icons.shopping_cart_rounded,
-                        label: '복주머니 상점',
-                        color: colors.accent,
-                        onTap: () {
-                          context.pop();
-                          context.push('/token-purchase');
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: DSSpacing.md),
-                    Expanded(
-                      child: _buildActionButton(
-                        icon: Icons.card_giftcard_rounded,
-                        label: '무료 복주머니',
-                        color: colors.textSecondary,
-                        onTap: () async {
-                          final result = await ref.read(tokenProvider.notifier).claimDailyTokens();
-                          if (result && context.mounted) {
-                            Navigator.of(context).pop(true);
-                          } else if (context.mounted) {
-                            _showClaimError();
-                          }
-                        },
-                      ),
-                    )
-                  ],
-                ),
-                const SizedBox(height: DSSpacing.md),
-
-                // Subscription Option
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        colors.accentTertiary.withValues(alpha: 0.2),
-                        colors.accent.withValues(alpha: 0.2),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(DSRadius.md),
-                    border: Border.all(
-                      color: colors.accentTertiary.withValues(alpha: 0.5),
-                    ),
-                  ),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () {
-                        DSHaptics.light();
-                        context.pop();
-                        context.push('/subscription');
-                      },
-                      borderRadius: BorderRadius.circular(DSRadius.md),
-                      child: Padding(
-                        padding: const EdgeInsets.all(DSSpacing.md),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.all_inclusive_rounded,
-                              color: colors.accentTertiary,
-                            ),
-                            const SizedBox(width: DSSpacing.md),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '무제한 이용권',
-                                    style: typography.bodyMedium.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: colors.textPrimary,
-                                    ),
-                                  ),
-                                  Text(
-                                    '월 ₩30,000으로 모든 프리미엄 운세 무제한',
-                                    style: typography.bodySmall.copyWith(
-                                      color: colors.textSecondary,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Icon(
-                              Icons.arrow_forward_rounded,
-                              color: colors.accentTertiary,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: DSSpacing.lg),
-
-                // Cancel Button
-                TextButton(
-                  onPressed: () => context.pop(),
-                  child: Text(
-                    '나중에 하기',
-                    style: typography.labelMedium.copyWith(
+                    Icon(
+                      Icons.schedule_outlined,
+                      size: 20,
                       color: colors.textSecondary,
                     ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '무료 토큰 충전까지 ',
+                      style: context.bodyMedium.copyWith(
+                        color: colors.textSecondary,
+                      ),
+                    ),
+                    Text(
+                      _getNextResetTime(),
+                      style: context.bodyMedium.copyWith(
+                        color: colors.accent,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // 안내 문구
+              Text(
+                '지금 바로 이용하시려면 토큰을 구매하세요',
+                style: context.bodySmall.copyWith(
+                  color: colors.textTertiary,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+
+              // Best Value - Subscription (가성비 최고)
+              _buildSubscriptionButton(),
+              const SizedBox(height: 12),
+
+              // Secondary Options
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildActionButton(
+                      icon: Icons.shopping_bag_outlined,
+                      label: '토큰 구매',
+                      subtitle: '₩28~/개',
+                      isPrimary: false,
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        context.push('/token-purchase');
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildActionButton(
+                      icon: Icons.card_giftcard_outlined,
+                      label: '무료 받기',
+                      subtitle: '일 1회',
+                      isPrimary: false,
+                      onTap: () async {
+                        final result = await ref.read(tokenProvider.notifier).claimDailyTokens();
+                        if (result && context.mounted) {
+                          Navigator.of(context).pop(true);
+                        } else if (context.mounted) {
+                          _showClaimError();
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Cancel Button
+              SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  child: Text(
+                    '나중에 하기',
+                    style: context.bodyMedium.copyWith(
+                      color: colors.textTertiary,
+                    ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildTokenInfo({
-    required String label,
-    required String value,
-    required Color color,
-  }) {
-    final colors = context.colors;
-    final typography = context.typography;
-
-    return Column(
-      children: [
-        Text(
-          label,
-          style: typography.labelSmall.copyWith(
-            color: colors.textTertiary,
-          ),
-        ),
-        const SizedBox(height: DSSpacing.xs),
-        Text(
-          value,
-          style: typography.headingSmall.copyWith(
-            color: color,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
     );
   }
 
   Widget _buildActionButton({
     required IconData icon,
     required String label,
-    required Color color,
+    String? subtitle,
+    required bool isPrimary,
     required VoidCallback onTap,
   }) {
     final colors = context.colors;
-    final typography = context.typography;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(DSRadius.md),
-        border: Border.all(
-          color: color.withValues(alpha: 0.5),
-        ),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            DSHaptics.light();
-            onTap();
-          },
-          borderRadius: BorderRadius.circular(DSRadius.md),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: DSSpacing.md),
-            child: Column(
-              children: [
-                Icon(icon, color: color, size: 24),
-                const SizedBox(height: DSSpacing.xs),
+    return Material(
+      color: isPrimary ? colors.accent : colors.backgroundSecondary,
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        onTap: () {
+          DSHaptics.light();
+          onTap();
+        },
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Column(
+            children: [
+              Icon(
+                icon,
+                color: isPrimary ? Colors.white : colors.textSecondary,
+                size: 24,
+              ),
+              const SizedBox(height: 6),
+              Text(
+                label,
+                style: context.labelMedium.copyWith(
+                  color: isPrimary ? Colors.white : colors.textPrimary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              if (subtitle != null) ...[
+                const SizedBox(height: 2),
                 Text(
-                  label,
-                  style: typography.labelSmall.copyWith(
-                    color: color,
-                    fontWeight: FontWeight.bold,
+                  subtitle,
+                  style: context.labelSmall.copyWith(
+                    color: isPrimary ? Colors.white70 : colors.textTertiary,
                   ),
                 ),
               ],
-            ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSubscriptionButton() {
+    final colors = context.colors;
+
+    return Material(
+      color: colors.accent,
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        onTap: () {
+          DSHaptics.light();
+          Navigator.of(context).pop();
+          context.push('/subscription');
+        },
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          padding: const EdgeInsets.all(18),
+          child: Row(
+            children: [
+              // 아이콘
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.workspace_premium_outlined,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 14),
+              // 텍스트
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          'Plus 구독',
+                          style: context.bodyMedium.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            '21배 저렴',
+                            style: context.labelSmall.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '월 ₩3,900 · 3,000 토큰 (₩1.3/개)',
+                      style: context.bodySmall.copyWith(
+                        color: Colors.white.withValues(alpha: 0.8),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(
+                Icons.chevron_right,
+                color: Colors.white70,
+                size: 22,
+              ),
+            ],
           ),
         ),
       ),
@@ -379,15 +366,15 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
       SnackBar(
         content: Text(
           tokenError == 'ALREADY_CLAIMED'
-              ? '오늘은 이미 무료 복주머니를 받으셨습니다'
-              : '무료 복주머니 받기에 실패했습니다',
+              ? '오늘은 이미 무료 토큰을 받으셨습니다'
+              : '무료 토큰 받기에 실패했습니다',
         ),
         backgroundColor: colors.error,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(DSRadius.md),
+          borderRadius: BorderRadius.circular(12),
         ),
-        margin: const EdgeInsets.all(DSSpacing.md),
+        margin: const EdgeInsets.all(16),
       ),
     );
   }

@@ -41,7 +41,7 @@ lib/
 │   ├── network/                # HTTP 클라이언트, 인터셉터
 │   ├── providers/              # 전역 상태 (user_settings_provider 등)
 │   ├── services/               # 비즈니스 로직 서비스 (50+ 파일)
-│   ├── theme/                  # 레거시 테마 (TossDesignSystem)
+│   ├── theme/                  # 테마 (DSColors, ChatGPT 스타일)
 │   ├── utils/                  # 유틸리티 (날짜, 로거 등)
 │   └── widgets/                # 재사용 위젯 (UnifiedFortuneBaseWidget 등)
 ├── features/                   # Feature Slice 모듈 (19개)

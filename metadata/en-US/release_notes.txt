@@ -1,1 +1,10 @@
+v1.0.0 Official Release
 
+• Face AI: Get fun personality insights from your selfie
+• Daily Insights: AI-generated personalized guidance updated daily
+• Life Insights: Love, career, wellness and more
+• Home Widgets: Quick access to your insights
+• Dark mode support
+• Performance and stability improvements
+
+Thank you for using ZPZG!

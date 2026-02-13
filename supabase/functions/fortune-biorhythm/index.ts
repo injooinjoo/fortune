@@ -289,25 +289,14 @@ ${Array.from({ length: 7 }, (_, i) => {
       metadata: { name, totalDays, physicalValue, emotionalValue, intellectualValue, isPremium }
     })
 
-    // ✅ Blur 로직 적용 (프리미엄이 아니면 상세 분석 블러 처리)
-    const isBlurred = !isPremium
-    const blurredSections = isBlurred
-      ? ['personal_analysis', 'lifestyle_advice', 'health_tips', 'weekly_activities']
-      : []
-
-    // 응답 구성 (블러 없이 전체 데이터)
+    // 응답 구성 (전체 데이터)
     const blurredResult = {
       ...result,
       personal_analysis: result.personal_analysis,
       lifestyle_advice: result.lifestyle_advice,
       health_tips: result.health_tips,
-      weekly_activities: result.weekly_activities,
-      // ✅ 블러 상태 정보
-      isBlurred,
-      blurredSections
+      weekly_activities: result.weekly_activities
     }
-
-    console.log(`💎 [Biorhythm] isPremium: ${isPremium}, isBlurred: ${isBlurred}`)
 
     // ✅ 퍼센타일 계산 (오늘 운세를 본 사람들 중 상위 몇 %)
     const percentileData = await calculatePercentile(

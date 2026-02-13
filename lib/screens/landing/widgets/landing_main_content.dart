@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/design_system/design_system.dart';
-import '../../../core/theme/typography_unified.dart';
 
 /// Main content area of landing page with logo, title, and start button
 class LandingMainContent extends StatelessWidget {
@@ -19,11 +18,11 @@ class LandingMainContent extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // App Logo - '相' (관상) Korean Calligraphy
+          // App Logo
           Image.asset(
-            Theme.of(context).brightness == Brightness.dark
-                ? 'assets/images/sang_dark.png'
-                : 'assets/images/sang_light.png',
+            context.isDark
+                ? 'assets/images/zpzg_logo_dark.webp'
+                : 'assets/images/zpzg_logo_light.webp',
             width: 120,
             height: 120,
           ).animate().fadeIn(duration: 800.ms).scale(

@@ -39,7 +39,7 @@ class HanjiBackground extends StatelessWidget {
     super.key,
     required this.child,
     this.showTexture = false,
-    this.textureOpacity = 0.05,
+    this.textureOpacity = 0.03,
     this.backgroundColor,
   });
 
@@ -52,7 +52,7 @@ class HanjiBackground extends StatelessWidget {
     return HanjiBackground(
       key: key,
       showTexture: true,
-      textureOpacity: 0.03,
+      textureOpacity: 0.015,
       backgroundColor: backgroundColor,
       child: child,
     );
@@ -67,7 +67,7 @@ class HanjiBackground extends StatelessWidget {
     return HanjiBackground(
       key: key,
       showTexture: true,
-      textureOpacity: 0.08,
+      textureOpacity: 0.04,
       backgroundColor: backgroundColor,
       child: child,
     );
@@ -115,8 +115,8 @@ class _HanjiTexture extends StatelessWidget {
     // Try to load hanji texture asset
     // Falls back to subtle color pattern if asset not available
     final texturePath = brightness == Brightness.dark
-        ? 'assets/textures/hanji_dark.png'
-        : 'assets/textures/hanji_light.png';
+        ? 'assets/textures/hanji_dark.webp'
+        : 'assets/textures/hanji_light.webp';
 
     return Opacity(
       opacity: opacity,
@@ -163,7 +163,7 @@ class _HanjiPatternPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // Create very subtle fiber-like pattern
     final paint = Paint()
-      ..color = baseColor.withValues(alpha: 0.02)
+      ..color = baseColor.withValues(alpha: 0.01)
       ..strokeWidth = 0.5
       ..style = PaintingStyle.stroke;
 
@@ -184,13 +184,84 @@ class _HanjiPatternPainter extends CustomPainter {
       canvas.drawLine(
         Offset(x, offset),
         Offset(x + 0.1, size.height - offset),
-        paint..color = baseColor.withValues(alpha: 0.015),
+        paint..color = baseColor.withValues(alpha: 0.008),
       );
     }
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+/// Clean background wrapper for modern AI Chat aesthetic
+///
+/// Simple, neutral background with no decorations or textures.
+class CleanBackground extends StatelessWidget {
+  /// Child widget to wrap
+  final Widget child;
+
+  /// Background color override (default: theme-aware background color)
+  final Color? backgroundColor;
+
+  const CleanBackground({
+    super.key,
+    required this.child,
+    this.backgroundColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final effectiveBackground = backgroundColor ?? colors.background;
+
+    return Container(
+      color: effectiveBackground,
+      child: child,
+    );
+  }
+}
+
+/// Clean container for modern card-like elements
+class CleanContainer extends StatelessWidget {
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry? margin;
+  final double borderRadius;
+  final Color? backgroundColor;
+  final BoxBorder? border;
+  final List<BoxShadow>? boxShadow;
+
+  const CleanContainer({
+    super.key,
+    required this.child,
+    this.padding,
+    this.margin,
+    this.borderRadius = 16.0,
+    this.backgroundColor,
+    this.border,
+    this.boxShadow,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+
+    return Container(
+      margin: margin,
+      padding: padding,
+      decoration: BoxDecoration(
+        color: backgroundColor ?? colors.surface,
+        borderRadius: BorderRadius.circular(borderRadius),
+        border: border ??
+            Border.all(
+              color: colors.border,
+              width: 1,
+            ),
+        boxShadow: boxShadow,
+      ),
+      child: child,
+    );
+  }
 }
 
 /// Hanji-textured container for smaller elements
@@ -232,7 +303,7 @@ class HanjiContainer extends StatelessWidget {
                 children: [
                   _HanjiTexture(
                     brightness: Theme.of(context).brightness,
-                    opacity: 0.04,
+                    opacity: 0.02,
                   ),
                   child,
                 ],

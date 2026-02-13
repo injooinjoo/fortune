@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/theme/fortune_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/constants/fortune_type_names.dart';
 // import '../../../../shared/glassmorphism/glass_container.dart'; // TODO: Remove if not needed
 import '../../domain/models/fortune_history.dart';
@@ -29,11 +28,11 @@ class CategoryPieChart extends StatelessWidget {
     
     final topCategories = sortedCategories.take(5).toList();
     final colors = [
-      TossDesignSystem.tossBlue,
-      TossDesignSystem.gray600,
-      TossDesignSystem.successGreen,
-      TossDesignSystem.warningOrange,
-      TossDesignSystem.errorRed];
+      DSColors.accentDark,
+      DSColors.textSecondaryDark,
+      DSColors.success,
+      DSColors.warning,
+      DSColors.error];
     
     return SizedBox(
       height: 300,
@@ -62,7 +61,7 @@ class CategoryPieChart extends StatelessWidget {
                           radius: 80,
                           titleStyle: context.labelMedium.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: TossDesignSystem.white,
+                            color: Colors.white,
                           ),
                           color: colors[index % colors.length],
                         );

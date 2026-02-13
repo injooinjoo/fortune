@@ -1,7 +1,7 @@
-import 'package:fortune/core/theme/fortune_design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../data/five_elements_explanations.dart';
 import 'package:fortune/core/theme/app_animations.dart';
@@ -26,7 +26,8 @@ class FiveElementsExplanationBottomSheet extends StatefulWidget {
   }) {
     return showModalBottomSheet(
       context: context,
-      backgroundColor: TossDesignSystem.white.withValues(alpha: 0.0),
+      backgroundColor: Colors.white.withValues(alpha: 0.0),
+      barrierColor: DSColors.overlay,
       isScrollControlled: true,
       isDismissible: true,
       enableDrag: true,
@@ -66,17 +67,17 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
   Color _getElementColor(String element) {
     switch (element) {
       case '목':
-        return TossDesignSystem.successGreen;
+        return DSColors.success;
       case '화':
-        return TossDesignSystem.warningOrange;
+        return DSColors.warning;
       case '토':
-        return TossDesignSystem.warningOrange;
+        return DSColors.warning;
       case '금':
-        return TossDesignSystem.gray600;
+        return DSColors.textSecondaryDark;
       case '수':
-        return TossDesignSystem.tossBlue;
+        return DSColors.accentDark;
       default:
-        return TossDesignSystem.gray600;
+        return DSColors.textSecondaryDark;
     }
   }
 
@@ -124,8 +125,8 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             boxShadow: [
               BoxShadow(
                 color: theme.brightness == Brightness.dark
-                    ? TossDesignSystem.grayDark900.withValues(alpha: 0.3)
-                    : TossDesignSystem.gray900.withValues(alpha: 0.1),
+                    ? DSColors.textPrimary.withValues(alpha: 0.3)
+                    : DSColors.textPrimaryDark.withValues(alpha: 0.1),
                 blurRadius: 20,
                 offset: const Offset(0, -5),
               ),
@@ -172,13 +173,13 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
     return Container(
       margin: const EdgeInsets.only(
         top: AppSpacing.small,
-        bottom: TossDesignSystem.spacingXS),
+        bottom: DSSpacing.xs),
       width: 40,
       height: 4,
       decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? TossDesignSystem.gray400
-            : TossDesignSystem.gray600,
+        color: context.isDark
+            ? DSColors.textDisabledDark
+            : DSColors.textSecondaryDark,
         borderRadius: BorderRadius.circular(AppDimensions.radiusXSmall),
       ),
     );
@@ -228,8 +229,8 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                           explanation['name'],
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             color: theme.brightness == Brightness.dark
-                                ? TossDesignSystem.gray100
-                                : TossDesignSystem.grayDark900)),
+                                ? DSColors.backgroundSecondaryDark
+                                : DSColors.textPrimary)),
                       ],
                     ),
                   ).animate()
@@ -365,7 +366,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
         ),
         const SizedBox(height: AppSpacing.spacing4),
         ...characteristics.map((characteristic) => Padding(
-          padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
+          padding: const EdgeInsets.only(bottom: DSSpacing.xs),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -418,7 +419,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
           borderRadius: AppDimensions.borderRadiusMedium,
           boxShadow: [
             BoxShadow(
-              color: TossDesignSystem.gray900.withValues(alpha:0.05),
+              color: DSColors.textPrimaryDark.withValues(alpha:0.05),
               blurRadius: 10,
               offset: const Offset(0, 2),
             ),
@@ -447,15 +448,15 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
     if (isExcess) {
       advice = balanceAdvice['excess'] ?? '';
       status = '과다';
-      statusColor = TossDesignSystem.warningOrange;
+      statusColor = DSColors.warning;
     } else if (isDeficient) {
       advice = balanceAdvice['deficiency'] ?? '';
       status = '부족';
-      statusColor = TossDesignSystem.errorRed;
+      statusColor = DSColors.error;
     } else {
       advice = '${explanation['name']}(${widget.element})의 기운이 적절한 균형을 이루고 있습니다. 현재의 조화로운 상태를 유지하면서 건강한 생활을 이어가세요.';
       status = '균형';
-      statusColor = TossDesignSystem.successGreen;
+      statusColor = DSColors.success;
     }
     
     return Column(
@@ -466,12 +467,12 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             Container(
               padding: AppSpacing.paddingAll8,
         decoration: BoxDecoration(
-          color: TossDesignSystem.warningOrange.withValues(alpha:0.1),
+          color: DSColors.warning.withValues(alpha:0.1),
           borderRadius: AppDimensions.borderRadiusSmall,
         ),
         child: const Icon(
                 Icons.balance,
-                color: TossDesignSystem.warningOrange,
+                color: DSColors.warning,
                 size: AppDimensions.iconSizeSmall,
               ),
             ),
@@ -622,7 +623,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing1, vertical: AppSpacing.spacing0),
                               decoration: BoxDecoration(
-                                color: TossDesignSystem.successGreen.withValues(alpha:0.2),
+                                color: DSColors.success.withValues(alpha:0.2),
                                 borderRadius: BorderRadius.circular(AppDimensions.radiusMedium)),
                               child: Text(
                                 '상생',
@@ -633,7 +634,7 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing1, vertical: AppSpacing.spacing0),
                               decoration: BoxDecoration(
-                                color: TossDesignSystem.warningOrange.withValues(alpha:0.2),
+                                color: DSColors.warning.withValues(alpha:0.2),
                                 borderRadius: BorderRadius.circular(AppDimensions.radiusMedium)),
                               child: Text(
                                 '상극',
@@ -671,11 +672,11 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             Container(
               padding: AppSpacing.paddingAll8,
         decoration: BoxDecoration(
-      color: TossDesignSystem.errorRed.withValues(alpha:0.1),
+      color: DSColors.error.withValues(alpha:0.1),
                 borderRadius: AppDimensions.borderRadiusSmall),
       child: const Icon(
                 Icons.favorite,
-                color: TossDesignSystem.errorRed,
+                color: DSColors.error,
                 size: AppDimensions.iconSizeSmall),
             ),
             const SizedBox(width: AppSpacing.spacing3),
@@ -689,22 +690,22 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
         Container(
           padding: AppSpacing.paddingAll16,
           decoration: BoxDecoration(
-            color: TossDesignSystem.errorRed.withValues(alpha:0.05),
+            color: DSColors.error.withValues(alpha:0.05),
             borderRadius: AppDimensions.borderRadiusMedium,
             border: Border.all(
-              color: TossDesignSystem.errorRed.withValues(alpha:0.2),
+              color: DSColors.error.withValues(alpha:0.2),
             ),
           ),
           child: Column(
             children: healthTips.map((tip) => Padding(
-              padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
+              padding: const EdgeInsets.only(bottom: DSSpacing.xs),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Icon(
                     Icons.health_and_safety,
                     size: AppDimensions.iconSizeXSmall,
-                    color: TossDesignSystem.errorRed,
+                    color: DSColors.error,
                   ),
                   const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
@@ -735,11 +736,11 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             Container(
               padding: AppSpacing.paddingAll8,
         decoration: BoxDecoration(
-      color: TossDesignSystem.tossBlue.withValues(alpha:0.1),
+      color: DSColors.accentDark.withValues(alpha:0.1),
                 borderRadius: AppDimensions.borderRadiusSmall),
               child: const Icon(
                 Icons.work,
-                color: TossDesignSystem.tossBlue,
+                color: DSColors.accentDark,
                 size: AppDimensions.iconSizeSmall),
             ),
             const SizedBox(width: AppSpacing.spacing3),
@@ -754,21 +755,21 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
         Container(
           padding: AppSpacing.paddingAll16,
           decoration: BoxDecoration(
-            color: TossDesignSystem.tossBlue.withValues(alpha:0.05),
+            color: DSColors.accentDark.withValues(alpha:0.05),
             borderRadius: AppDimensions.borderRadiusMedium,
             border: Border.all(
-              color: TossDesignSystem.tossBlue.withValues(alpha:0.2)),
+              color: DSColors.accentDark.withValues(alpha:0.2)),
           ),
           child: Column(
             children: careers.map((career) => Padding(
-              padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
+              padding: const EdgeInsets.only(bottom: DSSpacing.xs),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Icon(
                     Icons.arrow_right,
                     size: AppDimensions.iconSizeSmall,
-                    color: TossDesignSystem.tossBlue,
+                    color: DSColors.accentDark,
                   ),
                   const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
@@ -798,12 +799,12 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
             Container(
               padding: AppSpacing.paddingAll8,
               decoration: BoxDecoration(
-                color: TossDesignSystem.warningOrange.withValues(alpha:0.2),
+                color: DSColors.warning.withValues(alpha:0.2),
                 borderRadius: AppDimensions.borderRadiusSmall,
               ),
               child: const Icon(
                 Icons.auto_awesome,
-                color: TossDesignSystem.warningOrange,
+                color: DSColors.warning,
                 size: AppDimensions.iconSizeSmall,
               ),
             ),
@@ -822,25 +823,25 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
         decoration: BoxDecoration(
       gradient: LinearGradient(
               colors: [
-                TossDesignSystem.warningOrange.withValues(alpha:0.1),
-                TossDesignSystem.warningOrange.withValues(alpha:0.05)],
+                DSColors.warning.withValues(alpha:0.1),
+                DSColors.warning.withValues(alpha:0.05)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
           ),
       borderRadius: AppDimensions.borderRadiusMedium,
             border: Border.all(
-              color: TossDesignSystem.warningOrange.withValues(alpha:0.3)),
+              color: DSColors.warning.withValues(alpha:0.3)),
         ),
           child: Column(
             children: luckyItems.map((item) => Padding(
-              padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
+              padding: const EdgeInsets.only(bottom: DSSpacing.xs),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Icon(
                     Icons.stars,
                     size: AppDimensions.iconSizeXSmall,
-                    color: TossDesignSystem.warningOrange,
+                    color: DSColors.warning,
                   ),
                   const SizedBox(width: AppSpacing.spacing2),
                   Expanded(

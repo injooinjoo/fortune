@@ -1,4 +1,4 @@
-import '../../../../core/theme/fortune_colors.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../models/fortune_survey_config.dart';
 
 /// 인사이트별 설문 설정 정의
@@ -113,33 +113,33 @@ const _concernOptions = [
 ];
 
 /// Career 설문 설정
-final careerSurveyConfig = FortuneSurveyConfig(
+const careerSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.career,
   title: '커리어 인사이트',
   description: '당신의 커리어 방향을 알려드릴게요',
   emoji: '💼',
-  accentColor: FortuneColors.career,
+  accentColor: DSColors.accentSecondary,
   steps: [
-    const SurveyStep(
+    SurveyStep(
       id: 'field',
       question: '어떤 분야에서 일하고 계신가요?',
       inputType: SurveyInputType.chips,
       options: _fieldOptions,
     ),
-    const SurveyStep(
+    SurveyStep(
       id: 'position',
       question: '현재 포지션이 어떻게 되세요?',
       inputType: SurveyInputType.chips,
       dependsOn: 'field',
       options: [], // 동적으로 로드됨
     ),
-    const SurveyStep(
+    SurveyStep(
       id: 'experience',
       question: '경력은 어느 정도 되셨나요?',
       inputType: SurveyInputType.chips,
       options: _experienceOptions,
     ),
-    const SurveyStep(
+    SurveyStep(
       id: 'concern',
       question: '요즘 가장 큰 고민은 뭔가요?',
       inputType: SurveyInputType.chips,
@@ -209,34 +209,28 @@ const _idealTypeMaleOptions = [
   SurveyOption(id: 'warm', label: '훈훈남 (따뜻+편안)', emoji: '☀️'),
 ];
 
-/// 성별 옵션 (연애운용)
-const _genderOptions = [
-  SurveyOption(id: 'male', label: '남성', emoji: '👨'),
-  SurveyOption(id: 'female', label: '여성', emoji: '👩'),
-];
-
 /// Love 설문 설정
-final loveSurveyConfig = FortuneSurveyConfig(
+const loveSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.love,
   title: '연애 인사이트',
   description: '당신의 사랑 운을 알려드릴게요',
   emoji: '💕',
-  accentColor: FortuneColors.love,
+  accentColor: DSColors.accentSecondary,
   steps: [
     // gender는 프로필에서 자동 가져옴 (chat_home_page.dart에서 initialAnswers로 전달)
-    const SurveyStep(
+    SurveyStep(
       id: 'status',
       question: '지금 연애 상태가 어때? 💕',
       inputType: SurveyInputType.chips,
       options: _relationshipStatusOptions,
     ),
-    const SurveyStep(
+    SurveyStep(
       id: 'concern',
       question: '가장 궁금한 게 뭐야? 🤔',
       inputType: SurveyInputType.chips,
       options: _loveConcernOptions,
     ),
-    const SurveyStep(
+    SurveyStep(
       id: 'datingStyle',
       question: '연애할 때 어떤 스타일이야? 💝',
       inputType: SurveyInputType.multiSelect,
@@ -244,7 +238,7 @@ final loveSurveyConfig = FortuneSurveyConfig(
       isRequired: false,
     ),
     // 남성 → 여성 이상형 (동물상)
-    const SurveyStep(
+    SurveyStep(
       id: 'idealLooks',
       question: '어떤 외모 스타일이 끌려? 👀',
       inputType: SurveyInputType.multiSelect,
@@ -253,7 +247,7 @@ final loveSurveyConfig = FortuneSurveyConfig(
       showWhen: {'status': ['single', 'crush'], 'gender': ['male']},
     ),
     // 여성 → 남성 이상형 (남성상)
-    const SurveyStep(
+    SurveyStep(
       id: 'idealLooks',
       question: '어떤 외모 스타일이 끌려? 👀',
       inputType: SurveyInputType.multiSelect,
@@ -262,7 +256,7 @@ final loveSurveyConfig = FortuneSurveyConfig(
       showWhen: {'status': ['single', 'crush'], 'gender': ['female']},
     ),
     // 공통 성격 옵션
-    const SurveyStep(
+    SurveyStep(
       id: 'idealPersonality',
       question: '이상형 성격은? ✨',
       inputType: SurveyInputType.multiSelect,
@@ -278,12 +272,26 @@ final loveSurveyConfig = FortuneSurveyConfig(
 // ============================================================
 
 /// Daily 설문 설정 (설문 스킵 - 바로 조회)
-final dailySurveyConfig = FortuneSurveyConfig(
+const dailySurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.daily,
   title: '오늘의 인사이트',
   description: '오늘 하루를 미리 살펴볼까요?',
   emoji: '🌅',
-  accentColor: FortuneColors.daily,
+  accentColor: DSColors.accentSecondary,
+  steps: [], // 설문 없이 바로 API 호출
+);
+
+// ============================================================
+// Game Enhance (게임 강화운세) 설문 설정
+// ============================================================
+
+/// Game Enhance 설문 설정 (설문 스킵 - 바로 조회)
+const gameEnhanceSurveyConfig = FortuneSurveyConfig(
+  fortuneType: FortuneSurveyType.gameEnhance,
+  title: '강화의 기운',
+  description: '오늘의 강화 성공 확률은?',
+  emoji: '🎮',
+  accentColor: DSColors.accentSecondary, // 화(火) - 강화의 불꽃
   steps: [], // 설문 없이 바로 API 호출
 );
 
@@ -338,44 +346,44 @@ const _challengesOptions = [
 ];
 
 /// Talent 설문 설정
-final talentSurveyConfig = FortuneSurveyConfig(
+const talentSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.talent,
   title: '적성 찾기',
   description: '숨겨진 재능을 발견해볼까요?',
   emoji: '🌟',
-  accentColor: FortuneColors.mystical,
+  accentColor: DSColors.accentSecondary,
   steps: [
-    const SurveyStep(
+    SurveyStep(
       id: 'interest',
       question: '어떤 분야에 관심이 있으세요?',
       inputType: SurveyInputType.multiSelect,
       options: _interestAreaOptions,
     ),
-    const SurveyStep(
+    SurveyStep(
       id: 'workStyle',
       question: '일할 때 어떤 스타일이세요?',
       inputType: SurveyInputType.chips,
       options: _workStyleOptions,
     ),
-    const SurveyStep(
+    SurveyStep(
       id: 'problemSolving',
       question: '문제를 어떻게 해결하세요?',
       inputType: SurveyInputType.chips,
       options: _problemSolvingOptions,
     ),
-    const SurveyStep(
+    SurveyStep(
       id: 'experience',
       question: '관심 분야 경험이 어느 정도 있으세요?',
       inputType: SurveyInputType.chips,
       options: _talentExperienceOptions,
     ),
-    const SurveyStep(
+    SurveyStep(
       id: 'timeAvailable',
       question: '일주일에 얼마나 투자할 수 있으세요?',
       inputType: SurveyInputType.chips,
       options: _timeAvailableOptions,
     ),
-    const SurveyStep(
+    SurveyStep(
       id: 'challenges',
       question: '현재 겪고 있는 어려움이 있나요?',
       inputType: SurveyInputType.multiSelect,
@@ -403,7 +411,7 @@ const tarotSurveyConfig = FortuneSurveyConfig(
   title: '타로',
   description: '카드가 전하는 메시지를 들어볼까요?',
   emoji: '🃏',
-  accentColor: FortuneColors.mystical,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'purpose',
@@ -463,7 +471,7 @@ const mbtiSurveyConfig = FortuneSurveyConfig(
   title: 'MBTI 인사이트',
   description: 'MBTI로 보는 오늘의 인사이트',
   emoji: '🧠',
-  accentColor: FortuneColors.career,
+  accentColor: DSColors.accentSecondary,
   steps: [
     // Step 1: MBTI 확인 (프로필에 MBTI가 있으면 확인 질문)
     SurveyStep(
@@ -531,10 +539,11 @@ final Map<FortuneSurveyType, FortuneSurveyConfig> surveyConfigs = {
   FortuneSurveyType.health: healthSurveyConfig,
   FortuneSurveyType.exercise: exerciseSurveyConfig,
   FortuneSurveyType.sportsGame: sportsGameSurveyConfig,
-  // 인터랙티브 (3개)
+  // 인터랙티브 (4개)
   FortuneSurveyType.dream: dreamSurveyConfig,
   FortuneSurveyType.celebrity: celebritySurveyConfig,
   FortuneSurveyType.pastLife: pastLifeSurveyConfig,
+  FortuneSurveyType.gameEnhance: gameEnhanceSurveyConfig,
   // 가족/반려동물 (4개)
   FortuneSurveyType.pet: petSurveyConfig,
   FortuneSurveyType.family: familySurveyConfig,
@@ -547,6 +556,8 @@ final Map<FortuneSurveyType, FortuneSurveyConfig> surveyConfigs = {
   FortuneSurveyType.moving: movingSurveyConfig,
   // 웰니스 (1개)
   FortuneSurveyType.gratitude: gratitudeSurveyConfig,
+  // 이미지 생성 (1개)
+  FortuneSurveyType.yearlyEncounter: yearlyEncounterSurveyConfig,
 };
 
 /// 분야별 포지션 가져오기
@@ -575,7 +586,7 @@ const newYearSurveyConfig = FortuneSurveyConfig(
   title: '새해 인사이트',
   description: '새해 복 많이 받으세요!',
   emoji: '🎊',
-  accentColor: FortuneColors.wealth,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'goal',
@@ -604,7 +615,7 @@ const dailyCalendarSurveyConfig = FortuneSurveyConfig(
   title: '기간별 인사이트',
   description: '날짜를 선택하면 그날의 일정과 인사이트를 함께 확인해드려요!',
   emoji: '📅',
-  accentColor: FortuneColors.daily,
+  accentColor: DSColors.accentSecondary,
   steps: [
     // Step 1: 캘린더 연동 여부 (선택적)
     SurveyStep(
@@ -654,7 +665,7 @@ const traditionalSurveyConfig = FortuneSurveyConfig(
   title: '전통 사주 분석',
   description: '사주팔자로 보는 당신의 운명',
   emoji: '📿',
-  accentColor: FortuneColors.mystical,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'analysisType',
@@ -697,18 +708,18 @@ const faceReadingSurveyConfig = FortuneSurveyConfig(
   title: 'AI 관상 분석',
   description: 'AI가 당신의 얼굴을 분석해드려요',
   emoji: '🎭',
-  accentColor: FortuneColors.mystical,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'focus',
-      question: '어떤 관상이 궁금해? 👀',
+      question: '어떤 관상이 궁금하세요? 👀',
       inputType: SurveyInputType.chips,
       options: _faceReadingFocusOptions,
       isRequired: false,
     ),
     SurveyStep(
       id: 'photo',
-      question: '얼굴 사진을 올려줘! 📸\n정면 사진이 가장 정확해',
+      question: '얼굴 사진을 올려주세요! 📸\n정면 사진이 가장 정확해요',
       inputType: SurveyInputType.faceReading,
     ),
   ],
@@ -744,7 +755,7 @@ const talismanSurveyConfig = FortuneSurveyConfig(
   title: '부적',
   description: '당신을 위한 맞춤 부적',
   emoji: '🧧',
-  accentColor: FortuneColors.mystical,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'purpose',
@@ -813,7 +824,7 @@ const personalityDnaSurveyConfig = FortuneSurveyConfig(
   title: '성격 DNA',
   description: 'MBTI, 혈액형, 별자리, 띠를 조합한 당신만의 DNA',
   emoji: '🧬',
-  accentColor: FortuneColors.career,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'mbti',
@@ -856,7 +867,7 @@ const biorhythmSurveyConfig = FortuneSurveyConfig(
   title: '바이오리듬',
   description: '오늘의 신체/감성/지성 리듬',
   emoji: '📊',
-  accentColor: FortuneColors.career,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'targetDate',
@@ -893,7 +904,7 @@ const profileCreationSurveyConfig = FortuneSurveyConfig(
   title: '상대방 정보 입력',
   description: '궁합을 볼 상대의 정보를 알려주세요',
   emoji: '✍️',
-  accentColor: FortuneColors.love,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'name',
@@ -947,7 +958,7 @@ const compatibilitySurveyConfig = FortuneSurveyConfig(
   title: '궁합',
   description: '누구와의 궁합이 궁금하세요?',
   emoji: '💞',
-  accentColor: FortuneColors.love,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'inputMethod',
@@ -1001,7 +1012,7 @@ const avoidPeopleSurveyConfig = FortuneSurveyConfig(
   title: '경계 대상',
   description: '조심해야 할 인연을 알려드려요',
   emoji: '⚠️',
-  accentColor: FortuneColors.moderate,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'situation',
@@ -1152,7 +1163,7 @@ const exLoverSurveyConfig = FortuneSurveyConfig(
   title: '재회 인사이트',
   description: '솔직한 조언자가 함께할게요',
   emoji: '💬',
-  accentColor: FortuneColors.love,
+  accentColor: DSColors.accentSecondary,
   steps: [
     // Step 1: 상담 목표 (가치 제안 선택)
     SurveyStep(
@@ -1302,38 +1313,38 @@ const _blindDatePartnerInfoOptions = [
 ];
 
 /// BlindDate 설문 설정
-final blindDateSurveyConfig = FortuneSurveyConfig(
+const blindDateSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.blindDate,
   title: '소개팅 인사이트',
   description: '소개팅 인사이트를 확인해드릴게요!',
   emoji: '💘',
-  accentColor: FortuneColors.love,
+  accentColor: DSColors.accentSecondary,
   steps: [
-    const SurveyStep(
+    SurveyStep(
       id: 'dateType',
       question: '어떤 방식으로 만나시나요?',
       inputType: SurveyInputType.chips,
       options: _blindDateTypeOptions,
     ),
-    const SurveyStep(
+    SurveyStep(
       id: 'expectation',
       question: '어떤 만남을 원하세요?',
       inputType: SurveyInputType.chips,
       options: _blindDateExpectOptions,
     ),
-    const SurveyStep(
+    SurveyStep(
       id: 'meetingTime',
       question: '만남 시간대가 어떻게 되나요?',
       inputType: SurveyInputType.chips,
       options: _blindDateTimeOptions,
     ),
-    const SurveyStep(
+    SurveyStep(
       id: 'isFirstBlindDate',
       question: '첫 소개팅이신가요?',
       inputType: SurveyInputType.chips,
       options: _blindDateFirstTimeOptions,
     ),
-    const SurveyStep(
+    SurveyStep(
       id: 'hasPartnerInfo',
       question: '상대방 정보가 있나요?',
       inputType: SurveyInputType.chips,
@@ -1345,7 +1356,7 @@ final blindDateSurveyConfig = FortuneSurveyConfig(
       question: '상대방 사진을 올려주세요 📷',
       inputType: SurveyInputType.image,
       isRequired: false,
-      showWhen: const {'hasPartnerInfo': 'photo'},
+      showWhen: {'hasPartnerInfo': 'photo'},
     ),
     // 조건부: 인스타를 안다고 하면 아이디 입력
     SurveyStep(
@@ -1353,7 +1364,7 @@ final blindDateSurveyConfig = FortuneSurveyConfig(
       question: '상대방 인스타그램 아이디를 알려주세요 📱',
       inputType: SurveyInputType.text,
       isRequired: false,
-      showWhen: const {'hasPartnerInfo': 'instagram'},
+      showWhen: {'hasPartnerInfo': 'instagram'},
     ),
   ],
 );
@@ -1426,7 +1437,7 @@ const moneySurveyConfig = FortuneSurveyConfig(
   title: '재물 인사이트',
   description: '당신의 재정 상황을 분석하고 맞춤 조언을 드릴게요',
   emoji: '💰',
-  accentColor: FortuneColors.wealth,
+  accentColor: DSColors.accentSecondary,
   steps: [
     // Step 1: 재물 목표
     SurveyStep(
@@ -1486,7 +1497,6 @@ const moneySurveyConfig = FortuneSurveyConfig(
 
 /// 아이템 카테고리 옵션
 const _luckyItemCategoryOptions = [
-  SurveyOption(id: 'all', label: '전체', emoji: '✨'),
   SurveyOption(id: 'fashion', label: '패션/액세서리', emoji: '👔'),
   SurveyOption(id: 'food', label: '음식/음료', emoji: '🍽️'),
   SurveyOption(id: 'color', label: '컬러', emoji: '🎨'),
@@ -1500,7 +1510,7 @@ const luckyItemsSurveyConfig = FortuneSurveyConfig(
   title: '행운 아이템',
   description: '오늘의 행운을 가져다줄 아이템!',
   emoji: '🍀',
-  accentColor: FortuneColors.daily,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'category',
@@ -1537,7 +1547,7 @@ const lottoSurveyConfig = FortuneSurveyConfig(
   title: '로또 번호',
   description: '행운의 번호를 뽑아볼게요!',
   emoji: '🎰',
-  accentColor: FortuneColors.wealth,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'method',
@@ -1569,13 +1579,21 @@ const _wishCategoryOptions = [
   SurveyOption(id: 'other', label: '기타', emoji: '✨'),
 ];
 
+/// 복채 옵션 (소원 후 감사 토큰)
+const _wishBokchaeOptions = [
+  SurveyOption(id: '0', label: '다음에 할게요', emoji: '🙏'),
+  SurveyOption(id: '1', label: '1개', emoji: '🧧'),
+  SurveyOption(id: '3', label: '3개', emoji: '🧧🧧🧧'),
+  SurveyOption(id: '5', label: '5개', emoji: '🧧🧧🧧🧧🧧'),
+];
+
 /// Wish 설문 설정
 const wishSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.wish,
   title: '소원 빌기',
   description: '마음 속 소원을 빌어보세요',
   emoji: '🌠',
-  accentColor: FortuneColors.mystical,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'category',
@@ -1588,6 +1606,13 @@ const wishSurveyConfig = FortuneSurveyConfig(
       question: '소원을 말하거나 적어주세요',
       inputType: SurveyInputType.voice,
       options: [],
+    ),
+    SurveyStep(
+      id: 'bokchae',
+      question: '감사의 복채를 올리시겠어요?',
+      inputType: SurveyInputType.chips,
+      options: _wishBokchaeOptions,
+      isRequired: false,
     ),
   ],
 );
@@ -1602,7 +1627,7 @@ const fortuneCookieSurveyConfig = FortuneSurveyConfig(
   title: '오늘의 메시지',
   description: '오늘 당신에게 전하는 한 마디',
   emoji: '🥠',
-  accentColor: FortuneColors.daily,
+  accentColor: DSColors.accentSecondary,
   steps: [], // 추가 수집 없음
 );
 
@@ -1671,7 +1696,7 @@ const healthSurveyConfig = FortuneSurveyConfig(
   title: '건강 인사이트',
   description: '오늘의 건강 인사이트를 확인해드릴게요',
   emoji: '💊',
-  accentColor: FortuneColors.career,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'currentCondition',
@@ -1739,7 +1764,7 @@ const exerciseSurveyConfig = FortuneSurveyConfig(
   title: '운동 추천',
   description: '오늘 맞는 운동을 추천해드려요',
   emoji: '🏃',
-  accentColor: FortuneColors.career,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'goal',
@@ -1776,26 +1801,26 @@ const sportsGameSurveyConfig = FortuneSurveyConfig(
   title: '경기 인사이트',
   description: '경기 결과를 예측해드릴게요!',
   emoji: '🏆',
-  accentColor: FortuneColors.career,
+  accentColor: DSColors.accentSecondary,
   steps: [
     // Step 1: 종목 선택
     SurveyStep(
       id: 'sport',
-      question: '어떤 종목이야? 🏆',
+      question: '어떤 종목인가요? 🏆',
       inputType: SurveyInputType.chips,
       options: _sportTypeOptions,
     ),
     // Step 2: 경기 선택 (종목에 따라 동적 로드)
     SurveyStep(
       id: 'match',
-      question: '어떤 경기를 볼까? 📅',
+      question: '어떤 경기를 볼까요? 📅',
       inputType: SurveyInputType.matchSelection,
       dependsOn: 'sport',
     ),
     // Step 3: 응원팀 선택 (선택한 경기의 양 팀 중)
     SurveyStep(
       id: 'favoriteTeam',
-      question: '어느 팀 응원해? 📣',
+      question: '어느 팀을 응원하시나요? 📣',
       inputType: SurveyInputType.chips,
       dependsOn: 'match',
       isRequired: false,
@@ -1823,7 +1848,7 @@ const dreamSurveyConfig = FortuneSurveyConfig(
   title: '꿈 해몽',
   description: '어젯밤 꿈 이야기를 들려주세요',
   emoji: '💭',
-  accentColor: FortuneColors.mystical,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'dreamContent',
@@ -1866,7 +1891,7 @@ const celebritySurveyConfig = FortuneSurveyConfig(
   title: '유명인 궁합',
   description: '좋아하는 유명인과 궁합을 알아볼까요?',
   emoji: '⭐',
-  accentColor: FortuneColors.love,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'celebrity',
@@ -1907,7 +1932,7 @@ const petSurveyConfig = FortuneSurveyConfig(
   title: '반려동물 궁합',
   description: '반려동물과의 궁합을 봐드릴게요!',
   emoji: '🐾',
-  accentColor: FortuneColors.daily,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'pet',
@@ -1953,7 +1978,7 @@ const familySurveyConfig = FortuneSurveyConfig(
   title: '가족 인사이트',
   description: '가족 인사이트를 살펴볼게요',
   emoji: '👨‍👩‍👧‍👦',
-  accentColor: FortuneColors.love,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'concern',
@@ -2013,7 +2038,7 @@ const namingSurveyConfig = FortuneSurveyConfig(
   title: '작명',
   description: '좋은 이름을 찾아드릴게요!',
   emoji: '📝',
-  accentColor: FortuneColors.mystical,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'dueDateKnown',
@@ -2062,7 +2087,7 @@ const babyNicknameSurveyConfig = FortuneSurveyConfig(
   title: '태명 이야기',
   description: '태명으로 아이와 교감해보세요!',
   emoji: '👶',
-  accentColor: FortuneColors.love,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'babyDream',
@@ -2100,7 +2125,7 @@ const ootdEvaluationSurveyConfig = FortuneSurveyConfig(
   title: 'OOTD 평가',
   description: 'AI가 오늘의 패션을 평가해드려요!',
   emoji: '👔',
-  accentColor: FortuneColors.career,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'tpo',
@@ -2111,7 +2136,7 @@ const ootdEvaluationSurveyConfig = FortuneSurveyConfig(
     SurveyStep(
       id: 'photo',
       question: 'OOTD 사진을 올려주세요! 📸',
-      inputType: SurveyInputType.image,
+      inputType: SurveyInputType.ootdImage,
       options: [],
     ),
   ],
@@ -2147,7 +2172,7 @@ const examSurveyConfig = FortuneSurveyConfig(
   title: '시험운',
   description: '시험 합격 가이드를 드릴게요!',
   emoji: '📝',
-  accentColor: FortuneColors.career,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'examType',
@@ -2214,7 +2239,7 @@ const movingSurveyConfig = FortuneSurveyConfig(
   title: '이사운',
   description: '새 보금자리의 길한 방향과 시기를 찾아드릴게요!',
   emoji: '🏠',
-  accentColor: FortuneColors.career,
+  accentColor: DSColors.accentSecondary,
   steps: [
     // Step 1: 현재 지역 (필수)
     SurveyStep(
@@ -2273,7 +2298,7 @@ const gratitudeSurveyConfig = FortuneSurveyConfig(
   title: '감사일기',
   description: '오늘 감사한 일 3가지를 적어보세요',
   emoji: '✨',
-  accentColor: FortuneColors.wealth,
+  accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
       id: 'gratitude1',
@@ -2294,6 +2319,119 @@ const gratitudeSurveyConfig = FortuneSurveyConfig(
 );
 
 // ============================================================
+// YearlyEncounter (올해의 인연) 설문 설정
+// ============================================================
+
+/// 상대방 성별 옵션
+const _targetGenderOptions = [
+  SurveyOption(id: 'male', label: '남성', emoji: '👨'),
+  SurveyOption(id: 'female', label: '여성', emoji: '👩'),
+];
+
+/// 사용자 연령대 옵션
+const _userAgeOptions = [
+  SurveyOption(id: 'early20s', label: '20대 초반', emoji: '🌱'),
+  SurveyOption(id: 'mid20s', label: '20대 중반', emoji: '🌿'),
+  SurveyOption(id: 'late20s', label: '20대 후반', emoji: '🌳'),
+  SurveyOption(id: 'early30s', label: '30대 초반', emoji: '🌲'),
+  SurveyOption(id: 'mid30s', label: '30대 중반', emoji: '🏔️'),
+  SurveyOption(id: 'late30s', label: '30대 후반', emoji: '⛰️'),
+  SurveyOption(id: 'over40s', label: '40대 이상', emoji: '🗻'),
+];
+
+/// 희망 MBTI 옵션
+const _idealMbtiOptions = [
+  SurveyOption(id: 'any', label: '상관없음', emoji: '✨'),
+  SurveyOption(id: 'ISTJ', label: 'ISTJ', emoji: '📋'),
+  SurveyOption(id: 'ISFJ', label: 'ISFJ', emoji: '🛡️'),
+  SurveyOption(id: 'INFJ', label: 'INFJ', emoji: '🔮'),
+  SurveyOption(id: 'INTJ', label: 'INTJ', emoji: '🧠'),
+  SurveyOption(id: 'ISTP', label: 'ISTP', emoji: '🔧'),
+  SurveyOption(id: 'ISFP', label: 'ISFP', emoji: '🎨'),
+  SurveyOption(id: 'INFP', label: 'INFP', emoji: '🌙'),
+  SurveyOption(id: 'INTP', label: 'INTP', emoji: '💡'),
+  SurveyOption(id: 'ESTP', label: 'ESTP', emoji: '🎯'),
+  SurveyOption(id: 'ESFP', label: 'ESFP', emoji: '🎉'),
+  SurveyOption(id: 'ENFP', label: 'ENFP', emoji: '🌈'),
+  SurveyOption(id: 'ENTP', label: 'ENTP', emoji: '⚡'),
+  SurveyOption(id: 'ESTJ', label: 'ESTJ', emoji: '📊'),
+  SurveyOption(id: 'ESFJ', label: 'ESFJ', emoji: '💝'),
+  SurveyOption(id: 'ENFJ', label: 'ENFJ', emoji: '🌟'),
+  SurveyOption(id: 'ENTJ', label: 'ENTJ', emoji: '👑'),
+];
+
+/// 남성 스타일 옵션 (올해의 인연)
+const _maleStyleOptions = [
+  SurveyOption(id: 'none', label: '없음', emoji: '🎲'),
+  SurveyOption(id: 'dandy', label: '댄디한 정장남', emoji: '🎩'),
+  SurveyOption(id: 'sporty', label: '스포티한 헬창', emoji: '💪'),
+  SurveyOption(id: 'casual', label: '편안한 무드 감성남', emoji: '☕'),
+  SurveyOption(id: 'prep', label: '프레피 대학생', emoji: '📚'),
+  SurveyOption(id: 'street', label: '스트릿 패션 힙보이', emoji: '🎸'),
+];
+
+/// 여성 스타일 옵션 (올해의 인연)
+const _femaleStyleOptions = [
+  SurveyOption(id: 'none', label: '없음', emoji: '🎲'),
+  SurveyOption(id: 'innocent', label: '청순한 첫사랑', emoji: '🌸'),
+  SurveyOption(id: 'career', label: '시크한 커리어우먼', emoji: '💼'),
+  SurveyOption(id: 'girlcrush', label: '걸크러쉬 언니', emoji: '🔥'),
+  SurveyOption(id: 'pure', label: '수수한 옆집 언니', emoji: '🏠'),
+  SurveyOption(id: 'glamour', label: '화려한 연예인상', emoji: '✨'),
+];
+
+/// YearlyEncounter 설문 설정
+const yearlyEncounterSurveyConfig = FortuneSurveyConfig(
+  fortuneType: FortuneSurveyType.yearlyEncounter,
+  title: '2026 올해의 인연',
+  description: '올해 만나게 될 운명의 상대를 미리 만나보세요',
+  emoji: '💕',
+  accentColor: DSColors.accentSecondary,
+  steps: [
+    SurveyStep(
+      id: 'targetGender',
+      question: '어떤 성별의 인연을 찾고 있나요?',
+      inputType: SurveyInputType.chips,
+      options: _targetGenderOptions,
+    ),
+    SurveyStep(
+      id: 'userAge',
+      question: '나이대가 어떻게 되세요?',
+      inputType: SurveyInputType.chips,
+      options: _userAgeOptions,
+    ),
+    SurveyStep(
+      id: 'idealMbti',
+      question: '선호하는 MBTI가 있으신가요?',
+      inputType: SurveyInputType.chips,
+      options: _idealMbtiOptions,
+    ),
+    // 남성 스타일 선택 (targetGender가 male일 때만 표시)
+    SurveyStep(
+      id: 'idealStyle',
+      question: '어떤 스타일이 끌리세요? ✨',
+      inputType: SurveyInputType.chips,
+      options: _maleStyleOptions,
+      showWhen: {'targetGender': 'male'},
+    ),
+    // 여성 스타일 선택 (targetGender가 female일 때만 표시)
+    SurveyStep(
+      id: 'idealStyle',
+      question: '어떤 스타일이 끌리세요? ✨',
+      inputType: SurveyInputType.chips,
+      options: _femaleStyleOptions,
+      showWhen: {'targetGender': 'female'},
+    ),
+    SurveyStep(
+      id: 'idealType',
+      question: '추가로 원하는 특징이 있으면 적어주세요 💬',
+      inputType: SurveyInputType.textWithSkip,
+      isRequired: false,
+    ),
+  ],
+);
+
+// ============================================================
 // PastLife (전생탐험) 설문 설정
 // ============================================================
 
@@ -2304,7 +2442,7 @@ const _pastLifeEraVibeOptions = [
   SurveyOption(id: 'joseon_common', label: '조선 서민', emoji: '🏡'),
   SurveyOption(id: 'warrior', label: '전쟁터의 무사', emoji: '⚔️'),
   SurveyOption(id: 'artist', label: '예술가/기생', emoji: '🎨'),
-  SurveyOption(id: 'unknown', label: '모르겠어', emoji: '🌫️'),
+  SurveyOption(id: 'unknown', label: '모르겠어요', emoji: '🌫️'),
 ];
 
 /// 전생에서 궁금한 것 옵션
@@ -2317,11 +2455,11 @@ const _pastLifeCuriosityOptions = [
 
 /// 전생 기억 느낌 옵션
 const _pastLifeFeelingOptions = [
-  SurveyOption(id: 'deja_vu', label: '데자뷔를 자주 느껴', emoji: '👁️'),
-  SurveyOption(id: 'old_soul', label: '나이보다 성숙하다는 말을 들어', emoji: '🧓'),
-  SurveyOption(id: 'specific_era', label: '특정 시대에 끌려', emoji: '⏳'),
-  SurveyOption(id: 'recurring_dream', label: '반복되는 꿈이 있어', emoji: '💭'),
-  SurveyOption(id: 'none', label: '딱히 없어', emoji: '🤷'),
+  SurveyOption(id: 'deja_vu', label: '데자뷔를 자주 느껴요', emoji: '👁️'),
+  SurveyOption(id: 'old_soul', label: '나이보다 성숙하다는 말을 들어요', emoji: '🧓'),
+  SurveyOption(id: 'specific_era', label: '특정 시대에 끌려요', emoji: '⏳'),
+  SurveyOption(id: 'recurring_dream', label: '반복되는 꿈이 있어요', emoji: '💭'),
+  SurveyOption(id: 'none', label: '딱히 없어요', emoji: '🤷'),
 ];
 
 const pastLifeSurveyConfig = FortuneSurveyConfig(
@@ -2329,19 +2467,19 @@ const pastLifeSurveyConfig = FortuneSurveyConfig(
   title: '전생탐험',
   description: 'AI가 당신의 전생을 탐험해드려요',
   emoji: '🔮',
-  accentColor: FortuneColors.mystical,
+  accentColor: DSColors.accentSecondary,
   steps: [
     // Step 1: 전생에서 가장 궁금한 것
     SurveyStep(
       id: 'curiosity',
-      question: '전생에서 가장 궁금한 게 뭐야? 🔮',
+      question: '전생에서 가장 궁금한 게 뭐예요? 🔮',
       inputType: SurveyInputType.chips,
       options: _pastLifeCuriosityOptions,
     ),
     // Step 2: 전생 시대 예감 (선택)
     SurveyStep(
       id: 'eraVibe',
-      question: '혹시 전생이 어느 시대였을 것 같아? ✨',
+      question: '혹시 전생이 어느 시대였을 것 같으세요? ✨',
       inputType: SurveyInputType.chips,
       options: _pastLifeEraVibeOptions,
       isRequired: false,
@@ -2349,7 +2487,7 @@ const pastLifeSurveyConfig = FortuneSurveyConfig(
     // Step 3: 전생 기억 느낌 (선택)
     SurveyStep(
       id: 'feeling',
-      question: '평소에 이런 느낌 받은 적 있어? 🌙',
+      question: '평소에 이런 느낌 받으신 적 있으세요? 🌙',
       inputType: SurveyInputType.chips,
       options: _pastLifeFeelingOptions,
       isRequired: false,
@@ -2357,7 +2495,7 @@ const pastLifeSurveyConfig = FortuneSurveyConfig(
     // Step 4: 사진 업로드 (핵심)
     SurveyStep(
       id: 'photo',
-      question: '이제 너의 전생을 읽어볼게 🔮\n사진을 올려주면 AI가 전생 초상화도 그려줄 수 있어',
+      question: '이제 전생을 읽어볼게요 🔮\n사진을 올려주시면 AI가 전생 초상화도 그려드릴 수 있어요',
       inputType: SurveyInputType.faceReading,
     ),
   ],

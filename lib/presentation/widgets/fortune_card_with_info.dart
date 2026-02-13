@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'fortune_card.dart';
 import 'fortune_explanation_bottom_sheet.dart';
-import '../../../../core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 
 class FortuneCardWithInfo extends StatelessWidget {
@@ -66,7 +66,7 @@ class FortuneCardWithInfo extends StatelessWidget {
             top: 8,
             right: 8,
             child: Material(
-              color: TossDesignSystem.transparent,
+              color: Colors.transparent,
               child: InkWell(
                 onTap: () => _showFortuneInfo(context),
                 borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
@@ -74,15 +74,15 @@ class FortuneCardWithInfo extends StatelessWidget {
                   width: 36,
                   height: AppSpacing.spacing9,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? TossDesignSystem.grayDark800.withValues(alpha: 0.9)
-                        : TossDesignSystem.gray100.withValues(alpha: 0.9),
+                    color: context.isDark
+                        ? DSColors.textPrimary.withValues(alpha: 0.9)
+                        : DSColors.backgroundSecondaryDark.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
                     boxShadow: [
                       BoxShadow(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? TossDesignSystem.grayDark900.withValues(alpha: 0.3)
-                            : TossDesignSystem.gray900.withValues(alpha: 0.1),
+                        color: context.isDark
+                            ? DSColors.textPrimary.withValues(alpha: 0.3)
+                            : DSColors.textPrimaryDark.withValues(alpha: 0.1),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),

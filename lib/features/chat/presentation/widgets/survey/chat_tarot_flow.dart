@@ -52,7 +52,9 @@ class _MajorArcanaCard {
     required this.fileName,
   });
 
-  String get imagePath => 'assets/images/tarot/decks/rider_waite/major/$fileName';
+  /// 특정 덱의 이미지 경로 반환
+  String getImagePath(String deckId) =>
+      'assets/images/tarot/decks/$deckId/major/$fileName';
 }
 
 /// 22장 메이저 아르카나 카드 데이터
@@ -92,10 +94,18 @@ class ChatTarotFlow extends ConsumerStatefulWidget {
   final void Function(Map<String, dynamic> tarotData) onComplete;
   final String? question;
 
+  /// 사용할 타로 덱 ID (기본: rider_waite)
+  final String deckId;
+
+  /// 덱 표시 이름
+  final String? deckDisplayName;
+
   const ChatTarotFlow({
     super.key,
     required this.onComplete,
     this.question,
+    this.deckId = 'rider_waite',
+    this.deckDisplayName,
   });
 
   @override
@@ -160,7 +170,7 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
           index: cardIndex,
           cardName: cardInfo.name,
           cardNameKr: cardInfo.nameKr,
-          imagePath: cardInfo.imagePath,
+          imagePath: cardInfo.getImagePath(widget.deckId),
           isReversed: false,
           positionKey: _selectedSpread!.getPositionKey(positionIndex),
           positionName: _selectedSpread!.getPositionName(positionIndex),
@@ -212,8 +222,8 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
         // 레거시 호환을 위한 인덱스 배열
         'selectedCardIndices': _selectedCards.map((c) => c.index).toList(),
         'question': widget.question,
-        // 기본 덱 사용 (Rider-Waite)
-        'deck': 'rider_waite',
+        // 오늘의 덱 사용
+        'deck': widget.deckId,
       });
     });
   }
@@ -258,8 +268,8 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  colors.accentSecondary.withValues(alpha: 0.15),
-                  colors.accent.withValues(alpha: 0.1),
+                  colors.textPrimary.withValues(alpha: 0.1),
+                  colors.textPrimary.withValues(alpha: 0.06),
                 ],
               ),
               borderRadius: BorderRadius.circular(DSRadius.sm),
@@ -270,7 +280,7 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
                 Text('🎴', style: typography.bodyMedium),
                 const SizedBox(width: DSSpacing.xs),
                 Text(
-                  '오늘의 타로: Rider-Waite',
+                  '오늘의 타로: ${widget.deckDisplayName ?? widget.deckId}',
                   style: typography.labelMedium.copyWith(
                     color: colors.textPrimary,
                     fontWeight: FontWeight.w600,
@@ -292,11 +302,11 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
               children: List.generate(5, (index) {
                 // 실제 카드 이미지 사용 (0-4번 카드)
                 final cardImages = [
-                  'assets/images/tarot/decks/rider_waite/major/00_fool.jpg',
-                  'assets/images/tarot/decks/rider_waite/major/01_magician.jpg',
-                  'assets/images/tarot/decks/rider_waite/major/02_high_priestess.jpg',
-                  'assets/images/tarot/decks/rider_waite/major/03_empress.jpg',
-                  'assets/images/tarot/decks/rider_waite/major/04_emperor.jpg',
+                  'assets/images/tarot/decks/${widget.deckId}/major/00_fool.webp',
+                  'assets/images/tarot/decks/${widget.deckId}/major/01_magician.webp',
+                  'assets/images/tarot/decks/${widget.deckId}/major/02_high_priestess.webp',
+                  'assets/images/tarot/decks/${widget.deckId}/major/03_empress.webp',
+                  'assets/images/tarot/decks/${widget.deckId}/major/04_emperor.webp',
                 ];
                 final offset = (index - 2) * 12.0;
                 final rotation = (index - 2) * 0.1;
@@ -313,13 +323,6 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
                           color: colors.surface,
                           width: 2,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: colors.textPrimary.withValues(alpha: 0.2),
-                            blurRadius: 6,
-                            offset: const Offset(1, 2),
-                          ),
-                        ],
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(4),
@@ -329,7 +332,7 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
                           errorBuilder: (context, error, stackTrace) {
                             // 이미지 로드 실패 시 폴백
                             return Container(
-                              color: colors.accentSecondary,
+                              color: colors.textSecondary,
                               child: Icon(
                                 Icons.auto_awesome,
                                 color: colors.surface.withValues(alpha: 0.6),
@@ -399,8 +402,8 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                colors.accentSecondary.withValues(alpha: 0.15),
-                colors.accent.withValues(alpha: 0.1),
+                colors.textPrimary.withValues(alpha: 0.1),
+                colors.textPrimary.withValues(alpha: 0.06),
               ],
             ),
             borderRadius: BorderRadius.circular(DSRadius.sm),
@@ -411,7 +414,7 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
               Text('🎴', style: typography.bodyMedium),
               const SizedBox(width: DSSpacing.xs),
               Text(
-                '오늘의 타로: Rider-Waite',
+                '오늘의 타로: ${widget.deckDisplayName ?? widget.deckId}',
                 style: typography.labelMedium.copyWith(
                   color: colors.textPrimary,
                   fontWeight: FontWeight.w600,
@@ -433,7 +436,7 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
                     Text(
                       '${selectedCount + 1}번째 카드: $nextPositionName',
                       style: typography.labelMedium.copyWith(
-                        color: colors.accentSecondary,
+                        color: colors.textPrimary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -460,13 +463,13 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
                 vertical: DSSpacing.xxs,
               ),
               decoration: BoxDecoration(
-                color: colors.accentSecondary.withValues(alpha: 0.1),
+                color: colors.textPrimary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Text(
                 '$selectedCount / $requiredCards',
                 style: typography.labelSmall.copyWith(
-                  color: colors.accentSecondary,
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -539,17 +542,26 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
         ),
         const SizedBox(height: DSSpacing.md),
 
-        // 선택된 카드 미리보기 (가로 스크롤)
+        // 선택된 카드 미리보기 (가운데 정렬)
         SizedBox(
-          height: 160,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: _selectedCards.length,
-            separatorBuilder: (_, __) => const SizedBox(width: DSSpacing.sm),
-            itemBuilder: (context, index) {
-              final card = _selectedCards[index];
-              return _buildConfirmationCard(colors, typography, card, index);
-            },
+          height: 170, // 역방향 표시 포함 높이
+          child: Center(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: _selectedCards.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final card = entry.value;
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      left: index == 0 ? 0 : DSSpacing.sm,
+                    ),
+                    child: _buildConfirmationCard(colors, typography, card, index),
+                  );
+                }).toList(),
+              ),
+            ),
           ),
         ),
         const SizedBox(height: DSSpacing.md),
@@ -574,8 +586,8 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
               child: ElevatedButton(
                 onPressed: _completeSelection,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: colors.accentSecondary,
-                  foregroundColor: colors.surface,
+                  backgroundColor: colors.ctaBackground,
+                  foregroundColor: colors.ctaForeground,
                   padding: const EdgeInsets.symmetric(vertical: DSSpacing.sm),
                 ),
                 child: Row(
@@ -615,7 +627,7 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
           Text(
             card.positionName,
             style: typography.labelSmall.copyWith(
-              color: colors.accentSecondary,
+              color: colors.textPrimary,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -629,13 +641,12 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(6),
               border: Border.all(
-                color: card.isReversed ? colors.error : colors.accentSecondary,
+                color: colors.textPrimary,
                 width: 2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: (card.isReversed ? colors.error : colors.accentSecondary)
-                      .withValues(alpha: 0.3),
+                  color: colors.textPrimary.withValues(alpha: 0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -650,7 +661,7 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
-                      color: colors.accentSecondary,
+                      color: colors.textSecondary,
                       child: Center(
                         child: Text(
                           card.cardNameKr,
@@ -681,13 +692,13 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
               margin: const EdgeInsets.only(top: 2),
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
               decoration: BoxDecoration(
-                color: colors.error.withValues(alpha: 0.15),
+                color: colors.warning.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
                 '역방향',
                 style: typography.labelSmall.copyWith(
-                  color: colors.error,
+                  color: colors.warning,
                   fontSize: 9,
                 ),
               ),
@@ -748,27 +759,17 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
                   width: cardWidth,
                   height: cardHeight,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: isSelected
-                          ? [colors.accentSecondary, colors.accentSecondary.withValues(alpha: 0.8)]
-                          : [
-                              colors.surface,
-                              colors.surface.withValues(alpha: 0.95),
-                            ],
-                    ),
                     borderRadius: BorderRadius.circular(4),
                     border: Border.all(
                       color: isSelected
-                          ? colors.accentSecondary
+                          ? colors.textPrimary
                           : colors.textPrimary.withValues(alpha: 0.15),
                       width: isSelected ? 2 : 1,
                     ),
                     boxShadow: [
                       BoxShadow(
                         color: isSelected
-                            ? colors.accentSecondary.withValues(alpha: 0.4)
+                            ? colors.textPrimary.withValues(alpha: 0.3)
                             : colors.textPrimary.withValues(alpha: 0.08),
                         blurRadius: isSelected ? 10 : 3,
                         offset: const Offset(0, 2),
@@ -777,16 +778,25 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
                   ),
                   child: Stack(
                     children: [
-                      // 카드 뒷면 패턴
-                      Center(
-                        child: Icon(
-                          Icons.auto_awesome,
-                          color: isSelected
-                              ? colors.surface.withValues(alpha: 0.9)
-                              : colors.textSecondary.withValues(alpha: 0.25),
-                          size: 16,
+                      // 카드 뒷면 이미지
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(3),
+                        child: Image.asset(
+                          'assets/images/fortune/tarot/tarot_card_back.webp',
+                          fit: BoxFit.cover,
+                          width: cardWidth,
+                          height: cardHeight,
                         ),
                       ),
+
+                      // 선택 시 하이라이트 오버레이
+                      if (isSelected)
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(3),
+                            color: colors.textPrimary.withValues(alpha: 0.2),
+                          ),
+                        ),
 
                       // 선택 순서 표시
                       if (isSelected && selectionOrder != null)
@@ -804,7 +814,7 @@ class _ChatTarotFlowState extends ConsumerState<ChatTarotFlow> {
                               child: Text(
                                 '$selectionOrder',
                                 style: typography.labelSmall.copyWith(
-                                  color: colors.accentSecondary,
+                                  color: colors.textPrimary,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 8,
                                 ),
@@ -915,32 +925,17 @@ class _SpreadCard extends StatelessWidget {
                           width: 28,
                           height: 40,
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                colors.accentSecondary,
-                                colors.accent,
-                              ],
-                            ),
                             borderRadius: BorderRadius.circular(3),
                             border: Border.all(
                               color: colors.surface,
                               width: 1,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: colors.textPrimary.withValues(alpha: 0.1),
-                                blurRadius: 2,
-                                offset: const Offset(1, 1),
-                              ),
-                            ],
                           ),
-                          child: Center(
-                            child: Icon(
-                              Icons.auto_awesome,
-                              color: colors.surface.withValues(alpha: 0.7),
-                              size: 12,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(2),
+                            child: Image.asset(
+                              'assets/images/fortune/tarot/tarot_card_back.webp',
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ),
@@ -965,13 +960,13 @@ class _SpreadCard extends StatelessWidget {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: colors.accentSecondary.withValues(alpha: 0.15),
+                            color: colors.textPrimary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(DSRadius.xs),
                           ),
                           child: Text(
                             '${spread.cardCount}장',
                             style: typography.labelSmall.copyWith(
-                              color: colors.accentSecondary,
+                              color: colors.textPrimary,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

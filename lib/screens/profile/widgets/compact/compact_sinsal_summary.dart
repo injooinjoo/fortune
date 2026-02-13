@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/fortune_theme.dart';
-import '../../../../core/theme/fortune_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 압축된 신살 요약
 ///
@@ -16,7 +14,7 @@ class CompactSinsalSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final sinsalData = _extractSinsal();
 
     if (sinsalData['gilsin']!.isEmpty && sinsalData['hyungsin']!.isEmpty) {
@@ -24,14 +22,14 @@ class CompactSinsalSummary extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.all(TossTheme.spacingS),
+      padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.black.withValues(alpha: 0.2)
+            ? context.colors.backgroundSecondary
             : Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(TossTheme.radiusS),
+        borderRadius: BorderRadius.circular(DSRadius.sm),
         border: Border.all(
-          color: isDark ? TossDesignSystem.borderDark : TossTheme.borderPrimary,
+          color: isDark ? DSColors.border : DSColors.borderDark,
         ),
       ),
       child: Column(
@@ -43,14 +41,14 @@ class CompactSinsalSummary extends StatelessWidget {
               Icon(
                 Icons.stars_rounded,
                 size: 14,
-                color: isDark ? Colors.white60 : Colors.black45,
+                color: context.colors.textSecondary,
               ),
               const SizedBox(width: 4),
               Text(
                 '신살',
                 style: context.labelTiny.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white70 : Colors.black54,
+                  color: context.colors.textSecondary,
                 ),
               ),
               const Spacer(),
@@ -58,12 +56,12 @@ class CompactSinsalSummary extends StatelessWidget {
                 '神煞 · 길흉성',
                 style: context.labelTiny.copyWith(
                   fontSize: 9,
-                  color: isDark ? Colors.white38 : Colors.black26,
+                  color: context.colors.textTertiary,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: TossTheme.spacingXS),
+          const SizedBox(height: DSSpacing.xs),
 
           // 길신 섹션
           if (sinsalData['gilsin']!.isNotEmpty) ...[
@@ -72,7 +70,7 @@ class CompactSinsalSummary extends StatelessWidget {
               title: '길신',
               hanja: '吉神',
               sinsals: sinsalData['gilsin']!,
-              color: const Color(0xFF10B981),
+              color: DSColors.success,
               isDark: isDark,
             ),
             const SizedBox(height: 6),
@@ -85,7 +83,7 @@ class CompactSinsalSummary extends StatelessWidget {
               title: '흉신',
               hanja: '凶神',
               sinsals: sinsalData['hyungsin']!,
-              color: const Color(0xFFEF4444),
+              color: DSColors.error,
               isDark: isDark,
             ),
         ],
@@ -226,7 +224,7 @@ class CompactSinsalSummary extends StatelessWidget {
               '${sinsals.length}개',
               style: context.labelTiny.copyWith(
                 fontSize: 9,
-                color: isDark ? Colors.white38 : Colors.black26,
+                color: context.colors.textTertiary,
               ),
             ),
           ],
@@ -260,8 +258,8 @@ class CompactSinsalSummary extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
         decoration: BoxDecoration(
           color: isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : Colors.white,
+              ? context.colors.surface.withValues(alpha: 0.08)
+              : context.colors.surface,
           borderRadius: BorderRadius.circular(4),
           border: Border.all(
             color: color.withValues(alpha: 0.3),
@@ -285,7 +283,7 @@ class CompactSinsalSummary extends StatelessWidget {
               name,
               style: context.labelTiny.copyWith(
                 fontWeight: FontWeight.w500,
-                color: isDark ? Colors.white70 : Colors.black54,
+                color: context.colors.textSecondary,
               ),
             ),
           ],

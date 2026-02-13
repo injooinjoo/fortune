@@ -1,7 +1,7 @@
-/// Celtic Cross spread interpretations for Swords suit (indices 50-63)
-///
-/// Swords represent the element of Air - intellect, thoughts, communication,
-/// conflict, truth, and mental challenges.
+// Celtic Cross spread interpretations for Swords suit (indices 50-63)
+//
+// Swords represent the element of Air - intellect, thoughts, communication,
+// conflict, truth, and mental challenges.
 class CelticCrossSwords {
   CelticCrossSwords._();
 

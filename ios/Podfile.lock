@@ -1,7 +1,5 @@
 PODS:
-  - app_links (0.0.2):
-    - Flutter
-  - app_tracking_transparency (0.0.1):
+  - app_links (6.4.1):
     - Flutter
   - AppAuth (1.7.6):
     - AppAuth/Core (= 1.7.6)
@@ -58,6 +56,14 @@ PODS:
   - DKPhotoGallery/Resource (0.0.19):
     - SDWebImage
     - SwiftyGif
+  - FBAEMKit (18.0.2):
+    - FBSDKCoreKit_Basics (= 18.0.2)
+  - FBSDKCoreKit (18.0.2):
+    - FBAEMKit (= 18.0.2)
+    - FBSDKCoreKit_Basics (= 18.0.2)
+  - FBSDKCoreKit_Basics (18.0.2)
+  - FBSDKShareKit (18.0.2):
+    - FBSDKCoreKit (= 18.0.2)
   - file_picker (0.0.1):
     - DKImagePickerController/PhotoGallery
     - Flutter
@@ -74,18 +80,18 @@ PODS:
   - Firebase/RemoteConfig (11.15.0):
     - Firebase/CoreOnly
     - FirebaseRemoteConfig (~> 11.15.0)
-  - firebase_analytics (11.5.2):
+  - firebase_analytics (11.6.0):
     - Firebase/Analytics (= 11.15.0)
     - firebase_core
     - Flutter
-  - firebase_core (3.15.1):
+  - firebase_core (3.15.2):
     - Firebase/CoreOnly (= 11.15.0)
     - Flutter
-  - firebase_messaging (15.2.9):
+  - firebase_messaging (15.2.10):
     - Firebase/Messaging (= 11.15.0)
     - firebase_core
     - Flutter
-  - firebase_remote_config (5.4.7):
+  - firebase_remote_config (5.5.0):
     - Firebase/RemoteConfig (= 11.15.0)
     - firebase_core
     - Flutter
@@ -165,18 +171,6 @@ PODS:
   - geolocator_apple (1.2.0):
     - Flutter
     - FlutterMacOS
-  - Google-Mobile-Ads-SDK (12.2.0):
-    - GoogleUserMessagingPlatform (>= 1.1)
-  - google_mlkit_commons (0.9.0):
-    - Flutter
-    - MLKitVision
-  - google_mlkit_face_mesh_detection (0.3.0):
-    - Flutter
-    - google_mlkit_commons
-  - google_mobile_ads (6.0.0):
-    - Flutter
-    - Google-Mobile-Ads-SDK (~> 12.2.0)
-    - webview_flutter_wkwebview
   - google_sign_in_ios (0.0.1):
     - AppAuth (>= 1.7.4)
     - Flutter
@@ -217,12 +211,6 @@ PODS:
     - AppCheckCore (~> 11.0)
     - GTMAppAuth (< 5.0, >= 4.1.1)
     - GTMSessionFetcher/Core (~> 3.3)
-  - GoogleToolboxForMac/Defines (4.2.1)
-  - GoogleToolboxForMac/Logger (4.2.1):
-    - GoogleToolboxForMac/Defines (= 4.2.1)
-  - "GoogleToolboxForMac/NSData+zlib (4.2.1)":
-    - GoogleToolboxForMac/Defines (= 4.2.1)
-  - GoogleUserMessagingPlatform (3.1.0)
   - GoogleUtilities/AppDelegateSwizzler (8.1.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
@@ -274,24 +262,10 @@ PODS:
     - FlutterMacOS
   - integration_test (0.0.1):
     - Flutter
-  - kakao_flutter_sdk_common (1.9.7-3):
+  - kakao_flutter_sdk_common (1.10.0):
     - Flutter
   - location (0.0.1):
     - Flutter
-  - MLImage (1.0.0-beta8)
-  - MLKitCommon (14.0.0):
-    - GoogleDataTransport (~> 10.0)
-    - GoogleToolboxForMac/Logger (< 5.0, >= 4.2.1)
-    - "GoogleToolboxForMac/NSData+zlib (< 5.0, >= 4.2.1)"
-    - GoogleUtilities/Logger (~> 8.0)
-    - GoogleUtilities/UserDefaults (~> 8.0)
-    - GTMSessionFetcher/Core (< 4.0, >= 3.3.2)
-  - MLKitVision (10.0.0):
-    - GoogleToolboxForMac/Logger (< 5.0, >= 4.2.1)
-    - "GoogleToolboxForMac/NSData+zlib (< 5.0, >= 4.2.1)"
-    - GTMSessionFetcher/Core (< 4.0, >= 3.3.2)
-    - MLImage (= 1.0.0-beta8)
-    - MLKitCommon (~> 14.0)
   - nanopb (3.30910.0):
     - nanopb/decode (= 3.30910.0)
     - nanopb/encode (= 3.30910.0)
@@ -308,15 +282,19 @@ PODS:
   - permission_handler_apple (9.3.0):
     - Flutter
   - PromisesObjC (2.4.0)
-  - SDWebImage (5.21.5):
-    - SDWebImage/Core (= 5.21.5)
-  - SDWebImage/Core (5.21.5)
+  - SDWebImage (5.21.6):
+    - SDWebImage/Core (= 5.21.6)
+  - SDWebImage/Core (5.21.6)
   - share_plus (0.0.1):
     - Flutter
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
   - sign_in_with_apple (0.0.1):
+    - Flutter
+  - social_share_plugin_ios (0.0.1):
+    - FBSDKCoreKit
+    - FBSDKShareKit
     - Flutter
   - speech_to_text (7.2.0):
     - CwlCatchException
@@ -388,15 +366,11 @@ PODS:
   - video_player_avfoundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - webview_flutter_wkwebview (0.0.1):
-    - Flutter
-    - FlutterMacOS
   - workmanager_apple (0.0.1):
     - Flutter
 
 DEPENDENCIES:
   - app_links (from `.symlinks/plugins/app_links/ios`)
-  - app_tracking_transparency (from `.symlinks/plugins/app_tracking_transparency/ios`)
   - audioplayers_darwin (from `.symlinks/plugins/audioplayers_darwin/darwin`)
   - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
@@ -417,9 +391,6 @@ DEPENDENCIES:
   - flutter_widgetkit (from `.symlinks/plugins/flutter_widgetkit/ios`)
   - geocoding_ios (from `.symlinks/plugins/geocoding_ios/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/darwin`)
-  - google_mlkit_commons (from `.symlinks/plugins/google_mlkit_commons/ios`)
-  - google_mlkit_face_mesh_detection (from `.symlinks/plugins/google_mlkit_face_mesh_detection/ios`)
-  - google_mobile_ads (from `.symlinks/plugins/google_mobile_ads/ios`)
   - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/darwin`)
   - haptic_feedback (from `.symlinks/plugins/haptic_feedback/ios`)
   - health (from `.symlinks/plugins/health/ios`)
@@ -437,12 +408,12 @@ DEPENDENCIES:
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sign_in_with_apple (from `.symlinks/plugins/sign_in_with_apple/ios`)
+  - social_share_plugin_ios (from `.symlinks/plugins/social_share_plugin_ios/ios`)
   - speech_to_text (from `.symlinks/plugins/speech_to_text/darwin`)
   - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
   - stripe_ios (from `.symlinks/plugins/stripe_ios/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/darwin`)
-  - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/darwin`)
   - workmanager_apple (from `.symlinks/plugins/workmanager_apple/ios`)
 
 SPEC REPOS:
@@ -453,6 +424,10 @@ SPEC REPOS:
     - CwlCatchExceptionSupport
     - DKImagePickerController
     - DKPhotoGallery
+    - FBAEMKit
+    - FBSDKCoreKit
+    - FBSDKCoreKit_Basics
+    - FBSDKShareKit
     - Firebase
     - FirebaseABTesting
     - FirebaseAnalytics
@@ -463,19 +438,13 @@ SPEC REPOS:
     - FirebaseRemoteConfig
     - FirebaseRemoteConfigInterop
     - FirebaseSharedSwift
-    - Google-Mobile-Ads-SDK
     - GoogleAdsOnDeviceConversion
     - GoogleAppMeasurement
     - GoogleDataTransport
     - GoogleSignIn
-    - GoogleToolboxForMac
-    - GoogleUserMessagingPlatform
     - GoogleUtilities
     - GTMAppAuth
     - GTMSessionFetcher
-    - MLImage
-    - MLKitCommon
-    - MLKitVision
     - nanopb
     - OrderedSet
     - PromisesObjC
@@ -495,8 +464,6 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   app_links:
     :path: ".symlinks/plugins/app_links/ios"
-  app_tracking_transparency:
-    :path: ".symlinks/plugins/app_tracking_transparency/ios"
   audioplayers_darwin:
     :path: ".symlinks/plugins/audioplayers_darwin/darwin"
   camera_avfoundation:
@@ -537,12 +504,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/geocoding_ios/ios"
   geolocator_apple:
     :path: ".symlinks/plugins/geolocator_apple/darwin"
-  google_mlkit_commons:
-    :path: ".symlinks/plugins/google_mlkit_commons/ios"
-  google_mlkit_face_mesh_detection:
-    :path: ".symlinks/plugins/google_mlkit_face_mesh_detection/ios"
-  google_mobile_ads:
-    :path: ".symlinks/plugins/google_mobile_ads/ios"
   google_sign_in_ios:
     :path: ".symlinks/plugins/google_sign_in_ios/darwin"
   haptic_feedback:
@@ -577,6 +538,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   sign_in_with_apple:
     :path: ".symlinks/plugins/sign_in_with_apple/ios"
+  social_share_plugin_ios:
+    :path: ".symlinks/plugins/social_share_plugin_ios/ios"
   speech_to_text:
     :path: ".symlinks/plugins/speech_to_text/darwin"
   sqflite_darwin:
@@ -587,14 +550,11 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
   video_player_avfoundation:
     :path: ".symlinks/plugins/video_player_avfoundation/darwin"
-  webview_flutter_wkwebview:
-    :path: ".symlinks/plugins/webview_flutter_wkwebview/darwin"
   workmanager_apple:
     :path: ".symlinks/plugins/workmanager_apple/ios"
 
 SPEC CHECKSUMS:
-  app_links: 76b66b60cc809390ca1ad69bfd66b998d2387ac7
-  app_tracking_transparency: 3d84f147f67ca82d3c15355c36b1fa6b66ca7c92
+  app_links: 3dbc685f76b1693c66a6d9dd1e9ab6f73d97dc0a
   AppAuth: d4f13a8fe0baf391b2108511793e4b479691fb73
   AppCheckCore: cc8fd0a3a230ddd401f326489c99990b013f0c4f
   audioplayers_darwin: 4f9ca89d92d3d21cec7ec580e78ca888e5fb68bd
@@ -606,12 +566,16 @@ SPEC CHECKSUMS:
   device_info_plus: 21fcca2080fbcd348be798aa36c3e5ed849eefbe
   DKImagePickerController: 946cec48c7873164274ecc4624d19e3da4c1ef3c
   DKPhotoGallery: b3834fecb755ee09a593d7c9e389d8b5d6deed60
+  FBAEMKit: 56a4f5a9607957b547b6458b17a98c5bb2736367
+  FBSDKCoreKit: 54f1240567e16862ab71c53c33dc347db5c524c5
+  FBSDKCoreKit_Basics: eb530cd6a79030dbb11df460aafb2767bcad9028
+  FBSDKShareKit: e52c6b1584c77c708bcb4001c9a48223c115cbd9
   file_picker: a0560bc09d61de87f12d246fc47d2119e6ef37be
   Firebase: d99ac19b909cd2c548339c2241ecd0d1599ab02e
-  firebase_analytics: 740475b8bf6f9a79b04c2d55fe226a60679fe593
-  firebase_core: ece862f94b2bc72ee0edbeec7ab5c7cb09fe1ab5
-  firebase_messaging: e1a5fae495603115be1d0183bc849da748734e2b
-  firebase_remote_config: 88ede24650cdf0916188dc2fe4138e3a03e62712
+  firebase_analytics: 0e25ca1d4001ccedd40b4e5b74c0ec34e18f6425
+  firebase_core: 995454a784ff288be5689b796deb9e9fa3601818
+  firebase_messaging: f4a41dd102ac18b840eba3f39d67e77922d3f707
+  firebase_remote_config: 4dd0f9d900105e8d81a31a26ac1ed949c6d3c74a
   FirebaseABTesting: 5e9d432834aebf27ab72100d37af44dfbe8d82f7
   FirebaseAnalytics: 6433dfd311ba78084fc93bdfc145e8cb75740eae
   FirebaseCore: efb3893e5b94f32b86e331e3bd6dadf18b66568e
@@ -631,17 +595,11 @@ SPEC CHECKSUMS:
   flutter_widgetkit: 21fcf04a99462110a8c855b614b97532d7d759b7
   geocoding_ios: 33776c9ebb98d037b5e025bb0e7537f6dd19646e
   geolocator_apple: ab36aa0e8b7d7a2d7639b3b4e48308394e8cef5e
-  Google-Mobile-Ads-SDK: 1dfb0c3cb46c7e2b00b0f4de74a1e06d9ea25d67
-  google_mlkit_commons: 92c769cc2e0a2bfdeb3c38091a36e8a9cc8c63d4
-  google_mlkit_face_mesh_detection: 6f5a13765aedab17a59f418a7ea3651ae8bcea22
-  google_mobile_ads: 535223588a6791b7a3cc3513a1bc7b89d12f3e62
   google_sign_in_ios: b48bb9af78576358a168361173155596c845f0b9
   GoogleAdsOnDeviceConversion: 2be6297a4f048459e0ae17fad9bfd2844e10cf64
   GoogleAppMeasurement: 700dce7541804bec33db590a5c496b663fbe2539
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
   GoogleSignIn: ce8c89bb9b37fb624b92e7514cc67335d1e277e4
-  GoogleToolboxForMac: d1a2cbf009c453f4d6ded37c105e2f67a32206d8
-  GoogleUserMessagingPlatform: befe603da6501006420c206222acd449bba45a9c
   GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
   GTMAppAuth: f69bd07d68cd3b766125f7e072c45d7340dea0de
   GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
@@ -649,25 +607,23 @@ SPEC CHECKSUMS:
   health: 32d2fbc7f26f9a2388d1a514ce168adbfa5bda65
   home_widget: f169fc41fd807b4d46ab6615dc44d62adbf9f64f
   image_cropper: c4326ea50132b1e1564499e5d32a84f01fb03537
-  image_picker_ios: 7fe1ff8e34c1790d6fff70a32484959f563a928a
+  image_picker_ios: e0ece4aa2a75771a7de3fa735d26d90817041326
   in_app_purchase_storekit: d1a48cb0f8b29dbf5f85f782f5dd79b21b90a5e6
   integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
-  kakao_flutter_sdk_common: 600d55b532da0bd37268a529e1add49302477710
+  kakao_flutter_sdk_common: 682b3606698f87467788598dc2dc09d4e6867fbd
   location: 155caecf9da4f280ab5fe4a55f94ceccfab838f8
-  MLImage: 0de5c6c2bf9e93b80ef752e2797f0836f03b58c0
-  MLKitCommon: 47d47b50a031d00db62f1b0efe5a1d8b09a3b2e6
-  MLKitVision: 39a5a812db83c4a0794445088e567f3631c11961
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   OrderedSet: e539b66b644ff081c73a262d24ad552a69be3a94
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
-  path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
+  path_provider_foundation: bb55f6dbba17d0dccd6737fe6f7f34fbd0376880
   pay_ios: 2c48d76615ded0cfaff66185669501b8b1dfc55e
   permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
-  SDWebImage: e9c98383c7572d713c1a0d7dd2783b10599b9838
+  SDWebImage: 1bb6a1b84b6fe87b972a102bdc77dd589df33477
   share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a
-  shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
+  shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb
   sign_in_with_apple: c5dcc141574c8c54d5ac99dd2163c0c72ad22418
+  social_share_plugin_ios: 362b20b52b769dba3bdf5e08fb8e48e98676077f
   speech_to_text: 3b313d98516d3d0406cea424782ec25470c59d19
   sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
   Stripe: 8a03a78bfa16b197f9fac51e42670ac563b34388
@@ -682,11 +638,10 @@ SPEC CHECKSUMS:
   SwiftTryCatch: fb6d2b34abe48efd69578dac919293a44f95b481
   SwiftyGif: 706c60cf65fa2bc5ee0313beece843c8eb8194d4
   TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
-  url_launcher_ios: 694010445543906933d732453a59da0a173ae33d
+  url_launcher_ios: 7a95fa5b60cc718a708b8f2966718e93db0cef1b
   video_player_avfoundation: dd410b52df6d2466a42d28550e33e4146928280a
-  webview_flutter_wkwebview: 1821ceac936eba6f7984d89a9f3bcb4dea99ebb2
   workmanager_apple: f540d652595dfe5c8b8200c4c85ba622d6fb5c5b
 
-PODFILE CHECKSUM: 6bbc76ec6178140db60dab1acd4aeec7e5fe57b7
+PODFILE CHECKSUM: a591d68f2e3da2c979fc9de7b2ddda2fb1d21bf0
 
 COCOAPODS: 1.16.2

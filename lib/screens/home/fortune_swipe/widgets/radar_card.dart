@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../presentation/widgets/fortune_infographic_widgets.dart';
 import '../utils/fortune_swipe_helpers.dart';
 
 /// 📈 5대 영역 레이더 카드 - ChatGPT Pulse 스타일
 class RadarCard extends StatelessWidget {
   final Map<String, double> radarData;
-  final bool isDark;
 
   const RadarCard({
     super.key,
     required this.radarData,
-    required this.isDark,
   });
 
   @override
@@ -24,14 +22,14 @@ class RadarCard extends StatelessWidget {
         Text(
           '5대 영역별 운세',
           style: context.heading3.copyWith(
-            color: isDark ? Colors.white : Colors.black87,
+            color: context.colors.textPrimary,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           '오늘의 각 분야별 운세를 한눈에',
           style: context.bodySmall.copyWith(
-            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+            color: context.colors.textPrimary.withValues(alpha: 0.5),
           ),
         ),
 
@@ -41,15 +39,12 @@ class RadarCard extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+            color: context.colors.surface,
             borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            border: Border.all(
+              color: context.colors.border,
+              width: 1,
+            ),
           ),
           child: Column(
             children: [
@@ -59,7 +54,7 @@ class RadarCard extends StatelessWidget {
                 child: FortuneInfographicWidgets.buildRadarChart(
                   scores: radarData.map((k, v) => MapEntry(k, v.round())),
                   size: 180,
-                  primaryColor: const Color(0xFF2E8B57), // 木(목) - 전통 청록
+                  primaryColor: const Color(0xFF2E8B57), // 고유 색상 - 木(목) 전통 청록
                 ),
               ).animate()
                 .fadeIn(duration: 600.ms)
@@ -80,7 +75,7 @@ class RadarCard extends StatelessWidget {
                         child: Text(
                           entry.key,
                           style: context.bodySmall.copyWith(
-                            color: isDark ? Colors.white : Colors.black87,
+                            color: context.colors.textPrimary,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -95,7 +90,7 @@ class RadarCard extends StatelessWidget {
                             Container(
                               height: 4,
                               decoration: BoxDecoration(
-                                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
+                                color: context.colors.textPrimary.withValues(alpha: 0.06),
                                 borderRadius: BorderRadius.circular(2),
                               ),
                             ),

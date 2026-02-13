@@ -7,7 +7,7 @@ const corsHeaders = {
 }
 
 /**
- * 토큰(복주머니) 잔액 조회 Edge Function
+ * 토큰 잔액 조회 Edge Function
  *
  * GET /token-balance
  *

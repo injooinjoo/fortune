@@ -6,14 +6,10 @@ import '../../../../../core/design_system/design_system.dart';
 /// 터치 가능한 얼굴 맵 - 오관(五官) 영역 표시
 class InteractiveFaceMap extends StatefulWidget {
   final Map<String, dynamic>? ogwanData;
-  final bool isBlurred;
-  final VoidCallback? onUnlockRequested;
 
   const InteractiveFaceMap({
     super.key,
     this.ogwanData,
-    this.isBlurred = false,
-    this.onUnlockRequested,
   });
 
   @override
@@ -86,7 +82,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -101,7 +97,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                 ]
               : [
                   DSColors.surface,
-                  Colors.white,
+                  context.colors.background,
                 ],
         ),
         borderRadius: BorderRadius.circular(24),
@@ -141,17 +137,17 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                   children: [
                     Text(
                       '오관(五官) 인터랙티브 맵',
-                      style: DSTypography.headingSmall.copyWith(
+                      style: context.headingSmall.copyWith(
                         color: isDark
                             ? DSColors.textPrimary
                             : DSColors.textPrimary,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: DSSpacing.xxs),
                     Text(
                       '터치하여 상세 분석 보기',
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelSmall.copyWith(
                         color: isDark
                             ? DSColors.textSecondary
                             : DSColors.textSecondary,
@@ -163,7 +159,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
             ],
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: DSSpacing.lg),
 
           // Face Map 영역
           AspectRatio(
@@ -243,7 +239,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                                           color: zone.color,
                                           size: size.width * zone.relativeSize * 0.35,
                                         ),
-                                        if (hasData && !widget.isBlurred)
+                                        if (hasData)
                                           Container(
                                             margin: const EdgeInsets.only(top: 4),
                                             width: 8,
@@ -264,48 +260,6 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                       );
                     }),
 
-                    // 블러 오버레이
-                    if (widget.isBlurred)
-                      Positioned.fill(
-                        child: GestureDetector(
-                          onTap: widget.onUnlockRequested,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: (isDark ? Colors.black : Colors.white)
-                                  .withValues(alpha: 0.7),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(
-                                    Icons.lock_outline,
-                                    size: 48,
-                                    color: DSColors.accentSecondary,
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Text(
-                                    '프리미엄 잠금',
-                                    style: DSTypography.headingSmall.copyWith(
-                                      color: DSColors.accentSecondary,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '터치하여 잠금 해제',
-                                    style: DSTypography.labelSmall.copyWith(
-                                      color: isDark
-                                          ? DSColors.textSecondary
-                                          : DSColors.textSecondary,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
                   ],
                 );
               },
@@ -313,13 +267,13 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
           ),
 
           // 선택된 영역 상세 정보
-          if (_selectedZone != null && !widget.isBlurred) ...[
+          if (_selectedZone != null) ...[
             const SizedBox(height: 20),
             _buildSelectedZoneDetail(isDark),
           ],
 
           // 범례
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           _buildLegend(isDark),
         ],
       ),
@@ -327,11 +281,6 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
   }
 
   void _onZoneTapped(String key) {
-    if (widget.isBlurred) {
-      widget.onUnlockRequested?.call();
-      return;
-    }
-
     setState(() {
       _selectedZone = _selectedZone == key ? null : key;
     });
@@ -382,7 +331,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                   children: [
                     Text(
                       zone.name,
-                      style: DSTypography.headingSmall.copyWith(
+                      style: context.headingSmall.copyWith(
                         color: isDark
                             ? DSColors.textPrimary
                             : DSColors.textPrimary,
@@ -391,7 +340,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                     ),
                     Text(
                       zone.subtitle,
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelSmall.copyWith(
                         color: zone.color,
                         fontWeight: FontWeight.w600,
                       ),
@@ -409,13 +358,13 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                   ),
                   child: Text(
                     '$score점',
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: zone.color,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: DSSpacing.sm),
               ],
               IconButton(
                 icon: const Icon(Icons.close, size: 20),
@@ -447,15 +396,15 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
               const SizedBox(height: 12),
               Text(
                 '관찰',
-                style: DSTypography.labelSmall.copyWith(
+                style: context.labelSmall.copyWith(
                   color: zone.color,
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: DSSpacing.xs),
               Text(
                 observation,
-                style: DSTypography.bodyMedium.copyWith(
+                style: context.bodyMedium.copyWith(
                   color: isDark
                       ? DSColors.textPrimary
                       : DSColors.textPrimary,
@@ -469,15 +418,15 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
               const SizedBox(height: 10),
               Text(
                 '해석',
-                style: DSTypography.labelSmall.copyWith(
+                style: context.labelSmall.copyWith(
                   color: zone.color,
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: DSSpacing.xs),
               Text(
                 interpretation,
-                style: DSTypography.bodyMedium.copyWith(
+                style: context.bodyMedium.copyWith(
                   color: isDark
                       ? DSColors.textPrimary
                       : DSColors.textPrimary,
@@ -503,11 +452,11 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                       color: zone.color,
                       size: 16,
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: DSSpacing.sm),
                     Expanded(
                       child: Text(
                         advice,
-                        style: DSTypography.bodyMedium.copyWith(
+                        style: context.bodyMedium.copyWith(
                           color: isDark
                               ? DSColors.textPrimary
                               : DSColors.textPrimary,
@@ -523,7 +472,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
             const SizedBox(height: 12),
             Text(
               '분석 데이터가 없습니다.',
-              style: DSTypography.bodyMedium.copyWith(
+              style: context.bodyMedium.copyWith(
                 color: isDark
                     ? DSColors.textSecondary
                     : DSColors.textSecondary,
@@ -576,7 +525,7 @@ class _InteractiveFaceMapState extends State<InteractiveFaceMap>
                 const SizedBox(width: 6),
                 Text(
                   zone.name.split('(')[0],
-                  style: DSTypography.labelSmall.copyWith(
+                  style: context.labelSmall.copyWith(
                     color: isSelected
                         ? zone.color
                         : (isDark

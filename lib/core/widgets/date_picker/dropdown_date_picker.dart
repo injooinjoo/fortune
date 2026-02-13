@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../theme/fortune_design_system.dart';
 import '../../design_system/design_system.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_dimensions.dart';
@@ -129,8 +128,6 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final age = widget.showAge ? _calculateAge() : null;
 
     return Column(
@@ -138,13 +135,11 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
       children: [
         if (widget.label != null)
           Padding(
-            padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
+            padding: const EdgeInsets.only(bottom: DSSpacing.xs),
             child: Text(
               widget.label!,
-              style: DSTypography.labelMedium.copyWith(
-                color: isDark
-                    ? TossDesignSystem.textSecondaryDark
-                    : TossDesignSystem.textSecondaryLight,
+              style: context.labelMedium.copyWith(
+                color: context.colors.textSecondary,
               ),
             ),
           ),
@@ -163,9 +158,9 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
               children: [
                 Icon(
                   Icons.calendar_today_rounded,
-                  color: isDark
-                      ? TossDesignSystem.textSecondaryDark
-                      : TossDesignSystem.tossBlue,
+                  color: context.isDark
+                      ? context.colors.textSecondary
+                      : context.colors.accent,
                   size: 20,
                 ),
                 const SizedBox(width: AppSpacing.spacing3),
@@ -177,17 +172,15 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
                         DatePickerUtils.formatKorean(
                           DateTime(selectedYear, selectedMonth, selectedDay),
                         ),
-                        style: DSTypography.bodyLarge.copyWith(
+                        style: context.bodyLarge.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       if (age != null && age >= 0)
                         Text(
                           '만 $age세',
-                          style: DSTypography.bodySmall.copyWith(
-                            color: isDark
-                                ? TossDesignSystem.textSecondaryDark
-                                : TossDesignSystem.textSecondaryLight,
+                          style: context.bodySmall.copyWith(
+                            color: context.colors.textSecondary,
                           ),
                         ),
                     ],
@@ -198,9 +191,7 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
                   duration: AppAnimations.durationShort,
                   child: Icon(
                     Icons.expand_more_rounded,
-                    color: isDark
-                        ? TossDesignSystem.textSecondaryDark
-                        : TossDesignSystem.textSecondaryLight,
+                    color: context.colors.textSecondary,
                   ),
                 ),
               ],
@@ -275,10 +266,7 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
                       Container(
                         padding: AppSpacing.paddingAll12,
                         decoration: BoxDecoration(
-                          color: (isDark
-                                  ? TossDesignSystem.tossBlue
-                                  : TossDesignSystem.tossBlue)
-                              .withValues(alpha: 0.1),
+                          color: DSColors.accentDark.withValues(alpha: 0.1),
                           borderRadius: AppDimensions.borderRadiusMedium,
                         ),
                         child: Row(
@@ -287,13 +275,13 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
                             const Icon(
                               Icons.cake_rounded,
                               size: AppDimensions.iconSizeSmall,
-                              color: TossDesignSystem.tossBlue,
+                              color: DSColors.accentDark,
                             ),
                             const SizedBox(width: AppSpacing.spacing2),
                             Text(
                               '나이: $age세',
-                              style: DSTypography.bodyMedium.copyWith(
-                                color: TossDesignSystem.tossBlue,
+                              style: context.bodyMedium.copyWith(
+                                color: DSColors.accentDark,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -321,32 +309,23 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
     required Function(int?) onChanged,
     required String suffix,
   }) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: DSTypography.labelSmall.copyWith(
-            color: isDark
-                ? TossDesignSystem.textSecondaryDark
-                : TossDesignSystem.textSecondaryLight,
+          style: context.labelSmall.copyWith(
+            color: context.colors.textSecondary,
           ),
         ),
         const SizedBox(height: AppSpacing.spacing1),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3),
           decoration: BoxDecoration(
-            color: isDark
-                ? TossDesignSystem.grayDark800
-                : TossDesignSystem.white,
+            color: context.colors.surface,
             borderRadius: AppDimensions.borderRadiusSmall,
             border: Border.all(
-              color: isDark
-                  ? TossDesignSystem.borderDark
-                  : TossDesignSystem.borderLight,
+              color: context.colors.border,
             ),
           ),
           child: DropdownButton<int>(
@@ -354,15 +333,13 @@ class _DropdownDatePickerState extends State<DropdownDatePicker> {
             isExpanded: true,
             isDense: true,
             underline: const SizedBox(),
-            dropdownColor: isDark
-                ? TossDesignSystem.grayDark800
-                : TossDesignSystem.white,
+            dropdownColor: context.colors.surface,
             items: items.map((item) {
               return DropdownMenuItem<int>(
                 value: item,
                 child: Text(
                   '$item$suffix',
-                  style: DSTypography.bodyMedium,
+                  style: context.bodyMedium,
                 ),
               );
             }).toList(),

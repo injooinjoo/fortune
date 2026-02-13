@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/design_system.dart';
-import '../../../../../core/theme/saju_colors.dart';
 import '../../../../../core/components/app_card.dart';
 import '../../../../../data/saju_explanations.dart';
 import '../../../domain/models/saju/ji_jang_gan_data.dart';
@@ -31,7 +30,7 @@ class SajuJijangganWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return AppCard(
       padding: const EdgeInsets.all(DSSpacing.md),
@@ -40,7 +39,7 @@ class SajuJijangganWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (showTitle) ...[
-            _buildTitle(isDark),
+            _buildTitle(context, isDark),
             const SizedBox(height: DSSpacing.sm),
           ],
           _buildJijangganTable(context, isDark),
@@ -49,7 +48,7 @@ class SajuJijangganWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildTitle(bool isDark) {
+  Widget _buildTitle(BuildContext context, bool isDark) {
     return Row(
       children: [
         const Icon(
@@ -62,14 +61,14 @@ class SajuJijangganWidget extends StatelessWidget {
           children: [
             Text(
               '지장간',
-              style: DSTypography.headingMedium.copyWith(
+              style: context.headingMedium.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: DSSpacing.xs),
             Text(
               '支藏干',
-              style: DSTypography.labelSmall.copyWith(
+              style: context.labelSmall.copyWith(
                 color: isDark
                     ? DSColors.textTertiary
                     : DSColors.textSecondary,
@@ -142,15 +141,15 @@ class SajuJijangganWidget extends StatelessWidget {
                       children: [
                         Text(
                           pillar['hanja']!,
-                          style: DSTypography.labelSmall.copyWith(
+                          style: context.labelSmall.copyWith(
                             color: isDark
                                 ? DSColors.textTertiary
                                 : DSColors.textSecondary,
                             fontSize: 10, // 예외: 초소형 사주 칼럼 헤더
                           ),
                         ),
-                        const SizedBox(height: 2),
-                        _buildBranchCell(branchData, isDay, isDark),
+                        const SizedBox(height: DSSpacing.xxs),
+                        _buildBranchCell(context, branchData, isDay, isDark),
                       ],
                     ),
                   ),
@@ -208,6 +207,7 @@ class SajuJijangganWidget extends StatelessWidget {
   }
 
   Widget _buildBranchCell(
+    BuildContext context,
     Map<String, dynamic>? branchData,
     bool isDay,
     bool isDark,
@@ -238,7 +238,7 @@ class SajuJijangganWidget extends StatelessWidget {
         // 한글 작게
         Text(
           name,
-          style: DSTypography.labelSmall.copyWith(
+          style: context.labelSmall.copyWith(
             color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
             fontWeight: FontWeight.w500,
             fontSize: 10, // 예외: 초소형 사주 한글명
@@ -313,7 +313,7 @@ class SajuJijangganWidget extends StatelessWidget {
                     color: color,
                   ),
                 ),
-                const SizedBox(width: 2),
+                const SizedBox(width: DSSpacing.xxs),
                 Text(
                   '${stem.ratio}%',
                   style: TextStyle(

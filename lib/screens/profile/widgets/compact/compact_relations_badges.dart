@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/fortune_theme.dart';
-import '../../../../core/theme/fortune_design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 압축된 합충형해 배지
 ///
@@ -16,7 +14,7 @@ class CompactRelationsBadges extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final relations = _extractRelations();
 
     if (relations.isEmpty) {
@@ -24,14 +22,14 @@ class CompactRelationsBadges extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.all(TossTheme.spacingS),
+      padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.black.withValues(alpha: 0.2)
+            ? context.colors.backgroundSecondary
             : Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(TossTheme.radiusS),
+        borderRadius: BorderRadius.circular(DSRadius.sm),
         border: Border.all(
-          color: isDark ? TossDesignSystem.borderDark : TossTheme.borderPrimary,
+          color: isDark ? DSColors.border : DSColors.borderDark,
         ),
       ),
       child: Column(
@@ -43,14 +41,14 @@ class CompactRelationsBadges extends StatelessWidget {
               Icon(
                 Icons.link_rounded,
                 size: 14,
-                color: isDark ? Colors.white60 : Colors.black45,
+                color: context.colors.textSecondary,
               ),
               const SizedBox(width: 4),
               Text(
                 '합충형해',
                 style: context.labelTiny.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white70 : Colors.black54,
+                  color: context.colors.textSecondary,
                 ),
               ),
               const Spacer(),
@@ -58,12 +56,12 @@ class CompactRelationsBadges extends StatelessWidget {
                 '合沖刑破害',
                 style: context.labelTiny.copyWith(
                   fontSize: 9,
-                  color: isDark ? Colors.white38 : Colors.black26,
+                  color: context.colors.textTertiary,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: TossTheme.spacingXS),
+          const SizedBox(height: DSSpacing.xs),
           // 배지들
           Wrap(
             spacing: 6,
@@ -92,7 +90,7 @@ class CompactRelationsBadges extends StatelessWidget {
           'type': '합',
           'hanja': '合',
           'description': hap.toString(),
-          'color': const Color(0xFF10B981), // 초록 - 조화
+          'color': DSColors.success, // 초록 - 조화
         });
       }
     }
@@ -105,7 +103,7 @@ class CompactRelationsBadges extends StatelessWidget {
           'type': '충',
           'hanja': '沖',
           'description': chung.toString(),
-          'color': const Color(0xFFEF4444), // 빨강 - 충돌
+          'color': DSColors.error, // 빨강 - 충돌
         });
       }
     }
@@ -118,7 +116,7 @@ class CompactRelationsBadges extends StatelessWidget {
           'type': '형',
           'hanja': '刑',
           'description': hyung.toString(),
-          'color': const Color(0xFFF59E0B), // 주황 - 형벌
+          'color': DSColors.warning, // 주황 - 형벌
         });
       }
     }
@@ -131,7 +129,7 @@ class CompactRelationsBadges extends StatelessWidget {
           'type': '파',
           'hanja': '破',
           'description': pa.toString(),
-          'color': const Color(0xFF8B5CF6), // 보라 - 파괴
+          'color': DSColors.accentSecondary, // 보라 - 파괴
         });
       }
     }
@@ -144,7 +142,7 @@ class CompactRelationsBadges extends StatelessWidget {
           'type': '해',
           'hanja': '害',
           'description': hae.toString(),
-          'color': const Color(0xFF6366F1), // 인디고 - 해침
+          'color': DSColors.info, // 인디고 - 해침
         });
       }
     }
@@ -195,7 +193,7 @@ class CompactRelationsBadges extends StatelessWidget {
             '$type: $description',
             style: context.labelTiny.copyWith(
               fontWeight: FontWeight.w500,
-              color: isDark ? Colors.white70 : Colors.black54,
+              color: context.colors.textSecondary,
             ),
           ),
         ],

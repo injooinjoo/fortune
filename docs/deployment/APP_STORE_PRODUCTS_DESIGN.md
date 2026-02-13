@@ -22,71 +22,71 @@
 
 ---
 
-### 상품 1: 월간 구독
+### 상품 1: Pro 구독 (기존 월간 → Pro)
 
 | 항목 | 값 |
 |------|---|
-| **참조 이름** | Fortune Monthly Subscription |
+| **참조 이름** | Fortune Pro Subscription |
 | **상품 ID** | `com.beyond.fortune.subscription.monthly` |
 | **유형** | 자동 갱신 구독 (Auto-Renewable Subscription) |
 | **구독 기간** | 1개월 |
-| **그룹 내 순서** | 1 (Level 1 - 기본) |
+| **그룹 내 순서** | 1 (Level 1 - Pro) |
 
 #### 가격표
 
 | 국가 | 가격 | App Store Tier |
 |------|------|----------------|
-| 한국 | ₩1,900 | Tier 2 |
-| 미국 | $0.99 | Tier 1 |
-| 일본 | ¥160 | Tier 1 |
+| 한국 | ₩4,500 | Tier 4 |
+| 미국 | $3.99 | Tier 4 |
+| 일본 | ¥600 | Tier 4 |
 
 #### 현지화 정보 (한국어)
 
 | 항목 | 내용 |
 |------|------|
-| 표시 이름 | 월간 프리미엄 |
-| 설명 | 한 달 동안 모든 운세를 무제한으로 확인하고 광고 없이 이용하세요. 언제든 해지 가능합니다. |
+| 표시 이름 | Pro 구독 |
+| 설명 | 매월 30,000개의 토큰을 자동 충전받고 프리미엄 운세를 이용하세요. 언제든 해지 가능합니다. |
 
 #### 현지화 정보 (영어)
 
 | 항목 | 내용 |
 |------|------|
-| 표시 이름 | Monthly Premium |
-| 설명 | Get unlimited access to all fortune readings and enjoy an ad-free experience for one month. Cancel anytime. |
+| 표시 이름 | Pro Subscription |
+| 설명 | Get 30,000 tokens recharged monthly and access premium fortune readings. Cancel anytime. |
 
 ---
 
-### 상품 2: 연간 구독
+### 상품 2: Max 구독 (월간)
 
 | 항목 | 값 |
 |------|---|
-| **참조 이름** | Fortune Yearly Subscription |
-| **상품 ID** | `com.beyond.fortune.subscription.yearly` |
+| **참조 이름** | Fortune Max Subscription |
+| **상품 ID** | `com.beyond.fortune.subscription.max` |
 | **유형** | 자동 갱신 구독 (Auto-Renewable Subscription) |
-| **구독 기간** | 1년 |
-| **그룹 내 순서** | 2 (Level 2 - 프리미엄) |
+| **구독 기간** | 1개월 |
+| **그룹 내 순서** | 2 (Level 2 - Max) |
 
 #### 가격표
 
-| 국가 | 가격 | App Store Tier | 월간 대비 할인율 |
-|------|------|----------------|-----------------|
-| 한국 | ₩19,000 | Tier 22 | 17% 할인 |
-| 미국 | $9.99 | Tier 10 | 16% 할인 |
-| 일본 | ¥1,600 | Tier 16 | 17% 할인 |
+| 국가 | 가격 | App Store Tier |
+|------|------|----------------|
+| 한국 | ₩12,900 | Tier 13 |
+| 미국 | $12.99 | Tier 13 |
+| 일본 | ¥2,000 | Tier 20 |
 
 #### 현지화 정보 (한국어)
 
 | 항목 | 내용 |
 |------|------|
-| 표시 이름 | 연간 프리미엄 |
-| 설명 | 1년 동안 모든 운세를 무제한으로 확인하고 광고 없이 이용하세요. 월간 구독 대비 17% 할인됩니다. 언제든 해지 가능합니다. |
+| 표시 이름 | Max 구독 |
+| 설명 | 매월 100,000개의 토큰을 자동 충전받고 모든 기능을 무제한으로 이용하세요. 언제든 해지 가능합니다. |
 
 #### 현지화 정보 (영어)
 
 | 항목 | 내용 |
 |------|------|
-| 표시 이름 | Yearly Premium |
-| 설명 | Get unlimited access to all fortune readings and enjoy an ad-free experience for one year. Save 17% compared to monthly subscription. Cancel anytime. |
+| 표시 이름 | Max Subscription |
+| 설명 | Get 100,000 tokens recharged monthly and unlimited access to all features. Cancel anytime. |
 
 ---
 
@@ -248,9 +248,9 @@
 ```
 This app offers both subscription and consumable in-app purchases:
 
-1. SUBSCRIPTIONS (Auto-Renewable):
-   - Monthly Premium (₩1,900/month): Unlimited fortune readings + ad-free
-   - Yearly Premium (₩19,000/year): Same benefits with 17% discount
+1. SUBSCRIPTIONS (Auto-Renewable, Monthly):
+   - Pro Subscription (₩4,500/month): 30,000 tokens/month + premium features
+   - Max Subscription (₩12,900/month): 100,000 tokens/month + all features
 
 2. CONSUMABLES (Tokens):
    - Tokens are used to access individual fortune readings
@@ -279,8 +279,8 @@ Demo Account (if needed):
 | tokens50 | ₩4,500 | ₩4,400 (Tier 4) |
 | tokens100 | ₩8,000 | ₩7,700 (Tier 7) |
 | tokens200 | ₩14,000 | ₩13,000 (Tier 13) |
-| monthly | ₩1,900 | ₩1,900 (Tier 2) ✅ |
-| yearly | ₩19,000 | ₩19,000 (Tier 22) ✅ |
+| Pro (monthly) | ₩4,500 | ₩4,500 (Tier 4) ✅ |
+| Max (monthly) | ₩12,900 | ₩12,900 (Tier 13) ✅ |
 
 > **참고**: 실제 가격은 `ProductDetails.price`에서 가져오므로 UI에서는 Store 가격이 표시됩니다.
 
@@ -298,15 +298,15 @@ Demo Account (if needed):
 - [ ] 그룹 참조 이름: `fortune_premium_group`
 
 ### 3단계: 구독 상품 추가
-- [ ] Monthly Subscription 추가
+- [ ] Pro Subscription 추가
   - [ ] 상품 ID: `com.beyond.fortune.subscription.monthly`
-  - [ ] 가격 설정 (Tier 2)
+  - [ ] 가격 설정 (Tier 4 - ₩4,500)
   - [ ] 현지화 정보 입력 (한국어, 영어)
   - [ ] 스크린샷 업로드
-- [ ] Yearly Subscription 추가
-  - [ ] 상품 ID: `com.beyond.fortune.subscription.yearly`
-  - [ ] 가격 설정 (Tier 22)
-  - [ ] 현지화 정보 입력 (한국어, 영어)
+- [x] Max Subscription 추가
+  - [x] 상품 ID: `com.beyond.fortune.subscription.max`
+  - [x] 가격 설정 (Tier 13 - ₩12,900)
+  - [x] 현지화 정보 입력 (한국어)
   - [ ] 스크린샷 업로드
 
 ### 4단계: 소모성 상품 추가

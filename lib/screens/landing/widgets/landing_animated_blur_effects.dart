@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../../../core/design_system/design_system.dart';
 
 /// Korean Traditional Ink-Wash (발묵/潑墨) animated effects for landing page
 /// Design Philosophy: "Ink spreading on Hanji" (한지 위의 먹 번짐)
@@ -13,7 +14,7 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     if (isDark) {
       return _buildDarkModeEffects();
@@ -38,8 +39,8 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  const Color(0xFF8B9CAD).withValues(alpha: 0.12), // 담먹색 (Light ink gray)
-                  const Color(0xFF8B9CAD).withValues(alpha: 0.06),
+                  const Color(0xFF8B9CAD).withValues(alpha: 0.12), // 고유 색상 - 담먹색 (Light ink gray)
+                  const Color(0xFF8B9CAD).withValues(alpha: 0.06), // 고유 색상
                   Colors.transparent,
                 ],
               ),
@@ -70,8 +71,8 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  const Color(0xFF6B7B8A).withValues(alpha: 0.15), // 회먹색 (Gray ink)
-                  const Color(0xFF6B7B8A).withValues(alpha: 0.08),
+                  const Color(0xFF6B7B8A).withValues(alpha: 0.15), // 고유 색상 - 회먹색 (Gray ink)
+                  const Color(0xFF6B7B8A).withValues(alpha: 0.08), // 고유 색상
                   Colors.transparent,
                 ],
               ),
@@ -102,8 +103,8 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  const Color(0xFFD4C5A9).withValues(alpha: 0.18), // 담황색 (Light ocher)
-                  const Color(0xFFD4C5A9).withValues(alpha: 0.08),
+                  const Color(0xFFD4C5A9).withValues(alpha: 0.18), // 고유 색상 - 담황색 (Light ocher)
+                  const Color(0xFFD4C5A9).withValues(alpha: 0.08), // 고유 색상
                   Colors.transparent,
                 ],
               ),
@@ -141,8 +142,8 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  const Color(0xFF2D3A5C).withValues(alpha: 0.25), // 쪽빛 (Deep indigo)
-                  const Color(0xFF2D3A5C).withValues(alpha: 0.12),
+                  const Color(0xFF2D3A5C).withValues(alpha: 0.25), // 고유 색상 - 쪽빛 (Deep indigo)
+                  const Color(0xFF2D3A5C).withValues(alpha: 0.12), // 고유 색상
                   Colors.transparent,
                 ],
               ),
@@ -173,8 +174,8 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  const Color(0xFF1F2937).withValues(alpha: 0.30), // 현무색 (Charcoal)
-                  const Color(0xFF1F2937).withValues(alpha: 0.15),
+                  const Color(0xFF1F2937).withValues(alpha: 0.30), // 고유 색상 - 현무색 (Charcoal)
+                  const Color(0xFF1F2937).withValues(alpha: 0.15), // 고유 색상
                   Colors.transparent,
                 ],
               ),
@@ -205,8 +206,8 @@ class LandingAnimatedBlurEffects extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  const Color(0xFF4A5568).withValues(alpha: 0.15), // 회색 (Subtle gray)
-                  const Color(0xFF4A5568).withValues(alpha: 0.06),
+                  const Color(0xFF4A5568).withValues(alpha: 0.15), // 고유 색상 - 회색 (Subtle gray)
+                  const Color(0xFF4A5568).withValues(alpha: 0.06), // 고유 색상
                   Colors.transparent,
                 ],
               ),

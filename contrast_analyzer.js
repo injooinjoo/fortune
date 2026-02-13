@@ -98,7 +98,7 @@ function getAccessibilityGrade(contrast, isLargeText = false) {
     }
 }
 
-// 토스 디자인 시스템 색상 정의 (TossDesignSystem에서 추출)
+// 디자인 시스템 색상 정의 (DSColors - ChatGPT 스타일)
 const tossColors = {
     // 라이트모드 색상
     light: {

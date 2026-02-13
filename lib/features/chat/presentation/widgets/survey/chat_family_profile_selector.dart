@@ -208,7 +208,7 @@ class _ProfileChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Material(
       color: Colors.transparent,
@@ -236,12 +236,12 @@ class _ProfileChip extends StatelessWidget {
                 height: 28,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: colors.accentSecondary.withValues(alpha: 0.2),
+                  color: colors.textPrimary.withValues(alpha: 0.1),
                 ),
                 child: Icon(
                   _getAvatarIcon(),
                   size: 16,
-                  color: colors.accentSecondary,
+                  color: colors.textSecondary,
                 ),
               ),
               const SizedBox(width: DSSpacing.xs),
@@ -287,8 +287,6 @@ class _NewProfileChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -300,10 +298,10 @@ class _NewProfileChip extends StatelessWidget {
             vertical: DSSpacing.xs,
           ),
           decoration: BoxDecoration(
-            color: colors.accentSecondary.withValues(alpha: isDark ? 0.2 : 0.1),
+            color: colors.textPrimary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(DSRadius.lg),
             border: Border.all(
-              color: colors.accentSecondary.withValues(alpha: 0.3),
+              color: colors.textPrimary.withValues(alpha: 0.3),
             ),
           ),
           child: Row(
@@ -312,13 +310,13 @@ class _NewProfileChip extends StatelessWidget {
               Icon(
                 Icons.add,
                 size: 16,
-                color: colors.accentSecondary,
+                color: colors.textSecondary,
               ),
               const SizedBox(width: DSSpacing.xs),
               Text(
                 '$relationText 등록하기',
                 style: typography.labelMedium.copyWith(
-                  color: colors.accentSecondary,
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.w500,
                 ),
               ),

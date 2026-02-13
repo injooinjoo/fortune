@@ -1,5 +1,5 @@
-/// Daily Fortune Page - Widget Test
-/// 일일 운세 페이지 UI 테스트
+// Daily Fortune Page - Widget Test
+// 일일 운세 페이지 UI 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -102,38 +102,6 @@ void main() {
 
         await tester.pumpAndSettle();
         expect(find.text('건강운'), findsOneWidget);
-      });
-    });
-
-    group('블러 처리', () {
-      testWidgets('무료 사용자는 블러 처리된 콘텐츠 표시', (tester) async {
-        await tester.pumpWidget(
-          const ProviderScope(
-            child: MaterialApp(
-              home: Scaffold(
-                body: _MockDailyFortunePage(isBlurred: true),
-              ),
-            ),
-          ),
-        );
-
-        await tester.pumpAndSettle();
-        expect(find.text('프리미엄 전용'), findsWidgets);
-      });
-
-      testWidgets('프리미엄 사용자는 전체 콘텐츠 표시', (tester) async {
-        await tester.pumpWidget(
-          const ProviderScope(
-            child: MaterialApp(
-              home: Scaffold(
-                body: _MockDailyFortunePage(isBlurred: false),
-              ),
-            ),
-          ),
-        );
-
-        await tester.pumpAndSettle();
-        expect(find.text('프리미엄 전용'), findsNothing);
       });
     });
 
@@ -250,13 +218,11 @@ void main() {
 
 class _MockDailyFortunePage extends StatelessWidget {
   final int score;
-  final bool isBlurred;
   final String? luckyColor;
   final int? luckyNumber;
 
   const _MockDailyFortunePage({
     this.score = 75,
-    this.isBlurred = false,
     this.luckyColor,
     this.luckyNumber,
   });
@@ -277,14 +243,14 @@ class _MockDailyFortunePage extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  Text('2024년 12월 7일'),
+                  const Text('2024년 12월 7일'),
                   const SizedBox(height: 16),
                   Text('$score점', style: const TextStyle(fontSize: 48)),
                   const SizedBox(height: 24),
-                  _FortuneCategory(title: '종합운', isBlurred: isBlurred),
-                  _FortuneCategory(title: '연애운', isBlurred: isBlurred),
-                  _FortuneCategory(title: '재물운', isBlurred: isBlurred),
-                  _FortuneCategory(title: '건강운', isBlurred: isBlurred),
+                  const _FortuneCategory(title: '종합운'),
+                  const _FortuneCategory(title: '연애운'),
+                  const _FortuneCategory(title: '재물운'),
+                  const _FortuneCategory(title: '건강운'),
                   if (luckyColor != null) ...[
                     const SizedBox(height: 16),
                     const Text('행운의 색상'),
@@ -307,16 +273,15 @@ class _MockDailyFortunePage extends StatelessWidget {
 
 class _FortuneCategory extends StatelessWidget {
   final String title;
-  final bool isBlurred;
 
-  const _FortuneCategory({required this.title, this.isBlurred = false});
+  const _FortuneCategory({required this.title});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
         title: Text(title),
-        subtitle: isBlurred ? const Text('프리미엄 전용') : const Text('상세 내용'),
+        subtitle: const Text('상세 내용'),
       ),
     );
   }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fortune/core/design_system/design_system.dart';
 import '../../../../../core/components/app_card.dart';
-import '../../../../../core/widgets/unified_blur_wrapper.dart';
 
 /// 얼굴 부위별 상세 분석 카드
 /// 오관(五官), 삼정(三停), 십이궁(十二宮) 등의 개별 부위 카드
@@ -13,9 +12,6 @@ class FaceZoneDetailCard extends StatelessWidget {
   final IconData icon;
   final Color color;
   final Map<String, dynamic>? zoneData;
-  final bool isBlurred;
-  final List<String> blurredSections;
-  final String sectionKey;
   final int animationIndex;
 
   const FaceZoneDetailCard({
@@ -26,15 +22,12 @@ class FaceZoneDetailCard extends StatelessWidget {
     required this.icon,
     required this.color,
     this.zoneData,
-    this.isBlurred = false,
-    this.blurredSections = const [],
-    this.sectionKey = 'ogwan',
     this.animationIndex = 0,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     // zoneData가 Map인 경우 파싱
     final observation = zoneData?['observation'] as String? ?? '';
@@ -57,11 +50,7 @@ class FaceZoneDetailCard extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: UnifiedBlurWrapper(
-        isBlurred: isBlurred,
-        blurredSections: blurredSections,
-        sectionKey: sectionKey,
-        child: AppCard(
+      child: AppCard(
           style: AppCardStyle.filled,
           padding: const EdgeInsets.all(20),
           child: Column(
@@ -90,17 +79,17 @@ class FaceZoneDetailCard extends StatelessWidget {
                       children: [
                         Text(
                           title,
-                          style: DSTypography.labelLarge.copyWith(
+                          style: context.labelLarge.copyWith(
                             color: isDark
                                 ? DSColors.textPrimary
                                 : DSColors.textPrimary,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        const SizedBox(height: 2),
+                        const SizedBox(height: DSSpacing.xxs),
                         Text(
                           subtitle,
-                          style: DSTypography.labelSmall.copyWith(
+                          style: context.labelSmall.copyWith(
                             color: isDark
                                 ? DSColors.textSecondary
                                 : DSColors.textSecondary,
@@ -120,7 +109,7 @@ class FaceZoneDetailCard extends StatelessWidget {
                       ),
                       child: Text(
                         '$score점',
-                        style: DSTypography.labelSmall.copyWith(
+                        style: context.labelSmall.copyWith(
                           color: color,
                           fontWeight: FontWeight.w700,
                         ),
@@ -131,7 +120,7 @@ class FaceZoneDetailCard extends StatelessWidget {
 
               // 점수 게이지 바
               if (score > 0) ...[
-                const SizedBox(height: 16),
+                const SizedBox(height: DSSpacing.md),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
@@ -147,8 +136,9 @@ class FaceZoneDetailCard extends StatelessWidget {
               if (observation.isNotEmpty || interpretation.isNotEmpty) ...[
                 // 관찰 내용
                 if (observation.isNotEmpty) ...[
-                  const SizedBox(height: 16),
+                  const SizedBox(height: DSSpacing.md),
                   _buildDetailSection(
+                    context: context,
                     title: '관찰',
                     content: observation,
                     color: color,
@@ -160,6 +150,7 @@ class FaceZoneDetailCard extends StatelessWidget {
                 if (interpretation.isNotEmpty) ...[
                   const SizedBox(height: 12),
                   _buildDetailSection(
+                    context: context,
                     title: '해석',
                     content: interpretation,
                     color: color,
@@ -169,7 +160,7 @@ class FaceZoneDetailCard extends StatelessWidget {
               ]
               // 삼정 형식 (description, period, peakAge)
               else if (description.isNotEmpty) ...[
-                const SizedBox(height: 16),
+                const SizedBox(height: DSSpacing.md),
                 if (period.isNotEmpty) ...[
                   Container(
                     padding:
@@ -180,7 +171,7 @@ class FaceZoneDetailCard extends StatelessWidget {
                     ),
                     child: Text(
                       period,
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelSmall.copyWith(
                         color: color,
                         fontWeight: FontWeight.w600,
                       ),
@@ -190,7 +181,7 @@ class FaceZoneDetailCard extends StatelessWidget {
                 ],
                 Text(
                   description,
-                  style: DSTypography.bodyMedium.copyWith(
+                  style: context.bodyMedium.copyWith(
                     color: isDark
                         ? DSColors.textPrimary
                         : DSColors.textPrimary,
@@ -198,7 +189,7 @@ class FaceZoneDetailCard extends StatelessWidget {
                   ),
                 ),
                 if (peakAge.isNotEmpty) ...[
-                  const SizedBox(height: 8),
+                  const SizedBox(height: DSSpacing.sm),
                   Row(
                     children: [
                       Icon(
@@ -209,7 +200,7 @@ class FaceZoneDetailCard extends StatelessWidget {
                       const SizedBox(width: 6),
                       Text(
                         '전성기: $peakAge',
-                        style: DSTypography.labelSmall.copyWith(
+                        style: context.labelSmall.copyWith(
                           color: color,
                           fontWeight: FontWeight.w600,
                         ),
@@ -239,11 +230,11 @@ class FaceZoneDetailCard extends StatelessWidget {
                         color: color,
                         size: 18,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: DSSpacing.sm),
                       Expanded(
                         child: Text(
                           advice,
-                          style: DSTypography.bodyMedium.copyWith(
+                          style: context.bodyMedium.copyWith(
                             color: isDark
                                 ? DSColors.textPrimary
                                 : DSColors.textPrimary,
@@ -258,11 +249,11 @@ class FaceZoneDetailCard extends StatelessWidget {
             ],
           ),
         ),
-      ),
     ).animate().fadeIn(duration: 500.ms, delay: (100 * animationIndex).ms);
   }
 
   Widget _buildDetailSection({
+    required BuildContext context,
     required String title,
     required String content,
     required Color color,
@@ -273,15 +264,15 @@ class FaceZoneDetailCard extends StatelessWidget {
       children: [
         Text(
           title,
-          style: DSTypography.labelSmall.copyWith(
+          style: context.labelSmall.copyWith(
             color: color,
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: DSSpacing.xs),
         Text(
           content,
-          style: DSTypography.bodyMedium.copyWith(
+          style: context.bodyMedium.copyWith(
             color: isDark
                 ? DSColors.textPrimary
                 : DSColors.textPrimary,

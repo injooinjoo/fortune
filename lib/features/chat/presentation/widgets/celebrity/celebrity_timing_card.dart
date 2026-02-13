@@ -68,7 +68,7 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Container(
       width: double.infinity,
@@ -82,13 +82,6 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
         border: Border.all(
           color: colors.textPrimary.withValues(alpha: 0.1),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: colors.textPrimary.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -157,8 +150,8 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFFF59E0B).withValues(alpha: 0.15), // 골드/오렌지 계열
-            const Color(0xFFEAB308).withValues(alpha: 0.1),
+            DSColors.warning.withValues(alpha: 0.15), // 골드/오렌지 계열
+            DSColors.warning.withValues(alpha: 0.1),
           ],
         ),
       ),
@@ -172,9 +165,9 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
                 height: 56,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: const Color(0xFFF59E0B).withValues(alpha: 0.2),
+                  color: DSColors.warning.withValues(alpha: 0.2),
                   border: Border.all(
-                    color: const Color(0xFFF59E0B).withValues(alpha: 0.4),
+                    color: DSColors.warning.withValues(alpha: 0.4),
                     width: 2,
                   ),
                 ),
@@ -196,14 +189,8 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
                 child: Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: colors.surface,
                     shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 4,
-                      ),
-                    ],
                   ),
                   child: const Text('⏰', style: TextStyle(fontSize: 14)),
                 ),
@@ -243,7 +230,7 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
             ),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFFF59E0B), Color(0xFFEAB308)],
+                colors: [DSColors.warning, DSColors.warning],
               ),
               borderRadius: BorderRadius.circular(DSRadius.full),
             ),
@@ -276,10 +263,10 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
       child: Container(
         padding: const EdgeInsets.all(DSSpacing.md),
         decoration: BoxDecoration(
-          color: const Color(0xFFF59E0B).withValues(alpha: 0.05),
+          color: DSColors.warning.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
-            color: const Color(0xFFF59E0B).withValues(alpha: 0.1),
+            color: DSColors.warning.withValues(alpha: 0.1),
           ),
         ),
         child: Text(
@@ -309,10 +296,10 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
           Row(
             children: [
               if (data['best_year'] != null)
-                _buildTimeBadge(context, '📅', data['best_year'], const Color(0xFF3B82F6)),
+                _buildTimeBadge(context, '📅', data['best_year'], DSColors.info),
               const SizedBox(width: DSSpacing.sm),
               if (data['best_month'] != null)
-                _buildTimeBadge(context, '🗓️', data['best_month'], const Color(0xFF22C55E)),
+                _buildTimeBadge(context, '🗓️', data['best_month'], DSColors.warning),
             ],
           ),
           if (data['best_day_type'] != null) ...[
@@ -323,13 +310,13 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
                 vertical: DSSpacing.xs,
               ),
               decoration: BoxDecoration(
-                color: const Color(0xFF8B5CF6).withValues(alpha: 0.1),
+                color: DSColors.success.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Text(
                 '💫 ${data['best_day_type']}',
                 style: typography.labelSmall.copyWith(
-                  color: const Color(0xFF8B5CF6),
+                  color: DSColors.success,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -399,8 +386,8 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    const Color(0xFFEC4899).withValues(alpha: 0.1),
-                    const Color(0xFFF472B6).withValues(alpha: 0.05),
+                    DSColors.error.withValues(alpha: 0.1),
+                    DSColors.error.withValues(alpha: 0.05),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(DSRadius.md),
@@ -412,7 +399,7 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
                   Text(
                     data['optimal_period'],
                     style: typography.labelLarge.copyWith(
-                      color: const Color(0xFFEC4899),
+                      color: DSColors.error,
                       fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.center,
@@ -450,7 +437,7 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
             Container(
               padding: const EdgeInsets.all(DSSpacing.sm),
               decoration: BoxDecoration(
-                color: const Color(0xFFFBBF24).withValues(alpha: 0.1),
+                color: DSColors.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Row(
@@ -556,10 +543,10 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
           Container(
             padding: const EdgeInsets.all(DSSpacing.sm),
             decoration: BoxDecoration(
-              color: const Color(0xFFEF4444).withValues(alpha: 0.1),
+              color: DSColors.error.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(DSRadius.sm),
               border: Border.all(
-                color: const Color(0xFFEF4444).withValues(alpha: 0.2),
+                color: DSColors.error.withValues(alpha: 0.2),
               ),
             ),
             child: Column(
@@ -585,7 +572,7 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
                               Text(
                                 time.toString(),
                                 style: typography.labelSmall.copyWith(
-                                  color: const Color(0xFFEF4444),
+                                  color: DSColors.error,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -611,7 +598,7 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
             Container(
               padding: const EdgeInsets.all(DSSpacing.sm),
               decoration: BoxDecoration(
-                color: const Color(0xFF22C55E).withValues(alpha: 0.1),
+                color: DSColors.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Row(
@@ -663,8 +650,8 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      const Color(0xFFFFD700).withValues(alpha: 0.1),
-                      const Color(0xFFFFA500).withValues(alpha: 0.05),
+                      DSColors.warning.withValues(alpha: 0.1),
+                      DSColors.success.withValues(alpha: 0.05),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(DSRadius.sm),
@@ -675,13 +662,13 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
                     Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFFD700).withValues(alpha: 0.3),
+                        color: DSColors.warning.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         '${index + 1}',
                         style: typography.labelSmall.copyWith(
-                          color: const Color(0xFFB8860B),
+                          color: DSColors.warning,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -694,7 +681,7 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
                           Text(
                             date.toString(),
                             style: typography.labelMedium.copyWith(
-                              color: const Color(0xFFB8860B),
+                              color: DSColors.warning,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -753,7 +740,7 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
                   '🌸',
                   '봄',
                   data['spring'],
-                  const Color(0xFFF472B6),
+                  DSColors.error,
                 ),
               ),
               const SizedBox(width: DSSpacing.xs),
@@ -763,7 +750,7 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
                   '🌊',
                   '여름',
                   data['summer'],
-                  const Color(0xFF3B82F6),
+                  DSColors.info,
                 ),
               ),
             ],
@@ -777,7 +764,7 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
                   '🍂',
                   '가을',
                   data['autumn'],
-                  const Color(0xFFF59E0B),
+                  DSColors.warning,
                 ),
               ),
               const SizedBox(width: DSSpacing.xs),
@@ -787,7 +774,7 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
                   '❄️',
                   '겨울',
                   data['winter'],
-                  const Color(0xFF8B5CF6),
+                  DSColors.success,
                 ),
               ),
             ],
@@ -885,7 +872,7 @@ class _CelebrityTimingCardState extends ConsumerState<CelebrityTimingCard> {
 
   Widget _buildDefaultAvatar() {
     return Container(
-      color: const Color(0xFFF59E0B).withValues(alpha: 0.3),
+      color: DSColors.warning.withValues(alpha: 0.3),
       child: const Center(
         child: Icon(
           Icons.person,

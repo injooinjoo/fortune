@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../utils/fortune_swipe_helpers.dart';
 
 /// ❤️ 카테고리 상세 카드 (연애/금전/직장/학업/건강)
@@ -9,7 +9,6 @@ class CategoryDetailCard extends StatelessWidget {
   final String categoryKey;
   final int score;
   final String advice;
-  final bool isDark;
 
   const CategoryDetailCard({
     super.key,
@@ -17,7 +16,6 @@ class CategoryDetailCard extends StatelessWidget {
     required this.categoryKey,
     required this.score,
     required this.advice,
-    required this.isDark,
   });
 
   /// 카테고리별 민화 이미지 목록 (각 4개씩)
@@ -82,7 +80,7 @@ class CategoryDetailCard extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF5F0E6),
+            color: context.isDark ? DSColors.surface : DSColors.backgroundSecondaryDark,
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
@@ -93,9 +91,9 @@ class CategoryDetailCard extends StatelessWidget {
                 return Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: isDark
-                        ? [const Color(0xFF2C2C2E), const Color(0xFF1C1C1E)]
-                        : [const Color(0xFFF5F0E6), const Color(0xFFEDE8DC)],
+                      colors: context.isDark
+                        ? [DSColors.surfaceSecondary, DSColors.surface] // 고유 색상(dark gradient start)
+                        : [DSColors.backgroundSecondaryDark, const Color(0xFFEDE8DC)], // 고유 색상(light gradient end)
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
@@ -112,7 +110,7 @@ class CategoryDetailCard extends StatelessWidget {
                         Text(
                           minhwaInfo['label']!,
                           style: context.labelSmall.copyWith(
-                            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+                            color: context.colors.textPrimary.withValues(alpha: 0.5),
                           ),
                         ),
                       ],
@@ -137,8 +135,8 @@ class CategoryDetailCard extends StatelessWidget {
             const SizedBox(width: 10),
             Text(
               title,
-              style: context.calligraphyTitle.copyWith(
-                color: isDark ? Colors.white : Colors.black87,
+              style: context.heading3.copyWith(
+                color: context.colors.textPrimary,
               ),
             ),
           ],
@@ -151,15 +149,12 @@ class CategoryDetailCard extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+            color: context.colors.surface,
             borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            border: Border.all(
+              color: context.colors.border,
+              width: 1,
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,7 +178,7 @@ class CategoryDetailCard extends StatelessWidget {
                   Text(
                     '점',
                     style: context.bodyMedium.copyWith(
-                      color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+                      color: context.colors.textPrimary.withValues(alpha: 0.5),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -198,7 +193,7 @@ class CategoryDetailCard extends StatelessWidget {
                   Container(
                     height: 4,
                     decoration: BoxDecoration(
-                      color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
+                      color: context.colors.textPrimary.withValues(alpha: 0.06),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -222,7 +217,7 @@ class CategoryDetailCard extends StatelessWidget {
               Text(
                 advice,
                 style: context.bodySmall.copyWith(
-                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.7),
+                  color: context.colors.textPrimary.withValues(alpha: 0.7),
                   height: 1.7,
                 ),
               ),

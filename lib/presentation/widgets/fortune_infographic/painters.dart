@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import '../../../core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 /// Custom painter for drawing timeline chart with real hourly scores
 class TimelineChartPainter extends CustomPainter {
@@ -40,8 +40,8 @@ class TimelineChartPainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue).withValues(alpha: 0.1),
-          (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue).withValues(alpha: 0.05),
+          (isDark ? DSColors.accent : DSColors.accentDark).withValues(alpha: 0.1),
+          (isDark ? DSColors.accent : DSColors.accentDark).withValues(alpha: 0.05),
         ],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
@@ -61,7 +61,7 @@ class TimelineChartPainter extends CustomPainter {
 
     // Draw the main line
     final linePaint = Paint()
-      ..color = isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue
+      ..color = isDark ? DSColors.accent : DSColors.accentDark
       ..strokeWidth = 2.0
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
@@ -91,11 +91,11 @@ class TimelineChartPainter extends CustomPainter {
 
     // Draw points on the line
     final pointPaint = Paint()
-      ..color = isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue
+      ..color = isDark ? DSColors.accent : DSColors.accentDark
       ..style = PaintingStyle.fill;
 
     final pointBorderPaint = Paint()
-      ..color = isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white
+      ..color = isDark ? DSColors.surfaceSecondary : DSColors.surfaceDark
       ..style = PaintingStyle.fill;
 
     for (int i = 0; i < points.length; i++) {
@@ -110,7 +110,7 @@ class TimelineChartPainter extends CustomPainter {
 
         // Draw current hour indicator line
         final indicatorPaint = Paint()
-          ..color = (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue).withValues(alpha: 0.3)
+          ..color = (isDark ? DSColors.accent : DSColors.accentDark).withValues(alpha: 0.3)
           ..strokeWidth = 1.0
           ..style = PaintingStyle.stroke;
 
@@ -127,7 +127,7 @@ class TimelineChartPainter extends CustomPainter {
 
     // Draw horizontal reference lines
     final gridPaint = Paint()
-      ..color = (isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray300).withValues(alpha: 0.3)
+      ..color = (isDark ? DSColors.textTertiary : DSColors.borderDark).withValues(alpha: 0.3)
       ..strokeWidth = 0.5
       ..style = PaintingStyle.stroke;
 
@@ -176,7 +176,7 @@ class RadarChartPainter extends CustomPainter {
 
     // Draw background grid
     final gridPaint = Paint()
-      ..color = (isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray300).withValues(alpha: 0.3)
+      ..color = (isDark ? DSColors.textTertiary : DSColors.borderDark).withValues(alpha: 0.3)
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
 
@@ -200,7 +200,7 @@ class RadarChartPainter extends CustomPainter {
         text: TextSpan(
           text: _getCategoryLabel(categories[i]),
           style: TextStyle(
-            color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+            color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -258,7 +258,7 @@ class RadarChartPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     final pointBorderPaint = Paint()
-      ..color = isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white
+      ..color = isDark ? DSColors.surfaceSecondary : DSColors.surfaceDark
       ..style = PaintingStyle.fill;
 
     for (final point in dataPoints) {

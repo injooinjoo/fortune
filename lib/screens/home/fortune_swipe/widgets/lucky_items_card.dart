@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// ✨ 행운 아이템 카드 - ChatGPT Pulse 스타일
 class LuckyItemsCard extends StatelessWidget {
   final Map<String, String> luckyItems;
-  final bool isDark;
 
   const LuckyItemsCard({
     super.key,
     required this.luckyItems,
-    required this.isDark,
   });
 
   /// U07: 시간 포맷 변경 ("저녁6시에서8시" → "저녁6~8시")
@@ -156,14 +154,14 @@ class LuckyItemsCard extends StatelessWidget {
         Text(
           '오늘의 행운 아이템',
           style: context.heading3.copyWith(
-            color: isDark ? Colors.white : Colors.black87,
+            color: context.colors.textPrimary,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           '오늘 행운을 불러올 아이템들',
           style: context.bodySmall.copyWith(
-            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+            color: context.colors.textPrimary.withValues(alpha: 0.5),
           ),
         ),
 
@@ -185,19 +183,12 @@ class LuckyItemsCard extends StatelessWidget {
                   width: itemWidth,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+                    color: context.colors.surface,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
+                      color: context.colors.textPrimary.withValues(alpha: 0.08),
                       width: 1,
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
-                        blurRadius: 16,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,7 +203,7 @@ class LuckyItemsCard extends StatelessWidget {
                       Text(
                         entry.key,
                         style: context.labelTiny.copyWith(
-                          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+                          color: context.colors.textPrimary.withValues(alpha: 0.5),
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -220,7 +211,7 @@ class LuckyItemsCard extends StatelessWidget {
                       Text(
                         _formatValue(entry.key, entry.value),
                         style: context.labelMedium.copyWith(
-                          color: isDark ? Colors.white : Colors.black87,
+                          color: context.colors.textPrimary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

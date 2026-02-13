@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../data/models/celebrity_saju.dart';
-import 'package:fortune/core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/core/theme/font_config.dart';
 
 class CelebritySajuInfoWidget extends StatelessWidget {
@@ -186,7 +186,7 @@ class CelebritySajuInfoWidget extends StatelessWidget {
                   child: Text(
                     count > 0 ? '$element$count' : '',
                     style: const TextStyle(
-                      color: TossDesignSystem.white,
+                      color: Colors.white,
                       fontFamily: FontConfig.primary,
                       fontWeight: FontWeight.bold,
                     ),
@@ -316,17 +316,17 @@ class CelebritySajuInfoWidget extends StatelessWidget {
   Color _getElementColor(String element) {
     switch (element) {
       case '목':
-        return TossDesignSystem.successGreen;
+        return DSColors.success;
       case '화':
-        return TossDesignSystem.warningOrange;
+        return DSColors.warning;
       case '토':
-        return TossDesignSystem.warningOrange.withValues(alpha: 0.8);
+        return DSColors.warning.withValues(alpha: 0.8);
       case '금':
-        return TossDesignSystem.warningOrange;
+        return DSColors.warning;
       case '수':
-        return TossDesignSystem.tossBlue;
+        return DSColors.accentDark;
       default:
-        return TossDesignSystem.gray600;
+        return DSColors.textSecondaryDark;
     }
   }
 }

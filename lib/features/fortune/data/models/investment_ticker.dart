@@ -22,17 +22,17 @@ enum InvestmentCategory {
   String get imagePath {
     switch (this) {
       case InvestmentCategory.crypto:
-        return 'assets/images/fortune/categories/investment_crypto.png';
+        return 'assets/images/fortune/categories/investment_crypto.webp';
       case InvestmentCategory.krStock:
-        return 'assets/images/fortune/categories/investment_kr_stock.png';
+        return 'assets/images/fortune/categories/investment_kr_stock.webp';
       case InvestmentCategory.usStock:
-        return 'assets/images/fortune/categories/investment_us_stock.png';
+        return 'assets/images/fortune/categories/investment_us_stock.webp';
       case InvestmentCategory.etf:
-        return 'assets/images/fortune/categories/investment_etf.png';
+        return 'assets/images/fortune/categories/investment_etf.webp';
       case InvestmentCategory.commodity:
-        return 'assets/images/fortune/categories/investment_commodity.png';
+        return 'assets/images/fortune/categories/investment_commodity.webp';
       case InvestmentCategory.realEstate:
-        return 'assets/images/fortune/categories/investment_real_estate.png';
+        return 'assets/images/fortune/categories/investment_real_estate.webp';
     }
   }
 

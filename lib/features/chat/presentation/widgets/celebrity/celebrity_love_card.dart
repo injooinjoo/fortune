@@ -67,7 +67,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Container(
       width: double.infinity,
@@ -81,13 +81,6 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
         border: Border.all(
           color: colors.textPrimary.withValues(alpha: 0.1),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: colors.textPrimary.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -156,8 +149,8 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFFE91E63).withValues(alpha: 0.15), // 핑크 계열
-            const Color(0xFFEC4899).withValues(alpha: 0.1),
+            DSColors.error.withValues(alpha: 0.15), // 핑크 계열
+            DSColors.error.withValues(alpha: 0.1),
           ],
         ),
       ),
@@ -171,9 +164,9 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
                 height: 56,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: const Color(0xFFE91E63).withValues(alpha: 0.2),
+                  color: DSColors.error.withValues(alpha: 0.2),
                   border: Border.all(
-                    color: const Color(0xFFE91E63).withValues(alpha: 0.4),
+                    color: DSColors.error.withValues(alpha: 0.4),
                     width: 2,
                   ),
                 ),
@@ -195,14 +188,8 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
                 child: Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: colors.surface,
                     shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 4,
-                      ),
-                    ],
                   ),
                   child: const Text('💕', style: TextStyle(fontSize: 14)),
                 ),
@@ -242,7 +229,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
             ),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFFE91E63), Color(0xFFEC4899)],
+                colors: [DSColors.error, DSColors.error],
               ),
               borderRadius: BorderRadius.circular(DSRadius.full),
             ),
@@ -275,10 +262,10 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
       child: Container(
         padding: const EdgeInsets.all(DSSpacing.md),
         decoration: BoxDecoration(
-          color: const Color(0xFFE91E63).withValues(alpha: 0.05),
+          color: DSColors.error.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
-            color: const Color(0xFFE91E63).withValues(alpha: 0.1),
+            color: DSColors.error.withValues(alpha: 0.1),
           ),
         ),
         child: Text(
@@ -313,7 +300,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
               Text(
                 '${score.toInt()}점',
                 style: typography.labelMedium.copyWith(
-                  color: const Color(0xFFE91E63),
+                  color: DSColors.error,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -332,7 +319,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
             Container(
               padding: const EdgeInsets.all(DSSpacing.sm),
               decoration: BoxDecoration(
-                color: const Color(0xFFFBBF24).withValues(alpha: 0.1),
+                color: DSColors.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Row(
@@ -379,7 +366,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
             ),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFFFF6B6B), Color(0xFFFF8E8E)],
+                colors: [DSColors.warning, DSColors.error],
               ),
               borderRadius: BorderRadius.circular(DSRadius.sm),
             ),
@@ -444,16 +431,16 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
               vertical: DSSpacing.xs,
             ),
             decoration: BoxDecoration(
-              color: const Color(0xFF8B5CF6).withValues(alpha: 0.1),
+              color: DSColors.success.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(DSRadius.sm),
               border: Border.all(
-                color: const Color(0xFF8B5CF6).withValues(alpha: 0.2),
+                color: DSColors.success.withValues(alpha: 0.2),
               ),
             ),
             child: Text(
               data['chemistry_type'] ?? '',
               style: typography.labelSmall.copyWith(
-                color: const Color(0xFF8B5CF6),
+                color: DSColors.success,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -473,8 +460,8 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    const Color(0xFF8B5CF6).withValues(alpha: 0.05),
-                    const Color(0xFFEC4899).withValues(alpha: 0.05),
+                    DSColors.success.withValues(alpha: 0.05),
+                    DSColors.error.withValues(alpha: 0.05),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
@@ -513,7 +500,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
                   context,
                   '나',
                   data['user_level'] ?? '',
-                  const Color(0xFF3B82F6),
+                  DSColors.info,
                 ),
               ),
               const SizedBox(width: DSSpacing.sm),
@@ -522,7 +509,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
                   context,
                   widget.celebrityName ?? '상대',
                   data['celebrity_level'] ?? '',
-                  const Color(0xFFEC4899),
+                  DSColors.error,
                 ),
               ),
             ],
@@ -532,7 +519,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
             Container(
               padding: const EdgeInsets.all(DSSpacing.sm),
               decoration: BoxDecoration(
-                color: const Color(0xFF22C55E).withValues(alpha: 0.1),
+                color: DSColors.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Row(
@@ -606,10 +593,10 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
           Container(
             padding: const EdgeInsets.all(DSSpacing.sm),
             decoration: BoxDecoration(
-              color: const Color(0xFF6366F1).withValues(alpha: 0.05),
+              color: DSColors.accentSecondary.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(DSRadius.sm),
               border: Border.all(
-                color: const Color(0xFF6366F1).withValues(alpha: 0.1),
+                color: DSColors.accentSecondary.withValues(alpha: 0.1),
               ),
             ),
             child: Column(
@@ -618,7 +605,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
                 Text(
                   '🗓️ 3년 후',
                   style: typography.labelSmall.copyWith(
-                    color: const Color(0xFF6366F1),
+                    color: DSColors.accentSecondary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -696,8 +683,8 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  const Color(0xFFFFD700).withValues(alpha: 0.2),
-                  const Color(0xFFFFA500).withValues(alpha: 0.1),
+                  DSColors.warning.withValues(alpha: 0.2),
+                  DSColors.success.withValues(alpha: 0.1),
                 ],
               ),
               borderRadius: BorderRadius.circular(DSRadius.sm),
@@ -710,7 +697,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
                 Text(
                   '결혼 궁합 ${score.toInt()}점',
                   style: typography.headingSmall.copyWith(
-                    color: const Color(0xFFB8860B),
+                    color: DSColors.warning,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -761,7 +748,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
                   child: Text(
                     data['advice'],
                     style: typography.labelSmall.copyWith(
-                      color: const Color(0xFFE91E63),
+                      color: DSColors.error,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -815,7 +802,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
     return Container(
       height: 8,
       decoration: BoxDecoration(
-        color: const Color(0xFFE91E63).withValues(alpha: 0.1),
+        color: DSColors.error.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: FractionallySizedBox(
@@ -824,7 +811,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
         child: Container(
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [Color(0xFFE91E63), Color(0xFFEC4899)],
+              colors: [DSColors.error, DSColors.error],
             ),
             borderRadius: BorderRadius.circular(4),
           ),
@@ -835,7 +822,7 @@ class _CelebrityLoveCardState extends ConsumerState<CelebrityLoveCard> {
 
   Widget _buildDefaultAvatar() {
     return Container(
-      color: const Color(0xFFE91E63).withValues(alpha: 0.3),
+      color: DSColors.error.withValues(alpha: 0.3),
       child: const Center(
         child: Icon(
           Icons.person,

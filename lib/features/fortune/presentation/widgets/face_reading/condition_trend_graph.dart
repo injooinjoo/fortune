@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../../../../../core/design_system/design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
 import '../../../domain/models/face_condition.dart';
 import '../../providers/face_condition_tracker_provider.dart';
 
@@ -14,9 +13,6 @@ import '../../providers/face_condition_tracker_provider.dart';
 /// 핵심 가치: 위로·공감·공유 (자기계발 ❌)
 /// 타겟: 2-30대 여성
 class ConditionTrendGraph extends ConsumerStatefulWidget {
-  /// 다크 모드 여부
-  final bool isDark;
-
   /// 표시할 메트릭 타입들 (선택적)
   /// 기본: ['overall', 'complexion', 'puffiness', 'fatigue']
   final List<String>? visibleMetrics;
@@ -32,7 +28,6 @@ class ConditionTrendGraph extends ConsumerStatefulWidget {
 
   const ConditionTrendGraph({
     super.key,
-    this.isDark = false,
     this.visibleMetrics,
     this.height = 220,
     this.onTap,
@@ -100,10 +95,10 @@ class _ConditionTrendGraphState extends ConsumerState<ConditionTrendGraph>
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: widget.isDark ? DSColors.surfaceDark : DSColors.surface,
+          color: context.isDark ? DSColors.surfaceDark : DSColors.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: widget.isDark ? DSColors.borderDark : DSColors.border,
+            color: context.isDark ? DSColors.borderDark : DSColors.border,
           ),
         ),
         child: Column(
@@ -111,7 +106,7 @@ class _ConditionTrendGraphState extends ConsumerState<ConditionTrendGraph>
           children: [
             // 헤더
             _buildHeader(),
-            const SizedBox(height: 16),
+            const SizedBox(height: DSSpacing.md),
 
             // 범례
             _buildLegend(),
@@ -132,8 +127,8 @@ class _ConditionTrendGraphState extends ConsumerState<ConditionTrendGraph>
 
             // 로딩 상태
             if (trackerState.isLoading) ...[
-              const SizedBox(height: 8),
-              Center(
+              const SizedBox(height: DSSpacing.sm),
+              const Center(
                 child: SizedBox(
                   width: 16,
                   height: 16,
@@ -162,20 +157,20 @@ class _ConditionTrendGraphState extends ConsumerState<ConditionTrendGraph>
             color: DSColors.accent.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(
+          child: const Icon(
             Icons.show_chart,
             color: DSColors.accent,
             size: 20,
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: DSSpacing.sm + 4),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               '이번 주 컨디션 변화',
               style: context.labelMedium.copyWith(
-                color: widget.isDark
+                color: context.isDark
                     ? DSColors.textPrimaryDark
                     : DSColors.textPrimary,
                 fontWeight: FontWeight.w600,
@@ -184,7 +179,7 @@ class _ConditionTrendGraphState extends ConsumerState<ConditionTrendGraph>
             Text(
               '매일의 변화를 한눈에 볼 수 있어요',
               style: context.labelSmall.copyWith(
-                color: widget.isDark
+                color: context.isDark
                     ? DSColors.textSecondaryDark
                     : DSColors.textSecondary,
               ),
@@ -236,7 +231,7 @@ class _ConditionTrendGraphState extends ConsumerState<ConditionTrendGraph>
                 Text(
                   label,
                   style: context.labelSmall.copyWith(
-                    color: widget.isDark
+                    color: context.isDark
                         ? DSColors.textSecondaryDark
                         : DSColors.textSecondary,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
@@ -259,7 +254,7 @@ class _ConditionTrendGraphState extends ConsumerState<ConditionTrendGraph>
         horizontalInterval: 20,
         getDrawingHorizontalLine: (value) {
           return FlLine(
-            color: widget.isDark
+            color: context.isDark
                 ? DSColors.borderDark.withValues(alpha: 0.5)
                 : DSColors.border,
             strokeWidth: 1,
@@ -276,7 +271,7 @@ class _ConditionTrendGraphState extends ConsumerState<ConditionTrendGraph>
               return Text(
                 '${value.toInt()}',
                 style: context.labelSmall.copyWith(
-                  color: widget.isDark
+                  color: context.isDark
                       ? DSColors.textSecondaryDark
                       : DSColors.textSecondary,
                   fontSize: 10,
@@ -303,7 +298,7 @@ class _ConditionTrendGraphState extends ConsumerState<ConditionTrendGraph>
                     style: context.labelSmall.copyWith(
                       color: isToday
                           ? DSColors.accent
-                          : widget.isDark
+                          : context.isDark
                               ? DSColors.textSecondaryDark
                               : DSColors.textSecondary,
                       fontWeight: isToday ? FontWeight.w700 : FontWeight.w500,
@@ -393,7 +388,7 @@ class _ConditionTrendGraphState extends ConsumerState<ConditionTrendGraph>
               radius: 4,
               color: effectiveColor,
               strokeWidth: 2,
-              strokeColor: widget.isDark ? DSColors.surfaceDark : DSColors.surface,
+              strokeColor: context.isDark ? DSColors.surfaceDark : DSColors.surface,
             );
           },
         ),
@@ -482,10 +477,10 @@ class _ConditionTrendGraphState extends ConsumerState<ConditionTrendGraph>
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: widget.isDark ? DSColors.surfaceDark : DSColors.surface,
+        color: context.isDark ? DSColors.surfaceDark : DSColors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: widget.isDark ? DSColors.borderDark : DSColors.border,
+          color: context.isDark ? DSColors.borderDark : DSColors.border,
         ),
       ),
       child: Column(
@@ -503,21 +498,21 @@ class _ConditionTrendGraphState extends ConsumerState<ConditionTrendGraph>
               size: 32,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Text(
             '아직 기록이 없어요',
             style: context.bodyMedium.copyWith(
-              color: widget.isDark
+              color: context.isDark
                   ? DSColors.textPrimaryDark
                   : DSColors.textPrimary,
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: DSSpacing.xs),
           Text(
             '매일 분석을 받으면 변화를 볼 수 있어요',
             style: context.labelSmall.copyWith(
-              color: widget.isDark
+              color: context.isDark
                   ? DSColors.textSecondaryDark
                   : DSColors.textSecondary,
             ),
@@ -531,13 +526,11 @@ class _ConditionTrendGraphState extends ConsumerState<ConditionTrendGraph>
 
 /// 간단한 미니 트렌드 그래프 (작은 공간용)
 class MiniConditionGraph extends ConsumerWidget {
-  final bool isDark;
   final double width;
   final double height;
 
   const MiniConditionGraph({
     super.key,
-    this.isDark = false,
     this.width = 80,
     this.height = 40,
   });

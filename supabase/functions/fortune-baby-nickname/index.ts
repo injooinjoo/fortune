@@ -30,7 +30,6 @@ interface BabyNicknameResponse {
     todayMission: string;      // 오늘의 태담 미션
     luckyKeywords: string[];   // 행운 키워드 3개
     dreamInterpretation?: string; // 태몽 해석 (태몽이 있을 때만)
-    isBlurred: boolean;
   };
 }
 
@@ -160,8 +159,7 @@ serve(async (req) => {
         babyMessage: fortuneData.babyMessage || `엄마! 아빠! 저를 '${params.nickname}'라고 불러주셔서 너무 행복해요!`,
         todayMission: fortuneData.todayMission || '오늘은 배를 쓰다듬으며 "사랑해"라고 속삭여주세요',
         luckyKeywords: fortuneData.luckyKeywords || ['사랑', '행복', '건강'],
-        dreamInterpretation: params.babyDream ? fortuneData.dreamInterpretation : undefined,
-        isBlurred: false
+        dreamInterpretation: params.babyDream ? fortuneData.dreamInterpretation : undefined
       }
     }
 

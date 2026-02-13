@@ -1,30 +1,25 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/cache/cache_service.dart';
-import '../../core/components/app_dialog.dart';
-import '../../core/services/performance_cache_service.dart';
-import '../../core/utils/secure_storage.dart';
 import '../../services/storage_service.dart';
-import '../../presentation/providers/theme_provider.dart';
 import '../../core/design_system/design_system.dart';
-import '../../core/theme/typography_unified.dart';
 import '../../data/services/fortune_api_service.dart';
 import 'package:share_plus/share_plus.dart';
-import '../../presentation/providers/auth_provider.dart';
-import '../../data/models/user_profile.dart';
-import '../../presentation/providers/navigation_visibility_provider.dart';
-import '../../core/services/debug_premium_service.dart';
+import '../../presentation/providers/providers.dart';
+import '../../presentation/widgets/social_login_bottom_sheet.dart';
+import './providers/character_stats_provider.dart';
 import '../../core/services/fortune_haptic_service.dart';
-import '../../presentation/providers/token_provider.dart';
 import '../../core/providers/user_settings_provider.dart';
 import '../../shared/components/settings_list_tile.dart';
 import '../../shared/components/section_header.dart';
 import '../../shared/components/premium_membership_card.dart';
+import '../../features/settings/presentation/widgets/storage_management_widget.dart';
+import '../../core/providers/locale_provider.dart';
+import '../../core/extensions/l10n_extension.dart';
 import 'widgets/profile_list_sheet.dart';
+import 'widgets/language_selection_sheet.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   /// 외부에서 전달받은 스크롤 컨트롤러 (바텀시트 드래그용)
@@ -77,25 +72,32 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     return context.colors.surface;
   }
 
-  // 테스트 계정 확인
-  String? get _userEmail => supabase.auth.currentUser?.email;
-  bool get _isTestAccount => DebugPremiumService.isTestAccount(_userEmail);
-
   // 로그아웃 처리
   Future<void> _handleLogout() async {
     final shouldLogout = await DSModal.confirm(
       context: context,
-      title: '로그아웃',
-      message: '정말 로그아웃 하시겠습니까?',
-      confirmText: '로그아웃',
-      cancelText: '취소',
+      title: context.l10n.logout,
+      message: context.l10n.logoutConfirm,
+      confirmText: context.l10n.logout,
+      cancelText: context.l10n.cancel,
       isDestructive: true,
     );
 
     if (shouldLogout == true) {
+      // 1. Supabase 로그아웃
       await supabase.auth.signOut();
+
+      // 2. 로컬 데이터 정리
+      await _storageService.clearUserProfile();
+      await _storageService.clearGuestMode();
+      await _storageService.clearGuestId();
+
+      // 3. 캐시 정리
+      final cacheService = CacheService();
+      cacheService.clearAllCache();
+
       if (mounted) {
-        // Chat-First: 로그아웃 후 채팅으로 이동 (게스트 모드)
+        // 4. 온보딩 채팅으로 이동 (Chat-First)
         context.go('/chat');
       }
     }
@@ -114,7 +116,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (birthDate != null && birthDate.isNotEmpty) {
       try {
         final date = DateTime.parse(birthDate);
-        parts.add('${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}');
+        parts.add(
+            '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}');
       } catch (e) {
         // 파싱 실패 시 무시
       }
@@ -123,13 +126,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (gender != null) {
       switch (gender) {
         case 'male':
-          parts.add('남성');
+          parts.add(context.l10n.genderMale);
           break;
         case 'female':
-          parts.add('여성');
+          parts.add(context.l10n.genderFemale);
           break;
         case 'other':
-          parts.add('선택 안함');
+          parts.add(context.l10n.genderOther);
           break;
       }
     }
@@ -142,114 +145,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   // _buildListItem replaced by SettingsListTile component
 
-  /// 테스터 전용: 초기화 확인 다이얼로그 표시
-  Future<void> _showResetConfirmationDialog(BuildContext context) async {
-    ref.read(fortuneHapticServiceProvider).warning();
-
-    final confirmed = await AppDialog.showConfirmation(
-      context: context,
-      title: '정말 초기화하시겠습니까?',
-      message: '모든 데이터가 삭제되며,\n온보딩부터 다시 시작합니다.\n\n이 작업은 되돌릴 수 없습니다.',
-      confirmText: '초기화',
-      cancelText: '취소',
-      isDanger: true,
-    );
-
-    if (confirmed == true && context.mounted) {
-      await _performFullReset(context);
-    }
-  }
-
-  /// 테스터 전용: 모든 데이터 초기화 후 온보딩으로 이동
-  Future<void> _performFullReset(BuildContext context) async {
-    // ⚠️ 핵심 전략:
-    // 1. 로딩 다이얼로그 사용하지 않음 (Navigator.pop이 GoRouter와 충돌)
-    // 2. 먼저 온보딩으로 이동
-    // 3. 이동 후 백그라운드에서 정리 작업 수행
-
-    debugPrint('🚀 초기화 시작 - 채팅으로 이동');
-
-    // 1. 먼저 채팅으로 이동! (Chat-First: 온보딩은 채팅 내에서 처리)
-    if (context.mounted) {
-      context.go('/chat');
-    }
-
-    // 2. 약간의 지연 후 정리 작업 수행 (네비게이션이 완전히 완료된 후)
-    Future.delayed(const Duration(milliseconds: 500), () async {
-      await _performCleanup();
-    });
-  }
-
-  /// 백그라운드에서 정리 작업 수행 (네비게이션 완료 후)
-  Future<void> _performCleanup() async {
-    try {
-      debugPrint('🧹 정리 작업 시작...');
-
-      // 1. Supabase 로그아웃
-      try {
-        await supabase.auth.signOut();
-        debugPrint('  ✓ Supabase 로그아웃');
-      } catch (e) {
-        debugPrint('  ✗ SignOut error: $e');
-      }
-
-      // 2. Secure Storage 삭제
-      try {
-        await SecureStorage.deleteAll();
-        debugPrint('  ✓ SecureStorage 삭제');
-      } catch (e) {
-        debugPrint('  ✗ SecureStorage error: $e');
-      }
-
-      // 3. SharedPreferences 삭제
-      try {
-        await _storageService.clearAll();
-        debugPrint('  ✓ SharedPreferences 삭제');
-      } catch (e) {
-        debugPrint('  ✗ Storage error: $e');
-      }
-
-      // 4. Hive Cache 삭제
-      try {
-        final cacheService = CacheService();
-        await cacheService.clearAllCache();
-        debugPrint('  ✓ Hive Cache 삭제');
-      } catch (e) {
-        debugPrint('  ✗ Cache error: $e');
-      }
-
-      // 5. Performance Cache 삭제
-      try {
-        final performanceCacheService = PerformanceCacheService();
-        await performanceCacheService.clearAll();
-        debugPrint('  ✓ Performance Cache 삭제');
-      } catch (e) {
-        debugPrint('  ✗ Performance cache error: $e');
-      }
-
-      // 6. Widget data 삭제
-      try {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.remove('unified_fortune_widget_data');
-        debugPrint('  ✓ Widget data 삭제');
-      } catch (e) {
-        debugPrint('  ✗ Widget data error: $e');
-      }
-
-      // 7. Debug Premium Override 해제
-      try {
-        await DebugPremiumService.setOverride(null);
-        debugPrint('  ✓ Debug Premium 해제');
-      } catch (e) {
-        debugPrint('  ✗ Debug premium error: $e');
-      }
-
-      debugPrint('✅ 모든 정리 작업 완료');
-    } catch (e) {
-      debugPrint('❌ Cleanup error: $e');
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -261,9 +156,48 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
     _scrollController.addListener(_onScroll);
 
-    _loadUserData();
+    // 비로그인 상태면 로그인 바텀시트 표시
+    final userId = supabase.auth.currentUser?.id;
+    if (userId == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showLoginBottomSheet();
+      });
+    } else {
+      _loadUserData();
+    }
   }
-  
+
+  /// 비로그인 시 로그인 바텀시트 표시
+  Future<void> _showLoginBottomSheet() async {
+    if (!mounted) return;
+
+    await SocialLoginBottomSheet.show(
+      context,
+      ref: ref,
+      onGoogleLogin: () async {
+        Navigator.pop(context);
+        await ref.read(socialAuthProvider.notifier).signInWithGoogle();
+        if (mounted && supabase.auth.currentUser != null) {
+          _loadUserData();
+        }
+      },
+      onAppleLogin: () async {
+        Navigator.pop(context);
+        await ref.read(socialAuthProvider.notifier).signInWithApple();
+        if (mounted && supabase.auth.currentUser != null) {
+          _loadUserData();
+        }
+      },
+      onKakaoLogin: () {},
+      onNaverLogin: () {},
+    );
+
+    // 바텀시트 닫히고 아직 비로그인이면 이전 페이지로
+    if (mounted && supabase.auth.currentUser == null) {
+      context.pop();
+    }
+  }
+
   @override
   void dispose() {
     _scrollController.removeListener(_onScroll);
@@ -271,7 +205,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     _internalScrollController?.dispose();
     super.dispose();
   }
-  
+
   void _onScroll() {
     // 바텀시트 모드에서는 네비게이션 바 관련 로직 스킵
     if (widget.isInBottomSheet) return;
@@ -287,12 +221,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       final isScrollingDown = scrollDelta > 0;
 
       // 방향이 바뀌었거나, 같은 방향으로 계속 스크롤 중일 때
-      if (isScrollingDown != _isScrollingDown || scrollDelta.abs() > scrollThreshold) {
+      if (isScrollingDown != _isScrollingDown ||
+          scrollDelta.abs() > scrollThreshold) {
         _isScrollingDown = isScrollingDown;
         _lastScrollOffset = currentScrollOffset;
 
         // Update navigation visibility
-        final navigationNotifier = ref.read(navigationVisibilityProvider.notifier);
+        final navigationNotifier =
+            ref.read(navigationVisibilityProvider.notifier);
         if (isScrollingDown && currentScrollOffset > 50) {
           // 최소 50픽셀은 스크롤해야 숨김
           navigationNotifier.hide();
@@ -337,8 +273,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         } catch (e) {
           // Handle missing table error gracefully
           debugPrint('Loaded local profile: ${localProfile != null}');
-          if (e.toString().contains('relation "public.user_statistics" does not exist')) {
-            debugPrint('user_statistics table not found - using default values');
+          if (e
+              .toString()
+              .contains('relation "public.user_statistics" does not exist')) {
+            debugPrint(
+                'user_statistics table not found - using default values');
           }
         }
 
@@ -365,20 +304,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         if (mounted) {
           setState(() {
             userProfile = response;
-            userStats = statsResponse ?? {
-              'total_fortunes_viewed': 0,
-              'consecutive_days': 0,
-              'last_login': DateTime.now().toIso8601String(),
-              'favorite_fortune_type': null,
-              'login_count': 0,
-              'streak_days': 0,
-              'total_tokens_earned': 0,
-              'total_tokens_spent': 0,
-              'profile_completion_percentage': 0,
-              'achievements': [],
-            };
+            userStats = statsResponse ??
+                {
+                  'total_fortunes_viewed': 0,
+                  'consecutive_days': 0,
+                  'last_login': DateTime.now().toIso8601String(),
+                  'favorite_fortune_type': null,
+                  'login_count': 0,
+                  'streak_days': 0,
+                  'total_tokens_earned': 0,
+                  'total_tokens_spent': 0,
+                  'profile_completion_percentage': 0,
+                  'achievements': [],
+                };
             // 오늘 운세 점수가 있으면 추가
-            if (todayFortuneResponse != null && todayFortuneResponse['score'] != null) {
+            if (todayFortuneResponse != null &&
+                todayFortuneResponse['score'] != null) {
               userStats!['today_score'] = todayFortuneResponse['score'];
             }
             isLoading = false;
@@ -422,7 +363,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     try {
       final fortuneApiService = ref.read(fortuneApiServiceProvider);
-      final scores = await fortuneApiService.getUserFortuneHistory(userId: userId);
+      final scores =
+          await fortuneApiService.getUserFortuneHistory(userId: userId);
 
       if (mounted) {
         setState(() {
@@ -483,7 +425,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               child: Row(
                 children: [
                   Text(
-                    '내 프로필',
+                    context.l10n.myProfile,
                     style: context.heading2.copyWith(
                       color: context.colors.textPrimary,
                     ),
@@ -508,7 +450,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           // 프로필 요약 카드
           if (userProfile != null || localProfile != null)
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+              margin: const EdgeInsets.symmetric(
+                  horizontal: DSSpacing.pageHorizontal),
               decoration: BoxDecoration(
                 color: context.colors.surface,
                 borderRadius: BorderRadius.circular(DSRadius.md),
@@ -516,26 +459,23 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   color: context.colors.border,
                   width: 1,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
               ),
               child: SettingsListTile(
                 leading: CircleAvatar(
                   radius: 24,
-                  backgroundImage: (userProfile ?? localProfile)?['profile_image_url'] != null
-                      ? NetworkImage((userProfile ?? localProfile)!['profile_image_url'])
+                  backgroundImage: (userProfile ??
+                              localProfile)?['profile_image_url'] !=
+                          null
+                      ? NetworkImage(
+                          (userProfile ?? localProfile)!['profile_image_url'])
                       : null,
-                  child: (userProfile ?? localProfile)?['profile_image_url'] == null
+                  child: (userProfile ?? localProfile)?['profile_image_url'] ==
+                          null
                       ? const Icon(Icons.person, size: 24)
                       : null,
                 ),
                 // 로컬 스토리지 이름 우선 (사용자가 직접 입력한 이름), DB 이름 폴백
-                title: localProfile?['name'] ?? userProfile?['name'] ?? '사용자',
+                title: localProfile?['name'] ?? userProfile?['name'] ?? context.l10n.user,
                 subtitle: _formatProfileSubtitle(),
                 trailing: Icon(
                   Icons.chevron_right,
@@ -548,18 +488,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
           // 다른 프로필 보기 텍스트 링크
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+            padding: const EdgeInsets.symmetric(
+                horizontal: DSSpacing.pageHorizontal),
             child: Align(
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: () => _showProfileList(context),
                 style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 child: Text(
-                  '다른 프로필 보기',
+                  context.l10n.viewOtherProfiles,
                   style: context.bodySmall.copyWith(
                     color: context.colors.textSecondary,
                   ),
@@ -568,13 +510,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           ),
 
-          // 프리미엄 & 복주머니 통합 카드
+          // 프리미엄 & 토큰 통합 카드
           const PremiumMembershipCard(),
 
+          // AI 캐릭터 & 채팅 섹션
+          _buildCharacterSection(context),
+
           // 탐구 활동 섹션
-          const SectionHeader(title: '탐구 활동'),
+          SectionHeader(title: context.l10n.explorationActivity),
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+            margin: const EdgeInsets.symmetric(
+                horizontal: DSSpacing.pageHorizontal),
             decoration: BoxDecoration(
               color: context.colors.surface,
               borderRadius: BorderRadius.circular(DSRadius.md),
@@ -594,7 +540,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               children: [
                 SettingsListTile(
                   icon: Icons.today_outlined,
-                  title: '오늘의 인사이트',
+                  title: context.l10n.todayInsight,
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -607,14 +553,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           ),
                         ),
                         Text(
-                          '점',
+                          context.l10n.scorePoint,
                           style: context.bodyMedium.copyWith(
                             color: _getSecondaryTextColor(context),
                           ),
                         ),
                       ] else
                         Text(
-                          '미확인',
+                          context.l10n.notChecked,
                           style: context.bodyMedium.copyWith(
                             color: _getSecondaryTextColor(context),
                           ),
@@ -624,9 +570,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 SettingsListTile(
                   icon: Icons.local_fire_department_outlined,
-                  title: '연속 접속일',
+                  title: context.l10n.consecutiveDays,
                   trailing: Text(
-                    '${userStats?['consecutive_days'] ?? 0}일',
+                    context.l10n.dayCount(userStats?['consecutive_days'] ?? 0),
                     style: context.bodyMedium.copyWith(
                       color: _getSecondaryTextColor(context),
                     ),
@@ -634,9 +580,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 SettingsListTile(
                   icon: Icons.visibility_outlined,
-                  title: '총 탐구 횟수',
+                  title: context.l10n.totalExplorations,
                   trailing: Text(
-                    '${userStats?['total_fortunes_viewed'] ?? 0}회',
+                    context.l10n.timesCount(userStats?['total_fortunes_viewed'] ?? 0),
                     style: context.bodyMedium.copyWith(
                       color: _getSecondaryTextColor(context),
                     ),
@@ -647,7 +593,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           ),
 
-          // 복주머니 획득 안내
+          // 토큰 획득 안내
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: DSSpacing.pageHorizontal + 4,
@@ -663,7 +609,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
-                    '오늘의 운세 10개 이상 보면 복주머니 1개를 받아요!',
+                    context.l10n.tokenEarnInfo,
                     style: context.bodySmall.copyWith(
                       color: context.colors.textTertiary,
                       fontSize: 12,
@@ -674,11 +620,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           ),
 
-          // 정보 섹션
+          // 내 정보 섹션 (통합, 접을 수 있음)
           if (userProfile != null || localProfile != null) ...[
-            const SectionHeader(title: '정보'),
+            SectionHeader(title: context.l10n.myInfo),
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+              margin: const EdgeInsets.symmetric(
+                  horizontal: DSSpacing.pageHorizontal),
               decoration: BoxDecoration(
                 color: context.colors.surface,
                 borderRadius: BorderRadius.circular(DSRadius.md),
@@ -686,141 +633,150 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   color: context.colors.border,
                   width: 1,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
               ),
-              child: Column(
-                children: [
-                  SettingsListTile(
-                    icon: Icons.cake_outlined,
-                    title: '생년월일',
-                    trailing: Text(
-                      _formatBirthDate((userProfile ?? localProfile)?['birth_date']),
-                      style: context.bodyMedium.copyWith(
-                        color: _getSecondaryTextColor(context),
-                      ),
-                    ),
-                    onTap: _navigateToProfileEdit,
+              child: Theme(
+                data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                child: ExpansionTile(
+                  initiallyExpanded: false,
+                  tilePadding: const EdgeInsets.symmetric(
+                    horizontal: DSSpacing.md,
+                    vertical: DSSpacing.xs,
                   ),
-                  SettingsListTile(
-                    icon: Icons.access_time_outlined,
-                    title: '출생시간',
-                    trailing: Text(
-                      (userProfile ?? localProfile)?['birth_time'] ?? '미입력',
-                      style: context.bodyMedium.copyWith(
-                        color: _getSecondaryTextColor(context),
-                      ),
-                    ),
-                    onTap: _navigateToProfileEdit,
+                  leading: Icon(
+                    Icons.auto_awesome,
+                    color: context.colors.textSecondary,
+                    size: 22,
                   ),
-                  SettingsListTile(
-                    icon: Icons.pets_outlined,
-                    title: '띠',
-                    trailing: Text(
-                      (userProfile ?? localProfile)?['chinese_zodiac'] ?? '미입력',
-                      style: context.bodyMedium.copyWith(
-                        color: _getSecondaryTextColor(context),
-                      ),
+                  title: Text(
+                    context.l10n.birthdateAndSaju,
+                    style: context.bodyMedium.copyWith(
+                      color: _getTextColor(context),
                     ),
                   ),
-                  SettingsListTile(
-                    icon: Icons.stars_outlined,
-                    title: '별자리',
-                    trailing: Text(
-                      (userProfile ?? localProfile)?['zodiac_sign'] ?? '미입력',
-                      style: context.bodyMedium.copyWith(
-                        color: _getSecondaryTextColor(context),
-                      ),
+                  subtitle: Text(
+                    _formatBirthDateShort(),
+                    style: context.bodySmall.copyWith(
+                      color: _getSecondaryTextColor(context),
                     ),
                   ),
-                  SettingsListTile(
-                    icon: Icons.water_drop_outlined,
-                    title: '혈액형',
-                    trailing: Text(
-                      (userProfile ?? localProfile)?['blood_type'] != null
-                          ? '${(userProfile ?? localProfile)!['blood_type']}형'
-                          : '미입력',
-                      style: context.bodyMedium.copyWith(
-                        color: _getSecondaryTextColor(context),
+                  children: [
+                    // 생년월일
+                    SettingsListTile(
+                      icon: Icons.cake_outlined,
+                      title: context.l10n.birthdate,
+                      trailing: Text(
+                        _formatBirthDate(
+                            (userProfile ?? localProfile)?['birth_date'], context),
+                        style: context.bodyMedium.copyWith(
+                          color: _getSecondaryTextColor(context),
+                        ),
+                      ),
+                      onTap: _navigateToProfileEdit,
+                    ),
+                    // 출생시간
+                    SettingsListTile(
+                      icon: Icons.access_time_outlined,
+                      title: context.l10n.birthTime,
+                      trailing: Text(
+                        (userProfile ?? localProfile)?['birth_time'] ?? context.l10n.notEntered,
+                        style: context.bodyMedium.copyWith(
+                          color: _getSecondaryTextColor(context),
+                        ),
+                      ),
+                      onTap: _navigateToProfileEdit,
+                    ),
+                    // 띠
+                    SettingsListTile(
+                      icon: Icons.pets_outlined,
+                      title: context.l10n.chineseZodiac,
+                      trailing: Text(
+                        (userProfile ?? localProfile)?['chinese_zodiac'] ?? context.l10n.notEntered,
+                        style: context.bodyMedium.copyWith(
+                          color: _getSecondaryTextColor(context),
+                        ),
                       ),
                     ),
-                    onTap: _navigateToProfileEdit,
-                  ),
-                  SettingsListTile(
-                    icon: Icons.psychology_outlined,
-                    title: 'MBTI',
-                    trailing: Text(
-                      (userProfile ?? localProfile)?['mbti']?.toUpperCase() ?? '미입력',
-                      style: context.bodyMedium.copyWith(
-                        color: _getSecondaryTextColor(context),
+                    // 별자리
+                    SettingsListTile(
+                      icon: Icons.stars_outlined,
+                      title: context.l10n.zodiacSign,
+                      trailing: Text(
+                        (userProfile ?? localProfile)?['zodiac_sign'] ?? context.l10n.notEntered,
+                        style: context.bodyMedium.copyWith(
+                          color: _getSecondaryTextColor(context),
+                        ),
                       ),
                     ),
-                    onTap: _navigateToProfileEdit,
-                    isLast: true,
-                  ),
-                ],
-              ),
-            ),
-          ],
-
-          // 사주 & 분석 섹션
-          if (userProfile != null || localProfile != null) ...[
-            const SectionHeader(title: '사주 & 분석'),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
-              decoration: BoxDecoration(
-                color: context.colors.surface,
-                borderRadius: BorderRadius.circular(DSRadius.md),
-                border: Border.all(
-                  color: context.colors.border,
-                  width: 1,
+                    // 혈액형
+                    SettingsListTile(
+                      icon: Icons.water_drop_outlined,
+                      title: context.l10n.bloodType,
+                      trailing: Text(
+                        (userProfile ?? localProfile)?['blood_type'] != null
+                            ? context.l10n.bloodTypeFormat((userProfile ?? localProfile)!['blood_type'])
+                            : context.l10n.notEntered,
+                        style: context.bodyMedium.copyWith(
+                          color: _getSecondaryTextColor(context),
+                        ),
+                      ),
+                      onTap: _navigateToProfileEdit,
+                    ),
+                    // MBTI
+                    SettingsListTile(
+                      icon: Icons.psychology_outlined,
+                      title: 'MBTI',
+                      trailing: Text(
+                        (userProfile ?? localProfile)?['mbti']?.toUpperCase() ??
+                            context.l10n.notEntered,
+                        style: context.bodyMedium.copyWith(
+                          color: _getSecondaryTextColor(context),
+                        ),
+                      ),
+                      onTap: _navigateToProfileEdit,
+                    ),
+                    // 구분선
+                    Divider(
+                      height: 1,
+                      color: context.colors.border,
+                      indent: DSSpacing.md,
+                      endIndent: DSSpacing.md,
+                    ),
+                    const SizedBox(height: DSSpacing.xs),
+                    // 사주 종합
+                    SettingsListTile(
+                      icon: Icons.auto_awesome,
+                      title: context.l10n.sajuSummary,
+                      subtitle: context.l10n.sajuSummaryDesc,
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: _getSecondaryTextColor(context),
+                      ),
+                      onTap: () {
+                        context.push('/profile/saju-summary');
+                      },
+                    ),
+                    // 인사이트 기록
+                    SettingsListTile(
+                      icon: Icons.history,
+                      title: context.l10n.insightHistory,
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: _getSecondaryTextColor(context),
+                      ),
+                      onTap: () => context.push('/profile/history'),
+                      isLast: true,
+                    ),
+                  ],
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  SettingsListTile(
-                    icon: Icons.auto_awesome,
-                    title: '사주 종합',
-                    subtitle: '한 장의 인포그래픽으로 보기',
-                    trailing: Icon(
-                      Icons.chevron_right,
-                      color: _getSecondaryTextColor(context),
-                    ),
-                    onTap: () {
-                      context.push('/profile/saju-summary');
-                    },
-                  ),
-                  SettingsListTile(
-                    icon: Icons.history,
-                    title: '운세 기록',
-                    trailing: Icon(
-                      Icons.chevron_right,
-                      color: _getSecondaryTextColor(context),
-                    ),
-                    onTap: () => context.push('/profile/history'),
-                    isLast: true,
-                  ),
-                ],
               ),
             ),
           ],
 
           // 도구 섹션
-          const SectionHeader(title: '도구'),
+          SectionHeader(title: context.l10n.tools),
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+            margin: const EdgeInsets.symmetric(
+                horizontal: DSSpacing.pageHorizontal),
             decoration: BoxDecoration(
               color: context.colors.surface,
               borderRadius: BorderRadius.circular(DSRadius.md),
@@ -840,7 +796,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               children: [
                 SettingsListTile(
                   icon: Icons.share_outlined,
-                  title: '친구와 공유',
+                  title: context.l10n.shareWithFriend,
                   trailing: Icon(
                     Icons.chevron_right,
                     color: _getSecondaryTextColor(context),
@@ -851,7 +807,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 SettingsListTile(
                   icon: Icons.verified_outlined,
-                  title: '프로필 인증',
+                  title: context.l10n.profileVerification,
                   trailing: Icon(
                     Icons.chevron_right,
                     color: _getSecondaryTextColor(context),
@@ -868,7 +824,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           // ───────────────────────────────────────────────────────
 
           // 계정 관리 섹션
-          const SectionHeader(title: '계정 관리'),
+          SectionHeader(title: context.l10n.accountManagement),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
@@ -879,8 +835,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               children: [
                 SettingsListTile(
                   icon: Icons.link_outlined,
-                  title: '소셜 계정 연동',
-                  subtitle: '여러 로그인 방법을 하나로 관리',
+                  title: context.l10n.socialAccountLink,
+                  subtitle: context.l10n.socialAccountLinkDesc,
                   trailing: Icon(
                     Icons.chevron_right,
                     color: _getSecondaryTextColor(context),
@@ -889,8 +845,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 SettingsListTile(
                   icon: Icons.phone_outlined,
-                  title: '전화번호 관리',
-                  subtitle: '전화번호 변경 및 인증',
+                  title: context.l10n.phoneManagement,
+                  subtitle: context.l10n.phoneManagementDesc,
                   trailing: Icon(
                     Icons.chevron_right,
                     color: _getSecondaryTextColor(context),
@@ -899,8 +855,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 SettingsListTile(
                   icon: Icons.notifications_outlined,
-                  title: '알림 설정',
-                  subtitle: '푸시, 문자, 운세 알림 관리',
+                  title: context.l10n.notificationSettings,
+                  subtitle: context.l10n.notificationSettingsDesc,
                   trailing: Icon(
                     Icons.chevron_right,
                     color: _getSecondaryTextColor(context),
@@ -913,7 +869,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
 
           // 앱 설정 섹션
-          const SectionHeader(title: '앱 설정'),
+          SectionHeader(title: context.l10n.appSettings),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
@@ -924,28 +880,76 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               children: [
                 SettingsListTile(
                   icon: Icons.vibration_outlined,
-                  title: '진동 피드백',
-                  subtitle: '버튼 및 카드 터치 시 진동',
-                  trailing: DSToggle(
-                    value: ref.watch(userSettingsProvider).hapticEnabled,
-                    onChanged: (value) {
-                      ref.read(userSettingsProvider.notifier).setHapticEnabled(value);
-                      if (value) {
-                        DSHaptics.light();
-                      }
-                    },
+                  title: context.l10n.hapticFeedback,
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        ref.watch(userSettingsProvider).hapticEnabled ? 'ON' : 'OFF',
+                        style: context.bodyMedium.copyWith(
+                          color: ref.watch(userSettingsProvider).hapticEnabled
+                              ? context.colors.accent
+                              : _getSecondaryTextColor(context),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      DSToggle(
+                        value: ref.watch(userSettingsProvider).hapticEnabled,
+                        onChanged: (value) {
+                          ref
+                              .read(userSettingsProvider.notifier)
+                              .setHapticEnabled(value);
+                          if (value) {
+                            DSHaptics.light();
+                          }
+                        },
+                      ),
+                    ],
                   ),
                 ),
+                Consumer(
+                  builder: (context, ref, _) {
+                    final localeNotifier = ref.watch(localeProvider.notifier);
+                    return SettingsListTile(
+                      icon: Icons.language_outlined,
+                      title: context.l10n.language,
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            localeNotifier.currentLanguage.nativeName,
+                            style: context.bodyMedium.copyWith(
+                              color: _getSecondaryTextColor(context),
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Icon(
+                            Icons.chevron_right,
+                            color: _getSecondaryTextColor(context),
+                          ),
+                        ],
+                      ),
+                      onTap: () {
+                        LanguageSelectionSheet.show(context);
+                      },
+                    );
+                  },
+                ),
                 SettingsListTile(
-                  icon: Icons.language_outlined,
-                  title: '언어',
-                  subtitle: '한국어',
+                  icon: Icons.storage_outlined,
+                  title: context.l10n.storageManagement,
                   trailing: Icon(
                     Icons.chevron_right,
                     color: _getSecondaryTextColor(context),
                   ),
                   onTap: () {
-                    // TODO: Implement language selection
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const StorageManagementPage(),
+                      ),
+                    );
                   },
                   isLast: true,
                 ),
@@ -954,7 +958,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
 
           // 지원 섹션
-          const SectionHeader(title: '지원'),
+          SectionHeader(title: context.l10n.support),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
@@ -965,7 +969,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               children: [
                 SettingsListTile(
                   icon: Icons.help_outline,
-                  title: '도움말',
+                  title: context.l10n.help,
                   trailing: Icon(
                     Icons.chevron_right,
                     color: _getSecondaryTextColor(context),
@@ -974,7 +978,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 SettingsListTile(
                   icon: Icons.privacy_tip_outlined,
-                  title: '개인정보 처리방침',
+                  title: context.l10n.privacyPolicy,
                   trailing: Icon(
                     Icons.chevron_right,
                     color: _getSecondaryTextColor(context),
@@ -983,130 +987,38 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 SettingsListTile(
                   icon: Icons.description_outlined,
-                  title: '이용약관',
+                  title: context.l10n.termsOfService,
                   trailing: Icon(
                     Icons.chevron_right,
                     color: _getSecondaryTextColor(context),
                   ),
                   onTap: () => context.push('/terms-of-service'),
+                ),
+                SettingsListTile(
+                  icon: Icons.logout_outlined,
+                  title: context.l10n.logout,
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: _getSecondaryTextColor(context),
+                  ),
+                  onTap: _handleLogout,
+                ),
+                SettingsListTile(
+                  icon: Icons.person_remove_outlined,
+                  title: context.l10n.memberWithdrawal,
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: _getSecondaryTextColor(context),
+                  ),
+                  onTap: () => context.push('/profile/account-deletion'),
                   isLast: true,
                 ),
               ],
             ),
           ),
 
-          // 로그아웃 버튼
-          const SizedBox(height: 24),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: DSButton.destructive(
-              text: '로그아웃',
-              onPressed: _handleLogout,
-              size: DSButtonSize.medium,
-            ),
-          ),
-
-          // 개발자 도구 (테스트 계정에서만 표시)
-          FutureBuilder<UserProfile?>(
-            future: ref.watch(userProfileProvider.future),
-            builder: (context, snapshot) {
-              final profile = snapshot.data;
-              if ((kDebugMode || _isTestAccount) && profile != null && profile.isTestAccount) {
-                return FutureBuilder<bool?>(
-                  future: DebugPremiumService.getOverrideValue(),
-                  builder: (context, overrideSnapshot) {
-                    final tokenState = ref.watch(tokenProvider);
-                    final premiumOverride = overrideSnapshot.data;
-                    final isPremium = premiumOverride ?? tokenState.hasUnlimitedAccess;
-
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 24),
-                        const SectionHeader(title: '개발자 도구'),
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
-                          decoration: BoxDecoration(
-                            color: context.colors.surface,
-                            borderRadius: BorderRadius.circular(DSRadius.md),
-                            border: Border.all(
-                              color: context.colors.border,
-                              width: 1,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.04),
-                                blurRadius: 10,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              SettingsListTile(
-                                icon: Icons.bug_report_outlined,
-                                title: '무제한 복주머니',
-                                trailing: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: context.colors.success.withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    '활성화',
-                                    style: context.labelSmall.copyWith(
-                                      color: context.colors.success,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SettingsListTile(
-                                icon: Icons.star_outline,
-                                title: '프리미엄 기능',
-                                trailing: Switch(
-                                  value: isPremium,
-                                  onChanged: (value) async {
-                                    await DebugPremiumService.togglePremium();
-                                    setState(() {});
-                                  },
-                                  activeThumbColor: context.colors.accent,
-                                ),
-                              ),
-                              SettingsListTile(
-                                icon: Icons.refresh_outlined,
-                                title: '초기화 및 온보딩 재시작',
-                                subtitle: '모든 데이터 삭제 후 처음부터',
-                                trailing: Icon(
-                                  Icons.chevron_right,
-                                  color: context.colors.textSecondary,
-                                ),
-                                onTap: () => _showResetConfirmationDialog(context),
-                              ),
-                              SettingsListTile(
-                                icon: Icons.cloud_download_outlined,
-                                title: '유명인 정보 크롤링',
-                                trailing: Icon(
-                                  Icons.chevron_right,
-                                  color: _getSecondaryTextColor(context),
-                                ),
-                                onTap: () => context.push('/admin/celebrity-crawling'),
-                                isLast: true,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              }
-              return const SizedBox.shrink();
-            },
-          ),
-
           // 버전 정보
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Center(
             child: Text(
               'Fortune v1.0.0',
@@ -1123,7 +1035,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ),
     );
 
-
     // 바텀시트 모드에서는 콘텐츠만 반환
     if (widget.isInBottomSheet) {
       return content;
@@ -1137,8 +1048,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         elevation: 0,
         scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: Icon(
+            Icons.close,
+            color: context.colors.textPrimary,
+          ),
+          onPressed: () => context.pop(),
+        ),
         title: Text(
-          '내 프로필',
+          context.l10n.myProfile,
           style: context.heading2.copyWith(
             color: context.colors.textPrimary,
           ),
@@ -1163,15 +1081,142 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
+  // AI 캐릭터 & 채팅 섹션 빌더
+  Widget _buildCharacterSection(BuildContext context) {
+    final stats = ref.watch(characterStatsProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SectionHeader(title: context.l10n.aiCharacterChat),
+        Container(
+          margin: const EdgeInsets.symmetric(
+              horizontal: DSSpacing.pageHorizontal),
+          decoration: BoxDecoration(
+            color: context.colors.surface,
+            borderRadius: BorderRadius.circular(DSRadius.md),
+            border: Border.all(
+              color: context.colors.border,
+              width: 1,
+            ),
+          ),
+          child: Column(
+            children: [
+              // 대표 캐릭터 (가장 높은 호감도)
+              if (stats.topCharacter != null)
+                SettingsListTile(
+                  leading: CircleAvatar(
+                    radius: 20,
+                    backgroundColor: stats.topCharacter!.accentColor,
+                    backgroundImage: stats.topCharacter!.avatarAsset.isNotEmpty
+                        ? AssetImage(stats.topCharacter!.avatarAsset)
+                        : null,
+                    child: stats.topCharacter!.avatarAsset.isEmpty
+                        ? Text(
+                            stats.topCharacter!.name.isNotEmpty
+                                ? stats.topCharacter!.name[0]
+                                : '?',
+                            style: context.bodyMedium.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        : null,
+                  ),
+                  title: stats.topCharacter!.name,
+                  subtitle: '${stats.topPhaseName} · ${stats.topLoveEmoji} ${stats.topAffinityPercent}%',
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: _getSecondaryTextColor(context),
+                  ),
+                  onTap: () {
+                    ref.read(fortuneHapticServiceProvider).buttonTap();
+                    context.push('/character/${stats.topCharacter!.id}', extra: stats.topCharacter);
+                  },
+                )
+              else
+                SettingsListTile(
+                  icon: Icons.favorite_outline,
+                  title: context.l10n.startCharacterChat,
+                  subtitle: context.l10n.meetNewCharacters,
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: _getSecondaryTextColor(context),
+                  ),
+                  onTap: () {
+                    ref.read(fortuneHapticServiceProvider).buttonTap();
+                    context.go('/chat');
+                  },
+                ),
+
+              // 총 대화 수
+              SettingsListTile(
+                icon: Icons.chat_bubble_outline,
+                title: context.l10n.totalConversations,
+                trailing: Text(
+                  context.l10n.conversationCount(stats.totalMessages),
+                  style: context.bodyMedium.copyWith(
+                    color: _getSecondaryTextColor(context),
+                  ),
+                ),
+              ),
+
+              // 활성 캐릭터 수
+              SettingsListTile(
+                icon: Icons.people_outline,
+                title: context.l10n.activeCharacters,
+                trailing: Text(
+                  context.l10n.characterCount(stats.totalConversations),
+                  style: context.bodyMedium.copyWith(
+                    color: _getSecondaryTextColor(context),
+                  ),
+                ),
+              ),
+
+              // 캐릭터 목록 바로가기
+              SettingsListTile(
+                icon: Icons.grid_view_outlined,
+                title: context.l10n.viewAllCharacters,
+                trailing: Icon(
+                  Icons.chevron_right,
+                  color: _getSecondaryTextColor(context),
+                ),
+                onTap: () {
+                  ref.read(fortuneHapticServiceProvider).buttonTap();
+                  context.go('/chat');
+                },
+                isLast: true,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   // Helper Methods
-  String _formatBirthDate(String? birthDate) {
-    if (birthDate == null || birthDate.isEmpty) return '미입력';
+  String _formatBirthDate(String? birthDate, BuildContext ctx) {
+    if (birthDate == null || birthDate.isEmpty) return ctx.l10n.notEntered;
 
     try {
       final date = DateTime.parse(birthDate);
-      return '${date.year}년 ${date.month}월 ${date.day}일';
+      return ctx.l10n.dateFormatYMD(date.year, date.month, date.day);
     } catch (e) {
-      return '미입력';
+      return ctx.l10n.notEntered;
+    }
+  }
+
+  /// 간략한 생년월일 포맷 (YYYY.MM.DD)
+  String _formatBirthDateShort() {
+    final profile = userProfile ?? localProfile;
+    final birthDate = profile?['birth_date'] as String?;
+    if (birthDate == null || birthDate.isEmpty) return context.l10n.notEntered;
+
+    try {
+      final date = DateTime.parse(birthDate);
+      return '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}';
+    } catch (e) {
+      return context.l10n.notEntered;
     }
   }
 
@@ -1189,6 +1234,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: DSColors.overlay,
       builder: (_) => const ProfileListSheet(),
     );
   }
@@ -1196,7 +1242,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Future<void> _inviteFriend() async {
     final currentUser = supabase.auth.currentUser;
     final appStoreUrl = 'https://apps.apple.com/app/fortune';
-    final playStoreUrl = 'https://play.google.com/store/apps/details?id=com.beyond.fortune';
+    final playStoreUrl =
+        'https://play.google.com/store/apps/details?id=com.beyond.fortune';
     final inviteCode = currentUser?.id.substring(0, 8) ?? 'FORTUNE2024';
 
     final shareText = '''🔮 Fortune - 오늘의 운세 앱 초대
@@ -1207,7 +1254,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 ✨ Fortune의 특별한 점:
 🎯 매일 업데이트되는 오늘의 운세
 💝 다양한 운세 테마 (사주, 타로, 별자리 등)
-🎁 친구 초대 시 무료 복주머니 지급!
+🎁 친구 초대 시 무료 토큰 지급!
 
 지금 바로 Fortune을 다운로드하고 운세를 확인해보세요!
 

@@ -1,10 +1,9 @@
-/// Onboarding Page - Widget Test
-/// 온보딩 페이지 UI 테스트
+// Onboarding Page - Widget Test
+// 온보딩 페이지 UI 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../helpers/test_helpers.dart';
 
 void main() {
   group('OnboardingPage 테스트', () {
@@ -326,9 +325,7 @@ void main() {
 
 class _MockNameInputStep extends StatefulWidget {
   final VoidCallback? onNext;
-  final String? initialName;
-
-  const _MockNameInputStep({this.onNext, this.initialName});
+  const _MockNameInputStep({this.onNext});
 
   @override
   State<_MockNameInputStep> createState() => _MockNameInputStepState();
@@ -340,7 +337,7 @@ class _MockNameInputStepState extends State<_MockNameInputStep> {
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: widget.initialName ?? '');
+    _controller = TextEditingController(text: '');
     _controller.addListener(_onTextChanged);
   }
 

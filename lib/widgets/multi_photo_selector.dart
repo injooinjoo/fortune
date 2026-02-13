@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:universal_io/io.dart';
-import '../core/theme/fortune_design_system.dart';
+import '../core/design_system/design_system.dart';
 import '../core/theme/font_config.dart';
 
 /// 여러 장의 사진을 선택할 수 있는 위젯
@@ -82,7 +82,8 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
       // Android or Web
       showModalBottomSheet(
         context: context,
-        backgroundColor: TossDesignSystem.grayDark100,
+        backgroundColor: DSColors.surface,
+        barrierColor: DSColors.overlay,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
@@ -95,12 +96,12 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                 height: 4,
                 margin: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.gray600,
+                  color: DSColors.textSecondaryDark,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
               ListTile(
-                leading: const Icon(Icons.camera_alt, color: TossDesignSystem.tossBlue),
+                leading: const Icon(Icons.camera_alt, color: DSColors.accentDark),
                 title: const Text('카메라로 촬영'),
                 onTap: () {
                   Navigator.pop(context);
@@ -108,7 +109,7 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.photo_library, color: TossDesignSystem.tossBlue),
+                leading: const Icon(Icons.photo_library, color: DSColors.accentDark),
                 title: const Text('갤러리에서 선택'),
                 onTap: () {
                   Navigator.pop(context);
@@ -117,7 +118,7 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
               ),
               if (_selectedPhotos.length < widget.maxPhotos)
                 ListTile(
-                  leading: const Icon(Icons.photo_library_outlined, color: TossDesignSystem.tossBlue),
+                  leading: const Icon(Icons.photo_library_outlined, color: DSColors.accentDark),
                   title: const Text('여러 장 선택'),
                   onTap: () {
                     Navigator.pop(context);
@@ -203,13 +204,13 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: TossDesignSystem.grayDark100,
+        backgroundColor: DSColors.surface,
         title: const Text('알림'),
         content: Text('최대 ${widget.maxPhotos}장까지만 선택할 수 있습니다'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('확인', style: TextStyle(color: TossDesignSystem.tossBlue)),
+            child: const Text('확인', style: TextStyle(color: DSColors.accentDark)),
           ),
         ],
       ),
@@ -220,7 +221,7 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: TossDesignSystem.errorRed,
+        backgroundColor: DSColors.error,
       ),
     );
   }
@@ -250,13 +251,13 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
             if (widget.isRequired)
               const Text(
                 ' *',
-                style: TextStyle(color: TossDesignSystem.errorRed),
+                style: TextStyle(color: DSColors.error),
               ),
             const Spacer(),
             Text(
               '${_selectedPhotos.length}/${widget.maxPhotos}',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: TossDesignSystem.gray600,
+                color: DSColors.textSecondaryDark,
               ),
             ),
           ],
@@ -287,10 +288,10 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                             width: 100,
                             height: 120,
                             decoration: BoxDecoration(
-                              color: TossDesignSystem.grayDark100,
+                              color: DSColors.surface,
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: TossDesignSystem.gray300,
+                                color: DSColors.borderDark,
                                 width: 2,
                                 style: BorderStyle.solid,
                               ),
@@ -301,13 +302,13 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                                 const Icon(
                                   Icons.add_photo_alternate,
                                   size: 32,
-                                  color: TossDesignSystem.gray600,
+                                  color: DSColors.textSecondaryDark,
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   '사진 추가',
                                   style: theme.textTheme.bodySmall?.copyWith(
-                                    color: TossDesignSystem.gray600,
+                                    color: DSColors.textSecondaryDark,
                                   ),
                                 ),
                               ],
@@ -330,7 +331,7 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+                                color: DSColors.accentDark.withValues(alpha: 0.3),
                                 width: 2,
                               ),
                             ),
@@ -342,10 +343,10 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                                       fit: BoxFit.cover,
                                       errorBuilder: (context, error, stackTrace) {
                                         return Container(
-                                          color: TossDesignSystem.grayDark100,
+                                          color: DSColors.surface,
                                           child: const Icon(
                                             Icons.broken_image,
-                                            color: TossDesignSystem.gray600,
+                                            color: DSColors.textSecondaryDark,
                                           ),
                                         );
                                       },
@@ -355,10 +356,10 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                                       fit: BoxFit.cover,
                                       errorBuilder: (context, error, stackTrace) {
                                         return Container(
-                                          color: TossDesignSystem.grayDark100,
+                                          color: DSColors.surface,
                                           child: const Icon(
                                             Icons.broken_image,
-                                            color: TossDesignSystem.gray600,
+                                            color: DSColors.textSecondaryDark,
                                           ),
                                         );
                                       },
@@ -374,13 +375,13 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                               child: Container(
                                 padding: const EdgeInsets.all(4),
                                 decoration: BoxDecoration(
-                                  color: TossDesignSystem.black.withValues(alpha: 0.6),
+                                  color: Colors.black.withValues(alpha: 0.6),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
                                   Icons.close,
                                   size: 16,
-                                  color: TossDesignSystem.white,
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
@@ -395,13 +396,13 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: TossDesignSystem.tossBlue.withValues(alpha: 0.9),
+                                color: DSColors.accentDark.withValues(alpha: 0.9),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
                                 '${index + 1}',
                                 style: const TextStyle(
-                                  color: TossDesignSystem.white,
+                                  color: Colors.white,
                                   fontFamily: FontConfig.primary,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -422,7 +423,7 @@ class _MultiPhotoSelectorState extends State<MultiPhotoSelector> {
             child: Text(
               '사진을 추가하면 더 정확한 인사이트를 확인할 수 있습니다',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: TossDesignSystem.gray600,
+                color: DSColors.textSecondaryDark,
               ),
             ),
           ),

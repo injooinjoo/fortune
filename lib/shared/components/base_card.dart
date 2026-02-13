@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fortune/core/design_system/design_system.dart';
 import '../../core/theme/app_theme_extensions.dart';
 
+/// @deprecated Use [DSCard] instead for consistent design system usage.
 /// Base card widget that enforces consistent design guidelines
 /// Light mode: Background #f6f6f6, Card #ffffff
 /// Dark mode: Background #0A0A0A, Card #1C1C1C
@@ -47,7 +48,7 @@ class BaseCard extends StatelessWidget {
         color: gradient != null ? null : cardColor,
         gradient: gradient,
         borderRadius: borderRadius ?? BorderRadius.circular(DSRadius.lg),
-        boxShadow: boxShadow ?? [shadows.card],
+        boxShadow: boxShadow ?? shadows.card,
         border: border),
       child: Padding(
         padding: padding ?? const EdgeInsets.all(DSSpacing.lg),
@@ -66,6 +67,7 @@ class BaseCard extends StatelessWidget {
   }
 }
 
+/// @deprecated Use [DSCard.gradient] or [DSCard.premium] instead.
 /// Premium card with gradient background
 class PremiumCard extends StatelessWidget {
   final Widget child;
@@ -107,6 +109,7 @@ class PremiumCard extends StatelessWidget {
   }
 }
 
+/// @deprecated Use [DSCard] with custom content instead.
 /// Info card for displaying information
 class InfoCard extends StatelessWidget {
   final String title;

@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
-import '../../tokens/ds_fortune_colors.dart';
-import '../../tokens/ds_love_colors.dart';
-import '../../tokens/ds_luck_colors.dart';
+import '../../theme/ds_extensions.dart';
+import '../../tokens/ds_colors.dart';
 import '../../../theme/font_config.dart';
+
+// Legacy color helpers (ChatGPT style migration)
+class _LegacyColors {
+  static Color getGold(bool isDark) => isDark ? const Color(0xFFFFD700) : DSColors.warning;
+  static Color getHanjiBackground(bool isDark) => isDark ? DSColors.background : DSColors.backgroundDark;
+  static const Color luckyRed = DSColors.error;
+  static const Color healthLuck = DSColors.success;
+
+  // Love colors (from DSLoveColors)
+  static Color getLovePrimary(bool isDark) => isDark ? const Color(0xFFE91E63) : const Color(0xFFD81B60);
+  static Color getLoveBackground(bool isDark) => isDark ? const Color(0xFF2D1D26) : const Color(0xFFFCE4EC);
+  static const Color rougePink = Color(0xFFE91E63);
+}
 
 /// Fortune header layout style
 enum FortuneHeaderStyle {
@@ -77,7 +89,7 @@ class FortuneHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final colors = _getColors(isDark);
 
     switch (style) {
@@ -524,51 +536,44 @@ class FortuneHeader extends StatelessWidget {
   }
 
   _HeaderColors _getColors(bool isDark) {
+    final brightness = isDark ? Brightness.dark : Brightness.light;
     switch (colorScheme) {
       case FortuneHeaderColorScheme.fortune:
         return _HeaderColors(
-          primary: DSFortuneColors.getPrimary(isDark),
-          background: DSFortuneColors.getHanjiBackground(isDark),
-          textColor: DSFortuneColors.getInk(isDark),
-          sealColor: DSFortuneColors.sealVermilion,
+          primary: DSColors.getAccentSecondary(brightness),
+          background: DSColors.getBackground(brightness),
+          textColor: DSColors.getTextPrimary(brightness),
+          sealColor: DSColors.error,
         );
       case FortuneHeaderColorScheme.love:
         return _HeaderColors(
-          primary: DSLoveColors.getPrimary(isDark),
-          background: DSLoveColors.getHanjiBackground(isDark),
-          textColor: isDark
-              ? const Color(0xFFD4D0C8)
-              : DSFortuneColors.inkBlack,
-          sealColor: DSLoveColors.rougePink,
+          primary: _LegacyColors.getLovePrimary(isDark),
+          background: _LegacyColors.getLoveBackground(isDark),
+          textColor: DSColors.getTextPrimary(brightness),
+          sealColor: _LegacyColors.rougePink,
         );
       case FortuneHeaderColorScheme.luck:
         return _HeaderColors(
-          primary: DSLuckColors.getGold(isDark),
-          background: DSLuckColors.getHanjiBackground(isDark),
-          textColor: isDark
-              ? const Color(0xFFD4D0C8)
-              : DSFortuneColors.inkBlack,
-          sealColor: DSLuckColors.luckyRed,
+          primary: _LegacyColors.getGold(isDark),
+          background: _LegacyColors.getHanjiBackground(isDark),
+          textColor: DSColors.getTextPrimary(brightness),
+          sealColor: _LegacyColors.luckyRed,
         );
       case FortuneHeaderColorScheme.health:
         return _HeaderColors(
-          primary: DSLuckColors.healthLuck,
+          primary: _LegacyColors.healthLuck,
           background: isDark
               ? const Color(0xFF1D2D25)
               : const Color(0xFFF0F8F5),
-          textColor: isDark
-              ? const Color(0xFFD4D0C8)
-              : DSFortuneColors.inkBlack,
-          sealColor: DSLuckColors.healthLuck,
+          textColor: DSColors.getTextPrimary(brightness),
+          sealColor: _LegacyColors.healthLuck,
         );
       case FortuneHeaderColorScheme.custom:
         return _HeaderColors(
-          primary: customPrimaryColor ?? DSFortuneColors.mysticalPurple,
-          background: customBackgroundColor ?? DSFortuneColors.hanjiCream,
-          textColor: isDark
-              ? const Color(0xFFD4D0C8)
-              : DSFortuneColors.inkBlack,
-          sealColor: customPrimaryColor ?? DSFortuneColors.sealVermilion,
+          primary: customPrimaryColor ?? DSColors.accentSecondary,
+          background: customBackgroundColor ?? DSColors.backgroundSecondaryDark,
+          textColor: DSColors.getTextPrimary(brightness),
+          sealColor: customPrimaryColor ?? DSColors.error,
         );
     }
   }
@@ -620,7 +625,7 @@ class FortuneHeaderSliver extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return SliverAppBar(
       expandedHeight: expandedHeight,
@@ -717,51 +722,54 @@ class FortuneHeaderSliver extends StatelessWidget {
   }
 
   Color _getPrimaryColor(bool isDark) {
+    final brightness = isDark ? Brightness.dark : Brightness.light;
     switch (colorScheme) {
       case FortuneHeaderColorScheme.fortune:
-        return DSFortuneColors.getPrimary(isDark);
+        return DSColors.getAccentSecondary(brightness);
       case FortuneHeaderColorScheme.love:
-        return DSLoveColors.getPrimary(isDark);
+        return _LegacyColors.getLovePrimary(isDark);
       case FortuneHeaderColorScheme.luck:
-        return DSLuckColors.getGold(isDark);
+        return _LegacyColors.getGold(isDark);
       case FortuneHeaderColorScheme.health:
-        return DSLuckColors.healthLuck;
+        return _LegacyColors.healthLuck;
       case FortuneHeaderColorScheme.custom:
-        return DSFortuneColors.getPrimary(isDark);
+        return DSColors.getAccentSecondary(brightness);
     }
   }
 
   Color _getBackgroundColor(bool isDark) {
+    final brightness = isDark ? Brightness.dark : Brightness.light;
     switch (colorScheme) {
       case FortuneHeaderColorScheme.fortune:
-        return DSFortuneColors.getHanjiBackground(isDark);
+        return DSColors.getBackground(brightness);
       case FortuneHeaderColorScheme.love:
-        return DSLoveColors.getHanjiBackground(isDark);
+        return _LegacyColors.getLoveBackground(isDark);
       case FortuneHeaderColorScheme.luck:
-        return DSLuckColors.getHanjiBackground(isDark);
+        return _LegacyColors.getHanjiBackground(isDark);
       case FortuneHeaderColorScheme.health:
         return isDark ? const Color(0xFF1D2D25) : const Color(0xFFF0F8F5);
       case FortuneHeaderColorScheme.custom:
-        return DSFortuneColors.getHanjiBackground(isDark);
+        return DSColors.getBackground(brightness);
     }
   }
 
   Color _getTextColor(bool isDark) {
-    return isDark ? const Color(0xFFD4D0C8) : DSFortuneColors.inkBlack;
+    final brightness = isDark ? Brightness.dark : Brightness.light;
+    return DSColors.getTextPrimary(brightness);
   }
 
   Color _getSealColor(bool isDark) {
     switch (colorScheme) {
       case FortuneHeaderColorScheme.fortune:
-        return DSFortuneColors.sealVermilion;
+        return DSColors.error;
       case FortuneHeaderColorScheme.love:
-        return DSLoveColors.rougePink;
+        return _LegacyColors.rougePink;
       case FortuneHeaderColorScheme.luck:
-        return DSLuckColors.luckyRed;
+        return _LegacyColors.luckyRed;
       case FortuneHeaderColorScheme.health:
-        return DSLuckColors.healthLuck;
+        return _LegacyColors.healthLuck;
       case FortuneHeaderColorScheme.custom:
-        return DSFortuneColors.sealVermilion;
+        return DSColors.error;
     }
   }
 }

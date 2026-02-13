@@ -1,4 +1,4 @@
-/// Model class for fortune result data
+// Model class for fortune result data
 class FortuneResult {
   final String? id;
   final String? type;
@@ -15,8 +15,6 @@ class FortuneResult {
   final Map<String, dynamic>? luckyItems;
   final List<String>? recommendations;
   final Map<String, dynamic>? additionalInfo;
-  final bool isBlurred;  // ✅ 블러 상태
-  final List<String> blurredSections;  // ✅ 블러 처리된 섹션 키
   final int? percentile;  // ✅ 상위 퍼센타일 (예: 15 = 상위 15%)
   final int? totalTodayViewers;  // ✅ 오늘 해당 운세를 본 총 인원수
   final bool isPercentileValid;  // ✅ 퍼센타일 데이터 유효 여부
@@ -37,8 +35,6 @@ class FortuneResult {
     this.luckyItems,
     this.recommendations,
     this.additionalInfo,
-    this.isBlurred = false,  // ✅ Default
-    this.blurredSections = const [],  // ✅ Default
     this.percentile,
     this.totalTodayViewers,
     this.isPercentileValid = false,
@@ -70,8 +66,6 @@ class FortuneResult {
     Map<String, dynamic>? luckyItems,
     List<String>? recommendations,
     Map<String, dynamic>? additionalInfo,
-    bool? isBlurred,
-    List<String>? blurredSections,
     int? percentile,
     int? totalTodayViewers,
     bool? isPercentileValid,
@@ -92,8 +86,6 @@ class FortuneResult {
       luckyItems: luckyItems ?? this.luckyItems,
       recommendations: recommendations ?? this.recommendations,
       additionalInfo: additionalInfo ?? this.additionalInfo,
-      isBlurred: isBlurred ?? this.isBlurred,
-      blurredSections: blurredSections ?? this.blurredSections,
       percentile: percentile ?? this.percentile,
       totalTodayViewers: totalTodayViewers ?? this.totalTodayViewers,
       isPercentileValid: isPercentileValid ?? this.isPercentileValid,
@@ -125,10 +117,6 @@ class FortuneResult {
       additionalInfo: map['additionalInfo'] != null
           ? Map<String, dynamic>.from(map['additionalInfo'])
           : null,
-      isBlurred: map['isBlurred'] ?? false,  // ✅ Default false
-      blurredSections: map['blurredSections'] != null
-          ? List<String>.from(map['blurredSections'])
-          : [],  // ✅ Default []
       percentile: map['percentile'] as int?,
       totalTodayViewers: map['totalTodayViewers'] as int?,
       isPercentileValid: map['isPercentileValid'] ?? false,
@@ -152,8 +140,6 @@ class FortuneResult {
       'luckyItems': luckyItems,
       'recommendations': recommendations,
       'additionalInfo': null,
-      'isBlurred': isBlurred,  // ✅ Added
-      'blurredSections': blurredSections,  // ✅ Added
       'percentile': percentile,  // ✅ Added
       'totalTodayViewers': totalTodayViewers,  // ✅ Added
       'isPercentileValid': isPercentileValid,  // ✅ Added

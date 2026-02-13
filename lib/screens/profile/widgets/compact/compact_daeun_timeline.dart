@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/fortune_theme.dart';
-import '../../../../core/theme/fortune_design_system.dart';
-import '../../../../core/theme/saju_colors.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 압축된 대운 타임라인
 ///
@@ -17,7 +14,7 @@ class CompactDaeunTimeline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final daeunList = _extractDaeun();
     final currentIndex = _findCurrentDaeunIndex(daeunList);
 
@@ -26,14 +23,14 @@ class CompactDaeunTimeline extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.all(TossTheme.spacingS),
+      padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.black.withValues(alpha: 0.2)
+            ? context.colors.backgroundSecondary
             : Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(TossTheme.radiusS),
+        borderRadius: BorderRadius.circular(DSRadius.sm),
         border: Border.all(
-          color: isDark ? TossDesignSystem.borderDark : TossTheme.borderPrimary,
+          color: isDark ? DSColors.border : DSColors.borderDark,
         ),
       ),
       child: Column(
@@ -45,14 +42,14 @@ class CompactDaeunTimeline extends StatelessWidget {
               Icon(
                 Icons.timeline_rounded,
                 size: 14,
-                color: isDark ? Colors.white60 : Colors.black45,
+                color: context.colors.textSecondary,
               ),
               const SizedBox(width: 4),
               Text(
                 '대운 흐름',
                 style: context.labelTiny.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white70 : Colors.black54,
+                  color: context.colors.textSecondary,
                 ),
               ),
               const Spacer(),
@@ -60,12 +57,12 @@ class CompactDaeunTimeline extends StatelessWidget {
                 '大運 · 10년 주기',
                 style: context.labelTiny.copyWith(
                   fontSize: 9,
-                  color: isDark ? Colors.white38 : Colors.black26,
+                  color: context.colors.textTertiary,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: TossTheme.spacingS),
+          const SizedBox(height: DSSpacing.sm),
 
           // 타임라인
           SizedBox(
@@ -184,21 +181,21 @@ class CompactDaeunTimeline extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
           decoration: BoxDecoration(
             color: isCurrent
-                ? TossTheme.brandBlue.withValues(alpha: 0.15)
+                ? DSColors.accent.withValues(alpha: 0.15)
                 : isPast
                     ? (isDark
-                        ? Colors.white.withValues(alpha: 0.03)
-                        : Colors.black.withValues(alpha: 0.03))
+                        ? context.colors.surface.withValues(alpha: 0.03)
+                        : context.colors.textPrimary.withValues(alpha: 0.03))
                     : (isDark
-                        ? Colors.white.withValues(alpha: 0.06)
-                        : Colors.white),
+                        ? context.colors.surface.withValues(alpha: 0.06)
+                        : context.colors.surface),
             borderRadius: BorderRadius.circular(6),
             border: Border.all(
               color: isCurrent
-                  ? TossTheme.brandBlue
+                  ? DSColors.accent
                   : (isDark
-                      ? TossDesignSystem.borderDark
-                      : TossTheme.borderPrimary),
+                      ? DSColors.border
+                      : DSColors.borderDark),
               width: isCurrent ? 2 : 1,
             ),
           ),
@@ -210,9 +207,9 @@ class CompactDaeunTimeline extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                 decoration: BoxDecoration(
                   color: isCurrent
-                      ? TossTheme.brandBlue.withValues(alpha: 0.2)
+                      ? DSColors.accent.withValues(alpha: 0.2)
                       : (isDark
-                          ? Colors.white.withValues(alpha: 0.1)
+                          ? context.colors.surface.withValues(alpha: 0.1)
                           : Colors.grey.shade200),
                   borderRadius: BorderRadius.circular(3),
                 ),
@@ -222,10 +219,10 @@ class CompactDaeunTimeline extends StatelessWidget {
                     fontSize: 8,
                     fontWeight: FontWeight.bold,
                     color: isCurrent
-                        ? TossTheme.brandBlue
+                        ? DSColors.accent
                         : (isPast
-                            ? (isDark ? Colors.white30 : Colors.black26)
-                            : (isDark ? Colors.white54 : Colors.black45)),
+                            ? context.colors.textTertiary
+                            : context.colors.textSecondary),
                   ),
                 ),
               ),
@@ -258,9 +255,7 @@ class CompactDaeunTimeline extends StatelessWidget {
           Container(
             width: 12,
             height: 2,
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.2)
-                : Colors.black.withValues(alpha: 0.1),
+            color: context.colors.textTertiary.withValues(alpha: 0.3),
           ),
       ],
     );

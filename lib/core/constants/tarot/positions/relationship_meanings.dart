@@ -1,6 +1,6 @@
-/// Relationship spread interpretations for all 78 tarot cards
-///
-/// Positions: you (당신), partner (상대방), relationship (관계), challenges (도전), advice (조언)
+// Relationship spread interpretations for all 78 tarot cards
+//
+// Positions: you (당신), partner (상대방), relationship (관계), challenges (도전), advice (조언)
 class RelationshipMeanings {
   RelationshipMeanings._();
 

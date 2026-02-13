@@ -1,13 +1,13 @@
 # Design System Rules - Quality Check
-# Toss Design System 준수 규칙 정의
+# DSColors (ChatGPT 스타일) 준수 규칙 정의
 
 colors:
   description: "색상 사용 규칙"
 
   required:
-    - pattern: "TossDesignSystem.*"
-      description: "모든 색상은 TossDesignSystem 토큰 사용"
-      example: "TossDesignSystem.backgroundDark"
+    - pattern: "DSColors.*"
+      description: "모든 색상은 DSColors 토큰 사용"
+      example: "DSColors.backgroundDark"
 
     - pattern: "isDark"
       description: "다크모드 분기 처리"
@@ -18,14 +18,29 @@ colors:
       description: "하드코딩 색상 금지"
       grep_pattern: "Color\\(0x"
       search_path: "lib/"
-      exclude: "toss_design_system.dart"
+      exclude: "ds_colors.dart"
 
     - pattern: "Colors."
       description: "Material Colors 직접 사용 금지"
       grep_pattern: "Colors\\."
       search_path: "lib/"
-      exclude: ["toss_design_system.dart", "test/"]
+      exclude: ["ds_colors.dart", "test/"]
       allowed_exceptions: ["Colors.white", "Colors.black", "Colors.transparent"]
+
+    - pattern: "TossDesignSystem"
+      description: "deprecated 디자인 시스템 사용 금지"
+      grep_pattern: "TossDesignSystem"
+      search_path: "lib/"
+
+    - pattern: "ObangseokColors"
+      description: "deprecated 오방색 시스템 사용 금지"
+      grep_pattern: "ObangseokColors"
+      search_path: "lib/"
+
+    - pattern: "DSFortuneColors"
+      description: "deprecated 운세 색상 시스템 사용 금지"
+      grep_pattern: "DSFortuneColors"
+      search_path: "lib/"
 
 typography:
   description: "타이포그래피 사용 규칙"
@@ -44,34 +59,20 @@ typography:
       description: "하드코딩 fontSize 금지"
       grep_pattern: "fontSize:"
       search_path: "lib/"
-      exclude: ["typography_unified.dart", "toss_design_system.dart"]
+      exclude: ["typography_unified.dart", "ds_typography.dart"]
 
-    - pattern: "TossDesignSystem.heading"
-      description: "deprecated 폰트 스타일 사용 금지"
-      grep_pattern: "TossDesignSystem\\.heading"
-      search_path: "lib/"
-
-    - pattern: "TossDesignSystem.body"
-      description: "deprecated 폰트 스타일 사용 금지"
-      grep_pattern: "TossDesignSystem\\.body"
+    - pattern: "TextStyle(fontSize:"
+      description: "직접 TextStyle 생성 금지"
+      grep_pattern: "TextStyle\\(fontSize:"
       search_path: "lib/"
 
 components:
   description: "컴포넌트 사용 규칙"
 
   required:
-    - pattern: "UnifiedBlurWrapper"
-      description: "블러 처리는 UnifiedBlurWrapper 사용"
-      search_path: "lib/features/fortune/"
-
     - pattern: "Icons.arrow_back_ios"
       description: "뒤로가기는 iOS 스타일 아이콘"
       search_path: "lib/"
-
-  forbidden:
-    - pattern: "ImageFilter.blur"
-      description: "ImageFilter.blur 직접 사용 금지"
-      grep_pattern: "ImageFilter\\.blur"
       search_path: "lib/"
 
     - pattern: "Icons.arrow_back[^_]"

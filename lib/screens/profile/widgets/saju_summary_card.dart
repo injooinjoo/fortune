@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/fortune_theme.dart';
-import '../../../core/theme/typography_unified.dart';
+import '../../../core/design_system/design_system.dart';
 import '../../../core/components/app_card.dart';
 import 'compact/compact_pillar_table.dart';
 import 'compact/compact_element_bars.dart';
@@ -24,49 +23,49 @@ class SajuSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingM),
+      padding: const EdgeInsets.all(DSSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           if (showHeader) ...[
             _buildHeader(context, isDark),
-            const SizedBox(height: TossTheme.spacingM),
+            const SizedBox(height: DSSpacing.md),
           ],
           // 1. 사주 팔자 + 십성
           CompactPillarTable(sajuData: sajuData),
-          const SizedBox(height: TossTheme.spacingS),
+          const SizedBox(height: DSSpacing.sm),
 
           // 2. 지장간
           CompactJijangganRow(sajuData: sajuData),
-          const SizedBox(height: TossTheme.spacingXS),
+          const SizedBox(height: DSSpacing.xs),
 
           // 3. 12운성
           CompactTwelveStagesRow(sajuData: sajuData),
-          const SizedBox(height: TossTheme.spacingXS),
+          const SizedBox(height: DSSpacing.xs),
 
           // 4. 납음오행
           CompactNapeumRow(sajuData: sajuData),
-          const SizedBox(height: TossTheme.spacingS),
+          const SizedBox(height: DSSpacing.sm),
 
           // 5. 오행 균형 바 차트
           CompactElementBars(sajuData: sajuData),
-          const SizedBox(height: TossTheme.spacingS),
+          const SizedBox(height: DSSpacing.sm),
 
           // 6. 합충형해 배지
           CompactRelationsBadges(sajuData: sajuData),
-          const SizedBox(height: TossTheme.spacingXS),
+          const SizedBox(height: DSSpacing.xs),
 
           // 7. 공망/천을귀인
           CompactSpecialInfoRow(sajuData: sajuData),
-          const SizedBox(height: TossTheme.spacingXS),
+          const SizedBox(height: DSSpacing.xs),
 
           // 8. 신살 요약
           CompactSinsalSummary(sajuData: sajuData),
-          const SizedBox(height: TossTheme.spacingS),
+          const SizedBox(height: DSSpacing.sm),
 
           // 9. 대운 타임라인
           CompactDaeunTimeline(sajuData: sajuData),
@@ -84,8 +83,8 @@ class SajuSummaryCard extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: isDark
-                  ? [const Color(0xFF7C3AED), const Color(0xFF2563EB)]
-                  : [const Color(0xFF8B5CF6), const Color(0xFF3B82F6)],
+                  ? [DSColors.accentSecondary, DSColors.info] // 사주 헤더 그라디언트
+                  : [DSColors.accentSecondary, DSColors.info], // 사주 헤더 그라디언트
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -97,7 +96,7 @@ class SajuSummaryCard extends StatelessWidget {
             size: 20,
           ),
         ),
-        const SizedBox(width: TossTheme.spacingS),
+        const SizedBox(width: DSSpacing.sm),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,13 +105,13 @@ class SajuSummaryCard extends StatelessWidget {
                 '사주 종합',
                 style: context.heading3.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black87,
+                  color: context.colors.textPrimary,
                 ),
               ),
               Text(
                 '四柱綜合 · 나의 사주 팔자',
                 style: context.labelTiny.copyWith(
-                  color: isDark ? Colors.white60 : Colors.black54,
+                  color: context.colors.textSecondary,
                 ),
               ),
             ],

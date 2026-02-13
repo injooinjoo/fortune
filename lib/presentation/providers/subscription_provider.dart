@@ -172,15 +172,13 @@ final subscriptionProvider = StateNotifierProvider<SubscriptionNotifier, Subscri
   return SubscriptionNotifier(purchaseService, ref);
 });
 
-/// 프리미엄 사용자 여부 Provider (광고 숨김 등에 사용)
+/// 구독 활성화 여부 Provider (구독 = 매월 토큰 자동 충전)
 ///
-/// tokenProvider.hasUnlimitedAccess를 사용하여 3가지 조건 모두 확인:
-/// - subscription.isActive (구독 활성화)
-/// - hasUnlimitedTokens (테스트 계정)
-/// - balance.hasUnlimitedAccess (무제한 토큰)
-final isPremiumProvider = Provider<bool>((ref) {
-  final tokenState = ref.watch(tokenProvider);
-  return tokenState.hasUnlimitedAccess;
+/// 프리미엄/무제한 개념 제거됨. 구독은 단순히 토큰 정기구매.
+/// 모든 운세는 토큰 잔액으로만 이용 가능.
+final isSubscriptionActiveProvider = Provider<bool>((ref) {
+  final subscriptionState = ref.watch(subscriptionProvider);
+  return subscriptionState.isActive;
 });
 
 /// 구독 로딩 상태 Provider

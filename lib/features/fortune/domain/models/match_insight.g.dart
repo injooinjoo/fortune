@@ -23,11 +23,6 @@ _$MatchInsightImpl _$$MatchInsightImplFromJson(Map<String, dynamic> json) =>
       fortuneElements: FortuneElements.fromJson(
           json['fortuneElements'] as Map<String, dynamic>),
       cautionMessage: json['cautionMessage'] as String,
-      isBlurred: json['isBlurred'] as bool? ?? false,
-      blurredSections: (json['blurredSections'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          const [],
       timestamp: DateTime.parse(json['timestamp'] as String),
       percentile: (json['percentile'] as num?)?.toInt(),
       sport: $enumDecode(_$SportTypeEnumMap, json['sport']),
@@ -50,8 +45,6 @@ Map<String, dynamic> _$$MatchInsightImplToJson(_$MatchInsightImpl instance) =>
       'opponentAnalysis': instance.opponentAnalysis,
       'fortuneElements': instance.fortuneElements,
       'cautionMessage': instance.cautionMessage,
-      'isBlurred': instance.isBlurred,
-      'blurredSections': instance.blurredSections,
       'timestamp': instance.timestamp.toIso8601String(),
       'percentile': instance.percentile,
       'sport': _$SportTypeEnumMap[instance.sport]!,

@@ -1,19 +1,20 @@
 # 인사이트 시스템 가이드
 
-> 최종 업데이트: 2025.01.03
+> 최종 업데이트: 2025.01.16
 
 ## 개요
 
 Fortune App의 인사이트 시스템은 **72% API 비용 절감**을 위한 최적화된 프로세스를 사용합니다.
 
-### 인사이트 통계 (2025.01.03)
+### 인사이트 통계 (2025.01.16)
 
 | 항목 | 수치 |
 |------|------|
-| 인사이트 Edge Functions | 39개 |
+| 인사이트 Edge Functions | 40개 |
 | 유틸리티 Functions | 22개 |
 | 인사이트 카테고리 | 13개 |
-| 프리미엄 전용 | 8개 |
+| 토큰 전용 | 8개 |
+| 무료 전용 | 1개 (게임 강화운세) |
 
 ---
 
@@ -39,10 +40,7 @@ Fortune App의 인사이트 시스템은 **72% API 비용 절감**을 위한 최
 
 5️⃣ 결과 페이지 표시 (분기)
     ├─ 프리미엄 사용자? → YES → 전체 결과 즉시 표시
-    └─ 일반 사용자? → NO ↓
-
-6️⃣ 블러 처리 결과 표시
-    └─ 4개 섹션 블러 (조언, 미래전망, 행운아이템, 주의사항)
+    └─ 일반 사용자? → NO → 프리미엄 유도 표시
 ```
 
 ---
@@ -248,6 +246,15 @@ conditions = {
 }
 ```
 
+### 게임 강화운세 (Game Enhance)
+```dart
+// ⚠️ 무료, 입력 없음, 즉시 결과
+conditions = {
+  'saju': user.sajuData,
+  // 추가 입력 없음 - 칩 탭 시 즉시 호출
+}
+```
+
 ### MBTI 운세 (MBTI)
 ```dart
 conditions = {
@@ -272,103 +279,42 @@ conditions = {
 
 ---
 
-## 프리미엄 & 광고 시스템
+## 구독 시스템
 
-### 프리미엄 vs 일반 사용자
+### 구독자 vs 일반 사용자
 
-| 구분 | 프리미엄 | 일반 |
+| 구분 | 구독자 | 일반 |
 |------|---------|------|
-| 결과 표시 | 즉시 전체 공개 | 블러 처리 |
-| 광고 시청 | 불필요 | 필수 (5초) |
-| 블러 섹션 | 없음 | 4개 섹션 |
+| 토큰 보너스 | 월 50개 | 없음 |
 
-### 프리미엄 확인 방법
+**핵심**: 구독 = 토큰 정기구매. 구독자도 운세 이용 시 토큰 소비 필수.
+
+### 구독 상태 확인 방법
 
 ```dart
-// 1. 프리미엄 상태 확인
+// 구독 상태 확인
 final tokenState = ref.read(tokenProvider);
 final premiumOverride = await DebugPremiumService.getOverrideValue();
-final isPremium = premiumOverride ?? tokenState.hasUnlimitedAccess;
-
-// 2. UnifiedFortuneService 호출 시 전달
-final fortuneResult = await fortuneService.getFortune(
-  fortuneType: 'daily_calendar',
-  inputConditions: inputConditions,
-  conditions: conditions,
-  isPremium: isPremium,
-);
-```
-
-### 블러 처리 시스템
-
-```dart
-// FortuneResult에 블러 적용
-if (!isPremium) {
-  fortuneResult.applyBlur([
-    'advice',           // 조언
-    'future_outlook',   // 미래 전망
-    'luck_items',       // 행운 아이템
-    'warnings',         // 주의사항
-  ]);
-}
-```
-
-### 광고 시청 & 블러 해제
-
-```dart
-Future<void> _showAdAndUnblur() async {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (context) => AdLoadingDialog(
-      duration: Duration(seconds: 5),
-    ),
-  );
-
-  await Future.delayed(Duration(seconds: 5));
-  Navigator.of(context).pop();
-
-  setState(() {
-    _fortuneResult.removeBlur();
-  });
-}
+final isSubscribed = premiumOverride ?? tokenState.hasUnlimitedAccess;
 ```
 
 ---
 
-## 토큰/소울 소비율
+## 수익화 모델 (토큰)
 
-### 운세 유형별 토큰 소비 (39개)
+> **상세 정책은 [22-business-model.md](22-business-model.md) 참조**
 
-| 유형 | 토큰 | 운세 종류 |
-|------|------|----------|
-| **Simple** | 1 | daily, time, lucky-items, lucky-number, biorhythm |
-| **Medium** | 2 | love, career, mbti, dream, health, talent, avoid-people, new-year |
-| **Complex** | 3 | tarot, saju, traditional-saju, compatibility, blind-date, ex-lover, face-reading, naming |
-| **Premium** | 5 | celebrity, wealth, investment, pet-compatibility, ootd, home-fengshui |
-| **Family** | 3 | family-change, family-children, family-health, family-relationship, family-wealth |
-| **Special** | 4 | past-life, exam, match-insight, premium-saju, talisman, recommend |
+### 요약
 
-### 전체 운세 목록 (39개)
+| 모델 | 운세 수 | 특징 |
+|------|--------|------|
+| 🆓 **무료** | 5개 | 제한 없이 무료 |
+| 🪙 **토큰** | 31개 | 토큰 소비 |
 
-| 카테고리 | 운세 함수 | 토큰 |
-|----------|----------|------|
-| **기본** | fortune-daily, fortune-time | 1 |
-| **행운** | fortune-lucky-items, fortune-biorhythm | 1-2 |
-| **연애** | fortune-love, fortune-blind-date, fortune-ex-lover, fortune-compatibility | 2-3 |
-| **직업** | fortune-career, fortune-talent | 2 |
-| **건강** | fortune-health, fortune-health-document | 2-3 |
-| **성격** | fortune-mbti, fortune-match-insight | 2-4 |
-| **타로** | fortune-tarot | 3 |
-| **사주** | fortune-saju, fortune-traditional-saju, fortune-premium-saju | 3-5 |
-| **관상** | fortune-face-reading, fortune-face-reading-watch | 3 |
-| **꿈** | fortune-dream | 2 |
-| **가족** | fortune-family-change, fortune-family-children, fortune-family-health, fortune-family-relationship, fortune-family-wealth | 3 |
-| **재물** | fortune-wealth, fortune-investment | 2-5 |
-| **특수** | fortune-naming, fortune-pet-compatibility, fortune-celebrity | 3-5 |
-| **환경** | fortune-home-fengshui, fortune-ootd | 5 |
-| **시즌** | fortune-new-year, fortune-exam | 2-4 |
-| **기타** | fortune-avoid-people, fortune-past-life, fortune-talisman, fortune-recommend | 2-4 |
+### 토큰 운세 (9개)
+- newYear (5개), traditional (5개), naming (7개)
+- babyNickname (5개), yearlyEncounter (3개), celebrity (5개)
+- lotto (3개), exam (3개), ootdEvaluation (3개)
 
 ### 토큰 소비 코드
 

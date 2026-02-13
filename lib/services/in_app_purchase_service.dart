@@ -271,11 +271,11 @@ class InAppPurchaseService {
       Logger.info('   - productInfo 존재: ${productInfo != null}');
       if (productInfo != null) {
         Logger.info('   - isSubscription: ${productInfo.isSubscription}');
-        Logger.info('   - tokens: ${productInfo.tokens}');
+        Logger.info('   - points: ${productInfo.points}');
       }
 
-      if (productInfo != null && !productInfo.isSubscription && productInfo.tokens > 0) {
-        Logger.info('✅ 토큰 상품 확인! ${productInfo.tokens}개 복주머니 추가 완료 (서버에서 처리됨)');
+      if (productInfo != null && !productInfo.isSubscription && productInfo.points > 0) {
+        Logger.info('✅ 토큰 상품 확인! ${productInfo.points}개 토큰 추가 완료 (서버에서 처리됨)');
       } else {
         Logger.info('⚠️ 토큰 상품 아님 또는 조건 미충족');
       }
@@ -484,8 +484,8 @@ class InAppPurchaseService {
       Logger.warning('상품 정보 찾기 실패 - 기본값 사용');
     }
 
-    final productName = productInfo?.title ?? '복주머니';
-    final tokenAmount = productInfo?.tokens ?? 0;
+    final productName = productInfo?.title ?? '토큰';
+    final tokenAmount = productInfo?.points ?? 0;
     final message = '$productName 구매가 완료되었습니다!';
 
     // 결제 완료 콜백 호출 (상품 정보 포함)

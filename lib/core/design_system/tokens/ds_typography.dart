@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/theme/font_config.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:fortune/core/theme/typography_unified.dart';
 import 'ds_colors.dart';
 
-/// Korean Traditional "Saaju" typography system
+/// Modern AI Chat typography system
 ///
-/// Design Philosophy: Calligraphy meets modern readability
+/// Design Philosophy: Clean, readable, content-focused
 ///
 /// Font Strategy:
-/// - All text: NanumMyeongjo (나눔명조) - Traditional calligraphy feel
+/// - Primary: NotoSansKR (local, clean sans-serif)
+/// - Legacy calligraphy: NanumMyeongjo (for specific traditional content)
 ///
 /// Usage:
 /// ```dart
@@ -19,240 +20,122 @@ import 'ds_colors.dart';
 class DSTypography {
   DSTypography._();
 
-  /// Headline font family - Calligraphy style (나눔명조)
-  static String get headlineFamily => GoogleFonts.nanumMyeongjo().fontFamily!;
+  /// Primary font family - NotoSansKR
+  static String get headlineFamily => FontConfig.primary;
 
-  /// Body font family - NanumMyeongjo for fortune content
-  static String get bodyFamily => GoogleFonts.nanumMyeongjo().fontFamily!;
+  /// Body font family - NotoSansKR
+  static String get bodyFamily => FontConfig.primary;
 
-  /// UI font family - FontConfig.primary 참조
+  /// UI font family - FontConfig.primary reference
   static const String uiFamily = FontConfig.primary;
 
-  /// Number font family - FontConfig.number 참조
+  /// Number font family - FontConfig.number reference
   static const String numberFamily = FontConfig.number;
 
-  /// Default font family for theme - FontConfig.primary 참조
+  /// Default font family for theme - FontConfig.primary reference
   static const String fontFamily = FontConfig.primary;
 
   // ============================================
-  // DISPLAY STYLES (Fortune titles, hero text)
-  // Using NanumMyeongjo for traditional feel
+  // DISPLAY STYLES (Hero text, splash screens)
+  // Using Inter for modern, clean look
   // ============================================
 
-  /// Display Large - 32px, SemiBold - Fortune titles
-  /// (w700→w600 조정으로 한지 위 붓글씨 느낌)
-  static TextStyle get displayLarge => GoogleFonts.nanumMyeongjo(
-        fontSize: 32,
-        fontWeight: FontWeight.w600,
-        height: 1.3,
-        letterSpacing: 0,
-      );
+  /// Display Large - 36px, SemiBold - Page hero titles
+  static TextStyle get displayLarge => TypographyUnified.displayLarge;
 
-  /// Display Medium - 28px, SemiBold - Section headers
-  static TextStyle get displayMedium => GoogleFonts.nanumMyeongjo(
-        fontSize: 28,
-        fontWeight: FontWeight.w600,
-        height: 1.35,
-        letterSpacing: 0,
-      );
+  /// Display Medium - 32px, SemiBold - Section headers
+  static TextStyle get displayMedium => TypographyUnified.displayMedium;
 
-  /// Display Small - 24px, SemiBold
-  static TextStyle get displaySmall => GoogleFonts.nanumMyeongjo(
-        fontSize: 24,
-        fontWeight: FontWeight.w600,
-        height: 1.4,
-        letterSpacing: 0,
-      );
+  /// Display Small - 28px, SemiBold
+  static TextStyle get displaySmall => TypographyUnified.displaySmall;
 
   // ============================================
   // HEADING STYLES (Page titles, card headers)
-  // Using NanumMyeongjo for traditional aesthetic
+  // Using Inter for modern aesthetic
   // ============================================
 
-  /// Heading Large - 24px, SemiBold - Page titles
-  static TextStyle get headingLarge => GoogleFonts.nanumMyeongjo(
-        fontSize: 24,
-        fontWeight: FontWeight.w600,
-        height: 1.35,
-        letterSpacing: 0,
-      );
+  /// Heading Large - 28px, SemiBold - Page titles
+  static TextStyle get headingLarge => TypographyUnified.heading1;
 
-  /// Heading Medium - 20px, Medium - Card headers
-  static TextStyle get headingMedium => GoogleFonts.nanumMyeongjo(
-        fontSize: 20,
-        fontWeight: FontWeight.w500,
-        height: 1.4,
-        letterSpacing: 0,
-      );
+  /// Heading Medium - 24px, SemiBold - Card headers
+  static TextStyle get headingMedium => TypographyUnified.heading2;
 
-  /// Heading Small - 18px, Medium
-  static TextStyle get headingSmall => GoogleFonts.nanumMyeongjo(
-        fontSize: 18,
-        fontWeight: FontWeight.w500,
-        height: 1.45,
-        letterSpacing: 0,
-      );
+  /// Heading Small - 20px, Medium
+  static TextStyle get headingSmall => TypographyUnified.heading3;
 
   // ============================================
-  // BODY STYLES (Fortune content, descriptions)
-  // Using NanumMyeongjo for readability
+  // BODY STYLES (Content, descriptions)
+  // Using Inter for readability
   // ============================================
 
-  /// Body Large - 16px, Regular - Main fortune content
-  static TextStyle get bodyLarge => GoogleFonts.nanumMyeongjo(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        height: 1.7,
-        letterSpacing: 0,
-      );
+  /// Body Large - 16px, Regular - Main content
+  static TextStyle get bodyLarge => TypographyUnified.bodyLarge;
 
   /// Body Medium - 14px, Regular - Secondary content
-  static TextStyle get bodyMedium => GoogleFonts.nanumMyeongjo(
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-        height: 1.65,
-        letterSpacing: 0,
-      );
+  static TextStyle get bodyMedium => TypographyUnified.bodyMedium;
 
   /// Body Small - 13px, Regular - Fine print
-  static TextStyle get bodySmall => GoogleFonts.nanumMyeongjo(
-        fontSize: 13,
-        fontWeight: FontWeight.w400,
-        height: 1.6,
-        letterSpacing: 0,
-      );
+  static TextStyle get bodySmall => TypographyUnified.bodySmall;
 
   // ============================================
   // LABEL STYLES (UI labels, navigation)
-  // Using NanumMyeongjo for consistent typography
+  // Using Inter for UI consistency
   // ============================================
 
-  /// Label Large - 16px, Medium
-  static const TextStyle labelLarge = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-    height: 1.5,
-    letterSpacing: 0,
-    fontFamily: uiFamily,
-  );
+  /// Label Large - 14px, Medium
+  static TextStyle get labelLarge => TypographyUnified.labelLarge;
 
-  /// Label Medium - 14px, Medium
-  static const TextStyle labelMedium = TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.w500,
-    height: 1.5,
-    letterSpacing: 0,
-    fontFamily: uiFamily,
-  );
+  /// Label Medium - 13px, Medium
+  static TextStyle get labelMedium => TypographyUnified.labelMedium;
 
   /// Label Small - 12px, Medium
-  static const TextStyle labelSmall = TextStyle(
-    fontSize: 12,
-    fontWeight: FontWeight.w500,
-    height: 1.4,
-    letterSpacing: 0,
-    fontFamily: uiFamily,
-  );
+  static TextStyle get labelSmall => TypographyUnified.labelSmall;
 
   /// Label Tiny - 11px, Medium (badges, etc)
-  static const TextStyle labelTiny = TextStyle(
-    fontSize: 11,
-    fontWeight: FontWeight.w500,
-    height: 1.4,
-    letterSpacing: 0,
-    fontFamily: uiFamily,
-  );
+  static TextStyle get labelTiny => TypographyUnified.labelTiny;
 
   // ============================================
-  // SECTION HEADER (Traditional style)
+  // SECTION HEADER
   // ============================================
 
   /// Section Header - 12px, SemiBold
-  static const TextStyle sectionHeader = TextStyle(
-    fontSize: 12,
-    fontWeight: FontWeight.w600,
-    height: 1.4,
-    letterSpacing: 0.5,
-    fontFamily: uiFamily,
-  );
+  static TextStyle get sectionHeader => TypographyUnified.labelSmall.copyWith(
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.5,
+      );
 
   // ============================================
-  // BUTTON STYLES (Seal/stamp buttons)
+  // BUTTON STYLES
   // ============================================
 
-  /// Button Large - 17px, SemiBold
-  static const TextStyle buttonLarge = TextStyle(
-    fontSize: 17,
-    fontWeight: FontWeight.w600,
-    height: 1.4,
-    letterSpacing: 0,
-    fontFamily: uiFamily,
-  );
+  /// Button Large - 16px, SemiBold
+  static TextStyle get buttonLarge => TypographyUnified.buttonLarge;
 
-  /// Button Medium - 16px, SemiBold
-  static const TextStyle buttonMedium = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w600,
-    height: 1.4,
-    letterSpacing: 0,
-    fontFamily: uiFamily,
-  );
+  /// Button Medium - 15px, SemiBold
+  static TextStyle get buttonMedium => TypographyUnified.buttonMedium;
 
   /// Button Small - 14px, SemiBold
-  static const TextStyle buttonSmall = TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.w600,
-    height: 1.4,
-    letterSpacing: 0,
-    fontFamily: uiFamily,
-  );
+  static TextStyle get buttonSmall => TypographyUnified.buttonSmall;
 
   // ============================================
   // NUMBER STYLES (for amounts, statistics)
   // ============================================
 
-  /// Number Large - 32px, SemiBold
-  /// (w700→w600 조정으로 부드러운 무게감)
-  static const TextStyle numberLarge = TextStyle(
-    fontSize: 32,
-    fontWeight: FontWeight.w600,
-    height: 1.25,
-    letterSpacing: -0.02,
-    fontFamily: numberFamily,
-    fontFeatures: [FontFeature.tabularFigures()],
-  );
+  /// Number Large - 28px, SemiBold
+  static TextStyle get numberLarge => TypographyUnified.numberLarge;
 
-  /// Number Medium - 24px, SemiBold
-  static const TextStyle numberMedium = TextStyle(
-    fontSize: 24,
-    fontWeight: FontWeight.w600,
-    height: 1.33,
-    letterSpacing: -0.01,
-    fontFamily: numberFamily,
-    fontFeatures: [FontFeature.tabularFigures()],
-  );
+  /// Number Medium - 22px, SemiBold
+  static TextStyle get numberMedium => TypographyUnified.numberMedium;
 
   /// Number Small - 18px, SemiBold
-  static const TextStyle numberSmall = TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeight.w600,
-    height: 1.4,
-    letterSpacing: 0,
-    fontFamily: numberFamily,
-    fontFeatures: [FontFeature.tabularFigures()],
-  );
+  static TextStyle get numberSmall => TypographyUnified.numberSmall;
 
   // ============================================
   // INPUT STYLES
   // ============================================
 
-  /// Input text style - Using serif for traditional feel
-  static TextStyle get input => GoogleFonts.nanumMyeongjo(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        height: 1.5,
-        letterSpacing: 0,
-      );
+  /// Input text style
+  static TextStyle get input => TypographyUnified.bodyMedium;
 
   /// Input placeholder style
   static TextStyle get inputPlaceholder => input.copyWith(
@@ -265,42 +148,21 @@ class DSTypography {
   );
 
   // ============================================
-  // FORTUNE-SPECIFIC STYLES
+  // FORTUNE-SPECIFIC STYLES (Legacy calligraphy)
+  // Using NanumMyeongjo for traditional content
   // ============================================
 
-  /// Fortune title - Large calligraphy style
-  /// (w700→w600 조정으로 부드러운 붓글씨 느낌)
-  static TextStyle get fortuneTitle => GoogleFonts.nanumMyeongjo(
-        fontSize: 28,
-        fontWeight: FontWeight.w600,
-        height: 1.35,
-        letterSpacing: 0,
-      );
+  /// Fortune title - Calligraphy style for traditional content
+  static TextStyle get fortuneTitle => TypographyUnified.calligraphyTitle;
 
-  /// Fortune subtitle - Medium calligraphy
-  static TextStyle get fortuneSubtitle => GoogleFonts.nanumMyeongjo(
-        fontSize: 18,
-        fontWeight: FontWeight.w500,
-        height: 1.45,
-        letterSpacing: 0,
-      );
+  /// Fortune subtitle - Calligraphy style
+  static TextStyle get fortuneSubtitle => TypographyUnified.calligraphySubtitle;
 
-  /// Fortune content - Serif body for readability
-  static TextStyle get fortuneContent => GoogleFonts.nanumMyeongjo(
-        fontSize: 15,
-        fontWeight: FontWeight.w400,
-        height: 1.8,
-        letterSpacing: 0.2,
-      );
+  /// Fortune content - Calligraphy style for readability
+  static TextStyle get fortuneContent => TypographyUnified.calligraphyBody;
 
-  /// Fortune quote - Elegant serif for special text
-  static TextStyle get fortuneQuote => GoogleFonts.nanumMyeongjo(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        height: 1.75,
-        letterSpacing: 0.1,
-        fontStyle: FontStyle.italic,
-      );
+  /// Fortune quote - Calligraphy style for special text
+  static TextStyle get fortuneQuote => TypographyUnified.calligraphyQuote;
 }
 
 /// Typography scheme for context-based access
@@ -338,7 +200,7 @@ class DSTypographyScheme {
   TextStyle get inputPlaceholder => DSTypography.inputPlaceholder;
   TextStyle get inputError => DSTypography.inputError;
 
-  // Fortune-specific
+  // Fortune-specific (legacy calligraphy)
   TextStyle get fortuneTitle => DSTypography.fortuneTitle;
   TextStyle get fortuneSubtitle => DSTypography.fortuneSubtitle;
   TextStyle get fortuneContent => DSTypography.fortuneContent;

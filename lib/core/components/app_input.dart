@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 /// TOSS 스타일 텍스트 입력 필드
 class TossTextField extends StatefulWidget {
@@ -69,7 +69,7 @@ class _TossTextFieldState extends State<TossTextField>
     
     _animationController = AnimationController(
       vsync: this,
-      duration: TossDesignSystem.durationShort,
+      duration: DSAnimation.fast,
     );
     
     _focusAnimation = Tween<double>(
@@ -108,7 +108,6 @@ class _TossTextFieldState extends State<TossTextField>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final hasError = widget.errorText != null;
     
     return Column(
@@ -118,28 +117,28 @@ class _TossTextFieldState extends State<TossTextField>
         if (widget.labelText != null) ...[
           Text(
             widget.labelText!,
-            style: TossDesignSystem.body3.copyWith(
-              color: hasError 
-                  ? TossDesignSystem.errorRed
-                  : (isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600),
+            style: context.bodySmall.copyWith(
+              color: hasError
+                  ? DSColors.error
+                  : context.colors.textSecondary,
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: TossDesignSystem.spacingS),
+          const SizedBox(height: DSSpacing.sm),
         ],
         AnimatedBuilder(
           animation: _focusAnimation,
           builder: (context, child) {
             return Container(
               decoration: BoxDecoration(
-                color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-                borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
+                color: context.colors.surface,
+                borderRadius: BorderRadius.circular(DSRadius.smd),
                 border: Border.all(
                   color: hasError
-                      ? TossDesignSystem.errorRed
+                      ? DSColors.error
                       : _hasFocus
-                          ? TossDesignSystem.tossBlue
-                          : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200),
+                          ? context.colors.accent
+                          : context.colors.border,
                   width: _hasFocus ? 2 : 1,
                 ),
               ),
@@ -157,19 +156,19 @@ class _TossTextFieldState extends State<TossTextField>
                 enabled: widget.enabled,
                 inputFormatters: widget.inputFormatters,
                 autofocus: widget.autofocus,
-                style: TossDesignSystem.body2.copyWith(
-                  color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                style: context.bodyMedium.copyWith(
+                  color: context.colors.textPrimary,
                 ),
                 decoration: InputDecoration(
                   hintText: widget.hintText,
-                  hintStyle: TossDesignSystem.body2.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+                  hintStyle: context.bodyMedium.copyWith(
+                    color: context.colors.textDisabled,
                   ),
                   prefixIcon: widget.prefixIcon,
                   suffixIcon: widget.suffixIcon,
                   contentPadding: const EdgeInsets.symmetric(
-                    horizontal: TossDesignSystem.spacingM,
-                    vertical: TossDesignSystem.spacingM,
+                    horizontal: DSSpacing.md,
+                    vertical: DSSpacing.md,
                   ),
                   border: InputBorder.none,
                   counterText: '',
@@ -179,15 +178,15 @@ class _TossTextFieldState extends State<TossTextField>
           },
         ),
         if (widget.errorText != null || widget.helperText != null) ...[
-          const SizedBox(height: TossDesignSystem.spacingXS),
+          const SizedBox(height: DSSpacing.xs),
           Text(
             widget.errorText ?? widget.helperText ?? '',
-            style: TossDesignSystem.caption1.copyWith(
+            style: context.labelMedium.copyWith(
               color: hasError
-                  ? TossDesignSystem.errorRed
-                  : (isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400),
+                  ? DSColors.error
+                  : context.colors.textDisabled,
             ),
-          ).animate().fadeIn(duration: TossDesignSystem.durationShort),
+          ).animate().fadeIn(duration: DSAnimation.fast),
         ],
       ],
     );
@@ -215,8 +214,6 @@ class TossSelectField<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -224,19 +221,19 @@ class TossSelectField<T> extends StatelessWidget {
         if (labelText != null) ...[
           Text(
             labelText!,
-            style: TossDesignSystem.body3.copyWith(
-              color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+            style: context.bodySmall.copyWith(
+              color: context.colors.textSecondary,
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: TossDesignSystem.spacingS),
+          const SizedBox(height: DSSpacing.sm),
         ],
         Container(
           decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white,
-            borderRadius: BorderRadius.circular(TossDesignSystem.radiusS),
+            color: context.colors.surface,
+            borderRadius: BorderRadius.circular(DSRadius.smd),
             border: Border.all(
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+              color: context.colors.border,
             ),
           ),
           child: DropdownButtonHideUnderline(
@@ -245,8 +242,8 @@ class TossSelectField<T> extends StatelessWidget {
               hint: hintText != null
                   ? Text(
                       hintText!,
-                      style: TossDesignSystem.body2.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark400 : TossDesignSystem.gray400,
+                      style: context.bodyMedium.copyWith(
+                        color: context.colors.textDisabled,
                       ),
                     )
                   : null,
@@ -255,8 +252,8 @@ class TossSelectField<T> extends StatelessWidget {
                   value: option.value,
                   child: Text(
                     option.label,
-                    style: TossDesignSystem.body2.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                    style: context.bodyMedium.copyWith(
+                      color: context.colors.textPrimary,
                     ),
                   ),
                 );
@@ -264,12 +261,12 @@ class TossSelectField<T> extends StatelessWidget {
               onChanged: enabled ? onChanged : null,
               isExpanded: true,
               padding: const EdgeInsets.symmetric(
-                horizontal: TossDesignSystem.spacingM,
-                vertical: TossDesignSystem.spacingM,
+                horizontal: DSSpacing.md,
+                vertical: DSSpacing.md,
               ),
               icon: Icon(
                 Icons.keyboard_arrow_down,
-                color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                color: context.colors.textSecondary,
               ),
             ),
           ),
@@ -306,8 +303,6 @@ class TossCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
     return InkWell(
       onTap: enabled
           ? () {
@@ -315,7 +310,7 @@ class TossCheckbox extends StatelessWidget {
               onChanged?.call(!value);
             }
           : null,
-      borderRadius: BorderRadius.circular(TossDesignSystem.radiusXS),
+      borderRadius: BorderRadius.circular(DSRadius.xs),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -324,13 +319,13 @@ class TossCheckbox extends StatelessWidget {
             height: 20,
             decoration: BoxDecoration(
               color: value
-                  ? TossDesignSystem.tossBlue
-                  : (isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.white),
-              borderRadius: BorderRadius.circular(TossDesignSystem.radiusXS),
+                  ? context.colors.accent
+                  : context.colors.surface,
+              borderRadius: BorderRadius.circular(DSRadius.xs),
               border: Border.all(
                 color: value
-                    ? TossDesignSystem.tossBlue
-                    : (isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray300),
+                    ? context.colors.accent
+                    : context.colors.border,
                 width: 2,
               ),
             ),
@@ -338,16 +333,16 @@ class TossCheckbox extends StatelessWidget {
                 ? const Icon(
                     Icons.check,
                     size: 14,
-                    color: TossDesignSystem.white,
-                  ).animate().scale(duration: TossDesignSystem.durationShort)
+                    color: Colors.white,
+                  ).animate().scale(duration: DSAnimation.fast)
                 : null,
           ),
           if (label != null) ...[
-            const SizedBox(width: TossDesignSystem.spacingS),
+            const SizedBox(width: DSSpacing.sm),
             Text(
               label!,
-              style: TossDesignSystem.body2.copyWith(
-                color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+              style: context.bodyMedium.copyWith(
+                color: context.colors.textPrimary,
               ),
             ),
           ],

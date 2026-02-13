@@ -1,4 +1,4 @@
-/// 트렌드 콘텐츠 모델 export
+// 트렌드 콘텐츠 모델 export
 library;
 
 export 'trend_content.dart';

@@ -1,12 +1,12 @@
-/// Mock InAppPurchase Service for Integration Tests
-/// IAP Mock 서비스 - 실제 결제 없이 구매 플로우 테스트
-///
-/// 사용법:
-/// ```dart
-/// final mockIAP = MockInAppPurchaseService();
-/// mockIAP.setNextPurchaseResult(MockPurchaseResult.success);
-/// await mockIAP.purchaseProduct('soul_100');
-/// ```
+// Mock InAppPurchase Service for Integration Tests
+// IAP Mock 서비스 - 실제 결제 없이 구매 플로우 테스트
+//
+// 사용법:
+// ```dart
+// final mockIAP = MockInAppPurchaseService();
+// mockIAP.setNextPurchaseResult(MockPurchaseResult.success);
+// await mockIAP.purchaseProduct('soul_100');
+// ```
 
 import 'dart:async';
 

@@ -1,10 +1,17 @@
-This app provides AI-based fortune telling services.
+This is an ENTERTAINMENT app that provides AI-generated personalized lifestyle insights and guidance.
 
 Test Account:
-- Email: test@fortune.com
-- Password: TestPassword123!
+- Email: injoo1222@naver.com
+- Password: Dlswn@123
 
-The app requires user authentication to access personalized fortune readings.
-All fortune categories are available with the test account.
+The app requires user authentication to access personalized content.
+All features are available with the test account.
+
+Key Features to Test:
+1. Face AI - AI-based face analysis for entertainment
+2. Daily Insights - Personalized daily messages
+3. Personality Analysis - MBTI and personality assessments
 
 Note: Some features require in-app purchases, but the test account has access to all premium features for review purposes.
+
+IMPORTANT: All content is AI-generated for entertainment purposes only.

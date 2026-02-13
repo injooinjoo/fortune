@@ -19,59 +19,66 @@ We have fixed the in-app purchase receipt validation issue.
 
 ---
 
-## Re: Guideline 4.3(b) - Spam / Design Differentiation
+## App Overview - Entertainment & Lifestyle Application
 
-We understand your concern about app differentiation. Here's what makes "ZPZG" (Know Yourself) unique:
+"ZPZG" (지피지기 - Know Yourself) is an **ENTERTAINMENT app** that provides AI-generated personalized lifestyle insights and guidance.
 
-### Core Differentiator: Scientific Approach to Physiognomy
+### App Category:
+- Primary: LIFESTYLE
+- Secondary: ENTERTAINMENT
 
-Our app's name "ZPZG" (Know Yourself) reflects our unique approach - treating traditional Korean physiognomy (관상학) as an accumulated wisdom system rather than mere superstition.
+### Core Features:
 
-### Unique Features:
+1. **Face AI (AI 관상) - Entertainment Feature**
+   - Camera-based face analysis using AI for fun personality insights
+   - Provides entertaining interpretations of facial features
+   - For entertainment purposes only
 
-1. **Face Reading (관상) - Core Feature**
-   - Camera-based face analysis using traditional Korean physiognomy principles
-   - Analysis of facial features: forehead (지혜), eyes (성격), nose (재물운), lips (애정운), ears (수명)
-   - Based on classical Korean physiognomy texts and interpretations
+2. **Daily Insights**
+   - AI-generated personalized daily messages
+   - Lifestyle tips and guidance
+   - Motivation and inspiration content
 
-2. **Traditional Korean Fortune Systems**
-   - **Tojeong Bigyeol (토정비결)**: Ancient Korean fortune-telling system with authentic algorithms
-   - **Saju (사주)**: Traditional Four Pillars of Destiny analysis
-   - **24 Solar Terms (24절기)**: Season-based fortune guidance
+3. **Personality Analysis**
+   - MBTI-based personality assessments
+   - Self-discovery and reflection tools
+   - Entertainment-focused personality insights
 
-3. **Soul/Token Economy System**
-   - Unique gamification: Users earn "souls" (영혼) by viewing free fortunes
-   - Premium readings require spending souls
-   - Creates engagement beyond simple fortune reading
+4. **Interactive Features**
+   - Insight Cards (similar to mood cards)
+   - Dream journal and interpretation
+   - Lifestyle guidance
 
-4. **Comprehensive Fortune Categories (50+)**
-   - Dream interpretation, career, love, health, moving dates, and more
-   - Each category provides personalized guidance
-
-5. **Interactive Features**
-   - Tarot card drawing with traditional card meanings
-   - Worry bead meditation (염주 명상) with haptic feedback
-   - Talisman (부적) generation
+### Token/Soul Economy System
+- Users earn "souls" (영혼) through app engagement
+- Premium content can be accessed using tokens
+- Creates gamified engagement experience
 
 ### Target Audience:
-- Korean users interested in traditional physiognomy and fortune-telling
-- Users seeking personalized life guidance based on traditional wisdom
-- Those looking for cultural and spiritual exploration
+- Users seeking daily entertainment and inspiration
+- Those interested in personality and self-discovery content
+- Users looking for personalized lifestyle guidance
 
-Our app uniquely combines face reading (관상) as a scientific approach with traditional Korean fortune systems, creating a distinct experience not duplicated by other apps in the store.
+### Important Disclaimers:
+- All content is AI-generated for ENTERTAINMENT purposes only
+- App clearly states content should not be used for important life decisions
+- No claims of accuracy or predictive ability
 
 ---
 
 ## Testing Instructions:
 
-1. **In-App Purchase Testing**:
-   - Use Sandbox test account provided
-   - All subscription and token purchase flows now work correctly
-   - Receipt validation properly handles both production and sandbox environments
+1. **Account Login**:
+   - Use the provided test account credentials
+   - Social login (Apple ID, Google, Kakao) also available
 
-2. **App Features**:
-   - Create account or login with Apple ID
-   - Try "오늘의 운세" (Today's Fortune) - free feature
-   - Try "사주" (Saju) - premium feature requiring tokens
+2. **Feature Testing**:
+   - Try "Face AI" feature for entertainment face analysis
+   - Check "Daily Insights" for personalized content
+   - Test premium features (test account has full access)
+
+3. **In-App Purchase Testing**:
+   - Use Sandbox test environment
+   - All subscription and token purchase flows work correctly
 
 Thank you for your review.

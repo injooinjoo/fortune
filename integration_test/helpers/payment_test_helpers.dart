@@ -1,12 +1,12 @@
-/// Payment Test Helpers for Integration Tests
-/// 결제 기능 테스트 전용 유틸리티
-///
-/// 사용법:
-/// ```dart
-/// await PaymentTestHelpers.verifyTokenBalance(tester);
-/// await PaymentTestHelpers.simulatePurchase(tester);
-/// await PaymentTestHelpers.testInsufficientTokensFlow(tester);
-/// ```
+// Payment Test Helpers for Integration Tests
+// 결제 기능 테스트 전용 유틸리티
+//
+// 사용법:
+// ```dart
+// await PaymentTestHelpers.verifyTokenBalance(tester);
+// await PaymentTestHelpers.simulatePurchase(tester);
+// await PaymentTestHelpers.testInsufficientTokensFlow(tester);
+// ```
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -48,8 +48,6 @@ class PaymentTestHelpers {
   static int? getDisplayedTokenBalance(WidgetTester tester) {
     // Soul 또는 토큰 옆의 숫자 찾기
     final soulText = find.textContaining('Soul');
-    final tokenText = find.textContaining('토큰');
-
     if (soulText.evaluate().isNotEmpty) {
       final widget = tester.widget<Text>(soulText.first);
       final text = widget.data ?? '';
@@ -128,7 +126,7 @@ class PaymentTestHelpers {
   /// 토큰 패키지 선택
   static Future<bool> selectTokenPackage(
     WidgetTester tester, {
-    MockTokenProduct? product,
+    MockProductDetails? product,
   }) async {
     await tester.pump(const Duration(seconds: 1));
 
@@ -537,7 +535,7 @@ class PaymentTestHelpers {
   /// Mock IAP 서비스 설정 - 다음 구매 실패
   static void setNextPurchaseFailure(
     MockInAppPurchaseService mock, {
-    MockPurchaseResult result = MockPurchaseResult.error,
+    MockPurchaseResult result = MockPurchaseResult.paymentFailed,
   }) {
     mock.setNextPurchaseResult(result);
   }
@@ -549,12 +547,12 @@ class PaymentTestHelpers {
 
   /// Mock 토큰 잔액 설정
   static void setMockTokenBalance(MockInAppPurchaseService mock, int balance) {
-    mock.tokenBalance = balance;
+    mock.setTokenBalance(balance);
   }
 
   /// Mock 프리미엄 상태 설정
   static void setMockPremiumStatus(MockInAppPurchaseService mock, bool isPremium) {
-    mock.isPremium = isPremium;
+    mock.setSubscriptionStatus(isPremium);
   }
 }
 

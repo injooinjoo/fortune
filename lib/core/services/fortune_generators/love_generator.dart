@@ -46,16 +46,7 @@ class LoveGenerator {
 
       final data = response.data as Map<String, dynamic>;
 
-      // 프리미엄이 아니면 블러 섹션 설정
-      final blurredSections = isPremium
-          ? <String>[]
-          : [
-              'compatibilityInsights',
-              'predictions',
-              'actionPlan',
-              'warningArea',
-            ];
-
+      // 🎯 토큰 소비형 모델: 블러 처리 제거
       // 점수 및 메시지 추출
       final loveScore = data['loveScore'] as int? ?? 70;
       final mainMessage = data['mainMessage'] as String? ?? '새로운 사랑의 기회가 찾아올 것입니다.';
@@ -72,13 +63,10 @@ class LoveGenerator {
         data: data,
         score: loveScore,
         createdAt: DateTime.now(),
-        isBlurred: !isPremium,
-        blurredSections: blurredSections,
       );
 
       Logger.info('[LoveGenerator] 연애운 생성 완료');
       Logger.info('   - fortuneId: ${result.id}');
-      Logger.info('   - isBlurred: ${result.isBlurred}');
 
       return result;
     } catch (e, stackTrace) {

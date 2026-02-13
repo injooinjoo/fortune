@@ -1,7 +1,7 @@
-/// Route Observer Logger
-///
-/// 런타임에 실제로 방문된 화면을 추적하고 visited_screens.json에 기록합니다.
-/// 개발 모드(kDebugMode)에서만 동작하며, 실제 사용 패턴 분석에 활용됩니다.
+// Route Observer Logger
+//
+// 런타임에 실제로 방문된 화면을 추적하고 visited_screens.json에 기록합니다.
+// 개발 모드(kDebugMode)에서만 동작하며, 실제 사용 패턴 분석에 활용됩니다.
 library;
 
 import 'package:universal_io/io.dart';

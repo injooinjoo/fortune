@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import '../design_system/design_system.dart';
 
 /// GPT/Claude 스타일의 타이핑 효과 위젯
 ///
@@ -170,7 +171,7 @@ class _GptStyleTypingTextState extends State<GptStyleTypingText>
   @override
   Widget build(BuildContext context) {
     final effectiveStyle = widget.style ?? DefaultTextStyle.of(context).style;
-    final textColor = effectiveStyle.color ?? Colors.black;
+    final textColor = effectiveStyle.color ?? context.colors.textPrimary;
 
     return Stack(
       children: [
@@ -344,7 +345,7 @@ class _TypingLoadingIndicatorState extends State<TypingLoadingIndicator>
   @override
   Widget build(BuildContext context) {
     final effectiveStyle = widget.style ?? DefaultTextStyle.of(context).style;
-    final textColor = effectiveStyle.color ?? Colors.black;
+    final textColor = effectiveStyle.color ?? context.colors.textPrimary;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

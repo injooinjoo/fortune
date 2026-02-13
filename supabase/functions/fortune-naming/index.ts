@@ -67,8 +67,6 @@ interface NamingFortuneResponse {
     recommendedNames: RecommendedName[];
     namingTips: string[];
     warnings: string[];
-    isBlurred: boolean;
-    blurredSections: string[];
   };
   cachedAt?: string;
 }
@@ -379,11 +377,6 @@ serve(async (req) => {
     console.log('AI 작명운세 생성 시작...')
     const fortuneData = await generateNamingFortune(params)
 
-    // 블러 로직 (프리미엄이 아니면 4위 이후 블러)
-    const isPremium = params.isPremium ?? false
-    const isBlurred = !isPremium
-    const blurredSections = isBlurred ? ['names4to10', 'detailedAnalysis'] : []
-
     // 응답 데이터 구조화
     // 첫 번째 추천 이름의 점수를 전체 점수로 사용
     const topScore = fortuneData.recommendedNames?.[0]?.totalScore || 85
@@ -412,13 +405,9 @@ serve(async (req) => {
         ],
         warnings: fortuneData.warnings || [
           '출산예정일 기준 분석이므로 실제 출생일과 다를 수 있습니다'
-        ],
-        isBlurred,
-        blurredSections
+        ]
       }
     }
-
-    console.log(`[작명운세] isPremium: ${isPremium}, isBlurred: ${isBlurred}`)
 
     // 캐시 저장
     await saveCachedFortune(params.userId, params, response.data)

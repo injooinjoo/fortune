@@ -1,10 +1,9 @@
-/// Landing Page - Widget Test
-/// 랜딩 페이지 UI 테스트
+// Landing Page - Widget Test
+// 랜딩 페이지 UI 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../helpers/test_helpers.dart';
 
 void main() {
   group('LandingPage 테스트', () {

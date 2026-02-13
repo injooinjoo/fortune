@@ -1,12 +1,12 @@
-/// Mock Authentication Service for Integration Tests
-/// Auth Mock - 실제 인증 없이 로그인/로그아웃 플로우 테스트
-///
-/// 사용법:
-/// ```dart
-/// final mockAuth = MockAuthService();
-/// await mockAuth.signInWithTestAccount();
-/// expect(mockAuth.isAuthenticated, isTrue);
-/// ```
+// Mock Authentication Service for Integration Tests
+// Auth Mock - 실제 인증 없이 로그인/로그아웃 플로우 테스트
+//
+// 사용법:
+// ```dart
+// final mockAuth = MockAuthService();
+// await mockAuth.signInWithTestAccount();
+// expect(mockAuth.isAuthenticated, isTrue);
+// ```
 
 import 'dart:async';
 
@@ -142,8 +142,6 @@ class MockAuthService {
 
   // 설정
   Duration _simulatedDelay = const Duration(milliseconds: 300);
-  bool _autoRefreshSession = true;
-
   // 콜백
   void Function(MockAuthStatus)? onAuthStateChanged;
   void Function(MockUser?)? onUserChanged;
@@ -175,11 +173,6 @@ class MockAuthService {
     _simulatedDelay = delay;
   }
 
-  /// 자동 세션 갱신 설정
-  void setAutoRefreshSession(bool autoRefresh) {
-    _autoRefreshSession = autoRefresh;
-  }
-
   /// 세션 만료 시뮬레이션
   void simulateSessionExpiry() {
     if (_currentSession != null) {
@@ -200,7 +193,6 @@ class MockAuthService {
     _currentSession = null;
     _nextResult = MockAuthResult.success;
     _simulatedDelay = const Duration(milliseconds: 300);
-    _autoRefreshSession = true;
     _updateStatus(MockAuthStatus.unauthenticated);
     _updateUser(null);
   }

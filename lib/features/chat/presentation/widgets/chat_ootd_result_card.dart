@@ -1,9 +1,10 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
-import '../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../core/widgets/fortune_action_buttons.dart';
+import '../../../../core/widgets/infographic/headers/ootd_info_header.dart';
+import '../../../../core/constants/fortune_card_images.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// OOTD 평가 결과 카드 - 패션 매거진 스타일
 ///
@@ -13,356 +14,175 @@ import '../../../../core/widgets/unified_blur_wrapper.dart';
 /// - 6각형 레이더 차트
 /// - 스타일 처방전
 /// - 셀럽 + 추천 아이템 2열 카드
-class ChatOotdResultCard extends StatelessWidget {
+class ChatOotdResultCard extends ConsumerWidget {
   final Map<String, dynamic> ootdData;
-  final bool isBlurred;
-  final List<String> blurredSections;
 
   const ChatOotdResultCard({
     super.key,
     required this.ootdData,
-    this.isBlurred = false,
-    this.blurredSections = const [],
   });
 
-  // 메인 그린 컬러
-  static const Color _primaryGreen = Color(0xFF10B981);
-  static const Color _lightGreen = Color(0xFF34D399);
+  // 동양화 스타일 - 포인트 색상은 쪽빛(cheongMuted) 사용
+  static Color _getAccentColor(BuildContext context) => DSColors.info;
 
   @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(
         vertical: DSSpacing.sm,
         horizontal: DSSpacing.md,
       ),
-      decoration: BoxDecoration(
-        color: isDark ? colors.backgroundSecondary : colors.surface,
-        borderRadius: BorderRadius.circular(DSRadius.lg),
-        border: Border.all(
-          color: colors.textPrimary.withValues(alpha: 0.1),
+      child: DSCard.flat(
+        padding: EdgeInsets.zero,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 인포그래픽 헤더 (점수, 등급, 레이더, 해시태그 통합)
+            _buildInfoHeader(context),
+            // 전체 코멘트 (무료 공개)
+            _buildOverallCommentSection(context),
+            // 하이라이트 (무료 공개)
+            _buildHighlightsSection(context),
+            // TPO 피드백 (무료 공개)
+            _buildTpoFeedbackSection(context),
+            _buildPrescriptionSection(context),
+            _buildBottomCardsSection(context),
+            const SizedBox(height: DSSpacing.md),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: colors.textPrimary.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHeader(context),
-          UnifiedBlurWrapper(
-            isBlurred: isBlurred,
-            blurredSections: blurredSections,
-            sectionKey: 'ootd-result',
-            fortuneType: 'ootd-evaluation',
-            child: Column(
-              children: [
-                _buildScoreSection(context),
-                _buildHashtagSection(context),
-                _buildRadarChartSection(context),
-                _buildPrescriptionSection(context),
-                _buildBottomCardsSection(context),
-                const SizedBox(height: DSSpacing.md),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
 
-  /// 헤더 섹션 (그린 그라데이션)
-  Widget _buildHeader(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final tpo = ootdData['tpo'] as String? ?? '';
-
-    final tpoLabels = {
-      'date': '💕 데이트',
-      'interview': '💼 면접',
-      'work': '🏢 출근',
-      'casual': '☕ 일상',
-      'party': '🎉 파티/모임',
-      'wedding': '💒 경조사',
-      'travel': '✈️ 여행',
-      'sports': '🏃 운동',
-    };
-
-    return Container(
-      padding: const EdgeInsets.all(DSSpacing.md),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: isDark
-              ? [_primaryGreen, const Color(0xFF059669)]
-              : [_lightGreen, _primaryGreen],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(DSSpacing.xs),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(DSRadius.sm),
-            ),
-            child: const Icon(
-              Icons.checkroom,
-              color: Colors.white,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: DSSpacing.sm),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'OOTD 평가 결과',
-                  style: context.heading3.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  'AI Style Analysis',
-                  style: context.labelSmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.8),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          if (tpo.isNotEmpty)
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: DSSpacing.sm,
-                vertical: DSSpacing.xs,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(DSRadius.full),
-              ),
-              child: Text(
-                tpoLabels[tpo] ?? tpo,
-                style: context.labelSmall.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  /// 점수 섹션 - 좌측 점수/뱃지 + 우측 원형 게이지
-  Widget _buildScoreSection(BuildContext context) {
+  /// 인포그래픽 헤더 (점수, 등급, 레이더 차트, 해시태그 통합)
+  Widget _buildInfoHeader(BuildContext context) {
     final colors = context.colors;
     final details = ootdData['details'] as Map<String, dynamic>? ?? {};
-    final score = (ootdData['score'] as num?)?.toDouble() ?? 0.0;
+    final score = (ootdData['score'] as num?)?.toInt() ?? 75;
     final grade = details['overallGrade'] as String? ?? 'C';
-    final comment = details['overallComment'] as String? ?? '';
 
-    // 등급별 라벨
-    final gradeLabels = {
-      'S': 'TREND SETTER',
-      'A': 'TOP-TIER',
-      'B': 'CHIC STYLE',
-      'C': 'RISING STAR',
-    };
+    // 레이더 데이터 추출 - categories 필드 사용 (Edge Function 응답 구조에 맞춤)
+    Map<String, dynamic>? radarScores;
+    final categories = details['categories'] as Map<String, dynamic>?;
+    if (categories != null && categories.isNotEmpty) {
+      radarScores = {};
+      // 6개 카테고리 한글 라벨로 변환
+      const labelMap = {
+        'colorHarmony': '색상조화',
+        'silhouette': '실루엣',
+        'styleConsistency': '스타일',
+        'accessories': '액세서리',
+        'tpoFit': 'TPO',
+        'trendScore': '트렌드',
+      };
+      for (final entry in categories.entries) {
+        num? scoreVal;
 
-    return Container(
-      padding: const EdgeInsets.all(DSSpacing.md),
-      child: Column(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // 좌측: 점수 + 등급 뱃지들
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 점수 + 등급 뱃지
-                    Row(
-                      children: [
-                        // 점수
-                        RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: score.toStringAsFixed(1),
-                                style: context.heading1.copyWith(
-                                  fontSize: 42,
-                                  fontWeight: FontWeight.bold,
-                                  color: colors.textPrimary,
-                                ),
-                              ),
-                              TextSpan(
-                                text: '/10',
-                                style: context.heading3.copyWith(
-                                  color: colors.textSecondary,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: DSSpacing.sm),
-                        // A 뱃지
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: DSSpacing.sm,
-                            vertical: DSSpacing.xs,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _primaryGreen.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(DSRadius.sm),
-                          ),
-                          child: Text(
-                            grade,
-                            style: context.heading3.copyWith(
-                              color: _primaryGreen,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: DSSpacing.xs),
-                        // TREND SETTER 태그
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: DSSpacing.sm,
-                            vertical: DSSpacing.xs,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: _primaryGreen),
-                            borderRadius: BorderRadius.circular(DSRadius.full),
-                          ),
-                          child: Text(
-                            gradeLabels[grade] ?? 'STYLE',
-                            style: context.labelSmall.copyWith(
-                              color: _primaryGreen,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 10,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              // 우측: 원형 게이지
-              _buildCircularGauge(context, score),
-            ],
+        // 다양한 응답 형식 처리
+        if (entry.value is Map) {
+          // 정상 형식: {score: 8.0, feedback: "..."}
+          scoreVal = (entry.value as Map)['score'] as num?;
+        } else if (entry.value is num) {
+          // 간소화 형식: LLM이 숫자만 반환한 경우
+          scoreVal = entry.value as num;
+        } else if (entry.value is String) {
+          // 문자열로 반환된 경우
+          scoreVal = num.tryParse(entry.value as String);
+        }
+
+        if (scoreVal != null) {
+          // 점수를 0-100 스케일로 변환 (원본은 0-10)
+          final normalizedScore = scoreVal.toDouble() * 10;
+          final label = labelMap[entry.key] ?? entry.key;
+          radarScores[label] = normalizedScore;
+        }
+      }
+
+      // 카테고리가 비어있으면 기본값으로 6개 축 생성
+      if (radarScores.isEmpty) {
+        radarScores = {
+          '색상조화': 70.0,
+          '실루엣': 70.0,
+          '스타일': 70.0,
+          '액세서리': 70.0,
+          'TPO': 70.0,
+          '트렌드': 70.0,
+        };
+      }
+    } else {
+      // categories가 null이면 score 기반으로 기본 레이더 데이터 생성
+      final baseScore = (score / 10.0) * 10; // 0-100 스케일
+      radarScores = {
+        '색상조화': baseScore,
+        '실루엣': baseScore,
+        '스타일': baseScore,
+        '액세서리': baseScore,
+        'TPO': baseScore,
+        '트렌드': baseScore,
+      };
+    }
+
+    // 해시태그 추출 (styleKeywords도 fallback으로 사용)
+    final hashtags = (details['hashtags'] as List?)?.cast<String>() ??
+        (details['styleKeywords'] as List?)?.cast<String>() ??
+        (ootdData['keywords'] as List?)?.cast<String>() ??
+        [];
+
+    return Stack(
+      children: [
+        // 인포그래픽 헤더
+        OotdInfoHeader(
+          score: score,
+          grade: grade,
+          radarScores: radarScores,
+          hashtags: hashtags,
+        ),
+        // 액션 버튼 오버레이
+        Positioned(
+          top: DSSpacing.sm,
+          right: DSSpacing.sm,
+          child: FortuneActionButtons(
+            contentId: ootdData['id']?.toString() ??
+                'ootd_${DateTime.now().millisecondsSinceEpoch}',
+            contentType: 'ootd',
+            fortuneType: 'ootdEvaluation',
+            shareTitle: 'OOTD 평가 결과',
+            shareContent: ootdData['overallAdvice'] ?? '패션 분석 결과입니다.',
+            iconSize: 20,
+            iconColor: colors.textSecondary,
           ),
-          const SizedBox(height: DSSpacing.sm),
-          // 코멘트
-          if (comment.isNotEmpty)
-            Text(
-              comment,
-              style: context.bodyLarge.copyWith(
-                color: colors.textPrimary,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-        ],
-      ),
-    ).animate().fadeIn(duration: 400.ms);
-  }
-
-  /// 원형 게이지 위젯
-  Widget _buildCircularGauge(BuildContext context, double score) {
-    final normalizedScore = (score / 10.0).clamp(0.0, 1.0);
-
-    return SizedBox(
-      width: 64,
-      height: 64,
-      child: TweenAnimationBuilder<double>(
-        tween: Tween(begin: 0, end: normalizedScore),
-        duration: const Duration(milliseconds: 1200),
-        curve: Curves.easeOutCubic,
-        builder: (context, value, child) {
-          return CustomPaint(
-            painter: _CircularGaugePainter(
-              progress: value,
-              backgroundColor: Colors.grey.withValues(alpha: 0.2),
-              progressColor: _primaryGreen,
-              strokeWidth: 6,
-            ),
-          );
-        },
-      ),
+        ),
+      ],
     );
   }
 
-  /// 해시태그 칩 섹션
-  Widget _buildHashtagSection(BuildContext context) {
+  /// 전체 코멘트 섹션 (무료 공개)
+  Widget _buildOverallCommentSection(BuildContext context) {
     final colors = context.colors;
     final details = ootdData['details'] as Map<String, dynamic>? ?? {};
-    final keywords =
-        (details['styleKeywords'] as List<dynamic>?)?.cast<String>() ?? [];
+    final comment = details['overallComment'] as String? ??
+        ootdData['content'] as String? ?? '';
 
-    if (keywords.isEmpty) return const SizedBox.shrink();
+    if (comment.isEmpty) return const SizedBox.shrink();
 
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: DSSpacing.md,
         vertical: DSSpacing.sm,
       ),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const Text('🏷', style: TextStyle(fontSize: 16)),
-              const SizedBox(width: DSSpacing.xs),
-              Text(
-                '칭찬 포인트',
-                style: context.bodyLarge.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: colors.textPrimary,
-                ),
+          const Text('💬', style: TextStyle(fontSize: 18)),
+          const SizedBox(width: DSSpacing.sm),
+          Expanded(
+            child: Text(
+              comment,
+              style: context.bodyMedium.copyWith(
+                color: colors.textPrimary,
+                height: 1.5,
               ),
-            ],
-          ),
-          const SizedBox(height: DSSpacing.sm),
-          SizedBox(
-            height: 36,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: keywords.length,
-              separatorBuilder: (_, __) => const SizedBox(width: DSSpacing.xs),
-              itemBuilder: (context, index) {
-                return Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: DSSpacing.sm,
-                    vertical: DSSpacing.xs,
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: _primaryGreen),
-                    borderRadius: BorderRadius.circular(DSRadius.full),
-                  ),
-                  child: Text(
-                    '#${keywords[index]}',
-                    style: context.bodySmall.copyWith(
-                      color: _primaryGreen,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                );
-              },
             ),
           ),
         ],
@@ -370,29 +190,13 @@ class ChatOotdResultCard extends StatelessWidget {
     ).animate().fadeIn(duration: 400.ms, delay: 100.ms);
   }
 
-  /// 레이더 차트 섹션 (6각형)
-  Widget _buildRadarChartSection(BuildContext context) {
+  /// 하이라이트 섹션 (잘된 포인트, 무료 공개)
+  Widget _buildHighlightsSection(BuildContext context) {
     final colors = context.colors;
     final details = ootdData['details'] as Map<String, dynamic>? ?? {};
-    final categories = details['categories'] as Map<String, dynamic>? ?? {};
+    final highlights = (details['highlights'] as List<dynamic>?)?.cast<String>() ?? [];
 
-    if (categories.isEmpty) return const SizedBox.shrink();
-
-    // 6개 카테고리 데이터 준비
-    final categoryLabels = {
-      'colorHarmony': '색상',
-      'silhouette': '실루엣',
-      'styleConsistency': '스타일',
-      'accessories': '악세',
-      'tpoFit': 'TPO',
-      'trendScore': '트렌드',
-    };
-
-    final scores = <String, double>{};
-    for (final entry in categoryLabels.entries) {
-      final data = categories[entry.key] as Map<String, dynamic>?;
-      scores[entry.value] = (data?['score'] as num?)?.toDouble() ?? 7.0;
-    }
+    if (highlights.isEmpty) return const SizedBox.shrink();
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -404,10 +208,10 @@ class ChatOotdResultCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Text('📊', style: TextStyle(fontSize: 16)),
+              const Text('✨', style: TextStyle(fontSize: 18)),
               const SizedBox(width: DSSpacing.xs),
               Text(
-                '세부 평가',
+                '잘된 포인트',
                 style: context.bodyLarge.copyWith(
                   fontWeight: FontWeight.w600,
                   color: colors.textPrimary,
@@ -415,26 +219,104 @@ class ChatOotdResultCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: DSSpacing.md),
-          Center(
-            child: SizedBox(
-              width: 220,
-              height: 220,
-              child: CustomPaint(
-                painter: _OotdRadarChartPainter(
-                  scores: scores,
-                  primaryColor: _primaryGreen,
+          const SizedBox(height: DSSpacing.xs),
+          ...highlights.map((highlight) => Padding(
+            padding: const EdgeInsets.only(bottom: DSSpacing.xxs),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('•', style: context.bodyMedium.copyWith(color: colors.success)),
+                const SizedBox(width: DSSpacing.xs),
+                Expanded(
+                  child: Text(
+                    highlight,
+                    style: context.bodyMedium.copyWith(color: colors.textPrimary),
+                  ),
+                ),
+              ],
+            ),
+          )),
+        ],
+      ),
+    ).animate().fadeIn(duration: 400.ms, delay: 150.ms);
+  }
+
+  /// TPO 피드백 섹션 (무료 공개)
+  Widget _buildTpoFeedbackSection(BuildContext context) {
+    final colors = context.colors;
+    final details = ootdData['details'] as Map<String, dynamic>? ?? {};
+    final tpo = details['tpo'] as String? ?? '';
+    final tpoScore = (details['tpoScore'] as num?)?.toInt();
+    final tpoFeedback = details['tpoFeedback'] as String? ?? '';
+
+    if (tpoFeedback.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+      padding: const EdgeInsets.all(DSSpacing.sm),
+      decoration: BoxDecoration(
+        color: _getAccentColor(context).withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(DSRadius.sm),
+        border: Border.all(
+          color: _getAccentColor(context).withValues(alpha: 0.2),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text('🎯', style: TextStyle(fontSize: 16)),
+              const SizedBox(width: DSSpacing.xs),
+              Text(
+                'TPO 적합도',
+                style: context.labelMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: colors.textPrimary,
                 ),
               ),
+              if (tpo.isNotEmpty) ...[
+                const SizedBox(width: DSSpacing.xs),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: DSSpacing.xs,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _getAccentColor(context),
+                    borderRadius: BorderRadius.circular(DSRadius.xs),
+                  ),
+                  child: Text(
+                    tpo,
+                    style: context.labelSmall.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+              if (tpoScore != null) ...[
+                const Spacer(),
+                Text(
+                  '$tpoScore점',
+                  style: context.labelMedium.copyWith(
+                    color: _getAccentColor(context),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ],
+          ),
+          const SizedBox(height: DSSpacing.xs),
+          Text(
+            tpoFeedback,
+            style: context.bodySmall.copyWith(
+              color: colors.textSecondary,
             ),
           ),
         ],
       ),
-    ).animate().fadeIn(duration: 400.ms, delay: 200.ms).scale(
-          begin: const Offset(0.95, 0.95),
-          duration: 500.ms,
-          curve: Curves.easeOut,
-        );
+    ).animate().fadeIn(duration: 400.ms, delay: 200.ms);
   }
 
   /// 스타일 처방전 섹션
@@ -457,12 +339,22 @@ class ChatOotdResultCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '이렇게 하면 더 완벽해요!',
-            style: context.bodyLarge.copyWith(
-              fontWeight: FontWeight.w600,
-              color: colors.textPrimary,
-            ),
+          Row(
+            children: [
+              Image.asset(
+                FortuneCardImages.getSectionIcon('fashion'),
+                width: 32,
+                height: 32,
+              ),
+              const SizedBox(width: DSSpacing.md),
+              Text(
+                '이렇게 하면 더 완벽해요!',
+                style: context.bodyLarge.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: colors.textPrimary,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: DSSpacing.sm),
           ...suggestions.asMap().entries.map((entry) {
@@ -476,10 +368,10 @@ class ChatOotdResultCard extends StatelessWidget {
                 margin: const EdgeInsets.only(top: DSSpacing.xs),
                 padding: const EdgeInsets.all(DSSpacing.sm),
                 decoration: BoxDecoration(
-                  color: _primaryGreen.withValues(alpha: 0.1),
+                  color: _getAccentColor(context).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(DSRadius.sm),
                   border: Border.all(
-                    color: _primaryGreen.withValues(alpha: 0.3),
+                    color: _getAccentColor(context).withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(
@@ -550,7 +442,7 @@ class ChatOotdResultCard extends StatelessWidget {
       spans.add(TextSpan(
         text: match.group(0),
         style: context.bodyMedium.copyWith(
-          color: _primaryGreen,
+          color: _getAccentColor(context),
           fontWeight: FontWeight.bold,
         ),
       ));
@@ -567,7 +459,7 @@ class ChatOotdResultCard extends StatelessWidget {
     return spans;
   }
 
-  /// 하단 2열 카드 섹션 (셀럽 + 추천 아이템)
+  /// 하단 2열 카드 섹션 (셀럽 + 추천 아이템) - 반응형 레이아웃
   Widget _buildBottomCardsSection(BuildContext context) {
     final details = ootdData['details'] as Map<String, dynamic>? ?? {};
     final celebMatch = details['celebrityMatch'] as Map<String, dynamic>?;
@@ -581,30 +473,50 @@ class ChatOotdResultCard extends StatelessWidget {
         horizontal: DSSpacing.md,
         vertical: DSSpacing.sm,
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 셀럽 스타일 매칭 카드
-          if (celebMatch != null)
-            Expanded(
-              child: _buildCelebCard(context, celebMatch),
-            ),
-          if (celebMatch != null && items.isNotEmpty)
-            const SizedBox(width: DSSpacing.sm),
-          // 추천 아이템 카드
-          if (items.isNotEmpty)
-            Expanded(
-              child: _buildRecommendCard(context, items.first as Map<String, dynamic>),
-            ),
-        ],
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // 화면 너비가 좁으면 세로 배치, 넓으면 가로 배치
+          final isNarrow = constraints.maxWidth < 320;
+
+          final celebWidget = celebMatch != null
+              ? _buildCelebCard(context, celebMatch)
+              : null;
+          final recommendWidget = items.isNotEmpty
+              ? _buildRecommendCard(context, items.first as Map<String, dynamic>)
+              : null;
+
+          if (isNarrow) {
+            // 좁은 화면: 세로 배치
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (celebWidget != null) celebWidget,
+                if (celebWidget != null && recommendWidget != null)
+                  const SizedBox(height: DSSpacing.sm),
+                if (recommendWidget != null) recommendWidget,
+              ],
+            );
+          }
+
+          // 넓은 화면: 가로 배치
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (celebWidget != null) Expanded(child: celebWidget),
+              if (celebWidget != null && recommendWidget != null)
+                const SizedBox(width: DSSpacing.sm),
+              if (recommendWidget != null) Expanded(child: recommendWidget),
+            ],
+          );
+        },
       ),
     ).animate().fadeIn(duration: 400.ms, delay: 400.ms);
   }
 
   /// 셀럽 스타일 매칭 카드
-  Widget _buildCelebCard(BuildContext context, Map<String, dynamic> celebMatch) {
+  Widget _buildCelebCard(
+      BuildContext context, Map<String, dynamic> celebMatch) {
     final colors = context.colors;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final name = celebMatch['name'] as String? ?? '';
     final similarity = (celebMatch['similarity'] as num?)?.toInt() ?? 0;
     final reason = celebMatch['reason'] as String? ?? '';
@@ -612,26 +524,23 @@ class ChatOotdResultCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
-        color: isDark ? colors.surface : Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
           color: colors.textPrimary.withValues(alpha: 0.1),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: colors.textPrimary.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Text('🌟', style: TextStyle(fontSize: 14)),
-              const SizedBox(width: 4),
+              Image.asset(
+                FortuneCardImages.getSectionIcon('lucky'),
+                width: 20,
+                height: 20,
+              ),
+              const SizedBox(width: DSSpacing.xs),
               Text(
                 '셀럽 스타일 매칭',
                 style: context.labelSmall.copyWith(
@@ -647,7 +556,7 @@ class ChatOotdResultCard extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: const Color(0xFF8B5CF6).withValues(alpha: 0.2),
+              color: DSColors.textPrimary.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: const Center(
@@ -671,7 +580,7 @@ class ChatOotdResultCard extends StatelessWidget {
           Text(
             '$similarity% 일치',
             style: context.labelSmall.copyWith(
-              color: const Color(0xFF8B5CF6),
+              color: DSColors.textPrimary,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -707,7 +616,6 @@ class ChatOotdResultCard extends StatelessWidget {
   /// 추천 아이템 카드
   Widget _buildRecommendCard(BuildContext context, Map<String, dynamic> item) {
     final colors = context.colors;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final emoji = item['emoji'] as String? ?? '👗';
     final itemName = item['item'] as String? ?? '';
     final reason = item['reason'] as String? ?? '';
@@ -715,26 +623,23 @@ class ChatOotdResultCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
-        color: isDark ? colors.surface : Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
           color: colors.textPrimary.withValues(alpha: 0.1),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: colors.textPrimary.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Text('👗', style: TextStyle(fontSize: 14)),
-              const SizedBox(width: 4),
+              Image.asset(
+                FortuneCardImages.getSectionIcon('lucky'),
+                width: 20,
+                height: 20,
+              ),
+              const SizedBox(width: DSSpacing.xs),
               Text(
                 '추천 아이템',
                 style: context.labelSmall.copyWith(
@@ -750,7 +655,7 @@ class ChatOotdResultCard extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: _primaryGreen.withValues(alpha: 0.1),
+              color: _getAccentColor(context).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(DSRadius.sm),
             ),
             child: Center(
@@ -775,196 +680,166 @@ class ChatOotdResultCard extends StatelessWidget {
           ),
           const SizedBox(height: DSSpacing.sm),
           // 스타일링 팁 확인 버튼
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
-            decoration: BoxDecoration(
-              color: _primaryGreen,
-              borderRadius: BorderRadius.circular(DSRadius.sm),
-            ),
-            child: Text(
-              '스타일링 팁 확인',
-              style: context.labelSmall.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
+          GestureDetector(
+            onTap: () => _showStylingTipSheet(context, itemName, reason, emoji),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+              decoration: BoxDecoration(
+                color: _getAccentColor(context),
+                borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
-              textAlign: TextAlign.center,
+              child: Text(
+                '스타일링 팁 확인',
+                style: context.labelSmall.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
+              ),
             ),
           ),
         ],
       ),
     );
   }
-}
 
-/// 원형 게이지 페인터
-class _CircularGaugePainter extends CustomPainter {
-  final double progress;
-  final Color backgroundColor;
-  final Color progressColor;
-  final double strokeWidth;
+  /// 스타일링 팁 바텀시트 표시
+  void _showStylingTipSheet(
+    BuildContext context,
+    String itemName,
+    String reason,
+    String emoji,
+  ) {
+    final colors = context.colors;
 
-  _CircularGaugePainter({
-    required this.progress,
-    required this.backgroundColor,
-    required this.progressColor,
-    required this.strokeWidth,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = (size.width - strokeWidth) / 2;
-
-    // 배경 원
-    final bgPaint = Paint()
-      ..color = backgroundColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-
-    canvas.drawCircle(center, radius, bgPaint);
-
-    // 진행 원
-    final progressPaint = Paint()
-      ..color = progressColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-
-    final sweepAngle = 2 * math.pi * progress;
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      -math.pi / 2, // 12시 방향에서 시작
-      sweepAngle,
-      false,
-      progressPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(_CircularGaugePainter oldDelegate) {
-    return progress != oldDelegate.progress;
-  }
-}
-
-/// OOTD 전용 6각형 레이더 차트 페인터
-class _OotdRadarChartPainter extends CustomPainter {
-  final Map<String, double> scores;
-  final Color primaryColor;
-
-  _OotdRadarChartPainter({
-    required this.scores,
-    required this.primaryColor,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2 - 30; // 라벨 공간 확보
-    final labels = scores.keys.toList();
-    final values = scores.values.toList();
-    final count = labels.length;
-
-    if (count == 0) return;
-
-    // 가이드 라인 (회색)
-    final gridPaint = Paint()
-      ..color = Colors.grey.withValues(alpha: 0.3)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1;
-
-    // 3단계 가이드 라인 그리기
-    for (int level = 1; level <= 3; level++) {
-      final levelRadius = radius * (level / 3);
-      final path = Path();
-      for (int i = 0; i <= count; i++) {
-        final angle = (2 * math.pi / count) * i - math.pi / 2;
-        final x = center.dx + levelRadius * math.cos(angle);
-        final y = center.dy + levelRadius * math.sin(angle);
-        if (i == 0) {
-          path.moveTo(x, y);
-        } else {
-          path.lineTo(x, y);
-        }
-      }
-      path.close();
-      canvas.drawPath(path, gridPaint);
-    }
-
-    // 축 라인
-    for (int i = 0; i < count; i++) {
-      final angle = (2 * math.pi / count) * i - math.pi / 2;
-      final x = center.dx + radius * math.cos(angle);
-      final y = center.dy + radius * math.sin(angle);
-      canvas.drawLine(center, Offset(x, y), gridPaint);
-    }
-
-    // 데이터 영역 (반투명 그린)
-    final dataPath = Path();
-    final fillPaint = Paint()
-      ..color = primaryColor.withValues(alpha: 0.2)
-      ..style = PaintingStyle.fill;
-    final strokePaint = Paint()
-      ..color = primaryColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
-
-    for (int i = 0; i < count; i++) {
-      final normalizedScore = (values[i] / 10).clamp(0.0, 1.0);
-      final angle = (2 * math.pi / count) * i - math.pi / 2;
-      final x = center.dx + radius * normalizedScore * math.cos(angle);
-      final y = center.dy + radius * normalizedScore * math.sin(angle);
-      if (i == 0) {
-        dataPath.moveTo(x, y);
-      } else {
-        dataPath.lineTo(x, y);
-      }
-    }
-    dataPath.close();
-    canvas.drawPath(dataPath, fillPaint);
-    canvas.drawPath(dataPath, strokePaint);
-
-    // 꼭짓점에 별(★) 아이콘과 라벨
-    final textPainter = TextPainter(
-      textDirection: TextDirection.ltr,
-    );
-
-    for (int i = 0; i < count; i++) {
-      final angle = (2 * math.pi / count) * i - math.pi / 2;
-      final labelRadius = radius + 20;
-      final x = center.dx + labelRadius * math.cos(angle);
-      final y = center.dy + labelRadius * math.sin(angle);
-
-      // 별 아이콘
-      textPainter.text = TextSpan(
-        text: '★',
-        style: TextStyle(
-          fontSize: 10,
-          color: Colors.grey.withValues(alpha: 0.6),
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(DSSpacing.lg),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(DSRadius.lg),
+          ),
         ),
-      );
-      textPainter.layout();
-
-      // 라벨
-      textPainter.text = TextSpan(
-        text: '★ ${labels[i]}',
-        style: TextStyle(
-          fontSize: 11,
-          color: Colors.grey.shade600,
-          fontWeight: FontWeight.w500,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 핸들바
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: colors.textSecondary.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: DSSpacing.lg),
+            // 헤더
+            Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: _getAccentColor(context).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(DSRadius.md),
+                  ),
+                  child: Center(
+                    child: Text(emoji, style: const TextStyle(fontSize: 24)),
+                  ),
+                ),
+                const SizedBox(width: DSSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '추천 아이템',
+                        style: context.labelSmall.copyWith(
+                          color: colors.textSecondary,
+                        ),
+                      ),
+                      Text(
+                        itemName,
+                        style: context.heading4.copyWith(
+                          color: colors.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.lg),
+            // 스타일링 팁 내용
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(DSSpacing.md),
+              decoration: BoxDecoration(
+                color: _getAccentColor(context).withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(DSRadius.md),
+                border: Border.all(
+                  color: _getAccentColor(context).withValues(alpha: 0.2),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.tips_and_updates_outlined,
+                        size: 18,
+                        color: _getAccentColor(context),
+                      ),
+                      const SizedBox(width: DSSpacing.xs),
+                      Text(
+                        '스타일링 팁',
+                        style: context.bodyMedium.copyWith(
+                          color: _getAccentColor(context),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: DSSpacing.sm),
+                  Text(
+                    reason.isNotEmpty ? reason : '이 아이템으로 스타일을 완성해보세요!',
+                    style: context.bodyMedium.copyWith(
+                      color: colors.textPrimary,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: DSSpacing.lg),
+            // 닫기 버튼
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: _getAccentColor(context),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: DSSpacing.md),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(DSRadius.md),
+                  ),
+                ),
+                child: const Text('확인'),
+              ),
+            ),
+            SizedBox(height: MediaQuery.of(context).padding.bottom),
+          ],
         ),
-      );
-      textPainter.layout();
-      textPainter.paint(
-        canvas,
-        Offset(x - textPainter.width / 2, y - textPainter.height / 2),
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_OotdRadarChartPainter oldDelegate) {
-    return scores != oldDelegate.scores;
+      ),
+    );
   }
 }

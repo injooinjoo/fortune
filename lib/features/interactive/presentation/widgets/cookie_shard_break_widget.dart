@@ -126,11 +126,11 @@ class _CookieShardBreakWidgetState extends State<CookieShardBreakWidget>
 
   Color _getParticleColor() {
     final colors = [
-      const Color(0xFFE8D4A8), // 쿠키 베이지
-      const Color(0xFFD4B896), // 쿠키 브라운
-      const Color(0xFFC9A962), // 금색
-      const Color(0xFFBFA76A), // 어두운 금색
-      widget.accentColor ?? const Color(0xFFDC143C), // 액센트
+      const Color(0xFFE8D4A8), // 고유 색상 - 쿠키 파티클 베이지
+      const Color(0xFFD4B896), // 고유 색상 - 쿠키 파티클 브라운
+      const Color(0xFFC9A962), // 고유 색상 - 쿠키 파티클 금색
+      const Color(0xFFBFA76A), // 고유 색상 - 쿠키 파티클 어두운 금색
+      widget.accentColor ?? const Color(0xFFDC143C), // 고유 색상 - 쿠키 파티클 액센트
     ];
     return colors[_random.nextInt(colors.length)];
   }

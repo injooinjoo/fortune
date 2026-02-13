@@ -84,7 +84,7 @@ class IntentDetector {
       '건강', '몸', '컨디션', '피로', '아프', '병원',
     ],
     FortuneSurveyType.exercise: [
-      '운동', '헬스', '다이어트', '살', '근력', '체력',
+      '운동', '헬스', '다이어트', '살빼', '근력', '체력', '피트니스',
     ],
     FortuneSurveyType.sportsGame: [
       // 일반
@@ -200,22 +200,22 @@ class IntentDetector {
         return ''; // 프로필 생성은 직접 추천하지 않음
       // 기존 6개
       case FortuneSurveyType.career:
-        return '커리어에 대해 궁금하시군요! 커리어 운세를 봐드릴까요?';
+        return '커리어에 대해 궁금하시군요! 커리어 인사이트를 확인해볼까요?';
       case FortuneSurveyType.love:
-        return '연애 관련 고민이시네요! 연애 운세를 봐드릴까요?';
+        return '연애 관련 고민이시네요! 연애 인사이트를 확인해볼까요?';
       case FortuneSurveyType.talent:
         return '적성이 궁금하시군요! 재능 분석을 해드릴까요?';
       case FortuneSurveyType.daily:
-        return '오늘의 운세를 봐드릴까요?';
+        return '오늘의 인사이트를 확인해볼까요?';
       case FortuneSurveyType.tarot:
-        return '타로 카드로 운세를 봐드릴까요?';
+        return '타로 카드로 리딩을 해드릴까요?';
       case FortuneSurveyType.mbti:
         return 'MBTI 기반 분석을 해드릴까요?';
       // 시간 기반
       case FortuneSurveyType.newYear:
-        return '새해 운세를 미리 확인해볼까요?';
+        return '새해 인사이트를 미리 확인해볼까요?';
       case FortuneSurveyType.dailyCalendar:
-        return '특정 날짜의 운세를 확인해볼까요?';
+        return '특정 날짜의 인사이트를 확인해볼까요?';
       // 전통 분석
       case FortuneSurveyType.traditional:
         return '사주팔자로 깊이 있는 분석을 해드릴까요?';
@@ -234,10 +234,10 @@ class IntentDetector {
       case FortuneSurveyType.exLover:
         return '재회 가능성을 분석해드릴까요?';
       case FortuneSurveyType.blindDate:
-        return '소개팅 운세를 봐드릴까요?';
+        return '소개팅 가이드를 확인해볼까요?';
       // 재물
       case FortuneSurveyType.money:
-        return '재물운을 분석해드릴까요?';
+        return '재물 인사이트를 확인해볼까요?';
       // 라이프스타일
       case FortuneSurveyType.luckyItems:
         return '오늘의 행운 아이템을 알려드릴까요?';
@@ -249,11 +249,11 @@ class IntentDetector {
         return '오늘의 메시지를 전해드릴까요?';
       // 건강/스포츠
       case FortuneSurveyType.health:
-        return '건강 운세를 봐드릴까요?';
+        return '건강 체크를 해드릴까요?';
       case FortuneSurveyType.exercise:
         return '오늘 맞는 운동을 추천해드릴까요?';
       case FortuneSurveyType.sportsGame:
-        return '경기 운세를 봐드릴까요?';
+        return '경기 인사이트를 확인해볼까요?';
       // 인터랙티브
       case FortuneSurveyType.dream:
         return '꿈 해몽을 해드릴까요?';
@@ -261,11 +261,13 @@ class IntentDetector {
         return '좋아하는 유명인과의 궁합을 볼까요?';
       case FortuneSurveyType.pastLife:
         return '전생을 탐험해볼까요?';
+      case FortuneSurveyType.gameEnhance:
+        return '오늘의 강화 기운을 확인해볼까요?';
       // 가족/반려동물
       case FortuneSurveyType.pet:
         return '반려동물과의 궁합을 봐드릴까요?';
       case FortuneSurveyType.family:
-        return '가족 운세를 봐드릴까요?';
+        return '가족 인사이트를 확인해볼까요?';
       case FortuneSurveyType.naming:
         return '아이 이름을 지어드릴까요?';
       case FortuneSurveyType.babyNickname:
@@ -275,11 +277,13 @@ class IntentDetector {
       case FortuneSurveyType.talisman:
         return '나만의 부적을 만들어드릴까요?';
       case FortuneSurveyType.exam:
-        return '시험운을 봐드릴까요?';
+        return '시험 가이드를 확인해볼까요?';
       case FortuneSurveyType.moving:
         return '이사 길일을 알려드릴까요?';
       case FortuneSurveyType.gratitude:
         return '감사일기를 작성해볼까요?';
+      case FortuneSurveyType.yearlyEncounter:
+        return '올해 만나게 될 인연을 미리 만나볼까요?';
     }
   }
 }
@@ -298,8 +302,8 @@ class DetectedIntent {
     this.isAiGenerated = false,
   });
 
-  /// 신뢰도가 충분히 높은지 확인
-  bool get isConfident => confidence >= 0.1;
+  /// 신뢰도가 충분히 높은지 확인 (0.4 = 여러 키워드 매칭 필요)
+  bool get isConfident => confidence >= 0.4;
 
   @override
   String toString() {

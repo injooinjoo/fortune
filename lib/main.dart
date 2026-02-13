@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
-import 'dart:async';
 import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
@@ -8,27 +7,31 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-import 'core/config/environment.dart';
+import 'l10n/app_localizations.dart';
+
 import 'core/utils/logger.dart';
+import 'firebase_options_secure.dart';
 import 'routes/route_config.dart';
-import 'core/theme/fortune_design_system.dart';
-// // import 'presentation/providers/app_providers.dart'; // Has syntax errors
+import 'core/design_system/theme/ds_theme.dart';
 import 'presentation/providers/theme_provider.dart';
 import 'core/theme/font_size_system.dart';
-//     if (dart.library.html) 'core/utils/url_cleaner_web.dart';
-import 'services/ad_service.dart';
-import 'services/att_service.dart';
 import 'services/remote_config_service.dart';
-// import 'presentation/providers/font_size_provider.dart'; // ⚠️ REMOVED: 이제 user_settings_provider 사용
 import 'core/services/test_auth_service.dart';
 import 'services/notification/fcm_service.dart';
 import 'core/services/supabase_connection_service.dart';
 import 'core/utils/route_observer_logger.dart';
 import 'core/services/error_reporter_service.dart';
 import 'core/providers/user_settings_provider.dart';
+import 'core/providers/locale_provider.dart';
 import 'core/services/fortune_haptic_service.dart';
+import 'core/services/chat_sync_service.dart';
 import 'presentation/providers/auth_provider.dart';
+import 'services/deep_link_service.dart';
+import 'presentation/providers/app_providers.dart';
+import 'features/character/data/services/character_chat_local_service.dart';
+import 'features/character/data/services/character_affinity_service.dart';
 
 void main() async {
   debugPrint('🚀 [STARTUP] App main() started');
@@ -57,8 +60,12 @@ void main() async {
   }
 
   debugPrint('🚀 [STARTUP] Initializing date formatting...');
-  await initializeDateFormatting('ko_KR', null);
-  debugPrint('🚀 [STARTUP] Date formatting initialized');
+  await Future.wait([
+    initializeDateFormatting('ko_KR', null),
+    initializeDateFormatting('en_US', null),
+    initializeDateFormatting('ja_JP', null),
+  ]);
+  debugPrint('🚀 [STARTUP] Date formatting initialized (ko, en, ja)');
 
   // Initialize Hive
   try {
@@ -66,6 +73,16 @@ void main() async {
     await Hive.initFlutter();
     debugPrint('🚀 [STARTUP] Hive initialized successfully');
     Logger.info('Hive initialized successfully');
+
+    // Initialize Character Chat Local Storage (카카오톡 스타일)
+    debugPrint('🚀 [STARTUP] Initializing Character Chat Local Storage...');
+    await CharacterChatLocalService.initialize();
+    debugPrint('🚀 [STARTUP] Character Chat Local Storage initialized');
+
+    // Initialize Character Affinity Service (호감도 영속성)
+    debugPrint('🚀 [STARTUP] Initializing Character Affinity Service...');
+    await CharacterAffinityService.initialize();
+    debugPrint('🚀 [STARTUP] Character Affinity Service initialized');
   } catch (e) {
     debugPrint('❌ [STARTUP] Hive initialization failed: $e');
     Logger.error('Hive initialization failed', e);
@@ -81,9 +98,18 @@ void main() async {
   }
 
   // Initialize Firebase
-  // Firebase Core는 플러그인에 의해 자동 초기화되지만,
-  // Remote Config 같은 일부 서비스는 명시적 초기화가 필요할 수 있음
-  debugPrint('🚀 [STARTUP] Firebase initialized by plugin');
+  try {
+    debugPrint('🚀 [STARTUP] Initializing Firebase...');
+    await Firebase.initializeApp(
+      options: SecureFirebaseOptions.currentPlatform,
+    );
+    debugPrint('🚀 [STARTUP] Firebase initialized successfully');
+    Logger.info('Firebase initialized successfully');
+  } catch (e) {
+    debugPrint('❌ [STARTUP] Firebase initialization failed: $e');
+    Logger.error('Firebase initialization failed', e);
+    // 실패해도 앱은 계속 실행 (Remote Config, FCM 등 일부 기능 제한)
+  }
 
   // Initialize Supabase with enhanced connection management
   try {
@@ -97,6 +123,16 @@ void main() async {
     if (success) {
       debugPrint('🚀 [STARTUP] Supabase initialized successfully');
       Logger.info('Supabase initialized successfully');
+
+      // Initialize Chat Sync Service (Supabase 초기화 후에만 가능)
+      try {
+        debugPrint('🚀 [STARTUP] Initializing Chat Sync Service...');
+        await ChatSyncService.instance.initialize();
+        debugPrint('🚀 [STARTUP] Chat Sync Service initialized');
+      } catch (e) {
+        debugPrint('⚠️ [STARTUP] Chat Sync Service initialization failed: $e');
+        Logger.warning('Chat Sync Service initialization failed: $e');
+      }
     } else {
       debugPrint('⚠️ [STARTUP] Supabase connection failed, offline mode enabled');
       Logger.warning('Supabase connection failed (optional feature, using offline mode)');
@@ -133,47 +169,7 @@ void main() async {
     // The SDK is initialized when first login is attempted
     Logger.info('Naver SDK ready (initialized on first use)');
   }
-  
-  // Initialize ATT (App Tracking Transparency) first - required before ads on iOS 14.5+
-  if (!kIsWeb) {
-    try {
-      debugPrint('🔒 [ATT] Requesting App Tracking Transparency authorization...');
-      final attStatus = await AttService.instance.requestTrackingAuthorization();
-      debugPrint('🔒 [ATT] Authorization status: $attStatus');
-      Logger.info('ATT authorization status: $attStatus');
-    } catch (e) {
-      debugPrint('⚠️ [ATT] ATT request failed: $e');
-      Logger.warning('ATT request failed: $e');
-    }
-  }
 
-  // Initialize Ad Service in background - don't block app startup
-  // DISABLE ADS FOR TESTING ON REAL DEVICES
-  const bool disableAdsForTesting = false; // Enable ads for release build
-
-  debugPrint('🎯 [ADMOB] kIsWeb: $kIsWeb, DISABLE_ADS_FOR_TESTING: $disableAdsForTesting');
-  debugPrint('🎯 [ADMOB] Environment.enableAds: ${Environment.enableAds}');
-  debugPrint('🎯 [ADMOB] Environment.admobAppId: ${Environment.admobAppId}');
-
-  if (!kIsWeb && !disableAdsForTesting) {
-    // Don't await - let it run in the background
-    Future(() async {
-      try {
-        debugPrint('🎯 [ADMOB] Starting Ad Service initialization in background...');
-        Logger.info('Initializing Ad Service in background...');
-        await AdService.instance.initialize();
-        debugPrint('✅ [ADMOB] Ad Service initialized successfully in background');
-        Logger.info('Ad Service initialized successfully in background');
-      } catch (e) {
-        debugPrint('❌ [ADMOB] Ad Service initialization failed in background: $e');
-        Logger.error('Ad Service initialization failed in background: $e');
-      }
-    });
-  } else {
-    debugPrint('⚠️ [ADMOB] Ad Service disabled for testing');
-    Logger.info('Ad Service disabled for testing');
-  }
-  
   // Initialize SharedPreferences (used by user settings)
   try {
     await SharedPreferences.getInstance();
@@ -247,10 +243,29 @@ void main() async {
     }
   }
 
+  // Initialize Deep Link Service for Kakao share links
+  if (!kIsWeb) {
+    try {
+      debugPrint('🔗 [STARTUP] Initializing Deep Link Service...');
+      await DeepLinkService().initialize();
+      debugPrint('🔗 [STARTUP] Deep Link Service initialized successfully');
+      Logger.info('Deep Link Service initialized successfully');
+    } catch (e) {
+      debugPrint('⚠️ [STARTUP] Deep Link Service initialization failed: $e');
+      Logger.warning('Deep Link Service initialization failed (optional feature): $e');
+    }
+  }
+
   debugPrint('🚀 [STARTUP] All initializations complete, starting app...');
+
+  // Initialize provider overrides (SharedPreferences, etc.)
+  final providerOverrides = await initializeProviders();
+  debugPrint('🚀 [STARTUP] Provider overrides initialized');
+
   runApp(
-    const ProviderScope(
-      child: MyApp(),
+    ProviderScope(
+      overrides: providerOverrides,
+      child: const MyApp(),
     ),
   );
   debugPrint('🚀 [STARTUP] App started successfully');
@@ -265,20 +280,42 @@ class MyApp extends ConsumerWidget {
     final router = ref.watch(appRouterProvider);
     // 🎯 사용자 폰트 설정을 앱 전체에 적용
     final userSettings = ref.watch(userSettingsProvider);
+    // 🌐 언어 설정
+    final locale = ref.watch(localeProvider);
 
     // 위젯 데이터 준비 프로바이더 활성화 (auth 상태 변경 시 자동 실행)
     ref.read(widgetDataPreparationProvider);
+
+    // 채팅 데이터 복원 프로바이더 활성화 (로그인 시 서버에서 대화 복원)
+    ref.read(chatRestorationProvider);
 
     // FontSizeSystem에 스케일 팩터 동기화 (TypographyUnified용)
     FontSizeSystem.setScaleFactor(userSettings.fontScale);
 
     return MaterialApp.router(
       title: 'ZPZG',
-      theme: FortuneDesignSystem.lightTheme(fontScale: userSettings.fontScale),
-      darkTheme: FortuneDesignSystem.darkTheme(fontScale: userSettings.fontScale),
+      theme: DSTheme.light(fontScale: userSettings.fontScale),
+      darkTheme: DSTheme.dark(fontScale: userSettings.fontScale),
       themeMode: themeMode,
       debugShowCheckedModeBanner: false,
+      // Localization
+      locale: locale,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       routerConfig: router,
+      // 🎯 디바이스 시스템 폰트 크기 설정 반영 (접근성)
+      // 레이아웃 깨짐 방지를 위해 0.8 ~ 1.5 범위로 제한
+      builder: (context, child) {
+        final deviceTextScaler = MediaQuery.textScalerOf(context);
+        final clampedScaler = deviceTextScaler.clamp(
+          minScaleFactor: 0.8,
+          maxScaleFactor: 1.5,
+        );
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaler: clampedScaler),
+          child: child!,
+        );
+      },
     );
   }
 }

@@ -278,12 +278,6 @@ serve(async (req) => {
       const percentileData = await calculatePercentile(supabase, 'compatibility', score)
       const resultWithPercentile = addPercentileToResult(personalizedResult, percentileData)
 
-      // Blur 처리 (Premium 여부)
-      resultWithPercentile.isBlurred = !isPremium
-      resultWithPercentile.blurredSections = !isPremium
-        ? ['detailed_scores', 'analysis', 'advice']
-        : []
-
       return new Response(JSON.stringify({ success: true, data: resultWithPercentile }), {
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
@@ -311,7 +305,28 @@ serve(async (req) => {
       console.log('Cache miss, calling OpenAI API')
 
       // OpenAI API 호출을 위한 프롬프트 생성
-      const prompt = `당신은 한국의 전문 궁합 전문가입니다. 다음 정보를 바탕으로 구체적이고 실용적인 궁합 분석을 제공해주세요.
+      const prompt = `당신은 두 사람의 인연을 읽어주는 친근한 궁합 전문가예요! 💕
+마치 절친이 연애 상담해주듯, 재밌고 솔직하게 궁합을 분석해드려요.
+
+## 스타일 가이드 💑
+- 딱딱한 분석 NO! 친구처럼 편하게 말해주기
+- "~해요", "~거예요" 같은 친근한 말투
+- 장점은 확실히 칭찬! 주의점은 부드럽게 조언
+- 이모지는 포인트에 센스있게 💕✨🔥
+- 현실적이면서도 희망적인 톤
+
+## 톤 예시
+❌ "두 분은 성격적 상보성이 높습니다"
+✅ "오 이 조합 꽤 찰떡이에요! 서로 없는 거 채워주는 스타일 👀"
+
+❌ "갈등 발생 시 원만한 해결이 필요합니다"
+✅ "싸울 때? 솔직히 불꽃 튈 수 있어요 🔥 근데 화해하면 더 끈끈해지는 타입!"
+
+🚨 [최우선 규칙] 모든 응답은 반드시 한국어로 작성하세요!
+- JSON 키: 반드시 한국어 (전반적인궁합, 궁합점수, 성격궁합 등)
+- JSON 값: 반드시 한국어 문장
+- 영어 키(compatibility, score 등) 절대 사용 금지
+- 영어 문장 절대 사용 금지
 
 첫 번째 사람: "${person1_name}" (생년월일: ${person1_birth_date})
 두 번째 사람: "${person2_name}" (생년월일: ${person2_birth_date})
@@ -321,30 +336,30 @@ serve(async (req) => {
 ## 분량 요구사항 (카드 UI 스크롤 방지)
 - 모든 텍스트 필드: **반드시 100자 이내**
 - 배열 항목: **각 50자 이내**
-- 핵심만 간결하게 작성
+- 핵심만 간결하게, 근데 재밌게!
 
 \`\`\`json
 {
-  "전반적인궁합": "전체 궁합 분석",
+  "전반적인궁합": "두 사람 케미 총평! 친구 톤으로",
   "궁합점수": 0-100,
-  "성격궁합": "성격 조화 분석",
-  "애정궁합": "애정 관계 분석",
-  "결혼궁합": "결혼 생활 조화",
-  "소통궁합": "소통과 이해도",
-  "강점": ["강점1", "강점2", "강점3"],
-  "주의점": ["주의점1", "주의점2", "주의점3"],
-  "조언": ["조언1", "조언2", "조언3"],
-  "궁합키워드": "한 단어",
+  "성격궁합": "성격 조합 분석 (장점 위주로)",
+  "애정궁합": "연애할 때 케미 분석 💕",
+  "결혼궁합": "오래 함께할 때 어떨지",
+  "소통궁합": "대화 스타일 맞는지",
+  "강점": ["이 커플 찐 장점1", "장점2", "장점3"],
+  "주의점": ["살짝 조심할 것1", "주의점2", "주의점3"],
+  "조언": ["꿀팁1", "꿀팁2", "꿀팁3"],
+  "한줄평": "이 커플 한 줄 요약! 예: '불꽃 튀는 찐 케미 💥', '티격태격 사랑꾼들 🥊💕'",
   "연애스타일": {
-    "person1": "스타일명",
-    "person2": "스타일명",
-    "조합분석": "스타일 조합 분석"
+    "person1": "연애 스타일명 (재밌게)",
+    "person2": "연애 스타일명 (재밌게)",
+    "조합분석": "둘이 만나면 어떤 커플?"
   }
 }
 \`\`\`
 
 ⚠️ 중요: 절대로 "(xx자 이내)" 같은 글자수 지시문을 출력에 포함하지 마세요.
-긍정적이면서 현실적인 관점으로 작성해주세요. 반드시 JSON 형식으로만 응답하세요.`
+재밌고 솔직하게, 근데 희망적으로! 반드시 JSON 형식으로만 응답하세요 💕`
 
       // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
       const llm = await LLMFactory.createFromConfigAsync('compatibility')
@@ -352,7 +367,7 @@ serve(async (req) => {
       const response = await llm.generate([
         {
           role: 'system',
-          content: '당신은 한국의 전문 궁합 전문가입니다. 항상 한국어로 응답하며, 실용적이고 긍정적인 조언을 제공합니다.'
+          content: '당신은 연애 상담 잘해주는 절친 같은 궁합 전문가예요! 💕 친구처럼 편하게, 근데 핵심은 정확하게 얘기해줘요. 항상 한국어로, MZ 감성으로!'
         },
         {
           role: 'user',
@@ -391,14 +406,6 @@ serve(async (req) => {
         console.error('JSON parsing error:', error)
         throw new Error('API 응답 형식이 올바르지 않습니다.')
       }
-
-      // ✅ Premium 여부에 따라 Blur 처리
-      const isBlurred = !isPremium
-      const blurredSections = isBlurred
-        ? ['detailed_scores', 'analysis', 'advice']  // Flutter UI의 sectionKey와 일치
-        : []
-
-      console.log(`[Compatibility] 🔐 Blur 처리 - isPremium: ${isPremium}, isBlurred: ${isBlurred}, blurredSections: ${blurredSections.length}개`)
 
       // 조언 데이터 처리 (List → String 변환)
       const adviceData = parsedResponse.조언 || parsedResponse.advice || ['서로 배려', '대화 자주', '함께 시간']
@@ -440,7 +447,7 @@ serve(async (req) => {
         fortuneType: 'compatibility',
         score: compatibilityScore,
         content: overallCompatibilityText,
-        summary: parsedResponse.궁합키워드 || parsedResponse.compatibility_keyword || '천생연분',
+        summary: parsedResponse.한줄평 || parsedResponse.궁합키워드 || parsedResponse.compatibility_keyword || '운명처럼 만난 두 사람',
         advice: parsedResponse.조언?.[0] || parsedResponse.advice?.[0] || '서로를 존중하고 배려하세요',
         // 기존 필드 유지 (하위 호환성)
         title: `${person1_name}♥${person2_name} 궁합`,
@@ -456,7 +463,7 @@ serve(async (req) => {
         strengths: parsedResponse.강점 || parsedResponse.strengths || ['서로 이해', '존중', '배려'],
         cautions: parsedResponse.주의점 || parsedResponse.cautions || ['작은 갈등 주의', '대화 중요', '서로 존중'],
         detailed_advice: `• ${adviceString}`, // 상세 조언 (블러 대상)
-        compatibility_keyword: parsedResponse.궁합키워드 || parsedResponse.compatibility_keyword || '천생연분', // ✅ 무료: 공개
+        compatibility_keyword: parsedResponse.한줄평 || parsedResponse.궁합키워드 || parsedResponse.compatibility_keyword || '운명처럼 만난 두 사람', // ✅ 무료: 공개
         // score는 위에서 표준 필드로 이미 설정됨
         love_style: parsedResponse.연애스타일 || parsedResponse.love_style || null, // 연애 스타일 (LLM 생성)
         // ✅ 새로운 궁합 항목들 (무료 공개)
@@ -484,8 +491,6 @@ serve(async (req) => {
           message: seasonCompat
         },
         timestamp: new Date().toISOString(),
-        isBlurred, // ✅ Blur 상태
-        blurredSections, // ✅ Blur 처리된 섹션 목록
       }
 
       console.log(`[Compatibility] ✅ 응답 데이터 구조화 완료`)
@@ -505,7 +510,6 @@ serve(async (req) => {
       console.log(`[Compatibility]     - 운명수: ${fortuneData.destiny_number.number}`)
       console.log(`[Compatibility]     - 나이차: ${fortuneData.age_difference.years}살`)
       console.log(`[Compatibility]     - 계절: ${fortuneData.season.person1} × ${fortuneData.season.person2}`)
-      console.log(`[Compatibility]   🔐 Blur: ${isBlurred}, Sections: ${blurredSections.length}개`)
 
       // 결과 캐싱
       await supabase

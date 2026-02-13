@@ -2,13 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/widgets/unified_blur_wrapper.dart';
+import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
-import '../../../../core/utils/fortune_completion_helper.dart';
-import '../../../../core/utils/subscription_snackbar.dart';
-import '../../../../presentation/providers/subscription_provider.dart';
-import '../../../../presentation/providers/token_provider.dart';
-import '../../../../services/ad_service.dart';
 import '../../../../shared/widgets/smart_image.dart';
 import '../../../fortune/domain/models/past_life_result.dart';
 
@@ -18,7 +13,6 @@ import '../../../fortune/domain/models/past_life_result.dart';
 /// - 전생 신분 뱃지 (왕, 기생, 선비 등)
 /// - 전생 스토리 (300-500자)
 /// - 현생과의 연결 조언
-/// - 블러 처리 및 광고 언락
 class ChatPastLifeResultCard extends ConsumerStatefulWidget {
   final PastLifeResult result;
 
@@ -34,15 +28,11 @@ class ChatPastLifeResultCard extends ConsumerStatefulWidget {
 
 class _ChatPastLifeResultCardState
     extends ConsumerState<ChatPastLifeResultCard> {
-  bool _isBlurred = false;
-  List<String> _blurredSections = [];
   bool _isStoryExpanded = true; // 기본으로 펼쳐서 시작
 
   @override
   void initState() {
     super.initState();
-    _isBlurred = widget.result.isBlurred;
-    _blurredSections = List<String>.from(widget.result.blurredSections);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
@@ -53,11 +43,12 @@ class _ChatPastLifeResultCardState
 
   /// 초상화 풀스크린 확대 보기
   void _showFullScreenPortrait(BuildContext context) {
+    final typography = context.typography;
     DSHaptics.light();
 
     showDialog(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.95),
+      barrierColor: DSColors.overlay,
       builder: (context) => GestureDetector(
         onTap: () => Navigator.of(context).pop(),
         child: Scaffold(
@@ -86,7 +77,7 @@ class _ChatPastLifeResultCardState
                   icon: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.5),
+                      color: DSColors.background.withValues(alpha: 0.5),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -107,18 +98,16 @@ class _ChatPastLifeResultCardState
                   children: [
                     Text(
                       '${_getStatusEmoji(widget.result.pastLifeStatusEn)} ${widget.result.pastLifeStatus}',
-                      style: const TextStyle(
+                      style: typography.headingSmall.copyWith(
                         color: Colors.white,
-                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: DSSpacing.xs),
                     Text(
                       '${widget.result.pastLifeEra} • ${widget.result.pastLifeName}',
-                      style: TextStyle(
+                      style: typography.bodyMedium.copyWith(
                         color: Colors.white.withValues(alpha: 0.8),
-                        fontSize: 14,
                       ),
                     ),
                   ],
@@ -131,38 +120,9 @@ class _ChatPastLifeResultCardState
     );
   }
 
-  Future<void> _showAdAndUnblur() async {
-    final adService = AdService();
-
-    await adService.showRewardedAd(
-      onUserEarnedReward: (ad, reward) async {
-        await ref.read(fortuneHapticServiceProvider).premiumUnlock();
-
-        if (mounted) {
-          FortuneCompletionHelper.onFortuneViewed(context, ref, 'past-life');
-        }
-
-        setState(() {
-          _isBlurred = false;
-          _blurredSections = [];
-        });
-
-        if (mounted) {
-          final tokenState = ref.read(tokenProvider);
-          SubscriptionSnackbar.showAfterAd(
-            context,
-            hasUnlimitedAccess: tokenState.hasUnlimitedAccess,
-          );
-        }
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isPremium = ref.watch(isPremiumProvider);
 
     return Container(
       width: double.infinity,
@@ -171,18 +131,11 @@ class _ChatPastLifeResultCardState
         horizontal: DSSpacing.md,
       ),
       decoration: BoxDecoration(
-        color: isDark ? colors.backgroundSecondary : colors.surface,
+        color: context.isDark ? colors.backgroundSecondary : colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.lg),
         border: Border.all(
           color: colors.textPrimary.withValues(alpha: 0.1),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: colors.textPrimary.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -203,21 +156,15 @@ class _ChatPastLifeResultCardState
               .fadeIn(duration: 500.ms, delay: 200.ms),
 
           // 4. 전생 스토리 (블러)
-          _buildStorySection(context, isDark)
+          _buildStorySection(context)
               .animate()
               .fadeIn(duration: 500.ms, delay: 300.ms),
 
           // 5. 현생 조언 (블러)
           if (widget.result.advice.isNotEmpty)
-            _buildAdviceSection(context, isDark)
+            _buildAdviceSection(context)
                 .animate()
                 .fadeIn(duration: 500.ms, delay: 400.ms),
-
-          // 6. 언락 버튼 (블러 상태 + 비구독자)
-          if (_isBlurred && !isPremium)
-            _buildUnlockButton(context)
-                .animate()
-                .fadeIn(duration: 500.ms, delay: 500.ms),
 
           const SizedBox(height: DSSpacing.sm),
         ],
@@ -238,8 +185,8 @@ class _ChatPastLifeResultCardState
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                const Color(0xFF8B4513).withValues(alpha: 0.3),
-                const Color(0xFF5D3A1A).withValues(alpha: 0.2),
+                DSColors.warning.withValues(alpha: 0.3),
+                DSColors.textPrimary.withValues(alpha: 0.2),
                 colors.surface.withValues(alpha: 0.0),
               ],
             ),
@@ -259,12 +206,12 @@ class _ChatPastLifeResultCardState
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(DSRadius.md),
                 border: Border.all(
-                  color: const Color(0xFF8B4513).withValues(alpha: 0.5),
+                  color: DSColors.warning.withValues(alpha: 0.5),
                   width: 3,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF5D3A1A).withValues(alpha: 0.3),
+                    color: DSColors.textPrimary.withValues(alpha: 0.3),
                     blurRadius: 15,
                     offset: const Offset(0, 5),
                   ),
@@ -286,40 +233,20 @@ class _ChatPastLifeResultCardState
           ),
         ),
 
-        // 점수 뱃지 (우상단)
+        // 액션 버튼 (우상단)
         Positioned(
           top: DSSpacing.md,
           right: DSSpacing.md,
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: DSSpacing.sm,
-              vertical: DSSpacing.xs,
-            ),
-            decoration: BoxDecoration(
-              color: _getScoreColor(widget.result.score),
-              borderRadius: BorderRadius.circular(DSRadius.full),
-              boxShadow: [
-                BoxShadow(
-                  color: _getScoreColor(widget.result.score).withValues(alpha: 0.4),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('🌙', style: TextStyle(fontSize: 14)),
-                const SizedBox(width: 4),
-                Text(
-                  '${widget.result.score}',
-                  style: context.typography.labelMedium.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+          child: FortuneActionButtons(
+            contentId: 'past_life_${widget.result.pastLifeName}_${DateTime.now().millisecondsSinceEpoch}',
+            contentType: 'past_life',
+            fortuneType: 'pastLife',
+            shareTitle: '${widget.result.pastLifeStatus} - 전생탐험',
+            shareContent: widget.result.summary.isNotEmpty
+                ? widget.result.summary
+                : widget.result.story,
+            iconSize: 18,
+            iconColor: Colors.white.withValues(alpha: 0.9),
           ),
         ),
       ],
@@ -339,13 +266,13 @@ class _ChatPastLifeResultCardState
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFF8B4513).withValues(alpha: 0.15),
-            const Color(0xFFD4A574).withValues(alpha: 0.1),
+            DSColors.warning.withValues(alpha: 0.15),
+            DSColors.warning.withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
-          color: const Color(0xFF8B4513).withValues(alpha: 0.3),
+          color: DSColors.warning.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -368,7 +295,7 @@ class _ChatPastLifeResultCardState
               ),
             ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: DSSpacing.xs),
           // 시대 • 이름 • 성별
           Text(
             '${widget.result.pastLifeEra} • ${widget.result.pastLifeName} • ${widget.result.pastLifeGenderKo}',
@@ -414,15 +341,14 @@ class _ChatPastLifeResultCardState
     );
   }
 
-  Widget _buildStorySection(BuildContext context, bool isDark) {
+  Widget _buildStorySection(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isBlurredSection = _blurredSections.contains('story');
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? colors.backgroundSecondary : colors.surface,
+        color: context.isDark ? colors.backgroundSecondary : colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
           color: colors.textPrimary.withValues(alpha: 0.1),
@@ -456,21 +382,6 @@ class _ChatPastLifeResultCardState
                         ),
                       ),
                     ),
-                    if (_isBlurred && isBlurredSection)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: colors.textSecondary.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: const Text(
-                          '🔒',
-                          style: TextStyle(fontSize: 10),
-                        ),
-                      ),
                     const SizedBox(width: DSSpacing.xs),
                     Icon(
                       _isStoryExpanded
@@ -487,24 +398,18 @@ class _ChatPastLifeResultCardState
 
           // 내용
           if (_isStoryExpanded)
-            UnifiedBlurWrapper(
-              isBlurred: _isBlurred && isBlurredSection,
-              blurredSections: _blurredSections,
-              sectionKey: 'story',
-              fortuneType: 'past-life',
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  DSSpacing.md,
-                  0,
-                  DSSpacing.md,
-                  DSSpacing.md,
-                ),
-                child: Text(
-                  widget.result.story,
-                  style: typography.bodyMedium.copyWith(
-                    color: colors.textPrimary,
-                    height: 1.7,
-                  ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                DSSpacing.md,
+                0,
+                DSSpacing.md,
+                DSSpacing.md,
+              ),
+              child: Text(
+                widget.result.story,
+                style: typography.bodyMedium.copyWith(
+                  color: colors.textPrimary,
+                  height: 1.7,
                 ),
               ),
             ),
@@ -513,94 +418,46 @@ class _ChatPastLifeResultCardState
     );
   }
 
-  Widget _buildAdviceSection(BuildContext context, bool isDark) {
+  Widget _buildAdviceSection(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isBlurredSection = _blurredSections.contains('advice');
 
     return Container(
       margin: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? colors.backgroundSecondary : colors.surface,
+        color: context.isDark ? colors.backgroundSecondary : colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
-          color: const Color(0xFF8B4513).withValues(alpha: 0.2),
+          color: DSColors.warning.withValues(alpha: 0.2),
         ),
       ),
-      child: UnifiedBlurWrapper(
-        isBlurred: _isBlurred && isBlurredSection,
-        blurredSections: _blurredSections,
-        sectionKey: 'advice',
-        fortuneType: 'past-life',
-        child: Padding(
-          padding: const EdgeInsets.all(DSSpacing.md),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Text('🔮', style: TextStyle(fontSize: 18)),
-                  const SizedBox(width: DSSpacing.xs),
-                  Text(
-                    '현생과의 연결',
-                    style: typography.labelMedium.copyWith(
-                      color: colors.textPrimary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: DSSpacing.sm),
-              Text(
-                widget.result.advice,
-                style: typography.bodyMedium.copyWith(
-                  color: colors.textSecondary,
-                  height: 1.6,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildUnlockButton(BuildContext context) {
-    final typography = context.typography;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: _showAdAndUnblur,
-          borderRadius: BorderRadius.circular(DSRadius.md),
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: DSSpacing.md,
-              vertical: DSSpacing.sm,
-            ),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF8B4513), Color(0xFFD4A574)],
-              ),
-              borderRadius: BorderRadius.circular(DSRadius.md),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+      child: Padding(
+        padding: const EdgeInsets.all(DSSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                const Text('🌙', style: TextStyle(fontSize: 18)),
+                const Text('🔮', style: TextStyle(fontSize: 18)),
                 const SizedBox(width: DSSpacing.xs),
                 Text(
-                  '전생 이야기 모두 보기',
+                  '현생과의 연결',
                   style: typography.labelMedium.copyWith(
-                    color: Colors.white,
+                    color: colors.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
             ),
-          ),
+            const SizedBox(height: DSSpacing.sm),
+            Text(
+              widget.result.advice,
+              style: typography.bodyMedium.copyWith(
+                color: colors.textSecondary,
+                height: 1.6,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -608,7 +465,7 @@ class _ChatPastLifeResultCardState
 
   Widget _buildDefaultPortrait() {
     return Container(
-      color: const Color(0xFF8B4513).withValues(alpha: 0.2),
+      color: DSColors.warning.withValues(alpha: 0.2),
       child: const Center(
         child: Text(
           '🎎',
@@ -650,11 +507,4 @@ class _ChatPastLifeResultCardState
     }
   }
 
-  Color _getScoreColor(int score) {
-    if (score >= 90) return const Color(0xFF8B4513);
-    if (score >= 80) return const Color(0xFFB8860B);
-    if (score >= 70) return const Color(0xFFCD853F);
-    if (score >= 60) return const Color(0xFFD4A574);
-    return const Color(0xFF8B7355);
-  }
 }

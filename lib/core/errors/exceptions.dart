@@ -112,7 +112,7 @@ class InsufficientTokensException extends AppException {
   final String? fortuneType;
 
   const InsufficientTokensException([
-    String message = '복주머니가 부족합니다',
+    String message = '토큰가 부족합니다',
     this.required,
     this.available,
     this.fortuneType,
@@ -123,7 +123,7 @@ class InsufficientTokensException extends AppException {
     required int required,
     required int available,
     required String fortuneType,
-    String message = '복주머니가 부족합니다',
+    String message = '토큰가 부족합니다',
   }) {
     return InsufficientTokensException(message, required, available, fortuneType);
   }

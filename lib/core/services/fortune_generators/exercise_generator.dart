@@ -89,16 +89,7 @@ class ExerciseGenerator {
         throw Exception('API 응답에서 data 필드를 찾을 수 없습니다');
       }
 
-      // 프리미엄이 아니면 블러 섹션 설정
-      // 무료: recommendedExercise (추천 운동)
-      // 프리미엄: todayRoutine, weeklyPlan, injuryPrevention
-      final blurredSections = isPremium
-          ? <String>[]
-          : [
-              'todayRoutine',
-              'weeklyPlan',
-              'injuryPrevention',
-            ];
+      // 🎯 토큰 소비형 모델: 블러 처리 제거
 
       // 점수 추출 (추천 운동 적합도)
       final fitnessScore = data['fitnessScore'] as int? ?? 75;
@@ -124,13 +115,10 @@ class ExerciseGenerator {
         data: data,
         score: fitnessScore,
         createdAt: DateTime.now(),
-        isBlurred: !isPremium,
-        blurredSections: blurredSections,
       );
 
       Logger.info('[ExerciseGenerator] 운동운세 생성 완료');
       Logger.info('   - fortuneId: ${result.id}');
-      Logger.info('   - isBlurred: ${result.isBlurred}');
       Logger.info('   - sportType: ${conditions.sportType}');
 
       return result;

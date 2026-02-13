@@ -1,5 +1,5 @@
-/// Test Helpers - 테스트 공통 유틸리티
-/// 모든 테스트에서 사용할 수 있는 헬퍼 함수들
+// Test Helpers - 테스트 공통 유틸리티
+// 모든 테스트에서 사용할 수 있는 헬퍼 함수들
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -95,12 +95,10 @@ class TestDataFactory {
   /// 테스트용 운세 결과
   static Map<String, dynamic> createFortuneResult({
     int overallScore = 85,
-    bool isBlurred = false,
     List<Map<String, dynamic>>? sections,
   }) {
     return {
       'overallScore': overallScore,
-      'isBlurred': isBlurred,
       'sections': sections ??
           [
             {
@@ -108,21 +106,18 @@ class TestDataFactory {
               'title': '오늘의 운세',
               'content': '좋은 하루가 될 것입니다.',
               'score': 85,
-              'isBlurred': false,
             },
             {
               'key': 'love',
               'title': '애정운',
               'content': '연인과의 관계가 좋아집니다.',
               'score': 90,
-              'isBlurred': isBlurred,
             },
             {
               'key': 'career',
               'title': '직장운',
               'content': '업무에서 좋은 성과가 있습니다.',
               'score': 80,
-              'isBlurred': isBlurred,
             },
           ],
       'luckyItems': {

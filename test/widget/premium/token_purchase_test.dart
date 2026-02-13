@@ -1,5 +1,5 @@
-/// Token Purchase Screen - Widget Test
-/// 토큰 구매 화면 UI 테스트
+// Token Purchase Screen - Widget Test
+// 토큰 구매 화면 UI 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -594,10 +594,10 @@ class _MockTokenPurchaseScreenState extends State<_MockTokenPurchaseScreen> {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            _TokenUsageInfo(fortuneType: '일일운세', tokens: 10),
-            _TokenUsageInfo(fortuneType: '타로', tokens: 20),
-            _TokenUsageInfo(fortuneType: '궁합', tokens: 30),
-            _TokenUsageInfo(fortuneType: '관상', tokens: 30),
+            const _TokenUsageInfo(fortuneType: '일일운세', tokens: 10),
+            const _TokenUsageInfo(fortuneType: '타로', tokens: 20),
+            const _TokenUsageInfo(fortuneType: '궁합', tokens: 30),
+            const _TokenUsageInfo(fortuneType: '관상', tokens: 30),
             const SizedBox(height: 16),
 
             // 프리미엄 안내
@@ -677,8 +677,8 @@ class _TokenPackageCard extends StatelessWidget {
             children: [
               Radio<String>(
                 value: id,
-                groupValue: isSelected ? id : '',
-                onChanged: (_) => onTap(),
+                groupValue: isSelected ? id : '', // ignore: deprecated_member_use
+                onChanged: (_) => onTap(), // ignore: deprecated_member_use
               ),
               const SizedBox(width: 8),
               Expanded(

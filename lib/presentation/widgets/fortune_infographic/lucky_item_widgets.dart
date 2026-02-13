@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../core/theme/fortune_design_system.dart';
 import '../../../core/design_system/design_system.dart';
 import 'helpers.dart';
 
@@ -22,14 +21,14 @@ class LuckyItemWidgets {
       return const Center(
         child: Text(
           '행운 아이템이 없습니다',
-          style: TextStyle(color: TossDesignSystem.gray500),
+          style: TextStyle(color: DSColors.textTertiaryDark),
         ),
       );
     }
 
     return Builder(
       builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
 
         return GridView.builder(
           shrinkWrap: true,
@@ -51,19 +50,12 @@ class LuckyItemWidgets {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: isDark
-                    ? TossDesignSystem.grayDark200
-                    : TossDesignSystem.white,
+                    ? DSColors.surfaceSecondary
+                    : DSColors.surfaceDark,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: FortuneInfographicHelpers.getLuckyItemColor(type).withValues(alpha: 0.3),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: TossDesignSystem.black.withValues(alpha: 0.05),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -76,17 +68,17 @@ class LuckyItemWidgets {
                   const SizedBox(height: 8),
                   Text(
                     title,
-                    style: DSTypography.bodySmall.copyWith(
+                    style: context.bodySmall.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                      color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     value,
-                    style: DSTypography.labelMedium.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    style: context.labelMedium.copyWith(
+                      color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -110,38 +102,38 @@ class LuckyItemWidgets {
   }) {
     return Builder(
       builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
 
         final tags = <Map<String, dynamic>>[];
 
         if (luckyColor != null) {
-          tags.add({'icon': Icons.palette, 'label': '색상', 'value': luckyColor, 'color': const Color(0xFFFF6B35)});
+          tags.add({'icon': Icons.palette, 'label': '색상', 'value': luckyColor, 'color': DSColors.accentSecondary});
         }
         if (luckyFood != null) {
-          tags.add({'icon': Icons.restaurant, 'label': '음식', 'value': luckyFood, 'color': const Color(0xFF00D2FF)});
+          tags.add({'icon': Icons.restaurant, 'label': '음식', 'value': luckyFood, 'color': DSColors.warning});
         }
         if (luckyNumbers != null && luckyNumbers.isNotEmpty) {
-          tags.add({'icon': Icons.numbers, 'label': '숫자', 'value': luckyNumbers.join(', '), 'color': const Color(0xFF0066FF)});
+          tags.add({'icon': Icons.numbers, 'label': '숫자', 'value': luckyNumbers.join(', '), 'color': DSColors.success});
         }
         if (luckyDirection != null) {
-          tags.add({'icon': Icons.explore, 'label': '방향', 'value': luckyDirection, 'color': const Color(0xFF7C4DFF)});
+          tags.add({'icon': Icons.explore, 'label': '방향', 'value': luckyDirection, 'color': DSColors.info});
         }
 
         if (tags.isEmpty) {
           return Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+              color: isDark ? DSColors.surfaceSecondary : DSColors.surfaceDark,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+                color: isDark ? DSColors.border : DSColors.borderDark,
               ),
             ),
             child: Center(
               child: Text(
                 '행운 아이템 준비 중...',
                 style: TextStyle(
-                  color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                  color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
                 ),
               ),
             ),
@@ -151,10 +143,10 @@ class LuckyItemWidgets {
         return Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            color: isDark ? DSColors.surfaceSecondary : DSColors.surfaceDark,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+              color: isDark ? DSColors.border : DSColors.borderDark,
             ),
           ),
           child: Column(
@@ -165,14 +157,14 @@ class LuckyItemWidgets {
                   Icon(
                     Icons.auto_awesome,
                     size: 20,
-                    color: isDark ? TossDesignSystem.primaryBlue : TossDesignSystem.tossBlue,
+                    color: isDark ? DSColors.accent : DSColors.accentDark,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     '행운 아이템',
-                    style: DSTypography.labelMedium.copyWith(
+                    style: context.labelMedium.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                      color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
                     ),
                   ),
                 ],
@@ -206,13 +198,13 @@ class LuckyItemWidgets {
                           children: [
                             Text(
                               tag['label'] as String,
-                              style: DSTypography.labelSmall.copyWith(
-                                color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                              style: context.labelSmall.copyWith(
+                                color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
                               ),
                             ),
                             Text(
                               tag['value'] as String,
-                              style: DSTypography.bodySmall.copyWith(
+                              style: context.bodySmall.copyWith(
                                 fontWeight: FontWeight.w600,
                                 color: tag['color'] as Color,
                               ),
@@ -239,15 +231,15 @@ class LuckyItemWidgets {
   }) {
     return Builder(
       builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
 
         return Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            color: isDark ? DSColors.surfaceSecondary : DSColors.surfaceDark,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+              color: isDark ? DSColors.border : DSColors.borderDark,
             ),
           ),
           child: Column(
@@ -258,14 +250,14 @@ class LuckyItemWidgets {
                   Icon(
                     Icons.checkroom,
                     size: 20,
-                    color: isDark ? TossDesignSystem.primaryBlue : TossDesignSystem.tossBlue,
+                    color: isDark ? DSColors.accent : DSColors.accentDark,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     '오늘의 추천 스타일',
-                    style: DSTypography.labelMedium.copyWith(
+                    style: context.labelMedium.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                      color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
                     ),
                   ),
                 ],
@@ -274,8 +266,8 @@ class LuckyItemWidgets {
               if (outfitDescription != null)
                 Text(
                   outfitDescription,
-                  style: DSTypography.bodySmall.copyWith(
-                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
+                  style: context.bodySmall.copyWith(
+                    color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
                     height: 1.4,
                   ),
                 )
@@ -283,7 +275,7 @@ class LuckyItemWidgets {
                 Text(
                   '스타일 추천 준비 중...',
                   style: TextStyle(
-                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
                   ),
                 ),
               if (outfitItems != null && outfitItems.isNotEmpty) ...[
@@ -295,13 +287,13 @@ class LuckyItemWidgets {
                     return Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                        color: DSColors.accentDark.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         item,
-                        style: DSTypography.labelMedium.copyWith(
-                          color: TossDesignSystem.tossBlue,
+                        style: context.labelMedium.copyWith(
+                          color: DSColors.accentDark,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -325,17 +317,17 @@ class LuckyItemWidgets {
       height: 120,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+        color: isDarkMode ? DSColors.surfaceSecondary : DSColors.surfaceDark,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+          color: isDarkMode ? DSColors.border : DSColors.borderDark,
         ),
       ),
       child: Center(
         child: Text(
           '사주 행운 아이템 준비 중...',
           style: TextStyle(
-            color: isDarkMode ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+            color: isDarkMode ? DSColors.textTertiary : DSColors.textSecondaryDark,
           ),
         ),
       ),

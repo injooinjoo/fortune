@@ -1,8 +1,7 @@
-/// Mock Payment Services - 결제 관련 Mock 클래스
-/// Phase 4: 결제 & 프리미엄 테스트용
+// Mock Payment Services - 결제 관련 Mock 클래스
+// Phase 4: 결제 & 프리미엄 테스트용
 
 import 'package:mocktail/mocktail.dart';
-import 'package:flutter/material.dart';
 
 // ============================================
 // Test Data Factory - Payment

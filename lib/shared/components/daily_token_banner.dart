@@ -83,7 +83,7 @@ class DailyTokenBanner extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '매일 무료 복주머니 받기',
+                            '매일 무료 토큰 받기',
                             style: typography.labelLarge.copyWith(
                               fontWeight: FontWeight.bold,
                               color: colors.textPrimary,
@@ -91,7 +91,7 @@ class DailyTokenBanner extends ConsumerWidget {
                           ),
                           const SizedBox(height: DSSpacing.xs),
                           Text(
-                            '매일 접속하여 복주머니를 받아보세요!',
+                            '매일 접속하여 토큰를 받아보세요!',
                             style: typography.labelMedium.copyWith(
                               color: colors.textPrimary.withValues(alpha: 0.8),
                             ),

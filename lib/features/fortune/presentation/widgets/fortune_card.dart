@@ -49,11 +49,13 @@ class FortuneCard extends StatelessWidget {
       onTap: onTap,
       leading: icon,
       trailing: score != null ? _ScoreBadge(score: score, color: scoreColor) : null,
-      child: Text(
-        content,
-        style: DSTypography.bodyMedium.copyWith(
-          color: DSColors.textSecondary,
-          height: 1.6,
+      child: Builder(
+        builder: (context) => Text(
+          content,
+          style: context.bodyMedium.copyWith(
+            color: DSColors.textSecondary,
+            height: 1.6,
+          ),
         ),
       ),
     );
@@ -89,24 +91,26 @@ class FortuneCard extends StatelessWidget {
               child: Center(child: icon),
             )
           : null,
-      trailing: isSelected 
+      trailing: isSelected
           ? const Icon(
               Icons.check_circle,
               color: DSColors.accent,
               size: 24,
             )
-          : badge != null 
-              ? Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: DSColors.accent.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    badge,
-                    style: DSTypography.labelSmall.copyWith(
-                      color: DSColors.accent,
-                      fontWeight: FontWeight.w600,
+          : badge != null
+              ? Builder(
+                  builder: (context) => Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: DSColors.accent.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      badge,
+                      style: context.labelSmall.copyWith(
+                        color: DSColors.accent,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 )
@@ -127,69 +131,70 @@ class FortuneCard extends StatelessWidget {
     return FortuneCard(
       onTap: onTap,
       padding: const EdgeInsets.all(20),
-      child: Row(
-        children: [
-          if (icon != null) ...[
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: (iconColor ?? DSColors.accent).withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Center(
-                child: IconTheme(
-                  data: IconThemeData(
-                    color: iconColor ?? DSColors.accent,
-                    size: 20,
+      child: Builder(
+        builder: (context) => Row(
+          children: [
+            if (icon != null) ...[
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: (iconColor ?? DSColors.accent).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                  child: IconTheme(
+                    data: IconThemeData(
+                      color: iconColor ?? DSColors.accent,
+                      size: 20,
+                    ),
+                    child: icon,
                   ),
-                  child: icon,
                 ),
               ),
+              const SizedBox(width: 16),
+            ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: context.headingSmall.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    content,
+                    style: context.bodySmall.copyWith(
+                      color: DSColors.textSecondary,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(width: 16),
+            if (showArrow)
+              const Icon(
+                Icons.arrow_forward_ios,
+                color: DSColors.textTertiary,
+                size: 16,
+              ),
           ],
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: DSTypography.headingSmall.copyWith(
-                    
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  content,
-                  style: DSTypography.bodySmall.copyWith(
-                    color: DSColors.textSecondary,
-                    height: 1.5,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          if (showArrow)
-            const Icon(
-              Icons.arrow_forward_ios,
-              color: DSColors.textTertiary,
-              size: 16,
-            ),
-        ],
+        ),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     
     final Widget cardContent = Container(
       margin: margin ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       decoration: BoxDecoration(
-        color: backgroundColor ?? (isDark ? DSColors.surface : Colors.white),
+        color: backgroundColor ?? context.colors.surface,
         borderRadius: BorderRadius.circular(16),
         border: showBorder 
             ? Border.all(
@@ -197,19 +202,9 @@ class FortuneCard extends StatelessWidget {
                 width: 1,
               )
             : null,
-        boxShadow: elevation != null && elevation! > 0
-            ? [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  offset: const Offset(0, 2),
-                  blurRadius: 8,
-                  spreadRadius: 0,
-                ),
-              ]
-            : null,
       ),
       child: Material(
-        color: Colors.white.withValues(alpha: 0.0),
+        color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
@@ -232,7 +227,7 @@ class FortuneCard extends StatelessWidget {
                             children: [
                               Text(
                                 title!,
-                                style: DSTypography.headingSmall.copyWith(
+                                style: context.headingSmall.copyWith(
                                   fontWeight: FontWeight.w600,
                                   color: isDark ? DSColors.textPrimary : DSColors.textPrimary,
                                 ),
@@ -241,7 +236,7 @@ class FortuneCard extends StatelessWidget {
                                 const SizedBox(height: 4),
                                 Text(
                                   subtitle!,
-                                  style: DSTypography.bodySmall.copyWith(
+                                  style: context.bodySmall.copyWith(
                                     color: isDark ? DSColors.textSecondary : DSColors.textSecondary,
                                   ),
                                 ),
@@ -319,7 +314,7 @@ class _ScoreBadge extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             '$score점',
-            style: DSTypography.labelSmall.copyWith(
+            style: context.labelSmall.copyWith(
               color: scoreColor,
               fontWeight: FontWeight.w700,
             ),

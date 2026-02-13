@@ -80,14 +80,14 @@ class MbtiDimensionFortune {
 
 /// 차원별 색상 매핑
 const Map<String, Color> dimensionColors = {
-  'E': Color(0xFFFF6B6B), // 레드 - 외향
-  'I': Color(0xFF4ECDC4), // 틸 - 내향
-  'N': Color(0xFF9B59B6), // 퍼플 - 직관
-  'S': Color(0xFF3498DB), // 블루 - 감각
-  'T': Color(0xFF2ECC71), // 그린 - 사고
-  'F': Color(0xFFE91E63), // 핑크 - 감정
-  'J': Color(0xFFFF9800), // 오렌지 - 판단
-  'P': Color(0xFF00BCD4), // 시안 - 인식
+  'E': Color(0xFFFF6B6B), // 레드 - 외향 (MBTI 고유 파스텔)
+  'I': Color(0xFF4ECDC4), // 틸 - 내향 (MBTI 고유)
+  'N': Color(0xFF9B59B6), // 퍼플 - 직관 (MBTI 고유)
+  'S': Color(0xFF3498DB), // 블루 - 감각 (MBTI 고유)
+  'T': Color(0xFF2ECC71), // 그린 - 사고 (MBTI 고유)
+  'F': Color(0xFFE91E63), // 핑크 - 감정 (MBTI 고유)
+  'J': Color(0xFFFF9800), // 오렌지 - 판단 (MBTI 고유)
+  'P': Color(0xFF00BCD4), // 시안 - 인식 (MBTI 고유)
 };
 
 /// 차원별 아이콘 매핑

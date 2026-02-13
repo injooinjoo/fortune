@@ -18,9 +18,24 @@ pluginManagement {
 
 plugins {
     id "dev.flutter.flutter-plugin-loader" version "1.0.0"
-    id "com.android.application" version "8.6.0" apply false
+    id "com.android.application" version "8.9.1" apply false
     id "org.jetbrains.kotlin.android" version "2.1.0" apply false
     id "com.google.gms.google-services" version "4.4.0" apply false
 }
 
 include ":app"
+
+// Fix for packages missing namespace (AGP 8.0+ compatibility)
+gradle.beforeProject { project ->
+    project.afterEvaluate {
+        if (project.hasProperty('android') && project.android.namespace == null) {
+            def manifest = file("${project.projectDir}/src/main/AndroidManifest.xml")
+            if (manifest.exists()) {
+                def packageValue = new XmlSlurper().parse(manifest).@package.text()
+                if (packageValue) {
+                    project.android.namespace = packageValue
+                }
+            }
+        }
+    }
+}

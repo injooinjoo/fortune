@@ -1,5 +1,5 @@
-/// MBTI Fortune Page - Widget Test
-/// MBTI 운세 페이지 UI 테스트
+// MBTI Fortune Page - Widget Test
+// MBTI 운세 페이지 UI 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -159,23 +159,6 @@ void main() {
       });
     });
 
-    group('블러 처리', () {
-      testWidgets('무료 사용자는 일부 콘텐츠 블러', (tester) async {
-        await tester.pumpWidget(
-          const ProviderScope(
-            child: MaterialApp(
-              home: Scaffold(
-                body: _MockMBTIFortuneResult(isBlurred: true),
-              ),
-            ),
-          ),
-        );
-
-        await tester.pumpAndSettle();
-        expect(find.text('전체 분석 보기'), findsOneWidget);
-      });
-    });
-
     group('인터랙션', () {
       testWidgets('분석하기 버튼이 있어야 함', (tester) async {
         await tester.pumpWidget(
@@ -266,12 +249,10 @@ class _MockMBTIFortunePage extends StatelessWidget {
 class _MockMBTIFortuneResult extends StatelessWidget {
   final String mbtiType;
   final bool hasSajuData;
-  final bool isBlurred;
 
   const _MockMBTIFortuneResult({
     this.mbtiType = 'INTJ',
     this.hasSajuData = false,
-    this.isBlurred = false,
   });
 
   String _getMBTIName(String type) {
@@ -305,7 +286,7 @@ class _MockMBTIFortuneResult extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('MBTI 운세 결과', style: const TextStyle(fontSize: 24)),
+            const Text('MBTI 운세 결과', style: TextStyle(fontSize: 24)),
             const SizedBox(height: 16),
             Center(
               child: Column(
@@ -358,15 +339,6 @@ class _MockMBTIFortuneResult extends StatelessWidget {
               ),
             ],
 
-            if (isBlurred) ...[
-              const SizedBox(height: 16),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('전체 분석 보기'),
-                ),
-              ),
-            ],
           ],
         ),
       ),

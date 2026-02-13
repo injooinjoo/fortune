@@ -266,17 +266,32 @@ class _ChatLocationPickerState extends State<ChatLocationPicker> {
     widget.onLocationSelected(location);
   }
 
-  /// 주소 포맷팅
+  /// 주소 포맷팅 (시/도 + 구/군 + 동)
   String _formatAddress(Placemark place) {
     final parts = <String>[];
-    if (place.administrativeArea != null && place.administrativeArea!.isNotEmpty) {
-      parts.add(place.administrativeArea!);
+    final adminArea = place.administrativeArea;
+
+    // 1. 시/도
+    if (adminArea != null && adminArea.isNotEmpty) {
+      parts.add(adminArea);
     }
-    if (place.locality != null && place.locality!.isNotEmpty) {
+
+    // 2. 구/군 (locality가 administrativeArea와 동일하면 스킵)
+    if (place.locality != null &&
+        place.locality!.isNotEmpty &&
+        place.locality != adminArea) {
       parts.add(place.locality!);
-    } else if (place.subAdministrativeArea != null && place.subAdministrativeArea!.isNotEmpty) {
+    } else if (place.subAdministrativeArea != null &&
+               place.subAdministrativeArea!.isNotEmpty &&
+               place.subAdministrativeArea != adminArea) {
       parts.add(place.subAdministrativeArea!);
     }
+
+    // 3. 동/읍/면 (subLocality)
+    if (place.subLocality != null && place.subLocality!.isNotEmpty) {
+      parts.add(place.subLocality!);
+    }
+
     return parts.join(' ');
   }
 
@@ -352,19 +367,19 @@ class _ChatLocationPickerState extends State<ChatLocationPicker> {
         vertical: DSSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: colors.accentSecondary.withValues(alpha: 0.15),
+        color: colors.textPrimary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(DSRadius.md),
-        border: Border.all(color: colors.accentSecondary),
+        border: Border.all(color: colors.textPrimary),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.location_on, size: 16, color: colors.accentSecondary),
+          Icon(Icons.location_on, size: 16, color: colors.textSecondary),
           const SizedBox(width: DSSpacing.xs),
           Text(
             _selectedLocation!.displayName,
             style: typography.labelMedium.copyWith(
-              color: colors.accentSecondary,
+              color: colors.textPrimary,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -373,7 +388,7 @@ class _ChatLocationPickerState extends State<ChatLocationPicker> {
             onTap: () {
               setState(() => _selectedLocation = null);
             },
-            child: Icon(Icons.close, size: 16, color: colors.accentSecondary),
+            child: Icon(Icons.close, size: 16, color: colors.textSecondary),
           ),
         ],
       ),
@@ -447,13 +462,6 @@ class _ChatLocationPickerState extends State<ChatLocationPicker> {
         color: colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(color: colors.textPrimary.withValues(alpha: 0.1)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: ListView.builder(
         shrinkWrap: true,
@@ -562,19 +570,19 @@ class _ChatLocationPickerState extends State<ChatLocationPicker> {
                 ),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? colors.accentSecondary.withValues(alpha: 0.2)
+                      ? colors.textPrimary.withValues(alpha: 0.1)
                       : colors.backgroundSecondary,
                   borderRadius: BorderRadius.circular(DSRadius.lg),
                   border: Border.all(
                     color: isSelected
-                        ? colors.accentSecondary
+                        ? colors.textPrimary
                         : colors.textPrimary.withValues(alpha: 0.15),
                   ),
                 ),
                 child: Text(
                   region['display'] ?? '',
                   style: typography.labelMedium.copyWith(
-                    color: isSelected ? colors.accentSecondary : colors.textPrimary,
+                    color: isSelected ? colors.textPrimary : colors.textPrimary,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   ),
                 ),

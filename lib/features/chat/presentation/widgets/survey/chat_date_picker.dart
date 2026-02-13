@@ -43,18 +43,18 @@ class _ChatDatePickerState extends State<ChatDatePicker> {
       firstDate: widget.firstDate ?? DateTime(now.year - 1),
       lastDate: widget.lastDate ?? DateTime(now.year + 1),
       builder: (context, child) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: isDark
                 ? const ColorScheme.dark(
-                    primary: Color(0xFF7C3AED),
+                    primary: DSColors.accentSecondary,
                     onPrimary: Colors.white,
-                    surface: Color(0xFF1E1E1E),
+                    surface: DSColors.surface,
                     onSurface: Colors.white,
                   )
                 : const ColorScheme.light(
-                    primary: Color(0xFF7C3AED),
+                    primary: DSColors.accentSecondary,
                     onPrimary: Colors.white,
                     surface: Colors.white,
                     onSurface: Colors.black,
@@ -141,13 +141,13 @@ class _ChatDatePickerState extends State<ChatDatePicker> {
                 vertical: DSSpacing.xs,
               ),
               decoration: BoxDecoration(
-                color: colors.accentSecondary.withValues(alpha: 0.1),
+                color: colors.textPrimary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Text(
                 '선택: ${_formatDate(_selectedDate!)}',
                 style: typography.labelSmall.copyWith(
-                  color: colors.accentSecondary,
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -178,7 +178,7 @@ class _QuickDateChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Material(
       color: Colors.transparent,
@@ -193,12 +193,12 @@ class _QuickDateChip extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: isSelected
-                ? colors.accentSecondary.withValues(alpha: 0.2)
+                ? colors.textPrimary.withValues(alpha: 0.1)
                 : (isDark ? colors.backgroundSecondary : colors.surface),
             borderRadius: BorderRadius.circular(DSRadius.lg),
             border: Border.all(
               color: isSelected
-                  ? colors.accentSecondary
+                  ? colors.textPrimary
                   : colors.textPrimary.withValues(alpha: 0.2),
               width: isSelected ? 1.5 : 1,
             ),
@@ -214,7 +214,7 @@ class _QuickDateChip extends StatelessWidget {
                 option.label,
                 style: typography.labelMedium.copyWith(
                   color: isSelected
-                      ? colors.accentSecondary
+                      ? colors.textPrimary
                       : colors.textPrimary,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 ),
@@ -224,7 +224,7 @@ class _QuickDateChip extends StatelessWidget {
                 Icon(
                   Icons.check,
                   size: 14,
-                  color: colors.accentSecondary,
+                  color: colors.textPrimary,
                 ),
               ],
             ],
@@ -248,7 +248,7 @@ class _DatePickerChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Material(
       color: Colors.transparent,

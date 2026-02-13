@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../presentation/providers/auth_provider.dart';
+import '../../presentation/providers/providers.dart';
 import 'package:fortune/core/theme/app_animations.dart';
-import 'ads/interstitial_ad_helper.dart';
 import '../../core/utils/logger.dart';
-import '../../core/theme/fortune_design_system.dart';
 import '../../core/design_system/design_system.dart';
 import '../../core/widgets/date_picker/numeric_date_input.dart';
 
@@ -29,7 +27,8 @@ class FortuneExplanationBottomSheet extends ConsumerStatefulWidget {
   }) {
     return showModalBottomSheet(
       context: context,
-      backgroundColor: TossDesignSystem.black.withValues(alpha: 0.0),
+      backgroundColor: Colors.black.withValues(alpha: 0.0),
+      barrierColor: DSColors.overlay,
       isScrollControlled: true,
       isDismissible: true,
       enableDrag: true,
@@ -42,14 +41,16 @@ class FortuneExplanationBottomSheet extends ConsumerStatefulWidget {
   }
 
   @override
-  ConsumerState<FortuneExplanationBottomSheet> createState() => _FortuneExplanationBottomSheetState();
+  ConsumerState<FortuneExplanationBottomSheet> createState() =>
+      _FortuneExplanationBottomSheetState();
 }
 
-class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanationBottomSheet> 
+class _FortuneExplanationBottomSheetState
+    extends ConsumerState<FortuneExplanationBottomSheet>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   final ScrollController _scrollController = ScrollController();
-  
+
   // Form controllers for fortune settings
   final _nameController = TextEditingController();
   DateTime? _selectedDate;
@@ -57,7 +58,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
   String? _selectedMbti;
   String? _selectedBloodType;
   bool _isFormValid = false;
-  
+
   @override
   void initState() {
     super.initState();
@@ -68,19 +69,19 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     _animationController.forward();
     _loadUserProfile();
   }
-  
+
   void _loadUserProfile() {
     final profileAsync = ref.read(userProfileProvider);
     final profile = profileAsync.value;
     if (profile != null) {
-      _nameController.text = profile.name ?? '';
+      _nameController.text = profile.name;
       _selectedDate = profile.birthDate;
-      _selectedGender = profile.gender;
+      _selectedGender = profile.gender.value;
       _selectedMbti = profile.mbtiType;
       _checkFormValidity();
     }
   }
-  
+
   void _checkFormValidity() {
     setState(() {
       _isFormValid = _nameController.text.isNotEmpty &&
@@ -88,7 +89,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           _selectedGender != null;
     });
   }
-  
+
   @override
   void dispose() {
     _animationController.dispose();
@@ -106,9 +107,9 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
         return Container(
           height: MediaQuery.of(context).size.height * 0.9,
           decoration: BoxDecoration(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.grayDark100
-                : TossDesignSystem.white,
+            color: context.isDark
+                ? DSColors.surface
+                : DSColors.surfaceDark,
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
@@ -151,9 +152,9 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       width: 40,
       height: 4,
       decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? TossDesignSystem.grayDark300
-            : TossDesignSystem.gray300,
+        color: context.isDark
+            ? DSColors.border
+            : DSColors.borderDark,
         borderRadius: BorderRadius.circular(2),
       ),
     );
@@ -161,7 +162,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
 
   Widget _buildHeader(ThemeData theme) {
     final fortuneName = _getFortuneTypeName(widget.fortuneType);
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -197,9 +198,9 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                     Text(
                       _getFortuneDescription(widget.fortuneType),
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? TossDesignSystem.grayDark600
-                            : TossDesignSystem.gray600,
+                        color: context.isDark
+                            ? DSColors.textTertiary
+                            : DSColors.textSecondaryDark,
                       ),
                     ),
                   ],
@@ -236,32 +237,30 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           ),
         ),
         const SizedBox(height: 12),
-        ...recommendations.map((rec) => 
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 4),
-                  width: 6,
-                  height: 6,
-                  decoration: BoxDecoration(
-                    color: theme.primaryColor,
-                    shape: BoxShape.circle,
+        ...recommendations.map((rec) => Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 4),
+                    width: 6,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: theme.primaryColor,
+                      shape: BoxShape.circle,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    rec,
-                    style: theme.textTheme.bodyMedium,
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      rec,
+                      style: theme.textTheme.bodyMedium,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          )
-        ),
+                ],
+              ),
+            )),
       ],
     );
   }
@@ -277,7 +276,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           ),
         ),
         const SizedBox(height: 16),
-        
+
         // Name input
         TextField(
           controller: _nameController,
@@ -291,9 +290,9 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
             prefixIcon: const Icon(Icons.person),
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Birth date
         NumericDateInput(
           label: '생년월일',
@@ -306,9 +305,9 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           maxDate: DateTime.now(),
           showAge: true,
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Gender selection
         Text(
           '성별',
@@ -346,9 +345,9 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
             ),
           ],
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // MBTI selection (optional)
         Text(
           'MBTI (선택사항)',
@@ -360,8 +359,24 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
         Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP',
-                   'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP']
+          children: [
+            'INTJ',
+            'INTP',
+            'ENTJ',
+            'ENTP',
+            'INFJ',
+            'INFP',
+            'ENFJ',
+            'ENFP',
+            'ISTJ',
+            'ISFJ',
+            'ESTJ',
+            'ESFJ',
+            'ISTP',
+            'ISFP',
+            'ESTP',
+            'ESFP'
+          ]
               .map((mbti) => _buildChoiceChip(
                     label: mbti,
                     isSelected: _selectedMbti == mbti,
@@ -390,26 +405,26 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
         decoration: BoxDecoration(
           color: isSelected
               ? Theme.of(context).primaryColor
-              : (Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.grayDark100
-                  : TossDesignSystem.gray100),
+              : (context.isDark
+                  ? DSColors.surface
+                  : DSColors.backgroundSecondaryDark),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected
                 ? Theme.of(context).primaryColor
-                : (Theme.of(context).brightness == Brightness.dark
-                    ? TossDesignSystem.grayDark300
-                    : TossDesignSystem.gray300),
+                : (context.isDark
+                    ? DSColors.border
+                    : DSColors.borderDark),
           ),
         ),
         child: Text(
           label,
           style: TextStyle(
             color: isSelected
-                ? TossDesignSystem.white
-                : (Theme.of(context).brightness == Brightness.dark
-                    ? TossDesignSystem.grayDark900
-                    : TossDesignSystem.black),
+                ? Colors.white
+                : (context.isDark
+                    ? DSColors.textPrimary
+                    : DSColors.textPrimaryDark),
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
           ),
         ),
@@ -431,24 +446,24 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.grayDark50.withValues(alpha: 0.5)
-                : TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+            color: context.isDark
+                ? DSColors.background.withValues(alpha: 0.5)
+                : DSColors.accentDark.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? TossDesignSystem.grayDark200
-                  : TossDesignSystem.tossBlue.withValues(alpha: 0.3),
+              color: context.isDark
+                  ? DSColors.surfaceSecondary
+                  : DSColors.accentDark.withValues(alpha: 0.3),
             ),
           ),
           child: Column(
             children: [
-              _buildScoreRow('90-100점', '최고운', TossDesignSystem.errorRed),
-              _buildScoreRow('80-89점', '대길', TossDesignSystem.warningOrange),
-              _buildScoreRow('70-79점', '길', TossDesignSystem.warningYellow),
-              _buildScoreRow('60-69점', '평', TossDesignSystem.successGreen),
-              _buildScoreRow('50-59점', '하', TossDesignSystem.tossBlue),
-              _buildScoreRow('~49점', '흉', TossDesignSystem.gray500),
+              _buildScoreRow('90-100점', '최고운', DSColors.error),
+              _buildScoreRow('80-89점', '대길', DSColors.warning),
+              _buildScoreRow('70-79점', '길', DSColors.warning),
+              _buildScoreRow('60-69점', '평', DSColors.success),
+              _buildScoreRow('50-59점', '하', DSColors.accentDark),
+              _buildScoreRow('~49점', '흉', DSColors.textTertiaryDark),
             ],
           ),
         ),
@@ -472,7 +487,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           const SizedBox(width: 12),
           Text(
             '$score - $meaning',
-            style: DSTypography.bodySmall.copyWith(
+            style: context.bodySmall.copyWith(
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -496,14 +511,14 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: Theme.of(context).brightness == Brightness.dark
+              colors: context.isDark
                   ? [
-                      TossDesignSystem.grayDark100.withValues(alpha: 0.8),
-                      TossDesignSystem.grayDark50.withValues(alpha: 0.8),
+                      DSColors.surface.withValues(alpha: 0.8),
+                      DSColors.background.withValues(alpha: 0.8),
                     ]
                   : [
-                      TossDesignSystem.purple.withValues(alpha: 0.1),
-                      TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                      DSColors.accentTertiary.withValues(alpha: 0.1),
+                      DSColors.accentDark.withValues(alpha: 0.1),
                     ],
             ),
             borderRadius: BorderRadius.circular(12),
@@ -515,18 +530,18 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                 children: [
                   Icon(
                     Icons.auto_awesome,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? TossDesignSystem.purple.withValues(alpha: 0.7)
-                        : TossDesignSystem.purple,
+                    color: context.isDark
+                        ? DSColors.accentTertiary.withValues(alpha: 0.7)
+                        : DSColors.accentTertiary,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     '신령이 점지하는 개인 맞춤 운세',
-                    style: DSTypography.labelMedium.copyWith(
+                    style: context.labelMedium.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? TossDesignSystem.purple.withValues(alpha: 0.7)
-                          : TossDesignSystem.purple,
+                      color: context.isDark
+                          ? DSColors.accentTertiary.withValues(alpha: 0.7)
+                          : DSColors.accentTertiary,
                     ),
                   ),
                 ],
@@ -537,7 +552,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                 '• 매일 업데이트되는 실시간 운세\n'
                 '• 상세한 운세 해석과 조언 제공\n'
                 '• 다양한 운세 카테고리별 상세 분석',
-                style: DSTypography.bodySmall.copyWith( height: 1.5),
+                style: context.bodySmall.copyWith(height: 1.5),
               ),
             ],
           ),
@@ -550,14 +565,15 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? TossDesignSystem.grayDark100
-            : TossDesignSystem.white,
+        color: context.isDark
+            ? DSColors.surface
+            : DSColors.surfaceDark,
         boxShadow: [
           BoxShadow(
-            color: (Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.grayDark900
-                : TossDesignSystem.black).withValues(alpha: 0.1),
+            color: (context.isDark
+                    ? DSColors.textPrimary
+                    : DSColors.textPrimaryDark)
+                .withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -583,23 +599,16 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
 
                     final fortuneRoute = _getFortuneRoute(widget.fortuneType);
 
-                    // Premium/Frequency 체크 및 광고 표시 (Helper가 처리)
-                    await InterstitialAdHelper.showInterstitialAdWithCallback(
-                      ref,
-                      onAdCompleted: () async {
-                        Logger.debug('📺 [FortuneExplanationBottomSheet] Ad completed or skipped, navigating');
-                        if (context.mounted) context.go(fortuneRoute, extra: fortuneParams);
-                      },
-                      onAdFailed: () async {
-                        Logger.debug('📺 [FortuneExplanationBottomSheet] Ad failed, navigating anyway');
-                        if (context.mounted) context.go(fortuneRoute, extra: fortuneParams);
-                      },
-                    );
+                    // 운세 페이지로 이동
+                    Logger.debug('[FortuneExplanationBottomSheet] Navigating to $fortuneRoute');
+                    if (context.mounted) {
+                      context.go(fortuneRoute, extra: fortuneParams);
+                    }
                   }
                 : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: theme.primaryColor,
-              foregroundColor: TossDesignSystem.white,
+              foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -611,7 +620,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                 const SizedBox(width: 8),
                 Text(
                   '${_getFortuneTypeName(widget.fortuneType)} 보기',
-                  style: DSTypography.labelMedium.copyWith(
+                  style: context.labelMedium.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -685,27 +694,12 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
         '하루 일정을 계획적으로 보내고 싶은 분',
         '작은 변화라도 긍정적으로 받아들이고 싶은 분'
       ],
-      'love': [
-        '새로운 만남을 기대하는 분',
-        '연애 관계에서 고민이 있는 분',
-        '결혼을 앞두고 있는 분'
-      ],
-      'career': [
-        '직장에서 승진을 원하는 분',
-        '이직을 고려하고 있는 분',
-        '새로운 사업을 시작하려는 분'
-      ],
-      'money': [
-        '재정 관리에 관심이 있는 분',
-        '투자를 고려하고 있는 분',
-        '경제적 안정을 원하는 분'
-      ],
+      'love': ['새로운 만남을 기대하는 분', '연애 관계에서 고민이 있는 분', '결혼을 앞두고 있는 분'],
+      'career': ['직장에서 승진을 원하는 분', '이직을 고려하고 있는 분', '새로운 사업을 시작하려는 분'],
+      'money': ['재정 관리에 관심이 있는 분', '투자를 고려하고 있는 분', '경제적 안정을 원하는 분'],
     };
-    return recommendations[fortuneType] ?? [
-      '운세에 관심이 있는 모든 분',
-      '미래에 대한 조언이 필요한 분',
-      '긍정적인 에너지를 얻고 싶은 분'
-    ];
+    return recommendations[fortuneType] ??
+        ['운세에 관심이 있는 모든 분', '미래에 대한 조언이 필요한 분', '긍정적인 에너지를 얻고 싶은 분'];
   }
 
   String _getFortuneRoute(String fortuneType) {

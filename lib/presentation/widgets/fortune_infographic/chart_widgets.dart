@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'painters.dart';
 
 /// Chart widgets for fortune infographic
@@ -14,16 +14,16 @@ class ChartWidgets {
   }) {
     return Builder(
       builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
 
         return Container(
           height: size ?? 200,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            color: isDark ? DSColors.surfaceSecondary : DSColors.surfaceDark,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+              color: isDark ? DSColors.border : DSColors.borderDark,
             ),
           ),
           child: scores.isNotEmpty ?
@@ -32,14 +32,14 @@ class ChartWidgets {
               painter: RadarChartPainter(
                 scores: scores,
                 isDark: isDark,
-                primaryColor: primaryColor ?? (isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue),
+                primaryColor: primaryColor ?? (isDark ? DSColors.accent : DSColors.accentDark),
               ),
             ) :
             Center(
               child: Text(
                 '레이더 차트 준비 중...',
                 style: TextStyle(
-                  color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                  color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
                 ),
               ),
             ),
@@ -83,7 +83,7 @@ class _InteractiveTimelineChartState extends State<_InteractiveTimelineChart> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final displayHour = _touchedHour ?? widget.currentHour;
     final displayScore = widget.hourlyScores[displayHour];
 
@@ -91,10 +91,10 @@ class _InteractiveTimelineChartState extends State<_InteractiveTimelineChart> {
       height: widget.height,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+          color: isDark ? DSColors.border : DSColors.borderDark,
         ),
       ),
       child: Column(
@@ -106,14 +106,14 @@ class _InteractiveTimelineChartState extends State<_InteractiveTimelineChart> {
               Text(
                 _touchedHour != null ? '$displayHour시' : '현재 $displayHour시',
                 style: TextStyle(
-                  color: isDark ? TossDesignSystem.white : TossDesignSystem.black,
+                  color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
                 '$displayScore점',
                 style: TextStyle(
-                  color: isDark ? TossDesignSystem.tossBlueDark : TossDesignSystem.tossBlue,
+                  color: isDark ? DSColors.accent : DSColors.accentDark,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -156,7 +156,7 @@ class _InteractiveTimelineChartState extends State<_InteractiveTimelineChart> {
                 Text(
                   '${i.toString().padLeft(2, '0')}:00',
                   style: TextStyle(
-                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
                   ),
                 ),
             ],

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/fortune_design_system.dart';
+import '../design_system/theme/ds_extensions.dart';
 
 /// 한지 텍스처 배경 위젯
 ///
@@ -28,11 +28,11 @@ class HanjiBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final defaultOpacity = isDark ? 0.04 : 0.08;
+    final isDark = context.isDark;
+    final colors = context.colors;
+    final defaultOpacity = isDark ? 0.02 : 0.04;
     final effectiveOpacity = opacity ?? defaultOpacity;
-    final bgColor = backgroundColor ??
-        (isDark ? TossDesignSystem.black : TossDesignSystem.gray50);
+    final bgColor = backgroundColor ?? colors.background;
 
     if (!showTexture) {
       return Container(
@@ -50,11 +50,14 @@ class HanjiBackground extends StatelessWidget {
             child: Opacity(
               opacity: effectiveOpacity,
               child: Image.asset(
-                'assets/images/hanji_texture.png',
+                'assets/images/hanji_texture.webp',
                 fit: BoxFit.cover,
                 repeat: ImageRepeat.repeat,
                 color: isDark ? Colors.white : null,
                 colorBlendMode: isDark ? BlendMode.overlay : null,
+                errorBuilder: (context, error, stackTrace) {
+                  return const SizedBox.shrink();
+                },
               ),
             ),
           ),
@@ -107,10 +110,11 @@ class HanjiScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final defaultOpacity = isDark ? 0.04 : 0.08;
+    final isDark = context.isDark;
+    final colors = context.colors;
+    final defaultOpacity = isDark ? 0.02 : 0.04;
     final effectiveOpacity = textureOpacity ?? defaultOpacity;
-    final bgColor = isDark ? TossDesignSystem.black : TossDesignSystem.gray50;
+    final bgColor = colors.background;
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -123,11 +127,14 @@ class HanjiScaffold extends StatelessWidget {
                   child: Opacity(
                     opacity: effectiveOpacity,
                     child: Image.asset(
-                      'assets/images/hanji_texture.png',
+                      'assets/images/hanji_texture.webp',
                       fit: BoxFit.cover,
                       repeat: ImageRepeat.repeat,
                       color: isDark ? Colors.white : null,
                       colorBlendMode: isDark ? BlendMode.overlay : null,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const SizedBox.shrink();
+                      },
                     ),
                   ),
                 ),

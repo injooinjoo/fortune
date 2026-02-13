@@ -1,5 +1,5 @@
-/// Tarot Page - Widget Test
-/// 타로 페이지 UI 컴포넌트 테스트
+// Tarot Page - Widget Test
+// 타로 페이지 UI 컴포넌트 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -24,14 +24,12 @@ void main() {
     });
 
     testWidgets('덱 선택 시 콜백이 호출되어야 함', (tester) async {
-      String? selectedDeck;
-
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
             home: Scaffold(
               body: _MockDeckSelectionWidget(
-                onDeckSelected: (deck) => selectedDeck = deck,
+                onDeckSelected: (deck) {},
               ),
             ),
           ),
@@ -183,7 +181,7 @@ class _MockTarotResultWidget extends StatelessWidget {
         children: [
           Container(
             height: 200,
-            color: Colors.purple.withOpacity(0.1),
+            color: Colors.purple.withValues(alpha:0.1),
             child: const Center(child: Text('선택한 카드')),
           ),
           const Padding(

@@ -648,20 +648,10 @@ serve(async (req) => {
         const percentileData = await calculatePercentile(supabase, 'face-reading', personalized.score || 75)
         const resultWithPercentile = addPercentileToResult(personalized, percentileData)
 
-        // 블러 설정
-        const isBlurred = !isPremium
-        const blurredSections = isBlurred
-          ? ['personality', 'wealth_fortune', 'love_fortune', 'health_fortune', 'career_fortune', 'special_features', 'advice', 'full_analysis']
-          : []
-
         return new Response(
           JSON.stringify({
             success: true,
-            data: {
-              ...resultWithPercentile,
-              isBlurred,
-              blurredSections,
-            },
+            data: resultWithPercentile,
             cached: false,
             cohortHit: true,
           }),
@@ -836,23 +826,6 @@ serve(async (req) => {
     // =====================================================
     // 6. 응답 구성
     // =====================================================
-    const isBlurred = !isPremium
-    const blurredSections = isBlurred
-      ? [
-          // 기존 블러 섹션
-          'personality', 'wealth_fortune', 'love_fortune', 'health_fortune',
-          'career_fortune', 'special_features', 'advice', 'full_analysis',
-          'first_impression_detail', 'compatibility', 'marriage_prediction',
-          // V2 블러 섹션 (프리미엄 전용)
-          ...(useV2 ? [
-            'faceCondition', 'emotionAnalysis',
-            'myeonggung', 'migan',
-            'relationshipImpression',
-            'makeupStyleRecommendations', 'leadershipAnalysis'
-          ] : [])
-        ]
-      : []
-
     const fortuneResponse = {
       // ✅ 표준화된 필드명: score, content, summary, advice
       fortuneType: 'face-reading',
@@ -1002,9 +975,7 @@ serve(async (req) => {
       userGender: userGender || null,
       userAgeGroup: userAgeGroup || null,
 
-      timestamp: new Date().toISOString(),
-      isBlurred,
-      blurredSections
+      timestamp: new Date().toISOString()
     }
 
     // ✅ 퍼센타일 계산

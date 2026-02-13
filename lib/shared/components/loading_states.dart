@@ -92,7 +92,7 @@ class AppLoadingOverlay extends StatelessWidget {
               child: Container(
                 color: colors.textPrimary.withValues(alpha: 0.5),
                 child: Center(
-                  child: DSCard.hanji(
+                  child: DSCard.flat(
                     padding: const EdgeInsets.all(DSSpacing.lg),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -168,7 +168,7 @@ class CardSkeleton extends StatelessWidget {
     return Container(
       height: height ?? 120,
       margin: margin,
-      child: DSCard.hanji(
+      child: DSCard.flat(
         padding: const EdgeInsets.all(DSSpacing.lg),
         child: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,7 +203,7 @@ class FortuneResultSkeleton extends StatelessWidget {
       child: Column(
         children: [
           // Overall Score Skeleton
-          DSCard.hanji(
+          DSCard.flat(
             padding: const EdgeInsets.all(DSSpacing.lg),
             child: Column(
               children: [
@@ -221,7 +221,7 @@ class FortuneResultSkeleton extends StatelessWidget {
           const SizedBox(height: DSSpacing.md),
 
           // Score Breakdown Skeleton
-          DSCard.hanji(
+          DSCard.flat(
             padding: const EdgeInsets.all(DSSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -251,7 +251,7 @@ class FortuneResultSkeleton extends StatelessWidget {
           const SizedBox(height: DSSpacing.md),
 
           // Lucky Items Skeleton
-          DSCard.hanji(
+          DSCard.flat(
             padding: const EdgeInsets.all(DSSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -278,7 +278,7 @@ class FortuneResultSkeleton extends StatelessWidget {
           const SizedBox(height: DSSpacing.md),
 
           // Description Skeleton
-          DSCard.hanji(
+          DSCard.flat(
             padding: const EdgeInsets.all(DSSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -324,7 +324,7 @@ class ListItemSkeleton extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: DSSpacing.md),
           child: SizedBox(
             height: itemHeight,
-            child: DSCard.hanji(
+            child: DSCard.flat(
               padding: const EdgeInsets.all(DSSpacing.lg),
               child: Row(
                 children: [
@@ -381,7 +381,7 @@ class GridSkeleton extends StatelessWidget {
         crossAxisSpacing: DSSpacing.md),
       itemCount: itemCount,
       itemBuilder: (context, index) {
-        return DSCard.hanji(
+        return DSCard.flat(
           padding: const EdgeInsets.all(DSSpacing.lg),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

@@ -1,5 +1,5 @@
-/// Biorhythm Page - Widget Test
-/// 바이오리듬 페이지 UI 테스트
+// Biorhythm Page - Widget Test
+// 바이오리듬 페이지 UI 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -199,22 +199,6 @@ void main() {
       });
     });
 
-    group('블러 처리', () {
-      testWidgets('무료 사용자는 일부 콘텐츠 블러', (tester) async {
-        await tester.pumpWidget(
-          const ProviderScope(
-            child: MaterialApp(
-              home: Scaffold(
-                body: _MockBiorhythmPage(isBlurred: true),
-              ),
-            ),
-          ),
-        );
-
-        await tester.pumpAndSettle();
-        expect(find.text('전체 보기'), findsOneWidget);
-      });
-    });
   });
 }
 
@@ -226,15 +210,12 @@ class _MockBiorhythmPage extends StatelessWidget {
   final int physical;
   final int emotional;
   final int intellectual;
-  final int intuitive;
-  final bool isBlurred;
+  final int intuitive = 55;
 
   const _MockBiorhythmPage({
     this.physical = 60,
     this.emotional = 40,
     this.intellectual = 80,
-    this.intuitive = 55,
-    this.isBlurred = false,
   });
 
   String _getStatus(int value) {
@@ -316,15 +297,6 @@ class _MockBiorhythmPage extends StatelessWidget {
               ),
             ),
 
-            if (isBlurred) ...[
-              const SizedBox(height: 16),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('전체 보기'),
-                ),
-              ),
-            ],
           ],
         ),
       ),

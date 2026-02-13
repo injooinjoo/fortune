@@ -109,7 +109,7 @@ npx playwright test --headed --debug
 | 운세 페이지 수정 | `*_fortune_page.dart` 변경 | 해당 운세 페이지 |
 | UI 컴포넌트 수정 | `presentation/widgets/` 변경 | 관련 페이지들 |
 | Edge Function 배포 | `supabase functions deploy` 후 | API 연동 테스트 |
-| 프리미엄/블러 수정 | `blur`, `premium` 코드 변경 | 프리미엄 플로우 |
+| 구독 수정 | `premium` 코드 변경 | 구독 플로우 |
 | 라우팅 수정 | `route_config.dart` 변경 | 네비게이션 테스트 |
 
 ### 자동 트리거 비활성화
@@ -149,7 +149,7 @@ git commit -m "fix: typo [skip-qa]"
 4. 스크린샷 캡처
 ```
 
-**적용 페이지**: `/home`, `/profile`, `/premium` 등
+**적용 페이지**: `/home`, `/profile`, `/subscription` 등
 
 ### 3. 인증 플로우 시나리오 (`auth-flow`)
 
@@ -181,7 +181,6 @@ git commit -m "fix: typo [skip-qa]"
 | 운세 생성 | 버튼 클릭 후 API 호출 |
 | 로딩 상태 | 로딩 인디케이터 표시 |
 | 결과 표시 | 운세 결과 화면 렌더링 |
-| 블러 처리 | 프리미엄 미구독 시 블러 |
 
 ---
 

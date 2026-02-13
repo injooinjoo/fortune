@@ -29,8 +29,6 @@
  *   - activity: string - 행운의 활동
  * - health_forecast: object - 건강 예보 (프리미엄)
  * - activity_guide: object - 활동 가이드 (프리미엄)
- * - isBlurred: boolean - 블러 상태
- * - blurredSections: string[] - 블러된 섹션 목록
  *
  * @example
  * // Request
@@ -225,10 +223,8 @@ serve(async (req) => {
     if (cachedResult) {
       console.log('📦 [PetFortune] 캐시 히트!')
       const fortune = cachedResult.result
-      // 블러 처리 적용
-      const processedFortune = applyBlurring(fortune, isPremium)
       return new Response(
-        JSON.stringify({ success: true, data: processedFortune, cached: true, tokensUsed: 0 }),
+        JSON.stringify({ success: true, data: fortune, cached: true, tokensUsed: 0 }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
@@ -260,12 +256,9 @@ serve(async (req) => {
         ? JSON.parse(personalizedResult)
         : personalizedResult
 
-      // 블러 처리 적용
-      const processedFortune = applyBlurring(fortune, isPremium)
-
       // Percentile 계산
       const percentileData = await calculatePercentile(supabaseClient, 'pet-compatibility', fortune.score || fortune.overallScore || 80)
-      const fortuneWithPercentile = addPercentileToResult(processedFortune, percentileData)
+      const fortuneWithPercentile = addPercentileToResult(fortune, percentileData)
 
       return new Response(
         JSON.stringify({
@@ -703,15 +696,15 @@ ${zodiacAnimal ? `- 띠: ${zodiacAnimal}` : ''}
       emotional_care: fortuneData.emotional_care,
       special_tips: fortuneData.special_tips,
 
-      // 육각형 차트용 점수 (감각적 라벨)
+      // 세부 운세 점수 (감각적 라벨)
       hexagonScores: {
-        '꼬리 프로펠러': fortuneData.daily_condition.overall_score,  // 기분 수치
-        '텔레파시 농도': fortuneData.owner_bond.bond_score,          // 서로 통하는 정도
-        '우다다 에너지': fortuneData.daily_condition.energy_level === 'high' ? 90 :
-                        fortuneData.daily_condition.energy_level === 'medium' ? 70 : 50,  // 활동성
-        '눈맞춤 온도': Math.round((fortuneData.daily_condition.overall_score + fortuneData.owner_bond.bond_score) / 2),  // 친밀감
-        '건강': fortuneData.health_insight.energy_level,
-        '행복': Math.round((fortuneData.daily_condition.overall_score + fortuneData.health_insight.energy_level) / 2)
+        '🐾 꼬리 프로펠러': fortuneData.daily_condition.overall_score,
+        '💫 텔레파시 농도': fortuneData.owner_bond.bond_score,
+        '⚡ 우다다 에너지': fortuneData.daily_condition.energy_level === 'high' ? 90 :
+                          fortuneData.daily_condition.energy_level === 'medium' ? 70 : 50,
+        '👀 눈맞춤 온도': Math.round((fortuneData.daily_condition.overall_score + fortuneData.owner_bond.bond_score) / 2),
+        '💪 건강 지수': fortuneData.health_insight.energy_level,
+        '🌈 행복 지수': Math.round((fortuneData.daily_condition.overall_score + fortuneData.health_insight.energy_level) / 2)
       },
 
       createdAt: new Date().toISOString()
@@ -737,12 +730,9 @@ ${zodiacAnimal ? `- 띠: ${zodiacAnimal}` : ''}
       .then(() => console.log(`[fortune-pet-compatibility] 💾 Cohort Pool 저장 완료`))
       .catch((err) => console.error(`[fortune-pet-compatibility] ⚠️ Cohort Pool 저장 실패:`, err))
 
-    // 블러 처리 적용
-    const processedFortune = applyBlurring(fortune, isPremium)
-
     // Percentile 계산
     const percentileData = await calculatePercentile(supabaseClient, 'pet-compatibility', fortune.score)
-    const fortuneWithPercentile = addPercentileToResult(processedFortune, percentileData)
+    const fortuneWithPercentile = addPercentileToResult(fortune, percentileData)
 
     return new Response(
       JSON.stringify({
@@ -773,19 +763,6 @@ ${zodiacAnimal ? `- 띠: ${zodiacAnimal}` : ''}
   }
 })
 
-// 블러 처리 함수 (데이터는 그대로 유지, 플래그만 설정)
-function applyBlurring(fortune: any, isPremium: boolean): any {
-  const blurredSections = isPremium ? [] : [
-    'pets_voice', 'health_insight', 'activity_recommendation',
-    'emotional_care', 'special_tips'
-  ]
-
-  return {
-    ...fortune,  // 실제 데이터 그대로 유지 (클라이언트에서 블러 처리)
-    isBlurred: !isPremium,
-    blurredSections
-  }
-}
 
 // Fallback 운세 생성
 function generateFallbackFortune(petName: string, petSpecies: string, petAge: number, ownerName: string, season: string): PetFortuneResponse {

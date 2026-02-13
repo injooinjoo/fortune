@@ -34,6 +34,8 @@ export const FORTUNE_SPECIFIC_MODELS: Record<string, string | undefined> = {
   'fortune-past-life': 'gemini-2.0-flash-lite',
   'wealth': 'gemini-2.0-flash-lite',
   'talisman': 'gemini-2.0-flash-lite',
+  'yearly-encounter': 'gemini-2.0-flash-lite',
+  'free-chat': 'gemini-2.5-flash-lite',  // 대화 맥락 이해 개선
 }
 
 export function getModelConfig(fortuneType: string) {

@@ -2,6 +2,8 @@ import '../../../../domain/entities/fortune.dart';
 import '../../../../core/models/personality_dna_model.dart';
 import '../../../fortune/domain/models/match_insight.dart';
 import '../../../fortune/domain/models/past_life_result.dart';
+import '../../../fortune/domain/models/yearly_encounter_result.dart';
+import '../../../chat_insight/data/models/chat_insight_result.dart';
 
 /// 채팅 메시지 유형
 enum ChatMessageType {
@@ -26,6 +28,21 @@ enum ChatMessageType {
   /// 감사일기 결과 (일기장 스타일 카드)
   gratitudeResult,
 
+  /// AI 코칭 결과 (코칭 어드바이스 + 액션 아이템)
+  coachingResult,
+
+  /// 결정 분석 결과 (선택지별 장단점 + 추천)
+  decisionResult,
+
+  /// 하루 회고 결과 (일일 리뷰 인사이트)
+  dailyReviewResult,
+
+  /// 주간 리포트 결과 (주간 트렌드 + 인사이트)
+  weeklyReviewResult,
+
+  /// 카톡 대화 분석 인사이트 결과 (5종 카드)
+  chatInsightResult,
+
   /// 로딩 표시
   loading,
 
@@ -38,6 +55,12 @@ enum ChatMessageType {
 
 /// 온보딩 입력 타입
 enum OnboardingInputType {
+  /// 인생 컨설팅 대분류 선택 (연애, 돈, 커리어, 건강)
+  lifeCategory,
+
+  /// 세부 고민 선택
+  subConcern,
+
   /// 이름 입력 (텍스트)
   name,
 
@@ -69,12 +92,6 @@ class ChatMessage {
   final ChatMessageType type;
   final String? text;
   final DateTime timestamp;
-
-  /// 블러 처리 여부
-  final bool isBlurred;
-
-  /// 블러 처리된 섹션 키 목록
-  final List<String> blurredSections;
 
   /// 운세 결과용: 운세 유형
   final String? fortuneType;
@@ -130,13 +147,67 @@ class ChatMessage {
   /// 감사일기 결과: 작성 날짜
   final DateTime? gratitudeDate;
 
+  /// 올해의 인연 결과 데이터
+  final YearlyEncounterResult? yearlyEncounterResult;
+
+  // ============ AI 코칭/저널링 결과 필드 ============
+
+  /// 코칭 결과: 사용자가 입력한 상황
+  final String? coachingSituation;
+
+  /// 코칭 결과: AI 코칭 어드바이스
+  final String? coachingAdvice;
+
+  /// 코칭 결과: 실천 항목 목록
+  final List<String>? coachingActionItems;
+
+  /// 결정 분석 결과: 고민 중인 질문
+  final String? decisionQuestion;
+
+  /// 결정 분석 결과: 선택지별 분석 (JSON 형태: [{option, pros, cons}])
+  final List<Map<String, dynamic>>? decisionOptions;
+
+  /// 결정 분석 결과: AI 추천
+  final String? decisionRecommendation;
+
+  /// 결정 분석 결과: 확신을 가질 수 있는 포인트 목록
+  final List<String>? decisionConfidenceFactors;
+
+  /// 결정 분석 결과: 다음 단계 액션 목록
+  final List<String>? decisionNextSteps;
+
+  /// 결정 분석 결과: 결정 유형 (dating, career, money 등)
+  final String? decisionType;
+
+  /// 결정 분석 결과: 저장된 결정 기록 ID (팔로업 연동용)
+  final String? decisionReceiptId;
+
+  /// 하루 회고 결과: 오늘의 하이라이트
+  final String? dailyReviewHighlight;
+
+  /// 하루 회고 결과: 배운 점
+  final String? dailyReviewLearning;
+
+  /// 하루 회고 결과: 내일을 위한 한 마디
+  final String? dailyReviewTomorrow;
+
+  /// 주간 리포트 결과: 이번 주 요약
+  final String? weeklyReviewSummary;
+
+  /// 주간 리포트 결과: 성장 트렌드
+  final List<String>? weeklyReviewTrends;
+
+  /// 주간 리포트 결과: 다음 주 액션 제안
+  final List<String>? weeklyReviewActions;
+
+  /// 카톡 대화 분석 인사이트 결과 데이터
+  final ChatInsightResult? chatInsight;
+
   const ChatMessage({
     required this.id,
     required this.type,
     this.text,
     required this.timestamp,
-    this.isBlurred = false,
-    this.blurredSections = const [],
     this.fortuneType,
     this.sectionKey,
     this.chipIds,
@@ -155,6 +226,25 @@ class ChatMessage {
     this.gratitude2,
     this.gratitude3,
     this.gratitudeDate,
+    this.yearlyEncounterResult,
+    // AI 코칭/저널링 필드
+    this.coachingSituation,
+    this.coachingAdvice,
+    this.coachingActionItems,
+    this.decisionQuestion,
+    this.decisionOptions,
+    this.decisionRecommendation,
+    this.decisionConfidenceFactors,
+    this.decisionNextSteps,
+    this.decisionType,
+    this.decisionReceiptId,
+    this.dailyReviewHighlight,
+    this.dailyReviewLearning,
+    this.dailyReviewTomorrow,
+    this.weeklyReviewSummary,
+    this.weeklyReviewTrends,
+    this.weeklyReviewActions,
+    this.chatInsight,
   });
 
   ChatMessage copyWith({
@@ -162,8 +252,6 @@ class ChatMessage {
     ChatMessageType? type,
     String? text,
     DateTime? timestamp,
-    bool? isBlurred,
-    List<String>? blurredSections,
     String? fortuneType,
     String? sectionKey,
     List<String>? chipIds,
@@ -182,14 +270,31 @@ class ChatMessage {
     String? gratitude2,
     String? gratitude3,
     DateTime? gratitudeDate,
+    YearlyEncounterResult? yearlyEncounterResult,
+    // AI 코칭/저널링 필드
+    String? coachingSituation,
+    String? coachingAdvice,
+    List<String>? coachingActionItems,
+    String? decisionQuestion,
+    List<Map<String, dynamic>>? decisionOptions,
+    String? decisionRecommendation,
+    List<String>? decisionConfidenceFactors,
+    List<String>? decisionNextSteps,
+    String? decisionType,
+    String? decisionReceiptId,
+    String? dailyReviewHighlight,
+    String? dailyReviewLearning,
+    String? dailyReviewTomorrow,
+    String? weeklyReviewSummary,
+    List<String>? weeklyReviewTrends,
+    List<String>? weeklyReviewActions,
+    ChatInsightResult? chatInsight,
   }) {
     return ChatMessage(
       id: id ?? this.id,
       type: type ?? this.type,
       text: text ?? this.text,
       timestamp: timestamp ?? this.timestamp,
-      isBlurred: isBlurred ?? this.isBlurred,
-      blurredSections: blurredSections ?? this.blurredSections,
       fortuneType: fortuneType ?? this.fortuneType,
       sectionKey: sectionKey ?? this.sectionKey,
       chipIds: chipIds ?? this.chipIds,
@@ -208,6 +313,50 @@ class ChatMessage {
       gratitude2: gratitude2 ?? this.gratitude2,
       gratitude3: gratitude3 ?? this.gratitude3,
       gratitudeDate: gratitudeDate ?? this.gratitudeDate,
+      yearlyEncounterResult: yearlyEncounterResult ?? this.yearlyEncounterResult,
+      // AI 코칭/저널링 필드
+      coachingSituation: coachingSituation ?? this.coachingSituation,
+      coachingAdvice: coachingAdvice ?? this.coachingAdvice,
+      coachingActionItems: coachingActionItems ?? this.coachingActionItems,
+      decisionQuestion: decisionQuestion ?? this.decisionQuestion,
+      decisionOptions: decisionOptions ?? this.decisionOptions,
+      decisionRecommendation: decisionRecommendation ?? this.decisionRecommendation,
+      decisionConfidenceFactors: decisionConfidenceFactors ?? this.decisionConfidenceFactors,
+      decisionNextSteps: decisionNextSteps ?? this.decisionNextSteps,
+      decisionType: decisionType ?? this.decisionType,
+      decisionReceiptId: decisionReceiptId ?? this.decisionReceiptId,
+      dailyReviewHighlight: dailyReviewHighlight ?? this.dailyReviewHighlight,
+      dailyReviewLearning: dailyReviewLearning ?? this.dailyReviewLearning,
+      dailyReviewTomorrow: dailyReviewTomorrow ?? this.dailyReviewTomorrow,
+      weeklyReviewSummary: weeklyReviewSummary ?? this.weeklyReviewSummary,
+      weeklyReviewTrends: weeklyReviewTrends ?? this.weeklyReviewTrends,
+      weeklyReviewActions: weeklyReviewActions ?? this.weeklyReviewActions,
+      chatInsight: chatInsight ?? this.chatInsight,
     );
   }
+
+  /// 로컬 저장 가능 여부 (user, ai, system 메시지만 저장)
+  /// Fortune, MatchInsight 등 복잡한 객체는 세션 내에서만 유효
+  bool get isPersistable =>
+      type == ChatMessageType.user ||
+      type == ChatMessageType.ai ||
+      type == ChatMessageType.system;
+
+  /// JSON 직렬화 (로컬 저장용)
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'type': type.name,
+        'text': text,
+        'timestamp': timestamp.toIso8601String(),
+        'chipIds': chipIds,
+      };
+
+  /// JSON 역직렬화 (로컬 로드용)
+  factory ChatMessage.fromJson(Map<String, dynamic> json) => ChatMessage(
+        id: json['id'] as String,
+        type: ChatMessageType.values.byName(json['type'] as String),
+        text: json['text'] as String?,
+        timestamp: DateTime.parse(json['timestamp'] as String),
+        chipIds: (json['chipIds'] as List<dynamic>?)?.cast<String>(),
+      );
 }

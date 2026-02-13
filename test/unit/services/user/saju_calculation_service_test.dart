@@ -1,5 +1,5 @@
-/// Saju Calculation Service - Unit Test
-/// 사주 계산 서비스 테스트
+// Saju Calculation Service - Unit Test
+// 사주 계산 서비스 테스트
 
 import 'package:flutter_test/flutter_test.dart';
 import '../../../mocks/mock_user_services.dart';
@@ -50,8 +50,6 @@ void main() {
 
       test('시주 계산', () {
         // 시주는 일간에 따라 결정됨
-        final branches = UserTestData.getEarthlyBranches();
-
         String getHourBranch(int hour) {
           if (hour >= 23 || hour < 1) return '자';
           if (hour >= 1 && hour < 3) return '축';

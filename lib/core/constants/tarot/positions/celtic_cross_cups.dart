@@ -1,5 +1,5 @@
-/// Celtic Cross 스프레드 - Cups (14장) 해석
-/// 카드 인덱스: 36-49 (Ace ~ King of Cups)
+// Celtic Cross 스프레드 - Cups (14장) 해석
+// 카드 인덱스: 36-49 (Ace ~ King of Cups)
 
 class CelticCrossCups {
   static const Map<int, Map<String, Map<String, String>>> meanings = {

@@ -139,7 +139,7 @@ class DSModal extends StatelessWidget {
         decoration: BoxDecoration(
           color: colors.surface,
           borderRadius: BorderRadius.circular(DSRadius.xl),
-          boxShadow: [shadows.modal],
+          boxShadow: shadows.modal,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

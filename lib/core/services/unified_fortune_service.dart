@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../utils/logger.dart';
@@ -8,28 +7,9 @@ import '../models/cached_fortune_result.dart';
 import '../constants/soul_rates.dart';
 import '../errors/exceptions.dart';
 import '../../data/services/token_api_service.dart';
-import 'fortune_generators/tarot_generator.dart';
-import 'fortune_generators/moving_generator.dart';
-import 'fortune_generators/time_based_generator.dart';
-import 'fortune_generators/compatibility_generator.dart';
-import 'fortune_generators/avoid_people_generator.dart';
-import 'fortune_generators/ex_lover_generator.dart';
-import 'fortune_generators/blind_date_generator.dart';
-import 'fortune_generators/career_generator.dart';
-import 'fortune_generators/exam_generator.dart';
-import 'fortune_generators/health_generator.dart';
-import 'fortune_generators/fortune_cookie_generator.dart';
-import 'fortune_generators/wish_generator.dart';
-import 'fortune_generators/lucky_items_generator.dart';
-import 'fortune_generators/love_generator.dart'; // ✅ 추가
-import 'fortune_generators/talent_generator.dart'; // ✅ 재능 발견 추가
-import 'fortune_generators/traditional_saju_generator.dart'; // ✅ 전통사주 추가
-import 'fortune_generators/exercise_generator.dart'; // ✅ 운동운세 추가
 import 'fortune_optimization_service.dart';
+import 'generator_factory.dart';
 import '../../features/fortune/domain/models/fortune_conditions.dart';
-import '../../features/fortune/domain/models/conditions/love_fortune_conditions.dart'; // ✅ 추가
-import '../../features/fortune/domain/models/conditions/health_fortune_conditions.dart'; // ✅ 건강운세 추가
-import '../../features/fortune/domain/models/conditions/exercise_fortune_conditions.dart'; // ✅ 운동운세 추가
 
 /// 통합 운세 서비스 (최적화 시스템 통합)
 ///
@@ -45,6 +25,7 @@ class UnifiedFortuneService {
   final SupabaseClient _supabase;
   final TokenApiService? _tokenService;
   late final FortuneOptimizationService _optimizationService;
+  late final GeneratorFactory _generatorFactory;
 
   // 최적화 시스템 활성화 플래그 (기본값: true)
   final bool enableOptimization;
@@ -59,6 +40,7 @@ class UnifiedFortuneService {
     this.enableTokenValidation = true, // 토큰 검증 기본 활성화
   }) : _tokenService = tokenService {
     _optimizationService = FortuneOptimizationService(supabase: _supabase);
+    _generatorFactory = GeneratorFactory(_supabase);
   }
 
   // StorageService 인스턴스 (Guest ID용)
@@ -80,17 +62,17 @@ class UnifiedFortuneService {
 
   /// ==================== 메인 엔트리포인트 ====================
 
-  /// 운세 조회 (통합 플로우 + 최적화 + 블러 처리)
+  /// 운세 조회 (통합 플로우 + 최적화)
   ///
   /// 최적화 프로세스 (enableOptimization = true):
-  /// 1. FortuneOptimizationService 사용 (6단계 프로세스)
+  /// 1. FortuneOptimizationService 사용 (5단계 프로세스)
   ///    - 개인 캐시 확인 (20% 절감)
+  ///    - Cohort Pool 조회 (90% 절감)
   ///    - DB 풀 랜덤 선택 (50% 절감)
   ///    - 30% 확률 랜덤 (30% 절감)
   ///    - API 호출 (28%만 실행)
-  /// 2. 블러 상태로 즉시 반환 (광고 전)
-  /// 3. onAdComplete 콜백으로 블러 해제
-  /// 4. fortune_results + fortune_history 양쪽 저장
+  /// 2. fortune_results + fortune_history 양쪽 저장
+  /// 3. 결과 반환
   ///
   /// 레거시 프로세스 (enableOptimization = false):
   /// 1. checkExistingFortune (기존 방식)
@@ -102,8 +84,7 @@ class UnifiedFortuneService {
     required FortuneDataSource dataSource,
     required Map<String, dynamic> inputConditions,
     FortuneConditions? conditions, // 최적화용 조건 객체 (선택)
-    Function(FortuneResult)? onBlurredResult, // 블러 상태 결과 즉시 콜백
-    bool isPremium = false, // Premium 사용자는 블러 없이 표시
+    bool isPremium = false,
   }) async {
     try {
       final userId = await _getUserId();
@@ -118,7 +99,8 @@ class UnifiedFortuneService {
 
       // ===== 토큰 검증 (API 호출 전) =====
       final soulAmount = SoulRates.getSoulAmount(fortuneType);
-      Logger.info('[$fortuneType] 💰 영혼 비용: $soulAmount (${soulAmount < 0 ? "프리미엄" : "무료"})');
+      Logger.info(
+          '[$fortuneType] 💰 영혼 비용: $soulAmount (${soulAmount < 0 ? "프리미엄" : "무료"})');
 
       // 게스트 사용자는 토큰 검증 건너뜀 (guest_ 접두사로 시작)
       final isGuestUser = userId.startsWith('guest_');
@@ -129,15 +111,18 @@ class UnifiedFortuneService {
           if (soulAmount < 0) {
             // 프리미엄 운세 → 토큰 부족 시 예외
             final requiredTokens = -soulAmount;
-            if (!balance.hasUnlimitedAccess && balance.remainingTokens < requiredTokens) {
-              Logger.warning('[$fortuneType] ❌ 토큰 부족: 필요 $requiredTokens, 보유 ${balance.remainingTokens}');
+            if (!balance.hasUnlimitedAccess &&
+                balance.remainingTokens < requiredTokens) {
+              Logger.warning(
+                  '[$fortuneType] ❌ 토큰 부족: 필요 $requiredTokens, 보유 ${balance.remainingTokens}');
               throw InsufficientTokensException.withDetails(
                 required: requiredTokens,
                 available: balance.remainingTokens,
                 fortuneType: fortuneType,
               );
             }
-            Logger.info('[$fortuneType] ✅ 토큰 검증 통과 (보유: ${balance.remainingTokens}, 필요: $requiredTokens)');
+            Logger.info(
+                '[$fortuneType] ✅ 토큰 검증 통과 (보유: ${balance.remainingTokens}, 필요: $requiredTokens)');
           }
         } catch (e) {
           if (e is InsufficientTokensException) {
@@ -149,7 +134,9 @@ class UnifiedFortuneService {
       }
 
       // ===== 최적화 시스템 사용 (조건 객체가 있고 활성화된 경우) =====
-      if (enableOptimization && conditions != null && dataSource == FortuneDataSource.api) {
+      if (enableOptimization &&
+          conditions != null &&
+          dataSource == FortuneDataSource.api) {
         Logger.info('[$fortuneType] 🚀 최적화 시스템 사용');
 
         try {
@@ -157,61 +144,44 @@ class UnifiedFortuneService {
             userId: userId,
             fortuneType: fortuneType,
             conditions: conditions,
-            onShowAd: () async {
-              // 광고 표시는 UI에서 처리 (onBlurredResult 콜백 이후)
-              Logger.info('[$fortuneType] 📺 광고 표시 대기 (UI에서 처리)');
-            },
             onAPICall: (payload) async {
               // ✅ payload와 inputConditions 머지 (이미지 데이터 등 포함)
               Logger.info('[$fortuneType] 🔄 API 호출');
 
               // buildAPIPayload()에 없는 inputConditions 데이터를 병합
               final mergedPayload = {
-                ...payload,  // conditions.buildAPIPayload() 결과
-                ...inputConditions,  // 이미지 데이터 등 추가 조건
-                'isPremium': isPremium,  // ✅ Premium 상태 전달 (Edge Function에서 블러 처리용)
+                ...payload, // conditions.buildAPIPayload() 결과
+                ...inputConditions, // 이미지 데이터 등 추가 조건
+                'isPremium':
+                    isPremium, // ✅ Premium 상태 전달 (Edge Function에서 블러 처리용)
               };
 
-              final result = await _generateFromAPI(fortuneType, mergedPayload);
+              final result = await _generatorFactory.generate(
+                fortuneType: fortuneType,
+                inputConditions: mergedPayload,
+                dataSource: GeneratorDataSource.api,
+              );
 
               // ✅ DB 저장용 conditions에서 대용량 필드 제거 (image는 API 호출에만 필요)
-              final conditionsForDB = Map<String, dynamic>.from(inputConditions);
-              conditionsForDB.remove('image');  // 214KB base64 제거
+              final conditionsForDB =
+                  Map<String, dynamic>.from(inputConditions);
+              conditionsForDB.remove('image'); // 214KB base64 제거
 
               return result.data;
             },
           );
 
-          Logger.info('[$fortuneType] ✅ 최적화 시스템 완료 (소스: ${cachedResult.source})');
+          Logger.info(
+              '[$fortuneType] ✅ 최적화 시스템 완료 (소스: ${cachedResult.source})');
 
           // CachedFortuneResult → FortuneResult 변환
-          var fortuneResult = _convertCachedToFortuneResult(cachedResult);
-
-          // Premium이 아니면 블러 처리
-          if (!isPremium) {
-            final blurredSections = _getBlurredSectionsForType(fortuneType);
-            fortuneResult = fortuneResult.copyWith(
-              isBlurred: true,
-              blurredSections: blurredSections,
-            );
-
-            // 블러 상태 결과를 UI에 즉시 전달
-            if (onBlurredResult != null) {
-              Logger.info('[$fortuneType] 🔒 블러 상태 결과 전달 (광고 전)');
-              onBlurredResult(fortuneResult);
-            }
-
-            // TODO: 광고 표시 대기 (UI에서 처리)
-            // 광고 시청 후 블러 해제된 결과를 반환하려면
-            // UI 계층에서 이 메서드를 다시 호출하거나
-            // copyWith(isBlurred: false)를 사용
-          }
+          final fortuneResult = _convertCachedToFortuneResult(cachedResult);
 
           // fortune_history에도 저장 (기존 시스템과 호환성)
           if (cachedResult.apiCall) {
             // API 호출한 경우만 fortune_history에 저장
             await saveFortune(
-              result: fortuneResult.copyWith(isBlurred: false), // 저장 시 블러 해제
+              result: fortuneResult,
               fortuneType: fortuneType,
               inputConditions: inputConditions,
             );
@@ -242,7 +212,8 @@ class UnifiedFortuneService {
       Logger.info('[$fortuneType] ✅ 운세 생성 완료');
       Logger.info('[$fortuneType] 🆔 ID: ${result.id}');
       Logger.info('[$fortuneType] 📝 제목: ${result.title}');
-      Logger.info('[$fortuneType] 📊 데이터 크기: ${result.data.toString().length}자');
+      Logger.info(
+          '[$fortuneType] 📊 데이터 크기: ${result.data.toString().length}자');
       Logger.info('[$fortuneType] ⭐ 점수: ${result.score}');
 
       // DB 저장 시도 (실패해도 결과는 반환)
@@ -256,14 +227,14 @@ class UnifiedFortuneService {
         Logger.info('[$fortuneType] ✅ fortune_history 저장 완료');
       } catch (saveError) {
         // DB 저장 실패해도 API 결과는 사용자에게 반환
-        Logger.error('[$fortuneType] ❌ fortune_history 저장 실패 (결과는 반환됨): $saveError');
+        Logger.error(
+            '[$fortuneType] ❌ fortune_history 저장 실패 (결과는 반환됨): $saveError');
       }
 
       // ===== API 호출 성공 후 토큰 처리 =====
       await _processSoulTransaction(userId, fortuneType, soulAmount);
 
       return result;
-
     } catch (error, stackTrace) {
       Logger.error('[$fortuneType] ❌ 운세 조회 실패', error, stackTrace);
       rethrow;
@@ -275,8 +246,10 @@ class UnifiedFortuneService {
     // Edge Function 응답 구조에 따라 필드명이 다를 수 있음
     // - score 또는 overallScore
     // - title이 없을 수 있음
-    final score = cached.resultData['score'] ?? cached.resultData['overallScore'];
-    final title = cached.resultData['title'] as String? ?? _getDefaultTitle(cached.fortuneType);
+    final score =
+        cached.resultData['score'] ?? cached.resultData['overallScore'];
+    final title = cached.resultData['title'] as String? ??
+        _getDefaultTitle(cached.fortuneType);
 
     return FortuneResult.fromJson({
       'id': cached.id,
@@ -339,22 +312,25 @@ class UnifiedFortuneService {
         return null;
       }
 
-      final today = DateTime.now().toIso8601String().split('T')[0]; // YYYY-MM-DD
+      final today =
+          DateTime.now().toIso8601String().split('T')[0]; // YYYY-MM-DD
 
       // JSONB 조건을 정규화 (키 정렬) - DB에서는 text로 캐스팅해서 비교
       final normalizedConditions = _normalizeJsonb(inputConditions);
 
-      Logger.debug('[UnifiedFortune] 중복 체크 - userId: $userId, type: $fortuneType, date: $today');
-      Logger.debug('[UnifiedFortune] Normalized conditions: ${jsonEncode(normalizedConditions)}');
+      Logger.debug(
+          '[UnifiedFortune] 중복 체크 - userId: $userId, type: $fortuneType, date: $today');
+      Logger.debug(
+          '[UnifiedFortune] Normalized conditions: ${jsonEncode(normalizedConditions)}');
 
       // 잠깐! input_conditions 비교를 빼고 일단 모든 레코드를 가져온 후 메모리에서 비교
       // 이유: DB에 잘못된 JSONB 데이터가 있으면 쿼리 자체가 실패함
       final results = await _supabase
-        .from('fortune_history')
-        .select('*, id')
-        .eq('user_id', userId)
-        .eq('fortune_type', fortuneType)
-        .eq('fortune_date', today);
+          .from('fortune_history')
+          .select('*, id')
+          .eq('user_id', userId)
+          .eq('fortune_type', fortuneType)
+          .eq('fortune_date', today);
 
       if ((results.isEmpty)) {
         Logger.debug('[UnifiedFortune] 기존 결과 없음');
@@ -378,12 +354,11 @@ class UnifiedFortuneService {
           continue;
         }
       }
-    
+
       Logger.debug('[UnifiedFortune] 조건 일치하는 기존 결과 없음');
       return null;
-
-    } catch (error) {
-      Logger.warning('[UnifiedFortune] 기존 결과 확인 실패 (무시하고 계속): $error', error);
+    } catch (error, stack) {
+      Logger.error('[UnifiedFortune] 기존 결과 확인 실패 (무시하고 계속)', error, stack);
       return null; // 실패 시 null 반환하여 새로 생성하도록
     }
   }
@@ -391,642 +366,23 @@ class UnifiedFortuneService {
   /// ==================== Step 2: 운세 생성 ====================
 
   /// 운세 생성 (API 또는 로컬)
+  ///
+  /// GeneratorFactory를 통해 운세 생성 로직을 위임
+  /// (40+ switch-case → GeneratorFactory로 분리)
   Future<FortuneResult> generateFortune({
     required String fortuneType,
     required FortuneDataSource dataSource,
     required Map<String, dynamic> inputConditions,
   }) async {
-    switch (dataSource) {
-      case FortuneDataSource.api:
-        return await _generateFromAPI(fortuneType, inputConditions);
-      case FortuneDataSource.local:
-        return await _generateFromLocal(fortuneType, inputConditions);
-    }
-  }
-
-  /// API에서 운세 생성 (Edge Function 호출)
-  Future<FortuneResult> _generateFromAPI(
-    String fortuneType,
-    Map<String, dynamic> inputConditions,
-  ) async {
-    try {
-      Logger.info('[UnifiedFortune] API 호출 시작: $fortuneType');
-
-      // 운세 타입별 Generator 클래스 호출
-      switch (fortuneType.toLowerCase()) {
-        case 'moving':
-          return await MovingGenerator.generate(inputConditions, _supabase);
-
-        case 'time_based':
-        case 'daily':
-        case 'daily_calendar':
-          return await TimeBasedGenerator.generate(inputConditions, _supabase);
-
-        case 'compatibility':
-          return await CompatibilityGenerator.generate(inputConditions, _supabase);
-
-        case 'love':
-          final isPremium = inputConditions['isPremium'] as bool? ?? false;
-          return await LoveGenerator.generate(
-            conditions: LoveFortuneConditions.fromInputData(inputConditions),
-            supabase: _supabase,
-            isPremium: isPremium,
-          );
-
-        case 'talent':
-          return await TalentGenerator.generate(inputConditions, _supabase);
-
-        case 'traditional_saju':
-        case 'traditional-saju':
-          return await TraditionalSajuGenerator.generate(inputConditions, _supabase);
-
-        case 'avoid_people':
-        case 'avoid-people':
-          return await AvoidPeopleGenerator.generate(inputConditions, _supabase);
-
-        case 'ex_lover':
-        case 'ex-lover':
-          return await ExLoverGenerator.generate(inputConditions, _supabase);
-
-        case 'blind_date':
-        case 'blind-date':
-          return await BlindDateGenerator.generate(inputConditions, _supabase);
-
-        case 'career':
-        case 'career_future':
-        case 'career-future':
-        case 'career_seeker':
-        case 'career-seeker':
-        case 'career_change':
-        case 'career-change':
-        case 'startup_career':
-        case 'startup-career':
-          return await CareerGenerator.generate(inputConditions, _supabase);
-
-        case 'career_coaching':
-        case 'career-coaching':
-          // Career Coaching Edge Function 직접 호출
-          final isPremium = inputConditions['isPremium'] as bool? ?? false;
-
-          final payload = {
-            'currentRole': inputConditions['currentRole'],
-            'experienceLevel': inputConditions['experienceLevel'],
-            'industry': inputConditions['industry'],
-            'primaryConcern': inputConditions['primaryConcern'],
-            'shortTermGoal': inputConditions['shortTermGoal'],
-            'skillsToImprove': inputConditions['skillsToImprove'],
-            'coreValue': inputConditions['coreValue'],
-            'isPremium': isPremium,
-          };
-
-          final response = await _supabase.functions.invoke(
-            'fortune-career',  // fortune-career-coaching 미정의 → fortune-career 사용
-            body: payload,
-          );
-
-          if (response.data == null) {
-            throw Exception('Career Coaching API 응답 데이터 없음');
-          }
-
-          final responseData = response.data as Map<String, dynamic>;
-          if (responseData['success'] == true && responseData.containsKey('fortune')) {
-            final fortuneData = responseData['fortune'] as Map<String, dynamic>;
-            Logger.info('[UnifiedFortune] ✅ Career Coaching API 호출 성공');
-
-            return FortuneResult(
-              type: 'career_coaching',
-              title: '커리어 코칭',
-              summary: {},
-              data: fortuneData,
-              score: (fortuneData['health_score']?['overall_score'] as num?)?.toInt() ?? 70,
-              createdAt: DateTime.now(),
-            );
-          } else {
-            throw Exception('Career Coaching API 응답 형식 오류');
-          }
-
-        case 'exam':
-        case 'lucky_exam':
-        case 'lucky-exam':
-          final isPremium = inputConditions['isPremium'] as bool? ?? false;
-          return await ExamGenerator.generate(
-            inputConditions,
-            _supabase,
-            isPremium: isPremium,
-          );
-
-        case 'health':
-          final isPremium = inputConditions['isPremium'] as bool? ?? false;
-          return await HealthGenerator.generate(
-            conditions: HealthFortuneConditions.fromInputData(inputConditions),
-            supabase: _supabase,
-            isPremium: isPremium,
-          );
-
-        case 'exercise':
-          final exerciseIsPremium = inputConditions['isPremium'] as bool? ?? false;
-          return await ExerciseGenerator.generate(
-            conditions: ExerciseFortuneConditions.fromInputData(inputConditions),
-            supabase: _supabase,
-            isPremium: exerciseIsPremium,
-          );
-
-        // ✅ 가족운세 (5가지 concern)
-        case 'family-health':
-        case 'family-wealth':
-        case 'family-children':
-        case 'family-relationship':
-        case 'family-change':
-          final familyIsPremium = inputConditions['isPremium'] as bool? ?? false;
-
-          // concern 추출 (family-health → health)
-          final concern = fortuneType.split('-').last;
-          final endpoint = 'fortune-family-$concern';
-
-          // 사용자 정보 추가
-          final familyUser = _supabase.auth.currentUser;
-          final familyUserProfile = familyUser != null
-              ? await _supabase
-                  .from('user_profiles')
-                  .select('name, birth_date, birth_time, gender')
-                  .eq('id', familyUser.id)
-                  .maybeSingle()
-              : null;
-
-          // 가족 구성원 정보 (선택된 프로필)
-          final familyMemberData = inputConditions['familyMember'] as Map<String, dynamic>?;
-
-          final familyPayload = {
-            ...inputConditions,
-            'userId': familyUser?.id ?? 'anonymous',
-            'name': familyUserProfile?['name'] ?? 'Guest',
-            'birthDate': familyUserProfile?['birth_date'],
-            'birthTime': familyUserProfile?['birth_time'],
-            'gender': familyUserProfile?['gender'],
-            'isPremium': familyIsPremium,
-            // 가족 구성원 정보 추가
-            if (familyMemberData != null) 'familyMember': familyMemberData,
-          };
-
-          Logger.info('[UnifiedFortune] 가족운세 API 호출: $endpoint');
-
-          final familyResponse = await _supabase.functions.invoke(
-            endpoint,
-            body: familyPayload,
-          );
-
-          if (familyResponse.data == null) {
-            throw Exception('Family Fortune API 응답 데이터 없음');
-          }
-
-          final familyResponseData = familyResponse.data as Map<String, dynamic>;
-          final familyFortuneData = familyResponseData['fortune'] ?? familyResponseData;
-
-          Logger.info('[UnifiedFortune] ✅ 가족운세 API 호출 성공');
-
-          return FortuneResult(
-            type: fortuneType,
-            title: '가족 ${inputConditions['concern_label'] ?? concern}',
-            summary: {},
-            data: familyFortuneData,
-            score: (familyFortuneData['overallScore'] ?? familyFortuneData['score'] ?? 70) as int,
-            createdAt: DateTime.now(),
-          );
-
-        case 'wish':
-          return await WishGenerator.generate(inputConditions, _supabase);
-
-        case 'lucky_items':
-        case 'lucky-items':
-          return await LuckyItemsGenerator.generate(inputConditions, _supabase);
-
-        case 'mbti':
-          // MBTI Edge Function 직접 호출 (FortuneApiService 패턴 사용)
-          // Edge Function이 기대하는 필드명으로 변환: mbti_type → mbti, birth_date → birthDate
-          // userId와 name 추가
-          final mbtiIsPremium = inputConditions['isPremium'] as bool? ?? false;
-          final mbtiUser = _supabase.auth.currentUser;
-          final mbtiUserProfile = mbtiUser != null
-              ? await _supabase
-                  .from('user_profiles')
-                  .select('name')
-                  .eq('id', mbtiUser.id)
-                  .maybeSingle()
-              : null;
-
-          final mbtiPayload = {
-            'mbti': inputConditions['mbti_type'] ?? inputConditions['mbti'],
-            'name': mbtiUserProfile?['name'] as String? ?? mbtiUser?.userMetadata?['name'] as String? ?? inputConditions['name'] ?? 'Guest',
-            'birthDate': inputConditions['birth_date'] ?? inputConditions['birthDate'],
-            if (inputConditions['categories'] != null) 'categories': inputConditions['categories'],
-            'userId': mbtiUser?.id ?? inputConditions['userId'] ?? 'anonymous',
-            'isPremium': mbtiIsPremium, // ✅ 프리미엄 상태 전달
-          };
-
-          final response = await _supabase.functions.invoke(
-            'fortune-mbti',
-            body: mbtiPayload,
-          );
-
-          if (response.data == null) {
-            throw Exception('MBTI API 응답 데이터 없음');
-          }
-
-          // fortune-mbti returns {success: true, data: {...}}
-          final responseData = response.data as Map<String, dynamic>;
-          if (responseData['success'] == true && responseData.containsKey('data')) {
-            final fortuneData = responseData['data'] as Map<String, dynamic>;
-            Logger.info('[UnifiedFortune] ✅ MBTI API 호출 성공');
-
-            // Edge Function 응답을 FortuneResult 형식으로 변환
-            // ✅ isBlurred, blurredSections 포함
-            return FortuneResult(
-              type: 'mbti',
-              title: 'MBTI 운세 - ${mbtiPayload['mbti']}',
-              summary: {},
-              data: fortuneData, // 전체 응답을 data 필드에 저장
-              score: (fortuneData['energyLevel'] as num?)?.toInt() ?? 75,
-              createdAt: DateTime.now(),
-              isBlurred: fortuneData['isBlurred'] as bool? ?? false,
-              blurredSections: List<String>.from(fortuneData['blurredSections'] ?? []),
-            );
-          } else {
-            throw Exception('MBTI API 응답 형식 오류');
-          }
-
-        case 'personality_dna':
-        case 'personality-dna':
-          // Personality DNA Edge Function 직접 호출
-          // userId와 name 추가
-          final user = _supabase.auth.currentUser;
-          final userProfile = user != null
-              ? await _supabase
-                  .from('user_profiles')
-                  .select('name')
-                  .eq('id', user.id)
-                  .maybeSingle()
-              : null;
-
-          final payload = {
-            ...inputConditions,
-            'userId': user?.id ?? 'anonymous',
-            'name': userProfile?['name'] as String? ?? user?.userMetadata?['name'] as String? ?? 'Guest',
-          };
-
-          final response = await _supabase.functions.invoke(
-            'personality-dna',
-            body: payload,
-          );
-
-          if (response.data == null) {
-            throw Exception('Personality DNA API 응답 데이터 없음');
-          }
-
-          Logger.info('[UnifiedFortune] ✅ Personality DNA API 호출 성공');
-
-          // Edge Function 응답을 FortuneResult 형식으로 변환
-          final responseData = response.data as Map<String, dynamic>;
-          return FortuneResult(
-            type: 'personality-dna',
-            title: responseData['title'] as String? ?? '성격 DNA',
-            summary: {},
-            data: responseData, // 전체 응답을 data 필드에 저장
-            score: (responseData['socialRanking'] as num?)?.toInt(),
-            createdAt: DateTime.now(),
-          );
-
-        case 'face-reading':
-          // Face Reading Edge Function 직접 호출
-          Logger.info('[UnifiedFortune] 🔄 Face Reading API 호출 시작');
-
-          final faceResponse = await _supabase.functions.invoke(
-            'fortune-face-reading',
-            body: inputConditions,
-          );
-
-          if (faceResponse.data == null) {
-            throw Exception('Face Reading API 응답 데이터 없음');
-          }
-
-          Logger.info('[UnifiedFortune] ✅ Face Reading API 호출 성공');
-
-          final faceData = faceResponse.data as Map<String, dynamic>;
-          return FortuneResult(
-            type: 'face-reading',
-            title: faceData['title'] as String? ?? 'Face AI',
-            summary: faceData['summary'] as Map<String, dynamic>? ?? {'message': '분석 완료'},
-            data: faceData,
-            createdAt: DateTime.now(),
-          );
-
-        case 'dream':
-          // Dream Fortune Edge Function 직접 호출
-          Logger.info('[UnifiedFortune] 🔄 Dream Fortune API 호출 시작');
-          Logger.info('[UnifiedFortune] 📋 Request Body:');
-          Logger.info('[UnifiedFortune]   - dream: "${inputConditions['dream']}"');
-          Logger.info('[UnifiedFortune]   - inputType: ${inputConditions['inputType']}');
-          Logger.info('[UnifiedFortune]   - isPremium: ${inputConditions['isPremium']}');
-          Logger.info('[UnifiedFortune]   - Full body: ${jsonEncode(inputConditions)}');
-
-          try {
-            final dreamResponse = await _supabase.functions.invoke(
-              'fortune-dream',
-              body: inputConditions,
-            );
-
-            if (dreamResponse.data == null) {
-              throw Exception('Dream API 응답 데이터 없음');
-            }
-
-            Logger.info('[UnifiedFortune] ✅ Dream Fortune API 호출 성공');
-
-            final dreamResponseData = dreamResponse.data as Map<String, dynamic>;
-            if (dreamResponseData['success'] != true) {
-              throw Exception(dreamResponseData['error'] ?? 'Dream Fortune API 호출 실패');
-            }
-
-            final dreamData = dreamResponseData['data'] as Map<String, dynamic>;
-
-            // 🔍 디버그: API 응답 확인
-            Logger.info('[UnifiedFortune] 🔍 Dream API Response:');
-            Logger.info('[UnifiedFortune]   - isBlurred: ${dreamData['isBlurred']}');
-            Logger.info('[UnifiedFortune]   - blurredSections: ${dreamData['blurredSections']}');
-            Logger.info('[UnifiedFortune]   - isPremium (request): ${inputConditions['isPremium']}');
-
-            return FortuneResult(
-              type: 'dream',
-              title: dreamData['interpretation'] as String? ?? '꿈 해몽',
-              summary: {'message': dreamData['interpretation'] as String? ?? '해몽 완료'},
-              data: dreamData,
-              createdAt: DateTime.now(),
-              isBlurred: dreamData['isBlurred'] as bool? ?? false,
-              blurredSections: dreamData['blurredSections'] != null
-                  ? List<String>.from(dreamData['blurredSections'] as List)
-                  : [],
-            );
-          } on FunctionException catch (e) {
-            Logger.error('[UnifiedFortune] ❌ Dream Fortune API 에러');
-            Logger.error('[UnifiedFortune]   - Status: ${e.status}');
-            Logger.error('[UnifiedFortune]   - Details: ${e.details}');
-            Logger.error('[UnifiedFortune]   - ReasonPhrase: ${e.reasonPhrase}');
-            rethrow;
-          }
-
-        case 'biorhythm':
-          // Biorhythm Fortune Edge Function 직접 호출
-          Logger.info('[UnifiedFortune] 🔄 Biorhythm Fortune API 호출 시작');
-          Logger.info('[UnifiedFortune] 📋 Request Body: ${jsonEncode(inputConditions)}');
-
-          try {
-            final biorhythmResponse = await _supabase.functions.invoke(
-              'fortune-biorhythm',
-              body: inputConditions,
-            );
-
-            if (biorhythmResponse.data == null) {
-              throw Exception('Biorhythm API 응답 데이터 없음');
-            }
-
-            Logger.info('[UnifiedFortune] ✅ Biorhythm Fortune API 호출 성공');
-
-            final biorhythmResponseData = biorhythmResponse.data as Map<String, dynamic>;
-            if (biorhythmResponseData['success'] != true) {
-              throw Exception(biorhythmResponseData['error'] ?? 'Biorhythm Fortune API 호출 실패');
-            }
-
-            final biorhythmData = biorhythmResponseData['data'] as Map<String, dynamic>;
-            return FortuneResult(
-              type: 'biorhythm',
-              title: biorhythmData['title'] as String? ?? '바이오리듬',
-              summary: biorhythmData['summary'] as Map<String, dynamic>? ?? {},
-              data: biorhythmData,
-              createdAt: DateTime.now(),
-            );
-          } on FunctionException catch (e) {
-            Logger.error('[UnifiedFortune] ❌ Biorhythm Fortune API 에러');
-            Logger.error('[UnifiedFortune]   - Status: ${e.status}');
-            Logger.error('[UnifiedFortune]   - Details: ${e.details}');
-            Logger.error('[UnifiedFortune]   - ReasonPhrase: ${e.reasonPhrase}');
-            rethrow;
-          }
-
-        case 'celebrity':
-        case 'fortune-celebrity':
-          // Celebrity Fortune Edge Function 직접 호출
-          // 60초 타임아웃 (LLM 상세 콘텐츠 생성에 시간 소요)
-          Logger.info('[UnifiedFortune] 🔄 Celebrity Fortune API 호출 시작');
-          Logger.info('[UnifiedFortune] 📋 Request Body: ${jsonEncode(inputConditions)}');
-
-          try {
-            final celebrityUser = _supabase.auth.currentUser;
-            final celebrityPayload = {
-              'userId': celebrityUser?.id ?? inputConditions['userId'] ?? 'anonymous',
-              'name': inputConditions['name'] ?? 'Guest',
-              'birthDate': inputConditions['birthDate'],
-              'celebrity_id': inputConditions['celebrity_id'],
-              'celebrity_name': inputConditions['celebrity_name'],
-              'celebrity_birth_date': inputConditions['celebrity_birth_date'],
-              'connection_type': inputConditions['connection_type'] ?? 'ideal_match',
-              'question_type': inputConditions['question_type'] ?? 'overall',
-              'category': inputConditions['category'] ?? 'entertainment',
-              'isPremium': inputConditions['isPremium'] ?? false,
-            };
-
-            final celebrityResponse = await _supabase.functions.invoke(
-              'fortune-celebrity',
-              body: celebrityPayload,
-            ).timeout(
-              const Duration(seconds: 60),
-              onTimeout: () {
-                Logger.warning('[UnifiedFortune] ⚠️ Celebrity Fortune API 60초 타임아웃');
-                throw TimeoutException('Celebrity Fortune API 요청 시간 초과 (60초)');
-              },
-            );
-
-            if (celebrityResponse.data == null) {
-              throw Exception('Celebrity API 응답 데이터 없음');
-            }
-
-            Logger.info('[UnifiedFortune] ✅ Celebrity Fortune API 호출 성공');
-
-            final celebrityResponseData = celebrityResponse.data as Map<String, dynamic>;
-            if (celebrityResponseData['success'] == true && celebrityResponseData.containsKey('data')) {
-              final celebrityData = celebrityResponseData['data'] as Map<String, dynamic>;
-
-              return FortuneResult(
-                type: 'celebrity',
-                title: '${celebrityPayload['celebrity_name']} 궁합',
-                summary: {'message': celebrityData['main_message'] as String? ?? '궁합 분석 완료'},
-                data: celebrityData,
-                score: (celebrityData['overall_score'] as num?)?.toInt() ?? 75,
-                createdAt: DateTime.now(),
-                isBlurred: celebrityData['isBlurred'] as bool? ?? false,
-                blurredSections: List<String>.from(celebrityData['blurredSections'] ?? []),
-              );
-            } else {
-              throw Exception('Celebrity API 응답 형식 오류');
-            }
-          } on FunctionException catch (e) {
-            Logger.error('[UnifiedFortune] ❌ Celebrity Fortune API 에러');
-            Logger.error('[UnifiedFortune]   - Status: ${e.status}');
-            Logger.error('[UnifiedFortune]   - Details: ${e.details}');
-            Logger.error('[UnifiedFortune]   - ReasonPhrase: ${e.reasonPhrase}');
-            rethrow;
-          }
-
-        case 'baby_nickname':
-        case 'baby-nickname':
-        case 'babyNickname':
-          // Baby Nickname (태명) Edge Function 직접 호출
-          final babyNicknameUser = _supabase.auth.currentUser;
-          final babyNicknamePayload = {
-            'userId': babyNicknameUser?.id ?? 'anonymous',
-            'nickname': inputConditions['nickname'],
-            if (inputConditions['babyDream'] != null)
-              'babyDream': inputConditions['babyDream'],
-          };
-
-          try {
-            final babyNicknameResponse = await _supabase.functions.invoke(
-              'fortune-baby-nickname',
-              body: babyNicknamePayload,
-            );
-
-            if (babyNicknameResponse.data == null) {
-              throw Exception('Baby Nickname API 응답 데이터 없음');
-            }
-
-            final babyNicknameResponseData = babyNicknameResponse.data as Map<String, dynamic>;
-            if (babyNicknameResponseData['success'] == true && babyNicknameResponseData.containsKey('data')) {
-              final babyNicknameData = babyNicknameResponseData['data'] as Map<String, dynamic>;
-              Logger.info('[UnifiedFortune] ✅ Baby Nickname API 호출 성공');
-
-              return FortuneResult(
-                type: 'baby-nickname',
-                title: '태명 이야기 - ${babyNicknamePayload['nickname']}',
-                summary: {'message': babyNicknameData['babyMessage'] as String? ?? '아기가 메시지를 전해요'},
-                data: babyNicknameData,
-                createdAt: DateTime.now(),
-                isBlurred: babyNicknameData['isBlurred'] as bool? ?? false,
-                blurredSections: List<String>.from(babyNicknameData['blurredSections'] ?? []),
-              );
-            } else {
-              throw Exception('Baby Nickname API 응답 형식 오류');
-            }
-          } on FunctionException catch (e) {
-            Logger.error('[UnifiedFortune] ❌ Baby Nickname API 에러');
-            Logger.error('[UnifiedFortune]   - Status: ${e.status}');
-            Logger.error('[UnifiedFortune]   - Details: ${e.details}');
-            Logger.error('[UnifiedFortune]   - ReasonPhrase: ${e.reasonPhrase}');
-            rethrow;
-          }
-
-        case 'naming':
-          // Naming Edge Function 직접 호출
-          final namingUser = _supabase.auth.currentUser;
-          final namingPayload = {
-            'userId': namingUser?.id ?? 'anonymous',
-            'motherBirthDate': inputConditions['motherBirthDate'],
-            'motherBirthTime': inputConditions['motherBirthTime'],
-            'expectedBirthDate': inputConditions['expectedBirthDate'],
-            'babyGender': inputConditions['babyGender'] ?? 'unknown',
-            'familyName': inputConditions['familyName'] ?? '김',
-            'nameStyle': inputConditions['nameStyle'] ?? 'modern',
-            'isPremium': inputConditions['isPremium'] ?? false,
-          };
-
-          try {
-            final namingResponse = await _supabase.functions.invoke(
-              'fortune-naming',
-              body: namingPayload,
-            );
-
-            if (namingResponse.data == null) {
-              throw Exception('Naming API 응답 데이터 없음');
-            }
-
-            final namingResponseData = namingResponse.data as Map<String, dynamic>;
-            if (namingResponseData['success'] == true && namingResponseData.containsKey('data')) {
-              final namingData = namingResponseData['data'] as Map<String, dynamic>;
-              Logger.info('[UnifiedFortune] ✅ Naming API 호출 성공');
-
-              return FortuneResult(
-                type: 'naming',
-                title: '작명 추천 - ${namingPayload['familyName']}씨',
-                summary: {},
-                data: namingData,
-                createdAt: DateTime.now(),
-                isBlurred: namingData['isBlurred'] as bool? ?? false,
-                blurredSections: List<String>.from(namingData['blurredSections'] ?? []),
-              );
-            } else {
-              throw Exception('Naming API 응답 형식 오류');
-            }
-          } on FunctionException catch (e) {
-            Logger.error('[UnifiedFortune] ❌ Naming API 에러');
-            Logger.error('[UnifiedFortune]   - Status: ${e.status}');
-            Logger.error('[UnifiedFortune]   - Details: ${e.details}');
-            Logger.error('[UnifiedFortune]   - ReasonPhrase: ${e.reasonPhrase}');
-            rethrow;
-          }
-
-        default:
-          // 기본 Edge Function 호출 (레거시)
-          final response = await _supabase.functions.invoke(
-            'generate-fortune',
-            body: {
-              'fortune_type': fortuneType,
-              'input_conditions': inputConditions,
-            },
-          );
-
-          if (response.data == null) {
-            throw Exception('API 응답 데이터 없음');
-          }
-
-          Logger.info('[UnifiedFortune] ✅ API 호출 성공: $fortuneType');
-          return FortuneResult.fromJson(response.data);
-      }
-    } catch (error, stackTrace) {
-      Logger.error('[UnifiedFortune] API 호출 실패: $fortuneType', error, stackTrace);
-      throw Exception('API 호출 실패: $error');
-    }
-  }
-
-  /// 로컬에서 운세 생성 (계산 또는 로컬 데이터)
-  Future<FortuneResult> _generateFromLocal(
-    String fortuneType,
-    Map<String, dynamic> inputConditions,
-  ) async {
-    try {
-      Logger.info('[UnifiedFortune] 로컬 생성 시작: $fortuneType');
-
-      // 운세 타입별 Generator 클래스 호출
-      switch (fortuneType.toLowerCase()) {
-        case 'tarot':
-          return await TarotGenerator.generate(inputConditions);
-
-        case 'fortune_cookie':
-        case 'fortune-cookie':
-          return await FortuneCookieGenerator.generate(inputConditions);
-
-        // TODO: 다른 로컬 운세 Generator 추가
-        // case 'mbti':
-        //   return await MBTIGenerator.generate(inputConditions);
-        // case 'biorhythm':
-        //   return await BiorhythmGenerator.generate(inputConditions);
-
-        default:
-          throw UnimplementedError(
-            '로컬 생성 로직 미구현: $fortuneType\n'
-            '해당 운세의 Generator 클래스를 구현해야 합니다.'
-          );
-      }
-
-    } catch (error, stackTrace) {
-      Logger.error('[UnifiedFortune] 로컬 생성 실패: $fortuneType', error, stackTrace);
-      rethrow;
-    }
+    final generatorDataSource = dataSource == FortuneDataSource.api
+        ? GeneratorDataSource.api
+        : GeneratorDataSource.local;
+
+    return await _generatorFactory.generate(
+      fortuneType: fortuneType,
+      inputConditions: inputConditions,
+      dataSource: generatorDataSource,
+    );
   }
 
   /// ==================== Step 3: DB 저장 ====================
@@ -1062,13 +418,14 @@ class UnifiedFortuneService {
         Logger.debug('[UnifiedFortune] Using simplified_for_db for storage');
       } else {
         conditionsForDB = Map<String, dynamic>.from(inputConditions);
-        conditionsForDB.remove('image');  // 214KB base64 제거 - DB 인덱스 크기 제한 (8KB)
+        conditionsForDB.remove('image'); // 214KB base64 제거 - DB 인덱스 크기 제한 (8KB)
       }
 
       // JSONB 조건을 정규화 (키 정렬)
       final normalizedConditions = _normalizeJsonb(conditionsForDB);
 
-      Logger.debug('[UnifiedFortune] Saving conditions (${normalizedConditions.length} fields, image excluded)');
+      Logger.debug(
+          '[UnifiedFortune] Saving conditions (${normalizedConditions.length} fields, image excluded)');
 
       final data = {
         'user_id': userId,
@@ -1087,7 +444,6 @@ class UnifiedFortuneService {
       await _supabase.from('fortune_history').insert(data);
 
       Logger.info('[UnifiedFortune] ✅ DB 저장 완료: $fortuneType (User: $userId)');
-
     } catch (error, stackTrace) {
       // 중복 키 에러는 정상 (FortuneOptimizationService가 이미 저장함)
       if (error is PostgrestException && error.code == '23505') {
@@ -1095,7 +451,8 @@ class UnifiedFortuneService {
         return; // 중복 키 에러는 무시
       }
 
-      Logger.error('[UnifiedFortune] DB 저장 실패: $fortuneType', error, stackTrace);
+      Logger.error(
+          '[UnifiedFortune] DB 저장 실패: $fortuneType', error, stackTrace);
       // 저장 실패해도 결과는 반환할 수 있도록 throw하지 않음
       // 대신 경고 로그만 남김
       Logger.warning('[UnifiedFortune] ⚠️ DB 저장 실패했지만 운세 결과는 반환됩니다');
@@ -1103,93 +460,6 @@ class UnifiedFortuneService {
   }
 
   /// ==================== 유틸리티 메서드 ====================
-
-  /// 운세 타입별 블러 처리할 섹션 정의
-  ///
-  /// Premium이 아닌 사용자에게 광고 시청 전 숨길 중요 정보
-  List<String> _getBlurredSectionsForType(String fortuneType) {
-    switch (fortuneType.toLowerCase()) {
-      case 'tarot':
-        return ['interpretation', 'advice', 'future_outlook'];
-      case 'daily':
-      case 'daily_calendar':
-      case 'time_based':
-        return ['advice', 'ai_tips', 'caution'];
-      case 'mbti':
-        return ['personality_insights', 'today_advice', 'lucky_color'];
-      case 'compatibility':
-        return ['compatibility_score', 'relationship_advice', 'future_prediction'];
-      case 'love':
-        return ['compatibilityInsights', 'predictions', 'actionPlan', 'warningArea'];
-      case 'talent':
-        return ['top3_talents', 'career_roadmap', 'growth_timeline']; // ✅ 결과 페이지의 실제 섹션 키와 일치
-      case 'moving':
-        return ['direction_analysis', 'moving_advice', 'auspicious_dates'];
-      case 'career':
-      case 'career_future':
-      case 'career_seeker':
-      case 'career_change':
-      case 'startup_career':
-        return ['career_path', 'success_factors', 'growth_advice'];
-      case 'career_coaching':
-      case 'career-coaching':
-        // ✅ 커리어 코칭 블러 섹션: Edge Function 응답 구조에 맞춤
-        return [
-          'predictions',          // 커리어 예측
-          'skillAnalysis',        // 스킬 분석
-          'actionPlan',           // 액션 플랜
-          'strengthsAssessment',  // 강점 분석
-          'improvementAreas',     // 개선점
-        ];
-      case 'health':
-        return ['health_advice', 'precautions', 'wellness_tips'];
-      case 'exercise':
-        // 무료: recommendedExercise (추천 운동)
-        // 프리미엄: todayRoutine, weeklyPlan, injuryPrevention
-        return ['todayRoutine', 'weeklyPlan', 'injuryPrevention'];
-      // ✅ 가족운세 블러 섹션
-      case 'family-health':
-      case 'family-wealth':
-      case 'family-children':
-      case 'family-relationship':
-      case 'family-change':
-        return ['wealthCategories', 'monthlyTrend', 'familyAdvice', 'recommendations', 'warnings'];
-      case 'exam':
-      case 'lucky_exam':
-        return ['study_tips', 'success_probability', 'recommended_subjects'];
-      case 'personality_dna':
-      case 'personality-dna':
-        // ✅ Personality DNA 블러 섹션: 연애/직장/매칭/궁합 스타일
-        return ['loveStyle', 'workStyle', 'dailyMatching', 'compatibility'];
-      case 'lucky_items':
-        // ✅ 행운 아이템 블러 섹션: 로또(마지막번호), 쇼핑, 게임, 음식, 여행, 건강, 패션, 라이프, 오늘의색상
-        return ['lotto', 'shopping', 'game', 'food', 'travel', 'health', 'fashion', 'lifestyle', 'today_color'];
-      case 'face-reading':
-        // ✅ 관상 운세 블러 섹션: 상세 분석 + 프리미엄 섹션 (반 정도 블러)
-        // 무료: 총평, face_header, face_type_classification, 닮은꼴 연예인
-        // 블러: 오관/십이궁 상세 분석 + 프리미엄 섹션들
-        return [
-          'detailed_analysis',  // 오관(五官) + 십이궁(十二宮) 상세 분석
-          'personality',        // 성격과 기질
-          'special_features',   // 특별한 관상 특징
-          'advice',             // 조언과 개운법
-          'wealth_fortune',     // 재물운
-          'love_fortune',       // 연애운
-          'career_fortune',     // 직업운
-          'health_fortune',     // 건강운
-        ];
-      case 'baby-nickname':
-      case 'baby_nickname':
-      case 'babyNickname':
-        // ✅ 태명 분석 블러 섹션
-        // 무료: 아기 메시지 일부
-        // 블러: 오늘의 태담 미션, 태몽 해석
-        return ['todayMission', 'dreamInterpretation'];
-      default:
-        // 기본적으로 'advice', 'details', 'recommendations' 블러 처리
-        return ['advice', 'details', 'recommendations'];
-    }
-  }
 
   /// 토큰(영혼) 트랜잭션 처리
   ///

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/fortune_design_system.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_dimensions.dart';
+import '../../core/design_system/design_system.dart';
 
 class FortuneCard extends StatelessWidget {
   final IconData icon;
@@ -31,22 +31,23 @@ class FortuneCard extends StatelessWidget {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
     
-    // Light mode용 밝은 그라데이션 색상
+    // Light mode용 밝은 그라데이션 색상 (ChatGPT monochrome style)
     final lightModeGradients = {
-      // 사주팔자 - 밝은 노란색
-      0xFF000000: [const Color(0xFFFFF8E1), const Color(0xFFFFF3CD)],
+      // 사주팔자 - 한지 크림 그라데이션
+      0xFF000000: [DSColors.backgroundSecondary, DSColors.backgroundSecondary],
       // AI 관상 - 밝은 회색
-      0xFF1A1A1A: [const Color(0xFFF5F5F5), const Color(0xFFEEEEEE)],
+      0xFF1A1A1A: [const Color(0xFFF5F5F5), const Color(0xFFEEEEEE)], // 고유 색상 - 라이트모드 그라데이션
       // 프리미엄 - 밝은 보라색
-      0xFF2C2C2C: [const Color(0xFFF3E5F5), const Color(0xFFE1BEE7)],
+      0xFF2C2C2C: [DSColors.accentSecondary, const Color(0xFFE1BEE7)], // 고유 색상 - 보라 그라데이션 끝
       // 전체 운세 - 밝은 파란색
-      0xFF4A4A4A: [const Color(0xFFE3F2FD), const Color(0xFFBBDEFB)]};
+      0xFF4A4A4A: [const Color(0xFFE3F2FD), const Color(0xFFBBDEFB)], // 고유 색상 - 라이트모드 그라데이션
+    };
     
     List<Color>? adjustedGradient;
     if (gradient != null && !isDarkMode) {
       // Light mode에서는 밝은 색상으로 변경
       adjustedGradient = lightModeGradients[gradient!.first.toARGB32()] ??
-          gradient!.map((color) => Color.lerp(color, TossDesignSystem.grayDark900, 0.85)!).toList();
+          gradient!.map((color) => Color.lerp(color, DSColors.textPrimary, 0.85)!).toList();
     } else {
       adjustedGradient = gradient;
     }
@@ -63,7 +64,7 @@ class FortuneCard extends StatelessWidget {
                   colors: adjustedGradient)
               : null,
           color: adjustedGradient == null
-              ? (backgroundColor ?? (isDarkMode ? TossDesignSystem.cardBackgroundDark : TossDesignSystem.cardBackgroundLight))
+              ? (backgroundColor ?? (isDarkMode ? DSColors.surface : DSColors.surfaceDark))
               : null,
           borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
           boxShadow: [
@@ -73,7 +74,7 @@ class FortuneCard extends StatelessWidget {
               blurRadius: 12,
               offset: const Offset(0, 4))]),
         child: Material(
-          color: TossDesignSystem.white.withValues(alpha: 0.0),
+          color: Colors.white.withValues(alpha: 0.0),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
@@ -93,13 +94,13 @@ class FortuneCard extends StatelessWidget {
                       width: 50,
                       height: AppSpacing.spacing12 * 1.04,
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.grayDark900.withValues(alpha: 0.2),
+                        color: DSColors.textPrimary.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(AppDimensions.radiusLarge)),
                       child: Icon(
                         icon,
                         size: AppDimensions.iconSizeLarge,
                         color: adjustedGradient != null
-                            ? (isDarkMode ? TossDesignSystem.white : (iconColor ?? theme.colorScheme.primary))
+                            ? (isDarkMode ? DSColors.textPrimary : (iconColor ?? theme.colorScheme.primary))
                             : (iconColor ?? theme.colorScheme.primary),
                       ),
                     ),
@@ -109,7 +110,7 @@ class FortuneCard extends StatelessWidget {
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                       color: adjustedGradient != null
-                          ? (isDarkMode ? TossDesignSystem.white : theme.colorScheme.onSurface)
+                          ? (isDarkMode ? DSColors.textPrimary : theme.colorScheme.onSurface)
                           : theme.colorScheme.onSurface,
                       letterSpacing: -0.5),
                     textAlign: TextAlign.center,
@@ -121,7 +122,7 @@ class FortuneCard extends StatelessWidget {
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: adjustedGradient != null
                           ? (isDarkMode
-                              ? TossDesignSystem.white.withValues(alpha: 0.9)
+                              ? DSColors.textPrimary.withValues(alpha: 0.9)
                               : theme.colorScheme.onSurface.withValues(alpha: 0.6))
                           : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       fontWeight: FontWeight.w400),
@@ -135,13 +136,13 @@ class FortuneCard extends StatelessWidget {
                         horizontal: AppSpacing.spacing3,
                         vertical: AppSpacing.spacing1),
                       decoration: BoxDecoration(
-                        color: TossDesignSystem.grayDark900.withValues(alpha: 0.2),
+                        color: DSColors.textPrimary.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
                       child: Text(
                         badge!,
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: adjustedGradient != null
-                              ? (isDarkMode ? TossDesignSystem.white : theme.textTheme.bodyMedium?.color)
+                              ? (isDarkMode ? DSColors.textPrimary : theme.textTheme.bodyMedium?.color)
                               : theme.textTheme.bodyMedium?.color,
                           fontWeight: FontWeight.w600)),
                     ),

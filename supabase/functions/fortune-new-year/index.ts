@@ -125,23 +125,12 @@ serve(async (req) => {
       const overallScore = fortuneData.overallScore || fortuneData.score || 75
       const percentileData = await calculatePercentile(supabaseClient, 'new_year', overallScore)
 
-      // Blur 로직
-      const isBlurred = !isPremium
-      const blurredSections = isBlurred
-        ? ['goalFortune', 'sajuAnalysis', 'actionPlan', 'recommendations', 'specialMessage']
-        : []
-      const blurredMonthIndices = isBlurred ? [3, 4, 5, 6, 7, 8, 9, 10, 11] : []
-
       const fortune = {
         ...fortuneData,
         id: `new_year_${userId}_${targetYear}`,
         userId: userId,
         type: 'new_year',
         fortuneType: 'new_year',
-        isBlurred,
-        blurredSections,
-        blurredMonthIndices,
-        freeMonthCount: 3,
         percentile: percentileData.percentile,
         percentileMessage: percentileData.message,
         metadata: {
@@ -150,7 +139,7 @@ serve(async (req) => {
           goal: goal,
           goalLabel: displayGoalLabel,
           generatedAt: new Date().toISOString(),
-          cohortHit: true,
+          cohortHit: true
         }
       }
 
@@ -352,16 +341,6 @@ ${zodiacSign ? `- 별자리: ${zodiacSign}` : ''}
 
     const overallScore = fortuneData.overallScore || 75
 
-    // Blur 로직 (프리미엄 전용 섹션)
-    const isBlurred = !isPremium
-    const blurredSections = isBlurred
-      ? ['goalFortune', 'sajuAnalysis', 'actionPlan', 'recommendations', 'specialMessage']
-      : []
-
-    // 월별 운세: 1-3월 무료, 4-12월 프리미엄
-    const freeMonths = [1, 2, 3]
-    const blurredMonthIndices = isBlurred ? [3, 4, 5, 6, 7, 8, 9, 10, 11] : [] // 4-12월 (0-indexed: 3-11)
-
     // 운세 데이터 구성
     const fortune = {
       // 표준 필드
@@ -438,13 +417,7 @@ ${zodiacSign ? `- 별자리: ${zodiacSign}` : ''}
         goal: goal,
         goalLabel: displayGoalLabel,
         generatedAt: new Date().toISOString()
-      },
-
-      // 블러 상태
-      isBlurred,
-      blurredSections,
-      blurredMonthIndices, // 4-12월 블러 (0-indexed: 3-11)
-      freeMonthCount: 3 // 무료 공개 월 수 (1-3월)
+      }
     }
 
     // Percentile 계산

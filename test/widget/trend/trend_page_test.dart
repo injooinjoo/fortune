@@ -1,5 +1,5 @@
-/// Trend Page Widget Test
-/// 트렌드/인기 운세 페이지 테스트
+// Trend Page Widget Test
+// 트렌드/인기 운세 페이지 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -766,18 +766,18 @@ class _MockTrendPageState extends State<_MockTrendPage>
       );
     }
 
-    return Padding(
-      padding: const EdgeInsets.all(16),
+    return const Padding(
+      padding: EdgeInsets.all(16),
       child: Card(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('나의 이용 통계', style: TextStyle(fontSize: 18)),
-              const SizedBox(height: 16),
-              const Text('가장 많이 이용'),
-              const Text('타로 - 24회'),
+              Text('나의 이용 통계', style: TextStyle(fontSize: 18)),
+              SizedBox(height: 16),
+              Text('가장 많이 이용'),
+              Text('타로 - 24회'),
             ],
           ),
         ),
@@ -794,7 +794,7 @@ class _MockTrendPageState extends State<_MockTrendPage>
           const Text('당신을 위한 추천', style: TextStyle(fontSize: 18)),
           const SizedBox(height: 8),
           if (widget.isLoggedIn)
-            Container(
+            SizedBox(
               key: const Key('personalized_recommendation'),
               height: 100,
               child: ListView.builder(

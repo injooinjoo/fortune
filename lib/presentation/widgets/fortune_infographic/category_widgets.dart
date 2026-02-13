@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/fortune_design_system.dart';
 import '../../../core/design_system/design_system.dart';
 import 'helpers.dart';
 
@@ -27,17 +26,17 @@ class CategoryWidgets {
         height: 120,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDarkMode ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+          color: isDarkMode ? DSColors.surfaceSecondary : DSColors.surfaceDark,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+            color: isDarkMode ? DSColors.border : DSColors.borderDark,
           ),
         ),
         child: Center(
           child: Text(
             '카테고리 데이터를 불러오는 중...',
             style: TextStyle(
-              color: isDarkMode ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+              color: isDarkMode ? DSColors.textTertiary : DSColors.textSecondaryDark,
             ),
           ),
         ),
@@ -107,95 +106,97 @@ class CategoryWidgets {
       description = advice;
     }
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isDarkMode
-            ? [
-                TossDesignSystem.grayDark200,
-                TossDesignSystem.grayDark300.withValues(alpha: 0.5),
-              ]
-            : [
-                TossDesignSystem.white,
-                scoreColor.withValues(alpha: 0.05),
-              ],
+    return Builder(
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDarkMode
+              ? [
+                  DSColors.surfaceSecondary,
+                  DSColors.border.withValues(alpha: 0.5),
+                ]
+              : [
+                  DSColors.surfaceDark,
+                  scoreColor.withValues(alpha: 0.05),
+                ],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: scoreColor.withValues(alpha: 0.3),
+            width: 2,
+          ),
         ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: scoreColor.withValues(alpha: 0.3),
-          width: 2,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 헤더: 제목과 점수
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '오늘의 총운',
-                style: DSTypography.labelMedium.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: isDarkMode ? TossDesignSystem.white : TossDesignSystem.gray900,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 헤더: 제목과 점수
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '오늘의 총운',
+                  style: context.labelMedium.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: isDarkMode ? DSColors.textPrimary : DSColors.textPrimaryDark,
+                  ),
                 ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: scoreColor.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '$score점',
+                    style: context.bodySmall.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: scoreColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 16),
+
+            // 4자성어 (가장 눈에 띄게)
+            Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 decoration: BoxDecoration(
-                  color: scoreColor.withValues(alpha: 0.15),
+                  color: scoreColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: scoreColor.withValues(alpha: 0.2),
+                  ),
                 ),
                 child: Text(
-                  '$score점',
-                  style: DSTypography.bodySmall.copyWith(
-                    fontWeight: FontWeight.w700,
+                  idiom,
+                  style: context.displaySmall.copyWith(
+                    fontWeight: FontWeight.w800,
                     color: scoreColor,
+                    letterSpacing: 2,
+                    height: 1.2,
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
 
-          const SizedBox(height: 16),
+            const SizedBox(height: 16),
 
-          // 4자성어 (가장 눈에 띄게)
-          Center(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              decoration: BoxDecoration(
-                color: scoreColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: scoreColor.withValues(alpha: 0.2),
-                ),
-              ),
-              child: Text(
-                idiom,
-                style: DSTypography.displaySmall.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: scoreColor,
-                  letterSpacing: 2,
-                  height: 1.2,
-                ),
+            // 설명 텍스트
+            Text(
+              description,
+              style: context.bodySmall.copyWith(
+                color: isDarkMode ? DSColors.toggleInactive : DSColors.textSecondaryDark,
+                height: 1.5,
               ),
             ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // 설명 텍스트
-          Text(
-            description,
-            style: DSTypography.bodySmall.copyWith(
-              color: isDarkMode ? TossDesignSystem.grayDark400 : TossDesignSystem.gray700,
-              height: 1.5,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -208,57 +209,59 @@ class CategoryWidgets {
   }) {
     final scoreColor = FortuneInfographicHelpers.getCategoryScoreColor(score, isDarkMode);
 
-    return Container(
-      width: double.infinity,  // 전체 너비 사용
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: isDarkMode ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isDarkMode ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+    return Builder(
+      builder: (context) => Container(
+        width: double.infinity,  // 전체 너비 사용
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: isDarkMode ? DSColors.surfaceSecondary : DSColors.surfaceDark,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isDarkMode ? DSColors.border : DSColors.borderDark,
+          ),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  title,
-                  style: DSTypography.labelMedium.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: isDarkMode ? TossDesignSystem.white : TossDesignSystem.gray900,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    title,
+                    style: context.labelMedium.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: isDarkMode ? DSColors.textPrimary : DSColors.textPrimaryDark,
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: scoreColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  '$score점',
-                  style: DSTypography.bodySmall.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: scoreColor,
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: scoreColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '$score점',
+                    style: context.bodySmall.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: scoreColor,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          // 높이 제한 없이 자연스럽게 표시 (300자 설명 모두 보임)
-          Text(
-            description,
-            style: DSTypography.bodySmall.copyWith(
-              color: isDarkMode ? TossDesignSystem.grayDark400 : TossDesignSystem.gray600,
-              height: 1.5,
+              ],
             ),
-          ),
-        ],
+            const SizedBox(height: 12),
+            // 높이 제한 없이 자연스럽게 표시 (300자 설명 모두 보임)
+            Text(
+              description,
+              style: context.bodySmall.copyWith(
+                color: isDarkMode ? DSColors.toggleInactive : DSColors.textSecondaryDark,
+                height: 1.5,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -272,7 +275,7 @@ class CategoryWidgets {
   }) {
     return Builder(
       builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
 
         // Extract summary from fortuneSummary data
         final summary = fortuneSummary?['summary'] as String? ??
@@ -285,10 +288,10 @@ class CategoryWidgets {
         return Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            color: isDark ? DSColors.surfaceSecondary : DSColors.surfaceDark,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+              color: isDark ? DSColors.border : DSColors.borderDark,
             ),
           ),
           child: Column(
@@ -299,15 +302,15 @@ class CategoryWidgets {
                   Icon(
                     Icons.auto_awesome,
                     size: 20,
-                    color: isDark ? TossDesignSystem.primaryBlue : TossDesignSystem.tossBlue,
+                    color: isDark ? DSColors.accent : DSColors.accentDark,
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       title,
-                      style: DSTypography.labelMedium.copyWith(
+                      style: context.labelMedium.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                        color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
                       ),
                     ),
                   ),
@@ -319,7 +322,7 @@ class CategoryWidgets {
                     ),
                     child: Text(
                       '$score점',
-                      style: DSTypography.labelMedium.copyWith(
+                      style: context.labelMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: FortuneInfographicHelpers.getCategoryScoreColor(score, isDark),
                       ),
@@ -330,9 +333,9 @@ class CategoryWidgets {
               const SizedBox(height: 12),
               Text(
                 summary,
-                style: DSTypography.bodySmall.copyWith(
+                style: context.bodySmall.copyWith(
                   height: 1.4,
-                  color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
+                  color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
                 ),
               ),
               if (userZodiacAnimal != null || userZodiacSign != null || userMBTI != null) ...[
@@ -340,15 +343,15 @@ class CategoryWidgets {
                 Row(
                   children: [
                     if (userZodiacAnimal != null) ...[
-                      _buildProfileTag(userZodiacAnimal, isDark),
+                      _buildProfileTag(context, userZodiacAnimal, isDark),
                       const SizedBox(width: 8),
                     ],
                     if (userZodiacSign != null) ...[
-                      _buildProfileTag(userZodiacSign, isDark),
+                      _buildProfileTag(context, userZodiacSign, isDark),
                       const SizedBox(width: 8),
                     ],
                     if (userMBTI != null) ...[
-                      _buildProfileTag(userMBTI, isDark),
+                      _buildProfileTag(context, userMBTI, isDark),
                     ],
                   ],
                 ),
@@ -360,20 +363,20 @@ class CategoryWidgets {
     );
   }
 
-  static Widget _buildProfileTag(String text, bool isDark) {
+  static Widget _buildProfileTag(BuildContext context, String text, bool isDark) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: isDark
-          ? TossDesignSystem.primaryBlue.withValues(alpha: 0.2)
-          : TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+          ? DSColors.accent.withValues(alpha: 0.2)
+          : DSColors.accentDark.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
         text,
-        style: DSTypography.labelMedium.copyWith(
+        style: context.labelMedium.copyWith(
           fontWeight: FontWeight.w500,
-          color: isDark ? TossDesignSystem.primaryBlue : TossDesignSystem.tossBlue,
+          color: isDark ? DSColors.accent : DSColors.accentDark,
         ),
       ),
     );
@@ -386,15 +389,15 @@ class CategoryWidgets {
   }) {
     return Builder(
       builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
 
         return Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.grayDark200 : TossDesignSystem.white,
+            color: isDark ? DSColors.surfaceSecondary : DSColors.surfaceDark,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isDark ? TossDesignSystem.grayDark300 : TossDesignSystem.gray200,
+              color: isDark ? DSColors.border : DSColors.borderDark,
             ),
           ),
           child: Column(
@@ -408,7 +411,7 @@ class CategoryWidgets {
                     height: 32,
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Color(0xFF6366f1), Color(0xFF8b5cf6)],
+                        colors: [DSColors.accentSecondary, DSColors.accentSecondary],
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -422,7 +425,7 @@ class CategoryWidgets {
                   Text(
                     '신의 통찰',
                     style: TextStyle(
-                      color: isDark ? TossDesignSystem.white : TossDesignSystem.black,
+                      color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -436,14 +439,14 @@ class CategoryWidgets {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: isDark
-                        ? TossDesignSystem.grayDark300.withValues(alpha: 0.5)
-                        : TossDesignSystem.gray50,
+                        ? DSColors.border.withValues(alpha: 0.5)
+                        : DSColors.backgroundDark,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     insight,
                     style: TextStyle(
-                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray700,
+                      color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
                       height: 1.4,
                     ),
                   ),
@@ -456,7 +459,7 @@ class CategoryWidgets {
                 Text(
                   '✨ 추천 팁',
                   style: TextStyle(
-                    color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -471,7 +474,7 @@ class CategoryWidgets {
                         height: 4,
                         margin: const EdgeInsets.only(top: 6, right: 8),
                         decoration: const BoxDecoration(
-                          color: Color(0xFF6366f1),
+                          color: DSColors.accentSecondary,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -479,7 +482,7 @@ class CategoryWidgets {
                         child: Text(
                           tip,
                           style: TextStyle(
-                            color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                            color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
                             height: 1.3,
                           ),
                         ),
@@ -497,7 +500,7 @@ class CategoryWidgets {
                     child: Text(
                       '신의 통찰 준비 중...',
                       style: TextStyle(
-                        color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                        color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
                       ),
                     ),
                   ),

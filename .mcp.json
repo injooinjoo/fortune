@@ -1,11 +1,41 @@
 {
-    "mcpServers": {
-      "figma-dev-mode-mcp-server": {
-        "type": "sse",
-        "url": "http://127.0.0.1:3845/sse",
-        "headers": {
-          "Authorization": "Bearer figd_bR2cafXDSpDf6bhXpQJ0eoRZGrCkRM0W60YOpbdF"
-        }
+  "mcpServers": {
+    "ClaudeTalkToFigma": {
+      "command": "node",
+      "args": [
+        "/Users/jacobmac/Desktop/Dev/figma-mcp/dist/talk_to_figma_mcp/server.js"
+      ]
+    },
+    "shadcn": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://www.shadcn.io/api/mcp"]
+    },
+    "dart": {
+      "command": "dart",
+      "args": ["mcp-server"]
+    },
+    "dcm": {
+      "command": "dcm",
+      "args": ["start-mcp-server", "--client=claude-code"]
+    },
+    "figma-flutter": {
+      "command": "npx",
+      "args": ["-y", "figma-flutter-mcp", "--figma-api-key=YOUR_FIGMA_API_KEY", "--stdio"]
+    },
+    "ios-simulator": {
+      "command": "npx",
+      "args": ["-y", "ios-simulator-mcp"]
+    },
+    "magic": {
+      "command": "npx",
+      "args": ["-y", "@21st-dev/magic@latest"],
+      "env": {
+        "API_KEY": "YOUR_21ST_DEV_API_KEY"
       }
+    },
+    "supabase": {
+      "command": "npx",
+      "args": ["-y", "@supabase/mcp-server-supabase@latest"]
     }
   }
+}

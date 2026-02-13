@@ -94,7 +94,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
         width: widget.width,
         height: widget.height,
         transform: Matrix4.identity()
-          ..scale(widget.isHovered ? 1.05 : 1.0, widget.isHovered ? 1.05 : 1.0),
+          ..scaleByDouble(widget.isHovered ? 1.05 : 1.0, widget.isHovered ? 1.05 : 1.0, 1.0, 1.0),
         child: AnimatedBuilder(
           animation: _flipAnimation,
           builder: (context, child) {
@@ -154,82 +154,81 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
   }
 
   Widget _buildCardBack() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            widget.deck.primaryColor,
-            widget.deck.secondaryColor,
-          ],
-        ),
-      ),
-      child: Stack(
-        children: [
-          // Pattern overlay
-          CustomPaint(
-            painter: TarotCardBackPainter(
-              primaryColor: widget.deck.primaryColor,
-              secondaryColor: widget.deck.secondaryColor,
-              isHighlighted: widget.isHovered || widget.isSelected),
-            size: Size(widget.width, widget.height),
-          ),
-          // Center emblem
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.auto_awesome,
-                  size: widget.width * 0.33,
-                  color: Colors.white.withValues(alpha: 0.8),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  widget.deck.koreanName,
-                  style: TextStyle(
-                    fontSize: widget.width * 0.12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    letterSpacing: 1),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-          // 선택 순서 표시
-          if (widget.selectionOrder != null)
-            Positioned(
-              top: 10,
-              right: 10,
-              child: Container(
-                width: 30,
-                height: 30,
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        // 타로 카드 뒷면 이미지
+        ClipRRect(
+          borderRadius: BorderRadius.circular(DSRadius.md),
+          child: Image.asset(
+            'assets/images/fortune/tarot/tarot_card_back.webp',
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              // 폴백: 기존 그라데이션 디자인
+              return Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.3),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      widget.deck.primaryColor,
+                      widget.deck.secondaryColor,
+                    ],
+                  ),
                 ),
                 child: Center(
-                  child: Text(
-                    '${widget.selectionOrder}',
-                    style: context.typography.labelLarge.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: widget.deck.primaryColor,
-                    ),
+                  child: Icon(
+                    Icons.auto_awesome,
+                    size: widget.width * 0.33,
+                    color: Colors.white.withValues(alpha: 0.8),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        // 선택 시 하이라이트
+        if (widget.isSelected || widget.isHovered)
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(DSRadius.md),
+              border: Border.all(
+                color: Colors.amber.withValues(alpha: widget.isSelected ? 0.8 : 0.4),
+                width: widget.isSelected ? 3 : 2,
+              ),
+            ),
+          ),
+        // 선택 순서 표시
+        if (widget.selectionOrder != null)
+          Positioned(
+            top: 10,
+            right: 10,
+            child: Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.3),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Text(
+                  '${widget.selectionOrder}',
+                  style: context.typography.labelLarge.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: widget.deck.primaryColor,
                   ),
                 ),
               ),
             ),
-        ],
-      ),
+          ),
+      ],
     );
   }
 
@@ -268,7 +267,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                         size: widget.width * 0.5,
                         color: widget.deck.primaryColor,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: DSSpacing.md),
                       Text(
                         'Card ${widget.cardIndex + 1}',
                         style: TextStyle(

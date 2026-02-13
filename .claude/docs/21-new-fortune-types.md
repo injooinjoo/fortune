@@ -1,11 +1,11 @@
 # 신규 인사이트 타입 가이드
 
-> 최종 업데이트: 2025.01.03
+> 최종 업데이트: 2025.01.16
 
 ## 개요
 
 2024-2025년에 추가된 신규 인사이트 타입들을 정리한 문서입니다.
-기존 22개에서 39개로 확장되어 **18개 신규 인사이트**가 추가되었습니다.
+기존 22개에서 40개로 확장되어 **19개 신규 인사이트**가 추가되었습니다.
 
 ---
 
@@ -23,6 +23,7 @@
 | **특수** | 매칭 인사이트 | fortune-match-insight | 4 |
 | **특수** | 추천 인사이트 | fortune-recommend | 4 |
 | **특수** | 부적 생성 | fortune-talisman | 4 |
+| **인터랙티브** | 게임 강화운세 | fortune-game-enhance | 0 (무료) |
 | **시즌** | 시험 가이드 | fortune-exam | 4 |
 | **시즌** | 신년 인사이트 | fortune-new-year | 2 |
 | **건강** | 건강 문서 분석 | fortune-health-document | 3 |
@@ -38,7 +39,7 @@
 
 ### 공통 특징
 - 사용자 사주 + 가족 구성원 사주 조합 분석
-- 프리미엄 전용 (토큰 3개)
+- 구독 전용 (토큰 3개)
 - 가족 전체 운세 맥락 제공
 
 ### fortune-family-change
@@ -200,6 +201,75 @@ requiredFields: {
 // 기존 saju보다 3배 상세한 분석
 // 십성, 신살, 대운, 세운 등 전문적 내용 포함
 ```
+
+---
+
+## 인터랙티브 운세 (1개)
+
+### fortune-game-enhance
+```typescript
+// 게임 강화운세 - 범용 강화 성공 기운
+// ⚠️ 무료, 입력 없음, 즉시 결과
+
+requiredFields: {
+  saju: SajuData,
+  // 입력 필드 없음 - 칩 탭 시 즉시 호출
+}
+
+// 응답 구조
+{
+  score: number;                    // 0-100
+  luckyGrade: 'SSS'|'SS'|'S'|'A'|'B'|'C';
+  statusMessage: string;            // "오늘 강화, 해도 됩니다!"
+
+  enhanceStats: {
+    successAura: number;            // 성공 기운 %
+    protectionField: number;        // 파괴 방어력 %
+    chanceTimeActive: boolean;      // 찬스타임 여부
+    stackBonus: 'UP'|'DOWN'|'STABLE';
+  };
+
+  luckyTimes: {
+    goldenHour: string;             // "14:22"
+    goldenHourRange: string;        // "14:00-16:00"
+    avoidTime: string;              // "03:00-05:00"
+  };
+
+  enhanceRitual: {
+    luckySpot: string;              // NPC 위치
+    luckyDirection: string;         // 캐릭터 방향
+    luckyAction: string;            // 점프, 앉기 등
+    luckyPhrase: string;            // 주문
+  };
+
+  enhanceRoadmap: Array<{
+    phase: string;
+    action: string;
+    tip: string;
+    riskLevel: 'LOW'|'MEDIUM'|'HIGH';
+  }>;
+
+  luckyInfo: {
+    luckyNumber: number;
+    luckyColor: string;
+    luckyFood: string;
+  };
+
+  warnings: string[];
+  encouragement: {
+    beforeEnhance: string;
+    onSuccess: string;
+    onFail: string;
+  };
+}
+```
+
+**특징**:
+- 무료 (토큰 0개) - 블러 없음
+- 입력 필드 없음 - 범용 강화운
+- SSS~C 등급 시스템으로 도파민 자극
+- 토큰 후원 기능 (수익화)
+- 게임 미신 + 사주 오행 융합
 
 ---
 

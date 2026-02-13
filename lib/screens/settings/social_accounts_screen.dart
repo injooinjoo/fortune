@@ -94,7 +94,7 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
 
   Widget _buildProviderIcon(String provider, dynamic colors) {
     final assetPath = _getProviderAsset(provider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+
 
     if (assetPath != null) {
       final isApple = provider == 'apple';
@@ -104,7 +104,7 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
         height: 22,
         colorFilter: isApple
             ? ColorFilter.mode(
-                isDark ? Colors.white : Colors.black,
+                context.colors.textPrimary,
                 BlendMode.srcIn,
               )
             : null,

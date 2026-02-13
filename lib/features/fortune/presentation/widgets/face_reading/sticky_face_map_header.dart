@@ -24,7 +24,6 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
   final Function(String) onZoneTap;
   final VoidCallback onScrollToTop;
   final Map<String, dynamic>? ogwanData;
-  final bool isDark;
   final String? faceMapImagePath;
 
   // 터치 가능한 부위들 정의
@@ -100,7 +99,6 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
     required this.onZoneTap,
     required this.onScrollToTop,
     this.ogwanData,
-    required this.isDark,
     this.faceMapImagePath,
   });
 
@@ -119,20 +117,9 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     final expandRatio =
         1 - (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
-    final isCollapsed = expandRatio < 0.3;
-
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? DSColors.surface : Colors.white,
-        boxShadow: isCollapsed
-            ? [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ]
-            : null,
+        color: context.colors.surface,
       ),
       child: Stack(
         fit: StackFit.expand,
@@ -154,6 +141,8 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
   }
 
   Widget _buildExpandedMap(BuildContext context) {
+    final isDark = context.isDark;
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -184,17 +173,17 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
                   children: [
                     Text(
                       '관상 부위별 분석',
-                      style: DSTypography.labelLarge.copyWith(
+                      style: context.labelLarge.copyWith(
                         color: isDark
                             ? DSColors.textPrimary
                             : DSColors.textPrimary,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: DSSpacing.xxs),
                     Text(
                       '부위를 터치하여 상세 분석 보기',
-                      style: DSTypography.labelSmall.copyWith(
+                      style: context.labelSmall.copyWith(
                         color: isDark
                             ? DSColors.textSecondary
                             : DSColors.textSecondary,
@@ -206,7 +195,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
             ],
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
 
           // 얼굴 맵 이미지 + 터치 영역
           Expanded(
@@ -221,7 +210,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
                               faceMapImagePath!,
                               fit: BoxFit.contain,
                             )
-                          : _buildDefaultFaceOutline(constraints),
+                          : _buildDefaultFaceOutline(constraints, isDark),
                     ),
 
                     // 터치 영역 오버레이
@@ -254,7 +243,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
                                 children: [
                                   Text(
                                     area.name.split('(')[0],
-                                    style: DSTypography.labelSmall.copyWith(
+                                    style: context.labelSmall.copyWith(
                                       color: area.color,
                                       fontWeight: FontWeight.w700,
                                       fontSize: 9,
@@ -289,6 +278,8 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
   }
 
   Widget _buildCollapsedHeader(BuildContext context) {
+    final isDark = context.isDark;
+
     return GestureDetector(
       onTap: onScrollToTop,
       child: Container(
@@ -314,7 +305,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
             Expanded(
               child: Text(
                 '관상 분석 결과',
-                style: DSTypography.labelLarge.copyWith(
+                style: context.labelLarge.copyWith(
                   color: isDark
                       ? DSColors.textPrimary
                       : DSColors.textPrimary,
@@ -336,10 +327,10 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
                     color: DSColors.accentSecondary,
                     size: 18,
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: DSSpacing.xs),
                   Text(
                     '맵 보기',
-                    style: DSTypography.labelSmall.copyWith(
+                    style: context.labelSmall.copyWith(
                       color: DSColors.accentSecondary,
                       fontWeight: FontWeight.w600,
                     ),
@@ -353,7 +344,7 @@ class StickyFaceMapHeader extends SliverPersistentHeaderDelegate {
     );
   }
 
-  Widget _buildDefaultFaceOutline(BoxConstraints constraints) {
+  Widget _buildDefaultFaceOutline(BoxConstraints constraints, bool isDark) {
     return CustomPaint(
       size: Size(constraints.maxWidth * 0.8, constraints.maxHeight * 0.9),
       painter: _FaceOutlinePainter(

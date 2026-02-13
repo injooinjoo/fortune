@@ -1,5 +1,5 @@
-/// Saju Detail Page - Widget Test
-/// 사주 상세 화면 UI 테스트
+// Saju Detail Page - Widget Test
+// 사주 상세 화면 UI 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -623,11 +623,11 @@ class _MockSajuDetailPage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          _ElementRow(name: '목(木)', value: 2, color: Colors.green),
-                          _ElementRow(name: '화(火)', value: 3, color: Colors.red),
-                          _ElementRow(name: '토(土)', value: 1, color: Colors.brown),
-                          _ElementRow(name: '금(金)', value: 1, color: Colors.grey),
-                          _ElementRow(name: '수(水)', value: 1, color: Colors.blue),
+                          const _ElementRow(name: '목(木)', value: 2, color: Colors.green),
+                          const _ElementRow(name: '화(火)', value: 3, color: Colors.red),
+                          const _ElementRow(name: '토(土)', value: 1, color: Colors.brown),
+                          const _ElementRow(name: '금(金)', value: 1, color: Colors.grey),
+                          const _ElementRow(name: '수(水)', value: 1, color: Colors.blue),
                           const SizedBox(height: 16),
                           if (dominantElement != null)
                             Text('주 오행: ${_getElementName(dominantElement)}'),

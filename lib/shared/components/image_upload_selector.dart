@@ -727,6 +727,7 @@ class _ImageUploadSelectorState extends State<ImageUploadSelector> {
     showModalBottomSheet(
       context: context,
       backgroundColor: colors.surface,
+      barrierColor: DSColors.overlay,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(DSRadius.xl)),
       ),

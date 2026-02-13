@@ -151,8 +151,6 @@ class _ImageOptionChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -164,10 +162,10 @@ class _ImageOptionChip extends StatelessWidget {
             vertical: DSSpacing.xs,
           ),
           decoration: BoxDecoration(
-            color: colors.accentSecondary.withValues(alpha: isDark ? 0.2 : 0.1),
+            color: colors.textPrimary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(DSRadius.lg),
             border: Border.all(
-              color: colors.accentSecondary.withValues(alpha: 0.3),
+              color: colors.textPrimary.withValues(alpha: 0.3),
             ),
           ),
           child: Row(
@@ -179,20 +177,20 @@ class _ImageOptionChip extends StatelessWidget {
                   height: 16,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: colors.accentSecondary,
+                    color: colors.textSecondary,
                   ),
                 )
               else
                 Icon(
                   icon,
                   size: 16,
-                  color: colors.accentSecondary,
+                  color: colors.textSecondary,
                 ),
               const SizedBox(width: DSSpacing.xs),
               Text(
                 label,
                 style: typography.labelMedium.copyWith(
-                  color: colors.accentSecondary,
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.w500,
                 ),
               ),

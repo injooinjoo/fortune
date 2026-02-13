@@ -87,6 +87,7 @@ class FortuneInputWidgets {
             await showModalBottomSheet(
               context: context,
               backgroundColor: Colors.transparent,
+              barrierColor: DSColors.overlay,
               builder: (ctx) {
                 final sheetColors = ctx.colors;
                 final sheetTypography = ctx.typography;
@@ -247,7 +248,7 @@ class FortuneInputWidgets {
                   entry.value,
                   style: typography.bodyMedium.copyWith(
                     color: isSelected
-                        ? Colors.white
+                        ? colors.ctaForeground
                         : colors.textPrimary,
                     fontWeight:
                         isSelected ? FontWeight.w600 : FontWeight.normal,
@@ -352,25 +353,25 @@ class FortuneInputWidgets {
         style: ElevatedButton.styleFrom(
           backgroundColor: colors.accent,
           disabledBackgroundColor: colors.textTertiary,
-          foregroundColor: Colors.white,
+          foregroundColor: colors.ctaForeground,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(DSRadius.md),
           ),
         ),
         child: isLoading
-            ? const SizedBox(
+            ? SizedBox(
                 width: 24,
                 height: 24,
                 child: CircularProgressIndicator(
-                  color: Colors.white,
+                  color: colors.ctaForeground,
                   strokeWidth: 2,
                 ),
               )
             : Text(
                 label,
                 style: typography.labelLarge.copyWith(
-                  color: Colors.white,
+                  color: colors.ctaForeground,
                   fontWeight: FontWeight.w600,
                 ),
               ),

@@ -5,8 +5,6 @@ import '../../../services/celebrity_crawling_service.dart';
 import '../../../core/components/app_card.dart';
 import '../../../core/widgets/unified_button.dart';
 import '../../../core/widgets/unified_button_enums.dart';
-import '../../../core/theme/fortune_theme.dart';
-import '../../../core/theme/fortune_design_system.dart';
 import '../../../core/design_system/design_system.dart';
 
 class CelebrityCrawlingPage extends ConsumerStatefulWidget {
@@ -33,20 +31,20 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
     final crawlingStats = ref.watch(crawlingStatsProvider);
 
     return Scaffold(
-      backgroundColor: TossTheme.backgroundSecondary,
+      backgroundColor: context.colors.backgroundSecondary,
       appBar: AppBar(
         title: const Text(
           '유명인 정보 크롤링',
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
-        backgroundColor: TossDesignSystem.white,
-        foregroundColor: TossDesignSystem.black,
+        backgroundColor: context.colors.surface,
+        foregroundColor: context.colors.textPrimary,
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(
             height: 1,
-            color: TossTheme.borderGray300,
+            color: context.colors.border,
           ),
         ),
       ),
@@ -82,15 +80,15 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.analytics_outlined,
-                color: TossTheme.primaryBlue,
+                color: context.colors.accent,
                 size: 24,
               ),
               const SizedBox(width: 8),
               Text(
                 '크롤링 현황',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.headingSmall.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -104,26 +102,26 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
                 _buildStatItem(
                   '전체 유명인',
                   '${stats.totalCelebrities}명',
-                  TossDesignSystem.gray600,
+                  DSColors.textSecondaryDark,
                 ),
                 const SizedBox(height: 12),
                 _buildStatItem(
                   '크롤링 완료',
                   '${stats.crawledCelebrities}명',
-                  TossTheme.primaryBlue,
+                  context.colors.accent,
                 ),
                 const SizedBox(height: 12),
                 _buildStatItem(
                   '완료율',
                   '${stats.crawlingPercentage.toStringAsFixed(1)}%',
-                  TossTheme.primaryBlue,
+                  context.colors.accent,
                 ),
                 if (stats.lastCrawledAt != null) ...[
                   const SizedBox(height: 12),
                   _buildStatItem(
                     '마지막 크롤링',
                     _formatDateTime(stats.lastCrawledAt!),
-                    TossDesignSystem.gray600,
+                    DSColors.textSecondaryDark,
                   ),
                 ],
               ],
@@ -133,7 +131,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
             ),
             error: (error, _) => Text(
               '통계 로드 실패: $error',
-              style: const TextStyle(color: TossDesignSystem.error),
+              style: const TextStyle(color: DSColors.error),
             ),
           ),
         ],
@@ -147,13 +145,13 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
       children: [
         Text(
           label,
-          style: DSTypography.bodySmall.copyWith(
-            color: TossDesignSystem.gray600,
+          style: context.bodySmall.copyWith(
+            color: DSColors.textSecondaryDark,
           ),
         ),
         Text(
           value,
-          style: DSTypography.labelMedium.copyWith(
+          style: context.labelMedium.copyWith(
             fontWeight: FontWeight.w600,
             color: color,
           ),
@@ -169,15 +167,15 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.person_search,
-                color: TossTheme.primaryBlue,
+                color: context.colors.accent,
                 size: 24,
               ),
               const SizedBox(width: 8),
               Text(
                 '단일 크롤링',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.headingSmall.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -192,11 +190,11 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               hintText: '예: 송중기, 아이유, 손흥민',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: TossDesignSystem.gray300),
+                borderSide: const BorderSide(color: DSColors.borderDark),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: TossTheme.primaryBlue),
+                borderSide: BorderSide(color: context.colors.accent),
               ),
             ),
           ),
@@ -237,15 +235,15 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.batch_prediction,
-                color: TossTheme.primaryBlue,
+                color: context.colors.accent,
                 size: 24,
               ),
               const SizedBox(width: 8),
               Text(
                 '일괄 크롤링',
-                style: DSTypography.headingSmall.copyWith(
+                style: context.headingSmall.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -261,11 +259,11 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               hintText: '송중기\n아이유\n손흥민\n...',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: TossDesignSystem.gray300),
+                borderSide: const BorderSide(color: DSColors.borderDark),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: TossTheme.primaryBlue),
+                borderSide: BorderSide(color: context.colors.accent),
               ),
             ),
           ),
@@ -307,15 +305,15 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
     
     switch (state.status) {
       case CrawlingStatus.crawling:
-        statusColor = TossTheme.primaryBlue;
+        statusColor = context.colors.accent;
         statusIcon = Icons.sync;
         break;
       case CrawlingStatus.completed:
-        statusColor = TossDesignSystem.success;
+        statusColor = DSColors.success;
         statusIcon = Icons.check_circle;
         break;
       case CrawlingStatus.error:
-        statusColor = TossDesignSystem.error;
+        statusColor = DSColors.error;
         statusIcon = Icons.error;
         break;
       case CrawlingStatus.idle:
@@ -336,7 +334,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               const SizedBox(width: 8),
               Text(
                 _getStatusTitle(state.status),
-                style: DSTypography.headingSmall.copyWith(
+                style: context.headingSmall.copyWith(
                   fontWeight: FontWeight.w600,
                   color: statusColor,
                 ),
@@ -348,8 +346,8 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
           if (state.message != null)
             Text(
               state.message!,
-              style: DSTypography.bodySmall.copyWith(
-                color: TossDesignSystem.gray700,
+              style: context.bodySmall.copyWith(
+                color: DSColors.textSecondaryDark,
               ),
             ),
           
@@ -360,13 +358,13 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
               children: [
                 Text(
                   '진행률',
-                  style: DSTypography.bodySmall.copyWith(
-                    color: TossDesignSystem.gray600,
+                  style: context.bodySmall.copyWith(
+                    color: DSColors.textSecondaryDark,
                   ),
                 ),
                 Text(
                   '${state.current}/${state.total}',
-                  style: DSTypography.bodySmall.copyWith(
+                  style: context.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -375,7 +373,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
             const SizedBox(height: 8),
             LinearProgressIndicator(
               value: state.total! > 0 ? state.current! / state.total! : 0,
-              backgroundColor: TossDesignSystem.gray300,
+              backgroundColor: DSColors.borderDark,
               valueColor: AlwaysStoppedAnimation(statusColor),
             ),
           ],
@@ -388,17 +386,17 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
                 _buildResultItem(
                   '성공',
                   '${state.result!.successCount}',
-                  TossDesignSystem.success,
+                  DSColors.success,
                 ),
                 _buildResultItem(
                   '실패',
                   '${state.result!.failureCount}',
-                  TossDesignSystem.error,
+                  DSColors.error,
                 ),
                 _buildResultItem(
                   '성공률',
                   '${state.result!.successRate.toStringAsFixed(1)}%',
-                  TossTheme.primaryBlue,
+                  context.colors.accent,
                 ),
               ],
             ),
@@ -425,7 +423,7 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
       children: [
         Text(
           value,
-          style: DSTypography.headingSmall.copyWith(
+          style: context.headingSmall.copyWith(
             fontWeight: FontWeight.w600,
             color: color,
           ),
@@ -433,8 +431,8 @@ class _CelebrityCrawlingPageState extends ConsumerState<CelebrityCrawlingPage> {
         const SizedBox(height: 4),
         Text(
           label,
-          style: DSTypography.labelMedium.copyWith(
-            color: TossDesignSystem.gray600,
+          style: context.labelMedium.copyWith(
+            color: DSColors.textSecondaryDark,
           ),
         ),
       ],

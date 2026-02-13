@@ -257,7 +257,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
           label,
           style: typography.labelMedium.copyWith(
             color: isSelected
-                ? Colors.white
+                ? colors.ctaForeground
                 : colors.textSecondary,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
           ),
@@ -312,13 +312,13 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: DSSpacing.sm + 4, vertical: DSSpacing.xs),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
+                            color: colors.surface.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(DSRadius.lg),
                           ),
                           child: Text(
                             '${content.type.emoji} ${content.type.displayName}',
                             style: typography.labelSmall.copyWith(
-                              color: Colors.white,
+                              color: colors.textPrimary,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -335,13 +335,13 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(Icons.star,
-                                    color: Colors.white, size: 12),
+                                Icon(Icons.star,
+                                    color: colors.textPrimary, size: 12),
                                 const SizedBox(width: DSSpacing.xs),
                                 Text(
                                   'PREMIUM',
                                   style: typography.labelSmall.copyWith(
-                                    color: Colors.white,
+                                    color: colors.textPrimary,
                                     fontWeight: FontWeight.w700,
                                     fontSize: 10,
                                   ),
@@ -356,7 +356,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                     Text(
                       content.title,
                       style: typography.headingMedium.copyWith(
-                        color: Colors.white,
+                        color: colors.textPrimary,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.5,
                       ),
@@ -368,7 +368,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                       Text(
                         content.subtitle!,
                         style: typography.bodySmall.copyWith(
-                          color: Colors.white.withValues(alpha: 0.9),
+                          color: colors.textPrimary.withValues(alpha: 0.9),
                           fontWeight: FontWeight.w400,
                         ),
                         maxLines: 1,
@@ -398,7 +398,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                   height: 100,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: colors.surface.withValues(alpha: 0.1),
                   ),
                 ),
               ),
@@ -410,7 +410,7 @@ class _TrendPageState extends ConsumerState<TrendPage> {
                   height: 50,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.15),
+                    color: colors.surface.withValues(alpha: 0.15),
                   ),
                 ),
               ),
@@ -426,12 +426,12 @@ class _TrendPageState extends ConsumerState<TrendPage> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, color: Colors.white, size: 14),
+        Icon(icon, color: context.colors.textPrimary, size: 14),
         const SizedBox(width: DSSpacing.xs),
         Text(
           text,
           style: typography.labelSmall.copyWith(
-            color: Colors.white,
+            color: context.colors.textPrimary,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -442,11 +442,11 @@ class _TrendPageState extends ConsumerState<TrendPage> {
   List<Color> _getGradientColors(TrendContentType type) {
     switch (type) {
       case TrendContentType.psychologyTest:
-        return [const Color(0xFF8134AF), const Color(0xFF515BD4)];
+        return [const Color(0xFF8134AF), const Color(0xFF515BD4)]; // 고유 색상: 심리테스트 브랜드 그라디언트
       case TrendContentType.idealWorldcup:
-        return [const Color(0xFFF58529), const Color(0xFFDD2A7B)];
+        return [const Color(0xFFF58529), const Color(0xFFDD2A7B)]; // 고유 색상: 이상형 월드컵 브랜드 그라디언트
       case TrendContentType.balanceGame:
-        return [const Color(0xFF00C9B7), const Color(0xFF00B4D8)];
+        return [const Color(0xFF00C9B7), const Color(0xFF00B4D8)]; // 고유 색상: 밸런스 게임 브랜드 그라디언트
     }
   }
 

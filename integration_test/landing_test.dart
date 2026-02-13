@@ -1,13 +1,13 @@
-/// Landing Page - Integration Test
-/// 랜딩 페이지 E2E 테스트
-///
-/// 실행 방법:
-/// ```bash
-/// flutter test integration_test/landing_test.dart -d "iPhone 15 Pro"
-/// ```
-///
-/// 참고: pumpAndSettle은 루핑 애니메이션이 있으면 완료되지 않습니다.
-/// 대신 pump()를 사용하여 특정 시간만 기다립니다.
+// Landing Page - Integration Test
+// 랜딩 페이지 E2E 테스트
+//
+// 실행 방법:
+// ```bash
+// flutter test integration_test/landing_test.dart -d "iPhone 15 Pro"
+// ```
+//
+// 참고: pumpAndSettle은 루핑 애니메이션이 있으면 완료되지 않습니다.
+// 대신 pump()를 사용하여 특정 시간만 기다립니다.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

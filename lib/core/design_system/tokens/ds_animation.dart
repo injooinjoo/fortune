@@ -1,259 +1,429 @@
 import 'package:flutter/material.dart';
 
-/// Korean Traditional "Saaju" animation system
+/// Claude-inspired Modern Animation System
 ///
-/// Design Philosophy: Slow, meditative animations that evoke
-/// the feeling of ink spreading on hanji paper (번짐 효과)
+/// Design Philosophy: Smooth & Subtle (부드럽고 미묘함)
+///
+/// Key Principles:
+/// - Custom Easing: Claude's signature cubic-bezier(0.165, 0.85, 0.45, 1)
+/// - Subtle Feedback: Not overly dramatic animations
+/// - Quick Response: Fast initial reaction, gentle finish
+/// - Scale on Press: 0.98 scale (not 0.97)
+///
+/// Claude animation formula:
+/// ```css
+/// transition: all 300ms cubic-bezier(0.165, 0.85, 0.45, 1);
+/// active:scale-[0.98]
+/// ```
 ///
 /// Usage:
 /// ```dart
-/// // Breathing fade (ink spread effect)
-/// child.animate()
-///   .fadeIn(duration: DSAnimation.breathingFade, curve: DSAnimation.breathingCurve)
-///   .scale(begin: Offset(0.98, 0.98), end: Offset(1, 1));
-///
-/// // Standard animation
 /// AnimatedContainer(
-///   duration: DSAnimation.durationMedium,
-///   curve: DSAnimation.curveStandard,
+///   duration: DSAnimation.normal,
+///   curve: DSAnimation.claude,
 /// )
 /// ```
 class DSAnimation {
   DSAnimation._();
 
   // ============================================
-  // DURATIONS - General
+  // CLAUDE SIGNATURE CURVE
+  // cubic-bezier(0.165, 0.85, 0.45, 1)
+  // = Fast-out, gentle-in (snappy but smooth)
   // ============================================
 
-  /// 100ms - Micro interactions (ripples, hover states)
-  static const Duration durationFast = Duration(milliseconds: 100);
+  /// Claude's signature animation curve
+  /// Fast start, gentle finish - "snappy but smooth"
+  static const Curve claude = Cubic(0.165, 0.85, 0.45, 1);
 
-  /// 150ms - Quick transitions, button tap
-  static const Duration durationQuick = Duration(milliseconds: 150);
+  /// Alias for Claude curve
+  static const Curve primary = claude;
 
-  /// 200ms - Standard transitions, button release
-  static const Duration durationMedium = Duration(milliseconds: 200);
+  // ============================================
+  // DURATIONS - Modern naming
+  // ============================================
 
-  /// 300ms - Complex transitions
-  static const Duration durationSlow = Duration(milliseconds: 300);
+  /// 50ms - Instant micro interactions
+  static const Duration instant = Duration(milliseconds: 50);
+
+  /// 100ms - Micro interactions (ripples, focus states)
+  static const Duration micro = Duration(milliseconds: 100);
+
+  /// 150ms - Fast feedback (button press, hover)
+  static const Duration fast = Duration(milliseconds: 150);
+
+  /// 200ms - Quick transitions
+  static const Duration quick = Duration(milliseconds: 200);
+
+  /// 300ms - Normal transitions (Claude default)
+  static const Duration normal = Duration(milliseconds: 300);
 
   /// 400ms - Page transitions
-  static const Duration durationPage = Duration(milliseconds: 400);
+  static const Duration page = Duration(milliseconds: 400);
 
-  /// 500ms - Long animations
-  static const Duration durationLong = Duration(milliseconds: 500);
+  /// 500ms - Slow animations (complex reveals)
+  static const Duration slow = Duration(milliseconds: 500);
 
-  /// 800ms - Breathing fade, ink spread effect
-  static const Duration durationXLong = Duration(milliseconds: 800);
+  /// 800ms - Long animations (content reveals)
+  static const Duration long = Duration(milliseconds: 800);
 
-  /// 1000ms - Meditative loading
-  static const Duration durationMeditative = Duration(milliseconds: 1000);
-
-  /// 1200ms - Slow ink loading animation
-  static const Duration durationInkLoading = Duration(milliseconds: 1200);
+  /// 1000ms - Very long animations (loading states)
+  static const Duration xlong = Duration(milliseconds: 1000);
 
   // ============================================
-  // CURVES
+  // CURVES - Standard library + Claude
   // ============================================
 
-  /// Standard ease - default for most animations
-  static const Curve curveStandard = Curves.easeInOut;
+  /// Standard ease - most transitions
+  static const Curve standard = Curves.easeInOut;
 
-  /// Emphasized ease - for important transitions
-  static const Curve curveEmphasized = Curves.easeOutCubic;
+  /// Emphasized ease - important transitions
+  static const Curve emphasized = Curves.easeOutCubic;
 
-  /// Decelerate - for incoming elements
-  static const Curve curveDecelerate = Curves.decelerate;
+  /// Decelerate - incoming elements
+  static const Curve decelerate = Curves.decelerate;
 
-  /// Accelerate - for outgoing elements
-  static const Curve curveAccelerate = Curves.easeIn;
+  /// Accelerate - outgoing elements
+  static const Curve accelerate = Curves.easeIn;
 
-  /// Bounce - for playful interactions
-  static const Curve curveBounce = Curves.bounceOut;
+  /// Bounce - playful interactions
+  static const Curve bounce = Curves.bounceOut;
 
-  /// Elastic - for spring-like effects
-  static const Curve curveElastic = Curves.elasticOut;
+  /// Elastic - spring-like effects
+  static const Curve elastic = Curves.elasticOut;
 
-  /// Linear - for constant speed
-  static const Curve curveLinear = Curves.linear;
+  /// Linear - constant speed
+  static const Curve linear = Curves.linear;
 
-  /// Fast out, slow in - entering elements
-  static const Curve curveFastOutSlowIn = Curves.fastOutSlowIn;
+  /// Fast out, slow in
+  static const Curve fastOutSlowIn = Curves.fastOutSlowIn;
 
-  // ============================================
-  // INK-SPREAD ANIMATIONS (번짐 효과)
-  // Korean Traditional breathing animations
-  // ============================================
-
-  /// Breathing fade - slow ink spreading on paper (800ms)
-  static const Duration breathingFade = durationXLong;
-
-  /// Breathing curve - smooth ease in-out for meditative feel
-  static const Curve breathingCurve = Curves.easeInOut;
-
-  /// Ink spread animation - content appearing like ink on hanji
-  static const Duration inkSpread = durationXLong;
-
-  /// Ink spread curve
-  static const Curve inkSpreadCurve = Curves.easeOut;
-
-  /// Fortune reveal - slow, mystical content reveal (1000ms)
-  static const Duration fortuneReveal = durationMeditative;
-
-  /// Fortune reveal curve
-  static const Curve fortuneRevealCurve = Curves.easeInOutCubic;
+  /// Gentle ease for smooth animations
+  static const Curve gentle = Curves.easeOutQuart;
 
   // ============================================
-  // SEAL/STAMP ANIMATIONS (인장 효과)
-  // Button press animations
+  // PRESS SCALES - Claude uses 0.98
   // ============================================
 
-  /// Seal press - button tap down (150ms)
-  static const Duration sealPress = durationQuick;
+  /// Button press scale (Claude standard)
+  static const double pressScale = 0.98;
 
-  /// Seal release - button tap up with slight bounce (200ms)
-  static const Duration sealRelease = durationMedium;
+  /// Card tap scale (same as press)
+  static const double tapScale = 0.98;
 
-  /// Seal press scale factor
-  static const double sealPressScale = 0.97;
-
-  /// Seal press curve
-  static const Curve sealPressCurve = Curves.easeIn;
-
-  /// Seal release curve
-  static const Curve sealReleaseCurve = Curves.easeOutCubic;
+  /// Hover scale (slight enlargement)
+  static const double hoverScale = 1.02;
 
   // ============================================
-  // CARD ANIMATIONS (한지 카드)
-  // Hanji card interactions
+  // SEMANTIC ANIMATIONS - Button/Card
   // ============================================
 
-  /// Card tap - subtle scale on touch (150ms)
-  static const Duration cardTap = durationQuick;
+  /// Button press duration
+  static const Duration buttonPress = fast;
 
-  /// Card tap scale factor
-  static const double cardTapScale = 0.98;
+  /// Button release duration
+  static const Duration buttonRelease = quick;
+
+  /// Button press curve
+  static const Curve buttonPressCurve = accelerate;
+
+  /// Button release curve (Claude curve)
+  static const Curve buttonReleaseCurve = claude;
+
+  /// Card tap duration
+  static const Duration cardTap = fast;
+
+  /// Card release duration
+  static const Duration cardRelease = quick;
 
   /// Card tap curve
-  static const Curve cardTapCurve = Curves.easeIn;
+  static const Curve cardTapCurve = accelerate;
 
-  /// Card release - return to normal with soft ease (200ms)
-  static const Duration cardRelease = durationMedium;
+  /// Card release curve (Claude curve)
+  static const Curve cardReleaseCurve = claude;
 
-  /// Card release curve
-  static const Curve cardReleaseCurve = Curves.easeOutCubic;
-
-  /// Card hover - ink border darkens
-  static const Duration cardHover = durationMedium;
+  /// Card hover duration
+  static const Duration cardHover = quick;
 
   // ============================================
-  // SEMANTIC ANIMATIONS
+  // SEMANTIC ANIMATIONS - Content
   // ============================================
 
-  /// Button press animation duration
-  static const Duration buttonPress = sealPress;
+  /// Content fade in duration
+  static const Duration fadeIn = normal;
 
-  /// Toggle switch animation duration
-  static const Duration toggleSwitch = durationMedium;
+  /// Content fade in curve (Claude curve)
+  static const Curve fadeInCurve = claude;
+
+  /// Content reveal duration
+  static const Duration contentReveal = slow;
+
+  /// Content reveal curve
+  static const Curve contentRevealCurve = claude;
+
+  /// Result reveal duration (fortune results, etc.)
+  static const Duration resultReveal = long;
+
+  /// Result reveal curve
+  static const Curve resultRevealCurve = gentle;
+
+  // ============================================
+  // SEMANTIC ANIMATIONS - UI Elements
+  // ============================================
+
+  /// Toggle switch duration
+  static const Duration toggleSwitch = quick;
 
   /// Modal show/hide duration
-  static const Duration modalTransition = durationSlow;
+  static const Duration modal = slow;
+
+  /// Modal curve (Claude curve)
+  static const Curve modalCurve = claude;
 
   /// Bottom sheet slide duration
-  static const Duration bottomSheetSlide = durationSlow;
+  static const Duration bottomSheet = slow;
+
+  /// Bottom sheet curve
+  static const Curve bottomSheetCurve = emphasized;
 
   /// Page transition duration
-  static const Duration pageTransition = durationPage;
+  static const Duration pageTransition = page;
 
-  /// Loading indicator rotation - slow, meditative (1200ms)
-  static const Duration loadingRotation = durationInkLoading;
-
-  /// Skeleton shimmer duration
-  static const Duration shimmer = Duration(milliseconds: 1500);
+  /// Page transition curve (Claude curve)
+  static const Curve pageTransitionCurve = claude;
 
   /// Toast show/hide duration
-  static const Duration toastTransition = durationMedium;
+  static const Duration toast = quick;
 
-  /// Fade in/out duration - breathing fade for traditional feel
-  static const Duration fade = breathingFade;
+  /// Shimmer duration for skeleton loaders
+  static const Duration shimmer = Duration(milliseconds: 1500);
 
-  /// Scale animation duration
-  static const Duration scale = durationMedium;
-
-  // ============================================
-  // SEMANTIC CURVES
-  // ============================================
-
-  /// Default UI animation curve
-  static const Curve curveDefault = curveStandard;
-
-  /// Button animation curve - seal press feel
-  static const Curve curveButton = sealReleaseCurve;
-
-  /// Toggle animation curve
-  static const Curve curveToggle = curveEmphasized;
-
-  /// Modal animation curve
-  static const Curve curveModal = curveEmphasized;
-
-  /// Page transition curve - fade with ink spread
-  static const Curve curvePage = breathingCurve;
-
-  /// List item stagger curve - ink appearing sequentially
-  static const Curve curveStagger = inkSpreadCurve;
-
-  /// Card animation curve
-  static const Curve curveCard = cardReleaseCurve;
-
-  /// Fortune content curve
-  static const Curve curveFortune = fortuneRevealCurve;
+  /// Loading rotation duration
+  static const Duration loading = xlong;
 
   // ============================================
-  // STAGGER DELAYS (순차 애니메이션)
-  // For list items appearing like ink drops
+  // STAGGER DELAYS
   // ============================================
 
-  /// Stagger delay between items - ink drop effect
-  static const Duration staggerDelay = Duration(milliseconds: 50);
+  /// Default stagger delay between items
+  static const Duration stagger = Duration(milliseconds: 50);
 
-  /// Stagger delay for fortune content
-  static const Duration fortuneStaggerDelay = Duration(milliseconds: 80);
+  /// Card stagger delay
+  static const Duration cardStagger = Duration(milliseconds: 60);
 
-  /// Stagger delay for card grid
-  static const Duration cardStaggerDelay = Duration(milliseconds: 60);
+  /// Content stagger delay
+  static const Duration contentStagger = Duration(milliseconds: 80);
+
+  /// List item stagger delay
+  static const Duration listStagger = Duration(milliseconds: 40);
+
+  // ============================================
+  // LEGACY COMPATIBILITY - Ink-wash aliases
+  // Maps old Korean traditional naming to new
+  // ============================================
+
+  /// @deprecated Use [long] instead
+  static const Duration breathingFade = long;
+
+  /// @deprecated Use [claude] instead
+  static const Curve breathingCurve = standard;
+
+  /// @deprecated Use [long] instead
+  static const Duration inkSpread = long;
+
+  /// @deprecated Use [claude] instead
+  static const Curve inkSpreadCurve = emphasized;
+
+  /// @deprecated Use [xlong] instead
+  static const Duration fortuneReveal = xlong;
+
+  /// @deprecated Use [gentle] instead
+  static const Curve fortuneRevealCurve = gentle;
+
+  /// @deprecated Use [fast] instead
+  static const Duration sealPress = fast;
+
+  /// @deprecated Use [quick] instead
+  static const Duration sealRelease = quick;
+
+  /// @deprecated Use [pressScale] instead
+  static const double sealPressScale = pressScale;
+
+  /// @deprecated Use [accelerate] instead
+  static const Curve sealPressCurve = accelerate;
+
+  /// @deprecated Use [claude] instead
+  static const Curve sealReleaseCurve = claude;
+
+  /// @deprecated Use [tapScale] instead
+  static const double cardTapScale = tapScale;
+
+  /// @deprecated Use [xlong] instead
+  static const Duration durationMeditative = xlong;
+
+  /// @deprecated Use [loading] instead
+  static const Duration durationInkLoading = loading;
+
+  /// @deprecated Use [micro] instead
+  static const Duration durationFast = micro;
+
+  /// @deprecated Use [fast] instead
+  static const Duration durationQuick = fast;
+
+  /// @deprecated Use [quick] instead
+  static const Duration durationMedium = quick;
+
+  /// @deprecated Use [normal] instead
+  static const Duration durationSlow = normal;
+
+  /// @deprecated Use [page] instead
+  static const Duration durationPage = page;
+
+  /// @deprecated Use [slow] instead
+  static const Duration durationLong = slow;
+
+  /// @deprecated Use [long] instead
+  static const Duration durationXLong = long;
+
+  /// @deprecated Use [stagger] instead
+  static const Duration staggerDelay = stagger;
+
+  /// @deprecated Use [contentStagger] instead
+  static const Duration fortuneStaggerDelay = contentStagger;
+
+  /// @deprecated Use [cardStagger] instead
+  static const Duration cardStaggerDelay = cardStagger;
+
+  /// @deprecated Use [standard] instead
+  static const Curve curveStandard = standard;
+
+  /// @deprecated Use [emphasized] instead
+  static const Curve curveEmphasized = emphasized;
+
+  /// @deprecated Use [decelerate] instead
+  static const Curve curveDecelerate = decelerate;
+
+  /// @deprecated Use [accelerate] instead
+  static const Curve curveAccelerate = accelerate;
+
+  /// @deprecated Use [bounce] instead
+  static const Curve curveBounce = bounce;
+
+  /// @deprecated Use [elastic] instead
+  static const Curve curveElastic = elastic;
+
+  /// @deprecated Use [linear] instead
+  static const Curve curveLinear = linear;
+
+  /// @deprecated Use [fastOutSlowIn] instead
+  static const Curve curveFastOutSlowIn = fastOutSlowIn;
+
+  /// @deprecated Use [standard] instead
+  static const Curve curveDefault = standard;
+
+  /// @deprecated Use [claude] instead
+  static const Curve curveButton = claude;
+
+  /// @deprecated Use [emphasized] instead
+  static const Curve curveToggle = emphasized;
+
+  /// @deprecated Use [claude] instead
+  static const Curve curveModal = claude;
+
+  /// @deprecated Use [claude] instead
+  static const Curve curvePage = claude;
+
+  /// @deprecated Use [emphasized] instead
+  static const Curve curveStagger = emphasized;
+
+  /// @deprecated Use [claude] instead
+  static const Curve curveCard = claude;
+
+  /// @deprecated Use [gentle] instead
+  static const Curve curveFortune = gentle;
+
+  /// @deprecated Use [fadeIn] instead
+  static const Duration fade = fadeIn;
+
+  /// @deprecated Use [quick] instead
+  static const Duration scale = quick;
+
+  /// @deprecated Use [modal] instead
+  static const Duration modalTransition = modal;
+
+  /// @deprecated Use [bottomSheet] instead
+  static const Duration bottomSheetSlide = bottomSheet;
+
+  /// @deprecated Use [loading] instead
+  static const Duration loadingRotation = loading;
+
+  /// @deprecated Use [toast] instead
+  static const Duration toastTransition = toast;
 }
 
 /// Animation scheme for context-based access
 class DSAnimationScheme {
   const DSAnimationScheme();
 
-  // Durations
-  Duration get fast => DSAnimation.durationFast;
-  Duration get quick => DSAnimation.durationQuick;
-  Duration get medium => DSAnimation.durationMedium;
-  Duration get slow => DSAnimation.durationSlow;
-  Duration get page => DSAnimation.durationPage;
+  // Durations - Modern naming
+  Duration get instant => DSAnimation.instant;
+  Duration get micro => DSAnimation.micro;
+  Duration get fast => DSAnimation.fast;
+  Duration get quick => DSAnimation.quick;
+  Duration get normal => DSAnimation.normal;
+  Duration get page => DSAnimation.page;
+  Duration get slow => DSAnimation.slow;
+  Duration get long => DSAnimation.long;
+  Duration get xlong => DSAnimation.xlong;
 
-  // Ink-spread (번짐)
+  // Curves
+  Curve get claude => DSAnimation.claude;
+  Curve get primary => DSAnimation.primary;
+  Curve get standard => DSAnimation.standard;
+  Curve get emphasized => DSAnimation.emphasized;
+  Curve get gentle => DSAnimation.gentle;
+
+  // Scales
+  double get pressScale => DSAnimation.pressScale;
+  double get tapScale => DSAnimation.tapScale;
+  double get hoverScale => DSAnimation.hoverScale;
+
+  // Button animations
+  Duration get buttonPress => DSAnimation.buttonPress;
+  Duration get buttonRelease => DSAnimation.buttonRelease;
+  Curve get buttonCurve => DSAnimation.buttonReleaseCurve;
+
+  // Card animations
+  Duration get cardTap => DSAnimation.cardTap;
+  Duration get cardRelease => DSAnimation.cardRelease;
+  Curve get cardCurve => DSAnimation.cardReleaseCurve;
+
+  // Content animations
+  Duration get fadeIn => DSAnimation.fadeIn;
+  Duration get contentReveal => DSAnimation.contentReveal;
+  Duration get resultReveal => DSAnimation.resultReveal;
+
+  // UI elements
+  Duration get modal => DSAnimation.modal;
+  Duration get bottomSheet => DSAnimation.bottomSheet;
+  Duration get toast => DSAnimation.toast;
+  Duration get loading => DSAnimation.loading;
+
+  // Stagger
+  Duration get stagger => DSAnimation.stagger;
+  Duration get cardStagger => DSAnimation.cardStagger;
+  Duration get contentStagger => DSAnimation.contentStagger;
+
+  // Legacy compatibility
   Duration get breathingFade => DSAnimation.breathingFade;
   Curve get breathingCurve => DSAnimation.breathingCurve;
   Duration get inkSpread => DSAnimation.inkSpread;
   Duration get fortuneReveal => DSAnimation.fortuneReveal;
-
-  // Seal/Stamp (인장)
   Duration get sealPress => DSAnimation.sealPress;
   Duration get sealRelease => DSAnimation.sealRelease;
   double get sealPressScale => DSAnimation.sealPressScale;
-
-  // Card (한지 카드)
-  Duration get cardTap => DSAnimation.cardTap;
-  Duration get cardRelease => DSAnimation.cardRelease;
   double get cardTapScale => DSAnimation.cardTapScale;
-
-  // Stagger
   Duration get staggerDelay => DSAnimation.staggerDelay;
   Duration get fortuneStaggerDelay => DSAnimation.fortuneStaggerDelay;
-
-  // Loading
   Duration get loadingRotation => DSAnimation.loadingRotation;
 }

@@ -6,7 +6,7 @@ import 'providers.dart';
 // Fortune Gauge State
 class FortuneGaugeState {
   final int currentProgress;      // 0-10
-  final int totalLuckyBags;       // 획득한 복주머니 총 개수
+  final int totalTokens;       // 획득한 토큰 총 개수
   final Set<String> todayViewed;  // 오늘 본 운세 타입들
   final DateTime? lastResetDate;  // 일일 리셋용
   final bool isAnimating;         // 애니메이션 진행 중 여부
@@ -15,7 +15,7 @@ class FortuneGaugeState {
 
   const FortuneGaugeState({
     this.currentProgress = 0,
-    this.totalLuckyBags = 0,
+    this.totalTokens = 0,
     this.todayViewed = const {},
     this.lastResetDate,
     this.isAnimating = false,
@@ -25,7 +25,7 @@ class FortuneGaugeState {
 
   FortuneGaugeState copyWith({
     int? currentProgress,
-    int? totalLuckyBags,
+    int? totalTokens,
     Set<String>? todayViewed,
     DateTime? lastResetDate,
     bool? isAnimating,
@@ -34,7 +34,7 @@ class FortuneGaugeState {
   }) {
     return FortuneGaugeState(
       currentProgress: currentProgress ?? this.currentProgress,
-      totalLuckyBags: totalLuckyBags ?? this.totalLuckyBags,
+      totalTokens: totalTokens ?? this.totalTokens,
       todayViewed: todayViewed ?? this.todayViewed,
       lastResetDate: lastResetDate ?? this.lastResetDate,
       isAnimating: isAnimating ?? this.isAnimating,
@@ -77,7 +77,7 @@ class FortuneGaugeNotifier extends StateNotifier<FortuneGaugeState> {
 
         state = state.copyWith(
           currentProgress: needsReset ? 0 : (data['currentProgress'] as int? ?? 0),
-          totalLuckyBags: data['totalLuckyBags'] as int? ?? 0,
+          totalTokens: data['totalLuckyBags'] as int? ?? 0,  // 스토리지 키 유지 (하위호환)
           todayViewed: needsReset ? {} : todayViewedList,
           lastResetDate: DateTime.now(),
           isLoading: false,
@@ -137,9 +137,9 @@ class FortuneGaugeNotifier extends StateNotifier<FortuneGaugeState> {
       // 저장
       await _saveToStorage();
 
-      // 10 도달 시 복주머니 지급
+      // 10 도달 시 토큰 지급
       if (newProgress == 10) {
-        await _checkAndAwardLuckyBag();
+        await _checkAndAwardToken();
       }
 
       debugPrint('[FortuneGaugeProvider] Progress: $newProgress/10 (type: $fortuneType)');
@@ -154,32 +154,32 @@ class FortuneGaugeNotifier extends StateNotifier<FortuneGaugeState> {
     }
   }
 
-  // 10 도달 시 복주머니 지급 (TokenProvider.earnSouls 호출) 후 게이지 리셋
-  Future<void> _checkAndAwardLuckyBag() async {
+  // 10 도달 시 토큰 지급 (TokenProvider.earnSouls 호출) 후 게이지 리셋
+  Future<void> _checkAndAwardToken() async {
     try {
-      debugPrint('[FortuneGaugeProvider] Awarding lucky bag (복주머니)');
+      debugPrint('[FortuneGaugeProvider] Awarding token (토큰)');
 
       // TokenProvider의 earnSouls 호출
       final success = await ref.read(tokenProvider.notifier).earnSouls(
-        fortuneType: 'lucky-bag',
+        fortuneType: 'gauge_reward',
       );
 
       if (success) {
-        // 복주머니 개수 증가 + 게이지 리셋 (다음 사이클 시작)
+        // 토큰 개수 증가 + 게이지 리셋 (다음 사이클 시작)
         state = state.copyWith(
           currentProgress: 0,
           todayViewed: {},  // 다음 사이클 위해 초기화
-          totalLuckyBags: state.totalLuckyBags + 1,
+          totalTokens: state.totalTokens + 1,
         );
 
         await _saveToStorage();
 
-        debugPrint('[FortuneGaugeProvider] Lucky bag awarded! Total: ${state.totalLuckyBags}. Gauge reset to 0/10');
+        debugPrint('[FortuneGaugeProvider] Token awarded! Total: ${state.totalTokens}. Gauge reset to 0/10');
       } else {
-        debugPrint('[FortuneGaugeProvider] Failed to award lucky bag');
+        debugPrint('[FortuneGaugeProvider] Failed to award token');
       }
     } catch (e) {
-      debugPrint('[FortuneGaugeProvider] Error awarding lucky bag: $e');
+      debugPrint('[FortuneGaugeProvider] Error awarding token: $e');
     }
   }
 
@@ -216,7 +216,7 @@ class FortuneGaugeNotifier extends StateNotifier<FortuneGaugeState> {
     try {
       final data = {
         'currentProgress': state.currentProgress,
-        'totalLuckyBags': state.totalLuckyBags,
+        'totalLuckyBags': state.totalTokens,  // 스토리지 키 유지 (하위호환)
         'todayViewed': state.todayViewed.toList(),
         'lastResetDate': state.lastResetDate?.toIso8601String(),
       };
@@ -256,8 +256,8 @@ final gaugeProgressProvider = Provider<int>((ref) {
   return ref.watch(fortuneGaugeProvider).currentProgress;
 });
 
-final totalLuckyBagsProvider = Provider<int>((ref) {
-  return ref.watch(fortuneGaugeProvider).totalLuckyBags;
+final totalTokensProvider = Provider<int>((ref) {
+  return ref.watch(fortuneGaugeProvider).totalTokens;
 });
 
 final isGaugeCompleteProvider = Provider<bool>((ref) {

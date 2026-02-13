@@ -175,6 +175,12 @@ extension TypographyExtension on BuildContext {
   TextStyle get captionSmall => AppTypography.captionSmall;
 
   TextStyle get labelXSmall => AppTypography.labelXSmall;
+  TextStyle get labelTiny => TypographyUnified.labelTiny;
+
+  // Heading aliases (heading = headline)
+  TextStyle get headingLarge => TypographyUnified.heading1;
+  TextStyle get headingMedium => TypographyUnified.heading2;
+  TextStyle get headingSmall => TypographyUnified.heading3;
 
   TextStyle get button => AppTypography.button;
   TextStyle get buttonMedium => AppTypography.button; // Alias for button

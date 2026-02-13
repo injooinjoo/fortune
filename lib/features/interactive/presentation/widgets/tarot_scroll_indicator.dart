@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../../../../core/theme/fortune_design_system.dart';
 import '../../../../core/design_system/design_system.dart';
 
 class TarotScrollIndicator extends StatefulWidget {
@@ -78,15 +77,15 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.black.withValues(alpha: 0.6),
+                    color: DSColors.background.withValues(alpha: 0.6),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: TossDesignSystem.white.withValues(alpha: 0.3),
+                      color: DSColors.accent.withValues(alpha: 0.3),
                       width: 1)),
                   child: Text(
                     widget.text,
-                    style: DSTypography.bodySmall.copyWith(
-                      color: TossDesignSystem.white,
+                    style: context.bodySmall.copyWith(
+                      color: DSColors.accent,
                       fontWeight: FontWeight.w500),
                   ),
                 ),
@@ -130,7 +129,7 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
               child: CustomPaint(
                 size: const Size(30, 30),
                 painter: ArrowPainter(
-                  color: TossDesignSystem.white,
+                  color: DSColors.accent,
                   strokeWidth: 3,
                 ),
               ),
@@ -228,7 +227,7 @@ class _TarotScrollHintState extends State<TarotScrollHint>
                 width: 60,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: TossDesignSystem.white.withValues(alpha: 0.5),
+                  color: DSColors.accent.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(2),
                   boxShadow: [
                     BoxShadow(

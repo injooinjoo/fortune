@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/core/theme/app_typography.dart';
 
 /// Base text widget with Toss Product Sans typography
@@ -33,8 +33,7 @@ class AppText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final defaultColor = isDarkMode ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900;
+    final defaultColor = context.colors.textPrimary;
 
     final textStyle = (style ?? AppTypography.bodyMedium).copyWith(
       color: color ?? style?.color ?? defaultColor,

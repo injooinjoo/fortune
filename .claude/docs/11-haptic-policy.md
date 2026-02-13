@@ -24,7 +24,7 @@ Fortune 앱의 햅틱 피드백 시스템은 **토스와 듀오링고**의 접�
 | 순간 | 햅틱 패턴 | 설명 |
 |------|----------|------|
 | 타로 카드 공개 | `mysticalReveal()` | soft → success → medium (3단계) |
-| 운세 결과 블러 해제 | `premiumUnlock()` | soft → light → medium → heavy → success (5단계) |
+| 구독 콘텐츠 해제 | `premiumUnlock()` | soft → light → medium → heavy → success (5단계) |
 | 높은 점수 공개 (90+) | `scoreReveal(score)` | heavy → success x2 |
 | Top 1% 운세 | `jackpot()` | (heavy + success) x3 반복 |
 
@@ -204,7 +204,6 @@ await ref.haptic.mysticalReveal();
 | `DivineLoadingAnimation` | `loadingStep()`, `loadingLastStep()` | 각 스텝 전환 |
 | `EmotionalLoadingChecklist` | `loadingStep()`, `loadingComplete()` | 각 스텝 전환, 완료 |
 | `FlipCardWidget` | `mysticalReveal()` | 애니메이션 50% |
-| `UnifiedBlurWrapper` | `premiumUnlock()` | 블러 해제 시 |
 
 ---
 

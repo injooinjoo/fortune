@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../design_system.dart';
-import '../../tokens/ds_fortune_colors.dart';
 import '../../../theme/font_config.dart';
 
 /// Korean traditional Hanji paper style card - Universal component
@@ -56,7 +55,7 @@ class HanjiCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final colors = _HanjiColors.fromScheme(colorScheme, isDark);
 
     return Container(
@@ -174,15 +173,16 @@ class _HanjiColors {
   });
 
   factory _HanjiColors.fromScheme(HanjiColorScheme scheme, bool isDark) {
+    final brightness = isDark ? Brightness.dark : Brightness.light;
     switch (scheme) {
       case HanjiColorScheme.fortune:
         return _HanjiColors(
-          background: DSFortuneColors.getHanjiBackground(isDark),
+          background: DSColors.getBackground(brightness),
           border: isDark
-              ? DSFortuneColors.inkLight.withValues(alpha: 0.3)
-              : DSFortuneColors.inkBlack.withValues(alpha: 0.15),
-          accent: DSFortuneColors.getGold(isDark),
-          ink: DSFortuneColors.getInk(isDark),
+              ? DSColors.textSecondary.withValues(alpha: 0.3)
+              : DSColors.textPrimaryDark.withValues(alpha: 0.15),
+          accent: DSColors.warning,
+          ink: DSColors.getTextPrimary(brightness),
         );
       case HanjiColorScheme.love:
         return _HanjiColors(
@@ -634,7 +634,7 @@ class HanjiSectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final colors = _HanjiColors.fromScheme(colorScheme, isDark);
     final textColor = colors.ink;
 

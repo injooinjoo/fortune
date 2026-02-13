@@ -2,7 +2,7 @@
 
 # App Store Connect information
 app_identifier "com.beyond.fortune"
-username "your-apple-id@example.com"
+username "ink595@g.harvard.edu"
 
 # Metadata and screenshots
 force true # Skip HTML report verification
@@ -13,21 +13,21 @@ submit_for_review false
 # Phased release
 phased_release true
 
-# Price tier (0 = free)
-price_tier 0
+# Price tier - managed in App Store Connect directly
+# price_tier 0
 
 # Age rating configuration
 app_rating_config_path "./fastlane/metadata/app_rating_config.json"
 
 # App review information
 app_review_information(
-  first_name: "John",
-  last_name: "Doe",
-  phone_number: "+1 123 456 7890",
-  email_address: "review@beyond.com",
-  demo_user: "test@beyond.com",
-  demo_password: "TestPassword123!",
-  notes: "This app provides AI-based fortune telling services. Test account provided for review."
+  first_name: "Injoo",
+  last_name: "Kim",
+  phone_number: "+821050606843",
+  email_address: "injoo1222@naver.com",
+  demo_user: "injoo1222@naver.com",
+  demo_password: "Dlswn@123",
+  notes: "ENTERTAINMENT app with AI-generated lifestyle insights. Test: Login with provided account, try 'Face AI' and 'Daily Insights' features."
 )
 
 # Automatic release
@@ -48,14 +48,14 @@ secondary_category "ENTERTAINMENT"
 
 # Trade representative contact info (required for apps distributed in Korea)
 trade_representative_contact_information(
-  first_name: "John",
-  last_name: "Doe",
-  address_line1: "123 Main Street",
+  first_name: "Injoo",
+  last_name: "Kim",
+  address_line1: "Seoul, South Korea",
   city_name: "Seoul",
   state: "Seoul",
   country: "South Korea",
-  postal_code: "12345",
-  phone_number: "+82 10 1234 5678",
-  email_address: "legal@beyond.com",
+  postal_code: "06000",
+  phone_number: "+821050606843",
+  email_address: "injoo1222@naver.com",
   is_displayed_on_app_store: false
 )

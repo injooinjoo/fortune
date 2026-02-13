@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'package:fortune/core/theme/fortune_design_system.dart';
 import '../../core/design_system/design_system.dart';
 
 /// 오행 균형 차트 위젯 - 목/화/토/금/수 균형을 시각화
@@ -18,13 +17,13 @@ class ElementBalanceChart extends StatelessWidget {
     this.animated = true,
   });
 
-  // 오행별 색상과 아이콘
+  // 오행별 색상과 아이콘 (ChatGPT monochrome style)
   static const elementData = {
-    '목': {'color': Color(0xFF52D681), 'icon': '🌳', 'name': '목(木)'},
-    '화': {'color': Color(0xFFFF6B6B), 'icon': '🔥', 'name': '화(火)'},
-    '토': {'color': Color(0xFFF7DC6F), 'icon': '⛰️', 'name': '토(土)'},
-    '금': {'color': Color(0xFFE8E8E8), 'icon': '⚡', 'name': '금(金)'},
-    '수': {'color': Color(0xFF4ECDC4), 'icon': '💧', 'name': '수(水)'},
+    '목': {'color': DSColors.success, 'icon': '🌳', 'name': '목(木)'},
+    '화': {'color': DSColors.error, 'icon': '🔥', 'name': '화(火)'},
+    '토': {'color': DSColors.warning, 'icon': '⛰️', 'name': '토(土)'},
+    '금': {'color': DSColors.textSecondaryDark, 'icon': '⚡', 'name': '금(金)'},
+    '수': {'color': DSColors.info, 'icon': '💧', 'name': '수(水)'},
   };
 
   @override
@@ -39,6 +38,7 @@ class ElementBalanceChart extends StatelessWidget {
             painter: ElementCirclePainter(
               elements: elements,
               showPercentage: showPercentage,
+              iconStyle: context.headingSmall,
             ),
           ),
         ),
@@ -73,7 +73,7 @@ class ElementBalanceChart extends StatelessWidget {
             Text(
               '${data['icon']} ${data['name']}',
               style: TextStyle(
-                color: TossDesignSystem.gray100.withValues(alpha: 0.8),
+                color: DSColors.backgroundSecondaryDark.withValues(alpha: 0.8),
                 
                 fontWeight: FontWeight.w300,
               ),
@@ -83,7 +83,7 @@ class ElementBalanceChart extends StatelessWidget {
               Text(
                 '${(entry.value * 100).toInt()}%',
                 style: TextStyle(
-                  color: TossDesignSystem.gray100.withValues(alpha: 0.6),
+                  color: DSColors.backgroundSecondaryDark.withValues(alpha: 0.6),
                   
                   fontWeight: FontWeight.w400,
                 ),
@@ -99,10 +99,12 @@ class ElementBalanceChart extends StatelessWidget {
 class ElementCirclePainter extends CustomPainter {
   final Map<String, double> elements;
   final bool showPercentage;
+  final TextStyle iconStyle;
 
   ElementCirclePainter({
     required this.elements,
     required this.showPercentage,
+    required this.iconStyle,
   });
 
   @override
@@ -112,7 +114,7 @@ class ElementCirclePainter extends CustomPainter {
     
     // 배경 원
     final bgPaint = Paint()
-      ..color = TossDesignSystem.gray100.withValues(alpha: 0.05)
+      ..color = DSColors.backgroundSecondaryDark.withValues(alpha: 0.05)
       ..style = PaintingStyle.fill;
     canvas.drawCircle(center, radius, bgPaint);
     
@@ -148,7 +150,7 @@ class ElementCirclePainter extends CustomPainter {
       
       // 테두리 그리기
       final borderPaint = Paint()
-        ..color = TossDesignSystem.gray100.withValues(alpha: 0.2)
+        ..color = DSColors.backgroundSecondaryDark.withValues(alpha: 0.2)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1;
       canvas.drawPath(path, borderPaint);
@@ -166,7 +168,7 @@ class ElementCirclePainter extends CustomPainter {
         final iconPainter = TextPainter(
           text: TextSpan(
             text: data['icon'] as String,
-            style: DSTypography.headingSmall,
+            style: iconStyle,
           ),
           textDirection: TextDirection.ltr,
         );
@@ -185,14 +187,14 @@ class ElementCirclePainter extends CustomPainter {
           text: TextSpan(
             text: '$percentage%',
             style: TextStyle(
-              color: TossDesignSystem.gray100,
+              color: DSColors.backgroundSecondaryDark,
               
               fontWeight: FontWeight.bold,
               shadows: [
                 Shadow(
                   offset: const Offset(1, 1),
                   blurRadius: 2,
-                  color: TossDesignSystem.grayDark900.withValues(alpha: 0.5),
+                  color: DSColors.textPrimary.withValues(alpha: 0.5),
                 ),
               ],
             ),
@@ -214,7 +216,7 @@ class ElementCirclePainter extends CustomPainter {
     
     // 중앙 원 (도넛 효과)
     final centerCirclePaint = Paint()
-      ..color = TossDesignSystem.grayDark900
+      ..color = DSColors.textPrimary
       ..style = PaintingStyle.fill;
     canvas.drawCircle(center, radius * 0.3, centerCirclePaint);
     
@@ -223,7 +225,7 @@ class ElementCirclePainter extends CustomPainter {
       text: TextSpan(
         text: '오행\n균형',
         style: TextStyle(
-          color: TossDesignSystem.gray100.withValues(alpha: 0.8),
+          color: DSColors.backgroundSecondaryDark.withValues(alpha: 0.8),
           
           fontWeight: FontWeight.w300,
           height: 1.2,

@@ -45,7 +45,7 @@
 
 1. **Hard Block 게이트키퍼**: RCA/Discovery 보고서 존재 확인, 검증 미통과 시 차단
 2. **아키텍처 규칙 검증**: Clean Architecture 및 레이어 의존성 검사
-3. **디자인 시스템 준수 확인**: TossDesignSystem, TypographyUnified 사용 검증
+3. **디자인 시스템 준수 확인**: DSColors, TypographyUnified 사용 검증
 4. **Edge Function 표준 검사**: LLMFactory, PromptManager 사용 확인
 5. **앱스토어 규정 준수**: 금지어 검사, 면책조항 확인
 
@@ -84,28 +84,27 @@ patterns:
 ```yaml
 colors:
   required:
-    - "TossDesignSystem.* (모든 색상)"
+    - "DSColors.* (모든 색상)"
     - "isDark 조건문 (다크모드 대응)"
 
   forbidden:
     - "Color(0xFF...) (하드코딩)"
     - "Colors.blue, Colors.red 등 (직접 사용)"
+    - "TossDesignSystem.* (deprecated)"
 
 typography:
   required:
     - "context.heading1, context.bodyMedium 등"
 
   forbidden:
-    - "TossDesignSystem.heading1 (deprecated)"
     - "fontSize: 16 (하드코딩)"
+    - "TextStyle(fontSize: ...) 직접 사용"
 
 components:
   required:
-    - "UnifiedBlurWrapper (블러 처리)"
     - "Icons.arrow_back_ios (뒤로가기)"
 
   forbidden:
-    - "ImageFilter.blur (직접 구현)"
     - "Icons.arrow_back (Android 스타일)"
 ```
 

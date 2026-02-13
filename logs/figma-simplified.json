@@ -1,0 +1,919 @@
+{
+  "name": "App Design V1.0",
+  "nodes": [
+    {
+      "id": "55:39",
+      "name": "메인",
+      "type": "FRAME",
+      "layout": "layout_36L4PM",
+      "fills": "fill_05ZLU4",
+      "children": [
+        {
+          "id": "55:40",
+          "name": "Container",
+          "type": "FRAME",
+          "layout": "layout_6LHL7A",
+          "strokes": "stroke_ZW8XBA",
+          "children": [
+            {
+              "id": "55:41",
+              "name": "Button",
+              "type": "FRAME",
+              "layout": "layout_J202VL",
+              "borderRadius": "10px",
+              "children": [
+                {
+                  "id": "55:42",
+                  "name": "Icon",
+                  "type": "IMAGE-SVG",
+                  "layout": "layout_L9930T"
+                },
+                {
+                  "id": "55:45",
+                  "name": "Text",
+                  "type": "FRAME",
+                  "layout": "layout_ODJVM7",
+                  "children": [
+                    {
+                      "id": "55:46",
+                      "name": "로그인",
+                      "type": "TEXT",
+                      "layout": "layout_U35R2X",
+                      "text": "로그인",
+                      "textStyle": "style_S7EPIY",
+                      "fills": "fill_BNLABL"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "55:47",
+              "name": "Button",
+              "type": "IMAGE-SVG",
+              "layout": "layout_7GR0OR",
+              "borderRadius": "10px"
+            }
+          ]
+        },
+        {
+          "id": "55:53",
+          "name": "Container",
+          "type": "FRAME",
+          "layout": "layout_B2IUUU",
+          "children": [
+            {
+              "id": "55:54",
+              "name": "Container",
+              "type": "FRAME",
+              "layout": "layout_SWA9WL",
+              "children": [
+                {
+                  "id": "55:55",
+                  "name": "Heading 2",
+                  "type": "FRAME",
+                  "layout": "layout_ST38EM",
+                  "children": [
+                    {
+                      "id": "55:56",
+                      "name": "안녕하세요! 👋",
+                      "type": "TEXT",
+                      "layout": "layout_ITDUH1",
+                      "text": "안녕하세요! 👋",
+                      "textStyle": "style_Z79HO9",
+                      "fills": "fill_BNLABL"
+                    }
+                  ]
+                },
+                {
+                  "id": "55:57",
+                  "name": "Paragraph",
+                  "type": "FRAME",
+                  "layout": "layout_9T781A",
+                  "children": [
+                    {
+                      "id": "55:58",
+                      "name": "저는 당신의 인생 컨설턴트입니다.",
+                      "type": "TEXT",
+                      "layout": "layout_U8U06G",
+                      "text": "저는 당신의 인생 컨설턴트입니다.",
+                      "textStyle": "style_Z9JTXR",
+                      "fills": "fill_AFEOQ1"
+                    },
+                    {
+                      "id": "55:59",
+                      "name": "고민이나 질문이 있으시면 편하게 말씀해주세요.",
+                      "type": "TEXT",
+                      "layout": "layout_0HASG3",
+                      "text": "고민이나 질문이 있으시면 편하게 말씀해주세요.",
+                      "textStyle": "style_Z9JTXR",
+                      "fills": "fill_AFEOQ1"
+                    }
+                  ]
+                },
+                {
+                  "id": "55:60",
+                  "name": "Container",
+                  "type": "FRAME",
+                  "layout": "layout_Y8ANK2",
+                  "children": [
+                    {
+                      "id": "55:61",
+                      "name": "Button",
+                      "type": "FRAME",
+                      "layout": "layout_E4NAT2",
+                      "strokes": "stroke_6KR4R1",
+                      "borderRadius": "14px",
+                      "children": [
+                        {
+                          "id": "55:62",
+                          "name": "Container",
+                          "type": "FRAME",
+                          "layout": "layout_ODJVM7",
+                          "children": [
+                            {
+                              "id": "55:63",
+                              "name": "진로 고민",
+                              "type": "TEXT",
+                              "layout": "layout_1E9MSD",
+                              "text": "진로 고민",
+                              "textStyle": "style_NVL2AD",
+                              "fills": "fill_BNLABL"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "55:64",
+                          "name": "Container",
+                          "type": "FRAME",
+                          "layout": "layout_JF221U",
+                          "children": [
+                            {
+                              "id": "55:65",
+                              "name": "진로에 대해 고민이 있어요",
+                              "type": "TEXT",
+                              "layout": "layout_QEA4FE",
+                              "text": "진로에 대해 고민이 있어요",
+                              "textStyle": "style_XEH7HR",
+                              "fills": "fill_AFEOQ1"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id": "55:66",
+                      "name": "Button",
+                      "type": "FRAME",
+                      "layout": "layout_C9TP33",
+                      "strokes": "stroke_6KR4R1",
+                      "borderRadius": "14px",
+                      "children": [
+                        {
+                          "id": "55:67",
+                          "name": "Container",
+                          "type": "FRAME",
+                          "layout": "layout_ODJVM7",
+                          "children": [
+                            {
+                              "id": "55:68",
+                              "name": "인간관계 고민",
+                              "type": "TEXT",
+                              "layout": "layout_3X32VU",
+                              "text": "인간관계 고민",
+                              "textStyle": "style_NVL2AD",
+                              "fills": "fill_BNLABL"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "55:69",
+                          "name": "Container",
+                          "type": "FRAME",
+                          "layout": "layout_JF221U",
+                          "children": [
+                            {
+                              "id": "55:70",
+                              "name": "인간관계가 힘들어요",
+                              "type": "TEXT",
+                              "layout": "layout_VKL56U",
+                              "text": "인간관계가 힘들어요",
+                              "textStyle": "style_XEH7HR",
+                              "fills": "fill_AFEOQ1"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id": "55:71",
+                      "name": "Button",
+                      "type": "FRAME",
+                      "layout": "layout_4VXL6T",
+                      "strokes": "stroke_6KR4R1",
+                      "borderRadius": "14px",
+                      "children": [
+                        {
+                          "id": "55:72",
+                          "name": "Container",
+                          "type": "FRAME",
+                          "layout": "layout_ODJVM7",
+                          "children": [
+                            {
+                              "id": "55:73",
+                              "name": "자기계발",
+                              "type": "TEXT",
+                              "layout": "layout_O9YARN",
+                              "text": "자기계발",
+                              "textStyle": "style_NVL2AD",
+                              "fills": "fill_BNLABL"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "55:74",
+                          "name": "Container",
+                          "type": "FRAME",
+                          "layout": "layout_JF221U",
+                          "children": [
+                            {
+                              "id": "55:75",
+                              "name": "자기계발 방법을 알고 싶어요",
+                              "type": "TEXT",
+                              "layout": "layout_BD8KCW",
+                              "text": "자기계발 방법을 알고 싶어요",
+                              "textStyle": "style_XEH7HR",
+                              "fills": "fill_AFEOQ1"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "55:76",
+          "name": "Container",
+          "type": "FRAME",
+          "layout": "layout_5CIL3D",
+          "children": [
+            {
+              "id": "55:77",
+              "name": "Container",
+              "type": "FRAME",
+              "layout": "layout_NIZPGA",
+              "fills": "fill_2DZSYX",
+              "effects": "effect_3HFFPZ",
+              "borderRadius": "16px",
+              "children": [
+                {
+                  "id": "55:78",
+                  "name": "Text Area",
+                  "type": "FRAME",
+                  "layout": "layout_H6LU2E",
+                  "children": [
+                    {
+                      "id": "55:79",
+                      "name": "메시지를 입력하세요...",
+                      "type": "TEXT",
+                      "layout": "layout_LZD30D",
+                      "text": "메시지를 입력하세요...",
+                      "textStyle": "style_GU5XOL",
+                      "fills": "fill_9HWVGQ"
+                    }
+                  ]
+                },
+                {
+                  "id": "55:80",
+                  "name": "Button",
+                  "type": "IMAGE-SVG",
+                  "layout": "layout_CC3A2C",
+                  "fills": "fill_5HVSS3",
+                  "opacity": 0.5,
+                  "borderRadius": "10px"
+                }
+              ]
+            },
+            {
+              "id": "55:84",
+              "name": "Paragraph",
+              "type": "FRAME",
+              "layout": "layout_69X5QO",
+              "children": [
+                {
+                  "id": "55:85",
+                  "name": "AI가 생성한 응답은 부정확할 수 있습니다.",
+                  "type": "TEXT",
+                  "layout": "layout_MTFN2K",
+                  "text": "AI가 생성한 응답은 부정확할 수 있습니다.",
+                  "textStyle": "style_2G8F4G",
+                  "fills": "fill_AFEOQ1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "components": {},
+  "componentSets": {},
+  "globalVars": {
+    "styles": {
+      "layout_36L4PM": {
+        "mode": "none",
+        "sizing": {},
+        "dimensions": {
+          "width": 393,
+          "height": 852
+        }
+      },
+      "fill_05ZLU4": [
+        "#FFFFFF"
+      ],
+      "layout_6LHL7A": {
+        "mode": "row",
+        "justifyContent": "space-between",
+        "alignItems": "center",
+        "gap": "231.4451904296875px",
+        "padding": "0px 15.999004364013672px 0px 15.999000549316406px",
+        "sizing": {
+          "horizontal": "fixed",
+          "vertical": "fixed"
+        },
+        "locationRelativeToParent": {
+          "x": 0,
+          "y": 0
+        },
+        "dimensions": {
+          "width": 392.93,
+          "height": 55.99
+        }
+      },
+      "stroke_ZW8XBA": {
+        "colors": [
+          "rgba(0, 0, 0, 0.1)"
+        ],
+        "strokeWeight": "0px 0px 0.6120359897613525px"
+      },
+      "layout_J202VL": {
+        "mode": "row",
+        "alignItems": "center",
+        "gap": "7.994718551635742px",
+        "padding": "0px 11.992076873779297px",
+        "sizing": {
+          "horizontal": "fixed",
+          "vertical": "fixed"
+        },
+        "dimensions": {
+          "width": 93.5,
+          "height": 35.99
+        }
+      },
+      "layout_L9930T": {
+        "mode": "none",
+        "sizing": {
+          "horizontal": "fixed",
+          "vertical": "fixed"
+        },
+        "dimensions": {
+          "width": 20,
+          "height": 20
+        }
+      },
+      "layout_E0M5OM": {
+        "mode": "none",
+        "sizing": {},
+        "locationRelativeToParent": {
+          "x": 4.17,
+          "y": 12.5
+        },
+        "dimensions": {
+          "width": 11.66,
+          "height": 5
+        }
+      },
+      "stroke_7DIA9M": {
+        "colors": [
+          "#0A0A0A"
+        ],
+        "strokeWeight": "1.66636323928833px"
+      },
+      "layout_MWABLA": {
+        "mode": "none",
+        "sizing": {},
+        "locationRelativeToParent": {
+          "x": 6.67,
+          "y": 2.5
+        },
+        "dimensions": {
+          "width": 6.67,
+          "height": 6.67
+        }
+      },
+      "layout_ODJVM7": {
+        "mode": "none",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "fixed"
+        },
+        "dimensions": {
+          "height": 23.99
+        }
+      },
+      "layout_U35R2X": {
+        "mode": "none",
+        "sizing": {},
+        "locationRelativeToParent": {
+          "x": -1,
+          "y": -0.55
+        },
+        "dimensions": {
+          "width": 44,
+          "height": 24
+        }
+      },
+      "style_S7EPIY": {
+        "fontFamily": "Inter",
+        "fontWeight": 500,
+        "fontSize": 16,
+        "lineHeight": "1.5em",
+        "letterSpacing": "-1.953125%",
+        "textAlignHorizontal": "CENTER",
+        "textAlignVertical": "TOP"
+      },
+      "fill_BNLABL": [
+        "#0A0A0A"
+      ],
+      "layout_7GR0OR": {
+        "mode": "column",
+        "padding": "7.994718551635742px 7.994718551635742px 0px 7.994720458984375px",
+        "sizing": {
+          "horizontal": "fixed",
+          "vertical": "fixed"
+        },
+        "dimensions": {
+          "width": 35.99,
+          "height": 35.99
+        }
+      },
+      "layout_JF221U": {
+        "mode": "none",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "fixed"
+        },
+        "dimensions": {
+          "height": 20
+        }
+      },
+      "layout_SC83T0": {
+        "mode": "none",
+        "sizing": {},
+        "locationRelativeToParent": {
+          "x": 2.5,
+          "y": 2.5
+        },
+        "dimensions": {
+          "width": 15,
+          "height": 7.5
+        }
+      },
+      "layout_S1NX5K": {
+        "mode": "none",
+        "sizing": {},
+        "locationRelativeToParent": {
+          "x": 13.33,
+          "y": 2.5
+        },
+        "dimensions": {
+          "width": 4.17,
+          "height": 4.17
+        }
+      },
+      "layout_SVDOF0": {
+        "mode": "none",
+        "sizing": {},
+        "locationRelativeToParent": {
+          "x": 2.5,
+          "y": 10
+        },
+        "dimensions": {
+          "width": 15,
+          "height": 7.5
+        }
+      },
+      "layout_5556Z2": {
+        "mode": "none",
+        "sizing": {},
+        "locationRelativeToParent": {
+          "x": 2.5,
+          "y": 13.33
+        },
+        "dimensions": {
+          "width": 4.17,
+          "height": 4.17
+        }
+      },
+      "layout_B2IUUU": {
+        "mode": "column",
+        "padding": "136.20668029785156px 31.481599807739258px 0px 31.481595993041992px",
+        "sizing": {
+          "horizontal": "fixed",
+          "vertical": "fixed"
+        },
+        "locationRelativeToParent": {
+          "x": 0,
+          "y": 55.99
+        },
+        "dimensions": {
+          "width": 392.93,
+          "height": 672.01
+        }
+      },
+      "layout_SWA9WL": {
+        "mode": "column",
+        "alignSelf": "stretch",
+        "gap": "15.998992919921875px",
+        "padding": "0px 15.998987197875977px 0px 15.998998641967773px",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "fixed"
+        },
+        "dimensions": {
+          "height": 399.59
+        }
+      },
+      "layout_ST38EM": {
+        "mode": "row",
+        "justifyContent": "stretch",
+        "alignItems": "stretch",
+        "alignSelf": "stretch",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "fixed"
+        }
+      },
+      "layout_ITDUH1": {
+        "mode": "none",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "hug"
+        }
+      },
+      "style_Z79HO9": {
+        "fontFamily": "Inter",
+        "fontWeight": 500,
+        "fontSize": 30,
+        "lineHeight": "1.2em",
+        "letterSpacing": "1.318359375%",
+        "textAlignHorizontal": "CENTER",
+        "textAlignVertical": "TOP"
+      },
+      "layout_9T781A": {
+        "mode": "none",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "fixed"
+        },
+        "dimensions": {
+          "height": 47.99
+        }
+      },
+      "layout_U8U06G": {
+        "mode": "none",
+        "sizing": {},
+        "locationRelativeToParent": {
+          "x": 39.61,
+          "y": -0.55
+        },
+        "dimensions": {
+          "width": 219,
+          "height": 24
+        }
+      },
+      "style_Z9JTXR": {
+        "fontFamily": "Inter",
+        "fontWeight": 400,
+        "fontSize": 16,
+        "lineHeight": "1.5em",
+        "letterSpacing": "-1.953125%",
+        "textAlignHorizontal": "CENTER",
+        "textAlignVertical": "TOP"
+      },
+      "fill_AFEOQ1": [
+        "#717182"
+      ],
+      "layout_0HASG3": {
+        "mode": "none",
+        "sizing": {},
+        "locationRelativeToParent": {
+          "x": -6,
+          "y": 23.44
+        },
+        "dimensions": {
+          "width": 310,
+          "height": 24
+        }
+      },
+      "layout_Y8ANK2": {
+        "mode": "none",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "fixed"
+        },
+        "dimensions": {
+          "height": 267.61
+        }
+      },
+      "layout_E4NAT2": {
+        "mode": "column",
+        "gap": "3.9973697662353516px",
+        "padding": "16.61102294921875px 16.611042022705078px 0.6120359897613525px 16.611034393310547px",
+        "sizing": {
+          "horizontal": "fixed",
+          "vertical": "fixed"
+        },
+        "locationRelativeToParent": {
+          "x": 0,
+          "y": 0
+        },
+        "dimensions": {
+          "width": 297.97,
+          "height": 81.21
+        }
+      },
+      "stroke_6KR4R1": {
+        "colors": [
+          "rgba(0, 0, 0, 0.1)"
+        ],
+        "strokeWeight": "0.6120359897613525px"
+      },
+      "layout_1E9MSD": {
+        "mode": "none",
+        "sizing": {},
+        "locationRelativeToParent": {
+          "x": 0,
+          "y": -0.55
+        },
+        "dimensions": {
+          "width": 62,
+          "height": 24
+        }
+      },
+      "style_NVL2AD": {
+        "fontFamily": "Inter",
+        "fontWeight": 500,
+        "fontSize": 16,
+        "lineHeight": "1.5em",
+        "letterSpacing": "-1.953125%",
+        "textAlignHorizontal": "LEFT",
+        "textAlignVertical": "TOP"
+      },
+      "layout_QEA4FE": {
+        "mode": "none",
+        "sizing": {},
+        "locationRelativeToParent": {
+          "x": 0,
+          "y": 0.22
+        },
+        "dimensions": {
+          "width": 151,
+          "height": 20
+        }
+      },
+      "style_XEH7HR": {
+        "fontFamily": "Inter",
+        "fontWeight": 500,
+        "fontSize": 14,
+        "lineHeight": "1.4285714285714286em",
+        "letterSpacing": "-1.07421875%",
+        "textAlignHorizontal": "LEFT",
+        "textAlignVertical": "TOP"
+      },
+      "layout_C9TP33": {
+        "mode": "column",
+        "gap": "3.9973697662353516px",
+        "padding": "16.611053466796875px 16.611042022705078px 0.6120359897613525px 16.611034393310547px",
+        "sizing": {
+          "horizontal": "fixed",
+          "vertical": "fixed"
+        },
+        "locationRelativeToParent": {
+          "x": 0,
+          "y": 93.2
+        },
+        "dimensions": {
+          "width": 297.97,
+          "height": 81.21
+        }
+      },
+      "layout_3X32VU": {
+        "mode": "none",
+        "sizing": {},
+        "locationRelativeToParent": {
+          "x": 0,
+          "y": -0.55
+        },
+        "dimensions": {
+          "width": 91,
+          "height": 24
+        }
+      },
+      "layout_VKL56U": {
+        "mode": "none",
+        "sizing": {},
+        "locationRelativeToParent": {
+          "x": 0,
+          "y": 0.22
+        },
+        "dimensions": {
+          "width": 119,
+          "height": 20
+        }
+      },
+      "layout_4VXL6T": {
+        "mode": "column",
+        "gap": "3.9973697662353516px",
+        "padding": "16.61102294921875px 16.611042022705078px 0.6120359897613525px 16.611034393310547px",
+        "sizing": {
+          "horizontal": "fixed",
+          "vertical": "fixed"
+        },
+        "locationRelativeToParent": {
+          "x": 0,
+          "y": 186.4
+        },
+        "dimensions": {
+          "width": 297.97,
+          "height": 81.21
+        }
+      },
+      "layout_O9YARN": {
+        "mode": "none",
+        "sizing": {},
+        "locationRelativeToParent": {
+          "x": 0,
+          "y": -0.55
+        },
+        "dimensions": {
+          "width": 58,
+          "height": 24
+        }
+      },
+      "layout_BD8KCW": {
+        "mode": "none",
+        "sizing": {},
+        "locationRelativeToParent": {
+          "x": 0,
+          "y": 0.22
+        },
+        "dimensions": {
+          "width": 164,
+          "height": 20
+        }
+      },
+      "layout_5CIL3D": {
+        "mode": "column",
+        "gap": "7.994770050048828px",
+        "sizing": {
+          "horizontal": "fixed",
+          "vertical": "fixed"
+        },
+        "locationRelativeToParent": {
+          "x": 16,
+          "y": 744
+        },
+        "dimensions": {
+          "width": 360.93,
+          "height": 83.96
+        }
+      },
+      "layout_NIZPGA": {
+        "mode": "row",
+        "alignItems": "flex-end",
+        "alignSelf": "stretch",
+        "gap": "7.9947357177734375px",
+        "padding": "0px 15.998981475830078px 11.992027282714844px 15.999000549316406px",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "fixed"
+        }
+      },
+      "fill_2DZSYX": [
+        "#F3F3F5"
+      ],
+      "effect_3HFFPZ": {
+        "boxShadow": "0px 4px 6px -4px rgba(0, 0, 0, 0.1), 0px 10px 15px -3px rgba(0, 0, 0, 0.1)"
+      },
+      "layout_H6LU2E": {
+        "mode": "row",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "fixed"
+        },
+        "dimensions": {
+          "height": 23.99
+        }
+      },
+      "layout_LZD30D": {
+        "mode": "none",
+        "sizing": {
+          "horizontal": "hug",
+          "vertical": "hug"
+        }
+      },
+      "style_GU5XOL": {
+        "fontFamily": "Inter",
+        "fontWeight": 400,
+        "fontSize": 16,
+        "lineHeight": "1.5em",
+        "letterSpacing": "-1.953125%",
+        "textAlignHorizontal": "LEFT",
+        "textAlignVertical": "TOP"
+      },
+      "fill_9HWVGQ": [
+        "rgba(10, 10, 10, 0.5)"
+      ],
+      "layout_CC3A2C": {
+        "mode": "column",
+        "padding": "7.99468994140625px 7.994718551635742px 0px 7.994720458984375px",
+        "sizing": {
+          "horizontal": "fixed",
+          "vertical": "fixed"
+        },
+        "dimensions": {
+          "width": 35.99,
+          "height": 35.99
+        }
+      },
+      "fill_5HVSS3": [
+        "#030213"
+      ],
+      "layout_D7GN6N": {
+        "mode": "none",
+        "sizing": {},
+        "locationRelativeToParent": {
+          "x": 1.67,
+          "y": 1.66
+        },
+        "dimensions": {
+          "width": 16.67,
+          "height": 16.67
+        }
+      },
+      "stroke_TQLGCY": {
+        "colors": [
+          "#FFFFFF"
+        ],
+        "strokeWeight": "1.66636323928833px"
+      },
+      "layout_P80CFH": {
+        "mode": "none",
+        "sizing": {},
+        "locationRelativeToParent": {
+          "x": 9.09,
+          "y": 1.79
+        },
+        "dimensions": {
+          "width": 9.12,
+          "height": 9.11
+        }
+      },
+      "layout_69X5QO": {
+        "mode": "none",
+        "sizing": {
+          "horizontal": "fill",
+          "vertical": "fixed"
+        },
+        "dimensions": {
+          "height": 16
+        }
+      },
+      "layout_MTFN2K": {
+        "mode": "none",
+        "sizing": {},
+        "locationRelativeToParent": {
+          "x": 76.58,
+          "y": 0.61
+        },
+        "dimensions": {
+          "width": 209,
+          "height": 16
+        }
+      },
+      "style_2G8F4G": {
+        "fontFamily": "Inter",
+        "fontWeight": 400,
+        "fontSize": 12,
+        "lineHeight": "1.3333333333333333em",
+        "textAlignHorizontal": "CENTER",
+        "textAlignVertical": "TOP"
+      }
+    }
+  }
+}

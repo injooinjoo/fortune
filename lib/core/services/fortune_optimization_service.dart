@@ -4,43 +4,45 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/cached_fortune_result.dart';
 import '../../features/fortune/domain/models/fortune_conditions.dart';
 import '../utils/logger.dart';
+import 'cohort_fortune_service.dart';
 
-/// 운세 조회 최적화 서비스 (API 비용 72% 절감)
+/// 운세 조회 최적화 서비스 (API 비용 90% 절감)
 ///
-/// 6단계 프로세스:
+/// 5단계 프로세스:
 /// 1️⃣ 개인 캐시 확인 (오늘 이미 조회?)
-/// 2️⃣ DB 풀 크기 확인 (300개 이상?)
-/// 3️⃣ 30% 랜덤 선택
-/// 4️⃣ API 호출 준비
-/// 5️⃣ 광고 표시
-/// 6️⃣ 결과 저장 & 표시
+/// 2️⃣ Cohort Pool 조회 (90% 절감)
+/// 3️⃣ DB 풀 크기 확인 (300개 이상?)
+/// 4️⃣ 30% 랜덤 선택
+/// 5️⃣ API 호출 & 결과 저장
 class FortuneOptimizationService {
   final SupabaseClient _supabase;
+  late final CohortFortuneService _cohortService;
 
   // 상수
-  static const int dbPoolThreshold = 300; // DB 풀 최소 크기 (1000 → 300 최적화)
+  static const int dbPoolThreshold = 300; // DB 풀 최소 크기
+  static const int cohortPoolThreshold = 25; // Cohort Pool 최소 크기
   static const double randomSelectionProbability = 0.3; // 30% 확률
-  static const double personalCacheAdProbability = 0.5; // 개인 캐시 50% 광고 확률
-  static const Duration delayDuration = Duration(seconds: 5); // 5초 대기
 
   FortuneOptimizationService({SupabaseClient? supabase})
-      : _supabase = supabase ?? Supabase.instance.client;
+      : _supabase = supabase ?? Supabase.instance.client {
+    _cohortService = CohortFortuneService(supabase: _supabase);
+  }
 
-  /// 운세 조회 메인 메서드 (6단계 프로세스 총괄)
+  /// 운세 조회 메인 메서드
   ///
   /// [userId] 사용자 ID
   /// [fortuneType] 운세 종류 (예: 'daily', 'love', 'tarot')
   /// [conditions] 운세별 조건 객체
-  /// [onShowAd] 광고 표시 콜백 (5단계)
-  /// [onAPICall] API 호출 콜백 (6단계)
+  /// [onAPICall] API 호출 콜백
+  /// [inputConditions] Cohort Pool 조회용 원본 입력 (선택)
   ///
   /// Returns: [CachedFortuneResult] 운세 결과
   Future<CachedFortuneResult> getFortune({
     required String userId,
     required String fortuneType,
     required FortuneConditions conditions,
-    required Future<void> Function() onShowAd,
     required Future<Map<String, dynamic>> Function(Map<String, dynamic>) onAPICall,
+    Map<String, dynamic>? inputConditions,
   }) async {
     final conditionsHash = conditions.generateHash();
 
@@ -54,19 +56,24 @@ class FortuneOptimizationService {
         conditionsHash: conditionsHash,
       );
       if (personalCache != null) {
-        // 50% 확률로 광고 표시
-        final showAd = Random().nextDouble() < personalCacheAdProbability;
-        if (showAd) {
-          Logger.debug('[FortuneOptimization] ✅ [1단계] 개인 캐시 히트 - 50% 광고 표시');
-          await onShowAd();
-          await Future.delayed(delayDuration);
-        } else {
-          Logger.debug('[FortuneOptimization] ✅ [1단계] 개인 캐시 히트 - 즉시 반환 (광고 생략)');
-        }
+        Logger.debug('[FortuneOptimization] ✅ [1단계] 개인 캐시 히트 - 즉시 반환');
         return personalCache.copyWith(source: 'personal_cache');
       }
 
-      // 2️⃣ DB 풀 크기 확인
+      // 2️⃣ Cohort Pool 조회 (90% API 절감)
+      final cohortResult = await _checkCohortPool(
+        userId: userId,
+        fortuneType: fortuneType,
+        conditionsHash: conditionsHash,
+        conditions: conditions,
+        inputConditions: inputConditions ?? conditions.buildAPIPayload(),
+      );
+      if (cohortResult != null) {
+        Logger.debug('[FortuneOptimization] ✅ [2단계] Cohort Pool 히트 - 즉시 반환');
+        return cohortResult.copyWith(source: 'cohort_pool');
+      }
+
+      // 3️⃣ DB 풀 크기 확인
       final dbPoolResult = await _checkDBPoolSize(
         userId: userId,
         fortuneType: fortuneType,
@@ -74,11 +81,11 @@ class FortuneOptimizationService {
         conditions: conditions,
       );
       if (dbPoolResult != null) {
-        Logger.debug('[FortuneOptimization] ✅ [2단계] DB 풀 사용 - 랜덤 선택 완료');
+        Logger.debug('[FortuneOptimization] ✅ [3단계] DB 풀 사용 - 랜덤 선택 완료');
         return dbPoolResult.copyWith(source: 'db_pool');
       }
 
-      // 3️⃣ 30% 랜덤 선택
+      // 4️⃣ 30% 랜덤 선택
       final randomResult = await _randomSelection(
         userId: userId,
         fortuneType: fortuneType,
@@ -86,24 +93,105 @@ class FortuneOptimizationService {
         conditions: conditions,
       );
       if (randomResult != null) {
-        Logger.debug('[FortuneOptimization] ✅ [3단계] 랜덤 선택 - DB에서 가져옴');
+        Logger.debug('[FortuneOptimization] ✅ [4단계] 랜덤 선택 - DB에서 가져옴');
         return randomResult.copyWith(source: 'random_selection');
       }
 
-      // 4️⃣-6️⃣ API 호출
-      Logger.debug('[FortuneOptimization] 🔄 [4-6단계] API 호출 진행');
-      return await _callAPIAndSave(
+      // 5️⃣ API 호출
+      Logger.debug('[FortuneOptimization] 🔄 [5단계] API 호출 진행');
+      final apiResult = await _callAPIAndSave(
         userId: userId,
         fortuneType: fortuneType,
         conditionsHash: conditionsHash,
         conditions: conditions,
-        onShowAd: onShowAd,
         onAPICall: onAPICall,
       );
+
+      // API 호출 후 Cohort Pool에 저장 (다음 사용자를 위해)
+      if (apiResult.apiCall) {
+        await _saveToCohortPool(
+          fortuneType: fortuneType,
+          inputConditions: inputConditions ?? conditions.buildAPIPayload(),
+          resultData: apiResult.resultData,
+        );
+      }
+
+      return apiResult;
     } catch (e, stackTrace) {
       debugPrint('❌ 운세 조회 실패: $e');
       debugPrint('Stack trace: $stackTrace');
       rethrow;
+    }
+  }
+
+  /// 2단계: Cohort Pool 조회
+  ///
+  /// 동일 Cohort(나잇대, 띠, 오행 등)의 기존 결과 활용
+  Future<CachedFortuneResult?> _checkCohortPool({
+    required String userId,
+    required String fortuneType,
+    required String conditionsHash,
+    required FortuneConditions conditions,
+    required Map<String, dynamic> inputConditions,
+  }) async {
+    try {
+      // Cohort Pool 크기 확인
+      final poolSize = await _cohortService.getPoolSize(
+        fortuneType: fortuneType,
+        input: inputConditions,
+      );
+
+      if (poolSize < cohortPoolThreshold) {
+        debugPrint('  ✗ Cohort Pool 부족 ($poolSize/$cohortPoolThreshold)');
+        return null;
+      }
+
+      debugPrint('  ✓ Cohort Pool 충분 ($poolSize개)');
+
+      // Cohort Pool에서 결과 조회
+      final cohortResult = await _cohortService.getFromCohortPool(
+        fortuneType: fortuneType,
+        input: inputConditions,
+      );
+
+      if (cohortResult == null) {
+        debugPrint('  ✗ Cohort Pool 조회 실패');
+        return null;
+      }
+
+      debugPrint('  ✓ Cohort Pool에서 결과 조회 성공');
+
+      // 사용자 히스토리에 저장
+      return await _saveToUserHistory(
+        userId: userId,
+        fortuneType: fortuneType,
+        conditionsHash: conditionsHash,
+        conditions: conditions,
+        resultData: cohortResult.data,
+        source: 'cohort_pool',
+        apiCall: false,
+      );
+    } catch (e) {
+      debugPrint('  ⚠️ Cohort Pool 조회 실패: $e');
+      return null; // 에러 시 다음 단계로 진행
+    }
+  }
+
+  /// Cohort Pool에 결과 저장 (API 호출 후)
+  Future<void> _saveToCohortPool({
+    required String fortuneType,
+    required Map<String, dynamic> inputConditions,
+    required Map<String, dynamic> resultData,
+  }) async {
+    try {
+      await _cohortService.saveToPool(
+        fortuneType: fortuneType,
+        input: inputConditions,
+        result: resultData,
+      );
+      debugPrint('  ✅ Cohort Pool 저장 완료');
+    } catch (e) {
+      debugPrint('  ⚠️ Cohort Pool 저장 실패 (무시): $e');
     }
   }
 
@@ -116,7 +204,7 @@ class FortuneOptimizationService {
     required String conditionsHash,
   }) async {
     try {
-      // ✅ Date 컬럼으로 조회 (unique constraint와 일치)
+      // Date 컬럼으로 조회 (unique constraint와 일치)
       final today = DateTime.now();
       final todayDate = '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
 
@@ -126,7 +214,7 @@ class FortuneOptimizationService {
           .eq('user_id', userId)
           .eq('fortune_type', fortuneType)
           .eq('conditions_hash', conditionsHash)
-          .eq('date', todayDate)  // ✅ FIXED: Use date column (not created_at)
+          .eq('date', todayDate)
           .order('created_at', ascending: false)
           .limit(1)
           .maybeSingle();
@@ -144,9 +232,9 @@ class FortuneOptimizationService {
     }
   }
 
-  /// 2단계: DB 풀 크기 확인
+  /// 3단계: DB 풀 크기 확인
   ///
-  /// 동일 조건의 전체 데이터가 1000개 이상이면 랜덤 선택
+  /// 동일 조건의 전체 데이터가 300개 이상이면 랜덤 선택
   Future<CachedFortuneResult?> _checkDBPoolSize({
     required String userId,
     required String fortuneType,
@@ -154,7 +242,7 @@ class FortuneOptimizationService {
     required FortuneConditions conditions,
   }) async {
     try {
-      // 2-1. DB 풀 크기 확인
+      // DB 풀 크기 확인
       final countResponse = await _supabase
           .from('fortune_results')
           .select('id')
@@ -171,7 +259,7 @@ class FortuneOptimizationService {
 
       debugPrint('  ✓ DB 풀 충분 ($count개)');
 
-      // 2-2. 랜덤 선택
+      // 랜덤 선택
       final randomOffset = Random().nextInt(count);
       final randomResult = await _supabase
           .from('fortune_results')
@@ -182,11 +270,7 @@ class FortuneOptimizationService {
           .range(randomOffset, randomOffset)
           .single();
 
-      // 2-3. 5초 대기
-      debugPrint('  ⏳ 5초 대기 중...');
-      await Future.delayed(delayDuration);
-
-      // 2-4. 사용자 히스토리에 저장
+      // 사용자 히스토리에 저장
       await _saveToUserHistory(
         userId: userId,
         fortuneType: fortuneType,
@@ -204,7 +288,7 @@ class FortuneOptimizationService {
     }
   }
 
-  /// 3단계: 30% 랜덤 선택
+  /// 4단계: 30% 랜덤 선택
   ///
   /// 30% 확률로 기존 DB에서 랜덤 선택
   Future<CachedFortuneResult?> _randomSelection({
@@ -214,7 +298,7 @@ class FortuneOptimizationService {
     required FortuneConditions conditions,
   }) async {
     try {
-      // 3-1. 30% 확률 체크
+      // 30% 확률 체크
       final random = Random().nextDouble();
       if (random >= randomSelectionProbability) {
         debugPrint('  ✗ 랜덤 미선택 (${(random * 100).toStringAsFixed(1)}% > 30%)');
@@ -223,7 +307,7 @@ class FortuneOptimizationService {
 
       debugPrint('  ✓ 랜덤 선택 (${(random * 100).toStringAsFixed(1)}% < 30%)');
 
-      // 3-2. DB에서 최근 100개 중 랜덤 선택
+      // DB에서 최근 100개 중 랜덤 선택
       final results = await _supabase
           .from('fortune_results')
           .select()
@@ -240,11 +324,7 @@ class FortuneOptimizationService {
       final selectedResult = results[Random().nextInt(results.length)];
       debugPrint('  ✓ ${results.length}개 중 하나 선택');
 
-      // 3-3. 5초 대기
-      debugPrint('  ⏳ 5초 대기 중...');
-      await Future.delayed(delayDuration);
-
-      // 3-4. 사용자 히스토리에 저장
+      // 사용자 히스토리에 저장
       await _saveToUserHistory(
         userId: userId,
         fortuneType: fortuneType,
@@ -262,7 +342,7 @@ class FortuneOptimizationService {
     }
   }
 
-  /// 4-6단계: API 호출 & 저장
+  /// 5단계: API 호출 & 저장
   ///
   /// API 호출하여 새로운 운세 생성
   Future<CachedFortuneResult> _callAPIAndSave({
@@ -270,27 +350,21 @@ class FortuneOptimizationService {
     required String fortuneType,
     required String conditionsHash,
     required FortuneConditions conditions,
-    required Future<void> Function() onShowAd,
     required Future<Map<String, dynamic>> Function(Map<String, dynamic>) onAPICall,
   }) async {
     debugPrint('  🔄 API 호출 준비');
 
     try {
-      // 4. API 페이로드 생성
+      // API 페이로드 생성
       final payload = conditions.buildAPIPayload();
       debugPrint('  ✓ 페이로드 생성 완료');
 
-      // 5. 광고 표시 (5초)
-      debugPrint('  📺 광고 표시 중...');
-      await onShowAd();
-      await Future.delayed(delayDuration);
-
-      // 6. API 호출
+      // API 호출
       debugPrint('  🔄 API 호출 중...');
       final resultData = await onAPICall(payload);
       debugPrint('  ✓ API 응답 수신');
 
-      // 6-2. DB 저장
+      // DB 저장
       final savedResult = await _saveToUserHistory(
         userId: userId,
         fortuneType: fortuneType,
@@ -336,8 +410,6 @@ class FortuneOptimizationService {
         'date': today,
         'created_at': now.toIso8601String(),
         'updated_at': now.toIso8601String(),
-        // 인덱싱용 필드 추가 (DB 컬럼이 없으면 무시됨)
-        // ...conditions.toIndexableFields(), // ← 주석 처리 (DB에 해당 컬럼 없음)
       };
 
       final response = await _supabase
@@ -352,7 +424,6 @@ class FortuneOptimizationService {
       debugPrint('  ❌ fortune_results 저장 실패: $e');
 
       // DB 저장 실패해도 결과는 반환 (메모리에서 생성)
-      // ⚠️ 주의: 저장 실패 시 다음 실행에서 캐시를 찾을 수 없음!
       final now = DateTime.now();
       return CachedFortuneResult(
         id: 'temp_${DateTime.now().millisecondsSinceEpoch}',

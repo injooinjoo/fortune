@@ -276,7 +276,7 @@ class _DSToastWidgetState extends State<_DSToastWidget>
               decoration: BoxDecoration(
                 color: backgroundColor,
                 borderRadius: BorderRadius.circular(DSRadius.md),
-                boxShadow: [shadows.toast],
+                boxShadow: shadows.toast,
                 border: widget.type == DSToastType.info
                     ? Border.all(color: colors.border, width: 1)
                     : null,

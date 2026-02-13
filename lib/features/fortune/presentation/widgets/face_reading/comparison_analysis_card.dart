@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import '../../../../../core/design_system/design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
 import '../../../domain/models/face_reading_history_entry.dart';
 
 /// 두 날짜 비교 분석 카드
@@ -20,9 +19,6 @@ class ComparisonAnalysisCard extends StatelessWidget {
   /// 두 번째 날짜의 엔트리
   final FaceReadingHistoryEntry? entry2;
 
-  /// 다크 모드 여부
-  final bool isDark;
-
   /// 닫기 콜백
   final VoidCallback? onClose;
 
@@ -31,7 +27,6 @@ class ComparisonAnalysisCard extends StatelessWidget {
     required this.comparison,
     this.entry1,
     this.entry2,
-    this.isDark = false,
     this.onClose,
   });
 
@@ -40,18 +35,11 @@ class ComparisonAnalysisCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? DSColors.surfaceDark : DSColors.surface,
+        color: context.isDark ? DSColors.surfaceDark : DSColors.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? DSColors.borderDark : DSColors.border,
+          color: context.isDark ? DSColors.borderDark : DSColors.border,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,11 +54,11 @@ class ComparisonAnalysisCard extends StatelessWidget {
 
           // 컨디션 변화
           _buildConditionChange(context),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
 
           // 감정 변화
           _buildEmotionChange(context),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
 
           // 카테고리별 변화
           _buildScoreChanges(context),
@@ -93,7 +81,7 @@ class ComparisonAnalysisCard extends StatelessWidget {
             color: DSColors.accentSecondary.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(
+          child: const Icon(
             Icons.compare_arrows,
             color: DSColors.accentSecondary,
             size: 22,
@@ -107,7 +95,7 @@ class ComparisonAnalysisCard extends StatelessWidget {
               Text(
                 '변화 비교',
                 style: context.labelMedium.copyWith(
-                  color: isDark
+                  color: context.isDark
                       ? DSColors.textPrimaryDark
                       : DSColors.textPrimary,
                   fontWeight: FontWeight.w600,
@@ -116,7 +104,7 @@ class ComparisonAnalysisCard extends StatelessWidget {
               Text(
                 '두 순간의 나를 비교해 봤어요',
                 style: context.labelSmall.copyWith(
-                  color: isDark
+                  color: context.isDark
                       ? DSColors.textSecondaryDark
                       : DSColors.textSecondary,
                 ),
@@ -130,14 +118,14 @@ class ComparisonAnalysisCard extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: isDark
+                color: context.isDark
                     ? DSColors.borderDark.withValues(alpha: 0.5)
                     : DSColors.border.withValues(alpha: 0.5),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.close,
-                color: isDark
+                color: context.isDark
                     ? DSColors.textSecondaryDark
                     : DSColors.textSecondary,
                 size: 18,
@@ -163,8 +151,8 @@ class ComparisonAnalysisCard extends StatelessWidget {
             false,
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12),
           child: Icon(
             Icons.arrow_forward,
             color: DSColors.accent,
@@ -206,14 +194,14 @@ class ComparisonAnalysisCard extends StatelessWidget {
           Text(
             dateStr,
             style: context.labelMedium.copyWith(
-              color: isDark
+              color: context.isDark
                   ? DSColors.textPrimaryDark
                   : DSColors.textPrimary,
               fontWeight: FontWeight.w600,
             ),
           ),
           if (score != null) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: DSSpacing.sm),
             Text(
               '$score점',
               style: context.heading4.copyWith(
@@ -237,7 +225,7 @@ class ComparisonAnalysisCard extends StatelessWidget {
         Text(
           '컨디션 변화',
           style: context.labelMedium.copyWith(
-            color: isDark
+            color: context.isDark
                 ? DSColors.textPrimaryDark
                 : DSColors.textPrimary,
             fontWeight: FontWeight.w600,
@@ -264,7 +252,7 @@ class ComparisonAnalysisCard extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: isDark
+            color: context.isDark
                 ? DSColors.backgroundDark.withValues(alpha: 0.5)
                 : DSColors.background,
             borderRadius: BorderRadius.circular(8),
@@ -272,7 +260,7 @@ class ComparisonAnalysisCard extends StatelessWidget {
           child: Text(
             change.summary,
             style: context.labelSmall.copyWith(
-              color: isDark
+              color: context.isDark
                   ? DSColors.textSecondaryDark
                   : DSColors.textSecondary,
             ),
@@ -292,7 +280,7 @@ class ComparisonAnalysisCard extends StatelessWidget {
         Text(
           '표정 변화',
           style: context.labelMedium.copyWith(
-            color: isDark
+            color: context.isDark
                 ? DSColors.textPrimaryDark
                 : DSColors.textPrimary,
             fontWeight: FontWeight.w600,
@@ -331,7 +319,7 @@ class ComparisonAnalysisCard extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: isDark
+            color: context.isDark
                 ? DSColors.backgroundDark.withValues(alpha: 0.5)
                 : DSColors.background,
             borderRadius: BorderRadius.circular(8),
@@ -339,7 +327,7 @@ class ComparisonAnalysisCard extends StatelessWidget {
           child: Text(
             change.summary,
             style: context.labelSmall.copyWith(
-              color: isDark
+              color: context.isDark
                   ? DSColors.textSecondaryDark
                   : DSColors.textSecondary,
             ),
@@ -359,7 +347,7 @@ class ComparisonAnalysisCard extends StatelessWidget {
         Text(
           '카테고리별 변화',
           style: context.labelMedium.copyWith(
-            color: isDark
+            color: context.isDark
                 ? DSColors.textPrimaryDark
                 : DSColors.textPrimary,
             fontWeight: FontWeight.w600,
@@ -382,7 +370,7 @@ class ComparisonAnalysisCard extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: isDark
+            color: context.isDark
                 ? DSColors.backgroundDark.withValues(alpha: 0.5)
                 : DSColors.background,
             borderRadius: BorderRadius.circular(8),
@@ -390,7 +378,7 @@ class ComparisonAnalysisCard extends StatelessWidget {
           child: Text(
             changes.summary,
             style: context.labelSmall.copyWith(
-              color: isDark
+              color: context.isDark
                   ? DSColors.textSecondaryDark
                   : DSColors.textSecondary,
             ),
@@ -413,7 +401,7 @@ class ComparisonAnalysisCard extends StatelessWidget {
         ? DSColors.success
         : isNegative
             ? DSColors.warning
-            : isDark
+            : context.isDark
                 ? DSColors.textSecondaryDark
                 : DSColors.textSecondary;
 
@@ -422,13 +410,13 @@ class ComparisonAnalysisCard extends StatelessWidget {
         Text(
           label,
           style: context.labelSmall.copyWith(
-            color: isDark
+            color: context.isDark
                 ? DSColors.textSecondaryDark
                 : DSColors.textSecondary,
             fontSize: 10,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: DSSpacing.xs),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -459,7 +447,7 @@ class ComparisonAnalysisCard extends StatelessWidget {
         ? DSColors.success
         : isNegative
             ? DSColors.warning
-            : isDark
+            : context.isDark
                 ? DSColors.textSecondaryDark
                 : DSColors.textSecondary;
 
@@ -475,13 +463,13 @@ class ComparisonAnalysisCard extends StatelessWidget {
           Text(
             label,
             style: context.labelSmall.copyWith(
-              color: isDark
+              color: context.isDark
                   ? DSColors.textSecondaryDark
                   : DSColors.textSecondary,
               fontSize: 11,
             ),
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: DSSpacing.xs),
           if (isPositive)
             Icon(Icons.arrow_upward, color: color, size: 12)
           else if (isNegative)
@@ -518,16 +506,16 @@ class ComparisonAnalysisCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Text(
+          const Text(
             '💫',
-            style: const TextStyle(fontSize: 24),
+            style: TextStyle(fontSize: 24),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               comparison.comparisonInsight,
               style: context.bodyMedium.copyWith(
-                color: isDark
+                color: context.isDark
                     ? DSColors.textPrimaryDark
                     : DSColors.textPrimary,
                 height: 1.5,

@@ -64,3 +64,17 @@ jobs:
           flutter pub outdated
           echo "## Flutter Outdated Packages" >> $GITHUB_STEP_SUMMARY
           flutter pub outdated >> $GITHUB_STEP_SUMMARY || true
+
+  # Slack 알림 (실패 시)
+  notify-slack:
+    name: Slack Notification
+    needs: [update-dependencies, security-audit]
+    if: always() && (failure() || cancelled())
+    uses: ./.github/workflows/slack-notify.yml
+    with:
+      workflow_name: "Dependency Update"
+      job_status: ${{ contains(needs.*.result, 'failure') && 'failure' || 'cancelled' }}
+      failed_jobs: "${{ needs.update-dependencies.result == 'failure' && 'update-dependencies ' || '' }}${{ needs.security-audit.result == 'failure' && 'security-audit' || '' }}"
+      custom_message: "주간 의존성 업데이트 실패. 수동 개입 필요."
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

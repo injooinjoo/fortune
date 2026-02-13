@@ -18,7 +18,7 @@ class FortuneLoadingWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     // 새로운 토스 스타일 로딩 위젯 사용
     return TossFortuneLoadingWidget(
-      message: message ?? '운세를 분석하는 중...',
+      message: message ?? '인사이트를 분석하는 중...',
     );
   }
 }

@@ -74,7 +74,7 @@ class _LoadingVideoPlayerState extends State<LoadingVideoPlayer> {
         width: widget.width,
         height: widget.height,
         child: Image.asset(
-          'assets/images/app_icon.png',
+          'assets/images/app_icon.webp',
           fit: BoxFit.contain,
         ),
       );

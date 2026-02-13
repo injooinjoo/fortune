@@ -9,6 +9,7 @@ import '../../core/constants/edge_functions_endpoints.dart';
 import '../../domain/entities/fortune.dart';
 import '../models/fortune_response_model.dart';
 import '../../presentation/providers/providers.dart';
+import '../../presentation/providers/subscription_provider.dart';
 import '../../services/weather_service.dart';
 import 'fortune_api_service.dart';
 
@@ -29,6 +30,9 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
     'love',         // 23초 소요 확인됨 (경계 수준)
     'avoid-people', // 15-18초 소요 확인됨
     'new-year',     // 22-28초 소요, 12개월 월별 운세 + 목표별 분석
+    'yearly',       // new-year와 동일 (getYearlyFortune에서 사용)
+    'face-reading', // 이미지 업로드 + AI 관상 분석 (Vision API 호출)
+    'past-life',    // 이미지 업로드 + 전생 분석
   ];
   
   FortuneApiServiceWithEdgeFunctions(this._ref) : super(_ref.read(apiClientProvider));
@@ -40,6 +44,15 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
     if (value is num) return value.toInt();
     if (value is String) return int.tryParse(value);
     return null;
+  }
+
+  /// 이름 유효성 검사 - "undefined", "null", 빈 문자열 등 처리
+  static String _sanitizeName(dynamic name) {
+    const invalidNames = ['undefined', 'null', 'Unknown', ''];
+    if (name == null) return '회원';
+    final nameStr = name.toString().trim();
+    if (invalidNames.contains(nameStr)) return '회원';
+    return nameStr;
   }
   
   /// Get weather info optionally (doesn't fail if location permission denied)
@@ -95,54 +108,40 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
     try {
       debugPrint('📡 [FortuneApiServiceWithEdgeFunctions] Calling Edge Function');
       debugPrint('endpoint: $endpoint, userId: $userId, fortuneType: $fortuneType');
-      
-      // Get user profile to include name
-      final supabase = Supabase.instance.client;
-      final userProfileResponse = await supabase
-          .from('user_profiles')
-          .select('name, birth_date, birth_time, gender, mbti, blood_type, zodiac_sign, chinese_zodiac, saju_calculated')
-          .eq('id', userId)
-          .maybeSingle();
 
-      // 프로필 데이터 로깅
-      debugPrint('👤 [PROFILE] user_profiles 데이터:');
-      if (userProfileResponse != null) {
-        debugPrint('👤 [PROFILE] - name: ${userProfileResponse['name']}');
-        debugPrint('👤 [PROFILE] - birth_date: ${userProfileResponse['birth_date']}');
-        debugPrint('👤 [PROFILE] - birth_time: ${userProfileResponse['birth_time']}');
-        debugPrint('👤 [PROFILE] - gender: ${userProfileResponse['gender']}');
-        debugPrint('👤 [PROFILE] - saju_calculated: ${userProfileResponse['saju_calculated']}');
-        debugPrint('👤 [PROFILE] - zodiac_sign: ${userProfileResponse['zodiac_sign']}');
-        debugPrint('👤 [PROFILE] - chinese_zodiac: ${userProfileResponse['chinese_zodiac']}');
-      } else {
-        debugPrint('👤 [PROFILE] ❌ user_profiles 데이터가 없습니다!');
+      // 게스트 사용자 체크 - guest_ 접두사가 있으면 DB 쿼리 스킵
+      final isGuest = userId.startsWith('guest_');
+      if (isGuest) {
+        debugPrint('👤 [GUEST] 게스트 사용자 감지 - DB 쿼리 스킵');
       }
 
-      // Get saju data if available
+      // Get user profile and saju data in parallel (게스트는 스킵)
+      final supabase = Supabase.instance.client;
+      Map<String, dynamic>? userProfileResponse;
       Map<String, dynamic>? sajuData;
-      try {
-        final sajuResponse = await supabase
-            .from('user_saju')
-            .select('*')
-            .eq('user_id', userId)
-            .maybeSingle();
 
+      if (!isGuest) {
+        // 🚀 병렬 쿼리 실행 (성능 최적화: ~300ms 절약)
+        final queryResults = await Future.wait([
+          supabase
+              .from('user_profiles')
+              .select('name, birth_date, birth_time, gender, mbti, blood_type, zodiac_sign, chinese_zodiac, saju_calculated')
+              .eq('id', userId)
+              .maybeSingle(),
+          supabase
+              .from('user_saju')
+              .select('*')
+              .eq('user_id', userId)
+              .maybeSingle(),
+        ]);
+
+        userProfileResponse = queryResults[0];
+        final sajuResponse = queryResults[1];
+
+        debugPrint('👤 [PROFILE] user_profiles: ${userProfileResponse != null ? '✅' : '❌'}, user_saju: ${sajuResponse != null ? '✅' : '❌'}');
+
+        // Saju 데이터 변환
         if (sajuResponse != null) {
-          debugPrint('✅ Saju data found for user');
-          debugPrint('🔮 [SAJU] user_saju 테이블 데이터:');
-          // 실제 DB 컬럼명 사용 (stem/branch)
-          debugPrint('🔮 [SAJU] - year_stem: ${sajuResponse['year_stem']}');
-          debugPrint('🔮 [SAJU] - year_branch: ${sajuResponse['year_branch']}');
-          debugPrint('🔮 [SAJU] - month_stem: ${sajuResponse['month_stem']}');
-          debugPrint('🔮 [SAJU] - month_branch: ${sajuResponse['month_branch']}');
-          debugPrint('🔮 [SAJU] - day_stem: ${sajuResponse['day_stem']}');
-          debugPrint('🔮 [SAJU] - day_branch: ${sajuResponse['day_branch']}');
-          debugPrint('🔮 [SAJU] - hour_stem: ${sajuResponse['hour_stem']}');
-          debugPrint('🔮 [SAJU] - hour_branch: ${sajuResponse['hour_branch']}');
-          debugPrint('🔮 [SAJU] - weak_element: ${sajuResponse['weak_element']}');
-          debugPrint('🔮 [SAJU] - strong_element: ${sajuResponse['strong_element']}');
-
-          // Edge Function 호환을 위해 pillar 형태로 변환하여 sajuData 구성
           sajuData = {
             ...sajuResponse,
             // 천간(stem) + 지지(branch) 결합하여 pillar 형태 추가
@@ -164,17 +163,9 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
             'weak_element': sajuResponse['weak_element'],
             'strong_element': sajuResponse['strong_element'],
           };
-
-          debugPrint('🔮 [SAJU] 변환된 pillar 데이터:');
-          debugPrint('🔮 [SAJU] - year_pillar: ${sajuData['year_pillar']}');
-          debugPrint('🔮 [SAJU] - day_pillar: ${sajuData['day_pillar']}');
-          debugPrint('🔮 [SAJU] - day_master: ${sajuData['day_master']}');
-          debugPrint('🔮 [SAJU] - five_elements: ${sajuData['five_elements']}');
-        } else {
-          debugPrint('⚠️ No saju data found in user_saju table for user: $userId');
         }
-      } catch (e) {
-        debugPrint('⚠️ Error fetching saju data: $e');
+      } else {
+        debugPrint('👤 [GUEST] 게스트 사용자 - DB 쿼리 스킵');
       }
       
       // Debug info
@@ -194,9 +185,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         ...?data,
         'userId': userId,
         if (userProfileResponse != null) ...{
-          'name': (userProfileResponse['name'] != null && (userProfileResponse['name'] as String).isNotEmpty)
-              ? userProfileResponse['name']
-              : '사용자',  // Default to '사용자' instead of empty string
+          'name': _sanitizeName(userProfileResponse['name']),
           'birthDate': userProfileResponse['birth_date'],
           'birthTime': userProfileResponse['birth_time'],
           'gender': userProfileResponse['gender'],
@@ -207,28 +196,13 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
           'zodiacAnimal': userProfileResponse['chinese_zodiac'],
           'sajuCalculated': userProfileResponse['saju_calculated'] ?? false},
         if (sajuData != null) 'sajuData': sajuData,
-        if (userLocation != null) 'location': userLocation};
+        if (userLocation != null) 'location': userLocation,
+        'isSubscriber': _ref.read(isSubscriptionActiveProvider),
+      };
 
-      // 📤 API 요청 데이터 상세 로깅
-      debugPrint('📤 [API REQUEST] Edge Function으로 전송할 데이터:');
-      debugPrint('📤 [API REQUEST] - keys: ${requestData.keys.toList()}');
-      debugPrint('📤 [API REQUEST] - name: ${requestData['name']}');
-      debugPrint('📤 [API REQUEST] - birthDate: ${requestData['birthDate']}');
-      debugPrint('📤 [API REQUEST] - birthTime: ${requestData['birthTime']}');
-      debugPrint('📤 [API REQUEST] - gender: ${requestData['gender']}');
-      debugPrint('📤 [API REQUEST] - sajuCalculated: ${requestData['sajuCalculated']}');
-      debugPrint('📤 [API REQUEST] - sajuData 존재: ${requestData['sajuData'] != null}');
-      if (requestData['sajuData'] != null) {
-        final saju = requestData['sajuData'] as Map<String, dynamic>;
-        debugPrint('📤 [API REQUEST] - sajuData.year_pillar: ${saju['year_pillar']}');
-        debugPrint('📤 [API REQUEST] - sajuData.month_pillar: ${saju['month_pillar']}');
-        debugPrint('📤 [API REQUEST] - sajuData.day_pillar: ${saju['day_pillar']}');
-        debugPrint('📤 [API REQUEST] - sajuData.hour_pillar: ${saju['hour_pillar']}');
-        debugPrint('📤 [API REQUEST] - sajuData.day_master: ${saju['day_master']}');
-        debugPrint('📤 [API REQUEST] - sajuData.five_elements: ${saju['five_elements']}');
-      }
-      debugPrint('📤 [API REQUEST] - date: ${requestData['date']}');
-      debugPrint('📤 [API REQUEST] - period: ${requestData['period']}');
+      // 📤 API 요청 요약 (개인정보 제외)
+      debugPrint('📤 [API REQUEST] keys: ${requestData.keys.toList()}');
+      debugPrint('📤 [API REQUEST] sajuData: ${requestData['sajuData'] != null ? '✅' : '❌'}, isSubscriber: ${requestData['isSubscriber']}');
 
       // Create a custom Dio instance for Edge Functions
       debugPrint('URL: ${EdgeFunctionsEndpoints.currentBaseUrl}');
@@ -270,8 +244,8 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         receiveTimeout: timeout,
         sendTimeout: timeout,
         validateStatus: (status) => status! < 500));
-      debugPrint('present: ${Environment.supabaseAnonKey.isNotEmpty}');
-      debugPrint('prefix: ${Environment.supabaseAnonKey.substring(0, 20)}...');
+      // API 키 존재 확인 (보안상 키 값은 로깅하지 않음)
+      debugPrint('📡 [API] Supabase key: ${Environment.supabaseAnonKey.isNotEmpty ? '✅' : '❌'}');
 
       // Get auth token from Supabase session
       final session = Supabase.instance.client.auth.currentSession;
@@ -360,6 +334,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         debugPrint('📥 [_getFortuneFromEdgeFunction] Response keys: ${responseMap.keys.toList()}');
         throw Exception('Unknown response format from Edge Function');
       }
+
 
       // 📥 운세 응답 데이터 상세 로깅
       debugPrint('📥 [API RESPONSE] 운세 데이터 상세:');
@@ -615,6 +590,191 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         if (contentParts.isNotEmpty) {
           contentText = contentParts.join('');
           debugPrint('📝 [_getFortuneFromEdgeFunction] Built blind-date content (${contentText.length} chars)');
+        }
+      }
+
+      // Ex-lover fortune: build rich content from detailed fields
+      // API 응답 필드: hardTruth, theirPerspective, strategicAdvice, emotionalPrescription,
+      // reunionAssessment, closingMessage, personalizedAnalysis, newBeginning, milestones
+      if (fortuneType == 'ex-lover' || fortuneType == 'ex_lover') {
+        final contentParts = <String>[];
+
+        // 1. 개인화된 분석 (Opening)
+        final personalizedAnalysis = fortuneData['personalizedAnalysis'];
+        if (personalizedAnalysis is Map) {
+          final opening = personalizedAnalysis['opening'];
+          if (opening != null && opening.toString().isNotEmpty) {
+            contentParts.add('💜 $opening');
+          }
+          final insights = personalizedAnalysis['insights'];
+          if (insights is List && insights.isNotEmpty) {
+            contentParts.add('\n\n📌 핵심 인사이트\n• ${insights.join('\n• ')}');
+          }
+          final callout = personalizedAnalysis['callout'];
+          if (callout != null && callout.toString().isNotEmpty) {
+            contentParts.add('\n\n⚡ $callout');
+          }
+        }
+
+        // 2. 냉정한 진실 (Hard Truth) - 가장 중요한 섹션
+        final hardTruth = fortuneData['hardTruth'];
+        if (hardTruth is Map) {
+          contentParts.add('\n\n💔 냉정한 진실');
+          if (hardTruth['headline'] != null) {
+            contentParts.add('\n\n"${hardTruth['headline']}"');
+          }
+          if (hardTruth['diagnosis'] != null) {
+            contentParts.add('\n\n${hardTruth['diagnosis']}');
+          }
+          if (hardTruth['realityCheck'] != null) {
+            contentParts.add('\n\n🔍 현실 체크\n${hardTruth['realityCheck']}');
+          }
+          if (hardTruth['mostImportantAdvice'] != null) {
+            contentParts.add('\n\n💡 가장 중요한 조언\n${hardTruth['mostImportantAdvice']}');
+          }
+        } else if (hardTruth is String && hardTruth.isNotEmpty) {
+          contentParts.add('\n\n💔 냉정한 진실\n$hardTruth');
+        }
+
+        // 3. 재회 가능성 분석 (Reunion Assessment)
+        final reunionAssessment = fortuneData['reunionAssessment'];
+        if (reunionAssessment is Map) {
+          final score = reunionAssessment['score'];
+          contentParts.add('\n\n📊 재회 가능성 분석');
+          if (score != null) {
+            contentParts.add('\n\n재회 가능성: $score%');
+          }
+          final keyFactors = reunionAssessment['keyFactors'];
+          if (keyFactors is List && keyFactors.isNotEmpty) {
+            contentParts.add('\n\n핵심 요인:\n• ${keyFactors.join('\n• ')}');
+          }
+          if (reunionAssessment['timing'] != null) {
+            contentParts.add('\n\n⏰ 타이밍\n${reunionAssessment['timing']}');
+          }
+          if (reunionAssessment['approach'] != null) {
+            contentParts.add('\n\n🎯 접근 방법\n${reunionAssessment['approach']}');
+          }
+          final neverDo = reunionAssessment['neverDo'];
+          if (neverDo is List && neverDo.isNotEmpty) {
+            contentParts.add('\n\n🚫 절대 하지 말아야 할 것\n• ${neverDo.join('\n• ')}');
+          }
+        }
+
+        // 4. 상대방 관점 (Their Perspective)
+        final theirPerspective = fortuneData['theirPerspective'];
+        if (theirPerspective is Map) {
+          contentParts.add('\n\n💭 상대방의 마음');
+          if (theirPerspective['likelyThoughts'] != null) {
+            contentParts.add('\n\n그 사람의 감정:\n${theirPerspective['likelyThoughts']}');
+          }
+          if (theirPerspective['doTheyThinkOfYou'] != null) {
+            contentParts.add('\n\n나를 생각하고 있을까?\n${theirPerspective['doTheyThinkOfYou']}');
+          }
+          if (theirPerspective['unspokenWords'] != null) {
+            contentParts.add('\n\n말하지 못한 것들:\n${theirPerspective['unspokenWords']}');
+          }
+        } else if (theirPerspective is String && theirPerspective.isNotEmpty) {
+          contentParts.add('\n\n💭 상대방의 마음\n$theirPerspective');
+        }
+
+        // 5. 감정 처방전 (Emotional Prescription)
+        final emotionalPrescription = fortuneData['emotionalPrescription'];
+        if (emotionalPrescription is Map) {
+          contentParts.add('\n\n💊 감정 처방전');
+          if (emotionalPrescription['currentStateAnalysis'] != null) {
+            contentParts.add('\n\n현재 상태 분석:\n${emotionalPrescription['currentStateAnalysis']}');
+          }
+          if (emotionalPrescription['healingFocus'] != null) {
+            contentParts.add('\n\n치유 포인트:\n${emotionalPrescription['healingFocus']}');
+          }
+          final dailyPractice = emotionalPrescription['dailyPractice'];
+          if (dailyPractice is List && dailyPractice.isNotEmpty) {
+            contentParts.add('\n\n매일 실천하기:\n• ${dailyPractice.join('\n• ')}');
+          } else if (dailyPractice is String && dailyPractice.isNotEmpty) {
+            contentParts.add('\n\n매일 실천하기:\n$dailyPractice');
+          }
+        } else if (emotionalPrescription is String && emotionalPrescription.isNotEmpty) {
+          contentParts.add('\n\n💊 감정 처방전\n$emotionalPrescription');
+        }
+
+        // 6. 전략적 조언 (Strategic Advice)
+        final strategicAdvice = fortuneData['strategicAdvice'];
+        if (strategicAdvice is Map) {
+          contentParts.add('\n\n🎯 전략적 조언');
+          final shortTerm = strategicAdvice['shortTerm'];
+          if (shortTerm is List && shortTerm.isNotEmpty) {
+            contentParts.add('\n\n📅 1주일 내 할 일:\n• ${shortTerm.join('\n• ')}');
+          } else if (shortTerm is String && shortTerm.isNotEmpty) {
+            contentParts.add('\n\n📅 1주일 내 할 일:\n$shortTerm');
+          }
+          if (strategicAdvice['midTerm'] != null) {
+            contentParts.add('\n\n📆 1개월 목표:\n${strategicAdvice['midTerm']}');
+          }
+          if (strategicAdvice['critical'] != null) {
+            contentParts.add('\n\n⚠️ 가장 중요한 것:\n${strategicAdvice['critical']}');
+          }
+        } else if (strategicAdvice is String && strategicAdvice.isNotEmpty) {
+          contentParts.add('\n\n🎯 전략적 조언\n$strategicAdvice');
+        }
+
+        // 7. 새로운 시작 (New Beginning) - new_start 목표인 경우
+        final newBeginning = fortuneData['newBeginning'];
+        if (newBeginning is Map) {
+          contentParts.add('\n\n🌱 새로운 시작 준비');
+          if (newBeginning['readinessScore'] != null) {
+            contentParts.add('\n\n준비도: ${newBeginning['readinessScore']}%');
+          }
+          if (newBeginning['unresolvedEmotions'] != null) {
+            contentParts.add('\n\n미해결 감정:\n${newBeginning['unresolvedEmotions']}');
+          }
+          if (newBeginning['growthOpportunity'] != null) {
+            contentParts.add('\n\n성장 기회:\n${newBeginning['growthOpportunity']}');
+          }
+          if (newBeginning['nextRelationshipFocus'] != null) {
+            contentParts.add('\n\n다음 연애에서 중요한 것:\n${newBeginning['nextRelationshipFocus']}');
+          }
+        }
+
+        // 8. 이정표 (Milestones)
+        final milestones = fortuneData['milestones'];
+        if (milestones is Map) {
+          contentParts.add('\n\n🚩 회복 이정표');
+          if (milestones['shortTerm'] != null) {
+            contentParts.add('\n\n1주 후: ${milestones['shortTerm']}');
+          }
+          if (milestones['midTerm'] != null) {
+            contentParts.add('\n1개월 후: ${milestones['midTerm']}');
+          }
+          if (milestones['longTerm'] != null) {
+            contentParts.add('\n3개월 후: ${milestones['longTerm']}');
+          }
+        }
+
+        // 9. 마무리 메시지 (Closing Message)
+        final closingMessage = fortuneData['closingMessage'];
+        if (closingMessage is Map) {
+          contentParts.add('\n\n💝 마무리');
+          if (closingMessage['empathy'] != null) {
+            contentParts.add('\n\n${closingMessage['empathy']}');
+          }
+          if (closingMessage['todayAction'] != null) {
+            contentParts.add('\n\n오늘 할 일: ${closingMessage['todayAction']}');
+          }
+          if (closingMessage['reminder'] != null) {
+            contentParts.add('\n\n기억하세요: ${closingMessage['reminder']}');
+          }
+        } else if (closingMessage is String && closingMessage.isNotEmpty) {
+          contentParts.add('\n\n💝 $closingMessage');
+        }
+
+        // comfort_message fallback
+        if (fortuneData['comfort_message'] != null && closingMessage == null) {
+          contentParts.add('\n\n💝 ${fortuneData['comfort_message']}');
+        }
+
+        if (contentParts.isNotEmpty) {
+          contentText = contentParts.join('');
+          debugPrint('📝 [_getFortuneFromEdgeFunction] Built ex-lover content (${contentText.length} chars)');
         }
       }
 
@@ -923,7 +1083,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         fiveElements: fortuneData['fiveElements'],
         specialTip: fortuneData['special_tip'] ?? fortuneData['specialTip'],
         period: fortuneData['period']);
-      
+
       debugPrint('📝 [_getFortuneFromEdgeFunction] FortuneData.score: ${fortuneDataModel.score}');
 
       final fortuneResponse = FortuneResponseModel(

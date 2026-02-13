@@ -1,7 +1,7 @@
-/// 12운성(十二運星) 계산 로직
-///
-/// 12운성: 일간(日干)의 오행이 각 지지에서 어떤 생명 주기 단계에 있는지 나타냄
-/// 장생 → 목욕 → 관대 → 건록 → 제왕 → 쇠 → 병 → 사 → 묘 → 절 → 태 → 양
+// 12운성(十二運星) 계산 로직
+//
+// 12운성: 일간(日干)의 오행이 각 지지에서 어떤 생명 주기 단계에 있는지 나타냄
+// 장생 → 목욕 → 관대 → 건록 → 제왕 → 쇠 → 병 → 사 → 묘 → 절 → 태 → 양
 library;
 
 import 'package:flutter/material.dart';
@@ -100,15 +100,15 @@ enum TwelveStage {
   Color get color {
     switch (strength) {
       case 5:
-        return const Color(0xFF4CAF50); // 강한 초록
+        return const Color(0xFF4CAF50); // 강한 초록 (12운성 고유 등급 색상)
       case 4:
-        return const Color(0xFF8BC34A); // 연한 초록
+        return const Color(0xFF8BC34A); // 연한 초록 (12운성 고유)
       case 3:
-        return const Color(0xFFFFEB3B); // 노랑
+        return const Color(0xFFFFEB3B); // 노랑 (12운성 고유)
       case 2:
-        return const Color(0xFFFF9800); // 주황
+        return const Color(0xFFFF9800); // 주황 (12운성 고유)
       case 1:
-        return const Color(0xFFF44336); // 빨강
+        return const Color(0xFFF44336); // 빨강 (12운성 고유)
       default:
         return const Color(0xFF9E9E9E);
     }

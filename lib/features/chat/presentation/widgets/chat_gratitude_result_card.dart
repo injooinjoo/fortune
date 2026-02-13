@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:share_plus/share_plus.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
+import '../../../../core/widgets/fortune_action_buttons.dart';
 
 /// 감사일기 결과 카드 (일기장 스타일)
 ///
@@ -12,7 +12,7 @@ import '../../../../core/theme/typography_unified.dart';
 /// - 손글씨 느낌의 폰트 스타일
 /// - 하트 아이콘과 부드러운 장식
 /// - 공유 기능
-class ChatGratitudeResultCard extends StatelessWidget {
+class ChatGratitudeResultCard extends ConsumerWidget {
   final String gratitude1;
   final String gratitude2;
   final String gratitude3;
@@ -26,19 +26,19 @@ class ChatGratitudeResultCard extends StatelessWidget {
     required this.date,
   });
 
-  // 크림색 배경
-  static const _creamLight = Color(0xFFFFF8E7);
-  static const _creamDark = Color(0xFFFFFAF0);
+  // 디자인 색상 → DSColors 기반 (ChatGPT monochrome style)
+  static const _creamLight = DSColors.backgroundSecondary;
+  static const _creamDark = DSColors.background;
   // 다크모드 배경
-  static const _darkBg1 = Color(0xFF2A2520);
-  static const _darkBg2 = Color(0xFF1E1E1E);
-  // 액센트 색상
-  static const _pinkAccent = Color(0xFFE8B4B8);
-  static const _goldAccent = Color(0xFFFFD700);
+  static const _darkBg1 = DSColors.background;
+  static const _darkBg2 = DSColors.backgroundSecondary;
+  // 액센트 색상 - semantic colors
+  static const _pinkAccent = DSColors.error;
+  static const _goldAccent = DSColors.warning;
 
   @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = context.isDark;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -89,7 +89,7 @@ class ChatGratitudeResultCard extends StatelessWidget {
                   const SizedBox(height: 16),
 
                   // 구분선
-                  _buildDivider(isDark),
+                  _buildDivider(context),
 
                   const SizedBox(height: 16),
 
@@ -121,11 +121,6 @@ class ChatGratitudeResultCard extends StatelessWidget {
                     .fadeIn(duration: 500.ms, delay: 800.ms),
 
                   const SizedBox(height: 16),
-
-                  // 공유 버튼
-                  _buildShareButton(context, isDark)
-                    .animate()
-                    .fadeIn(duration: 400.ms, delay: 1000.ms),
                 ],
               ),
             ),
@@ -182,8 +177,9 @@ class ChatGratitudeResultCard extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context, bool isDark) {
+    final typography = context.typography;
     final formattedDate = DateFormat('M월 d일').format(date);
-    final textColor = isDark ? Colors.white : const Color(0xFF4A3728);
+    final textColor = isDark ? Colors.white : DSColors.textPrimary;
 
     return Row(
       children: [
@@ -207,11 +203,10 @@ class ChatGratitudeResultCard extends StatelessWidget {
                   fontStyle: FontStyle.italic,
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: DSSpacing.xxs),
               Text(
                 'Gratitude Journal',
-                style: TextStyle(
-                  fontSize: 10,
+                style: typography.labelTiny.copyWith(
                   color: textColor.withValues(alpha: 0.5),
                   letterSpacing: 1.5,
                   fontWeight: FontWeight.w300,
@@ -231,14 +226,27 @@ class ChatGratitudeResultCard extends StatelessWidget {
           child: Icon(
             Icons.auto_stories_rounded,
             size: 20,
-            color: isDark ? _pinkAccent : const Color(0xFF8B6914),
+            color: isDark ? _pinkAccent : DSColors.warning,
           ),
+        ),
+        const SizedBox(width: 8),
+        // 좋아요 + 공유 버튼
+        FortuneActionButtons(
+          contentId: 'gratitude_${date.millisecondsSinceEpoch}',
+          contentType: 'gratitude',
+          fortuneType: 'gratitude',
+          shareTitle: '${DateFormat('M월 d일').format(date)}의 감사일기',
+          shareContent: '$gratitude1, $gratitude2, $gratitude3',
+          iconSize: 18,
+          iconColor: isDark ? _pinkAccent : DSColors.warning,
         ),
       ],
     );
   }
 
-  Widget _buildDivider(bool isDark) {
+  Widget _buildDivider(BuildContext context) {
+    final typography = context.typography;
+    final isDark = context.isDark;
     return Row(
       children: [
         Expanded(
@@ -259,9 +267,8 @@ class ChatGratitudeResultCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Text(
             '🍃',
-            style: TextStyle(
-              fontSize: 12,
-              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.3),
+            style: typography.bodySmall.copyWith(
+              color: context.colors.textPrimary.withValues(alpha: 0.3),
             ),
           ),
         ),
@@ -289,7 +296,7 @@ class ChatGratitudeResultCard extends StatelessWidget {
     String text,
     bool isDark,
   ) {
-    final textColor = isDark ? Colors.white : const Color(0xFF4A3728);
+    final textColor = isDark ? Colors.white : DSColors.textPrimary;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -303,10 +310,10 @@ class ChatGratitudeResultCard extends StatelessWidget {
             color: _pinkAccent.withValues(alpha: isDark ? 0.2 : 0.15),
             shape: BoxShape.circle,
           ),
-          child: Center(
+          child: const Center(
             child: Text(
               '💛',
-              style: const TextStyle(fontSize: 12),
+              style: TextStyle(fontSize: 12),
             ),
           ),
         ),
@@ -317,9 +324,7 @@ class ChatGratitudeResultCard extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.05)
-                  : Colors.white.withValues(alpha: 0.6),
+              color: context.colors.surface.withValues(alpha: isDark ? 0.05 : 0.6),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: (isDark ? _pinkAccent : _goldAccent).withValues(alpha: 0.2),
@@ -340,7 +345,7 @@ class ChatGratitudeResultCard extends StatelessWidget {
   }
 
   Widget _buildClosingMessage(BuildContext context, bool isDark) {
-    final textColor = isDark ? Colors.white : const Color(0xFF4A3728);
+    final textColor = isDark ? Colors.white : DSColors.textPrimary;
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -373,7 +378,7 @@ class ChatGratitudeResultCard extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: DSSpacing.xs),
                 Text(
                   '작은 것에 감사하는 습관이 행복을 키워줘요 💛',
                   style: context.bodySmall.copyWith(
@@ -389,64 +394,4 @@ class ChatGratitudeResultCard extends StatelessWidget {
     );
   }
 
-  Widget _buildShareButton(BuildContext context, bool isDark) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        GestureDetector(
-          onTap: () => _shareGratitude(context),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  _pinkAccent.withValues(alpha: 0.3),
-                  _pinkAccent.withValues(alpha: 0.2),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.share_rounded,
-                  size: 14,
-                  color: isDark ? _pinkAccent : const Color(0xFF8B6914),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  '공유',
-                  style: context.labelSmall.copyWith(
-                    color: isDark ? _pinkAccent : const Color(0xFF8B6914),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _shareGratitude(BuildContext context) {
-    HapticFeedback.mediumImpact();
-
-    final formattedDate = DateFormat('M월 d일').format(date);
-    final shareText = '''
-✨ $formattedDate의 감사일기
-
-💛 $gratitude1
-💛 $gratitude2
-💛 $gratitude3
-
-오늘도 감사한 하루였네요 🌸
-작은 것에 감사하는 습관이 행복을 키워줘요.
-
-#감사일기 #오늘의감사
-''';
-
-    Share.share(shareText);
-  }
 }

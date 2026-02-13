@@ -13,8 +13,6 @@ class {{typePascal}}Result with _${{typePascal}}Result {
     String? warnings,
     @JsonKey(name: 'luck_items') LuckItems? luckItems,
     int? percentile,
-    @JsonKey(name: 'is_blurred') @Default(false) bool isBlurred,
-    @JsonKey(name: 'blurred_sections') @Default([]) List<String> blurredSections,
   }) = _{{typePascal}}Result;
 
   factory {{typePascal}}Result.fromJson(Map<String, dynamic> json) =>

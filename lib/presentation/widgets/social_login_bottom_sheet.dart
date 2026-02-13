@@ -25,7 +25,8 @@ class SocialLoginBottomSheet {
     return await showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.black.withValues(alpha: 0.5),
+      backgroundColor: Colors.transparent,
+      barrierColor: DSColorScheme(Theme.of(context).brightness).overlay,
       builder: (bottomSheetContext) {
         debugPrint(
             '🌐 [BOTTOMSHEET] Theme brightness: ${Theme.of(bottomSheetContext).brightness}');
@@ -38,57 +39,56 @@ class SocialLoginBottomSheet {
           builder: (context) {
             final colors = context.colors;
 
-            return Theme(
-              data: ThemeData.light(),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: colors.surface,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(25),
-                    topRight: Radius.circular(25),
+            return Container(
+              decoration: BoxDecoration(
+                color: colors.surface,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(25),
+                  topRight: Radius.circular(25),
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Drag handle
+                  Container(
+                    margin: const EdgeInsets.only(top: 12),
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: colors.border,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Drag handle
-                    Container(
-                      margin: const EdgeInsets.only(top: 12),
-                      width: 40,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: colors.border,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
+
+                  // Content - 버튼만
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Google Login
+                        _buildSocialButton(
+                            context: context,
+                            onPressed: isProcessing ? null : onGoogleLogin,
+                            type: 'google',
+                            colors: colors),
+                        const SizedBox(height: 12),
+
+                        // Apple Login
+                        _buildSocialButton(
+                            context: context,
+                            onPressed: isProcessing ? null : onAppleLogin,
+                            type: 'apple',
+                            colors: colors),
+
+                        // Safe area bottom padding
+                        SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
+                      ],
                     ),
-
-                    // Content - 버튼만
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 24),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Google Login
-                          _buildSocialButton(
-                              onPressed: isProcessing ? null : onGoogleLogin,
-                              type: 'google',
-                              colors: colors),
-                          const SizedBox(height: 12),
-
-                          // Apple Login
-                          _buildSocialButton(
-                              onPressed: isProcessing ? null : onAppleLogin,
-                              type: 'apple',
-                              colors: colors),
-
-                          // Safe area bottom padding
-                          SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             );
           },
@@ -99,13 +99,16 @@ class SocialLoginBottomSheet {
 
   /// 소셜 로그인 버튼 빌더
   static Widget _buildSocialButton(
-      {required VoidCallback? onPressed, required String type, required DSColorScheme colors}) {
+      {required BuildContext context, required VoidCallback? onPressed, required String type, required DSColorScheme colors}) {
     Widget icon;
     String text;
 
-    // BottomSheet는 항상 라이트 테마 (Theme.light()로 강제했음)
     final backgroundColor = colors.backgroundSecondary;
     final borderColor = colors.border;
+
+    // Apple: solid CTA style (ChatGPT pattern)
+    // Google: bordered style (ChatGPT pattern)
+    final isApple = type == 'apple';
 
     switch (type) {
       case 'apple':
@@ -113,6 +116,10 @@ class SocialLoginBottomSheet {
           'assets/images/social/apple.svg',
           width: 24,
           height: 24,
+          colorFilter: ColorFilter.mode(
+            colors.ctaForeground,
+            BlendMode.srcIn,
+          ),
         );
         text = 'Apple로 계속하기';
         break;
@@ -151,9 +158,9 @@ class SocialLoginBottomSheet {
         width: double.infinity,
         height: 52,
         decoration: BoxDecoration(
-          color: backgroundColor,
+          color: isApple ? colors.ctaBackground : backgroundColor,
           borderRadius: BorderRadius.circular(26),
-          border: Border.all(color: borderColor, width: 1),
+          border: isApple ? null : Border.all(color: borderColor, width: 1),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -162,9 +169,9 @@ class SocialLoginBottomSheet {
             const SizedBox(width: 12),
             Text(
               text,
-              style: DSTypography.labelLarge.copyWith(
+              style: context.labelLarge.copyWith(
                 fontWeight: FontWeight.w600,
-                color: colors.textPrimary,
+                color: isApple ? colors.ctaForeground : colors.textPrimary,
               ),
             ),
           ],

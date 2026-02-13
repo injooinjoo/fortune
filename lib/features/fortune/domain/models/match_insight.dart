@@ -19,8 +19,6 @@ class MatchInsight with _$MatchInsight {
     required TeamAnalysis opponentAnalysis,
     required FortuneElements fortuneElements,
     required String cautionMessage,
-    @Default(false) bool isBlurred,
-    @Default([]) List<String> blurredSections,
     required DateTime timestamp,
     int? percentile,
     // 경기 정보

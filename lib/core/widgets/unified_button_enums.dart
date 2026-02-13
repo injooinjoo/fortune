@@ -1,4 +1,4 @@
-/// UnifiedButton에서 사용하는 Enum 정의
+// UnifiedButton에서 사용하는 Enum 정의
 library;
 
 /// 버튼 스타일 종류

@@ -8,7 +8,7 @@ import '../../core/utils/supabase_helper.dart';
 import '../../core/utils/logger.dart';
 import '../../utils/date_utils.dart';
 import 'profile_edit_dialogs/index.dart';
-import '../../../../core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../shared/components/base_card.dart';
 
 class UserInfoCard extends StatefulWidget {
@@ -70,7 +70,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('프로필이 업데이트되었습니다'),
-            backgroundColor: TossDesignSystem.successGreen));
+            backgroundColor: DSColors.success));
       }
     } catch (e) {
       Logger.error('Failed to update profile field', e);
@@ -78,7 +78,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('실패: ${e.toString()}'),
-            backgroundColor: TossDesignSystem.errorRed));
+            backgroundColor: DSColors.error));
       }
     }
   }
@@ -288,7 +288,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
     final theme = Theme.of(context);
 
     return Material(
-      color: TossDesignSystem.white.withValues(alpha: 0.0),
+      color: Colors.white.withValues(alpha: 0.0),
       child: InkWell(
         onTap: item.onTap,
         borderRadius: AppDimensions.borderRadiusSmall,
@@ -298,9 +298,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
             right: items.indexOf(item) == 0 ? 6 : 0,
             left: items.indexOf(item) == 1 ? 6 : 0),
           decoration: BoxDecoration(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.grayDark800
-                : TossDesignSystem.gray50,
+            color: context.colors.surfaceSecondary,
             borderRadius: AppDimensions.borderRadiusSmall),
           child: Row(
             children: [

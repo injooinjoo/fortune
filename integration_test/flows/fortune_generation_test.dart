@@ -1,39 +1,38 @@
-/// Fortune Generation Flow Integration Test (Category A4)
-/// 운세 생성 플로우 E2E 테스트
-///
-/// 실행 방법:
-/// ```bash
-/// flutter test integration_test/flows/fortune_generation_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
-/// ```
-///
-/// 테스트 케이스 20개:
-/// - FORT-001: 오늘의 운세 홈 카드 표시
-/// - FORT-002: 타로 카드 선택 → 결과
-/// - FORT-003: 궁합 운세 두 사람 정보 → 결과
-/// - FORT-004: MBTI 운세 선택 → 결과
-/// - FORT-005: 꿈해몽 입력 → 해석
-/// - FORT-006: 사주 분석 생년월일시 → 결과
-/// - FORT-007: 연애 운세 정보 → 결과
-/// - FORT-008: 재물 운세 투자 성향 → 결과
-/// - FORT-009: 건강 운세 정보 → 결과
-/// - FORT-010: 부적 생성 소원 → 이미지
-/// - FORT-011: 운세 공유 결과 공유 기능
-/// - FORT-012: 운세 저장 히스토리 저장
-/// - FORT-013: 블러 처리 미결제 시 블러
-/// - FORT-014: 토큰 차감 운세 생성 시 차감
-/// - FORT-015: 로딩 상태 생성 중 로딩 UI
-/// - FORT-016: 에러 처리 API 에러 시 안내
-/// - FORT-017: 재시도 실패 시 재시도
-/// - FORT-018: 캐시 같은 운세 재조회
-/// - FORT-019: 관상 분석 사진 업로드 → 결과
-/// - FORT-020: 바이오리듬 차트
+// Fortune Generation Flow Integration Test (Category A4)
+// 운세 생성 플로우 E2E 테스트
+//
+// 실행 방법:
+// ```bash
+// flutter test integration_test/flows/fortune_generation_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
+// ```
+//
+// 테스트 케이스 20개:
+// - FORT-001: 오늘의 운세 홈 카드 표시
+// - FORT-002: 타로 카드 선택 → 결과
+// - FORT-003: 궁합 운세 두 사람 정보 → 결과
+// - FORT-004: MBTI 운세 선택 → 결과
+// - FORT-005: 꿈해몽 입력 → 해석
+// - FORT-006: 사주 분석 생년월일시 → 결과
+// - FORT-007: 연애 운세 정보 → 결과
+// - FORT-008: 재물 운세 투자 성향 → 결과
+// - FORT-009: 건강 운세 정보 → 결과
+// - FORT-010: 부적 생성 소원 → 이미지
+// - FORT-011: 운세 공유 결과 공유 기능
+// - FORT-012: 운세 저장 히스토리 저장
+// - FORT-013: 블러 처리 미결제 시 블러
+// - FORT-014: 토큰 차감 운세 생성 시 차감
+// - FORT-015: 로딩 상태 생성 중 로딩 UI
+// - FORT-016: 에러 처리 API 에러 시 안내
+// - FORT-017: 재시도 실패 시 재시도
+// - FORT-018: 캐시 같은 운세 재조회
+// - FORT-019: 관상 분석 사진 업로드 → 결과
+// - FORT-020: 바이오리듬 차트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:fortune/main.dart' as app;
 import '../helpers/navigation_helpers.dart';
-import '../helpers/fortune_test_helpers.dart';
 
 /// 앱 시작 헬퍼
 Future<void> startAppAndWait(

@@ -120,6 +120,9 @@ function extractJsonFromResponse(content: string): string {
   return content.trim()
 }
 
+// 하루 최대 소원 횟수
+const DAILY_WISH_LIMIT = 3
+
 serve(async (req) => {
   // CORS preflight 처리
   if (req.method === 'OPTIONS') {
@@ -137,6 +140,57 @@ serve(async (req) => {
     const urgency = rawUrgency ?? 3
 
     console.log('📝 소원 분석 요청:', { wish_text, category, urgency, user_profile })
+
+    // Supabase 클라이언트 생성 (하루 3회 제한 체크용)
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        global: {
+          headers: { Authorization: req.headers.get('Authorization')! },
+        },
+      }
+    )
+
+    // 사용자 정보 조회
+    const { data: userData } = await supabaseClient.auth.getUser()
+    const userId = userData?.user?.id
+
+    // 오늘 소원 횟수 체크 (하루 3회 제한)
+    let todayWishCount = 0
+    if (userId) {
+      const today = new Date().toISOString().split('T')[0]
+      const { count, error: countError } = await supabaseClient
+        .from('wish_fortunes')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userId)
+        .eq('wish_date', today)
+
+      if (countError) {
+        console.error('⚠️ 소원 횟수 조회 오류:', countError)
+      } else {
+        todayWishCount = count ?? 0
+      }
+
+      console.log(`📊 오늘 소원 횟수: ${todayWishCount}/${DAILY_WISH_LIMIT}`)
+
+      // 하루 3회 제한 체크
+      if (todayWishCount >= DAILY_WISH_LIMIT) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: '오늘 소원을 모두 사용했습니다',
+            message: `오늘은 ${DAILY_WISH_LIMIT}번의 소원을 모두 빌었어요. 내일 다시 만나요!`,
+            code: 'DAILY_LIMIT_EXCEEDED',
+            remaining_today: 0,
+          }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 429, // Too Many Requests
+          }
+        )
+      }
+    }
 
     // ✅ 용 테마 소원 분석 프롬프트: 청룡 현자 + 게이미피케이션 + 개인화
     // 소원 키워드 추출 (power_line에 사용)
@@ -212,6 +266,14 @@ ${user_profile ? `- 생년월일: ${user_profile.birth_date}, 띠: ${user_profil
 2. ❌ "열심히 하세요", "노력하세요" 같은 뻔한 조언
 3. ❌ 형식적이거나 복붙한 것 같은 위로
 4. ❌ 과장되거나 비현실적인 낙관주의
+5. ❌ "팁(tip)을 주세요", "팁을 남기세요" 등 서양 팁 문화 표현 (한국은 팁 문화가 없음)
+6. ❌ 서양식 표현이나 문화적으로 맞지 않는 조언
+
+🇰🇷 **한국 정서 필수 고려**:
+- 한국에는 팁(tip) 문화가 없으므로 절대 "팁을 주라", "팁을 남겨라" 같은 조언 금지
+- 대신 한국적 표현 사용: "감사 인사를 전하세요", "마음을 표현하세요", "작은 선물을 건네세요"
+- 한국 문화에 맞는 행운 행동: 어른께 인사드리기, 주변 정리하기, 따뜻한 음식 나누기
+- 한국식 인간관계 조언: 가족, 지인, 이웃과의 관계 중심
 
 ✅ **필수 포함 사항**:
 1. ✅ power_line에 반드시 소원 키워드 "${wishKeyword}" 포함
@@ -345,21 +407,7 @@ ${user_profile ? `- 생년월일: ${user_profile.birth_date}, 띠: ${user_profil
 
     console.log('✅ 파싱된 분석 결과:', analysisResult)
 
-    // Supabase 클라이언트 생성
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: { Authorization: req.headers.get('Authorization')! },
-        },
-      }
-    )
-
-    // 결과를 DB에 저장
-    const { data: userData } = await supabaseClient.auth.getUser()
-    const userId = userData?.user?.id
-
+    // 결과를 DB에 저장 (supabaseClient는 위에서 이미 생성됨)
     if (userId) {
       const { error: insertError } = await supabaseClient
         .from('wish_fortunes')
@@ -378,20 +426,21 @@ ${user_profile ? `- 생년월일: ${user_profile.birth_date}, 띠: ${user_profil
 
       if (insertError) {
         console.error('⚠️ DB 저장 오류:', insertError)
-        // 하루 1회 제한 위반 시 에러 반환
-        if (insertError.code === '23505') { // UNIQUE constraint violation
-          throw new Error('오늘은 이미 소원을 빌었습니다. 내일 다시 시도해주세요.')
-        }
-        // 기타 DB 오류는 결과 반환
+        // DB 오류는 로그만 남기고 결과 반환
       } else {
         console.log('✅ DB 저장 성공')
+        todayWishCount++ // 저장 성공 시 카운트 증가
       }
     }
+
+    // 남은 소원 횟수 계산
+    const remainingToday = Math.max(0, DAILY_WISH_LIMIT - todayWishCount)
 
     return new Response(
       JSON.stringify({
         success: true,
-        data: analysisResult
+        data: analysisResult,
+        remaining_today: remainingToday,
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

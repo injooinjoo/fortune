@@ -44,6 +44,7 @@ import {
 interface LoveFortuneRequest {
   userId: string;
   userName?: string; // ✅ 사용자 이름 (결과에서 "xx세 여성분" 대신 사용)
+  birthDate?: string; // ✅ 생년월일 (Cohort 계산용)
   age: number;
   gender: string;
   relationshipStatus: 'single' | 'dating' | 'crush' | 'complicated'; // breakup 제거
@@ -171,8 +172,6 @@ interface LoveFortuneResponse {
         tip: string;            // 대화 팁
       };
     };
-    isBlurred?: boolean; // ✅ 블러 상태
-    blurredSections?: string[]; // ✅ 블러 처리된 섹션 목록
   };
   cachedAt?: string;
 }
@@ -361,8 +360,8 @@ async function generateLoveFortune(params: LoveFortuneRequest): Promise<any> {
   },
   "recommendations": {
     "dateSpots": {
-      "primary": "구체적 장소명 + 분위기 + 추천 이유 (예: '한남동 블루보틀 카페 - 세련되고 조용한 분위기가 상담자의 차분한 매력과 잘 어울려요', 80자 이상)",
-      "alternatives": ["대안 장소 3개 - 구체적 장소명과 한줄 이유 (예: '성수동 대림창고 - 인스타그래머블한 분위기')"],
+      "primary": "실제 존재하는 구체적 장소명 + 분위기 + 추천 이유 (예: '한남동 블루보틀 카페 - 세련되고 조용한 분위기가 상담자의 차분한 매력과 잘 어울려요', 80자 이상). ⛔ 'OO', 'XX', '○○' 같은 플레이스홀더 절대 금지!",
+      "alternatives": ["대안 장소 3개 - 실제 구체적 장소명과 한줄 이유 (예: '성수동 대림창고 - 인스타그래머블한 분위기', '북촌 감고당길 카페거리 - 한옥 분위기', '연남동 연트럴파크 - 여유로운 산책')"],
       "reason": "왜 이 장소가 상담자에게 맞는지 심리학적 분석",
       "timeRecommendation": "추천 시간대와 이유 (예: '오후 3-5시, 햇살이 좋아 첫만남에 좋아요')"
     },
@@ -446,7 +445,13 @@ async function generateLoveFortune(params: LoveFortuneRequest): Promise<any> {
 - 모호한 점술 표현 금지 (구체적 시기, 방법, 행동 제시)
 - 과도한 낙관론이나 부정적 단정 금지
 - 설문에서 입력한 내용이 결과에 직접 반영되어야 함
-- 반드시 유효한 JSON 형식으로 출력`
+- 반드시 유효한 JSON 형식으로 출력
+
+# ⛔ 플레이스홀더 절대 금지
+다음과 같은 플레이스홀더 표현은 절대 사용하지 마세요:
+- 'OO', 'XX', '○○', '某某', '@@' 같은 마스킹
+- '카페 OO', '레스토랑 XX' 같은 가짜 장소명
+- 반드시 실제 존재하는 구체적인 장소명을 사용하세요 (예: '한남동 블루보틀', '성수동 대림창고', '을지로 카페거리')`
 
   // ✅ 상담자 호칭 결정 (userName 있으면 이름, 없으면 성별 기반)
   const clientName = params.userName
@@ -653,11 +658,12 @@ serve(async (req) => {
     }
 
     // ✅ Cohort Pool 조회 (API 비용 90% 절감)
+    // birthDate가 없으면 age로 대략적인 생년 계산
+    const effectiveBirthDate = params.birthDate || `${new Date().getFullYear() - params.age}-01-01`;
     const cohortData = extractLoveCohort({
-      age: params.age,
       gender: params.gender,
       relationshipStatus: params.relationshipStatus,
-      birthDate: undefined, // Love fortune doesn't use zodiac
+      birthDate: effectiveBirthDate,
     })
     const cohortHash = await generateCohortHash(cohortData)
     console.log(`[fortune-love] 🔍 Cohort: ${JSON.stringify(cohortData)}, Hash: ${cohortHash.substring(0, 16)}...`)
@@ -676,13 +682,6 @@ serve(async (req) => {
         charmPoints: params.charmPoints,
       })
 
-      // ✅ Blur 로직 적용
-      const isPremium = params.isPremium ?? false
-      const isBlurred = !isPremium
-      const blurredSections = isBlurred
-        ? ['loveProfile', 'detailedAnalysis', 'predictions', 'actionPlan']
-        : []
-
       // ✅ Percentile 계산
       const percentileData = await calculatePercentile(supabase, 'love', personalizedResult.score || 75)
       const resultWithPercentile = addPercentileToResult({
@@ -693,8 +692,6 @@ serve(async (req) => {
           gender: params.gender,
           relationshipStatus: params.relationshipStatus,
         },
-        isBlurred,
-        blurredSections,
       }, percentileData)
 
       return new Response(
@@ -711,13 +708,6 @@ serve(async (req) => {
 
     // ✅ 연애 상태별 기본값 가져오기
     const statusDefaults = getStatusDefaults(params.relationshipStatus);
-
-    // ✅ Blur 로직 적용 (프리미엄이 아니면 상세 분석 블러 처리)
-    const isPremium = params.isPremium ?? false;
-    const isBlurred = !isPremium;
-    const blurredSections = isBlurred
-      ? ['loveProfile', 'detailedAnalysis', 'predictions', 'actionPlan']
-      : [];
 
     // ✅ Deep merge 헬퍼: 빈 문자열이나 짧은 값은 기본값으로 대체
     const getValidString = (value: any, fallback: string, minLength: number = 10): string => {
@@ -920,14 +910,8 @@ serve(async (req) => {
             tip: fortuneData.recommendations.conversation?.tip || '상대방 이야기를 먼저 들어주고, 공감하면서 자연스럽게 대화를 이어가세요'
           }
         } : undefined,
-
-        // ✅ 블러 상태 정보
-        isBlurred,
-        blurredSections
       }
     }
-
-    console.log(`✅ [연애운] isPremium: ${isPremium}, isBlurred: ${!isPremium}`)
 
     // ✅ 퍼센타일 계산
     const percentileData = await calculatePercentile(supabase, 'love', response.data.score)

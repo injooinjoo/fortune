@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../theme/fortune_design_system.dart';
-import '../theme/typography_unified.dart';
-import '../theme/font_config.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../core/widgets/unified_button.dart';
 import '../../core/widgets/unified_button_enums.dart';
+import '../../core/extensions/l10n_extension.dart';
 
 /// TOSS 스타일 Dialog
 class AppDialog {
@@ -24,9 +23,7 @@ class AppDialog {
     return showDialog<T>(
       context: context,
       barrierDismissible: barrierDismissible,
-      barrierColor: (Theme.of(context).brightness == Brightness.light
-          ? TossDesignSystem.gray900
-          : TossDesignSystem.white).withValues(alpha: 0.5),
+      barrierColor: DSColors.overlay,
       builder: (context) => _AppDialogWrapper(
         padding: padding,
         child: child,
@@ -39,8 +36,8 @@ class AppDialog {
     required BuildContext context,
     required String title,
     required String message,
-    String confirmText = '확인',
-    String cancelText = '취소',
+    String? confirmText,
+    String? cancelText,
     bool isDanger = false,
     bool barrierDismissible = true,
     bool enableHaptic = true,
@@ -52,8 +49,8 @@ class AppDialog {
       child: _TossConfirmationDialog(
         title: title,
         message: message,
-        confirmText: confirmText,
-        cancelText: cancelText,
+        confirmText: confirmText ?? context.l10n.confirm,
+        cancelText: cancelText ?? context.l10n.cancel,
         isDanger: isDanger,
       ),
     );
@@ -64,7 +61,7 @@ class AppDialog {
     required BuildContext context,
     required String title,
     required String message,
-    String actionText = '확인',
+    String? actionText,
     bool enableHaptic = true,
   }) {
     return show<void>(
@@ -74,7 +71,7 @@ class AppDialog {
       child: _TossAlertDialog(
         title: title,
         message: message,
-        actionText: actionText,
+        actionText: actionText ?? context.l10n.confirm,
       ),
     );
   }
@@ -84,7 +81,7 @@ class AppDialog {
     required BuildContext context,
     required String title,
     String? message,
-    String actionText = '확인',
+    String? actionText,
     Duration? autoCloseDuration,
     bool enableHaptic = true,
   }) {
@@ -99,7 +96,7 @@ class AppDialog {
       child: _TossSuccessDialog(
         title: title,
         message: message,
-        actionText: actionText,
+        actionText: actionText ?? context.l10n.confirm,
       ),
     );
 
@@ -119,7 +116,7 @@ class AppDialog {
     required BuildContext context,
     required String title,
     required String message,
-    String actionText = '확인',
+    String? actionText,
     bool enableHaptic = true,
   }) {
     if (enableHaptic) {
@@ -133,7 +130,7 @@ class AppDialog {
       child: _TossErrorDialog(
         title: title,
         message: message,
-        actionText: actionText,
+        actionText: actionText ?? context.l10n.confirm,
       ),
     );
   }
@@ -147,9 +144,7 @@ class AppDialog {
     showDialog(
       context: context,
       barrierDismissible: barrierDismissible,
-      barrierColor: (Theme.of(context).brightness == Brightness.light
-          ? TossDesignSystem.gray900
-          : TossDesignSystem.white).withValues(alpha: 0.5),
+      barrierColor: DSColors.overlay,
       builder: (context) => _AppLoadingDialog(
         message: message,
       ),
@@ -174,16 +169,12 @@ class _AppDialogWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 40),
         child: Material(
-          color: theme.brightness == Brightness.light
-              ? TossDesignSystem.white
-              : TossDesignSystem.grayDark100,
-          borderRadius: BorderRadius.circular(TossDesignSystem.radiusL),
+          color: context.colors.surface,
+          borderRadius: BorderRadius.circular(DSRadius.lg),
           child: Padding(
             padding: padding ?? const EdgeInsets.all(24),
             child: child,
@@ -193,10 +184,10 @@ class _AppDialogWrapper extends StatelessWidget {
             .scale(
               begin: const Offset(0.9, 0.9),
               end: const Offset(1.0, 1.0),
-              duration: TossDesignSystem.durationShort,
+              duration: DSAnimation.fast,
               curve: Curves.easeOutCubic,
             )
-            .fadeIn(duration: TossDesignSystem.durationShort),
+            .fadeIn(duration: DSAnimation.fast),
       ),
     );
   }
@@ -228,16 +219,14 @@ class _TossConfirmationDialog extends StatelessWidget {
           title,
           style: Theme.of(context).textTheme.titleSmall,
         ),
-        const SizedBox(height: TossDesignSystem.spacingM),
+        const SizedBox(height: DSSpacing.md),
         Text(
           message,
-          style: TossDesignSystem.body2.copyWith(
-            color: Theme.of(context).brightness == Brightness.light
-                ? TossDesignSystem.gray600
-                : TossDesignSystem.gray400,
+          style: context.bodyMedium.copyWith(
+            color: context.colors.textSecondary,
           ),
         ),
-        const SizedBox(height: TossDesignSystem.spacingL),
+        const SizedBox(height: DSSpacing.lg),
         Row(
           children: [
             Expanded(
@@ -248,7 +237,7 @@ class _TossConfirmationDialog extends StatelessWidget {
                 size: UnifiedButtonSize.medium,
               ),
             ),
-            const SizedBox(width: TossDesignSystem.spacingM),
+            const SizedBox(width: DSSpacing.md),
             Expanded(
               child: UnifiedButton(
                 text: confirmText,
@@ -286,16 +275,14 @@ class _TossAlertDialog extends StatelessWidget {
           title,
           style: Theme.of(context).textTheme.titleSmall,
         ),
-        const SizedBox(height: TossDesignSystem.spacingM),
+        const SizedBox(height: DSSpacing.md),
         Text(
           message,
-          style: TossDesignSystem.body2.copyWith(
-            color: Theme.of(context).brightness == Brightness.light
-                ? TossDesignSystem.gray600
-                : TossDesignSystem.gray400,
+          style: context.bodyMedium.copyWith(
+            color: context.colors.textSecondary,
           ),
         ),
-        const SizedBox(height: TossDesignSystem.spacingL),
+        const SizedBox(height: DSSpacing.lg),
         SizedBox(
           width: double.infinity,
           child: UnifiedButton(
@@ -332,46 +319,43 @@ class _TossSuccessDialog extends StatelessWidget {
           height: 72,
           decoration: BoxDecoration(
             color: (Theme.of(context).brightness == Brightness.light
-                ? TossDesignSystem.successGreen
-                : TossDesignSystem.successGreen).withValues(alpha: 0.1),
+                ? DSColors.success
+                : DSColors.success).withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(
             Icons.check_circle,
             size: 48,
             color: Theme.of(context).brightness == Brightness.light
-                ? TossDesignSystem.successGreen
-                : TossDesignSystem.successGreen,
+                ? DSColors.success
+                : DSColors.success,
           ),
         )
             .animate()
             .scale(
               begin: const Offset(0, 0),
               end: const Offset(1, 1),
-              duration: TossDesignSystem.durationLong,
+              duration: DSAnimation.slow,
               curve: Curves.elasticOut,
             ),
-        const SizedBox(height: TossDesignSystem.spacingL),
+        const SizedBox(height: DSSpacing.lg),
         Text(
           title,
           style: Theme.of(context).textTheme.titleSmall,
           textAlign: TextAlign.center,
         ),
         if (message != null) ...[
-          const SizedBox(height: TossDesignSystem.spacingM),
+          const SizedBox(height: DSSpacing.md),
           Text(
             message!,
-            style: TypographyUnified.bodySmall.copyWith(
-              color: Theme.of(context).brightness == Brightness.light
-                  ? TossDesignSystem.gray600.withValues(alpha: 0.7)
-                  : TossDesignSystem.gray600.withValues(alpha: 0.3),
-              fontFamily: FontConfig.primary,
+            style: context.bodySmall.copyWith(
+              color: context.colors.textSecondary,
               height: 1.5,
             ),
             textAlign: TextAlign.center,
           ),
         ],
-        const SizedBox(height: TossDesignSystem.spacingL),
+        const SizedBox(height: DSSpacing.lg),
         SizedBox(
           width: double.infinity,
           child: UnifiedButton(
@@ -408,37 +392,35 @@ class _TossErrorDialog extends StatelessWidget {
           height: 72,
           decoration: BoxDecoration(
             color: (Theme.of(context).brightness == Brightness.light
-                ? TossDesignSystem.errorRed
-                : TossDesignSystem.errorRed).withValues(alpha: 0.1),
+                ? DSColors.error
+                : DSColors.error).withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(
             Icons.error_outline,
             size: 48,
             color: Theme.of(context).brightness == Brightness.light
-                ? TossDesignSystem.errorRed
-                : TossDesignSystem.errorRed,
+                ? DSColors.error
+                : DSColors.error,
           ),
         )
             .animate()
-            .shake(duration: TossDesignSystem.durationMedium, hz: 2, offset: const Offset(4, 0)),
-        const SizedBox(height: TossDesignSystem.spacingL),
+            .shake(duration: DSAnimation.normal, hz: 2, offset: const Offset(4, 0)),
+        const SizedBox(height: DSSpacing.lg),
         Text(
           title,
           style: Theme.of(context).textTheme.titleSmall,
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: TossDesignSystem.spacingM),
+        const SizedBox(height: DSSpacing.md),
         Text(
           message,
-          style: TossDesignSystem.body2.copyWith(
-            color: Theme.of(context).brightness == Brightness.light
-                ? TossDesignSystem.gray600
-                : TossDesignSystem.gray400,
+          style: context.bodyMedium.copyWith(
+            color: context.colors.textSecondary,
           ),
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: TossDesignSystem.spacingL),
+        const SizedBox(height: DSSpacing.lg),
         SizedBox(
           width: double.infinity,
           child: UnifiedButton(
@@ -463,16 +445,12 @@ class _AppLoadingDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
     return Center(
       child: Container(
         padding: const EdgeInsets.all(36),
         decoration: BoxDecoration(
-          color: theme.brightness == Brightness.light
-              ? TossDesignSystem.white
-              : TossDesignSystem.grayDark100,
-          borderRadius: BorderRadius.circular(TossDesignSystem.radiusL),
+          color: context.colors.surface,
+          borderRadius: BorderRadius.circular(DSRadius.lg),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -483,17 +461,15 @@ class _AppLoadingDialog extends StatelessWidget {
               child: CircularProgressIndicator(
                 strokeWidth: 3,
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  theme.brightness == Brightness.light
-                      ? TossDesignSystem.gray900
-                      : TossDesignSystem.white,
+                  context.colors.textPrimary,
                 ),
               ),
             ),
             if (message != null) ...[
-              const SizedBox(height: TossDesignSystem.spacingL),
+              const SizedBox(height: DSSpacing.lg),
               Text(
                 message!,
-                style: TossDesignSystem.body2,
+                style: context.bodyMedium,
                 textAlign: TextAlign.center,
               ),
             ],

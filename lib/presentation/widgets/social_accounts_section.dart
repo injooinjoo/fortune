@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_dimensions.dart';
 import '../../shared/glassmorphism/glass_container.dart';
@@ -34,25 +34,25 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
       name: 'Google',
       iconType: SocialIconType.asset,
       iconData: 'assets/images/social/google.svg',
-      color: Color(0xFF4285F4),
+      color: Color(0xFF4285F4), // 브랜드 고유 색상 - Google
     ),
     'apple': const SocialProviderInfo(
       name: 'Apple',
       iconType: SocialIconType.asset,
       iconData: 'assets/images/social/apple.svg',
-      color: TossDesignSystem.gray900,
+      color: DSColors.textPrimaryDark,
     ),
     'kakao': const SocialProviderInfo(
       name: 'Kakao',
       iconType: SocialIconType.asset,
       iconData: 'assets/images/social/kakao.svg',
-      color: Color(0xFFFEE500),
+      color: Color(0xFFFEE500), // 브랜드 고유 색상 - Kakao
     ),
     'naver': const SocialProviderInfo(
       name: 'Naver',
       iconType: SocialIconType.asset,
       iconData: 'assets/images/social/naver.svg',
-      color: Color(0xFF03C75A),
+      color: Color(0xFF03C75A), // 브랜드 고유 색상 - Naver
     ),
   };
   
@@ -99,7 +99,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('${_providers[provider]?.name} 계정이 연결되었습니다.'),
-              backgroundColor: TossDesignSystem.successGreen,
+              backgroundColor: DSColors.success,
             ),
           );
         }
@@ -110,7 +110,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${_providers[provider]?.name} 계정 연결에 실패했습니다.'),
-            backgroundColor: TossDesignSystem.errorRed,
+            backgroundColor: DSColors.error,
           ),
         );
       }
@@ -130,7 +130,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('기본 로그인 계정은 연결을 해제할 수 없습니다.'),
-          backgroundColor: TossDesignSystem.warningOrange,
+          backgroundColor: DSColors.warning,
         ),
       );
       return;
@@ -184,7 +184,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${_providers[provider]?.name} 계정 연결이 해제되었습니다.'),
-            backgroundColor: TossDesignSystem.successGreen,
+            backgroundColor: DSColors.success,
           ),
         );
       }
@@ -194,7 +194,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${_providers[provider]?.name} 계정 연결 해제에 실패했습니다.'),
-            backgroundColor: TossDesignSystem.errorRed,
+            backgroundColor: DSColors.error,
           ),
         );
       }
@@ -251,13 +251,13 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
                       const Icon(
                         Icons.check_circle,
                         size: 14,
-                        color: TossDesignSystem.successGreen,
+                        color: DSColors.success,
                       ),
                       const SizedBox(width: AppSpacing.spacing1),
                       Text(
                         isPrimary ? '기본 계정' : '연결됨',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: TossDesignSystem.successGreen,
+                          color: DSColors.success,
                         ),
                       ),
                     ],
@@ -293,7 +293,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
   Widget _buildProviderIcon(SocialProviderInfo providerInfo) {
     switch (providerInfo.iconType) {
       case SocialIconType.asset:
-        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isDark = context.isDark;
         final isApple = providerInfo.name == 'Apple';
         return SvgPicture.asset(
           providerInfo.iconData as String,
@@ -301,7 +301,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
           height: 24,
           colorFilter: isApple
               ? ColorFilter.mode(
-                  isDark ? TossDesignSystem.white : TossDesignSystem.grayDark900,
+                  isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
                   BlendMode.srcIn,
                 )
               : null,
@@ -324,7 +324,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
           providerInfo.iconData as IconData,
           size: AppDimensions.iconSizeMedium,
           color: providerInfo.iconType == SocialIconType.icon && providerInfo.name == 'Apple'
-              ? (Theme.of(context).brightness == Brightness.dark ? TossDesignSystem.white : TossDesignSystem.grayDark900)
+              ? (context.isDark ? DSColors.textPrimary : DSColors.textPrimaryDark)
               : providerInfo.color,
         );
       case SocialIconType.text:
@@ -339,7 +339,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
             child: Text(
               providerInfo.iconData as String,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: TossDesignSystem.white,
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -370,7 +370,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
         ),
         const SizedBox(height: AppSpacing.spacing4),
         ...(_providers.keys.map((provider) => Padding(
-          padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingXS),
+          padding: const EdgeInsets.only(bottom: DSSpacing.xs),
           child: _buildProviderButton(provider),
         )).toList()),
       ],

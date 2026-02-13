@@ -57,8 +57,6 @@ class TraditionalSajuGenerator {
 
       Logger.info('[TraditionalSajuGenerator] ✅ 파싱 완료');
       Logger.info('[TraditionalSajuGenerator]   📝 Question: ${result.data['question']}');
-      Logger.info('[TraditionalSajuGenerator]   🔒 isBlurred: ${result.isBlurred}');
-      Logger.info('[TraditionalSajuGenerator]   🔐 blurredSections: ${result.blurredSections}');
 
       return result;
     } catch (e, stackTrace) {
@@ -85,11 +83,6 @@ class TraditionalSajuGenerator {
         'summary': apiData['summary'] as String? ?? '',
       },
       score: null, // 전통사주는 점수 없음
-      isBlurred: apiData['isBlurred'] as bool? ?? false,
-      blurredSections: (apiData['blurredSections'] as List<dynamic>?)
-              ?.map((e) => e.toString())
-              .toList() ??
-          [],
     );
   }
 }

@@ -4,8 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:share_plus/share_plus.dart';
-import '../../../../core/theme/fortune_design_system.dart';
-import '../../../../core/theme/fortune_theme.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/components/app_card.dart';
 import '../../../../core/constants/fortune_type_names.dart';
 import '../../../../shared/components/app_header.dart';
@@ -25,11 +24,11 @@ class FortuneHistoryDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final score = history.summary['score'] as int? ?? 0;
 
     return Scaffold(
-      backgroundColor: isDark ? TossDesignSystem.backgroundDark : TossTheme.backgroundWhite,
+      backgroundColor: context.colors.background,
       appBar: AppHeader(
         title: history.title,
         showBackButton: true,
@@ -98,13 +97,13 @@ class FortuneHistoryDetailPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+              color: DSColors.accentDark.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Text(
               fortuneTypeName,
-              style: TossDesignSystem.caption.copyWith(
-                color: TossDesignSystem.tossBlue,
+              style: context.labelMedium.copyWith(
+                color: DSColors.accentDark,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -112,8 +111,8 @@ class FortuneHistoryDetailPage extends StatelessWidget {
           const SizedBox(width: 12),
           Text(
             DateFormat('yyyy년 MM월 dd일 HH:mm').format(history.createdAt),
-            style: TossDesignSystem.body3.copyWith(
-              color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+            style: context.bodySmall.copyWith(
+              color: context.colors.textSecondary,
             ),
           ),
         ],
@@ -140,15 +139,15 @@ class FortuneHistoryDetailPage extends StatelessWidget {
                 children: [
                   Text(
                     '$score',
-                    style: TossDesignSystem.display2.copyWith(
+                    style: context.displaySmall.copyWith(
                       color: scoreColor,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   Text(
                     '점',
-                    style: TossDesignSystem.body2.copyWith(
-                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                    style: context.bodyMedium.copyWith(
+                      color: context.colors.textSecondary,
                     ),
                   ),
                 ],
@@ -160,7 +159,7 @@ class FortuneHistoryDetailPage extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               _getScoreMessage(score),
-              style: TossDesignSystem.heading3.copyWith(
+              style: context.heading2.copyWith(
                 color: scoreColor,
                 fontWeight: FontWeight.w600,
               ),
@@ -187,16 +186,16 @@ class FortuneHistoryDetailPage extends StatelessWidget {
           children: [
             Text(
               '운세 요약',
-              style: TossDesignSystem.heading3.copyWith(
+              style: context.heading2.copyWith(
                 fontWeight: FontWeight.w700,
-                color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                color: context.colors.textPrimary,
               ),
             ),
             const SizedBox(height: 12),
             Text(
               content,
-              style: TossDesignSystem.body2.copyWith(
-                color: isDark ? TossDesignSystem.grayDark800 : TossDesignSystem.gray800,
+              style: context.bodyMedium.copyWith(
+                color: context.colors.textPrimary,
                 height: 1.8,
               ),
             ),
@@ -211,13 +210,13 @@ class FortuneHistoryDetailPage extends StatelessWidget {
     final sections = <Widget>[];
 
     // 다양한 운세 데이터 구조 처리
-    _addSectionIfExists(sections, data, 'advice', '조언', Icons.lightbulb, TossDesignSystem.warningOrange, isDark);
-    _addSectionIfExists(sections, data, 'love', '연애운', Icons.favorite, TossDesignSystem.errorRed, isDark);
-    _addSectionIfExists(sections, data, 'career', '직업운', Icons.work, TossDesignSystem.tossBlue, isDark);
-    _addSectionIfExists(sections, data, 'money', '금전운', Icons.attach_money, TossDesignSystem.successGreen, isDark);
-    _addSectionIfExists(sections, data, 'health', '건강운', Icons.favorite_border, TossDesignSystem.purple, isDark);
-    _addSectionIfExists(sections, data, 'overall', '종합운', Icons.star, TossDesignSystem.orange, isDark);
-    _addSectionIfExists(sections, data, 'description', '상세 설명', Icons.description, TossDesignSystem.gray600, isDark);
+    _addSectionIfExists(sections, data, 'advice', '조언', Icons.lightbulb, DSColors.warning, isDark);
+    _addSectionIfExists(sections, data, 'love', '연애운', Icons.favorite, DSColors.error, isDark);
+    _addSectionIfExists(sections, data, 'career', '직업운', Icons.work, DSColors.accentDark, isDark);
+    _addSectionIfExists(sections, data, 'money', '금전운', Icons.attach_money, DSColors.success, isDark);
+    _addSectionIfExists(sections, data, 'health', '건강운', Icons.favorite_border, DSColors.accentTertiary, isDark);
+    _addSectionIfExists(sections, data, 'overall', '종합운', Icons.star, DSColors.accentTertiaryDark, isDark);
+    _addSectionIfExists(sections, data, 'description', '상세 설명', Icons.description, DSColors.textSecondaryDark, isDark);
 
     // 행운 아이템 처리
     if (data['luckyItems'] != null || data['lucky_items'] != null) {
@@ -231,7 +230,7 @@ class FortuneHistoryDetailPage extends StatelessWidget {
     if (data['recommendations'] != null) {
       final recommendations = data['recommendations'];
       if (recommendations is List && recommendations.isNotEmpty) {
-        sections.add(_buildListSection(context, isDark, '추천 사항', recommendations.cast<String>(), Icons.check_circle, TossDesignSystem.successGreen));
+        sections.add(_buildListSection(context, isDark, '추천 사항', recommendations.cast<String>(), Icons.check_circle, DSColors.success));
       }
     }
 
@@ -239,7 +238,7 @@ class FortuneHistoryDetailPage extends StatelessWidget {
     if (data['warnings'] != null) {
       final warnings = data['warnings'];
       if (warnings is List && warnings.isNotEmpty) {
-        sections.add(_buildListSection(context, isDark, '주의 사항', warnings.cast<String>(), Icons.warning_amber, TossDesignSystem.warningOrange));
+        sections.add(_buildListSection(context, isDark, '주의 사항', warnings.cast<String>(), Icons.warning_amber, DSColors.warning));
       }
     }
 
@@ -285,9 +284,10 @@ class FortuneHistoryDetailPage extends StatelessWidget {
                 const SizedBox(width: 12),
                 Text(
                   title,
-                  style: TossDesignSystem.body1.copyWith(
+                  style: TextStyle(
+                    fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                    color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
                   ),
                 ),
               ],
@@ -295,8 +295,9 @@ class FortuneHistoryDetailPage extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               FortuneTextCleaner.clean(content),
-              style: TossDesignSystem.body3.copyWith(
-                color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+              style: TextStyle(
+                fontSize: 14,
+                color: isDark ? DSColors.textSecondary : DSColors.textSecondaryDark,
                 height: 1.6,
               ),
             ),
@@ -320,17 +321,17 @@ class FortuneHistoryDetailPage extends StatelessWidget {
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: TossDesignSystem.purple.withValues(alpha: 0.1),
+                    color: DSColors.accentTertiary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(Icons.auto_awesome, color: TossDesignSystem.purple, size: 18),
+                  child: const Icon(Icons.auto_awesome, color: DSColors.accentTertiary, size: 18),
                 ),
                 const SizedBox(width: 12),
                 Text(
                   '행운 아이템',
-                  style: TossDesignSystem.body1.copyWith(
+                  style: context.bodyLarge.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                    color: context.colors.textPrimary,
                   ),
                 ),
               ],
@@ -341,13 +342,13 @@ class FortuneHistoryDetailPage extends StatelessWidget {
               runSpacing: 12,
               children: [
                 if (luckyItems['color'] != null)
-                  _buildLuckyChip('색상', luckyItems['color'].toString(), Icons.palette, TossDesignSystem.purple),
+                  _buildLuckyChip('색상', luckyItems['color'].toString(), Icons.palette, DSColors.accentTertiary),
                 if (luckyItems['number'] != null)
-                  _buildLuckyChip('숫자', luckyItems['number'].toString(), Icons.looks_one, TossDesignSystem.successGreen),
+                  _buildLuckyChip('숫자', luckyItems['number'].toString(), Icons.looks_one, DSColors.success),
                 if (luckyItems['direction'] != null)
-                  _buildLuckyChip('방향', luckyItems['direction'].toString(), Icons.explore, TossDesignSystem.tossBlue),
+                  _buildLuckyChip('방향', luckyItems['direction'].toString(), Icons.explore, DSColors.accentDark),
                 if (luckyItems['time'] != null)
-                  _buildLuckyChip('시간', luckyItems['time'].toString(), Icons.schedule, TossDesignSystem.warningOrange),
+                  _buildLuckyChip('시간', luckyItems['time'].toString(), Icons.schedule, DSColors.warning),
               ],
             ),
           ],
@@ -370,7 +371,8 @@ class FortuneHistoryDetailPage extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             '$label: $value',
-            style: TossDesignSystem.caption.copyWith(
+            style: TextStyle(
+              fontSize: 12,
               color: color,
               fontWeight: FontWeight.w600,
             ),
@@ -402,9 +404,9 @@ class FortuneHistoryDetailPage extends StatelessWidget {
                 const SizedBox(width: 12),
                 Text(
                   title,
-                  style: TossDesignSystem.body1.copyWith(
+                  style: context.bodyLarge.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: isDark ? TossDesignSystem.grayDark900 : TossDesignSystem.gray900,
+                    color: context.colors.textPrimary,
                   ),
                 ),
               ],
@@ -420,8 +422,8 @@ class FortuneHistoryDetailPage extends StatelessWidget {
                   Expanded(
                     child: Text(
                       FortuneTextCleaner.clean(item),
-                      style: TossDesignSystem.body3.copyWith(
-                        color: isDark ? TossDesignSystem.grayDark700 : TossDesignSystem.gray700,
+                      style: context.bodySmall.copyWith(
+                        color: context.colors.textSecondary,
                         height: 1.5,
                       ),
                     ),
@@ -444,13 +446,13 @@ class FortuneHistoryDetailPage extends StatelessWidget {
         children: history.tags!.map((tag) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: isDark ? TossDesignSystem.grayDark100 : TossDesignSystem.gray100,
+            color: context.colors.backgroundSecondary,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Text(
             '#$tag',
-            style: TossDesignSystem.caption.copyWith(
-              color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+            style: context.labelMedium.copyWith(
+              color: context.colors.textSecondary,
             ),
           ),
         )).toList(),
@@ -479,10 +481,10 @@ class FortuneHistoryDetailPage extends StatelessWidget {
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return TossDesignSystem.successGreen;
-    if (score >= 60) return TossDesignSystem.tossBlue;
-    if (score >= 40) return TossDesignSystem.warningOrange;
-    return TossDesignSystem.errorRed;
+    if (score >= 80) return DSColors.success;
+    if (score >= 60) return DSColors.accentDark;
+    if (score >= 40) return DSColors.warning;
+    return DSColors.error;
   }
 
   String _getScoreMessage(int score) {

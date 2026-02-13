@@ -50,7 +50,7 @@ class _SajuElementChartState extends State<SajuElementChart> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final colors = context.colors;
     final typography = context.typography;
     return AnimatedBuilder(

@@ -1,22 +1,22 @@
-/// Accessibility Integration Test (Category B4)
-/// 접근성 E2E 테스트
-///
-/// 실행 방법:
-/// ```bash
-/// flutter test integration_test/accessibility_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
-/// ```
-///
-/// 테스트 케이스 10개:
-/// - A11Y-001: 시맨틱 레이블 (모든 버튼)
-/// - A11Y-002: 터치 타겟 최소 44x44
-/// - A11Y-003: 색상 대비 WCAG 기준
-/// - A11Y-004: 폰트 스케일 시스템 폰트 크기
-/// - A11Y-005: 스크린 리더 VoiceOver 호환
-/// - A11Y-006: 포커스 순서 논리적 탭 순서
-/// - A11Y-007: 키보드 접근
-/// - A11Y-008: 애니메이션 줄이기 옵션
-/// - A11Y-009: 다크 모드 가독성
-/// - A11Y-010: 에러 안내 접근성
+// Accessibility Integration Test (Category B4)
+// 접근성 E2E 테스트
+//
+// 실행 방법:
+// ```bash
+// flutter test integration_test/accessibility_test.dart -d "iPhone 15 Pro" --dart-define=TEST_MODE=true
+// ```
+//
+// 테스트 케이스 10개:
+// - A11Y-001: 시맨틱 레이블 (모든 버튼)
+// - A11Y-002: 터치 타겟 최소 44x44
+// - A11Y-003: 색상 대비 WCAG 기준
+// - A11Y-004: 폰트 스케일 시스템 폰트 크기
+// - A11Y-005: 스크린 리더 VoiceOver 호환
+// - A11Y-006: 포커스 순서 논리적 탭 순서
+// - A11Y-007: 키보드 접근
+// - A11Y-008: 애니메이션 줄이기 옵션
+// - A11Y-009: 다크 모드 가독성
+// - A11Y-010: 에러 안내 접근성
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -72,7 +72,6 @@ void main() {
       final bottomNav = find.byType(BottomNavigationBar);
 
       if (bottomNav.evaluate().isNotEmpty) {
-        final bottomNavWidget = tester.widget<BottomNavigationBar>(bottomNav.first);
         // 바텀 네비 아이템은 기본적으로 충분한 크기를 가짐
         final hasAdequateSize = true; // Flutter의 기본 BottomNavigationBar는 접근성 기준 충족
 

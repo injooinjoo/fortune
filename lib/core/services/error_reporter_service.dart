@@ -9,7 +9,8 @@ import '../utils/logger.dart';
 /// Flutter 앱에서 발생하는 모든 에러를 캡처하여 JSON 파일로 저장
 /// 백그라운드 모니터링 시스템이 이 파일을 읽어 자동으로 JIRA에 등록
 class ErrorReporterService {
-  static final ErrorReporterService _instance = ErrorReporterService._internal();
+  static final ErrorReporterService _instance =
+      ErrorReporterService._internal();
 
   factory ErrorReporterService() => _instance;
   ErrorReporterService._internal();
@@ -30,13 +31,21 @@ class ErrorReporterService {
 
     Logger.info('🚨 Initializing ErrorReporterService');
 
+    if (kIsWeb) {
+      Logger.info(
+          '🌐 Web platform detected, file-based error logging disabled');
+      _isInitialized = true;
+      return;
+    }
+
     // 앱 문서 디렉토리 경로 설정 (iOS 샌드박스 호환)
     try {
       final directory = await getApplicationDocumentsDirectory();
       _errorLogPath = '${directory.path}/fortune_runtime_errors.json';
     } catch (e) {
       // 경로 설정 실패 시 에러 로깅 비활성화
-      Logger.warning('Failed to get documents directory, error logging disabled: $e');
+      Logger.warning(
+          'Failed to get documents directory, error logging disabled: $e');
       _isInitialized = true;
       return;
     }
@@ -99,7 +108,11 @@ class ErrorReporterService {
         'stack_trace': _formatStackTrace(stackTrace),
         'context': context,
         'timestamp': DateTime.now().toIso8601String(),
-        'build_mode': kDebugMode ? 'debug' : kReleaseMode ? 'release' : 'profile',
+        'build_mode': kDebugMode
+            ? 'debug'
+            : kReleaseMode
+                ? 'release'
+                : 'profile',
         'platform': Platform.operatingSystem,
         'occurrence_count': 1,
       };
@@ -122,11 +135,14 @@ class ErrorReporterService {
   String _classifyError(Object error) {
     final errorString = error.toString().toLowerCase();
 
-    if (errorString.contains('socket') || errorString.contains('network') || errorString.contains('connection')) {
+    if (errorString.contains('socket') ||
+        errorString.contains('network') ||
+        errorString.contains('connection')) {
       return 'NetworkError';
     } else if (errorString.contains('timeout')) {
       return 'TimeoutError';
-    } else if (errorString.contains('renderbox') || errorString.contains('overflow')) {
+    } else if (errorString.contains('renderbox') ||
+        errorString.contains('overflow')) {
       return 'UIRenderError';
     } else if (errorString.contains('assertion')) {
       return 'AssertionError';
@@ -171,8 +187,8 @@ class ErrorReporterService {
   /// 중요한 에러 여부 판단
   bool _isCriticalError(String errorType) {
     return errorType.contains('Network') ||
-           errorType.contains('Assertion') ||
-           errorType.contains('NullPointer');
+        errorType.contains('Assertion') ||
+        errorType.contains('NullPointer');
   }
 
   /// 에러 큐를 JSON 파일로 플러시
@@ -191,7 +207,8 @@ class ErrorReporterService {
           try {
             existingErrors = jsonDecode(content) as List<dynamic>;
           } catch (e) {
-            Logger.warning('Failed to parse existing error log, creating new file');
+            Logger.warning(
+                'Failed to parse existing error log, creating new file');
           }
         }
       }
@@ -200,7 +217,8 @@ class ErrorReporterService {
       existingErrors.addAll(_errorQueue);
 
       // 파일 저장
-      final jsonContent = const JsonEncoder.withIndent('  ').convert(existingErrors);
+      final jsonContent =
+          const JsonEncoder.withIndent('  ').convert(existingErrors);
       await file.writeAsString(jsonContent);
 
       Logger.info('💾 Flushed ${_errorQueue.length} errors to $_errorLogPath');

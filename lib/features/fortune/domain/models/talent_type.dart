@@ -1,4 +1,4 @@
-/// 재능 타입 정의
+// 재능 타입 정의
 enum TalentType {
   creativityInnovator,    // 창의적 혁신가
   strategicPlanner,       // 전략적 기획자

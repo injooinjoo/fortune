@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/models/health_fortune_model.dart';
-import '../../../../core/theme/fortune_theme.dart';
-import '../../../../core/theme/fortune_design_system.dart';
 import '../../../../core/design_system/design_system.dart';
 
 class HealthTimelineChart extends StatefulWidget {
@@ -27,17 +25,17 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
   @override
   void initState() {
     super.initState();
-    
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
-    
+
     _chartAnimation = CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeOutCubic,
     );
-    
+
     _animationController.forward();
   }
 
@@ -53,38 +51,30 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: TossDesignSystem.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha: 0.04),
-            offset: const Offset(0, 2),
-            blurRadius: 16,
-            spreadRadius: 0,
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.timeline_rounded,
-                color: TossTheme.primaryBlue,
+                color: context.colors.accent,
                 size: 24,
               ),
               const SizedBox(width: 8),
               Text(
                 '시간대별 컨디션',
-                style: TossTheme.heading3.copyWith(
-                  color: TossTheme.textBlack,
+                style: context.heading3.copyWith(
+                  color: context.colors.textPrimary,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 20),
-          
+
           // 차트
           SizedBox(
             height: 200,
@@ -98,12 +88,12 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
               },
             ),
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // 시간대별 상세 정보
           _buildTimeSlotDetails(),
-          
+
           // 최적 활동 시간
           if (widget.timeline.bestTimeActivity != null) ...[
             const SizedBox(height: 16),
@@ -129,8 +119,8 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
         drawVerticalLine: false,
         horizontalInterval: 25,
         getDrawingHorizontalLine: (value) {
-          return const FlLine(
-            color: TossTheme.borderGray200,
+          return FlLine(
+            color: context.colors.divider,
             strokeWidth: 1,
             dashArray: [5, 5],
           );
@@ -146,19 +136,19 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
             reservedSize: 30,
             interval: 1,
             getTitlesWidget: (double value, TitleMeta meta) {
-              final style = DSTypography.labelMedium.copyWith(
+              final style = context.labelMedium.copyWith(
                 fontWeight: FontWeight.w500,
               );
               Widget text;
               switch (value.toInt()) {
                 case 0:
-                  text = Text('오전', style: style.copyWith(color: TossTheme.textGray600));
+                  text = Text('오전', style: style.copyWith(color: context.colors.textSecondary));
                   break;
                 case 1:
-                  text = Text('오후', style: style.copyWith(color: TossTheme.textGray600));
+                  text = Text('오후', style: style.copyWith(color: context.colors.textSecondary));
                   break;
                 case 2:
-                  text = Text('저녁', style: style.copyWith(color: TossTheme.textGray600));
+                  text = Text('저녁', style: style.copyWith(color: context.colors.textSecondary));
                   break;
                 default:
                   text = const Text('');
@@ -181,8 +171,8 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
                 axisSide: meta.axisSide,
                 child: Text(
                   '${value.toInt()}',
-                  style: DSTypography.labelSmall.copyWith(
-                    color: TossTheme.textGray600,
+                  style: context.labelSmall.copyWith(
+                    color: context.colors.textSecondary,
                   ),
                 ),
               );
@@ -203,8 +193,8 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              TossTheme.primaryBlue,
-              TossTheme.primaryBlue.withValues(alpha: 0.7),
+              context.colors.accent,
+              context.colors.accent.withValues(alpha: 0.7),
             ],
           ),
           barWidth: 3,
@@ -214,9 +204,9 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
             getDotPainter: (spot, percent, barData, index) {
               return FlDotCirclePainter(
                 radius: 6,
-                color: TossTheme.primaryBlue,
+                color: context.colors.accent,
                 strokeWidth: 3,
-                strokeColor: TossDesignSystem.white,
+                strokeColor: context.colors.surface,
               );
             },
           ),
@@ -226,8 +216,8 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                TossTheme.primaryBlue.withValues(alpha: 0.3),
-                TossTheme.primaryBlue.withValues(alpha: 0.05),
+                context.colors.accent.withValues(alpha: 0.3),
+                context.colors.accent.withValues(alpha: 0.05),
               ],
             ),
           ),
@@ -236,14 +226,14 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
       lineTouchData: LineTouchData(
         enabled: true,
         touchTooltipData: LineTouchTooltipData(
-          getTooltipColor: (touchedSpot) => TossTheme.primaryBlue,
+          getTooltipColor: (touchedSpot) => context.colors.accent,
           tooltipRoundedRadius: 8,
           tooltipPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           getTooltipItems: (List<LineBarSpot> touchedSpots) {
             return touchedSpots.map((LineBarSpot touchedSpot) {
               String timeLabel;
               String description;
-              
+
               switch (touchedSpot.x.toInt()) {
                 case 0:
                   timeLabel = '오전';
@@ -261,11 +251,11 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
                   timeLabel = '';
                   description = '';
               }
-              
+
               return LineTooltipItem(
                 '$timeLabel\n${touchedSpot.y.toInt()}점\n$description',
-                DSTypography.labelMedium.copyWith(
-                  color: TossDesignSystem.white,
+                context.labelMedium.copyWith(
+                  color: Colors.white,
                   fontWeight: FontWeight.w500,
                   height: 1.3,
                 ),
@@ -301,18 +291,18 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
         final index = entry.key;
         final timeSlot = entry.value;
         final isHighlighted = _touchedSpotIndex == index;
-        
+
         return AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isHighlighted 
-                ? TossTheme.primaryBlue.withValues(alpha: 0.1)
-                : TossTheme.backgroundSecondary,
+            color: isHighlighted
+                ? context.colors.accent.withValues(alpha: 0.1)
+                : context.colors.backgroundSecondary,
             borderRadius: BorderRadius.circular(12),
             border: isHighlighted
-                ? Border.all(color: TossTheme.primaryBlue.withValues(alpha: 0.3))
+                ? Border.all(color: context.colors.accent.withValues(alpha: 0.3))
                 : null,
           ),
           child: Row(
@@ -328,16 +318,16 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
                 child: Center(
                   child: Text(
                     '${timeSlot.conditionScore}',
-                    style: TossTheme.caption.copyWith(
-                      color: TossDesignSystem.white,
+                    style: context.bodySmall.copyWith(
+                      color: Colors.white,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
               ),
-              
+
               const SizedBox(width: 12),
-              
+
               // 시간대 정보
               Expanded(
                 child: Column(
@@ -345,29 +335,29 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
                   children: [
                     Text(
                       timeSlot.timeLabel,
-                      style: TossTheme.body2.copyWith(
+                      style: context.heading3.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: isHighlighted 
-                            ? TossTheme.primaryBlue 
-                            : TossTheme.textBlack,
+                        color: isHighlighted
+                            ? context.colors.accent
+                            : context.colors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       timeSlot.description,
-                      style: TossTheme.body3.copyWith(
-                        color: TossTheme.textGray600,
+                      style: context.buttonMedium.copyWith(
+                        color: context.colors.textSecondary,
                       ),
                     ),
                   ],
                 ),
               ),
-              
+
               // 추천사항 아이콘
               if (timeSlot.recommendations != null && timeSlot.recommendations!.isNotEmpty)
-                const Icon(
+                Icon(
                   Icons.lightbulb_outline_rounded,
-                  color: TossTheme.primaryBlue,
+                  color: context.colors.accent,
                   size: 16,
                 ),
             ],
@@ -387,13 +377,13 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            TossTheme.success.withValues(alpha: 0.1),
-            TossTheme.primaryBlue.withValues(alpha: 0.1),
+            DSColors.success.withValues(alpha: 0.1),
+            context.colors.accent.withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: TossTheme.primaryBlue.withValues(alpha: 0.2),
+          color: context.colors.accent.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
@@ -402,12 +392,12 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: TossTheme.primaryBlue.withValues(alpha: 0.2),
+              color: context.colors.accent.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.schedule_rounded,
-              color: TossTheme.primaryBlue,
+              color: context.colors.accent,
               size: 20,
             ),
           ),
@@ -418,16 +408,16 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
               children: [
                 Text(
                   '최적 활동 시간',
-                  style: TossTheme.body2.copyWith(
+                  style: context.heading3.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: TossTheme.textBlack,
+                    color: context.colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   widget.timeline.bestTimeActivity!,
-                  style: TossTheme.body3.copyWith(
-                    color: TossTheme.textGray600,
+                  style: context.buttonMedium.copyWith(
+                    color: context.colors.textSecondary,
                   ),
                 ),
               ],
@@ -439,9 +429,9 @@ class _HealthTimelineChartState extends State<HealthTimelineChart>
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return const Color(0xFF4CAF50); // 초록
-    if (score >= 60) return const Color(0xFF2196F3); // 파랑
-    if (score >= 40) return const Color(0xFFFF9800); // 주황
-    return const Color(0xFFFF5722); // 빨강
+    if (score >= 80) return const Color(0xFF4CAF50); // 고유 색상 - 건강 우수
+    if (score >= 60) return const Color(0xFF2196F3); // 고유 색상 - 건강 양호
+    if (score >= 40) return const Color(0xFFFF9800); // 고유 색상 - 건강 주의
+    return const Color(0xFFFF5722); // 고유 색상 - 건강 경고
   }
 }

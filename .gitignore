@@ -112,3 +112,4 @@ ios/build/
 
 # Claude local settings
 .claude/settings.local.json
+java_pid*.hprof

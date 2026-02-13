@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../domain/models/tarot_card_model.dart';
 import '../../../../../core/design_system/design_system.dart';
 import '../../../../../core/widgets/gpt_style_typing_text.dart';
-import '../../../../../core/widgets/unified_blur_wrapper.dart';
 import 'tarot_card_detail_modal.dart';
 
 class TarotMultiCardResult extends ConsumerStatefulWidget {
@@ -25,6 +24,10 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
+
+  // 동양화 스타일 - 테마 색상 (DSColors 사용)
+  static Color _getPrimaryColor(BuildContext context) => context.colors.textPrimary;
+  static Color _getSecondaryColor(BuildContext context) => DSColors.info;
 
   // GPT 스타일 타이핑 효과 섹션 관리
   int _currentTypingSection = 0;
@@ -74,7 +77,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return AnimatedBuilder(
       animation: _animationController,
@@ -84,21 +87,21 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
           child: ScaleTransition(
             scale: _scaleAnimation,
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(DSSpacing.lg),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // 질문 헤더
                   _buildQuestionHeader(isDark),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: DSSpacing.xl),
 
                   // 카드 레이아웃
                   _buildCardLayout(isDark),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: DSSpacing.xl),
 
                   // 전체 해석
                   _buildOverallInterpretation(isDark),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: DSSpacing.lg),
 
                   // 개별 카드 해석
                   _buildIndividualInterpretations(isDark),
@@ -118,41 +121,44 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
     final colors = context.colors;
     final typography = context.typography;
     return Container(
-      padding: const EdgeInsets.all(DSSpacing.md),
+      padding: const EdgeInsets.all(DSSpacing.cardPadding),
       decoration: BoxDecoration(
-        color: colors.surfaceSecondary,
+        color: _getPrimaryColor(context).withValues(alpha: isDark ? 0.1 : 0.05),
         borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(
+          color: _getPrimaryColor(context).withValues(alpha: isDark ? 0.3 : 0.2),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.help_outline,
                 size: 20,
-                color: Color(0xFF7C3AED),
+                color: _getPrimaryColor(context),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '질문',
                 style: typography.bodySmall.copyWith(
                   fontWeight: FontWeight.w500,
-                  color: colors.textSecondary,
+                  color: _getPrimaryColor(context),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             widget.result.question,
             style: typography.labelLarge.copyWith(
               fontWeight: FontWeight.w600,
               color: colors.textPrimary,
-              height: 1.4,
+              height: 1.5,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             '${widget.result.spreadType.displayName} • ${widget.result.cards.length}장',
             style: typography.bodySmall.copyWith(
@@ -193,11 +199,11 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
       children: List.generate(3, (index) {
         return Expanded(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
+            padding: const EdgeInsets.symmetric(horizontal: DSSpacing.xs),
             child: Column(
               children: [
                 _buildCardItem(widget.result.cards[index], index, isDark),
-                const SizedBox(height: 8),
+                const SizedBox(height: DSSpacing.sm),
                 Text(
                   ['과거', '현재', '미래'][index],
                   style: typography.labelMedium.copyWith(
@@ -229,7 +235,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
               return Column(
                 children: [
                   _buildCardItem(widget.result.cards[0], 0, isDark, small: true),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: DSSpacing.xs),
                   Text('나', style: typography.labelSmall.copyWith(color: colors.textSecondary)),
                 ],
               );
@@ -245,7 +251,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
               return Column(
                 children: [
                   _buildCardItem(widget.result.cards[1], 1, isDark, small: true),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: DSSpacing.xs),
                   Text('상대', style: typography.labelSmall.copyWith(color: colors.textSecondary)),
                 ],
               );
@@ -260,7 +266,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
               return Column(
                 children: [
                   _buildCardItem(widget.result.cards[2], 2, isDark, small: true),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: DSSpacing.xs),
                   Text('과거', style: typography.labelSmall.copyWith(color: colors.textSecondary)),
                 ],
               );
@@ -275,7 +281,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
               return Column(
                 children: [
                   _buildCardItem(widget.result.cards[3], 3, isDark, small: true),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: DSSpacing.xs),
                   Text('현재', style: typography.labelSmall.copyWith(color: colors.textSecondary)),
                 ],
               );
@@ -290,7 +296,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
               return Column(
                 children: [
                   _buildCardItem(widget.result.cards[4], 4, isDark, small: true),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: DSSpacing.xs),
                   Text('미래', style: typography.labelSmall.copyWith(color: colors.textSecondary)),
                 ],
               );
@@ -344,16 +350,19 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
     required bool isDark,
   }) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 32),
+      margin: const EdgeInsets.only(bottom: DSSpacing.xl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // 위치 번호 + 이름
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md, vertical: DSSpacing.sm),
             decoration: BoxDecoration(
-              color: const Color(0xFF7C3AED).withValues(alpha: 0.1),
+              color: _getPrimaryColor(context).withValues(alpha: isDark ? 0.15 : 0.1),
               borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: _getPrimaryColor(context).withValues(alpha: isDark ? 0.3 : 0.2),
+              ),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -361,8 +370,8 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                 Container(
                   width: 28,
                   height: 28,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF7C3AED),
+                  decoration: BoxDecoration(
+                    color: _getPrimaryColor(context),
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -375,18 +384,18 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: DSSpacing.sm),
                 Text(
                   positionName,
                   style: context.typography.labelLarge.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF7C3AED),
+                    color: _getPrimaryColor(context),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
 
           // 큰 카드 이미지
           GestureDetector(
@@ -405,13 +414,13 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF7C3AED).withValues(alpha: 0.25),
+                    color: _getPrimaryColor(context).withValues(alpha: isDark ? 0.35 : 0.25),
                     blurRadius: 30,
                     spreadRadius: 5,
                     offset: const Offset(0, 10),
                   ),
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.15),
+                    color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.15),
                     blurRadius: 20,
                     offset: const Offset(0, 8),
                   ),
@@ -438,8 +447,8 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                                     begin: Alignment.topCenter,
                                     end: Alignment.bottomCenter,
                                     colors: [
-                                      const Color(0xFF7C3AED).withValues(alpha: 0.1),
-                                      const Color(0xFF3B82F6).withValues(alpha: 0.1),
+                                      _getPrimaryColor(context).withValues(alpha: isDark ? 0.15 : 0.1),
+                                      _getSecondaryColor(context).withValues(alpha: isDark ? 0.15 : 0.1),
                                     ],
                                   ),
                                 ),
@@ -447,18 +456,18 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const Icon(
+                                      Icon(
                                         Icons.auto_awesome,
-                                        color: Color(0xFF7C3AED),
+                                        color: _getPrimaryColor(context),
                                         size: 64,
                                       ),
-                                      const SizedBox(height: 16),
+                                      const SizedBox(height: DSSpacing.md),
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                                        padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
                                         child: Text(
                                           card.cardNameKr,
                                           style: context.typography.labelLarge.copyWith(
-                                            color: const Color(0xFF7C3AED),
+                                            color: _getPrimaryColor(context),
                                             fontWeight: FontWeight.w700,
                                           ),
                                           textAlign: TextAlign.center,
@@ -507,7 +516,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: DSSpacing.sm),
 
           // 카드 이름 (이미지 아래에 별도 표시)
           Builder(builder: (context) {
@@ -522,15 +531,11 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
               textAlign: TextAlign.center,
             );
           }),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
 
           // 해석 텍스트
           if (interpretation.isNotEmpty)
-            UnifiedBlurWrapper(
-              isBlurred: widget.result.isBlurred,
-              blurredSections: widget.result.blurredSections,
-              sectionKey: 'card_${index + 1}',
-              child: Builder(builder: (context) {
+            Builder(builder: (context) {
                 final colors = context.colors;
                 final typography = context.typography;
                 return Container(
@@ -552,21 +557,20 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                   ),
                 );
               }),
-            ),
 
           // 구분선
           if (index < widget.result.cards.length - 1)
             Padding(
-              padding: const EdgeInsets.only(top: 32),
+              padding: const EdgeInsets.only(top: DSSpacing.xl),
               child: Container(
                 height: 1,
                 margin: const EdgeInsets.symmetric(horizontal: 40),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      const Color(0xFF7C3AED).withValues(alpha: 0.0),
-                      const Color(0xFF7C3AED).withValues(alpha: 0.3),
-                      const Color(0xFF7C3AED).withValues(alpha: 0.0),
+                      _getPrimaryColor(context).withValues(alpha: 0.0),
+                      _getPrimaryColor(context).withValues(alpha: isDark ? 0.4 : 0.3),
+                      _getPrimaryColor(context).withValues(alpha: 0.0),
                     ],
                   ),
                 ),
@@ -605,13 +609,13 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF7C3AED).withValues(alpha: 0.2),
+              color: _getPrimaryColor(context).withValues(alpha: isDark ? 0.3 : 0.2),
               blurRadius: 20,
               spreadRadius: 2,
               offset: const Offset(0, 8),
             ),
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
+              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.15),
               blurRadius: 15,
               offset: const Offset(0, 4),
             ),
@@ -622,7 +626,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(
-                color: const Color(0xFF7C3AED).withValues(alpha: 0.2),
+                color: _getPrimaryColor(context).withValues(alpha: isDark ? 0.3 : 0.2),
                 width: 2,
               ),
               borderRadius: BorderRadius.circular(16),
@@ -659,16 +663,16 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                                   children: [
                                     Icon(
                                       Icons.auto_awesome,
-                                      color: const Color(0xFF7C3AED),
+                                      color: _getPrimaryColor(context),
                                       size: large ? 48 : 32,
                                     ),
-                                    const SizedBox(height: 12),
+                                    const SizedBox(height: DSSpacing.sm),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                                      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm),
                                       child: Text(
                                         card.cardNameKr,
                                         style: context.typography.labelMedium.copyWith(
-                                          color: const Color(0xFF7C3AED),
+                                          color: _getPrimaryColor(context),
                                           fontWeight: FontWeight.w600,
                                         ),
                                         textAlign: TextAlign.center,
@@ -728,7 +732,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
         mainAxisSize: MainAxisSize.min,
         children: [
           cardWidget,
-          const SizedBox(height: 8),
+          const SizedBox(height: DSSpacing.sm),
           SizedBox(
             width: width,
             child: Text(
@@ -759,13 +763,13 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFF7C3AED).withValues(alpha: 0.05),
-            const Color(0xFF3B82F6).withValues(alpha: 0.05),
+            _getPrimaryColor(context).withValues(alpha: isDark ? 0.1 : 0.05),
+            _getSecondaryColor(context).withValues(alpha: isDark ? 0.1 : 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(DSRadius.lg),
         border: Border.all(
-          color: isDark ? colors.border : const Color(0xFF7C3AED).withValues(alpha: 0.1),
+          color: _getPrimaryColor(context).withValues(alpha: isDark ? 0.3 : 0.15),
           width: 1,
         ),
       ),
@@ -774,12 +778,12 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.auto_awesome,
-                color: Color(0xFF7C3AED),
+                color: _getPrimaryColor(context),
                 size: 20,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '종합 해석',
                 style: typography.labelLarge.copyWith(
@@ -789,7 +793,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: DSSpacing.sm),
           GptStyleTypingText(
             text: widget.result.overallInterpretation,
             style: typography.bodySmall.copyWith(
@@ -807,16 +811,9 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
       ),
     );
 
-    // ✅ UnifiedBlurWrapper로 마이그레이션 완료 (2024-12-07)
-    return UnifiedBlurWrapper(
-      isBlurred: widget.result.isBlurred,
-      blurredSections: widget.result.blurredSections,
-      sectionKey: 'overall_interpretation',
-      child: container,
-    );
+    return container;
   }
 
-  // ✅ _buildBlurWrapper 제거됨 - UnifiedBlurWrapper 사용
 
   Widget _buildIndividualInterpretations(bool isDark) {
     if (widget.result.spreadType == TarotSpreadType.single) {
@@ -842,13 +839,13 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
           final card = widget.result.cards[index];
 
           final container = Container(
-            margin: const EdgeInsets.only(bottom: 12),
+            margin: const EdgeInsets.only(bottom: DSSpacing.sm),
             padding: const EdgeInsets.all(DSSpacing.md),
             decoration: BoxDecoration(
-              color: colors.surface,
+              color: _getPrimaryColor(context).withValues(alpha: isDark ? 0.08 : 0.03),
               borderRadius: BorderRadius.circular(DSRadius.md),
               border: Border.all(
-                color: colors.border,
+                color: _getPrimaryColor(context).withValues(alpha: isDark ? 0.25 : 0.15),
                 width: 1,
               ),
             ),
@@ -861,7 +858,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                       width: 24,
                       height: 24,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF7C3AED).withValues(alpha: 0.1),
+                        color: _getPrimaryColor(context).withValues(alpha: isDark ? 0.2 : 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: Center(
@@ -869,12 +866,12 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                           '${index + 1}',
                           style: typography.labelMedium.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: const Color(0xFF7C3AED),
+                            color: _getPrimaryColor(context),
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: DSSpacing.sm),
                     Text(
                       card.fullName,
                       style: typography.bodySmall.copyWith(
@@ -884,7 +881,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: DSSpacing.sm),
                 Text(
                   entry.value,
                   style: typography.bodySmall.copyWith(
@@ -897,13 +894,7 @@ class _TarotMultiCardResultState extends ConsumerState<TarotMultiCardResult>
             ),
           );
 
-          // ✅ 2번째(card_2), 3번째(card_3) 카드는 블러 처리
-          return UnifiedBlurWrapper(
-            isBlurred: widget.result.isBlurred,
-            blurredSections: widget.result.blurredSections,
-            sectionKey: 'card_${index + 1}',  // card_1, card_2, card_3, ...
-            child: container,
-          );
+          return container;
         }),
       ],
     );

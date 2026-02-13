@@ -60,6 +60,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: DSColors.overlay,
       builder: (context) => Container(
         width: double.infinity,
         height: MediaQuery.of(context).size.height * 0.6,
@@ -103,7 +104,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
                 // Title
                 Text(
                   '나만의 인사이트를 확인하세요',
-                  style: DSTypography.displaySmall.copyWith(
+                  style: context.displaySmall.copyWith(
                     color: colors.textPrimary,
                   ),
                 ),
@@ -155,7 +156,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
                 // Terms text
                 Text(
                   '계속하면 서비스 이용약관 및\n개인정보 처리방침에 동의하는 것으로 간주됩니다.',
-                  style: DSTypography.labelMedium.copyWith(
+                  style: context.labelMedium.copyWith(
                     color: colors.textSecondary,
                     height: 1.5,
                   ),
@@ -257,7 +258,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
             const SizedBox(width: 12),
             Text(
               label,
-              style: DSTypography.labelMedium.copyWith(
+              style: context.labelMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 color: colors.textPrimary,
               ),
@@ -296,7 +297,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
                       // Title
                       Text(
                         '오늘의 이야기가\n완성되었어요!',
-                        style: DSTypography.displaySmall.copyWith(
+                        style: context.displaySmall.copyWith(
                           fontWeight: FontWeight.w600,
                           color: colors.textPrimary,
                           height: 1.2,
@@ -309,7 +310,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
                       // Subtitle
                       Text(
                         '로그인하고 나만의 맞춤 인사이트를\n확인해보세요',
-                        style: DSTypography.labelMedium.copyWith(
+                        style: context.labelMedium.copyWith(
                           color: colors.textSecondary,
                           height: 1.4,
                         ),
@@ -333,7 +334,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
                           ),
                           child: Text(
                             '내 미래 미리보기',
-                            style: DSTypography.labelMedium.copyWith(
+                            style: context.labelMedium.copyWith(
                               color: colors.ctaForeground,
                             ),
                           ),
@@ -347,7 +348,7 @@ class _PreviewScreenState extends State<PreviewScreen> with TickerProviderStateM
                         onTap: widget.onContinueWithoutLogin,
                         child: Text(
                           '로그인 없이 보기',
-                          style: DSTypography.bodySmall.copyWith(
+                          style: context.bodySmall.copyWith(
                             color: colors.textSecondary,
                             decoration: TextDecoration.underline,
                             decorationColor: colors.textSecondary,

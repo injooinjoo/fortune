@@ -1,4 +1,4 @@
-/// Feature flags for gradual rollout of new features
+// Feature flags for gradual rollout of new features
 class FeatureFlags {
   // Singleton instance
   static final FeatureFlags _instance = FeatureFlags._internal();

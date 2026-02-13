@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/components/app_card.dart';
-import '../../../../core/theme/fortune_theme.dart';
-import '../../../../core/theme/fortune_design_system.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../domain/models/fortune_history.dart';
 
 /// 운세 히스토리 캘린더 뷰
@@ -40,15 +39,15 @@ class _FortuneCalendarViewState extends State<FortuneCalendarView> {
   @override
   Widget build(BuildContext context) {
     return AppCard(
-      padding: const EdgeInsets.all(TossTheme.spacingL),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       child: Column(
         children: [
           // 월 네비게이션
           _buildMonthNavigation(),
-          const SizedBox(height: TossTheme.spacingL),
+          const SizedBox(height: DSSpacing.lg),
           // 요일 헤더
           _buildWeekdayHeaders(),
-          const SizedBox(height: TossTheme.spacingS),
+          const SizedBox(height: DSSpacing.sm),
           // 캘린더 그리드
           _buildCalendarGrid(),
         ],
@@ -61,17 +60,17 @@ class _FortuneCalendarViewState extends State<FortuneCalendarView> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
-          icon: const Icon(Icons.chevron_left, color: TossTheme.textBlack),
+          icon: Icon(Icons.chevron_left, color: context.colors.textPrimary),
           onPressed: () => _changeMonth(-1),
         ),
         Text(
           DateFormat('yyyy년 MM월').format(_currentMonth),
-          style: TossTheme.heading2.copyWith(
+          style: context.heading1.copyWith(
             fontWeight: FontWeight.w700,
           ),
         ),
         IconButton(
-          icon: const Icon(Icons.chevron_right, color: TossTheme.textBlack),
+          icon: Icon(Icons.chevron_right, color: context.colors.textPrimary),
           onPressed: () => _changeMonth(1),
         ),
       ],
@@ -85,9 +84,9 @@ class _FortuneCalendarViewState extends State<FortuneCalendarView> {
         return Expanded(
           child: Text(
             weekday,
-            style: TossTheme.caption.copyWith(
+            style: context.bodySmall.copyWith(
               fontWeight: FontWeight.w600,
-              color: TossTheme.textGray600,
+              color: context.colors.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -131,12 +130,12 @@ class _FortuneCalendarViewState extends State<FortuneCalendarView> {
     final isToday = _isToday(date);
     final hasFortune = fortune != null;
     
-    Color backgroundColor = TossDesignSystem.white.withValues(alpha: 0.0);
-    Color textColor = TossTheme.textBlack;
+    Color backgroundColor = Colors.white.withValues(alpha: 0.0);
+    Color textColor = context.colors.textPrimary;
     
     if (isToday) {
-      backgroundColor = TossTheme.primaryBlue.withValues(alpha: 0.1);
-      textColor = TossTheme.primaryBlue;
+      backgroundColor = context.colors.accent.withValues(alpha: 0.1);
+      textColor = context.colors.accent;
     }
     
     if (hasFortune) {
@@ -152,9 +151,9 @@ class _FortuneCalendarViewState extends State<FortuneCalendarView> {
       child: Container(
         decoration: BoxDecoration(
           color: backgroundColor,
-          borderRadius: BorderRadius.circular(TossTheme.radiusS),
+          borderRadius: BorderRadius.circular(DSRadius.smd),
           border: isToday ? Border.all(
-            color: TossTheme.primaryBlue,
+            color: context.colors.accent,
             width: 1.5,
           ) : null,
         ),
@@ -163,7 +162,7 @@ class _FortuneCalendarViewState extends State<FortuneCalendarView> {
           children: [
             Text(
               '${date.day}',
-              style: TossTheme.body2.copyWith(
+              style: context.heading3.copyWith(
                 color: textColor,
                 fontWeight: isToday || hasFortune 
                   ? FontWeight.w700 
@@ -207,10 +206,10 @@ class _FortuneCalendarViewState extends State<FortuneCalendarView> {
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return TossDesignSystem.success;
-    if (score >= 70) return TossTheme.primaryBlue;
-    if (score >= 60) return TossDesignSystem.warningYellow;
-    return TossDesignSystem.error;
+    if (score >= 80) return DSColors.success;
+    if (score >= 70) return context.colors.accent;
+    if (score >= 60) return DSColors.warning;
+    return DSColors.error;
   }
 
   void _changeMonth(int delta) {

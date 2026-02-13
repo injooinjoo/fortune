@@ -370,9 +370,6 @@ mixin _$FaceReadingResultV2 {
   LeadershipAnalysis? get leadershipAnalysis =>
       throw _privateConstructorUsedError; // === Apple Watch 데이터 ===
   WatchFaceReadingData? get watchData =>
-      throw _privateConstructorUsedError; // === 블러 처리 ===
-  bool get isBlurred => throw _privateConstructorUsedError;
-  List<String> get blurredSections =>
       throw _privateConstructorUsedError; // === 공유용 데이터 ===
   ShareableContent? get shareableContent => throw _privateConstructorUsedError;
 
@@ -414,8 +411,6 @@ abstract class $FaceReadingResultV2CopyWith<$Res> {
       LuckyFeatureEnhancement? luckyFeatureEnhancement,
       LeadershipAnalysis? leadershipAnalysis,
       WatchFaceReadingData? watchData,
-      bool isBlurred,
-      List<String> blurredSections,
       ShareableContent? shareableContent});
 
   $FaceConditionCopyWith<$Res>? get faceCondition;
@@ -467,8 +462,6 @@ class _$FaceReadingResultV2CopyWithImpl<$Res, $Val extends FaceReadingResultV2>
     Object? luckyFeatureEnhancement = freezed,
     Object? leadershipAnalysis = freezed,
     Object? watchData = freezed,
-    Object? isBlurred = null,
-    Object? blurredSections = null,
     Object? shareableContent = freezed,
   }) {
     return _then(_value.copyWith(
@@ -556,14 +549,6 @@ class _$FaceReadingResultV2CopyWithImpl<$Res, $Val extends FaceReadingResultV2>
           ? _value.watchData
           : watchData // ignore: cast_nullable_to_non_nullable
               as WatchFaceReadingData?,
-      isBlurred: null == isBlurred
-          ? _value.isBlurred
-          : isBlurred // ignore: cast_nullable_to_non_nullable
-              as bool,
-      blurredSections: null == blurredSections
-          ? _value.blurredSections
-          : blurredSections // ignore: cast_nullable_to_non_nullable
-              as List<String>,
       shareableContent: freezed == shareableContent
           ? _value.shareableContent
           : shareableContent // ignore: cast_nullable_to_non_nullable
@@ -761,8 +746,6 @@ abstract class _$$FaceReadingResultV2ImplCopyWith<$Res>
       LuckyFeatureEnhancement? luckyFeatureEnhancement,
       LeadershipAnalysis? leadershipAnalysis,
       WatchFaceReadingData? watchData,
-      bool isBlurred,
-      List<String> blurredSections,
       ShareableContent? shareableContent});
 
   @override
@@ -823,8 +806,6 @@ class __$$FaceReadingResultV2ImplCopyWithImpl<$Res>
     Object? luckyFeatureEnhancement = freezed,
     Object? leadershipAnalysis = freezed,
     Object? watchData = freezed,
-    Object? isBlurred = null,
-    Object? blurredSections = null,
     Object? shareableContent = freezed,
   }) {
     return _then(_$FaceReadingResultV2Impl(
@@ -912,14 +893,6 @@ class __$$FaceReadingResultV2ImplCopyWithImpl<$Res>
           ? _value.watchData
           : watchData // ignore: cast_nullable_to_non_nullable
               as WatchFaceReadingData?,
-      isBlurred: null == isBlurred
-          ? _value.isBlurred
-          : isBlurred // ignore: cast_nullable_to_non_nullable
-              as bool,
-      blurredSections: null == blurredSections
-          ? _value._blurredSections
-          : blurredSections // ignore: cast_nullable_to_non_nullable
-              as List<String>,
       shareableContent: freezed == shareableContent
           ? _value.shareableContent
           : shareableContent // ignore: cast_nullable_to_non_nullable
@@ -953,12 +926,9 @@ class _$FaceReadingResultV2Impl implements _FaceReadingResultV2 {
       this.luckyFeatureEnhancement,
       this.leadershipAnalysis,
       this.watchData,
-      this.isBlurred = false,
-      final List<String> blurredSections = const [],
       this.shareableContent})
       : _priorityInsights = priorityInsights,
-        _celebrityMatches = celebrityMatches,
-        _blurredSections = blurredSections;
+        _celebrityMatches = celebrityMatches;
 
   factory _$FaceReadingResultV2Impl.fromJson(Map<String, dynamic> json) =>
       _$$FaceReadingResultV2ImplFromJson(json);
@@ -1061,26 +1031,13 @@ class _$FaceReadingResultV2Impl implements _FaceReadingResultV2 {
 // === Apple Watch 데이터 ===
   @override
   final WatchFaceReadingData? watchData;
-// === 블러 처리 ===
-  @override
-  @JsonKey()
-  final bool isBlurred;
-  final List<String> _blurredSections;
-  @override
-  @JsonKey()
-  List<String> get blurredSections {
-    if (_blurredSections is EqualUnmodifiableListView) return _blurredSections;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_blurredSections);
-  }
-
 // === 공유용 데이터 ===
   @override
   final ShareableContent? shareableContent;
 
   @override
   String toString() {
-    return 'FaceReadingResultV2(id: $id, userId: $userId, createdAt: $createdAt, gender: $gender, ageGroup: $ageGroup, priorityInsights: $priorityInsights, overallScore: $overallScore, summaryMessage: $summaryMessage, overallFortune: $overallFortune, faceType: $faceType, faceCondition: $faceCondition, emotionAnalysis: $emotionAnalysis, myeonggungAnalysis: $myeonggungAnalysis, miganAnalysis: $miganAnalysis, simplifiedOgwan: $simplifiedOgwan, simplifiedSibigung: $simplifiedSibigung, celebrityMatches: $celebrityMatches, makeupRecommendations: $makeupRecommendations, luckyFeatureEnhancement: $luckyFeatureEnhancement, leadershipAnalysis: $leadershipAnalysis, watchData: $watchData, isBlurred: $isBlurred, blurredSections: $blurredSections, shareableContent: $shareableContent)';
+    return 'FaceReadingResultV2(id: $id, userId: $userId, createdAt: $createdAt, gender: $gender, ageGroup: $ageGroup, priorityInsights: $priorityInsights, overallScore: $overallScore, summaryMessage: $summaryMessage, overallFortune: $overallFortune, faceType: $faceType, faceCondition: $faceCondition, emotionAnalysis: $emotionAnalysis, myeonggungAnalysis: $myeonggungAnalysis, miganAnalysis: $miganAnalysis, simplifiedOgwan: $simplifiedOgwan, simplifiedSibigung: $simplifiedSibigung, celebrityMatches: $celebrityMatches, makeupRecommendations: $makeupRecommendations, luckyFeatureEnhancement: $luckyFeatureEnhancement, leadershipAnalysis: $leadershipAnalysis, watchData: $watchData, shareableContent: $shareableContent)';
   }
 
   @override
@@ -1128,10 +1085,6 @@ class _$FaceReadingResultV2Impl implements _FaceReadingResultV2 {
                 other.leadershipAnalysis == leadershipAnalysis) &&
             (identical(other.watchData, watchData) ||
                 other.watchData == watchData) &&
-            (identical(other.isBlurred, isBlurred) ||
-                other.isBlurred == isBlurred) &&
-            const DeepCollectionEquality()
-                .equals(other._blurredSections, _blurredSections) &&
             (identical(other.shareableContent, shareableContent) ||
                 other.shareableContent == shareableContent));
   }
@@ -1161,8 +1114,6 @@ class _$FaceReadingResultV2Impl implements _FaceReadingResultV2 {
         luckyFeatureEnhancement,
         leadershipAnalysis,
         watchData,
-        isBlurred,
-        const DeepCollectionEquality().hash(_blurredSections),
         shareableContent
       ]);
 
@@ -1206,8 +1157,6 @@ abstract class _FaceReadingResultV2 implements FaceReadingResultV2 {
       final LuckyFeatureEnhancement? luckyFeatureEnhancement,
       final LeadershipAnalysis? leadershipAnalysis,
       final WatchFaceReadingData? watchData,
-      final bool isBlurred,
-      final List<String> blurredSections,
       final ShareableContent? shareableContent}) = _$FaceReadingResultV2Impl;
 
   factory _FaceReadingResultV2.fromJson(Map<String, dynamic> json) =
@@ -1281,11 +1230,7 @@ abstract class _FaceReadingResultV2 implements FaceReadingResultV2 {
   @override
   LeadershipAnalysis? get leadershipAnalysis; // === Apple Watch 데이터 ===
   @override
-  WatchFaceReadingData? get watchData; // === 블러 처리 ===
-  @override
-  bool get isBlurred;
-  @override
-  List<String> get blurredSections; // === 공유용 데이터 ===
+  WatchFaceReadingData? get watchData; // === 공유용 데이터 ===
   @override
   ShareableContent? get shareableContent;
 

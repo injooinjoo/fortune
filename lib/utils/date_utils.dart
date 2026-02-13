@@ -1,3 +1,5 @@
+import 'package:lunar/lunar.dart';
+
 class TimePeriod {
   final String value;
   final String label;
@@ -91,13 +93,35 @@ class FortuneDateUtils {
     return '';
   }
 
-  // 생년월일에서 띠 계산
+  // 생년월일에서 띠 계산 (음력 기준)
   static String getChineseZodiac(String birthDate) {
     if (birthDate.isEmpty) return '';
-    
-    final year = DateTime.parse(birthDate).year;
-    const animals = ['원숭이', '닭', '개', '돼지', '쥐', '소', '호랑이', '토끼', '용', '뱀', '말', '양'];
-    return animals[year % 12];
+
+    try {
+      final date = DateTime.parse(birthDate);
+      // lunar 패키지로 음력 변환 후 지지로 띠 계산
+      final lunar = Lunar.fromDate(date);
+      final yearZhi = lunar.getYearZhi();
+
+      const zhiToAnimal = {
+        '子': '쥐',
+        '丑': '소',
+        '寅': '호랑이',
+        '卯': '토끼',
+        '辰': '용',
+        '巳': '뱀',
+        '午': '말',
+        '未': '양',
+        '申': '원숭이',
+        '酉': '닭',
+        '戌': '개',
+        '亥': '돼지',
+      };
+
+      return zhiToAnimal[yearZhi] ?? '';
+    } catch (e) {
+      return '';
+    }
   }
 
   // 현재 시간을 기준으로 해당하는 시진 찾기

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/models/personality_dna_model.dart';
-import '../../../../../../core/theme/typography_unified.dart';
 
 /// 파워 컬러 카드
 class PowerColorCard extends StatelessWidget {
@@ -10,13 +10,15 @@ class PowerColorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.isDark;
+
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(DSSpacing.cardPadding),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: powerColor.color.withValues(alpha:0.5),
+          color: powerColor.color.withValues(alpha: isDark ? 0.7 : 0.5),
         ),
       ),
       child: Column(
@@ -25,29 +27,29 @@ class PowerColorCard extends StatelessWidget {
           Row(
             children: [
               const Text('💎', style: TextStyle(fontSize: 20)),
-              const SizedBox(width: 8),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '나의 파워 컬러',
                 style: context.heading4.copyWith(fontWeight: FontWeight.bold),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(DSSpacing.cardPadding),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
                   powerColor.color,
-                  powerColor.color.withValues(alpha:0.7),
+                  powerColor.color.withValues(alpha: 0.7),
                 ],
               ),
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: powerColor.color.withValues(alpha:0.3),
+                  color: powerColor.color.withValues(alpha: 0.3),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -62,13 +64,6 @@ class PowerColorCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha:0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
                   ),
                   child: Center(
                     child: Container(
@@ -81,7 +76,7 @@ class PowerColorCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: DSSpacing.md),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,14 +88,14 @@ class PowerColorCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: DSSpacing.xs),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
+                          horizontal: DSSpacing.sm,
+                          vertical: DSSpacing.xs,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha:0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
@@ -117,11 +112,12 @@ class PowerColorCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             '이 색상은 당신의 에너지와 가장 잘 어울리는 파워 컬러입니다. 중요한 날이나 자신감이 필요할 때 이 색상을 활용해보세요!',
             style: context.bodyMedium.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha:0.7),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: isDark ? 0.85 : 0.7),
+              height: 1.5,
             ),
           ),
         ],

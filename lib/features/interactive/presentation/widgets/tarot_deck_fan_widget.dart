@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../../../../core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 class TarotDeckFanWidget extends StatefulWidget {
   final int cardCount;
@@ -122,9 +122,9 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
                   child: Transform(
                     alignment: Alignment.bottomCenter,
                     transform: Matrix4.identity()
-                      ..translate(0.0, -floatOffset + (1 - fanProgress) * 100)
+                      ..translateByDouble(0.0, -floatOffset + (1 - fanProgress) * 100, 0.0, 0.0)
                       ..rotateZ(angle)
-                      ..scale(0.9 + scaleBoost + fanProgress * 0.1),
+                      ..scaleByDouble(0.9 + scaleBoost + fanProgress * 0.1, 0.9 + scaleBoost + fanProgress * 0.1, 1.0, 1.0),
                     child: Opacity(
                       opacity: 0.5 + fanProgress * 0.5,
                       child: Stack(
@@ -178,7 +178,7 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
         border: Border.all(
           color: isHovered
               ? Theme.of(context).colorScheme.secondary
-              : TossDesignSystem.white.withValues(alpha: 0.3),
+              : context.colors.accent.withValues(alpha: 0.3),
           width: isHovered ? 3 : 2)),
       child: Stack(
         children: [
@@ -186,16 +186,16 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
           Positioned.fill(
             child: CustomPaint(
               painter: MandalaPainter(
-                color: TossDesignSystem.white.withValues(alpha: 0.1),
+                color: context.colors.accent.withValues(alpha: 0.1),
                 isAnimated: isHovered)),
           ),
-          
+
           // Center symbol
           Center(
             child: Icon(
               Icons.auto_awesome,
               size: 40,
-              color: TossDesignSystem.white.withValues(alpha: isHovered ? 0.9 : 0.7)),
+              color: context.colors.accent.withValues(alpha: isHovered ? 0.9 : 0.7)),
           ),
         ],
       ),

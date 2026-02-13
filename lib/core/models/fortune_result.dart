@@ -1,6 +1,6 @@
-/// 통합 운세 결과 모델
-///
-/// 모든 운세 타입에 공통적으로 사용되는 표준 결과 형식
+// 통합 운세 결과 모델
+//
+// 모든 운세 타입에 공통적으로 사용되는 표준 결과 형식
 class FortuneResult {
   /// 운세 고유 ID (fortune_history 테이블의 ID)
   final String? id;
@@ -34,13 +34,6 @@ class FortuneResult {
   /// 조회수
   final int? viewCount;
 
-  /// 블러 상태 (광고 시청 전 일부 내용 숨김)
-  final bool isBlurred;
-
-  /// 블러 처리할 섹션 키 목록
-  /// 예: ['advice', 'luckItems', 'warnings', 'detailedAnalysis']
-  final List<String> blurredSections;
-
   /// 오늘 운세를 본 사람들 중 상위 퍼센타일 (예: 15 = 상위 15%)
   final int? percentile;
 
@@ -60,8 +53,6 @@ class FortuneResult {
     this.createdAt,
     this.lastViewedAt,
     this.viewCount,
-    this.isBlurred = false,
-    this.blurredSections = const [],
     this.percentile,
     this.totalTodayViewers,
     this.isPercentileValid = false,
@@ -95,10 +86,6 @@ class FortuneResult {
           ? DateTime.parse(json['last_viewed_at'] as String)
           : null,
       viewCount: json['view_count'] as int?,
-      isBlurred: json['is_blurred'] as bool? ?? false,
-      blurredSections: json['blurred_sections'] != null
-          ? List<String>.from(json['blurred_sections'] as List)
-          : [],
       percentile: json['percentile'] as int?,
       totalTodayViewers: json['total_today_viewers'] as int?,
       isPercentileValid: json['is_percentile_valid'] as bool? ?? false,
@@ -119,8 +106,6 @@ class FortuneResult {
       if (createdAt != null) 'created_at': createdAt!.toIso8601String(),
       if (lastViewedAt != null) 'last_viewed_at': lastViewedAt!.toIso8601String(),
       if (viewCount != null) 'view_count': viewCount,
-      'is_blurred': isBlurred,
-      'blurred_sections': blurredSections,
       if (percentile != null) 'percentile': percentile,
       if (totalTodayViewers != null) 'total_today_viewers': totalTodayViewers,
       'is_percentile_valid': isPercentileValid,
@@ -138,8 +123,6 @@ class FortuneResult {
     DateTime? createdAt,
     DateTime? lastViewedAt,
     int? viewCount,
-    bool? isBlurred,
-    List<String>? blurredSections,
     int? percentile,
     int? totalTodayViewers,
     bool? isPercentileValid,
@@ -154,8 +137,6 @@ class FortuneResult {
       createdAt: createdAt ?? this.createdAt,
       lastViewedAt: lastViewedAt ?? this.lastViewedAt,
       viewCount: viewCount ?? this.viewCount,
-      isBlurred: isBlurred ?? this.isBlurred,
-      blurredSections: blurredSections ?? this.blurredSections,
       percentile: percentile ?? this.percentile,
       totalTodayViewers: totalTodayViewers ?? this.totalTodayViewers,
       isPercentileValid: isPercentileValid ?? this.isPercentileValid,

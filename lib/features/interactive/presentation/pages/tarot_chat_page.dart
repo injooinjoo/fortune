@@ -3,8 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math';
 import '../../../../shared/components/app_header.dart';
-import '../../../../core/theme/fortune_design_system.dart';
-import '../../../../core/design_system/design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import '../../../../core/constants/tarot_metadata.dart';
 import '../../../../core/providers/user_settings_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
@@ -195,7 +194,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
       
       if (!hasEnoughTokens) {
         messages.updateLastMessage(ChatMessage(
-          text: '복주머니가 부족합니다. 복주머니를 충전해주세요.',
+          text: '토큰가 부족합니다. 토큰를 충전해주세요.',
           isUser: false,
           timestamp: DateTime.now()));
         setState(() => _isProcessing = false);
@@ -333,7 +332,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
     final fontScale = ref.watch(userSettingsProvider).fontScale;
 
     return Scaffold(
-      backgroundColor: TossDesignSystem.gray50,
+      backgroundColor: DSColors.backgroundDark,
       body: SafeArea(
         child: Column(
           children: [
@@ -341,7 +340,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
             AppHeader(
               title: '타로 리딩',
               showBackButton: true,
-              backgroundColor: TossDesignSystem.white,
+              backgroundColor: context.colors.surface,
               elevation: 0.5,
               actions: [
                 IconButton(
@@ -374,33 +373,29 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: TossDesignSystem.white,
+              color: context.colors.surface,
               shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: TossDesignSystem.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2))]),
+            ),
             child: const Icon(
               Icons.auto_awesome,
               size: 40,
-              color: TossDesignSystem.gray900)),
+              color: DSColors.textPrimaryDark)),
           
-          const SizedBox(height: 24),
+          const SizedBox(height: DSSpacing.lg),
           
           // Welcome text
           Text(
             '타로 리딩에 오신 것을 환영합니다',
-            style: DSTypography.headingMedium.copyWith(
+            style: context.headingMedium.copyWith(
               fontWeight: FontWeight.bold,
-              color: TossDesignSystem.gray900)),
+              color: DSColors.textPrimaryDark)),
 
           const SizedBox(height: 12),
 
           Text(
             '궁금한 것을 물어보시면 타로 카드로 답변해 드릴게요',
-            style: DSTypography.labelMedium.copyWith(
-              color: TossDesignSystem.gray600),
+            style: context.labelMedium.copyWith(
+              color: DSColors.textSecondaryDark),
             textAlign: TextAlign.center),
 
           const SizedBox(height: 40),
@@ -408,11 +403,11 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
           // Example questions
           Text(
             '이런 질문을 해보세요',
-            style: DSTypography.labelMedium.copyWith(
+            style: context.labelMedium.copyWith(
               fontWeight: FontWeight.w600,
-              color: TossDesignSystem.gray900)),
+              color: DSColors.textPrimaryDark)),
           
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           
           // Question grid
           Wrap(
@@ -433,7 +428,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
       constraints: BoxConstraints(
         maxWidth: MediaQuery.of(context).size.width * 0.42),
       child: Material(
-        color: TossDesignSystem.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           onTap: () {
@@ -447,17 +442,13 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: TossDesignSystem.gray200,
+                color: DSColors.borderDark,
                 width: 1),
-              boxShadow: [
-                BoxShadow(
-                  color: TossDesignSystem.black.withValues(alpha: 0.04),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2))]),
+            ),
             child: Text(
               question,
-              style: DSTypography.bodySmall.copyWith(
-                color: TossDesignSystem.gray900,
+              style: context.bodySmall.copyWith(
+                color: DSColors.textPrimaryDark,
                 fontWeight: FontWeight.w500,
                 height: 1.4),
               textAlign: TextAlign.center)))));
@@ -488,34 +479,30 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: TossDesignSystem.white,
+                color: context.colors.surface,
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: TossDesignSystem.gray600,
+                  color: DSColors.textSecondaryDark,
                   width: 1)),
               child: const Icon(
                 Icons.auto_awesome,
                 size: 18,
-                color: TossDesignSystem.gray900,
+                color: DSColors.textPrimaryDark,
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: DSSpacing.sm),
           ],
           
           Flexible(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: isUser ? TossDesignSystem.gray900 : TossDesignSystem.white,
+                color: isUser ? DSColors.textPrimaryDark : context.colors.surface,
                 borderRadius: BorderRadius.circular(16),
                 border: !isUser ? Border.all(
-                  color: TossDesignSystem.gray600,
+                  color: DSColors.textSecondaryDark,
                   width: 1) : null,
-                boxShadow: [
-                  BoxShadow(
-                    color: TossDesignSystem.black.withValues(alpha: 0.02),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2))]),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -529,14 +516,14 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              TossDesignSystem.gray600),
+                              DSColors.textSecondaryDark),
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: DSSpacing.sm),
                         Text(
                           message.text,
-                          style: DSTypography.bodySmall.copyWith(
-                            color: isUser ? TossDesignSystem.white : TossDesignSystem.gray900,
+                          style: context.bodySmall.copyWith(
+                            color: isUser ? Colors.white : DSColors.textPrimaryDark,
                           ),
                         ),
                       ],
@@ -544,8 +531,8 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                   else
                     Text(
                       message.text,
-                      style: DSTypography.bodySmall.copyWith(
-                        color: isUser ? TossDesignSystem.white : TossDesignSystem.gray900,
+                      style: context.bodySmall.copyWith(
+                        color: isUser ? Colors.white : DSColors.textPrimaryDark,
                         height: 1.4,
                       ),
                     ),
@@ -567,7 +554,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
             ),
           ),
           
-          if (isUser) const SizedBox(width: 8),
+          if (isUser) const SizedBox(width: DSSpacing.sm),
         ],
       ),
     );
@@ -580,15 +567,8 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: TossDesignSystem.gray300,
+          color: DSColors.borderDark,
           width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha: 0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
@@ -603,11 +583,11 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    color: TossDesignSystem.gray100,
+                    color: DSColors.backgroundSecondaryDark,
                     child: const Icon(
                       Icons.style,
                       size: 40,
-                      color: TossDesignSystem.gray600,
+                      color: DSColors.textSecondaryDark,
                     ),
                   );
                 },
@@ -615,26 +595,26 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
             ),
             // 카드 이름
             Container(
-              color: TossDesignSystem.white,
+              color: context.colors.surface,
               padding: const EdgeInsets.all(8),
               child: Column(
                 children: [
                   Text(
                     card.name,
-                    style: DSTypography.labelMedium.copyWith(
+                    style: context.labelMedium.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: TossDesignSystem.gray900,
+                      color: DSColors.textPrimaryDark,
                     ),
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   if (card.isReversed) ...[
-                    const SizedBox(height: 2),
+                    const SizedBox(height: DSSpacing.xxs),
                     Text(
                       '(역방향)',
-                      style: DSTypography.labelSmall.copyWith(
-                        color: TossDesignSystem.gray600,
+                      style: context.labelSmall.copyWith(
+                        color: DSColors.textSecondaryDark,
                       ),
                     ),
                   ],
@@ -654,11 +634,11 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
         right: 16,
         top: 12,
         bottom: MediaQuery.of(context).padding.bottom + 12),
-      decoration: const BoxDecoration(
-        color: TossDesignSystem.white,
-        border: Border(
+      decoration: BoxDecoration(
+        color: context.colors.surface,
+        border: const Border(
           top: BorderSide(
-            color: TossDesignSystem.gray600,
+            color: DSColors.textSecondaryDark,
             width: 1)),
       ),
       child: UnifiedVoiceTextField(

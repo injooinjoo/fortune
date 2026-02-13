@@ -1,5 +1,5 @@
-/// Notification Settings - Widget Test
-/// 알림 설정 화면 UI 테스트
+// Notification Settings - Widget Test
+// 알림 설정 화면 UI 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -87,7 +87,7 @@ void main() {
             child: MaterialApp(
               home: Scaffold(
                 body: _MockNotificationSettingsScreen(
-                  dailyNotificationTime: const TimeOfDay(hour: 8, minute: 0),
+                  dailyNotificationTime: TimeOfDay(hour: 8, minute: 0),
                 ),
               ),
             ),
@@ -285,14 +285,12 @@ void main() {
 
 class _MockNotificationSettingsScreen extends StatefulWidget {
   final bool masterEnabled;
-  final bool dailyNotificationEnabled;
   final TimeOfDay dailyNotificationTime;
   final bool hasChanges;
   final VoidCallback? onTimePickerTap;
 
   const _MockNotificationSettingsScreen({
     this.masterEnabled = true,
-    this.dailyNotificationEnabled = true,
     this.dailyNotificationTime = const TimeOfDay(hour: 8, minute: 0),
     this.hasChanges = false,
     this.onTimePickerTap,
@@ -316,7 +314,7 @@ class _MockNotificationSettingsScreenState
   void initState() {
     super.initState();
     _masterEnabled = widget.masterEnabled;
-    _dailyEnabled = widget.dailyNotificationEnabled;
+    _dailyEnabled = true;
   }
 
   String _formatTime(TimeOfDay time) {
@@ -367,7 +365,7 @@ class _MockNotificationSettingsScreenState
             const SizedBox(height: 16),
 
             // 일일 운세 알림
-            _SectionHeader(title: '일일 운세'),
+            const _SectionHeader(title: '일일 운세'),
             _NotificationToggle(
               title: '일일 운세 알림',
               subtitle: '매일 아침 오늘의 운세를 알려드려요',
@@ -386,7 +384,7 @@ class _MockNotificationSettingsScreenState
             const Divider(),
 
             // 운세 관련 알림
-            _SectionHeader(title: '운세 알림'),
+            const _SectionHeader(title: '운세 알림'),
             _NotificationToggle(
               title: '특별한 날 알림',
               subtitle: '생일, 절기 등 특별한 날에 알려드려요',
@@ -405,7 +403,7 @@ class _MockNotificationSettingsScreenState
             const Divider(),
 
             // 마케팅 알림
-            _SectionHeader(title: '마케팅'),
+            const _SectionHeader(title: '마케팅'),
             _NotificationToggle(
               title: '이벤트/프로모션',
               subtitle: '특별 이벤트와 할인 정보를 알려드려요',

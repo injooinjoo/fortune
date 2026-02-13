@@ -371,8 +371,6 @@ serve(async (req) => {
       opponentAnalysis: result.opponentAnalysis,
       fortuneElements: result.fortuneElements,
       cautionMessage: result.cautionMessage,
-      isBlurred: false,
-      blurredSections: [],
       timestamp: new Date().toISOString(),
       percentile,
       // 경기 정보

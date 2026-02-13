@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../services/cache_service.dart';
 import '../../data/services/fortune_api_service.dart';
-import '../../../../core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 class CacheSettingsWidget extends ConsumerStatefulWidget {
   const CacheSettingsWidget({super.key});
@@ -46,7 +46,7 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(
-              foregroundColor: TossDesignSystem.errorRed),
+              foregroundColor: DSColors.error),
             child: const Text('삭제'))
         ]));
 
@@ -107,7 +107,7 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
           children: [
             Row(
               children: [
-                const Icon(Icons.storage, color: TossDesignSystem.tossBlue),
+                const Icon(Icons.storage, color: DSColors.accentDark),
                 const SizedBox(width: AppSpacing.spacing2),
                 Text(
                   '캐시 관리',
@@ -138,21 +138,21 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
               icon: Icons.cloud_download,
               label: '오프라인용 인사이트 준비',
               onPressed: _isLoading ? null : _preloadForOffline,
-              color: TossDesignSystem.tossBlue,
+              color: DSColors.accentDark,
             ),
             const SizedBox(height: AppSpacing.spacing2),
             _buildActionButton(
               icon: Icons.cleaning_services,
               label: '만료된 캐시 정리',
               onPressed: _isLoading ? null : _cleanExpiredCache,
-              color: TossDesignSystem.warningOrange,
+              color: DSColors.warning,
             ),
             const SizedBox(height: AppSpacing.spacing2),
             _buildActionButton(
               icon: Icons.delete_outline,
               label: '모든 캐시 삭제',
               onPressed: _isLoading ? null : _clearCache,
-              color: TossDesignSystem.errorRed,
+              color: DSColors.error,
             ),
           ],
         ),

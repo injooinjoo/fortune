@@ -684,7 +684,7 @@ class WidgetDataService {
       overall: const WidgetOverallData(
         score: 0,
         grade: '-',
-        message: '운세를 받아보세요 ✨',
+        message: '인사이트를 받아보세요 ✨',
       ),
       categories: {
         for (final key in ['love', 'money', 'work', 'study', 'health'])
@@ -711,7 +711,7 @@ class WidgetDataService {
       updatedAt: now,
       validDate: todayStr,
       displayState: WidgetDisplayState.empty,
-      engagementMessage: '운세를 받아보세요 ✨',
+      engagementMessage: '인사이트를 받아보세요 ✨',
     );
   }
 

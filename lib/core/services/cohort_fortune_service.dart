@@ -33,15 +33,15 @@ class CohortFortuneService {
       );
 
       if (cohortData.isEmpty) {
-        AppLogger.info('[CohortFortune] No cohort data for $fortuneType');
+        Logger.info('[CohortFortune] No cohort data for $fortuneType');
         return null;
       }
 
       final cohortHash = CohortHelpers.generateCohortHash(cohortData);
 
-      AppLogger.info(
+      Logger.info(
           '[CohortFortune] Looking for $fortuneType with hash: $cohortHash');
-      AppLogger.info('[CohortFortune] Cohort data: $cohortData');
+      Logger.info('[CohortFortune] Cohort data: $cohortData');
 
       // 2. DB에서 랜덤 결과 조회
       final response = await _supabase.rpc(
@@ -53,7 +53,7 @@ class CohortFortuneService {
       );
 
       if (response == null) {
-        AppLogger.info('[CohortFortune] No result in pool for $cohortHash');
+        Logger.info('[CohortFortune] No result in pool for $cohortHash');
         return null;
       }
 
@@ -62,12 +62,11 @@ class CohortFortuneService {
       // 3. 개인화 후처리
       final personalized = _personalize(template, input);
 
-      AppLogger.info('[CohortFortune] Successfully retrieved from pool');
+      Logger.info('[CohortFortune] Successfully retrieved from pool');
 
       return FortuneResult.fromJson(personalized);
     } catch (e, stack) {
-      AppLogger.error('[CohortFortune] Error getting from pool: $e',
-          error: e, stackTrace: stack);
+      Logger.error('[CohortFortune] Error getting from pool: $e', e, stack);
       return null;
     }
   }
@@ -97,7 +96,7 @@ class CohortFortuneService {
 
       return response as int? ?? 0;
     } catch (e) {
-      AppLogger.error('[CohortFortune] Error getting pool size: $e');
+      Logger.error('[CohortFortune] Error getting pool size: $e');
       return 0;
     }
   }
@@ -129,10 +128,10 @@ class CohortFortuneService {
         'quality_score': 1.0,
       });
 
-      AppLogger.info('[CohortFortune] Saved new result to pool');
+      Logger.info('[CohortFortune] Saved new result to pool');
       return true;
     } catch (e) {
-      AppLogger.error('[CohortFortune] Error saving to pool: $e');
+      Logger.error('[CohortFortune] Error saving to pool: $e');
       return false;
     }
   }
@@ -287,7 +286,7 @@ class CohortFortuneService {
 
       return response;
     } catch (e) {
-      AppLogger.error('[CohortFortune] Error getting settings: $e');
+      Logger.error('[CohortFortune] Error getting settings: $e');
       return null;
     }
   }
@@ -308,7 +307,7 @@ class CohortFortuneService {
 
       return (response as List).cast<Map<String, dynamic>>();
     } catch (e) {
-      AppLogger.error('[CohortFortune] Error getting underfilled cohorts: $e');
+      Logger.error('[CohortFortune] Error getting underfilled cohorts: $e');
       return [];
     }
   }
@@ -325,7 +324,7 @@ class CohortFortuneService {
 
       return (response as List).cast<Map<String, dynamic>>();
     } catch (e) {
-      AppLogger.error('[CohortFortune] Error getting pool stats: $e');
+      Logger.error('[CohortFortune] Error getting pool stats: $e');
       return [];
     }
   }

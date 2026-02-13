@@ -36,13 +36,12 @@ import NaverThirdPartyLogin
     setupNaverLogin()
     #endif
     
-    // Register native platform plugin
-    // TODO: Add NativePlatformPlugin.swift to Xcode project before uncommenting
-    // if #available(iOS 16.1, *) {
-    //   if let registrar = self.registrar(forPlugin: "NativePlatformPlugin") {
-    //     NativePlatformPlugin.register(with: registrar)
-    //   }
-    // }
+    // Register native platform plugin for widget and Live Activity support
+    if #available(iOS 16.1, *) {
+      if let registrar = self.registrar(forPlugin: "NativePlatformPlugin") {
+        NativePlatformPlugin.register(with: registrar)
+      }
+    }
 
     // Register background tasks for widget refresh
     registerBackgroundTasks()
@@ -331,7 +330,7 @@ import NaverThirdPartyLogin
     instance?.serviceUrlScheme = "naverQMEfy6U82j8nKG3HSE8y"
     instance?.consumerKey = "QMEfy6U82j8nKG3HSE8y"
     instance?.consumerSecret = "Hu5KdO9DxK"
-    instance?.appName = "Fortune"
+    instance?.appName = "ZPZG"
     
     // Check if already logged in
     if let accessToken = instance?.accessToken, !accessToken.isEmpty {

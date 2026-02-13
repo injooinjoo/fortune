@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/theme/typography_unified.dart';
 import '../../domain/models/meditation_history.dart';
 import '../providers/wellness_providers.dart';
 import 'mind_gem_widget.dart';
@@ -32,6 +31,7 @@ class MeditationCompletionSheet extends ConsumerStatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: DSColors.overlay,
       builder: (context) => MeditationCompletionSheet(
         durationMinutes: durationMinutes,
         completedCycles: completedCycles,
@@ -113,7 +113,7 @@ class _MeditationCompletionSheetState
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final historyState = ref.watch(meditationHistoryProvider);
     final statistics = historyState.statistics;
 
@@ -129,13 +129,6 @@ class _MeditationCompletionSheetState
               decoration: BoxDecoration(
                 color: isDark ? DSColors.surfaceDark : DSColors.surface,
                 borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 20,
-                    offset: const Offset(0, -5),
-                  ),
-                ],
               ),
               child: SafeArea(
                 top: false,

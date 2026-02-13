@@ -1,12 +1,11 @@
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
-import '../providers/providers.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/services/fortune_haptic_service.dart';
 import 'package:fortune/core/theme/app_animations.dart';
@@ -29,11 +28,11 @@ class TimeBasedFortuneBottomSheet extends ConsumerStatefulWidget {
   }) {
     return showModalBottomSheet(
       context: context,
-      backgroundColor: TossDesignSystem.transparent,
+      backgroundColor: Colors.transparent,
       isScrollControlled: true,
       isDismissible: true,
       enableDrag: true,
-      barrierColor: TossDesignSystem.transparent,
+      barrierColor: Colors.transparent,
       useRootNavigator: true,
       builder: (context) => TimeBasedFortuneBottomSheet(
         onDismiss: onDismiss,
@@ -119,14 +118,8 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
     setState(() {
       _isLoadingFortune = true;
     });
-    
-    final isPremium = ref.read(hasUnlimitedAccessProvider);
-    
+
     try {
-      if (!isPremium) {
-        await _showDirectAd();
-      }
-      
       if (mounted) {
         setState(() {
           _isLoadingFortune = false;
@@ -158,17 +151,14 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
           _isLoadingFortune = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('광고 로딩 중 오류가 발생했습니다'))
+          const SnackBar(content: Text('데이터 로딩 중 오류가 발생했습니다'))
         );
       }
     }
   }
   
-  Future<void> _showDirectAd() async {
-    await Future.delayed(const Duration(seconds: 3));
-  }
-
   Widget _buildCalendarCell(BuildContext context, DateTime day, DateTime focusedDay) {
+    final typography = context.typography;
     final theme = Theme.of(context);
     final isSelected = isSameDay(day, _selectedDay);
     final isToday = isSameDay(day, DateTime.now());
@@ -188,12 +178,12 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
       textColor = theme.colorScheme.onSurface.withValues(alpha:0.3);
     } else if (isSelected) {
       backgroundColor = AppTheme.primaryColor;
-      textColor = TossDesignSystem.white;
+      textColor = Colors.white;
     } else if (isToday) {
       borderColor = AppTheme.primaryColor;
       textColor = AppTheme.primaryColor;
     } else if (isHoliday || (isWeekend && !isPastDate)) {
-      textColor = TossDesignSystem.errorRed;
+      textColor = DSColors.error;
     }
 
     return Container(
@@ -208,7 +198,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
           Center(
             child: Text(
               '${day.day}',
-              style: TextStyle(
+              style: typography.bodyMedium.copyWith(
                 color: textColor,
                 fontWeight: isSelected || isToday ? FontWeight.bold : FontWeight.normal,
               ),
@@ -227,7 +217,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
                       width: 6,
                       height: 6,
                       decoration: const BoxDecoration(
-                        color: TossDesignSystem.errorRed,
+                        color: DSColors.error,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -237,7 +227,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
                       height: 6,
                       margin: const EdgeInsets.only(left: 2),
                       decoration: const BoxDecoration(
-                        color: TossDesignSystem.warningOrange,
+                        color: DSColors.warning,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -247,7 +237,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
                       height: 6,
                       margin: const EdgeInsets.only(left: 2),
                       decoration: const BoxDecoration(
-                        color: TossDesignSystem.warningOrange,
+                        color: DSColors.warning,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -310,19 +300,19 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: TossDesignSystem.errorRed.withValues(alpha:0.1),
+                      color: DSColors.error.withValues(alpha:0.1),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: TossDesignSystem.errorRed.withValues(alpha:0.3)),
+                      border: Border.all(color: DSColors.error.withValues(alpha:0.3)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.celebration, size: 14, color: TossDesignSystem.errorRed),
+                        const Icon(Icons.celebration, size: 14, color: DSColors.error),
                         const SizedBox(width: 4),
                         Text(
                           eventInfo.holidayName!,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: TossDesignSystem.errorRed,
+                            color: DSColors.error,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -333,19 +323,19 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: TossDesignSystem.warningOrange.withValues(alpha:0.1),
+                      color: DSColors.warning.withValues(alpha:0.1),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: TossDesignSystem.warningOrange.withValues(alpha:0.3)),
+                      border: Border.all(color: DSColors.warning.withValues(alpha:0.3)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.star, size: 14, color: TossDesignSystem.warningOrange),
+                        const Icon(Icons.star, size: 14, color: DSColors.warning),
                         const SizedBox(width: 4),
                         Text(
                           eventInfo.specialName!,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: TossDesignSystem.warningOrange,
+                            color: DSColors.warning,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -356,19 +346,19 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: TossDesignSystem.warningOrange.withValues(alpha:0.1),
+                      color: DSColors.warning.withValues(alpha:0.1),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: TossDesignSystem.warningOrange.withValues(alpha:0.3)),
+                      border: Border.all(color: DSColors.warning.withValues(alpha:0.3)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.home, size: 14, color: TossDesignSystem.warningOrange),
+                        const Icon(Icons.home, size: 14, color: DSColors.warning),
                         const SizedBox(width: 4),
                         Text(
                           eventInfo.auspiciousName!,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: TossDesignSystem.warningOrange,
+                            color: DSColors.warning,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -377,7 +367,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
                           Text(
                             '${eventInfo.auspiciousScore}점',
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: TossDesignSystem.warningOrange,
+                              color: DSColors.warning,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -396,14 +386,14 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
               children: [
                 const Icon(
                   Icons.info_outline,
-                  color: TossDesignSystem.gray600,
+                  color: DSColors.textSecondaryDark,
                   size: 16,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   '과거 날짜입니다',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: TossDesignSystem.gray600,
+                    color: DSColors.textSecondaryDark,
                   ),
                 ),
               ],
@@ -435,16 +425,16 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
           child: Container(
             height: screenHeight * 0.82,
             decoration: BoxDecoration(
-              color: theme.brightness == Brightness.dark 
-                  ? TossDesignSystem.gray900 
-                  : TossDesignSystem.grayDark900,
+              color: theme.brightness == Brightness.dark
+                  ? DSColors.surface
+                  : DSColors.surfaceDark,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(24),
                 topRight: Radius.circular(24),
               ),
               boxShadow: [
                 BoxShadow(
-                  color: TossDesignSystem.gray900.withValues(alpha:0.1),
+                  color: DSColors.textPrimaryDark.withValues(alpha:0.1),
                   blurRadius: 20,
                   offset: const Offset(0, -5),
                 ),
@@ -478,12 +468,12 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
     return Container(
       margin: const EdgeInsets.only(
         top: AppSpacing.small, 
-        bottom: TossDesignSystem.spacingXS,
+        bottom: DSSpacing.xs,
       ),
       width: 40,
       height: 4,
       decoration: BoxDecoration(
-        color: TossDesignSystem.gray600,
+        color: DSColors.textSecondaryDark,
         borderRadius: BorderRadius.circular(AppDimensions.radiusXSmall),
       ),
     );
@@ -503,6 +493,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
   }
 
   Widget _buildCalendar(ThemeData theme) {
+    final typography = context.typography;
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 24),
       elevation: 2,
@@ -533,8 +524,8 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
           onPageChanged: _onPageChanged,
           calendarStyle: CalendarStyle(
             outsideDaysVisible: false,
-            weekendTextStyle: const TextStyle(color: TossDesignSystem.errorRed),
-            holidayTextStyle: const TextStyle(color: TossDesignSystem.errorRed),
+            weekendTextStyle: typography.bodyMedium.copyWith(color: DSColors.error),
+            holidayTextStyle: typography.bodyMedium.copyWith(color: DSColors.error),
             selectedDecoration: const BoxDecoration(
               color: AppTheme.primaryColor,
               shape: BoxShape.circle,
@@ -567,8 +558,8 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
             titleTextFormatter: (date, locale) => DateFormat('yyyy년 M월', 'ko_KR').format(date),
           ),
           daysOfWeekStyle: DaysOfWeekStyle(
-            weekdayStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha:0.7)),
-            weekendStyle: TextStyle(color: TossDesignSystem.errorRed.withValues(alpha:0.7)),
+            weekdayStyle: typography.bodySmall.copyWith(color: theme.colorScheme.onSurface.withValues(alpha:0.7)),
+            weekendStyle: typography.bodySmall.copyWith(color: DSColors.error.withValues(alpha:0.7)),
           ),
           daysOfWeekHeight: 40,
           locale: 'ko_KR',
@@ -589,7 +580,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
         color: Colors.transparent,
         boxShadow: [
           BoxShadow(
-            color: TossDesignSystem.gray900.withValues(alpha:0.05),
+            color: DSColors.textPrimaryDark.withValues(alpha:0.05),
             blurRadius: 10,
             offset: const Offset(0, -5),
           ),
@@ -606,7 +597,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
         size: UnifiedButtonSize.large,
         isLoading: _isLoadingFortune,
         isEnabled: canGetFortune && !_isLoadingFortune,
-        icon: !_isLoadingFortune ? const Icon(Icons.auto_awesome, size: 20, color: TossDesignSystem.white) : null,
+        icon: !_isLoadingFortune ? const Icon(Icons.auto_awesome, size: 20, color: Colors.white) : null,
         width: double.infinity,
       ),
     );

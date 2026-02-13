@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../core/theme/fortune_design_system.dart';
 import '../../../core/design_system/design_system.dart';
 import 'helpers.dart';
 
@@ -20,14 +19,14 @@ class ScoreWidgets {
         width: double.infinity,
         padding: const EdgeInsets.all(32),
         decoration: BoxDecoration(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? TossDesignSystem.grayDark200
-              : TossDesignSystem.white,
+          color: context.isDark
+              ? DSColors.surfaceSecondary
+              : DSColors.surfaceDark,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Theme.of(context).brightness == Brightness.dark
-                ? TossDesignSystem.grayDark300
-                : const Color(0xFFF2F4F6),
+            color: context.isDark
+                ? DSColors.border
+                : context.colors.border,
             width: 1,
           ),
         ),
@@ -37,9 +36,9 @@ class ScoreWidgets {
             Text(
               '$score',
               style: TextStyle(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? TossDesignSystem.white
-                    : TossDesignSystem.gray900,
+                color: context.isDark
+                    ? DSColors.textPrimary
+                    : DSColors.textPrimaryDark,
                 fontSize: size * 0.3,
                 fontWeight: FontWeight.w300,
                 letterSpacing: -4,
@@ -55,9 +54,9 @@ class ScoreWidgets {
             Text(
               message,
               style: TextStyle(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? TossDesignSystem.grayDark100
-                    : TossDesignSystem.gray700,
+                color: context.isDark
+                    ? DSColors.surface
+                    : DSColors.textSecondaryDark,
                 fontWeight: FontWeight.w500,
               ),
               textAlign: TextAlign.center,
@@ -71,9 +70,9 @@ class ScoreWidgets {
               Text(
                 subtitle,
                 style: TextStyle(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? TossDesignSystem.grayDark600
-                      : TossDesignSystem.gray600,
+                  color: context.isDark
+                      ? DSColors.textTertiary
+                      : DSColors.textSecondaryDark,
                   fontWeight: FontWeight.w400,
                 ),
                 textAlign: TextAlign.center,
@@ -96,8 +95,8 @@ class ScoreWidgets {
   }) {
     return Builder(
       builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        final chartColor = color ?? TossDesignSystem.tossBlue;
+        final isDark = context.isDark;
+        final chartColor = color ?? DSColors.accentDark;
 
         return SizedBox(
           width: size,
@@ -112,8 +111,8 @@ class ScoreWidgets {
                   value: score / 100.0,
                   strokeWidth: 8,
                   backgroundColor: isDark
-                      ? TossDesignSystem.grayDark300
-                      : TossDesignSystem.gray200,
+                      ? DSColors.border
+                      : DSColors.borderDark,
                   valueColor: AlwaysStoppedAnimation<Color>(chartColor),
                 ),
               ),
@@ -125,14 +124,14 @@ class ScoreWidgets {
                     style: TextStyle(
                       fontSize: size * 0.2,
                       fontWeight: FontWeight.bold,
-                      color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+                      color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
                     ),
                   ),
                   Text(
                     title,
                     style: TextStyle(
                       fontSize: size * 0.08,
-                      color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+                      color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
                     ),
                   ),
                 ],
@@ -154,23 +153,16 @@ class ScoreWidgets {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? TossDesignSystem.grayDark200
-            : TossDesignSystem.white,
+        color: context.isDark
+            ? DSColors.surfaceSecondary
+            : DSColors.surfaceDark,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? TossDesignSystem.grayDark300
-              : TossDesignSystem.gray200,
+          color: context.isDark
+              ? DSColors.border
+              : DSColors.borderDark,
           width: 1,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: TossDesignSystem.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         children: [
@@ -183,7 +175,7 @@ class ScoreWidgets {
                   context: context,
                 ),
               ),
-              Container(width: 1, height: 40, color: TossDesignSystem.gray200),
+              Container(width: 1, height: 40, color: DSColors.borderDark),
               Expanded(
                 child: _buildStatItem(
                   title: '등급',
@@ -191,7 +183,7 @@ class ScoreWidgets {
                   context: context,
                 ),
               ),
-              Container(width: 1, height: 40, color: TossDesignSystem.gray200),
+              Container(width: 1, height: 40, color: DSColors.borderDark),
               Expanded(
                 child: _buildStatItem(
                   title: '랭킹',
@@ -213,22 +205,22 @@ class ScoreWidgets {
     required String value,
     required BuildContext context,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Column(
       children: [
         Text(
           value,
-          style: DSTypography.displaySmall.copyWith(
+          style: context.displaySmall.copyWith(
             fontWeight: FontWeight.bold,
-            color: isDark ? TossDesignSystem.white : TossDesignSystem.gray900,
+            color: isDark ? DSColors.textPrimary : DSColors.textPrimaryDark,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           title,
-          style: DSTypography.labelMedium.copyWith(
-            color: isDark ? TossDesignSystem.grayDark600 : TossDesignSystem.gray600,
+          style: context.labelMedium.copyWith(
+            color: isDark ? DSColors.textTertiary : DSColors.textSecondaryDark,
           ),
         ),
       ],

@@ -1,10 +1,10 @@
-/// 레거시 API 엔드포인트 (기존 백엔드 호환용)
-///
-/// 주의: 운세 관련 기능은 Edge Functions를 우선 사용합니다.
-/// Edge Functions 엔드포인트는 [EdgeFunctionsEndpoints] 클래스를 참조하세요.
-///
-/// 이 파일은 아직 Edge Function으로 마이그레이션되지 않은 기능이나
-/// 레거시 호환성을 위해 유지됩니다.
+// 레거시 API 엔드포인트 (기존 백엔드 호환용)
+//
+// 주의: 운세 관련 기능은 Edge Functions를 우선 사용합니다.
+// Edge Functions 엔드포인트는 [EdgeFunctionsEndpoints] 클래스를 참조하세요.
+//
+// 이 파일은 아직 Edge Function으로 마이그레이션되지 않은 기능이나
+// 레거시 호환성을 위해 유지됩니다.
 class ApiEndpoints {
   // Base URL은 환경변수에서 가져옴
   static const String baseUrl = String.fromEnvironment('API_BASE_URL',

@@ -104,7 +104,7 @@ class _ChatBirthDatetimePickerState extends State<ChatBirthDatetimePicker> {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Container(
       width: double.infinity,
@@ -231,8 +231,8 @@ class _ChatBirthDatetimePickerState extends State<ChatBirthDatetimePicker> {
               child: ElevatedButton(
                 onPressed: _onConfirm,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: colors.accentSecondary,
-                  foregroundColor: Colors.white,
+                  backgroundColor: colors.ctaBackground,
+                  foregroundColor: colors.ctaForeground,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(DSRadius.md),
@@ -241,7 +241,7 @@ class _ChatBirthDatetimePickerState extends State<ChatBirthDatetimePicker> {
                 child: Text(
                   _buildConfirmText(),
                   style: typography.labelMedium.copyWith(
-                    color: Colors.white,
+                    color: colors.ctaForeground,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -362,8 +362,8 @@ class _ChatBirthDatetimePickerState extends State<ChatBirthDatetimePicker> {
   }
 
   Widget _buildMinutePicker(DSColorScheme colors, DSTypographyScheme typography, bool isDark) {
-    // 0: 모름, 1-60: 0분-59분 (10분 단위로 간소화)
-    final items = ['?', '00', '10', '20', '30', '40', '50'];
+    // 0: 모름, 1-60: 0분-59분 (1분 단위)
+    final items = ['?', ...List.generate(60, (i) => i.toString().padLeft(2, '0'))];
 
     return CupertinoPicker(
       scrollController: _minuteController,
@@ -375,7 +375,7 @@ class _ChatBirthDatetimePickerState extends State<ChatBirthDatetimePicker> {
           if (index == 0) {
             _selectedMinute = null;
           } else {
-            _selectedMinute = (index - 1) * 10;
+            _selectedMinute = index - 1;
           }
         });
       },
@@ -383,7 +383,7 @@ class _ChatBirthDatetimePickerState extends State<ChatBirthDatetimePicker> {
         e.value,
         e.key == 0
             ? _selectedMinute == null
-            : _selectedMinute == (e.key - 1) * 10,
+            : _selectedMinute == (e.key - 1),
         colors,
         typography,
       )).toList(),
@@ -407,7 +407,7 @@ class _ChatBirthDatetimePickerState extends State<ChatBirthDatetimePicker> {
       decoration: BoxDecoration(
         border: Border.symmetric(
           horizontal: BorderSide(
-            color: colors.accentSecondary.withValues(alpha: 0.3),
+            color: colors.textPrimary.withValues(alpha: 0.2),
             width: 1,
           ),
         ),

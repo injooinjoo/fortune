@@ -89,7 +89,7 @@ class _PetProfileChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
 
     return Material(
       color: Colors.transparent,
@@ -157,8 +157,6 @@ class _NewPetProfileChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -170,10 +168,10 @@ class _NewPetProfileChip extends StatelessWidget {
             vertical: DSSpacing.xs,
           ),
           decoration: BoxDecoration(
-            color: colors.accentSecondary.withValues(alpha: isDark ? 0.2 : 0.1),
+            color: colors.textPrimary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(DSRadius.lg),
             border: Border.all(
-              color: colors.accentSecondary.withValues(alpha: 0.3),
+              color: colors.textPrimary.withValues(alpha: 0.3),
             ),
           ),
           child: Row(
@@ -184,13 +182,13 @@ class _NewPetProfileChip extends StatelessWidget {
               Icon(
                 Icons.add,
                 size: 14,
-                color: colors.accentSecondary,
+                color: colors.textSecondary,
               ),
               const SizedBox(width: 2),
               Text(
                 '반려동물 등록하기',
                 style: typography.labelMedium.copyWith(
-                  color: colors.accentSecondary,
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.w500,
                 ),
               ),

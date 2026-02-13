@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/theme/font_config.dart';
 import '../../../../core/services/fortune_haptic_service.dart';
 
@@ -14,7 +14,6 @@ import '../../../../core/services/fortune_haptic_service.dart';
 class ShareCard extends ConsumerStatefulWidget {
   final int score;
   final String message;
-  final bool isDark;
 
   // 풀 버전 데이터
   final Map<String, int>? categoryScores;
@@ -27,7 +26,6 @@ class ShareCard extends ConsumerStatefulWidget {
     super.key,
     required this.score,
     required this.message,
-    required this.isDark,
     this.categoryScores,
     this.luckyItems,
     this.fiveElements,
@@ -43,8 +41,8 @@ class _ShareCardState extends ConsumerState<ShareCard> {
   final ScreenshotController _screenshotController = ScreenshotController();
   bool _isCapturing = false;
 
-  // Traditional 버튼 색상
-  static const _traditionalBrown = Color(0xFF8D6E63);
+  // 고유 색상: Traditional 한지 공유카드 브랜드 색상
+  static const _traditionalBrown = Color(0xFF8D6E63); // 고유 색상: 전통 갈색
 
   Future<void> _captureAndShare() async {
     if (_isCapturing) return;
@@ -115,15 +113,15 @@ class _ShareCardState extends ConsumerState<ShareCard> {
                 children: [
                   Text(
                     '오늘의 인사이트 공유하기',
-                    style: context.calligraphyTitle.copyWith(
-                      color: widget.isDark ? Colors.white : Colors.black87,
+                    style: context.heading3.copyWith(
+                      color: context.colors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: DSSpacing.xs),
                   Text(
                     '친구들과 함께 나눠보세요',
                     style: context.bodySmall.copyWith(
-                      color: (widget.isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+                      color: context.colors.textSecondary,
                     ),
                   ),
                 ],
@@ -156,7 +154,7 @@ class _ShareCardState extends ConsumerState<ShareCard> {
           ],
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: DSSpacing.md),
 
         // 캡처 대상 영역
         Screenshot(
@@ -174,7 +172,7 @@ class _ShareCardState extends ConsumerState<ShareCard> {
           .fadeIn(duration: 500.ms)
           .scale(begin: const Offset(0.95, 0.95), duration: 500.ms, curve: Curves.easeOut),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: DSSpacing.md),
 
         // 이미지로 공유하기 버튼
         SizedBox(
@@ -217,6 +215,7 @@ class _ShareCardState extends ConsumerState<ShareCard> {
 }
 
 /// Traditional 한지 스타일 공유 카드 콘텐츠
+/// 스크린샷 캡처용 - 고정 색상 (테마 비의존)
 class _TraditionalShareCardContent extends StatelessWidget {
   final int score;
   final String message;
@@ -226,12 +225,12 @@ class _TraditionalShareCardContent extends StatelessWidget {
   final String? userName;
   final DateTime date;
 
-  // Traditional 색상 팔레트
-  static const _hanjiBeige = Color(0xFFFFF8E1);
-  static const _traditionalBrown = Color(0xFF8D6E63);
-  static const _lightBrown = Color(0xFFBCAAA4);
-  static const _darkBrown = Color(0xFF5D4037);
-  static const _sealRed = Color(0xFFB71C1C);
+  // 고유 색상: Traditional 한지 공유카드 팔레트 (스크린샷 캡처용 고정 색상)
+  static const _hanjiBeige = Color(0xFFFFF8E1); // 고유 색상: 한지 크림
+  static const _traditionalBrown = Color(0xFF8D6E63); // 고유 색상: 전통 갈색
+  static const _lightBrown = Color(0xFFBCAAA4); // 고유 색상: 밝은 갈색
+  static const _darkBrown = Color(0xFF5D4037); // 고유 색상: 진한 갈색
+  static const _sealRed = Color(0xFFB71C1C); // 고유 색상: 인장 적색
 
   const _TraditionalShareCardContent({
     required this.score,
@@ -373,7 +372,7 @@ class _TraditionalShareCardContent extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: DSSpacing.sm),
         // 사자성어/메시지
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
@@ -500,12 +499,13 @@ class _TraditionalShareCardContent extends StatelessWidget {
       '水': fiveElements?['water'] ?? fiveElements?['수(水)'] ?? 20,
     };
 
+    // 오방색 기반 오행 색상 (공유 카드 전용 - 스크린샷 캡처용 고정 색상)
     final elementColors = {
-      '木': const Color(0xFF2E7D32),
-      '火': const Color(0xFFD32F2F),
-      '土': const Color(0xFFFF8F00),
-      '金': const Color(0xFF757575),
-      '水': const Color(0xFF1976D2),
+      '木': const Color(0xFF2E7D32), // 오방색: 목
+      '火': const Color(0xFFD32F2F), // 오방색: 화
+      '土': const Color(0xFFFF8F00), // 오방색: 토
+      '金': const Color(0xFF757575), // 오방색: 금
+      '水': const Color(0xFF1976D2), // 오방색: 수
     };
 
     return Container(

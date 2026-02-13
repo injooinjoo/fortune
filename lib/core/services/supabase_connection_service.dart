@@ -23,6 +23,8 @@ class SupabaseConnectionService extends ResilientService {
   static bool _isConnected = false;
   static String? _lastError;
   static DateTime? _lastConnectionAttempt;
+  static int _consecutiveFailures = 0;
+  static DateTime? _nextRetryAllowedAt;
 
   /// 연결 상태 스트림
   static final StreamController<bool> _connectionStateController = StreamController<bool>.broadcast();
@@ -161,14 +163,15 @@ class SupabaseConnectionService extends ResilientService {
     await safeExecute(
       () async {
         Timer.periodic(const Duration(minutes: 5), (timer) async {
-          // 연결 상태 변화 감지를 위한 이전 상태 저장
-        // final wasConnected = _isConnected; // 현재는 사용하지 않지만 향후 연결 상태 변화 감지용
-
           try {
             await _verifyConnection();
+
+            // 연결 성공 - 실패 카운터 리셋
             if (!_isConnected) {
               _isConnected = true;
               _lastError = null;
+              _consecutiveFailures = 0;
+              _nextRetryAllowedAt = null;
               _connectionStateController.add(true);
               Logger.info('Supabase 연결 복구됨');
             }
@@ -177,9 +180,26 @@ class SupabaseConnectionService extends ResilientService {
               _isConnected = false;
               _lastError = e.toString();
               _connectionStateController.add(false);
-              Logger.warning('Supabase 연결 끊김 감지: $e');
 
-              // 자동 재연결 시도
+              // DNS 실패 감지
+              final isDnsFailure = e.toString().contains('Failed host lookup') ||
+                                   e.toString().contains('SocketException');
+
+              if (isDnsFailure) {
+                _consecutiveFailures++;
+                Logger.warning('Supabase DNS 연결 실패 ($_consecutiveFailures회): $e');
+
+                // 연속 실패 3회 이상 시 1시간 대기
+                if (_consecutiveFailures >= 3) {
+                  _nextRetryAllowedAt = DateTime.now().add(const Duration(hours: 1));
+                  Logger.warning('연속 3회 실패로 1시간 후 재시도: $_nextRetryAllowedAt');
+                  return; // 재연결 시도 차단
+                }
+              } else {
+                Logger.warning('Supabase 연결 끊김 감지: $e');
+              }
+
+              // 자동 재연결 시도 (backoff 적용)
               _attemptReconnection();
             }
           }
@@ -194,16 +214,33 @@ class SupabaseConnectionService extends ResilientService {
   Future<void> _attemptReconnection() async {
     await safeExecute(
       () async {
-        Logger.info('Supabase 자동 재연결 시도 중...');
+        // 재시도 대기 시간 체크
+        if (_nextRetryAllowedAt != null && DateTime.now().isBefore(_nextRetryAllowedAt!)) {
+          final waitTime = _nextRetryAllowedAt!.difference(DateTime.now());
+          Logger.info('재연결 대기 중 (${waitTime.inMinutes}분 남음)');
+          return;
+        }
+
+        // Exponential backoff 계산: 5초 * 2^(실패횟수-1)
+        final backoffSeconds = 5 * (1 << (_consecutiveFailures - 1).clamp(0, 5)); // 최대 160초
+        Logger.info('Supabase 자동 재연결 시도 중 (backoff: $backoffSeconds초)...');
 
         final success = await initialize(
           maxRetries: 2,
           timeout: const Duration(seconds: 15),
-          retryDelay: const Duration(seconds: 5),
+          retryDelay: Duration(seconds: backoffSeconds),
         );
 
         if (success) {
-          Logger.info('Supabase 자동 재연결 성공');
+          // 성공 시 실제 네트워크 검증
+          try {
+            await _verifyConnection();
+            _consecutiveFailures = 0;
+            _nextRetryAllowedAt = null;
+            Logger.info('Supabase 자동 재연결 성공 (검증 완료)');
+          } catch (e) {
+            Logger.warning('재연결은 성공했으나 네트워크 검증 실패: $e');
+          }
         } else {
           Logger.warning('Supabase 자동 재연결 실패');
         }

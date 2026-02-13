@@ -1,5 +1,5 @@
-/// Love Fortune Page - Widget Test
-/// 연애운 페이지 UI 테스트
+// Love Fortune Page - Widget Test
+// 연애운 페이지 UI 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -167,22 +167,6 @@ void main() {
       });
     });
 
-    group('블러 처리', () {
-      testWidgets('무료 사용자는 일부 콘텐츠 블러', (tester) async {
-        await tester.pumpWidget(
-          const ProviderScope(
-            child: MaterialApp(
-              home: Scaffold(
-                body: _MockLoveFortuneResult(isBlurred: true),
-              ),
-            ),
-          ),
-        );
-
-        await tester.pumpAndSettle();
-        expect(find.text('전체 보기'), findsOneWidget);
-      });
-    });
   });
 }
 
@@ -251,12 +235,10 @@ class _MockLoveFortunePage extends StatelessWidget {
 class _MockLoveFortuneResult extends StatelessWidget {
   final int score;
   final String relationshipStatus;
-  final bool isBlurred;
 
   const _MockLoveFortuneResult({
     this.score = 75,
     this.relationshipStatus = 'single',
-    this.isBlurred = false,
   });
 
   @override
@@ -282,15 +264,6 @@ class _MockLoveFortuneResult extends StatelessWidget {
             ],
             if (relationshipStatus == 'dating') ...[
               const Card(child: ListTile(title: Text('관계 발전'))),
-            ],
-            if (isBlurred) ...[
-              const SizedBox(height: 16),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('전체 보기'),
-                ),
-              ),
             ],
           ],
         ),

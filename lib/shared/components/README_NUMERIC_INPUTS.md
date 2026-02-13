@@ -180,10 +180,10 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
 
 ## 스타일 커스터마이징
 
-두 위젯 모두 TOSS Design System을 사용하여 일관된 UI를 제공합니다:
+두 위젯 모두 Design System을 사용하여 일관된 UI를 제공합니다:
 
-- **포커스 시**: 파란색 테두리 (TossDesignSystem.primaryBlue)
-- **에러 시**: 빨간색 테두리 (TossDesignSystem.error)
+- **포커스 시**: 파란색 테두리 (DSColors.accentDark)
+- **에러 시**: 빨간색 테두리 (DSColors.error)
 - **기본**: 회색 테두리 (#E5E5E5)
 
 ---

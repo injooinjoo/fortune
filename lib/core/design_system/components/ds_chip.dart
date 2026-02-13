@@ -67,8 +67,8 @@ class DSChip extends StatelessWidget {
     Color? borderColor;
 
     if (selected) {
-      backgroundColor = colors.accent;
-      foregroundColor = Colors.white;
+      backgroundColor = colors.ctaBackground;
+      foregroundColor = colors.ctaForeground;
     } else {
       switch (style) {
         case DSChipStyle.filled:
@@ -81,8 +81,8 @@ class DSChip extends StatelessWidget {
           borderColor = colors.border;
           break;
         case DSChipStyle.subtle:
-          backgroundColor = colors.accentLight;
-          foregroundColor = colors.accent;
+          backgroundColor = colors.backgroundTertiary;
+          foregroundColor = colors.textPrimary;
           break;
       }
     }

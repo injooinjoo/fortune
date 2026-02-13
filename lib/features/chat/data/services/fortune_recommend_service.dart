@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../core/constants/edge_functions_endpoints.dart';
+
 import '../../domain/models/ai_recommendation.dart';
 
 /// 로컬 키워드 매칭 맵 (운세 타입 → 검색 키워드들)
@@ -66,62 +64,50 @@ const Map<String, List<String>> _fortuneKeywords = {
 
 /// 키워드 → 추천 이유 매핑
 const Map<String, String> _fortuneReasons = {
-  'daily': '오늘 운세',
-  'daily_calendar': '기간별 운세',
-  'newYear': '새해 운세',
-  'love': '연애운',
+  'daily': '오늘의 인사이트',
+  'daily_calendar': '기간별 인사이트',
+  'newYear': '새해 인사이트',
+  'love': '연애 인사이트',
   'compatibility': '궁합 보기',
-  'blindDate': '소개팅 운',
-  'exLover': '재회 운세',
+  'blindDate': '소개팅 가이드',
+  'exLover': '재회 인사이트',
   'avoidPeople': '경계 대상',
-  'career': '직업운',
+  'career': '커리어 가이드',
   'talent': '적성 분석',
-  'money': '재물운',
+  'money': '재물 가이드',
   'luckyItems': '행운 아이템',
-  'lotto': '로또 운',
-  'tarot': '타로 점',
+  'lotto': '로또 가이드',
+  'tarot': '타로 리딩',
   'traditional': '사주 분석',
   'faceReading': 'AI 관상',
   'mbti': 'MBTI 분석',
   'personalityDna': '성격 분석',
   'biorhythm': '바이오리듬',
-  'health': '건강운',
+  'health': '건강 체크',
   'exercise': '운동 추천',
-  'sportsGame': '경기 운',
+  'sportsGame': '경기 가이드',
   'dream': '꿈 해몽',
   'wish': '소원 빌기',
   'fortuneCookie': '포춘쿠키',
   'celebrity': '연예인 궁합',
-  'family': '가족 운세',
+  'family': '가족 인사이트',
   'pet': '펫 궁합',
   'naming': '작명',
   'ootdEvaluation': 'OOTD 평가',
   'talisman': '부적 생성',
-  'exam': '시험운',
-  'moving': '이사운',
+  'exam': '시험 가이드',
+  'moving': '이사 가이드',
 };
 
 /// AI 기반 운세 추천 서비스
 class FortuneRecommendService {
-  final Dio _dio;
   final Map<String, AIRecommendResponse> _cache = {};
 
   // 디바운싱
   Timer? _debounceTimer;
   static const Duration _debounceDelay = Duration(milliseconds: 300);
 
-  // 타임아웃
-  static const Duration _timeout = Duration(milliseconds: 3000);
-
-  FortuneRecommendService({Dio? dio}) : _dio = dio ?? _createDio();
-
-  static Dio _createDio() {
-    return Dio(BaseOptions(
-      baseUrl: EdgeFunctionsEndpoints.currentBaseUrl,
-      connectTimeout: _timeout,
-      receiveTimeout: _timeout,
-    ));
-  }
+  FortuneRecommendService();
 
   /// 로컬 키워드 매칭 (LLM 호출 없이 즉시 반환)
   /// 단어별로 쪼개서 매칭하므로 대부분의 쿼리가 여기서 처리됨

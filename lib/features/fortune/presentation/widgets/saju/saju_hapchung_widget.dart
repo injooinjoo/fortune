@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
-import '../../../../../core/theme/saju_colors.dart';
 import '../../../../../core/components/app_card.dart';
 import '../../../../../data/saju_explanations.dart';
 import '../../../domain/models/saju/stem_branch_relations.dart';
@@ -34,7 +32,7 @@ class SajuHapchungWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final relations = _analyzeRelations();
 
     if (relations.isEmpty) {
@@ -105,7 +103,7 @@ class SajuHapchungWidget extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: DSSpacing.xs),
             Text(
               '合沖刑破害',
               style: context.labelSmall.copyWith(
@@ -186,14 +184,14 @@ class SajuHapchungWidget extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(width: 2),
+                    const SizedBox(width: DSSpacing.xxs),
                     Container(
                       width: 16,
                       height: 16,
                       decoration: BoxDecoration(
                         color: count > 0
                             ? color.withValues(alpha: 0.2)
-                            : (isDark ? Colors.grey.shade800 : Colors.grey.shade200),
+                            : context.colors.surfaceSecondary,
                         shape: BoxShape.circle,
                       ),
                       child: Center(
@@ -270,7 +268,7 @@ class SajuHapchungWidget extends StatelessWidget {
               color: color,
             ),
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: DSSpacing.xs),
           Text(
             hanja,
             style: context.labelSmall.copyWith(
@@ -362,7 +360,7 @@ class SajuHapchungWidget extends StatelessWidget {
                             color: color,
                           ),
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: DSSpacing.xs),
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 4,
@@ -429,7 +427,7 @@ class SajuHapchungWidget extends StatelessWidget {
                           isDark: isDark,
                         ),
                       ),
-                      const SizedBox(width: 2),
+                      const SizedBox(width: DSSpacing.xxs),
                       Text(
                         relation.resultWuxing!,
                         style: context.labelMedium.copyWith(
@@ -453,9 +451,7 @@ class SajuHapchungWidget extends StatelessWidget {
               vertical: DSSpacing.xs,
             ),
             decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.black.withValues(alpha: 0.2)
-                  : Colors.grey.shade50,
+              color: context.colors.surfaceSecondary,
               borderRadius: BorderRadius.circular(DSRadius.sm),
             ),
             child: Text(

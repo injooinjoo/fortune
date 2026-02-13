@@ -107,49 +107,49 @@ interface PersonalityDNAResponse {
 const MBTI_LOVE_STYLES = {
   'ENTJ': {
     title: '프로포즈 리더형',
-    description: '연애도 전략적으로, 사랑도 계획적으로',
+    description: '연애에서도 리더십이 빛나는 타입이에요. 관계를 주도하며 상대방과 함께 성장하는 것을 중요하게 여기고, 미래를 향한 명확한 비전을 가지고 사랑해요.',
     when_dating: '첫 데이트부터 결혼까지의 로드맵을 머릿속에 그려놓고 있어요',
     after_breakup: '이별 후 1주일 안에 완전히 정리하고 다음 연애 준비 완료'
   },
   'ENTP': {
     title: '썸의 마법사형',
-    description: '썸 타는 재미로 사는 사람, 확정은 무서워',
+    description: '썸 타는 재미를 누구보다 잘 아는 타입이에요. 지적인 대화와 유머로 상대방을 사로잡으며, 예측 불가능한 매력으로 연애를 흥미진진하게 만들어요.',
     when_dating: '매일 새로운 데이트 코스를 기획하며 상대방을 깜짝 놀라게 해요',
     after_breakup: '친구로 남자고 하면서 실제로 친구가 되는 신기한 능력 보유'
   },
   'INTJ': {
     title: '연애 마스터플랜형',
-    description: '100년 동안 사랑할 계획서를 작성하는 타입',
+    description: '한 번 마음을 정하면 장기적인 관계를 구축하는 전략가예요. 감정보다 신뢰를 중시하며, 상대방의 성장을 진심으로 응원하는 깊은 사랑을 해요.',
     when_dating: '상대방의 성향을 분석해서 맞춤형 연애를 진행해요',
     after_breakup: '이별 후 6개월간 자기계발에 몰두한 후 더 업그레이드되어 돌아옴'
   },
   'INTP': {
     title: '연애 연구원형',
-    description: '사랑도 하나의 흥미로운 연구 주제',
+    description: '사랑도 하나의 흥미로운 탐구 대상으로 여기는 타입이에요. 상대방을 깊이 이해하려 노력하며, 진심을 표현하는 게 서툴지만 속마음은 누구보다 따뜻해요.',
     when_dating: '상대방을 이해하려고 노력하다가 본인도 모르게 분석하고 있어요',
     after_breakup: '이별의 원인을 논리적으로 분석하고 리포트 작성'
   },
   'ENFJ': {
     title: '연애 멘토형',
-    description: '상대방을 더 나은 사람으로 만들어주고 싶은 욕구',
+    description: '상대방의 잠재력을 발견하고 함께 성장하는 것에서 행복을 느끼는 타입이에요. 헌신적인 사랑으로 연인을 감싸며, 관계 속에서 서로가 더 나은 사람이 되길 바라요.',
     when_dating: '상대방의 꿈과 목표를 항상 응원하고 지지해줘요',
     after_breakup: '상대방의 행복을 위해 먼저 연락을 끊는 숭고한 희생정신'
   },
   'ENFP': {
     title: '연애 에너자이저형',
-    description: '사랑하면 온 세상이 다 내 것 같은 기분',
+    description: '사랑에 빠지면 온 세상이 반짝거리는 낭만파예요. 상대방을 세상에서 가장 특별한 존재로 만들어주며, 매 순간을 영화처럼 드라마틱하게 만들어가요.',
     when_dating: '매 순간이 영화 같고, 상대방을 세상에서 가장 특별한 사람으로 만들어줘요',
     after_breakup: '3일은 울고, 일주일 후엔 새로운 사랑을 꿈꾸고 있음'
   },
   'INFJ': {
     title: '운명론자형',
-    description: '우리 전생에 무슨 인연이었을까 자주 생각',
+    description: '전생의 인연을 믿으며 깊은 영혼의 연결을 추구하는 타입이에요. 표면적인 관계보다 내면의 교감을 중시하며, 한 번 마음을 주면 끝까지 지켜내려 해요.',
     when_dating: '깊은 대화를 좋아하고, 상대방의 내면을 이해하려고 노력해요',
     after_breakup: '운명이 아니었나보다 하며 담담하게 받아들이는 척 하지만 속으론 상처'
   },
   'INFP': {
     title: '로맨틱 드리머형',
-    description: '사랑하는 사람과의 미래를 매일 상상하며 행복해함',
+    description: '동화 속 주인공처럼 순수하고 이상적인 사랑을 꿈꾸는 타입이에요. 작은 것에도 깊은 의미를 부여하며, 상대방을 위한 섬세한 배려로 마음을 표현해요.',
     when_dating: '작은 기념일도 다 챙기고, 상대방만의 특별한 별명을 만들어줘요',
     after_breakup: '이별 후 한 달간 슬픈 노래만 들으며 감상에 젖어있음'
   },
@@ -436,6 +436,204 @@ const RARITY_LEVELS = {
   '14.2': 'common', '15.7': 'common', '17.9': 'common', '19.8': 'common', '21.5': 'common'
 }
 
+// 혈액형별 연애 특성 수정자
+const BLOOD_TYPE_LOVE_MODIFIERS = {
+  'A': {
+    trait: '세심하고 신중한',
+    dating_extra: '상대방의 기분을 먼저 살피며 배려심이 넘쳐요',
+    breakup_extra: '이별 후에도 상대방 걱정을 오래 해요'
+  },
+  'B': {
+    trait: '자유롭고 솔직한',
+    dating_extra: '감정 표현이 직설적이고 숨김이 없어요',
+    breakup_extra: '이별 후 새로운 취미에 푹 빠져요'
+  },
+  'O': {
+    trait: '열정적이고 대담한',
+    dating_extra: '좋아하면 직진! 적극적으로 애정 표현해요',
+    breakup_extra: '이별 후 친구들과 신나게 놀며 극복해요'
+  },
+  'AB': {
+    trait: '독특하고 다재다능한',
+    dating_extra: '감정 기복이 있지만 그게 또 매력이에요',
+    breakup_extra: '이별을 객관적으로 분석하며 성장의 기회로 삼아요'
+  }
+}
+
+// 혈액형별 직장 특성 수정자
+const BLOOD_TYPE_WORK_MODIFIERS = {
+  'A': {
+    trait: '꼼꼼하고 책임감 있는',
+    boss_extra: '디테일까지 완벽하게 챙기는 스타일',
+    dinner_extra: '분위기 파악 빠르고 센스 있게 행동해요'
+  },
+  'B': {
+    trait: '창의적이고 자유로운',
+    boss_extra: '직원들의 개성을 존중하며 자유롭게 맡겨요',
+    dinner_extra: '분위기 띄우는 재미있는 이야기 보따리'
+  },
+  'O': {
+    trait: '목표지향적이고 추진력 있는',
+    boss_extra: '목표가 명확하고 팀을 강하게 이끌어요',
+    dinner_extra: '술자리에서도 리더십 발휘하며 분위기 주도'
+  },
+  'AB': {
+    trait: '분석적이고 합리적인',
+    boss_extra: '논리적으로 판단하고 공정하게 대해요',
+    dinner_extra: '적당한 선에서 즐기다 조용히 빠져요'
+  }
+}
+
+// 별자리별 성격 특성
+const ZODIAC_TRAITS = {
+  '양자리': { element: '불', trait: '열정과 추진력', strength: '새로운 도전을 두려워하지 않는 용기' },
+  '황소자리': { element: '땅', trait: '안정과 인내', strength: '끈기 있게 목표를 향해 나아가는 힘' },
+  '쌍둥이자리': { element: '바람', trait: '재치와 소통', strength: '다양한 관계를 맺고 정보를 빠르게 흡수하는 능력' },
+  '게자리': { element: '물', trait: '감성과 배려', strength: '사람들의 마음을 읽고 공감하는 능력' },
+  '사자자리': { element: '불', trait: '자신감과 리더십', strength: '주변을 밝히는 카리스마와 존재감' },
+  '처녀자리': { element: '땅', trait: '분석과 완벽', strength: '디테일을 놓치지 않는 세심함' },
+  '천칭자리': { element: '바람', trait: '조화와 미학', strength: '균형 잡힌 판단력과 심미안' },
+  '전갈자리': { element: '물', trait: '집중과 통찰', strength: '깊이 파고드는 통찰력과 집념' },
+  '사수자리': { element: '불', trait: '탐험과 낙관', strength: '새로운 세계를 향한 호기심과 긍정 에너지' },
+  '염소자리': { element: '땅', trait: '성실과 야망', strength: '꾸준히 정상을 향해 오르는 끈기' },
+  '물병자리': { element: '바람', trait: '혁신과 독립', strength: '틀에 얽매이지 않는 창의적 사고' },
+  '물고기자리': { element: '물', trait: '직관과 상상', strength: '풍부한 감성과 예술적 감각' }
+}
+
+// 띠별 성격 특성
+const ZODIAC_ANIMAL_TRAITS = {
+  '쥐': { trait: '영리함', strength: '기회를 빠르게 포착하는 눈썰미', weakness: '때로 너무 계산적일 수 있어요' },
+  '소': { trait: '성실함', strength: '묵묵히 맡은 바를 해내는 책임감', weakness: '변화에 적응이 느릴 수 있어요' },
+  '호랑이': { trait: '용맹함', strength: '어떤 상황에서도 당당한 자신감', weakness: '충동적인 결정을 할 때가 있어요' },
+  '토끼': { trait: '온화함', strength: '부드럽게 갈등을 해결하는 능력', weakness: '우유부단해 보일 때가 있어요' },
+  '용': { trait: '카리스마', strength: '남다른 존재감과 리더십', weakness: '자존심이 세서 양보가 어려울 때가 있어요' },
+  '뱀': { trait: '지혜로움', strength: '상황을 꿰뚫어보는 통찰력', weakness: '속마음을 잘 드러내지 않아요' },
+  '말': { trait: '활동적임', strength: '에너지 넘치는 행동력', weakness: '한곳에 오래 머무르기 힘들어해요' },
+  '양': { trait: '온순함', strength: '다른 사람을 편하게 해주는 분위기', weakness: '결단력이 부족해 보일 때가 있어요' },
+  '원숭이': { trait: '재치있음', strength: '어떤 상황도 유쾌하게 넘기는 센스', weakness: '가볍게 보일 때가 있어요' },
+  '닭': { trait: '꼼꼼함', strength: '디테일을 놓치지 않는 세심함', weakness: '지나치게 완벽을 추구할 때가 있어요' },
+  '개': { trait: '충직함', strength: '한 번 마음 주면 끝까지 함께하는 의리', weakness: '낯선 사람에게 경계심이 있어요' },
+  '돼지': { trait: '너그러움', strength: '베풀기 좋아하는 따뜻한 마음', weakness: '쉽게 믿어서 손해볼 때가 있어요' }
+}
+
+// 조합 타이틀 생성 함수
+function generateCombinedTitle(mbti: string, bloodType: string, zodiacAnimal: string): string {
+  const bloodModifier = BLOOD_TYPE_LOVE_MODIFIERS[bloodType]?.trait || ''
+  const animalTrait = ZODIAC_ANIMAL_TRAITS[zodiacAnimal]?.trait || ''
+  const mbtiTitle = MBTI_LOVE_STYLES[mbti]?.title || ''
+
+  // 조합별 고유 타이틀 생성
+  const combinations = [
+    `${bloodModifier} ${mbtiTitle}`,
+    `${animalTrait}의 ${mbtiTitle}`,
+    `${bloodModifier} ${animalTrait}의 연인`
+  ]
+
+  // MBTI + 혈액형 + 띠 조합으로 결정론적 선택
+  const hash = (mbti + bloodType + zodiacAnimal).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
+  return combinations[hash % combinations.length]
+}
+
+// 조합된 설명 생성 함수
+function generateCombinedDescription(mbti: string, bloodType: string, zodiac: string, zodiacAnimal: string): string {
+  const baseDesc = MBTI_LOVE_STYLES[mbti]?.description || ''
+  const bloodTrait = BLOOD_TYPE_LOVE_MODIFIERS[bloodType]?.trait || ''
+  const zodiacInfo = ZODIAC_TRAITS[zodiac]
+  const animalInfo = ZODIAC_ANIMAL_TRAITS[zodiacAnimal]
+
+  let combined = baseDesc
+
+  if (zodiacInfo) {
+    combined += ` ${zodiacInfo.element}의 기운을 받아 ${zodiacInfo.trait}이 더해졌어요.`
+  }
+
+  if (animalInfo) {
+    combined += ` ${zodiacAnimal}띠 특유의 ${animalInfo.trait}까지 갖춘 매력적인 타입이에요.`
+  }
+
+  return combined
+}
+
+// 조합된 연애 스타일 생성
+function generateCombinedLoveStyle(mbti: string, bloodType: string, zodiac: string, zodiacAnimal: string) {
+  const baseLove = MBTI_LOVE_STYLES[mbti]
+  const bloodMod = BLOOD_TYPE_LOVE_MODIFIERS[bloodType]
+  const zodiacInfo = ZODIAC_TRAITS[zodiac]
+  const animalInfo = ZODIAC_ANIMAL_TRAITS[zodiacAnimal]
+
+  return {
+    title: `${bloodMod?.trait || ''} ${baseLove?.title || ''}`.trim(),
+    description: generateCombinedDescription(mbti, bloodType, zodiac, zodiacAnimal),
+    when_dating: `${baseLove?.when_dating || ''} ${bloodMod?.dating_extra || ''}`.trim(),
+    after_breakup: `${baseLove?.after_breakup || ''} ${animalInfo ? `(${zodiacAnimal}띠답게 ${animalInfo.trait}으로 극복!)` : ''}`.trim()
+  }
+}
+
+// 조합된 직장 스타일 생성
+function generateCombinedWorkStyle(mbti: string, bloodType: string, zodiac: string, zodiacAnimal: string) {
+  const baseWork = MBTI_WORK_STYLES[mbti]
+  const bloodMod = BLOOD_TYPE_WORK_MODIFIERS[bloodType]
+  const zodiacInfo = ZODIAC_TRAITS[zodiac]
+  const animalInfo = ZODIAC_ANIMAL_TRAITS[zodiacAnimal]
+
+  return {
+    title: `${bloodMod?.trait || ''} ${baseWork?.title || ''}`.trim(),
+    as_boss: `${baseWork?.as_boss || ''} ${bloodMod?.boss_extra ? `(${bloodMod.boss_extra})` : ''}`.trim(),
+    at_company_dinner: `${baseWork?.at_company_dinner || ''} ${bloodMod?.dinner_extra ? `- ${bloodMod.dinner_extra}` : ''}`.trim(),
+    work_habit: `${baseWork?.work_habit || ''} ${zodiacInfo ? `${zodiacInfo.element}의 기운으로 ${zodiacInfo.strength}!` : ''}`.trim()
+  }
+}
+
+// 조합된 특성 요약 생성
+function generateTraits(mbti: string, bloodType: string, zodiac: string, zodiacAnimal: string): string[] {
+  const traits: string[] = []
+
+  // MBTI 기반 특성
+  if (mbti.includes('E')) traits.push('에너지 넘침')
+  else traits.push('깊이 있는 내면')
+
+  if (mbti.includes('N')) traits.push('창의적 사고')
+  else traits.push('현실적 판단')
+
+  if (mbti.includes('F')) traits.push('감성적 공감')
+  else traits.push('논리적 분석')
+
+  if (mbti.includes('J')) traits.push('계획적 실행')
+  else traits.push('유연한 대처')
+
+  // 혈액형 특성
+  const bloodTrait = BLOOD_TYPE_LOVE_MODIFIERS[bloodType]?.trait
+  if (bloodTrait) traits.push(bloodTrait)
+
+  // 별자리 특성
+  const zodiacTrait = ZODIAC_TRAITS[zodiac]?.trait
+  if (zodiacTrait) traits.push(zodiacTrait)
+
+  // 띠 특성
+  const animalTrait = ZODIAC_ANIMAL_TRAITS[zodiacAnimal]?.trait
+  if (animalTrait) traits.push(`${zodiacAnimal}띠의 ${animalTrait}`)
+
+  return traits.slice(0, 5) // 최대 5개
+}
+
+// 조합된 재미있는 사실 생성
+function generateFunnyFact(mbti: string, bloodType: string, zodiac: string, zodiacAnimal: string): string {
+  const zodiacInfo = ZODIAC_TRAITS[zodiac]
+  const animalInfo = ZODIAC_ANIMAL_TRAITS[zodiacAnimal]
+  const bloodInfo = BLOOD_TYPE_LOVE_MODIFIERS[bloodType]
+
+  const facts = [
+    `${mbti}이면서 ${bloodType}형인 당신! ${bloodInfo?.trait || ''} 성격 덕분에 첫인상이 좋다는 말 자주 들으시죠?`,
+    `${zodiac}의 ${zodiacInfo?.element || ''} 에너지와 ${zodiacAnimal}띠의 ${animalInfo?.trait || ''}이 만나 독특한 매력을 뿜어내요!`,
+    `${bloodType}형 ${zodiacAnimal}띠는 전체 인구의 약 ${(100 / 4 / 12).toFixed(1)}%! 꽤 희귀한 조합이에요!`,
+    `${mbti} + ${bloodType}형 + ${zodiacAnimal}띠 조합은 ${animalInfo?.strength || '특별한 능력'}을 가진 희귀 타입!`,
+    `${zodiacInfo?.element || ''} 별자리와 ${animalInfo?.trait || ''} 띠의 만남! 당신만의 독특한 DNA예요!`
+  ]
+
+  const hash = (mbti + bloodType + zodiac + zodiacAnimal).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
+  return facts[hash % facts.length]
+}
+
 // 날짜 기반 결정론적 랜덤 함수 (같은 날짜면 같은 값)
 function seededRandom(date: Date, seed: string): number {
   const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
@@ -603,9 +801,14 @@ serve(async (req) => {
     // DNA 코드 생성
     const dnaCode = `${mbti.slice(0, 2)}-${bloodType}${zodiacAnimal.slice(0, 1)}-${Date.now().toString().slice(-4)}`
 
+    // ✅ 조합된 데이터 생성 (MBTI + 혈액형 + 별자리 + 띠 모두 반영)
+    const loveStyle = generateCombinedLoveStyle(mbti, bloodType, zodiac, zodiacAnimal)
+    const workStyle = generateCombinedWorkStyle(mbti, bloodType, zodiac, zodiacAnimal)
+    const traits = generateTraits(mbti, bloodType, zodiac, zodiacAnimal)
+    const funnyFact = generateFunnyFact(mbti, bloodType, zodiac, zodiacAnimal)
+    const combinedTitle = generateCombinedTitle(mbti, bloodType, zodiacAnimal)
+
     // 기본 데이터 가져오기
-    const loveStyle = MBTI_LOVE_STYLES[mbti]
-    const workStyle = MBTI_WORK_STYLES[mbti]
     const dailyMatching = MBTI_DAILY_MATCHING[mbti]
     const compatibility = COMPATIBILITY_MATCHING[mbti]
     const funStats = FUN_STATS[mbti]
@@ -637,20 +840,24 @@ serve(async (req) => {
 
     // ✅ 오늘의 하이라이트 생성 (날짜 기반으로 다양화)
     const highlights = [
-      `${name}님은 오늘 ${loveStyle.title}의 매력이 빛나는 날이에요!`,
+      `${name}님은 오늘 ${combinedTitle}의 매력이 빛나는 날이에요!`,
       `오늘의 ${name}님은 에너지 ${dailyFortune.energyLevel}%! 활기찬 하루를 보내세요!`,
       `${name}님의 럭키 컬러는 ${dailyFortune.luckyColor}! 오늘 꼭 활용해보세요!`,
       `오늘의 럭키 넘버 ${dailyFortune.luckyNumber}! ${name}님께 행운이 가득하길!`,
+      `${bloodType}형 ${zodiacAnimal}띠 ${mbti}! ${name}님만의 특별한 조합이에요!`,
     ]
-    const todayHighlight = selectFromArray(highlights, currentDate, `highlight-${mbti}`)
+    const todayHighlight = selectFromArray(highlights, currentDate, `highlight-${mbti}-${bloodType}`)
 
     // ✅ 오늘의 조언 (날짜 기반)
     const todayAdvice = generateTodayAdvice(mbti, bloodType, currentDate)
 
-    const response: PersonalityDNAResponse = {
+    const response = {
       dnaCode,
-      title: `${loveStyle.title}`,
+      title: combinedTitle,
       emoji: mbti.includes('E') ? '✨' : '🌙',
+      description: loveStyle.description,
+      traits,
+      funnyFact,
       todayHighlight,
       loveStyle,
       workStyle,

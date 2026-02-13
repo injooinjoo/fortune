@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../../../../../../core/design_system/design_system.dart';
 import '../../../../../../core/models/personality_dna_model.dart';
-import '../../../../../../core/theme/typography_unified.dart';
 
 /// 능력치 레이더 차트 (5각형)
 class StatsRadarChart extends StatelessWidget {
@@ -11,13 +11,16 @@ class StatsRadarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.isDark;
+    final dividerColor = Theme.of(context).dividerColor;
+
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(DSSpacing.cardPadding),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Theme.of(context).dividerColor.withValues(alpha:0.1),
+          color: dividerColor.withValues(alpha: isDark ? 0.3 : 0.1),
         ),
       ),
       child: Column(
@@ -26,21 +29,21 @@ class StatsRadarChart extends StatelessWidget {
           Row(
             children: [
               const Text('⭐', style: TextStyle(fontSize: 20)),
-              const SizedBox(width: 8),
+              const SizedBox(width: DSSpacing.sm),
               Text(
                 '나의 능력치',
                 style: context.heading4.copyWith(fontWeight: FontWeight.bold),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           SizedBox(
             height: 250,
             child: RadarChart(
               RadarChartData(
                 dataSets: [
                   RadarDataSet(
-                    fillColor: Theme.of(context).colorScheme.primary.withValues(alpha:0.2),
+                    fillColor: Theme.of(context).colorScheme.primary.withValues(alpha: isDark ? 0.3 : 0.2),
                     borderColor: Theme.of(context).colorScheme.primary,
                     borderWidth: 2,
                     entryRadius: 4,
@@ -52,7 +55,7 @@ class StatsRadarChart extends StatelessWidget {
                 radarBackgroundColor: Colors.transparent,
                 borderData: FlBorderData(show: false),
                 radarBorderData: BorderSide(
-                  color: Theme.of(context).dividerColor.withValues(alpha:0.3),
+                  color: dividerColor.withValues(alpha: isDark ? 0.5 : 0.3),
                   width: 1,
                 ),
                 titlePositionPercentageOffset: 0.15,
@@ -73,23 +76,24 @@ class StatsRadarChart extends StatelessWidget {
                   fontSize: 10,
                 ),
                 tickBorderData: BorderSide(
-                  color: Theme.of(context).dividerColor.withValues(alpha:0.1),
+                  color: dividerColor.withValues(alpha: isDark ? 0.2 : 0.1),
                   width: 1,
                 ),
                 gridBorderData: BorderSide(
-                  color: Theme.of(context).dividerColor.withValues(alpha:0.2),
+                  color: dividerColor.withValues(alpha: isDark ? 0.3 : 0.2),
                   width: 1,
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
           // 능력치 상세 목록
           ...List.generate(stats.labels.length, (index) {
             return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
+              padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
               child: _buildStatBar(
                 context,
+                isDark,
                 stats.labels[index],
                 stats.values[index],
                 _getStatColor(index),
@@ -101,7 +105,13 @@ class StatsRadarChart extends StatelessWidget {
     );
   }
 
-  Widget _buildStatBar(BuildContext context, String label, int value, Color color) {
+  Widget _buildStatBar(
+    BuildContext context,
+    bool isDark,
+    String label,
+    int value,
+    Color color,
+  ) {
     return Row(
       children: [
         SizedBox(
@@ -113,14 +123,14 @@ class StatsRadarChart extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: DSSpacing.sm),
         Expanded(
           child: Stack(
             children: [
               Container(
                 height: 8,
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha:0.2),
+                  color: color.withValues(alpha: isDark ? 0.3 : 0.2),
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
@@ -137,7 +147,7 @@ class StatsRadarChart extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: DSSpacing.sm),
         SizedBox(
           width: 30,
           child: Text(
@@ -155,11 +165,11 @@ class StatsRadarChart extends StatelessWidget {
 
   Color _getStatColor(int index) {
     const colors = [
-      Color(0xFFFF6B6B), // 카리스마
-      Color(0xFF4ECDC4), // 지능
-      Color(0xFFFFE66D), // 창의력
-      Color(0xFF95E1D3), // 리더십
-      Color(0xFFDDA0DD), // 공감력
+      Color(0xFFFF6B6B), // 고유 색상 - 카리스마
+      Color(0xFF4ECDC4), // 고유 색상 - 지능
+      Color(0xFFFFE66D), // 고유 색상 - 창의력
+      Color(0xFF95E1D3), // 고유 색상 - 리더십
+      Color(0xFFDDA0DD), // 고유 색상 - 공감력
     ];
     return colors[index % colors.length];
   }

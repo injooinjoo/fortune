@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/design_system/design_system.dart';
+import '../../../core/extensions/l10n_extension.dart';
 import '../../../presentation/providers/active_profile_provider.dart';
-import '../../../presentation/providers/auth_provider.dart';
+import '../../../presentation/providers/providers.dart';
 import '../../../presentation/providers/secondary_profiles_provider.dart';
 import 'add_profile_sheet.dart';
 
@@ -18,7 +19,7 @@ class ProfileListSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
     final activeState = ref.watch(activeProfileProvider);
-    final primaryProfileAsync = ref.watch(userProfileProvider);
+    final primaryProfile = ref.watch(primaryUserProfileProvider);
     final secondaryProfiles = ref.watch(secondaryProfilesProvider);
     final canAdd = ref.watch(canAddSecondaryProfileProvider);
 
@@ -68,9 +69,9 @@ class ProfileListSheet extends ConsumerWidget {
 
             // 본인 프로필
             _ProfileListTile(
-              name: primaryProfileAsync.valueOrNull?.name ?? '나',
+              name: primaryProfile?.name ?? '나',
               subtitle: '본인',
-              initial: (primaryProfileAsync.valueOrNull?.name ?? '나')
+              initial: (primaryProfile?.name ?? '나')
                   .substring(0, 1),
               isSelected: activeState.isPrimary,
               onTap: () {
@@ -163,6 +164,7 @@ class ProfileListSheet extends ConsumerWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: DSColors.overlay,
       builder: (_) => const AddProfileSheet(),
     );
   }
@@ -174,6 +176,7 @@ class ProfileListSheet extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       backgroundColor: colors.background,
+      barrierColor: DSColors.overlay,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -197,7 +200,7 @@ class ProfileListSheet extends ConsumerWidget {
                 color: colors.textPrimary,
               ),
               title: Text(
-                '수정',
+                context.l10n.edit,
                 style: context.typography.bodyLarge.copyWith(
                   color: colors.textPrimary,
                 ),
@@ -213,7 +216,7 @@ class ProfileListSheet extends ConsumerWidget {
                 color: colors.error,
               ),
               title: Text(
-                '삭제',
+                context.l10n.delete,
                 style: context.typography.bodyLarge.copyWith(
                   color: colors.error,
                 ),
@@ -249,18 +252,20 @@ class ProfileListSheet extends ConsumerWidget {
         backgroundColor: colors.background,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          '프로필 삭제',
-          style: context.typography.headingMedium.copyWith(color: colors.textPrimary),
+          context.l10n.deleteProfile,
+          style: context.typography.headingMedium
+              .copyWith(color: colors.textPrimary),
         ),
         content: Text(
-          '이 프로필을 삭제하시겠습니까?\n삭제된 프로필은 복구할 수 없습니다.',
-          style: context.typography.bodyMedium.copyWith(color: colors.textSecondary),
+          context.l10n.deleteProfileConfirm,
+          style: context.typography.bodyMedium
+              .copyWith(color: colors.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: Text(
-              '취소',
+              context.l10n.cancel,
               style: context.typography.buttonMedium.copyWith(
                 color: colors.textSecondary,
               ),
@@ -269,7 +274,7 @@ class ProfileListSheet extends ConsumerWidget {
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: Text(
-              '삭제',
+              context.l10n.delete,
               style: context.typography.buttonMedium.copyWith(
                 color: colors.error,
               ),
@@ -309,15 +314,15 @@ class _ProfileListTile extends StatelessWidget {
         height: 44,
         decoration: BoxDecoration(
           color: isSelected
-              ? colors.accentSecondary
-              : colors.accentSecondary.withValues(alpha: 0.15),
+              ? colors.textPrimary
+              : colors.textPrimary.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         ),
         child: Center(
           child: Text(
             initial,
             style: context.typography.headingSmall.copyWith(
-              color: isSelected ? Colors.white : colors.accentSecondary,
+              color: isSelected ? Colors.white : colors.textPrimary,
             ),
           ),
         ),
@@ -331,10 +336,11 @@ class _ProfileListTile extends StatelessWidget {
       ),
       subtitle: Text(
         subtitle,
-        style: context.typography.bodySmall.copyWith(color: colors.textSecondary),
+        style:
+            context.typography.bodySmall.copyWith(color: colors.textSecondary),
       ),
       trailing: isSelected
-          ? Icon(Icons.check_circle, color: colors.accentSecondary)
+          ? Icon(Icons.check_circle, color: colors.textPrimary)
           : null,
       onTap: onTap,
       onLongPress: onLongPress,

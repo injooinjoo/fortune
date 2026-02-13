@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:fortune/core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 
 class PrivacyPolicyPage extends ConsumerStatefulWidget {
   const PrivacyPolicyPage({super.key});
@@ -11,56 +11,33 @@ class PrivacyPolicyPage extends ConsumerStatefulWidget {
 }
 
 class _PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
-  // TOSS Design System Helper Methods
-  bool _isDarkMode(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark;
-  }
-
-  Color _getTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark900
-        : TossDesignSystem.gray900;
-  }
-
-  Color _getSecondaryTextColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark400
-        : TossDesignSystem.gray600;
-  }
-
-  Color _getBackgroundColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? TossDesignSystem.grayDark50
-        : TossDesignSystem.gray50;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _getBackgroundColor(context),
+      backgroundColor: context.colors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: _getTextColor(context)),
+          icon: Icon(Icons.arrow_back_ios, color: context.colors.textPrimary),
           onPressed: () => context.pop(),
         ),
         title: Text(
           '개인정보처리방침',
-          style: TossDesignSystem.heading4.copyWith(
-            color: _getTextColor(context),
+          style: context.heading3.copyWith(
+            color: context.colors.textPrimary,
           ),
         ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(
-            horizontal: TossDesignSystem.marginHorizontal),
+            horizontal: DSSpacing.pageHorizontal),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: TossDesignSystem.spacingM),
+            const SizedBox(height: DSSpacing.md),
 
             _buildSection(
               '1. 개인정보의 수집 및 이용 목적',
@@ -95,18 +72,14 @@ class _PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
             ),
 
             _buildSection(
-              '4. 광고 및 추적',
-              'Fortune 앱은 맞춤형 광고 제공을 위해 다음의 서비스를 이용합니다:\n\n'
-              '• Google AdMob: 맞춤형 광고 제공\n'
-              '• SKAdNetwork: Apple의 개인정보 보호 광고 측정\n'
-              '• Firebase Analytics: 앱 사용 분석\n\n'
-              '앱 추적 투명성(ATT):\n'
-              '앱 최초 실행 시 "앱이 활동을 추적하는 것을 허용할까요?" 팝업이 표시됩니다. '
-              '추적을 허용하면 맞춤형 광고가 표시되고, 거부하면 일반 광고가 표시됩니다. '
-              '추적 거부 시에도 앱의 모든 기능을 정상적으로 이용할 수 있습니다.\n\n'
-              '광고 식별자(IDFA):\n'
-              '사용자가 추적을 허용한 경우에만 광고 식별자를 수집하여 광고 성과 측정에 활용합니다.\n\n'
-              '프리미엄 구독 시 모든 광고가 제거됩니다.',
+              '4. 분석 서비스',
+              'Fortune 앱은 서비스 개선을 위해 다음의 분석 서비스를 이용합니다:\n\n'
+              '• Firebase Analytics: 앱 사용 분석 및 오류 추적\n\n'
+              '수집되는 정보:\n'
+              '• 기기 정보 (기기 모델, OS 버전)\n'
+              '• 앱 사용 패턴 (화면 조회, 기능 사용 빈도)\n'
+              '• 오류 로그 (앱 충돌 시 디버깅용)\n\n'
+              '이 정보는 익명화되어 개인을 식별할 수 없으며, 서비스 품질 향상에만 활용됩니다.',
             ),
 
             _buildSection(
@@ -124,7 +97,6 @@ class _PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
             _buildSection(
               '6. 개인정보의 제3자 제공',
               '서비스는 다음의 제3자에게 개인정보를 제공합니다:\n\n'
-              '• Google LLC (AdMob): 광고 ID, 앱 사용 데이터 - 맞춤형 광고 제공\n'
               '• Google LLC (Firebase): 기기 정보, 앱 사용 데이터 - 앱 분석 및 오류 추적\n'
               '• Supabase Inc: 이메일, 생년월일 - 회원 관리 및 운세 서비스 제공\n'
               '• Apple Inc: 구매 정보 - 인앱 결제 처리\n\n'
@@ -147,8 +119,7 @@ class _PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
               '• 개인정보 열람 요구\n'
               '• 오류 등이 있을 경우 정정 요구\n'
               '• 삭제 요구\n'
-              '• 처리정지 요구\n'
-              '• 광고 추적 설정 변경 (설정 > 개인정보 보호 > 추적)\n\n'
+              '• 처리정지 요구\n\n'
               '권리 행사는 서비스 내 설정 메뉴 또는 고객센터를 통해 가능합니다.',
             ),
 
@@ -161,15 +132,15 @@ class _PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
               '• 전화: 02-1234-5678',
             ),
 
-            const SizedBox(height: TossDesignSystem.spacingL),
+            const SizedBox(height: DSSpacing.lg),
 
             Container(
-              padding: const EdgeInsets.all(TossDesignSystem.spacingM),
+              padding: const EdgeInsets.all(DSSpacing.md),
               decoration: BoxDecoration(
-                color: TossDesignSystem.tossBlue.withValues(alpha: 0.05),
+                color: DSColors.accentDark.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: TossDesignSystem.tossBlue.withValues(alpha: 0.1),
+                  color: DSColors.accentDark.withValues(alpha: 0.1),
                   width: 1,
                 ),
               ),
@@ -178,20 +149,20 @@ class _PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
                   const Icon(
                     Icons.calendar_today,
                     size: 18,
-                    color: TossDesignSystem.tossBlue,
+                    color: DSColors.accentDark,
                   ),
-                  const SizedBox(width: TossDesignSystem.spacingS),
+                  const SizedBox(width: DSSpacing.sm),
                   Text(
                     '시행일: 2025년 1월 1일',
-                    style: TossDesignSystem.caption.copyWith(
-                      color: _getSecondaryTextColor(context),
+                    style: context.labelSmall.copyWith(
+                      color: context.colors.textSecondary,
                     ),
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: TossDesignSystem.spacingXXL),
+            const SizedBox(height: DSSpacing.xxl),
           ],
         ),
       ),
@@ -200,21 +171,21 @@ class _PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
 
   Widget _buildSection(String title, String content) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: TossDesignSystem.spacingL),
+      padding: const EdgeInsets.only(bottom: DSSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: TossDesignSystem.body1.copyWith(
-              color: _getTextColor(context),
+            style: context.bodyLarge.copyWith(
+              color: context.colors.textPrimary,
             ),
           ),
-          const SizedBox(height: TossDesignSystem.spacingM),
+          const SizedBox(height: DSSpacing.md),
           Text(
             content,
-            style: TossDesignSystem.caption.copyWith(
-              color: _getSecondaryTextColor(context),
+            style: context.labelSmall.copyWith(
+              color: context.colors.textSecondary,
             ),
           ),
         ],

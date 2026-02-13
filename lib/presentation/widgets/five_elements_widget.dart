@@ -1,4 +1,4 @@
-import 'package:fortune/core/theme/fortune_design_system.dart';
+import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'dart:math';
@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/fortune/presentation/providers/saju_provider.dart';
 import 'five_elements_explanation_bottom_sheet.dart';
-import 'package:fortune/core/theme/fortune_colors.dart';
 
 class FiveElementsWidget extends ConsumerWidget {
   final Map<String, dynamic>? userProfile;
@@ -47,12 +46,12 @@ class FiveElementsWidget extends ConsumerWidget {
       padding: AppSpacing.paddingAll20,
       decoration: BoxDecoration(
         color: theme.brightness == Brightness.dark
-            ? TossDesignSystem.grayDark100
-            : TossDesignSystem.gray50,
+            ? DSColors.surface
+            : DSColors.backgroundDark,
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
           color: theme.brightness == Brightness.dark
-              ? TossDesignSystem.grayDark200
+              ? DSColors.surfaceSecondary
               : theme.colorScheme.outline.withValues(alpha: 0.1),
           width: 1),
       ),
@@ -132,12 +131,12 @@ class FiveElementsWidget extends ConsumerWidget {
       padding: AppSpacing.paddingAll20,
       decoration: BoxDecoration(
         color: theme.brightness == Brightness.dark
-            ? TossDesignSystem.grayDark100
-            : TossDesignSystem.gray50,
+            ? DSColors.surface
+            : DSColors.backgroundDark,
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
           color: theme.brightness == Brightness.dark
-              ? TossDesignSystem.grayDark200
+              ? DSColors.surfaceSecondary
               : theme.colorScheme.outline.withValues(alpha: 0.1),
           width: 1),
       ),
@@ -177,7 +176,7 @@ class FiveElementsWidget extends ConsumerWidget {
       padding: AppSpacing.paddingAll16,
       decoration: BoxDecoration(
         color: theme.brightness == Brightness.dark
-            ? TossDesignSystem.grayDark200
+            ? DSColors.surfaceSecondary
             : theme.colorScheme.primary.withValues(alpha: 0.05),
         borderRadius: AppDimensions.borderRadiusMedium),
       child: Column(
@@ -285,7 +284,7 @@ class FiveElementsWidget extends ConsumerWidget {
                     offset: const Offset(0, 2))]),
               child: Center(
                 child: Padding(
-                  padding: TossDesignSystem.spacingXS.all,
+                  padding: DSSpacing.xs.all,
                   child: FittedBox(
                     fit: BoxFit.contain,
                     child: Column(
@@ -296,7 +295,7 @@ class FiveElementsWidget extends ConsumerWidget {
                           _getElementHanja(element),
                           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                             color: theme.brightness == Brightness.dark
-                                ? TossDesignSystem.grayDark900
+                                ? DSColors.textPrimary
                                 : null,
                           )),
                         Text(
@@ -307,7 +306,7 @@ class FiveElementsWidget extends ConsumerWidget {
                           '$percentage%',
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: theme.brightness == Brightness.dark
-                                ? TossDesignSystem.grayDark700
+                                ? DSColors.textSecondary
                                 : null,
                           )),
                       ],
@@ -487,12 +486,12 @@ class FiveElementsWidget extends ConsumerWidget {
       padding: AppSpacing.paddingAll16,
       decoration: BoxDecoration(
         color: theme.brightness == Brightness.dark
-            ? TossDesignSystem.grayDark200
+            ? DSColors.surfaceSecondary
             : theme.colorScheme.outline.withValues(alpha: 0.05),
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
           color: theme.brightness == Brightness.dark
-              ? TossDesignSystem.grayDark300
+              ? DSColors.border
               : theme.colorScheme.outline.withValues(alpha: 0.1)),
       ),
       child: Column(
@@ -517,7 +516,7 @@ class FiveElementsWidget extends ConsumerWidget {
           if (dominantElement != null)
             Padding(
               padding: const EdgeInsets.only(
-                bottom: TossDesignSystem.spacingXS),
+                bottom: DSSpacing.xs),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -525,7 +524,7 @@ class FiveElementsWidget extends ConsumerWidget {
                     width: 6,
                     height: AppSpacing.spacing1 * 1.5,
                     margin: const EdgeInsets.only(
-                      top: TossDesignSystem.spacingXS),
+                      top: DSSpacing.xs),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.primary,
                       shape: BoxShape.circle),
@@ -547,7 +546,7 @@ class FiveElementsWidget extends ConsumerWidget {
                   width: 6,
                   height: AppSpacing.spacing1 * 1.5,
                   margin: const EdgeInsets.only(
-                    top: TossDesignSystem.spacingXS),
+                    top: DSSpacing.xs),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.error,
                     shape: BoxShape.circle),
@@ -575,17 +574,17 @@ class FiveElementsWidget extends ConsumerWidget {
   Color _getElementColor(String element) {
     switch (element) {
       case '목':
-        return TossDesignSystem.successGreen;
+        return DSColors.success;
       case '화':
-        return TossDesignSystem.warningOrange;
+        return DSColors.warning;
       case '토':
-        return FortuneColors.goldLight;
+        return DSColors.warning;
       case '금':
-        return TossDesignSystem.gray600;
+        return DSColors.textSecondaryDark;
       case '수':
-        return TossDesignSystem.tossBlue;
+        return DSColors.accentDark;
       default:
-        return TossDesignSystem.gray600;
+        return DSColors.textSecondaryDark;
     }
   }
   

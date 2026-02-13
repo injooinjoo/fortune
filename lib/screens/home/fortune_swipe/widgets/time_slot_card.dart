@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/typography_unified.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// ⏰ 시간대별 조언 카드 - ChatGPT Pulse 스타일
 class TimeSlotCard extends StatelessWidget {
   final Map<String, String> timeSlots;
-  final bool isDark;
 
   const TimeSlotCard({
     super.key,
     required this.timeSlots,
-    required this.isDark,
   });
 
   String get _currentTimeSlot {
@@ -32,15 +30,15 @@ class TimeSlotCard extends StatelessWidget {
         // 헤더
         Text(
           '시간대별 조언',
-          style: context.calligraphyTitle.copyWith(
-            color: isDark ? Colors.white : Colors.black87,
+          style: context.heading3.copyWith(
+            color: context.colors.textPrimary,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           '오늘 하루를 시간대별로 준비하세요',
           style: context.bodySmall.copyWith(
-            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+            color: context.colors.textSecondary,
           ),
         ),
 
@@ -53,8 +51,7 @@ class TimeSlotCard extends StatelessWidget {
             title: '오전 (6시-12시)',
             advice: timeSlots['morning']!,
             isActive: currentTimeSlot == 'morning',
-            isDark: isDark,
-            accentColor: const Color(0xFFDAA520), // 황금색 (아침 햇살)
+            accentColor: context.colors.accentTertiary,
           ),
 
         if (timeSlots['morning']?.isNotEmpty == true &&
@@ -68,8 +65,7 @@ class TimeSlotCard extends StatelessWidget {
             title: '오후 (12시-18시)',
             advice: timeSlots['afternoon']!,
             isActive: currentTimeSlot == 'afternoon',
-            isDark: isDark,
-            accentColor: const Color(0xFFDC143C), // 진홍색 (화기)
+            accentColor: context.colors.accentSecondary,
           ),
 
         if (timeSlots['afternoon']?.isNotEmpty == true &&
@@ -83,8 +79,7 @@ class TimeSlotCard extends StatelessWidget {
             title: '저녁 (18시-자정)',
             advice: timeSlots['evening']!,
             isActive: currentTimeSlot == 'evening',
-            isDark: isDark,
-            accentColor: const Color(0xFF1E3A5F), // 남색 (수기)
+            accentColor: context.colors.accent,
           ),
       ],
     );
@@ -96,7 +91,6 @@ class _TimeSlotItem extends StatelessWidget {
   final String title;
   final String advice;
   final bool isActive;
-  final bool isDark;
   final Color accentColor;
 
   const _TimeSlotItem({
@@ -104,7 +98,6 @@ class _TimeSlotItem extends StatelessWidget {
     required this.title,
     required this.advice,
     required this.isActive,
-    required this.isDark,
     required this.accentColor,
   });
 
@@ -114,7 +107,7 @@ class _TimeSlotItem extends StatelessWidget {
       context: context,
       barrierDismissible: true,
       barrierLabel: '닫기',
-      barrierColor: Colors.black54,
+      barrierColor: DSColors.overlay,
       transitionDuration: const Duration(milliseconds: 300),
       transitionBuilder: (ctx, a1, a2, child) {
         return ScaleTransition(
@@ -129,16 +122,9 @@ class _TimeSlotItem extends StatelessWidget {
             width: MediaQuery.of(ctx).size.width * 0.85,
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              // 다크모드에서 더 밝은 배경으로 가독성 개선
-              color: isDark ? const Color(0xFF2C2C2E) : Colors.white,
+              // Theme-aware modal surface
+              color: ctx.colors.surface,
               borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -161,9 +147,9 @@ class _TimeSlotItem extends StatelessWidget {
                     Expanded(
                       child: Text(
                         title,
-                        style: ctx.calligraphySubtitle.copyWith(
-                          color: isDark ? Colors.white : Colors.black87,
-                          fontWeight: FontWeight.w700,
+                        style: ctx.heading4.copyWith(
+                          color: ctx.colors.textPrimary,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
@@ -171,7 +157,7 @@ class _TimeSlotItem extends StatelessWidget {
                       onPressed: () => Navigator.of(ctx).pop(),
                       icon: Icon(
                         Icons.close,
-                        color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+                        color: ctx.colors.textTertiary,
                       ),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
@@ -187,10 +173,9 @@ class _TimeSlotItem extends StatelessWidget {
                 // 전체 조언 텍스트
                 Text(
                   advice,
-                  style: ctx.calligraphyBody.copyWith(
-                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.8),
-                    fontSize: 15,
-                    height: 1.8,
+                  style: ctx.bodyMedium.copyWith(
+                    color: ctx.colors.textSecondary,
+                    height: 1.7,
                   ),
                 ),
               ],
@@ -203,119 +188,114 @@ class _TimeSlotItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return GestureDetector(
       onTap: () => _showDetailPopup(context),
       child: Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: isActive
-            ? Border.all(color: accentColor.withValues(alpha: 0.4), width: 1.5)
-            : Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08), width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 이모지 아이콘 (전통 스타일)
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: isActive
-                  ? accentColor.withValues(alpha: 0.15)
-                  : (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: isActive
+              ? Border.all(color: accentColor.withValues(alpha: 0.4), width: 1.5)
+              : Border.all(color: colors.border, width: 1),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 이모지 아이콘
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
                 color: isActive
-                    ? accentColor.withValues(alpha: 0.3)
-                    : (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
-                width: 1,
+                    ? accentColor.withValues(alpha: 0.15)
+                    : colors.backgroundTertiary,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: isActive
+                      ? accentColor.withValues(alpha: 0.3)
+                      : colors.border,
+                  width: 1,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  emoji,
+                  style: const TextStyle(fontSize: 22),
+                ),
               ),
             ),
-            child: Center(
-              child: Text(
-                emoji,
-                style: const TextStyle(fontSize: 22),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      title,
-                      style: context.bodySmall.copyWith(
-                        color: isDark ? Colors.white : Colors.black87,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    if (isActive) ...[
-                      const SizedBox(width: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: accentColor.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(4),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        title,
+                        style: context.bodySmall.copyWith(
+                          color: colors.textPrimary,
+                          fontWeight: FontWeight.w600,
                         ),
-                        child: Text(
-                          '지금',
-                          style: context.labelTiny.copyWith(
-                            color: accentColor,
-                            fontWeight: FontWeight.w600,
+                      ),
+                      if (isActive) ...[
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: accentColor.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            '지금',
+                            style: context.labelTiny.copyWith(
+                              color: accentColor,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    advice,
+                    style: context.labelSmall.copyWith(
+                      color: colors.textSecondary,
+                      height: 1.6,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 6),
+                  // 확장 힌트
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '탭하여 자세히 보기',
+                        style: context.labelTiny.copyWith(
+                          color: accentColor.withValues(alpha: 0.6),
+                          fontWeight: FontWeight.w500,
+                          fontSize: 10,
+                        ),
+                      ),
+                      const SizedBox(width: 2),
+                      Icon(
+                        Icons.keyboard_arrow_down,
+                        color: accentColor.withValues(alpha: 0.6),
+                        size: 12,
                       ),
                     ],
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  advice,
-                  style: context.labelSmall.copyWith(
-                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.7),
-                    height: 1.6,
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 6),
-                // 확장 힌트
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      '탭하여 자세히 보기',
-                      style: context.labelTiny.copyWith(
-                        color: accentColor.withValues(alpha: 0.6),
-                        fontWeight: FontWeight.w500,
-                        fontSize: 10, // 예외: 초소형 힌트
-                      ),
-                    ),
-                    const SizedBox(width: 2),
-                    Icon(
-                      Icons.keyboard_arrow_down,
-                      color: accentColor.withValues(alpha: 0.6),
-                      size: 12,
-                    ),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }

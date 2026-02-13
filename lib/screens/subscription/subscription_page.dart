@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/design_system/design_system.dart';
-import '../../core/theme/obangseok_colors.dart';
-import '../../core/theme/typography_unified.dart';
 import '../../core/services/fortune_haptic_service.dart';
 import '../../core/widgets/unified_button.dart';
 import '../../core/constants/in_app_products.dart';
@@ -49,10 +47,11 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
             true,
             plan: _selectedPlan,
             expiresAt: _calculateExpirationDate(_selectedPlan),
-            productId: _selectedPlan == 'monthly'
-                ? InAppProducts.monthlySubscription
-                : InAppProducts.yearlySubscription,
+            productId: _selectedPlan == 'pro'
+                ? InAppProducts.proSubscription
+                : InAppProducts.maxSubscription,
           );
+          if (!mounted) return;
           Toast.show(context, message: message, type: ToastType.success);
           Navigator.of(context).pop(); // 구독 완료 후 이전 화면으로
         }
@@ -87,18 +86,16 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
     );
   }
 
-  /// 만료일 계산
+  /// 만료일 계산 (Pro/Max 모두 월간 구독)
   DateTime _calculateExpirationDate(String plan) {
     final now = DateTime.now();
-    return plan == 'yearly'
-        ? now.add(const Duration(days: 365))
-        : now.add(const Duration(days: 30));
+    return now.add(const Duration(days: 30)); // Pro, Max 모두 월간
   }
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final isPremium = ref.watch(isPremiumProvider);
+    final isSubscriber = ref.watch(isSubscriptionActiveProvider);
     final subscriptionState = ref.watch(subscriptionProvider);
 
     return Scaffold(
@@ -124,21 +121,21 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
             const SizedBox(height: DSSpacing.md),
 
             // 구독자: 프리미엄 상태 카드
-            if (isPremium) ...[
+            if (isSubscriber) ...[
               _buildActiveSubscriptionCard(subscriptionState),
               const SizedBox(height: DSSpacing.xl),
             ],
 
             // 비구독자: 프리미엄 소개 배너 + 플랜 선택
-            if (!isPremium) ...[
+            if (!isSubscriber) ...[
               // Premium Benefits - 황색(Hwang) 그라데이션으로 복/풍요의 느낌
               Container(
                 padding: const EdgeInsets.all(DSSpacing.lg),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
+                  gradient: LinearGradient(
                     colors: [
-                      ObangseokColors.hwangLight,
-                      ObangseokColors.hwang,
+                      DSColors.warning.withValues(alpha: 0.8),
+                      DSColors.warning,
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -146,7 +143,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                   borderRadius: BorderRadius.circular(DSRadius.lg),
                   boxShadow: [
                     BoxShadow(
-                      color: ObangseokColors.hwang.withValues(alpha: 0.3),
+                      color: DSColors.warning.withValues(alpha: 0.3),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -157,16 +154,16 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                   children: [
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.workspace_premium,
-                          color: Colors.white,
+                          color: colors.textPrimary,
                           size: 32,
                         ),
                         const SizedBox(width: DSSpacing.md),
                         Text(
                           '프리미엄운세',
                           style: context.heading2.copyWith(
-                            color: Colors.white,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ],
@@ -175,7 +172,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                     Text(
                       '무제한 운세와 프리미엄 기능을 경험하세요',
                       style: context.bodySmall.copyWith(
-                        color: Colors.white.withValues(alpha: 0.9),
+                        color: colors.textPrimary.withValues(alpha: 0.9),
                       ),
                     ),
                   ],
@@ -207,25 +204,26 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
 
               const SizedBox(height: DSSpacing.md),
 
-              // Monthly Plan
+              // Pro Plan
               _buildPlanCard(
-                id: 'monthly',
-                title: '월간 구독',
-                price: '₩2,200',
+                id: 'pro',
+                title: 'Pro 구독',
+                price: '₩4,500',
                 period: '/ 월',
                 badge: null,
+                subtitle: '매월 30,000 토큰',
               ),
 
               const SizedBox(height: DSSpacing.md),
 
-              // Yearly Plan
+              // Max Plan
               _buildPlanCard(
-                id: 'yearly',
-                title: '연간 구독',
-                price: '₩19,000',
-                period: '/ 년',
-                badge: '28% 절약',
-                originalPrice: '₩26,400',
+                id: 'max',
+                title: 'Max 구독',
+                price: '₩12,900',
+                period: '/ 월',
+                badge: '인기',
+                subtitle: '매월 100,000 토큰',
               ),
 
               const SizedBox(height: DSSpacing.xl),
@@ -267,9 +265,9 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                     subtitle: '모든 운세를 무제한으로 확인',
                   ),
                   _buildFeatureItem(
-                    icon: Icons.block,
-                    title: '광고 제거',
-                    subtitle: '광고 없이 깔끔하게',
+                    icon: Icons.all_inclusive,
+                    title: '월간 토큰',
+                    subtitle: 'Pro: 30,000개 / Max: 100,000개 매월 지급',
                   ),
                   _buildFeatureItem(
                     icon: Icons.star,
@@ -348,15 +346,15 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
           ),
 
           // Floating Bottom Button (구독자가 아닌 경우에만 표시)
-          if (!isPremium)
+          if (!isSubscriber)
             UnifiedButton.floating(
               text: _isLoading
                   ? '처리 중...'
                   : _selectedPlan == 'free'
                       ? '무료 플랜 사용 중'
-                      : _selectedPlan == 'monthly'
-                          ? '월간 구독 시작하기 - ₩2,200/월'
-                          : '연간 구독 시작하기 - ₩19,000/년',
+                      : _selectedPlan == 'pro'
+                          ? 'Pro 구독 시작하기 - ₩4,500/월'
+                          : 'Max 구독 시작하기 - ₩12,900/월',
               onPressed: _selectedPlan == 'free' || _isLoading ? null : _startSubscription,
               isEnabled: _selectedPlan != 'free' && !_isLoading,
             ),
@@ -378,6 +376,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
     required String period,
     String? badge,
     String? originalPrice,
+    String? subtitle,
   }) {
     final colors = context.colors;
     final isSelected = _selectedPlan == id;
@@ -395,14 +394,14 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
           color: colors.surface,
           borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
-            // 인주색(Inju) - 전통 도장 색상으로 선택 강조
-            color: isSelected ? ObangseokColors.inju : colors.border,
+            // 선택 강조
+            color: isSelected ? DSColors.error : colors.border,
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: ObangseokColors.inju.withValues(alpha: 0.2),
+                    color: DSColors.error.withValues(alpha: 0.2),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -417,16 +416,16 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isSelected ? ObangseokColors.inju : colors.border,
+                  color: isSelected ? DSColors.error : colors.border,
                   width: 2,
                 ),
-                color: isSelected ? ObangseokColors.inju : Colors.transparent,
+                color: isSelected ? DSColors.error : Colors.transparent,
               ),
               child: isSelected
-                  ? const Icon(
+                  ? Icon(
                       Icons.check,
                       size: 16,
-                      color: Colors.white,
+                      color: colors.surface,
                     )
                   : null,
             ),
@@ -451,14 +450,14 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            // 인주색으로 배지 강조
-                            color: ObangseokColors.inju.withValues(alpha: 0.1),
+                            // 배지 강조
+                            color: DSColors.error.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             badge,
                             style: context.labelSmall.copyWith(
-                              color: ObangseokColors.inju,
+                              color: DSColors.error,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -493,6 +492,15 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                       ],
                     ],
                   ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: context.labelSmall.copyWith(
+                        color: colors.textSecondary,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -527,8 +535,8 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
           Icon(
             icon,
             size: 22,
-            // 황색 - 프리미엄 혜택 아이콘
-            color: ObangseokColors.hwang,
+            // 프리미엄 혜택 아이콘
+            color: DSColors.warning,
           ),
           const SizedBox(width: DSSpacing.md),
           Expanded(
@@ -558,6 +566,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
 
   /// 활성 구독 상태 카드 (구독자용)
   Widget _buildActiveSubscriptionCard(SubscriptionState subscriptionState) {
+    final colors = context.colors;
     final planName = subscriptionState.plan == 'yearly' ? '연간 구독' : '월간 구독';
     final remainingDays = subscriptionState.remainingDays;
     final expiresAt = subscriptionState.expiresAt;
@@ -565,10 +574,10 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.lg),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           colors: [
-            ObangseokColors.hwangLight,
-            ObangseokColors.hwang,
+            DSColors.warning.withValues(alpha: 0.8),
+            DSColors.warning,
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -576,7 +585,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
         borderRadius: BorderRadius.circular(DSRadius.lg),
         boxShadow: [
           BoxShadow(
-            color: ObangseokColors.hwang.withValues(alpha: 0.3),
+            color: DSColors.warning.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -591,12 +600,12 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
               Container(
                 padding: const EdgeInsets.all(DSSpacing.sm),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: colors.surface.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(DSRadius.sm),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.workspace_premium,
-                  color: Colors.white,
+                  color: colors.textPrimary,
                   size: 28,
                 ),
               ),
@@ -607,7 +616,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                   Text(
                     '프리미엄운세',
                     style: context.heading3.copyWith(
-                      color: Colors.white,
+                      color: colors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -617,13 +626,13 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
+                      color: colors.surface.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       planName,
                       style: context.labelSmall.copyWith(
-                        color: Colors.white,
+                        color: colors.textPrimary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -638,7 +647,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -647,13 +656,13 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                     const Icon(
                       Icons.check_circle,
                       size: 14,
-                      color: ObangseokColors.cheong,
+                      color: DSColors.info,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       '구독 중',
                       style: context.labelSmall.copyWith(
-                        color: ObangseokColors.cheong,
+                        color: DSColors.info,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -669,7 +678,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
           Container(
             padding: const EdgeInsets.all(DSSpacing.md),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
+              color: colors.surface.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(DSRadius.md),
             ),
             child: Column(
@@ -681,13 +690,13 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                     Text(
                       '남은 기간',
                       style: context.bodySmall.copyWith(
-                        color: Colors.white.withValues(alpha: 0.8),
+                        color: colors.textPrimary.withValues(alpha: 0.8),
                       ),
                     ),
                     Text(
                       '$remainingDays일',
                       style: context.bodyMedium.copyWith(
-                        color: Colors.white,
+                        color: colors.textPrimary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -696,7 +705,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                 const SizedBox(height: DSSpacing.sm),
                 // 구분선
                 Divider(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: colors.surface.withValues(alpha: 0.2),
                   height: 1,
                 ),
                 const SizedBox(height: DSSpacing.sm),
@@ -707,7 +716,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                     Text(
                       '다음 결제일',
                       style: context.bodySmall.copyWith(
-                        color: Colors.white.withValues(alpha: 0.8),
+                        color: colors.textPrimary.withValues(alpha: 0.8),
                       ),
                     ),
                     Text(
@@ -715,7 +724,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                           ? '${expiresAt.year}.${expiresAt.month.toString().padLeft(2, '0')}.${expiresAt.day.toString().padLeft(2, '0')}'
                           : '-',
                       style: context.bodyMedium.copyWith(
-                        color: Colors.white,
+                        color: colors.textPrimary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -733,8 +742,8 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
             child: OutlinedButton.icon(
               onPressed: () => _showSubscriptionManagementGuide(context),
               style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.white,
-                side: const BorderSide(color: Colors.white, width: 1.5),
+                foregroundColor: colors.textPrimary,
+                side: BorderSide(color: colors.textPrimary, width: 1.5),
                 padding: const EdgeInsets.symmetric(vertical: DSSpacing.sm),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(DSRadius.sm),
@@ -744,7 +753,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
               label: Text(
                 '구독 관리',
                 style: context.bodySmall.copyWith(
-                  color: Colors.white,
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -759,10 +768,10 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
     if (_isLoading) return;
 
     String productId;
-    if (_selectedPlan == 'monthly') {
-      productId = InAppProducts.monthlySubscription;
-    } else if (_selectedPlan == 'yearly') {
-      productId = InAppProducts.yearlySubscription;
+    if (_selectedPlan == 'pro') {
+      productId = InAppProducts.proSubscription;
+    } else if (_selectedPlan == 'max') {
+      productId = InAppProducts.maxSubscription;
     } else {
       return; // free plan selected
     }
@@ -784,63 +793,71 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
     showModalBottomSheet(
       context: context,
       backgroundColor: colors.background,
+      barrierColor: DSColors.overlay,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(DSRadius.lg)),
       ),
       builder: (context) => SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(DSSpacing.lg),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.settings_outlined,
-                    size: 20,
-                    color: colors.accent,
-                  ),
-                  const SizedBox(width: DSSpacing.sm),
-                  Text(
-                    '구독 관리 방법',
-                    style: context.bodyLarge.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: colors.textPrimary,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: DSSpacing.lg),
-              Text(
-                '구독 취소 및 관리는 Apple ID 설정에서 가능합니다:\n\n'
-                '1. 설정 앱 열기\n'
-                '2. 상단의 [내 이름] 탭\n'
-                '3. [구독] 선택\n'
-                '4. Fortune 앱 선택\n'
-                '5. [구독 취소] 또는 플랜 변경\n\n'
-                '• 구독 기간 종료 최소 24시간 전에 취소해야 다음 결제가 되지 않습니다.\n'
-                '• 무료 체험 기간 중 취소하면 체험 기간 종료와 함께 구독이 해지됩니다.',
-                style: context.bodySmall.copyWith(
-                  color: colors.textSecondary,
-                  height: 1.6,
-                ),
-              ),
-              const SizedBox(height: DSSpacing.lg),
-              SizedBox(
-                width: double.infinity,
-                child: TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(
-                    '확인',
-                    style: context.bodyMedium.copyWith(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.settings_outlined,
+                      size: 20,
                       color: colors.accent,
-                      fontWeight: FontWeight.w600,
+                    ),
+                    const SizedBox(width: DSSpacing.sm),
+                    Text(
+                      '구독 관리 방법',
+                      style: context.bodyLarge.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: colors.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: DSSpacing.lg),
+                Text(
+                  '📱 iOS (iPhone/iPad)\n'
+                  '1. 설정 앱 열기\n'
+                  '2. 상단의 [내 이름] 탭\n'
+                  '3. [구독] 선택\n'
+                  '4. ZPZG 앱 선택\n'
+                  '5. [구독 취소] 또는 플랜 변경\n\n'
+                  '🤖 Android\n'
+                  '1. Google Play 스토어 앱 열기\n'
+                  '2. 프로필 아이콘 탭\n'
+                  '3. [결제 및 구독] 선택\n'
+                  '4. [구독] 선택\n'
+                  '5. ZPZG 앱 선택 → [구독 취소]\n\n'
+                  '• 구독 기간 종료 최소 24시간 전에 취소해야 다음 결제가 되지 않습니다.',
+                  style: context.bodySmall.copyWith(
+                    color: colors.textSecondary,
+                    height: 1.6,
+                  ),
+                ),
+                const SizedBox(height: DSSpacing.lg),
+                SizedBox(
+                  width: double.infinity,
+                  child: TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(
+                      '확인',
+                      style: context.bodyMedium.copyWith(
+                        color: colors.accent,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

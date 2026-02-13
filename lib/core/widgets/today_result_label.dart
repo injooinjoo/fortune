@@ -36,19 +36,19 @@ class TodayResultLabel extends StatelessWidget {
     final now = DateTime.now();
     final dateText = DateFormat('M월 d일 EEEE', 'ko_KR').format(now);
 
-    // 색상 결정: 밝은 테마면 흰색, 아니면 accent
-    final labelColor = useLightTheme ? Colors.white : colors.accent;
+    // 색상 결정: 밝은 테마면 흰색 (DSColors.accent), 아니면 context accent
+    final labelColor = useLightTheme ? DSColors.accent : colors.accent;
     final bgColor = useLightTheme
-        ? Colors.white.withValues(alpha: 0.2)
+        ? DSColors.accent.withValues(alpha: 0.2)
         : colors.accent.withValues(alpha: 0.1);
     final hintColor = useLightTheme
-        ? Colors.white.withValues(alpha: 0.8)
+        ? DSColors.accent.withValues(alpha: 0.8)
         : colors.textSecondary;
 
     if (compact) {
       return Text(
         '오늘 $dateText',
-        style: DSTypography.labelSmall.copyWith(
+        style: context.labelSmall.copyWith(
           color: labelColor,
           fontWeight: FontWeight.w500,
         ),
@@ -64,7 +64,7 @@ class TodayResultLabel extends StatelessWidget {
             color: bgColor,
             borderRadius: BorderRadius.circular(20),
             border: useLightTheme
-                ? Border.all(color: Colors.white.withValues(alpha: 0.3))
+                ? Border.all(color: DSColors.accent.withValues(alpha: 0.3))
                 : null,
           ),
           child: Row(
@@ -78,7 +78,7 @@ class TodayResultLabel extends StatelessWidget {
               const SizedBox(width: 6),
               Text(
                 '오늘의 인사이트',
-                style: DSTypography.labelMedium.copyWith(
+                style: context.labelMedium.copyWith(
                   color: labelColor,
                   fontWeight: FontWeight.w700,
                 ),
@@ -95,7 +95,7 @@ class TodayResultLabel extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 dateText,
-                style: DSTypography.labelSmall.copyWith(
+                style: context.labelSmall.copyWith(
                   color: labelColor.withValues(alpha: 0.9),
                   fontWeight: FontWeight.w500,
                 ),
@@ -107,7 +107,7 @@ class TodayResultLabel extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             '내일이 되면 새로운 인사이트가 준비돼요',
-            style: DSTypography.labelSmall.copyWith(
+            style: context.labelSmall.copyWith(
               color: hintColor,
               fontWeight: FontWeight.w400,
             ),

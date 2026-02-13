@@ -1,17 +1,16 @@
 /**
- * NanoBanana 패션 이미지 생성 Edge Function
+ * Gemini 패션 이미지 생성 Edge Function
  *
  * 사용자의 스타일 선택과 오행 기반 패션 추천을 바탕으로
  * 전신 패션 이미지를 생성합니다.
  *
- * Cost: 35 souls ($0.02/image via NanoBanana)
+ * Cost: 35 souls (Gemini 2.5 Flash Image 이미지 생성)
  */
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-const NANOBANANA_API_KEY = Deno.env.get('NANOBANANA_API_KEY')
-const NANOBANANA_API_URL = 'https://api.nanobanana.ai/v1/generate'
+const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY')!
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
@@ -75,41 +74,57 @@ DO NOT include: text, logos, watermarks, blurry, distorted, cartoon, anime.`
 }
 
 /**
- * NanoBanana API를 통한 이미지 생성
+ * Gemini 2.5 Flash Image를 통한 이미지 생성
  */
-async function generateImageWithNanoBanana(prompt: string): Promise<string> {
-  console.log('🎨 Generating fashion image with NanoBanana...')
+async function generateImageWithGemini(prompt: string): Promise<string> {
+  console.log('🎨 Generating fashion image with Gemini 2.5 Flash Image...')
 
-  if (!NANOBANANA_API_KEY) {
-    // NanoBanana API 키가 없으면 placeholder 반환
-    console.log('⚠️ NanoBanana API key not configured, returning placeholder')
-    throw new Error('NanoBanana API key not configured')
+  if (!GEMINI_API_KEY) {
+    console.log('⚠️ Gemini API key not configured')
+    throw new Error('Gemini API key not configured')
   }
 
-  const response = await fetch(NANOBANANA_API_URL, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${NANOBANANA_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      prompt,
-      aspect_ratio: '9:16',
-      style: 'fashion_photography',
-      quality: 'high',
-    }),
-  })
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key=${GEMINI_API_KEY}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [{
+          role: 'user',
+          parts: [{ text: prompt }],
+        }],
+        generationConfig: {
+          responseModalities: ['image', 'text'],
+          responseMimeType: 'text/plain',
+        },
+      }),
+    }
+  )
 
   if (!response.ok) {
     const errorText = await response.text()
-    console.error('❌ NanoBanana API error:', errorText)
-    throw new Error(`NanoBanana API failed: ${response.status}`)
+    console.error('❌ Gemini API error:', errorText)
+    throw new Error(`Gemini API failed: ${response.status}`)
   }
 
   const result = await response.json()
-  console.log('✅ Image generated successfully')
 
-  return result.image_base64 || result.imageBase64 || result.image
+  // Gemini 응답에서 이미지 데이터 추출
+  const parts = result.candidates?.[0]?.content?.parts || []
+  const imagePart = parts.find((part: { inlineData?: { mimeType: string; data: string } }) =>
+    part.inlineData?.mimeType?.startsWith('image/')
+  )
+
+  if (!imagePart?.inlineData?.data) {
+    console.error('❌ Gemini 응답에 이미지 없음:', JSON.stringify(result).substring(0, 500))
+    throw new Error('No image data in Gemini response')
+  }
+
+  console.log('✅ Image generated successfully')
+  return imagePart.inlineData.data
 }
 
 /**
@@ -203,8 +218,8 @@ serve(async (req) => {
     const prompt = buildFashionPrompt(request)
     console.log('📝 Generated prompt length:', prompt.length)
 
-    // 2. NanoBanana로 이미지 생성
-    const imageBase64 = await generateImageWithNanoBanana(prompt)
+    // 2. Gemini 2.5 Flash Image로 이미지 생성
+    const imageBase64 = await generateImageWithGemini(prompt)
 
     // 3. Supabase Storage에 업로드
     const imageUrl = await uploadToSupabase(

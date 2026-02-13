@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/design_system/design_system.dart';
-import '../../../../../core/theme/saju_colors.dart';
-import '../../../../../core/theme/typography_unified.dart';
 import '../../../../../core/components/app_card.dart';
 import '../../../domain/models/saju/sinsal_data.dart';
 import '../../../domain/models/saju/sinsal_detail_data.dart';
@@ -36,7 +34,7 @@ class SajuSinsalWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.isDark;
     final sinsals = _analyzeSinsals();
 
     if (sinsals.isEmpty) {
@@ -105,7 +103,7 @@ class SajuSinsalWidget extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: DSSpacing.xs),
             Text(
               '神殺',
               style: context.labelSmall.copyWith(
@@ -163,7 +161,7 @@ class SajuSinsalWidget extends StatelessWidget {
               color: color,
             ),
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: DSSpacing.xs),
           Text(
             hanja,
             style: context.labelSmall.copyWith(
@@ -300,7 +298,7 @@ class SajuSinsalWidget extends StatelessWidget {
                             color: color,
                           ),
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: DSSpacing.xs),
                         Text(
                           sinsal.hanja,
                           style: context.labelTiny.copyWith(
@@ -363,9 +361,7 @@ class SajuSinsalWidget extends StatelessWidget {
                 vertical: DSSpacing.xs,
               ),
               decoration: BoxDecoration(
-                color: isDark
-                    ? Colors.black.withValues(alpha: 0.2)
-                    : Colors.grey.shade50,
+                color: context.colors.surfaceSecondary,
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Row(
@@ -376,7 +372,7 @@ class SajuSinsalWidget extends StatelessWidget {
                     color: DSColors.warning,
                     size: 12,
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: DSSpacing.xs),
                   Expanded(
                     child: Text(
                       sinsal.remedy,

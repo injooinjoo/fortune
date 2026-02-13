@@ -13,16 +13,16 @@ class LottoNumberSet {
     required this.numberElements,
   });
 
-  /// 공개된 번호들 (5개) - 광고 전
+  /// 공개된 번호들 (5개)
   List<int> get visibleNumbers => numbers.sublist(0, 5);
 
-  /// 잠긴 번호 (1개 - 광고 후 공개)
+  /// 잠긴 번호 (1개 - 토큰 사용 후 공개)
   int get lockedNumber => numbers[5];
 }
 
 /// 로또 번호 결과 모델
 ///
-/// 6개 번호 중 5개는 바로 공개, 1개는 광고 후 공개
+/// 6개 번호 중 5개는 바로 공개, 1개는 토큰 사용 후 공개
 class LottoResult {
   /// 6개의 로또 번호 (정렬됨, 1-45) - 하위 호환성을 위해 유지 (1세트일 때만)
   final List<int> numbers;
@@ -50,7 +50,7 @@ class LottoResult {
   /// 공개된 번호들 (5개) - 하위 호환성 (1세트일 때)
   List<int> get visibleNumbers => numbers.sublist(0, 5);
 
-  /// 잠긴 번호 (1개 - 광고 후 공개) - 하위 호환성 (1세트일 때)
+  /// 잠긴 번호 (1개 - 토큰 사용 후 공개) - 하위 호환성 (1세트일 때)
   int get lockedNumber => numbers[5];
 
   /// 게임 수 (세트 수)
@@ -153,9 +153,9 @@ class SajuAdvice {
 
 /// 연금복권 720+ 결과 모델
 ///
-/// 조 번호(1~5)는 블러 처리, 6자리 번호는 바로 공개
+/// 조 번호(1~5)는 토큰 사용 후 공개, 6자리 번호는 바로 공개
 class PensionLotteryResult {
-  /// 조 번호 (1-5) - 광고 후 공개
+  /// 조 번호 (1-5) - 토큰 사용 후 공개
   final int groupNumber;
 
   /// 6자리 번호 (각 자리 0-9)

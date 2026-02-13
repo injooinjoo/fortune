@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../core/design_system/design_system.dart';
-import '../../../../../core/theme/typography_unified.dart';
 import '../../../domain/models/face_reading_result_v2.dart';
 
 /// Apple Watch 데이터 미리보기 카드
@@ -13,9 +12,6 @@ class WatchDataPreviewCard extends StatelessWidget {
   /// Watch 데이터
   final WatchFaceReadingData watchData;
 
-  /// 다크 모드 여부
-  final bool isDark;
-
   /// Watch 앱 연결 상태
   final bool isWatchConnected;
 
@@ -25,7 +21,6 @@ class WatchDataPreviewCard extends StatelessWidget {
   const WatchDataPreviewCard({
     super.key,
     required this.watchData,
-    this.isDark = false,
     this.isWatchConnected = false,
     this.onSyncToWatch,
   });
@@ -35,12 +30,12 @@ class WatchDataPreviewCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFF1A1A1A), // Watch 배경 느낌
-            const Color(0xFF2A2A2A),
+            Color(0xFF1A1A1A), // Watch 배경 느낌
+            Color(0xFF2A2A2A),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
@@ -58,7 +53,7 @@ class WatchDataPreviewCard extends StatelessWidget {
 
           // 리마인더 메시지
           _buildReminderMessage(context),
-          const SizedBox(height: 16),
+          const SizedBox(height: DSSpacing.md),
 
           // 동기화 버튼
           if (onSyncToWatch != null) _buildSyncButton(context),
@@ -69,22 +64,23 @@ class WatchDataPreviewCard extends StatelessWidget {
 
   /// 헤더 빌드
   Widget _buildHeader(BuildContext context) {
+    final colors = context.colors;
     return Row(
       children: [
         // Watch 아이콘
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: colors.surface.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: const Icon(
+          child: Icon(
             Icons.watch,
-            color: Colors.white,
+            color: colors.textPrimary,
             size: 20,
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: DSSpacing.sm + 4),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,14 +88,14 @@ class WatchDataPreviewCard extends StatelessWidget {
               Text(
                 'Apple Watch',
                 style: context.labelMedium.copyWith(
-                  color: Colors.white,
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
                 '오늘의 행운 정보',
                 style: context.labelSmall.copyWith(
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: colors.textSecondary,
                 ),
               ),
             ],
@@ -111,7 +107,7 @@ class WatchDataPreviewCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: isWatchConnected
                 ? DSColors.success.withValues(alpha: 0.2)
-                : Colors.white.withValues(alpha: 0.1),
+                : colors.surface.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
@@ -125,13 +121,13 @@ class WatchDataPreviewCard extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: DSSpacing.xs),
               Text(
                 isWatchConnected ? '연결됨' : '연결 안됨',
                 style: context.labelSmall.copyWith(
                   color: isWatchConnected
                       ? DSColors.success
-                      : Colors.white.withValues(alpha: 0.5),
+                      : colors.textSecondary,
                   fontSize: 10,
                 ),
               ),
@@ -144,24 +140,18 @@ class WatchDataPreviewCard extends StatelessWidget {
 
   /// Watch 미리보기
   Widget _buildWatchPreview(BuildContext context) {
+    final colors = context.colors;
     return Center(
       child: Container(
         width: 180,
         height: 180,
         decoration: BoxDecoration(
-          color: const Color(0xFF000000),
+          color: colors.background,
           shape: BoxShape.circle,
           border: Border.all(
             color: Colors.grey.shade800,
             width: 8,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-            ),
-          ],
         ),
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -172,22 +162,22 @@ class WatchDataPreviewCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.explore,
-                    color: Colors.white54,
+                    color: colors.textSecondary,
                     size: 14,
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: DSSpacing.xs),
                   Text(
                     watchData.luckyDirection,
                     style: context.labelSmall.copyWith(
-                      color: Colors.white70,
+                      color: colors.textSecondary,
                       fontSize: 12,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: DSSpacing.sm),
 
               // 행운 색상
               Row(
@@ -200,7 +190,7 @@ class WatchDataPreviewCard extends StatelessWidget {
                       color: _parseColor(watchData.luckyColor.colorCode),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: Colors.white30,
+                        color: colors.border,
                         width: 1,
                       ),
                     ),
@@ -209,7 +199,7 @@ class WatchDataPreviewCard extends StatelessWidget {
                   Text(
                     watchData.luckyColor.colorName,
                     style: context.labelSmall.copyWith(
-                      color: Colors.white,
+                      color: colors.textPrimary,
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
                     ),
@@ -229,11 +219,11 @@ class WatchDataPreviewCard extends StatelessWidget {
               Text(
                 '컨디션',
                 style: context.labelSmall.copyWith(
-                  color: Colors.white54,
+                  color: colors.textSecondary,
                   fontSize: 10,
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: DSSpacing.sm),
 
               // 행운 시간
               Text(
@@ -241,7 +231,7 @@ class WatchDataPreviewCard extends StatelessWidget {
                     ? watchData.luckyTimePeriods.first
                     : '',
                 style: context.labelSmall.copyWith(
-                  color: Colors.white70,
+                  color: colors.textSecondary,
                   fontSize: 10,
                 ),
               ),
@@ -254,10 +244,11 @@ class WatchDataPreviewCard extends StatelessWidget {
 
   /// 리마인더 메시지
   Widget _buildReminderMessage(BuildContext context) {
+    final colors = context.colors;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: colors.surface.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -270,7 +261,7 @@ class WatchDataPreviewCard extends StatelessWidget {
             ),
             child: const Text('🧘', style: TextStyle(fontSize: 16)),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: DSSpacing.sm + 4),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -278,15 +269,15 @@ class WatchDataPreviewCard extends StatelessWidget {
                 Text(
                   '오늘의 리마인더',
                   style: context.labelSmall.copyWith(
-                    color: Colors.white54,
+                    color: colors.textSecondary,
                     fontSize: 10,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: DSSpacing.xxs),
                 Text(
                   watchData.dailyReminderMessage,
                   style: context.bodySmall.copyWith(
-                    color: Colors.white,
+                    color: colors.textPrimary,
                     height: 1.3,
                   ),
                 ),
@@ -300,13 +291,14 @@ class WatchDataPreviewCard extends StatelessWidget {
 
   /// 동기화 버튼
   Widget _buildSyncButton(BuildContext context) {
+    final colors = context.colors;
     return GestureDetector(
       onTap: onSyncToWatch,
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: [DSColors.accent, DSColors.accentSecondary],
           ),
           borderRadius: BorderRadius.circular(14),
@@ -314,16 +306,16 @@ class WatchDataPreviewCard extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.sync,
-              color: Colors.white,
+              color: colors.textPrimary,
               size: 18,
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: DSSpacing.sm),
             Text(
               'Watch에 동기화',
               style: context.labelMedium.copyWith(
-                color: Colors.white,
+                color: colors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -392,7 +384,7 @@ class WatchComplicationWidget extends StatelessWidget {
             Text(
               '컨디션',
               style: TextStyle(
-                color: Colors.white54,
+                color: context.colors.textSecondary,
                 fontSize: size * 0.12,
               ),
             ),
@@ -417,12 +409,10 @@ class WatchComplicationWidget extends StatelessWidget {
 /// Watch 행운 정보 요약 위젯
 class WatchLuckySummary extends StatelessWidget {
   final WatchFaceReadingData watchData;
-  final bool isDark;
 
   const WatchLuckySummary({
     super.key,
     required this.watchData,
-    this.isDark = false,
   });
 
   @override
@@ -430,10 +420,10 @@ class WatchLuckySummary extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: isDark ? DSColors.surfaceDark : DSColors.surface,
+        color: context.isDark ? DSColors.surfaceDark : DSColors.surface,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: isDark ? DSColors.borderDark : DSColors.border,
+          color: context.isDark ? DSColors.borderDark : DSColors.border,
         ),
       ),
       child: Row(
@@ -445,10 +435,10 @@ class WatchLuckySummary extends StatelessWidget {
             label: '방향',
             value: watchData.luckyDirection,
           ),
-          _buildDivider(),
+          _buildDivider(context),
           // 색상
           _buildColorItem(context),
-          _buildDivider(),
+          _buildDivider(context),
           // 시간
           _buildItem(
             context,
@@ -477,11 +467,11 @@ class WatchLuckySummary extends StatelessWidget {
             color: DSColors.accent,
             size: 18,
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: DSSpacing.xs),
           Text(
             value,
             style: context.labelSmall.copyWith(
-              color: isDark
+              color: context.isDark
                   ? DSColors.textPrimaryDark
                   : DSColors.textPrimary,
               fontWeight: FontWeight.w600,
@@ -490,7 +480,7 @@ class WatchLuckySummary extends StatelessWidget {
           Text(
             label,
             style: context.labelSmall.copyWith(
-              color: isDark
+              color: context.isDark
                   ? DSColors.textSecondaryDark
                   : DSColors.textSecondary,
               fontSize: 10,
@@ -512,15 +502,15 @@ class WatchLuckySummary extends StatelessWidget {
               color: _parseColor(watchData.luckyColor.colorCode),
               shape: BoxShape.circle,
               border: Border.all(
-                color: isDark ? DSColors.borderDark : DSColors.border,
+                color: context.isDark ? DSColors.borderDark : DSColors.border,
               ),
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: DSSpacing.xs),
           Text(
             watchData.luckyColor.colorName,
             style: context.labelSmall.copyWith(
-              color: isDark
+              color: context.isDark
                   ? DSColors.textPrimaryDark
                   : DSColors.textPrimary,
               fontWeight: FontWeight.w600,
@@ -529,7 +519,7 @@ class WatchLuckySummary extends StatelessWidget {
           Text(
             '행운 색상',
             style: context.labelSmall.copyWith(
-              color: isDark
+              color: context.isDark
                   ? DSColors.textSecondaryDark
                   : DSColors.textSecondary,
               fontSize: 10,
@@ -540,11 +530,11 @@ class WatchLuckySummary extends StatelessWidget {
     );
   }
 
-  Widget _buildDivider() {
+  Widget _buildDivider(BuildContext context) {
     return Container(
       width: 1,
       height: 40,
-      color: isDark ? DSColors.borderDark : DSColors.border,
+      color: context.isDark ? DSColors.borderDark : DSColors.border,
     );
   }
 

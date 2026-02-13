@@ -3,6 +3,8 @@ import UIKit
 import ActivityKit
 import WidgetKit
 import Intents
+import Vision
+import CoreImage
 
 @available(iOS 16.1, *)
 public class NativePlatformPlugin: NSObject, FlutterPlugin {
@@ -35,17 +37,33 @@ public class NativePlatformPlugin: NSObject, FlutterPlugin {
         case "cancelNotification":
             cancelNotification(call: call, result: result)
         case "updateDynamicIsland":
-            updateDynamicIsland(call: call, result: result)
+            if #available(iOS 16.2, *) {
+                updateDynamicIsland(call: call, result: result)
+            } else {
+                result(FlutterError(code: "UNAVAILABLE", message: "iOS 16.2+ required", details: nil))
+            }
         case "startLiveActivity":
-            startLiveActivity(call: call, result: result)
+            if #available(iOS 16.2, *) {
+                startLiveActivity(call: call, result: result)
+            } else {
+                result(FlutterError(code: "UNAVAILABLE", message: "iOS 16.2+ required", details: nil))
+            }
         case "endLiveActivity":
-            endLiveActivity(call: call, result: result)
+            if #available(iOS 16.2, *) {
+                endLiveActivity(call: call, result: result)
+            } else {
+                result(FlutterError(code: "UNAVAILABLE", message: "iOS 16.2+ required", details: nil))
+            }
         case "addSiriShortcut":
             addSiriShortcut(call: call, result: result)
         case "startScreenshotDetection":
             startScreenshotDetection(result: result)
         case "stopScreenshotDetection":
             stopScreenshotDetection(result: result)
+        case "detectFace":
+            detectFace(call: call, result: result)
+        case "isFaceDetectionSupported":
+            result(true)
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -66,7 +84,8 @@ public class NativePlatformPlugin: NSObject, FlutterPlugin {
         }
         
         // Store widget data in App Group container
-        if let sharedDefaults = UserDefaults(suiteName: "group.com.fortune.fortune") {
+        // AppGroupId는 Dart 코드(group.com.beyond.fortune)와 동일해야 함
+        if let sharedDefaults = UserDefaults(suiteName: "group.com.beyond.fortune") {
             sharedDefaults.set(data, forKey: "widget_\(widgetType)")
             sharedDefaults.synchronize()
             
@@ -260,9 +279,142 @@ public class NativePlatformPlugin: NSObject, FlutterPlugin {
             "data": ["timestamp": Int(Date().timeIntervalSince1970 * 1000)]
         ])
     }
+
+    // MARK: - Face Detection with Landmarks (Vision Framework)
+    private func detectFace(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let args = call.arguments as? [String: Any],
+              let imageData = args["imageData"] as? FlutterStandardTypedData else {
+            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Image data required", details: nil))
+            return
+        }
+
+        guard let cgImage = createCGImage(from: imageData.data) else {
+            result(FlutterError(code: "IMAGE_ERROR", message: "Failed to create image from data", details: nil))
+            return
+        }
+
+        let imageWidth = CGFloat(cgImage.width)
+        let imageHeight = CGFloat(cgImage.height)
+
+        // Create face landmarks detection request (includes face detection + landmarks)
+        let faceLandmarksRequest = VNDetectFaceLandmarksRequest { request, error in
+            if let error = error {
+                DispatchQueue.main.async {
+                    result(FlutterError(code: "DETECTION_ERROR", message: error.localizedDescription, details: nil))
+                }
+                return
+            }
+
+            guard let observations = request.results as? [VNFaceObservation], !observations.isEmpty else {
+                DispatchQueue.main.async {
+                    result(nil) // No face detected
+                }
+                return
+            }
+
+            // Get the first (most prominent) face
+            let face = observations[0]
+            let boundingBox = face.boundingBox
+
+            // Convert normalized coordinates to pixel coordinates
+            // Vision uses bottom-left origin, Flutter uses top-left
+            let x = boundingBox.origin.x * imageWidth
+            let y = (1 - boundingBox.origin.y - boundingBox.height) * imageHeight
+            let width = boundingBox.width * imageWidth
+            let height = boundingBox.height * imageHeight
+
+            // Extract face landmarks
+            var landmarksData: [[String: Double]] = []
+
+            if let landmarks = face.landmarks {
+                // Helper function to extract points from a landmark region
+                func extractPoints(from region: VNFaceLandmarkRegion2D?, into array: inout [[String: Double]]) {
+                    guard let region = region else { return }
+                    for i in 0..<region.pointCount {
+                        let point = region.normalizedPoints[i]
+                        // Convert normalized coordinates (0-1, bottom-left origin) to pixel coordinates (top-left origin)
+                        // Points are relative to bounding box, need to transform to image coordinates
+                        let pixelX = (boundingBox.origin.x + point.x * boundingBox.width) * imageWidth
+                        let pixelY = (1 - (boundingBox.origin.y + point.y * boundingBox.height)) * imageHeight
+                        array.append([
+                            "x": Double(pixelX),
+                            "y": Double(pixelY)
+                        ])
+                    }
+                }
+
+                // Extract all landmark regions in order
+                extractPoints(from: landmarks.faceContour, into: &landmarksData)      // Face outline
+                extractPoints(from: landmarks.leftEyebrow, into: &landmarksData)      // Left eyebrow
+                extractPoints(from: landmarks.rightEyebrow, into: &landmarksData)     // Right eyebrow
+                extractPoints(from: landmarks.leftEye, into: &landmarksData)          // Left eye
+                extractPoints(from: landmarks.rightEye, into: &landmarksData)         // Right eye
+                extractPoints(from: landmarks.nose, into: &landmarksData)             // Nose
+                extractPoints(from: landmarks.noseCrest, into: &landmarksData)        // Nose bridge
+                extractPoints(from: landmarks.outerLips, into: &landmarksData)        // Outer lips
+                extractPoints(from: landmarks.innerLips, into: &landmarksData)        // Inner lips
+            }
+
+            let faceData: [String: Any] = [
+                "detected": true,
+                "confidence": Double(face.confidence),
+                "boundingBox": [
+                    "x": Double(x),
+                    "y": Double(y),
+                    "width": Double(width),
+                    "height": Double(height)
+                ],
+                "landmarks": landmarksData,
+                "faceCount": observations.count
+            ]
+
+            DispatchQueue.main.async {
+                result(faceData)
+            }
+        }
+
+        // Enable CPU-only mode for simulator support
+        #if targetEnvironment(simulator)
+        if #available(iOS 17.0, *) {
+            let revision = VNDetectFaceLandmarksRequest.supportedRevisions.max() ?? VNDetectFaceLandmarksRequestRevision3
+            faceLandmarksRequest.revision = revision
+        }
+        #endif
+
+        // Create and execute the request handler
+        let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                try handler.perform([faceLandmarksRequest])
+            } catch {
+                DispatchQueue.main.async {
+                    result(FlutterError(code: "HANDLER_ERROR", message: error.localizedDescription, details: nil))
+                }
+            }
+        }
+    }
+
+    private func createCGImage(from data: Data) -> CGImage? {
+        guard let dataProvider = CGDataProvider(data: data as CFData),
+              let cgImage = CGImage(
+                jpegDataProviderSource: dataProvider,
+                decode: nil,
+                shouldInterpolate: true,
+                intent: .defaultIntent
+              ) else {
+            // Try PNG if JPEG fails
+            if let uiImage = UIImage(data: data) {
+                return uiImage.cgImage
+            }
+            return nil
+        }
+        return cgImage
+    }
 }
 
 // MARK: - FlutterStreamHandler
+@available(iOS 16.1, *)
 extension NativePlatformPlugin: FlutterStreamHandler {
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
         self.eventSink = events
@@ -279,26 +431,17 @@ extension NativePlatformPlugin: FlutterStreamHandler {
 @available(iOS 16.2, *)
 struct FortuneActivityAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
-        var fortuneData: [String: Any]
-        
-        enum CodingKeys: String, CodingKey {
-            case fortuneData
-        }
-        
+        var fortuneDataJson: String  // JSON string for Hashable compliance
+
         init(fortuneData: [String: Any]) {
-            self.fortuneData = fortuneData
-        }
-        
-        init(from decoder: Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            fortuneData = [:]
-        }
-        
-        func encode(to encoder: Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            // Encode fortuneData as needed
+            if let jsonData = try? JSONSerialization.data(withJSONObject: fortuneData),
+               let jsonString = String(data: jsonData, encoding: .utf8) {
+                self.fortuneDataJson = jsonString
+            } else {
+                self.fortuneDataJson = "{}"
+            }
         }
     }
-    
+
     var fortuneType: String
 }

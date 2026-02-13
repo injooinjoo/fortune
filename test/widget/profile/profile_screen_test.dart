@@ -1,5 +1,5 @@
-/// Profile Screen - Widget Test
-/// 프로필 화면 UI 테스트
+// Profile Screen - Widget Test
+// 프로필 화면 UI 테스트
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

@@ -1,16 +1,16 @@
-/// Fortune explanation data for different fortune types
+// Fortune explanation data for different fortune types
 class FortuneExplanations {
   static const Map<String, Map<String, dynamic>> explanations = {
     'daily': {
-      'title': '오늘의 운세',
+      'title': '오늘의 인사이트',
       'description': '오늘 당신만을 위한 특별한 하루 예보입니다. 시간대별 에너지 흐름과 함께 오늘을 빛내줄 행운 아이템을 확인해보세요.',
       'features': [
-        '24시간 운세 흐름 분석',
+        '24시간 에너지 흐름 분석',
         '분야별 세부 점수 제공',
         '맞춤형 행운 아이템 추천',
         '시간대별 활동 가이드'],
       'tips': [
-        '아침 커피와 함께 운세를 확인하며 오늘의 에너지를 입어보세요',
+        '아침 커피와 함께 인사이트를 확인하며 오늘의 에너지를 입어보세요',
         '황금 시간대에는 중요한 결정이나 만남을 잡아보세요',
         '행운의 색을 포인트로 활용하면 운이 두 배로 상승합니다'],
       'visualData': {

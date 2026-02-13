@@ -60,9 +60,6 @@ class DetailedFortune extends Fortune {
     Map<String, dynamic>? scoreBreakdown,
     Map<String, dynamic>? luckyItems,
     List<String>? recommendations,
-    // ✅ Missing parameters from parent Fortune class
-    bool? isBlurred,
-    List<String>? blurredSections,
     // ✅ Percentile fields
     int? percentile,
     int? totalTodayViewers,
