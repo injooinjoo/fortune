@@ -1,0 +1,164 @@
+# Reusable Slack Notification Workflow
+# 모든 워크플로우에서 호출하여 실패 시 Slack 알림을 전송합니다.
+#
+# 사용법:
+#   notify-slack:
+#     needs: [job1, job2, job3]
+#     if: always() && (failure() || cancelled())
+#     uses: ./.github/workflows/slack-notify.yml
+#     with:
+#       workflow_name: "워크플로우 이름"
+#       job_status: ${{ contains(needs.*.result, 'failure') && 'failure' || 'cancelled' }}
+#       failed_jobs: "실패한 job 목록"
+#     secrets:
+#       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+name: Slack Notification (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      workflow_name:
+        description: "호출한 워크플로우 이름"
+        required: true
+        type: string
+      job_status:
+        description: "success, failure, cancelled"
+        required: true
+        type: string
+      failed_jobs:
+        description: "실패한 job 목록 (콤마 구분)"
+        required: false
+        type: string
+        default: ""
+      pr_number:
+        description: "PR 번호 (있는 경우)"
+        required: false
+        type: string
+        default: ""
+      custom_message:
+        description: "추가 메시지"
+        required: false
+        type: string
+        default: ""
+      notify_on_success:
+        description: "성공 시에도 알림 전송 여부"
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      SLACK_WEBHOOK_URL:
+        required: true
+
+jobs:
+  notify:
+    name: Send Slack Notification
+    runs-on: ubuntu-latest
+    # 성공 알림이 비활성화된 경우 성공 상태면 스킵
+    if: ${{ inputs.job_status != 'success' || inputs.notify_on_success }}
+
+    steps:
+      - name: Build Slack Message Variables
+        id: vars
+        run: |
+          # 상태에 따른 이모지 및 색상 결정
+          if [ "${{ inputs.job_status }}" = "success" ]; then
+            echo "emoji=✅" >> $GITHUB_OUTPUT
+            echo "color=good" >> $GITHUB_OUTPUT
+            echo "status_kr=성공" >> $GITHUB_OUTPUT
+          elif [ "${{ inputs.job_status }}" = "failure" ]; then
+            echo "emoji=❌" >> $GITHUB_OUTPUT
+            echo "color=danger" >> $GITHUB_OUTPUT
+            echo "status_kr=실패" >> $GITHUB_OUTPUT
+          else
+            echo "emoji=⚠️" >> $GITHUB_OUTPUT
+            echo "color=#808080" >> $GITHUB_OUTPUT
+            echo "status_kr=취소됨" >> $GITHUB_OUTPUT
+          fi
+
+          # 커밋 SHA 단축
+          SHORT_SHA="${{ github.sha }}"
+          echo "short_sha=${SHORT_SHA:0:7}" >> $GITHUB_OUTPUT
+
+          # PR 링크 생성
+          if [ -n "${{ inputs.pr_number }}" ]; then
+            echo "pr_text=• *PR:* <https://github.com/${{ github.repository }}/pull/${{ inputs.pr_number }}|#${{ inputs.pr_number }}>" >> $GITHUB_OUTPUT
+          else
+            echo "pr_text=" >> $GITHUB_OUTPUT
+          fi
+
+          # 실패한 Job 텍스트
+          if [ -n "${{ inputs.failed_jobs }}" ]; then
+            echo "failed_jobs_text=• *실패한 Job:* \`${{ inputs.failed_jobs }}\`" >> $GITHUB_OUTPUT
+          else
+            echo "failed_jobs_text=" >> $GITHUB_OUTPUT
+          fi
+
+          # 추가 메시지
+          if [ -n "${{ inputs.custom_message }}" ]; then
+            echo "custom_text=• *추가 정보:* ${{ inputs.custom_message }}" >> $GITHUB_OUTPUT
+          else
+            echo "custom_text=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Send Slack Notification
+        uses: slackapi/slack-github-action@v1.25.0
+        with:
+          payload: |
+            {
+              "attachments": [
+                {
+                  "color": "${{ steps.vars.outputs.color }}",
+                  "blocks": [
+                    {
+                      "type": "header",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "${{ steps.vars.outputs.emoji }} ${{ inputs.workflow_name }} ${{ steps.vars.outputs.status_kr }}",
+                        "emoji": true
+                      }
+                    },
+                    {
+                      "type": "section",
+                      "fields": [
+                        {
+                          "type": "mrkdwn",
+                          "text": "*레포지토리:*\n${{ github.repository }}"
+                        },
+                        {
+                          "type": "mrkdwn",
+                          "text": "*브랜치:*\n`${{ github.ref_name }}`"
+                        },
+                        {
+                          "type": "mrkdwn",
+                          "text": "*커밋:*\n<https://github.com/${{ github.repository }}/commit/${{ github.sha }}|${{ steps.vars.outputs.short_sha }}>"
+                        },
+                        {
+                          "type": "mrkdwn",
+                          "text": "*실행자:*\n${{ github.actor }}"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "*워크플로우 상세:*\n• <https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|로그 확인하기>\n${{ steps.vars.outputs.pr_text }}\n${{ steps.vars.outputs.failed_jobs_text }}\n${{ steps.vars.outputs.custom_text }}"
+                      }
+                    },
+                    {
+                      "type": "context",
+                      "elements": [
+                        {
+                          "type": "mrkdwn",
+                          "text": "Fortune Flutter CI/CD | 트리거: ${{ github.event_name }} | 실행 #${{ github.run_number }}"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

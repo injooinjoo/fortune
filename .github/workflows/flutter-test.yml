@@ -306,3 +306,17 @@ jobs:
         NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
         NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
       timeout-minutes: 5
+
+  # Slack 알림 (모든 job 실패/취소 시 단일 알림)
+  notify-slack:
+    name: Slack Notification
+    needs: [test, integration-test, build, deploy-preview]
+    if: always() && (failure() || cancelled())
+    uses: ./.github/workflows/slack-notify.yml
+    with:
+      workflow_name: "Flutter Test CI"
+      job_status: ${{ contains(needs.*.result, 'failure') && 'failure' || 'cancelled' }}
+      failed_jobs: "${{ needs.test.result == 'failure' && 'test ' || '' }}${{ needs.integration-test.result == 'failure' && 'integration-test ' || '' }}${{ needs.build.result == 'failure' && 'build ' || '' }}${{ needs.deploy-preview.result == 'failure' && 'deploy-preview' || '' }}"
+      pr_number: ${{ github.event.pull_request.number || '' }}
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
