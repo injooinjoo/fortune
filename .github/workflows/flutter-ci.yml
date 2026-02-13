@@ -373,10 +373,11 @@ jobs:
       run: flutter pub get
 
     - name: Build APK
-      run: flutter build apk --release --split-per-abi
-    
-    - name: Build App Bundle
-      run: flutter build appbundle --release
+      run: flutter build apk --debug
+
+    # Note: Release builds require signing keystore, skip App Bundle in CI
+    # - name: Build App Bundle
+    #   run: flutter build appbundle --release
     
     - name: Upload Android artifacts
       uses: actions/upload-artifact@v4
@@ -384,7 +385,6 @@ jobs:
         name: android-build
         path: |
           build/app/outputs/flutter-apk/
-          build/app/outputs/bundle/release/
 
   build-ios:
     name: Build iOS
