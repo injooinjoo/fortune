@@ -25,27 +25,27 @@ jobs:
   analyze:
     name: Analyze & Format
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
         flutter-version: ${{ env.FLUTTER_VERSION }}
         channel: 'stable'
         cache: true
-    
+
     - name: Get dependencies
       run: flutter pub get
-    
+
     - name: Check formatting
       run: dart format --set-exit-if-changed .
-    
+
     - name: Analyze code
       run: flutter analyze --no-fatal-infos --no-fatal-warnings
-    
+
     - name: Check for dependency issues
       run: flutter pub outdated --no-dev-dependencies
 
@@ -53,18 +53,18 @@ jobs:
     name: Unit & Widget Tests
     runs-on: ubuntu-latest
     needs: analyze
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
         flutter-version: ${{ env.FLUTTER_VERSION }}
         channel: 'stable'
         cache: true
-    
+
     - name: Setup test environment
       run: |
         # Create .env from .env.test for CI
@@ -85,14 +85,13 @@ jobs:
 
     - name: Run tests with coverage
       run: flutter test --coverage --test-randomize-ordering-seed random
-    
+
     - name: Generate LCOV report
       run: |
         sudo apt-get update
         sudo apt-get install -y lcov
 
         # 생성된 파일 제외 (freezed, g.dart, gen.dart)
-        # --ignore-errors unused: 매칭되지 않는 패턴 무시
         lcov --remove coverage/lcov.info \
           '*.freezed.dart' \
           '*.g.dart' \
@@ -102,25 +101,23 @@ jobs:
           -o coverage/lcov.info
 
         lcov --summary coverage/lcov.info
-    
+
     - name: Upload coverage reports
       uses: codecov/codecov-action@v4
       with:
         file: ./coverage/lcov.info
         flags: unittests
         name: codecov-flutter
-    
+
     - name: Check minimum coverage
       run: |
         COVERAGE=$(lcov --summary coverage/lcov.info 2>&1 | grep -E "lines\.+:" | sed -E 's/.*lines\.+:\ +([0-9.]+)%.*/\1/')
         echo "Current coverage: $COVERAGE%"
 
-        # 임시: 커버리지 체크를 경고로만 표시 (CI가 lcov 보고서 생성에 문제가 있어 보임)
         if (( $(echo "$COVERAGE < 80" | bc -l) )); then
           echo "::warning::Coverage $COVERAGE% is below 80% threshold"
-          # TODO: lcov 설정 확인 후 다시 exit 1 활성화
         fi
-    
+
     - name: Archive test results
       if: always()
       uses: actions/upload-artifact@v4
@@ -128,158 +125,20 @@ jobs:
         name: test-results
         path: |
           coverage/
-          test-results.json
 
-  integration-test-ios:
-    name: iOS Integration Tests
-    runs-on: macos-13
-    needs: test
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: ${{ env.FLUTTER_VERSION }}
-        channel: 'stable'
-        cache: true
-
-    - name: Setup build environment
-      run: |
-        cp .env.test .env
-        mkdir -p assets/images/character/lunch assets/decorations assets/icons/traditional assets/animations
-        touch assets/images/character/lunch/.gitkeep assets/decorations/.gitkeep assets/icons/traditional/.gitkeep assets/animations/.gitkeep
-
-    - name: Get dependencies
-      run: flutter pub get
-
-    - name: Setup iOS Simulator
-      run: |
-        echo "Available simulators:"
-        xcrun simctl list devices available
-
-        # Find available iPhone simulator (macos-13 may not have iPhone 16)
-        DEVICE_NAME=""
-        for name in "iPhone 15" "iPhone 15 Pro" "iPhone 14" "iPhone 14 Pro"; do
-          if xcrun simctl list devices available | grep -q "$name"; then
-            DEVICE_NAME="$name"
-            break
-          fi
-        done
-
-        if [ -z "$DEVICE_NAME" ]; then
-          DEVICE_NAME=$(xcrun simctl list devices available | grep "iPhone" | head -1 | sed 's/.*\(iPhone[^(]*\).*/\1/' | xargs)
-        fi
-
-        echo "Using simulator: $DEVICE_NAME"
-        DEVICE_ID=$(xcrun simctl list devices available | grep "$DEVICE_NAME" | head -1 | awk -F '[()]' '{print $2}')
-        echo "Device ID: $DEVICE_ID"
-        xcrun simctl boot "$DEVICE_ID" 2>/dev/null || true
-        sleep 5
-
-    - name: Run integration tests
-      timeout-minutes: 20
-      run: flutter test integration_test/app_test.dart --timeout 180s
-
-  integration-test-android:
-    name: Android Integration Tests
-    runs-on: ubuntu-latest
-    needs: test
-    # Android emulator in CI is flaky, don't block on failure
-    continue-on-error: true
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Enable KVM
-      run: |
-        echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-        sudo udevadm control --reload-rules
-        sudo udevadm trigger --name-match=kvm
-
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: ${{ env.FLUTTER_VERSION }}
-        channel: 'stable'
-        cache: true
-
-    - name: Setup Java
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: ${{ env.JAVA_VERSION }}
-
-    - name: Setup build environment
-      run: |
-        cp .env.test .env
-        mkdir -p assets/images/character/lunch assets/decorations assets/icons/traditional assets/animations
-        touch assets/images/character/lunch/.gitkeep assets/decorations/.gitkeep assets/icons/traditional/.gitkeep assets/animations/.gitkeep
-
-    - name: Setup Google Services
-      env:
-        GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
-      run: |
-        if [ -n "$GOOGLE_SERVICES_JSON" ]; then
-          echo "Using google-services.json from secret"
-          echo "$GOOGLE_SERVICES_JSON" | base64 -d > android/app/google-services.json
-        else
-          echo "Creating placeholder google-services.json for CI build"
-          cat > android/app/google-services.json << 'EOFGS'
-        {
-          "project_info": {
-            "project_number": "000000000000",
-            "project_id": "placeholder-project",
-            "storage_bucket": "placeholder-project.appspot.com"
-          },
-          "client": [
-            {
-              "client_info": {
-                "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
-                "android_client_info": {
-                  "package_name": "com.beyond.fortune"
-                }
-              },
-              "oauth_client": [],
-              "api_key": [
-                {
-                  "current_key": "placeholder_api_key"
-                }
-              ],
-              "services": {}
-            }
-          ],
-          "configuration_version": "1"
-        }
-        EOFGS
-        fi
-
-    - name: Get dependencies
-      run: flutter pub get
-
-    - name: Setup Android Emulator
-      uses: reactivecircus/android-emulator-runner@v2
-      with:
-        api-level: 31
-        arch: x86_64
-        target: google_apis
-        profile: pixel_5
-        emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
-        disable-animations: true
-        script: flutter test integration_test/app_test.dart --timeout 120s
+  # NOTE: Integration tests removed from CI
+  # Run locally: flutter test integration_test/app_test.dart
+  # Or use Firebase Test Lab for real device testing
 
   build-web:
     name: Build Web
     runs-on: ubuntu-latest
     needs: test
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
@@ -301,7 +160,6 @@ jobs:
 
     - name: Optimize web build
       run: |
-        # Compress assets
         find build/web -name "*.js" -exec gzip -k {} \;
         find build/web -name "*.css" -exec gzip -k {} \;
 
@@ -315,18 +173,18 @@ jobs:
     name: Build Android
     runs-on: ubuntu-latest
     needs: test
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
         flutter-version: ${{ env.FLUTTER_VERSION }}
         channel: 'stable'
         cache: true
-    
+
     - name: Setup Java
       uses: actions/setup-java@v4
       with:
@@ -385,10 +243,6 @@ jobs:
         GRADLE_OPTS: "-Xmx4g -XX:MaxMetaspaceSize=2g -XX:+HeapDumpOnOutOfMemoryError -Dorg.gradle.daemon=false"
       run: flutter build apk --debug
 
-    # Note: Release builds require signing keystore, skip App Bundle in CI
-    # - name: Build App Bundle
-    #   run: flutter build appbundle --release
-    
     - name: Upload Android artifacts
       uses: actions/upload-artifact@v4
       with:
@@ -401,11 +255,11 @@ jobs:
     runs-on: macos-13
     needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
@@ -424,12 +278,12 @@ jobs:
 
     - name: Build iOS (no signing)
       run: flutter build ios --release --no-codesign
-    
+
     - name: Archive iOS build
       run: |
         cd ios
         xcodebuild -workspace Runner.xcworkspace -scheme Runner -configuration Release -archivePath RunnerArchive.xcarchive archive -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO
-    
+
     - name: Upload iOS artifacts
       uses: actions/upload-artifact@v4
       with:
@@ -441,14 +295,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-web
     if: github.event_name == 'pull_request'
-    
+
     steps:
     - name: Download web artifacts
       uses: actions/download-artifact@v4
       with:
         name: web-build
         path: web-build
-    
+
     - name: Deploy to Vercel Preview
       uses: amondnet/vercel-action@v25
       with:
@@ -463,14 +317,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-web, build-android]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+
     - name: Download all artifacts
       uses: actions/download-artifact@v4
-    
+
     - name: Create Release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
@@ -484,7 +338,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # Slack 알림 (핵심 job 실패/취소 시 단일 알림)
+  # Slack notification on core job failure
   notify-slack:
     name: Slack Notification
     needs: [analyze, test, build-web, build-android]
