@@ -157,8 +157,8 @@ Description: |
   Discover your potential with Fortune!
 
   📞 Customer Support
-  • Email: support@fortune.app
-  • Website: https://fortune.app
+  • Email: support@zpzg.co.kr
+  • Website: https://zpzg.co.kr
 
   ⚠️ Disclaimer
   For entertainment and reference only. Make important decisions carefully.
@@ -206,9 +206,9 @@ Keywords: |
 
 #### Privacy Policy
 ```yaml
-Privacy Policy URL: https://fortune.app/privacy
+Privacy Policy URL: https://zpzg.co.kr/privacy
 Contact Information:
-  Email: support@fortune.app
+  Email: support@zpzg.co.kr
   Phone: +82-10-0000-0000 (optional)
 ```
 
@@ -259,7 +259,7 @@ Data Retention: Until user account deletion
    ```yaml
    Beta App Name: Fortune Beta
    Beta App Description: AI-powered fortune service beta test
-   Feedback Email: beta@fortune.app
+   Feedback Email: beta@zpzg.co.kr
 
    Test Information:
    - Test fortune generation
@@ -291,7 +291,7 @@ What's New in This Version: |
 
   💡 Continuous updates for better service.
 
-  📞 Contact: support@fortune.app
+  📞 Contact: support@zpzg.co.kr
 ```
 
 #### App Review Information
@@ -299,10 +299,10 @@ What's New in This Version: |
 Contact Information:
   Name: [Developer Name]
   Phone: +82-10-0000-0000
-  Email: developer@fortune.app
+  Email: developer@zpzg.co.kr
 
 Demo Account (if needed):
-  Username: demo@fortune.app
+  Username: demo@zpzg.co.kr
   Password: Demo123!
 
 Review Notes: |
@@ -487,8 +487,8 @@ Content Rating: Everyone (E)
 
 #### Contact Details
 ```yaml
-Website: https://fortune.app
-Email: support@fortune.app
+Website: https://zpzg.co.kr
+Email: support@zpzg.co.kr
 Phone: +82-10-0000-0000 (optional)
 ```
 
@@ -567,7 +567,7 @@ Android Version: API 23 (Android 6.0) or higher
 
    💡 Continuous updates for better service.
 
-   📞 Contact: support@fortune.app
+   📞 Contact: support@zpzg.co.kr
    ```
 
 #### Pre-Launch Checklist
@@ -656,8 +656,8 @@ Fortune과 함께 매일 새로운 자신을 발견하고, 더 나은 선택을 
 
 📞 고객지원
 문의사항이나 건의사항이 있으시면 언제든 연락해 주세요.
-• 이메일: support@fortune.app
-• 웹사이트: https://fortune.app
+• 이메일: support@zpzg.co.kr
+• 웹사이트: https://zpzg.co.kr
 
 ⚠️ 주의사항
 본 서비스는 참고용으로만 사용하시고, 중요한 결정은 신중히 하시기 바랍니다.
@@ -725,8 +725,8 @@ Discover your true potential and gain inspiration for better choices with Fortun
 
 📞 Customer Support
 For any questions or suggestions, please contact us:
-• Email: support@fortune.app
-• Website: https://fortune.app
+• Email: support@zpzg.co.kr
+• Website: https://zpzg.co.kr
 
 ⚠️ Disclaimer
 This service is for entertainment and reference purposes only. Please make important decisions carefully.
@@ -803,10 +803,10 @@ Long-tail Keywords:
 - [ ] **Promotional images** (optional)
 
 #### Legal and Policy
-- [ ] **Privacy Policy URL** https://fortune.app/privacy
-- [ ] **Terms of Service URL** https://fortune.app/terms
-- [ ] **Support Email** support@fortune.app
-- [ ] **Website URL** https://fortune.app
+- [ ] **Privacy Policy URL** https://zpzg.co.kr/privacy
+- [ ] **Terms of Service URL** https://zpzg.co.kr/terms
+- [ ] **Support Email** support@zpzg.co.kr
+- [ ] **Website URL** https://zpzg.co.kr
 
 #### App Information
 - [ ] **App description** written in primary language
@@ -997,9 +997,9 @@ Encourage Reviews:
 #### Customer Support
 ```yaml
 Support Channels:
-  - Email: support@fortune.app
-  - Website: https://fortune.app/support
-  - FAQ: https://fortune.app/faq
+  - Email: support@zpzg.co.kr
+  - Website: https://zpzg.co.kr/support
+  - FAQ: https://zpzg.co.kr/faq
   - In-app feedback form
 
 Response Time:
@@ -1164,16 +1164,16 @@ Regular Tasks:
 ## Support Resources
 
 ### URLs
-- **Website**: https://fortune.app
-- **Support**: https://fortune.app/support
-- **Privacy Policy**: https://fortune.app/privacy
-- **Terms of Service**: https://fortune.app/terms
-- **FAQ**: https://fortune.app/faq
+- **Website**: https://zpzg.co.kr
+- **Support**: https://zpzg.co.kr/support
+- **Privacy Policy**: https://zpzg.co.kr/privacy
+- **Terms of Service**: https://zpzg.co.kr/terms
+- **FAQ**: https://zpzg.co.kr/faq
 
 ### Contact Information
-- **Support Email**: support@fortune.app
-- **Developer Email**: developer@fortune.app
-- **Beta Feedback**: beta@fortune.app
+- **Support Email**: support@zpzg.co.kr
+- **Developer Email**: developer@zpzg.co.kr
+- **Beta Feedback**: beta@zpzg.co.kr
 
 ### Developer Accounts
 - **Apple Developer**: https://developer.apple.com
@@ -1286,4 +1286,4 @@ Solution:
 **Version**: 1.0.0
 **Author**: Fortune Development Team
 
-For questions or updates to this guide, contact developer@fortune.app
+For questions or updates to this guide, contact developer@zpzg.co.kr

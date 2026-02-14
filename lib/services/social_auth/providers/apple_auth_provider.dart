@@ -20,7 +20,14 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
 
       if (!kIsWeb && Platform.isIOS) {
         Logger.info('Using native Apple Sign-In for iOS');
-        return await _signInWithAppleNative();
+        final nativeResponse = await _signInWithAppleNative();
+        if (nativeResponse?.user != null && nativeResponse?.session != null) {
+          return nativeResponse;
+        }
+
+        Logger.warning(
+            'Apple native sign-in did not return a valid session, fallback to OAuth flow');
+        return await _signInWithAppleOAuth();
       } else {
         Logger.info('Using OAuth for Apple Sign-In (web/Android)');
         return await _signInWithAppleOAuth();
@@ -70,13 +77,16 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
 
       Logger.securityCheckpoint('Apple: ${response.user?.id}');
 
-      if (response.user != null && credential.givenName != null) {
+      if (response.user != null) {
+        final fullName =
+            '${credential.givenName ?? ''} ${credential.familyName ?? ''}'
+                .trim();
         await AuthProviderUtils.updateUserProfile(
           supabase: supabase,
           profileCache: profileCache,
           userId: response.user!.id,
           email: credential.email,
-          name: '${credential.givenName ?? ''} ${credential.familyName ?? ''}',
+          name: fullName.isEmpty ? null : fullName,
           provider: 'apple',
         ).catchError((error) {
           Logger.warning(
@@ -147,7 +157,7 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
         redirectTo: kIsWeb
             ? '${Uri.base.origin}/auth/callback'
             : 'com.beyond.fortune://auth-callback',
-        authScreenLaunchMode: LaunchMode.platformDefault,
+        authScreenLaunchMode: LaunchMode.inAppBrowserView,
       );
 
       if (!response) {

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../core/design_system/design_system.dart';
 import '../services/app_version_service.dart';
+import '../services/storage_service.dart';
 import '../presentation/widgets/app_update_dialog.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -14,6 +15,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   bool _versionCheckBlocked = false;
+  final StorageService _storageService = StorageService();
 
   @override
   void initState() {
@@ -91,12 +93,13 @@ class _SplashScreenState extends State<SplashScreen> {
     try {
       debugPrint('🔍 SplashScreen: Getting Supabase client');
       final supabase = Supabase.instance.client;
-      debugPrint('🔐 SplashScreen: Checking current session');
-      final session = supabase.auth.currentSession;
+      debugPrint('🔐 SplashScreen: Resolving current session');
+      final session = await _resolveSession(supabase);
       debugPrint(
           '🔐 SplashScreen: Session status - ${session != null ? 'Authenticated' : 'Not authenticated'}');
 
       if (session != null) {
+        await _storageService.clearGuestMode();
         try {
           debugPrint(
               '👤 SplashScreen: Checking user profile for user ${session.user.id}');
@@ -142,6 +145,7 @@ class _SplashScreenState extends State<SplashScreen> {
           if (mounted) context.go('/chat');
         }
       } else {
+        await _storageService.setGuestMode(true);
         // Chat-First: 비로그인 사용자도 채팅으로 이동 (게스트 모드)
         debugPrint(
             '➡️ SplashScreen: No session, redirecting to chat (guest mode)');
@@ -151,6 +155,26 @@ class _SplashScreenState extends State<SplashScreen> {
       debugPrint('❌ SplashScreen: Critical error in auth check: $e');
       // Chat-First: 에러 시에도 채팅으로 이동
       if (mounted) context.go('/chat');
+    }
+  }
+
+  Future<Session?> _resolveSession(SupabaseClient supabase) async {
+    final currentSession = supabase.auth.currentSession;
+    if (currentSession != null) {
+      return currentSession;
+    }
+
+    try {
+      final authState = await supabase.auth.onAuthStateChange
+          .firstWhere((state) =>
+              state.session != null &&
+              (state.event == AuthChangeEvent.initialSession ||
+                  state.event == AuthChangeEvent.signedIn ||
+                  state.event == AuthChangeEvent.tokenRefreshed))
+          .timeout(const Duration(seconds: 3));
+      return authState.session;
+    } catch (_) {
+      return supabase.auth.currentSession;
     }
   }
 

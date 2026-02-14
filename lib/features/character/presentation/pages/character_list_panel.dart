@@ -175,14 +175,15 @@ class _CharacterTabBar extends StatelessWidget {
             onTap: () => onTabChanged(CharacterListTab.story),
             isDark: isDark,
           ),
-          const SizedBox(width: 8),
-          _TabButton(
-            label: context.l10n.viewFortune,
-            icon: Icons.auto_awesome,
-            isSelected: currentTab == CharacterListTab.fortune,
-            onTap: () => onTabChanged(CharacterListTab.fortune),
-            isDark: isDark,
-          ),
+          // TODO: 임시 비활성화 - 앱스토어 심사 후 복원
+          // const SizedBox(width: 8),
+          // _TabButton(
+          //   label: context.l10n.viewFortune,
+          //   icon: Icons.auto_awesome,
+          //   isSelected: currentTab == CharacterListTab.fortune,
+          //   onTap: () => onTabChanged(CharacterListTab.fortune),
+          //   isDark: isDark,
+          // ),
         ],
       ),
     );

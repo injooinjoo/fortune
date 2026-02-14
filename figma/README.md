@@ -1,4 +1,4 @@
-# Fortune App → Figma 마이그레이션 가이드
+# ZPZG → Figma 마이그레이션 가이드
 
 > 업데이트: 2025.02 - ChatGPT 스타일 디자인 시스템 (DSColors)
 
@@ -43,7 +43,7 @@ JSON으로 토큰 일괄 import 원하면:
 Figma에서 다음 페이지들을 생성하세요:
 
 ```
-Fortune App Design System
+ZPZG Design System
 ├── 📋 Cover (커버 페이지)
 ├── 🎨 Foundation
 │   ├── Colors (ChatGPT 스타일)

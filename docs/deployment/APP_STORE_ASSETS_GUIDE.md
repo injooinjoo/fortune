@@ -459,8 +459,8 @@ pngquant --quality=80-95 image.png
 ## 📞 도움말
 
 **에셋 생성 도움이 필요하면:**
-- 디자인팀 문의: design@fortune.app
-- 기술팀 문의: developer@fortune.app
+- 디자인팀 문의: design@zpzg.co.kr
+- 기술팀 문의: developer@zpzg.co.kr
 
 **유용한 리소스:**
 - [App Store Screenshot Guidelines](https://developer.apple.com/app-store/product-page/)

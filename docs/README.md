@@ -1,4 +1,4 @@
-# Fortune App Documentation
+# ZPZG Documentation
 
 Fortune 앱 개발을 위한 통합 문서 색인입니다.
 
@@ -100,6 +100,7 @@ docs/
 - [Git + JIRA 워크플로우](development/GIT_JIRA_WORKFLOW.md) - Git과 JIRA 통합
 - [JIRA 설정](development/JIRA_CONFIG.md) - JIRA 프로젝트 설정
 - [UX 요청 처리 가이드](development/UX_REQUEST_GUIDE.md) - UX 피드백 자동 처리
+- [코드 통일성 가드](development/CODE_CONSISTENCY_GUARD.md) - 통일성 회귀 방지 규칙과 운영법
 
 > **Note**: 일부 개발 추적 문서들(ALL_FILES_LIST, DEPENDENCY_TRACE 등)은 `development/_archive/`로 이동되었습니다.
 

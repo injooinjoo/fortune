@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Fortune App Deployment Script
+# ZPZG Deployment Script
 # This script helps deploy the app to both Android and iOS app stores
 
 set -e
 
 echo "=========================================="
-echo "Fortune App - Deployment Script"
+echo "ZPZG - Deployment Script"
 echo "=========================================="
 echo ""
 

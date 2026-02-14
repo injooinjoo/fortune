@@ -1,4 +1,4 @@
-# Security Checklist - Fortune App Deployment
+# Security Checklist - ZPZG Deployment
 
 ## 🔴 CRITICAL: Exposed API Keys to Rotate
 

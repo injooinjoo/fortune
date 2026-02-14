@@ -240,7 +240,7 @@ flutter build ipa --release
 ## 📞 지원
 
 **문제가 있으면:**
-- 기술팀: developer@fortune.app
+- 기술팀: developer@zpzg.co.kr
 - 전체 가이드: `docs/deployment/IOS_LAUNCH_GUIDE.md`
 
 **Apple 지원:**

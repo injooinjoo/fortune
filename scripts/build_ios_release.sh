@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # iOS 릴리즈 빌드 자동화 스크립트
-# Fortune App - iOS App Store 배포용
+# ZPZG iOS App Store 배포용
 
 set -e  # 에러 발생 시 즉시 중단
 
@@ -15,7 +15,7 @@ NC='\033[0m' # No Color
 # 로고
 echo -e "${BLUE}"
 echo "╔══════════════════════════════════════╗"
-echo "║   Fortune iOS Release Build Script  ║"
+echo "║      ZPZG iOS Release Build Script       ║"
 echo "║          App Store Deploy            ║"
 echo "╚══════════════════════════════════════╝"
 echo -e "${NC}"

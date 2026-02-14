@@ -23,7 +23,7 @@ Description:
 - Error Log:
 - Environment: iOS/Android/Web
 
-Labels: fortune-app, flutter
+Labels: zpzg, flutter
 ```
 
 ### Issue Types

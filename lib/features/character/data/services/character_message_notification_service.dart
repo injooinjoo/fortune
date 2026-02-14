@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../../../../core/design_system/utils/ds_haptics.dart';
 import '../../../../core/utils/logger.dart';
@@ -25,6 +26,9 @@ class CharacterMessageNotificationService {
     required String characterId,
     required String characterName,
     required String messagePreview,
+    String? messageId,
+    String? conversationId,
+    String? roomState,
   }) async {
     try {
       // 카카오톡 DM 스타일 - 높은 중요도 + 소리 + 진동
@@ -55,13 +59,25 @@ class CharacterMessageNotificationService {
       final preview = messagePreview.length > 50
           ? '${messagePreview.substring(0, 50)}...'
           : messagePreview;
+      final encodedCharacterId = Uri.encodeComponent(characterId);
+      final payload = jsonEncode({
+        'type': 'character_dm',
+        'character_id': characterId,
+        'characterId': characterId,
+        'title': characterName,
+        'body': preview,
+        'route': '/character/$encodedCharacterId?openCharacterChat=true',
+        if (messageId != null) 'message_id': messageId,
+        if (conversationId != null) 'conversation_id': conversationId,
+        if (roomState != null) 'room_state': roomState,
+      });
 
       await _notifications.show(
         characterId.hashCode,
         characterName,
         preview,
         details,
-        payload: 'character_chat:$characterId',
+        payload: payload,
       );
 
       Logger.info('캐릭터 메시지 알림 표시: $characterName');
@@ -84,6 +100,9 @@ class CharacterMessageNotificationService {
     required String characterId,
     required String characterName,
     required String messagePreview,
+    String? messageId,
+    String? conversationId,
+    String? roomState,
   }) async {
     // 진동 먼저 (즉각적 피드백)
     triggerHaptic();
@@ -93,6 +112,9 @@ class CharacterMessageNotificationService {
       characterId: characterId,
       characterName: characterName,
       messagePreview: messagePreview,
+      messageId: messageId,
+      conversationId: conversationId,
+      roomState: roomState,
     );
   }
 }

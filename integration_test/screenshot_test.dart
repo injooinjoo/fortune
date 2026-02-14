@@ -301,7 +301,7 @@ Future<void> _generatePageIndex() async {
   final buffer = StringBuffer();
   buffer.writeln('<!DOCTYPE html>');
   buffer.writeln('<html><head>');
-  buffer.writeln('<title>Fortune App Screenshots</title>');
+  buffer.writeln('<title>ZPZG Screenshots</title>');
   buffer.writeln('<style>');
   buffer.writeln(
       'body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 40px; background: #f5f5f5; }');
@@ -316,7 +316,7 @@ Future<void> _generatePageIndex() async {
   buffer.writeln('.mode-title { font-size: 24px; margin-bottom: 20px; }');
   buffer.writeln('</style>');
   buffer.writeln('</head><body>');
-  buffer.writeln('<h1>📸 Fortune App Screenshots</h1>');
+  buffer.writeln('<h1>📸 ZPZG Screenshots</h1>');
   buffer.writeln('<p>Generated: ${DateTime.now()}</p>');
 
   // Light Mode

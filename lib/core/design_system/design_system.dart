@@ -1,4 +1,4 @@
-// Modern AI Chat Design System for Fortune App
+// Modern AI Chat Design System for ZPZG
 //
 // Design Philosophy: Minimalist, neutral, content-focused
 // Inspired by Claude and ChatGPT interfaces.

@@ -119,7 +119,7 @@ class _PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
               '개인정보 보호책임자\n'
                   '• 성명: 김포춘\n'
                   '• 직책: 개인정보보호 책임자\n'
-                  '• 이메일: privacy@fortune-app.com\n'
+                  '• 이메일: privacy@zpzg.co.kr\n'
                   '• 전화: 02-1234-5678',
             ),
             const SizedBox(height: DSSpacing.lg),

@@ -1,7 +1,7 @@
 // simple-test.spec.js - Direct URL testing
 const { test, expect } = require('@playwright/test');
 
-test.describe('Fortune App Direct Testing', () => {
+test.describe('ZPZG Direct Testing', () => {
   test('should test app functionality without Flutter server', async ({ page }) => {
     console.log('🧪 [TEST] Starting direct app test');
 
@@ -42,7 +42,7 @@ test.describe('Fortune App Direct Testing', () => {
         console.log(`🔧 [PLAYWRIGHT] Found ${koreanText.length} Korean characters`);
       }
 
-      // Look for specific Fortune app elements
+  // Look for specific app elements
       const fortuneKeywords = ['운세', '오늘', '사주', '타로', '궁합', '꿈해몽', 'Fortune'];
       const foundKeywords = fortuneKeywords.filter(keyword => bodyText.includes(keyword));
       console.log(`🔧 [PLAYWRIGHT] Found keywords: ${foundKeywords.join(', ')}`);
@@ -103,10 +103,10 @@ test.describe('Fortune App Direct Testing', () => {
       <!DOCTYPE html>
       <html>
       <head>
-        <title>Fortune Test Page</title>
+        <title>ZPZG Test Page</title>
       </head>
       <body>
-        <h1>🔧 Fortune App Test Mode</h1>
+        <h1>🔧 ZPZG Test Mode</h1>
         <p>테스트 모드로 실행 중입니다.</p>
         <button id="test-btn">운세 보기</button>
         <div id="result"></div>

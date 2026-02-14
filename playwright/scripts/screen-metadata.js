@@ -1,5 +1,5 @@
 /**
- * Fortune App - Screen Metadata Registry
+ * ZPZG - Screen Metadata Registry
  *
  * 각 화면의 상세 정보를 정의합니다:
  * - 라우트 경로
@@ -491,7 +491,7 @@ const SCREEN_METADATA = {
           trigger: '결과 확인 후'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'MBTISelector',
           'FortuneResultCard',
           'UnifiedBlurWrapper',
@@ -517,7 +517,7 @@ const SCREEN_METADATA = {
           trigger: '결과 확인 후'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'PersonInputCard',
           'CompatibilityScoreCircle',
           'CompatibilityAnalysisCard',
@@ -543,7 +543,7 @@ const SCREEN_METADATA = {
           trigger: '결과 확인 후'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'CelebrityMatchCard',
           'SajuComparisonTable',
           'UnifiedBlurWrapper'
@@ -564,7 +564,7 @@ const SCREEN_METADATA = {
           trigger: '결과 확인 후'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'FamilyMemberInput',
           'FamilyFortuneCard',
           'RelationshipAnalysis'
@@ -585,7 +585,7 @@ const SCREEN_METADATA = {
           trigger: '결과 확인 후'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'PetTypeSelector',
           'CompatibilityScoreCircle',
           'PetAdviceCard'
@@ -606,7 +606,7 @@ const SCREEN_METADATA = {
           trigger: '결과 확인 후'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'WarningPersonCard',
           'RelationshipAdvice',
           'UnifiedBlurWrapper'
@@ -627,7 +627,7 @@ const SCREEN_METADATA = {
           trigger: '결과 확인 후'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'PersonalityRadarChart',
           'TraitCard',
           'DNAVisualizer'
@@ -648,7 +648,7 @@ const SCREEN_METADATA = {
           trigger: '날짜 선택'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'MonthCalendar',
           'DayFortuneCard',
           'LuckyItemsRow'
@@ -669,7 +669,7 @@ const SCREEN_METADATA = {
           trigger: '결과 확인 후'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'DateRangePicker',
           'MovingDateCard',
           'DirectionAdvice'
@@ -690,7 +690,7 @@ const SCREEN_METADATA = {
           trigger: '결과 확인 후'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'WishInput',
           'WishResultCard',
           'SuccessRateGauge'
@@ -722,7 +722,7 @@ const SCREEN_METADATA = {
           trigger: '결과 확인 후'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'SajuPillarTablePro',
           'WuxingBalanceChart',
           'YearlyFortuneTimeline'
@@ -743,7 +743,7 @@ const SCREEN_METADATA = {
           trigger: '결과 확인 후'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'ManselyeokTable',
           'SinsalWidget',
           'TwelveStagesWidget',
@@ -765,7 +765,7 @@ const SCREEN_METADATA = {
           trigger: '결과 확인 후'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'CameraCapture',
           'FaceAnalysisOverlay',
           'FaceReadingResultCard',
@@ -787,7 +787,7 @@ const SCREEN_METADATA = {
           trigger: '카드 뽑기'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'QuestionInput',
           'SpreadSelector',
           'TarotCardWidget',
@@ -809,7 +809,7 @@ const SCREEN_METADATA = {
           trigger: '부적 생성 후'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'TalismanTypeSelector',
           'TalismanResultCard',
           'TalismanShareWidget'
@@ -841,7 +841,7 @@ const SCREEN_METADATA = {
           trigger: '분석 시작'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'RelationshipStatusSelector',
           'ConcernInput',
           'UnifiedButton'
@@ -862,7 +862,7 @@ const SCREEN_METADATA = {
           trigger: '분석 시작'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'ExPartnerInput',
           'EmotionAnalysisCard',
           'ReconciliationAdvice'
@@ -883,7 +883,7 @@ const SCREEN_METADATA = {
           trigger: '결과 확인 후'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'BlindDateInput',
           'CompatibilityScoreCircle',
           'FirstImpressionAdvice',
@@ -916,7 +916,7 @@ const SCREEN_METADATA = {
           trigger: '분석 시작'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'CareerStatusInput',
           'ConcernSelector',
           'UnifiedButton'
@@ -937,7 +937,7 @@ const SCREEN_METADATA = {
           trigger: '분석 시작'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'InvestmentTypeSelector',
           'RiskToleranceSlider',
           'InvestmentAdviceCard'
@@ -958,7 +958,7 @@ const SCREEN_METADATA = {
           trigger: '결과 확인 후'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'ExamTypeSelector',
           'ExamDatePicker',
           'SuccessRateGauge',
@@ -980,7 +980,7 @@ const SCREEN_METADATA = {
           trigger: '분석 시작'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'InterestSelector',
           'UnifiedButton'
         ],
@@ -1011,7 +1011,7 @@ const SCREEN_METADATA = {
           trigger: '결과 확인 후'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'BiorhythmChart',
           'BiorhythmStatusCards',
           'DailyForecast',
@@ -1033,7 +1033,7 @@ const SCREEN_METADATA = {
           trigger: '결과 확인 후'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'HourlyScoreGraph',
           'TimeSlotCard',
           'ActivityRecommendation'
@@ -1054,7 +1054,7 @@ const SCREEN_METADATA = {
           trigger: '결과 확인 후'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'YearOverviewCard',
           'MonthlyTimeline',
           'KeyEventsList'
@@ -1075,7 +1075,7 @@ const SCREEN_METADATA = {
           trigger: '결과 확인 후'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'NewYearOverviewCard',
           'LuckyItemsGrid',
           'MonthlyHighlights'
@@ -1107,7 +1107,7 @@ const SCREEN_METADATA = {
           trigger: '분석 시작'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'HealthDataCard',
           'BodyPartAnalysis',
           'HealthAdviceCard'
@@ -1128,7 +1128,7 @@ const SCREEN_METADATA = {
           trigger: '결과 확인 후'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'ExerciseRecommendation',
           'OptimalTimeCard',
           'IntensityGauge'
@@ -1144,7 +1144,7 @@ const SCREEN_METADATA = {
         description: '골프 운세',
         descriptionKo: '오늘의 골프 운',
         uxFlow: { prev: ['fortune-list'], next: ['fortune-list'], trigger: '결과' },
-        components: ['StandardFortuneAppBar', 'SportsFortuneCard'],
+        components: ['StandardZpzgAppBar', 'SportsFortuneCard'],
         designNotes: ['스포츠별 아이콘', '운세 결과'],
         states: ['loading', 'result'],
         dartFile: 'lib/features/sports/presentation/pages/sports_fortune_page.dart'
@@ -1173,7 +1173,7 @@ const SCREEN_METADATA = {
           trigger: '결과 확인 후'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'DreamInput',
           'VoiceInputWidget',
           'DreamAnalysisCard',
@@ -1195,7 +1195,7 @@ const SCREEN_METADATA = {
           trigger: '결과 확인 후'
         },
         components: [
-          'StandardFortuneAppBar',
+          'StandardZpzgAppBar',
           'LuckyColorCard',
           'LuckyNumberCard',
           'LuckyDirectionCard',

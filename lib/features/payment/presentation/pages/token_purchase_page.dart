@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -648,6 +649,36 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                 ),
               ),
             )),
+        const SizedBox(height: 16),
+        // 이용약관 및 개인정보처리방침 링크 (App Store 3.1.2 준수)
+        Text.rich(
+          TextSpan(
+            text: '구매 시 ',
+            style: context.labelSmall.copyWith(color: colors.textSecondary),
+            children: [
+              TextSpan(
+                text: '이용약관',
+                style: context.labelSmall.copyWith(
+                  color: colors.accent,
+                  decoration: TextDecoration.underline,
+                ),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () => context.push('/terms-of-service'),
+              ),
+              const TextSpan(text: ' 및 '),
+              TextSpan(
+                text: '개인정보처리방침',
+                style: context.labelSmall.copyWith(
+                  color: colors.accent,
+                  decoration: TextDecoration.underline,
+                ),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () => context.push('/privacy-policy'),
+              ),
+              const TextSpan(text: '에 동의하는 것으로 간주합니다.'),
+            ],
+          ),
+        ),
       ],
     );
   }

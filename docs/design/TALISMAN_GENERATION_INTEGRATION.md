@@ -479,5 +479,5 @@ Error: duplicate key value violates unique constraint
 
 **작성일**: 2025-01-08
 **버전**: 1.0.0
-**작성자**: Fortune App Development Team
+**작성자**: ZPZG Development Team
 **참고 문서**: `KOREAN_TALISMAN_DESIGN_GUIDE.md`

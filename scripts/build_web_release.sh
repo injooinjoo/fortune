@@ -9,6 +9,11 @@ echo "🌐 Flutter Web Release Build Starting..."
 echo "🧹 Cleaning previous build..."
 flutter clean
 
+echo "📦 Syncing .well-known assets for universal/app links..."
+mkdir -p web/.well-known
+cp docs/deployment/well-known/apple-app-site-association web/.well-known/apple-app-site-association
+cp docs/deployment/well-known/assetlinks.json web/.well-known/assetlinks.json
+
 # Get dependencies
 echo "📦 Getting dependencies..."
 flutter pub get

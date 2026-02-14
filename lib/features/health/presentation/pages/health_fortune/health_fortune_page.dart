@@ -17,7 +17,6 @@ import '../../../../../core/widgets/unified_button_enums.dart';
 import '../../../../../shared/components/toast.dart';
 import '../../../../../presentation/providers/providers.dart';
 import '../../../../../core/services/unified_fortune_service.dart';
-import '../../../../../services/health_data_service.dart';
 
 class HealthFortunePage extends ConsumerStatefulWidget {
   const HealthFortunePage({super.key});
@@ -29,7 +28,6 @@ class HealthFortunePage extends ConsumerStatefulWidget {
 class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
   final PageController _pageController = PageController();
   final HealthFortuneService _healthService = HealthFortuneService();
-  final HealthDataService _healthDataService = HealthDataService();
 
   @override
   void initState() {
@@ -52,10 +50,6 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
 
   // Result data
   HealthFortuneResult? _fortuneResult;
-
-  // Premium health data
-  bool _isLoadingHealthData = false;
-  HealthSummary? _healthSummary;
 
   @override
   void dispose() {
@@ -122,9 +116,6 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
   }
 
   Widget _buildConditionSelectionPage(bool isDark) {
-    final tokenState = ref.watch(tokenProvider);
-    final isPremium = tokenState.hasUnlimitedTokens;
-
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -157,16 +148,6 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
 
           const SizedBox(height: 24),
 
-          HealthAppConnectionSection(
-            isPremium: isPremium,
-            isLoadingHealthData: _isLoadingHealthData,
-            healthSummary: _healthSummary,
-            onConnect: _connectHealthApp,
-            onRefresh: _refreshHealthData,
-          ),
-
-          const SizedBox(height: 16),
-
           // 전문 진단 서류 업로드 섹션
           MedicalDocumentUploadSection(
             tokenCost: 3,
@@ -193,52 +174,6 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
         ],
       ),
     );
-  }
-
-  Future<void> _connectHealthApp() async {
-    setState(() {
-      _isLoadingHealthData = true;
-    });
-
-    try {
-      final authorized = await _healthDataService.requestAuthorization();
-
-      if (!authorized) {
-        if (mounted) {
-          Toast.warning(context, '건강앱 접근 권한이 필요합니다');
-        }
-        return;
-      }
-
-      final summary = await _healthDataService.getHealthSummary();
-
-      if (mounted) {
-        setState(() {
-          _healthSummary = summary;
-        });
-
-        if (summary != null && summary.hasData) {
-          Toast.success(context, '건강 데이터를 성공적으로 불러왔습니다');
-        } else {
-          Toast.info(context, '건강앱에 저장된 데이터가 없습니다');
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        Toast.error(context, '건강 데이터를 불러오는 중 오류가 발생했습니다');
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoadingHealthData = false;
-        });
-      }
-    }
-  }
-
-  Future<void> _refreshHealthData() async {
-    HapticFeedback.lightImpact();
-    await _connectHealthApp();
   }
 
   void _showDocumentUploadSheet() {
@@ -364,10 +299,10 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: context.colors.surfaceSecondary.withOpacity(0.5),
+                color: context.colors.surfaceSecondary.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: context.colors.border.withOpacity(0.3),
+                  color: context.colors.border.withValues(alpha: 0.3),
                 ),
               ),
               child: Column(
@@ -470,10 +405,6 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
           : <String>[],
       'isPremium': isPremium,
     };
-
-    if (isPremium && _healthSummary != null && _healthSummary!.hasData) {
-      inputConditions['health_app_data'] = _healthSummary!.toJson();
-    }
 
     await fortuneService.getFortune(
       fortuneType: 'health',

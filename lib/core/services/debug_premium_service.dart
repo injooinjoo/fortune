@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../config/environment.dart';
 
 /// 디버그/테스트용 프리미엄 상태 오버라이드 서비스
-/// 개발 환경 또는 테스트 계정(@test.fortune.com)에서 작동합니다
+/// 개발 환경 또는 테스트 계정(@test.zpzg.com)에서 작동합니다
 class DebugPremiumService {
   static const String _keyPremiumOverride = 'debug_premium_override';
   static const String _keyOverrideEnabled = 'debug_premium_override_enabled';

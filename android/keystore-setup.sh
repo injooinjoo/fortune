@@ -4,7 +4,7 @@
 # This script helps create a secure keystore for Android app signing
 
 echo "================================================"
-echo "Fortune App - Android Keystore Setup"
+echo "ZPZG Android Keystore Setup"
 echo "================================================"
 echo ""
 echo "This script will help you create a secure keystore for signing your Android app."

@@ -104,7 +104,7 @@ test.describe('Fortune Generation Flow', () => {
 
         // Fill with appropriate test data based on input type/placeholder
         if (inputType === 'email' || placeholder.includes('이메일') || placeholder.includes('email')) {
-          await input.fill('test@fortune.com');
+          await input.fill('test@zpzg.com');
         } else if (inputType === 'date' || placeholder.includes('생년월일') || placeholder.includes('date')) {
           await input.fill('1990-01-01');
         } else if (placeholder.includes('이름') || placeholder.includes('name')) {

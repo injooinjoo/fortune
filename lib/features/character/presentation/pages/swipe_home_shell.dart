@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../providers/character_provider.dart';
 import '../../domain/models/ai_character.dart';
 import 'character_list_panel.dart';
@@ -26,6 +27,7 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
   late AnimationController _chatOverlayController;
   late Animation<Offset> _chatOverlayAnimation;
   final StorageService _storageService = StorageService();
+  String? _pendingCharacterOpenId;
 
   bool _showChatOverlay = false;
   bool _showOnboarding = false;
@@ -48,6 +50,16 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
       parent: _chatOverlayController,
       curve: Curves.easeInOut,
     ));
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _handleOpenCharacterFromRoute();
+      }
+    });
   }
 
   Future<void> _checkOnboarding() async {
@@ -86,7 +98,34 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
         ref.read(chatModeProvider.notifier).state = ChatMode.fortune;
         ref.read(selectedCharacterProvider.notifier).state = null;
       }
+      _pendingCharacterOpenId = null;
     });
+  }
+
+  void _handleOpenCharacterFromRoute() {
+    final uri = GoRouterState.of(context).uri;
+    final shouldOpen = uri.queryParameters['openCharacterChat'] == 'true';
+    final characterId = uri.queryParameters['characterId'];
+
+    if (!shouldOpen || characterId == null || characterId.isEmpty) {
+      _pendingCharacterOpenId = null;
+      return;
+    }
+
+    if (_pendingCharacterOpenId == characterId && _showChatOverlay) {
+      return;
+    }
+
+    final character = ref.read(characterByIdProvider(characterId));
+    if (character == null) return;
+
+    ref.read(selectedCharacterProvider.notifier).state = character;
+    ref.read(chatModeProvider.notifier).state = ChatMode.character;
+    _pendingCharacterOpenId = characterId;
+
+    if (!_showChatOverlay) {
+      _showChatPanel();
+    }
   }
 
   /// 캐릭터 선택 처리
@@ -131,6 +170,7 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
             SlideTransition(
               position: _chatOverlayAnimation,
               child: CharacterChatPanel(
+                key: ValueKey(character.id),
                 character: character,
                 onBack: _dismissChatPanel,
               ),

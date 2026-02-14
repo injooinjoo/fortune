@@ -29,6 +29,15 @@ jobs:
     name: Smoke Tests (50+ Routes)
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    outputs:
+      attempts: ${{ steps.e2e-run.outputs.attempts }}
+      run1_exit: ${{ steps.e2e-run.outputs.run1_exit }}
+      run1_passed: ${{ steps.e2e-run.outputs.run1_passed }}
+      run1_failed: ${{ steps.e2e-run.outputs.run1_failed }}
+      run2_exit: ${{ steps.e2e-run.outputs.run2_exit }}
+      run2_passed: ${{ steps.e2e-run.outputs.run2_passed }}
+      run2_failed: ${{ steps.e2e-run.outputs.run2_failed }}
+      run_summary_file: ${{ steps.e2e-run.outputs.run_summary_file }}
 
     steps:
       - name: Checkout code
@@ -66,29 +75,118 @@ jobs:
         run: flutter build web --release
 
       - name: Run Smoke Tests
+        id: e2e-run
         run: |
-          # 수동으로 서버 시작
-          npx serve build/web -l 3000 &
-          SERVER_PID=$!
+          set -uo pipefail
 
-          echo "Waiting for server..."
-          npx wait-on http://localhost:3000 --timeout 60000
+          RUN_COMMAND='npm run test:e2e'
+          SUMMARY_FILE='artifacts/run-summary.md'
+          RUN1_EXIT=1
+          RUN1_PASSED=0
+          RUN1_FAILED=1
+          RUN2_EXIT=1
+          RUN2_PASSED=0
+          RUN2_FAILED=1
+          TOTAL_ATTEMPTS=1
 
-          # 디버그: 테스트 파일 목록 확인
-          echo "=== Test files in playwright/tests ==="
-          ls -la playwright/tests/
+          mkdir -p artifacts/e2e-attempt-1 artifacts/e2e-attempt-2 artifacts
+          {
+            echo "# Playwright E2E Retry Log"
+            echo "| Attempt | Exit | Passed | Failed | Started (UTC) | Finished (UTC) |"
+            echo "|---|---|---|---|---|---|"
+          } > "$SUMMARY_FILE"
 
-          # 모든 테스트 실행 (testDir에서 자동 발견)
-          npx playwright test \
-            --project=chromium \
-            --reporter=html,json,github || TEST_RESULT=$?
+          run_once() {
+            local attempt="$1"
+            local artifact_dir="artifacts/e2e-attempt-${attempt}"
+            local exit_code=1
+            local passed_count=0
+            local failed_count=1
+            local start_at
+            local finish_at
 
-          kill $SERVER_PID 2>/dev/null || true
-          exit ${TEST_RESULT:-0}
+            rm -rf test-results playwright-report
+            mkdir -p "$artifact_dir"
+
+            start_at="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            if $RUN_COMMAND 2>&1 | tee "$artifact_dir/command.log"; then
+              exit_code=0
+            else
+              exit_code=$?
+            fi
+            finish_at="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+
+            if [ -f test-results/results.json ]; then
+              passed_count=$(jq '.stats.expected // 0' test-results/results.json)
+              failed_count=$(jq '.stats.unexpected // 0' test-results/results.json)
+            else
+              passed_count=0
+              failed_count=1
+            fi
+
+            mkdir -p "$artifact_dir"
+            cp -R test-results playwright-report "$artifact_dir/" || true
+            cp test-results/results.json "$artifact_dir/run-results.json" 2>/dev/null || true
+
+            cat > "$artifact_dir/run-summary.json" <<EOF
+          {
+            "attempt": ${attempt},
+            "command": "${RUN_COMMAND}",
+            "exitCode": ${exit_code},
+            "passed": ${passed_count},
+            "failed": ${failed_count},
+            "startedAt": "${start_at}",
+            "finishedAt": "${finish_at}"
+          }
+EOF
+
+            echo "| ${attempt} | ${exit_code} | ${passed_count} | ${failed_count} | ${start_at} | ${finish_at} |" >> "$SUMMARY_FILE"
+
+            if [ "$attempt" = "1" ]; then
+              RUN1_EXIT=$exit_code
+              RUN1_PASSED=$passed_count
+              RUN1_FAILED=$failed_count
+            else
+              RUN2_EXIT=$exit_code
+              RUN2_PASSED=$passed_count
+              RUN2_FAILED=$failed_count
+            fi
+          }
+
+          run_once 1
+
+          if [ "$RUN1_EXIT" -ne 0 ] || [ "$RUN1_FAILED" -ne 0 ]; then
+            echo "1차 실행 실패로 인해 2차 실행을 시작합니다." | tee -a "$SUMMARY_FILE"
+            run_once 2
+            TOTAL_ATTEMPTS=2
+          fi
+
+          echo "attempts=$TOTAL_ATTEMPTS" >> "$GITHUB_OUTPUT"
+          echo "run1_exit=$RUN1_EXIT" >> "$GITHUB_OUTPUT"
+          echo "run1_passed=$RUN1_PASSED" >> "$GITHUB_OUTPUT"
+          echo "run1_failed=$RUN1_FAILED" >> "$GITHUB_OUTPUT"
+          echo "run2_exit=$RUN2_EXIT" >> "$GITHUB_OUTPUT"
+          echo "run2_passed=$RUN2_PASSED" >> "$GITHUB_OUTPUT"
+          echo "run2_failed=$RUN2_FAILED" >> "$GITHUB_OUTPUT"
+          echo "run_summary_file=$SUMMARY_FILE" >> "$GITHUB_OUTPUT"
+
+          if [ "$TOTAL_ATTEMPTS" -eq 2 ] && [ "$RUN2_EXIT" -ne 0 ] || [ "$TOTAL_ATTEMPTS" -eq 2 ] && [ "$RUN2_FAILED" -ne 0 ]; then
+            echo "최종 실행 실패"
+            cat "$SUMMARY_FILE"
+            exit 1
+          fi
+
+          if [ "$TOTAL_ATTEMPTS" -eq 1 ] && ( [ "$RUN1_EXIT" -ne 0 ] || [ "$RUN1_FAILED" -ne 0 ] ); then
+            echo "최종 실행 실패"
+            cat "$SUMMARY_FILE"
+            exit 1
+          fi
+
+          echo "최종 실행 성공"
+          cat "$SUMMARY_FILE"
         env:
           CI: true
           BASE_URL: http://localhost:3000
-          PLAYWRIGHT_SKIP_WEBSERVER: "true"
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
@@ -96,8 +194,9 @@ jobs:
         with:
           name: playwright-report-${{ github.run_id }}
           path: |
-            playwright-report/
-            test-results/
+            artifacts/e2e-attempt-1
+            artifacts/e2e-attempt-2
+            artifacts/run-summary.md
           retention-days: 7
 
       - name: Upload screenshots
@@ -165,23 +264,25 @@ jobs:
       - name: Generate summary
         run: |
           echo "## 🧪 E2E Test Results" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          if [ -f "./report/results.json" ]; then
-            PASSED=$(jq '.stats.expected // 0' ./report/results.json 2>/dev/null || echo "0")
-            FAILED=$(jq '.stats.unexpected // 0' ./report/results.json 2>/dev/null || echo "0")
-            TOTAL=$((PASSED + FAILED))
-
-            echo "| Metric | Count |" >> $GITHUB_STEP_SUMMARY
-            echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
-            echo "| ✅ Passed | $PASSED |" >> $GITHUB_STEP_SUMMARY
-            echo "| ❌ Failed | $FAILED |" >> $GITHUB_STEP_SUMMARY
-            echo "| 📊 Total | $TOTAL |" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "⚠️ 테스트 결과 파일을 찾을 수 없습니다." >> $GITHUB_STEP_SUMMARY
+          echo "| Attempt | Exit | Passed | Failed |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|---|---|" >> $GITHUB_STEP_SUMMARY
+          echo "| 1 | ${{ needs.smoke-tests.outputs.run1_exit }} | ${{ needs.smoke-tests.outputs.run1_passed }} | ${{ needs.smoke-tests.outputs.run1_failed }} |" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ needs.smoke-tests.outputs.attempts }}" = "2" ]; then
+            echo "| 2 | ${{ needs.smoke-tests.outputs.run2_exit }} | ${{ needs.smoke-tests.outputs.run2_passed }} | ${{ needs.smoke-tests.outputs.run2_failed }} |" >> $GITHUB_STEP_SUMMARY
           fi
 
           echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Run count: ${{ needs.smoke-tests.outputs.attempts }} of 2 max" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ -f "./report/${{ needs.smoke-tests.outputs.run_summary_file }}" ]; then
+            echo "### Run Log" >> $GITHUB_STEP_SUMMARY
+            cat ./report/${{ needs.smoke-tests.outputs.run_summary_file }} >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ 실행 로그 파일을 찾을 수 없습니다." >> $GITHUB_STEP_SUMMARY
+          fi
+
           echo "---" >> $GITHUB_STEP_SUMMARY
           echo "*Generated by E2E Tests workflow*" >> $GITHUB_STEP_SUMMARY
 

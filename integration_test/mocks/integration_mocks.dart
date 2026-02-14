@@ -29,7 +29,7 @@ List<Override> createTestOverrides({
 
 /// 테스트용 사용자 데이터
 class TestUserData {
-  static const String testEmail = 'test@fortune.com';
+  static const String testEmail = 'test@zpzg.com';
   static const String testPassword = 'test1234!';
   static const String testName = '테스트 사용자';
   static const String testBirthdate = '1990-01-01';

@@ -22,6 +22,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders, handleCors } from '../_shared/cors.ts'
+import { sendCharacterDmPush } from '../_shared/notification_push.ts'
 
 // 캐릭터별 Follow-up 메시지 템플릿 (랜덤 선택됨)
 const FOLLOW_UP_TEMPLATES: Record<string, string[]> = {
@@ -248,14 +249,15 @@ serve(async (req: Request) => {
             const characterName = getCharacterName(followUp.character_id)
 
             // FCM 푸시 전송
-            await sendFcmNotification({
-              token: followUp.fcm_token,
-              title: characterName,
-              body: message,
-              data: {
-                type: 'character_follow_up',
-                characterId: followUp.character_id,
-              },
+            await sendCharacterDmPush({
+              supabase,
+              userId: followUp.user_id,
+              characterId: followUp.character_id,
+              characterName,
+              messageText: message,
+              messageId: followUp.id,
+              type: 'character_follow_up',
+              roomState: 'follow_up',
             })
 
             // 상태 업데이트
@@ -314,48 +316,4 @@ function getCharacterName(characterId: string): string {
     'min_junhyuk': '민준혁',
   }
   return names[characterId] || characterId
-}
-
-// FCM 푸시 알림 전송
-async function sendFcmNotification(params: {
-  token: string
-  title: string
-  body: string
-  data?: Record<string, string>
-}): Promise<void> {
-  const fcmServerKey = Deno.env.get('FCM_SERVER_KEY')
-  if (!fcmServerKey) {
-    throw new Error('FCM_SERVER_KEY not configured')
-  }
-
-  const response = await fetch('https://fcm.googleapis.com/fcm/send', {
-    method: 'POST',
-    headers: {
-      'Authorization': `key=${fcmServerKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      to: params.token,
-      notification: {
-        title: params.title,
-        body: params.body,
-        sound: 'default',
-      },
-      data: params.data || {},
-      android: {
-        priority: 'high',
-      },
-      apns: {
-        payload: {
-          aps: {
-            sound: 'default',
-          },
-        },
-      },
-    }),
-  })
-
-  if (!response.ok) {
-    throw new Error(`FCM request failed: ${response.status}`)
-  }
 }

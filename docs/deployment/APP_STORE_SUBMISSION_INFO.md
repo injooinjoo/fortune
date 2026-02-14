@@ -32,7 +32,7 @@
 **필요 작업:**
 1. Google Sites에 개인정보 처리방침 페이지 생성
 2. URL: `https://sites.google.com/view/fortune-privacy` (임시)
-3. 또는 자체 도메인: `https://fortune.app/privacy` (도메인 구매 시)
+3. 또는 자체 도메인: `https://zpzg.co.kr/privacy` (도메인 구매 시)
 
 **임시 해결책:**
 - Google Sites 무료 계정으로 즉시 생성 가능
@@ -212,12 +212,12 @@ App Store Connect에서 다음 정보를 입력해야 합니다:
 ## 📞 문의 및 지원
 
 **개인정보 관련 문의:**
-- 이메일: privacy@fortune.app
+- 이메일: privacy@zpzg.co.kr
 - 전화: +82-70-1234-5678
 
 **앱 지원:**
-- 이메일: support@fortune.app
-- 홈페이지: https://fortune.app (예정)
+- 이메일: support@zpzg.co.kr
+- 홈페이지: https://zpzg.co.kr (예정)
 
 ---
 

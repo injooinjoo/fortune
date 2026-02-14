@@ -5,5 +5,13 @@ import '../../l10n/app_localizations.dart';
 extension L10nExtension on BuildContext {
   /// Access AppLocalizations instance
   /// Usage: context.l10n.tokens, context.l10n.confirm, etc.
-  AppLocalizations get l10n => AppLocalizations.of(this)!;
+  AppLocalizations get l10n {
+    final localizations = AppLocalizations.of(this);
+    if (localizations != null) {
+      return localizations;
+    }
+
+    // Fallback for transient contexts where Localizations is not yet attached.
+    return lookupAppLocalizations(const Locale('ko'));
+  }
 }

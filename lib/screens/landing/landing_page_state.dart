@@ -71,7 +71,7 @@ mixin LandingPageState<T extends StatefulWidget>
         await _storageService.saveUserProfile({
           'id': 'test-user-${DateTime.now().millisecondsSinceEpoch}',
           'name': '테스트 사용자',
-          'email': 'test@fortune.com',
+          'email': 'test@zpzg.com',
           'birth_date': '1990-01-01',
           'birth_time': '12:00',
           'gender': 'male',
@@ -124,19 +124,21 @@ mixin LandingPageState<T extends StatefulWidget>
   Future<void> _handleAuthStateChange(AuthState data) async {
     debugPrint('🔔 Auth state changed: ${data.event}');
 
-    if (data.event == AuthChangeEvent.signedIn &&
+    if ((data.event == AuthChangeEvent.signedIn ||
+            data.event == AuthChangeEvent.initialSession) &&
         data.session != null &&
         mounted) {
-      debugPrint('🟢 User signed in via OAuth, processing...');
+      debugPrint('🟢 Auth session available, processing...');
 
       if (_isAuthProcessing) {
         setState(() => _isAuthProcessing = false);
         _authTimeoutTimer?.cancel();
       }
 
+      await _storageService.clearGuestMode();
       await syncProfileFromSupabase();
 
-      if (mounted) {
+      if (mounted && data.event == AuthChangeEvent.signedIn) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

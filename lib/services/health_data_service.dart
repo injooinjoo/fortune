@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 /// 건강 데이터 서비스
 ///
 /// NOTE:
-/// HealthKit/Google Fit 연동 기능은 App Review 대응을 위해 비활성화되었습니다.
+/// 외부 건강 플랫폼 연동은 App Review 대응을 위해 비활성화되었습니다.
 /// API 호환성을 위해 서비스 인터페이스와 데이터 모델은 유지합니다.
 /// 프리미엄 사용자 전용 기능
 class HealthDataService {

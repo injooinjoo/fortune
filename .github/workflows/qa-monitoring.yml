@@ -71,28 +71,17 @@ jobs:
       - name: Run Smoke Tests
         id: test
         run: |
-          # 수동으로 서버 시작
-          npx serve build/web -l 3000 &
-          SERVER_PID=$!
-          npx wait-on http://localhost:3000 --timeout 60000
-
           # 스모크 테스트 실행
-          npx playwright test smoke \
-            --project=chromium \
-            --reporter=json \
-            --output=test-results.json || true
-
-          kill $SERVER_PID 2>/dev/null || true
+          npx playwright test smoke --project=chromium || true
         env:
           CI: true
-          PLAYWRIGHT_SKIP_WEBSERVER: "true"
 
       - name: Parse test results
         id: results
         run: |
-          if [ -f "test-results.json" ]; then
-            PASSED=$(jq '.stats.expected // 0' test-results.json)
-            FAILED=$(jq '.stats.unexpected // 0' test-results.json)
+          if [ -f "test-results/results.json" ]; then
+            PASSED=$(jq '.stats.expected // 0' test-results/results.json)
+            FAILED=$(jq '.stats.unexpected // 0' test-results/results.json)
             TOTAL=$((PASSED + FAILED))
           else
             PASSED=0
@@ -111,7 +100,6 @@ jobs:
           name: smoke-results-${{ github.run_id }}
           path: |
             test-results/
-            test-results.json
           retention-days: 30
 
   # =====================================================

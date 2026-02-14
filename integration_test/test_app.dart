@@ -18,6 +18,8 @@ import 'package:fortune/core/theme/font_size_system.dart';
 import 'package:fortune/routes/route_config.dart';
 import 'package:fortune/presentation/providers/theme_provider.dart';
 import 'package:fortune/core/providers/user_settings_provider.dart';
+import 'package:fortune/core/providers/locale_provider.dart';
+import 'package:fortune/l10n/app_localizations.dart';
 import 'package:fortune/core/services/test_auth_service.dart';
 import 'package:fortune/core/services/supabase_connection_service.dart';
 
@@ -105,6 +107,7 @@ class TestApp extends ConsumerWidget {
     final themeMode = ref.watch(themeModeProvider);
     final router = ref.watch(appRouterProvider);
     final userSettings = ref.watch(userSettingsProvider);
+    final locale = ref.watch(localeProvider);
 
     FontSizeSystem.setScaleFactor(userSettings.fontScale);
 
@@ -114,7 +117,21 @@ class TestApp extends ConsumerWidget {
       darkTheme: DSTheme.dark(fontScale: userSettings.fontScale),
       themeMode: themeMode,
       debugShowCheckedModeBanner: false,
+      locale: locale,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       routerConfig: router,
+      builder: (context, child) {
+        final deviceTextScaler = MediaQuery.textScalerOf(context);
+        final clampedScaler = deviceTextScaler.clamp(
+          minScaleFactor: 0.8,
+          maxScaleFactor: 1.5,
+        );
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaler: clampedScaler),
+          child: child!,
+        );
+      },
     );
   }
 }

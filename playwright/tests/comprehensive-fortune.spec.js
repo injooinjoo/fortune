@@ -1,8 +1,8 @@
-// comprehensive-fortune.spec.js - 종합적인 Fortune 앱 테스트
+// comprehensive-fortune.spec.js - 종합적인 ZPZG 앱 테스트
 const { test, expect } = require('@playwright/test');
 const { AuthHelper } = require('../helpers/auth.helper');
 
-test.describe('종합 Fortune 앱 기능 테스트', () => {
+test.describe('종합 ZPZG 앱 기능 테스트', () => {
   let authHelper;
 
   test.beforeEach(async ({ page }) => {
@@ -196,7 +196,7 @@ test.describe('종합 Fortune 앱 기능 테스트', () => {
         let testData = '테스트 데이터';
 
         if (type === 'email' || placeholder.includes('이메일') || ariaLabel.includes('email')) {
-          testData = 'test@fortune.app';
+          testData = 'test@zpzg.com';
         } else if (type === 'date' || placeholder.includes('생년월일') || ariaLabel.includes('date')) {
           testData = '1990-01-01';
         } else if (placeholder.includes('이름') || ariaLabel.includes('name')) {

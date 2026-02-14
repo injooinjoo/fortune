@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import '../core/utils/logger.dart';
 import '../core/cache/profile_cache.dart';
+import 'storage_service.dart';
 import 'social_auth/providers/google_auth_provider.dart';
 import 'social_auth/providers/apple_auth_provider.dart';
 import 'social_auth/providers/kakao_auth_provider.dart';
@@ -12,6 +13,7 @@ import 'social_auth/providers/facebook_auth_provider.dart';
 class SocialAuthService {
   final SupabaseClient _supabase;
   final _profileCache = ProfileCache();
+  final _storageService = StorageService();
 
   late final GoogleAuthProvider _googleProvider;
   late final AppleAuthProvider _appleProvider;
@@ -29,27 +31,32 @@ class SocialAuthService {
 
   // Google Sign In
   Future<AuthResponse?> signInWithGoogle({BuildContext? context}) async {
-    return await _googleProvider.signIn();
+    final response = await _googleProvider.signIn();
+    return await _handleSuccessfulDirectAuth(response);
   }
 
   // Apple Sign In
   Future<AuthResponse?> signInWithApple() async {
-    return await _appleProvider.signIn();
+    final response = await _appleProvider.signIn();
+    return await _handleSuccessfulDirectAuth(response);
   }
 
   // Kakao Sign In
   Future<AuthResponse?> signInWithKakao() async {
-    return await _kakaoProvider.signIn();
+    final response = await _kakaoProvider.signIn();
+    return await _handleSuccessfulDirectAuth(response);
   }
 
   // Naver Sign In
   Future<AuthResponse?> signInWithNaver() async {
-    return await _naverProvider.signIn();
+    final response = await _naverProvider.signIn();
+    return await _handleSuccessfulDirectAuth(response);
   }
 
   // Facebook Sign In
   Future<AuthResponse?> signInWithFacebook() async {
-    return await _facebookProvider.signIn();
+    final response = await _facebookProvider.signIn();
+    return await _handleSuccessfulDirectAuth(response);
   }
 
   // Sign Out
@@ -219,5 +226,19 @@ class SocialAuthService {
       Logger.warning(
           '[SocialAuthService] 연결된 제공자 업데이트 실패 (선택적 기능, 수동 업데이트 가능): $e');
     }
+  }
+
+  Future<AuthResponse?> _handleSuccessfulDirectAuth(
+      AuthResponse? response) async {
+    if (response?.user == null) return response;
+
+    try {
+      // Prevent stale guest-state after native/social sign-in flows.
+      await _storageService.clearGuestMode();
+    } catch (e) {
+      Logger.warning('[SocialAuthService] 게스트 모드 해제 실패 (선택적 기능, 로그인은 계속): $e');
+    }
+
+    return response;
   }
 }

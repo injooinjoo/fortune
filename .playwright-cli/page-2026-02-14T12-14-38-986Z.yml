@@ -1,0 +1,356 @@
+- generic [active] [ref=e1]:
+  - link "Skip to content":
+    - /url: "#geist-skip-nav"
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "Vercel logo":
+        - /url: /injooinjoos-projects
+        - button "Vercel Logo" [ref=e176] [cursor=pointer]:
+          - img "Vercel Logo" [ref=e177]
+      - navigation [ref=e7]:
+        - list [ref=e179]:
+          - listitem [ref=e180]:
+            - img [ref=e181]
+            - generic [ref=e183]:
+              - link "injooinjoo's projects injooinjoo's projects Hobby" [ref=e184] [cursor=pointer]:
+                - /url: /injooinjoos-projects
+                - img "injooinjoo's projects" [ref=e185]:
+                  - img "injooinjoo's projects" [ref=e186]
+                - paragraph [ref=e187]: injooinjoo's projects
+                - generic [ref=e189]: Hobby
+              - button "Switch team" [ref=e192] [cursor=pointer]:
+                - img [ref=e194]
+          - listitem [ref=e196]:
+            - img [ref=e197]
+            - generic [ref=e199]:
+              - link "zpzg-landing" [ref=e200] [cursor=pointer]:
+                - /url: /injooinjoos-projects/zpzg-landing
+                - img [ref=e201]
+                - paragraph [ref=e202]: zpzg-landing
+              - button "Switch team" [ref=e205] [cursor=pointer]:
+                - img [ref=e207]
+        - generic [ref=e209]:
+          - list [ref=e210]:
+            - button "Find… F" [ref=e211]:
+              - generic [ref=e213]:
+                - img [ref=e215]
+                - generic [ref=e217]: Find…
+                - generic [ref=e219]: F
+            - button "Feedback" [ref=e221] [cursor=pointer]:
+              - generic [ref=e222]: Feedback
+          - generic [ref=e223]:
+            - button "notifications" [ref=e225] [cursor=pointer]:
+              - generic [ref=e227]:
+                - img
+            - button "Open links menu" [ref=e228] [cursor=pointer]:
+              - img [ref=e230]
+            - button "Menu" [ref=e233] [cursor=pointer]:
+              - img "injooinjoo" [ref=e235]:
+                - img "injooinjoo" [ref=e236]
+    - main [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e16]:
+          - link "Overview" [ref=e237] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing
+            - text: Overview
+          - link "Deployments" [ref=e239] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/deployments
+          - link "Analytics" [ref=e240] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/analytics
+          - link "Speed Insights" [ref=e241] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/speed-insights
+          - link "Logs" [ref=e242] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/logs
+          - link "Observability" [ref=e243] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/observability
+          - link "Redirects" [ref=e244] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/cdn/redirects
+          - link "Firewall" [ref=e245] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/firewall
+          - link "AI Gateway" [ref=e246] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/ai-gateway
+          - link "Sandboxes" [ref=e247] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/sandboxes
+          - link "Storage" [ref=e248] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/stores
+          - link "Flags" [ref=e249] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/flags
+          - link "Settings" [ref=e250] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/settings
+        - generic:
+          - button "Scroll to top":
+            - generic:
+              - img
+      - generic [ref=e33]:
+        - generic [ref=e40]:
+          - heading "Project Settings" [level=1] [ref=e41]
+          - link "Go to Team Settings" [ref=e42] [cursor=pointer]:
+            - /url: /injooinjoos-projects/~/settings
+            - img [ref=e43]
+            - text: Go to Team Settings
+        - generic [ref=e45]:
+          - generic [ref=e47]:
+            - generic [ref=e49]:
+              - searchbox "Search" [ref=e50]
+              - img [ref=e52]
+            - link "General" [ref=e251] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/general
+              - generic [ref=e252]: General
+            - link "Build and Deployment" [ref=e253] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/build-and-deployment
+              - generic [ref=e254]: Build and Deployment
+            - link "Domains" [ref=e255] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/domains
+              - generic [ref=e256]: Domains
+            - link "Environments" [ref=e257] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/environments
+              - generic [ref=e258]: Environments
+            - link "Environment Variables" [ref=e259] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/environment-variables
+              - generic [ref=e260]: Environment Variables
+            - link "Git" [ref=e261] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/git
+              - generic [ref=e262]: Git
+            - link "Integrations" [ref=e263] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/integrations
+              - generic [ref=e264]: Integrations
+            - link "Deployment Protection" [ref=e265] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/deployment-protection
+              - generic [ref=e266]: Deployment Protection
+            - link "Functions" [ref=e267] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/functions
+              - generic [ref=e268]: Functions
+            - link "Caches" [ref=e269] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/caches
+              - generic [ref=e270]: Caches
+            - link "Cron Jobs" [ref=e271] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/cron-jobs
+              - generic [ref=e272]: Cron Jobs
+            - link "Microfrontends" [ref=e273] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/microfrontends
+              - generic [ref=e274]: Microfrontends
+            - link "Project Members" [ref=e275] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/project-members
+              - generic [ref=e276]: Project Members
+            - link "Drains" [ref=e277] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/drains
+              - generic [ref=e278]: Drains
+            - link "Security" [ref=e279] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/security
+              - generic [ref=e280]: Security
+            - link "Connectivity" [ref=e281] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/connectivity
+              - generic [ref=e282]: Connectivity
+            - link "Advanced" [ref=e283] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/advanced
+              - generic [ref=e284]: Advanced
+          - generic [ref=e285]:
+            - generic [ref=e287]:
+              - generic [ref=e288]:
+                - heading "Project Name" [level=4] [ref=e289]:
+                  - link "Project Name" [ref=e291] [cursor=pointer]:
+                    - /url: "#project-name"
+                    - generic [ref=e292]: Project Name
+                    - img [ref=e293]
+                - paragraph [ref=e295]: Used to identify your Project on the Dashboard, Vercel CLI, and in the URL of your Deployments.
+                - generic [ref=e296]:
+                  - textbox "Project Name" [ref=e297]: zpzg-landing
+                  - generic [ref=e299]: vercel.com/injooinjoos-projects/
+              - generic [ref=e300]:
+                - generic [ref=e302]:
+                  - text: Learn more about
+                  - link "Project Name" [ref=e303] [cursor=pointer]:
+                    - /url: /docs/projects/overview#project-name
+                    - text: Project Name
+                    - img [ref=e304]
+                - button "Save" [disabled] [ref=e309]:
+                  - generic [ref=e310]: Save
+            - generic [ref=e312]:
+              - generic [ref=e313]:
+                - heading "Project ID" [level=4] [ref=e314]:
+                  - link "Project ID" [ref=e316] [cursor=pointer]:
+                    - /url: "#project-id"
+                    - generic [ref=e317]: Project ID
+                    - img [ref=e318]
+                - paragraph [ref=e320]: Used when interacting with the Vercel API.
+                - generic [ref=e321]:
+                  - generic [ref=e322]: prj_2ZiYXhFUvjumVs8TR9y3hGWKJGwU
+                  - button "Copy to clipboard" [ref=e323] [cursor=pointer]:
+                    - generic [ref=e325]:
+                      - img [ref=e327]
+                      - img [ref=e330]
+              - generic [ref=e334]:
+                - text: Learn more about
+                - link "Project ID" [ref=e335] [cursor=pointer]:
+                  - /url: /docs/api?query=api#endpoints/projects
+                  - text: Project ID
+                  - img [ref=e336]
+            - generic [ref=e340]:
+              - generic [ref=e341]:
+                - heading "Vercel Toolbar" [level=4] [ref=e342]:
+                  - link "Vercel Toolbar" [ref=e344] [cursor=pointer]:
+                    - /url: "#vercel-toolbar"
+                    - generic [ref=e345]: Vercel Toolbar
+                    - img [ref=e346]
+                - paragraph [ref=e348]: Enable the Vercel Toolbar on your Deployments.
+                - generic [ref=e349]:
+                  - generic [ref=e352]:
+                    - generic [ref=e353]: Pre-Production Deployments
+                    - generic [ref=e354]:
+                      - combobox "Pre-Production Deployments" [ref=e355] [cursor=pointer]:
+                        - option "Default (controlled at the team level)" [selected]
+                        - option "On"
+                        - option "Off"
+                      - generic:
+                        - img
+                  - generic [ref=e358]:
+                    - generic [ref=e359]: Production Deployments
+                    - generic [ref=e360]:
+                      - combobox "Production Deployments" [ref=e361] [cursor=pointer]:
+                        - option "Default (controlled at the team level)" [selected]
+                        - option "On"
+                        - option "Off"
+                      - generic:
+                        - img
+                - generic [ref=e364]:
+                  - img [ref=e366]
+                  - generic [ref=e368]:
+                    - text: To use the toolbar in production your team members need the
+                    - link "Chrome extension" [ref=e369] [cursor=pointer]:
+                      - /url: https://chromewebstore.google.com/detail/vercel/lahhiofdgnbcgmemekkmjnpifojdaelb
+                    - text: or to enable the toolbar for that domain in the toolbar menu. Learn more about using the
+                    - link "toolbar in production" [ref=e370] [cursor=pointer]:
+                      - /url: /docs/vercel-toolbar/in-production-and-localhost/add-to-production
+                    - text: .
+              - generic [ref=e371]:
+                - generic [ref=e373]:
+                  - text: Learn more about the
+                  - link "Vercel Toolbar" [ref=e374] [cursor=pointer]:
+                    - /url: /docs/workflow-collaboration/vercel-toolbar
+                    - text: Vercel Toolbar
+                    - img [ref=e375]
+                - button "Save" [ref=e380] [cursor=pointer]:
+                  - generic [ref=e381]: Save
+            - generic [ref=e383]:
+              - generic [ref=e384]:
+                - heading "Preview Deployment Suffix" [level=4] [ref=e386]:
+                  - link "Preview Deployment Suffix" [ref=e388] [cursor=pointer]:
+                    - /url: "#preview-deployment-suffix"
+                    - generic [ref=e389]: Preview Deployment Suffix
+                    - img [ref=e390]
+                - paragraph [ref=e392]:
+                  - text: By default, the URL of every new Preview Deployment ends with
+                  - code [ref=e393]: .vercel.app
+                  - text: . This setting allows you to choose your own custom domain in place of this suffix. This takes precedence over the
+                  - link "team-level preview deployment suffix" [ref=e394] [cursor=pointer]:
+                    - /url: /injooinjoos-projects/~/settings
+                  - text: .
+                - generic [ref=e397]:
+                  - generic "my-deployment." [ref=e399]
+                  - textbox "vercel.app" [disabled] [ref=e402]
+              - generic [ref=e403]:
+                - generic [ref=e405]:
+                  - text: This feature is available on the
+                  - link "Pro plan" [ref=e406] [cursor=pointer]:
+                    - /url: /pricing
+                    - text: Pro plan
+                    - img [ref=e407]
+                  - text: for an additional
+                  - generic [ref=e409]: $100 per month
+                  - text: .
+                - button "Upgrade" [ref=e413] [cursor=pointer]:
+                  - generic [ref=e414]: Upgrade
+            - generic [ref=e416]:
+              - generic [ref=e417]:
+                - heading "Transfer" [level=4] [ref=e418]:
+                  - generic [ref=e420]: Transfer
+                - paragraph [ref=e421]: Transfer your project to another team without downtime or workflow interruptions.
+              - generic [ref=e422]:
+                - generic [ref=e424]:
+                  - text: Learn more about
+                  - link "Transferring Projects" [ref=e425] [cursor=pointer]:
+                    - /url: /docs/projects/overview#transferring-a-project
+                    - text: Transferring Projects
+                    - img [ref=e426]
+                - button "Transfer" [ref=e430] [cursor=pointer]:
+                  - generic [ref=e431]: Transfer
+            - generic [ref=e433]:
+              - generic [ref=e434]:
+                - heading "Delete Project" [level=4] [ref=e435]:
+                  - link "Delete Project" [ref=e437] [cursor=pointer]:
+                    - /url: "#delete-project"
+                    - generic [ref=e438]: Delete Project
+                    - img [ref=e439]
+                - paragraph [ref=e441]: Permanently delete this project and all deployments, domains, environment variables, serverless functions, and settings.
+                - separator [ref=e443]
+                - generic [ref=e444]:
+                  - link "Visit Deployment" [ref=e447] [cursor=pointer]:
+                    - /url: https://zpzg-landing-i6gja8ey8-injooinjoos-projects.vercel.app
+                    - img [ref=e450]
+                  - generic [ref=e451]:
+                    - generic "zpzg-landing" [ref=e452]
+                    - generic [ref=e453]: Last updated 7m ago
+              - button "Delete Project" [ref=e458] [cursor=pointer]:
+                - generic [ref=e459]: Delete Project
+    - contentinfo [ref=e460]:
+      - navigation "Vercel Directory" [ref=e461]:
+        - generic [ref=e462]:
+          - link "Vercel logo" [ref=e463] [cursor=pointer]:
+            - /url: /home
+            - img "Vercel logo" [ref=e464]
+          - list [ref=e466]:
+            - listitem [ref=e467]:
+              - link "Home" [ref=e468] [cursor=pointer]:
+                - /url: /home
+            - listitem [ref=e469]:
+              - link "Docs" [ref=e470] [cursor=pointer]:
+                - /url: /docs
+            - listitem [ref=e471]:
+              - link "Knowledge Base" [ref=e472] [cursor=pointer]:
+                - /url: /kb
+            - listitem [ref=e473]:
+              - link "Academy" [ref=e474] [cursor=pointer]:
+                - /url: /academy
+            - listitem [ref=e475]:
+              - button "SDKs" [ref=e476] [cursor=pointer]:
+                - generic [ref=e478]:
+                  - text: SDKs
+                  - img [ref=e479]
+            - listitem [ref=e481]:
+              - link "Help" [ref=e482] [cursor=pointer]:
+                - /url: /help
+            - listitem [ref=e483]:
+              - link "Contact" [ref=e484] [cursor=pointer]:
+                - /url: /contact
+            - listitem [ref=e485]:
+              - button "Legal" [ref=e486] [cursor=pointer]:
+                - generic [ref=e488]:
+                  - text: Legal
+                  - img [ref=e489]
+        - generic [ref=e491]:
+          - link "Loading status…" [ref=e492] [cursor=pointer]:
+            - /url: https://vercel-status.com
+            - paragraph [ref=e495]: Loading status…
+          - group "Select a display theme:" [ref=e496]:
+            - generic [ref=e497]: "Select a display theme:"
+            - generic [ref=e498]:
+              - radio "system" [checked]
+              - generic [ref=e499] [cursor=pointer]:
+                - generic [ref=e500]: system
+                - img [ref=e501]
+            - generic [ref=e503]:
+              - radio "light"
+              - generic [ref=e504] [cursor=pointer]:
+                - generic [ref=e505]: light
+                - img [ref=e506]
+            - generic [ref=e508]:
+              - radio "dark"
+              - generic [ref=e509] [cursor=pointer]:
+                - generic [ref=e510]: dark
+                - img [ref=e511]
+  - alert [ref=e513]
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - img

@@ -1,4 +1,4 @@
-# 📸 Fortune App 스크린샷 촬영 완전 가이드
+# 📸 ZPZG 스크린샷 촬영 완전 가이드
 
 **최종 업데이트**: 2025-01-15
 **목적**: iOS App Store와 Google Play Store용 스크린샷 촬영 완벽 가이드
@@ -901,7 +901,7 @@ BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-echo -e "${BLUE}📸 Fortune App 스크린샷 촬영 마스터${NC}"
+echo -e "${BLUE}📸 ZPZG 스크린샷 촬영 마스터${NC}"
 echo ""
 echo "이 스크립트는 다음을 수행합니다:"
 echo "1. iOS 스크린샷 촬영 (iPhone 15 Pro Max, iPhone 11 Pro Max)"

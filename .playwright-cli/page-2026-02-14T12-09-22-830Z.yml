@@ -1,0 +1,39 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - progressbar [ref=e6]
+      - main [ref=e90]:
+        - generic [ref=e91]:
+          - generic [ref=e93]:
+            - generic [ref=e94]:
+              - img [ref=e96]
+              - generic [ref=e101]: Sign in with Google
+            - img "Vercel" [ref=e102]
+          - generic [ref=e103]:
+            - heading "Hi Injoo" [level=1] [ref=e104]
+            - generic [ref=e111]: injooinjoo@gmail.com
+        - generic [ref=e117]:
+          - heading "Verifying it’s you..." [level=2] [ref=e119]:
+            - generic [ref=e120]: Verifying it’s you...
+          - generic [ref=e123]: Complete sign-in using your passkey
+        - button "Try another way" [ref=e129]:
+          - generic [ref=e132]: Try another way
+    - contentinfo [ref=e75]:
+      - combobox "Change language English (United States)" [ref=e79] [cursor=pointer]:
+        - generic:
+          - generic: English (United States)
+        - generic:
+          - img
+      - list [ref=e81]:
+        - listitem [ref=e82]:
+          - link "Help" [ref=e83] [cursor=pointer]:
+            - /url: https://support.google.com/accounts?hl=en-US&p=account_iph
+        - listitem [ref=e84]:
+          - link "Privacy" [ref=e85] [cursor=pointer]:
+            - /url: https://accounts.google.com/TOS?loc=KR&hl=en-US&privacy=true
+        - listitem [ref=e86]:
+          - link "Terms" [ref=e87] [cursor=pointer]:
+            - /url: https://accounts.google.com/TOS?loc=KR&hl=en-US
+  - iframe [ref=e88]:
+    
+  - generic [ref=e135]: Hi Injoo

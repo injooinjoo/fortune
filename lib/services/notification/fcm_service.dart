@@ -24,6 +24,7 @@ class NotificationChannels {
   static const String tokenAlert = 'token_alert';
   static const String promotion = 'promotion';
   static const String system = 'system';
+  static const String characterDm = 'character_dm';
 }
 
 // 알림 설정 모델
@@ -331,24 +332,41 @@ class FCMService {
 
   // 알림 탭 처리
   void _onNotificationTapped(NotificationResponse response) {
-    if (response.payload != null) {
-      final payload = response.payload!;
+    if (response.payload == null) {
+      return;
+    }
 
-      // 🆕 캐릭터 채팅 알림 (character_chat:characterId 형식)
-      if (payload.startsWith('character_chat:')) {
-        final characterId = payload.split(':').last;
-        _navigateTo('/character/$characterId/chat');
-        Logger.info('캐릭터 채팅 알림 탭: $characterId');
-        return;
-      }
+    final payload = response.payload!;
 
-      // 기존 JSON 페이로드 처리
-      try {
-        final data = jsonDecode(payload) as Map<String, dynamic>;
-        _handleNotificationTap(data);
-      } catch (e) {
-        Logger.error('알림 페이로드 파싱 실패', e);
+    // 기존 문자열 payload: character_chat:characterId
+    if (payload.startsWith('character_chat:')) {
+      final characterId = payload.split(':').last;
+      _handleNotificationTap({
+        'type': 'character_dm',
+        'character_id': characterId,
+      });
+      Logger.info('캐릭터 채팅 알림 탭: $characterId');
+      return;
+    }
+
+    // JSON payload 처리
+    final data = _tryDecodePayload(payload);
+    if (data != null) {
+      _handleNotificationTap(data);
+    } else {
+      Logger.error('알림 페이로드 파싱 실패', Exception('invalid payload'));
+    }
+  }
+
+  Map<String, dynamic>? _tryDecodePayload(String payload) {
+    try {
+      final decoded = jsonDecode(payload);
+      if (decoded is Map<String, dynamic>) {
+        return decoded;
       }
+      return null;
+    } catch (_) {
+      return null;
     }
   }
 
@@ -356,6 +374,8 @@ class FCMService {
   void _handleNotificationTap(Map<String, dynamic> data) {
     final type = data['type'];
     final route = data['route'] as String?;
+    final characterId =
+        data['character_id']?.toString() ?? data['characterId']?.toString();
 
     // 알림 오픈 로깅
     _logNotificationOpen(data);
@@ -364,6 +384,13 @@ class FCMService {
     if (route != null && route.isNotEmpty) {
       _navigateTo(route);
       return;
+    }
+
+    if (type == 'character_dm' || type == 'character_follow_up') {
+      if (characterId != null && characterId.isNotEmpty) {
+        _navigateTo(_buildCharacterRoute(characterId));
+        return;
+      }
     }
 
     // type 기반 네비게이션 (하위 호환성)
@@ -400,6 +427,11 @@ class FCMService {
         Logger.info('알림 탭: 타입 $type, 홈으로 이동');
         _navigateTo('/home');
     }
+  }
+
+  String _buildCharacterRoute(String characterId) {
+    final encodedCharacterId = Uri.encodeComponent(characterId);
+    return '/character/$encodedCharacterId?openCharacterChat=true';
   }
 
   // 네비게이션 실행

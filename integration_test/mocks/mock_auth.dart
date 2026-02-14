@@ -68,7 +68,7 @@ class MockUser {
 
   factory MockUser.testUser() => MockUser(
         id: 'test-user-001',
-        email: 'test@fortune.com',
+        email: 'test@zpzg.com',
         displayName: '테스트 사용자',
         isTestAccount: true,
         metadata: {
@@ -81,7 +81,7 @@ class MockUser {
 
   factory MockUser.premiumUser() => MockUser(
         id: 'premium-user-001',
-        email: 'premium@fortune.com',
+        email: 'premium@zpzg.com',
         displayName: '프리미엄 사용자',
         isTestAccount: true,
         isPremium: true,
@@ -96,7 +96,7 @@ class MockUser {
 
   factory MockUser.newUser() => MockUser(
         id: 'new-user-001',
-        email: 'new@fortune.com',
+        email: 'new@zpzg.com',
         displayName: null,
         isTestAccount: true,
         metadata: {},
@@ -203,7 +203,7 @@ class MockAuthService {
 
   /// 테스트 계정으로 로그인
   Future<MockAuthResult> signInWithTestAccount() async {
-    return signIn('test@fortune.com', 'Test123!@#');
+    return signIn('test@zpzg.com', 'Test123!@#');
   }
 
   /// 프리미엄 테스트 계정으로 로그인

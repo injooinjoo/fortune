@@ -1,5 +1,5 @@
 /**
- * Fortune App - Screenshot Organizer
+ * ZPZG - Screenshot Organizer
  *
  * 목적: 캡처된 스크린샷을 Figma 업로드용으로 조직화
  * 사용법: node playwright/scripts/organize-screenshots.js
@@ -186,7 +186,7 @@ function generateMetadata() {
 function generateChecklist(metadata) {
   console.log('\nGenerating Figma upload checklist...');
 
-  let checklist = `# Fortune App → Figma 업로드 체크리스트
+  let checklist = `# ZPZG → Figma 업로드 체크리스트
 
 Generated: ${new Date().toISOString()}
 Total Screenshots: ${metadata.totalScreenshots}
@@ -351,7 +351,7 @@ function generateTokenReference() {
 
 async function main() {
   console.log('='.repeat(60));
-  console.log('Fortune App - Screenshot Organizer');
+  console.log('ZPZG - Screenshot Organizer');
   console.log('='.repeat(60));
 
   // 1. 스크린샷 조직화

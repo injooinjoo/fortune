@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'dart:convert';
 import '../../core/config/environment.dart';
 import '../../widgets/icons/fortune_compass_icon.dart';
 import '../../services/storage_service.dart';
@@ -109,16 +108,84 @@ class _CallbackPageState extends State<CallbackPage> {
     }
   }
 
+  Uri _resolveCallbackUri() {
+    final currentUri = Uri.base;
+    final encodedCallbackUri = currentUri.queryParameters['authCallbackUrl'];
+    if (encodedCallbackUri == null || encodedCallbackUri.isEmpty) {
+      return currentUri;
+    }
+
+    try {
+      return Uri.parse(Uri.decodeComponent(encodedCallbackUri));
+    } catch (error) {
+      debugPrint('Failed to decode authCallbackUrl: $error');
+      return currentUri;
+    }
+  }
+
+  Uri _normalizeAuthUri(Uri uri) {
+    if (uri.fragment.isEmpty) {
+      return uri;
+    }
+
+    try {
+      final fragmentParams = Uri.splitQueryString(uri.fragment);
+      if (fragmentParams.isEmpty) {
+        return uri;
+      }
+
+      final merged = <String, String>{...uri.queryParameters};
+      for (final entry in fragmentParams.entries) {
+        merged.putIfAbsent(entry.key, () => entry.value);
+      }
+
+      return uri.replace(queryParameters: merged, fragment: '');
+    } catch (error) {
+      debugPrint('Failed to normalize callback fragment: $error');
+      return uri;
+    }
+  }
+
+  Future<bool> _restoreAuthSessionWithRetry({
+    int maxAttempts = 8,
+    Duration interval = const Duration(milliseconds: 500),
+  }) async {
+    for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+      final session = Supabase.instance.client.auth.currentSession;
+      final user = session?.user;
+
+      if (user != null) {
+        debugPrint('Session restored on retry attempt: $attempt');
+        await _checkAndNavigate(user);
+        return true;
+      }
+
+      if (attempt == maxAttempts) {
+        return false;
+      }
+
+      debugPrint('Waiting for auth session, attempt $attempt/$maxAttempts');
+      await Future.delayed(interval);
+    }
+
+    return false;
+  }
+
   Future<void> _handleCallback() async {
     try {
-      // Get the current URL and extract parameters
-      final uri = Uri.base;
+      final resolvedUri = _resolveCallbackUri();
+      final uri = _normalizeAuthUri(resolvedUri);
+
       debugPrint('=== AUTH CALLBACK HANDLER ===');
       debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
       debugPrint('Scheme: ${uri.scheme}');
       debugPrint('Host: ${uri.host}');
       debugPrint('Path: ${uri.path}');
       debugPrint('parameters: ${uri.queryParameters}');
+
+      if (uri.fragment.isNotEmpty) {
+        debugPrint('Fragment (fallback): ${uri.fragment}');
+      }
 
       // Log current Supabase session
       final currentSession = Supabase.instance.client.auth.currentSession;
@@ -131,112 +198,6 @@ class _CallbackPageState extends State<CallbackPage> {
       final code = uri.queryParameters['code'];
       debugPrint(
           'code: ${code != null ? "present (${code.length} chars)" : "null"}');
-
-      // Check for custom URL scheme callback (com.beyond.fortune://auth-callback)
-      if (uri.scheme == 'com.beyond.fortune' && uri.host == 'auth-callback') {
-        debugPrint('Custom URL scheme callback detected: ${uri.toString()}');
-        // Handle the callback from OAuth redirect
-        if (uri.fragment.isNotEmpty) {
-          // Parse fragment parameters (OAuth often uses fragment instead of query)
-          final fragmentParams = Uri.splitQueryString(uri.fragment);
-          debugPrint('Fragment parameters: $fragmentParams');
-
-          // Check if we have access_token and refresh_token in fragment
-          final accessToken = fragmentParams['access_token'];
-          final refreshToken = fragmentParams['refresh_token'];
-
-          if (accessToken != null) {
-            debugPrint('Access token found in fragment, creating session...');
-            try {
-              // Try different Supabase session creation methods
-
-              // Method 1: Use recoverSession (recommended for access tokens)
-              try {
-                final response = await Supabase.instance.client.auth
-                    .recoverSession(accessToken);
-                if (response.session != null && response.user != null) {
-                  debugPrint('✅ Session recovered successfully from fragment!');
-                  if (mounted) {
-                    await _checkAndNavigate(response.user!);
-                    return;
-                  }
-                }
-              } catch (recoverError) {
-                debugPrint('⚠️ recoverSession failed: $recoverError');
-              }
-
-              // Method 2: Try refreshSession if available
-              try {
-                final response = await Supabase.instance.client.auth
-                    .refreshSession(refreshToken);
-                if (response.session != null && response.user != null) {
-                  debugPrint('✅ Session refreshed successfully!');
-                  if (mounted) {
-                    await _checkAndNavigate(response.user!);
-                    return;
-                  }
-                }
-              } catch (refreshError) {
-                debugPrint('⚠️ refreshSession failed: $refreshError');
-              }
-
-              // Method 3: Manual session creation using JWT parsing
-              try {
-                // Parse JWT to get session information
-                final tokenParts = accessToken.split('.');
-                if (tokenParts.length == 3) {
-                  final payload = tokenParts[1];
-                  final normalizedPayload =
-                      payload.padRight((payload.length + 3) & ~3, '=');
-                  final decodedBytes = base64.decode(normalizedPayload);
-                  final decodedPayload = utf8.decode(decodedBytes);
-                  final payloadJson =
-                      json.decode(decodedPayload) as Map<String, dynamic>;
-
-                  // Set token in auth headers manually
-                  Supabase.instance.client.auth.headers['Authorization'] =
-                      'Bearer $accessToken';
-
-                  // Force auth state update
-                  final now = DateTime.now();
-                  final user = User(
-                    id: payloadJson['sub'] as String,
-                    appMetadata:
-                        payloadJson['app_metadata'] as Map<String, dynamic>? ??
-                            {},
-                    userMetadata:
-                        payloadJson['user_metadata'] as Map<String, dynamic>? ??
-                            {},
-                    aud: payloadJson['aud'] as String? ?? 'authenticated',
-                    email: payloadJson['email'] as String?,
-                    phone: payloadJson['phone'] as String?,
-                    createdAt: now.toIso8601String(),
-                    updatedAt: now.toIso8601String(),
-                    emailConfirmedAt: payloadJson['email_verified'] == true
-                        ? now.toIso8601String()
-                        : null,
-                    phoneConfirmedAt: null,
-                    lastSignInAt: now.toIso8601String(),
-                  );
-
-                  debugPrint(
-                      '✅ Manual session created for user: ${user.email}');
-                  if (mounted) {
-                    await _checkAndNavigate(user);
-                    return;
-                  }
-                }
-              } catch (manualError) {
-                debugPrint('⚠️ Manual session creation failed: $manualError');
-              }
-            } catch (fragmentError) {
-              debugPrint(
-                  '❌ All session creation methods failed: $fragmentError');
-              // Continue with normal flow
-            }
-          }
-        }
-      }
 
       // Extract error parameter if present
       final error = uri.queryParameters['error'];
@@ -268,18 +229,20 @@ class _CallbackPageState extends State<CallbackPage> {
       // Try to recover session from URL
       debugPrint('Attempting to recover session from URL...');
       try {
-        final response =
-            await Supabase.instance.client.auth.getSessionFromUrl(uri);
-        debugPrint('response: ${response.session.user.id}');
+        final response = await Supabase.instance.client.auth
+            .getSessionFromUrl(uri, storeSession: true);
+        final user = response.session.user;
+
+        debugPrint('response: ${user.id}');
 
         debugPrint('Session recovered successfully!');
         if (mounted) {
           // Check if user has completed onboarding
-          await _checkAndNavigate(response.session.user);
+          await _checkAndNavigate(user);
           return;
         }
       } catch (authError) {
-        debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
+        debugPrint('Session recovery failed from callback url: $authError');
         if (authError.toString().contains('Invalid API key')) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -288,34 +251,13 @@ class _CallbackPageState extends State<CallbackPage> {
                 duration: const Duration(seconds: 5)));
           }
         }
-        rethrow;
       }
 
-      // Listen for auth state changes
-      bool sessionFound = false;
-      final authSub =
-          Supabase.instance.client.auth.onAuthStateChange.listen((data) {
-        debugPrint('Auth state changed: ${data.event}');
-        debugPrint('user: ${data.session?.user.id}');
-
-        if (data.session != null && !sessionFound) {
-          sessionFound = true;
-          debugPrint('Login successful via auth state change!');
-          if (mounted) {
-            _checkAndNavigate(data.session!.user);
-          }
-        }
-      });
-
-      // Give auth state a moment to propagate
-      debugPrint('Checking auth state...');
-      await Future.delayed(const Duration(milliseconds: 1000));
+      // Give auth state propagation time and retry by polling active session.
+      final restored = await _restoreAuthSessionWithRetry();
 
       // Final check
-      final finalSession = Supabase.instance.client.auth.currentSession;
-      debugPrint('check: ${finalSession?.user.id}');
-
-      if (finalSession == null && !sessionFound) {
+      if (!restored) {
         debugPrint('No session found after all attempts');
         if (mounted) {
           context.go('/?error=auth_failure&reason=no_session');
@@ -323,7 +265,6 @@ class _CallbackPageState extends State<CallbackPage> {
       }
 
       // Clean up
-      authSub.cancel();
       debugPrint('=== END AUTH CALLBACK ===');
     } catch (e) {
       debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Fortune App Screenshot Capture Script
+# ZPZG Screenshot Capture Script
 # 시뮬레이터에서 앱을 실행하고 스크린샷을 캡처합니다.
 #
 # 사용법:

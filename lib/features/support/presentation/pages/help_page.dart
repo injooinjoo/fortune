@@ -60,7 +60,7 @@ class _HelpPageState extends ConsumerState<HelpPage> {
                   const SizedBox(width: DSSpacing.md),
                   Expanded(
                     child: Text(
-                      'Fortune 앱을 더 잘 활용하는 방법을 알아보세요!',
+                      'ZPZG 앱을 더 잘 활용하는 방법을 알아보세요!',
                       style: typography.bodySmall.copyWith(
                         color: colors.textSecondary,
                       ),
@@ -233,7 +233,7 @@ class _HelpPageState extends ConsumerState<HelpPage> {
                       // TODO: 1:1 문의 페이지가 없으므로 이메일 문의로 대체
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('이메일로 문의해주세요: support@fortune-app.com'),
+                          content: Text('이메일로 문의해주세요: support@zpzg.co.kr'),
                         ),
                       );
                     },
@@ -256,7 +256,7 @@ class _HelpPageState extends ConsumerState<HelpPage> {
                       ),
                     ),
                     subtitle: Text(
-                      'support@fortune-app.com',
+                      'support@zpzg.co.kr',
                       style: typography.labelSmall.copyWith(
                         color: colors.textSecondary,
                       ),

@@ -1,5 +1,5 @@
 /**
- * Fortune App - Screen Metadata Registry V2
+ * ZPZG - Screen Metadata Registry V2
  *
  * Figma 마이그레이션을 위한 완전한 메타데이터 시스템
  *
@@ -19,7 +19,7 @@
 const FIGMA_CONFIG = {
   // 프로젝트 정보
   project: {
-    name: 'Fortune App Design System',
+    name: 'ZPZG Design System',
     fileId: 'HirRn0EDfrvHBl3pKpN4Vt',
     fileName: 'App-Design-V1.0',
   },

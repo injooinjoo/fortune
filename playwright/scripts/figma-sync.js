@@ -1,5 +1,5 @@
 /**
- * Fortune App - Figma Sync Script
+ * ZPZG - Figma Sync Script
  *
  * Figma API를 활용한 디자인 동기화 자동화
  *
@@ -288,7 +288,7 @@ Auto Layout을 적용하고, 컴포넌트는 재사용 가능하게 만들어주
 
 async function main() {
   console.log('='.repeat(60));
-  console.log('Fortune App - Figma Sync');
+  console.log('ZPZG - Figma Sync');
   console.log('='.repeat(60));
 
   // 환경 변수 체크

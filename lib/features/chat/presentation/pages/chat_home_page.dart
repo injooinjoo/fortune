@@ -130,6 +130,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   /// 꿈해몽 버블 표시 여부
   bool _showDreamBubbles = true;
 
+  /// 키보드 표시 상태 추적
+  bool _isKeyboardVisible = false;
+
   /// 랜덤 플레이스홀더 문구 (앱 시작 시 한 번만 설정)
   late String _randomPlaceholder;
 
@@ -604,6 +607,19 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   /// 최하단으로 스크롤 (ChatScrollService 위임)
   void _scrollToBottom() {
     _scrollService.scrollToBottom();
+  }
+
+  /// 키보드 표시/숨김 상태 변경 시 스크롤 동기화
+  void _handleKeyboardVisibilityChanged(bool isVisible) {
+    if (_isKeyboardVisible == isVisible) return;
+    _isKeyboardVisible = isVisible;
+
+    if (isVisible) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _scrollToBottom();
+      });
+    }
   }
 
   /// 운세 결과 카드 헤더로 스크롤 (1회만, ChatScrollService 위임)
@@ -4893,6 +4909,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     final onboardingState = ref.watch(onboardingChatProvider);
     final colors = context.colors;
     final isDark = context.isDark;
+    final keyboardInset = MediaQuery.of(context).viewInsets.bottom;
+    final isKeyboardVisible = keyboardInset > 0;
+    _handleKeyboardVisibilityChanged(isKeyboardVisible);
 
     // 온보딩 상태 변경 시 자동 스크롤
     ref.listen<OnboardingState>(onboardingChatProvider, (previous, next) {
@@ -4976,56 +4995,61 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       value: overlayStyle,
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Stack(
-          children: [
-            Positioned.fill(
-              child: _buildChatBackground(),
-            ),
-            Positioned.fill(
-              child: SafeArea(
-                bottom: false, // MainShell에서 navigation bar padding 처리
-                child: GestureDetector(
-                  onTap: () {
-                    // 배경 탭 시 키보드 dismiss
-                    FocusScope.of(context).unfocus();
-                  },
-                  behavior: HitTestBehavior.translucent,
-                  child: Stack(
-                    children: [
-                      // 메인 콘텐츠 (메시지 영역)
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 200),
-                        switchInCurve: Curves.easeOutCubic,
-                        switchOutCurve: Curves.easeInCubic,
-                        transitionBuilder: (child, animation) =>
-                            FadeTransition(opacity: animation, child: child),
-                        child: chatState.isEmpty
-                            ? ChatWelcomeView(
-                                key: const ValueKey('chat-welcome'),
-                                onChipTap: _handleChipTap,
-                                bottomPadding: _calculateBottomPadding(
-                                  surveyState,
-                                  onboardingState,
-                                  surveyOptions: surveyOptions,
+        resizeToAvoidBottomInset: false,
+        body: AnimatedPadding(
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOutCubic,
+          padding: EdgeInsets.only(bottom: keyboardInset),
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: _buildChatBackground(),
+              ),
+              Positioned.fill(
+                child: SafeArea(
+                  bottom: false, // MainShell에서 navigation bar padding 처리
+                  child: GestureDetector(
+                    onTap: () {
+                      // 배경 탭 시 키보드 dismiss
+                      FocusScope.of(context).unfocus();
+                    },
+                    behavior: HitTestBehavior.translucent,
+                    child: Stack(
+                      children: [
+                        // 메인 콘텐츠 (메시지 영역)
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          switchInCurve: Curves.easeOutCubic,
+                          switchOutCurve: Curves.easeInCubic,
+                          transitionBuilder: (child, animation) =>
+                              FadeTransition(opacity: animation, child: child),
+                          child: chatState.isEmpty
+                              ? ChatWelcomeView(
+                                  key: const ValueKey('chat-welcome'),
+                                  onChipTap: _handleChipTap,
+                                  bottomPadding: _calculateBottomPadding(
+                                    surveyState,
+                                    onboardingState,
+                                    surveyOptions: surveyOptions,
+                                  ),
+                                )
+                              : ChatMessageList(
+                                  key: const ValueKey('chat-messages'),
+                                  scrollController: _scrollController,
+                                  messages: chatState.messages,
+                                  isTyping: chatState.isTyping,
+                                  onChipTap: _handleChipTap,
+                                  onViewAllTap: _handleViewAllTap,
+                                  bottomPadding: _calculateBottomPadding(
+                                    surveyState,
+                                    onboardingState,
+                                    surveyOptions: surveyOptions,
+                                  ),
+                                  onTypingIndicatorRendered: _scrollToBottom,
+                                  onFortuneResultRendered:
+                                      _handleFortuneResultRendered,
                                 ),
-                              )
-                            : ChatMessageList(
-                                key: const ValueKey('chat-messages'),
-                                scrollController: _scrollController,
-                                messages: chatState.messages,
-                                isTyping: chatState.isTyping,
-                                onChipTap: _handleChipTap,
-                                onViewAllTap: _handleViewAllTap,
-                                bottomPadding: _calculateBottomPadding(
-                                  surveyState,
-                                  onboardingState,
-                                  surveyOptions: surveyOptions,
-                                ),
-                                onTypingIndicatorRendered: _scrollToBottom,
-                                onFortuneResultRendered:
-                                    _handleFortuneResultRendered,
-                              ),
-                      ),
+                        ),
 
                       // 프로필 아이콘 (투명 오버레이 - 좌측) - 온보딩 중에는 숨김
                       if (onboardingState.currentStep ==

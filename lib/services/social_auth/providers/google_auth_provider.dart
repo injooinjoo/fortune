@@ -36,7 +36,8 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
         redirectTo: kIsWeb
             ? '${Uri.base.origin}/auth/callback'
             : 'com.beyond.fortune://auth-callback',
-        authScreenLaunchMode: LaunchMode.externalApplication,
+        // Keep OAuth inside the app UX on iOS (SFSafariViewController).
+        authScreenLaunchMode: LaunchMode.inAppBrowserView,
       );
 
       if (!response) {
@@ -44,8 +45,7 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
         throw Exception('Google OAuth sign in failed to start');
       }
 
-      Logger.info(
-          'Google OAuth initiated successfully - redirecting to browser');
+      Logger.info('Google OAuth initiated successfully');
       debugPrint('🟡 [GoogleAuthProvider] OAuth redirect initiated');
 
       Logger.securityCheckpoint('Google OAuth flow initiated');

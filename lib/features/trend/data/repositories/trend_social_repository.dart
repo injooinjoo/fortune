@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:fortune/core/config/environment.dart';
 import '../../domain/models/models.dart';
 
 /// 트렌드 소셜 기능 Repository (좋아요, 댓글)
@@ -318,7 +319,7 @@ class TrendSocialRepository {
       title: resultTitle ?? content.title,
       description: content.subtitle ?? '${content.type.displayName}에 참여해보세요!',
       imageUrl: resultImageUrl ?? content.thumbnailUrl,
-      url: 'https://fortune.app/trend/${content.id}',
+      url: '${Environment.appBaseUrl}/trend/${content.id}',
     );
   }
 

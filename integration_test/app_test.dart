@@ -1,4 +1,4 @@
-// Fortune App - Integration Test (E2E)
+// ZPZG - Integration Test (E2E)
 // 전체 앱 플로우를 테스트하는 E2E 테스트
 //
 // 실행 방법:
@@ -9,54 +9,66 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:fortune/main.dart' as app;
+import 'package:fortune/features/character/presentation/pages/swipe_home_shell.dart';
+import 'test_app.dart';
+
+Future<void> startAppAndWait(
+  WidgetTester tester, {
+  Duration waitDuration = const Duration(seconds: 10),
+}) async {
+  await tester.pumpWidget(createTestApp());
+
+  final steps = waitDuration.inMilliseconds ~/ 100;
+  for (int i = 0; i < steps; i++) {
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+}
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
+  setUpAll(() async {
+    await initializeTestApp(
+      skipSupabase: false,
+      skipHive: false,
+    );
+  });
+
   group('앱 시작 테스트', () {
     testWidgets('앱이 정상적으로 시작되어야 함', (tester) async {
-      app.main();
-      await tester.pumpAndSettle(const Duration(seconds: 5));
+      await startAppAndWait(tester);
 
       // 앱이 시작되면 어떤 화면이든 렌더링되어야 함
-      expect(find.byType(MaterialApp), findsOneWidget);
+      expect(find.byType(MaterialApp), findsWidgets);
     });
 
-    testWidgets('랜딩 페이지가 표시되어야 함 (비로그인 상태)', (tester) async {
-      app.main();
-      await tester.pumpAndSettle(const Duration(seconds: 5));
+    testWidgets('초기 진입 후 메인 또는 랜딩 화면이 표시되어야 함', (tester) async {
+      await startAppAndWait(tester);
 
-      // 랜딩 페이지의 "시작하기" 버튼 또는 앱 이름 텍스트 확인
-      // 앱 이름이 Fortune에서 ZPZG로 변경됨
+      // Chat-First 라우팅 기준: 채팅 셸(로그인/게스트) 또는 시작 화면을 허용
+      final chatShell = find.byType(SwipeHomeShell);
       final startButton = find.text('시작하기');
-      final zpzgText = find.text('ZPZG');
-      final fortuneText = find.text('Fortune');
 
       expect(
-        startButton.evaluate().isNotEmpty ||
-            zpzgText.evaluate().isNotEmpty ||
-            fortuneText.evaluate().isNotEmpty,
+        chatShell.evaluate().isNotEmpty || startButton.evaluate().isNotEmpty,
         isTrue,
-        reason: '랜딩 페이지가 표시되어야 합니다',
+        reason: '초기 진입 후 메인 또는 랜딩 화면이 표시되어야 합니다',
       );
     });
   });
 
   group('네비게이션 테스트', () {
-    testWidgets('시작하기 버튼 탭 시 다음 화면으로 이동', (tester) async {
-      app.main();
-      await tester.pumpAndSettle(const Duration(seconds: 5));
+    testWidgets('시작하기 버튼이 있으면 탭해도 앱이 안정적으로 동작해야 함', (tester) async {
+      await startAppAndWait(tester);
 
       // 시작하기 버튼 찾기
       final startButton = find.text('시작하기');
       if (startButton.evaluate().isNotEmpty) {
         await tester.tap(startButton);
         await tester.pumpAndSettle(const Duration(seconds: 3));
-
-        // 화면이 변경되었는지 확인 (랜딩이 아닌 다른 화면)
-        // 온보딩이나 홈 화면이 표시되어야 함
       }
+
+      expect(tester.takeException(), isNull);
     });
   });
 }

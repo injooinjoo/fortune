@@ -314,7 +314,7 @@ Fortune은 사용자의 개인정보를 안전하게 보호합니다.
 📱 지금 바로 다운로드하고
 AI가 분석하는 나만의 운세를 확인해보세요!
 
-💌 문의: support@fortune.app
+💌 문의: support@zpzg.co.kr
 🌐 개인정보 처리방침: https://sites.google.com/view/fortune-policy
 ```
 
@@ -351,9 +351,9 @@ AI가 분석하는 나만의 운세를 확인해보세요!
 ### 📧 연락처 정보
 
 ```
-이메일: support@fortune.app
+이메일: support@zpzg.co.kr
 전화번호: +82-70-1234-5678 (선택)
-웹사이트: https://fortune.app (선택)
+웹사이트: https://zpzg.co.kr (선택)
 ```
 
 ---
@@ -468,8 +468,8 @@ AI가 분석하는 나만의 운세를 확인해보세요!
 ## 📞 문의
 
 **앱 관련 문의:**
-- 이메일: support@fortune.app
-- 개인정보: privacy@fortune.app
+- 이메일: support@zpzg.co.kr
+- 개인정보: privacy@zpzg.co.kr
 
 **Google Play 지원:**
 - Google Play Console 고객센터

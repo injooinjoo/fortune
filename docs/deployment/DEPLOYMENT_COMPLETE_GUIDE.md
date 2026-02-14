@@ -1,4 +1,4 @@
-# Fortune App Deployment Complete Guide
+# ZPZG Deployment Complete Guide
 
 **Last Updated**: December 2025
 **Purpose**: Comprehensive deployment guide for Android and iOS app stores
@@ -82,7 +82,7 @@
    ENVIRONMENT=production
 
    # API Configuration
-   PROD_API_BASE_URL=https://api.fortune.app
+   PROD_API_BASE_URL=https://api.zpzg.co.kr
 
    # Supabase
    SUPABASE_URL=https://your-project.supabase.co
@@ -210,7 +210,7 @@ flutter build apk --release
    - Expected rating: Everyone / PEGI 3
 
 5. **Privacy Policy**:
-   - URL: `https://fortune.app/privacy` (must be accessible)
+   - URL: `https://zpzg.co.kr/privacy` (must be accessible)
 
 6. **Release Track**:
    - Internal testing → Closed testing → Open testing → Production
@@ -316,7 +316,7 @@ fastlane release  # App Store
 
 4. **Privacy Details**:
    - Complete Data Collection questionnaire
-   - Privacy Policy URL: `https://fortune.app/privacy`
+   - Privacy Policy URL: `https://zpzg.co.kr/privacy`
    - Data Types Collected: Account Data, Contact Info, Usage Data
    - Data Usage: App Functionality, Analytics, Product Personalization
 
@@ -333,8 +333,8 @@ fastlane release  # App Store
    - Promotional text (170 chars): Updates shown before description
    - Description (4000 chars): See [Store Listing](#5-store-listing-optimization)
    - Keywords (100 chars): `운세,사주,타로,별자리,궁합,AI,점,운명,행운`
-   - Support URL: `https://fortune.app/support`
-   - Marketing URL: `https://fortune.app` (optional)
+   - Support URL: `https://zpzg.co.kr/support`
+   - Marketing URL: `https://zpzg.co.kr` (optional)
 
 ### Step 5: Submit for Review
 

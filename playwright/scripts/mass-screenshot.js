@@ -1,5 +1,5 @@
 /**
- * Fortune App - Mass Screenshot Capture Script
+ * ZPZG - Mass Screenshot Capture Script
  *
  * 목적: 전체 120개+ 화면을 Light/Dark 모드로 자동 캡처
  * 사용법:
@@ -312,7 +312,7 @@ async function captureScreenshot(page, category, route, theme) {
 
 async function main() {
   console.log('='.repeat(60));
-  console.log('Fortune App - Mass Screenshot Capture');
+  console.log('ZPZG - Mass Screenshot Capture');
   console.log('='.repeat(60));
   console.log(`Base URL: ${CONFIG.baseUrl}`);
   console.log(`Viewport: ${CONFIG.viewport.width}x${CONFIG.viewport.height}`);

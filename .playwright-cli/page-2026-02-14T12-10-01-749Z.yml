@@ -1,0 +1,187 @@
+- generic [ref=e1]:
+  - link "Skip to content":
+    - /url: "#geist-skip-nav"
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "Vercel logo":
+        - /url: /injooinjoos-projects
+        - button "Vercel Logo" [ref=e4] [cursor=pointer]:
+          - img "Vercel Logo" [ref=e5]
+      - navigation [ref=e7]:
+        - list [ref=e8]:
+          - listitem [ref=e336]:
+            - img [ref=e337]
+            - generic [ref=e339]:
+              - link "injooinjoo's projects injooinjoo's projects Hobby" [ref=e340] [cursor=pointer]:
+                - /url: /injooinjoos-projects
+                - img "injooinjoo's projects" [ref=e341]:
+                  - img "injooinjoo's projects" [ref=e342]
+                - paragraph [ref=e343]: injooinjoo's projects
+                - generic [ref=e345]: Hobby
+              - button "Switch team" [ref=e830] [cursor=pointer]:
+                - img [ref=e832]
+        - generic [ref=e25]:
+          - list [ref=e26]:
+            - button "Find… F" [ref=e27]:
+              - generic [ref=e29]:
+                - img [ref=e31]
+                - generic [ref=e33]: Find…
+                - generic [ref=e35]: F
+            - button "Feedback" [ref=e37] [cursor=pointer]:
+              - generic [ref=e38]: Feedback
+          - generic [ref=e39]:
+            - button "notifications" [ref=e41] [cursor=pointer]:
+              - generic [ref=e43]:
+                - img
+            - button "Open links menu" [ref=e44] [cursor=pointer]:
+              - img [ref=e46]
+            - button "Menu" [ref=e49] [cursor=pointer]:
+              - img "injooinjoo" [ref=e51]:
+                - img "injooinjoo" [ref=e52]
+    - main [ref=e53]:
+      - generic [ref=e54]:
+        - generic [ref=e56]:
+          - link "Overview" [ref=e57] [cursor=pointer]:
+            - /url: /injooinjoos-projects
+          - link "Integrations" [ref=e58] [cursor=pointer]:
+            - /url: /injooinjoos-projects/~/integrations
+          - link "Deployments" [ref=e59] [cursor=pointer]:
+            - /url: /injooinjoos-projects/~/deployments
+          - link "Activity" [ref=e60] [cursor=pointer]:
+            - /url: /injooinjoos-projects/~/activity
+          - link "Domains" [active] [ref=e61] [cursor=pointer]:
+            - /url: /injooinjoos-projects/~/domains
+            - text: Domains
+          - link "Usage" [ref=e62] [cursor=pointer]:
+            - /url: /injooinjoos-projects/~/usage
+          - link "Observability" [ref=e63] [cursor=pointer]:
+            - /url: /injooinjoos-projects/~/observability
+          - link "Storage" [ref=e64] [cursor=pointer]:
+            - /url: /injooinjoos-projects/~/stores
+          - link "Flags" [ref=e65] [cursor=pointer]:
+            - /url: /injooinjoos-projects/~/experimentation/collections
+          - link "AI Gateway" [ref=e66] [cursor=pointer]:
+            - /url: /injooinjoos-projects/~/ai-gateway
+          - link "Sandboxes" [ref=e67] [cursor=pointer]:
+            - /url: /injooinjoos-projects/~/sandboxes
+          - link "Agent" [ref=e68] [cursor=pointer]:
+            - /url: /injooinjoos-projects/~/agent
+          - link "Support" [ref=e69] [cursor=pointer]:
+            - /url: /injooinjoos-projects/~/support/cases
+          - link "Settings" [ref=e70] [cursor=pointer]:
+            - /url: /injooinjoos-projects/~/settings
+        - generic:
+          - button "Scroll to top":
+            - generic:
+              - img
+      - generic [ref=e356]:
+        - generic [ref=e360]:
+          - heading "Domains" [level=1] [ref=e362]
+          - generic [ref=e363]:
+            - button "Add Existing" [ref=e364] [cursor=pointer]:
+              - generic [ref=e365]: Add Existing
+            - button "Transfer In" [ref=e366] [cursor=pointer]:
+              - generic [ref=e367]: Transfer In
+            - link "Buy" [ref=e368] [cursor=pointer]:
+              - /url: /domains?teamSlug=injooinjoos-projects
+              - generic [ref=e369]: Buy
+        - generic [ref=e371]:
+          - generic [ref=e373]:
+            - button "filter domains" [ref=e374] [cursor=pointer]:
+              - img [ref=e376]
+            - generic [ref=e378]:
+              - searchbox "Search" [ref=e379]
+              - img [ref=e381]
+          - generic [ref=e383]:
+            - generic [ref=e385]:
+              - generic [ref=e387] [cursor=pointer]:
+                - checkbox "Select all" [ref=e388]
+                - img [ref=e390]
+              - paragraph [ref=e391]: Select all
+            - button "Domain options" [ref=e392] [cursor=pointer]:
+              - img [ref=e394]
+          - list [ref=e396]:
+            - listitem [ref=e397]:
+              - generic [ref=e398]:
+                - generic [ref=e399]:
+                  - generic [ref=e401] [cursor=pointer]:
+                    - checkbox [ref=e402]
+                    - img [ref=e404]
+                  - generic [ref=e406]:
+                    - link "zpzg.co.kr" [ref=e407] [cursor=pointer]:
+                      - /url: /injooinjoos-projects/~/domains/zpzg.co.kr
+                      - generic [ref=e409]: zpzg.co.kr
+                    - paragraph [ref=e410]:
+                      - generic [ref=e411]: Third Party
+                  - link "Configure zpzg.co.kr" [ref=e412] [cursor=pointer]:
+                    - /url: /injooinjoos-projects/~/domains/zpzg.co.kr
+                    - paragraph [ref=e413]: Configure zpzg.co.kr
+                - generic [ref=e415]:
+                  - generic [ref=e416]:
+                    - paragraph [ref=e417]: Jan 16
+                    - img "injooinjoo Avatar" [ref=e419]:
+                      - img "injooinjoo Avatar" [ref=e420]
+                  - button "Domain options" [ref=e421] [cursor=pointer]:
+                    - img [ref=e423]
+    - contentinfo [ref=e282]:
+      - navigation "Vercel Directory" [ref=e283]:
+        - generic [ref=e284]:
+          - link "Vercel logo" [ref=e285] [cursor=pointer]:
+            - /url: /home
+            - img "Vercel logo" [ref=e286]
+          - list [ref=e288]:
+            - listitem [ref=e289]:
+              - link "Home" [ref=e290] [cursor=pointer]:
+                - /url: /home
+            - listitem [ref=e291]:
+              - link "Docs" [ref=e292] [cursor=pointer]:
+                - /url: /docs
+            - listitem [ref=e293]:
+              - link "Knowledge Base" [ref=e294] [cursor=pointer]:
+                - /url: /kb
+            - listitem [ref=e295]:
+              - link "Academy" [ref=e296] [cursor=pointer]:
+                - /url: /academy
+            - listitem [ref=e297]:
+              - button "SDKs" [ref=e298] [cursor=pointer]:
+                - generic [ref=e300]:
+                  - text: SDKs
+                  - img [ref=e301]
+            - listitem [ref=e303]:
+              - link "Help" [ref=e304] [cursor=pointer]:
+                - /url: /help
+            - listitem [ref=e305]:
+              - link "Contact" [ref=e306] [cursor=pointer]:
+                - /url: /contact
+            - listitem [ref=e307]:
+              - button "Legal" [ref=e308] [cursor=pointer]:
+                - generic [ref=e310]:
+                  - text: Legal
+                  - img [ref=e311]
+        - generic [ref=e313]:
+          - link "Loading status…" [ref=e314] [cursor=pointer]:
+            - /url: https://vercel-status.com
+            - paragraph [ref=e317]: Loading status…
+          - group "Select a display theme:" [ref=e318]:
+            - generic [ref=e319]: "Select a display theme:"
+            - generic [ref=e320]:
+              - radio "system" [checked]
+              - generic [ref=e321] [cursor=pointer]:
+                - generic [ref=e322]: system
+                - img [ref=e323]
+            - generic [ref=e325]:
+              - radio "light"
+              - generic [ref=e326] [cursor=pointer]:
+                - generic [ref=e327]: light
+                - img [ref=e328]
+            - generic [ref=e330]:
+              - radio "dark"
+              - generic [ref=e331] [cursor=pointer]:
+                - generic [ref=e332]: dark
+                - img [ref=e333]
+  - alert [ref=e335]: Domains – Vercel
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - img

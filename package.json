@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "E2E testing for Fortune Flutter App",
   "scripts": {
+    "lint": "echo \"No frontend lint configured in CI. Skipping.\"",
+    "typecheck": "echo \"No static typecheck configured in CI. Skipping.\"",
+    "build": "echo \"No frontend build configured in CI. Skipping.\"",
     "test": "playwright test",
     "test:smoke": "playwright test playwright/tests/smoke.spec.js --project=chromium",
     "test:smoke:ci": "CI=true playwright test playwright/tests/smoke.spec.js --project=chromium",
@@ -15,7 +18,7 @@
     "test:install": "playwright install",
     "test:codegen": "playwright codegen",
     "lighthouse": "lhci autorun",
-    "serve:build": "npx serve build/web -l 3000"
+    "serve:build": "npx serve build/web -l 3000 --single"
   },
   "devDependencies": {
     "@playwright/test": "^1.40.0",

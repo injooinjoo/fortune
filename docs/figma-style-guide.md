@@ -1,4 +1,4 @@
-# Fortune App - Figma Style Guide
+# ZPZG - Figma Style Guide
 
 > Flutter 디자인 시스템을 Figma로 이전하기 위한 스타일 가이드
 > 마지막 업데이트: 2026-02-09

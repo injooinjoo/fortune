@@ -4,7 +4,7 @@ class AppConstants {
   static const String appVersion = '1.0.0';
 
   // API Configuration
-  static const String baseUrl = 'https://api.fortune.app';
+  static const String baseUrl = 'https://api.zpzg.co.kr';
   static const Duration apiTimeout = Duration(seconds: 30);
 
   // Cache Configuration

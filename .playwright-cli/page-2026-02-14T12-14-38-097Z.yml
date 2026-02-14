@@ -1,0 +1,150 @@
+- generic [active] [ref=e1]:
+  - link "Skip to content":
+    - /url: "#geist-skip-nav"
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "Vercel logo":
+        - /url: /home
+        - button "Vercel Logo" [ref=e4] [cursor=pointer]:
+          - img "Vercel Logo" [ref=e5]
+      - navigation [ref=e7]:
+        - listitem [ref=e8]:
+          - img [ref=e9]
+          - img "Placeholder Avatar" [ref=e12]
+    - main [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e16]:
+          - link "Overview" [ref=e17] [cursor=pointer]:
+            - /url: "#intent:global:overview"
+          - link "Deployments" [ref=e18] [cursor=pointer]:
+            - /url: "#intent:global:deployments"
+          - link "Analytics" [ref=e19] [cursor=pointer]:
+            - /url: "#intent:global:analytics"
+          - link "Speed Insights" [ref=e20] [cursor=pointer]:
+            - /url: "#intent:global:speed-insights"
+          - link "Logs" [ref=e21] [cursor=pointer]:
+            - /url: "#intent:global:logs"
+          - link "Observability" [ref=e22] [cursor=pointer]:
+            - /url: "#intent:global:observability"
+          - link "Redirects" [ref=e23] [cursor=pointer]:
+            - /url: "#intent:global:redirects"
+          - link "Firewall" [ref=e24] [cursor=pointer]:
+            - /url: "#intent:global:firewall"
+          - link "AI Gateway" [ref=e25] [cursor=pointer]:
+            - /url: "#intent:global:ai-gateway"
+          - link "Sandboxes" [ref=e26] [cursor=pointer]:
+            - /url: "#intent:global:sandboxes"
+          - link "Storage" [ref=e27] [cursor=pointer]:
+            - /url: "#intent:global:storage"
+          - link "Flags" [ref=e28] [cursor=pointer]:
+            - /url: "#intent:global:flags"
+          - link "Settings" [ref=e29] [cursor=pointer]:
+            - /url: "#intent:global:settings"
+        - generic:
+          - button "Scroll to top":
+            - generic:
+              - img
+      - generic [ref=e33]:
+        - generic [ref=e40]:
+          - heading "Project Settings" [level=1] [ref=e41]
+          - link "Go to Team Settings" [ref=e42] [cursor=pointer]:
+            - /url: /injooinjoos-projects/~/settings
+            - img [ref=e43]
+            - text: Go to Team Settings
+        - generic [ref=e45]:
+          - generic [ref=e47]:
+            - generic [ref=e49]:
+              - searchbox "Search" [ref=e50]
+              - img [ref=e52]
+            - link "General" [ref=e54] [cursor=pointer]:
+              - /url: "#intent:project-settings:general"
+              - generic [ref=e55]: General
+            - link "Build and Deployment" [ref=e56] [cursor=pointer]:
+              - /url: "#intent:project-settings:build-and-deployment"
+              - generic [ref=e57]: Build and Deployment
+            - link "Domains" [ref=e58] [cursor=pointer]:
+              - /url: "#intent:project-settings:domains"
+              - generic [ref=e59]: Domains
+            - link "Environments" [ref=e60] [cursor=pointer]:
+              - /url: "#intent:project-settings:environments"
+              - generic [ref=e61]: Environments
+            - link "Environment Variables" [ref=e62] [cursor=pointer]:
+              - /url: "#intent:project-settings:environment-variables"
+              - generic [ref=e63]: Environment Variables
+            - link "Git" [ref=e64] [cursor=pointer]:
+              - /url: "#intent:project-settings:git"
+              - generic [ref=e65]: Git
+            - link "Integrations" [ref=e66] [cursor=pointer]:
+              - /url: "#intent:project-settings:integrations"
+              - generic [ref=e67]: Integrations
+            - link "Deployment Protection" [ref=e68] [cursor=pointer]:
+              - /url: "#intent:project-settings:deployment-protection"
+              - generic [ref=e69]: Deployment Protection
+            - link "Functions" [ref=e70] [cursor=pointer]:
+              - /url: "#intent:project-settings:functions"
+              - generic [ref=e71]: Functions
+            - link "Caches" [ref=e72] [cursor=pointer]:
+              - /url: "#intent:project-settings:caches"
+              - generic [ref=e73]: Caches
+            - link "Cron Jobs" [ref=e74] [cursor=pointer]:
+              - /url: "#intent:project-settings:cron-jobs"
+              - generic [ref=e75]: Cron Jobs
+            - link "Microfrontends" [ref=e76] [cursor=pointer]:
+              - /url: "#intent:project-settings:microfrontends"
+              - generic [ref=e77]: Microfrontends
+            - link "Project Members" [ref=e78] [cursor=pointer]:
+              - /url: "#intent:project-settings:project-members"
+              - generic [ref=e79]: Project Members
+            - link "Drains" [ref=e80] [cursor=pointer]:
+              - /url: "#intent:project-settings:drains"
+              - generic [ref=e81]: Drains
+            - link "Security" [ref=e82] [cursor=pointer]:
+              - /url: "#intent:project-settings:security"
+              - generic [ref=e83]: Security
+            - link "Connectivity" [ref=e84] [cursor=pointer]:
+              - /url: "#intent:project-settings:connectivity"
+              - generic [ref=e85]: Connectivity
+            - link "Advanced" [ref=e86] [cursor=pointer]:
+              - /url: "#intent:project-settings:advanced"
+              - generic [ref=e87]: Advanced
+          - generic [ref=e91]:
+            - generic [ref=e94]:
+              - heading "Project Name" [level=4] [ref=e96]:
+                - link "Project Name" [ref=e98] [cursor=pointer]:
+                  - /url: "#project-name"
+                  - generic [ref=e99]: Project Name
+                  - img [ref=e100]
+              - paragraph [ref=e102]: Used to identify your Project on the Dashboard, Vercel CLI, and in the URL of your Deployments.
+            - generic [ref=e109]:
+              - generic [ref=e110]:
+                - heading "Project ID" [level=4] [ref=e112]:
+                  - link "Project ID" [ref=e114] [cursor=pointer]:
+                    - /url: "#project-id"
+                    - generic [ref=e115]: Project ID
+                    - img [ref=e116]
+                - paragraph [ref=e118]: Used when interacting with the Vercel API.
+              - generic [ref=e122]:
+                - text: Learn more about
+                - link "Project ID" [ref=e123] [cursor=pointer]:
+                  - /url: /docs/api?query=api#endpoints/projects
+                  - text: Project ID
+                  - img [ref=e124]
+            - generic [ref=e129]:
+              - heading "Vercel Toolbar" [level=4] [ref=e131]:
+                - link "Vercel Toolbar" [ref=e133] [cursor=pointer]:
+                  - /url: "#vercel-toolbar"
+                  - generic [ref=e134]: Vercel Toolbar
+                  - img [ref=e135]
+              - paragraph [ref=e137]: Enable the Vercel Toolbar on your Deployments.
+            - generic [ref=e146]:
+              - heading "Transfer" [level=4] [ref=e148]
+              - paragraph [ref=e149]
+            - generic [ref=e156]:
+              - heading "Delete Project" [level=4] [ref=e158]:
+                - link "Delete Project" [ref=e160] [cursor=pointer]:
+                  - /url: "#delete-project"
+                  - generic [ref=e161]: Delete Project
+                  - img [ref=e162]
+              - paragraph [ref=e164]: The project will be permanently deleted, including its deployments and domains. This action is irreversible and can not be undone.
+              - separator [ref=e166]
+    - contentinfo [ref=e175]

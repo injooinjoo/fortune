@@ -12,24 +12,14 @@ test.describe('Authentication Flow', () => {
   test('should bypass login in test mode', async ({ page }) => {
     console.log('🧪 [TEST] Starting auth bypass test');
 
-    // Setup test authentication
-    await authHelper.setupTestAuth();
-
-    // Navigate to app
-    await page.goto('/');
-
-    // Wait for app to load and auto-authenticate
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(3000); // Give Flutter time to initialize
+    // Validate authentication helper can complete full bypass flow
+    const authResult = await authHelper.authenticate();
+    expect(authResult).toBeTruthy();
 
     // Verify we're not stuck on landing page
     const hasLandingButton = await page.locator('text=시작하기').isVisible().catch(() => false);
-
-    if (hasLandingButton) {
-      console.log('🔧 [TEST] Landing page detected, auth bypass may not be working');
-    } else {
-      console.log('🔧 [TEST] Landing page not found - auth bypass likely working');
-    }
+    expect(hasLandingButton).toBe(false);
+    console.log('🔧 [TEST] Landing page not found - auth bypass is working');
 
     // Take screenshot for debugging
     await page.screenshot({
@@ -44,31 +34,26 @@ test.describe('Authentication Flow', () => {
     console.log('🧪 [TEST] Starting authentication state test');
 
     // Authenticate using helper
-    await authHelper.authenticate();
+    const authResult = await authHelper.authenticate();
+    expect(authResult).toBeTruthy();
 
     // Verify authenticated elements are present
     const pageTitle = await page.title();
     console.log(`🔧 [TEST] Page title: ${pageTitle}`);
+    expect(pageTitle).not.toBe('');
 
-    // Check for authenticated UI elements
-    const bodyText = await page.textContent('body');
-    const isAuthenticated = !bodyText.includes('시작하기') &&
-                           (bodyText.includes('Home') ||
-                            bodyText.includes('운세') ||
-                            bodyText.includes('프로필') ||
-                            pageTitle.includes('Fortune'));
-
+    const isAuthenticated = await authHelper.verifyAuthenticated();
     console.log(`🔧 [TEST] Authentication detected: ${isAuthenticated}`);
+    expect(isAuthenticated).toBe(true);
+
+    const bodyText = await page.textContent('body');
+    expect(bodyText.length).toBeGreaterThan(50);
 
     // Take screenshot
     await page.screenshot({
       path: 'test-results/authenticated-state.png',
       fullPage: true
     });
-
-    // Basic expectation - we should not be on a blank or error page
-    expect(pageTitle).not.toBe('');
-    expect(bodyText.length).toBeGreaterThan(50);
 
     console.log('🧪 [TEST] Authentication state test completed');
   });
@@ -77,7 +62,8 @@ test.describe('Authentication Flow', () => {
     console.log('🧪 [TEST] Starting navigation test');
 
     // Authenticate first
-    await authHelper.authenticate();
+    const authResult = await authHelper.authenticate();
+    expect(authResult).toBeTruthy();
 
     // Wait for app to fully load
     await page.waitForTimeout(2000);

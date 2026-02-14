@@ -1,0 +1,505 @@
+- generic [ref=e1]:
+  - link "Skip to content":
+    - /url: "#geist-skip-nav"
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "Vercel logo":
+        - /url: /injooinjoos-projects
+        - button "Vercel Logo" [ref=e176] [cursor=pointer]:
+          - img "Vercel Logo" [ref=e177]
+      - navigation [ref=e7]:
+        - list [ref=e179]:
+          - listitem [ref=e514]:
+            - img [ref=e515]
+            - generic [ref=e517]:
+              - link "injooinjoo's projects injooinjoo's projects Hobby" [ref=e518] [cursor=pointer]:
+                - /url: /injooinjoos-projects
+                - img "injooinjoo's projects" [ref=e519]:
+                  - img "injooinjoo's projects" [ref=e520]
+                - paragraph [ref=e521]: injooinjoo's projects
+                - generic [ref=e523]: Hobby
+              - button "Switch team" [ref=e526] [cursor=pointer]:
+                - img [ref=e528]
+          - listitem [ref=e530]:
+            - img [ref=e531]
+            - generic [ref=e533]:
+              - link "zpzg-landing" [ref=e534] [cursor=pointer]:
+                - /url: /injooinjoos-projects/zpzg-landing
+                - img [ref=e535]
+                - paragraph [ref=e536]: zpzg-landing
+              - button "Switch team" [ref=e539] [cursor=pointer]:
+                - img [ref=e541]
+        - generic [ref=e209]:
+          - list [ref=e210]:
+            - button "Find… F" [ref=e211]:
+              - generic [ref=e213]:
+                - img [ref=e215]
+                - generic [ref=e217]: Find…
+                - generic [ref=e219]: F
+            - button "Feedback" [ref=e221] [cursor=pointer]:
+              - generic [ref=e222]: Feedback
+          - generic [ref=e223]:
+            - button "notifications" [ref=e225] [cursor=pointer]:
+              - generic [ref=e227]:
+                - img
+            - button "Open links menu" [ref=e228] [cursor=pointer]:
+              - img [ref=e230]
+            - button "Menu" [ref=e233] [cursor=pointer]:
+              - img "injooinjoo" [ref=e235]:
+                - img "injooinjoo" [ref=e236]
+    - main [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e16]:
+          - link "Overview" [ref=e237] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing
+          - link "Deployments" [ref=e239] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/deployments
+          - link "Analytics" [ref=e240] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/analytics
+          - link "Speed Insights" [ref=e241] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/speed-insights
+          - link "Logs" [ref=e242] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/logs
+          - link "Observability" [ref=e243] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/observability
+          - link "Redirects" [ref=e244] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/cdn/redirects
+          - link "Firewall" [ref=e245] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/firewall
+          - link "AI Gateway" [ref=e246] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/ai-gateway
+          - link "Sandboxes" [ref=e247] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/sandboxes
+          - link "Storage" [ref=e248] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/stores
+          - link "Flags" [ref=e249] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/flags
+          - link "Settings" [ref=e250] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/settings
+        - generic:
+          - button "Scroll to top":
+            - generic:
+              - img
+      - generic [ref=e33]:
+        - generic [ref=e40]:
+          - heading "Project Settings" [level=1] [ref=e41]
+          - link "Go to Team Settings" [ref=e42] [cursor=pointer]:
+            - /url: /injooinjoos-projects/~/settings
+            - img [ref=e43]
+            - text: Go to Team Settings
+        - generic [ref=e45]:
+          - generic [ref=e47]:
+            - generic [ref=e49]:
+              - searchbox "Search" [ref=e50]
+              - img [ref=e52]
+            - link "General" [ref=e251] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/general
+              - generic [ref=e252]: General
+            - link "Build and Deployment" [active] [ref=e253] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/build-and-deployment
+              - generic [ref=e254]: Build and Deployment
+            - link "Domains" [ref=e255] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/domains
+              - generic [ref=e256]: Domains
+            - link "Environments" [ref=e257] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/environments
+              - generic [ref=e258]: Environments
+            - link "Environment Variables" [ref=e259] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/environment-variables
+              - generic [ref=e260]: Environment Variables
+            - link "Git" [ref=e261] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/git
+              - generic [ref=e262]: Git
+            - link "Integrations" [ref=e263] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/integrations
+              - generic [ref=e264]: Integrations
+            - link "Deployment Protection" [ref=e265] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/deployment-protection
+              - generic [ref=e266]: Deployment Protection
+            - link "Functions" [ref=e267] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/functions
+              - generic [ref=e268]: Functions
+            - link "Caches" [ref=e269] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/caches
+              - generic [ref=e270]: Caches
+            - link "Cron Jobs" [ref=e271] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/cron-jobs
+              - generic [ref=e272]: Cron Jobs
+            - link "Microfrontends" [ref=e273] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/microfrontends
+              - generic [ref=e274]: Microfrontends
+            - link "Project Members" [ref=e275] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/project-members
+              - generic [ref=e276]: Project Members
+            - link "Drains" [ref=e277] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/drains
+              - generic [ref=e278]: Drains
+            - link "Security" [ref=e279] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/security
+              - generic [ref=e280]: Security
+            - link "Connectivity" [ref=e281] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/connectivity
+              - generic [ref=e282]: Connectivity
+            - link "Advanced" [ref=e283] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/advanced
+              - generic [ref=e284]: Advanced
+          - generic [ref=e544]:
+            - generic [ref=e546]:
+              - generic [ref=e547]:
+                - heading "Framework Settings" [level=4] [ref=e548]:
+                  - link "Framework Settings" [ref=e550] [cursor=pointer]:
+                    - /url: "#framework-settings"
+                    - generic [ref=e551]: Framework Settings
+                    - img [ref=e552]
+                - paragraph [ref=e554]: When using a framework for a new project, it will be automatically detected. As a result, several project settings are automatically configured to achieve the best result. You can override them below.
+                - generic [ref=e556]:
+                  - generic [ref=e559]:
+                    - generic [ref=e561]: Framework Preset
+                    - combobox [ref=e562]:
+                      - generic [ref=e563]:
+                        - generic:
+                          - img
+                        - searchbox "Framework Preset" [ref=e564]: Other
+                        - button "Open menu" [ref=e565] [cursor=pointer]:
+                          - img [ref=e566]
+                  - generic [ref=e568]:
+                    - generic [ref=e569]:
+                      - generic [ref=e570]:
+                        - heading "Build Command" [level=5] [ref=e571]
+                        - img [ref=e574]
+                      - generic "Build Command" [ref=e579]:
+                        - 'textbox "`npm run vercel-build` or `npm run build`" [disabled] [ref=e581]'
+                    - generic [ref=e582]:
+                      - heading "Override" [level=5] [ref=e584]
+                      - checkbox [ref=e588]
+                  - generic [ref=e591]:
+                    - generic [ref=e592]:
+                      - generic [ref=e593]:
+                        - heading "Output Directory" [level=5] [ref=e594]
+                        - img [ref=e597]
+                      - generic "Output Directory" [ref=e602]:
+                        - 'textbox "`public` if it exists, or `.`" [disabled] [ref=e604]'
+                    - generic [ref=e605]:
+                      - heading "Override" [level=5] [ref=e607]
+                      - checkbox [ref=e611]
+                  - generic [ref=e614]:
+                    - generic [ref=e615]:
+                      - generic [ref=e616]:
+                        - heading "Install Command" [level=5] [ref=e617]
+                        - img [ref=e620]
+                      - generic "Install Command" [ref=e625]:
+                        - 'textbox "`yarn install`, `pnpm install`, `npm install`, or `bun install`" [disabled] [ref=e627]'
+                    - generic [ref=e628]:
+                      - heading "Override" [level=5] [ref=e630]
+                      - checkbox [ref=e634]
+                  - generic [ref=e637]:
+                    - generic [ref=e638]:
+                      - generic [ref=e639]:
+                        - heading "Development Command" [level=5] [ref=e640]
+                        - img [ref=e643]
+                      - generic "Development Command" [ref=e648]:
+                        - textbox "None" [disabled] [ref=e650]
+                    - generic [ref=e651]:
+                      - heading "Override" [level=5] [ref=e653]
+                      - checkbox [ref=e657]
+              - generic [ref=e660]:
+                - generic [ref=e662]:
+                  - text: Learn more about
+                  - link "Build and Development Settings" [ref=e663] [cursor=pointer]:
+                    - /url: /docs/deployments/configure-a-build#build-and-development-settings
+                    - text: Build and Development Settings
+                    - img [ref=e664]
+                - button "Save" [disabled] [ref=e669]:
+                  - generic [ref=e670]: Save
+            - generic [ref=e672]:
+              - generic [ref=e673]:
+                - heading "Root Directory" [level=4] [ref=e674]:
+                  - link "Root Directory" [ref=e676] [cursor=pointer]:
+                    - /url: "#root-directory"
+                    - generic [ref=e677]: Root Directory
+                    - img [ref=e678]
+                - paragraph [ref=e680]: The directory within your project, where your code is located. Leave this field empty if your code is not located in a subdirectory.
+                - generic [ref=e681]:
+                  - textbox [ref=e684]
+                  - generic [ref=e685]:
+                    - paragraph [ref=e686]:
+                      - text: Include files outside the root directory in the
+                      - link "Build Step" [ref=e687] [cursor=pointer]:
+                        - /url: /docs/deployments/build-step
+                        - text: Build Step
+                        - img [ref=e688]
+                      - text: .
+                    - generic "Enabled" [ref=e690]:
+                      - paragraph [ref=e692]: Enabled
+                      - checkbox "Include files outside the root directory in the Build Step . Enabled" [checked] [ref=e693]
+                  - separator [ref=e696]
+                  - generic [ref=e697]:
+                    - paragraph [ref=e698]:
+                      - link "Skip deployments" [ref=e699] [cursor=pointer]:
+                        - /url: /docs/monorepos#skipping-unaffected-projects
+                        - text: Skip deployments
+                        - img [ref=e700]
+                      - text: when there are no changes to the root directory or its dependencies.
+                    - generic "Disabled" [ref=e703]:
+                      - paragraph [ref=e705]: Disabled
+                      - checkbox "Skip deployments when there are no changes to the root directory or its dependencies. Disabled" [disabled] [ref=e706]
+              - generic [ref=e709]:
+                - paragraph [ref=e711]:
+                  - text: Learn more about
+                  - link "Root Directory" [ref=e712] [cursor=pointer]:
+                    - /url: /docs/deployments/configure-a-build#root-directory
+                    - text: Root Directory
+                    - img [ref=e713]
+                - button "Save" [disabled] [ref=e718]:
+                  - generic [ref=e719]: Save
+            - generic [ref=e721]:
+              - generic [ref=e722]:
+                - heading "Ignored Build Step" [level=4] [ref=e723]:
+                  - link "Ignored Build Step" [ref=e725] [cursor=pointer]:
+                    - /url: "#ignored-build-step"
+                    - generic [ref=e726]: Ignored Build Step
+                    - img [ref=e727]
+                - paragraph [ref=e729]:
+                  - text: When a commit is pushed to the Git repository that is connected with your Project, its SHA will determine if a new Build has to be issued. If the SHA was deployed before, no new Build will be issued.
+                  - text: You can customize this behavior with a command that exits with code 1 (new Build needed) or code 0.
+                - generic [ref=e732]:
+                  - generic [ref=e733]: Behavior
+                  - generic [ref=e734]:
+                    - combobox "Behavior" [ref=e735] [cursor=pointer]:
+                      - option "Automatic" [selected]
+                      - option "Only build production"
+                      - option "Only build pre-production"
+                      - option "Only build if there are changes"
+                      - option "Only build if there are changes in a folder"
+                      - option "Don't build anything"
+                      - option "Run my Bash script"
+                      - option "Run my Node script"
+                      - option "Custom"
+                    - generic:
+                      - img
+              - generic [ref=e736]:
+                - paragraph [ref=e738]:
+                  - text: Learn more about
+                  - link "Ignored Build Step" [ref=e739] [cursor=pointer]:
+                    - /url: /docs/project-configuration/git-settings#ignored-build-step
+                    - text: Ignored Build Step
+                    - img [ref=e740]
+                - button "Save" [disabled] [ref=e745]:
+                  - generic [ref=e746]: Save
+            - generic [ref=e748]:
+              - generic [ref=e749]:
+                - heading "Node.js Version" [level=4] [ref=e750]:
+                  - link "Node.js Version" [ref=e752] [cursor=pointer]:
+                    - /url: "#node.js-version"
+                    - generic [ref=e753]: Node.js Version
+                    - img [ref=e754]
+                - paragraph [ref=e756]: The version of Node.js that is used in the Build Step and for Serverless Functions. A new Deployment is required for your changes to take effect.
+                - generic [ref=e761]:
+                  - combobox [ref=e762] [cursor=pointer]:
+                    - option "24.x" [selected]
+                    - option "22.x"
+                    - option "20.x"
+                  - generic:
+                    - img
+              - generic [ref=e763]:
+                - paragraph [ref=e765]:
+                  - text: Learn more about
+                  - link "Node.js Version" [ref=e766] [cursor=pointer]:
+                    - /url: /docs/functions/serverless-functions/runtimes/node-js#node.js-version
+                    - text: Node.js Version
+                    - img [ref=e767]
+                - button "Save" [disabled] [ref=e772]:
+                  - generic [ref=e773]: Save
+            - generic [ref=e775]:
+              - generic [ref=e776]:
+                - heading "On-Demand Concurrent Builds" [level=4] [ref=e777]:
+                  - link "On-Demand Concurrent Builds" [ref=e779] [cursor=pointer]:
+                    - /url: "#on-demand-concurrent-builds"
+                    - generic [ref=e780]: On-Demand Concurrent Builds
+                    - img [ref=e781]
+                - paragraph [ref=e783]: Skip the build queue and build deployments immediately. Usage costs apply per build minute.
+                - radiogroup [ref=e785]:
+                  - generic [ref=e786]:
+                    - generic [ref=e788]:
+                      - radio "Run all builds immediately Skip the queue for all builds" [ref=e790]
+                      - generic [ref=e794]:
+                        - paragraph [ref=e795]: Run all builds immediately
+                        - paragraph [ref=e796]: Skip the queue for all builds
+                    - generic [ref=e798]:
+                      - radio "Run up to one build per branch New deployments within a branch are queued" [ref=e800]
+                      - generic [ref=e804]:
+                        - paragraph [ref=e805]: Run up to one build per branch
+                        - paragraph [ref=e806]: New deployments within a branch are queued
+                    - generic [ref=e808]:
+                      - radio "Disable on-demand concurrent builds Builds are queued, maximum of one at a time" [checked] [ref=e810]
+                      - generic [ref=e814]:
+                        - paragraph [ref=e815]: Disable on-demand concurrent builds
+                        - paragraph [ref=e816]: Builds are queued, maximum of one at a time
+              - paragraph [ref=e819]:
+                - text: This feature is available on the
+                - link "Pro plan" [ref=e820] [cursor=pointer]:
+                  - /url: /pricing
+                  - text: Pro plan
+                  - img [ref=e821]
+            - generic [ref=e825]:
+              - generic [ref=e826]:
+                - heading "Build Machine" [level=4] [ref=e827]:
+                  - link "Build Machine" [ref=e829] [cursor=pointer]:
+                    - /url: "#build-machine"
+                    - generic [ref=e830]: Build Machine
+                    - img [ref=e831]
+                - paragraph [ref=e833]: Choose a larger build machine. Charges apply per minute if it exceeds your team's pre-committed concurrency.
+                - radiogroup [ref=e835]:
+                  - generic [ref=e836]:
+                    - generic [ref=e839]:
+                      - radio "Standard performance 4 vCPUs 8 GB Memory Default Cost-effective option for lightweight apps and APIs" [checked] [ref=e841]
+                      - generic [ref=e845]:
+                        - generic [ref=e846]:
+                          - generic [ref=e847]: Standard performance
+                          - generic [ref=e848]:
+                            - generic [ref=e850]: 4 vCPUs
+                            - generic [ref=e852]: 8 GB Memory
+                            - generic [ref=e854]: Default
+                        - paragraph [ref=e855]: Cost-effective option for lightweight apps and APIs
+                    - generic [ref=e858]:
+                      - radio "Enhanced performance 8 vCPUs 16 GB Memory Increased compute, ideal for large applications" [ref=e860]
+                      - generic [ref=e864]:
+                        - generic [ref=e865]:
+                          - generic [ref=e866]: Enhanced performance
+                          - generic [ref=e867]:
+                            - generic [ref=e869]: 8 vCPUs
+                            - generic [ref=e871]: 16 GB Memory
+                        - paragraph [ref=e872]: Increased compute, ideal for large applications
+                    - generic [ref=e875]:
+                      - radio "Turbo performance 30 vCPUs 60 GB Memory Optimized for Turbopack builds which take advantage of multiple cores" [ref=e877]
+                      - generic [ref=e881]:
+                        - generic [ref=e882]:
+                          - generic [ref=e883]: Turbo performance
+                          - generic [ref=e884]:
+                            - generic [ref=e886]: 30 vCPUs
+                            - generic [ref=e888]: 60 GB Memory
+                        - paragraph [ref=e889]: Optimized for Turbopack builds which take advantage of multiple cores
+              - generic [ref=e892]:
+                - text: Learn more about
+                - link "Build Machine types" [ref=e893] [cursor=pointer]:
+                  - /url: /docs/builds/managing-builds#build-machine-types
+                  - text: Build Machine types
+                  - img [ref=e894]
+                - text: and
+                - link "Pricing" [ref=e896] [cursor=pointer]:
+                  - /url: /docs/builds/managing-builds#on-demand-concurrent-builds-pricing
+                  - text: Pricing
+                  - img [ref=e897]
+            - generic [ref=e900]:
+              - generic [ref=e901]:
+                - heading "Deployment Checks" [level=2] [ref=e902]
+                - paragraph [ref=e903]: Define checks needed to promote a deployment to production
+              - generic [ref=e904]:
+                - paragraph [ref=e905]: No checks configured
+                - generic [ref=e907]:
+                  - paragraph [ref=e908]: Use events or statuses from your checks provider to determine when a deployment is promoted to Production.
+                  - button "Add Checks" [ref=e910] [cursor=pointer]:
+                    - img [ref=e912]
+                    - generic [ref=e914]: Add Checks
+            - generic [ref=e916]:
+              - generic [ref=e917]:
+                - heading "Rolling Releases" [level=4] [ref=e919]:
+                  - link "Rolling Releases" [ref=e920] [cursor=pointer]:
+                    - /url: "#rolling-releases"
+                    - generic [ref=e921]: Rolling Releases
+                    - img [ref=e922]
+                - paragraph [ref=e924]: Configure rolling release settings for your production environment. Rolling releases allow you to gradually deploy changes to users by defining a percentage of traffic for each stage.
+                - generic [ref=e926] [cursor=pointer]:
+                  - generic [ref=e927]: Disabled
+                  - checkbox "Disabled" [ref=e928]
+              - generic [ref=e932]:
+                - paragraph [ref=e933]:
+                  - text: This feature is available on the
+                  - link "Pro plan" [ref=e934] [cursor=pointer]:
+                    - /url: /pricing
+                    - text: Pro plan
+                    - img [ref=e935]
+                - button "Save" [disabled] [ref=e937]:
+                  - generic [ref=e938]: Save
+            - generic [ref=e940]:
+              - generic [ref=e941]:
+                - heading "Prioritize Production Builds" [level=4] [ref=e942]:
+                  - link "Prioritize Production Builds" [ref=e944] [cursor=pointer]:
+                    - /url: "#prioritize-production-builds"
+                    - generic [ref=e945]: Prioritize Production Builds
+                    - img [ref=e946]
+                - paragraph [ref=e948]: Builds for Production environment will be prioritized over Pre-Production environments.
+                - generic [ref=e949] [cursor=pointer]:
+                  - checkbox "Enabled" [checked] [ref=e951]
+                  - text: Enabled
+              - generic [ref=e954]:
+                - paragraph [ref=e956]:
+                  - text: Learn more about
+                  - link "Prioritize Production Builds" [ref=e957] [cursor=pointer]:
+                    - /url: /docs/deployments/concurrent-builds#prioritize-production-builds
+                    - text: Prioritize Production Builds
+                    - img [ref=e958]
+                - button "Save" [disabled] [ref=e963]:
+                  - generic [ref=e964]: Save
+    - contentinfo [ref=e460]:
+      - navigation "Vercel Directory" [ref=e461]:
+        - generic [ref=e462]:
+          - link "Vercel logo" [ref=e463] [cursor=pointer]:
+            - /url: /home
+            - img "Vercel logo" [ref=e464]
+          - list [ref=e466]:
+            - listitem [ref=e467]:
+              - link "Home" [ref=e468] [cursor=pointer]:
+                - /url: /home
+            - listitem [ref=e469]:
+              - link "Docs" [ref=e470] [cursor=pointer]:
+                - /url: /docs
+            - listitem [ref=e471]:
+              - link "Knowledge Base" [ref=e472] [cursor=pointer]:
+                - /url: /kb
+            - listitem [ref=e473]:
+              - link "Academy" [ref=e474] [cursor=pointer]:
+                - /url: /academy
+            - listitem [ref=e475]:
+              - button "SDKs" [ref=e476] [cursor=pointer]:
+                - generic [ref=e478]:
+                  - text: SDKs
+                  - img [ref=e479]
+            - listitem [ref=e481]:
+              - link "Help" [ref=e482] [cursor=pointer]:
+                - /url: /help
+            - listitem [ref=e483]:
+              - link "Contact" [ref=e484] [cursor=pointer]:
+                - /url: /contact
+            - listitem [ref=e485]:
+              - button "Legal" [ref=e486] [cursor=pointer]:
+                - generic [ref=e488]:
+                  - text: Legal
+                  - img [ref=e489]
+        - generic [ref=e491]:
+          - link "Loading status…" [ref=e492] [cursor=pointer]:
+            - /url: https://vercel-status.com
+            - paragraph [ref=e495]: Loading status…
+          - group "Select a display theme:" [ref=e496]:
+            - generic [ref=e497]: "Select a display theme:"
+            - generic [ref=e498]:
+              - radio "system" [checked]
+              - generic [ref=e499] [cursor=pointer]:
+                - generic [ref=e500]: system
+                - img [ref=e501]
+            - generic [ref=e503]:
+              - radio "light"
+              - generic [ref=e504] [cursor=pointer]:
+                - generic [ref=e505]: light
+                - img [ref=e506]
+            - generic [ref=e508]:
+              - radio "dark"
+              - generic [ref=e509] [cursor=pointer]:
+                - generic [ref=e510]: dark
+                - img [ref=e511]
+  - alert [ref=e513]
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - img

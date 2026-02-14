@@ -9,7 +9,9 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:zpzg.co.kr</string>
+		<string>applinks:www.zpzg.co.kr</string>
 		<string>webcredentials:zpzg.co.kr</string>
+		<string>webcredentials:www.zpzg.co.kr</string>
 	</array>
 	<key>com.apple.security.application-groups</key>
 	<array>

@@ -60,7 +60,7 @@ const PAGES = [
 
 async function main() {
   console.log('='.repeat(60));
-  console.log('Fortune App - Simple Screenshot Capture');
+  console.log('ZPZG - Simple Screenshot Capture');
   console.log('='.repeat(60));
   console.log(`총 ${PAGES.length}개 페이지 캡처 예정`);
   console.log(`출력 폴더: ${CONFIG.outputDir}`);

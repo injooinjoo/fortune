@@ -61,7 +61,7 @@
 			</dict>
 		</array>
 		<key>CFBundleVersion</key>
-		<string>52</string>
+		<string>$(FLUTTER_BUILD_NUMBER)</string>
 		<key>FirebaseAutomaticScreenReportingEnabled</key>
 		<false/>
 		<key>FirebaseDataCollectionDefaultEnabled</key>
@@ -108,10 +108,6 @@
 		<string>AI가 얼굴 특성을 분석하기 위해 사진 보관함 접근 권한이 필요합니다.</string>
 		<key>NSSpeechRecognitionUsageDescription</key>
 		<string>음성을 텍스트로 변환하여 입력을 편리하게 하기 위해 음성 인식 권한이 필요합니다.</string>
-		<key>NSHealthShareUsageDescription</key>
-		<string>건강 데이터를 분석하여 맞춤형 건강 인사이트와 운동 추천을 제공하기 위해 건강 정보 읽기 권한이 필요합니다.</string>
-		<key>NSHealthUpdateUsageDescription</key>
-		<string>건강 관련 활동 기록을 저장하기 위해 건강 정보 쓰기 권한이 필요합니다.</string>
 		<key>NSSupportsLiveActivities</key>
 		<true/>
 		<key>NSSupportsLiveActivitiesFrequentUpdates</key>

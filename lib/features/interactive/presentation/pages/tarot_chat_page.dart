@@ -92,6 +92,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
   final ScrollController _scrollController = ScrollController();
   bool _isProcessing = false;
   bool _hasCheckedDeck = false;
+  bool _isKeyboardVisible = false;
   late AnimationController _cardAnimationController;
 
   @override
@@ -142,6 +143,18 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
         );
       }
     });
+  }
+
+  void _handleKeyboardVisibilityChanged(bool isVisible) {
+    if (_isKeyboardVisible == isVisible) return;
+    _isKeyboardVisible = isVisible;
+
+    if (isVisible) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _scrollToBottom();
+      });
+    }
   }
 
   Future<void> _sendMessage(String text) async {
@@ -342,11 +355,19 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
   Widget build(BuildContext context) {
     final messages = ref.watch(chatMessagesProvider);
     final fontScale = ref.watch(userSettingsProvider).fontScale;
+    final keyboardInset = MediaQuery.of(context).viewInsets.bottom;
+    final isKeyboardVisible = keyboardInset > 0;
+    _handleKeyboardVisibilityChanged(isKeyboardVisible);
 
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: DSColors.backgroundDark,
-        body: SafeArea(
-            child: Column(children: [
+        body: AnimatedPadding(
+            duration: const Duration(milliseconds: 220),
+            curve: Curves.easeOutCubic,
+            padding: EdgeInsets.only(bottom: keyboardInset),
+            child: SafeArea(
+                child: Column(children: [
           // Clean header
           AppHeader(
               title: '타로 리딩',
@@ -370,7 +391,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
 
           // Bottom input area
           _buildInputArea(fontScale)
-        ])));
+        ]))));
   }
 
   Widget _buildWelcomeView(double fontScale) {

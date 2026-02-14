@@ -28,7 +28,7 @@ class TalismanShareService {
       // Add watermark text
       final textPainter = TextPainter(
         text: TextSpan(
-          text: 'Fortune App',
+          text: 'ZPZG',
           style: TypographyUnified.buttonMedium.copyWith(
             fontWeight: FontWeight.bold,
             color: Colors.white.withValues(alpha: 0.8),
@@ -140,7 +140,7 @@ class TalismanShareService {
 
     // Share using share_plus
     await Share.shareXFiles([XFile(tempFile.path)],
-        text: '$userName님의 $type이 완성되었습니다! 🎯\n\n#부적 #인사이트 #FortuneApp');
+        text: '$userName님의 $type이 완성되었습니다! 🎯\n\n#부적 #인사이트 #ZPZG');
 
     // Clean up
     await tempFile.delete();
@@ -162,7 +162,7 @@ class TalismanShareService {
     } else {
       // Android can share directly
       await Share.shareXFiles([XFile(tempFile.path)],
-          text: '오늘의 $type 🎯\n\n#부적 #인사이트 #행운 #FortuneApp');
+        text: '오늘의 $type 🎯\n\n#부적 #인사이트 #행운 #ZPZG');
     }
 
     await tempFile.delete();
@@ -173,7 +173,7 @@ class TalismanShareService {
     final tempFile = await _saveImageToTemp(imageData);
 
     await Share.shareXFiles([XFile(tempFile.path)],
-        text: '나만의 $type을 만들었어요! 🎯\n\n#부적 #인사이트 #FortuneApp');
+        text: '나만의 $type을 만들었어요! 🎯\n\n#부적 #인사이트 #ZPZG');
 
     await tempFile.delete();
   }
@@ -183,7 +183,7 @@ class TalismanShareService {
     final tempFile = await _saveImageToTemp(imageData);
 
     await Share.shareXFiles([XFile(tempFile.path)],
-        text: '나만의 $type 완성! 🎯\n\n#부적 #인사이트 #FortuneApp #행운');
+        text: '나만의 $type 완성! 🎯\n\n#부적 #인사이트 #ZPZG #행운');
 
     await tempFile.delete();
   }
@@ -201,7 +201,7 @@ class TalismanShareService {
   Future<void> _copyText(String type, String userName) async {
     final text = '$userName님의 $type이 완성되었습니다!\n\n'
         '이 부적은 당신의 소원을 이루어주고 행운을 가져다 줄 것입니다. 🎯\n\n'
-        'Fortune App에서 나만의 부적을 만들어보세요!';
+        'ZPZG에서 나만의 부적을 만들어보세요!';
 
     await Clipboard.setData(ClipboardData(text: text));
   }
@@ -211,7 +211,7 @@ class TalismanShareService {
     final tempFile = await _saveImageToTemp(imageData);
 
     await Share.shareXFiles([XFile(tempFile.path)],
-        text: '나만의 $type을 만들었어요! 🎯\n\nFortune App에서 당신만의 부적을 만들어보세요!');
+        text: '나만의 $type을 만들었어요! 🎯\n\nZPZG에서 당신만의 부적을 만들어보세요!');
 
     await tempFile.delete();
   }

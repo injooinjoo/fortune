@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/design_system/design_system.dart';
 import '../../core/services/fortune_haptic_service.dart';
 import '../../core/widgets/unified_button.dart';
@@ -288,12 +289,50 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
 
                 // Terms
                 Center(
-                  child: Text(
-                    '구독은 언제든 해지 가능합니다\n자동 갱신되며 해지 전까지 요금이 청구됩니다',
-                    textAlign: TextAlign.center,
-                    style: context.labelSmall.copyWith(
-                      color: colors.textSecondary,
-                    ),
+                  child: Column(
+                    children: [
+                      Text(
+                        '구독은 언제든 해지 가능합니다\n자동 갱신되며 해지 전까지 요금이 청구됩니다',
+                        textAlign: TextAlign.center,
+                        style: context.labelSmall.copyWith(
+                          color: colors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: DSSpacing.sm),
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 4,
+                        children: [
+                          TextButton(
+                            onPressed: () => context.push('/terms-of-service'),
+                            child: Text(
+                              '이용약관(EULA)',
+                              style: context.labelSmall.copyWith(
+                                color: colors.accent,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            '·',
+                            style: context.labelSmall.copyWith(
+                              color: colors.textSecondary,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () => context.push('/privacy-policy'),
+                            child: Text(
+                              '개인정보 처리방침',
+                              style: context.labelSmall.copyWith(
+                                color: colors.accent,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
 

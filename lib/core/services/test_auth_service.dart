@@ -80,7 +80,7 @@ class TestAuthService {
 
       // Create or get test account
       final testEmail = const String.fromEnvironment('TEST_ACCOUNT_EMAIL',
-          defaultValue: 'test@fortune.com');
+          defaultValue: 'test@zpzg.com');
       final testPassword = const String.fromEnvironment('TEST_ACCOUNT_PASSWORD',
           defaultValue: 'Test123!@#');
 

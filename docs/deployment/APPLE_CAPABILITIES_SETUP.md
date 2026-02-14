@@ -557,7 +557,7 @@ open ios/Runner.xcworkspace
 **문제가 계속되면:**
 - Apple Developer Support: https://developer.apple.com/support
 - Capabilities 가이드: https://developer.apple.com/documentation/xcode/capabilities
-- Fortune 개발팀: developer@fortune.app
+- Fortune 개발팀: developer@zpzg.co.kr
 
 ---
 

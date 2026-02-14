@@ -14,7 +14,7 @@ class AdminGuard extends ConsumerWidget {
 
   // Default admin emails
   static const List<String> defaultAdminEmails = [
-    'admin@fortune.com',
+    'admin@zpzg.com',
     'admin@fortune-admin.com'
   ];
 

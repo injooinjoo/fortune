@@ -23,6 +23,8 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { corsHeaders, handleCors } from '../_shared/cors.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { sendCharacterDmPush } from '../_shared/notification_push.ts'
 
 interface ChatMessage {
   role: 'user' | 'assistant' | 'system'
@@ -398,6 +400,24 @@ serve(async (req: Request) => {
       userProfile
     )
 
+    const authHeader = req.headers.get('Authorization')
+    const token = authHeader?.replace('Bearer ', '')
+    let userId: string | null = null
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    const supabase = supabaseUrl && supabaseServiceKey
+      ? createClient(supabaseUrl, supabaseServiceKey)
+      : null
+
+    if (token && supabase) {
+      const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+      if (authError || !user) {
+        console.warn('[character-chat] 사용자 인증 확인 실패, 푸시 생략')
+      } else {
+        userId = user.id
+      }
+    }
+
     // 메시지 히스토리 준비
     const limitedHistory = limitMessages(messages || [])
     const charName = characterName || '캐릭터'
@@ -467,6 +487,22 @@ ${characterTraits}
 
     // 감정 추출 및 딜레이 계산
     const { emotionTag, delaySec } = extractEmotion(responseText)
+
+    if (userId && supabase) {
+      try {
+        await sendCharacterDmPush({
+          supabase,
+          userId,
+          characterId,
+          characterName: charName,
+          messageText: responseText,
+          type: 'character_dm',
+          roomState: 'character_chat',
+        })
+      } catch (pushError) {
+        console.error('character-chat 푸시 전송 실패:', pushError)
+      }
+    }
 
     return new Response(
       JSON.stringify({

@@ -114,7 +114,7 @@ curl $UPSTASH_REDIS_REST_URL/get/test \
 2. "Personal access tokens" 섹션
 3. 기존 토큰 삭제
 4. "Create new token" 클릭
-5. 토큰 이름 입력 (예: "Fortune App Production")
+5. 토큰 이름 입력 (예: "ZPZG Production")
 6. 새 토큰 복사 후 안전하게 저장
 7. `.env` 파일 업데이트:
    ```env

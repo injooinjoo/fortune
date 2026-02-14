@@ -1,0 +1,324 @@
+- generic [active] [ref=e1]:
+  - link "Skip to content":
+    - /url: "#geist-skip-nav"
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link "Vercel logo":
+        - /url: /injooinjoos-projects
+        - button "Vercel Logo" [ref=e4] [cursor=pointer]:
+          - img "Vercel Logo" [ref=e5]
+      - navigation [ref=e7]:
+        - list [ref=e8]:
+          - listitem [ref=e336]:
+            - img [ref=e337]
+            - generic [ref=e339]:
+              - link "injooinjoo's projects injooinjoo's projects Hobby" [ref=e340] [cursor=pointer]:
+                - /url: /injooinjoos-projects
+                - img "injooinjoo's projects" [ref=e341]:
+                  - img "injooinjoo's projects" [ref=e342]
+                - paragraph [ref=e343]: injooinjoo's projects
+                - generic [ref=e345]: Hobby
+              - button "Switch team" [ref=e348] [cursor=pointer]:
+                - img [ref=e350]
+          - listitem [ref=e352]:
+            - img [ref=e353]
+            - generic [ref=e355]:
+              - link "zpzg-landing" [ref=e356] [cursor=pointer]:
+                - /url: /injooinjoos-projects/zpzg-landing
+                - img [ref=e357]
+                - paragraph [ref=e358]: zpzg-landing
+              - button "Switch team" [ref=e361] [cursor=pointer]:
+                - img [ref=e363]
+        - generic [ref=e25]:
+          - list [ref=e26]:
+            - button "Find… F" [ref=e27]:
+              - generic [ref=e29]:
+                - img [ref=e31]
+                - generic [ref=e33]: Find…
+                - generic [ref=e35]: F
+            - button "Feedback" [ref=e37] [cursor=pointer]:
+              - generic [ref=e38]: Feedback
+          - generic [ref=e39]:
+            - button "notifications" [ref=e41] [cursor=pointer]:
+              - generic [ref=e43]:
+                - img
+            - button "Open links menu" [ref=e44] [cursor=pointer]:
+              - img [ref=e46]
+            - button "Menu" [ref=e49] [cursor=pointer]:
+              - img "injooinjoo" [ref=e51]:
+                - img "injooinjoo" [ref=e52]
+    - main [ref=e53]:
+      - generic [ref=e365]:
+        - generic [ref=e367]:
+          - link "Overview" [ref=e368] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing
+          - link "Deployments" [ref=e369] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/deployments
+          - link "Analytics" [ref=e370] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/analytics
+          - link "Speed Insights" [ref=e371] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/speed-insights
+          - link "Logs" [ref=e372] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/logs
+          - link "Observability" [ref=e373] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/observability
+          - link "Redirects" [ref=e374] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/cdn/redirects
+          - link "Firewall" [ref=e375] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/firewall
+          - link "AI Gateway" [ref=e376] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/ai-gateway
+          - link "Sandboxes" [ref=e377] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/sandboxes
+          - link "Storage" [ref=e378] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/stores
+          - link "Flags" [ref=e379] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/flags
+          - link "Settings" [ref=e380] [cursor=pointer]:
+            - /url: /injooinjoos-projects/zpzg-landing/settings
+        - generic:
+          - button "Scroll to top":
+            - generic:
+              - img
+      - generic [ref=e383]:
+        - generic [ref=e388]:
+          - paragraph [ref=e391]: zpzg-landing
+          - generic [ref=e393]:
+            - generic [ref=e394]:
+              - link "Visit" [ref=e395] [cursor=pointer]:
+                - /url: https://www.zpzg.co.kr
+                - generic [ref=e396]: Visit
+              - button "Visit with" [ref=e397] [cursor=pointer]:
+                - img [ref=e399]
+            - link "Domains" [ref=e401] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/domains
+              - generic [ref=e402]: Domains
+            - link "Usage" [ref=e403] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/usage
+              - generic [ref=e404]: Usage
+            - link "Connect Git" [ref=e405] [cursor=pointer]:
+              - /url: /injooinjoos-projects/zpzg-landing/settings/git
+              - generic [ref=e406]: Connect Git
+        - generic [ref=e407]:
+          - generic [ref=e409]:
+            - heading "Production Deployment" [level=3] [ref=e411]
+            - generic [ref=e413]:
+              - generic [ref=e414]:
+                - link "Build Logs" [ref=e415] [cursor=pointer]:
+                  - /url: /injooinjoos-projects/zpzg-landing/78BLokrgu7BxKoEaLXjxHFG1VWxJ
+                  - generic [ref=e416]: Build Logs
+                - link "Runtime Logs" [ref=e417] [cursor=pointer]:
+                  - /url: /injooinjoos-projects/zpzg-landing/logs?deploymentDomains=zpzg-landing-ndxngv5o1-injooinjoos-projects.vercel.app
+                  - generic [ref=e418]: Runtime Logs
+              - button "Instant Rollback" [ref=e420] [cursor=pointer]:
+                - generic [ref=e422]:
+                  - img [ref=e423]
+                  - generic [ref=e425]: Instant Rollback
+          - generic [ref=e429]:
+            - generic [ref=e430]:
+              - generic [ref=e432]:
+                - link "Visit Deployment" [ref=e435] [cursor=pointer]:
+                  - /url: https://www.zpzg.co.kr
+                  - img [ref=e438]
+                - generic [ref=e440]:
+                  - generic [ref=e441]:
+                    - generic [ref=e443]:
+                      - term [ref=e444]: Deployment
+                      - definition [ref=e445]:
+                        - link "zpzg-landing-ndxngv5o1-injooinjoos-projects.vercel.app" [ref=e447] [cursor=pointer]:
+                          - /url: /injooinjoos-projects/zpzg-landing/78BLokrgu7BxKoEaLXjxHFG1VWxJ
+                    - link "0" [ref=e449] [cursor=pointer]:
+                      - /url: /injooinjoos-projects/zpzg-landing/speed-insights
+                      - progressbar [ref=e451]:
+                        - img [ref=e452]
+                        - img [ref=e457]
+                  - generic [ref=e460]:
+                    - term [ref=e461]:
+                      - generic [ref=e463]:
+                        - text: Domains
+                        - link [ref=e464] [cursor=pointer]:
+                          - /url: /injooinjoos-projects/zpzg-landing/settings/domains
+                          - img [ref=e465]
+                    - definition [ref=e467]:
+                      - generic [ref=e470]:
+                        - link "www.zpzg.co.kr" [ref=e471] [cursor=pointer]:
+                          - /url: https://www.zpzg.co.kr
+                          - generic [ref=e472]: www.zpzg.co.kr
+                          - img [ref=e473]
+                        - link "zpzg-landing.vercel.app" [ref=e475] [cursor=pointer]:
+                          - /url: https://zpzg-landing.vercel.app
+                          - generic [ref=e476]: zpzg-landing.vercel.app
+                          - img [ref=e477]
+                  - generic [ref=e479]:
+                    - generic [ref=e480]:
+                      - term [ref=e481]: Status
+                      - definition [ref=e482]:
+                        - generic "This deployment is ready." [ref=e485]:
+                          - generic [ref=e489]: Ready
+                    - generic [ref=e491]:
+                      - term [ref=e492]: Created
+                      - definition [ref=e493]:
+                        - generic [ref=e495] [cursor=pointer]:
+                          - paragraph [ref=e496]: Jan 16 by injooinjoo
+                          - img "injooinjoo Avatar" [ref=e497]:
+                            - img "injooinjoo Avatar" [ref=e498]
+                  - generic [ref=e500]:
+                    - term [ref=e501]: Source
+                    - definition [ref=e502]:
+                      - generic [ref=e504]:
+                        - generic [ref=e505]:
+                          - img [ref=e506]
+                          - link "View code" [ref=e508] [cursor=pointer]:
+                            - /url: /injooinjoos-projects/zpzg-landing/78BLokrgu7BxKoEaLXjxHFG1VWxJ/source
+                            - generic [ref=e509]: View code
+                        - generic [ref=e510]:
+                          - img [ref=e511]
+                          - link "vercel deploy" [ref=e513] [cursor=pointer]:
+                            - /url: /docs/cli/deploy
+                            - code [ref=e514]: vercel deploy
+              - button "Deployment Settings 3 Recommendations" [ref=e517] [cursor=pointer]:
+                - generic [ref=e518]:
+                  - img [ref=e519]
+                  - generic [ref=e521]:
+                    - generic [ref=e522]: Deployment Settings
+                    - generic [ref=e528]: 3 Recommendations
+            - generic [ref=e531]:
+              - generic [ref=e533]: To deploy to Production, connect to git, or run vercel --prod via the CLI.
+              - generic [ref=e535]:
+                - link "Deployments" [ref=e536] [cursor=pointer]:
+                  - /url: /injooinjoos-projects/zpzg-landing/deployments?environment=production
+                  - img [ref=e538]
+                  - generic [ref=e540]: Deployments
+                - link "Learn more" [ref=e541] [cursor=pointer]:
+                  - /url: /docs/git#production-branch
+                  - img [ref=e543]
+        - generic [ref=e546]:
+          - generic [ref=e549]:
+            - generic [ref=e550]:
+              - generic [ref=e551]:
+                - paragraph [ref=e552]:
+                  - strong [ref=e553]: Firewall
+                - time [ref=e554]: 24h
+              - link "Go to page" [ref=e555] [cursor=pointer]:
+                - /url: /injooinjoos-projects/zpzg-landing/firewall?range=1d
+                - img [ref=e557]
+              - link [ref=e559] [cursor=pointer]:
+                - /url: /injooinjoos-projects/zpzg-landing/firewall?range=1d
+            - generic [ref=e560]:
+              - paragraph [ref=e562]: Active · All systems normal
+              - generic [ref=e566]:
+                - generic [ref=e568]:
+                  - img [ref=e569]
+                  - generic [ref=e572]: Challenge
+                - generic [ref=e573]:
+                  - paragraph [ref=e574]: "***"
+                  - paragraph [ref=e575]: •
+                  - generic [ref=e576]: 19h ago
+                  - paragraph [ref=e577]: "5"
+          - generic [ref=e578]:
+            - generic [ref=e579]:
+              - generic [ref=e580]:
+                - paragraph [ref=e581]:
+                  - strong [ref=e582]: Observability
+                - time [ref=e583]: 6h
+              - link "Go to page" [ref=e584] [cursor=pointer]:
+                - /url: /injooinjoos-projects/zpzg-landing/observability?period=6h
+                - img [ref=e586]
+              - link [ref=e588] [cursor=pointer]:
+                - /url: /injooinjoos-projects/zpzg-landing/observability?period=6h
+            - generic [ref=e590]:
+              - generic [ref=e591]:
+                - generic [ref=e592]: Edge Requests
+                - generic [ref=e593]: "113"
+              - img [ref=e598]
+              - generic [ref=e603]:
+                - generic [ref=e604]: Function Invocations
+                - generic [ref=e605]: "0"
+              - img [ref=e610]
+              - generic [ref=e611]:
+                - generic [ref=e612]: Error Rate
+                - generic [ref=e613]: 0%
+              - img [ref=e618]
+          - generic [ref=e619]:
+            - generic [ref=e620]:
+              - paragraph [ref=e622]:
+                - strong [ref=e623]: Analytics
+              - link "Go to page" [ref=e624] [cursor=pointer]:
+                - /url: /injooinjoos-projects/zpzg-landing/analytics
+                - img [ref=e626]
+              - link [ref=e628] [cursor=pointer]:
+                - /url: /injooinjoos-projects/zpzg-landing/analytics
+            - generic [ref=e630]:
+              - generic [ref=e631]:
+                - img [ref=e632]
+                - paragraph [ref=e634]: Track visitors and page views
+              - link "Enable" [ref=e635] [cursor=pointer]:
+                - /url: /injooinjoos-projects/zpzg-landing/analytics?enable=1&source=project-overview-analytics-card
+                - generic [ref=e636]: Enable
+        - generic [ref=e637]:
+          - paragraph [ref=e641]: Preview Deployments
+          - generic [ref=e645]:
+            - heading "No Preview Deployments" [level=3] [ref=e646]
+            - paragraph [ref=e648]: Commit using our Git connections.
+    - contentinfo [ref=e282]:
+      - navigation "Vercel Directory" [ref=e283]:
+        - generic [ref=e284]:
+          - link "Vercel logo" [ref=e285] [cursor=pointer]:
+            - /url: /home
+            - img "Vercel logo" [ref=e286]
+          - list [ref=e288]:
+            - listitem [ref=e289]:
+              - link "Home" [ref=e290] [cursor=pointer]:
+                - /url: /home
+            - listitem [ref=e291]:
+              - link "Docs" [ref=e292] [cursor=pointer]:
+                - /url: /docs
+            - listitem [ref=e293]:
+              - link "Knowledge Base" [ref=e294] [cursor=pointer]:
+                - /url: /kb
+            - listitem [ref=e295]:
+              - link "Academy" [ref=e296] [cursor=pointer]:
+                - /url: /academy
+            - listitem [ref=e297]:
+              - button "SDKs" [ref=e298] [cursor=pointer]:
+                - generic [ref=e300]:
+                  - text: SDKs
+                  - img [ref=e301]
+            - listitem [ref=e303]:
+              - link "Help" [ref=e304] [cursor=pointer]:
+                - /url: /help
+            - listitem [ref=e305]:
+              - link "Contact" [ref=e306] [cursor=pointer]:
+                - /url: /contact
+            - listitem [ref=e307]:
+              - button "Legal" [ref=e308] [cursor=pointer]:
+                - generic [ref=e310]:
+                  - text: Legal
+                  - img [ref=e311]
+        - generic [ref=e313]:
+          - link "Loading status…" [ref=e314] [cursor=pointer]:
+            - /url: https://vercel-status.com
+            - paragraph [ref=e317]: Loading status…
+          - group "Select a display theme:" [ref=e318]:
+            - generic [ref=e319]: "Select a display theme:"
+            - generic [ref=e320]:
+              - radio "system" [checked]
+              - generic [ref=e321] [cursor=pointer]:
+                - generic [ref=e322]: system
+                - img [ref=e323]
+            - generic [ref=e325]:
+              - radio "light"
+              - generic [ref=e326] [cursor=pointer]:
+                - generic [ref=e327]: light
+                - img [ref=e328]
+            - generic [ref=e330]:
+              - radio "dark"
+              - generic [ref=e331] [cursor=pointer]:
+                - generic [ref=e332]: dark
+                - img [ref=e333]
+  - alert [ref=e335]: zpzg-landing - Overview – Vercel
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - img

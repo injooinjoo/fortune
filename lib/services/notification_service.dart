@@ -1,10 +1,13 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 // import 'package:flutter_native_timezone/flutter_native_timezone.dart';  // AGP 8.x compatibility issue
 import 'package:fortune/core/utils/logger.dart';
+import 'package:fortune/core/theme/theme_keys.dart';
 import 'package:fortune/services/native_platform_service.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:go_router/go_router.dart';
 
 /// Service for managing local notifications
 class NotificationService {
@@ -271,8 +274,66 @@ class NotificationService {
 
   /// Handle notification tap
   static void _onNotificationTap(NotificationResponse response) {
-    Logger.info('tapped: ${response.payload}');
-    // Handle navigation based on payload
-    // This should be implemented based on your navigation structure
+    if (response.payload == null) {
+      return;
+    }
+
+    final payload = response.payload!;
+    Logger.info('tapped: $payload');
+
+    // 기존 문자열 payload: character_chat:characterId
+    if (payload.startsWith('character_chat:')) {
+      final characterId = payload.split(':').last;
+      _handleNavigationPayload(
+          {'type': 'character_dm', 'character_id': characterId});
+      return;
+    }
+
+    // JSON payload
+    final parsedPayload = _tryDecodePayload(payload);
+    if (parsedPayload != null) {
+      _handleNavigationPayload(parsedPayload);
+    } else {
+      Logger.warning('[NotificationService] 알림 페이로드 파싱 실패');
+    }
+  }
+
+  static Map<String, dynamic>? _tryDecodePayload(String payload) {
+    try {
+      final decoded = jsonDecode(payload);
+      if (decoded is Map<String, dynamic>) {
+        return decoded;
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static void _handleNavigationPayload(Map<String, dynamic> data) {
+    final type = data['type'];
+    final route = data['route'] as String?;
+    final characterId =
+        data['character_id']?.toString() ?? data['characterId']?.toString();
+    final appContext = appNavigatorKey.currentContext;
+
+    if (appContext == null) {
+      Logger.warning('[NotificationService] 네비게이션 컨텍스트 없음');
+      return;
+    }
+
+    if (route != null && route.isNotEmpty) {
+      GoRouter.of(appContext).go(route);
+      return;
+    }
+
+    if (type == 'character_dm' || type == 'character_follow_up') {
+      if (characterId != null && characterId.isNotEmpty) {
+        final encodedCharacterId = Uri.encodeComponent(characterId);
+        GoRouter.of(appContext)
+            .go('/character/$encodedCharacterId?openCharacterChat=true');
+      }
+      return;
+    }
   }
 }

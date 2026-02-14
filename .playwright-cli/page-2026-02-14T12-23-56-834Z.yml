@@ -1,0 +1,1 @@
+- generic [ref=e2]: "[ { \"relation\": [ \"delegate_permission/common.handle_all_urls\" ], \"target\": { \"namespace\": \"android_app\", \"package_name\": \"com.beyond.fortune\", \"sha256_cert_fingerprints\": [ \"E7:58:39:4F:F8:58:86:B4:E8:62:6C:85:A5:8D:DA:82:C6:CD:47:FE:C8:22:F4:7D:41:69:61:21:CB:9E:3E:EF\" ] } } ]"

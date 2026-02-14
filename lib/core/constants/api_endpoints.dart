@@ -8,7 +8,7 @@
 class ApiEndpoints {
   // Base URL은 환경변수에서 가져옴
   static const String baseUrl = String.fromEnvironment('API_BASE_URL',
-      defaultValue: 'https://fortune.example.com');
+      defaultValue: 'https://api.zpzg.co.kr');
 
   // Auth endpoints (레거시 - 현재 Supabase Auth 사용)
   static const String login = '/api/auth/login';

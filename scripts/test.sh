@@ -1,5 +1,5 @@
 #!/bin/bash
-# Test execution script for Fortune Flutter App
+# Test execution script for ZPZG Flutter App
 # Usage: ./scripts/test.sh [flutter|playwright|all]
 
 set -e  # Exit on any error
@@ -34,7 +34,7 @@ setup_test_env() {
     export FLUTTER_TEST_MODE=true
     export TEST_MODE=true
     export BYPASS_AUTH=true
-    export TEST_ACCOUNT_EMAIL="test@fortune.com"
+    export TEST_ACCOUNT_EMAIL="test@zpzg.com"
     export TEST_ACCOUNT_PASSWORD="Test123!@#"
     export TEST_USER_ID="test-user-id-12345"
     export TEST_PROFILE_COMPLETE=true

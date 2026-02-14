@@ -83,7 +83,7 @@ class Environment {
 
   // 테스트 계정 도메인 (쉼표로 구분)
   static List<String> get testEmailDomains {
-    final domains = dotenv.env['TEST_EMAIL_DOMAINS'] ?? '@test.fortune.com';
+    final domains = dotenv.env['TEST_EMAIL_DOMAINS'] ?? '@test.zpzg.com';
     return domains.split(',').map((d) => d.trim().toLowerCase()).toList();
   }
 

@@ -16,6 +16,7 @@ class DeepLinkService {
 
   late final AppLinks _appLinks;
   StreamSubscription<Uri>? _linkSubscription;
+  String? _pendingRoute;
 
   /// 대기 중인 딥링크 fortuneType (앱 시작 시 처리용)
   static const String _pendingFortuneTypeKey = 'pending_deep_link_fortune_type';
@@ -52,6 +53,12 @@ class DeepLinkService {
   Future<void> _handleDeepLink(Uri uri) async {
     Logger.info('딥링크 수신: $uri');
 
+    if (_isAuthCallbackUri(uri)) {
+      final encodedUri = Uri.encodeComponent(uri.toString());
+      _navigateTo('/auth/callback?authCallbackUrl=$encodedUri');
+      return;
+    }
+
     // 쿼리 파라미터 추출
     final screen = uri.queryParameters['screen'];
     final fortuneType = uri.queryParameters['fortuneType'];
@@ -72,6 +79,20 @@ class DeepLinkService {
 
     // 기본: 홈으로 이동
     _navigateTo('/chat');
+  }
+
+  bool _isAuthCallbackUri(Uri uri) {
+    if (uri.scheme == 'com.beyond.fortune' && uri.host == 'auth-callback') {
+      return true;
+    }
+
+    if (uri.scheme == 'io.supabase.flutter' &&
+        (uri.path.contains('callback') ||
+            uri.toString().contains('access_token'))) {
+      return true;
+    }
+
+    return false;
   }
 
   /// 채팅 화면으로 이동하며 fortuneType 저장
@@ -96,12 +117,47 @@ class DeepLinkService {
       final context = appNavigatorKey.currentContext;
       if (context != null) {
         GoRouter.of(context).go(route);
+        if (_pendingRoute == route) {
+          _pendingRoute = null;
+        }
         Logger.info('딥링크 네비게이션: $route');
-      } else {
-        Logger.warning('딥링크 네비게이션 실패: context가 null');
+        return;
       }
+
+      _pendingRoute = route;
+      Logger.warning('딥링크 네비게이션 실패: context가 null, 500ms 내 재시도 예정');
+      _retryPendingNavigation();
     } catch (e) {
       Logger.error('딥링크 네비게이션 에러', e);
+    }
+  }
+
+  Future<void> _retryPendingNavigation() async {
+    if (_pendingRoute == null) return;
+
+    for (int retry = 0; retry < 12; retry++) {
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      final route = _pendingRoute;
+      if (route == null) return;
+
+      final context = appNavigatorKey.currentContext;
+      if (context == null) continue;
+
+      try {
+        GoRouter.of(context).go(route);
+        _pendingRoute = null;
+        Logger.info('딥링크 네비게이션 재시도 성공: $route');
+      } catch (error) {
+        Logger.error('딥링크 네비게이션 재시도 중 오류', error);
+      }
+
+      return;
+    }
+
+    if (_pendingRoute != null) {
+      Logger.warning('딥링크 네비게이션 재시도 실패: context가 계속 null');
+      _pendingRoute = null;
     }
   }
 

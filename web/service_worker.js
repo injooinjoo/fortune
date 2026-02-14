@@ -1,5 +1,5 @@
-// Service Worker for Fortune App
-const CACHE_NAME = 'fortune-app-v1';
+// Service Worker for ZPZG
+const CACHE_NAME = 'zpzg-web-v1';
 const DYNAMIC_CACHE = 'fortune-dynamic-v1';
 
 // Assets to cache on install

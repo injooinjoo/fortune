@@ -1,13 +1,14 @@
 #!/bin/bash
 
-# Fortune App - 전체 테스트 실행 스크립트
+# ZPZG - 전체 테스트 실행 스크립트
 # 사용법: ./scripts/run_all_tests.sh [options]
 # 옵션:
 #   --unit       Unit 테스트만 실행
 #   --widget     Widget 테스트만 실행
 #   --integration Integration 테스트만 실행 (디바이스 필요)
+#   --consistency 코드 통일성 가드 실행
 #   --coverage   커버리지 리포트 생성
-#   --ci         CI 환경용 (Integration 테스트 제외)
+#   --ci         CI 환경용 (Integration 테스트 제외, consistency 포함)
 
 set -e
 
@@ -22,9 +23,10 @@ NC='\033[0m' # No Color
 UNIT_RESULT=0
 WIDGET_RESULT=0
 INTEGRATION_RESULT=0
+CONSISTENCY_RESULT=0
 
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${BLUE}   Fortune App - 테스트 실행기${NC}"
+echo -e "${BLUE}   ZPZG - 테스트 실행기${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
@@ -32,6 +34,7 @@ echo ""
 RUN_UNIT=false
 RUN_WIDGET=false
 RUN_INTEGRATION=false
+RUN_CONSISTENCY=false
 RUN_COVERAGE=false
 CI_MODE=false
 
@@ -53,6 +56,9 @@ for arg in "$@"; do
     --integration)
       RUN_INTEGRATION=true
       ;;
+    --consistency)
+      RUN_CONSISTENCY=true
+      ;;
     --coverage)
       RUN_COVERAGE=true
       RUN_UNIT=true
@@ -63,6 +69,7 @@ for arg in "$@"; do
       RUN_UNIT=true
       RUN_WIDGET=true
       RUN_INTEGRATION=false
+      RUN_CONSISTENCY=true
       ;;
   esac
 done
@@ -125,7 +132,22 @@ if [ "$RUN_INTEGRATION" = true ]; then
   echo ""
 fi
 
-# 4. Coverage Report (선택적)
+# 4. Consistency Guard (선택적)
+if [ "$RUN_CONSISTENCY" = true ]; then
+  echo -e "${YELLOW}🛡️  [4/5] Code Consistency Guard 실행 중...${NC}"
+  echo "────────────────────────────────────────────────"
+
+  if ./scripts/check_code_consistency.sh; then
+    CONSISTENCY_RESULT=0
+    echo -e "${GREEN}✅ Consistency Guard 통과${NC}"
+  else
+    CONSISTENCY_RESULT=1
+    echo -e "${RED}❌ Consistency Guard 실패${NC}"
+  fi
+  echo ""
+fi
+
+# 5. Coverage Report (선택적)
 if [ "$RUN_COVERAGE" = true ]; then
   echo -e "${YELLOW}📊 Coverage 리포트 생성 중...${NC}"
   echo "────────────────────────────────────────────────"
@@ -168,12 +190,18 @@ fi
 if [ "$RUN_INTEGRATION" = true ]; then
   print_result "Integration Tests" $INTEGRATION_RESULT
 fi
+if [ "$RUN_CONSISTENCY" = true ]; then
+  print_result "Consistency Guard" $CONSISTENCY_RESULT
+fi
 
 echo ""
 
 # 최종 결과
 TOTAL_RESULT=$((UNIT_RESULT + WIDGET_RESULT))
 if [ "$INTEGRATION_RESULT" -eq 1 ]; then
+  TOTAL_RESULT=$((TOTAL_RESULT + 1))
+fi
+if [ "$CONSISTENCY_RESULT" -eq 1 ]; then
   TOTAL_RESULT=$((TOTAL_RESULT + 1))
 fi
 

@@ -17,6 +17,24 @@ allprojects {
     }
 }
 
+// Ensure legacy plugins (e.g. social_share_plugin_android) are compiled with a
+// modern SDK so Android resources like `android:attr/lStar` resolve correctly.
+subprojects { project ->
+    project.afterEvaluate {
+        def androidExt = project.extensions.findByName("android")
+        if (androidExt == null) {
+            return
+        }
+
+        if (androidExt.hasProperty("compileSdkVersion")) {
+            androidExt.compileSdkVersion 36
+        }
+        if (androidExt.hasProperty("compileSdk")) {
+            androidExt.compileSdk = 36
+        }
+    }
+}
+
 rootProject.buildDir = "../build"
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"

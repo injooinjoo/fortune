@@ -312,7 +312,7 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
         redirectTo: kIsWeb
             ? '${Uri.base.origin}/auth/callback'
             : 'com.beyond.fortune://auth-callback',
-        authScreenLaunchMode: LaunchMode.platformDefault,
+        authScreenLaunchMode: LaunchMode.inAppBrowserView,
       );
 
       if (!response) {
