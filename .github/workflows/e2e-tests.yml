@@ -128,17 +128,16 @@ jobs:
             cp -R test-results playwright-report "$artifact_dir/" || true
             cp test-results/results.json "$artifact_dir/run-results.json" 2>/dev/null || true
 
-            cat > "$artifact_dir/run-summary.json" <<EOF
-          {
-            "attempt": ${attempt},
-            "command": "${RUN_COMMAND}",
-            "exitCode": ${exit_code},
-            "passed": ${passed_count},
-            "failed": ${failed_count},
-            "startedAt": "${start_at}",
-            "finishedAt": "${finish_at}"
-          }
-EOF
+            printf '%s\n' \
+              '{' \
+              "  \"attempt\": ${attempt}," \
+              "  \"command\": \"${RUN_COMMAND}\"," \
+              "  \"exitCode\": ${exit_code}," \
+              "  \"passed\": ${passed_count}," \
+              "  \"failed\": ${failed_count}," \
+              "  \"startedAt\": \"${start_at}\"," \
+              "  \"finishedAt\": \"${finish_at}\"" \
+              '}' > "$artifact_dir/run-summary.json"
 
             echo "| ${attempt} | ${exit_code} | ${passed_count} | ${failed_count} | ${start_at} | ${finish_at} |" >> "$SUMMARY_FILE"
 
