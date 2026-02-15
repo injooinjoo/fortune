@@ -35,6 +35,7 @@ final characterChatProvider = StateNotifierProvider.family<
 final _allCharacters = [...defaultCharacters, ...fortuneCharacters];
 
 class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
+  static const String _firstMeetConversationMode = 'first_meet_v1';
   final String _characterId;
   final Ref _ref;
   final CharacterChatService _service = CharacterChatService();
@@ -126,6 +127,75 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       'lovePoints': state.affinity.lovePoints,
       'currentStreak': state.affinity.currentStreak,
     };
+  }
+
+  bool _isFormalCharacter() => _character.personality.contains('존댓말');
+
+  String _buildFirstMeetOpening() {
+    final name = _character.name;
+    if (_isFormalCharacter()) {
+      return '안녕하세요, 저는 $name입니다. 처음 인사드려요. 서로 편하게 알아가고 싶어요. 요즘 가장 궁금한 한 가지를 말씀해주실래요?';
+    }
+    return '안녕, 나는 $name야. 우리 오늘 처음이니까 가볍게 서로 알아가보자. 요즘 제일 궁금한 거 하나만 말해줘.';
+  }
+
+  bool _isFirstMeetThread([List<CharacterChatMessage>? messages]) {
+    final source = messages ?? state.messages;
+    CharacterChatMessage? firstCharacterMessage;
+
+    for (final message in source) {
+      if (message.type == CharacterChatMessageType.character) {
+        firstCharacterMessage = message;
+        break;
+      }
+    }
+
+    if (firstCharacterMessage == null) return false;
+    return firstCharacterMessage.text == _buildFirstMeetOpening();
+  }
+
+  int _assistantTurnCount([List<CharacterChatMessage>? messages]) {
+    final source = messages ?? state.messages;
+    return source
+        .where((message) => message.type == CharacterChatMessageType.character)
+        .length;
+  }
+
+  bool _isFirstMeetPhase(AffinityPhase phase) =>
+      phase == AffinityPhase.stranger || phase == AffinityPhase.acquaintance;
+
+  bool _shouldApplyFirstMeetMode([List<CharacterChatMessage>? messages]) {
+    final source = messages ?? state.messages;
+    return _isFirstMeetThread(source) &&
+        _isFirstMeetPhase(state.affinity.phase) &&
+        _assistantTurnCount(source) < 4;
+  }
+
+  String _buildFirstMeetPrompt({required int introTurn}) {
+    final safeIntroTurn = introTurn < 1 ? 1 : (introTurn > 4 ? 4 : introTurn);
+    final String goal;
+    if (safeIntroTurn == 1) {
+      goal = '첫 인사 직후 단계: 사용자의 현재 관심사 한 가지를 듣고 가볍게 공감하세요.';
+    } else if (safeIntroTurn == 2) {
+      goal = '두 번째 단계: 사용자의 성향/대화 톤을 파악하는 질문 1개만 하세요.';
+    } else if (safeIntroTurn == 3) {
+      goal = '세 번째 단계: 관심사나 대화 선호를 확인하고 관계 기반은 최소로 유지하세요.';
+    } else {
+      goal = '네 번째 단계: 아이스브레이킹 마무리. 필요하면 본론으로 자연스럽게 전환하세요.';
+    }
+
+    return '''
+[FIRST_MEET MODE - $_firstMeetConversationMode]
+- 현재 introTurn: $safeIntroTurn
+- 목표: $goal
+
+필수 규칙:
+1) 1응답 1질문 원칙을 지키세요.
+2) 사전 관계/사건/공동 과거를 절대 가정하지 마세요.
+3) 친밀 호칭 강요 금지. 기본 호칭은 중립적으로 유지하세요.
+4) 초반 3~4턴은 소개/성향 파악 중심으로 진행하세요.
+5) 사용자가 명시적으로 운세/문제 해결을 요청하면 즉시 본론으로 전환하세요.
+''';
   }
 
   /// 유저 메시지 추가
@@ -349,6 +419,9 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     setTyping(true);
 
     try {
+      final useFirstMeetMode = _shouldApplyFirstMeetMode();
+      final introTurn = _assistantTurnCount();
+
       // 메시지 히스토리 준비 (마지막 유저 메시지 제외)
       final messagesWithoutLast = state.messages.length > 1
           ? state.messages.sublist(0, state.messages.length - 1)
@@ -362,7 +435,13 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
       // 이모티콘 빈도 지시문 추가
       final emojiInstruction = _character.behaviorPattern.getEmojiInstruction();
-      final enhancedPrompt = '${_character.systemPrompt}\n\n$emojiInstruction';
+      final firstMeetPrompt =
+          useFirstMeetMode ? _buildFirstMeetPrompt(introTurn: introTurn) : '';
+      final enhancedPrompt = [
+        _character.systemPrompt,
+        emojiInstruction,
+        if (firstMeetPrompt.isNotEmpty) firstMeetPrompt,
+      ].join('\n\n');
 
       // API 호출
       final response = await _service.sendMessage(
@@ -378,6 +457,8 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         clientTimestamp: DateTime.now().toIso8601String(),
         userProfile: _getUserProfileMap(),
         affinityContext: _buildAffinityContext(),
+        conversationMode: useFirstMeetMode ? _firstMeetConversationMode : null,
+        introTurn: useFirstMeetMode ? introTurn : null,
       );
 
       // 타이핑 딜레이
@@ -567,6 +648,9 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     setTyping(true);
 
     try {
+      final useFirstMeetMode = _shouldApplyFirstMeetMode();
+      final introTurn = _assistantTurnCount();
+
       // 메시지 히스토리 준비 (최근 20개, 방금 추가한 사용자 메시지 제외)
       final messagesWithoutCurrent = state.messages.length > 1
           ? state.messages.sublist(0, state.messages.length - 1)
@@ -580,7 +664,13 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
       // 이모티콘 빈도 지시문 추가
       final emojiInstruction = _character.behaviorPattern.getEmojiInstruction();
-      final enhancedPrompt = '${_character.systemPrompt}\n\n$emojiInstruction';
+      final firstMeetPrompt =
+          useFirstMeetMode ? _buildFirstMeetPrompt(introTurn: introTurn) : '';
+      final enhancedPrompt = [
+        _character.systemPrompt,
+        emojiInstruction,
+        if (firstMeetPrompt.isNotEmpty) firstMeetPrompt,
+      ].join('\n\n');
 
       // API 호출
       final response = await _service.sendMessage(
@@ -596,6 +686,8 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         clientTimestamp: DateTime.now().toIso8601String(),
         userProfile: _getUserProfileMap(),
         affinityContext: _buildAffinityContext(),
+        conversationMode: useFirstMeetMode ? _firstMeetConversationMode : null,
+        introTurn: useFirstMeetMode ? introTurn : null,
       );
 
       // 5단계: 감정 기반 타이핑 딜레이 (클라이언트 측)
@@ -625,10 +717,13 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   }
 
   /// 첫 메시지로 대화 시작 (unreadCount 증가 없이 - 사용자가 채팅방에 있으므로)
-  void startConversation(String firstMessage) {
+  void startConversation([String? legacyFirstMessage]) {
+    if (legacyFirstMessage != null) {
+      // 하위 호환: 전달값이 있더라도 first-meet 시작 문구를 항상 사용합니다.
+    }
     if (state.messages.isEmpty) {
-      final message =
-          CharacterChatMessage.character(firstMessage, _characterId);
+      final message = CharacterChatMessage.character(
+          _buildFirstMeetOpening(), _characterId);
       state = state.copyWith(
         messages: [...state.messages, message],
         // unreadCount는 증가시키지 않음 - 사용자가 이미 채팅방에 있음
@@ -1091,9 +1186,7 @@ $emojiInstruction
           isLoading: false,
           isInitialized: true,
         );
-        if (_character.firstMessage.isNotEmpty) {
-          startConversation(_character.firstMessage);
-        }
+        startConversation();
       }
     } catch (e) {
       // 에러 시에도 초기화 완료 처리 (첫 메시지로 시작)
@@ -1101,9 +1194,7 @@ $emojiInstruction
         isLoading: false,
         isInitialized: true,
       );
-      if (_character.firstMessage.isNotEmpty) {
-        startConversation(_character.firstMessage);
-      }
+      startConversation();
     }
   }
 

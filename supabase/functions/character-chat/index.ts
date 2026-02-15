@@ -74,6 +74,8 @@ interface CharacterChatRequest {
   clientTimestamp?: string; // ISO 8601 형식 (시간 인식용)
   userProfile?: UserProfileInfo; // 유저 프로필 정보 (개인화용)
   affinityContext?: AffinityContextPayload; // 게스트용 관계 단계 힌트
+  conversationMode?: "first_meet_v1";
+  introTurn?: number;
 }
 
 interface AffinityDelta {
@@ -500,6 +502,14 @@ function buildRelationshipAdaptationPrompt(
   const phase = normalizePhase(context.phase);
   const guide = RELATIONSHIP_STYLE_GUIDE[phase];
   const sourceLabel = source === "server" ? "server-db" : "guest-client";
+  const isEarlyPhase = phase === "stranger" || phase === "acquaintance";
+  const earlyPhaseGuard = isEarlyPhase
+    ? `
+- 초기 관계 강제 금지: 사전 연인/부부/절친 관계를 전제하지 마세요.
+- 호칭 제한: "여보", "자기", "애인" 등 친밀 호칭 사용 금지.
+- 세계관 디테일 선공개 금지: 사용자가 먼저 묻기 전 과도한 배경 설정을 꺼내지 마세요.
+`.trim()
+    : "";
 
   return `
 [RELATIONSHIP ADAPTATION - ${sourceLabel}]
@@ -510,11 +520,44 @@ function buildRelationshipAdaptationPrompt(
 - 호칭 가이드: ${guide.addressing}
 - proactive 강도: ${guide.proactive}
 - 경계 규칙: ${guide.boundary}
+${earlyPhaseGuard}
 
 핵심 원칙:
 1) 캐릭터의 원본 페르소나/말투/세계관은 절대 변경하지 마세요.
 2) 조절 가능한 것은 친밀도 강도(표현 수위, 호칭 빈도, 먼저 말 거는 적극성) 뿐입니다.
 3) 단계에 맞지 않는 과도한 친밀 표현은 피하고, 자연스러운 대화 연속성을 우선하세요.
+`.trim();
+}
+
+function buildFirstMeetConversationPrompt(
+  mode?: "first_meet_v1",
+  introTurn?: number,
+): string {
+  if (mode !== "first_meet_v1") return "";
+
+  const safeIntroTurn = Math.max(1, Math.min(4, Math.floor(introTurn ?? 1)));
+  let turnGoal = "";
+  if (safeIntroTurn === 1) {
+    turnGoal = "첫 만남 인사 이후 단계: 사용자의 현재 관심사 1가지를 듣고 가볍게 공감";
+  } else if (safeIntroTurn === 2) {
+    turnGoal = "두 번째 단계: 성향/대화 톤 파악 질문 1개";
+  } else if (safeIntroTurn === 3) {
+    turnGoal = "세 번째 단계: 관심사/대화 선호 파악 후 본론 진입 준비";
+  } else {
+    turnGoal = "네 번째 단계: 아이스브레이킹 마무리 후 본론 자연 전환";
+  }
+
+  return `
+[FIRST MEET MODE - first_meet_v1]
+- introTurn: ${safeIntroTurn}
+- 목표: ${turnGoal}
+
+필수 규칙:
+1) 한 번의 응답에서 질문은 정확히 1개만 하세요.
+2) 사전 관계/사건/공동 과거를 절대 가정하지 마세요.
+3) 친밀 호칭을 강요하지 말고 중립 호칭을 유지하세요.
+4) 초기 3~4턴은 소개/성향 파악 중심으로 진행하세요.
+5) 사용자가 운세/문제해결을 명시적으로 요청하면 즉시 본론으로 전환하세요.
 `.trim();
 }
 
@@ -582,6 +625,8 @@ serve(async (req: Request) => {
       clientTimestamp,
       userProfile,
       affinityContext,
+      conversationMode,
+      introTurn,
     }: CharacterChatRequest = await req.json();
 
     // 유효성 검사
@@ -658,7 +703,7 @@ serve(async (req: Request) => {
 
 [캐릭터 특성 - 반드시 유지]
 ${characterTraits}
-말투와 호칭을 절대 변경하지 마세요.
+말투의 핵심은 유지하되, 호칭은 관계 단계 가이드를 우선하세요.
 `;
     }
 
@@ -700,6 +745,10 @@ ${characterTraits}
       resolvedAffinityContext,
       userId ? "server" : "client",
     );
+    const firstMeetPrompt = buildFirstMeetConversationPrompt(
+      conversationMode,
+      introTurn,
+    );
     const memoryPrompt = userId
       ? buildMemoryInjectionPrompt(memoryContext)
       : "";
@@ -710,6 +759,7 @@ ${characterTraits}
       timeContext,
       conversationContext,
       relationshipPrompt,
+      firstMeetPrompt,
       memoryPrompt,
       AFFINITY_EVALUATION_PROMPT,
     ].filter((section) => section && section.trim().length > 0);

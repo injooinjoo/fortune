@@ -82,6 +82,8 @@ class CharacterChatService {
     String? clientTimestamp, // 현재 시간 (시간 인식용)
     Map<String, dynamic>? userProfile, // 유저 프로필 정보 (개인화용)
     Map<String, dynamic>? affinityContext, // 관계 단계 컨텍스트 (게스트 모드 우선)
+    String? conversationMode, // 대화 모드 (first_meet_v1 등)
+    int? introTurn, // first-meet 단계 턴 카운트
   }) async {
     try {
       final response = await _supabase.functions.invoke(
@@ -101,6 +103,8 @@ class CharacterChatService {
           if (clientTimestamp != null) 'clientTimestamp': clientTimestamp,
           if (userProfile != null) 'userProfile': userProfile,
           if (affinityContext != null) 'affinityContext': affinityContext,
+          if (conversationMode != null) 'conversationMode': conversationMode,
+          if (introTurn != null) 'introTurn': introTurn,
         },
       );
 
