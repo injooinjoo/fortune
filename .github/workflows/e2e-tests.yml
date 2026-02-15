@@ -266,19 +266,19 @@ EOF
           echo "## 🧪 E2E Test Results" >> $GITHUB_STEP_SUMMARY
           echo "| Attempt | Exit | Passed | Failed |" >> $GITHUB_STEP_SUMMARY
           echo "|---|---|---|---|" >> $GITHUB_STEP_SUMMARY
-          echo "| 1 | ${{ needs.smoke-tests.outputs.run1_exit }} | ${{ needs.smoke-tests.outputs.run1_passed }} | ${{ needs.smoke-tests.outputs.run1_failed }} |" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ needs.smoke-tests.outputs.attempts }}" = "2" ]; then
-            echo "| 2 | ${{ needs.smoke-tests.outputs.run2_exit }} | ${{ needs.smoke-tests.outputs.run2_passed }} | ${{ needs.smoke-tests.outputs.run2_failed }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 1 | ${{ needs['smoke-tests'].outputs.run1_exit }} | ${{ needs['smoke-tests'].outputs.run1_passed }} | ${{ needs['smoke-tests'].outputs.run1_failed }} |" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ needs['smoke-tests'].outputs.attempts }}" = "2" ]; then
+            echo "| 2 | ${{ needs['smoke-tests'].outputs.run2_exit }} | ${{ needs['smoke-tests'].outputs.run2_passed }} | ${{ needs['smoke-tests'].outputs.run2_failed }} |" >> $GITHUB_STEP_SUMMARY
           fi
 
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Run count: ${{ needs.smoke-tests.outputs.attempts }} of 2 max" >> $GITHUB_STEP_SUMMARY
+          echo "Run count: ${{ needs['smoke-tests'].outputs.attempts }} of 2 max" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          if [ -f "./report/${{ needs.smoke-tests.outputs.run_summary_file }}" ]; then
+          if [ -f "./report/${{ needs['smoke-tests'].outputs.run_summary_file }}" ]; then
             echo "### Run Log" >> $GITHUB_STEP_SUMMARY
-            cat ./report/${{ needs.smoke-tests.outputs.run_summary_file }} >> $GITHUB_STEP_SUMMARY
+            cat ./report/${{ needs['smoke-tests'].outputs.run_summary_file }} >> $GITHUB_STEP_SUMMARY
           else
             echo "⚠️ 실행 로그 파일을 찾을 수 없습니다." >> $GITHUB_STEP_SUMMARY
           fi
@@ -292,7 +292,7 @@ EOF
   notify-slack:
     name: Slack Notification
     needs: [smoke-tests]
-    if: always() && needs.smoke-tests.result == 'failure'
+    if: always() && needs['smoke-tests'].result == 'failure'
     uses: ./.github/workflows/slack-notify.yml
     with:
       workflow_name: "E2E Tests"
