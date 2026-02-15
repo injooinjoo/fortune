@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/utils/logger.dart';
+import '../../oauth_in_app_browser_coordinator.dart';
 import '../base/base_social_auth_provider.dart';
 
 class FacebookAuthProvider extends BaseSocialAuthProvider {
@@ -13,6 +16,8 @@ class FacebookAuthProvider extends BaseSocialAuthProvider {
   Future<AuthResponse?> signIn() async {
     try {
       Logger.info('Starting Facebook Sign-In process with Supabase OAuth');
+      final flowId =
+          OAuthInAppBrowserCoordinator.markOAuthStarted(providerName);
 
       final response = await supabase.auth.signInWithOAuth(
         OAuthProvider.facebook,
@@ -23,13 +28,21 @@ class FacebookAuthProvider extends BaseSocialAuthProvider {
       );
 
       if (!response) {
+        OAuthInAppBrowserCoordinator.markOAuthFinished(reason: 'launch_failed');
         throw Exception('Facebook OAuth sign in failed');
       }
 
+      unawaited(
+        OAuthInAppBrowserCoordinator.watchForSessionAndClose(
+          supabase,
+          flowId: flowId,
+        ),
+      );
       Logger.securityCheckpoint('Facebook OAuth sign in initiated');
 
       return null;
     } catch (error) {
+      OAuthInAppBrowserCoordinator.markOAuthFinished(reason: 'exception');
       Logger.warning(
           '[FacebookAuthProvider] Facebook 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
       rethrow;

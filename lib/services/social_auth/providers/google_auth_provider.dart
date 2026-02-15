@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:universal_io/io.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/utils/logger.dart';
 import '../../../core/config/environment.dart';
+import '../../oauth_in_app_browser_coordinator.dart';
 import '../base/base_social_auth_provider.dart';
 
 class GoogleAuthProvider extends BaseSocialAuthProvider {
@@ -33,6 +36,8 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
       Logger.info('Starting Supabase OAuth for Google');
       final redirectTo = _resolveRedirectTo();
       Logger.info('Google OAuth redirectTo: $redirectTo');
+      final flowId =
+          OAuthInAppBrowserCoordinator.markOAuthStarted(providerName);
 
       final response = await supabase.auth.signInWithOAuth(
         OAuthProvider.google,
@@ -42,9 +47,17 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
       );
 
       if (!response) {
+        OAuthInAppBrowserCoordinator.markOAuthFinished(reason: 'launch_failed');
         Logger.warning('Google OAuth initiation failed');
         throw Exception('Google OAuth sign in failed to start');
       }
+
+      unawaited(
+        OAuthInAppBrowserCoordinator.watchForSessionAndClose(
+          supabase,
+          flowId: flowId,
+        ),
+      );
 
       Logger.info('Google OAuth initiated successfully');
       debugPrint('🟡 [GoogleAuthProvider] OAuth redirect initiated');
@@ -54,6 +67,7 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
 
       return null;
     } catch (error) {
+      OAuthInAppBrowserCoordinator.markOAuthFinished(reason: 'exception');
       Logger.warning(
           '[GoogleAuthProvider] Google OAuth 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
       Logger.warning(

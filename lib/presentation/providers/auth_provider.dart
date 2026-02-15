@@ -7,6 +7,7 @@ import '../../services/user_statistics_service.dart';
 import '../../services/storage_service.dart';
 import '../../services/widget_service.dart';
 import '../../services/widget_data_service.dart';
+import '../../services/oauth_in_app_browser_coordinator.dart';
 import '../../features/character/data/services/character_chat_service.dart';
 import '../../features/character/data/services/follow_up_scheduler.dart';
 import '../../features/character/presentation/providers/active_chat_provider.dart';
@@ -209,6 +210,7 @@ final chatRestorationProvider = Provider<void>((ref) {
   ref.listen<AsyncValue<AuthState?>>(authStateProvider, (previous, next) {
     next.whenData((authState) async {
       if (authState == null) return;
+      await OAuthInAppBrowserCoordinator.onAuthStateChanged(authState);
 
       // 스코프 갱신은 auth 이벤트마다 수행
       await UserScopeService.instance.refreshCurrentScope();

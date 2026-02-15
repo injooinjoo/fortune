@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'package:universal_io/io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/utils/logger.dart';
+import '../../oauth_in_app_browser_coordinator.dart';
 import '../base/base_social_auth_provider.dart';
 
 class KakaoAuthProvider extends BaseSocialAuthProvider {
@@ -306,6 +308,8 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
   Future<AuthResponse?> _signInWithKakaoOAuth() async {
     try {
       Logger.info('Using Kakao OAuth sign in');
+      final flowId =
+          OAuthInAppBrowserCoordinator.markOAuthStarted(providerName);
 
       final response = await supabase.auth.signInWithOAuth(
         OAuthProvider.kakao,
@@ -316,12 +320,20 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
       );
 
       if (!response) {
+        OAuthInAppBrowserCoordinator.markOAuthFinished(reason: 'launch_failed');
         throw Exception('Kakao OAuth sign in failed');
       }
 
+      unawaited(
+        OAuthInAppBrowserCoordinator.watchForSessionAndClose(
+          supabase,
+          flowId: flowId,
+        ),
+      );
       Logger.securityCheckpoint('Kakao OAuth sign in initiated');
       return null;
     } catch (error) {
+      OAuthInAppBrowserCoordinator.markOAuthFinished(reason: 'exception');
       Logger.warning(
           '[KakaoAuthProvider] Kakao OAuth 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
       rethrow;

@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import '../../services/social_auth_service.dart';
 import '../../services/storage_service.dart';
+import '../../services/oauth_in_app_browser_coordinator.dart';
 import '../../core/utils/url_cleaner_stub.dart'
     if (dart.library.html) '../../core/utils/url_cleaner_web.dart';
 import '../../core/design_system/design_system.dart';
@@ -123,6 +124,7 @@ mixin LandingPageState<T extends StatefulWidget>
 
   Future<void> _handleAuthStateChange(AuthState data) async {
     debugPrint('🔔 Auth state changed: ${data.event}');
+    await OAuthInAppBrowserCoordinator.onAuthStateChanged(data);
 
     if ((data.event == AuthChangeEvent.signedIn ||
             data.event == AuthChangeEvent.initialSession) &&

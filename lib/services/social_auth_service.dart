@@ -4,6 +4,7 @@ import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import '../core/utils/logger.dart';
 import '../core/cache/profile_cache.dart';
 import 'storage_service.dart';
+import 'oauth_in_app_browser_coordinator.dart';
 import 'social_auth/providers/google_auth_provider.dart';
 import 'social_auth/providers/apple_auth_provider.dart';
 import 'social_auth/providers/kakao_auth_provider.dart';
@@ -62,6 +63,8 @@ class SocialAuthService {
   // Sign Out
   Future<void> signOut() async {
     try {
+      OAuthInAppBrowserCoordinator.markOAuthFinished(reason: 'user_sign_out');
+
       // Kakao logout
       try {
         await kakao.UserApi.instance.logout();

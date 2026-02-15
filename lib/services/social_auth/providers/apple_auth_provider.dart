@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:universal_io/io.dart';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/utils/logger.dart';
+import '../../oauth_in_app_browser_coordinator.dart';
 import '../base/base_social_auth_provider.dart';
 
 class AppleAuthProvider extends BaseSocialAuthProvider {
@@ -151,6 +153,8 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
   Future<AuthResponse?> _signInWithAppleOAuth() async {
     try {
       Logger.info('Using Apple OAuth sign in');
+      final flowId =
+          OAuthInAppBrowserCoordinator.markOAuthStarted(providerName);
 
       final response = await supabase.auth.signInWithOAuth(
         OAuthProvider.apple,
@@ -161,12 +165,20 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
       );
 
       if (!response) {
+        OAuthInAppBrowserCoordinator.markOAuthFinished(reason: 'launch_failed');
         throw Exception('Apple OAuth sign in failed');
       }
 
+      unawaited(
+        OAuthInAppBrowserCoordinator.watchForSessionAndClose(
+          supabase,
+          flowId: flowId,
+        ),
+      );
       Logger.securityCheckpoint('Apple OAuth sign in initiated');
       return null;
     } catch (error) {
+      OAuthInAppBrowserCoordinator.markOAuthFinished(reason: 'exception');
       Logger.warning(
           '[AppleAuthProvider] Apple OAuth 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
       rethrow;
