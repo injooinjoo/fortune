@@ -67,10 +67,11 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
       return '${Uri.base.origin}/auth/callback';
     }
 
-    // iOS prefers Supabase default callback scheme for stable return from
-    // SFSafariViewController OAuth flows.
+    // Keep iOS on the app custom scheme. The current Supabase project
+    // redirect allowlist does not reliably accept the Supabase default
+    // scheme in this app setup and can fall back to localhost.
     if (Platform.isIOS) {
-      return 'io.supabase.flutter://login-callback';
+      return 'com.beyond.fortune://auth-callback';
     }
 
     return 'com.beyond.fortune://auth-callback';

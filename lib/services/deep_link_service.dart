@@ -87,7 +87,8 @@ class DeepLinkService {
     }
 
     if (uri.scheme == 'io.supabase.flutter' &&
-        (uri.path.contains('callback') ||
+        (uri.host.contains('callback') ||
+            uri.path.contains('callback') ||
             uri.toString().contains('access_token'))) {
       return true;
     }
