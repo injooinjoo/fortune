@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../services/social_auth_service.dart';
-import '../../../core/utils/logger.dart';
+import '../../../presentation/widgets/social_login_bottom_sheet.dart';
 import '../../../core/providers/user_settings_provider.dart';
 
 class NameInputStep extends ConsumerStatefulWidget {
@@ -34,7 +33,6 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
   final FocusNode _focusNode = FocusNode();
   late final SocialAuthService _socialAuthService;
   bool _isValid = false;
-  bool _bottomSheetLoading = false;
 
   @override
   void initState() {
@@ -65,135 +63,30 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
     super.dispose();
   }
 
-  void _showSocialLoginBottomSheet(BuildContext context) {
-    final colors = context.colors;
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      barrierColor: DSColors.overlay,
-      builder: (context) => Container(
-        width: double.infinity,
-        height: MediaQuery.of(context).size.height * 0.6,
-        decoration: BoxDecoration(
-          color: colors.surface,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(25),
-            topRight: Radius.circular(25),
-          ),
-        ),
-        child: StatefulBuilder(
-          builder: (context, setBottomSheetState) {
-            return _buildBottomSheetContent(setBottomSheetState);
-          },
-        ),
+  Future<void> _showSocialLoginBottomSheet(BuildContext context) async {
+    await SocialLoginBottomSheet.show(
+      context,
+      onGoogleLogin: () => _handleSocialLogin(
+        provider: 'google',
+        loginAction: () =>
+            _socialAuthService.signInWithGoogle(context: context),
       ),
+      onAppleLogin: () => _handleSocialLogin(
+        provider: 'apple',
+        loginAction: _socialAuthService.signInWithApple,
+      ),
+      onKakaoLogin: () async {},
+      onNaverLogin: () async {},
+      ref: ref,
     );
   }
 
-  Widget _buildBottomSheetContent(StateSetter setBottomSheetState) {
-    final typography = ref.watch(typographyThemeProvider);
-    final colors = context.colors;
-
-    return Column(
-      children: [
-        // Drag handle
-        Container(
-          margin: const EdgeInsets.only(top: 12),
-          width: 40,
-          height: 4,
-          decoration: BoxDecoration(
-            color: colors.border,
-            borderRadius: BorderRadius.circular(2),
-          ),
-        ),
-
-        // Content
-        Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-            child: Column(
-              children: [
-                // Title
-                Text(
-                  '기존 계정으로 로그인하세요',
-                  style: typography.headingLarge.copyWith(),
-                ),
-
-                const SizedBox(height: 40),
-
-                // Loading indicator
-                if (_bottomSheetLoading)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 40),
-                    child: CircularProgressIndicator(),
-                  )
-                else ...[
-                  // Social Login Buttons (unified design)
-                  // NOTE: Kakao and Naver are temporarily hidden.
-                  // TODO: Re-enable when ready for production rollout.
-                  // See: .claude/docs/09-social-login-status.md for details.
-                  _buildSocialLoginButton(
-                    context: context,
-                    label: 'Google로 계속하기',
-                    logoPath: 'assets/images/social/google.svg',
-                    onTap: () => _handleSocialLoginInBottomSheet(
-                        'google', setBottomSheetState),
-                  ),
-                  const SizedBox(height: 12),
-
-                  _buildSocialLoginButton(
-                    context: context,
-                    label: 'Apple로 계속하기',
-                    logoPath: 'assets/images/social/apple.svg',
-                    onTap: () => _handleSocialLoginInBottomSheet(
-                        'apple', setBottomSheetState),
-                  ),
-
-                  // ============================================
-                  // TEMPORARILY HIDDEN: Kakao & Naver Login
-                  // Reason: Focus on Google/Apple for initial launch
-                  // Re-enable by uncommenting below when ready
-                  // ============================================
-                  // const SizedBox(height: 12),
-                  // _buildSocialLoginButton(
-                  //   context: context,
-                  //   label: '카카오로 계속하기',
-                  //   logoPath: 'assets/images/social/kakao.svg',
-                  //   onTap: () => _handleSocialLoginInBottomSheet('kakao', setBottomSheetState),
-                  // ),
-                  // const SizedBox(height: 12),
-                  // _buildSocialLoginButton(
-                  //   context: context,
-                  //   label: '네이버로 계속하기',
-                  //   logoPath: 'assets/images/social/naver.svg',
-                  //   onTap: () => _handleSocialLoginInBottomSheet('naver', setBottomSheetState),
-                  // ),
-                ], // Close the else block for loading
-
-                const SizedBox(height: 30),
-
-                // Terms text
-                Text(
-                  '계속하면 서비스 이용약관 및\n개인정보 처리방침에 동의하는 것으로 간주됩니다.',
-                  style: typography.labelMedium.copyWith(
-                    color: colors.textSecondary,
-                    height: 1.5,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Future<void> _handleSocialLoginInBottomSheet(
-      String provider, StateSetter setBottomSheetState) async {
-    // Debug: Show immediate feedback
+  Future<void> _handleSocialLogin({
+    required String provider,
+    required Future<AuthResponse?> Function() loginAction,
+  }) async {
     if (!mounted) return;
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('$provider 로그인 시도 중...'),
@@ -201,111 +94,24 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
       ),
     );
 
-    setBottomSheetState(() {
-      _bottomSheetLoading = true;
-    });
-
     try {
-      AuthResponse? response;
+      final response = await loginAction();
 
-      switch (provider) {
-        case 'google':
-          response =
-              await _socialAuthService.signInWithGoogle(context: context);
-          break;
-        case 'apple':
-          response = await _socialAuthService.signInWithApple();
-          break;
-        case 'kakao':
-          response = await _socialAuthService.signInWithKakao();
-          break;
-        case 'naver':
-          response = await _socialAuthService.signInWithNaver();
-          break;
-      }
-
-      // OAuth flows return null (handled by deep linking)
-      // Direct auth flows return AuthResponse
       if (!mounted) return;
-
       if (response != null && response.user != null) {
-        // Close bottom sheet and navigate to chat
-        Navigator.pop(context);
         context.go('/chat');
-      } else {
-        // For OAuth flows, close bottom sheet and let auth state listener handle navigation
-        Navigator.pop(context);
       }
     } catch (error) {
-      Logger.error('소셜 로그인 실패: $provider', error);
-
-      if (mounted) {
-        setBottomSheetState(() {
-          _bottomSheetLoading = false;
-        });
-
-        // Show detailed error message for debugging
-        final errorMessage = error.toString();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('$provider 로그인 실패: $errorMessage'),
-            backgroundColor: context.colors.error,
-            duration: const Duration(seconds: 5),
-          ),
-        );
-      }
-    }
-  }
-
-  Widget _buildSocialLoginButton({
-    required BuildContext context,
-    required String label,
-    required String logoPath,
-    required VoidCallback onTap,
-  }) {
-    final typography = ref.watch(typographyThemeProvider);
-    final colors = context.colors;
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          // Debug: Immediate feedback
-          debugPrint('Button tapped: $label');
-          onTap();
-        },
-        borderRadius: BorderRadius.circular(DSRadius.md),
-        child: Container(
-          width: double.infinity,
-          height: 52,
-          decoration: BoxDecoration(
-            color: colors.surface,
-            border: Border.all(
-              color: colors.border,
-              width: 1,
-            ),
-            borderRadius: BorderRadius.circular(DSRadius.md),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SvgPicture.asset(
-                logoPath,
-                width: 24,
-                height: 24,
-              ),
-              const SizedBox(width: 12),
-              Text(
-                label,
-                style: typography.buttonMedium.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: colors.textPrimary,
-                ),
-              ),
-            ],
-          ),
+      if (!mounted) return;
+      final errorMessage = error.toString();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('$provider 로그인 실패: $errorMessage'),
+          backgroundColor: context.colors.error,
+          duration: const Duration(seconds: 5),
         ),
-      ),
-    );
+      );
+    }
   }
 
   @override

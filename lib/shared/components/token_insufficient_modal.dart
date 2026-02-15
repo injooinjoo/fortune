@@ -2,8 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/design_system/design_system.dart';
+import '../../presentation/providers/auth_provider.dart';
 import '../../presentation/providers/token_provider.dart';
+import '../../presentation/widgets/social_login_bottom_sheet.dart';
+import '../../services/social_auth_service.dart';
 
 class TokenInsufficientModal extends ConsumerStatefulWidget {
   final int requiredTokens;
@@ -59,6 +63,13 @@ class _TokenInsufficientModalState
   Widget build(BuildContext context) {
     final colors = context.colors;
     final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
+    final authState = ref.watch(authStateProvider);
+    final isLoggedIn = authState.maybeWhen(
+      data: (state) =>
+          state?.session != null ||
+          Supabase.instance.client.auth.currentSession != null,
+      orElse: () => Supabase.instance.client.auth.currentSession != null,
+    );
 
     return Container(
       decoration: BoxDecoration(
@@ -108,7 +119,7 @@ class _TokenInsufficientModalState
 
               // Title
               Text(
-                '토큰을 모두 소진했어요',
+                isLoggedIn ? '토큰을 모두 소진했어요' : '로그인이 필요해요',
                 style: context.headingMedium.copyWith(
                   color: colors.textPrimary,
                   fontWeight: FontWeight.w600,
@@ -116,44 +127,74 @@ class _TokenInsufficientModalState
               ),
               const SizedBox(height: 12),
 
-              // 남은 시간 안내
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-                decoration: BoxDecoration(
-                  color: colors.backgroundSecondary,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.schedule_outlined,
-                      size: 20,
-                      color: colors.textSecondary,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '무료 토큰 충전까지 ',
-                      style: context.bodyMedium.copyWith(
+              if (isLoggedIn)
+                // 남은 시간 안내 (로그인 사용자)
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: colors.backgroundSecondary,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.schedule_outlined,
+                        size: 20,
                         color: colors.textSecondary,
                       ),
-                    ),
-                    Text(
-                      _getNextResetTime(),
-                      style: context.bodyMedium.copyWith(
-                        color: colors.accent,
-                        fontWeight: FontWeight.w600,
+                      const SizedBox(width: 8),
+                      Text(
+                        '무료 토큰 충전까지 ',
+                        style: context.bodyMedium.copyWith(
+                          color: colors.textSecondary,
+                        ),
                       ),
-                    ),
-                  ],
+                      Text(
+                        _getNextResetTime(),
+                        style: context.bodyMedium.copyWith(
+                          color: colors.accent,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              else
+                // 로그인 안내 (비로그인 사용자)
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: colors.backgroundSecondary,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.login_outlined,
+                        size: 20,
+                        color: colors.textSecondary,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '로그인 후 토큰을 충전하고 사용할 수 있어요',
+                        style: context.bodyMedium.copyWith(
+                          color: colors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
               const SizedBox(height: 12),
 
               // 안내 문구
               Text(
-                '지금 바로 이용하시려면 토큰을 구매하세요',
+                isLoggedIn
+                    ? '지금 바로 이용하시려면 토큰을 구매하세요'
+                    : '로그인하면 현재 채팅을 이어서 사용할 수 있어요',
                 style: context.bodySmall.copyWith(
                   color: colors.textTertiary,
                 ),
@@ -161,46 +202,54 @@ class _TokenInsufficientModalState
               ),
               const SizedBox(height: 24),
 
-              // Best Value - Subscription (가성비 최고)
-              _buildSubscriptionButton(),
-              const SizedBox(height: 12),
+              if (isLoggedIn) ...[
+                // Best Value - Subscription (가성비 최고)
+                _buildSubscriptionButton(),
+                const SizedBox(height: 12),
 
-              // Secondary Options
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildActionButton(
-                      icon: Icons.shopping_bag_outlined,
-                      label: '토큰 구매',
-                      subtitle: '₩28~/개',
-                      isPrimary: false,
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        context.push('/token-purchase');
-                      },
+                // Secondary Options
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildActionButton(
+                        icon: Icons.shopping_bag_outlined,
+                        label: '토큰 구매',
+                        subtitle: '₩28~/개',
+                        isPrimary: false,
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          context.push('/token-purchase');
+                        },
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildActionButton(
-                      icon: Icons.card_giftcard_outlined,
-                      label: '무료 받기',
-                      subtitle: '일 1회',
-                      isPrimary: false,
-                      onTap: () async {
-                        final result = await ref
-                            .read(tokenProvider.notifier)
-                            .claimDailyTokens();
-                        if (result && context.mounted) {
-                          Navigator.of(context).pop(true);
-                        } else if (context.mounted) {
-                          _showClaimError();
-                        }
-                      },
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildActionButton(
+                        icon: Icons.card_giftcard_outlined,
+                        label: '무료 받기',
+                        subtitle: '일 1회',
+                        isPrimary: false,
+                        onTap: () async {
+                          final result = await ref
+                              .read(tokenProvider.notifier)
+                              .claimDailyTokens();
+                          if (result && context.mounted) {
+                            Navigator.of(context).pop(true);
+                          } else if (context.mounted) {
+                            _showClaimError();
+                          }
+                        },
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ] else ...[
+                DSButton.primary(
+                  text: '로그인하기',
+                  leadingIcon: Icons.login_outlined,
+                  onPressed: _showSocialLoginBottomSheet,
+                ),
+              ],
               const SizedBox(height: 16),
 
               // Cancel Button
@@ -222,6 +271,82 @@ class _TokenInsufficientModalState
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _showSocialLoginBottomSheet() {
+    SocialAuthService? socialAuthService;
+    try {
+      socialAuthService = SocialAuthService(Supabase.instance.client);
+    } catch (e) {
+      _showLoginError();
+      return;
+    }
+
+    SocialLoginBottomSheet.show(
+      context,
+      onGoogleLogin: () async {
+        await _handleSocialLogin(() async {
+          await socialAuthService!.signInWithGoogle();
+        });
+      },
+      onAppleLogin: () async {
+        await _handleSocialLogin(() async {
+          await socialAuthService!.signInWithApple();
+        });
+      },
+      onKakaoLogin: () async {
+        await _handleSocialLogin(() async {
+          await socialAuthService!.signInWithKakao();
+        });
+      },
+      onNaverLogin: () async {
+        await _handleSocialLogin(() async {
+          await socialAuthService!.signInWithNaver();
+        });
+      },
+      isProcessing: false,
+      ref: ref,
+    );
+  }
+
+  Future<void> _handleSocialLogin(Future<void> Function() loginAction) async {
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    final errorColor = context.colors.error;
+
+    // 토큰 모달 닫기
+    if (mounted && Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
+
+    try {
+      await loginAction();
+    } catch (e) {
+      messenger?.showSnackBar(
+        SnackBar(
+          content: const Text('로그인에 실패했습니다. 다시 시도해주세요.'),
+          backgroundColor: errorColor,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: const EdgeInsets.all(16),
+        ),
+      );
+    }
+  }
+
+  void _showLoginError() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('로그인 화면을 여는 중 문제가 발생했습니다.'),
+        backgroundColor: context.colors.error,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        margin: const EdgeInsets.all(16),
       ),
     );
   }

@@ -175,21 +175,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       context,
       ref: ref,
       onGoogleLogin: () async {
-        Navigator.pop(context);
         await ref.read(socialAuthProvider.notifier).signInWithGoogle();
         if (mounted && supabase.auth.currentUser != null) {
           _loadUserData();
         }
       },
       onAppleLogin: () async {
-        Navigator.pop(context);
         await ref.read(socialAuthProvider.notifier).signInWithApple();
         if (mounted && supabase.auth.currentUser != null) {
           _loadUserData();
         }
       },
-      onKakaoLogin: () {},
-      onNaverLogin: () {},
+      onKakaoLogin: () async {},
+      onNaverLogin: () async {},
     );
 
     // 바텀시트 닫히고 아직 비로그인이면 이전 페이지로

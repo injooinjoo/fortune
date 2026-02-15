@@ -4,16 +4,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/design_system/design_system.dart';
 import '../../core/services/fortune_haptic_service.dart';
 
+typedef SocialLoginAction = Future<void> Function();
+
 /// 재사용 가능한 소셜 로그인 BottomSheet
 /// Landing Page, Onboarding 등 여러 곳에서 사용 가능
 class SocialLoginBottomSheet {
   /// BottomSheet를 표시하고 사용자의 선택을 반환
-  static Future<String?> show(
+  static Future<void> show(
     BuildContext context, {
-    required VoidCallback onGoogleLogin,
-    required VoidCallback onAppleLogin,
-    required VoidCallback onKakaoLogin,
-    required VoidCallback onNaverLogin,
+    required SocialLoginAction onGoogleLogin,
+    required SocialLoginAction onAppleLogin,
+    required SocialLoginAction onKakaoLogin,
+    required SocialLoginAction onNaverLogin,
     bool isProcessing = false,
     WidgetRef? ref,
   }) async {
@@ -22,7 +24,7 @@ class SocialLoginBottomSheet {
       ref.read(fortuneHapticServiceProvider).sheetOpen();
     }
 
-    return await showModalBottomSheet<String>(
+    await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -35,9 +37,23 @@ class SocialLoginBottomSheet {
         debugPrint(
             '🌐 [BOTTOMSHEET] textTheme.bodyLarge.color: ${Theme.of(bottomSheetContext).textTheme.bodyLarge?.color}');
 
-        return Builder(
-          builder: (context) {
+        bool isTapLocked = false;
+
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
             final colors = context.colors;
+            final isButtonDisabled = isProcessing || isTapLocked;
+
+            Future<void> handleSocialTap(SocialLoginAction action) async {
+              if (isProcessing || isTapLocked) return;
+              setSheetState(() {
+                isTapLocked = true;
+              });
+
+              Navigator.of(bottomSheetContext).pop();
+              await Future<void>.delayed(const Duration(milliseconds: 80));
+              await action();
+            }
 
             return Container(
               decoration: BoxDecoration(
@@ -71,7 +87,9 @@ class SocialLoginBottomSheet {
                         // Google Login
                         _buildSocialButton(
                             context: context,
-                            onPressed: isProcessing ? null : onGoogleLogin,
+                            onPressed: isButtonDisabled
+                                ? null
+                                : () => handleSocialTap(onGoogleLogin),
                             type: 'google',
                             colors: colors),
                         const SizedBox(height: 12),
@@ -79,7 +97,9 @@ class SocialLoginBottomSheet {
                         // Apple Login
                         _buildSocialButton(
                             context: context,
-                            onPressed: isProcessing ? null : onAppleLogin,
+                            onPressed: isButtonDisabled
+                                ? null
+                                : () => handleSocialTap(onAppleLogin),
                             type: 'apple',
                             colors: colors),
 

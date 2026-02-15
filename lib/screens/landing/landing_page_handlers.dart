@@ -47,13 +47,6 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
         }
       } else {
         debugPrint('🍎 OAuth flow initiated');
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Apple 로그인을 처리하고 있습니다...'),
-            ),
-          );
-        }
       }
     } catch (e) {
       debugPrint('🍎 Apple login error: $e');
@@ -107,10 +100,7 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
           ));
         }
       } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('네이버 로그인을 처리하고 있습니다...')));
-        }
+        debugPrint('🟢 [NAVER] OAuth flow initiated');
       }
     } catch (e) {
       debugPrint('🟢 [NAVER] Exception caught: $e');
@@ -152,43 +142,23 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
       context,
       onGoogleLogin: () async {
         debugPrint('🔴 Google login button clicked');
-
-        if (Navigator.canPop(context)) {
-          Navigator.pop(context);
-        }
-
-        await Future.delayed(const Duration(milliseconds: 100));
-        handleSocialLogin('Google');
+        await handleSocialLogin('Google');
       },
       onAppleLogin: () async {
         debugPrint('🍎 Apple login button clicked');
         debugPrint('🍎 _isAuthProcessing: $isAuthProcessing');
-
-        if (Navigator.canPop(context)) {
-          Navigator.pop(context);
-        }
-
-        await Future.delayed(const Duration(milliseconds: 100));
-        handleAppleLogin();
+        await handleAppleLogin();
       },
       onKakaoLogin: () async {
         debugPrint('🟡 Kakao login button clicked');
-
-        if (Navigator.canPop(context)) {
-          Navigator.pop(context);
-        }
-
-        await Future.delayed(const Duration(milliseconds: 100));
-        handleSocialLogin('Kakao');
+        await handleSocialLogin('Kakao');
       },
-      onNaverLogin: () {
+      onNaverLogin: () async {
         debugPrint('🟢 Naver login button clicked');
         debugPrint('🟢 _isAuthProcessing before pop: $isAuthProcessing');
 
-        Navigator.pop(context);
-
         debugPrint('🟢 About to call _handleNaverLogin()');
-        handleNaverLogin();
+        await handleNaverLogin();
       },
       isProcessing: isAuthProcessing,
     );
@@ -227,27 +197,6 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
   }
 
   Future<void> _handleGoogleLogin() async {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Row(
-            children: [
-              SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
-              ),
-              SizedBox(width: 16),
-              Text('Google 로그인 진행 중...'),
-            ],
-          ),
-          duration: Duration(seconds: 10),
-        ),
-      );
-    }
-
     final prefs = await SharedPreferences.getInstance();
     final keys = prefs
         .getKeys()
@@ -266,24 +215,7 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
       }
 
       await socialAuthService!.signInWithGoogle();
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      }
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Google 로그인을 처리하고 있습니다...'),
-            duration: Duration(seconds: 3),
-          ),
-        );
-      }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      }
-
       debugPrint('Google 로그인 에러: $e');
 
       if (mounted) {
@@ -304,27 +236,6 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
   }
 
   Future<void> _handleKakaoLogin() async {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Row(
-            children: [
-              SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
-              ),
-              SizedBox(width: 16),
-              Text('카카오 로그인 진행 중...'),
-            ],
-          ),
-          duration: Duration(seconds: 10),
-        ),
-      );
-    }
-
     try {
       debugPrint('🟡 Starting Kakao login...');
       if (socialAuthService == null) {
@@ -332,10 +243,6 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
       }
 
       final response = await socialAuthService!.signInWithKakao();
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      }
 
       debugPrint('🟡 Kakao login response: $response');
 
@@ -361,21 +268,9 @@ mixin LandingPageHandlers<T extends StatefulWidget> on LandingPageState<T> {
         }
       } else {
         debugPrint('🟡 Kakao OAuth flow initiated, waiting for callback...');
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('카카오 로그인을 처리하고 있습니다...'),
-              backgroundColor: context.colors.warning,
-            ),
-          );
-        }
       }
     } catch (kakaoError) {
       debugPrint('🟡 Kakao login error: $kakaoError');
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

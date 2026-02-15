@@ -30,7 +30,6 @@ class GuestLoginBanner extends ConsumerWidget {
     SocialLoginBottomSheet.show(
       context,
       onGoogleLogin: () async {
-        Navigator.pop(context);
         ref.read(_loginProcessingProvider.notifier).state = true;
         try {
           await socialAuthService!.signInWithGoogle();
@@ -41,7 +40,6 @@ class GuestLoginBanner extends ConsumerWidget {
         }
       },
       onAppleLogin: () async {
-        Navigator.pop(context);
         ref.read(_loginProcessingProvider.notifier).state = true;
         try {
           await socialAuthService!.signInWithApple();
@@ -52,7 +50,6 @@ class GuestLoginBanner extends ConsumerWidget {
         }
       },
       onKakaoLogin: () async {
-        Navigator.pop(context);
         ref.read(_loginProcessingProvider.notifier).state = true;
         try {
           await socialAuthService!.signInWithKakao();
@@ -63,7 +60,6 @@ class GuestLoginBanner extends ConsumerWidget {
         }
       },
       onNaverLogin: () async {
-        Navigator.pop(context);
         ref.read(_loginProcessingProvider.notifier).state = true;
         try {
           await socialAuthService!.signInWithNaver();

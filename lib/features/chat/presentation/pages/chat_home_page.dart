@@ -505,7 +505,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     SocialLoginBottomSheet.show(
       context,
       onGoogleLogin: () async {
-        Navigator.pop(context);
         try {
           await socialAuthService!.signInWithGoogle();
           // OAuth 리다이렉트 후 auth state listener가 처리
@@ -514,7 +513,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         }
       },
       onAppleLogin: () async {
-        Navigator.pop(context);
         try {
           await socialAuthService!.signInWithApple();
           // OAuth 리다이렉트 후 auth state listener가 처리
@@ -523,7 +521,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         }
       },
       onKakaoLogin: () async {
-        Navigator.pop(context);
         try {
           await socialAuthService!.signInWithKakao();
           // OAuth 리다이렉트 후 auth state listener가 처리
@@ -532,7 +529,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         }
       },
       onNaverLogin: () async {
-        Navigator.pop(context);
         try {
           await socialAuthService!.signInWithNaver();
           // OAuth 리다이렉트 후 auth state listener가 처리
