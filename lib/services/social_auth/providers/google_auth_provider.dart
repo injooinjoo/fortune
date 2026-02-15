@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:universal_io/io.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/utils/logger.dart';
 import '../../../core/config/environment.dart';
@@ -30,12 +31,12 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
       debugPrint(
           '🟡 [GoogleAuthProvider] Starting Supabase OAuth for Google...');
       Logger.info('Starting Supabase OAuth for Google');
+      final redirectTo = _resolveRedirectTo();
+      Logger.info('Google OAuth redirectTo: $redirectTo');
 
       final response = await supabase.auth.signInWithOAuth(
         OAuthProvider.google,
-        redirectTo: kIsWeb
-            ? '${Uri.base.origin}/auth/callback'
-            : 'com.beyond.fortune://auth-callback',
+        redirectTo: redirectTo,
         // Keep OAuth inside the app UX on iOS (SFSafariViewController).
         authScreenLaunchMode: LaunchMode.inAppBrowserView,
       );
@@ -59,5 +60,19 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
           '[GoogleAuthProvider] Google OAuth 에러 타입 (선택적 기능, 다른 로그인 방법 사용 권장): ${error.runtimeType}');
       rethrow;
     }
+  }
+
+  String _resolveRedirectTo() {
+    if (kIsWeb) {
+      return '${Uri.base.origin}/auth/callback';
+    }
+
+    // iOS prefers Supabase default callback scheme for stable return from
+    // SFSafariViewController OAuth flows.
+    if (Platform.isIOS) {
+      return 'io.supabase.flutter://login-callback';
+    }
+
+    return 'com.beyond.fortune://auth-callback';
   }
 }
