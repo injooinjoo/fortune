@@ -259,7 +259,7 @@ class CategoryDetailCard extends StatelessWidget {
                     style: context.displayMedium.copyWith(
                       fontSize: 48, // 카테고리별 점수
                       color: scoreColor,
-                      fontWeight: FontWeight.w200,
+                      fontWeight: FontWeight.w400,
                       letterSpacing: -2,
                       height: 1.0,
                     ),
@@ -268,7 +268,7 @@ class CategoryDetailCard extends StatelessWidget {
                   Text(
                     '점',
                     style: context.bodyMedium.copyWith(
-                      color: context.colors.textPrimary.withValues(alpha: 0.5),
+                      color: context.colors.textPrimary.withValues(alpha: 0.75),
                       fontWeight: FontWeight.w500,
                     ),
                   ),

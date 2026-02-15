@@ -162,7 +162,7 @@ class TalismanShareService {
     } else {
       // Android can share directly
       await Share.shareXFiles([XFile(tempFile.path)],
-        text: '오늘의 $type 🎯\n\n#부적 #인사이트 #행운 #ZPZG');
+          text: '오늘의 $type 🎯\n\n#부적 #인사이트 #행운 #ZPZG');
     }
 
     await tempFile.delete();

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../../core/design_system/design_system.dart';
+import '../../../../../../core/utils/haptic_utils.dart';
 import '../../../../domain/models/health_fortune_model.dart';
 
 class ConditionOption extends StatelessWidget {
@@ -22,7 +22,7 @@ class ConditionOption extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        HapticFeedback.lightImpact();
+        HapticUtils.lightImpact();
         onTap();
       },
       child: AnimatedContainer(

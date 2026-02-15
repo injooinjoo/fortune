@@ -1,8 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:fortune/core/design_system/design_system.dart';
+import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../presentation/providers/content_interaction_provider.dart';
 import '../../services/fortune_share_service.dart';
 
@@ -127,7 +129,7 @@ class _FortuneActionButtonsState extends ConsumerState<FortuneActionButtons>
 
   Future<void> _handleLikeTap(bool currentState) async {
     // 햅틱 피드백
-    HapticFeedback.lightImpact();
+    HapticUtils.lightImpact();
 
     // 애니메이션 재생
     if (!currentState) {
@@ -143,7 +145,7 @@ class _FortuneActionButtonsState extends ConsumerState<FortuneActionButtons>
   }
 
   Future<void> _handleShareTap() async {
-    HapticFeedback.lightImpact();
+    HapticUtils.lightImpact();
 
     final shareService = FortuneShareService();
     Uint8List? imageData = widget.shareImage;
@@ -272,7 +274,7 @@ class LikeOnlyButton extends ConsumerWidget {
 
     return GestureDetector(
       onTap: () async {
-        HapticFeedback.lightImpact();
+        HapticUtils.lightImpact();
         await ref
             .read(contentInteractionProvider(contentId).notifier)
             .toggleSave(
@@ -320,7 +322,7 @@ class ShareOnlyButton extends StatelessWidget {
 
     return GestureDetector(
       onTap: () async {
-        HapticFeedback.lightImpact();
+        HapticUtils.lightImpact();
         final shareService = FortuneShareService();
         await shareService.showShareSheet(
           context: context,

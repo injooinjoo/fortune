@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fortune/core/design_system/design_system.dart';
+import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../core/widgets/unified_button.dart';
 import '../../core/widgets/unified_button_enums.dart';
 import '../../core/extensions/l10n_extension.dart';
@@ -21,7 +21,7 @@ class AppBottomSheet {
     bool enableHaptic = true,
   }) {
     if (enableHaptic) {
-      HapticFeedback.mediumImpact();
+      HapticUtils.mediumImpact();
     }
 
     return showModalBottomSheet<T>(
@@ -270,7 +270,7 @@ class _OptionItem<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        HapticFeedback.selectionClick();
+        HapticUtils.selection();
         onTap();
       },
       borderRadius: BorderRadius.circular(DSRadius.smd),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math';
 import '../../../../shared/components/app_header.dart';
@@ -11,6 +10,7 @@ import '../../../../presentation/providers/tarot_deck_provider.dart';
 import '../../../../data/services/fortune_api_service.dart';
 import '../../../../core/constants/api_endpoints.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../../../presentation/providers/navigation_visibility_provider.dart';
 import '../../../../core/utils/fortune_text_cleaner.dart';
 import '../../../../core/widgets/unified_voice_text_field.dart';
@@ -368,30 +368,30 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
             padding: EdgeInsets.only(bottom: keyboardInset),
             child: SafeArea(
                 child: Column(children: [
-          // Clean header
-          AppHeader(
-              title: '타로 리딩',
-              showBackButton: true,
-              backgroundColor: context.colors.surface,
-              elevation: 0.5,
-              actions: [
-                IconButton(
-                    icon: const Icon(Icons.style, size: 20),
-                    onPressed: () {
-                      context.pushNamed('interactive-tarot-deck-selection');
-                    },
-                    tooltip: '카드 변경')
-              ]),
+              // Clean header
+              AppHeader(
+                  title: '타로 리딩',
+                  showBackButton: true,
+                  backgroundColor: context.colors.surface,
+                  elevation: 0.5,
+                  actions: [
+                    IconButton(
+                        icon: const Icon(Icons.style, size: 20),
+                        onPressed: () {
+                          context.pushNamed('interactive-tarot-deck-selection');
+                        },
+                        tooltip: '카드 변경')
+                  ]),
 
-          // Main content area
-          Expanded(
-              child: messages.isEmpty
-                  ? _buildWelcomeView(fontScale)
-                  : _buildChatView(messages, fontScale)),
+              // Main content area
+              Expanded(
+                  child: messages.isEmpty
+                      ? _buildWelcomeView(fontScale)
+                      : _buildChatView(messages, fontScale)),
 
-          // Bottom input area
-          _buildInputArea(fontScale)
-        ]))));
+              // Bottom input area
+              _buildInputArea(fontScale)
+            ]))));
   }
 
   Widget _buildWelcomeView(double fontScale) {
@@ -462,7 +462,7 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
             child: InkWell(
                 onTap: () {
                   debugPrint('[TarotChat] Example question tapped: $question');
-                  HapticFeedback.lightImpact();
+                  HapticUtils.lightImpact();
                   _sendMessage(question);
                 },
                 borderRadius: BorderRadius.circular(12),

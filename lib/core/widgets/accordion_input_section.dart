@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../design_system/design_system.dart';
+import '../utils/haptic_utils.dart';
 
 /// 아코디언 방식 입력 섹션 모델
 class AccordionInputSection {
@@ -116,7 +116,7 @@ class _AccordionInputFormState extends State<AccordionInputForm> {
   }
 
   void _onSectionComplete(int index, dynamic value) {
-    HapticFeedback.mediumImpact();
+    HapticUtils.mediumImpact();
 
     setState(() {
       widget.sections[index].value = value;
@@ -146,7 +146,7 @@ class _AccordionInputFormState extends State<AccordionInputForm> {
 
   void _onSectionTap(int index) {
     if (_activeIndex != index) {
-      HapticFeedback.lightImpact();
+      HapticUtils.lightImpact();
       _moveToSection(index);
     }
   }
@@ -482,7 +482,7 @@ class _AccordionInputFormWithHeaderState
   }
 
   void _onSectionComplete(int index, dynamic value) {
-    HapticFeedback.mediumImpact();
+    HapticUtils.mediumImpact();
 
     setState(() {
       widget.sections[index].value = value;
@@ -512,7 +512,7 @@ class _AccordionInputFormWithHeaderState
 
   void _onSectionTap(int index) {
     if (_activeIndex != index) {
-      HapticFeedback.lightImpact();
+      HapticUtils.lightImpact();
       _moveToSection(index);
     }
   }

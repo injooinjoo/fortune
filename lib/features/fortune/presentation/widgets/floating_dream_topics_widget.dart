@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../../../core/design_system/design_system.dart';
+import 'package:fortune/core/utils/haptic_utils.dart';
 
 /// 플로팅 꿈 주제 위젯 - 한 줄씩 번갈아 좌/우로 롤링
 class FloatingDreamTopicsWidget extends StatefulWidget {
@@ -196,7 +196,7 @@ class _RollingChipRowState extends State<_RollingChipRow>
           final topic = extendedTopics[index];
           return GestureDetector(
             onTap: () {
-              HapticFeedback.lightImpact();
+              HapticUtils.lightImpact();
               widget.onTopicSelected(topic);
             },
             child: Container(

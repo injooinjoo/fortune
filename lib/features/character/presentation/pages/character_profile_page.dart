@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/extensions/l10n_extension.dart';
+import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../../../shared/widgets/smart_image.dart';
 import '../../data/services/character_localizer.dart';
 import '../../domain/models/ai_character.dart';
@@ -303,7 +305,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
       width: double.infinity,
       child: ElevatedButton.icon(
         onPressed: () {
-          HapticFeedback.lightImpact();
+          HapticUtils.lightImpact();
           // 캐릭터 선택 provider 설정 → SwipeHomeShell이 감지하여 채팅 패널 열기
           ref.read(selectedCharacterProvider.notifier).state = _character;
           ref.read(chatModeProvider.notifier).state = ChatMode.character;
@@ -548,7 +550,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
   }
 
   void _showImageDetail(BuildContext context, int index) {
-    HapticFeedback.lightImpact();
+    HapticUtils.lightImpact();
     // TODO: 이미지 상세 보기 구현
     showDialog(
       context: context,
@@ -568,7 +570,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
   }
 
   void _showMoreOptions(BuildContext context) {
-    HapticFeedback.lightImpact();
+    HapticUtils.lightImpact();
     showModalBottomSheet(
       context: context,
       builder: (ctx) => SafeArea(
@@ -614,9 +616,11 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
-              ref
-                  .read(characterChatProvider(_character.id).notifier)
-                  .clearConversation();
+              unawaited(
+                ref
+                    .read(characterChatProvider(_character.id).notifier)
+                    .clearConversationData(),
+              );
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(context.l10n.conversationResetSuccess(

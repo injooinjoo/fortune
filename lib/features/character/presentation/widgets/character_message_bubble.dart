@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
+import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../domain/models/ai_character.dart';
 import '../../domain/models/character_chat_message.dart';
 import 'affinity_change_indicator.dart';
@@ -103,7 +103,7 @@ class CharacterMessageBubble extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () {
-              HapticFeedback.lightImpact();
+              HapticUtils.lightImpact();
               context.push('/character/${character.id}', extra: character);
             },
             child: CircleAvatar(

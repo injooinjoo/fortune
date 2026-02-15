@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/design_system/design_system.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -17,6 +16,7 @@ import '../../../../../core/widgets/unified_button_enums.dart';
 import '../../../../../shared/components/toast.dart';
 import '../../../../../presentation/providers/providers.dart';
 import '../../../../../core/services/unified_fortune_service.dart';
+import '../../../../../core/utils/haptic_utils.dart';
 
 class HealthFortunePage extends ConsumerStatefulWidget {
   const HealthFortunePage({super.key});
@@ -177,7 +177,7 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
   }
 
   void _showDocumentUploadSheet() {
-    HapticFeedback.mediumImpact();
+    HapticUtils.mediumImpact();
     DocumentUploadBottomSheet.show(
       context,
       onDocumentSelected: (result) {
@@ -345,7 +345,7 @@ class _HealthFortunePageState extends ConsumerState<HealthFortunePage> {
 
   void _goToNextStep() {
     if (_currentStep < 2) {
-      HapticFeedback.lightImpact();
+      HapticUtils.lightImpact();
       setState(() {
         _currentStep++;
       });

@@ -116,7 +116,7 @@ class _OverallCardState extends State<OverallCard> {
                       icon: Icon(
                         Icons.close,
                         color:
-                            context.colors.textPrimary.withValues(alpha: 0.5),
+                            context.colors.textPrimary.withValues(alpha: 0.72),
                       ),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
@@ -204,7 +204,7 @@ class _OverallCardState extends State<OverallCard> {
                           minhwaInfo['label']!,
                           style: context.labelMedium.copyWith(
                             color: context.colors.textPrimary
-                                .withValues(alpha: 0.5),
+                                .withValues(alpha: 0.72),
                           ),
                         ),
                       ],
@@ -263,7 +263,7 @@ class _OverallCardState extends State<OverallCard> {
                     style: context.displayLarge.copyWith(
                       fontSize: 72, // 예외: 초대형 숫자
                       color: scoreColor,
-                      fontWeight: FontWeight.w200,
+                      fontWeight: FontWeight.w400,
                       letterSpacing: -4,
                       height: 1.0,
                     ),
@@ -272,7 +272,7 @@ class _OverallCardState extends State<OverallCard> {
                   Text(
                     '점',
                     style: context.bodyLarge.copyWith(
-                      color: context.colors.textPrimary.withValues(alpha: 0.5),
+                      color: context.colors.textPrimary.withValues(alpha: 0.75),
                       fontWeight: FontWeight.w500,
                     ),
                   ),

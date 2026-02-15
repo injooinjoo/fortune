@@ -25,7 +25,7 @@ class ActionPlanCard extends StatelessWidget {
         Text(
           '오늘 꼭 실천할 것들',
           style: context.bodySmall.copyWith(
-            color: context.colors.textPrimary.withValues(alpha: 0.5),
+            color: context.colors.textPrimary.withValues(alpha: 0.72),
           ),
         ),
         const SizedBox(height: 16),

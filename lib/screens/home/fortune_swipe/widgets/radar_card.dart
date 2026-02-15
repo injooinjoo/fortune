@@ -29,7 +29,7 @@ class RadarCard extends StatelessWidget {
         Text(
           '오늘의 각 분야별 운세를 한눈에',
           style: context.bodySmall.copyWith(
-            color: context.colors.textPrimary.withValues(alpha: 0.5),
+            color: context.colors.textPrimary.withValues(alpha: 0.72),
           ),
         ),
 

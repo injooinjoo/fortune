@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/models/character_chat_message.dart';
 import '../../domain/models/character_chat_state.dart';
@@ -116,6 +118,14 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     } catch (_) {
       return null;
     }
+  }
+
+  Map<String, dynamic> _buildAffinityContext() {
+    return {
+      'phase': state.affinity.phase.name,
+      'lovePoints': state.affinity.lovePoints,
+      'currentStreak': state.affinity.currentStreak,
+    };
   }
 
   /// 유저 메시지 추가
@@ -298,6 +308,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         characterTraits: _character.personality,
         clientTimestamp: DateTime.now().toIso8601String(),
         userProfile: _getUserProfileMap(),
+        affinityContext: _buildAffinityContext(),
       );
 
       // 타이핑 딜레이
@@ -366,6 +377,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         characterTraits: _character.personality,
         clientTimestamp: DateTime.now().toIso8601String(),
         userProfile: _getUserProfileMap(),
+        affinityContext: _buildAffinityContext(),
       );
 
       // 타이핑 딜레이
@@ -446,8 +458,28 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     state = state.copyWith(error: null);
   }
 
-  /// 대화 초기화
+  /// 레거시 대화 초기화 (비동기 정리 API로 위임)
   void clearConversation() {
+    unawaited(clearConversationData());
+  }
+
+  /// 대화/호감도/서버 스레드까지 포함한 명시적 초기화
+  Future<void> clearConversationData() async {
+    cancelFollowUp();
+
+    await _service.deleteConversation(_characterId);
+    await _affinityService.deleteAffinity(
+      _characterId,
+      deleteFromServer: true,
+    );
+
+    // 서버 동기화 큐에도 빈 메시지를 반영해 레이스 조건을 줄임
+    await ChatSyncService.instance.queueForSync(
+      chatId: _characterId,
+      chatType: 'character',
+      messages: const <Map<String, dynamic>>[],
+    );
+
     state = CharacterChatState(characterId: _characterId);
   }
 
@@ -563,6 +595,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         characterTraits: _character.personality,
         clientTimestamp: DateTime.now().toIso8601String(),
         userProfile: _getUserProfileMap(),
+        affinityContext: _buildAffinityContext(),
       );
 
       // 5단계: 감정 기반 타이핑 딜레이 (클라이언트 측)
@@ -683,6 +716,7 @@ $emojiInstruction
         characterTraits: _character.personality,
         clientTimestamp: DateTime.now().toIso8601String(),
         userProfile: _getUserProfileMap(),
+        affinityContext: _buildAffinityContext(),
       );
 
       // 5단계: 감정 기반 타이핑 딜레이
@@ -801,6 +835,7 @@ $emojiInstruction
         characterTraits: _character.personality,
         clientTimestamp: DateTime.now().toIso8601String(),
         userProfile: _getUserProfileMap(),
+        affinityContext: _buildAffinityContext(),
       );
 
       // 5단계: 감정 기반 타이핑 딜레이
@@ -1171,6 +1206,7 @@ $emojiInstruction
         characterTraits: _character.personality,
         clientTimestamp: DateTime.now().toIso8601String(),
         userProfile: _getUserProfileMap(),
+        affinityContext: _buildAffinityContext(),
       );
 
       // 감정 기반 타이핑 딜레이

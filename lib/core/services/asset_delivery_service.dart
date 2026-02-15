@@ -41,6 +41,17 @@ class AssetDeliveryService {
   // 초기화 여부
   bool _initialized = false;
 
+  bool isPackSupported(String packId) {
+    final pack = AssetPackConfig.packs[packId];
+    if (pack == null) return false;
+    return pack.isSupportedOnCurrentPlatform();
+  }
+
+  bool _isPackSupported(AssetPack? pack) {
+    if (pack == null) return false;
+    return pack.isSupportedOnCurrentPlatform();
+  }
+
   // ============================================================
   // 초기화
   // ============================================================
@@ -78,6 +89,8 @@ class AssetDeliveryService {
 
     // Tier 1 (번들)은 항상 설치됨
     final pack = AssetPackConfig.packs[packId];
+    if (!_isPackSupported(pack)) return false;
+
     if (pack?.tier == AssetTier.bundled) return true;
 
     // Hive에서 상태 확인
@@ -92,6 +105,10 @@ class AssetDeliveryService {
     await _ensureInitialized();
 
     final pack = AssetPackConfig.packs[packId];
+    if (!_isPackSupported(pack)) {
+      return AssetPackStatus.notInstalled;
+    }
+
     if (pack?.tier == AssetTier.bundled) {
       return AssetPackStatus.installed;
     }
@@ -128,13 +145,18 @@ class AssetDeliveryService {
   // ============================================================
 
   /// 자산 팩 다운로드 요청
-  Future<void> requestAssetPack(String packId) async {
+  Future<bool> requestAssetPack(String packId) async {
     await _ensureInitialized();
 
     final pack = AssetPackConfig.packs[packId];
     if (pack == null) {
       debugPrint('📦 [AssetDeliveryService] ❌ 알 수 없는 팩: $packId');
-      return;
+      return false;
+    }
+
+    if (!_isPackSupported(pack)) {
+      debugPrint('📦 [AssetDeliveryService] ⛔ 플랫폼 미지원 팩: $packId');
+      return false;
     }
 
     // 이미 설치됨
@@ -145,13 +167,13 @@ class AssetDeliveryService {
         status: AssetPackStatus.installed,
         progress: 1.0,
       ));
-      return;
+      return true;
     }
 
     // 이미 다운로드 중
     if (_downloadingPacks.contains(packId)) {
       debugPrint('📦 [AssetDeliveryService] ⏳ 다운로드 중: $packId');
-      return;
+      return true;
     }
 
     // 다운로드 시작
@@ -182,6 +204,7 @@ class AssetDeliveryService {
       ));
 
       debugPrint('📦 [AssetDeliveryService] ✅ 다운로드 완료: $packId');
+      return true;
     } catch (e) {
       _downloadingPacks.remove(packId);
       await _updatePackStatus(packId, AssetPackStatus.failed);
@@ -193,6 +216,7 @@ class AssetDeliveryService {
       ));
 
       debugPrint('📦 [AssetDeliveryService] ❌ 다운로드 실패: $packId - $e');
+      return false;
     }
   }
 
@@ -330,6 +354,11 @@ class AssetDeliveryService {
       return assetPath;
     }
 
+    final pack = AssetPackConfig.packs[packId];
+    if (!_isPackSupported(pack)) {
+      return _getCdnUrl(assetPath, packId);
+    }
+
     // 설치 여부 확인
     if (await isPackInstalled(packId)) {
       // 로컬 캐시 경로 반환
@@ -430,7 +459,7 @@ class AssetDeliveryService {
 
     // 설치될 때까지 대기 (타임아웃 60초)
     final completer = Completer<String?>();
-    Timer? timeout;
+    late final Timer timeout;
     StreamSubscription<DownloadProgress>? subscription;
 
     timeout = Timer(const Duration(seconds: 60), () {
@@ -444,18 +473,23 @@ class AssetDeliveryService {
     subscription = downloadProgress.listen((progress) {
       if (progress.packId == packId) {
         if (progress.status == AssetPackStatus.installed) {
-          timeout?.cancel();
+          timeout.cancel();
           if (!completer.isCompleted) completer.complete(todaysDeck);
         }
         if (progress.status == AssetPackStatus.failed) {
-          timeout?.cancel();
+          timeout.cancel();
           if (!completer.isCompleted) completer.complete(null);
         }
       }
     });
 
     // 스트림 구독 후 다운로드 요청
-    await requestAssetPack(packId);
+    final requested = await requestAssetPack(packId);
+    if (!requested) {
+      timeout.cancel();
+      await subscription.cancel();
+      return null;
+    }
 
     final result = await completer.future;
     await subscription.cancel();
@@ -472,7 +506,7 @@ class AssetDeliveryService {
 
     // 설치될 때까지 대기 (타임아웃 30초)
     final completer = Completer<bool>();
-    Timer? timeout;
+    late final Timer timeout;
     StreamSubscription<DownloadProgress>? subscription;
 
     timeout = Timer(const Duration(seconds: 30), () {
@@ -486,18 +520,23 @@ class AssetDeliveryService {
     subscription = downloadProgress.listen((progress) {
       if (progress.packId == packId) {
         if (progress.status == AssetPackStatus.installed) {
-          timeout?.cancel();
+          timeout.cancel();
           if (!completer.isCompleted) completer.complete(true);
         }
         if (progress.status == AssetPackStatus.failed) {
-          timeout?.cancel();
+          timeout.cancel();
           if (!completer.isCompleted) completer.complete(false);
         }
       }
     });
 
     // 스트림 구독 후 다운로드 요청
-    await requestAssetPack(packId);
+    final requested = await requestAssetPack(packId);
+    if (!requested) {
+      timeout.cancel();
+      await subscription.cancel();
+      return false;
+    }
 
     final result = await completer.future;
     await subscription.cancel();
@@ -519,15 +558,21 @@ class AssetDeliveryService {
       await for (final entity in _cacheDirectory!.list(recursive: true)) {
         if (entity is File) {
           final size = await entity.length();
+          final pathParts = entity.path.split('/');
+          final cacheIndex = pathParts.indexOf('asset_packs');
+          final packId = (cacheIndex >= 0 && cacheIndex + 1 < pathParts.length)
+              ? pathParts[cacheIndex + 1]
+              : null;
+
+          if (packId == null ||
+              !_isPackSupported(AssetPackConfig.packs[packId])) {
+            continue;
+          }
+
           downloadedSize += size;
 
           // 팩별 크기 계산
-          final pathParts = entity.path.split('/');
-          final cacheIndex = pathParts.indexOf('asset_packs');
-          if (cacheIndex >= 0 && cacheIndex + 1 < pathParts.length) {
-            final packId = pathParts[cacheIndex + 1];
-            packSizes[packId] = (packSizes[packId] ?? 0) + size;
-          }
+          packSizes[packId] = (packSizes[packId] ?? 0) + size;
         }
       }
     }
@@ -549,6 +594,11 @@ class AssetDeliveryService {
     await _ensureInitialized();
 
     final pack = AssetPackConfig.packs[packId];
+    if (!_isPackSupported(pack)) {
+      debugPrint('📦 [AssetDeliveryService] ⛔ 플랫폼 미지원 자산은 삭제 대상 제외: $packId');
+      return;
+    }
+
     if (pack?.tier == AssetTier.bundled) {
       debugPrint('📦 [AssetDeliveryService] ⚠️ 번들 자산은 삭제 불가: $packId');
       return;
@@ -579,7 +629,9 @@ class AssetDeliveryService {
     final keysToDelete = <String>[];
     for (final key in _packStatusBox.keys) {
       final pack = AssetPackConfig.packs[key];
-      if (pack?.tier != AssetTier.bundled) {
+      if (pack != null &&
+          _isPackSupported(pack) &&
+          pack.tier != AssetTier.bundled) {
         keysToDelete.add(key as String);
       }
     }

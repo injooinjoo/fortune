@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../../../core/design_system/design_system.dart';
+import '../../../../../../core/utils/haptic_utils.dart';
 
 import '../../../../../../core/widgets/unified_button.dart';
 import '../../../../../../core/widgets/unified_button_enums.dart';
@@ -164,7 +164,7 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
             return Expanded(
               child: GestureDetector(
                 onTap: () {
-                  HapticFeedback.selectionClick();
+                  HapticUtils.selection();
                   setState(() => _selectedDocumentType = type);
                 },
                 child: Container(
@@ -261,7 +261,7 @@ class _DocumentUploadBottomSheetState extends State<DocumentUploadBottomSheet> {
   }) {
     return GestureDetector(
       onTap: () {
-        HapticFeedback.lightImpact();
+        HapticUtils.lightImpact();
         onTap();
       },
       child: Container(

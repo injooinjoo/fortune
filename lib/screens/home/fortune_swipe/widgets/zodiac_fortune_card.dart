@@ -36,7 +36,7 @@ class ZodiacFortuneCard extends StatelessWidget {
                   Text(
                     '나와 주변 사람들의 오늘 운세',
                     style: context.bodySmall.copyWith(
-                      color: context.colors.textPrimary.withValues(alpha: 0.5),
+                      color: context.colors.textPrimary.withValues(alpha: 0.72),
                     ),
                   ),
                 ],
@@ -267,7 +267,7 @@ class ZodiacFortuneCard extends StatelessWidget {
                   Text(
                     '소중한 사람의 운세도 한눈에 확인하세요',
                     style: context.labelTiny.copyWith(
-                      color: context.colors.textPrimary.withValues(alpha: 0.5),
+                      color: context.colors.textPrimary.withValues(alpha: 0.72),
                     ),
                   ),
                 ],

@@ -3,11 +3,11 @@ import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 // Adjusted const usage for elements layout
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/fortune/presentation/providers/saju_provider.dart';
 import 'five_elements_explanation_bottom_sheet.dart';
+import 'package:fortune/core/utils/haptic_utils.dart';
 
 class FiveElementsWidget extends ConsumerWidget {
   final Map<String, dynamic>? userProfile;
@@ -248,7 +248,7 @@ class FiveElementsWidget extends ConsumerWidget {
 
     return GestureDetector(
       onTap: () {
-        HapticFeedback.lightImpact();
+        HapticUtils.lightImpact();
         FiveElementsExplanationBottomSheet.show(context,
             element: element, elementCount: count, totalCount: total);
       },
@@ -362,7 +362,7 @@ class FiveElementsWidget extends ConsumerWidget {
 
         return GestureDetector(
           onTap: () {
-            HapticFeedback.lightImpact();
+            HapticUtils.lightImpact();
             FiveElementsExplanationBottomSheet.show(context,
                 element: entry.key,
                 elementCount: entry.value,

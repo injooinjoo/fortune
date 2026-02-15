@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../../../core/design_system/design_system.dart';
+import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../domain/models/character_choice.dart';
 import '../../domain/models/ai_character.dart';
 
@@ -66,7 +66,7 @@ class _CharacterChoiceWidgetState extends State<CharacterChoiceWidget>
   void _handleTimeout() {
     if (_isSelected) return;
 
-    HapticFeedback.mediumImpact();
+    HapticUtils.mediumImpact();
     if (widget.choiceSet.defaultChoiceIndex != null &&
         widget.choiceSet.defaultChoiceIndex! <
             widget.choiceSet.choices.length) {
@@ -82,7 +82,7 @@ class _CharacterChoiceWidgetState extends State<CharacterChoiceWidget>
     if (_isSelected) return;
 
     setState(() => _isSelected = true);
-    HapticFeedback.lightImpact();
+    HapticUtils.lightImpact();
     _timer?.cancel();
 
     // 선택 애니메이션 후 콜백

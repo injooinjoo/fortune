@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/models/character_chat_message.dart';
+import '../../../../core/services/user_scope_service.dart';
 import '../../../../core/utils/logger.dart';
 
 /// 캐릭터 채팅 로컬 저장소 서비스 (카카오톡 스타일)
@@ -9,6 +12,7 @@ import '../../../../core/utils/logger.dart';
 class CharacterChatLocalService {
   static const String _boxName = 'character_chats';
   static const String _metadataBoxName = 'character_chat_metadata';
+  static const String _migrationDoneKey = 'character_chat_scope_migrated_v1';
   static Box<String>? _box;
   static Box<String>? _metadataBox;
 
@@ -17,6 +21,7 @@ class CharacterChatLocalService {
     try {
       _box = await Hive.openBox<String>(_boxName);
       _metadataBox = await Hive.openBox<String>(_metadataBoxName);
+      await _migrateLegacyKeysIfNeeded();
       Logger.info('CharacterChatLocalService initialized');
     } catch (e) {
       Logger.error('CharacterChatLocalService initialization failed', e);
@@ -37,21 +42,24 @@ class CharacterChatLocalService {
     }
 
     try {
+      final ownerScope = await UserScopeService.instance.getCurrentOwnerId();
+      final conversationKey = _conversationKey(ownerScope, characterId);
+
       // 메시지 목록을 JSON으로 변환
       final messagesJson = messages.map((m) => m.toJson()).toList();
       final jsonString = jsonEncode(messagesJson);
 
-      // characterId를 키로 저장
-      await _box!.put(characterId, jsonString);
+      // ownerScope|characterId를 키로 저장
+      await _box!.put(conversationKey, jsonString);
 
       // 마지막 업데이트 시간 저장
       await _metadataBox!.put(
-        '${characterId}_lastUpdate',
+        _metadataKey(ownerScope, characterId, _MetadataType.lastUpdate),
         DateTime.now().toIso8601String(),
       );
 
       Logger.info(
-          'Saved ${messages.length} messages for character: $characterId');
+          'Saved ${messages.length} messages for character: $characterId (owner: $ownerScope)');
       return true;
     } catch (e) {
       Logger.error('Failed to save conversation locally', e);
@@ -68,7 +76,8 @@ class CharacterChatLocalService {
     }
 
     try {
-      final jsonString = _box!.get(characterId);
+      final ownerScope = await UserScopeService.instance.getCurrentOwnerId();
+      final jsonString = _box!.get(_conversationKey(ownerScope, characterId));
       if (jsonString == null || jsonString.isEmpty) {
         return [];
       }
@@ -79,7 +88,7 @@ class CharacterChatLocalService {
           .toList();
 
       Logger.info(
-          'Loaded ${messages.length} messages for character: $characterId');
+          'Loaded ${messages.length} messages for character: $characterId (owner: $ownerScope)');
       return messages;
     } catch (e) {
       Logger.error('Failed to load conversation locally', e);
@@ -94,9 +103,14 @@ class CharacterChatLocalService {
     }
 
     try {
-      await _box!.delete(characterId);
-      await _metadataBox!.delete('${characterId}_lastUpdate');
-      Logger.info('Deleted conversation for character: $characterId');
+      final ownerScope = await UserScopeService.instance.getCurrentOwnerId();
+      await _box!.delete(_conversationKey(ownerScope, characterId));
+      await _metadataBox!.delete(
+          _metadataKey(ownerScope, characterId, _MetadataType.lastUpdate));
+      await _metadataBox!.delete(
+          _metadataKey(ownerScope, characterId, _MetadataType.lastRead));
+      Logger.info(
+          'Deleted conversation for character: $characterId (owner: $ownerScope)');
       return true;
     } catch (e) {
       Logger.error('Failed to delete conversation locally', e);
@@ -110,7 +124,8 @@ class CharacterChatLocalService {
       return false;
     }
 
-    return _box!.containsKey(characterId);
+    final ownerScope = await UserScopeService.instance.getCurrentOwnerId();
+    return _box!.containsKey(_conversationKey(ownerScope, characterId));
   }
 
   /// 마지막 업데이트 시간 조회
@@ -119,7 +134,9 @@ class CharacterChatLocalService {
       return null;
     }
 
-    final timeString = _metadataBox!.get('${characterId}_lastUpdate');
+    final ownerScope = await UserScopeService.instance.getCurrentOwnerId();
+    final timeString = _metadataBox!
+        .get(_metadataKey(ownerScope, characterId, _MetadataType.lastUpdate));
     if (timeString == null) {
       return null;
     }
@@ -131,8 +148,9 @@ class CharacterChatLocalService {
   Future<void> saveLastReadTimestamp(String characterId) async {
     if (!isInitialized) return;
 
+    final ownerScope = await UserScopeService.instance.getCurrentOwnerId();
     await _metadataBox!.put(
-      '${characterId}_lastRead',
+      _metadataKey(ownerScope, characterId, _MetadataType.lastRead),
       DateTime.now().toIso8601String(),
     );
   }
@@ -141,7 +159,9 @@ class CharacterChatLocalService {
   Future<DateTime?> getLastReadTimestamp(String characterId) async {
     if (!isInitialized) return null;
 
-    final timeString = _metadataBox!.get('${characterId}_lastRead');
+    final ownerScope = await UserScopeService.instance.getCurrentOwnerId();
+    final timeString = _metadataBox!
+        .get(_metadataKey(ownerScope, characterId, _MetadataType.lastRead));
     if (timeString == null) return null;
 
     return DateTime.tryParse(timeString);
@@ -153,7 +173,13 @@ class CharacterChatLocalService {
       return [];
     }
 
-    return _box!.keys.cast<String>().toList();
+    final ownerScope = await UserScopeService.instance.getCurrentOwnerId();
+    final prefix = '$ownerScope|';
+    return _box!.keys
+        .cast<String>()
+        .where((key) => key.startsWith(prefix))
+        .map((key) => key.substring(prefix.length))
+        .toList();
   }
 
   /// 모든 대화 삭제
@@ -163,13 +189,142 @@ class CharacterChatLocalService {
     }
 
     try {
-      await _box!.clear();
-      await _metadataBox!.clear();
-      Logger.info('Cleared all local conversations');
+      final ownerScope = await UserScopeService.instance.getCurrentOwnerId();
+      await clearConversationsByOwner(ownerScope);
+      Logger.info('Cleared all local conversations for owner: $ownerScope');
       return true;
     } catch (e) {
       Logger.error('Failed to clear all conversations', e);
       return false;
     }
   }
+
+  /// 특정 ownerScope의 모든 대화 삭제
+  Future<void> clearConversationsByOwner(String ownerScope) async {
+    if (!isInitialized) return;
+
+    final conversationPrefix = '$ownerScope|';
+    final metadataPrefix = '$ownerScope|';
+
+    final conversationKeys = _box!.keys
+        .cast<String>()
+        .where((key) => key.startsWith(conversationPrefix))
+        .toList();
+    for (final key in conversationKeys) {
+      await _box!.delete(key);
+    }
+
+    final metadataKeys = _metadataBox!.keys
+        .cast<String>()
+        .where((key) => key.startsWith(metadataPrefix))
+        .toList();
+    for (final key in metadataKeys) {
+      await _metadataBox!.delete(key);
+    }
+  }
+
+  static Future<void> _migrateLegacyKeysIfNeeded() async {
+    if (!isInitialized) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    final alreadyMigrated = prefs.getBool(_migrationDoneKey) ?? false;
+    if (alreadyMigrated) return;
+
+    String? currentUserId;
+    try {
+      currentUserId = Supabase.instance.client.auth.currentUser?.id;
+    } catch (_) {
+      currentUserId = null;
+    }
+    final lastKnownUserId =
+        await UserScopeService.instance.getLastKnownUserId();
+    final guestOwnerScope = await UserScopeService.instance.getGuestOwnerId();
+
+    final targetOwnerScope =
+        currentUserId != null && currentUserId == lastKnownUserId
+            ? UserScopeService.ownerIdForUser(currentUserId)
+            : guestOwnerScope;
+
+    final legacyConversationKeys =
+        _box!.keys.cast<String>().where((key) => !_isScopedKey(key)).toList();
+
+    for (final legacyCharacterId in legacyConversationKeys) {
+      final value = _box!.get(legacyCharacterId);
+      if (value == null) continue;
+
+      final newKey = _conversationKey(targetOwnerScope, legacyCharacterId);
+      if (!_box!.containsKey(newKey)) {
+        await _box!.put(newKey, value);
+      }
+      await _box!.delete(legacyCharacterId);
+    }
+
+    final legacyMetadataKeys = _metadataBox!.keys
+        .cast<String>()
+        .where((key) => !_isScopedKey(key))
+        .toList();
+
+    for (final legacyKey in legacyMetadataKeys) {
+      final parsed = _parseLegacyMetadataKey(legacyKey);
+      if (parsed == null) continue;
+
+      final value = _metadataBox!.get(legacyKey);
+      if (value == null) continue;
+
+      final newKey =
+          _metadataKey(targetOwnerScope, parsed.characterId, parsed.type);
+      if (!_metadataBox!.containsKey(newKey)) {
+        await _metadataBox!.put(newKey, value);
+      }
+      await _metadataBox!.delete(legacyKey);
+    }
+
+    await prefs.setBool(_migrationDoneKey, true);
+    Logger.info(
+        'CharacterChatLocalService legacy migration completed (owner: $targetOwnerScope)');
+  }
+
+  static bool _isScopedKey(String key) => key.contains('|');
+
+  static String _conversationKey(String ownerScope, String characterId) {
+    return '$ownerScope|$characterId';
+  }
+
+  static String _metadataKey(
+      String ownerScope, String characterId, _MetadataType type) {
+    return '$ownerScope|$characterId|${type.name}';
+  }
+
+  static _LegacyMetadataParsed? _parseLegacyMetadataKey(String key) {
+    if (key.endsWith('_lastUpdate')) {
+      return _LegacyMetadataParsed(
+        characterId: key.replaceFirst('_lastUpdate', ''),
+        type: _MetadataType.lastUpdate,
+      );
+    }
+
+    if (key.endsWith('_lastRead')) {
+      return _LegacyMetadataParsed(
+        characterId: key.replaceFirst('_lastRead', ''),
+        type: _MetadataType.lastRead,
+      );
+    }
+
+    return null;
+  }
+}
+
+enum _MetadataType {
+  lastUpdate,
+  lastRead,
+}
+
+class _LegacyMetadataParsed {
+  final String characterId;
+  final _MetadataType type;
+
+  const _LegacyMetadataParsed({
+    required this.characterId,
+    required this.type,
+  });
 }

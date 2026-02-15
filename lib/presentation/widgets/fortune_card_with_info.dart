@@ -1,10 +1,10 @@
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'fortune_card.dart';
 import 'fortune_explanation_bottom_sheet.dart';
 import 'package:fortune/core/design_system/design_system.dart';
 import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/utils/haptic_utils.dart';
 
 class FortuneCardWithInfo extends StatelessWidget {
   final IconData icon;
@@ -35,7 +35,7 @@ class FortuneCardWithInfo extends StatelessWidget {
   });
 
   void _showFortuneInfo(BuildContext context) {
-    HapticFeedback.lightImpact();
+    HapticUtils.lightImpact();
     FortuneExplanationBottomSheet.show(
       context,
       fortuneType: fortuneType,

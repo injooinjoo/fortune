@@ -64,11 +64,11 @@ class DSColors {
   /// Primary text - Pure white
   static const Color textPrimary = Color(0xFFFFFFFF);
 
-  /// Secondary text - iOS system gray (brightened for better visibility)
-  static const Color textSecondary = Color(0xFFAEAEB2);
+  /// Secondary text - brighter gray for stronger dark-mode readability
+  static const Color textSecondary = Color(0xFFC7C7CC);
 
-  /// Tertiary text - Medium gray (brightened)
-  static const Color textTertiary = Color(0xFF8E8E93);
+  /// Tertiary text - raised contrast while keeping hierarchy
+  static const Color textTertiary = Color(0xFFB0B0B5);
 
   /// Disabled text - Mid gray
   static const Color textDisabled = Color(0xFF48484A);
@@ -173,11 +173,11 @@ class DSColors {
   /// Primary text light - Pure black
   static const Color textPrimaryDark = Color(0xFF000000);
 
-  /// Secondary text light - Darker for better visibility
-  static const Color textSecondaryDark = Color(0xFF48484A);
+  /// Secondary text light - stronger contrast on white backgrounds
+  static const Color textSecondaryDark = Color(0xFF2C2C2E);
 
-  /// Tertiary text light - Medium gray
-  static const Color textTertiaryDark = Color(0xFF6E6E73);
+  /// Tertiary text light - strengthened for better small-text legibility
+  static const Color textTertiaryDark = Color(0xFF3C3C43);
 
   /// Disabled text light
   static const Color textDisabledDark = Color(0xFFAEAEB2);

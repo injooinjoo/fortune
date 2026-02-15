@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/models/character_affinity.dart';
+import '../../../../core/services/user_scope_service.dart';
 import '../../../../core/utils/logger.dart';
 
 /// 캐릭터 호감도 서비스
@@ -43,7 +44,8 @@ class CharacterAffinityService {
     }
 
     try {
-      final jsonString = _box!.get(characterId);
+      final ownerScope = await UserScopeService.instance.getCurrentOwnerId();
+      final jsonString = _box!.get(_localKey(ownerScope, characterId));
       if (jsonString == null || jsonString.isEmpty) {
         return null;
       }
@@ -52,7 +54,7 @@ class CharacterAffinityService {
       final affinity = CharacterAffinity.fromJson(json);
 
       Logger.info(
-          'Loaded affinity for $characterId: ${affinity.lovePoints}pts');
+          'Loaded affinity for $characterId: ${affinity.lovePoints}pts (owner: $ownerScope)');
       return affinity;
     } catch (e) {
       Logger.error('Failed to load affinity locally', e);
@@ -69,9 +71,11 @@ class CharacterAffinityService {
     }
 
     try {
+      final ownerScope = await UserScopeService.instance.getCurrentOwnerId();
       final jsonString = jsonEncode(affinity.toJson());
-      await _box!.put(characterId, jsonString);
-      Logger.info('Saved affinity for $characterId: ${affinity.lovePoints}pts');
+      await _box!.put(_localKey(ownerScope, characterId), jsonString);
+      Logger.info(
+          'Saved affinity for $characterId: ${affinity.lovePoints}pts (owner: $ownerScope)');
       return true;
     } catch (e) {
       Logger.error('Failed to save affinity locally', e);
@@ -84,11 +88,34 @@ class CharacterAffinityService {
     if (!isInitialized) return false;
 
     try {
-      await _box!.delete(characterId);
-      Logger.info('Deleted affinity for $characterId');
+      final ownerScope = await UserScopeService.instance.getCurrentOwnerId();
+      await _box!.delete(_localKey(ownerScope, characterId));
+      Logger.info('Deleted affinity for $characterId (owner: $ownerScope)');
       return true;
     } catch (e) {
       Logger.error('Failed to delete affinity locally', e);
+      return false;
+    }
+  }
+
+  /// 호감도 삭제 (서버)
+  Future<bool> deleteAffinityFromServer(String characterId) async {
+    try {
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId == null) {
+        return false;
+      }
+
+      await _supabase
+          .from('user_character_affinity')
+          .delete()
+          .eq('user_id', userId)
+          .eq('character_id', characterId);
+
+      Logger.info('Deleted affinity from server for $characterId');
+      return true;
+    } catch (e) {
+      Logger.error('Failed to delete affinity from server', e);
       return false;
     }
   }
@@ -202,6 +229,20 @@ class CharacterAffinityService {
     return localSuccess;
   }
 
+  /// 호감도 삭제 (로컬 + 선택적 서버)
+  Future<bool> deleteAffinity(
+    String characterId, {
+    bool deleteFromServer = false,
+  }) async {
+    final localDeleted = await deleteAffinityLocal(characterId);
+
+    if (deleteFromServer) {
+      await deleteAffinityFromServer(characterId);
+    }
+
+    return localDeleted;
+  }
+
   /// 서버에서 동기화 (서버 → 로컬)
   Future<CharacterAffinity?> syncFromServer(String characterId) async {
     final serverAffinity = await loadAffinityFromServer(characterId);
@@ -295,8 +336,13 @@ class CharacterAffinityService {
     final Map<String, CharacterAffinity> result = {};
 
     try {
-      for (final key in _box!.keys) {
-        final characterId = key as String;
+      final ownerScope = await UserScopeService.instance.getCurrentOwnerId();
+      final prefix = '$ownerScope|';
+      final scopedKeys =
+          _box!.keys.cast<String>().where((key) => key.startsWith(prefix));
+
+      for (final key in scopedKeys) {
+        final characterId = key.substring(prefix.length);
         final affinity = await loadAffinityLocal(characterId);
         if (affinity != null) {
           result[characterId] = _applyDailyResetAndPenalty(affinity);
@@ -314,8 +360,16 @@ class CharacterAffinityService {
     if (!isInitialized) return false;
 
     try {
-      await _box!.clear();
-      Logger.info('Cleared all local affinities');
+      final ownerScope = await UserScopeService.instance.getCurrentOwnerId();
+      final prefix = '$ownerScope|';
+      final scopedKeys = _box!.keys
+          .cast<String>()
+          .where((key) => key.startsWith(prefix))
+          .toList();
+      for (final key in scopedKeys) {
+        await _box!.delete(key);
+      }
+      Logger.info('Cleared all local affinities for owner: $ownerScope');
       return true;
     } catch (e) {
       Logger.error('Failed to clear all affinities', e);
@@ -331,6 +385,10 @@ class CharacterAffinityService {
 
     // 추가 조건 (메시지 수, 스트릭)
     return targetPhase.requirements.isMet(affinity);
+  }
+
+  String _localKey(String ownerScope, String characterId) {
+    return '$ownerScope|$characterId';
   }
 }
 

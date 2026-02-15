@@ -38,7 +38,7 @@ class WeeklyTrendCard extends StatelessWidget {
         Text(
           '이번 주 당신의 운세 흐름',
           style: context.bodySmall.copyWith(
-            color: context.colors.textPrimary.withValues(alpha: 0.5),
+            color: context.colors.textPrimary.withValues(alpha: 0.72),
           ),
         ),
 

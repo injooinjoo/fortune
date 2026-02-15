@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/l10n_extension.dart';
 import '../../../../core/theme/typography_unified.dart';
+import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../../data/services/character_localizer.dart';
 import '../../domain/models/ai_character.dart';
@@ -114,7 +114,7 @@ class CharacterListPanel extends ConsumerWidget {
           // 프로필 이미지 (설정으로 이동)
           GestureDetector(
             onTap: () {
-              HapticFeedback.lightImpact();
+              HapticUtils.lightImpact();
               context.push('/profile');
             },
             child: CircleAvatar(
@@ -300,11 +300,11 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
             child: Text(context.l10n.cancel),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(ctx);
-              ref
+              await ref
                   .read(characterChatProvider(widget.character.id).notifier)
-                  .clearConversation();
+                  .clearConversationData();
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: Text(context.l10n.leave),
@@ -316,7 +316,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
 
   void _onToggleMute(BuildContext context) {
     _closeActions();
-    HapticFeedback.lightImpact();
+    HapticUtils.lightImpact();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(context.l10n.notificationOffMessage(
@@ -461,7 +461,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                     // 아바타 (탭하면 프로필)
                     GestureDetector(
                       onTap: () {
-                        HapticFeedback.lightImpact();
+                        HapticUtils.lightImpact();
                         context.push('/character/${widget.character.id}',
                             extra: widget.character);
                       },

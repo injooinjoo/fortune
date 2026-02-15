@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
+import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../domain/models/meditation_session.dart';
 import '../providers/wellness_providers.dart';
 
@@ -90,7 +90,7 @@ class BreathingTimerWidget extends ConsumerWidget {
               _ControlButton(
                 icon: Icons.pause_rounded,
                 onPressed: () {
-                  HapticFeedback.lightImpact();
+                  HapticUtils.lightImpact();
                   ref.read(breathingTimerProvider.notifier).pause();
                 },
                 color: DSColors.accent,
@@ -99,7 +99,7 @@ class BreathingTimerWidget extends ConsumerWidget {
               _ControlButton(
                 icon: Icons.refresh_rounded,
                 onPressed: () {
-                  HapticFeedback.lightImpact();
+                  HapticUtils.lightImpact();
                   ref.read(breathingTimerProvider.notifier).reset();
                 },
                 color: isDark
@@ -110,7 +110,7 @@ class BreathingTimerWidget extends ConsumerWidget {
               _ControlButton(
                 icon: Icons.play_arrow_rounded,
                 onPressed: () {
-                  HapticFeedback.mediumImpact();
+                  HapticUtils.mediumImpact();
                   ref.read(breathingTimerProvider.notifier).start();
                 },
                 color: DSColors.accent,
@@ -295,7 +295,7 @@ class BreathingPatternSelector extends ConsumerWidget {
               onTap: isDisabled
                   ? null
                   : () {
-                      HapticFeedback.selectionClick();
+                      HapticUtils.selection();
                       ref
                           .read(selectedBreathingPatternProvider.notifier)
                           .state = pattern;
@@ -386,7 +386,7 @@ class MeditationDurationSelector extends ConsumerWidget {
                 onTap: isDisabled
                     ? null
                     : () {
-                        HapticFeedback.selectionClick();
+                        HapticUtils.selection();
                         ref
                             .read(selectedMeditationDurationProvider.notifier)
                             .state = duration;

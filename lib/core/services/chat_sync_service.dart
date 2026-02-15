@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -8,6 +7,7 @@ import 'package:uuid/uuid.dart';
 import '../models/chat_sync_item.dart';
 import '../utils/logger.dart';
 import 'sync_queue_local_service.dart';
+import 'user_scope_service.dart';
 
 /// 통합 채팅 동기화 서비스
 /// - Debounced 자동 저장 (3초)
@@ -37,7 +37,6 @@ class ChatSyncService {
   // Configuration
   static const Duration _debounceDelay = Duration(seconds: 3);
   static const Duration _minSyncInterval = Duration(seconds: 30);
-  static const int _maxRetries = 3;
   DateTime? _lastSyncTime;
 
   /// 서비스 초기화
@@ -84,13 +83,16 @@ class ChatSyncService {
       return;
     }
 
+    final ownerId = await UserScopeService.instance.getCurrentOwnerId();
+
     // 기존 타이머 취소
-    final timerKey = '${chatType}_$chatId';
+    final timerKey = '${ownerId}_${chatType}_$chatId';
     _debounceTimers[timerKey]?.cancel();
 
     // 새 타이머 설정 (debounce)
     _debounceTimers[timerKey] = Timer(_debounceDelay, () async {
       await _performQueueAndSync(
+        ownerId: ownerId,
         chatId: chatId,
         chatType: chatType,
         messages: messages,
@@ -114,21 +116,19 @@ class ChatSyncService {
 
   /// 큐에 추가하고 동기화 시도
   Future<void> _performQueueAndSync({
+    required String ownerId,
     required String chatId,
     required String chatType,
     required List<Map<String, dynamic>> messages,
   }) async {
-    // 현재 사용자 ID 가져오기
-    final userId = _supabase.auth.currentUser?.id;
-
     // 동기화 항목 생성
     final item = ChatSyncItem(
       id: _uuid.v4(),
+      ownerId: ownerId,
       chatId: chatId,
       chatType: chatType,
       messages: messages,
       createdAt: DateTime.now(),
-      userId: userId,
       status: SyncStatus.pending,
     );
 
@@ -166,7 +166,8 @@ class ChatSyncService {
     _lastSyncTime = DateTime.now();
 
     try {
-      final pendingItems = await _queueService.getPending();
+      final ownerId = await UserScopeService.instance.getCurrentOwnerId();
+      final pendingItems = await _queueService.getPending(ownerId: ownerId);
       Logger.info('[ChatSyncService] 대기 항목 ${pendingItems.length}개 처리 시작');
 
       for (final item in pendingItems) {
@@ -174,7 +175,7 @@ class ChatSyncService {
       }
 
       // 완료된 항목 정리
-      await _queueService.clearCompleted();
+      await _queueService.clearCompleted(ownerId: ownerId);
     } finally {
       _isSyncing = false;
     }
@@ -182,6 +183,13 @@ class ChatSyncService {
 
   /// 단일 항목 동기화
   Future<bool> _syncItem(ChatSyncItem item) async {
+    final currentOwnerId = await UserScopeService.instance.getCurrentOwnerId();
+    if (item.ownerId != currentOwnerId) {
+      Logger.warning(
+          '[ChatSyncService] owner mismatch - skip sync: ${item.ownerId} != $currentOwnerId');
+      return false;
+    }
+
     // 인증 안 된 경우 로컬에만 저장 (나중에 마이그레이션)
     if (_supabase.auth.currentUser == null) {
       Logger.info('[ChatSyncService] 미인증 사용자 - 로컬에만 저장');
@@ -196,6 +204,7 @@ class ChatSyncService {
 
     try {
       await _queueService.updateStatus(
+        item.ownerId,
         item.chatType,
         item.chatId,
         SyncStatus.syncing,
@@ -219,7 +228,7 @@ class ChatSyncService {
       );
 
       if (response.status == 200) {
-        await _queueService.remove(item.chatType, item.chatId);
+        await _queueService.remove(item.ownerId, item.chatType, item.chatId);
         Logger.info('[ChatSyncService] 동기화 성공: ${item.chatId}');
         return true;
       } else {
@@ -230,6 +239,7 @@ class ChatSyncService {
 
       // 재시도 가능하면 실패 상태로 업데이트
       await _queueService.updateStatus(
+        item.ownerId,
         item.chatType,
         item.chatId,
         SyncStatus.failed,
@@ -245,8 +255,15 @@ class ChatSyncService {
     if (!_isInitialized) return false;
 
     try {
-      // 게스트 항목에 userId 할당
-      await _queueService.assignUserId(userId);
+      final guestOwnerId = await UserScopeService.instance.getGuestOwnerId();
+      final userOwnerId = UserScopeService.ownerIdForUser(userId);
+
+      // 게스트 owner를 로그인 owner로 승격
+      await _queueService.assignOwner(
+        fromOwnerId: guestOwnerId,
+        toOwnerId: userOwnerId,
+      );
+      await UserScopeService.instance.refreshCurrentScope();
 
       // 동기화 시도
       await processQueue();
@@ -261,7 +278,9 @@ class ChatSyncService {
 
   /// 대기 중인 항목 개수
   Future<int> getPendingCount() async {
-    return await _queueService.getPendingCount();
+    final ownerId = await UserScopeService.instance.getCurrentOwnerId();
+    final pending = await _queueService.getPending(ownerId: ownerId);
+    return pending.length;
   }
 
   /// 리소스 정리
@@ -271,11 +290,5 @@ class ChatSyncService {
       timer.cancel();
     }
     _debounceTimers.clear();
-  }
-
-  /// Exponential backoff 계산
-  int _calculateBackoffMs(int attemptCount) {
-    // 5초, 10초, 20초, 최대 60초
-    return min(5000 * pow(2, attemptCount - 1).toInt(), 60000);
   }
 }

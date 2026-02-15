@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/models/health_fortune_model.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/unified_button.dart';
+import '../../../../core/utils/haptic_utils.dart';
 
 class BodyPartSelector extends StatefulWidget {
   final List<BodyPart> selectedParts;
@@ -280,7 +280,7 @@ class _BodyPartSelectorState extends State<BodyPartSelector> {
   }
 
   void _toggleBodyPart(BodyPart part) {
-    HapticFeedback.lightImpact();
+    HapticUtils.lightImpact();
     setState(() {
       if (_selectedParts.contains(part)) {
         _selectedParts.remove(part);

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fortune/core/design_system/design_system.dart';
+import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../core/widgets/unified_button.dart';
 import '../../core/widgets/unified_button_enums.dart';
 import '../../core/extensions/l10n_extension.dart';
@@ -17,7 +17,7 @@ class AppDialog {
     bool enableHaptic = true,
   }) {
     if (enableHaptic) {
-      HapticFeedback.mediumImpact();
+      HapticUtils.mediumImpact();
     }
 
     return showDialog<T>(
@@ -86,7 +86,7 @@ class AppDialog {
     bool enableHaptic = true,
   }) {
     if (enableHaptic) {
-      HapticFeedback.heavyImpact();
+      HapticUtils.heavyImpact();
     }
 
     final future = show<void>(
@@ -120,7 +120,7 @@ class AppDialog {
     bool enableHaptic = true,
   }) {
     if (enableHaptic) {
-      HapticFeedback.heavyImpact();
+      HapticUtils.heavyImpact();
     }
 
     return show<void>(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
 import 'package:fortune/core/design_system/design_system.dart';
+import 'package:fortune/core/utils/haptic_utils.dart';
 
 class BottomTarotDeckWidget extends ConsumerStatefulWidget {
   final Function(int) onCardSelected;
@@ -153,7 +153,7 @@ class _BottomTarotDeckWidgetState extends ConsumerState<BottomTarotDeckWidget>
           child: GestureDetector(
             onTap: () {
               if (isCenter) {
-                HapticFeedback.mediumImpact();
+                HapticUtils.mediumImpact();
                 // 카드 선택
                 widget.onCardSelected(index);
               } else {

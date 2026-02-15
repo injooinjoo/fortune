@@ -20,6 +20,10 @@ _$AssetPackImpl _$$AssetPackImplFromJson(Map<String, dynamic> json) =>
       fortuneType: json['fortuneType'] as String?,
       status: $enumDecodeNullable(_$AssetPackStatusEnumMap, json['status']) ??
           AssetPackStatus.notInstalled,
+      supportedTargets: (json['supportedTargets'] as List<dynamic>?)
+              ?.map((e) => $enumDecode(_$AssetDistributionTargetEnumMap, e))
+              .toSet() ??
+          const <AssetDistributionTarget>{AssetDistributionTarget.all},
       downloadProgress: (json['downloadProgress'] as num?)?.toDouble() ?? 0.0,
       lastAccessedAt: json['lastAccessedAt'] == null
           ? null
@@ -39,6 +43,9 @@ Map<String, dynamic> _$$AssetPackImplToJson(_$AssetPackImpl instance) =>
       'estimatedSize': instance.estimatedSize,
       'fortuneType': instance.fortuneType,
       'status': _$AssetPackStatusEnumMap[instance.status]!,
+      'supportedTargets': instance.supportedTargets
+          .map((e) => _$AssetDistributionTargetEnumMap[e]!)
+          .toList(),
       'downloadProgress': instance.downloadProgress,
       'lastAccessedAt': instance.lastAccessedAt?.toIso8601String(),
       'installedAt': instance.installedAt?.toIso8601String(),
@@ -56,6 +63,12 @@ const _$AssetPackStatusEnumMap = {
   AssetPackStatus.downloading: 'downloading',
   AssetPackStatus.installed: 'installed',
   AssetPackStatus.failed: 'failed',
+};
+
+const _$AssetDistributionTargetEnumMap = {
+  AssetDistributionTarget.all: 'all',
+  AssetDistributionTarget.ios: 'ios',
+  AssetDistributionTarget.android: 'android',
 };
 
 _$DownloadProgressImpl _$$DownloadProgressImplFromJson(

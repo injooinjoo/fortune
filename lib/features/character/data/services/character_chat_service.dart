@@ -81,6 +81,7 @@ class CharacterChatService {
     String? characterTraits, // 캐릭터 특성 요약 (말투, 호칭 등)
     String? clientTimestamp, // 현재 시간 (시간 인식용)
     Map<String, dynamic>? userProfile, // 유저 프로필 정보 (개인화용)
+    Map<String, dynamic>? affinityContext, // 관계 단계 컨텍스트 (게스트 모드 우선)
   }) async {
     try {
       final response = await _supabase.functions.invoke(
@@ -99,6 +100,7 @@ class CharacterChatService {
           if (characterTraits != null) 'characterTraits': characterTraits,
           if (clientTimestamp != null) 'clientTimestamp': clientTimestamp,
           if (userProfile != null) 'userProfile': userProfile,
+          if (affinityContext != null) 'affinityContext': affinityContext,
         },
       );
 
@@ -210,14 +212,29 @@ class CharacterChatService {
   /// 대화 삭제 (로컬 + 서버)
   Future<bool> deleteConversation(String characterId) async {
     final localDeleted = await _localService.deleteConversation(characterId);
-    // 서버 삭제는 별도 API가 필요하면 추가
+
+    // 서버는 빈 메시지로 초기화해 사실상 리셋 처리
+    try {
+      if (_supabase.auth.currentSession != null) {
+        await _supabase.functions.invoke(
+          'character-conversation-save',
+          body: {
+            'characterId': characterId,
+            'messages': <Map<String, dynamic>>[],
+          },
+        );
+      }
+    } catch (e) {
+      Logger.warning('Failed to clear conversation on server: $e');
+    }
+
     return localDeleted;
   }
 
   /// 모든 캐릭터 대화 일괄 불러오기 (로그인 후 복원용)
   ///
   /// 서버에서 모든 대화를 불러와 로컬에 저장합니다.
-  /// 반환: Map<characterId, List<CharacterChatMessage>>
+  /// 반환: `Map<characterId, List<CharacterChatMessage>>`
   Future<Map<String, List<CharacterChatMessage>>> loadAllConversations() async {
     final result = <String, List<CharacterChatMessage>>{};
 
@@ -227,6 +244,9 @@ class CharacterChatService {
         Logger.info('loadAllConversations: 미인증 상태 - 스킵');
         return result;
       }
+
+      // 현재 owner 범위의 로컬 대화를 먼저 정리해 교차 유저 노출 차단
+      await _localService.clearAllConversations();
 
       final response = await _supabase.functions.invoke(
         'character-conversations-load-all',

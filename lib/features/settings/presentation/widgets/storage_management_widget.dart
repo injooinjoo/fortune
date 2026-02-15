@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/services/asset_delivery_service.dart';
@@ -38,6 +39,7 @@ class _StorageManagementWidgetState extends State<StorageManagementWidget> {
       // 각 팩의 상태 가져오기
       final statuses = <String, AssetPackStatus>{};
       for (final packId in AssetPackConfig.packs.keys) {
+        if (!_assetService.isPackSupported(packId)) continue;
         statuses[packId] = await _assetService.getPackStatus(packId);
       }
 
@@ -184,6 +186,20 @@ class _StorageManagementWidgetState extends State<StorageManagementWidget> {
 
         const Divider(),
 
+        if (defaultTargetPlatform == TargetPlatform.iOS) ...[
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              'iOS에서는 Android 전용(onDemand) 자산이 비지원되어 스토리지 목록에서 제외됩니다.',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.primary,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+        ],
+
         // 다운로드된 자산 팩 목록
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -298,6 +314,7 @@ class _StorageManagementWidgetState extends State<StorageManagementWidget> {
     // 설치된 팩만 필터링 (번들 제외)
     final installedPacks = AssetPackConfig.packs.entries
         .where((e) =>
+            _assetService.isPackSupported(e.key) &&
             e.value.tier != AssetTier.bundled &&
             _packStatuses[e.key] == AssetPackStatus.installed)
         .toList();

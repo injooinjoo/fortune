@@ -124,9 +124,15 @@ class _SmartImageState extends State<SmartImage> {
 
       // 자동 다운로드가 활성화되어 있고 설치되지 않은 팩이면 다운로드
       if (widget.autoDownload) {
+        if (!service.isPackSupported(widget.assetPackId!)) {
+          debugPrint(
+              '🖼️ [SmartImage] ⛔ 미지원 패킷(플랫폼 분기): ${widget.assetPackId}');
+          return;
+        }
+
         final isInstalled = await service.isPackInstalled(widget.assetPackId!);
         if (!isInstalled) {
-          _startDownload();
+          await _startDownload();
         }
       }
     } catch (e) {
@@ -141,15 +147,23 @@ class _SmartImageState extends State<SmartImage> {
     }
   }
 
-  void _startDownload() {
+  Future<void> _startDownload() async {
     if (widget.assetPackId == null || _isDownloading) return;
+
+    final service = AssetDeliveryService();
+    if (!service.isPackSupported(widget.assetPackId!)) {
+      debugPrint('🖼️ [SmartImage] ⛔ 미지원 패킷(플랫폼 분기): ${widget.assetPackId}');
+      return;
+    }
+
+    final requestStarted = await service.requestAssetPack(widget.assetPackId!);
+    if (!requestStarted) return;
+
+    if (!mounted) return;
 
     setState(() {
       _isDownloading = true;
     });
-
-    final service = AssetDeliveryService();
-    service.requestAssetPack(widget.assetPackId!);
 
     // 다운로드 진행률 구독
     service.downloadProgress.listen((progress) {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -10,6 +9,7 @@ import '../../../../core/widgets/unified_button_enums.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../domain/models/medical_document_models.dart';
 import '../../data/services/medical_document_service.dart';
+import '../../../../core/utils/haptic_utils.dart';
 
 /// 의료 문서 분석 결과 페이지
 class MedicalDocumentResultPage extends ConsumerStatefulWidget {
@@ -80,7 +80,7 @@ class _MedicalDocumentResultPageState
         _isLoading = false;
       });
 
-      HapticFeedback.mediumImpact();
+      HapticUtils.mediumImpact();
     } catch (e) {
       setState(() {
         _isLoading = false;

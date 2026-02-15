@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fortune/core/design_system/design_system.dart';
+import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_dimensions.dart';
 import '../../core/theme/app_typography.dart';
@@ -180,7 +180,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
                     ?.copyWith(fontWeight: FontWeight.bold)),
             IconButton(
                 onPressed: () {
-                  HapticFeedback.lightImpact();
+                  HapticUtils.lightImpact();
                   _initializeSaju();
                 },
                 icon: Icon(Icons.refresh, color: theme.colorScheme.primary))

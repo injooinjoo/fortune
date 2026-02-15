@@ -12,25 +12,25 @@ enum SyncStatus {
 /// 오프라인 큐에 저장되어 나중에 DB로 동기화됨
 class ChatSyncItem {
   final String id;
+  final String ownerId; // user:<uid> | guest:<deviceId>
   final String chatId; // characterId 또는 'general'
   final String chatType; // 'character' | 'general'
   final List<Map<String, dynamic>> messages;
   final DateTime createdAt;
   final DateTime? lastAttemptAt;
   final int attemptCount;
-  final String? userId; // null이면 게스트
   final SyncStatus status;
   final String? errorMessage;
 
   const ChatSyncItem({
     required this.id,
+    required this.ownerId,
     required this.chatId,
     required this.chatType,
     required this.messages,
     required this.createdAt,
     this.lastAttemptAt,
     this.attemptCount = 0,
-    this.userId,
     this.status = SyncStatus.pending,
     this.errorMessage,
   });
@@ -39,6 +39,8 @@ class ChatSyncItem {
   factory ChatSyncItem.fromJson(Map<String, dynamic> json) {
     return ChatSyncItem(
       id: json['id'] as String,
+      ownerId: (json['ownerId'] as String?) ??
+          _legacyUserIdToOwnerId(json['userId'] as String?),
       chatId: json['chatId'] as String,
       chatType: json['chatType'] as String,
       messages: (json['messages'] as List)
@@ -49,7 +51,6 @@ class ChatSyncItem {
           ? DateTime.parse(json['lastAttemptAt'] as String)
           : null,
       attemptCount: json['attemptCount'] as int? ?? 0,
-      userId: json['userId'] as String?,
       status: SyncStatus.values.firstWhere(
         (s) => s.name == json['status'],
         orElse: () => SyncStatus.pending,
@@ -62,13 +63,13 @@ class ChatSyncItem {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'ownerId': ownerId,
       'chatId': chatId,
       'chatType': chatType,
       'messages': messages,
       'createdAt': createdAt.toIso8601String(),
       'lastAttemptAt': lastAttemptAt?.toIso8601String(),
       'attemptCount': attemptCount,
-      'userId': userId,
       'status': status.name,
       'errorMessage': errorMessage,
     };
@@ -86,25 +87,25 @@ class ChatSyncItem {
   /// 복사본 생성
   ChatSyncItem copyWith({
     String? id,
+    String? ownerId,
     String? chatId,
     String? chatType,
     List<Map<String, dynamic>>? messages,
     DateTime? createdAt,
     DateTime? lastAttemptAt,
     int? attemptCount,
-    String? userId,
     SyncStatus? status,
     String? errorMessage,
   }) {
     return ChatSyncItem(
       id: id ?? this.id,
+      ownerId: ownerId ?? this.ownerId,
       chatId: chatId ?? this.chatId,
       chatType: chatType ?? this.chatType,
       messages: messages ?? this.messages,
       createdAt: createdAt ?? this.createdAt,
       lastAttemptAt: lastAttemptAt ?? this.lastAttemptAt,
       attemptCount: attemptCount ?? this.attemptCount,
-      userId: userId ?? this.userId,
       status: status ?? this.status,
       errorMessage: errorMessage ?? this.errorMessage,
     );
@@ -114,11 +115,18 @@ class ChatSyncItem {
   bool get canRetry => attemptCount < 3;
 
   /// 게스트 사용자 여부
-  bool get isGuest => userId == null;
+  bool get isGuest => ownerId.startsWith('guest:');
+
+  static String _legacyUserIdToOwnerId(String? userId) {
+    if (userId == null || userId.isEmpty) {
+      return 'guest:legacy';
+    }
+    return 'user:$userId';
+  }
 
   @override
   String toString() {
-    return 'ChatSyncItem(id: $id, chatId: $chatId, chatType: $chatType, '
-        'status: $status, attemptCount: $attemptCount)';
+    return 'ChatSyncItem(id: $id, ownerId: $ownerId, chatId: $chatId, '
+        'chatType: $chatType, status: $status, attemptCount: $attemptCount)';
   }
 }

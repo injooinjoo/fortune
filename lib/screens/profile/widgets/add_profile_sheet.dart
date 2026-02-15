@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/design_system/design_system.dart';
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/widgets/date_picker/numeric_date_input.dart';
 import '../../../presentation/providers/secondary_profiles_provider.dart';
+import 'package:fortune/core/utils/haptic_utils.dart';
 
 /// 프로필 추가 바텀시트
 ///
@@ -398,7 +398,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
           label: '${option['emoji']} ${option['label']}',
           isSelected: isSelected,
           onTap: () {
-            HapticFeedback.lightImpact();
+            HapticUtils.lightImpact();
             setState(() {
               _relationship = option['value']!;
               // 가족이 아닌 경우 familyRelation 초기화
@@ -424,7 +424,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
           label: '${option['emoji']} ${option['label']}',
           isSelected: isSelected,
           onTap: () {
-            HapticFeedback.lightImpact();
+            HapticUtils.lightImpact();
             setState(() => _familyRelation = option['value']!);
           },
           colors: colors,
@@ -441,7 +441,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
           label: '♂ 남성',
           isSelected: _gender == 'male',
           onTap: () {
-            HapticFeedback.lightImpact();
+            HapticUtils.lightImpact();
             setState(() => _gender = 'male');
           },
           colors: colors,
@@ -451,7 +451,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
           label: '♀ 여성',
           isSelected: _gender == 'female',
           onTap: () {
-            HapticFeedback.lightImpact();
+            HapticUtils.lightImpact();
             setState(() => _gender = 'female');
           },
           colors: colors,
@@ -473,7 +473,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
               label: type,
               isSelected: isSelected,
               onTap: () {
-                HapticFeedback.lightImpact();
+                HapticUtils.lightImpact();
                 setState(() => _mbti = type);
               },
               colors: colors,
@@ -484,7 +484,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
         const SizedBox(height: DSSpacing.sm),
         TextButton(
           onPressed: () {
-            HapticFeedback.lightImpact();
+            HapticUtils.lightImpact();
             setState(() => _mbti = null);
           },
           child: Text(
@@ -511,7 +511,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
                 label: '$type형',
                 isSelected: isSelected,
                 onTap: () {
-                  HapticFeedback.lightImpact();
+                  HapticUtils.lightImpact();
                   setState(() => _bloodType = type);
                 },
                 colors: colors,
@@ -524,7 +524,7 @@ class _AddProfileSheetState extends ConsumerState<AddProfileSheet> {
           alignment: Alignment.centerLeft,
           child: TextButton(
             onPressed: () {
-              HapticFeedback.lightImpact();
+              HapticUtils.lightImpact();
               setState(() => _bloodType = null);
             },
             child: Text(

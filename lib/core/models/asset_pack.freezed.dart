@@ -44,6 +44,10 @@ mixin _$AssetPack {
   /// 현재 상태
   AssetPackStatus get status => throw _privateConstructorUsedError;
 
+  /// 스토어/플랫폼 지원 대상
+  Set<AssetDistributionTarget> get supportedTargets =>
+      throw _privateConstructorUsedError;
+
   /// 다운로드 진행률 (0.0 ~ 1.0)
   double get downloadProgress => throw _privateConstructorUsedError;
 
@@ -77,6 +81,7 @@ abstract class $AssetPackCopyWith<$Res> {
       int estimatedSize,
       String? fortuneType,
       AssetPackStatus status,
+      Set<AssetDistributionTarget> supportedTargets,
       double downloadProgress,
       DateTime? lastAccessedAt,
       DateTime? installedAt});
@@ -105,6 +110,7 @@ class _$AssetPackCopyWithImpl<$Res, $Val extends AssetPack>
     Object? estimatedSize = null,
     Object? fortuneType = freezed,
     Object? status = null,
+    Object? supportedTargets = null,
     Object? downloadProgress = null,
     Object? lastAccessedAt = freezed,
     Object? installedAt = freezed,
@@ -142,6 +148,10 @@ class _$AssetPackCopyWithImpl<$Res, $Val extends AssetPack>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as AssetPackStatus,
+      supportedTargets: null == supportedTargets
+          ? _value.supportedTargets
+          : supportedTargets // ignore: cast_nullable_to_non_nullable
+              as Set<AssetDistributionTarget>,
       downloadProgress: null == downloadProgress
           ? _value.downloadProgress
           : downloadProgress // ignore: cast_nullable_to_non_nullable
@@ -175,6 +185,7 @@ abstract class _$$AssetPackImplCopyWith<$Res>
       int estimatedSize,
       String? fortuneType,
       AssetPackStatus status,
+      Set<AssetDistributionTarget> supportedTargets,
       double downloadProgress,
       DateTime? lastAccessedAt,
       DateTime? installedAt});
@@ -201,6 +212,7 @@ class __$$AssetPackImplCopyWithImpl<$Res>
     Object? estimatedSize = null,
     Object? fortuneType = freezed,
     Object? status = null,
+    Object? supportedTargets = null,
     Object? downloadProgress = null,
     Object? lastAccessedAt = freezed,
     Object? installedAt = freezed,
@@ -238,6 +250,10 @@ class __$$AssetPackImplCopyWithImpl<$Res>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as AssetPackStatus,
+      supportedTargets: null == supportedTargets
+          ? _value._supportedTargets
+          : supportedTargets // ignore: cast_nullable_to_non_nullable
+              as Set<AssetDistributionTarget>,
       downloadProgress: null == downloadProgress
           ? _value.downloadProgress
           : downloadProgress // ignore: cast_nullable_to_non_nullable
@@ -256,7 +272,7 @@ class __$$AssetPackImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$AssetPackImpl implements _AssetPack {
+class _$AssetPackImpl extends _AssetPack with DiagnosticableTreeMixin {
   const _$AssetPackImpl(
       {required this.id,
       required this.displayName,
@@ -266,10 +282,14 @@ class _$AssetPackImpl implements _AssetPack {
       this.estimatedSize = 0,
       this.fortuneType,
       this.status = AssetPackStatus.notInstalled,
+      final Set<AssetDistributionTarget> supportedTargets =
+          const <AssetDistributionTarget>{AssetDistributionTarget.all},
       this.downloadProgress = 0.0,
       this.lastAccessedAt,
       this.installedAt})
-      : _localPaths = localPaths;
+      : _localPaths = localPaths,
+        _supportedTargets = supportedTargets,
+        super._();
 
   factory _$AssetPackImpl.fromJson(Map<String, dynamic> json) =>
       _$$AssetPackImplFromJson(json);
@@ -316,6 +336,18 @@ class _$AssetPackImpl implements _AssetPack {
   @JsonKey()
   final AssetPackStatus status;
 
+  /// 스토어/플랫폼 지원 대상
+  final Set<AssetDistributionTarget> _supportedTargets;
+
+  /// 스토어/플랫폼 지원 대상
+  @override
+  @JsonKey()
+  Set<AssetDistributionTarget> get supportedTargets {
+    if (_supportedTargets is EqualUnmodifiableSetView) return _supportedTargets;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableSetView(_supportedTargets);
+  }
+
   /// 다운로드 진행률 (0.0 ~ 1.0)
   @override
   @JsonKey()
@@ -330,8 +362,27 @@ class _$AssetPackImpl implements _AssetPack {
   final DateTime? installedAt;
 
   @override
-  String toString() {
-    return 'AssetPack(id: $id, displayName: $displayName, tier: $tier, localPaths: $localPaths, storagePath: $storagePath, estimatedSize: $estimatedSize, fortuneType: $fortuneType, status: $status, downloadProgress: $downloadProgress, lastAccessedAt: $lastAccessedAt, installedAt: $installedAt)';
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AssetPack(id: $id, displayName: $displayName, tier: $tier, localPaths: $localPaths, storagePath: $storagePath, estimatedSize: $estimatedSize, fortuneType: $fortuneType, status: $status, supportedTargets: $supportedTargets, downloadProgress: $downloadProgress, lastAccessedAt: $lastAccessedAt, installedAt: $installedAt)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'AssetPack'))
+      ..add(DiagnosticsProperty('id', id))
+      ..add(DiagnosticsProperty('displayName', displayName))
+      ..add(DiagnosticsProperty('tier', tier))
+      ..add(DiagnosticsProperty('localPaths', localPaths))
+      ..add(DiagnosticsProperty('storagePath', storagePath))
+      ..add(DiagnosticsProperty('estimatedSize', estimatedSize))
+      ..add(DiagnosticsProperty('fortuneType', fortuneType))
+      ..add(DiagnosticsProperty('status', status))
+      ..add(DiagnosticsProperty('supportedTargets', supportedTargets))
+      ..add(DiagnosticsProperty('downloadProgress', downloadProgress))
+      ..add(DiagnosticsProperty('lastAccessedAt', lastAccessedAt))
+      ..add(DiagnosticsProperty('installedAt', installedAt));
   }
 
   @override
@@ -352,6 +403,8 @@ class _$AssetPackImpl implements _AssetPack {
             (identical(other.fortuneType, fortuneType) ||
                 other.fortuneType == fortuneType) &&
             (identical(other.status, status) || other.status == status) &&
+            const DeepCollectionEquality()
+                .equals(other._supportedTargets, _supportedTargets) &&
             (identical(other.downloadProgress, downloadProgress) ||
                 other.downloadProgress == downloadProgress) &&
             (identical(other.lastAccessedAt, lastAccessedAt) ||
@@ -372,6 +425,7 @@ class _$AssetPackImpl implements _AssetPack {
       estimatedSize,
       fortuneType,
       status,
+      const DeepCollectionEquality().hash(_supportedTargets),
       downloadProgress,
       lastAccessedAt,
       installedAt);
@@ -392,7 +446,7 @@ class _$AssetPackImpl implements _AssetPack {
   }
 }
 
-abstract class _AssetPack implements AssetPack {
+abstract class _AssetPack extends AssetPack {
   const factory _AssetPack(
       {required final String id,
       required final String displayName,
@@ -402,9 +456,11 @@ abstract class _AssetPack implements AssetPack {
       final int estimatedSize,
       final String? fortuneType,
       final AssetPackStatus status,
+      final Set<AssetDistributionTarget> supportedTargets,
       final double downloadProgress,
       final DateTime? lastAccessedAt,
       final DateTime? installedAt}) = _$AssetPackImpl;
+  const _AssetPack._() : super._();
 
   factory _AssetPack.fromJson(Map<String, dynamic> json) =
       _$AssetPackImpl.fromJson;
@@ -440,6 +496,10 @@ abstract class _AssetPack implements AssetPack {
   /// 현재 상태
   @override
   AssetPackStatus get status;
+
+  /// 스토어/플랫폼 지원 대상
+  @override
+  Set<AssetDistributionTarget> get supportedTargets;
 
   /// 다운로드 진행률 (0.0 ~ 1.0)
   @override
@@ -644,7 +704,9 @@ class __$$DownloadProgressImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$DownloadProgressImpl implements _DownloadProgress {
+class _$DownloadProgressImpl
+    with DiagnosticableTreeMixin
+    implements _DownloadProgress {
   const _$DownloadProgressImpl(
       {required this.packId,
       required this.status,
@@ -689,8 +751,23 @@ class _$DownloadProgressImpl implements _DownloadProgress {
   final int? estimatedSecondsRemaining;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'DownloadProgress(packId: $packId, status: $status, progress: $progress, downloadedBytes: $downloadedBytes, totalBytes: $totalBytes, errorMessage: $errorMessage, estimatedSecondsRemaining: $estimatedSecondsRemaining)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'DownloadProgress'))
+      ..add(DiagnosticsProperty('packId', packId))
+      ..add(DiagnosticsProperty('status', status))
+      ..add(DiagnosticsProperty('progress', progress))
+      ..add(DiagnosticsProperty('downloadedBytes', downloadedBytes))
+      ..add(DiagnosticsProperty('totalBytes', totalBytes))
+      ..add(DiagnosticsProperty('errorMessage', errorMessage))
+      ..add(DiagnosticsProperty(
+          'estimatedSecondsRemaining', estimatedSecondsRemaining));
   }
 
   @override
@@ -952,7 +1029,7 @@ class __$$StorageUsageImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$StorageUsageImpl implements _StorageUsage {
+class _$StorageUsageImpl with DiagnosticableTreeMixin implements _StorageUsage {
   const _$StorageUsageImpl(
       {this.bundledSize = 0,
       this.downloadedSize = 0,
@@ -1003,8 +1080,21 @@ class _$StorageUsageImpl implements _StorageUsage {
   }
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'StorageUsage(bundledSize: $bundledSize, downloadedSize: $downloadedSize, cacheSize: $cacheSize, totalSize: $totalSize, availableSpace: $availableSpace, packSizes: $packSizes)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'StorageUsage'))
+      ..add(DiagnosticsProperty('bundledSize', bundledSize))
+      ..add(DiagnosticsProperty('downloadedSize', downloadedSize))
+      ..add(DiagnosticsProperty('cacheSize', cacheSize))
+      ..add(DiagnosticsProperty('totalSize', totalSize))
+      ..add(DiagnosticsProperty('availableSpace', availableSpace))
+      ..add(DiagnosticsProperty('packSizes', packSizes));
   }
 
   @override

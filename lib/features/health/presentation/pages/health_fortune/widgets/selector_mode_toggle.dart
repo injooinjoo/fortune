@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../../../../../core/design_system/design_system.dart';
+import '../../../../../../core/utils/haptic_utils.dart';
 
 class SelectorModeToggle extends StatelessWidget {
   final bool useGridSelector;
@@ -30,7 +30,7 @@ class SelectorModeToggle extends StatelessWidget {
               label: '목록 선택',
               isSelected: useGridSelector,
               onTap: () {
-                HapticFeedback.lightImpact();
+                HapticUtils.selection();
                 onChanged(true);
               },
             ),
@@ -42,7 +42,7 @@ class SelectorModeToggle extends StatelessWidget {
               label: '실루엣 선택',
               isSelected: !useGridSelector,
               onTap: () {
-                HapticFeedback.lightImpact();
+                HapticUtils.selection();
                 onChanged(false);
               },
             ),

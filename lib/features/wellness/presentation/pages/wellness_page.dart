@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
+import 'package:fortune/core/utils/haptic_utils.dart';
 
 /// 웰니스 메인 페이지
 class WellnessPage extends ConsumerWidget {
@@ -135,7 +135,7 @@ class WellnessPage extends ConsumerWidget {
         children: moods.map((mood) {
           return GestureDetector(
             onTap: () {
-              HapticFeedback.selectionClick();
+              HapticUtils.selection();
               // TODO: 무드 저장 기능 구현
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -179,7 +179,7 @@ class WellnessPage extends ConsumerWidget {
           title: '호흡 명상',
           subtitle: '4-7-8 호흡법으로 마음을 진정시키세요',
           onTap: () {
-            HapticFeedback.lightImpact();
+            HapticUtils.lightImpact();
             context.push('/wellness/meditation');
           },
         ),
@@ -192,7 +192,7 @@ class WellnessPage extends ConsumerWidget {
           title: '감사 일기',
           subtitle: '오늘 감사한 일 3가지를 기록하세요',
           onTap: () {
-            HapticFeedback.lightImpact();
+            HapticUtils.lightImpact();
             // TODO: 감사 일기 페이지로 이동
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -214,7 +214,7 @@ class WellnessPage extends ConsumerWidget {
           title: '무드 트래커',
           subtitle: '감정 패턴을 파악하고 나를 이해하세요',
           onTap: () {
-            HapticFeedback.lightImpact();
+            HapticUtils.lightImpact();
             // TODO: 무드 트래커 페이지로 이동
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(

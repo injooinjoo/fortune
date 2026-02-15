@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../../../../core/design_system/design_system.dart';
 import '../../../../fortune/data/models/investment_ticker.dart';
+import 'package:fortune/core/utils/haptic_utils.dart';
 
 /// 채팅 설문용 투자 카테고리 선택 위젯
 class ChatInvestmentCategorySelector extends StatelessWidget {
@@ -41,7 +41,7 @@ class ChatInvestmentCategorySelector extends StatelessWidget {
                 colors: colors,
                 typography: typography,
                 onTap: () {
-                  HapticFeedback.lightImpact();
+                  HapticUtils.lightImpact();
                   onCategorySelected(category);
                 },
               );

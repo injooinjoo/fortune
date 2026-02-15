@@ -201,7 +201,7 @@ class LuckyItemsCard extends StatelessWidget {
         Text(
           '오늘 행운을 불러올 아이템들',
           style: context.bodySmall.copyWith(
-            color: context.colors.textPrimary.withValues(alpha: 0.5),
+            color: context.colors.textPrimary.withValues(alpha: 0.72),
           ),
         ),
 
@@ -243,8 +243,8 @@ class LuckyItemsCard extends StatelessWidget {
                       Text(
                         entry.key,
                         style: context.labelTiny.copyWith(
-                          color:
-                              context.colors.textPrimary.withValues(alpha: 0.5),
+                          color: context.colors.textPrimary
+                              .withValues(alpha: 0.72),
                         ),
                       ),
                       const SizedBox(height: 2),

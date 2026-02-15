@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fortune/core/design_system/design_system.dart';
+import 'package:fortune/core/utils/haptic_utils.dart';
 
 /// TOSS 스타일 Toast
 class AppToast {
@@ -20,16 +20,16 @@ class AppToast {
     if (enableHaptic) {
       switch (type) {
         case AppToastType.success:
-          HapticFeedback.mediumImpact();
+          HapticUtils.mediumImpact();
           break;
         case AppToastType.error:
-          HapticFeedback.heavyImpact();
+          HapticUtils.heavyImpact();
           break;
         case AppToastType.warning:
-          HapticFeedback.mediumImpact();
+          HapticUtils.mediumImpact();
           break;
         case AppToastType.info:
-          HapticFeedback.lightImpact();
+          HapticUtils.lightImpact();
           break;
       }
     }

@@ -27,6 +27,7 @@ import 'core/providers/user_settings_provider.dart';
 import 'core/providers/locale_provider.dart';
 import 'core/services/fortune_haptic_service.dart';
 import 'core/services/chat_sync_service.dart';
+import 'core/services/user_scope_service.dart';
 import 'presentation/providers/auth_provider.dart';
 import 'services/deep_link_service.dart';
 import 'presentation/providers/app_providers.dart';
@@ -143,6 +144,15 @@ void main() async {
     debugPrint('❌ [STARTUP] Supabase initialization error: $e');
     Logger.warning(
         'Supabase initialization failed (optional feature, using offline mode): $e');
+  }
+
+  // Initialize user scope service (user:<uid> / guest:<deviceId>)
+  try {
+    debugPrint('🚀 [STARTUP] Initializing User Scope Service...');
+    await UserScopeService.instance.initialize();
+    debugPrint('🚀 [STARTUP] User Scope Service initialized');
+  } catch (e) {
+    debugPrint('⚠️ [STARTUP] User Scope Service initialization failed: $e');
   }
 
   // Initialize Firebase Remote Config (synchronously to ensure Firebase is ready)

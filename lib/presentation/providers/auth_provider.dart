@@ -8,6 +8,13 @@ import '../../services/storage_service.dart';
 import '../../services/widget_service.dart';
 import '../../services/widget_data_service.dart';
 import '../../features/character/data/services/character_chat_service.dart';
+import '../../features/character/data/services/follow_up_scheduler.dart';
+import '../../features/character/presentation/providers/active_chat_provider.dart';
+import '../../features/character/presentation/providers/character_chat_provider.dart';
+import '../../features/character/presentation/providers/character_chat_survey_provider.dart';
+import '../../features/character/presentation/providers/sorted_characters_provider.dart';
+import '../../core/services/chat_sync_service.dart';
+import '../../core/services/user_scope_service.dart';
 
 // Supabase client provider
 final supabaseClientProvider = Provider<SupabaseClient>((ref) {
@@ -203,6 +210,19 @@ final chatRestorationProvider = Provider<void>((ref) {
     next.whenData((authState) async {
       if (authState == null) return;
 
+      // 스코프 갱신은 auth 이벤트마다 수행
+      await UserScopeService.instance.refreshCurrentScope();
+
+      if (authState.event == AuthChangeEvent.signedOut) {
+        // 로그아웃 시 캐릭터 세션 경계 강제
+        FollowUpScheduler().cancelAll();
+        ref.invalidate(characterChatProvider);
+        ref.invalidate(characterChatSurveyProvider);
+        ref.invalidate(sortedCharactersProvider);
+        ref.invalidate(activeCharacterChatProvider);
+        return;
+      }
+
       final userId = authState.session?.user.id;
       if (userId == null) return;
 
@@ -210,6 +230,15 @@ final chatRestorationProvider = Provider<void>((ref) {
       if (authState.event == AuthChangeEvent.signedIn ||
           authState.event == AuthChangeEvent.initialSession) {
         try {
+          // 게스트 큐 owner를 현재 로그인 owner로 승격 후 동기화
+          await ChatSyncService.instance.migrateGuestData(userId);
+
+          // 캐릭터 관련 provider 캐시 리셋
+          ref.invalidate(characterChatProvider);
+          ref.invalidate(characterChatSurveyProvider);
+          ref.invalidate(sortedCharactersProvider);
+          ref.invalidate(activeCharacterChatProvider);
+
           Logger.info('[ChatRestoration] 대화 복원 시작...');
           final chatService = CharacterChatService();
           final restoredConversations =

@@ -161,7 +161,7 @@ class DSTheme {
           borderRadius: BorderRadius.circular(DSRadius.input),
           borderSide: BorderSide(color: colors.error, width: 2),
         ),
-        hintStyle: DSTypography.input.copyWith(color: colors.textTertiary),
+        hintStyle: DSTypography.input.copyWith(color: colors.textSecondary),
         errorStyle: DSTypography.labelSmall.copyWith(color: colors.error),
       ),
 
@@ -186,7 +186,13 @@ class DSTheme {
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: colors.surface,
         selectedItemColor: colors.accent,
-        unselectedItemColor: colors.textTertiary,
+        unselectedItemColor: colors.textSecondary,
+        selectedLabelStyle: DSTypography.labelMedium.copyWith(
+          fontWeight: FontWeight.w600,
+        ),
+        unselectedLabelStyle: DSTypography.labelMedium.copyWith(
+          fontWeight: FontWeight.w500,
+        ),
         showSelectedLabels: true,
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
@@ -301,7 +307,7 @@ class DSTheme {
         titleTextStyle: DSTypography.bodyMedium.copyWith(
           color: colors.textPrimary,
         ),
-        subtitleTextStyle: DSTypography.labelSmall.copyWith(
+        subtitleTextStyle: DSTypography.bodySmall.copyWith(
           color: colors.textSecondary,
         ),
         iconColor: colors.textSecondary,

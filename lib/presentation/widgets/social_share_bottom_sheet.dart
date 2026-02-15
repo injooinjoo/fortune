@@ -1,8 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../core/design_system/design_system.dart';
+import '../../core/utils/haptic_utils.dart';
 
 /// 공유 바텀시트 - 카카오톡/인스타그램 전용
 class SocialShareBottomSheet extends ConsumerStatefulWidget {
@@ -160,7 +162,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
                         child: _buildActionButton(
                           context: context,
                           onTap: () {
-                            HapticFeedback.lightImpact();
+                            HapticUtils.lightImpact();
                             widget.onShare(SharePlatform.gallery);
                             Navigator.of(context).pop();
                           },
@@ -175,7 +177,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
                         child: _buildActionButton(
                           context: context,
                           onTap: () {
-                            HapticFeedback.lightImpact();
+                            HapticUtils.lightImpact();
                             widget.onShare(SharePlatform.copy);
                             Navigator.of(context).pop();
                           },
@@ -293,7 +295,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
-          HapticFeedback.mediumImpact();
+          HapticUtils.mediumImpact();
           widget.onShare(platform);
           Navigator.of(context).pop();
         },

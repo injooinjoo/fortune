@@ -1,8 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/fortune_metadata.dart';
 import '../../../../core/design_system/design_system.dart';
+import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../domain/models/ai_character.dart';
 import '../providers/character_chat_provider.dart';
 
@@ -25,7 +27,7 @@ class CharacterProfileSheet extends ConsumerWidget {
     required WidgetRef ref,
     required AiCharacter character,
   }) {
-    HapticFeedback.lightImpact();
+    HapticUtils.lightImpact();
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -40,9 +42,11 @@ class CharacterProfileSheet extends ConsumerWidget {
           scrollController: scrollController,
           onResetConversation: () {
             // 대화 초기화
-            ref
-                .read(characterChatProvider(character.id).notifier)
-                .clearConversation();
+            unawaited(
+              ref
+                  .read(characterChatProvider(character.id).notifier)
+                  .clearConversationData(),
+            );
             Navigator.pop(context);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -586,7 +590,7 @@ class CharacterProfileSheet extends ConsumerWidget {
   }
 
   void _showResetConfirmDialog(BuildContext context) {
-    HapticFeedback.mediumImpact();
+    HapticUtils.mediumImpact();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

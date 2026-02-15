@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import '../../utils/haptic_utils.dart';
 
 /// Haptic patterns
 @immutable
@@ -32,16 +32,16 @@ class HapticPatterns {
   static Future<void> execute(HapticType type) async {
     switch (type) {
       case HapticType.light:
-        await HapticFeedback.lightImpact();
+        await HapticUtils.lightImpact();
         break;
       case HapticType.medium:
-        await HapticFeedback.mediumImpact();
+        await HapticUtils.mediumImpact();
         break;
       case HapticType.heavy:
-        await HapticFeedback.heavyImpact();
+        await HapticUtils.heavyImpact();
         break;
       case HapticType.selection:
-        await HapticFeedback.selectionClick();
+        await HapticUtils.selection();
         break;
     }
   }

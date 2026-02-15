@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/fortune_metadata.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/extensions/l10n_extension.dart';
+import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../../../core/widgets/unified_voice_text_field.dart';
 import '../../../../shared/components/token_insufficient_modal.dart';
 import '../../domain/models/ai_character.dart';
@@ -244,7 +244,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           IconButton(
             icon: const Icon(Icons.arrow_back_ios_new, size: 20),
             onPressed: () {
-              HapticFeedback.lightImpact();
+              HapticUtils.lightImpact();
               widget.onBack?.call();
             },
             padding: const EdgeInsets.all(8),
@@ -314,7 +314,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   }
 
   void _showCharacterProfile(BuildContext context) {
-    HapticFeedback.lightImpact();
+    HapticUtils.lightImpact();
     context.push('/character/${widget.character.id}', extra: widget.character);
   }
 
@@ -387,7 +387,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
   /// 운세 칩 탭 핸들러 - 설문이 있으면 설문 시작, 없으면 바로 요청
   void _handleFortuneChipTap(String fortuneType, String displayName) {
-    HapticFeedback.lightImpact();
+    HapticUtils.lightImpact();
 
     // fortuneType을 FortuneSurveyType으로 매핑
     final surveyType = _mapFortuneTypeToSurveyType(fortuneType);

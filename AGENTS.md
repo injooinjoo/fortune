@@ -295,7 +295,9 @@
 ## 21. Codex 실행 규칙 (Repository 특화)
 - 파일 검색은 `rg` 우선
 - 변경은 최소 범위, 파일 단위 문맥 확인 후 적용
-- 요청되지 않은 git commit/branch 생성 금지
+- 브랜치 생성은 명시 요청 시에만 수행한다.
+- 개발 변경이 발생하면 커밋/푸시 요청 여부와 무관하게 `git commit` + `git push`를 기본 수행한다.
+- `git push` 후 해당 브랜치/커밋의 GitHub Actions 상태 확인을 기본 수행한다.
 - 대규모 변경 전 간단 계획 수립, 완료 전 검증 결과를 명시
 - UI 전용 작업은 기본적으로 Presentation 범위에서 해결하고, Domain/Data 변경은 명시적 필요가 있을 때만 수행
 - Edge 전용 작업은 기본적으로 `supabase/functions`와 `_shared` 범위에서 해결
@@ -308,12 +310,13 @@
   4. 사용자 수동 테스트 시나리오(필요 시)
   5. 미수행/차단 사항(JIRA MCP 미연결 등)
 - 6. `git push` 실행 결과 및 GitHub Actions 상태
-- 커밋을 요청받은 경우 메시지 형식:
+- 커밋 요청 여부와 무관하게 메시지 형식:
   - `[FORT-XXX] <type>: <summary>`
   - type 예시: `feat`, `fix`, `refactor`, `style`, `docs`, `test`, `chore`
 
 ## 25. 고정 개발 완료 게이트(반드시)
 - 개발 완료 후 즉시 다음 절차를 수행한다.
+  - 사용자 요청 여부와 무관하게 커밋/푸시까지 완료한다.
   - `git push` 실행
   - GitHub Actions의 해당 브랜치/커밋 Workflow 실행 상태 확인
   - 실패 시 원인 파악 후 수정 후 재실행

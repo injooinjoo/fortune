@@ -151,6 +151,7 @@ class AssetPackConfig {
       id: 'tarot_rider_waite',
       displayName: 'Rider-Waite-Smith 타로',
       tier: AssetTier.onDemand,
+      supportedTargets: {AssetDistributionTarget.android},
       localPaths: ['assets/images/tarot/decks/rider_waite/'],
       storagePath: 'tarot/rider_waite/',
       estimatedSize: 5 * 1024 * 1024, // 5 MB
@@ -161,6 +162,7 @@ class AssetPackConfig {
       id: 'tarot_thoth',
       displayName: '토트 타로',
       tier: AssetTier.onDemand,
+      supportedTargets: {AssetDistributionTarget.android},
       localPaths: ['assets/images/tarot/decks/thoth/'],
       storagePath: 'tarot/thoth/',
       estimatedSize: 5 * 1024 * 1024,
@@ -171,6 +173,7 @@ class AssetPackConfig {
       id: 'tarot_ancient_italian',
       displayName: '고대 이탈리아 타로',
       tier: AssetTier.onDemand,
+      supportedTargets: {AssetDistributionTarget.android},
       localPaths: ['assets/images/tarot/decks/ancient_italian/'],
       storagePath: 'tarot/ancient_italian/',
       estimatedSize: 5 * 1024 * 1024,
@@ -181,6 +184,7 @@ class AssetPackConfig {
       id: 'tarot_before_tarot',
       displayName: '비포 타로',
       tier: AssetTier.onDemand,
+      supportedTargets: {AssetDistributionTarget.android},
       localPaths: ['assets/images/tarot/decks/before_tarot/'],
       storagePath: 'tarot/before_tarot/',
       estimatedSize: 5 * 1024 * 1024,
@@ -191,6 +195,7 @@ class AssetPackConfig {
       id: 'tarot_after_tarot',
       displayName: '애프터 타로',
       tier: AssetTier.onDemand,
+      supportedTargets: {AssetDistributionTarget.android},
       localPaths: ['assets/images/tarot/decks/after_tarot/'],
       storagePath: 'tarot/after_tarot/',
       estimatedSize: 5 * 1024 * 1024,
@@ -201,6 +206,7 @@ class AssetPackConfig {
       id: 'tarot_golden_dawn_cicero',
       displayName: '골든 던 Cicero 타로',
       tier: AssetTier.onDemand,
+      supportedTargets: {AssetDistributionTarget.android},
       localPaths: ['assets/images/tarot/decks/golden_dawn_cicero/'],
       storagePath: 'tarot/golden_dawn_cicero/',
       estimatedSize: 5 * 1024 * 1024,
@@ -211,6 +217,7 @@ class AssetPackConfig {
       id: 'tarot_golden_dawn_wang',
       displayName: '골든 던 Wang 타로',
       tier: AssetTier.onDemand,
+      supportedTargets: {AssetDistributionTarget.android},
       localPaths: ['assets/images/tarot/decks/golden_dawn_wang/'],
       storagePath: 'tarot/golden_dawn_wang/',
       estimatedSize: 5 * 1024 * 1024,
@@ -221,6 +228,7 @@ class AssetPackConfig {
       id: 'tarot_grand_etteilla',
       displayName: '그랑 에테이야 타로',
       tier: AssetTier.onDemand,
+      supportedTargets: {AssetDistributionTarget.android},
       localPaths: ['assets/images/tarot/decks/grand_etteilla/'],
       storagePath: 'tarot/grand_etteilla/',
       estimatedSize: 5 * 1024 * 1024,
@@ -234,6 +242,7 @@ class AssetPackConfig {
       id: 'mbti_characters',
       displayName: 'MBTI 캐릭터',
       tier: AssetTier.onDemand,
+      supportedTargets: {AssetDistributionTarget.android},
       localPaths: ['assets/images/fortune/mbti/characters/'],
       storagePath: 'category/mbti/',
       estimatedSize: 21 * 1024 * 1024, // 21 MB
@@ -244,6 +253,7 @@ class AssetPackConfig {
       id: 'zodiac_assets',
       displayName: '띠별 이미지',
       tier: AssetTier.onDemand,
+      supportedTargets: {AssetDistributionTarget.android},
       localPaths: ['assets/images/fortune/zodiac/'],
       storagePath: 'category/zodiac/',
       estimatedSize: 20 * 1024 * 1024, // 20 MB
@@ -254,6 +264,7 @@ class AssetPackConfig {
       id: 'saju_elements',
       displayName: '사주/오행 이미지',
       tier: AssetTier.onDemand,
+      supportedTargets: {AssetDistributionTarget.android},
       localPaths: ['assets/images/fortune/saju/elements/'],
       storagePath: 'category/saju/',
       estimatedSize: 5 * 1024 * 1024, // 5 MB
@@ -264,6 +275,7 @@ class AssetPackConfig {
       id: 'pet_assets',
       displayName: '펫 이미지',
       tier: AssetTier.onDemand,
+      supportedTargets: {AssetDistributionTarget.android},
       localPaths: ['assets/images/fortune/pets/'],
       storagePath: 'category/pets/',
       estimatedSize: 11 * 1024 * 1024, // 11 MB
@@ -274,6 +286,7 @@ class AssetPackConfig {
       id: 'talisman_assets',
       displayName: '탈리스만/부적 이미지',
       tier: AssetTier.onDemand,
+      supportedTargets: {AssetDistributionTarget.android},
       localPaths: [
         'assets/images/fortune/talisman/',
         'assets/images/talismans/',
@@ -287,6 +300,7 @@ class AssetPackConfig {
       id: 'lucky_items',
       displayName: '행운 아이템',
       tier: AssetTier.onDemand,
+      supportedTargets: {AssetDistributionTarget.android},
       localPaths: [
         'assets/images/fortune/icons/lucky/',
         'assets/images/fortune/items/lucky/',
@@ -299,6 +313,7 @@ class AssetPackConfig {
       id: 'infographic_assets',
       displayName: '인포그래픽',
       tier: AssetTier.onDemand,
+      supportedTargets: {AssetDistributionTarget.android},
       localPaths: ['assets/images/infographic/'],
       storagePath: 'category/infographic/',
       estimatedSize: 6 * 1024 * 1024, // 6 MB
@@ -308,6 +323,7 @@ class AssetPackConfig {
       id: 'video_content',
       displayName: '비디오 콘텐츠',
       tier: AssetTier.onDemand,
+      supportedTargets: {AssetDistributionTarget.android},
       localPaths: ['assets/videos/'],
       storagePath: 'videos/',
       estimatedSize: 12 * 1024 * 1024, // 12 MB
@@ -320,6 +336,7 @@ class AssetPackConfig {
       id: 'heroes_love',
       displayName: '애정 운세 히어로',
       tier: AssetTier.onDemand,
+      supportedTargets: {AssetDistributionTarget.android},
       localPaths: ['assets/images/fortune/heroes/love/'],
       storagePath: 'heroes/love/',
       estimatedSize: 8 * 1024 * 1024,
@@ -330,6 +347,7 @@ class AssetPackConfig {
       id: 'heroes_career',
       displayName: '직장 운세 히어로',
       tier: AssetTier.onDemand,
+      supportedTargets: {AssetDistributionTarget.android},
       localPaths: ['assets/images/fortune/heroes/career/'],
       storagePath: 'heroes/career/',
       estimatedSize: 8 * 1024 * 1024,
@@ -340,6 +358,7 @@ class AssetPackConfig {
       id: 'heroes_health',
       displayName: '건강 운세 히어로',
       tier: AssetTier.onDemand,
+      supportedTargets: {AssetDistributionTarget.android},
       localPaths: ['assets/images/fortune/heroes/health/'],
       storagePath: 'heroes/health/',
       estimatedSize: 8 * 1024 * 1024,
@@ -350,6 +369,7 @@ class AssetPackConfig {
       id: 'heroes_investment',
       displayName: '투자 운세 히어로',
       tier: AssetTier.onDemand,
+      supportedTargets: {AssetDistributionTarget.android},
       localPaths: ['assets/images/fortune/heroes/investment/'],
       storagePath: 'heroes/investment/',
       estimatedSize: 8 * 1024 * 1024,
@@ -360,6 +380,7 @@ class AssetPackConfig {
       id: 'heroes_exam',
       displayName: '시험 운세 히어로',
       tier: AssetTier.onDemand,
+      supportedTargets: {AssetDistributionTarget.android},
       localPaths: ['assets/images/fortune/heroes/exam/'],
       storagePath: 'heroes/exam/',
       estimatedSize: 8 * 1024 * 1024,
@@ -392,6 +413,11 @@ class AssetPackConfig {
   /// Tier별 자산 팩 목록 반환
   static List<AssetPack> getPacksByTier(AssetTier tier) {
     return packs.values.where((pack) => pack.tier == tier).toList();
+  }
+
+  /// 플랫폼 대상별 자산 팩 목록
+  static List<AssetPack> getPacksByTarget(AssetDistributionTarget target) {
+    return packs.values.where((pack) => pack.isSupported(target)).toList();
   }
 
   /// Tier 1 (번들) 자산 팩 목록

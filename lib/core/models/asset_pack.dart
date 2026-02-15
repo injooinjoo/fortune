@@ -1,7 +1,15 @@
+import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'asset_pack.freezed.dart';
 part 'asset_pack.g.dart';
+
+/// 스토어/플랫폼별 배포 대상
+enum AssetDistributionTarget {
+  all,
+  ios,
+  android,
+}
 
 /// 자산 팩 Tier 분류
 enum AssetTier {
@@ -36,6 +44,9 @@ enum AssetPackStatus {
 /// 자산 팩 모델
 @freezed
 class AssetPack with _$AssetPack {
+  // ignore: unused_element
+  const AssetPack._();
+
   const factory AssetPack({
     /// 팩 고유 ID (예: 'tarot_rider_waite', 'mbti_characters')
     required String id,
@@ -61,6 +72,10 @@ class AssetPack with _$AssetPack {
     /// 현재 상태
     @Default(AssetPackStatus.notInstalled) AssetPackStatus status,
 
+    /// 스토어/플랫폼 지원 대상
+    @Default(<AssetDistributionTarget>{AssetDistributionTarget.all})
+    Set<AssetDistributionTarget> supportedTargets,
+
     /// 다운로드 진행률 (0.0 ~ 1.0)
     @Default(0.0) double downloadProgress,
 
@@ -73,6 +88,20 @@ class AssetPack with _$AssetPack {
 
   factory AssetPack.fromJson(Map<String, dynamic> json) =>
       _$AssetPackFromJson(json);
+
+  bool isSupported(AssetDistributionTarget target) {
+    return supportedTargets.contains(AssetDistributionTarget.all) ||
+        supportedTargets.contains(target);
+  }
+
+  bool isSupportedOnCurrentPlatform() {
+    final target = switch (defaultTargetPlatform) {
+      TargetPlatform.iOS => AssetDistributionTarget.ios,
+      TargetPlatform.android => AssetDistributionTarget.android,
+      _ => AssetDistributionTarget.all,
+    };
+    return isSupported(target);
+  }
 }
 
 /// 다운로드 진행률 정보

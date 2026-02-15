@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
+import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../domain/models/meditation_history.dart';
 import '../providers/wellness_providers.dart';
 import 'mind_gem_widget.dart';
@@ -26,7 +26,7 @@ class MeditationCompletionSheet extends ConsumerStatefulWidget {
     required int completedCycles,
     required String patternName,
   }) {
-    HapticFeedback.mediumImpact();
+    HapticUtils.mediumImpact();
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,

@@ -1,4 +1,4 @@
-import 'package:flutter/services.dart';
+import 'package:fortune/core/utils/haptic_utils.dart';
 
 /// Haptic feedback utilities
 ///
@@ -13,41 +13,41 @@ class DSHaptics {
 
   /// Light impact - for subtle interactions
   static void light() {
-    HapticFeedback.lightImpact();
+    HapticUtils.lightImpact();
   }
 
   /// Medium impact - for button taps, selections
   static void medium() {
-    HapticFeedback.mediumImpact();
+    HapticUtils.mediumImpact();
   }
 
   /// Heavy impact - for important actions, confirmations
   static void heavy() {
-    HapticFeedback.heavyImpact();
+    HapticUtils.heavyImpact();
   }
 
   /// Selection click - for toggle switches, pickers
   static void selection() {
-    HapticFeedback.selectionClick();
+    HapticUtils.selection();
   }
 
   /// Vibrate - generic vibration
   static void vibrate() {
-    HapticFeedback.vibrate();
+    HapticUtils.vibrate();
   }
 
   /// Success feedback - for successful actions
   static void success() {
-    HapticFeedback.mediumImpact();
+    HapticUtils.success();
   }
 
   /// Error feedback - for error states
   static void error() {
-    HapticFeedback.heavyImpact();
+    HapticUtils.heavyImpact();
   }
 
   /// Warning feedback - for warning states
   static void warning() {
-    HapticFeedback.mediumImpact();
+    HapticUtils.mediumImpact();
   }
 }

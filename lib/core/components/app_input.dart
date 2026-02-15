@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fortune/core/design_system/design_system.dart';
+import 'package:fortune/core/utils/haptic_utils.dart';
 
 /// TOSS 스타일 텍스트 입력 필드
 class TossTextField extends StatefulWidget {
@@ -99,7 +99,7 @@ class _TossTextFieldState extends State<TossTextField>
     if (_hasFocus) {
       _animationController.forward();
       if (widget.enableHaptic) {
-        HapticFeedback.selectionClick();
+        HapticUtils.selection();
       }
     } else {
       _animationController.reverse();
@@ -302,7 +302,7 @@ class TossCheckbox extends StatelessWidget {
     return InkWell(
       onTap: enabled
           ? () {
-              HapticFeedback.selectionClick();
+              HapticUtils.selection();
               onChanged?.call(!value);
             }
           : null,
