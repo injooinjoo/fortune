@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/extensions/l10n_extension.dart';
 import 'package:fortune/core/utils/haptic_utils.dart';
@@ -11,6 +12,7 @@ import '../../data/services/character_localizer.dart';
 import '../../domain/models/ai_character.dart';
 import '../../data/default_characters.dart';
 import '../../data/fortune_characters.dart';
+import '../utils/character_accent_palette.dart';
 import '../providers/character_chat_provider.dart';
 import '../providers/character_provider.dart';
 
@@ -38,6 +40,13 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
   late TabController _tabController;
   late AiCharacter _character;
   bool _didHandleOpenChatRoute = false;
+
+  CharacterAccentPalette _accentPalette(BuildContext context) {
+    return CharacterAccentPalette.from(
+      source: _character.accentColor,
+      brightness: Theme.of(context).brightness,
+    );
+  }
 
   @override
   void initState() {
@@ -79,9 +88,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark ? DSColors.backgroundDark : DSColors.backgroundDark;
-    final chatState = ref.watch(characterChatProvider(_character.id));
-    final affinity = chatState.affinity;
-    final messageCount = chatState.messages.length;
+    final accentPalette = _accentPalette(context);
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -114,7 +121,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
                   children: [
                     const SizedBox(height: 16),
                     // 인스타그램 스타일 프로필 헤더
-                    _buildProfileHeader(context, messageCount, affinity),
+                    _buildProfileHeader(context),
                     const SizedBox(height: 16),
                     // 이름
                     Align(
@@ -139,7 +146,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
                           return Text(
                             '#$tag',
                             style: context.bodySmall.copyWith(
-                              color: _character.accentColor,
+                              color: accentPalette.accent,
                               fontWeight: FontWeight.w500,
                             ),
                           );
@@ -172,8 +179,8 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
               delegate: _SliverTabBarDelegate(
                 TabBar(
                   controller: _tabController,
-                  indicatorColor: _character.accentColor,
-                  labelColor: _character.accentColor,
+                  indicatorColor: accentPalette.accent,
+                  labelColor: accentPalette.accent,
                   unselectedLabelColor: Colors.grey,
                   tabs: const [
                     Tab(icon: Icon(Icons.grid_on)),
@@ -199,48 +206,46 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
   }
 
   /// 프로필 헤더 (아바타 + 통계)
-  Widget _buildProfileHeader(
-      BuildContext context, int messageCount, dynamic affinity) {
+  Widget _buildProfileHeader(BuildContext context) {
+    final accentPalette = _accentPalette(context);
+    final seed = _character.id.codeUnits.fold<int>(
+      0,
+      (acc, code) => (acc * 31 + code) % 100000,
+    );
+    final posts = _character.galleryAssets.length;
+    final followers = 120 + (seed % 9800);
+    final following = 60 + ((seed ~/ 7) % 1200);
+    final numberFormat = NumberFormat.decimalPattern(
+      Localizations.localeOf(context).toString(),
+    );
+
     return Row(
       children: [
         // 큰 아바타
-        Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: _character.accentColor.withValues(alpha: 0.3),
-                blurRadius: 20,
-                spreadRadius: 5,
-              ),
-            ],
-          ),
-          child: _character.avatarAsset.isNotEmpty
-              ? CircleAvatar(
-                  radius: 44,
-                  backgroundColor: _character.accentColor,
-                  child: ClipOval(
-                    child: SmartImage(
-                      path: _character.avatarAsset,
-                      width: 88,
-                      height: 88,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                )
-              : CircleAvatar(
-                  radius: 44,
-                  backgroundColor: _character.accentColor,
-                  child: Text(
-                    _character.initial,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                    ),
+        _character.avatarAsset.isNotEmpty
+            ? CircleAvatar(
+                radius: 44,
+                backgroundColor: accentPalette.accent,
+                child: ClipOval(
+                  child: SmartImage(
+                    path: _character.avatarAsset,
+                    width: 88,
+                    height: 88,
+                    fit: BoxFit.cover,
                   ),
                 ),
-        ),
+              )
+            : CircleAvatar(
+                radius: 44,
+                backgroundColor: accentPalette.accent,
+                child: Text(
+                  _character.initial,
+                  style: context.heading2.copyWith(
+                    color: accentPalette.onAccent,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
         const SizedBox(width: 24),
         // 통계
         Expanded(
@@ -249,20 +254,18 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
             children: [
               _buildStatColumn(
                 context,
-                count: '$messageCount',
-                label: context.l10n.conversation,
+                count: numberFormat.format(posts),
+                label: context.l10n.profilePosts,
               ),
               _buildStatColumn(
                 context,
-                count: '${affinity.lovePercent}%',
-                label: context.l10n.affinity,
+                count: numberFormat.format(followers),
+                label: context.l10n.profileFollowers,
               ),
               _buildStatColumn(
                 context,
-                count: CharacterLocalizer.getAffinityPhaseName(
-                    context, affinity.phase),
-                label: context.l10n.relationship,
-                isText: true,
+                count: numberFormat.format(following),
+                label: context.l10n.profileFollowing,
               ),
             ],
           ),
@@ -276,23 +279,22 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
     BuildContext context, {
     required String count,
     required String label,
-    bool isText = false,
   }) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           count,
-          style: (isText ? context.bodySmall : context.heading4).copyWith(
+          style: context.heading4.copyWith(
             fontWeight: FontWeight.bold,
-            color: _character.accentColor,
+            color: context.colors.textPrimary,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           label,
           style: context.labelMedium.copyWith(
-            color: Colors.grey[600],
+            color: context.colors.textSecondary,
           ),
         ),
       ],
@@ -301,6 +303,14 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
 
   /// 메시지 보내기 버튼
   Widget _buildMessageButton(BuildContext context) {
+    final accentPalette = _accentPalette(context);
+    final buttonBackground = _messageButtonBackground(accentPalette.accent);
+    final buttonForeground = _bestReadableForeground(
+      background: buttonBackground,
+      primary: DSColors.textPrimary,
+      secondary: DSColors.textPrimaryDark,
+    );
+
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
@@ -313,10 +323,13 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
           Navigator.of(context).pop();
         },
         icon: const Icon(Icons.chat_bubble_outline, size: 18),
-        label: Text(context.l10n.sendMessage),
+        label: Text(
+          context.l10n.sendMessage,
+          style: context.bodyLarge.copyWith(fontWeight: FontWeight.w700),
+        ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: _character.accentColor,
-          foregroundColor: Colors.white,
+          backgroundColor: buttonBackground,
+          foregroundColor: buttonForeground,
           padding: const EdgeInsets.symmetric(vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
@@ -326,9 +339,58 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
     );
   }
 
+  Color _messageButtonBackground(Color accent) {
+    const minContrast = 4.5;
+    const darkBase = DSColors.textPrimaryDark;
+
+    if (_contrastRatio(accent, DSColors.textPrimary) >= minContrast) {
+      return accent;
+    }
+
+    Color best = accent;
+    double bestContrast = _contrastRatio(accent, DSColors.textPrimary);
+
+    for (int i = 1; i <= 8; i++) {
+      final alpha = (i * 0.08).clamp(0.08, 0.64);
+      final candidate =
+          Color.alphaBlend(darkBase.withValues(alpha: alpha), accent);
+      final contrast = _contrastRatio(candidate, DSColors.textPrimary);
+
+      if (contrast > bestContrast) {
+        best = candidate;
+        bestContrast = contrast;
+      }
+
+      if (contrast >= minContrast) {
+        return candidate;
+      }
+    }
+
+    return best;
+  }
+
+  Color _bestReadableForeground({
+    required Color background,
+    required Color primary,
+    required Color secondary,
+  }) {
+    final primaryContrast = _contrastRatio(background, primary);
+    final secondaryContrast = _contrastRatio(background, secondary);
+    return primaryContrast >= secondaryContrast ? primary : secondary;
+  }
+
+  double _contrastRatio(Color a, Color b) {
+    final luminanceA = a.computeLuminance();
+    final luminanceB = b.computeLuminance();
+    final lighter = luminanceA >= luminanceB ? luminanceA : luminanceB;
+    final darker = luminanceA >= luminanceB ? luminanceB : luminanceA;
+    return (lighter + 0.05) / (darker + 0.05);
+  }
+
   /// 사진 그리드
   Widget _buildPhotoGrid(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accentPalette = _accentPalette(context);
 
     // galleryAssets가 비어있으면 placeholder 표시
     if (_character.galleryAssets.isEmpty) {
@@ -338,27 +400,28 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
           crossAxisCount: 3,
           crossAxisSpacing: 2,
           mainAxisSpacing: 2,
+          childAspectRatio: 3 / 4,
         ),
         itemCount: 9, // placeholder 9개
         itemBuilder: (context, index) {
           return Container(
             color: isDark
-                ? _character.accentColor.withValues(alpha: 0.2)
-                : _character.accentColor.withValues(alpha: 0.1),
+                ? accentPalette.softBackground.withValues(alpha: 0.28)
+                : accentPalette.softBackground,
             child: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
                     Icons.image_outlined,
-                    color: _character.accentColor.withValues(alpha: 0.5),
+                    color: accentPalette.accent.withValues(alpha: 0.62),
                     size: 32,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '${index + 1}',
                     style: context.labelSmall.copyWith(
-                      color: _character.accentColor.withValues(alpha: 0.5),
+                      color: accentPalette.accent.withValues(alpha: 0.62),
                     ),
                   ),
                 ],
@@ -376,6 +439,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
         crossAxisCount: 3,
         crossAxisSpacing: 2,
         mainAxisSpacing: 2,
+        childAspectRatio: 3 / 4,
       ),
       itemCount: _character.galleryAssets.length,
       itemBuilder: (context, index) {
@@ -447,6 +511,8 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
     required String content,
     required Color bgColor,
   }) {
+    final accentPalette = _accentPalette(context);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -462,14 +528,14 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
               Icon(
                 icon,
                 size: 20,
-                color: _character.accentColor,
+                color: accentPalette.accent,
               ),
               const SizedBox(width: 8),
               Text(
                 title,
                 style: context.bodyMedium.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: _character.accentColor,
+                  color: accentPalette.accent,
                 ),
               ),
             ],
@@ -485,6 +551,8 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
   }
 
   Widget _buildNpcSection(BuildContext context, Color bgColor) {
+    final accentPalette = _accentPalette(context);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -500,14 +568,14 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
               Icon(
                 Icons.group,
                 size: 20,
-                color: _character.accentColor,
+                color: accentPalette.accent,
               ),
               const SizedBox(width: 8),
               Text(
                 context.l10n.characterList,
                 style: context.bodyMedium.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: _character.accentColor,
+                  color: accentPalette.accent,
                 ),
               ),
             ],
@@ -522,7 +590,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
                   Text(
                     '• ',
                     style: TextStyle(
-                      color: _character.accentColor,
+                      color: accentPalette.accent,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
