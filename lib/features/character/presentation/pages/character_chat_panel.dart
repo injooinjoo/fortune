@@ -14,6 +14,7 @@ import '../../domain/models/character_choice.dart';
 import '../providers/character_chat_provider.dart';
 import '../providers/character_chat_survey_provider.dart';
 import '../providers/active_chat_provider.dart';
+import '../utils/character_accent_palette.dart';
 import '../widgets/character_intro_card.dart';
 import '../widgets/character_message_bubble.dart';
 import '../widgets/character_choice_widget.dart';
@@ -48,6 +49,13 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
   /// Notifier 참조 캐시 (dispose 후 ref 사용 불가 문제 해결)
   CharacterChatNotifier? _cachedNotifier;
+
+  CharacterAccentPalette _accentPalette(BuildContext context) {
+    return CharacterAccentPalette.from(
+      source: widget.character.accentColor,
+      brightness: Theme.of(context).brightness,
+    );
+  }
 
   @override
   void initState() {
@@ -236,6 +244,8 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   }
 
   Widget _buildHeader(BuildContext context) {
+    final accentPalette = _accentPalette(context);
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       child: Row(
@@ -260,7 +270,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                 children: [
                   CircleAvatar(
                     radius: 18,
-                    backgroundColor: widget.character.accentColor,
+                    backgroundColor: accentPalette.accent,
                     backgroundImage: widget.character.avatarAsset.isNotEmpty
                         ? AssetImage(widget.character.avatarAsset)
                         : null,
@@ -268,7 +278,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                         ? Text(
                             widget.character.initial,
                             style: context.bodySmall.copyWith(
-                              color: Colors.white,
+                              color: accentPalette.onAccent,
                               fontWeight: FontWeight.bold,
                             ),
                           )
@@ -320,13 +330,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
   /// 운세 전문가 칩 바 (전문 분야 운세 칩들)
   Widget _buildFortuneChipBar(dynamic chatState) {
-    // 밝은 색상이면 더 어둡게 조정하여 흰 배경에서 가독성 확보
-    Color chipColor = widget.character.accentColor;
-    if (chipColor.computeLuminance() > 0.4) {
-      final hsl = HSLColor.fromColor(chipColor);
-      chipColor =
-          hsl.withLightness((hsl.lightness * 0.65).clamp(0.25, 0.45)).toColor();
-    }
+    final colors = context.colors;
 
     return Container(
       height: 50,
@@ -334,7 +338,9 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         border: Border(
-          bottom: BorderSide(color: Colors.grey[200]!),
+          bottom: BorderSide(
+            color: colors.border.withValues(alpha: 0.8),
+          ),
         ),
       ),
       child: ListView.separated(
@@ -346,33 +352,33 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           final specialty = widget.character.specialties[index];
           final fortuneType = FortuneType.fromKey(specialty);
           final displayName = fortuneType?.displayName ?? specialty;
+          final surveyType = _mapFortuneTypeToSurveyType(specialty);
+          final chipEmoji = surveyType != null
+              ? (surveyConfigs[surveyType]?.emoji ?? '✨')
+              : '✨';
 
           return GestureDetector(
             onTap: chatState.isProcessing
                 ? null
                 : () => _handleFortuneChipTap(specialty, displayName),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
               decoration: BoxDecoration(
-                color: chipColor.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(16),
+                color: colors.surface,
+                borderRadius: BorderRadius.circular(18),
                 border: Border.all(
-                  color: chipColor.withValues(alpha: 0.4),
+                  color: colors.border,
                 ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    Icons.auto_awesome,
-                    size: 14,
-                    color: chipColor,
-                  ),
+                  Text(chipEmoji, style: const TextStyle(fontSize: 14)),
                   const SizedBox(width: 4),
                   Text(
                     displayName,
                     style: context.labelMedium.copyWith(
-                      color: chipColor,
+                      color: colors.textPrimary,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -474,6 +480,13 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     return mapping[fortuneType];
   }
 
+  String _formatSurveyOptionText(SurveyOption option) {
+    if (option.emoji != null && option.emoji!.isNotEmpty) {
+      return '${option.emoji!} ${option.label}';
+    }
+    return option.label;
+  }
+
   /// 설문 답변 처리
   void _handleSurveyAnswer(dynamic answer) {
     final surveyNotifier =
@@ -481,9 +494,18 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     final chatNotifier =
         ref.read(characterChatProvider(widget.character.id).notifier);
 
+    dynamic answerValue = answer;
+
     // 답변을 사용자 메시지로 표시
     String answerText;
-    if (answer is List) {
+    if (answer is SurveyOption) {
+      answerValue = answer.id;
+      answerText = _formatSurveyOptionText(answer);
+    } else if (answer is List && answer.every((item) => item is SurveyOption)) {
+      final selectedOptions = answer.cast<SurveyOption>();
+      answerValue = selectedOptions.map((option) => option.id).toList();
+      answerText = selectedOptions.map(_formatSurveyOptionText).join(', ');
+    } else if (answer is List) {
       answerText = answer.join(', ');
     } else if (answer is Map) {
       answerText = answer.values.join(', ');
@@ -493,7 +515,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     chatNotifier.addUserMessage(answerText);
 
     // 답변 처리
-    surveyNotifier.answerCurrentStep(answer);
+    surveyNotifier.answerCurrentStep(answerValue);
 
     // 다음 단계 확인
     Future.delayed(const Duration(milliseconds: 300), () {
@@ -586,13 +608,15 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   }
 
   Widget _buildTypingIndicator() {
+    final accentPalette = _accentPalette(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
           CircleAvatar(
             radius: 16,
-            backgroundColor: widget.character.accentColor,
+            backgroundColor: accentPalette.accent,
             backgroundImage: widget.character.avatarAsset.isNotEmpty
                 ? AssetImage(widget.character.avatarAsset)
                 : null,
@@ -600,7 +624,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                 ? Text(
                     widget.character.initial,
                     style: context.labelMedium.copyWith(
-                      color: Colors.white,
+                      color: accentPalette.onAccent,
                     ),
                   )
                 : null,
@@ -631,6 +655,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
     final progress = surveyState.activeProgress!;
     final step = progress.currentStep;
+    final accentPalette = _accentPalette(context);
     final surveyNotifier =
         ref.read(characterChatSurveyProvider(widget.character.id).notifier);
     final options = surveyNotifier.getCurrentStepOptions();
@@ -660,8 +685,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                   child: LinearProgressIndicator(
                     value: progress.progress,
                     backgroundColor: Colors.grey[200],
-                    valueColor:
-                        AlwaysStoppedAnimation(widget.character.accentColor),
+                    valueColor: AlwaysStoppedAnimation(accentPalette.accent),
                   ),
                 ),
                 // 스킵 버튼 (선택적 단계만)
@@ -693,7 +717,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       case SurveyInputType.chips:
         return ChatSurveyChips(
           options: options,
-          onSelect: (option) => _handleSurveyAnswer(option.id),
+          onSelect: _handleSurveyAnswer,
         );
 
       case SurveyInputType.multiSelect:
@@ -732,7 +756,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         if (options.isNotEmpty) {
           return ChatSurveyChips(
             options: options,
-            onSelect: (option) => _handleSurveyAnswer(option.id),
+            onSelect: _handleSurveyAnswer,
           );
         }
         return _buildTextInput(step);
@@ -742,6 +766,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   /// 다중 선택 칩 위젯
   Widget _buildMultiSelectChips(List<SurveyOption> options) {
     final selectedIds = <String>{};
+    final accentPalette = _accentPalette(context);
 
     return StatefulBuilder(
       builder: (context, setState) {
@@ -765,10 +790,15 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
             const SizedBox(height: DSSpacing.sm),
             if (selectedIds.isNotEmpty)
               ElevatedButton(
-                onPressed: () => _handleSurveyAnswer(selectedIds.toList()),
+                onPressed: () {
+                  final selectedOptions = options
+                      .where((option) => selectedIds.contains(option.id))
+                      .toList(growable: false);
+                  _handleSurveyAnswer(selectedOptions);
+                },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: widget.character.accentColor,
-                  foregroundColor: Colors.white,
+                  backgroundColor: accentPalette.accent,
+                  foregroundColor: accentPalette.onAccent,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -784,6 +814,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   /// 텍스트 입력 위젯
   Widget _buildTextInput(SurveyStep step) {
     final textController = TextEditingController();
+    final accentPalette = _accentPalette(context);
     return Row(
       children: [
         Expanded(
@@ -814,7 +845,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
               _handleSurveyAnswer(textController.text);
             }
           },
-          icon: Icon(Icons.send, color: widget.character.accentColor),
+          icon: Icon(Icons.send, color: accentPalette.accent),
         ),
         if (step.inputType == SurveyInputType.textWithSkip)
           TextButton(

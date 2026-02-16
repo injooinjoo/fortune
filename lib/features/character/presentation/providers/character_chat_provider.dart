@@ -19,6 +19,7 @@ import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../../../../core/constants/soul_rates.dart';
 import '../../../../services/app_icon_badge_service.dart';
+import '../../../../services/storage_service.dart';
 import '../../../../data/services/fortune_api/fortune_api_service.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
@@ -43,6 +44,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   final FollowUpScheduler _followUpScheduler = FollowUpScheduler();
   final CharacterChatLocalService _localService = CharacterChatLocalService();
   final CharacterAffinityService _affinityService = CharacterAffinityService();
+  final StorageService _storageService = StorageService();
 
   /// 현재 캐릭터 정보 캐시
   AiCharacter? _cachedCharacter;
@@ -1074,6 +1076,20 @@ $emojiInstruction
     return buffer.toString();
   }
 
+  Future<String> _resolveFortuneUserId() async {
+    final profileAsync = _ref.read(userProfileProvider);
+    final profileId = profileAsync.maybeWhen(
+      data: (profile) => profile?.id,
+      orElse: () => null,
+    );
+
+    if (profileId != null && profileId.isNotEmpty) {
+      return profileId;
+    }
+
+    return _storageService.getOrCreateGuestId();
+  }
+
   /// 🆕 운세 API 호출하여 Fortune 데이터 가져오기
   Future<Fortune?> _fetchFortuneData(
     String fortuneType,
@@ -1097,13 +1113,8 @@ $emojiInstruction
         'hasParams': params.isNotEmpty,
       });
 
-      // 유저 ID 가져오기
-      final profileAsync = _ref.read(userProfileProvider);
-      final userId = profileAsync.maybeWhen(
-            data: (profile) => profile?.id,
-            orElse: () => null,
-          ) ??
-          'guest';
+      // 유저 ID 가져오기 (비로그인은 guest_<uuid> 사용)
+      final userId = await _resolveFortuneUserId();
 
       final fortune = await apiService.getFortune(
         userId: userId,
