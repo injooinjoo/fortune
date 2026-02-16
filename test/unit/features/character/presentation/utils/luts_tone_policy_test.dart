@@ -105,5 +105,23 @@ void main() {
       expect(guarded.contains('도움이 필요하시면'), isFalse);
       expect(guarded, isNotEmpty);
     });
+
+    test('초기 턴 continuity 플래그 시 대화 연결 질문을 보강한다', () {
+      const profile = LutsToneProfile(
+        language: LutsLanguage.ko,
+        speechLevel: LutsSpeechLevel.formal,
+        nicknameAllowed: false,
+        turnIntent: LutsTurnIntent.sharing,
+      );
+
+      final bridged = LutsTonePolicy.applyGeneratedTone(
+        '김인주 씨, 만나서 반갑습니다!',
+        profile,
+        encourageContinuity: true,
+      );
+
+      expect(bridged.contains('요즘 가장 궁금한 건 뭐예요'), isTrue);
+      expect('?'.allMatches(bridged).length <= 1, isTrue);
+    });
   });
 }

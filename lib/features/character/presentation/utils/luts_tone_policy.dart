@@ -356,8 +356,9 @@ class LutsTonePolicy {
 
   static String applyGeneratedTone(
     String message,
-    LutsToneProfile profile,
-  ) {
+    LutsToneProfile profile, {
+    bool encourageContinuity = false,
+  }) {
     var result = message.trim();
     if (result.isEmpty) return result;
 
@@ -367,6 +368,10 @@ class LutsTonePolicy {
     result = _sanitizeServiceTone(result);
     result = _applyTurnIntentShaping(result, profile);
     result = enforceKakaoSingleBubble(result);
+    if (encourageContinuity) {
+      result = _ensureConversationalBridge(result, profile);
+      result = enforceKakaoSingleBubble(result);
+    }
     return result.isEmpty ? _defaultReplyForIntent(profile) : result;
   }
 
@@ -460,6 +465,49 @@ class LutsTonePolicy {
     }
 
     return result;
+  }
+
+  static String _ensureConversationalBridge(
+    String text,
+    LutsToneProfile profile,
+  ) {
+    final normalized = text.replaceAll(RegExp(r'\s+'), ' ').trim();
+    if (normalized.isEmpty) return _defaultReplyForIntent(profile);
+
+    final hasQuestion = normalized.contains('?') || normalized.contains('？');
+    if (hasQuestion || profile.turnIntent == LutsTurnIntent.question) {
+      return normalized;
+    }
+
+    final shouldBridge = profile.turnIntent == LutsTurnIntent.greeting ||
+        profile.turnIntent == LutsTurnIntent.shortReply ||
+        profile.turnIntent == LutsTurnIntent.sharing;
+    if (!shouldBridge) return normalized;
+
+    final bridge = _bridgeSentence(profile);
+    if (bridge.isEmpty) return normalized;
+
+    final needsPunctuation = !RegExp(r'[.!?。！？]$').hasMatch(normalized);
+    final base = needsPunctuation ? '$normalized.' : normalized;
+    return '$base $bridge'.trim();
+  }
+
+  static String _bridgeSentence(LutsToneProfile profile) {
+    switch (profile.language) {
+      case LutsLanguage.en:
+        return profile.speechLevel == LutsSpeechLevel.casual
+            ? 'What are you curious about these days?'
+            : 'What are you most curious about these days?';
+      case LutsLanguage.ja:
+        return profile.speechLevel == LutsSpeechLevel.casual
+            ? '最近いちばん気になってることって何？'
+            : '最近いちばん気になっていることは何ですか？';
+      case LutsLanguage.ko:
+      case LutsLanguage.unknown:
+        return profile.speechLevel == LutsSpeechLevel.casual
+            ? '요즘 제일 궁금한 게 뭐야?'
+            : '요즘 가장 궁금한 건 뭐예요?';
+    }
   }
 
   static String _normalizeGreetingEcho(String text, LutsToneProfile profile) {

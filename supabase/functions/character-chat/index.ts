@@ -559,6 +559,7 @@ function buildFirstMeetConversationPrompt(
 3) 친밀 호칭을 강요하지 말고 중립 호칭을 유지하세요.
 4) 초기 3~4턴은 소개/성향 파악 중심으로 진행하세요.
 5) 사용자가 운세/문제해결을 명시적으로 요청하면 즉시 본론으로 전환하세요.
+6) 답변을 단절형으로 끝내지 말고 짧은 브릿지 문장이나 가벼운 질문으로 자연스럽게 이어가세요.
 `.trim();
 }
 
@@ -922,6 +923,43 @@ function isLutsShortReply(language: LutsLanguage, text: string): boolean {
   return text.length <= 12;
 }
 
+function buildLutsBridgeSentence(profile: LutsToneProfile): string {
+  if (profile.language === "en") {
+    return profile.speechLevel === "casual"
+      ? "What are you curious about these days?"
+      : "What are you most curious about these days?";
+  }
+  if (profile.language === "ja") {
+    return profile.speechLevel === "casual"
+      ? "最近いちばん気になってることって何？"
+      : "最近いちばん気になっていることは何ですか？";
+  }
+  return profile.speechLevel === "casual"
+    ? "요즘 제일 궁금한 게 뭐야?"
+    : "요즘 가장 궁금한 건 뭐예요?";
+}
+
+function ensureLutsContinuity(text: string, profile: LutsToneProfile): string {
+  const normalized = text.replace(/\s{2,}/g, " ").trim();
+  if (!normalized) return defaultLutsReply(profile);
+
+  const hasQuestion = normalized.includes("?") || normalized.includes("？");
+  const shouldBridge = profile.turnIntent === "greeting" ||
+    profile.turnIntent === "shortReply" ||
+    profile.turnIntent === "sharing";
+
+  if (!shouldBridge || hasQuestion || profile.turnIntent === "question") {
+    return normalized;
+  }
+
+  const bridge = buildLutsBridgeSentence(profile);
+  if (!bridge) return normalized;
+
+  const needsPunctuation = !/[.!?。！？]$/.test(normalized);
+  const base = needsPunctuation ? `${normalized}.` : normalized;
+  return `${base} ${bridge}`.trim();
+}
+
 function splitLutsSentences(text: string): string[] {
   const normalized = text.replace(/\n+/g, " ").replace(/\s{2,}/g, " ").trim();
   if (!normalized) return [];
@@ -950,6 +988,7 @@ function applyLutsOutputGuard(
   if (profile.turnIntent === "greeting") {
     guarded = normalizeLutsGreetingEcho(guarded, profile);
   }
+  guarded = ensureLutsContinuity(guarded, profile);
   if (!guarded) {
     guarded = defaultLutsReply(profile);
   }

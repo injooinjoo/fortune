@@ -159,17 +159,22 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   String _applyLutsGeneratedTone(
     String message, {
     LutsToneProfile? profile,
+    bool encourageContinuity = false,
   }) {
     if (!_isLutsCharacter) return message;
     final resolvedProfile = profile ?? _buildLutsToneProfile();
-    return LutsTonePolicy.applyGeneratedTone(message, resolvedProfile);
+    return LutsTonePolicy.applyGeneratedTone(
+      message,
+      resolvedProfile,
+      encourageContinuity: encourageContinuity,
+    );
   }
 
   bool _isFormalCharacter() => _character.personality.contains('존댓말');
 
   String _buildFirstMeetOpening() {
     if (_isLutsCharacter) {
-      final lutsToneProfile = _buildLutsToneProfile();
+      const lutsToneProfile = LutsToneProfile.neutral;
       return _applyLutsTemplateTone(
         LutsTonePolicy.buildFirstMeetOpening(lutsToneProfile),
         profile: lutsToneProfile,
@@ -239,6 +244,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 3) 친밀 호칭 강요 금지. 기본 호칭은 중립적으로 유지하세요.
 4) 초반 3~4턴은 소개/성향 파악 중심으로 진행하세요.
 5) 사용자가 명시적으로 운세/문제 해결을 요청하면 즉시 본론으로 전환하세요.
+6) 답변을 단절형 문장으로 끝내지 말고, 짧은 브릿지 문장이나 가벼운 질문으로 자연스럽게 이어가세요.
 ''';
   }
 
@@ -577,21 +583,34 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     );
   }
 
-  /// 마지막 사용자 메시지를 읽음 처리 (1 → 사라짐)
-  void markLastUserMessageAsRead() {
+  /// 아직 읽지 않은 사용자 메시지를 모두 읽음 처리 (sent -> read)
+  ///
+  /// 연속 전송 시 이전 메시지의 "1"이 남는 현상을 막기 위해
+  /// 마지막 하나가 아니라 pending 상태 전체를 정리합니다.
+  void markPendingUserMessagesAsRead() {
+    final now = DateTime.now();
     final messages = List<CharacterChatMessage>.from(state.messages);
-    final lastUserIdx = messages.lastIndexWhere(
-      (m) => m.type == CharacterChatMessageType.user,
-    );
-    if (lastUserIdx >= 0 &&
-        messages[lastUserIdx].status == MessageStatus.sent) {
-      messages[lastUserIdx] = messages[lastUserIdx].copyWith(
-        status: MessageStatus.read,
-        readAt: DateTime.now(),
-      );
+    var hasChanged = false;
+
+    for (var i = 0; i < messages.length; i++) {
+      final message = messages[i];
+      if (message.type == CharacterChatMessageType.user &&
+          message.status == MessageStatus.sent) {
+        messages[i] = message.copyWith(
+          status: MessageStatus.read,
+          readAt: now,
+        );
+        hasChanged = true;
+      }
+    }
+
+    if (hasChanged) {
       state = state.copyWith(messages: messages);
     }
   }
+
+  /// @deprecated Use [markPendingUserMessagesAsRead]
+  void markLastUserMessageAsRead() => markPendingUserMessagesAsRead();
 
   /// 읽지 않은 메시지 수 초기화 (채팅방 진입 시)
   void clearUnreadCount() {
@@ -726,8 +745,8 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     final readDelay = ResponseDelayConfig.calculateReadDelay();
     await Future.delayed(Duration(milliseconds: readDelay));
 
-    // 3단계: 읽음 처리 → "1" 사라짐
-    markLastUserMessageAsRead();
+    // 3단계: 읽음 처리 → pending "1" 전체 정리
+    markPendingUserMessagesAsRead();
 
     // 4단계: 타이핑 시작
     setTyping(true);
@@ -792,6 +811,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       final normalizedResponse = _applyLutsGeneratedTone(
         response.response,
         profile: lutsToneProfile,
+        encourageContinuity: useFirstMeetMode,
       );
 
       // 6단계: 캐릭터 응답 추가 (호감도 변경값 포함)
@@ -852,7 +872,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     await Future.delayed(Duration(milliseconds: readDelay));
 
     // 3단계: 읽음 처리
-    markLastUserMessageAsRead();
+    markPendingUserMessagesAsRead();
 
     // 4단계: 타이핑 시작
     setTyping(true);
@@ -979,7 +999,7 @@ $emojiInstruction
     await Future.delayed(Duration(milliseconds: readDelay));
 
     // 3단계: 읽음 처리
-    markLastUserMessageAsRead();
+    markPendingUserMessagesAsRead();
 
     // 4단계: 타이핑 시작
     setTyping(true);
@@ -1393,8 +1413,8 @@ $emojiInstruction
     final readDelay = ResponseDelayConfig.calculateReadDelay();
     await Future.delayed(Duration(milliseconds: readDelay));
 
-    // 읽음 처리 → "1" 사라짐
-    markLastUserMessageAsRead();
+    // 읽음 처리 → pending "1" 전체 정리
+    markPendingUserMessagesAsRead();
 
     // 타이핑 시작
     setTyping(true);
