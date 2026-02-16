@@ -118,7 +118,7 @@ class LutsTonePolicy {
   );
 
   static final RegExp _serviceTonePattern = RegExp(
-    r'(무엇을\s*도와드릴\s*수|도움이\s*필요하시면|문의|지원|how can i help|let me help|assist you|お手伝い|サポート)',
+    r'(무엇을\s*도와드릴\s*수|(?:무엇을|뭘|어떻게)\s*도와드릴까요\??|도움이\s*필요하시면|문의|지원|how can i help|let me help|assist you|お手伝い|サポート)',
     caseSensitive: false,
   );
 
@@ -134,6 +134,13 @@ class LutsTonePolicy {
     MapEntry(
       RegExp(r'무엇을\s*도와드릴\s*수\s*있을까요\??', caseSensitive: false),
       '편하게 이야기해요.',
+    ),
+    MapEntry(
+      RegExp(
+        r'(?:무엇을|뭘|어떻게)\s*도와드릴까요\??',
+        caseSensitive: false,
+      ),
+      '',
     ),
     MapEntry(
       RegExp(r'도움이\s*필요하시면[^.!?。！？]*[.!?。！？]?', caseSensitive: false),
@@ -299,7 +306,7 @@ class LutsTonePolicy {
 - 카톡형 1버블: 답변은 1~2문장만 사용하세요.
 - 반복 금지: 같은 의미 문장을 반복하지 마세요.
 - 질문 제한: 질문은 필요할 때만 최대 1개 사용하세요.
-- 상담사 톤 금지: "무엇을 도와드릴 수", "도움이 필요하시면", "문의" 같은 문구를 금지하세요.
+- 상담사 톤 금지: "무엇을 도와드릴 수", "무엇을 도와드릴까요", "도움이 필요하시면", "문의" 같은 문구를 금지하세요.
 - $languageGuide
 - $speechGuide
 - $nicknameGuide
@@ -515,7 +522,7 @@ class LutsTonePolicy {
     if (normalized.isEmpty) return _defaultReplyForIntent(profile);
 
     final greetingEchoPattern = RegExp(
-      r'^(네[, ]*)?(반갑(?:습니다|네요|다|아요)|만나서 반갑)',
+      r'^(네[, ]*)?(저도[, ]*)?(반갑(?:습니다|네요|다|아요)|만나서 반갑)',
       caseSensitive: false,
     );
 

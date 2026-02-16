@@ -625,7 +625,7 @@ const LUTS_CHARACTER_ID = "luts";
 const LUTS_NICKNAME_PATTERN =
   /(여보|자기(?:야)?|허니|달링|애인|honey|darling|babe|baby|sweetheart|dear|my love|ハニー|ダーリン|ベイビー)/gi;
 const LUTS_SERVICE_TONE_PATTERN =
-  /(무엇을\s*도와드릴\s*수|도움이\s*필요하시면|문의|지원|how can i help|let me help|assist you|お手伝い|サポート)/i;
+  /(무엇을\s*도와드릴\s*수|(?:무엇을|뭘|어떻게)\s*도와드릴까요\??|도움이\s*필요하시면|문의|지원|how can i help|let me help|assist you|お手伝い|サポート)/i;
 const LUTS_GREETING_PATTERN = {
   ko: /(안녕(?:하세요)?|반갑(?:습니다|네요|다|아요)|처음 뵙)/i,
   en: /(hello|hi|hey|nice to meet you|good to meet you)/i,
@@ -786,7 +786,7 @@ function buildLutsStyleGuardPrompt(profile: LutsToneProfile): string {
 - 카톡형 1버블: 답변은 1~2문장으로 제한하세요.
 - 질문 제한: 질문은 필요할 때만 최대 1개 사용.
 - 반복 금지: 같은 의미 문장 반복 금지.
-- 상담사 톤 금지: "무엇을 도와드릴 수", "도움이 필요하시면", "문의" 같은 문구 금지.
+- 상담사 톤 금지: "무엇을 도와드릴 수", "무엇을 도와드릴까요", "도움이 필요하시면", "문의" 같은 문구 금지.
 - ${languageGuide}
 - ${speechGuide}
 - ${nicknameGuide}
@@ -819,6 +819,7 @@ function removeLutsServiceTone(text: string): string {
       "",
     ],
     [/무엇을\s*도와드릴\s*수\s*있을까요\??/gi, "편하게 이야기해요."],
+    [/(?:무엇을|뭘|어떻게)\s*도와드릴까요\??/gi, ""],
     [/도움이\s*필요하시면[^.!?。！？]*[.!?。！？]?/gi, ""],
     [/문의(?:해\s*주세요|해주세요|주세요)/gi, ""],
     [/how can i help you[^.!?。！？]*[.!?。！？]?/gi, ""],
@@ -891,7 +892,7 @@ function normalizeLutsGreetingEcho(
   if (!normalized) return defaultLutsReply(profile);
 
   const greetingEchoPattern =
-    /^(네[, ]*)?(반갑(?:습니다|네요|다|아요)|만나서 반갑)/i;
+    /^(네[, ]*)?(저도[, ]*)?(반갑(?:습니다|네요|다|아요)|만나서 반갑)/i;
   if (greetingEchoPattern.test(normalized)) {
     return defaultLutsReply(profile);
   }

@@ -106,6 +106,23 @@ void main() {
       expect(guarded, isNotEmpty);
     });
 
+    test('"무엇을 도와드릴까요" 문구를 제거한다', () {
+      const profile = LutsToneProfile(
+        language: LutsLanguage.ko,
+        speechLevel: LutsSpeechLevel.formal,
+        nicknameAllowed: false,
+        turnIntent: LutsTurnIntent.greeting,
+      );
+
+      final guarded = LutsTonePolicy.applyGeneratedTone(
+        '네, 저도 만나서 반가워요! 😊 무엇을 도와드릴까요?',
+        profile,
+      );
+
+      expect(guarded.contains('무엇을 도와드릴'), isFalse);
+      expect(guarded, isNotEmpty);
+    });
+
     test('초기 턴 continuity 플래그 시 대화 연결 질문을 보강한다', () {
       const profile = LutsToneProfile(
         language: LutsLanguage.ko,
