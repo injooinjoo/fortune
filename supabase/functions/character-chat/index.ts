@@ -553,7 +553,7 @@ function buildFirstMeetConversationPrompt(
 - 목표: ${turnGoal}
 
 필수 규칙:
-1) 한 번의 응답에서 질문은 정확히 1개만 하세요.
+1) 질문은 필요할 때만 0~1개 사용하세요.
 2) 사전 관계/사건/공동 과거를 절대 가정하지 마세요.
 3) 친밀 호칭을 강요하지 말고 중립 호칭을 유지하세요.
 4) 초기 3~4턴은 소개/성향 파악 중심으로 진행하세요.
@@ -600,6 +600,202 @@ function removeKakaoEmoticons(text: string): string {
     .replace(kakaoPattern, "")
     .replace(/\s{2,}/g, " ")
     .trim();
+}
+
+type LutsLanguage = "ko" | "en" | "ja" | "unknown";
+type LutsSpeechLevel = "formal" | "casual" | "neutral";
+
+interface LutsToneProfile {
+  language: LutsLanguage;
+  speechLevel: LutsSpeechLevel;
+  nicknameAllowed: boolean;
+}
+
+const LUTS_CHARACTER_ID = "luts";
+const LUTS_NICKNAME_PATTERN =
+  /(여보|자기(?:야)?|허니|달링|애인|honey|darling|babe|baby|sweetheart|dear|my love|ハニー|ダーリン|ベイビー)/gi;
+
+function detectLutsLanguage(text: string): LutsLanguage {
+  if (!text.trim()) return "unknown";
+
+  const koCount = (text.match(/[가-힣]/g) || []).length;
+  const jaCount = (text.match(/[\u3040-\u30FF\u4E00-\u9FFF]/g) || []).length;
+  const enCount = (text.match(/[A-Za-z]/g) || []).length;
+
+  if (koCount >= jaCount && koCount >= enCount && koCount > 0) return "ko";
+  if (jaCount >= koCount && jaCount >= enCount && jaCount > 0) return "ja";
+  if (enCount > 0) return "en";
+  return "unknown";
+}
+
+function detectLutsSpeechLevel(
+  language: LutsLanguage,
+  text: string,
+): LutsSpeechLevel {
+  if (!text.trim()) return "neutral";
+
+  const rules: Record<
+    Exclude<LutsLanguage, "unknown">,
+    { formal: RegExp; casual: RegExp }
+  > = {
+    ko: {
+      formal: /(안녕하세요|감사합니다|죄송합니다|주세요|드려요|합니다|습니다|세요|이에요|예요|까요\??|인가요\??)/g,
+      casual: /(안녕|해\?|했어|할래|줘|먹었어|뭐해|야\?|니\?|ㅋㅋ+|ㅎㅎ+|ㅠㅠ+|ㅜㅜ+)/g,
+    },
+    ja: {
+      formal: /(です|ます|ください|でしょう|ません|ございます|こんにちは)/g,
+      casual: /(だよ|だね|じゃん|かな|ね\?|よ\?|w+|笑)/g,
+    },
+    en: {
+      formal: /(please|could you|would you|thank you|may i|i would like|hello)/gi,
+      casual: /(hey|yo|lol|lmao|wanna|gonna|gotta|sup|bro|dude|haha|thx)/gi,
+    },
+  };
+
+  if (language === "unknown") return "neutral";
+
+  const formalScore = (text.match(rules[language].formal) || []).length;
+  const casualScore = (text.match(rules[language].casual) || []).length;
+
+  if (formalScore > casualScore) return "formal";
+  if (casualScore > formalScore) return "casual";
+  return "neutral";
+}
+
+function hasLutsNickname(text: string): boolean {
+  LUTS_NICKNAME_PATTERN.lastIndex = 0;
+  return LUTS_NICKNAME_PATTERN.test(text);
+}
+
+function buildLutsToneProfile(
+  history: ChatMessage[],
+  userMessage: string,
+): LutsToneProfile {
+  const userTexts = [
+    ...history
+      .filter((message) => message.role === "user")
+      .map((message) => message.content.trim())
+      .filter((text) => text.length > 0),
+    userMessage.trim(),
+  ].filter((text) => text.length > 0);
+
+  if (userTexts.length === 0) {
+    return {
+      language: "unknown",
+      speechLevel: "neutral",
+      nicknameAllowed: false,
+    };
+  }
+
+  const latest = userTexts[userTexts.length - 1];
+  const recentJoined = userTexts.slice(-3).join(" ");
+  const language = detectLutsLanguage(latest);
+  const speechLevel = detectLutsSpeechLevel(language, recentJoined);
+  const nicknameAllowed = userTexts.some((text) => hasLutsNickname(text));
+
+  return {
+    language,
+    speechLevel,
+    nicknameAllowed,
+  };
+}
+
+function buildLutsStyleGuardPrompt(profile: LutsToneProfile): string {
+  const languageGuide = profile.language === "ko"
+    ? "한국어로 답하고, 사용자 존댓말/반말을 미러링하세요."
+    : profile.language === "en"
+    ? "Respond in English and mirror the user's politeness level."
+    : profile.language === "ja"
+    ? "日本語で返答し、丁寧語/カジュアルをユーザーに合わせてください。"
+    : "사용자 최근 메시지 언어와 톤을 우선 추정해서 맞추세요.";
+
+  const speechGuide = profile.speechLevel === "formal"
+    ? "현재 톤: formal. 정중하고 차분한 어조 유지."
+    : profile.speechLevel === "casual"
+    ? "현재 톤: casual. 과하지 않은 자연스러운 구어체 사용."
+    : "현재 톤: neutral. 과도한 격식/과도한 친밀 표현 모두 피하세요.";
+
+  const nicknameGuide = profile.nicknameAllowed
+    ? "애칭 사용 가능: 사용자가 먼저 애칭을 사용한 경우에만 제한적으로 사용."
+    : "애칭 사용 금지: 여보/자기/honey/darling 계열 호칭 사용 금지.";
+
+  return `
+[LUTS STYLE GUARD]
+- 직답 우선: 질문에는 첫 문장에서 직접 답하세요.
+- 1버블 규칙: 답변은 1~2문장으로 제한하세요.
+- 질문 제한: 질문은 필요할 때만 최대 1개.
+- 반복 금지: 같은 의미 문장 반복 금지.
+- ${languageGuide}
+- ${speechGuide}
+- ${nicknameGuide}
+`.trim();
+}
+
+function removeBlockedLutsNicknames(
+  text: string,
+  language: LutsLanguage,
+): string {
+  const replacement = language === "en"
+    ? "you"
+    : language === "ja"
+    ? "あなた"
+    : "당신";
+
+  LUTS_NICKNAME_PATTERN.lastIndex = 0;
+  return text
+    .replace(LUTS_NICKNAME_PATTERN, replacement)
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+function splitLutsSentences(text: string): string[] {
+  const normalized = text.replace(/\n+/g, " ").replace(/\s{2,}/g, " ").trim();
+  if (!normalized) return [];
+
+  const sentenceMatches = normalized.match(/[^.!?。！？]+[.!?。！？]?/g) || [];
+  return sentenceMatches
+    .map((sentence) => sentence.trim())
+    .filter((sentence) => sentence.length > 0);
+}
+
+function applyLutsOutputGuard(
+  text: string,
+  profile: LutsToneProfile,
+): string {
+  let guarded = text.trim();
+  if (!guarded) return guarded;
+
+  if (!profile.nicknameAllowed) {
+    guarded = removeBlockedLutsNicknames(guarded, profile.language);
+  }
+
+  const sentences = splitLutsSentences(guarded);
+  if (sentences.length === 0) return guarded;
+
+  const deduped: string[] = [];
+  const seen = new Set<string>();
+
+  for (const sentence of sentences) {
+    const key = sentence.toLowerCase().replace(/[^0-9a-z가-힣ぁ-んァ-ヶ一-龯]+/g, "");
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    deduped.push(sentence);
+  }
+
+  const limited = deduped.slice(0, 2);
+  let questionCount = 0;
+
+  for (let i = 0; i < limited.length; i++) {
+    const hasQuestion = limited[i].includes("?") || limited[i].includes("？");
+    if (!hasQuestion) continue;
+
+    questionCount += 1;
+    if (questionCount > 1) {
+      limited[i] = limited[i].replace(/\?/g, ".").replace(/？/g, "。");
+    }
+  }
+
+  return limited.join(" ").replace(/\s{2,}/g, " ").trim();
 }
 
 serve(async (req: Request) => {
@@ -695,6 +891,12 @@ serve(async (req: Request) => {
     // 메시지 히스토리 준비
     const limitedHistory = limitMessages(messages || []);
     const charName = characterName || "캐릭터";
+    const lutsToneProfile = characterId === LUTS_CHARACTER_ID
+      ? buildLutsToneProfile(limitedHistory, userMessage)
+      : null;
+    const lutsStylePrompt = lutsToneProfile
+      ? buildLutsStyleGuardPrompt(lutsToneProfile)
+      : "";
 
     // 캐릭터 특성을 시스템 프롬프트에 추가
     let traitsPrompt = "";
@@ -761,6 +963,7 @@ ${characterTraits}
       relationshipPrompt,
       firstMeetPrompt,
       memoryPrompt,
+      lutsStylePrompt,
       AFFINITY_EVALUATION_PROMPT,
     ].filter((section) => section && section.trim().length > 0);
 
@@ -789,6 +992,9 @@ ${characterTraits}
       emojiFrequency,
       emoticonStyle,
     );
+    if (lutsToneProfile) {
+      responseText = applyLutsOutputGuard(responseText, lutsToneProfile);
+    }
 
     // 감정 추출 및 딜레이 계산
     const { emotionTag, delaySec } = extractEmotion(responseText);

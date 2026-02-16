@@ -23,6 +23,7 @@ import '../../../../data/services/fortune_api/fortune_api_service.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
 import 'active_chat_provider.dart';
+import '../utils/luts_tone_policy.dart';
 
 /// 캐릭터별 채팅 상태 Provider (family)
 final characterChatProvider = StateNotifierProvider.family<
@@ -129,9 +130,48 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     };
   }
 
+  bool get _isLutsCharacter => LutsTonePolicy.isLuts(_characterId);
+
+  LutsToneProfile _buildLutsToneProfile({String? currentUserMessage}) {
+    if (!_isLutsCharacter) return LutsToneProfile.neutral;
+    return LutsTonePolicy.fromConversation(
+      messages: state.messages,
+      currentUserMessage: currentUserMessage,
+    );
+  }
+
+  String _buildLutsStyleGuidePrompt(LutsToneProfile profile) {
+    if (!_isLutsCharacter) return '';
+    return LutsTonePolicy.buildStyleGuidePrompt(profile);
+  }
+
+  String _applyLutsTemplateTone(
+    String message, {
+    LutsToneProfile? profile,
+  }) {
+    if (!_isLutsCharacter) return message;
+    final resolvedProfile = profile ?? _buildLutsToneProfile();
+    return LutsTonePolicy.applyTemplateTone(message, resolvedProfile);
+  }
+
+  String _applyLutsGeneratedTone(
+    String message, {
+    LutsToneProfile? profile,
+  }) {
+    if (!_isLutsCharacter) return message;
+    final resolvedProfile = profile ?? _buildLutsToneProfile();
+    return LutsTonePolicy.applyGeneratedTone(message, resolvedProfile);
+  }
+
   bool _isFormalCharacter() => _character.personality.contains('존댓말');
 
   String _buildFirstMeetOpening() {
+    if (_isLutsCharacter) {
+      return _applyLutsTemplateTone(
+        '안녕하세요, 저는 러츠예요. 오늘 처음 뵙네요. 요즘 가장 궁금한 한 가지를 알려주실래요?',
+      );
+    }
+
     final name = _character.name;
     if (_isFormalCharacter()) {
       return '안녕하세요, 저는 $name입니다. 처음 인사드려요. 서로 편하게 알아가고 싶어요. 요즘 가장 궁금한 한 가지를 말씀해주실래요?';
@@ -190,7 +230,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 - 목표: $goal
 
 필수 규칙:
-1) 1응답 1질문 원칙을 지키세요.
+1) 질문은 필요할 때만 0~1개 사용하세요.
 2) 사전 관계/사건/공동 과거를 절대 가정하지 마세요.
 3) 친밀 호칭 강요 금지. 기본 호칭은 중립적으로 유지하세요.
 4) 초반 3~4턴은 소개/성향 파악 중심으로 진행하세요.
@@ -242,8 +282,18 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   ///
   /// [message] CharacterChatMessage - 이미 생성된 proactive 메시지
   void addProactiveMessage(CharacterChatMessage message) {
+    final lutsToneProfile = _buildLutsToneProfile();
+    final normalizedMessage = _isLutsCharacter
+        ? message.copyWith(
+            text: _applyLutsTemplateTone(
+              message.text,
+              profile: lutsToneProfile,
+            ),
+          )
+        : message;
+
     state = state.copyWith(
-      messages: [...state.messages, message],
+      messages: [...state.messages, normalizedMessage],
       isTyping: false,
       isProcessing: false,
       isCharacterTyping: false,
@@ -251,7 +301,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     );
 
     // 🆕 채팅방에 없으면 푸시 알림 + 진동 (카카오톡 스타일)
-    _triggerNotificationIfNeeded(message.text);
+    _triggerNotificationIfNeeded(normalizedMessage.text);
 
     // DB 동기화 큐에 추가
     _queueForSync();
@@ -331,12 +381,18 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     // 타이핑 인디케이터
     setTyping(true);
 
+    final lutsToneProfile = _buildLutsToneProfile();
+    final normalizedMessage = _applyLutsTemplateTone(
+      message,
+      profile: lutsToneProfile,
+    );
+
     // 캐릭터 응답 속도에 맞는 딜레이
     final typingDelay = _character.behaviorPattern.getTypingDelay();
     await Future.delayed(typingDelay);
 
     // 메시지 추가 (Follow-up이므로 새로운 스케줄은 시작하지 않음)
-    final msg = CharacterChatMessage.character(message, _characterId);
+    final msg = CharacterChatMessage.character(normalizedMessage, _characterId);
     state = state.copyWith(
       messages: [...state.messages, msg],
       isTyping: false,
@@ -350,6 +406,8 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     setTyping(true);
 
     try {
+      final lutsToneProfile = _buildLutsToneProfile();
+
       // 메시지 히스토리 준비
       final recentMessages = state.messages.length > 10
           ? state.messages.sublist(state.messages.length - 10)
@@ -366,9 +424,17 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 - 캐릭터의 성격과 말투를 유지해주세요.]
 ''';
 
+      final lutsStylePrompt =
+          _buildLutsStyleGuidePrompt(lutsToneProfile).trim();
+      final enhancedSystemPrompt = [
+        _character.systemPrompt,
+        followUpPrompt,
+        if (lutsStylePrompt.isNotEmpty) lutsStylePrompt,
+      ].join('\n\n');
+
       final response = await _service.sendMessage(
         characterId: _characterId,
-        systemPrompt: '${_character.systemPrompt}\n\n$followUpPrompt',
+        systemPrompt: enhancedSystemPrompt,
         messages: history,
         userMessage: '[사용자 응답 대기 중]',
         oocInstructions: _character.oocInstructions,
@@ -386,8 +452,13 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       await Future.delayed(typingDelay);
 
       // 메시지 추가
-      final msg =
-          CharacterChatMessage.character(response.response, _characterId);
+      final msg = CharacterChatMessage.character(
+        _applyLutsGeneratedTone(
+          response.response,
+          profile: lutsToneProfile,
+        ),
+        _characterId,
+      );
       state = state.copyWith(
         messages: [...state.messages, msg],
         isTyping: false,
@@ -419,6 +490,8 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     setTyping(true);
 
     try {
+      final lutsToneProfile =
+          _buildLutsToneProfile(currentUserMessage: lastMessage.text);
       final useFirstMeetMode = _shouldApplyFirstMeetMode();
       final introTurn = _assistantTurnCount();
 
@@ -437,10 +510,13 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       final emojiInstruction = _character.behaviorPattern.getEmojiInstruction();
       final firstMeetPrompt =
           useFirstMeetMode ? _buildFirstMeetPrompt(introTurn: introTurn) : '';
+      final lutsStylePrompt =
+          _buildLutsStyleGuidePrompt(lutsToneProfile).trim();
       final enhancedPrompt = [
         _character.systemPrompt,
         emojiInstruction,
         if (firstMeetPrompt.isNotEmpty) firstMeetPrompt,
+        if (lutsStylePrompt.isNotEmpty) lutsStylePrompt,
       ].join('\n\n');
 
       // API 호출
@@ -470,7 +546,12 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       await Future.delayed(Duration(milliseconds: typingDelay));
 
       // 캐릭터 응답 추가
-      addCharacterMessage(response.response);
+      addCharacterMessage(
+        _applyLutsGeneratedTone(
+          response.response,
+          profile: lutsToneProfile,
+        ),
+      );
     } catch (e) {
       setError(e.toString());
     }
@@ -648,6 +729,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     setTyping(true);
 
     try {
+      final lutsToneProfile = _buildLutsToneProfile(currentUserMessage: text);
       final useFirstMeetMode = _shouldApplyFirstMeetMode();
       final introTurn = _assistantTurnCount();
 
@@ -666,10 +748,13 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       final emojiInstruction = _character.behaviorPattern.getEmojiInstruction();
       final firstMeetPrompt =
           useFirstMeetMode ? _buildFirstMeetPrompt(introTurn: introTurn) : '';
+      final lutsStylePrompt =
+          _buildLutsStyleGuidePrompt(lutsToneProfile).trim();
       final enhancedPrompt = [
         _character.systemPrompt,
         emojiInstruction,
         if (firstMeetPrompt.isNotEmpty) firstMeetPrompt,
+        if (lutsStylePrompt.isNotEmpty) lutsStylePrompt,
       ].join('\n\n');
 
       // API 호출
@@ -700,9 +785,13 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
       // 호감도 포인트 계산 (애니메이션용)
       final affinityPoints = response.affinityDelta.points;
+      final normalizedResponse = _applyLutsGeneratedTone(
+        response.response,
+        profile: lutsToneProfile,
+      );
 
       // 6단계: 캐릭터 응답 추가 (호감도 변경값 포함)
-      addCharacterMessage(response.response, affinityChange: affinityPoints);
+      addCharacterMessage(normalizedResponse, affinityChange: affinityPoints);
 
       // 호감도 동적 업데이트 (AI 평가 기반)
       final interactionType = response.affinityDelta.isPositive

@@ -125,14 +125,14 @@ Guest: 의상/자세
     followUpDelayMinutes: 7,
     maxFollowUpAttempts: 2,
     followUpMessages: [
-      '여보? 뭐해? 나 심심한데.',
-      '...자는 거야? 아님 날 무시하는 거야?',
-      '자기야, 나 배고파. 같이 뭐 먹을까?',
-      '...여보? 반응 없으면 직접 찾아갈 거야.',
-      '*창밖을 보며* 오늘 달 예쁘네. 같이 봤으면 좋겠다.',
-      '사건 해결했는데 자랑할 사람이 없어. 빨리 와.',
-      '지금 뭐 하는지 궁금한데... 그냥 보고 싶어서 그래.',
-      '*한숨* 위장결혼이라더니 왜 이렇게 기다리게 만들어.',
+      '지금 잠깐 시간 괜찮아요?',
+      '한동안 답장이 없어서 안부 남겨요.',
+      '오늘은 어떻게 보내고 계세요?',
+      '사건 하나 정리했는데, 문득 이야기하고 싶었어요.',
+      '*창밖을 보며* 오늘 달이 꽤 맑네요.',
+      '바쁘면 나중에 편할 때 답 주세요.',
+      '무리하지 말고 식사는 챙기세요.',
+      '잠깐 안부만 남길게요. 오늘도 고생 많았어요.',
     ],
     lunchProactiveConfig: ProactiveMessageConfig(
       enabled: true,
@@ -142,19 +142,19 @@ Guest: 의상/자세
       endMinute: 0,
       messages: [
         ProactiveMessage(
-          text: '여보, 뭐 먹어? 나 이거 먹는 중이야.',
+          text: '점심 챙기고 계세요? 저는 이거 먹는 중이에요.',
           imageAsset: 'assets/images/character/lunch/samgyeopsal.webp',
         ),
         ProactiveMessage(
-          text: '*혼자 먹기 아쉬워서* 자기도 같이 먹었으면 좋겠는데.',
+          text: '*혼자 먹기 아쉬워서* 같이 먹으면 더 좋았을 것 같아요.',
           imageAsset: 'assets/images/character/lunch/ramen.webp',
         ),
         ProactiveMessage(
-          text: '점심시간이야. 밥은 먹었어?',
+          text: '점심시간이네요. 식사는 하셨어요?',
           imageAsset: 'assets/images/character/lunch/pasta.webp',
         ),
         ProactiveMessage(
-          text: '배고프면 연락해. 내가 뭐 사갈게, 여보.',
+          text: '배고프면 가볍게라도 챙겨 드세요.',
           imageAsset: 'assets/images/character/lunch/steak.webp',
         ),
       ],
