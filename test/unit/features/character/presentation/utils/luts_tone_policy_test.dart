@@ -38,6 +38,14 @@ void main() {
 
       expect(profile.speechLevel, LutsSpeechLevel.formal);
     });
+
+    test('인사 입력 시 greeting intent를 감지한다', () {
+      final profile = LutsTonePolicy.fromConversation(
+        messages: [CharacterChatMessage.user('반갑습니다')],
+      );
+
+      expect(profile.turnIntent, LutsTurnIntent.greeting);
+    });
   });
 
   group('LutsTonePolicy output guard', () {
@@ -46,6 +54,7 @@ void main() {
         language: LutsLanguage.ko,
         speechLevel: LutsSpeechLevel.formal,
         nicknameAllowed: false,
+        turnIntent: LutsTurnIntent.question,
       );
 
       final guarded = LutsTonePolicy.applyGeneratedTone(
@@ -63,6 +72,7 @@ void main() {
         language: LutsLanguage.ko,
         speechLevel: LutsSpeechLevel.formal,
         nicknameAllowed: false,
+        turnIntent: LutsTurnIntent.sharing,
       );
 
       final normalized = LutsTonePolicy.applyTemplateTone(
@@ -76,6 +86,24 @@ void main() {
           .length;
 
       expect(sentenceCount <= 2, isTrue);
+    });
+
+    test('서비스형 문구를 제거한다', () {
+      const profile = LutsToneProfile(
+        language: LutsLanguage.ko,
+        speechLevel: LutsSpeechLevel.formal,
+        nicknameAllowed: false,
+        turnIntent: LutsTurnIntent.greeting,
+      );
+
+      final guarded = LutsTonePolicy.applyGeneratedTone(
+        '네, 반갑습니다! 처음 뵙는 만큼 제가 무엇을 도와드릴 수 있을지 궁금하네요.',
+        profile,
+      );
+
+      expect(guarded.contains('무엇을 도와드릴 수'), isFalse);
+      expect(guarded.contains('도움이 필요하시면'), isFalse);
+      expect(guarded, isNotEmpty);
     });
   });
 }

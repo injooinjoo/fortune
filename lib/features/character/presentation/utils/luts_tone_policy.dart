@@ -2,28 +2,41 @@ import '../../domain/models/character_chat_message.dart';
 
 /// 언어 추정 결과
 ///
-/// `unknown`은 입력이 너무 짧거나 문자가 섞여서 단정하기 어려운 경우입니다.
+/// `unknown`은 입력이 너무 짧거나 문자가 섞여 단정하기 어려운 경우입니다.
 enum LutsLanguage { ko, en, ja, unknown }
 
 /// 말투 격식 추정 결과
 enum LutsSpeechLevel { formal, casual, neutral }
+
+/// 최근 사용자 발화의 의도 분류
+enum LutsTurnIntent {
+  greeting,
+  gratitude,
+  shortReply,
+  question,
+  sharing,
+  unknown
+}
 
 /// 러츠 톤 정책에 필요한 사용자 말투 컨텍스트
 class LutsToneProfile {
   final LutsLanguage language;
   final LutsSpeechLevel speechLevel;
   final bool nicknameAllowed;
+  final LutsTurnIntent turnIntent;
 
   const LutsToneProfile({
     required this.language,
     required this.speechLevel,
     required this.nicknameAllowed,
+    required this.turnIntent,
   });
 
   static const neutral = LutsToneProfile(
     language: LutsLanguage.unknown,
     speechLevel: LutsSpeechLevel.neutral,
     nicknameAllowed: false,
+    turnIntent: LutsTurnIntent.unknown,
   );
 }
 
@@ -65,6 +78,88 @@ class LutsTonePolicy {
     caseSensitive: false,
   );
 
+  static final RegExp _koGreetingPattern = RegExp(
+    r'(안녕(?:하세요)?|반갑(?:습니다|네요|다|아요)|처음 뵙)',
+    caseSensitive: false,
+  );
+  static final RegExp _enGreetingPattern = RegExp(
+    r'(hello|hi|hey|nice to meet you|good to meet you)',
+    caseSensitive: false,
+  );
+  static final RegExp _jaGreetingPattern = RegExp(
+    r'(こんにちは|はじめまして|よろしく)',
+    caseSensitive: false,
+  );
+
+  static final RegExp _koThanksPattern = RegExp(
+    r'(감사(?:합니다|해요|해)|고마워(?:요)?)',
+    caseSensitive: false,
+  );
+  static final RegExp _enThanksPattern = RegExp(
+    r'(thank you|thanks|thx)',
+    caseSensitive: false,
+  );
+  static final RegExp _jaThanksPattern = RegExp(
+    r'(ありがとう|ありがとうございます)',
+    caseSensitive: false,
+  );
+
+  static final RegExp _koShortReplyPattern = RegExp(
+    r'^(네|넵|응|ㅇㅇ|그래|좋아요|좋아|맞아요|맞아|반갑습니다|반가워요)[.!?]?$',
+    caseSensitive: false,
+  );
+  static final RegExp _enShortReplyPattern = RegExp(
+    r'^(ok|okay|yep|yeah|sure|nice|cool|got it|sounds good)[.!?]?$',
+    caseSensitive: false,
+  );
+  static final RegExp _jaShortReplyPattern = RegExp(
+    r'^(はい|うん|了解|いいね|いいよ|なるほど)[。！？!?]?$',
+    caseSensitive: false,
+  );
+
+  static final RegExp _serviceTonePattern = RegExp(
+    r'(무엇을\s*도와드릴\s*수|도움이\s*필요하시면|문의|지원|how can i help|let me help|assist you|お手伝い|サポート)',
+    caseSensitive: false,
+  );
+
+  static final List<MapEntry<RegExp, String>> _serviceToneReplacements = [
+    MapEntry(RegExp(r'처음 뵙는 만큼[, ]*', caseSensitive: false), ''),
+    MapEntry(
+      RegExp(
+        r'제가\s*무엇을\s*도와드릴\s*수\s*있을지[^.!?。！？]*[.!?。！？]?',
+        caseSensitive: false,
+      ),
+      '',
+    ),
+    MapEntry(
+      RegExp(r'무엇을\s*도와드릴\s*수\s*있을까요\??', caseSensitive: false),
+      '편하게 이야기해요.',
+    ),
+    MapEntry(
+      RegExp(r'도움이\s*필요하시면[^.!?。！？]*[.!?。！？]?', caseSensitive: false),
+      '',
+    ),
+    MapEntry(
+      RegExp(r'문의(?:해\s*주세요|해주세요|주세요)', caseSensitive: false),
+      '',
+    ),
+    MapEntry(
+      RegExp(r'how can i help you[^.!?。！？]*[.!?。！？]?', caseSensitive: false),
+      '',
+    ),
+    MapEntry(
+      RegExp(
+        r'let me know how i can help[^.!?。！？]*[.!?。！？]?',
+        caseSensitive: false,
+      ),
+      '',
+    ),
+    MapEntry(
+      RegExp(r'どのようにお手伝い[^。！？!?]*[。！？!?]?', caseSensitive: false),
+      '',
+    ),
+  ];
+
   static final RegExp _koCharPattern = RegExp(r'[가-힣]');
   static final RegExp _jaCharPattern = RegExp(r'[\u3040-\u30FF\u4E00-\u9FFF]');
   static final RegExp _enCharPattern = RegExp(r'[A-Za-z]');
@@ -93,12 +188,14 @@ class LutsTonePolicy {
     final language = detectLanguage(latest);
     final speechLevel =
         detectSpeechLevel(language: language, text: recentJoined);
+    final turnIntent = detectTurnIntent(text: latest, language: language);
     final nicknameAllowed = userTexts.any(_containsNickname);
 
     return LutsToneProfile(
       language: language,
       speechLevel: speechLevel,
       nicknameAllowed: nicknameAllowed,
+      turnIntent: turnIntent,
     );
   }
 
@@ -112,15 +209,12 @@ class LutsTonePolicy {
     if (koCount >= jaCount && koCount >= enCount && koCount > 0) {
       return LutsLanguage.ko;
     }
-
     if (jaCount >= koCount && jaCount >= enCount && jaCount > 0) {
       return LutsLanguage.ja;
     }
-
     if (enCount > 0) {
       return LutsLanguage.en;
     }
-
     return LutsLanguage.unknown;
   }
 
@@ -155,6 +249,22 @@ class LutsTonePolicy {
     return LutsSpeechLevel.neutral;
   }
 
+  static LutsTurnIntent detectTurnIntent({
+    required String text,
+    required LutsLanguage language,
+  }) {
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) return LutsTurnIntent.unknown;
+
+    final hasQuestionMark = trimmed.contains('?') || trimmed.contains('？');
+    if (_isGreeting(trimmed, language)) return LutsTurnIntent.greeting;
+    if (_isGratitude(trimmed, language)) return LutsTurnIntent.gratitude;
+    if (hasQuestionMark) return LutsTurnIntent.question;
+    if (_isShortReply(trimmed, language)) return LutsTurnIntent.shortReply;
+
+    return LutsTurnIntent.sharing;
+  }
+
   static String buildStyleGuidePrompt(LutsToneProfile profile) {
     final languageGuide = switch (profile.language) {
       LutsLanguage.ko => '한국어로 답하고, 사용자 말투의 존댓말/반말을 그대로 미러링하세요.',
@@ -166,24 +276,56 @@ class LutsTonePolicy {
 
     final speechGuide = switch (profile.speechLevel) {
       LutsSpeechLevel.formal => '현재 톤: formal. 정중하고 차분한 어조를 유지하세요.',
-      LutsSpeechLevel.casual => '현재 톤: casual. 편한 구어체로 답하세요.',
-      LutsSpeechLevel.neutral => '현재 톤: neutral. 과하게 딱딱하거나 과격하지 않게 답하세요.',
+      LutsSpeechLevel.casual => '현재 톤: casual. 과장 없이 자연스러운 구어체를 사용하세요.',
+      LutsSpeechLevel.neutral => '현재 톤: neutral. 과한 격식/과한 친밀 표현을 모두 피하세요.',
     };
 
     final nicknameGuide = profile.nicknameAllowed
-        ? '애칭 사용 가능: 사용자가 먼저 애칭을 사용했으므로, 필요할 때만 자연스럽게 제한적으로 사용하세요.'
+        ? '애칭 사용 가능: 사용자가 먼저 애칭을 사용했으므로, 필요할 때만 제한적으로 사용하세요.'
         : '애칭 사용 금지: "여보", "자기", "honey", "darling" 같은 호칭을 쓰지 마세요.';
+
+    final intentGuide = switch (profile.turnIntent) {
+      LutsTurnIntent.greeting => '턴 전략: 인사에는 짧은 리액션 중심으로 답하고, 같은 인사 반복은 금지하세요.',
+      LutsTurnIntent.gratitude => '턴 전략: 감사 표현에는 짧게 받아주고 대화를 이어가세요.',
+      LutsTurnIntent.shortReply => '턴 전략: 짧은 답장에는 짧은 공감 후 맥락을 한 걸음만 확장하세요.',
+      LutsTurnIntent.question => '턴 전략: 질문이면 첫 문장에서 바로 답하고 필요 시 한 문장만 덧붙이세요.',
+      LutsTurnIntent.sharing =>
+        '턴 전략: 공감 또는 관찰을 한 문장으로 주고, 필요할 때만 질문 1개를 사용하세요.',
+      LutsTurnIntent.unknown => '턴 전략: 중립적으로 한 문장 반응 후 자연스럽게 이어가세요.',
+    };
 
     return '''
 [LUTS STYLE GUARD]
-- 직답 우선: 질문에는 첫 문장에서 직접 답하세요.
-- 1버블 규칙: 답변은 1~2문장만 사용하세요.
-- 질문 제한: 답변 내 질문은 필요할 때만 최대 1개.
+- 카톡형 1버블: 답변은 1~2문장만 사용하세요.
 - 반복 금지: 같은 의미 문장을 반복하지 마세요.
+- 질문 제한: 질문은 필요할 때만 최대 1개 사용하세요.
+- 상담사 톤 금지: "무엇을 도와드릴 수", "도움이 필요하시면", "문의" 같은 문구를 금지하세요.
 - $languageGuide
 - $speechGuide
 - $nicknameGuide
+- $intentGuide
 ''';
+  }
+
+  static String buildFirstMeetOpening(LutsToneProfile profile) {
+    switch (profile.language) {
+      case LutsLanguage.en:
+        if (profile.speechLevel == LutsSpeechLevel.casual) {
+          return 'Hey, I\'m Luts. Nice to meet you.';
+        }
+        return 'Hello, I\'m Luts. Nice to meet you.';
+      case LutsLanguage.ja:
+        if (profile.speechLevel == LutsSpeechLevel.casual) {
+          return 'やあ、ルツだよ。会えてうれしい。';
+        }
+        return 'こんにちは、ルツです。お会いできてうれしいです。';
+      case LutsLanguage.ko:
+      case LutsLanguage.unknown:
+        if (profile.speechLevel == LutsSpeechLevel.casual) {
+          return '안녕, 러츠야. 만나서 반가워.';
+        }
+        return '안녕하세요, 러츠예요. 만나서 반가워요.';
+    }
   }
 
   static String applyTemplateTone(
@@ -191,10 +333,12 @@ class LutsTonePolicy {
     LutsToneProfile profile,
   ) {
     var result = message.trim();
+    if (result.isEmpty) return result;
 
     if (!profile.nicknameAllowed) {
       result = _removeNicknames(result);
     }
+    result = _sanitizeServiceTone(result);
 
     if (profile.language == LutsLanguage.ko &&
         profile.speechLevel == LutsSpeechLevel.formal) {
@@ -205,7 +349,9 @@ class LutsTonePolicy {
       result = _toKoreanCasual(result);
     }
 
-    return enforceKakaoSingleBubble(result);
+    result = _applyTurnIntentShaping(result, profile);
+    result = enforceKakaoSingleBubble(result);
+    return result.isEmpty ? _defaultReplyForIntent(profile) : result;
   }
 
   static String applyGeneratedTone(
@@ -213,10 +359,15 @@ class LutsTonePolicy {
     LutsToneProfile profile,
   ) {
     var result = message.trim();
+    if (result.isEmpty) return result;
+
     if (!profile.nicknameAllowed) {
       result = _removeNicknames(result);
     }
-    return enforceKakaoSingleBubble(result);
+    result = _sanitizeServiceTone(result);
+    result = _applyTurnIntentShaping(result, profile);
+    result = enforceKakaoSingleBubble(result);
+    return result.isEmpty ? _defaultReplyForIntent(profile) : result;
   }
 
   static String enforceKakaoSingleBubble(String text) {
@@ -280,6 +431,142 @@ class LutsTonePolicy {
         .trim();
   }
 
+  static String _sanitizeServiceTone(String text) {
+    var result = text;
+    for (final replacement in _serviceToneReplacements) {
+      result = result.replaceAll(replacement.key, replacement.value);
+    }
+    return result
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .replaceAll(RegExp(r'^[,.\s]+'), '')
+        .trim();
+  }
+
+  static String _applyTurnIntentShaping(String text, LutsToneProfile profile) {
+    var result = text.trim();
+    if (result.isEmpty) return result;
+
+    if (_serviceTonePattern.hasMatch(result)) {
+      return _defaultReplyForIntent(profile);
+    }
+
+    if (profile.turnIntent == LutsTurnIntent.greeting) {
+      result = _normalizeGreetingEcho(result, profile);
+    }
+
+    if (profile.turnIntent == LutsTurnIntent.gratitude &&
+        _serviceTonePattern.hasMatch(result)) {
+      return _defaultReplyForIntent(profile);
+    }
+
+    return result;
+  }
+
+  static String _normalizeGreetingEcho(String text, LutsToneProfile profile) {
+    final normalized = text.replaceAll(RegExp(r'\s+'), ' ').trim();
+    if (normalized.isEmpty) return _defaultReplyForIntent(profile);
+
+    final greetingEchoPattern = RegExp(
+      r'^(네[, ]*)?(반갑(?:습니다|네요|다|아요)|만나서 반갑)',
+      caseSensitive: false,
+    );
+
+    if (greetingEchoPattern.hasMatch(normalized)) {
+      return _defaultReplyForIntent(profile);
+    }
+
+    return normalized;
+  }
+
+  static String _defaultReplyForIntent(LutsToneProfile profile) {
+    switch (profile.language) {
+      case LutsLanguage.en:
+        switch (profile.turnIntent) {
+          case LutsTurnIntent.greeting:
+            return 'Nice to meet you too. We can chat casually.';
+          case LutsTurnIntent.gratitude:
+            return 'You are welcome. We can keep going.';
+          case LutsTurnIntent.shortReply:
+            return 'Sounds good. Let us keep talking.';
+          case LutsTurnIntent.question:
+          case LutsTurnIntent.sharing:
+          case LutsTurnIntent.unknown:
+            return 'I hear you. Let us keep this simple.';
+        }
+      case LutsLanguage.ja:
+        switch (profile.turnIntent) {
+          case LutsTurnIntent.greeting:
+            return 'こちらこそ、会えてうれしいです。気軽に話してください。';
+          case LutsTurnIntent.gratitude:
+            return 'どういたしまして。続けて話しましょう。';
+          case LutsTurnIntent.shortReply:
+            return 'いいですね。ゆっくり話しましょう。';
+          case LutsTurnIntent.question:
+          case LutsTurnIntent.sharing:
+          case LutsTurnIntent.unknown:
+            return 'うん、受け取ったよ。続けて話そう。';
+        }
+      case LutsLanguage.ko:
+      case LutsLanguage.unknown:
+        final isCasual = profile.speechLevel == LutsSpeechLevel.casual;
+        switch (profile.turnIntent) {
+          case LutsTurnIntent.greeting:
+            return isCasual ? '나도 반가워. 편하게 얘기하자.' : '저도 반가워요. 편하게 이야기해요.';
+          case LutsTurnIntent.gratitude:
+            return isCasual ? '별말 아니야. 이어서 얘기하자.' : '별말씀을요. 이어서 이야기해요.';
+          case LutsTurnIntent.shortReply:
+            return isCasual ? '좋아. 이어서 얘기해.' : '좋아요. 이어서 이야기해요.';
+          case LutsTurnIntent.question:
+          case LutsTurnIntent.sharing:
+          case LutsTurnIntent.unknown:
+            return isCasual ? '응, 들었어. 계속 말해줘.' : '네, 잘 들었어요. 이어서 말씀해 주세요.';
+        }
+    }
+  }
+
+  static bool _isGreeting(String text, LutsLanguage language) {
+    switch (language) {
+      case LutsLanguage.ko:
+        return _koGreetingPattern.hasMatch(text);
+      case LutsLanguage.en:
+        return _enGreetingPattern.hasMatch(text);
+      case LutsLanguage.ja:
+        return _jaGreetingPattern.hasMatch(text);
+      case LutsLanguage.unknown:
+        return _koGreetingPattern.hasMatch(text) ||
+            _enGreetingPattern.hasMatch(text) ||
+            _jaGreetingPattern.hasMatch(text);
+    }
+  }
+
+  static bool _isGratitude(String text, LutsLanguage language) {
+    switch (language) {
+      case LutsLanguage.ko:
+        return _koThanksPattern.hasMatch(text);
+      case LutsLanguage.en:
+        return _enThanksPattern.hasMatch(text);
+      case LutsLanguage.ja:
+        return _jaThanksPattern.hasMatch(text);
+      case LutsLanguage.unknown:
+        return _koThanksPattern.hasMatch(text) ||
+            _enThanksPattern.hasMatch(text) ||
+            _jaThanksPattern.hasMatch(text);
+    }
+  }
+
+  static bool _isShortReply(String text, LutsLanguage language) {
+    switch (language) {
+      case LutsLanguage.ko:
+        return _koShortReplyPattern.hasMatch(text);
+      case LutsLanguage.en:
+        return _enShortReplyPattern.hasMatch(text);
+      case LutsLanguage.ja:
+        return _jaShortReplyPattern.hasMatch(text);
+      case LutsLanguage.unknown:
+        return text.runes.length <= 10;
+    }
+  }
+
   static String _toKoreanFormal(String text) {
     var result = text;
 
@@ -297,6 +584,7 @@ class LutsTonePolicy {
       MapEntry('궁금한데', '궁금해요'),
       MapEntry('보고 싶어서 그래.', '보고 싶어서 그랬어요.'),
       MapEntry('빨리 와.', '시간 되실 때 와주세요.'),
+      MapEntry('얘기하자.', '이야기해요.'),
     ];
 
     for (final replacement in replacements) {
@@ -320,6 +608,8 @@ class LutsTonePolicy {
       MapEntry('와주세요.', '와줘.'),
       MapEntry('고생 많았어요.', '고생 많았어.'),
       MapEntry('해주세요?', '해줄래?'),
+      MapEntry('이어서 이야기해요.', '이어서 얘기해.'),
+      MapEntry('편하게 이야기해요.', '편하게 얘기하자.'),
     ];
 
     for (final replacement in replacements) {

@@ -538,7 +538,8 @@ function buildFirstMeetConversationPrompt(
   const safeIntroTurn = Math.max(1, Math.min(4, Math.floor(introTurn ?? 1)));
   let turnGoal = "";
   if (safeIntroTurn === 1) {
-    turnGoal = "첫 만남 인사 이후 단계: 사용자의 현재 관심사 1가지를 듣고 가볍게 공감";
+    turnGoal =
+      "첫 만남 인사 이후 단계: 사용자의 현재 관심사 1가지를 듣고 가볍게 공감";
   } else if (safeIntroTurn === 2) {
     turnGoal = "두 번째 단계: 성향/대화 톤 파악 질문 1개";
   } else if (safeIntroTurn === 3) {
@@ -604,16 +605,42 @@ function removeKakaoEmoticons(text: string): string {
 
 type LutsLanguage = "ko" | "en" | "ja" | "unknown";
 type LutsSpeechLevel = "formal" | "casual" | "neutral";
+type LutsTurnIntent =
+  | "greeting"
+  | "gratitude"
+  | "shortReply"
+  | "question"
+  | "sharing"
+  | "unknown";
 
 interface LutsToneProfile {
   language: LutsLanguage;
   speechLevel: LutsSpeechLevel;
   nicknameAllowed: boolean;
+  turnIntent: LutsTurnIntent;
 }
 
 const LUTS_CHARACTER_ID = "luts";
 const LUTS_NICKNAME_PATTERN =
   /(여보|자기(?:야)?|허니|달링|애인|honey|darling|babe|baby|sweetheart|dear|my love|ハニー|ダーリン|ベイビー)/gi;
+const LUTS_SERVICE_TONE_PATTERN =
+  /(무엇을\s*도와드릴\s*수|도움이\s*필요하시면|문의|지원|how can i help|let me help|assist you|お手伝い|サポート)/i;
+const LUTS_GREETING_PATTERN = {
+  ko: /(안녕(?:하세요)?|반갑(?:습니다|네요|다|아요)|처음 뵙)/i,
+  en: /(hello|hi|hey|nice to meet you|good to meet you)/i,
+  ja: /(こんにちは|はじめまして|よろしく)/i,
+};
+const LUTS_GRATITUDE_PATTERN = {
+  ko: /(감사(?:합니다|해요|해)|고마워(?:요)?)/i,
+  en: /(thank you|thanks|thx)/i,
+  ja: /(ありがとう|ありがとうございます)/i,
+};
+const LUTS_SHORT_REPLY_PATTERN = {
+  ko:
+    /^(네|넵|응|ㅇㅇ|그래|좋아요|좋아|맞아요|맞아|반갑습니다|반가워요)[.!?]?$/i,
+  en: /^(ok|okay|yep|yeah|sure|nice|cool|got it|sounds good)[.!?]?$/i,
+  ja: /^(はい|うん|了解|いいね|いいよ|なるほど)[。！？!?]?$/i,
+};
 
 function detectLutsLanguage(text: string): LutsLanguage {
   if (!text.trim()) return "unknown";
@@ -639,15 +666,18 @@ function detectLutsSpeechLevel(
     { formal: RegExp; casual: RegExp }
   > = {
     ko: {
-      formal: /(안녕하세요|감사합니다|죄송합니다|주세요|드려요|합니다|습니다|세요|이에요|예요|까요\??|인가요\??)/g,
-      casual: /(안녕|해\?|했어|할래|줘|먹었어|뭐해|야\?|니\?|ㅋㅋ+|ㅎㅎ+|ㅠㅠ+|ㅜㅜ+)/g,
+      formal:
+        /(안녕하세요|감사합니다|죄송합니다|주세요|드려요|합니다|습니다|세요|이에요|예요|까요\??|인가요\??)/g,
+      casual:
+        /(안녕|해\?|했어|할래|줘|먹었어|뭐해|야\?|니\?|ㅋㅋ+|ㅎㅎ+|ㅠㅠ+|ㅜㅜ+)/g,
     },
     ja: {
       formal: /(です|ます|ください|でしょう|ません|ございます|こんにちは)/g,
       casual: /(だよ|だね|じゃん|かな|ね\?|よ\?|w+|笑)/g,
     },
     en: {
-      formal: /(please|could you|would you|thank you|may i|i would like|hello)/gi,
+      formal:
+        /(please|could you|would you|thank you|may i|i would like|hello)/gi,
       casual: /(hey|yo|lol|lmao|wanna|gonna|gotta|sup|bro|dude|haha|thx)/gi,
     },
   };
@@ -660,6 +690,22 @@ function detectLutsSpeechLevel(
   if (formalScore > casualScore) return "formal";
   if (casualScore > formalScore) return "casual";
   return "neutral";
+}
+
+function detectLutsTurnIntent(
+  language: LutsLanguage,
+  text: string,
+): LutsTurnIntent {
+  const trimmed = text.trim();
+  if (!trimmed) return "unknown";
+
+  if (isLutsGreeting(language, trimmed)) return "greeting";
+  if (isLutsGratitude(language, trimmed)) return "gratitude";
+
+  if (trimmed.includes("?") || trimmed.includes("？")) return "question";
+  if (isLutsShortReply(language, trimmed)) return "shortReply";
+
+  return "sharing";
 }
 
 function hasLutsNickname(text: string): boolean {
@@ -684,6 +730,7 @@ function buildLutsToneProfile(
       language: "unknown",
       speechLevel: "neutral",
       nicknameAllowed: false,
+      turnIntent: "unknown",
     };
   }
 
@@ -691,12 +738,14 @@ function buildLutsToneProfile(
   const recentJoined = userTexts.slice(-3).join(" ");
   const language = detectLutsLanguage(latest);
   const speechLevel = detectLutsSpeechLevel(language, recentJoined);
+  const turnIntent = detectLutsTurnIntent(language, latest);
   const nicknameAllowed = userTexts.some((text) => hasLutsNickname(text));
 
   return {
     language,
     speechLevel,
     nicknameAllowed,
+    turnIntent,
   };
 }
 
@@ -719,15 +768,28 @@ function buildLutsStyleGuardPrompt(profile: LutsToneProfile): string {
     ? "애칭 사용 가능: 사용자가 먼저 애칭을 사용한 경우에만 제한적으로 사용."
     : "애칭 사용 금지: 여보/자기/honey/darling 계열 호칭 사용 금지.";
 
+  const turnIntentGuide = profile.turnIntent === "greeting"
+    ? "턴 전략: 인사에는 짧은 리액션 중심으로 답하고 같은 인사 반복 금지."
+    : profile.turnIntent === "gratitude"
+    ? "턴 전략: 감사 표현에는 짧게 받아주고 대화를 이어가기."
+    : profile.turnIntent === "shortReply"
+    ? "턴 전략: 짧은 답장에는 짧은 공감 후 한 걸음만 확장."
+    : profile.turnIntent === "question"
+    ? "턴 전략: 질문에는 첫 문장에서 직답 후 필요 시 한 문장 추가."
+    : profile.turnIntent === "sharing"
+    ? "턴 전략: 공감/관찰을 먼저 주고 필요할 때만 질문 1개 사용."
+    : "턴 전략: 중립적으로 짧게 반응 후 이어가기.";
+
   return `
 [LUTS STYLE GUARD]
-- 직답 우선: 질문에는 첫 문장에서 직접 답하세요.
-- 1버블 규칙: 답변은 1~2문장으로 제한하세요.
-- 질문 제한: 질문은 필요할 때만 최대 1개.
+- 카톡형 1버블: 답변은 1~2문장으로 제한하세요.
+- 질문 제한: 질문은 필요할 때만 최대 1개 사용.
 - 반복 금지: 같은 의미 문장 반복 금지.
+- 상담사 톤 금지: "무엇을 도와드릴 수", "도움이 필요하시면", "문의" 같은 문구 금지.
 - ${languageGuide}
 - ${speechGuide}
 - ${nicknameGuide}
+- ${turnIntentGuide}
 `.trim();
 }
 
@@ -746,6 +808,118 @@ function removeBlockedLutsNicknames(
     .replace(LUTS_NICKNAME_PATTERN, replacement)
     .replace(/\s{2,}/g, " ")
     .trim();
+}
+
+function removeLutsServiceTone(text: string): string {
+  const replacements: Array<[RegExp, string]> = [
+    [/처음 뵙는 만큼[, ]*/gi, ""],
+    [
+      /제가\s*무엇을\s*도와드릴\s*수\s*있을지[^.!?。！？]*[.!?。！？]?/gi,
+      "",
+    ],
+    [/무엇을\s*도와드릴\s*수\s*있을까요\??/gi, "편하게 이야기해요."],
+    [/도움이\s*필요하시면[^.!?。！？]*[.!?。！？]?/gi, ""],
+    [/문의(?:해\s*주세요|해주세요|주세요)/gi, ""],
+    [/how can i help you[^.!?。！？]*[.!?。！？]?/gi, ""],
+    [/let me know how i can help[^.!?。！？]*[.!?。！？]?/gi, ""],
+    [/どのようにお手伝い[^。！？!?]*[。！？!?]?/gi, ""],
+  ];
+
+  let result = text;
+  for (const [pattern, replaceWith] of replacements) {
+    result = result.replace(pattern, replaceWith);
+  }
+
+  return result
+    .replace(/\s{2,}/g, " ")
+    .replace(/^[,.\s]+/g, "")
+    .trim();
+}
+
+function defaultLutsReply(profile: LutsToneProfile): string {
+  if (profile.language === "en") {
+    if (profile.turnIntent === "greeting") {
+      return "Nice to meet you too. We can chat casually.";
+    }
+    if (profile.turnIntent === "gratitude") {
+      return "You are welcome. We can keep going.";
+    }
+    if (profile.turnIntent === "shortReply") {
+      return "Sounds good. Let us keep talking.";
+    }
+    return "I hear you. Let us keep this simple.";
+  }
+
+  if (profile.language === "ja") {
+    if (profile.turnIntent === "greeting") {
+      return "こちらこそ、会えてうれしいです。気軽に話してください。";
+    }
+    if (profile.turnIntent === "gratitude") {
+      return "どういたしまして。続けて話しましょう。";
+    }
+    if (profile.turnIntent === "shortReply") {
+      return "いいですね。ゆっくり話しましょう。";
+    }
+    return "うん、受け取ったよ。続けて話そう。";
+  }
+
+  const isCasual = profile.speechLevel === "casual";
+  if (profile.turnIntent === "greeting") {
+    return isCasual
+      ? "나도 반가워. 편하게 얘기하자."
+      : "저도 반가워요. 편하게 이야기해요.";
+  }
+  if (profile.turnIntent === "gratitude") {
+    return isCasual
+      ? "별말 아니야. 이어서 얘기하자."
+      : "별말씀을요. 이어서 이야기해요.";
+  }
+  if (profile.turnIntent === "shortReply") {
+    return isCasual ? "좋아. 이어서 얘기해." : "좋아요. 이어서 이야기해요.";
+  }
+  return isCasual
+    ? "응, 들었어. 계속 말해줘."
+    : "네, 잘 들었어요. 이어서 말씀해 주세요.";
+}
+
+function normalizeLutsGreetingEcho(
+  text: string,
+  profile: LutsToneProfile,
+): string {
+  const normalized = text.replace(/\s+/g, " ").trim();
+  if (!normalized) return defaultLutsReply(profile);
+
+  const greetingEchoPattern =
+    /^(네[, ]*)?(반갑(?:습니다|네요|다|아요)|만나서 반갑)/i;
+  if (greetingEchoPattern.test(normalized)) {
+    return defaultLutsReply(profile);
+  }
+  return normalized;
+}
+
+function isLutsGreeting(language: LutsLanguage, text: string): boolean {
+  if (language === "ko") return LUTS_GREETING_PATTERN.ko.test(text);
+  if (language === "en") return LUTS_GREETING_PATTERN.en.test(text);
+  if (language === "ja") return LUTS_GREETING_PATTERN.ja.test(text);
+  return LUTS_GREETING_PATTERN.ko.test(text) ||
+    LUTS_GREETING_PATTERN.en.test(text) ||
+    LUTS_GREETING_PATTERN.ja.test(text);
+}
+
+function isLutsGratitude(language: LutsLanguage, text: string): boolean {
+  if (language === "ko") return LUTS_GRATITUDE_PATTERN.ko.test(text);
+  if (language === "en") return LUTS_GRATITUDE_PATTERN.en.test(text);
+  if (language === "ja") return LUTS_GRATITUDE_PATTERN.ja.test(text);
+  return LUTS_GRATITUDE_PATTERN.ko.test(text) ||
+    LUTS_GRATITUDE_PATTERN.en.test(text) ||
+    LUTS_GRATITUDE_PATTERN.ja.test(text);
+}
+
+function isLutsShortReply(language: LutsLanguage, text: string): boolean {
+  if (language === "ko") return LUTS_SHORT_REPLY_PATTERN.ko.test(text);
+  if (language === "en") return LUTS_SHORT_REPLY_PATTERN.en.test(text);
+  if (language === "ja") return LUTS_SHORT_REPLY_PATTERN.ja.test(text);
+  return text.length <= 12;
 }
 
 function splitLutsSentences(text: string): string[] {
@@ -768,15 +942,29 @@ function applyLutsOutputGuard(
   if (!profile.nicknameAllowed) {
     guarded = removeBlockedLutsNicknames(guarded, profile.language);
   }
+  guarded = removeLutsServiceTone(guarded);
+
+  if (LUTS_SERVICE_TONE_PATTERN.test(guarded)) {
+    guarded = defaultLutsReply(profile);
+  }
+  if (profile.turnIntent === "greeting") {
+    guarded = normalizeLutsGreetingEcho(guarded, profile);
+  }
+  if (!guarded) {
+    guarded = defaultLutsReply(profile);
+  }
 
   const sentences = splitLutsSentences(guarded);
-  if (sentences.length === 0) return guarded;
+  if (sentences.length === 0) return defaultLutsReply(profile);
 
   const deduped: string[] = [];
   const seen = new Set<string>();
 
   for (const sentence of sentences) {
-    const key = sentence.toLowerCase().replace(/[^0-9a-z가-힣ぁ-んァ-ヶ一-龯]+/g, "");
+    const key = sentence.toLowerCase().replace(
+      /[^0-9a-z가-힣ぁ-んァ-ヶ一-龯]+/g,
+      "",
+    );
     if (!key || seen.has(key)) continue;
     seen.add(key);
     deduped.push(sentence);
@@ -795,7 +983,8 @@ function applyLutsOutputGuard(
     }
   }
 
-  return limited.join(" ").replace(/\s{2,}/g, " ").trim();
+  const normalized = limited.join(" ").replace(/\s{2,}/g, " ").trim();
+  return normalized.length === 0 ? defaultLutsReply(profile) : normalized;
 }
 
 serve(async (req: Request) => {

@@ -169,8 +169,10 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
   String _buildFirstMeetOpening() {
     if (_isLutsCharacter) {
+      final lutsToneProfile = _buildLutsToneProfile();
       return _applyLutsTemplateTone(
-        '안녕하세요, 저는 러츠예요. 오늘 처음 뵙네요. 요즘 가장 궁금한 한 가지를 알려주실래요?',
+        LutsTonePolicy.buildFirstMeetOpening(lutsToneProfile),
+        profile: lutsToneProfile,
       );
     }
 
@@ -856,6 +858,8 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     setTyping(true);
 
     try {
+      final lutsToneProfile =
+          _buildLutsToneProfile(currentUserMessage: requestMessage);
       // 🆕 실제 운세 API 호출하여 상세 데이터 가져오기
       final fortuneData = await _fetchFortuneData(fortuneType, {});
       final fortuneDataContext = _formatFortuneDataForContext(fortuneData);
@@ -890,9 +894,17 @@ $fortuneDataContext
 $emojiInstruction
 ''';
 
+      final lutsStylePrompt =
+          _buildLutsStyleGuidePrompt(lutsToneProfile).trim();
+      final enhancedPrompt = [
+        _character.systemPrompt,
+        fortuneContext,
+        if (lutsStylePrompt.isNotEmpty) lutsStylePrompt,
+      ].join('\n\n');
+
       final response = await _service.sendMessage(
         characterId: _characterId,
-        systemPrompt: '${_character.systemPrompt}\n\n$fortuneContext',
+        systemPrompt: enhancedPrompt,
         messages: history,
         userMessage: requestMessage,
         oocInstructions: _character.oocInstructions,
@@ -915,9 +927,13 @@ $emojiInstruction
 
       // 호감도 포인트 계산 (애니메이션용)
       final affinityPoints = response.affinityDelta.points;
+      final normalizedResponse = _applyLutsGeneratedTone(
+        response.response,
+        profile: lutsToneProfile,
+      );
 
       // 6단계: 캐릭터 응답 추가 (호감도 변경값 포함)
-      addCharacterMessage(response.response, affinityChange: affinityPoints);
+      addCharacterMessage(normalizedResponse, affinityChange: affinityPoints);
 
       // 호감도 동적 업데이트 (AI 평가 기반)
       final interactionType = response.affinityDelta.isPositive
@@ -969,6 +985,8 @@ $emojiInstruction
     setTyping(true);
 
     try {
+      final lutsToneProfile =
+          _buildLutsToneProfile(currentUserMessage: requestMessage);
       // 🆕 실제 운세 API 호출하여 상세 데이터 가져오기 (설문 답변 포함)
       final fortuneData = await _fetchFortuneData(fortuneType, surveyAnswers);
       final fortuneDataContext = _formatFortuneDataForContext(fortuneData);
@@ -1009,9 +1027,17 @@ $fortuneDataContext
 $emojiInstruction
 ''';
 
+      final lutsStylePrompt =
+          _buildLutsStyleGuidePrompt(lutsToneProfile).trim();
+      final enhancedPrompt = [
+        _character.systemPrompt,
+        fortuneContext,
+        if (lutsStylePrompt.isNotEmpty) lutsStylePrompt,
+      ].join('\n\n');
+
       final response = await _service.sendMessage(
         characterId: _characterId,
-        systemPrompt: '${_character.systemPrompt}\n\n$fortuneContext',
+        systemPrompt: enhancedPrompt,
         messages: history,
         userMessage: requestMessage,
         oocInstructions: _character.oocInstructions,
@@ -1034,9 +1060,13 @@ $emojiInstruction
 
       // 호감도 포인트 계산 (애니메이션용)
       final affinityPoints = response.affinityDelta.points;
+      final normalizedResponse = _applyLutsGeneratedTone(
+        response.response,
+        profile: lutsToneProfile,
+      );
 
       // 6단계: 캐릭터 응답 추가 (호감도 변경값 포함)
-      addCharacterMessage(response.response, affinityChange: affinityPoints);
+      addCharacterMessage(normalizedResponse, affinityChange: affinityPoints);
 
       // 호감도 동적 업데이트 (AI 평가 기반)
       final interactionType = response.affinityDelta.isPositive
@@ -1370,6 +1400,8 @@ $emojiInstruction
     setTyping(true);
 
     try {
+      final lutsToneProfile =
+          _buildLutsToneProfile(currentUserMessage: choice.text);
       // 선택에 대한 캐릭터 반응 요청 (방금 추가한 사용자 선택 제외)
       final messagesWithoutCurrent = state.messages.length > 1
           ? state.messages.sublist(0, state.messages.length - 1)
@@ -1383,7 +1415,13 @@ $emojiInstruction
 
       // 이모티콘 빈도 지시문 추가
       final emojiInstruction = _character.behaviorPattern.getEmojiInstruction();
-      final enhancedPrompt = '${_character.systemPrompt}\n\n$emojiInstruction';
+      final lutsStylePrompt =
+          _buildLutsStyleGuidePrompt(lutsToneProfile).trim();
+      final enhancedPrompt = [
+        _character.systemPrompt,
+        emojiInstruction,
+        if (lutsStylePrompt.isNotEmpty) lutsStylePrompt,
+      ].join('\n\n');
 
       final response = await _service.sendMessage(
         characterId: _characterId,
@@ -1408,7 +1446,12 @@ $emojiInstruction
       );
       await Future.delayed(Duration(milliseconds: typingDelay));
 
-      addCharacterMessage(response.response);
+      addCharacterMessage(
+        _applyLutsGeneratedTone(
+          response.response,
+          profile: lutsToneProfile,
+        ),
+      );
     } catch (e) {
       setError(e.toString());
     }
