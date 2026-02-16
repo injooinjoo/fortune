@@ -504,45 +504,6 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                     const Center(child: MiniTypingIndicator()),
                               ),
                             ),
-                          // 읽지 않은 메시지 빨간 점 (캐릭터가 마지막에 보낸 경우에만)
-                          if (!isTyping && showUnreadBadge)
-                            Positioned(
-                              right: 0,
-                              top: 0,
-                              child: Container(
-                                width: 14,
-                                height: 14,
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Theme.of(context)
-                                        .scaffoldBackgroundColor,
-                                    width: 2,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          // 온라인 상태 표시 (최근 활동이 있는 캐릭터)
-                          // 읽지 않은 메시지가 있고 타이핑 중이 아닐 때 표시
-                          if (!isTyping && showUnreadBadge)
-                            Positioned(
-                              right: 0,
-                              bottom: 0,
-                              child: Container(
-                                width: 14,
-                                height: 14,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF4CAF50), // 초록색 (온라인)
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Theme.of(context)
-                                        .scaffoldBackgroundColor,
-                                    width: 2,
-                                  ),
-                                ),
-                              ),
-                            ),
                           // 운세 전문가 배지
                           if (widget.character.isFortuneExpert)
                             Positioned(
