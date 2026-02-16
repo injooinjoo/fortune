@@ -53,6 +53,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   Timer? _readIdleIcebreakerTimer;
   String? _pendingReadIdleAnchorMessageId;
   String? _lastReadIdleIcebreakerAnchorMessageId;
+  bool _isUserDrafting = false;
 
   CharacterChatNotifier(this._ref, this._characterId)
       : super(CharacterChatState(characterId: _characterId)) {
@@ -264,6 +265,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     if (!_isLutsCharacter) return false;
     if (!_isCurrentChatActive()) return false;
     if (!_isFirstMeetPhase(state.affinity.phase)) return false;
+    if (_isUserDrafting) return false;
     if (_containsQuestion(anchorMessage.text)) return false;
     if (state.isTyping || state.isProcessing) return false;
     if (_lastReadIdleIcebreakerAnchorMessageId == anchorMessage.id) {
@@ -295,6 +297,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     if (!mounted) return;
     if (_pendingReadIdleAnchorMessageId != anchorMessageId) return;
     if (!_isCurrentChatActive()) return;
+    if (_isUserDrafting) return;
     if (state.isTyping || state.isProcessing) return;
     if (_lastReadIdleIcebreakerAnchorMessageId == anchorMessageId) return;
 
@@ -360,6 +363,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
   /// 유저 메시지 추가
   void addUserMessage(String text) {
+    _isUserDrafting = false;
     _cancelReadIdleIcebreaker();
     final message = CharacterChatMessage.user(text);
     state = state.copyWith(
@@ -740,6 +744,19 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     state = state.copyWith(unreadCount: 0);
     // 마지막으로 읽은 시간 저장 (앱 재시작 후에도 유지)
     _localService.saveLastReadTimestamp(_characterId);
+    _scheduleReadIdleIcebreakerForReadEvent();
+  }
+
+  void onUserDraftChanged(String draftText) {
+    final hasDraft = draftText.trim().isNotEmpty;
+    if (_isUserDrafting == hasDraft) return;
+
+    _isUserDrafting = hasDraft;
+    if (hasDraft) {
+      _cancelReadIdleIcebreaker();
+      return;
+    }
+
     _scheduleReadIdleIcebreakerForReadEvent();
   }
 
