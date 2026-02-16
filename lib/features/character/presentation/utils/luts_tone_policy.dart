@@ -533,6 +533,64 @@ class LutsTonePolicy {
     }
   }
 
+  static String buildReadIdleIcebreakerQuestion(
+    LutsToneProfile profile, {
+    AffinityPhase? affinityPhase,
+    DateTime? now,
+  }) {
+    final resolvedSpeech =
+        _resolveSpeechLevel(profile: profile, affinityPhase: affinityPhase);
+    final hour = (now ?? DateTime.now()).hour;
+    final isLunchTime = hour >= 11 && hour < 14;
+    final isDinnerTime = hour >= 17 && hour < 21;
+
+    switch (profile.language) {
+      case LutsLanguage.en:
+        if (isLunchTime) {
+          return resolvedSpeech == LutsSpeechLevel.casual
+              ? 'Have you had lunch yet?'
+              : 'Have you had lunch yet?';
+        }
+        if (isDinnerTime) {
+          return resolvedSpeech == LutsSpeechLevel.casual
+              ? 'Have you had dinner yet?'
+              : 'Have you had dinner yet?';
+        }
+        return resolvedSpeech == LutsSpeechLevel.casual
+            ? 'What are you up to right now?'
+            : 'What are you doing right now?';
+      case LutsLanguage.ja:
+        if (isLunchTime) {
+          return resolvedSpeech == LutsSpeechLevel.casual
+              ? 'お昼ごはん、もう食べた？'
+              : 'お昼ごはんはもう食べましたか？';
+        }
+        if (isDinnerTime) {
+          return resolvedSpeech == LutsSpeechLevel.casual
+              ? '夕ごはん、もう食べた？'
+              : '夕ごはんはもう食べましたか？';
+        }
+        return resolvedSpeech == LutsSpeechLevel.casual
+            ? '今なにしてる？'
+            : '今は何をしていますか？';
+      case LutsLanguage.ko:
+      case LutsLanguage.unknown:
+        if (isLunchTime) {
+          return resolvedSpeech == LutsSpeechLevel.casual
+              ? '점심 먹었어?'
+              : '점심 드셨어요?';
+        }
+        if (isDinnerTime) {
+          return resolvedSpeech == LutsSpeechLevel.casual
+              ? '저녁 먹었어?'
+              : '저녁 드셨어요?';
+        }
+        return resolvedSpeech == LutsSpeechLevel.casual
+            ? '지금 뭐 하고 있어?'
+            : '지금 뭐 하고 계세요?';
+    }
+  }
+
   static String applyTemplateTone(
     String message,
     LutsToneProfile profile, {

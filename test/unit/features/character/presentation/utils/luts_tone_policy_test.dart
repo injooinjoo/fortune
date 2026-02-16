@@ -238,4 +238,57 @@ void main() {
       expect(prompt.contains('4단계: 연인 단계'), isTrue);
     });
   });
+
+  group('LutsTonePolicy read-idle icebreaker', () {
+    test('1단계에서는 casual 입력이어도 존댓말 질문을 우선한다', () {
+      const profile = LutsToneProfile(
+        language: LutsLanguage.ko,
+        speechLevel: LutsSpeechLevel.casual,
+        nicknameAllowed: false,
+        turnIntent: LutsTurnIntent.sharing,
+      );
+
+      final question = LutsTonePolicy.buildReadIdleIcebreakerQuestion(
+        profile,
+        affinityPhase: AffinityPhase.stranger,
+        now: DateTime(2026, 2, 16, 16, 0),
+      );
+
+      expect(question, '지금 뭐 하고 계세요?');
+    });
+
+    test('점심 시간에는 점심 질문을 사용한다', () {
+      const profile = LutsToneProfile(
+        language: LutsLanguage.ko,
+        speechLevel: LutsSpeechLevel.formal,
+        nicknameAllowed: false,
+        turnIntent: LutsTurnIntent.sharing,
+      );
+
+      final question = LutsTonePolicy.buildReadIdleIcebreakerQuestion(
+        profile,
+        affinityPhase: AffinityPhase.friend,
+        now: DateTime(2026, 2, 16, 12, 30),
+      );
+
+      expect(question, '점심 드셨어요?');
+    });
+
+    test('저녁 시간 + casual이면 반말 질문을 사용한다', () {
+      const profile = LutsToneProfile(
+        language: LutsLanguage.ko,
+        speechLevel: LutsSpeechLevel.casual,
+        nicknameAllowed: false,
+        turnIntent: LutsTurnIntent.sharing,
+      );
+
+      final question = LutsTonePolicy.buildReadIdleIcebreakerQuestion(
+        profile,
+        affinityPhase: AffinityPhase.romantic,
+        now: DateTime(2026, 2, 16, 18, 20),
+      );
+
+      expect(question, '저녁 먹었어?');
+    });
+  });
 }

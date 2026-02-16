@@ -39,6 +39,7 @@ final _allCharacters = [...defaultCharacters, ...fortuneCharacters];
 
 class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   static const String _firstMeetConversationMode = 'first_meet_v1';
+  static const Duration _readIdleIcebreakerDelay = Duration(seconds: 10);
   final String _characterId;
   final Ref _ref;
   final CharacterChatService _service = CharacterChatService();
@@ -49,6 +50,9 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
   /// 현재 캐릭터 정보 캐시
   AiCharacter? _cachedCharacter;
+  Timer? _readIdleIcebreakerTimer;
+  String? _pendingReadIdleAnchorMessageId;
+  String? _lastReadIdleIcebreakerAnchorMessageId;
 
   CharacterChatNotifier(this._ref, this._characterId)
       : super(CharacterChatState(characterId: _characterId)) {
@@ -232,6 +236,100 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         _assistantTurnCount(source) < 4;
   }
 
+  bool _isCurrentChatActive() {
+    final activeChatId = _ref.read(activeCharacterChatProvider);
+    return activeChatId == _characterId;
+  }
+
+  bool _containsQuestion(String text) =>
+      text.contains('?') || text.contains('？');
+
+  void _cancelReadIdleIcebreaker() {
+    _readIdleIcebreakerTimer?.cancel();
+    _readIdleIcebreakerTimer = null;
+    _pendingReadIdleAnchorMessageId = null;
+  }
+
+  CharacterChatMessage? _findLastCharacterMessage() {
+    for (var i = state.messages.length - 1; i >= 0; i--) {
+      final message = state.messages[i];
+      if (message.type == CharacterChatMessageType.character) {
+        return message;
+      }
+    }
+    return null;
+  }
+
+  bool _shouldScheduleReadIdleIcebreaker(CharacterChatMessage anchorMessage) {
+    if (!_isLutsCharacter) return false;
+    if (!_isCurrentChatActive()) return false;
+    if (!_isFirstMeetPhase(state.affinity.phase)) return false;
+    if (_containsQuestion(anchorMessage.text)) return false;
+    if (state.isTyping || state.isProcessing) return false;
+    if (_lastReadIdleIcebreakerAnchorMessageId == anchorMessage.id) {
+      return false;
+    }
+    return true;
+  }
+
+  void _scheduleReadIdleIcebreaker({
+    required CharacterChatMessage anchorMessage,
+  }) {
+    _cancelReadIdleIcebreaker();
+    if (!_shouldScheduleReadIdleIcebreaker(anchorMessage)) return;
+
+    _pendingReadIdleAnchorMessageId = anchorMessage.id;
+    _readIdleIcebreakerTimer = Timer(_readIdleIcebreakerDelay, () {
+      unawaited(_sendReadIdleIcebreakerIfStillIdle(anchorMessage.id));
+    });
+  }
+
+  void _scheduleReadIdleIcebreakerForReadEvent() {
+    final anchorMessage = _findLastCharacterMessage();
+    if (anchorMessage == null) return;
+    _scheduleReadIdleIcebreaker(anchorMessage: anchorMessage);
+  }
+
+  Future<void> _sendReadIdleIcebreakerIfStillIdle(
+      String anchorMessageId) async {
+    if (!mounted) return;
+    if (_pendingReadIdleAnchorMessageId != anchorMessageId) return;
+    if (!_isCurrentChatActive()) return;
+    if (state.isTyping || state.isProcessing) return;
+    if (_lastReadIdleIcebreakerAnchorMessageId == anchorMessageId) return;
+
+    final anchorIndex =
+        state.messages.indexWhere((m) => m.id == anchorMessageId);
+    if (anchorIndex < 0) return;
+
+    final hasUserReplyAfterAnchor = state.messages
+        .skip(anchorIndex + 1)
+        .any((m) => m.type == CharacterChatMessageType.user);
+    if (hasUserReplyAfterAnchor) return;
+
+    final lastMessage = state.messages.isNotEmpty ? state.messages.last : null;
+    if (lastMessage == null ||
+        lastMessage.type != CharacterChatMessageType.character) {
+      return;
+    }
+
+    final lutsToneProfile = _buildLutsToneProfile();
+    final icebreaker = LutsTonePolicy.buildReadIdleIcebreakerQuestion(
+      lutsToneProfile,
+      affinityPhase: state.affinity.phase,
+      now: DateTime.now(),
+    );
+    final normalized = _applyLutsTemplateTone(
+      icebreaker,
+      profile: lutsToneProfile,
+    );
+    if (normalized.isEmpty) return;
+
+    _lastReadIdleIcebreakerAnchorMessageId = anchorMessageId;
+    _pendingReadIdleAnchorMessageId = null;
+    addCharacterMessage(normalized, scheduleReadIdleIcebreaker: false);
+  }
+
   String _buildFirstMeetPrompt({required int introTurn}) {
     final safeIntroTurn = introTurn < 1 ? 1 : (introTurn > 4 ? 4 : introTurn);
     final String goal;
@@ -262,6 +360,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
   /// 유저 메시지 추가
   void addUserMessage(String text) {
+    _cancelReadIdleIcebreaker();
     final message = CharacterChatMessage.user(text);
     state = state.copyWith(
       messages: [...state.messages, message],
@@ -276,7 +375,11 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   }
 
   /// 캐릭터 메시지 추가
-  void addCharacterMessage(String text, {int? affinityChange}) {
+  void addCharacterMessage(
+    String text, {
+    int? affinityChange,
+    bool scheduleReadIdleIcebreaker = true,
+  }) {
     final message = CharacterChatMessage.character(
       text,
       _characterId,
@@ -295,6 +398,12 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
     // 캐릭터 응답 후 Follow-up 스케줄 시작
     _startFollowUpSchedule();
+
+    if (scheduleReadIdleIcebreaker) {
+      _scheduleReadIdleIcebreaker(anchorMessage: message);
+    } else {
+      _cancelReadIdleIcebreaker();
+    }
 
     // DB 동기화 큐에 추가 (debounced)
     _queueForSync();
@@ -324,6 +433,8 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
     // 🆕 채팅방에 없으면 푸시 알림 + 진동 (카카오톡 스타일)
     _triggerNotificationIfNeeded(normalizedMessage.text);
+
+    _scheduleReadIdleIcebreaker(anchorMessage: normalizedMessage);
 
     // DB 동기화 큐에 추가
     _queueForSync();
@@ -629,6 +740,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     state = state.copyWith(unreadCount: 0);
     // 마지막으로 읽은 시간 저장 (앱 재시작 후에도 유지)
     _localService.saveLastReadTimestamp(_characterId);
+    _scheduleReadIdleIcebreakerForReadEvent();
   }
 
   /// 읽지 않은 메시지 수 증가 (캐릭터 메시지 도착 시, 채팅방 밖에서)
@@ -662,6 +774,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
   /// 대화/호감도/서버 스레드까지 포함한 명시적 초기화
   Future<void> clearConversationData() async {
+    _cancelReadIdleIcebreaker();
     cancelFollowUp();
 
     await _service.deleteConversation(_characterId);
@@ -1505,5 +1618,11 @@ $emojiInstruction
   ChoiceSet? get activeChoiceSet {
     if (!hasActiveChoice) return null;
     return state.messages.last.choiceSet;
+  }
+
+  @override
+  void dispose() {
+    _cancelReadIdleIcebreaker();
+    super.dispose();
   }
 }
