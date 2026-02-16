@@ -19,7 +19,7 @@ Use the same fixed fields for decision-gate checks:
 ## 3. Decision Gate Checklist
 | check_id | severity(P0/P1/P2) | check_item | result(pass/fail/pending) | evidence(path\|url\|screenshot) | owner | due_date | status |
 |---|---|---|---|---|---|---|---|
-| DEC-001 | P0 | Frozen commit SHA captured for this candidate | pending | run `git rev-parse HEAD` and paste in Decision Entry | release-owner | TBD | open |
+| DEC-001 | P0 | Frozen commit SHA captured for this candidate | pass | `c3f9a953ea6295498605cb18211ac63185ecb582` | release-owner | 2026-02-16 | done |
 | DEC-002 | P0 | Master checklist P0 items all pass | fail | `/docs/deployment/review/STORE_REVIEW_MASTER_CHECKLIST.md` (manual/실기기 항목 `COM-MAN-001~004`, `TC-IOS-001~006`, `TC-AND-001~002`, `TC-AND-004` pending) | release-owner | 2026-02-16 | blocked |
 | DEC-003 | P1 | Master checklist P1 items all pass | fail | Open P1 items remain in iOS/Android evidence (`IOS-PERM-004~006`, `IOS-PRIV-002~003`, `IOS-META-004`, `AND-DATA-002~003` 등) | release-owner | TBD | open |
 | DEC-004 | P0 | iOS evidence checklist has no open P0/P1 | pending | `/docs/deployment/review/IOS_REVIEW_EVIDENCE.md` | ios-owner | TBD | open |

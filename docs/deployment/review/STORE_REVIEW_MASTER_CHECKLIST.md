@@ -27,7 +27,7 @@ Every check item must include the following fields:
 | check_id | severity(P0/P1/P2) | check_item | result(pass/fail/pending) | evidence(path\|url\|screenshot) | owner | due_date | status |
 |---|---|---|---|---|---|---|---|
 | COM-KICK-001 | P0 | Jira issue created (`FORT` preferred, fallback `KAN`) | pass | `KAN-19` | release-owner | 2026-02-16 | done |
-| COM-KICK-002 | P0 | Review target commit SHA frozen | pending | `git rev-parse HEAD` output in `/docs/deployment/review/RELEASE_DECISION_LOG.md` | release-owner | TBD | open |
+| COM-KICK-002 | P0 | Review target commit SHA frozen | pass | `c3f9a953ea6295498605cb18211ac63185ecb582` in `/docs/deployment/review/RELEASE_DECISION_LOG.md` | release-owner | 2026-02-16 | done |
 | COM-KICK-003 | P0 | Block rule declared (`P0/P1 fail => no submit`) | pass | This document section 1/3 | release-owner | 2026-02-16 | done |
 
 ## 5. Source-of-Truth Matrix (KR+EN)
