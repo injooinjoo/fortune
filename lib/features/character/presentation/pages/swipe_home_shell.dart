@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/extensions/l10n_extension.dart';
 import '../providers/character_provider.dart';
 import '../../domain/models/ai_character.dart';
 import 'character_list_panel.dart';
 import 'character_chat_panel.dart';
 import 'character_onboarding_page.dart';
 import '../../../../services/storage_service.dart';
+import '../../../../presentation/providers/auth_provider.dart';
 
 /// 홈 셸 (임시: 메시지 목록만 표시)
 /// - 메시지 목록 (CharacterListPanel) - 메인
@@ -142,6 +144,8 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
   @override
   Widget build(BuildContext context) {
     final character = ref.watch(selectedCharacterProvider);
+    final isRestoringConversations =
+        ref.watch(chatRestorationInProgressProvider);
 
     // 프로필 페이지에서 "메시지 보내기" 클릭 시 자동으로 채팅 패널 열기
     ref.listen<AiCharacter?>(selectedCharacterProvider, (prev, next) {
@@ -175,7 +179,39 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
                 onBack: _dismissChatPanel,
               ),
             ),
+
+          if (isRestoringConversations && !_showChatOverlay)
+            _buildConversationRestoringOverlay(context),
         ],
+      ),
+    );
+  }
+
+  Widget _buildConversationRestoringOverlay(BuildContext context) {
+    final theme = Theme.of(context);
+    return Positioned.fill(
+      child: ColoredBox(
+        color: theme.scaffoldBackgroundColor.withValues(alpha: 0.82),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(
+                width: 28,
+                height: 28,
+                child: CircularProgressIndicator(strokeWidth: 2.4),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                context.l10n.loading,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.72),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

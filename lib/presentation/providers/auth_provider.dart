@@ -71,6 +71,9 @@ final authServiceProvider = Provider<AuthService>((ref) {
   return AuthService(client, statisticsService);
 });
 
+/// 로그인 직후 대화 목록 일괄 복원 진행 상태
+final chatRestorationInProgressProvider = StateProvider<bool>((ref) => false);
+
 // Auth service class
 class AuthService {
   final SupabaseClient _client;
@@ -216,6 +219,7 @@ final chatRestorationProvider = Provider<void>((ref) {
       await UserScopeService.instance.refreshCurrentScope();
 
       if (authState.event == AuthChangeEvent.signedOut) {
+        ref.read(chatRestorationInProgressProvider.notifier).state = false;
         // 로그아웃 시 캐릭터 세션 경계 강제
         FollowUpScheduler().cancelAll();
         ref.invalidate(characterChatProvider);
@@ -231,15 +235,10 @@ final chatRestorationProvider = Provider<void>((ref) {
       // 로그인/세션 복구 시에만 대화 복원
       if (authState.event == AuthChangeEvent.signedIn ||
           authState.event == AuthChangeEvent.initialSession) {
+        ref.read(chatRestorationInProgressProvider.notifier).state = true;
         try {
           // 게스트 큐 owner를 현재 로그인 owner로 승격 후 동기화
           await ChatSyncService.instance.migrateGuestData(userId);
-
-          // 캐릭터 관련 provider 캐시 리셋
-          ref.invalidate(characterChatProvider);
-          ref.invalidate(characterChatSurveyProvider);
-          ref.invalidate(sortedCharactersProvider);
-          ref.invalidate(activeCharacterChatProvider);
 
           Logger.info('[ChatRestoration] 대화 복원 시작...');
           final chatService = CharacterChatService();
@@ -254,6 +253,13 @@ final chatRestorationProvider = Provider<void>((ref) {
           }
         } catch (e) {
           Logger.warning('[ChatRestoration] 대화 복원 실패 (비치명적): $e');
+        } finally {
+          // 복원 완료 시점에 캐시를 무효화해야 목록이 최신 로컬 데이터를 즉시 반영한다.
+          ref.invalidate(characterChatProvider);
+          ref.invalidate(characterChatSurveyProvider);
+          ref.invalidate(sortedCharactersProvider);
+          ref.invalidate(activeCharacterChatProvider);
+          ref.read(chatRestorationInProgressProvider.notifier).state = false;
         }
       }
     });
