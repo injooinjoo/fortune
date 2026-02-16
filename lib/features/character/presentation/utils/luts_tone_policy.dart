@@ -143,7 +143,7 @@ class LutsTonePolicy {
   );
 
   static final RegExp _serviceTonePattern = RegExp(
-    r'(무엇을\s*도와드릴\s*수|(?:무엇을|뭘|어떻게)\s*도와드릴까요\??|도움이\s*필요하시면|문의|지원|how can i help|let me help|assist you|お手伝い|サポート)',
+    r"(무엇을\s*도와드릴\s*수|(?:무엇을|뭘|어떻게)\s*도와드릴까요\??|도움이\s*필요하시면|문의|지원|how can i help|let me help|assist you|お手伝い|サポート|저는?\s*(?:ai|인공지능)|(?:i am|i'm)\s+an?\s+ai|as an ai|私は\s*ai|僕は\s*ai|aiなので)",
     caseSensitive: false,
   );
 
@@ -188,6 +188,27 @@ class LutsTonePolicy {
     ),
     MapEntry(
       RegExp(r'どのようにお手伝い[^。！？!?]*[。！？!?]?', caseSensitive: false),
+      '',
+    ),
+    MapEntry(
+      RegExp(r'저는?\s*(?:ai|인공지능)[^.!?。！？]*[.!?。！？]?', caseSensitive: false),
+      '',
+    ),
+    MapEntry(
+      RegExp(r"(?:i am|i'm)\s+an?\s+ai[^.!?。！？]*[.!?。！？]?",
+          caseSensitive: false),
+      '',
+    ),
+    MapEntry(
+      RegExp(r'as an ai[^.!?。！？]*[.!?。！？]?', caseSensitive: false),
+      '',
+    ),
+    MapEntry(
+      RegExp(r'(?:私は|僕は)\s*ai[^。！？!?]*[。！？!?]?', caseSensitive: false),
+      '',
+    ),
+    MapEntry(
+      RegExp(r'aiなので[^。！？!?]*[。！？!?]?', caseSensitive: false),
       '',
     ),
   ];
@@ -500,6 +521,7 @@ class LutsTonePolicy {
 - 반복 금지: 같은 의미 문장을 반복하지 마세요.
 - 질문 제한: 질문은 필요할 때만 최대 1개 사용하세요.
 - 상담사 톤 금지: "무엇을 도와드릴 수", "무엇을 도와드릴까요", "도움이 필요하시면", "문의" 같은 문구를 금지하세요.
+- 메타 발화 금지: "저는 인공지능이라", "as an AI"처럼 캐릭터 몰입을 깨는 자기정체성 설명을 금지하세요.
 - 관계 단계: $relationshipLabel
 - 단계 운영: $relationshipGuide
 - 단계 경계: $relationshipBoundary

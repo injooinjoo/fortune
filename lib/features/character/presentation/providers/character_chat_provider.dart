@@ -245,6 +245,66 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   bool _containsQuestion(String text) =>
       text.contains('?') || text.contains('？');
 
+  bool _isQuestionLikeText(String text) {
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) return false;
+    if (_containsQuestion(trimmed)) return true;
+
+    final koQuestionEnding = RegExp(
+      r'(나요|까요|인가요|한가요|있나요|없나요|맞나요|될까요|할까요)$',
+      caseSensitive: false,
+    );
+    final jaQuestionEnding = RegExp(
+      r'(ですか|ますか|でしょうか|かな|の)$',
+      caseSensitive: false,
+    );
+    final enQuestionStart = RegExp(
+      r'^(who|what|when|where|why|how|do|does|did|is|are|am|can|could|would|will|should)\b',
+      caseSensitive: false,
+    );
+
+    return koQuestionEnding.hasMatch(trimmed) ||
+        jaQuestionEnding.hasMatch(trimmed) ||
+        enQuestionStart.hasMatch(trimmed);
+  }
+
+  bool _isLowSignalIcebreakerIntent(String text) {
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) return true;
+    if (_isQuestionLikeText(trimmed)) return false;
+
+    final language = LutsTonePolicy.detectLanguage(trimmed);
+    final intent = LutsTonePolicy.detectTurnIntent(
+      text: trimmed,
+      language: language,
+    );
+
+    return intent == LutsTurnIntent.greeting ||
+        intent == LutsTurnIntent.gratitude ||
+        intent == LutsTurnIntent.shortReply;
+  }
+
+  bool _matchesReadIdleIcebreakerContext(CharacterChatMessage anchorMessage) {
+    final anchorIndex =
+        state.messages.indexWhere((m) => m.id == anchorMessage.id);
+    if (anchorIndex < 0) return false;
+
+    CharacterChatMessage? latestUserBeforeAnchor;
+    var userCountBeforeAnchor = 0;
+    for (var i = 0; i < anchorIndex; i++) {
+      final message = state.messages[i];
+      if (message.type != CharacterChatMessageType.user) continue;
+      userCountBeforeAnchor += 1;
+      latestUserBeforeAnchor = message;
+    }
+
+    // 아이스브레이킹은 대화 초반(사용자 0~1회 발화)에서만 사용.
+    if (userCountBeforeAnchor >= 2) return false;
+    if (latestUserBeforeAnchor == null) return true;
+
+    return _isLowSignalIcebreakerIntent(latestUserBeforeAnchor.text);
+  }
+
   void _cancelReadIdleIcebreaker() {
     _readIdleIcebreakerTimer?.cancel();
     _readIdleIcebreakerTimer = null;
@@ -266,7 +326,8 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     if (!_isCurrentChatActive()) return false;
     if (!_isFirstMeetPhase(state.affinity.phase)) return false;
     if (_isUserDrafting) return false;
-    if (_containsQuestion(anchorMessage.text)) return false;
+    if (_isQuestionLikeText(anchorMessage.text)) return false;
+    if (!_matchesReadIdleIcebreakerContext(anchorMessage)) return false;
     if (state.isTyping || state.isProcessing) return false;
     if (_lastReadIdleIcebreakerAnchorMessageId == anchorMessage.id) {
       return false;
@@ -304,6 +365,8 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     final anchorIndex =
         state.messages.indexWhere((m) => m.id == anchorMessageId);
     if (anchorIndex < 0) return;
+    final anchorMessage = state.messages[anchorIndex];
+    if (!_matchesReadIdleIcebreakerContext(anchorMessage)) return;
 
     final hasUserReplyAfterAnchor = state.messages
         .skip(anchorIndex + 1)

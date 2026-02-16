@@ -132,6 +132,25 @@ void main() {
       expect(guarded, isNotEmpty);
     });
 
+    test('AI 정체성 메타 문구를 제거한다', () {
+      const profile = LutsToneProfile(
+        language: LutsLanguage.ko,
+        speechLevel: LutsSpeechLevel.formal,
+        nicknameAllowed: false,
+        turnIntent: LutsTurnIntent.sharing,
+      );
+
+      final guarded = LutsTonePolicy.applyGeneratedTone(
+        '흥미로운 주제네요! 저는 인공지능이라 직접적인 피부 관리는 할 수 없지만 관심 있게 보고 있어요.',
+        profile,
+      );
+
+      expect(guarded.contains('인공지능'), isFalse);
+      expect(guarded.toLowerCase().contains('as an ai'), isFalse);
+      expect(guarded.toLowerCase().contains("i'm an ai"), isFalse);
+      expect(guarded, isNotEmpty);
+    });
+
     test('초기 턴 continuity 플래그 시 대화 연결 질문을 보강한다', () {
       const profile = LutsToneProfile(
         language: LutsLanguage.ko,
