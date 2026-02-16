@@ -8,6 +8,7 @@ import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../../data/services/character_localizer.dart';
 import '../../domain/models/ai_character.dart';
 import '../../domain/models/character_chat_message.dart';
+import '../utils/character_accent_palette.dart';
 import '../providers/character_chat_provider.dart';
 import '../providers/character_provider.dart';
 import '../widgets/wave_typing_indicator.dart';
@@ -352,9 +353,17 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
   @override
   Widget build(BuildContext context) {
     final chatState = ref.watch(characterChatProvider(widget.character.id));
+    final accentPalette = CharacterAccentPalette.from(
+      source: widget.character.accentColor,
+      brightness: Theme.of(context).brightness,
+    );
     final hasConversation = chatState.hasConversation;
     final isTyping = chatState.isCharacterTyping;
     final unreadCount = chatState.unreadCount;
+    final tagsText = CharacterLocalizer.getTags(context, widget.character.id)
+        .take(3)
+        .map((t) => '#$t')
+        .join(' ');
 
     // 마지막 메시지가 캐릭터인지 확인 (내가 보낸 게 마지막이면 뱃지 안 보임)
     final isLastMessageFromCharacter = chatState.messages.isNotEmpty &&
@@ -372,7 +381,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
         }
       },
       child: SizedBox(
-        height: 109,
+        height: 84,
         child: Stack(
           children: [
             // 액션 버튼들 (배경에 고정)
@@ -455,7 +464,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                   ),
                 ),
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                 child: Row(
                   children: [
                     // 아바타 (탭하면 프로필)
@@ -470,7 +479,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                         children: [
                           CircleAvatar(
                             radius: 28,
-                            backgroundColor: widget.character.accentColor,
+                            backgroundColor: accentPalette.accent,
                             backgroundImage:
                                 widget.character.avatarAsset.isNotEmpty
                                     ? AssetImage(widget.character.avatarAsset)
@@ -478,8 +487,8 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                             child: widget.character.avatarAsset.isEmpty
                                 ? Text(
                                     widget.character.initial,
-                                    style: const TextStyle(
-                                      color: Colors.white,
+                                    style: TextStyle(
+                                      color: accentPalette.onAccent,
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -513,7 +522,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                 width: 18,
                                 height: 18,
                                 decoration: BoxDecoration(
-                                  color: widget.character.accentColor,
+                                  color: accentPalette.accent,
                                   shape: BoxShape.circle,
                                   border: Border.all(
                                     color: Theme.of(context)
@@ -521,16 +530,19 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                     width: 2,
                                   ),
                                 ),
-                                child: const Center(
-                                  child: Icon(Icons.auto_awesome,
-                                      size: 10, color: Colors.white),
+                                child: Center(
+                                  child: Icon(
+                                    Icons.auto_awesome,
+                                    size: 10,
+                                    color: accentPalette.onAccent,
+                                  ),
                                 ),
                               ),
                             ),
                         ],
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 10),
                     // 이름 + 태그 + 마지막 메시지
                     Expanded(
                       child: Column(
@@ -565,59 +577,42 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 6, vertical: 2),
                                   decoration: BoxDecoration(
-                                    color: widget.character.accentColor
-                                        .withValues(alpha: 0.15),
+                                    color: accentPalette.softBackground,
                                     borderRadius: BorderRadius.circular(4),
                                     border: Border.all(
-                                      color: widget.character.accentColor
-                                          .withValues(alpha: 0.3),
+                                      color: accentPalette.softBorder,
                                     ),
                                   ),
                                   child: Text(
                                     widget.character.specialtyCategory!,
                                     style: context.labelTiny.copyWith(
-                                      color: widget.character.accentColor,
+                                      color: accentPalette.accent,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ),
                               ],
-                              if (!hasConversation) ...[
-                                const SizedBox(width: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 6, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: widget.character.accentColor,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
+                              if (tagsText.isNotEmpty) ...[
+                                const SizedBox(width: 6),
+                                Expanded(
                                   child: Text(
-                                    context.l10n.newConversation,
-                                    style: context.labelTiny.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
+                                    tagsText,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface
+                                          .withValues(alpha: 0.72),
                                     ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
                             ],
                           ),
                           const SizedBox(height: 2),
-                          Text(
-                            CharacterLocalizer.getTags(
-                                    context, widget.character.id)
-                                .take(3)
-                                .map((t) => '#$t')
-                                .join(' '),
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 4),
                           Text(
                             isTyping
                                 ? context.l10n.typing
@@ -630,8 +625,8 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                               fontWeight:
                                   isTyping ? FontWeight.w500 : FontWeight.w400,
                               color: isTyping
-                                  ? widget.character.accentColor
-                                  : Colors.grey[600],
+                                  ? accentPalette.accent
+                                  : Theme.of(context).colorScheme.onSurface,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -654,7 +649,18 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                               fontWeight: showUnreadBadge
                                   ? FontWeight.w600
                                   : FontWeight.w400,
-                              color: showUnreadBadge ? Colors.red : Colors.grey,
+                              color: showUnreadBadge
+                                  ? Colors.red
+                                  : Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                        if (!hasConversation)
+                          Text(
+                            context.l10n.newConversation,
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                         if (showUnreadBadge) ...[
@@ -706,6 +712,14 @@ class _NewMessageSheet extends ConsumerWidget {
   const _NewMessageSheet({
     required this.onCharacterSelected,
   });
+
+  String _buildRecommendedSummary(BuildContext context, String characterId) {
+    final tags = CharacterLocalizer.getTags(context, characterId).take(3);
+    if (tags.isNotEmpty) {
+      return tags.join(' · ');
+    }
+    return CharacterLocalizer.getShortDescription(context, characterId);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -760,7 +774,7 @@ class _NewMessageSheet extends ConsumerWidget {
                   Text(
                     context.l10n.recipient,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey[600],
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                   ),
                   const SizedBox(width: 8),
@@ -768,7 +782,9 @@ class _NewMessageSheet extends ConsumerWidget {
                     child: TextField(
                       decoration: InputDecoration(
                         hintText: context.l10n.search,
-                        hintStyle: TextStyle(color: Colors.grey[400]),
+                        hintStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                         border: InputBorder.none,
                         isDense: true,
                         contentPadding: EdgeInsets.zero,
@@ -796,21 +812,33 @@ class _NewMessageSheet extends ConsumerWidget {
             Expanded(
               child: ListView.builder(
                 controller: scrollController,
+                padding: const EdgeInsets.only(bottom: 8),
                 itemCount: characters.length,
                 itemBuilder: (context, index) {
                   final character = characters[index];
+                  final summary =
+                      _buildRecommendedSummary(context, character.id);
+                  final accentPalette = CharacterAccentPalette.from(
+                    source: character.accentColor,
+                    brightness: Theme.of(context).brightness,
+                  );
                   return ListTile(
+                    dense: true,
+                    visualDensity: const VisualDensity(vertical: -1.8),
+                    minVerticalPadding: 0,
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
                     leading: CircleAvatar(
                       radius: 24,
-                      backgroundColor: character.accentColor,
+                      backgroundColor: accentPalette.accent,
                       backgroundImage: character.avatarAsset.isNotEmpty
                           ? AssetImage(character.avatarAsset)
                           : null,
                       child: character.avatarAsset.isEmpty
                           ? Text(
                               character.initial,
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: accentPalette.onAccent,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -824,10 +852,9 @@ class _NewMessageSheet extends ConsumerWidget {
                           ),
                     ),
                     subtitle: Text(
-                      CharacterLocalizer.getShortDescription(
-                          context, character.id),
+                      summary,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
