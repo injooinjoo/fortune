@@ -412,6 +412,12 @@ type RelationshipPhase =
   | "romantic"
   | "soulmate";
 
+type LutsRelationshipStage =
+  | "gettingToKnow"
+  | "gettingCloser"
+  | "emotionalBond"
+  | "romantic";
+
 const RELATIONSHIP_STYLE_GUIDE: Record<
   RelationshipPhase,
   { intimacy: string; addressing: string; proactive: string; boundary: string }
@@ -464,6 +470,62 @@ function normalizePhase(value?: string): RelationshipPhase {
       return value;
     default:
       return "stranger";
+  }
+}
+
+function mapLutsRelationshipStage(
+  phase: RelationshipPhase,
+): LutsRelationshipStage {
+  switch (phase) {
+    case "stranger":
+      return "gettingToKnow";
+    case "acquaintance":
+    case "friend":
+      return "gettingCloser";
+    case "closeFriend":
+      return "emotionalBond";
+    case "romantic":
+    case "soulmate":
+      return "romantic";
+  }
+}
+
+function lutsRelationshipStageLabel(stage: LutsRelationshipStage): string {
+  switch (stage) {
+    case "gettingToKnow":
+      return "1단계: 처음 알고 지내는 단계";
+    case "gettingCloser":
+      return "2단계: 조금 친해지고 알아가는 단계";
+    case "emotionalBond":
+      return "3단계: 속마음을 털고 위로해주는 단계";
+    case "romantic":
+      return "4단계: 연인 단계";
+  }
+}
+
+function lutsRelationshipStageGuide(stage: LutsRelationshipStage): string {
+  switch (stage) {
+    case "gettingToKnow":
+      return "가벼운 인사/취향/일상 주제로 시작하고 부담 없는 한 걸음 대화를 유지하세요.";
+    case "gettingCloser":
+      return "관심사와 근황을 조금 더 깊게 묻고 가벼운 공감으로 친밀감을 올리세요.";
+    case "emotionalBond":
+      return "속마음 공유와 정서적 위로를 우선하고 판단보다 경청/공감을 중심에 두세요.";
+    case "romantic":
+      return "다정하고 따뜻한 애정 표현이 가능하며 연인 톤은 자연스럽고 과하지 않게 유지하세요.";
+  }
+}
+
+function lutsRelationshipStageBoundary(stage: LutsRelationshipStage): string {
+  switch (stage) {
+    case "gettingToKnow":
+      return "사전 연인관계/독점/집착 뉘앙스는 금지하고 소개팅 초반 톤을 유지하세요.";
+    case "gettingCloser":
+      return "친근함은 허용하되 관계 확정 발언이나 과한 소유욕 표현은 금지하세요.";
+    case "emotionalBond":
+      return "위로는 하되 감정 조종, 관계 강요, 부담 주는 표현은 금지하세요.";
+    case "romantic":
+      return "애정 표현은 사용자 반응을 우선하고 불편 신호가 보이면 즉시 수위를 낮추세요.";
   }
 }
 
@@ -750,7 +812,15 @@ function buildLutsToneProfile(
   };
 }
 
-function buildLutsStyleGuardPrompt(profile: LutsToneProfile): string {
+function buildLutsStyleGuardPrompt(
+  profile: LutsToneProfile,
+  relationshipPhase: RelationshipPhase,
+): string {
+  const relationshipStage = mapLutsRelationshipStage(relationshipPhase);
+  const relationshipLabel = lutsRelationshipStageLabel(relationshipStage);
+  const relationshipGuide = lutsRelationshipStageGuide(relationshipStage);
+  const relationshipBoundary = lutsRelationshipStageBoundary(relationshipStage);
+
   const languageGuide = profile.language === "ko"
     ? "한국어로 답하고, 사용자 존댓말/반말을 미러링하세요."
     : profile.language === "en"
@@ -787,6 +857,9 @@ function buildLutsStyleGuardPrompt(profile: LutsToneProfile): string {
 - 질문 제한: 질문은 필요할 때만 최대 1개 사용.
 - 반복 금지: 같은 의미 문장 반복 금지.
 - 상담사 톤 금지: "무엇을 도와드릴 수", "무엇을 도와드릴까요", "도움이 필요하시면", "문의" 같은 문구 금지.
+- 관계 단계: ${relationshipLabel}
+- 단계 운영: ${relationshipGuide}
+- 단계 경계: ${relationshipBoundary}
 - ${languageGuide}
 - ${speechGuide}
 - ${nicknameGuide}
@@ -1124,7 +1197,10 @@ serve(async (req: Request) => {
       ? buildLutsToneProfile(limitedHistory, userMessage)
       : null;
     const lutsStylePrompt = lutsToneProfile
-      ? buildLutsStyleGuardPrompt(lutsToneProfile)
+      ? buildLutsStyleGuardPrompt(
+        lutsToneProfile,
+        normalizePhase(resolvedAffinityContext.phase),
+      )
       : "";
 
     // 캐릭터 특성을 시스템 프롬프트에 추가

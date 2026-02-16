@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fortune/features/character/domain/models/character_affinity.dart';
 import 'package:fortune/features/character/domain/models/character_chat_message.dart';
 import 'package:fortune/features/character/presentation/utils/luts_tone_policy.dart';
 
@@ -139,6 +140,56 @@ void main() {
 
       expect(bridged.contains('요즘 가장 궁금한 건 뭐예요'), isTrue);
       expect('?'.allMatches(bridged).length <= 1, isTrue);
+    });
+  });
+
+  group('LutsTonePolicy relationship stage guide', () {
+    test('stranger는 1단계 가이드를 반환한다', () {
+      const profile = LutsToneProfile(
+        language: LutsLanguage.ko,
+        speechLevel: LutsSpeechLevel.formal,
+        nicknameAllowed: false,
+        turnIntent: LutsTurnIntent.sharing,
+      );
+
+      final prompt = LutsTonePolicy.buildStyleGuidePrompt(
+        profile,
+        affinityPhase: AffinityPhase.stranger,
+      );
+
+      expect(prompt.contains('1단계: 처음 알고 지내는 단계'), isTrue);
+    });
+
+    test('closeFriend는 3단계 가이드를 반환한다', () {
+      const profile = LutsToneProfile(
+        language: LutsLanguage.ko,
+        speechLevel: LutsSpeechLevel.formal,
+        nicknameAllowed: false,
+        turnIntent: LutsTurnIntent.sharing,
+      );
+
+      final prompt = LutsTonePolicy.buildStyleGuidePrompt(
+        profile,
+        affinityPhase: AffinityPhase.closeFriend,
+      );
+
+      expect(prompt.contains('3단계: 속마음을 털고 위로해주는 단계'), isTrue);
+    });
+
+    test('romantic은 4단계 가이드를 반환한다', () {
+      const profile = LutsToneProfile(
+        language: LutsLanguage.ko,
+        speechLevel: LutsSpeechLevel.formal,
+        nicknameAllowed: true,
+        turnIntent: LutsTurnIntent.sharing,
+      );
+
+      final prompt = LutsTonePolicy.buildStyleGuidePrompt(
+        profile,
+        affinityPhase: AffinityPhase.romantic,
+      );
+
+      expect(prompt.contains('4단계: 연인 단계'), isTrue);
     });
   });
 }

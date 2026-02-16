@@ -144,7 +144,10 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
   String _buildLutsStyleGuidePrompt(LutsToneProfile profile) {
     if (!_isLutsCharacter) return '';
-    return LutsTonePolicy.buildStyleGuidePrompt(profile);
+    return LutsTonePolicy.buildStyleGuidePrompt(
+      profile,
+      affinityPhase: state.affinity.phase,
+    );
   }
 
   String _applyLutsTemplateTone(
