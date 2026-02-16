@@ -24,6 +24,7 @@ import '../../../../data/services/fortune_api/fortune_api_service.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
 import 'active_chat_provider.dart';
+import 'character_provider.dart';
 import '../utils/luts_tone_policy.dart';
 
 /// 캐릭터별 채팅 상태 Provider (family)
@@ -675,6 +676,13 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       chatType: 'character',
       messages: const <Map<String, dynamic>>[],
     );
+
+    final selectedCharacter = _ref.read(selectedCharacterProvider);
+    if (selectedCharacter?.id == _characterId) {
+      _ref.read(activeCharacterChatProvider.notifier).state = null;
+      _ref.read(chatModeProvider.notifier).state = ChatMode.fortune;
+      _ref.read(selectedCharacterProvider.notifier).state = null;
+    }
 
     state = CharacterChatState(characterId: _characterId);
   }
