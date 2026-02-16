@@ -893,6 +893,11 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         controller: _textController,
         hintText: context.l10n.enterMessage,
         enabled: true, // 연속 메시지 전송 허용 (카카오톡처럼)
+        onTextChanged: (text) {
+          ref
+              .read(characterChatProvider(widget.character.id).notifier)
+              .onUserDraftChanged(text);
+        },
         onSubmit: (text) {
           if (text.isNotEmpty) {
             ref
