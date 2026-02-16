@@ -47,6 +47,14 @@ void main() {
 
       expect(profile.turnIntent, LutsTurnIntent.greeting);
     });
+
+    test('ㅎㅎ 단독 신호로 casual로 떨어지지 않는다', () {
+      final profile = LutsTonePolicy.fromConversation(
+        messages: [CharacterChatMessage.user('반가워요 ㅎㅎ')],
+      );
+
+      expect(profile.speechLevel, isNot(LutsSpeechLevel.casual));
+    });
   });
 
   group('LutsTonePolicy output guard', () {
@@ -140,6 +148,44 @@ void main() {
 
       expect(bridged.contains('요즘 가장 궁금한 건 뭐예요'), isTrue);
       expect('?'.allMatches(bridged).length <= 1, isTrue);
+    });
+
+    test('1단계에서 이름 미확인 시 이름 질문을 1회 유도한다', () {
+      const profile = LutsToneProfile(
+        language: LutsLanguage.ko,
+        speechLevel: LutsSpeechLevel.casual,
+        nicknameAllowed: false,
+        turnIntent: LutsTurnIntent.shortReply,
+      );
+
+      final bridged = LutsTonePolicy.applyGeneratedTone(
+        '저도 반가워요.',
+        profile,
+        encourageContinuity: true,
+        affinityPhase: AffinityPhase.stranger,
+      );
+
+      expect(bridged.contains('어떻게 불러드리면 될까요'), isTrue);
+    });
+
+    test('이름을 이미 물어본 뒤에는 재질문하지 않는다', () {
+      const profile = LutsToneProfile(
+        language: LutsLanguage.ko,
+        speechLevel: LutsSpeechLevel.casual,
+        nicknameAllowed: false,
+        turnIntent: LutsTurnIntent.shortReply,
+        nameAsked: true,
+      );
+
+      final bridged = LutsTonePolicy.applyGeneratedTone(
+        '저도 반가워요.',
+        profile,
+        encourageContinuity: true,
+        affinityPhase: AffinityPhase.stranger,
+      );
+
+      expect(bridged.contains('어떻게 불러드리면 될까요'), isFalse);
+      expect(bridged.contains('요즘 가장 궁금한 건 뭐예요'), isTrue);
     });
   });
 

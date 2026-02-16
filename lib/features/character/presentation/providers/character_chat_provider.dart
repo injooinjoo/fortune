@@ -136,9 +136,12 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
   LutsToneProfile _buildLutsToneProfile({String? currentUserMessage}) {
     if (!_isLutsCharacter) return LutsToneProfile.neutral;
+    final profileMap = _getUserProfileMap();
+    final knownUserName = profileMap?['name'] as String?;
     return LutsTonePolicy.fromConversation(
       messages: state.messages,
       currentUserMessage: currentUserMessage,
+      knownUserName: knownUserName,
     );
   }
 
@@ -156,7 +159,11 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   }) {
     if (!_isLutsCharacter) return message;
     final resolvedProfile = profile ?? _buildLutsToneProfile();
-    return LutsTonePolicy.applyTemplateTone(message, resolvedProfile);
+    return LutsTonePolicy.applyTemplateTone(
+      message,
+      resolvedProfile,
+      affinityPhase: state.affinity.phase,
+    );
   }
 
   String _applyLutsGeneratedTone(
@@ -170,6 +177,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       message,
       resolvedProfile,
       encourageContinuity: encourageContinuity,
+      affinityPhase: state.affinity.phase,
     );
   }
 

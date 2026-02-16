@@ -681,6 +681,9 @@ interface LutsToneProfile {
   speechLevel: LutsSpeechLevel;
   nicknameAllowed: boolean;
   turnIntent: LutsTurnIntent;
+  nameKnown: boolean;
+  nameAsked: boolean;
+  explicitCasual: boolean;
 }
 
 const LUTS_CHARACTER_ID = "luts";
@@ -731,8 +734,7 @@ function detectLutsSpeechLevel(
     ko: {
       formal:
         /(안녕하세요|감사합니다|죄송합니다|주세요|드려요|합니다|습니다|세요|이에요|예요|까요\??|인가요\??)/g,
-      casual:
-        /(안녕|해\?|했어|할래|줘|먹었어|뭐해|야\?|니\?|ㅋㅋ+|ㅎㅎ+|ㅠㅠ+|ㅜㅜ+)/g,
+      casual: /(안녕|해\?|했어|할래|줘|먹었어|뭐해|야\?|니\?)/g,
     },
     ja: {
       formal: /(です|ます|ください|でしょう|ません|ございます|こんにちは)/g,
@@ -747,8 +749,14 @@ function detectLutsSpeechLevel(
 
   if (language === "unknown") return "neutral";
 
-  const formalScore = (text.match(rules[language].formal) || []).length;
-  const casualScore = (text.match(rules[language].casual) || []).length;
+  let formalScore = (text.match(rules[language].formal) || []).length;
+  let casualScore = (text.match(rules[language].casual) || []).length;
+
+  if (language === "ko") {
+    formalScore += (text.match(/[가-힣]+요(?:[.!?]|$)/g) || []).length;
+    casualScore +=
+      (text.match(/[가-힣]+(?:야|니|냐)(?:[.!?]|$)/g) || []).length;
+  }
 
   if (formalScore > casualScore) return "formal";
   if (casualScore > formalScore) return "casual";
@@ -771,6 +779,60 @@ function detectLutsTurnIntent(
   return "sharing";
 }
 
+function hasExplicitLutsCasualTone(
+  language: LutsLanguage,
+  text: string,
+): boolean {
+  if (!text.trim()) return false;
+
+  if (language === "ko") {
+    return /(뭐해\?|뭐 해\?|했어\?|할래\?|해줘|말해줘|반가워[.!?]?$|안녕[.!?]?$|야\?|니\?|하자[.!?]?$)/i
+      .test(text);
+  }
+  if (language === "ja") {
+    return /(だよ|だね|じゃん|しよう|してね)/i.test(text);
+  }
+  if (language === "en") {
+    return /\b(wanna|gonna|gotta|bro|dude|yo|sup)\b/i.test(text);
+  }
+  return false;
+}
+
+function looksLikeLutsNameDisclosure(text: string): boolean {
+  const trimmed = text.trim();
+  if (!trimmed) return false;
+
+  const ko =
+    /(제\s*이름은|저는|전|나는|난)\s*[가-힣A-Za-z0-9]{2,12}\s*(입니다|이에요|예요|라고\s*해요|라고\s*합니다|이야)/i;
+  const en = /(my name is|i'm\s+[A-Za-z]{2,20}|i am\s+[A-Za-z]{2,20})/i;
+  const ja = /(名前は|わたしは|僕は|俺は).{1,20}(です|だよ)/i;
+
+  return ko.test(trimmed) || en.test(trimmed) || ja.test(trimmed);
+}
+
+function asksLutsUserName(text: string): boolean {
+  const trimmed = text.trim();
+  if (!trimmed) return false;
+
+  return /(어떻게\s*불러드리면|뭐라고\s*불러드리면|이름\s*(알려|말해)|what should i call you|your name|お名前|何て呼べば)/i
+    .test(trimmed);
+}
+
+function resolveLutsSpeechLevel(
+  profile: LutsToneProfile,
+  relationshipPhase: RelationshipPhase,
+): LutsSpeechLevel {
+  const stage = mapLutsRelationshipStage(relationshipPhase);
+  const isEarlyStage = stage === "gettingToKnow";
+  const isKoreanLike = profile.language === "ko" ||
+    profile.language === "unknown";
+
+  if (isEarlyStage && isKoreanLike && !profile.explicitCasual) {
+    return "formal";
+  }
+  return profile.speechLevel;
+}
+
 function hasLutsNickname(text: string): boolean {
   LUTS_NICKNAME_PATTERN.lastIndex = 0;
   return LUTS_NICKNAME_PATTERN.test(text);
@@ -779,6 +841,7 @@ function hasLutsNickname(text: string): boolean {
 function buildLutsToneProfile(
   history: ChatMessage[],
   userMessage: string,
+  options?: { knownUserName?: string | null },
 ): LutsToneProfile {
   const userTexts = [
     ...history
@@ -787,6 +850,10 @@ function buildLutsToneProfile(
       .filter((text) => text.length > 0),
     userMessage.trim(),
   ].filter((text) => text.length > 0);
+  const characterTexts = history
+    .filter((message) => message.role === "assistant")
+    .map((message) => message.content.trim())
+    .filter((text) => text.length > 0);
 
   if (userTexts.length === 0) {
     return {
@@ -794,21 +861,31 @@ function buildLutsToneProfile(
       speechLevel: "neutral",
       nicknameAllowed: false,
       turnIntent: "unknown",
+      nameKnown: false,
+      nameAsked: false,
+      explicitCasual: false,
     };
   }
 
   const latest = userTexts[userTexts.length - 1];
   const recentJoined = userTexts.slice(-3).join(" ");
   const language = detectLutsLanguage(latest);
+  const explicitCasual = hasExplicitLutsCasualTone(language, recentJoined);
   const speechLevel = detectLutsSpeechLevel(language, recentJoined);
   const turnIntent = detectLutsTurnIntent(language, latest);
   const nicknameAllowed = userTexts.some((text) => hasLutsNickname(text));
+  const nameKnown = Boolean(options?.knownUserName?.trim()) ||
+    userTexts.some((text) => looksLikeLutsNameDisclosure(text));
+  const nameAsked = characterTexts.some((text) => asksLutsUserName(text));
 
   return {
     language,
     speechLevel,
     nicknameAllowed,
     turnIntent,
+    nameKnown,
+    nameAsked,
+    explicitCasual,
   };
 }
 
@@ -820,6 +897,7 @@ function buildLutsStyleGuardPrompt(
   const relationshipLabel = lutsRelationshipStageLabel(relationshipStage);
   const relationshipGuide = lutsRelationshipStageGuide(relationshipStage);
   const relationshipBoundary = lutsRelationshipStageBoundary(relationshipStage);
+  const resolvedSpeech = resolveLutsSpeechLevel(profile, relationshipPhase);
 
   const languageGuide = profile.language === "ko"
     ? "한국어로 답하고, 사용자 존댓말/반말을 미러링하세요."
@@ -829,15 +907,26 @@ function buildLutsStyleGuardPrompt(
     ? "日本語で返答し、丁寧語/カジュアルをユーザーに合わせてください。"
     : "사용자 최근 메시지 언어와 톤을 우선 추정해서 맞추세요.";
 
-  const speechGuide = profile.speechLevel === "formal"
+  const speechGuide = resolvedSpeech === "formal"
     ? "현재 톤: formal. 정중하고 차분한 어조 유지."
-    : profile.speechLevel === "casual"
+    : resolvedSpeech === "casual"
     ? "현재 톤: casual. 과하지 않은 자연스러운 구어체 사용."
     : "현재 톤: neutral. 과도한 격식/과도한 친밀 표현 모두 피하세요.";
+
+  const earlyFormalityGuide = relationshipStage === "gettingToKnow" &&
+      !profile.explicitCasual
+    ? "초기 단계 규칙: 사용자가 명시적으로 반말을 쓰기 전에는 존댓말 유지."
+    : "초기 단계 규칙: 관계 단계에 맞춰 과한 친밀 표현은 피하세요.";
 
   const nicknameGuide = profile.nicknameAllowed
     ? "애칭 사용 가능: 사용자가 먼저 애칭을 사용한 경우에만 제한적으로 사용."
     : "애칭 사용 금지: 여보/자기/honey/darling 계열 호칭 사용 금지.";
+
+  const nameGuide = profile.nameKnown
+    ? "이름 상태: 사용자 이름이 확인됨. 과도한 반복 없이 자연스럽게 호칭."
+    : profile.nameAsked
+    ? "이름 상태: 이미 이름 질문을 했으니 재촉 금지. 중립 호칭으로 진행."
+    : '이름 상태: 초반 1회만 "편하게 어떻게 불러드리면 될까요?"로 가볍게 확인하고, 미응답이면 다음 주제로 진행.';
 
   const turnIntentGuide = profile.turnIntent === "greeting"
     ? "턴 전략: 인사에는 짧은 리액션 중심으로 답하고 같은 인사 반복 금지."
@@ -862,7 +951,9 @@ function buildLutsStyleGuardPrompt(
 - 단계 경계: ${relationshipBoundary}
 - ${languageGuide}
 - ${speechGuide}
+- ${earlyFormalityGuide}
 - ${nicknameGuide}
+- ${nameGuide}
 - ${turnIntentGuide}
 `.trim();
 }
@@ -911,7 +1002,12 @@ function removeLutsServiceTone(text: string): string {
     .trim();
 }
 
-function defaultLutsReply(profile: LutsToneProfile): string {
+function defaultLutsReply(
+  profile: LutsToneProfile,
+  relationshipPhase: RelationshipPhase,
+): string {
+  const resolvedSpeech = resolveLutsSpeechLevel(profile, relationshipPhase);
+
   if (profile.language === "en") {
     if (profile.turnIntent === "greeting") {
       return "Nice to meet you too. We can chat casually.";
@@ -938,7 +1034,7 @@ function defaultLutsReply(profile: LutsToneProfile): string {
     return "うん、受け取ったよ。続けて話そう。";
   }
 
-  const isCasual = profile.speechLevel === "casual";
+  const isCasual = resolvedSpeech === "casual";
   if (profile.turnIntent === "greeting") {
     return isCasual
       ? "나도 반가워. 편하게 얘기하자."
@@ -960,14 +1056,15 @@ function defaultLutsReply(profile: LutsToneProfile): string {
 function normalizeLutsGreetingEcho(
   text: string,
   profile: LutsToneProfile,
+  relationshipPhase: RelationshipPhase,
 ): string {
   const normalized = text.replace(/\s+/g, " ").trim();
-  if (!normalized) return defaultLutsReply(profile);
+  if (!normalized) return defaultLutsReply(profile, relationshipPhase);
 
   const greetingEchoPattern =
     /^(네[, ]*)?(저도[, ]*)?(반갑(?:습니다|네요|다|아요)|만나서 반갑)/i;
   if (greetingEchoPattern.test(normalized)) {
-    return defaultLutsReply(profile);
+    return defaultLutsReply(profile, relationshipPhase);
   }
   return normalized;
 }
@@ -997,25 +1094,56 @@ function isLutsShortReply(language: LutsLanguage, text: string): boolean {
   return text.length <= 12;
 }
 
-function buildLutsBridgeSentence(profile: LutsToneProfile): string {
+function buildLutsBridgeSentence(
+  profile: LutsToneProfile,
+  relationshipPhase: RelationshipPhase,
+): string {
+  const resolvedSpeech = resolveLutsSpeechLevel(profile, relationshipPhase);
+
   if (profile.language === "en") {
-    return profile.speechLevel === "casual"
+    return resolvedSpeech === "casual"
       ? "What are you curious about these days?"
       : "What are you most curious about these days?";
   }
   if (profile.language === "ja") {
-    return profile.speechLevel === "casual"
+    return resolvedSpeech === "casual"
       ? "最近いちばん気になってることって何？"
       : "最近いちばん気になっていることは何ですか？";
   }
-  return profile.speechLevel === "casual"
+  return resolvedSpeech === "casual"
     ? "요즘 제일 궁금한 게 뭐야?"
     : "요즘 가장 궁금한 건 뭐예요?";
 }
 
-function ensureLutsContinuity(text: string, profile: LutsToneProfile): string {
+function buildLutsNamePrompt(
+  profile: LutsToneProfile,
+  relationshipPhase: RelationshipPhase,
+): string {
+  const resolvedSpeech = resolveLutsSpeechLevel(profile, relationshipPhase);
+
+  if (profile.language === "en") {
+    return resolvedSpeech === "casual"
+      ? "What should I call you? It is okay if you want to share later."
+      : "What should I call you? It is okay if you want to share your name later.";
+  }
+  if (profile.language === "ja") {
+    return resolvedSpeech === "casual"
+      ? "なんて呼べばいい？名前はあとででも大丈夫だよ。"
+      : "なんてお呼びすればいいですか？お名前は後ででも大丈夫です。";
+  }
+  return resolvedSpeech === "casual"
+    ? "편하게 뭐라고 부르면 돼? 이름은 편할 때 말해줘도 돼."
+    : "편하게 어떻게 불러드리면 될까요? 이름은 편할 때 알려주셔도 괜찮아요.";
+}
+
+function ensureLutsContinuity(
+  text: string,
+  profile: LutsToneProfile,
+  relationshipPhase: RelationshipPhase,
+): string {
   const normalized = text.replace(/\s{2,}/g, " ").trim();
-  if (!normalized) return defaultLutsReply(profile);
+  const stage = mapLutsRelationshipStage(relationshipPhase);
+  if (!normalized) return defaultLutsReply(profile, relationshipPhase);
 
   const hasQuestion = normalized.includes("?") || normalized.includes("？");
   const shouldBridge = profile.turnIntent === "greeting" ||
@@ -1026,7 +1154,16 @@ function ensureLutsContinuity(text: string, profile: LutsToneProfile): string {
     return normalized;
   }
 
-  const bridge = buildLutsBridgeSentence(profile);
+  if (
+    stage === "gettingToKnow" &&
+    !profile.nameKnown &&
+    !profile.nameAsked &&
+    (profile.turnIntent === "greeting" || profile.turnIntent === "shortReply")
+  ) {
+    return buildLutsNamePrompt(profile, relationshipPhase);
+  }
+
+  const bridge = buildLutsBridgeSentence(profile, relationshipPhase);
   if (!bridge) return normalized;
 
   const needsPunctuation = !/[.!?。！？]$/.test(normalized);
@@ -1047,6 +1184,7 @@ function splitLutsSentences(text: string): string[] {
 function applyLutsOutputGuard(
   text: string,
   profile: LutsToneProfile,
+  relationshipPhase: RelationshipPhase,
 ): string {
   let guarded = text.trim();
   if (!guarded) return guarded;
@@ -1057,18 +1195,20 @@ function applyLutsOutputGuard(
   guarded = removeLutsServiceTone(guarded);
 
   if (LUTS_SERVICE_TONE_PATTERN.test(guarded)) {
-    guarded = defaultLutsReply(profile);
+    guarded = defaultLutsReply(profile, relationshipPhase);
   }
   if (profile.turnIntent === "greeting") {
-    guarded = normalizeLutsGreetingEcho(guarded, profile);
+    guarded = normalizeLutsGreetingEcho(guarded, profile, relationshipPhase);
   }
-  guarded = ensureLutsContinuity(guarded, profile);
+  guarded = ensureLutsContinuity(guarded, profile, relationshipPhase);
   if (!guarded) {
-    guarded = defaultLutsReply(profile);
+    guarded = defaultLutsReply(profile, relationshipPhase);
   }
 
   const sentences = splitLutsSentences(guarded);
-  if (sentences.length === 0) return defaultLutsReply(profile);
+  if (sentences.length === 0) {
+    return defaultLutsReply(profile, relationshipPhase);
+  }
 
   const deduped: string[] = [];
   const seen = new Set<string>();
@@ -1097,7 +1237,9 @@ function applyLutsOutputGuard(
   }
 
   const normalized = limited.join(" ").replace(/\s{2,}/g, " ").trim();
-  return normalized.length === 0 ? defaultLutsReply(profile) : normalized;
+  return normalized.length === 0
+    ? defaultLutsReply(profile, relationshipPhase)
+    : normalized;
 }
 
 serve(async (req: Request) => {
@@ -1194,7 +1336,9 @@ serve(async (req: Request) => {
     const limitedHistory = limitMessages(messages || []);
     const charName = characterName || "캐릭터";
     const lutsToneProfile = characterId === LUTS_CHARACTER_ID
-      ? buildLutsToneProfile(limitedHistory, userMessage)
+      ? buildLutsToneProfile(limitedHistory, userMessage, {
+        knownUserName: userProfile?.name || userName || null,
+      })
       : null;
     const lutsStylePrompt = lutsToneProfile
       ? buildLutsStyleGuardPrompt(
@@ -1298,7 +1442,11 @@ ${characterTraits}
       emoticonStyle,
     );
     if (lutsToneProfile) {
-      responseText = applyLutsOutputGuard(responseText, lutsToneProfile);
+      responseText = applyLutsOutputGuard(
+        responseText,
+        lutsToneProfile,
+        normalizePhase(resolvedAffinityContext.phase),
+      );
     }
 
     // 감정 추출 및 딜레이 계산
