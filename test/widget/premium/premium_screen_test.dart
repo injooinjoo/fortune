@@ -1,6 +1,8 @@
 // Premium Screen - Widget Test
 // 프리미엄 화면 UI 테스트
 
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -692,10 +694,8 @@ class _SubscriptionOption extends StatelessWidget {
           children: [
             Radio<String>(
               value: title.toLowerCase(),
-              groupValue: isSelected
-                  ? title.toLowerCase()
-                  : '', // ignore: deprecated_member_use
-              onChanged: (_) => onTap(), // ignore: deprecated_member_use
+              groupValue: isSelected ? title.toLowerCase() : '',
+              onChanged: (_) => onTap(),
             ),
             const SizedBox(width: 8),
             Expanded(

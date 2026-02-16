@@ -27,7 +27,7 @@
 |---|---|---|---|---|---|---|---|
 | IOS-META-001 | P0 | Review note includes entertainment framing + test flow + premium test guidance | pass | `metadata/review_information/notes.txt`, `ios/fastlane/metadata/review_information/review_notes.txt` | content-owner | 2026-02-16 | done |
 | IOS-META-002 | P0 | Demo credentials exist in both metadata sources | pass | `metadata/review_information/demo_user.txt`, `metadata/review_information/demo_password.txt`, `ios/fastlane/metadata/review_information/review_demo_user.txt`, `ios/fastlane/metadata/review_information/review_demo_password.txt` | release-owner | 2026-02-16 | done |
-| IOS-META-003 | P1 | KR+EN metadata completeness with no fallback mismatch | pending | `metadata/ko/*`, `metadata/en-US/*`, `ios/fastlane/metadata/ko/*`, `ios/fastlane/metadata/en-US/*` | content-owner | TBD | open |
+| IOS-META-003 | P1 | KR+EN metadata completeness with no fallback mismatch | pass | `metadata/ko/*`, `metadata/en-US/*`, `ios/fastlane/metadata/ko/*`, `ios/fastlane/metadata/en-US/*`, `ios/fastlane/metadata/en-US/support_url.txt` | content-owner | 2026-02-16 | done |
 | IOS-META-004 | P1 | Age rating / content rating questionnaire updated in ASC | pending | ASC screenshots + exported rating config (`ios/fastlane/metadata/app_rating_config.json`) | release-owner | TBD | open |
 
 ## 5. Purchase and Subscription Evidence
@@ -48,8 +48,8 @@
 ## 7. Version / Build Consistency
 | check_id | severity(P0/P1/P2) | check_item | result(pass/fail/pending) | evidence(path\|url\|screenshot) | owner | due_date | status |
 |---|---|---|---|---|---|---|---|
-| IOS-BUILD-001 | P0 | iOS release no-codesign build succeeds with production defines | pass | `docs/development/reports/2026-02-16_store_review_strategy_verify.md` | ios-owner | 2026-02-16 | done |
-| IOS-BUILD-002 | P0 | iOS archive via `flutter build ipa --no-codesign` succeeds | pass | `docs/development/reports/2026-02-16_store_review_strategy_verify.md` | ios-owner | 2026-02-16 | done |
+| IOS-BUILD-001 | P0 | iOS release no-codesign build succeeds with production defines | pass | `docs/development/reports/2026-02-16_store_review_gate_blockers_verify.md` | ios-owner | 2026-02-16 | done |
+| IOS-BUILD-002 | P0 | iOS archive via `flutter build ipa --no-codesign` succeeds | pass | `docs/development/reports/2026-02-16_store_review_gate_blockers_verify.md` | ios-owner | 2026-02-16 | done |
 | IOS-VERS-001 | P0 | `pubspec.yaml` version aligns with built iOS app version/build | pending | `pubspec.yaml`, `flutter build` output, app bundle metadata | release-owner | TBD | open |
 | IOS-VERS-002 | P0 | App Store Connect selected build matches frozen commit | pending | ASC build screen capture + commit SHA | release-owner | TBD | open |
 

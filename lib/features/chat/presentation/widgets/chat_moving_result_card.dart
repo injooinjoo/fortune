@@ -652,8 +652,9 @@ class _ChatMovingResultCardState extends ConsumerState<ChatMovingResultCard> {
     final itemsColors = luckyItems['colors'] as List<dynamic>? ?? [];
     final plants = luckyItems['plants'] as List<dynamic>? ?? [];
 
-    if (items.isEmpty && itemsColors.isEmpty && plants.isEmpty)
+    if (items.isEmpty && itemsColors.isEmpty && plants.isEmpty) {
       return const SizedBox.shrink();
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),

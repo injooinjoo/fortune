@@ -104,19 +104,13 @@ class _ProfileVerificationPageState
                 ),
               ),
 
-              // 선택 라디오
-              Radio<String>(
-                value: method,
-                groupValue: _selectedMethod, // ignore: deprecated_member_use
-                onChanged: (value) {
-                  // ignore: deprecated_member_use
-                  if (value != null) {
-                    setState(() {
-                      _selectedMethod = value;
-                    });
-                  }
-                },
-                activeColor: context.colors.accent,
+              // 선택 상태 표시
+              Icon(
+                isSelected
+                    ? Icons.radio_button_checked
+                    : Icons.radio_button_unchecked,
+                size: 22,
+                color: isSelected ? context.colors.accent : _secondaryTextColor,
               ),
             ],
           ),

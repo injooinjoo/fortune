@@ -159,33 +159,18 @@ class FortuneGaugeNotifier extends StateNotifier<FortuneGaugeState> {
     }
   }
 
-  // 10 도달 시 토큰 지급 (TokenProvider.earnSouls 호출) 후 게이지 리셋
+  // 10 도달 시 게이지 리셋 (획득형 보상 정책 제거)
   Future<void> _checkAndAwardToken() async {
     try {
-      debugPrint('[FortuneGaugeProvider] Awarding token (토큰)');
-
-      // TokenProvider의 earnSouls 호출
-      final success = await ref.read(tokenProvider.notifier).earnSouls(
-            fortuneType: 'gauge_reward',
-          );
-
-      if (success) {
-        // 토큰 개수 증가 + 게이지 리셋 (다음 사이클 시작)
-        state = state.copyWith(
-          currentProgress: 0,
-          todayViewed: {}, // 다음 사이클 위해 초기화
-          totalTokens: state.totalTokens + 1,
-        );
-
-        await _saveToStorage();
-
-        debugPrint(
-            '[FortuneGaugeProvider] Token awarded! Total: ${state.totalTokens}. Gauge reset to 0/10');
-      } else {
-        debugPrint('[FortuneGaugeProvider] Failed to award token');
-      }
+      debugPrint(
+          '[FortuneGaugeProvider] Gauge cycle completed. Resetting progress.');
+      state = state.copyWith(
+        currentProgress: 0,
+        todayViewed: {}, // 다음 사이클 위해 초기화
+      );
+      await _saveToStorage();
     } catch (e) {
-      debugPrint('[FortuneGaugeProvider] Error awarding token: $e');
+      debugPrint('[FortuneGaugeProvider] Error resetting gauge cycle: $e');
     }
   }
 

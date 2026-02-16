@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -4133,6 +4132,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   /// 경계 대상 미리보기 섹션 (avoid-people fortune)
+  // ignore: unused_element
   Widget _buildCautionPreviewSection(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;

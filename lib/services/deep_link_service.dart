@@ -144,6 +144,7 @@ class DeepLinkService {
 
       final context = appNavigatorKey.currentContext;
       if (context == null) continue;
+      if (!context.mounted) continue;
 
       try {
         GoRouter.of(context).go(route);

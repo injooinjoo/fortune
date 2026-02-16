@@ -281,6 +281,7 @@ Future<void> _tapRouteItem(WidgetTester tester, String route) async {
 }
 
 /// RenderObject를 사용한 대체 캡처 방법
+// ignore: unused_element
 Future<void> _captureWithRenderObject(WidgetTester tester, String path) async {
   final element = tester.element(find.byType(MaterialApp));
   final renderObject = element.renderObject;

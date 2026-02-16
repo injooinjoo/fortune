@@ -65,11 +65,14 @@ class LuckyItemsCard extends StatelessWidget {
       if (lowerValue.contains('올리브')) return '🫒';
       if (lowerValue.contains('청록') ||
           lowerValue.contains('민트') ||
-          lowerValue.contains('터콰이즈')) return '🩵';
+          lowerValue.contains('터콰이즈')) {
+        return '🩵';
+      }
       if (lowerValue.contains('금') || lowerValue.contains('골드')) return '🥇';
       if (lowerValue.contains('은') || lowerValue.contains('실버')) return '🥈';
-      if (lowerValue.contains('베이지') || lowerValue.contains('아이보리'))
+      if (lowerValue.contains('베이지') || lowerValue.contains('아이보리')) {
         return '🤍';
+      }
       if (lowerValue.contains('갈색') || lowerValue.contains('브라운')) return '🟤';
       return '🎨';
     }
@@ -92,34 +95,52 @@ class LuckyItemsCard extends StatelessWidget {
       if (lowerValue.contains('과일')) return '🍎';
       if (lowerValue.contains('채소') ||
           lowerValue.contains('야채') ||
-          lowerValue.contains('샐러드')) return '🥬';
+          lowerValue.contains('샐러드')) {
+        return '🥬';
+      }
       if (lowerValue.contains('고기') ||
           lowerValue.contains('육류') ||
-          lowerValue.contains('스테이크')) return '🥩';
+          lowerValue.contains('스테이크')) {
+        return '🥩';
+      }
       if (lowerValue.contains('해산물') ||
           lowerValue.contains('생선') ||
-          lowerValue.contains('회')) return '🦐';
+          lowerValue.contains('회')) {
+        return '🦐';
+      }
       if (lowerValue.contains('면') ||
           lowerValue.contains('국수') ||
           lowerValue.contains('파스타') ||
-          lowerValue.contains('라면')) return '🍜';
+          lowerValue.contains('라면')) {
+        return '🍜';
+      }
       if (lowerValue.contains('밥') || lowerValue.contains('쌀')) return '🍚';
       if (lowerValue.contains('빵') ||
           lowerValue.contains('토스트') ||
-          lowerValue.contains('베이커리')) return '🍞';
+          lowerValue.contains('베이커리')) {
+        return '🍞';
+      }
       if (lowerValue.contains('견과') ||
           lowerValue.contains('땅콩') ||
           lowerValue.contains('아몬드') ||
-          lowerValue.contains('호두')) return '🥜';
+          lowerValue.contains('호두')) {
+        return '🥜';
+      }
       if (lowerValue.contains('디저트') ||
           lowerValue.contains('케이크') ||
-          lowerValue.contains('과자')) return '🍰';
+          lowerValue.contains('과자')) {
+        return '🍰';
+      }
       if (lowerValue.contains('음료') ||
           lowerValue.contains('커피') ||
-          lowerValue.contains('차')) return '☕';
+          lowerValue.contains('차')) {
+        return '☕';
+      }
       if (lowerValue.contains('국') ||
           lowerValue.contains('찌개') ||
-          lowerValue.contains('탕')) return '🍲';
+          lowerValue.contains('탕')) {
+        return '🍲';
+      }
       if (lowerValue.contains('피자')) return '🍕';
       if (lowerValue.contains('버거') || lowerValue.contains('햄버거')) return '🍔';
       if (lowerValue.contains('초밥') || lowerValue.contains('스시')) return '🍣';
@@ -135,26 +156,35 @@ class LuckyItemsCard extends StatelessWidget {
       if (lowerValue.contains('꽃') || lowerValue.contains('플라워')) return '🌸';
       if (lowerValue.contains('브로치') ||
           lowerValue.contains('보석') ||
-          lowerValue.contains('쥬얼리')) return '💎';
+          lowerValue.contains('쥬얼리')) {
+        return '💎';
+      }
       if (lowerValue.contains('반지') || lowerValue.contains('링')) return '💍';
-      if (lowerValue.contains('목걸이') || lowerValue.contains('네크리스'))
+      if (lowerValue.contains('목걸이') || lowerValue.contains('네크리스')) {
         return '📿';
+      }
       if (lowerValue.contains('열쇠') || lowerValue.contains('키')) return '🔑';
       if (lowerValue.contains('우산')) return '☂️';
       if (lowerValue.contains('손수건') || lowerValue.contains('스카프')) return '🧣';
       if (lowerValue.contains('노트') ||
           lowerValue.contains('다이어리') ||
-          lowerValue.contains('수첩')) return '📓';
+          lowerValue.contains('수첩')) {
+        return '📓';
+      }
       if (lowerValue.contains('펜') || lowerValue.contains('필기')) return '🖊️';
       if (lowerValue.contains('안경')) return '👓';
       if (lowerValue.contains('모자') || lowerValue.contains('캡')) return '🧢';
       if (lowerValue.contains('신발') ||
           lowerValue.contains('구두') ||
-          lowerValue.contains('운동화')) return '👟';
+          lowerValue.contains('운동화')) {
+        return '👟';
+      }
       if (lowerValue.contains('지갑')) return '👛';
       if (lowerValue.contains('휴대폰') ||
           lowerValue.contains('스마트폰') ||
-          lowerValue.contains('폰')) return '📱';
+          lowerValue.contains('폰')) {
+        return '📱';
+      }
       if (lowerValue.contains('이어폰') || lowerValue.contains('헤드폰')) return '🎧';
       return '✨';
     }

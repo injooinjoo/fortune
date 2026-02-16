@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 # iOS Full Regression Runner (env: .env.test by default)
-# Runs: analyze → format check → iOS build (no codesign) → unit → widget → integration (iPhone 15 Pro)
+# Runs: analyze → format check → iOS build (no codesign) → unit → widget → integration (auto-fallback simulator)
 #
 # Usage:
 #   ./scripts/ios_full_regression.sh [SIMULATOR_NAME]
-#   Defaults: SIMULATOR_NAME="iPhone 15 Pro", ENV_FILE=.env.test
+#   Defaults: SIMULATOR_NAME="iPhone 15 Pro" (fallback enabled), ENV_FILE=.env.test
 
 set -uo pipefail
 
@@ -58,7 +58,15 @@ fi
 if [ -f ./scripts/run_ios_integration_tests.sh ]; then
   echo -e "${YELLOW}▸ Running iOS integration tests...${NC}"
   ENV_FILE="${ENV_FILE}" bash ./scripts/run_ios_integration_tests.sh "${SIM_NAME}"
-  if [ $? -eq 0 ]; then INTEG=0; else INTEG=1; fi
+  INTEG_STATUS=$?
+  if [ $INTEG_STATUS -eq 0 ]; then
+    INTEG=0
+  elif [ $INTEG_STATUS -eq 2 ]; then
+    INTEG=2
+    echo -e "${YELLOW}  ! iOS simulator runtime unavailable; integration tests skipped${NC}"
+  else
+    INTEG=1
+  fi
   echo
 else
   echo -e "${YELLOW}  ! helper script missing; skipping integration${NC}"

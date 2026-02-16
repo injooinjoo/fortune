@@ -386,12 +386,10 @@ class _TrendBalanceGamePageState extends ConsumerState<TrendBalanceGamePage> {
                               subject: '밸런스 게임 결과 공유',
                             );
                           } catch (e) {
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                // ignore: use_build_context_synchronously
-                                const SnackBar(content: Text('공유에 실패했습니다')),
-                              );
-                            }
+                            if (!mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('공유에 실패했습니다')),
+                            );
                           }
                         },
                         icon: const Icon(Icons.share_outlined),

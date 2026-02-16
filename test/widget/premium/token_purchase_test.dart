@@ -1,6 +1,8 @@
 // Token Purchase Screen - Widget Test
 // 토큰 구매 화면 UI 테스트
 
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -679,9 +681,8 @@ class _TokenPackageCard extends StatelessWidget {
             children: [
               Radio<String>(
                 value: id,
-                groupValue:
-                    isSelected ? id : '', // ignore: deprecated_member_use
-                onChanged: (_) => onTap(), // ignore: deprecated_member_use
+                groupValue: isSelected ? id : '',
+                onChanged: (_) => onTap(),
               ),
               const SizedBox(width: 8),
               Expanded(

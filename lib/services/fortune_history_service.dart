@@ -174,13 +174,16 @@ class FortuneHistoryService {
 
     // 운세 타입 기반 태그
     if (fortuneType.contains('love')) tags.add('연애');
-    if (fortuneType.contains('money') || fortuneType.contains('wealth'))
+    if (fortuneType.contains('money') || fortuneType.contains('wealth')) {
       tags.add('금전');
-    if (fortuneType.contains('career') || fortuneType.contains('job'))
+    }
+    if (fortuneType.contains('career') || fortuneType.contains('job')) {
       tags.add('직업');
+    }
     if (fortuneType.contains('health')) tags.add('건강');
-    if (fortuneType.contains('daily') || fortuneType.contains('today'))
+    if (fortuneType.contains('daily') || fortuneType.contains('today')) {
       tags.add('일일');
+    }
     if (fortuneType.contains('weekly')) tags.add('주간');
     if (fortuneType.contains('monthly')) tags.add('월간');
     if (fortuneType.contains('moving')) tags.add('이사');

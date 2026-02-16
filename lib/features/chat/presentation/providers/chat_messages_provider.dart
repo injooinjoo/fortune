@@ -29,6 +29,7 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
   }
 
   /// 로컬에 저장된 메시지 로드
+  // ignore: unused_element
   Future<void> _loadMessages() async {
     try {
       final stored = _prefs.getString(_storageKey);

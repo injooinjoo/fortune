@@ -34,14 +34,14 @@
 | check_id | severity(P0/P1/P2) | check_item | result(pass/fail/pending) | evidence(path\|url\|screenshot) | owner | due_date | status |
 |---|---|---|---|---|---|---|---|
 | AND-IAP-001 | P0 | Purchase success/cancel/restore user flows verified on Android | pending | UI recording + billing logs | qa-owner | TBD | open |
-| AND-IAP-002 | P1 | Server-side Google Play purchase token verification implemented | fail | `/supabase/functions/payment-verify-purchase/index.ts` (`// TODO: Google Play 영수증 검증 구현`) | backend-owner | TBD | open |
+| AND-IAP-002 | P1 | Server-side Google Play purchase token verification implemented | pass | `supabase/functions/payment-verify-purchase/index.ts` (Google OAuth JWT + Android Publisher API products/subscriptions verification), `docs/development/reports/2026-02-16_store_review_gate_blockers_verify.md` | backend-owner | 2026-02-16 | done |
 | AND-IAP-003 | P1 | Play subscription status reflected correctly after backend activation | pending | subscription logs + DB snapshot | backend-owner | TBD | open |
 
 ## 6. Stability Risk (ANR/Crash) and Build Evidence
 | check_id | severity(P0/P1/P2) | check_item | result(pass/fail/pending) | evidence(path\|url\|screenshot) | owner | due_date | status |
 |---|---|---|---|---|---|---|---|
-| AND-STAB-001 | P0 | Release AAB build succeeds | pass | `docs/development/reports/2026-02-16_store_review_strategy_verify.md` | android-owner | 2026-02-16 | done |
-| AND-STAB-002 | P0 | Release lint passes (`lintRelease`) | pass | `docs/development/reports/2026-02-16_store_review_strategy_verify.md` | android-owner | 2026-02-16 | done |
+| AND-STAB-001 | P0 | Release AAB build succeeds | pass | `docs/development/reports/2026-02-16_store_review_gate_blockers_verify.md` | android-owner | 2026-02-16 | done |
+| AND-STAB-002 | P0 | Release lint passes (`lintRelease`) | pass | `docs/development/reports/2026-02-16_store_review_gate_blockers_verify.md` | android-owner | 2026-02-16 | done |
 | AND-STAB-003 | P1 | Core scenario run shows no blocker-level crashes/ANR | pending | real-device run logs | qa-owner | TBD | open |
 
 ## 7. Policy-Sensitive Store Text Review

@@ -9,12 +9,300 @@ const corsHeaders = {
 // Apple Receipt Validation URLs
 const APPLE_PRODUCTION_URL = 'https://buy.itunes.apple.com/verifyReceipt'
 const APPLE_SANDBOX_URL = 'https://sandbox.itunes.apple.com/verifyReceipt'
+const GOOGLE_OAUTH_TOKEN_URL = 'https://oauth2.googleapis.com/token'
+const GOOGLE_ANDROID_PUBLISHER_BASE_URL = 'https://androidpublisher.googleapis.com/androidpublisher/v3'
+const GOOGLE_ANDROID_PUBLISHER_SCOPE = 'https://www.googleapis.com/auth/androidpublisher'
 
 // Apple Receipt Status Codes
 const APPLE_STATUS = {
   SUCCESS: 0,
   SANDBOX_RECEIPT_IN_PRODUCTION: 21007,
   PRODUCTION_RECEIPT_IN_SANDBOX: 21008,
+}
+
+function base64UrlEncode(input: string): string {
+  return btoa(input).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+}
+
+function base64UrlEncodeBytes(bytes: Uint8Array): string {
+  let binary = ''
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte)
+  }
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+}
+
+function pemToArrayBuffer(pem: string): ArrayBuffer {
+  const normalizedPem = pem
+    .replace(/-----BEGIN PRIVATE KEY-----/g, '')
+    .replace(/-----END PRIVATE KEY-----/g, '')
+    .replace(/\s+/g, '')
+
+  const binary = atob(normalizedPem)
+  const bytes = new Uint8Array(binary.length)
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i)
+  }
+  return bytes.buffer
+}
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message
+  }
+  return String(error)
+}
+
+function getErrorStack(error: unknown): string | undefined {
+  if (error instanceof Error) {
+    return error.stack
+  }
+  return undefined
+}
+
+async function signJwt(unsignedToken: string, privateKeyPem: string): Promise<string> {
+  const keyData = pemToArrayBuffer(privateKeyPem)
+  const cryptoKey = await crypto.subtle.importKey(
+    'pkcs8',
+    keyData,
+    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  )
+
+  const signature = await crypto.subtle.sign(
+    'RSASSA-PKCS1-v1_5',
+    cryptoKey,
+    new TextEncoder().encode(unsignedToken),
+  )
+
+  return base64UrlEncodeBytes(new Uint8Array(signature))
+}
+
+function loadGoogleServiceAccountCredentials():
+  | { clientEmail: string; privateKey: string }
+  | null {
+  const jsonCredential =
+    Deno.env.get('GOOGLE_PLAY_SERVICE_ACCOUNT_JSON') ||
+    Deno.env.get('GOOGLE_SERVICE_ACCOUNT_JSON')
+
+  if (jsonCredential) {
+    try {
+      const parsed = JSON.parse(jsonCredential)
+      const clientEmail = parsed.client_email as string | undefined
+      const privateKeyRaw = parsed.private_key as string | undefined
+      if (clientEmail && privateKeyRaw) {
+        return {
+          clientEmail,
+          privateKey: privateKeyRaw.replace(/\\n/g, '\n'),
+        }
+      }
+    } catch (error) {
+      console.error('❌ GOOGLE_PLAY_SERVICE_ACCOUNT_JSON 파싱 실패:', error)
+    }
+  }
+
+  const clientEmail =
+    Deno.env.get('GOOGLE_PLAY_CLIENT_EMAIL') || Deno.env.get('GOOGLE_CLIENT_EMAIL')
+  const privateKeyRaw =
+    Deno.env.get('GOOGLE_PLAY_PRIVATE_KEY') || Deno.env.get('GOOGLE_PRIVATE_KEY')
+
+  if (clientEmail && privateKeyRaw) {
+    return {
+      clientEmail,
+      privateKey: privateKeyRaw.replace(/\\n/g, '\n'),
+    }
+  }
+
+  return null
+}
+
+async function getGoogleAccessToken(): Promise<string | null> {
+  const credentials = loadGoogleServiceAccountCredentials()
+  if (!credentials) {
+    console.error('❌ Google Play 서비스 계정 환경변수가 없습니다.')
+    return null
+  }
+
+  const now = Math.floor(Date.now() / 1000)
+  const header = {
+    alg: 'RS256',
+    typ: 'JWT',
+  }
+  const payload = {
+    iss: credentials.clientEmail,
+    scope: GOOGLE_ANDROID_PUBLISHER_SCOPE,
+    aud: GOOGLE_OAUTH_TOKEN_URL,
+    iat: now,
+    exp: now + 3600,
+  }
+
+  try {
+    const encodedHeader = base64UrlEncode(JSON.stringify(header))
+    const encodedPayload = base64UrlEncode(JSON.stringify(payload))
+    const unsignedToken = `${encodedHeader}.${encodedPayload}`
+    const signature = await signJwt(unsignedToken, credentials.privateKey)
+    const assertion = `${unsignedToken}.${signature}`
+
+    const response = await fetch(GOOGLE_OAUTH_TOKEN_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+        assertion,
+      }),
+    })
+
+    const body = await response.json()
+    if (!response.ok) {
+      console.error('❌ Google OAuth 토큰 발급 실패:', JSON.stringify(body))
+      return null
+    }
+
+    return body.access_token as string
+  } catch (error) {
+    console.error('❌ Google OAuth 토큰 발급 중 예외:', error)
+    return null
+  }
+}
+
+async function verifyGooglePlayPurchase(
+  packageName: string,
+  productId: string,
+  purchaseToken: string,
+): Promise<{
+  isValid: boolean
+  productId?: string
+  orderId?: string
+  environment?: string
+  error?: string
+}> {
+  console.log('🤖 Google Play 영수증 검증 시작...')
+
+  const accessToken = await getGoogleAccessToken()
+  if (!accessToken) {
+    return {
+      isValid: false,
+      error: 'Missing or invalid Google service account credentials',
+    }
+  }
+
+  const encodedPackage = encodeURIComponent(packageName)
+  const encodedProduct = encodeURIComponent(productId)
+  const encodedToken = encodeURIComponent(purchaseToken)
+
+  // 1) One-time products
+  const productUrl =
+    `${GOOGLE_ANDROID_PUBLISHER_BASE_URL}/applications/${encodedPackage}` +
+    `/purchases/products/${encodedProduct}/tokens/${encodedToken}`
+
+  try {
+    const productResponse = await fetch(productUrl, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    const productResult = await productResponse.json()
+
+    if (productResponse.ok) {
+      const purchaseState = Number(productResult.purchaseState ?? -1)
+      const isValid = purchaseState === 0
+      console.log(`🤖 Product 구매 상태: purchaseState=${purchaseState}, valid=${isValid}`)
+      return {
+        isValid,
+        productId: productResult.productId || productId,
+        orderId: productResult.orderId,
+        environment: 'android-product',
+        error: isValid ? undefined : `Invalid purchaseState: ${purchaseState}`,
+      }
+    }
+
+    console.log(`⚠️ products.get 실패: ${productResponse.status}`)
+  } catch (error) {
+    console.error('❌ Google products.get 호출 오류:', error)
+  }
+
+  // 2) Subscription v2
+  const subscriptionV2Url =
+    `${GOOGLE_ANDROID_PUBLISHER_BASE_URL}/applications/${encodedPackage}` +
+    `/purchases/subscriptionsv2/tokens/${encodedToken}`
+
+  try {
+    const subscriptionResponse = await fetch(subscriptionV2Url, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    const subscriptionResult = await subscriptionResponse.json()
+
+    if (subscriptionResponse.ok) {
+      const validStates = new Set([
+        'SUBSCRIPTION_STATE_ACTIVE',
+        'SUBSCRIPTION_STATE_IN_GRACE_PERIOD',
+      ])
+      const subscriptionState = String(subscriptionResult.subscriptionState ?? '')
+      const lineItem =
+        subscriptionResult.lineItems?.find((item: { productId?: string }) => item?.productId === productId) ||
+        subscriptionResult.lineItems?.[0]
+      const isValid = validStates.has(subscriptionState)
+
+      console.log(
+        `🤖 Subscription 상태: subscriptionState=${subscriptionState}, valid=${isValid}`,
+      )
+      return {
+        isValid,
+        productId: lineItem?.productId || productId,
+        orderId: subscriptionResult.latestOrderId,
+        environment: 'android-subscription-v2',
+        error: isValid ? undefined : `Invalid subscriptionState: ${subscriptionState}`,
+      }
+    }
+
+    console.log(`⚠️ subscriptionsv2.get 실패: ${subscriptionResponse.status}`)
+  } catch (error) {
+    console.error('❌ Google subscriptionsv2.get 호출 오류:', error)
+  }
+
+  // 3) Subscription legacy fallback
+  const legacySubscriptionUrl =
+    `${GOOGLE_ANDROID_PUBLISHER_BASE_URL}/applications/${encodedPackage}` +
+    `/purchases/subscriptions/${encodedProduct}/tokens/${encodedToken}`
+
+  try {
+    const legacyResponse = await fetch(legacySubscriptionUrl, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    const legacyResult = await legacyResponse.json()
+
+    if (legacyResponse.ok) {
+      const expiryTimeMillis = Number(legacyResult.expiryTimeMillis ?? 0)
+      const isValid = expiryTimeMillis > Date.now()
+      console.log(
+        `🤖 Legacy subscription 상태: expiryTimeMillis=${expiryTimeMillis}, valid=${isValid}`,
+      )
+      return {
+        isValid,
+        productId,
+        orderId: legacyResult.orderId,
+        environment: 'android-subscription-legacy',
+        error: isValid ? undefined : 'Subscription is expired',
+      }
+    }
+
+    console.log(`⚠️ subscriptions.get 실패: ${legacyResponse.status}`)
+  } catch (error) {
+    console.error('❌ Google subscriptions.get 호출 오류:', error)
+  }
+
+  return {
+    isValid: false,
+    error: 'Google Play verification failed',
+  }
 }
 
 /**
@@ -105,7 +393,7 @@ async function verifyAppleReceipt(receipt: string, sharedSecret?: string): Promi
     console.error('❌ Apple 서버 통신 오류:', error)
     return {
       isValid: false,
-      error: `Network error: ${error.message}`,
+      error: `Network error: ${getErrorMessage(error)}`,
     }
   }
 }
@@ -153,13 +441,22 @@ serve(async (req) => {
     const body = await req.json()
     console.log('📥 받은 body:', JSON.stringify(body, null, 2))
 
-    const { platform, productId, purchaseToken, receipt, orderId, transactionId } = body
+    const {
+      platform,
+      productId,
+      purchaseToken,
+      receipt,
+      orderId,
+      transactionId,
+      packageName,
+    } = body
     console.log(`📦 platform: ${platform}`)
     console.log(`📦 productId: ${productId}`)
     console.log(`📦 purchaseToken: ${purchaseToken ? '있음' : '없음'}`)
     console.log(`📦 receipt: ${receipt ? '있음 (길이:' + String(receipt).length + ')' : '없음'}`)
     console.log(`📦 orderId: ${orderId}`)
     console.log(`📦 transactionId: ${transactionId}`)
+    console.log(`📦 packageName: ${packageName || '없음(기본값 사용 예정)'}`)
 
     // 필수 파라미터 검증
     if (!platform || !productId) {
@@ -251,11 +548,25 @@ serve(async (req) => {
         )
       }
 
-      // TODO: Google Play 영수증 검증 구현
-      // 현재는 purchaseToken 존재 여부만 확인 (추후 Google Play Developer API 연동 필요)
-      console.log('⚠️ Android: Google Play 검증은 아직 미구현 - purchaseToken 존재로 통과')
-      isValid = true
-      environment = 'android'
+      const targetPackageName =
+        packageName || Deno.env.get('GOOGLE_PLAY_PACKAGE_NAME') || 'com.beyond.fortune'
+      const androidResult = await verifyGooglePlayPurchase(
+        targetPackageName,
+        productId,
+        purchaseToken,
+      )
+
+      isValid = androidResult.isValid
+      environment = androidResult.environment || 'android'
+
+      if (androidResult.isValid) {
+        verifiedProductId = androidResult.productId || productId
+        verifiedTransactionId =
+          androidResult.orderId || orderId || transactionId || purchaseToken
+        console.log(`✅ Android 검증 성공 (${environment}): ${verifiedProductId}`)
+      } else {
+        console.error(`❌ Android 검증 실패: ${androidResult.error}`)
+      }
 
     } else {
       console.warn(`⚠️ 알 수 없는 플랫폼: ${platform}`)
@@ -380,7 +691,7 @@ serve(async (req) => {
           balance_after: newBalance,
           description: purchaseDescription,
           reference_type: 'in_app_purchase',
-          reference_id: transactionId || orderId
+          reference_id: verifiedTransactionId
         }
         console.log(`📊 INSERT 데이터: ${JSON.stringify(transactionData, null, 2)}`)
 
@@ -401,7 +712,7 @@ serve(async (req) => {
         event_type: 'purchase_verified',
         product_id: productId,
         platform,
-        purchase_id: transactionId || orderId,
+        purchase_id: verifiedTransactionId,
         metadata: {
           tokens_added: actualTokensToAdd,
           base_tokens: tokensToAdd,
@@ -427,6 +738,7 @@ serve(async (req) => {
     const responseData = {
       valid: isValid,
       productId: verifiedProductId,
+      transactionId: verifiedTransactionId,
       platform,
       environment,
       tokensAdded: isValid ? actualTokensToAdd : 0,
@@ -449,10 +761,14 @@ serve(async (req) => {
     console.error('❌ 치명적 오류 발생!')
     console.error('========================================')
     console.error('❌ 에러:', error)
-    console.error('❌ 에러 메시지:', error.message)
-    console.error('❌ 에러 스택:', error.stack)
+    console.error('❌ 에러 메시지:', getErrorMessage(error))
+    console.error('❌ 에러 스택:', getErrorStack(error))
     return new Response(
-      JSON.stringify({ valid: false, error: 'Verification failed', details: error.message }),
+      JSON.stringify({
+        valid: false,
+        error: 'Verification failed',
+        details: getErrorMessage(error),
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }

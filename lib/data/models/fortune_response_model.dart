@@ -345,8 +345,9 @@ class FortuneData {
 
       // Build content from career sections
       final contentParts = <String>[];
-      if (json['overallOutlook'] != null)
+      if (json['overallOutlook'] != null) {
         contentParts.add(json['overallOutlook'] as String);
+      }
 
       if (actionPlan != null) {
         if (actionPlan['immediate'] != null) {
@@ -403,24 +404,30 @@ class FortuneData {
       if (mainMessage != null) contentParts.add(mainMessage);
 
       if (loveProfile != null) {
-        if (loveProfile['currentState'] != null)
+        if (loveProfile['currentState'] != null) {
           contentParts.add('\n\n💕 현재 연애 상태\n${loveProfile['currentState']}');
-        if (loveProfile['attractionPoints'] != null)
+        }
+        if (loveProfile['attractionPoints'] != null) {
           contentParts.add('\n\n✨ 매력 포인트\n${loveProfile['attractionPoints']}');
-        if (loveProfile['loveStyle'] != null)
+        }
+        if (loveProfile['loveStyle'] != null) {
           contentParts.add('\n\n💝 연애 스타일\n${loveProfile['loveStyle']}');
+        }
       }
 
       if (detailedAnalysis != null) {
-        if (detailedAnalysis['emotionalState'] != null)
+        if (detailedAnalysis['emotionalState'] != null) {
           contentParts
               .add('\n\n🌸 감정 상태\n${detailedAnalysis['emotionalState']}');
-        if (detailedAnalysis['relationshipDynamics'] != null)
+        }
+        if (detailedAnalysis['relationshipDynamics'] != null) {
           contentParts
               .add('\n\n💑 관계 역학\n${detailedAnalysis['relationshipDynamics']}');
-        if (detailedAnalysis['growthOpportunities'] != null)
+        }
+        if (detailedAnalysis['growthOpportunities'] != null) {
           contentParts
               .add('\n\n🌱 성장 기회\n${detailedAnalysis['growthOpportunities']}');
+        }
       }
 
       if (todaysAdvice != null) {
@@ -439,17 +446,21 @@ class FortuneData {
       }
 
       if (predictions != null) {
-        if (predictions['shortTerm'] != null)
+        if (predictions['shortTerm'] != null) {
           contentParts.add('\n\n📅 단기 예측\n${predictions['shortTerm']}');
-        if (predictions['longTerm'] != null)
+        }
+        if (predictions['longTerm'] != null) {
           contentParts.add('\n\n🔮 장기 예측\n${predictions['longTerm']}');
+        }
       }
 
       if (actionPlan != null) {
-        if (actionPlan['immediateAction'] != null)
+        if (actionPlan['immediateAction'] != null) {
           contentParts.add('\n\n⚡ 즉시 행동\n${actionPlan['immediateAction']}');
-        if (actionPlan['weeklyGoal'] != null)
+        }
+        if (actionPlan['weeklyGoal'] != null) {
           contentParts.add('\n\n🎯 이번 주 목표\n${actionPlan['weeklyGoal']}');
+        }
       }
 
       if (contentParts.isNotEmpty) {
@@ -732,20 +743,23 @@ class FortuneData {
       if (physical != null) {
         contentParts.add(
             '\n\n💪 신체 리듬: ${physical['phase'] ?? ''} (${physical['score']}점)');
-        if (physical['status'] != null)
+        if (physical['status'] != null) {
           contentParts.add('\n${physical['status']}');
+        }
       }
       if (emotional != null) {
         contentParts.add(
             '\n\n💖 감정 리듬: ${emotional['phase'] ?? ''} (${emotional['score']}점)');
-        if (emotional['status'] != null)
+        if (emotional['status'] != null) {
           contentParts.add('\n${emotional['status']}');
+        }
       }
       if (intellectual != null) {
         contentParts.add(
             '\n\n🧠 지성 리듬: ${intellectual['phase'] ?? ''} (${intellectual['score']}점)');
-        if (intellectual['status'] != null)
+        if (intellectual['status'] != null) {
           contentParts.add('\n${intellectual['status']}');
+        }
       }
 
       // Add advice from each rhythm
@@ -753,12 +767,15 @@ class FortuneData {
           emotional?['advice'] != null ||
           intellectual?['advice'] != null) {
         contentParts.add('\n\n💡 오늘의 조언');
-        if (physical?['advice'] != null)
+        if (physical?['advice'] != null) {
           contentParts.add('\n• 신체: ${physical!['advice']}');
-        if (emotional?['advice'] != null)
+        }
+        if (emotional?['advice'] != null) {
           contentParts.add('\n• 감정: ${emotional!['advice']}');
-        if (intellectual?['advice'] != null)
+        }
+        if (intellectual?['advice'] != null) {
           contentParts.add('\n• 지성: ${intellectual!['advice']}');
+        }
       }
 
       if (contentParts.isNotEmpty) {
@@ -811,12 +828,15 @@ class FortuneData {
       final goalAdvice = json['goalAdvice'] as Map<String, dynamic>?;
       if (goalAdvice != null) {
         contentParts.add('\n\n🎯 ${goalAdvice['primaryGoal'] ?? '목표'} 달성 전략');
-        if (goalAdvice['strategy'] != null)
+        if (goalAdvice['strategy'] != null) {
           contentParts.add('\n${goalAdvice['strategy']}');
-        if (goalAdvice['luckyTiming'] != null)
+        }
+        if (goalAdvice['luckyTiming'] != null) {
           contentParts.add('\n⏰ 유리한 시기: ${goalAdvice['luckyTiming']}');
-        if (goalAdvice['sajuAnalysis'] != null)
+        }
+        if (goalAdvice['sajuAnalysis'] != null) {
           contentParts.add('\n🔮 ${goalAdvice['sajuAnalysis']}');
+        }
       }
 
       // Concern resolution preview
@@ -825,8 +845,9 @@ class FortuneData {
       if (concernResolution != null) {
         contentParts
             .add('\n\n⚠️ ${concernResolution['primaryConcern'] ?? '고민'} 해결책');
-        if (concernResolution['analysis'] != null)
+        if (concernResolution['analysis'] != null) {
           contentParts.add('\n${concernResolution['analysis']}');
+        }
         if (concernResolution['solution'] != null) {
           final solutions = concernResolution['solution'];
           if (solutions is List) {
@@ -866,12 +887,15 @@ class FortuneData {
             final insightScore = insight['score'];
             contentParts.add(
                 '\n\n$label ${insightScore != null ? "($insightScore점)" : ""}');
-            if (insight['analysis'] != null)
+            if (insight['analysis'] != null) {
               contentParts.add('\n${insight['analysis']}');
-            if (insight['timing'] != null)
+            }
+            if (insight['timing'] != null) {
               contentParts.add('\n⏰ ${insight['timing']}');
-            if (insight['caution'] != null)
+            }
+            if (insight['caution'] != null) {
               contentParts.add('\n⚠️ ${insight['caution']}');
+            }
           }
         }
       }
@@ -1336,8 +1360,9 @@ class FortuneData {
   }
 
   CompatibilityFortune? toCompatibilityFortune() {
-    if (type != 'compatibility' && type != 'traditional-compatibility')
+    if (type != 'compatibility' && type != 'traditional-compatibility') {
       return null;
+    }
 
     return CompatibilityFortune(
         compatibilityScore: compatibilityScore ?? 0,

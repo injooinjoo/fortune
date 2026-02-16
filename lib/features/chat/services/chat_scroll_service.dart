@@ -81,52 +81,26 @@ class ChatScrollService {
 
   /// 결과 카드 상단으로 스크롤
   void _performScrollToCardTop(BuildContext cardContext) {
-    if (!isMounted() || !scrollController.hasClients) return;
+    if (!isMounted() || !scrollController.hasClients || !cardContext.mounted) {
+      return;
+    }
 
-    Future.delayed(ChatScrollConstants.layoutDelay, () {
-      if (!isMounted() || !scrollController.hasClients) return;
-      if (!cardContext.mounted) return;
-
-      try {
-        // 카드 위젯의 RenderObject 찾기
-        final renderObject = cardContext.findRenderObject();
-        if (renderObject is! RenderBox) return;
-
-        // 스크롤 가능한 부모 찾기
-        final scrollableState = Scrollable.maybeOf(cardContext);
-        if (scrollableState == null) return;
-
-        if (!scrollableState.context.mounted) return;
-        final scrollableRenderObject = scrollableState.context
-            .findRenderObject(); // ignore: use_build_context_synchronously
-        if (scrollableRenderObject is! RenderBox) return;
-
-        // 카드의 위치 계산 (스크롤 뷰 기준)
-        final cardPosition = renderObject.localToGlobal(
-          Offset.zero,
-          ancestor: scrollableRenderObject,
-        );
-
-        // 현재 스크롤 위치 + 카드 상단 위치 = 목표 스크롤 위치
-        // 약간의 상단 여백(16px) 추가
-        final targetOffset = scrollController.offset + cardPosition.dy - 16;
-
-        // 유효한 범위 내로 제한
-        final clampedOffset = targetOffset.clamp(
-          scrollController.position.minScrollExtent,
-          scrollController.position.maxScrollExtent,
-        );
-
-        scrollController.animateTo(
-          clampedOffset,
-          duration: ChatScrollConstants.scrollDuration,
-          curve: ChatScrollConstants.scrollCurve,
-        );
-      } catch (e) {
-        // 실패 시 기본 하단 스크롤
-        debugPrint('⚠️ [ChatScrollService] scrollToCardTop failed: $e');
-        _performScrollToBottom();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!isMounted() ||
+          !scrollController.hasClients ||
+          !cardContext.mounted) {
+        return;
       }
+
+      Scrollable.ensureVisible(
+        cardContext,
+        alignment: 0,
+        duration: ChatScrollConstants.scrollDuration,
+        curve: ChatScrollConstants.scrollCurve,
+      ).catchError((error) {
+        debugPrint('⚠️ [ChatScrollService] scrollToCardTop failed: $error');
+        _performScrollToBottom();
+      });
     });
   }
 }

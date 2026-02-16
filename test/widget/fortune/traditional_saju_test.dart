@@ -288,22 +288,21 @@ class _MockTraditionalSajuResult extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return const SafeArea(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('전통 사주 분석 결과', style: TextStyle(fontSize: 24)),
-            const SizedBox(height: 16),
-            const Card(
+            Text('전통 사주 분석 결과', style: TextStyle(fontSize: 24)),
+            SizedBox(height: 16),
+            Card(
                 child: ListTile(
                     title: Text('사주팔자'), subtitle: Text('경오 정축 갑자 기사'))),
-            const Card(
+            Card(
                 child: ListTile(title: Text('대운'), subtitle: Text('현재 대운 정보'))),
-            const Card(
-                child: ListTile(title: Text('세운'), subtitle: Text('올해의 운세'))),
-            const Card(child: ListTile(title: Text('용신'), subtitle: Text('토'))),
+            Card(child: ListTile(title: Text('세운'), subtitle: Text('올해의 운세'))),
+            Card(child: ListTile(title: Text('용신'), subtitle: Text('토'))),
           ],
         ),
       ),

@@ -20,6 +20,19 @@ NC='\033[0m'
 SIM_NAME=${1:-"iPhone 15 Pro"}
 ENV_FILE=${ENV_FILE:-.env.test}
 
+find_udid_by_name() {
+  local target_name="$1"
+  xcrun simctl list devices available |
+    sed -n "s/^\\s*${target_name} (\\([0-9A-F-]\\{36\\}\\)).*/\\1/p" |
+    head -n1
+}
+
+find_first_available_simulator() {
+  xcrun simctl list devices available |
+    sed -n 's/^\s*\(iPhone[^()]*\|iPad[^()]*\) (\([0-9A-F-]\{36\}\)).*/\1|\2/p' |
+    head -n1
+}
+
 echo -e "${BLUE}▸ iOS Integration Test Runner${NC}"
 echo -e "${BLUE}   Target: ${SIM_NAME} | Env: ${ENV_FILE}${NC}"
 
@@ -32,12 +45,21 @@ if [ ! -f "$ENV_FILE" ]; then
 fi
 
 # Find simulator UDID by name
-UDID=$(xcrun simctl list devices | sed -n "s/^\s*${SIM_NAME} (\([0-9A-F-]\{36\}\)).*/\1/p" | head -n1)
+UDID=$(find_udid_by_name "${SIM_NAME}")
 
 if [ -z "$UDID" ]; then
-  echo -e "${RED}Simulator '${SIM_NAME}' not found. Create it in Xcode or pass a different name.${NC}"
-  echo -e "${YELLOW}Tip:${NC} Open Simulator and check available devices: 'xcrun simctl list devices'"
-  exit 1
+  FALLBACK=$(find_first_available_simulator)
+  if [ -n "$FALLBACK" ]; then
+    SIM_NAME=$(echo "$FALLBACK" | cut -d'|' -f1)
+    UDID=$(echo "$FALLBACK" | cut -d'|' -f2)
+    echo -e "${YELLOW}Simulator fallback:${NC} requested device not found, using '${SIM_NAME}' (${UDID})"
+  else
+    echo -e "${RED}No available iPhone/iPad simulator found.${NC}"
+    echo -e "${YELLOW}Tip:${NC} Open Xcode > Settings > Platforms and install an iOS runtime."
+    echo -e "${YELLOW}Tip:${NC} Check available devices: 'xcrun simctl list devices available'"
+    # Exit 2 = skipped (environment missing simulator runtime)
+    exit 2
+  fi
 fi
 
 # Boot if needed

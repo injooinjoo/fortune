@@ -315,8 +315,9 @@ class LuckyItem {
   static String _getTimeIcon(String value) {
     final v = value.toLowerCase();
     if (v.contains('새벽') || v.contains('dawn')) return '🌃';
-    if (v.contains('아침') || v.contains('오전') || v.contains('morning'))
+    if (v.contains('아침') || v.contains('오전') || v.contains('morning')) {
       return '🌅';
+    }
     if (v.contains('정오') || v.contains('낮') || v.contains('noon')) return '☀️';
     if (v.contains('오후') || v.contains('afternoon')) return '🌤️';
     if (v.contains('저녁') || v.contains('evening')) return '🌆';

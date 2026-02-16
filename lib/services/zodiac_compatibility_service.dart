@@ -221,12 +221,15 @@ class ZodiacCompatibilityService {
   }
 
   static bool _inSameGroup(String zodiac1, String zodiac2) {
-    if (cardinalSigns.contains(zodiac1) && cardinalSigns.contains(zodiac2))
+    if (cardinalSigns.contains(zodiac1) && cardinalSigns.contains(zodiac2)) {
       return true;
-    if (fixedSigns.contains(zodiac1) && fixedSigns.contains(zodiac2))
+    }
+    if (fixedSigns.contains(zodiac1) && fixedSigns.contains(zodiac2)) {
       return true;
-    if (mutableSigns.contains(zodiac1) && mutableSigns.contains(zodiac2))
+    }
+    if (mutableSigns.contains(zodiac1) && mutableSigns.contains(zodiac2)) {
       return true;
+    }
     return false;
   }
 

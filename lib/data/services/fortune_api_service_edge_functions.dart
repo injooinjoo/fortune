@@ -942,15 +942,19 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
                   directionAnalysis['compatibilityReason'];
 
           if (direction != null) contentParts.add('\n• 이사 방향: $direction 방향');
-          if (directionMeaning != null)
+          if (directionMeaning != null) {
             contentParts.add('\n• 방위 의미: $directionMeaning');
+          }
           if (element != null) contentParts.add('\n• 오행: $element');
-          if (elementEffect != null)
+          if (elementEffect != null) {
             contentParts.add('\n• 오행 영향: $elementEffect');
-          if (compatibility != null)
+          }
+          if (compatibility != null) {
             contentParts.add('\n• 궁합 점수: $compatibility점');
-          if (compatibilityReason != null)
+          }
+          if (compatibilityReason != null) {
             contentParts.add('\n• 궁합 판단: $compatibilityReason');
+          }
         }
 
         // 3. 시기 분석
@@ -967,11 +971,13 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
           final recommendation = timingAnalysis['recommendation'];
 
           if (seasonLuck != null) contentParts.add('\n• 계절 운: $seasonLuck');
-          if (seasonMeaning != null)
+          if (seasonMeaning != null) {
             contentParts.add('\n• 계절 의미: $seasonMeaning');
+          }
           if (monthLuck != null) contentParts.add('\n• 월 운세: $monthLuck점');
-          if (recommendation != null)
+          if (recommendation != null) {
             contentParts.add('\n• 추천: $recommendation');
+          }
         }
 
         // 4. 길일/흉일
@@ -1032,13 +1038,16 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
               terrainAnalysis['energy_flow'] ?? terrainAnalysis['energyFlow'];
 
           if (terrainType != null) contentParts.add('\n• 지형: $terrainType');
-          if (fengShuiQuality != null)
+          if (fengShuiQuality != null) {
             contentParts.add('\n• 풍수 점수: $fengShuiQuality점');
-          if (qualityDescription != null)
+          }
+          if (qualityDescription != null) {
             contentParts.add('\n• 평가: $qualityDescription');
+          }
           if (waterEnergy != null) contentParts.add('\n• 수기(水氣): $waterEnergy');
-          if (mountainEnergy != null)
+          if (mountainEnergy != null) {
             contentParts.add('\n• 산기(山氣): $mountainEnergy');
+          }
           if (energyFlow != null) contentParts.add('\n• 기운 흐름: $energyFlow');
 
           // 사신사 (Four Guardians)
@@ -1059,14 +1068,18 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
                 frontPhoenix != null ||
                 backTurtle != null) {
               contentParts.add('\n\n🐉 사신사(四神砂) 분석');
-              if (leftDragon != null)
+              if (leftDragon != null) {
                 contentParts.add('\n• 좌청룡(東): $leftDragon');
-              if (rightTiger != null)
+              }
+              if (rightTiger != null) {
                 contentParts.add('\n• 우백호(西): $rightTiger');
-              if (frontPhoenix != null)
+              }
+              if (frontPhoenix != null) {
                 contentParts.add('\n• 전주작(南): $frontPhoenix');
-              if (backTurtle != null)
+              }
+              if (backTurtle != null) {
                 contentParts.add('\n• 후현무(北): $backTurtle');
+              }
             }
           }
         }
