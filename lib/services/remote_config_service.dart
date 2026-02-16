@@ -50,6 +50,9 @@ class RemoteConfigService {
   static const String imageCdnBaseUrlKey = 'image_cdn_base_url';
   static const String useImageCdnKey = 'use_image_cdn';
 
+  // 캐릭터 톤 엔진 롤아웃
+  static const String characterToneRolloutKey = 'character_tone_rollout_v1';
+
   /// Remote Config 초기화
   Future<void> initialize() async {
     if (_isInitialized) return;
@@ -141,6 +144,22 @@ class RemoteConfigService {
       // 이미지 CDN (비활성화 = 로컬 에셋 사용)
       imageCdnBaseUrlKey: '',
       useImageCdnKey: false,
+
+      // 캐릭터 톤 롤아웃
+      characterToneRolloutKey: json.encode({
+        'enabledCharacterIds': [
+          'luts',
+          'jung_tae_yoon',
+          'seo_yoonjae',
+          'han_seojun'
+        ],
+        'idleIcebreakerCharacterIds': [
+          'luts',
+          'jung_tae_yoon',
+          'seo_yoonjae',
+          'han_seojun'
+        ]
+      }),
     });
   }
 
@@ -361,6 +380,40 @@ class RemoteConfigService {
     // assets/ 제거하고 CDN URL로 변환
     final relativePath = assetPath.replaceFirst('assets/', '');
     return '$baseUrl/$relativePath';
+  }
+
+  /// 캐릭터 톤 롤아웃 설정(JSON)을 Map으로 반환
+  ///
+  /// 실패 시 안전한 기본값을 반환합니다.
+  Map<String, dynamic> getCharacterToneRolloutConfig() {
+    final fallback = <String, dynamic>{
+      'enabledCharacterIds': [
+        'luts',
+        'jung_tae_yoon',
+        'seo_yoonjae',
+        'han_seojun',
+      ],
+      'idleIcebreakerCharacterIds': [
+        'luts',
+        'jung_tae_yoon',
+        'seo_yoonjae',
+        'han_seojun',
+      ],
+    };
+
+    if (!_isInitialized) return fallback;
+
+    try {
+      final jsonString = _remoteConfig.getString(characterToneRolloutKey);
+      if (jsonString.isEmpty) return fallback;
+
+      final parsed = json.decode(jsonString);
+      if (parsed is! Map<String, dynamic>) return fallback;
+      return parsed;
+    } catch (e) {
+      Logger.warning('[RemoteConfigService] 캐릭터 톤 롤아웃 파싱 실패: $e');
+      return fallback;
+    }
   }
 }
 

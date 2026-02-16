@@ -687,6 +687,121 @@ interface LutsToneProfile {
 }
 
 const LUTS_CHARACTER_ID = "luts";
+const CHARACTER_STYLE_GUARD_MARKER = "CHARACTER_STYLE_GUARD_V1";
+const CHARACTER_STYLE_GUARD_IDS = new Set([
+  "luts",
+  "jung_tae_yoon",
+  "seo_yoonjae",
+  "kang_harin",
+  "jayden_angel",
+  "ciel_butler",
+  "lee_doyoon",
+  "han_seojun",
+  "baek_hyunwoo",
+  "min_junhyuk",
+]);
+
+interface CharacterVoiceProfile {
+  defaultSpeech: "formal" | "casual" | "neutral";
+  questionAggressiveness: "low" | "medium" | "high";
+  strictNicknameGate: boolean;
+  bridgeFormalKo?: string;
+  bridgeCasualKo?: string;
+  lexiconHints: string[];
+}
+
+const CHARACTER_VOICE_PROFILES: Record<string, CharacterVoiceProfile> = {
+  luts: {
+    defaultSpeech: "formal",
+    questionAggressiveness: "low",
+    strictNicknameGate: true,
+    bridgeFormalKo: "요즘 가장 궁금한 건 뭐예요?",
+    bridgeCasualKo: "요즘 제일 궁금한 게 뭐야?",
+    lexiconHints: ["차분함", "관찰형 공감"],
+  },
+  jung_tae_yoon: {
+    defaultSpeech: "formal",
+    questionAggressiveness: "low",
+    strictNicknameGate: true,
+    bridgeFormalKo: "편하실 때 오늘 어땠는지 들려주실래요?",
+    bridgeCasualKo: "오늘 어땠는지 편할 때 말해줘.",
+    lexiconHints: ["정제된 위트", "짧은 공감"],
+  },
+  seo_yoonjae: {
+    defaultSpeech: "formal",
+    questionAggressiveness: "medium",
+    strictNicknameGate: true,
+    bridgeFormalKo: "지금 기분은 어떤 쪽에 가까워요?",
+    bridgeCasualKo: "지금 기분이 어떤 쪽이야?",
+    lexiconHints: ["게임 메타포 소량", "가벼운 장난"],
+  },
+  kang_harin: {
+    defaultSpeech: "formal",
+    questionAggressiveness: "low",
+    strictNicknameGate: true,
+    lexiconHints: ["프로페셔널 톤", "절제된 관심"],
+  },
+  jayden_angel: {
+    defaultSpeech: "formal",
+    questionAggressiveness: "low",
+    strictNicknameGate: true,
+    lexiconHints: ["시적 표현 소량", "신비로운 어조"],
+  },
+  ciel_butler: {
+    defaultSpeech: "formal",
+    questionAggressiveness: "low",
+    strictNicknameGate: true,
+    lexiconHints: ["극존칭 유지", "집사 어휘"],
+  },
+  lee_doyoon: {
+    defaultSpeech: "formal",
+    questionAggressiveness: "medium",
+    strictNicknameGate: true,
+    lexiconHints: ["밝은 리액션", "가벼운 텍스트 이모티콘"],
+  },
+  han_seojun: {
+    defaultSpeech: "formal",
+    questionAggressiveness: "low",
+    strictNicknameGate: true,
+    bridgeFormalKo: "괜찮으면 지금 기분만 짧게 알려줘요.",
+    bridgeCasualKo: "괜찮으면 지금 기분만 짧게 알려줘.",
+    lexiconHints: ["짧은 문장", "무심한 톤"],
+  },
+  baek_hyunwoo: {
+    defaultSpeech: "formal",
+    questionAggressiveness: "medium",
+    strictNicknameGate: true,
+    lexiconHints: ["관찰형 직답", "분석 톤 과잉 금지"],
+  },
+  min_junhyuk: {
+    defaultSpeech: "formal",
+    questionAggressiveness: "low",
+    strictNicknameGate: true,
+    bridgeFormalKo: "무리 없으시면 오늘 컨디션은 어떠세요?",
+    bridgeCasualKo: "무리 없으면 오늘 컨디션 어때?",
+    lexiconHints: ["따뜻한 제안형", "부드러운 공감"],
+  },
+};
+
+const DEFAULT_CHARACTER_VOICE_PROFILE: CharacterVoiceProfile = {
+  defaultSpeech: "formal",
+  questionAggressiveness: "low",
+  strictNicknameGate: true,
+  lexiconHints: [],
+};
+
+function getCharacterVoiceProfile(characterId: string): CharacterVoiceProfile {
+  return CHARACTER_VOICE_PROFILES[characterId] ||
+    DEFAULT_CHARACTER_VOICE_PROFILE;
+}
+
+function extractCharacterStyleGuardId(basePrompt: string): string | null {
+  const match = basePrompt.match(
+    new RegExp(`\\[${CHARACTER_STYLE_GUARD_MARKER}:([a-z0-9_]+)\\]`, "i"),
+  );
+  if (!match?.[1]) return null;
+  return match[1];
+}
 const LUTS_NICKNAME_PATTERN =
   /(여보|자기(?:야)?|허니|달링|애인|honey|darling|babe|baby|sweetheart|dear|my love|ハニー|ダーリン|ベイビー)/gi;
 const LUTS_SERVICE_TONE_PATTERN =
@@ -821,6 +936,7 @@ function asksLutsUserName(text: string): boolean {
 function resolveLutsSpeechLevel(
   profile: LutsToneProfile,
   relationshipPhase: RelationshipPhase,
+  voiceProfile: CharacterVoiceProfile,
 ): LutsSpeechLevel {
   const stage = mapLutsRelationshipStage(relationshipPhase);
   const isEarlyStage = stage === "gettingToKnow";
@@ -830,6 +946,12 @@ function resolveLutsSpeechLevel(
   if (isEarlyStage && isKoreanLike && !profile.explicitCasual) {
     return "formal";
   }
+
+  if (profile.speechLevel === "neutral") {
+    if (voiceProfile.defaultSpeech === "casual") return "casual";
+    if (voiceProfile.defaultSpeech === "formal") return "formal";
+  }
+
   return profile.speechLevel;
 }
 
@@ -892,12 +1014,17 @@ function buildLutsToneProfile(
 function buildLutsStyleGuardPrompt(
   profile: LutsToneProfile,
   relationshipPhase: RelationshipPhase,
+  voiceProfile: CharacterVoiceProfile,
 ): string {
   const relationshipStage = mapLutsRelationshipStage(relationshipPhase);
   const relationshipLabel = lutsRelationshipStageLabel(relationshipStage);
   const relationshipGuide = lutsRelationshipStageGuide(relationshipStage);
   const relationshipBoundary = lutsRelationshipStageBoundary(relationshipStage);
-  const resolvedSpeech = resolveLutsSpeechLevel(profile, relationshipPhase);
+  const resolvedSpeech = resolveLutsSpeechLevel(
+    profile,
+    relationshipPhase,
+    voiceProfile,
+  );
 
   const languageGuide = profile.language === "ko"
     ? "한국어로 답하고, 사용자 존댓말/반말을 미러링하세요."
@@ -940,8 +1067,12 @@ function buildLutsStyleGuardPrompt(
     ? "턴 전략: 공감/관찰을 먼저 주고 필요할 때만 질문 1개 사용."
     : "턴 전략: 중립적으로 짧게 반응 후 이어가기.";
 
+  const lexiconGuide = voiceProfile.lexiconHints.length > 0
+    ? `- 보이스 힌트: ${voiceProfile.lexiconHints.join(", ")}`
+    : "";
+
   return `
-[LUTS STYLE GUARD]
+[CHARACTER STYLE GUARD]
 - 카톡형 1버블: 답변은 1~2문장으로 제한하세요.
 - 질문 제한: 질문은 필요할 때만 최대 1개 사용.
 - 반복 금지: 같은 의미 문장 반복 금지.
@@ -955,6 +1086,7 @@ function buildLutsStyleGuardPrompt(
 - ${nicknameGuide}
 - ${nameGuide}
 - ${turnIntentGuide}
+${lexiconGuide}
 `.trim();
 }
 
@@ -1005,8 +1137,13 @@ function removeLutsServiceTone(text: string): string {
 function defaultLutsReply(
   profile: LutsToneProfile,
   relationshipPhase: RelationshipPhase,
+  voiceProfile: CharacterVoiceProfile,
 ): string {
-  const resolvedSpeech = resolveLutsSpeechLevel(profile, relationshipPhase);
+  const resolvedSpeech = resolveLutsSpeechLevel(
+    profile,
+    relationshipPhase,
+    voiceProfile,
+  );
 
   if (profile.language === "en") {
     if (profile.turnIntent === "greeting") {
@@ -1057,14 +1194,17 @@ function normalizeLutsGreetingEcho(
   text: string,
   profile: LutsToneProfile,
   relationshipPhase: RelationshipPhase,
+  voiceProfile: CharacterVoiceProfile,
 ): string {
   const normalized = text.replace(/\s+/g, " ").trim();
-  if (!normalized) return defaultLutsReply(profile, relationshipPhase);
+  if (!normalized) {
+    return defaultLutsReply(profile, relationshipPhase, voiceProfile);
+  }
 
   const greetingEchoPattern =
     /^(네[, ]*)?(저도[, ]*)?(반갑(?:습니다|네요|다|아요)|만나서 반갑)/i;
   if (greetingEchoPattern.test(normalized)) {
-    return defaultLutsReply(profile, relationshipPhase);
+    return defaultLutsReply(profile, relationshipPhase, voiceProfile);
   }
   return normalized;
 }
@@ -1097,8 +1237,13 @@ function isLutsShortReply(language: LutsLanguage, text: string): boolean {
 function buildLutsBridgeSentence(
   profile: LutsToneProfile,
   relationshipPhase: RelationshipPhase,
+  voiceProfile: CharacterVoiceProfile,
 ): string {
-  const resolvedSpeech = resolveLutsSpeechLevel(profile, relationshipPhase);
+  const resolvedSpeech = resolveLutsSpeechLevel(
+    profile,
+    relationshipPhase,
+    voiceProfile,
+  );
 
   if (profile.language === "en") {
     return resolvedSpeech === "casual"
@@ -1111,15 +1256,20 @@ function buildLutsBridgeSentence(
       : "最近いちばん気になっていることは何ですか？";
   }
   return resolvedSpeech === "casual"
-    ? "요즘 제일 궁금한 게 뭐야?"
-    : "요즘 가장 궁금한 건 뭐예요?";
+    ? (voiceProfile.bridgeCasualKo || "요즘 제일 궁금한 게 뭐야?")
+    : (voiceProfile.bridgeFormalKo || "요즘 가장 궁금한 건 뭐예요?");
 }
 
 function buildLutsNamePrompt(
   profile: LutsToneProfile,
   relationshipPhase: RelationshipPhase,
+  voiceProfile: CharacterVoiceProfile,
 ): string {
-  const resolvedSpeech = resolveLutsSpeechLevel(profile, relationshipPhase);
+  const resolvedSpeech = resolveLutsSpeechLevel(
+    profile,
+    relationshipPhase,
+    voiceProfile,
+  );
 
   if (profile.language === "en") {
     return resolvedSpeech === "casual"
@@ -1140,10 +1290,13 @@ function ensureLutsContinuity(
   text: string,
   profile: LutsToneProfile,
   relationshipPhase: RelationshipPhase,
+  voiceProfile: CharacterVoiceProfile,
 ): string {
   const normalized = text.replace(/\s{2,}/g, " ").trim();
   const stage = mapLutsRelationshipStage(relationshipPhase);
-  if (!normalized) return defaultLutsReply(profile, relationshipPhase);
+  if (!normalized) {
+    return defaultLutsReply(profile, relationshipPhase, voiceProfile);
+  }
 
   const hasQuestion = normalized.includes("?") || normalized.includes("？");
   const shouldBridge = profile.turnIntent === "greeting" ||
@@ -1160,10 +1313,14 @@ function ensureLutsContinuity(
     !profile.nameAsked &&
     (profile.turnIntent === "greeting" || profile.turnIntent === "shortReply")
   ) {
-    return buildLutsNamePrompt(profile, relationshipPhase);
+    return buildLutsNamePrompt(profile, relationshipPhase, voiceProfile);
   }
 
-  const bridge = buildLutsBridgeSentence(profile, relationshipPhase);
+  const bridge = buildLutsBridgeSentence(
+    profile,
+    relationshipPhase,
+    voiceProfile,
+  );
   if (!bridge) return normalized;
 
   const needsPunctuation = !/[.!?。！？]$/.test(normalized);
@@ -1185,29 +1342,40 @@ function applyLutsOutputGuard(
   text: string,
   profile: LutsToneProfile,
   relationshipPhase: RelationshipPhase,
+  voiceProfile: CharacterVoiceProfile,
 ): string {
   let guarded = text.trim();
   if (!guarded) return guarded;
 
-  if (!profile.nicknameAllowed) {
+  if (!profile.nicknameAllowed && voiceProfile.strictNicknameGate) {
     guarded = removeBlockedLutsNicknames(guarded, profile.language);
   }
   guarded = removeLutsServiceTone(guarded);
 
   if (LUTS_SERVICE_TONE_PATTERN.test(guarded)) {
-    guarded = defaultLutsReply(profile, relationshipPhase);
+    guarded = defaultLutsReply(profile, relationshipPhase, voiceProfile);
   }
   if (profile.turnIntent === "greeting") {
-    guarded = normalizeLutsGreetingEcho(guarded, profile, relationshipPhase);
+    guarded = normalizeLutsGreetingEcho(
+      guarded,
+      profile,
+      relationshipPhase,
+      voiceProfile,
+    );
   }
-  guarded = ensureLutsContinuity(guarded, profile, relationshipPhase);
+  guarded = ensureLutsContinuity(
+    guarded,
+    profile,
+    relationshipPhase,
+    voiceProfile,
+  );
   if (!guarded) {
-    guarded = defaultLutsReply(profile, relationshipPhase);
+    guarded = defaultLutsReply(profile, relationshipPhase, voiceProfile);
   }
 
   const sentences = splitLutsSentences(guarded);
   if (sentences.length === 0) {
-    return defaultLutsReply(profile, relationshipPhase);
+    return defaultLutsReply(profile, relationshipPhase, voiceProfile);
   }
 
   const deduped: string[] = [];
@@ -1238,7 +1406,7 @@ function applyLutsOutputGuard(
 
   const normalized = limited.join(" ").replace(/\s{2,}/g, " ").trim();
   return normalized.length === 0
-    ? defaultLutsReply(profile, relationshipPhase)
+    ? defaultLutsReply(profile, relationshipPhase, voiceProfile)
     : normalized;
 }
 
@@ -1335,7 +1503,13 @@ serve(async (req: Request) => {
     // 메시지 히스토리 준비
     const limitedHistory = limitMessages(messages || []);
     const charName = characterName || "캐릭터";
-    const lutsToneProfile = characterId === LUTS_CHARACTER_ID
+    const styleGuardId = extractCharacterStyleGuardId(systemPrompt);
+    const shouldApplyCharacterStyleGuard = styleGuardId === characterId &&
+      styleGuardId !== null &&
+      CHARACTER_STYLE_GUARD_IDS.has(styleGuardId);
+    const voiceProfile = getCharacterVoiceProfile(characterId);
+
+    const lutsToneProfile = shouldApplyCharacterStyleGuard
       ? buildLutsToneProfile(limitedHistory, userMessage, {
         knownUserName: userProfile?.name || userName || null,
       })
@@ -1344,6 +1518,7 @@ serve(async (req: Request) => {
       ? buildLutsStyleGuardPrompt(
         lutsToneProfile,
         normalizePhase(resolvedAffinityContext.phase),
+        voiceProfile,
       )
       : "";
 
@@ -1446,6 +1621,7 @@ ${characterTraits}
         responseText,
         lutsToneProfile,
         normalizePhase(resolvedAffinityContext.phase),
+        voiceProfile,
       );
     }
 

@@ -23,9 +23,12 @@ import '../../../../services/storage_service.dart';
 import '../../../../data/services/fortune_api/fortune_api_service.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
+import '../../../../services/remote_config_service.dart';
 import 'active_chat_provider.dart';
 import 'character_provider.dart';
-import '../utils/luts_tone_policy.dart';
+import '../utils/character_tone_policy.dart';
+import '../utils/character_tone_rollout.dart';
+import '../utils/character_voice_profile_registry.dart';
 
 /// 캐릭터별 채팅 상태 Provider (family)
 final characterChatProvider = StateNotifierProvider.family<
@@ -53,7 +56,9 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   Timer? _readIdleIcebreakerTimer;
   String? _pendingReadIdleAnchorMessageId;
   String? _lastReadIdleIcebreakerAnchorMessageId;
+  DateTime? _lastReadIdleIcebreakerSentAt;
   bool _isUserDrafting = false;
+  Future<void> _sendQueue = Future<void>.value();
 
   CharacterChatNotifier(this._ref, this._characterId)
       : super(CharacterChatState(characterId: _characterId)) {
@@ -138,71 +143,88 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     };
   }
 
-  bool get _isLutsCharacter => LutsTonePolicy.isLuts(_characterId);
+  CharacterVoiceProfile get _voiceProfile =>
+      CharacterVoiceProfileRegistry.profileFor(_characterId);
 
-  LutsToneProfile _buildLutsToneProfile({String? currentUserMessage}) {
-    if (!_isLutsCharacter) return LutsToneProfile.neutral;
+  bool get _isTonePolicyEnabledCharacter =>
+      CharacterToneRollout.isEnabledCharacter(
+        _characterId,
+        remoteConfig: _ref.read(remoteConfigProvider),
+      );
+
+  bool get _isIdleIcebreakerEnabledCharacter =>
+      CharacterToneRollout.isIdleIcebreakerEnabledCharacter(
+        _characterId,
+        remoteConfig: _ref.read(remoteConfigProvider),
+      );
+
+  CharacterToneProfile _buildToneProfile({String? currentUserMessage}) {
+    if (!_isTonePolicyEnabledCharacter) return CharacterToneProfile.neutral;
     final profileMap = _getUserProfileMap();
     final knownUserName = profileMap?['name'] as String?;
-    return LutsTonePolicy.fromConversation(
+    return CharacterTonePolicy.fromConversation(
       messages: state.messages,
       currentUserMessage: currentUserMessage,
       knownUserName: knownUserName,
     );
   }
 
-  String _buildLutsStyleGuidePrompt(LutsToneProfile profile) {
-    if (!_isLutsCharacter) return '';
-    return LutsTonePolicy.buildStyleGuidePrompt(
+  String _buildToneStyleGuidePrompt(CharacterToneProfile profile) {
+    if (!_isTonePolicyEnabledCharacter) return '';
+    final guardPrompt = CharacterTonePolicy.buildStyleGuidePrompt(
       profile,
+      voiceProfile: _voiceProfile,
       affinityPhase: state.affinity.phase,
     );
+    return '[CHARACTER_STYLE_GUARD_V1:$_characterId]\n$guardPrompt';
   }
 
-  String _applyLutsTemplateTone(
+  String _applyTemplateTone(
     String message, {
-    LutsToneProfile? profile,
+    CharacterToneProfile? profile,
   }) {
-    if (!_isLutsCharacter) return message;
-    final resolvedProfile = profile ?? _buildLutsToneProfile();
-    return LutsTonePolicy.applyTemplateTone(
+    if (!_isTonePolicyEnabledCharacter) return message;
+    final resolvedProfile = profile ?? _buildToneProfile();
+    return CharacterTonePolicy.applyTemplateTone(
       message,
       resolvedProfile,
+      voiceProfile: _voiceProfile,
       affinityPhase: state.affinity.phase,
     );
   }
 
-  String _applyLutsGeneratedTone(
+  String _applyGeneratedTone(
     String message, {
-    LutsToneProfile? profile,
+    CharacterToneProfile? profile,
     bool encourageContinuity = false,
   }) {
-    if (!_isLutsCharacter) return message;
-    final resolvedProfile = profile ?? _buildLutsToneProfile();
-    return LutsTonePolicy.applyGeneratedTone(
+    if (!_isTonePolicyEnabledCharacter) return message;
+    final resolvedProfile = profile ?? _buildToneProfile();
+    return CharacterTonePolicy.applyGeneratedTone(
       message,
       resolvedProfile,
+      voiceProfile: _voiceProfile,
       encourageContinuity: encourageContinuity,
       affinityPhase: state.affinity.phase,
     );
   }
 
-  bool _isFormalCharacter() => _character.personality.contains('존댓말');
-
   String _buildFirstMeetOpening() {
-    if (_isLutsCharacter) {
-      const lutsToneProfile = LutsToneProfile.neutral;
-      return _applyLutsTemplateTone(
-        LutsTonePolicy.buildFirstMeetOpening(lutsToneProfile),
-        profile: lutsToneProfile,
+    if (_isTonePolicyEnabledCharacter) {
+      const toneProfile = CharacterToneProfile.neutral;
+      return _applyTemplateTone(
+        CharacterTonePolicy.buildFirstMeetOpening(
+          _character.name,
+          toneProfile,
+          voiceProfile: _voiceProfile,
+          affinityPhase: state.affinity.phase,
+        ),
+        profile: toneProfile,
       );
     }
 
     final name = _character.name;
-    if (_isFormalCharacter()) {
-      return '안녕하세요, 저는 $name입니다. 처음 인사드려요. 서로 편하게 알아가고 싶어요. 요즘 가장 궁금한 한 가지를 말씀해주실래요?';
-    }
-    return '안녕, 나는 $name야. 우리 오늘 처음이니까 가볍게 서로 알아가보자. 요즘 제일 궁금한 거 하나만 말해줘.';
+    return '안녕하세요, $name예요. 만나서 반가워요.';
   }
 
   bool _isFirstMeetThread([List<CharacterChatMessage>? messages]) {
@@ -273,15 +295,39 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     if (trimmed.isEmpty) return true;
     if (_isQuestionLikeText(trimmed)) return false;
 
-    final language = LutsTonePolicy.detectLanguage(trimmed);
-    final intent = LutsTonePolicy.detectTurnIntent(
+    final language = CharacterTonePolicy.detectLanguage(trimmed);
+    final intent = CharacterTonePolicy.detectTurnIntent(
       text: trimmed,
       language: language,
     );
 
-    return intent == LutsTurnIntent.greeting ||
-        intent == LutsTurnIntent.gratitude ||
-        intent == LutsTurnIntent.shortReply;
+    return intent == CharacterTurnIntent.greeting ||
+        intent == CharacterTurnIntent.gratitude ||
+        intent == CharacterTurnIntent.shortReply;
+  }
+
+  bool _hasUnresolvedRecentUserQuestion() {
+    for (var i = state.messages.length - 1; i >= 0; i--) {
+      final message = state.messages[i];
+      if (message.type != CharacterChatMessageType.user) continue;
+
+      if (!_isQuestionLikeText(message.text)) {
+        return false;
+      }
+
+      final hasCharacterReplyAfter = state.messages
+          .skip(i + 1)
+          .any((m) => m.type == CharacterChatMessageType.character);
+      return !hasCharacterReplyAfter;
+    }
+
+    return false;
+  }
+
+  bool _isReadIdleCooldownActive() {
+    if (_lastReadIdleIcebreakerSentAt == null) return false;
+    final elapsed = DateTime.now().difference(_lastReadIdleIcebreakerSentAt!);
+    return elapsed.inSeconds < 120;
   }
 
   bool _matchesReadIdleIcebreakerContext(CharacterChatMessage anchorMessage) {
@@ -322,11 +368,14 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   }
 
   bool _shouldScheduleReadIdleIcebreaker(CharacterChatMessage anchorMessage) {
-    if (!_isLutsCharacter) return false;
+    if (!_isIdleIcebreakerEnabledCharacter) return false;
     if (!_isCurrentChatActive()) return false;
     if (!_isFirstMeetPhase(state.affinity.phase)) return false;
     if (_isUserDrafting) return false;
+    if (anchorMessage.origin != MessageOrigin.aiReply) return false;
     if (_isQuestionLikeText(anchorMessage.text)) return false;
+    if (_hasUnresolvedRecentUserQuestion()) return false;
+    if (_isReadIdleCooldownActive()) return false;
     if (!_matchesReadIdleIcebreakerContext(anchorMessage)) return false;
     if (state.isTyping || state.isProcessing) return false;
     if (_lastReadIdleIcebreakerAnchorMessageId == anchorMessage.id) {
@@ -366,7 +415,10 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         state.messages.indexWhere((m) => m.id == anchorMessageId);
     if (anchorIndex < 0) return;
     final anchorMessage = state.messages[anchorIndex];
+    if (anchorMessage.origin != MessageOrigin.aiReply) return;
     if (!_matchesReadIdleIcebreakerContext(anchorMessage)) return;
+    if (_hasUnresolvedRecentUserQuestion()) return;
+    if (_isReadIdleCooldownActive()) return;
 
     final hasUserReplyAfterAnchor = state.messages
         .skip(anchorIndex + 1)
@@ -379,21 +431,28 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       return;
     }
 
-    final lutsToneProfile = _buildLutsToneProfile();
-    final icebreaker = LutsTonePolicy.buildReadIdleIcebreakerQuestion(
-      lutsToneProfile,
+    final toneProfile = _buildToneProfile();
+    final icebreaker = CharacterTonePolicy.buildReadIdleIcebreakerQuestion(
+      toneProfile,
+      voiceProfile: _voiceProfile,
       affinityPhase: state.affinity.phase,
       now: DateTime.now(),
+      recentAssistantText: anchorMessage.text,
     );
-    final normalized = _applyLutsTemplateTone(
+    final normalized = _applyTemplateTone(
       icebreaker,
-      profile: lutsToneProfile,
+      profile: toneProfile,
     );
     if (normalized.isEmpty) return;
 
     _lastReadIdleIcebreakerAnchorMessageId = anchorMessageId;
+    _lastReadIdleIcebreakerSentAt = DateTime.now();
     _pendingReadIdleAnchorMessageId = null;
-    addCharacterMessage(normalized, scheduleReadIdleIcebreaker: false);
+    addCharacterMessage(
+      normalized,
+      scheduleReadIdleIcebreaker: false,
+      origin: MessageOrigin.followUp,
+    );
   }
 
   String _buildFirstMeetPrompt({required int introTurn}) {
@@ -446,19 +505,29 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     String text, {
     int? affinityChange,
     bool scheduleReadIdleIcebreaker = true,
+    MessageOrigin origin = MessageOrigin.aiReply,
   }) {
     final message = CharacterChatMessage.character(
       text,
       _characterId,
       affinityChange: affinityChange,
+      origin: origin,
     );
+    final isCurrentChatActive = _isCurrentChatActive();
+    final nextUnreadCount =
+        isCurrentChatActive ? state.unreadCount : state.unreadCount + 1;
+
     state = state.copyWith(
       messages: [...state.messages, message],
       isTyping: false,
       isProcessing: false,
       isCharacterTyping: false, // DM 목록에서 "입력 중..." 해제
-      unreadCount: state.unreadCount + 1, // 읽지 않은 메시지 증가
+      unreadCount: nextUnreadCount,
     );
+
+    if (isCurrentChatActive) {
+      _localService.saveLastReadTimestamp(_characterId);
+    }
 
     // 🆕 채팅방에 없으면 푸시 알림 + 진동 (카카오톡 스타일)
     _triggerNotificationIfNeeded(text);
@@ -480,23 +549,32 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   ///
   /// [message] CharacterChatMessage - 이미 생성된 proactive 메시지
   void addProactiveMessage(CharacterChatMessage message) {
-    final lutsToneProfile = _buildLutsToneProfile();
-    final normalizedMessage = _isLutsCharacter
+    final toneProfile = _buildToneProfile();
+    final normalizedMessage = _isTonePolicyEnabledCharacter
         ? message.copyWith(
-            text: _applyLutsTemplateTone(
+            text: _applyTemplateTone(
               message.text,
-              profile: lutsToneProfile,
+              profile: toneProfile,
             ),
+            origin: MessageOrigin.proactive,
           )
-        : message;
+        : message.copyWith(origin: MessageOrigin.proactive);
+
+    final isCurrentChatActive = _isCurrentChatActive();
+    final nextUnreadCount =
+        isCurrentChatActive ? state.unreadCount : state.unreadCount + 1;
 
     state = state.copyWith(
       messages: [...state.messages, normalizedMessage],
       isTyping: false,
       isProcessing: false,
       isCharacterTyping: false,
-      unreadCount: state.unreadCount + 1,
+      unreadCount: nextUnreadCount,
     );
+
+    if (isCurrentChatActive) {
+      _localService.saveLastReadTimestamp(_characterId);
+    }
 
     // 🆕 채팅방에 없으면 푸시 알림 + 진동 (카카오톡 스타일)
     _triggerNotificationIfNeeded(normalizedMessage.text);
@@ -581,10 +659,10 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     // 타이핑 인디케이터
     setTyping(true);
 
-    final lutsToneProfile = _buildLutsToneProfile();
-    final normalizedMessage = _applyLutsTemplateTone(
+    final toneProfile = _buildToneProfile();
+    final normalizedMessage = _applyTemplateTone(
       message,
-      profile: lutsToneProfile,
+      profile: toneProfile,
     );
 
     // 캐릭터 응답 속도에 맞는 딜레이
@@ -592,13 +670,23 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     await Future.delayed(typingDelay);
 
     // 메시지 추가 (Follow-up이므로 새로운 스케줄은 시작하지 않음)
-    final msg = CharacterChatMessage.character(normalizedMessage, _characterId);
+    final isCurrentChatActive = _isCurrentChatActive();
+    final msg = CharacterChatMessage.character(
+      normalizedMessage,
+      _characterId,
+      origin: MessageOrigin.followUp,
+    );
     state = state.copyWith(
       messages: [...state.messages, msg],
       isTyping: false,
       isCharacterTyping: false,
-      unreadCount: state.unreadCount + 1,
+      unreadCount:
+          isCurrentChatActive ? state.unreadCount : state.unreadCount + 1,
     );
+
+    if (isCurrentChatActive) {
+      _localService.saveLastReadTimestamp(_characterId);
+    }
   }
 
   /// AI로 Follow-up 메시지 생성
@@ -606,7 +694,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     setTyping(true);
 
     try {
-      final lutsToneProfile = _buildLutsToneProfile();
+      final toneProfile = _buildToneProfile();
 
       // 메시지 히스토리 준비
       final recentMessages = state.messages.length > 10
@@ -624,12 +712,11 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 - 캐릭터의 성격과 말투를 유지해주세요.]
 ''';
 
-      final lutsStylePrompt =
-          _buildLutsStyleGuidePrompt(lutsToneProfile).trim();
+      final toneStylePrompt = _buildToneStyleGuidePrompt(toneProfile).trim();
       final enhancedSystemPrompt = [
         _character.systemPrompt,
         followUpPrompt,
-        if (lutsStylePrompt.isNotEmpty) lutsStylePrompt,
+        if (toneStylePrompt.isNotEmpty) toneStylePrompt,
       ].join('\n\n');
 
       final response = await _service.sendMessage(
@@ -652,19 +739,26 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       await Future.delayed(typingDelay);
 
       // 메시지 추가
+      final isCurrentChatActive = _isCurrentChatActive();
       final msg = CharacterChatMessage.character(
-        _applyLutsGeneratedTone(
+        _applyGeneratedTone(
           response.response,
-          profile: lutsToneProfile,
+          profile: toneProfile,
         ),
         _characterId,
+        origin: MessageOrigin.followUp,
       );
       state = state.copyWith(
         messages: [...state.messages, msg],
         isTyping: false,
         isCharacterTyping: false,
-        unreadCount: state.unreadCount + 1,
+        unreadCount:
+            isCurrentChatActive ? state.unreadCount : state.unreadCount + 1,
       );
+
+      if (isCurrentChatActive) {
+        _localService.saveLastReadTimestamp(_characterId);
+      }
     } catch (e) {
       setTyping(false);
       // Follow-up 실패는 무시 (필수 기능 아님)
@@ -690,8 +784,8 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     setTyping(true);
 
     try {
-      final lutsToneProfile =
-          _buildLutsToneProfile(currentUserMessage: lastMessage.text);
+      final toneProfile =
+          _buildToneProfile(currentUserMessage: lastMessage.text);
       final useFirstMeetMode = _shouldApplyFirstMeetMode();
       final introTurn = _assistantTurnCount();
 
@@ -710,13 +804,12 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       final emojiInstruction = _character.behaviorPattern.getEmojiInstruction();
       final firstMeetPrompt =
           useFirstMeetMode ? _buildFirstMeetPrompt(introTurn: introTurn) : '';
-      final lutsStylePrompt =
-          _buildLutsStyleGuidePrompt(lutsToneProfile).trim();
+      final toneStylePrompt = _buildToneStyleGuidePrompt(toneProfile).trim();
       final enhancedPrompt = [
         _character.systemPrompt,
         emojiInstruction,
         if (firstMeetPrompt.isNotEmpty) firstMeetPrompt,
-        if (lutsStylePrompt.isNotEmpty) lutsStylePrompt,
+        if (toneStylePrompt.isNotEmpty) toneStylePrompt,
       ].join('\n\n');
 
       // API 호출
@@ -745,11 +838,13 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       );
       await Future.delayed(Duration(milliseconds: typingDelay));
 
+      _ackPendingUserMessagesBeforeCharacterReply();
+
       // 캐릭터 응답 추가
       addCharacterMessage(
-        _applyLutsGeneratedTone(
+        _applyGeneratedTone(
           response.response,
-          profile: lutsToneProfile,
+          profile: toneProfile,
         ),
       );
     } catch (e) {
@@ -767,6 +862,9 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
   /// 타이핑 인디케이터 설정
   void setTyping(bool typing) {
+    if (typing) {
+      _cancelReadIdleIcebreaker();
+    }
     state = state.copyWith(
       isTyping: typing,
       isCharacterTyping: typing, // DM 목록용
@@ -796,7 +894,12 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
     if (hasChanged) {
       state = state.copyWith(messages: messages);
+      _queueForSync();
     }
+  }
+
+  void _ackPendingUserMessagesBeforeCharacterReply() {
+    markPendingUserMessagesAsRead();
   }
 
   /// @deprecated Use [markPendingUserMessagesAsRead]
@@ -931,7 +1034,21 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   }
 
   /// 메시지 전송 (API 호출 포함) - 인스타그램 DM 스타일 딜레이 적용
-  Future<void> sendMessage(String text) async {
+  Future<void> sendMessage(String text) {
+    final normalized = text.trim();
+    if (normalized.isEmpty) return Future.value();
+
+    _sendQueue = _sendQueue.then((_) async {
+      try {
+        await _sendMessageInternal(normalized);
+      } catch (e) {
+        Logger.error('[CharacterChat] send queue failed', e);
+      }
+    });
+    return _sendQueue;
+  }
+
+  Future<void> _sendMessageInternal(String text) async {
     if (text.trim().isEmpty) return;
 
     // 🪙 토큰 소비 체크 (4토큰/메시지)
@@ -964,7 +1081,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     setTyping(true);
 
     try {
-      final lutsToneProfile = _buildLutsToneProfile(currentUserMessage: text);
+      final toneProfile = _buildToneProfile(currentUserMessage: text);
       final useFirstMeetMode = _shouldApplyFirstMeetMode();
       final introTurn = _assistantTurnCount();
 
@@ -983,13 +1100,12 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       final emojiInstruction = _character.behaviorPattern.getEmojiInstruction();
       final firstMeetPrompt =
           useFirstMeetMode ? _buildFirstMeetPrompt(introTurn: introTurn) : '';
-      final lutsStylePrompt =
-          _buildLutsStyleGuidePrompt(lutsToneProfile).trim();
+      final toneStylePrompt = _buildToneStyleGuidePrompt(toneProfile).trim();
       final enhancedPrompt = [
         _character.systemPrompt,
         emojiInstruction,
         if (firstMeetPrompt.isNotEmpty) firstMeetPrompt,
-        if (lutsStylePrompt.isNotEmpty) lutsStylePrompt,
+        if (toneStylePrompt.isNotEmpty) toneStylePrompt,
       ].join('\n\n');
 
       // API 호출
@@ -1020,11 +1136,13 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
       // 호감도 포인트 계산 (애니메이션용)
       final affinityPoints = response.affinityDelta.points;
-      final normalizedResponse = _applyLutsGeneratedTone(
+      final normalizedResponse = _applyGeneratedTone(
         response.response,
-        profile: lutsToneProfile,
+        profile: toneProfile,
         encourageContinuity: useFirstMeetMode,
       );
+
+      _ackPendingUserMessagesBeforeCharacterReply();
 
       // 6단계: 캐릭터 응답 추가 (호감도 변경값 포함)
       addCharacterMessage(normalizedResponse, affinityChange: affinityPoints);
@@ -1090,8 +1208,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     setTyping(true);
 
     try {
-      final lutsToneProfile =
-          _buildLutsToneProfile(currentUserMessage: requestMessage);
+      final toneProfile = _buildToneProfile(currentUserMessage: requestMessage);
       // 🆕 실제 운세 API 호출하여 상세 데이터 가져오기
       final fortuneData = await _fetchFortuneData(fortuneType, {});
       final fortuneDataContext = _formatFortuneDataForContext(fortuneData);
@@ -1126,12 +1243,11 @@ $fortuneDataContext
 $emojiInstruction
 ''';
 
-      final lutsStylePrompt =
-          _buildLutsStyleGuidePrompt(lutsToneProfile).trim();
+      final toneStylePrompt = _buildToneStyleGuidePrompt(toneProfile).trim();
       final enhancedPrompt = [
         _character.systemPrompt,
         fortuneContext,
-        if (lutsStylePrompt.isNotEmpty) lutsStylePrompt,
+        if (toneStylePrompt.isNotEmpty) toneStylePrompt,
       ].join('\n\n');
 
       final response = await _service.sendMessage(
@@ -1159,10 +1275,12 @@ $emojiInstruction
 
       // 호감도 포인트 계산 (애니메이션용)
       final affinityPoints = response.affinityDelta.points;
-      final normalizedResponse = _applyLutsGeneratedTone(
+      final normalizedResponse = _applyGeneratedTone(
         response.response,
-        profile: lutsToneProfile,
+        profile: toneProfile,
       );
+
+      _ackPendingUserMessagesBeforeCharacterReply();
 
       // 6단계: 캐릭터 응답 추가 (호감도 변경값 포함)
       addCharacterMessage(normalizedResponse, affinityChange: affinityPoints);
@@ -1217,8 +1335,7 @@ $emojiInstruction
     setTyping(true);
 
     try {
-      final lutsToneProfile =
-          _buildLutsToneProfile(currentUserMessage: requestMessage);
+      final toneProfile = _buildToneProfile(currentUserMessage: requestMessage);
       // 🆕 실제 운세 API 호출하여 상세 데이터 가져오기 (설문 답변 포함)
       final fortuneData = await _fetchFortuneData(fortuneType, surveyAnswers);
       final fortuneDataContext = _formatFortuneDataForContext(fortuneData);
@@ -1259,12 +1376,11 @@ $fortuneDataContext
 $emojiInstruction
 ''';
 
-      final lutsStylePrompt =
-          _buildLutsStyleGuidePrompt(lutsToneProfile).trim();
+      final toneStylePrompt = _buildToneStyleGuidePrompt(toneProfile).trim();
       final enhancedPrompt = [
         _character.systemPrompt,
         fortuneContext,
-        if (lutsStylePrompt.isNotEmpty) lutsStylePrompt,
+        if (toneStylePrompt.isNotEmpty) toneStylePrompt,
       ].join('\n\n');
 
       final response = await _service.sendMessage(
@@ -1292,10 +1408,12 @@ $emojiInstruction
 
       // 호감도 포인트 계산 (애니메이션용)
       final affinityPoints = response.affinityDelta.points;
-      final normalizedResponse = _applyLutsGeneratedTone(
+      final normalizedResponse = _applyGeneratedTone(
         response.response,
-        profile: lutsToneProfile,
+        profile: toneProfile,
       );
+
+      _ackPendingUserMessagesBeforeCharacterReply();
 
       // 6단계: 캐릭터 응답 추가 (호감도 변경값 포함)
       addCharacterMessage(normalizedResponse, affinityChange: affinityPoints);
@@ -1632,8 +1750,7 @@ $emojiInstruction
     setTyping(true);
 
     try {
-      final lutsToneProfile =
-          _buildLutsToneProfile(currentUserMessage: choice.text);
+      final toneProfile = _buildToneProfile(currentUserMessage: choice.text);
       // 선택에 대한 캐릭터 반응 요청 (방금 추가한 사용자 선택 제외)
       final messagesWithoutCurrent = state.messages.length > 1
           ? state.messages.sublist(0, state.messages.length - 1)
@@ -1647,12 +1764,11 @@ $emojiInstruction
 
       // 이모티콘 빈도 지시문 추가
       final emojiInstruction = _character.behaviorPattern.getEmojiInstruction();
-      final lutsStylePrompt =
-          _buildLutsStyleGuidePrompt(lutsToneProfile).trim();
+      final toneStylePrompt = _buildToneStyleGuidePrompt(toneProfile).trim();
       final enhancedPrompt = [
         _character.systemPrompt,
         emojiInstruction,
-        if (lutsStylePrompt.isNotEmpty) lutsStylePrompt,
+        if (toneStylePrompt.isNotEmpty) toneStylePrompt,
       ].join('\n\n');
 
       final response = await _service.sendMessage(
@@ -1678,10 +1794,12 @@ $emojiInstruction
       );
       await Future.delayed(Duration(milliseconds: typingDelay));
 
+      _ackPendingUserMessagesBeforeCharacterReply();
+
       addCharacterMessage(
-        _applyLutsGeneratedTone(
+        _applyGeneratedTone(
           response.response,
-          profile: lutsToneProfile,
+          profile: toneProfile,
         ),
       );
     } catch (e) {

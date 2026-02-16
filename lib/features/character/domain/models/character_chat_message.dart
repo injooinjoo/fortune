@@ -17,6 +17,15 @@ enum MessageStatus {
   read, // 읽음 (숫자 사라짐)
 }
 
+/// 메시지 생성 경로
+enum MessageOrigin {
+  userInput,
+  aiReply,
+  followUp,
+  proactive,
+  system,
+}
+
 /// 캐릭터 채팅 메시지 모델
 class CharacterChatMessage {
   final String id;
@@ -29,6 +38,7 @@ class CharacterChatMessage {
   final DateTime? readAt; // 읽음 시간
   final int? affinityChange; // 호감도 변경값 (게이미피케이션용)
   final String? imageAsset; // 이미지 에셋 경로 (점심 사진 등)
+  final MessageOrigin origin; // 메시지 출처
 
   CharacterChatMessage({
     String? id,
@@ -41,6 +51,7 @@ class CharacterChatMessage {
     this.readAt,
     this.affinityChange,
     this.imageAsset,
+    this.origin = MessageOrigin.system,
   })  : id = id ?? const Uuid().v4(),
         timestamp = timestamp ?? DateTime.now();
 
@@ -50,6 +61,7 @@ class CharacterChatMessage {
       type: CharacterChatMessageType.user,
       text: text,
       status: MessageStatus.sent, // 전송됨 (1 표시)
+      origin: MessageOrigin.userInput,
     );
   }
 
@@ -59,6 +71,7 @@ class CharacterChatMessage {
     String characterId, {
     int? affinityChange,
     String? imageAsset,
+    MessageOrigin origin = MessageOrigin.aiReply,
   }) {
     return CharacterChatMessage(
       type: CharacterChatMessageType.character,
@@ -66,6 +79,7 @@ class CharacterChatMessage {
       characterId: characterId,
       affinityChange: affinityChange,
       imageAsset: imageAsset,
+      origin: origin,
     );
   }
 
@@ -75,6 +89,7 @@ class CharacterChatMessage {
     String characterId, {
     required String imageAsset,
     int? affinityChange,
+    MessageOrigin origin = MessageOrigin.proactive,
   }) {
     return CharacterChatMessage(
       type: CharacterChatMessageType.character,
@@ -82,6 +97,7 @@ class CharacterChatMessage {
       characterId: characterId,
       imageAsset: imageAsset,
       affinityChange: affinityChange,
+      origin: origin,
     );
   }
 
@@ -90,6 +106,7 @@ class CharacterChatMessage {
     return CharacterChatMessage(
       type: CharacterChatMessageType.system,
       text: text,
+      origin: MessageOrigin.system,
     );
   }
 
@@ -98,6 +115,7 @@ class CharacterChatMessage {
     return CharacterChatMessage(
       type: CharacterChatMessageType.narration,
       text: text,
+      origin: MessageOrigin.system,
     );
   }
 
@@ -108,6 +126,7 @@ class CharacterChatMessage {
       type: CharacterChatMessageType.choice,
       text: situation ?? '선택지',
       choiceSet: choiceSet,
+      origin: MessageOrigin.system,
     );
   }
 
@@ -142,6 +161,7 @@ class CharacterChatMessage {
     DateTime? readAt,
     int? affinityChange,
     String? imageAsset,
+    MessageOrigin? origin,
   }) {
     return CharacterChatMessage(
       id: id ?? this.id,
@@ -154,6 +174,7 @@ class CharacterChatMessage {
       readAt: readAt ?? this.readAt,
       affinityChange: affinityChange ?? this.affinityChange,
       imageAsset: imageAsset ?? this.imageAsset,
+      origin: origin ?? this.origin,
     );
   }
 
@@ -165,6 +186,7 @@ class CharacterChatMessage {
       'content': text,
       'timestamp': timestamp.toIso8601String(),
       'status': status.name,
+      'origin': origin.name,
       if (characterId != null) 'characterId': characterId,
       if (choiceSet != null) 'choiceSet': choiceSet!.toJson(),
       if (readAt != null) 'readAt': readAt!.toIso8601String(),
@@ -192,6 +214,19 @@ class CharacterChatMessage {
       status: MessageStatus.values.firstWhere(
         (e) => e.name == json['status'],
         orElse: () => MessageStatus.read, // 기존 메시지는 읽음 처리
+      ),
+      origin: MessageOrigin.values.firstWhere(
+        (e) => e.name == json['origin'],
+        orElse: () {
+          final type = json['type'] as String?;
+          if (type == CharacterChatMessageType.user.name) {
+            return MessageOrigin.userInput;
+          }
+          if (type == CharacterChatMessageType.character.name) {
+            return MessageOrigin.aiReply;
+          }
+          return MessageOrigin.system;
+        },
       ),
       readAt: json['readAt'] != null
           ? DateTime.tryParse(json['readAt'] as String)

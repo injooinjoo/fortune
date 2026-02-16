@@ -3,6 +3,10 @@
 ## 목적
 러츠(`luts`) 채팅을 카톡형 왕복 대화 품질에 맞게 개선한다.
 
+## 공통 엔진 연계
+- 러츠 규칙은 `/docs/development/character-chat/character_kakao_tone_engine_v1.md`의 공통 엔진 규칙을 기반으로 한다.
+- 러츠는 공통 엔진 위에 러츠 전용 보이스 프로필/관계 가이드를 오버레이한다.
+
 ## 적용 범위
 - 실시간 채팅 응답
 - 앱 내 follow-up 메시지
