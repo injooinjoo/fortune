@@ -210,42 +210,30 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
     return Row(
       children: [
         // 큰 아바타
-        Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: _character.accentColor.withValues(alpha: 0.3),
-                blurRadius: 20,
-                spreadRadius: 5,
-              ),
-            ],
-          ),
-          child: _character.avatarAsset.isNotEmpty
-              ? CircleAvatar(
-                  radius: 44,
-                  backgroundColor: _character.accentColor,
-                  child: ClipOval(
-                    child: SmartImage(
-                      path: _character.avatarAsset,
-                      width: 88,
-                      height: 88,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                )
-              : CircleAvatar(
-                  radius: 44,
-                  backgroundColor: _character.accentColor,
-                  child: Text(
-                    _character.initial,
-                    style: context.heading2.copyWith(
-                      color: avatarTextColor,
-                      fontWeight: FontWeight.bold,
-                    ),
+        _character.avatarAsset.isNotEmpty
+            ? CircleAvatar(
+                radius: 44,
+                backgroundColor: _character.accentColor,
+                child: ClipOval(
+                  child: SmartImage(
+                    path: _character.avatarAsset,
+                    width: 88,
+                    height: 88,
+                    fit: BoxFit.cover,
                   ),
                 ),
-        ),
+              )
+            : CircleAvatar(
+                radius: 44,
+                backgroundColor: _character.accentColor,
+                child: Text(
+                  _character.initial,
+                  style: context.heading2.copyWith(
+                    color: avatarTextColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
         const SizedBox(width: 24),
         // 통계
         Expanded(
