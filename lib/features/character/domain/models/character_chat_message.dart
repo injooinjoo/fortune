@@ -26,6 +26,12 @@ enum MessageOrigin {
   system,
 }
 
+/// 미디어 카테고리
+enum CharacterMediaCategory {
+  meal,
+  workout,
+}
+
 /// 캐릭터 채팅 메시지 모델
 class CharacterChatMessage {
   final String id;
@@ -38,6 +44,8 @@ class CharacterChatMessage {
   final DateTime? readAt; // 읽음 시간
   final int? affinityChange; // 호감도 변경값 (게이미피케이션용)
   final String? imageAsset; // 이미지 에셋 경로 (점심 사진 등)
+  final String? imageUrl; // 이미지 네트워크 URL (생성 이미지 등)
+  final CharacterMediaCategory? mediaCategory; // 이미지 카테고리
   final MessageOrigin origin; // 메시지 출처
 
   CharacterChatMessage({
@@ -51,6 +59,8 @@ class CharacterChatMessage {
     this.readAt,
     this.affinityChange,
     this.imageAsset,
+    this.imageUrl,
+    this.mediaCategory,
     this.origin = MessageOrigin.system,
   })  : id = id ?? const Uuid().v4(),
         timestamp = timestamp ?? DateTime.now();
@@ -71,6 +81,8 @@ class CharacterChatMessage {
     String characterId, {
     int? affinityChange,
     String? imageAsset,
+    String? imageUrl,
+    CharacterMediaCategory? mediaCategory,
     MessageOrigin origin = MessageOrigin.aiReply,
   }) {
     return CharacterChatMessage(
@@ -79,6 +91,8 @@ class CharacterChatMessage {
       characterId: characterId,
       affinityChange: affinityChange,
       imageAsset: imageAsset,
+      imageUrl: imageUrl,
+      mediaCategory: mediaCategory,
       origin: origin,
     );
   }
@@ -89,6 +103,8 @@ class CharacterChatMessage {
     String characterId, {
     required String imageAsset,
     int? affinityChange,
+    String? imageUrl,
+    CharacterMediaCategory? mediaCategory,
     MessageOrigin origin = MessageOrigin.proactive,
   }) {
     return CharacterChatMessage(
@@ -96,6 +112,8 @@ class CharacterChatMessage {
       text: text,
       characterId: characterId,
       imageAsset: imageAsset,
+      imageUrl: imageUrl,
+      mediaCategory: mediaCategory,
       affinityChange: affinityChange,
       origin: origin,
     );
@@ -148,7 +166,11 @@ class CharacterChatMessage {
   bool get isChoice => type == CharacterChatMessageType.choice;
 
   /// 이미지 메시지 여부
-  bool get hasImage => imageAsset != null && imageAsset!.isNotEmpty;
+  bool get hasImage {
+    final hasAsset = imageAsset != null && imageAsset!.isNotEmpty;
+    final hasUrl = imageUrl != null && imageUrl!.isNotEmpty;
+    return hasAsset || hasUrl;
+  }
 
   CharacterChatMessage copyWith({
     String? id,
@@ -161,6 +183,8 @@ class CharacterChatMessage {
     DateTime? readAt,
     int? affinityChange,
     String? imageAsset,
+    String? imageUrl,
+    CharacterMediaCategory? mediaCategory,
     MessageOrigin? origin,
   }) {
     return CharacterChatMessage(
@@ -174,6 +198,8 @@ class CharacterChatMessage {
       readAt: readAt ?? this.readAt,
       affinityChange: affinityChange ?? this.affinityChange,
       imageAsset: imageAsset ?? this.imageAsset,
+      imageUrl: imageUrl ?? this.imageUrl,
+      mediaCategory: mediaCategory ?? this.mediaCategory,
       origin: origin ?? this.origin,
     );
   }
@@ -192,6 +218,8 @@ class CharacterChatMessage {
       if (readAt != null) 'readAt': readAt!.toIso8601String(),
       if (affinityChange != null) 'affinityChange': affinityChange,
       if (imageAsset != null) 'imageAsset': imageAsset,
+      if (imageUrl != null) 'imageUrl': imageUrl,
+      if (mediaCategory != null) 'mediaCategory': mediaCategory!.name,
     };
   }
 
@@ -233,6 +261,13 @@ class CharacterChatMessage {
           : null,
       affinityChange: json['affinityChange'] as int?,
       imageAsset: json['imageAsset'] as String?,
+      imageUrl: json['imageUrl'] as String?,
+      mediaCategory: json['mediaCategory'] != null
+          ? CharacterMediaCategory.values.firstWhere(
+              (e) => e.name == json['mediaCategory'],
+              orElse: () => CharacterMediaCategory.meal,
+            )
+          : null,
     );
   }
 }

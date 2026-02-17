@@ -11,6 +11,7 @@
  * - systemPrompt: string - 캐릭터 시스템 프롬프트
  * - messages: Array<{role, content}> - 대화 히스토리
  * - userMessage: string - 사용자 메시지
+ * - modelPreference?: "default" | "grok-fast" - 모델 선호 (luts 전용)
  * - userName?: string - 사용자 이름
  * - userDescription?: string - 사용자 설명
  * - oocInstructions?: string - OOC 상태창 포맷 지시
@@ -18,10 +19,11 @@
  * @response CharacterChatResponse
  * - success: boolean
  * - response: string - AI 캐릭터 응답
- * - meta: { provider, model, latencyMs }
+ * - meta: { provider, model, latencyMs, fallbackUsed }
  */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { LLMFactory } from "../_shared/llm/factory.ts";
+import type { LLMResponse } from "../_shared/llm/types.ts";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { sendCharacterDmPush } from "../_shared/notification_push.ts";
@@ -64,6 +66,7 @@ interface CharacterChatRequest {
   systemPrompt: string;
   messages: ChatMessage[];
   userMessage: string;
+  modelPreference?: "default" | "grok-fast";
   userName?: string;
   userDescription?: string;
   oocInstructions?: string;
@@ -94,6 +97,7 @@ interface CharacterChatResponse {
     provider: string;
     model: string;
     latencyMs: number;
+    fallbackUsed: boolean;
   };
   error?: string;
 }
@@ -1423,6 +1427,7 @@ serve(async (req: Request) => {
       systemPrompt,
       messages,
       userMessage,
+      modelPreference,
       userName,
       userDescription,
       oocInstructions,
@@ -1444,6 +1449,24 @@ serve(async (req: Request) => {
           success: false,
           response: "",
           error: "characterId, systemPrompt, userMessage는 필수입니다",
+        } as CharacterChatResponse),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 400,
+        },
+      );
+    }
+
+    if (
+      modelPreference &&
+      modelPreference !== "default" &&
+      modelPreference !== "grok-fast"
+    ) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          response: "",
+          error: "modelPreference는 default | grok-fast만 허용됩니다",
         } as CharacterChatResponse),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -1597,19 +1620,47 @@ ${characterTraits}
       { role: "user", content: enhancedUserMessage },
     ];
 
-    // LLM 호출 (free-chat 설정 사용, 높은 temperature)
-    const llm = LLMFactory.createFromConfig("free-chat");
+    const isLutsGrokFastMode = characterId === LUTS_CHARACTER_ID &&
+      modelPreference === "grok-fast";
+    let fallbackUsed = false;
+    let llmResponse: LLMResponse;
 
-    const response = await llm.generate(chatMessages, {
-      temperature: 0.6, // 맥락 일관성 우선 (0.75 → 0.6)
-      maxTokens: 2048, // 긴 응답 허용
-    });
+    if (isLutsGrokFastMode) {
+      try {
+        const grokLlm = LLMFactory.create("grok", "grok-3-mini-fast");
+        llmResponse = await grokLlm.generate(chatMessages, {
+          temperature: 0.6,
+          maxTokens: 2048,
+        });
+      } catch (grokError) {
+        fallbackUsed = true;
+        console.warn(
+          "[character-chat] grok-fast failed, fallback to Gemini:",
+          grokError,
+        );
+        const geminiFallbackLlm = LLMFactory.create(
+          "gemini",
+          "gemini-2.0-flash-lite",
+        );
+        llmResponse = await geminiFallbackLlm.generate(chatMessages, {
+          temperature: 0.6,
+          maxTokens: 2048,
+        });
+      }
+    } else {
+      // 기본 경로: DB 기반 character-chat 설정 사용
+      const llm = await LLMFactory.createFromConfigAsync("character-chat");
+      llmResponse = await llm.generate(chatMessages, {
+        temperature: 0.6,
+        maxTokens: 2048,
+      });
+    }
 
     const latencyMs = Date.now() - startTime;
 
     // 후처리: 호감도 평가 추출 → OOC 블록 제거 → 이모티콘 검증
     const { cleanedText: textWithoutAffinity, affinityDelta } =
-      extractAffinityDelta(response.content.trim());
+      extractAffinityDelta(llmResponse.content.trim());
     let responseText = removeOocBlock(textWithoutAffinity);
     responseText = validateEmojiUsage(
       responseText,
@@ -1652,9 +1703,10 @@ ${characterTraits}
         delaySec,
         affinityDelta,
         meta: {
-          provider: "gemini",
-          model: "gemini-2.0-flash-lite",
+          provider: llmResponse.provider,
+          model: llmResponse.model,
           latencyMs,
+          fallbackUsed,
         },
       } as CharacterChatResponse),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
@@ -1671,9 +1723,10 @@ ${characterTraits}
         affinityDelta: { points: 0, reason: "error", quality: "neutral" },
         error: error instanceof Error ? error.message : "Unknown error",
         meta: {
-          provider: "gemini",
-          model: "gemini-2.0-flash-lite",
+          provider: "unknown",
+          model: "unknown",
           latencyMs: Date.now() - startTime,
+          fallbackUsed: false,
         },
       } as CharacterChatResponse),
       {

@@ -11,6 +11,8 @@ import '../../data/services/character_chat_service.dart';
 import '../../data/services/character_chat_local_service.dart';
 import '../../data/services/character_affinity_service.dart';
 import '../../data/services/character_message_notification_service.dart';
+import '../../data/services/character_proactive_context_service.dart';
+import '../../data/services/character_proactive_media_service.dart';
 import '../../data/services/follow_up_scheduler.dart';
 import '../../data/default_characters.dart';
 import '../../data/fortune_characters.dart';
@@ -49,6 +51,10 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   final FollowUpScheduler _followUpScheduler = FollowUpScheduler();
   final CharacterChatLocalService _localService = CharacterChatLocalService();
   final CharacterAffinityService _affinityService = CharacterAffinityService();
+  final CharacterProactiveContextService _proactiveContextService =
+      CharacterProactiveContextService();
+  final CharacterProactiveMediaService _proactiveMediaService =
+      CharacterProactiveMediaService();
   final StorageService _storageService = StorageService();
 
   /// 현재 캐릭터 정보 캐시
@@ -95,6 +101,91 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       (c) => c.id == _characterId,
     );
     return _cachedCharacter!;
+  }
+
+  bool get _isLutsCharacter => _characterId == 'luts';
+
+  String? _resolveModelPreference() {
+    if (!_isLutsCharacter) return null;
+    final remoteConfig = _ref.read(remoteConfigProvider);
+    return remoteConfig.getCharacterLutsModelPreference();
+  }
+
+  Future<CharacterChatMessage> _buildFollowUpMessageWithOptionalMedia(
+    String text,
+  ) async {
+    final baseMessage = CharacterChatMessage.character(
+      text,
+      _characterId,
+      origin: MessageOrigin.followUp,
+    );
+
+    if (!_isLutsCharacter) {
+      return baseMessage;
+    }
+
+    final remoteConfig = _ref.read(remoteConfigProvider);
+    if (!remoteConfig.isCharacterLutsProactiveImageEnabled()) {
+      return baseMessage;
+    }
+
+    try {
+      final maxPerDay = remoteConfig.getCharacterLutsProactiveImageMaxPerDay();
+      final canSend = await _localService.canSendProactiveImage(
+        _characterId,
+        maxPerDay: maxPerDay,
+      );
+      if (!canSend) {
+        return baseMessage;
+      }
+
+      final contextDecision = _proactiveContextService.resolve(
+        messages: state.messages,
+        now: DateTime.now(),
+      );
+      if (contextDecision == null) {
+        return baseMessage;
+      }
+
+      final media = await _proactiveMediaService.resolveFollowUpMedia(
+        characterId: _characterId,
+        category: contextDecision.category,
+        contextText: contextDecision.contextText,
+        styleHint: contextDecision.styleHint,
+      );
+      if (media == null) {
+        return baseMessage;
+      }
+
+      await _localService.markProactiveImageSent(_characterId);
+
+      return baseMessage.copyWith(
+        imageAsset: media.imageAsset,
+        imageUrl: media.imageUrl,
+        mediaCategory: media.category,
+      );
+    } catch (error) {
+      Logger.warning(
+        '[CharacterChat] Failed to attach proactive media. Fallback to text.',
+        {'characterId': _characterId, 'error': error.toString()},
+      );
+      return baseMessage;
+    }
+  }
+
+  void _appendFollowUpMessage(CharacterChatMessage message) {
+    final isCurrentChatActive = _isCurrentChatActive();
+    state = state.copyWith(
+      messages: [...state.messages, message],
+      isTyping: false,
+      isCharacterTyping: false,
+      unreadCount:
+          isCurrentChatActive ? state.unreadCount : state.unreadCount + 1,
+    );
+
+    if (isCurrentChatActive) {
+      _localService.saveLastReadTimestamp(_characterId);
+    }
   }
 
   /// 유저 프로필 정보를 API용 Map으로 변환
@@ -670,23 +761,10 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     await Future.delayed(typingDelay);
 
     // 메시지 추가 (Follow-up이므로 새로운 스케줄은 시작하지 않음)
-    final isCurrentChatActive = _isCurrentChatActive();
-    final msg = CharacterChatMessage.character(
+    final msg = await _buildFollowUpMessageWithOptionalMedia(
       normalizedMessage,
-      _characterId,
-      origin: MessageOrigin.followUp,
     );
-    state = state.copyWith(
-      messages: [...state.messages, msg],
-      isTyping: false,
-      isCharacterTyping: false,
-      unreadCount:
-          isCurrentChatActive ? state.unreadCount : state.unreadCount + 1,
-    );
-
-    if (isCurrentChatActive) {
-      _localService.saveLastReadTimestamp(_characterId);
-    }
+    _appendFollowUpMessage(msg);
   }
 
   /// AI로 Follow-up 메시지 생성
@@ -724,6 +802,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         systemPrompt: enhancedSystemPrompt,
         messages: history,
         userMessage: '[사용자 응답 대기 중]',
+        modelPreference: _resolveModelPreference(),
         oocInstructions: _character.oocInstructions,
         emojiFrequency: _character.behaviorPattern.emojiFrequencyString,
         emoticonStyle: _character.behaviorPattern.emoticonStyleString,
@@ -739,26 +818,13 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       await Future.delayed(typingDelay);
 
       // 메시지 추가
-      final isCurrentChatActive = _isCurrentChatActive();
-      final msg = CharacterChatMessage.character(
+      final msg = await _buildFollowUpMessageWithOptionalMedia(
         _applyGeneratedTone(
           response.response,
           profile: toneProfile,
         ),
-        _characterId,
-        origin: MessageOrigin.followUp,
       );
-      state = state.copyWith(
-        messages: [...state.messages, msg],
-        isTyping: false,
-        isCharacterTyping: false,
-        unreadCount:
-            isCurrentChatActive ? state.unreadCount : state.unreadCount + 1,
-      );
-
-      if (isCurrentChatActive) {
-        _localService.saveLastReadTimestamp(_characterId);
-      }
+      _appendFollowUpMessage(msg);
     } catch (e) {
       setTyping(false);
       // Follow-up 실패는 무시 (필수 기능 아님)
@@ -818,6 +884,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         systemPrompt: enhancedPrompt,
         messages: history,
         userMessage: lastMessage.text,
+        modelPreference: _resolveModelPreference(),
         oocInstructions: _character.oocInstructions,
         emojiFrequency: _character.behaviorPattern.emojiFrequencyString,
         emoticonStyle: _character.behaviorPattern.emoticonStyleString,
@@ -1114,6 +1181,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         systemPrompt: enhancedPrompt,
         messages: history,
         userMessage: text,
+        modelPreference: _resolveModelPreference(),
         oocInstructions: _character.oocInstructions,
         emojiFrequency: _character.behaviorPattern.emojiFrequencyString,
         emoticonStyle: _character.behaviorPattern.emoticonStyleString,
@@ -1255,6 +1323,7 @@ $emojiInstruction
         systemPrompt: enhancedPrompt,
         messages: history,
         userMessage: requestMessage,
+        modelPreference: _resolveModelPreference(),
         oocInstructions: _character.oocInstructions,
         emojiFrequency: _character.behaviorPattern.emojiFrequencyString,
         emoticonStyle: _character.behaviorPattern.emoticonStyleString,
@@ -1388,6 +1457,7 @@ $emojiInstruction
         systemPrompt: enhancedPrompt,
         messages: history,
         userMessage: requestMessage,
+        modelPreference: _resolveModelPreference(),
         oocInstructions: _character.oocInstructions,
         emojiFrequency: _character.behaviorPattern.emojiFrequencyString,
         emoticonStyle: _character.behaviorPattern.emoticonStyleString,
@@ -1776,6 +1846,7 @@ $emojiInstruction
         systemPrompt: enhancedPrompt,
         messages: history,
         userMessage: '(사용자가 "${choice.text}"를 선택함)',
+        modelPreference: _resolveModelPreference(),
         oocInstructions: _character.oocInstructions,
         emojiFrequency: _character.behaviorPattern.emojiFrequencyString,
         emoticonStyle: _character.behaviorPattern.emoticonStyleString,

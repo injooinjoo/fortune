@@ -24,6 +24,7 @@ const COST_PER_1M_TOKENS: Record<string, { input: number; output: number }> = {
   // Grok
   'grok-2-latest': { input: 2.00, output: 10.00 },
   'grok-2': { input: 2.00, output: 10.00 },
+  'grok-3-mini-fast': { input: 0.30, output: 0.50 },
 }
 
 export interface UsageLogData {

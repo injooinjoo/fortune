@@ -109,6 +109,10 @@ class CharacterChatLocalService {
           _metadataKey(ownerScope, characterId, _MetadataType.lastUpdate));
       await _metadataBox!.delete(
           _metadataKey(ownerScope, characterId, _MetadataType.lastRead));
+      await _metadataBox!.delete(_metadataKey(
+          ownerScope, characterId, _MetadataType.lastProactiveImageAt));
+      await _metadataBox!.delete(_metadataKey(
+          ownerScope, characterId, _MetadataType.proactiveImageDailyCount));
       Logger.info(
           'Deleted conversation for character: $characterId (owner: $ownerScope)');
       return true;
@@ -165,6 +169,101 @@ class CharacterChatLocalService {
     if (timeString == null) return null;
 
     return DateTime.tryParse(timeString);
+  }
+
+  /// 마지막 proactive 이미지 발화 시간 저장
+  Future<void> saveLastProactiveImageTimestamp(
+    String characterId, {
+    DateTime? timestamp,
+  }) async {
+    if (!isInitialized) return;
+
+    final ownerScope = await UserScopeService.instance.getCurrentOwnerId();
+    final now = timestamp ?? DateTime.now();
+    await _metadataBox!.put(
+      _metadataKey(ownerScope, characterId, _MetadataType.lastProactiveImageAt),
+      now.toIso8601String(),
+    );
+  }
+
+  /// 마지막 proactive 이미지 발화 시간 조회
+  Future<DateTime?> getLastProactiveImageTimestamp(String characterId) async {
+    if (!isInitialized) return null;
+
+    final ownerScope = await UserScopeService.instance.getCurrentOwnerId();
+    final timeString = _metadataBox!.get(_metadataKey(
+        ownerScope, characterId, _MetadataType.lastProactiveImageAt));
+    if (timeString == null) return null;
+
+    return DateTime.tryParse(timeString);
+  }
+
+  /// 오늘 발화한 proactive 이미지 수 조회
+  Future<int> getTodayProactiveImageCount(String characterId) async {
+    if (!isInitialized) return 0;
+
+    final ownerScope = await UserScopeService.instance.getCurrentOwnerId();
+    final countKey = _metadataKey(
+        ownerScope, characterId, _MetadataType.proactiveImageDailyCount);
+    final dateKey = _metadataKey(
+        ownerScope, characterId, _MetadataType.lastProactiveImageAt);
+    final dateValue = _metadataBox!.get(dateKey);
+    if (dateValue == null) return 0;
+
+    final lastSentDate = DateTime.tryParse(dateValue);
+    if (lastSentDate == null) return 0;
+
+    final now = DateTime.now();
+    final isSameDay = lastSentDate.year == now.year &&
+        lastSentDate.month == now.month &&
+        lastSentDate.day == now.day;
+
+    if (!isSameDay) return 0;
+
+    final countRaw = _metadataBox!.get(countKey);
+    if (countRaw == null) return 1;
+    final parsed = int.tryParse(countRaw);
+    return parsed ?? 1;
+  }
+
+  /// proactive 이미지 발화 가능 여부
+  Future<bool> canSendProactiveImage(
+    String characterId, {
+    int maxPerDay = 1,
+  }) async {
+    if (maxPerDay <= 0) return false;
+    final count = await getTodayProactiveImageCount(characterId);
+    return count < maxPerDay;
+  }
+
+  /// proactive 이미지 발화 기록 (일자별 카운트)
+  Future<void> markProactiveImageSent(
+    String characterId, {
+    DateTime? timestamp,
+  }) async {
+    if (!isInitialized) return;
+
+    final ownerScope = await UserScopeService.instance.getCurrentOwnerId();
+    final now = timestamp ?? DateTime.now();
+    final dateKey = _metadataKey(
+        ownerScope, characterId, _MetadataType.lastProactiveImageAt);
+    final countKey = _metadataKey(
+        ownerScope, characterId, _MetadataType.proactiveImageDailyCount);
+
+    final previousDateRaw = _metadataBox!.get(dateKey);
+    final previousDate =
+        previousDateRaw != null ? DateTime.tryParse(previousDateRaw) : null;
+    final isSameDay = previousDate != null &&
+        previousDate.year == now.year &&
+        previousDate.month == now.month &&
+        previousDate.day == now.day;
+
+    final currentCountRaw = _metadataBox!.get(countKey);
+    final currentCount = int.tryParse(currentCountRaw ?? '') ?? 0;
+    final nextCount = isSameDay ? currentCount + 1 : 1;
+
+    await _metadataBox!.put(dateKey, now.toIso8601String());
+    await _metadataBox!.put(countKey, nextCount.toString());
   }
 
   /// 모든 캐릭터 ID 목록 조회
@@ -317,6 +416,8 @@ class CharacterChatLocalService {
 enum _MetadataType {
   lastUpdate,
   lastRead,
+  lastProactiveImageAt,
+  proactiveImageDailyCount,
 }
 
 class _LegacyMetadataParsed {

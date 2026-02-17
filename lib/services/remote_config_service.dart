@@ -53,6 +53,13 @@ class RemoteConfigService {
   // 캐릭터 톤 엔진 롤아웃
   static const String characterToneRolloutKey = 'character_tone_rollout_v1';
 
+  // 러츠 채팅 모델/이미지 운영 설정
+  static const String characterLutsModelPrefKey = 'character_luts_model_pref';
+  static const String characterLutsProactiveImageEnabledKey =
+      'character_luts_proactive_image_enabled';
+  static const String characterLutsProactiveImageMaxPerDayKey =
+      'character_luts_proactive_image_max_per_day';
+
   /// Remote Config 초기화
   Future<void> initialize() async {
     if (_isInitialized) return;
@@ -160,6 +167,11 @@ class RemoteConfigService {
           'han_seojun'
         ]
       }),
+
+      // 러츠 채팅 모델/이미지 설정
+      characterLutsModelPrefKey: 'default',
+      characterLutsProactiveImageEnabledKey: true,
+      characterLutsProactiveImageMaxPerDayKey: 1,
     });
   }
 
@@ -414,6 +426,29 @@ class RemoteConfigService {
       Logger.warning('[RemoteConfigService] 캐릭터 톤 롤아웃 파싱 실패: $e');
       return fallback;
     }
+  }
+
+  /// 러츠 채팅 모델 선호값 (default | grok-fast)
+  String getCharacterLutsModelPreference() {
+    if (!_isInitialized) return 'default';
+
+    final value = _remoteConfig.getString(characterLutsModelPrefKey);
+    if (value == 'grok-fast') return value;
+    return 'default';
+  }
+
+  /// 러츠 proactive 이미지 활성화 여부
+  bool isCharacterLutsProactiveImageEnabled() {
+    if (!_isInitialized) return true;
+    return _remoteConfig.getBool(characterLutsProactiveImageEnabledKey);
+  }
+
+  /// 러츠 proactive 이미지 일일 최대 발화 횟수
+  int getCharacterLutsProactiveImageMaxPerDay() {
+    if (!_isInitialized) return 1;
+    final value = _remoteConfig.getInt(characterLutsProactiveImageMaxPerDayKey);
+    if (value < 0) return 0;
+    return value;
   }
 }
 

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../shared/widgets/smart_image.dart';
 import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../domain/models/ai_character.dart';
 import '../../domain/models/character_chat_message.dart';
+import '../utils/character_accent_palette.dart';
 import 'affinity_change_indicator.dart';
 
 /// 캐릭터 채팅 메시지 버블 (4종)
@@ -96,6 +98,10 @@ class CharacterMessageBubble extends StatelessWidget {
   /// 캐릭터 메시지 (왼쪽 + 아바타) - 그림자로 구분되는 떠다니는 버블
   Widget _buildCharacterBubble(BuildContext context) {
     final colors = context.colors;
+    final accentPalette = CharacterAccentPalette.from(
+      source: character.accentColor,
+      brightness: Theme.of(context).brightness,
+    );
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -108,7 +114,7 @@ class CharacterMessageBubble extends StatelessWidget {
             },
             child: CircleAvatar(
               radius: 16,
-              backgroundColor: character.accentColor,
+              backgroundColor: accentPalette.accent,
               backgroundImage: character.avatarAsset.isNotEmpty
                   ? AssetImage(character.avatarAsset)
                   : null,
@@ -116,7 +122,7 @@ class CharacterMessageBubble extends StatelessWidget {
                   ? Text(
                       character.initial,
                       style: context.labelMedium.copyWith(
-                        color: colors.textPrimary,
+                        color: accentPalette.onAccent,
                         fontWeight: FontWeight.bold,
                       ),
                     )
@@ -179,6 +185,18 @@ class CharacterMessageBubble extends StatelessWidget {
 
   /// 이미지 버블 (점심 사진 등 proactive 메시지용)
   Widget _buildImageBubble(BuildContext context, DSColorScheme colors) {
+    final imagePath =
+        (message.imageAsset != null && message.imageAsset!.isNotEmpty)
+            ? message.imageAsset!
+            : message.imageUrl;
+    if (imagePath == null || imagePath.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final fallbackIcon = message.mediaCategory == CharacterMediaCategory.workout
+        ? Icons.fitness_center
+        : Icons.restaurant;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 6),
       constraints: const BoxConstraints(maxWidth: 220),
@@ -194,24 +212,23 @@ class CharacterMessageBubble extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
-        child: Image.asset(
-          message.imageAsset!,
+        child: SmartImage(
+          path: imagePath,
+          width: 220,
+          height: 150,
           fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            // 이미지 로드 실패 시 placeholder
-            return Container(
-              width: 200,
-              height: 150,
-              color: colors.backgroundSecondary,
-              child: Center(
-                child: Icon(
-                  Icons.restaurant,
-                  size: 48,
-                  color: colors.textTertiary,
-                ),
+          errorWidget: Container(
+            width: 220,
+            height: 150,
+            color: colors.backgroundSecondary,
+            child: Center(
+              child: Icon(
+                fallbackIcon,
+                size: 48,
+                color: colors.textTertiary,
               ),
-            );
-          },
+            ),
+          ),
         ),
       ),
     );
