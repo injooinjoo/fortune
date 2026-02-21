@@ -11,6 +11,10 @@ on:
         required: false
         type: number
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   generate-zodiac-fortunes:
     runs-on: ubuntu-latest

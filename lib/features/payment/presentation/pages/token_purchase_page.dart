@@ -25,9 +25,11 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
   final InAppPurchaseService _purchaseService = InAppPurchaseService();
 
   int? _selectedPackageIndex;
+  int? _selectedSubscriptionIndex;
   bool _isProcessing = false;
   bool _isLoading = true;
   List<ProductDetails> _products = [];
+  List<ProductDetails> _subscriptions = [];
 
   @override
   void initState() {
@@ -117,22 +119,33 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
   Future<void> _loadProducts() async {
     await _purchaseService.loadProducts();
     setState(() {
-      // 월간 구독 제외, 토큰(소모성) 상품만 필터링
-      final filteredProducts = _purchaseService.products.where((product) {
-        // 월간 구독 제외
-        if (product.id == InAppProducts.proSubscription) return false;
-        // 소모성 상품만 포함
+      // 소모성 상품 (토큰 패키지)
+      final consumableProducts = _purchaseService.products.where((product) {
         return InAppProducts.consumableIds.contains(product.id);
       }).toList();
 
       // 토큰 수 기준 오름차순 정렬 (작은 것부터)
-      filteredProducts.sort((a, b) {
+      consumableProducts.sort((a, b) {
         final aInfo = InAppProducts.productDetails[a.id];
         final bInfo = InAppProducts.productDetails[b.id];
         return (aInfo?.points ?? 0).compareTo(bInfo?.points ?? 0);
       });
 
-      _products = filteredProducts;
+      _products = consumableProducts;
+
+      // 구독 상품 (Pro, Max)
+      final subscriptionProducts = _purchaseService.products.where((product) {
+        return InAppProducts.subscriptionIds.contains(product.id);
+      }).toList();
+
+      // Pro → Max 순서로 정렬
+      subscriptionProducts.sort((a, b) {
+        final aInfo = InAppProducts.productDetails[a.id];
+        final bInfo = InAppProducts.productDetails[b.id];
+        return (aInfo?.price ?? 0).compareTo(bInfo?.price ?? 0);
+      });
+
+      _subscriptions = subscriptionProducts;
     });
   }
 
@@ -180,7 +193,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
     }
 
     // IAP 상품이 없으면 Mock 데이터로 UI 표시 (스크린샷용)
-    final bool useMockData = _products.isEmpty;
+    final bool useMockData = _products.isEmpty && _subscriptions.isEmpty;
 
     return Stack(
       children: [
@@ -191,6 +204,8 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildCurrentBalance(),
+              const SizedBox(height: 24),
+              _buildSubscriptionList(useMockData: useMockData),
               const SizedBox(height: 24),
               _buildPackageList(useMockData: useMockData),
               const SizedBox(height: 32),
@@ -382,27 +397,57 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
     ).animate().fadeIn(duration: 600.ms).slideX(begin: -0.1, end: 0);
   }
 
-  Widget _buildPackageList({bool useMockData = false}) {
+  Widget _buildSubscriptionList({bool useMockData = false}) {
     final colors = context.colors;
-    // Mock 데이터 사용 시 InAppProducts.productDetails에서 소모성 상품만 가져오기
-    final mockProducts = InAppProducts.consumableIds
+    // Mock 데이터 사용 시 InAppProducts.productDetails에서 구독 상품만 가져오기
+    final mockSubscriptions = InAppProducts.subscriptionIds
         .map((id) => InAppProducts.productDetails[id])
         .whereType<ProductInfo>()
         .toList();
 
-    final itemCount = useMockData ? mockProducts.length : _products.length;
+    final itemCount =
+        useMockData ? mockSubscriptions.length : _subscriptions.length;
+
+    // 구독 상품이 없으면 섹션 숨김
+    if (itemCount == 0 && !useMockData) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Row(
+          children: [
+            Text(
+              '월간 구독',
+              style: context.heading3.copyWith(
+                fontWeight: FontWeight.bold,
+                color: colors.textPrimary,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: colors.accent.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                '추천',
+                style: context.labelSmall.copyWith(
+                  color: colors.accent,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
         Text(
-          '토큰 패키지 선택',
-          style: context.heading3.copyWith(
-            fontWeight: FontWeight.bold,
-            color: colors.textPrimary,
+          '매월 자동 충전되는 토큰으로 더 저렴하게 이용하세요',
+          style: context.labelSmall.copyWith(
+            color: colors.textSecondary,
           ),
         ),
-        if (useMockData) ...[
+        if (useMockData && _subscriptions.isEmpty) ...[
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -425,7 +470,226 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
           final String description;
           final String price;
 
-          if (useMockData) {
+          if (useMockData && _subscriptions.isEmpty) {
+            productInfo = mockSubscriptions[index];
+            title = productInfo.title;
+            description = productInfo.description;
+            price =
+                '₩${productInfo.price.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}';
+          } else {
+            final product = _subscriptions[index];
+            productInfo = InAppProducts.productDetails[product.id];
+            title = productInfo?.title ?? product.title;
+            description = productInfo?.description ?? product.description;
+            price = product.price;
+          }
+
+          final isSelected = _selectedSubscriptionIndex == index;
+
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: _buildSubscriptionCard(
+              title: title,
+              description: description,
+              price: price,
+              productInfo: productInfo,
+              isSelected: isSelected,
+              isMax: productInfo?.subscriptionPeriod == 'max',
+              onTap: () {
+                ref.read(fortuneHapticServiceProvider).selection();
+                setState(() {
+                  _selectedSubscriptionIndex = index;
+                  // 구독 선택 시 패키지 선택 해제
+                  _selectedPackageIndex = null;
+                });
+              },
+            )
+                .animate()
+                .fadeIn(duration: 600.ms, delay: (index * 100).ms)
+                .slideX(begin: 0.1, end: 0),
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _buildSubscriptionCard({
+    required String title,
+    required String description,
+    required String price,
+    ProductInfo? productInfo,
+    required bool isSelected,
+    bool isMax = false,
+    required VoidCallback onTap,
+  }) {
+    final colors = context.colors;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        decoration: BoxDecoration(
+          // 구독은 accent 색상으로 구분
+          gradient: isSelected
+              ? LinearGradient(
+                  colors: [
+                    colors.accent.withValues(alpha: 0.15),
+                    colors.accent.withValues(alpha: 0.05),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                )
+              : null,
+          border: Border.all(
+            color: isSelected ? colors.accent : colors.border,
+            width: isSelected ? 2 : 1,
+          ),
+          borderRadius: BorderRadius.circular(DSRadius.lg),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: colors.accent.withValues(alpha: 0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
+        ),
+        padding: const EdgeInsets.all(DSSpacing.lg),
+        child: Row(
+          children: [
+            Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? colors.accent.withValues(alpha: 0.1)
+                    : colors.backgroundSecondary,
+                borderRadius: BorderRadius.circular(DSRadius.md),
+              ),
+              child: Center(
+                child: Icon(
+                  Icons.all_inclusive,
+                  size: 28,
+                  color: isSelected ? colors.accent : colors.textSecondary,
+                ),
+              ),
+            ),
+            const SizedBox(width: DSSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        title,
+                        style: context.bodyLarge.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: colors.textPrimary,
+                        ),
+                      ),
+                      if (isMax) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: DSColors.warning.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            'BEST',
+                            style: context.labelSmall.copyWith(
+                              color: DSColors.warning,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    description,
+                    style: context.labelSmall.copyWith(
+                      color: colors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  price,
+                  style: context.heading3.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: isSelected ? colors.accent : colors.textPrimary,
+                  ),
+                ),
+                Text(
+                  '/월',
+                  style: context.labelSmall.copyWith(
+                    color: colors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPackageList({bool useMockData = false}) {
+    final colors = context.colors;
+    // Mock 데이터 사용 시 InAppProducts.productDetails에서 소모성 상품만 가져오기
+    final mockProducts = InAppProducts.consumableIds
+        .map((id) => InAppProducts.productDetails[id])
+        .whereType<ProductInfo>()
+        .toList();
+
+    // 토큰 패키지가 없으면 Mock 데이터 사용
+    final usePackageMock = useMockData || _products.isEmpty;
+    final itemCount = usePackageMock ? mockProducts.length : _products.length;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '토큰 패키지 선택',
+          style: context.heading3.copyWith(
+            fontWeight: FontWeight.bold,
+            color: colors.textPrimary,
+          ),
+        ),
+        if (usePackageMock) ...[
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: colors.accent.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              '미리보기 모드 (App Store 검토 대기 중)',
+              style: context.labelSmall.copyWith(
+                color: colors.accent,
+              ),
+            ),
+          ),
+        ],
+        const SizedBox(height: 16),
+        ...List.generate(itemCount, (index) {
+          final ProductInfo? productInfo;
+          final String title;
+          final String description;
+          final String price;
+
+          if (usePackageMock) {
             productInfo = mockProducts[index];
             title = productInfo.title;
             description = productInfo.description;
@@ -453,6 +717,8 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                 ref.read(fortuneHapticServiceProvider).selection();
                 setState(() {
                   _selectedPackageIndex = index;
+                  // 패키지 선택 시 구독 선택 해제
+                  _selectedSubscriptionIndex = null;
                 });
               },
             )
@@ -578,7 +844,20 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
 
   Widget _buildPurchaseButton() {
     final colors = context.colors;
-    final isDisabled = _selectedPackageIndex == null || _isProcessing;
+    final hasSelection =
+        _selectedPackageIndex != null || _selectedSubscriptionIndex != null;
+    final isDisabled = !hasSelection || _isProcessing;
+    final isSubscription = _selectedSubscriptionIndex != null;
+
+    // 버튼 텍스트 결정
+    String buttonText;
+    if (!hasSelection) {
+      buttonText = '상품을 선택해주세요';
+    } else if (isSubscription) {
+      buttonText = '구독하기';
+    } else {
+      buttonText = '구매하기';
+    }
 
     // 선택 전에도 눈에 보이도록 명시적인 컨테이너로 감싸기
     return Container(
@@ -606,7 +885,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                     ),
                   )
                 : Text(
-                    _selectedPackageIndex == null ? '패키지를 선택해주세요' : '구매하기',
+                    buttonText,
                     style: context.bodyLarge.copyWith(
                       color: isDisabled
                           ? colors.textSecondary
@@ -684,10 +963,15 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
   }
 
   Future<void> _handlePurchase() async {
-    if (_selectedPackageIndex == null) return;
+    final isSubscription = _selectedSubscriptionIndex != null;
+    final selectedIndex =
+        isSubscription ? _selectedSubscriptionIndex : _selectedPackageIndex;
+
+    if (selectedIndex == null) return;
 
     // Mock 모드에서는 구매 불가 안내
-    if (_products.isEmpty) {
+    final productList = isSubscription ? _subscriptions : _products;
+    if (productList.isEmpty) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -703,12 +987,12 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
     ref.read(fortuneHapticServiceProvider).jackpot();
 
     try {
-      final product = _products[_selectedPackageIndex!];
+      final product = productList[selectedIndex];
       // 결제 시작 - 실제 완료는 onPurchaseCompleted 콜백에서 처리
       final started = await _purchaseService.purchaseProduct(product.id);
 
       if (!started) {
-        throw Exception('구매를 시작할 수 없습니다');
+        throw Exception(isSubscription ? '구독을 시작할 수 없습니다' : '구매를 시작할 수 없습니다');
       }
       // 결제 UI가 표시됨 - 완료/취소/에러는 콜백에서 처리
     } catch (e) {

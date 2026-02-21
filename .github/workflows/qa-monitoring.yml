@@ -21,6 +21,10 @@ on:
         default: true
         type: boolean
 
+permissions:
+  contents: read
+  issues: write
+
 env:
   FLUTTER_VERSION: '3.38.0'
   NODE_VERSION: '20.x'
