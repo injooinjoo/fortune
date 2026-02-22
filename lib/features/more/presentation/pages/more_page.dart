@@ -31,7 +31,9 @@ class _MorePageState extends ConsumerState<MorePage> {
       if (mounted) {
         setState(() => _appVersion = 'v${info.version}');
       }
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('[MorePage] 앱 버전 로드 실패: $e');
+    }
   }
 
   @override

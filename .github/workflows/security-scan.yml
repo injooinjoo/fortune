@@ -2,9 +2,9 @@ name: Security Scan
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, master, develop ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
   schedule:
     # Run security scan daily at 2 AM UTC
     - cron: '0 2 * * *'
@@ -18,13 +18,14 @@ jobs:
   secret-scan:
     name: Secret Scanning
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Full history for better detection
 
       - name: TruffleHog OSS
-        uses: trufflesecurity/trufflehog@main
+        uses: trufflesecurity/trufflehog@7c0734f987ad0bb30ee8da210773b800ee2016d3 # v3.93.4
         with:
           path: ./
           base: ${{ github.event.repository.default_branch }}
@@ -39,11 +40,12 @@ jobs:
   dependency-check:
     name: Dependency Vulnerability Check
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@e368e328979b113139d6f9068e03accaed98a518 # 0.34.1
         with:
           scan-type: 'fs'
           scan-ref: '.'
@@ -60,6 +62,7 @@ jobs:
   flutter-analyze:
     name: Flutter Security Analysis
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: .
@@ -89,6 +92,7 @@ jobs:
   code-quality:
     name: Code Quality & Security
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     # SONAR_TOKEN이 설정되지 않은 경우에도 워크플로우가 실패하지 않도록 함
     continue-on-error: true
     steps:
@@ -106,7 +110,7 @@ jobs:
 
       - name: SonarCloud Scan
         if: steps.sonar-check.outputs.skip != 'true'
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarcloud-github-action@ffc3010689be73b8e5ae0c57ce35968afd7909e8 # v5.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -114,12 +118,13 @@ jobs:
   docker-scan:
     name: Docker Image Security Scan
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     if: contains(github.event.head_commit.message, 'docker') || contains(github.event.head_commit.message, 'Dockerfile')
     steps:
       - uses: actions/checkout@v4
 
       - name: Run Trivy vulnerability scanner in Docker mode
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@e368e328979b113139d6f9068e03accaed98a518 # 0.34.1
         with:
           scan-type: 'config'
           hide-progress: false
@@ -131,6 +136,7 @@ jobs:
     name: Security Report
     needs: [secret-scan, dependency-check, flutter-analyze, code-quality]
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     if: always()
     steps:
       - name: Create Security Report

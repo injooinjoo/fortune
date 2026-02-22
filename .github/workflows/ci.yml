@@ -2,18 +2,22 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
   pull_request:
-    branches: [main]
+    branches: [main, master]
+
+permissions:
+  contents: read
 
 jobs:
   ci:
     runs-on: ubuntu-latest
-    
+    timeout-minutes: 30
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -26,31 +30,58 @@ jobs:
           flutter-version: '3.38.0'
           channel: 'stable'
           cache: true
-          
+
       - name: Install Dependencies
         run: npm ci
 
       - name: Install Flutter dependencies
         run: flutter pub get
 
+      - name: Check formatting
+        run: dart format --set-exit-if-changed .
+
+      - name: Analyze code
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+
+      - name: Setup test environment
+        run: |
+          cat > .env << 'ENVEOF'
+          FLUTTER_TEST_MODE=true
+          NODE_ENV=test
+          SUPABASE_URL=https://test-placeholder.supabase.co
+          SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QtcGxhY2Vob2xkZXIiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoyMDAwMDAwMDAwfQ.placeholder-test-signature-not-real-key-for-ci-only
+          BYPASS_AUTH=true
+          USE_MOCK_DATA=true
+          MOCK_FORTUNE_RESPONSES=true
+          BYPASS_PAYMENT=true
+          MOCK_PREMIUM_FEATURES=true
+          GOOGLE_WEB_CLIENT_ID=000000000000-placeholder.apps.googleusercontent.com
+          GOOGLE_IOS_CLIENT_ID=000000000000-placeholder-ios.apps.googleusercontent.com
+          GOOGLE_ANDROID_CLIENT_ID=000000000000-placeholder-android.apps.googleusercontent.com
+          GEMINI_API_KEY=AIzaSy-placeholder-test-key
+          OPENAI_API_KEY=sk-proj-placeholder-test-key
+          KAKAO_REST_API_KEY=placeholder_kakao_key
+          ENABLE_ADS=false
+          DISABLE_ANALYTICS=true
+          ENVEOF
+          mkdir -p assets/images/character/lunch assets/decorations assets/icons/traditional assets/animations
+          touch assets/images/character/lunch/.gitkeep assets/decorations/.gitkeep assets/icons/traditional/.gitkeep assets/animations/.gitkeep
+
       - name: Build Flutter Web
         run: flutter build web --release
-        
+
       - name: Lint Check
         run: npm run lint
-        
+
       - name: Type Check
         run: npm run typecheck
-        
+
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
 
       - name: Run Playwright E2E Tests
         run: npx playwright test
-        
-      - name: Build Project
-        run: npm run build
-        
+
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
         if: failure()

@@ -52,6 +52,12 @@ app.*.map.json
 /android/app/*.keystore
 /android/play-store-credentials.json
 
+# Code signing certificates & provisioning
+*.p12
+*.mobileprovision
+*.cer
+*.crt
+
 # iOS/macOS specific
 /ios/Runner.xcworkspace/xcuserdata/
 /ios/Runner.xcodeproj/xcuserdata/
@@ -64,6 +70,7 @@ app.*.map.json
 .env
 .env.local
 .env.production
+.env.test
 
 # Fastlane
 /ios/fastlane/report.xml

@@ -166,7 +166,9 @@ class _ProgressiveDateInputState extends State<ProgressiveDateInput> {
           widget.onDateChanged(date);
           return;
         }
-      } catch (_) {}
+      } catch (e) {
+        debugPrint('[DateInput] 날짜 파싱 실패: $e');
+      }
     }
     widget.onDateChanged(null);
   }

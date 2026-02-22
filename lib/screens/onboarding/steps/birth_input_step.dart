@@ -290,7 +290,9 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
           widget.onBirthDateChanged(date);
           return;
         }
-      } catch (_) {}
+      } catch (e) {
+        debugPrint('[BirthInput] 날짜 파싱 실패: $e');
+      }
     }
     setState(() => _isDateValid = false);
   }

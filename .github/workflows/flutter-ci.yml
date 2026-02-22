@@ -17,6 +17,10 @@ on:
       - '.github/workflows/flutter-ci.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pull-requests: write
+
 env:
   FLUTTER_VERSION: '3.38.0'
   JAVA_VERSION: '17'
@@ -25,6 +29,7 @@ jobs:
   analyze:
     name: Analyze & Format
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
     - name: Checkout code
@@ -52,6 +57,7 @@ jobs:
   test:
     name: Unit & Widget Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     needs: analyze
 
     steps:
@@ -67,18 +73,27 @@ jobs:
 
     - name: Setup test environment
       run: |
-        # Create .env from .env.test for CI
-        cp .env.test .env
-        # Create missing asset directories
-        mkdir -p assets/images/character/lunch
-        mkdir -p assets/decorations
-        mkdir -p assets/icons/traditional
-        mkdir -p assets/animations
-        # Add placeholder files to empty directories
-        touch assets/images/character/lunch/.gitkeep
-        touch assets/decorations/.gitkeep
-        touch assets/icons/traditional/.gitkeep
-        touch assets/animations/.gitkeep
+        cat > .env << 'ENVEOF'
+        FLUTTER_TEST_MODE=true
+        NODE_ENV=test
+        SUPABASE_URL=https://test-placeholder.supabase.co
+        SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QtcGxhY2Vob2xkZXIiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoyMDAwMDAwMDAwfQ.placeholder-test-signature-not-real-key-for-ci-only
+        BYPASS_AUTH=true
+        USE_MOCK_DATA=true
+        MOCK_FORTUNE_RESPONSES=true
+        BYPASS_PAYMENT=true
+        MOCK_PREMIUM_FEATURES=true
+        GOOGLE_WEB_CLIENT_ID=000000000000-placeholder.apps.googleusercontent.com
+        GOOGLE_IOS_CLIENT_ID=000000000000-placeholder-ios.apps.googleusercontent.com
+        GOOGLE_ANDROID_CLIENT_ID=000000000000-placeholder-android.apps.googleusercontent.com
+        GEMINI_API_KEY=AIzaSy-placeholder-test-key
+        OPENAI_API_KEY=sk-proj-placeholder-test-key
+        KAKAO_REST_API_KEY=placeholder_kakao_key
+        ENABLE_ADS=false
+        DISABLE_ANALYTICS=true
+        ENVEOF
+        mkdir -p assets/images/character/lunch assets/decorations assets/icons/traditional assets/animations
+        touch assets/images/character/lunch/.gitkeep assets/decorations/.gitkeep assets/icons/traditional/.gitkeep assets/animations/.gitkeep
 
     - name: Get dependencies
       run: flutter pub get
@@ -133,6 +148,7 @@ jobs:
   build-web:
     name: Build Web
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     needs: test
 
     steps:
@@ -148,7 +164,25 @@ jobs:
 
     - name: Setup build environment
       run: |
-        cp .env.test .env
+        cat > .env << 'ENVEOF'
+        FLUTTER_TEST_MODE=true
+        NODE_ENV=test
+        SUPABASE_URL=https://test-placeholder.supabase.co
+        SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QtcGxhY2Vob2xkZXIiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoyMDAwMDAwMDAwfQ.placeholder-test-signature-not-real-key-for-ci-only
+        BYPASS_AUTH=true
+        USE_MOCK_DATA=true
+        MOCK_FORTUNE_RESPONSES=true
+        BYPASS_PAYMENT=true
+        MOCK_PREMIUM_FEATURES=true
+        GOOGLE_WEB_CLIENT_ID=000000000000-placeholder.apps.googleusercontent.com
+        GOOGLE_IOS_CLIENT_ID=000000000000-placeholder-ios.apps.googleusercontent.com
+        GOOGLE_ANDROID_CLIENT_ID=000000000000-placeholder-android.apps.googleusercontent.com
+        GEMINI_API_KEY=AIzaSy-placeholder-test-key
+        OPENAI_API_KEY=sk-proj-placeholder-test-key
+        KAKAO_REST_API_KEY=placeholder_kakao_key
+        ENABLE_ADS=false
+        DISABLE_ANALYTICS=true
+        ENVEOF
         mkdir -p assets/images/character/lunch assets/decorations assets/icons/traditional assets/animations
         touch assets/images/character/lunch/.gitkeep assets/decorations/.gitkeep assets/icons/traditional/.gitkeep assets/animations/.gitkeep
 
@@ -172,6 +206,7 @@ jobs:
   build-android:
     name: Build Android
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     needs: test
 
     steps:
@@ -193,7 +228,25 @@ jobs:
 
     - name: Setup build environment
       run: |
-        cp .env.test .env
+        cat > .env << 'ENVEOF'
+        FLUTTER_TEST_MODE=true
+        NODE_ENV=test
+        SUPABASE_URL=https://test-placeholder.supabase.co
+        SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QtcGxhY2Vob2xkZXIiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoyMDAwMDAwMDAwfQ.placeholder-test-signature-not-real-key-for-ci-only
+        BYPASS_AUTH=true
+        USE_MOCK_DATA=true
+        MOCK_FORTUNE_RESPONSES=true
+        BYPASS_PAYMENT=true
+        MOCK_PREMIUM_FEATURES=true
+        GOOGLE_WEB_CLIENT_ID=000000000000-placeholder.apps.googleusercontent.com
+        GOOGLE_IOS_CLIENT_ID=000000000000-placeholder-ios.apps.googleusercontent.com
+        GOOGLE_ANDROID_CLIENT_ID=000000000000-placeholder-android.apps.googleusercontent.com
+        GEMINI_API_KEY=AIzaSy-placeholder-test-key
+        OPENAI_API_KEY=sk-proj-placeholder-test-key
+        KAKAO_REST_API_KEY=placeholder_kakao_key
+        ENABLE_ADS=false
+        DISABLE_ANALYTICS=true
+        ENVEOF
         mkdir -p assets/images/character/lunch assets/decorations assets/icons/traditional assets/animations
         touch assets/images/character/lunch/.gitkeep assets/decorations/.gitkeep assets/icons/traditional/.gitkeep assets/animations/.gitkeep
 
@@ -253,6 +306,7 @@ jobs:
   build-ios:
     name: Build iOS
     runs-on: macos-13
+    timeout-minutes: 45
     needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
@@ -269,7 +323,25 @@ jobs:
 
     - name: Setup build environment
       run: |
-        cp .env.test .env
+        cat > .env << 'ENVEOF'
+        FLUTTER_TEST_MODE=true
+        NODE_ENV=test
+        SUPABASE_URL=https://test-placeholder.supabase.co
+        SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QtcGxhY2Vob2xkZXIiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoyMDAwMDAwMDAwfQ.placeholder-test-signature-not-real-key-for-ci-only
+        BYPASS_AUTH=true
+        USE_MOCK_DATA=true
+        MOCK_FORTUNE_RESPONSES=true
+        BYPASS_PAYMENT=true
+        MOCK_PREMIUM_FEATURES=true
+        GOOGLE_WEB_CLIENT_ID=000000000000-placeholder.apps.googleusercontent.com
+        GOOGLE_IOS_CLIENT_ID=000000000000-placeholder-ios.apps.googleusercontent.com
+        GOOGLE_ANDROID_CLIENT_ID=000000000000-placeholder-android.apps.googleusercontent.com
+        GEMINI_API_KEY=AIzaSy-placeholder-test-key
+        OPENAI_API_KEY=sk-proj-placeholder-test-key
+        KAKAO_REST_API_KEY=placeholder_kakao_key
+        ENABLE_ADS=false
+        DISABLE_ANALYTICS=true
+        ENVEOF
         mkdir -p assets/images/character/lunch assets/decorations assets/icons/traditional assets/animations
         touch assets/images/character/lunch/.gitkeep assets/decorations/.gitkeep assets/icons/traditional/.gitkeep assets/animations/.gitkeep
 
@@ -293,6 +365,7 @@ jobs:
   deploy-web-preview:
     name: Deploy Web Preview
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: build-web
     if: github.event_name == 'pull_request'
 
@@ -315,6 +388,7 @@ jobs:
   release:
     name: Create Release
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: [build-web, build-android]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 

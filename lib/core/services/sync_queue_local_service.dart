@@ -145,7 +145,9 @@ class SyncQueueLocalService {
                 (ownerId == null || item.ownerId == ownerId)) {
               keysToDelete.add(key as String);
             }
-          } catch (_) {}
+          } catch (e) {
+            Logger.debug('[SyncQueue] 완료 항목 파싱 실패: $e');
+          }
         }
       }
 
@@ -199,7 +201,9 @@ class SyncQueueLocalService {
                 (guestOwnerId == null || item.ownerId == guestOwnerId)) {
               items.add(item);
             }
-          } catch (_) {}
+          } catch (e) {
+            Logger.debug('[SyncQueue] 게스트 항목 파싱 실패: $e');
+          }
         }
       }
       return items;
@@ -276,7 +280,8 @@ class SyncQueueLocalService {
           await _box!.put(newKey, item.toJsonString());
         }
         await _box!.delete(key);
-      } catch (_) {
+      } catch (e) {
+        Logger.debug('[SyncQueue] 레거시 마이그레이션 실패: $e');
         // malformed legacy row는 삭제
         await _box!.delete(key);
       }
