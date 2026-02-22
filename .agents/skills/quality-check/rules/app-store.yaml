@@ -1,0 +1,74 @@
+# App Store Rules - Quality Check
+# 앱스토어 규정 준수 규칙 정의
+
+forbidden_words:
+  description: "사용자에게 표시되는 문자열에서 금지된 단어"
+
+  korean:
+    - word: "운세"
+      replacement: "인사이트"
+      grep_pattern: "'운세'"
+      reason: "앱스토어 점술 관련 정책"
+
+    - word: "점술"
+      replacement: "성향 분석"
+      grep_pattern: "'점술'"
+      reason: "앱스토어 점술 관련 정책"
+
+    - word: "점쟁이"
+      replacement: "분석가"
+      grep_pattern: "'점쟁이'"
+      reason: "앱스토어 점술 관련 정책"
+
+    - word: "무당"
+      replacement: "전문가"
+      grep_pattern: "'무당'"
+      reason: "앱스토어 점술 관련 정책"
+
+  english:
+    - word: "fortune"
+      replacement: "insight"
+      grep_pattern: "'fortune'"
+      reason: "App Store divination policy"
+
+    - word: "horoscope"
+      replacement: "personality analysis"
+      grep_pattern: "'horoscope'"
+      reason: "App Store divination policy"
+
+    - word: "divination"
+      replacement: "guidance"
+      grep_pattern: "'divination'"
+      reason: "App Store divination policy"
+
+  allowed_locations:
+    - "코드 주석"
+    - "개발자 문서"
+    - "Edge Function 내부 (서버 전용)"
+    - "변수명 / 클래스명"
+
+disclaimer:
+  description: "오락 목적 면책조항 규칙"
+
+  required:
+    - widget: "EntertainmentDisclaimer"
+      description: "모든 운세 결과 페이지에 면책조항 표시"
+      grep_pattern: "EntertainmentDisclaimer"
+      search_path: "lib/features/fortune/presentation/pages/"
+
+  locations:
+    - "운세 결과 페이지 하단"
+    - "주요 기능 설명 화면"
+
+content_rating:
+  description: "콘텐츠 등급 관련 규칙"
+
+  forbidden:
+    - category: "gambling"
+      description: "도박 관련 콘텐츠 금지"
+
+    - category: "real_money"
+      description: "실제 돈과 연관된 예측 금지"
+
+    - category: "medical_advice"
+      description: "의학적 조언 제공 금지"
