@@ -345,8 +345,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
           buffer.writeln();
 
           // 2. 운세 타입별 관련 프로필 정보
-          final profileLines =
-              _getRelevantProfileLines(fortuneType, profile);
+          final profileLines = _getRelevantProfileLines(fortuneType, profile);
           for (final line in profileLines) {
             buffer.writeln(line);
           }
@@ -575,14 +574,12 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     if (fields.contains('birth') && profile.birthDate != null) {
       final bd = profile.birthDate!;
       final lunarTag = profile.isLunarBirthdate == true ? ' (음력)' : '';
-      lines.add(
-          '🎂 생년월일: ${bd.year}년 ${bd.month}월 ${bd.day}일$lunarTag');
+      lines.add('🎂 생년월일: ${bd.year}년 ${bd.month}월 ${bd.day}일$lunarTag');
     }
     if (fields.contains('birthTime')) {
       if (profile.birthTime != null && profile.birthTime!.isNotEmpty) {
         lines.add('🕐 태어난 시간: ${profile.birthTime}');
-      } else if (profile.birthHour != null &&
-          profile.birthHour!.isNotEmpty) {
+      } else if (profile.birthHour != null && profile.birthHour!.isNotEmpty) {
         lines.add('🕐 태어난 시간: ${profile.birthHour}시');
       }
     }

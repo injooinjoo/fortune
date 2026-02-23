@@ -1368,10 +1368,12 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         // 사용자 신상정보 조합
         final parts = <String>[];
         if (birthDate != null) {
-          parts.add('${birthDate.year}년 ${birthDate.month}월 ${birthDate.day}일생');
+          parts
+              .add('${birthDate.year}년 ${birthDate.month}월 ${birthDate.day}일생');
         }
         if (zodiacSign != null) parts.add(zodiacSign);
-        if (profile?.chineseZodiac != null) parts.add('${profile!.chineseZodiac}띠');
+        if (profile?.chineseZodiac != null)
+          parts.add('${profile!.chineseZodiac}띠');
         if (profile?.bloodType != null) parts.add('${profile!.bloodType}형');
 
         if (parts.isNotEmpty) {
