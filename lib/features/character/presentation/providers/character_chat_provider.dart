@@ -1302,11 +1302,12 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
   /// 사주 결과 비주얼 카드 메시지 추가 (구조화 데이터 포함)
   void addSajuResultMessage(Map<String, dynamic> sajuData) {
+    final formatted = _formatValueForContext(sajuData).trim();
+    final fallbackText = formatted.isEmpty ? '사주 분석 결과' : formatted;
     final message = CharacterChatMessage.character(
-      '사주 분석 결과',
+      fallbackText,
       _characterId,
       origin: MessageOrigin.aiReply,
-      sajuData: sajuData,
     );
     final isCurrentChatActive = _isCurrentChatActive();
     final nextUnreadCount =
