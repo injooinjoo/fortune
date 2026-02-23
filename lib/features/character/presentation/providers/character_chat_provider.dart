@@ -262,10 +262,16 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       CharacterVoiceProfileRegistry.profileFor(_characterId);
 
   bool get _isTonePolicyEnabledCharacter =>
-      CharacterToneRollout.isEnabledCharacter(_characterId);
+      CharacterToneRollout.isEnabledCharacter(
+        _characterId,
+        remoteConfig: _ref.read(remoteConfigProvider),
+      );
 
   bool get _isIdleIcebreakerEnabledCharacter =>
-      CharacterToneRollout.isIdleIcebreakerEnabledCharacter(_characterId);
+      CharacterToneRollout.isIdleIcebreakerEnabledCharacter(
+        _characterId,
+        remoteConfig: _ref.read(remoteConfigProvider),
+      );
 
   CharacterToneProfile _buildToneProfile({String? currentUserMessage}) {
     if (!_isTonePolicyEnabledCharacter) return CharacterToneProfile.neutral;
@@ -661,12 +667,12 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
   /// 사주 결과 비주얼 카드 메시지 추가 (구조화 데이터 포함)
   void addSajuResultMessage(Map<String, dynamic> sajuData) {
-    final message = CharacterChatMessage(
-      type: CharacterChatMessageType.character,
-      text: '', // 텍스트 없음 — 비주얼 카드로 렌더링
-      characterId: _characterId,
+    final formatted = _formatValueForContext(sajuData).trim();
+    final fallbackText = formatted.isEmpty ? '사주 분석 결과' : formatted;
+    final message = CharacterChatMessage.character(
+      fallbackText,
+      _characterId,
       origin: MessageOrigin.aiReply,
-      sajuData: sajuData,
     );
     final isCurrentChatActive = _isCurrentChatActive();
     final nextUnreadCount =
