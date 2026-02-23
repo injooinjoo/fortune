@@ -11,10 +11,10 @@
 
 ## 2. Search Strategy
 - Keywords:
-  - `TruffleHog`, `base`, `head`, `playwright install`, `webkit`, `firefox`, `gitleaks`, `id`
+  - `TruffleHog`, `base`, `head`, `playwright install`, `playwright test`, `test:e2e`, `webkit`, `firefox`, `gitleaks`, `id`
 - Commands:
   - `rg "TruffleHog|base:|head:" .github/workflows -S`
-  - `rg "playwright install|webkit|firefox" .github/workflows playwright.config.js -S`
+  - `rg "playwright install|playwright test|test:e2e|webkit|firefox" .github/workflows playwright.config.js package.json -S`
   - `rg "^\[\[rules\]\]|^id\\s*=|UPSTASH_REDIS_REST_TOKEN|SUPABASE_SERVICE_ROLE_KEY" .gitleaks.toml -n -S`
   - `sed -n '1,260p' .github/workflows/ci.yml`
   - `sed -n '1,260p' .github/workflows/security-scan.yml`
@@ -24,6 +24,7 @@
 ## 3. Similar Code Findings
 - Reusable:
   1. `.github/workflows/e2e-tests.yml` - Playwright full browser install pattern (`npx playwright install --with-deps`)
+  2. `.github/workflows/e2e-tests.yml` - canonical CI E2E command scope (`npm run test:e2e`)
   2. gitleaks v8 schema requirement - each custom `[[rules]]` block should provide explicit `id`.
 - Reference only:
   1. `.github/workflows/qa-monitoring.yml` - Chromium-only install (project scope is chromium smoke, not full matrix)
@@ -35,6 +36,7 @@
 - Extend existing code:
   - Adjust `security-scan.yml` TruffleHog config to rely on action defaults instead of explicit base/head override.
   - Align Security workflow analyze step with CI behavior to avoid non-security lint/info noise as hard failure.
+  - Align CI Playwright command scope from `npx playwright test` to `npm run test:e2e` to match dedicated E2E workflow and avoid unintended full-suite execution in CI pipeline.
   - Add explicit `id` for all custom gitleaks rules while preserving existing regex patterns.
 - New code required:
   - None (workflow patch only).
@@ -59,3 +61,4 @@
   1. Security Scan no longer fails with `BASE and HEAD commits are the same`.
   2. Security Scan no longer fails with `rule |id| is missing or empty`.
   3. CI Pipeline Playwright stage no longer fails from missing WebKit executable.
+  4. CI Pipeline no longer runs unintended full Playwright suite (`npx playwright test`) and succeeds with scoped E2E command.
