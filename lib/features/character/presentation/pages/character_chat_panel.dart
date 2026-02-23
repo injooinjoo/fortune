@@ -24,6 +24,9 @@ import '../../../chat/domain/configs/survey_configs.dart';
 import '../../../chat/presentation/widgets/survey/chat_survey_chips.dart';
 import '../../../chat/presentation/widgets/survey/chat_birth_datetime_picker.dart';
 import '../../../chat/presentation/widgets/survey/chat_survey_slider.dart';
+import '../../../chat/presentation/widgets/survey/chat_inline_calendar.dart';
+import '../../../chat/presentation/widgets/survey/chat_face_reading_flow.dart';
+import '../../../../core/services/unified_calendar_service.dart';
 
 /// 1:1 캐릭터 롤플레이 채팅 패널
 class CharacterChatPanel extends ConsumerStatefulWidget {
@@ -584,6 +587,41 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     return option.label;
   }
 
+  /// 달력 답변을 보기 좋게 포맷팅
+  String _formatCalendarAnswer(Map<dynamic, dynamic> answer) {
+    final selectedDate = answer['selectedDate'] as String?;
+    final eventCount = answer['eventCount'] as int? ?? 0;
+
+    if (selectedDate == null) {
+      return '날짜 선택됨';
+    }
+
+    // 'YYYY-MM-DD' 형식 파싱
+    final parts = selectedDate.split('-');
+    if (parts.length != 3) {
+      return selectedDate;
+    }
+
+    final year = int.tryParse(parts[0]) ?? 0;
+    final month = int.tryParse(parts[1]) ?? 0;
+    final day = int.tryParse(parts[2]) ?? 0;
+
+    // 요일 계산
+    final date = DateTime(year, month, day);
+    final weekdays = ['월', '화', '수', '목', '금', '토', '일'];
+    final weekday = weekdays[(date.weekday - 1) % 7];
+
+    // 포맷팅: "2026년 2월 26일 (목)"
+    String formatted = '$year년 $month월 $day일 ($weekday)';
+
+    // 일정이 있으면 표시
+    if (eventCount > 0) {
+      formatted += ' · 일정 $eventCount개';
+    }
+
+    return '📅 $formatted';
+  }
+
   /// 설문 답변 처리
   void _handleSurveyAnswer(dynamic answer) {
     final surveyNotifier =
@@ -605,7 +643,14 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     } else if (answer is List) {
       answerText = answer.join(', ');
     } else if (answer is Map) {
-      answerText = answer.values.join(', ');
+      // 달력 답변 특별 처리
+      if (answer.containsKey('selectedDate')) {
+        answerText = _formatCalendarAnswer(answer);
+      } else if (answer.containsKey('imagePath')) {
+        answerText = '📷 사진 선택 완료';
+      } else {
+        answerText = answer.values.join(', ');
+      }
     } else {
       answerText = answer.toString();
     }
@@ -629,6 +674,13 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         chatNotifier.addCharacterMessage(nextQuestion);
         _scrollToBottom();
       }
+    });
+  }
+
+  /// 관상 분석 플로우 완료 핸들러
+  void _handleFaceReadingComplete(String imagePath) {
+    _handleSurveyAnswer({
+      'imagePath': imagePath,
     });
   }
 
@@ -864,6 +916,14 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       case SurveyInputType.textWithSkip:
         return _buildTextInput(step);
 
+      case SurveyInputType.calendar:
+        return _buildCalendarInput(step);
+
+      case SurveyInputType.faceReading:
+        return ChatFaceReadingFlow(
+          onComplete: _handleFaceReadingComplete,
+        );
+
       default:
         // 기타 복잡한 입력은 chips로 대체하거나 스킵
         if (options.isNotEmpty) {
@@ -972,6 +1032,48 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
             child: Text(context.l10n.none),
           ),
       ],
+    );
+  }
+
+  /// 캘린더 입력 위젯 (날짜별 운세용)
+  Widget _buildCalendarInput(SurveyStep step) {
+    final calendarService = UnifiedCalendarService();
+    final isCalendarSynced = calendarService.isGoogleConnected;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.sm),
+      child: ChatInlineCalendar(
+        hintText: step.question,
+        initialDate: DateTime.now(),
+        firstDate: DateTime.now().subtract(const Duration(days: 30)),
+        lastDate: DateTime.now().add(const Duration(days: 365)),
+        showQuickOptions: true,
+        showEventsAfterSelection: true,
+        isCalendarSynced: isCalendarSynced,
+        onLoadEvents: (date) async {
+          return await calendarService.getEventsForDate(date);
+        },
+        onDateSelected: (date) {
+          // 단순 날짜 선택만 (이벤트 표시 전)
+        },
+        onDateConfirmed: (date, events) {
+          // 날짜 + 이벤트 선택 완료
+          _handleSurveyAnswer({
+            'date': date.toIso8601String(),
+            'selectedDate':
+                '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}',
+            'events': events
+                .map((e) => {
+                      'title': e.title,
+                      'startTime': e.startTime?.toIso8601String(),
+                      'isAllDay': e.isAllDay,
+                      'location': e.location,
+                    })
+                .toList(),
+            'eventCount': events.length,
+          });
+        },
+      ),
     );
   }
 

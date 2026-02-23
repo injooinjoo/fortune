@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -1300,12 +1302,11 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
   /// 사주 결과 비주얼 카드 메시지 추가 (구조화 데이터 포함)
   void addSajuResultMessage(Map<String, dynamic> sajuData) {
-    final formatted = _formatValueForContext(sajuData).trim();
-    final fallbackText = formatted.isEmpty ? '사주 분석 결과' : formatted;
     final message = CharacterChatMessage.character(
-      fallbackText,
+      '사주 분석 결과',
       _characterId,
       origin: MessageOrigin.aiReply,
+      sajuData: sajuData,
     );
     final isCurrentChatActive = _isCurrentChatActive();
     final nextUnreadCount =
@@ -2202,6 +2203,28 @@ $emojiInstruction
 ''';
       }
 
+      // 🆕 새해 운세 전용 시스템 지시문
+      if (fortuneType == 'new-year') {
+        fortuneSystemInstruction += '''
+
+[새해 운세 응답 구조]
+반드시 아래 순서로 섹션을 나누어 "---" 구분자와 함께 응답하세요:
+
+1. 🎊 인사말 + 종합 점수 (greeting, overallScore)
+---
+2. 🎯 새해 목표 운세 (goalFortune - 목표별 예측, 좋은 시기, 행동 지침)
+---
+3. ✨ 사주 오행 분석 (sajuAnalysis - 오행 궁합, 기운 조언)
+---
+4. 🍀 행운 요소 (luckyItems - 색상, 숫자, 방향, 아이템)
+---
+5. 💪 추천 사항 & 행동 계획 (recommendations, actionPlan)
+
+각 섹션은 데이터를 친근하게 풀어서 설명해주세요.
+월별 하이라이트(monthlyHighlights)는 필요시 관련 섹션에 자연스럽게 녹여주세요.
+''';
+      }
+
       // 운세 데이터를 유저 메시지에 직접 포함 (LLM이 가장 주목하는 위치)
       final fortuneUserMessage = '''
 $requestMessage
@@ -2395,6 +2418,28 @@ $emojiInstruction
 ''';
       }
 
+      // 🆕 새해 운세 전용 시스템 지시문
+      if (fortuneType == 'new-year') {
+        fortuneSystemInstruction += '''
+
+[새해 운세 응답 구조]
+반드시 아래 순서로 섹션을 나누어 "---" 구분자와 함께 응답하세요:
+
+1. 🎊 인사말 + 종합 점수 (greeting, overallScore)
+---
+2. 🎯 새해 목표 운세 (goalFortune - 목표별 예측, 좋은 시기, 행동 지침)
+---
+3. ✨ 사주 오행 분석 (sajuAnalysis - 오행 궁합, 기운 조언)
+---
+4. 🍀 행운 요소 (luckyItems - 색상, 숫자, 방향, 아이템)
+---
+5. 💪 추천 사항 & 행동 계획 (recommendations, actionPlan)
+
+각 섹션은 데이터를 친근하게 풀어서 설명해주세요.
+월별 하이라이트(monthlyHighlights)는 필요시 관련 섹션에 자연스럽게 녹여주세요.
+''';
+      }
+
       // 운세 데이터를 유저 메시지에 직접 포함 (LLM이 가장 주목하는 위치)
       final fortuneUserMessage = '''
 $requestMessage
@@ -2475,6 +2520,11 @@ $enrichedContext
       final key = entry.key;
       final value = entry.value;
 
+      if (_isImageAnswerEntry(key, value)) {
+        buffer.writeln('  - $key: 사진 업로드 완료');
+        continue;
+      }
+
       // 값 형식에 따라 처리
       String formattedValue;
       if (value is List) {
@@ -2489,6 +2539,78 @@ $enrichedContext
       buffer.writeln('  - $key: $formattedValue');
     }
     return buffer.toString();
+  }
+
+  bool _isImageAnswerEntry(String key, dynamic value) {
+    final lowerKey = key.toLowerCase();
+    if (lowerKey == 'photo' || lowerKey == 'imagepath' || lowerKey == 'image') {
+      return true;
+    }
+
+    if (value is Map<String, dynamic>) {
+      return value.containsKey('imagePath') || value.containsKey('image');
+    }
+
+    if (value is Map) {
+      return value.containsKey('imagePath') || value.containsKey('image');
+    }
+
+    return false;
+  }
+
+  Future<Map<String, dynamic>> _normalizeSurveyAnswersForApi(
+    String apiFortuneType,
+    Map<String, dynamic> answers,
+  ) async {
+    final normalizedAnswers = Map<String, dynamic>.from(answers);
+
+    if (apiFortuneType != 'face-reading') {
+      return normalizedAnswers;
+    }
+
+    final photoData = normalizedAnswers['photo'];
+    String? imagePath;
+
+    if (photoData is Map<String, dynamic>) {
+      imagePath = photoData['imagePath'] as String?;
+    } else if (photoData is Map) {
+      final rawPath = photoData['imagePath'];
+      if (rawPath is String) {
+        imagePath = rawPath;
+      }
+    }
+
+    if (imagePath == null || imagePath.isEmpty) {
+      throw Exception('Face AI 분석용 사진이 없어요. 사진을 다시 올려주세요.');
+    }
+
+    final imageFile = File(imagePath);
+    if (!await imageFile.exists()) {
+      Logger.warning('[CharacterChat] Face-reading image file missing', {
+        'fortuneType': apiFortuneType,
+      });
+      throw Exception('선택한 사진 파일을 찾을 수 없어요. 다시 업로드해주세요.');
+    }
+
+    try {
+      final imageBytes = await imageFile.readAsBytes();
+      if (imageBytes.isEmpty) {
+        throw Exception('사진 파일이 비어 있어요. 다른 사진으로 다시 시도해주세요.');
+      }
+
+      normalizedAnswers
+        ..remove('photo')
+        ..remove('imagePath')
+        ..['image'] = base64Encode(imageBytes);
+    } on Exception {
+      rethrow;
+    } catch (error) {
+      Logger.error(
+          '[CharacterChat] Face-reading image conversion failed', error);
+      throw Exception('사진 처리 중 오류가 발생했어요. 다시 업로드해주세요.');
+    }
+
+    return normalizedAnswers;
   }
 
   Future<String> _resolveFortuneUserId() async {
@@ -2635,10 +2757,12 @@ $enrichedContext
       fortuneType,
       answers: answers,
     );
+    final normalizedAnswers =
+        await _normalizeSurveyAnswersForApi(apiFortuneType, answers);
 
     // 사용자 프로필 정보 추가
     final params = <String, dynamic>{
-      ...answers,
+      ...normalizedAnswers,
       if (userProfile != null) ...userProfile,
     };
 
@@ -2652,7 +2776,7 @@ $enrichedContext
 
     final conditions = CharacterChatFortuneConditions(
       fortuneType: apiFortuneType,
-      answers: answers,
+      answers: normalizedAnswers,
       userProfileMergedParams: params,
     );
 
