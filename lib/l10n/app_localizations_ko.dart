@@ -180,10 +180,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get categorySpecial => '특별 기능';
 
   @override
-  String get fortuneDaily => '오늘의 인사이트';
+  String get fortuneDaily => '오늘의 운세';
 
   @override
-  String get fortuneToday => '오늘의 인사이트';
+  String get fortuneToday => '오늘의 운세';
 
   @override
   String get fortuneTomorrow => '내일의 인사이트';
@@ -635,7 +635,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get explorationActivity => '탐구 활동';
 
   @override
-  String get todayInsight => '오늘의 인사이트';
+  String get todayInsight => '오늘의 운세';
 
   @override
   String get scorePoint => '점';

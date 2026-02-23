@@ -209,10 +209,10 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                   _buildPlanCard(
                     id: 'pro',
                     title: 'Pro 구독',
-                    price: '₩4,500',
+                    price: '₩3,300',
                     period: '/ 월',
                     badge: null,
-                    subtitle: '매월 30,000 토큰',
+                    subtitle: '매월 3,000 토큰',
                   ),
 
                   const SizedBox(height: DSSpacing.md),
@@ -221,10 +221,10 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                   _buildPlanCard(
                     id: 'max',
                     title: 'Max 구독',
-                    price: '₩12,900',
+                    price: '₩13,000',
                     period: '/ 월',
                     badge: '인기',
-                    subtitle: '매월 100,000 토큰',
+                    subtitle: '매월 12,600 토큰',
                   ),
 
                   const SizedBox(height: DSSpacing.xl),
@@ -268,7 +268,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
                       _buildFeatureItem(
                         icon: Icons.all_inclusive,
                         title: '월간 토큰',
-                        subtitle: 'Pro: 30,000개 / Max: 100,000개 매월 지급',
+                        subtitle: 'Pro: 3,000개 / Max: 12,600개 매월 지급',
                       ),
                       _buildFeatureItem(
                         icon: Icons.star,
@@ -287,18 +287,35 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
 
                 const SizedBox(height: DSSpacing.xxl),
 
-                // Terms
+                // Apple 필수 구독 정보 (Guideline 3.1.2)
+                Container(
+                  padding: const EdgeInsets.all(DSSpacing.md),
+                  decoration: BoxDecoration(
+                    color: colors.backgroundSecondary,
+                    borderRadius: BorderRadius.circular(DSRadius.sm),
+                    border: Border.all(
+                      color: colors.border,
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    '• 결제는 구매 확인 시 Apple ID 계정으로 청구됩니다\n'
+                    '• 현재 기간 종료 최소 24시간 전에 자동 갱신을 해제하지 않으면 구독이 자동으로 갱신됩니다\n'
+                    '• 갱신 요금은 현재 기간 종료 24시간 이내에 청구됩니다 (Pro: ₩3,300/월, Max: ₩13,000/월)\n'
+                    '• 구독은 구매 후 설정 > [사용자 이름] > 구독에서 관리하고 자동 갱신을 해제할 수 있습니다',
+                    style: context.labelSmall.copyWith(
+                      color: colors.textSecondary,
+                      height: 1.6,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: DSSpacing.lg),
+
+                // Terms Links
                 Center(
                   child: Column(
                     children: [
-                      Text(
-                        '구독은 언제든 해지 가능합니다\n자동 갱신되며 해지 전까지 요금이 청구됩니다',
-                        textAlign: TextAlign.center,
-                        style: context.labelSmall.copyWith(
-                          color: colors.textSecondary,
-                        ),
-                      ),
-                      const SizedBox(height: DSSpacing.sm),
                       Wrap(
                         alignment: WrapAlignment.center,
                         crossAxisAlignment: WrapCrossAlignment.center,

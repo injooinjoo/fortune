@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/extensions/l10n_extension.dart';
 import '../../domain/models/recommendation_chip.dart';
 
 /// 운세 추천 칩 그리드
@@ -205,7 +206,7 @@ class _FortuneChipGridState extends State<FortuneChipGrid>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    chip.label,
+                    chip.getLocalizedLabel(context),
                     style: typography.labelMedium.copyWith(
                       color: colors.textPrimary,
                       fontWeight: FontWeight.w600,
@@ -214,7 +215,7 @@ class _FortuneChipGridState extends State<FortuneChipGrid>
                   if (chip.subtitle != null) ...[
                     const SizedBox(height: 2),
                     Text(
-                      chip.subtitle!,
+                      chip.getLocalizedSubtitle(context) ?? '',
                       style: typography.bodySmall.copyWith(
                         color: colors.textSecondary,
                       ),
@@ -274,7 +275,7 @@ class _FortuneChipGridState extends State<FortuneChipGrid>
                 borderRadius: BorderRadius.circular(DSRadius.md),
               ),
               child: Text(
-                '더보기',
+                context.l10n.chipViewMore,
                 style: typography.labelMedium.copyWith(
                   color: colors.textSecondary,
                   fontWeight: FontWeight.w500,

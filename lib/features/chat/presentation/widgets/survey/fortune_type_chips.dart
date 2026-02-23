@@ -130,7 +130,7 @@ class _FortuneTypeChip extends StatelessWidget {
       case FortuneSurveyType.talent:
         return '적성 찾기';
       case FortuneSurveyType.daily:
-        return '오늘의 인사이트';
+        return '오늘의 운세';
       case FortuneSurveyType.tarot:
         return '타로';
       case FortuneSurveyType.mbti:

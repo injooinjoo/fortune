@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -92,16 +94,18 @@ class SocialLoginBottomSheet {
                                 : () => handleSocialTap(onGoogleLogin),
                             type: 'google',
                             colors: colors),
-                        const SizedBox(height: 12),
 
-                        // Apple Login
-                        _buildSocialButton(
-                            context: context,
-                            onPressed: isButtonDisabled
-                                ? null
-                                : () => handleSocialTap(onAppleLogin),
-                            type: 'apple',
-                            colors: colors),
+                        // Apple Login - iOS/Web only (Android OAuth 미지원)
+                        if (!Platform.isAndroid) ...[
+                          const SizedBox(height: 12),
+                          _buildSocialButton(
+                              context: context,
+                              onPressed: isButtonDisabled
+                                  ? null
+                                  : () => handleSocialTap(onAppleLogin),
+                              type: 'apple',
+                              colors: colors),
+                        ],
 
                         // Safe area bottom padding
                         SizedBox(

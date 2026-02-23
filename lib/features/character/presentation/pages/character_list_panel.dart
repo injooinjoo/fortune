@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/l10n_extension.dart';
-import '../../../../core/theme/typography_unified.dart';
 import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../../data/services/character_localizer.dart';
@@ -12,6 +11,23 @@ import '../utils/character_accent_palette.dart';
 import '../providers/character_chat_provider.dart';
 import '../providers/character_provider.dart';
 import '../widgets/wave_typing_indicator.dart';
+
+/// 카테고리 영문 → 한글 라벨 변환
+String _specialtyCategoryLabel(String category) {
+  const labels = {
+    'lifestyle': '라이프',
+    'traditional': '전통',
+    'zodiac': '별자리',
+    'personality': '심리',
+    'love': '연애',
+    'career': '재물',
+    'lucky': '행운',
+    'sports': '스포츠',
+    'fengshui': '풍수',
+    'special': '타로',
+  };
+  return labels[category] ?? category;
+}
 
 /// DM 목록 패널 (인스타그램 DM 스타일)
 class CharacterListPanel extends ConsumerWidget {
@@ -176,15 +192,14 @@ class _CharacterTabBar extends StatelessWidget {
             onTap: () => onTabChanged(CharacterListTab.story),
             isDark: isDark,
           ),
-          // TODO: 임시 비활성화 - 앱스토어 심사 후 복원
-          // const SizedBox(width: 8),
-          // _TabButton(
-          //   label: context.l10n.viewFortune,
-          //   icon: Icons.auto_awesome,
-          //   isSelected: currentTab == CharacterListTab.fortune,
-          //   onTap: () => onTabChanged(CharacterListTab.fortune),
-          //   isDark: isDark,
-          // ),
+          const SizedBox(width: 8),
+          _TabButton(
+            label: context.l10n.viewFortune,
+            icon: Icons.auto_awesome,
+            isSelected: currentTab == CharacterListTab.fortune,
+            onTap: () => onTabChanged(CharacterListTab.fortune),
+            isDark: isDark,
+          ),
         ],
       ),
     );
@@ -365,10 +380,13 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
         .map((t) => '#$t')
         .join(' ');
 
-    // 마지막 메시지가 캐릭터인지 확인 (내가 보낸 게 마지막이면 뱃지 안 보임)
+    // 마지막 메시지가 캐릭터인지 확인
     final isLastMessageFromCharacter = chatState.messages.isNotEmpty &&
         chatState.messages.last.type == CharacterChatMessageType.character;
-    final showUnreadBadge = unreadCount > 0 && isLastMessageFromCharacter;
+    // 읽지 않은 메시지 (빨간 점)
+    final hasUnread = unreadCount > 0 && isLastMessageFromCharacter;
+    // 내 차례 (읽었든 안읽었든, 캐릭터가 마지막이면 표시)
+    final isMyTurn = hasConversation && isLastMessageFromCharacter;
 
     return GestureDetector(
       onHorizontalDragUpdate: _handleDragUpdate,
@@ -513,28 +531,21 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                     const Center(child: MiniTypingIndicator()),
                               ),
                             ),
-                          // 운세 전문가 배지
-                          if (widget.character.isFortuneExpert)
+                          // 읽지 않은 메시지 빨간 점
+                          if (hasUnread && !isTyping)
                             Positioned(
-                              left: 0,
-                              bottom: 0,
+                              right: 0,
+                              top: 0,
                               child: Container(
-                                width: 18,
-                                height: 18,
+                                width: 10,
+                                height: 10,
                                 decoration: BoxDecoration(
-                                  color: accentPalette.accent,
+                                  color: Colors.red,
                                   shape: BoxShape.circle,
                                   border: Border.all(
                                     color: Theme.of(context)
                                         .scaffoldBackgroundColor,
-                                    width: 2,
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Icon(
-                                    Icons.auto_awesome,
-                                    size: 10,
-                                    color: accentPalette.onAccent,
+                                    width: 1.5,
                                   ),
                                 ),
                               ),
@@ -557,7 +568,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                       context, widget.character.id),
                                   style: TextStyle(
                                     fontSize: 17,
-                                    fontWeight: showUnreadBadge
+                                    fontWeight: hasUnread
                                         ? FontWeight.bold
                                         : FontWeight.w600,
                                     color: Theme.of(context)
@@ -577,17 +588,22 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 6, vertical: 2),
                                   decoration: BoxDecoration(
-                                    color: accentPalette.softBackground,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .surfaceContainerHighest
+                                        .withValues(alpha: 0.7),
                                     borderRadius: BorderRadius.circular(4),
-                                    border: Border.all(
-                                      color: accentPalette.softBorder,
-                                    ),
                                   ),
                                   child: Text(
-                                    widget.character.specialtyCategory!,
-                                    style: context.labelTiny.copyWith(
-                                      color: accentPalette.accent,
-                                      fontWeight: FontWeight.w600,
+                                    _specialtyCategoryLabel(
+                                        widget.character.specialtyCategory!),
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w500,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface
+                                          .withValues(alpha: 0.6),
                                     ),
                                   ),
                                 ),
@@ -622,11 +638,17 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                         context, widget.character.id)),
                             style: TextStyle(
                               fontSize: 14,
-                              fontWeight:
-                                  isTyping ? FontWeight.w500 : FontWeight.w400,
+                              fontWeight: isTyping || hasUnread
+                                  ? FontWeight.w500
+                                  : FontWeight.w400,
                               color: isTyping
                                   ? accentPalette.accent
-                                  : Theme.of(context).colorScheme.onSurface,
+                                  : hasUnread
+                                      ? Theme.of(context).colorScheme.onSurface
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .onSurface
+                                          .withValues(alpha: 0.6),
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -635,7 +657,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                       ),
                     ),
                     const SizedBox(width: 8),
-                    // 타임스탬프 + 읽지 않은 메시지 배지
+                    // 타임스탬프 + 내 차례 표시
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -646,37 +668,43 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                             _formatTimestamp(chatState.lastMessageTime!),
                             style: TextStyle(
                               fontSize: 12,
-                              fontWeight: showUnreadBadge
-                                  ? FontWeight.w600
-                                  : FontWeight.w400,
-                              color: showUnreadBadge
-                                  ? Colors.red
-                                  : Theme.of(context).colorScheme.onSurface,
+                              fontWeight: FontWeight.w400,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.45),
                             ),
                           ),
                         if (!hasConversation)
                           Text(
                             context.l10n.newConversation,
                             style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w500,
-                              color: Theme.of(context).colorScheme.onSurface,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.45),
                             ),
                           ),
-                        if (showUnreadBadge) ...[
-                          const SizedBox(height: 4),
+                        if (isMyTurn) ...[
+                          const SizedBox(height: 6),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
+                                horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(12),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
-                              unreadCount > 99 ? '99+' : '$unreadCount',
-                              style: context.labelSmall.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
+                              context.l10n.yourTurn,
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                             ),
                           ),

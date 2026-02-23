@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 /// Fortune type definitions (Entertainment-focused terminology)
 enum FortuneType {
   // Daily Insights
-  daily('daily', '오늘의 인사이트'),
+  daily('daily', '오늘의 운세'),
   today('today', '오늘의 메시지'),
   tomorrow('tomorrow', '내일의 인사이트'),
   hourly('hourly', '시간별 가이드'),
@@ -165,7 +165,7 @@ class FortuneMetadataRepository {
     // Daily Insights
     FortuneType.daily: const FortuneMetadata(
         type: FortuneType.daily,
-        title: '오늘의 인사이트',
+        title: '오늘의 운세',
         subtitle: '오늘 하루의 전체적인 가이드를 확인하세요',
         icon: Icons.today,
         primaryColor: Color(0xFF4A90E2),

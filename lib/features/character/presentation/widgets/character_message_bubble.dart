@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../shared/widgets/smart_image.dart';
 import 'package:fortune/core/utils/haptic_utils.dart';
+import '../../../chat/presentation/widgets/chat_saju_result_card.dart';
 import '../../domain/models/ai_character.dart';
 import '../../domain/models/character_chat_message.dart';
 import '../utils/character_accent_palette.dart';
@@ -16,11 +17,13 @@ import 'affinity_change_indicator.dart';
 class CharacterMessageBubble extends StatelessWidget {
   final CharacterChatMessage message;
   final AiCharacter character;
+  final bool showAvatar;
 
   const CharacterMessageBubble({
     super.key,
     required this.message,
     required this.character,
+    this.showAvatar = true,
   });
 
   @override
@@ -103,32 +106,35 @@ class CharacterMessageBubble extends StatelessWidget {
       brightness: Theme.of(context).brightness,
     );
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: EdgeInsets.symmetric(vertical: showAvatar ? 4 : 2),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          GestureDetector(
-            onTap: () {
-              HapticUtils.lightImpact();
-              context.push('/character/${character.id}', extra: character);
-            },
-            child: CircleAvatar(
-              radius: 16,
-              backgroundColor: accentPalette.accent,
-              backgroundImage: character.avatarAsset.isNotEmpty
-                  ? AssetImage(character.avatarAsset)
-                  : null,
-              child: character.avatarAsset.isEmpty
-                  ? Text(
-                      character.initial,
-                      style: context.labelMedium.copyWith(
-                        color: accentPalette.onAccent,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )
-                  : null,
-            ),
-          ),
+          if (showAvatar)
+            GestureDetector(
+              onTap: () {
+                HapticUtils.lightImpact();
+                context.push('/character/${character.id}', extra: character);
+              },
+              child: CircleAvatar(
+                radius: 16,
+                backgroundColor: accentPalette.accent,
+                backgroundImage: character.avatarAsset.isNotEmpty
+                    ? AssetImage(character.avatarAsset)
+                    : null,
+                child: character.avatarAsset.isEmpty
+                    ? Text(
+                        character.initial,
+                        style: context.labelMedium.copyWith(
+                          color: accentPalette.onAccent,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    : null,
+              ),
+            )
+          else
+            const SizedBox(width: 32), // 아바타와 동일 크기 (radius 16 * 2)
           const SizedBox(width: 12),
           Flexible(
             child: Column(
@@ -136,8 +142,11 @@ class CharacterMessageBubble extends StatelessWidget {
               children: [
                 // 이미지가 있으면 먼저 표시 (점심 사진 등)
                 if (message.hasImage) _buildImageBubble(context, colors),
+                // 사주 결과 비주얼 카드 (구조화 데이터가 있으면 카드로 렌더링)
+                if (message.hasSajuData)
+                  ChatSajuResultCard(sajuData: message.sajuData!)
                 // 텍스트 버블
-                if (message.text.isNotEmpty)
+                else if (message.text.isNotEmpty)
                   Stack(
                     clipBehavior: Clip.none,
                     children: [

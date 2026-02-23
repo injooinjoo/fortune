@@ -260,7 +260,7 @@ const List<FortuneCategory> _defaultCategories = [
     icon: Icons.psychology_rounded,
     iconAsset: 'assets/icons/fortune/mbti.webp',
     gradientColors: [DSColors.accentSecondary, Color(0xFF5B21B6)],
-    description: 'MBTI 성격별 오늘의 인사이트',
+    description: 'MBTI 성격별 오늘의 운세',
     category: 'lifestyle',
     isNew: true,
   ),

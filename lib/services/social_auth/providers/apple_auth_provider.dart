@@ -101,53 +101,43 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
       return _handleAppleError(e);
     } catch (error) {
       Logger.warning(
-          '[AppleAuthProvider] 네이티브 Apple 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
+          '[AppleAuthProvider] Native Apple 로그인 실패, OAuth fallback 시도: $error');
 
-      if (error.toString().contains('not available') ||
-          error.toString().contains('simulator')) {
-        throw Exception('Apple 로그인은 실제 기기에서만 사용 가능합니다.');
+      // 사용자 취소인 경우에만 rethrow
+      final errorString = error.toString().toLowerCase();
+      if (errorString.contains('cancel') || errorString.contains('cancelled')) {
+        rethrow;
       }
-      rethrow;
+
+      // iPad/Mac Catalyst 환경 또는 기타 실패 시 OAuth로 자동 fallback
+      // return null을 반환하면 signIn()에서 OAuth fallback 트리거
+      Logger.info('[AppleAuthProvider] OAuth fallback 활성화 (iPad/기타 환경 지원)');
+      return null;
     }
   }
 
+  /// Apple Sign-In 에러 처리
+  /// - canceled: 사용자 취소 → null 반환 (로그인 중단)
+  /// - 기타 에러: null 반환 (OAuth fallback 트리거)
   AuthResponse? _handleAppleError(SignInWithAppleAuthorizationException e) {
     if (e.code == AuthorizationErrorCode.canceled) {
       Logger.info('User canceled Apple Sign-In');
-      return null;
-    } else if (e.code == AuthorizationErrorCode.failed) {
-      Logger.warning(
-          '[AppleAuthProvider] Apple 로그인 인증 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $e');
-      throw Exception('Apple 로그인 인증에 실패했습니다. 다시 시도해주세요.');
-    } else if (e.code == AuthorizationErrorCode.invalidResponse) {
-      Logger.warning(
-          '[AppleAuthProvider] Apple 로그인 응답 오류 (선택적 기능, 다른 로그인 방법 사용 권장): $e');
-      throw Exception('Apple 서버 응답 오류가 발생했습니다.');
-    } else if (e.code == AuthorizationErrorCode.notHandled) {
-      Logger.warning(
-          '[AppleAuthProvider] Apple 로그인 처리 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $e');
-      throw Exception('Apple 로그인을 처리할 수 없습니다.');
-    } else if (e.code == AuthorizationErrorCode.unknown) {
-      Logger.warning(
-          '[AppleAuthProvider] Apple 로그인 알 수 없는 오류 (선택적 기능, 다른 로그인 방법 사용 권장): ${e.code}');
-      Logger.warning(
-          '[AppleAuthProvider] Apple 로그인 에러 메시지 (선택적 기능, 다른 로그인 방법 사용 권장): ${e.message}');
-
-      if (e.message.contains('1000') || e.toString().contains('1000')) {
-        Logger.warning(
-            '[AppleAuthProvider] Apple 로그인 오류 1000 발생 (선택적 기능, 설정 확인 필요): 설정 문제 감지됨');
-        throw Exception('Apple ID 설정을 확인해주세요');
-      }
-
-      if (e.message.isNotEmpty) {
-        throw Exception('Apple 로그인 오류: ${e.message}');
-      }
-      throw Exception('알 수 없는 오류가 발생했습니다. (${e.code})');
-    } else {
-      Logger.warning(
-          '[AppleAuthProvider] Apple 로그인 오류 (선택적 기능, 다른 로그인 방법 사용 권장): $e');
-      throw Exception('Apple 로그인 중 오류가 발생했습니다.');
+      // 사용자 취소는 조용히 처리 (OAuth fallback 없음)
+      throw Exception('사용자가 Apple 로그인을 취소했습니다.');
     }
+
+    // 나머지 모든 에러는 OAuth fallback 트리거
+    Logger.warning(
+        '[AppleAuthProvider] Native Apple Sign-In 실패, OAuth fallback 시도: ${e.code} - ${e.message}');
+
+    if (e.code == AuthorizationErrorCode.unknown &&
+        (e.message.contains('1000') || e.toString().contains('1000'))) {
+      Logger.info(
+          '[AppleAuthProvider] Error 1000 감지 - iPad/Catalyst 환경일 수 있음, OAuth로 전환');
+    }
+
+    // null 반환 → signIn()에서 OAuth fallback 실행
+    return null;
   }
 
   Future<AuthResponse?> _signInWithAppleOAuth() async {

@@ -4,6 +4,7 @@ import '../../../../core/design_system/design_system.dart';
 import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../domain/models/character_choice.dart';
 import '../../domain/models/ai_character.dart';
+import '../utils/character_accent_palette.dart';
 
 /// 캐릭터 대화 중 선택지 표시 위젯
 class CharacterChoiceWidget extends StatefulWidget {
@@ -102,6 +103,10 @@ class _CharacterChoiceWidgetState extends State<CharacterChoiceWidget>
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark ? DSColors.surfaceDark : Colors.grey[100];
+    final accentPalette = CharacterAccentPalette.from(
+      source: widget.character.accentColor,
+      brightness: Theme.of(context).brightness,
+    );
 
     return FadeTransition(
       opacity: _fadeAnimation,
@@ -112,7 +117,7 @@ class _CharacterChoiceWidgetState extends State<CharacterChoiceWidget>
           color: bgColor,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: widget.character.accentColor.withValues(alpha: 0.3),
+            color: accentPalette.softBorder,
             width: 1.5,
           ),
         ),
@@ -158,6 +163,10 @@ class _CharacterChoiceWidgetState extends State<CharacterChoiceWidget>
   Widget _buildTimerIndicator(BuildContext context) {
     final progress = _remainingSeconds / widget.choiceSet.timeoutSeconds!;
     final isUrgent = _remainingSeconds <= 3;
+    final accentPalette = CharacterAccentPalette.from(
+      source: widget.character.accentColor,
+      brightness: Theme.of(context).brightness,
+    );
 
     return Row(
       children: [
@@ -174,7 +183,7 @@ class _CharacterChoiceWidgetState extends State<CharacterChoiceWidget>
               value: progress,
               backgroundColor: Colors.grey[300],
               valueColor: AlwaysStoppedAnimation<Color>(
-                isUrgent ? Colors.red : widget.character.accentColor,
+                isUrgent ? Colors.red : accentPalette.accent,
               ),
               minHeight: 4,
             ),
@@ -194,6 +203,10 @@ class _CharacterChoiceWidgetState extends State<CharacterChoiceWidget>
 
   Widget _buildChoiceButton(BuildContext context, CharacterChoice choice) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accentPalette = CharacterAccentPalette.from(
+      source: widget.character.accentColor,
+      brightness: Theme.of(context).brightness,
+    );
 
     // 선택지 타입에 따른 색상
     Color buttonColor;
@@ -201,8 +214,8 @@ class _CharacterChoiceWidgetState extends State<CharacterChoiceWidget>
 
     switch (choice.type) {
       case ChoiceType.positive:
-        buttonColor = widget.character.accentColor;
-        textColor = DSColors.accent;
+        buttonColor = accentPalette.accent;
+        textColor = accentPalette.onAccent;
       case ChoiceType.negative:
         buttonColor = isDark ? DSColors.surfaceDark : Colors.grey[200]!;
         textColor = isDark ? Colors.grey[400]! : Colors.grey[600]!;

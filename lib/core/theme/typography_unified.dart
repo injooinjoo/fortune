@@ -105,7 +105,7 @@ class TypographyUnified {
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.displayLargeScaled,
         height: 1.22,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         letterSpacing: -0.2,
       );
 
@@ -114,7 +114,7 @@ class TypographyUnified {
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.displayMediumScaled,
         height: 1.24,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         letterSpacing: -0.2,
       );
 
@@ -123,7 +123,7 @@ class TypographyUnified {
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.displaySmallScaled,
         height: 1.28,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         letterSpacing: -0.15,
       );
 
@@ -136,7 +136,7 @@ class TypographyUnified {
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.heading1Scaled,
         height: 1.32,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         letterSpacing: -0.1,
       );
 
@@ -145,7 +145,7 @@ class TypographyUnified {
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.heading2Scaled,
         height: 1.34,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         letterSpacing: -0.05,
       );
 
@@ -154,7 +154,7 @@ class TypographyUnified {
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.heading3Scaled,
         height: 1.4,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         letterSpacing: 0,
       );
 
@@ -163,7 +163,7 @@ class TypographyUnified {
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.heading4Scaled,
         height: 1.42,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         letterSpacing: 0,
       );
 
@@ -176,7 +176,7 @@ class TypographyUnified {
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.bodyLargeScaled,
         height: 1.58,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
         letterSpacing: 0,
       );
 
@@ -185,7 +185,7 @@ class TypographyUnified {
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.bodyMediumScaled,
         height: 1.56,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
         letterSpacing: 0,
       );
 
@@ -194,7 +194,7 @@ class TypographyUnified {
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.bodySmallScaled,
         height: 1.5,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
         letterSpacing: 0,
       );
 
@@ -207,7 +207,7 @@ class TypographyUnified {
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.labelLargeScaled,
         height: 1.45,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
         letterSpacing: 0,
       );
 
@@ -216,7 +216,7 @@ class TypographyUnified {
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.labelMediumScaled,
         height: 1.4,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
         letterSpacing: 0,
       );
 
@@ -225,7 +225,7 @@ class TypographyUnified {
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.labelSmallScaled,
         height: 1.35,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
         letterSpacing: 0,
       );
 
@@ -234,7 +234,7 @@ class TypographyUnified {
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.labelTinyScaled,
         height: 1.32,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
         letterSpacing: 0,
       );
 
@@ -247,7 +247,7 @@ class TypographyUnified {
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.buttonLargeScaled,
         height: 1.5,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         letterSpacing: 0,
       );
 
@@ -256,7 +256,7 @@ class TypographyUnified {
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.buttonMediumScaled,
         height: 1.5,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         letterSpacing: 0,
       );
 
@@ -265,7 +265,7 @@ class TypographyUnified {
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.buttonSmallScaled,
         height: 1.45,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         letterSpacing: 0,
       );
 
@@ -274,7 +274,7 @@ class TypographyUnified {
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.buttonTinyScaled,
         height: 1.4,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
         letterSpacing: 0,
       );
 
@@ -317,7 +317,7 @@ class TypographyUnified {
         fontFamily: fontFamilyNumber,
         fontSize: FontSizeSystem.numberSmallScaled,
         height: 1.4,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
         letterSpacing: 0,
         fontFeatures: const [FontFeature.tabularFigures()],
       );

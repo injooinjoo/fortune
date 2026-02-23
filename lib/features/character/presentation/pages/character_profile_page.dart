@@ -306,6 +306,9 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
       child: ElevatedButton.icon(
         onPressed: () {
           HapticUtils.lightImpact();
+          ref
+              .read(characterChatProvider(_character.id).notifier)
+              .startConversation(_character.firstMessage);
           // 캐릭터 선택 provider 설정 → SwipeHomeShell이 감지하여 채팅 패널 열기
           ref.read(selectedCharacterProvider.notifier).state = _character;
           ref.read(chatModeProvider.notifier).state = ChatMode.character;

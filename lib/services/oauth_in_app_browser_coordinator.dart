@@ -24,7 +24,7 @@ class OAuthInAppBrowserCoordinator {
     _activeProvider = provider;
 
     _safetyResetTimer?.cancel();
-    _safetyResetTimer = Timer(const Duration(minutes: 2), () {
+    _safetyResetTimer = Timer(const Duration(minutes: 3), () {
       Logger.warning(
           '[OAuthBrowser] Safety timeout reached, clearing pending OAuth state (provider: $_activeProvider)');
       _clearState();
@@ -61,7 +61,7 @@ class OAuthInAppBrowserCoordinator {
   static Future<void> watchForSessionAndClose(
     SupabaseClient supabase, {
     required int flowId,
-    int maxAttempts = 80,
+    int maxAttempts = 120, // 30초 (iPad 네트워크 지연 대응)
     Duration interval = const Duration(milliseconds: 250),
   }) async {
     if (!_isOAuthInProgress) return;

@@ -69,7 +69,7 @@ class _ShareCardState extends ConsumerState<ShareCard> {
       await Share.shareXFiles(
         [XFile(file.path)],
         text: _getShareText(),
-        subject: '오늘의 인사이트',
+        subject: '오늘의 운세',
       );
     } catch (e) {
       _shareTextFallback();
@@ -82,7 +82,7 @@ class _ShareCardState extends ConsumerState<ShareCard> {
 
   String _getShareText() {
     return '''
-✨ 오늘의 인사이트
+✨ 오늘의 운세
 
 📊 오늘 점수: ${widget.score}점
 💬 ${widget.message}
@@ -94,7 +94,7 @@ class _ShareCardState extends ConsumerState<ShareCard> {
   }
 
   void _shareTextFallback() {
-    Share.share(_getShareText(), subject: '오늘의 인사이트');
+    Share.share(_getShareText(), subject: '오늘의 운세');
   }
 
   @override
@@ -112,7 +112,7 @@ class _ShareCardState extends ConsumerState<ShareCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '오늘의 인사이트 공유하기',
+                    '오늘의 운세 공유하기',
                     style: context.heading3.copyWith(
                       color: context.colors.textPrimary,
                     ),
@@ -316,7 +316,7 @@ class _TraditionalShareCardContent extends StatelessWidget {
       ),
       child: Center(
         child: Text(
-          '⊹ 오늘의 인사이트 ⊹',
+          '⊹ 오늘의 운세 ⊹',
           style: context.labelLarge.copyWith(
             color: Colors.white,
             fontWeight: FontWeight.w600,
@@ -332,7 +332,7 @@ class _TraditionalShareCardContent extends StatelessWidget {
         '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}';
     final displayName = userName != null && userName!.isNotEmpty
         ? '$userName님의 인사이트'
-        : '오늘의 인사이트';
+        : '오늘의 운세';
 
     return Text(
       '$dateStr  $displayName',

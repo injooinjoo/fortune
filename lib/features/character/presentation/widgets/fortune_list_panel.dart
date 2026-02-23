@@ -108,7 +108,7 @@ class _FortuneListItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    chip.label,
+                    chip.getLocalizedLabel(context),
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -116,7 +116,7 @@ class _FortuneListItem extends StatelessWidget {
                   if (chip.subtitle != null) ...[
                     const SizedBox(height: 2),
                     Text(
-                      chip.subtitle!,
+                      chip.getLocalizedSubtitle(context) ?? '',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Colors.grey[600],
                           ),

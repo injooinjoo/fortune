@@ -344,7 +344,7 @@ class FortuneResultCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 섹션 헤더 - 먹 세로선 스타일
-          _buildSectionHeader(context, '오늘의 인사이트', meokColor),
+          _buildSectionHeader(context, '오늘의 운세', meokColor),
           const SizedBox(height: DSSpacing.md),
           // 본문 - 먹색, 여유로운 줄간격
           Text(

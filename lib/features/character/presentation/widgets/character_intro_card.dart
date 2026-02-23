@@ -3,6 +3,7 @@ import '../../../../core/extensions/l10n_extension.dart';
 import '../../../../core/theme/typography_unified.dart';
 import '../../data/services/character_localizer.dart';
 import '../../domain/models/ai_character.dart';
+import '../utils/character_accent_palette.dart';
 
 /// 캐릭터 소개 카드 (첫 대화 시작 전)
 class CharacterIntroCard extends StatelessWidget {
@@ -17,6 +18,11 @@ class CharacterIntroCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final accentPalette = CharacterAccentPalette.from(
+      source: character.accentColor,
+      brightness: Theme.of(context).brightness,
+    );
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -25,11 +31,11 @@ class CharacterIntroCard extends StatelessWidget {
           // 아바타
           CircleAvatar(
             radius: 48,
-            backgroundColor: character.accentColor,
+            backgroundColor: accentPalette.accent,
             child: Text(
               character.initial,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: accentPalette.onAccent,
                 fontSize: 36,
                 fontWeight: FontWeight.bold,
               ),
@@ -54,13 +60,13 @@ class CharacterIntroCard extends StatelessWidget {
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: character.accentColor.withValues(alpha: 0.1),
+                  color: accentPalette.softBackground,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   '#$tag',
                   style: context.labelMedium.copyWith(
-                    color: character.accentColor,
+                    color: accentPalette.accent,
                   ),
                 ),
               );
@@ -83,14 +89,14 @@ class CharacterIntroCard extends StatelessWidget {
                     Icon(
                       Icons.auto_stories,
                       size: 18,
-                      color: character.accentColor,
+                      color: accentPalette.accent,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       context.l10n.worldview,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: character.accentColor,
+                        color: accentPalette.accent,
                       ),
                     ),
                   ],
@@ -122,14 +128,14 @@ class CharacterIntroCard extends StatelessWidget {
                     Icon(
                       Icons.person,
                       size: 18,
-                      color: character.accentColor,
+                      color: accentPalette.accent,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       context.l10n.characterLabel,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: character.accentColor,
+                        color: accentPalette.accent,
                       ),
                     ),
                   ],
@@ -162,8 +168,8 @@ class CharacterIntroCard extends StatelessWidget {
             child: ElevatedButton(
               onPressed: onStartConversation,
               style: ElevatedButton.styleFrom(
-                backgroundColor: character.accentColor,
-                foregroundColor: Colors.white,
+                backgroundColor: accentPalette.accent,
+                foregroundColor: accentPalette.onAccent,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),

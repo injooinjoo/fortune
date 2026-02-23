@@ -3,7 +3,7 @@ class FortuneEmotionalDescriptions {
     final descriptions = {
       'mbti': {
         'emotionalDescription':
-            'MBTI로 오늘의 인사이트를 알아봅니다. 같이 있을 상대(애인이나, 직장동료, 같은반 친구 등)와의 오늘 그리고 내일의 케미를 분석해드립니다. 관계와 소통, 성장과 웰빙 등 우리가 필요로 하는 인사이트를 제공합니다.',
+            'MBTI로 오늘의 운세를 알아봅니다. 같이 있을 상대(애인이나, 직장동료, 같은반 친구 등)와의 오늘 그리고 내일의 케미를 분석해드립니다. 관계와 소통, 성장과 웰빙 등 우리가 필요로 하는 인사이트를 제공합니다.',
         'inputLabel': 'MBTI',
         'inputHint': 'ENTJ',
         'inputType': 'dropdown',

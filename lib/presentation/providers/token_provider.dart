@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/entities/token.dart';
 import '../../data/models/user_profile.dart';
 import '../../data/services/token_api_service.dart';
@@ -92,9 +93,45 @@ class TokenState {
 class TokenNotifier extends StateNotifier<TokenState> {
   final TokenApiService _apiService;
   final Ref ref;
+  bool _isAuthSyncInProgress = false;
 
   TokenNotifier(this._apiService, this.ref) : super(const TokenState()) {
+    _setupAuthStateListener();
     _initializeTokenData();
+  }
+
+  void _setupAuthStateListener() {
+    ref.listen<AsyncValue<AuthState?>>(authStateProvider, (previous, next) {
+      next.whenData((authState) {
+        if (authState == null) return;
+        _handleAuthStateChanged(authState);
+      });
+    });
+  }
+
+  Future<void> _handleAuthStateChanged(AuthState authState) async {
+    final hasSession = authState.session?.user != null;
+
+    if (authState.event == AuthChangeEvent.signedOut || !hasSession) {
+      state = const TokenState();
+      return;
+    }
+
+    final shouldSyncTokenData = authState.event == AuthChangeEvent.signedIn ||
+        authState.event == AuthChangeEvent.initialSession ||
+        authState.event == AuthChangeEvent.tokenRefreshed;
+
+    if (!shouldSyncTokenData || _isAuthSyncInProgress || state.isLoading) {
+      return;
+    }
+
+    _isAuthSyncInProgress = true;
+    try {
+      ref.invalidate(userProvider);
+      await loadTokenData();
+    } finally {
+      _isAuthSyncInProgress = false;
+    }
   }
 
   Future<void> _initializeTokenData() async {

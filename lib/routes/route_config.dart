@@ -41,6 +41,9 @@ import '../screens/subscription/subscription_page.dart';
 // Import admin pages
 import '../features/admin/pages/celebrity_crawling_page.dart';
 
+// Import manseryeok page
+import '../features/fortune/presentation/pages/manseryeok_page.dart';
+
 // Import new tab pages
 import '../features/more/presentation/pages/fortune_tab_page.dart';
 import '../features/more/presentation/pages/more_page.dart';
@@ -275,6 +278,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           context,
           state,
           const PremiumScreen(),
+        ),
+      ),
+
+      // Manseryeok (만세력) full page route (outside shell)
+      GoRoute(
+        path: '/manseryeok',
+        name: 'manseryeok',
+        pageBuilder: (context, state) => PageTransitions.slideTransition(
+          context,
+          state,
+          const ManseryeokPage(),
         ),
       ),
 

@@ -383,7 +383,7 @@ class IntentDetector {
       case FortuneSurveyType.talent:
         return '적성이 궁금하시군요! 재능 분석을 해드릴까요?';
       case FortuneSurveyType.daily:
-        return '오늘의 인사이트를 확인해볼까요?';
+        return '오늘의 운세를 확인해볼까요?';
       case FortuneSurveyType.tarot:
         return '타로 카드로 리딩을 해드릴까요?';
       case FortuneSurveyType.mbti:

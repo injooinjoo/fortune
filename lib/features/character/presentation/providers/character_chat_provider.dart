@@ -27,6 +27,8 @@ import '../../../../services/app_icon_badge_service.dart';
 import '../../../../services/storage_service.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
+import '../../../../constants/fortune_constants.dart';
+import '../../../../models/user_profile.dart';
 import '../../../../services/remote_config_service.dart';
 import '../../../../core/services/fortune_generators/fortune_cookie_generator.dart';
 import '../../../fortune/domain/models/conditions/character_chat_fortune_conditions.dart';
@@ -248,6 +250,645 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       );
     } catch (_) {
       return null;
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // 운세 타입별 맞춤 인트로 메시지 시스템
+  // ─────────────────────────────────────────────────────────────
+
+  /// 설문 답변 ID → 한국어 라벨 변환 맵
+  static const _answerLabels = <String, String>{
+    // 연애 상태
+    'single': '솔로', 'dating': '연애 중', 'crush': '짝사랑',
+    'complicated': '복잡한 관계',
+    // 연애 고민
+    'meeting': '만남/인연', 'confession': '고백 타이밍',
+    'conflict': '갈등 해결',
+    // 연애 스타일
+    'clingy': '애정 표현 많이', 'independent': '개인 시간 중요',
+    // 이상형 성격
+    'kind': '따뜻한', 'funny': '유머러스', 'smart': '똑똑한',
+    'stable': '안정적인', 'passionate': '열정적인', 'calm': '차분한',
+    // 이상형 외모 (여성상)
+    'cat': '고양이상', 'fox': '여우상', 'puppy': '강아지상',
+    'rabbit': '토끼상', 'deer': '사슴상', 'squirrel': '다람쥐상',
+    // 이상형 외모 (남성상)
+    'arab': '아랍상', 'tofu': '두부상', 'nerd': '너드남',
+    'beast': '짐승남', 'gentle': '젠틀남', 'warm': '훈훈남',
+    // 직업 분야
+    'tech': 'IT/개발', 'finance': '금융/재무',
+    'healthcare': '의료/헬스케어', 'education': '교육',
+    'creative': '크리에이티브', 'marketing': '마케팅/광고',
+    'sales': '영업/세일즈', 'hr': '인사/HR',
+    'legal': '법률/법무', 'manufacturing': '제조/생산', 'other': '기타',
+    // 경력
+    'student': '학생/취준생', 'junior': '신입 (0-2년)',
+    'mid': '주니어 (3-5년)', 'senior': '시니어 (6-10년)',
+    'lead': '리드급 (10년+)', 'executive': '임원급',
+    // 직업/커리어 고민
+    'growth': '성장/자기계발', 'direction': '방향성 고민',
+    'change': '이직/전직', 'balance': '워라밸', 'salary': '연봉/처우',
+    'relationship': '관계/인간관계',
+    // 궁합 관계
+    'lover': '연인', 'friend': '친구',
+    'colleague': '동료/지인', 'family': '가족',
+    // 타로 목적
+    'love': '연애/관계', 'career': '일/커리어',
+    'decision': '결정/선택', 'guidance': '조언/가이드',
+    // MBTI 분석 카테고리
+    'personality': '성향 분석',
+    // 경계 상황
+    'work': '직장/비즈니스', 'money': '금전 거래',
+    // 새해 목표
+    'success': '성공/성취', 'wealth': '부자되기',
+    'health': '건강/운동', 'travel': '여행/경험', 'peace': '마음의 평화',
+    // 재능 관련
+    'solo': '혼자 집중해서', 'team': '팀과 협업하며',
+    'logical': '논리적으로 분석', 'intuitive': '직관적으로 판단',
+    'beginner': '처음 시작', 'some': '조금 해봤어요',
+    'intermediate': '어느 정도 경험', 'experienced': '전문가 수준',
+    'minimal': '주 1-2시간', 'moderate': '주 5-10시간',
+    'significant': '주 10시간 이상', 'fulltime': '풀타임 가능',
+    'time': '시간 부족', 'motivation': '동기부여 어려움',
+    'resources': '자원/비용 부담', 'confidence': '자신감 부족',
+    // 사주 분석 유형
+    'comprehensive': '종합 분석',
+    // 캘린더
+    'sync': '캘린더 연동', 'skip': '건너뛰기',
+    // 공통
+    'yes': '네', 'no': '아니요',
+    'profile': '프로필에서 선택', 'new': '직접 입력',
+  };
+
+  /// 운세 타입별 맞춤 인트로 메시지 생성
+  /// [fortuneType]: 운세 타입 (e.g., 'daily', 'love', 'career')
+  /// [surveyAnswers]: 설문 답변 (설문이 있는 운세 타입에서 전달)
+  String? _buildFortuneIntroMessage(
+    String fortuneType, {
+    Map<String, dynamic>? surveyAnswers,
+  }) {
+    // traditional-saju는 만세력 카드가 인트로 역할을 하므로 null 반환
+    if (fortuneType == 'traditional-saju') return null;
+
+    try {
+      final profileAsync = _ref.read(userProfileProvider);
+      return profileAsync.maybeWhen(
+        data: (profile) {
+          if (profile == null) return null;
+
+          final name = profile.name.isNotEmpty ? profile.name : null;
+          final buffer = StringBuffer();
+
+          // 1. 캐릭터 맞춤 인사말
+          buffer.writeln(_getIntroGreeting(fortuneType, name));
+          buffer.writeln();
+
+          // 2. 운세 타입별 관련 프로필 정보
+          final profileLines =
+              _getRelevantProfileLines(fortuneType, profile);
+          for (final line in profileLines) {
+            buffer.writeln(line);
+          }
+
+          // 3. 설문 답변 (있는 경우)
+          if (surveyAnswers != null && surveyAnswers.isNotEmpty) {
+            final answerLines =
+                _getSurveyAnswerLines(fortuneType, surveyAnswers);
+            if (answerLines.isNotEmpty) {
+              if (profileLines.isNotEmpty) buffer.writeln();
+              buffer.writeln('📋 입력해주신 정보:');
+              for (final line in answerLines) {
+                buffer.writeln(line);
+              }
+            }
+          }
+
+          // 4. 마무리
+          buffer.writeln();
+          buffer.write(_getIntroClosing(fortuneType));
+
+          return buffer.toString();
+        },
+        orElse: () => null,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// 운세 타입별 맞춤 인사말
+  String _getIntroGreeting(String fortuneType, String? name) {
+    final d = name != null ? '$name님' : '회원님';
+
+    switch (fortuneType) {
+      // ─── 하늘 (lifestyle) ───
+      case 'daily':
+        return '$d의 오늘 하루를 살펴볼게요~ ☀️';
+      case 'new-year':
+        return '$d의 새해 운세를 봐드릴게요~ 🎊';
+      case 'daily-calendar':
+        return '$d의 오늘의 운세 캘린더를 확인해볼게요~ 📅';
+      case 'fortune-cookie':
+        return '$d에게 행운의 메시지를 준비해볼게요~ 🥠';
+      case 'gratitude':
+        return '$d과 함께 감사 일기를 써볼게요~ 🙏';
+      // ─── 무현 도사 (traditional) ───
+      case 'face-reading':
+        return '$d의 관상을 한번 봐드리겠습니다... 🔮';
+      case 'naming':
+        return '$d의 이름의 기운을 살펴보겠습니다... ✍️';
+      case 'baby-nickname':
+        return '정성을 담아 태명을 지어드리겠습니다... 👶';
+      // ─── 스텔라 (zodiac) ───
+      case 'zodiac':
+        return '$d의 별자리 운세를 읽어볼게요~ ⭐';
+      case 'zodiac-animal':
+        return '$d의 띠별 운세를 확인해볼게요~ 🐾';
+      case 'constellation':
+        return '$d의 별자리 에너지를 분석해볼게요~ 🌟';
+      case 'birthstone':
+        return '$d의 탄생석 이야기를 들려드릴게요~ 💎';
+      // ─── Dr. 마인드 (personality) ───
+      case 'mbti':
+        return '$d의 MBTI를 깊이 분석해볼게요~ 🧠';
+      case 'personality-dna':
+        return '$d의 성격 DNA를 분석해볼게요~ 🧬';
+      case 'talent':
+        return '$d의 숨겨진 재능을 찾아볼게요~ ✨';
+      case 'past-life':
+        return '$d의 전생의 흔적을 더듬어볼게요~ 🌀';
+      // ─── 로제 (love) ───
+      case 'love':
+        return '$d의 연애운을 살펴볼게요~ 💕';
+      case 'compatibility':
+        return '$d의 궁합을 봐드릴게요~ 💞';
+      case 'blind-date':
+        return '$d의 소개팅 운을 살펴볼게요~ 💘';
+      case 'ex-lover':
+        return '$d의 재회 운세를 봐드릴게요... 💔';
+      case 'avoid-people':
+        return '$d이 주의해야 할 인연을 살펴볼게요~ ⚠️';
+      case 'celebrity':
+        return '$d의 닮은 연예인을 찾아볼게요~ 🌟';
+      case 'yearly-encounter':
+        return '$d의 올해 만남 운을 살펴볼게요~ 💫';
+      // ─── 제임스 김 (career) ───
+      case 'career':
+        return '$d의 커리어 운세를 분석해드리겠습니다~ 💼';
+      case 'wealth':
+        return '$d의 재물운을 살펴보겠습니다~ 💰';
+      case 'exam':
+        return '$d의 시험운을 분석해드리겠습니다~ 📝';
+      // ─── 럭키 (lucky) ───
+      case 'lucky-items':
+        return '$d의 오늘의 행운 아이템을 찾아볼게요~ 🍀';
+      case 'lotto':
+        return '$d의 행운의 숫자를 뽑아볼게요~ 🎰';
+      case 'ootd-evaluation':
+        return '$d의 오늘 패션을 평가해볼게요~ 👗';
+      // ─── 마르코 (sports) ───
+      case 'match-insight':
+        return '$d을 위한 경기 인사이트를 준비해볼게요~ ⚽';
+      case 'game-enhance':
+        return '$d의 게임 운세를 살펴볼게요~ 🎮';
+      case 'exercise':
+        return '$d의 운동 운세를 확인해볼게요~ 💪';
+      // ─── 리나 (fengshui) ───
+      case 'moving':
+        return '$d의 이사 풍수를 살펴보겠습니다~ 🏠';
+      // ─── 루나 (special) ───
+      case 'tarot':
+        return '$d을 위해 타로 카드를 펼쳐볼게요~ 🃏';
+      case 'dream':
+        return '$d의 꿈을 해석해볼게요~ 🌙';
+      case 'health':
+        return '$d의 건강운을 살펴볼게요~ 🏥';
+      case 'biorhythm':
+        return '$d의 바이오리듬을 분석해볼게요~ 📊';
+      case 'family':
+        return '$d의 가족운을 살펴볼게요~ 👨‍👩‍👧‍👦';
+      case 'pet-compatibility':
+        return '$d의 반려동물 궁합을 봐드릴게요~ 🐾';
+      case 'talisman':
+        return '$d을 위한 부적을 만들어드릴게요~ 🧧';
+      case 'wish':
+        return '$d의 소원 성취 운세를 봐드릴게요~ ⭐';
+      default:
+        return '$d의 운세를 살펴볼게요~ ✨';
+    }
+  }
+
+  /// 운세 타입별 관련 프로필 필드 집합 반환
+  Set<String> _relevantFieldsFor(String fortuneType) {
+    switch (fortuneType) {
+      // 전통/사주 계열 (생년월일+시간+성별+띠)
+      case 'face-reading':
+      case 'naming':
+      case 'baby-nickname':
+        return {'birth', 'birthTime', 'gender', 'chineseZodiac'};
+      // 별자리 계열
+      case 'zodiac':
+      case 'constellation':
+        return {'birth', 'zodiac'};
+      case 'zodiac-animal':
+        return {'birth', 'chineseZodiac'};
+      case 'birthstone':
+        return {'birth'};
+      // 성격/심리 계열
+      case 'mbti':
+        return {'mbti'};
+      case 'personality-dna':
+        return {'birth', 'mbti', 'bloodType'};
+      case 'talent':
+        return {'birth', 'mbti'};
+      case 'past-life':
+        return {'birth', 'gender'};
+      // 연애 계열
+      case 'love':
+      case 'blind-date':
+      case 'yearly-encounter':
+      case 'celebrity':
+        return {'birth', 'gender', 'zodiac'};
+      case 'compatibility':
+        return {'birth', 'birthTime', 'gender'};
+      case 'ex-lover':
+      case 'avoid-people':
+        return {'birth', 'gender'};
+      // 직업/재물 계열
+      case 'career':
+      case 'wealth':
+      case 'exam':
+        return {'birth', 'zodiac', 'chineseZodiac'};
+      // 행운 계열
+      case 'lucky-items':
+      case 'lotto':
+        return {'birth', 'zodiac', 'chineseZodiac'};
+      case 'ootd-evaluation':
+        return {};
+      // 스포츠 계열
+      case 'match-insight':
+      case 'game-enhance':
+        return {};
+      case 'exercise':
+        return {'birth', 'gender'};
+      // 풍수
+      case 'moving':
+        return {'birth', 'birthTime', 'chineseZodiac'};
+      // 특별 계열
+      case 'tarot':
+        return {'birth', 'zodiac'};
+      case 'dream':
+        return {};
+      case 'health':
+        return {'birth', 'gender', 'bloodType'};
+      case 'biorhythm':
+        return {'birth'};
+      case 'family':
+        return {'birth', 'chineseZodiac'};
+      case 'pet-compatibility':
+        return {};
+      case 'talisman':
+        return {'birth', 'birthTime', 'chineseZodiac'};
+      case 'wish':
+        return {'birth', 'zodiac'};
+      // 라이프스타일
+      case 'daily':
+      case 'new-year':
+        return {'birth', 'zodiac', 'chineseZodiac'};
+      case 'daily-calendar':
+        return {'birth', 'zodiac'};
+      case 'fortune-cookie':
+      case 'gratitude':
+        return {};
+      default:
+        return {'birth', 'gender', 'zodiac', 'chineseZodiac'};
+    }
+  }
+
+  /// 운세 타입별 관련 프로필 정보 라인 생성
+  List<String> _getRelevantProfileLines(
+      String fortuneType, UserProfile profile) {
+    final lines = <String>[];
+    final fields = _relevantFieldsFor(fortuneType);
+
+    if (fields.contains('birth') && profile.birthDate != null) {
+      final bd = profile.birthDate!;
+      final lunarTag = profile.isLunarBirthdate == true ? ' (음력)' : '';
+      lines.add(
+          '🎂 생년월일: ${bd.year}년 ${bd.month}월 ${bd.day}일$lunarTag');
+    }
+    if (fields.contains('birthTime')) {
+      if (profile.birthTime != null && profile.birthTime!.isNotEmpty) {
+        lines.add('🕐 태어난 시간: ${profile.birthTime}');
+      } else if (profile.birthHour != null &&
+          profile.birthHour!.isNotEmpty) {
+        lines.add('🕐 태어난 시간: ${profile.birthHour}시');
+      }
+    }
+    if (fields.contains('gender') && profile.gender != Gender.other) {
+      lines.add('👤 성별: ${profile.gender.label}');
+    }
+    if (fields.contains('chineseZodiac') && profile.chineseZodiac != null) {
+      lines.add('🐾 띠: ${profile.chineseZodiac}');
+    }
+    if (fields.contains('zodiac') && profile.zodiacSign != null) {
+      lines.add('⭐ 별자리: ${profile.zodiacSign}');
+    }
+    if (fields.contains('mbti') && profile.mbti != null) {
+      lines.add('🧠 MBTI: ${profile.mbti}');
+    }
+    if (fields.contains('bloodType') && profile.bloodType != null) {
+      lines.add('🩸 혈액형: ${profile.bloodType}형');
+    }
+
+    return lines;
+  }
+
+  /// 설문 답변 ID를 한국어 라벨로 변환
+  String _resolveAnswerLabel(dynamic value) {
+    if (value is String) {
+      return _answerLabels[value] ?? value;
+    }
+    if (value is List) {
+      return value
+          .map((v) => _answerLabels[v.toString()] ?? v.toString())
+          .join(', ');
+    }
+    return value.toString();
+  }
+
+  /// 설문 답변 라인 추가 헬퍼
+  void _addSurveyLine(
+    List<String> lines,
+    Map<String, dynamic> answers,
+    String key,
+    String label,
+  ) {
+    final value = answers[key];
+    if (value == null) return;
+    final display = _resolveAnswerLabel(value);
+    if (display.isNotEmpty) {
+      lines.add('$label: $display');
+    }
+  }
+
+  /// 운세 타입별 설문 답변 라인 생성
+  List<String> _getSurveyAnswerLines(
+    String fortuneType,
+    Map<String, dynamic> answers,
+  ) {
+    final lines = <String>[];
+
+    switch (fortuneType) {
+      // ─── 로제 (love) ───
+      case 'love':
+        _addSurveyLine(lines, answers, 'status', '💕 연애 상태');
+        _addSurveyLine(lines, answers, 'concern', '💫 궁금한 점');
+        _addSurveyLine(lines, answers, 'datingStyle', '💝 연애 스타일');
+        _addSurveyLine(lines, answers, 'idealPersonality', '✨ 이상형 성격');
+        _addSurveyLine(lines, answers, 'idealLooks', '👀 이상형 외모');
+        break;
+      case 'compatibility':
+        _addSurveyLine(lines, answers, 'partnerName', '👤 상대방');
+        _addSurveyLine(lines, answers, 'relationship', '🤝 관계');
+        break;
+      case 'blind-date':
+        _addSurveyLine(lines, answers, 'idealPersonality', '✨ 이상형 성격');
+        _addSurveyLine(lines, answers, 'idealLooks', '👀 이상형 외모');
+        _addSurveyLine(lines, answers, 'dealbreaker', '🚫 절대 안 되는 점');
+        break;
+      case 'ex-lover':
+        _addSurveyLine(lines, answers, 'primaryGoal', '🎯 상담 목표');
+        _addSurveyLine(lines, answers, 'breakupReason', '💔 이별 사유');
+        _addSurveyLine(lines, answers, 'currentFeelings', '💭 현재 감정');
+        _addSurveyLine(lines, answers, 'partnerContact', '📱 연락 상태');
+        break;
+      case 'avoid-people':
+        _addSurveyLine(lines, answers, 'situation', '⚠️ 상황');
+        break;
+      case 'celebrity':
+        _addSurveyLine(lines, answers, 'preference', '🌟 선호 스타일');
+        break;
+      case 'yearly-encounter':
+        _addSurveyLine(lines, answers, 'preference', '💫 만남 선호');
+        break;
+      // ─── 제임스 김 (career) ───
+      case 'career':
+        _addSurveyLine(lines, answers, 'field', '💼 분야');
+        _addSurveyLine(lines, answers, 'position', '🏢 직무');
+        _addSurveyLine(lines, answers, 'experience', '📊 경력');
+        _addSurveyLine(lines, answers, 'concern', '💫 고민');
+        break;
+      case 'wealth':
+        _addSurveyLine(lines, answers, 'concern', '💰 재물 고민');
+        break;
+      case 'exam':
+        _addSurveyLine(lines, answers, 'examType', '📝 시험 종류');
+        _addSurveyLine(lines, answers, 'concern', '💫 고민');
+        break;
+      // ─── Dr. 마인드 (personality) ───
+      case 'mbti':
+        _addSurveyLine(lines, answers, 'mbtiType', '🧠 MBTI 유형');
+        _addSurveyLine(lines, answers, 'category', '📂 분석 카테고리');
+        break;
+      case 'personality-dna':
+        _addSurveyLine(lines, answers, 'focus', '🧬 분석 포인트');
+        break;
+      case 'talent':
+        _addSurveyLine(lines, answers, 'interest', '🎯 관심 분야');
+        _addSurveyLine(lines, answers, 'workStyle', '💼 작업 스타일');
+        _addSurveyLine(lines, answers, 'thinkingStyle', '🧠 사고 방식');
+        _addSurveyLine(lines, answers, 'experience', '📊 경험');
+        _addSurveyLine(lines, answers, 'availability', '⏰ 투자 가능 시간');
+        _addSurveyLine(lines, answers, 'challenge', '💪 어려운 점');
+        break;
+      case 'past-life':
+        _addSurveyLine(lines, answers, 'curiosity', '🌀 궁금한 점');
+        break;
+      // ─── 루나 (special) ───
+      case 'tarot':
+        _addSurveyLine(lines, answers, 'purpose', '🔮 상담 주제');
+        break;
+      case 'dream':
+        _addSurveyLine(lines, answers, 'dreamType', '💭 꿈 유형');
+        _addSurveyLine(lines, answers, 'dreamContent', '📝 꿈 내용');
+        break;
+      case 'health':
+        _addSurveyLine(lines, answers, 'concern', '🏥 건강 고민');
+        break;
+      case 'biorhythm':
+        _addSurveyLine(lines, answers, 'concern', '📊 궁금한 점');
+        break;
+      case 'family':
+        _addSurveyLine(lines, answers, 'concern', '👨‍👩‍👧‍👦 가족 고민');
+        break;
+      case 'pet-compatibility':
+        _addSurveyLine(lines, answers, 'petType', '🐾 반려동물 종류');
+        _addSurveyLine(lines, answers, 'petName', '💝 이름');
+        break;
+      case 'talisman':
+        _addSurveyLine(lines, answers, 'purpose', '🧧 부적 목적');
+        break;
+      case 'wish':
+        _addSurveyLine(lines, answers, 'wish', '⭐ 소원');
+        break;
+      // ─── 무현 도사 (traditional) ───
+      case 'face-reading':
+        _addSurveyLine(lines, answers, 'focus', '🔮 분석 포인트');
+        break;
+      case 'naming':
+        _addSurveyLine(lines, answers, 'purpose', '✍️ 작명 목적');
+        break;
+      case 'baby-nickname':
+        _addSurveyLine(lines, answers, 'wish', '👶 바라는 점');
+        break;
+      // ─── 하늘 (lifestyle) ───
+      case 'daily':
+        _addSurveyLine(lines, answers, 'interest', '💫 관심사');
+        break;
+      case 'new-year':
+        _addSurveyLine(lines, answers, 'goal', '🎯 새해 목표');
+        break;
+      case 'daily-calendar':
+        _addSurveyLine(lines, answers, 'calendarSync', '📅 캘린더 연동');
+        break;
+      case 'fortune-cookie':
+        _addSurveyLine(lines, answers, 'mood', '🥠 오늘 기분');
+        break;
+      case 'gratitude':
+        _addSurveyLine(lines, answers, 'theme', '🙏 감사 테마');
+        break;
+      // ─── 럭키 (lucky) ───
+      case 'lucky-items':
+        _addSurveyLine(lines, answers, 'category', '🍀 카테고리');
+        break;
+      case 'lotto':
+        _addSurveyLine(lines, answers, 'style', '🎰 번호 스타일');
+        break;
+      case 'ootd-evaluation':
+        _addSurveyLine(lines, answers, 'style', '👗 스타일');
+        break;
+      // ─── 마르코 (sports) ───
+      case 'match-insight':
+        _addSurveyLine(lines, answers, 'sport', '⚽ 종목');
+        _addSurveyLine(lines, answers, 'team', '🏟️ 응원 팀');
+        break;
+      case 'game-enhance':
+        _addSurveyLine(lines, answers, 'gameType', '🎮 게임 종류');
+        _addSurveyLine(lines, answers, 'goal', '🎯 목표');
+        break;
+      case 'exercise':
+        _addSurveyLine(lines, answers, 'goal', '🎯 운동 목표');
+        _addSurveyLine(lines, answers, 'preference', '💪 선호 운동');
+        break;
+      // ─── 리나 (fengshui) ───
+      case 'moving':
+        _addSurveyLine(lines, answers, 'reason', '📦 이사 사유');
+        _addSurveyLine(lines, answers, 'direction', '🧭 방향');
+        break;
+    }
+
+    return lines;
+  }
+
+  /// 운세 타입별 마무리 메시지
+  String _getIntroClosing(String fortuneType) {
+    switch (fortuneType) {
+      // ─── 하늘 (lifestyle) ───
+      case 'daily':
+        return '이 정보로 오늘의 운세 봐드릴게요! 잠시만요~ ✨';
+      case 'new-year':
+        return '새해 운세 꼼꼼히 봐드릴게요! 🎊';
+      case 'daily-calendar':
+        return '오늘의 운세 캘린더 준비할게요! 📅';
+      case 'fortune-cookie':
+        return '행운의 메시지 열어볼게요~ 🥠';
+      case 'gratitude':
+        return '함께 감사한 마음을 담아볼게요~ 🙏';
+      // ─── 무현 도사 (traditional) ───
+      case 'face-reading':
+        return '관상을 살펴보겠습니다... 잠시만 기다려주십시오 🔮';
+      case 'naming':
+        return '좋은 이름의 기운을 찾아보겠습니다... ✍️';
+      case 'baby-nickname':
+        return '아기에게 복을 담은 태명을 지어드리겠습니다... 👶';
+      // ─── 스텔라 (zodiac) ───
+      case 'zodiac':
+        return '별자리의 메시지를 읽어드릴게요! ⭐';
+      case 'zodiac-animal':
+        return '띠별 운세를 자세히 봐드릴게요! 🐾';
+      case 'constellation':
+        return '별자리 에너지를 분석해드릴게요! 🌟';
+      case 'birthstone':
+        return '탄생석의 이야기를 전해드릴게요! 💎';
+      // ─── Dr. 마인드 (personality) ───
+      case 'mbti':
+        return 'MBTI 심층 분석 시작할게요! 🧠';
+      case 'personality-dna':
+        return '성격 DNA 분석 들어갑니다! 🧬';
+      case 'talent':
+        return '숨겨진 재능을 발굴해볼게요! ✨';
+      case 'past-life':
+        return '전생의 기억을 더듬어볼게요... 🌀';
+      // ─── 로제 (love) ───
+      case 'love':
+        return '연애운 꼼꼼히 봐드릴게요! 잠시만요~ 💕';
+      case 'compatibility':
+        return '궁합을 자세히 분석해드릴게요! 💞';
+      case 'blind-date':
+        return '소개팅 운세 분석 시작! 💘';
+      case 'ex-lover':
+        return '재회 운세를 정성스럽게 봐드릴게요... 💔';
+      case 'avoid-people':
+        return '조심해야 할 인연을 알려드릴게요! ⚠️';
+      case 'celebrity':
+        return '닮은 연예인 찾아보는 중~ 🌟';
+      case 'yearly-encounter':
+        return '올해의 만남 운세 분석 시작! 💫';
+      // ─── 제임스 김 (career) ───
+      case 'career':
+        return '커리어 운세 분석 시작하겠습니다! 💼';
+      case 'wealth':
+        return '재물운을 꼼꼼히 살펴보겠습니다! 💰';
+      case 'exam':
+        return '시험운 분석에 들어가겠습니다! 📝';
+      // ─── 럭키 (lucky) ───
+      case 'lucky-items':
+        return '오늘의 행운 아이템 찾아볼게요~ 🍀';
+      case 'lotto':
+        return '행운의 숫자를 뽑아볼게요~ 🎰';
+      case 'ootd-evaluation':
+        return '패션 평가 시작! 👗';
+      // ─── 마르코 (sports) ───
+      case 'match-insight':
+        return '경기 분석 시작할게요! ⚽';
+      case 'game-enhance':
+        return '게임 운세 분석 시작! 🎮';
+      case 'exercise':
+        return '운동 운세 확인해볼게요! 💪';
+      // ─── 리나 (fengshui) ───
+      case 'moving':
+        return '이사 풍수를 정성껏 살펴보겠습니다~ 🏠';
+      // ─── 루나 (special) ───
+      case 'tarot':
+        return '카드가 말해주는 이야기를 전해드릴게요~ 🃏';
+      case 'dream':
+        return '꿈의 의미를 해석해볼게요~ 🌙';
+      case 'health':
+        return '건강운을 꼼꼼히 살펴볼게요! 🏥';
+      case 'biorhythm':
+        return '바이오리듬 분석 시작! 📊';
+      case 'family':
+        return '가족운을 정성껏 봐드릴게요! 👨‍👩‍👧‍👦';
+      case 'pet-compatibility':
+        return '반려동물 궁합을 분석해볼게요! 🐾';
+      case 'talisman':
+        return '정성을 담아 부적을 만들어드릴게요! 🧧';
+      case 'wish':
+        return '소원 성취 운세 분석 시작! ⭐';
+      default:
+        return '운세 봐드릴게요! 잠시만 기다려주세요~ ✨';
     }
   }
 
@@ -1481,6 +2122,16 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     // 3단계: 읽음 처리
     markPendingUserMessagesAsRead();
 
+    // 3.5단계: 신상정보 인트로 메시지 (운세 보기 전 사용자 정보 열거)
+    final introMessage = _buildFortuneIntroMessage(fortuneType);
+    if (introMessage != null) {
+      setTyping(true);
+      await Future.delayed(const Duration(milliseconds: 800));
+      setTyping(false);
+      addCharacterMessage(introMessage);
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+
     // 4단계: 타이핑 시작
     setTyping(true);
 
@@ -1655,6 +2306,19 @@ $enrichedContext
 
     // 3단계: 읽음 처리
     markPendingUserMessagesAsRead();
+
+    // 3.5단계: 신상정보 인트로 메시지 (운세 보기 전 사용자 정보 + 설문 답변 열거)
+    final introMessage = _buildFortuneIntroMessage(
+      fortuneType,
+      surveyAnswers: surveyAnswers,
+    );
+    if (introMessage != null) {
+      setTyping(true);
+      await Future.delayed(const Duration(milliseconds: 800));
+      setTyping(false);
+      addCharacterMessage(introMessage);
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
 
     // 4단계: 타이핑 시작
     setTyping(true);

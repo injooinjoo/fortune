@@ -186,10 +186,12 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           }
         }
 
-        // 📜 새 메시지 추가 시 자동 스크롤 (다른 채팅앱처럼)
+        // 📜 새 메시지 추가 또는 타이핑 시작 시 자동 스크롤 (다른 채팅앱처럼)
         final prevCount = previous?.messages.length ?? 0;
         final nextCount = next.messages.length;
-        if (nextCount > prevCount) {
+        final typingStarted =
+            next.isTyping && !(previous?.isTyping ?? false);
+        if (nextCount > prevCount || typingStarted) {
           _scrollToBottom();
         }
       },

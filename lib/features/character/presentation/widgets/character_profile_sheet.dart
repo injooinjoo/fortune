@@ -6,6 +6,7 @@ import '../../../../core/constants/fortune_metadata.dart';
 import '../../../../core/design_system/design_system.dart';
 import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../domain/models/ai_character.dart';
+import '../utils/character_accent_palette.dart';
 import '../providers/character_chat_provider.dart';
 
 /// 캐릭터 프로필 BottomSheet
@@ -20,6 +21,13 @@ class CharacterProfileSheet extends ConsumerWidget {
     this.onResetConversation,
     this.scrollController,
   });
+
+  CharacterAccentPalette _accentPalette(BuildContext context) {
+    return CharacterAccentPalette.from(
+      source: character.accentColor,
+      brightness: Theme.of(context).brightness,
+    );
+  }
 
   /// BottomSheet로 표시
   static Future<void> show({
@@ -65,6 +73,7 @@ class CharacterProfileSheet extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark ? DSColors.backgroundDark : DSColors.backgroundDark;
     final sectionBgColor = isDark ? DSColors.surfaceDark : Colors.grey[100];
+    final accentPalette = _accentPalette(context);
 
     return Container(
       decoration: BoxDecoration(
@@ -116,13 +125,13 @@ class CharacterProfileSheet extends ConsumerWidget {
                           vertical: 5,
                         ),
                         decoration: BoxDecoration(
-                          color: character.accentColor.withValues(alpha: 0.15),
+                          color: accentPalette.softBackground,
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Text(
                           '#$tag',
                           style: context.bodySmall.copyWith(
-                            color: character.accentColor,
+                            color: accentPalette.accent,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -199,6 +208,7 @@ class CharacterProfileSheet extends ConsumerWidget {
     final chatState = ref.watch(characterChatProvider(character.id));
     final affinity = chatState.affinity;
     final messageCount = chatState.messages.length;
+    final accentPalette = _accentPalette(context);
 
     return Row(
       children: [
@@ -208,7 +218,7 @@ class CharacterProfileSheet extends ConsumerWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: character.accentColor.withValues(alpha: 0.3),
+                color: accentPalette.accent.withValues(alpha: 0.3),
                 blurRadius: 20,
                 spreadRadius: 5,
               ),
@@ -216,11 +226,11 @@ class CharacterProfileSheet extends ConsumerWidget {
           ),
           child: CircleAvatar(
             radius: 44,
-            backgroundColor: character.accentColor,
+            backgroundColor: accentPalette.accent,
             child: Text(
               character.initial,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: accentPalette.onAccent,
                 fontSize: 36,
                 fontWeight: FontWeight.bold,
               ),
@@ -263,6 +273,8 @@ class CharacterProfileSheet extends ConsumerWidget {
     required String label,
     bool isText = false,
   }) {
+    final accentPalette = _accentPalette(context);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -270,7 +282,7 @@ class CharacterProfileSheet extends ConsumerWidget {
           count,
           style: (isText ? context.bodySmall : context.heading4).copyWith(
             fontWeight: FontWeight.bold,
-            color: character.accentColor,
+            color: accentPalette.accent,
           ),
         ),
         const SizedBox(height: 4),
@@ -291,6 +303,8 @@ class CharacterProfileSheet extends ConsumerWidget {
     required String content,
     required Color bgColor,
   }) {
+    final accentPalette = _accentPalette(context);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -306,14 +320,14 @@ class CharacterProfileSheet extends ConsumerWidget {
               Icon(
                 icon,
                 size: 20,
-                color: character.accentColor,
+                color: accentPalette.accent,
               ),
               const SizedBox(width: 8),
               Text(
                 title,
                 style: context.bodyMedium.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: character.accentColor,
+                  color: accentPalette.accent,
                 ),
               ),
             ],
@@ -331,6 +345,8 @@ class CharacterProfileSheet extends ConsumerWidget {
   }
 
   Widget _buildSpecialtiesSection(BuildContext context, Color bgColor) {
+    final accentPalette = _accentPalette(context);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -346,14 +362,14 @@ class CharacterProfileSheet extends ConsumerWidget {
               Icon(
                 Icons.auto_awesome,
                 size: 20,
-                color: character.accentColor,
+                color: accentPalette.accent,
               ),
               const SizedBox(width: 8),
               Text(
                 '전문 분야',
                 style: context.bodyMedium.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: character.accentColor,
+                  color: accentPalette.accent,
                 ),
               ),
             ],
@@ -371,10 +387,10 @@ class CharacterProfileSheet extends ConsumerWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: character.accentColor.withValues(alpha: 0.15),
+                  color: accentPalette.softBackground,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: character.accentColor.withValues(alpha: 0.3),
+                    color: accentPalette.softBorder,
                   ),
                 ),
                 child: Row(
@@ -383,13 +399,13 @@ class CharacterProfileSheet extends ConsumerWidget {
                     Icon(
                       Icons.stars,
                       size: 14,
-                      color: character.accentColor,
+                      color: accentPalette.accent,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       displayName,
                       style: context.bodySmall.copyWith(
-                        color: character.accentColor,
+                        color: accentPalette.accent,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -407,6 +423,7 @@ class CharacterProfileSheet extends ConsumerWidget {
       BuildContext context, WidgetRef ref, Color bgColor) {
     final chatState = ref.watch(characterChatProvider(character.id));
     final affinity = chatState.affinity;
+    final accentPalette = _accentPalette(context);
 
     return Container(
       width: double.infinity,
@@ -423,14 +440,14 @@ class CharacterProfileSheet extends ConsumerWidget {
               Icon(
                 Icons.favorite,
                 size: 20,
-                color: character.accentColor,
+                color: accentPalette.accent,
               ),
               const SizedBox(width: 8),
               Text(
                 '호감도',
                 style: context.bodyMedium.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: character.accentColor,
+                  color: accentPalette.accent,
                 ),
               ),
             ],
@@ -455,7 +472,7 @@ class CharacterProfileSheet extends ConsumerWidget {
                         value: affinity.lovePercent / 100,
                         backgroundColor: Colors.grey[300],
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          character.accentColor,
+                          accentPalette.accent,
                         ),
                         minHeight: 10,
                       ),
@@ -469,7 +486,7 @@ class CharacterProfileSheet extends ConsumerWidget {
                           '${affinity.lovePercent}%',
                           style: context.bodySmall.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: character.accentColor,
+                            color: accentPalette.accent,
                           ),
                         ),
                         Container(
@@ -478,15 +495,14 @@ class CharacterProfileSheet extends ConsumerWidget {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color:
-                                character.accentColor.withValues(alpha: 0.15),
+                            color: accentPalette.softBackground,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
                             affinity.phaseName,
                             style: context.labelMedium.copyWith(
                               fontWeight: FontWeight.w500,
-                              color: character.accentColor,
+                              color: accentPalette.accent,
                             ),
                           ),
                         ),
@@ -503,6 +519,8 @@ class CharacterProfileSheet extends ConsumerWidget {
   }
 
   Widget _buildNpcSection(BuildContext context, Color bgColor) {
+    final accentPalette = _accentPalette(context);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -518,14 +536,14 @@ class CharacterProfileSheet extends ConsumerWidget {
               Icon(
                 Icons.group,
                 size: 20,
-                color: character.accentColor,
+                color: accentPalette.accent,
               ),
               const SizedBox(width: 8),
               Text(
                 '등장인물',
                 style: context.bodyMedium.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: character.accentColor,
+                  color: accentPalette.accent,
                 ),
               ),
             ],
@@ -540,7 +558,7 @@ class CharacterProfileSheet extends ConsumerWidget {
                   Text(
                     '• ',
                     style: TextStyle(
-                      color: character.accentColor,
+                      color: accentPalette.accent,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

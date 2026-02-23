@@ -32,7 +32,7 @@ class DailyScoreTemplate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScoreTemplate(
-      title: '오늘의 인사이트',
+      title: '오늘의 운세',
       score: score,
       showStars: false,
       categories: categories,

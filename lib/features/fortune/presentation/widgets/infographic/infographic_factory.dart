@@ -106,7 +106,7 @@ class InfographicFactory {
     // 일일/기간별 운세
     FortuneType.daily: const InfographicConfig(
       templateType: InfographicTemplateType.score,
-      title: '오늘의 인사이트',
+      title: '오늘의 운세',
       themeColor: DSColors.accentSecondary,
       hasCategories: true,
       hasLuckyItems: true,

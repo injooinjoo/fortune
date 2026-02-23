@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../utils/fortune_swipe_helpers.dart';
 
-/// 📊 오늘의 인사이트 카드 - ChatGPT Pulse 스타일
+/// 📊 오늘의 운세 카드 - ChatGPT Pulse 스타일
 class OverallCard extends StatefulWidget {
   final int score;
   final String message;
@@ -229,7 +229,7 @@ class _OverallCardState extends State<OverallCard> {
             ),
             const SizedBox(width: 10),
             Text(
-              '오늘의 인사이트',
+              '오늘의 운세',
               style: context.heading3.copyWith(
                 color: context.colors.textPrimary,
               ),

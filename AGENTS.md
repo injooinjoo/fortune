@@ -105,7 +105,12 @@
   - `docs/development/templates/VERIFY_REPORT_TEMPLATE.md`
 
 ## 7. JIRA 규칙 (Critical)
-- 개발 작업 시작 시 JIRA 이슈 생성이 기본이다(FORT 프로젝트).
+- 개발 작업 시작 시 JIRA 이슈 생성이 기본이다.
+- 프로젝트 키 선택 규칙:
+  - 1순위: `FORT` (접근 가능한 경우)
+  - 2순위: `KAN` (FORT 미노출/권한 없음 시 fallback)
+- JIRA 연결 판정은 `mcp__jira__getAccessibleAtlassianResources` 성공 여부로 판단한다.
+- `list_mcp_resources`가 비어 있어도 JIRA 미연결로 간주하지 않는다.
 - 완료 시 Done 전환 + 해결 코멘트 남긴다.
 - JIRA MCP 미연결 시:
   - 자동화 불가를 명시하고 코드 작업은 계속 진행한다.
@@ -298,6 +303,7 @@
 - 브랜치 생성은 명시 요청 시에만 수행한다.
 - 개발 변경이 발생하면 커밋/푸시 요청 여부와 무관하게 `git commit` + `git push`를 기본 수행한다.
 - `git push` 후 해당 브랜치/커밋의 GitHub Actions 상태 확인을 기본 수행한다.
+- `git push/Actions 확인`을 "요청되지 않아 수행하지 않음" 사유로 스킵하지 않는다.
 - 대규모 변경 전 간단 계획 수립, 완료 전 검증 결과를 명시
 - UI 전용 작업은 기본적으로 Presentation 범위에서 해결하고, Domain/Data 변경은 명시적 필요가 있을 때만 수행
 - Edge 전용 작업은 기본적으로 `supabase/functions`와 `_shared` 범위에서 해결
@@ -311,7 +317,7 @@
   5. 미수행/차단 사항(JIRA MCP 미연결 등)
 - 6. `git push` 실행 결과 및 GitHub Actions 상태
 - 커밋 요청 여부와 무관하게 메시지 형식:
-  - `[FORT-XXX] <type>: <summary>`
+  - `[<JIRA-KEY>] <type>: <summary>`
   - type 예시: `feat`, `fix`, `refactor`, `style`, `docs`, `test`, `chore`
 
 ## 25. 고정 개발 완료 게이트(반드시)

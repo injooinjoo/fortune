@@ -59,13 +59,10 @@
   - 앵커 변경
 
 ## 롤아웃
-- Remote Config key: `character_tone_rollout_v1`
-- 필드:
-  - `enabledCharacterIds`
-  - `idleIcebreakerCharacterIds`
-- 기본값:
-  - `enabledCharacterIds`: `luts`, `jung_tae_yoon`, `seo_yoonjae`, `han_seojun`
-  - `idleIcebreakerCharacterIds`: `luts`, `jung_tae_yoon`, `seo_yoonjae`, `han_seojun`
+- Firebase Remote Config는 사용하지 않음. 앱 기본값만 사용.
+- 적용 대상: `CharacterVoiceProfileRegistry.storyCharacterIds` (스토리 캐릭터 10명 전체)
+  - `enabledCharacterIds` / `idleIcebreakerCharacterIds` 모두 위 집합과 동기화.
+- 추후 오버라이드가 필요하면 Supabase `feature_flags` 메타데이터 등으로 확장 가능.
 
 ## 보이스 프로필
 캐릭터별로 아래 프로필을 오버라이드한다.

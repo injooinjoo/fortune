@@ -421,13 +421,13 @@ abstract class AppLocalizations {
   /// No description provided for @fortuneDaily.
   ///
   /// In ko, this message translates to:
-  /// **'오늘의 인사이트'**
+  /// **'오늘의 운세'**
   String get fortuneDaily;
 
   /// No description provided for @fortuneToday.
   ///
   /// In ko, this message translates to:
-  /// **'오늘의 인사이트'**
+  /// **'오늘의 운세'**
   String get fortuneToday;
 
   /// No description provided for @fortuneTomorrow.
@@ -1327,7 +1327,7 @@ abstract class AppLocalizations {
   /// No description provided for @todayInsight.
   ///
   /// In ko, this message translates to:
-  /// **'오늘의 인사이트'**
+  /// **'오늘의 운세'**
   String get todayInsight;
 
   /// No description provided for @scorePoint.

@@ -20,7 +20,7 @@
     },
     "figma-flutter": {
       "command": "npx",
-      "args": ["-y", "figma-flutter-mcp", "--figma-api-key=YOUR_FIGMA_API_KEY", "--stdio"]
+      "args": ["-y", "figma-flutter-mcp", "--figma-api-key=figd_bR2cafXDSpDf6bhXpQJ0eoRZGrCkRM0W60YOpbdF", "--stdio"]
     },
     "ios-simulator": {
       "command": "npx",
@@ -32,6 +32,10 @@
       "env": {
         "API_KEY": "YOUR_21ST_DEV_API_KEY"
       }
+    },
+    "jira": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://mcp.atlassian.com/v1/mcp"]
     },
     "supabase": {
       "command": "npx",

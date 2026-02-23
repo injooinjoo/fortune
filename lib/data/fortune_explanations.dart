@@ -2,7 +2,7 @@
 class FortuneExplanations {
   static const Map<String, Map<String, dynamic>> explanations = {
     'daily': {
-      'title': '오늘의 인사이트',
+      'title': '오늘의 운세',
       'description':
           '오늘 당신만을 위한 특별한 하루 예보입니다. 시간대별 에너지 흐름과 함께 오늘을 빛내줄 행운 아이템을 확인해보세요.',
       'features': [

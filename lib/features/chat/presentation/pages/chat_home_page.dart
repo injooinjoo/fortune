@@ -1365,14 +1365,23 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
     switch (type) {
       case FortuneSurveyType.daily:
-        if (zodiacSign != null) {
-          return '$name님! $zodiacSign의 오늘 인사이트를 확인해드릴게요. ✨';
+        // 사용자 신상정보 조합
+        final parts = <String>[];
+        if (birthDate != null) {
+          parts.add('${birthDate.year}년 ${birthDate.month}월 ${birthDate.day}일생');
         }
-        return '$name님의 오늘 인사이트를 확인해드릴게요! ✨';
+        if (zodiacSign != null) parts.add(zodiacSign);
+        if (profile?.chineseZodiac != null) parts.add('${profile!.chineseZodiac}띠');
+        if (profile?.bloodType != null) parts.add('${profile!.bloodType}형');
+
+        if (parts.isNotEmpty) {
+          return '$name님은 ${parts.join(' ')}이시네요!\n오늘의 운세를 확인해드릴게요 ✨';
+        }
+        return '$name님의 오늘의 운세를 확인해드릴게요! ✨';
 
       case FortuneSurveyType.newYear:
         final year = DateTime.now().year;
-        return '$name님의 $year년 인사이트를 살펴볼게요! 🎊';
+        return '$name님의 $year년 운세를 살펴볼게요! 🎊';
 
       case FortuneSurveyType.traditional:
         if (birthInfo.isNotEmpty) {
@@ -1420,7 +1429,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         return '$name님의 행운 번호를 뽑아볼게요! 🎰';
 
       case FortuneSurveyType.health:
-        return '$name님의 건강 인사이트를 확인해드릴게요! 💊';
+        return '$name님의 건강운을 확인해드릴게요! 💊';
 
       case FortuneSurveyType.dream:
         return '$name님, 꿈 이야기를 들려주세요! 💭';
@@ -1435,7 +1444,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         return '$name님! 반려동물 궁합을 봐드릴게요. 🐾';
 
       case FortuneSurveyType.family:
-        return '$name님의 가족 인사이트를 살펴볼게요! 👨‍👩‍👧‍👦';
+        return '$name님의 가족운을 살펴볼게요! 👨‍👩‍👧‍👦';
 
       case FortuneSurveyType.naming:
         return '좋은 이름을 찾아드릴게요, $name님! 📝';
@@ -2582,7 +2591,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
       // 오늘의 운세 자동 호출 (사주 분석 후 무료 제공)
       Future.delayed(const Duration(milliseconds: 500), () async {
-        chatNotifier.addAiMessage('이제 오늘의 인사이트를 보여드릴게요... ✨');
+        chatNotifier.addAiMessage('이제 오늘의 운세를 보여드릴게요... ✨');
         _scrollToBottom(); // AI 메시지는 하단으로 스크롤
 
         try {
@@ -2594,14 +2603,14 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
           // 스크롤은 FortuneResultScrollWrapper의 onRendered 콜백으로 자동 처리됨
           chatNotifier.addFortuneResultMessage(
-            text: '오늘의 인사이트',
+            text: '오늘의 운세',
             fortuneType: 'daily',
             fortune: fortune,
           );
         } catch (e) {
           Logger.error('오늘의 운세 호출 실패', e);
           chatNotifier.addAiMessage(
-            '오늘의 인사이트를 불러오지 못했어요. 😢\n'
+            '오늘의 운세를 불러오지 못했어요. 😢\n'
             '아래 칩을 눌러 다시 시도해보세요.',
           );
           _scrollToBottom();
@@ -3962,7 +3971,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   String _getTypeDisplayName(FortuneSurveyType type) {
     switch (type) {
       case FortuneSurveyType.daily:
-        return '오늘의 인사이트';
+        return '오늘의 운세';
       case FortuneSurveyType.career:
         return '오늘의 커리어';
       case FortuneSurveyType.love:

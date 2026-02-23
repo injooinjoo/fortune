@@ -1569,10 +1569,20 @@ ${characterTraits}
 `;
     }
 
+    // 운세 상담 요청 감지 (유저 메시지에 운세 데이터가 포함된 경우)
+    const isFortuneRequest = userMessage.includes("운세 분석 결과") ||
+      systemPrompt.includes("[운세 상담 모드]");
+
     // 유저 메시지 앞에 맥락 리마인더 추가 (모델이 바로 직전에 보게 됨)
     let enhancedUserMessage = userMessage;
-    if (limitedHistory.length >= 2) {
-      // 최근 2개 메시지만 리마인더로 추가
+    if (isFortuneRequest) {
+      // 운세 요청: 유저 메시지에 이미 운세 데이터가 포함되어 있으므로
+      // 맥락 리마인더로 감싸지 않고 운세 전달 지시만 추가
+      enhancedUserMessage = `${userMessage}
+
+⚠️ 위의 운세 데이터를 반드시 상세하게 전달하세요. 점수, 내용, 행운 아이템, 추천/주의 사항을 모두 포함해서 200자 이상으로 답변하세요.`;
+    } else if (limitedHistory.length >= 2) {
+      // 일반 대화: 최근 2개 메시지만 리마인더로 추가
       const lastTwo = limitedHistory.slice(-2);
       const contextReminder = lastTwo
         .map((m) =>
@@ -1620,6 +1630,9 @@ ${characterTraits}
       { role: "user", content: enhancedUserMessage },
     ];
 
+    // 운세 요청 시 더 긴 응답을 위해 maxTokens 증가
+    const fortuneMaxTokens = isFortuneRequest ? 4096 : 2048;
+
     const isLutsGrokFastMode = characterId === LUTS_CHARACTER_ID &&
       modelPreference === "grok-fast";
     let fallbackUsed = false;
@@ -1630,7 +1643,7 @@ ${characterTraits}
         const grokLlm = LLMFactory.create("grok", "grok-3-mini-fast");
         llmResponse = await grokLlm.generate(chatMessages, {
           temperature: 0.6,
-          maxTokens: 2048,
+          maxTokens: fortuneMaxTokens,
         });
       } catch (grokError) {
         fallbackUsed = true;
@@ -1644,7 +1657,7 @@ ${characterTraits}
         );
         llmResponse = await geminiFallbackLlm.generate(chatMessages, {
           temperature: 0.6,
-          maxTokens: 2048,
+          maxTokens: fortuneMaxTokens,
         });
       }
     } else {
@@ -1652,7 +1665,7 @@ ${characterTraits}
       const llm = await LLMFactory.createFromConfigAsync("character-chat");
       llmResponse = await llm.generate(chatMessages, {
         temperature: 0.6,
-        maxTokens: 2048,
+        maxTokens: fortuneMaxTokens,
       });
     }
 

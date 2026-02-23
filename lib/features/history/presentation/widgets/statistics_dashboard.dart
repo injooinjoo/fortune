@@ -101,7 +101,7 @@ class StatisticsDashboard extends StatelessWidget {
                     Icon(Icons.insights,
                         size: 20, color: theme.colorScheme.primary),
                     const SizedBox(width: 8),
-                    Text('오늘의 인사이트',
+                    Text('오늘의 운세',
                         style: context.labelMedium
                             .copyWith(fontWeight: FontWeight.bold)),
                   ],

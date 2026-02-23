@@ -121,6 +121,28 @@ ios/build/
 .claude/settings.local.json
 java_pid*.hprof
 
+# Tool artifacts
+.agent/
+.agents/skills/
+.claude/skills/
+.cursor/
+.kiro/
+.playwright-cli/
+.testsprite/
+skills/
+
+# Root screenshots (debug)
+appstore-connect-check.png
+appstoreconnect_apps.png
+appstoreconnect_check.png
+asc-after-login.png
+
+# Deno lock (auto-generated)
+deno.lock
+
+# Landing page (separate project)
+zpzg-landing/
+
 # ========================================
 # Security - API Keys & Credentials
 # ========================================

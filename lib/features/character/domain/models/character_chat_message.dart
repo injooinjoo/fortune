@@ -47,6 +47,7 @@ class CharacterChatMessage {
   final String? imageUrl; // 이미지 네트워크 URL (생성 이미지 등)
   final CharacterMediaCategory? mediaCategory; // 이미지 카테고리
   final MessageOrigin origin; // 메시지 출처
+  final Map<String, dynamic>? sajuData; // 사주 결과 구조화 데이터
 
   CharacterChatMessage({
     String? id,
@@ -62,6 +63,7 @@ class CharacterChatMessage {
     this.imageUrl,
     this.mediaCategory,
     this.origin = MessageOrigin.system,
+    this.sajuData,
   })  : id = id ?? const Uuid().v4(),
         timestamp = timestamp ?? DateTime.now();
 
@@ -172,6 +174,9 @@ class CharacterChatMessage {
     return hasAsset || hasUrl;
   }
 
+  /// 사주 결과 데이터 포함 여부
+  bool get hasSajuData => sajuData != null && sajuData!.isNotEmpty;
+
   CharacterChatMessage copyWith({
     String? id,
     CharacterChatMessageType? type,
@@ -186,6 +191,7 @@ class CharacterChatMessage {
     String? imageUrl,
     CharacterMediaCategory? mediaCategory,
     MessageOrigin? origin,
+    Map<String, dynamic>? sajuData,
   }) {
     return CharacterChatMessage(
       id: id ?? this.id,
@@ -201,6 +207,7 @@ class CharacterChatMessage {
       imageUrl: imageUrl ?? this.imageUrl,
       mediaCategory: mediaCategory ?? this.mediaCategory,
       origin: origin ?? this.origin,
+      sajuData: sajuData ?? this.sajuData,
     );
   }
 
@@ -220,6 +227,7 @@ class CharacterChatMessage {
       if (imageAsset != null) 'imageAsset': imageAsset,
       if (imageUrl != null) 'imageUrl': imageUrl,
       if (mediaCategory != null) 'mediaCategory': mediaCategory!.name,
+      if (sajuData != null) 'sajuData': sajuData,
     };
   }
 
@@ -268,6 +276,7 @@ class CharacterChatMessage {
               orElse: () => CharacterMediaCategory.meal,
             )
           : null,
+      sajuData: json['sajuData'] as Map<String, dynamic>?,
     );
   }
 }

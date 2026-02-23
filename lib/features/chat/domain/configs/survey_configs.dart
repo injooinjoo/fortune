@@ -276,13 +276,13 @@ const loveSurveyConfig = FortuneSurveyConfig(
 );
 
 // ============================================================
-// Daily (오늘의 인사이트) 설문 설정
+// Daily (오늘의 운세) 설문 설정
 // ============================================================
 
 /// Daily 설문 설정 (설문 스킵 - 바로 조회)
 const dailySurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.daily,
-  title: '오늘의 인사이트',
+  title: '오늘의 운세',
   description: '오늘 하루를 미리 살펴볼까요?',
   emoji: '🌅',
   accentColor: DSColors.accentSecondary,
@@ -477,7 +477,7 @@ const _mbtiCategoryOptions = [
 const mbtiSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.mbti,
   title: 'MBTI 인사이트',
-  description: 'MBTI로 보는 오늘의 인사이트',
+  description: 'MBTI로 보는 오늘의 운세',
   emoji: '🧠',
   accentColor: DSColors.accentSecondary,
   steps: [

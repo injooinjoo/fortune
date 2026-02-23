@@ -77,7 +77,7 @@ class TodayResultLabel extends StatelessWidget {
               ),
               const SizedBox(width: 6),
               Text(
-                '오늘의 인사이트',
+                '오늘의 운세',
                 style: context.labelMedium.copyWith(
                   color: labelColor,
                   fontWeight: FontWeight.w700,

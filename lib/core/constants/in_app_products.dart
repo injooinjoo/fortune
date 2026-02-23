@@ -1,6 +1,6 @@
-// In-App Purchase Product IDs - 포인트 시스템
+// In-App Purchase Product IDs - 토큰 시스템
 class InAppProducts {
-  // Consumable Products (포인트 패키지)
+  // Consumable Products (토큰 패키지)
   static const String points300 = 'com.beyond.fortune.points300';
   static const String points600 = 'com.beyond.fortune.points600';
   static const String points1200 = 'com.beyond.fortune.points1200';
@@ -20,18 +20,18 @@ class InAppProducts {
   static const Map<String, ProductInfo> productDetails = {
     points300: ProductInfo(
       id: points300,
-      title: '330 포인트',
-      description: '300P + 30P 보너스',
-      price: 3000,
-      points: 330,
+      title: '350 토큰',
+      description: '300 + 50 보너스',
+      price: 3300,
+      points: 350,
       basePoints: 300,
-      bonusPoints: 30,
+      bonusPoints: 50,
       isSubscription: false,
     ),
     points600: ProductInfo(
       id: points600,
-      title: '700 포인트',
-      description: '600P + 100P 보너스',
+      title: '700 토큰',
+      description: '600 + 100 보너스',
       price: 5500,
       points: 700,
       basePoints: 600,
@@ -40,39 +40,39 @@ class InAppProducts {
     ),
     points1200: ProductInfo(
       id: points1200,
-      title: '1,500 포인트',
-      description: '1,200P + 300P 보너스',
-      price: 9900,
-      points: 1500,
-      basePoints: 1200,
-      bonusPoints: 300,
+      title: '1,650 토큰',
+      description: '1,500 + 150 보너스',
+      price: 11000,
+      points: 1650,
+      basePoints: 1500,
+      bonusPoints: 150,
       isSubscription: false,
     ),
     points3000: ProductInfo(
       id: points3000,
-      title: '4,000 포인트',
-      description: '3,000P + 1,000P 보너스',
+      title: '4,400 토큰',
+      description: '4,000 + 400 보너스',
       price: 22000,
-      points: 4000,
-      basePoints: 3000,
-      bonusPoints: 1000,
+      points: 4400,
+      basePoints: 4000,
+      bonusPoints: 400,
       isSubscription: false,
     ),
     proSubscription: ProductInfo(
       id: proSubscription,
       title: 'Pro 구독',
-      description: '매월 30,000개 토큰 자동 충전',
-      price: 4500,
-      points: 30000, // 월간 토큰
+      description: '매월 3,000 토큰 자동 충전',
+      price: 3300,
+      points: 3000, // 월간 토큰
       isSubscription: true,
       subscriptionPeriod: 'pro',
     ),
     maxSubscription: ProductInfo(
       id: maxSubscription,
       title: 'Max 구독',
-      description: '매월 100,000개 토큰 자동 충전',
-      price: 12900,
-      points: 100000, // 월간 토큰
+      description: '매월 12,600 토큰 자동 충전',
+      price: 13000,
+      points: 12600, // 월간 토큰
       isSubscription: true,
       subscriptionPeriod: 'max',
     ),
@@ -125,9 +125,9 @@ class ProductInfo {
   final String title;
   final String description;
   final int price; // in KRW
-  final int points; // 총 포인트 (보너스 포함)
-  final int? basePoints; // 기본 포인트
-  final int? bonusPoints; // 보너스 포인트
+  final int points; // 총 토큰 (보너스 포함)
+  final int? basePoints; // 기본 토큰
+  final int? bonusPoints; // 보너스 토큰
   final bool isSubscription;
   final String? subscriptionPeriod; // 'monthly' or 'yearly'
   final bool isNonConsumable; // 평생 소유 상품
@@ -150,19 +150,22 @@ class ProductInfo {
   /// 구독 여부에 따른 혜택 문구
   String get benefitText {
     if (isSubscription) {
-      return '매일 ${dailyPointLimit}P 충전';
+      return '매일 $dailyPointLimit 토큰 충전';
     }
     if (bonusPoints != null && bonusPoints! > 0) {
-      return '$basePoints P + $bonusPoints P 보너스';
+      return '$basePoints + $bonusPoints 보너스';
     }
-    return '$points P 충전';
+    return '$points 토큰 충전';
   }
 
-  /// 포인트당 가격 (원)
-  double get pricePerPoint {
+  /// 토큰당 가격 (원)
+  double get pricePerToken {
     if (points <= 0) return 0;
     return price / points;
   }
+
+  /// 포인트당 가격 (원) - 레거시 호환
+  double get pricePerPoint => pricePerToken;
 
   /// 월간 가격 반환
   int get monthlyEquivalentPrice => price;
@@ -171,8 +174,8 @@ class ProductInfo {
   int get savingsPercent {
     if (subscriptionPeriod == 'max') {
       // Pro 가격 대비 토큰당 가격 절약률
-      const proPrice = 4500;
-      const proTokens = 30000;
+      const proPrice = 3300;
+      const proTokens = 3000;
       final proPricePerToken = proPrice / proTokens;
       final maxPricePerToken = price / points;
       return (((proPricePerToken - maxPricePerToken) / proPricePerToken) * 100)

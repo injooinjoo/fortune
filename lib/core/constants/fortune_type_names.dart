@@ -7,7 +7,7 @@ class FortuneTypeNames {
   static const Map<String, String> names = {
     // Daily Insights (일일 인사이트)
     'daily': '오늘의 메시지',
-    'today': '오늘의 인사이트',
+    'today': '오늘의 운세',
     'tomorrow': '내일의 인사이트',
     'daily-calendar': '날짜별 인사이트',
     'weekly': '주간 인사이트',

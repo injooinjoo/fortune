@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import '../../../design_system/design_system.dart';
 
-/// 사주 결과 인포그래픽 헤더
+/// 사주 결과 인포그래픽 헤더 (프리미엄 비주얼)
 ///
-/// 사주 팔자 표, 오행 밸런스, 보완 조언을 표시
+/// 사주 팔자를 개별 컬러 카드로 표시, 오행 밸런스, 보완 조언을 표시
 ///
-/// 사용 예시:
+/// pillars 데이터 형식:
 /// ```dart
-/// SajuInfoHeader(
-///   birthDate: '1990.05.15',
-///   birthTime: '10:30',
-///   pillars: {'year': {'sky': '庚', 'earth': '午'}, ...},
-///   elements: {'목': 28, '화': 35, '토': 22, '금': 10, '수': 5},
-/// )
+/// {
+///   'year': { 'sky': '甲', 'skyElement': '목', 'earth': '子', 'earthElement': '수', 'animal': '쥐' },
+///   'month': { ... },
+///   'day': { ... },
+///   'hour': { ... },
+/// }
 /// ```
 class SajuInfoHeader extends StatelessWidget {
   /// 생년월일
@@ -21,7 +21,7 @@ class SajuInfoHeader extends StatelessWidget {
   /// 생시
   final String? birthTime;
 
-  /// 사주 팔자 (4주 8자)
+  /// 사주 팔자 (4주 8자) - sky/earth + element info
   final Map<String, dynamic>? pillars;
 
   /// 오행 분포
@@ -62,6 +62,15 @@ class SajuInfoHeader extends StatelessWidget {
     );
   }
 
+  // 오행 → 한자 매핑
+  static const _wuxingKanji = {
+    '목': '木',
+    '화': '火',
+    '토': '土',
+    '금': '金',
+    '수': '水',
+  };
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
@@ -78,10 +87,10 @@ class SajuInfoHeader extends StatelessWidget {
           // 제목 + 생년월일
           _buildTitle(context),
 
-          // 사주 팔자 테이블
+          // 사주 팔자 개별 카드
           if (pillars != null && pillars!.isNotEmpty) ...[
             const SizedBox(height: DSSpacing.md),
-            _buildPillarsTable(context),
+            _buildPillarCards(context),
           ],
 
           // 오행 밸런스 바
@@ -143,99 +152,289 @@ class SajuInfoHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildPillarsTable(BuildContext context) {
+  /// 4개 필러를 개별 컬러 카드로 표시
+  Widget _buildPillarCards(BuildContext context) {
+    final isDark = context.isDark;
+    final pillarOrder = ['hour', 'day', 'month', 'year'];
+    final pillarLabels = {
+      'year': '년주',
+      'month': '월주',
+      'day': '일주',
+      'hour': '시주'
+    };
+
+    return Row(
+      children: pillarOrder.asMap().entries.map((entry) {
+        final index = entry.key;
+        final key = entry.value;
+        final pillar = pillars![key] as Map<String, dynamic>?;
+        final isDay = key == 'day';
+
+        return Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: index == 0 ? 0 : 3,
+              right: index == 3 ? 0 : 3,
+            ),
+            child: pillar != null
+                ? _buildPillarCard(
+                    context,
+                    sky: pillar['sky'] as String? ?? '-',
+                    earth: pillar['earth'] as String? ?? '-',
+                    skyElement: pillar['skyElement'] as String? ?? '',
+                    earthElement: pillar['earthElement'] as String? ?? '',
+                    animal: pillar['animal'] as String?,
+                    label: pillarLabels[key] ?? key,
+                    isDay: isDay,
+                    isDark: isDark,
+                  )
+                : _buildEmptyPillarCard(
+                    context,
+                    label: pillarLabels[key] ?? key,
+                    isDark: isDark,
+                  ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  /// 개별 필러 카드 위젯
+  Widget _buildPillarCard(
+    BuildContext context, {
+    required String sky,
+    required String earth,
+    required String skyElement,
+    required String earthElement,
+    String? animal,
+    required String label,
+    required bool isDay,
+    required bool isDark,
+  }) {
     final colors = context.colors;
-    final pillarOrder = ['year', 'month', 'day', 'hour'];
-    final pillarNames = {'year': '년', 'month': '월', 'day': '일', 'hour': '시'};
+    final skyColor = SajuColors.getWuxingColor(skyElement, isDark: isDark);
+    final earthColor = SajuColors.getWuxingColor(earthElement, isDark: isDark);
+    final skyBg =
+        SajuColors.getWuxingBackgroundColor(skyElement, isDark: isDark);
+    final earthBg =
+        SajuColors.getWuxingBackgroundColor(earthElement, isDark: isDark);
 
     return Container(
-      padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
-        color: colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(DSRadius.md),
-        border: Border.all(color: colors.border),
+        border: isDay
+            ? Border.all(color: colors.accent, width: 2)
+            : Border.all(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : Colors.black.withValues(alpha: 0.06)),
+        boxShadow: isDay
+            ? [
+                BoxShadow(
+                  color: colors.accent.withValues(alpha: 0.15),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ]
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
+                  blurRadius: 4,
+                  offset: const Offset(0, 1),
+                ),
+              ],
       ),
+      clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
-          // 천간 행
-          Row(
-            children: [
-              SizedBox(
-                width: 40,
-                child: Text(
-                  '天干',
-                  style: context.labelSmall.copyWith(
-                    color: colors.textSecondary,
+          // 천간 영역
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            decoration: BoxDecoration(
+              color: skyBg,
+            ),
+            child: Column(
+              children: [
+                Text(
+                  sky,
+                  style: context.heading2.copyWith(
+                    color: skyColor,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              ),
-              ...pillarOrder.map((key) {
-                final pillar = pillars![key] as Map<String, dynamic>?;
-                final sky = pillar?['sky'] as String? ??
-                    pillar?['천간'] as String? ??
-                    '-';
-                return Expanded(
-                  child: Center(
-                    child: Text(
-                      sky,
-                      style: context.heading4.copyWith(
-                        color: _getElementColor(sky, colors),
-                      ),
-                    ),
+                const SizedBox(height: 2),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                  decoration: BoxDecoration(
+                    color: skyColor.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(4),
                   ),
-                );
-              }),
-            ],
-          ),
-          const SizedBox(height: 8),
-          // 지지 행
-          Row(
-            children: [
-              SizedBox(
-                width: 40,
-                child: Text(
-                  '地支',
-                  style: context.labelSmall.copyWith(
-                    color: colors.textSecondary,
+                  child: Text(
+                    skyElement.isNotEmpty
+                        ? '${_wuxingKanji[skyElement] ?? skyElement} $skyElement'
+                        : '',
+                    style: context.labelTiny.copyWith(
+                      color: skyColor,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
-              ),
-              ...pillarOrder.map((key) {
-                final pillar = pillars![key] as Map<String, dynamic>?;
-                final earth = pillar?['earth'] as String? ??
-                    pillar?['지지'] as String? ??
-                    '-';
-                return Expanded(
-                  child: Center(
-                    child: Text(
-                      earth,
-                      style: context.heading4.copyWith(
-                        color: _getElementColor(earth, colors),
-                      ),
-                    ),
-                  ),
-                );
-              }),
-            ],
+              ],
+            ),
           ),
-          const SizedBox(height: 8),
-          // 라벨 행
-          Row(
-            children: [
-              const SizedBox(width: 40),
-              ...pillarOrder.map((key) {
-                return Expanded(
-                  child: Center(
-                    child: Text(
-                      pillarNames[key] ?? key,
-                      style: context.labelSmall.copyWith(
-                        color: colors.textTertiary,
-                      ),
+          // 미세한 구분선
+          Container(
+            height: 0.5,
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.06)
+                : Colors.black.withValues(alpha: 0.04),
+          ),
+          // 지지 영역
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            decoration: BoxDecoration(
+              color: earthBg,
+            ),
+            child: Column(
+              children: [
+                Text(
+                  earth,
+                  style: context.heading2.copyWith(
+                    color: earthColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                if (animal != null && animal.isNotEmpty)
+                  Text(
+                    animal,
+                    style: context.labelTiny.copyWith(
+                      color: earthColor.withValues(alpha: 0.7),
                     ),
                   ),
-                );
-              }),
-            ],
+                const SizedBox(height: 2),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                  decoration: BoxDecoration(
+                    color: earthColor.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    earthElement.isNotEmpty
+                        ? '${_wuxingKanji[earthElement] ?? earthElement} $earthElement'
+                        : '',
+                    style: context.labelTiny.copyWith(
+                      color: earthColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // 라벨
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            color: isDay
+                ? colors.accent.withValues(alpha: 0.08)
+                : (isDark
+                    ? Colors.white.withValues(alpha: 0.03)
+                    : Colors.black.withValues(alpha: 0.02)),
+            child: Center(
+              child: Text(
+                label,
+                style: context.labelSmall.copyWith(
+                  color: isDay ? colors.accent : colors.textTertiary,
+                  fontWeight: isDay ? FontWeight.w700 : FontWeight.w500,
+                  fontSize: 10,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 시주 데이터 없을 때 placeholder
+  Widget _buildEmptyPillarCard(
+    BuildContext context, {
+    required String label,
+    required bool isDark,
+  }) {
+    final colors = context.colors;
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.06)
+              : Colors.black.withValues(alpha: 0.04),
+          style: BorderStyle.solid,
+        ),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          // 천간 placeholder
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.02)
+                : Colors.black.withValues(alpha: 0.02),
+            child: Center(
+              child: Text(
+                '?',
+                style: context.heading2.copyWith(
+                  color: colors.textTertiary,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            height: 0.5,
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.06)
+                : Colors.black.withValues(alpha: 0.04),
+          ),
+          // 지지 placeholder
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.02)
+                : Colors.black.withValues(alpha: 0.02),
+            child: Center(
+              child: Text(
+                '?',
+                style: context.heading2.copyWith(
+                  color: colors.textTertiary,
+                ),
+              ),
+            ),
+          ),
+          // 라벨
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.03)
+                : Colors.black.withValues(alpha: 0.02),
+            child: Center(
+              child: Text(
+                label,
+                style: context.labelSmall.copyWith(
+                  color: colors.textTertiary,
+                  fontSize: 10,
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -244,15 +443,9 @@ class SajuInfoHeader extends StatelessWidget {
 
   Widget _buildElementBalance(BuildContext context) {
     final colors = context.colors;
-    final elementColors = {
-      '목': const Color(0xFF38A169), // 초록
-      '화': const Color(0xFFE53E3E), // 빨강
-      '토': const Color(0xFFD69E2E), // 황토
-      '금': const Color(0xFFA0AEC0), // 은색
-      '수': const Color(0xFF3182CE), // 파랑
-    };
-
+    final isDark = context.isDark;
     final total = elements!.values.fold<num>(0, (sum, v) => sum + (v as num));
+    if (total <= 0) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -270,28 +463,29 @@ class SajuInfoHeader extends StatelessWidget {
           ],
         ),
         const SizedBox(height: DSSpacing.sm),
-        // 수평 스택 바
+        // 수평 스택 바 (높이 증가 + 한자 표시)
         Container(
-          height: 24,
+          height: 32,
           clipBehavior: Clip.hardEdge,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
           ),
           child: Row(
             children: elements!.entries.map((e) {
               final ratio = (e.value as num) / total;
-              final color = elementColors[e.key] ?? colors.accent;
+              final color = SajuColors.getWuxingColor(e.key, isDark: isDark);
+              final kanji = _wuxingKanji[e.key] ?? e.key;
               return Expanded(
-                flex: (ratio * 100).round(),
+                flex: (ratio * 100).round().clamp(1, 100),
                 child: Container(
                   color: color,
                   child: Center(
-                    child: ratio > 0.1
+                    child: ratio > 0.08
                         ? Text(
-                            e.key,
+                            kanji,
                             style: context.labelSmall.copyWith(
-                              color: DSColors.accent,
-                              fontSize: 10,
+                              color: Colors.white,
+                              fontSize: ratio > 0.15 ? 13 : 10,
                               fontWeight: FontWeight.bold,
                             ),
                           )
@@ -302,27 +496,52 @@ class SajuInfoHeader extends StatelessWidget {
             }).toList(),
           ),
         ),
-        const SizedBox(height: 8),
-        // 강/약 표시
+        const SizedBox(height: 10),
+        // 강/약 표시 (오행 색 도트 추가)
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (strongElement != null) ...[
+              Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  color:
+                      SajuColors.getWuxingColor(strongElement!, isDark: isDark),
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 4),
               Text(
-                '↑ 강: $strongElement',
+                '강: $strongElement',
                 style: context.labelSmall.copyWith(
-                  color: colors.success,
+                  color:
+                      SajuColors.getWuxingColor(strongElement!, isDark: isDark),
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(width: 16),
             ],
-            if (weakElement != null)
-              Text(
-                '↓ 약: $weakElement',
-                style: context.labelSmall.copyWith(
-                  color: colors.error,
+            if (weakElement != null) ...[
+              Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  color:
+                      SajuColors.getWuxingColor(weakElement!, isDark: isDark),
+                  shape: BoxShape.circle,
                 ),
               ),
+              const SizedBox(width: 4),
+              Text(
+                '약: $weakElement',
+                style: context.labelSmall.copyWith(
+                  color:
+                      SajuColors.getWuxingColor(weakElement!, isDark: isDark),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ],
         ),
       ],
@@ -354,22 +573,5 @@ class SajuInfoHeader extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Color _getElementColor(String char, DSColorScheme colors) {
-    // 천간/지지에서 오행 추출
-    const woodChars = ['甲', '乙', '寅', '卯'];
-    const fireChars = ['丙', '丁', '巳', '午'];
-    const earthChars = ['戊', '己', '辰', '戌', '丑', '未'];
-    const metalChars = ['庚', '辛', '申', '酉'];
-    const waterChars = ['壬', '癸', '子', '亥'];
-
-    if (woodChars.contains(char)) return const Color(0xFF38A169);
-    if (fireChars.contains(char)) return const Color(0xFFE53E3E);
-    if (earthChars.contains(char)) return const Color(0xFFD69E2E);
-    if (metalChars.contains(char)) return const Color(0xFFA0AEC0);
-    if (waterChars.contains(char)) return const Color(0xFF3182CE);
-
-    return colors.textPrimary;
   }
 }

@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+.dart_tool/
+.packages
+
+# Build outputs
+build/
+.gradle/
+*.apk
+*.ipa
+*.aab
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+
+# Generated files
+*.g.dart
+*.freezed.dart
+*.mocks.dart
+lib/generated/
+
+# iOS/Android build cache
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+android/.gradle/
+android/app/build/
+
+# Large binary assets (tarot decks - 8 decks x 78 cards)
+assets/images/tarot/decks/
+
+# Test outputs
+testsprite_tests/tmp/
+output/
+coverage/
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.development
+.env.test
+.env.codex.backup
+
+# Misc
+.DS_Store
+*.log
+third_party/
+.playwright-cli/

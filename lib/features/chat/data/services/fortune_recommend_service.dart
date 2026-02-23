@@ -64,7 +64,7 @@ const Map<String, List<String>> _fortuneKeywords = {
 
 /// 키워드 → 추천 이유 매핑
 const Map<String, String> _fortuneReasons = {
-  'daily': '오늘의 인사이트',
+  'daily': '오늘의 운세',
   'daily-calendar': '기간별 인사이트',
   'new-year': '새해 인사이트',
   'love': '연애 인사이트',

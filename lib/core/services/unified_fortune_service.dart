@@ -266,7 +266,7 @@ class UnifiedFortuneService {
   String _getDefaultTitle(String fortuneType) {
     const titles = {
       'avoid-people': '피해야 할 사람',
-      'daily': '오늘의 인사이트',
+      'daily': '오늘의 운세',
       'tarot': 'Insight Cards',
       'mbti': 'MBTI 분석',
       'love': '연애 분석',
