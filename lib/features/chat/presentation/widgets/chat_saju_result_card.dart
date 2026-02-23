@@ -20,11 +20,16 @@ import '../../../fortune/presentation/widgets/saju_element_chart.dart';
 class ChatSajuResultCard extends ConsumerStatefulWidget {
   final Map<String, dynamic> sajuData;
   final Map<String, dynamic>? fortuneResult;
+  final EdgeInsetsGeometry margin;
 
   const ChatSajuResultCard({
     super.key,
     required this.sajuData,
     this.fortuneResult,
+    this.margin = const EdgeInsets.symmetric(
+      vertical: DSSpacing.sm,
+      horizontal: DSSpacing.md,
+    ),
   });
 
   @override
@@ -100,10 +105,7 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
 
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.symmetric(
-        vertical: DSSpacing.sm,
-        horizontal: DSSpacing.md,
-      ),
+      margin: widget.margin,
       decoration: BoxDecoration(
         color: isDark ? colors.backgroundSecondary : colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.lg),

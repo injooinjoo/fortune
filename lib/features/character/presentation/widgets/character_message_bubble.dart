@@ -105,6 +105,47 @@ class CharacterMessageBubble extends StatelessWidget {
       source: character.accentColor,
       brightness: Theme.of(context).brightness,
     );
+
+    if (message.hasSajuData) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: showAvatar ? 4 : 2),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (showAvatar) ...[
+              GestureDetector(
+                onTap: () {
+                  HapticUtils.lightImpact();
+                  context.push('/character/${character.id}', extra: character);
+                },
+                child: CircleAvatar(
+                  radius: 16,
+                  backgroundColor: accentPalette.accent,
+                  backgroundImage: character.avatarAsset.isNotEmpty
+                      ? AssetImage(character.avatarAsset)
+                      : null,
+                  child: character.avatarAsset.isEmpty
+                      ? Text(
+                          character.initial,
+                          style: context.labelMedium.copyWith(
+                            color: accentPalette.onAccent,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      : null,
+                ),
+              ),
+              const SizedBox(height: DSSpacing.xs),
+            ],
+            ChatSajuResultCard(
+              sajuData: message.sajuData!,
+              margin: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: showAvatar ? 4 : 2),
       child: Row(
@@ -142,11 +183,8 @@ class CharacterMessageBubble extends StatelessWidget {
               children: [
                 // 이미지가 있으면 먼저 표시 (점심 사진 등)
                 if (message.hasImage) _buildImageBubble(context, colors),
-                // 사주 결과 비주얼 카드 (구조화 데이터가 있으면 카드로 렌더링)
-                if (message.hasSajuData)
-                  ChatSajuResultCard(sajuData: message.sajuData!)
                 // 텍스트 버블
-                else if (message.text.isNotEmpty)
+                if (message.text.isNotEmpty)
                   Stack(
                     clipBehavior: Clip.none,
                     children: [
