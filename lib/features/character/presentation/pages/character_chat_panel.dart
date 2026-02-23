@@ -704,23 +704,9 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           );
         }
 
-        // 카카오톡 스타일 아바타 그룹핑: 연속 캐릭터 메시지 중 첫 번째만 아바타 표시
-        final bool shouldShowAvatar;
-        if (message.type != CharacterChatMessageType.character) {
-          shouldShowAvatar = true;
-        } else if (index == 0) {
-          shouldShowAvatar = true;
-        } else {
-          final prevMessage =
-              chatState.messages[index - 1] as CharacterChatMessage;
-          shouldShowAvatar =
-              prevMessage.type != CharacterChatMessageType.character;
-        }
-
         return CharacterMessageBubble(
           message: message,
           character: widget.character,
-          showAvatar: shouldShowAvatar,
         );
       },
     );
