@@ -3,6 +3,7 @@
 
 import { createClient, SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMResponse } from './types.ts'
+import { GcpLoggingService } from '../monitoring/gcp-logging.ts'
 
 // 프로바이더별 토큰당 비용 (USD, 2025년 기준)
 const COST_PER_1M_TOKENS: Record<string, { input: number; output: number }> = {
@@ -81,6 +82,22 @@ export class UsageLogger {
         data.response.usage.completionTokens
       )
 
+      await GcpLoggingService.log({
+        eventType: 'llm_usage',
+        functionName: data.fortuneType,
+        requestId: data.requestId,
+        userId: data.userId,
+        provider: data.provider,
+        model: data.model,
+        promptTokens: data.response.usage.promptTokens,
+        completionTokens: data.response.usage.completionTokens,
+        totalTokens: data.response.usage.totalTokens,
+        estimatedCostUsd: estimatedCost,
+        latencyMs: data.response.latency,
+        success: data.response.finishReason !== 'error',
+        metadata: data.metadata,
+      })
+
       const logEntry = {
         fortune_type: data.fortuneType,
         user_id: data.userId || null,
@@ -144,6 +161,22 @@ export class UsageLogger {
         error_message: errorMessage,
         metadata: metadata || {},
       }
+
+      await GcpLoggingService.log({
+        eventType: 'llm_usage_error',
+        functionName: fortuneType,
+        userId: userId,
+        provider: provider,
+        model: model,
+        promptTokens: 0,
+        completionTokens: 0,
+        totalTokens: 0,
+        estimatedCostUsd: 0,
+        latencyMs: 0,
+        success: false,
+        errorMessage: errorMessage,
+        metadata: metadata,
+      })
 
       await supabase.from('llm_usage_logs').insert(logEntry)
     } catch (error) {

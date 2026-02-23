@@ -19,6 +19,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { corsHeaders, handleCors } from '../_shared/cors.ts'
+import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 
 interface FreeChatContext {
   userName?: string
@@ -43,6 +44,7 @@ interface FreeChatResponse {
     provider: string
     model: string
     latencyMs: number
+    requestId: string
   }
   error?: string
 }
@@ -51,6 +53,7 @@ interface FreeChatResponse {
 const FORTUNE_KEYWORDS = ['운세', '운', '오늘', '내일', '이번주', '띠', '별자리', '사주', '미래', '앞날', '길흉', '행운']
 const PERSONALITY_KEYWORDS = ['성격', 'mbti', '관계', '연애', '사람', '친구', '성향', '타입', '사교', '내향', '외향']
 const HEALTH_KEYWORDS = ['건강', '다이어트', '운동', '식단', '몸', '피로', '체력', '수면', '스트레스']
+const FREE_CHAT_MODEL = 'gemini-2.5-flash-lite'
 
 // 생년월일에서 나이 계산
 function calculateAge(birthDate: string): number {
@@ -177,6 +180,7 @@ serve(async (req: Request) => {
   if (corsResponse) return corsResponse
 
   const startTime = Date.now()
+  const requestId = req.headers.get('x-request-id') || crypto.randomUUID()
 
   try {
     const { message, context }: FreeChatRequest = await req.json()
@@ -187,6 +191,12 @@ serve(async (req: Request) => {
         JSON.stringify({
           success: false,
           response: '',
+          meta: {
+            provider: 'gemini',
+            model: FREE_CHAT_MODEL,
+            latencyMs: Date.now() - startTime,
+            requestId,
+          },
           error: '메시지를 입력해주세요',
         } as FreeChatResponse),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
@@ -210,14 +220,27 @@ serve(async (req: Request) => {
 
     const latencyMs = Date.now() - startTime
 
+    await UsageLogger.log({
+      fortuneType: 'free-chat',
+      requestId,
+      provider: response.provider,
+      model: response.model,
+      response,
+      metadata: {
+        messageLength: message.trim().length,
+        hasContext: Boolean(context),
+      },
+    })
+
     return new Response(
       JSON.stringify({
         success: true,
         response: response.content.trim(),
         meta: {
           provider: 'gemini',
-          model: 'gemini-2.0-flash-lite',
+          model: response.model,
           latencyMs,
+          requestId,
         },
       } as FreeChatResponse),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -226,6 +249,15 @@ serve(async (req: Request) => {
   } catch (error) {
     console.error('free-chat 에러:', error)
 
+    await UsageLogger.logError(
+      'free-chat',
+      'gemini',
+      FREE_CHAT_MODEL,
+      error instanceof Error ? error.message : 'Unknown error',
+      undefined,
+      { requestId, latencyMs: Date.now() - startTime }
+    )
+
     return new Response(
       JSON.stringify({
         success: false,
@@ -233,8 +265,9 @@ serve(async (req: Request) => {
         error: error instanceof Error ? error.message : 'Unknown error',
         meta: {
           provider: 'gemini',
-          model: 'gemini-2.0-flash-lite',
+          model: FREE_CHAT_MODEL,
           latencyMs: Date.now() - startTime,
+          requestId,
         },
       } as FreeChatResponse),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }

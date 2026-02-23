@@ -12,10 +12,13 @@
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 
 const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY')!
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+const GEMINI_TEXT_MODEL = 'gemini-2.0-flash-lite'
+const GEMINI_IMAGE_MODEL = 'gemini-2.5-flash-image'
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -58,6 +61,11 @@ interface YearlyEncounterResponse {
     createdAt: string
   }
   error?: string
+}
+
+interface TelemetryContext {
+  userId: string
+  requestId: string
 }
 
 // ============================================================================
@@ -252,6 +260,20 @@ function randomPick<T>(array: T[]): T {
   return array[Math.floor(Math.random() * array.length)]
 }
 
+function toFinishReason(reason?: string): 'stop' | 'length' | 'error' {
+  if (reason === 'STOP') return 'stop'
+  if (reason === 'MAX_TOKENS') return 'length'
+  return 'error'
+}
+
+function extractUsageMetadata(result: any) {
+  return {
+    promptTokens: result?.usageMetadata?.promptTokenCount ?? 0,
+    completionTokens: result?.usageMetadata?.candidatesTokenCount ?? 0,
+    totalTokens: result?.usageMetadata?.totalTokenCount ?? 0,
+  }
+}
+
 // ============================================================================
 // Image Prompt Variations (다양한 이미지 생성을 위한 배열)
 // ============================================================================
@@ -412,9 +434,12 @@ DO NOT include: text, logos, watermarks, blurry, cartoon, anime, illustrated, CG
 async function generateAppearanceHashtags(
   targetGender: string,
   idealType: string,
-  mbti: string
+  mbti: string,
+  telemetry: TelemetryContext
 ): Promise<string[]> {
   console.log('📝 Generating appearance hashtags with Gemini 2.0 Flash Lite...')
+  const startTime = Date.now()
+  let responseStatus = 0
 
   try {
     const systemPrompt = `You are a creative Korean content writer for a "2026 Destiny Finder" app.
@@ -439,7 +464,7 @@ Example: ["#무쌍_강아지상", "#셔츠가잘어울리는", "#너드미"]`
 - MBTI preference: ${mbti}`
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_TEXT_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -455,13 +480,37 @@ Example: ["#무쌍_강아지상", "#셔츠가잘어울리는", "#너드미"]`
         }),
       }
     )
+    responseStatus = response.status
 
     if (!response.ok) {
-      throw new Error(`Gemini API error: ${response.status}`)
+      const errorText = await response.text()
+      throw new Error(`Gemini API error: ${response.status} - ${errorText.substring(0, 500)}`)
     }
 
     const data = await response.json()
     const content = data.candidates?.[0]?.content?.parts?.[0]?.text || ''
+    const usage = extractUsageMetadata(data)
+
+    await UsageLogger.log({
+      fortuneType: 'yearly-encounter',
+      userId: telemetry.userId,
+      requestId: telemetry.requestId,
+      provider: 'gemini',
+      model: GEMINI_TEXT_MODEL,
+      response: {
+        content,
+        finishReason: toFinishReason(data.candidates?.[0]?.finishReason),
+        usage,
+        latency: Date.now() - startTime,
+        provider: 'gemini',
+        model: GEMINI_TEXT_MODEL,
+      },
+      metadata: {
+        phase: 'appearance_hashtags',
+        targetGender,
+        statusCode: responseStatus,
+      },
+    })
 
     // Parse JSON array from response
     const match = content.match(/\[.*\]/s)
@@ -473,6 +522,22 @@ Example: ["#무쌍_강아지상", "#셔츠가잘어울리는", "#너드미"]`
     return ['#따뜻한_미소', '#눈빛이_다정한', '#설렘유발자']
   } catch (error) {
     console.error('❌ Hashtag generation error:', error)
+
+    await UsageLogger.logError(
+      'yearly-encounter',
+      'gemini',
+      GEMINI_TEXT_MODEL,
+      error instanceof Error ? error.message : 'Unknown error',
+      telemetry.userId,
+      {
+        phase: 'appearance_hashtags',
+        requestId: telemetry.requestId,
+        statusCode: responseStatus,
+        latencyMs: Date.now() - startTime,
+        targetGender,
+      }
+    )
+
     return ['#따뜻한_미소', '#눈빛이_다정한', '#설렘유발자']
   }
 }
@@ -481,16 +546,21 @@ Example: ["#무쌍_강아지상", "#셔츠가잘어울리는", "#너드미"]`
 // Gemini 2.5 Flash Image Image Generation (이미지 생성)
 // ============================================================================
 
-async function generateImageWithGemini(prompt: string): Promise<string> {
+async function generateImageWithGemini(
+  prompt: string,
+  telemetry: TelemetryContext,
+  attempt: number
+): Promise<string> {
   const startTime = Date.now()
   console.log('🎨 Generating portrait with Gemini 2.5 Flash Image...')
+  let responseStatus = 0
 
   if (!GEMINI_API_KEY) {
     throw new Error('Gemini API key not configured')
   }
 
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key=${GEMINI_API_KEY}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_IMAGE_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
     {
       method: 'POST',
       headers: {
@@ -508,6 +578,7 @@ async function generateImageWithGemini(prompt: string): Promise<string> {
       }),
     }
   )
+  responseStatus = response.status
 
   if (!response.ok) {
     const errorText = await response.text()
@@ -515,10 +586,28 @@ async function generateImageWithGemini(prompt: string): Promise<string> {
       status: response.status,
       body: errorText.substring(0, 500),
     })
+
+    await UsageLogger.logError(
+      'yearly-encounter',
+      'gemini',
+      GEMINI_IMAGE_MODEL,
+      `Gemini API failed: ${response.status} - ${errorText.substring(0, 500)}`,
+      telemetry.userId,
+      {
+        phase: 'image_generation',
+        requestId: telemetry.requestId,
+        attempt,
+        promptLength: prompt.length,
+        statusCode: responseStatus,
+        latencyMs: Date.now() - startTime,
+      }
+    )
+
     throw new Error(`Gemini API failed: ${response.status} - ${errorText}`)
   }
 
   const result = await response.json()
+  const usage = extractUsageMetadata(result)
 
   // Gemini 응답에서 이미지 데이터 추출
   const parts = result.candidates?.[0]?.content?.parts || []
@@ -528,11 +617,51 @@ async function generateImageWithGemini(prompt: string): Promise<string> {
 
   if (!imagePart?.inlineData?.data) {
     console.error('❌ Gemini 응답에 이미지 없음:', JSON.stringify(result).substring(0, 500))
+
+    await UsageLogger.logError(
+      'yearly-encounter',
+      'gemini',
+      GEMINI_IMAGE_MODEL,
+      'No image data in Gemini response',
+      telemetry.userId,
+      {
+        phase: 'image_generation',
+        requestId: telemetry.requestId,
+        attempt,
+        promptLength: prompt.length,
+        statusCode: responseStatus,
+        latencyMs: Date.now() - startTime,
+      }
+    )
+
     throw new Error('No image data in Gemini response')
   }
 
   const latency = Date.now() - startTime
   console.log(`✅ Image generated successfully in ${latency}ms`)
+
+  await UsageLogger.log({
+    fortuneType: 'yearly-encounter',
+    userId: telemetry.userId,
+    requestId: telemetry.requestId,
+    provider: 'gemini',
+    model: GEMINI_IMAGE_MODEL,
+    response: {
+      content: '[image-generated]',
+      finishReason: toFinishReason(result.candidates?.[0]?.finishReason),
+      usage,
+      latency,
+      provider: 'gemini',
+      model: GEMINI_IMAGE_MODEL,
+    },
+    metadata: {
+      phase: 'image_generation',
+      requestId: telemetry.requestId,
+      attempt,
+      promptLength: prompt.length,
+      statusCode: responseStatus,
+    },
+  })
 
   return imagePart.inlineData.data
 }
@@ -541,13 +670,17 @@ async function generateImageWithGemini(prompt: string): Promise<string> {
 // Retry Logic with Exponential Backoff
 // ============================================================================
 
-async function generateImageWithRetry(prompt: string, maxRetries = 3): Promise<string> {
+async function generateImageWithRetry(
+  prompt: string,
+  telemetry: TelemetryContext,
+  maxRetries = 3
+): Promise<string> {
   let lastError: Error | null = null
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       console.log(`🎨 이미지 생성 시도 ${attempt}/${maxRetries}...`)
-      return await generateImageWithGemini(prompt)
+      return await generateImageWithGemini(prompt, telemetry, attempt)
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error))
       console.error(`❌ 시도 ${attempt} 실패:`, lastError.message)
@@ -643,14 +776,40 @@ serve(async (req) => {
     return new Response(null, { headers: CORS_HEADERS })
   }
 
+  const requestId = req.headers.get('x-request-id') || crypto.randomUUID()
+
   try {
     const request: YearlyEncounterRequest = await req.json()
     console.log('📥 Yearly Encounter request:', {
+      requestId,
       userId: request.userId,
       targetGender: request.targetGender,
       userAge: request.userAge,
       idealMbti: request.idealMbti,
     })
+
+    if (
+      !request.userId ||
+      !request.userAge ||
+      !request.idealMbti ||
+      (request.targetGender !== 'male' && request.targetGender !== 'female')
+    ) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: '필수 입력값이 누락되었어요. userId/targetGender/userAge/idealMbti를 확인해주세요.',
+        }),
+        {
+          status: 400,
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        }
+      )
+    }
+
+    const telemetry: TelemetryContext = {
+      userId: request.userId,
+      requestId,
+    }
 
     const isPremium = request.isPremium ?? false
 
@@ -663,7 +822,7 @@ serve(async (req) => {
     console.log('📝 Image prompt length:', imagePrompt.length)
 
     // 2. Generate image with Gemini 2.5 Flash Image (with retry logic)
-    const imageBase64 = await generateImageWithRetry(imagePrompt, 3)
+    const imageBase64 = await generateImageWithRetry(imagePrompt, telemetry, 3)
 
     // 3. Upload to Supabase Storage
     const imageUrl = await uploadToSupabase(imageBase64, request.userId)
@@ -672,7 +831,8 @@ serve(async (req) => {
     const appearanceHashtags = await generateAppearanceHashtags(
       request.targetGender,
       request.idealType,
-      request.idealMbti
+      request.idealMbti,
+      telemetry
     )
 
     // 5. Pick random values from constants
@@ -710,6 +870,16 @@ serve(async (req) => {
     })
   } catch (error) {
     console.error('❌ Error:', error)
+
+    await UsageLogger.logError(
+      'yearly-encounter',
+      'gemini',
+      GEMINI_IMAGE_MODEL,
+      error instanceof Error ? error.message : 'Unknown error',
+      undefined,
+      { phase: 'handler', requestId }
+    )
+
     return new Response(
       JSON.stringify({
         success: false,
