@@ -219,8 +219,8 @@ class ChatWeeklyReviewCard extends ConsumerWidget {
         // 좋아요 + 공유 버튼
         FortuneActionButtons(
           contentId: 'weekly_review_${date.millisecondsSinceEpoch}',
-          contentType: 'weekly_review',
-          fortuneType: 'weekly_review',
+          contentType: 'weekly-review',
+          fortuneType: 'weekly-review',
           shareTitle: '주간 리포트',
           shareContent: summary,
           iconSize: 18,

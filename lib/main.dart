@@ -30,6 +30,7 @@ import 'core/providers/locale_provider.dart';
 import 'core/services/fortune_haptic_service.dart';
 import 'core/services/chat_sync_service.dart';
 import 'core/services/user_scope_service.dart';
+import 'core/services/fortune_type_local_migration_service.dart';
 import 'presentation/providers/auth_provider.dart';
 import 'services/deep_link_service.dart';
 import 'presentation/providers/app_providers.dart';
@@ -186,6 +187,12 @@ void main() async {
 }
 
 Future<void> _runDeferredInitializations({required bool supabaseReady}) async {
+  try {
+    await FortuneTypeLocalMigrationService.runOnce();
+  } catch (e) {
+    debugPrint('⚠️ [POST_STARTUP] Fortune type local migration failed: $e');
+  }
+
   if (supabaseReady) {
     try {
       debugPrint('🚀 [POST_STARTUP] Initializing User Scope Service...');

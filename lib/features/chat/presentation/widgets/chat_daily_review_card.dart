@@ -215,8 +215,8 @@ class ChatDailyReviewCard extends ConsumerWidget {
         // 좋아요 + 공유 버튼
         FortuneActionButtons(
           contentId: 'daily_review_${date.millisecondsSinceEpoch}',
-          contentType: 'daily_review',
-          fortuneType: 'daily_review',
+          contentType: 'daily-review',
+          fortuneType: 'daily-review',
           shareTitle: '하루 회고 - ${DateFormat('M월 d일').format(date)}',
           shareContent: '오늘의 하이라이트: $highlight\n배운 점: $learning',
           iconSize: 18,

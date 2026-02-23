@@ -164,6 +164,177 @@ enum FortuneSurveyType {
   yearlyEncounter, // 올해의 인연
 }
 
+extension FortuneSurveyTypeCanonicalX on FortuneSurveyType {
+  /// Canonical kebab-case type id used across Character/Chat/Edge/DB.
+  String get canonicalId {
+    switch (this) {
+      case FortuneSurveyType.profileCreation:
+        return 'profile-creation';
+      case FortuneSurveyType.career:
+        return 'career';
+      case FortuneSurveyType.love:
+        return 'love';
+      case FortuneSurveyType.talent:
+        return 'talent';
+      case FortuneSurveyType.daily:
+        return 'daily';
+      case FortuneSurveyType.tarot:
+        return 'tarot';
+      case FortuneSurveyType.mbti:
+        return 'mbti';
+      case FortuneSurveyType.newYear:
+        return 'new-year';
+      case FortuneSurveyType.dailyCalendar:
+        return 'daily-calendar';
+      case FortuneSurveyType.traditional:
+        return 'traditional-saju';
+      case FortuneSurveyType.faceReading:
+        return 'face-reading';
+      case FortuneSurveyType.talisman:
+        return 'talisman';
+      case FortuneSurveyType.personalityDna:
+        return 'personality-dna';
+      case FortuneSurveyType.biorhythm:
+        return 'biorhythm';
+      case FortuneSurveyType.compatibility:
+        return 'compatibility';
+      case FortuneSurveyType.avoidPeople:
+        return 'avoid-people';
+      case FortuneSurveyType.exLover:
+        return 'ex-lover';
+      case FortuneSurveyType.blindDate:
+        return 'blind-date';
+      case FortuneSurveyType.money:
+        return 'wealth';
+      case FortuneSurveyType.luckyItems:
+        return 'lucky-items';
+      case FortuneSurveyType.lotto:
+        return 'lotto';
+      case FortuneSurveyType.wish:
+        return 'wish';
+      case FortuneSurveyType.fortuneCookie:
+        return 'fortune-cookie';
+      case FortuneSurveyType.health:
+        return 'health';
+      case FortuneSurveyType.exercise:
+        return 'exercise';
+      case FortuneSurveyType.sportsGame:
+        return 'match-insight';
+      case FortuneSurveyType.dream:
+        return 'dream';
+      case FortuneSurveyType.celebrity:
+        return 'celebrity';
+      case FortuneSurveyType.pastLife:
+        return 'past-life';
+      case FortuneSurveyType.gameEnhance:
+        return 'game-enhance';
+      case FortuneSurveyType.pet:
+        return 'pet-compatibility';
+      case FortuneSurveyType.family:
+        return 'family';
+      case FortuneSurveyType.naming:
+        return 'naming';
+      case FortuneSurveyType.babyNickname:
+        return 'baby-nickname';
+      case FortuneSurveyType.ootdEvaluation:
+        return 'ootd-evaluation';
+      case FortuneSurveyType.exam:
+        return 'exam';
+      case FortuneSurveyType.moving:
+        return 'moving';
+      case FortuneSurveyType.gratitude:
+        return 'gratitude';
+      case FortuneSurveyType.yearlyEncounter:
+        return 'yearly-encounter';
+    }
+  }
+
+  static FortuneSurveyType? fromCanonicalId(String canonicalId) {
+    switch (canonicalId) {
+      case 'profile-creation':
+        return FortuneSurveyType.profileCreation;
+      case 'career':
+        return FortuneSurveyType.career;
+      case 'love':
+        return FortuneSurveyType.love;
+      case 'talent':
+        return FortuneSurveyType.talent;
+      case 'daily':
+        return FortuneSurveyType.daily;
+      case 'tarot':
+        return FortuneSurveyType.tarot;
+      case 'mbti':
+        return FortuneSurveyType.mbti;
+      case 'new-year':
+        return FortuneSurveyType.newYear;
+      case 'daily-calendar':
+        return FortuneSurveyType.dailyCalendar;
+      case 'traditional-saju':
+        return FortuneSurveyType.traditional;
+      case 'face-reading':
+        return FortuneSurveyType.faceReading;
+      case 'talisman':
+        return FortuneSurveyType.talisman;
+      case 'personality-dna':
+        return FortuneSurveyType.personalityDna;
+      case 'biorhythm':
+        return FortuneSurveyType.biorhythm;
+      case 'compatibility':
+        return FortuneSurveyType.compatibility;
+      case 'avoid-people':
+        return FortuneSurveyType.avoidPeople;
+      case 'ex-lover':
+        return FortuneSurveyType.exLover;
+      case 'blind-date':
+        return FortuneSurveyType.blindDate;
+      case 'wealth':
+        return FortuneSurveyType.money;
+      case 'lucky-items':
+        return FortuneSurveyType.luckyItems;
+      case 'lotto':
+        return FortuneSurveyType.lotto;
+      case 'wish':
+        return FortuneSurveyType.wish;
+      case 'fortune-cookie':
+        return FortuneSurveyType.fortuneCookie;
+      case 'health':
+        return FortuneSurveyType.health;
+      case 'exercise':
+        return FortuneSurveyType.exercise;
+      case 'match-insight':
+        return FortuneSurveyType.sportsGame;
+      case 'dream':
+        return FortuneSurveyType.dream;
+      case 'celebrity':
+        return FortuneSurveyType.celebrity;
+      case 'past-life':
+        return FortuneSurveyType.pastLife;
+      case 'game-enhance':
+        return FortuneSurveyType.gameEnhance;
+      case 'pet-compatibility':
+        return FortuneSurveyType.pet;
+      case 'family':
+        return FortuneSurveyType.family;
+      case 'naming':
+        return FortuneSurveyType.naming;
+      case 'baby-nickname':
+        return FortuneSurveyType.babyNickname;
+      case 'ootd-evaluation':
+        return FortuneSurveyType.ootdEvaluation;
+      case 'exam':
+        return FortuneSurveyType.exam;
+      case 'moving':
+        return FortuneSurveyType.moving;
+      case 'gratitude':
+        return FortuneSurveyType.gratitude;
+      case 'yearly-encounter':
+        return FortuneSurveyType.yearlyEncounter;
+      default:
+        return null;
+    }
+  }
+}
+
 /// 설문 설정
 class FortuneSurveyConfig {
   final FortuneSurveyType fortuneType;

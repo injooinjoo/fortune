@@ -120,18 +120,13 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   /// 오늘의 운세 타입 체크 (설문 기반 아닌 운세)
-  /// 'daily_calendar'는 기간별 인사이트로, 민화 이미지 사용
+  /// 'daily-calendar'는 기간별 인사이트로, 민화 이미지 사용
   bool get _isDailyFortune =>
-      fortuneType == 'daily' ||
-      fortuneType == 'time' ||
-      fortuneType == 'daily_calendar';
+      fortuneType == 'daily' || fortuneType == 'daily-calendar';
 
-  /// 연간 운세 타입 체크 (다양한 형식 지원: new-year, new_year, newYear)
+  /// 연간 운세 타입 체크
   bool get _isYearlyFortune =>
-      fortuneType == 'yearly' ||
-      fortuneType == 'new-year' ||
-      fortuneType == 'new_year' ||
-      fortuneType == 'newYear';
+      fortuneType == 'yearly' || fortuneType == 'new-year';
 
   /// 연간 인사이트 제목 생성 (현재 연도 기반)
   String get _yearlyTitle {
@@ -187,8 +182,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
         metadata['intellectual'] != null;
   }
 
-  /// 재물운 타입 체크 (wealth 또는 money)
-  bool get _isWealth => fortuneType == 'wealth' || fortuneType == 'money';
+  /// 재물운 타입 체크
+  bool get _isWealth => fortuneType == 'wealth';
 
   /// 재물운 데이터 존재 여부 체크
   bool get _hasWealthData {
@@ -255,9 +250,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   }
 
   /// 운동운 타입 체크
-  /// 'exercise' 또는 'health_sports' (FortuneSurveyType.exercise → _mapSurveyTypeToString)
-  bool get _isExercise =>
-      fortuneType == 'exercise' || fortuneType == 'health_sports';
+  bool get _isExercise => fortuneType == 'exercise';
 
   /// 운동운 데이터 존재 여부 체크
   bool get _hasExerciseData {
@@ -521,9 +514,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
 
   /// 관상 타입 체크
   bool get _isFaceReading =>
-      fortuneType == 'face-reading' ||
-      fortuneType == 'faceReading' ||
-      fortuneType == 'physiognomy';
+      fortuneType == 'face-reading' || fortuneType == 'physiognomy';
 
   /// 관상 데이터 존재 여부 체크 (V2 + Legacy 지원)
   bool get _hasFaceReadingData {
@@ -746,8 +737,8 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
                     fortuneType != 'avoid-people')
                   _buildContentSection(context),
 
-                // 기간별 인사이트 상세 데이터 (daily_calendar)
-                if (fortuneType == 'daily_calendar')
+                // 기간별 인사이트 상세 데이터 (daily-calendar)
+                if (fortuneType == 'daily-calendar')
                   _buildDailyCalendarSection(context),
 
                 // 카테고리/육각형 점수 표시 (content 표시하지 않는 타입만)
@@ -1055,7 +1046,7 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
       _buildLuckBoosterSection(context),
       // 기존 콘텐츠 섹션 (선택적 표시)
       if (fortune.content.isNotEmpty) _buildDailyStorySection(context),
-      if (fortuneType == 'daily_calendar') _buildDailyCalendarSection(context),
+      if (fortuneType == 'daily-calendar') _buildDailyCalendarSection(context),
       if (fortune.timeSpecificFortunes != null &&
           fortune.timeSpecificFortunes!.isNotEmpty)
         _buildDailyTimelineSection(context),
@@ -2425,19 +2416,18 @@ class _ChatFortuneResultCardState extends ConsumerState<ChatFortuneResultCard> {
   String _mapFortuneTypeKey(String typeKey) {
     // 내부적으로 사용하는 키와 FortuneType enum 키 매핑
     const keyMapping = {
-      'daily_calendar': 'daily',
-      'traditional_saju': 'traditionalSaju',
+      'daily-calendar': 'daily',
+      'traditional-saju': 'traditionalSaju',
       'premium_saju': 'premiumSaju',
       'face-reading': 'faceReading',
-      'personality-dna': 'personalityDna',
+      'personality-dna': 'personality',
       'past-life': 'pastLife',
       'avoid-people': 'avoidPeople',
       'lucky-items': 'luckyItems',
       'lucky-lottery': 'luckyLottery',
-      'sports_game': 'sportsGame',
-      'fortune-cookie': 'fortuneCookie',
-      'blind_date': 'blindDate',
-      'ex_lover': 'exLover',
+      'match-insight': 'sports',
+      'blind-date': 'blindDate',
+      'ex-lover': 'exLover',
     };
     return keyMapping[typeKey] ?? typeKey;
   }

@@ -235,13 +235,13 @@ abstract class AppLocalizations {
   /// No description provided for @points.
   ///
   /// In ko, this message translates to:
-  /// **'포인트'**
+  /// **'토큰'**
   String get points;
 
   /// No description provided for @pointsWithCount.
   ///
   /// In ko, this message translates to:
-  /// **'{count} 포인트'**
+  /// **'{count} 토큰'**
   String pointsWithCount(int count);
 
   /// No description provided for @bonus.
@@ -250,53 +250,53 @@ abstract class AppLocalizations {
   /// **'보너스'**
   String get bonus;
 
-  /// No description provided for @points330Title.
+  /// No description provided for @points350Title.
   ///
   /// In ko, this message translates to:
-  /// **'330 포인트'**
-  String get points330Title;
+  /// **'350 토큰'**
+  String get points350Title;
 
-  /// No description provided for @points330Desc.
+  /// No description provided for @points350Desc.
   ///
   /// In ko, this message translates to:
-  /// **'300P + 30P 보너스'**
-  String get points330Desc;
+  /// **'300 + 50 보너스'**
+  String get points350Desc;
 
   /// No description provided for @points700Title.
   ///
   /// In ko, this message translates to:
-  /// **'700 포인트'**
+  /// **'700 토큰'**
   String get points700Title;
 
   /// No description provided for @points700Desc.
   ///
   /// In ko, this message translates to:
-  /// **'600P + 100P 보너스'**
+  /// **'600 + 100 보너스'**
   String get points700Desc;
 
-  /// No description provided for @points1500Title.
+  /// No description provided for @points1650Title.
   ///
   /// In ko, this message translates to:
-  /// **'1,500 포인트'**
-  String get points1500Title;
+  /// **'1,650 토큰'**
+  String get points1650Title;
 
-  /// No description provided for @points1500Desc.
+  /// No description provided for @points1650Desc.
   ///
   /// In ko, this message translates to:
-  /// **'1,200P + 300P 보너스'**
-  String get points1500Desc;
+  /// **'1,500 + 150 보너스'**
+  String get points1650Desc;
 
-  /// No description provided for @points4000Title.
+  /// No description provided for @points4400Title.
   ///
   /// In ko, this message translates to:
-  /// **'4,000 포인트'**
-  String get points4000Title;
+  /// **'4,400 토큰'**
+  String get points4400Title;
 
-  /// No description provided for @points4000Desc.
+  /// No description provided for @points4400Desc.
   ///
   /// In ko, this message translates to:
-  /// **'3,000P + 1,000P 보너스'**
-  String get points4000Desc;
+  /// **'4,000 + 400 보너스'**
+  String get points4400Desc;
 
   /// No description provided for @proSubscriptionTitle.
   ///
@@ -307,7 +307,7 @@ abstract class AppLocalizations {
   /// No description provided for @proSubscriptionDesc.
   ///
   /// In ko, this message translates to:
-  /// **'매월 30,000개 토큰 자동 충전'**
+  /// **'매월 3,000 토큰 자동 충전'**
   String get proSubscriptionDesc;
 
   /// No description provided for @maxSubscriptionTitle.
@@ -319,7 +319,7 @@ abstract class AppLocalizations {
   /// No description provided for @maxSubscriptionDesc.
   ///
   /// In ko, this message translates to:
-  /// **'매월 100,000개 토큰 자동 충전'**
+  /// **'매월 12,600 토큰 자동 충전'**
   String get maxSubscriptionDesc;
 
   /// No description provided for @premiumSajuTitle.
@@ -421,7 +421,7 @@ abstract class AppLocalizations {
   /// No description provided for @fortuneDaily.
   ///
   /// In ko, this message translates to:
-  /// **'오늘의 메시지'**
+  /// **'오늘의 인사이트'**
   String get fortuneDaily;
 
   /// No description provided for @fortuneToday.
@@ -549,6 +549,12 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'별자리 분석'**
   String get fortuneZodiac;
+
+  /// No description provided for @fortuneConstellation.
+  ///
+  /// In ko, this message translates to:
+  /// **'별자리 특성'**
+  String get fortuneConstellation;
 
   /// No description provided for @fortuneZodiacAnimal.
   ///
@@ -909,6 +915,120 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'이름 분석'**
   String get fortuneNaming;
+
+  /// No description provided for @fortuneFamily.
+  ///
+  /// In ko, this message translates to:
+  /// **'가족 궁합'**
+  String get fortuneFamily;
+
+  /// No description provided for @fortuneFortuneCookie.
+  ///
+  /// In ko, this message translates to:
+  /// **'포춘쿠키'**
+  String get fortuneFortuneCookie;
+
+  /// No description provided for @fortuneGratitude.
+  ///
+  /// In ko, this message translates to:
+  /// **'감사 일기'**
+  String get fortuneGratitude;
+
+  /// No description provided for @fortuneCoaching.
+  ///
+  /// In ko, this message translates to:
+  /// **'AI 코칭'**
+  String get fortuneCoaching;
+
+  /// No description provided for @fortuneDecisionHelper.
+  ///
+  /// In ko, this message translates to:
+  /// **'고민 해결'**
+  String get fortuneDecisionHelper;
+
+  /// No description provided for @fortuneDailyReview.
+  ///
+  /// In ko, this message translates to:
+  /// **'하루 정리'**
+  String get fortuneDailyReview;
+
+  /// No description provided for @fortuneWeeklyReview.
+  ///
+  /// In ko, this message translates to:
+  /// **'주간 리뷰'**
+  String get fortuneWeeklyReview;
+
+  /// No description provided for @fortuneChatInsight.
+  ///
+  /// In ko, this message translates to:
+  /// **'카톡 대화 분석'**
+  String get fortuneChatInsight;
+
+  /// No description provided for @fortuneExercise.
+  ///
+  /// In ko, this message translates to:
+  /// **'운동 운세'**
+  String get fortuneExercise;
+
+  /// No description provided for @fortuneSportsGame.
+  ///
+  /// In ko, this message translates to:
+  /// **'경기 승부'**
+  String get fortuneSportsGame;
+
+  /// No description provided for @fortuneOotdEvaluation.
+  ///
+  /// In ko, this message translates to:
+  /// **'코디 점수'**
+  String get fortuneOotdEvaluation;
+
+  /// No description provided for @fortuneYearlyEncounter.
+  ///
+  /// In ko, this message translates to:
+  /// **'올해의 인연'**
+  String get fortuneYearlyEncounter;
+
+  /// No description provided for @fortuneBabyNickname.
+  ///
+  /// In ko, this message translates to:
+  /// **'태명 짓기'**
+  String get fortuneBabyNickname;
+
+  /// No description provided for @fortuneBreathing.
+  ///
+  /// In ko, this message translates to:
+  /// **'명상 가이드'**
+  String get fortuneBreathing;
+
+  /// No description provided for @fortuneMoney.
+  ///
+  /// In ko, this message translates to:
+  /// **'재물 운세'**
+  String get fortuneMoney;
+
+  /// No description provided for @fortuneGameEnhance.
+  ///
+  /// In ko, this message translates to:
+  /// **'게임 강화운'**
+  String get fortuneGameEnhance;
+
+  /// No description provided for @chipViewAll.
+  ///
+  /// In ko, this message translates to:
+  /// **'전체 보기'**
+  String get chipViewAll;
+
+  /// No description provided for @chipViewMore.
+  ///
+  /// In ko, this message translates to:
+  /// **'더보기'**
+  String get chipViewMore;
+
+  /// No description provided for @fortuneFeatureComingSoon.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name} 기능은 곧 준비될 예정이에요! 🔮\n다른 인사이트를 먼저 확인해보시겠어요?'**
+  String fortuneFeatureComingSoon(String name);
 
   /// No description provided for @loadingTimeDaily1.
   ///
@@ -1618,6 +1738,12 @@ abstract class AppLocalizations {
   /// **'새 대화'**
   String get newConversation;
 
+  /// No description provided for @yourTurn.
+  ///
+  /// In ko, this message translates to:
+  /// **'내 차례'**
+  String get yourTurn;
+
   /// No description provided for @typing.
   ///
   /// In ko, this message translates to:
@@ -1743,6 +1869,24 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'관계'**
   String get relationship;
+
+  /// No description provided for @profilePosts.
+  ///
+  /// In ko, this message translates to:
+  /// **'포스트'**
+  String get profilePosts;
+
+  /// No description provided for @profileFollowers.
+  ///
+  /// In ko, this message translates to:
+  /// **'팔로워'**
+  String get profileFollowers;
+
+  /// No description provided for @profileFollowing.
+  ///
+  /// In ko, this message translates to:
+  /// **'팔로잉'**
+  String get profileFollowing;
 
   /// No description provided for @sendMessage.
   ///

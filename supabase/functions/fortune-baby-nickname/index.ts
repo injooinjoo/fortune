@@ -155,7 +155,7 @@ serve(async (req) => {
     const response: BabyNicknameResponse = {
       success: true,
       data: {
-        fortuneType: 'babyNickname',
+        fortuneType: 'baby-nickname',
         babyMessage: fortuneData.babyMessage || `엄마! 아빠! 저를 '${params.nickname}'라고 불러주셔서 너무 행복해요!`,
         todayMission: fortuneData.todayMission || '오늘은 배를 쓰다듬으며 "사랑해"라고 속삭여주세요',
         luckyKeywords: fortuneData.luckyKeywords || ['사랑', '행복', '건강'],

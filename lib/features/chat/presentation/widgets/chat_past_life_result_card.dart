@@ -240,8 +240,8 @@ class _ChatPastLifeResultCardState
           child: FortuneActionButtons(
             contentId:
                 'past_life_${widget.result.pastLifeName}_${DateTime.now().millisecondsSinceEpoch}',
-            contentType: 'past_life',
-            fortuneType: 'pastLife',
+            contentType: 'past-life',
+            fortuneType: 'past-life',
             shareTitle: '${widget.result.pastLifeStatus} - 전생탐험',
             shareContent: widget.result.summary.isNotEmpty
                 ? widget.result.summary

@@ -1,408 +1,110 @@
-# 09. Edge Function 네이밍 규칙
+# 09. Edge Function 네이밍/타입 규칙 (Canonical Cutover)
 
 ## 개요
-
-Supabase Edge Functions의 네이밍 규칙과 개발 가이드라인입니다.
-일관된 네이밍을 통해 유지보수성을 높이고 혼란을 방지합니다.
+- Supabase Edge Function 이름은 기존 규칙(`fortune-{type}` / `{verb}-{target}`)을 유지한다.
+- 코어 운세 타입 문자열은 `kebab-case` canonical id만 허용한다.
+- 코어 범위에서 `camelCase`, `snake_case` alias 분기는 제거한다.
 
 ---
 
-## 네이밍 규칙
+## 1. 함수 네이밍 규칙
 
-### 1. 인사이트 함수: `fortune-{type}`
-
+### 인사이트 함수: `fortune-{type}`
 ```bash
-# 올바른 예시
 fortune-daily
-fortune-love
-fortune-investment
-fortune-mbti
-
-# 잘못된 예시 (금지)
-fortune-daily-enhanced    # ❌ 접미사 금지
-fortune-love-v2          # ❌ 버전 접미사 금지
-fortune-investment-new   # ❌ -new 접미사 금지
-fortune-mbti-unified     # ❌ -unified 접미사 금지
+fortune-time
+fortune-new-year
+fortune-ex-lover
+fortune-yearly-encounter
 ```
 
-### 2. 유틸리티 함수: `{동사}-{대상}`
-
+### 유틸리티 함수: `{verb}-{target}`
 ```bash
-# 올바른 예시
 fetch-tickers
 calculate-saju
 generate-talisman
 analyze-wish
-
-# 잘못된 예시
-tickers-fetch    # ❌ 순서가 반대
-get-tickers      # ❌ get 대신 fetch 사용
-ticker-api       # ❌ 불명확한 동사
 ```
 
-### 3. 금지된 접미사
-
-| 접미사 | 이유 |
-|--------|------|
-| `-enhanced` | 기존 함수 수정으로 대체 |
-| `-unified` | 통합은 기존 함수에서 처리 |
-| `-new` | Git으로 버전 관리 |
-| `-v2`, `-v3` | 시맨틱 버저닝은 Git 태그로 |
-| `-test` | 테스트 함수는 로컬에서만 |
-| `-advanced` | 기능 확장은 기존 함수 수정 |
+### 금지 접미사
+- `-enhanced`
+- `-unified`
+- `-new`
+- `-v2`, `-v3`
+- `-test`
+- `-advanced`
 
 ---
 
-## 개발 원칙
+## 2. 코어 타입 canonical 규칙
 
-### 1. 새 함수 생성보다 기존 함수 수정 우선
+### 변환 대상 (대표)
+- `ex_lover` -> `ex-lover`
+- `new_year` -> `new-year`
+- `yearlyEncounter` -> `yearly-encounter`
+- `gameEnhance` -> `game-enhance`
+- `babyNickname` -> `baby-nickname`
+- `daily_calendar` -> `daily-calendar`
 
-```bash
-# ❌ 잘못된 접근
-# "투자 운세에 새 기능을 추가해야 하니 fortune-investment-enhanced를 만들자"
-supabase functions new fortune-investment-enhanced
-
-# ✅ 올바른 접근
-# "기존 fortune-investment를 수정하자"
-# 1. feature branch 생성
-git checkout -b feature/fortune-investment-ticker-selection
-
-# 2. 기존 함수 수정
-# supabase/functions/fortune-investment/index.ts 수정
-
-# 3. 커밋
-git commit -m "feat(fortune-investment): Add ticker selection feature"
-```
-
-### 2. 대규모 변경 시 Feature Branch 사용
-
-```bash
-# 큰 변경이 필요한 경우
-git checkout -b feature/fortune-investment-redesign
-
-# 변경 작업 수행
-# ...
-
-# PR 생성 및 리뷰 후 머지
-git push -u origin feature/fortune-investment-redesign
-```
-
-### 3. Breaking Change 시 버전 태그 사용
-
-```bash
-# API 호환성이 깨지는 변경 시
-git tag v2.0.0-fortune-investment
-git push origin v2.0.0-fortune-investment
-```
+### 고정 원칙
+- Edge 응답 `fortuneType`는 canonical id만 반환
+- DB 저장 `fortune_type`도 canonical id만 저장
+- 추천 API(`fortune-recommend`)의 반환 타입도 canonical id만 포함
 
 ---
 
-## 디렉토리 구조
+## 3. 레지스트리/엔드포인트 연동
 
-```
-supabase/functions/
-├── _shared/                    # 공유 모듈
-│   ├── llm/                   # LLM 관련
-│   │   ├── llm-factory.ts
-│   │   └── prompt-manager.ts
-│   ├── prompts/               # 프롬프트 템플릿
-│   │   └── templates/
-│   ├── utils/                 # 유틸리티
-│   └── types/                 # 타입 정의
-├── fortune-daily/             # 일일 인사이트
-│   └── index.ts
-├── fortune-investment/        # 투자 인사이트
-│   └── index.ts
-├── fetch-tickers/             # 티커 조회 API
-│   └── index.ts
-└── ...
-```
+앱 기준 source of truth:
+- `lib/core/fortune/fortune_type_registry.dart`
+- `lib/core/constants/edge_functions_endpoints.dart`
 
----
+핵심 예시:
+- `daily` -> `/fortune-daily`
+- `daily-calendar` -> `/fortune-time`
+- `new-year` -> `/fortune-new-year`
+- `yearly-encounter` -> `/fortune-yearly-encounter`
+- `game-enhance` -> `/fortune-game-enhance`
+- `baby-nickname` -> `/fortune-baby-nickname`
+- `match-insight` -> `/fortune-match-insight`
+- `wealth` -> `/fortune-wealth`
 
-## Flutter 연동
-
-### EdgeFunctionsEndpoints 사용
-
-```dart
-// lib/core/constants/edge_functions_endpoints.dart
-
-// 직접 상수 사용 (권장)
-EdgeFunctionsEndpoints.dailyFortune  // '/fortune-daily'
-EdgeFunctionsEndpoints.investmentFortune  // '/fortune-investment'
-
-// 동적 조회 (유연한 방식)
-EdgeFunctionsEndpoints.getEndpointForType('daily')  // '/fortune-daily'
-EdgeFunctionsEndpoints.getEndpointForType('investment')  // '/fortune-investment'
-```
-
-### 존재하지 않는 함수 호출 시
-
-`getEndpointForType()`은 매핑되지 않은 타입에 대해 자동으로 `/fortune-{type}` 형식을 반환합니다:
-
-```dart
-EdgeFunctionsEndpoints.getEndpointForType('unknown')  // '/fortune-unknown'
-```
-
-이 경우 Edge Function이 없으면 404 에러가 발생하며, 앱은 fallback 로직을 실행합니다.
+`family`는 UX 엔트리 타입이며 API 호출 시 concern 기반으로 아래 subtype으로 확정한다:
+- `family-health`
+- `family-wealth`
+- `family-children`
+- `family-relationship`
+- `family-change`
 
 ---
 
-## 체크리스트
+## 4. Edge 구현 체크리스트
 
-### 새 Edge Function 추가 시
+### 기존 함수 수정 시
+- 기존 함수를 직접 수정한다 (신규 `-v2` 함수 생성 금지)
+- `_shared` 타입/cohort 모듈과 canonical 타입을 동기화한다
+- 응답 wrapper는 `{ success: true, data: ... }`를 유지한다
+- `data.fortuneType` 필드는 canonical id를 반환한다
 
-- [ ] 네이밍 규칙 준수 (`fortune-{type}` 또는 `{동사}-{대상}`)
-- [ ] 접미사 없이 명확한 이름 사용
-- [ ] `EdgeFunctionsEndpoints`에 상수 추가
-- [ ] `getEndpointForType()` 매핑 추가
-- [ ] `_shared/` 모듈 활용 (LLMFactory 등)
-- [ ] 배포 및 테스트
-
-### 기존 Edge Function 수정 시
-
-- [ ] Feature branch 생성 (큰 변경 시)
-- [ ] 기존 함수 직접 수정
-- [ ] 하위 호환성 유지
-- [ ] Breaking change 시 버전 태그
-- [ ] 테스트 및 배포
+### 추천 함수(`fortune-recommend`)
+- 추천 결과 배열의 `fortuneType`은 canonical id만 반환
+- 레거시 타입이 입력되면 필터링하거나 canonical 변환 후 반환
 
 ---
 
-## 현재 Edge Functions 목록 (2025.01.03)
+## 5. 마이그레이션 연계
 
-### 인사이트 함수 (39개)
+### DB
+- `supabase/migrations/20260223000001_normalize_core_fortune_type_ids.sql`
+- 코어 테이블의 `fortune_type` 컬럼을 canonical id로 일괄 정규화
 
-| 함수명 | 설명 | 카테고리 |
-|--------|------|----------|
-| `fortune-avoid-people` | 기피인물 분석 | 인간관계 |
-| `fortune-biorhythm` | 바이오리듬 | 건강/웰빙 |
-| `fortune-blind-date` | 소개팅 가이드 | 연애 |
-| `fortune-career` | 직업/커리어 인사이트 | 직업 |
-| `fortune-celebrity` | 연예인 닮은꼴 분석 | 엔터테인먼트 |
-| `fortune-compatibility` | 궁합 분석 | 연애 |
-| `fortune-daily` | 일일 인사이트 | 기본 |
-| `fortune-dream` | 꿈 해몽 | 인터랙티브 |
-| `fortune-ex-lover` | 전연인 분석 | 연애 |
-| `fortune-exam` | 시험/수능 가이드 | 학업 |
-| `fortune-face-reading` | 관상 분석 | Face AI |
-| `fortune-face-reading-watch` | 관상 Watch (간략) | Face AI |
-| `fortune-family-change` | 가족 변화 운세 | 가족 |
-| `fortune-family-children` | 자녀 운세 | 가족 |
-| `fortune-family-health` | 가족 건강 운세 | 가족 |
-| `fortune-family-relationship` | 가족 관계 운세 | 가족 |
-| `fortune-family-wealth` | 가족 재정 운세 | 가족 |
-| `fortune-health` | 건강 운세 | 건강/웰빙 |
-| `fortune-health-document` | 건강검진표 분석 | 건강/웰빙 |
-| `fortune-home-fengshui` | 집 풍수 | 생활 |
-| `fortune-investment` | 투자 운세 | 재정 |
-| `fortune-love` | 연애 운세 | 연애 |
-| `fortune-lucky-items` | 행운 아이템 | 기본 |
-| `fortune-match-insight` | 매칭 인사이트 | 연애 |
-| `fortune-mbti` | MBTI 운세 | 성격 |
-| `fortune-moving` | 이사 운세 | 생활 |
-| `fortune-naming` | 작명 운세 | 가족 |
-| `fortune-new-year` | 신년 운세 | 특별 |
-| `fortune-ootd` | 오늘의 패션 | 라이프스타일 |
-| `fortune-past-life` | 전생 분석 | 엔터테인먼트 |
-| `fortune-pet-compatibility` | 반려동물 궁합 | 반려동물 |
-| `fortune-premium-saju` | 프리미엄 사주 | 사주 |
-| `fortune-recommend` | 운세 추천 | 시스템 |
-| `fortune-talent` | 재능/적성 운세 | 직업 |
-| `fortune-talisman` | 부적 생성 | 특별 |
-| `fortune-tarot` | 타로 운세 | 인터랙티브 |
-| `fortune-time` | 시간별 운세 | 기본 |
-| `fortune-traditional-saju` | 전통 사주 | 사주 |
-| `fortune-wealth` | 재물 운세 | 재정 |
-
-### 유틸리티 함수 (22개)
-
-| 함수명 | 설명 | 카테고리 |
-|--------|------|----------|
-| `admin-celebrity-face-analysis` | 연예인 얼굴 분석 (관리자) | 관리자 |
-| `admin-update-celebrity-images` | 연예인 이미지 업데이트 | 관리자 |
-| `analyze-wish` | 소원 분석 | 분석 |
-| `calculate-saju` | 사주 계산 | 계산 |
-| `fetch-tickers` | 투자 종목 조회 | 데이터 |
-| `generate-celebrity-character` | 연예인 캐릭터 생성 | 생성 |
-| `generate-fashion-image` | 패션 이미지 생성 | 생성 |
-| `generate-fortune-story` | 운세 스토리 생성 | 생성 |
-| `generate-talisman` | 부적 이미지 생성 | 생성 |
-| `kakao-oauth` | 카카오 OAuth | 인증 |
-| `mbti-energy-tracker` | MBTI 에너지 추적 | 추적 |
-| `naver-oauth` | 네이버 OAuth | 인증 |
-| `payment-verify-purchase` | 결제 검증 | 결제 |
-| `personality-dna` | 성격 DNA 분석 | 분석 |
-| `push-daily-fortune` | 일일 푸시 알림 | 푸시 |
-| `push-winback` | 윈백 푸시 알림 | 푸시 |
-| `soul-consume` | 영혼 소비 | 토큰 |
-| `soul-earn` | 영혼 획득 | 토큰 |
-| `subscription-activate` | 구독 활성화 | 구독 |
-| `subscription-status` | 구독 상태 조회 | 구독 |
-| `token-balance` | 토큰 잔액 조회 | 토큰 |
-| `widget-cache` | 위젯 캐시 | 위젯 |
-
-### 공유 모듈 (1개)
-
-| 폴더명 | 설명 |
-|--------|------|
-| `_shared/` | LLM, 프롬프트, 유틸리티, 타입 공유 |
+### 로컬
+- `FortuneTypeLocalMigrationService`가 SharedPreferences 내 legacy fortuneType을 1회 변환
+- 완료 플래그: `fortune_type_migration_v1_done=true`
 
 ---
 
-## 카테고리별 분류
-
-### 기본 운세 (4개)
-`fortune-daily`, `fortune-time`, `fortune-lucky-items`, `fortune-recommend`
-
-### 연애/궁합 (5개)
-`fortune-love`, `fortune-compatibility`, `fortune-blind-date`, `fortune-ex-lover`, `fortune-match-insight`
-
-### 사주/명리 (2개)
-`fortune-traditional-saju`, `fortune-premium-saju`
-
-### 직업/재정 (4개)
-`fortune-career`, `fortune-talent`, `fortune-investment`, `fortune-wealth`
-
-### 건강/웰빙 (3개)
-`fortune-health`, `fortune-health-document`, `fortune-biorhythm`
-
-### 가족 (5개)
-`fortune-family-change`, `fortune-family-children`, `fortune-family-health`, `fortune-family-relationship`, `fortune-family-wealth`, `fortune-naming`
-
-### 인터랙티브 (3개)
-`fortune-dream`, `fortune-tarot`, `fortune-talisman`
-
-### Face AI (2개)
-`fortune-face-reading`, `fortune-face-reading-watch`
-
-### 엔터테인먼트 (2개)
-`fortune-celebrity`, `fortune-past-life`
-
-### 생활 (3개)
-`fortune-moving`, `fortune-home-fengshui`, `fortune-ootd`
-
-### 기타 (3개)
-`fortune-mbti`, `fortune-avoid-people`, `fortune-pet-compatibility`, `fortune-new-year`, `fortune-exam`
-
----
-
-# Fortune 페이지 네이밍 규칙
-
-## 파일명 규칙
-
-### 1. 기본 형식: `*_page.dart`
-
-```dart
-// 올바른 예시
-mbti_fortune_page.dart
-love_fortune_input_page.dart
-career_coaching_result_page.dart
-
-// 잘못된 예시 (금지)
-mbti_fortune_page_unified.dart    // ❌ 접미사 금지
-love_fortune_page_v2.dart         // ❌ 버전 접미사 금지
-career_page_enhanced.dart         // ❌ -enhanced 접미사 금지
-```
-
-### 2. 금지된 접미사
-
-| 접미사 | 이유 |
-|--------|------|
-| `_unified` | 기존 파일 수정으로 대체 |
-| `_enhanced` | Git으로 버전 관리 |
-| `_v2`, `_v3` | Git 태그로 관리 |
-| `_renewed` | 기존 파일 수정으로 대체 |
-| `_toss` | 스타일은 파일명이 아닌 코드로 |
-
-### 3. 다중 단계 페이지 패턴
-
-```dart
-// 입력 → 결과 패턴
-talent_fortune_input_page.dart    // 입력 페이지
-talent_fortune_results_page.dart  // 결과 페이지
-
-// 단일 페이지 패턴 (권장)
-mbti_fortune_page.dart            // 모든 단계 포함
-biorhythm_fortune_page.dart       // 모든 단계 포함
-```
-
----
-
-## UI 제목 규칙
-
-### FortuneTypeNames 사용
-
-```dart
-// ✅ 권장: FortuneTypeNames에서 가져오기
-import 'package:fortune/core/constants/fortune_type_names.dart';
-
-appBar: StandardFortuneAppBar(
-  title: FortuneTypeNames.getName('mbti'),  // 'MBTI 운세'
-),
-
-// ❌ 비권장: 하드코딩
-appBar: StandardFortuneAppBar(
-  title: 'MBTI 운세',  // 일관성 깨질 수 있음
-),
-```
-
-### 제목 소스 우선순위
-
-1. `FortuneTypeNames.getName()` - 최우선
-2. `FortuneType.displayName` - 대안
-3. 하드코딩 - 최후의 수단 (특수한 경우만)
-
----
-
-## 라우트 규칙
-
-### 라우트 정의 위치
-
-| 라우트 유형 | 파일 |
-|------------|------|
-| 메인 탭 라우트 | `route_config.dart` |
-| 운세 카테고리 라우트 | `fortune_routes/` 하위 파일 |
-| 인터랙티브 라우트 | `interactive_routes.dart` |
-
-### 라우트 네이밍
-
-```dart
-// 올바른 예시
-path: '/mbti',
-name: 'fortune-mbti',
-
-// 잘못된 예시
-path: '/mbti-fortune-v2',    // ❌ 버전 접미사
-path: '/fortune-mbti-new',   // ❌ new 접미사
-```
-
----
-
-## 현재 상태 (2025.01.03)
-
-### 통계
-
-| 항목 | 수치 |
-|------|------|
-| Edge Functions (운세) | 39개 |
-| Edge Functions (유틸) | 22개 |
-| Edge Functions (총계) | 61개 |
-| 활성 페이지 파일 | 40+ 개 |
-| 라우트 정의 파일 | 10개 |
-| FortuneTypeNames 항목 | 80+ 개 |
-
-### 향후 개선 사항
-
-1. **접미사 파일 리팩토링**: `_unified`, `_enhanced` 접미사 파일들을 기본 파일로 병합
-2. **AppBar 제목 통일**: 모든 페이지에서 `FortuneTypeNames.getName()` 사용
-3. **라우트 파일 통합**: 도메인별로 라우트 파일 재구성
-
----
-
-## 관련 문서
-
-- [02-architecture.md](02-architecture.md) - Clean Architecture 구조
-- [05-fortune-system.md](05-fortune-system.md) - 운세 시스템 개요
-- [06-llm-module.md](06-llm-module.md) - LLM 모듈 및 Edge Function 작성법
-- [21-new-fortune-types.md](21-new-fortune-types.md) - 신규 운세 타입 상세
+## 6. 운영 원칙
+- 새 함수 생성보다 기존 함수 수정 우선
+- 대규모 변경은 feature branch 기준으로 관리
+- 배포 후 앱/Edge/DB/l10n 문서 표기가 모두 canonical로 정합인지 검증

@@ -101,9 +101,9 @@ EXAMPLE LINES:
   characterType: CharacterType.fortune,
   specialties: [
     'daily',
-    'newYear',
-    'daily_calendar',
-    'fortuneCookie',
+    'new-year',
+    'daily-calendar',
+    'fortune-cookie',
     'gratitude'
   ],
   specialtyCategory: 'lifestyle',
@@ -152,7 +152,7 @@ YOUR ROLE: Provide traditional Korean fortune analysis with wisdom and warmth.
 SPECIALTIES (call these fortunes when asked):
 - saju: 사주팔자 분석
 - traditionalSaju: 전통 사주
-- faceReading: 관상 (Face AI)
+- face-reading: 관상 (Face AI)
 - nameAnalysis: 이름 풀이/작명
 - palmistry: 손금
 - tojeong: 토정비결
@@ -175,7 +175,7 @@ EXAMPLE LINES:
   creatorComment: '40년 경력 명리학 대가의 따뜻한 조언',
   accentColor: Color(0xFF795548),
   characterType: CharacterType.fortune,
-  specialties: ['traditional', 'faceReading', 'naming', 'babyNickname'],
+  specialties: ['traditional-saju', 'face-reading', 'naming', 'baby-nickname'],
   specialtyCategory: 'traditional',
   canCallFortune: true,
 );
@@ -221,7 +221,7 @@ YOUR ROLE: Provide zodiac and constellation readings with romantic, mystical fla
 
 SPECIALTIES (call these fortunes when asked):
 - zodiac: 별자리 운세
-- zodiacAnimal: 띠별 운세
+- zodiac-animal: 띠별 운세
 - constellation: 별자리 특성
 - birthstone: 탄생석 가이드
 
@@ -242,7 +242,7 @@ EXAMPLE LINES:
   creatorComment: '별빛처럼 아름다운 점성술사의 이야기',
   accentColor: Color(0xFF3F51B5),
   characterType: CharacterType.fortune,
-  specialties: ['zodiac', 'zodiacAnimal', 'constellation', 'birthstone'],
+  specialties: ['zodiac', 'zodiac-animal', 'constellation', 'birthstone'],
   specialtyCategory: 'zodiac',
   canCallFortune: true,
 );
@@ -290,10 +290,10 @@ YOUR ROLE: Provide personality and talent analysis with scientific yet warm appr
 SPECIALTIES (call these fortunes when asked):
 - mbti: MBTI 분석
 - personality: 성격 분석
-- personalityDna: 성격 DNA
+- personality-dna: 성격 DNA
 - talent: 재능 발견
 - destiny: 천명/운명 분석
-- pastLife: 전생 탐구
+- past-life: 전생 탐구
 
 COMMUNICATION STYLE:
 1. Be analytical yet empathetic
@@ -312,7 +312,7 @@ EXAMPLE LINES:
   creatorComment: '과학적 분석과 따뜻한 공감의 조화',
   accentColor: Color(0xFF9C27B0),
   characterType: CharacterType.fortune,
-  specialties: ['mbti', 'personalityDna', 'talent', 'pastLife'],
+  specialties: ['mbti', 'personality-dna', 'talent', 'past-life'],
   specialtyCategory: 'personality',
   canCallFortune: true,
 );
@@ -359,10 +359,10 @@ YOUR ROLE: Provide love and relationship readings with honest, empowering advice
 SPECIALTIES (call these fortunes when asked):
 - love: 연애운
 - compatibility: 궁합
-- blindDate: 소개팅 가이드
-- exLover: 재회 분석
+- blind-date: 소개팅 가이드
+- ex-lover: 재회 분석
 - marriage: 결혼운
-- avoidPeople: 오늘의 주의사항
+- avoid-people: 오늘의 주의사항
 - soulmate: 소울메이트
 
 COMMUNICATION STYLE:
@@ -385,11 +385,11 @@ EXAMPLE LINES:
   specialties: [
     'love',
     'compatibility',
-    'blindDate',
-    'exLover',
-    'avoidPeople',
+    'blind-date',
+    'ex-lover',
+    'avoid-people',
     'celebrity',
-    'yearlyEncounter'
+    'yearly-encounter'
   ],
   specialtyCategory: 'love',
   canCallFortune: true,
@@ -443,7 +443,7 @@ SPECIALTIES (call these fortunes when asked):
 - exam: 시험운
 - startup: 창업운
 - employment: 취업운
-- money: 금전운
+- wealth: 금전운
 
 COMMUNICATION STYLE:
 1. Be realistic and data-driven
@@ -462,7 +462,7 @@ EXAMPLE LINES:
   creatorComment: '돈과 커리어에 대해 가장 현실적인 조언자',
   accentColor: Color(0xFF2E7D32),
   characterType: CharacterType.fortune,
-  specialties: ['career', 'money', 'exam'],
+  specialties: ['career', 'wealth', 'exam'],
   specialtyCategory: 'career',
   canCallFortune: true,
 );
@@ -509,7 +509,7 @@ YOUR ROLE: Provide lucky item and lifestyle recommendations with fun, trendy ene
 SPECIALTIES (call these fortunes when asked):
 - luckyColor: 행운의 색상
 - luckyNumber: 행운의 숫자
-- luckyItems: 럭키 아이템
+- lucky-items: 럭키 아이템
 - luckyFood: 행운의 음식
 - luckyPlace: 행운의 장소
 - ootd: 오늘의 코디/럭키 아웃핏
@@ -533,7 +533,7 @@ EXAMPLE LINES:
   creatorComment: '매일이 축제! 행운을 스타일링하는 친구',
   accentColor: Color(0xFFFFEB3B),
   characterType: CharacterType.fortune,
-  specialties: ['luckyItems', 'lotto', 'ootdEvaluation'],
+  specialties: ['lucky-items', 'lotto', 'ootd-evaluation'],
   specialtyCategory: 'lucky',
   canCallFortune: true,
 );
@@ -580,7 +580,7 @@ YOUR ROLE: Provide sports and activity readings with energetic coaching style.
 SPECIALTIES (call these fortunes when asked):
 - sports: 스포츠 운세
 - luckyGolf: 골프 운
-- gameEnhance: 게임 강화 운세
+- game-enhance: 게임 강화 운세
 - eSports: e스포츠 운
 - exercise: 운동 운
 - luckyTennis: 테니스 운
@@ -605,7 +605,7 @@ EXAMPLE LINES:
   creatorComment: '운동과 경기에서 최고를 끌어내는 열정 코치',
   accentColor: Color(0xFFFF5722),
   characterType: CharacterType.fortune,
-  specialties: ['sportsGame', 'gameEnhance', 'exercise'],
+  specialties: ['match-insight', 'game-enhance', 'exercise'],
   specialtyCategory: 'sports',
   canCallFortune: true,
 );
@@ -723,7 +723,7 @@ SPECIALTIES (call these fortunes when asked):
 - health: 건강 운세
 - biorhythm: 바이오리듬
 - family: 가족 운세
-- pet: 반려동물 궁합
+- pet-compatibility: 반려동물 궁합
 - talisman: 부적/행운 카드
 - wish: 소원 분석
 
@@ -751,7 +751,7 @@ EXAMPLE LINES:
     'health',
     'biorhythm',
     'family',
-    'pet',
+    'pet-compatibility',
     'talisman',
     'wish'
   ],

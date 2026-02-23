@@ -730,7 +730,7 @@ ${hasEvents ? `
     // ✅ 운세 데이터 구성 (경계대상 패턴 적용)
     const fortune = {
       // 표준화된 필드명: score, content, summary, advice
-      fortuneType: 'time',
+      fortuneType: 'daily-calendar',
       score: overallScore,
       content: fortuneData.content || '시간대별 인사이트를 확인하세요.',
       summary: fortuneData.summary || '',
@@ -739,7 +739,7 @@ ${hasEvents ? `
       // 기존 필드 유지 (하위 호환성)
       id: `${Date.now()}-${period}`,
       userId: userId,
-      type: eventsForDate.length > 0 ? 'daily_calendar' : 'time_based',
+      type: 'daily-calendar',
       period: period,
       overall_score: overallScore,
       message: eventsForDate.length > 0

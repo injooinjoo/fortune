@@ -17,6 +17,7 @@ import '../../data/services/character_proactive_media_service.dart';
 import '../../data/services/follow_up_scheduler.dart';
 import '../../data/default_characters.dart';
 import '../../data/fortune_characters.dart';
+import '../../../../core/fortune/fortune_type_registry.dart';
 import '../../../../core/services/chat_sync_service.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
@@ -262,16 +263,10 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       CharacterVoiceProfileRegistry.profileFor(_characterId);
 
   bool get _isTonePolicyEnabledCharacter =>
-      CharacterToneRollout.isEnabledCharacter(
-        _characterId,
-        remoteConfig: _ref.read(remoteConfigProvider),
-      );
+      CharacterToneRollout.isEnabledCharacter(_characterId);
 
   bool get _isIdleIcebreakerEnabledCharacter =>
-      CharacterToneRollout.isIdleIcebreakerEnabledCharacter(
-        _characterId,
-        remoteConfig: _ref.read(remoteConfigProvider),
-      );
+      CharacterToneRollout.isIdleIcebreakerEnabledCharacter(_characterId);
 
   CharacterToneProfile _buildToneProfile({String? currentUserMessage}) {
     if (!_isTonePolicyEnabledCharacter) return CharacterToneProfile.neutral;
@@ -1498,7 +1493,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       // 🆕 사주 타입이면 pillar 표를 맨 앞에 추가
       String enrichedContext = fortuneDataContext;
       Logger.info('[SajuTable] sendFortuneRequest fortuneType=$fortuneType');
-      if (fortuneType == 'traditional' || fortuneType == 'saju') {
+      if (fortuneType == 'traditional-saju') {
         // sajuProvider에 데이터가 없으면 먼저 로드
         if (_ref.read(sajuProvider).sajuData == null) {
           Logger.info('[SajuTable] sajuData null → fetchUserSaju() 호출');
@@ -1551,7 +1546,7 @@ $emojiInstruction
 ''';
 
       // 🆕 사주 타입 전용 시스템 지시문
-      if (fortuneType == 'traditional' || fortuneType == 'saju') {
+      if (fortuneType == 'traditional-saju') {
         fortuneSystemInstruction += '''
 사주팔자 명식 표가 포함되어 있습니다. 반드시 이 표를 먼저 보여주고,
 각 주(柱)의 천간/지지/오행 의미를 해석해주세요.
@@ -1674,7 +1669,7 @@ $enrichedContext
       String enrichedContext = fortuneDataContext;
       Logger.info(
           '[SajuTable] sendFortuneRequestWithAnswers fortuneType=$fortuneType');
-      if (fortuneType == 'traditional' || fortuneType == 'saju') {
+      if (fortuneType == 'traditional-saju') {
         // sajuProvider에 데이터가 없으면 먼저 로드
         if (_ref.read(sajuProvider).sajuData == null) {
           Logger.info(
@@ -1731,7 +1726,7 @@ $emojiInstruction
 ''';
 
       // 🆕 사주 타입 전용 시스템 지시문
-      if (fortuneType == 'traditional' || fortuneType == 'saju') {
+      if (fortuneType == 'traditional-saju') {
         fortuneSystemInstruction += '''
 사주팔자 명식 표가 포함되어 있습니다. 반드시 이 표를 먼저 보여주고,
 각 주(柱)의 천간/지지/오행 의미를 해석해주세요.
@@ -1855,7 +1850,7 @@ $enrichedContext
     Map<String, dynamic> answers,
   ) async {
     switch (fortuneType) {
-      case 'fortuneCookie':
+      case 'fortune-cookie':
         // chat_home_page.dart 패턴 재사용 - 로컬 포춘쿠키 생성기
         try {
           final cookieResult =
@@ -1940,6 +1935,17 @@ $enrichedContext
         // gratitude는 API 없음 - 캐릭터가 감사일기 대화를 이끌도록
         // null 반환 → 기존 generic 컨텍스트 사용 (대화형이므로 OK)
         return null;
+      case 'wish':
+        final userId = await _resolveFortuneUserId();
+        final wishText = answers['wishContent']?.toString() ?? '';
+        return Fortune(
+          id: 'wish-${DateTime.now().millisecondsSinceEpoch}',
+          userId: userId,
+          type: 'wish',
+          content: wishText,
+          createdAt: DateTime.now(),
+          additionalInfo: {'wish_text': wishText},
+        );
 
       default:
         return null; // 로컬 처리 아닌 타입 → API 호출 진행
@@ -1955,16 +1961,19 @@ $enrichedContext
     final localFortune = await _getLocalFortune(fortuneType, answers);
     if (localFortune != null) return localFortune;
 
-    // fortuneCookie, gratitude는 로컬 전용 → null이면 API 호출 스킵
-    if (fortuneType == 'fortuneCookie' || fortuneType == 'gratitude') {
+    // 로컬 전용 타입은 API 호출 스킵
+    if (FortuneTypeRegistry.isLocalOnly(fortuneType)) {
       return null;
     }
 
     final unifiedService = _ref.read(characterUnifiedFortuneServiceProvider);
     final userProfile = _getUserProfileMap();
 
-    // fortuneType을 API 타입으로 매핑
-    final apiFortuneType = _mapToApiFortuneType(fortuneType);
+    // fortuneType을 canonical API 타입으로 매핑
+    final apiFortuneType = FortuneTypeRegistry.resolveApiType(
+      fortuneType,
+      answers: answers,
+    );
 
     // 사용자 프로필 정보 추가
     final params = <String, dynamic>{
@@ -2006,73 +2015,6 @@ $enrichedContext
     });
 
     return fortune;
-  }
-
-  /// fortuneType 문자열을 API fortuneType으로 매핑
-  /// fortune_characters.dart의 모든 specialty 타입을 Edge Function 타입으로 변환
-  String _mapToApiFortuneType(String fortuneType) {
-    const mapping = {
-      // 일상 운세 (하늘)
-      'daily': 'daily',
-      'newYear': 'new_year',
-      'daily_calendar': 'daily_calendar',
-
-      // 전통 운세 (무현 도사)
-      'traditional': 'saju',
-      'faceReading': 'face-reading',
-      'naming': 'naming',
-      'babyNickname': 'baby-nickname',
-
-      // 별자리/띠 (스텔라) → daily fortune 사용
-      'zodiac': 'daily',
-      'zodiacAnimal': 'daily',
-      'constellation': 'daily',
-      'birthstone': 'daily',
-
-      // 성격/심리 (Dr. 마인드)
-      'mbti': 'mbti',
-      'personalityDna': 'mbti',
-      'talent': 'talent',
-      'pastLife': 'past-life',
-
-      // 연애/궁합 (로제)
-      'love': 'love',
-      'compatibility': 'compatibility',
-      'blindDate': 'blind-date',
-      'exLover': 'ex-lover',
-      'avoidPeople': 'avoid-people',
-      'celebrity': 'celebrity',
-      'yearlyEncounter': 'yearly-encounter',
-
-      // 직업/재물 (제임스 김)
-      'career': 'career',
-      'money': 'wealth',
-      'exam': 'exam',
-
-      // 행운 (럭키)
-      'luckyItems': 'lucky-items',
-      'lotto': 'lotto',
-      'ootdEvaluation': 'ootd',
-
-      // 스포츠/운동 (마르코)
-      'sportsGame': 'match-insight',
-      'gameEnhance': 'game-enhance',
-      'exercise': 'exercise',
-
-      // 이사 (리나)
-      'moving': 'moving',
-
-      // 종합 (루나)
-      'tarot': 'tarot',
-      'dream': 'dream',
-      'health': 'health',
-      'biorhythm': 'biorhythm',
-      'family': 'family',
-      'pet': 'pet-compatibility',
-      'talisman': 'talisman',
-      'wish': 'wish',
-    };
-    return mapping[fortuneType] ?? fortuneType;
   }
 
   /// 중첩된 Map/List를 읽기 쉬운 텍스트로 변환하는 헬퍼

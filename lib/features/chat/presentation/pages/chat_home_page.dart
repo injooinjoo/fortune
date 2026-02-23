@@ -24,6 +24,7 @@ import '../../../../data/models/pet_profile.dart';
 import '../../../../data/services/fortune_api/fortune_api_service.dart';
 import '../../../../domain/entities/fortune.dart' hide FortuneElements;
 import '../../../../core/cache/cache_service.dart';
+import '../../../../core/extensions/l10n_extension.dart';
 import '../../domain/models/recommendation_chip.dart';
 import '../../domain/models/fortune_survey_config.dart';
 import '../../domain/configs/survey_configs.dart';
@@ -709,18 +710,17 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   /// (사주 기반 운세는 생년월일 필수)
   static const _birthDateRequiredTypes = {
     'daily', // 오늘의 나
-    'newYear', // 새해 운세
-    'daily_calendar', // 기간별 인사이트
-    'dailyCalendar', // 기간별 인사이트 (다른 표기)
+    'new-year', // 새해 운세
+    'daily-calendar', // 기간별 인사이트
     'compatibility', // 궁합
-    'blindDate', // 소개팅 운세
+    'blind-date', // 소개팅 운세
     'love', // 연애운
-    'yearlyEncounter', // 올해의 인연
-    'traditional', // 사주 분석
+    'yearly-encounter', // 올해의 인연
+    'traditional-saju', // 사주 분석
     'biorhythm', // 바이오리듬
     'health', // 건강운
-    'money', // 재물운
-    'luckyItems', // 럭키 아이템
+    'wealth', // 재물운
+    'lucky-items', // 럭키 아이템
     'family', // 가족운
   };
 
@@ -767,7 +767,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     } else if (action == ProfileRequiredAction.continueAsGuest) {
       // 온보딩 시작 (생년월일 등 입력)
       final chatNotifier = ref.read(chatMessagesProvider.notifier);
-      chatNotifier.addUserMessage(chip.label);
+      chatNotifier.addUserMessage(chip.getLocalizedLabel(context));
       _scrollToBottom();
 
       // 온보딩 시작
@@ -791,16 +791,16 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     }
 
     // 카톡 대화 분석: 인라인 채팅 플로우
-    if (chip.fortuneType == 'chatInsight') {
-      chatNotifier.addUserMessage(chip.label);
+    if (chip.fortuneType == 'chat-insight') {
+      chatNotifier.addUserMessage(chip.getLocalizedLabel(context));
       _scrollToBottom();
       _startChatInsightFlow();
       return;
     }
 
     // 전체운세보기: 모든 운세 칩 표시
-    if (chip.fortuneType == 'viewAll') {
-      chatNotifier.addUserMessage(chip.label);
+    if (chip.fortuneType == 'view-all') {
+      chatNotifier.addUserMessage(chip.getLocalizedLabel(context));
       _scrollToBottom();
       Future.delayed(const Duration(milliseconds: 300), () {
         chatNotifier.addAiMessage(
@@ -827,9 +827,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     }
 
     // 포춘쿠키: 인라인 애니메이션 후 결과 표시
-    if (chip.fortuneType == 'fortuneCookie') {
+    if (chip.fortuneType == 'fortune-cookie') {
       _updateChatBackgroundForType(FortuneSurveyType.fortuneCookie);
-      chatNotifier.addUserMessage(chip.label);
+      chatNotifier.addUserMessage(chip.getLocalizedLabel(context));
       _scrollToBottom();
       _showFortuneCookieWithAnimation();
       return;
@@ -844,7 +844,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
       // 약간의 딜레이 후 사용자 메시지 추가 (초기화 후 렌더링 위해)
       await Future.delayed(const Duration(milliseconds: 100));
-      chatNotifier.addUserMessage(chip.label);
+      chatNotifier.addUserMessage(chip.getLocalizedLabel(context));
       _scrollController.jumpTo(0);
 
       // 인사 메시지 생성 및 표시
@@ -867,7 +867,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       _updateChatBackgroundForType(surveyType);
       // 사주 분석 특별 처리 (ChatSajuResultCard 사용 - 설문 건너뛰기)
       if (surveyType == FortuneSurveyType.traditional) {
-        chatNotifier.addUserMessage(chip.label);
+        chatNotifier.addUserMessage(chip.getLocalizedLabel(context));
         _scrollToBottom();
         _handleSajuRequest();
         return;
@@ -875,7 +875,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
       // 타로 특별 처리: 오늘의 덱 다운로드 후 진행
       if (surveyType == FortuneSurveyType.tarot) {
-        chatNotifier.addUserMessage(chip.label);
+        chatNotifier.addUserMessage(chip.getLocalizedLabel(context));
         _scrollToBottom();
         _prepareTarotDeckAndStart(surveyNotifier, chatNotifier);
         return;
@@ -886,7 +886,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
       // 설문 단계가 없으면 바로 API 호출 (daily 등)
       if (config == null || config.steps.isEmpty) {
-        chatNotifier.addUserMessage(chip.label);
+        chatNotifier.addUserMessage(chip.getLocalizedLabel(context));
         _scrollToBottom();
 
         // 사용자 프로필 가져오기
@@ -943,7 +943,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
         if (cacheService.hasTodayDailyCalendarFortune(userId)) {
           // 오늘 이미 조회했으면 바로 결과 표시 (설문 스킵)
-          chatNotifier.addUserMessage(chip.label);
+          chatNotifier.addUserMessage(chip.getLocalizedLabel(context));
           chatNotifier.showTypingIndicator();
           _scrollToBottom();
 
@@ -958,7 +958,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
                 // 스크롤은 FortuneResultScrollWrapper의 onRendered 콜백으로 자동 처리됨
                 chatNotifier.addFortuneResultMessage(
                   text: '기간별 인사이트',
-                  fortuneType: 'daily_calendar',
+                  fortuneType: 'daily-calendar',
                   fortune: cachedFortune,
                   selectedDate: DateTime.now(), // 캐시된 결과는 오늘 날짜
                 );
@@ -975,7 +975,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       }
 
       // 설문 지원 타입 → 설문 시작
-      chatNotifier.addUserMessage(chip.label);
+      chatNotifier.addUserMessage(chip.getLocalizedLabel(context));
       _scrollToBottom();
 
       // 사용자 프로필 가져오기
@@ -1022,13 +1022,14 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       });
     } else {
       // 미지원 타입 → 준비 중 메시지
-      chatNotifier.addUserMessage(chip.label);
+      chatNotifier.addUserMessage(chip.getLocalizedLabel(context));
       chatNotifier.showTypingIndicator();
       _scrollToBottom();
 
       Future.delayed(const Duration(milliseconds: 800), () {
         chatNotifier.addAiMessage(
-          '${chip.label} 기능은 곧 준비될 예정이에요! 🔮\n다른 인사이트를 먼저 확인해보시겠어요?',
+          context.l10n
+              .fortuneFeatureComingSoon(chip.getLocalizedLabel(context)),
         );
         _scrollToBottom();
       });
@@ -1089,98 +1090,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
   /// RecommendationChip의 fortuneType을 FortuneSurveyType으로 매핑 (30개 전체)
   FortuneSurveyType? _mapChipToSurveyType(String fortuneType) {
-    switch (fortuneType) {
-      // 기존 6개
-      case 'career':
-        return FortuneSurveyType.career;
-      case 'love':
-        return FortuneSurveyType.love;
-      case 'daily':
-        return FortuneSurveyType.daily;
-      case 'talent':
-        return FortuneSurveyType.talent;
-      case 'tarot':
-        return FortuneSurveyType.tarot;
-      case 'mbti':
-        return FortuneSurveyType.mbti;
-      // 시간 기반
-      case 'newYear':
-        return FortuneSurveyType.newYear;
-      case 'daily_calendar':
-        return FortuneSurveyType.dailyCalendar;
-      // 전통 분석
-      case 'traditional':
-        return FortuneSurveyType.traditional;
-      case 'faceReading':
-        return FortuneSurveyType.faceReading;
-      // 성격/개성
-      case 'personalityDna':
-        return FortuneSurveyType.personalityDna;
-      case 'biorhythm':
-        return FortuneSurveyType.biorhythm;
-      // 연애/관계
-      case 'compatibility':
-        return FortuneSurveyType.compatibility;
-      case 'avoidPeople':
-        return FortuneSurveyType.avoidPeople;
-      case 'exLover':
-        return FortuneSurveyType.exLover;
-      case 'blindDate':
-        return FortuneSurveyType.blindDate;
-      case 'yearlyEncounter':
-        return FortuneSurveyType.yearlyEncounter;
-      // 재물
-      case 'money':
-        return FortuneSurveyType.money;
-      // 라이프스타일
-      case 'luckyItems':
-        return FortuneSurveyType.luckyItems;
-      case 'lotto':
-        return FortuneSurveyType.lotto;
-      case 'wish':
-        return FortuneSurveyType.wish;
-      case 'fortuneCookie':
-        return FortuneSurveyType.fortuneCookie;
-      // 건강/스포츠
-      case 'health':
-        return FortuneSurveyType.health;
-      case 'exercise':
-        return FortuneSurveyType.exercise;
-      case 'sportsGame':
-        return FortuneSurveyType.sportsGame;
-      // 인터랙티브
-      case 'dream':
-        return FortuneSurveyType.dream;
-      case 'celebrity':
-        return FortuneSurveyType.celebrity;
-      case 'pastLife':
-        return FortuneSurveyType.pastLife;
-      case 'gameEnhance':
-        return FortuneSurveyType.gameEnhance;
-      // 가족/반려동물
-      case 'pet':
-        return FortuneSurveyType.pet;
-      case 'family':
-        return FortuneSurveyType.family;
-      case 'naming':
-        return FortuneSurveyType.naming;
-      // 스타일/패션
-      case 'ootdEvaluation':
-        return FortuneSurveyType.ootdEvaluation;
-      // 전통/신비 (추가)
-      case 'talisman':
-        return FortuneSurveyType.talisman;
-      // 실용/결정
-      case 'exam':
-        return FortuneSurveyType.exam;
-      case 'moving':
-        return FortuneSurveyType.moving;
-      // 웰니스
-      case 'gratitude':
-        return FortuneSurveyType.gratitude;
-      default:
-        return null;
-    }
+    return FortuneSurveyTypeCanonicalX.fromCanonicalId(fortuneType);
   }
 
   /// 온보딩 이름 입력 제출
@@ -2661,6 +2571,15 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         sajuData: sajuState.sajuData!,
       );
 
+      // 만세력 전체 페이지로 자동 이동
+      if (mounted) {
+        Future.delayed(const Duration(milliseconds: 300), () {
+          if (mounted) {
+            context.pushNamed('manseryeok');
+          }
+        });
+      }
+
       // 오늘의 운세 자동 호출 (사주 분석 후 무료 제공)
       Future.delayed(const Duration(milliseconds: 500), () async {
         chatNotifier.addAiMessage('이제 오늘의 인사이트를 보여드릴게요... ✨');
@@ -2722,7 +2641,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     required FortuneSurveyType type,
     required Map<String, dynamic> answers,
   }) async {
-    final fortuneType = type.name;
+    final fortuneType = type.canonicalId;
     final historyService = FortuneHistoryService();
 
     // 1. DB에서 오늘 결과 확인
@@ -2904,7 +2823,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     final gender = userProfile?.gender ?? 'unknown';
 
     Logger.info('🔮 [ChatHomePage] Calling fortune API', {
-      'type': type.name,
+      'type': type.canonicalId,
       'userId': userId,
       'answers': answers,
     });
@@ -2944,7 +2863,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         };
         return apiService.getFortune(
           userId: userId,
-          fortuneType: 'new_year',
+          fortuneType: 'new-year',
           params: {
             'birthDate': birthDateStr,
             'birthTime': userProfile?.birthTime ?? '자시 (23:00 - 01:00)',
@@ -2984,7 +2903,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
           return apiService.getFortune(
             userId: userId,
-            fortuneType: 'daily_calendar',
+            fortuneType: 'daily-calendar',
             params: {
               'birthDate': birthDateStr,
               'birthTime': userProfile?.birthTime ?? '자시 (23:00 - 01:00)',
@@ -3019,7 +2938,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
         return apiService.getFortune(
           userId: userId,
-          fortuneType: 'daily_calendar',
+          fortuneType: 'daily-calendar',
           params: {
             'birthDate': birthDateStr,
             'birthTime': userProfile?.birthTime ?? '자시 (23:00 - 01:00)',
@@ -4125,86 +4044,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
   /// FortuneSurveyType을 FortuneCardImages에서 사용하는 문자열로 변환
   String _mapSurveyTypeToString(FortuneSurveyType type) {
-    switch (type) {
-      case FortuneSurveyType.career:
-        return 'career';
-      case FortuneSurveyType.love:
-        return 'love';
-      case FortuneSurveyType.talent:
-        return 'talent';
-      case FortuneSurveyType.daily:
-        return 'daily';
-      case FortuneSurveyType.tarot:
-        return 'tarot';
-      case FortuneSurveyType.mbti:
-        return 'mbti';
-      case FortuneSurveyType.newYear:
-        return 'newYear';
-      case FortuneSurveyType.dailyCalendar:
-        return 'daily_calendar';
-      case FortuneSurveyType.traditional:
-        return 'traditional';
-      case FortuneSurveyType.faceReading:
-        return 'face-reading';
-      case FortuneSurveyType.personalityDna:
-        return 'personality';
-      case FortuneSurveyType.biorhythm:
-        return 'biorhythm';
-      case FortuneSurveyType.compatibility:
-        return 'compatibility';
-      case FortuneSurveyType.avoidPeople:
-        return 'avoid-people';
-      case FortuneSurveyType.exLover:
-        return 'ex-lover';
-      case FortuneSurveyType.blindDate:
-        return 'blind-date';
-      case FortuneSurveyType.money:
-        return 'money';
-      case FortuneSurveyType.luckyItems:
-        return 'lucky-items';
-      case FortuneSurveyType.lotto:
-        return 'lotto';
-      case FortuneSurveyType.wish:
-        return 'wish';
-      case FortuneSurveyType.fortuneCookie:
-        return 'fortune-cookie';
-      case FortuneSurveyType.health:
-        return 'health';
-      case FortuneSurveyType.exercise:
-        return 'health_sports';
-      case FortuneSurveyType.sportsGame:
-        return 'match-insight';
-      case FortuneSurveyType.dream:
-        return 'dream';
-      case FortuneSurveyType.celebrity:
-        return 'celebrity';
-      case FortuneSurveyType.pastLife:
-        return 'past-life';
-      case FortuneSurveyType.gameEnhance:
-        return 'game-enhance';
-      case FortuneSurveyType.pet:
-        return 'pet';
-      case FortuneSurveyType.family:
-        return 'family';
-      case FortuneSurveyType.naming:
-        return 'naming';
-      case FortuneSurveyType.babyNickname:
-        return 'baby-nickname';
-      case FortuneSurveyType.ootdEvaluation:
-        return 'ootd-evaluation';
-      case FortuneSurveyType.talisman:
-        return 'talisman';
-      case FortuneSurveyType.exam:
-        return 'exam';
-      case FortuneSurveyType.moving:
-        return 'moving';
-      case FortuneSurveyType.profileCreation:
-        return 'default'; // 프로필 생성은 운세 이미지 불필요
-      case FortuneSurveyType.gratitude:
-        return 'gratitude'; // 감사일기
-      case FortuneSurveyType.yearlyEncounter:
-        return 'yearly-encounter'; // 올해의 인연
-    }
+    return type.canonicalId;
   }
 
   /// 꿈해몽 dreamContent 입력 단계인지 확인

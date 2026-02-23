@@ -259,7 +259,7 @@ class _FortuneCookieResultCardState
         FortuneActionButtons(
           contentId: widget.fortune.id,
           contentType: 'cookie',
-          fortuneType: 'fortuneCookie',
+          fortuneType: 'fortune-cookie',
           shareTitle: '$_cookieTypeName 포춘쿠키',
           shareContent: _message,
           iconSize: 18,

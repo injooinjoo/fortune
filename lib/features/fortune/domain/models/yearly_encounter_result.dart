@@ -54,7 +54,7 @@ class YearlyEncounterResult {
   });
 
   /// 운세 타입 식별자
-  String get fortuneType => 'yearlyEncounter';
+  String get fortuneType => 'yearly-encounter';
 
   /// 성별 한글 표시
   String get targetGenderKo => targetGender == 'male' ? '남성' : '여성';

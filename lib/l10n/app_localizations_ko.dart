@@ -79,51 +79,51 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get points => '포인트';
+  String get points => '토큰';
 
   @override
   String pointsWithCount(int count) {
-    return '$count 포인트';
+    return '$count 토큰';
   }
 
   @override
   String get bonus => '보너스';
 
   @override
-  String get points330Title => '330 포인트';
+  String get points350Title => '350 토큰';
 
   @override
-  String get points330Desc => '300P + 30P 보너스';
+  String get points350Desc => '300 + 50 보너스';
 
   @override
-  String get points700Title => '700 포인트';
+  String get points700Title => '700 토큰';
 
   @override
-  String get points700Desc => '600P + 100P 보너스';
+  String get points700Desc => '600 + 100 보너스';
 
   @override
-  String get points1500Title => '1,500 포인트';
+  String get points1650Title => '1,650 토큰';
 
   @override
-  String get points1500Desc => '1,200P + 300P 보너스';
+  String get points1650Desc => '1,500 + 150 보너스';
 
   @override
-  String get points4000Title => '4,000 포인트';
+  String get points4400Title => '4,400 토큰';
 
   @override
-  String get points4000Desc => '3,000P + 1,000P 보너스';
+  String get points4400Desc => '4,000 + 400 보너스';
 
   @override
   String get proSubscriptionTitle => 'Pro 구독';
 
   @override
-  String get proSubscriptionDesc => '매월 30,000개 토큰 자동 충전';
+  String get proSubscriptionDesc => '매월 3,000 토큰 자동 충전';
 
   @override
   String get maxSubscriptionTitle => 'Max 구독';
 
   @override
-  String get maxSubscriptionDesc => '매월 100,000개 토큰 자동 충전';
+  String get maxSubscriptionDesc => '매월 12,600 토큰 자동 충전';
 
   @override
   String get premiumSajuTitle => '상세 사주명리서';
@@ -180,7 +180,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get categorySpecial => '특별 기능';
 
   @override
-  String get fortuneDaily => '오늘의 메시지';
+  String get fortuneDaily => '오늘의 인사이트';
 
   @override
   String get fortuneToday => '오늘의 인사이트';
@@ -244,6 +244,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get fortuneZodiac => '별자리 분석';
+
+  @override
+  String get fortuneConstellation => '별자리 특성';
 
   @override
   String get fortuneZodiacAnimal => '띠별 분석';
@@ -424,6 +427,65 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get fortuneNaming => '이름 분석';
+
+  @override
+  String get fortuneFamily => '가족 궁합';
+
+  @override
+  String get fortuneFortuneCookie => '포춘쿠키';
+
+  @override
+  String get fortuneGratitude => '감사 일기';
+
+  @override
+  String get fortuneCoaching => 'AI 코칭';
+
+  @override
+  String get fortuneDecisionHelper => '고민 해결';
+
+  @override
+  String get fortuneDailyReview => '하루 정리';
+
+  @override
+  String get fortuneWeeklyReview => '주간 리뷰';
+
+  @override
+  String get fortuneChatInsight => '카톡 대화 분석';
+
+  @override
+  String get fortuneExercise => '운동 운세';
+
+  @override
+  String get fortuneSportsGame => '경기 승부';
+
+  @override
+  String get fortuneOotdEvaluation => '코디 점수';
+
+  @override
+  String get fortuneYearlyEncounter => '올해의 인연';
+
+  @override
+  String get fortuneBabyNickname => '태명 짓기';
+
+  @override
+  String get fortuneBreathing => '명상 가이드';
+
+  @override
+  String get fortuneMoney => '재물 운세';
+
+  @override
+  String get fortuneGameEnhance => '게임 강화운';
+
+  @override
+  String get chipViewAll => '전체 보기';
+
+  @override
+  String get chipViewMore => '더보기';
+
+  @override
+  String fortuneFeatureComingSoon(String name) {
+    return '$name 기능은 곧 준비될 예정이에요! 🔮\n다른 인사이트를 먼저 확인해보시겠어요?';
+  }
 
   @override
   String get loadingTimeDaily1 => '오늘의 태양이 당신의 하루를 비추는 중';
@@ -794,6 +856,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get newConversation => '새 대화';
 
   @override
+  String get yourTurn => '내 차례';
+
+  @override
   String get typing => '입력 중...';
 
   @override
@@ -867,6 +932,15 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get relationship => '관계';
+
+  @override
+  String get profilePosts => '포스트';
+
+  @override
+  String get profileFollowers => '팔로워';
+
+  @override
+  String get profileFollowing => '팔로잉';
 
   @override
   String get sendMessage => '메시지 보내기';

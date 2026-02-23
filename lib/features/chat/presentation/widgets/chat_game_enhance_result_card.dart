@@ -216,8 +216,8 @@ class _ChatGameEnhanceResultCardState
             right: DSSpacing.sm,
             child: FortuneActionButtons(
               contentId: fortuneId,
-              contentType: 'gameEnhance',
-              fortuneType: 'gameEnhance',
+              contentType: 'game-enhance',
+              fortuneType: 'game-enhance',
               shareTitle: '강화의 기운',
               shareContent: statusMessage,
               iconColor: DSColors.textPrimary,

@@ -749,7 +749,7 @@ async function saveYearlyEncounterRecord(
     .insert({
       user_id: userId,
       fortune_data: {
-        fortune_type: 'yearlyEncounter',
+        fortune_type: 'yearly-encounter',
         ...result,
       },
       created_at: new Date().toISOString(),

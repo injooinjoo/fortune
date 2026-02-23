@@ -14,8 +14,13 @@ class AIRecommendation {
   });
 
   factory AIRecommendation.fromJson(Map<String, dynamic> json) {
+    final rawType = (json['fortuneType'] as String?) ?? 'daily';
+    final canonicalType =
+        FortuneSurveyTypeCanonicalX.fromCanonicalId(rawType) != null
+            ? rawType
+            : FortuneSurveyType.daily.canonicalId;
     return AIRecommendation(
-      fortuneType: json['fortuneType'] as String,
+      fortuneType: canonicalType,
       confidence: (json['confidence'] as num).toDouble(),
       reason: json['reason'] as String?,
     );
@@ -34,96 +39,8 @@ class AIRecommendation {
 
   /// fortuneType 문자열 → FortuneSurveyType 매핑
   FortuneSurveyType _mapToSurveyType(String type) {
-    switch (type) {
-      // 시간 기반
-      case 'daily':
-        return FortuneSurveyType.daily;
-      case 'newYear':
-        return FortuneSurveyType.newYear;
-
-      // 연애/관계
-      case 'love':
-        return FortuneSurveyType.love;
-      case 'compatibility':
-        return FortuneSurveyType.compatibility;
-      case 'blindDate':
-        return FortuneSurveyType.blindDate;
-      case 'exLover':
-        return FortuneSurveyType.exLover;
-      case 'avoidPeople':
-        return FortuneSurveyType.avoidPeople;
-
-      // 직업/재능
-      case 'career':
-        return FortuneSurveyType.career;
-      case 'talent':
-        return FortuneSurveyType.talent;
-
-      // 재물
-      case 'money':
-        return FortuneSurveyType.money;
-      case 'luckyItems':
-        return FortuneSurveyType.luckyItems;
-      case 'lotto':
-        return FortuneSurveyType.lotto;
-
-      // 전통/신비
-      case 'tarot':
-        return FortuneSurveyType.tarot;
-      case 'traditional':
-        return FortuneSurveyType.traditional;
-      case 'faceReading':
-        return FortuneSurveyType.faceReading;
-
-      // 성격/개성
-      case 'mbti':
-        return FortuneSurveyType.mbti;
-      case 'personalityDna':
-        return FortuneSurveyType.personalityDna;
-      case 'biorhythm':
-        return FortuneSurveyType.biorhythm;
-
-      // 건강/스포츠
-      case 'health':
-        return FortuneSurveyType.health;
-      case 'exercise':
-        return FortuneSurveyType.exercise;
-      case 'sportsGame':
-        return FortuneSurveyType.sportsGame;
-
-      // 인터랙티브
-      case 'dream':
-        return FortuneSurveyType.dream;
-      case 'wish':
-        return FortuneSurveyType.wish;
-      case 'fortuneCookie':
-        return FortuneSurveyType.fortuneCookie;
-      case 'celebrity':
-        return FortuneSurveyType.celebrity;
-
-      // 가족/반려동물
-      case 'family':
-        return FortuneSurveyType.family;
-      case 'pet':
-        return FortuneSurveyType.pet;
-      case 'naming':
-        return FortuneSurveyType.naming;
-
-      // 스타일/패션
-      case 'ootdEvaluation':
-        return FortuneSurveyType.ootdEvaluation;
-
-      // 기타
-      case 'talisman':
-        return FortuneSurveyType.talisman;
-      case 'exam':
-        return FortuneSurveyType.exam;
-      case 'moving':
-        return FortuneSurveyType.moving;
-
-      default:
-        return FortuneSurveyType.daily;
-    }
+    return FortuneSurveyTypeCanonicalX.fromCanonicalId(type) ??
+        FortuneSurveyType.daily;
   }
 
   @override

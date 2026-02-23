@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/extensions/l10n_extension.dart';
 
 /// 추천 칩 모델
 class RecommendationChip {
@@ -18,6 +19,82 @@ class RecommendationChip {
     required this.icon,
     required this.color,
   });
+
+  /// l10n으로 변환된 칩 라벨 반환 (fallback: label 필드)
+  String getLocalizedLabel(BuildContext context) {
+    return _chipLabelMap(context)[id] ?? label;
+  }
+
+  /// l10n으로 변환된 칩 subtitle 반환
+  String? getLocalizedSubtitle(BuildContext context) {
+    return subtitle;
+  }
+
+  /// id → l10n 라벨 매핑
+  static Map<String, String> _chipLabelMap(BuildContext context) {
+    final l10n = context.l10n;
+    return {
+      // 시간 기반
+      'daily': l10n.fortuneDaily,
+      'daily-calendar': l10n.fortuneDailyCalendar,
+      'new-year': l10n.fortuneNewYear,
+      // 연애/관계
+      'love': l10n.fortuneLove,
+      'compatibility': l10n.fortuneCompatibility,
+      'ex-lover': l10n.fortuneExLover,
+      'yearly-encounter': l10n.fortuneYearlyEncounter,
+      'blind-date': l10n.fortuneBlindDate,
+      'avoid-people': l10n.fortuneAvoidPeople,
+      // 직업/재능
+      'career': l10n.fortuneCareer,
+      'talent': l10n.fortuneTalent,
+      // 재물
+      'wealth': l10n.fortuneWealth,
+      'lucky-items': l10n.fortuneLuckyItems,
+      'lotto': l10n.fortuneLuckyLottery,
+      // 전통/신비
+      'tarot': l10n.fortuneTarot,
+      'traditional-saju': l10n.fortuneTraditional,
+      'face-reading': l10n.fortuneFaceReading,
+      'talisman': l10n.fortuneTalisman,
+      'past-life': l10n.fortunePastLife,
+      // 성격/개성
+      'personality-dna': l10n.fortunePersonalityDna,
+      'biorhythm': l10n.fortuneBiorhythm,
+      'mbti': l10n.fortuneMbti,
+      // 건강/스포츠
+      'health': l10n.fortuneHealth,
+      'exercise': l10n.fortuneExercise,
+      'match-insight': l10n.fortuneSportsGame,
+      // 인터랙티브
+      'game-enhance': l10n.fortuneGameEnhance,
+      'dream': l10n.fortuneDream,
+      'wish': l10n.fortuneWish,
+      'fortune-cookie': l10n.fortuneFortuneCookie,
+      'celebrity': l10n.fortuneCelebrity,
+      // 가족/반려동물
+      'family': l10n.fortuneFamily,
+      'pet-compatibility': l10n.fortunePet,
+      'naming': l10n.fortuneNaming,
+      'baby-nickname': l10n.fortuneBabyNickname,
+      // 스타일
+      'ootd-evaluation': l10n.fortuneOotdEvaluation,
+      // 실용/결정
+      'exam': l10n.fortuneLuckyExam,
+      'moving': l10n.fortuneMoving,
+      // 웰니스
+      'breathing': l10n.fortuneBreathing,
+      'gratitude': l10n.fortuneGratitude,
+      // AI 코칭/저널링
+      'coaching': l10n.fortuneCoaching,
+      'decision': l10n.fortuneDecisionHelper,
+      'daily-review': l10n.fortuneDailyReview,
+      'weekly-review': l10n.fortuneWeeklyReview,
+      // 초기 칩
+      'chat-insight': l10n.fortuneChatInsight,
+      'view-all': l10n.chipViewAll,
+    };
+  }
 }
 
 /// 기본 추천 칩 목록 (전체 인사이트)
@@ -31,16 +108,16 @@ const List<RecommendationChip> defaultChips = [
     color: DSColors.accentSecondary,
   ),
   RecommendationChip(
-    id: 'dailyCalendar',
+    id: 'daily-calendar',
     label: '일진 달력',
-    fortuneType: 'daily_calendar',
+    fortuneType: 'daily-calendar',
     icon: Icons.calendar_month_outlined,
     color: DSColors.accentSecondary,
   ),
   RecommendationChip(
-    id: 'newYear',
+    id: 'new-year',
     label: '신년 운세',
-    fortuneType: 'newYear',
+    fortuneType: 'new-year',
     icon: Icons.celebration_outlined,
     color: DSColors.accentSecondary,
   ),
@@ -61,30 +138,30 @@ const List<RecommendationChip> defaultChips = [
     color: DSColors.accentSecondary,
   ),
   RecommendationChip(
-    id: 'exLover',
+    id: 'ex-lover',
     label: '전 애인 운',
-    fortuneType: 'exLover',
+    fortuneType: 'ex-lover',
     icon: Icons.replay_outlined,
     color: DSColors.accentSecondary,
   ),
   RecommendationChip(
-    id: 'yearlyEncounter',
+    id: 'yearly-encounter',
     label: '올해의 인연',
-    fortuneType: 'yearlyEncounter',
+    fortuneType: 'yearly-encounter',
     icon: Icons.favorite,
     color: DSColors.accentSecondary,
   ),
   RecommendationChip(
-    id: 'blindDate',
+    id: 'blind-date',
     label: '소개팅 운',
-    fortuneType: 'blindDate',
+    fortuneType: 'blind-date',
     icon: Icons.wine_bar_outlined,
     color: DSColors.accentSecondary,
   ),
   RecommendationChip(
-    id: 'avoidPeople',
+    id: 'avoid-people',
     label: '피해야 할 사람',
-    fortuneType: 'avoidPeople',
+    fortuneType: 'avoid-people',
     icon: Icons.warning_amber_outlined,
     color: DSColors.accentSecondary,
   ),
@@ -107,16 +184,16 @@ const List<RecommendationChip> defaultChips = [
 
   // ============ 재물 ============
   RecommendationChip(
-    id: 'money',
+    id: 'wealth',
     label: '재물 운세',
-    fortuneType: 'money',
+    fortuneType: 'wealth',
     icon: Icons.attach_money,
     color: DSColors.accentSecondary,
   ),
   RecommendationChip(
-    id: 'luckyItems',
+    id: 'lucky-items',
     label: '행운 아이템',
-    fortuneType: 'luckyItems',
+    fortuneType: 'lucky-items',
     icon: Icons.auto_awesome,
     color: DSColors.accentSecondary,
   ),
@@ -137,16 +214,16 @@ const List<RecommendationChip> defaultChips = [
     color: DSColors.accentSecondary,
   ),
   RecommendationChip(
-    id: 'traditional',
+    id: 'traditional-saju',
     label: '사주 풀이',
-    fortuneType: 'traditional',
+    fortuneType: 'traditional-saju',
     icon: Icons.menu_book_outlined,
     color: DSColors.accentSecondary,
   ),
   RecommendationChip(
-    id: 'faceReading',
+    id: 'face-reading',
     label: '관상 보기',
-    fortuneType: 'faceReading',
+    fortuneType: 'face-reading',
     icon: Icons.face_retouching_natural,
     color: DSColors.accentSecondary,
   ),
@@ -158,18 +235,18 @@ const List<RecommendationChip> defaultChips = [
     color: DSColors.accentSecondary,
   ),
   RecommendationChip(
-    id: 'pastLife',
+    id: 'past-life',
     label: '전생 보기',
-    fortuneType: 'pastLife',
+    fortuneType: 'past-life',
     icon: Icons.history_edu,
     color: DSColors.accentSecondary,
   ),
 
   // ============ 성격/개성 ============
   RecommendationChip(
-    id: 'personalityDna',
+    id: 'personality-dna',
     label: '성격 DNA',
-    fortuneType: 'personalityDna',
+    fortuneType: 'personality-dna',
     icon: Icons.fingerprint,
     color: DSColors.accentSecondary,
   ),
@@ -204,18 +281,18 @@ const List<RecommendationChip> defaultChips = [
     color: DSColors.accentSecondary,
   ),
   RecommendationChip(
-    id: 'sportsGame',
+    id: 'match-insight',
     label: '경기 승부',
-    fortuneType: 'sportsGame',
+    fortuneType: 'match-insight',
     icon: Icons.sports_soccer,
     color: DSColors.accentSecondary,
   ),
 
   // ============ 인터랙티브 ============
   RecommendationChip(
-    id: 'gameEnhance',
+    id: 'game-enhance',
     label: '게임 강화운',
-    fortuneType: 'gameEnhance',
+    fortuneType: 'game-enhance',
     icon: Icons.rocket_launch_outlined,
     color: DSColors.accentSecondary,
   ),
@@ -234,9 +311,9 @@ const List<RecommendationChip> defaultChips = [
     color: DSColors.accentSecondary,
   ),
   RecommendationChip(
-    id: 'fortuneCookie',
+    id: 'fortune-cookie',
     label: '포춘쿠키',
-    fortuneType: 'fortuneCookie',
+    fortuneType: 'fortune-cookie',
     icon: Icons.cookie_outlined,
     color: DSColors.accentSecondary,
   ),
@@ -257,9 +334,9 @@ const List<RecommendationChip> defaultChips = [
     color: DSColors.accentSecondary,
   ),
   RecommendationChip(
-    id: 'pet',
+    id: 'pet-compatibility',
     label: '펫 궁합',
-    fortuneType: 'pet',
+    fortuneType: 'pet-compatibility',
     icon: Icons.pets,
     color: DSColors.accentSecondary,
   ),
@@ -273,9 +350,9 @@ const List<RecommendationChip> defaultChips = [
 
   // ============ 스타일/패션 ============
   RecommendationChip(
-    id: 'ootdEvaluation',
+    id: 'ootd-evaluation',
     label: '코디 점수',
-    fortuneType: 'ootdEvaluation',
+    fortuneType: 'ootd-evaluation',
     icon: Icons.checkroom,
     color: DSColors.accentSecondary,
   ),
@@ -328,16 +405,16 @@ const List<RecommendationChip> defaultChips = [
     color: DSColors.accentSecondary,
   ),
   RecommendationChip(
-    id: 'dailyReview',
+    id: 'daily-review',
     label: '하루 정리',
-    fortuneType: 'daily_review',
+    fortuneType: 'daily-review',
     icon: Icons.edit_note_outlined,
     color: DSColors.accentSecondary,
   ),
   RecommendationChip(
-    id: 'weeklyReview',
+    id: 'weekly-review',
     label: '주간 리뷰',
-    fortuneType: 'weekly_review',
+    fortuneType: 'weekly-review',
     icon: Icons.calendar_view_week_outlined,
     color: DSColors.accentSecondary,
   ),
@@ -349,9 +426,9 @@ const List<RecommendationChip> additionalChips = [];
 /// 시작 화면 초기 칩 (5개 표시) - 카톡 분석 + AI 코칭 중심으로 재배치
 const List<RecommendationChip> initialChips = [
   RecommendationChip(
-    id: 'chatInsight',
+    id: 'chat-insight',
     label: '카톡 대화 분석',
-    fortuneType: 'chatInsight',
+    fortuneType: 'chat-insight',
     icon: Icons.forum_outlined,
     color: DSColors.accentSecondary,
   ),
@@ -377,9 +454,9 @@ const List<RecommendationChip> initialChips = [
     color: DSColors.accentSecondary,
   ),
   RecommendationChip(
-    id: 'viewAll',
+    id: 'view-all',
     label: '전체 보기',
-    fortuneType: 'viewAll',
+    fortuneType: 'view-all',
     icon: Icons.apps_outlined,
     color: DSColors.accentSecondary,
   ),

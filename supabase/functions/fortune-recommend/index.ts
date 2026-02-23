@@ -46,54 +46,101 @@ const FORTUNE_METADATA = `
 
 ### 시간 기반
 - daily: 오늘의 인사이트, 하루 분석, 일진, 오늘의 기운
-- yearly: 연간 인사이트, 한해 분석, 올해 신년, 2024년 2025년
-- newYear: 새해 인사이트, 정월, 설날, 새해 복
+- daily-calendar: 날짜별 인사이트, 캘린더, 기간별 분석
+- new-year: 새해 인사이트, 정월, 설날, 새해 복
 
 ### 연애/관계
 - love: 연애 인사이트, 사랑, 애인, 커플, 썸, 고백, 짝사랑
 - compatibility: 궁합, 상성, 어울림, 맞는 사람
-- blindDate: 소개팅, 첫만남, 미팅, 선보기
-- exLover: 재회, 이별, 헤어짐, 전 남친, 전 여친, 다시 만남
-- avoidPeople: 경계 대상, 조심할 사람, 피해야 할
+- blind-date: 소개팅, 첫만남, 미팅, 선보기
+- ex-lover: 재회, 이별, 헤어짐, 전 남친, 전 여친, 다시 만남
+- avoid-people: 경계 대상, 조심할 사람, 피해야 할
+- yearly-encounter: 올해의 인연, 미래 애인, 인연 예측
 
 ### 직업/재능
 - career: 커리어 인사이트, 취업, 이직, 승진, 퇴사, 직장, 회사
 - talent: 적성, 재능, 진로, 잘하는 것
 
 ### 재물
-- money: 재물 인사이트, 금전, 부자, 돈 운, 수입
-- luckyItems: 행운 아이템, 럭키, 오늘의 색, 행운의 숫자
+- wealth: 재물 인사이트, 금전, 부자, 돈 운, 수입
+- lucky-items: 행운 아이템, 럭키, 오늘의 색, 행운의 숫자
 - lotto: 로또, 복권, 당첨, 번호
 
 ### 전통/신비
 - tarot: 타로, 카드점, 카드 뽑기
-- traditional: 사주, 팔자, 명리, 음양오행, 사주팔자
-- faceReading: 관상, 얼굴, AI 관상, 인상
+- traditional-saju: 사주, 팔자, 명리, 음양오행, 사주팔자
+- face-reading: 관상, 얼굴, AI 관상, 인상
+- past-life: 전생, 환생, 이전 생
 
 ### 성격/개성
 - mbti: MBTI, 성격유형, 엠비티아이
-- personalityDna: 성격 DNA, 나의 성격, 성격 분석
+- personality-dna: 성격 DNA, 나의 성격, 성격 분석
 - biorhythm: 바이오리듬, 신체 리듬, 컨디션
 
 ### 건강/스포츠
 - health: 건강 인사이트, 컨디션, 몸 상태, 건강 체크
 - exercise: 운동 추천, 오늘 운동, 피트니스
-- sportsGame: 경기 인사이트, 스포츠, 승부, 축구, 야구
+- match-insight: 경기 인사이트, 스포츠, 승부, 축구, 야구
 
 ### 인터랙티브
 - dream: 꿈해몽, 꿈 분석, 악몽, 길몽, 꿈 풀이
 - wish: 소원, 빌기, 원하는 것
-- fortuneCookie: 포춘쿠키, 오늘의 메시지, 행운 메시지
+- fortune-cookie: 포춘쿠키, 오늘의 메시지, 행운 메시지
 - celebrity: 유명인 궁합, 연예인, 아이돌
+- game-enhance: 게임 강화운, 강화 확률, 찬스타임
 
 ### 가족/반려동물
 - family: 가족 인사이트, 부모, 자녀, 육아
-- pet: 반려동물, 강아지, 고양이, 펫 궁합
+- pet-compatibility: 반려동물, 강아지, 고양이, 펫 궁합
 - naming: 작명, 이름 짓기, 아기 이름
+- baby-nickname: 태명, 태교, 아기 별명
 
 ### 스타일/패션
-- ootdEvaluation: OOTD 평가, 오늘 옷, 패션 체크
+- ootd-evaluation: OOTD 평가, 오늘 옷, 패션 체크
+
+### 기타 코어
+- exam: 시험운, 수능, 자격증
+- moving: 이사운, 이사 날짜
 `
+
+const CANONICAL_TYPES = new Set<string>([
+  'daily',
+  'daily-calendar',
+  'new-year',
+  'traditional-saju',
+  'face-reading',
+  'mbti',
+  'personality-dna',
+  'love',
+  'compatibility',
+  'blind-date',
+  'ex-lover',
+  'avoid-people',
+  'yearly-encounter',
+  'career',
+  'wealth',
+  'lucky-items',
+  'match-insight',
+  'game-enhance',
+  'exercise',
+  'dream',
+  'tarot',
+  'past-life',
+  'health',
+  'pet-compatibility',
+  'family',
+  'naming',
+  'baby-nickname',
+  'ootd-evaluation',
+  'exam',
+  'moving',
+  'wish',
+  'fortune-cookie',
+  'lotto',
+  'celebrity',
+  'talisman',
+  'biorhythm',
+])
 
 // 시스템 프롬프트
 const SYSTEM_PROMPT = `당신은 사용자의 자기 발견을 돕는 인사이트 추천 AI입니다.
@@ -167,7 +214,8 @@ serve(async (req: Request) => {
       if (Array.isArray(parsed)) {
         recommendations = parsed
           .filter((r: any) =>
-            r.fortuneType &&
+            typeof r.fortuneType === 'string' &&
+            CANONICAL_TYPES.has(r.fortuneType) &&
             typeof r.confidence === 'number' &&
             r.confidence >= 0.3
           )

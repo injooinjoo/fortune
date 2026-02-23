@@ -8,57 +8,57 @@ class LoadingMessages {
   static const Map<String, String> _typeToCategory = {
     // 시간/일상
     'daily': 'time_daily',
-    'daily_calendar': 'time_daily',
-    'newYear': 'time_daily',
+    'daily-calendar': 'time_daily',
+    'new-year': 'time_daily',
 
     // 연애/관계
     'love': 'love_relation',
     'compatibility': 'love_relation',
-    'blindDate': 'love_relation',
-    'exLover': 'love_relation',
+    'blind-date': 'love_relation',
+    'ex-lover': 'love_relation',
 
     // 경계/조심
-    'avoidPeople': 'caution',
+    'avoid-people': 'caution',
 
     // 직업/재능
     'career': 'career_talent',
     'talent': 'career_talent',
 
     // 재물
-    'money': 'wealth',
-    'luckyItems': 'wealth',
+    'wealth': 'wealth',
+    'lucky-items': 'wealth',
     'lotto': 'wealth',
 
     // 전통/신비
     'tarot': 'mystic',
-    'traditional': 'mystic',
-    'faceReading': 'mystic',
+    'traditional-saju': 'mystic',
+    'face-reading': 'mystic',
     'talisman': 'mystic',
-    'pastLife': 'mystic',
+    'past-life': 'mystic',
 
     // 성격/심리
     'mbti': 'personality',
-    'personalityDna': 'personality',
+    'personality-dna': 'personality',
     'biorhythm': 'personality',
 
     // 건강/운동
     'health': 'health_sport',
     'exercise': 'health_sport',
-    'sportsGame': 'health_sport',
+    'match-insight': 'health_sport',
 
     // 인터랙티브
     'dream': 'interactive',
     'wish': 'interactive',
-    'fortuneCookie': 'interactive',
+    'fortune-cookie': 'interactive',
     'celebrity': 'interactive',
 
     // 가족/반려
     'family': 'family_pet',
-    'pet': 'family_pet',
+    'pet-compatibility': 'family_pet',
     'naming': 'family_pet',
 
     // 스타일
-    'ootdEvaluation': 'style',
+    'ootd-evaluation': 'style',
 
     // 실용/웰니스
     'exam': 'practical',

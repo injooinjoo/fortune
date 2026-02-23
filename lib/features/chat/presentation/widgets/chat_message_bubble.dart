@@ -245,8 +245,7 @@ class ChatMessageBubble extends ConsumerWidget {
 
     // 올해의 인연 결과 카드 표시
     if (message.type == ChatMessageType.fortuneResult &&
-        (message.fortuneType == 'yearly-encounter' ||
-            message.fortuneType == 'yearlyEncounter') &&
+        message.fortuneType == 'yearly-encounter' &&
         message.yearlyEncounterResult != null) {
       return FortuneResultScrollWrapper(
         messageId: message.id,

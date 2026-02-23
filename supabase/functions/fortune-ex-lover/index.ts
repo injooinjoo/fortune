@@ -570,7 +570,7 @@ serve(async (req) => {
 
     // 캐시 키 생성 (v2 - 목표 + 핵심 요소 기반)
     const hash = await createHash(`${name}_${primaryGoal}_${coreReason}_${time_since_breakup}_${breakup_initiator}_${contact_status}_${relationshipDepth}`)
-    const cacheKey = `ex_lover_fortune_v2_${hash}`
+    const cacheKey = `ex-lover_fortune_v2_${hash}`
     const { data: cachedResult } = await supabase
       .from('fortune_cache')
       .select('result')
@@ -870,7 +870,7 @@ serve(async (req) => {
       fortuneData = {
         // 표준화된 필드 (하위 호환성)
         fortuneType: 'ex-lover',
-        fortune_type: 'ex_lover',
+        fortune_type: 'ex-lover',
         score: parsedResponse.score || Math.floor(Math.random() * 20) + 60,
         content: parsedResponse.hardTruth?.headline || '솔직한 조언을 드릴게요.',
         summary: `재회 가능성 ${reunionScore}% - ${parsedResponse.title || '솔직한 조언자가 함께합니다'}`,
@@ -995,7 +995,7 @@ serve(async (req) => {
       await supabase.from('fortune_cache').insert({
         cache_key: cacheKey,
         result: fortuneData,
-        fortune_type: 'ex_lover',
+        fortune_type: 'ex-lover',
         expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
       })
 

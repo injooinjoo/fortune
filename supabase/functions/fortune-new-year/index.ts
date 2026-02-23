@@ -123,14 +123,14 @@ serve(async (req) => {
         : personalizedResult
 
       const overallScore = fortuneData.overallScore || fortuneData.score || 75
-      const percentileData = await calculatePercentile(supabaseClient, 'new_year', overallScore)
+      const percentileData = await calculatePercentile(supabaseClient, 'new-year', overallScore)
 
       const fortune = {
         ...fortuneData,
-        id: `new_year_${userId}_${targetYear}`,
+        id: `new-year_${userId}_${targetYear}`,
         userId: userId,
-        type: 'new_year',
-        fortuneType: 'new_year',
+        type: 'new-year',
+        fortuneType: 'new-year',
         percentile: percentileData.percentile,
         percentileMessage: percentileData.message,
         metadata: {
@@ -320,7 +320,7 @@ ${zodiacSign ? `- 별자리: ${zodiacSign}` : ''}
 
     // LLM 사용량 로깅
     await UsageLogger.log({
-      fortuneType: 'new_year',
+      fortuneType: 'new-year',
       userId: userId,
       provider: response.provider,
       model: response.model,
@@ -344,10 +344,10 @@ ${zodiacSign ? `- 별자리: ${zodiacSign}` : ''}
     // 운세 데이터 구성
     const fortune = {
       // 표준 필드
-      id: `new_year_${userId}_${targetYear}`,
+      id: `new-year_${userId}_${targetYear}`,
       userId: userId,
-      type: 'new_year',
-      fortuneType: 'new_year',
+      type: 'new-year',
+      fortuneType: 'new-year',
 
       // 점수 및 요약
       score: overallScore,
@@ -421,7 +421,7 @@ ${zodiacSign ? `- 별자리: ${zodiacSign}` : ''}
     }
 
     // Percentile 계산
-    const percentileData = await calculatePercentile(supabaseClient, 'new_year', overallScore)
+    const percentileData = await calculatePercentile(supabaseClient, 'new-year', overallScore)
     const fortuneWithPercentile = addPercentileToResult(fortune, percentileData)
 
     // ===== Cohort Pool 저장 (Fire-and-forget) =====

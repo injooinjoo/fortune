@@ -673,7 +673,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
       // Ex-lover fortune: build rich content from detailed fields
       // API 응답 필드: hardTruth, theirPerspective, strategicAdvice, emotionalPrescription,
       // reunionAssessment, closingMessage, personalizedAnalysis, newBeginning, milestones
-      if (fortuneType == 'ex-lover' || fortuneType == 'ex_lover') {
+      if (fortuneType == 'ex-lover') {
         final contentParts = <String>[];
 
         // 1. 개인화된 분석 (Opening)

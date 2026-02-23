@@ -936,9 +936,9 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
   List<String> _getRecommendedChipsForCategory() {
     switch (state.primaryLifeCategory) {
       case LifeCategory.loveRelationship:
-        return ['compatibility', 'tarot', 'love', 'yearlyEncounter'];
+        return ['compatibility', 'tarot', 'love', 'yearly-encounter'];
       case LifeCategory.moneyFinance:
-        return ['money', 'luckyItems', 'tarot', 'career'];
+        return ['wealth', 'lucky-items', 'tarot', 'career'];
       case LifeCategory.careerStudy:
         return ['career', 'talent', 'exam', 'tarot'];
       case LifeCategory.healthWellness:
@@ -958,8 +958,8 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
     final chatNotifier = _ref.read(chatMessagesProvider.notifier);
     chatNotifier.addAiMessage('오늘 어떤 도움이 필요하세요? ✨\n아래에서 원하는 항목을 선택해보세요!');
     chatNotifier.addSystemMessage(chipIds: [
-      'daily_fortune',
-      'love_fortune',
+      'daily',
+      'love',
       'tarot',
     ]);
   }
@@ -1005,9 +1005,9 @@ class OnboardingChatNotifier extends StateNotifier<OnboardingState> {
         chatNotifier
             .addAiMessage('${profile['name']}님, 다시 오셨군요! 반가워요 ✨\n무엇이 궁금하세요?');
         chatNotifier.addSystemMessage(chipIds: [
-          'daily_fortune',
-          'love_fortune',
-          'career_fortune',
+          'daily',
+          'love',
+          'career',
           'tarot',
         ]);
       } else {

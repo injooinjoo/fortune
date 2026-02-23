@@ -83,6 +83,7 @@ class EdgeFunctionsEndpoints {
 
   // 재물/투자
   static const String investmentFortune = '/fortune-investment';
+  static const String wealthFortune = '/fortune-wealth';
 
   // 이사/생활
   static const String movingFortune = '/fortune-moving';
@@ -125,67 +126,55 @@ class EdgeFunctionsEndpoints {
   // 실제 존재하는 Edge Function만 매핑
   static String getEndpointForType(String fortuneType) {
     final endpointMap = {
-      // 일상 운세
+      // 코어 canonical 타입
       'daily': dailyFortune,
-      'today': dailyFortune,
-      'time': timeFortune,
-      'time_based': timeFortune,
-      'daily_calendar': timeFortune, // 기간별 운세 → fortune-time 사용
-      'dailyCalendar': timeFortune, // camelCase 호환
+      'daily-calendar': timeFortune,
       'biorhythm': biorhythmFortune,
       'dream': dreamFortune,
-      // 전통 운세
+
+      // 전통/성격
       'traditional-saju': traditionalSaju,
-      'saju': traditionalSaju,
       'face-reading': faceReadingFortune,
-      // 성격/심리
       'mbti': mbtiFortune,
+      'personality-dna': mbtiFortune,
       'talent': talentFortune,
-      // 연애/궁합
+
+      // 연애/관계
       'love': loveFortune,
       'compatibility': compatibilityFortune,
       'ex-lover': exLoverFortune,
       'blind-date': blindDateFortune,
-      // 직업
+      'avoid-people': avoidPeopleFortune,
+      'yearly-encounter': '/fortune-yearly-encounter',
+
+      // 직업/재물
       'career': careerFortune,
       'health': healthFortune,
-      // 재물/투자
-      'investment': investmentFortune,
-      // 이사/생활
-      'moving': movingFortune,
-      // 가족 운세 (통합)
-      'family': familyFortune,
-      // 행운 아이템
+      'wealth': wealthFortune,
       'lucky-items': luckyItemsFortune,
-      // 특별 운세
-      'avoid-people': avoidPeopleFortune,
+      'match-insight': '/fortune-match-insight',
+      'game-enhance': '/fortune-game-enhance',
+      'exercise': '/fortune-exercise',
+
+      // 라이프스타일
+      'moving': movingFortune,
       'celebrity': celebrityFortune,
-      // 새해 운세
-      'new_year': newYearFortune,
-      'newYear': newYearFortune,
-      'yearly': newYearFortune,
-      // 반려동물
-      'pet-compatibility': petCompatibilityFortune,
-      // 기타 운세
+      'new-year': newYearFortune,
+      'ootd-evaluation': '/fortune-ootd',
+      'past-life': '/fortune-past-life',
+      'naming': '/fortune-naming',
+      'baby-nickname': '/fortune-baby-nickname',
       'exam': examFortune,
       'tarot': tarotFortune,
-      'home-fengshui': homeFengshuiFortune,
-      // 소원 분석
+
+      // 가족/반려
+      'family': '/fortune-family-health', // concern 기반 subtype은 호출부에서 결정
+      'pet-compatibility': petCompatibilityFortune,
+
+      // 유틸/인터랙션
       'wish': analyzeWish,
-      // 올해의 인연 (이미지 생성)
-      'yearly-encounter': '/fortune-yearly-encounter',
-      'yearlyEncounter': '/fortune-yearly-encounter',
-      // 작명
-      'naming': '/fortune-naming',
-      // OOTD 평가 (이미지 분석)
-      'ootd': '/fortune-ootd',
-      'ootdEvaluation': '/fortune-ootd',
-      // 재물운
-      'money': '/fortune-wealth',
-      'wealth': '/fortune-wealth',
-      // 전생
-      'past-life': '/fortune-past-life',
-      'pastLife': '/fortune-past-life',
+      'talisman': generateTalisman,
+      'decision': '/fortune-decision',
     };
 
     return endpointMap[fortuneType] ?? '/fortune-$fortuneType';

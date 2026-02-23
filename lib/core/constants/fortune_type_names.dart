@@ -9,12 +9,11 @@ class FortuneTypeNames {
     'daily': '오늘의 메시지',
     'today': '오늘의 인사이트',
     'tomorrow': '내일의 인사이트',
-    'daily_calendar': '날짜별 인사이트',
+    'daily-calendar': '날짜별 인사이트',
     'weekly': '주간 인사이트',
     'monthly': '월간 인사이트',
 
     // Traditional Analysis (전통 분석)
-    'traditional': '전통 분석',
     'saju': '생년월일 분석',
     'traditional-saju': '전통 생년월일 분석',
     'tarot': 'Insight Cards',
@@ -108,22 +107,28 @@ class FortuneTypeNames {
     'talisman': '행운 카드',
     'new-year': '새해 인사이트',
     'celebrity': '유명인 분석',
+    'yearly-encounter': '올해의 인연',
+    'game-enhance': '강화 운세',
+    'match-insight': '경기 인사이트',
+    'fortune-cookie': '오늘의 메시지',
     'same-birthday-celebrity': '같은 생일 연예인',
     'network-report': '네트워크 리포트',
     'dream': '꿈 분석',
 
     // Pet & Children (반려/육아)
-    'pet': '반려동물 분석',
     'pet-dog': '반려견 가이드',
     'pet-cat': '반려묘 가이드',
     'pet-compatibility': '반려동물 매칭',
+    'family': '가족 인사이트',
     'children': '자녀 분석',
     'parenting': '육아 가이드',
     'pregnancy': '태교 가이드',
     'family-harmony': '가족 화합 가이드',
 
     // Naming (작명)
-    'naming': '이름 분석'
+    'naming': '이름 분석',
+    'baby-nickname': '태명 이야기',
+    'ootd-evaluation': 'OOTD 평가'
   };
 
   /// Get the Korean name for a fortune type
@@ -134,7 +139,7 @@ class FortuneTypeNames {
 
   /// Get the category name for a fortune type
   static String getCategory(String fortuneType) {
-    if (['daily', 'today', 'tomorrow', 'daily_calendar', 'weekly', 'monthly']
+    if (['daily', 'today', 'tomorrow', 'daily-calendar', 'weekly', 'monthly']
         .contains(fortuneType)) {
       return '일일 인사이트';
     } else if ([
@@ -267,9 +272,10 @@ class FortuneTypeNames {
       'daily': '/daily-calendar',
       'today': '/daily-calendar',
       'tomorrow': '/daily-calendar',
-      'daily_calendar': '/daily-calendar',
+      'daily-calendar': '/daily-calendar',
       'weekly': '/daily-calendar',
       'monthly': '/daily-calendar',
+      'new-year': '/new-year',
       'saju': '/traditional-saju',
       'tojeong': '/traditional',
       'palmistry': '/traditional',
@@ -287,7 +293,16 @@ class FortuneTypeNames {
       'health': '/health-toss',
       'dream': '/interactive/dream',
       'tarot': '/tarot',
-      'naming': '/naming'
+      'naming': '/naming',
+      'pet-compatibility': '/pet-compatibility',
+      'ex-lover': '/ex-lover',
+      'blind-date': '/blind-date',
+      'avoid-people': '/avoid-people',
+      'yearly-encounter': '/yearly-encounter',
+      'match-insight': '/match-insight',
+      'game-enhance': '/game-enhance',
+      'baby-nickname': '/baby-nickname',
+      'ootd-evaluation': '/ootd-evaluation'
     };
 
     return routeMap[fortuneType] ?? '/fortune';

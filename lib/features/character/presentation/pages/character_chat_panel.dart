@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/constants/fortune_metadata.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/fortune/fortune_type_registry.dart';
 import '../../../../core/extensions/l10n_extension.dart';
 import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../../../core/widgets/unified_voice_text_field.dart';
@@ -15,7 +15,6 @@ import '../providers/character_chat_provider.dart';
 import '../providers/character_chat_survey_provider.dart';
 import '../providers/active_chat_provider.dart';
 import '../utils/character_accent_palette.dart';
-import '../widgets/character_intro_card.dart';
 import '../widgets/character_message_bubble.dart';
 import '../widgets/character_choice_widget.dart';
 import '../widgets/wave_typing_indicator.dart';
@@ -49,6 +48,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
   /// Notifier 참조 캐시 (dispose 후 ref 사용 불가 문제 해결)
   CharacterChatNotifier? _cachedNotifier;
+  bool _didRedirectToProfile = false;
 
   CharacterAccentPalette _accentPalette(BuildContext context) {
     return CharacterAccentPalette.from(
@@ -141,17 +141,12 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     });
   }
 
-  void _startConversation() {
-    ref
-        .read(characterChatProvider(widget.character.id).notifier)
-        .startConversation(widget.character.firstMessage);
-  }
-
   @override
   Widget build(BuildContext context) {
     final chatState = ref.watch(characterChatProvider(widget.character.id));
     final surveyState =
         ref.watch(characterChatSurveyProvider(widget.character.id));
+    _redirectToProfileIfNoConversation(chatState);
 
     // 🪙 토큰 부족 및 일반 에러 감지
     ref.listen<CharacterChatState>(
@@ -226,9 +221,12 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                     ? const Center(child: CircularProgressIndicator())
                     : chatState.hasConversation
                         ? _buildChatList(chatState)
-                        : CharacterIntroCard(
-                            character: widget.character,
-                            onStartConversation: _startConversation,
+                        : const Center(
+                            child: SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
                           ),
               ),
               // 설문 UI (설문 진행 중일 때)
@@ -328,6 +326,131 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     context.push('/character/${widget.character.id}', extra: widget.character);
   }
 
+  void _redirectToProfileIfNoConversation(CharacterChatState chatState) {
+    if (chatState.isLoading ||
+        chatState.hasConversation ||
+        _didRedirectToProfile) {
+      return;
+    }
+
+    _didRedirectToProfile = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      widget.onBack?.call();
+      context.push('/character/${widget.character.id}',
+          extra: widget.character);
+    });
+  }
+
+  /// specialty 키 → l10n 라벨 매핑
+  String _getSpecialtyLabel(BuildContext context, String specialty) {
+    final l10n = context.l10n;
+    switch (FortuneTypeRegistry.labelKeyOf(specialty)) {
+      case 'fortuneDaily':
+        return l10n.fortuneDaily;
+      case 'fortuneDailyCalendar':
+        return l10n.fortuneDailyCalendar;
+      case 'fortuneNewYear':
+        return l10n.fortuneNewYear;
+      case 'fortuneTraditional':
+        return l10n.fortuneTraditional;
+      case 'fortuneSaju':
+        return l10n.fortuneSaju;
+      case 'fortuneTarot':
+        return l10n.fortuneTarot;
+      case 'fortuneFaceReading':
+        return l10n.fortuneFaceReading;
+      case 'fortuneTalisman':
+        return l10n.fortuneTalisman;
+      case 'fortunePastLife':
+        return l10n.fortunePastLife;
+      case 'fortuneDream':
+        return l10n.fortuneDream;
+      case 'fortuneLove':
+        return l10n.fortuneLove;
+      case 'fortuneCompatibility':
+        return l10n.fortuneCompatibility;
+      case 'fortuneBlindDate':
+        return l10n.fortuneBlindDate;
+      case 'fortuneExLover':
+        return l10n.fortuneExLover;
+      case 'fortuneAvoidPeople':
+        return l10n.fortuneAvoidPeople;
+      case 'fortuneYearlyEncounter':
+        return l10n.fortuneYearlyEncounter;
+      case 'fortuneCelebrity':
+        return l10n.fortuneCelebrity;
+      case 'fortuneMbti':
+        return l10n.fortuneMbti;
+      case 'fortunePersonalityDna':
+        return l10n.fortunePersonalityDna;
+      case 'fortuneTalent':
+        return l10n.fortuneTalent;
+      case 'fortuneBiorhythm':
+        return l10n.fortuneBiorhythm;
+      case 'fortuneCareer':
+        return l10n.fortuneCareer;
+      case 'fortuneWealth':
+        return l10n.fortuneWealth;
+      case 'fortuneLuckyExam':
+        return l10n.fortuneLuckyExam;
+      case 'fortuneLuckyItems':
+        return l10n.fortuneLuckyItems;
+      case 'fortuneLuckyLottery':
+        return l10n.fortuneLuckyLottery;
+      case 'fortuneOotdEvaluation':
+        return l10n.fortuneOotdEvaluation;
+      case 'fortuneZodiac':
+        return l10n.fortuneZodiac;
+      case 'fortuneConstellation':
+        return l10n.fortuneConstellation;
+      case 'fortuneZodiacAnimal':
+        return l10n.fortuneZodiacAnimal;
+      case 'fortuneBirthstone':
+        return l10n.fortuneBirthstone;
+      case 'fortuneHealth':
+        return l10n.fortuneHealth;
+      case 'fortuneExercise':
+        return l10n.fortuneExercise;
+      case 'fortuneSportsGame':
+        return l10n.fortuneSportsGame;
+      case 'fortuneGameEnhance':
+        return l10n.fortuneGameEnhance;
+      case 'fortuneFamily':
+        return l10n.fortuneFamily;
+      case 'fortunePet':
+        return l10n.fortunePet;
+      case 'fortuneNaming':
+        return l10n.fortuneNaming;
+      case 'fortuneBabyNickname':
+        return l10n.fortuneBabyNickname;
+      case 'fortuneMoving':
+        return l10n.fortuneMoving;
+      case 'fortuneFortuneCookie':
+        return l10n.fortuneFortuneCookie;
+      case 'fortuneGratitude':
+        return l10n.fortuneGratitude;
+      case 'fortuneBreathing':
+        return l10n.fortuneBreathing;
+      case 'fortuneCoaching':
+        return l10n.fortuneCoaching;
+      case 'fortuneDecisionHelper':
+        return l10n.fortuneDecisionHelper;
+      case 'fortuneDailyReview':
+        return l10n.fortuneDailyReview;
+      case 'fortuneWeeklyReview':
+        return l10n.fortuneWeeklyReview;
+      case 'fortuneChatInsight':
+        return l10n.fortuneChatInsight;
+      case 'fortuneWish':
+        return l10n.fortuneWish;
+      case 'chipViewAll':
+        return l10n.chipViewAll;
+      default:
+        return specialty;
+    }
+  }
+
   /// 운세 전문가 칩 바 (전문 분야 운세 칩들)
   Widget _buildFortuneChipBar(dynamic chatState) {
     final colors = context.colors;
@@ -350,8 +473,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         separatorBuilder: (_, __) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           final specialty = widget.character.specialties[index];
-          final fortuneType = FortuneType.fromKey(specialty);
-          final displayName = fortuneType?.displayName ?? specialty;
+          final displayName = _getSpecialtyLabel(context, specialty);
           final surveyType = _mapFortuneTypeToSurveyType(specialty);
           final chipEmoji = surveyType != null
               ? (surveyConfigs[surveyType]?.emoji ?? '✨')
@@ -392,7 +514,8 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   }
 
   /// 운세 칩 탭 핸들러 - 설문이 있으면 설문 시작, 없으면 바로 요청
-  void _handleFortuneChipTap(String fortuneType, String displayName) {
+  Future<void> _handleFortuneChipTap(
+      String fortuneType, String displayName) async {
     HapticUtils.lightImpact();
 
     // fortuneType을 FortuneSurveyType으로 매핑
@@ -427,6 +550,19 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       });
     } else {
       // 설문 없이 바로 요청
+      // 🆕 사주 타입이면 비주얼 카드로 사주 결과 즉시 보여줌
+      if (fortuneType == 'traditional-saju') {
+        final chatNotifier =
+            ref.read(characterChatProvider(widget.character.id).notifier);
+        final sajuData = await chatNotifier.getSajuRawData();
+        if (!mounted) return;
+        if (sajuData != null && sajuData.isNotEmpty) {
+          chatNotifier.addSajuResultMessage(sajuData);
+          _scrollToBottom();
+        }
+      }
+
+      if (!mounted) return;
       final requestMessage = context.l10n.tellMeAbout(displayName);
       ref
           .read(characterChatProvider(widget.character.id).notifier)
@@ -437,47 +573,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
   /// fortuneType 문자열을 FortuneSurveyType으로 매핑
   FortuneSurveyType? _mapFortuneTypeToSurveyType(String fortuneType) {
-    const mapping = {
-      'daily': FortuneSurveyType.daily,
-      'career': FortuneSurveyType.career,
-      'love': FortuneSurveyType.love,
-      'talent': FortuneSurveyType.talent,
-      'tarot': FortuneSurveyType.tarot,
-      'mbti': FortuneSurveyType.mbti,
-      'newYear': FortuneSurveyType.newYear,
-      'daily_calendar': FortuneSurveyType.dailyCalendar,
-      'traditional': FortuneSurveyType.traditional,
-      'faceReading': FortuneSurveyType.faceReading,
-      'talisman': FortuneSurveyType.talisman,
-      'personalityDna': FortuneSurveyType.personalityDna,
-      'biorhythm': FortuneSurveyType.biorhythm,
-      'compatibility': FortuneSurveyType.compatibility,
-      'avoidPeople': FortuneSurveyType.avoidPeople,
-      'exLover': FortuneSurveyType.exLover,
-      'blindDate': FortuneSurveyType.blindDate,
-      'money': FortuneSurveyType.money,
-      'luckyItems': FortuneSurveyType.luckyItems,
-      'lotto': FortuneSurveyType.lotto,
-      'wish': FortuneSurveyType.wish,
-      'fortuneCookie': FortuneSurveyType.fortuneCookie,
-      'health': FortuneSurveyType.health,
-      'exercise': FortuneSurveyType.exercise,
-      'sportsGame': FortuneSurveyType.sportsGame,
-      'dream': FortuneSurveyType.dream,
-      'celebrity': FortuneSurveyType.celebrity,
-      'pastLife': FortuneSurveyType.pastLife,
-      'gameEnhance': FortuneSurveyType.gameEnhance,
-      'pet': FortuneSurveyType.pet,
-      'family': FortuneSurveyType.family,
-      'naming': FortuneSurveyType.naming,
-      'babyNickname': FortuneSurveyType.babyNickname,
-      'ootdEvaluation': FortuneSurveyType.ootdEvaluation,
-      'exam': FortuneSurveyType.exam,
-      'moving': FortuneSurveyType.moving,
-      'gratitude': FortuneSurveyType.gratitude,
-      'yearlyEncounter': FortuneSurveyType.yearlyEncounter,
-    };
-    return mapping[fortuneType];
+    return FortuneSurveyTypeCanonicalX.fromCanonicalId(fortuneType);
   }
 
   String _formatSurveyOptionText(SurveyOption option) {
@@ -536,7 +632,8 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   }
 
   /// 설문 완료 처리
-  void _handleSurveyComplete(CharacterChatSurveyState surveyState) {
+  Future<void> _handleSurveyComplete(
+      CharacterChatSurveyState surveyState) async {
     final chatNotifier =
         ref.read(characterChatProvider(widget.character.id).notifier);
     final surveyNotifier =
@@ -549,12 +646,27 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     final fortuneType = surveyState.fortuneTypeString ?? 'daily';
     final answers = surveyState.completedData ?? {};
 
+    // 🆕 사주 타입이면 비주얼 카드로 사주 결과 즉시 보여줌
+    debugPrint('[SajuCard] fortuneType=$fortuneType, checking saju...');
+    if (fortuneType == 'traditional-saju') {
+      final sajuData = await chatNotifier.getSajuRawData();
+      debugPrint(
+          '[SajuCard] sajuData=${sajuData != null ? 'loaded (${sajuData.keys.toList()})' : 'null'}');
+      if (sajuData != null && sajuData.isNotEmpty) {
+        chatNotifier.addSajuResultMessage(sajuData);
+        _scrollToBottom();
+      } else {
+        debugPrint('[SajuCard] ⚠️ 사주 데이터가 비어있음! sajuProvider 데이터 없음');
+      }
+    }
+
     // 설문 초기화
     surveyNotifier.clearCompleted();
 
+    if (!mounted) return;
+
     // 운세 요청 (설문 답변 포함)
-    final displayName =
-        FortuneType.fromKey(fortuneType)?.displayName ?? fortuneType;
+    final displayName = _getSpecialtyLabel(context, fortuneType);
     final requestMessage = context.l10n.showResults(displayName);
 
     ref
@@ -592,9 +704,23 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           );
         }
 
+        // 카카오톡 스타일 아바타 그룹핑: 연속 캐릭터 메시지 중 첫 번째만 아바타 표시
+        final bool shouldShowAvatar;
+        if (message.type != CharacterChatMessageType.character) {
+          shouldShowAvatar = true;
+        } else if (index == 0) {
+          shouldShowAvatar = true;
+        } else {
+          final prevMessage =
+              chatState.messages[index - 1] as CharacterChatMessage;
+          shouldShowAvatar =
+              prevMessage.type != CharacterChatMessageType.character;
+        }
+
         return CharacterMessageBubble(
           message: message,
           character: widget.character,
+          showAvatar: shouldShowAvatar,
         );
       },
     );

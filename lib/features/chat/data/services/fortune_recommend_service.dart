@@ -8,53 +8,53 @@ import '../../domain/models/ai_recommendation.dart';
 const Map<String, List<String>> _fortuneKeywords = {
   // 시간 기반
   'daily': ['오늘', '일일', '하루', '오늘운세', '일진', '오늘의'],
-  'daily_calendar': ['캘린더', '달력', '날짜별', '기간별', '특정날짜', '날짜선택', '언제', '며칠'],
-  'newYear': ['새해', '신년', '정월', '설날', '설'],
+  'daily-calendar': ['캘린더', '달력', '날짜별', '기간별', '특정날짜', '날짜선택', '언제', '며칠'],
+  'new-year': ['새해', '신년', '정월', '설날', '설'],
 
   // 연애/관계
   'love': ['연애', '사랑', '애인', '썸', '고백', '짝사랑', '연애운'],
   'compatibility': ['궁합', '상성', '어울림', '맞는사람', '케미'],
-  'blindDate': ['소개팅', '미팅', '첫만남', '선보기', '맞선'],
-  'exLover': ['재회', '이별', '헤어짐', '전남친', '전여친', '전애인', '다시'],
-  'avoidPeople': ['경계', '조심할', '피해야', '나쁜사람', '위험한'],
+  'blind-date': ['소개팅', '미팅', '첫만남', '선보기', '맞선'],
+  'ex-lover': ['재회', '이별', '헤어짐', '전남친', '전여친', '전애인', '다시'],
+  'avoid-people': ['경계', '조심할', '피해야', '나쁜사람', '위험한'],
 
   // 직업/재능
   'career': ['직업', '취업', '이직', '승진', '퇴사', '직장', '회사', '커리어'],
   'talent': ['적성', '재능', '진로', '잘하는것', '소질', '능력'],
 
   // 재물
-  'money': ['재물', '금전', '돈', '재운', '수입', '부자', '재물운'],
-  'luckyItems': ['행운', '럭키', '행운아이템', '행운의', '색깔', '숫자'],
+  'wealth': ['재물', '금전', '돈', '재운', '수입', '부자', '재물운'],
+  'lucky-items': ['행운', '럭키', '행운아이템', '행운의', '색깔', '숫자'],
   'lotto': ['로또', '복권', '당첨', '번호', '로또번호'],
 
   // 전통/신비
   'tarot': ['타로', '카드', '타로카드', '카드점'],
-  'traditional': ['사주', '팔자', '명리', '음양오행', '사주팔자', '오행', '명식'],
-  'faceReading': ['관상', '얼굴', '인상', '이목구비', 'AI관상'],
+  'traditional-saju': ['사주', '팔자', '명리', '음양오행', '사주팔자', '오행', '명식'],
+  'face-reading': ['관상', '얼굴', '인상', '이목구비', 'AI관상'],
 
   // 성격/개성
   'mbti': ['mbti', 'MBTI', '엠비티아이', '성격유형', '유형'],
-  'personalityDna': ['성격', 'DNA', '성격분석', '나의성격'],
+  'personality-dna': ['성격', 'DNA', '성격분석', '나의성격'],
   'biorhythm': ['바이오리듬', '리듬', '컨디션', '생체리듬'],
 
   // 건강/스포츠
   'health': ['건강', '건강운', '몸상태', '건강체크'],
   'exercise': ['운동', '피트니스', '헬스', '오늘운동'],
-  'sportsGame': ['경기', '스포츠', '승부', '축구', '야구', '경기운'],
+  'match-insight': ['경기', '스포츠', '승부', '축구', '야구', '경기운'],
 
   // 인터랙티브
   'dream': ['꿈', '꿈해몽', '악몽', '길몽', '꿈풀이', '꿈해석'],
   'wish': ['소원', '빌기', '원하는것', '소망'],
-  'fortuneCookie': ['포춘쿠키', '쿠키', '행운메시지', '오늘메시지'],
+  'fortune-cookie': ['포춘쿠키', '쿠키', '행운메시지', '오늘메시지'],
   'celebrity': ['연예인', '아이돌', '유명인', '스타', '연예인궁합'],
 
   // 가족/반려동물
   'family': ['가족', '부모', '자녀', '육아', '가족운'],
-  'pet': ['반려동물', '강아지', '고양이', '펫', '반려견', '반려묘'],
+  'pet-compatibility': ['반려동물', '강아지', '고양이', '펫', '반려견', '반려묘'],
   'naming': ['작명', '이름', '아기이름', '이름짓기'],
 
   // 스타일/패션
-  'ootdEvaluation': ['ootd', 'OOTD', '옷', '패션', '코디', '오늘옷'],
+  'ootd-evaluation': ['ootd', 'OOTD', '옷', '패션', '코디', '오늘옷'],
 
   // 기타
   'talisman': ['부적', '액막이', '행운부적'],
@@ -65,35 +65,35 @@ const Map<String, List<String>> _fortuneKeywords = {
 /// 키워드 → 추천 이유 매핑
 const Map<String, String> _fortuneReasons = {
   'daily': '오늘의 인사이트',
-  'daily_calendar': '기간별 인사이트',
-  'newYear': '새해 인사이트',
+  'daily-calendar': '기간별 인사이트',
+  'new-year': '새해 인사이트',
   'love': '연애 인사이트',
   'compatibility': '궁합 보기',
-  'blindDate': '소개팅 가이드',
-  'exLover': '재회 인사이트',
-  'avoidPeople': '경계 대상',
+  'blind-date': '소개팅 가이드',
+  'ex-lover': '재회 인사이트',
+  'avoid-people': '경계 대상',
   'career': '커리어 가이드',
   'talent': '적성 분석',
-  'money': '재물 가이드',
-  'luckyItems': '행운 아이템',
+  'wealth': '재물 가이드',
+  'lucky-items': '행운 아이템',
   'lotto': '로또 가이드',
   'tarot': '타로 리딩',
-  'traditional': '사주 분석',
-  'faceReading': 'AI 관상',
+  'traditional-saju': '사주 분석',
+  'face-reading': 'AI 관상',
   'mbti': 'MBTI 분석',
-  'personalityDna': '성격 분석',
+  'personality-dna': '성격 분석',
   'biorhythm': '바이오리듬',
   'health': '건강 체크',
   'exercise': '운동 추천',
-  'sportsGame': '경기 가이드',
+  'match-insight': '경기 가이드',
   'dream': '꿈 해몽',
   'wish': '소원 빌기',
-  'fortuneCookie': '포춘쿠키',
+  'fortune-cookie': '포춘쿠키',
   'celebrity': '연예인 궁합',
   'family': '가족 인사이트',
-  'pet': '펫 궁합',
+  'pet-compatibility': '펫 궁합',
   'naming': '작명',
-  'ootdEvaluation': 'OOTD 평가',
+  'ootd-evaluation': 'OOTD 평가',
   'talisman': '부적 생성',
   'exam': '시험 가이드',
   'moving': '이사 가이드',

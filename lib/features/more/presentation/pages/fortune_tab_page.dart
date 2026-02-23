@@ -55,7 +55,7 @@ class _FortuneTabPageState extends ConsumerState<FortuneTabPage> {
   ];
 
   List<RecommendationChip> get _filteredChips {
-    var chips = defaultChips.where((c) => c.fortuneType != 'viewAll').toList();
+    var chips = defaultChips.where((c) => c.fortuneType != 'view-all').toList();
 
     // 카테고리 필터
     if (_selectedCategory != null) {
@@ -388,7 +388,7 @@ class _FortuneTabPageState extends ConsumerState<FortuneTabPage> {
     DSTypographyScheme typography,
   ) {
     return Semantics(
-      label: '${chip.label} 운세',
+      label: chip.getLocalizedLabel(context),
       button: true,
       child: GestureDetector(
         onTap: () => _navigateToFortune(chip),
@@ -412,7 +412,7 @@ class _FortuneTabPageState extends ConsumerState<FortuneTabPage> {
               ),
               const SizedBox(height: DSSpacing.xs),
               Text(
-                chip.label,
+                chip.getLocalizedLabel(context),
                 style: typography.labelSmall.copyWith(
                   color: colors.textPrimary,
                   fontWeight: FontWeight.w500,

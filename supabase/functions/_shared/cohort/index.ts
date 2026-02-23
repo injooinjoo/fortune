@@ -481,7 +481,6 @@ export function extractCohort(fortuneType: string, input: Record<string, unknown
         });
 
       case 'new-year':
-      case 'new_year':
         return extractNewYearCohort({
           goal: input.goal as string,
           birthDate: input.birthDate as string,
@@ -494,7 +493,6 @@ export function extractCohort(fortuneType: string, input: Record<string, unknown
         });
 
       case 'pet-compatibility':
-      case 'pet':
         return extractPetCompatibilityCohort({
           petType: input.petType as string,
           birthDate: input.birthDate as string,

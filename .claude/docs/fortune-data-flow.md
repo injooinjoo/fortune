@@ -1,4 +1,10 @@
-# Fortune 데이터 흐름 문서
+# Fortune 데이터 흐름 문서 (Canonical ID 기준)
+
+## 목적
+- 코어 운세 타입은 앱/Edge/DB/캐시/문서에서 모두 `kebab-case` canonical id를 사용한다.
+- legacy alias(`camelCase`, `snake_case`)는 코어 런타임 경로에서 사용하지 않는다.
+
+---
 
 ## 전체 아키텍처
 
@@ -13,6 +19,7 @@
 │  2. FortuneApiDecisionService.shouldCallApi()  ← API 결정        │
 │     ├─ true  → Edge Function 호출                               │
 │     └─ false → getSimilarFortune() (fortune_history DB 검색)     │
+│  3. fortuneType은 canonical id만 사용                            │
 └─────────────────────────────────────────────────────────────────┘
       │
       ▼ (API 호출 시)
@@ -23,335 +30,152 @@
 │  2. get_random_cohort_result RPC 호출                            │
 │     ├─ Pool 있음 → 개인화 후 반환                                │
 │     └─ Pool 없음 → LLM 호출 → Pool에 저장 → 반환                  │
+│  3. 응답 wrapper의 fortuneType도 canonical id만 반환              │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 1. API 호출 결정 로직 (FortuneApiDecisionService)
+## 1. 타입/엔드포인트 단일 규칙
 
-### 확률 계산 공식
-```
-최종확률 = (사용자등급 × 0.4) + (운세중요도 × 0.3) + (시간대 × 0.2) + (랜덤 × 0.1)
-```
+### 코어 canonical 매핑 (요약)
+| Canonical ID | Endpoint |
+|---|---|
+| `daily` | `/fortune-daily` |
+| `daily-calendar` | `/fortune-time` |
+| `new-year` | `/fortune-new-year` |
+| `traditional-saju` | `/fortune-traditional-saju` |
+| `face-reading` | `/fortune-face-reading` |
+| `mbti` | `/fortune-mbti` |
+| `personality-dna` | `/fortune-mbti` |
+| `love` | `/fortune-love` |
+| `compatibility` | `/fortune-compatibility` |
+| `blind-date` | `/fortune-blind-date` |
+| `ex-lover` | `/fortune-ex-lover` |
+| `avoid-people` | `/fortune-avoid-people` |
+| `yearly-encounter` | `/fortune-yearly-encounter` |
+| `career` | `/fortune-career` |
+| `wealth` | `/fortune-wealth` |
+| `lucky-items` | `/fortune-lucky-items` |
+| `match-insight` | `/fortune-match-insight` |
+| `game-enhance` | `/fortune-game-enhance` |
+| `exercise` | `/fortune-exercise` |
+| `dream` | `/fortune-dream` |
+| `tarot` | `/fortune-tarot` |
+| `past-life` | `/fortune-past-life` |
+| `health` | `/fortune-health` |
+| `pet-compatibility` | `/fortune-pet-compatibility` |
+| `family` | concern 기반 `family-*` 동적 라우팅 |
+| `naming` | `/fortune-naming` |
+| `baby-nickname` | `/fortune-baby-nickname` |
+| `ootd-evaluation` | `/fortune-ootd` |
+| `exam` | `/fortune-exam` |
+| `moving` | `/fortune-moving` |
+| `celebrity` | `/fortune-celebrity` |
+| `biorhythm` | `/fortune-biorhythm` |
 
-### 사용자 등급 점수 (40%)
-| 등급 | 조건 | 점수 |
-|------|------|------|
-| VIP | 7일 내 5회 이상 사용 | 100% |
-| 신규 | 가입 7일 이내 | 80% |
-| 일반 | 그 외 | 30% |
-| 휴면 | 30일 이상 미사용 | 10% |
+### 로컬 전용 canonical 타입
+- `fortune-cookie`
+- `wish`
+- `gratitude`
+- `breathing`
+- `daily-review`
+- `weekly-review`
+- `chat-insight`
+- `coaching`
+- `decision`
+- `view-all`
+- `profile-creation`
 
-### 운세 중요도 점수 (30%)
-| 중요도 | 운세 타입 | 점수 |
-|--------|----------|------|
-| 높음 | love, health, investment, exam | 50% |
-| 중간 | dream, traditional_saju, family, moving, wish | 30% |
-| 낮음 | fortune_cookie, talisman, biorhythm, person_to_avoid, ex_fortune, blind_date | 10% |
-| 기타 | 그 외 | 20% |
+---
 
-### 시간대 점수 (20%)
-| 시간대 | 시간 | 점수 |
-|--------|------|------|
-| 피크타임 | 12-14시, 19-22시 | 20% |
-| 오프피크 | 그 외 | 50% |
+## 2. API 호출 결정 로직
 
-### 항상 API 호출 타입 (예외)
+### 항상 API 호출 타입 (canonical)
 ```dart
-const alwaysCallApiTypes = ['wish', 'dream', 'face-reading', 'ex-lover', 'blind-date'];
+const alwaysCallApiTypes = [
+  'wish',
+  'dream',
+  'face-reading',
+  'ex-lover',
+  'blind-date',
+];
 ```
 
----
-
-## 2. Cohort Pool 시스템 (Edge Function)
-
-### Cohort 추출 요소 (타입별)
-| 운세 타입 | Cohort 요소 | 예상 조합 수 |
-|----------|-------------|-------------|
-| daily | period + zodiac + element | 300 |
-| love | ageGroup + gender + status + zodiac | 540 |
-| career | ageGroup + gender + industry | 135 |
-| compatibility | zodiac1 + zodiac2 + genderPair | 576 |
-| mbti | mbti | 16 |
-| dream | dreamCategory + emotion + zodiac | 540 |
-| health | ageGroup + gender + season + element | 300 |
-| tarot | spreadType + questionCategory + element | 75 |
-| saju | dayMaster + elementBalance + questionCategory | 250 |
-| talent | ageGroup + gender + talentArea | 120 |
-| exam | examCategory + zodiac + element | 180 |
-| moving | direction + zodiac + element | 240 |
-| pet | petCategory + zodiac + element | 180 |
-| new-year | goal + zodiac | 84 |
-| talisman | zodiac + element | 60 |
-| face-reading | faceShape + gender + ageGroup | 120 |
-| ex-lover | emotionState + timeElapsed + contactStatus | 60 |
-| wealth | goal + risk + urgency | 45 |
-
-### Cohort Pool 사용 Edge Functions (28개)
-- fortune-daily, fortune-love, fortune-compatibility, fortune-tarot
-- fortune-career, fortune-health, fortune-dream, fortune-wealth
-- fortune-talent, fortune-investment, fortune-ex-lover, fortune-blind-date
-- fortune-avoid-people, fortune-exam, fortune-moving, fortune-pet-compatibility
-- fortune-new-year, fortune-talisman, fortune-lucky-items
-- fortune-face-reading, fortune-traditional-saju
-- fortune-family-relationship, fortune-family-change, fortune-family-children
-- fortune-family-health, fortune-family-wealth
+### 참고
+- `daily-calendar`, `new-year`, `yearly-encounter`, `game-enhance`, `baby-nickname`는 canonical id로만 처리한다.
+- `money`는 `wealth`, `sportsGame`은 `match-insight`로 고정한다.
 
 ---
 
-## 3. 운세 타입별 데이터 소스 정리
+## 3. Cohort Pool 시스템
 
-### 분류 기준
-- **A**: 항상 API (특수 입력 필요)
-- **B**: Decision + Cohort (일반 최적화)
-- **C**: 특수 처리 (이미지 생성/분석)
-- **D**: DB 직접 조회 (API 없음)
-- **E**: 특수 핸들러 (클라이언트 처리)
+### Cohort Pool 사용 Edge Functions (예시)
+- `fortune-daily`, `fortune-love`, `fortune-compatibility`, `fortune-tarot`
+- `fortune-career`, `fortune-health`, `fortune-dream`, `fortune-wealth`
+- `fortune-ex-lover`, `fortune-blind-date`, `fortune-avoid-people`
+- `fortune-exam`, `fortune-moving`, `fortune-pet-compatibility`
+- `fortune-new-year`, `fortune-lucky-items`, `fortune-face-reading`
+- `fortune-traditional-saju`
+- `fortune-family-relationship`, `fortune-family-change`, `fortune-family-children`
+- `fortune-family-health`, `fortune-family-wealth`
 
----
-
-### 칩별 상세 매핑 (31개)
-
-| 칩 ID | fortuneType | 분류 | 데이터 소스 | Edge Function | 비고 |
-|-------|-------------|------|-------------|---------------|------|
-| **daily** | daily | B | Decision+Cohort | fortune-daily | |
-| **dailyCalendar** | daily_calendar | B | Decision+Cohort | fortune-time | 기간별 운세 |
-| **newYear** | newYear | B | Decision+Cohort | fortune-new-year | |
-| **love** | love | B | Decision+Cohort | fortune-love | |
-| **compatibility** | compatibility | B | Decision+Cohort | fortune-compatibility | |
-| **exLover** | exLover | A | 항상 API | fortune-ex-lover | 개인 입력 필요 |
-| **yearlyEncounter** | yearlyEncounter | C | 항상 API | fortune-yearly-encounter | 이미지 생성 |
-| **blindDate** | blindDate | A | 항상 API | fortune-blind-date | 개인 입력 필요 |
-| **avoidPeople** | avoidPeople | B | Decision+Cohort | fortune-avoid-people | |
-| **career** | career | B | Decision+Cohort | fortune-career | |
-| **talent** | talent | B | Decision+Cohort | fortune-talent | |
-| **money** | money | B | Decision+Cohort | fortune-wealth | |
-| **luckyItems** | luckyItems | B | Decision+Cohort | fortune-lucky-items | |
-| **lotto** | lotto | B | Decision+Cohort | fortune-lucky-lottery | |
-| **tarot** | tarot | B | Decision+Cohort | fortune-tarot | |
-| **traditional** | traditional | B | Decision+Cohort | fortune-traditional-saju | |
-| **faceReading** | faceReading | C | 항상 API | fortune-face-reading | 이미지 분석 |
-| **talisman** | talisman | C | 항상 API | generate-talisman | 이미지 생성 |
-| **pastLife** | pastLife | C | 항상 API | fortune-past-life | 이미지 생성 (V2 리뉴얼) |
-| **personalityDna** | personalityDna | B | Decision+Cohort | personality-dna | |
-| **biorhythm** | biorhythm | B | Decision+Cohort | fortune-biorhythm | |
-| **mbti** | mbti | B | Decision+Cohort | fortune-mbti | |
-| **health** | health | B | Decision+Cohort | fortune-health | |
-| **exercise** | exercise | B | Decision+Cohort | fortune-exercise | |
-| **sportsGame** | sportsGame | B | Decision+Cohort | fortune-match-insight | |
-| **dream** | dream | A | 항상 API | fortune-dream | 개인 입력 필요 |
-| **wish** | wish | A | 항상 API | analyze-wish | 개인 입력 필요 |
-| **fortuneCookie** | fortuneCookie | E | 클라이언트 | 없음 | 애니메이션 처리 |
-| **celebrity** | celebrity | B | Decision+Cohort | fortune-celebrity | |
-| **family** | family | B | Decision+Cohort | fortune-family | |
-| **pet** | pet | B | Decision+Cohort | fortune-pet-compatibility | |
-| **naming** | naming | B | Decision+Cohort | fortune-naming | |
-| **ootdEvaluation** | ootdEvaluation | C | 항상 API | fortune-ootd | 이미지 분석 |
-| **exam** | exam | B | Decision+Cohort | fortune-exam | |
-| **moving** | moving | B | Decision+Cohort | fortune-moving | |
-| **breathing** | breathing | E | 클라이언트 | 없음 | 명상 화면 이동 |
-| **gratitude** | gratitude | D | 미구현 | 없음 | Edge Function 필요 |
+### 핵심 원칙
+- cohort key/DB 저장의 `fortune_type`도 canonical id를 사용한다.
+- 코어 경로에서 alias 분기(`new_year`, `ex_lover`, `yearlyEncounter`)를 두지 않는다.
 
 ---
 
-## 4. 비용 절감 효과
+## 4. 칩/설문/응답 정합성
 
-### 전체 흐름에서의 절감
-```
-1단계: 캐시 확인           → 캐시 히트 시 100% 절감
-2단계: Decision Service    → 72% 확률로 API 미호출
-3단계: Similar Fortune     → fortune_history 재사용
-4단계: Cohort Pool         → Pool 있으면 LLM 미호출
-5단계: LLM 호출            → 최후의 수단
-```
+### 단일 레지스트리 원칙
+- `FortuneTypeRegistry`에서 `id`, `labelKey`, `endpoint`, `isLocalOnly`, `resolveApiType`를 단일 관리한다.
+- `FortuneSurveyType` enum은 유지하되 문자열 노출은 `canonicalId` 확장을 사용한다.
 
-### 예상 비용 절감률
-| 단계 | 절감률 | 누적 API 호출률 |
-|------|--------|----------------|
-| 캐시 | ~20% | 80% |
-| Decision | ~57% | 23% |
-| Cohort Pool | ~70% | 7% |
-| **최종** | | **~7% API 호출** |
+### 정합 체크 포인트
+1. 추천 칩 `id/fortuneType`는 canonical id만 사용
+2. 설문 완료 후 API 호출 타입도 canonical id 기반
+3. Edge 응답 `fortuneType`과 DB 저장값이 동일
+4. 캐시 key, history 필터, 문서 표기도 동일
 
 ---
 
-## 5. 특수 처리 운세
+## 5. 마이그레이션 정책
 
-### 이미지 생성 (항상 API 필요)
-| 타입 | Edge Function | 설명 | 최적화 |
-|------|---------------|------|--------|
-| yearlyEncounter | fortune-yearly-encounter | AI 인연 얼굴 이미지 | 없음 (항상 생성) |
-| talisman | generate-talisman | 부적 이미지 | 없음 (항상 생성) |
-| pastLife | fortune-past-life | 전생 초상화 (V2) | **이미지 Pool** (직업당 3개, 이후 재사용) |
+### DB 마이그레이션
+- `supabase/migrations/20260223000001_normalize_core_fortune_type_ids.sql`
+- 대상 컬럼의 legacy 값을 canonical로 일괄 정규화
+- `user_statistics.fortune_type_count` JSONB key rename + merge 수행
 
-### 이미지 분석 (항상 API 필요)
-| 타입 | Edge Function | 설명 |
-|------|---------------|------|
-| faceReading | fortune-face-reading | 얼굴 사진 분석 |
-| ootdEvaluation | fortune-ootd | 패션 사진 분석 |
+### 로컬 1회 마이그레이션
+- `FortuneTypeLocalMigrationService`로 SharedPreferences 내 fortuneType 문자열 정규화
+- 플래그: `fortune_type_migration_v1_done=true`
 
-### 개인 입력 필요 (항상 API 필요)
-| 타입 | Edge Function | 설명 |
-|------|---------------|------|
-| dream | fortune-dream | 꿈 내용 텍스트 |
-| wish | analyze-wish | 소원 텍스트 |
-| exLover | fortune-ex-lover | 전 연인 정보 |
-| blindDate | fortune-blind-date | 소개팅 상대 정보 |
+---
+
+## 6. 이미지/특수 처리 타입
+
+### 이미지 생성
+| 타입 | Edge Function | 비고 |
+|---|---|---|
+| `yearly-encounter` | `fortune-yearly-encounter` | 생성형 결과 |
+| `past-life` | `fortune-past-life` | 이미지 Pool 재사용 정책 적용 |
+
+### 이미지 분석
+| 타입 | Edge Function |
+|---|---|
+| `face-reading` | `fortune-face-reading` |
+| `ootd-evaluation` | `fortune-ootd` |
 
 ### 클라이언트 특수 처리
 | 타입 | 처리 방식 |
-|------|----------|
-| fortuneCookie | 애니메이션 후 랜덤 메시지 |
-| breathing | /wellness/meditation 화면 이동 |
-| viewAll | 전체 칩 목록 표시 |
+|---|---|
+| `fortune-cookie` | 애니메이션 후 로컬 메시지 |
+| `breathing` | 명상 화면 이동 |
+| `view-all` | 전체 칩 목록 표시 |
 
 ---
 
-## 6. 전생 운세 이미지 Pool 시스템 (pastLife)
-
-### 개요
-전생 운세(pastLife)는 이미지 생성 비용 절감을 위해 **이미지 Pool** 시스템을 사용합니다.
-- 각 **status(직업) + gender(성별)**당 최대 3개 이미지 저장
-- 3개 이상 존재 시 Pool에서 랜덤 재사용
-- 얼굴 이미지 제공 시 항상 새로 생성 (개인화)
-
-### 데이터베이스 테이블
-```sql
-past_life_portrait_pool
-├─ id (UUID)
-├─ status (TEXT)          -- STATUS_CONFIGS 키 (e.g., 'court_secretary')
-├─ status_kr (TEXT)       -- 한글 직업명
-├─ status_en (TEXT)       -- 영문 직업명
-├─ gender (TEXT)          -- 'male' | 'female'
-├─ portrait_url (TEXT)    -- Supabase Storage URL
-├─ portrait_prompt (TEXT) -- 생성 프롬프트 (디버깅용)
-├─ quality_score (DECIMAL)-- 품질 점수 (0-1)
-├─ usage_count (INTEGER)  -- 재사용 횟수
-├─ created_at, updated_at
-```
-
-### RPC 함수
-| 함수 | 설명 |
-|------|------|
-| `get_portrait_count_for_status(status, gender)` | status+gender별 저장된 이미지 개수 |
-| `get_random_portrait_for_status(status, gender)` | 랜덤 이미지 URL 반환 (usage_count 증가) |
-| `save_portrait_to_pool(...)` | 새 이미지 저장 (3개 제한 체크) |
-| `get_portrait_pool_stats()` | Pool 전체 통계 |
-
-### 데이터 흐름
-```
-전생 운세 요청
-      │
-      ▼
-┌─────────────────────────────────────────────────────┐
-│         얼굴 이미지 있음?                            │
-│         (faceImageBase64)                           │
-└─────────────────────────────────────────────────────┘
-        │                       │
-       있음                    없음
-        │                       │
-        ▼                       ▼
-  항상 새로 생성          get_portrait_count_for_status()
-  (개인화 필요)                  │
-        │                   ┌───┴───┐
-        │                 ≥3개    <3개
-        │                   │       │
-        │                   ▼       ▼
-        │           Pool에서 재사용   새로 생성
-        │           (랜덤 선택)     + Pool에 저장
-        │                   │       │
-        └───────────────────┴───────┘
-                            │
-                            ▼
-                    LLM으로 스토리 생성
-                            │
-                            ▼
-                      결과 반환
-```
-
-### 예상 효과
-- **STATUS_CONFIGS**: 80+ 직업
-- **성별**: 2 (male/female)
-- **최대 이미지 수**: 80 × 2 × 3 = **480개**
-- **초기 생성 후**: 이미지 생성 API 호출 ~0% (LLM 스토리만 생성)
-- **비용 절감**: 이미지 생성 비용 ~100% 절감 (Pool 가득 찬 후)
-
-### 로깅 메타데이터
-```typescript
-metadata: {
-  portraitFromPool: boolean,  // Pool에서 재사용 여부
-  portraitStatus: string,     // 직업 코드
-  portraitGender: string,     // 성별
-}
-```
-
----
-
-## 7. 미구현/검토 필요 항목
-
-| 칩 ID | 현재 상태 | 필요 작업 |
-|-------|----------|----------|
-| gratitude | Edge Function 없음 | fortune-gratitude 생성 필요 |
-| lotto | lucky-lottery 사용 | 별도 lotto용 함수 검토 |
-
----
-
-## 8. 데이터 흐름 다이어그램
-
-```
-[사용자] ──탭──▶ [ChatHomePage]
-                      │
-                      ▼
-              _handleChipTap()
-                      │
-                      ▼
-              ┌───────────────┐
-              │ 특수 처리?    │
-              └───────────────┘
-                  │       │
-          viewAll/breathing/fortuneCookie
-                  │       │
-                  ▼       ▼
-              특수 핸들러   일반 운세
-                          │
-                          ▼
-                   설문 진행 (있으면)
-                          │
-                          ▼
-              _callFortuneApiWithCache()
-                          │
-                          ▼
-              FortuneApiService.getFortune()
-                          │
-                  ┌───────┴───────┐
-                  │               │
-              캐시 히트       캐시 미스
-                  │               │
-                  ▼               ▼
-              결과 반환    DecisionService.shouldCallApi()
-                              │           │
-                          true(28%)   false(72%)
-                              │           │
-                              ▼           ▼
-                      Edge Function   getSimilarFortune()
-                              │           │
-                              ▼           ▼
-                      Cohort Pool?   fortune_history
-                        │     │           │
-                      있음   없음         │
-                        │     │           │
-                        ▼     ▼           │
-                      반환   LLM 호출     │
-                              │           │
-                              ▼           │
-                      Pool에 저장        │
-                              │           │
-                              └─────┬─────┘
-                                    │
-                                    ▼
-                            결과 반환 + 캐시 저장
-                                    │
-                                    ▼
-                            ChatFortuneResultCard 표시
-```
+## 7. 관련 문서
+- `docs/development/FORTUNE_TYPE_CANONICAL_MAPPING.md`
+- `.claude/docs/09-edge-function-conventions.md`

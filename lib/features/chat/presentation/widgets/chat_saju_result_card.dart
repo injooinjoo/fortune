@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/widgets/infographic/headers/saju_info_header.dart';
@@ -81,6 +82,17 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
     };
   }
 
+  /// 오행 색상 리스트 (그라디언트 악센트 스트라이프용)
+  List<Color> _getWuxingGradientColors(bool isDark) {
+    return [
+      SajuColors.getWuxingColor('목', isDark: isDark),
+      SajuColors.getWuxingColor('화', isDark: isDark),
+      SajuColors.getWuxingColor('토', isDark: isDark),
+      SajuColors.getWuxingColor('금', isDark: isDark),
+      SajuColors.getWuxingColor('수', isDark: isDark),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
@@ -103,11 +115,28 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // 오행 그라디언트 악센트 스트라이프
+          _buildWuxingAccentStripe(isDark),
           // 인포그래픽 헤더 (Hero + 오행 밸런스 통합)
           _buildInfoHeader(context),
           // 섹션들
           _buildSections(context),
+          // 전체 만세력 보기 버튼
+          _buildManseryeokButton(context),
         ],
+      ),
+    );
+  }
+
+  /// 오행 5색 그라디언트 악센트 스트라이프 (카드 상단)
+  Widget _buildWuxingAccentStripe(bool isDark) {
+    final gradientColors = _getWuxingGradientColors(isDark);
+    return Container(
+      height: 4,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: gradientColors,
+        ),
       ),
     );
   }
@@ -116,16 +145,49 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
     final colors = context.colors;
     final data = widget.sajuData;
 
-    // 사주 팔자 데이터 추출
+    // 사주 팔자 데이터 추출 (sajuProvider._formatSajuData() 형식)
+    // data['year']['cheongan']['hanja'] = '甲', data['year']['jiji']['hanja'] = '子' 등
     Map<String, dynamic>? pillars;
-    final myungsik = data['myungsik'] as Map<String, dynamic>?;
-    if (myungsik != null) {
-      pillars = {
-        'year': {'sky': myungsik['yearSky'], 'earth': myungsik['yearEarth']},
-        'month': {'sky': myungsik['monthSky'], 'earth': myungsik['monthEarth']},
-        'day': {'sky': myungsik['daySky'], 'earth': myungsik['dayEarth']},
-        'hour': {'sky': myungsik['hourSky'], 'earth': myungsik['hourEarth']},
-      };
+    final yearData = data['year'] as Map<String, dynamic>?;
+    if (yearData != null) {
+      pillars = {};
+      for (final key in ['year', 'month', 'day', 'hour']) {
+        final p = data[key] as Map<String, dynamic>?;
+        if (p != null) {
+          final cheongan = p['cheongan'] as Map<String, dynamic>? ?? {};
+          final jiji = p['jiji'] as Map<String, dynamic>? ?? {};
+          pillars[key] = {
+            'sky': cheongan['hanja'] ?? cheongan['char'] ?? '-',
+            'skyElement': cheongan['element'] ?? '',
+            'earth': jiji['hanja'] ?? jiji['char'] ?? '-',
+            'earthElement': jiji['element'] ?? '',
+            'animal': jiji['animal'] ?? '',
+          };
+        }
+      }
+    } else {
+      // Fallback: myungsik 형식도 지원 (다른 소스에서 올 경우)
+      final myungsik = data['myungsik'] as Map<String, dynamic>?;
+      if (myungsik != null) {
+        pillars = {
+          'year': {
+            'sky': myungsik['yearSky'],
+            'earth': myungsik['yearEarth'],
+          },
+          'month': {
+            'sky': myungsik['monthSky'],
+            'earth': myungsik['monthEarth'],
+          },
+          'day': {
+            'sky': myungsik['daySky'],
+            'earth': myungsik['dayEarth'],
+          },
+          'hour': {
+            'sky': myungsik['hourSky'],
+            'earth': myungsik['hourEarth'],
+          },
+        };
+      }
     }
 
     // 강/약 오행 찾기
@@ -161,7 +223,7 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
                 contentId: widget.sajuData['id']?.toString() ??
                     'saju_${DateTime.now().millisecondsSinceEpoch}',
                 contentType: 'saju',
-                fortuneType: 'traditional',
+                fortuneType: 'traditional-saju',
                 shareTitle: '사주 분석 결과',
                 shareContent: '나의 사주팔자 분석 결과입니다.',
                 iconSize: 20,
@@ -297,6 +359,7 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
     required Widget child,
   }) {
     final colors = context.colors;
+    final isDark = context.isDark;
     final isExpanded = _expandedSections[key] ?? false;
 
     return Column(
@@ -311,23 +374,35 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
           child: Container(
             padding: const EdgeInsets.symmetric(
               horizontal: DSSpacing.md,
-              vertical: DSSpacing.sm,
+              vertical: 10,
             ),
             decoration: BoxDecoration(
+              color: isExpanded
+                  ? colors.accent.withValues(alpha: isDark ? 0.06 : 0.03)
+                  : Colors.transparent,
               border: Border(
                 bottom: BorderSide(
-                  color: colors.textPrimary.withValues(alpha: 0.1),
+                  color: colors.textPrimary.withValues(alpha: 0.06),
                 ),
               ),
             ),
             child: Row(
               children: [
-                Icon(
-                  icon,
-                  color: colors.accent,
-                  size: 20,
+                // 아이콘을 원형 배경 안에
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: colors.accent.withValues(alpha: 0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    icon,
+                    color: colors.accent,
+                    size: 16,
+                  ),
                 ),
-                const SizedBox(width: DSSpacing.xs),
+                const SizedBox(width: DSSpacing.sm),
                 Text(
                   title,
                   style: context.bodyLarge.copyWith(
@@ -335,11 +410,12 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
                     color: colors.textPrimary,
                   ),
                 ),
-                const SizedBox(width: DSSpacing.xs),
+                const SizedBox(width: 6),
                 Text(
                   subtitle,
                   style: context.labelSmall.copyWith(
-                    color: colors.textSecondary,
+                    color: colors.textTertiary,
+                    fontSize: 10,
                   ),
                 ),
                 const Spacer(),
@@ -348,7 +424,8 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
                   duration: const Duration(milliseconds: 200),
                   child: Icon(
                     Icons.keyboard_arrow_down,
-                    color: colors.textSecondary,
+                    color: colors.textTertiary,
+                    size: 20,
                   ),
                 ),
               ],
@@ -367,6 +444,62 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
           duration: const Duration(milliseconds: 200),
         ),
       ],
+    );
+  }
+
+  /// "전체 만세력 보기" 네비게이션 버튼
+  Widget _buildManseryeokButton(BuildContext context) {
+    final colors = context.colors;
+    final isDark = context.isDark;
+
+    return InkWell(
+      onTap: () => context.pushNamed('manseryeok'),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: isDark
+                ? [
+                    colors.accent.withValues(alpha: 0.15),
+                    colors.accent.withValues(alpha: 0.08),
+                  ]
+                : [
+                    colors.accent.withValues(alpha: 0.08),
+                    colors.accent.withValues(alpha: 0.04),
+                  ],
+          ),
+          border: Border(
+            top: BorderSide(
+              color: colors.accent.withValues(alpha: 0.2),
+            ),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.auto_awesome,
+              color: colors.accent,
+              size: 18,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              '전체 만세력 분석 보기',
+              style: context.bodyMedium.copyWith(
+                color: colors.accent,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Icon(
+              Icons.arrow_forward_ios,
+              color: colors.accent,
+              size: 14,
+            ),
+          ],
+        ),
+      ),
     );
   }
 

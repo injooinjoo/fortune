@@ -79,51 +79,51 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get points => 'Points';
+  String get points => 'Tokens';
 
   @override
   String pointsWithCount(int count) {
-    return '$count Points';
+    return '$count Tokens';
   }
 
   @override
   String get bonus => 'Bonus';
 
   @override
-  String get points330Title => '330 Points';
+  String get points350Title => '350 Tokens';
 
   @override
-  String get points330Desc => '300P + 30P Bonus';
+  String get points350Desc => '300 + 50 Bonus';
 
   @override
-  String get points700Title => '700 Points';
+  String get points700Title => '700 Tokens';
 
   @override
-  String get points700Desc => '600P + 100P Bonus';
+  String get points700Desc => '600 + 100 Bonus';
 
   @override
-  String get points1500Title => '1,500 Points';
+  String get points1650Title => '1,650 Tokens';
 
   @override
-  String get points1500Desc => '1,200P + 300P Bonus';
+  String get points1650Desc => '1,500 + 150 Bonus';
 
   @override
-  String get points4000Title => '4,000 Points';
+  String get points4400Title => '4,400 Tokens';
 
   @override
-  String get points4000Desc => '3,000P + 1,000P Bonus';
+  String get points4400Desc => '4,000 + 400 Bonus';
 
   @override
   String get proSubscriptionTitle => 'Pro Subscription';
 
   @override
-  String get proSubscriptionDesc => '30,000 tokens auto-recharged monthly';
+  String get proSubscriptionDesc => '3,000 tokens auto-recharged monthly';
 
   @override
   String get maxSubscriptionTitle => 'Max Subscription';
 
   @override
-  String get maxSubscriptionDesc => '100,000 tokens auto-recharged monthly';
+  String get maxSubscriptionDesc => '12,600 tokens auto-recharged monthly';
 
   @override
   String get premiumSajuTitle => 'Premium Birth Chart Analysis';
@@ -180,7 +180,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get categorySpecial => 'Special Features';
 
   @override
-  String get fortuneDaily => 'Today\'s Message';
+  String get fortuneDaily => 'Today\'s Insight';
 
   @override
   String get fortuneToday => 'Today\'s Insight';
@@ -244,6 +244,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fortuneZodiac => 'Zodiac Analysis';
+
+  @override
+  String get fortuneConstellation => 'Constellation Traits';
 
   @override
   String get fortuneZodiacAnimal => 'Chinese Zodiac';
@@ -424,6 +427,65 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fortuneNaming => 'Name Analysis';
+
+  @override
+  String get fortuneFamily => 'Family Compatibility';
+
+  @override
+  String get fortuneFortuneCookie => 'Fortune Cookie';
+
+  @override
+  String get fortuneGratitude => 'Gratitude Journal';
+
+  @override
+  String get fortuneCoaching => 'AI Coaching';
+
+  @override
+  String get fortuneDecisionHelper => 'Decision Helper';
+
+  @override
+  String get fortuneDailyReview => 'Daily Review';
+
+  @override
+  String get fortuneWeeklyReview => 'Weekly Review';
+
+  @override
+  String get fortuneChatInsight => 'Chat Analysis';
+
+  @override
+  String get fortuneExercise => 'Fitness Fortune';
+
+  @override
+  String get fortuneSportsGame => 'Sports Match';
+
+  @override
+  String get fortuneOotdEvaluation => 'Outfit Score';
+
+  @override
+  String get fortuneYearlyEncounter => 'Yearly Connection';
+
+  @override
+  String get fortuneBabyNickname => 'Baby Nickname';
+
+  @override
+  String get fortuneBreathing => 'Meditation Guide';
+
+  @override
+  String get fortuneMoney => 'Wealth Fortune';
+
+  @override
+  String get fortuneGameEnhance => 'Game Enhancement';
+
+  @override
+  String get chipViewAll => 'View All';
+
+  @override
+  String get chipViewMore => 'View More';
+
+  @override
+  String fortuneFeatureComingSoon(String name) {
+    return '$name is coming soon! 🔮\nWould you like to try another insight first?';
+  }
 
   @override
   String get loadingTimeDaily1 => 'The sun is illuminating your day';
@@ -797,6 +859,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get newConversation => 'New';
 
   @override
+  String get yourTurn => 'Your turn';
+
+  @override
   String get typing => 'Typing...';
 
   @override
@@ -870,6 +935,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get relationship => 'Status';
+
+  @override
+  String get profilePosts => 'posts';
+
+  @override
+  String get profileFollowers => 'followers';
+
+  @override
+  String get profileFollowing => 'following';
 
   @override
   String get sendMessage => 'Send Message';

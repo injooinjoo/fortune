@@ -38,7 +38,7 @@ export interface TokenInfo {
 export const FORTUNE_POINT_COSTS = {
   // === 기본 운세 (1-2P) - Gemini Flash Lite ===
   daily: 1,
-  daily_calendar: 1,
+  'daily-calendar': 1,
   today: 1,
   tomorrow: 1,
   hourly: 1,
@@ -87,15 +87,12 @@ export const FORTUNE_POINT_COSTS = {
   talent: 4,
   naming: 4,
   'baby-nickname': 4,
-  baby_nickname: 4,
-  babyNickname: 4,
   moving: 4,
   'moving-date': 4,
 
   // === 프리미엄 운세 (8-15P) - GPT/Claude ===
   saju: 12,
   'traditional-saju': 12,
-  traditional_saju: 12,
   'traditional-unified': 12,
   'saju-psychology': 10,
   tojeong: 12,
@@ -105,9 +102,7 @@ export const FORTUNE_POINT_COSTS = {
   'couple-match': 10,
   chemistry: 8,
   'ex-lover': 10,
-  ex_lover: 10,
   'blind-date': 8,
-  blind_date: 8,
   'celebrity-match': 8,
   'traditional-compatibility': 12,
   palmistry: 10,

@@ -79,51 +79,51 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get points => 'ポイント';
+  String get points => 'トークン';
 
   @override
   String pointsWithCount(int count) {
-    return '$count ポイント';
+    return '$count トークン';
   }
 
   @override
   String get bonus => 'ボーナス';
 
   @override
-  String get points330Title => '330 ポイント';
+  String get points350Title => '350 トークン';
 
   @override
-  String get points330Desc => '300P + 30P ボーナス';
+  String get points350Desc => '300 + 50 ボーナス';
 
   @override
-  String get points700Title => '700 ポイント';
+  String get points700Title => '700 トークン';
 
   @override
-  String get points700Desc => '600P + 100P ボーナス';
+  String get points700Desc => '600 + 100 ボーナス';
 
   @override
-  String get points1500Title => '1,500 ポイント';
+  String get points1650Title => '1,650 トークン';
 
   @override
-  String get points1500Desc => '1,200P + 300P ボーナス';
+  String get points1650Desc => '1,500 + 150 ボーナス';
 
   @override
-  String get points4000Title => '4,000 ポイント';
+  String get points4400Title => '4,400 トークン';
 
   @override
-  String get points4000Desc => '3,000P + 1,000P ボーナス';
+  String get points4400Desc => '4,000 + 400 ボーナス';
 
   @override
   String get proSubscriptionTitle => 'Proサブスク';
 
   @override
-  String get proSubscriptionDesc => '毎月30,000トークン自動チャージ';
+  String get proSubscriptionDesc => '毎月3,000トークン自動チャージ';
 
   @override
   String get maxSubscriptionTitle => 'Maxサブスク';
 
   @override
-  String get maxSubscriptionDesc => '毎月100,000トークン自動チャージ';
+  String get maxSubscriptionDesc => '毎月12,600トークン自動チャージ';
 
   @override
   String get premiumSajuTitle => '詳細四柱推命書';
@@ -180,7 +180,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get categorySpecial => '特別機能';
 
   @override
-  String get fortuneDaily => '今日のメッセージ';
+  String get fortuneDaily => '今日のインサイト';
 
   @override
   String get fortuneToday => '今日のインサイト';
@@ -244,6 +244,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get fortuneZodiac => '星座分析';
+
+  @override
+  String get fortuneConstellation => '星座特性';
 
   @override
   String get fortuneZodiacAnimal => '干支分析';
@@ -424,6 +427,65 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get fortuneNaming => '名前分析';
+
+  @override
+  String get fortuneFamily => '가족 궁합';
+
+  @override
+  String get fortuneFortuneCookie => '포춘쿠키';
+
+  @override
+  String get fortuneGratitude => '감사 일기';
+
+  @override
+  String get fortuneCoaching => 'AI 코칭';
+
+  @override
+  String get fortuneDecisionHelper => '고민 해결';
+
+  @override
+  String get fortuneDailyReview => '하루 정리';
+
+  @override
+  String get fortuneWeeklyReview => '주간 리뷰';
+
+  @override
+  String get fortuneChatInsight => '카톡 대화 분석';
+
+  @override
+  String get fortuneExercise => '운동 운세';
+
+  @override
+  String get fortuneSportsGame => '경기 승부';
+
+  @override
+  String get fortuneOotdEvaluation => '코디 점수';
+
+  @override
+  String get fortuneYearlyEncounter => '올해의 인연';
+
+  @override
+  String get fortuneBabyNickname => '태명 짓기';
+
+  @override
+  String get fortuneBreathing => '명상 가이드';
+
+  @override
+  String get fortuneMoney => '재물 운세';
+
+  @override
+  String get fortuneGameEnhance => '게임 강화운';
+
+  @override
+  String get chipViewAll => '전체 보기';
+
+  @override
+  String get chipViewMore => '더보기';
+
+  @override
+  String fortuneFeatureComingSoon(String name) {
+    return '$name 기능은 곧 준비될 예정이에요! 🔮\n다른 인사이트를 먼저 확인해보시겠어요?';
+  }
 
   @override
   String get loadingTimeDaily1 => '今日の太陽があなたの一日を照らしています';
@@ -794,6 +856,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get newConversation => '新規';
 
   @override
+  String get yourTurn => 'あなたの番';
+
+  @override
   String get typing => '入力中...';
 
   @override
@@ -867,6 +932,15 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get relationship => '関係';
+
+  @override
+  String get profilePosts => '投稿';
+
+  @override
+  String get profileFollowers => 'フォロワー';
+
+  @override
+  String get profileFollowing => 'フォロー中';
 
   @override
   String get sendMessage => 'メッセージを送る';

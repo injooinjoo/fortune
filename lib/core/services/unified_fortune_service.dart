@@ -266,7 +266,6 @@ class UnifiedFortuneService {
   String _getDefaultTitle(String fortuneType) {
     const titles = {
       'avoid-people': '피해야 할 사람',
-      'avoid_people': '피해야 할 사람',
       'daily': '오늘의 인사이트',
       'tarot': 'Insight Cards',
       'mbti': 'MBTI 분석',
@@ -284,10 +283,8 @@ class UnifiedFortuneService {
       'ex-lover': '재회 분석',
       'lucky-series': '럭키 시리즈',
       'fortune-celebrity': '연예인 분석',
-      'fortune-pet': '반려동물 가이드',
+      'pet-compatibility': '반려동물 가이드',
       'baby-nickname': '태명 이야기',
-      'baby_nickname': '태명 이야기',
-      'babyNickname': '태명 이야기',
     };
     return titles[fortuneType] ?? '분석 결과';
   }

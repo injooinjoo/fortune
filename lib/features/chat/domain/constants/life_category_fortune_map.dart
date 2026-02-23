@@ -10,22 +10,22 @@ const Map<LifeCategory, List<String>> lifeCategoryFortuneMap = {
   LifeCategory.loveRelationship: [
     'love', // 붉은 실 - 연애운
     'compatibility', // 우리의 결 - 궁합
-    'yearlyEncounter', // 올해의 인연
-    'blindDate', // 설렘 미리보기 - 소개팅/블라인드데이트
-    'exLover', // 다시, 안부 - 전 연인
-    'avoidPeople', // 피해야 할 사람
+    'yearly-encounter', // 올해의 인연
+    'blind-date', // 설렘 미리보기 - 소개팅/블라인드데이트
+    'ex-lover', // 다시, 안부 - 전 연인
+    'avoid-people', // 피해야 할 사람
     'family', // 가족 사이
-    'pet', // 멍냥궁합
+    'pet-compatibility', // 멍냥궁합
     'tarot', // 타로 한 장
-    'pastLife', // 전생 탐험
+    'past-life', // 전생 탐험
     'decision', // 결정 도움 (관계 관련 고민)
   ],
 
   // ============ 돈/재정 ============
   // 재물, 투자, 사업에 관한 운세들
   LifeCategory.moneyFinance: [
-    'money', // 돈길 걷기 - 재물운
-    'luckyItems', // 럭키 포인트
+    'wealth', // 돈길 걷기 - 재물운
+    'lucky-items', // 럭키 포인트
     'lotto', // 럭키 넘버
     'career', // 커리어 점프 (수입 관련)
     'tarot', // 타로 한 장
@@ -44,10 +44,10 @@ const Map<LifeCategory, List<String>> lifeCategoryFortuneMap = {
     'tarot', // 타로 한 장
     'decision', // 결정 도움 (진로 관련)
     'coaching', // 코칭 세션
-    'personalityDna', // 성격 DNA
+    'personality-dna', // 성격 DNA
     'daily', // 오늘의 나
-    'dailyReview', // 하루 정리
-    'weeklyReview', // 주간 돌아보기
+    'daily-review', // 하루 정리
+    'weekly-review', // 주간 돌아보기
   ],
 
   // ============ 건강/웰빙 ============
@@ -58,8 +58,8 @@ const Map<LifeCategory, List<String>> lifeCategoryFortuneMap = {
     'exercise', // 오운완
     'breathing', // 마음 쉼표
     'gratitude', // 고마운 하루
-    'dailyReview', // 하루 정리
-    'weeklyReview', // 주간 돌아보기
+    'daily-review', // 하루 정리
+    'weekly-review', // 주간 돌아보기
     'coaching', // 코칭 세션
     'daily', // 오늘의 나
     'tarot', // 타로 한 장
@@ -71,7 +71,7 @@ const Map<LifeCategory, List<String>> lifeCategoryFortuneMap = {
 /// 해당 카테고리 선택 직후 가장 먼저 보여줄 칩들입니다.
 const Map<LifeCategory, List<String>> lifeCategoryPrimaryChips = {
   LifeCategory.loveRelationship: ['love', 'compatibility', 'tarot'],
-  LifeCategory.moneyFinance: ['money', 'luckyItems', 'career'],
+  LifeCategory.moneyFinance: ['wealth', 'lucky-items', 'career'],
   LifeCategory.careerStudy: ['career', 'exam', 'coaching'],
   LifeCategory.healthWellness: ['health', 'gratitude', 'breathing'],
 };
@@ -81,37 +81,37 @@ const Map<LifeCategory, List<String>> lifeCategoryPrimaryChips = {
 /// 더 정밀한 추천을 위해 세부 고민 ID에 따른 추천 칩을 정의합니다.
 const Map<String, List<String>> subConcernFortuneMap = {
   // ============ 연애/관계 세부 ============
-  'currently_dating': ['compatibility', 'love', 'tarot', 'dailyReview'],
-  'seeking_new_love': ['yearlyEncounter', 'blindDate', 'love', 'tarot'],
-  'breakup_reunion': ['exLover', 'tarot', 'coaching', 'pastLife'],
+  'currently_dating': ['compatibility', 'love', 'tarot', 'daily-review'],
+  'seeking_new_love': ['yearly-encounter', 'blind-date', 'love', 'tarot'],
+  'breakup_reunion': ['ex-lover', 'tarot', 'coaching', 'past-life'],
   'marriage_longterm': ['compatibility', 'family', 'tarot', 'decision'],
   'family_relations': ['family', 'compatibility', 'coaching', 'breathing'],
 
   // ============ 돈/재정 세부 ============
-  'investment': ['money', 'luckyItems', 'tarot', 'decision'],
-  'job_income': ['career', 'money', 'talent', 'coaching'],
-  'saving_spending': ['money', 'daily', 'coaching', 'decision'],
-  'business': ['money', 'career', 'tarot', 'decision'],
-  'debt_crisis': ['money', 'coaching', 'tarot', 'breathing'],
+  'investment': ['wealth', 'lucky-items', 'tarot', 'decision'],
+  'job_income': ['career', 'wealth', 'talent', 'coaching'],
+  'saving_spending': ['wealth', 'daily', 'coaching', 'decision'],
+  'business': ['wealth', 'career', 'tarot', 'decision'],
+  'debt_crisis': ['wealth', 'coaching', 'tarot', 'breathing'],
 
   // ============ 커리어/학업 세부 ============
   'job_change': ['career', 'talent', 'decision', 'coaching'],
   'promotion': ['career', 'daily', 'tarot', 'coaching'],
   'exam_certification': ['exam', 'daily', 'coaching', 'breathing'],
-  'career_path': ['talent', 'personalityDna', 'coaching', 'decision'],
+  'career_path': ['talent', 'personality-dna', 'coaching', 'decision'],
   'workplace_relations': [
     'compatibility',
     'coaching',
     'breathing',
-    'dailyReview'
+    'daily-review'
   ],
 
   // ============ 건강/웰빙 세부 ============
   'physical_health': ['health', 'exercise', 'biorhythm', 'daily'],
-  'mental_stress': ['breathing', 'coaching', 'gratitude', 'dailyReview'],
+  'mental_stress': ['breathing', 'coaching', 'gratitude', 'daily-review'],
   'diet_exercise': ['exercise', 'health', 'biorhythm', 'coaching'],
-  'sleep_rest': ['biorhythm', 'breathing', 'health', 'dailyReview'],
-  'lifestyle': ['daily', 'health', 'gratitude', 'weeklyReview'],
+  'sleep_rest': ['biorhythm', 'breathing', 'health', 'daily-review'],
+  'lifestyle': ['daily', 'health', 'gratitude', 'weekly-review'],
 };
 
 /// 세부 고민에 대한 기본 추천 칩 가져오기

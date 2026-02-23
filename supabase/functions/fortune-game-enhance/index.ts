@@ -102,8 +102,8 @@ serve(async (req) => {
 
     console.log('Game enhance fortune request:', { timeContext, dateContext })
 
-    const hash = await createHash(`game_enhance_${dateContext.year}_${dateContext.month}_${dateContext.day}_${birthDate || ''}`)
-    const cacheKey = `game_enhance_v1_${hash}`
+    const hash = await createHash(`game-enhance_${dateContext.year}_${dateContext.month}_${dateContext.day}_${birthDate || ''}`)
+    const cacheKey = `game-enhance_v1_${hash}`
     const { data: cachedResult } = await supabase
       .from('fortune_cache')
       .select('result')
@@ -121,7 +121,7 @@ serve(async (req) => {
       console.log('Cache hit for game enhance fortune')
       fortuneData = cachedResult.result
     } else {
-      const cohortResult = await getFromCohortPool(supabase, 'gameEnhance', cohortHash)
+      const cohortResult = await getFromCohortPool(supabase, 'game-enhance', cohortHash)
 
       if (cohortResult) {
         console.log(`[fortune-game-enhance] Cohort Pool HIT!`)
@@ -258,7 +258,7 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
 10. 현재 시간대(${timeContext.period})를 고려한 황금 시간 설정
 11. ${dateContext.weekday}요일 특성 반영 (월요일은 새출발, 금요일은 도전 등)`
 
-        const llm = await LLMFactory.createFromConfigAsync('gameEnhance')
+        const llm = await LLMFactory.createFromConfigAsync('game-enhance')
 
         const response = await llm.generate([
           {
@@ -278,7 +278,7 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
         console.log(`LLM 호출 완료: ${response.provider}/${response.model} - ${response.latency}ms`)
 
         await UsageLogger.log({
-          fortuneType: 'gameEnhance',
+          fortuneType: 'game-enhance',
           provider: response.provider,
           model: response.model,
           response: response,
@@ -351,7 +351,8 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
         const hashtags = parsedResponse.hashtags || ['#강화성공', '#찬스타임', '#가즈아']
 
         fortuneData = {
-          fortune_type: 'gameEnhance',
+          fortuneType: 'game-enhance',
+          fortune_type: 'game-enhance',
           title: '강화의 기운',
 
           // 핵심 점수
@@ -397,18 +398,18 @@ ${gender ? `- 성별: ${gender === 'male' ? '남성' : '여성'}` : ''}
           .insert({
             cache_key: cacheKey,
             result: fortuneData,
-            fortune_type: 'gameEnhance',
+            fortune_type: 'game-enhance',
             expires_at: new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString() // 6시간 캐시
           })
 
         // Cohort Pool 저장
-        saveToCohortPool(supabase, 'gameEnhance', cohortHash, fortuneData)
+        saveToCohortPool(supabase, 'game-enhance', cohortHash, fortuneData)
           .then(() => console.log(`[fortune-game-enhance] Cohort Pool 저장 완료`))
           .catch((err) => console.error(`[fortune-game-enhance] Cohort Pool 저장 실패:`, err))
       }
     }
 
-    const percentileData = await calculatePercentile(supabase, 'gameEnhance', fortuneData.score)
+    const percentileData = await calculatePercentile(supabase, 'game-enhance', fortuneData.score)
     const fortuneDataWithPercentile = addPercentileToResult(fortuneData, percentileData)
 
     return new Response(JSON.stringify({

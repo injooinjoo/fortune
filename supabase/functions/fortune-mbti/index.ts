@@ -406,13 +406,13 @@ serve(async (req) => {
     const today = new Date().toISOString().split('T')[0]
 
     // ==================== 1. 전역 차원 캐시 확인 ====================
-    const dimensionCacheKey = `mbti_dimensions_${today}`
+    const dimensionCacheKey = `mbti-dimensions_${today}`
 
     const { data: cachedDimensions } = await supabaseClient
       .from('fortune_cache')
       .select('result')
       .eq('cache_key', dimensionCacheKey)
-      .eq('fortune_type', 'mbti_dimensions')
+      .eq('fortune_type', 'mbti-dimensions')
       .single()
 
     let allDimensions: Record<string, { fortune: string; tip: string; score: number; warning?: string }>
@@ -488,7 +488,7 @@ serve(async (req) => {
 
       // LLM 사용량 로깅
       await UsageLogger.log({
-        fortuneType: 'mbti_dimensions',
+        fortuneType: 'mbti-dimensions',
         userId: 'system', // 전역 캐시용이므로 시스템
         provider: response.provider,
         model: response.model,
@@ -532,7 +532,7 @@ serve(async (req) => {
         .from('fortune_cache')
         .insert({
           cache_key: dimensionCacheKey,
-          fortune_type: 'mbti_dimensions',
+          fortune_type: 'mbti-dimensions',
           user_id: null, // 전역 캐시
           result: allDimensions,
           created_at: new Date().toISOString()
