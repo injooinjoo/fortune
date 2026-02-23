@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/models/character_chat_message.dart';
 import '../../domain/models/character_chat_state.dart';
 import '../../domain/models/character_affinity.dart';
@@ -20,14 +21,19 @@ import '../../../../core/services/chat_sync_service.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../../../../core/constants/soul_rates.dart';
+import '../../../../core/services/unified_fortune_service.dart';
 import '../../../../services/app_icon_badge_service.dart';
 import '../../../../services/storage_service.dart';
-import '../../../../data/services/fortune_api/fortune_api_service.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../services/remote_config_service.dart';
+import '../../../../core/services/fortune_generators/fortune_cookie_generator.dart';
+import '../../../fortune/domain/models/conditions/character_chat_fortune_conditions.dart';
+import '../../../fortune/domain/services/lotto_number_generator.dart';
+import '../../../fortune/presentation/providers/saju_provider.dart';
 import 'active_chat_provider.dart';
 import 'character_provider.dart';
+import 'character_fortune_adapter.dart';
 import '../utils/character_tone_policy.dart';
 import '../utils/character_tone_rollout.dart';
 import '../utils/character_voice_profile_registry.dart';
@@ -38,6 +44,16 @@ final characterChatProvider = StateNotifierProvider.family<
   (ref, characterId) => CharacterChatNotifier(ref, characterId),
 );
 
+/// 호기심 탭 캐릭터 운세 요청 전용 Unified 서비스
+///
+/// character-chat 토큰은 상위 로직에서 이미 차감하므로 토큰 트랜잭션은 비활성화합니다.
+final characterUnifiedFortuneServiceProvider = Provider<UnifiedFortuneService>(
+  (ref) => UnifiedFortuneService(
+    Supabase.instance.client,
+    enableTokenValidation: false,
+  ),
+);
+
 /// 캐릭터 채팅 상태 관리자
 /// 모든 캐릭터 목록 (스토리 + 운세)
 final _allCharacters = [...defaultCharacters, ...fortuneCharacters];
@@ -45,6 +61,14 @@ final _allCharacters = [...defaultCharacters, ...fortuneCharacters];
 class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   static const String _firstMeetConversationMode = 'first_meet_v1';
   static const Duration _readIdleIcebreakerDelay = Duration(seconds: 10);
+
+  /// metadata에서 제외할 내부/UI 전용 키
+  static const _metadataSkipKeys = {
+    'surveyData',
+    'disclaimer',
+    'fortuneType',
+    'fortune_type',
+  };
   final String _characterId;
   final Ref _ref;
   final CharacterChatService _service = CharacterChatService();
@@ -238,16 +262,10 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       CharacterVoiceProfileRegistry.profileFor(_characterId);
 
   bool get _isTonePolicyEnabledCharacter =>
-      CharacterToneRollout.isEnabledCharacter(
-        _characterId,
-        remoteConfig: _ref.read(remoteConfigProvider),
-      );
+      CharacterToneRollout.isEnabledCharacter(_characterId);
 
   bool get _isIdleIcebreakerEnabledCharacter =>
-      CharacterToneRollout.isIdleIcebreakerEnabledCharacter(
-        _characterId,
-        remoteConfig: _ref.read(remoteConfigProvider),
-      );
+      CharacterToneRollout.isIdleIcebreakerEnabledCharacter(_characterId);
 
   CharacterToneProfile _buildToneProfile({String? currentUserMessage}) {
     if (!_isTonePolicyEnabledCharacter) return CharacterToneProfile.neutral;
@@ -592,11 +610,14 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   }
 
   /// 캐릭터 메시지 추가
+  ///
+  /// [suppressNotification] true이면 알림/Follow-up/동기화를 억제 (멀티 버블 중간 메시지용)
   void addCharacterMessage(
     String text, {
     int? affinityChange,
     bool scheduleReadIdleIcebreaker = true,
     MessageOrigin origin = MessageOrigin.aiReply,
+    bool suppressNotification = false,
   }) {
     final message = CharacterChatMessage.character(
       text,
@@ -620,11 +641,13 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       _localService.saveLastReadTimestamp(_characterId);
     }
 
-    // 🆕 채팅방에 없으면 푸시 알림 + 진동 (카카오톡 스타일)
-    _triggerNotificationIfNeeded(text);
+    if (!suppressNotification) {
+      // 🆕 채팅방에 없으면 푸시 알림 + 진동 (카카오톡 스타일)
+      _triggerNotificationIfNeeded(text);
 
-    // 캐릭터 응답 후 Follow-up 스케줄 시작
-    _startFollowUpSchedule();
+      // 캐릭터 응답 후 Follow-up 스케줄 시작
+      _startFollowUpSchedule();
+    }
 
     if (scheduleReadIdleIcebreaker) {
       _scheduleReadIdleIcebreaker(anchorMessage: message);
@@ -634,6 +657,186 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
     // DB 동기화 큐에 추가 (debounced)
     _queueForSync();
+  }
+
+  /// 사주 결과 비주얼 카드 메시지 추가 (구조화 데이터 포함)
+  void addSajuResultMessage(Map<String, dynamic> sajuData) {
+    final message = CharacterChatMessage(
+      type: CharacterChatMessageType.character,
+      text: '', // 텍스트 없음 — 비주얼 카드로 렌더링
+      characterId: _characterId,
+      origin: MessageOrigin.aiReply,
+      sajuData: sajuData,
+    );
+    final isCurrentChatActive = _isCurrentChatActive();
+    final nextUnreadCount =
+        isCurrentChatActive ? state.unreadCount : state.unreadCount + 1;
+
+    state = state.copyWith(
+      messages: [...state.messages, message],
+      isTyping: false,
+      isProcessing: false,
+      isCharacterTyping: false,
+      unreadCount: nextUnreadCount,
+    );
+
+    if (isCurrentChatActive) {
+      _localService.saveLastReadTimestamp(_characterId);
+    }
+
+    _triggerNotificationIfNeeded('사주 분석 결과');
+    _startFollowUpSchedule();
+    _queueForSync();
+  }
+
+  /// 운세 응답을 멀티 버블로 분할하여 순차 전달
+  ///
+  /// 1차: "---" 구분자로 분할 시도
+  /// 2차: 콘텐츠 패턴 기반 강제 분할 (LLM이 구분자 미생성 시)
+  /// 3차: 길이 기반 분할 (200자 이상이면 문장 단위로 2-4개)
+  Future<void> _addSplitFortuneMessages(
+    String fullResponse, {
+    int? affinityChange,
+    CharacterToneProfile? toneProfile,
+  }) async {
+    // 1차: "---" 구분자 분할 (tone 적용 전 raw 응답)
+    var sections = fullResponse
+        .split(RegExp(r'\n---\n'))
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .toList();
+
+    // 2차: 구분자 없으면 콘텐츠 패턴 기반 분할
+    if (sections.length <= 1) {
+      sections = _splitByContentPatterns(fullResponse);
+    }
+
+    // 3차: 패턴도 없으면 길이 기반 분할
+    if (sections.length <= 1 && fullResponse.length > 200) {
+      sections = _splitByLength(fullResponse);
+    }
+
+    // 그래도 1개 이하면 단일 메시지
+    if (sections.length <= 1) {
+      final toned = _applyGeneratedTone(fullResponse, profile: toneProfile);
+      addCharacterMessage(toned, affinityChange: affinityChange);
+      return;
+    }
+
+    for (int i = 0; i < sections.length; i++) {
+      if (!mounted) return;
+
+      final isLast = i == sections.length - 1;
+
+      // 각 섹션별로 tone 적용 (enforceKakaoSingleBubble 포함)
+      final tonedSection =
+          _applyGeneratedTone(sections[i], profile: toneProfile);
+
+      // 중간 메시지: 알림/Follow-up 억제, 호감도 없음
+      // 마지막 메시지: 알림 O, 호감도 표시
+      addCharacterMessage(
+        tonedSection,
+        affinityChange: isLast ? affinityChange : null,
+        suppressNotification: !isLast,
+        scheduleReadIdleIcebreaker: isLast,
+      );
+
+      // 마지막이 아니면 타이핑 딜레이 후 다음 섹션
+      if (!isLast) {
+        final delay = _calculateSectionDelay(sections[i].length);
+        setTyping(true);
+        await Future.delayed(Duration(milliseconds: delay));
+        if (!mounted) return;
+      }
+    }
+  }
+
+  /// 운세 응답의 콘텐츠 패턴을 감지하여 섹션 분할
+  ///
+  /// 운세 결과에 자주 나타나는 헤딩/주제 패턴을 기준으로 분할
+  List<String> _splitByContentPatterns(String text) {
+    // 운세 응답에서 자주 사용되는 섹션 헤딩 패턴
+    // 예: *오늘의 기운:, ❤️ 주의할 점:, 😊 행운 아이템:, [종합 점수] 등
+    final sectionPattern = RegExp(
+      r'\n(?='
+      r'(?:\*|★|☆|●|◆|▶|►|■|□|💫|✨|🌟|⭐|💪|❤️|💛|💚|💜|🧡|💙|🖤|😊|😉|🤗|💕|🎯|📌|🔮|🌙|☀️|🌈|🍀|🎁|💎|👉|📍|🔑|💡|🎊|🎉|⚡|🔥|🌸|🌺|🏆|💰|📈|🙏|💖|🫶|💗)' // 이모지/마커로 시작
+      r'|'
+      r'(?:\[.+?\])' // [대괄호 헤딩]
+      r'|'
+      r'(?:오늘의\s*기운|종합|총평|럭키|행운\s*아이템|추천\s*사항|주의\s*사항|주의할\s*점|실천\s*포인트|시간대별|특별\s*팁|한줄\s*요약|조언)' // 한국어 헤딩
+      r')',
+      caseSensitive: false,
+    );
+
+    // 원본에서 매칭 위치 기반으로 섹션 재구성
+    final matches = sectionPattern.allMatches(text).toList();
+    if (matches.isEmpty) return [text.trim()];
+
+    final sections = <String>[];
+
+    // 첫 매칭 전 텍스트 (인삿말/도입부)
+    final firstPart = text.substring(0, matches.first.start).trim();
+    if (firstPart.isNotEmpty) {
+      sections.add(firstPart);
+    }
+
+    // 각 매칭 구간
+    for (int i = 0; i < matches.length; i++) {
+      final start = matches[i].start;
+      final end = i + 1 < matches.length ? matches[i + 1].start : text.length;
+      final section = text.substring(start, end).trim();
+      if (section.isNotEmpty) {
+        sections.add(section);
+      }
+    }
+
+    // 너무 작은 섹션(30자 미만)은 이전 섹션에 병합
+    final merged = <String>[];
+    for (final section in sections) {
+      if (merged.isNotEmpty && section.length < 30) {
+        merged.last = '${merged.last}\n$section';
+      } else {
+        merged.add(section);
+      }
+    }
+
+    // 최대 5개 섹션으로 제한 (너무 많으면 마지막에 합침)
+    if (merged.length > 5) {
+      final last = merged.sublist(4).join('\n');
+      return [...merged.sublist(0, 4), last];
+    }
+
+    return merged.length > 1 ? merged : [text.trim()];
+  }
+
+  /// 긴 텍스트를 문장 단위로 2-4개 섹션으로 분할
+  List<String> _splitByLength(String text) {
+    // 문장 종결 패턴으로 분할
+    final sentences = text.split(RegExp(r'(?<=[.!?。！？~♡♥])\s+')).toList();
+    if (sentences.length <= 1) return [text.trim()];
+
+    // 목표: 2-4개 섹션, 각 50자 이상
+    final targetCount = (sentences.length / 3).ceil().clamp(2, 4);
+    final sentencesPerSection = (sentences.length / targetCount).ceil();
+
+    final sections = <String>[];
+    for (int i = 0; i < sentences.length; i += sentencesPerSection) {
+      final end = (i + sentencesPerSection).clamp(0, sentences.length);
+      final section = sentences.sublist(i, end).join(' ').trim();
+      if (section.isNotEmpty) {
+        sections.add(section);
+      }
+    }
+
+    return sections.length > 1 ? sections : [text.trim()];
+  }
+
+  /// 섹션 길이 기반 타이핑 딜레이 계산 (300-800ms)
+  int _calculateSectionDelay(int sectionLength) {
+    if (sectionLength < 50) return 300;
+    if (sectionLength < 100) return 450;
+    if (sectionLength < 200) return 600;
+    return 800;
   }
 
   /// Proactive 메시지 추가 (점심 사진 등 시간대 기반 자발적 메시지)
@@ -1105,9 +1308,15 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     final normalized = text.trim();
     if (normalized.isEmpty) return Future.value();
 
+    // 🪙 토큰 소비 체크 (즉시 실행 - UI 차단 전에 확인)
+    final hasUnlimitedAccess = _ref.read(hasUnlimitedTokensProvider);
+
+    // 유저 메시지를 즉시 UI에 반영 (큐 대기 없이)
+    addUserMessage(normalized);
+
     _sendQueue = _sendQueue.then((_) async {
       try {
-        await _sendMessageInternal(normalized);
+        await _sendMessageInternal(normalized, hasUnlimitedAccess);
       } catch (e) {
         Logger.error('[CharacterChat] send queue failed', e);
       }
@@ -1115,11 +1324,11 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     return _sendQueue;
   }
 
-  Future<void> _sendMessageInternal(String text) async {
+  Future<void> _sendMessageInternal(
+      String text, bool hasUnlimitedAccess) async {
     if (text.trim().isEmpty) return;
 
     // 🪙 토큰 소비 체크 (4토큰/메시지)
-    final hasUnlimitedAccess = _ref.read(hasUnlimitedTokensProvider);
     if (!hasUnlimitedAccess) {
       final tokenCost = SoulRates.getTokenCost('character-chat');
       final tokenNotifier = _ref.read(tokenProvider.notifier);
@@ -1134,8 +1343,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       }
     }
 
-    // 1단계: 유저 메시지 추가 (status: sent → "1" 표시)
-    addUserMessage(text);
+    // 1단계: 유저 메시지는 이미 sendMessage()에서 추가됨
 
     // 2단계: 읽음 딜레이 (0.5~1.5초) - AI가 메시지를 "봤다"는 느낌
     final readDelay = ResponseDelayConfig.calculateReadDelay();
@@ -1281,6 +1489,24 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       final fortuneData = await _fetchFortuneData(fortuneType, {});
       final fortuneDataContext = _formatFortuneDataForContext(fortuneData);
 
+      // 🆕 사주 타입이면 pillar 표를 맨 앞에 추가
+      String enrichedContext = fortuneDataContext;
+      Logger.info('[SajuTable] sendFortuneRequest fortuneType=$fortuneType');
+      if (fortuneType == 'traditional' || fortuneType == 'saju') {
+        // sajuProvider에 데이터가 없으면 먼저 로드
+        if (_ref.read(sajuProvider).sajuData == null) {
+          Logger.info('[SajuTable] sajuData null → fetchUserSaju() 호출');
+          await _ref.read(sajuProvider.notifier).fetchUserSaju();
+        }
+        final sajuTable = _formatSajuPillarTable();
+        Logger.info(
+            '[SajuTable] sendFortuneRequest sajuTable.length=${sajuTable.length}');
+        if (sajuTable.isNotEmpty) {
+          enrichedContext = '$sajuTable\n\n$fortuneDataContext';
+          Logger.info('[SajuTable] enrichedContext에 사주 표 추가 완료');
+        }
+      }
+
       // 메시지 히스토리 준비
       final messagesWithoutCurrent = state.messages.length > 1
           ? state.messages.sublist(0, state.messages.length - 1)
@@ -1295,26 +1521,53 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       // 이모티콘 빈도 지시문 추가
       final emojiInstruction = _character.behaviorPattern.getEmojiInstruction();
 
-      // 운세 상담 컨텍스트를 포함한 API 호출 (실제 운세 데이터 포함)
-      final fortuneContext = '''
-[운세 상담 요청]
-- 운세 타입: $fortuneType
-- 사용자 요청: $requestMessage
+      // 운세 상담: 시스템 프롬프트에는 간단한 지시, 유저 메시지에 운세 데이터 포함
+      // (LLM이 시스템 프롬프트의 운세 데이터를 무시하는 문제 해결)
+      var fortuneSystemInstruction = '''
+[운세 상담 모드]
+이번 메시지는 운세 상담 요청입니다. 유저 메시지 안에 운세 분석 결과 데이터가 포함되어 있습니다.
+반드시 해당 데이터를 상세하게 전달하세요. 한 줄 요약은 절대 금지입니다.
+최소 200자 이상으로 점수, 본문, 행운 아이템, 추천/주의 사항을 모두 포함하세요.
 
-[실제 운세 분석 결과]
-$fortuneDataContext
-
-위의 실제 운세 분석 결과를 바탕으로 사용자에게 운세를 전달해주세요.
-캐릭터의 말투와 성격을 유지하면서 운세 정보를 자연스럽게 전달해주세요.
-점수, 행운 아이템, 추천 사항 등 실제 데이터를 활용하여 구체적으로 이야기해주세요.
-
+[중요: 말풍선 분리 규칙]
+응답을 주제별로 나누어 각 섹션 사이에 반드시 "---" 구분자를 넣어주세요.
+예시 구조:
+- 종합 점수/요약
+---
+- 본문 상세 해석
+---
+- 행운 아이템/럭키 포인트
+---
+- 추천 사항 & 주의 사항
+각 섹션은 자연스러운 대화체로, 하나의 독립된 메시지처럼 작성하세요.
+"---"는 반드시 줄 맨 앞에 단독으로 적어주세요.
 $emojiInstruction
+''';
+
+      // 🆕 사주 타입 전용 시스템 지시문
+      if (fortuneType == 'traditional' || fortuneType == 'saju') {
+        fortuneSystemInstruction += '''
+사주팔자 명식 표가 포함되어 있습니다. 반드시 이 표를 먼저 보여주고,
+각 주(柱)의 천간/지지/오행 의미를 해석해주세요.
+사주 명식 → 오행 분석 → 질문 답변 순서로 진행하세요.
+''';
+      }
+
+      // 운세 데이터를 유저 메시지에 직접 포함 (LLM이 가장 주목하는 위치)
+      final fortuneUserMessage = '''
+$requestMessage
+
+아래는 나의 실제 운세 분석 결과야. 이 데이터를 바탕으로 상세하게 알려줘:
+
+$enrichedContext
+
+위 운세 데이터의 점수, 내용, 행운 아이템, 추천 사항, 주의 사항을 빠짐없이 자세하게 전달해줘.
 ''';
 
       final toneStylePrompt = _buildToneStyleGuidePrompt(toneProfile).trim();
       final enhancedPrompt = [
         _character.systemPrompt,
-        fortuneContext,
+        fortuneSystemInstruction,
         if (toneStylePrompt.isNotEmpty) toneStylePrompt,
       ].join('\n\n');
 
@@ -1322,7 +1575,7 @@ $emojiInstruction
         characterId: _characterId,
         systemPrompt: enhancedPrompt,
         messages: history,
-        userMessage: requestMessage,
+        userMessage: fortuneUserMessage,
         modelPreference: _resolveModelPreference(),
         oocInstructions: _character.oocInstructions,
         emojiFrequency: _character.behaviorPattern.emojiFrequencyString,
@@ -1344,15 +1597,17 @@ $emojiInstruction
 
       // 호감도 포인트 계산 (애니메이션용)
       final affinityPoints = response.affinityDelta.points;
-      final normalizedResponse = _applyGeneratedTone(
-        response.response,
-        profile: toneProfile,
-      );
 
       _ackPendingUserMessagesBeforeCharacterReply();
 
-      // 6단계: 캐릭터 응답 추가 (호감도 변경값 포함)
-      addCharacterMessage(normalizedResponse, affinityChange: affinityPoints);
+      // 6단계: 캐릭터 응답을 멀티 버블로 분할 전달
+      // raw response를 먼저 분할 → 각 섹션에 tone 적용
+      // (tone 적용 시 enforceKakaoSingleBubble이 줄바꿈을 제거하므로)
+      await _addSplitFortuneMessages(
+        response.response,
+        affinityChange: affinityPoints,
+        toneProfile: toneProfile,
+      );
 
       // 호감도 동적 업데이트 (AI 평가 기반)
       final interactionType = response.affinityDelta.isPositive
@@ -1409,6 +1664,26 @@ $emojiInstruction
       final fortuneData = await _fetchFortuneData(fortuneType, surveyAnswers);
       final fortuneDataContext = _formatFortuneDataForContext(fortuneData);
 
+      // 🆕 사주 타입이면 pillar 표를 맨 앞에 추가
+      String enrichedContext = fortuneDataContext;
+      Logger.info(
+          '[SajuTable] sendFortuneRequestWithAnswers fortuneType=$fortuneType');
+      if (fortuneType == 'traditional' || fortuneType == 'saju') {
+        // sajuProvider에 데이터가 없으면 먼저 로드
+        if (_ref.read(sajuProvider).sajuData == null) {
+          Logger.info(
+              '[SajuTable] sajuData null → fetchUserSaju() 호출 (WithAnswers)');
+          await _ref.read(sajuProvider.notifier).fetchUserSaju();
+        }
+        final sajuTable = _formatSajuPillarTable();
+        Logger.info(
+            '[SajuTable] WithAnswers sajuTable.length=${sajuTable.length}');
+        if (sajuTable.isNotEmpty) {
+          enrichedContext = '$sajuTable\n\n$fortuneDataContext';
+          Logger.info('[SajuTable] WithAnswers enrichedContext에 사주 표 추가 완료');
+        }
+      }
+
       // 메시지 히스토리 준비
       final messagesWithoutCurrent = state.messages.length > 1
           ? state.messages.sublist(0, state.messages.length - 1)
@@ -1426,29 +1701,56 @@ $emojiInstruction
       // 설문 답변을 사람이 읽기 쉬운 형식으로 변환
       final answersDescription = _formatSurveyAnswers(surveyAnswers);
 
-      // 운세 상담 컨텍스트 (설문 답변 + 실제 운세 데이터 포함)
-      final fortuneContext = '''
-[운세 상담 요청]
-- 운세 타입: $fortuneType
-- 사용자 요청: $requestMessage
-- 사용자 설문 답변:
+      // 운세 상담: 시스템 프롬프트에는 간단한 지시, 유저 메시지에 운세 데이터 포함
+      var fortuneSystemInstruction = '''
+[운세 상담 모드]
+이번 메시지는 운세 상담 요청입니다. 유저 메시지 안에 운세 분석 결과 데이터가 포함되어 있습니다.
+반드시 해당 데이터를 상세하게 전달하세요. 한 줄 요약은 절대 금지입니다.
+최소 200자 이상으로 점수, 본문, 행운 아이템, 추천/주의 사항을 모두 포함하세요.
+사용자의 설문 답변을 언급하면서 더 친근하고 맞춤화된 조언을 해주세요.
+
+[중요: 말풍선 분리 규칙]
+응답을 주제별로 나누어 각 섹션 사이에 반드시 "---" 구분자를 넣어주세요.
+예시 구조:
+- 종합 점수/요약
+---
+- 본문 상세 해석
+---
+- 행운 아이템/럭키 포인트
+---
+- 추천 사항 & 주의 사항
+각 섹션은 자연스러운 대화체로, 하나의 독립된 메시지처럼 작성하세요.
+"---"는 반드시 줄 맨 앞에 단독으로 적어주세요.
+$emojiInstruction
+''';
+
+      // 🆕 사주 타입 전용 시스템 지시문
+      if (fortuneType == 'traditional' || fortuneType == 'saju') {
+        fortuneSystemInstruction += '''
+사주팔자 명식 표가 포함되어 있습니다. 반드시 이 표를 먼저 보여주고,
+각 주(柱)의 천간/지지/오행 의미를 해석해주세요.
+사주 명식 → 오행 분석 → 질문 답변 순서로 진행하세요.
+''';
+      }
+
+      // 운세 데이터를 유저 메시지에 직접 포함 (LLM이 가장 주목하는 위치)
+      final fortuneUserMessage = '''
+$requestMessage
+
+내가 답한 설문 내용:
 $answersDescription
 
-[실제 운세 분석 결과]
-$fortuneDataContext
+아래는 나의 실제 운세 분석 결과야. 이 데이터를 바탕으로 상세하게 알려줘:
 
-위의 실제 운세 분석 결과를 바탕으로 사용자에게 운세를 전달해주세요.
-캐릭터의 말투와 성격을 유지하면서 설문 답변 내용을 자연스럽게 반영해주세요.
-점수, 행운 아이템, 추천 사항 등 실제 데이터를 활용하여 구체적으로 이야기해주세요.
-사용자가 선택한 내용을 언급하면서 더 친근하고 맞춤화된 조언을 해주세요.
+$enrichedContext
 
-$emojiInstruction
+위 운세 데이터의 점수, 내용, 행운 아이템, 추천 사항, 주의 사항을 빠짐없이 자세하게 전달해줘.
 ''';
 
       final toneStylePrompt = _buildToneStyleGuidePrompt(toneProfile).trim();
       final enhancedPrompt = [
         _character.systemPrompt,
-        fortuneContext,
+        fortuneSystemInstruction,
         if (toneStylePrompt.isNotEmpty) toneStylePrompt,
       ].join('\n\n');
 
@@ -1456,7 +1758,7 @@ $emojiInstruction
         characterId: _characterId,
         systemPrompt: enhancedPrompt,
         messages: history,
-        userMessage: requestMessage,
+        userMessage: fortuneUserMessage,
         modelPreference: _resolveModelPreference(),
         oocInstructions: _character.oocInstructions,
         emojiFrequency: _character.behaviorPattern.emojiFrequencyString,
@@ -1478,15 +1780,16 @@ $emojiInstruction
 
       // 호감도 포인트 계산 (애니메이션용)
       final affinityPoints = response.affinityDelta.points;
-      final normalizedResponse = _applyGeneratedTone(
-        response.response,
-        profile: toneProfile,
-      );
 
       _ackPendingUserMessagesBeforeCharacterReply();
 
-      // 6단계: 캐릭터 응답 추가 (호감도 변경값 포함)
-      addCharacterMessage(normalizedResponse, affinityChange: affinityPoints);
+      // 6단계: 캐릭터 응답을 멀티 버블로 분할 전달
+      // raw response를 먼저 분할 → 각 섹션에 tone 적용
+      await _addSplitFortuneMessages(
+        response.response,
+        affinityChange: affinityPoints,
+        toneProfile: toneProfile,
+      );
 
       // 호감도 동적 업데이트 (AI 평가 기반)
       final interactionType = response.affinityDelta.isPositive
@@ -1540,81 +1843,290 @@ $emojiInstruction
     return _storageService.getOrCreateGuestId();
   }
 
+  /// 🆕 로컬 전용 운세 타입 처리 (Edge Function 없는 타입)
+  Future<Fortune?> _getLocalFortune(
+    String fortuneType,
+    Map<String, dynamic> answers,
+  ) async {
+    switch (fortuneType) {
+      case 'fortuneCookie':
+        // chat_home_page.dart 패턴 재사용 - 로컬 포춘쿠키 생성기
+        try {
+          final cookieResult =
+              await FortuneCookieGenerator.getTodayFortuneCookie();
+          final userId = await _resolveFortuneUserId();
+          return Fortune(
+            id: 'fortune-cookie-${DateTime.now().toIso8601String().split('T')[0]}',
+            userId: userId,
+            type: 'fortune-cookie',
+            content: cookieResult.data['message'] as String? ?? '',
+            createdAt: DateTime.now(),
+            overallScore: cookieResult.score,
+            luckyItems: {
+              'lucky_number': cookieResult.data['lucky_number'],
+              'lucky_color': cookieResult.data['lucky_color'],
+              'emoji': cookieResult.data['emoji'],
+            },
+            recommendations: [
+              if (cookieResult.data['action_mission'] != null)
+                cookieResult.data['action_mission'] as String,
+            ],
+            specialTip: cookieResult.data['lucky_time'] as String?,
+          );
+        } catch (e) {
+          Logger.warning(
+              '[CharacterChat] FortuneCookie local generation failed',
+              {'error': e.toString()});
+          return null;
+        }
+
+      case 'lotto':
+        // chat_home_page.dart 패턴 참고 - 로컬 로또 번호 생성기
+        try {
+          final profileAsync = _ref.read(userProfileProvider);
+          final profile = profileAsync.maybeWhen(
+            data: (p) => p,
+            orElse: () => null,
+          );
+
+          if (profile?.birthDate == null) {
+            Logger.warning(
+                '[CharacterChat] Lotto: birthDate required but not available');
+            return null;
+          }
+
+          final gameCount =
+              int.tryParse(answers['gameCount']?.toString() ?? '1') ?? 1;
+          final result = LottoNumberGenerator.generate(
+            birthDate: profile!.birthDate!,
+            birthTime: profile.birthTime,
+            gender: profile.gender.value,
+            gameCount: gameCount,
+          );
+
+          // sets가 있으면 sets 사용, 없으면 단일 numbers 사용
+          final numbersText = result.lottoResult.sets.isNotEmpty
+              ? result.lottoResult.sets
+                  .asMap()
+                  .entries
+                  .map((e) => '${e.key + 1}게임: ${e.value.numbers.join(", ")}')
+                  .join('\n')
+              : '1게임: ${result.lottoResult.numbers.join(", ")}';
+
+          final userId = await _resolveFortuneUserId();
+          return Fortune(
+            id: 'lotto-${DateTime.now().millisecondsSinceEpoch}',
+            userId: userId,
+            type: 'lotto',
+            content:
+                '🎰 행운의 로또 번호\n\n$numbersText\n\n💬 ${result.lottoResult.fortuneMessage}',
+            createdAt: DateTime.now(),
+            specialTip:
+                '${result.luckyTiming.luckyDay} ${result.luckyTiming.luckyTimeSlot}',
+          );
+        } catch (e) {
+          Logger.warning('[CharacterChat] Lotto local generation failed',
+              {'error': e.toString()});
+          return null;
+        }
+
+      case 'gratitude':
+        // gratitude는 API 없음 - 캐릭터가 감사일기 대화를 이끌도록
+        // null 반환 → 기존 generic 컨텍스트 사용 (대화형이므로 OK)
+        return null;
+
+      default:
+        return null; // 로컬 처리 아닌 타입 → API 호출 진행
+    }
+  }
+
   /// 🆕 운세 API 호출하여 Fortune 데이터 가져오기
   Future<Fortune?> _fetchFortuneData(
     String fortuneType,
     Map<String, dynamic> answers,
   ) async {
-    try {
-      final apiService = _ref.read(fortuneApiServiceProvider);
-      final userProfile = _getUserProfileMap();
+    // 🆕 로컬 전용 타입 먼저 체크
+    final localFortune = await _getLocalFortune(fortuneType, answers);
+    if (localFortune != null) return localFortune;
 
-      // fortuneType을 API 타입으로 매핑
-      final apiFortuneType = _mapToApiFortuneType(fortuneType);
-
-      // 사용자 프로필 정보 추가
-      final params = <String, dynamic>{
-        ...answers,
-        if (userProfile != null) ...userProfile,
-      };
-
-      Logger.info('[CharacterChat] Calling fortune API', {
-        'fortuneType': apiFortuneType,
-        'hasParams': params.isNotEmpty,
-      });
-
-      // 유저 ID 가져오기 (비로그인은 guest_<uuid> 사용)
-      final userId = await _resolveFortuneUserId();
-
-      final fortune = await apiService.getFortune(
-        userId: userId,
-        fortuneType: apiFortuneType,
-        params: params,
-      );
-
-      Logger.info('[CharacterChat] Fortune API success', {
-        'fortuneType': apiFortuneType,
-        'hasContent': fortune.content.isNotEmpty,
-        'score': fortune.overallScore,
-      });
-
-      return fortune;
-    } catch (e) {
-      Logger.warning('[CharacterChat] Fortune API failed, using fallback',
-          {'error': e.toString()});
+    // fortuneCookie, gratitude는 로컬 전용 → null이면 API 호출 스킵
+    if (fortuneType == 'fortuneCookie' || fortuneType == 'gratitude') {
       return null;
     }
+
+    final unifiedService = _ref.read(characterUnifiedFortuneServiceProvider);
+    final userProfile = _getUserProfileMap();
+
+    // fortuneType을 API 타입으로 매핑
+    final apiFortuneType = _mapToApiFortuneType(fortuneType);
+
+    // 사용자 프로필 정보 추가
+    final params = <String, dynamic>{
+      ...answers,
+      if (userProfile != null) ...userProfile,
+    };
+
+    Logger.info('[CharacterChat] Calling unified fortune route', {
+      'fortuneType': apiFortuneType,
+      'hasParams': params.isNotEmpty,
+    });
+
+    // 유저 ID 가져오기 (비로그인은 guest_<uuid> 사용)
+    final userId = await _resolveFortuneUserId();
+
+    final conditions = CharacterChatFortuneConditions(
+      fortuneType: apiFortuneType,
+      answers: answers,
+      userProfileMergedParams: params,
+    );
+
+    final result = await unifiedService.getFortune(
+      fortuneType: apiFortuneType,
+      dataSource: FortuneDataSource.api,
+      inputConditions: params,
+      conditions: conditions,
+    );
+
+    final fortune = CharacterFortuneAdapter.fromFortuneResult(
+      result: result,
+      userId: userId,
+      fortuneType: apiFortuneType,
+    );
+
+    Logger.info('[CharacterChat] Unified fortune route success', {
+      'fortuneType': apiFortuneType,
+      'hasContent': fortune.content.isNotEmpty,
+      'score': fortune.overallScore,
+    });
+
+    return fortune;
   }
 
   /// fortuneType 문자열을 API fortuneType으로 매핑
+  /// fortune_characters.dart의 모든 specialty 타입을 Edge Function 타입으로 변환
   String _mapToApiFortuneType(String fortuneType) {
     const mapping = {
+      // 일상 운세 (하늘)
       'daily': 'daily',
       'newYear': 'new_year',
       'daily_calendar': 'daily_calendar',
-      'career': 'career',
-      'love': 'love',
-      'compatibility': 'compatibility',
-      'tarot': 'tarot',
-      'mbti': 'mbti',
+
+      // 전통 운세 (무현 도사)
       'traditional': 'saju',
       'faceReading': 'face-reading',
-      'biorhythm': 'biorhythm',
-      'money': 'money',
+      'naming': 'naming',
+      'babyNickname': 'baby-nickname',
+
+      // 별자리/띠 (스텔라) → daily fortune 사용
+      'zodiac': 'daily',
+      'zodiacAnimal': 'daily',
+      'constellation': 'daily',
+      'birthstone': 'daily',
+
+      // 성격/심리 (Dr. 마인드)
+      'mbti': 'mbti',
+      'personalityDna': 'mbti',
+      'talent': 'talent',
+      'pastLife': 'past-life',
+
+      // 연애/궁합 (로제)
+      'love': 'love',
+      'compatibility': 'compatibility',
+      'blindDate': 'blind-date',
+      'exLover': 'ex-lover',
+      'avoidPeople': 'avoid-people',
+      'celebrity': 'celebrity',
+      'yearlyEncounter': 'yearly-encounter',
+
+      // 직업/재물 (제임스 김)
+      'career': 'career',
+      'money': 'wealth',
+      'exam': 'exam',
+
+      // 행운 (럭키)
       'luckyItems': 'lucky-items',
       'lotto': 'lotto',
-      'health': 'health',
-      'dream': 'dream',
-      'pastLife': 'past-life',
+      'ootdEvaluation': 'ootd',
+
+      // 스포츠/운동 (마르코)
+      'sportsGame': 'match-insight',
       'gameEnhance': 'game-enhance',
-      'pet': 'pet',
+      'exercise': 'exercise',
+
+      // 이사 (리나)
+      'moving': 'moving',
+
+      // 종합 (루나)
+      'tarot': 'tarot',
+      'dream': 'dream',
+      'health': 'health',
+      'biorhythm': 'biorhythm',
       'family': 'family',
-      'naming': 'naming',
+      'pet': 'pet-compatibility',
+      'talisman': 'talisman',
+      'wish': 'wish',
     };
     return mapping[fortuneType] ?? fortuneType;
   }
 
-  /// 🆕 Fortune 데이터를 캐릭터 컨텍스트용 텍스트로 변환
+  /// 중첩된 Map/List를 읽기 쉬운 텍스트로 변환하는 헬퍼
+  String _formatValueForContext(dynamic value, {int indent = 1}) {
+    final prefix = '  ' * indent;
+
+    if (value == null) return '';
+
+    if (value is String) {
+      return value.isEmpty ? '' : value;
+    }
+
+    if (value is num || value is bool) {
+      return value.toString();
+    }
+
+    if (value is List) {
+      if (value.isEmpty) return '';
+      final buffer = StringBuffer();
+      for (final item in value) {
+        if (item is Map<String, dynamic>) {
+          final parts = <String>[];
+          for (final entry in item.entries) {
+            if (entry.value != null && entry.value.toString().isNotEmpty) {
+              parts.add('${entry.key}: ${entry.value}');
+            }
+          }
+          if (parts.isNotEmpty) {
+            buffer.writeln('$prefix- ${parts.join(' | ')}');
+          }
+        } else if (item != null && item.toString().isNotEmpty) {
+          buffer.writeln('$prefix- $item');
+        }
+      }
+      return buffer.toString().trimRight();
+    }
+
+    if (value is Map<String, dynamic>) {
+      if (value.isEmpty) return '';
+      final buffer = StringBuffer();
+      for (final entry in value.entries) {
+        if (entry.value == null) continue;
+        final formatted =
+            _formatValueForContext(entry.value, indent: indent + 1);
+        if (formatted.isEmpty) continue;
+
+        if (entry.value is Map || entry.value is List) {
+          buffer.writeln('$prefix- ${entry.key}:');
+          buffer.writeln(formatted);
+        } else {
+          buffer.writeln('$prefix- ${entry.key}: $formatted');
+        }
+      }
+      return buffer.toString().trimRight();
+    }
+
+    return value.toString();
+  }
+
+  /// 🆕 Fortune 데이터를 캐릭터 컨텍스트용 텍스트로 변환 (모든 운세 타입 지원)
   String _formatFortuneDataForContext(Fortune? fortune) {
     if (fortune == null) {
       return '(운세 데이터를 가져오지 못했습니다. 일반적인 조언을 제공해주세요.)';
@@ -1622,27 +2134,46 @@ $emojiInstruction
 
     final buffer = StringBuffer();
 
-    // 기본 운세 내용
+    // ── 기본 정보 ──
+    if (fortune.category != null && fortune.category!.isNotEmpty) {
+      buffer.writeln('🏷️ 운세 유형: ${fortune.category}');
+    }
+    if (fortune.period != null && fortune.period!.isNotEmpty) {
+      buffer.writeln('📅 기간: ${fortune.period}');
+    }
+
+    // ── 인사말 ──
+    if (fortune.greeting != null && fortune.greeting!.isNotEmpty) {
+      buffer.writeln('👋 인사말: ${fortune.greeting}');
+    }
+
+    // ── 기본 운세 내용 ──
     if (fortune.content.isNotEmpty) {
       buffer.writeln('📌 운세 내용: ${fortune.content}');
     }
 
-    // 전체 점수
+    // ── 전체 점수 ──
     if (fortune.overallScore != null) {
       buffer.writeln('⭐ 전체 점수: ${fortune.overallScore}점');
     }
 
-    // 설명
+    // ── 퍼센타일 ──
+    if (fortune.isPercentileValid && fortune.percentile != null) {
+      buffer.writeln(
+          '🏆 상위 ${fortune.percentile}% (오늘 ${fortune.totalTodayViewers ?? "?"}명 중)');
+    }
+
+    // ── 설명 ──
     if (fortune.description != null && fortune.description!.isNotEmpty) {
       buffer.writeln('📝 설명: ${fortune.description}');
     }
 
-    // 요약
+    // ── 요약 ──
     if (fortune.summary != null && fortune.summary!.isNotEmpty) {
       buffer.writeln('📋 요약: ${fortune.summary}');
     }
 
-    // 육각형 점수 (연애, 재물, 건강 등)
+    // ── 육각형 점수 (연애, 재물, 건강 등) ──
     if (fortune.hexagonScores != null && fortune.hexagonScores!.isNotEmpty) {
       buffer.writeln('📊 세부 점수:');
       fortune.hexagonScores!.forEach((key, value) {
@@ -1650,7 +2181,7 @@ $emojiInstruction
       });
     }
 
-    // 점수 세부 분류
+    // ── 점수 세부 분류 ──
     if (fortune.scoreBreakdown != null && fortune.scoreBreakdown!.isNotEmpty) {
       buffer.writeln('📈 점수 분석:');
       fortune.scoreBreakdown!.forEach((key, value) {
@@ -1658,7 +2189,61 @@ $emojiInstruction
       });
     }
 
-    // 행운 아이템
+    // ── 카테고리별 운세 (love, money, work, health, social) ──
+    if (fortune.categories != null && fortune.categories!.isNotEmpty) {
+      buffer.writeln('🔮 카테고리별 운세:');
+      fortune.categories!.forEach((key, value) {
+        if (value is Map<String, dynamic>) {
+          final score = value['score'];
+          final desc =
+              value['description'] ?? value['summary'] ?? value['advice'];
+          buffer.writeln(
+              '  - $key: ${score != null ? "$score점" : ""} ${desc ?? ""}');
+        } else if (value != null) {
+          buffer.writeln('  - $key: $value');
+        }
+      });
+    }
+
+    // ── 사주 인사이트 ──
+    if (fortune.sajuInsight != null && fortune.sajuInsight!.isNotEmpty) {
+      buffer.writeln('🔯 사주 인사이트:');
+      buffer.writeln(_formatValueForContext(fortune.sajuInsight));
+    }
+
+    // ── 오행 분석 ──
+    if (fortune.fiveElements != null && fortune.fiveElements!.isNotEmpty) {
+      buffer.writeln('🌊 오행 분석:');
+      buffer.writeln(_formatValueForContext(fortune.fiveElements));
+    }
+
+    // ── 시간대별 운세 ──
+    if (fortune.timeSpecificFortunes != null &&
+        fortune.timeSpecificFortunes!.isNotEmpty) {
+      buffer.writeln('⏰ 시간대별 운세:');
+      for (final tsf in fortune.timeSpecificFortunes!) {
+        buffer.writeln(
+            '  - ${tsf.time} (${tsf.title}): ${tsf.score}점 - ${tsf.description}');
+        if (tsf.recommendation != null && tsf.recommendation!.isNotEmpty) {
+          buffer.writeln('    추천: ${tsf.recommendation}');
+        }
+      }
+    }
+
+    // ── 띠별 운세 ──
+    if (fortune.birthYearFortunes != null &&
+        fortune.birthYearFortunes!.isNotEmpty) {
+      buffer.writeln('🐲 띠별 운세:');
+      for (final byf in fortune.birthYearFortunes!) {
+        buffer.writeln(
+            '  - ${byf.zodiacAnimal} (${byf.birthYear}): ${byf.description}');
+        if (byf.advice != null && byf.advice!.isNotEmpty) {
+          buffer.writeln('    조언: ${byf.advice}');
+        }
+      }
+    }
+
+    // ── 행운 아이템 (기본) ──
     if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty) {
       buffer.writeln('🍀 행운 아이템:');
       fortune.luckyItems!.forEach((key, value) {
@@ -1668,7 +2253,36 @@ $emojiInstruction
       });
     }
 
-    // 추천 사항
+    // ── 행운 아이템 (상세) ──
+    if (fortune.detailedLuckyItems != null &&
+        fortune.detailedLuckyItems!.isNotEmpty) {
+      buffer.writeln('🎁 상세 행운 아이템:');
+      fortune.detailedLuckyItems!.forEach((category, items) {
+        buffer.writeln('  [$category]');
+        for (final item in items) {
+          buffer.write('  - ${item.value} (${item.category})');
+          if (item.reason.isNotEmpty) buffer.write(' - ${item.reason}');
+          if (item.timeRange != null) buffer.write(' [${item.timeRange}]');
+          if (item.situation != null) buffer.write(' (${item.situation})');
+          buffer.writeln();
+        }
+      });
+    }
+
+    // ── 추천 실천 사항 ──
+    if (fortune.personalActions != null &&
+        fortune.personalActions!.isNotEmpty) {
+      buffer.writeln('🎯 추천 실천 사항:');
+      for (final action in fortune.personalActions!) {
+        final title = action['title'] ?? action['action'] ?? '';
+        final desc = action['description'] ?? action['reason'] ?? '';
+        final timing = action['timing'] ?? action['time'] ?? '';
+        buffer.writeln(
+            '  - $title${desc.toString().isNotEmpty ? ": $desc" : ""}${timing.toString().isNotEmpty ? " ($timing)" : ""}');
+      }
+    }
+
+    // ── 추천 사항 ──
     if (fortune.recommendations != null &&
         fortune.recommendations!.isNotEmpty) {
       buffer.writeln('💡 추천 사항:');
@@ -1677,7 +2291,7 @@ $emojiInstruction
       }
     }
 
-    // 주의 사항
+    // ── 주의 사항 ──
     if (fortune.warnings != null && fortune.warnings!.isNotEmpty) {
       buffer.writeln('⚠️ 주의 사항:');
       for (final warning in fortune.warnings!) {
@@ -1685,14 +2299,161 @@ $emojiInstruction
       }
     }
 
-    // 특별 팁
+    // ── 특별 팁 ──
     if (fortune.specialTip != null && fortune.specialTip!.isNotEmpty) {
       buffer.writeln('✨ 특별 팁: ${fortune.specialTip}');
     }
 
-    // 인사말 (있으면)
-    if (fortune.greeting != null && fortune.greeting!.isNotEmpty) {
-      buffer.writeln('👋 인사말: ${fortune.greeting}');
+    // ── 날씨 연동 ──
+    if (fortune.weatherSummary != null && fortune.weatherSummary!.isNotEmpty) {
+      buffer.writeln('🌤️ 날씨 연동:');
+      buffer.writeln(_formatValueForContext(fortune.weatherSummary));
+    }
+
+    // ── 운세 상세 데이터 (metadata - 운세 타입별 고유 데이터) ──
+    if (fortune.metadata != null && fortune.metadata!.isNotEmpty) {
+      final metadataToFormat = Map<String, dynamic>.from(fortune.metadata!)
+        ..removeWhere(
+            (key, value) => _metadataSkipKeys.contains(key) || value == null);
+
+      if (metadataToFormat.isNotEmpty) {
+        buffer.writeln('📖 운세 상세 분석:');
+
+        // 알려진 키에 대해 한국어 라벨 매핑
+        const labelMap = {
+          // MBTI
+          'dimensions': '성격 차원 분석',
+          'todayTrap': '오늘의 함정',
+          'mbtiDescription': 'MBTI 설명',
+          'cognitiveStrengths': '인지적 강점',
+          'challenges': '도전 과제',
+          // Wealth
+          'wealthPotential': '재물 잠재력',
+          'elementAnalysis': '오행 재물 분석',
+          'goalAdvice': '목표 달성 전략',
+          'cashflowInsight': '현금 흐름 인사이트',
+          'concernResolution': '고민 해결',
+          'investmentInsights': '투자 인사이트',
+          'luckyElements': '행운 요소',
+          'monthlyFlow': '월별 흐름',
+          'actionItems': '실천 항목',
+          // Avoid-people
+          'cautionPeople': '경계 인물',
+          'cautionObjects': '경계 사물',
+          'cautionColors': '경계 색상',
+          'cautionNumbers': '경계 숫자',
+          'cautionAnimals': '경계 동물',
+          'cautionPlaces': '경계 장소',
+          'cautionTimes': '경계 시간',
+          'cautionDirections': '경계 방향',
+          'timeStrategy': '시간대 전략',
+          // Time
+          'timeSlots': '시간대별 분석',
+          'cautionActivities': '경계 활동',
+          'traditionalElements': '전통 요소',
+          'bestTime': '최고 시간',
+          'worstTime': '주의 시간',
+          // Biorhythm
+          'physical': '신체 리듬',
+          'emotional': '감정 리듬',
+          'intellectual': '지성 리듬',
+          'today_recommendation': '오늘의 추천',
+          'weekly_forecast': '주간 예보',
+          'important_dates': '중요 날짜',
+          'weekly_activities': '주간 활동',
+          'personal_analysis': '개인 분석',
+          'lifestyle_advice': '라이프스타일 조언',
+          'health_tips': '건강 팁',
+          // Naming
+          'recommendedNames': '추천 이름',
+          'ohaengAnalysis': '오행 분석',
+          'namingTips': '작명 팁',
+          // Ex-lover
+          'hardTruth': '냉정한 진실',
+          'theirPerspective': '상대방의 시선',
+          'strategicAdvice': '전략적 조언',
+          'emotionalPrescription': '감정 처방전',
+          'reunion_possibility': '재회 가능성',
+          'reunionAssessment': '재회 분석',
+          'reunionCap': '재회 상한',
+          'contact_status': '연락 상태',
+          'relationshipDepth': '관계 깊이',
+          'currentState': '현재 상태',
+          'comfort_message': '위로 메시지',
+          'closingMessage': '마무리 메시지',
+          'openingMessage': '시작 메시지',
+          'breakupAnalysis': '이별 분석',
+          'emotionalJourney': '감정 여정',
+          'actionPlan': '실천 계획',
+          // Pet
+          'pets_voice': '반려동물 속마음',
+          'bonding_mission': '유대감 미션',
+          'daily_condition': '오늘의 컨디션',
+          'owner_bond': '주인과의 유대감',
+          'activity_recommendation': '활동 추천',
+          'care_tips': '케어 팁',
+          'health_check': '건강 체크',
+          'weather_advice': '날씨 조언',
+          'special_message': '특별 메시지',
+          'pet_info': '반려동물 정보',
+          'today_story': '오늘의 이야기',
+          'breed_specific': '품종별 특성',
+          'health_insight': '건강 인사이트',
+          'emotional_care': '감정 케어',
+          'special_tips': '특별 팁',
+          'lucky_items': '행운 아이템',
+          'pet_content': '반려동물 콘텐츠',
+          'pet_summary': '반려동물 요약',
+          // Love
+          'loveProfile': '연애 프로필',
+          'detailedAnalysis': '상세 분석',
+          'todaysAdvice': '오늘의 조언',
+          'predictions': '예측',
+          // Compatibility
+          'overall_compatibility': '전체 궁합',
+          'personality_match': '성격 궁합',
+          'loveMatch': '연애 궁합',
+          'marriageMatch': '결혼 궁합',
+          'communicationMatch': '소통 궁합',
+          'strengths': '강점',
+          'cautions': '주의점',
+          'detailed_advice': '상세 조언',
+          'zodiac_animal': '띠',
+          'star_sign': '별자리',
+          'destiny_number': '운명의 숫자',
+          'age_difference': '나이 차이',
+          'loveStyle': '연애 스타일',
+          // General
+          'overallScore': '전체 점수',
+          'luckyColor': '행운의 색상',
+          'luckyNumber': '행운의 숫자',
+          'energyLevel': '에너지 레벨',
+        };
+
+        for (final entry in metadataToFormat.entries) {
+          final label = labelMap[entry.key] ?? entry.key;
+          final formatted = _formatValueForContext(entry.value);
+          if (formatted.isEmpty) continue;
+
+          if (entry.value is Map || entry.value is List) {
+            buffer.writeln('  [$label]');
+            buffer.writeln(formatted);
+          } else {
+            buffer.writeln('  - $label: $formatted');
+          }
+        }
+      }
+    } else if (fortune.additionalInfo != null &&
+        fortune.additionalInfo!.isNotEmpty) {
+      // metadata가 없고 additionalInfo만 있는 경우
+      final infoToFormat = Map<String, dynamic>.from(fortune.additionalInfo!)
+        ..removeWhere(
+            (key, value) => _metadataSkipKeys.contains(key) || value == null);
+
+      if (infoToFormat.isNotEmpty) {
+        buffer.writeln('📖 추가 정보:');
+        buffer.writeln(_formatValueForContext(infoToFormat));
+      }
     }
 
     return buffer.toString();
@@ -1887,6 +2648,215 @@ $emojiInstruction
   ChoiceSet? get activeChoiceSet {
     if (!hasActiveChoice) return null;
     return state.messages.last.choiceSet;
+  }
+
+  /// 사주 명식 표 텍스트를 외부에서 접근 가능하도록 제공
+  /// (character_chat_panel에서 분석 시작 시 즉시 표시용)
+  /// sajuProvider에 데이터가 없으면 fetchUserSaju()로 로드 후 표 생성
+  Future<String> getSajuPillarTableText() async {
+    // sajuProvider에 데이터가 없으면 먼저 로드
+    final currentState = _ref.read(sajuProvider);
+    if (currentState.sajuData == null) {
+      Logger.info('[SajuTable] sajuData가 null → fetchUserSaju() 호출');
+      await _ref.read(sajuProvider.notifier).fetchUserSaju();
+    }
+    return _formatSajuPillarTable();
+  }
+
+  /// sajuProvider에서 원시 사주 데이터 가져오기 (비주얼 카드 렌더링용)
+  /// ChatSajuResultCard가 직접 처리할 수 있는 Map 형식으로 반환
+  Future<Map<String, dynamic>?> getSajuRawData() async {
+    final currentState = _ref.read(sajuProvider);
+    if (currentState.sajuData == null) {
+      Logger.info('[SajuCard] sajuData null → fetchUserSaju() 호출');
+      await _ref.read(sajuProvider.notifier).fetchUserSaju();
+    }
+    return _ref.read(sajuProvider).sajuData;
+  }
+
+  /// 사주 4주를 텍스트 표 형식으로 포맷팅
+  /// sajuProvider에서 유저의 사주 데이터를 가져와 명식 표로 변환
+  String _formatSajuPillarTable() {
+    final sajuState = _ref.read(sajuProvider);
+    final sajuData = sajuState.sajuData;
+    Logger.info('[SajuTable] sajuData == null? ${sajuData == null}');
+    if (sajuData != null) {
+      Logger.info('[SajuTable] keys: ${sajuData.keys.toList()}');
+      Logger.info('[SajuTable] year: ${sajuData['year']}');
+      Logger.info('[SajuTable] day: ${sajuData['day']}');
+    }
+    if (sajuData == null) return '';
+
+    final pillars = ['hour', 'day', 'month', 'year'];
+    final pillarLabels = {
+      'hour': '시주(時柱)',
+      'day': '일주(日柱)',
+      'month': '월주(月柱)',
+      'year': '년주(年柱)',
+    };
+
+    // 각 주의 천간/지지 데이터 추출
+    final stemChars = <String>[];
+    final stemHanjas = <String>[];
+    final stemElements = <String>[];
+    final branchChars = <String>[];
+    final branchHanjas = <String>[];
+    final branchElements = <String>[];
+    final branchAnimals = <String>[];
+    final tenshinList = <String>[];
+
+    final dayStemChar = (sajuData['day']?['cheongan']
+            as Map<String, dynamic>?)?['char'] as String? ??
+        '';
+
+    for (final key in pillars) {
+      final pillarData = sajuData[key] as Map<String, dynamic>?;
+      final cheongan = pillarData?['cheongan'] as Map<String, dynamic>?;
+      final jiji = pillarData?['jiji'] as Map<String, dynamic>?;
+
+      stemChars.add(cheongan?['char'] as String? ?? '-');
+      stemHanjas.add(cheongan?['hanja'] as String? ?? '-');
+      stemElements.add(cheongan?['element'] as String? ?? '-');
+      branchChars.add(jiji?['char'] as String? ?? '-');
+      branchHanjas.add(jiji?['hanja'] as String? ?? '-');
+      branchElements.add(jiji?['element'] as String? ?? '-');
+      branchAnimals.add(jiji?['animal'] as String? ?? '-');
+
+      // 십성 계산
+      if (key == 'day') {
+        tenshinList.add('일간(나)');
+      } else {
+        final targetStem = cheongan?['char'] as String? ?? '';
+        tenshinList.add(_getTenshinForContext(dayStemChar, targetStem));
+      }
+    }
+
+    // 표 구성
+    final buf = StringBuffer();
+    buf.writeln('📜 사주팔자 명식 (四柱八字)');
+    buf.writeln('');
+
+    // 헤더
+    buf.writeln(
+        '        ${pillarLabels['hour']}  ${pillarLabels['day']}  ${pillarLabels['month']}  ${pillarLabels['year']}');
+
+    // 천간 행
+    buf.writeln(
+        '천간:    ${stemChars[0]}(${stemHanjas[0]})     ${stemChars[1]}(${stemHanjas[1]})     ${stemChars[2]}(${stemHanjas[2]})     ${stemChars[3]}(${stemHanjas[3]})');
+    buf.writeln(
+        '        ${stemElements[0]}       ${stemElements[1]}       ${stemElements[2]}       ${stemElements[3]}');
+
+    // 지지 행
+    buf.writeln(
+        '지지:    ${branchChars[0]}(${branchHanjas[0]})     ${branchChars[1]}(${branchHanjas[1]})     ${branchChars[2]}(${branchHanjas[2]})     ${branchChars[3]}(${branchHanjas[3]})');
+    buf.writeln(
+        '        ${branchAnimals[0]}       ${branchAnimals[1]}       ${branchAnimals[2]}       ${branchAnimals[3]}');
+    buf.writeln(
+        '        ${branchElements[0]}       ${branchElements[1]}       ${branchElements[2]}       ${branchElements[3]}');
+
+    // 십성 행
+    buf.writeln(
+        '십성:    ${tenshinList[0]}     ${tenshinList[1]}     ${tenshinList[2]}     ${tenshinList[3]}');
+
+    // 오행 분포
+    final elements = sajuData['elements'] as Map<String, dynamic>?;
+    if (elements != null) {
+      buf.writeln('');
+      final elementOrder = ['목', '화', '토', '금', '수'];
+      final elementParts = elementOrder
+          .map((e) => '$e(${_getElementHanja(e)}) ${elements[e] ?? 0}')
+          .join(' | ');
+      buf.writeln('오행 분포: $elementParts');
+    }
+
+    // 주된/부족한 오행
+    final dominant = sajuData['dominantElement'] as String?;
+    final lacking = sajuData['lackingElement'] as String?;
+    if (dominant != null && dominant.isNotEmpty) {
+      final parts = <String>[];
+      parts.add('주된 오행: $dominant(${_getElementHanja(dominant)})');
+      if (lacking != null && lacking.isNotEmpty) {
+        parts.add('부족한 오행: $lacking(${_getElementHanja(lacking)})');
+      }
+      buf.writeln(parts.join(' | '));
+    }
+
+    return buf.toString();
+  }
+
+  /// 오행 한자 매핑
+  String _getElementHanja(String element) {
+    const map = {'목': '木', '화': '火', '토': '土', '금': '金', '수': '水'};
+    return map[element] ?? element;
+  }
+
+  /// 십성 판단 (일간 기준 상생상극 관계)
+  /// CompactPillarTable._getTenshin() 로직 재사용
+  String _getTenshinForContext(String dayStem, String targetStem) {
+    if (dayStem.isEmpty || targetStem.isEmpty) return '-';
+
+    const stemElements = {
+      '갑': '목',
+      '을': '목',
+      '병': '화',
+      '정': '화',
+      '무': '토',
+      '기': '토',
+      '경': '금',
+      '신': '금',
+      '임': '수',
+      '계': '수',
+    };
+    const stemYinYang = {
+      '갑': '양',
+      '을': '음',
+      '병': '양',
+      '정': '음',
+      '무': '양',
+      '기': '음',
+      '경': '양',
+      '신': '음',
+      '임': '양',
+      '계': '음',
+    };
+
+    final dayElement = stemElements[dayStem] ?? '';
+    final targetElement = stemElements[targetStem] ?? '';
+    final dayYinYang = stemYinYang[dayStem] ?? '';
+    final targetYinYang = stemYinYang[targetStem] ?? '';
+
+    if (dayElement.isEmpty || targetElement.isEmpty) return '-';
+
+    final isSameYinYang = dayYinYang == targetYinYang;
+
+    // 같은 오행 = 비견/겁재
+    if (dayElement == targetElement) {
+      return isSameYinYang ? '비견' : '겁재';
+    }
+
+    // 나를 생하는 것 = 인성
+    const generatingMap = {'목': '수', '화': '목', '토': '화', '금': '토', '수': '금'};
+    if (generatingMap[dayElement] == targetElement) {
+      return isSameYinYang ? '편인' : '정인';
+    }
+
+    // 내가 생하는 것 = 식상
+    if (generatingMap[targetElement] == dayElement) {
+      return isSameYinYang ? '식신' : '상관';
+    }
+
+    // 나를 극하는 것 = 관성
+    const controllingMap = {'목': '금', '화': '수', '토': '목', '금': '화', '수': '토'};
+    if (controllingMap[dayElement] == targetElement) {
+      return isSameYinYang ? '편관' : '정관';
+    }
+
+    // 내가 극하는 것 = 재성
+    if (controllingMap[targetElement] == dayElement) {
+      return isSameYinYang ? '편재' : '정재';
+    }
+
+    return '-';
   }
 
   @override
