@@ -3,6 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 import { corsHeaders, handleCors } from '../_shared/cors.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
+import { authenticateUser } from '../_shared/auth.ts'
 
 type ProactiveImageCategory = 'meal' | 'workout'
 
@@ -74,6 +75,17 @@ serve(async (req: Request) => {
   const startedAt = Date.now()
 
   try {
+    const { user, error: authError } = await authenticateUser(req)
+    if (authError || !user) {
+      return authError ?? new Response(
+        JSON.stringify({ success: false, error: 'Unauthorized' } as GenerateCharacterProactiveImageResponse),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 401,
+        }
+      )
+    }
+
     const request = (await req.json()) as GenerateCharacterProactiveImageRequest
 
     if (!request.characterId || !request.category) {

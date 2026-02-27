@@ -19,6 +19,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { corsHeaders, handleCors } from '../_shared/cors.ts'
+import { authenticateUser } from '../_shared/auth.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 
 interface FreeChatContext {
@@ -183,8 +184,18 @@ serve(async (req: Request) => {
 
   const startTime = Date.now()
   const requestId = req.headers.get('x-request-id') || crypto.randomUUID()
+  let userId: string | undefined
 
   try {
+    const { user, error: authError } = await authenticateUser(req)
+    if (authError || !user) {
+      return authError ?? new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+    userId = user.id
+
     const { message, context }: FreeChatRequest = await req.json()
 
     // 유효성 검사
@@ -224,6 +235,7 @@ serve(async (req: Request) => {
 
     await UsageLogger.log({
       fortuneType: 'free-chat',
+      userId,
       requestId,
       provider: response.provider,
       model: response.model,
@@ -256,7 +268,7 @@ serve(async (req: Request) => {
       'gemini',
       FREE_CHAT_MODEL,
       error instanceof Error ? error.message : 'Unknown error',
-      undefined,
+      userId,
       { requestId, latencyMs: Date.now() - startTime }
     )
 

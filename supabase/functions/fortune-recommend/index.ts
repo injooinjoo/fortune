@@ -16,6 +16,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { corsHeaders, handleCors } from '../_shared/cors.ts'
+import { authenticateUser } from '../_shared/auth.ts'
 
 // 추천 결과 인터페이스
 interface FortuneRecommendation {
@@ -172,6 +173,14 @@ serve(async (req: Request) => {
   const startTime = Date.now()
 
   try {
+    const { user, error: authError } = await authenticateUser(req)
+    if (authError || !user) {
+      return authError ?? new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
     const { query, limit = 3 }: RecommendRequest = await req.json()
 
     // 유효성 검사
