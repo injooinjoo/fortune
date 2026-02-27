@@ -1,0 +1,53 @@
+{
+  "generated_at": "2026-02-27T17:55:53.161Z",
+  "expected_frames": 88,
+  "captured_count": 88,
+  "blocked_count": 0,
+  "by_theme": {
+    "light": 44,
+    "dark": 44
+  },
+  "by_surface_type": {
+    "route": 68,
+    "chat_rep": 20
+  },
+  "reachable_surface_count": 44,
+  "missing_captures": [],
+  "identical_theme_pairs": [
+    {
+      "surface_id": "route_wellness_meditation",
+      "light_hash": "40be570e066333f51ad129aae8adb29c579080b0b4564ce18ce98a541218f510",
+      "dark_hash": "40be570e066333f51ad129aae8adb29c579080b0b4564ce18ce98a541218f510"
+    }
+  ],
+  "figma_frames": {
+    "index_path": "/Users/jacobmac/Desktop/Dev/fortune/artifacts/design/mobile/v2/figma_frames/index.json",
+    "total_targets": 88
+  },
+  "components_pages": {
+    "index_path": "/Users/jacobmac/Desktop/Dev/fortune/artifacts/design/mobile/v2/components/index.json",
+    "total_targets": 2,
+    "has_light": true,
+    "has_dark": true
+  },
+  "old61_mapping": {
+    "path": "/Users/jacobmac/Desktop/Dev/fortune/artifacts/design/mobile/v2/old61_mapping.json",
+    "summary": {
+      "total": 61,
+      "kept": 15,
+      "replaced": 46,
+      "excluded": 0
+    }
+  },
+  "logs": {
+    "capture_log_entries": 88,
+    "blocked_entries": 0
+  },
+  "pass": {
+    "captures_complete": true,
+    "no_popup_or_notfound_blocked": true,
+    "theme_variation_detected": false,
+    "components_ready": true,
+    "old61_mapping_ready": true
+  }
+}

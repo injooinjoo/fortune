@@ -1,0 +1,21 @@
+{
+  "generated_at": "2026-02-27T17:43:56.795Z",
+  "udid": "F1EEA05E-D150-4281-BC6E-8684E5AF470C",
+  "themes": [
+    "light",
+    "dark"
+  ],
+  "total_reachable_surfaces": 44,
+  "expected_captures": 88,
+  "captured_count": 88,
+  "blocked_count": 0,
+  "by_theme": {
+    "light": 44,
+    "dark": 44
+  },
+  "by_surface_type": {
+    "route": 68,
+    "chat_rep": 20
+  },
+  "output_root": "/Users/jacobmac/Desktop/Dev/fortune/artifacts/design/mobile/v2/raw"
+}

@@ -1,0 +1,69 @@
+{
+  "appScheme": "com.beyond.fortune",
+  "appHost": "deeplink",
+  "targetDevice": {
+    "name": "iPhone 16 Pro Max",
+    "points": { "width": 440, "height": 956 }
+  },
+  "themes": ["light", "dark"],
+  "routeSurfaces": [
+    { "id": "route_splash", "path": "/splash", "label": "Splash" },
+    { "id": "route_signup", "path": "/signup", "label": "Signup" },
+    { "id": "route_onboarding", "path": "/onboarding", "label": "Onboarding" },
+    { "id": "route_onboarding_toss_style", "path": "/onboarding/toss-style", "label": "Onboarding Toss Style" },
+    { "id": "route_chat", "path": "/chat", "label": "Chat Home" },
+    { "id": "route_home", "path": "/home", "label": "Home" },
+    { "id": "route_fortune", "path": "/fortune", "label": "Fortune Tab" },
+    { "id": "route_history", "path": "/history", "label": "History" },
+    { "id": "route_more", "path": "/more", "label": "More" },
+    { "id": "route_profile", "path": "/profile", "label": "Profile" },
+    { "id": "route_profile_edit", "path": "/profile/edit", "label": "Profile Edit" },
+    { "id": "route_profile_saju", "path": "/profile/saju", "label": "Profile Saju" },
+    { "id": "route_profile_saju_summary", "path": "/profile/saju-summary", "label": "Profile Saju Summary" },
+    { "id": "route_profile_elements", "path": "/profile/elements", "label": "Profile Elements" },
+    { "id": "route_profile_verification", "path": "/profile/verification", "label": "Profile Verification" },
+    { "id": "route_profile_social_accounts", "path": "/profile/social-accounts", "label": "Profile Social Accounts" },
+    { "id": "route_profile_phone_management", "path": "/profile/phone-management", "label": "Profile Phone Management" },
+    { "id": "route_profile_notifications", "path": "/profile/notifications", "label": "Profile Notifications" },
+    { "id": "route_profile_font", "path": "/profile/font", "label": "Profile Font" },
+    { "id": "route_profile_account_deletion", "path": "/profile/account-deletion", "label": "Profile Account Deletion" },
+    { "id": "route_premium", "path": "/premium", "label": "Premium" },
+    { "id": "route_manseryeok", "path": "/manseryeok", "label": "Manseryeok" },
+    { "id": "route_trend", "path": "/trend", "label": "Trend" },
+    { "id": "route_wellness", "path": "/wellness", "label": "Wellness" },
+    { "id": "route_wellness_meditation", "path": "/wellness/meditation", "label": "Wellness Meditation" },
+    { "id": "route_health_toss", "path": "/health-toss", "label": "Health Toss" },
+    { "id": "route_exercise", "path": "/exercise", "label": "Exercise" },
+    { "id": "route_sports_game", "path": "/sports-game", "label": "Sports Game" },
+    { "id": "route_subscription", "path": "/subscription", "label": "Subscription" },
+    { "id": "route_token_purchase", "path": "/token-purchase", "label": "Token Purchase" },
+    { "id": "route_help", "path": "/help", "label": "Help" },
+    { "id": "route_privacy_policy", "path": "/privacy-policy", "label": "Privacy Policy" },
+    { "id": "route_terms_of_service", "path": "/terms-of-service", "label": "Terms Of Service" },
+    { "id": "route_admin_celebrity_crawling", "path": "/admin/celebrity-crawling", "label": "Admin Celebrity Crawling" },
+    { "id": "route_trend_psychology_sample", "path": "/trend/psychology/sample", "label": "Trend Psychology Sample" },
+    { "id": "route_trend_worldcup_sample", "path": "/trend/worldcup/sample", "label": "Trend Worldcup Sample" },
+    { "id": "route_trend_balance_sample", "path": "/trend/balance/sample", "label": "Trend Balance Sample" }
+  ],
+  "chatRepresentatives": [
+    { "id": "chat_rep_haneul", "name": "하늘", "category": "라이프" },
+    { "id": "chat_rep_muhyeon_dosa", "name": "무현 도사", "category": "전통" },
+    { "id": "chat_rep_stella", "name": "스텔라", "category": "별자리" },
+    { "id": "chat_rep_dr_mind", "name": "Dr. 마인드", "category": "심리" },
+    { "id": "chat_rep_rose", "name": "로제", "category": "연애" },
+    { "id": "chat_rep_james_kim", "name": "제임스 김", "category": "재물" },
+    { "id": "chat_rep_lucky", "name": "럭키", "category": "행운" },
+    { "id": "chat_rep_marco", "name": "마르코", "category": "스포츠" },
+    { "id": "chat_rep_lina", "name": "리나", "category": "풍수" },
+    { "id": "chat_rep_luna", "name": "루나", "category": "타로" }
+  ],
+  "errorPatterns": [
+    "Page not found",
+    "찾을 수 없습니다"
+  ],
+  "popupPatterns": [
+    "Open in",
+    "Open in \"ZPZG\"",
+    "Open in “ZPZG”"
+  ]
+}

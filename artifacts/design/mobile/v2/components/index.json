@@ -1,0 +1,24 @@
+{
+  "generated_at": "2026-02-27T17:44:16.241Z",
+  "inventory_path": "/Users/jacobmac/Desktop/Dev/fortune/artifacts/design/mobile/v2/live_inventory.json",
+  "raw_root": "/Users/jacobmac/Desktop/Dev/fortune/artifacts/design/mobile/v2/raw",
+  "output_root": "/Users/jacobmac/Desktop/Dev/fortune/artifacts/design/mobile/v2/components",
+  "total_targets": 2,
+  "crop_count_per_theme": 8,
+  "targets": [
+    {
+      "theme": "light",
+      "section": "Mobile Components v2 / Light",
+      "frame_name": "chat_components / light",
+      "source_surface_id": "route_chat",
+      "relative_path": "components/light/index.html"
+    },
+    {
+      "theme": "dark",
+      "section": "Mobile Components v2 / Dark",
+      "frame_name": "chat_components / dark",
+      "source_surface_id": "route_chat",
+      "relative_path": "components/dark/index.html"
+    }
+  ]
+}
