@@ -4,8 +4,8 @@
 export const LLM_GLOBAL_CONFIG = {
   provider: (Deno.env.get('LLM_PROVIDER') || 'gemini') as 'openai' | 'gemini' | 'anthropic' | 'grok',
   defaultModel: Deno.env.get('LLM_DEFAULT_MODEL') || 'gemini-2.0-flash-lite',
-  defaultTemperature: 1,
-  defaultMaxTokens: 8192,
+  defaultTemperature: 0.7,
+  defaultMaxTokens: 2048,
 } as const
 
 // 운세별 커스텀 모델 (선택사항)

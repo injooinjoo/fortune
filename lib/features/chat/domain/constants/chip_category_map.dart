@@ -47,7 +47,6 @@ const Map<String, String> chipToCategoryMap = {
   'wish': 'interactive',
   'fortune-cookie': 'interactive',
   'celebrity': 'interactive',
-  'gratitude': 'interactive',
 
   // ============ petFamily (가족/반려동물) ============
   'family': 'petFamily',

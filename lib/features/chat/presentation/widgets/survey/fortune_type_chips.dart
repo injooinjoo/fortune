@@ -193,8 +193,6 @@ class _FortuneTypeChip extends StatelessWidget {
         return '시험운';
       case FortuneSurveyType.moving:
         return '이사운';
-      case FortuneSurveyType.gratitude:
-        return '감사일기';
       case FortuneSurveyType.yearlyEncounter:
         return '올해의 인연';
       case FortuneSurveyType.gameEnhance:

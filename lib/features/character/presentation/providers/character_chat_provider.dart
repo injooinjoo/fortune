@@ -392,8 +392,6 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         return '$d의 오늘의 운세 캘린더를 확인해볼게요~ 📅';
       case 'fortune-cookie':
         return '$d에게 행운의 메시지를 준비해볼게요~ 🥠';
-      case 'gratitude':
-        return '$d과 함께 감사 일기를 써볼게요~ 🙏';
       // ─── 무현 도사 (traditional) ───
       case 'face-reading':
         return '$d의 관상을 한번 봐드리겠습니다... 🔮';
@@ -560,7 +558,6 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       case 'daily-calendar':
         return {'birth', 'zodiac'};
       case 'fortune-cookie':
-      case 'gratitude':
         return {};
       default:
         return {'birth', 'gender', 'zodiac', 'chineseZodiac'};
@@ -755,9 +752,6 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       case 'fortune-cookie':
         _addSurveyLine(lines, answers, 'mood', '🥠 오늘 기분');
         break;
-      case 'gratitude':
-        _addSurveyLine(lines, answers, 'theme', '🙏 감사 테마');
-        break;
       // ─── 럭키 (lucky) ───
       case 'lucky-items':
         _addSurveyLine(lines, answers, 'category', '🍀 카테고리');
@@ -803,8 +797,6 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         return '오늘의 운세 캘린더 준비할게요! 📅';
       case 'fortune-cookie':
         return '행운의 메시지 열어볼게요~ 🥠';
-      case 'gratitude':
-        return '함께 감사한 마음을 담아볼게요~ 🙏';
       // ─── 무현 도사 (traditional) ───
       case 'face-reading':
         return '관상을 살펴보겠습니다... 잠시만 기다려주십시오 🔮';
@@ -1308,6 +1300,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       fallbackText,
       _characterId,
       origin: MessageOrigin.aiReply,
+      sajuData: sajuData,
     );
     final isCurrentChatActive = _isCurrentChatActive();
     final nextUnreadCount =
@@ -2715,10 +2708,6 @@ $enrichedContext
           return null;
         }
 
-      case 'gratitude':
-        // gratitude는 API 없음 - 캐릭터가 감사일기 대화를 이끌도록
-        // null 반환 → 기존 generic 컨텍스트 사용 (대화형이므로 OK)
-        return null;
       case 'wish':
         final userId = await _resolveFortuneUserId();
         final wishText = answers['wishContent']?.toString() ?? '';

@@ -328,14 +328,25 @@ ${zodiacSign ? `- 별자리: ${zodiacSign}` : ''}
       metadata: { name, birthDate, gender, zodiacAnimal, goal, goalLabel, isPremium }
     })
 
-    // JSON 파싱
+    // JSON 파싱 (markdown code block 제거 포함)
     let fortuneData: any
     try {
-      fortuneData = typeof response.content === 'string'
-        ? JSON.parse(response.content)
-        : response.content
+      let contentToParse = response.content
+
+      // markdown code block 제거 (```json ... ``` 또는 ``` ... ```)
+      if (typeof contentToParse === 'string') {
+        // ```json 또는 ``` 로 시작하는 code block 제거
+        const codeBlockMatch = contentToParse.match(/```(?:json)?\s*([\s\S]*?)```/)
+        if (codeBlockMatch) {
+          contentToParse = codeBlockMatch[1].trim()
+        }
+        fortuneData = JSON.parse(contentToParse)
+      } else {
+        fortuneData = contentToParse
+      }
     } catch (parseError) {
       console.error(`[fortune-new-year] ❌ JSON 파싱 실패:`, parseError)
+      console.error(`[fortune-new-year] 원본 응답:`, response.content?.substring(0, 500))
       throw new Error('LLM 응답을 파싱할 수 없습니다')
     }
 

@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>chat_components / light</title>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif;
+      background: #f8fafc;
+      color: #111827;
+    }
+    .stage {
+      width: 1800px;
+      min-height: 1100px;
+      margin: 0 auto;
+      padding: 36px;
+      display: grid;
+      gap: 16px;
+      align-content: start;
+    }
+    .header {
+      display: grid;
+      gap: 4px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: -0.02em;
+    }
+    .header p {
+      margin: 0;
+      color: #6b7280;
+      font-size: 13px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .tile {
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 14px;
+      padding: 10px;
+      display: grid;
+      gap: 8px;
+      align-content: start;
+    }
+    .crop {
+      --scale: 0.26;
+      width: calc(var(--w) * var(--scale) * 1px);
+      height: calc(var(--h) * var(--scale) * 1px);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #d1d5db;
+      background: #000;
+      position: relative;
+    }
+    .crop img {
+      position: absolute;
+      left: calc(var(--x) * var(--scale) * -1px);
+      top: calc(var(--y) * var(--scale) * -1px);
+      width: calc(var(--img-w) * var(--scale) * 1px);
+      height: calc(var(--img-h) * var(--scale) * 1px);
+      object-fit: cover;
+      display: block;
+    }
+    .meta { display: grid; gap: 2px; }
+    .name { font-size: 13px; font-weight: 700; color: #111827; }
+    .desc { font-size: 12px; color: #6b7280; line-height: 1.35; }
+  </style>
+</head>
+<body>
+  <main class="stage" data-section="Mobile Components v2 / Light" data-theme="light" data-source-surface-id="route_chat">
+    <section class="header">
+      <h1>chat_components / light</h1>
+      <p>Real-capture crop tiles sourced from <strong>route_chat</strong> (light)</p>
+    </section>
+    <section class="grid">
+      <article class="tile">
+        <div class="crop" style="--x:0;--y:0;--w:1320;--h:150;--img-w:1320;--img-h:2868;">
+          <img src="../../raw/route_chat/light.png" alt="status_bar" />
+        </div>
+        <div class="meta">
+          <div class="name">Status Bar</div>
+          <div class="desc">Top status indicators</div>
+        </div>
+      </article>
+    
+      <article class="tile">
+        <div class="crop" style="--x:0;--y:150;--w:1320;--h:230;--img-w:1320;--img-h:2868;">
+          <img src="../../raw/route_chat/light.png" alt="chat_header" />
+        </div>
+        <div class="meta">
+          <div class="name">Chat Header</div>
+          <div class="desc">Title + actions area</div>
+        </div>
+      </article>
+    
+      <article class="tile">
+        <div class="crop" style="--x:0;--y:360;--w:1320;--h:170;--img-w:1320;--img-h:2868;">
+          <img src="../../raw/route_chat/light.png" alt="chip_row" />
+        </div>
+        <div class="meta">
+          <div class="name">Suggestion Chips</div>
+          <div class="desc">Horizontal chip row</div>
+        </div>
+      </article>
+    
+      <article class="tile">
+        <div class="crop" style="--x:150;--y:560;--w:880;--h:220;--img-w:1320;--img-h:2868;">
+          <img src="../../raw/route_chat/light.png" alt="bubble_ai_1" />
+        </div>
+        <div class="meta">
+          <div class="name">AI Bubble 1</div>
+          <div class="desc">Primary assistant message bubble</div>
+        </div>
+      </article>
+    
+      <article class="tile">
+        <div class="crop" style="--x:150;--y:810;--w:900;--h:220;--img-w:1320;--img-h:2868;">
+          <img src="../../raw/route_chat/light.png" alt="bubble_ai_2" />
+        </div>
+        <div class="meta">
+          <div class="name">AI Bubble 2</div>
+          <div class="desc">Secondary assistant bubble variant</div>
+        </div>
+      </article>
+    
+      <article class="tile">
+        <div class="crop" style="--x:420;--y:1160;--w:780;--h:190;--img-w:1320;--img-h:2868;">
+          <img src="../../raw/route_chat/light.png" alt="bubble_user" />
+        </div>
+        <div class="meta">
+          <div class="name">User Bubble</div>
+          <div class="desc">User-side reply bubble</div>
+        </div>
+      </article>
+    
+      <article class="tile">
+        <div class="crop" style="--x:130;--y:1360;--w:1040;--h:620;--img-w:1320;--img-h:2868;">
+          <img src="../../raw/route_chat/light.png" alt="result_card" />
+        </div>
+        <div class="meta">
+          <div class="name">Insight Card</div>
+          <div class="desc">Rich result card cluster</div>
+        </div>
+      </article>
+    
+      <article class="tile">
+        <div class="crop" style="--x:50;--y:2600;--w:1220;--h:200;--img-w:1320;--img-h:2868;">
+          <img src="../../raw/route_chat/light.png" alt="chat_input" />
+        </div>
+        <div class="meta">
+          <div class="name">Input Bar</div>
+          <div class="desc">Message input + voice action</div>
+        </div>
+      </article>
+    
+    </section>
+  </main>
+</body>
+</html>

@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../domain/models/chat_message.dart';
+import 'chat_audio_player.dart';
 import 'chat_career_result_card.dart';
+import 'chat_image_bubble.dart';
+import 'chat_rich_content_card.dart';
 import 'chat_moving_result_card.dart';
 import 'celebrity/celebrity_card_factory.dart';
 import 'chat_fortune_result_card.dart';
@@ -12,7 +15,6 @@ import 'chat_match_insight_card.dart';
 import 'chat_ootd_result_card.dart';
 import 'chat_saju_result_card.dart';
 import 'chat_talisman_result_card.dart';
-import 'chat_gratitude_result_card.dart';
 import 'chat_coaching_result_card.dart';
 import 'chat_decision_result_card.dart';
 import 'chat_daily_review_card.dart';
@@ -36,10 +38,14 @@ class ChatMessageBubble extends ConsumerWidget {
   final void Function(String messageId, BuildContext context)?
       onFortuneResultRendered;
 
+  /// 좋아요 버튼 클릭 시 호출되는 콜백
+  final void Function(String messageId)? onLikeTap;
+
   const ChatMessageBubble({
     super.key,
     required this.message,
     this.onFortuneResultRendered,
+    this.onLikeTap,
   });
 
   @override
@@ -47,6 +53,36 @@ class ChatMessageBubble extends ConsumerWidget {
     final colors = context.colors;
     final typography = context.typography;
     final isUser = message.type == ChatMessageType.user;
+
+    // ============ 리치 컨텐츠 메시지 타입 ============
+
+    // 이미지 메시지 표시
+    if (message.type == ChatMessageType.image && message.hasImage) {
+      return ChatImageBubble(
+        imagePath: message.imagePath!,
+        caption: message.imageCaption,
+        isUser: isUser,
+      );
+    }
+
+    // 오디오 메시지 표시
+    if (message.type == ChatMessageType.audio && message.hasAudio) {
+      return ChatAudioPlayer(
+        audioPath: message.audioPath!,
+        durationSeconds: message.audioDurationSeconds,
+        isUser: isUser,
+      );
+    }
+
+    // 리치 컨텐츠 카드 표시
+    if (message.type == ChatMessageType.richContent &&
+        message.richContent != null) {
+      return ChatRichContentCard(
+        content: message.richContent!,
+      );
+    }
+
+    // ============ 기존 메시지 타입 ============
 
     // 성격 DNA 결과 카드 표시
     if (message.type == ChatMessageType.personalityDnaResult &&
@@ -298,25 +334,6 @@ class ChatMessageBubble extends ConsumerWidget {
       );
     }
 
-    // 감사일기 결과 카드 표시 (일기장 스타일)
-    if (message.type == ChatMessageType.gratitudeResult) {
-      return FortuneResultScrollWrapper(
-        messageId: message.id,
-        onRendered: onFortuneResultRendered,
-        child: Container(
-          width: double.infinity,
-          alignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
-          child: ChatGratitudeResultCard(
-            gratitude1: message.gratitude1 ?? '',
-            gratitude2: message.gratitude2 ?? '',
-            gratitude3: message.gratitude3 ?? '',
-            date: message.gratitudeDate ?? DateTime.now(),
-          ),
-        ),
-      );
-    }
-
     // AI 코칭 결과 카드 표시
     if (message.type == ChatMessageType.coachingResult) {
       return FortuneResultScrollWrapper(
@@ -452,24 +469,69 @@ class ChatMessageBubble extends ConsumerWidget {
       ),
       child: Align(
         alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-        child: Container(
-          constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width * 0.75,
-          ),
-          padding: const EdgeInsets.symmetric(
-            horizontal: DSSpacing.md,
-            vertical: DSSpacing.sm,
-          ),
-          decoration: BoxDecoration(
-            color: isUser ? colors.userBubble : colors.backgroundSecondary,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Text(
-            message.text ?? '',
-            style: typography.bodyMedium.copyWith(
-              color: colors.textPrimary,
+        child: Column(
+          crossAxisAlignment:
+              isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.75,
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: DSSpacing.md,
+                vertical: DSSpacing.sm,
+              ),
+              decoration: BoxDecoration(
+                color: isUser ? colors.userBubble : colors.backgroundSecondary,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                message.text ?? '',
+                style: typography.bodyMedium.copyWith(
+                  color: colors.textPrimary,
+                ),
+              ),
             ),
-          ),
+            // AI 메시지에만 좋아요 버튼 표시
+            if (!isUser && onLikeTap != null)
+              _LikeButton(
+                isLiked: message.isLiked ?? false,
+                onTap: () => onLikeTap!(message.id),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// 좋아요 버튼 위젯
+class _LikeButton extends StatelessWidget {
+  final bool isLiked;
+  final VoidCallback onTap;
+
+  const _LikeButton({
+    required this.isLiked,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: const EdgeInsets.only(
+          left: DSSpacing.xs,
+          top: DSSpacing.xxs,
+        ),
+        child: Icon(
+          isLiked ? Icons.thumb_up : Icons.thumb_up_outlined,
+          size: 16,
+          color: isLiked ? colors.accent : colors.textTertiary,
         ),
       ),
     );

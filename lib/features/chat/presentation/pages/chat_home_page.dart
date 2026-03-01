@@ -1495,25 +1495,10 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     _handleSurveyAnswerValue(text.trim(), text.trim());
   }
 
-  /// 감사일기 리액션 메시지 풀
-  static const _gratitudeReactions = [
-    '와, 정말 멋진 일이네요! 💛',
-    '듣기만 해도 제 마음이 다 따뜻해져요 🥰',
-    '그런 순간이 있었군요, 정말 소중하네요 ✨',
-    '일상 속 작은 행복을 발견하셨네요 🌸',
-  ];
-
   /// 범용 설문 답변 처리 (옵션 외 입력: 텍스트, 날짜, 슬라이더 등)
   void _handleSurveyAnswerValue(dynamic value, String displayText) {
     final chatNotifier = ref.read(chatMessagesProvider.notifier);
     final surveyNotifier = ref.read(chatSurveyProvider.notifier);
-
-    // 현재 설문 상태 확인 (답변 처리 전)
-    final beforeState = ref.read(chatSurveyProvider);
-    final isGratitude = beforeState.activeProgress?.config.fortuneType ==
-        FortuneSurveyType.gratitude;
-    final gratitudeStepIndex =
-        beforeState.activeProgress?.currentStepIndex ?? 0;
 
     // 사용자 답변 메시지
     chatNotifier.addUserMessage(displayText);
@@ -1522,48 +1507,18 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     // 답변 처리
     surveyNotifier.answerCurrentStep(value);
 
-    // 감사일기인 경우 리액션 추가
-    if (isGratitude && gratitudeStepIndex < 2) {
-      // 아직 완료되지 않은 경우에만 리액션 표시
-      Future.delayed(const Duration(milliseconds: 300), () {
-        // 랜덤 리액션 선택
-        final reaction = _gratitudeReactions[
-            gratitudeStepIndex % _gratitudeReactions.length];
-        chatNotifier.addAiMessage(reaction);
+    // 설문 처리
+    Future.delayed(const Duration(milliseconds: 300), () {
+      final surveyState = ref.read(chatSurveyProvider);
+
+      if (surveyState.isCompleted) {
+        _handleSurveyComplete(surveyState);
+      } else if (surveyState.activeProgress != null) {
+        final question = _buildDynamicQuestion(surveyState.activeProgress!);
+        chatNotifier.addAiMessage(question);
         _scrollToBottom();
-
-        // 다음 질문 표시
-        Future.delayed(const Duration(milliseconds: 500), () {
-          final surveyState = ref.read(chatSurveyProvider);
-          if (surveyState.activeProgress != null && !surveyState.isCompleted) {
-            final question = _buildDynamicQuestion(surveyState.activeProgress!);
-            chatNotifier.addAiMessage(question);
-            _scrollToBottom();
-          }
-        });
-      });
-    } else if (isGratitude && gratitudeStepIndex == 2) {
-      // 마지막 답변 후 완료 처리
-      Future.delayed(const Duration(milliseconds: 300), () {
-        final surveyState = ref.read(chatSurveyProvider);
-        if (surveyState.isCompleted) {
-          _handleSurveyComplete(surveyState);
-        }
-      });
-    } else {
-      // 일반 설문 처리
-      Future.delayed(const Duration(milliseconds: 300), () {
-        final surveyState = ref.read(chatSurveyProvider);
-
-        if (surveyState.isCompleted) {
-          _handleSurveyComplete(surveyState);
-        } else if (surveyState.activeProgress != null) {
-          final question = _buildDynamicQuestion(surveyState.activeProgress!);
-          chatNotifier.addAiMessage(question);
-          _scrollToBottom();
-        }
-      });
-    }
+      }
+    });
   }
 
   /// 관계 깊이 값 매핑 (Flutter → Edge Function)
@@ -1733,13 +1688,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     // 사주 분석 특별 처리 (ChatSajuResultCard 사용)
     if (completedType == FortuneSurveyType.traditional) {
       _handleSajuRequest();
-      surveyNotifier.clearCompleted();
-      return;
-    }
-
-    // 감사일기 특별 처리 (API 호출 없이 로컬 표시)
-    if (completedType == FortuneSurveyType.gratitude) {
-      _handleGratitudeComplete(completedData);
       surveyNotifier.clearCompleted();
       return;
     }
@@ -1994,36 +1942,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       );
       surveyNotifier.clearCompleted();
       _scrollToBottom();
-    });
-  }
-
-  /// 감사일기 완료 처리 (API 호출 없이 로컬 표시 - 일기장 스타일 카드)
-  void _handleGratitudeComplete(Map<String, dynamic> data) {
-    final chatNotifier = ref.read(chatMessagesProvider.notifier);
-
-    final gratitude1 = data['gratitude1'] as String? ?? '';
-    final gratitude2 = data['gratitude2'] as String? ?? '';
-    final gratitude3 = data['gratitude3'] as String? ?? '';
-
-    // 마지막 답변에 대한 리액션 표시
-    chatNotifier.addAiMessage('그런 순간이 있었군요, 정말 소중하네요 ✨');
-    _scrollToBottom();
-
-    chatNotifier.showTypingIndicator();
-
-    Future.delayed(const Duration(milliseconds: 500), () {
-      // 일기장 스타일 결과 카드 표시
-      chatNotifier.addGratitudeResultMessage(
-        gratitude1: gratitude1,
-        gratitude2: gratitude2,
-        gratitude3: gratitude3,
-      );
-      _scrollToBottom();
-
-      // 완료 후 추천 칩 표시 (스크롤 없이 - 결과가 보이게 유지)
-      Future.delayed(const Duration(milliseconds: 500), () {
-        chatNotifier.addSystemMessage();
-      });
     });
   }
 
@@ -3881,11 +3799,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         // _handleProfileCreationComplete에서 별도 처리됨
         throw UnsupportedError('profileCreation은 운세 API를 사용하지 않습니다');
 
-      case FortuneSurveyType.gratitude:
-        // gratitude는 API 호출 없이 로컬에서 처리
-        // _handleGratitudeComplete에서 별도 처리됨
-        throw UnsupportedError('gratitude는 운세 API를 사용하지 않습니다');
-
       case FortuneSurveyType.yearlyEncounter:
         // 올해의 인연: AI 이미지 생성 + 텍스트 분석
         return apiService.getFortune(
@@ -4046,8 +3959,6 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         return '오늘의 이사운';
       case FortuneSurveyType.profileCreation:
         return '프로필 생성';
-      case FortuneSurveyType.gratitude:
-        return '감사일기';
       case FortuneSurveyType.yearlyEncounter:
         return '올해의 인연';
     }
@@ -4896,6 +4807,11 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
                                     onTypingIndicatorRendered: _scrollToBottom,
                                     onFortuneResultRendered:
                                         _handleFortuneResultRendered,
+                                    onLikeTap: (messageId) {
+                                      ref
+                                          .read(chatMessagesProvider.notifier)
+                                          .toggleMessageLike(messageId);
+                                    },
                                   ),
                           ),
 

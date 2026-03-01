@@ -457,8 +457,6 @@ class IntentDetector {
         return '시험 가이드를 확인해볼까요?';
       case FortuneSurveyType.moving:
         return '이사 길일을 알려드릴까요?';
-      case FortuneSurveyType.gratitude:
-        return '감사일기를 작성해볼까요?';
       case FortuneSurveyType.yearlyEncounter:
         return '올해 만나게 될 인연을 미리 만나볼까요?';
     }

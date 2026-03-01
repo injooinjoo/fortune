@@ -102,10 +102,10 @@ class AppDimensions {
   static const int gridColumns = 12;
   static const double gridGutterWidth = 16.0;
 
-  // Responsive breakpoints
+  // Responsive breakpoints (iPad 최소 너비 기준)
   static const double breakpointMobile = 0.0;
-  static const double breakpointTablet = 600.0;
-  static const double breakpointDesktop = 1024.0;
+  static const double breakpointTablet = 768.0; // iPad 세로 모드 최소 너비
+  static const double breakpointDesktop = 1024.0; // iPad 가로 모드 / 작은 노트북
   static const double breakpointWide = 1440.0;
 
   // Animation values

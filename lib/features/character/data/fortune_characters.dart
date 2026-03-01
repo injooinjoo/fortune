@@ -104,7 +104,6 @@ EXAMPLE LINES:
     'new-year',
     'daily-calendar',
     'fortune-cookie',
-    'gratitude'
   ],
   specialtyCategory: 'lifestyle',
   canCallFortune: true,

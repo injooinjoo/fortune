@@ -389,6 +389,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
     final isMyTurn = hasConversation && isLastMessageFromCharacter;
 
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onHorizontalDragUpdate: _handleDragUpdate,
       onHorizontalDragEnd: (_) {},
       onTap: () {
@@ -413,6 +414,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                   // 알림 끄기 버튼
                   Expanded(
                     child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTap: () => _onToggleMute(context),
                       child: Container(
                         color: Colors.grey[500],
@@ -438,6 +440,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                   // 나가기 버튼
                   Expanded(
                     child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTap: () => _onDelete(context),
                       child: Container(
                         color: Colors.red,

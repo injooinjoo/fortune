@@ -40,19 +40,26 @@ class SocialLoginBottomSheet {
             '🌐 [BOTTOMSHEET] textTheme.bodyLarge.color: ${Theme.of(bottomSheetContext).textTheme.bodyLarge?.color}');
 
         bool isTapLocked = false;
+        String? activeLoadingProvider;
 
         return StatefulBuilder(
           builder: (context, setSheetState) {
             final colors = context.colors;
             final isButtonDisabled = isProcessing || isTapLocked;
 
-            Future<void> handleSocialTap(SocialLoginAction action) async {
+            Future<void> handleSocialTap(
+                SocialLoginAction action, String provider) async {
               if (isProcessing || isTapLocked) return;
               setSheetState(() {
                 isTapLocked = true;
+                activeLoadingProvider = provider;
               });
 
-              Navigator.of(bottomSheetContext).pop();
+              // 잠시 로딩 상태 표시 후 닫기 (사용자 피드백)
+              await Future<void>.delayed(const Duration(milliseconds: 300));
+              if (bottomSheetContext.mounted) {
+                Navigator.of(bottomSheetContext).pop();
+              }
               await Future<void>.delayed(const Duration(milliseconds: 80));
               await action();
             }
@@ -91,9 +98,11 @@ class SocialLoginBottomSheet {
                             context: context,
                             onPressed: isButtonDisabled
                                 ? null
-                                : () => handleSocialTap(onGoogleLogin),
+                                : () =>
+                                    handleSocialTap(onGoogleLogin, 'google'),
                             type: 'google',
-                            colors: colors),
+                            colors: colors,
+                            isLoading: activeLoadingProvider == 'google'),
 
                         // Apple Login - iOS/Web only (Android OAuth 미지원)
                         if (!Platform.isAndroid) ...[
@@ -102,9 +111,11 @@ class SocialLoginBottomSheet {
                               context: context,
                               onPressed: isButtonDisabled
                                   ? null
-                                  : () => handleSocialTap(onAppleLogin),
+                                  : () =>
+                                      handleSocialTap(onAppleLogin, 'apple'),
                               type: 'apple',
-                              colors: colors),
+                              colors: colors,
+                              isLoading: activeLoadingProvider == 'apple'),
                         ],
 
                         // Safe area bottom padding
@@ -123,11 +134,14 @@ class SocialLoginBottomSheet {
   }
 
   /// 소셜 로그인 버튼 빌더
-  static Widget _buildSocialButton(
-      {required BuildContext context,
-      required VoidCallback? onPressed,
-      required String type,
-      required DSColorScheme colors}) {
+  /// [isLoading]이 true일 때 로딩 인디케이터 표시 (해당 버튼만)
+  static Widget _buildSocialButton({
+    required BuildContext context,
+    required VoidCallback? onPressed,
+    required String type,
+    required DSColorScheme colors,
+    bool isLoading = false,
+  }) {
     Widget icon;
     String text;
 
@@ -190,20 +204,47 @@ class SocialLoginBottomSheet {
           borderRadius: BorderRadius.circular(26),
           border: isApple ? null : Border.all(color: borderColor, width: 1),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            icon,
-            const SizedBox(width: 12),
-            Text(
-              text,
-              style: context.labelLarge.copyWith(
-                fontWeight: FontWeight.w600,
-                color: isApple ? colors.ctaForeground : colors.textPrimary,
+        child: isLoading
+            // 로딩 상태: 인디케이터 + 텍스트
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color:
+                          isApple ? colors.ctaForeground : colors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    '${type == 'apple' ? 'Apple' : type == 'google' ? 'Google' : type == 'kakao' ? '카카오' : '네이버'} 계정 연결 중...',
+                    style: context.labelLarge.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color:
+                          isApple ? colors.ctaForeground : colors.textPrimary,
+                    ),
+                  ),
+                ],
+              )
+            // 기본 상태: 아이콘 + 텍스트
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  icon,
+                  const SizedBox(width: 12),
+                  Text(
+                    text,
+                    style: context.labelLarge.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color:
+                          isApple ? colors.ctaForeground : colors.textPrimary,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }

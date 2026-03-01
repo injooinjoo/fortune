@@ -13,6 +13,7 @@ import '../../../../presentation/widgets/common/custom_card.dart';
 import '../../../../core/constants/in_app_products.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/subscription_provider.dart';
+import '../../../../shared/components/toast.dart';
 
 class TokenPurchasePage extends ConsumerStatefulWidget {
   const TokenPurchasePage({super.key});
@@ -958,8 +959,43 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
             ],
           ),
         ),
+        const SizedBox(height: 12),
+        // 구매 복원 버튼 (App Store 3.1.2 준수)
+        Center(
+          child: TextButton.icon(
+            onPressed: _isLoading ? null : _restorePurchases,
+            icon: Icon(
+              Icons.refresh,
+              size: 16,
+              color: colors.accent,
+            ),
+            label: Text(
+              '구매 복원',
+              style: context.bodySmall.copyWith(
+                color: colors.accent,
+              ),
+            ),
+          ),
+        ),
       ],
     );
+  }
+
+  Future<void> _restorePurchases() async {
+    if (_isLoading) return;
+
+    try {
+      setState(() => _isLoading = true);
+      await _purchaseService.restorePurchases();
+      if (mounted) {
+        Toast.show(context, message: '구매 복원을 시작합니다...', type: ToastType.info);
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        Toast.show(context, message: e.toString(), type: ToastType.error);
+      }
+    }
   }
 
   Future<void> _handlePurchase() async {

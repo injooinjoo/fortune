@@ -253,12 +253,6 @@ class FortuneTypeRegistry {
       endpoint: null,
       isLocalOnly: true,
     ),
-    'gratitude': FortuneTypeSpec(
-      id: 'gratitude',
-      labelKey: 'fortuneGratitude',
-      endpoint: null,
-      isLocalOnly: true,
-    ),
     'breathing': FortuneTypeSpec(
       id: 'breathing',
       labelKey: 'fortuneBreathing',

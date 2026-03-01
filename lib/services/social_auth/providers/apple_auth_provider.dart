@@ -12,11 +12,18 @@ import '../base/base_social_auth_provider.dart';
 class AppleAuthProvider extends BaseSocialAuthProvider {
   AppleAuthProvider(super.supabase, super.profileCache);
 
+  /// iPad Error 1000 재시도 횟수 추적
+  int _error1000RetryCount = 0;
+  static const int _maxError1000Retries = 1;
+
   @override
   String get providerName => 'apple';
 
   @override
   Future<AuthResponse?> signIn() async {
+    // 새 로그인 시도 시 재시도 카운터 리셋
+    _error1000RetryCount = 0;
+
     try {
       Logger.info('Starting Apple Sign-In process');
 
@@ -71,10 +78,19 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
         throw Exception('Failed to obtain Apple ID token');
       }
 
-      final response = await supabase.auth.signInWithIdToken(
+      // 15초 타임아웃으로 네트워크 지연 대응 (IPv6/NAT64 환경 고려)
+      final response = await supabase.auth
+          .signInWithIdToken(
         provider: OAuthProvider.apple,
         idToken: idToken,
         nonce: rawNonce,
+      )
+          .timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          Logger.warning('[AppleAuthProvider] signInWithIdToken 타임아웃 (15초)');
+          throw TimeoutException('Apple 인증 서버 응답 지연. 잠시 후 다시 시도해 주세요.');
+        },
       );
 
       Logger.securityCheckpoint('Apple: ${response.user?.id}');
@@ -98,7 +114,7 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
 
       return response;
     } on SignInWithAppleAuthorizationException catch (e) {
-      return _handleAppleError(e);
+      return await _handleAppleError(e);
     } catch (error) {
       Logger.warning(
           '[AppleAuthProvider] Native Apple 로그인 실패, OAuth fallback 시도: $error');
@@ -117,24 +133,48 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
   }
 
   /// Apple Sign-In 에러 처리
-  /// - canceled: 사용자 취소 → null 반환 (로그인 중단)
+  /// - canceled: 사용자 취소 → 예외 throw (로그인 중단)
+  /// - Error 1000: iPad 환경 → 1회 재시도 후 OAuth fallback
   /// - 기타 에러: null 반환 (OAuth fallback 트리거)
-  AuthResponse? _handleAppleError(SignInWithAppleAuthorizationException e) {
+  Future<AuthResponse?> _handleAppleError(
+      SignInWithAppleAuthorizationException e) async {
     if (e.code == AuthorizationErrorCode.canceled) {
       Logger.info('User canceled Apple Sign-In');
       // 사용자 취소는 조용히 처리 (OAuth fallback 없음)
       throw Exception('사용자가 Apple 로그인을 취소했습니다.');
     }
 
-    // 나머지 모든 에러는 OAuth fallback 트리거
-    Logger.warning(
-        '[AppleAuthProvider] Native Apple Sign-In 실패, OAuth fallback 시도: ${e.code} - ${e.message}');
-
+    // Error 1000 감지 - iPad/Catalyst 환경에서 1회 재시도
     if (e.code == AuthorizationErrorCode.unknown &&
         (e.message.contains('1000') || e.toString().contains('1000'))) {
       Logger.info(
-          '[AppleAuthProvider] Error 1000 감지 - iPad/Catalyst 환경일 수 있음, OAuth로 전환');
+          '[AppleAuthProvider] Error 1000 감지 - iPad/Catalyst 환경, 재시도 횟수: $_error1000RetryCount');
+
+      if (_error1000RetryCount < _maxError1000Retries) {
+        _error1000RetryCount++;
+        Logger.info(
+            '[AppleAuthProvider] 1초 대기 후 Native 재시도 ($_error1000RetryCount/$_maxError1000Retries)');
+
+        // iPad에서 일시적 오류일 수 있으므로 1초 대기 후 재시도
+        await Future<void>.delayed(const Duration(seconds: 1));
+
+        try {
+          final retryResponse = await _signInWithAppleNative();
+          if (retryResponse?.user != null && retryResponse?.session != null) {
+            Logger.info('[AppleAuthProvider] Error 1000 재시도 성공');
+            return retryResponse;
+          }
+        } catch (retryError) {
+          Logger.warning('[AppleAuthProvider] Error 1000 재시도 실패: $retryError');
+        }
+      }
+
+      Logger.info('[AppleAuthProvider] Error 1000 재시도 한도 초과, OAuth로 전환');
     }
+
+    // 나머지 모든 에러는 OAuth fallback 트리거
+    Logger.warning(
+        '[AppleAuthProvider] Native Apple Sign-In 실패, OAuth fallback 시도: ${e.code} - ${e.message}');
 
     // null 반환 → signIn()에서 OAuth fallback 실행
     return null;
@@ -142,21 +182,27 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
 
   Future<AuthResponse?> _signInWithAppleOAuth() async {
     try {
-      Logger.info('Using Apple OAuth sign in');
+      Logger.info('[AppleAuthProvider] OAuth fallback 시작');
       final flowId =
           OAuthInAppBrowserCoordinator.markOAuthStarted(providerName);
 
+      // Note: redirectTo는 Supabase가 인증 완료 후 앱으로 돌아올 때 사용
+      // Apple OAuth 자체는 Supabase Dashboard에 설정된 Service ID와 Return URL을 사용
+      final redirectUrl = kIsWeb
+          ? '${Uri.base.origin}/auth/callback'
+          : 'com.beyond.fortune://auth-callback';
+
+      Logger.info('[AppleAuthProvider] OAuth redirect URL: $redirectUrl');
+
       final response = await supabase.auth.signInWithOAuth(
         OAuthProvider.apple,
-        redirectTo: kIsWeb
-            ? '${Uri.base.origin}/auth/callback'
-            : 'com.beyond.fortune://auth-callback',
+        redirectTo: redirectUrl,
         authScreenLaunchMode: LaunchMode.inAppBrowserView,
       );
 
       if (!response) {
         OAuthInAppBrowserCoordinator.markOAuthFinished(reason: 'launch_failed');
-        throw Exception('Apple OAuth sign in failed');
+        throw Exception('Apple OAuth sign in failed to launch browser');
       }
 
       unawaited(
@@ -169,8 +215,11 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
       return null;
     } catch (error) {
       OAuthInAppBrowserCoordinator.markOAuthFinished(reason: 'exception');
-      Logger.warning(
-          '[AppleAuthProvider] Apple OAuth 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
+      // OAuth 에러는 주로 Apple Developer Console/Supabase 설정 문제
+      // "Invalid client id or web redirect url" → Service ID/Return URL 설정 확인 필요
+      Logger.warning('[AppleAuthProvider] Apple OAuth 실패: $error\n'
+          '→ Apple Developer Console에서 Service ID의 Return URL 확인 필요\n'
+          '→ Supabase Dashboard에서 Apple Provider 설정 확인 필요');
       rethrow;
     }
   }

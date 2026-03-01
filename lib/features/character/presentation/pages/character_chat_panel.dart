@@ -157,23 +157,21 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       (previous, next) {
         if (next.error != null && next.error != previous?.error) {
           if (next.error == 'INSUFFICIENT_TOKENS') {
-            // 에러 클리어
-            ref
-                .read(characterChatProvider(widget.character.id).notifier)
-                .clearError();
-
-            // 토큰 부족 모달 표시
+            // 토큰 부족 모달 표시 (먼저!)
             TokenInsufficientModal.show(
               context: context,
               requiredTokens: 1,
               fortuneType: 'character-chat',
             );
-          } else {
-            // 일반 에러 - SnackBar로 표시
-            ref
-                .read(characterChatProvider(widget.character.id).notifier)
-                .clearError();
 
+            // 딜레이 후 에러 클리어 (다음 에러 감지 가능하도록)
+            Future.delayed(const Duration(milliseconds: 100), () {
+              ref
+                  .read(characterChatProvider(widget.character.id).notifier)
+                  .clearError();
+            });
+          } else {
+            // 일반 에러 - SnackBar로 표시 (먼저!)
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(context.l10n.errorOccurredRetry),
@@ -186,6 +184,13 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                 ),
               ),
             );
+
+            // 딜레이 후 에러 클리어 (다음 에러 감지 가능하도록)
+            Future.delayed(const Duration(milliseconds: 100), () {
+              ref
+                  .read(characterChatProvider(widget.character.id).notifier)
+                  .clearError();
+            });
           }
         }
 
@@ -432,8 +437,6 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         return l10n.fortuneMoving;
       case 'fortuneFortuneCookie':
         return l10n.fortuneFortuneCookie;
-      case 'fortuneGratitude':
-        return l10n.fortuneGratitude;
       case 'fortuneBreathing':
         return l10n.fortuneBreathing;
       case 'fortuneCoaching':

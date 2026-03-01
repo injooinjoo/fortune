@@ -224,37 +224,6 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     );
   }
 
-  /// 감사일기 결과 메시지 추가 (일기장 스타일 카드)
-  /// [clearFirst] true이면 기존 대화를 지우고 결과만 표시 (기본값: true)
-  void addGratitudeResultMessage({
-    required String gratitude1,
-    required String gratitude2,
-    required String gratitude3,
-    bool clearFirst = true,
-  }) {
-    // 결과 표시 시 강한 햅틱 피드백
-    HapticUtils.heavyImpact();
-
-    // 기존 대화 지우기 (자석 기능 대체)
-    if (clearFirst) {
-      state = const ChatState();
-    }
-
-    final message = ChatMessage(
-      id: _uuid.v4(),
-      type: ChatMessageType.gratitudeResult,
-      timestamp: DateTime.now(),
-      gratitude1: gratitude1,
-      gratitude2: gratitude2,
-      gratitude3: gratitude3,
-      gratitudeDate: DateTime.now(),
-    );
-    state = state.copyWith(
-      messages: [...state.messages, message],
-      isTyping: false,
-    );
-  }
-
   /// AI 코칭 결과 메시지 추가
   /// [clearFirst] true이면 기존 대화를 지우고 결과만 표시 (기본값: true)
   void addCoachingResultMessage({
@@ -428,6 +397,20 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
   /// 에러 설정
   void setError(String? error) {
     state = state.copyWith(error: error);
+  }
+
+  /// 메시지 좋아요 토글
+  void toggleMessageLike(String messageId) {
+    final updatedMessages = state.messages.map((message) {
+      if (message.id == messageId) {
+        return message.copyWith(isLiked: !(message.isLiked ?? false));
+      }
+      return message;
+    }).toList();
+
+    state = state.copyWith(messages: updatedMessages);
+    _saveMessages();
+    HapticUtils.lightImpact();
   }
 
   /// 대화 초기화

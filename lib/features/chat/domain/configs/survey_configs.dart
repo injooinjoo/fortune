@@ -562,8 +562,6 @@ final Map<FortuneSurveyType, FortuneSurveyConfig> surveyConfigs = {
   // 실용/결정 (2개)
   FortuneSurveyType.exam: examSurveyConfig,
   FortuneSurveyType.moving: movingSurveyConfig,
-  // 웰니스 (1개)
-  FortuneSurveyType.gratitude: gratitudeSurveyConfig,
   // 이미지 생성 (1개)
   FortuneSurveyType.yearlyEncounter: yearlyEncounterSurveyConfig,
 };
@@ -2292,36 +2290,6 @@ const movingSurveyConfig = FortuneSurveyConfig(
       inputType: SurveyInputType.multiSelect,
       options: _movingConcernsOptions,
       isRequired: false,
-    ),
-  ],
-);
-
-// ============================================================
-// Gratitude (감사일기) 설문 설정
-// ============================================================
-
-/// Gratitude 설문 설정
-const gratitudeSurveyConfig = FortuneSurveyConfig(
-  fortuneType: FortuneSurveyType.gratitude,
-  title: '감사일기',
-  description: '오늘 감사한 일 3가지를 적어보세요',
-  emoji: '✨',
-  accentColor: DSColors.accentSecondary,
-  steps: [
-    SurveyStep(
-      id: 'gratitude1',
-      question: '오늘 당신의 입가를 미소 짓게 했던 아주 사소한 순간은 언제인가요? 😊',
-      inputType: SurveyInputType.text,
-    ),
-    SurveyStep(
-      id: 'gratitude2',
-      question: '나를 위해 고생한 내 몸이나 마음에게 해주고 싶은 고마운 한마디가 있을까요? ✨',
-      inputType: SurveyInputType.text,
-    ),
-    SurveyStep(
-      id: 'gratitude3',
-      question: '오늘 하루 중 가장 따뜻했던 장면 하나를 떠올려 보세요 🍃',
-      inputType: SurveyInputType.text,
     ),
   ],
 );

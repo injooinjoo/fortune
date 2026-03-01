@@ -168,6 +168,9 @@ class GeneratorFactory {
       case 'naming':
         return await _generateNaming(input, isPremium);
 
+      case 'new_year':
+        return await _generateNewYear(input, isPremium);
+
       // ==================== 가족 운세 (5가지) ====================
       case 'family_health':
       case 'family_wealth':
@@ -523,6 +526,55 @@ class GeneratorFactory {
       );
     }
     throw Exception('Naming API 응답 형식 오류');
+  }
+
+  Future<FortuneResult> _generateNewYear(
+    Map<String, dynamic> input,
+    bool isPremium,
+  ) async {
+    final user = _supabase.auth.currentUser;
+    final userProfile = user != null
+        ? await _supabase
+            .from('user_profiles')
+            .select('name, birth_date, birth_time, gender, is_lunar')
+            .eq('id', user.id)
+            .maybeSingle()
+        : null;
+
+    final payload = {
+      'userId': user?.id ?? 'anonymous',
+      'name': userProfile?['name'] ?? input['name'] ?? '사용자',
+      'birthDate': userProfile?['birth_date'] ?? input['birthDate'],
+      'birthTime': userProfile?['birth_time'] ?? input['birthTime'],
+      'gender': userProfile?['gender'] ?? input['gender'],
+      'isLunar': userProfile?['is_lunar'] ?? input['isLunar'] ?? false,
+      'zodiacSign': input['zodiacSign'],
+      'zodiacAnimal': input['zodiacAnimal'],
+      'goal': input['goal'],
+      'goalLabel': input['goalLabel'],
+      'isPremium': isPremium,
+    };
+
+    final response = await _supabase.functions.invoke(
+      'fortune-new-year',
+      body: payload,
+    );
+
+    if (response.data == null) {
+      throw Exception('New Year Fortune API 응답 없음');
+    }
+
+    final data = response.data as Map<String, dynamic>;
+    final fortune = data['fortune'] as Map<String, dynamic>? ?? data;
+
+    return FortuneResult(
+      type: 'new-year',
+      title: fortune['greeting'] as String? ?? '새해 운세',
+      summary: {'message': fortune['summary'] as String? ?? ''},
+      data: fortune,
+      score: (fortune['overallScore'] ?? fortune['score'] ?? 75) as int,
+      createdAt: DateTime.now(),
+    );
   }
 
   Future<FortuneResult> _generateFamily(

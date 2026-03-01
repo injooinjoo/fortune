@@ -157,9 +157,6 @@ enum FortuneSurveyType {
   exam, // 시험운
   moving, // 이사/이직운
 
-  // 웰니스 (1개)
-  gratitude, // 감사일기
-
   // 이미지 생성 (1개)
   yearlyEncounter, // 올해의 인연
 }
@@ -242,8 +239,6 @@ extension FortuneSurveyTypeCanonicalX on FortuneSurveyType {
         return 'exam';
       case FortuneSurveyType.moving:
         return 'moving';
-      case FortuneSurveyType.gratitude:
-        return 'gratitude';
       case FortuneSurveyType.yearlyEncounter:
         return 'yearly-encounter';
     }
@@ -325,8 +320,6 @@ extension FortuneSurveyTypeCanonicalX on FortuneSurveyType {
         return FortuneSurveyType.exam;
       case 'moving':
         return FortuneSurveyType.moving;
-      case 'gratitude':
-        return FortuneSurveyType.gratitude;
       case 'yearly-encounter':
         return FortuneSurveyType.yearlyEncounter;
       default:

@@ -35,6 +35,7 @@ import { UsageLogger } from '../_shared/llm/usage-logger.ts'
 import { calculatePercentile } from '../_shared/percentile/calculator.ts'
 import {
   extractDailyCohort,
+  generateCohortHash,
   getFromCohortPool,
   personalize,
   saveToCohortPool,
@@ -350,6 +351,7 @@ serve(async (req) => {
     // ============================================
     // 온디맨드 Pool 저장을 위해 cohortData를 외부에 선언
     let dailyCohortData: { period: string; zodiac: string; element: string } | null = null;
+    let dailyCohortHash: string | null = null;
 
     if (birthDate) {
       try {
@@ -358,10 +360,11 @@ serve(async (req) => {
           now: date ? new Date(date) : undefined,
         });
         const cohortData = dailyCohortData;
+        dailyCohortHash = await generateCohortHash(cohortData);
 
-        console.log(`🔍 [Cohort] Daily 조회 시도:`, JSON.stringify(cohortData));
+        console.log(`🔍 [Cohort] Daily 조회 시도:`, JSON.stringify(cohortData), `hash: ${dailyCohortHash.slice(0, 8)}...`);
 
-        const cachedResult = await getFromCohortPool(supabaseAdmin, 'daily', cohortData);
+        const cachedResult = await getFromCohortPool(supabaseAdmin, 'daily', dailyCohortHash);
 
         if (cachedResult) {
           console.log('✅ [Cohort] Pool에서 결과 반환 (LLM 호출 절약!)');
@@ -749,8 +752,8 @@ serve(async (req) => {
             content: prompt
           }
         ], {
-          temperature: 1,
-          maxTokens: 8192,
+          temperature: 0.7,
+          maxTokens: 1024,
           jsonMode: false
         })
 
@@ -1850,7 +1853,7 @@ serve(async (req) => {
 
     // ✅ Cohort Pool 온디맨드 저장 (백그라운드, 비동기 - 응답 지연 없음)
     // Pool이 50개 미만일 때만 저장되어 자연스럽게 축적됨
-    if (dailyCohortData) {
+    if (dailyCohortData && dailyCohortHash) {
       // 템플릿화: 개인 정보를 플레이스홀더로 대체
       const userName = name || '회원님';
       const fortuneTemplate = {
@@ -1861,7 +1864,7 @@ serve(async (req) => {
         description: fortune.description?.replace(userName, '{{userName}}') || '',
       };
 
-      saveToCohortPool(supabaseAdmin, 'daily', dailyCohortData, fortuneTemplate).then(saved => {
+      saveToCohortPool(supabaseAdmin, 'daily', dailyCohortHash, dailyCohortData, fortuneTemplate).then(saved => {
         if (saved) {
           console.log('✅ [Cohort] Pool에 새 결과 저장됨');
         }

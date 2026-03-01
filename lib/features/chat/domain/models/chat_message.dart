@@ -4,6 +4,7 @@ import '../../../fortune/domain/models/match_insight.dart';
 import '../../../fortune/domain/models/past_life_result.dart';
 import '../../../fortune/domain/models/yearly_encounter_result.dart';
 import '../../../chat_insight/data/models/chat_insight_result.dart';
+import 'rich_content_data.dart';
 
 /// 채팅 메시지 유형
 enum ChatMessageType {
@@ -24,9 +25,6 @@ enum ChatMessageType {
 
   /// 부적 결과 (이미지 + 짧은 설명)
   talismanResult,
-
-  /// 감사일기 결과 (일기장 스타일 카드)
-  gratitudeResult,
 
   /// AI 코칭 결과 (코칭 어드바이스 + 액션 아이템)
   coachingResult,
@@ -51,6 +49,15 @@ enum ChatMessageType {
 
   /// 온보딩 입력 요청 (이름, 생년월일, 시간 등)
   onboardingInput,
+
+  /// 이미지 메시지 (사진, 스크린샷 등)
+  image,
+
+  /// 오디오 메시지 (음성 메시지, 음악 클립 등)
+  audio,
+
+  /// 리치 컨텐츠 카드 (텍스트+이미지+버튼 조합)
+  richContent,
 }
 
 /// 온보딩 입력 타입
@@ -135,18 +142,6 @@ class ChatMessage {
   /// 부적 결과: 100자 내외 효능 + 사용법
   final String? talismanShortDescription;
 
-  /// 감사일기 결과: 첫 번째 감사
-  final String? gratitude1;
-
-  /// 감사일기 결과: 두 번째 감사
-  final String? gratitude2;
-
-  /// 감사일기 결과: 세 번째 감사
-  final String? gratitude3;
-
-  /// 감사일기 결과: 작성 날짜
-  final DateTime? gratitudeDate;
-
   /// 올해의 인연 결과 데이터
   final YearlyEncounterResult? yearlyEncounterResult;
 
@@ -203,6 +198,32 @@ class ChatMessage {
   /// 카톡 대화 분석 인사이트 결과 데이터
   final ChatInsightResult? chatInsight;
 
+  // ============ 리치 컨텐츠 필드 ============
+
+  /// 이미지 메시지: 에셋 경로 (로컬 이미지)
+  final String? imageAsset;
+
+  /// 이미지 메시지: 네트워크 URL
+  final String? imageUrl;
+
+  /// 이미지 메시지: 캡션 (선택적)
+  final String? imageCaption;
+
+  /// 오디오 메시지: 에셋 경로 (로컬 오디오)
+  final String? audioAsset;
+
+  /// 오디오 메시지: 네트워크 URL
+  final String? audioUrl;
+
+  /// 오디오 메시지: 재생 시간 (초)
+  final int? audioDurationSeconds;
+
+  /// 리치 컨텐츠: 구조화된 카드 데이터
+  final RichContentData? richContent;
+
+  /// 메시지 좋아요 여부 (AI 메시지에만 적용)
+  final bool? isLiked;
+
   const ChatMessage({
     required this.id,
     required this.type,
@@ -222,10 +243,6 @@ class ChatMessage {
     this.talismanImageUrl,
     this.talismanCategoryName,
     this.talismanShortDescription,
-    this.gratitude1,
-    this.gratitude2,
-    this.gratitude3,
-    this.gratitudeDate,
     this.yearlyEncounterResult,
     // AI 코칭/저널링 필드
     this.coachingSituation,
@@ -245,7 +262,36 @@ class ChatMessage {
     this.weeklyReviewTrends,
     this.weeklyReviewActions,
     this.chatInsight,
+    // 리치 컨텐츠 필드
+    this.imageAsset,
+    this.imageUrl,
+    this.imageCaption,
+    this.audioAsset,
+    this.audioUrl,
+    this.audioDurationSeconds,
+    this.richContent,
+    this.isLiked,
   });
+
+  /// 이미지 메시지 여부
+  bool get hasImage {
+    final hasAsset = imageAsset != null && imageAsset!.isNotEmpty;
+    final hasUrl = imageUrl != null && imageUrl!.isNotEmpty;
+    return hasAsset || hasUrl;
+  }
+
+  /// 오디오 메시지 여부
+  bool get hasAudio {
+    final hasAsset = audioAsset != null && audioAsset!.isNotEmpty;
+    final hasUrl = audioUrl != null && audioUrl!.isNotEmpty;
+    return hasAsset || hasUrl;
+  }
+
+  /// 이미지 경로 반환 (URL 우선)
+  String? get imagePath => imageUrl ?? imageAsset;
+
+  /// 오디오 경로 반환 (URL 우선)
+  String? get audioPath => audioUrl ?? audioAsset;
 
   ChatMessage copyWith({
     String? id,
@@ -266,10 +312,6 @@ class ChatMessage {
     String? talismanImageUrl,
     String? talismanCategoryName,
     String? talismanShortDescription,
-    String? gratitude1,
-    String? gratitude2,
-    String? gratitude3,
-    DateTime? gratitudeDate,
     YearlyEncounterResult? yearlyEncounterResult,
     // AI 코칭/저널링 필드
     String? coachingSituation,
@@ -289,6 +331,15 @@ class ChatMessage {
     List<String>? weeklyReviewTrends,
     List<String>? weeklyReviewActions,
     ChatInsightResult? chatInsight,
+    // 리치 컨텐츠 필드
+    String? imageAsset,
+    String? imageUrl,
+    String? imageCaption,
+    String? audioAsset,
+    String? audioUrl,
+    int? audioDurationSeconds,
+    RichContentData? richContent,
+    bool? isLiked,
   }) {
     return ChatMessage(
       id: id ?? this.id,
@@ -310,10 +361,6 @@ class ChatMessage {
       talismanCategoryName: talismanCategoryName ?? this.talismanCategoryName,
       talismanShortDescription:
           talismanShortDescription ?? this.talismanShortDescription,
-      gratitude1: gratitude1 ?? this.gratitude1,
-      gratitude2: gratitude2 ?? this.gratitude2,
-      gratitude3: gratitude3 ?? this.gratitude3,
-      gratitudeDate: gratitudeDate ?? this.gratitudeDate,
       yearlyEncounterResult:
           yearlyEncounterResult ?? this.yearlyEncounterResult,
       // AI 코칭/저널링 필드
@@ -336,15 +383,27 @@ class ChatMessage {
       weeklyReviewTrends: weeklyReviewTrends ?? this.weeklyReviewTrends,
       weeklyReviewActions: weeklyReviewActions ?? this.weeklyReviewActions,
       chatInsight: chatInsight ?? this.chatInsight,
+      // 리치 컨텐츠 필드
+      imageAsset: imageAsset ?? this.imageAsset,
+      imageUrl: imageUrl ?? this.imageUrl,
+      imageCaption: imageCaption ?? this.imageCaption,
+      audioAsset: audioAsset ?? this.audioAsset,
+      audioUrl: audioUrl ?? this.audioUrl,
+      audioDurationSeconds: audioDurationSeconds ?? this.audioDurationSeconds,
+      richContent: richContent ?? this.richContent,
+      isLiked: isLiked ?? this.isLiked,
     );
   }
 
-  /// 로컬 저장 가능 여부 (user, ai, system 메시지만 저장)
+  /// 로컬 저장 가능 여부 (user, ai, system, image, audio, richContent 메시지 저장)
   /// Fortune, MatchInsight 등 복잡한 객체는 세션 내에서만 유효
   bool get isPersistable =>
       type == ChatMessageType.user ||
       type == ChatMessageType.ai ||
-      type == ChatMessageType.system;
+      type == ChatMessageType.system ||
+      type == ChatMessageType.image ||
+      type == ChatMessageType.audio ||
+      type == ChatMessageType.richContent;
 
   /// JSON 직렬화 (로컬 저장용)
   Map<String, dynamic> toJson() => {
@@ -353,6 +412,15 @@ class ChatMessage {
         'text': text,
         'timestamp': timestamp.toIso8601String(),
         'chipIds': chipIds,
+        // 리치 컨텐츠 필드
+        'imageAsset': imageAsset,
+        'imageUrl': imageUrl,
+        'imageCaption': imageCaption,
+        'audioAsset': audioAsset,
+        'audioUrl': audioUrl,
+        'audioDurationSeconds': audioDurationSeconds,
+        'richContent': richContent?.toJson(),
+        'isLiked': isLiked,
       };
 
   /// JSON 역직렬화 (로컬 로드용)
@@ -362,5 +430,17 @@ class ChatMessage {
         text: json['text'] as String?,
         timestamp: DateTime.parse(json['timestamp'] as String),
         chipIds: (json['chipIds'] as List<dynamic>?)?.cast<String>(),
+        // 리치 컨텐츠 필드
+        imageAsset: json['imageAsset'] as String?,
+        imageUrl: json['imageUrl'] as String?,
+        imageCaption: json['imageCaption'] as String?,
+        audioAsset: json['audioAsset'] as String?,
+        audioUrl: json['audioUrl'] as String?,
+        audioDurationSeconds: json['audioDurationSeconds'] as int?,
+        richContent: json['richContent'] != null
+            ? RichContentData.fromJson(
+                json['richContent'] as Map<String, dynamic>)
+            : null,
+        isLiked: json['isLiked'] as bool?,
       );
 }

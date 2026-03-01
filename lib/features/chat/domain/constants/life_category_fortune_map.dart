@@ -57,7 +57,6 @@ const Map<LifeCategory, List<String>> lifeCategoryFortuneMap = {
     'biorhythm', // 바이오리듬
     'exercise', // 오운완
     'breathing', // 마음 쉼표
-    'gratitude', // 고마운 하루
     'daily-review', // 하루 정리
     'weekly-review', // 주간 돌아보기
     'coaching', // 코칭 세션
@@ -73,7 +72,7 @@ const Map<LifeCategory, List<String>> lifeCategoryPrimaryChips = {
   LifeCategory.loveRelationship: ['love', 'compatibility', 'tarot'],
   LifeCategory.moneyFinance: ['wealth', 'lucky-items', 'career'],
   LifeCategory.careerStudy: ['career', 'exam', 'coaching'],
-  LifeCategory.healthWellness: ['health', 'gratitude', 'breathing'],
+  LifeCategory.healthWellness: ['health', 'breathing', 'coaching'],
 };
 
 /// 세부 고민별 추천 칩 ID 매핑 (선택적)
@@ -108,10 +107,10 @@ const Map<String, List<String>> subConcernFortuneMap = {
 
   // ============ 건강/웰빙 세부 ============
   'physical_health': ['health', 'exercise', 'biorhythm', 'daily'],
-  'mental_stress': ['breathing', 'coaching', 'gratitude', 'daily-review'],
+  'mental_stress': ['breathing', 'coaching', 'daily-review', 'tarot'],
   'diet_exercise': ['exercise', 'health', 'biorhythm', 'coaching'],
   'sleep_rest': ['biorhythm', 'breathing', 'health', 'daily-review'],
-  'lifestyle': ['daily', 'health', 'gratitude', 'weekly-review'],
+  'lifestyle': ['daily', 'health', 'weekly-review', 'coaching'],
 };
 
 /// 세부 고민에 대한 기본 추천 칩 가져오기

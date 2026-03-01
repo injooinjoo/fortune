@@ -19,6 +19,9 @@ class ChatMessageList extends ConsumerWidget {
   final VoidCallback? onViewAllTap;
   final double bottomPadding;
 
+  /// 좋아요 버튼 클릭 시 호출되는 콜백
+  final void Function(String messageId)? onLikeTap;
+
   /// 타이핑 인디케이터가 렌더링 완료되면 호출됨
   final VoidCallback? onTypingIndicatorRendered;
 
@@ -37,6 +40,7 @@ class ChatMessageList extends ConsumerWidget {
     this.bottomPadding = 0,
     this.onTypingIndicatorRendered,
     this.onFortuneResultRendered,
+    this.onLikeTap,
   });
 
   /// 이전 메시지에서 마지막 운세 타입 찾기
@@ -114,6 +118,7 @@ class ChatMessageList extends ConsumerWidget {
         return ChatMessageBubble(
           message: message,
           onFortuneResultRendered: onFortuneResultRendered,
+          onLikeTap: onLikeTap,
         );
       },
     );

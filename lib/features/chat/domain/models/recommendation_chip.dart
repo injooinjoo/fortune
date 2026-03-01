@@ -84,7 +84,6 @@ class RecommendationChip {
       'moving': l10n.fortuneMoving,
       // 웰니스
       'breathing': l10n.fortuneBreathing,
-      'gratitude': l10n.fortuneGratitude,
       // AI 코칭/저널링
       'coaching': l10n.fortuneCoaching,
       'decision': l10n.fortuneDecisionHelper,
@@ -381,13 +380,6 @@ const List<RecommendationChip> defaultChips = [
     icon: Icons.self_improvement_outlined,
     color: DSColors.accentSecondary,
   ),
-  RecommendationChip(
-    id: 'gratitude',
-    label: '감사 일기',
-    fortuneType: 'gratitude',
-    icon: Icons.favorite_outline,
-    color: DSColors.accentSecondary,
-  ),
 
   // ============ AI 코칭/저널링 ============
   RecommendationChip(
@@ -444,13 +436,6 @@ const List<RecommendationChip> initialChips = [
     label: '오늘의 운세',
     fortuneType: 'daily',
     icon: Icons.wb_sunny_outlined,
-    color: DSColors.accentSecondary,
-  ),
-  RecommendationChip(
-    id: 'gratitude',
-    label: '감사 일기',
-    fortuneType: 'gratitude',
-    icon: Icons.favorite_outline,
     color: DSColors.accentSecondary,
   ),
   RecommendationChip(

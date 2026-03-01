@@ -1,0 +1,1194 @@
+{
+  "generated_at": "2026-02-27T15:57:44.418Z",
+  "device": {
+    "name": "iPhone 16 Pro Max",
+    "width": 440,
+    "height": 956
+  },
+  "totals": {
+    "screens": 61,
+    "screenshot_targets": 122
+  },
+  "screens": [
+    {
+      "screen_id": "landing",
+      "name": "Landing",
+      "name_ko": "랜딩 페이지",
+      "path": "/chat",
+      "deeplink_screen": "chat",
+      "category": "auth",
+      "category_name": "Auth & Onboarding",
+      "category_name_ko": "인증 & 온보딩",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 1,
+      "figma_page": "04-Screens-Auth",
+      "source": {
+        "dartFile": "lib/screens/landing_page.dart",
+        "relatedFiles": [
+          "lib/core/widgets/social_login_button.dart",
+          "lib/core/widgets/animated_background.dart"
+        ]
+      }
+    },
+    {
+      "screen_id": "onboarding",
+      "name": "Onboarding",
+      "name_ko": "온보딩",
+      "path": "/onboarding",
+      "deeplink_screen": "onboarding",
+      "category": "auth",
+      "category_name": "Auth & Onboarding",
+      "category_name_ko": "인증 & 온보딩",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 1,
+      "figma_page": "04-Screens-Auth",
+      "source": {
+        "dartFile": "lib/screens/onboarding/onboarding_page.dart",
+        "relatedFiles": [
+          "lib/screens/onboarding/steps/name_input_step.dart",
+          "lib/screens/onboarding/steps/birth_input_step.dart",
+          "lib/screens/onboarding/steps/phone_step.dart"
+        ]
+      }
+    },
+    {
+      "screen_id": "home",
+      "name": "Home",
+      "name_ko": "홈",
+      "path": "/home",
+      "deeplink_screen": "home",
+      "category": "home",
+      "category_name": "Home & Navigation",
+      "category_name_ko": "홈 & 네비게이션",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 1,
+      "figma_page": "05-Screens-Home",
+      "source": {
+        "dartFile": "lib/screens/home/home_screen.dart",
+        "relatedFiles": [
+          "lib/screens/home/fortune_swipe/",
+          "lib/shared/layouts/main_shell.dart"
+        ]
+      }
+    },
+    {
+      "screen_id": "fortune_list",
+      "name": "Fortune List",
+      "name_ko": "운세 목록",
+      "path": "/fortune",
+      "deeplink_screen": "fortune",
+      "category": "home",
+      "category_name": "Home & Navigation",
+      "category_name_ko": "홈 & 네비게이션",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 1,
+      "figma_page": "05-Screens-Home",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/fortune_list_page.dart"
+      }
+    },
+    {
+      "screen_id": "tarot",
+      "name": "Tarot",
+      "name_ko": "타로",
+      "path": "/tarot",
+      "deeplink_screen": "tarot",
+      "category": "fortune_traditional",
+      "category_name": "Fortune - Traditional",
+      "category_name_ko": "운세 - 전통",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "08-Screens-Fortune-Traditional",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/tarot_page.dart",
+        "relatedFiles": [
+          "lib/features/fortune/presentation/widgets/tarot/",
+          "lib/core/constants/tarot/tarot_helper.dart"
+        ]
+      }
+    },
+    {
+      "screen_id": "traditional_saju",
+      "name": "Traditional Saju",
+      "name_ko": "정통 사주",
+      "path": "/traditional-saju",
+      "deeplink_screen": "traditional-saju",
+      "category": "fortune_traditional",
+      "category_name": "Fortune - Traditional",
+      "category_name_ko": "운세 - 전통",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "08-Screens-Fortune-Traditional",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/traditional_saju_page.dart",
+        "relatedFiles": [
+          "lib/features/fortune/presentation/widgets/saju/",
+          "lib/features/fortune/domain/models/saju/"
+        ]
+      }
+    },
+    {
+      "screen_id": "profile",
+      "name": "Profile",
+      "name_ko": "내 정보",
+      "path": "/profile",
+      "deeplink_screen": "profile",
+      "category": "profile",
+      "category_name": "Profile & Settings",
+      "category_name_ko": "프로필 & 설정",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "06-Screens-Profile",
+      "source": {
+        "dartFile": "lib/features/profile/presentation/pages/profile_page.dart"
+      }
+    },
+    {
+      "screen_id": "profile_edit",
+      "name": "Profile Edit",
+      "name_ko": "프로필 수정",
+      "path": "/profile/edit",
+      "deeplink_screen": "profile/edit",
+      "category": "profile",
+      "category_name": "Profile & Settings",
+      "category_name_ko": "프로필 & 설정",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "06-Screens-Profile",
+      "source": {
+        "dartFile": "lib/features/profile/presentation/pages/profile_edit_page.dart"
+      }
+    },
+    {
+      "screen_id": "profile_saju",
+      "name": "Profile Saju",
+      "name_ko": "내 사주",
+      "path": "/profile/saju",
+      "deeplink_screen": "profile/saju",
+      "category": "profile",
+      "category_name": "Profile & Settings",
+      "category_name_ko": "프로필 & 설정",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "06-Screens-Profile",
+      "source": {
+        "dartFile": "lib/features/profile/presentation/pages/profile_saju_page.dart"
+      }
+    },
+    {
+      "screen_id": "settings",
+      "name": "Settings",
+      "name_ko": "설정",
+      "path": "/settings",
+      "deeplink_screen": "settings",
+      "category": "profile",
+      "category_name": "Profile & Settings",
+      "category_name_ko": "프로필 & 설정",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "06-Screens-Profile",
+      "source": {
+        "dartFile": "lib/features/settings/presentation/pages/settings_page.dart"
+      }
+    },
+    {
+      "screen_id": "subscription",
+      "name": "Subscription",
+      "name_ko": "구독 관리",
+      "path": "/subscription",
+      "deeplink_screen": "subscription",
+      "category": "profile",
+      "category_name": "Profile & Settings",
+      "category_name_ko": "프로필 & 설정",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "06-Screens-Profile",
+      "source": {
+        "dartFile": "lib/features/subscription/presentation/pages/subscription_page.dart"
+      }
+    },
+    {
+      "screen_id": "token_purchase",
+      "name": "Token Purchase",
+      "name_ko": "토큰 구매",
+      "path": "/token-purchase",
+      "deeplink_screen": "token-purchase",
+      "category": "profile",
+      "category_name": "Profile & Settings",
+      "category_name_ko": "프로필 & 설정",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "06-Screens-Profile",
+      "source": {
+        "dartFile": "lib/features/subscription/presentation/pages/token_purchase_page.dart"
+      }
+    },
+    {
+      "screen_id": "help",
+      "name": "Help",
+      "name_ko": "고객센터",
+      "path": "/help",
+      "deeplink_screen": "help",
+      "category": "profile",
+      "category_name": "Profile & Settings",
+      "category_name_ko": "프로필 & 설정",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "06-Screens-Profile",
+      "source": {
+        "dartFile": "lib/features/settings/presentation/pages/help_page.dart"
+      }
+    },
+    {
+      "screen_id": "mbti",
+      "name": "MBTI Fortune",
+      "name_ko": "MBTI 운세",
+      "path": "/mbti",
+      "deeplink_screen": "mbti",
+      "category": "fortune_basic",
+      "category_name": "Fortune - Basic",
+      "category_name_ko": "운세 - 기본",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "07-Screens-Fortune-Basic",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/mbti_fortune_page.dart"
+      }
+    },
+    {
+      "screen_id": "wish",
+      "name": "Wish Fortune",
+      "name_ko": "소원빌기",
+      "path": "/wish",
+      "deeplink_screen": "wish",
+      "category": "fortune_basic",
+      "category_name": "Fortune - Basic",
+      "category_name_ko": "운세 - 기본",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "07-Screens-Fortune-Basic",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/wish_fortune_page.dart"
+      }
+    },
+    {
+      "screen_id": "compatibility",
+      "name": "Compatibility",
+      "name_ko": "궁합",
+      "path": "/compatibility",
+      "deeplink_screen": "compatibility",
+      "category": "fortune_basic",
+      "category_name": "Fortune - Basic",
+      "category_name_ko": "운세 - 기본",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "07-Screens-Fortune-Basic",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/compatibility_page.dart"
+      }
+    },
+    {
+      "screen_id": "celebrity",
+      "name": "Celebrity Fortune",
+      "name_ko": "유명인 운세",
+      "path": "/celebrity",
+      "deeplink_screen": "celebrity",
+      "category": "fortune_basic",
+      "category_name": "Fortune - Basic",
+      "category_name_ko": "운세 - 기본",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "07-Screens-Fortune-Basic",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/celebrity_fortune_page.dart"
+      }
+    },
+    {
+      "screen_id": "family",
+      "name": "Family Fortune",
+      "name_ko": "가족 운세",
+      "path": "/family",
+      "deeplink_screen": "family",
+      "category": "fortune_basic",
+      "category_name": "Fortune - Basic",
+      "category_name_ko": "운세 - 기본",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "07-Screens-Fortune-Basic",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/family_fortune_page.dart"
+      }
+    },
+    {
+      "screen_id": "pet",
+      "name": "Pet Compatibility",
+      "name_ko": "반려동물 궁합",
+      "path": "/pet",
+      "deeplink_screen": "pet",
+      "category": "fortune_basic",
+      "category_name": "Fortune - Basic",
+      "category_name_ko": "운세 - 기본",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "07-Screens-Fortune-Basic",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/pet_compatibility_page.dart"
+      }
+    },
+    {
+      "screen_id": "personality_dna",
+      "name": "Personality DNA",
+      "name_ko": "성격 DNA",
+      "path": "/personality-dna",
+      "deeplink_screen": "personality-dna",
+      "category": "fortune_basic",
+      "category_name": "Fortune - Basic",
+      "category_name_ko": "운세 - 기본",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "07-Screens-Fortune-Basic",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/personality_dna_page.dart"
+      }
+    },
+    {
+      "screen_id": "daily_calendar",
+      "name": "Daily Calendar",
+      "name_ko": "일일 달력",
+      "path": "/daily-calendar",
+      "deeplink_screen": "daily-calendar",
+      "category": "fortune_basic",
+      "category_name": "Fortune - Basic",
+      "category_name_ko": "운세 - 기본",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "07-Screens-Fortune-Basic",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/daily_calendar_fortune_page.dart"
+      }
+    },
+    {
+      "screen_id": "moving",
+      "name": "Moving Fortune",
+      "name_ko": "이사 운세",
+      "path": "/moving",
+      "deeplink_screen": "moving",
+      "category": "fortune_basic",
+      "category_name": "Fortune - Basic",
+      "category_name_ko": "운세 - 기본",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "07-Screens-Fortune-Basic",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/moving_fortune_page.dart"
+      }
+    },
+    {
+      "screen_id": "love",
+      "name": "Love Fortune",
+      "name_ko": "연애 운세",
+      "path": "/love",
+      "deeplink_screen": "love",
+      "category": "fortune_love",
+      "category_name": "Fortune - Love",
+      "category_name_ko": "운세 - 연애",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "09-Screens-Fortune-Love",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/love_fortune_page.dart"
+      }
+    },
+    {
+      "screen_id": "ex_lover",
+      "name": "Ex-lover Fortune",
+      "name_ko": "전 연인 운세",
+      "path": "/ex-lover-simple",
+      "deeplink_screen": "ex-lover-simple",
+      "category": "fortune_love",
+      "category_name": "Fortune - Love",
+      "category_name_ko": "운세 - 연애",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "09-Screens-Fortune-Love",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/ex_lover_fortune_page.dart"
+      }
+    },
+    {
+      "screen_id": "blind_date",
+      "name": "Blind Date Fortune",
+      "name_ko": "소개팅 운세",
+      "path": "/blind-date",
+      "deeplink_screen": "blind-date",
+      "category": "fortune_love",
+      "category_name": "Fortune - Love",
+      "category_name_ko": "운세 - 연애",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "09-Screens-Fortune-Love",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/blind_date_fortune_page.dart"
+      }
+    },
+    {
+      "screen_id": "career",
+      "name": "Career Fortune",
+      "name_ko": "커리어 운세",
+      "path": "/career",
+      "deeplink_screen": "career",
+      "category": "fortune_career",
+      "category_name": "Fortune - Career",
+      "category_name_ko": "운세 - 커리어",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "10-Screens-Fortune-Career",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/career_fortune_page.dart"
+      }
+    },
+    {
+      "screen_id": "investment",
+      "name": "Investment Fortune",
+      "name_ko": "투자 운세",
+      "path": "/investment",
+      "deeplink_screen": "investment",
+      "category": "fortune_career",
+      "category_name": "Fortune - Career",
+      "category_name_ko": "운세 - 커리어",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "10-Screens-Fortune-Career",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/investment_fortune_page.dart"
+      }
+    },
+    {
+      "screen_id": "lucky_exam",
+      "name": "Lucky Exam",
+      "name_ko": "시험운",
+      "path": "/lucky-exam",
+      "deeplink_screen": "lucky-exam",
+      "category": "fortune_career",
+      "category_name": "Fortune - Career",
+      "category_name_ko": "운세 - 커리어",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "10-Screens-Fortune-Career",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/lucky_exam_page.dart"
+      }
+    },
+    {
+      "screen_id": "talent_fortune",
+      "name": "Talent Fortune",
+      "name_ko": "재능 운세",
+      "path": "/talent-fortune-input",
+      "deeplink_screen": "talent-fortune-input",
+      "category": "fortune_career",
+      "category_name": "Fortune - Career",
+      "category_name_ko": "운세 - 커리어",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "10-Screens-Fortune-Career",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/talent_fortune_input_page.dart"
+      }
+    },
+    {
+      "screen_id": "biorhythm",
+      "name": "Biorhythm",
+      "name_ko": "바이오리듬",
+      "path": "/biorhythm",
+      "deeplink_screen": "biorhythm",
+      "category": "fortune_time",
+      "category_name": "Fortune - Time",
+      "category_name_ko": "운세 - 시간",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "11-Screens-Fortune-Time",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/biorhythm_page.dart"
+      }
+    },
+    {
+      "screen_id": "time_fortune",
+      "name": "Time Fortune",
+      "name_ko": "시간 운세",
+      "path": "/time",
+      "deeplink_screen": "time",
+      "category": "fortune_time",
+      "category_name": "Fortune - Time",
+      "category_name_ko": "운세 - 시간",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "11-Screens-Fortune-Time",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/time_fortune_page.dart"
+      }
+    },
+    {
+      "screen_id": "yearly",
+      "name": "Yearly Fortune",
+      "name_ko": "신년운세",
+      "path": "/yearly",
+      "deeplink_screen": "yearly",
+      "category": "fortune_time",
+      "category_name": "Fortune - Time",
+      "category_name_ko": "운세 - 시간",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "11-Screens-Fortune-Time",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/yearly_fortune_page.dart"
+      }
+    },
+    {
+      "screen_id": "new_year",
+      "name": "New Year Fortune",
+      "name_ko": "새해 운세",
+      "path": "/new-year",
+      "deeplink_screen": "new-year",
+      "category": "fortune_time",
+      "category_name": "Fortune - Time",
+      "category_name_ko": "운세 - 시간",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "11-Screens-Fortune-Time",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/new_year_fortune_page.dart"
+      }
+    },
+    {
+      "screen_id": "health",
+      "name": "Health Fortune",
+      "name_ko": "건강 운세",
+      "path": "/health-toss",
+      "deeplink_screen": "health-toss",
+      "category": "fortune_health",
+      "category_name": "Fortune - Health",
+      "category_name_ko": "운세 - 건강",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 3,
+      "figma_page": "12-Screens-Fortune-Health",
+      "source": {
+        "dartFile": "lib/features/health/presentation/pages/health_fortune_page.dart"
+      }
+    },
+    {
+      "screen_id": "exercise",
+      "name": "Exercise Fortune",
+      "name_ko": "운동 운세",
+      "path": "/exercise",
+      "deeplink_screen": "exercise",
+      "category": "fortune_health",
+      "category_name": "Fortune - Health",
+      "category_name_ko": "운세 - 건강",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 3,
+      "figma_page": "12-Screens-Fortune-Health",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/exercise_fortune_page.dart"
+      }
+    },
+    {
+      "screen_id": "lucky_golf",
+      "name": "Lucky Golf",
+      "name_ko": "골프 운세",
+      "path": "/lucky-golf",
+      "deeplink_screen": "lucky-golf",
+      "category": "fortune_health",
+      "category_name": "Fortune - Health",
+      "category_name_ko": "운세 - 건강",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 3,
+      "figma_page": "12-Screens-Fortune-Health",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/lucky_golf_page.dart"
+      }
+    },
+    {
+      "screen_id": "lucky_baseball",
+      "name": "Lucky Baseball",
+      "name_ko": "야구 운세",
+      "path": "/lucky-baseball",
+      "deeplink_screen": "lucky-baseball",
+      "category": "fortune_health",
+      "category_name": "Fortune - Health",
+      "category_name_ko": "운세 - 건강",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 3,
+      "figma_page": "12-Screens-Fortune-Health",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/lucky_baseball_page.dart"
+      }
+    },
+    {
+      "screen_id": "lucky_tennis",
+      "name": "Lucky Tennis",
+      "name_ko": "테니스 운세",
+      "path": "/lucky-tennis",
+      "deeplink_screen": "lucky-tennis",
+      "category": "fortune_health",
+      "category_name": "Fortune - Health",
+      "category_name_ko": "운세 - 건강",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 3,
+      "figma_page": "12-Screens-Fortune-Health",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/lucky_tennis_page.dart"
+      }
+    },
+    {
+      "screen_id": "lucky_running",
+      "name": "Lucky Running",
+      "name_ko": "러닝 운세",
+      "path": "/lucky-running",
+      "deeplink_screen": "lucky-running",
+      "category": "fortune_health",
+      "category_name": "Fortune - Health",
+      "category_name_ko": "운세 - 건강",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 3,
+      "figma_page": "12-Screens-Fortune-Health",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/lucky_running_page.dart"
+      }
+    },
+    {
+      "screen_id": "lucky_cycling",
+      "name": "Lucky Cycling",
+      "name_ko": "사이클 운세",
+      "path": "/lucky-cycling",
+      "deeplink_screen": "lucky-cycling",
+      "category": "fortune_health",
+      "category_name": "Fortune - Health",
+      "category_name_ko": "운세 - 건강",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 3,
+      "figma_page": "12-Screens-Fortune-Health",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/lucky_cycling_page.dart"
+      }
+    },
+    {
+      "screen_id": "lucky_swim",
+      "name": "Lucky Swim",
+      "name_ko": "수영 운세",
+      "path": "/lucky-swim",
+      "deeplink_screen": "lucky-swim",
+      "category": "fortune_health",
+      "category_name": "Fortune - Health",
+      "category_name_ko": "운세 - 건강",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 3,
+      "figma_page": "12-Screens-Fortune-Health",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/lucky_swim_page.dart"
+      }
+    },
+    {
+      "screen_id": "lucky_fishing",
+      "name": "Lucky Fishing",
+      "name_ko": "낚시 운세",
+      "path": "/lucky-fishing",
+      "deeplink_screen": "lucky-fishing",
+      "category": "fortune_health",
+      "category_name": "Fortune - Health",
+      "category_name_ko": "운세 - 건강",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 3,
+      "figma_page": "12-Screens-Fortune-Health",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/lucky_fishing_page.dart"
+      }
+    },
+    {
+      "screen_id": "lucky_hiking",
+      "name": "Lucky Hiking",
+      "name_ko": "등산 운세",
+      "path": "/lucky-hiking",
+      "deeplink_screen": "lucky-hiking",
+      "category": "fortune_health",
+      "category_name": "Fortune - Health",
+      "category_name_ko": "운세 - 건강",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 3,
+      "figma_page": "12-Screens-Fortune-Health",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/lucky_hiking_page.dart"
+      }
+    },
+    {
+      "screen_id": "dream",
+      "name": "Dream Fortune",
+      "name_ko": "꿈해몽",
+      "path": "/dream",
+      "deeplink_screen": "dream",
+      "category": "fortune_special",
+      "category_name": "Fortune - Special",
+      "category_name_ko": "운세 - 특수",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "07-Screens-Fortune-Basic",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/dream_fortune_page.dart"
+      }
+    },
+    {
+      "screen_id": "dream_chat",
+      "name": "Dream Chat",
+      "name_ko": "꿈 대화",
+      "path": "/dream-chat",
+      "deeplink_screen": "dream-chat",
+      "category": "fortune_special",
+      "category_name": "Fortune - Special",
+      "category_name_ko": "운세 - 특수",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "07-Screens-Fortune-Basic",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/dream_chat_page.dart"
+      }
+    },
+    {
+      "screen_id": "lucky_items",
+      "name": "Lucky Items",
+      "name_ko": "행운 아이템",
+      "path": "/lucky-items",
+      "deeplink_screen": "lucky-items",
+      "category": "fortune_special",
+      "category_name": "Fortune - Special",
+      "category_name_ko": "운세 - 특수",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "07-Screens-Fortune-Basic",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/lucky_items_page.dart"
+      }
+    },
+    {
+      "screen_id": "talisman",
+      "name": "Lucky Talisman",
+      "name_ko": "부적",
+      "path": "/lucky-talisman",
+      "deeplink_screen": "lucky-talisman",
+      "category": "fortune_special",
+      "category_name": "Fortune - Special",
+      "category_name_ko": "운세 - 특수",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "07-Screens-Fortune-Basic",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/talisman_fortune_page.dart"
+      }
+    },
+    {
+      "screen_id": "face_reading",
+      "name": "Face Reading",
+      "name_ko": "관상",
+      "path": "/face-reading",
+      "deeplink_screen": "face-reading",
+      "category": "fortune_special",
+      "category_name": "Fortune - Special",
+      "category_name_ko": "운세 - 특수",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "07-Screens-Fortune-Basic",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/face_reading_fortune_page.dart"
+      }
+    },
+    {
+      "screen_id": "interactive_list",
+      "name": "Interactive List",
+      "name_ko": "인터랙티브 목록",
+      "path": "/interactive",
+      "deeplink_screen": "interactive",
+      "category": "interactive",
+      "category_name": "Interactive",
+      "category_name_ko": "인터랙티브",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "13-Screens-Interactive",
+      "source": {
+        "dartFile": "lib/features/interactive/presentation/pages/interactive_list_page.dart"
+      }
+    },
+    {
+      "screen_id": "dream_interpretation",
+      "name": "Dream Interpretation",
+      "name_ko": "꿈 해석",
+      "path": "/interactive/dream",
+      "deeplink_screen": "interactive/dream",
+      "category": "interactive",
+      "category_name": "Interactive",
+      "category_name_ko": "인터랙티브",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "13-Screens-Interactive",
+      "source": {
+        "dartFile": "lib/features/interactive/presentation/pages/dream_interpretation_page.dart"
+      }
+    },
+    {
+      "screen_id": "psychology_test",
+      "name": "Psychology Test",
+      "name_ko": "심리 테스트",
+      "path": "/interactive/psychology-test",
+      "deeplink_screen": "interactive/psychology-test",
+      "category": "interactive",
+      "category_name": "Interactive",
+      "category_name_ko": "인터랙티브",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "13-Screens-Interactive",
+      "source": {
+        "dartFile": "lib/features/interactive/presentation/pages/psychology_test_page.dart"
+      }
+    },
+    {
+      "screen_id": "tarot_chat",
+      "name": "Tarot Chat",
+      "name_ko": "타로 챗",
+      "path": "/interactive/tarot",
+      "deeplink_screen": "interactive/tarot",
+      "category": "interactive",
+      "category_name": "Interactive",
+      "category_name_ko": "인터랙티브",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "13-Screens-Interactive",
+      "source": {
+        "dartFile": "lib/features/interactive/presentation/pages/tarot_chat_page.dart"
+      }
+    },
+    {
+      "screen_id": "tarot_deck_selection",
+      "name": "Tarot Deck Selection",
+      "name_ko": "타로 덱 선택",
+      "path": "/interactive/tarot/deck-selection",
+      "deeplink_screen": "interactive/tarot/deck-selection",
+      "category": "interactive",
+      "category_name": "Interactive",
+      "category_name_ko": "인터랙티브",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "13-Screens-Interactive",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/tarot_deck_selection_page.dart"
+      }
+    },
+    {
+      "screen_id": "tarot_animated_flow",
+      "name": "Tarot Animated Flow",
+      "name_ko": "타로 애니메이션",
+      "path": "/interactive/tarot/animated-flow",
+      "deeplink_screen": "interactive/tarot/animated-flow",
+      "category": "interactive",
+      "category_name": "Interactive",
+      "category_name_ko": "인터랙티브",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "13-Screens-Interactive",
+      "source": {
+        "dartFile": "lib/features/fortune/presentation/pages/tarot_animated_flow_page.dart"
+      }
+    },
+    {
+      "screen_id": "face_reading_interactive",
+      "name": "Face Reading Interactive",
+      "name_ko": "관상 인터랙티브",
+      "path": "/interactive/face-reading",
+      "deeplink_screen": "interactive/face-reading",
+      "category": "interactive",
+      "category_name": "Interactive",
+      "category_name_ko": "인터랙티브",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "13-Screens-Interactive",
+      "source": {
+        "dartFile": "lib/features/interactive/presentation/pages/face_reading_interactive_page.dart"
+      }
+    },
+    {
+      "screen_id": "taemong",
+      "name": "Taemong",
+      "name_ko": "태몽",
+      "path": "/interactive/taemong",
+      "deeplink_screen": "interactive/taemong",
+      "category": "interactive",
+      "category_name": "Interactive",
+      "category_name_ko": "인터랙티브",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "13-Screens-Interactive",
+      "source": {
+        "dartFile": "lib/features/interactive/presentation/pages/taemong_page.dart"
+      }
+    },
+    {
+      "screen_id": "worry_bead",
+      "name": "Worry Bead",
+      "name_ko": "걱정 구슬",
+      "path": "/interactive/worry-bead",
+      "deeplink_screen": "interactive/worry-bead",
+      "category": "interactive",
+      "category_name": "Interactive",
+      "category_name_ko": "인터랙티브",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "13-Screens-Interactive",
+      "source": {
+        "dartFile": "lib/features/interactive/presentation/pages/worry_bead_page.dart"
+      }
+    },
+    {
+      "screen_id": "dream_journal",
+      "name": "Dream Journal",
+      "name_ko": "꿈 일기",
+      "path": "/interactive/dream-journal",
+      "deeplink_screen": "interactive/dream-journal",
+      "category": "interactive",
+      "category_name": "Interactive",
+      "category_name_ko": "인터랙티브",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 2,
+      "figma_page": "13-Screens-Interactive",
+      "source": {
+        "dartFile": "lib/features/interactive/presentation/pages/dream_journal_page.dart"
+      }
+    },
+    {
+      "screen_id": "trend_psychology",
+      "name": "Trend Psychology",
+      "name_ko": "심리 테스트 트렌드",
+      "path": "/trend/psychology/sample",
+      "deeplink_screen": "trend/psychology/sample",
+      "category": "trend",
+      "category_name": "Trend",
+      "category_name_ko": "트렌드",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 3,
+      "figma_page": "14-Screens-Trend",
+      "source": {
+        "dartFile": "lib/features/trend/presentation/pages/trend_psychology_page.dart"
+      }
+    },
+    {
+      "screen_id": "trend_worldcup",
+      "name": "Trend Worldcup",
+      "name_ko": "이상형 월드컵",
+      "path": "/trend/worldcup/sample",
+      "deeplink_screen": "trend/worldcup/sample",
+      "category": "trend",
+      "category_name": "Trend",
+      "category_name_ko": "트렌드",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 3,
+      "figma_page": "14-Screens-Trend",
+      "source": {
+        "dartFile": "lib/features/trend/presentation/pages/trend_worldcup_page.dart"
+      }
+    },
+    {
+      "screen_id": "trend_balance",
+      "name": "Trend Balance",
+      "name_ko": "밸런스 게임",
+      "path": "/trend/balance/sample",
+      "deeplink_screen": "trend/balance/sample",
+      "category": "trend",
+      "category_name": "Trend",
+      "category_name_ko": "트렌드",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "priority": 3,
+      "figma_page": "14-Screens-Trend",
+      "source": {
+        "dartFile": "lib/features/trend/presentation/pages/trend_balance_page.dart"
+      }
+    }
+  ]
+}

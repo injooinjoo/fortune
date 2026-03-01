@@ -64,7 +64,6 @@ class LoadingMessages {
     'exam': 'practical',
     'moving': 'practical',
     'breathing': 'practical',
-    'gratitude': 'practical',
   };
 
   /// 카테고리별 메시지

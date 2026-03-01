@@ -1,0 +1,167 @@
+{
+  "generated_at": "2026-02-27T16:30:22.164Z",
+  "expected": {
+    "screens": 61,
+    "targets": 122
+  },
+  "actual": {
+    "screenshots": 122,
+    "boards": 122,
+    "blocked": 0
+  },
+  "pass": {
+    "screenshots_complete": true,
+    "boards_complete": true,
+    "boards_component_panel_valid": true
+  },
+  "missing_screenshots": [],
+  "missing_boards": [],
+  "invalid_boards": [],
+  "blocked": [],
+  "sample_dimension_checks": [
+    {
+      "screen_id": "landing",
+      "theme": "light",
+      "path": "artifacts/design/mobile/raw/landing/light.png",
+      "width": 1320,
+      "height": 2868
+    },
+    {
+      "screen_id": "landing",
+      "theme": "dark",
+      "path": "artifacts/design/mobile/raw/landing/dark.png",
+      "width": 1320,
+      "height": 2868
+    },
+    {
+      "screen_id": "onboarding",
+      "theme": "light",
+      "path": "artifacts/design/mobile/raw/onboarding/light.png",
+      "width": 1320,
+      "height": 2868
+    },
+    {
+      "screen_id": "onboarding",
+      "theme": "dark",
+      "path": "artifacts/design/mobile/raw/onboarding/dark.png",
+      "width": 1320,
+      "height": 2868
+    },
+    {
+      "screen_id": "home",
+      "theme": "light",
+      "path": "artifacts/design/mobile/raw/home/light.png",
+      "width": 1320,
+      "height": 2868
+    },
+    {
+      "screen_id": "home",
+      "theme": "dark",
+      "path": "artifacts/design/mobile/raw/home/dark.png",
+      "width": 1320,
+      "height": 2868
+    },
+    {
+      "screen_id": "fortune_list",
+      "theme": "light",
+      "path": "artifacts/design/mobile/raw/fortune_list/light.png",
+      "width": 1320,
+      "height": 2868
+    },
+    {
+      "screen_id": "fortune_list",
+      "theme": "dark",
+      "path": "artifacts/design/mobile/raw/fortune_list/dark.png",
+      "width": 1320,
+      "height": 2868
+    },
+    {
+      "screen_id": "tarot",
+      "theme": "light",
+      "path": "artifacts/design/mobile/raw/tarot/light.png",
+      "width": 1320,
+      "height": 2868
+    },
+    {
+      "screen_id": "tarot",
+      "theme": "dark",
+      "path": "artifacts/design/mobile/raw/tarot/dark.png",
+      "width": 1320,
+      "height": 2868
+    },
+    {
+      "screen_id": "traditional_saju",
+      "theme": "light",
+      "path": "artifacts/design/mobile/raw/traditional_saju/light.png",
+      "width": 1320,
+      "height": 2868
+    },
+    {
+      "screen_id": "traditional_saju",
+      "theme": "dark",
+      "path": "artifacts/design/mobile/raw/traditional_saju/dark.png",
+      "width": 1320,
+      "height": 2868
+    },
+    {
+      "screen_id": "profile",
+      "theme": "light",
+      "path": "artifacts/design/mobile/raw/profile/light.png",
+      "width": 1320,
+      "height": 2868
+    },
+    {
+      "screen_id": "profile",
+      "theme": "dark",
+      "path": "artifacts/design/mobile/raw/profile/dark.png",
+      "width": 1320,
+      "height": 2868
+    },
+    {
+      "screen_id": "profile_edit",
+      "theme": "light",
+      "path": "artifacts/design/mobile/raw/profile_edit/light.png",
+      "width": 1320,
+      "height": 2868
+    },
+    {
+      "screen_id": "profile_edit",
+      "theme": "dark",
+      "path": "artifacts/design/mobile/raw/profile_edit/dark.png",
+      "width": 1320,
+      "height": 2868
+    },
+    {
+      "screen_id": "profile_saju",
+      "theme": "light",
+      "path": "artifacts/design/mobile/raw/profile_saju/light.png",
+      "width": 1320,
+      "height": 2868
+    },
+    {
+      "screen_id": "profile_saju",
+      "theme": "dark",
+      "path": "artifacts/design/mobile/raw/profile_saju/dark.png",
+      "width": 1320,
+      "height": 2868
+    },
+    {
+      "screen_id": "settings",
+      "theme": "light",
+      "path": "artifacts/design/mobile/raw/settings/light.png",
+      "width": 1320,
+      "height": 2868
+    },
+    {
+      "screen_id": "settings",
+      "theme": "dark",
+      "path": "artifacts/design/mobile/raw/settings/dark.png",
+      "width": 1320,
+      "height": 2868
+    }
+  ],
+  "notes": [
+    "Figma frame-count verification is manual in MCP workflow.",
+    "Box-only frame detection in Figma is approximated by HTML component-panel integrity."
+  ]
+}

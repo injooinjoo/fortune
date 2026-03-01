@@ -58,21 +58,30 @@ class OAuthInAppBrowserCoordinator {
     markOAuthFinished(reason: 'auth_event_${authState.event.name}');
   }
 
+  /// OAuth 세션 감지 및 브라우저 자동 닫기
+  ///
+  /// [maxAttempts] × [interval] = 총 대기 시간
+  /// 기본값: 180 × 250ms = 45초 (iPad/IPv6 환경 대응)
+  /// [onProgress] 콜백으로 UI에서 진행 상황 표시 가능
   static Future<void> watchForSessionAndClose(
     SupabaseClient supabase, {
     required int flowId,
-    int maxAttempts = 120, // 30초 (iPad 네트워크 지연 대응)
+    int maxAttempts = 180, // 45초 (iPad/IPv6 네트워크 지연 대응)
     Duration interval = const Duration(milliseconds: 250),
+    void Function(int currentAttempt, int totalAttempts)? onProgress,
   }) async {
     if (!_isOAuthInProgress) return;
 
     for (var i = 0; i < maxAttempts; i++) {
       if (!_isOAuthInProgress || flowId != _flowId) return;
 
+      // UI 진행 상황 콜백 (선택적)
+      onProgress?.call(i, maxAttempts);
+
       final session = supabase.auth.currentSession;
       if (session?.user != null) {
         Logger.info(
-            '[OAuthBrowser] Auth session detected via polling, closing in-app browser');
+            '[OAuthBrowser] Auth session detected via polling (attempt $i/$maxAttempts), closing in-app browser');
         await _closeInAppBrowserIfNeeded();
         markOAuthFinished(reason: 'session_polling');
         return;
@@ -80,6 +89,10 @@ class OAuthInAppBrowserCoordinator {
 
       await Future<void>.delayed(interval);
     }
+
+    // 타임아웃 도달
+    Logger.warning(
+        '[OAuthBrowser] Session polling timeout reached ($maxAttempts attempts)');
   }
 
   static Future<void> _closeInAppBrowserIfNeeded() async {

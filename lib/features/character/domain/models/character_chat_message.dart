@@ -86,6 +86,7 @@ class CharacterChatMessage {
     String? imageUrl,
     CharacterMediaCategory? mediaCategory,
     MessageOrigin origin = MessageOrigin.aiReply,
+    Map<String, dynamic>? sajuData,
   }) {
     return CharacterChatMessage(
       type: CharacterChatMessageType.character,
@@ -96,6 +97,7 @@ class CharacterChatMessage {
       imageUrl: imageUrl,
       mediaCategory: mediaCategory,
       origin: origin,
+      sajuData: sajuData,
     );
   }
 
