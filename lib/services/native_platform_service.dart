@@ -68,6 +68,9 @@ class NativePlatformService extends ResilientService {
       await _channel.invokeMethod(
           'updateWidget', {'widgetType': widgetType, 'data': data});
       Logger.info('Native platform initialized successfully');
+    } on MissingPluginException catch (e) {
+      Logger.warning(
+          '[NativePlatformService] 위젯 업데이트 실패 (플러그인 미등록, 선택적 기능): $e');
     } on PlatformException catch (e) {
       Logger.warning(
           '[NativePlatformService] 위젯 업데이트 실패 (선택적 기능, 위젯 데이터 비활성화): $e');

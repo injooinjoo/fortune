@@ -9,7 +9,7 @@ import 'package:home_widget/home_widget.dart';
 /// Service for managing home screen widgets
 /// 새 위젯 시스템: 총운, 카테고리, 시간대, 로또 위젯 지원
 class WidgetService {
-  static const String appGroupId = 'group.com.beyond.fortune';
+  static bool _backgroundHandlerRegistered = false;
 
   // 새 위젯 이름들
   static const String overallWidgetName = 'FortuneOverallWidget';
@@ -27,18 +27,22 @@ class WidgetService {
   /// Initialize widget service
   static Future<void> initialize() async {
     try {
-      if (defaultTargetPlatform == TargetPlatform.iOS) {
-        await HomeWidget.setAppGroupId(appGroupId);
-      }
-      await WidgetDataService.initialize();
+      await WidgetDataService.ensureInitialized();
 
       // 백그라운드 새로고침 핸들러 등록
-      _setupBackgroundRefreshHandler();
+      if (!_backgroundHandlerRegistered) {
+        _setupBackgroundRefreshHandler();
+        _backgroundHandlerRegistered = true;
+      }
 
       Logger.info('[WidgetService] 위젯 서비스 초기화 완료');
     } catch (e) {
       Logger.warning('[WidgetService] 위젯 서비스 초기화 실패 (선택적 기능): $e');
     }
+  }
+
+  static Future<void> _ensureWidgetReady() async {
+    await initialize();
   }
 
   /// 백그라운드 새로고침 핸들러 설정
@@ -135,6 +139,7 @@ class WidgetService {
   /// 위젯 데이터 새로고침 (앱 시작 시 또는 운세 조회 후 호출)
   static Future<void> refreshWidgetData(String userId) async {
     try {
+      await _ensureWidgetReady();
       // 오늘 데이터가 이미 있는지 확인
       final isValid = await WidgetDataService.isDataValidForToday();
       if (isValid) {
@@ -153,6 +158,7 @@ class WidgetService {
   /// 강제 위젯 데이터 새로고침 (오늘 데이터가 있어도 갱신)
   static Future<void> forceRefreshWidgetData(String userId) async {
     try {
+      await _ensureWidgetReady();
       await WidgetDataService.fetchAndSaveForWidget(userId: userId);
       Logger.info('[WidgetService] 위젯 데이터 강제 새로고침 완료');
     } catch (e) {
@@ -168,6 +174,7 @@ class WidgetService {
     String? description,
   }) async {
     try {
+      await _ensureWidgetReady();
       await HomeWidget.saveWidgetData<int>('overall_score', score);
       await HomeWidget.saveWidgetData<String>('overall_grade', grade);
       await HomeWidget.saveWidgetData<String>('overall_message', message);
@@ -193,6 +200,7 @@ class WidgetService {
     required String icon,
   }) async {
     try {
+      await _ensureWidgetReady();
       await HomeWidget.saveWidgetData<String>('category_key', category);
       await HomeWidget.saveWidgetData<String>('category_name', name);
       await HomeWidget.saveWidgetData<int>('category_score', score);
@@ -215,6 +223,7 @@ class WidgetService {
     required String icon,
   }) async {
     try {
+      await _ensureWidgetReady();
       await HomeWidget.saveWidgetData<String>('timeslot_name', timeSlotName);
       await HomeWidget.saveWidgetData<int>('timeslot_score', score);
       await HomeWidget.saveWidgetData<String>('timeslot_message', message);
@@ -233,6 +242,7 @@ class WidgetService {
     required List<int> numbers,
   }) async {
     try {
+      await _ensureWidgetReady();
       await HomeWidget.saveWidgetData<String>(
           'lotto_numbers', numbers.join(', '));
 
@@ -247,6 +257,7 @@ class WidgetService {
   /// SharedWidgetData로 모든 위젯 업데이트
   static Future<void> updateAllWidgetsFromData(SharedWidgetData data) async {
     try {
+      await _ensureWidgetReady();
       // 총운 위젯
       await updateOverallWidget(
         score: data.overall.score,
@@ -335,6 +346,7 @@ class WidgetService {
   /// 모든 위젯 업데이트 알림
   static Future<void> notifyAllWidgets() async {
     try {
+      await _ensureWidgetReady();
       await NativePlatformService.updateWidget(
         widgetType: 'all',
         data: {'action': 'refresh'},
@@ -366,6 +378,7 @@ class WidgetService {
   /// Get initial widget data (when app is launched from widget)
   static Future<Map<String, dynamic>?> getInitialWidgetData() async {
     try {
+      await _ensureWidgetReady();
       final uri = await HomeWidget.initiallyLaunchedFromHomeWidget();
       if (uri != null) {
         return uri.queryParameters;
@@ -382,6 +395,7 @@ class WidgetService {
   /// 카테고리 위젯의 선택된 카테고리 저장
   static Future<void> setSelectedCategory(String category) async {
     try {
+      await _ensureWidgetReady();
       await HomeWidget.saveWidgetData<String>('selected_category', category);
 
       // 저장된 데이터에서 해당 카테고리 정보 로드하여 위젯 업데이트
@@ -408,6 +422,7 @@ class WidgetService {
   /// 선택된 카테고리 조회
   static Future<String> getSelectedCategory() async {
     try {
+      await _ensureWidgetReady();
       return await HomeWidget.getWidgetData<String>('selected_category') ??
           'love';
     } catch (e) {

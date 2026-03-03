@@ -15,6 +15,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class WidgetDataService {
   static const String _sharedDataKey = 'unified_fortune_widget_data';
   static const String _appGroupId = 'group.com.beyond.fortune';
+  static bool _isInitialized = false;
 
   // 카테고리 매핑
   static const Map<String, String> _categoryNames = {
@@ -42,12 +43,20 @@ class WidgetDataService {
 
   /// 위젯 서비스 초기화
   static Future<void> initialize() async {
+    await ensureInitialized();
+  }
+
+  /// HomeWidget 사용 전 초기화 보장
+  static Future<void> ensureInitialized() async {
+    if (_isInitialized) return;
     try {
       if (defaultTargetPlatform == TargetPlatform.iOS) {
         await HomeWidget.setAppGroupId(_appGroupId);
       }
+      _isInitialized = true;
       Logger.info('[WidgetDataService] 초기화 완료');
     } catch (e) {
+      _isInitialized = false;
       Logger.warning('[WidgetDataService] 초기화 실패 (선택적 기능): $e');
     }
   }
@@ -58,6 +67,7 @@ class WidgetDataService {
     required String userId,
   }) async {
     try {
+      await ensureInitialized();
       Logger.info('[WidgetDataService] 위젯 데이터 fetch 시작');
 
       // 1. fortune-daily 데이터 가져오기
@@ -515,6 +525,7 @@ class WidgetDataService {
   /// 저장된 위젯 데이터 로드
   static Future<SharedWidgetData?> loadWidgetData() async {
     try {
+      await ensureInitialized();
       final jsonStr = await HomeWidget.getWidgetData<String>(_sharedDataKey);
       if (jsonStr == null || jsonStr.isEmpty) return null;
 
@@ -529,6 +540,7 @@ class WidgetDataService {
   /// 오늘 데이터가 유효한지 확인
   static Future<bool> isDataValidForToday() async {
     try {
+      await ensureInitialized();
       final validDate = await HomeWidget.getWidgetData<String>('valid_date');
       if (validDate == null) return false;
 
@@ -650,6 +662,7 @@ class WidgetDataService {
     SharedWidgetData? yesterdayData,
   }) async {
     try {
+      await ensureInitialized();
       SharedWidgetData dataToSave;
 
       if (todayData != null) {

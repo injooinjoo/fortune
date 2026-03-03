@@ -37,10 +37,8 @@ import NaverThirdPartyLogin
     #endif
     
     // Register native platform plugin for widget and Live Activity support
-    if #available(iOS 16.1, *) {
-      if let registrar = self.registrar(forPlugin: "NativePlatformPlugin") {
-        NativePlatformPlugin.register(with: registrar)
-      }
+    if let registrar = self.registrar(forPlugin: "NativePlatformPlugin") {
+      NativePlatformPlugin.register(with: registrar)
     }
 
     // Register background tasks for widget refresh

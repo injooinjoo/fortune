@@ -290,6 +290,8 @@ final widgetDataPreparationProvider = Provider<void>((ref) {
           authState.event == AuthChangeEvent.tokenRefreshed ||
           authState.event == AuthChangeEvent.initialSession) {
         try {
+          await WidgetService.initialize();
+
           // 위젯 설치 확인 (Android만 실제 확인, iOS는 항상 true)
           final isInstalled = await WidgetDataService.isWidgetInstalled();
 

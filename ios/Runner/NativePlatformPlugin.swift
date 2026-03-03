@@ -6,7 +6,6 @@ import Intents
 import Vision
 import CoreImage
 
-@available(iOS 16.1, *)
 public class NativePlatformPlugin: NSObject, FlutterPlugin {
     private var channel: FlutterMethodChannel?
     private var eventChannel: FlutterEventChannel?
@@ -414,7 +413,6 @@ public class NativePlatformPlugin: NSObject, FlutterPlugin {
 }
 
 // MARK: - FlutterStreamHandler
-@available(iOS 16.1, *)
 extension NativePlatformPlugin: FlutterStreamHandler {
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
         self.eventSink = events
