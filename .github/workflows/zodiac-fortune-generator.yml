@@ -23,8 +23,44 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+
+    - name: Preflight required secrets
+      id: preflight
+      env:
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      run: |
+        MISSING=()
+
+        if [ -z "$SUPABASE_URL" ]; then
+          MISSING+=("SUPABASE_URL")
+        fi
+
+        if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+          MISSING+=("SUPABASE_SERVICE_ROLE_KEY")
+        fi
+
+        if [ "${#MISSING[@]}" -gt 0 ]; then
+          echo "has_secrets=false" >> "$GITHUB_OUTPUT"
+
+          {
+            echo "## ⚠️ Zodiac generation skipped"
+            echo ""
+            echo "Required GitHub secrets are missing:"
+            for KEY in "${MISSING[@]}"; do
+              echo "- \`$KEY\`"
+            done
+            echo ""
+            echo "Add missing repository secrets and rerun this workflow."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          exit 0
+        fi
+
+        echo "has_secrets=true" >> "$GITHUB_OUTPUT"
     
     - name: Generate Zodiac Age Fortunes
+      if: steps.preflight.outputs.has_secrets == 'true'
       env:
         SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
         SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
@@ -73,7 +109,7 @@ jobs:
         fi
     
     - name: Create Issue on Repeated Failures
-      if: failure()
+      if: failure() && steps.preflight.outputs.has_secrets == 'true'
       uses: actions/github-script@v7
       with:
         script: |

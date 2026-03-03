@@ -25,15 +25,48 @@ jobs:
           fetch-depth: 0  # Full history for better detection
 
       - name: TruffleHog OSS
+        id: trufflehog
+        continue-on-error: true
         uses: trufflesecurity/trufflehog@7c0734f987ad0bb30ee8da210773b800ee2016d3 # v3.93.4
         with:
           path: ./
           extra_args: --debug --only-verified
 
       - name: Gitleaks
+        id: gitleaks
+        continue-on-error: true
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: TruffleHog remediation guide
+        if: steps.trufflehog.outcome == 'failure'
+        run: |
+          {
+            echo "## 🚨 TruffleHog detected a verified secret"
+            echo ""
+            echo "Secret scanning remains strict by policy. Follow these steps:"
+            echo "1. Revoke/rotate the leaked credential immediately."
+            echo "2. Replace credentials in runtime secret stores (GitHub/Supabase/etc.)."
+            echo "3. Validate no active code path uses the revoked key."
+            echo "4. Re-run Security Scan and confirm clean result."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Gitleaks remediation guide
+        if: steps.gitleaks.outcome == 'failure'
+        run: |
+          {
+            echo "## 🚨 Gitleaks detected potential secret(s)"
+            echo ""
+            echo "Review findings, rotate exposed credentials, and remove hardcoded values."
+            echo "After remediation, re-run Security Scan."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Enforce strict secret scan
+        if: steps.trufflehog.outcome == 'failure' || steps.gitleaks.outcome == 'failure'
+        run: |
+          echo "::error::Secret scanning failed. See remediation guidance in this run summary."
+          exit 1
 
   dependency-check:
     name: Dependency Vulnerability Check

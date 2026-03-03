@@ -53,3 +53,9 @@ id = "upstash-redis-rest-token"
 description = "Redis/Upstash Token"
 regex = '''UPSTASH_REDIS_REST_TOKEN\s*=\s*["\']?[A-Za-z0-9\-_.=]+["\']?'''
 tags = ["token", "Redis"]
+
+[[rules]]
+id = "postgres-dsn-with-credentials"
+description = "Postgres/Supabase DSN with embedded credentials"
+regex = '''(?i)postgres(?:ql)?://[A-Za-z0-9._%+\-]+:[^@\s]+@[A-Za-z0-9.\-]+(?::\d+)?/[A-Za-z0-9._-]+'''
+tags = ["secret", "database", "postgres", "supabase"]
