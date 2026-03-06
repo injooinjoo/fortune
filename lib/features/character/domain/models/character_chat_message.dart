@@ -52,7 +52,7 @@ class CharacterChatMessage {
   CharacterChatMessage({
     String? id,
     required this.type,
-    required this.text,
+    required String text,
     DateTime? timestamp,
     this.characterId,
     this.choiceSet,
@@ -65,6 +65,7 @@ class CharacterChatMessage {
     this.origin = MessageOrigin.system,
     this.sajuData,
   })  : id = id ?? const Uuid().v4(),
+        text = _sanitizeTextValue(text),
         timestamp = timestamp ?? DateTime.now();
 
   /// 사용자 메시지 생성 (status: sent로 시작 - "1" 표시)
@@ -280,5 +281,48 @@ class CharacterChatMessage {
           : null,
       sajuData: json['sajuData'] as Map<String, dynamic>?,
     );
+  }
+
+  static String _sanitizeTextValue(String text) {
+    if (text.isEmpty) {
+      return text;
+    }
+
+    final codeUnits = text.codeUnits;
+    final buffer = StringBuffer();
+    var changed = false;
+
+    for (var i = 0; i < codeUnits.length; i++) {
+      final unit = codeUnits[i];
+      final isHighSurrogate = unit >= 0xD800 && unit <= 0xDBFF;
+      final isLowSurrogate = unit >= 0xDC00 && unit <= 0xDFFF;
+
+      if (isHighSurrogate) {
+        final hasTrailingLowSurrogate = i + 1 < codeUnits.length &&
+            codeUnits[i + 1] >= 0xDC00 &&
+            codeUnits[i + 1] <= 0xDFFF;
+
+        if (hasTrailingLowSurrogate) {
+          buffer.writeCharCode(unit);
+          buffer.writeCharCode(codeUnits[i + 1]);
+          i++;
+          continue;
+        }
+
+        changed = true;
+        buffer.writeCharCode(0xFFFD);
+        continue;
+      }
+
+      if (isLowSurrogate) {
+        changed = true;
+        buffer.writeCharCode(0xFFFD);
+        continue;
+      }
+
+      buffer.writeCharCode(unit);
+    }
+
+    return changed ? buffer.toString() : text;
   }
 }

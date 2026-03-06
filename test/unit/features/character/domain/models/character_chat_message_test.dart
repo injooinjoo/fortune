@@ -37,4 +37,39 @@ void main() {
       expect(restored.hasImage, isFalse);
     });
   });
+
+  group('CharacterChatMessage UTF-16 sanitization', () {
+    test('preserves valid surrogate pairs', () {
+      final validEmoji = String.fromCharCodes(const [0xD83D, 0xDE0A]);
+
+      final message =
+          CharacterChatMessage.character(validEmoji, 'fortune_marco');
+
+      expect(message.text, validEmoji);
+    });
+
+    test('replaces malformed surrogate code units in constructor input', () {
+      final malformed = String.fromCharCodes(const [0xD83D, 0x0041, 0xDE0A]);
+
+      final message =
+          CharacterChatMessage.character(malformed, 'fortune_marco');
+
+      expect(message.text, '\uFFFDA\uFFFD');
+    });
+
+    test('sanitizes malformed content when loading from json', () {
+      final malformed = String.fromCharCodes(const [0xDE0A]);
+
+      final message = CharacterChatMessage.fromJson({
+        'id': 'msg-1',
+        'type': CharacterChatMessageType.character.name,
+        'content': malformed,
+        'timestamp': DateTime(2026, 3, 6).toIso8601String(),
+        'status': MessageStatus.read.name,
+        'origin': MessageOrigin.aiReply.name,
+      });
+
+      expect(message.text, '\uFFFD');
+    });
+  });
 }
