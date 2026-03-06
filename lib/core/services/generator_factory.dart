@@ -132,9 +132,6 @@ class GeneratorFactory {
           isPremium: isPremium,
         );
 
-      case 'game_enhance':
-        return await _generateGameEnhance(input);
-
       case 'wish':
         return await WishGenerator.generate(input, _supabase);
 
@@ -534,66 +531,6 @@ class GeneratorFactory {
       );
     }
     throw Exception('Celebrity API 응답 형식 오류');
-  }
-
-
-  Future<FortuneResult> _generateGameEnhance(
-    Map<String, dynamic> input,
-  ) async {
-    final user = _supabase.auth.currentUser;
-
-    String? readOptionalString(dynamic value) {
-      if (value == null) {
-        return null;
-      }
-      final text = value.toString().trim();
-      return text.isEmpty ? null : text;
-    }
-
-    final birthDate = readOptionalString(input['birthDate']);
-    final gender = readOptionalString(input['gender']);
-    final payload = <String, dynamic>{
-      'userId': user?.id ?? input['userId'] ?? 'anonymous',
-      if (birthDate != null) 'birthDate': birthDate,
-      if (gender != null) 'gender': gender,
-    };
-
-    final response = await _supabase.functions
-        .invoke('fortune-game-enhance', body: payload)
-        .timeout(
-          const Duration(seconds: 90),
-          onTimeout: () => throw Exception('Game Enhance API 타임아웃 (90초)'),
-        );
-
-    if (response.data == null) {
-      throw Exception('Game Enhance API 응답 없음');
-    }
-
-    final responseData = response.data as Map<String, dynamic>;
-    if (responseData['success'] != true || !responseData.containsKey('data')) {
-      throw Exception(responseData['error'] ?? 'Game Enhance API 응답 형식 오류');
-    }
-
-    final fortune = responseData['data'] as Map<String, dynamic>;
-    return FortuneResult(
-      id: fortune['id'] as String?,
-      type: 'game-enhance',
-      title: readOptionalString(fortune['title']) ?? '강화의 기운',
-      summary: {
-        'message': readOptionalString(fortune['summary']) ??
-            readOptionalString(fortune['status_message']) ??
-            '강화운 분석 완료',
-      },
-      data: fortune,
-      score: (fortune['score'] as num?)?.toInt(),
-      createdAt: DateTime.tryParse(
-        readOptionalString(fortune['timestamp']) ??
-            readOptionalString(fortune['created_at']) ??
-            '',
-      ),
-      percentile: (fortune['percentile'] as num?)?.toInt(),
-      isPercentileValid: fortune['percentile'] != null,
-    );
   }
 
   Future<FortuneResult> _generateBabyNickname(
