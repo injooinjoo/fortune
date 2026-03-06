@@ -45,7 +45,8 @@ const preparationLabels: Record<string, string> = {
   'perfect': '완벽하게 준비됨',
   'good': '잘 준비되고 있음',
   'normal': '보통 수준',
-  'worried': '걱정됨'
+  'worried': '걱정됨',
+  'panic': '급하게 준비 중'
 }
 
 function calculateDaysRemaining(examDate: string): number {
