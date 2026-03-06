@@ -134,6 +134,34 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
   bool get _isLutsCharacter => _characterId == 'luts';
 
+  bool get _skipSimulatedReplyDelay => _character.isFortuneExpert;
+
+  Future<void> _waitForReadDelayIfNeeded() async {
+    if (_skipSimulatedReplyDelay) return;
+
+    final readDelay = ResponseDelayConfig.calculateReadDelay();
+    await Future.delayed(Duration(milliseconds: readDelay));
+  }
+
+  Future<void> _waitForGeneratedReplyDelayIfNeeded({
+    required String? emotionTag,
+    required String responseText,
+  }) async {
+    if (_skipSimulatedReplyDelay) return;
+
+    final emotion = ResponseDelayConfig.parseEmotion(emotionTag);
+    final typingDelay = ResponseDelayConfig.calculateTypingDelay(
+      emotion: emotion,
+      responseLength: responseText.length,
+    );
+    await Future.delayed(Duration(milliseconds: typingDelay));
+  }
+
+  Future<void> _waitForUiDelayIfNeeded(Duration duration) async {
+    if (_skipSimulatedReplyDelay) return;
+    await Future.delayed(duration);
+  }
+
   String? _resolveModelPreference() {
     if (!_isLutsCharacter) return null;
     final remoteConfig = _ref.read(remoteConfigProvider);
@@ -1377,9 +1405,10 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
       // 마지막이 아니면 타이핑 딜레이 후 다음 섹션
       if (!isLast) {
-        final delay = _calculateSectionDelay(sections[i].length);
         setTyping(true);
-        await Future.delayed(Duration(milliseconds: delay));
+        await _waitForUiDelayIfNeeded(
+          Duration(milliseconds: _calculateSectionDelay(sections[i].length)),
+        );
         if (!mounted) return;
       }
     }
@@ -1594,8 +1623,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     );
 
     // 캐릭터 응답 속도에 맞는 딜레이
-    final typingDelay = _character.behaviorPattern.getTypingDelay();
-    await Future.delayed(typingDelay);
+    await _waitForUiDelayIfNeeded(_character.behaviorPattern.getTypingDelay());
 
     // 메시지 추가 (Follow-up이므로 새로운 스케줄은 시작하지 않음)
     final msg = await _buildFollowUpMessageWithOptionalMedia(
@@ -1651,8 +1679,8 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       );
 
       // 타이핑 딜레이
-      final typingDelay = _character.behaviorPattern.getTypingDelay();
-      await Future.delayed(typingDelay);
+      await _waitForUiDelayIfNeeded(
+          _character.behaviorPattern.getTypingDelay());
 
       // 메시지 추가
       final msg = await _buildFollowUpMessageWithOptionalMedia(
@@ -1735,12 +1763,10 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       );
 
       // 타이핑 딜레이
-      final emotion = ResponseDelayConfig.parseEmotion(response.emotionTag);
-      final typingDelay = ResponseDelayConfig.calculateTypingDelay(
-        emotion: emotion,
-        responseLength: response.response.length,
+      await _waitForGeneratedReplyDelayIfNeeded(
+        emotionTag: response.emotionTag,
+        responseText: response.response,
       );
-      await Future.delayed(Duration(milliseconds: typingDelay));
 
       _ackPendingUserMessagesBeforeCharacterReply();
 
@@ -1980,8 +2006,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     // 1단계: 유저 메시지는 이미 sendMessage()에서 추가됨
 
     // 2단계: 읽음 딜레이 (0.5~1.5초) - AI가 메시지를 "봤다"는 느낌
-    final readDelay = ResponseDelayConfig.calculateReadDelay();
-    await Future.delayed(Duration(milliseconds: readDelay));
+    await _waitForReadDelayIfNeeded();
 
     // 3단계: 읽음 처리 → pending "1" 전체 정리
     markPendingUserMessagesAsRead();
@@ -2037,12 +2062,10 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       );
 
       // 5단계: 감정 기반 타이핑 딜레이 (클라이언트 측)
-      final emotion = ResponseDelayConfig.parseEmotion(response.emotionTag);
-      final typingDelay = ResponseDelayConfig.calculateTypingDelay(
-        emotion: emotion,
-        responseLength: response.response.length,
+      await _waitForGeneratedReplyDelayIfNeeded(
+        emotionTag: response.emotionTag,
+        responseText: response.response,
       );
-      await Future.delayed(Duration(milliseconds: typingDelay));
 
       // 호감도 포인트 계산 (애니메이션용)
       final affinityPoints = response.affinityDelta.points;
@@ -2108,8 +2131,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     addUserMessage(requestMessage);
 
     // 2단계: 읽음 딜레이
-    final readDelay = ResponseDelayConfig.calculateReadDelay();
-    await Future.delayed(Duration(milliseconds: readDelay));
+    await _waitForReadDelayIfNeeded();
 
     // 3단계: 읽음 처리
     markPendingUserMessagesAsRead();
@@ -2118,10 +2140,10 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     final introMessage = _buildFortuneIntroMessage(fortuneType);
     if (introMessage != null) {
       setTyping(true);
-      await Future.delayed(const Duration(milliseconds: 800));
+      await _waitForUiDelayIfNeeded(const Duration(milliseconds: 800));
       setTyping(false);
       addCharacterMessage(introMessage);
-      await Future.delayed(const Duration(milliseconds: 500));
+      await _waitForUiDelayIfNeeded(const Duration(milliseconds: 500));
     }
 
     // 4단계: 타이핑 시작
@@ -2254,12 +2276,10 @@ $enrichedContext
       );
 
       // 5단계: 감정 기반 타이핑 딜레이
-      final emotion = ResponseDelayConfig.parseEmotion(response.emotionTag);
-      final typingDelay = ResponseDelayConfig.calculateTypingDelay(
-        emotion: emotion,
-        responseLength: response.response.length,
+      await _waitForGeneratedReplyDelayIfNeeded(
+        emotionTag: response.emotionTag,
+        responseText: response.response,
       );
-      await Future.delayed(Duration(milliseconds: typingDelay));
 
       // 호감도 포인트 계산 (애니메이션용)
       final affinityPoints = response.affinityDelta.points;
@@ -2315,8 +2335,7 @@ $enrichedContext
     addUserMessage(requestMessage);
 
     // 2단계: 읽음 딜레이
-    final readDelay = ResponseDelayConfig.calculateReadDelay();
-    await Future.delayed(Duration(milliseconds: readDelay));
+    await _waitForReadDelayIfNeeded();
 
     // 3단계: 읽음 처리
     markPendingUserMessagesAsRead();
@@ -2328,10 +2347,10 @@ $enrichedContext
     );
     if (introMessage != null) {
       setTyping(true);
-      await Future.delayed(const Duration(milliseconds: 800));
+      await _waitForUiDelayIfNeeded(const Duration(milliseconds: 800));
       setTyping(false);
       addCharacterMessage(introMessage);
-      await Future.delayed(const Duration(milliseconds: 500));
+      await _waitForUiDelayIfNeeded(const Duration(milliseconds: 500));
     }
 
     // 4단계: 타이핑 시작
@@ -2472,12 +2491,10 @@ $enrichedContext
       );
 
       // 5단계: 감정 기반 타이핑 딜레이
-      final emotion = ResponseDelayConfig.parseEmotion(response.emotionTag);
-      final typingDelay = ResponseDelayConfig.calculateTypingDelay(
-        emotion: emotion,
-        responseLength: response.response.length,
+      await _waitForGeneratedReplyDelayIfNeeded(
+        emotionTag: response.emotionTag,
+        responseText: response.response,
       );
-      await Future.delayed(Duration(milliseconds: typingDelay));
 
       // 호감도 포인트 계산 (애니메이션용)
       final affinityPoints = response.affinityDelta.points;
@@ -3294,8 +3311,7 @@ $enrichedContext
     }
 
     // 읽음 딜레이 (0.5~1.5초)
-    final readDelay = ResponseDelayConfig.calculateReadDelay();
-    await Future.delayed(Duration(milliseconds: readDelay));
+    await _waitForReadDelayIfNeeded();
 
     // 읽음 처리 → pending "1" 전체 정리
     markPendingUserMessagesAsRead();
@@ -3342,12 +3358,10 @@ $enrichedContext
       );
 
       // 감정 기반 타이핑 딜레이
-      final emotion = ResponseDelayConfig.parseEmotion(response.emotionTag);
-      final typingDelay = ResponseDelayConfig.calculateTypingDelay(
-        emotion: emotion,
-        responseLength: response.response.length,
+      await _waitForGeneratedReplyDelayIfNeeded(
+        emotionTag: response.emotionTag,
+        responseText: response.response,
       );
-      await Future.delayed(Duration(milliseconds: typingDelay));
 
       _ackPendingUserMessagesBeforeCharacterReply();
 
