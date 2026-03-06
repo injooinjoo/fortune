@@ -14,6 +14,33 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 /// 2. Configure Security Rules properly
 /// 3. Use domain restrictions in Firebase Console
 class SecureFirebaseOptions {
+  static bool get isCurrentPlatformConfigured =>
+      missingCurrentPlatformKeys.isEmpty;
+
+  static String get currentPlatformLabel {
+    if (kIsWeb) return 'web';
+
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.android:
+        return 'android';
+      case TargetPlatform.iOS:
+        return 'ios';
+      case TargetPlatform.macOS:
+        return 'macos';
+      case TargetPlatform.windows:
+        return 'windows';
+      case TargetPlatform.linux:
+        return 'linux';
+      default:
+        return 'unknown';
+    }
+  }
+
+  static List<String> get missingCurrentPlatformKeys =>
+      _requiredKeysForCurrentPlatform
+          .where((key) => _isMissingOrPlaceholder(dotenv.env[key]))
+          .toList();
+
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
       return web;
@@ -91,5 +118,54 @@ class SecureFirebaseOptions {
   static String _throwMissingKey(String key) {
     throw Exception(
         'Missing Firebase configuration: $key. Please check your .env file.');
+  }
+
+  static List<String> get _requiredKeysForCurrentPlatform {
+    if (kIsWeb) {
+      return const [
+        'FIREBASE_WEB_API_KEY',
+        'FIREBASE_WEB_APP_ID',
+        'FIREBASE_MESSAGING_SENDER_ID',
+        'FIREBASE_PROJECT_ID',
+      ];
+    }
+
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.android:
+        return const [
+          'FIREBASE_ANDROID_API_KEY',
+          'FIREBASE_ANDROID_APP_ID',
+          'FIREBASE_MESSAGING_SENDER_ID',
+          'FIREBASE_PROJECT_ID',
+        ];
+      case TargetPlatform.iOS:
+        return const [
+          'FIREBASE_IOS_API_KEY',
+          'FIREBASE_IOS_APP_ID',
+          'FIREBASE_MESSAGING_SENDER_ID',
+          'FIREBASE_PROJECT_ID',
+        ];
+      case TargetPlatform.macOS:
+        return const [
+          'FIREBASE_MACOS_API_KEY',
+          'FIREBASE_MACOS_APP_ID',
+          'FIREBASE_MESSAGING_SENDER_ID',
+          'FIREBASE_PROJECT_ID',
+        ];
+      case TargetPlatform.windows:
+      case TargetPlatform.linux:
+        return const [];
+      default:
+        return const [];
+    }
+  }
+
+  static bool _isMissingOrPlaceholder(String? value) {
+    final normalized = value?.trim() ?? '';
+    if (normalized.isEmpty) return true;
+    return normalized.startsWith('your-') ||
+        normalized.startsWith('your_') ||
+        normalized.startsWith('<') ||
+        normalized.contains('-placeholder');
   }
 }

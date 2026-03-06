@@ -14,9 +14,10 @@ class DeepLinkService {
   factory DeepLinkService() => _instance;
   DeepLinkService._internal();
 
-  late final AppLinks _appLinks;
+  AppLinks? _appLinks;
   StreamSubscription<Uri>? _linkSubscription;
   String? _pendingRoute;
+  bool _isInitialized = false;
 
   /// 대기 중인 딥링크 fortuneType (앱 시작 시 처리용)
   static const String _pendingFortuneTypeKey = 'pending_deep_link_fortune_type';
@@ -24,12 +25,17 @@ class DeepLinkService {
   /// 초기화
   Future<void> initialize() async {
     if (kIsWeb) return;
+    if (_isInitialized) {
+      Logger.info('DeepLinkService already initialized');
+      return;
+    }
 
     try {
-      _appLinks = AppLinks();
+      await _linkSubscription?.cancel();
+      final appLinks = _appLinks ??= AppLinks();
 
       // 앱이 이미 실행 중일 때 딥링크 수신
-      _linkSubscription = _appLinks.uriLinkStream.listen(
+      _linkSubscription = appLinks.uriLinkStream.listen(
         _handleDeepLink,
         onError: (error) {
           Logger.error('딥링크 스트림 에러', error);
@@ -37,12 +43,13 @@ class DeepLinkService {
       );
 
       // 앱이 종료된 상태에서 딥링크로 실행된 경우
-      final initialLink = await _appLinks.getInitialLink();
+      final initialLink = await appLinks.getInitialLink();
       if (initialLink != null) {
         Logger.info('초기 딥링크: $initialLink');
         await _handleDeepLink(initialLink);
       }
 
+      _isInitialized = true;
       Logger.info('DeepLinkService 초기화 완료');
     } catch (e) {
       Logger.error('DeepLinkService 초기화 실패', e);
@@ -182,5 +189,7 @@ class DeepLinkService {
   /// 리소스 해제
   void dispose() {
     _linkSubscription?.cancel();
+    _linkSubscription = null;
+    _isInitialized = false;
   }
 }

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
-import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
+import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode, kReleaseMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:intl/date_symbol_data_local.dart';
@@ -97,13 +97,34 @@ void main() async {
   }
 
   // Initialize Firebase
+  var isFirebaseReady = false;
   try {
     debugPrint('🚀 [STARTUP] Initializing Firebase...');
-    await Firebase.initializeApp(
-      options: SecureFirebaseOptions.currentPlatform,
-    );
-    debugPrint('🚀 [STARTUP] Firebase initialized successfully');
-    Logger.info('Firebase initialized successfully');
+    if (Firebase.apps.isNotEmpty) {
+      isFirebaseReady = true;
+      debugPrint('🚀 [STARTUP] Firebase already initialized');
+      Logger.info('Firebase already initialized');
+    } else if (!SecureFirebaseOptions.isCurrentPlatformConfigured) {
+      final missingKeys = SecureFirebaseOptions.missingCurrentPlatformKeys;
+      final message =
+          'Firebase config missing for ${SecureFirebaseOptions.currentPlatformLabel}: ${missingKeys.join(', ')}';
+
+      if (kReleaseMode) {
+        throw Exception(
+            '$message. Release startup requires Firebase configuration.');
+      }
+
+      debugPrint(
+          '⚠️ [STARTUP] $message - skipping Firebase initialization in dev/test mode');
+      Logger.warning('$message - Firebase disabled for dev/test startup');
+    } else {
+      await Firebase.initializeApp(
+        options: SecureFirebaseOptions.currentPlatform,
+      );
+      isFirebaseReady = Firebase.apps.isNotEmpty;
+      debugPrint('🚀 [STARTUP] Firebase initialized successfully');
+      Logger.info('Firebase initialized successfully');
+    }
   } catch (e) {
     debugPrint('❌ [STARTUP] Firebase initialization failed: $e');
     Logger.error('Firebase initialization failed', e);
@@ -183,10 +204,16 @@ void main() async {
 
   // Optional services are initialized after the first frame to avoid iOS
   // launch watchdog termination during `flutter run`.
-  unawaited(_runDeferredInitializations(supabaseReady: isSupabaseReady));
+  unawaited(_runDeferredInitializations(
+    supabaseReady: isSupabaseReady,
+    firebaseReady: isFirebaseReady,
+  ));
 }
 
-Future<void> _runDeferredInitializations({required bool supabaseReady}) async {
+Future<void> _runDeferredInitializations({
+  required bool supabaseReady,
+  required bool firebaseReady,
+}) async {
   try {
     await FortuneTypeLocalMigrationService.runOnce();
   } catch (e) {
@@ -231,15 +258,22 @@ Future<void> _runDeferredInitializations({required bool supabaseReady}) async {
     debugPrint('⚠️ [POST_STARTUP] Guest mode check failed: $e');
   }
 
-  try {
-    debugPrint('🚀 [POST_STARTUP] Initializing Firebase Remote Config...');
-    await RemoteConfigService().initialize();
-    debugPrint('🚀 [POST_STARTUP] Remote Config initialized successfully');
-    Logger.info('Remote Config initialized successfully');
-  } catch (e) {
-    debugPrint('⚠️ [POST_STARTUP] Remote Config initialization failed: $e');
+  if (firebaseReady) {
+    try {
+      debugPrint('🚀 [POST_STARTUP] Initializing Firebase Remote Config...');
+      await RemoteConfigService().initialize();
+      debugPrint('🚀 [POST_STARTUP] Remote Config initialized successfully');
+      Logger.info('Remote Config initialized successfully');
+    } catch (e) {
+      debugPrint('⚠️ [POST_STARTUP] Remote Config initialization failed: $e');
+      Logger.warning(
+          'Remote Config initialization failed (using default values): $e');
+    }
+  } else {
+    debugPrint(
+        '⚠️ [POST_STARTUP] Firebase unavailable, skipping Remote Config initialization');
     Logger.warning(
-        'Remote Config initialization failed (using default values): $e');
+        'Remote Config initialization skipped: Firebase unavailable');
   }
 
   if (kDebugMode) {
@@ -265,15 +299,22 @@ Future<void> _runDeferredInitializations({required bool supabaseReady}) async {
   }
 
   if (!kIsWeb) {
-    try {
-      debugPrint('🔔 [POST_STARTUP] Initializing FCM Service...');
-      await FCMService().initialize();
-      debugPrint('🔔 [POST_STARTUP] FCM Service initialized successfully');
-      Logger.info('FCM Service initialized successfully');
-    } catch (e) {
-      debugPrint('⚠️ [POST_STARTUP] FCM Service initialization failed: $e');
+    if (firebaseReady) {
+      try {
+        debugPrint('🔔 [POST_STARTUP] Initializing FCM Service...');
+        await FCMService().initialize();
+        debugPrint('🔔 [POST_STARTUP] FCM Service initialized successfully');
+        Logger.info('FCM Service initialized successfully');
+      } catch (e) {
+        debugPrint('⚠️ [POST_STARTUP] FCM Service initialization failed: $e');
+        Logger.warning(
+            'FCM Service initialization failed (optional feature): $e');
+      }
+    } else {
+      debugPrint(
+          '⚠️ [POST_STARTUP] Firebase unavailable, skipping FCM Service initialization');
       Logger.warning(
-          'FCM Service initialization failed (optional feature): $e');
+          'FCM Service initialization skipped: Firebase unavailable');
     }
 
     try {
