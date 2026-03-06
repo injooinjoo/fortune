@@ -161,6 +161,9 @@ class GeneratorFactory {
       case 'fortune_celebrity':
         return await _generateCelebrity(input, isPremium);
 
+      case 'match_insight':
+        return await _generateMatchInsight(input);
+
       case 'baby_nickname':
       case 'babynickname':
         return await _generateBabyNickname(input);
@@ -410,6 +413,82 @@ class GeneratorFactory {
     );
   }
 
+  Future<FortuneResult> _generateMatchInsight(
+    Map<String, dynamic> input,
+  ) async {
+    final user = _supabase.auth.currentUser;
+    final match = _asStringKeyedMap(input['match']);
+
+    final sport = _readRequiredString(
+      [input['sport'], match['sport']],
+      fieldName: 'sport',
+    );
+    final homeTeam = _readRequiredString(
+      [input['homeTeam'], match['homeTeam']],
+      fieldName: 'homeTeam',
+    );
+    final awayTeam = _readRequiredString(
+      [input['awayTeam'], match['awayTeam']],
+      fieldName: 'awayTeam',
+    );
+    final gameDate = _readRequiredString(
+      [input['gameDate'], match['gameTime'], match['gameDate']],
+      fieldName: 'gameDate',
+    );
+    final league = _readOptionalString(input['league']) ??
+        _readOptionalString(match['league']);
+    final favoriteTeam = _resolveMatchInsightFavoriteTeam(
+      rawFavoriteTeam: input['favoriteTeam'],
+      homeTeam: homeTeam,
+      awayTeam: awayTeam,
+    );
+    final birthDate = _readOptionalString(input['birthDate']);
+
+    final payload = <String, dynamic>{
+      'userId': user?.id ?? input['userId'] ?? 'anonymous',
+      'sport': sport,
+      'homeTeam': homeTeam,
+      'awayTeam': awayTeam,
+      'gameDate': gameDate,
+      if (league != null) 'league': league,
+      if (favoriteTeam != null) 'favoriteTeam': favoriteTeam,
+      if (birthDate != null) 'birthDate': birthDate,
+    };
+
+    final response = await _supabase.functions
+        .invoke('fortune-match-insight', body: payload)
+        .timeout(
+          const Duration(seconds: 90),
+          onTimeout: () => throw Exception('Match Insight API 타임아웃 (90초)'),
+        );
+
+    if (response.status != 200) {
+      throw Exception('Match Insight API 호출 실패: ${response.status}');
+    }
+
+    final responseData = response.data as Map<String, dynamic>?;
+    if (responseData == null) {
+      throw Exception('Match Insight API 응답 데이터가 없습니다');
+    }
+
+    final summaryText = _readOptionalString(responseData['summary']);
+    final timestampRaw = _readOptionalString(responseData['timestamp']) ??
+        _readOptionalString(responseData['created_at']);
+
+    return FortuneResult(
+      id: responseData['id'] as String?,
+      type: 'match-insight',
+      title: _readOptionalString(responseData['title']) ??
+          '$homeTeam vs $awayTeam',
+      summary: summaryText == null ? {} : {'message': summaryText},
+      data: responseData,
+      score: (responseData['score'] as num?)?.toInt(),
+      createdAt: timestampRaw != null ? DateTime.tryParse(timestampRaw) : null,
+      percentile: (responseData['percentile'] as num?)?.toInt(),
+      isPercentileValid: responseData['percentile'] != null,
+    );
+  }
+
   Future<FortuneResult> _generateCelebrity(
     Map<String, dynamic> input,
     bool isPremium,
@@ -648,6 +727,59 @@ class GeneratorFactory {
 
     Logger.info('[GeneratorFactory] ✅ Default API: $fortuneType');
     return FortuneResult.fromJson(response.data);
+  }
+
+  Map<String, dynamic> _asStringKeyedMap(dynamic value) {
+    if (value is Map<String, dynamic>) {
+      return value;
+    }
+    if (value is Map) {
+      return value.map(
+        (key, mapValue) => MapEntry(key.toString(), mapValue),
+      );
+    }
+    return const <String, dynamic>{};
+  }
+
+  String? _readOptionalString(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+    final text = value.toString().trim();
+    return text.isEmpty ? null : text;
+  }
+
+  String _readRequiredString(
+    List<dynamic> candidates, {
+    required String fieldName,
+  }) {
+    for (final candidate in candidates) {
+      final text = _readOptionalString(candidate);
+      if (text != null) {
+        return text;
+      }
+    }
+    throw Exception('Match Insight API 입력 누락: $fieldName');
+  }
+
+  String? _resolveMatchInsightFavoriteTeam({
+    required dynamic rawFavoriteTeam,
+    required String homeTeam,
+    required String awayTeam,
+  }) {
+    final favoriteTeam = _readOptionalString(rawFavoriteTeam);
+    if (favoriteTeam == null) {
+      return null;
+    }
+
+    switch (favoriteTeam.toLowerCase()) {
+      case 'home':
+        return homeTeam;
+      case 'away':
+        return awayTeam;
+      default:
+        return favoriteTeam;
+    }
   }
 }
 
