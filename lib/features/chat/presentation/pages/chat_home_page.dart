@@ -25,6 +25,7 @@ import '../../../../data/services/fortune_api/fortune_api_service.dart';
 import '../../../../domain/entities/fortune.dart' hide FortuneElements;
 import '../../../../core/cache/cache_service.dart';
 import '../../../../core/extensions/l10n_extension.dart';
+import '../../../../core/utils/moving_fortune_input_mapper.dart';
 import '../../domain/models/recommendation_chip.dart';
 import '../../domain/models/fortune_survey_config.dart';
 import '../../domain/configs/survey_configs.dart';
@@ -3831,56 +3832,19 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
   /// 이사 시기 옵션을 날짜 문자열로 변환
   String _formatMovingPeriod(String period) {
-    final now = DateTime.now();
-    switch (period) {
-      case '1month':
-        return now
-            .add(const Duration(days: 30))
-            .toIso8601String()
-            .split('T')[0];
-      case '3months':
-        return now
+    return MovingFortuneInputMapper.resolveMovingDate(
+          null,
+          movingPeriod: period,
+        ) ??
+        DateTime.now()
             .add(const Duration(days: 90))
             .toIso8601String()
             .split('T')[0];
-      case '6months':
-        return now
-            .add(const Duration(days: 180))
-            .toIso8601String()
-            .split('T')[0];
-      case '1year':
-        return now
-            .add(const Duration(days: 365))
-            .toIso8601String()
-            .split('T')[0];
-      case 'undecided':
-      default:
-        return now
-            .add(const Duration(days: 90))
-            .toIso8601String()
-            .split('T')[0]; // 기본 3개월
-    }
   }
 
   /// 이사 목적 옵션을 한글로 매핑
   String _mapMovingPurpose(String? purpose) {
-    switch (purpose) {
-      case 'job':
-        return '직장/취업';
-      case 'study':
-        return '학업/유학';
-      case 'marriage':
-        return '결혼/독립';
-      case 'family':
-        return '가족';
-      case 'environment':
-        return '주거환경 개선';
-      case 'investment':
-        return '투자/재테크';
-      case 'other':
-      default:
-        return '기타';
-    }
+    return MovingFortuneInputMapper.mapPurposeLabel(purpose) ?? '기타';
   }
 
   String _getTypeDisplayName(FortuneSurveyType type) {

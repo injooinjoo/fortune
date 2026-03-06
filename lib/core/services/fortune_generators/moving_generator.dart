@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/fortune_result.dart';
 import '../../utils/logger.dart';
+import '../../utils/moving_fortune_input_mapper.dart';
 
 /// 이사운 Generator - API 기반 운세 생성
 class MovingGenerator {
@@ -11,27 +12,33 @@ class MovingGenerator {
     SupabaseClient supabase,
   ) async {
     final userId = supabase.auth.currentUser?.id ?? 'unknown';
+    final normalizedInputConditions =
+        MovingFortuneInputMapper.normalize(inputConditions);
 
     // 📤 API 요청 준비
     Logger.info('[MovingGenerator] 📤 API 요청 준비');
     Logger.info('[MovingGenerator]   🌐 Edge Function: fortune-moving');
     Logger.info('[MovingGenerator]   👤 user_id: $userId');
     Logger.info(
-        '[MovingGenerator]   📍 current_area: ${inputConditions['current_area']}');
+        '[MovingGenerator]   📍 current_area: ${normalizedInputConditions['current_area']}');
     Logger.info(
-        '[MovingGenerator]   📍 target_area: ${inputConditions['target_area']}');
+        '[MovingGenerator]   📍 target_area: ${normalizedInputConditions['target_area']}');
     Logger.info(
-        '[MovingGenerator]   📅 moving_period: ${inputConditions['moving_period']}');
+        '[MovingGenerator]   📅 moving_period: ${normalizedInputConditions['moving_period']}');
     Logger.info(
-        '[MovingGenerator]   🎯 purpose: ${inputConditions['purpose']}');
+        '[MovingGenerator]   🎯 purpose: ${normalizedInputConditions['purpose']}');
 
     try {
       final requestBody = {
         'fortune_type': 'moving',
-        'current_area': inputConditions['current_area'],
-        'target_area': inputConditions['target_area'],
-        'moving_period': inputConditions['moving_period'],
-        'purpose': inputConditions['purpose'],
+        'current_area': normalizedInputConditions['current_area'],
+        'target_area': normalizedInputConditions['target_area'],
+        'moving_period': normalizedInputConditions['moving_period'],
+        'movingDate': normalizedInputConditions['movingDate'],
+        'purpose': normalizedInputConditions['purpose'],
+        'purposeCategory': normalizedInputConditions['purposeCategory'],
+        'concerns': normalizedInputConditions['concerns'],
+        'direction': normalizedInputConditions['direction'],
       };
 
       Logger.info('[MovingGenerator] 📡 API 호출 중...');
@@ -61,7 +68,7 @@ class MovingGenerator {
 
       // 🔄 파싱
       Logger.info('[MovingGenerator] 🔄 응답 데이터 파싱 중...');
-      final result = _convertToFortuneResult(data, inputConditions);
+      final result = _convertToFortuneResult(data, normalizedInputConditions);
 
       Logger.info('[MovingGenerator] ✅ 파싱 완료');
       Logger.info('[MovingGenerator]   📝 Title: ${result.title}');
