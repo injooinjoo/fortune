@@ -22557,8 +22557,7 @@
         "lib/shared/components/token_insufficient_modal.dart",
         "lib/shared/glassmorphism/glass_container.dart",
         "lib/shared/layouts/main_shell.dart",
-        "lib/shared/widgets/smart_image.dart",
-        "lib/shared/widgets/typography/app_text.dart"
+        "lib/shared/widgets/smart_image.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24203,21 +24202,21 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "dart",
       "notes": [
-        "runtime_unreachable"
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
       "path": "lib/core/theme/app_typography.dart",
       "referenced_by": [
         "docs/design/_archive/legacy/TOSS_DESIGN_SYSTEM.md",
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/shared/widgets/typography/app_text.dart"
+        "docs/development/_archive/ALL_FILES_LIST.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -31237,24 +31236,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/models/ab_test_variant.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/CLEANUP_REPORT.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -32604,8 +32585,7 @@
       ],
       "path": "lib/screens/landing/landing_page.dart",
       "referenced_by": [
-        "lib/screens/landing/index.dart",
-        "lib/screens/landing_page.dart"
+        "lib/screens/landing/index.dart"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -32742,25 +32722,6 @@
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/screens/landing_page.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
-        "docs/development/_archive/FILE_DEPENDENCY_MAP.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -33241,22 +33202,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "lib_md",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/scripts/README.md",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -34230,24 +34175,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/shared/widgets/typography/app_text.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "scripts/fix_const_errors.py"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "tooling_only"
     },
     {
       "area": "lib",
@@ -39456,24 +39383,24 @@
       "assets": 1231,
       "docs": 143,
       "integration_test": 26,
-      "lib": 756,
+      "lib": 752,
       "scripts": 69,
       "supabase": 214,
       "test": 53
     },
     "counts_by_candidate_action": {
-      "keep": 1144,
+      "keep": 1143,
       "keep_generated": 38,
       "manual_review": 838,
-      "phase2_review_candidate": 424,
+      "phase2_review_candidate": 421,
       "phase3_feature_cleanup": 48
     },
     "counts_by_usage_status": {
-      "doc_only": 158,
+      "doc_only": 156,
       "generated_excluded": 38,
-      "runtime_used": 1144,
+      "runtime_used": 1143,
       "test_only": 80,
-      "tooling_only": 186,
+      "tooling_only": 185,
       "unreferenced": 886
     },
     "declared_asset_dirs_without_runtime_refs": [
@@ -39584,8 +39511,8 @@
       "integration_test"
     ],
     "lib_dart_runtime_reachable": 635,
-    "lib_dart_total": 752,
-    "lib_dart_zero_incoming": 57,
+    "lib_dart_total": 749,
+    "lib_dart_zero_incoming": 55,
     "missing_function_refs": [
       "add-tokens",
       "crawl-celebrity-info",
@@ -39665,7 +39592,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2492,
+    "total_files": 2488,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "character-follow-up",
