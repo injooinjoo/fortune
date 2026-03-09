@@ -40,51 +40,48 @@
     },
     {
       "area": "assets",
-      "candidate_action": "phase2_review_candidate",
+      "candidate_action": "manual_review",
       "dirty": false,
       "kind": "asset_ttf",
       "notes": [
+        "no_inbound_refs",
         "pubspec_declared:assets/fonts"
       ],
       "path": "assets/fonts/GmarketSans/GmarketSansTTFBold.ttf",
-      "referenced_by": [
-        "pubspec.yaml"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "tooling_only"
+      "usage_status": "unreferenced"
     },
     {
       "area": "assets",
-      "candidate_action": "phase2_review_candidate",
+      "candidate_action": "manual_review",
       "dirty": false,
       "kind": "asset_ttf",
       "notes": [
+        "no_inbound_refs",
         "pubspec_declared:assets/fonts"
       ],
       "path": "assets/fonts/GmarketSans/GmarketSansTTFLight.ttf",
-      "referenced_by": [
-        "pubspec.yaml"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "tooling_only"
+      "usage_status": "unreferenced"
     },
     {
       "area": "assets",
-      "candidate_action": "phase2_review_candidate",
+      "candidate_action": "manual_review",
       "dirty": false,
       "kind": "asset_ttf",
       "notes": [
+        "no_inbound_refs",
         "pubspec_declared:assets/fonts"
       ],
       "path": "assets/fonts/GmarketSans/GmarketSansTTFMedium.ttf",
-      "referenced_by": [
-        "pubspec.yaml"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "tooling_only"
+      "usage_status": "unreferenced"
     },
     {
       "area": "assets",
@@ -39391,8 +39388,8 @@
     "counts_by_candidate_action": {
       "keep": 1143,
       "keep_generated": 38,
-      "manual_review": 838,
-      "phase2_review_candidate": 421,
+      "manual_review": 841,
+      "phase2_review_candidate": 418,
       "phase3_feature_cleanup": 48
     },
     "counts_by_usage_status": {
@@ -39400,8 +39397,8 @@
       "generated_excluded": 38,
       "runtime_used": 1143,
       "test_only": 80,
-      "tooling_only": 185,
-      "unreferenced": 886
+      "tooling_only": 182,
+      "unreferenced": 889
     },
     "declared_asset_dirs_without_runtime_refs": [
       "assets/animations",
