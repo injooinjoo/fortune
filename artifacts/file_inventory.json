@@ -21477,7 +21477,6 @@
       "notes": [],
       "path": "lib/core/components/app_bottom_sheet.dart",
       "referenced_by": [
-        "lib/core/components/app_components.dart",
         "lib/features/chat/presentation/widgets/profile_required_bottom_sheet.dart"
       ],
       "runtime_reachable": true,
@@ -21492,7 +21491,6 @@
       "notes": [],
       "path": "lib/core/components/app_card.dart",
       "referenced_by": [
-        "lib/core/components/app_components.dart",
         "lib/features/admin/pages/celebrity_crawling_page.dart",
         "lib/features/fortune/presentation/widgets/face_reading/face_zone_detail_card.dart",
         "lib/features/fortune/presentation/widgets/saju/saju_hapchung_widget.dart",
@@ -21520,7 +21518,7 @@
         "runtime_unreachable",
         "zero_incoming_dart"
       ],
-      "path": "lib/core/components/app_components.dart",
+      "path": "lib/core/components/app_dialog.dart",
       "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
@@ -21528,67 +21526,51 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
       "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/core/components/app_dialog.dart",
-      "referenced_by": [
-        "lib/core/components/app_components.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
       "path": "lib/core/components/app_input.dart",
-      "referenced_by": [
-        "lib/core/components/app_components.dart"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
       "notes": [
-        "runtime_unreachable"
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
       "path": "lib/core/components/app_loading.dart",
-      "referenced_by": [
-        "lib/core/components/app_components.dart"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
       "notes": [
-        "runtime_unreachable"
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
       "path": "lib/core/components/app_toast.dart",
-      "referenced_by": [
-        "lib/core/components/app_components.dart"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -21777,7 +21759,6 @@
         "lib/core/widgets/fortune_hero_section.dart",
         "lib/core/widgets/section_card.dart",
         "lib/features/chat/presentation/widgets/chat_career_result_card.dart",
-        "lib/features/chat/presentation/widgets/chat_celebrity_result_card.dart",
         "lib/features/chat/presentation/widgets/chat_match_insight_card.dart",
         "lib/features/chat/presentation/widgets/chat_ootd_result_card.dart",
         "lib/features/chat/presentation/widgets/personality_dna_chat_card.dart",
@@ -21814,7 +21795,6 @@
       "path": "lib/core/constants/fortune_metadata.dart",
       "referenced_by": [
         "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/features/character/presentation/widgets/character_profile_sheet.dart",
         "lib/features/chat/presentation/widgets/chat_fortune_result_card.dart",
         "lib/features/fortune/presentation/widgets/infographic/infographic_factory.dart"
       ],
@@ -21832,7 +21812,6 @@
       "referenced_by": [
         "docs/development/_archive/ALL_FILES_LIST.md",
         "docs/development/reports/VERIFY_FORTUNE_TYPE_UNIFICATION.md",
-        "lib/core/widgets/fortune_result_widgets.dart",
         "lib/features/history/presentation/pages/fortune_history_detail_page.dart",
         "lib/features/history/presentation/widgets/fortune_charts.dart",
         "lib/features/history/presentation/widgets/timeline_view.dart",
@@ -21903,7 +21882,6 @@
         "docs/development/reports/VERIFY_FORTUNE_TYPE_UNIFICATION.md",
         "lib/core/services/fortune_access_service.dart",
         "lib/core/services/unified_fortune_service.dart",
-        "lib/core/widgets/unified_fortune_base_widget.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/fortune/domain/entities/fortune_category.dart",
         "lib/presentation/providers/token_provider.dart"
@@ -22547,22 +22525,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/core/design_system/components/traditional/traditional_button.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -22610,7 +22572,6 @@
         "lib/core/widgets/fortune_hero_section.dart",
         "lib/core/widgets/fortune_input_widgets.dart",
         "lib/core/widgets/gpt_style_typing_text.dart",
-        "lib/core/widgets/info_banner.dart",
         "lib/core/widgets/infographic/category_bar_chart.dart",
         "lib/core/widgets/infographic/energy_gauge.dart",
         "lib/core/widgets/infographic/headers/career_info_header.dart",
@@ -22622,9 +22583,7 @@
         "lib/core/widgets/infographic/score_circle_widget.dart",
         "lib/core/widgets/infographic/theme_chips.dart",
         "lib/core/widgets/section_card.dart",
-        "lib/core/widgets/today_result_label.dart",
         "lib/core/widgets/unified_button.dart",
-        "lib/core/widgets/unified_fortune_base_widget.dart",
         "lib/core/widgets/unified_voice_bubble_input.dart",
         "lib/core/widgets/unified_voice_text_field.dart",
         "lib/features/admin/pages/celebrity_crawling_page.dart",
@@ -22633,7 +22592,6 @@
         "lib/features/character/presentation/pages/character_profile_page.dart",
         "lib/features/character/presentation/widgets/character_choice_widget.dart",
         "lib/features/character/presentation/widgets/character_message_bubble.dart",
-        "lib/features/character/presentation/widgets/character_profile_sheet.dart",
         "lib/features/chat/domain/configs/survey_configs.dart",
         "lib/features/chat/domain/models/life_category.dart",
         "lib/features/chat/domain/models/recommendation_chip.dart",
@@ -22645,12 +22603,10 @@
         "lib/features/chat/presentation/widgets/celebrity/celebrity_timing_card.dart",
         "lib/features/chat/presentation/widgets/chat_audio_player.dart",
         "lib/features/chat/presentation/widgets/chat_career_result_card.dart",
-        "lib/features/chat/presentation/widgets/chat_celebrity_result_card.dart",
         "lib/features/chat/presentation/widgets/chat_coaching_result_card.dart",
         "lib/features/chat/presentation/widgets/chat_daily_review_card.dart",
         "lib/features/chat/presentation/widgets/chat_decision_result_card.dart",
         "lib/features/chat/presentation/widgets/chat_fortune_result_card.dart",
-        "lib/features/chat/presentation/widgets/chat_game_enhance_result_card.dart",
         "lib/features/chat/presentation/widgets/chat_image_bubble.dart",
         "lib/features/chat/presentation/widgets/chat_match_insight_card.dart",
         "lib/features/chat/presentation/widgets/chat_message_bubble.dart",
@@ -22692,7 +22648,6 @@
         "lib/features/chat/presentation/widgets/survey/chat_survey_chips.dart",
         "lib/features/chat/presentation/widgets/survey/chat_survey_slider.dart",
         "lib/features/chat/presentation/widgets/survey/chat_tarot_flow.dart",
-        "lib/features/chat/presentation/widgets/survey/chat_voice_input.dart",
         "lib/features/chat/presentation/widgets/survey/fortune_type_chips.dart",
         "lib/features/chat/presentation/widgets/survey/multi_select_survey_widget.dart",
         "lib/features/chat/presentation/widgets/survey/ootd_photo_input.dart",
@@ -22710,21 +22665,11 @@
         "lib/features/chat_insight/presentation/widgets/timeline_card_widget.dart",
         "lib/features/chat_insight/presentation/widgets/trigger_card_widget.dart",
         "lib/features/exercise/presentation/pages/exercise_fortune_page.dart",
-        "lib/features/fortune/domain/models/saju_elements.dart",
         "lib/features/fortune/presentation/pages/manseryeok_page.dart",
         "lib/features/fortune/presentation/widgets/face_reading/celebrity_match_carousel.dart",
-        "lib/features/fortune/presentation/widgets/face_reading/comparison_analysis_card.dart",
-        "lib/features/fortune/presentation/widgets/face_reading/condition_trend_graph.dart",
-        "lib/features/fortune/presentation/widgets/face_reading/face_reading_history_calendar.dart",
         "lib/features/fortune/presentation/widgets/face_reading/face_zone_detail_card.dart",
         "lib/features/fortune/presentation/widgets/face_reading/instagram_share_card.dart",
         "lib/features/fortune/presentation/widgets/face_reading/interactive_face_map.dart",
-        "lib/features/fortune/presentation/widgets/face_reading/mission_progress_widget.dart",
-        "lib/features/fortune/presentation/widgets/face_reading/share_preview_modal.dart",
-        "lib/features/fortune/presentation/widgets/face_reading/smile_challenge_card.dart",
-        "lib/features/fortune/presentation/widgets/face_reading/sticky_face_map_header.dart",
-        "lib/features/fortune/presentation/widgets/face_reading/trend_insight_banner.dart",
-        "lib/features/fortune/presentation/widgets/face_reading/watch_data_preview_card.dart",
         "lib/features/fortune/presentation/widgets/floating_dream_topics_widget.dart",
         "lib/features/fortune/presentation/widgets/fortune_card.dart",
         "lib/features/fortune/presentation/widgets/fortune_result_card.dart",
@@ -22983,7 +22928,6 @@
         "lib/core/design_system/components/hanji_background.dart",
         "lib/core/design_system/components/traditional/fortune_header.dart",
         "lib/core/design_system/components/traditional/seal_stamp_widget.dart",
-        "lib/core/design_system/components/traditional/traditional_button.dart",
         "lib/core/design_system/components/traditional/traditional_knot_indicator.dart",
         "lib/core/design_system/design_system.dart",
         "lib/core/theme/typography_unified.dart",
@@ -23066,7 +23010,6 @@
         "lib/core/design_system/components/traditional/cloud_bubble_painter.dart",
         "lib/core/design_system/components/traditional/fortune_header.dart",
         "lib/core/design_system/components/traditional/seal_stamp_widget.dart",
-        "lib/core/design_system/components/traditional/traditional_button.dart",
         "lib/core/design_system/components/traditional/traditional_knot_indicator.dart",
         "lib/core/design_system/design_system.dart",
         "lib/core/design_system/theme/ds_extensions.dart",
@@ -23254,7 +23197,6 @@
         "lib/core/network/api_client.dart",
         "lib/core/services/fortune_generators/wish_generator.dart",
         "lib/core/services/unified_fortune_service.dart",
-        "lib/core/widgets/unified_fortune_base_widget.dart",
         "lib/data/datasources/fortune_remote_data_source.dart",
         "lib/data/datasources/token_remote_data_source.dart",
         "lib/data/services/fortune_api/fortune_api_service.dart",
@@ -23307,7 +23249,6 @@
         "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/features/character/presentation/pages/character_profile_page.dart",
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
-        "lib/features/character/presentation/widgets/character_intro_card.dart",
         "lib/features/chat/domain/models/recommendation_chip.dart",
         "lib/features/chat/presentation/pages/chat_home_page.dart",
         "lib/features/chat/presentation/widgets/fortune_chip_grid.dart",
@@ -23445,10 +23386,8 @@
         "lib/core/services/fortune_generators/wish_generator.dart",
         "lib/core/services/generator_factory.dart",
         "lib/core/services/unified_fortune_service.dart",
-        "lib/core/widgets/unified_fortune_base_widget.dart",
         "lib/data/dream_interpretations_data.dart",
         "lib/features/character/presentation/providers/character_fortune_adapter.dart",
-        "lib/features/fortune/data/datasources/love_fortune_data_source.dart",
         "lib/features/interactive/presentation/pages/dream_interpretation_page.dart",
         "test/unit/features/character/presentation/providers/character_fortune_adapter_test.dart"
       ],
@@ -23659,7 +23598,6 @@
         "lib/core/services/fortune_haptic_service.dart",
         "lib/core/services/meditation_sound_service.dart",
         "lib/core/services/page_turn_sound_service.dart",
-        "lib/core/widgets/fortune_result_widgets.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_result_view.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_selection_view.dart",
         "lib/features/history/presentation/pages/fortune_history_page.dart",
@@ -23827,19 +23765,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase3_feature_cleanup",
       "dirty": false,
       "kind": "dart",
       "notes": [
-        "runtime_unreachable"
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
       "path": "lib/core/services/fortune_asset_service.dart",
-      "referenced_by": [
-        "lib/core/widgets/lucky_items_row.dart"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -24094,7 +24032,6 @@
         "lib/features/chat/presentation/widgets/celebrity/celebrity_pastlife_card.dart",
         "lib/features/chat/presentation/widgets/celebrity/celebrity_personality_card.dart",
         "lib/features/chat/presentation/widgets/celebrity/celebrity_timing_card.dart",
-        "lib/features/chat/presentation/widgets/chat_celebrity_result_card.dart",
         "lib/features/chat/presentation/widgets/chat_past_life_result_card.dart",
         "lib/features/chat/presentation/widgets/chat_yearly_encounter_result_card.dart",
         "lib/features/chat/presentation/widgets/personality_dna_chat_card.dart",
@@ -24448,7 +24385,6 @@
       "referenced_by": [
         "docs/development/FORTUNE_STANDARDIZATION_GUIDE.md",
         "lib/core/services/personality_dna_service.dart",
-        "lib/core/widgets/unified_fortune_base_widget.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart",
         "lib/features/interactive/presentation/pages/dream_interpretation_page.dart"
@@ -24846,10 +24782,8 @@
       "referenced_by": [
         "docs/design/_archive/legacy/TOSS_DESIGN_SYSTEM.md",
         "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/core/components/app_components.dart",
         "lib/core/theme/app_theme.dart",
         "lib/core/utils/theme_utils.dart",
-        "lib/core/widgets/fortune_result_widgets.dart",
         "lib/presentation/widgets/fortune_history_summary_widget.dart",
         "lib/screens/onboarding/steps/phone_step.dart",
         "lib/screens/onboarding/steps/phone_verification_step.dart",
@@ -24891,7 +24825,6 @@
         "lib/core/design_system/components/traditional/fortune_header.dart",
         "lib/core/design_system/components/traditional/hanji_card.dart",
         "lib/core/design_system/components/traditional/seal_stamp_widget.dart",
-        "lib/core/design_system/components/traditional/traditional_button.dart",
         "lib/core/design_system/tokens/ds_typography.dart",
         "lib/core/theme/typography_theme.dart",
         "lib/core/theme/typography_unified.dart",
@@ -24976,8 +24909,6 @@
         "lib/core/design_system/theme/ds_theme.dart",
         "lib/core/design_system/tokens/ds_typography.dart",
         "lib/core/theme/app_typography.dart",
-        "lib/core/widgets/lucky_items_row.dart",
-        "lib/features/character/presentation/widgets/character_intro_card.dart",
         "lib/screens/profile/widgets/profile_switcher_card.dart",
         "lib/services/talisman_share_service.dart",
         "test/font_scaling_test.dart"
@@ -25090,22 +25021,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/core/utils/fortune_completion_helper.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "dart",
@@ -25129,7 +25044,6 @@
       "notes": [],
       "path": "lib/core/utils/fortune_text_cleaner.dart",
       "referenced_by": [
-        "lib/core/widgets/fortune_result_widgets.dart",
         "lib/features/fortune/presentation/widgets/fortune_result_card.dart",
         "lib/features/history/presentation/pages/fortune_history_detail_page.dart",
         "lib/features/interactive/presentation/pages/dream_interpretation_page.dart",
@@ -25176,8 +25090,6 @@
         "lib/core/theme/app_theme/haptic_patterns.dart",
         "lib/core/widgets/accordion_input_section.dart",
         "lib/core/widgets/fortune_action_buttons.dart",
-        "lib/core/widgets/fortune_result_widgets.dart",
-        "lib/core/widgets/unified_fortune_base_widget.dart",
         "lib/core/widgets/unified_voice_bubble_input.dart",
         "lib/core/widgets/unified_voice_text_field.dart",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
@@ -25185,7 +25097,6 @@
         "lib/features/character/presentation/pages/character_profile_page.dart",
         "lib/features/character/presentation/widgets/character_choice_widget.dart",
         "lib/features/character/presentation/widgets/character_message_bubble.dart",
-        "lib/features/character/presentation/widgets/character_profile_sheet.dart",
         "lib/features/chat/presentation/providers/chat_messages_provider.dart",
         "lib/features/chat/presentation/widgets/survey/chat_investment_category_selector.dart",
         "lib/features/chat/presentation/widgets/survey/chat_investment_ticker_selector.dart",
@@ -25284,10 +25195,8 @@
         "lib/core/services/talisman_generation_service.dart",
         "lib/core/services/unified_calendar_service.dart",
         "lib/core/services/unified_fortune_service.dart",
-        "lib/core/utils/fortune_completion_helper.dart",
         "lib/core/utils/performance_monitor.dart",
         "lib/core/utils/supabase_helper.dart",
-        "lib/core/widgets/unified_fortune_base_widget.dart",
         "lib/data/services/fortune_api/daily_fortune_api.dart",
         "lib/data/services/fortune_api/fortune_api_service.dart",
         "lib/data/services/fortune_api/misc_fortune_api.dart",
@@ -25308,7 +25217,6 @@
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/chat/presentation/pages/chat_home_page.dart",
         "lib/features/chat/presentation/providers/onboarding_chat_provider.dart",
-        "lib/features/fortune/data/datasources/love_fortune_data_source.dart",
         "lib/features/fortune/presentation/providers/match_insight_provider.dart",
         "lib/features/health/data/services/health_fortune_service.dart",
         "lib/features/health/data/services/medical_document_service.dart",
@@ -25726,12 +25634,10 @@
       "path": "lib/core/widgets/fortune_action_buttons.dart",
       "referenced_by": [
         "lib/features/chat/presentation/widgets/chat_career_result_card.dart",
-        "lib/features/chat/presentation/widgets/chat_celebrity_result_card.dart",
         "lib/features/chat/presentation/widgets/chat_coaching_result_card.dart",
         "lib/features/chat/presentation/widgets/chat_daily_review_card.dart",
         "lib/features/chat/presentation/widgets/chat_decision_result_card.dart",
         "lib/features/chat/presentation/widgets/chat_fortune_result_card.dart",
-        "lib/features/chat/presentation/widgets/chat_game_enhance_result_card.dart",
         "lib/features/chat/presentation/widgets/chat_moving_result_card.dart",
         "lib/features/chat/presentation/widgets/chat_ootd_result_card.dart",
         "lib/features/chat/presentation/widgets/chat_past_life_result_card.dart",
@@ -25783,22 +25689,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/core/widgets/fortune_result_widgets.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -25823,22 +25713,6 @@
         "zero_incoming_dart"
       ],
       "path": "lib/core/widgets/hanji_background.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/core/widgets/info_banner.dart",
       "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
@@ -25996,7 +25870,6 @@
       ],
       "path": "lib/core/widgets/infographic/lucky_items_compact.dart",
       "referenced_by": [
-        "lib/core/widgets/fortune_result_widgets.dart",
         "lib/core/widgets/infographic/headers/daily_info_header.dart",
         "lib/core/widgets/infographic/index.dart"
       ],
@@ -26039,22 +25912,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/core/widgets/lucky_items_row.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -26072,22 +25929,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/core/widgets/today_result_label.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -26096,7 +25937,6 @@
       "referenced_by": [
         "docs/APP_ARCHITECTURE.md",
         "lib/core/components/app_bottom_sheet.dart",
-        "lib/core/components/app_components.dart",
         "lib/core/components/app_dialog.dart",
         "lib/features/admin/pages/celebrity_crawling_page.dart",
         "lib/features/exercise/presentation/pages/exercise_fortune_page.dart",
@@ -26136,7 +25976,6 @@
       "path": "lib/core/widgets/unified_button_enums.dart",
       "referenced_by": [
         "lib/core/components/app_bottom_sheet.dart",
-        "lib/core/components/app_components.dart",
         "lib/core/components/app_dialog.dart",
         "lib/core/widgets/unified_button.dart",
         "lib/features/admin/pages/celebrity_crawling_page.dart",
@@ -26189,27 +26028,11 @@
         "runtime_unreachable",
         "zero_incoming_dart"
       ],
-      "path": "lib/core/widgets/unified_fortune_base_widget.dart",
+      "path": "lib/core/widgets/unified_voice_bubble_input.dart",
       "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/core/widgets/unified_voice_bubble_input.dart",
-      "referenced_by": [
-        "lib/features/chat/presentation/widgets/survey/chat_voice_input.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
     },
     {
       "area": "lib",
@@ -26959,7 +26782,6 @@
       "referenced_by": [
         "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/core/services/unified_fortune_service.dart",
-        "lib/core/widgets/unified_fortune_base_widget.dart",
         "lib/features/interactive/presentation/pages/taemong_page.dart",
         "lib/features/interactive/presentation/pages/worry_bead_page.dart",
         "lib/presentation/providers/token_provider.dart",
@@ -27022,7 +26844,6 @@
         "lib/features/chat/presentation/widgets/celebrity/celebrity_personality_card.dart",
         "lib/features/chat/presentation/widgets/celebrity/celebrity_timing_card.dart",
         "lib/features/chat/presentation/widgets/chat_career_result_card.dart",
-        "lib/features/chat/presentation/widgets/chat_celebrity_result_card.dart",
         "lib/features/chat/presentation/widgets/chat_fortune_result_card.dart",
         "lib/features/chat/presentation/widgets/chat_moving_result_card.dart",
         "lib/features/chat/presentation/widgets/fortune_cookie_result_card.dart",
@@ -27620,8 +27441,7 @@
       "path": "lib/features/character/data/services/character_localizer.dart",
       "referenced_by": [
         "lib/features/character/presentation/pages/character_list_panel.dart",
-        "lib/features/character/presentation/pages/character_profile_page.dart",
-        "lib/features/character/presentation/widgets/character_intro_card.dart"
+        "lib/features/character/presentation/pages/character_profile_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -27723,9 +27543,7 @@
         "lib/features/character/presentation/providers/character_provider.dart",
         "lib/features/character/presentation/providers/sorted_characters_provider.dart",
         "lib/features/character/presentation/widgets/character_choice_widget.dart",
-        "lib/features/character/presentation/widgets/character_intro_card.dart",
         "lib/features/character/presentation/widgets/character_message_bubble.dart",
-        "lib/features/character/presentation/widgets/character_profile_sheet.dart",
         "lib/routes/character_routes.dart",
         "lib/screens/profile/providers/character_stats_provider.dart"
       ],
@@ -27980,7 +27798,6 @@
         "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/features/character/presentation/pages/character_profile_page.dart",
         "lib/features/character/presentation/providers/sorted_characters_provider.dart",
-        "lib/features/character/presentation/widgets/character_profile_sheet.dart",
         "lib/presentation/providers/auth_provider.dart",
         "lib/screens/profile/providers/character_stats_provider.dart",
         "test/unit/features/character/presentation/providers/character_chat_provider_test.dart"
@@ -28032,7 +27849,6 @@
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/character/presentation/providers/sorted_characters_provider.dart",
-        "lib/features/character/presentation/widgets/fortune_list_panel.dart",
         "lib/features/chat/presentation/pages/chat_home_page.dart"
       ],
       "runtime_reachable": true,
@@ -28064,9 +27880,7 @@
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/features/character/presentation/widgets/character_choice_widget.dart",
-        "lib/features/character/presentation/widgets/character_intro_card.dart",
-        "lib/features/character/presentation/widgets/character_message_bubble.dart",
-        "lib/features/character/presentation/widgets/character_profile_sheet.dart"
+        "lib/features/character/presentation/widgets/character_message_bubble.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -28194,22 +28008,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/character/presentation/widgets/character_intro_card.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -28221,38 +28019,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/character/presentation/widgets/character_profile_sheet.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/character/presentation/widgets/fortune_list_panel.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -28502,7 +28268,6 @@
       "referenced_by": [
         "docs/development/reports/VERIFY_FORTUNE_TYPE_UNIFICATION.md",
         "lib/features/character/presentation/providers/character_provider.dart",
-        "lib/features/character/presentation/widgets/fortune_list_panel.dart",
         "lib/features/chat/domain/services/smart_chip_recommender.dart",
         "lib/features/chat/presentation/pages/chat_home_page.dart",
         "lib/features/chat/presentation/providers/smart_recommendation_provider.dart",
@@ -28737,22 +28502,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/chat/presentation/widgets/chat_celebrity_result_card.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -28806,22 +28555,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/chat/presentation/widgets/chat_game_enhance_result_card.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -29436,22 +29169,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/chat/presentation/widgets/survey/chat_voice_input.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -29909,22 +29626,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/data/datasources/love_fortune_data_source.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -30104,8 +29805,7 @@
       "path": "lib/features/fortune/domain/models/conditions/love_fortune_conditions.dart",
       "referenced_by": [
         "lib/core/services/fortune_generators/love_generator.dart",
-        "lib/core/services/generator_factory.dart",
-        "lib/features/fortune/data/datasources/love_fortune_data_source.dart"
+        "lib/core/services/generator_factory.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -30174,8 +29874,7 @@
         "lib/features/fortune/domain/models/face_reading_history_entry.dart",
         "lib/features/fortune/domain/models/face_reading_result_v2.dart",
         "lib/features/fortune/presentation/providers/face_condition_tracker_provider.dart",
-        "lib/features/fortune/presentation/providers/face_reading_state_provider.dart",
-        "lib/features/fortune/presentation/widgets/face_reading/condition_trend_graph.dart"
+        "lib/features/fortune/presentation/providers/face_reading_state_provider.dart"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -30215,20 +29914,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
       "notes": [
-        "runtime_unreachable"
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
       "path": "lib/features/fortune/domain/models/face_reading_history_entry.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/face_reading/comparison_analysis_card.dart",
-        "lib/features/fortune/presentation/widgets/face_reading/face_reading_history_calendar.dart"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -30272,8 +29970,7 @@
       ],
       "path": "lib/features/fortune/domain/models/face_reading_result_v2.dart",
       "referenced_by": [
-        "lib/features/fortune/presentation/providers/face_reading_state_provider.dart",
-        "lib/features/fortune/presentation/widgets/face_reading/watch_data_preview_card.dart"
+        "lib/features/fortune/presentation/providers/face_reading_state_provider.dart"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -30323,7 +30020,6 @@
         "lib/core/services/fortune_access_service.dart",
         "lib/core/services/fortune_optimization_service.dart",
         "lib/core/services/unified_fortune_service.dart",
-        "lib/core/widgets/unified_fortune_base_widget.dart",
         "lib/features/fortune/domain/models/conditions/character_chat_fortune_conditions.dart",
         "lib/features/fortune/domain/models/conditions/dream_fortune_conditions.dart",
         "lib/features/fortune/domain/models/conditions/exercise_fortune_conditions.dart",
@@ -30601,22 +30297,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/domain/models/saju/stem_branch_relations_detail_data.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -30655,43 +30335,11 @@
         "runtime_unreachable",
         "zero_incoming_dart"
       ],
-      "path": "lib/features/fortune/domain/models/saju/twelve_stage_data.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/domain/models/saju_elements.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
       "path": "lib/features/fortune/domain/models/sipseong/sipseong_talent_data.dart",
-      "referenced_by": [
-        "lib/features/fortune/domain/models/sipseong_talent.dart"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -30703,28 +30351,11 @@
       ],
       "path": "lib/features/fortune/domain/models/sipseong/sipseong_talent_model.dart",
       "referenced_by": [
-        "lib/features/fortune/domain/models/sipseong/sipseong_talent_data.dart",
-        "lib/features/fortune/domain/models/sipseong_talent.dart"
+        "lib/features/fortune/domain/models/sipseong/sipseong_talent_data.dart"
       ],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/domain/models/sipseong_talent.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -30776,22 +30407,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "generated_excluded"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/domain/models/talent_input_model.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -30963,20 +30578,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase3_feature_cleanup",
       "dirty": false,
       "kind": "dart",
       "notes": [
-        "runtime_unreachable"
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
       "path": "lib/features/fortune/presentation/providers/face_condition_tracker_provider.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/face_reading/condition_trend_graph.dart",
-        "lib/features/fortune/presentation/widgets/face_reading/trend_insight_banner.dart"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -31167,54 +30781,6 @@
         "runtime_unreachable",
         "zero_incoming_dart"
       ],
-      "path": "lib/features/fortune/presentation/widgets/face_reading/comparison_analysis_card.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/face_reading/condition_trend_graph.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/face_reading/face_reading_history_calendar.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
       "path": "lib/features/fortune/presentation/widgets/face_reading/face_zone_detail_card.dart",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -31223,19 +30789,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
       "notes": [
-        "runtime_unreachable"
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
       "path": "lib/features/fortune/presentation/widgets/face_reading/instagram_share_card.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/face_reading/share_preview_modal.dart"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -31248,102 +30814,6 @@
         "zero_incoming_dart"
       ],
       "path": "lib/features/fortune/presentation/widgets/face_reading/interactive_face_map.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/face_reading/mission_progress_widget.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/face_reading/share_preview_modal.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/face_reading/smile_challenge_card.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/face_reading/sticky_face_map_header.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/face_reading/trend_insight_banner.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/face_reading/watch_data_preview_card.dart",
       "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
@@ -34554,7 +34024,6 @@
       "notes": [],
       "path": "lib/presentation/providers/fortune_gauge_provider.dart",
       "referenced_by": [
-        "lib/core/utils/fortune_completion_helper.dart",
         "lib/features/chat/presentation/providers/smart_recommendation_provider.dart",
         "lib/presentation/providers/providers.dart"
       ],
@@ -34655,7 +34124,6 @@
       "path": "lib/presentation/providers/providers.dart",
       "referenced_by": [
         "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/core/widgets/unified_fortune_base_widget.dart",
         "lib/data/services/fortune_api/fortune_api_service.dart",
         "lib/data/services/fortune_api_service_edge_functions.dart",
         "lib/data/services/fortune_batch_service.dart",
@@ -35172,7 +34640,6 @@
       "referenced_by": [
         "docs/development/UNIFIED_DATE_PICKER_MIGRATION.md",
         "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/core/widgets/fortune_result_widgets.dart",
         "lib/presentation/widgets/fortune_card_with_info.dart"
       ],
       "runtime_reachable": false,
@@ -35403,20 +34870,20 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "dart",
       "notes": [
-        "runtime_unreachable"
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
       "path": "lib/presentation/widgets/hexagon_chart.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/features/chat/presentation/widgets/chat_celebrity_result_card.dart"
+        "docs/development/_archive/ALL_FILES_LIST.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -37602,21 +37069,21 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "dart",
       "notes": [
-        "runtime_unreachable"
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
       "path": "lib/services/screenshot_detection_service.dart",
       "referenced_by": [
         "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
-        "lib/core/widgets/unified_fortune_base_widget.dart"
+        "docs/development/_archive/DEPENDENCY_TRACE.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -38142,19 +37609,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
       "notes": [
-        "runtime_unreachable"
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
       "path": "lib/shared/components/gauge_increment_overlay.dart",
-      "referenced_by": [
-        "lib/core/utils/fortune_completion_helper.dart"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -38376,7 +37843,6 @@
       "path": "lib/shared/components/toast.dart",
       "referenced_by": [
         "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/core/widgets/unified_fortune_base_widget.dart",
         "lib/features/exercise/presentation/pages/exercise_fortune_page.dart",
         "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart",
         "lib/features/health/presentation/pages/health_fortune/widgets/document_upload_bottom_sheet.dart",
@@ -38413,19 +37879,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
       "notes": [
-        "runtime_unreachable"
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
       "path": "lib/shared/components/token_celebration_overlay.dart",
-      "referenced_by": [
-        "lib/core/utils/fortune_completion_helper.dart"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -38436,7 +37902,6 @@
       "path": "lib/shared/components/token_insufficient_modal.dart",
       "referenced_by": [
         "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/core/widgets/unified_fortune_base_widget.dart",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/chat/presentation/pages/chat_home_page.dart",
         "lib/features/interactive/presentation/pages/face_reading_page.dart",
@@ -38458,8 +37923,6 @@
         "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/core/widgets/chat_bubble.dart",
         "lib/core/widgets/date_picker/dropdown_date_picker.dart",
-        "lib/core/widgets/fortune_result_widgets.dart",
-        "lib/core/widgets/lucky_items_row.dart",
         "lib/features/admin/presentation/widgets/admin_guard.dart",
         "lib/features/admin/presentation/widgets/admin_navigation_card.dart",
         "lib/features/admin/presentation/widgets/chart_card.dart",
@@ -38542,7 +38005,6 @@
       "notes": [],
       "path": "lib/shared/widgets/smart_image.dart",
       "referenced_by": [
-        "lib/core/widgets/lucky_items_row.dart",
         "lib/features/character/presentation/pages/character_profile_page.dart",
         "lib/features/character/presentation/widgets/character_message_bubble.dart",
         "lib/features/chat/presentation/widgets/celebrity/celebrity_love_card.dart",
@@ -38550,7 +38012,6 @@
         "lib/features/chat/presentation/widgets/celebrity/celebrity_personality_card.dart",
         "lib/features/chat/presentation/widgets/celebrity/celebrity_timing_card.dart",
         "lib/features/chat/presentation/widgets/chat_career_result_card.dart",
-        "lib/features/chat/presentation/widgets/chat_celebrity_result_card.dart",
         "lib/features/chat/presentation/widgets/chat_image_bubble.dart",
         "lib/features/chat/presentation/widgets/chat_match_insight_card.dart",
         "lib/features/chat/presentation/widgets/chat_moving_result_card.dart",
@@ -43905,26 +43366,26 @@
       "assets": 1232,
       "docs": 140,
       "integration_test": 26,
-      "lib": 995,
+      "lib": 966,
       "scripts": 69,
       "supabase": 214,
       "test": 53
     },
     "counts_by_candidate_action": {
-      "keep": 1232,
+      "keep": 1218,
       "keep_generated": 52,
       "manual_review": 825,
-      "phase1_remove_candidate": 57,
-      "phase2_review_candidate": 526,
-      "phase3_feature_cleanup": 37
+      "phase1_remove_candidate": 38,
+      "phase2_review_candidate": 528,
+      "phase3_feature_cleanup": 39
     },
     "counts_by_usage_status": {
-      "doc_only": 262,
+      "doc_only": 264,
       "generated_excluded": 52,
-      "runtime_used": 1232,
+      "runtime_used": 1218,
       "test_only": 79,
       "tooling_only": 185,
-      "unreferenced": 919
+      "unreferenced": 902
     },
     "declared_asset_dirs_without_runtime_refs": [
       "assets/animations",
@@ -44033,8 +43494,8 @@
       "integration_test"
     ],
     "lib_dart_runtime_reachable": 635,
-    "lib_dart_total": 990,
-    "lib_dart_zero_incoming": 194,
+    "lib_dart_total": 961,
+    "lib_dart_zero_incoming": 179,
     "missing_function_refs": [
       "add-tokens",
       "calculate-auspicious-days",
@@ -44115,7 +43576,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2729,
+    "total_files": 2700,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "character-follow-up",
