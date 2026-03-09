@@ -3618,5 +3618,3 @@ $enrichedContext
     super.dispose();
   }
 }
-          messages: [firstMessage],
-        messages: [firstMessage],
