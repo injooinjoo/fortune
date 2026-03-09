@@ -103,7 +103,8 @@ GENERATED_PATTERNS = (
     re.compile(r'^supabase/\.temp/cli-latest$'),
 )
 
-DART_IMPORT_RE = re.compile(r'^\s*(?:import|export|part)\s+[\'"]([^\'"]+)[\'"]', re.MULTILINE)
+DART_DIRECTIVE_RE = re.compile(r'^\s*(?:import|export|part)\b[\s\S]*?;', re.MULTILINE)
+QUOTED_URI_RE = re.compile(r'[\'"]([^\'"]+)[\'"]')
 MODULE_IMPORT_RE = re.compile(
     r'(?:import|export)\s+(?:[^\'"]*?\s+from\s+)?[\'"]([^\'"]+)[\'"]|'
     r'require\(\s*[\'"]([^\'"]+)[\'"]\s*\)'
@@ -403,13 +404,14 @@ def build_analysis() -> dict[str, object]:
     for source, text in texts.items():
         suffix = Path(source).suffix.lower()
         if suffix == '.dart':
-            for target in DART_IMPORT_RE.findall(text):
-                resolved = resolve_module_target(source, target, inventory_lookup)
-                if not resolved:
-                    continue
-                references[resolved].add(source)
-                dart_outgoing[source].add(resolved)
-                dart_incoming[resolved].add(source)
+            for directive in DART_DIRECTIVE_RE.findall(text):
+                for target in QUOTED_URI_RE.findall(directive):
+                    resolved = resolve_module_target(source, target, inventory_lookup)
+                    if not resolved:
+                        continue
+                    references[resolved].add(source)
+                    dart_outgoing[source].add(resolved)
+                    dart_incoming[resolved].add(source)
         elif suffix in TS_JS_SUFFIXES:
             for raw_target, raw_require in MODULE_IMPORT_RE.findall(text):
                 target = raw_target or raw_require

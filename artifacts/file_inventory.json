@@ -19850,54 +19850,8 @@
         "archive_doc",
         "no_inbound_refs"
       ],
-      "path": "docs/development/_archive/ALL_FILES_LIST.md",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [
-        "archive_doc",
-        "no_inbound_refs"
-      ],
-      "path": "docs/development/_archive/CLEANUP_REPORT.md",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [
-        "archive_doc",
-        "no_inbound_refs"
-      ],
-      "path": "docs/development/_archive/DEPENDENCY_TRACE.md",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [
-        "archive_doc"
-      ],
       "path": "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
-      "referenced_by": [
-        "docs/development/_archive/CLEANUP_REPORT.md"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -21431,7 +21385,6 @@
       "notes": [],
       "path": "lib/constants/fortune_constants.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/chat/presentation/providers/onboarding_chat_provider.dart",
         "lib/features/chat/presentation/widgets/survey/chat_onboarding_inputs.dart",
@@ -21452,7 +21405,6 @@
       "notes": [],
       "path": "lib/core/cache/cache_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "lib/features/chat/presentation/pages/chat_home_page.dart",
         "lib/screens/profile/profile_screen.dart",
@@ -21470,7 +21422,6 @@
       "notes": [],
       "path": "lib/core/cache/models/cached_fortune.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/core/cache/cache_service.dart"
       ],
       "runtime_reachable": true,
@@ -21485,7 +21436,6 @@
       "notes": [],
       "path": "lib/core/cache/profile_cache.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/services/social_auth/base/base_social_auth_provider.dart",
         "lib/services/social_auth_service.dart"
       ],
@@ -21555,8 +21505,6 @@
       "notes": [],
       "path": "lib/core/config/environment.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/network/api_client.dart",
         "lib/core/services/debug_premium_service.dart",
@@ -21581,8 +21529,6 @@
       "notes": [],
       "path": "lib/core/config/feature_flags.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "lib/data/services/fortune_api/fortune_api_service.dart",
         "lib/data/services/fortune_api_service_edge_functions.dart"
       ],
@@ -21598,7 +21544,6 @@
       "notes": [],
       "path": "lib/core/constants/api_endpoints.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "docs/troubleshooting/DB_FIX_INSTRUCTIONS.md",
         "lib/data/datasources/fortune_remote_data_source.dart",
         "lib/data/datasources/token_remote_data_source.dart",
@@ -21639,7 +21584,6 @@
       "notes": [],
       "path": "lib/core/constants/edge_functions_endpoints.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "docs/development/reports/VERIFY_FORTUNE_TYPE_UNIFICATION.md",
         "lib/data/services/fortune_api/daily_fortune_api.dart",
         "lib/data/services/fortune_api/fortune_api_service.dart",
@@ -21660,7 +21604,6 @@
       "notes": [],
       "path": "lib/core/constants/fortune_card_images.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/core/widgets/fortune_hero_section.dart",
         "lib/core/widgets/section_card.dart",
         "lib/features/chat/presentation/widgets/chat_career_result_card.dart",
@@ -21681,7 +21624,6 @@
       "notes": [],
       "path": "lib/core/constants/fortune_detailed_metadata.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/data/models/fortune_response_model.dart",
         "lib/domain/entities/fortune.dart"
       ],
@@ -21697,7 +21639,6 @@
       "notes": [],
       "path": "lib/core/constants/fortune_metadata.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/chat/presentation/widgets/chat_fortune_result_card.dart",
         "lib/features/fortune/presentation/widgets/infographic/infographic_factory.dart"
       ],
@@ -21713,7 +21654,6 @@
       "notes": [],
       "path": "lib/core/constants/fortune_type_names.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "docs/development/reports/VERIFY_FORTUNE_TYPE_UNIFICATION.md",
         "lib/features/history/presentation/pages/fortune_history_detail_page.dart",
         "lib/features/history/presentation/widgets/fortune_charts.dart",
@@ -21731,7 +21671,6 @@
       "notes": [],
       "path": "lib/core/constants/in_app_products.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/payment/presentation/pages/token_purchase_page.dart",
         "lib/screens/subscription/subscription_page.dart",
         "lib/services/in_app_purchase_service.dart"
@@ -21778,7 +21717,6 @@
       "notes": [],
       "path": "lib/core/constants/soul_rates.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "docs/development/_archive/FORTUNE_API_DEVELOPMENT_CHECKLIST.md",
         "docs/development/reports/VERIFY_FORTUNE_TYPE_UNIFICATION.md",
         "lib/core/services/fortune_access_service.dart",
@@ -22002,7 +21940,6 @@
       "notes": [],
       "path": "lib/core/constants/tarot_deck_metadata.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/fortune/presentation/widgets/tarot/tarot_card_widget.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_deck_spread_widget.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_result_view.dart",
@@ -22022,7 +21959,6 @@
       "notes": [],
       "path": "lib/core/constants/tarot_metadata.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/fortune/presentation/widgets/tarot/tarot_card_detail_modal.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_result_view.dart",
         "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/deep_interpretation_page.dart",
@@ -22840,7 +22776,6 @@
       "notes": [],
       "path": "lib/core/errors/exceptions.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/core/network/api_client.dart",
         "lib/core/services/fortune_generators/wish_generator.dart",
         "lib/core/services/unified_fortune_service.dart",
@@ -22907,6 +22842,8 @@
       "path": "lib/core/models/asset_pack.dart",
       "referenced_by": [
         "lib/core/constants/asset_pack_config.dart",
+        "lib/core/models/asset_pack.freezed.dart",
+        "lib/core/models/asset_pack.g.dart",
         "lib/core/services/asset_delivery_service.dart",
         "lib/features/settings/presentation/widgets/storage_management_widget.dart",
         "lib/shared/widgets/smart_image.dart"
@@ -23039,7 +22976,6 @@
       "notes": [],
       "path": "lib/core/models/personality_dna_model.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/core/services/personality_dna_service.dart",
         "lib/features/chat/domain/models/chat_message.dart",
         "lib/features/chat/presentation/providers/chat_messages_provider.dart",
@@ -23067,7 +23003,6 @@
       "notes": [],
       "path": "lib/core/network/api_client.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "lib/data/datasources/fortune_remote_data_source.dart",
         "lib/data/datasources/token_remote_data_source.dart",
@@ -23093,7 +23028,6 @@
       "notes": [],
       "path": "lib/core/network/cache_interceptor.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/core/network/api_client.dart"
       ],
       "runtime_reachable": true,
@@ -23108,7 +23042,6 @@
       "notes": [],
       "path": "lib/core/network/token_refresh_interceptor.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/core/network/api_client.dart"
       ],
       "runtime_reachable": true,
@@ -23716,7 +23649,6 @@
       "notes": [],
       "path": "lib/core/services/performance_cache_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/services/account_deletion_service.dart"
       ],
       "runtime_reachable": true,
@@ -23731,7 +23663,6 @@
       "notes": [],
       "path": "lib/core/services/personality_dna_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/chat/presentation/pages/chat_home_page.dart"
       ],
       "runtime_reachable": true,
@@ -23746,7 +23677,6 @@
       "notes": [],
       "path": "lib/core/services/resilient_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/core/services/supabase_connection_service.dart",
         "lib/services/analytics_service.dart",
         "lib/services/app_icon_badge_service.dart",
@@ -23786,8 +23716,6 @@
       "notes": [],
       "path": "lib/core/services/supabase_connection_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "integration_test/test_app.dart",
         "lib/main.dart",
         "lib/screens/splash_screen.dart",
@@ -23834,8 +23762,6 @@
       "notes": [],
       "path": "lib/core/services/test_auth_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "integration_test/test_app.dart",
         "lib/main.dart",
@@ -23919,7 +23845,6 @@
       "notes": [],
       "path": "lib/core/theme/app_dimensions.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/presentation/widgets/common/custom_card.dart",
         "lib/presentation/widgets/social_accounts_section.dart"
       ],
@@ -23935,7 +23860,6 @@
       "notes": [],
       "path": "lib/core/theme/app_spacing.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "lib/presentation/widgets/common/custom_card.dart",
         "lib/presentation/widgets/social_accounts_section.dart",
@@ -23953,7 +23877,6 @@
       "notes": [],
       "path": "lib/core/theme/app_theme.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/interactive/presentation/pages/worry_bead_page.dart"
       ],
       "runtime_reachable": true,
@@ -24188,7 +24111,6 @@
       "path": "lib/core/theme/app_theme_extensions.dart",
       "referenced_by": [
         "docs/design/_archive/legacy/TOSS_DESIGN_SYSTEM.md",
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/core/theme/app_theme.dart",
         "lib/screens/onboarding/steps/phone_step.dart",
         "lib/screens/onboarding/steps/phone_verification_step.dart"
@@ -24196,24 +24118,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/core/theme/app_typography.dart",
-      "referenced_by": [
-        "docs/design/_archive/legacy/TOSS_DESIGN_SYSTEM.md",
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -24304,7 +24208,6 @@
         "lib/core/design_system/design_system.dart",
         "lib/core/design_system/theme/ds_theme.dart",
         "lib/core/design_system/tokens/ds_typography.dart",
-        "lib/core/theme/app_typography.dart",
         "lib/screens/profile/widgets/profile_switcher_card.dart",
         "test/font_scaling_test.dart"
       ],
@@ -24382,8 +24285,6 @@
       "notes": [],
       "path": "lib/core/utils/haptic_utils.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "lib/core/components/app_bottom_sheet.dart",
         "lib/core/design_system/utils/ds_haptics.dart",
@@ -24430,8 +24331,6 @@
       "notes": [],
       "path": "lib/core/utils/logger.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "lib/core/cache/cache_service.dart",
         "lib/core/network/api_client.dart",
@@ -24567,8 +24466,6 @@
       "notes": [],
       "path": "lib/core/utils/page_transitions.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "lib/routes/character_routes.dart",
         "lib/routes/route_config.dart",
         "lib/routes/routes/auth_routes.dart",
@@ -24588,8 +24485,6 @@
       ],
       "path": "lib/core/utils/profile_validation.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "lib/screens/landing/landing_page.dart"
       ],
       "runtime_reachable": false,
@@ -24604,8 +24499,6 @@
       "notes": [],
       "path": "lib/core/utils/route_observer_logger.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "lib/main.dart",
         "lib/routes/route_config.dart"
       ],
@@ -24621,8 +24514,6 @@
       "notes": [],
       "path": "lib/core/utils/secure_storage.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "lib/services/account_deletion_service.dart"
       ],
@@ -24638,7 +24529,6 @@
       "notes": [],
       "path": "lib/core/utils/supabase_helper.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/presentation/providers/auth_provider.dart",
         "lib/presentation/providers/user_profile_notifier.dart"
       ],
@@ -24654,8 +24544,6 @@
       "notes": [],
       "path": "lib/core/utils/url_cleaner_stub.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "lib/screens/auth/callback_page.dart",
         "lib/screens/landing/landing_page_state.dart"
       ],
@@ -24665,20 +24553,18 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
+      "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
+      "notes": [],
       "path": "lib/core/utils/url_cleaner_web.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
+        "lib/screens/auth/callback_page.dart",
+        "lib/screens/landing/landing_page_state.dart"
       ],
-      "runtime_reachable": false,
+      "runtime_reachable": true,
       "test_only": false,
-      "usage_status": "doc_only"
+      "usage_status": "runtime_used"
     },
     {
       "area": "lib",
@@ -24688,7 +24574,6 @@
       "notes": [],
       "path": "lib/core/utils/zodiac_calculator.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/core/utils/cohort_helpers.dart"
       ],
       "runtime_reachable": true,
@@ -24969,7 +24854,6 @@
       "notes": [],
       "path": "lib/data/datasources/fortune_remote_data_source.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/presentation/providers/providers.dart"
       ],
       "runtime_reachable": true,
@@ -24984,7 +24868,6 @@
       "notes": [],
       "path": "lib/data/datasources/token_remote_data_source.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/presentation/providers/providers.dart"
       ],
       "runtime_reachable": true,
@@ -25027,8 +24910,7 @@
       "notes": [],
       "path": "lib/data/models/celebrity.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/CLEANUP_REPORT.md",
+        "lib/data/models/celebrity.g.dart",
         "lib/services/celebrity_crawling_service.dart"
       ],
       "runtime_reachable": true,
@@ -25045,7 +24927,6 @@
       ],
       "path": "lib/data/models/celebrity.g.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/data/models/celebrity.dart"
       ],
       "runtime_reachable": true,
@@ -25062,7 +24943,6 @@
       ],
       "path": "lib/data/models/celebrity_saju.dart",
       "referenced_by": [
-        "docs/development/_archive/CLEANUP_REPORT.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "lib/presentation/providers/celebrity_saju_provider.dart",
         "lib/screens/home/fortune_swipe/widgets/celebrity_card.dart",
@@ -25080,7 +24960,6 @@
       "notes": [],
       "path": "lib/data/models/celebrity_simple.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/chat/presentation/widgets/survey/chat_celebrity_selector.dart",
         "lib/presentation/providers/celebrity_provider.dart",
         "lib/services/celebrity_service.dart"
@@ -25099,7 +24978,6 @@
       ],
       "path": "lib/data/models/fortune_card_score.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/presentation/providers/fortune_recommendation_provider.dart"
       ],
       "runtime_reachable": false,
@@ -25114,8 +24992,6 @@
       "notes": [],
       "path": "lib/data/models/fortune_response_model.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "lib/data/datasources/fortune_remote_data_source.dart",
         "lib/data/services/fortune_api/daily_fortune_api.dart",
@@ -25138,7 +25014,6 @@
       "path": "lib/data/models/pet_profile.dart",
       "referenced_by": [
         "docs/data/DATABASE_GUIDE.md",
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/chat/presentation/pages/chat_home_page.dart",
         "lib/features/chat/presentation/widgets/survey/chat_pet_profile_selector.dart",
         "lib/features/chat/presentation/widgets/survey/chat_pet_registration_form.dart",
@@ -25176,8 +25051,6 @@
       "notes": [],
       "path": "lib/data/models/user_profile.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "lib/features/chat/presentation/pages/chat_home_page.dart",
         "lib/presentation/providers/auth_provider.dart",
@@ -25365,7 +25238,6 @@
       "notes": [],
       "path": "lib/data/services/fortune_api_decision_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "docs/development/_archive/FORTUNE_API_DEVELOPMENT_CHECKLIST.md",
         "lib/data/services/fortune_api/fortune_api_service.dart"
       ],
@@ -25381,8 +25253,6 @@
       "notes": [],
       "path": "lib/data/services/fortune_api_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "docs/development/_archive/FORTUNE_API_DEVELOPMENT_CHECKLIST.md",
         "lib/data/services/fortune_api_service_edge_functions.dart",
         "lib/features/health/data/services/health_fortune_service.dart",
@@ -25407,8 +25277,6 @@
       "path": "lib/data/services/fortune_api_service_edge_functions.dart",
       "referenced_by": [
         "docs/APP_ARCHITECTURE.md",
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "lib/data/services/fortune_api/fortune_api_service.dart",
         "lib/presentation/providers/providers.dart"
       ],
@@ -25424,7 +25292,6 @@
       "notes": [],
       "path": "lib/data/services/token_api_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/core/services/unified_fortune_service.dart",
         "lib/features/interactive/presentation/pages/taemong_page.dart",
         "lib/features/interactive/presentation/pages/worry_bead_page.dart",
@@ -25443,7 +25310,6 @@
       "notes": [],
       "path": "lib/domain/entities/fortune.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "lib/core/cache/cache_service.dart",
         "lib/core/cache/models/cached_fortune.dart",
@@ -25495,7 +25361,6 @@
       "notes": [],
       "path": "lib/domain/entities/token.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/data/datasources/token_remote_data_source.dart",
         "lib/data/services/token_api_service.dart",
         "lib/presentation/providers/providers.dart",
@@ -25515,7 +25380,6 @@
       "notes": [],
       "path": "lib/domain/entities/user_profile.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "lib/presentation/providers/recommendation_provider.dart"
       ],
@@ -25531,7 +25395,6 @@
       "notes": [],
       "path": "lib/features/admin/pages/celebrity_crawling_page.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "lib/routes/route_config.dart"
       ],
@@ -27845,6 +27708,8 @@
         "lib/features/chat/presentation/widgets/survey/chat_investment_category_selector.dart",
         "lib/features/chat/presentation/widgets/survey/chat_investment_ticker_selector.dart",
         "lib/features/fortune/data/datasources/ticker_static_data.dart",
+        "lib/features/fortune/data/models/investment_ticker.freezed.dart",
+        "lib/features/fortune/data/models/investment_ticker.g.dart",
         "lib/features/fortune/data/repositories/ticker_repository.dart",
         "lib/features/fortune/presentation/providers/ticker_provider.dart"
       ],
@@ -28000,6 +27865,8 @@
       ],
       "path": "lib/features/fortune/domain/models/emotion_analysis.dart",
       "referenced_by": [
+        "lib/features/fortune/domain/models/emotion_analysis.freezed.dart",
+        "lib/features/fortune/domain/models/emotion_analysis.g.dart",
         "lib/features/fortune/domain/models/face_reading_result_v2.dart",
         "lib/features/fortune/presentation/providers/face_reading_state_provider.dart"
       ],
@@ -28049,6 +27916,8 @@
       ],
       "path": "lib/features/fortune/domain/models/face_condition.dart",
       "referenced_by": [
+        "lib/features/fortune/domain/models/face_condition.freezed.dart",
+        "lib/features/fortune/domain/models/face_condition.g.dart",
         "lib/features/fortune/domain/models/face_reading_result_v2.dart",
         "lib/features/fortune/presentation/providers/face_condition_tracker_provider.dart",
         "lib/features/fortune/presentation/providers/face_reading_state_provider.dart"
@@ -28099,6 +27968,8 @@
       ],
       "path": "lib/features/fortune/domain/models/face_reading_result_v2.dart",
       "referenced_by": [
+        "lib/features/fortune/domain/models/face_reading_result_v2.freezed.dart",
+        "lib/features/fortune/domain/models/face_reading_result_v2.g.dart",
         "lib/features/fortune/presentation/providers/face_reading_state_provider.dart"
       ],
       "runtime_reachable": false,
@@ -28171,6 +28042,8 @@
         "lib/features/chat/presentation/pages/chat_home_page.dart",
         "lib/features/chat/presentation/providers/chat_messages_provider.dart",
         "lib/features/chat/presentation/widgets/chat_match_insight_card.dart",
+        "lib/features/fortune/domain/models/match_insight.freezed.dart",
+        "lib/features/fortune/domain/models/match_insight.g.dart",
         "lib/features/fortune/presentation/providers/match_insight_provider.dart"
       ],
       "runtime_reachable": true,
@@ -28384,6 +28257,8 @@
         "lib/features/chat/presentation/pages/chat_home_page.dart",
         "lib/features/chat/presentation/widgets/survey/chat_match_selector.dart",
         "lib/features/fortune/domain/models/match_insight.dart",
+        "lib/features/fortune/domain/models/sports_schedule.freezed.dart",
+        "lib/features/fortune/domain/models/sports_schedule.g.dart",
         "lib/features/fortune/presentation/providers/match_insight_provider.dart",
         "lib/services/sports_schedule_service.dart"
       ],
@@ -28431,7 +28306,6 @@
       "notes": [],
       "path": "lib/features/fortune/domain/models/tarot_card_model.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/core/services/fortune_generators/tarot_generator.dart",
         "lib/features/chat/presentation/widgets/survey/chat_tarot_flow.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_card_detail_modal.dart",
@@ -28450,7 +28324,6 @@
       "notes": [],
       "path": "lib/features/fortune/domain/models/wish_fortune_result.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/core/services/wish_local_storage.dart",
         "lib/features/chat/presentation/widgets/chat_fortune_result_card.dart"
       ],
@@ -28641,8 +28514,6 @@
       "notes": [],
       "path": "lib/features/fortune/presentation/providers/saju_provider.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/chat/presentation/pages/chat_home_page.dart",
         "lib/features/fortune/presentation/pages/manseryeok_page.dart",
@@ -28661,7 +28532,8 @@
       "notes": [],
       "path": "lib/features/fortune/presentation/providers/ticker_provider.dart",
       "referenced_by": [
-        "lib/features/chat/presentation/widgets/survey/chat_investment_ticker_selector.dart"
+        "lib/features/chat/presentation/widgets/survey/chat_investment_ticker_selector.dart",
+        "lib/features/fortune/presentation/providers/ticker_provider.freezed.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -29438,8 +29310,6 @@
       "notes": [],
       "path": "lib/features/fortune/presentation/widgets/saju_element_chart.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "lib/features/chat/presentation/widgets/chat_saju_result_card.dart",
         "lib/features/fortune/presentation/pages/manseryeok_page.dart",
         "lib/screens/profile/saju_summary_page.dart"
@@ -29458,7 +29328,6 @@
       ],
       "path": "lib/features/fortune/presentation/widgets/tarot/tarot_animations.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/fortune/presentation/widgets/tarot/tarot_deck_spread_widget.dart"
       ],
       "runtime_reachable": false,
@@ -29491,7 +29360,6 @@
       ],
       "path": "lib/features/fortune/presentation/widgets/tarot/tarot_card_widget.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/fortune/presentation/widgets/tarot/tarot_deck_spread_widget.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_result_view.dart"
       ],
@@ -29509,7 +29377,6 @@
       ],
       "path": "lib/features/fortune/presentation/widgets/tarot/tarot_deck_spread_widget.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/fortune/presentation/widgets/tarot/tarot_selection_view.dart"
       ],
       "runtime_reachable": false,
@@ -29526,7 +29393,6 @@
       ],
       "path": "lib/features/fortune/presentation/widgets/tarot/tarot_input_view.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/interactive/presentation/pages/tarot_card_page.dart"
       ],
       "runtime_reachable": false,
@@ -29543,7 +29409,6 @@
       ],
       "path": "lib/features/fortune/presentation/widgets/tarot/tarot_result_view.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/interactive/presentation/pages/tarot_card_page.dart"
       ],
       "runtime_reachable": false,
@@ -29560,7 +29425,6 @@
       ],
       "path": "lib/features/fortune/presentation/widgets/tarot/tarot_selection_view.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/interactive/presentation/pages/tarot_card_page.dart"
       ],
       "runtime_reachable": false,
@@ -29717,7 +29581,6 @@
       "notes": [],
       "path": "lib/features/fortune/services/tarot_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/core/services/fortune_generators/tarot_generator.dart"
       ],
       "runtime_reachable": true,
@@ -29732,7 +29595,6 @@
       "notes": [],
       "path": "lib/features/health/data/services/health_fortune_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart"
       ],
       "runtime_reachable": true,
@@ -29761,7 +29623,6 @@
       "notes": [],
       "path": "lib/features/health/domain/models/health_fortune_model.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/health/data/services/health_fortune_service.dart",
         "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart",
         "lib/features/health/presentation/pages/health_fortune/widgets/body_part_health_section.dart",
@@ -29982,7 +29843,6 @@
       "notes": [],
       "path": "lib/features/health/presentation/widgets/body_part_grid_selector.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart"
       ],
       "runtime_reachable": true,
@@ -29997,7 +29857,6 @@
       "notes": [],
       "path": "lib/features/health/presentation/widgets/body_part_selector.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart"
       ],
       "runtime_reachable": true,
@@ -30012,7 +29871,6 @@
       "notes": [],
       "path": "lib/features/health/presentation/widgets/health_score_card.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart"
       ],
       "runtime_reachable": true,
@@ -30027,7 +29885,6 @@
       "notes": [],
       "path": "lib/features/health/presentation/widgets/health_timeline_chart.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart"
       ],
       "runtime_reachable": true,
@@ -30042,7 +29899,6 @@
       "notes": [],
       "path": "lib/features/history/domain/models/fortune_history.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/chat/presentation/pages/chat_home_page.dart",
         "lib/features/history/presentation/pages/fortune_history_detail_page.dart",
         "lib/features/history/presentation/pages/fortune_history_page.dart",
@@ -30079,8 +29935,6 @@
       "notes": [],
       "path": "lib/features/history/presentation/pages/fortune_history_page.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -30095,7 +29949,6 @@
       "notes": [],
       "path": "lib/features/history/presentation/widgets/fortune_calendar_view.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/history/presentation/pages/fortune_history_page.dart"
       ],
       "runtime_reachable": true,
@@ -30110,7 +29963,6 @@
       "notes": [],
       "path": "lib/features/history/presentation/widgets/fortune_charts.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/history/presentation/pages/fortune_history_page.dart"
       ],
       "runtime_reachable": true,
@@ -30125,7 +29977,6 @@
       "notes": [],
       "path": "lib/features/history/presentation/widgets/statistics_dashboard.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/history/presentation/pages/fortune_history_page.dart"
       ],
       "runtime_reachable": true,
@@ -30140,7 +29991,6 @@
       "notes": [],
       "path": "lib/features/history/presentation/widgets/timeline_view.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/history/presentation/pages/fortune_history_page.dart"
       ],
       "runtime_reachable": true,
@@ -30186,7 +30036,6 @@
       "path": "lib/features/interactive/presentation/pages/dream_interpretation_page.dart",
       "referenced_by": [
         "docs/development/UNIFIED_DATE_PICKER_MIGRATION.md",
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/routes/routes/interactive_routes.dart"
       ],
       "runtime_reachable": true,
@@ -30202,7 +30051,6 @@
       "path": "lib/features/interactive/presentation/pages/dream_page.dart",
       "referenced_by": [
         "docs/development/UNIFIED_DATE_PICKER_MIGRATION.md",
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/routes/routes/interactive_routes.dart"
       ],
       "runtime_reachable": true,
@@ -30218,7 +30066,6 @@
       "path": "lib/features/interactive/presentation/pages/face_reading_page.dart",
       "referenced_by": [
         "docs/deployment/review/IOS_REVIEW_EVIDENCE.md",
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/routes/routes/interactive_routes.dart"
       ],
       "runtime_reachable": true,
@@ -30233,7 +30080,6 @@
       "notes": [],
       "path": "lib/features/interactive/presentation/pages/interactive_list_page.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/routes/routes/interactive_routes.dart"
       ],
       "runtime_reachable": true,
@@ -30249,8 +30095,6 @@
       "path": "lib/features/interactive/presentation/pages/psychology_test_page.dart",
       "referenced_by": [
         "docs/development/UNIFIED_DATE_PICKER_MIGRATION.md",
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/CLEANUP_REPORT.md",
         "lib/routes/routes/interactive_routes.dart"
       ],
       "runtime_reachable": true,
@@ -30265,7 +30109,6 @@
       "notes": [],
       "path": "lib/features/interactive/presentation/pages/taemong_page.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/routes/routes/interactive_routes.dart"
       ],
       "runtime_reachable": true,
@@ -30280,7 +30123,6 @@
       "notes": [],
       "path": "lib/features/interactive/presentation/pages/tarot_animated_flow_page.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/routes/routes/interactive_routes.dart"
       ],
       "runtime_reachable": true,
@@ -30289,20 +30131,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
+      "candidate_action": "phase3_feature_cleanup",
       "dirty": false,
       "kind": "dart",
       "notes": [
+        "no_inbound_refs",
         "runtime_unreachable",
         "zero_incoming_dart"
       ],
       "path": "lib/features/interactive/presentation/pages/tarot_card_page.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "doc_only"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -30312,7 +30153,6 @@
       "notes": [],
       "path": "lib/features/interactive/presentation/pages/tarot_chat_page.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/routes/routes/interactive_routes.dart"
       ],
       "runtime_reachable": true,
@@ -30327,7 +30167,6 @@
       "notes": [],
       "path": "lib/features/interactive/presentation/pages/worry_bead_page.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/routes/routes/interactive_routes.dart"
       ],
       "runtime_reachable": true,
@@ -30412,7 +30251,6 @@
       "notes": [],
       "path": "lib/features/notification/presentation/pages/notification_settings_page.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -30427,7 +30265,6 @@
       "notes": [],
       "path": "lib/features/payment/presentation/pages/token_purchase_page.dart",
       "referenced_by": [
-        "docs/development/_archive/CLEANUP_REPORT.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -30442,7 +30279,6 @@
       "notes": [],
       "path": "lib/features/policy/presentation/pages/privacy_policy_page.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "lib/routes/route_config.dart"
       ],
@@ -30458,7 +30294,6 @@
       "notes": [],
       "path": "lib/features/policy/presentation/pages/terms_of_service_page.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -30496,20 +30331,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
+      "candidate_action": "phase3_feature_cleanup",
       "dirty": false,
       "kind": "dart",
       "notes": [
+        "no_inbound_refs",
         "runtime_unreachable",
         "zero_incoming_dart"
       ],
       "path": "lib/features/sports/presentation/pages/sports_fortune_page.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "doc_only"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -30519,7 +30353,6 @@
       "notes": [],
       "path": "lib/features/support/presentation/pages/help_page.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -30618,6 +30451,8 @@
       "notes": [],
       "path": "lib/features/trend/domain/models/balance_game.dart",
       "referenced_by": [
+        "lib/features/trend/domain/models/balance_game.freezed.dart",
+        "lib/features/trend/domain/models/balance_game.g.dart",
         "lib/features/trend/domain/models/models.dart"
       ],
       "runtime_reachable": true,
@@ -30664,6 +30499,8 @@
       "notes": [],
       "path": "lib/features/trend/domain/models/ideal_worldcup.dart",
       "referenced_by": [
+        "lib/features/trend/domain/models/ideal_worldcup.freezed.dart",
+        "lib/features/trend/domain/models/ideal_worldcup.g.dart",
         "lib/features/trend/domain/models/models.dart"
       ],
       "runtime_reachable": true,
@@ -30733,7 +30570,9 @@
       "notes": [],
       "path": "lib/features/trend/domain/models/psychology_test.dart",
       "referenced_by": [
-        "lib/features/trend/domain/models/models.dart"
+        "lib/features/trend/domain/models/models.dart",
+        "lib/features/trend/domain/models/psychology_test.freezed.dart",
+        "lib/features/trend/domain/models/psychology_test.g.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -30779,7 +30618,9 @@
       "notes": [],
       "path": "lib/features/trend/domain/models/trend_content.dart",
       "referenced_by": [
-        "lib/features/trend/domain/models/models.dart"
+        "lib/features/trend/domain/models/models.dart",
+        "lib/features/trend/domain/models/trend_content.freezed.dart",
+        "lib/features/trend/domain/models/trend_content.g.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -30825,7 +30666,9 @@
       "notes": [],
       "path": "lib/features/trend/domain/models/trend_social.dart",
       "referenced_by": [
-        "lib/features/trend/domain/models/models.dart"
+        "lib/features/trend/domain/models/models.dart",
+        "lib/features/trend/domain/models/trend_social.freezed.dart",
+        "lib/features/trend/domain/models/trend_social.g.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -30899,8 +30742,6 @@
       "notes": [],
       "path": "lib/features/trend/presentation/pages/trend_page.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -31063,8 +30904,6 @@
       "notes": [],
       "path": "lib/firebase_options_secure.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "lib/main.dart"
       ],
       "runtime_reachable": true,
@@ -31207,8 +31046,6 @@
       "referenced_by": [
         "docs/deployment/APPLE_CAPABILITIES_SETUP.md",
         "docs/deployment/DEPLOYMENT_COMPLETE_GUIDE.md",
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "docs/development/_archive/RUNTIME_ERROR_MONITORING.md",
         "docs/development/reports/VERIFY_FORTUNE_TYPE_UNIFICATION.md",
         "integration_test/accessibility_test.dart",
@@ -31239,12 +31076,12 @@
       "notes": [],
       "path": "lib/models/fortune_model.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "docs/development/_archive/HOME_DATA_FLOW_ANALYSIS.md",
         "lib/data/services/fortune_api/daily_fortune_api.dart",
         "lib/data/services/fortune_api/fortune_api_service.dart",
         "lib/data/services/fortune_api/relationship_fortune_api.dart",
         "lib/data/services/fortune_api/saju_fortune_api.dart",
+        "lib/models/fortune_model.g.dart",
         "lib/presentation/providers/fortune_provider.dart",
         "lib/services/cache_service.dart"
       ],
@@ -31262,7 +31099,6 @@
       ],
       "path": "lib/models/fortune_model.g.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/models/fortune_model.dart"
       ],
       "runtime_reachable": true,
@@ -31277,8 +31113,8 @@
       "notes": [],
       "path": "lib/models/partner_recommendation_model.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/models/fortune_model.dart"
+        "lib/models/fortune_model.dart",
+        "lib/models/partner_recommendation_model.g.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -31294,7 +31130,6 @@
       ],
       "path": "lib/models/partner_recommendation_model.g.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/models/partner_recommendation_model.dart"
       ],
       "runtime_reachable": true,
@@ -31309,6 +31144,8 @@
       "notes": [],
       "path": "lib/models/shared_widget_data.dart",
       "referenced_by": [
+        "lib/models/shared_widget_data.freezed.dart",
+        "lib/models/shared_widget_data.g.dart",
         "lib/services/widget_data_service.dart",
         "lib/services/widget_service.dart"
       ],
@@ -31356,7 +31193,6 @@
       "notes": [],
       "path": "lib/models/user_profile.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/data/models/user_profile.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/chat/presentation/providers/onboarding_chat_provider.dart",
@@ -31390,7 +31226,6 @@
       "notes": [],
       "path": "lib/presentation/providers/app_providers.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/main.dart"
       ],
       "runtime_reachable": true,
@@ -31406,7 +31241,6 @@
       "path": "lib/presentation/providers/auth_provider.dart",
       "referenced_by": [
         "docs/design/_archive/legacy/FORTUNE_INPUT_ACCORDION_STANDARD.md",
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
         "lib/features/chat/presentation/providers/onboarding_chat_provider.dart",
         "lib/features/chat/presentation/widgets/guest_login_banner.dart",
@@ -31429,7 +31263,6 @@
       "notes": [],
       "path": "lib/presentation/providers/celebrity_provider.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/admin/pages/celebrity_crawling_page.dart",
         "lib/features/chat/presentation/widgets/survey/chat_celebrity_selector.dart"
       ],
@@ -31447,7 +31280,6 @@
       ],
       "path": "lib/presentation/providers/celebrity_saju_provider.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/screens/home/fortune_swipe/widgets/celebrity_card.dart"
       ],
       "runtime_reachable": false,
@@ -31462,7 +31294,8 @@
       "notes": [],
       "path": "lib/presentation/providers/content_interaction_provider.dart",
       "referenced_by": [
-        "lib/core/widgets/fortune_action_buttons.dart"
+        "lib/core/widgets/fortune_action_buttons.dart",
+        "lib/presentation/providers/content_interaction_provider.freezed.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -31492,8 +31325,6 @@
       "notes": [],
       "path": "lib/presentation/providers/font_size_provider.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "lib/features/chat/presentation/providers/chat_messages_provider.dart",
         "lib/presentation/providers/app_providers.dart",
@@ -31526,7 +31357,6 @@
       "notes": [],
       "path": "lib/presentation/providers/fortune_history_provider.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/history/presentation/pages/fortune_history_page.dart"
       ],
       "runtime_reachable": true,
@@ -31541,7 +31371,6 @@
       "notes": [],
       "path": "lib/presentation/providers/fortune_provider.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/presentation/providers/providers.dart",
         "test/unit/providers/fortune_provider_test.dart"
       ],
@@ -31551,20 +31380,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
+      "candidate_action": "phase3_feature_cleanup",
       "dirty": false,
       "kind": "dart",
       "notes": [
+        "no_inbound_refs",
         "runtime_unreachable",
         "zero_incoming_dart"
       ],
       "path": "lib/presentation/providers/fortune_recommendation_provider.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "doc_only"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -31590,7 +31418,6 @@
       "notes": [],
       "path": "lib/presentation/providers/navigation_visibility_provider.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/interactive/presentation/pages/tarot_chat_page.dart",
         "lib/features/trend/presentation/pages/trend_page.dart",
         "lib/presentation/providers/providers.dart"
@@ -31607,7 +31434,6 @@
       "notes": [],
       "path": "lib/presentation/providers/providers.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/data/services/fortune_api/fortune_api_service.dart",
         "lib/data/services/fortune_api_service_edge_functions.dart",
         "lib/data/services/token_api_service.dart",
@@ -31639,7 +31465,6 @@
       "notes": [],
       "path": "lib/presentation/providers/recommendation_provider.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/presentation/providers/providers.dart"
       ],
       "runtime_reachable": true,
@@ -31673,7 +31498,6 @@
       "notes": [],
       "path": "lib/presentation/providers/social_auth_provider.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/presentation/providers/providers.dart"
       ],
       "runtime_reachable": true,
@@ -31688,7 +31512,6 @@
       "notes": [],
       "path": "lib/presentation/providers/soul_animation_provider.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/shared/components/token_balance_widget.dart"
       ],
       "runtime_reachable": true,
@@ -31721,7 +31544,6 @@
       "notes": [],
       "path": "lib/presentation/providers/tarot_deck_provider.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/interactive/presentation/pages/tarot_card_page.dart",
         "lib/features/interactive/presentation/pages/tarot_chat_page.dart"
       ],
@@ -31737,8 +31559,6 @@
       "notes": [],
       "path": "lib/presentation/providers/theme_provider.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "integration_test/screenshot_test.dart",
         "integration_test/test_app.dart",
@@ -31758,7 +31578,6 @@
       "notes": [],
       "path": "lib/presentation/providers/today_fortune_provider.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/presentation/providers/celebrity_saju_provider.dart",
         "lib/presentation/providers/providers.dart"
       ],
@@ -31774,7 +31593,6 @@
       "notes": [],
       "path": "lib/presentation/providers/token_provider.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/chat/presentation/pages/chat_home_page.dart",
         "lib/features/interactive/presentation/pages/dream_interpretation_page.dart",
@@ -31806,7 +31624,6 @@
       "notes": [],
       "path": "lib/presentation/providers/user_profile_notifier.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/chat/presentation/pages/chat_home_page.dart",
@@ -31825,20 +31642,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
+      "candidate_action": "phase3_feature_cleanup",
       "dirty": false,
       "kind": "dart",
       "notes": [
+        "no_inbound_refs",
         "runtime_unreachable",
         "zero_incoming_dart"
       ],
       "path": "lib/presentation/providers/user_provider.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "doc_only"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -31848,7 +31664,6 @@
       "notes": [],
       "path": "lib/presentation/providers/user_statistics_provider.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/presentation/providers/providers.dart"
       ],
       "runtime_reachable": true,
@@ -31877,7 +31692,6 @@
       "notes": [],
       "path": "lib/presentation/widgets/common/app_header.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/payment/presentation/pages/token_purchase_page.dart"
       ],
       "runtime_reachable": true,
@@ -31892,7 +31706,6 @@
       "notes": [],
       "path": "lib/presentation/widgets/common/custom_card.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/payment/presentation/pages/token_purchase_page.dart"
       ],
       "runtime_reachable": true,
@@ -32063,7 +31876,6 @@
       ],
       "path": "lib/presentation/widgets/fortune_infographic_widgets.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/screens/home/fortune_swipe/widgets/radar_card.dart"
       ],
       "runtime_reachable": false,
@@ -32078,7 +31890,6 @@
       "notes": [],
       "path": "lib/presentation/widgets/profile_image_picker.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/screens/profile/profile_edit_page.dart"
       ],
       "runtime_reachable": true,
@@ -32093,7 +31904,6 @@
       "notes": [],
       "path": "lib/presentation/widgets/social_accounts_section.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/screens/settings/social_accounts_screen.dart"
       ],
       "runtime_reachable": true,
@@ -32108,7 +31918,6 @@
       "notes": [],
       "path": "lib/presentation/widgets/social_login_bottom_sheet.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/chat/presentation/pages/chat_home_page.dart",
         "lib/features/chat/presentation/widgets/guest_login_banner.dart",
         "lib/screens/home/preview_screen.dart",
@@ -32130,7 +31939,6 @@
       "notes": [],
       "path": "lib/presentation/widgets/social_share_bottom_sheet.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/services/fortune_share_service.dart"
       ],
       "runtime_reachable": true,
@@ -32145,7 +31953,6 @@
       "notes": [],
       "path": "lib/providers/pet_provider.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/chat/presentation/pages/chat_home_page.dart",
         "lib/features/chat/presentation/widgets/survey/chat_pet_registration_form.dart"
       ],
@@ -32176,8 +31983,6 @@
       "path": "lib/routes/route_config.dart",
       "referenced_by": [
         "docs/APP_ARCHITECTURE.md",
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "integration_test/test_app.dart",
         "lib/main.dart",
         "scripts/pre-commit-screen-check.sh"
@@ -32194,8 +31999,6 @@
       "notes": [],
       "path": "lib/routes/routes/auth_routes.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -32210,8 +32013,6 @@
       "notes": [],
       "path": "lib/routes/routes/interactive_routes.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -32254,8 +32055,6 @@
       "notes": [],
       "path": "lib/screens/auth/callback_page.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "lib/routes/routes/auth_routes.dart"
       ],
       "runtime_reachable": true,
@@ -32270,8 +32069,6 @@
       "notes": [],
       "path": "lib/screens/auth/signup_screen.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "lib/routes/routes/auth_routes.dart"
       ],
@@ -32530,8 +32327,6 @@
       "notes": [],
       "path": "lib/screens/home/home_screen.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "lib/routes/route_config.dart"
       ],
@@ -32541,20 +32336,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
+      "candidate_action": "phase3_feature_cleanup",
       "dirty": false,
       "kind": "dart",
       "notes": [
+        "no_inbound_refs",
         "runtime_unreachable",
         "zero_incoming_dart"
       ],
       "path": "lib/screens/home/preview_screen.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "doc_only"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -32728,8 +32522,6 @@
       "notes": [],
       "path": "lib/screens/onboarding/onboarding_page.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "lib/routes/route_config.dart",
         "lib/routes/routes/auth_routes.dart"
@@ -32774,7 +32566,6 @@
       "notes": [],
       "path": "lib/screens/onboarding/steps/phone_step.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/screens/settings/phone_management_screen.dart"
       ],
       "runtime_reachable": true,
@@ -32789,7 +32580,6 @@
       "notes": [],
       "path": "lib/screens/onboarding/steps/phone_verification_step.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/screens/settings/phone_management_screen.dart"
       ],
       "runtime_reachable": true,
@@ -32836,8 +32626,6 @@
       "notes": [],
       "path": "lib/screens/premium/premium_screen.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -32880,8 +32668,6 @@
       "notes": [],
       "path": "lib/screens/profile/profile_edit_page.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "lib/routes/route_config.dart"
       ],
@@ -32897,8 +32683,6 @@
       "notes": [],
       "path": "lib/screens/profile/profile_screen.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
         "lib/routes/route_config.dart"
@@ -33143,8 +32927,6 @@
       "notes": [],
       "path": "lib/screens/settings/phone_management_screen.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -33159,8 +32941,6 @@
       "notes": [],
       "path": "lib/screens/settings/social_accounts_screen.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -33175,8 +32955,6 @@
       "notes": [],
       "path": "lib/screens/splash_screen.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "lib/routes/routes/auth_routes.dart"
       ],
@@ -33192,8 +32970,6 @@
       "notes": [],
       "path": "lib/screens/subscription/subscription_page.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -33223,8 +32999,6 @@
       "path": "lib/services/analytics_service.dart",
       "referenced_by": [
         "docs/deployment/review/ANDROID_REVIEW_EVIDENCE.md",
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "lib/core/utils/logger.dart",
         "lib/presentation/providers/fortune_recommendation_provider.dart"
@@ -33271,8 +33045,6 @@
       "path": "lib/services/cache_service.dart",
       "referenced_by": [
         "docs/data/DATABASE_GUIDE.md",
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "lib/data/services/fortune_api/daily_fortune_api.dart",
         "lib/data/services/fortune_api/fortune_api_service.dart",
         "lib/data/services/fortune_api/misc_fortune_api.dart",
@@ -33293,7 +33065,6 @@
       "notes": [],
       "path": "lib/services/celebrity_crawling_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/admin/pages/celebrity_crawling_page.dart",
         "lib/presentation/providers/celebrity_provider.dart"
       ],
@@ -33311,7 +33082,6 @@
       ],
       "path": "lib/services/celebrity_saju_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/presentation/providers/celebrity_saju_provider.dart"
       ],
       "runtime_reachable": false,
@@ -33326,7 +33096,6 @@
       "notes": [],
       "path": "lib/services/celebrity_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/presentation/providers/celebrity_provider.dart"
       ],
       "runtime_reachable": true,
@@ -33357,7 +33126,6 @@
       "path": "lib/services/fortune_history_service.dart",
       "referenced_by": [
         "docs/data/DATABASE_GUIDE.md",
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "docs/development/_archive/FORTUNE_API_DEVELOPMENT_CHECKLIST.md",
         "lib/features/chat/presentation/pages/chat_home_page.dart",
         "lib/features/interactive/presentation/pages/tarot_card_page.dart"
@@ -33403,7 +33171,6 @@
       "path": "lib/services/in_app_purchase_service.dart",
       "referenced_by": [
         "docs/deployment/review/ANDROID_REVIEW_EVIDENCE.md",
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "docs/development/reports/2026-02-16_store_review_gate_blockers_rca.md",
         "lib/features/payment/presentation/pages/token_purchase_page.dart",
         "lib/presentation/providers/subscription_provider.dart",
@@ -33449,7 +33216,6 @@
       "notes": [],
       "path": "lib/services/native_platform_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/services/notification_service.dart",
         "lib/services/widget_data_service.dart",
         "lib/services/widget_service.dart"
@@ -33466,7 +33232,6 @@
       "notes": [],
       "path": "lib/services/notification/fcm_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/notification/presentation/pages/notification_settings_page.dart",
         "lib/main.dart"
       ],
@@ -33484,7 +33249,6 @@
       ],
       "path": "lib/services/notification_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "docs/native/NATIVE_FEATURES_GUIDE.md",
         "lib/features/character/data/services/proactive_message_scheduler.dart"
       ],
@@ -33521,7 +33285,6 @@
       "path": "lib/services/pet_service.dart",
       "referenced_by": [
         "docs/data/DATABASE_GUIDE.md",
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/providers/pet_provider.dart"
       ],
       "runtime_reachable": true,
@@ -33537,7 +33300,6 @@
       "path": "lib/services/phone_auth_service.dart",
       "referenced_by": [
         "docs/data/DATABASE_GUIDE.md",
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/screens/settings/phone_management_screen.dart"
       ],
       "runtime_reachable": true,
@@ -33552,7 +33314,6 @@
       "notes": [],
       "path": "lib/services/region_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/chat/presentation/widgets/survey/chat_location_picker.dart"
       ],
       "runtime_reachable": true,
@@ -33567,8 +33328,6 @@
       "notes": [],
       "path": "lib/services/remote_config_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "docs/development/character-chat/reports/2026-02-16_character_chat_tone_discovery.md",
         "docs/development/character-chat/reports/2026-02-16_character_chat_tone_rca.md",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
@@ -33677,7 +33436,6 @@
       "path": "lib/services/social_auth_service.dart",
       "referenced_by": [
         "docs/data/DATABASE_GUIDE.md",
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/chat/presentation/pages/chat_home_page.dart",
         "lib/features/chat/presentation/widgets/guest_login_banner.dart",
         "lib/presentation/providers/social_auth_provider.dart",
@@ -33702,7 +33460,6 @@
       "referenced_by": [
         "docs/deployment/review/ANDROID_REVIEW_EVIDENCE.md",
         "docs/deployment/review/IOS_REVIEW_EVIDENCE.md",
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/core/widgets/unified_voice_text_field.dart"
       ],
       "runtime_reachable": true,
@@ -33731,7 +33488,6 @@
       "notes": [],
       "path": "lib/services/storage_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/core/services/unified_fortune_service.dart",
         "lib/core/utils/profile_validation.dart",
         "lib/features/character/presentation/pages/character_onboarding_page.dart",
@@ -33769,7 +33525,6 @@
       "notes": [],
       "path": "lib/services/supabase_storage_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/presentation/widgets/profile_image_picker.dart",
         "lib/screens/profile/profile_edit_page.dart"
       ],
@@ -33817,7 +33572,6 @@
       "path": "lib/services/user_statistics_service.dart",
       "referenced_by": [
         "docs/data/DATABASE_GUIDE.md",
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/presentation/providers/auth_provider.dart",
         "lib/presentation/providers/providers.dart",
         "lib/presentation/providers/user_statistics_provider.dart",
@@ -33835,7 +33589,6 @@
       "notes": [],
       "path": "lib/services/weather_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/data/services/fortune_api_service_edge_functions.dart"
       ],
       "runtime_reachable": true,
@@ -33865,7 +33618,6 @@
       "notes": [],
       "path": "lib/services/widget_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "docs/native/NATIVE_FEATURES_GUIDE.md",
         "lib/presentation/providers/auth_provider.dart"
       ],
@@ -33881,7 +33633,6 @@
       "notes": [],
       "path": "lib/shared/components/app_header.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/history/presentation/pages/fortune_history_detail_page.dart",
         "lib/features/history/presentation/pages/fortune_history_page.dart",
         "lib/features/interactive/presentation/pages/dream_page.dart",
@@ -33912,7 +33663,6 @@
       "path": "lib/shared/components/korean_date_picker.dart",
       "referenced_by": [
         "docs/development/UNIFIED_DATE_PICKER_MIGRATION.md",
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/interactive/presentation/pages/psychology_test_page.dart"
       ],
       "runtime_reachable": true,
@@ -33927,7 +33677,6 @@
       "notes": [],
       "path": "lib/shared/components/loading_states.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/fortune/presentation/widgets/tarot/tarot_result_view.dart",
         "lib/features/history/presentation/pages/fortune_history_page.dart",
         "lib/features/interactive/presentation/pages/dream_page.dart",
@@ -34039,7 +33788,6 @@
       "notes": [],
       "path": "lib/shared/components/toast.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/exercise/presentation/pages/exercise_fortune_page.dart",
         "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart",
         "lib/features/health/presentation/pages/health_fortune/widgets/document_upload_bottom_sheet.dart",
@@ -34067,7 +33815,6 @@
       "notes": [],
       "path": "lib/shared/components/token_balance_widget.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/shared/components/app_header.dart"
       ],
       "runtime_reachable": true,
@@ -34082,7 +33829,6 @@
       "notes": [],
       "path": "lib/shared/components/token_insufficient_modal.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/chat/presentation/pages/chat_home_page.dart",
         "lib/features/interactive/presentation/pages/face_reading_page.dart",
@@ -34101,7 +33847,6 @@
       "notes": [],
       "path": "lib/shared/glassmorphism/glass_container.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/fortune/presentation/widgets/tarot/tarot_result_view.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_selection_view.dart",
         "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/advice_page.dart",
@@ -34138,8 +33883,6 @@
       "notes": [],
       "path": "lib/shared/layouts/main_shell.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/DEPENDENCY_TRACE.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -34181,7 +33924,6 @@
       "notes": [],
       "path": "lib/utils/date_utils.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/chat/presentation/providers/onboarding_chat_provider.dart",
         "lib/presentation/providers/user_profile_notifier.dart",
         "lib/screens/onboarding/onboarding_page.dart",
@@ -34199,7 +33941,6 @@
       "notes": [],
       "path": "lib/widgets/icons/fortune_compass_icon.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/screens/auth/callback_page.dart"
       ],
       "runtime_reachable": true,
@@ -39378,27 +39119,27 @@
   "meta": {
     "counts_by_area": {
       "assets": 1231,
-      "docs": 143,
+      "docs": 140,
       "integration_test": 26,
-      "lib": 752,
+      "lib": 751,
       "scripts": 69,
       "supabase": 214,
       "test": 53
     },
     "counts_by_candidate_action": {
-      "keep": 1143,
+      "keep": 1144,
       "keep_generated": 38,
       "manual_review": 841,
-      "phase2_review_candidate": 418,
-      "phase3_feature_cleanup": 48
+      "phase2_review_candidate": 408,
+      "phase3_feature_cleanup": 53
     },
     "counts_by_usage_status": {
-      "doc_only": 156,
+      "doc_only": 146,
       "generated_excluded": 38,
-      "runtime_used": 1143,
+      "runtime_used": 1144,
       "test_only": 80,
       "tooling_only": 182,
-      "unreferenced": 889
+      "unreferenced": 894
     },
     "declared_asset_dirs_without_runtime_refs": [
       "assets/animations",
@@ -39507,9 +39248,9 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 635,
-    "lib_dart_total": 749,
-    "lib_dart_zero_incoming": 55,
+    "lib_dart_runtime_reachable": 636,
+    "lib_dart_total": 748,
+    "lib_dart_zero_incoming": 53,
     "missing_function_refs": [
       "add-tokens",
       "crawl-celebrity-info",
@@ -39589,7 +39330,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2488,
+    "total_files": 2484,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "character-follow-up",
