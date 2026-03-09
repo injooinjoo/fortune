@@ -370,6 +370,24 @@ def explicit_legacy(path: str) -> bool:
     return any(token in lowered for token in LEGACY_HINTS)
 
 
+def source_usage_context(path: str) -> str:
+    if path.startswith(('test/', 'integration_test/')):
+        return 'test'
+    if path.startswith('docs/'):
+        return 'doc'
+    if path.startswith('scripts/'):
+        return 'tooling'
+    if path.startswith(('.github/workflows/', 'web/', 'android/', 'ios/', 'macos/')):
+        return 'tooling'
+    if path.startswith('supabase/migrations/'):
+        return 'tooling'
+    if path.startswith('supabase/functions/'):
+        return 'runtime'
+    if path.startswith('lib/'):
+        return 'runtime'
+    return 'tooling'
+
+
 def first_non_generated_ref(referrers: set[str]) -> list[str]:
     return sorted(ref for ref in referrers if ref not in GENERATED_OUTPUTS)
 
@@ -439,11 +457,10 @@ def build_analysis() -> dict[str, object]:
         for function_name in FUNCTION_INVOKE_RE.findall(text):
             function_referrers[function_name].add(source)
 
-        if source == 'lib/core/constants/edge_functions_endpoints.dart':
-            for literal in ENDPOINT_LITERAL_RE.findall(text):
-                function_name = literal.lstrip('/')
-                if function_name and '-' in function_name and not function_name.endswith('-'):
-                    function_referrers[function_name].add(source)
+        for literal in ENDPOINT_LITERAL_RE.findall(text):
+            function_name = literal.lstrip('/')
+            if function_name and '-' in function_name and not function_name.endswith('-'):
+                function_referrers[function_name].add(source)
 
     runtime_dart_seen: set[str] = set()
     stack = ['lib/main.dart']
@@ -462,8 +479,17 @@ def build_analysis() -> dict[str, object]:
                 function_dirs[parts[2]].append(path)
 
     runtime_function_dirs = {
-        function_name for function_name in function_dirs if function_referrers.get(function_name)
+        function_name
+        for function_name, referrers in function_referrers.items()
+        if function_name in function_dirs
+        and any(source_usage_context(referrer) == 'runtime' for referrer in referrers)
     }
+
+    for function_name, referrers in function_referrers.items():
+        if function_name not in function_dirs:
+            continue
+        for target in function_dirs[function_name]:
+            references[target].update(referrers)
 
     runtime_supabase_seen: set[str] = set()
     supabase_stack: list[str] = []
@@ -479,21 +505,9 @@ def build_analysis() -> dict[str, object]:
         )
 
     def ref_context(referrer: str) -> str:
-        if referrer.startswith(('test/', 'integration_test/')):
-            return 'test'
-        if referrer.startswith('docs/'):
-            return 'doc'
-        if referrer.startswith('scripts/'):
-            return 'tooling'
-        if referrer.startswith(('.github/workflows/', 'web/', 'android/', 'ios/', 'macos/')):
-            return 'tooling'
-        if referrer.startswith('supabase/migrations/'):
-            return 'tooling'
         if referrer.startswith('supabase/functions/'):
             return 'runtime' if referrer in runtime_supabase_seen else 'tooling'
-        if referrer.startswith('lib/'):
-            return 'runtime'
-        return 'tooling'
+        return source_usage_context(referrer)
 
     missing_function_refs = sorted(
         function_name
@@ -533,6 +547,9 @@ def build_analysis() -> dict[str, object]:
         elif is_generated_path(path):
             usage_status = 'generated_excluded'
             notes.append('generated_or_generated_output')
+        elif path.startswith('lib/l10n/') and Path(path).suffix.lower() == '.arb':
+            usage_status = 'runtime_used'
+            notes.append('l10n_source')
         elif area == 'docs' or Path(path).suffix.lower() == '.md':
             usage_status = 'doc_only'
         elif area in {'test', 'integration_test'}:
