@@ -155,15 +155,19 @@ class CharacterListPanel extends ConsumerWidget {
     );
   }
 
-  void _showNewMessageSheet(BuildContext context) {
-    showModalBottomSheet(
+  Future<void> _showNewMessageSheet(BuildContext context) async {
+    final selectedCharacter = await showModalBottomSheet<AiCharacter>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => _NewMessageSheet(
-        onCharacterSelected: onCharacterSelected,
-      ),
+      builder: (ctx) => const _NewMessageSheet(),
     );
+
+    if (!context.mounted || selectedCharacter == null) {
+      return;
+    }
+
+    onCharacterSelected(selectedCharacter);
   }
 }
 
@@ -738,11 +742,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
 
 /// 새 대화 시작 바텀시트 (인스타그램 New message 스타일)
 class _NewMessageSheet extends ConsumerWidget {
-  final void Function(AiCharacter character) onCharacterSelected;
-
-  const _NewMessageSheet({
-    required this.onCharacterSelected,
-  });
+  const _NewMessageSheet();
 
   String _buildRecommendedSummary(BuildContext context, String characterId) {
     final tags = CharacterLocalizer.getTags(context, characterId).take(3);
@@ -890,10 +890,7 @@ class _NewMessageSheet extends ConsumerWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    onTap: () {
-                      Navigator.pop(context);
-                      onCharacterSelected(character);
-                    },
+                    onTap: () => Navigator.pop(context, character),
                   );
                 },
               ),
