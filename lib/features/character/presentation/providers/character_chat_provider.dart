@@ -3250,6 +3250,7 @@ $enrichedContext
         final firstMessage = CharacterChatMessage.character(
             _buildFirstMeetOpening(), _characterId);
         state = state.copyWith(
+          messages: [firstMessage],
           isLoading: false,
           isInitialized: true,
         );
@@ -3259,6 +3260,7 @@ $enrichedContext
       final firstMessage = CharacterChatMessage.character(
           _buildFirstMeetOpening(), _characterId);
       state = state.copyWith(
+        messages: [firstMessage],
         isLoading: false,
         isInitialized: true,
       );
