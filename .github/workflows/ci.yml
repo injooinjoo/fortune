@@ -18,6 +18,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Check source inventory drift
+        run: python3 scripts/source_inventory.py check
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
