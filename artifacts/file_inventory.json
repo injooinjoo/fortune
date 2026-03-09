@@ -23777,6 +23777,34 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "docs/development/reports/2026-03-10_llm_guard_hardening_discovery.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/development/reports/2026-03-10_llm_guard_hardening_verify.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "docs/development/reports/DISCOVERY_FORTUNE_TYPE_UNIFICATION.md",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -31683,6 +31711,7 @@
       "path": "lib/features/chat/presentation/pages/chat_home_page.dart",
       "referenced_by": [
         "docs/development/reports/2026-03-09_gcp_cost_incident_verify.md",
+        "docs/development/reports/2026-03-10_llm_guard_hardening_verify.md",
         "docs/development/reports/VERIFY_FORTUNE_TYPE_UNIFICATION.md",
         "lib/screens/home/home_screen.dart"
       ],
@@ -43087,9 +43116,26 @@
       "dirty": false,
       "kind": "edge_shared_source",
       "notes": [],
+      "path": "supabase/functions/_shared/llm/alerts.ts",
+      "referenced_by": [
+        "docs/development/reports/2026-03-10_llm_guard_hardening_verify.md",
+        "supabase/functions/_shared/llm/safety.ts"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "edge_shared_source",
+      "notes": [],
       "path": "supabase/functions/_shared/llm/config-service.ts",
       "referenced_by": [
         "docs/development/reports/2026-03-09_gcp_cost_incident_discovery.md",
+        "docs/development/reports/2026-03-10_llm_guard_hardening_discovery.md",
+        "docs/development/reports/2026-03-10_llm_guard_hardening_verify.md",
         "supabase/functions/_shared/llm/factory.ts"
       ],
       "runtime_reachable": true,
@@ -43104,6 +43150,7 @@
       "notes": [],
       "path": "supabase/functions/_shared/llm/config.ts",
       "referenced_by": [
+        "docs/development/reports/2026-03-10_llm_guard_hardening_verify.md",
         "supabase/functions/_shared/llm/factory.ts"
       ],
       "runtime_reachable": true,
@@ -43181,6 +43228,30 @@
       "dirty": false,
       "kind": "edge_shared_source",
       "notes": [],
+      "path": "supabase/functions/_shared/llm/models.ts",
+      "referenced_by": [
+        "docs/development/reports/2026-03-10_llm_guard_hardening_verify.md",
+        "supabase/functions/_shared/llm/config-service.ts",
+        "supabase/functions/_shared/llm/config.ts",
+        "supabase/functions/_shared/llm/providers/gemini.ts",
+        "supabase/functions/_shared/llm/safety.ts",
+        "supabase/functions/_shared/llm/usage-logger.ts",
+        "supabase/functions/fortune-past-life/index.ts",
+        "supabase/functions/fortune-yearly-encounter/index.ts",
+        "supabase/functions/free-chat/index.ts",
+        "supabase/functions/generate-fashion-image/index.ts",
+        "supabase/functions/generate-talisman/index.ts"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "edge_shared_source",
+      "notes": [],
       "path": "supabase/functions/_shared/llm/providers/anthropic.ts",
       "referenced_by": [
         "docs/development/reports/2026-03-09_gcp_cost_incident_verify.md",
@@ -43201,6 +43272,7 @@
         "docs/development/reports/2026-03-09_gcp_cost_incident_discovery.md",
         "docs/development/reports/2026-03-09_gcp_cost_incident_rca.md",
         "docs/development/reports/2026-03-09_gcp_cost_incident_verify.md",
+        "docs/development/reports/2026-03-10_llm_guard_hardening_verify.md",
         "supabase/functions/_shared/llm/factory.ts",
         "supabase/functions/generate-talisman/index.ts"
       ],
@@ -43245,10 +43317,13 @@
       "path": "supabase/functions/_shared/llm/safety.ts",
       "referenced_by": [
         "docs/development/reports/2026-03-09_gcp_cost_incident_verify.md",
+        "docs/development/reports/2026-03-10_llm_guard_hardening_discovery.md",
+        "docs/development/reports/2026-03-10_llm_guard_hardening_verify.md",
         "supabase/functions/_shared/llm/providers/gemini.ts",
         "supabase/functions/fortune-past-life/index.ts",
         "supabase/functions/fortune-yearly-encounter/index.ts",
-        "supabase/functions/generate-fashion-image/index.ts"
+        "supabase/functions/generate-fashion-image/index.ts",
+        "supabase/functions/monitor-llm-usage/index.ts"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -43285,6 +43360,7 @@
       "referenced_by": [
         "docs/development/gcp-api-usage-monitoring.md",
         "docs/development/reports/2026-03-09_gcp_cost_incident_discovery.md",
+        "docs/development/reports/2026-03-10_llm_guard_hardening_verify.md",
         "supabase/functions/analyze-wish/index.ts",
         "supabase/functions/calculate-saju/index.ts",
         "supabase/functions/chat-insight-analyze/index.ts",
@@ -43346,6 +43422,7 @@
       "path": "supabase/functions/_shared/monitoring/gcp-logging.ts",
       "referenced_by": [
         "docs/development/gcp-api-usage-monitoring.md",
+        "supabase/functions/_shared/llm/alerts.ts",
         "supabase/functions/_shared/llm/safety.ts",
         "supabase/functions/_shared/llm/usage-logger.ts"
       ],
@@ -43361,6 +43438,9 @@
       "notes": [],
       "path": "supabase/functions/_shared/notification_push.ts",
       "referenced_by": [
+        "docs/development/reports/2026-03-10_llm_guard_hardening_discovery.md",
+        "docs/development/reports/2026-03-10_llm_guard_hardening_verify.md",
+        "supabase/functions/_shared/llm/alerts.ts",
         "supabase/functions/character-chat/index.ts",
         "supabase/functions/character-follow-up/index.ts"
       ],
@@ -44350,7 +44430,9 @@
       "referenced_by": [
         "docs/development/reports/2026-03-09_gcp_cost_incident_discovery.md",
         "docs/development/reports/2026-03-09_gcp_cost_incident_rca.md",
-        "docs/development/reports/2026-03-09_gcp_cost_incident_verify.md"
+        "docs/development/reports/2026-03-09_gcp_cost_incident_verify.md",
+        "docs/development/reports/2026-03-10_llm_guard_hardening_discovery.md",
+        "docs/development/reports/2026-03-10_llm_guard_hardening_verify.md"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -44477,6 +44559,8 @@
         "docs/development/reports/2026-03-09_gcp_cost_incident_discovery.md",
         "docs/development/reports/2026-03-09_gcp_cost_incident_rca.md",
         "docs/development/reports/2026-03-09_gcp_cost_incident_verify.md",
+        "docs/development/reports/2026-03-10_llm_guard_hardening_discovery.md",
+        "docs/development/reports/2026-03-10_llm_guard_hardening_verify.md",
         "docs/development/reports/VERIFY_FORTUNE_TYPE_UNIFICATION.md"
       ],
       "runtime_reachable": true,
@@ -44493,7 +44577,8 @@
       ],
       "path": "supabase/functions/free-chat/index.ts",
       "referenced_by": [
-        "docs/development/gcp-api-usage-monitoring.md"
+        "docs/development/gcp-api-usage-monitoring.md",
+        "docs/development/reports/2026-03-10_llm_guard_hardening_verify.md"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -44526,7 +44611,9 @@
       "referenced_by": [
         "docs/development/reports/2026-03-09_gcp_cost_incident_discovery.md",
         "docs/development/reports/2026-03-09_gcp_cost_incident_rca.md",
-        "docs/development/reports/2026-03-09_gcp_cost_incident_verify.md"
+        "docs/development/reports/2026-03-09_gcp_cost_incident_verify.md",
+        "docs/development/reports/2026-03-10_llm_guard_hardening_discovery.md",
+        "docs/development/reports/2026-03-10_llm_guard_hardening_verify.md"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -44558,7 +44645,9 @@
       "path": "supabase/functions/generate-talisman/index.ts",
       "referenced_by": [
         "docs/design/_archive/legacy/KOREAN_TALISMAN_DESIGN_GUIDE.md",
-        "docs/development/reports/2026-03-09_gcp_cost_incident_verify.md"
+        "docs/development/reports/2026-03-09_gcp_cost_incident_verify.md",
+        "docs/development/reports/2026-03-10_llm_guard_hardening_discovery.md",
+        "docs/development/reports/2026-03-10_llm_guard_hardening_verify.md"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -44593,6 +44682,22 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "edge_function_source",
+      "notes": [
+        "edge_function_unreferenced:monitor-llm-usage"
+      ],
+      "path": "supabase/functions/monitor-llm-usage/index.ts",
+      "referenced_by": [
+        "docs/development/reports/2026-03-10_llm_guard_hardening_verify.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
     },
     {
       "area": "supabase",
@@ -46999,25 +47104,25 @@
   "meta": {
     "counts_by_area": {
       "assets": 1444,
-      "docs": 135,
+      "docs": 137,
       "integration_test": 26,
       "lib": 1000,
       "scripts": 69,
-      "supabase": 212,
+      "supabase": 215,
       "test": 53
     },
     "counts_by_candidate_action": {
-      "keep": 1230,
+      "keep": 1232,
       "keep_generated": 52,
       "manual_review": 825,
       "phase1_remove_candidate": 275,
-      "phase2_review_candidate": 520,
+      "phase2_review_candidate": 523,
       "phase3_feature_cleanup": 37
     },
     "counts_by_usage_status": {
-      "doc_only": 256,
+      "doc_only": 259,
       "generated_excluded": 52,
-      "runtime_used": 1230,
+      "runtime_used": 1232,
       "test_only": 79,
       "tooling_only": 185,
       "unreferenced": 1137
@@ -47211,7 +47316,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2939,
+    "total_files": 2944,
     "undeclared_asset_top_levels": [
       "assets/avatar"
     ],
@@ -47224,6 +47329,7 @@
       "fortune-family-children",
       "fortune-family-relationship",
       "fortune-family-wealth",
+      "monitor-llm-usage",
       "payment-verify-purchase",
       "profile-completion-bonus",
       "soul-consume",
