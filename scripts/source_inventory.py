@@ -221,6 +221,8 @@ def input_paths(all_paths: list[str]) -> list[str]:
 
 
 def path_exists(path: str) -> bool:
+    if not INCLUDE_DIRTY:
+        return True
     return (ROOT / path).exists()
 
 

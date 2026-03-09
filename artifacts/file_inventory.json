@@ -36303,7 +36303,6 @@
       "kind": "dart",
       "notes": [
         "runtime_unreachable",
-        "tracked_path_missing_on_disk",
         "zero_incoming_dart"
       ],
       "path": "lib/features/interactive/presentation/pages/tarot_card_page.dart",
@@ -36579,7 +36578,6 @@
       "kind": "dart",
       "notes": [
         "runtime_unreachable",
-        "tracked_path_missing_on_disk",
         "zero_incoming_dart"
       ],
       "path": "lib/features/sports/presentation/pages/sports_fortune_page.dart",
@@ -37713,7 +37711,6 @@
       "kind": "dart",
       "notes": [
         "runtime_unreachable",
-        "tracked_path_missing_on_disk",
         "zero_incoming_dart"
       ],
       "path": "lib/presentation/providers/fortune_recommendation_provider.dart",
@@ -37732,7 +37729,6 @@
       "notes": [
         "no_inbound_refs",
         "runtime_unreachable",
-        "tracked_path_missing_on_disk",
         "zero_incoming_dart"
       ],
       "path": "lib/presentation/providers/location_provider.dart",
@@ -38002,7 +37998,6 @@
       "kind": "dart",
       "notes": [
         "runtime_unreachable",
-        "tracked_path_missing_on_disk",
         "zero_incoming_dart"
       ],
       "path": "lib/presentation/providers/user_provider.dart",
@@ -39146,8 +39141,7 @@
       "dirty": false,
       "kind": "dart",
       "notes": [
-        "runtime_unreachable",
-        "tracked_path_missing_on_disk"
+        "runtime_unreachable"
       ],
       "path": "lib/screens/home/fortune_swipe/utils/fortune_swipe_helpers.dart",
       "referenced_by": [
@@ -39168,7 +39162,6 @@
       "notes": [
         "no_inbound_refs",
         "runtime_unreachable",
-        "tracked_path_missing_on_disk",
         "zero_incoming_dart"
       ],
       "path": "lib/screens/home/fortune_swipe/widgets/action_plan_card.dart",
@@ -39185,7 +39178,6 @@
       "notes": [
         "no_inbound_refs",
         "runtime_unreachable",
-        "tracked_path_missing_on_disk",
         "zero_incoming_dart"
       ],
       "path": "lib/screens/home/fortune_swipe/widgets/age_fortune_card.dart",
@@ -39202,7 +39194,6 @@
       "notes": [
         "no_inbound_refs",
         "runtime_unreachable",
-        "tracked_path_missing_on_disk",
         "zero_incoming_dart"
       ],
       "path": "lib/screens/home/fortune_swipe/widgets/category_detail_card.dart",
@@ -39219,7 +39210,6 @@
       "notes": [
         "no_inbound_refs",
         "runtime_unreachable",
-        "tracked_path_missing_on_disk",
         "zero_incoming_dart"
       ],
       "path": "lib/screens/home/fortune_swipe/widgets/celebrity_card.dart",
@@ -39236,7 +39226,6 @@
       "notes": [
         "no_inbound_refs",
         "runtime_unreachable",
-        "tracked_path_missing_on_disk",
         "zero_incoming_dart"
       ],
       "path": "lib/screens/home/fortune_swipe/widgets/five_elements_card.dart",
@@ -39253,7 +39242,6 @@
       "notes": [
         "no_inbound_refs",
         "runtime_unreachable",
-        "tracked_path_missing_on_disk",
         "zero_incoming_dart"
       ],
       "path": "lib/screens/home/fortune_swipe/widgets/hourly_score_graph_card.dart",
@@ -39270,7 +39258,6 @@
       "notes": [
         "no_inbound_refs",
         "runtime_unreachable",
-        "tracked_path_missing_on_disk",
         "zero_incoming_dart"
       ],
       "path": "lib/screens/home/fortune_swipe/widgets/lucky_items_card.dart",
@@ -39287,7 +39274,6 @@
       "notes": [
         "no_inbound_refs",
         "runtime_unreachable",
-        "tracked_path_missing_on_disk",
         "zero_incoming_dart"
       ],
       "path": "lib/screens/home/fortune_swipe/widgets/overall_card.dart",
@@ -39304,7 +39290,6 @@
       "notes": [
         "no_inbound_refs",
         "runtime_unreachable",
-        "tracked_path_missing_on_disk",
         "zero_incoming_dart"
       ],
       "path": "lib/screens/home/fortune_swipe/widgets/radar_card.dart",
@@ -39321,7 +39306,6 @@
       "notes": [
         "no_inbound_refs",
         "runtime_unreachable",
-        "tracked_path_missing_on_disk",
         "zero_incoming_dart"
       ],
       "path": "lib/screens/home/fortune_swipe/widgets/saju_insight_card.dart",
@@ -39338,7 +39322,6 @@
       "notes": [
         "no_inbound_refs",
         "runtime_unreachable",
-        "tracked_path_missing_on_disk",
         "zero_incoming_dart"
       ],
       "path": "lib/screens/home/fortune_swipe/widgets/share_card.dart",
@@ -39355,7 +39338,6 @@
       "notes": [
         "no_inbound_refs",
         "runtime_unreachable",
-        "tracked_path_missing_on_disk",
         "zero_incoming_dart"
       ],
       "path": "lib/screens/home/fortune_swipe/widgets/time_slot_card.dart",
@@ -39372,7 +39354,6 @@
       "notes": [
         "no_inbound_refs",
         "runtime_unreachable",
-        "tracked_path_missing_on_disk",
         "zero_incoming_dart"
       ],
       "path": "lib/screens/home/fortune_swipe/widgets/weekly_trend_card.dart",
@@ -39389,7 +39370,6 @@
       "notes": [
         "no_inbound_refs",
         "runtime_unreachable",
-        "tracked_path_missing_on_disk",
         "zero_incoming_dart"
       ],
       "path": "lib/screens/home/fortune_swipe/widgets/zodiac_fortune_card.dart",
@@ -39403,9 +39383,7 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [
-        "tracked_path_missing_on_disk"
-      ],
+      "notes": [],
       "path": "lib/screens/home/home_screen.dart",
       "referenced_by": [
         "docs/development/_archive/ALL_FILES_LIST.md",
@@ -39424,7 +39402,6 @@
       "kind": "dart",
       "notes": [
         "runtime_unreachable",
-        "tracked_path_missing_on_disk",
         "zero_incoming_dart"
       ],
       "path": "lib/screens/home/preview_screen.dart",
@@ -43876,8 +43853,7 @@
       "dirty": false,
       "kind": "edge_function_source",
       "notes": [
-        "edge_function_ref:fortune-baby-nickname",
-        "tracked_path_missing_on_disk"
+        "edge_function_ref:fortune-baby-nickname"
       ],
       "path": "supabase/functions/fortune-baby-nickname/index.ts",
       "referenced_by": [
@@ -44062,8 +44038,7 @@
       "kind": "edge_function_source",
       "notes": [
         "edge_function_unreferenced:fortune-face-reading-watch",
-        "no_inbound_refs",
-        "tracked_path_missing_on_disk"
+        "no_inbound_refs"
       ],
       "path": "supabase/functions/fortune-face-reading-watch/index.ts",
       "referenced_by": [],
@@ -44093,8 +44068,7 @@
       "kind": "edge_function_source",
       "notes": [
         "edge_function_unreferenced:fortune-family-change",
-        "no_inbound_refs",
-        "tracked_path_missing_on_disk"
+        "no_inbound_refs"
       ],
       "path": "supabase/functions/fortune-family-change/index.ts",
       "referenced_by": [],
@@ -44109,8 +44083,7 @@
       "kind": "edge_function_source",
       "notes": [
         "edge_function_unreferenced:fortune-family-children",
-        "no_inbound_refs",
-        "tracked_path_missing_on_disk"
+        "no_inbound_refs"
       ],
       "path": "supabase/functions/fortune-family-children/index.ts",
       "referenced_by": [],
@@ -44125,8 +44098,7 @@
       "kind": "edge_function_source",
       "notes": [
         "edge_function_ref:fortune-family-health",
-        "no_inbound_refs",
-        "tracked_path_missing_on_disk"
+        "no_inbound_refs"
       ],
       "path": "supabase/functions/fortune-family-health/index.ts",
       "referenced_by": [],
@@ -44141,8 +44113,7 @@
       "kind": "edge_function_source",
       "notes": [
         "edge_function_unreferenced:fortune-family-relationship",
-        "no_inbound_refs",
-        "tracked_path_missing_on_disk"
+        "no_inbound_refs"
       ],
       "path": "supabase/functions/fortune-family-relationship/index.ts",
       "referenced_by": [],
@@ -44157,8 +44128,7 @@
       "kind": "edge_function_source",
       "notes": [
         "edge_function_unreferenced:fortune-family-wealth",
-        "no_inbound_refs",
-        "tracked_path_missing_on_disk"
+        "no_inbound_refs"
       ],
       "path": "supabase/functions/fortune-family-wealth/index.ts",
       "referenced_by": [],
