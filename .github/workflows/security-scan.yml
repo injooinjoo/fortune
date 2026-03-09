@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 1  # Scan the current checkout to avoid stale historical noise
+          fetch-depth: 20  # Keep the scan focused while preserving recent commit ancestry
 
       - name: TruffleHog OSS
         id: trufflehog

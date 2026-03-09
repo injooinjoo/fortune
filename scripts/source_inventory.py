@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import difflib
 import json
+import os
 import re
 import subprocess
 import sys
@@ -12,6 +13,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+INCLUDE_DIRTY = os.environ.get('SOURCE_INVENTORY_INCLUDE_DIRTY') == '1'
 
 INVENTORY_PREFIXES = (
     'lib/',
@@ -142,9 +144,21 @@ def is_text_file(path: str) -> bool:
     return suffix in TEXT_SUFFIXES or Path(path).name in TEXT_FILENAMES
 
 
-def read_text(path: str) -> str | None:
+def read_text(path: str, dirty_paths: set[str]) -> str | None:
+    if not is_text_file(path):
+        return None
+
+    if not INCLUDE_DIRTY and path in dirty_paths and not path.startswith('docs/development/'):
+        result = subprocess.run(
+            ['git', 'show', f':{path}'],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        )
+        return result.stdout.decode('utf-8', errors='ignore')
+
     file_path = ROOT / path
-    if not file_path.exists() or not is_text_file(path):
+    if not file_path.exists():
         return None
     try:
         return file_path.read_text(encoding='utf-8')
@@ -153,7 +167,11 @@ def read_text(path: str) -> str | None:
 
 
 def tracked_and_untracked_paths() -> list[str]:
-    raw = run_git('ls-files', '--cached', '--others', '--exclude-standard', '-z')
+    args = ['ls-files', '--cached']
+    if INCLUDE_DIRTY:
+        args.extend(['--others', '--exclude-standard'])
+    args.append('-z')
+    raw = run_git(*args)
     seen: set[str] = set()
     paths: list[str] = []
     for path in raw.split('\0'):
@@ -354,17 +372,19 @@ def first_non_generated_ref(referrers: set[str]) -> list[str]:
 
 def build_analysis() -> dict[str, object]:
     all_paths = tracked_and_untracked_paths()
-    dirty_map = dirty_status_map()
+    working_dirty_map = dirty_status_map()
+    dirty_map = working_dirty_map if INCLUDE_DIRTY else {}
     inventory = inventory_paths(all_paths)
     extra_inputs = input_paths(all_paths)
     inventory_lookup = set(inventory)
     scan_inputs = sorted(set(inventory + extra_inputs))
 
     texts: dict[str, str] = {}
+    dirty_paths_for_snapshot = set(working_dirty_map)
     for path in scan_inputs:
         if path in GENERATED_OUTPUTS:
             continue
-        content = read_text(path)
+        content = read_text(path, dirty_paths_for_snapshot)
         if content is not None:
             texts[path] = content
 
@@ -700,7 +720,8 @@ def generate_file_inventory(records: list[dict[str, object]], summary: dict[str,
         '',
         '- Inventory targets: `lib`, `assets`, `supabase`, `scripts`, `docs`, `test`, `integration_test`',
         '- Analysis inputs only: `pubspec.yaml`, `.github/workflows/`, `web/`, `android/`, `ios/`, `macos/`, `README.md`, `l10n.yaml`',
-        '- Current worktree is part of the baseline; dirty paths are marked as `dirty_conflict` and excluded from automatic removal candidates.',
+        '- Generated outputs use the tracked snapshot by default so CI and local `check` stay deterministic.',
+        '- Local dirty view is opt-in via `SOURCE_INVENTORY_INCLUDE_DIRTY=1` and marks modified paths as `dirty_conflict`.',
         '',
         '## Baseline',
         '',
@@ -772,6 +793,7 @@ def generate_file_inventory(records: list[dict[str, object]], summary: dict[str,
         '```bash',
         'python3 scripts/source_inventory.py generate',
         'python3 scripts/source_inventory.py check',
+        'SOURCE_INVENTORY_INCLUDE_DIRTY=1 python3 scripts/source_inventory.py generate',
         '```',
         '',
     ]

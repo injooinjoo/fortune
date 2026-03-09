@@ -12,6 +12,11 @@ paths = [
     '''(^|/)node_modules/''',
     '''(^|/)supabase/\.temp/''',
 ]
+regexes = [
+    '''process\.env\.[A-Z0-9_]+''',
+    '''Deno\.env\.get\(['"][A-Z0-9_]+['"]\)''',
+    '''(?i)(placeholder|not-real|redacted|for-ci-only)''',
+]
 
 [[rules]]
 id = "firebase-api-key"
@@ -40,20 +45,20 @@ tags = ["key", "OpenAI"]
 [[rules]]
 id = "generic-secret"
 description = "Generic Secret"
-regex = '''(?i)(api_key|apikey|secret|password|passwd|pwd|token|api_token|private_key|client_secret)\s*[=:]\s*["\']?(?!process\.env\b|Deno\.env\b|dotenv\b|your[-_a-z0-9]*\b|placeholder[-_a-z0-9]*\b|mock[-_a-z0-9]*\b|sample[-_a-z0-9]*\b|test[-_a-z0-9]*\b|redacted\b)(?=[A-Za-z0-9\-_.=]{16,}["\']?\s*$)(?=[A-Za-z0-9\-_.=]*[A-Za-z])(?=[A-Za-z0-9\-_.=]*[0-9])[A-Za-z0-9\-_.=]+["\']?\s*$'''
+regex = '''(?i)(api_key|apikey|secret|password|passwd|pwd|token|api_token|private_key|client_secret)\s*[=:]\s*["\']?[A-Za-z0-9\-_.=]{16,}["\']?'''
 tags = ["secret", "generic"]
 
 # Custom rules for Fortune project
 [[rules]]
 id = "supabase-service-role-key"
 description = "Supabase Service Role Key"
-regex = '''SUPABASE_SERVICE_ROLE_KEY\s*=\s*["\']?(?!process\.env\b|Deno\.env\b|dotenv\b|your[-_a-z0-9]*\b|placeholder[-_a-z0-9]*\b|mock[-_a-z0-9]*\b|sample[-_a-z0-9]*\b|test[-_a-z0-9]*\b)(?=[A-Za-z0-9\-_.=]{20,}["\']?\s*$)(?=[A-Za-z0-9\-_.=]*[A-Za-z])(?=[A-Za-z0-9\-_.=]*[0-9])[A-Za-z0-9\-_.=]+["\']?\s*$'''
+regex = '''SUPABASE_SERVICE_ROLE_KEY\s*=\s*["\']?[A-Za-z0-9\-_.=]{20,}["\']?'''
 tags = ["key", "Supabase"]
 
 [[rules]]
 id = "upstash-redis-rest-token"
 description = "Redis/Upstash Token"
-regex = '''UPSTASH_REDIS_REST_TOKEN\s*=\s*["\']?(?!process\.env\b|Deno\.env\b|dotenv\b|your[-_a-z0-9]*\b|placeholder[-_a-z0-9]*\b|mock[-_a-z0-9]*\b|sample[-_a-z0-9]*\b|test[-_a-z0-9]*\b)(?=[A-Za-z0-9\-_.=]{20,}["\']?\s*$)(?=[A-Za-z0-9\-_.=]*[A-Za-z])(?=[A-Za-z0-9\-_.=]*[0-9])[A-Za-z0-9\-_.=]+["\']?\s*$'''
+regex = '''UPSTASH_REDIS_REST_TOKEN\s*=\s*["\']?[A-Za-z0-9\-_.=]{20,}["\']?'''
 tags = ["token", "Redis"]
 
 [[rules]]
