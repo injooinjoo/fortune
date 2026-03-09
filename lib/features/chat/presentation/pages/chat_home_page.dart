@@ -730,6 +730,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   ///
   /// Returns: true면 진행 가능, false면 중단 (로그인 이동 또는 온보딩 시작)
   Future<bool> _checkProfileOrShowLoginPrompt(RecommendationChip chip) async {
+    final localizedChipLabel = chip.getLocalizedLabel(context);
+
     // 1. Supabase 프로필 확인
     final userProfileAsync = ref.read(userProfileNotifierProvider);
     final userProfile = userProfileAsync.valueOrNull;
@@ -768,7 +770,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     } else if (action == ProfileRequiredAction.continueAsGuest) {
       // 온보딩 시작 (생년월일 등 입력)
       final chatNotifier = ref.read(chatMessagesProvider.notifier);
-      chatNotifier.addUserMessage(chip.getLocalizedLabel(context));
+      chatNotifier.addUserMessage(localizedChipLabel);
       _scrollToBottom();
 
       // 온보딩 시작
@@ -783,6 +785,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   Future<void> _handleChipTap(RecommendationChip chip) async {
     final chatNotifier = ref.read(chatMessagesProvider.notifier);
     final surveyNotifier = ref.read(chatSurveyProvider.notifier);
+    final localizedChipLabel = chip.getLocalizedLabel(context);
+    final comingSoonMessage =
+        context.l10n.fortuneFeatureComingSoon(localizedChipLabel);
 
     // birthDate 필요한 운세 타입: 프로필 체크 필요
     // (점신, 포스텔러 등 다른 앱처럼 로컬 저장 정보도 인정)
@@ -793,7 +798,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
     // 카톡 대화 분석: 인라인 채팅 플로우
     if (chip.fortuneType == 'chat-insight') {
-      chatNotifier.addUserMessage(chip.getLocalizedLabel(context));
+      chatNotifier.addUserMessage(localizedChipLabel);
       _scrollToBottom();
       _startChatInsightFlow();
       return;
@@ -801,7 +806,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
     // 전체운세보기: 모든 운세 칩 표시
     if (chip.fortuneType == 'view-all') {
-      chatNotifier.addUserMessage(chip.getLocalizedLabel(context));
+      chatNotifier.addUserMessage(localizedChipLabel);
       _scrollToBottom();
       Future.delayed(const Duration(milliseconds: 300), () {
         chatNotifier.addAiMessage(
@@ -830,7 +835,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     // 포춘쿠키: 인라인 애니메이션 후 결과 표시
     if (chip.fortuneType == 'fortune-cookie') {
       _updateChatBackgroundForType(FortuneSurveyType.fortuneCookie);
-      chatNotifier.addUserMessage(chip.getLocalizedLabel(context));
+      chatNotifier.addUserMessage(localizedChipLabel);
       _scrollToBottom();
       _showFortuneCookieWithAnimation();
       return;
@@ -845,7 +850,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
       // 약간의 딜레이 후 사용자 메시지 추가 (초기화 후 렌더링 위해)
       await Future.delayed(const Duration(milliseconds: 100));
-      chatNotifier.addUserMessage(chip.getLocalizedLabel(context));
+      chatNotifier.addUserMessage(localizedChipLabel);
       _scrollController.jumpTo(0);
 
       // 인사 메시지 생성 및 표시
@@ -868,7 +873,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       _updateChatBackgroundForType(surveyType);
       // 사주 분석 특별 처리 (ChatSajuResultCard 사용 - 설문 건너뛰기)
       if (surveyType == FortuneSurveyType.traditional) {
-        chatNotifier.addUserMessage(chip.getLocalizedLabel(context));
+        chatNotifier.addUserMessage(localizedChipLabel);
         _scrollToBottom();
         _handleSajuRequest();
         return;
@@ -876,7 +881,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
       // 타로 특별 처리: 오늘의 덱 다운로드 후 진행
       if (surveyType == FortuneSurveyType.tarot) {
-        chatNotifier.addUserMessage(chip.getLocalizedLabel(context));
+        chatNotifier.addUserMessage(localizedChipLabel);
         _scrollToBottom();
         _prepareTarotDeckAndStart(surveyNotifier, chatNotifier);
         return;
@@ -887,7 +892,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
       // 설문 단계가 없으면 바로 API 호출 (daily 등)
       if (config == null || config.steps.isEmpty) {
-        chatNotifier.addUserMessage(chip.getLocalizedLabel(context));
+        chatNotifier.addUserMessage(localizedChipLabel);
         _scrollToBottom();
 
         // 사용자 프로필 가져오기
@@ -944,7 +949,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
         if (cacheService.hasTodayDailyCalendarFortune(userId)) {
           // 오늘 이미 조회했으면 바로 결과 표시 (설문 스킵)
-          chatNotifier.addUserMessage(chip.getLocalizedLabel(context));
+          chatNotifier.addUserMessage(localizedChipLabel);
           chatNotifier.showTypingIndicator();
           _scrollToBottom();
 
@@ -976,7 +981,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       }
 
       // 설문 지원 타입 → 설문 시작
-      chatNotifier.addUserMessage(chip.getLocalizedLabel(context));
+      chatNotifier.addUserMessage(localizedChipLabel);
       _scrollToBottom();
 
       // 사용자 프로필 가져오기
@@ -1023,15 +1028,12 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       });
     } else {
       // 미지원 타입 → 준비 중 메시지
-      chatNotifier.addUserMessage(chip.getLocalizedLabel(context));
+      chatNotifier.addUserMessage(localizedChipLabel);
       chatNotifier.showTypingIndicator();
       _scrollToBottom();
 
       Future.delayed(const Duration(milliseconds: 800), () {
-        chatNotifier.addAiMessage(
-          context.l10n
-              .fortuneFeatureComingSoon(chip.getLocalizedLabel(context)),
-        );
+        chatNotifier.addAiMessage(comingSoonMessage);
         _scrollToBottom();
       });
     }
@@ -1372,10 +1374,15 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
           parts
               .add('${birthDate.year}년 ${birthDate.month}월 ${birthDate.day}일생');
         }
-        if (zodiacSign != null) parts.add(zodiacSign);
-        if (profile?.chineseZodiac != null)
+        if (zodiacSign != null) {
+          parts.add(zodiacSign);
+        }
+        if (profile?.chineseZodiac != null) {
           parts.add('${profile!.chineseZodiac}띠');
-        if (profile?.bloodType != null) parts.add('${profile!.bloodType}형');
+        }
+        if (profile?.bloodType != null) {
+          parts.add('${profile!.bloodType}형');
+        }
 
         if (parts.isNotEmpty) {
           return '$name님은 ${parts.join(' ')}이시네요!\n오늘의 운세를 확인해드릴게요 ✨';
