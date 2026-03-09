@@ -541,12 +541,12 @@ def build_analysis() -> dict[str, object]:
         elif path.startswith('supabase/functions/'):
             runtime_reachable = path in runtime_supabase_seen
 
-        if dirty:
-            usage_status = 'dirty_conflict'
-            notes.append(f'dirty_status:{dirty_map[path]}')
-        elif is_generated_path(path):
+        if is_generated_path(path):
             usage_status = 'generated_excluded'
             notes.append('generated_or_generated_output')
+        elif dirty:
+            usage_status = 'dirty_conflict'
+            notes.append(f'dirty_status:{dirty_map[path]}')
         elif path.startswith('lib/l10n/') and Path(path).suffix.lower() == '.arb':
             usage_status = 'runtime_used'
             notes.append('l10n_source')
