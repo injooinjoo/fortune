@@ -431,14 +431,6 @@ flutter:
     - family: NotoSansKR
       fonts:
         - asset: assets/fonts/NotoSansKR/NotoSansKR-VariableFont_wght.ttf
-    - family: GmarketSans
-      fonts:
-        - asset: assets/fonts/GmarketSans/GmarketSansTTFLight.ttf
-          weight: 300
-        - asset: assets/fonts/GmarketSans/GmarketSansTTFMedium.ttf
-          weight: 500
-        - asset: assets/fonts/GmarketSans/GmarketSansTTFBold.ttf
-          weight: 700
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

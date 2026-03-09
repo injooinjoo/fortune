@@ -35,7 +35,6 @@ class FontConfig {
   /// Font family fallback list
   static const List<String> fontFamilyFallback = [
     'NotoSansKR',
-    'GmarketSans',
     'Apple SD Gothic Neo',
     '-apple-system',
     'BlinkMacSystemFont',
