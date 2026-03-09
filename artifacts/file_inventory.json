@@ -17803,19 +17803,18 @@
     },
     {
       "area": "assets",
-      "candidate_action": "keep",
+      "candidate_action": "manual_review",
       "dirty": false,
       "kind": "asset_jpg",
       "notes": [
+        "no_inbound_refs",
         "pubspec_declared:assets/images/tarot"
       ],
       "path": "assets/images/tarot/major_00.jpg",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/tarot/tarot_result_card.dart"
-      ],
-      "runtime_reachable": true,
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "assets",
@@ -21544,25 +21543,8 @@
       "notes": [
         "runtime_unreachable"
       ],
-      "path": "lib/core/components/fortune_loading_screen.dart",
-      "referenced_by": [
-        "lib/presentation/widgets/fortune_loading_widget.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
       "path": "lib/core/components/loading_video_player.dart",
       "referenced_by": [
-        "lib/core/components/fortune_loading_screen.dart",
         "lib/screens/landing/widgets/landing_loading_screen.dart"
       ],
       "runtime_reachable": false,
@@ -21606,8 +21588,7 @@
         "docs/development/_archive/ALL_FILES_LIST.md",
         "docs/development/_archive/DEPENDENCY_TRACE.md",
         "lib/data/services/fortune_api/fortune_api_service.dart",
-        "lib/data/services/fortune_api_service_edge_functions.dart",
-        "lib/data/services/fortune_batch_service.dart"
+        "lib/data/services/fortune_api_service_edge_functions.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -21685,7 +21666,6 @@
         "lib/data/services/fortune_api/daily_fortune_api.dart",
         "lib/data/services/fortune_api/fortune_api_service.dart",
         "lib/data/services/fortune_api_service_edge_functions.dart",
-        "lib/data/services/fortune_batch_service.dart",
         "lib/features/chat/data/services/free_chat_service.dart",
         "lib/presentation/providers/fortune_recommendation_provider.dart",
         "scripts/source_inventory.py"
@@ -21709,7 +21689,6 @@
         "lib/features/chat/presentation/widgets/chat_match_insight_card.dart",
         "lib/features/chat/presentation/widgets/chat_ootd_result_card.dart",
         "lib/features/chat/presentation/widgets/personality_dna_chat_card.dart",
-        "lib/features/fortune/presentation/widgets/fortune_result_card.dart",
         "lib/features/fortune/presentation/widgets/personality_dna/widgets/daily_fortune_card.dart"
       ],
       "runtime_reachable": true,
@@ -21726,7 +21705,6 @@
       "referenced_by": [
         "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/data/models/fortune_response_model.dart",
-        "lib/domain/entities/detailed_fortune.dart",
         "lib/domain/entities/fortune.dart"
       ],
       "runtime_reachable": true,
@@ -21794,7 +21772,6 @@
       "path": "lib/core/constants/loading_messages.dart",
       "referenced_by": [
         "docs/development/reports/VERIFY_FORTUNE_TYPE_UNIFICATION.md",
-        "lib/core/components/fortune_loading_screen.dart",
         "lib/features/chat/presentation/widgets/chat_message_list.dart"
       ],
       "runtime_reachable": true,
@@ -21989,7 +21966,6 @@
       "referenced_by": [
         "lib/core/constants/tarot_metadata.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_card_widget.dart",
-        "lib/features/fortune/presentation/widgets/tarot/tarot_spread_selector.dart",
         "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/symbolism_page.dart"
       ],
       "runtime_reachable": true,
@@ -22020,7 +21996,6 @@
       "path": "lib/core/constants/tarot/tarot_position_meanings.dart",
       "referenced_by": [
         "lib/features/chat/presentation/widgets/chat_tarot_result_card.dart",
-        "lib/features/fortune/presentation/providers/tarot_storytelling_provider.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_result_view.dart"
       ],
       "runtime_reachable": true,
@@ -22071,16 +22046,8 @@
       "path": "lib/core/constants/tarot_metadata.dart",
       "referenced_by": [
         "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/core/constants/tarot_minor_arcana.dart",
-        "lib/core/constants/tarot_minor_arcana/cups.dart",
-        "lib/core/constants/tarot_minor_arcana/minor_arcana_helper.dart",
-        "lib/core/constants/tarot_minor_arcana/pentacles.dart",
-        "lib/core/constants/tarot_minor_arcana/swords.dart",
-        "lib/core/constants/tarot_minor_arcana/wands.dart",
-        "lib/features/fortune/presentation/providers/tarot_storytelling_provider.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_card_detail_modal.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_result_view.dart",
-        "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/card_helpers.dart",
         "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/deep_interpretation_page.dart",
         "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/practical_guide_page.dart",
         "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/relationships_page.dart",
@@ -22088,108 +22055,6 @@
         "lib/features/interactive/presentation/pages/tarot_chat_page.dart"
       ],
       "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/core/constants/tarot_minor_arcana.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/features/fortune/presentation/providers/tarot_storytelling_provider.dart",
-        "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/card_helpers.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/core/constants/tarot_minor_arcana/cups.dart",
-      "referenced_by": [
-        "lib/core/constants/tarot_minor_arcana.dart",
-        "lib/core/constants/tarot_minor_arcana/minor_arcana_helper.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/core/constants/tarot_minor_arcana/minor_arcana_helper.dart",
-      "referenced_by": [
-        "lib/core/constants/tarot_minor_arcana.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/core/constants/tarot_minor_arcana/pentacles.dart",
-      "referenced_by": [
-        "lib/core/constants/tarot_minor_arcana.dart",
-        "lib/core/constants/tarot_minor_arcana/minor_arcana_helper.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/core/constants/tarot_minor_arcana/swords.dart",
-      "referenced_by": [
-        "lib/core/constants/tarot_minor_arcana.dart",
-        "lib/core/constants/tarot_minor_arcana/minor_arcana_helper.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/core/constants/tarot_minor_arcana/wands.dart",
-      "referenced_by": [
-        "lib/core/constants/tarot_minor_arcana.dart",
-        "lib/core/constants/tarot_minor_arcana/minor_arcana_helper.dart"
-      ],
-      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -22413,8 +22278,7 @@
       "notes": [],
       "path": "lib/core/design_system/components/traditional/seal_stamp_widget.dart",
       "referenced_by": [
-        "lib/features/chat/presentation/widgets/chat_fortune_result_card.dart",
-        "lib/features/fortune/presentation/widgets/fortune_result_card.dart"
+        "lib/features/chat/presentation/widgets/chat_fortune_result_card.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -22444,17 +22308,13 @@
       "referenced_by": [
         "lib/core/components/app_bottom_sheet.dart",
         "lib/core/components/app_card.dart",
-        "lib/core/components/fortune_loading_screen.dart",
         "lib/core/constants/tarot/tarot_helper.dart",
         "lib/core/constants/tarot_deck_metadata.dart",
         "lib/core/design_system/components/traditional/cloud_bubble.dart",
         "lib/core/theme/app_dimensions.dart",
         "lib/core/theme/app_spacing.dart",
         "lib/core/theme/app_theme.dart",
-        "lib/core/widgets/date_picker/calendar_date_picker.dart",
-        "lib/core/widgets/date_picker/dropdown_date_picker.dart",
         "lib/core/widgets/date_picker/numeric_date_input.dart",
-        "lib/core/widgets/date_picker/wheel_date_picker.dart",
         "lib/core/widgets/floating_dream_bubbles.dart",
         "lib/core/widgets/fortune_action_buttons.dart",
         "lib/core/widgets/fortune_hero_section.dart",
@@ -22549,8 +22409,6 @@
         "lib/features/fortune/presentation/pages/manseryeok_page.dart",
         "lib/features/fortune/presentation/widgets/face_reading/celebrity_match_carousel.dart",
         "lib/features/fortune/presentation/widgets/floating_dream_topics_widget.dart",
-        "lib/features/fortune/presentation/widgets/fortune_card.dart",
-        "lib/features/fortune/presentation/widgets/fortune_result_card.dart",
         "lib/features/fortune/presentation/widgets/infographic/infographic_factory.dart",
         "lib/features/fortune/presentation/widgets/personality_dna/personality_dna_result_page.dart",
         "lib/features/fortune/presentation/widgets/personality_dna/widgets/basic_info_card.dart",
@@ -22576,24 +22434,16 @@
         "lib/features/fortune/presentation/widgets/saju/saju_yongshin_card.dart",
         "lib/features/fortune/presentation/widgets/saju/today_iljin_card.dart",
         "lib/features/fortune/presentation/widgets/saju_element_chart.dart",
-        "lib/features/fortune/presentation/widgets/standard_fortune_app_bar.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_animations.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_card_detail_modal.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_card_widget.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_input_view.dart",
-        "lib/features/fortune/presentation/widgets/tarot/tarot_multi_card_result.dart",
-        "lib/features/fortune/presentation/widgets/tarot/tarot_question_selector.dart",
-        "lib/features/fortune/presentation/widgets/tarot/tarot_result_card.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_result_view.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_selection_view.dart",
-        "lib/features/fortune/presentation/widgets/tarot/tarot_spread_selector.dart",
-        "lib/features/fortune/presentation/widgets/tarot_card_detail/tarot_card_detail_modal.dart",
         "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/advice_page.dart",
-        "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/card_header.dart",
         "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/card_image_page.dart",
         "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/deep_interpretation_page.dart",
         "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/meanings_page.dart",
-        "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/page_indicator.dart",
         "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/practical_guide_page.dart",
         "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/relationships_page.dart",
         "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/story_page.dart",
@@ -22628,14 +22478,10 @@
         "lib/features/interactive/presentation/pages/tarot_animated_flow_page.dart",
         "lib/features/interactive/presentation/pages/tarot_chat_page.dart",
         "lib/features/interactive/presentation/pages/worry_bead_page.dart",
-        "lib/features/interactive/presentation/widgets/bottom_tarot_deck_widget.dart",
-        "lib/features/interactive/presentation/widgets/tarot_deck_fan_widget.dart",
-        "lib/features/interactive/presentation/widgets/tarot_scroll_indicator.dart",
         "lib/features/more/presentation/pages/fortune_tab_page.dart",
         "lib/features/more/presentation/pages/more_page.dart",
         "lib/features/notification/presentation/pages/notification_settings_page.dart",
         "lib/features/payment/presentation/pages/token_purchase_page.dart",
-        "lib/features/policy/presentation/pages/policy_page.dart",
         "lib/features/policy/presentation/pages/privacy_policy_page.dart",
         "lib/features/policy/presentation/pages/terms_of_service_page.dart",
         "lib/features/settings/presentation/pages/font_settings_page.dart",
@@ -22651,18 +22497,10 @@
         "lib/features/wellness/presentation/widgets/meditation_completion_sheet.dart",
         "lib/features/wellness/presentation/widgets/mind_gem_widget.dart",
         "lib/presentation/providers/fortune_recommendation_provider.dart",
-        "lib/presentation/splash/splash_screen.dart",
         "lib/presentation/widgets/app_update_dialog.dart",
-        "lib/presentation/widgets/birth_year_fortune_list.dart",
-        "lib/presentation/widgets/cache_settings_widget.dart",
-        "lib/presentation/widgets/celebrity_saju_info_widget.dart",
-        "lib/presentation/widgets/celebrity_search_widget.dart",
-        "lib/presentation/widgets/element_balance_chart.dart",
         "lib/presentation/widgets/enhanced_shareable_fortune_card.dart",
         "lib/presentation/widgets/five_elements_explanation_bottom_sheet.dart",
-        "lib/presentation/widgets/five_elements_widget.dart",
         "lib/presentation/widgets/fortune_card.dart",
-        "lib/presentation/widgets/fortune_card_with_info.dart",
         "lib/presentation/widgets/fortune_explanation_bottom_sheet.dart",
         "lib/presentation/widgets/fortune_infographic/category_widgets.dart",
         "lib/presentation/widgets/fortune_infographic/chart_widgets.dart",
@@ -22888,7 +22726,6 @@
         "lib/core/design_system/tokens/ds_typography.dart",
         "lib/core/theme/typography_unified.dart",
         "lib/features/fortune/domain/entities/fortune_category.dart",
-        "lib/features/fortune/domain/models/talisman_models.dart",
         "lib/features/fortune/presentation/widgets/infographic/advice_tag.dart",
         "lib/features/fortune/presentation/widgets/infographic/lucky_item_row.dart",
         "lib/features/fortune/presentation/widgets/infographic/templates/chart/chart_presets.dart",
@@ -23077,23 +22914,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/core/errors/failures.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -23368,7 +23188,6 @@
         "lib/data/services/fortune_api/misc_fortune_api.dart",
         "lib/data/services/fortune_api/relationship_fortune_api.dart",
         "lib/data/services/fortune_api/saju_fortune_api.dart",
-        "lib/data/services/fortune_batch_service.dart",
         "lib/data/services/token_api_service.dart",
         "lib/features/admin/data/services/admin_api_service.dart",
         "lib/presentation/providers/providers.dart",
@@ -23877,7 +23696,6 @@
         "lib/features/chat/presentation/widgets/chat_past_life_result_card.dart",
         "lib/features/chat/presentation/widgets/chat_yearly_encounter_result_card.dart",
         "lib/features/chat/presentation/widgets/personality_dna_chat_card.dart",
-        "lib/features/fortune/presentation/widgets/fortune_result_card.dart",
         "lib/features/history/presentation/pages/fortune_history_page.dart",
         "lib/features/interactive/presentation/pages/interactive_list_page.dart",
         "lib/features/interactive/presentation/pages/tarot_animated_flow_page.dart",
@@ -24244,10 +24062,8 @@
       "path": "lib/core/theme/app_animations.dart",
       "referenced_by": [
         "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/core/widgets/date_picker/dropdown_date_picker.dart",
         "lib/presentation/widgets/five_elements_explanation_bottom_sheet.dart",
         "lib/presentation/widgets/fortune_explanation_bottom_sheet.dart",
-        "lib/presentation/widgets/fortune_loading_widget.dart",
         "lib/presentation/widgets/profile_completion_banner.dart",
         "lib/presentation/widgets/time_based_fortune_bottom_sheet.dart"
       ],
@@ -24264,19 +24080,10 @@
       "path": "lib/core/theme/app_dimensions.dart",
       "referenced_by": [
         "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/core/widgets/date_picker/calendar_date_picker.dart",
-        "lib/core/widgets/date_picker/dropdown_date_picker.dart",
-        "lib/core/widgets/date_picker/wheel_date_picker.dart",
-        "lib/presentation/widgets/birth_year_fortune_list.dart",
         "lib/presentation/widgets/common/custom_card.dart",
         "lib/presentation/widgets/enhanced_shareable_fortune_card.dart",
         "lib/presentation/widgets/five_elements_explanation_bottom_sheet.dart",
-        "lib/presentation/widgets/five_elements_widget.dart",
         "lib/presentation/widgets/fortune_card.dart",
-        "lib/presentation/widgets/fortune_card_with_info.dart",
-        "lib/presentation/widgets/fortune_history_chart.dart",
-        "lib/presentation/widgets/fortune_history_summary_widget.dart",
-        "lib/presentation/widgets/fortune_loading_widget.dart",
         "lib/presentation/widgets/offline_indicator.dart",
         "lib/presentation/widgets/profile_completion_banner.dart",
         "lib/presentation/widgets/profile_edit_dialogs/birth_date_edit_dialog.dart",
@@ -24308,20 +24115,10 @@
       "referenced_by": [
         "docs/development/_archive/ALL_FILES_LIST.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
-        "lib/core/widgets/date_picker/calendar_date_picker.dart",
-        "lib/core/widgets/date_picker/dropdown_date_picker.dart",
-        "lib/core/widgets/date_picker/wheel_date_picker.dart",
-        "lib/presentation/widgets/birth_year_fortune_list.dart",
-        "lib/presentation/widgets/cache_settings_widget.dart",
         "lib/presentation/widgets/common/custom_card.dart",
         "lib/presentation/widgets/enhanced_shareable_fortune_card.dart",
         "lib/presentation/widgets/five_elements_explanation_bottom_sheet.dart",
-        "lib/presentation/widgets/five_elements_widget.dart",
         "lib/presentation/widgets/fortune_card.dart",
-        "lib/presentation/widgets/fortune_card_with_info.dart",
-        "lib/presentation/widgets/fortune_history_chart.dart",
-        "lib/presentation/widgets/fortune_history_summary_widget.dart",
-        "lib/presentation/widgets/fortune_loading_widget.dart",
         "lib/presentation/widgets/offline_indicator.dart",
         "lib/presentation/widgets/profile_completion_banner.dart",
         "lib/presentation/widgets/profile_edit_dialogs/birth_date_edit_dialog.dart",
@@ -24354,7 +24151,6 @@
       "referenced_by": [
         "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/features/interactive/presentation/pages/worry_bead_page.dart",
-        "lib/features/policy/presentation/pages/policy_page.dart",
         "lib/presentation/widgets/time_based_fortune_bottom_sheet.dart"
       ],
       "runtime_reachable": true,
@@ -24591,7 +24387,6 @@
         "docs/design/_archive/legacy/TOSS_DESIGN_SYSTEM.md",
         "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/core/theme/app_theme.dart",
-        "lib/presentation/widgets/fortune_history_summary_widget.dart",
         "lib/screens/onboarding/steps/phone_step.dart",
         "lib/screens/onboarding/steps/phone_verification_step.dart",
         "lib/screens/onboarding/widgets/bottom_sheet_mbti_picker.dart",
@@ -24635,11 +24430,9 @@
         "lib/core/theme/typography_unified.dart",
         "lib/features/fortune/presentation/widgets/saju/saju_concept_card.dart",
         "lib/features/fortune/presentation/widgets/saju_element_chart.dart",
-        "lib/features/fortune/presentation/widgets/tarot/tarot_result_card.dart",
         "lib/features/health/presentation/pages/health_fortune/widgets/medical_document_upload_section.dart",
         "lib/features/health/presentation/pages/medical_document_result_page.dart",
         "lib/features/interactive/presentation/pages/dream_interpretation_page.dart",
-        "lib/presentation/widgets/celebrity_saju_info_widget.dart",
         "lib/screens/home/fortune_swipe/widgets/five_elements_card.dart",
         "lib/screens/home/fortune_swipe/widgets/hourly_score_graph_card.dart",
         "lib/screens/home/fortune_swipe/widgets/share_card.dart",
@@ -24776,7 +24569,6 @@
       "notes": [],
       "path": "lib/core/utils/fortune_text_cleaner.dart",
       "referenced_by": [
-        "lib/features/fortune/presentation/widgets/fortune_result_card.dart",
         "lib/features/history/presentation/pages/fortune_history_detail_page.dart",
         "lib/features/interactive/presentation/pages/dream_interpretation_page.dart",
         "lib/features/interactive/presentation/pages/tarot_chat_page.dart",
@@ -24839,13 +24631,10 @@
         "lib/features/interactive/presentation/pages/face_reading_page.dart",
         "lib/features/interactive/presentation/pages/taemong_page.dart",
         "lib/features/interactive/presentation/pages/tarot_chat_page.dart",
-        "lib/features/interactive/presentation/widgets/bottom_tarot_deck_widget.dart",
         "lib/features/notification/presentation/pages/notification_settings_page.dart",
         "lib/features/wellness/presentation/pages/wellness_page.dart",
         "lib/features/wellness/presentation/widgets/breathing_timer_widget.dart",
         "lib/features/wellness/presentation/widgets/meditation_completion_sheet.dart",
-        "lib/presentation/widgets/five_elements_widget.dart",
-        "lib/presentation/widgets/fortune_card_with_info.dart",
         "lib/presentation/widgets/saju_chart_widget.dart",
         "lib/presentation/widgets/social_share_bottom_sheet.dart",
         "lib/screens/profile/widgets/add_profile_sheet.dart",
@@ -24903,7 +24692,6 @@
         "lib/core/services/talisman_generation_service.dart",
         "lib/core/services/unified_calendar_service.dart",
         "lib/core/services/unified_fortune_service.dart",
-        "lib/core/utils/performance_monitor.dart",
         "lib/core/utils/supabase_helper.dart",
         "lib/data/services/fortune_api/daily_fortune_api.dart",
         "lib/data/services/fortune_api/fortune_api_service.dart",
@@ -24913,9 +24701,6 @@
         "lib/data/services/fortune_api_decision_service.dart",
         "lib/data/services/token_api_service.dart",
         "lib/features/admin/data/services/admin_api_service.dart",
-        "lib/features/admin/presentation/providers/admin_stats_provider.dart",
-        "lib/features/admin/presentation/providers/redis_stats_provider.dart",
-        "lib/features/admin/presentation/providers/token_usage_provider.dart",
         "lib/features/character/data/services/character_affinity_service.dart",
         "lib/features/character/data/services/character_chat_local_service.dart",
         "lib/features/character/data/services/character_chat_service.dart",
@@ -24944,7 +24729,6 @@
         "lib/presentation/providers/user_profile_notifier.dart",
         "lib/presentation/providers/user_statistics_provider.dart",
         "lib/presentation/widgets/fortune_explanation_bottom_sheet.dart",
-        "lib/presentation/widgets/fortune_history_summary_widget.dart",
         "lib/presentation/widgets/social_accounts_section.dart",
         "lib/presentation/widgets/user_info_card.dart",
         "lib/providers/pet_provider.dart",
@@ -25030,23 +24814,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/core/utils/performance_monitor.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -25173,49 +24940,13 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/core/widgets/date_picker/calendar_date_picker.dart",
-      "referenced_by": [
-        "lib/core/widgets/unified_date_picker.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
       "notes": [],
       "path": "lib/core/widgets/date_picker/date_picker_utils.dart",
       "referenced_by": [
         "docs/development/UNIFIED_DATE_PICKER_MIGRATION.md",
-        "lib/core/widgets/date_picker/calendar_date_picker.dart",
-        "lib/core/widgets/date_picker/dropdown_date_picker.dart",
-        "lib/core/widgets/date_picker/numeric_date_input.dart",
-        "lib/core/widgets/date_picker/wheel_date_picker.dart",
-        "lib/core/widgets/unified_date_picker.dart"
+        "lib/core/widgets/date_picker/numeric_date_input.dart"
       ],
       "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/core/widgets/date_picker/dropdown_date_picker.dart",
-      "referenced_by": [
-        "lib/core/widgets/unified_date_picker.dart"
-      ],
-      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -25227,28 +24958,11 @@
       "notes": [],
       "path": "lib/core/widgets/date_picker/numeric_date_input.dart",
       "referenced_by": [
-        "lib/core/widgets/unified_date_picker.dart",
         "lib/features/interactive/presentation/pages/dream_page.dart",
         "lib/presentation/widgets/fortune_explanation_bottom_sheet.dart",
         "lib/screens/profile/widgets/add_profile_sheet.dart"
       ],
       "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/core/widgets/date_picker/wheel_date_picker.dart",
-      "referenced_by": [
-        "lib/core/widgets/unified_date_picker.dart"
-      ],
-      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -25287,9 +25001,7 @@
         "lib/features/chat/presentation/widgets/chat_tarot_result_card.dart",
         "lib/features/chat/presentation/widgets/chat_weekly_review_card.dart",
         "lib/features/chat/presentation/widgets/chat_yearly_encounter_result_card.dart",
-        "lib/features/chat/presentation/widgets/fortune_cookie_result_card.dart",
-        "lib/features/fortune/presentation/widgets/fortune_result_card.dart",
-        "lib/features/fortune/presentation/widgets/tarot/tarot_result_card.dart"
+        "lib/features/chat/presentation/widgets/fortune_cookie_result_card.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -25319,8 +25031,7 @@
       "notes": [],
       "path": "lib/core/widgets/gpt_style_typing_text.dart",
       "referenced_by": [
-        "lib/features/chat/presentation/widgets/chat_tarot_result_card.dart",
-        "lib/features/fortune/presentation/widgets/tarot/tarot_multi_card_result.dart"
+        "lib/features/chat/presentation/widgets/chat_tarot_result_card.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -25425,14 +25136,9 @@
         "lib/core/components/app_bottom_sheet.dart",
         "lib/features/admin/pages/celebrity_crawling_page.dart",
         "lib/features/exercise/presentation/pages/exercise_fortune_page.dart",
-        "lib/features/fortune/presentation/widgets/fortune_result_card.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_input_view.dart",
-        "lib/features/fortune/presentation/widgets/tarot/tarot_question_selector.dart",
-        "lib/features/fortune/presentation/widgets/tarot/tarot_result_card.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_result_view.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_selection_view.dart",
-        "lib/features/fortune/presentation/widgets/tarot/tarot_spread_selector.dart",
-        "lib/features/fortune/presentation/widgets/tarot_card_detail/tarot_card_detail_modal.dart",
         "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart",
         "lib/features/health/presentation/pages/health_fortune/widgets/document_upload_bottom_sheet.dart",
         "lib/features/health/presentation/pages/health_fortune/widgets/health_app_connection_section.dart",
@@ -25464,12 +25170,9 @@
         "lib/core/widgets/unified_button.dart",
         "lib/features/admin/pages/celebrity_crawling_page.dart",
         "lib/features/exercise/presentation/pages/exercise_fortune_page.dart",
-        "lib/features/fortune/presentation/widgets/fortune_result_card.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_input_view.dart",
-        "lib/features/fortune/presentation/widgets/tarot/tarot_result_card.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_result_view.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_selection_view.dart",
-        "lib/features/fortune/presentation/widgets/tarot_card_detail/tarot_card_detail_modal.dart",
         "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart",
         "lib/features/health/presentation/pages/health_fortune/widgets/document_upload_bottom_sheet.dart",
         "lib/features/health/presentation/pages/health_fortune/widgets/health_app_connection_section.dart",
@@ -25484,23 +25187,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/core/widgets/unified_date_picker.dart",
-      "referenced_by": [
-        "docs/development/UNIFIED_DATE_PICKER_MIGRATION.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -25536,23 +25222,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/data/datasources/remote/supabase_client.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -25661,8 +25330,6 @@
         "docs/development/_archive/CLEANUP_REPORT.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
         "lib/presentation/providers/celebrity_saju_provider.dart",
-        "lib/presentation/widgets/celebrity_saju_info_widget.dart",
-        "lib/presentation/widgets/celebrity_search_widget.dart",
         "lib/screens/home/fortune_swipe/widgets/celebrity_card.dart",
         "lib/services/celebrity_saju_service.dart"
       ],
@@ -25722,7 +25389,6 @@
         "lib/data/services/fortune_api/relationship_fortune_api.dart",
         "lib/data/services/fortune_api/saju_fortune_api.dart",
         "lib/data/services/fortune_api_service_edge_functions.dart",
-        "lib/data/services/fortune_batch_service.dart",
         "lib/services/widget_data_manager.dart"
       ],
       "runtime_reachable": true,
@@ -25802,23 +25468,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/data/saju_element_explanations.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -26008,7 +25657,6 @@
         "lib/features/interactive/presentation/providers/psychology_test_providers.dart",
         "lib/presentation/providers/fortune_provider.dart",
         "lib/presentation/providers/today_fortune_provider.dart",
-        "lib/presentation/widgets/cache_settings_widget.dart",
         "lib/screens/profile/profile_screen.dart",
         "test/mocks/mock_services.dart"
       ],
@@ -26039,23 +25687,6 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/data/services/fortune_batch_service.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/features/fortune/presentation/providers/batch_fortune_provider.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
       "notes": [],
       "path": "lib/data/services/token_api_service.dart",
       "referenced_by": [
@@ -26069,23 +25700,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/domain/entities/detailed_fortune.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -26110,8 +25724,6 @@
         "lib/data/services/fortune_api/zodiac_fortune_api.dart",
         "lib/data/services/fortune_api_decision_service.dart",
         "lib/data/services/fortune_api_service_edge_functions.dart",
-        "lib/data/services/fortune_batch_service.dart",
-        "lib/domain/entities/detailed_fortune.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/character/presentation/providers/character_fortune_adapter.dart",
         "lib/features/chat/domain/models/chat_message.dart",
@@ -26127,13 +25739,11 @@
         "lib/features/chat/presentation/widgets/chat_moving_result_card.dart",
         "lib/features/chat/presentation/widgets/fortune_cookie_result_card.dart",
         "lib/features/fortune/presentation/providers/fortune_order_provider.dart",
-        "lib/features/fortune/presentation/widgets/fortune_result_card.dart",
         "lib/features/health/data/services/health_fortune_service.dart",
         "lib/models/fortune_model.dart",
         "lib/presentation/providers/fortune_provider.dart",
         "lib/presentation/providers/providers.dart",
         "lib/presentation/providers/today_fortune_provider.dart",
-        "lib/presentation/widgets/birth_year_fortune_list.dart",
         "lib/presentation/widgets/time_specific_fortune_card.dart",
         "lib/services/celebrity_saju_service.dart",
         "lib/services/widget_data_service.dart",
@@ -26191,8 +25801,7 @@
       "path": "lib/features/admin/data/models/admin_stats_model.dart",
       "referenced_by": [
         "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/features/admin/data/services/admin_api_service.dart",
-        "lib/features/admin/presentation/providers/admin_stats_provider.dart"
+        "lib/features/admin/data/services/admin_api_service.dart"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -26243,9 +25852,7 @@
       "path": "lib/features/admin/data/models/redis_stats_model.dart",
       "referenced_by": [
         "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/features/admin/data/services/admin_api_service.dart",
-        "lib/features/admin/presentation/providers/admin_stats_provider.dart",
-        "lib/features/admin/presentation/providers/redis_stats_provider.dart"
+        "lib/features/admin/data/services/admin_api_service.dart"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -26296,9 +25903,7 @@
       "path": "lib/features/admin/data/models/token_usage_detail_model.dart",
       "referenced_by": [
         "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/features/admin/data/services/admin_api_service.dart",
-        "lib/features/admin/presentation/providers/admin_stats_provider.dart",
-        "lib/features/admin/presentation/providers/token_usage_provider.dart"
+        "lib/features/admin/data/services/admin_api_service.dart"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -26340,22 +25945,20 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "dart",
       "notes": [
-        "runtime_unreachable"
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
       "path": "lib/features/admin/data/services/admin_api_service.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/features/admin/presentation/providers/admin_stats_provider.dart",
-        "lib/features/admin/presentation/providers/redis_stats_provider.dart",
-        "lib/features/admin/presentation/providers/token_usage_provider.dart"
+        "docs/development/_archive/ALL_FILES_LIST.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -26372,126 +25975,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/admin/presentation/providers/admin_stats_provider.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/FILE_DEPENDENCY_MAP.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/admin/presentation/providers/redis_stats_provider.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/features/admin/presentation/providers/token_usage_provider.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/admin/presentation/providers/token_usage_provider.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/admin/presentation/widgets/admin_guard.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/admin/presentation/widgets/admin_navigation_card.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/admin/presentation/widgets/chart_card.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/admin/presentation/widgets/stats_card.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -28790,23 +28273,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/data/models/blood_type_fortune.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -29132,40 +28598,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/domain/models/fortune_result.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/domain/models/investment_fortune_model.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -29430,40 +28862,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/domain/models/talent_type.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/domain/models/talisman_models.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -29474,9 +28872,7 @@
         "lib/core/services/fortune_generators/tarot_generator.dart",
         "lib/features/chat/presentation/widgets/survey/chat_tarot_flow.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_card_detail_modal.dart",
-        "lib/features/fortune/presentation/widgets/tarot/tarot_multi_card_result.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_result_view.dart",
-        "lib/features/fortune/presentation/widgets/tarot/tarot_spread_selector.dart",
         "lib/features/fortune/services/tarot_service.dart"
       ],
       "runtime_reachable": true,
@@ -29534,23 +28930,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/constants/fortune_button_spacing.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -29562,23 +28941,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/providers/batch_fortune_provider.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -29722,30 +29084,12 @@
         "lib/features/chat/presentation/pages/chat_home_page.dart",
         "lib/features/fortune/presentation/pages/manseryeok_page.dart",
         "lib/presentation/providers/celebrity_saju_provider.dart",
-        "lib/presentation/widgets/five_elements_widget.dart",
         "lib/presentation/widgets/saju_chart_widget.dart",
         "lib/screens/profile/saju_summary_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/providers/tarot_storytelling_provider.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -29804,40 +29148,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/fortune_card.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/features/fortune/presentation/widgets/fortune_result_card.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/fortune_result_card.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -30578,23 +29888,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/standard_fortune_app_bar.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -30620,7 +29913,6 @@
       ],
       "path": "lib/features/fortune/presentation/widgets/tarot/tarot_card_detail_modal.dart",
       "referenced_by": [
-        "lib/features/fortune/presentation/widgets/tarot/tarot_multi_card_result.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_result_view.dart"
       ],
       "runtime_reachable": false,
@@ -30681,57 +29973,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/tarot/tarot_multi_card_result.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/tarot/tarot_question_selector.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/tarot/tarot_result_card.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -30766,229 +30007,131 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
+      "candidate_action": "phase3_feature_cleanup",
       "dirty": false,
       "kind": "dart",
       "notes": [
+        "no_inbound_refs",
         "runtime_unreachable",
         "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/tarot/tarot_spread_selector.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/tarot_card_detail/tarot_card_detail_modal.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/tarot_card_detail_modal.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
       ],
       "path": "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/advice_page.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/tarot_card_detail/tarot_card_detail_modal.dart"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase3_feature_cleanup",
       "dirty": false,
       "kind": "dart",
       "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/card_header.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/tarot_card_detail/tarot_card_detail_modal.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/card_helpers.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/tarot_card_detail/tarot_card_detail_modal.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/card_image_page.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/tarot_card_detail/tarot_card_detail_modal.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/deep_interpretation_page.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/tarot_card_detail/tarot_card_detail_modal.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/meanings_page.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/tarot_card_detail/tarot_card_detail_modal.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/page_indicator.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/tarot_card_detail/tarot_card_detail_modal.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/practical_guide_page.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/tarot_card_detail/tarot_card_detail_modal.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/relationships_page.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/tarot_card_detail/tarot_card_detail_modal.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/story_page.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/tarot_card_detail/tarot_card_detail_modal.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/symbolism_page.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/tarot_card_detail/tarot_card_detail_modal.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
+        "no_inbound_refs",
         "runtime_unreachable",
         "zero_incoming_dart"
       ],
-      "path": "lib/features/fortune/presentation/widgets/tarot_card_detail_modal.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
+      "path": "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/card_image_page.dart",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "doc_only"
+      "usage_status": "unreferenced"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "phase3_feature_cleanup",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
+      "path": "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/deep_interpretation_page.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "unreferenced"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "phase3_feature_cleanup",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
+      "path": "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/meanings_page.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "unreferenced"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "phase3_feature_cleanup",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
+      "path": "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/practical_guide_page.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "unreferenced"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "phase3_feature_cleanup",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
+      "path": "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/relationships_page.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "unreferenced"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "phase3_feature_cleanup",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
+      "path": "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/story_page.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "unreferenced"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "phase3_feature_cleanup",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
+      "path": "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/symbolism_page.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -31659,23 +30802,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/interactive/presentation/widgets/bottom_tarot_deck_widget.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -31687,40 +30813,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/interactive/presentation/widgets/tarot_deck_fan_widget.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/interactive/presentation/widgets/tarot_scroll_indicator.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -31779,23 +30871,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/policy/presentation/pages/policy_page.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -32652,23 +31727,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/models/cache_entry.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -32681,7 +31739,6 @@
         "lib/data/services/fortune_api/fortune_api_service.dart",
         "lib/data/services/fortune_api/relationship_fortune_api.dart",
         "lib/data/services/fortune_api/saju_fortune_api.dart",
-        "lib/data/services/fortune_batch_service.dart",
         "lib/presentation/providers/fortune_provider.dart",
         "lib/services/cache_service.dart"
       ],
@@ -32844,8 +31901,6 @@
       "referenced_by": [
         "docs/design/_archive/legacy/FORTUNE_INPUT_ACCORDION_STANDARD.md",
         "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/data/datasources/remote/supabase_client.dart",
-        "lib/features/admin/presentation/widgets/admin_guard.dart",
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
         "lib/features/chat/presentation/providers/onboarding_chat_provider.dart",
         "lib/features/chat/presentation/widgets/guest_login_banner.dart",
@@ -32887,7 +31942,6 @@
       "path": "lib/presentation/providers/celebrity_saju_provider.dart",
       "referenced_by": [
         "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/presentation/widgets/celebrity_search_widget.dart",
         "lib/screens/home/fortune_swipe/widgets/celebrity_card.dart"
       ],
       "runtime_reachable": false,
@@ -33053,13 +32107,8 @@
         "docs/development/_archive/ALL_FILES_LIST.md",
         "lib/data/services/fortune_api/fortune_api_service.dart",
         "lib/data/services/fortune_api_service_edge_functions.dart",
-        "lib/data/services/fortune_batch_service.dart",
         "lib/data/services/token_api_service.dart",
-        "lib/features/admin/presentation/providers/admin_stats_provider.dart",
-        "lib/features/admin/presentation/providers/redis_stats_provider.dart",
         "lib/features/exercise/presentation/pages/exercise_fortune_page.dart",
-        "lib/features/fortune/presentation/providers/batch_fortune_provider.dart",
-        "lib/features/fortune/presentation/providers/tarot_storytelling_provider.dart",
         "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart",
         "lib/features/health/presentation/pages/medical_document_result_page.dart",
         "lib/features/interactive/presentation/providers/dream_providers.dart",
@@ -33309,40 +32358,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/presentation/splash/splash_screen.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/presentation/widgets/animated_tarot_card_widget.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -33354,74 +32369,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/presentation/widgets/birth_year_fortune_list.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/presentation/widgets/cache_settings_widget.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/presentation/widgets/celebrity_saju_info_widget.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/presentation/widgets/celebrity_search_widget.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -33455,23 +32402,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/presentation/widgets/element_balance_chart.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -33489,20 +32419,20 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "dart",
       "notes": [
-        "runtime_unreachable"
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
       "path": "lib/presentation/widgets/five_elements_explanation_bottom_sheet.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/presentation/widgets/five_elements_widget.dart"
+        "docs/development/_archive/ALL_FILES_LIST.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -33512,31 +32442,14 @@
       "notes": [
         "runtime_unreachable",
         "zero_incoming_dart"
-      ],
-      "path": "lib/presentation/widgets/five_elements_widget.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
       ],
       "path": "lib/presentation/widgets/fortune_card.dart",
       "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/presentation/widgets/fortune_card_with_info.dart"
+        "docs/development/_archive/ALL_FILES_LIST.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -33546,61 +32459,10 @@
       "notes": [
         "runtime_unreachable",
         "zero_incoming_dart"
-      ],
-      "path": "lib/presentation/widgets/fortune_card_with_info.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
       ],
       "path": "lib/presentation/widgets/fortune_explanation_bottom_sheet.dart",
       "referenced_by": [
         "docs/development/UNIFIED_DATE_PICKER_MIGRATION.md",
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/presentation/widgets/fortune_card_with_info.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/presentation/widgets/fortune_history_chart.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/presentation/widgets/fortune_history_summary_widget.dart",
-      "referenced_by": [
         "docs/development/_archive/ALL_FILES_LIST.md"
       ],
       "runtime_reachable": false,
@@ -33777,23 +32639,6 @@
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/presentation/widgets/fortune_loading_widget.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -35563,9 +34408,7 @@
         "lib/data/services/fortune_api/misc_fortune_api.dart",
         "lib/data/services/fortune_api/relationship_fortune_api.dart",
         "lib/data/services/fortune_api/saju_fortune_api.dart",
-        "lib/data/services/fortune_batch_service.dart",
         "lib/presentation/providers/fortune_provider.dart",
-        "lib/presentation/widgets/cache_settings_widget.dart",
         "lib/providers/cache_provider.dart",
         "test/mocks/mock_services.dart"
       ],
@@ -36402,7 +35245,6 @@
         "lib/features/interactive/presentation/pages/tarot_card_page.dart",
         "lib/features/interactive/presentation/pages/tarot_chat_page.dart",
         "lib/features/interactive/presentation/pages/worry_bead_page.dart",
-        "lib/features/policy/presentation/pages/policy_page.dart",
         "lib/features/trend/presentation/pages/trend_balance_game_page.dart",
         "lib/features/trend/presentation/pages/trend_ideal_worldcup_page.dart",
         "lib/features/trend/presentation/pages/trend_psychology_test_page.dart",
@@ -36767,11 +35609,6 @@
       "path": "lib/shared/glassmorphism/glass_container.dart",
       "referenced_by": [
         "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/core/widgets/date_picker/dropdown_date_picker.dart",
-        "lib/features/admin/presentation/widgets/admin_guard.dart",
-        "lib/features/admin/presentation/widgets/admin_navigation_card.dart",
-        "lib/features/admin/presentation/widgets/chart_card.dart",
-        "lib/features/admin/presentation/widgets/stats_card.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_result_view.dart",
         "lib/features/fortune/presentation/widgets/tarot/tarot_selection_view.dart",
         "lib/features/fortune/presentation/widgets/tarot_card_detail/widgets/advice_page.dart",
@@ -36790,7 +35627,6 @@
         "lib/features/interactive/presentation/pages/psychology_test_page.dart",
         "lib/features/interactive/presentation/pages/taemong_page.dart",
         "lib/features/interactive/presentation/pages/worry_bead_page.dart",
-        "lib/features/policy/presentation/pages/policy_page.dart",
         "lib/presentation/widgets/profile_completion_banner.dart",
         "lib/presentation/widgets/social_accounts_section.dart",
         "lib/presentation/widgets/tarot_fortune_card.dart",
@@ -36861,8 +35697,7 @@
         "lib/features/chat/presentation/widgets/chat_past_life_result_card.dart",
         "lib/features/chat/presentation/widgets/chat_rich_content_card.dart",
         "lib/features/chat/presentation/widgets/chat_yearly_encounter_result_card.dart",
-        "lib/features/chat/presentation/widgets/survey/chat_celebrity_selector.dart",
-        "lib/features/fortune/presentation/widgets/fortune_result_card.dart"
+        "lib/features/chat/presentation/widgets/survey/chat_celebrity_selector.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -42215,25 +41050,25 @@
       "assets": 1231,
       "docs": 143,
       "integration_test": 26,
-      "lib": 900,
+      "lib": 839,
       "scripts": 69,
       "supabase": 214,
       "test": 53
     },
     "counts_by_candidate_action": {
-      "keep": 1202,
+      "keep": 1172,
       "keep_generated": 46,
-      "manual_review": 837,
-      "phase2_review_candidate": 512,
-      "phase3_feature_cleanup": 39
+      "manual_review": 838,
+      "phase2_review_candidate": 472,
+      "phase3_feature_cleanup": 47
     },
     "counts_by_usage_status": {
-      "doc_only": 247,
+      "doc_only": 207,
       "generated_excluded": 46,
-      "runtime_used": 1202,
+      "runtime_used": 1172,
       "test_only": 80,
       "tooling_only": 185,
-      "unreferenced": 876
+      "unreferenced": 885
     },
     "declared_asset_dirs_without_runtime_refs": [
       "assets/animations",
@@ -42279,6 +41114,7 @@
       "assets/images/infographic/icons",
       "assets/images/mbti",
       "assets/images/talismans",
+      "assets/images/tarot",
       "assets/images/tarot/decks",
       "assets/images/tarot/decks/after_tarot",
       "assets/images/tarot/decks/after_tarot/cups",
@@ -42342,8 +41178,8 @@
       "integration_test"
     ],
     "lib_dart_runtime_reachable": 635,
-    "lib_dart_total": 896,
-    "lib_dart_zero_incoming": 136,
+    "lib_dart_total": 835,
+    "lib_dart_zero_incoming": 104,
     "missing_function_refs": [
       "add-tokens",
       "calculate-auspicious-days",
@@ -42424,7 +41260,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2636,
+    "total_files": 2575,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "character-follow-up",
