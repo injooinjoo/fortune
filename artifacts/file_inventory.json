@@ -19765,7 +19765,9 @@
       "notes": [],
       "path": "docs/development/GEMINI_COST_INCIDENT_RUNBOOK.md",
       "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_provider_audit_verify.md"
+        "docs/development/reports/2026-03-10_llm_provider_audit_verify.md",
+        "docs/development/reports/2026-03-10_llm_schema_repair_discovery.md",
+        "docs/development/reports/2026-03-10_llm_schema_repair_verify.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -20655,6 +20657,48 @@
       ],
       "path": "docs/development/reports/2026-03-10_llm_provider_audit_verify.md",
       "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/development/reports/2026-03-10_llm_schema_repair_discovery.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
+      "path": "docs/development/reports/2026-03-10_llm_schema_repair_rca.md",
+      "referenced_by": [
+        "docs/development/reports/2026-03-10_llm_schema_repair_discovery.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
+      "path": "docs/development/reports/2026-03-10_llm_schema_repair_verify.md",
+      "referenced_by": [
+        "docs/development/reports/2026-03-10_llm_schema_repair_discovery.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -28337,6 +28381,7 @@
         "docs/development/reports/2026-03-09_gcp_cost_incident_verify.md",
         "docs/development/reports/2026-03-10_llm_guard_hardening_verify.md",
         "docs/development/reports/2026-03-10_llm_provider_audit_verify.md",
+        "docs/development/reports/2026-03-10_llm_schema_repair_verify.md",
         "docs/development/reports/VERIFY_FORTUNE_TYPE_UNIFICATION.md",
         "lib/screens/home/home_screen.dart"
       ],
@@ -39561,6 +39606,9 @@
         "docs/development/reports/2026-03-10_llm_guard_hardening_verify.md",
         "docs/development/reports/2026-03-10_llm_provider_audit_discovery.md",
         "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
+        "docs/development/reports/2026-03-10_llm_schema_repair_discovery.md",
+        "docs/development/reports/2026-03-10_llm_schema_repair_rca.md",
+        "docs/development/reports/2026-03-10_llm_schema_repair_verify.md",
         "supabase/functions/_shared/llm/providers/anthropic.ts",
         "supabase/functions/_shared/llm/providers/gemini.ts",
         "supabase/functions/_shared/llm/providers/grok.ts",
@@ -40953,7 +41001,8 @@
       ],
       "path": "supabase/functions/monitor-llm-usage/index.ts",
       "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_guard_hardening_verify.md"
+        "docs/development/reports/2026-03-10_llm_guard_hardening_verify.md",
+        "docs/development/reports/2026-03-10_llm_schema_repair_verify.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -41753,11 +41802,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "supabase_migration",
-      "notes": [
-        "no_inbound_refs"
-      ],
+      "notes": [],
       "path": "supabase/migrations/20251126100000_create_llm_model_config.sql",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/development/reports/2026-03-10_llm_schema_repair_discovery.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "tooling_only"
@@ -41767,11 +41816,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "supabase_migration",
-      "notes": [
-        "no_inbound_refs"
-      ],
+      "notes": [],
       "path": "supabase/migrations/20251126100001_create_llm_usage_logs.sql",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/development/reports/2026-03-10_llm_schema_repair_discovery.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "tooling_only"
@@ -42551,11 +42600,27 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "supabase_migration",
-      "notes": [
-        "no_inbound_refs"
-      ],
+      "notes": [],
       "path": "supabase/migrations/20260227000001_guard_llm_model_config_cost.sql",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/development/reports/2026-03-10_llm_schema_repair_discovery.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "supabase_migration",
+      "notes": [],
+      "path": "supabase/migrations/20260310000001_repair_llm_guard_schema.sql",
+      "referenced_by": [
+        "docs/development/GEMINI_COST_INCIDENT_RUNBOOK.md",
+        "docs/development/reports/2026-03-10_llm_schema_repair_discovery.md",
+        "docs/development/reports/2026-03-10_llm_schema_repair_verify.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "tooling_only"
@@ -43364,11 +43429,11 @@
   "meta": {
     "counts_by_area": {
       "assets": 1232,
-      "docs": 140,
+      "docs": 143,
       "integration_test": 26,
       "lib": 966,
       "scripts": 69,
-      "supabase": 214,
+      "supabase": 215,
       "test": 53
     },
     "counts_by_candidate_action": {
@@ -43376,15 +43441,15 @@
       "keep_generated": 52,
       "manual_review": 825,
       "phase1_remove_candidate": 38,
-      "phase2_review_candidate": 528,
+      "phase2_review_candidate": 532,
       "phase3_feature_cleanup": 39
     },
     "counts_by_usage_status": {
-      "doc_only": 264,
+      "doc_only": 267,
       "generated_excluded": 52,
       "runtime_used": 1218,
       "test_only": 79,
-      "tooling_only": 185,
+      "tooling_only": 186,
       "unreferenced": 902
     },
     "declared_asset_dirs_without_runtime_refs": [
@@ -43576,7 +43641,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2700,
+    "total_files": 2704,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "character-follow-up",
