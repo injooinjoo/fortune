@@ -155,6 +155,14 @@ curl -sS \
   "$SUPABASE_URL/functions/v1/monitor-llm-usage" | jq
 ```
 
+If the response contains `usage_tracking_unavailable` or `relation "public.llm_usage_logs" does not exist`, restore the schema before trusting the guard:
+
+```bash
+supabase functions deploy monitor-llm-usage --project-ref hayjukwfcsdmppairazc
+# Then apply supabase/migrations/20260310000001_repair_llm_guard_schema.sql
+# through the approved repair path or the normal migration pipeline.
+```
+
 5. Confirm required GitHub repository secrets exist.
 
 - `SUPABASE_URL`
@@ -173,3 +181,4 @@ curl -sS \
 - Use `GEMINI_MODEL_ALLOWLIST` to prevent accidental rollouts to unsupported or expensive models.
 - Keep `GCP_LOGGING_ENABLED=true` and review blocked-request logs weekly.
 - Leave `.github/workflows/llm-guard-monitor.yml` enabled so usage is checked even when there is no live user traffic.
+- Disable unused GCP AI services such as `aiplatform.googleapis.com`, `cloudaicompanion.googleapis.com`, and `geminicloudassist.googleapis.com` unless they are explicitly re-approved.

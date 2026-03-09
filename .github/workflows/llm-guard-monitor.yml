@@ -67,8 +67,10 @@ jobs:
           BREACH_COUNT=$(jq -r '.breachCount // 0' monitor-response.json)
           TOP_FEATURE=$(jq -r '.snapshot.windows.topBurstFeatures[0].featureName // "n/a"' monitor-response.json)
           TOP_COUNT=$(jq -r '.snapshot.windows.topBurstFeatures[0].requestCount // 0' monitor-response.json)
+          TRACKING_AVAILABLE=$(jq -r '.snapshot.usageTrackingAvailable // false' monitor-response.json)
+          TRACKING_ERROR=$(jq -r '.snapshot.usageTrackingError // ""' monitor-response.json)
 
-          SUMMARY="severity=$SEVERITY warnings=$WARNING_COUNT breaches=$BREACH_COUNT top_feature=$TOP_FEATURE top_requests=$TOP_COUNT actions=$ACTIONS"
+          SUMMARY="severity=$SEVERITY warnings=$WARNING_COUNT breaches=$BREACH_COUNT tracking=$TRACKING_AVAILABLE tracking_error=$TRACKING_ERROR top_feature=$TOP_FEATURE top_requests=$TOP_COUNT actions=$ACTIONS"
 
           echo "severity=$SEVERITY" >> "$GITHUB_OUTPUT"
           echo "summary=$SUMMARY" >> "$GITHUB_OUTPUT"
@@ -79,6 +81,8 @@ jobs:
           echo "- Severity: \`$SEVERITY\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- Warnings: \`$WARNING_COUNT\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- Breaches: \`$BREACH_COUNT\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Usage tracking available: \`$TRACKING_AVAILABLE\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Usage tracking error: \`${TRACKING_ERROR:-n/a}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- Top feature: \`$TOP_FEATURE\` (\`$TOP_COUNT\` requests)" >> "$GITHUB_STEP_SUMMARY"
           echo "- Actions: \`$ACTIONS\`" >> "$GITHUB_STEP_SUMMARY"
 

@@ -102,6 +102,7 @@ export interface GeminiGuardSnapshot {
   provider: "gemini";
   severity: GuardSeverity;
   usageTrackingAvailable: boolean;
+  usageTrackingError?: string | null;
   currentCircuitState: LlmGuardState | null;
   limits: GeminiGuardLimits;
   windows: {
@@ -137,6 +138,7 @@ export class LlmSafetyError extends Error {
 const usageWindowCache = new Map<string, CachedUsageWindowStats>();
 const providerStateCache = new Map<string, CachedProviderGuardState>();
 let usageLogRelationAvailable: boolean | null = null;
+let lastUsageTrackingError: string | null = null;
 
 const DEFAULT_USAGE_CACHE_TTL_MS = 60_000;
 const DEFAULT_PROVIDER_STATE_CACHE_TTL_MS = 10_000;
@@ -264,8 +266,21 @@ function isMissingUsageLogRelationError(error: unknown): boolean {
     message.includes("does not exist");
 }
 
-function markUsageLogRelationUnavailable(): void {
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  if (error && typeof error === "object" && "message" in error) {
+    return String((error as { message?: unknown }).message || "");
+  }
+
+  return String(error || "");
+}
+
+function markUsageLogRelationUnavailable(error?: unknown): void {
   usageLogRelationAvailable = false;
+  lastUsageTrackingError = error ? getErrorMessage(error) : "unknown_error";
 }
 
 function getDisabledProviders(): Set<string> {
@@ -398,11 +413,12 @@ async function getProviderGuardState(
     .maybeSingle();
 
   if (error) {
-    markUsageLogRelationUnavailable();
+    markUsageLogRelationUnavailable(error);
     return null;
   }
 
   usageLogRelationAvailable = true;
+  lastUsageTrackingError = null;
   const state = data
     ? normalizeGuardState(data as Record<string, unknown>)
     : null;
@@ -463,11 +479,12 @@ async function persistProviderGuardState(
     .single();
 
   if (error) {
-    markUsageLogRelationUnavailable();
+    markUsageLogRelationUnavailable(error);
     return nextState;
   }
 
   usageLogRelationAvailable = true;
+  lastUsageTrackingError = null;
   const normalized = normalizeGuardState(data as Record<string, unknown>);
   providerStateCache.set(provider, {
     state: normalized,
@@ -550,7 +567,7 @@ async function getUsageWindowStats(
 
   const { count, error: countError } = await countQuery;
   if (countError) {
-    markUsageLogRelationUnavailable();
+    markUsageLogRelationUnavailable(countError);
     return {
       requestCount: 0,
       estimatedCostUsd: 0,
@@ -577,7 +594,7 @@ async function getUsageWindowStats(
       const { data, error } = await costQuery;
 
       if (error) {
-        markUsageLogRelationUnavailable();
+        markUsageLogRelationUnavailable(error);
         return {
           requestCount: count || 0,
           estimatedCostUsd: 0,
@@ -605,6 +622,7 @@ async function getUsageWindowStats(
   };
 
   usageLogRelationAvailable = true;
+  lastUsageTrackingError = null;
 
   usageWindowCache.set(cacheKey, {
     stats,
@@ -637,7 +655,7 @@ async function getTopBurstFeatures(
       .range(from, to);
 
     if (error) {
-      markUsageLogRelationUnavailable();
+      markUsageLogRelationUnavailable(error);
       return [];
     }
 
@@ -1027,6 +1045,9 @@ export async function getGeminiGuardSnapshot(
     provider: "gemini",
     severity,
     usageTrackingAvailable: usageLogRelationAvailable !== false,
+    usageTrackingError: usageLogRelationAvailable === false
+      ? lastUsageTrackingError
+      : null,
     currentCircuitState,
     limits,
     windows: {
