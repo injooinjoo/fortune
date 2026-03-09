@@ -94,7 +94,7 @@ jobs:
         id: test
         run: |
           # 스모크 테스트 실행
-          npx playwright test smoke --project=chromium || true
+          npm run test:smoke:ci || true
         env:
           CI: true
 
@@ -196,8 +196,7 @@ jobs:
             --output=json \
             --output-path=./lighthouse-report.json \
             --chrome-flags="--headless --no-sandbox" \
-            --only-categories=performance,accessibility,best-practices \
-            --preset=mobile || true
+            --only-categories=performance,accessibility,best-practices || true
 
           # 결과 파싱
           if [ -f "lighthouse-report.json" ]; then
@@ -232,6 +231,7 @@ jobs:
       healthy: ${{ steps.health.outputs.healthy }}
       total: ${{ steps.health.outputs.total }}
       failed_functions: ${{ steps.health.outputs.failed_functions }}
+      skipped: ${{ steps.health.outputs.skipped }}
 
     steps:
       - name: Health check Edge Functions
@@ -262,10 +262,13 @@ jobs:
           if [ -z "$SUPABASE_URL" ]; then
             echo "::warning::SUPABASE_URL secret이 설정되지 않았습니다. Edge Function 헬스체크를 건너뜁니다."
             echo "healthy=0" >> $GITHUB_OUTPUT
-            echo "total=${#FUNCTIONS[@]}" >> $GITHUB_OUTPUT
-            echo "failed_functions=SKIPPED_NO_URL" >> $GITHUB_OUTPUT
+            echo "total=0" >> $GITHUB_OUTPUT
+            echo "failed_functions=" >> $GITHUB_OUTPUT
+            echo "skipped=true" >> $GITHUB_OUTPUT
             exit 0
           fi
+
+          echo "skipped=false" >> $GITHUB_OUTPUT
 
           for func in "${FUNCTIONS[@]}"; do
             echo "Checking $func..."
@@ -307,6 +310,7 @@ jobs:
           PERF_SCORE="${{ needs.performance-tests.outputs.performance_score }}"
           EDGE_HEALTHY="${{ needs.edge-function-health.outputs.healthy }}"
           EDGE_TOTAL="${{ needs.edge-function-health.outputs.total }}"
+          EDGE_SKIPPED="${{ needs.edge-function-health.outputs.skipped }}"
 
           # 실패 조건 체크
           FAILED=false
@@ -321,7 +325,7 @@ jobs:
             echo "❌ Performance score too low: $PERF_SCORE"
           fi
 
-          if [ -n "$EDGE_HEALTHY" ] && [ -n "$EDGE_TOTAL" ]; then
+          if [ "$EDGE_SKIPPED" != "true" ] && [ -n "$EDGE_HEALTHY" ] && [ -n "$EDGE_TOTAL" ]; then
             if [ "$EDGE_HEALTHY" -lt "$EDGE_TOTAL" ]; then
               echo "⚠️ Some Edge Functions unhealthy: $EDGE_HEALTHY/$EDGE_TOTAL"
             fi
@@ -341,7 +345,11 @@ jobs:
           echo "|------|------|" >> $GITHUB_STEP_SUMMARY
           echo "| 🔥 Smoke Tests | ${{ needs.smoke-tests.outputs.passed }}/${{ needs.smoke-tests.outputs.total }} passed |" >> $GITHUB_STEP_SUMMARY
           echo "| ⚡ Performance | ${{ needs.performance-tests.outputs.performance_score }}/100 |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🔌 Edge Functions | ${{ needs.edge-function-health.outputs.healthy }}/${{ needs.edge-function-health.outputs.total }} healthy |" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ needs.edge-function-health.outputs.skipped }}" = "true" ]; then
+            echo "| 🔌 Edge Functions | skipped (missing secrets) |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| 🔌 Edge Functions | ${{ needs.edge-function-health.outputs.healthy }}/${{ needs.edge-function-health.outputs.total }} healthy |" >> $GITHUB_STEP_SUMMARY
+          fi
           echo "" >> $GITHUB_STEP_SUMMARY
 
           if [ "${{ steps.status.outputs.failed }}" = "true" ]; then
@@ -362,7 +370,8 @@ jobs:
       always() &&
       (needs.smoke-tests.outputs.failed != '0' ||
        needs.performance-tests.outputs.performance_score < 50 ||
-       needs.edge-function-health.outputs.healthy != needs.edge-function-health.outputs.total)
+       (needs.edge-function-health.outputs.skipped != 'true' &&
+        needs.edge-function-health.outputs.healthy != needs.edge-function-health.outputs.total))
 
     steps:
       - name: Create GitHub Issue
@@ -382,10 +391,14 @@ jobs:
             const edgeHealthy = '${{ needs.edge-function-health.outputs.healthy }}';
             const edgeTotal = '${{ needs.edge-function-health.outputs.total }}';
             const failedFunctions = '${{ needs.edge-function-health.outputs.failed_functions }}';
+            const edgeSkipped = '${{ needs.edge-function-health.outputs.skipped }}' === 'true';
 
             const smokeStatus = smokeResults.failed === '0' ? '✅' : '❌';
             const perfStatus = parseInt(perfScore) >= 50 ? '✅' : '❌';
-            const edgeStatus = edgeHealthy === edgeTotal ? '✅' : '⚠️';
+            const edgeStatus = edgeSkipped ? '⏭️' : edgeHealthy === edgeTotal ? '✅' : '⚠️';
+            const edgeSummary = edgeSkipped
+              ? 'skipped (missing secrets)'
+              : `${edgeHealthy}/${edgeTotal} healthy`;
 
             let bodyLines = [
               '## 🚨 QA 모니터링 실패 보고서',
@@ -399,7 +412,7 @@ jobs:
               '|------|------|------|',
               `| Smoke Tests | ${smokeResults.passed}/${smokeResults.total} passed | ${smokeStatus} |`,
               `| Performance | ${perfScore}/100 | ${perfStatus} |`,
-              `| Edge Functions | ${edgeHealthy}/${edgeTotal} healthy | ${edgeStatus} |`,
+              `| Edge Functions | ${edgeSummary} | ${edgeStatus} |`,
               ''
             ];
 
@@ -415,7 +428,7 @@ jobs:
               bodyLines.push('');
             }
 
-            if (failedFunctions && failedFunctions.trim()) {
+            if (!edgeSkipped && failedFunctions && failedFunctions.trim()) {
               bodyLines.push('### ⚠️ Edge Function 이상');
               bodyLines.push('다음 함수들이 응답하지 않습니다:');
               bodyLines.push('```');

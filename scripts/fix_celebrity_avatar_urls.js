@@ -6,9 +6,16 @@
 
 const https = require('https');
 
-const SUPABASE_URL = 'https://hayjukwfcsdmppairazc.supabase.co';
-const SERVICE_ROLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhheWp1a3dmY3NkbXBwYWlyYXpjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MjQxNTgzMiwiZXhwIjoyMDY3OTkxODMyfQ.g6e1p-xBTYQHJ4f9D25N3DcH44RxGDULAziycKSufYI';
-const STORAGE_BASE = 'https://hayjukwfcsdmppairazc.supabase.co/storage/v1/object/public/celebrities/avatars/';
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
+  throw new Error(
+    'SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables are required.',
+  );
+}
+
+const STORAGE_BASE = `${SUPABASE_URL}/storage/v1/object/public/celebrities/avatars/`;
 
 // 매핑 규칙
 const TYPE_MAP = {

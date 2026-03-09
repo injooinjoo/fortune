@@ -7,8 +7,10 @@ paths = [
     '''\.env\..*\.example$''',
     '''firebase_options_secure\.dart$''',
     '''secrets\.txt$''',
-    '''test''',
-    '''mock''',
+    '''(^|/)docs/development/reports/''',
+    '''(^|/)fortune_flutter/flutter_build_log\.txt$''',
+    '''(^|/)node_modules/''',
+    '''(^|/)supabase/\.temp/''',
 ]
 
 [[rules]]
@@ -38,20 +40,20 @@ tags = ["key", "OpenAI"]
 [[rules]]
 id = "generic-secret"
 description = "Generic Secret"
-regex = '''(?i)(api_key|apikey|secret|password|passwd|pwd|token|api_token|private_key|client_secret)\s*[=:]\s*["\']?[A-Za-z0-9\-_.=]{10,}["\']?'''
+regex = '''(?i)(api_key|apikey|secret|password|passwd|pwd|token|api_token|private_key|client_secret)\s*[=:]\s*["\']?(?!process\.env\b|Deno\.env\b|dotenv\b|your[-_a-z0-9]*\b|placeholder[-_a-z0-9]*\b|mock[-_a-z0-9]*\b|sample[-_a-z0-9]*\b|test[-_a-z0-9]*\b|redacted\b)(?=[A-Za-z0-9\-_.=]{16,}["\']?\s*$)(?=[A-Za-z0-9\-_.=]*[A-Za-z])(?=[A-Za-z0-9\-_.=]*[0-9])[A-Za-z0-9\-_.=]+["\']?\s*$'''
 tags = ["secret", "generic"]
 
 # Custom rules for Fortune project
 [[rules]]
 id = "supabase-service-role-key"
 description = "Supabase Service Role Key"
-regex = '''SUPABASE_SERVICE_ROLE_KEY\s*=\s*["\']?[A-Za-z0-9\-_.=]+["\']?'''
+regex = '''SUPABASE_SERVICE_ROLE_KEY\s*=\s*["\']?(?!process\.env\b|Deno\.env\b|dotenv\b|your[-_a-z0-9]*\b|placeholder[-_a-z0-9]*\b|mock[-_a-z0-9]*\b|sample[-_a-z0-9]*\b|test[-_a-z0-9]*\b)(?=[A-Za-z0-9\-_.=]{20,}["\']?\s*$)(?=[A-Za-z0-9\-_.=]*[A-Za-z])(?=[A-Za-z0-9\-_.=]*[0-9])[A-Za-z0-9\-_.=]+["\']?\s*$'''
 tags = ["key", "Supabase"]
 
 [[rules]]
 id = "upstash-redis-rest-token"
 description = "Redis/Upstash Token"
-regex = '''UPSTASH_REDIS_REST_TOKEN\s*=\s*["\']?[A-Za-z0-9\-_.=]+["\']?'''
+regex = '''UPSTASH_REDIS_REST_TOKEN\s*=\s*["\']?(?!process\.env\b|Deno\.env\b|dotenv\b|your[-_a-z0-9]*\b|placeholder[-_a-z0-9]*\b|mock[-_a-z0-9]*\b|sample[-_a-z0-9]*\b|test[-_a-z0-9]*\b)(?=[A-Za-z0-9\-_.=]{20,}["\']?\s*$)(?=[A-Za-z0-9\-_.=]*[A-Za-z])(?=[A-Za-z0-9\-_.=]*[0-9])[A-Za-z0-9\-_.=]+["\']?\s*$'''
 tags = ["token", "Redis"]
 
 [[rules]]

@@ -23,9 +23,18 @@ const DELAY_BETWEEN_REQUESTS = 15000 // 15초 간격 (안전 마진)
 const MAX_RETRIES = 2
 
 // Supabase 설정
-const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || 'https://hayjukwfcsdmppairazc.supabase.co'
-const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhheWp1a3dmY3NkbXBwYWlyYXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI0MTU4MzIsImV4cCI6MjA2Nzk5MTgzMn0.o5h68r7OZ_W9NE49-b-0pKQIaUFG4oZCXWRwhnmIqdI'
-const EDGE_FUNCTION_URL = `${SUPABASE_URL}/functions/v1/generate-celebrity-character`
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL')
+const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')
+
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  throw new Error(
+    'SUPABASE_URL and SUPABASE_ANON_KEY environment variables are required.',
+  )
+}
+
+const supabaseUrl = SUPABASE_URL
+const supabaseAnonKey = SUPABASE_ANON_KEY
+const EDGE_FUNCTION_URL = `${supabaseUrl}/functions/v1/generate-celebrity-character`
 
 // ===== Types =====
 interface Celebrity {
@@ -62,7 +71,7 @@ async function generateCharacter(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Authorization': `Bearer ${supabaseAnonKey}`,
       },
       body: JSON.stringify({
         celebrityId: celebrity.id,
@@ -125,12 +134,12 @@ async function generateCharacter(
 
 async function main() {
   console.log('🎨 치비 캐릭터 일괄 생성 시작')
-  console.log(`📍 Supabase URL: ${SUPABASE_URL}`)
+  console.log(`📍 Supabase URL: ${supabaseUrl}`)
   console.log(`⏱️  요청 간격: ${DELAY_BETWEEN_REQUESTS / 1000}초`)
   console.log('')
 
   // Supabase 클라이언트 생성
-  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
   // 이미지가 없는 유명인 수 확인
   const { count: totalCount } = await supabase
