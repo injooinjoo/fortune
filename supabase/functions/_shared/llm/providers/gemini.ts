@@ -9,6 +9,7 @@ import {
   LLMResponse,
 } from "../types.ts";
 import { assertLlmRequestAllowed } from "../safety.ts";
+import { GEMINI_IMAGE_MODEL } from "../models.ts";
 
 export class GeminiProvider implements ILLMProvider {
   constructor(
@@ -211,7 +212,7 @@ export class GeminiProvider implements ILLMProvider {
       console.log("📝 [Gemini] Prompt length:", prompt.length);
 
       // Gemini 이미지 생성 모델 사용
-      const imageModel = "gemini-2.5-flash-image";
+      const imageModel = GEMINI_IMAGE_MODEL;
 
       const requestBody = {
         contents: [

@@ -1,6 +1,6 @@
 # Gemini Cost Incident Runbook
 
-Last updated: 2026-03-09
+Last updated: 2026-03-10
 
 ## Purpose
 
@@ -58,7 +58,13 @@ supabase secrets set \
   GEMINI_API_KEY="<new-key>" \
   GEMINI_EMERGENCY_DISABLE=false \
   GEMINI_DAILY_REQUEST_LIMIT=2500 \
+  GEMINI_BURST_REQUEST_LIMIT=250 \
+  GEMINI_BURST_WINDOW_MINUTES=10 \
+  GEMINI_FEATURE_BURST_REQUEST_LIMIT=80 \
   GEMINI_GUARD_WINDOW_HOURS=24 \
+  GEMINI_CIRCUIT_BREAKER_COOLDOWN_MINUTES=30 \
+  LLM_GUARD_ALERT_THRESHOLD_RATIO=0.85 \
+  LLM_GUARD_MONITOR_SECRET="<generated-secret>" \
   LLM_USAGE_GUARD_CACHE_TTL_MS=60000 \
   --project-ref hayjukwfcsdmppairazc
 ```
@@ -88,6 +94,12 @@ supabase functions deploy generate-character-proactive-image --project-ref hayju
 
 If shared LLM files changed, the safer option is to deploy all Gemini-backed functions.
 
+If the monitor function or workflow changed, deploy the monitor as well:
+
+```bash
+supabase functions deploy monitor-llm-usage --project-ref hayjukwfcsdmppairazc
+```
+
 ## Re-enable service
 
 Only re-enable Gemini after:
@@ -112,7 +124,7 @@ gcloud services api-keys list --project=fortune2-463710
 2. Confirm safety guard secrets.
 
 ```bash
-supabase secrets list --project-ref hayjukwfcsdmppairazc | rg 'GEMINI_|LLM_USAGE_GUARD'
+supabase secrets list --project-ref hayjukwfcsdmppairazc | rg 'GEMINI_|LLM_GUARD|LLM_USAGE_GUARD'
 ```
 
 3. Inspect recent usage logs.
@@ -125,9 +137,29 @@ gcloud logging read \
   --freshness=7d
 ```
 
+4. Confirm the scheduled monitor endpoint.
+
+```bash
+curl -sS \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "x-llm-monitor-secret: $LLM_GUARD_MONITOR_SECRET" \
+  "$SUPABASE_URL/functions/v1/monitor-llm-usage" | jq
+```
+
+5. Confirm required GitHub repository secrets exist.
+
+- `SUPABASE_URL`
+- `LLM_GUARD_MONITOR_SECRET`
+- `SLACK_WEBHOOK_URL`
+
 ## Recurrence prevention
 
 - Keep only one production Gemini key.
 - Do not create ad hoc Gemini keys in the production GCP project.
 - Treat `GEMINI_DAILY_REQUEST_LIMIT` as required for production.
+- Treat burst limits and circuit breaker secrets as required for production.
+- Keep `LLM_ALLOW_PREVIEW_MODELS=false` in production until a preview model is explicitly approved.
+- Use `GEMINI_MODEL_ALLOWLIST` to prevent accidental rollouts to unsupported or expensive models.
 - Keep `GCP_LOGGING_ENABLED=true` and review blocked-request logs weekly.
+- Leave `.github/workflows/llm-guard-monitor.yml` enabled so usage is checked even when there is no live user traffic.

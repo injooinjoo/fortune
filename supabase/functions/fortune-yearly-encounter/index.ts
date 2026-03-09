@@ -13,13 +13,17 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { UsageLogger } from "../_shared/llm/usage-logger.ts";
+import {
+  GEMINI_IMAGE_MODEL,
+  GEMINI_SAFE_TEXT_MODEL,
+} from "../_shared/llm/models.ts";
 import { assertLlmRequestAllowed } from "../_shared/llm/safety.ts";
 
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY")!;
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-const GEMINI_TEXT_MODEL = "gemini-2.0-flash-lite";
-const GEMINI_IMAGE_MODEL = "gemini-2.5-flash-image";
+const GEMINI_TEXT_MODEL = GEMINI_SAFE_TEXT_MODEL;
+const GEMINI_IMAGE_MODEL_NAME = GEMINI_IMAGE_MODEL;
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -646,7 +650,7 @@ async function generateImageWithGemini(
 
   await assertLlmRequestAllowed({
     provider: "gemini",
-    model: GEMINI_IMAGE_MODEL,
+    model: GEMINI_IMAGE_MODEL_NAME,
     featureName: "yearly-encounter",
     mode: "image",
     requestId: telemetry.requestId,
@@ -656,7 +660,7 @@ async function generateImageWithGemini(
   });
 
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_IMAGE_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_IMAGE_MODEL_NAME}:generateContent?key=${GEMINI_API_KEY}`,
     {
       method: "POST",
       headers: {
@@ -686,7 +690,7 @@ async function generateImageWithGemini(
     await UsageLogger.logError(
       "yearly-encounter",
       "gemini",
-      GEMINI_IMAGE_MODEL,
+      GEMINI_IMAGE_MODEL_NAME,
       `Gemini API failed: ${response.status} - ${errorText.substring(0, 500)}`,
       telemetry.userId,
       {
@@ -720,7 +724,7 @@ async function generateImageWithGemini(
     await UsageLogger.logError(
       "yearly-encounter",
       "gemini",
-      GEMINI_IMAGE_MODEL,
+      GEMINI_IMAGE_MODEL_NAME,
       "No image data in Gemini response",
       telemetry.userId,
       {
@@ -744,14 +748,14 @@ async function generateImageWithGemini(
     userId: telemetry.userId,
     requestId: telemetry.requestId,
     provider: "gemini",
-    model: GEMINI_IMAGE_MODEL,
+    model: GEMINI_IMAGE_MODEL_NAME,
     response: {
       content: "[image-generated]",
       finishReason: toFinishReason(result.candidates?.[0]?.finishReason),
       usage,
       latency,
       provider: "gemini",
-      model: GEMINI_IMAGE_MODEL,
+      model: GEMINI_IMAGE_MODEL_NAME,
     },
     metadata: {
       phase: "image_generation",
@@ -987,7 +991,7 @@ serve(async (req) => {
     await UsageLogger.logError(
       "yearly-encounter",
       "gemini",
-      GEMINI_IMAGE_MODEL,
+      GEMINI_IMAGE_MODEL_NAME,
       error instanceof Error ? error.message : "Unknown error",
       undefined,
       { phase: "handler", requestId },

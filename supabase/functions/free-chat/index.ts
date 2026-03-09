@@ -16,120 +16,165 @@
  * - response: string - AI 답변
  * - meta: { provider, model, latencyMs }
  */
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { LLMFactory } from '../_shared/llm/factory.ts'
-import { corsHeaders, handleCors } from '../_shared/cors.ts'
-import { authenticateUser } from '../_shared/auth.ts'
-import { UsageLogger } from '../_shared/llm/usage-logger.ts'
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { LLMFactory } from "../_shared/llm/factory.ts";
+import { corsHeaders, handleCors } from "../_shared/cors.ts";
+import { authenticateUser } from "../_shared/auth.ts";
+import { UsageLogger } from "../_shared/llm/usage-logger.ts";
+import { GEMINI_CHAT_MODEL } from "../_shared/llm/models.ts";
 
 interface FreeChatContext {
-  userName?: string
-  birthDate?: string
-  birthTime?: string
-  gender?: string
-  mbti?: string
-  zodiacSign?: string
-  chineseZodiac?: string
-  bloodType?: string
+  userName?: string;
+  birthDate?: string;
+  birthTime?: string;
+  gender?: string;
+  mbti?: string;
+  zodiacSign?: string;
+  chineseZodiac?: string;
+  bloodType?: string;
 }
 
 interface FreeChatRequest {
-  message: string
-  context?: FreeChatContext
+  message: string;
+  context?: FreeChatContext;
 }
 
 interface FreeChatResponse {
-  success: boolean
-  response: string
+  success: boolean;
+  response: string;
   meta: {
-    provider: string
-    model: string
-    latencyMs: number
-    requestId: string
-  }
-  error?: string
+    provider: string;
+    model: string;
+    latencyMs: number;
+    requestId: string;
+  };
+  error?: string;
 }
 
 // 질문 유형별 키워드
-const FORTUNE_KEYWORDS = ['운세', '운', '오늘', '내일', '이번주', '띠', '별자리', '사주', '미래', '앞날', '길흉', '행운']
-const PERSONALITY_KEYWORDS = ['성격', 'mbti', '관계', '연애', '사람', '친구', '성향', '타입', '사교', '내향', '외향']
-const HEALTH_KEYWORDS = ['건강', '다이어트', '운동', '식단', '몸', '피로', '체력', '수면', '스트레스']
-const FREE_CHAT_MODEL = 'gemini-2.5-flash-lite'
+const FORTUNE_KEYWORDS = [
+  "운세",
+  "운",
+  "오늘",
+  "내일",
+  "이번주",
+  "띠",
+  "별자리",
+  "사주",
+  "미래",
+  "앞날",
+  "길흉",
+  "행운",
+];
+const PERSONALITY_KEYWORDS = [
+  "성격",
+  "mbti",
+  "관계",
+  "연애",
+  "사람",
+  "친구",
+  "성향",
+  "타입",
+  "사교",
+  "내향",
+  "외향",
+];
+const HEALTH_KEYWORDS = [
+  "건강",
+  "다이어트",
+  "운동",
+  "식단",
+  "몸",
+  "피로",
+  "체력",
+  "수면",
+  "스트레스",
+];
+const FREE_CHAT_MODEL = GEMINI_CHAT_MODEL;
 
 // 생년월일에서 나이 계산
 function calculateAge(birthDate: string): number {
-  const birth = new Date(birthDate)
-  const today = new Date()
-  let age = today.getFullYear() - birth.getFullYear()
-  const monthDiff = today.getMonth() - birth.getMonth()
+  const birth = new Date(birthDate);
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDiff = today.getMonth() - birth.getMonth();
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-    age--
+    age--;
   }
-  return age
+  return age;
 }
 
 // 생년월일 포맷
 function formatBirthDate(birthDate: string): string {
-  const date = new Date(birthDate)
-  const year = date.getFullYear()
-  const month = date.getMonth() + 1
-  const day = date.getDate()
-  return `${year}년 ${month}월 ${day}일`
+  const date = new Date(birthDate);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  return `${year}년 ${month}월 ${day}일`;
 }
 
 // 성별 한글 변환
 function formatGender(gender: string): string {
-  if (gender === 'male') return '남성'
-  if (gender === 'female') return '여성'
-  return ''
+  if (gender === "male") return "남성";
+  if (gender === "female") return "여성";
+  return "";
 }
 
 // 지능형 컨텍스트 생성
-function buildContextPrompt(message: string, context?: FreeChatContext): string {
-  if (!context) return ''
+function buildContextPrompt(
+  message: string,
+  context?: FreeChatContext,
+): string {
+  if (!context) return "";
 
-  const lowerMsg = message.toLowerCase()
-  const parts: string[] = []
+  const lowerMsg = message.toLowerCase();
+  const parts: string[] = [];
 
   // 이름은 항상 포함
   if (context.userName) {
-    parts.push(`사용자: ${context.userName}`)
+    parts.push(`사용자: ${context.userName}`);
   }
 
   // 운세/미래 관련 → 생년월일, 띠, 별자리
-  const isFortuneRelated = FORTUNE_KEYWORDS.some(k => lowerMsg.includes(k))
+  const isFortuneRelated = FORTUNE_KEYWORDS.some((k) => lowerMsg.includes(k));
   if (isFortuneRelated) {
-    if (context.birthDate) parts.push(`생년월일: ${formatBirthDate(context.birthDate)}`)
-    if (context.chineseZodiac) parts.push(`띠: ${context.chineseZodiac}`)
-    if (context.zodiacSign) parts.push(`별자리: ${context.zodiacSign}`)
+    if (context.birthDate) {
+      parts.push(`생년월일: ${formatBirthDate(context.birthDate)}`);
+    }
+    if (context.chineseZodiac) parts.push(`띠: ${context.chineseZodiac}`);
+    if (context.zodiacSign) parts.push(`별자리: ${context.zodiacSign}`);
   }
 
   // 성격/관계 관련 → MBTI, 성별
-  const isPersonalityRelated = PERSONALITY_KEYWORDS.some(k => lowerMsg.includes(k))
+  const isPersonalityRelated = PERSONALITY_KEYWORDS.some((k) =>
+    lowerMsg.includes(k)
+  );
   if (isPersonalityRelated) {
-    if (context.mbti) parts.push(`MBTI: ${context.mbti}`)
+    if (context.mbti) parts.push(`MBTI: ${context.mbti}`);
     if (context.gender) {
-      const genderKr = formatGender(context.gender)
-      if (genderKr) parts.push(`성별: ${genderKr}`)
+      const genderKr = formatGender(context.gender);
+      if (genderKr) parts.push(`성별: ${genderKr}`);
     }
   }
 
   // 건강/조언 관련 → 나이, 성별
-  const isHealthRelated = HEALTH_KEYWORDS.some(k => lowerMsg.includes(k))
+  const isHealthRelated = HEALTH_KEYWORDS.some((k) => lowerMsg.includes(k));
   if (isHealthRelated) {
-    if (context.birthDate) parts.push(`나이: ${calculateAge(context.birthDate)}세`)
+    if (context.birthDate) {
+      parts.push(`나이: ${calculateAge(context.birthDate)}세`);
+    }
     if (context.gender) {
-      const genderKr = formatGender(context.gender)
-      if (genderKr) parts.push(`성별: ${genderKr}`)
+      const genderKr = formatGender(context.gender);
+      if (genderKr) parts.push(`성별: ${genderKr}`);
     }
   }
 
   // 컨텍스트가 있으면 포맷팅
   if (parts.length > 0) {
-    return `[${parts.join(' | ')}]\n\n`
+    return `[${parts.join(" | ")}]\n\n`;
   }
 
-  return ''
+  return "";
 }
 
 // 시스템 프롬프트
@@ -175,66 +220,72 @@ const SYSTEM_PROMPT = `당신은 친근하고 따뜻한 AI 라이프 코치입�
 
 오늘 하루 '좋은 일이 생길 거야'라고 마음먹고 지내봐. 그 긍정적인 기운이 분명 좋은 걸 끌어당길 거야 🍀✨"
 
-⚠️ 중요: 위 예시의 "민지"는 예시일 뿐입니다. 실제 답변에서는 반드시 사용자 정보에 제공된 실제 이름을 사용하세요.`
+⚠️ 중요: 위 예시의 "민지"는 예시일 뿐입니다. 실제 답변에서는 반드시 사용자 정보에 제공된 실제 이름을 사용하세요.`;
 
 serve(async (req: Request) => {
   // CORS 처리
-  const corsResponse = handleCors(req)
-  if (corsResponse) return corsResponse
+  const corsResponse = handleCors(req);
+  if (corsResponse) return corsResponse;
 
-  const startTime = Date.now()
-  const requestId = req.headers.get('x-request-id') || crypto.randomUUID()
-  let userId: string | undefined
+  const startTime = Date.now();
+  const requestId = req.headers.get("x-request-id") || crypto.randomUUID();
+  let userId: string | undefined;
 
   try {
-    const { user, error: authError } = await authenticateUser(req)
+    const { user, error: authError } = await authenticateUser(req);
     if (authError || !user) {
       return authError ?? new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+        JSON.stringify({ error: "Unauthorized" }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
     }
-    userId = user.id
+    userId = user.id;
 
-    const { message, context }: FreeChatRequest = await req.json()
+    const { message, context }: FreeChatRequest = await req.json();
 
     // 유효성 검사
-    if (!message || typeof message !== 'string' || message.trim().length < 1) {
+    if (!message || typeof message !== "string" || message.trim().length < 1) {
       return new Response(
         JSON.stringify({
           success: false,
-          response: '',
+          response: "",
           meta: {
-            provider: 'gemini',
+            provider: "gemini",
             model: FREE_CHAT_MODEL,
             latencyMs: Date.now() - startTime,
             requestId,
           },
-          error: '메시지를 입력해주세요',
+          error: "메시지를 입력해주세요",
         } as FreeChatResponse),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
-      )
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 400,
+        },
+      );
     }
 
     // LLM 호출
-    const llm = LLMFactory.createFromConfig('free-chat')
+    const llm = LLMFactory.createFromConfig("free-chat");
 
     // 지능형 컨텍스트 생성
-    const contextPrompt = buildContextPrompt(message, context)
-    const userPrompt = contextPrompt + message.trim()
+    const contextPrompt = buildContextPrompt(message, context);
+    const userPrompt = contextPrompt + message.trim();
 
     const response = await llm.generate([
-      { role: 'system', content: SYSTEM_PROMPT },
-      { role: 'user', content: userPrompt },
+      { role: "system", content: SYSTEM_PROMPT },
+      { role: "user", content: userPrompt },
     ], {
       temperature: 0.8,
       maxTokens: 1024,
-    })
+    });
 
-    const latencyMs = Date.now() - startTime
+    const latencyMs = Date.now() - startTime;
 
     await UsageLogger.log({
-      fortuneType: 'free-chat',
+      fortuneType: "free-chat",
       userId,
       requestId,
       provider: response.provider,
@@ -244,47 +295,49 @@ serve(async (req: Request) => {
         messageLength: message.trim().length,
         hasContext: Boolean(context),
       },
-    })
+    });
 
     return new Response(
       JSON.stringify({
         success: true,
         response: response.content.trim(),
         meta: {
-          provider: 'gemini',
+          provider: "gemini",
           model: response.model,
           latencyMs,
           requestId,
         },
       } as FreeChatResponse),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
-
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
   } catch (error) {
-    console.error('free-chat 에러:', error)
+    console.error("free-chat 에러:", error);
 
     await UsageLogger.logError(
-      'free-chat',
-      'gemini',
+      "free-chat",
+      "gemini",
       FREE_CHAT_MODEL,
-      error instanceof Error ? error.message : 'Unknown error',
+      error instanceof Error ? error.message : "Unknown error",
       userId,
-      { requestId, latencyMs: Date.now() - startTime }
-    )
+      { requestId, latencyMs: Date.now() - startTime },
+    );
 
     return new Response(
       JSON.stringify({
         success: false,
-        response: '',
-        error: error instanceof Error ? error.message : 'Unknown error',
+        response: "",
+        error: error instanceof Error ? error.message : "Unknown error",
         meta: {
-          provider: 'gemini',
+          provider: "gemini",
           model: FREE_CHAT_MODEL,
           latencyMs: Date.now() - startTime,
           requestId,
         },
       } as FreeChatResponse),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-    )
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500,
+      },
+    );
   }
-})
+});

@@ -1,0 +1,96 @@
+name: LLM Guard Monitor
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Do not mutate guard state'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  monitor:
+    name: Check Gemini usage guard
+    runs-on: ubuntu-latest
+    outputs:
+      severity: ${{ steps.parse.outputs.severity }}
+      summary: ${{ steps.parse.outputs.summary }}
+      actions: ${{ steps.parse.outputs.actions }}
+
+    steps:
+      - name: Invoke monitor function
+        id: invoke
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          LLM_GUARD_MONITOR_SECRET: ${{ secrets.LLM_GUARD_MONITOR_SECRET }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$LLM_GUARD_MONITOR_SECRET" ]; then
+            echo "::warning::SUPABASE_URL 또는 LLM_GUARD_MONITOR_SECRET secret이 없어 모니터를 건너뜁니다."
+            cat > monitor-response.json <<'JSON'
+          {"success":true,"severity":"healthy","actions":["skipped_missing_secret"],"breachCount":0,"warningCount":0,"snapshot":{"windows":{"topBurstFeatures":[]}}}
+          JSON
+            exit 0
+          fi
+
+          PAYLOAD='{}'
+          if [ "$DRY_RUN" = "true" ]; then
+            PAYLOAD='{"dryRun":true}'
+          fi
+
+          STATUS=$(curl -sS -o monitor-response.json -w "%{http_code}" \
+            -X POST "$SUPABASE_URL/functions/v1/monitor-llm-usage" \
+            -H "Content-Type: application/json" \
+            -H "x-llm-monitor-secret: $LLM_GUARD_MONITOR_SECRET" \
+            -d "$PAYLOAD")
+
+          echo "http_status=$STATUS" >> "$GITHUB_OUTPUT"
+
+          if [ "$STATUS" -ge 400 ]; then
+            echo "::error::monitor-llm-usage returned HTTP $STATUS"
+            cat monitor-response.json
+            exit 1
+          fi
+
+      - name: Parse monitor response
+        id: parse
+        run: |
+          SEVERITY=$(jq -r '.severity // "unknown"' monitor-response.json)
+          ACTIONS=$(jq -r '(.actions // []) | join(",")' monitor-response.json)
+          WARNING_COUNT=$(jq -r '.warningCount // 0' monitor-response.json)
+          BREACH_COUNT=$(jq -r '.breachCount // 0' monitor-response.json)
+          TOP_FEATURE=$(jq -r '.snapshot.windows.topBurstFeatures[0].featureName // "n/a"' monitor-response.json)
+          TOP_COUNT=$(jq -r '.snapshot.windows.topBurstFeatures[0].requestCount // 0' monitor-response.json)
+
+          SUMMARY="severity=$SEVERITY warnings=$WARNING_COUNT breaches=$BREACH_COUNT top_feature=$TOP_FEATURE top_requests=$TOP_COUNT actions=$ACTIONS"
+
+          echo "severity=$SEVERITY" >> "$GITHUB_OUTPUT"
+          echo "summary=$SUMMARY" >> "$GITHUB_OUTPUT"
+          echo "actions=$ACTIONS" >> "$GITHUB_OUTPUT"
+
+          echo "## LLM Guard Monitor" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Severity: \`$SEVERITY\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Warnings: \`$WARNING_COUNT\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Breaches: \`$BREACH_COUNT\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Top feature: \`$TOP_FEATURE\` (\`$TOP_COUNT\` requests)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Actions: \`$ACTIONS\`" >> "$GITHUB_STEP_SUMMARY"
+
+  notify-slack:
+    name: Slack Notification
+    needs: [monitor]
+    if: ${{ needs.monitor.outputs.severity == 'warning' || needs.monitor.outputs.severity == 'critical' }}
+    uses: ./.github/workflows/slack-notify.yml
+    with:
+      workflow_name: "LLM Guard Monitor"
+      job_status: "failure"
+      failed_jobs: "monitor-llm-usage"
+      custom_message: "${{ needs.monitor.outputs.summary }}"
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

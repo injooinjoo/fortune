@@ -1,6 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { GeminiProvider } from "../_shared/llm/providers/gemini.ts";
+import {
+  GEMINI_IMAGE_MODEL,
+  GEMINI_SAFE_TEXT_MODEL,
+} from "../_shared/llm/models.ts";
 
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY")!;
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
@@ -176,7 +180,7 @@ async function generateImageWithGemini(prompt: string): Promise<string> {
 
   const provider = new GeminiProvider({
     apiKey: GEMINI_API_KEY,
-    model: "gemini-2.0-flash-exp", // 텍스트 모델 (이미지 생성 시에는 자동 전환)
+    model: GEMINI_SAFE_TEXT_MODEL,
     featureName: "generate-talisman",
   });
 
@@ -245,7 +249,7 @@ async function saveTalismanRecord(
       prompt_used: prompt,
       characters,
       is_public: true, // 공용 풀에 포함
-      model_used: "gemini-2.5-flash-preview-05-20",
+      model_used: GEMINI_IMAGE_MODEL,
       created_at: new Date().toISOString(),
     })
     .select("id")

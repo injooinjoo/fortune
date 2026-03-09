@@ -9,6 +9,7 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { GEMINI_IMAGE_MODEL } from "../_shared/llm/models.ts";
 import { assertLlmRequestAllowed } from "../_shared/llm/safety.ts";
 
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY")!;
@@ -95,13 +96,13 @@ async function generateImageWithGemini(prompt: string): Promise<string> {
 
   await assertLlmRequestAllowed({
     provider: "gemini",
-    model: "gemini-2.5-flash-image",
+    model: GEMINI_IMAGE_MODEL,
     featureName: "generate-fashion-image",
     mode: "image",
   });
 
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key=${GEMINI_API_KEY}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_IMAGE_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
     {
       method: "POST",
       headers: {

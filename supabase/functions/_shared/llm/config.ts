@@ -1,48 +1,55 @@
 // LLM 설정 관리
 
+import { GEMINI_CHAT_MODEL, GEMINI_SAFE_TEXT_MODEL } from "./models.ts";
+
 // 환경변수에서 Provider 결정 (단일 선택)
 export const LLM_GLOBAL_CONFIG = {
-  provider: (Deno.env.get('LLM_PROVIDER') || 'gemini') as 'openai' | 'gemini' | 'anthropic' | 'grok',
-  defaultModel: Deno.env.get('LLM_DEFAULT_MODEL') || 'gemini-2.0-flash-lite',
+  provider: (Deno.env.get("LLM_PROVIDER") || "gemini") as
+    | "openai"
+    | "gemini"
+    | "anthropic"
+    | "grok",
+  defaultModel: Deno.env.get("LLM_DEFAULT_MODEL") || GEMINI_SAFE_TEXT_MODEL,
   defaultTemperature: 0.7,
   defaultMaxTokens: 2048,
-} as const
+} as const;
 
 // 운세별 커스텀 모델 (선택사항)
 export const FORTUNE_SPECIFIC_MODELS: Record<string, string | undefined> = {
-  'moving': 'gemini-2.0-flash-lite',
-  'tarot': 'gemini-2.0-flash-lite',
-  'love': 'gemini-2.0-flash-lite',
-  'daily': 'gemini-2.0-flash-lite',
-  'career': 'gemini-2.0-flash-lite',
-  'health': 'gemini-2.0-flash-lite',
-  'mbti': 'gemini-2.0-flash-lite',
-  'compatibility': 'gemini-2.0-flash-lite',
-  'exam': 'gemini-2.0-flash-lite',
-  'investment': 'gemini-2.0-flash-lite',
-  'talent': 'gemini-2.0-flash-lite',
-  'face-reading': 'gemini-2.0-flash-lite',
-  'dream': 'gemini-2.0-flash-lite',
-  'avoid-people': 'gemini-2.0-flash-lite',
-  'blind-date': 'gemini-2.0-flash-lite',
-  'ex-lover': 'gemini-2.0-flash-lite',
-  'lucky-series': 'gemini-2.0-flash-lite',
-  'fortune-celebrity': 'gemini-2.0-flash-lite',
-  'fortune-pet': 'gemini-2.0-flash-lite',
-  'ootd-evaluation': 'gemini-2.0-flash-lite',
-  'fortune-recommend': 'gemini-2.0-flash-lite',
-  'fortune-past-life': 'gemini-2.0-flash-lite',
-  'wealth': 'gemini-2.0-flash-lite',
-  'talisman': 'gemini-2.0-flash-lite',
-  'yearly-encounter': 'gemini-2.0-flash-lite',
-  'free-chat': 'gemini-2.5-flash-lite',  // 대화 맥락 이해 개선
-}
+  "moving": GEMINI_SAFE_TEXT_MODEL,
+  "tarot": GEMINI_SAFE_TEXT_MODEL,
+  "love": GEMINI_SAFE_TEXT_MODEL,
+  "daily": GEMINI_SAFE_TEXT_MODEL,
+  "career": GEMINI_SAFE_TEXT_MODEL,
+  "health": GEMINI_SAFE_TEXT_MODEL,
+  "mbti": GEMINI_SAFE_TEXT_MODEL,
+  "compatibility": GEMINI_SAFE_TEXT_MODEL,
+  "exam": GEMINI_SAFE_TEXT_MODEL,
+  "investment": GEMINI_SAFE_TEXT_MODEL,
+  "talent": GEMINI_SAFE_TEXT_MODEL,
+  "face-reading": GEMINI_SAFE_TEXT_MODEL,
+  "dream": GEMINI_SAFE_TEXT_MODEL,
+  "avoid-people": GEMINI_SAFE_TEXT_MODEL,
+  "blind-date": GEMINI_SAFE_TEXT_MODEL,
+  "ex-lover": GEMINI_SAFE_TEXT_MODEL,
+  "lucky-series": GEMINI_SAFE_TEXT_MODEL,
+  "fortune-celebrity": GEMINI_SAFE_TEXT_MODEL,
+  "fortune-pet": GEMINI_SAFE_TEXT_MODEL,
+  "ootd-evaluation": GEMINI_SAFE_TEXT_MODEL,
+  "fortune-recommend": GEMINI_SAFE_TEXT_MODEL,
+  "fortune-past-life": GEMINI_SAFE_TEXT_MODEL,
+  "wealth": GEMINI_SAFE_TEXT_MODEL,
+  "talisman": GEMINI_SAFE_TEXT_MODEL,
+  "yearly-encounter": GEMINI_SAFE_TEXT_MODEL,
+  "free-chat": GEMINI_CHAT_MODEL, // 대화 맥락 이해 개선
+};
 
 export function getModelConfig(fortuneType: string) {
   return {
     provider: LLM_GLOBAL_CONFIG.provider,
-    model: FORTUNE_SPECIFIC_MODELS[fortuneType] || LLM_GLOBAL_CONFIG.defaultModel,
+    model: FORTUNE_SPECIFIC_MODELS[fortuneType] ||
+      LLM_GLOBAL_CONFIG.defaultModel,
     temperature: LLM_GLOBAL_CONFIG.defaultTemperature,
     maxTokens: LLM_GLOBAL_CONFIG.defaultMaxTokens,
-  }
+  };
 }
