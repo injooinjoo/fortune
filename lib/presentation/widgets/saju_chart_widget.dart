@@ -242,7 +242,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
     final heavenlyStem = pillarData['heavenly_stem'] ?? {};
     final earthlyBranch = pillarData['earthly_branch'] ?? {};
 
-    // NOTE: SajuElementExplanationBottomSheet 기능은 향후 구현 예정 (saju_element_explanation_bottom_sheet.dart.skip 참조)
+    // NOTE: SajuElementExplanationBottomSheet 기능은 향후 별도 구현 예정
     return Column(
       children: [
         Text(

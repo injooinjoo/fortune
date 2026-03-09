@@ -100,6 +100,7 @@ GENERATED_PATTERNS = (
     re.compile(r'\.freezed\.dart$'),
     re.compile(r'^lib/l10n/app_localizations(?:_[a-z]{2})?\.dart$'),
     re.compile(r'^docs/development/(?:FILE_INVENTORY|UNUSED_CANDIDATES)\.md$'),
+    re.compile(r'^supabase/\.temp/cli-latest$'),
 )
 
 DART_IMPORT_RE = re.compile(r'^\s*(?:import|export|part)\s+[\'"]([^\'"]+)[\'"]', re.MULTILINE)
@@ -530,7 +531,7 @@ def build_analysis() -> dict[str, object]:
         elif is_generated_path(path):
             usage_status = 'generated_excluded'
             notes.append('generated_or_generated_output')
-        elif area == 'docs':
+        elif area == 'docs' or Path(path).suffix.lower() == '.md':
             usage_status = 'doc_only'
         elif area in {'test', 'integration_test'}:
             usage_status = 'test_only'
@@ -539,6 +540,8 @@ def build_analysis() -> dict[str, object]:
         elif runtime_reachable or 'runtime' in contexts:
             usage_status = 'runtime_used'
         elif contexts == {'test'}:
+            usage_status = 'test_only'
+        elif 'test' in contexts and contexts <= {'doc', 'test'}:
             usage_status = 'test_only'
         elif contexts == {'doc'}:
             usage_status = 'doc_only'
@@ -587,7 +590,7 @@ def build_analysis() -> dict[str, object]:
         elif path.startswith('assets/'):
             candidate_action = 'manual_review'
         elif path.startswith('supabase/functions/') and '/_shared/' not in path:
-            candidate_action = 'phase1_remove_candidate'
+            candidate_action = 'manual_review'
         elif path.startswith('lib/') and (
             path.endswith('_page.dart')
             or '/pages/' in path
