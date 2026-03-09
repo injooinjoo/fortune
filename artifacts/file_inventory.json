@@ -21595,24 +21595,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/core/constants/ab_test_events.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/CLEANUP_REPORT.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -23040,57 +23022,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/core/models/holiday_models.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep_generated",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "generated_or_generated_output"
-      ],
-      "path": "lib/core/models/holiday_models.freezed.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/core/models/holiday_models.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "generated_excluded"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep_generated",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "generated_or_generated_output"
-      ],
-      "path": "lib/core/models/holiday_models.g.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "lib/core/models/holiday_models.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "generated_excluded"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -23863,6 +23794,7 @@
         "docs/development/_archive/DEPENDENCY_TRACE.md",
         "integration_test/test_app.dart",
         "lib/main.dart",
+        "lib/screens/splash_screen.dart",
         "lib/services/supabase_storage_service.dart",
         "lib/services/talent_resume_service.dart"
       ],
@@ -24580,7 +24512,6 @@
         "lib/providers/pet_provider.dart",
         "lib/screens/home/preview_screen.dart",
         "lib/screens/profile/profile_edit_page.dart",
-        "lib/services/ab_test_manager.dart",
         "lib/services/account_deletion_service.dart",
         "lib/services/analytics_service.dart",
         "lib/services/app_icon_badge_service.dart",
@@ -31313,50 +31244,14 @@
         "runtime_unreachable",
         "zero_incoming_dart"
       ],
-      "path": "lib/models/ab_test_experiment.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/CLEANUP_REPORT.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/models/ab_test_result.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/CLEANUP_REPORT.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
       "path": "lib/models/ab_test_variant.dart",
       "referenced_by": [
         "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/CLEANUP_REPORT.md",
-        "lib/models/ab_test_experiment.dart"
+        "docs/development/_archive/CLEANUP_REPORT.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -33365,24 +33260,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/services/ab_test_manager.dart",
-      "referenced_by": [
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/CLEANUP_REPORT.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -33442,25 +33319,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/services/auth_service.dart",
-      "referenced_by": [
-        "docs/deployment/APPLE_CAPABILITIES_SETUP.md",
-        "docs/development/_archive/ALL_FILES_LIST.md",
-        "docs/development/_archive/FILE_DEPENDENCY_MAP.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -33773,8 +33631,7 @@
         "docs/development/character-chat/reports/2026-02-16_character_chat_tone_rca.md",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/fortune/presentation/providers/fortune_categories_provider.dart",
-        "lib/main.dart",
-        "lib/services/ab_test_manager.dart"
+        "lib/main.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -34103,24 +33960,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/shared/components/custom_calendar_date_picker.dart",
-      "referenced_by": [
-        "docs/development/UNIFIED_DATE_PICKER_MIGRATION.md",
-        "docs/development/_archive/ALL_FILES_LIST.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -39617,22 +39456,22 @@
       "assets": 1231,
       "docs": 143,
       "integration_test": 26,
-      "lib": 765,
+      "lib": 756,
       "scripts": 69,
       "supabase": 214,
       "test": 53
     },
     "counts_by_candidate_action": {
-      "keep": 1145,
-      "keep_generated": 40,
+      "keep": 1144,
+      "keep_generated": 38,
       "manual_review": 838,
-      "phase2_review_candidate": 430,
+      "phase2_review_candidate": 424,
       "phase3_feature_cleanup": 48
     },
     "counts_by_usage_status": {
-      "doc_only": 164,
-      "generated_excluded": 40,
-      "runtime_used": 1145,
+      "doc_only": 158,
+      "generated_excluded": 38,
+      "runtime_used": 1144,
       "test_only": 80,
       "tooling_only": 186,
       "unreferenced": 886
@@ -39745,8 +39584,8 @@
       "integration_test"
     ],
     "lib_dart_runtime_reachable": 635,
-    "lib_dart_total": 761,
-    "lib_dart_zero_incoming": 63,
+    "lib_dart_total": 752,
+    "lib_dart_zero_incoming": 57,
     "missing_function_refs": [
       "add-tokens",
       "crawl-celebrity-info",
@@ -39826,7 +39665,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2501,
+    "total_files": 2492,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "character-follow-up",
