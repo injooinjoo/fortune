@@ -336,7 +336,8 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   }
 
   void _redirectToProfileIfNoConversation(CharacterChatState chatState) {
-    if (chatState.isLoading ||
+    if (!chatState.isInitialized ||
+        chatState.isLoading ||
         chatState.hasConversation ||
         _didRedirectToProfile) {
       return;

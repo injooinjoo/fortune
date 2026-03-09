@@ -16,7 +16,13 @@ class TestAuthService {
   static const String _testSessionKey = 'test_session';
   static const String _testModeUrlParam = 'test_mode';
 
-  final _supabase = Supabase.instance.client;
+  SupabaseClient? get _supabase {
+    try {
+      return Supabase.instance.client;
+    } catch (_) {
+      return null;
+    }
+  }
 
   /// Check if app is running in test mode (compile-time OR URL param for web)
   static bool isTestMode() {
@@ -86,17 +92,23 @@ class TestAuthService {
 
       debugPrint('🔧 Test: Attempting auto-login with $testEmail');
 
+      final supabase = _supabase;
+      if (supabase == null) {
+        debugPrint('🔧 Test: Supabase unavailable, skipping auto-login');
+        return false;
+      }
+
       // Try to sign in first
       AuthResponse? response;
       try {
-        response = await _supabase.auth.signInWithPassword(
+        response = await supabase.auth.signInWithPassword(
           email: testEmail,
           password: testPassword,
         );
       } catch (e) {
         debugPrint('🔧 Test: Sign in failed, trying to create account: $e');
         // If sign in fails, try to create the account
-        response = await _supabase.auth.signUp(
+        response = await supabase.auth.signUp(
           email: testEmail,
           password: testPassword,
           data: {
@@ -163,7 +175,7 @@ class TestAuthService {
       if (testSession == null) return false;
 
       // The session should already be set by autoLoginTestAccount
-      final currentUser = _supabase.auth.currentUser;
+      final currentUser = _supabase?.auth.currentUser;
       if (currentUser?.id == testSession['user_id']) {
         debugPrint('🔧 Test: Test session successfully injected');
         return true;
@@ -180,7 +192,7 @@ class TestAuthService {
   bool isCurrentUserTestAccount() {
     if (!isTestMode()) return false;
 
-    final currentUser = _supabase.auth.currentUser;
+    final currentUser = _supabase?.auth.currentUser;
     return currentUser?.userMetadata?['test_account'] == true ||
         currentUser?.email?.contains('test') == true;
   }

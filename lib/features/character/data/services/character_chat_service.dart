@@ -63,8 +63,15 @@ class CharacterChatResponse {
 
 /// 캐릭터 채팅 API 서비스 (카카오톡 스타일: 로컬 우선 저장)
 class CharacterChatService {
-  final _supabase = Supabase.instance.client;
   final _localService = CharacterChatLocalService();
+
+  SupabaseClient? get _supabase {
+    try {
+      return Supabase.instance.client;
+    } catch (_) {
+      return null;
+    }
+  }
 
   /// 메시지 전송 및 AI 응답 받기 (감정 기반 딜레이 포함)
   Future<CharacterChatResponse> sendMessage({
@@ -87,7 +94,12 @@ class CharacterChatService {
     int? introTurn, // first-meet 단계 턴 카운트
   }) async {
     try {
-      final response = await _supabase.functions.invoke(
+      final supabase = _supabase;
+      if (supabase == null) {
+        throw Exception('Supabase unavailable');
+      }
+
+      final response = await supabase.functions.invoke(
         'character-chat',
         body: {
           'characterId': characterId,
@@ -133,7 +145,12 @@ class CharacterChatService {
 
     // 2. 로컬에 없으면 서버에서 불러오기 시도
     try {
-      final response = await _supabase.functions.invoke(
+      final supabase = _supabase;
+      if (supabase == null) {
+        return [];
+      }
+
+      final response = await supabase.functions.invoke(
         'character-conversation-load',
         body: {'characterId': characterId},
       );
@@ -184,12 +201,13 @@ class CharacterChatService {
 
     // 2. 서버에 백업 시도 (인증된 경우만)
     try {
-      if (_supabase.auth.currentSession == null) {
+      final supabase = _supabase;
+      if (supabase == null || supabase.auth.currentSession == null) {
         // 인증 안 된 경우 로컬 저장 결과만 반환
         return localSaved;
       }
 
-      final response = await _supabase.functions.invoke(
+      final response = await supabase.functions.invoke(
         'character-conversation-save',
         body: {
           'characterId': characterId,
@@ -221,8 +239,9 @@ class CharacterChatService {
 
     // 서버는 빈 메시지로 초기화해 사실상 리셋 처리
     try {
-      if (_supabase.auth.currentSession != null) {
-        await _supabase.functions.invoke(
+      final supabase = _supabase;
+      if (supabase != null && supabase.auth.currentSession != null) {
+        await supabase.functions.invoke(
           'character-conversation-save',
           body: {
             'characterId': characterId,
@@ -245,8 +264,14 @@ class CharacterChatService {
     final result = <String, List<CharacterChatMessage>>{};
 
     try {
+      final supabase = _supabase;
+      if (supabase == null) {
+        Logger.info('loadAllConversations: Supabase unavailable - 스킵');
+        return result;
+      }
+
       // 인증 안 된 경우 빈 결과 반환
-      if (_supabase.auth.currentSession == null) {
+      if (supabase.auth.currentSession == null) {
         Logger.info('loadAllConversations: 미인증 상태 - 스킵');
         return result;
       }
@@ -254,7 +279,7 @@ class CharacterChatService {
       // 현재 owner 범위의 로컬 대화를 먼저 정리해 교차 유저 노출 차단
       await _localService.clearAllConversations();
 
-      final response = await _supabase.functions.invoke(
+      final response = await supabase.functions.invoke(
         'character-conversations-load-all',
         body: {},
       );

@@ -97,8 +97,21 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
   CharacterChatNotifier(this._ref, this._characterId)
       : super(CharacterChatState(characterId: _characterId)) {
-    // 앱 시작 시 로컬 저장소에서 대화 존재 여부 확인 (캐릭터 리스트용)
-    _checkLocalConversation();
+    // 로컬 미리보기 preload는 provider 생성 경로를 막지 않도록
+    // 마이크로태스크로 분리합니다.
+    Future.microtask(() async {
+      try {
+        await _checkLocalConversation();
+      } catch (error) {
+        Logger.warning(
+          '[CharacterChat] Failed to preload local conversation preview.',
+          {
+            'characterId': _characterId,
+            'error': error.toString(),
+          },
+        );
+      }
+    });
   }
 
   /// 로컬 저장소에서 대화 존재 여부 확인
@@ -3232,20 +3245,23 @@ $enrichedContext
           _startFollowUpSchedule();
         }
       } else {
-        // 없으면 캐릭터 첫 메시지로 시작
+        // 첫 진입은 초기 상태와 첫 메시지를 한 번에 반영해
+        // 빈 initialized 상태가 렌더링되지 않도록 합니다.
+        final firstMessage = CharacterChatMessage.character(
+            _buildFirstMeetOpening(), _characterId);
         state = state.copyWith(
           isLoading: false,
           isInitialized: true,
         );
-        startConversation();
       }
     } catch (e) {
-      // 에러 시에도 초기화 완료 처리 (첫 메시지로 시작)
+      // 로드 실패 시에도 첫 메시지로 안전하게 진입합니다.
+      final firstMessage = CharacterChatMessage.character(
+          _buildFirstMeetOpening(), _characterId);
       state = state.copyWith(
         isLoading: false,
         isInitialized: true,
       );
-      startConversation();
     }
   }
 
@@ -3602,3 +3618,5 @@ $enrichedContext
     super.dispose();
   }
 }
+          messages: [firstMessage],
+        messages: [firstMessage],

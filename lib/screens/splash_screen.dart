@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../core/design_system/design_system.dart';
+import '../core/services/supabase_connection_service.dart';
 import '../services/app_version_service.dart';
 import '../services/storage_service.dart';
 import '../presentation/widgets/app_update_dialog.dart';
@@ -16,6 +17,18 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   bool _versionCheckBlocked = false;
   final StorageService _storageService = StorageService();
+
+  SupabaseClient? _tryGetSupabaseClient() {
+    if (!SupabaseConnectionService.isInitialized) {
+      return null;
+    }
+
+    try {
+      return Supabase.instance.client;
+    } catch (_) {
+      return null;
+    }
+  }
 
   @override
   void initState() {
@@ -92,7 +105,14 @@ class _SplashScreenState extends State<SplashScreen> {
 
     try {
       debugPrint('🔍 SplashScreen: Getting Supabase client');
-      final supabase = Supabase.instance.client;
+      final supabase = _tryGetSupabaseClient();
+      if (supabase == null) {
+        debugPrint(
+            '⚠️ SplashScreen: Supabase unavailable, redirecting to chat (guest mode)');
+        await _storageService.setGuestMode(true);
+        if (mounted) context.go('/chat');
+        return;
+      }
       debugPrint('🔐 SplashScreen: Resolving current session');
       final session = await _resolveSession(supabase);
       debugPrint(

@@ -21,13 +21,21 @@ class UserScopeService {
   String? _cachedOwnerId;
   String? get cachedOwnerId => _cachedOwnerId;
 
+  User? _currentUserOrNull() {
+    try {
+      return Supabase.instance.client.auth.currentUser;
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<void> initialize() async {
     await _ensureDeviceId();
     await refreshCurrentScope();
   }
 
   Future<void> refreshCurrentScope() async {
-    final user = Supabase.instance.client.auth.currentUser;
+    final user = _currentUserOrNull();
     if (user != null) {
       _cachedOwnerId = ownerIdForUser(user.id);
       final prefs = await SharedPreferences.getInstance();
@@ -39,7 +47,7 @@ class UserScopeService {
   }
 
   Future<String> getCurrentOwnerId() async {
-    final user = Supabase.instance.client.auth.currentUser;
+    final user = _currentUserOrNull();
     if (user != null) {
       final ownerId = ownerIdForUser(user.id);
       if (_cachedOwnerId != ownerId) {

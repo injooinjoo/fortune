@@ -12,14 +12,19 @@ class CharacterAffinityService {
   static const String _boxName = 'character_affinity';
   static Box<String>? _box;
 
-  // Supabase 클라이언트
-  final SupabaseClient _supabase = Supabase.instance.client;
-
   // 싱글톤
   static final CharacterAffinityService _instance =
       CharacterAffinityService._internal();
   factory CharacterAffinityService() => _instance;
   CharacterAffinityService._internal();
+
+  SupabaseClient? get _supabase {
+    try {
+      return Supabase.instance.client;
+    } catch (_) {
+      return null;
+    }
+  }
 
   /// 초기화 (main.dart에서 호출)
   static Future<void> initialize() async {
@@ -101,12 +106,13 @@ class CharacterAffinityService {
   /// 호감도 삭제 (서버)
   Future<bool> deleteAffinityFromServer(String characterId) async {
     try {
-      final userId = _supabase.auth.currentUser?.id;
+      final supabase = _supabase;
+      final userId = supabase?.auth.currentUser?.id;
       if (userId == null) {
         return false;
       }
 
-      await _supabase
+      await supabase!
           .from('user_character_affinity')
           .delete()
           .eq('user_id', userId)
@@ -125,13 +131,14 @@ class CharacterAffinityService {
   /// 호감도 로드 (서버)
   Future<CharacterAffinity?> loadAffinityFromServer(String characterId) async {
     try {
-      final userId = _supabase.auth.currentUser?.id;
+      final supabase = _supabase;
+      final userId = supabase?.auth.currentUser?.id;
       if (userId == null) {
         Logger.warning('No user logged in');
         return null;
       }
 
-      final response = await _supabase
+      final response = await supabase!
           .from('user_character_affinity')
           .select()
           .eq('user_id', userId)
@@ -156,7 +163,8 @@ class CharacterAffinityService {
   Future<bool> saveAffinityToServer(
       String characterId, CharacterAffinity affinity) async {
     try {
-      final userId = _supabase.auth.currentUser?.id;
+      final supabase = _supabase;
+      final userId = supabase?.auth.currentUser?.id;
       if (userId == null) {
         Logger.warning('No user logged in');
         return false;
@@ -167,7 +175,7 @@ class CharacterAffinityService {
         ...affinity.toSupabaseRow(characterId),
       };
 
-      await _supabase
+      await supabase!
           .from('user_character_affinity')
           .upsert(data, onConflict: 'user_id,character_id');
 

@@ -38,7 +38,13 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
     try {
       state = const AsyncValue.loading();
 
-      final client = _ref.read(supabaseClientProvider);
+      SupabaseClient client;
+      try {
+        client = _ref.read(supabaseClientProvider);
+      } catch (_) {
+        state = const AsyncValue.data(null);
+        return;
+      }
       final user = client.auth.currentUser;
 
       if (user == null) {
