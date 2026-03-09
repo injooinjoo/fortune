@@ -1,68 +1,83 @@
 // Google Gemini Provider 구현
 
 import {
+  GenerateOptions,
   ILLMProvider,
+  ImageGenerateOptions,
+  ImageResponse,
   LLMMessage,
   LLMResponse,
-  GenerateOptions,
-  ImageResponse,
-  GeminiImageGenerateOptions,
-} from '../types.ts'
+} from "../types.ts";
+import { assertLlmRequestAllowed } from "../safety.ts";
 
 export class GeminiProvider implements ILLMProvider {
-  constructor(private config: { apiKey: string; model: string }) {}
+  constructor(
+    private config: { apiKey: string; model: string; featureName?: string },
+  ) {}
 
   async generate(
     messages: LLMMessage[],
-    options?: GenerateOptions
+    options?: GenerateOptions,
   ): Promise<LLMResponse> {
-    const startTime = Date.now()
+    const startTime = Date.now();
 
     try {
       // Gemini API 호출
-      console.log('🔄 [Gemini] Converting messages...')
-      const contents = this.convertMessages(messages)
-      console.log('✅ [Gemini] Messages converted:', JSON.stringify(contents).substring(0, 200))
+      console.log("🔄 [Gemini] Converting messages...");
+      const contents = this.convertMessages(messages);
+      console.log(
+        "✅ [Gemini] Messages converted:",
+        JSON.stringify(contents).substring(0, 200),
+      );
 
       const requestBody = {
         contents,
         generationConfig: {
           temperature: options?.temperature ?? 0.7,
           maxOutputTokens: options?.maxTokens ?? 2048,
-          responseMimeType: options?.jsonMode ? 'application/json' : 'text/plain',
+          responseMimeType: options?.jsonMode
+            ? "application/json"
+            : "text/plain",
         },
-      }
+      };
 
-      console.log('🔄 [Gemini] Stringifying request body...')
-      const bodyString = JSON.stringify(requestBody)
-      console.log('✅ [Gemini] Body stringified, length:', bodyString.length)
+      console.log("🔄 [Gemini] Stringifying request body...");
+      const bodyString = JSON.stringify(requestBody);
+      console.log("✅ [Gemini] Body stringified, length:", bodyString.length);
 
-      console.log('🔄 [Gemini] Calling Gemini API...')
+      await assertLlmRequestAllowed({
+        provider: "gemini",
+        model: this.config.model,
+        featureName: this.config.featureName || "shared-gemini-provider",
+        mode: "text",
+      });
+
+      console.log("🔄 [Gemini] Calling Gemini API...");
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${this.config.model}:generateContent?key=${this.config.apiKey}`,
         {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json; charset=utf-8',
+            "Content-Type": "application/json; charset=utf-8",
           },
           body: bodyString,
-        }
-      )
-      console.log('✅ [Gemini] API call completed, status:', response.status)
+        },
+      );
+      console.log("✅ [Gemini] API call completed, status:", response.status);
 
       if (!response.ok) {
-        const errorText = await response.text()
-        throw new Error(`Gemini API error: ${response.status} - ${errorText}`)
+        const errorText = await response.text();
+        throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
       }
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!data.candidates || data.candidates.length === 0) {
-        throw new Error('No candidates in Gemini response')
+        throw new Error("No candidates in Gemini response");
       }
 
-      const candidate = data.candidates[0]
-      const content = candidate.content?.parts?.[0]?.text || ''
+      const candidate = data.candidates[0];
+      const content = candidate.content?.parts?.[0]?.text || "";
 
       return {
         content,
@@ -73,105 +88,112 @@ export class GeminiProvider implements ILLMProvider {
           totalTokens: data.usageMetadata?.totalTokenCount || 0,
         },
         latency: Date.now() - startTime,
-        provider: 'gemini',
+        provider: "gemini",
         model: this.config.model,
-      }
+      };
     } catch (error) {
-      console.error('❌ Gemini API 호출 실패:', error)
-      throw error
+      console.error("❌ Gemini API 호출 실패:", error);
+      throw error;
     }
   }
 
   private convertMessages(messages: LLMMessage[]) {
     // Gemini 형식으로 변환
     // system 메시지는 첫 user 메시지에 병합, 나머지 히스토리는 유지
-    const systemMessage = messages.find((m) => m.role === 'system')
-    const nonSystemMessages = messages.filter((m) => m.role !== 'system')
+    const systemMessage = messages.find((m) => m.role === "system");
+    const nonSystemMessages = messages.filter((m) => m.role !== "system");
 
-    console.log('🔄 [Gemini] Converting messages...')
-    console.log('  Total messages:', messages.length)
-    console.log('  System message:', systemMessage ? 'yes' : 'no')
-    console.log('  Non-system messages:', nonSystemMessages.length)
+    console.log("🔄 [Gemini] Converting messages...");
+    console.log("  Total messages:", messages.length);
+    console.log("  System message:", systemMessage ? "yes" : "no");
+    console.log("  Non-system messages:", nonSystemMessages.length);
 
-    const result: Array<{ role: string; parts: any[] }> = []
+    const result: Array<{ role: string; parts: any[] }> = [];
 
     for (let i = 0; i < nonSystemMessages.length; i++) {
-      const msg = nonSystemMessages[i]
-      const content = msg.content
-      const isFirstUserMessage = i === 0 && msg.role === 'user' && systemMessage
+      const msg = nonSystemMessages[i];
+      const content = msg.content;
+      const isFirstUserMessage = i === 0 && msg.role === "user" &&
+        systemMessage;
 
       // ✅ content가 배열인 경우 (Vision API)
       if (Array.isArray(content)) {
         const parts = content.map((item: any) => {
-          if (item.type === 'text') {
+          if (item.type === "text") {
             // 첫 user 메시지면 system prompt 병합
             const text = isFirstUserMessage
               ? `${systemMessage!.content}\n\n${item.text}`
-              : item.text
-            return { text }
-          } else if (item.type === 'image_url') {
-            const base64Data = item.image_url.url.replace(/^data:image\/\w+;base64,/, '')
+              : item.text;
+            return { text };
+          } else if (item.type === "image_url") {
+            const base64Data = item.image_url.url.replace(
+              /^data:image\/\w+;base64,/,
+              "",
+            );
             return {
               inline_data: {
-                mime_type: 'image/jpeg',
-                data: base64Data
-              }
-            }
+                mime_type: "image/jpeg",
+                data: base64Data,
+              },
+            };
           }
-          return item
-        })
+          return item;
+        });
 
         result.push({
-          role: msg.role === 'assistant' ? 'model' : 'user',
-          parts: parts
-        })
+          role: msg.role === "assistant" ? "model" : "user",
+          parts: parts,
+        });
       } else {
         // ✅ content가 문자열인 경우 (일반 텍스트)
         // 첫 user 메시지면 system prompt 병합
         const text = isFirstUserMessage
           ? `${systemMessage!.content}\n\n${content}`
-          : content
+          : content;
 
         result.push({
-          role: msg.role === 'assistant' ? 'model' : 'user',
+          role: msg.role === "assistant" ? "model" : "user",
           parts: [{ text }],
-        })
+        });
       }
     }
 
     // 시스템 메시지만 있고 다른 메시지가 없는 경우
-    if (result.length === 0 && systemMessage) {
+    if (
+      result.length === 0 && systemMessage &&
+      typeof systemMessage.content === "string"
+    ) {
       result.push({
-        role: 'user',
+        role: "user",
         parts: [{ text: systemMessage.content }],
-      })
+      });
     }
 
-    console.log('✅ [Gemini] Converted to', result.length, 'messages')
-    return result
+    console.log("✅ [Gemini] Converted to", result.length, "messages");
+    return result;
   }
 
-  private mapFinishReason(reason?: string): 'stop' | 'length' | 'error' {
+  private mapFinishReason(reason?: string): "stop" | "length" | "error" {
     switch (reason) {
-      case 'STOP':
-        return 'stop'
-      case 'MAX_TOKENS':
-        return 'length'
+      case "STOP":
+        return "stop";
+      case "MAX_TOKENS":
+        return "length";
       default:
-        return 'error'
+        return "error";
     }
   }
 
   validateConfig(): boolean {
-    return !!this.config.apiKey && !!this.config.model
+    return !!this.config.apiKey && !!this.config.model;
   }
 
   getModelInfo() {
     return {
-      provider: 'gemini',
+      provider: "gemini",
       model: this.config.model,
-      capabilities: ['text', 'json', 'fast', 'image'],
-    }
+      capabilities: ["text", "json", "fast", "image"],
+    };
   }
 
   /**
@@ -180,74 +202,85 @@ export class GeminiProvider implements ILLMProvider {
    */
   async generateImage(
     prompt: string,
-    options?: GeminiImageGenerateOptions
+    options?: ImageGenerateOptions,
   ): Promise<ImageResponse> {
-    const startTime = Date.now()
+    const startTime = Date.now();
 
     try {
-      console.log('🎨 [Gemini] Generating image...')
-      console.log('📝 [Gemini] Prompt length:', prompt.length)
+      console.log("🎨 [Gemini] Generating image...");
+      console.log("📝 [Gemini] Prompt length:", prompt.length);
 
       // Gemini 이미지 생성 모델 사용
-      const imageModel = 'gemini-2.5-flash-image'
+      const imageModel = "gemini-2.5-flash-image";
 
       const requestBody = {
         contents: [
           {
-            role: 'user',
+            role: "user",
             parts: [{ text: prompt }],
           },
         ],
         generationConfig: {
-          responseModalities: ['TEXT', 'IMAGE'],
+          responseModalities: ["TEXT", "IMAGE"],
         },
-      }
+      };
 
-      console.log('🔄 [Gemini] Calling Image Generation API...')
+      await assertLlmRequestAllowed({
+        provider: "gemini",
+        model: imageModel,
+        featureName: this.config.featureName || "shared-gemini-provider",
+        mode: "image",
+      });
+
+      console.log("🔄 [Gemini] Calling Image Generation API...");
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${imageModel}:generateContent?key=${this.config.apiKey}`,
         {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json; charset=utf-8',
+            "Content-Type": "application/json; charset=utf-8",
           },
           body: JSON.stringify(requestBody),
-        }
-      )
+        },
+      );
 
-      console.log('✅ [Gemini] API call completed, status:', response.status)
+      console.log("✅ [Gemini] API call completed, status:", response.status);
 
       if (!response.ok) {
-        const errorText = await response.text()
-        throw new Error(`Gemini Image API error: ${response.status} - ${errorText}`)
+        const errorText = await response.text();
+        throw new Error(
+          `Gemini Image API error: ${response.status} - ${errorText}`,
+        );
       }
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!data.candidates || data.candidates.length === 0) {
-        throw new Error('No candidates in Gemini Image response')
+        throw new Error("No candidates in Gemini Image response");
       }
 
       // 이미지 데이터 추출
-      const parts = data.candidates[0].content?.parts || []
-      const imagePart = parts.find((p: any) => p.inlineData?.mimeType?.startsWith('image/'))
+      const parts = data.candidates[0].content?.parts || [];
+      const imagePart = parts.find((p: any) =>
+        p.inlineData?.mimeType?.startsWith("image/")
+      );
 
       if (!imagePart || !imagePart.inlineData) {
-        throw new Error('No image data in Gemini response')
+        throw new Error("No image data in Gemini response");
       }
 
-      const latency = Date.now() - startTime
-      console.log(`✅ [Gemini] Image generated in ${latency}ms`)
+      const latency = Date.now() - startTime;
+      console.log(`✅ [Gemini] Image generated in ${latency}ms`);
 
       return {
         imageBase64: imagePart.inlineData.data,
-        provider: 'gemini',
+        provider: "gemini",
         model: imageModel,
         latency,
-      }
+      };
     } catch (error) {
-      console.error('❌ [Gemini] Image generation failed:', error)
-      throw error
+      console.error("❌ [Gemini] Image generation failed:", error);
+      throw error;
     }
   }
 }

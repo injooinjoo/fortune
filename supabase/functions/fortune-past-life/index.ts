@@ -22,6 +22,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { LLMFactory } from '../_shared/llm/factory.ts'
 import { UsageLogger } from '../_shared/llm/usage-logger.ts'
+import { assertLlmRequestAllowed } from '../_shared/llm/safety.ts'
 
 const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY')!
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
@@ -1416,6 +1417,13 @@ async function generatePortraitWithGemini(prompt: string): Promise<string | null
         responseModalities: ['TEXT', 'IMAGE'],
       },
     }
+
+    await assertLlmRequestAllowed({
+      provider: 'gemini',
+      model: imageModel,
+      featureName: 'fortune-past-life',
+      mode: 'image',
+    })
 
     console.log('🔄 [PastLife] Calling Gemini Image Generation API...')
     const response = await fetch(

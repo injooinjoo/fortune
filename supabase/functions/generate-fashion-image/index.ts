@@ -7,56 +7,65 @@
  * Cost: 35 souls (Gemini 2.5 Flash Image 이미지 생성)
  */
 
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { assertLlmRequestAllowed } from "../_shared/llm/safety.ts";
 
-const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY')!
-const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
-const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY")!;
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-}
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
 
 interface FashionImageRequest {
-  userId: string
-  gender: 'male' | 'female'
-  styleType: string // hip, neat, sexy, intellectual, natural, romantic, sporty
+  userId: string;
+  gender: "male" | "female";
+  styleType: string; // hip, neat, sexy, intellectual, natural, romantic, sporty
   outfitData: {
-    top: { item: string; color: string }
-    bottom: { item: string; color: string }
-    outer?: { item: string; color: string }
-    shoes: { item: string; color: string }
-    accessories?: string[]
-  }
-  colorTone: 'warm' | 'cool'
+    top: { item: string; color: string };
+    bottom: { item: string; color: string };
+    outer?: { item: string; color: string };
+    shoes: { item: string; color: string };
+    accessories?: string[];
+  };
+  colorTone: "warm" | "cool";
 }
 
 // 스타일별 프롬프트 힌트
 const STYLE_PROMPTS: Record<string, string> = {
-  hip: 'trendy streetwear aesthetic, oversized fit, urban fashion, bold accessories',
-  neat: 'clean minimalist style, well-fitted formal wear, polished professional look',
-  sexy: 'elegant fitted silhouette, sophisticated glamour, confident pose',
-  intellectual: 'smart casual, classic refined style, glasses optional, scholarly vibe',
-  natural: 'relaxed comfortable fit, earthy tones, effortless casual style',
-  romantic: 'soft feminine aesthetic, flowing fabrics, delicate details, pastel accents',
-  sporty: 'athletic wear, dynamic pose, active lifestyle, sporty accessories',
-}
+  hip:
+    "trendy streetwear aesthetic, oversized fit, urban fashion, bold accessories",
+  neat:
+    "clean minimalist style, well-fitted formal wear, polished professional look",
+  sexy: "elegant fitted silhouette, sophisticated glamour, confident pose",
+  intellectual:
+    "smart casual, classic refined style, glasses optional, scholarly vibe",
+  natural: "relaxed comfortable fit, earthy tones, effortless casual style",
+  romantic:
+    "soft feminine aesthetic, flowing fabrics, delicate details, pastel accents",
+  sporty: "athletic wear, dynamic pose, active lifestyle, sporty accessories",
+};
 
 /**
  * 패션 이미지 프롬프트 생성
  */
 function buildFashionPrompt(request: FashionImageRequest): string {
-  const { gender, styleType, outfitData, colorTone } = request
-  const modelType = gender === 'male' ? 'Korean male model' : 'Korean female model'
-  const styleHint = STYLE_PROMPTS[styleType] || STYLE_PROMPTS.neat
+  const { gender, styleType, outfitData, colorTone } = request;
+  const modelType = gender === "male"
+    ? "Korean male model"
+    : "Korean female model";
+  const styleHint = STYLE_PROMPTS[styleType] || STYLE_PROMPTS.neat;
 
-  const accessories = outfitData.accessories?.join(', ') || 'minimal accessories'
+  const accessories = outfitData.accessories?.join(", ") ||
+    "minimal accessories";
   const outer = outfitData.outer
     ? `${outfitData.outer.item} in ${outfitData.outer.color},`
-    : ''
+    : "";
 
   return `Professional fashion photography, ${modelType}, full body shot,
 wearing ${outfitData.top.item} in ${outfitData.top.color},
@@ -70,61 +79,71 @@ Setting: Clean white studio background, soft studio lighting.
 Pose: Confident natural standing pose, fashion editorial quality.
 Camera: Full body portrait, 9:16 aspect ratio, high fashion magazine style.
 Quality: 4K, professional photography, studio lighting, sharp focus.
-DO NOT include: text, logos, watermarks, blurry, distorted, cartoon, anime.`
+DO NOT include: text, logos, watermarks, blurry, distorted, cartoon, anime.`;
 }
 
 /**
  * Gemini 2.5 Flash Image를 통한 이미지 생성
  */
 async function generateImageWithGemini(prompt: string): Promise<string> {
-  console.log('🎨 Generating fashion image with Gemini 2.5 Flash Image...')
+  console.log("🎨 Generating fashion image with Gemini 2.5 Flash Image...");
 
   if (!GEMINI_API_KEY) {
-    console.log('⚠️ Gemini API key not configured')
-    throw new Error('Gemini API key not configured')
+    console.log("⚠️ Gemini API key not configured");
+    throw new Error("Gemini API key not configured");
   }
+
+  await assertLlmRequestAllowed({
+    provider: "gemini",
+    model: "gemini-2.5-flash-image",
+    featureName: "generate-fashion-image",
+    mode: "image",
+  });
 
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key=${GEMINI_API_KEY}`,
     {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         contents: [{
-          role: 'user',
+          role: "user",
           parts: [{ text: prompt }],
         }],
         generationConfig: {
-          responseModalities: ['image', 'text'],
-          responseMimeType: 'text/plain',
+          responseModalities: ["image", "text"],
+          responseMimeType: "text/plain",
         },
       }),
-    }
-  )
+    },
+  );
 
   if (!response.ok) {
-    const errorText = await response.text()
-    console.error('❌ Gemini API error:', errorText)
-    throw new Error(`Gemini API failed: ${response.status}`)
+    const errorText = await response.text();
+    console.error("❌ Gemini API error:", errorText);
+    throw new Error(`Gemini API failed: ${response.status}`);
   }
 
-  const result = await response.json()
+  const result = await response.json();
 
   // Gemini 응답에서 이미지 데이터 추출
-  const parts = result.candidates?.[0]?.content?.parts || []
-  const imagePart = parts.find((part: { inlineData?: { mimeType: string; data: string } }) =>
-    part.inlineData?.mimeType?.startsWith('image/')
-  )
+  const parts = result.candidates?.[0]?.content?.parts || [];
+  const imagePart = parts.find((
+    part: { inlineData?: { mimeType: string; data: string } },
+  ) => part.inlineData?.mimeType?.startsWith("image/"));
 
   if (!imagePart?.inlineData?.data) {
-    console.error('❌ Gemini 응답에 이미지 없음:', JSON.stringify(result).substring(0, 500))
-    throw new Error('No image data in Gemini response')
+    console.error(
+      "❌ Gemini 응답에 이미지 없음:",
+      JSON.stringify(result).substring(0, 500),
+    );
+    throw new Error("No image data in Gemini response");
   }
 
-  console.log('✅ Image generated successfully')
-  return imagePart.inlineData.data
+  console.log("✅ Image generated successfully");
+  return imagePart.inlineData.data;
 }
 
 /**
@@ -133,34 +152,37 @@ async function generateImageWithGemini(prompt: string): Promise<string> {
 async function uploadToSupabase(
   imageBase64: string,
   userId: string,
-  styleType: string
+  styleType: string,
 ): Promise<string> {
-  console.log('📤 Uploading to Supabase Storage...')
+  console.log("📤 Uploading to Supabase Storage...");
 
-  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
   // Convert base64 to blob
-  const imageBuffer = Uint8Array.from(atob(imageBase64), (c) => c.charCodeAt(0))
-  const fileName = `${userId}/${styleType}_${Date.now()}.png`
+  const imageBuffer = Uint8Array.from(
+    atob(imageBase64),
+    (c) => c.charCodeAt(0),
+  );
+  const fileName = `${userId}/${styleType}_${Date.now()}.png`;
 
   const { error } = await supabase.storage
-    .from('fashion-images')
+    .from("fashion-images")
     .upload(fileName, imageBuffer, {
-      contentType: 'image/png',
+      contentType: "image/png",
       upsert: false,
-    })
+    });
 
   if (error) {
-    console.error('❌ Upload error:', error)
-    throw new Error(`Upload failed: ${error.message}`)
+    console.error("❌ Upload error:", error);
+    throw new Error(`Upload failed: ${error.message}`);
   }
 
   const { data: publicUrlData } = supabase.storage
-    .from('fashion-images')
-    .getPublicUrl(fileName)
+    .from("fashion-images")
+    .getPublicUrl(fileName);
 
-  console.log('✅ Upload successful:', publicUrlData.publicUrl)
-  return publicUrlData.publicUrl
+  console.log("✅ Upload successful:", publicUrlData.publicUrl);
+  return publicUrlData.publicUrl;
 }
 
 /**
@@ -172,14 +194,14 @@ async function saveFashionImageRecord(
   gender: string,
   imageUrl: string,
   prompt: string,
-  outfitData: FashionImageRequest['outfitData']
+  outfitData: FashionImageRequest["outfitData"],
 ): Promise<string> {
-  console.log('💾 Saving fashion image record to database...')
+  console.log("💾 Saving fashion image record to database...");
 
-  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
   const { data, error } = await supabase
-    .from('fashion_images')
+    .from("fashion_images")
     .insert({
       user_id: userId,
       style_type: styleType,
@@ -188,45 +210,45 @@ async function saveFashionImageRecord(
       prompt_used: prompt,
       outfit_data: outfitData,
     })
-    .select('id')
-    .single()
+    .select("id")
+    .single();
 
   if (error) {
-    console.error('❌ Database error:', error)
-    throw new Error(`Database insert failed: ${error.message}`)
+    console.error("❌ Database error:", error);
+    throw new Error(`Database insert failed: ${error.message}`);
   }
 
-  console.log('✅ Record saved with ID:', data.id)
-  return data.id
+  console.log("✅ Record saved with ID:", data.id);
+  return data.id;
 }
 
 serve(async (req) => {
   // CORS preflight
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: CORS_HEADERS })
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: CORS_HEADERS });
   }
 
   try {
-    const request: FashionImageRequest = await req.json()
-    console.log('📥 Fashion image request:', {
+    const request: FashionImageRequest = await req.json();
+    console.log("📥 Fashion image request:", {
       userId: request.userId,
       gender: request.gender,
       styleType: request.styleType,
-    })
+    });
 
     // 1. 프롬프트 생성
-    const prompt = buildFashionPrompt(request)
-    console.log('📝 Generated prompt length:', prompt.length)
+    const prompt = buildFashionPrompt(request);
+    console.log("📝 Generated prompt length:", prompt.length);
 
     // 2. Gemini 2.5 Flash Image로 이미지 생성
-    const imageBase64 = await generateImageWithGemini(prompt)
+    const imageBase64 = await generateImageWithGemini(prompt);
 
     // 3. Supabase Storage에 업로드
     const imageUrl = await uploadToSupabase(
       imageBase64,
       request.userId,
-      request.styleType
-    )
+      request.styleType,
+    );
 
     // 4. DB에 기록 저장
     const recordId = await saveFashionImageRecord(
@@ -235,8 +257,8 @@ serve(async (req) => {
       request.gender,
       imageUrl,
       prompt,
-      request.outfitData
-    )
+      request.outfitData,
+    );
 
     return new Response(
       JSON.stringify({
@@ -246,20 +268,20 @@ serve(async (req) => {
         styleType: request.styleType,
       }),
       {
-        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-      }
-    )
+        headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+      },
+    );
   } catch (error) {
-    console.error('❌ Error:', error)
+    console.error("❌ Error:", error);
     return new Response(
       JSON.stringify({
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       }),
       {
         status: 500,
-        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-      }
-    )
+        headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+      },
+    );
   }
-})
+});
