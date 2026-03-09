@@ -76,18 +76,21 @@ export class LLMFactory {
         return new OpenAIProvider({
           apiKey: Deno.env.get("OPENAI_API_KEY") || "",
           model,
+          featureName,
         });
 
       case "anthropic":
         return new AnthropicProvider({
           apiKey: Deno.env.get("ANTHROPIC_API_KEY") || "",
           model,
+          featureName,
         });
 
       case "grok":
         return new GrokProvider({
           apiKey: Deno.env.get("XAI_API_KEY") || "",
           model,
+          featureName,
         });
 
       default:

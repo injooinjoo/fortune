@@ -206,15 +206,6 @@ serve(async (req) => {
 
     console.log('📍 [Story] 사용자 위치:', userLocation || weather?.cityName || '미제공')
 
-    // OpenAI API 키 확인
-    const openAIApiKey = Deno.env.get('OPENAI_API_KEY')
-    console.log('🔑 OpenAI API key configured:', !!openAIApiKey)
-
-    if (!openAIApiKey) {
-      console.error('❌ OpenAI API key not configured')
-      throw new Error('OpenAI API key not configured')
-    }
-
     // Supabase 클라이언트 초기화
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
@@ -491,6 +482,11 @@ ${userProfile?.birthDate ? `- 생년월일: ${userProfile.birthDate}` : ''}
 
     // ✅ LLM 모듈 사용 (동적 DB 설정 - A/B 테스트 지원)
     const llm = await LLMFactory.createFromConfigAsync('fortune-story')
+    console.log('🔑 Configured LLM provider ready:', llm.getModelInfo().provider)
+
+    if (!llm.validateConfig()) {
+      throw new Error('Configured LLM provider is not available')
+    }
 
     const response = await llm.generate([
       { role: 'system', content: systemPrompt },

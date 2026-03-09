@@ -614,18 +614,9 @@ ${zodiacAnimal ? `- 띠: ${zodiacAnimal}` : ''}
     await UsageLogger.log({
       fortuneType: 'pet-compatibility',
       userId,
-      provider: 'openai',
-      model: response.model || 'gpt-4o-mini',
-      response: {
-        content: response.content,
-        usage: {
-          promptTokens: response.usage?.prompt_tokens || 0,
-          completionTokens: response.usage?.completion_tokens || 0,
-          totalTokens: response.usage?.total_tokens || 0,
-        },
-        latency: endTime - startTime,
-        finishReason: 'stop',
-      },
+      provider: response.provider,
+      model: response.model,
+      response,
     })
 
     // 반려동물 이모지
@@ -739,7 +730,7 @@ ${zodiacAnimal ? `- 띠: ${zodiacAnimal}` : ''}
         success: true,
         data: fortuneWithPercentile,
         cached: false,
-        tokensUsed: response.usage?.total_tokens || 0
+        tokensUsed: response.usage?.totalTokens || 0
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
@@ -748,12 +739,13 @@ ${zodiacAnimal ? `- 띠: ${zodiacAnimal}` : ''}
     )
 
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
     console.error('❌ [PetFortune] 에러:', error)
 
     return new Response(
       JSON.stringify({
         error: 'Failed to generate pet fortune',
-        message: error.message
+        message: errorMessage
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },

@@ -63,13 +63,21 @@ supabase secrets set \
   GEMINI_FEATURE_BURST_REQUEST_LIMIT=80 \
   GEMINI_GUARD_WINDOW_HOURS=24 \
   GEMINI_CIRCUIT_BREAKER_COOLDOWN_MINUTES=30 \
+  LLM_ENABLED_PROVIDERS=gemini \
+  LLM_DISABLED_PROVIDERS=openai,anthropic,grok \
   LLM_GUARD_ALERT_THRESHOLD_RATIO=0.85 \
   LLM_GUARD_MONITOR_SECRET="<generated-secret>" \
   LLM_USAGE_GUARD_CACHE_TTL_MS=60000 \
   --project-ref hayjukwfcsdmppairazc
 ```
 
-3. Delete or revoke keys that are not part of the approved inventory.
+3. Remove unused paid-provider secrets from production.
+
+```bash
+supabase secrets unset OPENAI_API_KEY --project-ref hayjukwfcsdmppairazc
+```
+
+4. Delete or revoke keys that are not part of the approved inventory.
 
 ```bash
 gcloud services api-keys delete <key-id> --project=fortune2-463710
@@ -159,6 +167,8 @@ curl -sS \
 - Do not create ad hoc Gemini keys in the production GCP project.
 - Treat `GEMINI_DAILY_REQUEST_LIMIT` as required for production.
 - Treat burst limits and circuit breaker secrets as required for production.
+- Keep `LLM_ENABLED_PROVIDERS=gemini` and `LLM_DISABLED_PROVIDERS=openai,anthropic,grok` in production unless another provider is explicitly approved.
+- Remove unused provider secrets from production instead of leaving them dormant.
 - Keep `LLM_ALLOW_PREVIEW_MODELS=false` in production until a preview model is explicitly approved.
 - Use `GEMINI_MODEL_ALLOWLIST` to prevent accidental rollouts to unsupported or expensive models.
 - Keep `GCP_LOGGING_ENABLED=true` and review blocked-request logs weekly.

@@ -195,18 +195,20 @@ serve(async (req) => {
     const llm = LLMFactory.createFromConfig('fortune-celebrity')
     const today = new Date()
 
-    const connectionTypeText = {
+    const connectionTypeMap: Record<string, string> = {
       ideal_match: '이상형 매치',
       compatibility: '전체 궁합',
       career_advice: '조언 구하기',
-    }[connection_type] || '궁합 분석'
+    }
+    const connectionTypeText = connectionTypeMap[connection_type] || '궁합 분석'
 
-    const questionTypeText = {
+    const questionTypeMap: Record<string, string> = {
       love: '사랑/연애',
       career: '커리어/성공',
       life: '인생/삶의 방향',
       friendship: '친구/인맥',
-    }[question_type] || '전체'
+    }
+    const questionTypeText = questionTypeMap[question_type] || '전체'
 
     const systemPrompt = `당신은 30년 경력의 사주명리 전문가이자 운명 분석가입니다.
 사용자와 유명인 사이의 깊은 인연과 사주적 궁합을 분석합니다.
@@ -363,18 +365,9 @@ ${category ? `- 카테고리: ${category}` : ''}
     await UsageLogger.log({
       fortuneType: 'celebrity',
       userId,
-      provider: 'openai',
-      model: response.model || 'gpt-4o-mini',
-      response: {
-        content: response.content,
-        usage: {
-          promptTokens: response.usage?.prompt_tokens || 0,
-          completionTokens: response.usage?.completion_tokens || 0,
-          totalTokens: response.usage?.total_tokens || 0,
-        },
-        latency: endTime - startTime,
-        finishReason: 'stop',
-      },
+      provider: response.provider,
+      model: response.model,
+      response,
     })
 
     // 전체 운세 데이터 구성
@@ -459,12 +452,13 @@ ${category ? `- 카테고리: ${category}` : ''}
     )
 
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
     console.error('❌ [CelebrityFortune] 에러:', error)
 
     return new Response(
       JSON.stringify({
         error: 'Failed to generate celebrity fortune',
-        message: error.message
+        message: errorMessage
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },

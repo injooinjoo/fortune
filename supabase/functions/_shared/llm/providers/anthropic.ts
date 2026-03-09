@@ -6,9 +6,12 @@ import {
   LLMMessage,
   LLMResponse,
 } from "../types.ts";
+import { assertLlmRequestAllowed } from "../safety.ts";
 
 export class AnthropicProvider implements ILLMProvider {
-  constructor(private config: { apiKey: string; model: string }) {}
+  constructor(
+    private config: { apiKey: string; model: string; featureName?: string },
+  ) {}
 
   async generate(
     messages: LLMMessage[],
@@ -24,6 +27,13 @@ export class AnthropicProvider implements ILLMProvider {
       : undefined;
 
     try {
+      await assertLlmRequestAllowed({
+        provider: "anthropic",
+        model: this.config.model,
+        featureName: this.config.featureName || "shared-anthropic-provider",
+        mode: "text",
+      });
+
       const requestBody: Record<string, unknown> = {
         model: this.config.model,
         max_tokens: options?.maxTokens ?? 8192,

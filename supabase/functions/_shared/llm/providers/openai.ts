@@ -8,9 +8,12 @@ import {
   ImageGenerateOptions,
   ImageResponse
 } from '../types.ts'
+import { assertLlmRequestAllowed } from '../safety.ts'
 
 export class OpenAIProvider implements ILLMProvider {
-  constructor(private config: { apiKey: string; model: string }) {}
+  constructor(
+    private config: { apiKey: string; model: string; featureName?: string },
+  ) {}
 
   async generate(
     messages: LLMMessage[],
@@ -19,6 +22,13 @@ export class OpenAIProvider implements ILLMProvider {
     const startTime = Date.now()
 
     try {
+      await assertLlmRequestAllowed({
+        provider: 'openai',
+        model: this.config.model,
+        featureName: this.config.featureName || 'shared-openai-provider',
+        mode: 'text',
+      })
+
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -70,6 +80,13 @@ export class OpenAIProvider implements ILLMProvider {
     const startTime = Date.now()
 
     try {
+      await assertLlmRequestAllowed({
+        provider: 'openai',
+        model: 'dall-e-3',
+        featureName: this.config.featureName || 'shared-openai-provider',
+        mode: 'image',
+      })
+
       const response = await fetch('https://api.openai.com/v1/images/generations', {
         method: 'POST',
         headers: {

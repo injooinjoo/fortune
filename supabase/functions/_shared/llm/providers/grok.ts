@@ -6,9 +6,12 @@ import {
   LLMResponse,
   GenerateOptions,
 } from '../types.ts'
+import { assertLlmRequestAllowed } from '../safety.ts'
 
 export class GrokProvider implements ILLMProvider {
-  constructor(private config: { apiKey: string; model: string }) {}
+  constructor(
+    private config: { apiKey: string; model: string; featureName?: string },
+  ) {}
 
   async generate(
     messages: LLMMessage[],
@@ -17,6 +20,13 @@ export class GrokProvider implements ILLMProvider {
     const startTime = Date.now()
 
     try {
+      await assertLlmRequestAllowed({
+        provider: 'grok',
+        model: this.config.model,
+        featureName: this.config.featureName || 'shared-grok-provider',
+        mode: 'text',
+      })
+
       const response = await fetch('https://api.x.ai/v1/chat/completions', {
         method: 'POST',
         headers: {

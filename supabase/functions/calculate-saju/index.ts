@@ -537,12 +537,13 @@ serve(async (req) => {
 
     // LLM 분석 (선택적)
     let gptAnalysis = null
-    const openAIApiKey = Deno.env.get('OPENAI_API_KEY')
 
-    if (openAIApiKey) {
-      try {
-        const llm = await LLMFactory.createFromConfigAsync('saju')
+    try {
+      const llm = await LLMFactory.createFromConfigAsync('saju')
 
+      if (!llm.validateConfig()) {
+        console.log('⚠️ LLM analysis skipped: configured provider is not available')
+      } else {
         const systemPrompt = `당신은 한국의 전통 사주명리학 전문가입니다.
 주어진 사주 정보를 바탕으로 깊이 있는 분석을 JSON으로 제공하세요.
 절대로 "분석 중", "알 수 없음" 같은 표현을 사용하지 마세요.
@@ -568,7 +569,7 @@ JSON 형식으로 응답: {personality_traits, fortune_summary, career_fortune, 
 
         if (response.content) {
           gptAnalysis = JSON.parse(response.content)
-          console.log('✅ GPT analysis completed')
+          console.log('✅ LLM analysis completed')
 
           await UsageLogger.log({
             fortuneType: 'calculate-saju-v2',
@@ -578,15 +579,18 @@ JSON 형식으로 응답: {personality_traits, fortune_summary, career_fortune, 
             response: response
           })
         }
-      } catch (e) {
-        console.log('⚠️ GPT analysis failed, using defaults:', e)
       }
+    } catch (e) {
+      console.log('⚠️ LLM analysis failed, using defaults:', e)
     }
 
     // 천간/지지 한자 매핑
-    const ganjaHanja: Record<string, string> = {
+    const stemHanja: Record<string, string> = {
       '갑': '甲', '을': '乙', '병': '丙', '정': '丁', '무': '戊',
       '기': '己', '경': '庚', '신': '辛', '임': '壬', '계': '癸',
+    }
+
+    const branchHanja: Record<string, string> = {
       '자': '子', '축': '丑', '인': '寅', '묘': '卯', '진': '辰',
       '사': '巳', '오': '午', '미': '未', '신': '申', '유': '酉',
       '술': '戌', '해': '亥'
@@ -612,14 +616,14 @@ JSON 형식으로 응답: {personality_traits, fortune_summary, career_fortune, 
       hour_branch: hourPillar?.jiji || null,
 
       // 한자 표기
-      year_stem_hanja: ganjaHanja[yearPillar.cheongan] || '',
-      year_branch_hanja: ganjaHanja[yearPillar.jiji] || '',
-      month_stem_hanja: ganjaHanja[monthPillar.cheongan] || '',
-      month_branch_hanja: ganjaHanja[monthPillar.jiji] || '',
-      day_stem_hanja: ganjaHanja[dayPillar.cheongan] || '',
-      day_branch_hanja: ganjaHanja[dayPillar.jiji] || '',
-      hour_stem_hanja: hourPillar ? ganjaHanja[hourPillar.cheongan] || '' : null,
-      hour_branch_hanja: hourPillar ? ganjaHanja[hourPillar.jiji] || '' : null,
+      year_stem_hanja: stemHanja[yearPillar.cheongan] || '',
+      year_branch_hanja: branchHanja[yearPillar.jiji] || '',
+      month_stem_hanja: stemHanja[monthPillar.cheongan] || '',
+      month_branch_hanja: branchHanja[monthPillar.jiji] || '',
+      day_stem_hanja: stemHanja[dayPillar.cheongan] || '',
+      day_branch_hanja: branchHanja[dayPillar.jiji] || '',
+      hour_stem_hanja: hourPillar ? stemHanja[hourPillar.cheongan] || '' : null,
+      hour_branch_hanja: hourPillar ? branchHanja[hourPillar.jiji] || '' : null,
 
       // 기존 스키마 호환 (element_balance JSONB)
       element_balance: {
@@ -724,9 +728,10 @@ JSON 형식으로 응답: {personality_traits, fortune_summary, career_fortune, 
     )
 
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
     console.error('❌ Error:', error)
     return new Response(
-      JSON.stringify({ success: false, error: error.message }),
+      JSON.stringify({ success: false, error: errorMessage }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     )
   }
