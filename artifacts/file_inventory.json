@@ -18886,8 +18886,7 @@
       "path": "assets/textures/hanji_light.webp",
       "referenced_by": [
         "lib/core/design_system/components/hanji_background.dart",
-        "lib/screens/landing/landing_page.dart",
-        "lib/shared/widgets/hanji_scaffold.dart"
+        "lib/screens/landing/landing_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -22925,7 +22924,6 @@
         "lib/screens/splash_screen.dart",
         "lib/screens/subscription/subscription_page.dart",
         "lib/shared/components/app_header.dart",
-        "lib/shared/components/app_list_tile.dart",
         "lib/shared/components/base_card.dart",
         "lib/shared/components/daily_token_banner.dart",
         "lib/shared/components/daily_token_claim_widget.dart",
@@ -22936,7 +22934,6 @@
         "lib/shared/components/loading_dots.dart",
         "lib/shared/components/loading_states.dart",
         "lib/shared/components/numeric_date_input.dart",
-        "lib/shared/components/numeric_time_input.dart",
         "lib/shared/components/premium_membership_card.dart",
         "lib/shared/components/profile_header_icon.dart",
         "lib/shared/components/progressive_date_input.dart",
@@ -23009,8 +23006,7 @@
         "lib/features/fortune/presentation/widgets/infographic/templates/score/misc_templates.dart",
         "lib/features/fortune/presentation/widgets/infographic/templates/score_template.dart",
         "lib/features/fortune/presentation/widgets/infographic/tip_tag_grid.dart",
-        "lib/features/fortune/presentation/widgets/infographic/versus_bar.dart",
-        "lib/shared/widgets/hanji_scaffold.dart"
+        "lib/features/fortune/presentation/widgets/infographic/versus_bar.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -36686,8 +36682,7 @@
         "docs/development/_archive/ALL_FILES_LIST.md",
         "docs/development/_archive/DEPENDENCY_TRACE.md",
         "docs/development/_archive/FILE_DEPENDENCY_MAP.md",
-        "lib/routes/route_config.dart",
-        "lib/shared/components/README_NUMERIC_INPUTS.md"
+        "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -37003,22 +36998,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "lib_md",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/scripts/NAMUWIKI_DUMP_GUIDE.md",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -38029,22 +38008,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "lib_md",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/shared/components/README_NUMERIC_INPUTS.md",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -38073,22 +38036,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/shared/components/app_list_tile.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -38291,22 +38238,6 @@
         "zero_incoming_dart"
       ],
       "path": "lib/shared/components/numeric_date_input.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/shared/components/numeric_time_input.dart",
       "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
@@ -38602,22 +38533,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/shared/widgets/hanji_scaffold.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -39828,20 +39743,6 @@
         "no_inbound_refs"
       ],
       "path": "supabase/.temp/cli-latest",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "supabase",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "supabase_support",
-      "notes": [
-        "no_inbound_refs"
-      ],
-      "path": "supabase/20250110_rollback_fortune_results.sql",
       "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
@@ -44004,16 +43905,16 @@
       "assets": 1232,
       "docs": 140,
       "integration_test": 26,
-      "lib": 1000,
+      "lib": 995,
       "scripts": 69,
-      "supabase": 215,
+      "supabase": 214,
       "test": 53
     },
     "counts_by_candidate_action": {
       "keep": 1232,
       "keep_generated": 52,
       "manual_review": 825,
-      "phase1_remove_candidate": 63,
+      "phase1_remove_candidate": 57,
       "phase2_review_candidate": 526,
       "phase3_feature_cleanup": 37
     },
@@ -44023,7 +43924,7 @@
       "runtime_used": 1232,
       "test_only": 79,
       "tooling_only": 185,
-      "unreferenced": 925
+      "unreferenced": 919
     },
     "declared_asset_dirs_without_runtime_refs": [
       "assets/animations",
@@ -44132,8 +44033,8 @@
       "integration_test"
     ],
     "lib_dart_runtime_reachable": 635,
-    "lib_dart_total": 993,
-    "lib_dart_zero_incoming": 197,
+    "lib_dart_total": 990,
+    "lib_dart_zero_incoming": 194,
     "missing_function_refs": [
       "add-tokens",
       "calculate-auspicious-days",
@@ -44214,7 +44115,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2735,
+    "total_files": 2729,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "character-follow-up",
