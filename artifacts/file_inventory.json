@@ -20593,134 +20593,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/core/constants/tarot/positions/celtic_cross_cups.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/core/constants/tarot/positions/celtic_cross_major_arcana.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/core/constants/tarot/positions/celtic_cross_pentacles.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/core/constants/tarot/positions/celtic_cross_swords.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/core/constants/tarot/positions/celtic_cross_wands.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/core/constants/tarot/positions/relationship_meanings.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/core/constants/tarot/positions/single_card_meanings.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/core/constants/tarot/positions/three_card_meanings.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -21083,7 +20955,6 @@
         "lib/core/widgets/date_picker/numeric_date_input.dart",
         "lib/core/widgets/floating_dream_bubbles.dart",
         "lib/core/widgets/fortune_action_buttons.dart",
-        "lib/core/widgets/infographic/energy_gauge.dart",
         "lib/core/widgets/infographic/headers/saju_info_header.dart",
         "lib/core/widgets/unified_button.dart",
         "lib/core/widgets/unified_voice_text_field.dart",
@@ -21171,8 +21042,6 @@
         "lib/features/wellness/presentation/widgets/meditation_completion_sheet.dart",
         "lib/features/wellness/presentation/widgets/mind_gem_widget.dart",
         "lib/presentation/widgets/app_update_dialog.dart",
-        "lib/presentation/widgets/fortune_infographic/helpers.dart",
-        "lib/presentation/widgets/fortune_infographic/painters.dart",
         "lib/presentation/widgets/profile_image_picker.dart",
         "lib/presentation/widgets/social_accounts_section.dart",
         "lib/presentation/widgets/social_login_bottom_sheet.dart",
@@ -21243,23 +21112,7 @@
         "lib/core/design_system/components/traditional/seal_stamp_widget.dart",
         "lib/core/design_system/components/traditional/traditional_knot_indicator.dart",
         "lib/core/design_system/design_system.dart",
-        "lib/core/theme/typography_unified.dart",
-        "lib/features/fortune/presentation/widgets/infographic/advice_tag.dart",
-        "lib/features/fortune/presentation/widgets/infographic/category_bar_chart.dart",
-        "lib/features/fortune/presentation/widgets/infographic/infographic_container.dart",
-        "lib/features/fortune/presentation/widgets/infographic/keyword_tags.dart",
-        "lib/features/fortune/presentation/widgets/infographic/lucky_item_row.dart",
-        "lib/features/fortune/presentation/widgets/infographic/privacy_shield.dart",
-        "lib/features/fortune/presentation/widgets/infographic/score_circle.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/chart/chart_presets.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/career_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/daily_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/health_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/love_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/misc_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score_template.dart",
-        "lib/features/fortune/presentation/widgets/infographic/tip_tag_grid.dart",
-        "lib/features/fortune/presentation/widgets/infographic/versus_bar.dart"
+        "lib/core/theme/typography_unified.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -21328,11 +21181,6 @@
         "lib/core/design_system/tokens/ds_typography.dart",
         "lib/core/theme/typography_unified.dart",
         "lib/features/fortune/domain/entities/fortune_category.dart",
-        "lib/features/fortune/presentation/widgets/infographic/advice_tag.dart",
-        "lib/features/fortune/presentation/widgets/infographic/lucky_item_row.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/chart/chart_presets.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/health_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/tip_tag_grid.dart",
         "lib/services/fortune_share_service.dart",
         "scripts/design/build_mobile_component_boards.js"
       ],
@@ -21359,14 +21207,7 @@
         "lib/core/design_system/components/ds_toast.dart",
         "lib/core/design_system/design_system.dart",
         "lib/core/design_system/theme/ds_extensions.dart",
-        "lib/core/design_system/theme/ds_theme.dart",
-        "lib/features/fortune/presentation/widgets/infographic/advice_tag.dart",
-        "lib/features/fortune/presentation/widgets/infographic/infographic_container.dart",
-        "lib/features/fortune/presentation/widgets/infographic/keyword_tags.dart",
-        "lib/features/fortune/presentation/widgets/infographic/lucky_item_row.dart",
-        "lib/features/fortune/presentation/widgets/infographic/privacy_shield.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/chart/chart_presets.dart",
-        "lib/features/fortune/presentation/widgets/infographic/tip_tag_grid.dart"
+        "lib/core/design_system/theme/ds_theme.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -21428,23 +21269,7 @@
         "lib/core/design_system/components/ds_toast.dart",
         "lib/core/design_system/design_system.dart",
         "lib/core/design_system/theme/ds_extensions.dart",
-        "lib/core/design_system/theme/ds_theme.dart",
-        "lib/features/fortune/presentation/widgets/infographic/advice_tag.dart",
-        "lib/features/fortune/presentation/widgets/infographic/category_bar_chart.dart",
-        "lib/features/fortune/presentation/widgets/infographic/infographic_container.dart",
-        "lib/features/fortune/presentation/widgets/infographic/keyword_tags.dart",
-        "lib/features/fortune/presentation/widgets/infographic/lucky_item_row.dart",
-        "lib/features/fortune/presentation/widgets/infographic/score_circle.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/chart/chart_presets.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/chart_template.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/career_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/daily_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/health_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/love_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/misc_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score_template.dart",
-        "lib/features/fortune/presentation/widgets/infographic/tip_tag_grid.dart",
-        "lib/features/fortune/presentation/widgets/infographic/versus_bar.dart"
+        "lib/core/design_system/theme/ds_theme.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -21681,22 +21506,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/core/models/personality_dna_model.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -23103,22 +22912,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/core/widgets/infographic/energy_gauge.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -24349,22 +24142,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/chat/domain/models/rich_content_data.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -24983,22 +24760,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/domain/models/past_life_result.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -25194,22 +24955,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/domain/models/yearly_encounter_result.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -25296,312 +25041,6 @@
         "lib/features/interactive/presentation/pages/face_reading_page.dart"
       ],
       "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/infographic/advice_tag.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/career_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/daily_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/love_templates.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/infographic/category_bar_chart.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/infographic/templates/chart/chart_presets.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/career_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/daily_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/misc_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score_template.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/infographic/infographic_assets.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/infographic/infographic_container.dart",
-        "lib/features/fortune/presentation/widgets/infographic/score_circle.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/infographic/infographic_container.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/infographic/templates/chart_template.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/misc_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score_template.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/infographic/keyword_tags.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/infographic/lucky_item_row.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/daily_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score_template.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/infographic/privacy_shield.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/infographic/templates/chart/chart_presets.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/chart_template.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score_template.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/infographic/score_circle.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/infographic/templates/score_template.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/infographic/templates/chart/chart_presets.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/infographic/templates/chart_template.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/infographic/templates/chart/chart_presets.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/infographic/templates/score/career_templates.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/infographic/templates/score/daily_templates.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/infographic/templates/score/health_templates.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/infographic/templates/score/love_templates.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/infographic/templates/score/misc_templates.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/infographic/templates/score_template.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/career_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/daily_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/health_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/love_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/misc_templates.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/infographic/tip_tag_grid.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/career_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/health_templates.dart",
-        "lib/features/fortune/presentation/widgets/infographic/templates/score/love_templates.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/fortune/presentation/widgets/infographic/versus_bar.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/infographic/templates/chart/chart_presets.dart"
-      ],
-      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -27846,38 +27285,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/presentation/widgets/fortune_infographic/helpers.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/presentation/widgets/fortune_infographic/painters.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -34254,25 +33661,24 @@
       "assets": 1231,
       "docs": 81,
       "integration_test": 26,
-      "lib": 541,
+      "lib": 508,
       "scripts": 68,
       "supabase": 203,
       "test": 52
     },
     "counts_by_candidate_action": {
-      "keep": 824,
+      "keep": 813,
       "keep_generated": 38,
       "manual_review": 975,
-      "phase1_remove_candidate": 22,
       "phase2_review_candidate": 343
     },
     "counts_by_usage_status": {
       "doc_only": 84,
       "generated_excluded": 38,
-      "runtime_used": 824,
+      "runtime_used": 813,
       "test_only": 78,
       "tooling_only": 181,
-      "unreferenced": 997
+      "unreferenced": 975
     },
     "declared_asset_dirs_without_runtime_refs": [
       "assets/animations",
@@ -34425,8 +33831,8 @@
       "integration_test"
     ],
     "lib_dart_runtime_reachable": 482,
-    "lib_dart_total": 538,
-    "lib_dart_zero_incoming": 25,
+    "lib_dart_total": 505,
+    "lib_dart_zero_incoming": 3,
     "missing_function_refs": [
       "--all",
       "add-tokens",
@@ -34541,7 +33947,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2202,
+    "total_files": 2169,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": []
   }
