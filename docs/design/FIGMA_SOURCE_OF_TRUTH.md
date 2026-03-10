@@ -51,6 +51,19 @@ Examples:
 
 Live captures are backed by verified local screenshots from the Flutter web build. Placeholder specs remain in the same file when a surface cannot be rendered locally without authenticated data, backend seed data, or `state.extra`.
 
+## Coverage Triage
+
+- `26` placeholder surfaces remain under active governance and are not dead pages.
+- Breakdown:
+  - `11` auth-gated profile/settings routes
+  - `7` runtime result layouts
+  - `6` trend content/result layouts waiting on representative seed data
+  - `2` `state.extra` dependent detail pages
+- Active-route delete candidates: `0`
+- Redirect-only exclusions: `/`, `/home`
+
+The official Figma file therefore covers every active router surface either as a live capture or as an explicitly managed placeholder. Removal candidates are tracked through source inventory, not by silently dropping frames from the design registry.
+
 ## Capture Model
 
 ### Live Capture

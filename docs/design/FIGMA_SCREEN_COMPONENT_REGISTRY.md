@@ -156,6 +156,18 @@ Additional official pages:
 
 ## Placeholder Governance
 
+### Triage Summary
+
+| Triage bucket | Count | Meaning |
+| --- | ---: | --- |
+| `capture_next_auth` | 11 | Active profile/settings routes blocked only by authenticated session setup in local capture mode |
+| `capture_next_runtime` | 7 | Active result layouts that need a completed in-app flow plus generated payloads |
+| `capture_next_seed_data` | 6 | Active trend layouts blocked by missing representative backend seed content |
+| `capture_next_state_extra` | 2 | Active pages that require `GoRouter state.extra` payloads instead of a bare URL |
+| `delete_or_archive` | 0 | Active-route Figma surfaces that should be removed from governance |
+
+This triage is the management baseline for the remaining `26` placeholders. None of these surfaces are currently classified as dead pages or archive candidates.
+
 ### Auth-gated profile surfaces
 
 - `profile__root__auth_gated`
@@ -174,6 +186,10 @@ Blocker:
 
 - Current test auto-login cannot establish a usable authenticated profile session because backend user creation fails in local capture mode.
 
+Action:
+
+- Keep in the official file and convert to live capture after local authenticated session setup is stabilized.
+
 ### `state.extra` dependent pages
 
 - `fortune_history__detail__extra`
@@ -182,6 +198,10 @@ Blocker:
 Blocker:
 
 - These surfaces require runtime navigation payloads and do not render correctly from a bare direct URL.
+
+Action:
+
+- Keep in the official file and capture them through a dedicated navigation harness or debug payload injector instead of direct hash routing.
 
 ### Runtime result pages
 
@@ -197,6 +217,10 @@ Blocker:
 
 - These states require successful local completion of the input flow plus generated backend or local result payloads.
 
+Action:
+
+- Keep in the official file and convert them after deterministic seeded result fixtures or capture automation are added for each flow.
+
 ### Trend content pages
 
 - `trend_psychology__detail__content`
@@ -209,6 +233,26 @@ Blocker:
 Blocker:
 
 - Current local backend seed data does not provide usable `trend_content` records for direct capture.
+
+Action:
+
+- Keep in the official file and convert them after one representative `trend_content` record per layout family is seeded locally.
+
+## Active Surface Audit
+
+### Continue Managing
+
+- All `26` placeholders remain under active governance because they map to live routes or live runtime result states.
+
+### Intentional Non-Surface Exclusions
+
+- `/` is excluded as a redirect-only route to `/chat`.
+- `/home` is excluded as a redirect-only compatibility route to `/chat`.
+
+### Delete Or Archive Candidates
+
+- Active-route pages: `_none_`
+- Route-orphan pages from source inventory: `_none_`
 
 ## Representative Content Rules
 

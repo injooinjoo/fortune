@@ -250,6 +250,7 @@ const SCREENS = [
     title: 'Chat Fortune Result Card',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_runtime',
     blocker:
       'Needs persisted conversation history and generated fortune-card state in local Hive storage.',
     sources: [
@@ -327,6 +328,7 @@ const SCREENS = [
     title: 'Psychology Test Result',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_runtime',
     blocker:
       'Needs token consumption plus successful remote psychology-test generation after completing five-question flow.',
     sources: [
@@ -380,6 +382,7 @@ const SCREENS = [
     title: 'Face Reading Result',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_runtime',
     blocker:
       'Requires photo-input flow plus generated analysis payload after runtime permission and edge call.',
     sources: ['lib/features/interactive/presentation/pages/face_reading_page.dart'],
@@ -404,6 +407,7 @@ const SCREENS = [
     title: 'Taemong Result',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_runtime',
     blocker: 'Requires text submission and taemong analysis completion.',
     sources: ['lib/features/interactive/presentation/pages/taemong_page.dart'],
   },
@@ -427,6 +431,7 @@ const SCREENS = [
     title: 'Worry Bead Result',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_runtime',
     blocker: 'Requires worry input and generated reflection result.',
     sources: ['lib/features/interactive/presentation/pages/worry_bead_page.dart'],
   },
@@ -463,6 +468,7 @@ const SCREENS = [
     title: 'Trend Psychology Detail',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_seed_data',
     blocker:
       'Backend trend_content table is empty in current dev data, so content detail cannot be opened from /trend.',
     sources: ['lib/features/trend/presentation/pages/trend_psychology_test_page.dart'],
@@ -474,6 +480,7 @@ const SCREENS = [
     title: 'Trend Psychology Result',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_seed_data',
     blocker: 'Requires seeded trend content plus completed test answers.',
     sources: ['lib/features/trend/presentation/pages/trend_psychology_test_page.dart'],
   },
@@ -484,6 +491,7 @@ const SCREENS = [
     title: 'Trend Ideal Worldcup',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_seed_data',
     blocker: 'Requires backend trend content record with worldcup payload.',
     sources: ['lib/features/trend/presentation/pages/trend_ideal_worldcup_page.dart'],
   },
@@ -494,6 +502,7 @@ const SCREENS = [
     title: 'Trend Worldcup Winner Result',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_seed_data',
     blocker: 'Requires seeded bracket data and completed selection flow.',
     sources: ['lib/features/trend/presentation/pages/trend_ideal_worldcup_page.dart'],
   },
@@ -504,6 +513,7 @@ const SCREENS = [
     title: 'Trend Balance Game',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_seed_data',
     blocker: 'Requires backend trend content record with balance-game payload.',
     sources: ['lib/features/trend/presentation/pages/trend_balance_game_page.dart'],
   },
@@ -514,6 +524,7 @@ const SCREENS = [
     title: 'Trend Balance Result',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_seed_data',
     blocker: 'Requires seeded balance-game content and summary completion.',
     sources: ['lib/features/trend/presentation/pages/trend_balance_game_page.dart'],
   },
@@ -540,6 +551,7 @@ const SCREENS = [
     title: 'Health Fortune Result',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_runtime',
     blocker: 'Needs successful health fortune generation after completing input flow.',
     sources: ['lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart'],
   },
@@ -550,6 +562,7 @@ const SCREENS = [
     title: 'Medical Document Result',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_state_extra',
     blocker: 'GoRouter state.extra upload payload is required to render this page.',
     sources: ['lib/features/health/presentation/pages/medical_document_result_page.dart'],
   },
@@ -573,6 +586,7 @@ const SCREENS = [
     title: 'Exercise Fortune Result',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_runtime',
     blocker: 'Needs multi-step selection flow plus successful edge function response.',
     sources: ['lib/features/exercise/presentation/pages/exercise_fortune_page.dart'],
   },
@@ -609,6 +623,7 @@ const SCREENS = [
     title: 'History Detail',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_state_extra',
     blocker: 'GoRouter state.extra FortuneHistory payload is required for detail rendering.',
     sources: ['lib/features/history/presentation/pages/fortune_history_detail_page.dart'],
   },
@@ -632,6 +647,7 @@ const SCREENS = [
     title: 'Profile Root',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_auth',
     blocker:
       'Current test auto-login is blocked by backend user-create failure, so /profile remains auth-gated in live capture.',
     sources: ['lib/screens/profile/profile_screen.dart'],
@@ -643,6 +659,7 @@ const SCREENS = [
     title: 'Profile Edit',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_auth',
     blocker: 'Requires authenticated user profile data.',
     sources: ['lib/screens/profile/profile_edit_page.dart'],
   },
@@ -653,6 +670,7 @@ const SCREENS = [
     title: 'Profile Saju',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_auth',
     blocker: 'Requires authenticated user profile data.',
     sources: ['lib/screens/profile/saju_detail_page.dart'],
   },
@@ -663,6 +681,7 @@ const SCREENS = [
     title: 'Profile Saju Summary',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_auth',
     blocker: 'Requires authenticated user profile data.',
     sources: ['lib/screens/profile/saju_summary_page.dart'],
   },
@@ -673,6 +692,7 @@ const SCREENS = [
     title: 'Profile Elements',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_auth',
     blocker: 'Requires authenticated user profile data.',
     sources: ['lib/screens/profile/elements_detail_page.dart'],
   },
@@ -683,6 +703,7 @@ const SCREENS = [
     title: 'Profile Verification',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_auth',
     blocker: 'Requires authenticated user profile data.',
     sources: ['lib/screens/profile/profile_verification_page.dart'],
   },
@@ -771,6 +792,7 @@ const SCREENS = [
     title: 'Notification Settings',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_auth',
     blocker: 'Nested under /profile and requires authenticated session.',
     sources: ['lib/features/notification/presentation/pages/notification_settings_page.dart'],
   },
@@ -781,6 +803,7 @@ const SCREENS = [
     title: 'Font Settings',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_auth',
     blocker: 'Nested under /profile and requires authenticated session.',
     sources: ['lib/features/settings/presentation/pages/font_settings_page.dart'],
   },
@@ -791,6 +814,7 @@ const SCREENS = [
     title: 'Social Accounts',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_auth',
     blocker: 'Nested under /profile and requires authenticated session.',
     sources: ['lib/screens/settings/social_accounts_screen.dart'],
   },
@@ -801,6 +825,7 @@ const SCREENS = [
     title: 'Phone Management',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_auth',
     blocker: 'Nested under /profile and requires authenticated session.',
     sources: ['lib/screens/settings/phone_management_screen.dart'],
   },
@@ -811,6 +836,7 @@ const SCREENS = [
     title: 'Account Deletion',
     routeHash: null,
     status: 'placeholder',
+    triage: 'capture_next_auth',
     blocker: 'Nested under /profile and requires authenticated session.',
     sources: ['lib/screens/profile/account_deletion_page.dart'],
   },
@@ -933,11 +959,23 @@ function getStatusCounts() {
   );
 }
 
+function getPlaceholderTriageCounts() {
+  return SCREENS.filter((screen) => screen.status === 'placeholder').reduce(
+    (acc, screen) => {
+      const triageKey = screen.triage || 'unclassified';
+      acc[triageKey] = (acc[triageKey] || 0) + 1;
+      return acc;
+    },
+    {}
+  );
+}
+
 module.exports = {
   COMPONENT_CARDS,
   FIGMA_PAGES,
   IPHONE_15_PRO,
   SCREENS,
+  getPlaceholderTriageCounts,
   getScreensByPage,
   getStatusCounts,
 };
