@@ -19379,11 +19379,41 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [
-        "no_inbound_refs"
+      "notes": [],
+      "path": "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+      "referenced_by": [
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
+        "docs/design/README.md"
       ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
+      "path": "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
+      "referenced_by": [
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
+        "docs/design/README.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
       "path": "docs/design/README.md",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -19769,11 +19799,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [
-        "no_inbound_refs"
-      ],
+      "notes": [],
       "path": "docs/figma-style-guide.md",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -20951,6 +20981,7 @@
       "notes": [],
       "path": "lib/core/design_system/components/ds_badge.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/design_system/design_system.dart"
       ],
       "runtime_reachable": true,
@@ -20965,6 +20996,7 @@
       "notes": [],
       "path": "lib/core/design_system/components/ds_bottom_sheet.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/design_system/design_system.dart"
       ],
       "runtime_reachable": true,
@@ -20979,6 +21011,7 @@
       "notes": [],
       "path": "lib/core/design_system/components/ds_button.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/design_system/components/ds_modal.dart",
         "lib/core/design_system/design_system.dart"
       ],
@@ -20995,6 +21028,7 @@
       "path": "lib/core/design_system/components/ds_card.dart",
       "referenced_by": [
         "docs/APP_ARCHITECTURE.md",
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/design_system/design_system.dart"
       ],
       "runtime_reachable": true,
@@ -21009,6 +21043,7 @@
       "notes": [],
       "path": "lib/core/design_system/components/ds_chip.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/design_system/design_system.dart"
       ],
       "runtime_reachable": true,
@@ -21023,6 +21058,7 @@
       "notes": [],
       "path": "lib/core/design_system/components/ds_list_tile.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/design_system/design_system.dart"
       ],
       "runtime_reachable": true,
@@ -21037,6 +21073,7 @@
       "notes": [],
       "path": "lib/core/design_system/components/ds_loading.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/design_system/design_system.dart"
       ],
       "runtime_reachable": true,
@@ -21051,6 +21088,7 @@
       "notes": [],
       "path": "lib/core/design_system/components/ds_modal.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/design_system/design_system.dart"
       ],
       "runtime_reachable": true,
@@ -21065,6 +21103,7 @@
       "notes": [],
       "path": "lib/core/design_system/components/ds_section_header.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/design_system/design_system.dart"
       ],
       "runtime_reachable": true,
@@ -21079,6 +21118,7 @@
       "notes": [],
       "path": "lib/core/design_system/components/ds_text_field.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/design_system/design_system.dart"
       ],
       "runtime_reachable": true,
@@ -21093,6 +21133,7 @@
       "notes": [],
       "path": "lib/core/design_system/components/ds_toast.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/design_system/design_system.dart"
       ],
       "runtime_reachable": true,
@@ -21107,6 +21148,7 @@
       "notes": [],
       "path": "lib/core/design_system/components/ds_toggle.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/design_system/design_system.dart"
       ],
       "runtime_reachable": true,
@@ -21121,6 +21163,7 @@
       "notes": [],
       "path": "lib/core/design_system/components/hanji_background.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/design_system/design_system.dart"
       ],
       "runtime_reachable": true,
@@ -21135,6 +21178,7 @@
       "notes": [],
       "path": "lib/core/design_system/components/traditional/cloud_bubble.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/design_system/design_system.dart"
       ],
       "runtime_reachable": true,
@@ -21149,6 +21193,7 @@
       "notes": [],
       "path": "lib/core/design_system/components/traditional/cloud_bubble_painter.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/design_system/design_system.dart"
       ],
       "runtime_reachable": true,
@@ -21165,6 +21210,7 @@
       ],
       "path": "lib/core/design_system/components/traditional/seal_stamp_widget.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/chat/presentation/widgets/chat_fortune_result_card.dart"
       ],
       "runtime_reachable": false,
@@ -21179,6 +21225,7 @@
       "notes": [],
       "path": "lib/core/design_system/components/traditional/traditional_knot_indicator.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/design_system/design_system.dart"
       ],
       "runtime_reachable": true,
@@ -21455,6 +21502,7 @@
       "notes": [],
       "path": "lib/core/design_system/tokens/ds_animation.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/design_system/components/ds_button.dart",
         "lib/core/design_system/components/ds_card.dart",
         "lib/core/design_system/components/ds_text_field.dart",
@@ -21475,6 +21523,7 @@
       "path": "lib/core/design_system/tokens/ds_colors.dart",
       "referenced_by": [
         "docs/APP_ARCHITECTURE.md",
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/design_system/components/ds_badge.dart",
         "lib/core/design_system/components/ds_bottom_sheet.dart",
         "lib/core/design_system/components/ds_button.dart",
@@ -21513,6 +21562,7 @@
       "notes": [],
       "path": "lib/core/design_system/tokens/ds_radius.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/design_system/components/ds_badge.dart",
         "lib/core/design_system/components/ds_bottom_sheet.dart",
         "lib/core/design_system/components/ds_button.dart",
@@ -21563,6 +21613,7 @@
       "notes": [],
       "path": "lib/core/design_system/tokens/ds_shadows.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/design_system/design_system.dart",
         "lib/core/design_system/theme/ds_extensions.dart"
       ],
@@ -21579,6 +21630,7 @@
       "path": "lib/core/design_system/tokens/ds_spacing.dart",
       "referenced_by": [
         "docs/APP_ARCHITECTURE.md",
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/design_system/components/ds_badge.dart",
         "lib/core/design_system/components/ds_bottom_sheet.dart",
         "lib/core/design_system/components/ds_button.dart",
@@ -21624,6 +21676,7 @@
       "notes": [],
       "path": "lib/core/design_system/tokens/ds_typography.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/design_system/components/ds_button.dart",
         "lib/core/design_system/components/ds_toast.dart",
         "lib/core/design_system/design_system.dart",
@@ -23948,6 +24001,7 @@
       "notes": [],
       "path": "lib/features/admin/pages/celebrity_crawling_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -24280,6 +24334,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/pages/character_onboarding_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/character/presentation/pages/swipe_home_shell.dart"
       ],
       "runtime_reachable": true,
@@ -24294,6 +24349,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/pages/character_profile_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/character_routes.dart"
       ],
       "runtime_reachable": true,
@@ -24308,6 +24364,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/pages/swipe_home_shell.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "integration_test/app_test.dart",
         "lib/routes/route_config.dart"
       ],
@@ -25547,6 +25604,7 @@
       "notes": [],
       "path": "lib/features/exercise/presentation/pages/exercise_fortune_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -26233,6 +26291,7 @@
       "notes": [],
       "path": "lib/features/fortune/presentation/pages/manseryeok_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -27008,6 +27067,7 @@
       "notes": [],
       "path": "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/health/presentation/pages/health_fortune_page.dart"
       ],
       "runtime_reachable": true,
@@ -27162,6 +27222,7 @@
       "notes": [],
       "path": "lib/features/health/presentation/pages/health_fortune_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -27176,6 +27237,7 @@
       "notes": [],
       "path": "lib/features/health/presentation/pages/medical_document_result_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -27267,6 +27329,7 @@
       "notes": [],
       "path": "lib/features/history/presentation/pages/fortune_history_detail_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -27281,6 +27344,7 @@
       "notes": [],
       "path": "lib/features/history/presentation/pages/fortune_history_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -27381,6 +27445,7 @@
       "notes": [],
       "path": "lib/features/interactive/presentation/pages/dream_interpretation_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/development/UNIFIED_DATE_PICKER_MIGRATION.md",
         "lib/routes/routes/interactive_routes.dart"
       ],
@@ -27396,6 +27461,7 @@
       "notes": [],
       "path": "lib/features/interactive/presentation/pages/dream_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/development/UNIFIED_DATE_PICKER_MIGRATION.md",
         "lib/routes/routes/interactive_routes.dart"
       ],
@@ -27412,6 +27478,7 @@
       "path": "lib/features/interactive/presentation/pages/face_reading_page.dart",
       "referenced_by": [
         "docs/deployment/review/IOS_REVIEW_EVIDENCE.md",
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/routes/interactive_routes.dart"
       ],
       "runtime_reachable": true,
@@ -27426,6 +27493,7 @@
       "notes": [],
       "path": "lib/features/interactive/presentation/pages/interactive_list_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/routes/interactive_routes.dart"
       ],
       "runtime_reachable": true,
@@ -27440,6 +27508,7 @@
       "notes": [],
       "path": "lib/features/interactive/presentation/pages/psychology_test_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/development/UNIFIED_DATE_PICKER_MIGRATION.md",
         "lib/routes/routes/interactive_routes.dart"
       ],
@@ -27455,6 +27524,7 @@
       "notes": [],
       "path": "lib/features/interactive/presentation/pages/taemong_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/routes/interactive_routes.dart"
       ],
       "runtime_reachable": true,
@@ -27469,6 +27539,7 @@
       "notes": [],
       "path": "lib/features/interactive/presentation/pages/tarot_animated_flow_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/routes/interactive_routes.dart"
       ],
       "runtime_reachable": true,
@@ -27483,6 +27554,7 @@
       "notes": [],
       "path": "lib/features/interactive/presentation/pages/tarot_chat_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/routes/interactive_routes.dart"
       ],
       "runtime_reachable": true,
@@ -27497,6 +27569,7 @@
       "notes": [],
       "path": "lib/features/interactive/presentation/pages/worry_bead_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/routes/interactive_routes.dart"
       ],
       "runtime_reachable": true,
@@ -27539,6 +27612,7 @@
       "notes": [],
       "path": "lib/features/more/presentation/pages/fortune_tab_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -27553,6 +27627,7 @@
       "notes": [],
       "path": "lib/features/more/presentation/pages/more_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -27567,6 +27642,7 @@
       "notes": [],
       "path": "lib/features/notification/presentation/pages/notification_settings_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -27581,6 +27657,7 @@
       "notes": [],
       "path": "lib/features/payment/presentation/pages/token_purchase_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -27595,6 +27672,7 @@
       "notes": [],
       "path": "lib/features/policy/presentation/pages/privacy_policy_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -27609,6 +27687,7 @@
       "notes": [],
       "path": "lib/features/policy/presentation/pages/terms_of_service_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -27623,6 +27702,7 @@
       "notes": [],
       "path": "lib/features/settings/presentation/pages/font_settings_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -27651,6 +27731,7 @@
       "notes": [],
       "path": "lib/features/support/presentation/pages/help_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -28012,6 +28093,7 @@
       "notes": [],
       "path": "lib/features/trend/presentation/pages/trend_balance_game_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/routes/trend_routes.dart"
       ],
       "runtime_reachable": true,
@@ -28026,6 +28108,7 @@
       "notes": [],
       "path": "lib/features/trend/presentation/pages/trend_ideal_worldcup_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/routes/trend_routes.dart"
       ],
       "runtime_reachable": true,
@@ -28040,6 +28123,7 @@
       "notes": [],
       "path": "lib/features/trend/presentation/pages/trend_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -28054,6 +28138,7 @@
       "notes": [],
       "path": "lib/features/trend/presentation/pages/trend_psychology_test_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/routes/trend_routes.dart"
       ],
       "runtime_reachable": true,
@@ -28116,6 +28201,7 @@
       "notes": [],
       "path": "lib/features/wellness/presentation/pages/meditation_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/routes/wellness_routes.dart"
       ],
       "runtime_reachable": true,
@@ -28130,6 +28216,7 @@
       "notes": [],
       "path": "lib/features/wellness/presentation/pages/wellness_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/routes/wellness_routes.dart"
       ],
       "runtime_reachable": true,
@@ -29131,6 +29218,8 @@
       "notes": [],
       "path": "lib/routes/character_routes.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -29146,6 +29235,8 @@
       "path": "lib/routes/route_config.dart",
       "referenced_by": [
         "docs/APP_ARCHITECTURE.md",
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "integration_test/test_app.dart",
         "lib/main.dart",
         "scripts/pre-commit-screen-check.sh"
@@ -29162,6 +29253,7 @@
       "notes": [],
       "path": "lib/routes/routes/auth_routes.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -29176,6 +29268,7 @@
       "notes": [],
       "path": "lib/routes/routes/interactive_routes.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -29190,6 +29283,7 @@
       "notes": [],
       "path": "lib/routes/routes/trend_routes.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -29204,6 +29298,7 @@
       "notes": [],
       "path": "lib/routes/routes/wellness_routes.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -29218,6 +29313,7 @@
       "notes": [],
       "path": "lib/screens/auth/callback_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/routes/auth_routes.dart"
       ],
       "runtime_reachable": true,
@@ -29232,6 +29328,7 @@
       "notes": [],
       "path": "lib/screens/auth/signup_screen.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/routes/auth_routes.dart"
       ],
       "runtime_reachable": true,
@@ -29246,6 +29343,7 @@
       "notes": [],
       "path": "lib/screens/onboarding/onboarding_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart",
         "lib/routes/routes/auth_routes.dart"
       ],
@@ -29317,6 +29415,7 @@
       "notes": [],
       "path": "lib/screens/premium/premium_screen.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -29331,6 +29430,7 @@
       "notes": [],
       "path": "lib/screens/profile/account_deletion_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -29345,6 +29445,7 @@
       "notes": [],
       "path": "lib/screens/profile/elements_detail_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -29359,6 +29460,7 @@
       "notes": [],
       "path": "lib/screens/profile/profile_edit_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -29373,6 +29475,7 @@
       "notes": [],
       "path": "lib/screens/profile/profile_screen.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
         "lib/routes/route_config.dart"
       ],
@@ -29388,6 +29491,7 @@
       "notes": [],
       "path": "lib/screens/profile/profile_verification_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -29416,6 +29520,7 @@
       "notes": [],
       "path": "lib/screens/profile/saju_detail_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -29430,6 +29535,7 @@
       "notes": [],
       "path": "lib/screens/profile/saju_summary_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -29500,6 +29606,7 @@
       "notes": [],
       "path": "lib/screens/settings/phone_management_screen.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -29514,6 +29621,7 @@
       "notes": [],
       "path": "lib/screens/settings/social_accounts_screen.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -29528,6 +29636,7 @@
       "notes": [],
       "path": "lib/screens/splash_screen.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/routes/auth_routes.dart"
       ],
       "runtime_reachable": true,
@@ -29542,6 +29651,7 @@
       "notes": [],
       "path": "lib/screens/subscription/subscription_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -30127,6 +30237,7 @@
       "notes": [],
       "path": "lib/shared/components/app_header.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/history/presentation/pages/fortune_history_detail_page.dart",
         "lib/features/history/presentation/pages/fortune_history_page.dart",
         "lib/features/interactive/presentation/pages/dream_page.dart",
@@ -30155,6 +30266,7 @@
       "notes": [],
       "path": "lib/shared/components/korean_date_picker.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/development/UNIFIED_DATE_PICKER_MIGRATION.md",
         "lib/features/interactive/presentation/pages/psychology_test_page.dart"
       ],
@@ -30170,6 +30282,7 @@
       "notes": [],
       "path": "lib/shared/components/loading_states.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/history/presentation/pages/fortune_history_page.dart",
         "lib/features/interactive/presentation/pages/dream_page.dart",
         "lib/features/interactive/presentation/pages/psychology_test_page.dart",
@@ -30189,6 +30302,7 @@
       "notes": [],
       "path": "lib/shared/components/premium_membership_card.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/more/presentation/pages/more_page.dart",
         "lib/screens/profile/profile_screen.dart"
       ],
@@ -30204,6 +30318,7 @@
       "notes": [],
       "path": "lib/shared/components/profile_header_icon.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/trend/presentation/pages/trend_page.dart"
       ],
       "runtime_reachable": true,
@@ -30218,6 +30333,7 @@
       "notes": [],
       "path": "lib/shared/components/progressive_date_input.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/screens/profile/profile_edit_page.dart"
       ],
       "runtime_reachable": true,
@@ -30232,6 +30348,7 @@
       "notes": [],
       "path": "lib/shared/components/purchase_loading_overlay.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/screens/subscription/subscription_page.dart"
       ],
       "runtime_reachable": true,
@@ -30246,6 +30363,7 @@
       "notes": [],
       "path": "lib/shared/components/section_header.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/more/presentation/pages/more_page.dart",
         "lib/screens/profile/account_deletion_page.dart",
         "lib/screens/profile/profile_screen.dart",
@@ -30263,6 +30381,7 @@
       "notes": [],
       "path": "lib/shared/components/settings_list_tile.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/more/presentation/pages/more_page.dart",
         "lib/screens/profile/profile_screen.dart",
         "lib/shared/components/premium_membership_card.dart"
@@ -30279,6 +30398,7 @@
       "notes": [],
       "path": "lib/shared/components/toast.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/exercise/presentation/pages/exercise_fortune_page.dart",
         "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart",
         "lib/features/health/presentation/pages/health_fortune/widgets/document_upload_bottom_sheet.dart",
@@ -30305,6 +30425,7 @@
       "notes": [],
       "path": "lib/shared/components/token_balance_widget.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/shared/components/app_header.dart"
       ],
       "runtime_reachable": true,
@@ -30319,6 +30440,7 @@
       "notes": [],
       "path": "lib/shared/components/token_insufficient_modal.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/interactive/presentation/pages/face_reading_page.dart",
         "lib/features/interactive/presentation/pages/taemong_page.dart",
@@ -30362,6 +30484,8 @@
       "notes": [],
       "path": "lib/shared/layouts/main_shell.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -35411,7 +35535,7 @@
   "meta": {
     "counts_by_area": {
       "assets": 1231,
-      "docs": 79,
+      "docs": 81,
       "integration_test": 26,
       "lib": 605,
       "scripts": 68,
@@ -35423,11 +35547,11 @@
       "keep_generated": 38,
       "manual_review": 863,
       "phase1_remove_candidate": 24,
-      "phase2_review_candidate": 340,
+      "phase2_review_candidate": 342,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
-      "doc_only": 81,
+      "doc_only": 83,
       "generated_excluded": 38,
       "runtime_used": 995,
       "test_only": 78,
@@ -35661,7 +35785,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2264,
+    "total_files": 2266,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": []
   }
