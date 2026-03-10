@@ -54,7 +54,7 @@ class SoulRates {
     'talisman': 4,
     'talent': 4,
     'naming': 4,
-    'baby-nickname': 4,
+    // baby-nickname은 naming으로 통합됨
     'moving': 4,
     'moving-date': 4,
 

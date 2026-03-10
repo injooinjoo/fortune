@@ -90,8 +90,15 @@ class AppVersionService {
   factory AppVersionService() => _instance;
   AppVersionService._internal();
 
-  final _supabase = Supabase.instance.client;
   PackageInfo? _packageInfo;
+
+  SupabaseClient? get _supabase {
+    try {
+      return Supabase.instance.client;
+    } catch (_) {
+      return null;
+    }
+  }
 
   /// 현재 플랫폼 가져오기
   String get _platform {
@@ -137,7 +144,13 @@ class AppVersionService {
   /// 서버에서 앱 설정 가져오기
   Future<AppSettings?> _fetchAppSettings() async {
     try {
-      final response = await _supabase
+      final supabase = _supabase;
+      if (supabase == null) {
+        Logger.info('[AppVersionService] Supabase unavailable, 버전 체크 스킵');
+        return null;
+      }
+
+      final response = await supabase
           .from('app_settings')
           .select()
           .eq('platform', _platform)

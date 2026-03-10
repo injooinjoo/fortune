@@ -552,11 +552,10 @@ final Map<FortuneSurveyType, FortuneSurveyConfig> surveyConfigs = {
   FortuneSurveyType.celebrity: celebritySurveyConfig,
   FortuneSurveyType.pastLife: pastLifeSurveyConfig,
   FortuneSurveyType.gameEnhance: gameEnhanceSurveyConfig,
-  // 가족/반려동물 (4개)
+  // 가족/반려동물 (3개) - baby-nickname은 naming으로 통합
   FortuneSurveyType.pet: petSurveyConfig,
   FortuneSurveyType.family: familySurveyConfig,
   FortuneSurveyType.naming: namingSurveyConfig,
-  FortuneSurveyType.babyNickname: babyNicknameSurveyConfig,
   // 스타일/패션 (1개)
   FortuneSurveyType.ootdEvaluation: ootdEvaluationSurveyConfig,
   // 실용/결정 (2개)
@@ -2038,11 +2037,11 @@ const _namingStyleOptions = [
   SurveyOption(id: 'strong', label: '강인한', emoji: '💪'),
 ];
 
-/// Naming 설문 설정
+/// Naming 설문 설정 (작명 + 태명 통합)
 const namingSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.naming,
-  title: '작명',
-  description: '좋은 이름을 찾아드릴게요!',
+  title: '작명/태명',
+  description: '좋은 이름과 태명을 찾아드릴게요!',
   emoji: '📝',
   accentColor: DSColors.accentSecondary,
   steps: [
@@ -2079,32 +2078,12 @@ const namingSurveyConfig = FortuneSurveyConfig(
       inputType: SurveyInputType.chips,
       options: _namingStyleOptions,
     ),
-  ],
-);
-
-// ============================================================
-// BabyNickname (태명) 설문 설정
-// ============================================================
-
-/// BabyNickname 설문 설정
-/// 아기 시점 메시지형 - 태아가 부모에게 직접 말하는 1인칭 시점
-const babyNicknameSurveyConfig = FortuneSurveyConfig(
-  fortuneType: FortuneSurveyType.babyNickname,
-  title: '태명 이야기',
-  description: '태명으로 아이와 교감해보세요!',
-  emoji: '👶',
-  accentColor: DSColors.accentSecondary,
-  steps: [
+    // 태몽 (선택사항)
     SurveyStep(
       id: 'babyDream',
       question: '혹시 태몽을 꾸셨나요? 🌙\n어떤 꿈이었는지 알려주세요',
       inputType: SurveyInputType.text,
       isRequired: false,
-    ),
-    SurveyStep(
-      id: 'nickname',
-      question: '아이 태명이 뭔가요? 💕',
-      inputType: SurveyInputType.text,
     ),
   ],
 );

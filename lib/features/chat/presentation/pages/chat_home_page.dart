@@ -144,6 +144,9 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
   /// 포춘쿠키 애니메이션 오버레이 표시 여부
   bool _showCookieAnimation = false;
 
+  /// 프로필 목록 새로고침 완료 여부 (무한 루프 방지)
+  bool _profilesRefreshedForSurvey = false;
+
   /// 카톡 대화 분석: 파싱된 메시지 (분석 완료 후 null 처리)
   List<ParsedMessage>? _chatInsightParsedMessages;
 
@@ -211,6 +214,8 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       _precacheChatBackgrounds();
       _checkPendingDeepLink();
       _checkPendingFortuneChip();
+      // 채팅방 진입 시 맨 아래로 스크롤
+      _scrollToBottom();
     });
   }
 
@@ -1000,6 +1005,10 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             userProfile?.gender != null) {
           initialAnswers = {'gender': userProfile!.gender};
         }
+
+        // 프로필 새로고침 플래그 초기화 (새 설문 시작)
+        _profilesRefreshedForSurvey = false;
+
         surveyNotifier.startSurvey(surveyType, initialAnswers: initialAnswers);
 
         // dailyCalendar이고 이미 캘린더 연동되어 있으면 첫 단계 건너뛰기
@@ -1323,6 +1332,10 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       if (type == FortuneSurveyType.love && userProfile?.gender != null) {
         initialAnswers = {'gender': userProfile!.gender};
       }
+
+      // 프로필 새로고침 플래그 초기화 (새 설문 시작)
+      _profilesRefreshedForSurvey = false;
+
       surveyNotifier.startSurvey(type, initialAnswers: initialAnswers);
 
       // dailyCalendar이고 이미 캘린더 연동되어 있으면 첫 단계 건너뛰기
@@ -1712,6 +1725,12 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       _handleTalismanComplete(completedData);
       surveyNotifier.clearCompleted();
       return;
+    }
+
+    // 궁합: "새로 입력" 플로우에서 입력한 파트너 정보를 프로필에 자동 저장
+    if (completedType == FortuneSurveyType.compatibility &&
+        completedData['inputMethod'] == 'new') {
+      _saveCompatibilityPartnerProfile(completedData);
     }
 
     chatNotifier.showTypingIndicator();
@@ -2122,16 +2141,81 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     }
   }
 
-  /// 궁합 설문 시작 시 inputMethod 단계 자동 건너뛰기
-  Future<void> _handleCompatibilityAutoSkip(
-      ChatSurveyNotifier surveyNotifier) async {
-    // 프로필 로드 확인 및 새로고침
-    final notifier = ref.read(secondaryProfilesProvider.notifier);
-    await notifier.refresh();
+  /// 궁합 "새로 입력" 플로우에서 입력한 파트너 정보를 프로필에 자동 저장
+  Future<void> _saveCompatibilityPartnerProfile(
+      Map<String, dynamic> completedData) async {
+    try {
+      final partnerName = completedData['partnerName'] as String?;
+      final partnerBirthData = completedData['partnerBirth'];
+      final relationship = completedData['relationship'] as String? ?? 'other';
 
+      if (partnerName == null || partnerName.isEmpty) {
+        Logger.warning('[Compatibility] 파트너 이름 없음 - 프로필 저장 건너뜀');
+        return;
+      }
+
+      // 생년월일 파싱
+      String birthDate = '';
+      String? birthTime;
+      String gender = 'female'; // 기본값
+
+      if (partnerBirthData is Map) {
+        final year = partnerBirthData['year'];
+        final month = partnerBirthData['month'];
+        final day = partnerBirthData['day'];
+        if (year != null && month != null && day != null) {
+          birthDate =
+              '$year-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}';
+        }
+        // 시간이 있으면 추출
+        final hour = partnerBirthData['hour'];
+        if (hour != null) {
+          birthTime = '${hour.toString().padLeft(2, '0')}:00';
+        }
+        // 성별이 있으면 추출
+        final genderData = partnerBirthData['gender'];
+        if (genderData != null) {
+          gender = genderData.toString();
+        }
+      } else if (partnerBirthData is String) {
+        birthDate = partnerBirthData;
+      }
+
+      if (birthDate.isEmpty) {
+        Logger.warning('[Compatibility] 파트너 생년월일 없음 - 프로필 저장 건너뜀');
+        return;
+      }
+
+      // 프로필 저장
+      final profilesNotifier = ref.read(secondaryProfilesProvider.notifier);
+      final newProfile = await profilesNotifier.addProfile(
+        name: partnerName,
+        birthDate: birthDate,
+        birthTime: birthTime,
+        gender: gender,
+        relationship: relationship,
+      );
+
+      if (newProfile != null) {
+        Logger.info(
+            '[Compatibility] 파트너 프로필 자동 저장 완료: ${newProfile.name} (${newProfile.id})');
+      }
+    } catch (e) {
+      // 프로필 저장 실패해도 궁합 API는 계속 진행
+      Logger.error('[Compatibility] 파트너 프로필 자동 저장 실패 (무시됨)', e);
+    }
+  }
+
+  /// 궁합 설문 시작 시 inputMethod 단계 자동 건너뛰기 (동기 버전)
+  void _handleCompatibilityAutoSkip(ChatSurveyNotifier surveyNotifier) {
+    // 현재 캐시된 프로필 상태로 판단 (비동기 새로고침 X)
     final profilesAsync = ref.read(secondaryProfilesProvider);
+    // ignore: avoid_print
+    print('🟢🟢🟢 [AUTO_SKIP] profilesAsync 상태: $profilesAsync');
     profilesAsync.when(
       data: (profiles) {
+        // ignore: avoid_print
+        print('🟢🟢🟢 [AUTO_SKIP] DATA: ${profiles.length}개 프로필');
         if (profiles.isEmpty) {
           // 프로필 없음 → 바로 '새로 입력' 모드로 진행
           surveyNotifier.answerCurrentStep('new');
@@ -2141,11 +2225,15 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         }
       },
       loading: () {
-        // 아직 로딩 중이면 기본으로 'new' 선택 (안전한 기본값)
-        surveyNotifier.answerCurrentStep('new');
+        // 아직 로딩 중이면 선택지 보여주기 (스킵하지 않음)
+        // ignore: avoid_print
+        print('🟢🟢🟢 [AUTO_SKIP] LOADING - 선택지 표시 (스킵 안함)');
+        // 아무것도 안 함 → 사용자가 직접 선택
       },
       error: (_, __) {
         // 에러 시 'new' 선택
+        // ignore: avoid_print
+        print('🟢🟢🟢 [AUTO_SKIP] ERROR - new 선택');
         surveyNotifier.answerCurrentStep('new');
       },
     );
@@ -3639,7 +3727,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
 
       case FortuneSurveyType.naming:
         // Edge Function 요구: userId, motherBirthDate, expectedBirthDate, babyGender, familyName
-        // Survey step ids: 'dueDate', 'gender', 'lastName', 'style'
+        // Survey step ids: 'dueDate', 'gender', 'lastName', 'style', 'babyDream' (optional)
         return apiService.getFortune(
           userId: userId,
           fortuneType: 'naming',
@@ -3649,18 +3737,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
             'babyGender': answers['gender'] ?? 'unknown',
             'familyName': answers['lastName'] ?? '김',
             'nameStyle': answers['style'] ?? 'modern',
-          },
-        );
-
-      case FortuneSurveyType.babyNickname:
-        // Edge Function 요구: userId, nickname, babyDream (optional)
-        // Survey step ids: 'nickname', 'babyDream'
-        return apiService.getFortune(
-          userId: userId,
-          fortuneType: 'baby-nickname',
-          params: {
-            'nickname': answers['nickname'] ?? '',
-            'babyDream': answers['babyDream'],
+            if (answers['babyDream'] != null) 'babyDream': answers['babyDream'],
           },
         );
 
@@ -3917,9 +3994,7 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
       case FortuneSurveyType.family:
         return '오늘의 가족운';
       case FortuneSurveyType.naming:
-        return '오늘의 이름운';
-      case FortuneSurveyType.babyNickname:
-        return '태명 이야기';
+        return '작명/태명';
       case FortuneSurveyType.ootdEvaluation:
         return '오늘의 OOTD';
       case FortuneSurveyType.talisman:
@@ -3980,8 +4055,32 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
     switch (currentStep.inputType) {
       case SurveyInputType.chips:
         if (options.isEmpty) return null;
+
+        // 궁합 inputMethod 단계: 프로필 없으면 'profile' 옵션 제거
+        var filteredOptions = options;
+        final surveyType = surveyState.activeProgress?.config.fortuneType;
+        if (surveyType == FortuneSurveyType.compatibility &&
+            currentStep.id == 'inputMethod') {
+          final profilesAsync = ref.watch(secondaryProfilesProvider);
+          final hasProfiles = profilesAsync.maybeWhen(
+            data: (profiles) => profiles.isNotEmpty,
+            orElse: () => false,
+          );
+          if (!hasProfiles) {
+            filteredOptions = options.where((o) => o.id != 'profile').toList();
+          }
+        }
+
+        // 옵션이 1개만 남으면 자동 선택
+        if (filteredOptions.length == 1) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _handleSurveyAnswer(filteredOptions.first);
+          });
+          return const SizedBox.shrink();
+        }
+
         return ChatSurveyChips(
-          options: options,
+          options: filteredOptions,
           onSelect: _handleSurveyAnswer,
         );
 
@@ -4010,34 +4109,82 @@ class _ChatHomePageState extends ConsumerState<ChatHomePage> {
         );
 
       case SurveyInputType.profile:
+        // ignore: avoid_print
+        print('🔴🔴🔴 [PROFILE] ===== 프로필 선택 단계 진입 =====');
+
+        // 프로필 목록 새로고침 트리거 (최신 데이터 보장, 1회만)
+        if (!_profilesRefreshedForSurvey) {
+          _profilesRefreshedForSurvey = true;
+          // ignore: avoid_print
+          print('🔴🔴🔴 [PROFILE] 프로필 새로고침 시작');
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              ref.read(secondaryProfilesProvider.notifier).refresh();
+            }
+          });
+        }
+
         final profilesAsync = ref.watch(secondaryProfilesProvider);
+        // ignore: avoid_print
+        print('🔴🔴🔴 [PROFILE] profilesAsync=$profilesAsync');
+
         return profilesAsync.when(
           data: (profiles) {
-            // 저장된 프로필이 없으면 자동으로 "새로 입력" 플로우 시작
-            if (profiles.isEmpty) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                _handleProfileSelect(null);
-              });
-              return const SizedBox.shrink();
+            // ignore: avoid_print
+            print('🔴🔴🔴 [PROFILE] DATA: ${profiles.length}개 프로필');
+            for (var p in profiles) {
+              // ignore: avoid_print
+              print('🔴🔴🔴 [PROFILE]   - ${p.name} (${p.birthDate})');
             }
-            return ChatProfileSelector(
-              profiles: profiles,
-              onSelect: _handleProfileSelect,
-              hintText: '궁합을 볼 상대를 선택하세요',
+            // 프로필 있으면 선택 UI 표시
+            if (profiles.isNotEmpty) {
+              // ignore: avoid_print
+              print('🔴🔴🔴 [PROFILE] ChatProfileSelector 표시');
+              return ChatProfileSelector(
+                profiles: profiles,
+                onSelect: _handleProfileSelect,
+                hintText: '🟢 ${profiles.length}개 프로필 로드됨',
+              );
+            }
+            // 프로필이 없으면 바로 AddProfileSheet 열기
+            // ignore: avoid_print
+            print(
+                '🔴🔴🔴 [PROFILE] 프로필 없음, _pending=$_pendingCompatibilityAfterProfileCreation');
+            if (!_pendingCompatibilityAfterProfileCreation) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted && !_pendingCompatibilityAfterProfileCreation) {
+                  // ignore: avoid_print
+                  print('🔴🔴🔴 [PROFILE] AddProfileSheet 열기');
+                  _handleProfileSelect(null);
+                }
+              });
+            }
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(DSSpacing.md),
+                child: Text('🔴 프로필 0개 - DB 비어있음'),
+              ),
             );
           },
-          loading: () => const Center(
-            child: Padding(
-              padding: EdgeInsets.all(DSSpacing.md),
-              child: CircularProgressIndicator(),
-            ),
-          ),
-          error: (_, __) {
-            // 에러 시에도 자동으로 "새로 입력" 플로우 시작
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              _handleProfileSelect(null);
-            });
-            return const SizedBox.shrink();
+          loading: () {
+            // ignore: avoid_print
+            print('🔴🔴🔴 [PROFILE] LOADING 상태');
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(DSSpacing.md),
+                child: Text('🟡 프로필 로딩 중...'),
+              ),
+            );
+          },
+          error: (e, __) {
+            // ignore: avoid_print
+            print('🔴🔴🔴 [PROFILE] ERROR: $e');
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(DSSpacing.md),
+                child: Text('🔴 에러: $e'),
+              ),
+            );
           },
         );
 

@@ -182,9 +182,7 @@ class _FortuneTypeChip extends StatelessWidget {
       case FortuneSurveyType.family:
         return '가족 인사이트';
       case FortuneSurveyType.naming:
-        return '작명';
-      case FortuneSurveyType.babyNickname:
-        return '태명';
+        return '작명/태명';
       case FortuneSurveyType.ootdEvaluation:
         return 'OOTD 평가';
       case FortuneSurveyType.talisman:

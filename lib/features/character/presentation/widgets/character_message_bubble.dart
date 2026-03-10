@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
@@ -66,31 +68,64 @@ class CharacterMessageBubble extends StatelessWidget {
               ),
             ),
           Flexible(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: colors.userBubble,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(4),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                // 이미지 썸네일 (사진 메시지인 경우)
+                if (message.hasImage && message.imageAsset != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.file(
+                        File(message.imageAsset!),
+                        width: 200,
+                        height: 200,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          width: 200,
+                          height: 200,
+                          decoration: BoxDecoration(
+                            color: colors.surfaceSecondary,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child:
+                              const Icon(Icons.image_not_supported, size: 40),
+                        ),
+                      ),
+                    ),
                   ),
-                ],
-              ),
-              child: Text(
-                message.text,
-                style: context.bodyMedium.copyWith(
-                  color: colors.textPrimary,
-                  height: 1.5,
-                ),
-              ),
+                // 텍스트 버블 (이미지만 있고 텍스트가 📷 사진인 경우 숨김)
+                if (!message.hasImage ||
+                    (message.text != '📷 사진' && message.text.isNotEmpty))
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: colors.userBubble,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                        bottomLeft: Radius.circular(20),
+                        bottomRight: Radius.circular(4),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.08),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      message.text,
+                      style: context.bodyMedium.copyWith(
+                        color: colors.textPrimary,
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
         ],

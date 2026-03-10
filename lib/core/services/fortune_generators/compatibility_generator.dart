@@ -12,8 +12,50 @@ class CompatibilityGenerator {
     SupabaseClient supabase,
   ) async {
     final userId = supabase.auth.currentUser?.id ?? 'unknown';
-    final person1 = inputConditions['person1'] as Map<String, dynamic>;
-    final person2 = inputConditions['person2'] as Map<String, dynamic>;
+
+    // ✅ 입력 형식 자동 감지 및 변환
+    final Map<String, dynamic> person1;
+    final Map<String, dynamic> person2;
+
+    if (inputConditions.containsKey('person1') &&
+        inputConditions.containsKey('person2')) {
+      // 기존 형식: {person1: {...}, person2: {...}}
+      person1 = inputConditions['person1'] as Map<String, dynamic>;
+      person2 = inputConditions['person2'] as Map<String, dynamic>;
+    } else {
+      // 새 형식: {name, birthDate, partnerName, partnerBirth, ...}
+      // person1 = 본인
+      person1 = {
+        'name': inputConditions['name'] ?? '본인',
+        'birth_date': inputConditions['birthDate'] ?? '',
+        'birth_time': inputConditions['birthTime'],
+        'gender': inputConditions['gender'],
+      };
+
+      // person2 = 상대방
+      final partnerBirth = inputConditions['partnerBirth'];
+      String partnerBirthDate = '';
+      if (partnerBirth is Map) {
+        final year = partnerBirth['year'];
+        final month = partnerBirth['month'];
+        final day = partnerBirth['day'];
+        if (year != null && month != null && day != null) {
+          partnerBirthDate =
+              '$year-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}';
+        }
+      } else if (partnerBirth is String) {
+        partnerBirthDate = partnerBirth;
+      }
+
+      person2 = {
+        'name': inputConditions['partnerName'] ?? '상대방',
+        'birth_date': partnerBirthDate,
+        'birth_time':
+            partnerBirth is Map ? partnerBirth['hour']?.toString() : null,
+        'gender': inputConditions['partnerGender'],
+        'relationship': inputConditions['relationship'],
+      };
+    }
 
     // 📤 API 요청 준비
     Logger.info('[CompatibilityGenerator] 📤 API 요청 준비');

@@ -66,6 +66,25 @@ class ChatScrollService {
     });
   }
 
+  /// 최하단으로 즉시 스크롤 (애니메이션 없음, 초기 진입용)
+  ///
+  /// 채팅방 진입 시 사용. 애니메이션 없이 즉시 맨 아래로 이동.
+  void scrollToBottomInstant() {
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(ChatScrollConstants.debounceDelay, () {
+      _performScrollToBottomInstant();
+    });
+  }
+
+  void _performScrollToBottomInstant() {
+    if (!isMounted() || !scrollController.hasClients) return;
+
+    Future.delayed(ChatScrollConstants.layoutDelay, () {
+      if (!isMounted() || !scrollController.hasClients) return;
+      scrollController.jumpTo(scrollController.position.maxScrollExtent);
+    });
+  }
+
   /// 결과 카드 헤더로 스크롤
   ///
   /// 운세 결과가 표시될 때 카드 상단이 보이도록 스크롤합니다.

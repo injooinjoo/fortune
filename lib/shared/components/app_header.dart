@@ -81,7 +81,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     } else if (GoRouter.of(context).canPop()) {
       GoRouter.of(context).pop();
     } else {
-      GoRouter.of(context).go('/home');
+      GoRouter.of(context).go('/chat');
     }
   }
 

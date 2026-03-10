@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/fortune/fortune_type_registry.dart';
 import '../../../../core/extensions/l10n_extension.dart';
@@ -18,6 +20,7 @@ import '../utils/character_accent_palette.dart';
 import '../widgets/character_message_bubble.dart';
 import '../widgets/character_choice_widget.dart';
 import '../widgets/wave_typing_indicator.dart';
+import '../../../chat/services/chat_scroll_service.dart';
 // 설문 관련 imports
 import '../../../chat/domain/models/fortune_survey_config.dart';
 import '../../../chat/domain/configs/survey_configs.dart';
@@ -26,7 +29,11 @@ import '../../../chat/presentation/widgets/survey/chat_birth_datetime_picker.dar
 import '../../../chat/presentation/widgets/survey/chat_survey_slider.dart';
 import '../../../chat/presentation/widgets/survey/chat_inline_calendar.dart';
 import '../../../chat/presentation/widgets/survey/chat_face_reading_flow.dart';
+import '../../../chat/presentation/widgets/survey/ootd_photo_input.dart';
+import '../../../chat/presentation/widgets/survey/chat_image_input.dart';
+import '../../../chat/presentation/widgets/survey/chat_match_selector.dart';
 import '../../../../core/services/unified_calendar_service.dart';
+import '../../../../presentation/providers/user_profile_notifier.dart';
 
 /// 1:1 캐릭터 롤플레이 채팅 패널
 class CharacterChatPanel extends ConsumerStatefulWidget {
@@ -46,12 +53,17 @@ class CharacterChatPanel extends ConsumerStatefulWidget {
 class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     with WidgetsBindingObserver {
   final TextEditingController _textController = TextEditingController();
+  final TextEditingController _surveyTextController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();
+  final ImagePicker _imagePicker = ImagePicker();
 
   /// Notifier 참조 캐시 (dispose 후 ref 사용 불가 문제 해결)
   CharacterChatNotifier? _cachedNotifier;
   bool _didRedirectToProfile = false;
+
+  /// 통합 스크롤 서비스 (ChatScrollService 사용)
+  late final ChatScrollService _scrollService;
 
   CharacterAccentPalette _accentPalette(BuildContext context) {
     return CharacterAccentPalette.from(
@@ -60,10 +72,39 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     );
   }
 
+  /// 동적 질문 생성 (mbtiConfirm 등 사용자 정보 포함 필요 시)
+  String _getDynamicStepQuestion(SurveyStep step) {
+    // mbtiConfirm 스텝: 사용자 MBTI 타입을 포함한 질문 생성
+    if (step.id == 'mbtiConfirm') {
+      // userProfileNotifierProvider에서 직접 가져오기 (더 안정적)
+      final profileAsync = ref.read(userProfileNotifierProvider);
+      final profile = profileAsync.valueOrNull;
+
+      final name = profile?.name ?? '회원';
+      final mbtiType = profile?.mbtiType;
+
+      debugPrint(
+          '[Survey] mbtiConfirm - name: $name, mbtiType: $mbtiType, hasValue: ${profileAsync.hasValue}');
+
+      if (mbtiType != null && mbtiType.isNotEmpty) {
+        return '$name님은 $mbtiType시네요! 맞으신가요? 🧠';
+      }
+      // MBTI 없으면 바로 선택하도록 안내
+      return 'MBTI 유형을 알려주시면 분석해드릴게요! 🧠';
+    }
+
+    // 기본: step의 원래 question 반환
+    return step.question;
+  }
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _scrollService = ChatScrollService(
+      scrollController: _scrollController,
+      isMounted: () => mounted,
+    );
     // 기존 대화 불러오기 + 읽음 처리
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
@@ -98,8 +139,10 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     // 화면 이탈 시 저장 (캐시된 notifier 사용 - ref 사용 불가)
     _cachedNotifier?.saveOnExit();
     _textController.dispose();
+    _surveyTextController.dispose();
     _scrollController.dispose();
     _focusNode.dispose();
+    _scrollService.dispose();
     super.dispose();
   }
 
@@ -123,25 +166,14 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     }
   }
 
+  /// 최하단으로 스크롤 (애니메이션)
   void _scrollToBottom() {
-    Future.delayed(const Duration(milliseconds: 100), () {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
-    });
+    _scrollService.scrollToBottom();
   }
 
   /// 채팅방 진입 시 즉시 맨 아래로 스크롤 (애니메이션 없이)
   void _scrollToBottomInstant() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-      }
-    });
+    _scrollService.scrollToBottomInstant();
   }
 
   @override
@@ -551,7 +583,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
             ref.read(characterChatSurveyProvider(widget.character.id));
         if (surveyState.isActive && surveyState.activeProgress != null) {
           final firstQuestion =
-              surveyState.activeProgress!.currentStep.question;
+              _getDynamicStepQuestion(surveyState.activeProgress!.currentStep);
           chatNotifier.addCharacterMessage(firstQuestion);
         }
         _scrollToBottom();
@@ -627,6 +659,15 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   }
 
   /// 설문 답변 처리
+  /// 이미지 선택 처리 (소개팅 가이드 등)
+  void _handleImageSelect(File image) {
+    final displayText = '📷 사진이 선택되었어요';
+    _handleSurveyAnswer({
+      'imagePath': image.path,
+      'displayText': displayText,
+    });
+  }
+
   void _handleSurveyAnswer(dynamic answer) {
     final surveyNotifier =
         ref.read(characterChatSurveyProvider(widget.character.id).notifier);
@@ -652,6 +693,8 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         answerText = _formatCalendarAnswer(answer);
       } else if (answer.containsKey('imagePath')) {
         answerText = '📷 사진 선택 완료';
+      } else if (answer.containsKey('displayText')) {
+        answerText = answer['displayText'] as String;
       } else {
         answerText = answer.values.join(', ');
       }
@@ -674,7 +717,8 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         _handleSurveyComplete(surveyState);
       } else if (surveyState.isActive && surveyState.activeProgress != null) {
         // 다음 질문
-        final nextQuestion = surveyState.activeProgress!.currentStep.question;
+        final nextQuestion =
+            _getDynamicStepQuestion(surveyState.activeProgress!.currentStep);
         chatNotifier.addCharacterMessage(nextQuestion);
         _scrollToBottom();
       }
@@ -830,12 +874,10 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     final options = surveyNotifier.getCurrentStepOptions();
 
     return Container(
-      padding: const EdgeInsets.all(DSSpacing.md),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
-        border: Border(
-          top: BorderSide(color: Colors.grey[200]!),
-        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -928,6 +970,39 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           onComplete: _handleFaceReadingComplete,
         );
 
+      case SurveyInputType.image:
+        return ChatImageInput(
+          onImageSelected: _handleImageSelect,
+          hintText: '사진을 선택하거나 촬영하세요',
+        );
+
+      case SurveyInputType.ootdImage:
+        return OotdPhotoInput(
+          onImageSelected: _handleImageSelect,
+        );
+
+      case SurveyInputType.matchSelection:
+        // 이전 단계에서 선택한 종목 가져오기
+        final surveyProgress = ref
+            .read(
+              characterChatSurveyProvider(widget.character.id),
+            )
+            .activeProgress;
+        final selectedSport = surveyProgress?.answers['sport']?.toString();
+        return ChatMatchSelector(
+          selectedSport: selectedSport,
+          onSelect: (game, league) {
+            _handleSurveyAnswer({
+              'gameId': game.id,
+              'homeTeam': game.homeTeam,
+              'awayTeam': game.awayTeam,
+              'league': league,
+              'gameTime': game.gameTime.toIso8601String(),
+              'displayText': '${game.homeTeam} vs ${game.awayTeam} ($league)',
+            });
+          },
+        );
+
       default:
         // 기타 복잡한 입력은 chips로 대체하거나 스킵
         if (options.isNotEmpty) {
@@ -988,41 +1063,23 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     );
   }
 
-  /// 텍스트 입력 위젯
+  /// 텍스트 입력 위젯 (UnifiedVoiceTextField 스타일 통일)
   Widget _buildTextInput(SurveyStep step) {
-    final textController = TextEditingController();
-    final accentPalette = _accentPalette(context);
     return Row(
       children: [
+        // 카메라 버튼 없음 (텍스트 설문에는 이미지 불필요)
         Expanded(
-          child: TextField(
-            controller: textController,
-            decoration: InputDecoration(
-              hintText: context.l10n.pleaseEnter,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(24),
-                borderSide: BorderSide(color: Colors.grey[300]!),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-            ),
-            onSubmitted: (text) {
+          child: UnifiedVoiceTextField(
+            controller: _surveyTextController,
+            hintText: context.l10n.pleaseEnter,
+            enabled: true,
+            onSubmit: (text) {
               if (text.isNotEmpty) {
                 _handleSurveyAnswer(text);
+                _surveyTextController.clear();
               }
             },
           ),
-        ),
-        const SizedBox(width: 8),
-        IconButton(
-          onPressed: () {
-            if (textController.text.isNotEmpty) {
-              _handleSurveyAnswer(textController.text);
-            }
-          },
-          icon: Icon(Icons.send, color: accentPalette.accent),
         ),
         if (step.inputType == SurveyInputType.textWithSkip)
           TextButton(
@@ -1094,37 +1151,142 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         _handleSurveyComplete(surveyState);
       } else if (surveyState.isActive && surveyState.activeProgress != null) {
         // 다음 질문 표시
-        final nextQuestion = surveyState.activeProgress!.currentStep.question;
+        final nextQuestion =
+            _getDynamicStepQuestion(surveyState.activeProgress!.currentStep);
         chatNotifier.addCharacterMessage(nextQuestion);
         _scrollToBottom();
       }
     });
   }
 
+  /// 사진 선택 바텀시트 표시
+  void _showImagePickerSheet() {
+    HapticUtils.lightImpact();
+    final colors = context.colors;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: colors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              margin: const EdgeInsets.only(top: 8),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: colors.border,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            ListTile(
+              leading:
+                  Icon(Icons.camera_alt_outlined, color: colors.textPrimary),
+              title: Text('카메라', style: context.bodyLarge),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading:
+                  Icon(Icons.photo_library_outlined, color: colors.textPrimary),
+              title: Text('갤러리', style: context.bodyLarge),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 이미지 선택 처리
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final XFile? image = await _imagePicker.pickImage(
+        source: source,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+
+      if (image != null && mounted) {
+        final file = File(image.path);
+        _handleImageMessage(file);
+      }
+    } catch (e) {
+      debugPrint('Image picker error: $e');
+    }
+  }
+
+  /// 이미지 메시지 처리 (채팅에 이미지 전송)
+  void _handleImageMessage(File imageFile) {
+    // 사용자 메시지로 이미지 경로 추가 (UI에서 이미지로 표시)
+    ref
+        .read(characterChatProvider(widget.character.id).notifier)
+        .sendImageMessage(imageFile.path);
+    _scrollToBottom();
+  }
+
   Widget _buildInputArea(dynamic chatState) {
+    final colors = context.colors;
+
     return Container(
       padding: const EdgeInsets.symmetric(
           horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
       ),
-      child: UnifiedVoiceTextField(
-        controller: _textController,
-        hintText: context.l10n.enterMessage,
-        enabled: true, // 연속 메시지 전송 허용 (카카오톡처럼)
-        onTextChanged: (text) {
-          ref
-              .read(characterChatProvider(widget.character.id).notifier)
-              .onUserDraftChanged(text);
-        },
-        onSubmit: (text) {
-          if (text.isNotEmpty) {
-            ref
-                .read(characterChatProvider(widget.character.id).notifier)
-                .sendMessage(text);
-            _scrollToBottom();
-          }
-        },
+      child: Row(
+        children: [
+          // 사진 첨부 버튼
+          GestureDetector(
+            onTap: _showImagePickerSheet,
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: colors.surfaceSecondary,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.photo_camera_outlined,
+                color: colors.textSecondary,
+                size: 22,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          // 텍스트 입력 필드
+          Expanded(
+            child: UnifiedVoiceTextField(
+              controller: _textController,
+              hintText: context.l10n.enterMessage,
+              enabled: true,
+              onTextChanged: (text) {
+                ref
+                    .read(characterChatProvider(widget.character.id).notifier)
+                    .onUserDraftChanged(text);
+              },
+              onSubmit: (text) {
+                if (text.isNotEmpty) {
+                  ref
+                      .read(characterChatProvider(widget.character.id).notifier)
+                      .sendMessage(text);
+                  _scrollToBottom();
+                }
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

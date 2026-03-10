@@ -29,6 +29,7 @@ import '../../../../services/app_icon_badge_service.dart';
 import '../../../../services/storage_service.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
+import '../../../../core/utils/moving_fortune_input_mapper.dart';
 import '../../../../constants/fortune_constants.dart';
 import '../../../../models/user_profile.dart';
 import '../../../../services/remote_config_service.dart';
@@ -287,6 +288,10 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
             if (profile.zodiacSign != null) 'zodiacSign': profile.zodiacSign,
             if (profile.chineseZodiac != null)
               'zodiacAnimal': profile.chineseZodiac,
+            // naming API용 birthDate (YYYY-MM-DD 형식)
+            if (profile.birthDate != null)
+              'birthDate': profile.birthDate!.toIso8601String().split('T')[0],
+            if (profile.birthTime != null) 'birthTime': profile.birthTime,
           };
         },
         orElse: () => null,
@@ -357,6 +362,17 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     'resources': '자원/비용 부담', 'confidence': '자신감 부족',
     // 사주 분석 유형
     'comprehensive': '종합 분석',
+    // 관상 분석 포인트
+    'overall': '종합 관상', 'fortune': '재물/복',
+    // 이사운
+    '1month': '1개월 이내', '3months': '3개월 이내',
+    '6months': '6개월 이내', 'year': '1년 이내', 'undecided': '아직 미정',
+    'marriage': '결혼/독립', 'better_life': '더 나은 환경',
+    'investment': '투자 목적',
+    // 작명 (naming)
+    'known': '알아요', 'unknown': '아직 몰라요', 'male': '남아', 'female': '여아',
+    'traditional': '전통적', 'modern': '현대적', 'unique': '독특한',
+    'cute': '귀여운', 'strong': '강인한',
     // 캘린더
     'sync': '캘린더 연동', 'skip': '건너뛰기',
     // 공통
@@ -437,9 +453,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       case 'face-reading':
         return '$d의 관상을 한번 봐드리겠습니다... 🔮';
       case 'naming':
-        return '$d의 이름의 기운을 살펴보겠습니다... ✍️';
-      case 'baby-nickname':
-        return '정성을 담아 태명을 지어드리겠습니다... 👶';
+        return '$d을 위한 좋은 이름을 찾아보겠습니다... ✍️👶';
       // ─── 스텔라 (zodiac) ───
       case 'zodiac':
         return '$d의 별자리 운세를 읽어볼게요~ ⭐';
@@ -470,7 +484,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       case 'avoid-people':
         return '$d이 주의해야 할 인연을 살펴볼게요~ ⚠️';
       case 'celebrity':
-        return '$d의 닮은 연예인을 찾아볼게요~ 🌟';
+        return '$d의 유명인 궁합을 분석해볼게요~ 🌟';
       case 'yearly-encounter':
         return '$d의 올해 만남 운을 살펴볼게요~ 💫';
       // ─── 제임스 김 (career) ───
@@ -525,7 +539,6 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       // 전통/사주 계열 (생년월일+시간+성별+띠)
       case 'face-reading':
       case 'naming':
-      case 'baby-nickname':
         return {'birth', 'birthTime', 'gender', 'chineseZodiac'};
       // 별자리 계열
       case 'zodiac':
@@ -776,9 +789,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         break;
       case 'naming':
         _addSurveyLine(lines, answers, 'purpose', '✍️ 작명 목적');
-        break;
-      case 'baby-nickname':
-        _addSurveyLine(lines, answers, 'wish', '👶 바라는 점');
+        _addSurveyLine(lines, answers, 'babyDream', '🌙 태몽');
         break;
       // ─── 하늘 (lifestyle) ───
       case 'daily':
@@ -818,8 +829,10 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         break;
       // ─── 리나 (fengshui) ───
       case 'moving':
-        _addSurveyLine(lines, answers, 'reason', '📦 이사 사유');
-        _addSurveyLine(lines, answers, 'direction', '🧭 방향');
+        _addSurveyLine(lines, answers, 'currentArea', '📍 현재 지역');
+        _addSurveyLine(lines, answers, 'targetArea', '🏠 이사 지역');
+        _addSurveyLine(lines, answers, 'movingPeriod', '📅 이사 시기');
+        _addSurveyLine(lines, answers, 'purpose', '📦 이사 사유');
         break;
     }
 
@@ -842,9 +855,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       case 'face-reading':
         return '관상을 살펴보겠습니다... 잠시만 기다려주십시오 🔮';
       case 'naming':
-        return '좋은 이름의 기운을 찾아보겠습니다... ✍️';
-      case 'baby-nickname':
-        return '아기에게 복을 담은 태명을 지어드리겠습니다... 👶';
+        return '좋은 이름과 태명을 찾아보겠습니다... ✍️👶';
       // ─── 스텔라 (zodiac) ───
       case 'zodiac':
         return '별자리의 메시지를 읽어드릴게요! ⭐';
@@ -875,7 +886,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       case 'avoid-people':
         return '조심해야 할 인연을 알려드릴게요! ⚠️';
       case 'celebrity':
-        return '닮은 연예인 찾아보는 중~ 🌟';
+        return '유명인 궁합 분석 중~ 🌟';
       case 'yearly-encounter':
         return '올해의 만남 운세 분석 시작! 💫';
       // ─── 제임스 김 (career) ───
@@ -1283,6 +1294,189 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     _queueForSync();
   }
 
+  /// 사용자 이미지 메시지 전송 (OOTD, 관상 등)
+  void sendImageMessage(String imagePath, {String? caption}) {
+    _isUserDrafting = false;
+    _cancelReadIdleIcebreaker();
+    final message =
+        CharacterChatMessage.userWithImage(imagePath, text: caption);
+    state = state.copyWith(
+      messages: [...state.messages, message],
+      isProcessing: true,
+    );
+
+    // 사용자가 응답했으므로 Follow-up 타이머 취소
+    _followUpScheduler.cancelFollowUp(_characterId);
+
+    // DB 동기화 큐에 추가 (debounced)
+    _queueForSync();
+
+    // 이미지 분석 요청 (OOTD 등)
+    _requestImageAnalysis(imagePath, caption);
+  }
+
+  /// 이미지 분석 요청 (캐릭터가 사진에 대해 응답)
+  Future<void> _requestImageAnalysis(String imagePath, String? caption) async {
+    // 캐릭터 타이핑 시작
+    state = state.copyWith(isTyping: true, isCharacterTyping: true);
+
+    try {
+      // 1) 이미지를 base64로 변환
+      final file = File(imagePath);
+      if (!await file.exists()) {
+        throw Exception('이미지 파일을 찾을 수 없습니다');
+      }
+      final bytes = await file.readAsBytes();
+      final imageBase64 = base64Encode(bytes);
+
+      // 2) 최근 메시지에서 TPO 추출
+      final tpo = _extractTpoFromRecentMessages();
+
+      // 3) 사용자 정보
+      final userProfile = _getUserProfileMap();
+      final userId = await _resolveFortuneUserId();
+
+      if (!mounted) return;
+
+      // 4) 안내 메시지 먼저 표시
+      addCharacterMessage(
+        '사진 잘 받았어요! 📸 분석해볼게요~',
+        scheduleReadIdleIcebreaker: false,
+        suppressNotification: true,
+      );
+      state = state.copyWith(isTyping: true, isCharacterTyping: true);
+
+      // 5) fortune-ootd Edge Function 호출
+      final response = await Supabase.instance.client.functions.invoke(
+        'fortune-ootd',
+        body: {
+          'imageBase64': imageBase64,
+          'tpo': tpo,
+          'userId': userId,
+          'userName': userProfile?['name'],
+          'userGender': userProfile?['gender'],
+        },
+      );
+
+      if (!mounted) return;
+
+      final data = response.data;
+      if (data == null || data['success'] != true) {
+        throw Exception(data?['error'] ?? 'OOTD 분석에 실패했습니다');
+      }
+
+      // 6) 결과를 캐릭터 스타일 메시지로 변환
+      final result = data['data'];
+      final messages = _formatOotdResult(result, tpo);
+
+      // 7) 멀티 버블로 전송
+      for (int i = 0; i < messages.length; i++) {
+        if (i > 0) {
+          state = state.copyWith(isTyping: true, isCharacterTyping: true);
+          await Future.delayed(const Duration(milliseconds: 800));
+          if (!mounted) return;
+        }
+        addCharacterMessage(
+          messages[i],
+          scheduleReadIdleIcebreaker: i == messages.length - 1,
+          suppressNotification: i < messages.length - 1,
+        );
+      }
+    } catch (e) {
+      Logger.warning(
+          '[CharacterChat] Image analysis failed', {'error': e.toString()});
+      if (mounted) {
+        addCharacterMessage(
+          '앗, 사진 분석 중에 문제가 생겼어요 😅 다시 한번 보내주실래요?',
+          scheduleReadIdleIcebreaker: true,
+        );
+      }
+    }
+  }
+
+  /// 최근 메시지에서 TPO(상황) 키워드 추출
+  String _extractTpoFromRecentMessages() {
+    final recentMessages = state.messages
+        .where((m) => m.type == CharacterChatMessageType.user)
+        .toList()
+        .reversed
+        .take(5);
+
+    final tpoKeywords = {
+      'date': ['데이트', '소개팅', '만남'],
+      'interview': ['면접', '인터뷰', '취업'],
+      'work': ['출근', '회사', '직장', '사무실', '오피스'],
+      'casual': ['일상', '캐주얼', '편한', '평소'],
+      'party': ['파티', '모임', '행사', '축하'],
+      'wedding': ['결혼식', '경조사', '돌잔치', '장례'],
+      'travel': ['여행', '휴가', '관광'],
+      'sports': ['운동', '헬스', '러닝', '조깅', '등산'],
+    };
+
+    for (final msg in recentMessages) {
+      final text = msg.text.toLowerCase();
+      for (final entry in tpoKeywords.entries) {
+        for (final keyword in entry.value) {
+          if (text.contains(keyword)) {
+            return entry.key;
+          }
+        }
+      }
+    }
+
+    return 'casual'; // 기본값
+  }
+
+  /// OOTD 분석 결과를 캐릭터 스타일 메시지로 포맷
+  List<String> _formatOotdResult(Map<String, dynamic> result, String tpo) {
+    final details = result['details'] as Map<String, dynamic>? ?? {};
+    final score = result['score'] ?? details['overallScore'] ?? 0;
+    final grade = details['overallGrade'] ?? 'B';
+    final comment = details['overallComment'] ?? result['content'] ?? '';
+    final highlights =
+        (details['highlights'] as List<dynamic>?)?.cast<String>() ?? [];
+    final suggestions =
+        (details['softSuggestions'] as List<dynamic>?)?.cast<String>() ?? [];
+    final styleKeywords =
+        (details['styleKeywords'] as List<dynamic>?)?.cast<String>() ?? [];
+    final celebrityMatch = details['celebrityMatch'] as Map<String, dynamic>?;
+
+    final messages = <String>[];
+
+    // 메시지 1: 총평 + 점수
+    final gradeEmoji = switch (grade) {
+      'S' => '🌟',
+      'A' => '✨',
+      'B' => '💫',
+      _ => '🌱',
+    };
+    messages.add('$gradeEmoji 코디 점수: $score점 ($grade등급)\n\n$comment');
+
+    // 메시지 2: 칭찬 포인트
+    if (highlights.isNotEmpty) {
+      final highlightText = highlights.map((h) => '💕 $h').join('\n');
+      messages.add('오늘 코디의 포인트!\n\n$highlightText');
+    }
+
+    // 메시지 3: 스타일 키워드 + 제안
+    final parts = <String>[];
+    if (styleKeywords.isNotEmpty) {
+      parts.add('🏷️ 스타일: ${styleKeywords.join(', ')}');
+    }
+    if (suggestions.isNotEmpty) {
+      parts.add('\n💡 스타일링 팁\n${suggestions.map((s) => '• $s').join('\n')}');
+    }
+    if (celebrityMatch != null && celebrityMatch['name'] != null) {
+      parts.add(
+          '\n⭐ 셀럽 매칭: ${celebrityMatch['name']} (${celebrityMatch['similarity']}% 유사)\n${celebrityMatch['reason'] ?? ''}');
+    }
+    if (parts.isNotEmpty) {
+      messages.add(parts.join('\n'));
+    }
+
+    return messages.isEmpty ? ['코디 분석 결과를 준비 중이에요!'] : messages;
+  }
+
   /// 캐릭터 메시지 추가
   ///
   /// [suppressNotification] true이면 알림/Follow-up/동기화를 억제 (멀티 버블 중간 메시지용)
@@ -1588,12 +1782,12 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     AppIconBadgeService.updateBadgeCount(total);
   }
 
-  /// DB 동기화 큐에 메시지 추가 (debounced) + 로컬 즉시 저장
+  /// DB 동기화 큐에 메시지 추가 (debounced)
   void _queueForSync() {
     if (state.messages.isEmpty) return;
 
-    // ⚡ 로컬에 즉시 저장 (앱 강제종료 대비)
-    _localService.saveConversation(_characterId, state.messages);
+    // ⚡ 로컬 저장 (debounced 3초) - 스트리밍 중 매번 저장하지 않음
+    _localService.saveConversationDebounced(_characterId, state.messages);
 
     // 서버 동기화 (debounced 3초)
     ChatSyncService.instance.queueForSync(
@@ -2588,6 +2782,208 @@ $enrichedContext
   ) async {
     final normalizedAnswers = Map<String, dynamic>.from(answers);
 
+    // ─── naming: 설문 필드 → API 필드 매핑 ───
+    if (apiFortuneType == 'naming') {
+      final userProfile = _getUserProfileMap();
+
+      // motherBirthDate: 사용자(엄마) 생년월일
+      if (userProfile?['birthDate'] != null) {
+        normalizedAnswers['motherBirthDate'] = userProfile!['birthDate'];
+      }
+      if (userProfile?['birthTime'] != null) {
+        normalizedAnswers['motherBirthTime'] = userProfile!['birthTime'];
+      }
+
+      // expectedBirthDate: 예정일 (dueDate → expectedBirthDate)
+      if (normalizedAnswers.containsKey('dueDate')) {
+        normalizedAnswers['expectedBirthDate'] = normalizedAnswers['dueDate'];
+        normalizedAnswers.remove('dueDate');
+      }
+
+      // babyGender: 아기 성별 (gender → babyGender)
+      if (normalizedAnswers.containsKey('gender')) {
+        normalizedAnswers['babyGender'] = normalizedAnswers['gender'];
+        normalizedAnswers.remove('gender');
+      }
+
+      // familyName: 성씨 (lastName → familyName)
+      if (normalizedAnswers.containsKey('lastName')) {
+        normalizedAnswers['familyName'] = normalizedAnswers['lastName'];
+        normalizedAnswers.remove('lastName');
+      }
+
+      // nameStyle: 이름 스타일 (style → nameStyle)
+      if (normalizedAnswers.containsKey('style')) {
+        normalizedAnswers['nameStyle'] = normalizedAnswers['style'];
+        normalizedAnswers.remove('style');
+      }
+
+      // 불필요한 필드 제거
+      normalizedAnswers.remove('dueDateKnown');
+
+      return normalizedAnswers;
+    }
+
+    // ─── career: 설문 필드 → API 필드 매핑 ───
+    if (apiFortuneType == 'career') {
+      // field + position → currentRole 매핑
+      const fieldLabels = {
+        'tech': 'IT/개발',
+        'finance': '금융/재무',
+        'healthcare': '의료/헬스케어',
+        'education': '교육',
+        'creative': '크리에이티브',
+        'marketing': '마케팅/광고',
+        'sales': '영업/세일즈',
+        'hr': '인사/HR',
+        'legal': '법률/법무',
+        'manufacturing': '제조/생산',
+        'other': '기타',
+      };
+
+      const positionLabels = {
+        // tech
+        'frontend': '프론트엔드 개발자',
+        'backend': '백엔드 개발자',
+        'fullstack': '풀스택 개발자',
+        'mobile': '모바일 개발자',
+        'data': '데이터/AI 엔지니어',
+        'devops': 'DevOps 엔지니어',
+        'pm': 'PM/PO',
+        // finance
+        'analyst': '애널리스트',
+        'accountant': '회계사',
+        'banker': '은행원',
+        'trader': '트레이더',
+        'auditor': '감사',
+        // healthcare
+        'doctor': '의사',
+        'nurse': '간호사',
+        'pharmacist': '약사',
+        'researcher': '연구원',
+        'admin': '행정',
+        // education
+        'teacher': '교사',
+        'professor': '교수',
+        'tutor': '강사',
+        // creative
+        'designer': '디자이너',
+        'writer': '작가/카피라이터',
+        'photographer': '포토그래퍼',
+        'director': '감독/PD',
+        // marketing
+        'marketer': '마케터',
+        'planner': '기획자',
+        'brand': '브랜드 매니저',
+        'performance': '퍼포먼스 마케터',
+        // sales
+        'sales_rep': '영업 담당자',
+        'account': '어카운트 매니저',
+        'bd': 'BD/사업개발',
+        // hr
+        'recruiter': '채용 담당자',
+        'hrbp': 'HRBP',
+        'training': '교육/연수 담당',
+        // legal
+        'lawyer': '변호사',
+        'paralegal': '법무팀',
+        'compliance': '컴플라이언스',
+        // manufacturing
+        'engineer': '엔지니어',
+        'manager': '생산 관리자',
+        'quality': '품질 관리자',
+        // other
+        'general': '일반 사무직',
+        'specialist': '전문직',
+        'freelance': '프리랜서',
+      };
+
+      final field = normalizedAnswers['field'] as String?;
+      final position = normalizedAnswers['position'] as String?;
+      final concern = normalizedAnswers['concern'] as String?;
+
+      // currentRole: field + position 조합
+      if (field != null || position != null) {
+        final fieldLabel = fieldLabels[field] ?? field ?? '';
+        final positionLabel = positionLabels[position] ?? position ?? '';
+        normalizedAnswers['currentRole'] = '$fieldLabel $positionLabel'.trim();
+      }
+
+      // concern → primaryConcern (Edge Function 기대 필드)
+      if (concern != null) {
+        normalizedAnswers['primaryConcern'] = concern;
+        normalizedAnswers['primary_concern'] = concern; // snake_case도 추가
+      }
+
+      // 기본값: timeHorizon
+      normalizedAnswers['timeHorizon'] ??= '3년 후';
+
+      return normalizedAnswers;
+    }
+
+    // ─── exam: 설문 필드 → API 필드 매핑 ───
+    if (apiFortuneType == 'exam') {
+      // examType 레이블 매핑
+      const examTypeLabels = {
+        'license': '자격증',
+        'employment': '취업/공채',
+        'academic': '학업/수능',
+        'language': '어학(토익/토플)',
+        'certification': '전문자격',
+        'civil_service': '공무원',
+        'other': '기타',
+      };
+
+      // preparation 레이블 매핑
+      const preparationLabels = {
+        'excellent': '매우 자신있음',
+        'good': '자신있음',
+        'average': '보통',
+        'poor': '불안',
+        'very_poor': '매우 불안',
+      };
+
+      final examType = normalizedAnswers['examType'] as String?;
+      final examDate = normalizedAnswers['examDate'];
+      final preparation = normalizedAnswers['preparation'] as String?;
+
+      // examType → exam_type
+      if (examType != null) {
+        normalizedAnswers['exam_type'] = examTypeLabels[examType] ?? examType;
+        normalizedAnswers['exam_category'] = examType;
+      }
+
+      // examDate (객체) → exam_date (문자열)
+      if (examDate is Map<String, dynamic>) {
+        // selectedDate 또는 date에서 날짜 추출
+        final selectedDate = examDate['selectedDate'] as String?;
+        final dateStr = examDate['date'] as String?;
+        if (selectedDate != null && selectedDate.isNotEmpty) {
+          normalizedAnswers['exam_date'] = selectedDate;
+        } else if (dateStr != null) {
+          // ISO 날짜에서 날짜 부분만 추출
+          normalizedAnswers['exam_date'] = dateStr.split('T').first;
+        }
+      } else if (examDate is String) {
+        normalizedAnswers['exam_date'] = examDate;
+      }
+
+      // preparation → confidence
+      if (preparation != null) {
+        normalizedAnswers['confidence'] =
+            preparationLabels[preparation] ?? preparation;
+        normalizedAnswers['preparation_status'] = preparation;
+      }
+
+      return normalizedAnswers;
+    }
+
+    // ─── moving: 설문 필드 → API 필드 매핑 ───
+    if (apiFortuneType == 'moving') {
+      return MovingFortuneInputMapper.normalize(normalizedAnswers);
+    }
+
+    // ─── face-reading: 이미지 처리 ───
     if (apiFortuneType != 'face-reading') {
       return normalizedAnswers;
     }
@@ -3271,6 +3667,9 @@ $enrichedContext
   Future<bool> saveOnExit() async {
     // 호감도 저장 (항상)
     await _affinityService.saveAffinity(_characterId, state.affinity);
+
+    // 펜딩된 로컬 저장 즉시 flush
+    await _localService.flushPendingConversations();
 
     // 메시지가 없으면 저장 안 함
     if (state.messages.isEmpty) return true;

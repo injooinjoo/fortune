@@ -284,7 +284,7 @@ class UnifiedFortuneService {
       'lucky-series': '럭키 시리즈',
       'fortune-celebrity': '연예인 분석',
       'pet-compatibility': '반려동물 가이드',
-      'baby-nickname': '태명 이야기',
+      // baby-nickname은 naming으로 통합됨
     };
     return titles[fortuneType] ?? '분석 결과';
   }

@@ -109,6 +109,8 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
       _checkDeckSelection();
       // Ensure navigation is hidden when this page loads
       ref.read(navigationVisibilityProvider.notifier).hide();
+      // 채팅방 진입 시 맨 아래로 스크롤
+      _scrollToBottom();
     });
   }
 
@@ -134,7 +136,8 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage>
   }
 
   void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (!mounted) return;
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,

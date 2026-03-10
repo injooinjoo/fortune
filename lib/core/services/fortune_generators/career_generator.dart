@@ -45,23 +45,42 @@ class CareerGenerator {
     final careerType =
         inputConditions['career_type'] as String? ?? 'career-future';
 
-    // 📤 API 요청 준비
-    Logger.info('[CareerGenerator] 📤 API 요청 준비');
-    Logger.info('[CareerGenerator]   🌐 Edge Function: fortune-career');
-    Logger.info('[CareerGenerator]   👤 user_id: $userId');
-    Logger.info('[CareerGenerator]   💼 career_type: $careerType');
-    Logger.info('[CareerGenerator]   🎯 goal: ${inputConditions['goal']}');
-    Logger.info(
-        '[CareerGenerator]   📅 time_horizon: ${inputConditions['time_horizon']}');
-
     try {
+      // camelCase 또는 snake_case 지원 (설문 매핑 호환성)
+      final currentRole = inputConditions['currentRole'] ??
+          inputConditions['current_role'] ??
+          '';
+      final goal =
+          inputConditions['careerGoal'] ?? inputConditions['goal'] ?? '';
+      final timeHorizon = inputConditions['timeHorizon'] ??
+          inputConditions['time_horizon'] ??
+          '3년 후';
+      final primaryConcern = inputConditions['primaryConcern'] ??
+          inputConditions['primary_concern'] ??
+          '';
+      final experience = inputConditions['experience'] ?? '';
+
+      // 📤 API 요청 준비
+      Logger.info('[CareerGenerator] 📤 API 요청 준비');
+      Logger.info('[CareerGenerator]   🌐 Edge Function: fortune-career');
+      Logger.info('[CareerGenerator]   👤 user_id: $userId');
+      Logger.info('[CareerGenerator]   💼 career_type: $careerType');
+      Logger.info('[CareerGenerator]   👔 current_role: $currentRole');
+      Logger.info('[CareerGenerator]   🎯 concern: $primaryConcern');
+      Logger.info('[CareerGenerator]   📅 time_horizon: $timeHorizon');
+
       final requestBody = {
         'fortune_type': careerType.replaceAll('-', '_'),
-        'current_role': inputConditions['current_role'],
-        'goal': inputConditions['goal'],
-        'time_horizon': inputConditions['time_horizon'],
+        'current_role': currentRole,
+        'goal': goal,
+        'time_horizon': timeHorizon,
         'career_path': inputConditions['career_path'],
         'selected_skills': inputConditions['selected_skills'],
+        // 핵심 고민 (Edge Function 기대 필드)
+        if (primaryConcern.isNotEmpty) 'primaryConcern': primaryConcern,
+        if (primaryConcern.isNotEmpty) 'primary_concern': primaryConcern,
+        // 경력 수준
+        if (experience.isNotEmpty) 'experience': experience,
         // career-seeker 관련
         if (inputConditions['desired_industry'] != null)
           'desired_industry': inputConditions['desired_industry'],

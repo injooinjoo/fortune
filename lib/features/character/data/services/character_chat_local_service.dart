@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,12 +10,20 @@ import '../../../../core/utils/logger.dart';
 /// 캐릭터 채팅 로컬 저장소 서비스 (카카오톡 스타일)
 /// - Hive를 사용하여 대화 내용을 기기에 저장
 /// - 서버 동기화와 독립적으로 로컬에 저장
+/// - 디바운스된 저장으로 성능 최적화
 class CharacterChatLocalService {
   static const String _boxName = 'character_chats';
   static const String _metadataBoxName = 'character_chat_metadata';
   static const String _migrationDoneKey = 'character_chat_scope_migrated_v1';
+  static const Duration _debounceDuration = Duration(seconds: 3);
   static Box<String>? _box;
   static Box<String>? _metadataBox;
+
+  /// 디바운스 타이머 (characterId별)
+  final Map<String, Timer> _debounceTimers = {};
+
+  /// 펜딩 저장 데이터 (characterId별)
+  final Map<String, List<CharacterChatMessage>> _pendingMessages = {};
 
   /// Hive 박스 초기화 (main.dart에서 호출)
   static Future<void> initialize() async {
@@ -64,6 +73,52 @@ class CharacterChatLocalService {
     } catch (e) {
       Logger.error('Failed to save conversation locally', e);
       return false;
+    }
+  }
+
+  /// 대화 저장 (디바운스) - 3초 내 중복 호출 무시
+  /// 스트리밍 중 매번 저장하지 않고, 마지막 호출 후 3초 뒤에 저장
+  void saveConversationDebounced(
+    String characterId,
+    List<CharacterChatMessage> messages,
+  ) {
+    if (!isInitialized) {
+      Logger.warning('CharacterChatLocalService not initialized');
+      return;
+    }
+
+    // 펜딩 데이터 업데이트
+    _pendingMessages[characterId] = messages;
+
+    // 기존 타이머 취소
+    _debounceTimers[characterId]?.cancel();
+
+    // 새 타이머 설정
+    _debounceTimers[characterId] = Timer(_debounceDuration, () async {
+      final pending = _pendingMessages.remove(characterId);
+      if (pending != null && pending.isNotEmpty) {
+        await saveConversation(characterId, pending);
+      }
+    });
+  }
+
+  /// 즉시 저장 (앱 백그라운드/종료 시)
+  Future<void> flushPendingConversations() async {
+    // 모든 타이머 취소
+    for (final timer in _debounceTimers.values) {
+      timer.cancel();
+    }
+    _debounceTimers.clear();
+
+    // 펜딩 데이터 모두 저장
+    final entries =
+        Map<String, List<CharacterChatMessage>>.from(_pendingMessages);
+    _pendingMessages.clear();
+
+    for (final entry in entries.entries) {
+      if (entry.value.isNotEmpty) {
+        await saveConversation(entry.key, entry.value);
+      }
     }
   }
 

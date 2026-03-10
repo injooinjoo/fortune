@@ -174,7 +174,7 @@ EXAMPLE LINES:
   creatorComment: '40년 경력 명리학 대가의 따뜻한 조언',
   accentColor: Color(0xFF795548),
   characterType: CharacterType.fortune,
-  specialties: ['traditional-saju', 'face-reading', 'naming', 'baby-nickname'],
+  specialties: ['traditional-saju', 'face-reading', 'naming'],
   specialtyCategory: 'traditional',
   canCallFortune: true,
 );
@@ -241,7 +241,7 @@ EXAMPLE LINES:
   creatorComment: '별빛처럼 아름다운 점성술사의 이야기',
   accentColor: Color(0xFF3F51B5),
   characterType: CharacterType.fortune,
-  specialties: ['zodiac', 'zodiac-animal', 'constellation', 'birthstone'],
+  specialties: ['zodiac', 'zodiac-animal', 'birthstone'],
   specialtyCategory: 'zodiac',
   canCallFortune: true,
 );

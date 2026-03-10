@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,10 +19,15 @@ import '../../domain/models/chat_state.dart';
 const _uuid = Uuid();
 
 /// 채팅 메시지 StateNotifier (로컬 저장 지원)
+/// - 디바운스된 저장으로 성능 최적화 (3초)
 class ChatMessagesNotifier extends StateNotifier<ChatState> {
   final SharedPreferences _prefs;
   static const _storageKey = 'chat_messages_v1';
   static const _maxStoredMessages = 100;
+  static const _debounceDuration = Duration(seconds: 3);
+
+  Timer? _saveDebounceTimer;
+  bool _hasPendingSave = false;
 
   ChatMessagesNotifier(this._prefs) : super(const ChatState()) {
     // 앱 시작 시 이전 대화 로드 비활성화 - 빈 상태로 시작
@@ -45,8 +51,24 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     }
   }
 
-  /// 메시지를 로컬에 저장 + DB 동기화 큐에 추가
-  Future<void> _saveMessages() async {
+  /// 메시지를 로컬에 저장 + DB 동기화 큐에 추가 (디바운스)
+  void _saveMessages() {
+    _hasPendingSave = true;
+
+    // 기존 타이머 취소
+    _saveDebounceTimer?.cancel();
+
+    // 새 타이머 설정 (3초 후 저장)
+    _saveDebounceTimer = Timer(_debounceDuration, () async {
+      await _performSave();
+    });
+  }
+
+  /// 실제 저장 수행
+  Future<void> _performSave() async {
+    if (!_hasPendingSave) return;
+    _hasPendingSave = false;
+
     try {
       final persistable = state.messages.where((m) => m.isPersistable).toList();
       // 최근 N개만 저장
@@ -55,7 +77,7 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
           : persistable;
       final json = toSave.map((m) => m.toJson()).toList();
 
-      // 1. 로컬 저장 (즉시)
+      // 1. 로컬 저장
       await _prefs.setString(_storageKey, jsonEncode(json));
 
       // 2. DB 동기화 큐에 추가 (debounced)
@@ -67,6 +89,13 @@ class ChatMessagesNotifier extends StateNotifier<ChatState> {
     } catch (e) {
       debugPrint('채팅 히스토리 저장 실패: $e');
     }
+  }
+
+  /// 펜딩된 저장 즉시 실행 (앱 백그라운드/종료 시)
+  Future<void> flushPendingSave() async {
+    _saveDebounceTimer?.cancel();
+    _saveDebounceTimer = null;
+    await _performSave();
   }
 
   /// 사용자 메시지 추가

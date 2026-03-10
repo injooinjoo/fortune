@@ -32,28 +32,63 @@ class ExLoverGenerator {
     Logger.info('[ExLoverGenerator]   🌐 Edge Function: fortune-ex-lover');
     Logger.info('[ExLoverGenerator]   👤 user_id: $userId');
     Logger.info('[ExLoverGenerator]   💔 name: $userName');
+
+    // ✅ Flutter 입력 필드명 → Edge Function 필드명 매핑
+    final timeSinceBreakup = inputConditions['time_since_breakup'] ??
+        inputConditions['breakupTime'] ??
+        '';
+    final exName =
+        inputConditions['ex_name'] ?? inputConditions['exPartnerName'] ?? '';
+    final exMbti =
+        inputConditions['ex_mbti'] ?? inputConditions['exPartnerMbti'] ?? '';
+    final exBirthDate = inputConditions['ex_birth_date'] ??
+        inputConditions['exPartnerBirthYear'] ??
+        '';
+    final breakupDetail = inputConditions['breakup_detail'] ??
+        inputConditions['detailedStory'] ??
+        '';
+    final contactStatus = inputConditions['contact_status'] ??
+        inputConditions['contactStatus'] ??
+        '';
+    final breakupInitiator = inputConditions['breakup_initiator'] ??
+        inputConditions['breakupInitiator'] ??
+        '';
+    final coreReason = inputConditions['breakup_reason'] ??
+        inputConditions['coreReason'] ??
+        '';
+    final relationshipDepth = inputConditions['relationshipDepth'] ?? '';
+    final primaryGoal = inputConditions['primaryGoal'] ?? 'healing';
+    final currentState =
+        inputConditions['currentState'] as List<dynamic>? ?? [];
+    final goalSpecific =
+        inputConditions['goalSpecific'] as Map<String, dynamic>?;
+
     Logger.info(
-        '[ExLoverGenerator]   📅 relationship_duration: ${inputConditions['relationship_duration']}');
-    Logger.info(
-        '[ExLoverGenerator]   💭 breakup_detail: ${inputConditions['breakup_detail']}');
+        '[ExLoverGenerator]   📅 time_since_breakup: $timeSinceBreakup');
+    Logger.info('[ExLoverGenerator]   💭 breakup_detail: $breakupDetail');
+    Logger.info('[ExLoverGenerator]   🎯 primaryGoal: $primaryGoal');
 
     try {
       final requestBody = {
         'fortune_type': 'ex_lover',
         'name': userName,
         // 상대방 정보
-        'ex_name': inputConditions['ex_name'],
-        'ex_mbti': inputConditions['ex_mbti'],
-        'ex_birth_date': inputConditions['ex_birth_date'],
-        // 관계 정보
+        'ex_name': exName,
+        'ex_mbti': exMbti,
+        'ex_birth_date': exBirthDate,
+        // ✅ v2 필수 필드들 (Edge Function 요구사항)
+        'primaryGoal': primaryGoal,
+        'time_since_breakup': timeSinceBreakup,
+        'breakup_initiator': breakupInitiator,
+        'relationshipDepth': relationshipDepth,
+        'coreReason': coreReason,
+        'breakup_detail': breakupDetail,
+        'currentState': currentState,
+        'contact_status': contactStatus,
+        'goalSpecific': goalSpecific,
+        // 관계 정보 (하위 호환성)
         'relationship_duration': inputConditions['relationship_duration'],
-        'time_since_breakup': inputConditions['time_since_breakup'],
-        'breakup_initiator': inputConditions['breakup_initiator'],
-        'contact_status': inputConditions['contact_status'],
-        // 이별 상세
-        'breakup_reason': inputConditions['breakup_reason'],
-        'breakup_detail': inputConditions['breakup_detail'],
-        // 감정 정보
+        // 감정 정보 (하위 호환성)
         'current_emotion': inputConditions['current_emotion'],
         'main_curiosity': inputConditions['main_curiosity'],
         // 추가 정보

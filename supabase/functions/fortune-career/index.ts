@@ -517,12 +517,21 @@ serve(async (req) => {
 
   try {
     // 요청 데이터 파싱
-    const requestData: CareerFortuneRequest = await req.json()
+    const requestData: CareerFortuneRequest & {
+      current_role?: string
+      career_goal?: string
+      time_horizon?: string
+      fortune_type?: string
+    } = await req.json()
     const {
       fortuneType = 'career-future',
+      fortune_type = '',
       currentRole = '',
+      current_role = '',
       careerGoal = '',
+      career_goal = '',
       timeHorizon = '3년 후',
+      time_horizon = '',
       careerPath = '전문가 (기술 심화)',
       skills = [],
       experience = '',
@@ -540,18 +549,22 @@ serve(async (req) => {
     } = requestData
 
     // ✅ snake_case → camelCase 통합 (Flutter에서 snake_case로 전달됨)
+    const actualFortuneType = fortuneType || fortune_type || 'career-future'
+    const actualCurrentRole = currentRole || current_role || ''
+    const actualCareerGoal = careerGoal || career_goal || ''
+    const actualTimeHorizon = timeHorizon || time_horizon || '3년 후'
     const concern = primaryConcern || primary_concern || ''
     const shortGoal = shortTermGoal || short_term_goal || ''
     const value = coreValue || core_value || ''
 
-    if (!currentRole && !careerGoal) {
+    if (!actualCurrentRole && !actualCareerGoal) {
       throw new Error('현재 직무 또는 커리어 목표를 입력해주세요.')
     }
 
     console.log('Career fortune request:', {
-      fortuneType,
-      currentRole: currentRole.substring(0, 50),
-      timeHorizon,
+      fortuneType: actualFortuneType,
+      currentRole: actualCurrentRole.substring(0, 50),
+      timeHorizon: actualTimeHorizon,
       careerPath,
       skillsCount: skills.length,
       isPremium, // ✅ 프리미엄 상태 로깅
@@ -561,9 +574,9 @@ serve(async (req) => {
     })
 
     // 기본 분석 수행
-    const careerField = estimateCareerField(currentRole)
-    const skillAnalysis = analyzeSkills(skills, careerField, currentRole)
-    const predictions = generateCareerPredictions(timeHorizon, careerPath, careerField, currentRole)
+    const careerField = estimateCareerField(actualCurrentRole)
+    const skillAnalysis = analyzeSkills(skills, careerField, actualCurrentRole)
+    const predictions = generateCareerPredictions(actualTimeHorizon, careerPath, careerField, actualCurrentRole)
 
     // ✅ Cohort Pool 조회 (API 비용 90% 절감)
     const cohortData = extractCareerCohort({
@@ -581,8 +594,8 @@ serve(async (req) => {
       // 개인화 (이름 치환)
       const personalizedResult = personalize(poolResult, {
         userName: requestData.userName || requestData.name,
-        currentRole,
-        careerGoal,
+        currentRole: actualCurrentRole,
+        careerGoal: actualCareerGoal,
       }) as Record<string, unknown>
 
       // 추가 데이터 병합
@@ -605,7 +618,7 @@ serve(async (req) => {
     console.log('[Career] Cohort Pool miss, LLM 호출 필요')
 
     // 캐시 확인 (UTF-8 안전한 SHA-256 해시) - ✅ 핵심 고민도 캐시 키에 포함
-    const hash = await createHash(`${fortuneType}_${currentRole}_${timeHorizon}_${careerPath}_${skills.join(',')}_${concern}`)
+    const hash = await createHash(`${actualFortuneType}_${actualCurrentRole}_${actualTimeHorizon}_${careerPath}_${skills.join(',')}_${concern}`)
     const cacheKey = `career_fortune_${hash}`
     const { data: cachedResult } = await supabase
       .from('fortune_cache')
@@ -656,16 +669,16 @@ serve(async (req) => {
 
 ⚠️ 중요: 오늘 날짜는 ${dateContext}입니다. 모든 시기 예측은 이 날짜 이후로 작성해주세요.
 
-현재 직무: "${currentRole}"
-커리어 목표: "${careerGoal}"
-시간 계획: ${timeHorizon}
+현재 직무: "${actualCurrentRole}"
+커리어 목표: "${actualCareerGoal}"
+시간 계획: ${actualTimeHorizon}
 희망 경로: ${careerPath}
 개발 희망 스킬: ${skills.join(', ')}
 분야 추정: ${careerField}
 이 분야의 일반적 성장 경로: ${fieldGrowthPaths}
 
 ⚠️ 매우 중요 - 직업별 맞춤 응답:
-사용자의 현재 직무는 "${currentRole}"입니다.
+사용자의 현재 직무는 "${actualCurrentRole}"입니다.
 반드시 이 직업에 맞는 커리어 패스와 조언을 제공하세요.
 
 예시:
@@ -691,7 +704,7 @@ ${concernSection}
 
 \`\`\`json
 {
-  "전반적인전망": "${timeHorizon} 내 커리어 전망",
+  "전반적인전망": "${actualTimeHorizon} 내 커리어 전망",
   "강점평가": ["강점1", "강점2", "강점3"],
   "개선영역": ["개선점1", "개선점2", "개선점3"],
   "실행계획": {
@@ -756,14 +769,14 @@ ${concernSection}
 
       // 응답 데이터 구조화 (✅ 표준화된 필드명 사용)
       fortuneData = {
-        fortuneType,
+        fortuneType: actualFortuneType,
         // ✅ 표준화된 필드명: score, content, summary, advice
         score: Math.floor(predictions[0]?.probability || 75),
         content: parsedResponse.전반적인전망 || parsedResponse.overallOutlook || '긍정적인 커리어 발전이 예상됩니다.',
-        summary: `${timeHorizon} 커리어 전망: ${careerPath}`,
+        summary: `${actualTimeHorizon} 커리어 전망: ${careerPath}`,
         advice: parsedResponse.멘토링조언 || parsedResponse.mentorshipAdvice || '전문성을 지속적으로 강화하세요',
-        currentRole,
-        timeHorizon,
+        currentRole: actualCurrentRole,
+        timeHorizon: actualTimeHorizon,
         careerPath,
         predictions: predictions,
         skillAnalysis: skillAnalysis,

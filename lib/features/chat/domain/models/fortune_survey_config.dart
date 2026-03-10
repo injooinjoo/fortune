@@ -144,11 +144,10 @@ enum FortuneSurveyType {
   pastLife, // 전생탐험
   gameEnhance, // 게임 강화운세
 
-  // 가족/반려동물 (4개)
+  // 가족/반려동물 (3개) - baby-nickname은 naming으로 통합
   pet, // 반려동물 궁합
   family, // 가족 운세
-  naming, // 작명
-  babyNickname, // 태명 분석
+  naming, // 작명/태명 (통합)
 
   // 스타일/패션 (1개)
   ootdEvaluation, // OOTD 평가
@@ -231,8 +230,6 @@ extension FortuneSurveyTypeCanonicalX on FortuneSurveyType {
         return 'family';
       case FortuneSurveyType.naming:
         return 'naming';
-      case FortuneSurveyType.babyNickname:
-        return 'baby-nickname';
       case FortuneSurveyType.ootdEvaluation:
         return 'ootd-evaluation';
       case FortuneSurveyType.exam:
@@ -311,9 +308,8 @@ extension FortuneSurveyTypeCanonicalX on FortuneSurveyType {
       case 'family':
         return FortuneSurveyType.family;
       case 'naming':
+      case 'baby-nickname': // 레거시 호환 → naming으로 통합
         return FortuneSurveyType.naming;
-      case 'baby-nickname':
-        return FortuneSurveyType.babyNickname;
       case 'ootd-evaluation':
         return FortuneSurveyType.ootdEvaluation;
       case 'exam':

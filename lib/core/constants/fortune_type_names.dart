@@ -125,9 +125,8 @@ class FortuneTypeNames {
     'pregnancy': '태교 가이드',
     'family-harmony': '가족 화합 가이드',
 
-    // Naming (작명)
-    'naming': '이름 분석',
-    'baby-nickname': '태명 이야기',
+    // Naming (작명/태명 통합)
+    'naming': '작명/태명',
     'ootd-evaluation': 'OOTD 평가'
   };
 
@@ -301,7 +300,7 @@ class FortuneTypeNames {
       'yearly-encounter': '/yearly-encounter',
       'match-insight': '/match-insight',
       'game-enhance': '/game-enhance',
-      'baby-nickname': '/baby-nickname',
+      // baby-nickname은 naming으로 통합됨
       'ootd-evaluation': '/ootd-evaluation'
     };
 

@@ -132,6 +132,9 @@ class GeneratorFactory {
           isPremium: isPremium,
         );
 
+      case 'match_insight':
+        return await _generateMatchInsight(input);
+
       case 'game_enhance':
         return await _generateGameEnhance(input);
 
@@ -164,18 +167,21 @@ class GeneratorFactory {
       case 'fortune_celebrity':
         return await _generateCelebrity(input, isPremium);
 
-      case 'match_insight':
-        return await _generateMatchInsight(input);
+      case 'past_life':
+        return await _generatePastLife(input, isPremium);
 
+      // baby_nickname은 naming으로 통합됨
       case 'baby_nickname':
       case 'babynickname':
-        return await _generateBabyNickname(input);
-
       case 'naming':
         return await _generateNaming(input, isPremium);
 
       case 'new_year':
         return await _generateNewYear(input, isPremium);
+
+      // ==================== 재물운 ====================
+      case 'wealth':
+        return await _generateWealth(input, isPremium);
 
       // ==================== 가족 운세 (5가지) ====================
       case 'family_health':
@@ -184,6 +190,11 @@ class GeneratorFactory {
       case 'family_relationship':
       case 'family_change':
         return await _generateFamily(fortuneType, input, isPremium);
+
+      // ==================== 올해의 인연 ====================
+      case 'yearly-encounter':
+      case 'yearly_encounter':
+        return await _generateYearlyEncounter(input, isPremium);
 
       // ==================== 기본 (레거시) ====================
       default:
@@ -492,6 +503,62 @@ class GeneratorFactory {
     );
   }
 
+  Future<FortuneResult> _generateGameEnhance(
+    Map<String, dynamic> input,
+  ) async {
+    final user = _supabase.auth.currentUser;
+    String? readOptionalString(dynamic value) {
+      if (value == null) {
+        return null;
+      }
+      final text = value.toString().trim();
+      return text.isEmpty ? null : text;
+    }
+
+    final birthDate = readOptionalString(input['birthDate']);
+    final gender = readOptionalString(input['gender']);
+    final payload = <String, dynamic>{
+      'userId': user?.id ?? input['userId'] ?? 'anonymous',
+      if (birthDate != null) 'birthDate': birthDate,
+      if (gender != null) 'gender': gender,
+    };
+
+    final response = await _supabase.functions
+        .invoke('fortune-game-enhance', body: payload)
+        .timeout(
+          const Duration(seconds: 90),
+          onTimeout: () => throw Exception('Game Enhance API 타임아웃 (90초)'),
+        );
+
+    if (response.data == null) {
+      throw Exception('Game Enhance API 응답 없음');
+    }
+
+    final responseData = response.data as Map<String, dynamic>;
+    if (responseData['success'] != true || !responseData.containsKey('data')) {
+      throw Exception(responseData['error'] ?? 'Game Enhance API 응답 형식 오류');
+    }
+
+    final fortune = responseData['data'] as Map<String, dynamic>;
+    final summaryText = readOptionalString(fortune['summary']) ??
+        readOptionalString(fortune['status_message']) ??
+        '강화운 분석 완료';
+    final timestampRaw = readOptionalString(fortune['timestamp']) ??
+        readOptionalString(fortune['created_at']);
+
+    return FortuneResult(
+      id: fortune['id'] as String?,
+      type: 'game-enhance',
+      title: readOptionalString(fortune['title']) ?? '강화의 기운',
+      summary: {'message': summaryText},
+      data: fortune,
+      score: (fortune['score'] as num?)?.toInt(),
+      createdAt: timestampRaw != null ? DateTime.tryParse(timestampRaw) : null,
+      percentile: (fortune['percentile'] as num?)?.toInt(),
+      isPercentileValid: fortune['percentile'] != null,
+    );
+  }
+
   Future<FortuneResult> _generateCelebrity(
     Map<String, dynamic> input,
     bool isPremium,
@@ -536,99 +603,133 @@ class GeneratorFactory {
     throw Exception('Celebrity API 응답 형식 오류');
   }
 
-  Future<FortuneResult> _generateGameEnhance(
+  Future<FortuneResult> _generatePastLife(
     Map<String, dynamic> input,
-  ) async {
-    final user = _supabase.auth.currentUser;
-
-    String? readOptionalString(dynamic value) {
-      if (value == null) {
-        return null;
-      }
-      final text = value.toString().trim();
-      return text.isEmpty ? null : text;
-    }
-
-    final birthDate = readOptionalString(input['birthDate']);
-    final gender = readOptionalString(input['gender']);
-    final payload = <String, dynamic>{
-      'userId': user?.id ?? input['userId'] ?? 'anonymous',
-      if (birthDate != null) 'birthDate': birthDate,
-      if (gender != null) 'gender': gender,
-    };
-
-    final response = await _supabase.functions
-        .invoke('fortune-game-enhance', body: payload)
-        .timeout(
-          const Duration(seconds: 90),
-          onTimeout: () => throw Exception('Game Enhance API 타임아웃 (90초)'),
-        );
-
-    if (response.data == null) {
-      throw Exception('Game Enhance API 응답 없음');
-    }
-
-    final responseData = response.data as Map<String, dynamic>;
-    if (responseData['success'] != true || !responseData.containsKey('data')) {
-      throw Exception(responseData['error'] ?? 'Game Enhance API 응답 형식 오류');
-    }
-
-    final fortune = responseData['data'] as Map<String, dynamic>;
-    return FortuneResult(
-      id: fortune['id'] as String?,
-      type: 'game-enhance',
-      title: readOptionalString(fortune['title']) ?? '강화의 기운',
-      summary: {
-        'message': readOptionalString(fortune['summary']) ??
-            readOptionalString(fortune['status_message']) ??
-            '강화운 분석 완료',
-      },
-      data: fortune,
-      score: (fortune['score'] as num?)?.toInt(),
-      createdAt: DateTime.tryParse(
-        readOptionalString(fortune['timestamp']) ??
-            readOptionalString(fortune['created_at']) ??
-            '',
-      ),
-      percentile: (fortune['percentile'] as num?)?.toInt(),
-      isPercentileValid: fortune['percentile'] != null,
-    );
-  }
-
-  Future<FortuneResult> _generateBabyNickname(
-    Map<String, dynamic> input,
+    bool isPremium,
   ) async {
     final user = _supabase.auth.currentUser;
     final payload = {
-      'userId': user?.id ?? 'anonymous',
-      'nickname': input['nickname'],
-      if (input['babyDream'] != null) 'babyDream': input['babyDream'],
+      'userId': user?.id ?? input['userId'] ?? 'anonymous',
+      'name': input['name'] ?? 'Guest',
+      'birthDate': input['birthDate'],
+      'birthTime': input['birthTime'],
+      'gender': input['gender'] ?? 'unknown',
+      'isPremium': isPremium,
+      // 선택적 필드
+      if (input['curiosity'] != null) 'curiosity': input['curiosity'],
+      if (input['eraVibe'] != null) 'eraVibe': input['eraVibe'],
+      if (input['feeling'] != null) 'feeling': input['feeling'],
+      // 얼굴 사진 (Base64)
+      if (input['photo'] != null && input['photo']['imagePath'] != null)
+        'faceImagePath': input['photo']['imagePath'],
+    };
+
+    final response = await _supabase.functions
+        .invoke('fortune-past-life', body: payload)
+        .timeout(
+          const Duration(seconds: 90),
+          onTimeout: () => throw Exception('Past Life API 타임아웃 (90초)'),
+        );
+
+    if (response.data == null) {
+      throw Exception('Past Life API 응답 없음');
+    }
+
+    final data = response.data as Map<String, dynamic>;
+
+    // Edge Function 응답: { fortune: {...} }
+    if (data.containsKey('fortune')) {
+      final fortune = data['fortune'] as Map<String, dynamic>;
+      return FortuneResult(
+        type: 'past-life',
+        title: fortune['statusKr'] as String? ?? '전생 운세',
+        summary: {'message': fortune['summary'] as String? ?? '전생 분석 완료'},
+        data: fortune,
+        score: (fortune['score'] as num?)?.toInt() ?? 75,
+        createdAt: DateTime.now(),
+      );
+    }
+
+    // 레거시 응답 형식: { success: true, data: {...} }
+    if (data['success'] == true && data.containsKey('data')) {
+      final fortune = data['data'] as Map<String, dynamic>;
+      return FortuneResult(
+        type: 'past-life',
+        title: '전생 운세',
+        summary: {'message': fortune['mainMessage'] as String? ?? '전생 분석 완료'},
+        data: fortune,
+        score: (fortune['overallScore'] as num?)?.toInt() ?? 75,
+        createdAt: DateTime.now(),
+      );
+    }
+
+    throw Exception(
+        'Past Life API 응답 형식 오류: ${data['error'] ?? data.keys.join(',')}');
+  }
+
+  /// 재물운 생성 (fortune-wealth Edge Function 호출)
+  Future<FortuneResult> _generateWealth(
+    Map<String, dynamic> input,
+    bool isPremium,
+  ) async {
+    final user = _supabase.auth.currentUser;
+    final payload = {
+      'userId': user?.id ?? input['userId'] ?? 'anonymous',
+      'userName': input['name'] ?? input['userName'] ?? 'Guest',
+      'isPremium': isPremium,
+      // 설문 필드
+      'goal': input['goal'] ?? 'saving',
+      'concern': input['concern'] ?? 'spending',
+      'income': input['income'] ?? 'stable',
+      'expense': input['expense'] ?? 'balanced',
+      'risk': input['risk'] ?? 'balanced',
+      'interests': input['interests'] ?? [],
+      'urgency': input['urgency'] ?? 'thisYear',
+      // 사주 데이터 (선택)
+      if (input['sajuData'] != null) 'sajuData': input['sajuData'],
     };
 
     final response = await _supabase.functions.invoke(
-      'fortune-baby-nickname',
+      'fortune-wealth',
       body: payload,
     );
 
     if (response.data == null) {
-      throw Exception('Baby Nickname API 응답 없음');
+      throw Exception('Wealth API 응답 없음');
     }
 
     final data = response.data as Map<String, dynamic>;
-    if (data['success'] == true && data.containsKey('data')) {
-      final fortune = data['data'] as Map<String, dynamic>;
+
+    // Edge Function 응답: { fortune: {...} } 또는 { success: true, data: {...} }
+    if (data.containsKey('fortune')) {
+      final fortune = data['fortune'] as Map<String, dynamic>;
       return FortuneResult(
-        type: 'baby-nickname',
-        title: '태명 이야기 - ${payload['nickname']}',
-        summary: {
-          'message': fortune['babyMessage'] as String? ?? '아기가 메시지를 전해요'
-        },
+        type: 'wealth',
+        title: '재물운',
+        summary: {'message': fortune['content'] as String? ?? '재물운 분석 완료'},
         data: fortune,
+        score: (fortune['overallScore'] as num?)?.toInt() ?? 75,
         createdAt: DateTime.now(),
       );
     }
-    throw Exception('Baby Nickname API 응답 형식 오류');
+
+    if (data['success'] == true && data.containsKey('data')) {
+      final fortune = data['data'] as Map<String, dynamic>;
+      return FortuneResult(
+        type: 'wealth',
+        title: '재물운',
+        summary: {'message': fortune['content'] as String? ?? '재물운 분석 완료'},
+        data: fortune,
+        score: (fortune['overallScore'] as num?)?.toInt() ?? 75,
+        createdAt: DateTime.now(),
+      );
+    }
+
+    throw Exception(
+        'Wealth API 응답 형식 오류: ${data['error'] ?? data.keys.join(',')}');
   }
+
+  // _generateBabyNickname은 _generateNaming으로 통합됨
 
   Future<FortuneResult> _generateNaming(
     Map<String, dynamic> input,
@@ -769,6 +870,51 @@ class GeneratorFactory {
       score: (fortune['overallScore'] ?? fortune['score'] ?? 70) as int,
       createdAt: DateTime.now(),
     );
+  }
+
+  Future<FortuneResult> _generateYearlyEncounter(
+    Map<String, dynamic> input,
+    bool isPremium,
+  ) async {
+    final user = _supabase.auth.currentUser;
+    final payload = {
+      'userId': user?.id ?? input['userId'] ?? 'anonymous',
+      'targetGender': input['targetGender'] ?? 'female',
+      'userAge': input['userAge'] ?? 'mid20s',
+      'idealMbti': input['idealMbti'] ?? '상관없음',
+      'idealStyle': input['idealStyle'],
+      'idealType': input['idealType'] ?? '',
+      'isPremium': isPremium,
+    };
+
+    final response = await _supabase.functions
+        .invoke('fortune-yearly-encounter', body: payload)
+        .timeout(
+          const Duration(seconds: 90),
+          onTimeout: () => throw Exception('Yearly Encounter API 타임아웃 (90초)'),
+        );
+
+    if (response.data == null) {
+      throw Exception('Yearly Encounter API 응답 없음');
+    }
+
+    final data = response.data as Map<String, dynamic>;
+    if (data['success'] == true && data.containsKey('data')) {
+      final fortune = data['data'] as Map<String, dynamic>;
+      return FortuneResult(
+        type: 'yearly-encounter',
+        title: '올해의 인연',
+        summary: {
+          'message': fortune['encounterSpotTitle'] as String? ?? '인연 분석 완료'
+        },
+        data: fortune,
+        score:
+            int.tryParse(fortune['compatibilityScore']?.toString() ?? '75') ??
+                75,
+        createdAt: DateTime.now(),
+      );
+    }
+    throw Exception('Yearly Encounter API 응답 형식 오류');
   }
 
   Future<FortuneResult> _generateDefault(

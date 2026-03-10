@@ -485,7 +485,6 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
             final result = results[index];
             return InsightHistoryCard(
               result: result,
-              onTap: () => context.push('/chat-insight'),
               onDelete: () async {
                 await InsightStorage.delete(result.analysisMeta.id);
                 setState(() {}); // rebuild to refresh FutureBuilder

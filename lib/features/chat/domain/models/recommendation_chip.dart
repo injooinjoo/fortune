@@ -76,7 +76,7 @@ class RecommendationChip {
       'family': l10n.fortuneFamily,
       'pet-compatibility': l10n.fortunePet,
       'naming': l10n.fortuneNaming,
-      'baby-nickname': l10n.fortuneBabyNickname,
+      // baby-nickname은 naming으로 통합됨
       // 스타일
       'ootd-evaluation': l10n.fortuneOotdEvaluation,
       // 실용/결정

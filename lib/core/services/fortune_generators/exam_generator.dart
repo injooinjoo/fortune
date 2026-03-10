@@ -27,34 +27,48 @@ class ExamGenerator {
   }) async {
     final userId = supabase.auth.currentUser?.id ?? 'unknown';
 
+    // camelCase 또는 snake_case 지원 (설문 매핑 호환성)
+    final examType =
+        inputConditions['exam_type'] ?? inputConditions['examType'] ?? '';
+    final examDate =
+        inputConditions['exam_date'] ?? inputConditions['examDate'] ?? '';
+    final studyPeriod =
+        inputConditions['study_period'] ?? inputConditions['studyPeriod'] ?? '';
+    final confidence =
+        inputConditions['confidence'] ?? inputConditions['preparation'] ?? '보통';
+    final difficulty = inputConditions['difficulty'] ?? '보통';
+    final examCategory = inputConditions['exam_category'] ??
+        inputConditions['examCategory'] ??
+        '';
+    final preparationStatus = inputConditions['preparation_status'] ??
+        inputConditions['preparationStatus'] ??
+        inputConditions['preparation'] ??
+        '';
+
     // 📤 API 요청 준비
     Logger.info('[ExamGenerator] 📤 API 요청 준비');
-    Logger.info('[ExamGenerator]   🌐 Edge Function: generate-fortune');
+    Logger.info('[ExamGenerator]   🌐 Edge Function: fortune-exam');
     Logger.info('[ExamGenerator]   👤 user_id: $userId');
-    Logger.info(
-        '[ExamGenerator]   📝 exam_type: ${inputConditions['exam_type']}');
-    Logger.info(
-        '[ExamGenerator]   📅 exam_date: ${inputConditions['exam_date']}');
-    Logger.info(
-        '[ExamGenerator]   📚 study_period: ${inputConditions['study_period']}');
-    Logger.info(
-        '[ExamGenerator]   💪 confidence: ${inputConditions['confidence']}');
+    Logger.info('[ExamGenerator]   📝 exam_type: $examType');
+    Logger.info('[ExamGenerator]   📅 exam_date: $examDate');
+    Logger.info('[ExamGenerator]   📚 study_period: $studyPeriod');
+    Logger.info('[ExamGenerator]   💪 confidence: $confidence');
 
     try {
       final requestBody = {
         'fortune_type': 'exam',
-        'exam_type': inputConditions['exam_type'],
-        'exam_date': inputConditions['exam_date'],
-        'study_period': inputConditions['study_period'],
-        'confidence': inputConditions['confidence'],
-        'difficulty': inputConditions['difficulty'],
+        'exam_type': examType,
+        'exam_date': examDate,
+        'study_period': studyPeriod,
+        'confidence': confidence,
+        'difficulty': difficulty,
         // 리뉴얼 필드
-        'exam_category': inputConditions['exam_category'],
+        'exam_category': examCategory,
         if (inputConditions['exam_sub_type'] != null)
           'exam_sub_type': inputConditions['exam_sub_type'],
         if (inputConditions['target_score'] != null)
           'target_score': inputConditions['target_score'],
-        'preparation_status': inputConditions['preparation_status'],
+        'preparation_status': preparationStatus,
         'time_point': inputConditions['time_point'],
         'isPremium': isPremium,
       };

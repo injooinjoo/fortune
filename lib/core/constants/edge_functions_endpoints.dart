@@ -50,7 +50,6 @@ class EdgeFunctionsEndpoints {
   // ============================================================
   // Batch & System (아직 Edge Function 미생성 - 기존 API 사용)
   // ============================================================
-  static const String fortuneBatch = '/fortune-batch';
   static const String fortuneSystem = '/fortune-system';
   static const String fortuneRecommendations = '/fortune-recommendations';
 
@@ -163,7 +162,7 @@ class EdgeFunctionsEndpoints {
       'ootd-evaluation': '/fortune-ootd',
       'past-life': '/fortune-past-life',
       'naming': '/fortune-naming',
-      'baby-nickname': '/fortune-baby-nickname',
+      // baby-nickname은 naming으로 통합됨
       'exam': examFortune,
       'tarot': tarotFortune,
 

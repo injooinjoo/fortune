@@ -158,9 +158,8 @@ serve(async (req) => {
     if (cachedResult) {
       console.log('📦 [CelebrityFortune] 캐시 히트!')
       const fortune = cachedResult.result
-      const processedFortune = applyBlurring(fortune, isPremium)
       return new Response(
-        JSON.stringify({ fortune: processedFortune, tokensUsed: 0 }),
+        JSON.stringify({ success: true, data: fortune }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' } }
       )
     }
@@ -433,17 +432,14 @@ ${category ? `- 카테고리: ${category}` : ''}
       console.warn('⚠️ [CelebrityFortune] 캐시 저장 실패:', cacheError)
     }
 
-    // 블러 처리 적용
-    const processedFortune = applyBlurring(fortune, isPremium)
-
     // Percentile 계산
     const percentileData = await calculatePercentile(supabaseClient, 'celebrity', fortune.score)
-    const fortuneWithPercentile = addPercentileToResult(processedFortune, percentileData)
+    const fortuneWithPercentile = addPercentileToResult(fortune, percentileData)
 
     return new Response(
       JSON.stringify({
-        fortune: fortuneWithPercentile,
-        tokensUsed: response.usage?.total_tokens || 0
+        success: true,
+        data: fortuneWithPercentile
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },

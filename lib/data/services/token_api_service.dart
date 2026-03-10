@@ -6,13 +6,47 @@ import '../../core/utils/logger.dart';
 import '../../domain/entities/token.dart';
 import '../../presentation/providers/providers.dart';
 
+/// 캐시된 토큰 잔액 (비용 최적화)
+class _CachedBalance {
+  final TokenBalance balance;
+  final DateTime timestamp;
+
+  _CachedBalance(this.balance, this.timestamp);
+
+  bool isExpired(Duration ttl) => DateTime.now().difference(timestamp) > ttl;
+}
+
 class TokenApiService {
   final ApiClient _apiClient;
 
+  // 토큰 잔액 인메모리 캐시 (60초 TTL) - 비용 최적화
+  static final Map<String, _CachedBalance> _balanceCache = {};
+  static const Duration _cacheTTL = Duration(seconds: 60);
+
   TokenApiService(this._apiClient);
 
-  // 토큰 잔액 조회
+  /// 캐시 무효화 (토큰 소비/획득 후 호출)
+  static void invalidateCache(String userId) {
+    _balanceCache.remove(userId);
+    Logger.debug('[TokenApiService] 캐시 무효화: $userId');
+  }
+
+  /// 전체 캐시 초기화
+  static void clearCache() {
+    _balanceCache.clear();
+    Logger.debug('[TokenApiService] 전체 캐시 초기화');
+  }
+
+  // 토큰 잔액 조회 (캐싱 적용)
   Future<TokenBalance> getTokenBalance({required String userId}) async {
+    // 캐시 확인
+    final cached = _balanceCache[userId];
+    if (cached != null && !cached.isExpired(_cacheTTL)) {
+      Logger.debug(
+          '[TokenApiService] 캐시 히트: $userId (${cached.balance.remainingTokens} tokens)');
+      return cached.balance;
+    }
+
     try {
       Logger.info('========== 🔍 토큰 잔액 조회 시작 ==========');
       Logger.info('userId: $userId');
@@ -35,13 +69,20 @@ class TokenApiService {
           '파싱된 값: balance=$balance, totalPurchased=$totalPurchased, totalUsed=$totalUsed, isUnlimited=$isUnlimited');
       Logger.info('==========================================');
 
-      return TokenBalance(
+      final result = TokenBalance(
           userId: userId,
           totalTokens: totalPurchased,
           usedTokens: totalUsed,
           remainingTokens: balance,
           lastUpdated: DateTime.now(),
           hasUnlimitedAccess: isUnlimited);
+
+      // 캐시에 저장
+      _balanceCache[userId] = _CachedBalance(result, DateTime.now());
+      Logger.debug(
+          '[TokenApiService] 캐시 저장: $userId (${result.remainingTokens} tokens)');
+
+      return result;
     } on DioException catch (e, stackTrace) {
       Logger.error('========== ❌ 토큰 잔액 조회 오류 ==========');
       Logger.error('statusCode: ${e.response?.statusCode}');
@@ -79,13 +120,18 @@ class TokenApiService {
       final data = await _apiClient.post('/soul-consume',
           data: {'fortuneType': fortuneType, 'referenceId': null});
 
-      return TokenBalance(
+      final result = TokenBalance(
           userId: userId,
           totalTokens: data['balance']['totalTokens'],
           usedTokens: data['balance']['usedTokens'],
           remainingTokens: data['balance']['remainingTokens'],
           lastUpdated: DateTime.parse(data['balance']['lastUpdated']),
           hasUnlimitedAccess: data['balance']['hasUnlimitedAccess']);
+
+      // 캐시 업데이트 (토큰 소비 후)
+      _balanceCache[userId] = _CachedBalance(result, DateTime.now());
+
+      return result;
     } on DioException catch (e) {
       if (e.response?.statusCode == 400 &&
           e.response?.data['code'] == 'INSUFFICIENT_TOKENS') {
@@ -247,13 +293,18 @@ class TokenApiService {
     try {
       final data = await _apiClient.post('/token-daily-claim');
 
-      return TokenBalance(
+      final result = TokenBalance(
           userId: userId,
           totalTokens: data['balance']['totalTokens'],
           usedTokens: data['balance']['usedTokens'],
           remainingTokens: data['balance']['remainingTokens'],
           lastUpdated: DateTime.parse(data['balance']['lastUpdated']),
           hasUnlimitedAccess: data['balance']['hasUnlimitedAccess']);
+
+      // 캐시 업데이트 (토큰 획득 후)
+      _balanceCache[userId] = _CachedBalance(result, DateTime.now());
+
+      return result;
     } on DioException catch (e) {
       if (e.response?.statusCode == 400 &&
           e.response?.data['code'] == 'ALREADY_CLAIMED') {
@@ -310,13 +361,18 @@ class TokenApiService {
       final data = await _apiClient
           .post('/soul-earn', data: {'fortuneType': fortuneType});
 
-      return TokenBalance(
+      final result = TokenBalance(
           userId: userId,
           totalTokens: data['balance']['totalTokens'],
           usedTokens: data['balance']['usedTokens'],
           remainingTokens: data['balance']['remainingTokens'],
           lastUpdated: DateTime.parse(data['balance']['lastUpdated']),
           hasUnlimitedAccess: data['balance']['hasUnlimitedAccess']);
+
+      // 캐시 업데이트 (토큰 획득 후)
+      _balanceCache[userId] = _CachedBalance(result, DateTime.now());
+
+      return result;
     } on DioException catch (e) {
       throw _handleDioError(e);
     }

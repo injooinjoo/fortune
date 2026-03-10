@@ -46,24 +46,24 @@ class SajuColors {
   static const Color waterDark = Color(0xFF38BDF8);
 
   // ============================================================
-  // 오행(五行) 배경색 - Light Mode (부드러운 파스텔 배경)
+  // 오행(五行) 배경색 - Light Mode (가독성 향상: 25% 알파)
   // ============================================================
 
-  static const Color woodBackgroundLight = Color(0x1A10B981);
-  static const Color fireBackgroundLight = Color(0x1AF43F5E);
-  static const Color earthBackgroundLight = Color(0x1AF59E0B);
-  static const Color metalBackgroundLight = Color(0x1A64748B);
-  static const Color waterBackgroundLight = Color(0x1A0EA5E9);
+  static const Color woodBackgroundLight = Color(0x4010B981);
+  static const Color fireBackgroundLight = Color(0x40F43F5E);
+  static const Color earthBackgroundLight = Color(0x40F59E0B);
+  static const Color metalBackgroundLight = Color(0x4064748B);
+  static const Color waterBackgroundLight = Color(0x400EA5E9);
 
   // ============================================================
-  // 오행(五行) 배경색 - Dark Mode (부드러운 파스텔 배경)
+  // 오행(五行) 배경색 - Dark Mode (가독성 향상: 30% 알파)
   // ============================================================
 
-  static const Color woodBackgroundDark = Color(0x2634D399);
-  static const Color fireBackgroundDark = Color(0x26FB7185);
-  static const Color earthBackgroundDark = Color(0x26FBBF24);
-  static const Color metalBackgroundDark = Color(0x2694A3B8);
-  static const Color waterBackgroundDark = Color(0x2638BDF8);
+  static const Color woodBackgroundDark = Color(0x4D34D399);
+  static const Color fireBackgroundDark = Color(0x4DFB7185);
+  static const Color earthBackgroundDark = Color(0x4DFBBF24);
+  static const Color metalBackgroundDark = Color(0x4D94A3B8);
+  static const Color waterBackgroundDark = Color(0x4D38BDF8);
 
   // ============================================================
   // 신살(神殺) 색상

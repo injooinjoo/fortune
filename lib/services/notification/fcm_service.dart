@@ -396,36 +396,36 @@ class FCMService {
     // type 기반 네비게이션 (하위 호환성)
     switch (type) {
       case 'daily_fortune':
-        _navigateTo('/home');
+        _navigateTo('/chat');
         break;
       case 'score_alert':
-        _navigateTo('/home');
+        _navigateTo('/chat');
         break;
       case 'token_alert':
       case 'token_purchase':
         _navigateTo('/token-purchase');
         break;
       case 'winback':
-        _navigateTo('/home');
+        _navigateTo('/chat');
         break;
       case 'promotion':
         final promoId = data['promo_id'] as String?;
         if (promoId != null) {
           _navigateTo('/promotion/$promoId');
         } else {
-          _navigateTo('/home');
+          _navigateTo('/chat');
         }
         break;
       case 'streak':
-        _navigateTo('/home');
+        _navigateTo('/chat');
         break;
       case 'event':
         final eventRoute = data['event_route'] as String?;
-        _navigateTo(eventRoute ?? '/home');
+        _navigateTo(eventRoute ?? '/chat');
         break;
       default:
         Logger.info('알림 탭: 타입 $type, 홈으로 이동');
-        _navigateTo('/home');
+        _navigateTo('/chat');
     }
   }
 

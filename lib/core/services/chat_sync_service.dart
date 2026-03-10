@@ -35,9 +35,12 @@ class ChatSyncService {
   bool _isInitialized = false;
 
   // Configuration
-  static const Duration _debounceDelay = Duration(seconds: 3);
+  static const Duration _debounceDelay = Duration(seconds: 10);
   static const Duration _minSyncInterval = Duration(seconds: 30);
   DateTime? _lastSyncTime;
+
+  // 중복 저장 방지: chatId별 마지막 메시지 개수 추적
+  final Map<String, int> _lastMessageCounts = {};
 
   /// 서비스 초기화
   Future<void> initialize() async {
@@ -83,6 +86,14 @@ class ChatSyncService {
       return;
     }
 
+    // 메시지 개수 변화 없으면 skip (비용 절감)
+    final cacheKey = '${chatType}_$chatId';
+    final lastCount = _lastMessageCounts[cacheKey] ?? 0;
+    if (messages.length == lastCount && messages.isNotEmpty) {
+      Logger.debug('[ChatSyncService] 메시지 변화 없음 - skip: $cacheKey');
+      return;
+    }
+
     final ownerId = await UserScopeService.instance.getCurrentOwnerId();
 
     // 기존 타이머 취소
@@ -91,6 +102,7 @@ class ChatSyncService {
 
     // 새 타이머 설정 (debounce)
     _debounceTimers[timerKey] = Timer(_debounceDelay, () async {
+      _lastMessageCounts[cacheKey] = messages.length;
       await _performQueueAndSync(
         ownerId: ownerId,
         chatId: chatId,
@@ -99,7 +111,7 @@ class ChatSyncService {
       );
     });
 
-    Logger.info(
+    Logger.debug(
         '[ChatSyncService] 동기화 예약됨: $timerKey (${_debounceDelay.inSeconds}초 후)');
   }
 

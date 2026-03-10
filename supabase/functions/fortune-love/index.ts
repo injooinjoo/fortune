@@ -528,8 +528,15 @@ ${statusSpecificInstructions[params.relationshipStatus] || statusSpecificInstruc
     }
   })
 
-  // JSON 파싱
-  return JSON.parse(response.content)
+  // JSON 파싱 전 후처리: LLM이 예시 이름(철수/영희)을 사용한 경우 실제 이름으로 치환
+  const clientName = params.userName ? `${params.userName}님` : '회원님';
+  const cleanedContent = response.content
+    .replace(/철수님/g, clientName)
+    .replace(/영희님/g, clientName)
+    .replace(/철수씨/g, clientName)
+    .replace(/영희씨/g, clientName);
+
+  return JSON.parse(cleanedContent)
 }
 
 // 캐시 조회 함수

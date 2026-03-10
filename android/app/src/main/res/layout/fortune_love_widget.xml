@@ -67,7 +67,7 @@
         android:id="@+id/partner_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="김철수님과의 궁합"
+        android:text="파트너님과의 궁합"
         android:textSize="16sp"
         android:textStyle="bold"
         android:textColor="@color/widget_text_color"

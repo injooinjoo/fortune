@@ -446,9 +446,7 @@ class IntentDetector {
       case FortuneSurveyType.family:
         return '가족 인사이트를 확인해볼까요?';
       case FortuneSurveyType.naming:
-        return '아이 이름을 지어드릴까요?';
-      case FortuneSurveyType.babyNickname:
-        return '태명을 지어드릴까요?';
+        return '이름이나 태명을 지어드릴까요?';
       case FortuneSurveyType.ootdEvaluation:
         return '오늘의 코디를 평가해드릴까요?';
       case FortuneSurveyType.talisman:

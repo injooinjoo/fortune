@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../screens/home/home_screen.dart';
 import '../features/character/presentation/pages/swipe_home_shell.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/profile/profile_edit_page.dart';
@@ -103,15 +102,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   const SwipeHomeShell(),
                 ),
               ),
-              // Home route (레거시 호환 - ChatHomePage로 리다이렉트)
+              // /home → /chat 리다이렉트 (레거시 호환)
               GoRoute(
                 path: '/home',
                 name: 'home',
-                pageBuilder: (context, state) => PageTransitions.tabTransition(
-                  context,
-                  state,
-                  const HomeScreen(),
-                ),
+                redirect: (context, state) => '/chat',
               ),
             ],
           ),

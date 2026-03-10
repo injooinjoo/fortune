@@ -18,9 +18,10 @@ class FortuneOptimizationService {
   final SupabaseClient _supabase;
   late final CohortFortuneService _cohortService;
 
-  // 상수
+  // 상수 (비용 최적화: KAN-XX)
   static const int dbPoolThreshold = 300; // DB 풀 최소 크기
-  static const int cohortPoolThreshold = 25; // Cohort Pool 최소 크기
+  static const int cohortPoolThreshold =
+      5; // Cohort Pool 최소 크기 (25→5: 캐시 히트율 향상)
   static const double randomSelectionProbability = 0.3; // 30% 확률
 
   FortuneOptimizationService({SupabaseClient? supabase})

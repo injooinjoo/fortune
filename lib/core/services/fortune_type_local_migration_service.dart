@@ -15,7 +15,8 @@ class FortuneTypeLocalMigrationService {
     'newYear': 'new-year',
     'yearlyEncounter': 'yearly-encounter',
     'gameEnhance': 'game-enhance',
-    'babyNickname': 'baby-nickname',
+    'babyNickname': 'naming', // baby-nickname → naming 통합
+    'baby-nickname': 'naming', // baby-nickname → naming 통합
     'ex_lover': 'ex-lover',
     'exLover': 'ex-lover',
     'blindDate': 'blind-date',

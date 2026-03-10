@@ -177,11 +177,7 @@ class FortuneTypeRegistry {
       labelKey: 'fortuneNaming',
       endpoint: '/fortune-naming',
     ),
-    'baby-nickname': FortuneTypeSpec(
-      id: 'baby-nickname',
-      labelKey: 'fortuneBabyNickname',
-      endpoint: '/fortune-baby-nickname',
-    ),
+    // baby-nickname은 naming으로 통합됨
     'ootd-evaluation': FortuneTypeSpec(
       id: 'ootd-evaluation',
       labelKey: 'fortuneOotdEvaluation',

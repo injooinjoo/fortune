@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'dart:developer' as developer;
 
+import '../../core/utils/logger.dart';
 import '../../data/models/secondary_profile.dart';
 
 /// 서브 프로필(가족/친구) 목록 Provider
@@ -26,12 +26,14 @@ class SecondaryProfilesNotifier
     try {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) {
-        developer.log('⚠️ SecondaryProfilesProvider: 로그인 필요');
+        // ignore: avoid_print
+        print('🟡🟡🟡 [PROVIDER] 로그인 필요 - userId null');
         state = const AsyncValue.data([]);
         return;
       }
 
-      developer.log('🔄 SecondaryProfilesProvider: 프로필 로드 시작');
+      // ignore: avoid_print
+      print('🟡🟡🟡 [PROVIDER] 프로필 로드 시작 (userId: $userId)');
 
       final response = await _supabase
           .from('secondary_profiles')
@@ -39,16 +41,24 @@ class SecondaryProfilesNotifier
           .eq('owner_id', userId)
           .order('created_at', ascending: true);
 
+      // ignore: avoid_print
+      print('🟡🟡🟡 [PROVIDER] Supabase 응답: $response');
+
       final profiles = (response as List)
           .map(
               (json) => SecondaryProfile.fromJson(json as Map<String, dynamic>))
           .toList();
 
       state = AsyncValue.data(profiles);
-      developer
-          .log('✅ SecondaryProfilesProvider: ${profiles.length}개 프로필 로드 완료');
+      // ignore: avoid_print
+      print('🟡🟡🟡 [PROVIDER] ${profiles.length}개 프로필 로드 완료');
+      for (var p in profiles) {
+        // ignore: avoid_print
+        print('🟡🟡🟡 [PROVIDER]   - ${p.name} (${p.birthDate})');
+      }
     } catch (e, st) {
-      developer.log('❌ SecondaryProfilesProvider 로드 실패: $e');
+      // ignore: avoid_print
+      print('🟡🟡🟡 [PROVIDER] 로드 실패: $e');
       state = AsyncValue.error(e, st);
     }
   }
@@ -81,7 +91,7 @@ class SecondaryProfilesNotifier
         throw Exception('로그인이 필요합니다');
       }
 
-      developer.log('➕ SecondaryProfilesProvider: 프로필 추가 - $name');
+      Logger.info('[SecondaryProfiles] 프로필 추가 - $name');
 
       final response = await _supabase
           .from('secondary_profiles')
@@ -105,11 +115,10 @@ class SecondaryProfilesNotifier
       // 목록에 추가
       state = state.whenData((profiles) => [...profiles, newProfile]);
 
-      developer
-          .log('✅ SecondaryProfilesProvider: 프로필 추가 완료 - ${newProfile.id}');
+      Logger.info('[SecondaryProfiles] 프로필 추가 완료 - ${newProfile.id}');
       return newProfile;
     } catch (e) {
-      developer.log('❌ SecondaryProfilesProvider 추가 실패: $e');
+      Logger.error('[SecondaryProfiles] 추가 실패: $e');
       rethrow;
     }
   }
@@ -117,7 +126,7 @@ class SecondaryProfilesNotifier
   /// 프로필 수정
   Future<void> updateProfile(SecondaryProfile profile) async {
     try {
-      developer.log('✏️ SecondaryProfilesProvider: 프로필 수정 - ${profile.name}');
+      Logger.info('[SecondaryProfiles] 프로필 수정 - ${profile.name}');
 
       await _supabase.from('secondary_profiles').update({
         'name': profile.name,
@@ -136,9 +145,9 @@ class SecondaryProfilesNotifier
       state = state.whenData((profiles) =>
           profiles.map((p) => p.id == profile.id ? profile : p).toList());
 
-      developer.log('✅ SecondaryProfilesProvider: 프로필 수정 완료');
+      Logger.info('[SecondaryProfiles] 프로필 수정 완료');
     } catch (e) {
-      developer.log('❌ SecondaryProfilesProvider 수정 실패: $e');
+      Logger.error('[SecondaryProfiles] 수정 실패: $e');
       rethrow;
     }
   }
@@ -146,7 +155,7 @@ class SecondaryProfilesNotifier
   /// 프로필 삭제
   Future<void> deleteProfile(String profileId) async {
     try {
-      developer.log('🗑️ SecondaryProfilesProvider: 프로필 삭제 - $profileId');
+      Logger.info('[SecondaryProfiles] 프로필 삭제 - $profileId');
 
       await _supabase.from('secondary_profiles').delete().eq('id', profileId);
 
@@ -154,9 +163,9 @@ class SecondaryProfilesNotifier
       state = state.whenData(
           (profiles) => profiles.where((p) => p.id != profileId).toList());
 
-      developer.log('✅ SecondaryProfilesProvider: 프로필 삭제 완료');
+      Logger.info('[SecondaryProfiles] 프로필 삭제 완료');
     } catch (e) {
-      developer.log('❌ SecondaryProfilesProvider 삭제 실패: $e');
+      Logger.error('[SecondaryProfiles] 삭제 실패: $e');
       rethrow;
     }
   }

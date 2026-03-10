@@ -78,6 +78,17 @@ class CharacterChatMessage {
     );
   }
 
+  /// 사용자 이미지 메시지 생성 (OOTD, 관상 등 사진 전송용)
+  factory CharacterChatMessage.userWithImage(String imagePath, {String? text}) {
+    return CharacterChatMessage(
+      type: CharacterChatMessageType.user,
+      text: text ?? '📷 사진',
+      imageAsset: imagePath,
+      status: MessageStatus.sent,
+      origin: MessageOrigin.userInput,
+    );
+  }
+
   /// 캐릭터 메시지 생성
   factory CharacterChatMessage.character(
     String text,
