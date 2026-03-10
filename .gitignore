@@ -137,6 +137,13 @@ appstoreconnect_apps.png
 appstoreconnect_check.png
 asc-after-login.png
 
+# Figma capture artifacts
+artifacts/figma_capture/
+artifacts/figma_catalog/
+artifacts/figma_catalog_*.png
+artifacts/figma_capture_samples/
+artifacts/figma_capture_samples_hash/
+
 # Deno lock (auto-generated)
 deno.lock
 

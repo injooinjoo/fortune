@@ -1,262 +1,215 @@
 # Fortune Screen And Component Registry
 
-## 기준
+## Reference
 
-- 공식 파일: [Fortune Design Source of Truth](https://www.figma.com/file/xKO8asAUg2g9fqpQQ9PZwb/Fortune-Design-Source-of-Truth?type=design&node-id=1-2&mode=design)
-- 파일 키: `xKO8asAUg2g9fqpQQ9PZwb`
-- 라우트 기준 소스: `lib/routes/route_config.dart`
-- nested route 소스:
-  - `lib/routes/routes/auth_routes.dart`
-  - `lib/routes/routes/interactive_routes.dart`
-  - `lib/routes/routes/trend_routes.dart`
-  - `lib/routes/routes/wellness_routes.dart`
-  - `lib/routes/character_routes.dart`
+- Official file: [Fortune Screen Catalog - Official](https://www.figma.com/design/dkx3Biwe5xkiMQWsjq95LA)
+- Figma file key: `dkx3Biwe5xkiMQWsjq95LA`
+- Device standard: `iPhone 15 Pro 393x852 @3x`
+- Capture manifest: `playwright/scripts/figma_capture_manifest.js`
+- Live capture runner: `playwright/scripts/capture_figma_screens.js`
+- Catalog generator: `playwright/scripts/build_figma_catalog.js`
 
-이 문서는 공식 Figma 파일에 들어가는 화면, 레이아웃, 컴포넌트 인벤토리의 저장소 기준 사본이다.
+This document is the repository-side registry for the official Figma file.
 
-## Route Inventory
+## Coverage Summary
 
-현재 route config 기준으로 관리 중인 핵심 route family는 아래와 같다.
+| Figma page | Total | Live | Placeholder |
+| --- | ---: | ---: | ---: |
+| `10 Entry / Auth / Onboarding` | 6 | 6 | 0 |
+| `20 Chat Home / Character` | 5 | 4 | 1 |
+| `30 Fortune Hub / Interactive` | 15 | 11 | 4 |
+| `40 Trend` | 7 | 1 | 6 |
+| `50 Health / Exercise` | 6 | 3 | 3 |
+| `60 History / Profile / More` | 9 | 2 | 7 |
+| `70 Commerce / Settings / Support` | 11 | 6 | 5 |
+| `80 Admin / Policy / Utility` | 2 | 2 | 0 |
 
-### Entry / Auth
+Additional official pages:
 
-- `/`
-- `/splash`
-- `/signup`
-- `/auth/callback`
-- `/onboarding`
-- `/onboarding/toss-style`
+- `00 Cover & Governance`
+- `90 Components`
+- `99 Archive`
 
-### Main Shell
+## Screen Catalog
 
-- `/chat`
-- `/home`
-- `/fortune`
-- `/history`
-- `/more`
+### 10 Entry / Auth / Onboarding
 
-### Profile / Account / Monetization
+- `auth__splash__redirected` | `#/splash` | `live`
+- `auth__signup__default` | `#/signup` | `live`
+- `auth__callback__redirected` | `#/auth/callback` | `live`
+- `onboarding__profile__default` | `#/onboarding` | `live`
+- `onboarding__toss_style__default` | `#/onboarding/toss-style` | `live`
+- `chat__onboarding__first_run` | `#/chat` | `live`
 
-- `/profile`
-- `/profile/edit`
-- `/profile/saju`
-- `/profile/saju-summary`
-- `/profile/elements`
-- `/profile/verification`
-- `/profile/social-accounts`
-- `/profile/phone-management`
-- `/profile/notifications`
-- `/profile/font`
-- `/profile/account-deletion`
-- `/subscription`
-- `/token-purchase`
-- `/premium`
+### 20 Chat Home / Character
 
-### Interactive / Fortune Flows
+- `chat__home__returning` | `#/chat` | `live`
+- `chat__character__luts` | `#/chat?openCharacterChat=true&characterId=luts` | `live`
+- `character__profile__luts` | `#/character/luts` | `live`
+- `character__profile__baek_hyunwoo` | `#/character/baek_hyunwoo` | `live`
+- `chat__result_card__fortune` | runtime-only state | `placeholder`
 
-- `/interactive`
-- `/interactive/dream`
-- `/interactive/psychology-test`
-- `/interactive/tarot`
-- `/interactive/animated-flow`
-- `/interactive/face-reading`
-- `/interactive/taemong`
-- `/interactive/worry-bead`
-- `/interactive/dream-journal`
-- `/manseryeok`
-- `/health-toss`
-- `/medical-document-result`
-- `/exercise`
-- `/sports-game`
+### 30 Fortune Hub / Interactive
 
-### Trend / Wellness
+- `fortune__hub__default` | `#/fortune` | `live`
+- `interactive__hub__list` | `#/fortune/interactive` | `live`
+- `interactive_dream__input__default` | `#/fortune/interactive/dream` | `live`
+- `interactive_dream__result__seeded` | `#/fortune/interactive/dream` | `live`
+- `interactive_psychology__input__default` | `#/fortune/interactive/psychology-test` | `live`
+- `interactive_psychology__result__api` | runtime result | `placeholder`
+- `interactive_tarot__input__default` | `#/fortune/interactive/tarot` | `live`
+- `interactive_tarot__animated_flow__default` | `#/fortune/interactive/tarot/animated-flow` | `live`
+- `interactive_face_reading__input__default` | `#/fortune/interactive/face-reading` | `live`
+- `interactive_face_reading__result__analysis` | runtime result | `placeholder`
+- `interactive_taemong__input__default` | `#/fortune/interactive/taemong` | `live`
+- `interactive_taemong__result__analysis` | runtime result | `placeholder`
+- `interactive_worry_bead__input__default` | `#/fortune/interactive/worry-bead` | `live`
+- `interactive_worry_bead__result__analysis` | runtime result | `placeholder`
+- `interactive_dream_journal__default` | `#/fortune/interactive/dream-journal` | `live`
 
-- `/trend`
-- `/trend/psychology/:contentId`
-- `/trend/worldcup/:contentId`
-- `/trend/balance/:contentId`
-- `/wellness`
-- `/wellness/meditation`
+### 40 Trend
 
-### Utility / Support / Detail / Admin
+- `trend__hub__empty` | `#/trend` | `live`
+- `trend_psychology__detail__content` | backend content dependent | `placeholder`
+- `trend_psychology__result__summary` | backend content dependent | `placeholder`
+- `trend_worldcup__detail__bracket` | backend content dependent | `placeholder`
+- `trend_worldcup__result__winner` | backend content dependent | `placeholder`
+- `trend_balance__detail__play` | backend content dependent | `placeholder`
+- `trend_balance__result__summary` | backend content dependent | `placeholder`
 
-- `/help`
-- `/privacy-policy`
-- `/terms-of-service`
-- `/fortune-history/:id`
-- `/character/:id`
-- `/admin/celebrity-crawling`
+### 50 Health / Exercise
 
-## Layout Shell Inventory
+- `health__input__default` | `#/health-toss` | `live`
+- `health__result__analysis` | runtime result | `placeholder`
+- `medical_document__result__analysis` | `state.extra` required | `placeholder`
+- `exercise__input__default` | `#/exercise` | `live`
+- `exercise__result__analysis` | runtime result | `placeholder`
+- `sports_game__input__default` | `#/sports-game` | `live`
 
-### Primary Shells
+### 60 History / Profile / More
 
-- `lib/shared/layouts/main_shell.dart`
-- `lib/features/character/presentation/pages/swipe_home_shell.dart`
-- `lib/screens/onboarding/onboarding_page.dart`
-- `lib/features/character/presentation/pages/character_onboarding_page.dart`
+- `history__empty__default` | `#/history` | `live`
+- `fortune_history__detail__extra` | `state.extra` required | `placeholder`
+- `more__guest__default` | `#/more` | `live`
+- `profile__root__auth_gated` | `#/profile` | `placeholder`
+- `profile__edit__auth_gated` | `#/profile/edit` | `placeholder`
+- `profile__saju__auth_gated` | `#/profile/saju` | `placeholder`
+- `profile__saju_summary__auth_gated` | `#/profile/saju-summary` | `placeholder`
+- `profile__elements__auth_gated` | `#/profile/elements` | `placeholder`
+- `profile__verification__auth_gated` | `#/profile/verification` | `placeholder`
 
-### Section Shell Families
+### 70 Commerce / Settings / Support
 
-- `lib/features/history/presentation/pages/fortune_history_page.dart`
-- `lib/features/more/presentation/pages/fortune_tab_page.dart`
-- `lib/features/more/presentation/pages/more_page.dart`
-- `lib/features/trend/presentation/pages/trend_page.dart`
-- `lib/features/wellness/presentation/pages/wellness_page.dart`
-- `lib/features/wellness/presentation/pages/meditation_page.dart`
-- `lib/screens/profile/profile_screen.dart`
+- `premium__default` | `#/premium` | `live`
+- `subscription__default` | `#/subscription` | `live`
+- `token_purchase__default` | `#/token-purchase` | `live`
+- `help__default` | `#/help` | `live`
+- `privacy_policy__default` | `#/privacy-policy` | `live`
+- `terms_of_service__default` | `#/terms-of-service` | `live`
+- `profile__notifications__auth_gated` | `#/profile/notifications` | `placeholder`
+- `profile__font__auth_gated` | `#/profile/font` | `placeholder`
+- `profile__social_accounts__auth_gated` | `#/profile/social-accounts` | `placeholder`
+- `profile__phone_management__auth_gated` | `#/profile/phone-management` | `placeholder`
+- `profile__account_deletion__auth_gated` | `#/profile/account-deletion` | `placeholder`
 
-## Page / Screen Source Inventory
+### 80 Admin / Policy / Utility
 
-### Admin
+- `admin__celebrity_crawling__error` | `#/admin/celebrity-crawling` | `live`
+- `manseryeok__default` | `#/manseryeok` | `live`
 
-- `lib/features/admin/pages/celebrity_crawling_page.dart`
+### 90 Components
 
-### Character
+- `App Shell and Headers`
+  - `lib/shared/layouts/main_shell.dart`
+  - `lib/shared/components/app_header.dart`
+  - `lib/shared/components/profile_header_icon.dart`
+- `Cards, Buttons, Inputs`
+  - `lib/core/design_system/components/ds_card.dart`
+  - `lib/core/design_system/components/ds_button.dart`
+  - `lib/core/design_system/components/ds_text_field.dart`
+  - `lib/core/widgets/unified_button.dart`
+- `Settings and Commerce Rows`
+  - `lib/shared/components/settings_list_tile.dart`
+  - `lib/shared/components/premium_membership_card.dart`
+  - `lib/shared/components/token_balance_widget.dart`
+  - `lib/shared/components/token_insufficient_modal.dart`
+- `Fortune and Result Blocks`
+  - `lib/shared/components/section_header.dart`
+  - `lib/shared/components/loading_states.dart`
+  - `lib/features/character/presentation/widgets/character_message_bubble.dart`
+  - `lib/features/chat/presentation/widgets/chat_saju_result_card.dart`
 
-- `lib/features/character/presentation/pages/character_onboarding_page.dart`
-- `lib/features/character/presentation/pages/character_profile_page.dart`
+### 99 Archive
 
-### Exercise
+- Superseded, blocked, or intentionally excluded surfaces move here only after they are removed from active governance pages.
 
-- `lib/features/exercise/presentation/pages/exercise_fortune_page.dart`
+## Placeholder Governance
 
-### Fortune / Calendar
+### Auth-gated profile surfaces
 
-- `lib/features/fortune/presentation/pages/manseryeok_page.dart`
+- `profile__root__auth_gated`
+- `profile__edit__auth_gated`
+- `profile__saju__auth_gated`
+- `profile__saju_summary__auth_gated`
+- `profile__elements__auth_gated`
+- `profile__verification__auth_gated`
+- `profile__notifications__auth_gated`
+- `profile__font__auth_gated`
+- `profile__social_accounts__auth_gated`
+- `profile__phone_management__auth_gated`
+- `profile__account_deletion__auth_gated`
 
-### Health
+Blocker:
 
-- `lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart`
-- `lib/features/health/presentation/pages/health_fortune_page.dart`
-- `lib/features/health/presentation/pages/medical_document_result_page.dart`
+- Current test auto-login cannot establish a usable authenticated profile session because backend user creation fails in local capture mode.
 
-### History
+### `state.extra` dependent pages
 
-- `lib/features/history/presentation/pages/fortune_history_detail_page.dart`
-- `lib/features/history/presentation/pages/fortune_history_page.dart`
+- `fortune_history__detail__extra`
+- `medical_document__result__analysis`
 
-### Interactive
+Blocker:
 
-- `lib/features/interactive/presentation/pages/dream_interpretation_page.dart`
-- `lib/features/interactive/presentation/pages/dream_page.dart`
-- `lib/features/interactive/presentation/pages/face_reading_page.dart`
-- `lib/features/interactive/presentation/pages/interactive_list_page.dart`
-- `lib/features/interactive/presentation/pages/psychology_test_page.dart`
-- `lib/features/interactive/presentation/pages/taemong_page.dart`
-- `lib/features/interactive/presentation/pages/tarot_animated_flow_page.dart`
-- `lib/features/interactive/presentation/pages/tarot_chat_page.dart`
-- `lib/features/interactive/presentation/pages/worry_bead_page.dart`
+- These surfaces require runtime navigation payloads and do not render correctly from a bare direct URL.
 
-### More / Explore
+### Runtime result pages
 
-- `lib/features/more/presentation/pages/fortune_tab_page.dart`
-- `lib/features/more/presentation/pages/more_page.dart`
+- `chat__result_card__fortune`
+- `interactive_psychology__result__api`
+- `interactive_face_reading__result__analysis`
+- `interactive_taemong__result__analysis`
+- `interactive_worry_bead__result__analysis`
+- `health__result__analysis`
+- `exercise__result__analysis`
 
-### Notification / Payment / Policy / Settings / Support
+Blocker:
 
-- `lib/features/notification/presentation/pages/notification_settings_page.dart`
-- `lib/features/payment/presentation/pages/token_purchase_page.dart`
-- `lib/features/policy/presentation/pages/privacy_policy_page.dart`
-- `lib/features/policy/presentation/pages/terms_of_service_page.dart`
-- `lib/features/settings/presentation/pages/font_settings_page.dart`
-- `lib/features/support/presentation/pages/help_page.dart`
+- These states require successful local completion of the input flow plus generated backend or local result payloads.
 
-### Trend
+### Trend content pages
 
-- `lib/features/trend/presentation/pages/trend_balance_game_page.dart`
-- `lib/features/trend/presentation/pages/trend_ideal_worldcup_page.dart`
-- `lib/features/trend/presentation/pages/trend_page.dart`
-- `lib/features/trend/presentation/pages/trend_psychology_test_page.dart`
+- `trend_psychology__detail__content`
+- `trend_psychology__result__summary`
+- `trend_worldcup__detail__bracket`
+- `trend_worldcup__result__winner`
+- `trend_balance__detail__play`
+- `trend_balance__result__summary`
 
-### Wellness
+Blocker:
 
-- `lib/features/wellness/presentation/pages/meditation_page.dart`
-- `lib/features/wellness/presentation/pages/wellness_page.dart`
+- Current local backend seed data does not provide usable `trend_content` records for direct capture.
 
-### Auth / Onboarding / Premium / Profile / Settings
+## Representative Content Rules
 
-- `lib/screens/auth/callback_page.dart`
-- `lib/screens/auth/signup_screen.dart`
-- `lib/screens/onboarding/onboarding_page.dart`
-- `lib/screens/premium/premium_screen.dart`
-- `lib/screens/profile/account_deletion_page.dart`
-- `lib/screens/profile/elements_detail_page.dart`
-- `lib/screens/profile/profile_edit_page.dart`
-- `lib/screens/profile/profile_screen.dart`
-- `lib/screens/profile/profile_verification_page.dart`
-- `lib/screens/profile/saju_detail_page.dart`
-- `lib/screens/profile/saju_summary_page.dart`
-- `lib/screens/settings/phone_management_screen.dart`
-- `lib/screens/settings/social_accounts_screen.dart`
-- `lib/screens/splash_screen.dart`
-- `lib/screens/subscription/subscription_page.dart`
+- Character representative samples are fixed to `luts` and `baek_hyunwoo`.
+- Dream result coverage uses a seeded local storage payload for `interactive_dream__result__seeded`.
+- Trend detail pages are not duplicated per content item. One representative content record per layout family is enough once seed data exists.
+- Loading, toast, snackbar, and generic error states are excluded unless they are the stable route surface itself.
 
-## Component Inventory
+## Update Checklist
 
-### DS Primitives
-
-- `lib/core/design_system/components/ds_badge.dart`
-- `lib/core/design_system/components/ds_bottom_sheet.dart`
-- `lib/core/design_system/components/ds_button.dart`
-- `lib/core/design_system/components/ds_card.dart`
-- `lib/core/design_system/components/ds_chip.dart`
-- `lib/core/design_system/components/ds_list_tile.dart`
-- `lib/core/design_system/components/ds_loading.dart`
-- `lib/core/design_system/components/ds_modal.dart`
-- `lib/core/design_system/components/ds_section_header.dart`
-- `lib/core/design_system/components/ds_text_field.dart`
-- `lib/core/design_system/components/ds_toast.dart`
-- `lib/core/design_system/components/ds_toggle.dart`
-- `lib/core/design_system/components/hanji_background.dart`
-
-### Traditional / Heritage Components
-
-- `lib/core/design_system/components/traditional/cloud_bubble.dart`
-- `lib/core/design_system/components/traditional/cloud_bubble_painter.dart`
-- `lib/core/design_system/components/traditional/seal_stamp_widget.dart`
-- `lib/core/design_system/components/traditional/traditional_knot_indicator.dart`
-
-### Shared Product Components
-
-- `lib/shared/components/app_header.dart`
-- `lib/shared/components/korean_date_picker.dart`
-- `lib/shared/components/loading_states.dart`
-- `lib/shared/components/premium_membership_card.dart`
-- `lib/shared/components/profile_header_icon.dart`
-- `lib/shared/components/progressive_date_input.dart`
-- `lib/shared/components/purchase_loading_overlay.dart`
-- `lib/shared/components/section_header.dart`
-- `lib/shared/components/settings_list_tile.dart`
-- `lib/shared/components/toast.dart`
-- `lib/shared/components/token_balance_widget.dart`
-- `lib/shared/components/token_insufficient_modal.dart`
-
-### Token Families
-
-- `lib/core/design_system/tokens/ds_animation.dart`
-- `lib/core/design_system/tokens/ds_colors.dart`
-- `lib/core/design_system/tokens/ds_radius.dart`
-- `lib/core/design_system/tokens/ds_shadows.dart`
-- `lib/core/design_system/tokens/ds_spacing.dart`
-- `lib/core/design_system/tokens/ds_typography.dart`
-
-## 운영 체크리스트
-
-### 새 화면 추가 시
-
-1. route family와 실제 page 파일을 둘 다 확인한다.
-2. 공식 Figma 파일의 `10 Screen Registry`를 업데이트한다.
-3. 이 문서의 route inventory와 page source inventory를 같이 업데이트한다.
-
-### 레이아웃 셸 변경 시
-
-1. `20 Layout Shells`를 먼저 업데이트한다.
-2. 영향받는 screen family가 있으면 `10 Screen Registry`도 같이 업데이트한다.
-3. `/chat` 같이 상태 전환이 있는 surface는 verified state 자료를 유지한다.
-
-### 공용 컴포넌트 변경 시
-
-1. component family를 primitive, heritage, shared product 중 하나로 분류한다.
-2. 공식 Figma 파일 `30 Components`와 이 문서의 component inventory를 같이 업데이트한다.
-3. 코드에 남아 있는 legacy component를 조용히 삭제하지 않는다.
+1. Confirm the target screen exists in router or runtime flow.
+2. Add or update the entry in `playwright/scripts/figma_capture_manifest.js`.
+3. Refresh live screenshots and catalog HTML.
+4. Update the official Figma file.
+5. Sync this registry and [FIGMA_SOURCE_OF_TRUTH.md](./FIGMA_SOURCE_OF_TRUTH.md).

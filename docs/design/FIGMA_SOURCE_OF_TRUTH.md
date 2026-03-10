@@ -1,93 +1,139 @@
 # Fortune Figma Source Of Truth
 
-## 공식 파일
+## Official File
 
-- 공식 Figma 파일명: `Fortune Design Source of Truth`
-- Figma file key: `xKO8asAUg2g9fqpQQ9PZwb`
-- 직접 링크: [Fortune Design Source of Truth](https://www.figma.com/file/xKO8asAUg2g9fqpQQ9PZwb/Fortune-Design-Source-of-Truth?type=design&node-id=1-2&mode=design)
+- Official file name: `Fortune Screen Catalog - Official`
+- Figma file key: `dkx3Biwe5xkiMQWsjq95LA`
+- Direct link: [Fortune Screen Catalog - Official](https://www.figma.com/design/dkx3Biwe5xkiMQWsjq95LA)
 
-이 문서가 가리키는 위 파일만 Fortune 앱의 공식 디자인 소스 오브 트루스다.  
-임시 캡처 파일, 탐색용 파일, 과거 초안 파일은 참고 자료일 수는 있어도 공식 관리 파일로 간주하지 않는다.
+This file is the only official Figma source of truth for Fortune. Draft captures, exploratory files, and one-off review files are not part of the formal design system unless they are merged into this file.
 
-## 목적
+## Standard
 
-- 모든 화면 레이아웃, 레이아웃 셸, 공용 컴포넌트 관리를 한 파일에 집중한다.
-- 라우트 변경과 UI 변경이 디자인 파일과 저장소 문서에 동시에 반영되도록 강제한다.
-- 산발적인 Figma 파일 생성 관행을 중단하고, 운영 기준을 문서와 파일 구조로 고정한다.
+- Device: `iPhone 15 Pro`
+- Frame size: `393 x 852`
+- Scale: `@3x`
+- Theme: `light`
+- Locale: `ko-KR`
+- Governance model: `one file only`
 
-## 파일 구조
+Every frame in the official catalog is normalized to this device standard. Desktop-width captures are out of scope for the official catalog.
 
-- `00 Foundation`
-  - 파일 정체성, 운영 규칙, verified home states
-- `10 Screen Registry`
-  - 라우트 패밀리 기준 화면 인벤토리
-- `20 Layout Shells`
-  - 앱 셸, 홈 셸, 온보딩 셸, 섹션 셸 인벤토리
-- `30 Components`
-  - 디자인 시스템 primitives, heritage components, shared product components
-- `40 States`
-  - 핵심 전후 상태, 빈 상태, 에러 상태, 퍼널 상태
-- `90 Archive`
-  - 폐기되었지만 이력 보존이 필요한 탐색안
+## File Structure
 
-## 운영 규칙
+- `00 Cover & Governance`
+- `10 Entry / Auth / Onboarding`
+- `20 Chat Home / Character`
+- `30 Fortune Hub / Interactive`
+- `40 Trend`
+- `50 Health / Exercise`
+- `60 History / Profile / More`
+- `70 Commerce / Settings / Support`
+- `80 Admin / Policy / Utility`
+- `90 Components`
+- `99 Archive`
 
-1. 공식 파일은 하나만 유지한다.
-2. 새 화면이나 새 컴포넌트를 만들 때 별도 Figma 파일을 정식 산출물로 만들지 않는다.
-3. 화면 관리는 라우트 기준으로, 레이아웃 관리는 셸 기준으로, 컴포넌트 관리는 소스 파일 기준으로 정리한다.
-4. `lib/routes/route_config.dart` 또는 nested route 파일이 바뀌면 `10 Screen Registry`와 저장소 문서를 같은 작업에서 같이 갱신한다.
-5. `lib/shared/layouts/`, `lib/features/**/pages/`, `lib/core/design_system/components/`, `lib/shared/components/`가 바뀌면 관련 registry 페이지와 저장소 문서를 같은 작업에서 같이 갱신한다.
-6. Flutter Web canvas 기반 화면은 raw HTML-to-design 변환을 신뢰하지 않는다. 공식 등록은 브라우저 검증 후 screenshot-backed capture를 사용한다.
-7. 기존 초안이나 탐색안은 공식 영역과 분리해서 archive로 취급한다.
+Frame naming is fixed as `flow__screen__state`.
 
-## 현재 시드 페이지
+Examples:
 
-- `00 Foundation`
-  - 운영 규칙, 파일 구조, `/chat` verified states
-- `10 Screen Registry`
-  - route-backed screen family 정리
-- `20 Layout Shells`
-  - MainShell, SwipeHomeShell, onboarding, section shell 정리
-- `30 Components`
-  - DS primitives, heritage components, shared components, token families 정리
+- `chat__home__returning`
+- `interactive_dream__result__seeded`
+- `trend_balance__result__summary`
 
-## 변경 워크플로우
+## Coverage Snapshot
 
-### 새 라우트나 새 페이지 추가
+- Managed surfaces: `61`
+- Live captures: `35`
+- Placeholder specs: `26`
+- Component inventory groups: `4`
 
-1. 라우트 파일과 페이지 파일을 기준으로 실제 surface를 확인한다.
-2. 공식 Figma 파일의 `10 Screen Registry`에 route family와 surface를 추가한다.
-3. 필요하면 `20 Layout Shells`에 연결된 셸도 추가한다.
-4. 이 문서와 [FIGMA_SCREEN_COMPONENT_REGISTRY.md](./FIGMA_SCREEN_COMPONENT_REGISTRY.md)를 같은 변경에 포함한다.
+Live captures are backed by verified local screenshots from the Flutter web build. Placeholder specs remain in the same file when a surface cannot be rendered locally without authenticated data, backend seed data, or `state.extra`.
 
-### 레이아웃 구조 변경
+## Capture Model
 
-1. 변경이 screen-level인지 shell-level인지 먼저 구분한다.
-2. 공통 구조 변경이면 개별 화면보다 `20 Layout Shells`를 먼저 갱신한다.
-3. 영향 받는 verified state가 있으면 `40 States`도 함께 업데이트한다.
+### Live Capture
 
-### 컴포넌트 변경
+Use live capture when the route can be rendered locally at `iPhone 15 Pro 393x852` with stable test-mode setup.
 
-1. 디자인 시스템 primitive인지 shared product component인지 분류한다.
-2. `30 Components`에서 소스 파일 매핑을 유지한다.
-3. legacy 또는 themed component라도 실제 코드에 남아 있으면 registry에서 지우지 않는다.
+Current live examples:
 
-## 소스 기준
+- `/chat` first-run onboarding
+- `/chat` returning home
+- `/fortune/interactive/dream` input and seeded result
+- `/premium`, `/subscription`, `/token-purchase`
+- `/help`, `/privacy-policy`, `/terms-of-service`
 
-- Router source: `lib/routes/route_config.dart`
-- Nested routes: `lib/routes/routes/*.dart`, `lib/routes/character_routes.dart`
-- Layout source: `lib/shared/layouts/main_shell.dart`
-- Screen source: `lib/features/**/presentation/pages/*.dart`, `lib/screens/**/*.dart`
-- Component source:
-  - `lib/core/design_system/components/`
-  - `lib/shared/components/`
+### Placeholder Spec
 
-## 문서 동기화 원칙
+Use placeholder spec when the route exists but local runtime requirements prevent stable capture.
 
-공식 Figma 파일 변경과 저장소 문서 변경은 분리하지 않는다.  
-정식 관리 대상에 변화가 생기면 최소 아래 문서가 같이 검토되어야 한다.
+Current blocker classes:
+
+- Auth-gated profile surfaces
+- `GoRouter state.extra` dependent pages
+- Result pages that require successful runtime generation
+- Trend detail/result pages that require backend `trend_content` seed data
+
+Placeholders stay inside the official file so coverage gaps are explicit and managed, not forgotten.
+
+## Source Pipeline
+
+Official repo sources:
+
+- Router: `lib/routes/route_config.dart`
+- Nested routes:
+  - `lib/routes/routes/auth_routes.dart`
+  - `lib/routes/routes/interactive_routes.dart`
+  - `lib/routes/routes/trend_routes.dart`
+  - `lib/routes/routes/wellness_routes.dart`
+  - `lib/routes/character_routes.dart`
+- Capture manifest: `playwright/scripts/figma_capture_manifest.js`
+- Live capture runner: `playwright/scripts/capture_figma_screens.js`
+- Catalog HTML generator: `playwright/scripts/build_figma_catalog.js`
+- Local static server: `playwright/scripts/figma_capture_server.py`
+
+Package scripts:
+
+- `npm run figma:serve-build`
+- `npm run figma:capture`
+- `npm run figma:catalog`
+
+Generated local outputs are intentionally disposable and should not be treated as source-of-truth artifacts:
+
+- `artifacts/figma_capture/`
+- `artifacts/figma_catalog/`
+
+## Operating Rules
+
+1. Maintain one official Figma file only.
+2. Cover every router-defined page with at least one frame.
+3. Add an extra frame for every key inline result state that materially changes layout.
+4. Use verified `iPhone 15 Pro` captures for live screens.
+5. Record blocked surfaces as placeholders in the same file until the blocker is removed.
+6. Update the Figma file and design docs in the same task as the route or UI change.
+7. Do not create separate “final” Figma files for features, audits, or handoff.
+
+## Update Workflow
+
+1. Confirm the target routes and result states from router and page source.
+2. Build the web app with valid local test configuration.
+3. Serve the built app with `npm run figma:serve-build`.
+4. Capture live screens with `npm run figma:capture`.
+5. Generate catalog HTML with `npm run figma:catalog`.
+6. Append the catalog pages into the existing official Figma file through the Figma MCP capture flow.
+7. Update this document and [FIGMA_SCREEN_COMPONENT_REGISTRY.md](./FIGMA_SCREEN_COMPONENT_REGISTRY.md) in the same change.
+
+## Known Constraints
+
+- `npx serve build/web --single` is not valid for official capture because dotfiles such as `build/web/assets/.env` are rewritten to `index.html`.
+- Flutter web uses hash routing for this app. Official capture URLs must follow the runtime pattern `http://localhost:<port>/?test_mode=true#/route`.
+- Some interactive and result surfaces require seeded local storage or backend payloads. Those states must be documented explicitly instead of being silently skipped.
+
+## Documentation Sync
+
+Any official change must keep these documents aligned:
 
 - [README.md](./README.md)
 - [FIGMA_SOURCE_OF_TRUTH.md](./FIGMA_SOURCE_OF_TRUTH.md)
 - [FIGMA_SCREEN_COMPONENT_REGISTRY.md](./FIGMA_SCREEN_COMPONENT_REGISTRY.md)
-- 필요 시 [../figma-style-guide.md](../figma-style-guide.md)

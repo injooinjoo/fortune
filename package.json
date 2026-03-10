@@ -18,7 +18,10 @@
     "test:install": "playwright install",
     "test:codegen": "playwright codegen",
     "lighthouse": "lhci autorun",
-    "serve:build": "npx serve build/web -l 3000 --single"
+    "serve:build": "npx serve build/web -l 3000 --single",
+    "figma:serve-build": "python3 playwright/scripts/figma_capture_server.py --root build/web --port 3001",
+    "figma:capture": "node playwright/scripts/capture_figma_screens.js",
+    "figma:catalog": "node playwright/scripts/build_figma_catalog.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.40.0",
