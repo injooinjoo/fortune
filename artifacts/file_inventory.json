@@ -22985,8 +22985,7 @@
       "referenced_by": [
         "lib/routes/route_config.dart",
         "lib/services/deep_link_service.dart",
-        "lib/services/notification/fcm_service.dart",
-        "lib/services/notification_service.dart"
+        "lib/services/notification/fcm_service.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23200,7 +23199,6 @@
         "lib/services/kakao_share_service.dart",
         "lib/services/native_platform_service.dart",
         "lib/services/notification/fcm_service.dart",
-        "lib/services/notification_service.dart",
         "lib/services/oauth_in_app_browser_coordinator.dart",
         "lib/services/pet_service.dart",
         "lib/services/region_service.dart",
@@ -24284,10 +24282,8 @@
         "lib/features/character/domain/models/character_chat_state.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/character/presentation/utils/character_tone_policy.dart",
-        "lib/features/character/presentation/utils/luts_tone_policy.dart",
         "lib/screens/profile/providers/character_stats_provider.dart",
-        "test/unit/features/character/presentation/utils/character_tone_policy_test.dart",
-        "test/unit/features/character/presentation/utils/luts_tone_policy_test.dart"
+        "test/unit/features/character/presentation/utils/character_tone_policy_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24310,14 +24306,12 @@
         "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/character/presentation/utils/character_tone_policy.dart",
-        "lib/features/character/presentation/utils/luts_tone_policy.dart",
         "lib/features/character/presentation/widgets/character_message_bubble.dart",
         "test/unit/features/character/data/services/character_proactive_context_service_test.dart",
         "test/unit/features/character/data/services/character_proactive_media_service_test.dart",
         "test/unit/features/character/domain/models/character_chat_message_test.dart",
         "test/unit/features/character/presentation/providers/character_chat_provider_test.dart",
-        "test/unit/features/character/presentation/utils/character_tone_policy_test.dart",
-        "test/unit/features/character/presentation/utils/luts_tone_policy_test.dart"
+        "test/unit/features/character/presentation/utils/character_tone_policy_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24603,22 +24597,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/features/character/presentation/utils/luts_tone_policy.dart",
-      "referenced_by": [
-        "test/unit/features/character/presentation/utils/luts_tone_policy_test.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
     },
     {
       "area": "lib",
@@ -30320,7 +30298,6 @@
       "notes": [],
       "path": "lib/services/native_platform_service.dart",
       "referenced_by": [
-        "lib/services/notification_service.dart",
         "lib/services/widget_data_service.dart",
         "lib/services/widget_service.dart"
       ],
@@ -30342,23 +30319,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/services/notification_service.dart",
-      "referenced_by": [
-        "docs/native/NATIVE_FEATURES_GUIDE.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -32087,7 +32047,6 @@
         "supabase/functions/character-conversation-load/index.ts",
         "supabase/functions/character-conversation-save/index.ts",
         "supabase/functions/character-conversations-load-all/index.ts",
-        "supabase/functions/character-follow-up/index.ts",
         "supabase/functions/chat-conversation-save/index.ts",
         "supabase/functions/delete-account/index.ts",
         "supabase/functions/fortune-recommend/index.ts",
@@ -32182,9 +32141,6 @@
         "supabase/functions/analyze-wish/index.ts",
         "supabase/functions/calculate-saju/index.ts",
         "supabase/functions/character-chat/index.ts",
-        "supabase/functions/chat-insight-analyze/index.ts",
-        "supabase/functions/chat-insight-followup/index.ts",
-        "supabase/functions/chat-insight-suggest/index.ts",
         "supabase/functions/fortune-avoid-people/index.ts",
         "supabase/functions/fortune-baby-nickname/index.ts",
         "supabase/functions/fortune-biorhythm/index.ts",
@@ -32365,9 +32321,6 @@
         "docs/development/gcp-api-usage-monitoring.md",
         "supabase/functions/analyze-wish/index.ts",
         "supabase/functions/calculate-saju/index.ts",
-        "supabase/functions/chat-insight-analyze/index.ts",
-        "supabase/functions/chat-insight-followup/index.ts",
-        "supabase/functions/chat-insight-suggest/index.ts",
         "supabase/functions/fortune-avoid-people/index.ts",
         "supabase/functions/fortune-baby-nickname/index.ts",
         "supabase/functions/fortune-biorhythm/index.ts",
@@ -32441,8 +32394,7 @@
       "path": "supabase/functions/_shared/notification_push.ts",
       "referenced_by": [
         "supabase/functions/_shared/llm/alerts.ts",
-        "supabase/functions/character-chat/index.ts",
-        "supabase/functions/character-follow-up/index.ts"
+        "supabase/functions/character-chat/index.ts"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -32696,6 +32648,7 @@
       ],
       "path": "supabase/functions/character-conversation-save/index.ts",
       "referenced_by": [
+        "lib/core/services/chat_sync_service.dart",
         "lib/features/character/data/services/character_chat_service.dart"
       ],
       "runtime_reachable": true,
@@ -32720,138 +32673,19 @@
     },
     {
       "area": "supabase",
-      "candidate_action": "manual_review",
+      "candidate_action": "keep",
       "dirty": false,
       "kind": "edge_function_source",
       "notes": [
-        "edge_function_unreferenced:character-follow-up",
-        "no_inbound_refs"
-      ],
-      "path": "supabase/functions/character-follow-up/index.ts",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "supabase",
-      "candidate_action": "manual_review",
-      "dirty": false,
-      "kind": "edge_function_source",
-      "notes": [
-        "edge_function_unreferenced:chat-conversation-save",
-        "no_inbound_refs"
+        "edge_function_ref:chat-conversation-save"
       ],
       "path": "supabase/functions/chat-conversation-save/index.ts",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "supabase",
-      "candidate_action": "manual_review",
-      "dirty": false,
-      "kind": "edge_function_source",
-      "notes": [
-        "edge_function_unreferenced:chat-insight-analyze",
-        "no_inbound_refs"
+      "referenced_by": [
+        "lib/core/services/chat_sync_service.dart"
       ],
-      "path": "supabase/functions/chat-insight-analyze/index.ts",
-      "referenced_by": [],
-      "runtime_reachable": false,
+      "runtime_reachable": true,
       "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "supabase",
-      "candidate_action": "manual_review",
-      "dirty": false,
-      "kind": "edge_function_source",
-      "notes": [
-        "edge_function_unreferenced:chat-insight-followup",
-        "no_inbound_refs"
-      ],
-      "path": "supabase/functions/chat-insight-followup/index.ts",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "supabase",
-      "candidate_action": "manual_review",
-      "dirty": false,
-      "kind": "edge_function_source",
-      "notes": [
-        "edge_function_unreferenced:chat-insight-suggest",
-        "no_inbound_refs"
-      ],
-      "path": "supabase/functions/chat-insight-suggest/index.ts",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "supabase",
-      "candidate_action": "manual_review",
-      "dirty": false,
-      "kind": "edge_function_source",
-      "notes": [
-        "edge_function_unreferenced:coach-personalize",
-        "no_inbound_refs"
-      ],
-      "path": "supabase/functions/coach-personalize/index.ts",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "supabase",
-      "candidate_action": "manual_review",
-      "dirty": false,
-      "kind": "edge_function_source",
-      "notes": [
-        "edge_function_unreferenced:daily-checkin",
-        "no_inbound_refs"
-      ],
-      "path": "supabase/functions/daily-checkin/index.ts",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "supabase",
-      "candidate_action": "manual_review",
-      "dirty": false,
-      "kind": "edge_function_source",
-      "notes": [
-        "edge_function_unreferenced:decision-followup",
-        "no_inbound_refs"
-      ],
-      "path": "supabase/functions/decision-followup/index.ts",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "supabase",
-      "candidate_action": "manual_review",
-      "dirty": false,
-      "kind": "edge_function_source",
-      "notes": [
-        "edge_function_unreferenced:decision-receipt",
-        "no_inbound_refs"
-      ],
-      "path": "supabase/functions/decision-receipt/index.ts",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "runtime_used"
     },
     {
       "area": "supabase",
@@ -32968,10 +32802,12 @@
       ],
       "path": "supabase/functions/fortune-career/index.ts",
       "referenced_by": [
+        "docs/data/LLM_PROVIDER_MIGRATION.md",
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/fortune/fortune_type_registry.dart",
         "lib/core/services/fortune_generators/career_generator.dart",
-        "lib/core/services/generator_factory.dart"
+        "lib/core/services/generator_factory.dart",
+        "supabase/functions/fortune-career/index.ts"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -33006,7 +32842,8 @@
       "referenced_by": [
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/fortune/fortune_type_registry.dart",
-        "lib/core/services/fortune_generators/compatibility_generator.dart"
+        "lib/core/services/fortune_generators/compatibility_generator.dart",
+        "supabase/functions/fortune-compatibility/index.ts"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -33026,7 +32863,8 @@
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/fortune/fortune_type_registry.dart",
         "lib/core/services/fortune_generators/time_based_generator.dart",
-        "lib/services/widget_data_service.dart"
+        "lib/services/widget_data_service.dart",
+        "supabase/functions/fortune-daily/index.ts"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -33061,7 +32899,8 @@
       "referenced_by": [
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/fortune/fortune_type_registry.dart",
-        "lib/core/services/generator_factory.dart"
+        "lib/core/services/generator_factory.dart",
+        "supabase/functions/fortune-dream/index.ts"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -33124,21 +32963,6 @@
     },
     {
       "area": "supabase",
-      "candidate_action": "manual_review",
-      "dirty": false,
-      "kind": "edge_function_source",
-      "notes": [
-        "edge_function_unreferenced:fortune-face-reading-watch",
-        "no_inbound_refs"
-      ],
-      "path": "supabase/functions/fortune-face-reading-watch/index.ts",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "supabase",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "edge_function_source",
@@ -33157,33 +32981,35 @@
     },
     {
       "area": "supabase",
-      "candidate_action": "manual_review",
+      "candidate_action": "keep",
       "dirty": false,
       "kind": "edge_function_source",
       "notes": [
-        "edge_function_unreferenced:fortune-family-change",
-        "no_inbound_refs"
+        "edge_function_ref:fortune-family-change"
       ],
       "path": "supabase/functions/fortune-family-change/index.ts",
-      "referenced_by": [],
-      "runtime_reachable": false,
+      "referenced_by": [
+        "lib/core/services/generator_factory.dart"
+      ],
+      "runtime_reachable": true,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "runtime_used"
     },
     {
       "area": "supabase",
-      "candidate_action": "manual_review",
+      "candidate_action": "keep",
       "dirty": false,
       "kind": "edge_function_source",
       "notes": [
-        "edge_function_unreferenced:fortune-family-children",
-        "no_inbound_refs"
+        "edge_function_ref:fortune-family-children"
       ],
       "path": "supabase/functions/fortune-family-children/index.ts",
-      "referenced_by": [],
-      "runtime_reachable": false,
+      "referenced_by": [
+        "lib/core/services/generator_factory.dart"
+      ],
+      "runtime_reachable": true,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "runtime_used"
     },
     {
       "area": "supabase",
@@ -33195,7 +33021,8 @@
       ],
       "path": "supabase/functions/fortune-family-health/index.ts",
       "referenced_by": [
-        "lib/core/constants/edge_functions_endpoints.dart"
+        "lib/core/constants/edge_functions_endpoints.dart",
+        "lib/core/services/generator_factory.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -33203,33 +33030,35 @@
     },
     {
       "area": "supabase",
-      "candidate_action": "manual_review",
+      "candidate_action": "keep",
       "dirty": false,
       "kind": "edge_function_source",
       "notes": [
-        "edge_function_unreferenced:fortune-family-relationship",
-        "no_inbound_refs"
+        "edge_function_ref:fortune-family-relationship"
       ],
       "path": "supabase/functions/fortune-family-relationship/index.ts",
-      "referenced_by": [],
-      "runtime_reachable": false,
+      "referenced_by": [
+        "lib/core/services/generator_factory.dart"
+      ],
+      "runtime_reachable": true,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "runtime_used"
     },
     {
       "area": "supabase",
-      "candidate_action": "manual_review",
+      "candidate_action": "keep",
       "dirty": false,
       "kind": "edge_function_source",
       "notes": [
-        "edge_function_unreferenced:fortune-family-wealth",
-        "no_inbound_refs"
+        "edge_function_ref:fortune-family-wealth"
       ],
       "path": "supabase/functions/fortune-family-wealth/index.ts",
-      "referenced_by": [],
-      "runtime_reachable": false,
+      "referenced_by": [
+        "lib/core/services/generator_factory.dart"
+      ],
+      "runtime_reachable": true,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "runtime_used"
     },
     {
       "area": "supabase",
@@ -33274,9 +33103,11 @@
       ],
       "path": "supabase/functions/fortune-health/index.ts",
       "referenced_by": [
+        "docs/data/LLM_PROVIDER_MIGRATION.md",
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/fortune/fortune_type_registry.dart",
-        "lib/core/services/fortune_generators/health_generator.dart"
+        "lib/core/services/fortune_generators/health_generator.dart",
+        "supabase/functions/fortune-health/index.ts"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -33308,7 +33139,8 @@
       ],
       "path": "supabase/functions/fortune-investment/index.ts",
       "referenced_by": [
-        "lib/core/constants/edge_functions_endpoints.dart"
+        "lib/core/constants/edge_functions_endpoints.dart",
+        "supabase/functions/fortune-investment/index.ts"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -33324,9 +33156,11 @@
       ],
       "path": "supabase/functions/fortune-love/index.ts",
       "referenced_by": [
+        "docs/data/LLM_PROVIDER_MIGRATION.md",
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/fortune/fortune_type_registry.dart",
-        "lib/core/services/fortune_generators/love_generator.dart"
+        "lib/core/services/fortune_generators/love_generator.dart",
+        "supabase/functions/fortune-love/index.ts"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -33377,6 +33211,7 @@
       ],
       "path": "supabase/functions/fortune-mbti/index.ts",
       "referenced_by": [
+        "docs/data/LLM_PROVIDER_MIGRATION.md",
         "docs/troubleshooting/DB_FIX_INSTRUCTIONS.md",
         "docs/troubleshooting/FIX_MBTI_404_GUIDE.md",
         "lib/core/constants/edge_functions_endpoints.dart",
@@ -33470,6 +33305,7 @@
       ],
       "path": "supabase/functions/fortune-past-life/index.ts",
       "referenced_by": [
+        "docs/development/GEMINI_COST_INCIDENT_RUNBOOK.md",
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/fortune/fortune_type_registry.dart"
       ],
@@ -33538,6 +33374,7 @@
       ],
       "path": "supabase/functions/fortune-tarot/index.ts",
       "referenced_by": [
+        "docs/data/LLM_PROVIDER_MIGRATION.md",
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/fortune/fortune_type_registry.dart"
       ],
@@ -33574,7 +33411,8 @@
       "referenced_by": [
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/fortune/fortune_type_registry.dart",
-        "lib/core/services/fortune_generators/traditional_saju_generator.dart"
+        "lib/core/services/fortune_generators/traditional_saju_generator.dart",
+        "supabase/functions/fortune-traditional-saju/index.ts"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -33607,6 +33445,7 @@
       ],
       "path": "supabase/functions/fortune-yearly-encounter/index.ts",
       "referenced_by": [
+        "docs/development/GEMINI_COST_INCIDENT_RUNBOOK.md",
         "docs/development/gcp-api-usage-monitoring.md",
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/fortune/fortune_type_registry.dart"
@@ -33625,6 +33464,7 @@
       ],
       "path": "supabase/functions/free-chat/index.ts",
       "referenced_by": [
+        "docs/development/GEMINI_COST_INCIDENT_RUNBOOK.md",
         "docs/development/gcp-api-usage-monitoring.md",
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/features/chat/data/services/free_chat_service.dart"
@@ -33643,6 +33483,7 @@
       ],
       "path": "supabase/functions/generate-character-proactive-image/index.ts",
       "referenced_by": [
+        "docs/development/GEMINI_COST_INCIDENT_RUNBOOK.md",
         "lib/features/character/data/services/character_proactive_media_service.dart"
       ],
       "runtime_reachable": true,
@@ -33651,18 +33492,19 @@
     },
     {
       "area": "supabase",
-      "candidate_action": "manual_review",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "edge_function_source",
       "notes": [
-        "edge_function_unreferenced:generate-fashion-image",
-        "no_inbound_refs"
+        "edge_function_non_runtime_ref:generate-fashion-image"
       ],
       "path": "supabase/functions/generate-fashion-image/index.ts",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/development/GEMINI_COST_INCIDENT_RUNBOOK.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "doc_only"
     },
     {
       "area": "supabase",
@@ -33690,6 +33532,8 @@
       ],
       "path": "supabase/functions/generate-talisman/index.ts",
       "referenced_by": [
+        "docs/design/TALISMAN_GENERATION_INTEGRATION.md",
+        "docs/development/GEMINI_COST_INCIDENT_RUNBOOK.md",
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/fortune/fortune_type_registry.dart",
         "lib/core/services/talisman_generation_service.dart"
@@ -33733,18 +33577,20 @@
     },
     {
       "area": "supabase",
-      "candidate_action": "manual_review",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "edge_function_source",
       "notes": [
-        "edge_function_unreferenced:monitor-llm-usage",
-        "no_inbound_refs"
+        "edge_function_non_runtime_ref:monitor-llm-usage"
       ],
       "path": "supabase/functions/monitor-llm-usage/index.ts",
-      "referenced_by": [],
+      "referenced_by": [
+        ".github/workflows/llm-guard-monitor.yml",
+        "docs/development/GEMINI_COST_INCIDENT_RUNBOOK.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "tooling_only"
     },
     {
       "area": "supabase",
@@ -35625,20 +35471,6 @@
       "notes": [
         "no_inbound_refs"
       ],
-      "path": "test/unit/features/character/presentation/utils/luts_tone_policy_test.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [
-        "no_inbound_refs"
-      ],
       "path": "test/unit/features/fortune/domain/models/conditions/character_chat_fortune_conditions_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -36169,24 +36001,24 @@
       "assets": 1231,
       "docs": 79,
       "integration_test": 26,
-      "lib": 650,
+      "lib": 648,
       "scripts": 68,
-      "supabase": 214,
-      "test": 53
+      "supabase": 205,
+      "test": 52
     },
     "counts_by_candidate_action": {
-      "keep": 1090,
+      "keep": 1095,
       "keep_generated": 38,
-      "manual_review": 853,
-      "phase2_review_candidate": 340
+      "manual_review": 837,
+      "phase2_review_candidate": 339
     },
     "counts_by_usage_status": {
       "doc_only": 80,
       "generated_excluded": 38,
-      "runtime_used": 1090,
-      "test_only": 80,
-      "tooling_only": 180,
-      "unreferenced": 853
+      "runtime_used": 1095,
+      "test_only": 78,
+      "tooling_only": 181,
+      "unreferenced": 837
     },
     "declared_asset_dirs_without_runtime_refs": [
       "assets/animations",
@@ -36298,13 +36130,15 @@
       "integration_test"
     ],
     "lib_dart_runtime_reachable": 636,
-    "lib_dart_total": 647,
-    "lib_dart_zero_incoming": 1,
+    "lib_dart_total": 645,
+    "lib_dart_zero_incoming": 0,
     "missing_function_refs": [
+      "--all",
       "add-tokens",
       "avoid-people",
       "baby-nickname",
       "blind-date",
+      "calculate-celebrity-saju",
       "chat-insight",
       "crawl-celebrity-info",
       "daily-calendar",
@@ -36317,7 +36151,9 @@
       "fortune-lucky-lottery",
       "fortune-recommendations",
       "fortune-system",
+      "fortune-zodiac-scheduler",
       "game-enhance",
+      "generate-celebrity-character",
       "generate-fortune",
       "health-toss",
       "lucky-exam",
@@ -36352,6 +36188,7 @@
       "character-conversation-load",
       "character-conversation-save",
       "character-conversations-load-all",
+      "chat-conversation-save",
       "delete-account",
       "fetch-tickers",
       "fortune-avoid-people",
@@ -36368,7 +36205,11 @@
       "fortune-exam",
       "fortune-exercise",
       "fortune-face-reading",
+      "fortune-family-change",
+      "fortune-family-children",
       "fortune-family-health",
+      "fortune-family-relationship",
+      "fortune-family-wealth",
       "fortune-game-enhance",
       "fortune-health",
       "fortune-health-document",
@@ -36408,25 +36249,8 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2321,
+    "total_files": 2309,
     "undeclared_asset_top_levels": [],
-    "unreferenced_function_dirs": [
-      "character-follow-up",
-      "chat-conversation-save",
-      "chat-insight-analyze",
-      "chat-insight-followup",
-      "chat-insight-suggest",
-      "coach-personalize",
-      "daily-checkin",
-      "decision-followup",
-      "decision-receipt",
-      "fortune-face-reading-watch",
-      "fortune-family-change",
-      "fortune-family-children",
-      "fortune-family-relationship",
-      "fortune-family-wealth",
-      "generate-fashion-image",
-      "monitor-llm-usage"
-    ]
+    "unreferenced_function_dirs": []
   }
 }

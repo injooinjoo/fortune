@@ -117,7 +117,21 @@ PATH_REF_RE = re.compile(
 )
 MARKDOWN_LINK_RE = re.compile(r'\[[^\]]*\]\(([^)#]+)')
 FUNCTION_INVOKE_RE = re.compile(r'functions\.invoke\(\s*[\'"]([a-z0-9-]+)[\'"]')
+FUNCTION_INVOKE_VAR_RE = re.compile(
+    r'functions\.invoke\(\s*([A-Za-z_][A-Za-z0-9_]*)\s*(?:,|\))'
+)
+FUNCTION_ASSIGN_LITERAL_RE = re.compile(
+    r'\b(?:final|const|var|String)\s+([A-Za-z_][A-Za-z0-9_]*)\s*=\s*[\'"]([a-z0-9-]+)[\'"]\s*;'
+)
+FUNCTION_ASSIGN_TERNARY_RE = re.compile(
+    r'\b(?:final|const|var|String)\s+([A-Za-z_][A-Za-z0-9_]*)\s*=\s*[^;]*\?\s*[\'"]([a-z0-9-]+)[\'"]\s*:\s*[\'"]([a-z0-9-]+)[\'"]\s*;'
+)
 ENDPOINT_LITERAL_RE = re.compile(r'[\'"](/(?:[a-z0-9-]+))[\'"]')
+FUNCTIONS_V1_LITERAL_RE = re.compile(r'functions/v1/([a-z0-9-]+)')
+SUPABASE_FUNCTION_DEPLOY_RE = re.compile(
+    r'supabase\s+functions\s+(?:deploy|serve)\s+([a-z0-9-]+)'
+)
+DYNAMIC_FAMILY_ENDPOINT_RE = re.compile(r'fortune-family-\$[A-Za-z_][A-Za-z0-9_]*')
 
 
 def run_git(*args: str) -> str:
@@ -421,6 +435,7 @@ def build_analysis() -> dict[str, object]:
 
     for source, text in texts.items():
         suffix = Path(source).suffix.lower()
+        function_name_vars: dict[str, set[str]] = defaultdict(set)
         if suffix == '.dart':
             for directive in DART_DIRECTIVE_RE.findall(text):
                 for target in QUOTED_URI_RE.findall(directive):
@@ -457,10 +472,26 @@ def build_analysis() -> dict[str, object]:
         for function_name in FUNCTION_INVOKE_RE.findall(text):
             function_referrers[function_name].add(source)
 
+        for variable_name, function_name in FUNCTION_ASSIGN_LITERAL_RE.findall(text):
+            function_name_vars[variable_name].add(function_name)
+
+        for variable_name, when_true, when_false in FUNCTION_ASSIGN_TERNARY_RE.findall(text):
+            function_name_vars[variable_name].update({when_true, when_false})
+
+        for variable_name in FUNCTION_INVOKE_VAR_RE.findall(text):
+            for function_name in function_name_vars.get(variable_name, set()):
+                function_referrers[function_name].add(source)
+
         for literal in ENDPOINT_LITERAL_RE.findall(text):
             function_name = literal.lstrip('/')
             if function_name and '-' in function_name and not function_name.endswith('-'):
                 function_referrers[function_name].add(source)
+
+        for function_name in FUNCTIONS_V1_LITERAL_RE.findall(text):
+            function_referrers[function_name].add(source)
+
+        for function_name in SUPABASE_FUNCTION_DEPLOY_RE.findall(text):
+            function_referrers[function_name].add(source)
 
     runtime_dart_seen: set[str] = set()
     stack = ['lib/main.dart']
@@ -477,6 +508,18 @@ def build_analysis() -> dict[str, object]:
             parts = Path(path).parts
             if len(parts) >= 3 and parts[2] != '_shared':
                 function_dirs[parts[2]].append(path)
+
+    for source, text in texts.items():
+        if DYNAMIC_FAMILY_ENDPOINT_RE.search(text):
+            for function_name in function_dirs:
+                if function_name.startswith('fortune-family-'):
+                    function_referrers[function_name].add(source)
+
+    referenced_function_dirs = {
+        function_name
+        for function_name, referrers in function_referrers.items()
+        if function_name in function_dirs and referrers
+    }
 
     runtime_function_dirs = {
         function_name
@@ -517,7 +560,7 @@ def build_analysis() -> dict[str, object]:
     unreferenced_function_dirs = sorted(
         function_name
         for function_name in function_dirs
-        if function_name not in runtime_function_dirs
+        if function_name not in referenced_function_dirs
     )
 
     records: list[dict[str, object]] = []
@@ -591,6 +634,8 @@ def build_analysis() -> dict[str, object]:
                 function_name = parts[2]
                 if function_name in runtime_function_dirs:
                     notes.append(f'edge_function_ref:{function_name}')
+                elif function_name in referenced_function_dirs:
+                    notes.append(f'edge_function_non_runtime_ref:{function_name}')
                 else:
                     notes.append(f'edge_function_unreferenced:{function_name}')
         if not refs:
