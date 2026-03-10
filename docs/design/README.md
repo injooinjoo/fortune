@@ -80,6 +80,8 @@ ZPZG의 디자인 시스템은 **ChatGPT/Claude 스타일의 모던 AI 채팅 �
 
 | 문서 | 설명 | 상태 |
 |------|------|------|
+| [FIGMA_SOURCE_OF_TRUTH.md](./FIGMA_SOURCE_OF_TRUTH.md) | 공식 Figma 파일 정의 및 운영 규칙 | 활성 |
+| [FIGMA_SCREEN_COMPONENT_REGISTRY.md](./FIGMA_SCREEN_COMPONENT_REGISTRY.md) | 화면, 레이아웃, 컴포넌트 인벤토리 | 활성 |
 | [BLUR_SYSTEM_GUIDE.md](./BLUR_SYSTEM_GUIDE.md) | 블러 시스템 가이드 | 활성 |
 | [UI_UX_MASTER_POLICY.md](./UI_UX_MASTER_POLICY.md) | UI/UX 마스터 정책 | 활성 |
 | [WIDGET_ARCHITECTURE_DESIGN.md](./WIDGET_ARCHITECTURE_DESIGN.md) | 위젯 아키텍처 | 활성 |
@@ -99,6 +101,12 @@ ZPZG의 디자인 시스템은 **ChatGPT/Claude 스타일의 모던 AI 채팅 �
 ---
 
 ## 빠른 시작
+
+### 0. 공식 Figma 파일 확인
+
+- 공식 파일: [Fortune Design Source of Truth](https://www.figma.com/file/xKO8asAUg2g9fqpQQ9PZwb/Fortune-Design-Source-of-Truth?type=design&node-id=1-2&mode=design)
+- 운영 규칙: [FIGMA_SOURCE_OF_TRUTH.md](./FIGMA_SOURCE_OF_TRUTH.md)
+- 인벤토리: [FIGMA_SCREEN_COMPONENT_REGISTRY.md](./FIGMA_SCREEN_COMPONENT_REGISTRY.md)
 
 ### 1. 색상 사용
 
