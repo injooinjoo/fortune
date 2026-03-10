@@ -5396,35 +5396,33 @@
     },
     {
       "area": "assets",
-      "candidate_action": "keep",
+      "candidate_action": "manual_review",
       "dirty": false,
       "kind": "asset_webp",
       "notes": [
+        "no_inbound_refs",
         "pubspec_declared:assets/images/fortune/categories"
       ],
       "path": "assets/images/fortune/categories/pet_cat.webp",
-      "referenced_by": [
-        "lib/data/models/pet_profile.dart"
-      ],
-      "runtime_reachable": true,
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "assets",
-      "candidate_action": "keep",
+      "candidate_action": "manual_review",
       "dirty": false,
       "kind": "asset_webp",
       "notes": [
+        "no_inbound_refs",
         "pubspec_declared:assets/images/fortune/categories"
       ],
       "path": "assets/images/fortune/categories/pet_dog.webp",
-      "referenced_by": [
-        "lib/data/models/pet_profile.dart"
-      ],
-      "runtime_reachable": true,
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "assets",
@@ -20896,22 +20894,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/core/design_system/components/traditional/seal_stamp_widget.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -21096,7 +21078,6 @@
         "lib/core/design_system/components/ds_toast.dart",
         "lib/core/design_system/components/ds_toggle.dart",
         "lib/core/design_system/components/hanji_background.dart",
-        "lib/core/design_system/components/traditional/seal_stamp_widget.dart",
         "lib/core/design_system/components/traditional/traditional_knot_indicator.dart",
         "lib/core/design_system/design_system.dart",
         "lib/core/theme/typography_unified.dart"
@@ -21157,7 +21138,6 @@
         "lib/core/design_system/components/ds_toast.dart",
         "lib/core/design_system/components/hanji_background.dart",
         "lib/core/design_system/components/traditional/cloud_bubble_painter.dart",
-        "lib/core/design_system/components/traditional/seal_stamp_widget.dart",
         "lib/core/design_system/components/traditional/traditional_knot_indicator.dart",
         "lib/core/design_system/design_system.dart",
         "lib/core/design_system/theme/ds_extensions.dart",
@@ -22448,7 +22428,6 @@
       "notes": [],
       "path": "lib/core/theme/font_config.dart",
       "referenced_by": [
-        "lib/core/design_system/components/traditional/seal_stamp_widget.dart",
         "lib/core/design_system/tokens/ds_typography.dart",
         "lib/core/theme/typography_theme.dart",
         "lib/core/theme/typography_unified.dart",
@@ -22687,7 +22666,6 @@
         "lib/services/app_icon_badge_service.dart",
         "lib/services/app_version_service.dart",
         "lib/services/deep_link_service.dart",
-        "lib/services/fortune_history_service.dart",
         "lib/services/fortune_share_service.dart",
         "lib/services/in_app_purchase_service.dart",
         "lib/services/instagram_share_service.dart",
@@ -22695,7 +22673,6 @@
         "lib/services/native_platform_service.dart",
         "lib/services/notification/fcm_service.dart",
         "lib/services/oauth_in_app_browser_coordinator.dart",
-        "lib/services/pet_service.dart",
         "lib/services/remote_config_service.dart",
         "lib/services/social_auth/base/base_social_auth_provider.dart",
         "lib/services/social_auth/providers/apple_auth_provider.dart",
@@ -23077,23 +23054,6 @@
         "lib/data/services/fortune_api_service_edge_functions.dart"
       ],
       "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/data/models/pet_profile.dart",
-      "referenced_by": [
-        "docs/data/DATABASE_GUIDE.md",
-        "lib/services/pet_service.dart"
-      ],
-      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -25574,8 +25534,7 @@
         "lib/features/history/presentation/widgets/fortune_charts.dart",
         "lib/features/history/presentation/widgets/timeline_view.dart",
         "lib/presentation/providers/fortune_history_provider.dart",
-        "lib/routes/route_config.dart",
-        "lib/services/fortune_history_service.dart"
+        "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26438,6 +26397,7 @@
       "notes": [],
       "path": "lib/features/wellness/presentation/pages/meditation_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/routes/wellness_routes.dart"
       ],
       "runtime_reachable": true,
@@ -26452,6 +26412,7 @@
       "notes": [],
       "path": "lib/features/wellness/presentation/pages/wellness_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/routes/wellness_routes.dart"
       ],
       "runtime_reachable": true,
@@ -26482,6 +26443,7 @@
       "notes": [],
       "path": "lib/features/wellness/presentation/widgets/breathing_timer_widget.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/wellness/presentation/pages/meditation_page.dart"
       ],
       "runtime_reachable": true,
@@ -26496,6 +26458,7 @@
       "notes": [],
       "path": "lib/features/wellness/presentation/widgets/meditation_completion_sheet.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/wellness/presentation/pages/meditation_page.dart"
       ],
       "runtime_reachable": true,
@@ -27850,23 +27813,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/services/fortune_history_service.dart",
-      "referenced_by": [
-        "docs/data/DATABASE_GUIDE.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -27986,23 +27932,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/services/pet_service.dart",
-      "referenced_by": [
-        "docs/data/DATABASE_GUIDE.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -28196,7 +28125,6 @@
         "lib/screens/profile/saju_detail_page.dart",
         "lib/screens/splash_screen.dart",
         "lib/services/account_deletion_service.dart",
-        "lib/services/fortune_history_service.dart",
         "lib/services/social_auth_service.dart",
         "lib/services/user_statistics_service.dart",
         "test/mocks/mock_auth_services.dart"
@@ -28246,8 +28174,7 @@
         "docs/data/DATABASE_GUIDE.md",
         "lib/presentation/providers/auth_provider.dart",
         "lib/presentation/providers/providers.dart",
-        "lib/presentation/providers/user_statistics_provider.dart",
-        "lib/services/fortune_history_service.dart"
+        "lib/presentation/providers/user_statistics_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -33589,25 +33516,24 @@
       "assets": 1231,
       "docs": 81,
       "integration_test": 26,
-      "lib": 508,
+      "lib": 504,
       "scripts": 68,
       "supabase": 203,
       "test": 52
     },
     "counts_by_candidate_action": {
-      "keep": 813,
+      "keep": 810,
       "keep_generated": 38,
-      "manual_review": 975,
-      "phase1_remove_candidate": 1,
-      "phase2_review_candidate": 342
+      "manual_review": 977,
+      "phase2_review_candidate": 340
     },
     "counts_by_usage_status": {
-      "doc_only": 83,
+      "doc_only": 81,
       "generated_excluded": 38,
-      "runtime_used": 813,
+      "runtime_used": 810,
       "test_only": 78,
       "tooling_only": 181,
-      "unreferenced": 976
+      "unreferenced": 977
     },
     "declared_asset_dirs_without_runtime_refs": [
       "assets/animations",
@@ -33760,8 +33686,8 @@
       "integration_test"
     ],
     "lib_dart_runtime_reachable": 482,
-    "lib_dart_total": 505,
-    "lib_dart_zero_incoming": 3,
+    "lib_dart_total": 501,
+    "lib_dart_zero_incoming": 0,
     "missing_function_refs": [
       "--all",
       "add-tokens",
@@ -33876,7 +33802,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2169,
+    "total_files": 2165,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": []
   }
