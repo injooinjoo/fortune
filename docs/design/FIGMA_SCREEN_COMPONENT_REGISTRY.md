@@ -22,6 +22,7 @@ This document is the repository-side registry for the official Figma file.
 | `50 Health / Exercise` | 6 | 3 | 3 |
 | `60 History / Profile / More` | 9 | 2 | 7 |
 | `70 Commerce / Settings / Support` | 11 | 6 | 5 |
+| `75 Wellness` | 2 | 2 | 0 |
 | `80 Admin / Policy / Utility` | 2 | 2 | 0 |
 
 Additional official pages:
@@ -112,6 +113,11 @@ Additional official pages:
 - `profile__phone_management__auth_gated` | `#/profile/phone-management` | `placeholder`
 - `profile__account_deletion__auth_gated` | `#/profile/account-deletion` | `placeholder`
 
+### 75 Wellness
+
+- `wellness__landing__default` | `#/wellness` | `live`
+- `wellness__meditation__default` | `#/wellness/meditation` | `live`
+
 ### 80 Admin / Policy / Utility
 
 - `admin__celebrity_crawling__error` | `#/admin/celebrity-crawling` | `live`
@@ -138,6 +144,11 @@ Additional official pages:
   - `lib/shared/components/loading_states.dart`
   - `lib/features/character/presentation/widgets/character_message_bubble.dart`
   - `lib/features/chat/presentation/widgets/chat_saju_result_card.dart`
+- `Wellness Focus Blocks`
+  - `lib/features/wellness/presentation/pages/wellness_page.dart`
+  - `lib/features/wellness/presentation/pages/meditation_page.dart`
+  - `lib/features/wellness/presentation/widgets/breathing_timer_widget.dart`
+  - `lib/features/wellness/presentation/widgets/meditation_completion_sheet.dart`
 
 ### 99 Archive
 
@@ -205,6 +216,7 @@ Blocker:
 - Dream result coverage uses a seeded local storage payload for `interactive_dream__result__seeded`.
 - Trend detail pages are not duplicated per content item. One representative content record per layout family is enough once seed data exists.
 - Loading, toast, snackbar, and generic error states are excluded unless they are the stable route surface itself.
+- Redirect-only routes `/` and `/home` are excluded from independent frame coverage because they do not produce unique UI surfaces.
 
 ## Update Checklist
 

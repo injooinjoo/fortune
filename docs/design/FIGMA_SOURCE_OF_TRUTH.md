@@ -29,6 +29,7 @@ Every frame in the official catalog is normalized to this device standard. Deskt
 - `50 Health / Exercise`
 - `60 History / Profile / More`
 - `70 Commerce / Settings / Support`
+- `75 Wellness`
 - `80 Admin / Policy / Utility`
 - `90 Components`
 - `99 Archive`
@@ -43,10 +44,10 @@ Examples:
 
 ## Coverage Snapshot
 
-- Managed surfaces: `61`
-- Live captures: `35`
+- Managed surfaces: `63`
+- Live captures: `37`
 - Placeholder specs: `26`
-- Component inventory groups: `4`
+- Component inventory groups: `5`
 
 Live captures are backed by verified local screenshots from the Flutter web build. Placeholder specs remain in the same file when a surface cannot be rendered locally without authenticated data, backend seed data, or `state.extra`.
 
@@ -61,6 +62,7 @@ Current live examples:
 - `/chat` first-run onboarding
 - `/chat` returning home
 - `/fortune/interactive/dream` input and seeded result
+- `/wellness`, `/wellness/meditation`
 - `/premium`, `/subscription`, `/token-purchase`
 - `/help`, `/privacy-policy`, `/terms-of-service`
 
@@ -113,6 +115,7 @@ Generated local outputs are intentionally disposable and should not be treated a
 5. Record blocked surfaces as placeholders in the same file until the blocker is removed.
 6. Update the Figma file and design docs in the same task as the route or UI change.
 7. Do not create separate “final” Figma files for features, audits, or handoff.
+8. Redirect-only routes such as `/` and `/home` are documented as route behavior, not as independent screen surfaces.
 
 ## Update Workflow
 

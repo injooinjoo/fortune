@@ -40,6 +40,11 @@ const FIGMA_PAGES = [
     description: 'Premium, subscription, token purchase, policy, and support screens.',
   },
   {
+    key: '75-wellness',
+    name: '75 Wellness',
+    description: 'Focused wellness landing and meditation flows that live outside the main shell.',
+  },
+  {
     key: '80-admin-policy-utility',
     name: '80 Admin / Policy / Utility',
     description: 'Admin and utility screens that need dedicated operational tracking.',
@@ -810,6 +815,32 @@ const SCREENS = [
     sources: ['lib/screens/profile/account_deletion_page.dart'],
   },
   {
+    id: 'wellness__landing__default',
+    pageKey: '75-wellness',
+    frameName: 'wellness__landing__default',
+    title: 'Wellness Landing',
+    routeHash: '#/wellness',
+    status: 'live',
+    waitMs: 10000,
+    buildStorage: () => ({
+      'flutter.character_onboarding_completed': 'true',
+    }),
+    sources: ['lib/features/wellness/presentation/pages/wellness_page.dart'],
+  },
+  {
+    id: 'wellness__meditation__default',
+    pageKey: '75-wellness',
+    frameName: 'wellness__meditation__default',
+    title: 'Meditation',
+    routeHash: '#/wellness/meditation',
+    status: 'live',
+    waitMs: 10000,
+    buildStorage: () => ({
+      'flutter.character_onboarding_completed': 'true',
+    }),
+    sources: ['lib/features/wellness/presentation/pages/meditation_page.dart'],
+  },
+  {
     id: 'admin__celebrity_crawling__error',
     pageKey: '80-admin-policy-utility',
     frameName: 'admin__celebrity_crawling__error',
@@ -872,6 +903,15 @@ const COMPONENT_CARDS = [
       'lib/shared/components/loading_states.dart',
       'lib/features/character/presentation/widgets/character_message_bubble.dart',
       'lib/features/chat/presentation/widgets/chat_saju_result_card.dart',
+    ],
+  },
+  {
+    title: 'Wellness Focus Blocks',
+    sources: [
+      'lib/features/wellness/presentation/pages/wellness_page.dart',
+      'lib/features/wellness/presentation/pages/meditation_page.dart',
+      'lib/features/wellness/presentation/widgets/breathing_timer_widget.dart',
+      'lib/features/wellness/presentation/widgets/meditation_completion_sheet.dart',
     ],
   },
 ];
