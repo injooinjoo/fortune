@@ -143,6 +143,7 @@ artifacts/figma_catalog/
 artifacts/figma_catalog_*.png
 artifacts/figma_capture_samples/
 artifacts/figma_capture_samples_hash/
+artifacts/design/figma_sync/
 
 # Deno lock (auto-generated)
 deno.lock

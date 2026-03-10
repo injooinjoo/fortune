@@ -113,6 +113,7 @@ Package scripts:
 - `npm run figma:serve-build`
 - `npm run figma:capture`
 - `npm run figma:catalog`
+- `npm run figma:guard`
 
 Generated local outputs are intentionally disposable and should not be treated as source-of-truth artifacts:
 
@@ -130,6 +131,30 @@ Generated local outputs are intentionally disposable and should not be treated a
 7. Do not create separate “final” Figma files for features, audits, or handoff.
 8. Redirect-only routes such as `/` and `/home` are documented as route behavior, not as independent screen surfaces.
 
+## Automation Guard
+
+The repository now enforces a design-sync guard in CI through `npm run figma:guard`.
+
+The guard automatically checks:
+
+- manifest counts vs design docs
+- placeholder triage completeness
+- route or UI changes without a matching Figma sync record
+- route changes without manifest and registry/source-of-truth updates
+
+Required repo touchpoints by change type:
+
+- Route changes:
+  - `playwright/scripts/figma_capture_manifest.js`
+  - `docs/design/FIGMA_SOURCE_OF_TRUTH.md`
+  - `docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md`
+  - `docs/design/FIGMA_SYNC_CHANGELOG.md`
+- UI-only visual changes:
+  - `docs/design/FIGMA_SYNC_CHANGELOG.md`
+  - plus any manifest/doc updates if screen inventory or counts changed
+
+Because branch protection is configured outside this repository, the remaining manual setup is to mark the CI workflow as a required GitHub status check.
+
 ## Update Workflow
 
 1. Confirm the target routes and result states from router and page source.
@@ -138,7 +163,8 @@ Generated local outputs are intentionally disposable and should not be treated a
 4. Capture live screens with `npm run figma:capture`.
 5. Generate catalog HTML with `npm run figma:catalog`.
 6. Append the catalog pages into the existing official Figma file through the Figma MCP capture flow.
-7. Update this document and [FIGMA_SCREEN_COMPONENT_REGISTRY.md](./FIGMA_SCREEN_COMPONENT_REGISTRY.md) in the same change.
+7. Update this document, [FIGMA_SCREEN_COMPONENT_REGISTRY.md](./FIGMA_SCREEN_COMPONENT_REGISTRY.md), and [FIGMA_SYNC_CHANGELOG.md](./FIGMA_SYNC_CHANGELOG.md) in the same change.
+8. Run `npm run figma:guard` before pushing.
 
 ## Known Constraints
 
@@ -153,3 +179,4 @@ Any official change must keep these documents aligned:
 - [README.md](./README.md)
 - [FIGMA_SOURCE_OF_TRUTH.md](./FIGMA_SOURCE_OF_TRUTH.md)
 - [FIGMA_SCREEN_COMPONENT_REGISTRY.md](./FIGMA_SCREEN_COMPONENT_REGISTRY.md)
+- [FIGMA_SYNC_CHANGELOG.md](./FIGMA_SYNC_CHANGELOG.md)

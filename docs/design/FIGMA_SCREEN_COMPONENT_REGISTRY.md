@@ -6,6 +6,7 @@
 - Figma file key: `dkx3Biwe5xkiMQWsjq95LA`
 - Device standard: `iPhone 15 Pro 393x852 @3x`
 - Capture manifest: `playwright/scripts/figma_capture_manifest.js`
+- Sync changelog: `docs/design/FIGMA_SYNC_CHANGELOG.md`
 - Live capture runner: `playwright/scripts/capture_figma_screens.js`
 - Catalog generator: `playwright/scripts/build_figma_catalog.js`
 
@@ -268,4 +269,6 @@ Action:
 2. Add or update the entry in `playwright/scripts/figma_capture_manifest.js`.
 3. Refresh live screenshots and catalog HTML.
 4. Update the official Figma file.
-5. Sync this registry and [FIGMA_SOURCE_OF_TRUTH.md](./FIGMA_SOURCE_OF_TRUTH.md).
+5. Append an entry to [FIGMA_SYNC_CHANGELOG.md](./FIGMA_SYNC_CHANGELOG.md).
+6. Sync this registry and [FIGMA_SOURCE_OF_TRUTH.md](./FIGMA_SOURCE_OF_TRUTH.md).
+7. Run `npm run figma:guard`.
