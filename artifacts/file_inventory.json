@@ -19538,11 +19538,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/development/GEMINI_COST_INCIDENT_RUNBOOK.md",
-      "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_schema_repair_verify.md"
+      "notes": [
+        "no_inbound_refs"
       ],
+      "path": "docs/development/GEMINI_COST_INCIDENT_RUNBOOK.md",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -19687,34 +19687,6 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [
-        "no_inbound_refs"
-      ],
-      "path": "docs/development/reports/2026-02-16_chat_read_and_continuity_discovery.md",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [
-        "no_inbound_refs"
-      ],
-      "path": "docs/development/reports/2026-02-16_chat_read_and_continuity_rca.md",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
       "notes": [],
       "path": "docs/development/reports/2026-02-16_luts_idle_context_guard_discovery.md",
       "referenced_by": [
@@ -19793,48 +19765,6 @@
       "referenced_by": [
         "docs/development/reports/2026-02-16_luts_persona_prompt_verify.md"
       ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [
-        "no_inbound_refs"
-      ],
-      "path": "docs/development/reports/2026-02-16_luts_relationship_stage_discovery.md",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [
-        "no_inbound_refs"
-      ],
-      "path": "docs/development/reports/2026-02-16_luts_service_tone_leak_discovery.md",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [
-        "no_inbound_refs"
-      ],
-      "path": "docs/development/reports/2026-02-16_luts_service_tone_leak_rca.md",
-      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -20025,49 +19955,7 @@
       "notes": [
         "no_inbound_refs"
       ],
-      "path": "docs/development/reports/2026-03-10_llm_provider_audit_discovery.md",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [],
       "path": "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
-      "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_provider_audit_discovery.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [
-        "no_inbound_refs"
-      ],
-      "path": "docs/development/reports/2026-03-10_llm_schema_repair_rca.md",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [
-        "no_inbound_refs"
-      ],
-      "path": "docs/development/reports/2026-03-10_llm_schema_repair_verify.md",
       "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
@@ -24637,7 +24525,6 @@
       "notes": [],
       "path": "lib/features/character/domain/models/character_affinity.dart",
       "referenced_by": [
-        "docs/development/reports/2026-02-16_luts_relationship_stage_discovery.md",
         "lib/features/character/data/services/character_affinity_service.dart",
         "lib/features/character/data/services/character_localizer.dart",
         "lib/features/character/domain/models/character_chat_state.dart",
@@ -24737,7 +24624,6 @@
       "notes": [],
       "path": "lib/features/character/presentation/pages/character_chat_panel.dart",
       "referenced_by": [
-        "docs/development/reports/2026-02-16_chat_read_and_continuity_discovery.md",
         "docs/development/reports/2026-02-16_luts_idle_context_guard_rca.md",
         "lib/features/character/presentation/pages/swipe_home_shell.dart"
       ],
@@ -24827,14 +24713,12 @@
       "notes": [],
       "path": "lib/features/character/presentation/providers/character_chat_provider.dart",
       "referenced_by": [
-        "docs/development/reports/2026-02-16_chat_read_and_continuity_rca.md",
         "docs/development/reports/2026-02-16_luts_idle_context_guard_discovery.md",
         "docs/development/reports/2026-02-16_luts_idle_context_guard_rca.md",
         "docs/development/reports/2026-02-16_luts_idle_context_guard_verify.md",
         "docs/development/reports/2026-02-16_luts_persona_prompt_discovery.md",
         "docs/development/reports/2026-02-16_luts_persona_prompt_rca.md",
         "docs/development/reports/2026-02-16_luts_persona_prompt_verify.md",
-        "docs/development/reports/2026-02-16_luts_relationship_stage_discovery.md",
         "docs/development/reports/2026-02-16_luts_tone_discovery.md",
         "docs/development/reports/2026-02-16_luts_tone_rca.md",
         "docs/development/reports/2026-02-16_luts_tone_verify.md",
@@ -24986,16 +24870,12 @@
       ],
       "path": "lib/features/character/presentation/utils/luts_tone_policy.dart",
       "referenced_by": [
-        "docs/development/reports/2026-02-16_chat_read_and_continuity_rca.md",
         "docs/development/reports/2026-02-16_luts_idle_context_guard_discovery.md",
         "docs/development/reports/2026-02-16_luts_idle_context_guard_rca.md",
         "docs/development/reports/2026-02-16_luts_idle_context_guard_verify.md",
         "docs/development/reports/2026-02-16_luts_persona_prompt_discovery.md",
         "docs/development/reports/2026-02-16_luts_persona_prompt_rca.md",
         "docs/development/reports/2026-02-16_luts_persona_prompt_verify.md",
-        "docs/development/reports/2026-02-16_luts_relationship_stage_discovery.md",
-        "docs/development/reports/2026-02-16_luts_service_tone_leak_discovery.md",
-        "docs/development/reports/2026-02-16_luts_service_tone_leak_rca.md",
         "docs/development/reports/2026-02-16_luts_tone_discovery.md",
         "docs/development/reports/2026-02-16_luts_tone_rca.md",
         "docs/development/reports/2026-02-16_luts_tone_verify.md",
@@ -25355,7 +25235,6 @@
       "notes": [],
       "path": "lib/features/chat/presentation/pages/chat_home_page.dart",
       "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_schema_repair_verify.md",
         "lib/screens/home/home_screen.dart"
       ],
       "runtime_reachable": true,
@@ -32566,7 +32445,6 @@
       "notes": [],
       "path": "supabase/functions/_shared/llm/factory.ts",
       "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_provider_audit_discovery.md",
         "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
         "supabase/functions/_shared/character_memory.ts",
         "supabase/functions/analyze-wish/index.ts",
@@ -32654,7 +32532,6 @@
       "notes": [],
       "path": "supabase/functions/_shared/llm/providers/anthropic.ts",
       "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_provider_audit_discovery.md",
         "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
         "supabase/functions/_shared/llm/factory.ts"
       ],
@@ -32670,7 +32547,6 @@
       "notes": [],
       "path": "supabase/functions/_shared/llm/providers/gemini.ts",
       "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_provider_audit_discovery.md",
         "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
         "supabase/functions/_shared/llm/factory.ts",
         "supabase/functions/generate-talisman/index.ts"
@@ -32687,7 +32563,6 @@
       "notes": [],
       "path": "supabase/functions/_shared/llm/providers/grok.ts",
       "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_provider_audit_discovery.md",
         "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
         "supabase/functions/_shared/llm/factory.ts"
       ],
@@ -32703,7 +32578,6 @@
       "notes": [],
       "path": "supabase/functions/_shared/llm/providers/openai.ts",
       "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_provider_audit_discovery.md",
         "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
         "supabase/functions/_shared/llm/factory.ts"
       ],
@@ -32719,10 +32593,7 @@
       "notes": [],
       "path": "supabase/functions/_shared/llm/safety.ts",
       "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_provider_audit_discovery.md",
         "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
-        "docs/development/reports/2026-03-10_llm_schema_repair_rca.md",
-        "docs/development/reports/2026-03-10_llm_schema_repair_verify.md",
         "supabase/functions/_shared/llm/providers/anthropic.ts",
         "supabase/functions/_shared/llm/providers/gemini.ts",
         "supabase/functions/_shared/llm/providers/grok.ts",
@@ -32765,7 +32636,6 @@
       "path": "supabase/functions/_shared/llm/usage-logger.ts",
       "referenced_by": [
         "docs/development/gcp-api-usage-monitoring.md",
-        "docs/development/reports/2026-03-10_llm_provider_audit_discovery.md",
         "supabase/functions/analyze-wish/index.ts",
         "supabase/functions/calculate-saju/index.ts",
         "supabase/functions/chat-insight-analyze/index.ts",
@@ -33048,7 +32918,6 @@
       ],
       "path": "supabase/functions/calculate-saju/index.ts",
       "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_provider_audit_discovery.md",
         "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/features/fortune/presentation/providers/saju_provider.dart",
@@ -33069,18 +32938,12 @@
       ],
       "path": "supabase/functions/character-chat/index.ts",
       "referenced_by": [
-        "docs/development/reports/2026-02-16_chat_read_and_continuity_discovery.md",
-        "docs/development/reports/2026-02-16_chat_read_and_continuity_rca.md",
         "docs/development/reports/2026-02-16_luts_persona_prompt_discovery.md",
         "docs/development/reports/2026-02-16_luts_persona_prompt_rca.md",
         "docs/development/reports/2026-02-16_luts_persona_prompt_verify.md",
-        "docs/development/reports/2026-02-16_luts_relationship_stage_discovery.md",
-        "docs/development/reports/2026-02-16_luts_service_tone_leak_discovery.md",
-        "docs/development/reports/2026-02-16_luts_service_tone_leak_rca.md",
         "docs/development/reports/2026-02-16_luts_tone_discovery.md",
         "docs/development/reports/2026-02-16_luts_tone_rca.md",
         "docs/development/reports/2026-02-16_luts_tone_verify.md",
-        "docs/development/reports/2026-03-10_llm_provider_audit_discovery.md",
         "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
         "lib/features/character/data/services/character_chat_service.dart"
       ],
@@ -33408,7 +33271,6 @@
       ],
       "path": "supabase/functions/fortune-celebrity/index.ts",
       "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_provider_audit_discovery.md",
         "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/fortune/fortune_type_registry.dart"
@@ -33910,7 +33772,6 @@
       ],
       "path": "supabase/functions/fortune-pet-compatibility/index.ts",
       "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_provider_audit_discovery.md",
         "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/fortune/fortune_type_registry.dart"
@@ -34099,7 +33960,6 @@
       ],
       "path": "supabase/functions/generate-fortune-story/index.ts",
       "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_provider_audit_discovery.md",
         "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
         "lib/core/constants/edge_functions_endpoints.dart"
       ],
@@ -34160,19 +34020,18 @@
     },
     {
       "area": "supabase",
-      "candidate_action": "phase2_review_candidate",
+      "candidate_action": "manual_review",
       "dirty": false,
       "kind": "edge_function_source",
       "notes": [
-        "edge_function_unreferenced:monitor-llm-usage"
+        "edge_function_unreferenced:monitor-llm-usage",
+        "no_inbound_refs"
       ],
       "path": "supabase/functions/monitor-llm-usage/index.ts",
-      "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_schema_repair_verify.md"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "doc_only"
+      "usage_status": "unreferenced"
     },
     {
       "area": "supabase",
@@ -35797,8 +35656,7 @@
       "notes": [],
       "path": "supabase/migrations/20260310000001_repair_llm_guard_schema.sql",
       "referenced_by": [
-        "docs/development/GEMINI_COST_INCIDENT_RUNBOOK.md",
-        "docs/development/reports/2026-03-10_llm_schema_repair_verify.md"
+        "docs/development/GEMINI_COST_INCIDENT_RUNBOOK.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -36058,7 +35916,6 @@
         "docs/development/reports/2026-02-16_luts_idle_context_guard_rca.md",
         "docs/development/reports/2026-02-16_luts_idle_context_guard_verify.md",
         "docs/development/reports/2026-02-16_luts_persona_prompt_verify.md",
-        "docs/development/reports/2026-02-16_luts_service_tone_leak_discovery.md",
         "docs/development/reports/2026-02-16_luts_tone_discovery.md",
         "docs/development/reports/2026-02-16_luts_tone_verify.md"
       ],
@@ -36602,7 +36459,7 @@
   "meta": {
     "counts_by_area": {
       "assets": 1231,
-      "docs": 103,
+      "docs": 95,
       "integration_test": 26,
       "lib": 650,
       "scripts": 68,
@@ -36612,16 +36469,16 @@
     "counts_by_candidate_action": {
       "keep": 1090,
       "keep_generated": 38,
-      "manual_review": 851,
-      "phase2_review_candidate": 366
+      "manual_review": 852,
+      "phase2_review_candidate": 357
     },
     "counts_by_usage_status": {
-      "doc_only": 106,
+      "doc_only": 97,
       "generated_excluded": 38,
       "runtime_used": 1090,
       "test_only": 80,
       "tooling_only": 180,
-      "unreferenced": 851
+      "unreferenced": 852
     },
     "declared_asset_dirs_without_runtime_refs": [
       "assets/animations",
@@ -36843,7 +36700,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2345,
+    "total_files": 2337,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "character-follow-up",
