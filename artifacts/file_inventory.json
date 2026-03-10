@@ -19653,17 +19653,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/development/character-chat/luts_kakao_style_v2.md",
-      "referenced_by": [
-        "docs/development/reports/2026-02-16_luts_idle_context_guard_discovery.md",
-        "docs/development/reports/2026-02-16_luts_idle_context_guard_rca.md",
-        "docs/development/reports/2026-02-16_luts_idle_context_guard_verify.md",
-        "docs/development/reports/2026-02-16_luts_persona_prompt_verify.md",
-        "docs/development/reports/2026-02-16_luts_tone_discovery.md",
-        "docs/development/reports/2026-02-16_luts_tone_rca.md",
-        "docs/development/reports/2026-02-16_luts_tone_verify.md"
+      "notes": [
+        "no_inbound_refs"
       ],
+      "path": "docs/development/character-chat/luts_kakao_style_v2.md",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -19678,135 +19672,6 @@
       ],
       "path": "docs/development/gcp-api-usage-monitoring.md",
       "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/development/reports/2026-02-16_luts_idle_context_guard_discovery.md",
-      "referenced_by": [
-        "docs/development/reports/2026-02-16_luts_idle_context_guard_discovery.md",
-        "docs/development/reports/2026-02-16_luts_idle_context_guard_verify.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/development/reports/2026-02-16_luts_idle_context_guard_rca.md",
-      "referenced_by": [
-        "docs/development/reports/2026-02-16_luts_idle_context_guard_discovery.md",
-        "docs/development/reports/2026-02-16_luts_idle_context_guard_verify.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/development/reports/2026-02-16_luts_idle_context_guard_verify.md",
-      "referenced_by": [
-        "docs/development/reports/2026-02-16_luts_idle_context_guard_discovery.md",
-        "docs/development/reports/2026-02-16_luts_idle_context_guard_verify.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/development/reports/2026-02-16_luts_persona_prompt_discovery.md",
-      "referenced_by": [
-        "docs/development/reports/2026-02-16_luts_persona_prompt_verify.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/development/reports/2026-02-16_luts_persona_prompt_rca.md",
-      "referenced_by": [
-        "docs/development/reports/2026-02-16_luts_persona_prompt_verify.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/development/reports/2026-02-16_luts_persona_prompt_verify.md",
-      "referenced_by": [
-        "docs/development/reports/2026-02-16_luts_persona_prompt_verify.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/development/reports/2026-02-16_luts_tone_discovery.md",
-      "referenced_by": [
-        "docs/development/reports/2026-02-16_luts_tone_verify.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/development/reports/2026-02-16_luts_tone_rca.md",
-      "referenced_by": [
-        "docs/development/reports/2026-02-16_luts_tone_verify.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/development/reports/2026-02-16_luts_tone_verify.md",
-      "referenced_by": [
-        "docs/development/reports/2026-02-16_luts_tone_verify.md"
-      ],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -19852,111 +19717,6 @@
         "docs/deployment/review/STORE_REVIEW_MASTER_CHECKLIST.md",
         "docs/development/reports/2026-02-16_store_review_strategy_verify.md"
       ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/development/reports/2026-02-23_ci_workflow_failures_discovery.md",
-      "referenced_by": [
-        "docs/development/reports/2026-02-23_ci_workflow_failures_discovery.md",
-        "docs/development/reports/2026-02-23_ci_workflow_failures_verify.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/development/reports/2026-02-23_ci_workflow_failures_rca.md",
-      "referenced_by": [
-        "docs/development/reports/2026-02-23_ci_workflow_failures_discovery.md",
-        "docs/development/reports/2026-02-23_ci_workflow_failures_verify.md",
-        "docs/development/reports/2026-03-03_ci_schedule_failures_discovery.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/development/reports/2026-02-23_ci_workflow_failures_verify.md",
-      "referenced_by": [
-        "docs/development/reports/2026-02-23_ci_workflow_failures_verify.md",
-        "docs/development/reports/2026-03-03_ci_schedule_failures_discovery.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/development/reports/2026-03-03_ci_schedule_failures_discovery.md",
-      "referenced_by": [
-        "docs/development/reports/2026-03-03_ci_schedule_failures_discovery.md",
-        "docs/development/reports/2026-03-03_ci_schedule_failures_verify.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/development/reports/2026-03-03_ci_schedule_failures_rca.md",
-      "referenced_by": [
-        "docs/development/reports/2026-03-03_ci_schedule_failures_discovery.md",
-        "docs/development/reports/2026-03-03_ci_schedule_failures_verify.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/development/reports/2026-03-03_ci_schedule_failures_verify.md",
-      "referenced_by": [
-        "docs/development/reports/2026-03-03_ci_schedule_failures_discovery.md",
-        "docs/development/reports/2026-03-03_ci_schedule_failures_verify.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "docs",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "doc_markdown",
-      "notes": [
-        "no_inbound_refs"
-      ],
-      "path": "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
-      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -24324,11 +24084,6 @@
       "notes": [],
       "path": "lib/features/character/data/default_characters.dart",
       "referenced_by": [
-        "docs/development/reports/2026-02-16_luts_persona_prompt_rca.md",
-        "docs/development/reports/2026-02-16_luts_persona_prompt_verify.md",
-        "docs/development/reports/2026-02-16_luts_tone_discovery.md",
-        "docs/development/reports/2026-02-16_luts_tone_rca.md",
-        "docs/development/reports/2026-02-16_luts_tone_verify.md",
         "lib/features/character/presentation/pages/character_profile_page.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/character/presentation/providers/character_provider.dart",
@@ -24508,7 +24263,6 @@
       "notes": [],
       "path": "lib/features/character/domain/models/behavior_pattern.dart",
       "referenced_by": [
-        "docs/development/reports/2026-02-16_luts_tone_discovery.md",
         "lib/features/character/data/default_characters.dart",
         "lib/features/character/data/services/follow_up_scheduler.dart",
         "lib/features/character/domain/models/ai_character.dart"
@@ -24624,7 +24378,6 @@
       "notes": [],
       "path": "lib/features/character/presentation/pages/character_chat_panel.dart",
       "referenced_by": [
-        "docs/development/reports/2026-02-16_luts_idle_context_guard_rca.md",
         "lib/features/character/presentation/pages/swipe_home_shell.dart"
       ],
       "runtime_reachable": true,
@@ -24713,15 +24466,6 @@
       "notes": [],
       "path": "lib/features/character/presentation/providers/character_chat_provider.dart",
       "referenced_by": [
-        "docs/development/reports/2026-02-16_luts_idle_context_guard_discovery.md",
-        "docs/development/reports/2026-02-16_luts_idle_context_guard_rca.md",
-        "docs/development/reports/2026-02-16_luts_idle_context_guard_verify.md",
-        "docs/development/reports/2026-02-16_luts_persona_prompt_discovery.md",
-        "docs/development/reports/2026-02-16_luts_persona_prompt_rca.md",
-        "docs/development/reports/2026-02-16_luts_persona_prompt_verify.md",
-        "docs/development/reports/2026-02-16_luts_tone_discovery.md",
-        "docs/development/reports/2026-02-16_luts_tone_rca.md",
-        "docs/development/reports/2026-02-16_luts_tone_verify.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/features/character/presentation/pages/character_profile_page.dart",
@@ -24870,15 +24614,6 @@
       ],
       "path": "lib/features/character/presentation/utils/luts_tone_policy.dart",
       "referenced_by": [
-        "docs/development/reports/2026-02-16_luts_idle_context_guard_discovery.md",
-        "docs/development/reports/2026-02-16_luts_idle_context_guard_rca.md",
-        "docs/development/reports/2026-02-16_luts_idle_context_guard_verify.md",
-        "docs/development/reports/2026-02-16_luts_persona_prompt_discovery.md",
-        "docs/development/reports/2026-02-16_luts_persona_prompt_rca.md",
-        "docs/development/reports/2026-02-16_luts_persona_prompt_verify.md",
-        "docs/development/reports/2026-02-16_luts_tone_discovery.md",
-        "docs/development/reports/2026-02-16_luts_tone_rca.md",
-        "docs/development/reports/2026-02-16_luts_tone_verify.md",
         "test/unit/features/character/presentation/utils/luts_tone_policy_test.dart"
       ],
       "runtime_reachable": false,
@@ -25204,7 +24939,6 @@
       "notes": [],
       "path": "lib/features/chat/domain/services/intent_detector.dart",
       "referenced_by": [
-        "docs/development/reports/2026-02-16_luts_tone_discovery.md",
         "lib/features/chat/domain/models/ai_recommendation.dart",
         "lib/features/chat/presentation/pages/chat_home_page.dart",
         "lib/features/chat/presentation/widgets/survey/fortune_type_chips.dart"
@@ -32294,7 +32028,6 @@
       "notes": [],
       "path": "supabase/functions/_shared/character_memory.ts",
       "referenced_by": [
-        "docs/development/reports/2026-02-16_luts_tone_discovery.md",
         "supabase/functions/character-chat/index.ts",
         "supabase/functions/character-conversation-save/index.ts"
       ],
@@ -32445,7 +32178,6 @@
       "notes": [],
       "path": "supabase/functions/_shared/llm/factory.ts",
       "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
         "supabase/functions/_shared/character_memory.ts",
         "supabase/functions/analyze-wish/index.ts",
         "supabase/functions/calculate-saju/index.ts",
@@ -32532,7 +32264,6 @@
       "notes": [],
       "path": "supabase/functions/_shared/llm/providers/anthropic.ts",
       "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
         "supabase/functions/_shared/llm/factory.ts"
       ],
       "runtime_reachable": true,
@@ -32547,7 +32278,6 @@
       "notes": [],
       "path": "supabase/functions/_shared/llm/providers/gemini.ts",
       "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
         "supabase/functions/_shared/llm/factory.ts",
         "supabase/functions/generate-talisman/index.ts"
       ],
@@ -32563,7 +32293,6 @@
       "notes": [],
       "path": "supabase/functions/_shared/llm/providers/grok.ts",
       "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
         "supabase/functions/_shared/llm/factory.ts"
       ],
       "runtime_reachable": true,
@@ -32578,7 +32307,6 @@
       "notes": [],
       "path": "supabase/functions/_shared/llm/providers/openai.ts",
       "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
         "supabase/functions/_shared/llm/factory.ts"
       ],
       "runtime_reachable": true,
@@ -32593,7 +32321,6 @@
       "notes": [],
       "path": "supabase/functions/_shared/llm/safety.ts",
       "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
         "supabase/functions/_shared/llm/providers/anthropic.ts",
         "supabase/functions/_shared/llm/providers/gemini.ts",
         "supabase/functions/_shared/llm/providers/grok.ts",
@@ -32918,7 +32645,6 @@
       ],
       "path": "supabase/functions/calculate-saju/index.ts",
       "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/features/fortune/presentation/providers/saju_provider.dart",
         "lib/screens/onboarding/onboarding_page.dart",
@@ -32938,13 +32664,6 @@
       ],
       "path": "supabase/functions/character-chat/index.ts",
       "referenced_by": [
-        "docs/development/reports/2026-02-16_luts_persona_prompt_discovery.md",
-        "docs/development/reports/2026-02-16_luts_persona_prompt_rca.md",
-        "docs/development/reports/2026-02-16_luts_persona_prompt_verify.md",
-        "docs/development/reports/2026-02-16_luts_tone_discovery.md",
-        "docs/development/reports/2026-02-16_luts_tone_rca.md",
-        "docs/development/reports/2026-02-16_luts_tone_verify.md",
-        "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
         "lib/features/character/data/services/character_chat_service.dart"
       ],
       "runtime_reachable": true,
@@ -33001,21 +32720,18 @@
     },
     {
       "area": "supabase",
-      "candidate_action": "phase2_review_candidate",
+      "candidate_action": "manual_review",
       "dirty": false,
       "kind": "edge_function_source",
       "notes": [
-        "edge_function_unreferenced:character-follow-up"
+        "edge_function_unreferenced:character-follow-up",
+        "no_inbound_refs"
       ],
       "path": "supabase/functions/character-follow-up/index.ts",
-      "referenced_by": [
-        "docs/development/reports/2026-02-16_luts_tone_discovery.md",
-        "docs/development/reports/2026-02-16_luts_tone_rca.md",
-        "docs/development/reports/2026-02-16_luts_tone_verify.md"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "doc_only"
+      "usage_status": "unreferenced"
     },
     {
       "area": "supabase",
@@ -33271,7 +32987,6 @@
       ],
       "path": "supabase/functions/fortune-celebrity/index.ts",
       "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/fortune/fortune_type_registry.dart"
       ],
@@ -33772,7 +33487,6 @@
       ],
       "path": "supabase/functions/fortune-pet-compatibility/index.ts",
       "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/fortune/fortune_type_registry.dart"
       ],
@@ -33960,7 +33674,6 @@
       ],
       "path": "supabase/functions/generate-fortune-story/index.ts",
       "referenced_by": [
-        "docs/development/reports/2026-03-10_llm_provider_audit_rca.md",
         "lib/core/constants/edge_functions_endpoints.dart"
       ],
       "runtime_reachable": true,
@@ -35909,16 +35622,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "test_dart",
-      "notes": [],
-      "path": "test/unit/features/character/presentation/utils/luts_tone_policy_test.dart",
-      "referenced_by": [
-        "docs/development/reports/2026-02-16_luts_idle_context_guard_discovery.md",
-        "docs/development/reports/2026-02-16_luts_idle_context_guard_rca.md",
-        "docs/development/reports/2026-02-16_luts_idle_context_guard_verify.md",
-        "docs/development/reports/2026-02-16_luts_persona_prompt_verify.md",
-        "docs/development/reports/2026-02-16_luts_tone_discovery.md",
-        "docs/development/reports/2026-02-16_luts_tone_verify.md"
+      "notes": [
+        "no_inbound_refs"
       ],
+      "path": "test/unit/features/character/presentation/utils/luts_tone_policy_test.dart",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": true,
       "usage_status": "test_only"
@@ -36459,7 +36167,7 @@
   "meta": {
     "counts_by_area": {
       "assets": 1231,
-      "docs": 95,
+      "docs": 79,
       "integration_test": 26,
       "lib": 650,
       "scripts": 68,
@@ -36469,16 +36177,16 @@
     "counts_by_candidate_action": {
       "keep": 1090,
       "keep_generated": 38,
-      "manual_review": 852,
-      "phase2_review_candidate": 357
+      "manual_review": 853,
+      "phase2_review_candidate": 340
     },
     "counts_by_usage_status": {
-      "doc_only": 97,
+      "doc_only": 80,
       "generated_excluded": 38,
       "runtime_used": 1090,
       "test_only": 80,
       "tooling_only": 180,
-      "unreferenced": 852
+      "unreferenced": 853
     },
     "declared_asset_dirs_without_runtime_refs": [
       "assets/animations",
@@ -36700,7 +36408,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2337,
+    "total_files": 2321,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "character-follow-up",
