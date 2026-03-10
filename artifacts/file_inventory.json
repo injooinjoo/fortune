@@ -32205,7 +32205,6 @@
         "supabase/functions/fortune-past-life/index.ts",
         "supabase/functions/fortune-yearly-encounter/index.ts",
         "supabase/functions/free-chat/index.ts",
-        "supabase/functions/generate-fashion-image/index.ts",
         "supabase/functions/generate-talisman/index.ts"
       ],
       "runtime_reachable": true,
@@ -32283,7 +32282,6 @@
         "supabase/functions/_shared/llm/providers/openai.ts",
         "supabase/functions/fortune-past-life/index.ts",
         "supabase/functions/fortune-yearly-encounter/index.ts",
-        "supabase/functions/generate-fashion-image/index.ts",
         "supabase/functions/monitor-llm-usage/index.ts"
       ],
       "runtime_reachable": true,
@@ -33489,22 +33487,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "supabase",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "edge_function_source",
-      "notes": [
-        "edge_function_non_runtime_ref:generate-fashion-image"
-      ],
-      "path": "supabase/functions/generate-fashion-image/index.ts",
-      "referenced_by": [
-        "docs/development/GEMINI_COST_INCIDENT_RUNBOOK.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
     },
     {
       "area": "supabase",
@@ -36003,17 +35985,17 @@
       "integration_test": 26,
       "lib": 648,
       "scripts": 68,
-      "supabase": 205,
+      "supabase": 204,
       "test": 52
     },
     "counts_by_candidate_action": {
       "keep": 1095,
       "keep_generated": 38,
       "manual_review": 837,
-      "phase2_review_candidate": 339
+      "phase2_review_candidate": 338
     },
     "counts_by_usage_status": {
-      "doc_only": 80,
+      "doc_only": 79,
       "generated_excluded": 38,
       "runtime_used": 1095,
       "test_only": 78,
@@ -36154,6 +36136,7 @@
       "fortune-zodiac-scheduler",
       "game-enhance",
       "generate-celebrity-character",
+      "generate-fashion-image",
       "generate-fortune",
       "health-toss",
       "lucky-exam",
@@ -36249,7 +36232,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2309,
+    "total_files": 2308,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": []
   }
