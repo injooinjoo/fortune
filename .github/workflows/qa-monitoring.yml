@@ -133,8 +133,10 @@ jobs:
     timeout-minutes: 20
     if: ${{ github.event.inputs.run_performance != 'false' }}
     outputs:
-      performance_score: ${{ steps.lighthouse.outputs.performance }}
-      lcp: ${{ steps.lighthouse.outputs.lcp }}
+      performance_score: ${{ steps.parse_lighthouse.outputs.performance }}
+      lcp: ${{ steps.parse_lighthouse.outputs.lcp }}
+      performance_status: ${{ steps.parse_lighthouse.outputs.performance_status }}
+      performance_error: ${{ steps.parse_lighthouse.outputs.performance_error }}
 
     steps:
       - name: Checkout code
@@ -183,33 +185,75 @@ jobs:
         run: npm install -g serve
 
       - name: Run Lighthouse
-        id: lighthouse
+        id: lighthouse_run
+        continue-on-error: true
         run: |
+          SERVER_PID=""
+          cleanup() {
+            if [ -n "$SERVER_PID" ] && kill -0 "$SERVER_PID" 2>/dev/null; then
+              kill "$SERVER_PID" || true
+              wait "$SERVER_PID" 2>/dev/null || true
+            fi
+          }
+
+          trap cleanup EXIT
+
           # 서버 시작
-          serve build/web -l 3000 &
+          serve build/web -l 3000 >/tmp/fortune-serve.log 2>&1 &
+          SERVER_PID=$!
           sleep 5
 
           # Lighthouse 실행
           npm install -g lighthouse
 
+          LIGHTHOUSE_EXIT=0
+          set +e
           lighthouse http://localhost:3000 \
             --output=json \
             --output-path=./lighthouse-report.json \
             --chrome-flags="--headless --no-sandbox" \
-            --only-categories=performance,accessibility,best-practices || true
+            --only-categories=performance,accessibility,best-practices
+          LIGHTHOUSE_EXIT=$?
+          set -e
 
-          # 결과 파싱
+          echo "lighthouse_exit_code=$LIGHTHOUSE_EXIT" >> $GITHUB_OUTPUT
+          exit 0
+
+      - name: Parse Lighthouse report
+        id: parse_lighthouse
+        if: always()
+        run: |
+          LIGHTHOUSE_EXIT="${{ steps.lighthouse_run.outputs.lighthouse_exit_code }}"
+          PERFORMANCE="NA"
+          LCP="NA"
+          STATUS="failed"
+          ERROR="LIGHTHOUSE_REPORT_MISSING"
+
           if [ -f "lighthouse-report.json" ]; then
-            PERF=$(jq '.categories.performance.score * 100 | floor' lighthouse-report.json)
-            LCP=$(jq '.audits["largest-contentful-paint"].numericValue | floor' lighthouse-report.json)
-            echo "performance=$PERF" >> $GITHUB_OUTPUT
-            echo "lcp=$LCP" >> $GITHUB_OUTPUT
-          else
-            echo "performance=0" >> $GITHUB_OUTPUT
-            echo "lcp=0" >> $GITHUB_OUTPUT
+            PERFORMANCE=$(jq -r 'if .categories.performance.score == null then "NA" else (.categories.performance.score * 100 | floor | tostring) end' lighthouse-report.json)
+            LCP=$(jq -r 'if .audits["largest-contentful-paint"].numericValue == null then "NA" else (.audits["largest-contentful-paint"].numericValue | floor | tostring) end' lighthouse-report.json)
+            ERROR=$(jq -r '.runtimeError.code // .runtimeError.message // .audits["largest-contentful-paint"].errorMessage // .audits.interactive.errorMessage // .audits["total-blocking-time"].errorMessage // ""' lighthouse-report.json)
+
+            if [ "$PERFORMANCE" != "NA" ]; then
+              STATUS="ok"
+              ERROR=""
+            elif [ -n "$ERROR" ]; then
+              STATUS="unavailable"
+            elif [ -n "$LIGHTHOUSE_EXIT" ] && [ "$LIGHTHOUSE_EXIT" != "0" ]; then
+              STATUS="failed"
+              ERROR="LIGHTHOUSE_EXIT_${LIGHTHOUSE_EXIT}"
+            else
+              STATUS="failed"
+              ERROR="LIGHTHOUSE_SCORE_MISSING"
+            fi
+          elif [ -n "$LIGHTHOUSE_EXIT" ] && [ "$LIGHTHOUSE_EXIT" != "0" ]; then
+            ERROR="LIGHTHOUSE_EXIT_${LIGHTHOUSE_EXIT}"
           fi
 
-          pkill -f "serve build/web" || true
+          echo "performance=$PERFORMANCE" >> $GITHUB_OUTPUT
+          echo "lcp=$LCP" >> $GITHUB_OUTPUT
+          echo "performance_status=$STATUS" >> $GITHUB_OUTPUT
+          echo "performance_error=$ERROR" >> $GITHUB_OUTPUT
 
       - name: Upload Lighthouse report
         uses: actions/upload-artifact@v4
@@ -282,7 +326,7 @@ jobs:
 
             if [ "$STATUS" = "200" ] || [ "$STATUS" = "400" ] || [ "$STATUS" = "401" ]; then
               echo "✅ $func: $STATUS"
-              ((HEALTHY++))
+              HEALTHY=$((HEALTHY + 1))
             else
               echo "❌ $func: $STATUS"
               FAILED_LIST="$FAILED_LIST $func"
@@ -301,6 +345,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: [smoke-tests, performance-tests, edge-function-health]
     if: always()
+    outputs:
+      failed: ${{ steps.status.outputs.failed }}
+      failed_jobs: ${{ steps.status.outputs.failed_jobs }}
+      performance_summary: ${{ steps.status.outputs.performance_summary }}
+      edge_summary: ${{ steps.status.outputs.edge_summary }}
 
     steps:
       - name: Calculate overall status
@@ -308,33 +357,70 @@ jobs:
         run: |
           SMOKE_FAILED="${{ needs.smoke-tests.outputs.failed }}"
           PERF_SCORE="${{ needs.performance-tests.outputs.performance_score }}"
+          PERF_STATUS="${{ needs.performance-tests.outputs.performance_status }}"
+          PERF_ERROR="${{ needs.performance-tests.outputs.performance_error }}"
           EDGE_HEALTHY="${{ needs.edge-function-health.outputs.healthy }}"
           EDGE_TOTAL="${{ needs.edge-function-health.outputs.total }}"
           EDGE_SKIPPED="${{ needs.edge-function-health.outputs.skipped }}"
 
           # 실패 조건 체크
           FAILED=false
+          FAILED_JOBS=""
+
+          if [ "$PERF_STATUS" = "ok" ]; then
+            PERFORMANCE_SUMMARY="$PERF_SCORE/100"
+          elif [ "$PERF_STATUS" = "unavailable" ]; then
+            PERFORMANCE_SUMMARY="N/A (${PERF_ERROR:-UNKNOWN})"
+          else
+            PERFORMANCE_SUMMARY="failed (${PERF_ERROR:-UNKNOWN})"
+          fi
+
+          if [ "$EDGE_SKIPPED" = "true" ]; then
+            EDGE_SUMMARY="skipped (missing secrets)"
+          elif [ -n "$EDGE_HEALTHY" ] && [ -n "$EDGE_TOTAL" ]; then
+            EDGE_SUMMARY="$EDGE_HEALTHY/$EDGE_TOTAL healthy"
+          else
+            EDGE_SUMMARY="failed to collect"
+          fi
 
           if [ "$SMOKE_FAILED" != "0" ] && [ -n "$SMOKE_FAILED" ]; then
             FAILED=true
             echo "❌ Smoke tests failed: $SMOKE_FAILED failures"
+            FAILED_JOBS="$FAILED_JOBS smoke-tests"
           fi
 
-          if [ -n "$PERF_SCORE" ] && [ "$PERF_SCORE" -lt 50 ] 2>/dev/null; then
+          if [ "$PERF_STATUS" != "ok" ]; then
+            FAILED=true
+            echo "❌ Performance measurement unavailable: $PERFORMANCE_SUMMARY"
+            FAILED_JOBS="$FAILED_JOBS performance"
+          elif [ "$PERF_SCORE" -lt 50 ] 2>/dev/null; then
             FAILED=true
             echo "❌ Performance score too low: $PERF_SCORE"
+            FAILED_JOBS="$FAILED_JOBS performance"
           fi
 
           if [ "$EDGE_SKIPPED" != "true" ] && [ -n "$EDGE_HEALTHY" ] && [ -n "$EDGE_TOTAL" ]; then
             if [ "$EDGE_HEALTHY" -lt "$EDGE_TOTAL" ]; then
+              FAILED=true
               echo "⚠️ Some Edge Functions unhealthy: $EDGE_HEALTHY/$EDGE_TOTAL"
+              FAILED_JOBS="$FAILED_JOBS edge-functions"
             fi
+          elif [ "$EDGE_SKIPPED" != "true" ]; then
+            FAILED=true
+            echo "❌ Edge Function health outputs missing"
+            FAILED_JOBS="$FAILED_JOBS edge-functions"
           fi
 
           echo "failed=$FAILED" >> $GITHUB_OUTPUT
+          echo "failed_jobs=${FAILED_JOBS# }" >> $GITHUB_OUTPUT
+          echo "performance_summary=$PERFORMANCE_SUMMARY" >> $GITHUB_OUTPUT
+          echo "edge_summary=$EDGE_SUMMARY" >> $GITHUB_OUTPUT
 
       - name: Generate summary
         run: |
+          PERFORMANCE_SUMMARY="${{ steps.status.outputs.performance_summary }}"
+          EDGE_SUMMARY="${{ steps.status.outputs.edge_summary }}"
+
           echo "## 📊 QA Monitoring Report" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**실행 시간:** $(date '+%Y-%m-%d %H:%M:%S KST')" >> $GITHUB_STEP_SUMMARY
@@ -344,12 +430,8 @@ jobs:
           echo "| 항목 | 결과 |" >> $GITHUB_STEP_SUMMARY
           echo "|------|------|" >> $GITHUB_STEP_SUMMARY
           echo "| 🔥 Smoke Tests | ${{ needs.smoke-tests.outputs.passed }}/${{ needs.smoke-tests.outputs.total }} passed |" >> $GITHUB_STEP_SUMMARY
-          echo "| ⚡ Performance | ${{ needs.performance-tests.outputs.performance_score }}/100 |" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ needs.edge-function-health.outputs.skipped }}" = "true" ]; then
-            echo "| 🔌 Edge Functions | skipped (missing secrets) |" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "| 🔌 Edge Functions | ${{ needs.edge-function-health.outputs.healthy }}/${{ needs.edge-function-health.outputs.total }} healthy |" >> $GITHUB_STEP_SUMMARY
-          fi
+          echo "| ⚡ Performance | $PERFORMANCE_SUMMARY |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔌 Edge Functions | $EDGE_SUMMARY |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           if [ "${{ steps.status.outputs.failed }}" = "true" ]; then
@@ -366,12 +448,7 @@ jobs:
     name: Create Issue on Failure
     runs-on: ubuntu-latest
     needs: [smoke-tests, performance-tests, edge-function-health, aggregate-and-notify]
-    if: |
-      always() &&
-      (needs.smoke-tests.outputs.failed != '0' ||
-       needs.performance-tests.outputs.performance_score < 50 ||
-       (needs.edge-function-health.outputs.skipped != 'true' &&
-        needs.edge-function-health.outputs.healthy != needs.edge-function-health.outputs.total))
+    if: always() && needs.aggregate-and-notify.outputs.failed == 'true'
 
     steps:
       - name: Create GitHub Issue
@@ -388,17 +465,31 @@ jobs:
             };
 
             const perfScore = '${{ needs.performance-tests.outputs.performance_score }}';
+            const perfStatusValue = '${{ needs.performance-tests.outputs.performance_status }}';
+            const perfError = '${{ needs.performance-tests.outputs.performance_error }}';
             const edgeHealthy = '${{ needs.edge-function-health.outputs.healthy }}';
             const edgeTotal = '${{ needs.edge-function-health.outputs.total }}';
             const failedFunctions = '${{ needs.edge-function-health.outputs.failed_functions }}';
             const edgeSkipped = '${{ needs.edge-function-health.outputs.skipped }}' === 'true';
 
             const smokeStatus = smokeResults.failed === '0' ? '✅' : '❌';
-            const perfStatus = parseInt(perfScore) >= 50 ? '✅' : '❌';
-            const edgeStatus = edgeSkipped ? '⏭️' : edgeHealthy === edgeTotal ? '✅' : '⚠️';
+            const perfMeasured = perfStatusValue === 'ok';
+            const perfUnavailable = perfStatusValue === 'unavailable';
+            const perfStatus = perfMeasured ? '✅' : '❌';
+            const perfSummary = perfMeasured
+              ? `${perfScore}/100`
+              : perfUnavailable
+                ? `N/A (${perfError || 'UNKNOWN'})`
+                : `failed (${perfError || 'UNKNOWN'})`;
+            const edgeHasCounts = edgeHealthy !== '' && edgeTotal !== '';
+            const edgeUnhealthy = !edgeSkipped && edgeHasCounts && Number(edgeHealthy) < Number(edgeTotal);
+            const edgeCollectionFailed = !edgeSkipped && !edgeHasCounts;
+            const edgeStatus = edgeSkipped ? '⏭️' : edgeCollectionFailed ? '❌' : edgeUnhealthy ? '⚠️' : '✅';
             const edgeSummary = edgeSkipped
               ? 'skipped (missing secrets)'
-              : `${edgeHealthy}/${edgeTotal} healthy`;
+              : edgeHasCounts
+                ? `${edgeHealthy}/${edgeTotal} healthy`
+                : 'failed to collect';
 
             let bodyLines = [
               '## 🚨 QA 모니터링 실패 보고서',
@@ -411,7 +502,7 @@ jobs:
               '| 항목 | 결과 | 상태 |',
               '|------|------|------|',
               `| Smoke Tests | ${smokeResults.passed}/${smokeResults.total} passed | ${smokeStatus} |`,
-              `| Performance | ${perfScore}/100 | ${perfStatus} |`,
+              `| Performance | ${perfSummary} | ${perfStatus} |`,
               `| Edge Functions | ${edgeSummary} | ${edgeStatus} |`,
               ''
             ];
@@ -422,7 +513,11 @@ jobs:
               bodyLines.push('');
             }
 
-            if (parseInt(perfScore) < 50) {
+            if (!perfMeasured) {
+              bodyLines.push('### ❌ 성능 측정 실패');
+              bodyLines.push(`Performance score를 계산할 수 없습니다. 원인: ${perfError || 'UNKNOWN'}`);
+              bodyLines.push('');
+            } else if (parseInt(perfScore, 10) < 50) {
               bodyLines.push('### ❌ 성능 저하');
               bodyLines.push(`Performance score가 ${perfScore}점으로 기준(50점) 미달입니다.`);
               bodyLines.push('');
@@ -434,6 +529,10 @@ jobs:
               bodyLines.push('```');
               bodyLines.push(failedFunctions);
               bodyLines.push('```');
+              bodyLines.push('');
+            } else if (edgeCollectionFailed) {
+              bodyLines.push('### ❌ Edge Function 측정 실패');
+              bodyLines.push('Edge Function health 결과를 수집하지 못했습니다.');
               bodyLines.push('');
             }
 
@@ -485,13 +584,13 @@ jobs:
   # =====================================================
   notify-slack:
     name: Slack Notification
-    needs: [smoke-tests, performance-tests, edge-function-health]
-    if: always() && (needs.smoke-tests.result == 'failure' || needs.performance-tests.result == 'failure' || needs.edge-function-health.result == 'failure')
+    needs: [smoke-tests, performance-tests, edge-function-health, aggregate-and-notify]
+    if: always() && needs.aggregate-and-notify.outputs.failed == 'true'
     uses: ./.github/workflows/slack-notify.yml
     with:
       workflow_name: "QA Monitoring"
       job_status: "failure"
-      failed_jobs: "${{ needs.smoke-tests.result == 'failure' && 'smoke-tests ' || '' }}${{ needs.performance-tests.result == 'failure' && 'performance ' || '' }}${{ needs.edge-function-health.result == 'failure' && 'edge-functions' || '' }}"
-      custom_message: "Performance: ${{ needs.performance-tests.outputs.performance_score || 'N/A' }}/100 | Edge: ${{ needs.edge-function-health.outputs.healthy || '?' }}/${{ needs.edge-function-health.outputs.total || '?' }}"
+      failed_jobs: "${{ needs.aggregate-and-notify.outputs.failed_jobs }}"
+      custom_message: "Performance: ${{ needs.aggregate-and-notify.outputs.performance_summary }} | Edge: ${{ needs.aggregate-and-notify.outputs.edge_summary }}"
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
