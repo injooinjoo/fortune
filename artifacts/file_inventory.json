@@ -27407,6 +27407,7 @@
       "notes": [],
       "path": "lib/screens/auth/signup_screen.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/routes/routes/auth_routes.dart"
       ],
       "runtime_reachable": true,
