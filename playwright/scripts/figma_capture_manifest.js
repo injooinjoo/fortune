@@ -235,6 +235,7 @@ const SCREENS = [
     title: 'Chat Account Sheet',
     frameName: 'Chat Account Sheet',
     status: 'placeholder',
+    triage: 'capture_next_runtime',
     blocker: 'Bottom-sheet runtime state needs an opened chat session to capture reliably.',
     note: 'Sheet contains only auth status, privacy policy, terms, account deletion, and logout.',
     sources: [
@@ -272,6 +273,7 @@ const SCREENS = [
     frameName: 'Account Deletion',
     routeHash: '#/account-deletion',
     status: 'placeholder',
+    triage: 'capture_next_auth',
     blocker: 'Requires an authenticated session to exercise the destructive flow.',
     sources: [
       'lib/routes/route_config.dart',
@@ -348,7 +350,7 @@ function getStatusCounts() {
 function getPlaceholderTriageCounts() {
   return SCREENS.filter((screen) => screen.status === 'placeholder').reduce(
     (acc, screen) => {
-      const triageKey = screen.blocker ? 'blocked' : 'unclassified';
+      const triageKey = screen.triage || 'unclassified';
       acc[triageKey] = (acc[triageKey] || 0) + 1;
       return acc;
     },

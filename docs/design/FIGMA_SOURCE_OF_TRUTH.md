@@ -5,8 +5,15 @@
 - Official file name: `Fortune Screen Catalog - Official`
 - Figma file key: `dkx3Biwe5xkiMQWsjq95LA`
 - Direct link: [Fortune Screen Catalog - Official](https://www.figma.com/design/dkx3Biwe5xkiMQWsjq95LA)
+- Layer naming contract: `docs/design/FIGMA_LAYER_NAMING_STANDARD.md`
 
 This file remains the only official Figma source of truth for Fortune.
+
+## Coverage Snapshot
+
+- Managed surfaces: `12`
+- Live captures: `10`
+- Placeholder specs: `2`
 
 ## Runtime Scope
 
@@ -57,6 +64,16 @@ Canonical repo sources:
 - Capture manifest: `playwright/scripts/figma_capture_manifest.js`
 - Live capture runner: `playwright/scripts/capture_figma_screens.js`
 - Catalog HTML generator: `playwright/scripts/build_figma_catalog.js`
+
+## MCP Operator Workflow
+
+Use the Figma MCP workflow in this order when a retained surface needs design context or re-capture:
+
+1. `get_metadata` to identify the page, node hierarchy, and candidate retained frames.
+2. `get_screenshot` to verify the current visual state of the selected node before any code/design sync work.
+3. `get_design_context` to retrieve the implementation-oriented payload after the node is confirmed.
+
+This workflow applies to retained runtime surfaces only. Removed groups `30/40/50/60/70/75` should not receive new MCP sync work.
 
 ## Rules
 

@@ -6,6 +6,7 @@
 - Figma file key: `dkx3Biwe5xkiMQWsjq95LA`
 - Device standard: `iPhone 15 Pro 393x852 @3x`
 - Capture manifest: `playwright/scripts/figma_capture_manifest.js`
+- Layer naming contract: `docs/design/FIGMA_LAYER_NAMING_STANDARD.md`
 - Sync changelog: `docs/design/FIGMA_SYNC_CHANGELOG.md`
 
 ## Coverage Summary
@@ -21,6 +22,13 @@ Additional official pages:
 - `00 Cover & Governance`
 - `90 Components`
 - `99 Archive`
+
+## Placeholder Triage
+
+| Triage | Count |
+| --- | ---: |
+| `capture_next_auth` | 1 |
+| `capture_next_runtime` | 1 |
 
 ## Screen Catalog
 
