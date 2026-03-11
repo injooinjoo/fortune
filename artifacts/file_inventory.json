@@ -19266,7 +19266,9 @@
       "path": "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
       "referenced_by": [
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
-        "docs/design/README.md"
+        "docs/design/FIGMA_SYNC_CHANGELOG.md",
+        "docs/design/README.md",
+        "scripts/design/figma_sync_guard.js"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -19282,7 +19284,26 @@
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
-        "docs/design/README.md"
+        "docs/design/FIGMA_SYNC_CHANGELOG.md",
+        "docs/design/README.md",
+        "scripts/design/figma_sync_guard.js"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
+      "path": "docs/design/FIGMA_SYNC_CHANGELOG.md",
+      "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
+        "docs/design/README.md",
+        "scripts/design/figma_sync_guard.js"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -19296,7 +19317,8 @@
       "notes": [],
       "path": "docs/design/README.md",
       "referenced_by": [
-        "docs/design/FIGMA_SOURCE_OF_TRUTH.md"
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
+        "scripts/design/figma_sync_guard.js"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -28944,6 +28966,20 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "script_js",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "scripts/design/figma_sync_guard.js",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "scripts",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "script_js",
       "notes": [],
       "path": "scripts/design/lib/mobile_v2_runtime.js",
       "referenced_by": [
@@ -33514,10 +33550,10 @@
   "meta": {
     "counts_by_area": {
       "assets": 1231,
-      "docs": 81,
+      "docs": 82,
       "integration_test": 26,
       "lib": 504,
-      "scripts": 68,
+      "scripts": 69,
       "supabase": 203,
       "test": 52
     },
@@ -33525,14 +33561,14 @@
       "keep": 810,
       "keep_generated": 38,
       "manual_review": 977,
-      "phase2_review_candidate": 340
+      "phase2_review_candidate": 342
     },
     "counts_by_usage_status": {
-      "doc_only": 81,
+      "doc_only": 82,
       "generated_excluded": 38,
       "runtime_used": 810,
       "test_only": 78,
-      "tooling_only": 181,
+      "tooling_only": 182,
       "unreferenced": 977
     },
     "declared_asset_dirs_without_runtime_refs": [
@@ -33802,7 +33838,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2165,
+    "total_files": 2167,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": []
   }
