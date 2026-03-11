@@ -19276,6 +19276,8 @@
       "notes": [],
       "path": "docs/design/FIGMA_LAYER_NAMING_STANDARD.md",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "docs/design/FIGMA_SYNC_CHANGELOG.md",
         "docs/design/README.md",
         "scripts/design/figma_sync_guard.js"
@@ -22356,6 +22358,7 @@
         "lib/core/services/sync_queue_local_service.dart",
         "lib/core/services/unified_calendar_service.dart",
         "lib/core/services/unified_fortune_service.dart",
+        "lib/core/utils/request_audit_tracker.dart",
         "lib/core/utils/supabase_helper.dart",
         "lib/data/services/fortune_api/daily_fortune_api.dart",
         "lib/data/services/fortune_api/fortune_api_service.dart",
@@ -22436,6 +22439,24 @@
         "lib/routes/character_routes.dart",
         "lib/routes/route_config.dart",
         "lib/routes/routes/auth_routes.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
+      "path": "lib/core/utils/request_audit_tracker.dart",
+      "referenced_by": [
+        "lib/data/services/fortune_api_service_edge_functions.dart",
+        "lib/features/chat_insight/data/storage/insight_storage.dart",
+        "lib/features/fortune/presentation/providers/saju_provider.dart",
+        "lib/presentation/providers/token_provider.dart",
+        "lib/presentation/providers/user_profile_notifier.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -31337,13 +31358,13 @@
       "assets": 1231,
       "docs": 86,
       "integration_test": 8,
-      "lib": 391,
+      "lib": 392,
       "scripts": 70,
       "supabase": 204,
       "test": 38
     },
     "counts_by_candidate_action": {
-      "keep": 672,
+      "keep": 673,
       "keep_generated": 28,
       "manual_review": 979,
       "phase1_remove_candidate": 19,
@@ -31353,7 +31374,7 @@
     "counts_by_usage_status": {
       "doc_only": 91,
       "generated_excluded": 28,
-      "runtime_used": 672,
+      "runtime_used": 673,
       "test_only": 46,
       "tooling_only": 184,
       "unreferenced": 1007
@@ -31509,8 +31530,8 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 306,
-    "lib_dart_total": 388,
+    "lib_dart_runtime_reachable": 307,
+    "lib_dart_total": 389,
     "lib_dart_zero_incoming": 33,
     "missing_function_refs": [
       "--all",
@@ -31617,7 +31638,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2028,
+    "total_files": 2029,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"

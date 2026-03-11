@@ -64,6 +64,7 @@ Additional official pages:
 ### Conversation Blocks
 
 - `lib/features/character/presentation/widgets/character_message_bubble.dart`
+- `lib/features/character/presentation/providers/character_chat_provider.dart`
 - `lib/features/chat/presentation/widgets/chat_saju_result_card.dart`
 - `lib/shared/components/section_header.dart`
 
@@ -79,6 +80,10 @@ Additional official pages:
 - `lib/core/design_system/components/ds_button.dart`
 - `lib/core/design_system/components/ds_text_field.dart`
 - `lib/core/widgets/unified_button.dart`
+
+### Retained Runtime State
+
+- `lib/features/fortune/presentation/providers/saju_provider.dart`
 
 ## Removed Page Groups
 

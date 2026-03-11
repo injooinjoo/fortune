@@ -215,6 +215,7 @@ const SCREENS = [
     sources: [
       'lib/features/character/presentation/pages/swipe_home_shell.dart',
       'lib/features/character/presentation/pages/character_chat_panel.dart',
+      'lib/features/character/presentation/providers/character_chat_provider.dart',
     ],
   },
   {
@@ -290,6 +291,7 @@ const SCREENS = [
     sources: [
       'lib/routes/route_config.dart',
       'lib/features/fortune/presentation/pages/manseryeok_page.dart',
+      'lib/features/fortune/presentation/providers/saju_provider.dart',
     ],
   },
 ].map(withScreenLayerContract);

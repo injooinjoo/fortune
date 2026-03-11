@@ -61,6 +61,8 @@ Canonical repo sources:
 - Router: `lib/routes/route_config.dart`
 - Auth routes: `lib/routes/routes/auth_routes.dart`
 - Character routes: `lib/routes/character_routes.dart`
+- Retained chat state: `lib/features/character/presentation/providers/character_chat_provider.dart`
+- Retained utility state: `lib/features/fortune/presentation/providers/saju_provider.dart`
 - Capture manifest: `playwright/scripts/figma_capture_manifest.js`
 - Live capture runner: `playwright/scripts/capture_figma_screens.js`
 - Catalog HTML generator: `playwright/scripts/build_figma_catalog.js`
