@@ -29459,7 +29459,6 @@
       "notes": [],
       "path": "scripts/source_inventory.py",
       "referenced_by": [
-        ".github/workflows/ci.yml",
         "scripts/source_inventory.py"
       ],
       "runtime_reachable": false,
