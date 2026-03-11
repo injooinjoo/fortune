@@ -98,6 +98,30 @@ Use [FIGMA_LAYER_RENAME_MATRIX.md](./FIGMA_LAYER_RENAME_MATRIX.md) as the operat
 
 Live captures are backed by verified local screenshots from the Flutter web build. Placeholder specs remain in the same file when a surface cannot be rendered locally without authenticated data, backend seed data, or `state.extra`.
 
+## Live MCP Audit Status
+
+Audit date: `2026-03-11`
+
+A direct Figma MCP audit against catalog root `0:1` plus a representative screen-card context check against the signup card `2:41` confirmed the current live-file state.
+
+Confirmed aligned:
+
+- Published screen ids, route labels, and source file references remain aligned with the router manifest and repo docs.
+- The representative signup card still maps `auth__signup__default` -> `#/signup` -> `lib/screens/auth/signup_screen.dart`.
+- The official file still includes the governed page groups through `75 Wellness`, `90 Components`, and `99 Archive`.
+
+Observed drift still present in the live file:
+
+- The cover governance card still says `35 live / 26 placeholder`, while the manifest, docs, and `npm run figma:guard` require `36 live / 26 placeholder`.
+- Section roots and internals still expose legacy names such as `00 Cover & Governance`, `Main Content (...)`, `Header`, `Article`, `Container`, `Text`, `Link`, and `Code`.
+- Duplicate `Main Content (...)` wrappers are still visible and remain `duplicate_review` cleanup targets.
+
+Operational implication:
+
+- The catalog content is broadly in sync with the current codebase.
+- The official Figma file is not yet fully normalized to the canonical internal naming contract.
+- Manual Figma rename cleanup is still required before naming sync can be treated as complete.
+
 ## Coverage Triage
 
 - `26` placeholder surfaces remain under active governance and are not dead pages.

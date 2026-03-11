@@ -18,6 +18,7 @@ This file is the repository-side proof that a code change was reconciled with th
 
 | Date | Jira | Code Scope | Affected Screens / Components | Figma Action |
 | --- | --- | --- | --- | --- |
+| 2026-03-11 | `KAN-67` | Live MCP audit of official catalog parity | Cover governance counts, legacy section/layer names, representative signup screen card | Verified repo parity, recorded stale `35 live / 26 placeholder` cover card, and documented remaining manual Figma rename cleanup |
 | 2026-03-11 | `KAN-65` | Figma layer governance + MCP sync contract | `section__00__cover_governance` through `section__99__archive`, all governed `screen_card__*`, component groups, sync guard | Added canonical layer naming docs, manifest contract fields, catalog export attributes, and guard checks for MCP-managed governance |
 | 2026-03-10 | `KAN-60` | Official catalog formalization | `10 Entry / Auth / Onboarding` through `99 Archive` | Created the single official catalog file and aligned repo docs |
 | 2026-03-10 | `KAN-61` | Wellness route coverage | `wellness__landing__default`, `wellness__meditation__default`, `Wellness Focus Blocks` | Added `75 Wellness` to the official file and synced docs |

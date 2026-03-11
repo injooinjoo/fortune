@@ -7,6 +7,7 @@ This audit maps the visible top-level Figma page groups from the official catalo
 Audit basis:
 
 - Figma structure from the official catalog screenshot
+- Figma MCP metadata audit on `2026-03-11` via `get_metadata(fileKey="dkx3Biwe5xkiMQWsjq95LA", nodeId="0:1")`
 - Router definitions in `lib/routes/route_config.dart`
 - Nested route groups in:
   - `lib/routes/routes/auth_routes.dart`
