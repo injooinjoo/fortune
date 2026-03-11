@@ -19263,6 +19263,42 @@
       "dirty": false,
       "kind": "doc_markdown",
       "notes": [],
+      "path": "docs/design/FIGMA_LAYER_NAMING_STANDARD.md",
+      "referenced_by": [
+        "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
+        "docs/design/FIGMA_SYNC_CHANGELOG.md",
+        "docs/design/README.md",
+        "scripts/design/figma_sync_guard.js"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
+      "path": "docs/design/FIGMA_LAYER_RENAME_MATRIX.md",
+      "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
+        "docs/design/README.md",
+        "scripts/design/figma_sync_guard.js"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
       "path": "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
       "referenced_by": [
         "docs/design/README.md"
@@ -33511,7 +33547,7 @@
   "meta": {
     "counts_by_area": {
       "assets": 1231,
-      "docs": 83,
+      "docs": 85,
       "integration_test": 26,
       "lib": 499,
       "scripts": 69,
@@ -33522,10 +33558,10 @@
       "keep": 805,
       "keep_generated": 38,
       "manual_review": 977,
-      "phase2_review_candidate": 344
+      "phase2_review_candidate": 346
     },
     "counts_by_usage_status": {
-      "doc_only": 83,
+      "doc_only": 85,
       "generated_excluded": 38,
       "runtime_used": 805,
       "test_only": 78,
@@ -33798,7 +33834,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2164,
+    "total_files": 2166,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": []
   }
