@@ -44,8 +44,8 @@ Examples:
 
 ## Coverage Snapshot
 
-- Managed surfaces: `63`
-- Live captures: `37`
+- Managed surfaces: `62`
+- Live captures: `36`
 - Placeholder specs: `26`
 - Component inventory groups: `5`
 
