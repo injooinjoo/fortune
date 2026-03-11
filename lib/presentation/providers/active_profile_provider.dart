@@ -126,7 +126,9 @@ class ActiveProfileNotifier extends StateNotifier<ActiveProfileState> {
         secondaryProfileId: secondaryId,
       );
 
-      await _ref.read(userProfileNotifierProvider.notifier).loadProfile();
+      await _ref.read(userProfileNotifierProvider.notifier).ensureLoaded(
+            trigger: 'activeProfile.restore',
+          );
       await _ref.read(secondaryProfilesProvider.notifier).refresh();
       final profiles = _ref.read(secondaryProfilesProvider).valueOrNull ?? [];
       if (profiles.isEmpty) {

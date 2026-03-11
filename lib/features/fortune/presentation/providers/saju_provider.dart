@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/utils/request_audit_tracker.dart';
+
 // Saju data state
 class SajuState {
   final bool isLoading;
@@ -31,39 +33,90 @@ class SajuState {
 // Saju Provider
 class SajuNotifier extends StateNotifier<SajuState> {
   final SupabaseClient _supabase;
+  Future<Map<String, dynamic>?>? _loadSajuFuture;
+  String? _loadedUserId;
 
   SajuNotifier(this._supabase) : super(SajuState());
 
+  Future<Map<String, dynamic>?> ensureLoaded({
+    bool force = false,
+    String trigger = 'manual',
+  }) async {
+    final user = _supabase.auth.currentUser;
+    if (user == null) {
+      _loadedUserId = null;
+      state = state.copyWith(isLoading: false, error: '로그인이 필요합니다.');
+      return null;
+    }
+
+    if (!force &&
+        _loadSajuFuture == null &&
+        state.sajuData != null &&
+        _loadedUserId == user.id) {
+      return state.sajuData;
+    }
+
+    if (_loadSajuFuture != null) {
+      return _loadSajuFuture!;
+    }
+
+    final future = _performFetchUserSaju(
+      userId: user.id,
+      trigger: trigger,
+    );
+    _loadSajuFuture = future;
+
+    try {
+      return await future;
+    } finally {
+      if (identical(_loadSajuFuture, future)) {
+        _loadSajuFuture = null;
+      }
+    }
+  }
+
   // Fetch user's Saju data
-  Future<void> fetchUserSaju() async {
+  Future<Map<String, dynamic>?> fetchUserSaju({
+    bool force = true,
+    String trigger = 'manual',
+  }) async {
+    return ensureLoaded(force: force, trigger: trigger);
+  }
+
+  Future<Map<String, dynamic>?> _performFetchUserSaju({
+    required String userId,
+    required String trigger,
+  }) async {
+    RequestAuditTracker.record(
+      key: 'saju.load',
+      trigger: trigger,
+      source: 'SajuNotifier',
+    );
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      final user = _supabase.auth.currentUser;
-      if (user == null) {
-        state = state.copyWith(isLoading: false, error: '로그인이 필요합니다.');
-        return;
-      }
-
       // First, try to get from database
       final response = await _supabase
           .from('user_saju')
           .select('*')
-          .eq('user_id', user.id)
+          .eq('user_id', userId)
           .maybeSingle();
 
       if (response != null) {
         // Format the data for display
         final formattedData = _formatSajuData(response);
+        _loadedUserId = userId;
         state = state.copyWith(
             isLoading: false, sajuData: formattedData, isCached: true);
-      } else {
-        // No data exists, need to calculate
-        state =
-            state.copyWith(isLoading: false, sajuData: null, isCached: false);
+        return formattedData;
       }
+
+      _loadedUserId = userId;
+      state = state.copyWith(isLoading: false, sajuData: null, isCached: false);
+      return null;
     } catch (e) {
       state = state.copyWith(isLoading: false, error: '실패했습니다: $e');
+      return null;
     }
   }
 
@@ -373,13 +426,13 @@ class SajuNotifier extends StateNotifier<SajuState> {
 
   // Clear Saju data
   void clearSaju() {
+    _loadSajuFuture = null;
+    _loadedUserId = null;
     state = SajuState();
   }
 
   // Refresh Saju data (force recalculation,
   Future<void> refreshSaju() async {
-    state = state.copyWith(isLoading: true, error: null);
-
     try {
       final user = _supabase.auth.currentUser;
       if (user == null) {
@@ -407,7 +460,7 @@ class SajuNotifier extends StateNotifier<SajuState> {
       // );
 
       // For now, just refetch the data
-      await fetchUserSaju();
+      await fetchUserSaju(force: true, trigger: 'refreshSaju');
     } catch (e) {
       state = state.copyWith(isLoading: false, error: '발생했습니다: $e');
     }
@@ -426,7 +479,9 @@ final userSajuProvider = FutureProvider<void>((ref) async {
   final user = supabase.auth.currentUser;
 
   if (user != null) {
-    await ref.read(sajuProvider.notifier).fetchUserSaju();
+    await ref.read(sajuProvider.notifier).ensureLoaded(
+          trigger: 'userSajuProvider',
+        );
   }
 });
 

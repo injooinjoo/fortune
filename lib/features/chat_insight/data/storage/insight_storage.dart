@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../../core/utils/request_audit_tracker.dart';
 import '../models/chat_insight_result.dart';
 
 /// 대화 분석 인사이트 로컬 저장소
@@ -26,6 +28,11 @@ class InsightStorage {
 
   /// 모든 분석 결과 로드
   static Future<List<ChatInsightResult>> loadAll() async {
+    RequestAuditTracker.record(
+      key: 'history.insight_storage',
+      trigger: 'loadAll',
+      source: 'InsightStorage',
+    );
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getString(_storageKey);
     if (raw == null || raw.isEmpty) return [];

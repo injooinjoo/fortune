@@ -42,7 +42,9 @@ class _ManseryeokPageState extends ConsumerState<ManseryeokPage>
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(sajuProvider.notifier).fetchUserSaju();
+      ref.read(sajuProvider.notifier).ensureLoaded(
+            trigger: 'manseryeok.init',
+          );
       _animationController.forward();
     });
   }
@@ -507,7 +509,10 @@ class _ManseryeokPageState extends ConsumerState<ManseryeokPage>
             const SizedBox(height: DSSpacing.lg),
             ElevatedButton(
               onPressed: () {
-                ref.read(sajuProvider.notifier).fetchUserSaju();
+                ref.read(sajuProvider.notifier).fetchUserSaju(
+                      force: true,
+                      trigger: 'manseryeok.retry',
+                    );
               },
               child: const Text('다시 시도'),
             ),

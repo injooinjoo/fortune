@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import '../../core/config/environment.dart';
 import '../../core/config/feature_flags.dart';
 import '../../core/constants/edge_functions_endpoints.dart';
+import '../../core/utils/request_audit_tracker.dart';
 import '../../domain/entities/fortune.dart';
 import '../models/fortune_response_model.dart';
 import '../../presentation/providers/providers.dart';
@@ -40,6 +41,11 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   late final Dio _edgeFunctionsDio = _createEdgeFunctionsDio();
 
   Dio _createEdgeFunctionsDio() {
+    RequestAuditTracker.record(
+      key: 'edge.client',
+      trigger: 'service.init',
+      source: 'FortuneApiServiceWithEdgeFunctions',
+    );
     return Dio(
       BaseOptions(
         baseUrl: EdgeFunctionsEndpoints.currentBaseUrl,

@@ -6,6 +6,32 @@ import '../../services/user_interaction_service.dart';
 
 part 'content_interaction_provider.freezed.dart';
 
+@immutable
+class SavedContentKeysRequest {
+  final List<String> contentKeys;
+
+  SavedContentKeysRequest(List<String> contentKeys)
+      : contentKeys = List.unmodifiable(contentKeys.toSet().toList()..sort());
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! SavedContentKeysRequest) return false;
+    if (contentKeys.length != other.contentKeys.length) return false;
+
+    for (var index = 0; index < contentKeys.length; index++) {
+      if (contentKeys[index] != other.contentKeys[index]) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  @override
+  int get hashCode => Object.hashAll(contentKeys);
+}
+
 /// 콘텐츠 인터랙션 상태
 @freezed
 class ContentInteractionState with _$ContentInteractionState {
@@ -98,10 +124,10 @@ final contentInteractionProvider = StateNotifierProvider.family<
 
 /// 여러 콘텐츠의 저장 상태 일괄 조회
 final savedContentKeysProvider =
-    FutureProvider.family<Set<String>, List<String>>(
-  (ref, contentKeys) async {
+    FutureProvider.family<Set<String>, SavedContentKeysRequest>(
+  (ref, request) async {
     final service = UserInteractionService();
-    return service.getSavedStatusBatch(contentKeys);
+    return service.getSavedStatusBatch(request.contentKeys);
   },
 );
 

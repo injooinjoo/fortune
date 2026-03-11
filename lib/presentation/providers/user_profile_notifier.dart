@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../data/models/user_profile.dart';
 import '../../core/utils/logger.dart';
+import '../../core/utils/request_audit_tracker.dart';
 import '../../core/utils/supabase_helper.dart';
 import '../../utils/date_utils.dart' as legacy_date_utils;
 import '../providers/providers.dart';
@@ -12,21 +13,29 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
   final Ref _ref;
   UserProfile? _primaryProfile;
   UserProfile? _overrideProfile;
+  Future<UserProfile?>? _loadProfileFuture;
+  String? _loadedUserId;
 
   UserProfileNotifier(this._ref) : super(const AsyncValue.loading()) {
-    loadProfile();
-    // 로그인 상태 변경 시 프로필 재로드
+    ensureLoaded(trigger: 'bootstrap');
     _ref.listen<AsyncValue<AuthState?>>(authStateProvider, (previous, next) {
       next.whenData((authState) {
-        if (authState?.event == AuthChangeEvent.signedIn ||
-            authState?.event == AuthChangeEvent.tokenRefreshed) {
+        if (authState == null) return;
+
+        if (authState.event == AuthChangeEvent.signedIn ||
+            authState.event == AuthChangeEvent.initialSession) {
           Logger.info(
               '🔄 [UserProfileNotifier] Auth state changed, reloading profile...');
-          loadProfile();
-        } else if (authState?.event == AuthChangeEvent.signedOut) {
+          ensureLoaded(
+            force: _loadedUserId != authState.session?.user.id,
+            trigger: 'auth.${authState.event.name}',
+          );
+        } else if (authState.event == AuthChangeEvent.signedOut) {
           Logger.info('🔄 [UserProfileNotifier] Signed out, clearing profile');
           _primaryProfile = null;
           _overrideProfile = null;
+          _loadedUserId = null;
+          _loadProfileFuture = null;
           _ref.read(storageServiceProvider).clearActiveProfileOverride();
           state = const AsyncValue.data(null);
         }
@@ -34,25 +43,73 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
     });
   }
 
-  Future<void> loadProfile() async {
+  Future<UserProfile?> ensureLoaded({
+    bool force = false,
+    String trigger = 'manual',
+  }) async {
+    SupabaseClient client;
     try {
+      client = _ref.read(supabaseClientProvider);
+    } catch (_) {
+      state = const AsyncValue.data(null);
+      return null;
+    }
+
+    final user = client.auth.currentUser;
+    if (user == null) {
+      _primaryProfile = null;
+      _overrideProfile = null;
+      _loadedUserId = null;
+      state = const AsyncValue.data(null);
+      return null;
+    }
+
+    if (!force &&
+        _loadProfileFuture == null &&
+        _primaryProfile != null &&
+        _loadedUserId == user.id &&
+        state.hasValue) {
+      return _overrideProfile ?? _primaryProfile;
+    }
+
+    if (_loadProfileFuture != null) {
+      return _loadProfileFuture!;
+    }
+
+    final future = _performLoadProfile(
+      user: user,
+      trigger: trigger,
+    );
+    _loadProfileFuture = future;
+
+    try {
+      return await future;
+    } finally {
+      if (identical(_loadProfileFuture, future)) {
+        _loadProfileFuture = null;
+      }
+    }
+  }
+
+  Future<void> loadProfile({
+    bool force = true,
+    String trigger = 'manual',
+  }) async {
+    await ensureLoaded(force: force, trigger: trigger);
+  }
+
+  Future<UserProfile?> _performLoadProfile({
+    required User user,
+    required String trigger,
+  }) async {
+    try {
+      RequestAuditTracker.record(
+        key: 'profile.load',
+        trigger: trigger,
+        source: 'UserProfileNotifier',
+      );
       state = const AsyncValue.loading();
 
-      SupabaseClient client;
-      try {
-        client = _ref.read(supabaseClientProvider);
-      } catch (_) {
-        state = const AsyncValue.data(null);
-        return;
-      }
-      final user = client.auth.currentUser;
-
-      if (user == null) {
-        state = const AsyncValue.data(null);
-        return;
-      }
-
-      // Use helper function to ensure profile exists
       final profileData = await SupabaseHelper.ensureUserProfile(
           userId: user.id,
           email: user.email ?? 'unknown@example.com',
@@ -63,19 +120,24 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
       if (profileData != null) {
         final profile = UserProfile.fromJson(profileData);
         _primaryProfile = profile;
+        _loadedUserId = user.id;
 
-        // Update local storage as well to keep it in sync
         final storage = _ref.read(storageServiceProvider);
         await storage.saveUserProfile(profile.toJson());
 
-        state = AsyncValue.data(_overrideProfile ?? profile);
-      } else {
-        _primaryProfile = null;
-        state = const AsyncValue.data(null);
+        final resolvedProfile = _overrideProfile ?? profile;
+        state = AsyncValue.data(resolvedProfile);
+        return resolvedProfile;
       }
+
+      _primaryProfile = null;
+      _loadedUserId = user.id;
+      state = const AsyncValue.data(null);
+      return null;
     } catch (e, stackTrace) {
       Logger.error('Failed to load user profile', e, stackTrace);
       state = AsyncValue.error(e, stackTrace);
+      rethrow;
     }
   }
 
@@ -103,7 +165,7 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
   }
 
   Future<void> refresh() async {
-    await loadProfile();
+    await ensureLoaded(force: true, trigger: 'refresh');
   }
 
   UserProfile? get primaryProfile => _primaryProfile;
@@ -177,10 +239,15 @@ final primaryUserProfileProvider = Provider<UserProfile?>((ref) {
 // Keep the original provider for backward compatibility but use the notifier
 final userProfileProvider = FutureProvider<UserProfile?>((ref) async {
   final profileAsync = ref.watch(userProfileNotifierProvider);
+  if (profileAsync.hasValue) {
+    return profileAsync.valueOrNull;
+  }
 
-  return profileAsync.when(
-    data: (profile) => profile,
-    loading: () async => ref.read(userProfileNotifierProvider).value,
-    error: (e, st) => throw e,
-  );
+  if (profileAsync.hasError) {
+    throw profileAsync.error!;
+  }
+
+  return ref.read(userProfileNotifierProvider.notifier).ensureLoaded(
+        trigger: 'userProfileProvider.future',
+      );
 });

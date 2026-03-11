@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/network/api_client.dart';
@@ -23,6 +24,32 @@ export 'recommendation_provider.dart';
 export 'navigation_visibility_provider.dart';
 export 'fortune_gauge_provider.dart';
 export 'user_profile_notifier.dart';
+
+@immutable
+class BatchFortuneRequest {
+  final List<String> types;
+
+  BatchFortuneRequest(List<String> types)
+      : types = List.unmodifiable(types.toSet().toList()..sort());
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! BatchFortuneRequest) return false;
+    if (types.length != other.types.length) return false;
+
+    for (var index = 0; index < types.length; index++) {
+      if (types[index] != other.types[index]) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  @override
+  int get hashCode => Object.hashAll(types);
+}
 
 // Core providers
 final supabaseProvider = Provider<SupabaseClient>((ref) {
@@ -82,12 +109,12 @@ final dailyFortuneProvider = FutureProvider<DailyFortune?>((ref) async {
 
 // Batch fortune provider
 final batchFortuneProvider =
-    FutureProvider.family<Map<String, Fortune>, List<String>>(
-        (ref, types) async {
+    FutureProvider.family<Map<String, Fortune>, BatchFortuneRequest>(
+        (ref, request) async {
   final fortuneDataSource = ref.watch(fortuneRemoteDataSourceProvider);
 
   try {
-    final responses = await fortuneDataSource.getBatchFortune(types);
+    final responses = await fortuneDataSource.getBatchFortune(request.types);
     final Map<String, Fortune> fortunes = {};
 
     responses.forEach((key, response) {

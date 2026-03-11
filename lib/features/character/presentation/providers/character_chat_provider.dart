@@ -2368,8 +2368,10 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       if (fortuneType == 'traditional-saju') {
         // sajuProvider에 데이터가 없으면 먼저 로드
         if (_ref.read(sajuProvider).sajuData == null) {
-          Logger.info('[SajuTable] sajuData null → fetchUserSaju() 호출');
-          await _ref.read(sajuProvider.notifier).fetchUserSaju();
+          Logger.info('[SajuTable] sajuData null → ensureLoaded() 호출');
+          await _ref.read(sajuProvider.notifier).ensureLoaded(
+                trigger: 'characterChat.sendFortuneRequest',
+              );
         }
         final sajuTable = _formatSajuPillarTable();
         Logger.info(
@@ -2577,8 +2579,10 @@ $enrichedContext
         // sajuProvider에 데이터가 없으면 먼저 로드
         if (_ref.read(sajuProvider).sajuData == null) {
           Logger.info(
-              '[SajuTable] sajuData null → fetchUserSaju() 호출 (WithAnswers)');
-          await _ref.read(sajuProvider.notifier).fetchUserSaju();
+              '[SajuTable] sajuData null → ensureLoaded() 호출 (WithAnswers)');
+          await _ref.read(sajuProvider.notifier).ensureLoaded(
+                trigger: 'characterChat.sendFortuneRequestWithAnswers',
+              );
         }
         final sajuTable = _formatSajuPillarTable();
         Logger.info(
@@ -3806,13 +3810,15 @@ $enrichedContext
 
   /// 사주 명식 표 텍스트를 외부에서 접근 가능하도록 제공
   /// (character_chat_panel에서 분석 시작 시 즉시 표시용)
-  /// sajuProvider에 데이터가 없으면 fetchUserSaju()로 로드 후 표 생성
+  /// sajuProvider에 데이터가 없으면 ensureLoaded()로 로드 후 표 생성
   Future<String> getSajuPillarTableText() async {
     // sajuProvider에 데이터가 없으면 먼저 로드
     final currentState = _ref.read(sajuProvider);
     if (currentState.sajuData == null) {
-      Logger.info('[SajuTable] sajuData가 null → fetchUserSaju() 호출');
-      await _ref.read(sajuProvider.notifier).fetchUserSaju();
+      Logger.info('[SajuTable] sajuData가 null → ensureLoaded() 호출');
+      await _ref.read(sajuProvider.notifier).ensureLoaded(
+            trigger: 'characterChat.getSajuPillarTableText',
+          );
     }
     return _formatSajuPillarTable();
   }
@@ -3822,8 +3828,10 @@ $enrichedContext
   Future<Map<String, dynamic>?> getSajuRawData() async {
     final currentState = _ref.read(sajuProvider);
     if (currentState.sajuData == null) {
-      Logger.info('[SajuCard] sajuData null → fetchUserSaju() 호출');
-      await _ref.read(sajuProvider.notifier).fetchUserSaju();
+      Logger.info('[SajuCard] sajuData null → ensureLoaded() 호출');
+      await _ref.read(sajuProvider.notifier).ensureLoaded(
+            trigger: 'characterChat.getSajuRawData',
+          );
     }
     return _ref.read(sajuProvider).sajuData;
   }

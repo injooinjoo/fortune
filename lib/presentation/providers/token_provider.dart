@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/constants/soul_rates.dart';
+import '../../core/utils/request_audit_tracker.dart';
 import '../../data/models/user_profile.dart';
 import '../../data/services/token_api_service.dart';
 import '../../domain/entities/token.dart';
@@ -218,11 +219,20 @@ class TokenNotifier extends StateNotifier<TokenState> {
     required String trigger,
     required bool force,
   }) async {
+    RequestAuditTracker.record(
+      key: 'token.load',
+      trigger: trigger,
+      source: 'TokenNotifier',
+    );
     state = state.copyWith(isLoading: true, error: null);
 
     try {
       final user = _resolveCurrentUser();
-      final userProfile = await ref.read(userProfileProvider.future);
+      final userProfile =
+          await ref.read(userProfileNotifierProvider.notifier).ensureLoaded(
+                force: force,
+                trigger: 'token.$trigger.profile',
+              );
       final userId = user?.id ?? 'guest-unlimited';
       final balance = TokenBalance(
         userId: userId,
@@ -337,6 +347,11 @@ class TokenNotifier extends StateNotifier<TokenState> {
     int? limit,
     int? offset,
   }) async {
+    RequestAuditTracker.record(
+      key: 'token.history.load',
+      trigger: 'limit:${limit ?? 'default'}:offset:${offset ?? 0}',
+      source: 'TokenNotifier',
+    );
     const history = <TokenTransaction>[];
     state = state.copyWith(history: history, error: null);
     return history;
