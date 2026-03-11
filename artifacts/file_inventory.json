@@ -8637,19 +8637,18 @@
     },
     {
       "area": "assets",
-      "candidate_action": "keep",
+      "candidate_action": "manual_review",
       "dirty": false,
       "kind": "asset_svg",
       "notes": [
+        "no_inbound_refs",
         "pubspec_declared:assets/images/health"
       ],
       "path": "assets/images/health/body_outline.svg",
-      "referenced_by": [
-        "lib/features/health/presentation/widgets/body_part_selector.dart"
-      ],
-      "runtime_reachable": true,
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "assets",
@@ -9652,8 +9651,7 @@
       "path": "assets/images/social/apple.svg",
       "referenced_by": [
         "lib/presentation/widgets/social_accounts_section.dart",
-        "lib/presentation/widgets/social_login_bottom_sheet.dart",
-        "lib/screens/settings/social_accounts_screen.dart"
+        "lib/presentation/widgets/social_login_bottom_sheet.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -9670,8 +9668,7 @@
       "path": "assets/images/social/google.svg",
       "referenced_by": [
         "lib/presentation/widgets/social_accounts_section.dart",
-        "lib/presentation/widgets/social_login_bottom_sheet.dart",
-        "lib/screens/settings/social_accounts_screen.dart"
+        "lib/presentation/widgets/social_login_bottom_sheet.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -9705,8 +9702,7 @@
       "referenced_by": [
         "lib/presentation/widgets/social_accounts_section.dart",
         "lib/presentation/widgets/social_login_bottom_sheet.dart",
-        "lib/presentation/widgets/social_share_bottom_sheet.dart",
-        "lib/screens/settings/social_accounts_screen.dart"
+        "lib/presentation/widgets/social_share_bottom_sheet.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -9723,8 +9719,7 @@
       "path": "assets/images/social/naver.svg",
       "referenced_by": [
         "lib/presentation/widgets/social_accounts_section.dart",
-        "lib/presentation/widgets/social_login_bottom_sheet.dart",
-        "lib/screens/settings/social_accounts_screen.dart"
+        "lib/presentation/widgets/social_login_bottom_sheet.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -19267,7 +19262,6 @@
       "referenced_by": [
         "docs/design/FIGMA_LAYER_NAMING_STANDARD.md",
         "docs/design/FIGMA_LAYER_RENAME_MATRIX.md",
-        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "docs/design/README.md"
       ],
       "runtime_reachable": false,
@@ -19282,9 +19276,6 @@
       "notes": [],
       "path": "docs/design/FIGMA_LAYER_NAMING_STANDARD.md",
       "referenced_by": [
-        "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
-        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "docs/design/FIGMA_SYNC_CHANGELOG.md",
         "docs/design/README.md",
         "scripts/design/figma_sync_guard.js"
@@ -19301,8 +19292,6 @@
       "notes": [],
       "path": "docs/design/FIGMA_LAYER_RENAME_MATRIX.md",
       "referenced_by": [
-        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "docs/design/README.md",
         "scripts/design/figma_sync_guard.js"
       ],
@@ -19318,6 +19307,7 @@
       "notes": [],
       "path": "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
       "referenced_by": [
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "docs/design/README.md"
       ],
       "runtime_reachable": false,
@@ -19332,7 +19322,6 @@
       "notes": [],
       "path": "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
       "referenced_by": [
-        "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "docs/design/FIGMA_SYNC_CHANGELOG.md",
         "docs/design/README.md",
@@ -19350,9 +19339,6 @@
       "notes": [],
       "path": "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
       "referenced_by": [
-        "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
-        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "docs/design/FIGMA_SYNC_CHANGELOG.md",
         "docs/design/README.md",
         "scripts/design/figma_sync_guard.js"
@@ -19386,7 +19372,6 @@
       "notes": [],
       "path": "docs/design/README.md",
       "referenced_by": [
-        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "scripts/design/figma_sync_guard.js"
       ],
       "runtime_reachable": false,
@@ -20028,21 +20013,6 @@
       "dirty": false,
       "kind": "test_dart",
       "notes": [],
-      "path": "integration_test/accessibility_test.dart",
-      "referenced_by": [
-        "docs/testing/test-coverage-map.md",
-        "integration_test/accessibility_test.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "integration_test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [],
       "path": "integration_test/app_test.dart",
       "referenced_by": [
         ".github/workflows/flutter-ci.yml",
@@ -20058,183 +20028,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "test_dart",
-      "notes": [],
-      "path": "integration_test/crash_prevention_test.dart",
-      "referenced_by": [
-        "integration_test/crash_prevention_test.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "integration_test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [],
-      "path": "integration_test/error_handling_test.dart",
-      "referenced_by": [
-        "integration_test/error_handling_test.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "integration_test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [],
-      "path": "integration_test/flows/auth_flow_test.dart",
-      "referenced_by": [
-        "docs/testing/test-coverage-map.md",
-        "integration_test/flows/auth_flow_test.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "integration_test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [
-        "no_inbound_refs"
-      ],
-      "path": "integration_test/flows/complete_user_journey_test.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "integration_test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [],
-      "path": "integration_test/flows/fortune_generation_test.dart",
-      "referenced_by": [
-        "docs/testing/test-coverage-map.md",
-        "integration_test/flows/fortune_generation_test.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "integration_test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [],
-      "path": "integration_test/flows/premium_flow_test.dart",
-      "referenced_by": [
-        "docs/testing/test-coverage-map.md",
-        "integration_test/flows/premium_flow_test.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "integration_test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [],
-      "path": "integration_test/flows/user_journey_test.dart",
-      "referenced_by": [
-        "docs/testing/test-coverage-map.md",
-        "integration_test/flows/user_journey_test.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "integration_test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [],
-      "path": "integration_test/fortune_flow_test.dart",
-      "referenced_by": [
-        "integration_test/fortune_flow_test.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "integration_test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [
-        "no_inbound_refs"
-      ],
-      "path": "integration_test/helpers/fortune_test_helpers.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "integration_test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
       "notes": [
         "no_inbound_refs"
       ],
       "path": "integration_test/helpers/integration_test_helpers.dart",
       "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "integration_test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [],
-      "path": "integration_test/helpers/navigation_helpers.dart",
-      "referenced_by": [
-        "integration_test/accessibility_test.dart",
-        "integration_test/crash_prevention_test.dart",
-        "integration_test/error_handling_test.dart",
-        "integration_test/flows/auth_flow_test.dart",
-        "integration_test/flows/fortune_generation_test.dart",
-        "integration_test/flows/premium_flow_test.dart",
-        "integration_test/flows/user_journey_test.dart",
-        "integration_test/helpers/fortune_test_helpers.dart",
-        "integration_test/helpers/payment_test_helpers.dart",
-        "integration_test/navigation_test.dart",
-        "integration_test/offline_test.dart",
-        "integration_test/performance_test.dart",
-        "integration_test/regression_test.dart",
-        "integration_test/screen_size_test.dart",
-        "integration_test/screenshot_test.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "integration_test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [],
-      "path": "integration_test/helpers/payment_test_helpers.dart",
-      "referenced_by": [
-        "integration_test/flows/premium_flow_test.dart"
-      ],
       "runtime_reachable": false,
       "test_only": true,
       "usage_status": "test_only"
@@ -20300,97 +20098,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "test_dart",
-      "notes": [],
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "integration_test/mocks/mock_in_app_purchase.dart",
-      "referenced_by": [
-        "integration_test/helpers/payment_test_helpers.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "integration_test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [],
-      "path": "integration_test/navigation_test.dart",
-      "referenced_by": [
-        "docs/testing/test-coverage-map.md",
-        "integration_test/navigation_test.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "integration_test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [],
-      "path": "integration_test/offline_test.dart",
-      "referenced_by": [
-        "integration_test/offline_test.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "integration_test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [],
-      "path": "integration_test/performance_test.dart",
-      "referenced_by": [
-        "docs/testing/test-coverage-map.md",
-        "integration_test/performance_test.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "integration_test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [],
-      "path": "integration_test/regression_test.dart",
-      "referenced_by": [
-        "integration_test/regression_test.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "integration_test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [],
-      "path": "integration_test/screen_size_test.dart",
-      "referenced_by": [
-        "integration_test/screen_size_test.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "integration_test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [],
-      "path": "integration_test/screenshot_test.dart",
-      "referenced_by": [
-        "integration_test/screenshot_test.dart"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": true,
       "usage_status": "test_only"
@@ -20403,8 +20115,7 @@
       "notes": [],
       "path": "integration_test/test_app.dart",
       "referenced_by": [
-        "integration_test/app_test.dart",
-        "integration_test/screenshot_test.dart"
+        "integration_test/app_test.dart"
       ],
       "runtime_reachable": false,
       "test_only": true,
@@ -20421,8 +20132,7 @@
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/models/user_profile.dart",
         "lib/presentation/providers/user_profile_notifier.dart",
-        "lib/screens/onboarding/onboarding_page.dart",
-        "lib/screens/profile/profile_edit_page.dart"
+        "lib/screens/onboarding/onboarding_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -20436,7 +20146,7 @@
       "notes": [],
       "path": "lib/core/cache/cache_service.dart",
       "referenced_by": [
-        "lib/screens/profile/profile_screen.dart",
+        "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
         "lib/services/account_deletion_service.dart"
       ],
       "runtime_reachable": true,
@@ -20485,10 +20195,7 @@
         "lib/features/fortune/presentation/widgets/saju/saju_pillar_table_pro.dart",
         "lib/features/fortune/presentation/widgets/saju/saju_sinsal_widget.dart",
         "lib/features/fortune/presentation/widgets/saju/saju_twelve_stages_widget.dart",
-        "lib/features/fortune/presentation/widgets/saju_element_chart.dart",
-        "lib/features/history/presentation/pages/fortune_history_detail_page.dart",
-        "lib/features/history/presentation/pages/fortune_history_page.dart",
-        "lib/features/history/presentation/widgets/fortune_calendar_view.dart"
+        "lib/features/fortune/presentation/widgets/saju_element_chart.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -20507,7 +20214,6 @@
         "lib/core/services/debug_premium_service.dart",
         "lib/core/utils/logger.dart",
         "lib/data/services/fortune_api_service_edge_functions.dart",
-        "lib/features/trend/data/repositories/trend_social_repository.dart",
         "lib/screens/auth/callback_page.dart",
         "lib/services/analytics_service.dart",
         "lib/services/kakao_share_service.dart",
@@ -20546,10 +20252,7 @@
         "lib/data/services/fortune_api/fortune_api_service.dart",
         "lib/data/services/fortune_api/misc_fortune_api.dart",
         "lib/data/services/fortune_api/relationship_fortune_api.dart",
-        "lib/data/services/fortune_api/saju_fortune_api.dart",
-        "lib/features/interactive/presentation/pages/tarot_chat_page.dart",
-        "lib/features/interactive/presentation/providers/dream_providers.dart",
-        "lib/features/interactive/presentation/providers/psychology_test_providers.dart"
+        "lib/data/services/fortune_api/saju_fortune_api.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -20563,8 +20266,7 @@
       "notes": [],
       "path": "lib/core/constants/asset_pack_config.dart",
       "referenced_by": [
-        "lib/core/services/asset_delivery_service.dart",
-        "lib/features/settings/presentation/widgets/storage_management_widget.dart"
+        "lib/core/services/asset_delivery_service.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -20603,33 +20305,33 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
-      "path": "lib/core/constants/fortune_type_names.dart",
-      "referenced_by": [
-        "lib/features/history/presentation/pages/fortune_history_detail_page.dart",
-        "lib/features/history/presentation/widgets/fortune_charts.dart",
-        "lib/features/history/presentation/widgets/timeline_view.dart"
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
-      "runtime_reachable": true,
+      "path": "lib/core/constants/fortune_type_names.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/constants/in_app_products.dart",
       "referenced_by": [
-        "lib/features/payment/presentation/pages/token_purchase_page.dart",
-        "lib/screens/subscription/subscription_page.dart",
         "lib/services/in_app_purchase_service.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -20656,7 +20358,6 @@
       "notes": [],
       "path": "lib/core/constants/soul_rates.dart",
       "referenced_by": [
-        "lib/core/services/unified_fortune_service.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/fortune/domain/entities/fortune_category.dart",
         "lib/presentation/providers/token_provider.dart"
@@ -20685,13 +20386,15 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/constants/tarot/tarot_card_info.dart",
       "referenced_by": [
         "lib/core/constants/tarot/tarot_metadata_data.dart",
         "lib/core/constants/tarot_metadata.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -20700,12 +20403,14 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/constants/tarot/tarot_helper.dart",
       "referenced_by": [
         "lib/core/constants/tarot_metadata.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -20714,13 +20419,15 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/constants/tarot/tarot_metadata_data.dart",
       "referenced_by": [
         "lib/core/constants/tarot/tarot_helper.dart",
         "lib/core/constants/tarot_metadata.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -20729,13 +20436,15 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/constants/tarot/tarot_spread.dart",
       "referenced_by": [
         "lib/core/constants/tarot/tarot_metadata_data.dart",
         "lib/core/constants/tarot_metadata.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -20744,28 +20453,32 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/constants/tarot_deck_metadata.dart",
       "referenced_by": [
         "lib/presentation/providers/tarot_deck_provider.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
-      "path": "lib/core/constants/tarot_metadata.dart",
-      "referenced_by": [
-        "lib/features/interactive/presentation/pages/tarot_chat_page.dart"
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
-      "runtime_reachable": true,
+      "path": "lib/core/constants/tarot_metadata.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -21018,6 +20731,7 @@
         "lib/core/widgets/unified_button.dart",
         "lib/core/widgets/unified_voice_text_field.dart",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
+        "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/features/character/presentation/pages/character_onboarding_page.dart",
         "lib/features/character/presentation/pages/character_profile_page.dart",
         "lib/features/character/presentation/widgets/character_choice_widget.dart",
@@ -21036,7 +20750,6 @@
         "lib/features/chat/presentation/widgets/survey/chat_survey_slider.dart",
         "lib/features/chat/presentation/widgets/survey/ootd_photo_input.dart",
         "lib/features/chat_insight/presentation/widgets/insight_history_card.dart",
-        "lib/features/exercise/presentation/pages/exercise_fortune_page.dart",
         "lib/features/fortune/presentation/pages/manseryeok_page.dart",
         "lib/features/fortune/presentation/widgets/face_reading/celebrity_match_carousel.dart",
         "lib/features/fortune/presentation/widgets/saju/manseryeok_daeun_timeline.dart",
@@ -21053,52 +20766,9 @@
         "lib/features/fortune/presentation/widgets/saju/today_iljin_card.dart",
         "lib/features/fortune/presentation/widgets/saju_element_chart.dart",
         "lib/features/fortune/presentation/widgets/voice_spectrum_animation.dart",
-        "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart",
-        "lib/features/health/presentation/pages/health_fortune/widgets/avoidance_section.dart",
-        "lib/features/health/presentation/pages/health_fortune/widgets/body_part_health_section.dart",
-        "lib/features/health/presentation/pages/health_fortune/widgets/condition_option.dart",
-        "lib/features/health/presentation/pages/health_fortune/widgets/document_upload_bottom_sheet.dart",
-        "lib/features/health/presentation/pages/health_fortune/widgets/health_app_connection_section.dart",
-        "lib/features/health/presentation/pages/health_fortune/widgets/medical_document_upload_section.dart",
-        "lib/features/health/presentation/pages/health_fortune/widgets/recommendations_section.dart",
-        "lib/features/health/presentation/pages/health_fortune/widgets/selector_mode_toggle.dart",
-        "lib/features/health/presentation/pages/health_fortune/widgets/tomorrow_preview_section.dart",
-        "lib/features/health/presentation/pages/medical_document_result_page.dart",
-        "lib/features/health/presentation/widgets/body_part_grid_selector.dart",
-        "lib/features/health/presentation/widgets/body_part_selector.dart",
-        "lib/features/health/presentation/widgets/health_score_card.dart",
-        "lib/features/health/presentation/widgets/health_timeline_chart.dart",
-        "lib/features/history/presentation/pages/fortune_history_detail_page.dart",
-        "lib/features/history/presentation/pages/fortune_history_page.dart",
-        "lib/features/history/presentation/widgets/fortune_calendar_view.dart",
-        "lib/features/history/presentation/widgets/fortune_charts.dart",
-        "lib/features/history/presentation/widgets/statistics_dashboard.dart",
-        "lib/features/history/presentation/widgets/timeline_view.dart",
-        "lib/features/interactive/presentation/pages/dream_interpretation_page.dart",
-        "lib/features/interactive/presentation/pages/dream_page.dart",
-        "lib/features/interactive/presentation/pages/face_reading_page.dart",
-        "lib/features/interactive/presentation/pages/psychology_test_page.dart",
-        "lib/features/interactive/presentation/pages/taemong_page.dart",
-        "lib/features/interactive/presentation/pages/tarot_animated_flow_page.dart",
-        "lib/features/interactive/presentation/pages/tarot_chat_page.dart",
-        "lib/features/interactive/presentation/pages/worry_bead_page.dart",
-        "lib/features/more/presentation/pages/fortune_tab_page.dart",
-        "lib/features/more/presentation/pages/more_page.dart",
         "lib/features/notification/presentation/pages/notification_settings_page.dart",
-        "lib/features/payment/presentation/pages/token_purchase_page.dart",
         "lib/features/policy/presentation/pages/privacy_policy_page.dart",
         "lib/features/policy/presentation/pages/terms_of_service_page.dart",
-        "lib/features/settings/presentation/pages/font_settings_page.dart",
-        "lib/features/support/presentation/pages/help_page.dart",
-        "lib/features/trend/presentation/pages/trend_balance_game_page.dart",
-        "lib/features/trend/presentation/pages/trend_ideal_worldcup_page.dart",
-        "lib/features/trend/presentation/pages/trend_page.dart",
-        "lib/features/trend/presentation/pages/trend_psychology_test_page.dart",
-        "lib/features/wellness/presentation/pages/meditation_page.dart",
-        "lib/features/wellness/presentation/pages/wellness_page.dart",
-        "lib/features/wellness/presentation/widgets/breathing_timer_widget.dart",
-        "lib/features/wellness/presentation/widgets/meditation_completion_sheet.dart",
-        "lib/features/wellness/presentation/widgets/mind_gem_widget.dart",
         "lib/presentation/widgets/app_update_dialog.dart",
         "lib/presentation/widgets/profile_image_picker.dart",
         "lib/presentation/widgets/social_accounts_section.dart",
@@ -21112,34 +20782,16 @@
         "lib/screens/onboarding/steps/phone_verification_step.dart",
         "lib/screens/premium/premium_screen.dart",
         "lib/screens/profile/account_deletion_page.dart",
-        "lib/screens/profile/elements_detail_page.dart",
-        "lib/screens/profile/profile_edit_page.dart",
-        "lib/screens/profile/profile_screen.dart",
-        "lib/screens/profile/profile_verification_page.dart",
-        "lib/screens/profile/saju_detail_page.dart",
-        "lib/screens/profile/saju_summary_page.dart",
-        "lib/screens/profile/widgets/add_profile_sheet.dart",
-        "lib/screens/profile/widgets/compact/compact_daeun_timeline.dart",
-        "lib/screens/profile/widgets/language_selection_sheet.dart",
-        "lib/screens/profile/widgets/profile_list_sheet.dart",
-        "lib/screens/settings/phone_management_screen.dart",
-        "lib/screens/settings/social_accounts_screen.dart",
         "lib/screens/splash_screen.dart",
-        "lib/screens/subscription/subscription_page.dart",
         "lib/shared/components/app_header.dart",
         "lib/shared/components/korean_date_picker.dart",
         "lib/shared/components/loading_states.dart",
-        "lib/shared/components/premium_membership_card.dart",
-        "lib/shared/components/profile_header_icon.dart",
         "lib/shared/components/progressive_date_input.dart",
         "lib/shared/components/purchase_loading_overlay.dart",
         "lib/shared/components/section_header.dart",
         "lib/shared/components/settings_list_tile.dart",
         "lib/shared/components/toast.dart",
-        "lib/shared/components/token_balance_widget.dart",
-        "lib/shared/components/token_insufficient_modal.dart",
         "lib/shared/glassmorphism/glass_container.dart",
-        "lib/shared/layouts/main_shell.dart",
         "lib/shared/widgets/smart_image.dart"
       ],
       "runtime_reachable": true,
@@ -21374,14 +21026,12 @@
       "referenced_by": [
         "lib/core/network/api_client.dart",
         "lib/core/services/fortune_generators/wish_generator.dart",
-        "lib/core/services/unified_fortune_service.dart",
         "lib/data/datasources/fortune_remote_data_source.dart",
         "lib/data/datasources/token_remote_data_source.dart",
         "lib/data/services/fortune_api/fortune_api_service.dart",
         "lib/data/services/fortune_api/misc_fortune_api.dart",
         "lib/data/services/token_api_service.dart",
-        "lib/presentation/providers/fortune_provider.dart",
-        "lib/presentation/providers/token_provider.dart"
+        "lib/presentation/providers/fortune_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -21400,11 +21050,7 @@
         "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/features/character/presentation/pages/character_profile_page.dart",
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
-        "lib/features/chat/domain/models/recommendation_chip.dart",
-        "lib/screens/profile/profile_screen.dart",
-        "lib/screens/profile/widgets/add_profile_sheet.dart",
-        "lib/screens/profile/widgets/language_selection_sheet.dart",
-        "lib/screens/profile/widgets/profile_list_sheet.dart"
+        "lib/features/chat/domain/models/recommendation_chip.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -21437,7 +21083,6 @@
         "lib/core/models/asset_pack.freezed.dart",
         "lib/core/models/asset_pack.g.dart",
         "lib/core/services/asset_delivery_service.dart",
-        "lib/features/settings/presentation/widgets/storage_management_widget.dart",
         "lib/shared/widgets/smart_image.dart"
       ],
       "runtime_reachable": true,
@@ -21536,7 +21181,6 @@
         "lib/core/services/unified_fortune_service.dart",
         "lib/data/dream_interpretations_data.dart",
         "lib/features/character/presentation/providers/character_fortune_adapter.dart",
-        "lib/features/interactive/presentation/pages/dream_interpretation_page.dart",
         "test/unit/features/character/presentation/providers/character_fortune_adapter_test.dart"
       ],
       "runtime_reachable": true,
@@ -21618,9 +21262,7 @@
       "path": "lib/core/providers/locale_provider.dart",
       "referenced_by": [
         "integration_test/test_app.dart",
-        "lib/main.dart",
-        "lib/screens/profile/profile_screen.dart",
-        "lib/screens/profile/widgets/language_selection_sheet.dart"
+        "lib/main.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -21637,16 +21279,8 @@
         "integration_test/test_app.dart",
         "lib/core/services/fortune_haptic_service.dart",
         "lib/core/services/meditation_sound_service.dart",
-        "lib/features/history/presentation/pages/fortune_history_page.dart",
-        "lib/features/interactive/presentation/pages/dream_page.dart",
-        "lib/features/interactive/presentation/pages/psychology_test_page.dart",
-        "lib/features/interactive/presentation/pages/tarot_chat_page.dart",
-        "lib/features/settings/presentation/pages/font_settings_page.dart",
         "lib/main.dart",
         "lib/screens/onboarding/steps/name_input_step.dart",
-        "lib/screens/profile/profile_screen.dart",
-        "lib/screens/settings/phone_management_screen.dart",
-        "lib/screens/settings/social_accounts_screen.dart",
         "lib/shared/components/section_header.dart",
         "lib/shared/components/settings_list_tile.dart"
       ],
@@ -21662,7 +21296,6 @@
       "notes": [],
       "path": "lib/core/services/asset_delivery_service.dart",
       "referenced_by": [
-        "lib/features/settings/presentation/widgets/storage_management_widget.dart",
         "lib/shared/widgets/smart_image.dart"
       ],
       "runtime_reachable": true,
@@ -21708,7 +21341,6 @@
       "path": "lib/core/services/debug_premium_service.dart",
       "referenced_by": [
         "docs/data/FORTUNE_OPTIMIZATION_GUIDE.md",
-        "lib/features/interactive/presentation/pages/dream_interpretation_page.dart",
         "lib/services/account_deletion_service.dart"
       ],
       "runtime_reachable": true,
@@ -21994,18 +21626,9 @@
       "notes": [],
       "path": "lib/core/services/fortune_haptic_service.dart",
       "referenced_by": [
-        "lib/features/history/presentation/pages/fortune_history_page.dart",
-        "lib/features/interactive/presentation/pages/interactive_list_page.dart",
-        "lib/features/interactive/presentation/pages/tarot_animated_flow_page.dart",
-        "lib/features/interactive/presentation/pages/worry_bead_page.dart",
-        "lib/features/payment/presentation/pages/token_purchase_page.dart",
-        "lib/features/settings/presentation/pages/font_settings_page.dart",
         "lib/main.dart",
         "lib/presentation/widgets/social_login_bottom_sheet.dart",
-        "lib/screens/onboarding/onboarding_page.dart",
-        "lib/screens/profile/profile_edit_page.dart",
-        "lib/screens/profile/profile_screen.dart",
-        "lib/screens/subscription/subscription_page.dart"
+        "lib/screens/onboarding/onboarding_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -22087,17 +21710,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase3_feature_cleanup",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
-      "path": "lib/core/services/meditation_sound_service.dart",
-      "referenced_by": [
-        "lib/features/wellness/presentation/pages/meditation_page.dart"
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
-      "runtime_reachable": true,
+      "path": "lib/core/services/meditation_sound_service.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -22204,9 +21829,7 @@
       "path": "lib/core/services/unified_fortune_service.dart",
       "referenced_by": [
         "docs/development/FORTUNE_STANDARDIZATION_GUIDE.md",
-        "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart",
-        "lib/features/interactive/presentation/pages/dream_interpretation_page.dart"
+        "lib/features/character/presentation/providers/character_chat_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -22235,13 +21858,15 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/theme/app_dimensions.dart",
       "referenced_by": [
         "lib/presentation/widgets/common/custom_card.dart",
         "lib/presentation/widgets/social_accounts_section.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -22263,30 +21888,34 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
-      "path": "lib/core/theme/app_theme.dart",
-      "referenced_by": [
-        "lib/features/interactive/presentation/pages/worry_bead_page.dart"
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
-      "runtime_reachable": true,
+      "path": "lib/core/theme/app_theme.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/theme/app_theme/animation_curves.dart",
       "referenced_by": [
         "lib/core/theme/app_theme/fortune_theme_extension.dart",
         "lib/core/theme/app_theme_extensions.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -22295,13 +21924,15 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/theme/app_theme/animation_durations.dart",
       "referenced_by": [
         "lib/core/theme/app_theme/fortune_theme_extension.dart",
         "lib/core/theme/app_theme_extensions.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -22310,13 +21941,15 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/theme/app_theme/bottom_sheet_styles.dart",
       "referenced_by": [
         "lib/core/theme/app_theme/fortune_theme_extension.dart",
         "lib/core/theme/app_theme_extensions.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -22325,13 +21958,15 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/theme/app_theme/card_styles.dart",
       "referenced_by": [
         "lib/core/theme/app_theme/fortune_theme_extension.dart",
         "lib/core/theme/app_theme_extensions.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -22340,13 +21975,15 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/theme/app_theme/data_visualization.dart",
       "referenced_by": [
         "lib/core/theme/app_theme/fortune_theme_extension.dart",
         "lib/core/theme/app_theme_extensions.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -22355,13 +21992,15 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/theme/app_theme/dialog_styles.dart",
       "referenced_by": [
         "lib/core/theme/app_theme/fortune_theme_extension.dart",
         "lib/core/theme/app_theme_extensions.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -22370,13 +22009,15 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/theme/app_theme/error_states.dart",
       "referenced_by": [
         "lib/core/theme/app_theme/fortune_theme_extension.dart",
         "lib/core/theme/app_theme_extensions.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -22385,13 +22026,15 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/theme/app_theme/form_styles.dart",
       "referenced_by": [
         "lib/core/theme/app_theme/fortune_theme_extension.dart",
         "lib/core/theme/app_theme_extensions.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -22400,12 +22043,14 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/theme/app_theme/fortune_theme_extension.dart",
       "referenced_by": [
         "lib/core/theme/app_theme_extensions.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -22414,13 +22059,15 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/theme/app_theme/haptic_patterns.dart",
       "referenced_by": [
         "lib/core/theme/app_theme/fortune_theme_extension.dart",
         "lib/core/theme/app_theme_extensions.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -22429,13 +22076,15 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/theme/app_theme/loading_states.dart",
       "referenced_by": [
         "lib/core/theme/app_theme/fortune_theme_extension.dart",
         "lib/core/theme/app_theme_extensions.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -22444,13 +22093,15 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/theme/app_theme/micro_interactions.dart",
       "referenced_by": [
         "lib/core/theme/app_theme/fortune_theme_extension.dart",
         "lib/core/theme/app_theme_extensions.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -22459,13 +22110,15 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/theme/app_theme/social_sharing_styles.dart",
       "referenced_by": [
         "lib/core/theme/app_theme/fortune_theme_extension.dart",
         "lib/core/theme/app_theme_extensions.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -22474,7 +22127,9 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/theme/app_theme/utils.dart",
       "referenced_by": [
         "lib/core/theme/app_theme/animation_durations.dart",
@@ -22489,7 +22144,7 @@
         "lib/core/theme/app_theme/social_sharing_styles.dart",
         "lib/core/theme/app_theme_extensions.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -22498,14 +22153,16 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/theme/app_theme_extensions.dart",
       "referenced_by": [
         "lib/core/theme/app_theme.dart",
         "lib/screens/onboarding/steps/phone_step.dart",
         "lib/screens/onboarding/steps/phone_verification_step.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -22521,10 +22178,7 @@
         "lib/core/theme/typography_theme.dart",
         "lib/core/theme/typography_unified.dart",
         "lib/features/fortune/presentation/widgets/saju/saju_concept_card.dart",
-        "lib/features/fortune/presentation/widgets/saju_element_chart.dart",
-        "lib/features/health/presentation/pages/health_fortune/widgets/medical_document_upload_section.dart",
-        "lib/features/health/presentation/pages/medical_document_result_page.dart",
-        "lib/features/interactive/presentation/pages/dream_interpretation_page.dart"
+        "lib/features/fortune/presentation/widgets/saju_element_chart.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -22572,8 +22226,7 @@
       "notes": [],
       "path": "lib/core/theme/typography_theme.dart",
       "referenced_by": [
-        "lib/core/providers/user_settings_provider.dart",
-        "lib/features/settings/presentation/pages/font_settings_page.dart"
+        "lib/core/providers/user_settings_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -22627,19 +22280,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
-      "path": "lib/core/utils/fortune_text_cleaner.dart",
-      "referenced_by": [
-        "lib/features/history/presentation/pages/fortune_history_detail_page.dart",
-        "lib/features/interactive/presentation/pages/dream_interpretation_page.dart",
-        "lib/features/interactive/presentation/pages/tarot_chat_page.dart"
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
-      "runtime_reachable": true,
+      "path": "lib/core/utils/fortune_text_cleaner.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -22659,22 +22312,8 @@
         "lib/features/character/presentation/pages/character_profile_page.dart",
         "lib/features/character/presentation/widgets/character_choice_widget.dart",
         "lib/features/character/presentation/widgets/character_message_bubble.dart",
-        "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart",
-        "lib/features/health/presentation/pages/health_fortune/widgets/condition_option.dart",
-        "lib/features/health/presentation/pages/health_fortune/widgets/document_upload_bottom_sheet.dart",
-        "lib/features/health/presentation/pages/health_fortune/widgets/selector_mode_toggle.dart",
-        "lib/features/health/presentation/pages/medical_document_result_page.dart",
-        "lib/features/health/presentation/widgets/body_part_grid_selector.dart",
-        "lib/features/health/presentation/widgets/body_part_selector.dart",
-        "lib/features/interactive/presentation/pages/face_reading_page.dart",
-        "lib/features/interactive/presentation/pages/taemong_page.dart",
-        "lib/features/interactive/presentation/pages/tarot_chat_page.dart",
         "lib/features/notification/presentation/pages/notification_settings_page.dart",
-        "lib/features/wellness/presentation/pages/wellness_page.dart",
-        "lib/features/wellness/presentation/widgets/breathing_timer_widget.dart",
-        "lib/features/wellness/presentation/widgets/meditation_completion_sheet.dart",
-        "lib/presentation/widgets/social_share_bottom_sheet.dart",
-        "lib/screens/profile/widgets/add_profile_sheet.dart"
+        "lib/presentation/widgets/social_share_bottom_sheet.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -22731,25 +22370,15 @@
         "lib/features/character/data/services/character_message_notification_service.dart",
         "lib/features/character/data/services/character_proactive_media_service.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "lib/features/health/data/services/health_fortune_service.dart",
-        "lib/features/health/data/services/medical_document_service.dart",
-        "lib/features/interactive/presentation/pages/dream_interpretation_page.dart",
-        "lib/features/interactive/presentation/pages/face_reading_page.dart",
-        "lib/features/interactive/presentation/pages/taemong_page.dart",
-        "lib/features/interactive/presentation/pages/worry_bead_page.dart",
         "lib/features/notification/presentation/pages/notification_settings_page.dart",
-        "lib/features/payment/presentation/pages/token_purchase_page.dart",
         "lib/main.dart",
         "lib/presentation/providers/auth_provider.dart",
         "lib/presentation/providers/fortune_provider.dart",
         "lib/presentation/providers/secondary_profiles_provider.dart",
         "lib/presentation/providers/social_auth_provider.dart",
-        "lib/presentation/providers/subscription_provider.dart",
-        "lib/presentation/providers/token_provider.dart",
         "lib/presentation/providers/user_profile_notifier.dart",
         "lib/presentation/providers/user_statistics_provider.dart",
         "lib/presentation/widgets/social_accounts_section.dart",
-        "lib/screens/profile/profile_edit_page.dart",
         "lib/services/account_deletion_service.dart",
         "lib/services/analytics_service.dart",
         "lib/services/app_icon_badge_service.dart",
@@ -22806,8 +22435,7 @@
       "referenced_by": [
         "lib/routes/character_routes.dart",
         "lib/routes/route_config.dart",
-        "lib/routes/routes/auth_routes.dart",
-        "lib/routes/routes/wellness_routes.dart"
+        "lib/routes/routes/auth_routes.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -22904,44 +22532,49 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/widgets/date_picker/date_picker_utils.dart",
       "referenced_by": [
         "docs/development/UNIFIED_DATE_PICKER_MIGRATION.md",
         "lib/core/widgets/date_picker/numeric_date_input.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
       "path": "lib/core/widgets/date_picker/numeric_date_input.dart",
-      "referenced_by": [
-        "lib/features/interactive/presentation/pages/dream_page.dart",
-        "lib/screens/profile/widgets/add_profile_sheet.dart"
-      ],
-      "runtime_reachable": true,
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
-      "path": "lib/core/widgets/floating_dream_bubbles.dart",
-      "referenced_by": [
-        "lib/features/interactive/presentation/pages/dream_interpretation_page.dart"
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
-      "runtime_reachable": true,
+      "path": "lib/core/widgets/floating_dream_bubbles.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -22973,48 +22606,35 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
       "path": "lib/core/widgets/unified_button.dart",
       "referenced_by": [
         "docs/APP_ARCHITECTURE.md",
-        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "lib/features/exercise/presentation/pages/exercise_fortune_page.dart",
-        "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart",
-        "lib/features/health/presentation/pages/health_fortune/widgets/document_upload_bottom_sheet.dart",
-        "lib/features/health/presentation/pages/health_fortune/widgets/health_app_connection_section.dart",
-        "lib/features/health/presentation/pages/medical_document_result_page.dart",
-        "lib/features/health/presentation/widgets/body_part_grid_selector.dart",
-        "lib/features/health/presentation/widgets/body_part_selector.dart",
-        "lib/features/history/presentation/pages/fortune_history_detail_page.dart",
-        "lib/features/history/presentation/pages/fortune_history_page.dart",
-        "lib/features/interactive/presentation/pages/dream_interpretation_page.dart",
-        "lib/screens/subscription/subscription_page.dart"
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "doc_only"
     },
     {
       "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/core/widgets/unified_button_enums.dart",
       "referenced_by": [
-        "lib/core/widgets/unified_button.dart",
-        "lib/features/exercise/presentation/pages/exercise_fortune_page.dart",
-        "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart",
-        "lib/features/health/presentation/pages/health_fortune/widgets/document_upload_bottom_sheet.dart",
-        "lib/features/health/presentation/pages/health_fortune/widgets/health_app_connection_section.dart",
-        "lib/features/health/presentation/pages/medical_document_result_page.dart",
-        "lib/features/history/presentation/pages/fortune_history_detail_page.dart",
-        "lib/features/history/presentation/pages/fortune_history_page.dart"
+        "lib/core/widgets/unified_button.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -23026,11 +22646,7 @@
       "notes": [],
       "path": "lib/core/widgets/unified_voice_text_field.dart",
       "referenced_by": [
-        "lib/features/character/presentation/pages/character_chat_panel.dart",
-        "lib/features/interactive/presentation/pages/dream_interpretation_page.dart",
-        "lib/features/interactive/presentation/pages/dream_page.dart",
-        "lib/features/interactive/presentation/pages/tarot_chat_page.dart",
-        "lib/features/interactive/presentation/pages/worry_bead_page.dart"
+        "lib/features/character/presentation/pages/character_chat_panel.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23066,17 +22682,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
-      "path": "lib/data/dream_interpretations_data.dart",
-      "referenced_by": [
-        "lib/features/interactive/presentation/pages/dream_interpretation_page.dart"
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
-      "runtime_reachable": true,
+      "path": "lib/data/dream_interpretations_data.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -23167,13 +22785,14 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/data/popular_dream_topics.dart",
       "referenced_by": [
-        "lib/core/widgets/floating_dream_bubbles.dart",
-        "lib/features/interactive/presentation/pages/dream_interpretation_page.dart"
+        "lib/core/widgets/floating_dream_bubbles.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -23190,8 +22809,7 @@
         "lib/features/fortune/presentation/widgets/saju/saju_jijanggan_widget.dart",
         "lib/features/fortune/presentation/widgets/saju/saju_pillar_table_pro.dart",
         "lib/features/fortune/presentation/widgets/saju/saju_twelve_stages_widget.dart",
-        "lib/features/fortune/presentation/widgets/saju_element_chart.dart",
-        "lib/screens/profile/saju_summary_page.dart"
+        "lib/features/fortune/presentation/widgets/saju_element_chart.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23353,12 +22971,8 @@
       "path": "lib/data/services/fortune_api_service.dart",
       "referenced_by": [
         "lib/data/services/fortune_api_service_edge_functions.dart",
-        "lib/features/health/data/services/health_fortune_service.dart",
-        "lib/features/interactive/presentation/pages/tarot_chat_page.dart",
-        "lib/features/interactive/presentation/providers/psychology_test_providers.dart",
         "lib/presentation/providers/fortune_provider.dart",
         "lib/presentation/providers/today_fortune_provider.dart",
-        "lib/screens/profile/profile_screen.dart",
         "test/mocks/mock_services.dart"
       ],
       "runtime_reachable": true,
@@ -23390,8 +23004,6 @@
       "path": "lib/data/services/token_api_service.dart",
       "referenced_by": [
         "lib/core/services/unified_fortune_service.dart",
-        "lib/features/interactive/presentation/pages/taemong_page.dart",
-        "lib/features/interactive/presentation/pages/worry_bead_page.dart",
         "lib/presentation/providers/token_provider.dart",
         "test/mocks/mock_services.dart"
       ],
@@ -23422,7 +23034,6 @@
         "lib/data/services/fortune_api_service_edge_functions.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/character/presentation/providers/character_fortune_adapter.dart",
-        "lib/features/health/data/services/health_fortune_service.dart",
         "lib/models/fortune_model.dart",
         "lib/presentation/providers/fortune_provider.dart",
         "lib/presentation/providers/providers.dart",
@@ -23478,8 +23089,7 @@
       "referenced_by": [
         "lib/features/character/presentation/pages/character_profile_page.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "lib/features/character/presentation/providers/character_provider.dart",
-        "lib/screens/profile/providers/character_stats_provider.dart"
+        "lib/features/character/presentation/providers/character_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23640,8 +23250,7 @@
         "lib/features/character/presentation/providers/sorted_characters_provider.dart",
         "lib/features/character/presentation/widgets/character_choice_widget.dart",
         "lib/features/character/presentation/widgets/character_message_bubble.dart",
-        "lib/routes/character_routes.dart",
-        "lib/screens/profile/providers/character_stats_provider.dart"
+        "lib/routes/character_routes.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23676,7 +23285,6 @@
         "lib/features/character/domain/models/character_chat_state.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/character/presentation/utils/character_tone_policy.dart",
-        "lib/screens/profile/providers/character_stats_provider.dart",
         "test/unit/features/character/presentation/utils/character_tone_policy_test.dart"
       ],
       "runtime_reachable": true,
@@ -23720,8 +23328,7 @@
       "path": "lib/features/character/domain/models/character_chat_state.dart",
       "referenced_by": [
         "lib/features/character/presentation/pages/character_chat_panel.dart",
-        "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "lib/screens/profile/providers/character_stats_provider.dart"
+        "lib/features/character/presentation/providers/character_chat_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23780,6 +23387,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/pages/character_list_panel.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/character/presentation/pages/swipe_home_shell.dart"
       ],
       "runtime_reachable": true,
@@ -23822,6 +23430,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/pages/swipe_home_shell.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "integration_test/app_test.dart",
         "lib/routes/route_config.dart"
       ],
@@ -23859,7 +23468,6 @@
         "lib/features/character/presentation/pages/character_profile_page.dart",
         "lib/features/character/presentation/providers/sorted_characters_provider.dart",
         "lib/presentation/providers/auth_provider.dart",
-        "lib/screens/profile/providers/character_stats_provider.dart",
         "test/unit/features/character/presentation/providers/character_chat_provider_test.dart"
       ],
       "runtime_reachable": true,
@@ -24080,17 +23688,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
-      "path": "lib/features/chat/domain/constants/chip_category_map.dart",
-      "referenced_by": [
-        "lib/features/more/presentation/pages/fortune_tab_page.dart"
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
-      "runtime_reachable": true,
+      "path": "lib/features/chat/domain/constants/chip_category_map.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -24131,8 +23741,7 @@
       "notes": [],
       "path": "lib/features/chat/domain/models/recommendation_chip.dart",
       "referenced_by": [
-        "lib/features/character/presentation/providers/character_provider.dart",
-        "lib/features/more/presentation/pages/fortune_tab_page.dart"
+        "lib/features/character/presentation/providers/character_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24161,7 +23770,8 @@
       "notes": [],
       "path": "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
       "referenced_by": [
-        "lib/shared/components/profile_header_icon.dart"
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "lib/features/character/presentation/pages/character_list_panel.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24298,72 +23908,49 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/features/chat_insight/data/models/chat_insight_result.dart",
       "referenced_by": [
         "lib/features/chat_insight/data/storage/insight_storage.dart",
-        "lib/features/chat_insight/presentation/widgets/insight_history_card.dart",
-        "lib/features/history/presentation/pages/fortune_history_page.dart"
+        "lib/features/chat_insight/presentation/widgets/insight_history_card.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
       "path": "lib/features/chat_insight/data/storage/insight_storage.dart",
-      "referenced_by": [
-        "lib/features/history/presentation/pages/fortune_history_page.dart"
-      ],
-      "runtime_reachable": true,
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
       "path": "lib/features/chat_insight/presentation/widgets/insight_history_card.dart",
-      "referenced_by": [
-        "lib/features/history/presentation/pages/fortune_history_page.dart"
-      ],
-      "runtime_reachable": true,
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/exercise/domain/models/exercise_fortune_model.dart",
-      "referenced_by": [
-        "lib/features/exercise/presentation/pages/exercise_fortune_page.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/exercise/presentation/pages/exercise_fortune_page.dart",
-      "referenced_by": [
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -24480,17 +24067,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
-      "path": "lib/features/fortune/domain/models/conditions/dream_fortune_conditions.dart",
-      "referenced_by": [
-        "lib/features/interactive/presentation/pages/dream_interpretation_page.dart"
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
-      "runtime_reachable": true,
+      "path": "lib/features/fortune/domain/models/conditions/dream_fortune_conditions.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -24988,8 +24577,7 @@
       "path": "lib/features/fortune/presentation/providers/saju_provider.dart",
       "referenced_by": [
         "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "lib/features/fortune/presentation/pages/manseryeok_page.dart",
-        "lib/screens/profile/saju_summary_page.dart"
+        "lib/features/fortune/presentation/pages/manseryeok_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -25029,17 +24617,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
-      "path": "lib/features/fortune/presentation/widgets/face_reading/celebrity_match_carousel.dart",
-      "referenced_by": [
-        "lib/features/interactive/presentation/pages/face_reading_page.dart"
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
-      "runtime_reachable": true,
+      "path": "lib/features/fortune/presentation/widgets/face_reading/celebrity_match_carousel.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -25182,8 +24772,7 @@
       "path": "lib/features/fortune/presentation/widgets/saju/saju_widgets.dart",
       "referenced_by": [
         "lib/features/chat/presentation/widgets/chat_saju_result_card.dart",
-        "lib/features/fortune/presentation/pages/manseryeok_page.dart",
-        "lib/screens/profile/saju_summary_page.dart"
+        "lib/features/fortune/presentation/pages/manseryeok_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -25240,8 +24829,7 @@
       "path": "lib/features/fortune/presentation/widgets/saju_element_chart.dart",
       "referenced_by": [
         "lib/features/chat/presentation/widgets/chat_saju_result_card.dart",
-        "lib/features/fortune/presentation/pages/manseryeok_page.dart",
-        "lib/screens/profile/saju_summary_page.dart"
+        "lib/features/fortune/presentation/pages/manseryeok_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -25277,655 +24865,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase3_feature_cleanup",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
-      "path": "lib/features/health/data/services/health_fortune_service.dart",
-      "referenced_by": [
-        "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart"
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/health/data/services/medical_document_service.dart",
-      "referenced_by": [
-        "lib/features/health/presentation/pages/medical_document_result_page.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/health/domain/models/health_fortune_model.dart",
-      "referenced_by": [
-        "lib/features/health/data/services/health_fortune_service.dart",
-        "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart",
-        "lib/features/health/presentation/pages/health_fortune/widgets/body_part_health_section.dart",
-        "lib/features/health/presentation/pages/health_fortune/widgets/condition_option.dart",
-        "lib/features/health/presentation/pages/health_fortune/widgets/recommendations_section.dart",
-        "lib/features/health/presentation/widgets/body_part_grid_selector.dart",
-        "lib/features/health/presentation/widgets/body_part_selector.dart",
-        "lib/features/health/presentation/widgets/health_timeline_chart.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/health/domain/models/medical_document_models.dart",
-      "referenced_by": [
-        "lib/features/health/data/services/medical_document_service.dart",
-        "lib/features/health/presentation/pages/health_fortune/widgets/document_upload_bottom_sheet.dart",
-        "lib/features/health/presentation/pages/medical_document_result_page.dart",
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart",
-      "referenced_by": [
-        "lib/features/health/presentation/pages/health_fortune_page.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/health/presentation/pages/health_fortune/widgets/avoidance_section.dart",
-      "referenced_by": [
-        "lib/features/health/presentation/pages/health_fortune/widgets/widgets.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/health/presentation/pages/health_fortune/widgets/body_part_health_section.dart",
-      "referenced_by": [
-        "lib/features/health/presentation/pages/health_fortune/widgets/widgets.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/health/presentation/pages/health_fortune/widgets/condition_option.dart",
-      "referenced_by": [
-        "lib/features/health/presentation/pages/health_fortune/widgets/widgets.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/health/presentation/pages/health_fortune/widgets/document_upload_bottom_sheet.dart",
-      "referenced_by": [
-        "lib/features/health/presentation/pages/health_fortune/widgets/widgets.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/health/presentation/pages/health_fortune/widgets/health_app_connection_section.dart",
-      "referenced_by": [
-        "lib/features/health/presentation/pages/health_fortune/widgets/widgets.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/health/presentation/pages/health_fortune/widgets/medical_document_upload_section.dart",
-      "referenced_by": [
-        "lib/features/health/presentation/pages/health_fortune/widgets/widgets.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/health/presentation/pages/health_fortune/widgets/recommendations_section.dart",
-      "referenced_by": [
-        "lib/features/health/presentation/pages/health_fortune/widgets/widgets.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/health/presentation/pages/health_fortune/widgets/selector_mode_toggle.dart",
-      "referenced_by": [
-        "lib/features/health/presentation/pages/health_fortune/widgets/widgets.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/health/presentation/pages/health_fortune/widgets/tomorrow_preview_section.dart",
-      "referenced_by": [
-        "lib/features/health/presentation/pages/health_fortune/widgets/widgets.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/health/presentation/pages/health_fortune/widgets/widgets.dart",
-      "referenced_by": [
-        "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/health/presentation/pages/health_fortune_page.dart",
-      "referenced_by": [
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/health/presentation/pages/medical_document_result_page.dart",
-      "referenced_by": [
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/health/presentation/widgets/body_part_grid_selector.dart",
-      "referenced_by": [
-        "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/health/presentation/widgets/body_part_selector.dart",
-      "referenced_by": [
-        "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/health/presentation/widgets/health_score_card.dart",
-      "referenced_by": [
-        "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/health/presentation/widgets/health_timeline_chart.dart",
-      "referenced_by": [
-        "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/history/domain/models/fortune_history.dart",
-      "referenced_by": [
-        "lib/features/history/presentation/pages/fortune_history_detail_page.dart",
-        "lib/features/history/presentation/pages/fortune_history_page.dart",
-        "lib/features/history/presentation/widgets/fortune_calendar_view.dart",
-        "lib/features/history/presentation/widgets/fortune_charts.dart",
-        "lib/features/history/presentation/widgets/timeline_view.dart",
-        "lib/presentation/providers/fortune_history_provider.dart",
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/history/presentation/pages/fortune_history_detail_page.dart",
-      "referenced_by": [
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/history/presentation/pages/fortune_history_page.dart",
-      "referenced_by": [
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/history/presentation/widgets/fortune_calendar_view.dart",
-      "referenced_by": [
-        "lib/features/history/presentation/pages/fortune_history_page.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/history/presentation/widgets/fortune_charts.dart",
-      "referenced_by": [
-        "lib/features/history/presentation/pages/fortune_history_page.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/history/presentation/widgets/statistics_dashboard.dart",
-      "referenced_by": [
-        "lib/features/history/presentation/pages/fortune_history_page.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/history/presentation/widgets/timeline_view.dart",
-      "referenced_by": [
-        "lib/features/history/presentation/pages/fortune_history_page.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/interactive/domain/models/dream_models.dart",
-      "referenced_by": [
-        "lib/features/interactive/presentation/pages/dream_page.dart",
-        "lib/features/interactive/presentation/providers/dream_providers.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/interactive/domain/models/psychology_test_models.dart",
-      "referenced_by": [
-        "lib/features/interactive/presentation/pages/psychology_test_page.dart",
-        "lib/features/interactive/presentation/providers/psychology_test_providers.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/interactive/presentation/pages/dream_interpretation_page.dart",
-      "referenced_by": [
-        "docs/development/UNIFIED_DATE_PICKER_MIGRATION.md",
-        "lib/routes/routes/interactive_routes.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/interactive/presentation/pages/dream_page.dart",
-      "referenced_by": [
-        "docs/development/UNIFIED_DATE_PICKER_MIGRATION.md",
-        "lib/routes/routes/interactive_routes.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/interactive/presentation/pages/face_reading_page.dart",
-      "referenced_by": [
-        "docs/deployment/review/IOS_REVIEW_EVIDENCE.md",
-        "lib/routes/routes/interactive_routes.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/interactive/presentation/pages/interactive_list_page.dart",
-      "referenced_by": [
-        "lib/routes/routes/interactive_routes.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/interactive/presentation/pages/psychology_test_page.dart",
-      "referenced_by": [
-        "docs/development/UNIFIED_DATE_PICKER_MIGRATION.md",
-        "lib/routes/routes/interactive_routes.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/interactive/presentation/pages/taemong_page.dart",
-      "referenced_by": [
-        "lib/routes/routes/interactive_routes.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/interactive/presentation/pages/tarot_animated_flow_page.dart",
-      "referenced_by": [
-        "lib/routes/routes/interactive_routes.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/interactive/presentation/pages/tarot_chat_page.dart",
-      "referenced_by": [
-        "lib/routes/routes/interactive_routes.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/interactive/presentation/pages/worry_bead_page.dart",
-      "referenced_by": [
-        "lib/routes/routes/interactive_routes.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/interactive/presentation/providers/dream_providers.dart",
-      "referenced_by": [
-        "lib/features/interactive/presentation/pages/dream_page.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/interactive/presentation/providers/psychology_test_providers.dart",
-      "referenced_by": [
-        "lib/features/interactive/presentation/pages/psychology_test_page.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/more/presentation/pages/fortune_tab_page.dart",
-      "referenced_by": [
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/more/presentation/pages/more_page.dart",
-      "referenced_by": [
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
       "path": "lib/features/notification/presentation/pages/notification_settings_page.dart",
-      "referenced_by": [
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/payment/presentation/pages/token_purchase_page.dart",
-      "referenced_by": [
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -25950,589 +24902,6 @@
       "path": "lib/features/policy/presentation/pages/terms_of_service_page.dart",
       "referenced_by": [
         "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/settings/presentation/pages/font_settings_page.dart",
-      "referenced_by": [
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/settings/presentation/widgets/storage_management_widget.dart",
-      "referenced_by": [
-        "lib/screens/profile/profile_screen.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/support/presentation/pages/help_page.dart",
-      "referenced_by": [
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/trend/data/repositories/balance_game_repository.dart",
-      "referenced_by": [
-        "lib/features/trend/data/repositories/repositories.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/trend/data/repositories/ideal_worldcup_repository.dart",
-      "referenced_by": [
-        "lib/features/trend/data/repositories/repositories.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/trend/data/repositories/psychology_test_repository.dart",
-      "referenced_by": [
-        "lib/features/trend/data/repositories/repositories.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/trend/data/repositories/repositories.dart",
-      "referenced_by": [
-        "lib/features/trend/presentation/providers/trend_providers.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/trend/data/repositories/trend_content_repository.dart",
-      "referenced_by": [
-        "lib/features/trend/data/repositories/repositories.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/trend/data/repositories/trend_social_repository.dart",
-      "referenced_by": [
-        "lib/features/trend/data/repositories/repositories.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/trend/domain/models/balance_game.dart",
-      "referenced_by": [
-        "lib/features/trend/domain/models/balance_game.freezed.dart",
-        "lib/features/trend/domain/models/balance_game.g.dart",
-        "lib/features/trend/domain/models/models.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep_generated",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "generated_or_generated_output"
-      ],
-      "path": "lib/features/trend/domain/models/balance_game.freezed.dart",
-      "referenced_by": [
-        "lib/features/trend/domain/models/balance_game.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "generated_excluded"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep_generated",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "generated_or_generated_output"
-      ],
-      "path": "lib/features/trend/domain/models/balance_game.g.dart",
-      "referenced_by": [
-        "lib/features/trend/domain/models/balance_game.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "generated_excluded"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/trend/domain/models/ideal_worldcup.dart",
-      "referenced_by": [
-        "lib/features/trend/domain/models/ideal_worldcup.freezed.dart",
-        "lib/features/trend/domain/models/ideal_worldcup.g.dart",
-        "lib/features/trend/domain/models/models.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep_generated",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "generated_or_generated_output"
-      ],
-      "path": "lib/features/trend/domain/models/ideal_worldcup.freezed.dart",
-      "referenced_by": [
-        "lib/features/trend/domain/models/ideal_worldcup.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "generated_excluded"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep_generated",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "generated_or_generated_output"
-      ],
-      "path": "lib/features/trend/domain/models/ideal_worldcup.g.dart",
-      "referenced_by": [
-        "lib/features/trend/domain/models/ideal_worldcup.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "generated_excluded"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/trend/domain/models/models.dart",
-      "referenced_by": [
-        "lib/features/trend/data/repositories/balance_game_repository.dart",
-        "lib/features/trend/data/repositories/ideal_worldcup_repository.dart",
-        "lib/features/trend/data/repositories/psychology_test_repository.dart",
-        "lib/features/trend/data/repositories/trend_content_repository.dart",
-        "lib/features/trend/data/repositories/trend_social_repository.dart",
-        "lib/features/trend/presentation/pages/trend_balance_game_page.dart",
-        "lib/features/trend/presentation/pages/trend_ideal_worldcup_page.dart",
-        "lib/features/trend/presentation/pages/trend_page.dart",
-        "lib/features/trend/presentation/pages/trend_psychology_test_page.dart",
-        "lib/features/trend/presentation/providers/trend_providers.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/trend/domain/models/psychology_test.dart",
-      "referenced_by": [
-        "lib/features/trend/domain/models/models.dart",
-        "lib/features/trend/domain/models/psychology_test.freezed.dart",
-        "lib/features/trend/domain/models/psychology_test.g.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep_generated",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "generated_or_generated_output"
-      ],
-      "path": "lib/features/trend/domain/models/psychology_test.freezed.dart",
-      "referenced_by": [
-        "lib/features/trend/domain/models/psychology_test.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "generated_excluded"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep_generated",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "generated_or_generated_output"
-      ],
-      "path": "lib/features/trend/domain/models/psychology_test.g.dart",
-      "referenced_by": [
-        "lib/features/trend/domain/models/psychology_test.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "generated_excluded"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/trend/domain/models/trend_content.dart",
-      "referenced_by": [
-        "lib/features/trend/domain/models/models.dart",
-        "lib/features/trend/domain/models/trend_content.freezed.dart",
-        "lib/features/trend/domain/models/trend_content.g.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep_generated",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "generated_or_generated_output"
-      ],
-      "path": "lib/features/trend/domain/models/trend_content.freezed.dart",
-      "referenced_by": [
-        "lib/features/trend/domain/models/trend_content.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "generated_excluded"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep_generated",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "generated_or_generated_output"
-      ],
-      "path": "lib/features/trend/domain/models/trend_content.g.dart",
-      "referenced_by": [
-        "lib/features/trend/domain/models/trend_content.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "generated_excluded"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/trend/domain/models/trend_social.dart",
-      "referenced_by": [
-        "lib/features/trend/domain/models/models.dart",
-        "lib/features/trend/domain/models/trend_social.freezed.dart",
-        "lib/features/trend/domain/models/trend_social.g.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep_generated",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "generated_or_generated_output"
-      ],
-      "path": "lib/features/trend/domain/models/trend_social.freezed.dart",
-      "referenced_by": [
-        "lib/features/trend/domain/models/trend_social.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "generated_excluded"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep_generated",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "generated_or_generated_output"
-      ],
-      "path": "lib/features/trend/domain/models/trend_social.g.dart",
-      "referenced_by": [
-        "lib/features/trend/domain/models/trend_social.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "generated_excluded"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/trend/presentation/pages/trend_balance_game_page.dart",
-      "referenced_by": [
-        "lib/routes/routes/trend_routes.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/trend/presentation/pages/trend_ideal_worldcup_page.dart",
-      "referenced_by": [
-        "lib/routes/routes/trend_routes.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/trend/presentation/pages/trend_page.dart",
-      "referenced_by": [
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/trend/presentation/pages/trend_psychology_test_page.dart",
-      "referenced_by": [
-        "lib/routes/routes/trend_routes.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/trend/presentation/providers/trend_providers.dart",
-      "referenced_by": [
-        "lib/features/trend/presentation/pages/trend_balance_game_page.dart",
-        "lib/features/trend/presentation/pages/trend_ideal_worldcup_page.dart",
-        "lib/features/trend/presentation/pages/trend_page.dart",
-        "lib/features/trend/presentation/pages/trend_psychology_test_page.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/wellness/domain/models/meditation_history.dart",
-      "referenced_by": [
-        "lib/features/wellness/presentation/providers/wellness_providers.dart",
-        "lib/features/wellness/presentation/widgets/meditation_completion_sheet.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/wellness/domain/models/meditation_session.dart",
-      "referenced_by": [
-        "lib/features/wellness/presentation/pages/meditation_page.dart",
-        "lib/features/wellness/presentation/providers/wellness_providers.dart",
-        "lib/features/wellness/presentation/widgets/breathing_timer_widget.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/wellness/presentation/pages/meditation_page.dart",
-      "referenced_by": [
-        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "lib/routes/routes/wellness_routes.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/wellness/presentation/pages/wellness_page.dart",
-      "referenced_by": [
-        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "lib/routes/routes/wellness_routes.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/wellness/presentation/providers/wellness_providers.dart",
-      "referenced_by": [
-        "lib/features/wellness/presentation/pages/meditation_page.dart",
-        "lib/features/wellness/presentation/widgets/breathing_timer_widget.dart",
-        "lib/features/wellness/presentation/widgets/meditation_completion_sheet.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/wellness/presentation/widgets/breathing_timer_widget.dart",
-      "referenced_by": [
-        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "lib/features/wellness/presentation/pages/meditation_page.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/wellness/presentation/widgets/meditation_completion_sheet.dart",
-      "referenced_by": [
-        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "lib/features/wellness/presentation/pages/meditation_page.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/wellness/presentation/widgets/mind_gem_widget.dart",
-      "referenced_by": [
-        "lib/features/wellness/presentation/widgets/meditation_completion_sheet.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26684,20 +25053,7 @@
       "referenced_by": [
         "docs/deployment/APPLE_CAPABILITIES_SETUP.md",
         "docs/deployment/DEPLOYMENT_COMPLETE_GUIDE.md",
-        "integration_test/accessibility_test.dart",
-        "integration_test/crash_prevention_test.dart",
-        "integration_test/error_handling_test.dart",
-        "integration_test/flows/auth_flow_test.dart",
-        "integration_test/flows/fortune_generation_test.dart",
-        "integration_test/flows/premium_flow_test.dart",
-        "integration_test/flows/user_journey_test.dart",
-        "integration_test/fortune_flow_test.dart",
         "integration_test/landing_test.dart",
-        "integration_test/navigation_test.dart",
-        "integration_test/offline_test.dart",
-        "integration_test/performance_test.dart",
-        "integration_test/regression_test.dart",
-        "integration_test/screen_size_test.dart",
         "scripts/source_inventory.py"
       ],
       "runtime_reachable": true,
@@ -26830,8 +25186,7 @@
       "referenced_by": [
         "lib/data/models/user_profile.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "lib/screens/onboarding/onboarding_page.dart",
-        "lib/screens/profile/profile_edit_page.dart"
+        "lib/screens/onboarding/onboarding_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26839,17 +25194,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase3_feature_cleanup",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
-      "path": "lib/presentation/providers/active_profile_provider.dart",
-      "referenced_by": [
-        "lib/screens/profile/widgets/profile_list_sheet.dart"
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
-      "runtime_reachable": true,
+      "path": "lib/presentation/providers/active_profile_provider.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -26874,12 +25231,9 @@
       "path": "lib/presentation/providers/auth_provider.dart",
       "referenced_by": [
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
-        "lib/features/interactive/presentation/pages/taemong_page.dart",
-        "lib/features/interactive/presentation/pages/worry_bead_page.dart",
         "lib/main.dart",
         "lib/presentation/providers/fortune_provider.dart",
-        "lib/presentation/providers/providers.dart",
-        "lib/shared/components/token_insufficient_modal.dart"
+        "lib/presentation/providers/providers.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26951,20 +25305,6 @@
       "dirty": false,
       "kind": "dart",
       "notes": [],
-      "path": "lib/presentation/providers/fortune_history_provider.dart",
-      "referenced_by": [
-        "lib/features/history/presentation/pages/fortune_history_page.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
       "path": "lib/presentation/providers/fortune_provider.dart",
       "referenced_by": [
         "lib/presentation/providers/providers.dart",
@@ -26982,8 +25322,6 @@
       "notes": [],
       "path": "lib/presentation/providers/navigation_visibility_provider.dart",
       "referenced_by": [
-        "lib/features/interactive/presentation/pages/tarot_chat_page.dart",
-        "lib/features/trend/presentation/pages/trend_page.dart",
         "lib/presentation/providers/providers.dart"
       ],
       "runtime_reachable": true,
@@ -27001,19 +25339,13 @@
         "lib/data/services/fortune_api/fortune_api_service.dart",
         "lib/data/services/fortune_api_service_edge_functions.dart",
         "lib/data/services/token_api_service.dart",
-        "lib/features/exercise/presentation/pages/exercise_fortune_page.dart",
-        "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart",
-        "lib/features/health/presentation/pages/medical_document_result_page.dart",
-        "lib/features/interactive/presentation/providers/dream_providers.dart",
         "lib/presentation/providers/active_profile_provider.dart",
         "lib/presentation/providers/fortune_gauge_provider.dart",
         "lib/presentation/providers/recommendation_provider.dart",
         "lib/presentation/providers/social_auth_provider.dart",
         "lib/presentation/providers/today_fortune_provider.dart",
         "lib/presentation/providers/token_provider.dart",
-        "lib/presentation/providers/user_profile_notifier.dart",
-        "lib/screens/profile/profile_screen.dart",
-        "lib/screens/profile/widgets/profile_list_sheet.dart"
+        "lib/presentation/providers/user_profile_notifier.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -27038,14 +25370,14 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/presentation/providers/secondary_profiles_provider.dart",
       "referenced_by": [
-        "lib/presentation/providers/active_profile_provider.dart",
-        "lib/screens/profile/widgets/add_profile_sheet.dart",
-        "lib/screens/profile/widgets/profile_list_sheet.dart"
+        "lib/presentation/providers/active_profile_provider.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -27065,47 +25397,35 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase3_feature_cleanup",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
       "path": "lib/presentation/providers/soul_animation_provider.dart",
-      "referenced_by": [
-        "lib/shared/components/token_balance_widget.dart"
-      ],
-      "runtime_reachable": true,
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase3_feature_cleanup",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
-      "path": "lib/presentation/providers/subscription_provider.dart",
-      "referenced_by": [
-        "lib/data/services/fortune_api_service_edge_functions.dart",
-        "lib/features/payment/presentation/pages/token_purchase_page.dart",
-        "lib/screens/subscription/subscription_page.dart"
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
       "path": "lib/presentation/providers/tarot_deck_provider.dart",
-      "referenced_by": [
-        "lib/features/interactive/presentation/pages/tarot_chat_page.dart"
-      ],
-      "runtime_reachable": true,
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -27115,7 +25435,6 @@
       "notes": [],
       "path": "lib/presentation/providers/theme_provider.dart",
       "referenced_by": [
-        "integration_test/screenshot_test.dart",
         "integration_test/test_app.dart",
         "lib/main.dart",
         "lib/presentation/providers/providers.dart"
@@ -27147,20 +25466,8 @@
       "path": "lib/presentation/providers/token_provider.dart",
       "referenced_by": [
         "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "lib/features/interactive/presentation/pages/dream_interpretation_page.dart",
-        "lib/features/interactive/presentation/pages/face_reading_page.dart",
-        "lib/features/interactive/presentation/pages/taemong_page.dart",
-        "lib/features/interactive/presentation/pages/tarot_chat_page.dart",
-        "lib/features/interactive/presentation/pages/worry_bead_page.dart",
-        "lib/features/interactive/presentation/providers/psychology_test_providers.dart",
-        "lib/features/payment/presentation/pages/token_purchase_page.dart",
         "lib/presentation/providers/providers.dart",
-        "lib/presentation/providers/subscription_provider.dart",
         "lib/screens/onboarding/onboarding_page.dart",
-        "lib/screens/subscription/subscription_page.dart",
-        "lib/shared/components/premium_membership_card.dart",
-        "lib/shared/components/token_balance_widget.dart",
-        "lib/shared/components/token_insufficient_modal.dart",
         "test/unit/providers/token_provider_test.dart"
       ],
       "runtime_reachable": true,
@@ -27178,11 +25485,8 @@
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "lib/features/interactive/presentation/pages/face_reading_page.dart",
-        "lib/features/more/presentation/pages/more_page.dart",
-        "lib/presentation/providers/providers.dart",
-        "lib/screens/profile/profile_edit_page.dart",
-        "lib/shared/components/profile_header_icon.dart"
+        "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
+        "lib/presentation/providers/providers.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -27218,59 +25522,67 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
       "path": "lib/presentation/widgets/common/app_header.dart",
-      "referenced_by": [
-        "lib/features/payment/presentation/pages/token_purchase_page.dart"
-      ],
-      "runtime_reachable": true,
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
       "path": "lib/presentation/widgets/common/custom_card.dart",
-      "referenced_by": [
-        "lib/features/payment/presentation/pages/token_purchase_page.dart"
-      ],
-      "runtime_reachable": true,
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
       "path": "lib/presentation/widgets/profile_image_picker.dart",
-      "referenced_by": [
-        "lib/screens/profile/profile_edit_page.dart"
-      ],
-      "runtime_reachable": true,
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
-      "path": "lib/presentation/widgets/social_accounts_section.dart",
-      "referenced_by": [
-        "lib/screens/settings/social_accounts_screen.dart"
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
-      "runtime_reachable": true,
+      "path": "lib/presentation/widgets/social_accounts_section.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -27281,8 +25593,6 @@
       "path": "lib/presentation/widgets/social_login_bottom_sheet.dart",
       "referenced_by": [
         "lib/screens/onboarding/steps/name_input_step.dart",
-        "lib/screens/profile/profile_screen.dart",
-        "lib/shared/components/token_insufficient_modal.dart",
         "test/widget/auth/social_login_bottom_sheet_test.dart"
       ],
       "runtime_reachable": true,
@@ -27360,54 +25670,6 @@
       "dirty": false,
       "kind": "dart",
       "notes": [],
-      "path": "lib/routes/routes/interactive_routes.dart",
-      "referenced_by": [
-        "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
-        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/routes/routes/trend_routes.dart",
-      "referenced_by": [
-        "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
-        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/routes/routes/wellness_routes.dart",
-      "referenced_by": [
-        "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
-        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
       "path": "lib/screens/auth/callback_page.dart",
       "referenced_by": [
         "lib/routes/routes/auth_routes.dart"
@@ -27424,7 +25686,6 @@
       "notes": [],
       "path": "lib/screens/auth/signup_screen.dart",
       "referenced_by": [
-        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/routes/routes/auth_routes.dart"
       ],
       "runtime_reachable": true,
@@ -27476,45 +25737,51 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase3_feature_cleanup",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
       "path": "lib/screens/onboarding/steps/phone_step.dart",
-      "referenced_by": [
-        "lib/screens/settings/phone_management_screen.dart"
-      ],
-      "runtime_reachable": true,
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase3_feature_cleanup",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
       "path": "lib/screens/onboarding/steps/phone_verification_step.dart",
-      "referenced_by": [
-        "lib/screens/settings/phone_management_screen.dart"
-      ],
-      "runtime_reachable": true,
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase3_feature_cleanup",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
-      "path": "lib/screens/premium/premium_screen.dart",
-      "referenced_by": [
-        "lib/routes/route_config.dart"
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
-      "runtime_reachable": true,
+      "path": "lib/screens/premium/premium_screen.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -27524,189 +25791,7 @@
       "notes": [],
       "path": "lib/screens/profile/account_deletion_page.dart",
       "referenced_by": [
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/screens/profile/elements_detail_page.dart",
-      "referenced_by": [
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/screens/profile/profile_edit_page.dart",
-      "referenced_by": [
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/screens/profile/profile_screen.dart",
-      "referenced_by": [
-        "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/screens/profile/profile_verification_page.dart",
-      "referenced_by": [
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/screens/profile/providers/character_stats_provider.dart",
-      "referenced_by": [
-        "lib/screens/profile/profile_screen.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/screens/profile/saju_detail_page.dart",
-      "referenced_by": [
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/screens/profile/saju_summary_page.dart",
-      "referenced_by": [
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/screens/profile/widgets/add_profile_sheet.dart",
-      "referenced_by": [
-        "lib/screens/profile/widgets/profile_list_sheet.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/screens/profile/widgets/compact/compact_daeun_timeline.dart",
-      "referenced_by": [
-        "lib/screens/profile/saju_summary_page.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/screens/profile/widgets/language_selection_sheet.dart",
-      "referenced_by": [
-        "lib/screens/profile/profile_screen.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/screens/profile/widgets/profile_list_sheet.dart",
-      "referenced_by": [
-        "lib/screens/profile/profile_screen.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/screens/settings/phone_management_screen.dart",
-      "referenced_by": [
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/screens/settings/social_accounts_screen.dart",
-      "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -27722,20 +25807,6 @@
       "path": "lib/screens/splash_screen.dart",
       "referenced_by": [
         "lib/routes/routes/auth_routes.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/screens/subscription/subscription_page.dart",
-      "referenced_by": [
-        "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -27850,34 +25921,36 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase3_feature_cleanup",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
-      "path": "lib/services/health_data_service.dart",
-      "referenced_by": [
-        "lib/features/health/presentation/pages/health_fortune/widgets/health_app_connection_section.dart"
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
-      "runtime_reachable": true,
+      "path": "lib/services/health_data_service.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
       "path": "lib/services/in_app_purchase_service.dart",
       "referenced_by": [
-        "docs/deployment/review/ANDROID_REVIEW_EVIDENCE.md",
-        "lib/features/payment/presentation/pages/token_purchase_page.dart",
-        "lib/presentation/providers/subscription_provider.dart",
-        "lib/screens/subscription/subscription_page.dart"
+        "docs/deployment/review/ANDROID_REVIEW_EVIDENCE.md"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -27958,18 +26031,20 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
       "path": "lib/services/phone_auth_service.dart",
       "referenced_by": [
-        "docs/data/DATABASE_GUIDE.md",
-        "lib/screens/settings/phone_management_screen.dart"
+        "docs/data/DATABASE_GUIDE.md"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -28086,9 +26161,7 @@
         "docs/data/DATABASE_GUIDE.md",
         "lib/presentation/providers/social_auth_provider.dart",
         "lib/presentation/widgets/social_accounts_section.dart",
-        "lib/screens/onboarding/steps/name_input_step.dart",
-        "lib/screens/settings/social_accounts_screen.dart",
-        "lib/shared/components/token_insufficient_modal.dart"
+        "lib/screens/onboarding/steps/name_input_step.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -28136,16 +26209,13 @@
         "lib/features/character/presentation/pages/character_onboarding_page.dart",
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "lib/features/interactive/presentation/pages/dream_interpretation_page.dart",
+        "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
         "lib/presentation/providers/auth_provider.dart",
         "lib/presentation/providers/fortune_gauge_provider.dart",
         "lib/presentation/providers/providers.dart",
         "lib/presentation/providers/user_statistics_provider.dart",
         "lib/screens/auth/callback_page.dart",
         "lib/screens/onboarding/onboarding_page.dart",
-        "lib/screens/profile/elements_detail_page.dart",
-        "lib/screens/profile/profile_screen.dart",
-        "lib/screens/profile/saju_detail_page.dart",
         "lib/screens/splash_screen.dart",
         "lib/services/account_deletion_service.dart",
         "lib/services/social_auth_service.dart",
@@ -28161,13 +26231,14 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/services/supabase_storage_service.dart",
       "referenced_by": [
-        "lib/presentation/widgets/profile_image_picker.dart",
-        "lib/screens/profile/profile_edit_page.dart"
+        "lib/presentation/widgets/profile_image_picker.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -28256,21 +26327,7 @@
       "path": "lib/shared/components/app_header.dart",
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "lib/features/history/presentation/pages/fortune_history_detail_page.dart",
-        "lib/features/history/presentation/pages/fortune_history_page.dart",
-        "lib/features/interactive/presentation/pages/dream_page.dart",
-        "lib/features/interactive/presentation/pages/face_reading_page.dart",
-        "lib/features/interactive/presentation/pages/interactive_list_page.dart",
-        "lib/features/interactive/presentation/pages/psychology_test_page.dart",
-        "lib/features/interactive/presentation/pages/taemong_page.dart",
-        "lib/features/interactive/presentation/pages/tarot_chat_page.dart",
-        "lib/features/interactive/presentation/pages/worry_bead_page.dart",
-        "lib/features/trend/presentation/pages/trend_balance_game_page.dart",
-        "lib/features/trend/presentation/pages/trend_ideal_worldcup_page.dart",
-        "lib/features/trend/presentation/pages/trend_psychology_test_page.dart",
-        "lib/presentation/providers/font_size_provider.dart",
-        "lib/screens/profile/profile_edit_page.dart",
-        "lib/screens/subscription/subscription_page.dart"
+        "lib/presentation/providers/font_size_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -28278,97 +26335,68 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
       "path": "lib/shared/components/korean_date_picker.dart",
       "referenced_by": [
-        "docs/development/UNIFIED_DATE_PICKER_MIGRATION.md",
-        "lib/features/interactive/presentation/pages/psychology_test_page.dart"
+        "docs/development/UNIFIED_DATE_PICKER_MIGRATION.md"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "doc_only"
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
       "path": "lib/shared/components/loading_states.dart",
-      "referenced_by": [
-        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "lib/features/history/presentation/pages/fortune_history_page.dart",
-        "lib/features/interactive/presentation/pages/dream_page.dart",
-        "lib/features/interactive/presentation/pages/psychology_test_page.dart",
-        "lib/features/trend/presentation/pages/trend_balance_game_page.dart",
-        "lib/features/trend/presentation/pages/trend_ideal_worldcup_page.dart",
-        "lib/features/trend/presentation/pages/trend_psychology_test_page.dart"
-      ],
-      "runtime_reachable": true,
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
-      "path": "lib/shared/components/premium_membership_card.dart",
-      "referenced_by": [
-        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "lib/features/more/presentation/pages/more_page.dart",
-        "lib/screens/profile/profile_screen.dart"
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/shared/components/profile_header_icon.dart",
-      "referenced_by": [
-        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "lib/features/trend/presentation/pages/trend_page.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
       "path": "lib/shared/components/progressive_date_input.dart",
-      "referenced_by": [
-        "lib/screens/profile/profile_edit_page.dart"
-      ],
-      "runtime_reachable": true,
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
-      "path": "lib/shared/components/purchase_loading_overlay.dart",
-      "referenced_by": [
-        "lib/screens/subscription/subscription_page.dart"
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
-      "runtime_reachable": true,
+      "path": "lib/shared/components/purchase_loading_overlay.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -28379,10 +26407,7 @@
       "path": "lib/shared/components/section_header.dart",
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "lib/features/more/presentation/pages/more_page.dart",
-        "lib/screens/profile/account_deletion_page.dart",
-        "lib/screens/profile/profile_screen.dart",
-        "lib/shared/components/premium_membership_card.dart"
+        "lib/screens/profile/account_deletion_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -28390,20 +26415,20 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
       "path": "lib/shared/components/settings_list_tile.dart",
       "referenced_by": [
-        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "lib/features/more/presentation/pages/more_page.dart",
-        "lib/screens/profile/profile_screen.dart",
-        "lib/shared/components/premium_membership_card.dart"
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -28413,52 +26438,8 @@
       "notes": [],
       "path": "lib/shared/components/toast.dart",
       "referenced_by": [
-        "lib/features/exercise/presentation/pages/exercise_fortune_page.dart",
-        "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart",
-        "lib/features/health/presentation/pages/health_fortune/widgets/document_upload_bottom_sheet.dart",
-        "lib/features/interactive/presentation/pages/dream_interpretation_page.dart",
-        "lib/features/interactive/presentation/pages/dream_page.dart",
-        "lib/features/interactive/presentation/pages/psychology_test_page.dart",
-        "lib/features/payment/presentation/pages/token_purchase_page.dart",
-        "lib/features/trend/presentation/pages/trend_balance_game_page.dart",
-        "lib/features/trend/presentation/pages/trend_ideal_worldcup_page.dart",
-        "lib/features/trend/presentation/pages/trend_psychology_test_page.dart",
         "lib/screens/profile/account_deletion_page.dart",
-        "lib/screens/subscription/subscription_page.dart",
         "lib/services/in_app_purchase_service.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/shared/components/token_balance_widget.dart",
-      "referenced_by": [
-        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "lib/shared/components/app_header.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/shared/components/token_insufficient_modal.dart",
-      "referenced_by": [
-        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "lib/features/character/presentation/pages/character_chat_panel.dart",
-        "lib/features/interactive/presentation/pages/face_reading_page.dart",
-        "lib/features/interactive/presentation/pages/taemong_page.dart",
-        "lib/features/interactive/presentation/pages/worry_bead_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -28472,34 +26453,10 @@
       "notes": [],
       "path": "lib/shared/glassmorphism/glass_container.dart",
       "referenced_by": [
-        "lib/features/history/presentation/widgets/statistics_dashboard.dart",
-        "lib/features/history/presentation/widgets/timeline_view.dart",
-        "lib/features/interactive/presentation/pages/dream_page.dart",
-        "lib/features/interactive/presentation/pages/face_reading_page.dart",
-        "lib/features/interactive/presentation/pages/interactive_list_page.dart",
-        "lib/features/interactive/presentation/pages/psychology_test_page.dart",
-        "lib/features/interactive/presentation/pages/taemong_page.dart",
-        "lib/features/interactive/presentation/pages/worry_bead_page.dart",
         "lib/presentation/widgets/social_accounts_section.dart",
         "lib/screens/premium/premium_screen.dart",
         "lib/shared/components/app_header.dart",
-        "lib/shared/components/korean_date_picker.dart",
-        "lib/shared/components/token_balance_widget.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/shared/layouts/main_shell.dart",
-      "referenced_by": [
-        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "lib/routes/route_config.dart"
+        "lib/shared/components/korean_date_picker.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -28529,8 +26486,7 @@
       "path": "lib/utils/date_utils.dart",
       "referenced_by": [
         "lib/presentation/providers/user_profile_notifier.dart",
-        "lib/screens/onboarding/onboarding_page.dart",
-        "lib/screens/profile/profile_edit_page.dart"
+        "lib/screens/onboarding/onboarding_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -28996,11 +26952,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "script_js",
-      "notes": [],
-      "path": "scripts/design/push_figma_catalog_to_figma.js",
-      "referenced_by": [
-        "docs/design/FIGMA_SOURCE_OF_TRUTH.md"
+      "notes": [
+        "no_inbound_refs"
       ],
+      "path": "scripts/design/push_figma_catalog_to_figma.js",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "tooling_only"
@@ -30198,8 +28154,7 @@
       "referenced_by": [
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/features/fortune/presentation/providers/saju_provider.dart",
-        "lib/screens/onboarding/onboarding_page.dart",
-        "lib/screens/profile/saju_detail_page.dart"
+        "lib/screens/onboarding/onboarding_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -30535,8 +28490,7 @@
       "referenced_by": [
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/fortune/fortune_type_registry.dart",
-        "lib/core/services/fortune_generators/exercise_generator.dart",
-        "lib/features/exercise/presentation/pages/exercise_fortune_page.dart"
+        "lib/core/services/fortune_generators/exercise_generator.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -30660,19 +28614,18 @@
     },
     {
       "area": "supabase",
-      "candidate_action": "keep",
+      "candidate_action": "manual_review",
       "dirty": false,
       "kind": "edge_function_source",
       "notes": [
-        "edge_function_ref:fortune-health-document"
+        "edge_function_unreferenced:fortune-health-document",
+        "no_inbound_refs"
       ],
       "path": "supabase/functions/fortune-health-document/index.ts",
-      "referenced_by": [
-        "lib/features/health/data/services/medical_document_service.dart"
-      ],
-      "runtime_reachable": true,
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "supabase",
@@ -32906,20 +30859,6 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "test_dart",
-      "notes": [],
-      "path": "test/mocks/mock_payment_services.dart",
-      "referenced_by": [
-        "test/unit/services/payment/in_app_purchase_service_test.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
       "notes": [
         "no_inbound_refs"
       ],
@@ -33136,20 +31075,6 @@
       "referenced_by": [
         "docs/testing/test-coverage-map.md"
       ],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [
-        "no_inbound_refs"
-      ],
-      "path": "test/unit/services/payment/in_app_purchase_service_test.dart",
-      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": true,
       "usage_status": "test_only"
@@ -33386,175 +31311,7 @@
       "notes": [
         "no_inbound_refs"
       ],
-      "path": "test/widget/interactive/dream_interpretation_test.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [
-        "no_inbound_refs"
-      ],
-      "path": "test/widget/interactive/fortune_cookie_test.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [
-        "no_inbound_refs"
-      ],
-      "path": "test/widget/interactive/psychology_test_test.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [
-        "no_inbound_refs"
-      ],
       "path": "test/widget/onboarding/onboarding_page_test.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [],
-      "path": "test/widget/pages/tarot_page_test.dart",
-      "referenced_by": [
-        "docs/testing/test-coverage-map.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [],
-      "path": "test/widget/premium/premium_screen_test.dart",
-      "referenced_by": [
-        "docs/testing/test-coverage-map.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [],
-      "path": "test/widget/premium/token_purchase_test.dart",
-      "referenced_by": [
-        "docs/testing/test-coverage-map.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [
-        "no_inbound_refs"
-      ],
-      "path": "test/widget/profile/profile_edit_page_test.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [
-        "no_inbound_refs"
-      ],
-      "path": "test/widget/profile/profile_screen_test.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [
-        "no_inbound_refs"
-      ],
-      "path": "test/widget/profile/saju_detail_page_test.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [
-        "no_inbound_refs"
-      ],
-      "path": "test/widget/settings/notification_settings_test.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [
-        "no_inbound_refs"
-      ],
-      "path": "test/widget/settings/settings_screen_test.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [
-        "no_inbound_refs"
-      ],
-      "path": "test/widget/trend/trend_page_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
       "test_only": true,
@@ -33579,25 +31336,27 @@
     "counts_by_area": {
       "assets": 1231,
       "docs": 86,
-      "integration_test": 26,
-      "lib": 499,
+      "integration_test": 8,
+      "lib": 391,
       "scripts": 70,
       "supabase": 204,
-      "test": 52
+      "test": 38
     },
     "counts_by_candidate_action": {
-      "keep": 805,
-      "keep_generated": 38,
-      "manual_review": 977,
-      "phase2_review_candidate": 348
+      "keep": 672,
+      "keep_generated": 28,
+      "manual_review": 979,
+      "phase1_remove_candidate": 19,
+      "phase2_review_candidate": 321,
+      "phase3_feature_cleanup": 9
     },
     "counts_by_usage_status": {
-      "doc_only": 86,
-      "generated_excluded": 38,
-      "runtime_used": 805,
-      "test_only": 78,
+      "doc_only": 91,
+      "generated_excluded": 28,
+      "runtime_used": 672,
+      "test_only": 46,
       "tooling_only": 184,
-      "unreferenced": 977
+      "unreferenced": 1007
     },
     "declared_asset_dirs_without_runtime_refs": [
       "assets/animations",
@@ -33676,6 +31435,7 @@
       "assets/images/fortune/zodiac",
       "assets/images/fortune_cards",
       "assets/images/fortune_entry",
+      "assets/images/health",
       "assets/images/infographic",
       "assets/images/infographic/backgrounds",
       "assets/images/infographic/decorations",
@@ -33749,17 +31509,17 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 475,
-    "lib_dart_total": 496,
-    "lib_dart_zero_incoming": 0,
+    "lib_dart_runtime_reachable": 306,
+    "lib_dart_total": 388,
+    "lib_dart_zero_incoming": 33,
     "missing_function_refs": [
       "--all",
+      "account-deletion",
       "add-tokens",
       "avoid-people",
       "blind-date",
       "calculate-celebrity-saju",
       "daily-calendar",
-      "ex-lover",
       "ex-lover-simple",
       "face-reading",
       "fortune-cookie",
@@ -33768,7 +31528,6 @@
       "fortune-recommendations",
       "fortune-system",
       "fortune-zodiac-scheduler",
-      "game-enhance",
       "generate-celebrity-character",
       "generate-fashion-image",
       "generate-fortune",
@@ -33776,12 +31535,7 @@
       "lucky-exam",
       "lucky-items",
       "lucky-talisman",
-      "match-insight",
-      "medical-document-result",
-      "new-year",
-      "ootd-evaluation",
       "payment-restore-purchases",
-      "pet-compatibility",
       "privacy-policy",
       "soul-transaction",
       "sports-game",
@@ -33795,8 +31549,7 @@
       "token-packages",
       "token-purchase",
       "traditional-saju",
-      "verify-purchase",
-      "yearly-encounter"
+      "verify-purchase"
     ],
     "runtime_function_dirs": [
       "analyze-wish",
@@ -33828,7 +31581,6 @@
       "fortune-family-wealth",
       "fortune-game-enhance",
       "fortune-health",
-      "fortune-health-document",
       "fortune-home-fengshui",
       "fortune-investment",
       "fortune-love",
@@ -33865,8 +31617,10 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2168,
+    "total_files": 2028,
     "undeclared_asset_top_levels": [],
-    "unreferenced_function_dirs": []
+    "unreferenced_function_dirs": [
+      "fortune-health-document"
+    ]
   }
 }
