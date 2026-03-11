@@ -131,7 +131,7 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
           const SizedBox(width: DSSpacing.sm),
           Expanded(
             child: Text(
-              '회원 탈퇴는 되돌릴 수 없습니다.\n탈퇴 전 남은 토큰와 프리미엄 상태를 확인해 주세요.',
+              '회원 탈퇴는 되돌릴 수 없습니다.\n탈퇴 전 계정 삭제 범위와 보관 안내를 확인해 주세요.',
               style: context.bodySmall.copyWith(
                 color: context.colors.textSecondary,
                 height: 1.4,
@@ -228,7 +228,7 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
               _buildConfirmItem(
                 value: _ackSubscription,
                 onChanged: (value) => setState(() => _ackSubscription = value),
-                text: '남은 토큰/프리미엄 혜택은 소멸됩니다.',
+                text: '탈퇴 시 계정에 연결된 이용 권한은 모두 종료됩니다.',
               ),
               const SizedBox(height: DSSpacing.md),
               const SectionHeader(title: '탈퇴 사유 (선택)'),

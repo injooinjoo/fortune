@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/l10n_extension.dart';
+import '../../../../core/design_system/design_system.dart';
 import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
+import '../../../chat/presentation/widgets/profile_bottom_sheet.dart';
 import '../../data/services/character_localizer.dart';
 import '../../domain/models/ai_character.dart';
 import '../../domain/models/character_chat_message.dart';
@@ -132,7 +134,13 @@ class CharacterListPanel extends ConsumerWidget {
           GestureDetector(
             onTap: () {
               HapticUtils.lightImpact();
-              context.push('/profile');
+              showModalBottomSheet<void>(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                barrierColor: DSColors.overlay,
+                builder: (_) => const ProfileBottomSheet(),
+              );
             },
             child: CircleAvatar(
               radius: 16,

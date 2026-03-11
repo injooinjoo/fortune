@@ -4,8 +4,6 @@ import '../utils/logger.dart';
 import '../../services/storage_service.dart';
 import '../models/fortune_result.dart';
 import '../models/cached_fortune_result.dart';
-import '../constants/soul_rates.dart';
-import '../errors/exceptions.dart';
 import '../../data/services/token_api_service.dart';
 import 'fortune_optimization_service.dart';
 import 'generator_factory.dart';
@@ -98,39 +96,15 @@ class UnifiedFortuneService {
       Logger.info('[$fortuneType] 📡 데이터 소스: $dataSource');
 
       // ===== 토큰 검증 (API 호출 전) =====
-      final soulAmount = SoulRates.getSoulAmount(fortuneType);
+      final soulAmount = 0;
       Logger.info(
           '[$fortuneType] 💰 영혼 비용: $soulAmount (${soulAmount < 0 ? "프리미엄" : "무료"})');
 
       // 게스트 사용자는 토큰 검증 건너뜀 (guest_ 접두사로 시작)
       final isGuestUser = userId.startsWith('guest_');
       if (enableTokenValidation && _tokenService != null && !isGuestUser) {
-        try {
-          final balance = await _tokenService.getTokenBalance(userId: userId);
-
-          if (soulAmount < 0) {
-            // 프리미엄 운세 → 토큰 부족 시 예외
-            final requiredTokens = -soulAmount;
-            if (!balance.hasUnlimitedAccess &&
-                balance.remainingTokens < requiredTokens) {
-              Logger.warning(
-                  '[$fortuneType] ❌ 토큰 부족: 필요 $requiredTokens, 보유 ${balance.remainingTokens}');
-              throw InsufficientTokensException.withDetails(
-                required: requiredTokens,
-                available: balance.remainingTokens,
-                fortuneType: fortuneType,
-              );
-            }
-            Logger.info(
-                '[$fortuneType] ✅ 토큰 검증 통과 (보유: ${balance.remainingTokens}, 필요: $requiredTokens)');
-          }
-        } catch (e) {
-          if (e is InsufficientTokensException) {
-            rethrow; // 토큰 부족 예외는 그대로 전파
-          }
-          // 토큰 조회 실패 시 로깅만 하고 계속 진행 (graceful degradation)
-          Logger.warning('[$fortuneType] ⚠️ 토큰 검증 건너뜀: $e');
-        }
+        Logger.info(
+            '[$fortuneType] ⏭️ 토큰 검증 비활성화: surviving chat flow is unlimited');
       }
 
       // ===== 최적화 시스템 사용 (조건 객체가 있고 활성화된 경우) =====
@@ -466,36 +440,7 @@ class UnifiedFortuneService {
     String fortuneType,
     int soulAmount,
   ) async {
-    // 게스트 사용자는 토큰 처리 건너뜀
-    final isGuestUser = userId.startsWith('guest_');
-    if (_tokenService == null || isGuestUser) {
-      Logger.info('[$fortuneType] ⏭️ 토큰 처리 건너뜀 (서비스 없음 또는 게스트)');
-      return;
-    }
-
-    try {
-      if (soulAmount < 0) {
-        // 프리미엄 운세 → 토큰 차감
-        final amount = -soulAmount;
-        await _tokenService.consumeTokens(
-          userId: userId,
-          fortuneType: fortuneType,
-          amount: amount,
-        );
-        Logger.info('[$fortuneType] 💸 토큰 차감 완료: $amount개');
-      } else if (soulAmount > 0) {
-        // 무료 운세 → 영혼 획득
-        await _tokenService.rewardTokensForAdView(
-          userId: userId,
-          fortuneType: fortuneType,
-          rewardAmount: soulAmount,
-        );
-        Logger.info('[$fortuneType] 🎁 영혼 획득 완료: $soulAmount개');
-      }
-    } catch (e) {
-      // 토큰 처리 실패해도 결과는 반환 (graceful degradation)
-      Logger.warning('[$fortuneType] ⚠️ 토큰 처리 실패 (결과는 반환됨): $e');
-    }
+    Logger.info('[$fortuneType] ⏭️ 토큰 처리 비활성화: unlimited access enabled');
   }
 
   /// JSONB 정규화 (키 정렬)

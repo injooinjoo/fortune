@@ -403,7 +403,7 @@ class FCMService {
         break;
       case 'token_alert':
       case 'token_purchase':
-        _navigateTo('/token-purchase');
+        _navigateTo('/chat');
         break;
       case 'winback':
         _navigateTo('/chat');

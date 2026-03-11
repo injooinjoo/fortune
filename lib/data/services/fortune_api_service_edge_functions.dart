@@ -9,7 +9,6 @@ import '../../core/constants/edge_functions_endpoints.dart';
 import '../../domain/entities/fortune.dart';
 import '../models/fortune_response_model.dart';
 import '../../presentation/providers/providers.dart';
-import '../../presentation/providers/subscription_provider.dart';
 import '../../services/weather_service.dart';
 import 'fortune_api_service.dart';
 
@@ -37,6 +36,52 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
 
   FortuneApiServiceWithEdgeFunctions(this._ref)
       : super(_ref.read(apiClientProvider));
+
+  late final Dio _edgeFunctionsDio = _createEdgeFunctionsDio();
+
+  Dio _createEdgeFunctionsDio() {
+    return Dio(
+      BaseOptions(
+        baseUrl: EdgeFunctionsEndpoints.currentBaseUrl,
+        connectTimeout: const Duration(seconds: 30),
+        validateStatus: (status) => status != null && status < 500,
+      ),
+    );
+  }
+
+  Map<String, dynamic> _buildEdgeHeaders() {
+    if (Environment.supabaseAnonKey.isEmpty) {
+      debugPrint('❌ [_buildEdgeHeaders] SUPABASE_ANON_KEY is missing!');
+      throw Exception(
+        'SUPABASE_ANON_KEY is not configured. Please check your environment settings.',
+      );
+    }
+
+    final headers = <String, dynamic>{
+      'Content-Type': 'application/json',
+      'apikey': Environment.supabaseAnonKey,
+    };
+
+    if (!kIsWeb) {
+      headers['x-requested-with'] = 'XMLHttpRequest';
+    }
+
+    final session = Supabase.instance.client.auth.currentSession;
+    if (session != null) {
+      headers['Authorization'] = 'Bearer ${session.accessToken}';
+    }
+
+    return headers;
+  }
+
+  Options _buildEdgeRequestOptions({Duration? timeout}) {
+    return Options(
+      headers: _buildEdgeHeaders(),
+      sendTimeout: timeout,
+      receiveTimeout: timeout,
+      validateStatus: (status) => status != null && status < 500,
+    );
+  }
 
   /// 안전한 int 파싱 - int, num, String 모두 처리
   static int? _parseToInt(dynamic value) {
@@ -208,7 +253,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         },
         if (sajuData != null) 'sajuData': sajuData,
         if (userLocation != null) 'location': userLocation,
-        'isSubscriber': _ref.read(isSubscriptionActiveProvider),
+        'isSubscriber': true,
       };
 
       // 📤 API 요청 요약 (개인정보 제외)
@@ -220,27 +265,6 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
       debugPrint('URL: ${EdgeFunctionsEndpoints.currentBaseUrl}');
       // Debug info
       // Debug info
-
-      // Validate Supabase anon key
-      if (Environment.supabaseAnonKey.isEmpty) {
-        debugPrint(
-            '❌ [_getFortuneFromEdgeFunction] SUPABASE_ANON_KEY is missing!');
-        debugPrint(
-            '❌ Please check your .env file and ensure SUPABASE_ANON_KEY is set');
-        throw Exception(
-            'SUPABASE_ANON_KEY is not configured. Please check your environment settings.');
-      }
-
-      // Configure headers based on platform
-      final headers = <String, dynamic>{
-        'Content-Type': 'application/json',
-        'apikey': Environment.supabaseAnonKey
-      };
-
-      // Only add XMLHttpRequest header for non-web platforms
-      if (!kIsWeb) {
-        headers['x-requested-with'] = 'XMLHttpRequest';
-      }
 
       // 복잡한 운세 타입은 더 긴 타임아웃 필요 (LLM 응답 시간이 길음)
       final isComplexFortune = _complexFortuneTypes.contains(fortuneType);
@@ -256,14 +280,6 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         debugPrint(
             '⏱️ [_getFortuneFromEdgeFunction] Using extended timeout: ${timeout.inSeconds}s');
       }
-
-      final edgeFunctionsDio = Dio(BaseOptions(
-          baseUrl: EdgeFunctionsEndpoints.currentBaseUrl,
-          headers: headers,
-          connectTimeout: timeout,
-          receiveTimeout: timeout,
-          sendTimeout: timeout,
-          validateStatus: (status) => status! < 500));
       // API 키 존재 확인 (보안상 키 값은 로깅하지 않음)
       debugPrint(
           '📡 [API] Supabase key: ${Environment.supabaseAnonKey.isNotEmpty ? '✅' : '❌'}');
@@ -277,12 +293,12 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         throw Exception('No active session. Please login first.');
       }
 
-      final authToken = 'Bearer ${session.accessToken}';
-      edgeFunctionsDio.options.headers['Authorization'] = authToken;
-      // Auth token added to headers
-
       final stopwatch = Stopwatch()..start();
-      final response = await edgeFunctionsDio.post(endpoint, data: requestData);
+      final response = await _edgeFunctionsDio.post(
+        endpoint,
+        data: requestData,
+        options: _buildEdgeRequestOptions(timeout: timeout),
+      );
       stopwatch.stop();
 
       debugPrint(
@@ -1428,29 +1444,10 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Map<String, dynamic>> getTokenBalance({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       try {
-        // Configure headers based on platform
-        final headers = <String, dynamic>{
-          'Content-Type': 'application/json',
-          'apikey': Environment.supabaseAnonKey
-        };
-
-        // Only add XMLHttpRequest header for non-web platforms
-        if (!kIsWeb) {
-          headers['x-requested-with'] = 'XMLHttpRequest';
-        }
-
-        final edgeFunctionsDio = Dio(BaseOptions(
-            baseUrl: EdgeFunctionsEndpoints.currentBaseUrl, headers: headers));
-
-        // Add auth token from Supabase session
-        final session = Supabase.instance.client.auth.currentSession;
-        if (session != null) {
-          edgeFunctionsDio.options.headers['Authorization'] =
-              'Bearer ${session.accessToken}';
-        }
-
-        final response =
-            await edgeFunctionsDio.get(EdgeFunctionsEndpoints.tokenBalance);
+        final response = await _edgeFunctionsDio.get(
+          EdgeFunctionsEndpoints.tokenBalance,
+          options: _buildEdgeRequestOptions(),
+        );
 
         return response.data;
       } catch (e) {
@@ -1470,30 +1467,11 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
       {required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       try {
-        // Configure headers based on platform
-        final headers = <String, dynamic>{
-          'Content-Type': 'application/json',
-          'apikey': Environment.supabaseAnonKey
-        };
-
-        // Only add XMLHttpRequest header for non-web platforms
-        if (!kIsWeb) {
-          headers['x-requested-with'] = 'XMLHttpRequest';
-        }
-
-        final edgeFunctionsDio = Dio(BaseOptions(
-            baseUrl: EdgeFunctionsEndpoints.currentBaseUrl, headers: headers));
-
-        // Add auth token from Supabase session
-        final session = Supabase.instance.client.auth.currentSession;
-        if (session != null) {
-          edgeFunctionsDio.options.headers['Authorization'] =
-              'Bearer ${session.accessToken}';
-        }
-
-        final response = await edgeFunctionsDio.post(
-            EdgeFunctionsEndpoints.tokenDailyClaim,
-            data: {'userId': userId});
+        final response = await _edgeFunctionsDio.post(
+          EdgeFunctionsEndpoints.tokenDailyClaim,
+          data: {'userId': userId},
+          options: _buildEdgeRequestOptions(),
+        );
 
         return response.data;
       } catch (e) {

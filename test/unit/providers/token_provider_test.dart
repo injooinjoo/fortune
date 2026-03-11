@@ -61,12 +61,10 @@ void main() {
       expect(newState.balance!.totalTokens, 15);
     });
 
-    test('hasUnlimitedTokens가 올바르게 동작해야 함', () {
-      // 프로필 없으면 무제한 토큰 없음
+    test('hasUnlimitedTokens는 contracted runtime에서 항상 true여야 함', () {
       const state1 = TokenState();
-      expect(state1.hasUnlimitedTokens, false);
+      expect(state1.hasUnlimitedTokens, true);
 
-      // 테스트 계정이 아니면 무제한 토큰 없음
       final balance = createBalance(
         remainingTokens: 0,
         usedTokens: 0,
@@ -74,10 +72,10 @@ void main() {
         hasUnlimitedAccess: true,
       );
       final state2 = state1.copyWith(balance: balance);
-      expect(state2.hasUnlimitedTokens, false); // userProfile이 필요함
+      expect(state2.hasUnlimitedTokens, true);
     });
 
-    test('canConsumeTokens가 올바르게 동작해야 함', () {
+    test('canConsumeTokens는 contracted runtime에서 항상 true여야 함', () {
       final balance = createBalance(
         remainingTokens: 5,
         usedTokens: 10,
@@ -89,14 +87,12 @@ void main() {
       expect(state.canConsumeTokens(1), true);
       expect(state.canConsumeTokens(5), true);
 
-      // 토큰 부족
-      expect(state.canConsumeTokens(6), false);
-      expect(state.canConsumeTokens(10), false);
+      // 토큰 부족 여부와 관계없이 무제한 접근
+      expect(state.canConsumeTokens(6), true);
+      expect(state.canConsumeTokens(10), true);
     });
 
     test('무제한 접근 시 항상 canConsumeTokens가 true여야 함', () {
-      // hasUnlimitedTokens는 userProfile이 필요함
-      // userProfile 없이는 hasUnlimitedAccess만으로는 무제한이 아님
       final balance = createBalance(
         remainingTokens: 0,
         usedTokens: 0,
@@ -105,10 +101,8 @@ void main() {
       );
       final state = const TokenState().copyWith(balance: balance);
 
-      // userProfile이 없으므로 hasUnlimitedTokens = false
-      // 따라서 잔액 기준으로 판단 (0개)
-      expect(state.canConsumeTokens(100), false);
-      expect(state.canConsumeTokens(0), true); // 0개는 소비 가능
+      expect(state.canConsumeTokens(100), true);
+      expect(state.canConsumeTokens(0), true);
     });
 
     test('getTokensForFortuneType가 올바르게 동작해야 함', () {
@@ -123,19 +117,17 @@ void main() {
       expect(state.getTokensForFortuneType('unknown'), greaterThan(0));
     });
 
-    test('currentTokens getter가 올바르게 동작해야 함', () {
-      // balance가 null인 경우
+    test('currentTokens getter는 contracted runtime에서 무제한 값을 반환해야 함', () {
       const state1 = TokenState();
-      expect(state1.currentTokens, 0);
+      expect(state1.currentTokens, 999999);
 
-      // balance가 있는 경우
       final balance = createBalance(
         remainingTokens: 25,
         usedTokens: 10,
         totalTokens: 35,
       );
       final state2 = state1.copyWith(balance: balance);
-      expect(state2.currentTokens, 25);
+      expect(state2.currentTokens, 999999);
     });
 
     test('isConsumingToken 상태가 올바르게 변경되어야 함', () {

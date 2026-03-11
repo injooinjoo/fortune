@@ -96,13 +96,12 @@ class AuthHelper {
       this.page.locator('flt-glass-pane').isVisible(),
       this.page.evaluate(() => {
         const pathname = window.location.pathname || '';
-        return pathname === '/chat' || pathname === '/home' || pathname === '/fortune' || pathname === '/history' || pathname === '/more';
+        return pathname === '/chat' || pathname === '/home';
       }),
       this.page.evaluate(() => {
         const text = document.body.innerText || '';
         return !text.includes('시작하기') &&
-               (text.includes('운세') || text.includes('Home') || text.includes('오늘') ||
-                text.includes('프로필') || text.includes('설정'));
+               (text.includes('메시지') || text.includes('Home') || text.includes('채팅'));
       }),
       this.page.evaluate(() => {
         const raw = window.localStorage.getItem('isGuestMode');

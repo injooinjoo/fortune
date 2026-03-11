@@ -6,274 +6,66 @@
 - Figma file key: `dkx3Biwe5xkiMQWsjq95LA`
 - Direct link: [Fortune Screen Catalog - Official](https://www.figma.com/design/dkx3Biwe5xkiMQWsjq95LA)
 
-This file is the only official Figma source of truth for Fortune. Draft captures, exploratory files, and one-off review files are not part of the formal design system unless they are merged into this file.
+This file remains the only official Figma source of truth for Fortune.
 
-Supporting governance docs:
+## Runtime Scope
 
-- [FIGMA_LAYER_NAMING_STANDARD.md](./FIGMA_LAYER_NAMING_STANDARD.md)
-- [FIGMA_LAYER_RENAME_MATRIX.md](./FIGMA_LAYER_RENAME_MATRIX.md)
-- [FIGMA_APPEND_RENAME_RUNBOOK.md](./FIGMA_APPEND_RENAME_RUNBOOK.md)
+The current product scope is intentionally reduced to:
 
-## Standard
+- `10 Entry / Auth / Onboarding`
+- `20 Chat / Character`
+- `80 Admin / Policy / Utility`
 
-- Device: `iPhone 15 Pro`
-- Frame size: `393 x 852`
-- Scale: `@3x`
-- Theme: `light`
-- Locale: `ko-KR`
-- Governance model: `one file only`
+Live runtime routes covered by the official catalog:
 
-Every frame in the official catalog is normalized to this device standard. Desktop-width captures are out of scope for the official catalog.
+- `/splash`
+- `/signup`
+- `/onboarding`
+- `/onboarding/toss-style`
+- `/chat`
+- `/character/:id`
+- `/privacy-policy`
+- `/terms-of-service`
+- `/account-deletion`
+- `/manseryeok`
 
-## File Structure
+## Official File Structure
 
 - `00 Cover & Governance`
 - `10 Entry / Auth / Onboarding`
-- `20 Chat Home / Character`
-- `30 Fortune Hub / Interactive`
-- `40 Trend`
-- `50 Health / Exercise`
-- `60 History / Profile / More`
-- `70 Commerce / Settings / Support`
-- `75 Wellness`
+- `20 Chat / Character`
 - `80 Admin / Policy / Utility`
 - `90 Components`
 - `99 Archive`
 
-Published screen ids remain fixed as `flow__screen__state`.
+The following legacy product groups are no longer valid source-of-truth sections and should be removed manually from the official file:
 
-Internal Figma layer names are governed separately by [FIGMA_LAYER_NAMING_STANDARD.md](./FIGMA_LAYER_NAMING_STANDARD.md).
+- `35:2` `30 Fortune Hub / Interactive`
+- `36:2` `40 Trend`
+- `37:2` `50 Health / Exercise`
+- `38:2` `60 History / Profile / More`
+- `39:2` `70 Commerce / Settings / Support`
+- `40:2` `75 Wellness`
 
-Examples:
+## Capture Sources
 
-- `chat__home__returning`
-- `interactive_dream__result__seeded`
-- `trend_balance__result__summary`
-
-## Layer Contract
-
-Top-level section roots must use canonical machine-readable layer names:
-
-- `section__00__cover_governance`
-- `section__10__entry_auth_onboarding`
-- `section__20__chat_character`
-- `section__30__fortune_interactive`
-- `section__40__trend`
-- `section__50__health_exercise`
-- `section__60__history_profile_more`
-- `section__70__commerce_settings_support`
-- `section__75__wellness`
-- `section__80__admin_policy_utility`
-- `section__90__components`
-- `section__99__archive`
-
-Shared structural roles are restricted to:
-
-- `content`
-- `header`
-- `overview`
-- `screen_grid`
-- `component_grid`
-- `archive_grid`
-- `nav_links`
-- `device_frame`
-
-Screen cards and metadata must use the canonical contract:
-
-- `screen_card__{screen_key}`
-- `preview__{screen_key}`
-- `badge__live_capture` / `badge__placeholder_spec`
-- `meta__route`
-- `meta__source`
-- `meta__note`
-- `meta__blocker`
-
-Use [FIGMA_LAYER_RENAME_MATRIX.md](./FIGMA_LAYER_RENAME_MATRIX.md) as the operational checklist when the official file still contains legacy names such as `Main Content (...)`, `Article`, or `Container`.
-
-## Coverage Snapshot
-
-- Managed surfaces: `62`
-- Live captures: `36`
-- Placeholder specs: `26`
-- Component inventory groups: `5`
-
-Live captures are backed by verified local screenshots from the Flutter web build. Placeholder specs remain in the same file when a surface cannot be rendered locally without authenticated data, backend seed data, or `state.extra`.
-
-## Live MCP Audit Status
-
-Audit date: `2026-03-11`
-
-A direct Figma MCP audit against the original catalog root `0:1`, a representative screen-card context check against the signup card `2:41`, and the refreshed appended page range `32:2` through `43:2` confirmed the current live-file state.
-
-Confirmed aligned:
-
-- Published screen ids, route labels, and source file references remain aligned with the router manifest and repo docs.
-- The representative signup card still maps `auth__signup__default` -> `#/signup` -> `lib/screens/auth/signup_screen.dart`.
-- The official file still includes the governed page groups through `75 Wellness`, `90 Components`, and `99 Archive`.
-- A refreshed repo-backed catalog page set was appended into the official file at `32:2` through `43:2`.
-- The refreshed cover page `32:2` now shows the expected `36 live / 26 placeholder` coverage split.
-
-Observed drift still present in the live file:
-
-- The original pre-refresh page set still contains the stale `35 live / 26 placeholder` cover governance card, so old and refreshed catalog pages currently coexist in the same file.
-- The refreshed appended pages also still import generic internal names such as `Main Content`, `Header`, `Section`, `Article`, `Container`, `Text`, `Link`, and `Code` instead of the canonical machine-readable layer contract.
-- Duplicate `Main Content (...)` wrappers are still visible and remain `duplicate_review` cleanup targets across both the legacy and refreshed page sets.
-
-Operational implication:
-
-- The catalog content is now refreshed from the current codebase inside the official file.
-- The official Figma file is still not fully normalized to the canonical internal naming contract.
-- Manual Figma rename cleanup on the refreshed appended page range `32:2` through `43:2`, plus old-page cleanup, are still required before naming sync can be treated as complete.
-
-## Coverage Triage
-
-- `26` placeholder surfaces remain under active governance and are not dead pages.
-- Breakdown:
-  - `11` auth-gated profile/settings routes
-  - `7` runtime result layouts
-  - `6` trend content/result layouts waiting on representative seed data
-  - `2` `state.extra` dependent detail pages
-- Active-route delete candidates: `0`
-- Redirect-only exclusions: `/`, `/home`
-
-The official Figma file therefore covers every active router surface either as a live capture or as an explicitly managed placeholder. Removal candidates are tracked through source inventory, not by silently dropping frames from the design registry.
-
-## Capture Model
-
-### Live Capture
-
-Use live capture when the route can be rendered locally at `iPhone 15 Pro 393x852` with stable test-mode setup.
-
-Current live examples:
-
-- `/chat` first-run onboarding
-- `/chat` returning home
-- `/fortune/interactive/dream` input and seeded result
-- `/wellness`, `/wellness/meditation`
-- `/premium`, `/subscription`, `/token-purchase`
-- `/help`, `/privacy-policy`, `/terms-of-service`
-
-### Placeholder Spec
-
-Use placeholder spec when the route exists but local runtime requirements prevent stable capture.
-
-Current blocker classes:
-
-- Auth-gated profile surfaces
-- `GoRouter state.extra` dependent pages
-- Result pages that require successful runtime generation
-- Trend detail/result pages that require backend `trend_content` seed data
-
-Placeholders stay inside the official file so coverage gaps are explicit and managed, not forgotten.
-
-## Source Pipeline
-
-Official repo sources:
+Canonical repo sources:
 
 - Router: `lib/routes/route_config.dart`
-- Nested routes:
-  - `lib/routes/routes/auth_routes.dart`
-  - `lib/routes/routes/interactive_routes.dart`
-  - `lib/routes/routes/trend_routes.dart`
-  - `lib/routes/routes/wellness_routes.dart`
-  - `lib/routes/character_routes.dart`
+- Auth routes: `lib/routes/routes/auth_routes.dart`
+- Character routes: `lib/routes/character_routes.dart`
 - Capture manifest: `playwright/scripts/figma_capture_manifest.js`
 - Live capture runner: `playwright/scripts/capture_figma_screens.js`
 - Catalog HTML generator: `playwright/scripts/build_figma_catalog.js`
-- Official file append helper: `scripts/design/push_figma_catalog_to_figma.js`
-- Local static server: `playwright/scripts/figma_capture_server.py`
 
-Package scripts:
+## Rules
 
-- `npm run figma:serve-build`
-- `npm run figma:capture`
-- `npm run figma:catalog`
-- `npm run figma:push-catalog -- --initial-capture-id <capture-id>`
-- `npm run figma:guard`
-
-Generated local outputs are intentionally disposable and should not be treated as source-of-truth artifacts:
-
-- `artifacts/figma_capture/`
-- `artifacts/figma_catalog/`
-
-## MCP Operator Workflow
-
-Use the Figma MCP workflow in this order:
-
-1. `get_metadata` to audit structure after rename batches or catalog refreshes.
-2. `get_screenshot` to verify representative screen cards visually.
-3. `get_design_context` only on exact screen-card nodes, never on the catalog root or whole-page wrappers.
-
-The catalog root is for governance and audit. Implementation work must target the exact screen-card node.
-
-## Operating Rules
-
-1. Maintain one official Figma file only.
-2. Cover every router-defined page with at least one frame.
-3. Add an extra frame for every key inline result state that materially changes layout.
-4. Use verified `iPhone 15 Pro` captures for live screens.
-5. Record blocked surfaces as placeholders in the same file until the blocker is removed.
-6. Update the Figma file and design docs in the same task as the route or UI change.
-7. Keep the official file aligned with the canonical layer contract in [FIGMA_LAYER_NAMING_STANDARD.md](./FIGMA_LAYER_NAMING_STANDARD.md).
-8. Do not create separate “final” Figma files for features, audits, or handoff.
-9. Redirect-only routes such as `/` and `/home` are documented as route behavior, not as independent screen surfaces.
-
-## Automation Guard
-
-The repository now enforces a design-sync guard in CI through `npm run figma:guard`.
-
-The guard automatically checks:
-
-- manifest counts vs design docs
-- placeholder triage completeness
-- canonical page/screen/component layer contract completeness
-- route or UI changes without a matching Figma sync record
-- route changes without manifest and registry/source-of-truth updates
-
-Required repo touchpoints by change type:
-
-- Route changes:
-  - `playwright/scripts/figma_capture_manifest.js`
-  - `docs/design/FIGMA_SOURCE_OF_TRUTH.md`
-  - `docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md`
-  - `docs/design/FIGMA_SYNC_CHANGELOG.md`
-- UI-only visual changes:
-  - `docs/design/FIGMA_SYNC_CHANGELOG.md`
-  - plus any manifest/doc updates if screen inventory or counts changed
-
-Because branch protection is configured outside this repository, the remaining manual setup is to mark the CI workflow as a required GitHub status check.
-
-## Code Connect Status
-
-Code Connect is deferred for this catalog. The current Figma seat does not expose Code Connect access, so the file is managed through MCP audit, screenshot verification, and repo-side governance only.
-
-## Update Workflow
-
-1. Confirm the target routes and result states from router and page source.
-2. Build the web app with valid local test configuration.
-3. Serve the built app with `npm run figma:serve-build`.
-4. Capture live screens with `npm run figma:capture`.
-5. Generate catalog HTML with `npm run figma:catalog`.
-6. Start an existing-file capture through Figma MCP for file key `dkx3Biwe5xkiMQWsjq95LA` and keep the returned `captureId`.
-7. Append the catalog pages into the existing official Figma file with `npm run figma:push-catalog -- --initial-capture-id <capture-id>`.
-8. Poll the same `captureId` through Figma MCP until the append run completes and note the appended page range in the audit docs.
-9. Normalize renamed layers against [FIGMA_LAYER_RENAME_MATRIX.md](./FIGMA_LAYER_RENAME_MATRIX.md) and execute the current append cleanup through [FIGMA_APPEND_RENAME_RUNBOOK.md](./FIGMA_APPEND_RENAME_RUNBOOK.md) when the imported structure still exposes legacy names.
-10. Update this document, [FIGMA_SCREEN_COMPONENT_REGISTRY.md](./FIGMA_SCREEN_COMPONENT_REGISTRY.md), and [FIGMA_SYNC_CHANGELOG.md](./FIGMA_SYNC_CHANGELOG.md) in the same change.
-11. Run `npm run figma:guard` before pushing.
-
-## Known Constraints
-
-- `npx serve build/web --single` is not valid for official capture because dotfiles such as `build/web/assets/.env` are rewritten to `index.html`.
-- Flutter web uses hash routing for this app. Official capture URLs must follow the runtime pattern `http://localhost:<port>/?test_mode=true#/route`.
-- Some interactive and result surfaces require seeded local storage or backend payloads. Those states must be documented explicitly instead of being silently skipped.
-
-## Documentation Sync
-
-Any official change must keep these documents aligned:
-
-- [README.md](./README.md)
-- [FIGMA_LAYER_NAMING_STANDARD.md](./FIGMA_LAYER_NAMING_STANDARD.md)
-- [FIGMA_LAYER_RENAME_MATRIX.md](./FIGMA_LAYER_RENAME_MATRIX.md)
-- [FIGMA_SOURCE_OF_TRUTH.md](./FIGMA_SOURCE_OF_TRUTH.md)
-- [FIGMA_SCREEN_COMPONENT_REGISTRY.md](./FIGMA_SCREEN_COMPONENT_REGISTRY.md)
-- [FIGMA_SYNC_CHANGELOG.md](./FIGMA_SYNC_CHANGELOG.md)
+1. Do not reintroduce deleted page groups into the official file.
+2. Any route change must update:
+   - `playwright/scripts/figma_capture_manifest.js`
+   - `docs/design/FIGMA_PAGE_USAGE_AUDIT.md`
+   - `docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md`
+   - `docs/design/FIGMA_SYNC_CHANGELOG.md`
+3. `90 Components` must only reference retained chat/policy/runtime components.
+4. Removed product groups belong in `99 Archive` only if historical reference is still required.
+5. Redirect-only routes such as `/` and `/home` are documented as behavior, not standalone screens.

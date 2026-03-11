@@ -55,8 +55,7 @@ final navigationVisibilityProvider = StateNotifierProvider<
 /// Extension to determine if a route should show navigation bar
 extension RouteNavigationVisibility on String {
   bool get shouldShowNavigationBar {
-    // 4탭 메인 라우트: 홈(Chat) / 운세 / 기록 / 더보기
-    const mainRoutes = ['/chat', '/fortune', '/history', '/more'];
+    const mainRoutes = ['/chat'];
 
     // Check if current route exactly matches or starts with a main route
     for (final mainRoute in mainRoutes) {
@@ -100,8 +99,7 @@ extension RouteNavigationVisibility on String {
 
   /// Check if this is a first-depth route
   bool get isFirstDepthRoute {
-    // Special handling for main routes
-    const mainRoutes = ['/chat', '/fortune', '/history', '/more'];
+    const mainRoutes = ['/chat'];
 
     // Check if this is exactly a main route
     if (mainRoutes.contains(this)) {

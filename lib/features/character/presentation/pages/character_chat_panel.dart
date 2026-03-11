@@ -8,7 +8,6 @@ import '../../../../core/fortune/fortune_type_registry.dart';
 import '../../../../core/extensions/l10n_extension.dart';
 import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../../../core/widgets/unified_voice_text_field.dart';
-import '../../../../shared/components/token_insufficient_modal.dart';
 import '../../domain/models/ai_character.dart';
 import '../../domain/models/character_chat_message.dart';
 import '../../domain/models/character_chat_state.dart';
@@ -188,42 +187,24 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       characterChatProvider(widget.character.id),
       (previous, next) {
         if (next.error != null && next.error != previous?.error) {
-          if (next.error == 'INSUFFICIENT_TOKENS') {
-            // 토큰 부족 모달 표시 (먼저!)
-            TokenInsufficientModal.show(
-              context: context,
-              requiredTokens: 1,
-              fortuneType: 'character-chat',
-            );
-
-            // 딜레이 후 에러 클리어 (다음 에러 감지 가능하도록)
-            Future.delayed(const Duration(milliseconds: 100), () {
-              ref
-                  .read(characterChatProvider(widget.character.id).notifier)
-                  .clearError();
-            });
-          } else {
-            // 일반 에러 - SnackBar로 표시 (먼저!)
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(context.l10n.errorOccurredRetry),
-                backgroundColor: Colors.red[400],
-                behavior: SnackBarBehavior.floating,
-                action: SnackBarAction(
-                  label: context.l10n.confirm,
-                  textColor: Colors.white,
-                  onPressed: () {},
-                ),
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(context.l10n.errorOccurredRetry),
+              backgroundColor: Colors.red[400],
+              behavior: SnackBarBehavior.floating,
+              action: SnackBarAction(
+                label: context.l10n.confirm,
+                textColor: Colors.white,
+                onPressed: () {},
               ),
-            );
+            ),
+          );
 
-            // 딜레이 후 에러 클리어 (다음 에러 감지 가능하도록)
-            Future.delayed(const Duration(milliseconds: 100), () {
-              ref
-                  .read(characterChatProvider(widget.character.id).notifier)
-                  .clearError();
-            });
-          }
+          Future.delayed(const Duration(milliseconds: 100), () {
+            ref
+                .read(characterChatProvider(widget.character.id).notifier)
+                .clearError();
+          });
         }
 
         // 📜 새 메시지 추가 또는 타이핑 시작 시 자동 스크롤 (다른 채팅앱처럼)

@@ -1,12 +1,10 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../domain/entities/token.dart';
+
+import '../../core/constants/soul_rates.dart';
 import '../../data/models/user_profile.dart';
 import '../../data/services/token_api_service.dart';
-import '../../core/errors/exceptions.dart';
-import '../../core/constants/soul_rates.dart';
-import '../../core/utils/logger.dart';
+import '../../domain/entities/token.dart';
 import 'providers.dart';
 
 // Token State (토큰 시스템)
@@ -58,44 +56,32 @@ class TokenState {
     );
   }
 
-  /// 구독 활성화 여부 (구독 = 매월 토큰 자동 충전)
-  bool get hasActiveSubscription => subscription?.isActive == true;
+  bool get hasActiveSubscription => true;
 
-  /// 테스트 계정 무제한 토큰 (개발용)
-  bool get hasUnlimitedTokens {
-    if (userProfile == null) return false;
-    return userProfile!.hasUnlimitedTokens ||
-        (userProfile!.isTestAccount && userProfile!.isPremiumActive);
-  }
+  bool get hasUnlimitedTokens => true;
 
-  /// 토큰 소비 가능 여부 (단순화: 테스트 계정 또는 잔액 체크)
-  bool canConsumeTokens(int amount) {
-    if (hasUnlimitedTokens) return true;
-    return (balance?.remainingTokens ?? 0) >= amount;
-  }
+  bool canConsumeTokens(int amount) => true;
 
-  /// 운세 타입에 필요한 토큰
   int getTokensForFortuneType(String fortuneType) {
     return SoulRates.getTokenCost(fortuneType);
   }
 
-  /// 현재 사용 가능한 토큰
-  int get currentTokens {
-    if (hasUnlimitedTokens) return 999999;
-    return balance?.remainingTokens ?? 0;
-  }
+  int get currentTokens => 999999;
 
-  /// 전체 잔액
-  int get totalBalance => balance?.remainingTokens ?? 0;
+  int get totalBalance => balance?.remainingTokens ?? 999999;
 }
 
-// Token Notifier
 class TokenNotifier extends StateNotifier<TokenState> {
-  final TokenApiService _apiService;
   final Ref ref;
   bool _isAuthSyncInProgress = false;
+  Future<void>? _loadTokenDataFuture;
+  Future<List<TokenTransaction>>? _loadTokenHistoryFuture;
+  String? _lastLoadedUserId;
+  DateTime? _lastLoadedAt;
 
-  TokenNotifier(this._apiService, this.ref) : super(const TokenState()) {
+  static const Duration _tokenRefreshStaleThreshold = Duration(minutes: 5);
+
+  TokenNotifier(TokenApiService _, this.ref) : super(const TokenState()) {
     _setupAuthStateListener();
     _initializeTokenData();
   }
@@ -110,328 +96,291 @@ class TokenNotifier extends StateNotifier<TokenState> {
   }
 
   Future<void> _handleAuthStateChanged(AuthState authState) async {
-    final hasSession = authState.session?.user != null;
+    final user = authState.session?.user;
+    final hasSession = user != null;
 
     if (authState.event == AuthChangeEvent.signedOut || !hasSession) {
+      _loadTokenDataFuture = null;
+      _loadTokenHistoryFuture = null;
+      _lastLoadedUserId = null;
+      _lastLoadedAt = null;
       state = const TokenState();
       return;
     }
 
-    final shouldSyncTokenData = authState.event == AuthChangeEvent.signedIn ||
-        authState.event == AuthChangeEvent.initialSession ||
-        authState.event == AuthChangeEvent.tokenRefreshed;
-
-    if (!shouldSyncTokenData || _isAuthSyncInProgress || state.isLoading) {
+    if (_isAuthSyncInProgress || state.isLoading) {
       return;
     }
 
-    _isAuthSyncInProgress = true;
-    try {
-      ref.invalidate(userProvider);
-      await loadTokenData();
-    } finally {
-      _isAuthSyncInProgress = false;
+    final eventName = authState.event.name;
+    if (authState.event == AuthChangeEvent.signedIn ||
+        authState.event == AuthChangeEvent.initialSession) {
+      await _runAuthSync(
+        () => ensureLoaded(
+          force: _lastLoadedUserId != user.id || state.balance == null,
+          trigger: 'auth.$eventName',
+        ),
+      );
+      return;
+    }
+
+    if (authState.event == AuthChangeEvent.tokenRefreshed &&
+        _shouldReloadForTokenRefresh(user.id)) {
+      await _runAuthSync(
+        () => ensureLoaded(
+          force: state.balance == null || state.userProfile == null,
+          trigger: 'auth.$eventName',
+        ),
+      );
     }
   }
 
   Future<void> _initializeTokenData() async {
     await Future.delayed(Duration.zero);
-
-    for (int i = 0; i < 5; i++) {
-      final user = ref.read(userProvider).value;
-      if (user != null) {
-        Logger.info(
-            '🔄 [TokenNotifier] User ready, loading token data (attempt ${i + 1})');
-        await loadTokenData();
-        return;
-      }
-      await Future.delayed(const Duration(milliseconds: 100));
-    }
-
-    Logger.warning('⚠️ [TokenNotifier] User not available after 5 retries');
-    state = state.copyWith(isLoading: false, error: 'User not authenticated');
+    await ensureLoaded(trigger: 'bootstrap');
   }
 
-  /// 토큰 데이터 로드
-  Future<void> loadTokenData() async {
+  User? _resolveCurrentUser() {
+    return ref.read(userProvider).value ??
+        ref.read(supabaseClientProvider).auth.currentUser;
+  }
+
+  bool _shouldReloadForTokenRefresh(String userId) {
+    return state.balance == null ||
+        state.userProfile == null ||
+        _lastLoadedUserId != userId ||
+        _isTokenStateStale();
+  }
+
+  bool _hasLoadedStateFor(String userId) {
+    return state.balance != null &&
+        state.userProfile != null &&
+        _lastLoadedUserId == userId &&
+        !_isTokenStateStale();
+  }
+
+  bool _isTokenStateStale() {
+    if (_lastLoadedAt == null) return true;
+    return DateTime.now().difference(_lastLoadedAt!) >
+        _tokenRefreshStaleThreshold;
+  }
+
+  Future<void> _runAuthSync(Future<void> Function() action) async {
+    if (_isAuthSyncInProgress) return;
+
+    _isAuthSyncInProgress = true;
+    try {
+      await action();
+    } finally {
+      _isAuthSyncInProgress = false;
+    }
+  }
+
+  Future<void> ensureLoaded({
+    bool force = false,
+    String trigger = 'manual',
+  }) async {
+    final currentUserId = _resolveCurrentUser()?.id ?? 'guest-unlimited';
+
+    if (!force &&
+        _loadTokenDataFuture == null &&
+        _hasLoadedStateFor(currentUserId)) {
+      return;
+    }
+
+    if (_loadTokenDataFuture != null) {
+      return _loadTokenDataFuture!;
+    }
+
+    final future = _performLoadTokenData(
+      trigger: trigger,
+      force: force,
+    );
+    _loadTokenDataFuture = future;
+
+    try {
+      await future;
+    } finally {
+      if (identical(_loadTokenDataFuture, future)) {
+        _loadTokenDataFuture = null;
+      }
+    }
+  }
+
+  Future<void> loadTokenData({
+    bool force = true,
+    String trigger = 'manual',
+  }) async {
+    await ensureLoaded(force: force, trigger: trigger);
+  }
+
+  Future<void> _performLoadTokenData({
+    required String trigger,
+    required bool force,
+  }) async {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      final user = ref.read(userProvider).value;
-      if (user == null) {
-        throw const UnauthorizedException('로그인이 필요합니다');
-      }
-
-      Logger.info('🔍 [TokenNotifier] Loading token data for user: ${user.id}');
-
+      final user = _resolveCurrentUser();
       final userProfile = await ref.read(userProfileProvider.future);
-
-      final results = await Future.wait([
-        _apiService.getTokenBalance(userId: user.id),
-        _apiService.getSubscription(userId: user.id),
-        _apiService.getTokenConsumptionRates(),
-      ]);
-
-      final balance = results[0] as TokenBalance;
-      final subscription = results[1] as UnlimitedSubscription?;
+      final userId = user?.id ?? 'guest-unlimited';
+      final balance = TokenBalance(
+        userId: userId,
+        totalTokens: 999999,
+        usedTokens: 0,
+        remainingTokens: 999999,
+        lastUpdated: DateTime.now(),
+        hasUnlimitedAccess: true,
+      );
+      final subscription = user == null
+          ? null
+          : UnlimitedSubscription(
+              id: 'free-unlimited',
+              userId: user.id,
+              startDate: DateTime.now(),
+              endDate: DateTime.now().add(const Duration(days: 3650)),
+              status: 'active',
+              plan: 'unlimited',
+              price: 0,
+              currency: 'KRW',
+            );
 
       state = state.copyWith(
         balance: balance,
         subscription: subscription,
-        consumptionRates: results[2] as Map<String, int>,
+        consumptionRates: const {},
         userProfile: userProfile,
         isLoading: false,
       );
-
-      Logger.info(
-          '✅ [TokenNotifier] Token data loaded: balance=${balance.remainingTokens}, subscription=${subscription?.isActive}');
-    } catch (e, stackTrace) {
-      Logger.error(
-          '❌ [TokenNotifier] Failed to load token data', e, stackTrace);
+      _lastLoadedUserId = userId;
+      _lastLoadedAt = DateTime.now();
+    } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
-  /// 토큰 소비 (모든 운세)
   Future<bool> consumeTokens({
     required String fortuneType,
     int? amount,
     String? referenceId,
   }) async {
-    // 테스트 계정 확인
-    final userProfile = await ref.read(userProfileProvider.future);
-    if (userProfile != null && userProfile.hasUnlimitedTokens) {
-      return true;
-    }
-
-    // 토큰 비용 계산
     final tokenCost = amount ?? SoulRates.getTokenCost(fortuneType);
-
-    // 토큰 부족 체크
-    if (!state.canConsumeTokens(tokenCost)) {
-      state = state.copyWith(error: 'INSUFFICIENT_TOKENS');
-      return false;
-    }
-
-    state = state.copyWith(isConsumingToken: true, error: null);
-
-    try {
-      final user = ref.read(userProvider).value;
-      if (user == null) {
-        throw const UnauthorizedException('로그인이 필요합니다');
-      }
-
-      // 낙관적 업데이트: 잔액 감소
-      if (state.balance != null) {
-        state = state.copyWith(
-          balance: state.balance!.copyWith(
-            remainingTokens: state.balance!.remainingTokens - tokenCost,
-            usedTokens: state.balance!.usedTokens + tokenCost,
-          ),
+    final currentBalance = state.balance ??
+        TokenBalance(
+          userId: state.userProfile?.userId ?? 'guest-unlimited',
+          totalTokens: 999999,
+          usedTokens: 0,
+          remainingTokens: 999999,
+          lastUpdated: DateTime.now(),
+          hasUnlimitedAccess: true,
         );
-      }
-
-      // API 호출
-      final newBalance = await _apiService.consumeTokens(
-        userId: user.id,
-        fortuneType: fortuneType,
-        amount: tokenCost,
-        referenceId: referenceId,
-      );
-
-      state = state.copyWith(
-        balance: newBalance,
-        isConsumingToken: false,
-      );
-
-      // 통계 추적
-      try {
-        final statisticsService = ref.read(userStatisticsServiceProvider);
-        await statisticsService.updateTokenUsage(user.id, tokenCost, 0);
-      } catch (e) {
-        // 통계 추적 실패는 무시
-      }
-
-      return true;
-    } catch (e) {
-      await loadTokenData(); // 실패 시 롤백
-
-      if (e is InsufficientTokensException) {
-        state = state.copyWith(
-          isConsumingToken: false,
-          error: 'INSUFFICIENT_TOKENS',
-        );
-        return false;
-      }
-
-      state = state.copyWith(
-        isConsumingToken: false,
-        error: e.toString(),
-      );
-      return false;
-    }
+    state = state.copyWith(
+      balance: currentBalance.copyWith(
+        totalTokens: 999999,
+        remainingTokens: 999999,
+        usedTokens: tokenCost > 0
+            ? currentBalance.usedTokens + tokenCost
+            : currentBalance.usedTokens,
+        lastUpdated: DateTime.now(),
+        hasUnlimitedAccess: true,
+      ),
+      isConsumingToken: false,
+      error: null,
+    );
+    return true;
   }
 
-  /// 토큰 확인 및 소비 (호환성)
   Future<bool> checkAndConsumeTokens(int amount, String fortuneType) async {
     return consumeTokens(fortuneType: fortuneType, amount: amount);
   }
 
-  /// 운세 접근 가능 여부 확인
   bool canAccessFortune(String fortuneType) {
     if (state.hasUnlimitedTokens) return true;
     final cost = SoulRates.getTokenCost(fortuneType);
     return state.canConsumeTokens(cost);
   }
 
-  /// 프리미엄 운세인지 확인 (모든 운세가 프리미엄)
   bool isPremiumFortune(String fortuneType) {
-    return true; // 모든 운세가 토큰 소비
+    return true;
   }
 
-  /// 출석체크 토큰 받기
   Future<bool> claimDailyTokens() async {
-    state = state.copyWith(isLoading: true, error: null);
-
-    try {
-      final user = ref.read(userProvider).value;
-      if (user == null) {
-        throw const UnauthorizedException('로그인이 필요합니다');
-      }
-
-      final newBalance = await _apiService.claimDailyTokens(userId: user.id);
-
-      state = state.copyWith(
-        balance: newBalance,
-        isLoading: false,
-      );
-
-      return true;
-    } catch (e) {
-      if (e is AlreadyClaimedException) {
-        state = state.copyWith(isLoading: false, error: 'ALREADY_CLAIMED');
-      } else {
-        state = state.copyWith(isLoading: false, error: e.toString());
-      }
-      return false;
-    }
+    state = state.copyWith(isLoading: false, error: null);
+    return true;
   }
 
-  /// 토큰 패키지 로드
   Future<void> loadTokenPackages() async {
-    try {
-      final packages = await _apiService.getTokenPackages();
-      state = state.copyWith(packages: packages);
-    } catch (e) {
-      state = state.copyWith(error: e.toString());
-    }
+    state = state.copyWith(packages: const [], error: null);
   }
 
-  /// 토큰 거래 내역 로드
-  Future<void> loadTokenHistory({int? limit, int? offset}) async {
+  Future<List<TokenTransaction>> loadTokenHistory({
+    int? limit,
+    int? offset,
+  }) async {
+    if (_loadTokenHistoryFuture != null) {
+      return _loadTokenHistoryFuture!;
+    }
+
+    final future = _performLoadTokenHistory(limit: limit, offset: offset);
+    _loadTokenHistoryFuture = future;
+
     try {
-      final user = ref.read(userProvider).value;
-      if (user == null) {
-        throw const UnauthorizedException('로그인이 필요합니다');
+      return await future;
+    } finally {
+      if (identical(_loadTokenHistoryFuture, future)) {
+        _loadTokenHistoryFuture = null;
       }
-
-      final history = await _apiService.getTokenHistory(
-        userId: user.id,
-        limit: limit,
-        offset: offset,
-      );
-
-      state = state.copyWith(history: history);
-    } catch (e) {
-      state = state.copyWith(error: e.toString());
     }
   }
 
-  /// 토큰 구매
+  Future<List<TokenTransaction>> _performLoadTokenHistory({
+    int? limit,
+    int? offset,
+  }) async {
+    const history = <TokenTransaction>[];
+    state = state.copyWith(history: history, error: null);
+    return history;
+  }
+
   Future<Map<String, dynamic>?> purchaseTokens({
     required String packageId,
     required String paymentMethodId,
   }) async {
-    state = state.copyWith(isLoading: true, error: null);
-
-    try {
-      final result = await _apiService.purchaseTokens(
-        packageId: packageId,
-        paymentMethodId: paymentMethodId,
-      );
-
-      await loadTokenData();
-      return result;
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
-      return null;
-    }
+    state = state.copyWith(isLoading: false, error: null);
+    return {
+      'success': true,
+      'message': 'Token purchases are disabled because access is unlimited.',
+      'packageId': packageId,
+      'paymentMethodId': paymentMethodId,
+    };
   }
 
-  /// 프로필 완성 보너스 청구
   Future<Map<String, dynamic>> claimProfileCompletionBonus() async {
-    state = state.copyWith(isLoading: true, error: null);
-
-    try {
-      final user = ref.read(userProvider).value;
-      if (user == null) {
-        throw const UnauthorizedException('로그인이 필요합니다');
-      }
-
-      final result =
-          await _apiService.claimProfileCompletionBonus(userId: user.id);
-
-      if (result['bonusGranted'] == true && result['balance'] != null) {
-        state = state.copyWith(
-          balance: result['balance'] as TokenBalance,
-          isLoading: false,
-        );
-      } else {
-        state = state.copyWith(isLoading: false);
-      }
-
-      return result;
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
-      return {
-        'success': false,
-        'bonusGranted': false,
-        'message': e.toString(),
-      };
-    }
+    state = state.copyWith(isLoading: false, error: null);
+    return {
+      'success': true,
+      'bonusGranted': false,
+      'bonusAmount': 0,
+      'message': 'Unlimited access enabled',
+    };
   }
 
-  /// 잔액 새로고침
   Future<void> refreshBalance() async {
-    try {
-      final user = ref.read(userProvider).value;
-      if (user == null) return;
-
-      final balance = await _apiService.getTokenBalance(userId: user.id);
-      state = state.copyWith(balance: balance);
-    } catch (e, stackTrace) {
-      debugPrint('Token balance refresh failed: $e');
-      debugPrint('$stackTrace');
-    }
+    await ensureLoaded(force: true, trigger: 'refreshBalance');
   }
 
-  /// 에러 클리어
   void clearError() {
     state = state.copyWith(error: null);
   }
 
-  // ===== 레거시 호환 메서드 (향후 제거 예정) =====
-
-  /// 영혼 획득 - 더 이상 사용하지 않음
   @Deprecated('모든 운세가 토큰 소비형입니다')
   Future<bool> earnSouls({
     required String fortuneType,
     String? referenceId,
   }) async {
-    return true; // 획득형 운세 없음
+    return true;
   }
 
-  /// 광고 보상 - 더 이상 사용하지 않음
   @Deprecated('광고 시스템이 제거되었습니다')
   Future<bool> rewardTokensForAd({
     required String fortuneType,
@@ -440,27 +389,22 @@ class TokenNotifier extends StateNotifier<TokenState> {
     return true;
   }
 
-  /// 영혼 처리 - 모든 운세가 소비형
   Future<bool> processSoulForFortune(String fortuneType) async {
     return consumeTokens(fortuneType: fortuneType);
   }
 }
 
-// Providers
 final tokenProvider = StateNotifierProvider<TokenNotifier, TokenState>((ref) {
   final apiService = ref.watch(tokenApiServiceProvider);
   return TokenNotifier(apiService, ref);
 });
 
-// Alias for compatibility
 final tokenServiceProvider = tokenProvider;
 
-// Convenient providers
 final tokenBalanceProvider = Provider<TokenBalance?>((ref) {
   return ref.watch(tokenProvider).balance;
 });
 
-/// 테스트 계정 무제한 토큰 여부 (개발용)
 final hasUnlimitedTokensProvider = Provider<bool>((ref) {
   return ref.watch(tokenProvider).hasUnlimitedTokens;
 });
@@ -478,19 +422,14 @@ final tokenConsumptionRateProvider =
   return ref.watch(tokenProvider).getTokensForFortuneType(fortuneType);
 });
 
-final tokenHistoryProvider =
-    FutureProvider<List<TokenTransaction>>((ref) async {
-  final tokenNotifier = ref.read(tokenProvider.notifier);
-  await tokenNotifier.loadTokenHistory();
+final tokenHistoryStateProvider = Provider<List<TokenTransaction>>((ref) {
   return ref.watch(tokenProvider).history;
 });
 
-/// 현재 사용 가능한 토큰
 final currentTokensProvider = Provider<int>((ref) {
   return ref.watch(tokenProvider).currentTokens;
 });
 
-/// 구독 활성화 여부 (구독 = 매월 토큰 자동 충전)
 final hasActiveSubscriptionProvider = Provider<bool>((ref) {
   return ref.watch(tokenProvider).hasActiveSubscription;
 });

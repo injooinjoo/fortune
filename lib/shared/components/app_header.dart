@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:fortune/core/design_system/design_system.dart';
 import '../glassmorphism/glass_container.dart';
-import 'token_balance_widget.dart';
 
 enum FontSize { small, medium, large }
 
@@ -159,13 +158,9 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                           if (onClosePressed != null) {
                             onClosePressed!();
                           } else {
-                            GoRouter.of(context).go('/fortune');
+                            GoRouter.of(context).go('/chat');
                           }
                         }),
-                  if (showTokenBalance) ...[
-                    const TokenBalanceWidget(),
-                    const SizedBox(width: DSSpacing.xs)
-                  ],
                   if (showActions && actions != null) ...actions!,
                 ],
               ),

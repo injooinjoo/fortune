@@ -266,44 +266,6 @@ class FortuneTypeNames {
 
   /// Get route for a fortune type
   static String? getRoute(String fortuneType) {
-    // Map fortune types to their routes
-    final routeMap = {
-      'daily': '/daily-calendar',
-      'today': '/daily-calendar',
-      'tomorrow': '/daily-calendar',
-      'daily-calendar': '/daily-calendar',
-      'weekly': '/daily-calendar',
-      'monthly': '/daily-calendar',
-      'new-year': '/new-year',
-      'saju': '/traditional-saju',
-      'tojeong': '/traditional',
-      'palmistry': '/traditional',
-      'physiognomy': '/face-reading',
-      'face-reading': '/face-reading',
-      'mbti': '/mbti',
-      'zodiac': '/daily-calendar',
-      'zodiac-animal': '/daily-calendar',
-      'love': '/love',
-      'marriage': '/compatibility',
-      'compatibility': '/compatibility',
-      'career': '/career',
-      'business': '/career',
-      'wealth': '/investment',
-      'health': '/health-toss',
-      'dream': '/interactive/dream',
-      'tarot': '/tarot',
-      'naming': '/naming',
-      'pet-compatibility': '/pet-compatibility',
-      'ex-lover': '/ex-lover',
-      'blind-date': '/blind-date',
-      'avoid-people': '/avoid-people',
-      'yearly-encounter': '/yearly-encounter',
-      'match-insight': '/match-insight',
-      'game-enhance': '/game-enhance',
-      // baby-nickname은 naming으로 통합됨
-      'ootd-evaluation': '/ootd-evaluation'
-    };
-
-    return routeMap[fortuneType] ?? '/fortune';
+    return '/chat';
   }
 }
