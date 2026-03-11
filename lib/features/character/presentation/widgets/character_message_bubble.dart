@@ -10,6 +10,7 @@ import '../../domain/models/ai_character.dart';
 import '../../domain/models/character_chat_message.dart';
 import '../utils/character_accent_palette.dart';
 import 'affinity_change_indicator.dart';
+import 'embedded_fortune_component.dart';
 
 /// 캐릭터 채팅 메시지 버블 (4종)
 /// - user: 오른쪽 정렬
@@ -175,6 +176,47 @@ class CharacterMessageBubble extends StatelessWidget {
             ChatSajuResultCard(
               sajuData: message.sajuData!,
               margin: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (message.hasEmbeddedWidget &&
+        EmbeddedFortuneComponent.supportsType(message.embeddedWidgetType)) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: showAvatar ? 4 : 2),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (showAvatar) ...[
+              GestureDetector(
+                onTap: () {
+                  HapticUtils.lightImpact();
+                  context.push('/character/${character.id}', extra: character);
+                },
+                child: CircleAvatar(
+                  radius: 16,
+                  backgroundColor: accentPalette.accent,
+                  backgroundImage: character.avatarAsset.isNotEmpty
+                      ? AssetImage(character.avatarAsset)
+                      : null,
+                  child: character.avatarAsset.isEmpty
+                      ? Text(
+                          character.initial,
+                          style: context.labelMedium.copyWith(
+                            color: accentPalette.onAccent,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      : null,
+                ),
+              ),
+              const SizedBox(height: DSSpacing.xs),
+            ],
+            EmbeddedFortuneComponent(
+              embeddedWidgetType: message.embeddedWidgetType!,
+              componentData: message.componentData!,
             ),
           ],
         ),

@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/l10n_extension.dart';
+import '../../../../core/navigation/fortune_chat_route.dart';
+import '../../../../core/utils/logger.dart';
 import '../providers/character_provider.dart';
+import '../../data/fortune_characters.dart';
 import '../../domain/models/ai_character.dart';
 import 'character_list_panel.dart';
 import 'character_chat_panel.dart';
@@ -29,7 +32,9 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
   late AnimationController _chatOverlayController;
   late Animation<Offset> _chatOverlayAnimation;
   final StorageService _storageService = StorageService();
-  String? _pendingCharacterOpenId;
+  FortuneChatLaunchRequest? _pendingLaunchRequest;
+  String? _handledRouteLaunchSignature;
+  String? _failedRouteLaunchSignature;
 
   bool _showChatOverlay = false;
   bool _showOnboarding = false;
@@ -99,41 +104,91 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
         // 캐릭터 모드 해제
         ref.read(chatModeProvider.notifier).state = ChatMode.fortune;
         ref.read(selectedCharacterProvider.notifier).state = null;
+        _pendingLaunchRequest = null;
       }
-      _pendingCharacterOpenId = null;
     });
   }
 
   void _handleOpenCharacterFromRoute() {
-    final uri = GoRouterState.of(context).uri;
-    final shouldOpen = uri.queryParameters['openCharacterChat'] == 'true';
-    final characterId = uri.queryParameters['characterId'];
+    final launchRequest =
+        FortuneChatLaunchRequest.fromUri(GoRouterState.of(context).uri);
 
-    if (!shouldOpen || characterId == null || characterId.isEmpty) {
-      _pendingCharacterOpenId = null;
+    if (!launchRequest.shouldOpenChat) {
+      _pendingLaunchRequest = null;
+      _handledRouteLaunchSignature = null;
+      _failedRouteLaunchSignature = null;
       return;
     }
 
-    if (_pendingCharacterOpenId == characterId && _showChatOverlay) {
+    final character = _resolveLaunchCharacter(launchRequest);
+    if (character == null) {
+      setState(() {
+        _pendingLaunchRequest = null;
+      });
+      _showMissingFortuneChatFallback(launchRequest);
       return;
     }
 
-    final character = ref.read(characterByIdProvider(characterId));
-    if (character == null) return;
+    final resolvedRequest = launchRequest.copyWith(characterId: character.id);
+    if (_handledRouteLaunchSignature == resolvedRequest.launchSignature &&
+        _showChatOverlay) {
+      return;
+    }
 
     ref.read(selectedCharacterProvider.notifier).state = character;
     ref.read(chatModeProvider.notifier).state = ChatMode.character;
-    _pendingCharacterOpenId = characterId;
+    setState(() {
+      _pendingLaunchRequest = resolvedRequest;
+      _handledRouteLaunchSignature = resolvedRequest.launchSignature;
+      _failedRouteLaunchSignature = null;
+    });
 
     if (!_showChatOverlay) {
       _showChatPanel();
     }
   }
 
+  AiCharacter? _resolveLaunchCharacter(FortuneChatLaunchRequest request) {
+    final explicitCharacterId = request.characterId;
+    if (explicitCharacterId != null && explicitCharacterId.isNotEmpty) {
+      final character = ref.read(characterByIdProvider(explicitCharacterId));
+      if (character != null) {
+        return character;
+      }
+    }
+
+    final fortuneType = request.fortuneType;
+    if (fortuneType != null && fortuneType.isNotEmpty) {
+      return findFortuneExpert(fortuneType);
+    }
+
+    return null;
+  }
+
+  void _showMissingFortuneChatFallback(FortuneChatLaunchRequest request) {
+    if (_failedRouteLaunchSignature == request.launchSignature) {
+      return;
+    }
+
+    _failedRouteLaunchSignature = request.launchSignature;
+    Logger.warning('[SwipeHomeShell] Unable to resolve fortune chat launch', {
+      'fortuneType': request.fortuneType,
+      'characterId': request.characterId,
+      'entrySource': request.entrySource,
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('이 운세는 아직 대화 시작 준비 중이에요.'),
+      ),
+    );
+  }
+
   /// 캐릭터 선택 처리
   void _onCharacterSelected(AiCharacter character) {
     ref.read(selectedCharacterProvider.notifier).state = character;
     ref.read(chatModeProvider.notifier).state = ChatMode.character;
+    _pendingLaunchRequest = null;
     // 채팅 오버레이 표시 (오른쪽에서 슬라이드 인)
     _showChatPanel();
   }
@@ -176,6 +231,10 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
               child: CharacterChatPanel(
                 key: ValueKey(character.id),
                 character: character,
+                initialFortuneType: _pendingLaunchRequest?.fortuneType,
+                autoStartFortune:
+                    _pendingLaunchRequest?.autoStartFortune ?? false,
+                entrySource: _pendingLaunchRequest?.entrySource,
                 onBack: _dismissChatPanel,
               ),
             ),

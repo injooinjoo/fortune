@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import '../../core/design_system/design_system.dart';
+import '../../features/character/presentation/utils/fortune_chat_navigation.dart';
 import '../../shared/glassmorphism/glass_container.dart';
 
 class PremiumScreen extends StatelessWidget {
@@ -94,7 +94,11 @@ class PremiumScreen extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                context.push('/traditional-saju');
+                openFortuneChat(
+                  context,
+                  'traditional-saju',
+                  entrySource: 'premium',
+                );
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),

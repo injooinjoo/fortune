@@ -36,6 +36,26 @@ void main() {
       expect(restored.mediaCategory, isNull);
       expect(restored.hasImage, isFalse);
     });
+
+    test('toJson/fromJson keeps embedded widget payload', () {
+      final original = CharacterChatMessage.character(
+        '오늘의 메시지',
+        'fortune_haneul',
+        embeddedWidgetType: 'fortune_cookie',
+        componentData: const {
+          'title': '오늘의 메시지',
+          'message': '행운이 가까이 있어요.',
+          'luckyNumber': '7',
+        },
+      );
+
+      final json = original.toJson();
+      final restored = CharacterChatMessage.fromJson(json);
+
+      expect(restored.embeddedWidgetType, 'fortune_cookie');
+      expect(restored.componentData?['message'], '행운이 가까이 있어요.');
+      expect(restored.hasEmbeddedWidget, isTrue);
+    });
   });
 
   group('CharacterChatMessage UTF-16 sanitization', () {

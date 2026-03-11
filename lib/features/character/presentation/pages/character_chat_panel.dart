@@ -8,6 +8,7 @@ import '../../../../core/fortune/fortune_type_registry.dart';
 import '../../../../core/extensions/l10n_extension.dart';
 import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../../../core/widgets/unified_voice_text_field.dart';
+import '../../data/fortune_characters.dart';
 import '../../domain/models/ai_character.dart';
 import '../../domain/models/character_chat_message.dart';
 import '../../domain/models/character_chat_state.dart';
@@ -38,11 +39,17 @@ import '../../../../presentation/providers/user_profile_notifier.dart';
 class CharacterChatPanel extends ConsumerStatefulWidget {
   final AiCharacter character;
   final VoidCallback? onBack;
+  final String? initialFortuneType;
+  final bool autoStartFortune;
+  final String? entrySource;
 
   const CharacterChatPanel({
     super.key,
     required this.character,
     this.onBack,
+    this.initialFortuneType,
+    this.autoStartFortune = false,
+    this.entrySource,
   });
 
   @override
@@ -60,6 +67,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   /// Notifier 참조 캐시 (dispose 후 ref 사용 불가 문제 해결)
   CharacterChatNotifier? _cachedNotifier;
   bool _didRedirectToProfile = false;
+  String? _consumedAutoStartSignature;
 
   /// 통합 스크롤 서비스 (ChatScrollService 사용)
   late final ChatScrollService _scrollService;
@@ -118,7 +126,22 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       _cachedNotifier?.clearUnreadCount(); // 채팅방 진입 시 읽음 처리
       // 채팅방 진입 시 맨 아래로 스크롤
       _scrollToBottomInstant();
+      await _maybeStartInitialFortuneFlow();
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant CharacterChatPanel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    final previousSignature = _buildAutoStartSignature(oldWidget);
+    final nextSignature = _buildAutoStartSignature(widget);
+    if (previousSignature != nextSignature) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (!mounted) return;
+        await _maybeStartInitialFortuneFlow();
+      });
+    }
   }
 
   @override
@@ -173,6 +196,44 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   /// 채팅방 진입 시 즉시 맨 아래로 스크롤 (애니메이션 없이)
   void _scrollToBottomInstant() {
     _scrollService.scrollToBottomInstant();
+  }
+
+  String? _buildAutoStartSignature(CharacterChatPanel panel) {
+    final fortuneType = panel.initialFortuneType;
+    if (!panel.autoStartFortune || fortuneType == null || fortuneType.isEmpty) {
+      return null;
+    }
+
+    return [
+      panel.character.id,
+      fortuneType,
+      panel.entrySource ?? '-',
+    ].join('|');
+  }
+
+  Future<void> _maybeStartInitialFortuneFlow() async {
+    final signature = _buildAutoStartSignature(widget);
+    final fortuneType = widget.initialFortuneType;
+
+    if (signature == null ||
+        fortuneType == null ||
+        fortuneType.isEmpty ||
+        _consumedAutoStartSignature == signature) {
+      return;
+    }
+
+    final expectedExpert = findFortuneExpert(fortuneType);
+    if (expectedExpert == null || expectedExpert.id != widget.character.id) {
+      return;
+    }
+
+    _consumedAutoStartSignature = signature;
+    await _startFortuneFlow(
+      fortuneType,
+      _getSpecialtyLabel(context, fortuneType),
+      triggerHaptic: false,
+      resetSurvey: true,
+    );
   }
 
   @override
@@ -537,7 +598,24 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   /// 운세 칩 탭 핸들러 - 설문이 있으면 설문 시작, 없으면 바로 요청
   Future<void> _handleFortuneChipTap(
       String fortuneType, String displayName) async {
-    HapticUtils.lightImpact();
+    await _startFortuneFlow(fortuneType, displayName);
+  }
+
+  Future<void> _startFortuneFlow(
+    String fortuneType,
+    String displayName, {
+    bool triggerHaptic = true,
+    bool resetSurvey = false,
+  }) async {
+    if (triggerHaptic) {
+      HapticUtils.lightImpact();
+    }
+
+    if (resetSurvey) {
+      ref
+          .read(characterChatSurveyProvider(widget.character.id).notifier)
+          .cancelSurvey();
+    }
 
     // fortuneType을 FortuneSurveyType으로 매핑
     final surveyType = _mapFortuneTypeToSurveyType(fortuneType);

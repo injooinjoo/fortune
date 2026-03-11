@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/navigation/fortune_chat_route.dart';
 import '../../domain/entities/user_profile.dart';
 import 'providers.dart';
 
@@ -81,7 +82,7 @@ final recommendedFortunesProvider =
           id: 'mbti',
           title: 'MBTI 주간 운세',
           description: '${userProfile.mbti} 유형에 맞는 조언',
-          route: '/mbti',
+          route: buildFortuneChatRoute('mbti', entrySource: 'recommendation'),
           reason: '${userProfile.mbti} 성격 유형 맞춤',
           relevanceScore: 0.95));
     }
@@ -93,7 +94,10 @@ final recommendedFortunesProvider =
           id: 'zodiac-animal',
           title: '띠 운세',
           description: '${userProfile.zodiacAnimal}띠의 이달 운세',
-          route: '/daily-calendar',
+          route: buildFortuneChatRoute(
+            'daily-calendar',
+            entrySource: 'recommendation',
+          ),
           reason: '${userProfile.zodiacAnimal}띠 맞춤',
           relevanceScore: 0.9));
     }
@@ -104,7 +108,10 @@ final recommendedFortunesProvider =
           id: 'zodiac',
           title: '별자리 월간 운세',
           description: '${userProfile.zodiacSign}의 흐름',
-          route: '/daily-calendar',
+          route: buildFortuneChatRoute(
+            'daily-calendar',
+            entrySource: 'recommendation',
+          ),
           reason: '${userProfile.zodiacSign} 맞춤',
           relevanceScore: 0.85));
     }
@@ -128,11 +135,14 @@ final recommendedFortunesProvider =
   // 연애 관련 방문이 많으면 연애운 추천
   if (visitedCategories.contains('love') &&
       !recommendations.any((r) => r.id == 'chemistry')) {
-    recommendations.add(const RecommendedFortune(
+    recommendations.add(RecommendedFortune(
         id: 'chemistry',
         title: '케미 운세',
         description: '상대방과의 특별한 연결',
-        route: '/compatibility',
+        route: buildFortuneChatRoute(
+          'compatibility',
+          entrySource: 'recommendation',
+        ),
         reason: '연애 운세에 관심',
         relevanceScore: 0.8));
   }
@@ -140,11 +150,11 @@ final recommendedFortunesProvider =
   // 직업 관련 방문이 많으면 직업운 추천
   if (visitedCategories.contains('career') &&
       !recommendations.any((r) => r.id == 'lucky-job')) {
-    recommendations.add(const RecommendedFortune(
+    recommendations.add(RecommendedFortune(
         id: 'lucky-job',
         title: '천직 운세',
         description: '나에게 맞는 직업 찾기',
-        route: '/career',
+        route: buildFortuneChatRoute('career', entrySource: 'recommendation'),
         reason: '직업 운세에 관심',
         relevanceScore: 0.75));
   }
@@ -154,11 +164,11 @@ final recommendedFortunesProvider =
 
   // 새해 시즌 (12월 ~ 1월)
   if (now.month == 12 || now.month == 1) {
-    recommendations.add(const RecommendedFortune(
+    recommendations.add(RecommendedFortune(
         id: 'new-year',
         title: '신년 운세',
         description: '새해의 전체적인 흐름',
-        route: '/yearly',
+        route: buildFortuneChatRoute('new-year', entrySource: 'recommendation'),
         reason: '새해 특별 운세',
         relevanceScore: 0.7));
   }
@@ -166,25 +176,31 @@ final recommendedFortunesProvider =
   // 4. 인기 운세 추가 (추천이 부족한 경우)
   if (recommendations.length < 3) {
     final popularFortunes = [
-      const RecommendedFortune(
+      RecommendedFortune(
           id: 'saju',
           title: '사주팔자',
           description: '정통 사주 풀이',
-          route: '/traditional-saju',
+          route: buildFortuneChatRoute(
+            'traditional-saju',
+            entrySource: 'recommendation',
+          ),
           reason: '인기 운세',
           relevanceScore: 0.6),
-      const RecommendedFortune(
+      RecommendedFortune(
           id: 'love',
           title: '연애운',
           description: '사랑과 인연의 흐름',
-          route: '/love',
+          route: buildFortuneChatRoute('love', entrySource: 'recommendation'),
           reason: '인기 운세',
           relevanceScore: 0.6),
-      const RecommendedFortune(
+      RecommendedFortune(
           id: 'wealth',
           title: '금전운',
           description: '재물과 투자의 운',
-          route: '/investment',
+          route: buildFortuneChatRoute(
+            'wealth',
+            entrySource: 'recommendation',
+          ),
           reason: '인기 운세',
           relevanceScore: 0.6)
     ];

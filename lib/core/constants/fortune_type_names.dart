@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../navigation/fortune_chat_route.dart';
 
 /// Fortune type names mapping
 /// Maps fortune type identifiers to their Korean display names
@@ -266,6 +267,14 @@ class FortuneTypeNames {
 
   /// Get route for a fortune type
   static String? getRoute(String fortuneType) {
-    return '/chat';
+    final normalizedType = normalizeFortuneTypeForChat(fortuneType);
+    if (normalizedType.isEmpty) {
+      return null;
+    }
+
+    return buildFortuneChatRoute(
+      normalizedType,
+      entrySource: 'fortune-type-names',
+    );
   }
 }

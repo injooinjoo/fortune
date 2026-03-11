@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/soul_rates.dart';
+import '../../../../core/navigation/fortune_chat_route.dart';
 import '../../../../core/design_system/tokens/ds_colors.dart';
 
 /// 인사이트 카테고리 엔티티
@@ -161,7 +162,16 @@ class FortuneCategory {
   }
 
   /// 기본 카테고리 목록 (오프라인 fallback용)
-  static List<FortuneCategory> get defaults => _defaultCategories;
+  static List<FortuneCategory> get defaults => _defaultCategories
+      .map(
+        (category) => category.copyWith(
+          route: buildFortuneChatRoute(
+            category.type,
+            entrySource: 'fortune-category',
+          ),
+        ),
+      )
+      .toList(growable: false);
 }
 
 /// 기본 하드코딩된 카테고리 (Remote Config 실패 시 fallback)

@@ -19,6 +19,7 @@ import '../../data/services/character_proactive_media_service.dart';
 import '../../data/services/follow_up_scheduler.dart';
 import '../../data/default_characters.dart';
 import '../../data/fortune_characters.dart';
+import '../../../../core/constants/fortune_type_names.dart';
 import '../../../../core/fortune/fortune_type_registry.dart';
 import '../../../../core/services/chat_sync_service.dart';
 import '../../../../presentation/providers/token_provider.dart';
@@ -1487,56 +1488,40 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     MessageOrigin origin = MessageOrigin.aiReply,
     bool suppressNotification = false,
   }) {
-    final message = CharacterChatMessage.character(
-      text,
-      _characterId,
-      affinityChange: affinityChange,
-      origin: origin,
+    _appendCharacterMessage(
+      CharacterChatMessage.character(
+        text,
+        _characterId,
+        affinityChange: affinityChange,
+        origin: origin,
+      ),
+      suppressNotification: suppressNotification,
+      scheduleReadIdleIcebreaker: scheduleReadIdleIcebreaker,
     );
-    final isCurrentChatActive = _isCurrentChatActive();
-    final nextUnreadCount =
-        isCurrentChatActive ? state.unreadCount : state.unreadCount + 1;
-
-    state = state.copyWith(
-      messages: [...state.messages, message],
-      isTyping: false,
-      isProcessing: false,
-      isCharacterTyping: false, // DM 목록에서 "입력 중..." 해제
-      unreadCount: nextUnreadCount,
-    );
-
-    if (isCurrentChatActive) {
-      _localService.saveLastReadTimestamp(_characterId);
-    }
-
-    if (!suppressNotification) {
-      // 🆕 채팅방에 없으면 푸시 알림 + 진동 (카카오톡 스타일)
-      _triggerNotificationIfNeeded(text);
-
-      // 캐릭터 응답 후 Follow-up 스케줄 시작
-      _startFollowUpSchedule();
-    }
-
-    if (scheduleReadIdleIcebreaker) {
-      _scheduleReadIdleIcebreaker(anchorMessage: message);
-    } else {
-      _cancelReadIdleIcebreaker();
-    }
-
-    // DB 동기화 큐에 추가 (debounced)
-    _queueForSync();
   }
 
   /// 사주 결과 비주얼 카드 메시지 추가 (구조화 데이터 포함)
   void addSajuResultMessage(Map<String, dynamic> sajuData) {
     final formatted = _formatValueForContext(sajuData).trim();
     final fallbackText = formatted.isEmpty ? '사주 분석 결과' : formatted;
-    final message = CharacterChatMessage.character(
-      fallbackText,
-      _characterId,
-      origin: MessageOrigin.aiReply,
-      sajuData: sajuData,
+    _appendCharacterMessage(
+      CharacterChatMessage.character(
+        fallbackText,
+        _characterId,
+        origin: MessageOrigin.aiReply,
+        sajuData: sajuData,
+      ),
+      scheduleReadIdleIcebreaker: false,
+      notificationText: '사주 분석 결과',
     );
+  }
+
+  void _appendCharacterMessage(
+    CharacterChatMessage message, {
+    bool scheduleReadIdleIcebreaker = true,
+    bool suppressNotification = false,
+    String? notificationText,
+  }) {
     final isCurrentChatActive = _isCurrentChatActive();
     final nextUnreadCount =
         isCurrentChatActive ? state.unreadCount : state.unreadCount + 1;
@@ -1553,9 +1538,42 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       _localService.saveLastReadTimestamp(_characterId);
     }
 
-    _triggerNotificationIfNeeded('사주 분석 결과');
-    _startFollowUpSchedule();
+    if (!suppressNotification) {
+      _triggerNotificationIfNeeded(
+        notificationText ??
+            (message.text.isNotEmpty ? message.text : '운세 결과가 도착했어요.'),
+      );
+      _startFollowUpSchedule();
+    }
+
+    if (scheduleReadIdleIcebreaker) {
+      _scheduleReadIdleIcebreaker(anchorMessage: message);
+    } else {
+      _cancelReadIdleIcebreaker();
+    }
+
     _queueForSync();
+  }
+
+  void addEmbeddedFortuneComponent({
+    required String embeddedWidgetType,
+    required Map<String, dynamic> componentData,
+    String? previewText,
+    bool suppressNotification = true,
+    bool scheduleReadIdleIcebreaker = false,
+  }) {
+    _appendCharacterMessage(
+      CharacterChatMessage.character(
+        previewText ?? _stringValue(componentData['title']) ?? '운세 결과',
+        _characterId,
+        origin: MessageOrigin.aiReply,
+        embeddedWidgetType: embeddedWidgetType,
+        componentData: componentData,
+      ),
+      suppressNotification: suppressNotification,
+      scheduleReadIdleIcebreaker: scheduleReadIdleIcebreaker,
+      notificationText: _stringValue(componentData['title']) ?? '운세 결과',
+    );
   }
 
   /// 운세 응답을 멀티 버블로 분할하여 순차 전달
@@ -2494,6 +2512,7 @@ $enrichedContext
       final affinityPoints = response.affinityDelta.points;
 
       _ackPendingUserMessagesBeforeCharacterReply();
+      _addEmbeddedFortuneComponentIfNeeded(fortuneType, fortuneData, const {});
 
       // 6단계: 캐릭터 응답을 멀티 버블로 분할 전달
       // raw response를 먼저 분할 → 각 섹션에 tone 적용
@@ -2711,6 +2730,11 @@ $enrichedContext
       final affinityPoints = response.affinityDelta.points;
 
       _ackPendingUserMessagesBeforeCharacterReply();
+      _addEmbeddedFortuneComponentIfNeeded(
+        fortuneType,
+        fortuneData,
+        surveyAnswers,
+      );
 
       // 6단계: 캐릭터 응답을 멀티 버블로 분할 전달
       // raw response를 먼저 분할 → 각 섹션에 tone 적용
@@ -3220,6 +3244,240 @@ $enrichedContext
     });
 
     return fortune;
+  }
+
+  void _addEmbeddedFortuneComponentIfNeeded(
+    String fortuneType,
+    Fortune? fortune,
+    Map<String, dynamic> surveyAnswers,
+  ) {
+    if (fortune == null || fortuneType == 'traditional-saju') {
+      return;
+    }
+
+    final componentData =
+        _buildEmbeddedComponentData(fortuneType, fortune, surveyAnswers);
+    if (componentData.isEmpty) {
+      return;
+    }
+
+    addEmbeddedFortuneComponent(
+      embeddedWidgetType: _embeddedWidgetTypeFor(fortuneType),
+      componentData: componentData,
+      previewText: _stringValue(componentData['summary']) ??
+          _stringValue(componentData['content']) ??
+          fortune.summary ??
+          fortune.content,
+    );
+  }
+
+  String _embeddedWidgetTypeFor(String fortuneType) {
+    switch (fortuneType) {
+      case 'fortune-cookie':
+        return 'fortune_cookie';
+      case 'tarot':
+        return 'tarot_spread';
+      case 'dream':
+        return 'dream_result';
+      case 'face-reading':
+        return 'face_reading_result';
+      case 'worry-bead':
+        return 'worry_bead_session';
+      case 'dream-journal':
+        return 'dream_journal_entry';
+      default:
+        return 'fortune_result_card';
+    }
+  }
+
+  Map<String, dynamic> _buildEmbeddedComponentData(
+    String fortuneType,
+    Fortune fortune,
+    Map<String, dynamic> surveyAnswers,
+  ) {
+    final rawPayload = _asMapValue(fortune.metadata?['raw_payload']);
+    final summaryPayload = _asMapValue(fortune.metadata?['summary']);
+    final payload = _buildGenericFortunePayload(
+      fortuneType,
+      fortune,
+      rawPayload: rawPayload,
+      summaryPayload: summaryPayload,
+    );
+
+    switch (fortuneType) {
+      case 'fortune-cookie':
+        payload.addAll({
+          'message': fortune.content,
+          'emoji': _stringValue(fortune.luckyItems?['emoji']) ??
+              _stringValue(rawPayload?['emoji']),
+          'luckyNumber': _stringValue(fortune.luckyItems?['lucky_number']) ??
+              _stringValue(rawPayload?['lucky_number']),
+          'luckyColor': _stringValue(fortune.luckyItems?['lucky_color']) ??
+              _stringValue(rawPayload?['lucky_color']),
+          'luckyTime':
+              fortune.specialTip ?? _stringValue(rawPayload?['lucky_time']),
+          'actionMission': fortune.recommendations?.isNotEmpty == true
+              ? fortune.recommendations!.first
+              : _stringValue(rawPayload?['action_mission']),
+        });
+        break;
+      case 'tarot':
+        payload.addAll({
+          'question': _stringValue(rawPayload?['question']),
+          'cards': _mapListValue(rawPayload?['cards']),
+          'positionInterpretations':
+              _asMapValue(rawPayload?['position_interpretations']),
+          'overallInterpretation':
+              _stringValue(rawPayload?['overall_interpretation']) ??
+                  fortune.content,
+        });
+        break;
+      case 'dream':
+        payload.addAll({
+          'dreamContent': _stringValue(surveyAnswers['dreamContent']) ??
+              _stringValue(rawPayload?['dream_content']),
+          'emotion': _stringValue(surveyAnswers['emotion']) ??
+              _stringValue(rawPayload?['dream_emotion']),
+          'dreamType': _stringValue(rawPayload?['dreamCategory']) ??
+              _stringValue(rawPayload?['dream_type']),
+        });
+        break;
+      case 'face-reading':
+        final existingHighlights =
+            (payload['highlights'] as List<String>?) ?? const <String>[];
+        final priorityInsights =
+            _stringListValue(rawPayload?['priority_insights']) ??
+                const <String>[];
+        payload.addAll({
+          'photoPath': _extractSurveyImagePath(surveyAnswers),
+          'highlights': <String>{
+            ...existingHighlights,
+            ...priorityInsights,
+          }.take(4).toList(growable: false),
+        });
+        break;
+    }
+
+    return payload;
+  }
+
+  Map<String, dynamic> _buildGenericFortunePayload(
+    String fortuneType,
+    Fortune fortune, {
+    Map<String, dynamic>? rawPayload,
+    Map<String, dynamic>? summaryPayload,
+  }) {
+    final luckyItems = Map<String, dynamic>.from(
+      fortune.luckyItems ??
+          _asMapValue(rawPayload?['luckyItems']) ??
+          _asMapValue(rawPayload?['lucky_items']) ??
+          const <String, dynamic>{},
+    );
+    final recommendations = fortune.recommendations?.toList(growable: false) ??
+        _stringListValue(rawPayload?['recommendations']) ??
+        _stringListValue(rawPayload?['advice']);
+    final warnings = fortune.warnings?.toList(growable: false) ??
+        _stringListValue(rawPayload?['warnings']) ??
+        _stringListValue(rawPayload?['cautions']);
+
+    return {
+      'title': FortuneTypeNames.getName(fortuneType),
+      'score': fortune.overallScore,
+      'summary': fortune.summary ??
+          _stringValue(summaryPayload?['summary']) ??
+          _stringValue(summaryPayload?['message']) ??
+          _stringValue(summaryPayload?['main_message']) ??
+          fortune.content,
+      'content': fortune.content,
+      'luckyItems': luckyItems,
+      'recommendations': recommendations,
+      'warnings': warnings,
+      'highlights': _buildEmbeddedHighlights(
+        fortune,
+        rawPayload: rawPayload,
+        summaryPayload: summaryPayload,
+      ),
+    };
+  }
+
+  List<String> _buildEmbeddedHighlights(
+    Fortune fortune, {
+    Map<String, dynamic>? rawPayload,
+    Map<String, dynamic>? summaryPayload,
+  }) {
+    final highlights = <String>{
+      if (fortune.category != null && fortune.category!.isNotEmpty)
+        fortune.category!,
+      if (fortune.period != null && fortune.period!.isNotEmpty) fortune.period!,
+      if (_stringValue(summaryPayload?['spread_name']) != null)
+        _stringValue(summaryPayload?['spread_name'])!,
+      if (_stringValue(rawPayload?['face_type']) != null)
+        _stringValue(rawPayload?['face_type'])!,
+    };
+
+    return highlights.where((item) => item.trim().isNotEmpty).take(4).toList();
+  }
+
+  String? _extractSurveyImagePath(Map<String, dynamic> surveyAnswers) {
+    final photo = surveyAnswers['photo'];
+    if (photo is Map<String, dynamic>) {
+      return _stringValue(photo['imagePath']);
+    }
+    if (photo is Map) {
+      return _stringValue(photo['imagePath']);
+    }
+    return _stringValue(surveyAnswers['imagePath']);
+  }
+
+  Map<String, dynamic>? _asMapValue(dynamic value) {
+    if (value is Map<String, dynamic>) {
+      return value;
+    }
+    if (value is Map) {
+      return value.map(
+        (key, mapValue) => MapEntry(key.toString(), mapValue),
+      );
+    }
+    return null;
+  }
+
+  List<Map<String, dynamic>> _mapListValue(dynamic value) {
+    if (value is! List) {
+      return const [];
+    }
+
+    return value
+        .map(_asMapValue)
+        .whereType<Map<String, dynamic>>()
+        .toList(growable: false);
+  }
+
+  List<String>? _stringListValue(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+    if (value is String && value.trim().isNotEmpty) {
+      return <String>[value.trim()];
+    }
+    if (value is! List) {
+      return null;
+    }
+
+    final items = value
+        .map(_stringValue)
+        .whereType<String>()
+        .where((item) => item.isNotEmpty)
+        .toList(growable: false);
+    return items.isEmpty ? null : items;
+  }
+
+  String? _stringValue(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+
+    final stringValue = value.toString().trim();
+    return stringValue.isEmpty ? null : stringValue;
   }
 
   /// 중첩된 Map/List를 읽기 쉬운 텍스트로 변환하는 헬퍼

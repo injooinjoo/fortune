@@ -48,6 +48,8 @@ class CharacterChatMessage {
   final CharacterMediaCategory? mediaCategory; // 이미지 카테고리
   final MessageOrigin origin; // 메시지 출처
   final Map<String, dynamic>? sajuData; // 사주 결과 구조화 데이터
+  final String? embeddedWidgetType; // 인라인 운세 위젯 타입
+  final Map<String, dynamic>? componentData; // 인라인 위젯 payload
 
   CharacterChatMessage({
     String? id,
@@ -64,6 +66,8 @@ class CharacterChatMessage {
     this.mediaCategory,
     this.origin = MessageOrigin.system,
     this.sajuData,
+    this.embeddedWidgetType,
+    this.componentData,
   })  : id = id ?? const Uuid().v4(),
         text = _sanitizeTextValue(text),
         timestamp = timestamp ?? DateTime.now();
@@ -99,6 +103,8 @@ class CharacterChatMessage {
     CharacterMediaCategory? mediaCategory,
     MessageOrigin origin = MessageOrigin.aiReply,
     Map<String, dynamic>? sajuData,
+    String? embeddedWidgetType,
+    Map<String, dynamic>? componentData,
   }) {
     return CharacterChatMessage(
       type: CharacterChatMessageType.character,
@@ -110,6 +116,8 @@ class CharacterChatMessage {
       mediaCategory: mediaCategory,
       origin: origin,
       sajuData: sajuData,
+      embeddedWidgetType: embeddedWidgetType,
+      componentData: componentData,
     );
   }
 
@@ -191,6 +199,13 @@ class CharacterChatMessage {
   /// 사주 결과 데이터 포함 여부
   bool get hasSajuData => sajuData != null && sajuData!.isNotEmpty;
 
+  /// 인라인 운세 위젯 포함 여부
+  bool get hasEmbeddedWidget =>
+      embeddedWidgetType != null &&
+      embeddedWidgetType!.isNotEmpty &&
+      componentData != null &&
+      componentData!.isNotEmpty;
+
   CharacterChatMessage copyWith({
     String? id,
     CharacterChatMessageType? type,
@@ -206,6 +221,8 @@ class CharacterChatMessage {
     CharacterMediaCategory? mediaCategory,
     MessageOrigin? origin,
     Map<String, dynamic>? sajuData,
+    String? embeddedWidgetType,
+    Map<String, dynamic>? componentData,
   }) {
     return CharacterChatMessage(
       id: id ?? this.id,
@@ -222,6 +239,8 @@ class CharacterChatMessage {
       mediaCategory: mediaCategory ?? this.mediaCategory,
       origin: origin ?? this.origin,
       sajuData: sajuData ?? this.sajuData,
+      embeddedWidgetType: embeddedWidgetType ?? this.embeddedWidgetType,
+      componentData: componentData ?? this.componentData,
     );
   }
 
@@ -242,6 +261,8 @@ class CharacterChatMessage {
       if (imageUrl != null) 'imageUrl': imageUrl,
       if (mediaCategory != null) 'mediaCategory': mediaCategory!.name,
       if (sajuData != null) 'sajuData': sajuData,
+      if (embeddedWidgetType != null) 'embeddedWidgetType': embeddedWidgetType,
+      if (componentData != null) 'componentData': componentData,
     };
   }
 
@@ -290,8 +311,22 @@ class CharacterChatMessage {
               orElse: () => CharacterMediaCategory.meal,
             )
           : null,
-      sajuData: json['sajuData'] as Map<String, dynamic>?,
+      sajuData: _castMap(json['sajuData']),
+      embeddedWidgetType: json['embeddedWidgetType'] as String?,
+      componentData: _castMap(json['componentData']),
     );
+  }
+
+  static Map<String, dynamic>? _castMap(dynamic value) {
+    if (value is Map<String, dynamic>) {
+      return value;
+    }
+    if (value is Map) {
+      return value.map(
+        (key, mapValue) => MapEntry(key.toString(), mapValue),
+      );
+    }
+    return null;
   }
 
   static String _sanitizeTextValue(String text) {

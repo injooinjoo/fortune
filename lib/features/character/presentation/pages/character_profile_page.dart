@@ -65,8 +65,22 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
     if (!shouldOpenChat) return;
 
     _didHandleOpenChatRoute = true;
-    final encodedCharacterId = Uri.encodeComponent(_character.id);
-    context.go('/chat?openCharacterChat=true&characterId=$encodedCharacterId');
+    final queryParameters = <String, String>{
+      'openCharacterChat': 'true',
+      'characterId': _character.id,
+      if (uri.queryParameters['fortuneType'] case final fortuneType?
+          when fortuneType.isNotEmpty)
+        'fortuneType': fortuneType,
+      if (uri.queryParameters['autoStartFortune'] case final autoStart?
+          when autoStart.isNotEmpty)
+        'autoStartFortune': autoStart,
+      if (uri.queryParameters['entrySource'] case final entrySource?
+          when entrySource.isNotEmpty)
+        'entrySource': entrySource,
+    };
+    context.go(
+      Uri(path: '/chat', queryParameters: queryParameters).toString(),
+    );
   }
 
   @override
