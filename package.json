@@ -22,6 +22,7 @@
     "figma:serve-build": "python3 playwright/scripts/figma_capture_server.py --root build/web --port 3001",
     "figma:capture": "node playwright/scripts/capture_figma_screens.js",
     "figma:catalog": "node playwright/scripts/build_figma_catalog.js",
+    "figma:push-catalog": "node scripts/design/push_figma_catalog_to_figma.js",
     "figma:guard": "node scripts/design/figma_sync_guard.js"
   },
   "devDependencies": {

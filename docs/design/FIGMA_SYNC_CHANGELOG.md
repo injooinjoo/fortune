@@ -18,6 +18,7 @@ This file is the repository-side proof that a code change was reconciled with th
 
 | Date | Jira | Code Scope | Affected Screens / Components | Figma Action |
 | --- | --- | --- | --- | --- |
+| 2026-03-11 | `KAN-67` | MCP catalog append refresh helper | `00 Cover & Governance` through `99 Archive`, helper operator path | Regenerated catalog HTML, appended refreshed pages into the official file through MCP existing-file capture, corrected the appended cover card to `36 live / 26 placeholder`, and recorded remaining manual rename cleanup |
 | 2026-03-11 | `KAN-67` | Live MCP audit of official catalog parity | Cover governance counts, legacy section/layer names, representative signup screen card | Verified repo parity, recorded stale `35 live / 26 placeholder` cover card, and documented remaining manual Figma rename cleanup |
 | 2026-03-11 | `KAN-65` | Figma layer governance + MCP sync contract | `section__00__cover_governance` through `section__99__archive`, all governed `screen_card__*`, component groups, sync guard | Added canonical layer naming docs, manifest contract fields, catalog export attributes, and guard checks for MCP-managed governance |
 | 2026-03-10 | `KAN-60` | Official catalog formalization | `10 Entry / Auth / Onboarding` through `99 Archive` | Created the single official catalog file and aligned repo docs |

@@ -8,6 +8,7 @@ Audit basis:
 
 - Figma structure from the official catalog screenshot
 - Figma MCP metadata audit on `2026-03-11` via `get_metadata(fileKey="dkx3Biwe5xkiMQWsjq95LA", nodeId="0:1")`
+- Figma MCP metadata audit on `2026-03-11` via refreshed appended page range `get_metadata(..., nodeId="32:2"..."43:2")`
 - Router definitions in `lib/routes/route_config.dart`
 - Nested route groups in:
   - `lib/routes/routes/auth_routes.dart`
@@ -142,3 +143,4 @@ Based on the current repository runtime:
 - The numbered top-level page groups are mostly correct and still useful.
 - The biggest Figma cleanup target is not the numbered buckets.
 - The biggest cleanup target is the duplicated `Main Content (...)` layer/page structure plus any old `/home`-era chat/dashboard frames.
+- The refreshed appended pages fix coverage content, but they still arrive with generic `Main Content` / `Header` / `Article` / `Container` wrappers, so naming cleanup remains a separate manual governance step.

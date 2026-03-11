@@ -102,25 +102,27 @@ Live captures are backed by verified local screenshots from the Flutter web buil
 
 Audit date: `2026-03-11`
 
-A direct Figma MCP audit against catalog root `0:1` plus a representative screen-card context check against the signup card `2:41` confirmed the current live-file state.
+A direct Figma MCP audit against the original catalog root `0:1`, a representative screen-card context check against the signup card `2:41`, and the refreshed appended page range `32:2` through `43:2` confirmed the current live-file state.
 
 Confirmed aligned:
 
 - Published screen ids, route labels, and source file references remain aligned with the router manifest and repo docs.
 - The representative signup card still maps `auth__signup__default` -> `#/signup` -> `lib/screens/auth/signup_screen.dart`.
 - The official file still includes the governed page groups through `75 Wellness`, `90 Components`, and `99 Archive`.
+- A refreshed repo-backed catalog page set was appended into the official file at `32:2` through `43:2`.
+- The refreshed cover page `32:2` now shows the expected `36 live / 26 placeholder` coverage split.
 
 Observed drift still present in the live file:
 
-- The cover governance card still says `35 live / 26 placeholder`, while the manifest, docs, and `npm run figma:guard` require `36 live / 26 placeholder`.
-- Section roots and internals still expose legacy names such as `00 Cover & Governance`, `Main Content (...)`, `Header`, `Article`, `Container`, `Text`, `Link`, and `Code`.
-- Duplicate `Main Content (...)` wrappers are still visible and remain `duplicate_review` cleanup targets.
+- The original pre-refresh page set still contains the stale `35 live / 26 placeholder` cover governance card, so old and refreshed catalog pages currently coexist in the same file.
+- The refreshed appended pages also still import generic internal names such as `Main Content`, `Header`, `Section`, `Article`, `Container`, `Text`, `Link`, and `Code` instead of the canonical machine-readable layer contract.
+- Duplicate `Main Content (...)` wrappers are still visible and remain `duplicate_review` cleanup targets across both the legacy and refreshed page sets.
 
 Operational implication:
 
-- The catalog content is broadly in sync with the current codebase.
-- The official Figma file is not yet fully normalized to the canonical internal naming contract.
-- Manual Figma rename cleanup is still required before naming sync can be treated as complete.
+- The catalog content is now refreshed from the current codebase inside the official file.
+- The official Figma file is still not fully normalized to the canonical internal naming contract.
+- Manual Figma rename cleanup and old-page cleanup are still required before naming sync can be treated as complete.
 
 ## Coverage Triage
 
@@ -177,6 +179,7 @@ Official repo sources:
 - Capture manifest: `playwright/scripts/figma_capture_manifest.js`
 - Live capture runner: `playwright/scripts/capture_figma_screens.js`
 - Catalog HTML generator: `playwright/scripts/build_figma_catalog.js`
+- Official file append helper: `scripts/design/push_figma_catalog_to_figma.js`
 - Local static server: `playwright/scripts/figma_capture_server.py`
 
 Package scripts:
@@ -184,6 +187,7 @@ Package scripts:
 - `npm run figma:serve-build`
 - `npm run figma:capture`
 - `npm run figma:catalog`
+- `npm run figma:push-catalog -- --initial-capture-id <capture-id>`
 - `npm run figma:guard`
 
 Generated local outputs are intentionally disposable and should not be treated as source-of-truth artifacts:
@@ -249,10 +253,12 @@ Code Connect is deferred for this catalog. The current Figma seat does not expos
 3. Serve the built app with `npm run figma:serve-build`.
 4. Capture live screens with `npm run figma:capture`.
 5. Generate catalog HTML with `npm run figma:catalog`.
-6. Append the catalog pages into the existing official Figma file through the Figma MCP capture flow.
-7. Normalize renamed layers against [FIGMA_LAYER_RENAME_MATRIX.md](./FIGMA_LAYER_RENAME_MATRIX.md) when the imported structure still exposes legacy names.
-8. Update this document, [FIGMA_SCREEN_COMPONENT_REGISTRY.md](./FIGMA_SCREEN_COMPONENT_REGISTRY.md), and [FIGMA_SYNC_CHANGELOG.md](./FIGMA_SYNC_CHANGELOG.md) in the same change.
-9. Run `npm run figma:guard` before pushing.
+6. Start an existing-file capture through Figma MCP for file key `dkx3Biwe5xkiMQWsjq95LA` and keep the returned `captureId`.
+7. Append the catalog pages into the existing official Figma file with `npm run figma:push-catalog -- --initial-capture-id <capture-id>`.
+8. Poll the same `captureId` through Figma MCP until the append run completes and note the appended page range in the audit docs.
+9. Normalize renamed layers against [FIGMA_LAYER_RENAME_MATRIX.md](./FIGMA_LAYER_RENAME_MATRIX.md) when the imported structure still exposes legacy names.
+10. Update this document, [FIGMA_SCREEN_COMPONENT_REGISTRY.md](./FIGMA_SCREEN_COMPONENT_REGISTRY.md), and [FIGMA_SYNC_CHANGELOG.md](./FIGMA_SYNC_CHANGELOG.md) in the same change.
+11. Run `npm run figma:guard` before pushing.
 
 ## Known Constraints
 
