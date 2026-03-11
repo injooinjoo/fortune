@@ -15,6 +15,7 @@ Audit basis:
   - `lib/routes/routes/wellness_routes.dart`
   - `lib/routes/character_routes.dart`
 - Current official design docs:
+  - `docs/design/FIGMA_LAYER_NAMING_STANDARD.md`
   - `docs/design/FIGMA_SOURCE_OF_TRUTH.md`
   - `docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md`
 
@@ -46,6 +47,8 @@ This document answers one question only:
 | `90 Components` | `governance_only` | Component inventory, not a runtime page bucket |
 | `99 Archive` | `archive_only` | Explicit historical/retired surface bucket |
 
+Target canonical layer roots for these groups are defined in [FIGMA_LAYER_NAMING_STANDARD.md](./FIGMA_LAYER_NAMING_STANDARD.md).
+
 ## Duplicate Review Groups
 
 The following visible groups are not canonical runtime buckets by themselves and should be reviewed as likely duplicates of the numbered top-level groups:
@@ -62,7 +65,7 @@ The following visible groups are not canonical runtime buckets by themselves and
 
 Recommendation:
 
-1. Treat the numbered groups (`20`, `30`, `40`, etc.) as the canonical page buckets.
+1. Treat the numbered groups (`20`, `30`, `40`, etc.) as the canonical page buckets and normalize their layer names to `section__...`.
 2. Keep `Main Content (...)` wrappers only if they are required for:
    - prototype flows
    - export/layout presentation

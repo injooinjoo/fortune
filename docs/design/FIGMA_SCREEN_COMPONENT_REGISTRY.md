@@ -7,6 +7,8 @@
 - Device standard: `iPhone 15 Pro 393x852 @3x`
 - Capture manifest: `playwright/scripts/figma_capture_manifest.js`
 - Sync changelog: `docs/design/FIGMA_SYNC_CHANGELOG.md`
+- Layer naming standard: `docs/design/FIGMA_LAYER_NAMING_STANDARD.md`
+- Rename matrix: `docs/design/FIGMA_LAYER_RENAME_MATRIX.md`
 - Live capture runner: `playwright/scripts/capture_figma_screens.js`
 - Catalog generator: `playwright/scripts/build_figma_catalog.js`
 
@@ -31,6 +33,51 @@ Additional official pages:
 - `00 Cover & Governance`
 - `90 Components`
 - `99 Archive`
+
+## Layer Contract
+
+Canonical top-level section roots:
+
+- `section__00__cover_governance`
+- `section__10__entry_auth_onboarding`
+- `section__20__chat_character`
+- `section__30__fortune_interactive`
+- `section__40__trend`
+- `section__50__health_exercise`
+- `section__60__history_profile_more`
+- `section__70__commerce_settings_support`
+- `section__75__wellness`
+- `section__80__admin_policy_utility`
+- `section__90__components`
+- `section__99__archive`
+
+Shared structural roles:
+
+- `content`
+- `header`
+- `overview`
+- `screen_grid`
+- `component_grid`
+- `archive_grid`
+- `nav_links`
+- `device_frame`
+
+Screen-card naming contract:
+
+- card root: `screen_card__{screen_key}`
+- preview: `preview__{screen_key}`
+- status badges: `badge__live_capture`, `badge__placeholder_spec`
+- metadata rows: `meta__route`, `meta__source`, `meta__note`, `meta__blocker`
+
+Component group layer names:
+
+- `App Shell and Headers` -> `component_group__app_shell_and_headers`
+- `Cards, Buttons, Inputs` -> `component_group__cards_buttons_inputs`
+- `Settings and Commerce Rows` -> `component_group__settings_and_commerce_rows`
+- `Fortune and Result Blocks` -> `component_group__fortune_and_result_blocks`
+- `Wellness Focus Blocks` -> `component_group__wellness_focus_blocks`
+
+Use [FIGMA_LAYER_RENAME_MATRIX.md](./FIGMA_LAYER_RENAME_MATRIX.md) for the current-to-target rename checklist when the official file still exposes legacy generic names.
 
 ## Screen Catalog
 
@@ -268,6 +315,7 @@ Action:
 2. Add or update the entry in `playwright/scripts/figma_capture_manifest.js`.
 3. Refresh live screenshots and catalog HTML.
 4. Update the official Figma file.
-5. Append an entry to [FIGMA_SYNC_CHANGELOG.md](./FIGMA_SYNC_CHANGELOG.md).
-6. Sync this registry and [FIGMA_SOURCE_OF_TRUTH.md](./FIGMA_SOURCE_OF_TRUTH.md).
-7. Run `npm run figma:guard`.
+5. Normalize the official file against [FIGMA_LAYER_NAMING_STANDARD.md](./FIGMA_LAYER_NAMING_STANDARD.md) and [FIGMA_LAYER_RENAME_MATRIX.md](./FIGMA_LAYER_RENAME_MATRIX.md) when legacy layer names remain.
+6. Append an entry to [FIGMA_SYNC_CHANGELOG.md](./FIGMA_SYNC_CHANGELOG.md).
+7. Sync this registry and [FIGMA_SOURCE_OF_TRUTH.md](./FIGMA_SOURCE_OF_TRUTH.md).
+8. Run `npm run figma:guard`.

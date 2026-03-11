@@ -8,6 +8,11 @@
 
 This file is the only official Figma source of truth for Fortune. Draft captures, exploratory files, and one-off review files are not part of the formal design system unless they are merged into this file.
 
+Supporting governance docs:
+
+- [FIGMA_LAYER_NAMING_STANDARD.md](./FIGMA_LAYER_NAMING_STANDARD.md)
+- [FIGMA_LAYER_RENAME_MATRIX.md](./FIGMA_LAYER_RENAME_MATRIX.md)
+
 ## Standard
 
 - Device: `iPhone 15 Pro`
@@ -34,13 +39,55 @@ Every frame in the official catalog is normalized to this device standard. Deskt
 - `90 Components`
 - `99 Archive`
 
-Frame naming is fixed as `flow__screen__state`.
+Published screen ids remain fixed as `flow__screen__state`.
+
+Internal Figma layer names are governed separately by [FIGMA_LAYER_NAMING_STANDARD.md](./FIGMA_LAYER_NAMING_STANDARD.md).
 
 Examples:
 
 - `chat__home__returning`
 - `interactive_dream__result__seeded`
 - `trend_balance__result__summary`
+
+## Layer Contract
+
+Top-level section roots must use canonical machine-readable layer names:
+
+- `section__00__cover_governance`
+- `section__10__entry_auth_onboarding`
+- `section__20__chat_character`
+- `section__30__fortune_interactive`
+- `section__40__trend`
+- `section__50__health_exercise`
+- `section__60__history_profile_more`
+- `section__70__commerce_settings_support`
+- `section__75__wellness`
+- `section__80__admin_policy_utility`
+- `section__90__components`
+- `section__99__archive`
+
+Shared structural roles are restricted to:
+
+- `content`
+- `header`
+- `overview`
+- `screen_grid`
+- `component_grid`
+- `archive_grid`
+- `nav_links`
+- `device_frame`
+
+Screen cards and metadata must use the canonical contract:
+
+- `screen_card__{screen_key}`
+- `preview__{screen_key}`
+- `badge__live_capture` / `badge__placeholder_spec`
+- `meta__route`
+- `meta__source`
+- `meta__note`
+- `meta__blocker`
+
+Use [FIGMA_LAYER_RENAME_MATRIX.md](./FIGMA_LAYER_RENAME_MATRIX.md) as the operational checklist when the official file still contains legacy names such as `Main Content (...)`, `Article`, or `Container`.
 
 ## Coverage Snapshot
 
@@ -120,6 +167,16 @@ Generated local outputs are intentionally disposable and should not be treated a
 - `artifacts/figma_capture/`
 - `artifacts/figma_catalog/`
 
+## MCP Operator Workflow
+
+Use the Figma MCP workflow in this order:
+
+1. `get_metadata` to audit structure after rename batches or catalog refreshes.
+2. `get_screenshot` to verify representative screen cards visually.
+3. `get_design_context` only on exact screen-card nodes, never on the catalog root or whole-page wrappers.
+
+The catalog root is for governance and audit. Implementation work must target the exact screen-card node.
+
 ## Operating Rules
 
 1. Maintain one official Figma file only.
@@ -128,8 +185,9 @@ Generated local outputs are intentionally disposable and should not be treated a
 4. Use verified `iPhone 15 Pro` captures for live screens.
 5. Record blocked surfaces as placeholders in the same file until the blocker is removed.
 6. Update the Figma file and design docs in the same task as the route or UI change.
-7. Do not create separate “final” Figma files for features, audits, or handoff.
-8. Redirect-only routes such as `/` and `/home` are documented as route behavior, not as independent screen surfaces.
+7. Keep the official file aligned with the canonical layer contract in [FIGMA_LAYER_NAMING_STANDARD.md](./FIGMA_LAYER_NAMING_STANDARD.md).
+8. Do not create separate “final” Figma files for features, audits, or handoff.
+9. Redirect-only routes such as `/` and `/home` are documented as route behavior, not as independent screen surfaces.
 
 ## Automation Guard
 
@@ -139,6 +197,7 @@ The guard automatically checks:
 
 - manifest counts vs design docs
 - placeholder triage completeness
+- canonical page/screen/component layer contract completeness
 - route or UI changes without a matching Figma sync record
 - route changes without manifest and registry/source-of-truth updates
 
@@ -155,6 +214,10 @@ Required repo touchpoints by change type:
 
 Because branch protection is configured outside this repository, the remaining manual setup is to mark the CI workflow as a required GitHub status check.
 
+## Code Connect Status
+
+Code Connect is deferred for this catalog. The current Figma seat does not expose Code Connect access, so the file is managed through MCP audit, screenshot verification, and repo-side governance only.
+
 ## Update Workflow
 
 1. Confirm the target routes and result states from router and page source.
@@ -163,8 +226,9 @@ Because branch protection is configured outside this repository, the remaining m
 4. Capture live screens with `npm run figma:capture`.
 5. Generate catalog HTML with `npm run figma:catalog`.
 6. Append the catalog pages into the existing official Figma file through the Figma MCP capture flow.
-7. Update this document, [FIGMA_SCREEN_COMPONENT_REGISTRY.md](./FIGMA_SCREEN_COMPONENT_REGISTRY.md), and [FIGMA_SYNC_CHANGELOG.md](./FIGMA_SYNC_CHANGELOG.md) in the same change.
-8. Run `npm run figma:guard` before pushing.
+7. Normalize renamed layers against [FIGMA_LAYER_RENAME_MATRIX.md](./FIGMA_LAYER_RENAME_MATRIX.md) when the imported structure still exposes legacy names.
+8. Update this document, [FIGMA_SCREEN_COMPONENT_REGISTRY.md](./FIGMA_SCREEN_COMPONENT_REGISTRY.md), and [FIGMA_SYNC_CHANGELOG.md](./FIGMA_SYNC_CHANGELOG.md) in the same change.
+9. Run `npm run figma:guard` before pushing.
 
 ## Known Constraints
 
@@ -177,6 +241,8 @@ Because branch protection is configured outside this repository, the remaining m
 Any official change must keep these documents aligned:
 
 - [README.md](./README.md)
+- [FIGMA_LAYER_NAMING_STANDARD.md](./FIGMA_LAYER_NAMING_STANDARD.md)
+- [FIGMA_LAYER_RENAME_MATRIX.md](./FIGMA_LAYER_RENAME_MATRIX.md)
 - [FIGMA_SOURCE_OF_TRUTH.md](./FIGMA_SOURCE_OF_TRUTH.md)
 - [FIGMA_SCREEN_COMPONENT_REGISTRY.md](./FIGMA_SCREEN_COMPONENT_REGISTRY.md)
 - [FIGMA_SYNC_CHANGELOG.md](./FIGMA_SYNC_CHANGELOG.md)

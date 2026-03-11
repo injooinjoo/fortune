@@ -27,6 +27,21 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
+function renderLayerAttributes(layerName) {
+  if (!layerName) {
+    return '';
+  }
+
+  const escaped = escapeHtml(layerName);
+  return `data-name="${escaped}" data-layer-name="${escaped}" aria-label="${escaped}"`;
+}
+
+function renderSourceList(sources, layerName = 'meta__source') {
+  return `<div class="source-list" ${renderLayerAttributes(layerName)}>
+      ${sources.map((source) => `<code>${escapeHtml(source)}</code>`).join('')}
+    </div>`;
+}
+
 function copyScreenshots() {
   ensureDir(SCREEN_ASSET_DIR);
 
@@ -43,68 +58,86 @@ function copyScreenshots() {
   return copied;
 }
 
-function renderStatusBadge(status) {
+function renderStatusBadge(status, layerName) {
   const labels = {
     live: 'Live Capture',
     placeholder: 'Placeholder Spec',
   };
-  return `<span class="status status-${status}">${escapeHtml(
+  return `<span class="status status-${status}" ${renderLayerAttributes(
+    layerName
+  )}>${escapeHtml(
     labels[status] || status
   )}</span>`;
 }
 
 function renderScreenCard(screen, imagePath) {
-  const sources = (screen.sources || [])
-    .map((source) => `<code>${escapeHtml(source)}</code>`)
-    .join('');
-  const metadataLines = [
-    screen.routeHash ? `<div><strong>Route</strong> ${escapeHtml(screen.routeHash)}</div>` : '',
-    screen.note ? `<div><strong>Note</strong> ${escapeHtml(screen.note)}</div>` : '',
-    screen.blocker ? `<div><strong>Blocker</strong> ${escapeHtml(screen.blocker)}</div>` : '',
-  ]
-    .filter(Boolean)
-    .join('');
+  const metadataLines = [];
+  if (screen.routeHash) {
+    metadataLines.push(
+      `<div ${renderLayerAttributes(
+        screen.metaLayerNames.route
+      )}><strong>Route</strong> ${escapeHtml(screen.routeHash)}</div>`
+    );
+  }
+  if (screen.note) {
+    metadataLines.push(
+      `<div ${renderLayerAttributes(
+        screen.metaLayerNames.note
+      )}><strong>Note</strong> ${escapeHtml(screen.note)}</div>`
+    );
+  }
+  if (screen.blocker) {
+    metadataLines.push(
+      `<div ${renderLayerAttributes(
+        screen.metaLayerNames.blocker
+      )}><strong>Blocker</strong> ${escapeHtml(screen.blocker)}</div>`
+    );
+  }
 
   const deviceFrame =
     imagePath != null
-      ? `<div class="phone-frame"><img src="${escapeHtml(imagePath)}" alt="${escapeHtml(
+      ? `<div class="phone-frame" ${renderLayerAttributes(
+          screen.previewLayerName
+        )}><img src="${escapeHtml(imagePath)}" alt="${escapeHtml(
           screen.frameName
         )}" /></div>`
-      : `<div class="phone-frame placeholder-frame">
+      : `<div class="phone-frame placeholder-frame" ${renderLayerAttributes(
+          screen.previewLayerName
+        )}>
           <div class="placeholder-title">${escapeHtml(screen.title)}</div>
           <div class="placeholder-body">${escapeHtml(
             screen.blocker || 'No live screenshot generated for this screen yet.'
           )}</div>
         </div>`;
 
-  return `<article class="screen-card">
-    <header class="screen-header">
+  return `<article class="screen-card" ${renderLayerAttributes(
+    screen.cardLayerName
+  )}>
+    <header class="screen-header" ${renderLayerAttributes('header')}>
       <div>
         <div class="eyebrow">${escapeHtml(screen.frameName)}</div>
         <h2>${escapeHtml(screen.title)}</h2>
       </div>
-      ${renderStatusBadge(imagePath ? 'live' : screen.status)}
+      ${renderStatusBadge(imagePath ? 'live' : screen.status, screen.statusBadgeName)}
     </header>
-    ${deviceFrame}
+    <div ${renderLayerAttributes('device_frame')}>${deviceFrame}</div>
     <div class="metadata">
-      ${metadataLines}
-      <div class="source-list">${sources}</div>
+      ${metadataLines.join('')}
+      ${renderSourceList(screen.sources || [], screen.metaLayerNames.source)}
     </div>
   </article>`;
 }
 
 function renderComponentCard(card) {
-  return `<article class="component-card">
+  return `<article class="component-card" ${renderLayerAttributes(
+    card.groupLayerName
+  )}>
     <h2>${escapeHtml(card.title)}</h2>
-    <div class="source-list">
-      ${card.sources
-        .map((source) => `<code>${escapeHtml(source)}</code>`)
-        .join('')}
-    </div>
+    ${renderSourceList(card.sources || [])}
   </article>`;
 }
 
-function renderPageShell(title, description, content) {
+function renderPageShell({ title, description, content, rootLayerName, layoutLayerNames }) {
   return `<!doctype html>
 <html lang="ko">
 <head>
@@ -361,8 +394,9 @@ function renderPageShell(title, description, content) {
   </style>
 </head>
 <body>
-  <main class="page">
-    <header class="page-header">
+  <main class="page" ${renderLayerAttributes(rootLayerName)}>
+    <div ${renderLayerAttributes(layoutLayerNames.content)}>
+    <header class="page-header" ${renderLayerAttributes(layoutLayerNames.header)}>
       <div>
         <h1>${escapeHtml(title)}</h1>
         <p>${escapeHtml(description)}</p>
@@ -372,6 +406,7 @@ function renderPageShell(title, description, content) {
       )}</div>
     </header>
     ${content}
+    </div>
   </main>
 </body>
 </html>`;
@@ -379,58 +414,66 @@ function renderPageShell(title, description, content) {
 
 function renderCoverPage() {
   const counts = getStatusCounts();
-  const pages = FIGMA_PAGES.filter((page) => page.key !== '00-cover-governance')
+  const page = FIGMA_PAGES.find((entry) => entry.key === '00-cover-governance');
+  const pages = FIGMA_PAGES.filter((entry) => entry.key !== '00-cover-governance')
     .map(
-      (page) =>
-        `<a href="${escapeHtml(`${page.key}.html`)}">${escapeHtml(page.name)}</a>`
+      (entry) =>
+        `<a href="${escapeHtml(`${entry.key}.html`)}">${escapeHtml(entry.name)}</a>`
     )
     .join('');
 
-  const content = `<section class="info-grid">
-    <article class="info-card">
+  const content = `<div ${renderLayerAttributes(page.layoutLayerNames.overview)}>
+  <section class="info-grid">
+    <article class="info-card" ${renderLayerAttributes('overview_card__official_file')}>
       <div class="eyebrow">Official File</div>
       <h2>Single Figma Source of Truth</h2>
       <p>Every route-backed screen and each key result state is tracked in one official file only. Live screenshots and placeholder specs are both derived from the same router-backed manifest.</p>
     </article>
-    <article class="info-card">
+    <article class="info-card" ${renderLayerAttributes('overview_card__capture_modes')}>
       <div class="eyebrow">Capture Modes</div>
       <h2>Hybrid Screen Catalog</h2>
       <p><strong>Live Capture</strong> is used where the current app can render deterministically. <strong>Placeholder Spec</strong> is used when runtime auth, backend content, or <code>state.extra</code> data blocks direct capture.</p>
     </article>
-    <article class="info-card">
+    <article class="info-card" ${renderLayerAttributes('overview_card__current_coverage')}>
       <div class="eyebrow">Current Coverage</div>
       <h2>${counts.live || 0} live / ${counts.placeholder || 0} placeholder</h2>
       <p>Live screens were regenerated from the current router manifest. Placeholder screens remain explicitly listed so the Figma file stays complete even when the runtime is blocked.</p>
     </article>
   </section>
   <section class="info-grid" style="margin-top: 20px;">
-    <article class="info-card">
+    <article class="info-card" ${renderLayerAttributes('overview_card__device_standard')}>
       <div class="eyebrow">Device Standard</div>
       <h2>iPhone 15 Pro Only</h2>
       <p>All frames are normalized to <code>393×852</code> at <code>@3x</code>, light theme, Korean locale. No desktop-width captures are treated as official.</p>
     </article>
-    <article class="info-card">
+    <article class="info-card" ${renderLayerAttributes('overview_card__routing_notes')}>
       <div class="eyebrow">Routing Notes</div>
       <h2>Hash Router and Nested Paths</h2>
       <p>Local capture uses hash routes. Interactive flows resolve from <code>#/fortune/interactive/*</code>, not direct <code>#/interactive/*</code> paths, so the catalog stores the working runtime URL for each screen.</p>
     </article>
-    <article class="info-card">
+    <article class="info-card" ${renderLayerAttributes('overview_card__runtime_blockers')}>
       <div class="eyebrow">Runtime Blockers</div>
       <h2>Auth / Backend / Extra State</h2>
       <p>Profile subroutes require authenticated user data. Trend detail routes require seeded backend content. History detail and medical-document result require explicit <code>state.extra</code> payloads.</p>
     </article>
   </section>
-  <section class="info-card" style="margin-top: 20px;">
+  </div>
+  <section class="info-card" style="margin-top: 20px;" ${renderLayerAttributes(
+    page.layoutLayerNames.navLinks
+  )}>
     <div class="eyebrow">Figma Pages</div>
     <h2>Catalog Structure</h2>
     <div class="link-list">${pages}</div>
   </section>`;
 
-  return renderPageShell(
-    '00 Cover & Governance',
-    'Official governance for the Fortune screen catalog, including device standard, capture modes, and current runtime blockers.',
-    content
-  );
+  return renderPageShell({
+    title: '00 Cover & Governance',
+    description:
+      'Official governance for the Fortune screen catalog, including device standard, capture modes, and current runtime blockers.',
+    content,
+    rootLayerName: page.layerName,
+    layoutLayerNames: page.layoutLayerNames,
+  });
 }
 
 function renderScreenPage(page, imageMap) {
@@ -439,30 +482,42 @@ function renderScreenPage(page, imageMap) {
     .map((screen) => renderScreenCard(screen, imageMap.get(screen.id) || null))
     .join('');
 
-  return renderPageShell(
-    page.name,
-    page.description,
-    `<section class="screen-grid">${cards}</section>`
-  );
+  return renderPageShell({
+    title: page.name,
+    description: page.description,
+    content: `<section class="screen-grid" ${renderLayerAttributes(
+      page.layoutLayerNames.grid
+    )}>${cards}</section>`,
+    rootLayerName: page.layerName,
+    layoutLayerNames: page.layoutLayerNames,
+  });
 }
 
 function renderComponentsPage() {
+  const page = FIGMA_PAGES.find((entry) => entry.key === '90-components');
   const cards = COMPONENT_CARDS.map(renderComponentCard).join('');
-  return renderPageShell(
-    '90 Components',
-    'Component family inventory mapped back to Flutter source files that should stay aligned with the official Figma library.',
-    `<section class="screen-grid">${cards}</section>`
-  );
+  return renderPageShell({
+    title: '90 Components',
+    description:
+      'Component family inventory mapped back to Flutter source files that should stay aligned with the official Figma library.',
+    content: `<section class="screen-grid" ${renderLayerAttributes(
+      page.layoutLayerNames.grid
+    )}>${cards}</section>`,
+    rootLayerName: page.layerName,
+    layoutLayerNames: page.layoutLayerNames,
+  });
 }
 
 function renderArchivePage() {
   const cards = [
     {
       title: 'Superseded Summary-only File',
+      groupLayerName: 'archive_card__superseded_summary_only_file',
       sources: ['Previous registry-style official file is superseded by this screen-level catalog.'],
     },
     {
       title: 'Invalid Direct Interactive Paths',
+      groupLayerName: 'archive_card__invalid_direct_interactive_paths',
       sources: [
         'Direct hash paths like #/interactive/dream are archived as invalid in the current runtime.',
         'Official live capture uses #/fortune/interactive/* routes instead.',
@@ -472,11 +527,17 @@ function renderArchivePage() {
     .map(renderComponentCard)
     .join('');
 
-  return renderPageShell(
-    '99 Archive',
-    'Archived patterns and superseded references that should not be treated as the active official workflow.',
-    `<section class="screen-grid">${cards}</section>`
-  );
+  const page = FIGMA_PAGES.find((entry) => entry.key === '99-archive');
+  return renderPageShell({
+    title: '99 Archive',
+    description:
+      'Archived patterns and superseded references that should not be treated as the active official workflow.',
+    content: `<section class="screen-grid" ${renderLayerAttributes(
+      page.layoutLayerNames.grid
+    )}>${cards}</section>`,
+    rootLayerName: page.layerName,
+    layoutLayerNames: page.layoutLayerNames,
+  });
 }
 
 function buildIndexPage() {
@@ -485,11 +546,19 @@ function buildIndexPage() {
       `<a href="${escapeHtml(`${page.key}.html`)}">${escapeHtml(page.name)}</a>`
   ).join('');
 
-  return renderPageShell(
-    'Fortune Figma Catalog',
-    'Local entry point for verifying the generated screen catalog before pushing it into the official Figma file.',
-    `<section class="info-card"><div class="link-list">${links}</div></section>`
-  );
+  return renderPageShell({
+    title: 'Fortune Figma Catalog',
+    description:
+      'Local entry point for verifying the generated screen catalog before pushing it into the official Figma file.',
+    content: `<section class="info-card" ${renderLayerAttributes(
+      'nav_links'
+    )}><div class="link-list">${links}</div></section>`,
+    rootLayerName: 'catalog_index',
+    layoutLayerNames: {
+      content: 'content',
+      header: 'header',
+    },
+  });
 }
 
 function main() {

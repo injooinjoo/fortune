@@ -16,7 +16,10 @@ const manifestModule = require(path.join(
 
 const {
   COMPONENT_CARDS,
+  FIGMA_PAGES,
+  PAGE_LAYER_NAMES,
   SCREENS,
+  SCREEN_META_LAYER_NAMES,
   getPlaceholderTriageCounts,
   getStatusCounts,
 } = manifestModule;
@@ -26,6 +29,8 @@ const sourceDocPath = 'docs/design/FIGMA_SOURCE_OF_TRUTH.md';
 const registryDocPath = 'docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md';
 const readmeDocPath = 'docs/design/README.md';
 const changelogPath = 'docs/design/FIGMA_SYNC_CHANGELOG.md';
+const namingDocPath = 'docs/design/FIGMA_LAYER_NAMING_STANDARD.md';
+const renameMatrixPath = 'docs/design/FIGMA_LAYER_RENAME_MATRIX.md';
 
 const knownTriage = new Set([
   'capture_next_auth',
@@ -149,6 +154,8 @@ function extractDocsCounts() {
   const sourceDoc = readText(sourceDocPath);
   const readmeDoc = readText(readmeDocPath);
   const registryDoc = readText(registryDocPath);
+  const namingDoc = readText(namingDocPath);
+  const renameMatrixDoc = readText(renameMatrixPath);
 
   const sourceCounts = {
     total: Number(sourceDoc.match(/Managed surfaces: `(\d+)`/)?.[1] || NaN),
@@ -177,6 +184,25 @@ function extractDocsCounts() {
     sourceCounts,
     readmeCounts,
     registryTriageCounts,
+    namingContract: {
+      sourceHasNamingDoc: sourceDoc.includes('FIGMA_LAYER_NAMING_STANDARD.md'),
+      registryHasNamingDoc: registryDoc.includes('FIGMA_LAYER_NAMING_STANDARD.md'),
+      readmeHasNamingDoc: readmeDoc.includes('FIGMA_LAYER_NAMING_STANDARD.md'),
+      sourceHasMcpWorkflow:
+        sourceDoc.includes('get_metadata') &&
+        sourceDoc.includes('get_screenshot') &&
+        sourceDoc.includes('get_design_context'),
+      namingDocHasGrammar:
+        namingDoc.includes('section__{nn}__{slug}') &&
+        namingDoc.includes('screen_card__{screen_key}') &&
+        namingDoc.includes('preview__{screen_key}') &&
+        namingDoc.includes('badge__live_capture') &&
+        namingDoc.includes('meta__route'),
+      renameMatrixHasRoots:
+        renameMatrixDoc.includes('section__00__cover_governance') &&
+        renameMatrixDoc.includes('section__90__components') &&
+        renameMatrixDoc.includes('section__99__archive'),
+    },
   };
 }
 
@@ -228,6 +254,8 @@ function buildReport() {
       registryDocPath,
       readmeDocPath,
       changelogPath,
+      namingDocPath,
+      renameMatrixPath,
     ].includes(file)
   );
 
@@ -238,6 +266,43 @@ function buildReport() {
 
   const screenIds = new Set();
   const frameNames = new Set();
+  const pageLayerNames = new Set();
+  const cardLayerNames = new Set();
+  const previewLayerNames = new Set();
+  const componentLayerNames = new Set();
+
+  for (const page of FIGMA_PAGES) {
+    if (!page.layerName) {
+      errors.push(`Figma page missing layerName: ${page.key}`);
+    } else if (pageLayerNames.has(page.layerName)) {
+      errors.push(`Duplicate Figma page layerName: ${page.layerName}`);
+    } else {
+      pageLayerNames.add(page.layerName);
+    }
+
+    if (PAGE_LAYER_NAMES[page.key] && page.layerName !== PAGE_LAYER_NAMES[page.key]) {
+      errors.push(
+        `Figma page layerName mismatch for ${page.key}: manifest=${page.layerName}, expected=${PAGE_LAYER_NAMES[page.key]}`
+      );
+    }
+
+    if (!page.layoutLayerNames?.content || !page.layoutLayerNames?.header) {
+      errors.push(`Figma page missing base layout layer names: ${page.key}`);
+    }
+
+    if (page.key === '00-cover-governance') {
+      if (!page.layoutLayerNames?.overview || !page.layoutLayerNames?.navLinks) {
+        errors.push(`Cover page missing overview/navLinks layer names: ${page.key}`);
+      }
+    } else if (page.key === '90-components' || page.key === '99-archive') {
+      if (!page.layoutLayerNames?.grid) {
+        errors.push(`Figma page missing grid layer name: ${page.key}`);
+      }
+    } else if (page.key !== '00-cover-governance' && !page.layoutLayerNames?.grid) {
+      errors.push(`Figma page missing screen_grid layer name: ${page.key}`);
+    }
+  }
+
   for (const screen of SCREENS) {
     if (screenIds.has(screen.id)) {
       errors.push(`Duplicate screen id: ${screen.id}`);
@@ -248,6 +313,36 @@ function buildReport() {
       errors.push(`Duplicate frame name: ${screen.frameName}`);
     }
     frameNames.add(screen.frameName);
+
+    if (!screen.cardLayerName) {
+      errors.push(`Screen missing cardLayerName: ${screen.frameName}`);
+    } else if (cardLayerNames.has(screen.cardLayerName)) {
+      errors.push(`Duplicate screen cardLayerName: ${screen.cardLayerName}`);
+    } else {
+      cardLayerNames.add(screen.cardLayerName);
+    }
+
+    if (!screen.previewLayerName) {
+      errors.push(`Screen missing previewLayerName: ${screen.frameName}`);
+    } else if (previewLayerNames.has(screen.previewLayerName)) {
+      errors.push(`Duplicate screen previewLayerName: ${screen.previewLayerName}`);
+    } else {
+      previewLayerNames.add(screen.previewLayerName);
+    }
+
+    if (!screen.statusBadgeName) {
+      errors.push(`Screen missing statusBadgeName: ${screen.frameName}`);
+    }
+
+    if (
+      !screen.metaLayerNames ||
+      screen.metaLayerNames.route !== SCREEN_META_LAYER_NAMES.route ||
+      screen.metaLayerNames.source !== SCREEN_META_LAYER_NAMES.source ||
+      screen.metaLayerNames.note !== SCREEN_META_LAYER_NAMES.note ||
+      screen.metaLayerNames.blocker !== SCREEN_META_LAYER_NAMES.blocker
+    ) {
+      errors.push(`Screen missing canonical metaLayerNames: ${screen.frameName}`);
+    }
 
     if (!Array.isArray(screen.sources) || screen.sources.length === 0) {
       errors.push(`Screen missing sources: ${screen.frameName}`);
@@ -268,6 +363,16 @@ function buildReport() {
           `Placeholder has unknown triage "${screen.triage}": ${screen.frameName}`
         );
       }
+    }
+  }
+
+  for (const component of COMPONENT_CARDS) {
+    if (!component.groupLayerName) {
+      errors.push(`Component group missing groupLayerName: ${component.title}`);
+    } else if (componentLayerNames.has(component.groupLayerName)) {
+      errors.push(`Duplicate component groupLayerName: ${component.groupLayerName}`);
+    } else {
+      componentLayerNames.add(component.groupLayerName);
     }
   }
 
@@ -313,6 +418,27 @@ function buildReport() {
     }
   }
 
+  if (!docsCounts.namingContract.sourceHasNamingDoc) {
+    errors.push(`FIGMA_SOURCE_OF_TRUTH must reference ${namingDocPath}.`);
+  }
+  if (!docsCounts.namingContract.registryHasNamingDoc) {
+    errors.push(`FIGMA_SCREEN_COMPONENT_REGISTRY must reference ${namingDocPath}.`);
+  }
+  if (!docsCounts.namingContract.readmeHasNamingDoc) {
+    errors.push(`docs/design/README.md must reference ${namingDocPath}.`);
+  }
+  if (!docsCounts.namingContract.sourceHasMcpWorkflow) {
+    errors.push(
+      'FIGMA_SOURCE_OF_TRUTH must document the MCP operator workflow for get_metadata, get_screenshot, and get_design_context.'
+    );
+  }
+  if (!docsCounts.namingContract.namingDocHasGrammar) {
+    errors.push(`Naming standard doc is missing required layer grammar in ${namingDocPath}.`);
+  }
+  if (!docsCounts.namingContract.renameMatrixHasRoots) {
+    errors.push(`Rename matrix doc is missing canonical root mappings in ${renameMatrixPath}.`);
+  }
+
   const affectedScreens = unique(
     uiChangedFiles.flatMap((file) => screenIndex.get(file) || [])
   );
@@ -352,6 +478,12 @@ function buildReport() {
   ) {
     errors.push(
       `Manifest changed without syncing ${sourceDocPath} and ${registryDocPath}.`
+    );
+  }
+
+  if (changedSet.has(manifestPath) && !changedSet.has(changelogPath)) {
+    errors.push(
+      `Manifest changed without syncing ${changelogPath}.`
     );
   }
 

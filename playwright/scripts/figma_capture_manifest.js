@@ -1,3 +1,112 @@
+const PAGE_LAYER_NAMES = Object.freeze({
+  '00-cover-governance': 'section__00__cover_governance',
+  '10-entry-auth-onboarding': 'section__10__entry_auth_onboarding',
+  '20-chat-home-character': 'section__20__chat_character',
+  '30-fortune-hub-interactive': 'section__30__fortune_interactive',
+  '40-trend': 'section__40__trend',
+  '50-health-exercise': 'section__50__health_exercise',
+  '60-history-profile-more': 'section__60__history_profile_more',
+  '70-commerce-settings-support': 'section__70__commerce_settings_support',
+  '75-wellness': 'section__75__wellness',
+  '80-admin-policy-utility': 'section__80__admin_policy_utility',
+  '90-components': 'section__90__components',
+  '99-archive': 'section__99__archive',
+});
+
+const CATALOG_LAYER_ROLES = Object.freeze({
+  content: 'content',
+  header: 'header',
+  overview: 'overview',
+  screenGrid: 'screen_grid',
+  componentGrid: 'component_grid',
+  archiveGrid: 'archive_grid',
+  navLinks: 'nav_links',
+  deviceFrame: 'device_frame',
+});
+
+const SCREEN_META_LAYER_NAMES = Object.freeze({
+  route: 'meta__route',
+  source: 'meta__source',
+  note: 'meta__note',
+  blocker: 'meta__blocker',
+});
+
+const STATUS_BADGE_LAYER_NAMES = Object.freeze({
+  live: 'badge__live_capture',
+  placeholder: 'badge__placeholder_spec',
+});
+
+function slugifyLayerName(value) {
+  return String(value)
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .replace(/_+/g, '_');
+}
+
+function getPageLayoutLayerNames(pageKey) {
+  const base = {
+    content: CATALOG_LAYER_ROLES.content,
+    header: CATALOG_LAYER_ROLES.header,
+  };
+
+  if (pageKey === '00-cover-governance') {
+    return {
+      ...base,
+      overview: CATALOG_LAYER_ROLES.overview,
+      navLinks: CATALOG_LAYER_ROLES.navLinks,
+    };
+  }
+
+  if (pageKey === '90-components') {
+    return {
+      ...base,
+      grid: CATALOG_LAYER_ROLES.componentGrid,
+    };
+  }
+
+  if (pageKey === '99-archive') {
+    return {
+      ...base,
+      grid: CATALOG_LAYER_ROLES.archiveGrid,
+    };
+  }
+
+  return {
+    ...base,
+    grid: CATALOG_LAYER_ROLES.screenGrid,
+  };
+}
+
+function withPageLayerContract(page) {
+  return {
+    ...page,
+    layerName: PAGE_LAYER_NAMES[page.key],
+    layoutLayerNames: getPageLayoutLayerNames(page.key),
+  };
+}
+
+function withScreenLayerContract(screen) {
+  return {
+    ...screen,
+    cardLayerName: `screen_card__${screen.id}`,
+    previewLayerName: `preview__${screen.id}`,
+    statusBadgeName:
+      STATUS_BADGE_LAYER_NAMES[screen.status] || `badge__${screen.status}`,
+    metaLayerNames: {
+      ...SCREEN_META_LAYER_NAMES,
+    },
+  };
+}
+
+function withComponentLayerContract(card) {
+  return {
+    ...card,
+    groupLayerName: `component_group__${slugifyLayerName(card.title)}`,
+  };
+}
+
 const FIGMA_PAGES = [
   {
     key: '00-cover-governance',
@@ -59,7 +168,7 @@ const FIGMA_PAGES = [
     name: '99 Archive',
     description: 'Superseded or runtime-blocked surfaces explicitly excluded from live capture.',
   },
-];
+].map(withPageLayerContract);
 
 const IPHONE_15_PRO = {
   name: 'iPhone 15 Pro',
@@ -879,7 +988,7 @@ const SCREENS = [
     }),
     sources: ['lib/features/fortune/presentation/pages/manseryeok_page.dart'],
   },
-];
+].map(withScreenLayerContract);
 
 const COMPONENT_CARDS = [
   {
@@ -926,7 +1035,7 @@ const COMPONENT_CARDS = [
       'lib/features/wellness/presentation/widgets/meditation_completion_sheet.dart',
     ],
   },
-];
+].map(withComponentLayerContract);
 
 function getScreensByPage() {
   return FIGMA_PAGES.map((page) => ({
@@ -957,10 +1066,14 @@ function getPlaceholderTriageCounts() {
 }
 
 module.exports = {
+  CATALOG_LAYER_ROLES,
   COMPONENT_CARDS,
   FIGMA_PAGES,
   IPHONE_15_PRO,
+  PAGE_LAYER_NAMES,
   SCREENS,
+  SCREEN_META_LAYER_NAMES,
+  STATUS_BADGE_LAYER_NAMES,
   getPlaceholderTriageCounts,
   getScreensByPage,
   getStatusCounts,
