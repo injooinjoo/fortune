@@ -23030,12 +23030,14 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/data/models/celebrity.dart",
       "referenced_by": [
         "lib/data/models/celebrity.g.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -23051,7 +23053,7 @@
       "referenced_by": [
         "lib/data/models/celebrity.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "generated_excluded"
     },
@@ -23060,13 +23062,15 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/data/models/celebrity_simple.dart",
       "referenced_by": [
         "lib/presentation/providers/celebrity_provider.dart",
         "lib/services/celebrity_service.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -26847,16 +26851,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase3_feature_cleanup",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
-      "path": "lib/presentation/providers/celebrity_provider.dart",
-      "referenced_by": [
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
+      "path": "lib/presentation/providers/celebrity_provider.dart",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "unused"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -27797,12 +27804,14 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/services/celebrity_service.dart",
       "referenced_by": [
         "lib/presentation/providers/celebrity_provider.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -32767,6 +32776,20 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "supabase/migrations/20260311000001_remove_celebrity_crawling_metadata.sql",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "supabase_migration",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "supabase/migrations/add_is_lunar_column.sql",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -33539,24 +33562,25 @@
       "assets": 1231,
       "docs": 83,
       "integration_test": 26,
-      "lib": 504,
+      "lib": 502,
       "scripts": 69,
-      "supabase": 203,
+      "supabase": 204,
       "test": 52
     },
     "counts_by_candidate_action": {
-      "keep": 810,
+      "keep": 807,
       "keep_generated": 38,
       "manual_review": 977,
-      "phase2_review_candidate": 343
+      "phase2_review_candidate": 344,
+      "phase3_feature_cleanup": 1
     },
     "counts_by_usage_status": {
       "doc_only": 83,
       "generated_excluded": 38,
-      "runtime_used": 810,
+      "runtime_used": 807,
       "test_only": 78,
-      "tooling_only": 182,
-      "unreferenced": 977
+      "tooling_only": 183,
+      "unreferenced": 978
     },
     "declared_asset_dirs_without_runtime_refs": [
       "assets/animations",
@@ -33708,9 +33732,9 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 482,
-    "lib_dart_total": 501,
-    "lib_dart_zero_incoming": 0,
+    "lib_dart_runtime_reachable": 475,
+    "lib_dart_total": 499,
+    "lib_dart_zero_incoming": 1,
     "missing_function_refs": [
       "--all",
       "add-tokens",
@@ -33824,7 +33848,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2168,
+    "total_files": 2167,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": []
   }
