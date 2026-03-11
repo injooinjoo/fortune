@@ -23484,6 +23484,8 @@
       "notes": [],
       "path": "lib/features/character/presentation/providers/character_chat_provider.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/features/character/presentation/pages/character_profile_page.dart",
@@ -24597,6 +24599,8 @@
       "notes": [],
       "path": "lib/features/fortune/presentation/providers/saju_provider.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/fortune/presentation/pages/manseryeok_page.dart"
       ],
