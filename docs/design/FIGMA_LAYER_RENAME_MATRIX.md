@@ -9,6 +9,8 @@ This matrix is the operational rename checklist for the official Figma file.
 
 The current MCP toolset can audit the file but cannot directly rename existing Figma nodes. Apply these renames in Figma, then verify structure through MCP `get_metadata`.
 
+This matrix defines the target names for governed anchors. For the current manual cleanup order and exact appended page node ids, use [FIGMA_APPEND_RENAME_RUNBOOK.md](./FIGMA_APPEND_RENAME_RUNBOOK.md).
+
 ## Top-level section roots
 
 | Current root name | Target root name |

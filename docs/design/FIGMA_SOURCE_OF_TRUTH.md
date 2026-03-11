@@ -12,6 +12,7 @@ Supporting governance docs:
 
 - [FIGMA_LAYER_NAMING_STANDARD.md](./FIGMA_LAYER_NAMING_STANDARD.md)
 - [FIGMA_LAYER_RENAME_MATRIX.md](./FIGMA_LAYER_RENAME_MATRIX.md)
+- [FIGMA_APPEND_RENAME_RUNBOOK.md](./FIGMA_APPEND_RENAME_RUNBOOK.md)
 
 ## Standard
 
@@ -122,7 +123,7 @@ Operational implication:
 
 - The catalog content is now refreshed from the current codebase inside the official file.
 - The official Figma file is still not fully normalized to the canonical internal naming contract.
-- Manual Figma rename cleanup and old-page cleanup are still required before naming sync can be treated as complete.
+- Manual Figma rename cleanup on the refreshed appended page range `32:2` through `43:2`, plus old-page cleanup, are still required before naming sync can be treated as complete.
 
 ## Coverage Triage
 
@@ -256,7 +257,7 @@ Code Connect is deferred for this catalog. The current Figma seat does not expos
 6. Start an existing-file capture through Figma MCP for file key `dkx3Biwe5xkiMQWsjq95LA` and keep the returned `captureId`.
 7. Append the catalog pages into the existing official Figma file with `npm run figma:push-catalog -- --initial-capture-id <capture-id>`.
 8. Poll the same `captureId` through Figma MCP until the append run completes and note the appended page range in the audit docs.
-9. Normalize renamed layers against [FIGMA_LAYER_RENAME_MATRIX.md](./FIGMA_LAYER_RENAME_MATRIX.md) when the imported structure still exposes legacy names.
+9. Normalize renamed layers against [FIGMA_LAYER_RENAME_MATRIX.md](./FIGMA_LAYER_RENAME_MATRIX.md) and execute the current append cleanup through [FIGMA_APPEND_RENAME_RUNBOOK.md](./FIGMA_APPEND_RENAME_RUNBOOK.md) when the imported structure still exposes legacy names.
 10. Update this document, [FIGMA_SCREEN_COMPONENT_REGISTRY.md](./FIGMA_SCREEN_COMPONENT_REGISTRY.md), and [FIGMA_SYNC_CHANGELOG.md](./FIGMA_SYNC_CHANGELOG.md) in the same change.
 11. Run `npm run figma:guard` before pushing.
 

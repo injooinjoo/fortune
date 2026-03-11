@@ -9,6 +9,24 @@ This document defines the canonical internal layer names for the official Figma 
 
 Visible titles in the catalog remain human-readable. Internal Figma frame and layer names must follow the machine-readable contract below so MCP audits, capture regeneration, and repo-side governance stay aligned.
 
+## Governed Scope
+
+The canonical naming contract is enforced on governed anchors, not every leaf text node in the imported Figma structure.
+
+Governed anchors are:
+
+- page root frames
+- page-level structural wrappers
+- governance cards
+- screen cards
+- component group cards
+- archive cards
+- preview image layers
+- badge roots
+- metadata row roots
+
+Leaf text nodes that only hold visible copy may keep content-driven names after import, as long as their governed parent layer already uses the canonical machine-readable name.
+
 ## Naming Grammar
 
 ### Top-level section frames
@@ -83,7 +101,7 @@ Examples:
 
 ## Forbidden Generic Names
 
-Do not leave governed structural layers with these ad hoc names:
+Do not leave governed anchor layers with these ad hoc names:
 
 - `Main Content (...)`
 - `Article`
@@ -92,7 +110,9 @@ Do not leave governed structural layers with these ad hoc names:
 - `Link`
 - `Code`
 
-These may exist temporarily during import, but the official file must be normalized to the canonical layer contract before the sync is considered complete.
+These may exist temporarily during import, but page roots, page-level wrappers, cards, previews, badges, and metadata rows must be normalized to the canonical layer contract before the sync is considered complete.
+
+For the current append-based cleanup, use [FIGMA_APPEND_RENAME_RUNBOOK.md](./FIGMA_APPEND_RENAME_RUNBOOK.md) to limit the manual pass to the refreshed appended page range.
 
 ## Canonical Section Roots
 
