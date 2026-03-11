@@ -19263,8 +19263,23 @@
       "dirty": false,
       "kind": "doc_markdown",
       "notes": [],
+      "path": "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
+      "referenced_by": [
+        "docs/design/README.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
       "path": "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
       "referenced_by": [
+        "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "docs/design/FIGMA_SYNC_CHANGELOG.md",
         "docs/design/README.md",
@@ -19282,6 +19297,7 @@
       "notes": [],
       "path": "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
       "referenced_by": [
+        "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "docs/design/FIGMA_SYNC_CHANGELOG.md",
@@ -27288,6 +27304,7 @@
       "notes": [],
       "path": "lib/routes/character_routes.dart",
       "referenced_by": [
+        "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/routes/route_config.dart"
       ],
@@ -27304,6 +27321,7 @@
       "path": "lib/routes/route_config.dart",
       "referenced_by": [
         "docs/APP_ARCHITECTURE.md",
+        "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "integration_test/test_app.dart",
         "lib/main.dart",
@@ -27321,6 +27339,7 @@
       "notes": [],
       "path": "lib/routes/routes/auth_routes.dart",
       "referenced_by": [
+        "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/routes/route_config.dart"
       ],
@@ -27336,6 +27355,7 @@
       "notes": [],
       "path": "lib/routes/routes/interactive_routes.dart",
       "referenced_by": [
+        "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/routes/route_config.dart"
       ],
@@ -27351,6 +27371,7 @@
       "notes": [],
       "path": "lib/routes/routes/trend_routes.dart",
       "referenced_by": [
+        "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/routes/route_config.dart"
       ],
@@ -27366,6 +27387,7 @@
       "notes": [],
       "path": "lib/routes/routes/wellness_routes.dart",
       "referenced_by": [
+        "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/routes/route_config.dart"
       ],
@@ -33550,7 +33572,7 @@
   "meta": {
     "counts_by_area": {
       "assets": 1231,
-      "docs": 82,
+      "docs": 83,
       "integration_test": 26,
       "lib": 504,
       "scripts": 69,
@@ -33561,10 +33583,10 @@
       "keep": 810,
       "keep_generated": 38,
       "manual_review": 977,
-      "phase2_review_candidate": 342
+      "phase2_review_candidate": 343
     },
     "counts_by_usage_status": {
-      "doc_only": 82,
+      "doc_only": 83,
       "generated_excluded": 38,
       "runtime_used": 810,
       "test_only": 78,
@@ -33838,7 +33860,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2167,
+    "total_files": 2168,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": []
   }
