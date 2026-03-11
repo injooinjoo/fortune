@@ -85,7 +85,7 @@ _none_
 | Type | Value |
 | --- | --- |
 | Unreferenced function directories | _none_ |
-| Missing referenced functions | `--all`, `add-tokens`, `avoid-people`, `blind-date`, `calculate-celebrity-saju`, `crawl-celebrity-info`, `daily-calendar`, `ex-lover`, `ex-lover-simple`, `face-reading`, `fortune-cookie`, `fortune-family`, `fortune-lucky-lottery`, `fortune-recommendations`, `fortune-system`, `fortune-zodiac-scheduler`, `game-enhance`, `generate-celebrity-character`, `generate-fashion-image`, `generate-fortune` |
+| Missing referenced functions | `--all`, `add-tokens`, `avoid-people`, `blind-date`, `calculate-celebrity-saju`, `daily-calendar`, `ex-lover`, `ex-lover-simple`, `face-reading`, `fortune-cookie`, `fortune-family`, `fortune-lucky-lottery`, `fortune-recommendations`, `fortune-system`, `fortune-zodiac-scheduler`, `game-enhance`, `generate-celebrity-character`, `generate-fashion-image`, `generate-fortune` |
 
 ### Pubspec Asset Mismatches
 

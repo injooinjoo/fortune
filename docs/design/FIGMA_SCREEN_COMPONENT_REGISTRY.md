@@ -121,7 +121,6 @@ Additional official pages:
 
 ### 80 Admin / Policy / Utility
 
-- `admin__celebrity_crawling__error` | `#/admin/celebrity-crawling` | `live`
 - `manseryeok__default` | `#/manseryeok` | `live`
 
 ### 90 Components

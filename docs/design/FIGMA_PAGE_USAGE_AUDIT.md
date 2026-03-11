@@ -42,7 +42,7 @@ This document answers one question only:
 | `60 History / Profile / More` | `active_runtime` | `/history`, `/more`, `/profile/*` active |
 | `70 Commerce / Settings / Support` | `active_runtime` | `/premium`, `/subscription`, `/token-purchase`, `/help`, `/privacy-policy`, `/terms-of-service`, profile settings routes active |
 | `75 Wellness` | `active_runtime` | `/wellness`, `/wellness/meditation` active |
-| `80 Admin / Policy / Utility` | `active_runtime` | `/admin/celebrity-crawling`, `/manseryeok` active |
+| `80 Admin / Policy / Utility` | `active_runtime` | `/manseryeok` active |
 | `90 Components` | `governance_only` | Component inventory, not a runtime page bucket |
 | `99 Archive` | `archive_only` | Explicit historical/retired surface bucket |
 
@@ -138,4 +138,3 @@ Based on the current repository runtime:
 - The numbered top-level page groups are mostly correct and still useful.
 - The biggest Figma cleanup target is not the numbered buckets.
 - The biggest cleanup target is the duplicated `Main Content (...)` layer/page structure plus any old `/home`-era chat/dashboard frames.
-

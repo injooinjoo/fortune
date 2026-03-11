@@ -867,20 +867,6 @@ const SCREENS = [
     sources: ['lib/features/wellness/presentation/pages/meditation_page.dart'],
   },
   {
-    id: 'admin__celebrity_crawling__error',
-    pageKey: '80-admin-policy-utility',
-    frameName: 'admin__celebrity_crawling__error',
-    title: 'Admin Celebrity Crawling',
-    routeHash: '#/admin/celebrity-crawling',
-    status: 'live',
-    waitMs: 10000,
-    buildStorage: () => ({
-      'flutter.character_onboarding_completed': 'true',
-    }),
-    note: 'Current dev schema renders an operational error banner for the stats query.',
-    sources: ['lib/features/admin/pages/celebrity_crawling_page.dart'],
-  },
-  {
     id: 'manseryeok__default',
     pageKey: '80-admin-policy-utility',
     frameName: 'manseryeok__default',

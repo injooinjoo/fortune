@@ -534,22 +534,6 @@
       "relative_path": "figma_frames/route_terms_of_service/dark/index.html"
     },
     {
-      "surface_id": "route_admin_celebrity_crawling",
-      "surface_type": "route",
-      "theme": "light",
-      "section": "Mobile Real v2 / Light",
-      "frame_name": "route_admin_celebrity_crawling / light",
-      "relative_path": "figma_frames/route_admin_celebrity_crawling/light/index.html"
-    },
-    {
-      "surface_id": "route_admin_celebrity_crawling",
-      "surface_type": "route",
-      "theme": "dark",
-      "section": "Mobile Real v2 / Dark",
-      "frame_name": "route_admin_celebrity_crawling / dark",
-      "relative_path": "figma_frames/route_admin_celebrity_crawling/dark/index.html"
-    },
-    {
       "surface_id": "chat_rep_haneul",
       "surface_type": "chat_rep",
       "theme": "light",

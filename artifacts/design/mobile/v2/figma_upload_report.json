@@ -157,21 +157,6 @@
       "timestamp": "2026-02-27T17:46:34.498Z"
     },
     {
-      "order": 11,
-      "frame_name": "route_admin_celebrity_crawling / light",
-      "section": "Mobile Real v2 / Light",
-      "target_group": "real",
-      "capture_id": "f16eb49f-1d20-473b-ad1c-f5583ba4db1a",
-      "endpoint": "https://mcp.figma.com/mcp/capture/f16eb49f-1d20-473b-ad1c-f5583ba4db1a/submit",
-      "url": "http://127.0.0.1:4174/figma_frames/route_admin_celebrity_crawling/light/index.html",
-      "status": "success",
-      "response_status": 200,
-      "next_capture_id": "5541f1c2-b99a-44ce-abcc-f04f5a1260e7",
-      "file_url": "https://www.figma.com/claim_file_from_capture/12e490a6-7501-4601-a85f-d2f63468296e",
-      "error": null,
-      "timestamp": "2026-02-27T17:46:40.734Z"
-    },
-    {
       "order": 12,
       "frame_name": "route_chat / light",
       "section": "Mobile Real v2 / Light",
@@ -815,21 +800,6 @@
       "file_url": "https://www.figma.com/claim_file_from_capture/12e490a6-7501-4601-a85f-d2f63468296e",
       "error": null,
       "timestamp": "2026-02-27T17:50:30.454Z"
-    },
-    {
-      "order": 55,
-      "frame_name": "route_admin_celebrity_crawling / dark",
-      "section": "Mobile Real v2 / Dark",
-      "target_group": "real",
-      "capture_id": "b667a7f9-681f-4777-b505-893fc9346f6a",
-      "endpoint": "https://mcp.figma.com/mcp/capture/b667a7f9-681f-4777-b505-893fc9346f6a/submit",
-      "url": "http://127.0.0.1:4174/figma_frames/route_admin_celebrity_crawling/dark/index.html",
-      "status": "success",
-      "response_status": 200,
-      "next_capture_id": "728bb52d-8a33-485d-9163-a66603708e65",
-      "file_url": "https://www.figma.com/claim_file_from_capture/12e490a6-7501-4601-a85f-d2f63468296e",
-      "error": null,
-      "timestamp": "2026-02-27T17:50:35.823Z"
     },
     {
       "order": 56,

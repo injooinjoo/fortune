@@ -37,9 +37,6 @@ import '../features/health/domain/models/medical_document_models.dart';
 import '../features/exercise/presentation/pages/exercise_fortune_page.dart';
 import '../screens/subscription/subscription_page.dart';
 
-// Import admin pages
-import '../features/admin/pages/celebrity_crawling_page.dart';
-
 // Import manseryeok page
 import '../features/fortune/presentation/pages/manseryeok_page.dart';
 
@@ -387,13 +384,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/terms-of-service',
         name: 'terms-of-service',
         builder: (context, state) => const TermsOfServicePage(),
-      ),
-
-      // Admin routes (outside shell)
-      GoRoute(
-        path: '/admin/celebrity-crawling',
-        name: 'admin-celebrity-crawling',
-        builder: (context, state) => const CelebrityCrawlingPage(),
       ),
     ],
   );

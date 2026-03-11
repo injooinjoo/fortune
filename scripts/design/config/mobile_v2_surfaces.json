@@ -40,7 +40,6 @@
     { "id": "route_help", "path": "/help", "label": "Help" },
     { "id": "route_privacy_policy", "path": "/privacy-policy", "label": "Privacy Policy" },
     { "id": "route_terms_of_service", "path": "/terms-of-service", "label": "Terms Of Service" },
-    { "id": "route_admin_celebrity_crawling", "path": "/admin/celebrity-crawling", "label": "Admin Celebrity Crawling" },
     { "id": "route_trend_psychology_sample", "path": "/trend/psychology/sample", "label": "Trend Psychology Sample" },
     { "id": "route_trend_worldcup_sample", "path": "/trend/worldcup/sample", "label": "Trend Worldcup Sample" },
     { "id": "route_trend_balance_sample", "path": "/trend/balance/sample", "label": "Trend Balance Sample" }

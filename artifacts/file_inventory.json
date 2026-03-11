@@ -20427,7 +20427,6 @@
       "notes": [],
       "path": "lib/core/components/app_card.dart",
       "referenced_by": [
-        "lib/features/admin/pages/celebrity_crawling_page.dart",
         "lib/features/fortune/presentation/widgets/saju/saju_hapchung_widget.dart",
         "lib/features/fortune/presentation/widgets/saju/saju_jijanggan_widget.dart",
         "lib/features/fortune/presentation/widgets/saju/saju_pillar_table_pro.dart",
@@ -20965,7 +20964,6 @@
         "lib/core/widgets/infographic/headers/saju_info_header.dart",
         "lib/core/widgets/unified_button.dart",
         "lib/core/widgets/unified_voice_text_field.dart",
-        "lib/features/admin/pages/celebrity_crawling_page.dart",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/pages/character_onboarding_page.dart",
         "lib/features/character/presentation/pages/character_profile_page.dart",
@@ -22930,7 +22928,6 @@
       "referenced_by": [
         "docs/APP_ARCHITECTURE.md",
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "lib/features/admin/pages/celebrity_crawling_page.dart",
         "lib/features/exercise/presentation/pages/exercise_fortune_page.dart",
         "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart",
         "lib/features/health/presentation/pages/health_fortune/widgets/document_upload_bottom_sheet.dart",
@@ -22956,7 +22953,6 @@
       "path": "lib/core/widgets/unified_button_enums.dart",
       "referenced_by": [
         "lib/core/widgets/unified_button.dart",
-        "lib/features/admin/pages/celebrity_crawling_page.dart",
         "lib/features/exercise/presentation/pages/exercise_fortune_page.dart",
         "lib/features/health/presentation/pages/health_fortune/health_fortune_page.dart",
         "lib/features/health/presentation/pages/health_fortune/widgets/document_upload_bottom_sheet.dart",
@@ -23037,8 +23033,7 @@
       "notes": [],
       "path": "lib/data/models/celebrity.dart",
       "referenced_by": [
-        "lib/data/models/celebrity.g.dart",
-        "lib/services/celebrity_crawling_service.dart"
+        "lib/data/models/celebrity.g.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23428,20 +23423,6 @@
       "path": "lib/domain/entities/user_profile.dart",
       "referenced_by": [
         "lib/presentation/providers/recommendation_provider.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/admin/pages/celebrity_crawling_page.dart",
-      "referenced_by": [
-        "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26872,11 +26853,10 @@
       "notes": [],
       "path": "lib/presentation/providers/celebrity_provider.dart",
       "referenced_by": [
-        "lib/features/admin/pages/celebrity_crawling_page.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unused"
     },
     {
       "area": "lib",
@@ -27807,21 +27787,6 @@
         "lib/data/services/fortune_api/saju_fortune_api.dart",
         "lib/presentation/providers/fortune_provider.dart",
         "test/mocks/mock_services.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/services/celebrity_crawling_service.dart",
-      "referenced_by": [
-        "lib/features/admin/pages/celebrity_crawling_page.dart",
-        "lib/presentation/providers/celebrity_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -33752,7 +33717,6 @@
       "avoid-people",
       "blind-date",
       "calculate-celebrity-saju",
-      "crawl-celebrity-info",
       "daily-calendar",
       "ex-lover",
       "ex-lover-simple",

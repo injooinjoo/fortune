@@ -1036,31 +1036,6 @@
       "deeplink_uri": "com.beyond.fortune://deeplink?screen=terms-of-service"
     },
     {
-      "surface_id": "route_admin_celebrity_crawling",
-      "surface_type": "route",
-      "label": "Admin Celebrity Crawling",
-      "route_path": "/admin/celebrity-crawling",
-      "inventory_status": "reachable",
-      "blocked_reason": null,
-      "issues": [],
-      "top_labels": [
-        "ZPZG",
-        "유명인 정보 크롤링",
-        "크롤링 현황\n통계 로드 실패: Exception: 통계 조회 실패: PostgrestException(message: column celebrities.source_url does not exist, code: 42703, details: Bad Request, hint: null)",
-        "단일 크롤링",
-        "유명인 이름",
-        "크롤링 시작",
-        "강제 업데이트",
-        "일괄 크롤링",
-        "유명인 목록 (한 줄에 하나씩)",
-        "샘플 데이터"
-      ],
-      "label_count": 11,
-      "popup_detected": false,
-      "popup_handled": false,
-      "deeplink_uri": "com.beyond.fortune://deeplink?screen=admin%2Fcelebrity-crawling"
-    },
-    {
       "surface_id": "route_trend_psychology_sample",
       "surface_type": "route",
       "label": "Trend Psychology Sample",
