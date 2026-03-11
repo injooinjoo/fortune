@@ -1,16 +1,23 @@
 import psycopg2
 import os
 import sys
-from urllib.parse import urlparse
 
-# Connection details
-DATABASE_URL = "postgresql://postgres.kfkdsoyrcgsgkjhwkcin:vf8gO4yb3hUYgNWh@aws-0-ap-northeast-2.pooler.supabase.co:6543/postgres"
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+DEFAULT_SQL_FILE = os.path.join(REPO_ROOT, 'celebrity_saju_mega_final.sql')
 
-# Alternative connections to try
-ALTERNATIVE_URLS = [
-    "postgresql://postgres.kfkdsoyrcgsgkjhwkcin:vf8gO4yb3hUYgNWh@db.kfkdsoyrcgsgkjhwkcin.supabase.co:5432/postgres",
-    "postgresql://postgres.kfkdsoyrcgsgkjhwkcin:vf8gO4yb3hUYgNWh@aws-0-ap-northeast-2.pooler.supabase.co:5432/postgres"
-]
+def get_required_database_url():
+    for key in ('SUPABASE_DB_URL', 'DATABASE_URL'):
+        value = os.environ.get(key, '').strip()
+        if value:
+            return value
+    return None
+
+
+def get_alternative_urls():
+    raw = os.environ.get('SUPABASE_DB_FALLBACK_URLS', '').strip()
+    if not raw:
+        return []
+    return [value.strip() for value in raw.split(',') if value.strip()]
 
 def try_connection(connection_string):
     """Try to connect to the database with given connection string"""
@@ -89,19 +96,25 @@ def execute_sql_file(conn, sql_file_path):
         return False
 
 def main():
-    sql_file_path = "/Users/jacobmac/Desktop/Dev/fortune/celebrity_saju_mega_final.sql"
+    database_url = get_required_database_url()
+    if not database_url:
+        print('❌ Missing database connection string.')
+        print('Set SUPABASE_DB_URL or DATABASE_URL before running this script.')
+        sys.exit(1)
+
+    sql_file_path = os.environ.get('CELEBRITY_SQL_PATH', DEFAULT_SQL_FILE)
     
     if not os.path.exists(sql_file_path):
         print(f"❌ SQL file not found: {sql_file_path}")
-        return
+        sys.exit(1)
     
     # Try main connection first
-    conn = try_connection(DATABASE_URL)
+    conn = try_connection(database_url)
     
     # If main connection fails, try alternatives
     if not conn:
         print("\nTrying alternative connection strings...")
-        for alt_url in ALTERNATIVE_URLS:
+        for alt_url in get_alternative_urls():
             conn = try_connection(alt_url)
             if conn:
                 break
@@ -113,7 +126,7 @@ def main():
         print("2. Ensure database is active and not paused")
         print("3. Verify the correct hostname format")
         print("4. Check if IP is whitelisted (if applicable)")
-        return
+        sys.exit(1)
     
     try:
         # Execute the SQL file
@@ -123,6 +136,7 @@ def main():
             print("✅ Celebrity data upload completed successfully!")
         else:
             print("❌ Celebrity data upload failed.")
+            sys.exit(1)
             
     finally:
         conn.close()

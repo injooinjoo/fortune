@@ -30,7 +30,10 @@ class UnifiedCalendarService {
   UnifiedCalendarService._internal();
 
   final DeviceCalendarService _deviceService = DeviceCalendarService();
-  final GoogleCalendarService _googleService = GoogleCalendarService();
+  GoogleCalendarService? _googleServiceInstance;
+
+  GoogleCalendarService get _googleService =>
+      _googleServiceInstance ??= GoogleCalendarService();
 
   static const String _prefKeyGoogleConnected = 'calendar_google_connected';
   static const String _prefKeyDeviceEnabled = 'calendar_device_enabled';

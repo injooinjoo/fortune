@@ -20,14 +20,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check source inventory drift
-        run: python3 scripts/source_inventory.py check
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           cache: 'npm'
+
+      - name: Check source inventory drift
+        run: |
+          if ! npm run source-inventory:check; then
+            echo "::error::Source inventory drift detected. Run 'npm run repo:sync' and commit generated outputs."
+            exit 1
+          fi
 
       - name: Check Figma sync drift
         run: npm run figma:guard

@@ -308,6 +308,30 @@ serve(async (req) => {
   }
 
   try {
+    let requestData: Record<string, unknown> = {}
+    if (req.method === 'POST') {
+      try {
+        requestData = await req.json()
+      } catch (_) {
+        requestData = {}
+      }
+    }
+
+    if (requestData.healthCheck === true) {
+      return new Response(
+        JSON.stringify({
+          success: true,
+          status: 'healthy',
+          fortuneType: 'daily',
+          timestamp: new Date().toISOString(),
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
+          status: 200,
+        }
+      )
+    }
+
     // Supabase 클라이언트 생성 (퍼센타일 계산용)
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -320,7 +344,6 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
     )
 
-    const requestData = await req.json()
     const {
       userId,
       name: rawName,

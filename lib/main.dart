@@ -87,15 +87,6 @@ void main() async {
     Logger.error('Hive initialization failed', e);
   }
 
-  // Initialize Haptic Service
-  try {
-    debugPrint('🚀 [STARTUP] Initializing Haptic Service...');
-    await FortuneHapticService.initialize();
-    debugPrint('🚀 [STARTUP] Haptic Service initialized');
-  } catch (e) {
-    debugPrint('⚠️ [STARTUP] Haptic Service initialization failed: $e');
-  }
-
   // Initialize Firebase
   var isFirebaseReady = false;
   try {
@@ -214,6 +205,16 @@ Future<void> _runDeferredInitializations({
   required bool supabaseReady,
   required bool firebaseReady,
 }) async {
+  await WidgetsBinding.instance.endOfFrame;
+
+  try {
+    debugPrint('🚀 [POST_STARTUP] Initializing Haptic Service...');
+    await FortuneHapticService.initialize();
+    debugPrint('🚀 [POST_STARTUP] Haptic Service initialized');
+  } catch (e) {
+    debugPrint('⚠️ [POST_STARTUP] Haptic Service initialization failed: $e');
+  }
+
   try {
     await FortuneTypeLocalMigrationService.runOnce();
   } catch (e) {

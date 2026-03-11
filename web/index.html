@@ -17,7 +17,7 @@
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="AI 기반 운세 서비스 - ZPZG">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.toss.im https://www.gstatic.com https://accounts.google.com; style-src 'self' 'unsafe-inline' https://static.toss.im; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.googleapis.com https://oauth2.googleapis.com https://www.gstatic.com https://fonts.gstatic.com; font-src 'self' https://static.toss.im https://fonts.gstatic.com; frame-src 'self' https://accounts.google.com;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://accounts.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.googleapis.com https://oauth2.googleapis.com https://www.gstatic.com https://fonts.gstatic.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://accounts.google.com;">
   
   <!-- Remove Flutter's default blue loading progress bar -->
   <style>
@@ -135,17 +135,6 @@
   <title>ZPZG</title>
   <link rel="manifest" href="manifest.json">
   
-  <!-- Toss Product Sans Font -->
-  <link rel="stylesheet" href="https://static.toss.im/tps/main.css">
-  <link rel="stylesheet" href="https://static.toss.im/tps/others.css">
-  <style>
-    * {
-      font-family: 'Toss Product Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-    }
-  </style>
-  
-  
-  
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
   
   
@@ -255,54 +244,54 @@
     </div>
   </div>
 
-  <script>
-    // Force HTML renderer to avoid Wasm incompatibilities
-    window.flutterWebRenderer = "html";
-  </script>
-  
   <script src="flutter_bootstrap.js" async=""></script>
   
   <script>
-    // TEMPORARY FIX: Clear ALL recentFortunes cache to fix type errors
-    // This will force a fresh start for fortune cache
-    try {
-      // Remove all recentFortunes related cache
-      localStorage.removeItem('flutter.recentFortunes');
-      console.log('🗑️ Force cleared ALL recentFortunes cache from localStorage');
-      
-      // Also clear any other potentially problematic cache
-      const keysToRemove = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.includes('recentFortunes')) {
-          keysToRemove.push(key);
-        }
+    const fortuneCacheMigrationVersion = 'fortune-cache-migration-20260311';
+
+    function scheduleIdleTask(callback) {
+      if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(callback, { timeout: 1500 });
+        return;
       }
-      keysToRemove.forEach(key => {
-        localStorage.removeItem(key);
-        console.log(`🗑️ Removed cache key: ${key}`);
-      });
-    } catch(e) {
-      console.log('Could not clear cache:', e);
+
+      window.setTimeout(callback, 0);
     }
-    
-    // Hide loading screen when Flutter is ready
+
+    function clearLegacyFortuneCacheOnce() {
+      try {
+        if (localStorage.getItem(fortuneCacheMigrationVersion) === 'done') {
+          return;
+        }
+
+        localStorage.removeItem('flutter.recentFortunes');
+
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.includes('recentFortunes')) {
+            keysToRemove.push(key);
+          }
+        }
+
+        keysToRemove.forEach((key) => {
+          localStorage.removeItem(key);
+        });
+
+        localStorage.setItem(fortuneCacheMigrationVersion, 'done');
+      } catch (e) {
+        console.log('Could not clear legacy fortune cache:', e);
+      }
+    }
+
+    function hideLoadingShell() {
+      document.getElementById('loading')?.classList.add('hidden');
+    }
+
     window.addEventListener('flutter-first-frame', function() {
-      document.getElementById('loading').classList.add('hidden');
+      hideLoadingShell();
+      scheduleIdleTask(clearLegacyFortuneCacheOnce);
     });
-    
-    // Register service worker for offline support
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service_worker.js')
-          .then((registration) => {
-            console.log('Service Worker registered:', registration);
-          })
-          .catch((error) => {
-            console.log('Service Worker registration failed:', error);
-          });
-      });
-    }
   </script>
 
 

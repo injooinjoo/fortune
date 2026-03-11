@@ -31,7 +31,7 @@ void main() {
         final session = mockGoTrueClient.currentSession;
 
         expect(session, isNotNull);
-        expect(session?.accessToken, 'mock-access-token');
+        expect(session?.accessToken, 'placeholder-access-token-not-real');
       });
 
       test('현재 사용자 조회', () {
@@ -92,11 +92,11 @@ void main() {
     group('토큰 검증', () {
       test('유효한 액세스 토큰', () {
         final session = AuthTestData.createMockSession(
-          accessToken: 'valid-access-token',
+          accessToken: 'placeholder-valid-access-token-not-real',
           expiresIn: 3600,
         );
 
-        expect(session.accessToken, 'valid-access-token');
+        expect(session.accessToken, 'placeholder-valid-access-token-not-real');
         expect(session.expiresIn, greaterThan(0));
       });
 

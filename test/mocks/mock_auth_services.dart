@@ -59,8 +59,8 @@ class AuthTestData {
 
   /// 테스트용 Session 생성
   static Session createMockSession({
-    String accessToken = 'mock-access-token',
-    String refreshToken = 'mock-refresh-token',
+    String accessToken = 'placeholder-access-token-not-real',
+    String refreshToken = 'placeholder-refresh-token-not-real',
     int expiresIn = 3600,
     User? user,
   }) {

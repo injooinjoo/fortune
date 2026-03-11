@@ -201,6 +201,9 @@ dependency_overrides:
   # Local fork removes legacy android-junit5 plugin that fails under modern Gradle/JDK.
   audioplayers_android:
     path: third_party/audioplayers_android
+  # Delay GIS SDK loading on web until the plugin is actually initialized.
+  google_sign_in_web:
+    path: third_party/google_sign_in_web
 
 dev_dependencies:
   flutter_test:

@@ -94,8 +94,8 @@ void main() {
     group('토큰 갱신', () {
       test('유효한 리프레시 토큰으로 세션 갱신 가능해야 함', () async {
         final newSession = AuthTestData.createMockSession(
-          accessToken: 'new-access-token',
-          refreshToken: 'new-refresh-token',
+          accessToken: 'placeholder-new-access-token-not-real',
+          refreshToken: 'placeholder-new-refresh-token-not-real',
         );
         final authResponse =
             AuthTestData.createMockAuthResponse(session: newSession);
@@ -106,7 +106,8 @@ void main() {
         final result = await mockGoTrueClient.refreshSession();
 
         expect(result.session, isNotNull);
-        expect(result.session?.accessToken, 'new-access-token');
+        expect(result.session?.accessToken,
+            'placeholder-new-access-token-not-real');
       });
     });
 

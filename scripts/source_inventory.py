@@ -1067,6 +1067,11 @@ def check_outputs(outputs: dict[str, str]) -> int:
         )
         for line in list(diff)[:40]:
             print(line, file=sys.stderr)
+    if mismatches:
+        print(
+            "Remediation: run `npm run repo:sync` (or `python3 scripts/source_inventory.py generate`) and commit the regenerated outputs.",
+            file=sys.stderr,
+        )
     return 1 if mismatches else 0
 
 

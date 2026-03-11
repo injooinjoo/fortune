@@ -1,8 +1,28 @@
 import socket
 import requests
-import json
 import os
 import sys
+from urllib.parse import urlparse
+
+
+def extract_project_ref():
+    supabase_url = os.environ.get('SUPABASE_URL', '').strip()
+    if supabase_url:
+        hostname = urlparse(supabase_url).hostname or ''
+        if hostname.endswith('.supabase.co'):
+            return hostname.split('.')[0]
+
+    explicit_ref = os.environ.get('SUPABASE_PROJECT_REF', '').strip()
+    if explicit_ref:
+        return explicit_ref
+
+    database_url = os.environ.get('SUPABASE_DB_URL') or os.environ.get('DATABASE_URL', '')
+    if database_url:
+        hostname = urlparse(database_url).hostname or ''
+        if hostname.startswith('db.'):
+            return hostname.split('.')[1]
+
+    return None
 
 def check_hostname(hostname):
     """Check if hostname resolves"""
@@ -55,7 +75,12 @@ def test_common_hostname_formats(project_ref):
 
 def get_project_info():
     """Extract project info from connection details"""
-    project_ref = "kfkdsoyrcgsgkjhwkcin"
+    project_ref = extract_project_ref()
+    if not project_ref:
+        print("❌ Could not determine project reference from environment.")
+        print("Set SUPABASE_URL or SUPABASE_PROJECT_REF before running this script.")
+        sys.exit(1)
+
     print(f"📋 Extracted project reference: {project_ref}")
     return project_ref
 
@@ -79,7 +104,7 @@ def main():
     
     # Test Supabase API
     print(f"\n2. Testing Supabase API accessibility...")
-    check_supabase_api(project_ref)
+    check_supabase_api(project_ref, os.environ.get('SUPABASE_ANON_KEY'))
     
     # Provide recommendations
     print(f"\n📝 Recommendations:")
@@ -93,8 +118,9 @@ def main():
     if working_hosts:
         print(f"\n🔧 Try these connection strings:")
         for host in working_hosts:
-            conn_str = f"postgresql://postgres.{project_ref}:vf8gO4yb3hUYgNWh@{host}:5432/postgres"
-            print(f"   {conn_str}")
+            print(
+                f"   postgresql://postgres.{project_ref}:<db-password>@{host}:5432/postgres"
+            )
 
 if __name__ == "__main__":
     main()

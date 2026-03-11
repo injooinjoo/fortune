@@ -19,16 +19,19 @@ class GoogleCalendarService {
   factory GoogleCalendarService() => _instance;
   GoogleCalendarService._internal();
 
-  /// Google Sign-In 인스턴스 (Calendar scope 포함)
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: [
-      'email',
-      gcal.CalendarApi.calendarReadonlyScope, // 읽기 전용
-    ],
-  );
+  GoogleSignIn? _googleSignIn;
 
   GoogleSignInAccount? _currentUser;
   gcal.CalendarApi? _calendarApi;
+
+  GoogleSignIn get _googleSignInClient {
+    return _googleSignIn ??= GoogleSignIn(
+      scopes: [
+        'email',
+        gcal.CalendarApi.calendarReadonlyScope,
+      ],
+    );
+  }
 
   /// 현재 연결된 Google 계정
   GoogleSignInAccount? get currentUser => _currentUser;
@@ -45,12 +48,12 @@ class GoogleCalendarService {
       Logger.info('[GoogleCalendar] 연동 시작...');
 
       // 1. 기존 로그인 확인
-      _currentUser = await _googleSignIn.signInSilently();
+      _currentUser = await _googleSignInClient.signInSilently();
 
       // 2. 새로 로그인 필요
       if (_currentUser == null) {
         Logger.info('[GoogleCalendar] 새 로그인 필요 - 로그인 화면 표시');
-        _currentUser = await _googleSignIn.signIn();
+        _currentUser = await _googleSignInClient.signIn();
       }
 
       if (_currentUser == null) {
@@ -59,7 +62,7 @@ class GoogleCalendarService {
       }
 
       // 3. API 클라이언트 생성
-      final httpClient = await _googleSignIn.authenticatedClient();
+      final httpClient = await _googleSignInClient.authenticatedClient();
       if (httpClient == null) {
         Logger.error('[GoogleCalendar] HTTP 클라이언트 생성 실패');
         return false;
@@ -78,7 +81,7 @@ class GoogleCalendarService {
   /// Google Calendar 연동 해제
   Future<void> disconnect() async {
     try {
-      await _googleSignIn.signOut();
+      await _googleSignInClient.signOut();
       _currentUser = null;
       _calendarApi = null;
       Logger.info('[GoogleCalendar] 연동 해제됨');

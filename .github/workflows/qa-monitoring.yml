@@ -275,6 +275,8 @@ jobs:
       healthy: ${{ steps.health.outputs.healthy }}
       total: ${{ steps.health.outputs.total }}
       failed_functions: ${{ steps.health.outputs.failed_functions }}
+      failed_details: ${{ steps.health.outputs.failed_details }}
+      project_ref: ${{ steps.health.outputs.project_ref }}
       skipped: ${{ steps.health.outputs.skipped }}
 
     steps:
@@ -300,6 +302,7 @@ jobs:
 
           HEALTHY=0
           FAILED_LIST=""
+          FAILED_DETAILS=""
           TOTAL=${#FUNCTIONS[@]}
 
           # Supabase URL이 설정되지 않은 경우 건너뛰기
@@ -308,11 +311,25 @@ jobs:
             echo "healthy=0" >> $GITHUB_OUTPUT
             echo "total=0" >> $GITHUB_OUTPUT
             echo "failed_functions=" >> $GITHUB_OUTPUT
+            echo "failed_details=" >> $GITHUB_OUTPUT
+            echo "project_ref=" >> $GITHUB_OUTPUT
             echo "skipped=true" >> $GITHUB_OUTPUT
             exit 0
           fi
 
+          PROJECT_REF=$(python3 - <<'PY'
+          import os
+          from urllib.parse import urlparse
+
+          url = os.environ.get("SUPABASE_URL", "").strip()
+          hostname = urlparse(url).hostname or ""
+          parts = hostname.split(".")
+          print(parts[0] if len(parts) >= 3 else "")
+          PY
+          )
+
           echo "skipped=false" >> $GITHUB_OUTPUT
+          echo "project_ref=$PROJECT_REF" >> $GITHUB_OUTPUT
 
           for func in "${FUNCTIONS[@]}"; do
             echo "Checking $func..."
@@ -330,12 +347,18 @@ jobs:
             else
               echo "❌ $func: $STATUS"
               FAILED_LIST="$FAILED_LIST $func"
+              FAILED_DETAILS="${FAILED_DETAILS}${func}:${STATUS}\n"
             fi
           done
 
           echo "healthy=$HEALTHY" >> $GITHUB_OUTPUT
           echo "total=$TOTAL" >> $GITHUB_OUTPUT
           echo "failed_functions=$FAILED_LIST" >> $GITHUB_OUTPUT
+          {
+            echo "failed_details<<EOF"
+            printf "%b" "$FAILED_DETAILS"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
 
   # =====================================================
   # Job 4: 결과 집계 및 알림
@@ -350,24 +373,31 @@ jobs:
       failed_jobs: ${{ steps.status.outputs.failed_jobs }}
       performance_summary: ${{ steps.status.outputs.performance_summary }}
       edge_summary: ${{ steps.status.outputs.edge_summary }}
+      project_ref: ${{ steps.status.outputs.project_ref }}
 
     steps:
       - name: Calculate overall status
         id: status
         run: |
           SMOKE_FAILED="${{ needs.smoke-tests.outputs.failed }}"
+          PERF_RESULT="${{ needs.performance-tests.result }}"
           PERF_SCORE="${{ needs.performance-tests.outputs.performance_score }}"
           PERF_STATUS="${{ needs.performance-tests.outputs.performance_status }}"
           PERF_ERROR="${{ needs.performance-tests.outputs.performance_error }}"
+          EDGE_RESULT="${{ needs.edge-function-health.result }}"
           EDGE_HEALTHY="${{ needs.edge-function-health.outputs.healthy }}"
           EDGE_TOTAL="${{ needs.edge-function-health.outputs.total }}"
+          EDGE_FAILED_DETAILS="${{ needs.edge-function-health.outputs.failed_details }}"
+          PROJECT_REF="${{ needs.edge-function-health.outputs.project_ref }}"
           EDGE_SKIPPED="${{ needs.edge-function-health.outputs.skipped }}"
 
           # 실패 조건 체크
           FAILED=false
           FAILED_JOBS=""
 
-          if [ "$PERF_STATUS" = "ok" ]; then
+          if [ "$PERF_RESULT" = "skipped" ]; then
+            PERFORMANCE_SUMMARY="skipped"
+          elif [ "$PERF_STATUS" = "ok" ]; then
             PERFORMANCE_SUMMARY="$PERF_SCORE/100"
           elif [ "$PERF_STATUS" = "unavailable" ]; then
             PERFORMANCE_SUMMARY="N/A (${PERF_ERROR:-UNKNOWN})"
@@ -375,7 +405,9 @@ jobs:
             PERFORMANCE_SUMMARY="failed (${PERF_ERROR:-UNKNOWN})"
           fi
 
-          if [ "$EDGE_SKIPPED" = "true" ]; then
+          if [ "$EDGE_RESULT" = "skipped" ]; then
+            EDGE_SUMMARY="skipped"
+          elif [ "$EDGE_SKIPPED" = "true" ]; then
             EDGE_SUMMARY="skipped (missing secrets)"
           elif [ -n "$EDGE_HEALTHY" ] && [ -n "$EDGE_TOTAL" ]; then
             EDGE_SUMMARY="$EDGE_HEALTHY/$EDGE_TOTAL healthy"
@@ -389,7 +421,9 @@ jobs:
             FAILED_JOBS="$FAILED_JOBS smoke-tests"
           fi
 
-          if [ "$PERF_STATUS" != "ok" ]; then
+          if [ "$PERF_RESULT" = "skipped" ]; then
+            echo "ℹ️ Performance tests skipped"
+          elif [ "$PERF_STATUS" != "ok" ]; then
             FAILED=true
             echo "❌ Performance measurement unavailable: $PERFORMANCE_SUMMARY"
             FAILED_JOBS="$FAILED_JOBS performance"
@@ -399,13 +433,16 @@ jobs:
             FAILED_JOBS="$FAILED_JOBS performance"
           fi
 
-          if [ "$EDGE_SKIPPED" != "true" ] && [ -n "$EDGE_HEALTHY" ] && [ -n "$EDGE_TOTAL" ]; then
+          if [ "$EDGE_RESULT" = "skipped" ] || [ "$EDGE_SKIPPED" = "true" ]; then
+            echo "ℹ️ Edge Function health checks skipped"
+          elif [ -n "$EDGE_HEALTHY" ] && [ -n "$EDGE_TOTAL" ]; then
             if [ "$EDGE_HEALTHY" -lt "$EDGE_TOTAL" ]; then
               FAILED=true
               echo "⚠️ Some Edge Functions unhealthy: $EDGE_HEALTHY/$EDGE_TOTAL"
+              printf "%b" "$EDGE_FAILED_DETAILS"
               FAILED_JOBS="$FAILED_JOBS edge-functions"
             fi
-          elif [ "$EDGE_SKIPPED" != "true" ]; then
+          else
             FAILED=true
             echo "❌ Edge Function health outputs missing"
             FAILED_JOBS="$FAILED_JOBS edge-functions"
@@ -415,15 +452,20 @@ jobs:
           echo "failed_jobs=${FAILED_JOBS# }" >> $GITHUB_OUTPUT
           echo "performance_summary=$PERFORMANCE_SUMMARY" >> $GITHUB_OUTPUT
           echo "edge_summary=$EDGE_SUMMARY" >> $GITHUB_OUTPUT
+          echo "project_ref=$PROJECT_REF" >> $GITHUB_OUTPUT
 
       - name: Generate summary
         run: |
           PERFORMANCE_SUMMARY="${{ steps.status.outputs.performance_summary }}"
           EDGE_SUMMARY="${{ steps.status.outputs.edge_summary }}"
+          PROJECT_REF="${{ steps.status.outputs.project_ref }}"
 
           echo "## 📊 QA Monitoring Report" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**실행 시간:** $(date '+%Y-%m-%d %H:%M:%S KST')" >> $GITHUB_STEP_SUMMARY
+          if [ -n "$PROJECT_REF" ]; then
+            echo "**모니터링 대상 Supabase 프로젝트:** \`$PROJECT_REF\`" >> $GITHUB_STEP_SUMMARY
+          fi
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 테스트 결과" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -465,18 +507,24 @@ jobs:
             };
 
             const perfScore = '${{ needs.performance-tests.outputs.performance_score }}';
+            const perfResult = '${{ needs.performance-tests.result }}';
             const perfStatusValue = '${{ needs.performance-tests.outputs.performance_status }}';
             const perfError = '${{ needs.performance-tests.outputs.performance_error }}';
             const edgeHealthy = '${{ needs.edge-function-health.outputs.healthy }}';
             const edgeTotal = '${{ needs.edge-function-health.outputs.total }}';
             const failedFunctions = '${{ needs.edge-function-health.outputs.failed_functions }}';
+            const failedDetails = `${{ needs.edge-function-health.outputs.failed_details }}`.trim();
+            const projectRef = '${{ needs.edge-function-health.outputs.project_ref }}';
+            const perfBelowThreshold = perfStatusValue === 'ok' && Number.parseInt(perfScore || '0', 10) < 50;
             const edgeSkipped = '${{ needs.edge-function-health.outputs.skipped }}' === 'true';
 
             const smokeStatus = smokeResults.failed === '0' ? '✅' : '❌';
-            const perfMeasured = perfStatusValue === 'ok';
+            const perfMeasured = perfResult !== 'skipped' && perfStatusValue === 'ok';
             const perfUnavailable = perfStatusValue === 'unavailable';
-            const perfStatus = perfMeasured ? '✅' : '❌';
-            const perfSummary = perfMeasured
+            const perfStatus = perfResult === 'skipped' ? '⏭️' : perfBelowThreshold ? '⚠️' : perfMeasured ? '✅' : '❌';
+            const perfSummary = perfResult === 'skipped'
+              ? 'skipped'
+              : perfMeasured
               ? `${perfScore}/100`
               : perfUnavailable
                 ? `N/A (${perfError || 'UNKNOWN'})`
@@ -496,6 +544,7 @@ jobs:
               '',
               `**일시:** ${date}`,
               `**실행 ID:** \`${context.runId}\``,
+              projectRef ? `**Supabase 프로젝트:** \`${projectRef}\`` : null,
               '',
               '### 테스트 결과',
               '',
@@ -513,11 +562,15 @@ jobs:
               bodyLines.push('');
             }
 
-            if (!perfMeasured) {
+            if (perfResult === 'skipped') {
+              bodyLines.push('### ⏭️ 성능 측정 생략');
+              bodyLines.push('이번 실행에서는 Performance 테스트가 수동으로 비활성화되었습니다.');
+              bodyLines.push('');
+            } else if (!perfMeasured) {
               bodyLines.push('### ❌ 성능 측정 실패');
               bodyLines.push(`Performance score를 계산할 수 없습니다. 원인: ${perfError || 'UNKNOWN'}`);
               bodyLines.push('');
-            } else if (parseInt(perfScore, 10) < 50) {
+            } else if (perfBelowThreshold) {
               bodyLines.push('### ❌ 성능 저하');
               bodyLines.push(`Performance score가 ${perfScore}점으로 기준(50점) 미달입니다.`);
               bodyLines.push('');
@@ -527,7 +580,7 @@ jobs:
               bodyLines.push('### ⚠️ Edge Function 이상');
               bodyLines.push('다음 함수들이 응답하지 않습니다:');
               bodyLines.push('```');
-              bodyLines.push(failedFunctions);
+              bodyLines.push(failedDetails || failedFunctions);
               bodyLines.push('```');
               bodyLines.push('');
             } else if (edgeCollectionFailed) {
@@ -544,7 +597,7 @@ jobs:
             bodyLines.push('---');
             bodyLines.push('*이 이슈는 QA 모니터링 파이프라인에서 자동 생성되었습니다.*');
 
-            const body = bodyLines.join('\n');
+            const body = bodyLines.filter(Boolean).join('\n');
 
             // 동일한 날짜의 이슈가 이미 있는지 확인
             const existingIssues = await github.rest.issues.listForRepo({
@@ -579,8 +632,43 @@ jobs:
               console.log(`Created new issue #${issue.data.number}`);
             }
 
+  close-issues-on-success:
+    name: Close QA Failure Issues
+    runs-on: ubuntu-latest
+    needs: [aggregate-and-notify]
+    if: always() && needs.aggregate-and-notify.outputs.failed != 'true'
+
+    steps:
+      - name: Close open qa-failure issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'qa-failure',
+              state: 'open',
+            });
+
+            for (const issue of issues) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `QA 모니터링이 정상으로 복구되어 자동으로 닫습니다. [해당 실행 로그](${runUrl})`,
+              });
+
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed',
+              });
+            }
+
   # =====================================================
-  # Job 6: Slack 알림 (실패 시)
+  # Job 7: Slack 알림 (실패 시)
   # =====================================================
   notify-slack:
     name: Slack Notification
@@ -591,6 +679,6 @@ jobs:
       workflow_name: "QA Monitoring"
       job_status: "failure"
       failed_jobs: "${{ needs.aggregate-and-notify.outputs.failed_jobs }}"
-      custom_message: "Performance: ${{ needs.aggregate-and-notify.outputs.performance_summary }} | Edge: ${{ needs.aggregate-and-notify.outputs.edge_summary }}"
+      custom_message: "Performance: ${{ needs.aggregate-and-notify.outputs.performance_summary }} | Edge: ${{ needs.aggregate-and-notify.outputs.edge_summary }}${{ needs.aggregate-and-notify.outputs.project_ref != '' && format(' | Ref: {0}', needs.aggregate-and-notify.outputs.project_ref) || '' }}"
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

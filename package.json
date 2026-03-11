@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "E2E testing for Fortune Flutter App",
   "scripts": {
+    "source-inventory:generate": "python3 scripts/source_inventory.py generate",
+    "source-inventory:check": "python3 scripts/source_inventory.py check",
+    "repo:sync": "npm run source-inventory:generate && npm run figma:catalog",
     "lint": "echo \"No frontend lint configured in CI. Skipping.\"",
     "typecheck": "echo \"No static typecheck configured in CI. Skipping.\"",
     "build": "echo \"No frontend build configured in CI. Skipping.\"",
