@@ -18751,11 +18751,13 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [
-        "no_inbound_refs"
-      ],
+      "notes": [],
       "path": "docs/APP_ARCHITECTURE.md",
-      "referenced_by": [],
+      "referenced_by": [
+        "README.md",
+        "docs/README.md",
+        "docs/getting-started/PROJECT_OVERVIEW.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -18779,11 +18781,12 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [
-        "no_inbound_refs"
-      ],
+      "notes": [],
       "path": "docs/README.md",
-      "referenced_by": [],
+      "referenced_by": [
+        "README.md",
+        "docs/getting-started/PROJECT_OVERVIEW.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -18838,7 +18841,6 @@
       "notes": [],
       "path": "docs/data/API_USAGE.md",
       "referenced_by": [
-        "docs/README.md",
         "docs/development/FORTUNE_STANDARDIZATION_GUIDE.md"
       ],
       "runtime_reachable": false,
@@ -18866,11 +18868,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/data/FORTUNE_OPTIMIZATION_GUIDE.md",
-      "referenced_by": [
-        "docs/README.md"
+      "notes": [
+        "no_inbound_refs"
       ],
+      "path": "docs/data/FORTUNE_OPTIMIZATION_GUIDE.md",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -18902,7 +18904,6 @@
       "notes": [],
       "path": "docs/data/LLM_PROVIDER_MIGRATION.md",
       "referenced_by": [
-        "docs/README.md",
         "docs/data/LLM_MODULE_GUIDE.md",
         "docs/data/PROMPT_ENGINEERING_GUIDE.md",
         "docs/deployment/API_KEY_ROTATION_GUIDE.md",
@@ -18920,7 +18921,6 @@
       "notes": [],
       "path": "docs/data/PROMPT_ENGINEERING_GUIDE.md",
       "referenced_by": [
-        "docs/README.md",
         "docs/data/FORTUNE_OPTIMIZATION_GUIDE.md",
         "docs/data/LLM_MODULE_GUIDE.md",
         "docs/data/LLM_PROVIDER_MIGRATION.md",
@@ -18935,11 +18935,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/deployment/ANDROID_DEPLOYMENT_SUMMARY.md",
-      "referenced_by": [
-        "docs/README.md"
+      "notes": [
+        "no_inbound_refs"
       ],
+      "path": "docs/deployment/ANDROID_DEPLOYMENT_SUMMARY.md",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -18952,7 +18952,6 @@
       "notes": [],
       "path": "docs/deployment/API_KEY_ROTATION_GUIDE.md",
       "referenced_by": [
-        "docs/README.md",
         "docs/data/LLM_MODULE_GUIDE.md",
         "docs/deployment/DEPLOYMENT_COMPLETE_GUIDE.md"
       ],
@@ -18965,11 +18964,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/deployment/APPLE_CAPABILITIES_SETUP.md",
-      "referenced_by": [
-        "docs/README.md"
+      "notes": [
+        "no_inbound_refs"
       ],
+      "path": "docs/deployment/APPLE_CAPABILITIES_SETUP.md",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -18982,7 +18981,6 @@
       "notes": [],
       "path": "docs/deployment/APP_STORE_ASSETS_GUIDE.md",
       "referenced_by": [
-        "docs/README.md",
         "docs/deployment/IOS_LAUNCH_QUICKSTART.md"
       ],
       "runtime_reachable": false,
@@ -19008,11 +19006,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/deployment/APP_STORE_PRODUCTS_DESIGN.md",
-      "referenced_by": [
-        "docs/README.md"
+      "notes": [
+        "no_inbound_refs"
       ],
+      "path": "docs/deployment/APP_STORE_PRODUCTS_DESIGN.md",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -19025,7 +19023,6 @@
       "notes": [],
       "path": "docs/deployment/APP_STORE_SUBMISSION_INFO.md",
       "referenced_by": [
-        "docs/README.md",
         "docs/development/reports/2026-02-16_store_review_strategy_discovery.md"
       ],
       "runtime_reachable": false,
@@ -19054,7 +19051,6 @@
       "notes": [],
       "path": "docs/deployment/GOOGLE_PLAY_SUBMISSION_GUIDE.md",
       "referenced_by": [
-        "docs/README.md",
         "docs/development/reports/2026-02-16_store_review_strategy_discovery.md"
       ],
       "runtime_reachable": false,
@@ -19066,11 +19062,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/deployment/IOS_LAUNCH_QUICKSTART.md",
-      "referenced_by": [
-        "docs/README.md"
+      "notes": [
+        "no_inbound_refs"
       ],
+      "path": "docs/deployment/IOS_LAUNCH_QUICKSTART.md",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -19094,11 +19090,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/deployment/SCREENSHOT_GUIDE.md",
-      "referenced_by": [
-        "docs/README.md"
+      "notes": [
+        "no_inbound_refs"
       ],
+      "path": "docs/deployment/SCREENSHOT_GUIDE.md",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -19111,7 +19107,6 @@
       "notes": [],
       "path": "docs/deployment/SECURITY_CHECKLIST.md",
       "referenced_by": [
-        "docs/README.md",
         "docs/deployment/IOS_LAUNCH_QUICKSTART.md"
       ],
       "runtime_reachable": false,
@@ -19402,7 +19397,6 @@
       "notes": [],
       "path": "docs/design/WIDGET_ARCHITECTURE_DESIGN.md",
       "referenced_by": [
-        "docs/README.md",
         "docs/design/README.md"
       ],
       "runtime_reachable": false,
@@ -19417,7 +19411,6 @@
       "notes": [],
       "path": "docs/development/CLAUDE_AUTOMATION.md",
       "referenced_by": [
-        "docs/README.md",
         "docs/development/FORTUNE_STANDARDIZATION_GUIDE.md"
       ],
       "runtime_reachable": false,
@@ -19429,11 +19422,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/development/CODE_CONSISTENCY_GUARD.md",
-      "referenced_by": [
-        "docs/README.md"
+      "notes": [
+        "no_inbound_refs"
       ],
+      "path": "docs/development/CODE_CONSISTENCY_GUARD.md",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -19462,7 +19455,6 @@
       "notes": [],
       "path": "docs/development/FORTUNE_STANDARDIZATION_GUIDE.md",
       "referenced_by": [
-        "docs/README.md",
         "scripts/create_fortune_standardization_tickets.sh",
         "scripts/create_remaining_tickets.sh"
       ],
@@ -19475,11 +19467,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/development/FORTUNE_STATUS_MAPPING.md",
-      "referenced_by": [
-        "docs/README.md"
+      "notes": [
+        "no_inbound_refs"
       ],
+      "path": "docs/development/FORTUNE_STATUS_MAPPING.md",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -19517,11 +19509,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/development/GIT_JIRA_WORKFLOW.md",
-      "referenced_by": [
-        "docs/README.md"
+      "notes": [
+        "no_inbound_refs"
       ],
+      "path": "docs/development/GIT_JIRA_WORKFLOW.md",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -19531,11 +19523,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/development/JIRA_CONFIG.md",
-      "referenced_by": [
-        "docs/README.md"
+      "notes": [
+        "no_inbound_refs"
       ],
+      "path": "docs/development/JIRA_CONFIG.md",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -19590,11 +19582,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/development/UX_REQUEST_GUIDE.md",
-      "referenced_by": [
-        "docs/README.md"
+      "notes": [
+        "no_inbound_refs"
       ],
+      "path": "docs/development/UX_REQUEST_GUIDE.md",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -19747,8 +19739,22 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "docs/features/CELEBRITY_AVATAR_SYSTEM_PLAN.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
+      "path": "docs/figma-style-guide.md",
       "referenced_by": [
         "docs/README.md"
       ],
@@ -19761,11 +19767,15 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [
-        "no_inbound_refs"
+      "notes": [],
+      "path": "docs/getting-started/APP_SURFACES_AND_ROUTES.md",
+      "referenced_by": [
+        "README.md",
+        "docs/APP_ARCHITECTURE.md",
+        "docs/README.md",
+        "docs/figma-style-guide.md",
+        "docs/getting-started/PROJECT_OVERVIEW.md"
       ],
-      "path": "docs/figma-style-guide.md",
-      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -19778,6 +19788,7 @@
       "notes": [],
       "path": "docs/getting-started/PROJECT_OVERVIEW.md",
       "referenced_by": [
+        "README.md",
         "docs/README.md"
       ],
       "runtime_reachable": false,
@@ -19818,11 +19829,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "docs/legal/PRIVACY_POLICY_CONTENT.md",
-      "referenced_by": [
-        "docs/README.md"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -19832,11 +19843,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "docs/legal/TERMS_OF_SERVICE_CONTENT.md",
-      "referenced_by": [
-        "docs/README.md"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -19846,11 +19857,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "docs/native/NATIVE_FEATURES_GUIDE.md",
-      "referenced_by": [
-        "docs/README.md"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -19860,11 +19871,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/native/WATCH_COMPANION_APPS_GUIDE.md",
-      "referenced_by": [
-        "docs/README.md"
+      "notes": [
+        "no_inbound_refs"
       ],
+      "path": "docs/native/WATCH_COMPANION_APPS_GUIDE.md",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -19916,11 +19927,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/testing/AB_TESTING_GUIDE.md",
-      "referenced_by": [
-        "docs/README.md"
+      "notes": [
+        "no_inbound_refs"
       ],
+      "path": "docs/testing/AB_TESTING_GUIDE.md",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -19930,11 +19941,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/testing/RESILIENT_SERVICE_GUIDE.md",
-      "referenced_by": [
-        "docs/README.md"
+      "notes": [
+        "no_inbound_refs"
       ],
+      "path": "docs/testing/RESILIENT_SERVICE_GUIDE.md",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -19972,11 +19983,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "docs/troubleshooting/DB_FIX_INSTRUCTIONS.md",
-      "referenced_by": [
-        "docs/README.md"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -19986,11 +19997,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "docs/troubleshooting/FIX_406_ERROR_GUIDE.md",
-      "referenced_by": [
-        "docs/README.md"
-      ],
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -20000,11 +20011,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/troubleshooting/FIX_MBTI_404_GUIDE.md",
-      "referenced_by": [
-        "docs/README.md"
+      "notes": [
+        "no_inbound_refs"
       ],
+      "path": "docs/troubleshooting/FIX_MBTI_404_GUIDE.md",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -20532,7 +20543,6 @@
       "notes": [],
       "path": "lib/core/design_system/components/ds_card.dart",
       "referenced_by": [
-        "docs/APP_ARCHITECTURE.md",
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/design_system/design_system.dart"
       ],
@@ -20868,7 +20878,6 @@
       "notes": [],
       "path": "lib/core/design_system/tokens/ds_colors.dart",
       "referenced_by": [
-        "docs/APP_ARCHITECTURE.md",
         "lib/core/design_system/components/ds_badge.dart",
         "lib/core/design_system/components/ds_bottom_sheet.dart",
         "lib/core/design_system/components/ds_button.dart",
@@ -20956,7 +20965,6 @@
       "notes": [],
       "path": "lib/core/design_system/tokens/ds_spacing.dart",
       "referenced_by": [
-        "docs/APP_ARCHITECTURE.md",
         "lib/core/design_system/components/ds_badge.dart",
         "lib/core/design_system/components/ds_bottom_sheet.dart",
         "lib/core/design_system/components/ds_button.dart",
@@ -21207,6 +21215,7 @@
       "notes": [],
       "path": "lib/core/navigation/fortune_chat_route.dart",
       "referenced_by": [
+        "docs/getting-started/APP_SURFACES_AND_ROUTES.md",
         "lib/core/constants/fortune_type_names.dart",
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
         "lib/features/character/presentation/utils/fortune_chat_navigation.dart",
@@ -22255,7 +22264,6 @@
       "notes": [],
       "path": "lib/core/theme/typography_unified.dart",
       "referenced_by": [
-        "docs/APP_ARCHITECTURE.md",
         "lib/core/design_system/design_system.dart",
         "lib/core/design_system/theme/ds_theme.dart",
         "lib/core/design_system/tokens/ds_typography.dart",
@@ -22651,7 +22659,6 @@
       ],
       "path": "lib/core/widgets/unified_button.dart",
       "referenced_by": [
-        "docs/APP_ARCHITECTURE.md",
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md"
       ],
       "runtime_reachable": false,
@@ -23022,7 +23029,6 @@
       "notes": [],
       "path": "lib/data/services/fortune_api_service_edge_functions.dart",
       "referenced_by": [
-        "docs/APP_ARCHITECTURE.md",
         "lib/data/services/fortune_api/fortune_api_service.dart",
         "lib/presentation/providers/providers.dart"
       ],
@@ -23138,6 +23144,7 @@
       "notes": [],
       "path": "lib/features/character/data/fortune_characters.dart",
       "referenced_by": [
+        "docs/getting-started/APP_SURFACES_AND_ROUTES.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/pages/character_profile_page.dart",
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
@@ -25659,8 +25666,12 @@
       "notes": [],
       "path": "lib/routes/character_routes.dart",
       "referenced_by": [
+        "docs/APP_ARCHITECTURE.md",
+        "docs/README.md",
         "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
+        "docs/getting-started/APP_SURFACES_AND_ROUTES.md",
+        "docs/getting-started/PROJECT_OVERVIEW.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -25676,8 +25687,11 @@
       "path": "lib/routes/route_config.dart",
       "referenced_by": [
         "docs/APP_ARCHITECTURE.md",
+        "docs/README.md",
         "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
+        "docs/getting-started/APP_SURFACES_AND_ROUTES.md",
+        "docs/getting-started/PROJECT_OVERVIEW.md",
         "integration_test/test_app.dart",
         "lib/main.dart",
         "scripts/pre-commit-screen-check.sh"
@@ -25694,8 +25708,12 @@
       "notes": [],
       "path": "lib/routes/routes/auth_routes.dart",
       "referenced_by": [
+        "docs/APP_ARCHITECTURE.md",
+        "docs/README.md",
         "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
+        "docs/getting-started/APP_SURFACES_AND_ROUTES.md",
+        "docs/getting-started/PROJECT_OVERVIEW.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -25903,6 +25921,7 @@
       "notes": [],
       "path": "lib/services/deep_link_service.dart",
       "referenced_by": [
+        "docs/getting-started/APP_SURFACES_AND_ROUTES.md",
         "lib/main.dart"
       ],
       "runtime_reachable": true,
@@ -28400,7 +28419,6 @@
       ],
       "path": "supabase/functions/fortune-daily/index.ts",
       "referenced_by": [
-        "docs/APP_ARCHITECTURE.md",
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/fortune/fortune_type_registry.dart",
         "lib/core/services/fortune_generators/time_based_generator.dart",
@@ -31341,11 +31359,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "test_dart",
-      "notes": [],
-      "path": "test/widget_test.dart",
-      "referenced_by": [
-        "README.md"
+      "notes": [
+        "no_inbound_refs"
       ],
+      "path": "test/widget_test.dart",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": true,
       "usage_status": "test_only"
@@ -31354,7 +31372,7 @@
   "meta": {
     "counts_by_area": {
       "assets": 1231,
-      "docs": 86,
+      "docs": 87,
       "integration_test": 8,
       "lib": 391,
       "scripts": 70,
@@ -31366,11 +31384,11 @@
       "keep_generated": 28,
       "manual_review": 979,
       "phase1_remove_candidate": 18,
-      "phase2_review_candidate": 322,
+      "phase2_review_candidate": 323,
       "phase3_feature_cleanup": 6
     },
     "counts_by_usage_status": {
-      "doc_only": 91,
+      "doc_only": 92,
       "generated_excluded": 28,
       "runtime_used": 676,
       "test_only": 47,
@@ -31636,7 +31654,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2029,
+    "total_files": 2030,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
