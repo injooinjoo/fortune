@@ -122,12 +122,12 @@ const FIGMA_PAGES = [
   {
     key: '20-chat-home-character',
     name: '20 Chat Home / Character',
-    description: 'The surviving chat shell, character conversation, and character profiles.',
+    description: 'The surviving chat shell, the two in-chat experiences, and character conversation states.',
   },
   {
     key: '80-admin-policy-utility',
     name: '80 Admin / Policy / Utility',
-    description: 'Policy pages, account deletion, and retained utility screens.',
+    description: 'Premium, policy pages, and account management screens.',
   },
   {
     key: '90-components',
@@ -205,6 +205,38 @@ const SCREENS = [
     ],
   },
   {
+    id: 'chat__home__general_default',
+    pageKey: '20-chat-home-character',
+    title: 'General Chat Home',
+    frameName: 'General Chat Home',
+    routeHash: '#/chat',
+    status: 'placeholder',
+    triage: 'capture_next_runtime',
+    blocker:
+      'Needs a deterministic Story-tab capture so the official catalog can distinguish 일반 채팅 from the shared /chat shell.',
+    note: 'User-facing 일반 채팅 home state inside /chat. This is not a standalone route.',
+    sources: [
+      'lib/features/character/presentation/pages/swipe_home_shell.dart',
+      'lib/features/character/presentation/pages/character_list_panel.dart',
+    ],
+  },
+  {
+    id: 'chat__home__curiosity_default',
+    pageKey: '20-chat-home-character',
+    title: 'Curiosity Home',
+    frameName: 'Curiosity Home',
+    routeHash: '#/chat',
+    status: 'placeholder',
+    triage: 'capture_next_runtime',
+    blocker:
+      'Needs a deterministic Fortune-tab capture so the official catalog can distinguish 호기심 from the shared /chat shell.',
+    note: 'User-facing 호기심 home state inside /chat. This is not a standalone route.',
+    sources: [
+      'lib/features/character/presentation/pages/swipe_home_shell.dart',
+      'lib/features/character/presentation/pages/character_list_panel.dart',
+    ],
+  },
+  {
     id: 'chat__character__luts',
     pageKey: '20-chat-home-character',
     title: 'Character Chat',
@@ -216,6 +248,40 @@ const SCREENS = [
       'lib/features/character/presentation/pages/swipe_home_shell.dart',
       'lib/features/character/presentation/pages/character_chat_panel.dart',
       'lib/features/character/presentation/providers/character_chat_provider.dart',
+    ],
+  },
+  {
+    id: 'chat__survey__fortune_step',
+    pageKey: '20-chat-home-character',
+    title: 'Curiosity Survey Step',
+    frameName: 'Curiosity Survey Step',
+    routeHash: '#/chat?fortuneType=daily',
+    status: 'placeholder',
+    triage: 'capture_next_runtime',
+    blocker:
+      'Requires deterministic expert launch plus an active in-chat survey step before capture.',
+    note: 'Single-step survey UI shown inside the 호기심 chat flow.',
+    sources: [
+      'lib/features/character/presentation/pages/character_chat_panel.dart',
+      'lib/features/character/presentation/providers/character_chat_survey_provider.dart',
+      'lib/features/chat/domain/configs/survey_configs.dart',
+    ],
+  },
+  {
+    id: 'chat__result__fortune_complete',
+    pageKey: '20-chat-home-character',
+    title: 'Curiosity Result Complete',
+    frameName: 'Curiosity Result Complete',
+    routeHash: '#/chat?fortuneType=daily',
+    status: 'placeholder',
+    triage: 'capture_next_runtime',
+    blocker:
+      'Needs seeded survey answers and a deterministic result payload to capture the completed 호기심 state.',
+    note: 'Completed insight result rendered back into the chat stream with embedded result components.',
+    sources: [
+      'lib/features/character/presentation/pages/character_chat_panel.dart',
+      'lib/features/character/presentation/widgets/embedded_fortune_component.dart',
+      'lib/features/chat/presentation/widgets/chat_saju_result_card.dart',
     ],
   },
   {
@@ -231,6 +297,23 @@ const SCREENS = [
     ],
   },
   {
+    id: 'chat__onboarding__character_intro',
+    pageKey: '20-chat-home-character',
+    title: 'Character Chat Onboarding',
+    frameName: 'Character Chat Onboarding',
+    routeHash: '#/chat',
+    status: 'placeholder',
+    triage: 'capture_next_runtime',
+    blocker:
+      'Shown only on first-run state and currently needs storage overrides to capture reliably.',
+    note: 'Three-slide onboarding shown before the first /chat session.',
+    sources: [
+      'lib/features/character/presentation/pages/swipe_home_shell.dart',
+      'lib/features/character/presentation/pages/character_onboarding_page.dart',
+      'lib/services/storage_service.dart',
+    ],
+  },
+  {
     id: 'chat__profile_sheet__default',
     pageKey: '20-chat-home-character',
     title: 'Chat Account Sheet',
@@ -241,6 +324,23 @@ const SCREENS = [
     note: 'Sheet contains only auth status, privacy policy, terms, account deletion, and logout.',
     sources: [
       'lib/features/chat/presentation/widgets/profile_bottom_sheet.dart',
+    ],
+  },
+  {
+    id: 'premium__insight__default',
+    pageKey: '80-admin-policy-utility',
+    title: 'Premium Insight',
+    frameName: 'Premium Insight',
+    routeHash: '#/premium',
+    status: 'placeholder',
+    triage: 'capture_next_runtime',
+    blocker:
+      'Current catalog has no live premium capture yet even though /premium is a retained route.',
+    note: 'Premium entry surface for 프리미엄 사주 and deep-link launch into the chat flow.',
+    sources: [
+      'lib/routes/route_config.dart',
+      'lib/screens/premium/premium_screen.dart',
+      'lib/features/character/presentation/utils/fortune_chat_navigation.dart',
     ],
   },
   {
@@ -281,19 +381,6 @@ const SCREENS = [
       'lib/screens/profile/account_deletion_page.dart',
     ],
   },
-  {
-    id: 'utility__manseryeok__default',
-    pageKey: '80-admin-policy-utility',
-    title: 'Manseryeok',
-    frameName: 'Manseryeok',
-    routeHash: '#/manseryeok',
-    status: 'live',
-    sources: [
-      'lib/routes/route_config.dart',
-      'lib/features/fortune/presentation/pages/manseryeok_page.dart',
-      'lib/features/fortune/presentation/providers/saju_provider.dart',
-    ],
-  },
 ].map(withScreenLayerContract);
 
 const COMPONENT_CARDS = [
@@ -306,17 +393,29 @@ const COMPONENT_CARDS = [
     ],
   },
   {
-    title: 'Conversation Blocks',
+    title: 'Character Entry and Onboarding',
     sources: [
+      'lib/features/character/presentation/pages/swipe_home_shell.dart',
+      'lib/features/character/presentation/pages/character_onboarding_page.dart',
+      'lib/services/storage_service.dart',
+    ],
+  },
+  {
+    title: 'Conversation, Survey, and Result Blocks',
+    sources: [
+      'lib/features/character/presentation/pages/character_chat_panel.dart',
       'lib/features/character/presentation/widgets/character_message_bubble.dart',
+      'lib/features/chat/presentation/widgets/survey/chat_survey_chips.dart',
       'lib/features/chat/presentation/widgets/chat_saju_result_card.dart',
+      'lib/features/character/presentation/widgets/embedded_fortune_component.dart',
       'lib/shared/components/section_header.dart',
     ],
   },
   {
-    title: 'Account and Policy Controls',
+    title: 'Account, Premium, and Policy Controls',
     sources: [
       'lib/features/chat/presentation/widgets/profile_bottom_sheet.dart',
+      'lib/screens/premium/premium_screen.dart',
       'lib/screens/profile/account_deletion_page.dart',
       'lib/shared/components/settings_list_tile.dart',
     ],

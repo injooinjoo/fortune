@@ -2,7 +2,7 @@
 
 ## Current Runtime Scope
 
-As of `2026-03-11`, the app runtime is contracted to:
+As of `2026-03-12`, the app runtime is contracted to:
 
 - `10 Entry / Auth / Onboarding`
 - `20 Chat / Character`
@@ -21,8 +21,8 @@ Repo evidence:
 | --- | --- | --- |
 | `00 Cover & Governance` | `governance_only` | Catalog governance only |
 | `10 Entry / Auth / Onboarding` | `active_runtime` | `/`, `/splash`, `/signup`, `/auth/callback`, `/onboarding`, `/onboarding/toss-style` |
-| `20 Chat / Character` | `active_runtime` | `/chat`, `/character/:id` |
-| `80 Admin / Policy / Utility` | `active_runtime` | `/privacy-policy`, `/terms-of-service`, `/account-deletion`, `/manseryeok` |
+| `20 Chat / Character` | `active_runtime` | `/chat`, `/character/:id`, plus internal `/chat` states for 일반 채팅, 호기심, survey, result, onboarding, and account sheet |
+| `80 Admin / Policy / Utility` | `active_runtime` | `/premium`, `/privacy-policy`, `/terms-of-service`, `/account-deletion` |
 | `90 Components` | `governance_only` | Retained component inventory only |
 | `99 Archive` | `archive_only` | Historical or removed product references |
 
@@ -63,6 +63,7 @@ The official file does not expose page-delete mutations through the available MC
 The official design catalog should now be interpreted as a reduced product:
 
 - keep `10`, `20`, and `80` as live runtime coverage
+- represent `/chat` internal current-state surfaces directly inside `20`
 - keep `00`, `90`, and `99` for governance/components/archive
 - delete the manual Figma pages listed above
 - treat any lingering references to `30/40/50/60/70/75` as stale artifacts

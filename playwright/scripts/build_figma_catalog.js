@@ -18,6 +18,22 @@ function ensureDir(dirPath) {
   fs.mkdirSync(dirPath, { recursive: true });
 }
 
+function cleanCatalogDir() {
+  if (!fs.existsSync(CATALOG_DIR)) {
+    return;
+  }
+
+  for (const entry of fs.readdirSync(CATALOG_DIR)) {
+    if (entry.endsWith('.html')) {
+      fs.rmSync(path.join(CATALOG_DIR, entry), { force: true });
+    }
+  }
+
+  if (fs.existsSync(SCREEN_ASSET_DIR)) {
+    fs.rmSync(SCREEN_ASSET_DIR, { recursive: true, force: true });
+  }
+}
+
 function escapeHtml(value) {
   return String(value)
     .replace(/&/g, '&amp;')
@@ -563,6 +579,7 @@ function buildIndexPage() {
 
 function main() {
   ensureDir(CATALOG_DIR);
+  cleanCatalogDir();
   const imageMap = copyScreenshots();
 
   fs.writeFileSync(path.join(CATALOG_DIR, 'index.html'), buildIndexPage());

@@ -7,13 +7,13 @@
 - Direct link: [Fortune Screen Catalog - Official](https://www.figma.com/design/dkx3Biwe5xkiMQWsjq95LA)
 - Layer naming contract: `docs/design/FIGMA_LAYER_NAMING_STANDARD.md`
 
-This file remains the only official Figma source of truth for Fortune.
+This file remains the only official Figma source of truth for Fortune current-state surfaces.
 
 ## Coverage Snapshot
 
-- Managed surfaces: `12`
-- Live captures: `10`
-- Placeholder specs: `2`
+- Managed surfaces: `17`
+- Live captures: `9`
+- Placeholder specs: `8`
 
 ## Runtime Scope
 
@@ -23,18 +23,26 @@ The current product scope is intentionally reduced to:
 - `20 Chat / Character`
 - `80 Admin / Policy / Utility`
 
-Live runtime routes covered by the official catalog:
+Runtime routes represented by the official catalog:
 
 - `/splash`
 - `/signup`
 - `/onboarding`
 - `/onboarding/toss-style`
 - `/chat`
+- `/premium`
 - `/character/:id`
 - `/privacy-policy`
 - `/terms-of-service`
 - `/account-deletion`
-- `/manseryeok`
+
+Internal `/chat` states represented as catalog surfaces:
+
+- 일반 채팅 홈
+- 호기심 홈
+- 채팅 설문 진행 상태
+- 채팅 결과 상태
+- 첫 진입 캐릭터 온보딩
 
 ## Official File Structure
 
@@ -62,7 +70,6 @@ Canonical repo sources:
 - Auth routes: `lib/routes/routes/auth_routes.dart`
 - Character routes: `lib/routes/character_routes.dart`
 - Retained chat state: `lib/features/character/presentation/providers/character_chat_provider.dart`
-- Retained utility state: `lib/features/fortune/presentation/providers/saju_provider.dart`
 - Capture manifest: `playwright/scripts/figma_capture_manifest.js`
 - Live capture runner: `playwright/scripts/capture_figma_screens.js`
 - Catalog HTML generator: `playwright/scripts/build_figma_catalog.js`

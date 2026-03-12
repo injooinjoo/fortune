@@ -14,8 +14,8 @@
 | Figma page | Total | Live | Placeholder |
 | --- | ---: | ---: | ---: |
 | `10 Entry / Auth / Onboarding` | 4 | 4 | 0 |
-| `20 Chat / Character` | 4 | 3 | 1 |
-| `80 Admin / Policy / Utility` | 4 | 3 | 1 |
+| `20 Chat / Character` | 9 | 3 | 6 |
+| `80 Admin / Policy / Utility` | 4 | 2 | 2 |
 
 Additional official pages:
 
@@ -28,7 +28,7 @@ Additional official pages:
 | Triage | Count |
 | --- | ---: |
 | `capture_next_auth` | 1 |
-| `capture_next_runtime` | 1 |
+| `capture_next_runtime` | 7 |
 
 ## Screen Catalog
 
@@ -42,16 +42,21 @@ Additional official pages:
 ### 20 Chat / Character
 
 - `chat__home__default` | `#/chat` | `live`
+- `chat__home__general_default` | `#/chat` | `placeholder`
+- `chat__home__curiosity_default` | `#/chat` | `placeholder`
 - `chat__character__luts` | `#/chat?openCharacterChat=true&characterId=luts` | `live`
+- `chat__survey__fortune_step` | `#/chat?fortuneType=daily` | `placeholder`
+- `chat__result__fortune_complete` | `#/chat?fortuneType=daily` | `placeholder`
 - `character__profile__luts` | `#/character/luts` | `live`
+- `chat__onboarding__character_intro` | `#/chat` | `placeholder`
 - `chat__profile_sheet__default` | bottom-sheet runtime state | `placeholder`
 
 ### 80 Admin / Policy / Utility
 
+- `premium__insight__default` | `#/premium` | `placeholder`
 - `policy__privacy__default` | `#/privacy-policy` | `live`
 - `policy__terms__default` | `#/terms-of-service` | `live`
 - `account__deletion__auth_gated` | `#/account-deletion` | `placeholder`
-- `utility__manseryeok__default` | `#/manseryeok` | `live`
 
 ## Component Inventory
 
@@ -61,16 +66,25 @@ Additional official pages:
 - `lib/features/character/presentation/pages/character_list_panel.dart`
 - `lib/shared/components/app_header.dart`
 
-### Conversation Blocks
+### Character Entry and Onboarding
 
+- `lib/features/character/presentation/pages/swipe_home_shell.dart`
+- `lib/features/character/presentation/pages/character_onboarding_page.dart`
+- `lib/services/storage_service.dart`
+
+### Conversation, Survey, and Result Blocks
+
+- `lib/features/character/presentation/pages/character_chat_panel.dart`
 - `lib/features/character/presentation/widgets/character_message_bubble.dart`
-- `lib/features/character/presentation/providers/character_chat_provider.dart`
+- `lib/features/chat/presentation/widgets/survey/chat_survey_chips.dart`
 - `lib/features/chat/presentation/widgets/chat_saju_result_card.dart`
+- `lib/features/character/presentation/widgets/embedded_fortune_component.dart`
 - `lib/shared/components/section_header.dart`
 
-### Account and Policy Controls
+### Account, Premium, and Policy Controls
 
 - `lib/features/chat/presentation/widgets/profile_bottom_sheet.dart`
+- `lib/screens/premium/premium_screen.dart`
 - `lib/screens/profile/account_deletion_page.dart`
 - `lib/shared/components/settings_list_tile.dart`
 
@@ -80,10 +94,6 @@ Additional official pages:
 - `lib/core/design_system/components/ds_button.dart`
 - `lib/core/design_system/components/ds_text_field.dart`
 - `lib/core/widgets/unified_button.dart`
-
-### Retained Runtime State
-
-- `lib/features/fortune/presentation/providers/saju_provider.dart`
 
 ## Removed Page Groups
 
