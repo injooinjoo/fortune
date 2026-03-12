@@ -1,6 +1,11 @@
 # 관상 시스템 가이드 (Face Reading System)
 
 > 최종 업데이트: 2025.01.03
+>
+> `Legacy / Future-state note`
+> 이 문서는 current-state 구현의 source of truth가 아닙니다.
+> 현재 제품 표면과 라우트는 `docs/getting-started/APP_SURFACES_AND_ROUTES.md`를 기준으로 판단합니다.
+> 아래의 `/fortune/face-ai`, `/fortune/face-ai/camera`, 탐구 탭 진입 구조는 현재 구현이 아니라 future-state 또는 과거 제안안으로 봐야 합니다.
 
 ## 통계
 

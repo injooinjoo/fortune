@@ -2,6 +2,11 @@
 
 > Flutter 디자인 시스템을 Figma로 이전하기 위한 스타일 가이드
 > 마지막 업데이트: 2026-02-09
+>
+> `Legacy / Future-state note`
+> 이 문서는 current-state 구현의 source of truth가 아닙니다.
+> 현재 제품 표면과 라우트는 `docs/getting-started/APP_SURFACES_AND_ROUTES.md`를 기준으로 해석합니다.
+> 이 문서 안의 다중 탭 구조나 `/fortune`, `/trend`, `/profile` 같은 상위 라우트 설명은 Figma 설계안 또는 과거안으로만 취급합니다.
 
 ---
 

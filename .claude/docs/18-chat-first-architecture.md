@@ -1,6 +1,11 @@
 # Chat-First Architecture Guide
 
 > 최종 업데이트: 2025.01.03
+>
+> `Legacy / Future-state note`
+> 이 문서는 current-state 구현의 source of truth가 아닙니다.
+> 현재 제품 표면과 라우트는 `docs/getting-started/APP_SURFACES_AND_ROUTES.md`를 기준으로 판단합니다.
+> 아래의 5탭 구조와 `/home`, `/fortune`, `/trend`, `/profile`는 현재 구현 설명이 아니라 과거안 또는 목표안으로 해석해야 합니다.
 
 ## 통계
 
