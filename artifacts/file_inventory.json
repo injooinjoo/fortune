@@ -20780,7 +20780,6 @@
         "lib/screens/onboarding/onboarding_page.dart",
         "lib/screens/onboarding/steps/birth_input_step.dart",
         "lib/screens/onboarding/steps/name_input_step.dart",
-        "lib/screens/onboarding/steps/phone_verification_step.dart",
         "lib/screens/premium/premium_screen.dart",
         "lib/screens/profile/account_deletion_page.dart",
         "lib/screens/splash_screen.dart",
@@ -22178,9 +22177,7 @@
       ],
       "path": "lib/core/theme/app_theme_extensions.dart",
       "referenced_by": [
-        "lib/core/theme/app_theme.dart",
-        "lib/screens/onboarding/steps/phone_step.dart",
-        "lib/screens/onboarding/steps/phone_verification_step.dart"
+        "lib/core/theme/app_theme.dart"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -23650,14 +23647,12 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
+      "notes": [],
       "path": "lib/features/character/presentation/utils/fortune_chat_navigation.dart",
       "referenced_by": [
         "lib/screens/premium/premium_screen.dart"
       ],
-      "runtime_reachable": false,
+      "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -25815,51 +25810,17 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase3_feature_cleanup",
+      "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/screens/onboarding/steps/phone_step.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase3_feature_cleanup",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/screens/onboarding/steps/phone_verification_step.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase3_feature_cleanup",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
+      "notes": [],
       "path": "lib/screens/premium/premium_screen.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
+      "referenced_by": [
+        "lib/routes/route_config.dart"
+      ],
+      "runtime_reachable": true,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "runtime_used"
     },
     {
       "area": "lib",
@@ -31430,26 +31391,26 @@
       "assets": 1231,
       "docs": 86,
       "integration_test": 8,
-      "lib": 395,
+      "lib": 393,
       "scripts": 70,
       "supabase": 204,
       "test": 39
     },
     "counts_by_candidate_action": {
-      "keep": 677,
+      "keep": 678,
       "keep_generated": 28,
       "manual_review": 979,
       "phase1_remove_candidate": 18,
       "phase2_review_candidate": 322,
-      "phase3_feature_cleanup": 9
+      "phase3_feature_cleanup": 6
     },
     "counts_by_usage_status": {
       "doc_only": 91,
       "generated_excluded": 28,
-      "runtime_used": 677,
+      "runtime_used": 678,
       "test_only": 47,
       "tooling_only": 184,
-      "unreferenced": 1006
+      "unreferenced": 1003
     },
     "declared_asset_dirs_without_runtime_refs": [
       "assets/animations",
@@ -31602,9 +31563,9 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 310,
-    "lib_dart_total": 392,
-    "lib_dart_zero_incoming": 32,
+    "lib_dart_runtime_reachable": 312,
+    "lib_dart_total": 390,
+    "lib_dart_zero_incoming": 29,
     "missing_function_refs": [
       "--all",
       "account-deletion",
@@ -31710,7 +31671,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2033,
+    "total_files": 2031,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
