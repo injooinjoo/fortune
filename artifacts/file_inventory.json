@@ -20751,9 +20751,7 @@
         "lib/features/chat/presentation/widgets/survey/chat_survey_slider.dart",
         "lib/features/chat/presentation/widgets/survey/ootd_photo_input.dart",
         "lib/features/chat_insight/presentation/widgets/insight_history_card.dart",
-        "lib/features/fortune/presentation/pages/manseryeok_page.dart",
         "lib/features/fortune/presentation/widgets/face_reading/celebrity_match_carousel.dart",
-        "lib/features/fortune/presentation/widgets/saju/manseryeok_daeun_timeline.dart",
         "lib/features/fortune/presentation/widgets/saju/oheng_cycle_widget.dart",
         "lib/features/fortune/presentation/widgets/saju/saju_concept_card.dart",
         "lib/features/fortune/presentation/widgets/saju/saju_hapchung_widget.dart",
@@ -22842,7 +22840,6 @@
       "notes": [],
       "path": "lib/data/saju_explanations.dart",
       "referenced_by": [
-        "lib/features/fortune/presentation/pages/manseryeok_page.dart",
         "lib/features/fortune/presentation/widgets/saju/saju_hapchung_widget.dart",
         "lib/features/fortune/presentation/widgets/saju/saju_jijanggan_widget.dart",
         "lib/features/fortune/presentation/widgets/saju/saju_pillar_table_pro.dart",
@@ -24424,7 +24421,6 @@
       "notes": [],
       "path": "lib/features/fortune/domain/models/saju/daeun_calculator.dart",
       "referenced_by": [
-        "lib/features/fortune/presentation/widgets/saju/manseryeok_daeun_timeline.dart",
         "lib/features/fortune/presentation/widgets/saju/saju_yeon_wolun_card.dart"
       ],
       "runtime_reachable": true,
@@ -24631,26 +24627,11 @@
       "dirty": false,
       "kind": "dart",
       "notes": [],
-      "path": "lib/features/fortune/presentation/pages/manseryeok_page.dart",
-      "referenced_by": [
-        "lib/routes/route_config.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
       "path": "lib/features/fortune/presentation/providers/saju_provider.dart",
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
-        "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "lib/features/fortune/presentation/pages/manseryeok_page.dart"
+        "lib/features/character/presentation/providers/character_chat_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24703,20 +24684,6 @@
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "unreferenced"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/features/fortune/presentation/widgets/saju/manseryeok_daeun_timeline.dart",
-      "referenced_by": [
-        "lib/features/fortune/presentation/widgets/saju/saju_widgets.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
     },
     {
       "area": "lib",
@@ -24844,8 +24811,7 @@
       "notes": [],
       "path": "lib/features/fortune/presentation/widgets/saju/saju_widgets.dart",
       "referenced_by": [
-        "lib/features/chat/presentation/widgets/chat_saju_result_card.dart",
-        "lib/features/fortune/presentation/pages/manseryeok_page.dart"
+        "lib/features/chat/presentation/widgets/chat_saju_result_card.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24901,8 +24867,7 @@
       "notes": [],
       "path": "lib/features/fortune/presentation/widgets/saju_element_chart.dart",
       "referenced_by": [
-        "lib/features/chat/presentation/widgets/chat_saju_result_card.dart",
-        "lib/features/fortune/presentation/pages/manseryeok_page.dart"
+        "lib/features/chat/presentation/widgets/chat_saju_result_card.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -31391,13 +31356,13 @@
       "assets": 1231,
       "docs": 86,
       "integration_test": 8,
-      "lib": 393,
+      "lib": 391,
       "scripts": 70,
       "supabase": 204,
       "test": 39
     },
     "counts_by_candidate_action": {
-      "keep": 678,
+      "keep": 676,
       "keep_generated": 28,
       "manual_review": 979,
       "phase1_remove_candidate": 18,
@@ -31407,7 +31372,7 @@
     "counts_by_usage_status": {
       "doc_only": 91,
       "generated_excluded": 28,
-      "runtime_used": 678,
+      "runtime_used": 676,
       "test_only": 47,
       "tooling_only": 184,
       "unreferenced": 1003
@@ -31563,8 +31528,8 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 312,
-    "lib_dart_total": 390,
+    "lib_dart_runtime_reachable": 310,
+    "lib_dart_total": 388,
     "lib_dart_zero_incoming": 29,
     "missing_function_refs": [
       "--all",
@@ -31671,7 +31636,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2031,
+    "total_files": 2029,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
