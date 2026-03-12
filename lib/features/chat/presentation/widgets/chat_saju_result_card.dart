@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/widgets/infographic/headers/saju_info_header.dart';
@@ -123,8 +122,6 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
           _buildInfoHeader(context),
           // 섹션들
           _buildSections(context),
-          // 전체 만세력 보기 버튼
-          _buildManseryeokButton(context),
         ],
       ),
     );
@@ -446,62 +443,6 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
           duration: const Duration(milliseconds: 200),
         ),
       ],
-    );
-  }
-
-  /// "전체 만세력 보기" 네비게이션 버튼
-  Widget _buildManseryeokButton(BuildContext context) {
-    final colors = context.colors;
-    final isDark = context.isDark;
-
-    return InkWell(
-      onTap: () => context.pushNamed('manseryeok'),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: isDark
-                ? [
-                    colors.accent.withValues(alpha: 0.15),
-                    colors.accent.withValues(alpha: 0.08),
-                  ]
-                : [
-                    colors.accent.withValues(alpha: 0.08),
-                    colors.accent.withValues(alpha: 0.04),
-                  ],
-          ),
-          border: Border(
-            top: BorderSide(
-              color: colors.accent.withValues(alpha: 0.2),
-            ),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.auto_awesome,
-              color: colors.accent,
-              size: 18,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              '전체 만세력 분석 보기',
-              style: context.bodyMedium.copyWith(
-                color: colors.accent,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(width: 4),
-            Icon(
-              Icons.arrow_forward_ios,
-              color: colors.accent,
-              size: 14,
-            ),
-          ],
-        ),
-      ),
     );
   }
 

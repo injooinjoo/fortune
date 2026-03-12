@@ -10,7 +10,6 @@ import '../screens/premium/premium_screen.dart';
 
 // Retained product surfaces
 import '../features/character/presentation/pages/swipe_home_shell.dart';
-import '../features/fortune/presentation/pages/manseryeok_page.dart';
 
 import 'routes/auth_routes.dart';
 import 'character_routes.dart';
@@ -54,15 +53,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/home',
         name: 'home',
         redirect: (context, state) => '/chat',
-      ),
-      GoRoute(
-        path: '/manseryeok',
-        name: 'manseryeok',
-        pageBuilder: (context, state) => PageTransitions.slideTransition(
-          context,
-          state,
-          const ManseryeokPage(),
-        ),
       ),
       GoRoute(
         path: '/premium',
