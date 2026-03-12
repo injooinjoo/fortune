@@ -92,7 +92,8 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? DSColors.backgroundDark : DSColors.backgroundDark;
+    final colors = context.colors;
+    final bgColor = colors.background;
     final chatState = ref.watch(characterChatProvider(_character.id));
     final affinity = chatState.affinity;
     final messageCount = chatState.messages.length;
@@ -462,8 +463,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
 
   /// 정보 탭 (세계관, 성격 등)
   Widget _buildInfoTab(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final sectionBgColor = isDark ? DSColors.surfaceDark : Colors.grey[100];
+    final sectionBgColor = context.colors.backgroundSecondary;
 
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -475,7 +475,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
           title: context.l10n.worldview,
           content:
               CharacterLocalizer.getWorldview(context, _character.id).trim(),
-          bgColor: sectionBgColor!,
+          bgColor: sectionBgColor,
         ),
         const SizedBox(height: 12),
         // 성격
