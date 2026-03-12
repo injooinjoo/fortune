@@ -6,6 +6,7 @@ import '../screens/onboarding/onboarding_page.dart';
 import '../features/policy/presentation/pages/privacy_policy_page.dart';
 import '../features/policy/presentation/pages/terms_of_service_page.dart';
 import '../screens/profile/account_deletion_page.dart';
+import '../screens/premium/premium_screen.dart';
 
 // Retained product surfaces
 import '../features/character/presentation/pages/swipe_home_shell.dart';
@@ -61,6 +62,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           context,
           state,
           const ManseryeokPage(),
+        ),
+      ),
+      GoRoute(
+        path: '/premium',
+        name: 'premium',
+        pageBuilder: (context, state) => PageTransitions.slideTransition(
+          context,
+          state,
+          const PremiumScreen(),
         ),
       ),
       GoRoute(

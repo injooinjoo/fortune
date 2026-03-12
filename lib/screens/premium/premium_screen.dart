@@ -16,7 +16,13 @@ class PremiumScreen extends StatelessWidget {
         backgroundColor: colors.surface,
         elevation: 0,
         scrolledUnderElevation: 0,
-        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: colors.textPrimary,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         title: Text(
           '프리미엄 인사이트',
           style: context.headingSmall.copyWith(

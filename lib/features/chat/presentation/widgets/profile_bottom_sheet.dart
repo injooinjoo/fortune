@@ -128,6 +128,11 @@ class _ProfileBottomSheetState extends ConsumerState<ProfileBottomSheet> {
                     ),
                     const SizedBox(height: DSSpacing.lg),
                     _ProfileSheetActionTile(
+                      icon: Icons.workspace_premium_outlined,
+                      title: '프리미엄 인사이트',
+                      onTap: () => _openRoute('/premium'),
+                    ),
+                    _ProfileSheetActionTile(
                       icon: Icons.privacy_tip_outlined,
                       title: '개인정보처리방침',
                       onTap: () => _openRoute('/privacy-policy'),
