@@ -23418,6 +23418,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/pages/character_chat_panel.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/character/presentation/pages/swipe_home_shell.dart"
       ],
       "runtime_reachable": true,
@@ -23447,6 +23448,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/pages/character_onboarding_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/character/presentation/pages/swipe_home_shell.dart"
       ],
       "runtime_reachable": true,
@@ -23508,7 +23510,6 @@
       "notes": [],
       "path": "lib/features/character/presentation/providers/character_chat_provider.dart",
       "referenced_by": [
-        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/pages/character_list_panel.dart",
@@ -23711,6 +23712,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/widgets/embedded_fortune_component.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/character/presentation/widgets/character_message_bubble.dart"
       ],
       "runtime_reachable": true,
@@ -23930,6 +23932,7 @@
       "notes": [],
       "path": "lib/features/chat/presentation/widgets/survey/chat_survey_chips.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart"
       ],
       "runtime_reachable": true,
@@ -24636,8 +24639,6 @@
       "notes": [],
       "path": "lib/features/fortune/presentation/providers/saju_provider.dart",
       "referenced_by": [
-        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/features/character/presentation/providers/character_chat_provider.dart"
       ],
       "runtime_reachable": true,
@@ -25799,6 +25800,7 @@
       "notes": [],
       "path": "lib/screens/premium/premium_screen.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -26228,6 +26230,7 @@
       "notes": [],
       "path": "lib/services/storage_service.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/core/services/unified_fortune_service.dart",
         "lib/features/character/presentation/pages/character_onboarding_page.dart",
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
