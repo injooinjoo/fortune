@@ -119,9 +119,3 @@ Delete the following stale page roots manually in Figma:
 - `63:2` `60 History / Profile / More`
 
 Historical references to `35:2`, `36:2`, `37:2`, `40:2`, and `41:2` are stale and should be ignored.
-
-Already deleted from the official file on `2026-03-13`:
-
-- `60:2` `30 Fortune Hub / Interactive`
-- `61:2` `40 Trend`
-- `62:2` `50 Health / Exercise`

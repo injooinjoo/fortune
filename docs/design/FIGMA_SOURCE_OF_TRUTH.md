@@ -81,12 +81,6 @@ The official file still contains older append generations and legacy product pag
 - `39:2` `70 Commerce / Settings / Support`
 - `63:2` `60 History / Profile / More`
 
-### Legacy roots already deleted from the official file
-
-- `60:2` `30 Fortune Hub / Interactive`
-- `61:2` `40 Trend`
-- `62:2` `50 Health / Exercise`
-
 ### Historical node IDs that are no longer present
 
 Do not follow older docs or comments that still reference:
