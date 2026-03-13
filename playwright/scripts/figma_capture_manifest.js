@@ -417,6 +417,14 @@ const COMPONENT_CARDS = [
     ],
   },
   {
+    title: 'Insight and Fortune Cards',
+    sources: [
+      'lib/features/chat_insight/presentation/widgets/insight_history_card.dart',
+      'lib/features/fortune/presentation/widgets/saju/today_iljin_card.dart',
+      'lib/shared/components/cards/fortune_cards.dart',
+    ],
+  },
+  {
     title: 'Account, Premium, and Policy Controls',
     sources: [
       'lib/features/chat/presentation/widgets/profile_bottom_sheet.dart',

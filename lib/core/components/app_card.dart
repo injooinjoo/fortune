@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/design_system/design_system.dart';
+import 'package:fortune/shared/components/cards/fortune_cards.dart';
 
 /// @deprecated Use [DSCard] instead for consistent design system usage.
 /// ChatGPT 스타일 카드 컴포넌트
@@ -24,38 +25,57 @@ class AppCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final shadows = context.shadows;
+    if (style == AppCardStyle.transparent) {
+      final content = Padding(
+        padding: padding ?? const EdgeInsets.all(DSSpacing.md),
+        child: child,
+      );
 
-    final Widget card = Container(
-      margin: margin,
-      decoration: BoxDecoration(
-        color: _getBackgroundColor(colors),
-        borderRadius: BorderRadius.circular(_getBorderRadius()),
-        border: _getBorder(colors),
-        boxShadow: _getBoxShadow(shadows),
-      ),
-      child: Material(
+      if (onTap == null) {
+        return Container(
+          margin: margin,
+          color: Colors.transparent,
+          child: content,
+        );
+      }
+
+      return Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(_getBorderRadius()),
         child: InkWell(
-          onTap: onTap != null
-              ? () {
-                  if (enableHaptic) {
-                    DSHaptics.light();
-                  }
-                  onTap!();
-                }
-              : null,
+          onTap: () {
+            if (enableHaptic) {
+              DSHaptics.light();
+            }
+            onTap!();
+          },
           borderRadius: BorderRadius.circular(_getBorderRadius()),
-          child: Padding(
-            padding: padding ?? const EdgeInsets.all(DSSpacing.md),
-            child: child,
+          child: Container(
+            margin: margin,
+            color: Colors.transparent,
+            child: content,
           ),
         ),
-      ),
-    );
+      );
+    }
 
-    return card;
+    return FortuneCardSurface(
+      style: _getCardStyle(),
+      margin: margin,
+      padding: padding ?? const EdgeInsets.all(DSSpacing.md),
+      borderRadius: _getBorderRadius(),
+      backgroundColor: _getBackgroundColor(colors),
+      showBorder: _getBorder(colors) != null,
+      borderColor: _getBorderColor(colors),
+      onTap: onTap != null
+          ? () {
+              if (enableHaptic) {
+                DSHaptics.light();
+              }
+              onTap!();
+            }
+          : null,
+      child: child,
+    );
   }
 
   Color _getBackgroundColor(DSColorScheme colors) {
@@ -98,9 +118,26 @@ class AppCard extends StatelessWidget {
     }
   }
 
-  List<BoxShadow>? _getBoxShadow(DSShadowScheme shadows) {
-    // Flat design - no depth shadows
+  Color? _getBorderColor(DSColorScheme colors) {
+    final border = _getBorder(colors);
+    if (border is Border) {
+      return border.top.color;
+    }
     return null;
+  }
+
+  DSCardStyle _getCardStyle() {
+    switch (style) {
+      case AppCardStyle.elevated:
+      case AppCardStyle.outlined:
+        return DSCardStyle.outlined;
+      case AppCardStyle.filled:
+        return DSCardStyle.flat;
+      case AppCardStyle.transparent:
+        return DSCardStyle.flat;
+      case AppCardStyle.glassmorphism:
+        return DSCardStyle.glassmorphism;
+    }
   }
 }
 

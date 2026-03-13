@@ -16,6 +16,7 @@ import '../utils/chat_catalog_preview.dart';
 import '../providers/character_chat_provider.dart';
 import '../providers/character_provider.dart';
 import '../widgets/wave_typing_indicator.dart';
+import '../../../../shared/components/cards/fortune_cards.dart';
 
 /// 카테고리 영문 → 한글 라벨 변환
 String _specialtyCategoryLabel(String category) {
@@ -310,9 +311,7 @@ class _ChatModeSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
     final isStory = currentTab == CharacterListTab.story;
-    final accent = isStory ? colors.textPrimary : colors.accent;
     final eyebrow = isStory ? '일반 채팅' : '호기심';
     final title = isStory ? '세계관 친구와 DM처럼 이어가는 대화' : '질문 하나로 바로 시작하는 인사이트';
     final description = isStory
@@ -322,69 +321,13 @@ class _ChatModeSummaryCard extends StatelessWidget {
         ? const ['캐릭터 대화', '관계 축적', '자유 입력']
         : const ['전문가 선택', '짧은 설문', '결과 카드'];
 
-    return Container(
+    return FortuneFeatureCard(
+      tone: isStory ? FortuneCardTone.neutral : FortuneCardTone.accent,
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-      padding: const EdgeInsets.all(DSSpacing.md),
-      decoration: BoxDecoration(
-        color: isStory ? colors.surface : colors.surfaceSecondary,
-        borderRadius: BorderRadius.circular(DSRadius.lg),
-        border: Border.all(
-          color: accent.withValues(alpha: 0.12),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            eyebrow,
-            style: context.labelSmall.copyWith(
-              color: colors.textSecondary,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: DSSpacing.xs),
-          Text(
-            title,
-            style: context.heading4.copyWith(
-              color: colors.textPrimary,
-            ),
-          ),
-          const SizedBox(height: DSSpacing.xs),
-          Text(
-            description,
-            style: context.bodySmall.copyWith(
-              color: colors.textSecondary,
-              height: 1.45,
-            ),
-          ),
-          const SizedBox(height: DSSpacing.sm),
-          Wrap(
-            spacing: DSSpacing.xs,
-            runSpacing: DSSpacing.xs,
-            children: highlights
-                .map(
-                  (item) => Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: DSSpacing.sm,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: accent.withValues(alpha: 0.08),
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Text(
-                      item,
-                      style: context.labelSmall.copyWith(
-                        color: accent,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                )
-                .toList(growable: false),
-          ),
-        ],
-      ),
+      eyebrow: eyebrow,
+      title: title,
+      description: description,
+      highlights: highlights,
     );
   }
 }

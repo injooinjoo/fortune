@@ -95,6 +95,12 @@ Additional official pages:
 - `lib/features/character/presentation/widgets/embedded_fortune_component.dart`
 - `lib/shared/components/section_header.dart`
 
+### Insight and Fortune Cards
+
+- `lib/features/chat_insight/presentation/widgets/insight_history_card.dart`
+- `lib/features/fortune/presentation/widgets/saju/today_iljin_card.dart`
+- `lib/shared/components/cards/fortune_cards.dart`
+
 ### Account, Premium, and Policy Controls
 
 - `lib/features/chat/presentation/widgets/profile_bottom_sheet.dart`

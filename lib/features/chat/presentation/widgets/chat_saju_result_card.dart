@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/widgets/fortune_action_buttons.dart';
 import '../../../../core/widgets/infographic/headers/saju_info_header.dart';
+import '../../../../shared/components/cards/fortune_cards.dart';
 import '../../../fortune/presentation/widgets/saju/saju_widgets.dart';
 import '../../../fortune/presentation/widgets/saju_element_chart.dart';
 
@@ -99,44 +100,15 @@ class _ChatSajuResultCardState extends ConsumerState<ChatSajuResultCard>
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
     final isDark = context.isDark;
 
-    return Container(
-      width: double.infinity,
+    return FortuneResultFrame(
       margin: widget.margin,
-      decoration: BoxDecoration(
-        color: isDark ? colors.backgroundSecondary : colors.surface,
-        borderRadius: BorderRadius.circular(DSRadius.lg),
-        border: Border.all(
-          color: colors.textPrimary.withValues(alpha: 0.1),
-        ),
+      accentGradient: LinearGradient(
+        colors: _getWuxingGradientColors(isDark),
       ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 오행 그라디언트 악센트 스트라이프
-          _buildWuxingAccentStripe(isDark),
-          // 인포그래픽 헤더 (Hero + 오행 밸런스 통합)
-          _buildInfoHeader(context),
-          // 섹션들
-          _buildSections(context),
-        ],
-      ),
-    );
-  }
-
-  /// 오행 5색 그라디언트 악센트 스트라이프 (카드 상단)
-  Widget _buildWuxingAccentStripe(bool isDark) {
-    final gradientColors = _getWuxingGradientColors(isDark);
-    return Container(
-      height: 4,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: gradientColors,
-        ),
-      ),
+      header: _buildInfoHeader(context),
+      child: _buildSections(context),
     );
   }
 

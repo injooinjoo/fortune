@@ -104,6 +104,7 @@ Canonical repo sources:
 - Capture manifest: `playwright/scripts/figma_capture_manifest.js`
 - Live capture runner: `playwright/scripts/capture_figma_screens.js`
 - Catalog HTML generator: `playwright/scripts/build_figma_catalog.js`
+- Card taxonomy: `docs/design/CARD_COMPONENT_TAXONOMY.md`
 
 ## MCP Operator Workflow
 

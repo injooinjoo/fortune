@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../../../core/design_system/design_system.dart';
+import '../../../../../shared/components/cards/fortune_cards.dart';
 import '../../../domain/models/saju/iljin_calculator.dart';
 
 /// 오늘의 일진(日辰) 카드 위젯
@@ -24,15 +25,12 @@ class TodayIljinCard extends StatelessWidget {
         ? IljinCalculator.checkCompatibility(myDayStem, iljin)
         : null;
 
-    return Container(
+    return FortuneCardSurface(
+      backgroundColor:
+          isDark ? context.colors.backgroundSecondary : context.colors.surface,
+      showBorder: true,
+      borderColor: isDark ? DSColors.border : DSColors.borderDark,
       padding: const EdgeInsets.all(DSSpacing.md),
-      decoration: BoxDecoration(
-        color: isDark ? context.colors.backgroundSecondary : Colors.white,
-        borderRadius: BorderRadius.circular(DSRadius.md),
-        border: Border.all(
-          color: isDark ? DSColors.border : DSColors.borderDark,
-        ),
-      ),
       child: Column(
         children: [
           // 상단: 날짜 + 일진
@@ -141,21 +139,12 @@ class TodayIljinCard extends StatelessWidget {
     IljinInfo iljin,
     bool isDark,
   ) {
-    return Container(
+    return FortuneCardBadge(
+      label: '${iljin.animal}띠',
+      backgroundColor: SajuColors.getBranchColor(iljin.branch, isDark: isDark)
+          .withValues(alpha: 0.15),
+      foregroundColor: SajuColors.getBranchColor(iljin.branch, isDark: isDark),
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        color: SajuColors.getBranchColor(iljin.branch, isDark: isDark)
-            .withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(DSRadius.full),
-      ),
-      child: Text(
-        '${iljin.animal}띠',
-        style: context.labelTiny.copyWith(
-          color: SajuColors.getBranchColor(iljin.branch, isDark: isDark),
-          fontWeight: FontWeight.bold,
-          fontSize: 9,
-        ),
-      ),
     );
   }
 
@@ -178,19 +167,11 @@ class TodayIljinCard extends StatelessWidget {
       child: Row(
         children: [
           // 길흉 배지
-          Container(
+          FortuneCardBadge(
+            label: compatibility.fortune,
+            backgroundColor: fortuneColor.withValues(alpha: 0.2),
+            foregroundColor: fortuneColor,
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: fortuneColor.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(DSRadius.full),
-            ),
-            child: Text(
-              compatibility.fortune,
-              style: context.labelSmall.copyWith(
-                color: fortuneColor,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
           ),
           const SizedBox(width: DSSpacing.sm),
 

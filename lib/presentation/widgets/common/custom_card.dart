@@ -1,6 +1,8 @@
 import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/design_system/design_system.dart';
+import 'package:fortune/shared/components/cards/fortune_cards.dart';
 
 class CustomCard extends StatelessWidget {
   final Widget child;
@@ -24,23 +26,18 @@ class CustomCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final card = Card(
-        margin: margin ?? AppSpacing.paddingAll8,
-        elevation: elevation ?? 2,
-        color: backgroundColor ?? Theme.of(context).cardColor,
-        shape: RoundedRectangleBorder(
-            borderRadius: borderRadius ?? AppDimensions.borderRadiusMedium),
-        child:
-            Padding(padding: padding ?? AppSpacing.paddingAll16, child: child));
+    final effectiveBorderRadius =
+        (borderRadius ?? AppDimensions.borderRadiusMedium)
+            .resolve(Directionality.of(context));
 
-    if (onTap != null) {
-      return InkWell(
-          onTap: onTap,
-          borderRadius: (borderRadius ?? AppDimensions.borderRadiusMedium)
-              as BorderRadius,
-          child: card);
-    }
-
-    return card;
+    return FortuneCardSurface(
+      style: (elevation ?? 2) > 0 ? DSCardStyle.elevated : DSCardStyle.flat,
+      margin: margin ?? AppSpacing.paddingAll8,
+      padding: padding ?? AppSpacing.paddingAll16,
+      borderRadius: effectiveBorderRadius.topLeft.x,
+      backgroundColor: backgroundColor ?? Theme.of(context).cardColor,
+      onTap: onTap,
+      child: child,
+    );
   }
 }

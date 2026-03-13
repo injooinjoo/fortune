@@ -262,71 +262,58 @@ class DSCard extends StatelessWidget {
     final effectivePadding =
         padding ?? const EdgeInsets.all(DSSpacing.cardPadding);
 
-    BoxDecoration decoration;
+    Color? defaultBackgroundColor;
+    BoxBorder? defaultBorder;
+    Gradient? effectiveGradient;
 
     switch (style) {
       case DSCardStyle.elevated:
-        // Modern flat card without shadow (minimal style)
-        decoration = BoxDecoration(
-          color: colors.surfaceSecondary,
-          borderRadius: BorderRadius.circular(effectiveRadius),
-        );
+        defaultBackgroundColor = colors.surfaceSecondary;
         break;
 
       case DSCardStyle.flat:
       case DSCardStyle.hanji: // Legacy hanji maps to flat
-        // Flat card with secondary background
-        decoration = BoxDecoration(
-          color: colors.surfaceSecondary,
-          borderRadius: BorderRadius.circular(effectiveRadius),
-        );
+        defaultBackgroundColor = colors.surfaceSecondary;
         break;
 
       case DSCardStyle.outlined:
-        // Clean bordered card
-        decoration = BoxDecoration(
-          color: colors.surface,
-          borderRadius: BorderRadius.circular(effectiveRadius),
-          border: Border.all(
-            color: colors.border,
-            width: 1,
-          ),
+        defaultBackgroundColor = colors.surface;
+        defaultBorder = Border.all(
+          color: colors.border,
+          width: 1,
         );
         break;
 
       case DSCardStyle.premium:
-        // Premium card with subtle accent border (no shadow)
-        decoration = BoxDecoration(
-          color: colors.surfaceSecondary,
-          borderRadius: BorderRadius.circular(effectiveRadius),
-          border: Border.all(
-            color: colors.accent.withValues(alpha: 0.3),
-            width: 1,
-          ),
+        defaultBackgroundColor = colors.surfaceSecondary;
+        defaultBorder = Border.all(
+          color: colors.accent.withValues(alpha: 0.3),
+          width: 1,
         );
         break;
 
       case DSCardStyle.gradient:
-        // Gradient background card
-        decoration = BoxDecoration(
-          gradient: cardGradient,
-          borderRadius: BorderRadius.circular(effectiveRadius),
-          border: border,
-        );
+        effectiveGradient = cardGradient;
         break;
 
       case DSCardStyle.glassmorphism:
-        // Glassmorphism with semi-transparent surface
-        decoration = BoxDecoration(
-          color: (backgroundColor ?? colors.surface).withValues(alpha: 0.7),
-          borderRadius: BorderRadius.circular(effectiveRadius),
-          border: Border.all(
-            color: colors.border.withValues(alpha: 0.2),
-            width: 1,
-          ),
+        defaultBackgroundColor =
+            (backgroundColor ?? colors.surface).withValues(alpha: 0.7);
+        defaultBorder = Border.all(
+          color: colors.border.withValues(alpha: 0.2),
+          width: 1,
         );
         break;
     }
+
+    final decoration = BoxDecoration(
+      color: effectiveGradient == null
+          ? backgroundColor ?? defaultBackgroundColor
+          : null,
+      gradient: effectiveGradient,
+      borderRadius: BorderRadius.circular(effectiveRadius),
+      border: border ?? defaultBorder,
+    );
 
     final Widget card = Container(
       width: fullWidth ? double.infinity : null,
