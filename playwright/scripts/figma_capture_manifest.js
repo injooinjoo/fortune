@@ -230,11 +230,8 @@ const SCREENS = [
     pageKey: '20-chat-home-character',
     title: 'General Chat Home',
     frameName: 'General Chat Home',
-    routeHash: '#/chat',
-    status: 'placeholder',
-    triage: 'capture_next_runtime',
-    blocker:
-      'Needs a deterministic 일반 채팅 mode capture so the official catalog can distinguish the general experience from the shared /chat shell.',
+    routeHash: '#/chat?catalogState=general-home',
+    status: 'live',
     note: 'User-facing 일반 채팅 home state inside /chat. This is not a standalone route.',
     sources: [
       'lib/features/character/presentation/pages/swipe_home_shell.dart',
@@ -246,11 +243,8 @@ const SCREENS = [
     pageKey: '20-chat-home-character',
     title: 'Curiosity Home',
     frameName: 'Curiosity Home',
-    routeHash: '#/chat',
-    status: 'placeholder',
-    triage: 'capture_next_runtime',
-    blocker:
-      'Needs a deterministic 호기심 mode capture so the official catalog can distinguish the curiosity experience from the shared /chat shell.',
+    routeHash: '#/chat?catalogState=curiosity-home',
+    status: 'live',
     note: 'User-facing 호기심 home state inside /chat. This is not a standalone route.',
     sources: [
       'lib/features/character/presentation/pages/swipe_home_shell.dart',
@@ -276,11 +270,8 @@ const SCREENS = [
     pageKey: '20-chat-home-character',
     title: 'Curiosity Survey Step',
     frameName: 'Curiosity Survey Step',
-    routeHash: '#/chat?fortuneType=daily',
-    status: 'placeholder',
-    triage: 'capture_next_runtime',
-    blocker:
-      'Requires deterministic expert launch plus an active in-chat survey step before capture.',
+    routeHash: '#/chat?catalogState=curiosity-survey&fortuneType=daily',
+    status: 'live',
     note: 'Single-step survey UI shown inside the 호기심 chat flow.',
     sources: [
       'lib/features/character/presentation/pages/character_chat_panel.dart',
@@ -293,11 +284,8 @@ const SCREENS = [
     pageKey: '20-chat-home-character',
     title: 'Curiosity Result Complete',
     frameName: 'Curiosity Result Complete',
-    routeHash: '#/chat?fortuneType=daily',
-    status: 'placeholder',
-    triage: 'capture_next_runtime',
-    blocker:
-      'Needs seeded survey answers and a deterministic result payload to capture the completed 호기심 state.',
+    routeHash: '#/chat?catalogState=curiosity-result&fortuneType=daily',
+    status: 'live',
     note: 'Completed insight result rendered back into the chat stream with embedded result components.',
     sources: [
       'lib/features/character/presentation/pages/character_chat_panel.dart',

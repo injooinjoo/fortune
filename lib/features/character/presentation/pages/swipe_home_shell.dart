@@ -7,6 +7,7 @@ import '../../../../core/utils/logger.dart';
 import '../providers/character_provider.dart';
 import '../../data/fortune_characters.dart';
 import '../../domain/models/ai_character.dart';
+import '../utils/chat_catalog_preview.dart';
 import 'character_list_panel.dart';
 import 'character_chat_panel.dart';
 import 'character_onboarding_page.dart';
@@ -110,6 +111,10 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
   }
 
   void _handleOpenCharacterFromRoute() {
+    if (_catalogPreviewFromRoute() != null) {
+      return;
+    }
+
     final launchRequest =
         FortuneChatLaunchRequest.fromUri(GoRouterState.of(context).uri);
 
@@ -196,21 +201,34 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
   // TODO: 나중에 복원 - 운세 선택 처리 (FortuneListPanel에서 호출)
   // void _onFortuneSelected(RecommendationChip chip) { ... }
 
+  ChatCatalogPreview? _catalogPreviewFromRoute() {
+    return ChatCatalogPreview.fromUri(GoRouterState.of(context).uri);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final character = ref.watch(selectedCharacterProvider);
+    final catalogPreview = _catalogPreviewFromRoute();
+    final previewCharacter =
+        catalogPreview != null ? catalogPreviewCharacter(catalogPreview) : null;
+    final character = previewCharacter ?? ref.watch(selectedCharacterProvider);
+    final isCatalogPreview = catalogPreview != null;
     final isRestoringConversations =
-        ref.watch(chatRestorationInProgressProvider);
+        isCatalogPreview ? false : ref.watch(chatRestorationInProgressProvider);
+    final showsPreviewOverlay = isCatalogPreview &&
+        catalogPreview.showsChatOverlay &&
+        character != null;
 
     // 프로필 페이지에서 "메시지 보내기" 클릭 시 자동으로 채팅 패널 열기
-    ref.listen<AiCharacter?>(selectedCharacterProvider, (prev, next) {
-      if (next != null && !_showChatOverlay) {
-        _showChatPanel();
-      }
-    });
+    if (!isCatalogPreview) {
+      ref.listen<AiCharacter?>(selectedCharacterProvider, (prev, next) {
+        if (next != null && !_showChatOverlay) {
+          _showChatPanel();
+        }
+      });
+    }
 
     // 온보딩 표시
-    if (_showOnboarding) {
+    if (!isCatalogPreview && _showOnboarding) {
       return CharacterOnboardingPage(
         onComplete: _onOnboardingComplete,
       );
@@ -222,10 +240,20 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
           // 메시지 목록 (CharacterListPanel) - 메인 화면
           CharacterListPanel(
             onCharacterSelected: _onCharacterSelected,
+            catalogPreview: catalogPreview,
           ),
 
           // 캐릭터 채팅 오버레이 (오른쪽에서 슬라이드 인)
-          if (_showChatOverlay && character != null)
+          if (showsPreviewOverlay)
+            CharacterChatPanel(
+              key: ValueKey(
+                'catalog-preview-${catalogPreview.state}-${character.id}',
+              ),
+              character: character,
+              initialFortuneType: catalogPreview.fortuneType,
+              catalogPreview: catalogPreview,
+            ),
+          if (!showsPreviewOverlay && _showChatOverlay && character != null)
             SlideTransition(
               position: _chatOverlayAnimation,
               child: CharacterChatPanel(

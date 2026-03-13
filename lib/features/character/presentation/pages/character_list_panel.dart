@@ -3,13 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/l10n_extension.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/navigation/fortune_chat_route.dart';
 import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../../../chat/presentation/widgets/profile_bottom_sheet.dart';
 import '../../data/services/character_localizer.dart';
 import '../../domain/models/ai_character.dart';
 import '../../domain/models/character_chat_message.dart';
+import '../../domain/models/character_chat_state.dart';
 import '../utils/character_accent_palette.dart';
+import '../utils/chat_catalog_preview.dart';
 import '../providers/character_chat_provider.dart';
 import '../providers/character_provider.dart';
 import '../widgets/wave_typing_indicator.dart';
@@ -36,19 +39,26 @@ class CharacterListPanel extends ConsumerWidget {
   final void Function(AiCharacter character) onCharacterSelected;
   final bool isOverlay;
   final VoidCallback? onDismiss;
+  final ChatCatalogPreview? catalogPreview;
 
   const CharacterListPanel({
     super.key,
     required this.onCharacterSelected,
     this.isOverlay = false,
     this.onDismiss,
+    this.catalogPreview,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 현재 탭에 맞는 캐릭터 목록 사용
-    final currentTab = ref.watch(characterListTabProvider);
-    final characters = ref.watch(currentTabCharactersProvider);
+    final CharacterListTab? previewTab =
+        catalogPreview != null ? catalogPreviewTab(catalogPreview!) : null;
+    final CharacterListTab currentTab =
+        previewTab ?? ref.watch(characterListTabProvider);
+    final characters = currentTab == CharacterListTab.story
+        ? ref.watch(storyCharactersProvider)
+        : ref.watch(fortuneCharactersProvider);
+    final isCatalogPreview = catalogPreview != null;
 
     return GestureDetector(
       onHorizontalDragEnd: isOverlay
@@ -70,10 +80,15 @@ class CharacterListPanel extends ConsumerWidget {
               // 탭 바
               _CharacterTabBar(
                 currentTab: currentTab,
+                isLocked: isCatalogPreview,
                 onTabChanged: (tab) {
+                  if (isCatalogPreview) {
+                    return;
+                  }
                   ref.read(characterListTabProvider.notifier).state = tab;
                 },
               ),
+              _ChatModeSummaryCard(currentTab: currentTab),
               const Divider(height: 1),
               // 캐릭터 목록
               Expanded(
@@ -83,7 +98,16 @@ class CharacterListPanel extends ConsumerWidget {
                     final character = characters[index];
                     return _CharacterListItem(
                       character: character,
-                      onTap: () => onCharacterSelected(character),
+                      previewChatState: catalogPreview != null
+                          ? catalogPreviewListState(
+                              preview: catalogPreview!,
+                              character: character,
+                              index: index,
+                            )
+                          : null,
+                      onTap: isCatalogPreview
+                          ? () {}
+                          : () => onCharacterSelected(character),
                     );
                   },
                 ),
@@ -183,10 +207,12 @@ class CharacterListPanel extends ConsumerWidget {
 class _CharacterTabBar extends StatelessWidget {
   final CharacterListTab currentTab;
   final void Function(CharacterListTab) onTabChanged;
+  final bool isLocked;
 
   const _CharacterTabBar({
     required this.currentTab,
     required this.onTabChanged,
+    this.isLocked = false,
   });
 
   @override
@@ -201,7 +227,7 @@ class _CharacterTabBar extends StatelessWidget {
             label: context.l10n.story,
             icon: Icons.favorite_outline,
             isSelected: currentTab == CharacterListTab.story,
-            onTap: () => onTabChanged(CharacterListTab.story),
+            onTap: isLocked ? null : () => onTabChanged(CharacterListTab.story),
             isDark: isDark,
           ),
           const SizedBox(width: 8),
@@ -209,7 +235,8 @@ class _CharacterTabBar extends StatelessWidget {
             label: context.l10n.viewFortune,
             icon: Icons.auto_awesome,
             isSelected: currentTab == CharacterListTab.fortune,
-            onTap: () => onTabChanged(CharacterListTab.fortune),
+            onTap:
+                isLocked ? null : () => onTabChanged(CharacterListTab.fortune),
             isDark: isDark,
           ),
         ],
@@ -222,7 +249,7 @@ class _TabButton extends StatelessWidget {
   final String label;
   final IconData icon;
   final bool isSelected;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final bool isDark;
 
   const _TabButton({
@@ -274,14 +301,104 @@ class _TabButton extends StatelessWidget {
   }
 }
 
+class _ChatModeSummaryCard extends StatelessWidget {
+  final CharacterListTab currentTab;
+
+  const _ChatModeSummaryCard({
+    required this.currentTab,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final isStory = currentTab == CharacterListTab.story;
+    final accent = isStory ? colors.textPrimary : colors.accent;
+    final eyebrow = isStory ? '일반 채팅' : '호기심';
+    final title = isStory ? '세계관 친구와 DM처럼 이어가는 대화' : '질문 하나로 바로 시작하는 인사이트';
+    final description = isStory
+        ? '편하게 말을 걸고 관계를 쌓아가며 자연스럽게 대화를 이어가요.'
+        : '운세 전문가를 고르고, 짧은 질문 뒤에 결과를 채팅 안에서 바로 받아보세요.';
+    final highlights = isStory
+        ? const ['캐릭터 대화', '관계 축적', '자유 입력']
+        : const ['전문가 선택', '짧은 설문', '결과 카드'];
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: isStory ? colors.surface : colors.surfaceSecondary,
+        borderRadius: BorderRadius.circular(DSRadius.lg),
+        border: Border.all(
+          color: accent.withValues(alpha: 0.12),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            eyebrow,
+            style: context.labelSmall.copyWith(
+              color: colors.textSecondary,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: DSSpacing.xs),
+          Text(
+            title,
+            style: context.heading4.copyWith(
+              color: colors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: DSSpacing.xs),
+          Text(
+            description,
+            style: context.bodySmall.copyWith(
+              color: colors.textSecondary,
+              height: 1.45,
+            ),
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          Wrap(
+            spacing: DSSpacing.xs,
+            runSpacing: DSSpacing.xs,
+            children: highlights
+                .map(
+                  (item) => Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: DSSpacing.sm,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: accent.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      item,
+                      style: context.labelSmall.copyWith(
+                        color: accent,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                )
+                .toList(growable: false),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 /// 캐릭터 목록 아이템 (인스타그램 DM 스타일 + iOS 스타일 스와이프 액션 버튼)
 class _CharacterListItem extends ConsumerStatefulWidget {
   final AiCharacter character;
   final VoidCallback onTap;
+  final CharacterChatState? previewChatState;
 
   const _CharacterListItem({
     required this.character,
     required this.onTap,
+    this.previewChatState,
   });
 
   @override
@@ -379,7 +496,9 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
 
   @override
   Widget build(BuildContext context) {
-    final chatState = ref.watch(characterChatProvider(widget.character.id));
+    final CharacterChatState chatState = widget.previewChatState ??
+        ref.watch(characterChatProvider(widget.character.id));
+    final interactionsEnabled = widget.previewChatState == null;
     final accentPalette = CharacterAccentPalette.from(
       source: widget.character.accentColor,
       brightness: Theme.of(context).brightness,
@@ -402,7 +521,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onHorizontalDragUpdate: _handleDragUpdate,
+      onHorizontalDragUpdate: interactionsEnabled ? _handleDragUpdate : null,
       onHorizontalDragEnd: (_) {},
       onTap: () {
         if (_isActionRevealed) {
@@ -502,11 +621,13 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                   children: [
                     // 아바타 (탭하면 프로필)
                     GestureDetector(
-                      onTap: () {
-                        HapticUtils.lightImpact();
-                        context.push('/character/${widget.character.id}',
-                            extra: widget.character);
-                      },
+                      onTap: interactionsEnabled
+                          ? () {
+                              HapticUtils.lightImpact();
+                              context.push('/character/${widget.character.id}',
+                                  extra: widget.character);
+                            }
+                          : null,
                       child: Stack(
                         clipBehavior: Clip.none,
                         children: [

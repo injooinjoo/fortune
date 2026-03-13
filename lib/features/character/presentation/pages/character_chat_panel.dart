@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/fortune/fortune_type_registry.dart';
 import '../../../../core/extensions/l10n_extension.dart';
+import '../../../../core/navigation/fortune_chat_route.dart';
 import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../../../core/widgets/unified_voice_text_field.dart';
 import '../../data/fortune_characters.dart';
@@ -17,6 +18,7 @@ import '../providers/character_chat_provider.dart';
 import '../providers/character_chat_survey_provider.dart';
 import '../providers/active_chat_provider.dart';
 import '../utils/character_accent_palette.dart';
+import '../utils/chat_catalog_preview.dart';
 import '../widgets/character_message_bubble.dart';
 import '../widgets/character_choice_widget.dart';
 import '../widgets/wave_typing_indicator.dart';
@@ -42,6 +44,7 @@ class CharacterChatPanel extends ConsumerStatefulWidget {
   final String? initialFortuneType;
   final bool autoStartFortune;
   final String? entrySource;
+  final ChatCatalogPreview? catalogPreview;
 
   const CharacterChatPanel({
     super.key,
@@ -50,6 +53,7 @@ class CharacterChatPanel extends ConsumerStatefulWidget {
     this.initialFortuneType,
     this.autoStartFortune = false,
     this.entrySource,
+    this.catalogPreview,
   });
 
   @override
@@ -115,6 +119,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     // 기존 대화 불러오기 + 읽음 처리
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
+      if (widget.catalogPreview != null) return;
 
       // 🆕 현재 채팅방 진입 표시 (푸시 알림 억제용)
       ref.read(activeCharacterChatProvider.notifier).state =
@@ -134,6 +139,10 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   void didUpdateWidget(covariant CharacterChatPanel oldWidget) {
     super.didUpdateWidget(oldWidget);
 
+    if (widget.catalogPreview != null) {
+      return;
+    }
+
     final previousSignature = _buildAutoStartSignature(oldWidget);
     final nextSignature = _buildAutoStartSignature(widget);
     if (previousSignature != nextSignature) {
@@ -146,6 +155,11 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
   @override
   void deactivate() {
+    if (widget.catalogPreview != null) {
+      super.deactivate();
+      return;
+    }
+
     // 🆕 채팅방 이탈 표시 (푸시 알림 활성화)
     // Future.microtask로 지연하여 위젯 라이프사이클 충돌 방지
     final notifier = ref.read(activeCharacterChatProvider.notifier);
@@ -159,7 +173,9 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     // 화면 이탈 시 저장 (캐시된 notifier 사용 - ref 사용 불가)
-    _cachedNotifier?.saveOnExit();
+    if (widget.catalogPreview == null) {
+      _cachedNotifier?.saveOnExit();
+    }
     _textController.dispose();
     _surveyTextController.dispose();
     _scrollController.dispose();
@@ -170,6 +186,10 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (widget.catalogPreview != null) {
+      return;
+    }
+
     // 앱이 백그라운드로 갈 때 저장
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.inactive) {
@@ -178,6 +198,10 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   }
 
   Future<void> _saveConversation() async {
+    if (widget.catalogPreview != null) {
+      return;
+    }
+
     // mounted 상태에서는 ref 사용, 아니면 캐시된 notifier 사용
     if (mounted) {
       await ref
@@ -238,45 +262,57 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
   @override
   Widget build(BuildContext context) {
-    final chatState = ref.watch(characterChatProvider(widget.character.id));
-    final surveyState =
-        ref.watch(characterChatSurveyProvider(widget.character.id));
-    _redirectToProfileIfNoConversation(chatState);
+    final isCatalogPreview = widget.catalogPreview != null;
+    final chatState = isCatalogPreview
+        ? catalogPreviewChatState(
+            preview: widget.catalogPreview!,
+            character: widget.character,
+          )
+        : ref.watch(characterChatProvider(widget.character.id));
+    final surveyState = isCatalogPreview
+        ? catalogPreviewSurveyState(widget.catalogPreview!)
+        : ref.watch(characterChatSurveyProvider(widget.character.id));
+
+    if (!isCatalogPreview) {
+      _redirectToProfileIfNoConversation(chatState);
+    }
 
     // 🪙 토큰 부족 및 일반 에러 감지
-    ref.listen<CharacterChatState>(
-      characterChatProvider(widget.character.id),
-      (previous, next) {
-        if (next.error != null && next.error != previous?.error) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(context.l10n.errorOccurredRetry),
-              backgroundColor: Colors.red[400],
-              behavior: SnackBarBehavior.floating,
-              action: SnackBarAction(
-                label: context.l10n.confirm,
-                textColor: Colors.white,
-                onPressed: () {},
+    if (!isCatalogPreview) {
+      ref.listen<CharacterChatState>(
+        characterChatProvider(widget.character.id),
+        (previous, next) {
+          if (next.error != null && next.error != previous?.error) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(context.l10n.errorOccurredRetry),
+                backgroundColor: Colors.red[400],
+                behavior: SnackBarBehavior.floating,
+                action: SnackBarAction(
+                  label: context.l10n.confirm,
+                  textColor: Colors.white,
+                  onPressed: () {},
+                ),
               ),
-            ),
-          );
+            );
 
-          Future.delayed(const Duration(milliseconds: 100), () {
-            ref
-                .read(characterChatProvider(widget.character.id).notifier)
-                .clearError();
-          });
-        }
+            Future.delayed(const Duration(milliseconds: 100), () {
+              ref
+                  .read(characterChatProvider(widget.character.id).notifier)
+                  .clearError();
+            });
+          }
 
-        // 📜 새 메시지 추가 또는 타이핑 시작 시 자동 스크롤 (다른 채팅앱처럼)
-        final prevCount = previous?.messages.length ?? 0;
-        final nextCount = next.messages.length;
-        final typingStarted = next.isTyping && !(previous?.isTyping ?? false);
-        if (nextCount > prevCount || typingStarted) {
-          _scrollToBottom();
-        }
-      },
-    );
+          // 📜 새 메시지 추가 또는 타이핑 시작 시 자동 스크롤 (다른 채팅앱처럼)
+          final prevCount = previous?.messages.length ?? 0;
+          final nextCount = next.messages.length;
+          final typingStarted = next.isTyping && !(previous?.isTyping ?? false);
+          if (nextCount > prevCount || typingStarted) {
+            _scrollToBottom();
+          }
+        },
+      );
+    }
 
     return PopScope(
       canPop: true,
@@ -410,6 +446,10 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   }
 
   void _redirectToProfileIfNoConversation(CharacterChatState chatState) {
+    if (widget.catalogPreview != null) {
+      return;
+    }
+
     if (!chatState.isInitialized ||
         chatState.isLoading ||
         chatState.hasConversation ||
@@ -928,9 +968,10 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     final progress = surveyState.activeProgress!;
     final step = progress.currentStep;
     final accentPalette = _accentPalette(context);
-    final surveyNotifier =
-        ref.read(characterChatSurveyProvider(widget.character.id).notifier);
-    final options = surveyNotifier.getCurrentStepOptions();
+    final surveyNotifier = widget.catalogPreview == null
+        ? ref.read(characterChatSurveyProvider(widget.character.id).notifier)
+        : null;
+    final options = surveyNotifier?.getCurrentStepOptions() ?? step.options;
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -961,10 +1002,12 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                 // 스킵 버튼 (선택적 단계만)
                 if (!step.isRequired)
                   TextButton(
-                    onPressed: () {
-                      surveyNotifier.skipCurrentStep();
-                      _checkSurveyCompletion();
-                    },
+                    onPressed: surveyNotifier == null
+                        ? null
+                        : () {
+                            surveyNotifier.skipCurrentStep();
+                            _checkSurveyCompletion();
+                          },
                     child: Text(
                       context.l10n.skip,
                       style:

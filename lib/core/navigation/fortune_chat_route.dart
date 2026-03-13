@@ -1,3 +1,68 @@
+enum ChatCatalogPreviewState {
+  generalHome,
+  curiosityHome,
+  curiositySurvey,
+  curiosityResult,
+}
+
+class ChatCatalogPreview {
+  final ChatCatalogPreviewState state;
+  final String? fortuneType;
+
+  const ChatCatalogPreview({
+    required this.state,
+    this.fortuneType,
+  });
+
+  bool get showsHomeShell =>
+      state == ChatCatalogPreviewState.generalHome ||
+      state == ChatCatalogPreviewState.curiosityHome;
+
+  bool get showsChatOverlay =>
+      state == ChatCatalogPreviewState.curiositySurvey ||
+      state == ChatCatalogPreviewState.curiosityResult;
+
+  bool get isGeneralHome => state == ChatCatalogPreviewState.generalHome;
+
+  bool get isCuriosityPreview => state != ChatCatalogPreviewState.generalHome;
+
+  static ChatCatalogPreview? fromUri(Uri uri) {
+    final rawState = _emptyToNull(uri.queryParameters['catalogState']);
+    if (rawState == null) {
+      return null;
+    }
+
+    final state = _catalogStateFromQuery(rawState);
+    if (state == null) {
+      return null;
+    }
+
+    final fortuneType = _emptyToNull(
+      normalizeFortuneTypeForChat(uri.queryParameters['fortuneType']),
+    );
+
+    return ChatCatalogPreview(
+      state: state,
+      fortuneType: fortuneType,
+    );
+  }
+
+  static ChatCatalogPreviewState? _catalogStateFromQuery(String rawState) {
+    switch (rawState.trim().toLowerCase()) {
+      case 'general-home':
+        return ChatCatalogPreviewState.generalHome;
+      case 'curiosity-home':
+        return ChatCatalogPreviewState.curiosityHome;
+      case 'curiosity-survey':
+        return ChatCatalogPreviewState.curiositySurvey;
+      case 'curiosity-result':
+        return ChatCatalogPreviewState.curiosityResult;
+      default:
+        return null;
+    }
+  }
+}
+
 class FortuneChatLaunchRequest {
   final bool openCharacterChat;
   final String? characterId;
