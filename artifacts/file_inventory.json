@@ -19253,6 +19253,21 @@
       "dirty": false,
       "kind": "doc_markdown",
       "notes": [],
+      "path": "docs/design/CARD_COMPONENT_TAXONOMY.md",
+      "referenced_by": [
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
+        "docs/design/README.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
       "path": "docs/design/FIGMA_APPEND_RENAME_RUNBOOK.md",
       "referenced_by": [
         "docs/design/FIGMA_LAYER_NAMING_STANDARD.md",
@@ -20225,6 +20240,7 @@
       "notes": [],
       "path": "lib/core/components/app_card.dart",
       "referenced_by": [
+        "docs/design/CARD_COMPONENT_TAXONOMY.md",
         "lib/features/fortune/presentation/widgets/saju/saju_hapchung_widget.dart",
         "lib/features/fortune/presentation/widgets/saju/saju_jijanggan_widget.dart",
         "lib/features/fortune/presentation/widgets/saju/saju_pillar_table_pro.dart",
@@ -20801,6 +20817,7 @@
         "lib/features/policy/presentation/pages/privacy_policy_page.dart",
         "lib/features/policy/presentation/pages/terms_of_service_page.dart",
         "lib/presentation/widgets/app_update_dialog.dart",
+        "lib/presentation/widgets/common/custom_card.dart",
         "lib/presentation/widgets/profile_image_picker.dart",
         "lib/presentation/widgets/social_accounts_section.dart",
         "lib/presentation/widgets/social_login_bottom_sheet.dart",
@@ -20814,6 +20831,7 @@
         "lib/screens/profile/account_deletion_page.dart",
         "lib/screens/splash_screen.dart",
         "lib/shared/components/app_header.dart",
+        "lib/shared/components/cards/fortune_cards.dart",
         "lib/shared/components/korean_date_picker.dart",
         "lib/shared/components/loading_states.dart",
         "lib/shared/components/progressive_date_input.dart",
@@ -20822,7 +20840,8 @@
         "lib/shared/components/settings_list_tile.dart",
         "lib/shared/components/toast.dart",
         "lib/shared/glassmorphism/glass_container.dart",
-        "lib/shared/widgets/smart_image.dart"
+        "lib/shared/widgets/smart_image.dart",
+        "test/widget/shared/fortune_cards_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23468,6 +23487,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/pages/character_list_panel.dart",
       "referenced_by": [
+        "docs/design/CARD_COMPONENT_TAXONOMY.md",
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/features/character/presentation/pages/swipe_home_shell.dart"
@@ -23898,6 +23918,7 @@
       "notes": [],
       "path": "lib/features/chat/presentation/widgets/chat_saju_result_card.dart",
       "referenced_by": [
+        "docs/design/CARD_COMPONENT_TAXONOMY.md",
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/features/character/presentation/widgets/character_message_bubble.dart"
@@ -24084,19 +24105,21 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "dart",
       "notes": [
-        "no_inbound_refs",
         "runtime_unreachable",
         "zero_incoming_dart"
       ],
       "path": "lib/features/chat_insight/presentation/widgets/insight_history_card.dart",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/design/CARD_COMPONENT_TAXONOMY.md",
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -24929,6 +24952,8 @@
       "notes": [],
       "path": "lib/features/fortune/presentation/widgets/saju/today_iljin_card.dart",
       "referenced_by": [
+        "docs/design/CARD_COMPONENT_TAXONOMY.md",
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/fortune/presentation/widgets/saju/saju_widgets.dart"
       ],
       "runtime_reachable": true,
@@ -25654,19 +25679,20 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "dart",
       "notes": [
-        "no_inbound_refs",
         "runtime_unreachable",
         "zero_incoming_dart"
       ],
       "path": "lib/presentation/widgets/common/custom_card.dart",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/design/CARD_COMPONENT_TAXONOMY.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -26441,6 +26467,27 @@
     },
     {
       "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
+      "path": "lib/shared/components/cards/fortune_cards.dart",
+      "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "lib/core/components/app_card.dart",
+        "lib/features/character/presentation/pages/character_list_panel.dart",
+        "lib/features/chat/presentation/widgets/chat_saju_result_card.dart",
+        "lib/features/chat_insight/presentation/widgets/insight_history_card.dart",
+        "lib/features/fortune/presentation/widgets/saju/today_iljin_card.dart",
+        "lib/presentation/widgets/common/custom_card.dart",
+        "test/widget/shared/fortune_cards_test.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "dart",
@@ -26458,19 +26505,20 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "dart",
       "notes": [
-        "no_inbound_refs",
         "runtime_unreachable",
         "zero_incoming_dart"
       ],
       "path": "lib/shared/components/loading_states.dart",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/design/CARD_COMPONENT_TAXONOMY.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -31459,6 +31507,20 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "test/widget/shared/fortune_cards_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "test/widget_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -31469,28 +31531,28 @@
   "meta": {
     "counts_by_area": {
       "assets": 1231,
-      "docs": 88,
+      "docs": 89,
       "integration_test": 8,
-      "lib": 392,
+      "lib": 393,
       "scripts": 70,
       "supabase": 204,
-      "test": 40
+      "test": 41
     },
     "counts_by_candidate_action": {
-      "keep": 677,
+      "keep": 678,
       "keep_generated": 28,
       "manual_review": 979,
-      "phase1_remove_candidate": 18,
-      "phase2_review_candidate": 325,
+      "phase1_remove_candidate": 15,
+      "phase2_review_candidate": 330,
       "phase3_feature_cleanup": 6
     },
     "counts_by_usage_status": {
-      "doc_only": 93,
+      "doc_only": 97,
       "generated_excluded": 28,
-      "runtime_used": 677,
-      "test_only": 48,
+      "runtime_used": 678,
+      "test_only": 49,
       "tooling_only": 184,
-      "unreferenced": 1003
+      "unreferenced": 1000
     },
     "declared_asset_dirs_without_runtime_refs": [
       "assets/animations",
@@ -31643,8 +31705,8 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 311,
-    "lib_dart_total": 389,
+    "lib_dart_runtime_reachable": 312,
+    "lib_dart_total": 390,
     "lib_dart_zero_incoming": 29,
     "missing_function_refs": [
       "--all",
@@ -31751,7 +31813,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2033,
+    "total_files": 2036,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
