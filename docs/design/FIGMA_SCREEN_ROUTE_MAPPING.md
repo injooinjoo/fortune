@@ -86,7 +86,17 @@ These page roots are still in the official file but should not be used for curre
 | Figma node | Figma page | Current app match |
 | --- | --- | --- |
 | `32:2`, `33:2`, `34:2`, `42:2`, `43:2` | Older append generation of current-state pages | superseded by `64:2` through `69:2` |
-| `38:2`, `39:2`, `60:2`, `61:2`, `62:2`, `63:2` | Legacy product groups such as Fortune Hub, Trend, Health, History, Commerce | no active current-state route group |
+| `38:2`, `39:2`, `63:2` | Legacy product groups such as History, More, and Commerce | no active current-state route group |
+
+## Legacy Figma Roots Already Deleted
+
+These legacy product roots were removed from the official file on `2026-03-13` and should not be reintroduced:
+
+| Figma node | Figma page | Current app match |
+| --- | --- | --- |
+| `60:2` | `30 Fortune Hub / Interactive` | no active current-state route group |
+| `61:2` | `40 Trend` | no active current-state route group |
+| `62:2` | `50 Health / Exercise` | no active current-state route group |
 
 ## Maintenance Notes
 

@@ -24,7 +24,9 @@ Only the retained canonical pages should be renamed:
 | `90 Components` | `section__90__components` |
 | `99 Archive` | `section__99__archive` |
 
-Stale roots such as `32:2`, `33:2`, `34:2`, `38:2`, `39:2`, `42:2`, `43:2`, and `60:2` through `63:2` are delete targets, not rename targets.
+Stale roots such as `32:2`, `33:2`, `34:2`, `38:2`, `39:2`, `42:2`, `43:2`, and `63:2` are delete targets, not rename targets.
+
+The legacy roots `60:2`, `61:2`, and `62:2` were already deleted from the official file on `2026-03-13`.
 
 ## Shared structural roles
 

@@ -78,10 +78,7 @@ function buildLegacyMapping({ legacyManifestPath, routeSurfaces, chatRepresentat
     fortune_love: 'chat_rep_rose',
     fortune_career: 'chat_rep_james_kim',
     fortune_time: 'chat_rep_haneul',
-    fortune_health: 'route_health_toss',
     fortune_special: 'chat_rep_lucky',
-    interactive: 'route_fortune',
-    trend: 'route_trend',
   };
 
   const entries = (legacyManifest.screens || []).map((screen) => {

@@ -29,10 +29,13 @@ Delete these stale page roots before any rename pass:
 
 - `38:2` `60 History / Profile / More`
 - `39:2` `70 Commerce / Settings / Support`
+- `63:2` `60 History / Profile / More`
+
+Already deleted from the official file on `2026-03-13`:
+
 - `60:2` `30 Fortune Hub / Interactive`
 - `61:2` `40 Trend`
 - `62:2` `50 Health / Exercise`
-- `63:2` `60 History / Profile / More`
 
 ### Ignore These Historical IDs
 

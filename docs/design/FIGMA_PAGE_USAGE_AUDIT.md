@@ -46,12 +46,19 @@ These pages are older append generations and should not be used for current-stat
 | --- | --- |
 | `38:2` | `60 History / Profile / More` |
 | `39:2` | `70 Commerce / Settings / Support` |
-| `60:2` | `30 Fortune Hub / Interactive` |
-| `61:2` | `40 Trend` |
-| `62:2` | `50 Health / Exercise` |
 | `63:2` | `60 History / Profile / More` |
 
 These groups no longer map to runtime and should be treated as deleted product scope.
+
+## Legacy Roots Deleted From The Official File
+
+The following legacy roots were deleted from the official file on `2026-03-13`:
+
+| Node ID | Page |
+| --- | --- |
+| `60:2` | `30 Fortune Hub / Interactive` |
+| `61:2` | `40 Trend` |
+| `62:2` | `50 Health / Exercise` |
 
 ## Current Runtime Route Gap
 
@@ -74,7 +81,7 @@ These page ids are not present in the current official file and should not be us
 ## Manual Figma Cleanup Order
 
 1. Delete the stale current-state append roots `32:2`, `33:2`, `34:2`, `42:2`, and `43:2`.
-2. Delete the legacy product roots `38:2`, `39:2`, `60:2`, `61:2`, `62:2`, and `63:2`.
+2. Delete the remaining legacy product roots `38:2`, `39:2`, and `63:2`.
 3. Keep only `64:2` through `69:2` as the canonical official catalog range.
 4. Run the rename pass only on the retained canonical range.
 
@@ -85,5 +92,6 @@ The official design catalog should now be interpreted as a reduced product:
 - keep only `64:2` through `69:2` as canonical
 - represent `/chat` internal current-state surfaces directly inside `66:2`
 - keep `64:2`, `68:2`, and `69:2` for governance, components, and archive
+- treat `60:2`, `61:2`, and `62:2` as completed deletions
 - delete the stale page roots listed above
 - treat any lingering references to removed tabs or direct `/fortune`, `/trend`, `/history`, `/profile`, `/more`, or `/subscription` flows as stale artifacts

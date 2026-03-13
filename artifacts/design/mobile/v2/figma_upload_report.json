@@ -2,8 +2,8 @@
   "generated_at": "2026-02-27T17:45:39.339Z",
   "initial_capture_id": "12e490a6-7501-4601-a85f-d2f63468296e",
   "final_capture_id": "47978692-5ef7-4979-9d8b-2496adf509bb",
-  "total_targets": 90,
-  "success_count": 90,
+  "total_targets": 78,
+  "success_count": 78,
   "failure_count": 0,
   "results": [
     {
@@ -170,51 +170,6 @@
       "file_url": "https://www.figma.com/claim_file_from_capture/12e490a6-7501-4601-a85f-d2f63468296e",
       "error": null,
       "timestamp": "2026-02-27T17:46:45.823Z"
-    },
-    {
-      "order": 13,
-      "frame_name": "route_exercise / light",
-      "section": "Mobile Real v2 / Light",
-      "target_group": "real",
-      "capture_id": "ed0e305b-cf24-460b-8ccc-1226d37cef73",
-      "endpoint": "https://mcp.figma.com/mcp/capture/ed0e305b-cf24-460b-8ccc-1226d37cef73/submit",
-      "url": "http://127.0.0.1:4174/figma_frames/route_exercise/light/index.html",
-      "status": "success",
-      "response_status": 200,
-      "next_capture_id": "3f4e6ac4-2418-452a-97f1-065e84100e93",
-      "file_url": "https://www.figma.com/claim_file_from_capture/12e490a6-7501-4601-a85f-d2f63468296e",
-      "error": null,
-      "timestamp": "2026-02-27T17:46:51.989Z"
-    },
-    {
-      "order": 14,
-      "frame_name": "route_fortune / light",
-      "section": "Mobile Real v2 / Light",
-      "target_group": "real",
-      "capture_id": "3f4e6ac4-2418-452a-97f1-065e84100e93",
-      "endpoint": "https://mcp.figma.com/mcp/capture/3f4e6ac4-2418-452a-97f1-065e84100e93/submit",
-      "url": "http://127.0.0.1:4174/figma_frames/route_fortune/light/index.html",
-      "status": "success",
-      "response_status": 200,
-      "next_capture_id": "118124db-1871-45a3-bd7a-6e5753bdd26f",
-      "file_url": "https://www.figma.com/claim_file_from_capture/12e490a6-7501-4601-a85f-d2f63468296e",
-      "error": null,
-      "timestamp": "2026-02-27T17:46:57.651Z"
-    },
-    {
-      "order": 15,
-      "frame_name": "route_health_toss / light",
-      "section": "Mobile Real v2 / Light",
-      "target_group": "real",
-      "capture_id": "118124db-1871-45a3-bd7a-6e5753bdd26f",
-      "endpoint": "https://mcp.figma.com/mcp/capture/118124db-1871-45a3-bd7a-6e5753bdd26f/submit",
-      "url": "http://127.0.0.1:4174/figma_frames/route_health_toss/light/index.html",
-      "status": "success",
-      "response_status": 200,
-      "next_capture_id": "f38c51da-f03d-4de8-b87b-03f8c83e7708",
-      "file_url": "https://www.figma.com/claim_file_from_capture/12e490a6-7501-4601-a85f-d2f63468296e",
-      "error": null,
-      "timestamp": "2026-02-27T17:47:02.842Z"
     },
     {
       "order": 16,
@@ -547,21 +502,6 @@
       "timestamp": "2026-02-27T17:48:58.106Z"
     },
     {
-      "order": 38,
-      "frame_name": "route_sports_game / light",
-      "section": "Mobile Real v2 / Light",
-      "target_group": "real",
-      "capture_id": "ee8de8ea-9c71-410e-93ce-6e8cc06c3e22",
-      "endpoint": "https://mcp.figma.com/mcp/capture/ee8de8ea-9c71-410e-93ce-6e8cc06c3e22/submit",
-      "url": "http://127.0.0.1:4174/figma_frames/route_sports_game/light/index.html",
-      "status": "success",
-      "response_status": 200,
-      "next_capture_id": "8c0c5b6e-9d33-4980-bec5-3131b16210ef",
-      "file_url": "https://www.figma.com/claim_file_from_capture/12e490a6-7501-4601-a85f-d2f63468296e",
-      "error": null,
-      "timestamp": "2026-02-27T17:49:03.009Z"
-    },
-    {
       "order": 39,
       "frame_name": "route_subscription / light",
       "section": "Mobile Real v2 / Light",
@@ -605,21 +545,6 @@
       "file_url": "https://www.figma.com/claim_file_from_capture/12e490a6-7501-4601-a85f-d2f63468296e",
       "error": null,
       "timestamp": "2026-02-27T17:49:18.663Z"
-    },
-    {
-      "order": 42,
-      "frame_name": "route_trend / light",
-      "section": "Mobile Real v2 / Light",
-      "target_group": "real",
-      "capture_id": "3a96b6b5-86f7-4785-9148-803657880324",
-      "endpoint": "https://mcp.figma.com/mcp/capture/3a96b6b5-86f7-4785-9148-803657880324/submit",
-      "url": "http://127.0.0.1:4174/figma_frames/route_trend/light/index.html",
-      "status": "success",
-      "response_status": 200,
-      "next_capture_id": "849f6688-ac82-48bd-8736-fea619beea8a",
-      "file_url": "https://www.figma.com/claim_file_from_capture/12e490a6-7501-4601-a85f-d2f63468296e",
-      "error": null,
-      "timestamp": "2026-02-27T17:49:23.491Z"
     },
     {
       "order": 43,
@@ -815,51 +740,6 @@
       "file_url": "https://www.figma.com/claim_file_from_capture/12e490a6-7501-4601-a85f-d2f63468296e",
       "error": null,
       "timestamp": "2026-02-27T17:50:40.856Z"
-    },
-    {
-      "order": 57,
-      "frame_name": "route_exercise / dark",
-      "section": "Mobile Real v2 / Dark",
-      "target_group": "real",
-      "capture_id": "7bbe3457-74c5-40d7-916f-b928729daac2",
-      "endpoint": "https://mcp.figma.com/mcp/capture/7bbe3457-74c5-40d7-916f-b928729daac2/submit",
-      "url": "http://127.0.0.1:4174/figma_frames/route_exercise/dark/index.html",
-      "status": "success",
-      "response_status": 200,
-      "next_capture_id": "8fc82065-ac9d-4637-b664-f5e8e71f1c1d",
-      "file_url": "https://www.figma.com/claim_file_from_capture/12e490a6-7501-4601-a85f-d2f63468296e",
-      "error": null,
-      "timestamp": "2026-02-27T17:50:46.571Z"
-    },
-    {
-      "order": 58,
-      "frame_name": "route_fortune / dark",
-      "section": "Mobile Real v2 / Dark",
-      "target_group": "real",
-      "capture_id": "8fc82065-ac9d-4637-b664-f5e8e71f1c1d",
-      "endpoint": "https://mcp.figma.com/mcp/capture/8fc82065-ac9d-4637-b664-f5e8e71f1c1d/submit",
-      "url": "http://127.0.0.1:4174/figma_frames/route_fortune/dark/index.html",
-      "status": "success",
-      "response_status": 200,
-      "next_capture_id": "8ab2935c-e2d7-486c-a298-9b6cb9c81d9d",
-      "file_url": "https://www.figma.com/claim_file_from_capture/12e490a6-7501-4601-a85f-d2f63468296e",
-      "error": null,
-      "timestamp": "2026-02-27T17:50:52.101Z"
-    },
-    {
-      "order": 59,
-      "frame_name": "route_health_toss / dark",
-      "section": "Mobile Real v2 / Dark",
-      "target_group": "real",
-      "capture_id": "8ab2935c-e2d7-486c-a298-9b6cb9c81d9d",
-      "endpoint": "https://mcp.figma.com/mcp/capture/8ab2935c-e2d7-486c-a298-9b6cb9c81d9d/submit",
-      "url": "http://127.0.0.1:4174/figma_frames/route_health_toss/dark/index.html",
-      "status": "success",
-      "response_status": 200,
-      "next_capture_id": "646e84ce-7129-4016-8dc1-958b9986265e",
-      "file_url": "https://www.figma.com/claim_file_from_capture/12e490a6-7501-4601-a85f-d2f63468296e",
-      "error": null,
-      "timestamp": "2026-02-27T17:50:57.392Z"
     },
     {
       "order": 60,
@@ -1192,21 +1072,6 @@
       "timestamp": "2026-02-27T17:53:10.243Z"
     },
     {
-      "order": 82,
-      "frame_name": "route_sports_game / dark",
-      "section": "Mobile Real v2 / Dark",
-      "target_group": "real",
-      "capture_id": "9e70f606-d073-4029-96e3-1ee7d1f72451",
-      "endpoint": "https://mcp.figma.com/mcp/capture/9e70f606-d073-4029-96e3-1ee7d1f72451/submit",
-      "url": "http://127.0.0.1:4174/figma_frames/route_sports_game/dark/index.html",
-      "status": "success",
-      "response_status": 200,
-      "next_capture_id": "5caeb3f3-f736-4db4-823f-184f0c7e6def",
-      "file_url": "https://www.figma.com/claim_file_from_capture/12e490a6-7501-4601-a85f-d2f63468296e",
-      "error": null,
-      "timestamp": "2026-02-27T17:53:17.441Z"
-    },
-    {
       "order": 83,
       "frame_name": "route_subscription / dark",
       "section": "Mobile Real v2 / Dark",
@@ -1250,21 +1115,6 @@
       "file_url": "https://www.figma.com/claim_file_from_capture/12e490a6-7501-4601-a85f-d2f63468296e",
       "error": null,
       "timestamp": "2026-02-27T17:53:49.668Z"
-    },
-    {
-      "order": 86,
-      "frame_name": "route_trend / dark",
-      "section": "Mobile Real v2 / Dark",
-      "target_group": "real",
-      "capture_id": "f199290a-5e47-4851-b2b6-7680acea11db",
-      "endpoint": "https://mcp.figma.com/mcp/capture/f199290a-5e47-4851-b2b6-7680acea11db/submit",
-      "url": "http://127.0.0.1:4174/figma_frames/route_trend/dark/index.html",
-      "status": "success",
-      "response_status": 200,
-      "next_capture_id": "3b40d6ff-8378-4293-8ca6-09b6ac03398c",
-      "file_url": "https://www.figma.com/claim_file_from_capture/12e490a6-7501-4601-a85f-d2f63468296e",
-      "error": null,
-      "timestamp": "2026-02-27T17:54:01.394Z"
     },
     {
       "order": 87,

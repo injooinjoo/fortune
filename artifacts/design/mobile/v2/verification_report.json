@@ -1,17 +1,17 @@
 {
   "generated_at": "2026-02-27T17:55:53.161Z",
-  "expected_frames": 88,
-  "captured_count": 88,
+  "expected_frames": 76,
+  "captured_count": 76,
   "blocked_count": 0,
   "by_theme": {
-    "light": 44,
-    "dark": 44
+    "light": 38,
+    "dark": 38
   },
   "by_surface_type": {
-    "route": 68,
-    "chat_rep": 20
+    "route": 28,
+    "chat_rep": 10
   },
-  "reachable_surface_count": 44,
+  "reachable_surface_count": 38,
   "missing_captures": [],
   "identical_theme_pairs": [
     {
@@ -22,7 +22,7 @@
   ],
   "figma_frames": {
     "index_path": "/Users/jacobmac/Desktop/Dev/fortune/artifacts/design/mobile/v2/figma_frames/index.json",
-    "total_targets": 88
+    "total_targets": 76
   },
   "components_pages": {
     "index_path": "/Users/jacobmac/Desktop/Dev/fortune/artifacts/design/mobile/v2/components/index.json",
@@ -33,14 +33,14 @@
   "old61_mapping": {
     "path": "/Users/jacobmac/Desktop/Dev/fortune/artifacts/design/mobile/v2/old61_mapping.json",
     "summary": {
-      "total": 61,
-      "kept": 15,
-      "replaced": 46,
+      "total": 37,
+      "kept": 9,
+      "replaced": 28,
       "excluded": 0
     }
   },
   "logs": {
-    "capture_log_entries": 88,
+    "capture_log_entries": 76,
     "blocked_entries": 0
   },
   "pass": {

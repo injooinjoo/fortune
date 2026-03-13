@@ -24,13 +24,6 @@
       "reason": "active_route_exists_in_chat_first_v2"
     },
     {
-      "legacy_screen_id": "fortune_list",
-      "legacy_path": "/fortune",
-      "status": "kept",
-      "replacement_surface_id": "route_fortune",
-      "reason": "active_route_exists_in_chat_first_v2"
-    },
-    {
       "legacy_screen_id": "tarot",
       "legacy_path": "/tarot",
       "status": "replaced",
@@ -234,76 +227,6 @@
       "reason": "legacy_route_removed_represented_by_chat_category:라이프"
     },
     {
-      "legacy_screen_id": "health",
-      "legacy_path": "/health-toss",
-      "status": "kept",
-      "replacement_surface_id": "route_health_toss",
-      "reason": "active_route_exists_in_chat_first_v2"
-    },
-    {
-      "legacy_screen_id": "exercise",
-      "legacy_path": "/exercise",
-      "status": "kept",
-      "replacement_surface_id": "route_exercise",
-      "reason": "active_route_exists_in_chat_first_v2"
-    },
-    {
-      "legacy_screen_id": "lucky_golf",
-      "legacy_path": "/lucky-golf",
-      "status": "replaced",
-      "replacement_surface_id": "route_health_toss",
-      "reason": "legacy_route_removed_represented_by_surface:route_health_toss"
-    },
-    {
-      "legacy_screen_id": "lucky_baseball",
-      "legacy_path": "/lucky-baseball",
-      "status": "replaced",
-      "replacement_surface_id": "route_health_toss",
-      "reason": "legacy_route_removed_represented_by_surface:route_health_toss"
-    },
-    {
-      "legacy_screen_id": "lucky_tennis",
-      "legacy_path": "/lucky-tennis",
-      "status": "replaced",
-      "replacement_surface_id": "route_health_toss",
-      "reason": "legacy_route_removed_represented_by_surface:route_health_toss"
-    },
-    {
-      "legacy_screen_id": "lucky_running",
-      "legacy_path": "/lucky-running",
-      "status": "replaced",
-      "replacement_surface_id": "route_health_toss",
-      "reason": "legacy_route_removed_represented_by_surface:route_health_toss"
-    },
-    {
-      "legacy_screen_id": "lucky_cycling",
-      "legacy_path": "/lucky-cycling",
-      "status": "replaced",
-      "replacement_surface_id": "route_health_toss",
-      "reason": "legacy_route_removed_represented_by_surface:route_health_toss"
-    },
-    {
-      "legacy_screen_id": "lucky_swim",
-      "legacy_path": "/lucky-swim",
-      "status": "replaced",
-      "replacement_surface_id": "route_health_toss",
-      "reason": "legacy_route_removed_represented_by_surface:route_health_toss"
-    },
-    {
-      "legacy_screen_id": "lucky_fishing",
-      "legacy_path": "/lucky-fishing",
-      "status": "replaced",
-      "replacement_surface_id": "route_health_toss",
-      "reason": "legacy_route_removed_represented_by_surface:route_health_toss"
-    },
-    {
-      "legacy_screen_id": "lucky_hiking",
-      "legacy_path": "/lucky-hiking",
-      "status": "replaced",
-      "replacement_surface_id": "route_health_toss",
-      "reason": "legacy_route_removed_represented_by_surface:route_health_toss"
-    },
-    {
       "legacy_screen_id": "dream",
       "legacy_path": "/dream",
       "status": "replaced",
@@ -337,103 +260,12 @@
       "status": "replaced",
       "replacement_surface_id": "chat_rep_lucky",
       "reason": "legacy_route_removed_represented_by_chat_category:행운"
-    },
-    {
-      "legacy_screen_id": "interactive_list",
-      "legacy_path": "/interactive",
-      "status": "replaced",
-      "replacement_surface_id": "route_fortune",
-      "reason": "legacy_route_removed_represented_by_surface:route_fortune"
-    },
-    {
-      "legacy_screen_id": "dream_interpretation",
-      "legacy_path": "/interactive/dream",
-      "status": "replaced",
-      "replacement_surface_id": "route_fortune",
-      "reason": "legacy_route_removed_represented_by_surface:route_fortune"
-    },
-    {
-      "legacy_screen_id": "psychology_test",
-      "legacy_path": "/interactive/psychology-test",
-      "status": "replaced",
-      "replacement_surface_id": "route_fortune",
-      "reason": "legacy_route_removed_represented_by_surface:route_fortune"
-    },
-    {
-      "legacy_screen_id": "tarot_chat",
-      "legacy_path": "/interactive/tarot",
-      "status": "replaced",
-      "replacement_surface_id": "route_fortune",
-      "reason": "legacy_route_removed_represented_by_surface:route_fortune"
-    },
-    {
-      "legacy_screen_id": "tarot_deck_selection",
-      "legacy_path": "/interactive/tarot/deck-selection",
-      "status": "replaced",
-      "replacement_surface_id": "route_fortune",
-      "reason": "legacy_route_removed_represented_by_surface:route_fortune"
-    },
-    {
-      "legacy_screen_id": "tarot_animated_flow",
-      "legacy_path": "/interactive/tarot/animated-flow",
-      "status": "replaced",
-      "replacement_surface_id": "route_fortune",
-      "reason": "legacy_route_removed_represented_by_surface:route_fortune"
-    },
-    {
-      "legacy_screen_id": "face_reading_interactive",
-      "legacy_path": "/interactive/face-reading",
-      "status": "replaced",
-      "replacement_surface_id": "route_fortune",
-      "reason": "legacy_route_removed_represented_by_surface:route_fortune"
-    },
-    {
-      "legacy_screen_id": "taemong",
-      "legacy_path": "/interactive/taemong",
-      "status": "replaced",
-      "replacement_surface_id": "route_fortune",
-      "reason": "legacy_route_removed_represented_by_surface:route_fortune"
-    },
-    {
-      "legacy_screen_id": "worry_bead",
-      "legacy_path": "/interactive/worry-bead",
-      "status": "replaced",
-      "replacement_surface_id": "route_fortune",
-      "reason": "legacy_route_removed_represented_by_surface:route_fortune"
-    },
-    {
-      "legacy_screen_id": "dream_journal",
-      "legacy_path": "/interactive/dream-journal",
-      "status": "replaced",
-      "replacement_surface_id": "route_fortune",
-      "reason": "legacy_route_removed_represented_by_surface:route_fortune"
-    },
-    {
-      "legacy_screen_id": "trend_psychology",
-      "legacy_path": "/trend/psychology/sample",
-      "status": "kept",
-      "replacement_surface_id": "route_trend_psychology_sample",
-      "reason": "active_route_exists_in_chat_first_v2"
-    },
-    {
-      "legacy_screen_id": "trend_worldcup",
-      "legacy_path": "/trend/worldcup/sample",
-      "status": "kept",
-      "replacement_surface_id": "route_trend_worldcup_sample",
-      "reason": "active_route_exists_in_chat_first_v2"
-    },
-    {
-      "legacy_screen_id": "trend_balance",
-      "legacy_path": "/trend/balance/sample",
-      "status": "kept",
-      "replacement_surface_id": "route_trend_balance_sample",
-      "reason": "active_route_exists_in_chat_first_v2"
     }
   ],
   "summary": {
-    "total": 61,
-    "kept": 15,
-    "replaced": 46,
+    "total": 37,
+    "kept": 9,
+    "replaced": 28,
     "excluded": 0
   }
 }

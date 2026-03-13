@@ -53,6 +53,10 @@ current-state 제품 표면과 라우트의 source of truth는 아래 순서를 
 - `/fortune`
 - `/trend`
 - `/profile`
+- `/interactive`
+- `/health-toss`
+- `/exercise`
+- `/sports-game`
 
 이 경로들은 current-state active route inventory에 포함하지 않습니다.
 
@@ -127,5 +131,5 @@ lib/
 ## 7. 설계 가드레일
 
 - current-state 설명은 실제 코드와 1:1로 맞아야 합니다.
-- 미래형 탭 구조나 별도 `/fortune`, `/trend`, `/profile` 설계는 source of truth가 아닙니다.
+- 미래형 탭 구조나 별도 `/fortune`, `/trend`, `/profile`, `/interactive`, `/health-toss`, `/exercise`, `/sports-game` 설계는 source of truth가 아닙니다.
 - 제품 IA 문서가 필요하면 먼저 `docs/getting-started/APP_SURFACES_AND_ROUTES.md`를 갱신합니다.

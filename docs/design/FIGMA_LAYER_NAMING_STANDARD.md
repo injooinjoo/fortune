@@ -50,7 +50,9 @@ Only the retained canonical page roots should be normalized:
 - `68:2` `90 Components`
 - `69:2` `99 Archive`
 
-Stale roots such as `32:2`, `33:2`, `34:2`, `38:2`, `39:2`, `42:2`, `43:2`, and `60:2` through `63:2` are delete targets, not canonical roots.
+Stale roots such as `32:2`, `33:2`, `34:2`, `38:2`, `39:2`, `42:2`, `43:2`, and `63:2` are delete targets, not canonical roots.
+
+The legacy roots `60:2`, `61:2`, and `62:2` were already deleted from the official file on `2026-03-13`.
 
 ### Shared structural roles
 

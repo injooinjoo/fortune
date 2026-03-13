@@ -3,7 +3,7 @@
   "inventory_path": "/Users/jacobmac/Desktop/Dev/fortune/artifacts/design/mobile/v2/live_inventory.json",
   "raw_root": "/Users/jacobmac/Desktop/Dev/fortune/artifacts/design/mobile/v2/raw",
   "output_root": "/Users/jacobmac/Desktop/Dev/fortune/artifacts/design/mobile/v2/figma_frames",
-  "total_targets": 88,
+  "total_targets": 76,
   "targets": [
     {
       "surface_id": "route_splash",
@@ -100,22 +100,6 @@
       "section": "Mobile Real v2 / Dark",
       "frame_name": "route_home / dark",
       "relative_path": "figma_frames/route_home/dark/index.html"
-    },
-    {
-      "surface_id": "route_fortune",
-      "surface_type": "route",
-      "theme": "light",
-      "section": "Mobile Real v2 / Light",
-      "frame_name": "route_fortune / light",
-      "relative_path": "figma_frames/route_fortune/light/index.html"
-    },
-    {
-      "surface_id": "route_fortune",
-      "surface_type": "route",
-      "theme": "dark",
-      "section": "Mobile Real v2 / Dark",
-      "frame_name": "route_fortune / dark",
-      "relative_path": "figma_frames/route_fortune/dark/index.html"
     },
     {
       "surface_id": "route_history",
@@ -358,22 +342,6 @@
       "relative_path": "figma_frames/route_manseryeok/dark/index.html"
     },
     {
-      "surface_id": "route_trend",
-      "surface_type": "route",
-      "theme": "light",
-      "section": "Mobile Real v2 / Light",
-      "frame_name": "route_trend / light",
-      "relative_path": "figma_frames/route_trend/light/index.html"
-    },
-    {
-      "surface_id": "route_trend",
-      "surface_type": "route",
-      "theme": "dark",
-      "section": "Mobile Real v2 / Dark",
-      "frame_name": "route_trend / dark",
-      "relative_path": "figma_frames/route_trend/dark/index.html"
-    },
-    {
       "surface_id": "route_wellness",
       "surface_type": "route",
       "theme": "light",
@@ -404,54 +372,6 @@
       "section": "Mobile Real v2 / Dark",
       "frame_name": "route_wellness_meditation / dark",
       "relative_path": "figma_frames/route_wellness_meditation/dark/index.html"
-    },
-    {
-      "surface_id": "route_health_toss",
-      "surface_type": "route",
-      "theme": "light",
-      "section": "Mobile Real v2 / Light",
-      "frame_name": "route_health_toss / light",
-      "relative_path": "figma_frames/route_health_toss/light/index.html"
-    },
-    {
-      "surface_id": "route_health_toss",
-      "surface_type": "route",
-      "theme": "dark",
-      "section": "Mobile Real v2 / Dark",
-      "frame_name": "route_health_toss / dark",
-      "relative_path": "figma_frames/route_health_toss/dark/index.html"
-    },
-    {
-      "surface_id": "route_exercise",
-      "surface_type": "route",
-      "theme": "light",
-      "section": "Mobile Real v2 / Light",
-      "frame_name": "route_exercise / light",
-      "relative_path": "figma_frames/route_exercise/light/index.html"
-    },
-    {
-      "surface_id": "route_exercise",
-      "surface_type": "route",
-      "theme": "dark",
-      "section": "Mobile Real v2 / Dark",
-      "frame_name": "route_exercise / dark",
-      "relative_path": "figma_frames/route_exercise/dark/index.html"
-    },
-    {
-      "surface_id": "route_sports_game",
-      "surface_type": "route",
-      "theme": "light",
-      "section": "Mobile Real v2 / Light",
-      "frame_name": "route_sports_game / light",
-      "relative_path": "figma_frames/route_sports_game/light/index.html"
-    },
-    {
-      "surface_id": "route_sports_game",
-      "surface_type": "route",
-      "theme": "dark",
-      "section": "Mobile Real v2 / Dark",
-      "frame_name": "route_sports_game / dark",
-      "relative_path": "figma_frames/route_sports_game/dark/index.html"
     },
     {
       "surface_id": "route_subscription",

@@ -51,6 +51,10 @@
 - `/fortune`
 - `/trend`
 - `/profile`
+- `/interactive`
+- `/health-toss`
+- `/exercise`
+- `/sports-game`
 
 ## `/chat` 내부 표면
 
