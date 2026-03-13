@@ -20,7 +20,6 @@ This document records the current card families used in the Fortune app and the 
 
 | Current card type | Current source | Shared family target |
 | --- | --- | --- |
-| Chat mode summary card | `lib/features/character/presentation/pages/character_list_panel.dart` | `FortuneFeatureCard` |
 | Insight history card | `lib/features/chat_insight/presentation/widgets/insight_history_card.dart` | `FortuneRecordCard` + `FortuneMetricPill` |
 | Today iljin card | `lib/features/fortune/presentation/widgets/saju/today_iljin_card.dart` | `FortuneCardSurface` + `FortuneCardBadge` |
 | Chat saju result card | `lib/features/chat/presentation/widgets/chat_saju_result_card.dart` | `FortuneResultFrame` |

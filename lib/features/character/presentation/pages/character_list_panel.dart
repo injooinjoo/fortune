@@ -16,7 +16,6 @@ import '../utils/chat_catalog_preview.dart';
 import '../providers/character_chat_provider.dart';
 import '../providers/character_provider.dart';
 import '../widgets/wave_typing_indicator.dart';
-import '../../../../shared/components/cards/fortune_cards.dart';
 
 /// 카테고리 영문 → 한글 라벨 변환
 String _specialtyCategoryLabel(String category) {
@@ -89,7 +88,6 @@ class CharacterListPanel extends ConsumerWidget {
                   ref.read(characterListTabProvider.notifier).state = tab;
                 },
               ),
-              _ChatModeSummaryCard(currentTab: currentTab),
               const Divider(height: 1),
               // 캐릭터 목록
               Expanded(
@@ -298,36 +296,6 @@ class _TabButton extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _ChatModeSummaryCard extends StatelessWidget {
-  final CharacterListTab currentTab;
-
-  const _ChatModeSummaryCard({
-    required this.currentTab,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isStory = currentTab == CharacterListTab.story;
-    final eyebrow = isStory ? '일반 채팅' : '호기심';
-    final title = isStory ? '세계관 친구와 DM처럼 이어가는 대화' : '질문 하나로 바로 시작하는 인사이트';
-    final description = isStory
-        ? '편하게 말을 걸고 관계를 쌓아가며 자연스럽게 대화를 이어가요.'
-        : '운세 전문가를 고르고, 짧은 질문 뒤에 결과를 채팅 안에서 바로 받아보세요.';
-    final highlights = isStory
-        ? const ['캐릭터 대화', '관계 축적', '자유 입력']
-        : const ['전문가 선택', '짧은 설문', '결과 카드'];
-
-    return FortuneFeatureCard(
-      tone: isStory ? FortuneCardTone.neutral : FortuneCardTone.accent,
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-      eyebrow: eyebrow,
-      title: title,
-      description: description,
-      highlights: highlights,
     );
   }
 }
