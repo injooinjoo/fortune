@@ -21237,6 +21237,8 @@
       "notes": [],
       "path": "lib/core/navigation/fortune_chat_route.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "docs/getting-started/APP_SURFACES_AND_ROUTES.md",
         "lib/core/constants/fortune_type_names.dart",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
@@ -23696,6 +23698,8 @@
       "notes": [],
       "path": "lib/features/character/presentation/utils/chat_catalog_preview.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
