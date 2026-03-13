@@ -13,8 +13,8 @@ This file remains the only official Figma source of truth for current-state Fort
 ## Coverage Snapshot
 
 - Managed surfaces: `18`
-- Live captures: `10`
-- Placeholder specs: `8`
+- Live captures: `14`
+- Placeholder specs: `4`
 
 ## Runtime Scope
 
@@ -65,9 +65,26 @@ Only the following page roots should be treated as the canonical current set ins
 
 Repo-side current-state sync work must target this range only.
 
+## Latest Single-Page Refresh Append
+
+The official file currently also contains a fresh chat-page append created by the `KAN-86` refresh:
+
+- `95:2` `20 Chat Home / Character`
+
+This page holds the latest live captures for:
+
+- `chat__home__general_default`
+- `chat__home__curiosity_default`
+- `chat__survey__fortune_step`
+- `chat__result__fortune_complete`
+
+Treat `95:2` as the freshest official chat-page payload until the retained canonical range is consolidated again.
+
 ## Official File Cleanliness
 
-The official file is currently clean. No stale legacy page roots remain alongside the canonical current range above.
+The official file currently keeps the retained canonical governance range `89:2` through `94:2`, plus the intentional chat refresh append `95:2`.
+
+No removed legacy page roots remain alongside that retained range and the `KAN-86` chat refresh append.
 
 Historical root ranges that were removed from the official file and must not be cited as current:
 
@@ -100,7 +117,7 @@ This workflow applies to retained runtime surfaces only.
 
 ## Rules
 
-1. Treat `89:2` through `94:2` as the only canonical current-state page range.
+1. Treat `89:2` through `94:2` as the canonical governance range, and explicitly document any newer single-page append such as `95:2` until it is consolidated.
 2. Do not reintroduce removed page groups into the official file.
 3. Any route change must update:
    - `playwright/scripts/figma_capture_manifest.js`

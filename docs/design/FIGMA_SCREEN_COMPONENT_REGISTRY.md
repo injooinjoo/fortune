@@ -24,7 +24,7 @@
 | Figma page | Total | Live | Placeholder |
 | --- | ---: | ---: | ---: |
 | `10 Entry / Auth / Onboarding` | 5 | 3 | 2 |
-| `20 Chat Home / Character` | 9 | 4 | 5 |
+| `20 Chat Home / Character` | 9 | 8 | 1 |
 | `80 Admin / Policy / Utility` | 4 | 3 | 1 |
 
 Additional official pages:
@@ -38,7 +38,7 @@ Additional official pages:
 | Triage | Count |
 | --- | ---: |
 | `capture_next_auth` | 1 |
-| `capture_next_runtime` | 6 |
+| `capture_next_runtime` | 2 |
 | `capture_next_state_extra` | 1 |
 
 ## Screen Catalog
@@ -54,11 +54,11 @@ Additional official pages:
 ### 20 Chat Home / Character
 
 - `chat__home__default` | `#/chat` | `live`
-- `chat__home__general_default` | `#/chat` | `placeholder`
-- `chat__home__curiosity_default` | `#/chat` | `placeholder`
+- `chat__home__general_default` | `#/chat?catalogState=general-home` | `live`
+- `chat__home__curiosity_default` | `#/chat?catalogState=curiosity-home` | `live`
 - `chat__character__luts` | `#/chat?openCharacterChat=true&characterId=luts` | `live`
-- `chat__survey__fortune_step` | `#/chat?fortuneType=daily` | `placeholder`
-- `chat__result__fortune_complete` | `#/chat?fortuneType=daily` | `placeholder`
+- `chat__survey__fortune_step` | `#/chat?catalogState=curiosity-survey&fortuneType=daily` | `live`
+- `chat__result__fortune_complete` | `#/chat?catalogState=curiosity-result&fortuneType=daily` | `live`
 - `character__profile__luts` | `#/character/luts` | `live`
 - `chat__onboarding__character_intro` | `#/chat` | `live`
 - `chat__profile_sheet__default` | bottom-sheet runtime state | `placeholder`
@@ -74,6 +74,7 @@ Additional official pages:
 
 ### Chat Shell and Headers
 
+- `lib/core/navigation/fortune_chat_route.dart`
 - `lib/features/character/presentation/pages/swipe_home_shell.dart`
 - `lib/features/character/presentation/pages/character_list_panel.dart`
 - `lib/shared/components/app_header.dart`
@@ -86,6 +87,7 @@ Additional official pages:
 
 ### Conversation, Survey, and Result Blocks
 
+- `lib/features/character/presentation/utils/chat_catalog_preview.dart`
 - `lib/features/character/presentation/pages/character_chat_panel.dart`
 - `lib/features/character/presentation/widgets/character_message_bubble.dart`
 - `lib/features/chat/presentation/widgets/survey/chat_survey_chips.dart`
