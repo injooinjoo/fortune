@@ -8,6 +8,7 @@ This file is the repository-side proof that a code change was reconciled with th
    - `playwright/scripts/figma_capture_manifest.js`
    - `docs/design/FIGMA_LAYER_NAMING_STANDARD.md` when the layer contract changes
    - `docs/design/FIGMA_SOURCE_OF_TRUTH.md`
+   - `docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md`
    - `docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md`
    - this changelog
 2. Any UI surface change under tracked presentation, screen, shared, or design-system files must append a changelog entry even if the screen list did not change.
@@ -18,6 +19,7 @@ This file is the repository-side proof that a code change was reconciled with th
 
 | Date | Jira | Code Scope | Affected Screens / Components | Figma Action |
 | --- | --- | --- | --- | --- |
+| 2026-03-13 | `KAN-84` | Detailed screen-to-runtime reconciliation docs | `65:2` through `69:2`, `auth__*`, `chat__*`, `policy__*`, `premium__*`, callback route gap notes | Added a card-level mapping registry between canonical Figma pages and actual Flutter runtime surfaces, linked the new registry from the Figma governance docs, and documented that `/auth/callback` still exists in runtime but is not represented as a dedicated current-state Figma card |
 | 2026-03-13 | `KAN-82` | Official catalog deep cleanup and current-code reconciliation | `00 Cover & Governance`, `99 Archive`, design governance docs, cleanup runbook, stale page inventory | Rebased the repo-side Figma contract onto the confirmed canonical page roots `64:2` through `69:2`, replaced stale `/fortune/interactive/*` governance copy with `/chat`-centered current-state wording, and recorded the exact stale roots still present in the official file for manual deletion |
 | 2026-03-12 | `KAN-80` | Current-state chat surface expansion | `chat__home__general_default`, `chat__home__curiosity_default`, `chat__survey__fortune_step`, `chat__result__fortune_complete`, `chat__onboarding__character_intro`, `premium__insight__default`, removed stale `utility__manseryeok__default`, updated component groups | Expanded the repo-backed catalog to reflect `/chat` internal experiences and the retained premium route, while dropping the non-routable manseryeok screen from current-state coverage so the official Figma file can be re-appended from the updated manifest |
 | 2026-03-11 | `KAN-70` | Reused retained runtime load paths | `chat__character__luts`, `utility__manseryeok__default`, retained provider-backed capture sources | Extended the retained manifest/source registry so character chat and manseryeok provider state changes remain covered by the official catalog guard |

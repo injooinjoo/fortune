@@ -6,6 +6,7 @@
 - Figma file key: `dkx3Biwe5xkiMQWsjq95LA`
 - Direct link: [Fortune Screen Catalog - Official](https://www.figma.com/design/dkx3Biwe5xkiMQWsjq95LA)
 - Layer naming contract: `docs/design/FIGMA_LAYER_NAMING_STANDARD.md`
+- Screen-to-route mapping: `docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md`
 
 This file remains the only official Figma source of truth for current-state Fortune surfaces.
 
@@ -35,6 +36,10 @@ Runtime routes represented by the official catalog:
 - `/privacy-policy`
 - `/terms-of-service`
 - `/account-deletion`
+
+App routes that still exist in runtime but do not currently have a dedicated canonical Figma card:
+
+- `/auth/callback`
 
 Internal `/chat` states represented as catalog surfaces:
 
@@ -120,6 +125,7 @@ This workflow applies to retained runtime surfaces only. Stale roots listed abov
 3. Any route change must update:
    - `playwright/scripts/figma_capture_manifest.js`
    - `docs/design/FIGMA_PAGE_USAGE_AUDIT.md`
+   - `docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md`
    - `docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md`
    - `docs/design/FIGMA_SYNC_CHANGELOG.md`
 4. `90 Components` must only reference retained chat, policy, and account-management components.

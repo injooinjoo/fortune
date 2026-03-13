@@ -20,7 +20,7 @@ Repo evidence:
 | Node ID | Figma page group | Status | Runtime coverage |
 | --- | --- | --- | --- |
 | `64:2` | `00 Cover & Governance` | `governance_only` | Catalog governance only |
-| `65:2` | `10 Entry / Auth / Onboarding` | `active_runtime` | `/`, `/splash`, `/signup`, `/auth/callback`, `/onboarding`, `/onboarding/toss-style` |
+| `65:2` | `10 Entry / Auth / Onboarding` | `active_runtime` | `/`, `/splash`, `/signup`, `/onboarding`, `/onboarding/toss-style` |
 | `66:2` | `20 Chat Home / Character` | `active_runtime` | `/chat`, `/character/:id`, plus internal `/chat` states for 일반 채팅, 호기심, survey, result, onboarding, and account sheet |
 | `67:2` | `80 Admin / Policy / Utility` | `active_runtime` | `/premium`, `/privacy-policy`, `/terms-of-service`, `/account-deletion` |
 | `68:2` | `90 Components` | `governance_only` | Retained component inventory only |
@@ -52,6 +52,12 @@ These pages are older append generations and should not be used for current-stat
 | `63:2` | `60 History / Profile / More` |
 
 These groups no longer map to runtime and should be treated as deleted product scope.
+
+## Current Runtime Route Gap
+
+`/auth/callback` still exists in app runtime via `lib/routes/routes/auth_routes.dart` and `lib/screens/auth/callback_page.dart`, but it does not have a dedicated screen card inside the canonical current page roots `64:2` through `69:2`.
+
+The older append generation `33:2` contained a callback card, so treat that as historical reference only, not current-state coverage.
 
 ## Historical Node IDs To Ignore
 

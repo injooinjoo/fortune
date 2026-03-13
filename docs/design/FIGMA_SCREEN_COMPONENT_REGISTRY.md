@@ -7,6 +7,7 @@
 - Device standard: `iPhone 15 Pro 393x852 @3x`
 - Capture manifest: `playwright/scripts/figma_capture_manifest.js`
 - Layer naming contract: `docs/design/FIGMA_LAYER_NAMING_STANDARD.md`
+- Detailed screen mapping: `docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md`
 - Sync changelog: `docs/design/FIGMA_SYNC_CHANGELOG.md`
 
 ## Canonical Current Page Roots
