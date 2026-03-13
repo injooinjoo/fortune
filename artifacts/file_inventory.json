@@ -19304,6 +19304,7 @@
       "notes": [],
       "path": "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "docs/design/README.md"
       ],
@@ -19319,6 +19320,7 @@
       "notes": [],
       "path": "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "docs/design/FIGMA_SYNC_CHANGELOG.md",
         "docs/design/README.md",
@@ -19334,8 +19336,26 @@
       "dirty": false,
       "kind": "doc_markdown",
       "notes": [],
+      "path": "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
+      "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
+        "docs/design/FIGMA_SYNC_CHANGELOG.md",
+        "docs/design/README.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
       "path": "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "docs/design/FIGMA_SYNC_CHANGELOG.md",
         "docs/design/README.md",
         "scripts/design/figma_sync_guard.js"
@@ -19353,6 +19373,7 @@
       "path": "docs/design/FIGMA_SYNC_CHANGELOG.md",
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "docs/design/README.md",
         "scripts/design/figma_sync_guard.js"
@@ -19773,6 +19794,7 @@
         "README.md",
         "docs/APP_ARCHITECTURE.md",
         "docs/README.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "docs/figma-style-guide.md",
         "docs/getting-started/PROJECT_OVERVIEW.md"
       ],
@@ -23419,6 +23441,7 @@
       "path": "lib/features/character/presentation/pages/character_chat_panel.dart",
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/features/character/presentation/pages/swipe_home_shell.dart"
       ],
       "runtime_reachable": true,
@@ -23434,6 +23457,7 @@
       "path": "lib/features/character/presentation/pages/character_list_panel.dart",
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/features/character/presentation/pages/swipe_home_shell.dart"
       ],
       "runtime_reachable": true,
@@ -23449,6 +23473,7 @@
       "path": "lib/features/character/presentation/pages/character_onboarding_page.dart",
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/features/character/presentation/pages/swipe_home_shell.dart"
       ],
       "runtime_reachable": true,
@@ -23463,6 +23488,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/pages/character_profile_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/routes/character_routes.dart"
       ],
       "runtime_reachable": true,
@@ -23478,6 +23504,7 @@
       "path": "lib/features/character/presentation/pages/swipe_home_shell.dart",
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "integration_test/app_test.dart",
         "lib/routes/route_config.dart"
       ],
@@ -23510,6 +23537,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/providers/character_chat_provider.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/pages/character_list_panel.dart",
@@ -23530,6 +23558,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/providers/character_chat_survey_provider.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/presentation/providers/auth_provider.dart"
       ],
@@ -23655,6 +23684,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/utils/fortune_chat_navigation.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/screens/premium/premium_screen.dart"
       ],
       "runtime_reachable": true,
@@ -23713,6 +23743,7 @@
       "path": "lib/features/character/presentation/widgets/embedded_fortune_component.dart",
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/features/character/presentation/widgets/character_message_bubble.dart"
       ],
       "runtime_reachable": true,
@@ -23756,6 +23787,7 @@
       "notes": [],
       "path": "lib/features/chat/domain/configs/survey_configs.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/providers/character_chat_survey_provider.dart"
       ],
@@ -23833,6 +23865,7 @@
       "path": "lib/features/chat/presentation/widgets/chat_saju_result_card.dart",
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/features/character/presentation/widgets/character_message_bubble.dart"
       ],
       "runtime_reachable": true,
@@ -23848,6 +23881,7 @@
       "path": "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/features/character/presentation/pages/character_list_panel.dart"
       ],
       "runtime_reachable": true,
@@ -24933,6 +24967,7 @@
       "notes": [],
       "path": "lib/features/policy/presentation/pages/privacy_policy_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -24947,6 +24982,7 @@
       "notes": [],
       "path": "lib/features/policy/presentation/pages/terms_of_service_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -25670,6 +25706,7 @@
         "docs/APP_ARCHITECTURE.md",
         "docs/README.md",
         "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "docs/getting-started/APP_SURFACES_AND_ROUTES.md",
         "docs/getting-started/PROJECT_OVERVIEW.md",
@@ -25690,6 +25727,7 @@
         "docs/APP_ARCHITECTURE.md",
         "docs/README.md",
         "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "docs/getting-started/APP_SURFACES_AND_ROUTES.md",
         "docs/getting-started/PROJECT_OVERVIEW.md",
@@ -25712,6 +25750,7 @@
         "docs/APP_ARCHITECTURE.md",
         "docs/README.md",
         "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "docs/getting-started/APP_SURFACES_AND_ROUTES.md",
         "docs/getting-started/PROJECT_OVERVIEW.md",
@@ -25729,6 +25768,8 @@
       "notes": [],
       "path": "lib/screens/auth/callback_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/routes/routes/auth_routes.dart"
       ],
       "runtime_reachable": true,
@@ -25743,6 +25784,7 @@
       "notes": [],
       "path": "lib/screens/auth/signup_screen.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/routes/routes/auth_routes.dart"
       ],
       "runtime_reachable": true,
@@ -25757,6 +25799,7 @@
       "notes": [],
       "path": "lib/screens/onboarding/onboarding_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/routes/route_config.dart",
         "lib/routes/routes/auth_routes.dart"
       ],
@@ -25801,6 +25844,7 @@
       "path": "lib/screens/premium/premium_screen.dart",
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -25816,6 +25860,7 @@
       "path": "lib/screens/profile/account_deletion_page.dart",
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -25830,6 +25875,7 @@
       "notes": [],
       "path": "lib/screens/splash_screen.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/routes/routes/auth_routes.dart"
       ],
       "runtime_reachable": true,
@@ -26231,6 +26277,7 @@
       "path": "lib/services/storage_service.dart",
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/core/services/unified_fortune_service.dart",
         "lib/features/character/presentation/pages/character_onboarding_page.dart",
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
@@ -31375,7 +31422,7 @@
   "meta": {
     "counts_by_area": {
       "assets": 1231,
-      "docs": 87,
+      "docs": 88,
       "integration_test": 8,
       "lib": 391,
       "scripts": 70,
@@ -31387,11 +31434,11 @@
       "keep_generated": 28,
       "manual_review": 979,
       "phase1_remove_candidate": 18,
-      "phase2_review_candidate": 323,
+      "phase2_review_candidate": 324,
       "phase3_feature_cleanup": 6
     },
     "counts_by_usage_status": {
-      "doc_only": 92,
+      "doc_only": 93,
       "generated_excluded": 28,
       "runtime_used": 676,
       "test_only": 47,
@@ -31657,7 +31704,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2030,
+    "total_files": 2031,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
