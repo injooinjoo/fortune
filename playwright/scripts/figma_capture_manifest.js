@@ -112,12 +112,12 @@ const FIGMA_PAGES = [
   {
     key: '00-cover-governance',
     name: '00 Cover & Governance',
-    description: 'Catalog governance, retained-surface summary, and manual delete instructions.',
+    description: 'Catalog governance, current-state summary, and routing/capture rules.',
   },
   {
     key: '10-entry-auth-onboarding',
     name: '10 Entry / Auth / Onboarding',
-    description: 'Entry routes and onboarding flows that still exist in runtime.',
+    description: 'Entry routes, auth callback handling, and onboarding flows that still exist in runtime.',
   },
   {
     key: '20-chat-home-character',
@@ -148,11 +148,15 @@ const SCREENS = [
     title: 'Splash',
     frameName: 'Splash',
     routeHash: '#/splash',
-    status: 'live',
+    status: 'placeholder',
+    triage: 'capture_next_runtime',
+    blocker:
+      'Launch timing currently resolves too quickly into onboarding or chat to keep a deterministic dedicated splash capture.',
     note: 'Initial redirect surface before auth or chat resolution.',
     sources: [
       'lib/routes/routes/auth_routes.dart',
       'lib/routes/route_config.dart',
+      'lib/screens/splash_screen.dart',
     ],
   },
   {
@@ -165,6 +169,22 @@ const SCREENS = [
     sources: [
       'lib/routes/routes/auth_routes.dart',
       'lib/screens/auth/signup_screen.dart',
+    ],
+  },
+  {
+    id: 'auth__callback__redirected',
+    pageKey: '10-entry-auth-onboarding',
+    title: 'Auth Callback Redirect',
+    frameName: 'Auth Callback Redirect',
+    routeHash: '#/auth/callback',
+    status: 'placeholder',
+    triage: 'capture_next_state_extra',
+    blocker:
+      'Requires OAuth callback parameters or a seeded auth session to render deterministically before redirecting into /chat.',
+    note: 'Transient callback route that normalizes auth response state and redirects the user into /chat.',
+    sources: [
+      'lib/routes/routes/auth_routes.dart',
+      'lib/screens/auth/callback_page.dart',
     ],
   },
   {
@@ -198,6 +218,7 @@ const SCREENS = [
     frameName: 'Chat Home',
     routeHash: '#/chat',
     status: 'live',
+    captureAssetId: 'chat__home__returning',
     sources: [
       'lib/routes/route_config.dart',
       'lib/features/character/presentation/pages/swipe_home_shell.dart',
@@ -302,10 +323,8 @@ const SCREENS = [
     title: 'Character Chat Onboarding',
     frameName: 'Character Chat Onboarding',
     routeHash: '#/chat',
-    status: 'placeholder',
-    triage: 'capture_next_runtime',
-    blocker:
-      'Shown only on first-run state and currently needs storage overrides to capture reliably.',
+    status: 'live',
+    captureAssetId: 'chat__onboarding__first_run',
     note: 'Three-slide onboarding shown before the first /chat session.',
     sources: [
       'lib/features/character/presentation/pages/swipe_home_shell.dart',
@@ -332,10 +351,8 @@ const SCREENS = [
     title: 'Premium Insight',
     frameName: 'Premium Insight',
     routeHash: '#/premium',
-    status: 'placeholder',
-    triage: 'capture_next_runtime',
-    blocker:
-      'Current catalog has no live premium capture yet even though /premium is a retained route.',
+    status: 'live',
+    captureAssetId: 'premium__default',
     note: 'Premium entry surface for 프리미엄 사주 and deep-link launch into the chat flow.',
     sources: [
       'lib/routes/route_config.dart',

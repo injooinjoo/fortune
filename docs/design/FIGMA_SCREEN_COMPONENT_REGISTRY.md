@@ -12,20 +12,20 @@
 
 ## Canonical Current Page Roots
 
-- `64:2` `00 Cover & Governance`
-- `65:2` `10 Entry / Auth / Onboarding`
-- `66:2` `20 Chat Home / Character`
-- `67:2` `80 Admin / Policy / Utility`
-- `68:2` `90 Components`
-- `69:2` `99 Archive`
+- `89:2` `00 Cover & Governance`
+- `90:2` `10 Entry / Auth / Onboarding`
+- `91:2` `20 Chat Home / Character`
+- `92:2` `80 Admin / Policy / Utility`
+- `93:2` `90 Components`
+- `94:2` `99 Archive`
 
 ## Coverage Summary
 
 | Figma page | Total | Live | Placeholder |
 | --- | ---: | ---: | ---: |
-| `10 Entry / Auth / Onboarding` | 4 | 4 | 0 |
-| `20 Chat Home / Character` | 9 | 3 | 6 |
-| `80 Admin / Policy / Utility` | 4 | 2 | 2 |
+| `10 Entry / Auth / Onboarding` | 5 | 3 | 2 |
+| `20 Chat Home / Character` | 9 | 4 | 5 |
+| `80 Admin / Policy / Utility` | 4 | 3 | 1 |
 
 Additional official pages:
 
@@ -38,14 +38,16 @@ Additional official pages:
 | Triage | Count |
 | --- | ---: |
 | `capture_next_auth` | 1 |
-| `capture_next_runtime` | 7 |
+| `capture_next_runtime` | 6 |
+| `capture_next_state_extra` | 1 |
 
 ## Screen Catalog
 
 ### 10 Entry / Auth / Onboarding
 
-- `auth__splash__default` | `#/splash` | `live`
+- `auth__splash__default` | `#/splash` | `placeholder`
 - `auth__signup__default` | `#/signup` | `live`
+- `auth__callback__redirected` | `#/auth/callback` | `placeholder`
 - `onboarding__profile__default` | `#/onboarding` | `live`
 - `onboarding__toss_style__default` | `#/onboarding/toss-style` | `live`
 
@@ -58,12 +60,12 @@ Additional official pages:
 - `chat__survey__fortune_step` | `#/chat?fortuneType=daily` | `placeholder`
 - `chat__result__fortune_complete` | `#/chat?fortuneType=daily` | `placeholder`
 - `character__profile__luts` | `#/character/luts` | `live`
-- `chat__onboarding__character_intro` | `#/chat` | `placeholder`
+- `chat__onboarding__character_intro` | `#/chat` | `live`
 - `chat__profile_sheet__default` | bottom-sheet runtime state | `placeholder`
 
 ### 80 Admin / Policy / Utility
 
-- `premium__insight__default` | `#/premium` | `placeholder`
+- `premium__insight__default` | `#/premium` | `live`
 - `policy__privacy__default` | `#/privacy-policy` | `live`
 - `policy__terms__default` | `#/terms-of-service` | `live`
 - `account__deletion__auth_gated` | `#/account-deletion` | `placeholder`
@@ -105,17 +107,11 @@ Additional official pages:
 - `lib/core/design_system/components/ds_text_field.dart`
 - `lib/core/widgets/unified_button.dart`
 
-## Manual Delete Targets In The Official File
+## Historical Root Ranges Removed From The Official File
 
-Delete the following stale page roots manually in Figma:
+These ids are no longer present in the official file and should be treated as historical only:
 
-- `32:2` `00 Cover & Governance`
-- `33:2` `10 Entry / Auth / Onboarding`
-- `34:2` `20 Chat Home / Character`
-- `38:2` `60 History / Profile / More`
-- `39:2` `70 Commerce / Settings / Support`
-- `42:2` `90 Components`
-- `43:2` `99 Archive`
-- `63:2` `60 History / Profile / More`
-
-Historical references to `35:2`, `36:2`, `37:2`, `40:2`, and `41:2` are stale and should be ignored.
+- `32:2`, `33:2`, `34:2`, `42:2`, `43:2`
+- `38:2`, `39:2`, `63:2`
+- `64:2` through `69:2`
+- `82:2` through `87:2`

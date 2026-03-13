@@ -63,7 +63,8 @@ function copyScreenshots() {
 
   const copied = new Map();
   for (const screen of SCREENS.filter((item) => item.status === 'live')) {
-    const source = path.join(CAPTURE_DIR, `${screen.id}.png`);
+    const captureAssetId = screen.captureAssetId || screen.id;
+    const source = path.join(CAPTURE_DIR, `${captureAssetId}.png`);
     if (!fs.existsSync(source)) continue;
 
     const target = path.join(SCREEN_ASSET_DIR, `${screen.id}.png`);
@@ -470,7 +471,7 @@ function renderCoverPage() {
     <article class="info-card" ${renderLayerAttributes('overview_card__runtime_blockers')}>
       <div class="eyebrow">Runtime Blockers</div>
       <h2>Auth, First-Run, and Runtime Gates</h2>
-      <p>Current placeholders remain where capture needs an authenticated account, seeded curiosity answers/results, first-run storage overrides, or an opened bottom sheet. <code>#/premium</code> is retained in runtime but still lacks a fresh live capture in the current catalog.</p>
+      <p>Current placeholders remain where capture needs OAuth callback parameters, an authenticated account, seeded curiosity answers/results, first-run storage overrides, or an opened bottom sheet. <code>#/auth/callback</code> and <code>#/account-deletion</code> are the clearest runtime-gated examples in the retained catalog.</p>
     </article>
   </section>
   </div>
@@ -527,19 +528,19 @@ function renderComponentsPage() {
 function renderArchivePage() {
   const cards = [
     {
-      title: 'Superseded Append Generation',
-      groupLayerName: 'archive_card__superseded_append_generation',
+      title: 'Removed Product Families',
+      groupLayerName: 'archive_card__removed_product_families',
       sources: [
-        'Delete older current-state append roots 32:2, 33:2, 34:2, 42:2, and 43:2.',
-        'Treat 64:2 through 69:2 as the only canonical current-state page roots in the official file.',
+        'Legacy groups such as Fortune Hub / Interactive, Trend, History / More, and Commerce no longer belong to the current runtime product.',
+        'Do not reintroduce removed route families or their stale capture assets into the canonical current-state catalog.',
       ],
     },
     {
-      title: 'Legacy Product Delete Targets',
-      groupLayerName: 'archive_card__legacy_product_delete_targets',
+      title: 'Redirect And Historical Capture Notes',
+      groupLayerName: 'archive_card__redirect_and_historical_capture_notes',
       sources: [
-        'Delete stale legacy product roots 38:2, 39:2, 60:2, 61:2, 62:2, and 63:2.',
-        'Ignore older docs that reference 35:2, 36:2, 37:2, 40:2, or 41:2. Those page ids are not present in the current official file.',
+        'Redirect-only routes like / and /home are behavior notes, not dedicated official screen cards.',
+        'Historical screenshots may remain under repo artifacts for debugging, but only manifest-backed retained surfaces belong in the official file.',
       ],
     },
   ]

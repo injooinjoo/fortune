@@ -12,8 +12,8 @@ This file remains the only official Figma source of truth for current-state Fort
 
 ## Coverage Snapshot
 
-- Managed surfaces: `17`
-- Live captures: `9`
+- Managed surfaces: `18`
+- Live captures: `10`
 - Placeholder specs: `8`
 
 ## Runtime Scope
@@ -28,6 +28,7 @@ Runtime routes represented by the official catalog:
 
 - `/splash`
 - `/signup`
+- `/auth/callback`
 - `/onboarding`
 - `/onboarding/toss-style`
 - `/chat`
@@ -37,9 +38,10 @@ Runtime routes represented by the official catalog:
 - `/terms-of-service`
 - `/account-deletion`
 
-App routes that still exist in runtime but do not currently have a dedicated canonical Figma card:
+Redirect-only routes that intentionally do not get their own official screen card:
 
-- `/auth/callback`
+- `/`
+- `/home`
 
 Internal `/chat` states represented as catalog surfaces:
 
@@ -52,46 +54,27 @@ Internal `/chat` states represented as catalog surfaces:
 
 ## Canonical Current Page Roots
 
-Only the following page roots should be treated as the current canonical set inside the official file:
+Only the following page roots should be treated as the canonical current set inside the official file:
 
-- `64:2` `00 Cover & Governance`
-- `65:2` `10 Entry / Auth / Onboarding`
-- `66:2` `20 Chat Home / Character`
-- `67:2` `80 Admin / Policy / Utility`
-- `68:2` `90 Components`
-- `69:2` `99 Archive`
+- `89:2` `00 Cover & Governance`
+- `90:2` `10 Entry / Auth / Onboarding`
+- `91:2` `20 Chat Home / Character`
+- `92:2` `80 Admin / Policy / Utility`
+- `93:2` `90 Components`
+- `94:2` `99 Archive`
 
 Repo-side current-state sync work must target this range only.
 
-## Stale Page Roots Still Present In The Official File
+## Official File Cleanliness
 
-The official file still contains older append generations and legacy product pages that must not be treated as source of truth.
+The official file is currently clean. No stale legacy page roots remain alongside the canonical current range above.
 
-### Superseded current-state append generation
+Historical root ranges that were removed from the official file and must not be cited as current:
 
-- `32:2` `00 Cover & Governance`
-- `33:2` `10 Entry / Auth / Onboarding`
-- `34:2` `20 Chat Home / Character`
-- `42:2` `90 Components`
-- `43:2` `99 Archive`
-
-### Legacy product groups
-
-- `38:2` `60 History / Profile / More`
-- `39:2` `70 Commerce / Settings / Support`
-- `63:2` `60 History / Profile / More`
-
-### Historical node IDs that are no longer present
-
-Do not follow older docs or comments that still reference:
-
-- `35:2`
-- `36:2`
-- `37:2`
-- `40:2`
-- `41:2`
-
-Those page ids are not present in the current official file.
+- older append generation: `32:2`, `33:2`, `34:2`, `42:2`, `43:2`
+- earlier contracted canonical range: `64:2` through `69:2`
+- superseded pre-refresh range: `82:2` through `87:2`
+- deleted legacy groups: `38:2`, `39:2`, `63:2`
 
 ## Capture Sources
 
@@ -113,11 +96,11 @@ Use the Figma MCP workflow in this order when a retained surface needs design co
 2. `get_screenshot` to verify the current visual state of the selected node before any code/design sync work.
 3. `get_design_context` to retrieve the implementation-oriented payload after the node is confirmed.
 
-This workflow applies to retained runtime surfaces only. Stale roots listed above should not receive new MCP sync work.
+This workflow applies to retained runtime surfaces only.
 
 ## Rules
 
-1. Treat `64:2` through `69:2` as the only canonical current-state page range.
+1. Treat `89:2` through `94:2` as the only canonical current-state page range.
 2. Do not reintroduce removed page groups into the official file.
 3. Any route change must update:
    - `playwright/scripts/figma_capture_manifest.js`
@@ -126,5 +109,5 @@ This workflow applies to retained runtime surfaces only. Stale roots listed abov
    - `docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md`
    - `docs/design/FIGMA_SYNC_CHANGELOG.md`
 4. `90 Components` must only reference retained chat, policy, and account-management components.
-5. `99 Archive` must record stale append generations and legacy delete targets, not active runtime coverage.
+5. `99 Archive` must record removed product families and historical references, not active runtime coverage.
 6. Redirect-only routes such as `/` and `/home` are documented as behavior, not standalone screens.

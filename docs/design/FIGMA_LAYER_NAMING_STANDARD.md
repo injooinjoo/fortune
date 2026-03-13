@@ -43,14 +43,14 @@ Examples:
 
 Only the retained canonical page roots should be normalized:
 
-- `64:2` `00 Cover & Governance`
-- `65:2` `10 Entry / Auth / Onboarding`
-- `66:2` `20 Chat Home / Character`
-- `67:2` `80 Admin / Policy / Utility`
-- `68:2` `90 Components`
-- `69:2` `99 Archive`
+- `89:2` `00 Cover & Governance`
+- `90:2` `10 Entry / Auth / Onboarding`
+- `91:2` `20 Chat Home / Character`
+- `92:2` `80 Admin / Policy / Utility`
+- `93:2` `90 Components`
+- `94:2` `99 Archive`
 
-Stale roots such as `32:2`, `33:2`, `34:2`, `38:2`, `39:2`, `42:2`, `43:2`, and `63:2` are delete targets, not canonical roots.
+Historical ranges such as `32:2`, `33:2`, `34:2`, `38:2`, `39:2`, `42:2`, `43:2`, `63:2`, `64:2`-`69:2`, and `82:2`-`87:2` were removed from the official file and are not canonical roots.
 
 ### Shared structural roles
 
@@ -128,7 +128,7 @@ Do not leave governed anchor layers with these ad hoc names:
 
 These may exist temporarily during import, but page roots, page-level wrappers, cards, previews, badges, and metadata rows must be normalized to the canonical layer contract before the sync is considered complete.
 
-For the current cleanup order, use [FIGMA_APPEND_RENAME_RUNBOOK.md](./FIGMA_APPEND_RENAME_RUNBOOK.md) to delete stale roots first and limit the rename pass to `64:2` through `69:2`.
+For the current cleanup order, use [FIGMA_APPEND_RENAME_RUNBOOK.md](./FIGMA_APPEND_RENAME_RUNBOOK.md) and limit the rename pass to `89:2` through `94:2`.
 
 ## Canonical Section Roots
 

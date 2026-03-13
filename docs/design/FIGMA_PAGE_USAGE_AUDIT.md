@@ -2,7 +2,7 @@
 
 ## Current Runtime Scope
 
-As of `2026-03-13`, the app runtime is contracted to:
+As of `2026-03-14`, the app runtime is contracted to:
 
 - `10 Entry / Auth / Onboarding`
 - `20 Chat Home / Character`
@@ -19,68 +19,34 @@ Repo evidence:
 
 | Node ID | Figma page group | Status | Runtime coverage |
 | --- | --- | --- | --- |
-| `64:2` | `00 Cover & Governance` | `governance_only` | Catalog governance only |
-| `65:2` | `10 Entry / Auth / Onboarding` | `active_runtime` | `/`, `/splash`, `/signup`, `/onboarding`, `/onboarding/toss-style` |
-| `66:2` | `20 Chat Home / Character` | `active_runtime` | `/chat`, `/character/:id`, plus internal `/chat` states for 일반 채팅, 호기심, survey, result, onboarding, and account sheet |
-| `67:2` | `80 Admin / Policy / Utility` | `active_runtime` | `/premium`, `/privacy-policy`, `/terms-of-service`, `/account-deletion` |
-| `68:2` | `90 Components` | `governance_only` | Retained component inventory only |
-| `69:2` | `99 Archive` | `archive_only` | Stale append generations and legacy delete targets |
+| `89:2` | `00 Cover & Governance` | `governance_only` | Catalog governance only |
+| `90:2` | `10 Entry / Auth / Onboarding` | `active_runtime` | `/`, `/splash`, `/signup`, `/auth/callback`, `/onboarding`, `/onboarding/toss-style` |
+| `91:2` | `20 Chat Home / Character` | `active_runtime` | `/chat`, `/character/:id`, plus internal `/chat` states for 일반 채팅, 호기심, survey, result, onboarding, and account sheet |
+| `92:2` | `80 Admin / Policy / Utility` | `active_runtime` | `/premium`, `/privacy-policy`, `/terms-of-service`, `/account-deletion` |
+| `93:2` | `90 Components` | `governance_only` | Retained component inventory only |
+| `94:2` | `99 Archive` | `archive_only` | Removed product families and historical capture notes |
 
-## Stale Page Roots Still In The Official File
+## Official File Status
 
-### Superseded current-state append generation
+The official file is clean. Only the canonical current page roots above remain in the file.
 
-| Node ID | Page |
-| --- | --- |
-| `32:2` | `00 Cover & Governance` |
-| `33:2` | `10 Entry / Auth / Onboarding` |
-| `34:2` | `20 Chat Home / Character` |
-| `42:2` | `90 Components` |
-| `43:2` | `99 Archive` |
+There is no current runtime route gap inside the official catalog. `/auth/callback` is now represented as `auth__callback__redirected` on `90:2`.
 
-These pages are older append generations and should not be used for current-state reviews, MCP audits, or route verification.
+## Historical Root Ranges To Ignore
 
-### Legacy product groups
+These ids may still appear in old screenshots, comments, or docs, but they are no longer present in the official file:
 
-| Node ID | Page |
-| --- | --- |
-| `38:2` | `60 History / Profile / More` |
-| `39:2` | `70 Commerce / Settings / Support` |
-| `63:2` | `60 History / Profile / More` |
-
-These groups no longer map to runtime and should be treated as deleted product scope.
-
-## Current Runtime Route Gap
-
-`/auth/callback` still exists in app runtime via `lib/routes/routes/auth_routes.dart` and `lib/screens/auth/callback_page.dart`, but it does not have a dedicated screen card inside the canonical current page roots `64:2` through `69:2`.
-
-The older append generation `33:2` contained a callback card, so treat that as historical reference only, not current-state coverage.
-
-## Historical Node IDs To Ignore
-
-Older docs may still mention:
-
-- `35:2`
-- `36:2`
-- `37:2`
-- `40:2`
-- `41:2`
-
-These page ids are not present in the current official file and should not be used for cleanup or rename work.
-
-## Manual Figma Cleanup Order
-
-1. Delete the stale current-state append roots `32:2`, `33:2`, `34:2`, `42:2`, and `43:2`.
-2. Delete the remaining legacy product roots `38:2`, `39:2`, and `63:2`.
-3. Keep only `64:2` through `69:2` as the canonical official catalog range.
-4. Run the rename pass only on the retained canonical range.
+- `32:2`, `33:2`, `34:2`, `42:2`, `43:2`
+- `38:2`, `39:2`, `63:2`
+- `64:2` through `69:2`
+- `82:2` through `87:2`
+- `35:2`, `36:2`, `37:2`, `40:2`, `41:2`
 
 ## Conclusion
 
 The official design catalog should now be interpreted as a reduced product:
 
-- keep only `64:2` through `69:2` as canonical
-- represent `/chat` internal current-state surfaces directly inside `66:2`
-- keep `64:2`, `68:2`, and `69:2` for governance, components, and archive
-- delete the stale page roots listed above
+- keep only `89:2` through `94:2` as canonical
+- represent `/chat` internal current-state surfaces directly inside `91:2`
+- keep `89:2`, `93:2`, and `94:2` for governance, components, and archive
 - treat any lingering references to removed tabs or direct `/fortune`, `/trend`, `/history`, `/profile`, `/more`, or `/subscription` flows as stale artifacts

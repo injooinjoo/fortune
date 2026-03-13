@@ -9,7 +9,7 @@ This matrix is the operational rename checklist for the official Figma file.
 
 The current MCP toolset can audit the file but cannot directly rename existing Figma nodes. Apply these renames in Figma, then verify structure through MCP `get_metadata`.
 
-Delete stale roots first. Use [FIGMA_APPEND_RENAME_RUNBOOK.md](./FIGMA_APPEND_RENAME_RUNBOOK.md) for the exact current cleanup order and node ids.
+Use [FIGMA_APPEND_RENAME_RUNBOOK.md](./FIGMA_APPEND_RENAME_RUNBOOK.md) for the exact current canonical range and current historical ids.
 
 ## Top-level section roots
 
@@ -24,7 +24,7 @@ Only the retained canonical pages should be renamed:
 | `90 Components` | `section__90__components` |
 | `99 Archive` | `section__99__archive` |
 
-Stale roots such as `32:2`, `33:2`, `34:2`, `38:2`, `39:2`, `42:2`, `43:2`, and `63:2` are delete targets, not rename targets.
+Historical roots such as `32:2`, `33:2`, `34:2`, `38:2`, `39:2`, `42:2`, `43:2`, `63:2`, `64:2`-`69:2`, and `82:2`-`87:2` are not rename targets.
 
 ## Shared structural roles
 
@@ -75,7 +75,7 @@ Representative retained examples:
 | --- | --- |
 | `Single Figma Source of Truth` | `overview_card__official_file` |
 | `Hybrid Screen Catalog` | `overview_card__capture_modes` |
-| current coverage card such as `9 live / 8 placeholder` | `overview_card__current_coverage` |
+| current coverage card such as `10 live / 8 placeholder` | `overview_card__current_coverage` |
 | `iPhone 15 Pro Only` | `overview_card__device_standard` |
 | `Retained Routes and In-Chat States` | `overview_card__routing_notes` |
 | `Auth, First-Run, and Runtime Gates` | `overview_card__runtime_blockers` |
@@ -99,8 +99,8 @@ Representative retained examples:
 
 ## Verification pass after rename
 
-1. Run MCP `get_metadata(fileKey=\"dkx3Biwe5xkiMQWsjq95LA\", nodeId=\"64:2\")` through `nodeId=\"69:2\"`.
+1. Run MCP `get_metadata(fileKey=\"dkx3Biwe5xkiMQWsjq95LA\", nodeId=\"89:2\")` through `nodeId=\"94:2\"`.
 2. Confirm section roots use only `section__...` names.
 3. Confirm governed structures no longer expose `Article`, `Container`, `Text`, `Link`, or `Code`.
 4. Confirm representative screen cards expose `screen_card__...`, `preview__...`, `meta__...`, and badge names.
-5. Confirm stale roots listed in the cleanup runbook are no longer present.
+5. Confirm no historical roots listed in the cleanup runbook have reappeared.
