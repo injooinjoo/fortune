@@ -448,7 +448,7 @@ function renderCoverPage() {
     <article class="info-card" ${renderLayerAttributes('overview_card__capture_modes')}>
       <div class="eyebrow">Capture Modes</div>
       <h2>Hybrid Screen Catalog</h2>
-      <p><strong>Live Capture</strong> is used where the current app can render deterministically. <strong>Placeholder Spec</strong> is used when runtime auth, backend content, or <code>state.extra</code> data blocks direct capture.</p>
+      <p><strong>Live Capture</strong> is used where the retained app can render deterministically. <strong>Placeholder Spec</strong> is used when capture still needs authenticated state, seeded curiosity data, first-run storage overrides, or an already opened sheet/session.</p>
     </article>
     <article class="info-card" ${renderLayerAttributes('overview_card__current_coverage')}>
       <div class="eyebrow">Current Coverage</div>
@@ -464,13 +464,13 @@ function renderCoverPage() {
     </article>
     <article class="info-card" ${renderLayerAttributes('overview_card__routing_notes')}>
       <div class="eyebrow">Routing Notes</div>
-      <h2>Hash Router and Nested Paths</h2>
-      <p>Local capture uses hash routes. Interactive flows resolve from <code>#/fortune/interactive/*</code>, not direct <code>#/interactive/*</code> paths, so the catalog stores the working runtime URL for each screen.</p>
+      <h2>Retained Routes and In-Chat States</h2>
+      <p>Local capture still uses hash routes, but the retained runtime is anchored on <code>#/chat</code>, <code>#/premium</code>, auth routes, policy routes, and <code>#/character/:id</code>. General chat, curiosity, survey, result, onboarding, and account-sheet states are catalog surfaces inside <code>#/chat</code>, not standalone top-level routes.</p>
     </article>
     <article class="info-card" ${renderLayerAttributes('overview_card__runtime_blockers')}>
       <div class="eyebrow">Runtime Blockers</div>
-      <h2>Auth / Backend / Extra State</h2>
-      <p>Profile subroutes require authenticated user data. Trend detail routes require seeded backend content. History detail and medical-document result require explicit <code>state.extra</code> payloads.</p>
+      <h2>Auth, First-Run, and Runtime Gates</h2>
+      <p>Current placeholders remain where capture needs an authenticated account, seeded curiosity answers/results, first-run storage overrides, or an opened bottom sheet. <code>#/premium</code> is retained in runtime but still lacks a fresh live capture in the current catalog.</p>
     </article>
   </section>
   </div>
@@ -527,16 +527,19 @@ function renderComponentsPage() {
 function renderArchivePage() {
   const cards = [
     {
-      title: 'Superseded Summary-only File',
-      groupLayerName: 'archive_card__superseded_summary_only_file',
-      sources: ['Previous registry-style official file is superseded by this screen-level catalog.'],
+      title: 'Superseded Append Generation',
+      groupLayerName: 'archive_card__superseded_append_generation',
+      sources: [
+        'Delete older current-state append roots 32:2, 33:2, 34:2, 42:2, and 43:2.',
+        'Treat 64:2 through 69:2 as the only canonical current-state page roots in the official file.',
+      ],
     },
     {
-      title: 'Invalid Direct Interactive Paths',
-      groupLayerName: 'archive_card__invalid_direct_interactive_paths',
+      title: 'Legacy Product Delete Targets',
+      groupLayerName: 'archive_card__legacy_product_delete_targets',
       sources: [
-        'Direct hash paths like #/interactive/dream are archived as invalid in the current runtime.',
-        'Official live capture uses #/fortune/interactive/* routes instead.',
+        'Delete stale legacy product roots 38:2, 39:2, 60:2, 61:2, 62:2, and 63:2.',
+        'Ignore older docs that reference 35:2, 36:2, 37:2, 40:2, or 41:2. Those page ids are not present in the current official file.',
       ],
     },
   ]

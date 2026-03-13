@@ -9,12 +9,21 @@
 - Layer naming contract: `docs/design/FIGMA_LAYER_NAMING_STANDARD.md`
 - Sync changelog: `docs/design/FIGMA_SYNC_CHANGELOG.md`
 
+## Canonical Current Page Roots
+
+- `64:2` `00 Cover & Governance`
+- `65:2` `10 Entry / Auth / Onboarding`
+- `66:2` `20 Chat Home / Character`
+- `67:2` `80 Admin / Policy / Utility`
+- `68:2` `90 Components`
+- `69:2` `99 Archive`
+
 ## Coverage Summary
 
 | Figma page | Total | Live | Placeholder |
 | --- | ---: | ---: | ---: |
 | `10 Entry / Auth / Onboarding` | 4 | 4 | 0 |
-| `20 Chat / Character` | 9 | 3 | 6 |
+| `20 Chat Home / Character` | 9 | 3 | 6 |
 | `80 Admin / Policy / Utility` | 4 | 2 | 2 |
 
 Additional official pages:
@@ -39,7 +48,7 @@ Additional official pages:
 - `onboarding__profile__default` | `#/onboarding` | `live`
 - `onboarding__toss_style__default` | `#/onboarding/toss-style` | `live`
 
-### 20 Chat / Character
+### 20 Chat Home / Character
 
 - `chat__home__default` | `#/chat` | `live`
 - `chat__home__general_default` | `#/chat` | `placeholder`
@@ -95,13 +104,20 @@ Additional official pages:
 - `lib/core/design_system/components/ds_text_field.dart`
 - `lib/core/widgets/unified_button.dart`
 
-## Removed Page Groups
+## Manual Delete Targets In The Official File
 
-The following former catalog groups are no longer part of the active registry and should be deleted manually from the official file:
+Delete the following stale page roots manually in Figma:
 
-- `35:2` `30 Fortune Hub / Interactive`
-- `36:2` `40 Trend`
-- `37:2` `50 Health / Exercise`
+- `32:2` `00 Cover & Governance`
+- `33:2` `10 Entry / Auth / Onboarding`
+- `34:2` `20 Chat Home / Character`
 - `38:2` `60 History / Profile / More`
 - `39:2` `70 Commerce / Settings / Support`
-- `40:2` `75 Wellness`
+- `42:2` `90 Components`
+- `43:2` `99 Archive`
+- `60:2` `30 Fortune Hub / Interactive`
+- `61:2` `40 Trend`
+- `62:2` `50 Health / Exercise`
+- `63:2` `60 History / Profile / More`
+
+Historical references to `35:2`, `36:2`, `37:2`, `40:2`, and `41:2` are stale and should be ignored.

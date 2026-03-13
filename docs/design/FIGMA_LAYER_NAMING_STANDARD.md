@@ -38,8 +38,19 @@ Top-level governed pages use:
 Examples:
 
 - `section__00__cover_governance`
-- `section__30__fortune_interactive`
-- `section__90__components`
+- `section__20__chat_character`
+- `section__99__archive`
+
+Only the retained canonical page roots should be normalized:
+
+- `64:2` `00 Cover & Governance`
+- `65:2` `10 Entry / Auth / Onboarding`
+- `66:2` `20 Chat Home / Character`
+- `67:2` `80 Admin / Policy / Utility`
+- `68:2` `90 Components`
+- `69:2` `99 Archive`
+
+Stale roots such as `32:2`, `33:2`, `34:2`, `38:2`, `39:2`, `42:2`, `43:2`, and `60:2` through `63:2` are delete targets, not canonical roots.
 
 ### Shared structural roles
 
@@ -73,7 +84,10 @@ Examples:
 
 - `screen_card__auth__signup__default`
 - `preview__auth__signup__default`
-- `screen_card__interactive_face_reading__result__analysis`
+- `screen_card__chat__home__general_default`
+- `preview__chat__home__general_default`
+- `screen_card__chat__survey__fortune_step`
+- `screen_card__premium__insight__default`
 
 ### Governance and archive cards
 
@@ -86,7 +100,8 @@ Examples:
 
 - `overview_card__official_file`
 - `overview_card__runtime_blockers`
-- `archive_card__invalid_direct_interactive_paths`
+- `archive_card__superseded_append_generation`
+- `archive_card__legacy_product_delete_targets`
 
 ### Component inventory cards
 
@@ -96,8 +111,9 @@ Component inventory cards use:
 
 Examples:
 
-- `component_group__app_shell_and_headers`
-- `component_group__fortune_and_result_blocks`
+- `component_group__chat_shell_and_headers`
+- `component_group__conversation_survey_and_result_blocks`
+- `component_group__account_premium_and_policy_controls`
 
 ## Forbidden Generic Names
 
@@ -112,7 +128,7 @@ Do not leave governed anchor layers with these ad hoc names:
 
 These may exist temporarily during import, but page roots, page-level wrappers, cards, previews, badges, and metadata rows must be normalized to the canonical layer contract before the sync is considered complete.
 
-For the current append-based cleanup, use [FIGMA_APPEND_RENAME_RUNBOOK.md](./FIGMA_APPEND_RENAME_RUNBOOK.md) to limit the manual pass to the refreshed appended page range.
+For the current cleanup order, use [FIGMA_APPEND_RENAME_RUNBOOK.md](./FIGMA_APPEND_RENAME_RUNBOOK.md) to delete stale roots first and limit the rename pass to `64:2` through `69:2`.
 
 ## Canonical Section Roots
 
@@ -121,12 +137,6 @@ For the current append-based cleanup, use [FIGMA_APPEND_RENAME_RUNBOOK.md](./FIG
 | `00 Cover & Governance` | `section__00__cover_governance` |
 | `10 Entry / Auth / Onboarding` | `section__10__entry_auth_onboarding` |
 | `20 Chat Home / Character` | `section__20__chat_character` |
-| `30 Fortune Hub / Interactive` | `section__30__fortune_interactive` |
-| `40 Trend` | `section__40__trend` |
-| `50 Health / Exercise` | `section__50__health_exercise` |
-| `60 History / Profile / More` | `section__60__history_profile_more` |
-| `70 Commerce / Settings / Support` | `section__70__commerce_settings_support` |
-| `75 Wellness` | `section__75__wellness` |
 | `80 Admin / Policy / Utility` | `section__80__admin_policy_utility` |
 | `90 Components` | `section__90__components` |
 | `99 Archive` | `section__99__archive` |

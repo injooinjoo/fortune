@@ -213,7 +213,7 @@ const SCREENS = [
     status: 'placeholder',
     triage: 'capture_next_runtime',
     blocker:
-      'Needs a deterministic Story-tab capture so the official catalog can distinguish 일반 채팅 from the shared /chat shell.',
+      'Needs a deterministic 일반 채팅 mode capture so the official catalog can distinguish the general experience from the shared /chat shell.',
     note: 'User-facing 일반 채팅 home state inside /chat. This is not a standalone route.',
     sources: [
       'lib/features/character/presentation/pages/swipe_home_shell.dart',
@@ -229,7 +229,7 @@ const SCREENS = [
     status: 'placeholder',
     triage: 'capture_next_runtime',
     blocker:
-      'Needs a deterministic Fortune-tab capture so the official catalog can distinguish 호기심 from the shared /chat shell.',
+      'Needs a deterministic 호기심 mode capture so the official catalog can distinguish the curiosity experience from the shared /chat shell.',
     note: 'User-facing 호기심 home state inside /chat. This is not a standalone route.',
     sources: [
       'lib/features/character/presentation/pages/swipe_home_shell.dart',
