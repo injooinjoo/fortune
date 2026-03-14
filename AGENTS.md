@@ -28,7 +28,7 @@
 ## 3. 자동 라우팅 규칙 (요청 분류)
 - 운세/궁합/타로/사주 기능 추가: `feature-fortune` 흐름
 - 채팅/추천칩/메시지: `feature-chat` 흐름
-- UI/디자인/색상/레이아웃: `feature-ui` 흐름
+- UI/디자인/색상/레이아웃/Figma: `feature-ui` 흐름 + Figma MCP 필수, Playwright는 QA 보조
 - Edge Function/API: `backend-service` 흐름
 - 에러/버그/안됨/깨짐/작동안함: `troubleshoot` 흐름
 - 검증/품질/QA: `quality-check` 흐름
@@ -39,6 +39,7 @@
 
 ## 4. MCP 사용 우선순위
 - 1순위 Supabase, 2순위 Playwright, 3순위 Context7, 4순위 Sequential, 5순위 JIRA, 그 외(Figma/GitHub/Brave).
+- 예외: 디자인/UI 수정, Figma URL 또는 node-id 포함 요청, 디자인-코드 동기화 요청은 Figma MCP를 최우선으로 사용한다.
 - 특정 MCP가 필요하지만 연결되지 않은 경우:
   - 차단 사실을 명시하고 가능한 로컬 대체 절차로 계속 진행한다.
 
@@ -174,6 +175,12 @@
 - 타이포 정책:
   - 같은 UI 위치는 같은 스타일
   - 시스템 글자크기 존중(0.8x~1.5x)
+
+### Figma MCP 동기화 규칙
+- 모든 디자인 수정 작업은 기본적으로 Figma MCP 조회부터 시작한다.
+- Figma URL, file key, node-id, 선택 가능한 Figma 문맥이 있으면 `get_design_context` 또는 적절한 Figma MCP 도구로 디자인/변수/에셋을 먼저 확인한다.
+- 코드 수정 후 동일한 Figma 문맥이 있으면 Code Connect 매핑 조회/추가/갱신까지 수행해 피그마와 코드의 동기화를 유지한다.
+- Figma 문맥이 없거나 MCP 연결이 불가하면 그 사실을 먼저 명시하고 로컬 수정을 진행할 수 있다. 이 경우 완료 보고에 `Figma 미동기화` 또는 차단 사유를 반드시 남긴다.
 
 ## 12. 햅틱 규칙
 - `FortuneHapticService`를 통한 중앙 제어만 사용

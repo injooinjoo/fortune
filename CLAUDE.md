@@ -1,6 +1,6 @@
 # Fortune Flutter App - Claude Code 가이드
 
-> 최종 업데이트: 2025.01.03
+> 최종 업데이트: 2026.03.14
 
 ## 자동 라우팅 (NEW)
 
@@ -10,7 +10,7 @@
 |-----------|-------|-------|-----|
 | 운세/궁합/타로/사주 추가 | `/sc:feature-fortune` | fortune-specialist | Supabase |
 | 채팅/추천 칩/메시지 | `/sc:feature-chat` | - | - |
-| UI/디자인/색상/레이아웃 | `/sc:feature-ui` | - | Playwright (QA) |
+| UI/디자인/색상/레이아웃/Figma | `/sc:feature-ui` | - | Figma (기본), Playwright (QA) |
 | Edge Function/API | `/sc:backend-service` | - | Supabase |
 | 에러/버그/안됨/수정 | `/sc:troubleshoot` | - | Sequential |
 | 검증/품질/QA | `/sc:quality-check` | quality-guardian | - |
@@ -21,6 +21,12 @@
 - **quality-guardian**: 모든 코드 생성 후 품질 검증
 
 **우선순위**: 사용자 명시적 요청 > 프로젝트 규칙 > 글로벌 SuperClaude
+
+### Figma 기본 워크플로우
+- 디자인 수정 요청은 기본적으로 Figma MCP부터 시작합니다.
+- Figma URL, file key, node-id, 선택 가능한 Figma 문맥이 있으면 디자인 컨텍스트/변수/에셋을 먼저 조회합니다.
+- 코드 반영 후 같은 Figma 문맥이 있으면 Code Connect 매핑도 함께 조회 또는 갱신하여 피그마-코드 동기화를 유지합니다.
+- Figma 문맥이 없거나 MCP 연결이 불가하면 차단 사실을 먼저 알리고 로컬 수정은 진행할 수 있지만, 완료 보고에 미동기화 상태를 남깁니다.
 
 ---
 
