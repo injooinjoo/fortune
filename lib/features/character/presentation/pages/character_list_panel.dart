@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/l10n_extension.dart';
@@ -35,7 +36,7 @@ String _specialtyCategoryLabel(String category) {
 }
 
 /// DM 목록 패널 (인스타그램 DM 스타일)
-class CharacterListPanel extends ConsumerWidget {
+class CharacterListPanel extends ConsumerStatefulWidget {
   final void Function(AiCharacter character) onCharacterSelected;
   final bool isOverlay;
   final VoidCallback? onDismiss;
@@ -50,23 +51,73 @@ class CharacterListPanel extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final CharacterListTab? previewTab =
-        catalogPreview != null ? catalogPreviewTab(catalogPreview!) : null;
+  ConsumerState<CharacterListPanel> createState() => _CharacterListPanelState();
+}
+
+class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
+  static const double _topChromeRevealOffset = 12;
+  bool _showTopChrome = true;
+
+  void _setTopChromeVisibility(bool visible) {
+    if (_showTopChrome == visible || !mounted) {
+      return;
+    }
+
+    setState(() {
+      _showTopChrome = visible;
+    });
+  }
+
+  bool _handleScrollNotification(ScrollNotification notification) {
+    if (notification.metrics.axis != Axis.vertical) {
+      return false;
+    }
+
+    if (notification.metrics.pixels <= 0) {
+      _setTopChromeVisibility(true);
+      return false;
+    }
+
+    if (notification is UserScrollNotification) {
+      switch (notification.direction) {
+        case ScrollDirection.forward:
+          _setTopChromeVisibility(true);
+          break;
+        case ScrollDirection.reverse:
+          if (notification.metrics.pixels > _topChromeRevealOffset) {
+            _setTopChromeVisibility(false);
+          }
+          break;
+        case ScrollDirection.idle:
+          break;
+      }
+    } else if (notification is ScrollUpdateNotification &&
+        notification.metrics.pixels <= _topChromeRevealOffset) {
+      _setTopChromeVisibility(true);
+    }
+
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final CharacterListTab? previewTab = widget.catalogPreview != null
+        ? catalogPreviewTab(widget.catalogPreview!)
+        : null;
     final CharacterListTab currentTab =
         previewTab ?? ref.watch(characterListTabProvider);
     final characters = currentTab == CharacterListTab.story
         ? ref.watch(storyCharactersProvider)
         : ref.watch(fortuneCharactersProvider);
-    final isCatalogPreview = catalogPreview != null;
+    final isCatalogPreview = widget.catalogPreview != null;
 
     return GestureDetector(
-      onHorizontalDragEnd: isOverlay
+      onHorizontalDragEnd: widget.isOverlay
           ? (details) {
               // 오른쪽으로 스와이프하면 닫기
               if (details.primaryVelocity != null &&
                   details.primaryVelocity! > 100) {
-                onDismiss?.call();
+                widget.onDismiss?.call();
               }
             }
           : null,
@@ -75,40 +126,70 @@ class CharacterListPanel extends ConsumerWidget {
         child: SafeArea(
           child: Column(
             children: [
-              // 헤더
-              _buildHeader(context, ref),
-              // 탭 바
-              _CharacterTabBar(
-                currentTab: currentTab,
-                isLocked: isCatalogPreview,
-                onTabChanged: (tab) {
-                  if (isCatalogPreview) {
-                    return;
-                  }
-                  ref.read(characterListTabProvider.notifier).state = tab;
-                },
+              ClipRect(
+                child: AnimatedAlign(
+                  duration: DSAnimation.normal,
+                  curve: DSAnimation.emphasized,
+                  alignment: Alignment.topCenter,
+                  heightFactor: _showTopChrome ? 1 : 0,
+                  child: AnimatedOpacity(
+                    duration: DSAnimation.quick,
+                    curve: DSAnimation.primary,
+                    opacity: _showTopChrome ? 1 : 0,
+                    child: AnimatedSlide(
+                      duration: DSAnimation.normal,
+                      curve: DSAnimation.emphasized,
+                      offset:
+                          _showTopChrome ? Offset.zero : const Offset(0, -0.08),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // 헤더
+                          _buildHeader(context),
+                          // 탭 바
+                          _CharacterTabBar(
+                            currentTab: currentTab,
+                            isLocked: isCatalogPreview,
+                            onTabChanged: (tab) {
+                              if (isCatalogPreview) {
+                                return;
+                              }
+                              _setTopChromeVisibility(true);
+                              ref
+                                  .read(characterListTabProvider.notifier)
+                                  .state = tab;
+                            },
+                          ),
+                          const Divider(height: 1),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
-              const Divider(height: 1),
               // 캐릭터 목록
               Expanded(
-                child: ListView.builder(
-                  itemCount: characters.length,
-                  itemBuilder: (context, index) {
-                    final character = characters[index];
-                    return _CharacterListItem(
-                      character: character,
-                      previewChatState: catalogPreview != null
-                          ? catalogPreviewListState(
-                              preview: catalogPreview!,
-                              character: character,
-                              index: index,
-                            )
-                          : null,
-                      onTap: isCatalogPreview
-                          ? () {}
-                          : () => onCharacterSelected(character),
-                    );
-                  },
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: _handleScrollNotification,
+                  child: ListView.builder(
+                    itemCount: characters.length,
+                    itemBuilder: (context, index) {
+                      final character = characters[index];
+                      return _CharacterListItem(
+                        character: character,
+                        previewChatState: widget.catalogPreview != null
+                            ? catalogPreviewListState(
+                                preview: widget.catalogPreview!,
+                                character: character,
+                                index: index,
+                              )
+                            : null,
+                        onTap: isCatalogPreview
+                            ? () {}
+                            : () => widget.onCharacterSelected(character),
+                      );
+                    },
+                  ),
                 ),
               ),
             ],
@@ -118,7 +199,7 @@ class CharacterListPanel extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, WidgetRef ref) {
+  Widget _buildHeader(BuildContext context) {
     final userProfile = ref.watch(userProfileNotifierProvider).valueOrNull;
     final profileImageUrl = userProfile?.profileImageUrl;
 
@@ -126,14 +207,14 @@ class CharacterListPanel extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
-          if (isOverlay)
+          if (widget.isOverlay)
             IconButton(
               icon: const Icon(Icons.close),
-              onPressed: onDismiss,
+              onPressed: widget.onDismiss,
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
             ),
-          if (isOverlay) const SizedBox(width: 12),
+          if (widget.isOverlay) const SizedBox(width: 12),
           Text(
             context.l10n.messages,
             style: const TextStyle(
@@ -198,7 +279,7 @@ class CharacterListPanel extends ConsumerWidget {
       return;
     }
 
-    onCharacterSelected(selectedCharacter);
+    widget.onCharacterSelected(selectedCharacter);
   }
 }
 
