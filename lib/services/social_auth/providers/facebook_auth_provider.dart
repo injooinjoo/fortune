@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/utils/logger.dart';
 import '../../oauth_in_app_browser_coordinator.dart';
 import '../base/base_social_auth_provider.dart';
+import '../base/social_auth_attempt_result.dart';
 
 class FacebookAuthProvider extends BaseSocialAuthProvider {
   FacebookAuthProvider(super.supabase, super.profileCache);
@@ -13,7 +14,7 @@ class FacebookAuthProvider extends BaseSocialAuthProvider {
   String get providerName => 'facebook';
 
   @override
-  Future<AuthResponse?> signIn() async {
+  Future<SocialAuthAttemptResult> signIn() async {
     try {
       Logger.info('Starting Facebook Sign-In process with Supabase OAuth');
       final flowId =
@@ -40,7 +41,7 @@ class FacebookAuthProvider extends BaseSocialAuthProvider {
       );
       Logger.securityCheckpoint('Facebook OAuth sign in initiated');
 
-      return null;
+      return const SocialAuthAttemptResult.pendingExternalAuth();
     } catch (error) {
       OAuthInAppBrowserCoordinator.markOAuthFinished(reason: 'exception');
       Logger.warning(

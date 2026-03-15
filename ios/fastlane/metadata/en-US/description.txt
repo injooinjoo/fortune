@@ -65,8 +65,8 @@ ZPZG is your AI companion for emotional support and daily conversations. For ser
 
 ■ TERMS & POLICIES
 
-• EULA: https://www.zpzg.co.kr/terms
-• Privacy Policy: https://zpzg.co.kr/privacy.html
+• EULA: https://zpzg.co.kr/terms
+• Privacy Policy: https://zpzg.co.kr/privacy
 • For app-level policy details, open App > 설정 > 정책
 
 So, how was your day? I'm all ears :)

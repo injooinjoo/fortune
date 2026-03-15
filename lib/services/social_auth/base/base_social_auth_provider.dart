@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/utils/logger.dart';
 import '../../../core/cache/profile_cache.dart';
+import 'social_auth_attempt_result.dart';
 
 /// Base interface for all social authentication providers
 abstract class BaseSocialAuthProvider {
@@ -10,7 +11,7 @@ abstract class BaseSocialAuthProvider {
   BaseSocialAuthProvider(this.supabase, this.profileCache);
 
   /// Main sign-in method that each provider must implement
-  Future<AuthResponse?> signIn();
+  Future<SocialAuthAttemptResult> signIn();
 
   /// Provider name (e.g., 'google', 'apple', 'kakao')
   String get providerName;

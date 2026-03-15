@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../services/social_auth_service.dart';
+import '../../../services/social_auth/base/social_auth_attempt_result.dart';
 import '../../../presentation/widgets/social_login_bottom_sheet.dart';
 import '../../../core/providers/user_settings_provider.dart';
 
@@ -14,6 +15,7 @@ class NameInputStep extends ConsumerStatefulWidget {
   final VoidCallback onNext;
   final VoidCallback? onSkip;
   final bool allowSkip;
+  final SocialAuthService? socialAuthService;
 
   const NameInputStep({
     super.key,
@@ -22,6 +24,7 @@ class NameInputStep extends ConsumerStatefulWidget {
     required this.onNext,
     this.onSkip,
     this.allowSkip = false,
+    this.socialAuthService,
   });
 
   @override
@@ -38,7 +41,8 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.initialName);
-    _socialAuthService = SocialAuthService(Supabase.instance.client);
+    _socialAuthService =
+        widget.socialAuthService ?? SocialAuthService(Supabase.instance.client);
     _isValid = _nameController.text.isNotEmpty;
 
     _nameController.addListener(() {
@@ -83,7 +87,7 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
 
   Future<void> _handleSocialLogin({
     required String provider,
-    required Future<AuthResponse?> Function() loginAction,
+    required Future<SocialAuthAttemptResult> Function() loginAction,
   }) async {
     if (!mounted) return;
 
@@ -95,15 +99,30 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
     );
 
     try {
-      final response = await loginAction();
+      final result = await loginAction();
 
       if (!mounted) return;
-      if (response != null && response.user != null) {
+      if (result.isAuthenticated) {
         context.go('/chat');
+        return;
+      }
+
+      if (result.isPendingExternalAuth) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('브라우저에서 인증을 완료해 주세요. 완료되면 앱으로 돌아옵니다.'),
+            duration: Duration(seconds: 4),
+          ),
+        );
       }
     } catch (error) {
       if (!mounted) return;
       final errorMessage = error.toString();
+      if (errorMessage.toLowerCase().contains('cancel')) {
+        return;
+      }
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('$provider 로그인 실패: $errorMessage'),

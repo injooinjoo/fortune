@@ -61,8 +61,7 @@ class DeepLinkService {
     Logger.info('딥링크 수신: $uri');
 
     if (_isAuthCallbackUri(uri)) {
-      final encodedUri = Uri.encodeComponent(uri.toString());
-      _navigateTo('/auth/callback?authCallbackUrl=$encodedUri');
+      _navigateTo(resolveRouteForUri(uri));
       return;
     }
 
@@ -80,12 +79,12 @@ class DeepLinkService {
 
     // 기타 screen 파라미터 처리
     if (screen != null) {
-      _navigateTo('/$screen');
+      _navigateTo(resolveRouteForUri(uri));
       return;
     }
 
     // 기본: 홈으로 이동
-    _navigateTo('/chat');
+    _navigateTo(resolveRouteForUri(uri));
   }
 
   bool _isAuthCallbackUri(Uri uri) {
@@ -101,6 +100,21 @@ class DeepLinkService {
     }
 
     return false;
+  }
+
+  @visibleForTesting
+  String resolveRouteForUri(Uri uri) {
+    if (_isAuthCallbackUri(uri)) {
+      final encodedUri = Uri.encodeComponent(uri.toString());
+      return '/auth/callback?authCallbackUrl=$encodedUri';
+    }
+
+    final screen = uri.queryParameters['screen'];
+    if (screen != null && screen.isNotEmpty) {
+      return '/$screen';
+    }
+
+    return '/chat';
   }
 
   /// 채팅 화면으로 이동하며 fortuneType 저장

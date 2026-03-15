@@ -7,6 +7,7 @@ import '../../../core/utils/logger.dart';
 import '../../../core/config/environment.dart';
 import '../../oauth_in_app_browser_coordinator.dart';
 import '../base/base_social_auth_provider.dart';
+import '../base/social_auth_attempt_result.dart';
 
 class GoogleAuthProvider extends BaseSocialAuthProvider {
   GoogleAuthProvider(super.supabase, super.profileCache);
@@ -15,7 +16,7 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
   String get providerName => 'google';
 
   @override
-  Future<AuthResponse?> signIn() async {
+  Future<SocialAuthAttemptResult> signIn() async {
     try {
       debugPrint(
           '🟡 [GoogleAuthProvider] signIn() started with Supabase OAuth');
@@ -65,7 +66,7 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
       Logger.securityCheckpoint('Google OAuth flow initiated');
       Logger.info('=== GOOGLE OAUTH SUPABASE INITIATED ===');
 
-      return null;
+      return const SocialAuthAttemptResult.pendingExternalAuth();
     } catch (error) {
       OAuthInAppBrowserCoordinator.markOAuthFinished(reason: 'exception');
       Logger.warning(

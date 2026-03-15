@@ -29,6 +29,7 @@
 | IOS-META-002 | P0 | Demo credentials exist in both metadata sources | pass | `metadata/review_information/demo_user.txt`, `metadata/review_information/demo_password.txt`, `ios/fastlane/metadata/review_information/review_demo_user.txt`, `ios/fastlane/metadata/review_information/review_demo_password.txt` | release-owner | 2026-02-16 | done |
 | IOS-META-003 | P1 | KR+EN metadata completeness with no fallback mismatch | pass | `metadata/ko/*`, `metadata/en-US/*`, `ios/fastlane/metadata/ko/*`, `ios/fastlane/metadata/en-US/*`, `ios/fastlane/metadata/en-US/support_url.txt` | content-owner | 2026-02-16 | done |
 | IOS-META-004 | P1 | Age rating / content rating questionnaire updated in ASC | pending | ASC screenshots + exported rating config (`ios/fastlane/metadata/app_rating_config.json`) | release-owner | TBD | open |
+| IOS-META-005 | P0 | ASC Privacy Policy field and Terms of Use link are visible on the submitted version | pending | ASC screenshots after metadata upload | release-owner | TBD | open |
 
 ## 5. Purchase and Subscription Evidence
 | check_id | severity(P0/P1/P2) | check_item | result(pass/fail/pending) | evidence(path\|url\|screenshot) | owner | due_date | status |

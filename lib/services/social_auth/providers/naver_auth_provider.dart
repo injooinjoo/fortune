@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/utils/logger.dart';
 import '../base/base_social_auth_provider.dart';
+import '../base/social_auth_attempt_result.dart';
 
 class NaverAuthProvider extends BaseSocialAuthProvider {
   static const _naverChannel = MethodChannel('com.beyond.fortune/naver_auth');
@@ -13,7 +14,7 @@ class NaverAuthProvider extends BaseSocialAuthProvider {
   String get providerName => 'naver';
 
   @override
-  Future<AuthResponse?> signIn() async {
+  Future<SocialAuthAttemptResult> signIn() async {
     try {
       Logger.info('Starting Naver Sign-In process (Native)');
 
@@ -32,7 +33,7 @@ class NaverAuthProvider extends BaseSocialAuthProvider {
 
       if (loginResult == null || loginResult['success'] != true) {
         Logger.info('User cancelled Naver Sign-In or login failed');
-        return null;
+        return const SocialAuthAttemptResult.cancelled();
       }
 
       final accessToken = loginResult['accessToken'] as String?;
@@ -102,7 +103,7 @@ class NaverAuthProvider extends BaseSocialAuthProvider {
             if (authResponse.session != null) {
               Logger.securityCheckpoint(
                   'Naver: ${authResponse.session?.user.id}');
-              return authResponse;
+              return SocialAuthAttemptResult.authenticated(authResponse);
             }
           }
           Logger.warning(
@@ -118,18 +119,20 @@ class NaverAuthProvider extends BaseSocialAuthProvider {
         final userData = data['user'] as Map<String, dynamic>?;
         if (userData != null && userData['id'] != null) {
           Logger.info('User created successfully but session pending');
-          return AuthResponse(
-            session: null,
-            user: User(
-              id: userData['id'] as String,
-              email: userData['email'] as String?,
-              appMetadata: {'provider': 'naver'},
-              userMetadata: {
-                'name': userData['name'],
-                'profile_image': userData['profile_image']
-              },
-              aud: '',
-              createdAt: DateTime.now().toIso8601String(),
+          return SocialAuthAttemptResult.authenticated(
+            AuthResponse(
+              session: null,
+              user: User(
+                id: userData['id'] as String,
+                email: userData['email'] as String?,
+                appMetadata: {'provider': 'naver'},
+                userMetadata: {
+                  'name': userData['name'],
+                  'profile_image': userData['profile_image']
+                },
+                aud: '',
+                createdAt: DateTime.now().toIso8601String(),
+              ),
             ),
           );
         }
@@ -144,9 +147,11 @@ class NaverAuthProvider extends BaseSocialAuthProvider {
 
       Logger.securityCheckpoint('Naver: ${sessionResponse.session.user.id}');
 
-      return AuthResponse(
-        session: sessionResponse.session,
-        user: sessionResponse.session.user,
+      return SocialAuthAttemptResult.authenticated(
+        AuthResponse(
+          session: sessionResponse.session,
+          user: sessionResponse.session.user,
+        ),
       );
     } catch (error) {
       Logger.warning(

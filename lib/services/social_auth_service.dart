@@ -5,6 +5,7 @@ import '../core/utils/logger.dart';
 import '../core/cache/profile_cache.dart';
 import 'storage_service.dart';
 import 'oauth_in_app_browser_coordinator.dart';
+import 'social_auth/base/social_auth_attempt_result.dart';
 import 'social_auth/providers/google_auth_provider.dart';
 import 'social_auth/providers/apple_auth_provider.dart';
 import 'social_auth/providers/kakao_auth_provider.dart';
@@ -31,33 +32,34 @@ class SocialAuthService {
   }
 
   // Google Sign In
-  Future<AuthResponse?> signInWithGoogle({BuildContext? context}) async {
-    final response = await _googleProvider.signIn();
-    return await _handleSuccessfulDirectAuth(response);
+  Future<SocialAuthAttemptResult> signInWithGoogle(
+      {BuildContext? context}) async {
+    final result = await _googleProvider.signIn();
+    return await _handleSuccessfulDirectAuth(result);
   }
 
   // Apple Sign In
-  Future<AuthResponse?> signInWithApple() async {
-    final response = await _appleProvider.signIn();
-    return await _handleSuccessfulDirectAuth(response);
+  Future<SocialAuthAttemptResult> signInWithApple() async {
+    final result = await _appleProvider.signIn();
+    return await _handleSuccessfulDirectAuth(result);
   }
 
   // Kakao Sign In
-  Future<AuthResponse?> signInWithKakao() async {
-    final response = await _kakaoProvider.signIn();
-    return await _handleSuccessfulDirectAuth(response);
+  Future<SocialAuthAttemptResult> signInWithKakao() async {
+    final result = await _kakaoProvider.signIn();
+    return await _handleSuccessfulDirectAuth(result);
   }
 
   // Naver Sign In
-  Future<AuthResponse?> signInWithNaver() async {
-    final response = await _naverProvider.signIn();
-    return await _handleSuccessfulDirectAuth(response);
+  Future<SocialAuthAttemptResult> signInWithNaver() async {
+    final result = await _naverProvider.signIn();
+    return await _handleSuccessfulDirectAuth(result);
   }
 
   // Facebook Sign In
-  Future<AuthResponse?> signInWithFacebook() async {
-    final response = await _facebookProvider.signIn();
-    return await _handleSuccessfulDirectAuth(response);
+  Future<SocialAuthAttemptResult> signInWithFacebook() async {
+    final result = await _facebookProvider.signIn();
+    return await _handleSuccessfulDirectAuth(result);
   }
 
   // Sign Out
@@ -124,19 +126,19 @@ class SocialAuthService {
       switch (provider) {
         case 'google':
           final result = await signInWithGoogle();
-          return result != null;
+          return result.isAuthenticated || result.isPendingExternalAuth;
         case 'apple':
           final result = await signInWithApple();
-          return result != null;
+          return result.isAuthenticated || result.isPendingExternalAuth;
         case 'facebook':
-          await signInWithFacebook();
-          return true;
+          final result = await signInWithFacebook();
+          return result.isAuthenticated || result.isPendingExternalAuth;
         case 'kakao':
-          await signInWithKakao();
-          return true;
+          final result = await signInWithKakao();
+          return result.isAuthenticated || result.isPendingExternalAuth;
         case 'naver':
           final result = await signInWithNaver();
-          return result != null;
+          return result.isAuthenticated || result.isPendingExternalAuth;
         default:
           return false;
       }
@@ -231,9 +233,11 @@ class SocialAuthService {
     }
   }
 
-  Future<AuthResponse?> _handleSuccessfulDirectAuth(
-      AuthResponse? response) async {
-    if (response?.user == null) return response;
+  Future<SocialAuthAttemptResult> _handleSuccessfulDirectAuth(
+      SocialAuthAttemptResult result) async {
+    if (!result.isAuthenticated || result.user == null) {
+      return result;
+    }
 
     try {
       // Prevent stale guest-state after native/social sign-in flows.
@@ -242,6 +246,6 @@ class SocialAuthService {
       Logger.warning('[SocialAuthService] 게스트 모드 해제 실패 (선택적 기능, 로그인은 계속): $e');
     }
 
-    return response;
+    return result;
   }
 }

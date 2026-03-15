@@ -1,84 +1,35 @@
-# App Store Review Note - ZPZG
+# App Store Review Reply Draft - ZPZG
 
-## Re: Guideline 2.1 - In-App Purchase Issue (Fixed)
+Hello App Review Team,
 
-We have fixed the in-app purchase receipt validation issue.
+We addressed both issues from the review dated February 23, 2026 for submission `e77d128e-763f-4670-b865-efbbc1fa39c2`.
 
-### What was wrong:
-- Server was not properly validating Apple receipts with Apple's verifyReceipt API
+## Guideline 2.1 - Sign in with Apple
 
-### What we fixed:
-- Implemented proper Apple receipt validation following Apple's recommended approach:
-  1. **Production-first validation**: Receipts are now validated against `https://buy.itunes.apple.com/verifyReceipt` first
-  2. **Sandbox fallback**: If status code 21007 is returned, the receipt is automatically re-validated against `https://sandbox.itunes.apple.com/verifyReceipt`
-  3. **Proper error handling**: All Apple status codes are now properly handled
+We fixed the iPad Sign in with Apple flow.
 
-### Technical Details:
-- Updated Edge Function: `payment-verify-purchase` (v18)
-- Follows Apple's documentation: "Validating Receipts with the App Store"
+### What changed
+- Deep link handling for OAuth callbacks is now initialized before app startup completes, so cold-start callback links are no longer missed.
+- The Apple login flow now uses explicit auth result states, so an OAuth fallback launched from iPad native sign-in is treated as an in-progress authentication flow instead of a silent failure.
+- Native Sign in with Apple remains enabled, and iPad fallback to OAuth is handled explicitly when needed.
 
----
+### Review path
+- Primary review path: sign in with the review test account
+  - Email: `test@zpzg.com`
+  - Password: `TestPassword123!`
+- Optional validation path: Sign in with Apple is also available on iPhone and iPad.
 
-## App Overview - Entertainment & Lifestyle Application
+## Guideline 3.1.2 - Subscription Metadata
 
-"ZPZG" (지피지기 - Know Yourself) is an **ENTERTAINMENT app** that provides AI-generated personalized lifestyle insights and guidance.
+We updated the App Store metadata to include the required policy links.
 
-### App Category:
-- Primary: LIFESTYLE
-- Secondary: ENTERTAINMENT
+### Policy links
+- Terms of Use (EULA): `https://zpzg.co.kr/terms`
+- Privacy Policy: `https://zpzg.co.kr/privacy`
 
-### Core Features:
-
-1. **Face AI (AI 관상) - Entertainment Feature**
-   - Camera-based face analysis using AI for fun personality insights
-   - Provides entertaining interpretations of facial features
-   - For entertainment purposes only
-
-2. **Daily Insights**
-   - AI-generated personalized daily messages
-   - Lifestyle tips and guidance
-   - Motivation and inspiration content
-
-3. **Personality Analysis**
-   - MBTI-based personality assessments
-   - Self-discovery and reflection tools
-   - Entertainment-focused personality insights
-
-4. **Interactive Features**
-   - Insight Cards (similar to mood cards)
-   - Dream journal and interpretation
-   - Lifestyle guidance
-
-### Token/Soul Economy System
-- Users earn "souls" (영혼) through app engagement
-- Premium content can be accessed using tokens
-- Creates gamified engagement experience
-
-### Target Audience:
-- Users seeking daily entertainment and inspiration
-- Those interested in personality and self-discovery content
-- Users looking for personalized lifestyle guidance
-
-### Important Disclaimers:
-- All content is AI-generated for ENTERTAINMENT purposes only
-- App clearly states content should not be used for important life decisions
-- No claims of accuracy or predictive ability
-
----
-
-## Testing Instructions:
-
-1. **Account Login**:
-   - Use the provided test account credentials
-   - Social login (Apple ID, Google, Kakao) also available
-
-2. **Feature Testing**:
-   - Try "Face AI" feature for entertainment face analysis
-   - Check "Daily Insights" for personalized content
-   - Test premium features (test account has full access)
-
-3. **In-App Purchase Testing**:
-   - Use Sandbox test environment
-   - All subscription and token purchase flows work correctly
+### Metadata update
+- The Privacy Policy field now uses the canonical privacy URL.
+- The App Description includes the Terms of Use (EULA) link.
+- Review notes now direct review through the provided test account first.
 
 Thank you for your review.

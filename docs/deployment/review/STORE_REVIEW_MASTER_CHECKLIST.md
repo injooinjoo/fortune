@@ -42,17 +42,18 @@ Priority policy:
 | COM-SOT-003 | P0 | KR privacy/support URL present in both sources | pass | `metadata/ko/privacy_url.txt`, `metadata/ko/support_url.txt`, `ios/fastlane/metadata/ko/privacy_url.txt`, `ios/fastlane/metadata/ko/support_url.txt` | content-owner | 2026-02-16 | done |
 | COM-SOT-004 | P1 | EN support URL present in priority-2 source | pass | `ios/fastlane/metadata/en-US/support_url.txt` | content-owner | 2026-02-16 | done |
 | COM-SOT-005 | P0 | Review note + demo account evidence files exist | pass | `metadata/review_information/notes.txt`, `metadata/review_information/demo_user.txt`, `metadata/review_information/demo_password.txt`, `ios/fastlane/metadata/review_information/review_notes.txt`, `ios/fastlane/metadata/review_information/review_demo_user.txt`, `ios/fastlane/metadata/review_information/review_demo_password.txt` | release-owner | 2026-02-16 | done |
+| COM-SOT-006 | P0 | App Store Connect Privacy Policy field + App Description Terms link confirmed after metadata upload | pending | ASC screenshots after deliver upload | release-owner | TBD | open |
 
 ## 6. URL Health Evidence
 Run and attach output:
-- `curl -sSIL https://zpzg.co.kr/privacy.html`
+- `curl -sSIL https://zpzg.co.kr/privacy`
 - `curl -sSIL https://zpzg.co.kr/support.html`
 - `curl -sSIL https://zpzg.co.kr/.well-known/apple-app-site-association`
 - `curl -sSIL https://zpzg.co.kr/.well-known/assetlinks.json`
 
 | check_id | severity(P0/P1/P2) | check_item | result(pass/fail/pending) | evidence(path\|url\|screenshot) | owner | due_date | status |
 |---|---|---|---|---|---|---|---|
-| COM-URL-001 | P0 | Privacy URL returns HTTP 200 | pass | URL: `https://zpzg.co.kr/privacy.html` | web-owner | 2026-02-16 | done |
+| COM-URL-001 | P0 | Privacy URL returns HTTP 200 | pass | URL: `https://zpzg.co.kr/privacy` | web-owner | 2026-02-16 | done |
 | COM-URL-002 | P0 | Support URL returns HTTP 200 | pass | URL: `https://zpzg.co.kr/support.html` | web-owner | 2026-02-16 | done |
 | COM-URL-003 | P0 | AASA endpoint returns HTTP 200 on apex domain | pass | URL: `https://zpzg.co.kr/.well-known/apple-app-site-association` | web-owner | 2026-02-16 | done |
 | COM-URL-004 | P0 | Asset Links endpoint returns HTTP 200 and JSON | pass | URL: `https://zpzg.co.kr/.well-known/assetlinks.json` | web-owner | 2026-02-16 | done |

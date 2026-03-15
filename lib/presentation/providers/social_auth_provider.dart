@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/social_auth_service.dart';
+import '../../services/social_auth/base/social_auth_attempt_result.dart';
 import '../../core/utils/logger.dart';
 import 'providers.dart';
 
@@ -15,7 +15,8 @@ final socialAuthServiceProvider = Provider<SocialAuthService>((ref) {
 enum SocialAuthState { initial, loading, authenticated, error }
 
 // Social Auth Notifier
-class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
+class SocialAuthNotifier
+    extends StateNotifier<AsyncValue<SocialAuthAttemptResult?>> {
   final SocialAuthService _socialAuthService;
   final Ref _ref;
 
@@ -30,12 +31,12 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
     try {
       debugPrint(
           '🟢 [SocialAuthProvider] Calling _socialAuthService.signInWithGoogle()...');
-      final response = await _socialAuthService.signInWithGoogle();
-      debugPrint('received: ${response != null ? "not null" : "null"}');
+      final result = await _socialAuthService.signInWithGoogle();
+      debugPrint('received status: ${result.status.name}');
 
-      if (response != null && response.user != null) {
-        debugPrint('authenticated: ${response.user!.id}');
-        state = AsyncValue.data(response);
+      if (result.isAuthenticated && result.user != null) {
+        debugPrint('authenticated: ${result.user!.id}');
+        state = AsyncValue.data(result);
 
         // 인증 상태 새로고침
         _ref.invalidate(userProvider);
@@ -49,7 +50,7 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
         // Update consecutive days on social sign in
         try {
           final statisticsService = _ref.read(userStatisticsServiceProvider);
-          await statisticsService.updateConsecutiveDays(response.user!.id);
+          await statisticsService.updateConsecutiveDays(result.user!.id);
         } catch (e) {
           Logger.error('Failed to update consecutive days', e);
           // Don't throw - this is not critical for sign in
@@ -58,9 +59,8 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
         Logger.info('Google Sign-In successful');
         debugPrint('🟢 [SocialAuthProvider] Google Sign-In successful');
       } else {
-        debugPrint(
-            '🟢 [SocialAuthProvider] No response or user from Google Sign-In');
-        state = const AsyncValue.data(null);
+        debugPrint('🟢 [SocialAuthProvider] Google Sign-In pending/cancelled');
+        state = AsyncValue.data(result);
       }
     } catch (error, stackTrace) {
       debugPrint('Fortune cached');
@@ -74,10 +74,10 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
     state = const AsyncValue.loading();
 
     try {
-      final response = await _socialAuthService.signInWithApple();
+      final result = await _socialAuthService.signInWithApple();
 
-      if (response != null && response.user != null) {
-        state = AsyncValue.data(response);
+      if (result.isAuthenticated && result.user != null) {
+        state = AsyncValue.data(result);
 
         // 인증 상태 새로고침
         _ref.invalidate(userProvider);
@@ -90,7 +90,7 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
         // Update consecutive days on social sign in
         try {
           final statisticsService = _ref.read(userStatisticsServiceProvider);
-          await statisticsService.updateConsecutiveDays(response.user!.id);
+          await statisticsService.updateConsecutiveDays(result.user!.id);
         } catch (e) {
           Logger.error('Failed to update consecutive days', e);
           // Don't throw - this is not critical for sign in
@@ -98,7 +98,7 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
 
         Logger.info('Apple Sign-In successful');
       } else {
-        state = const AsyncValue.data(null);
+        state = AsyncValue.data(result);
       }
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
@@ -111,10 +111,10 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
     state = const AsyncValue.loading();
 
     try {
-      final response = await _socialAuthService.signInWithFacebook();
+      final result = await _socialAuthService.signInWithFacebook();
 
-      if (response != null && response.user != null) {
-        state = AsyncValue.data(response);
+      if (result.isAuthenticated && result.user != null) {
+        state = AsyncValue.data(result);
 
         // 인증 상태 새로고침
         _ref.invalidate(userProvider);
@@ -127,7 +127,7 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
         // Update consecutive days on social sign in
         try {
           final statisticsService = _ref.read(userStatisticsServiceProvider);
-          await statisticsService.updateConsecutiveDays(response.user!.id);
+          await statisticsService.updateConsecutiveDays(result.user!.id);
         } catch (e) {
           Logger.error('Failed to update consecutive days', e);
           // Don't throw - this is not critical for sign in
@@ -135,7 +135,7 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
 
         Logger.info('Facebook Sign-In successful');
       } else {
-        state = const AsyncValue.data(null);
+        state = AsyncValue.data(result);
       }
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
@@ -148,10 +148,10 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
     state = const AsyncValue.loading();
 
     try {
-      final response = await _socialAuthService.signInWithKakao();
+      final result = await _socialAuthService.signInWithKakao();
 
-      if (response != null && response.user != null) {
-        state = AsyncValue.data(response);
+      if (result.isAuthenticated && result.user != null) {
+        state = AsyncValue.data(result);
 
         // 인증 상태 새로고침
         _ref.invalidate(userProvider);
@@ -164,7 +164,7 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
         // Update consecutive days on social sign in
         try {
           final statisticsService = _ref.read(userStatisticsServiceProvider);
-          await statisticsService.updateConsecutiveDays(response.user!.id);
+          await statisticsService.updateConsecutiveDays(result.user!.id);
         } catch (e) {
           Logger.error('Failed to update consecutive days', e);
           // Don't throw - this is not critical for sign in
@@ -172,7 +172,7 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
 
         Logger.info('Kakao Sign-In successful');
       } else {
-        state = const AsyncValue.data(null);
+        state = AsyncValue.data(result);
       }
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
@@ -185,10 +185,10 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
     state = const AsyncValue.loading();
 
     try {
-      final response = await _socialAuthService.signInWithNaver();
+      final result = await _socialAuthService.signInWithNaver();
 
-      if (response != null && response.user != null) {
-        state = AsyncValue.data(response);
+      if (result.isAuthenticated && result.user != null) {
+        state = AsyncValue.data(result);
 
         // 인증 상태 새로고침
         _ref.invalidate(userProvider);
@@ -201,7 +201,7 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
         // Update consecutive days on social sign in
         try {
           final statisticsService = _ref.read(userStatisticsServiceProvider);
-          await statisticsService.updateConsecutiveDays(response.user!.id);
+          await statisticsService.updateConsecutiveDays(result.user!.id);
         } catch (e) {
           Logger.error('Failed to update consecutive days', e);
           // Don't throw - this is not critical for sign in
@@ -209,7 +209,7 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
 
         Logger.info('Naver Sign-In successful');
       } else {
-        state = const AsyncValue.data(null);
+        state = AsyncValue.data(result);
       }
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
@@ -236,8 +236,8 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
 }
 
 // Social Auth Provider
-final socialAuthProvider =
-    StateNotifierProvider<SocialAuthNotifier, AsyncValue<AuthResponse?>>((ref) {
+final socialAuthProvider = StateNotifierProvider<SocialAuthNotifier,
+    AsyncValue<SocialAuthAttemptResult?>>((ref) {
   final socialAuthService = ref.watch(socialAuthServiceProvider);
   return SocialAuthNotifier(socialAuthService, ref);
 });

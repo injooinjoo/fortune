@@ -25,9 +25,9 @@ app_review_information(
   last_name: "Kim",
   phone_number: "+821050606843",
   email_address: "injoo1222@naver.com",
-  demo_user: "injoo1222@naver.com",
-  demo_password: "Dlswn@123",
-  notes: "ENTERTAINMENT app with AI-generated lifestyle insights. Test: Login with provided account, try 'Face AI' and 'Daily Insights' features."
+  demo_user: "test@zpzg.com",
+  demo_password: "TestPassword123!",
+  notes: "ENTERTAINMENT app. Primary review path: sign in with the review test account (test@zpzg.com / TestPassword123!). All premium features are already unlocked on this account. Optional authentication validation: Sign in with Apple is also available on iPhone and iPad. Terms of Use (EULA): https://zpzg.co.kr/terms . Privacy Policy: https://zpzg.co.kr/privacy ."
 )
 
 # Automatic release

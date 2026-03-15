@@ -68,23 +68,33 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
 
     try {
       bool success = false;
+      bool pendingExternalAuth = false;
+      bool cancelled = false;
 
       switch (provider) {
         case 'google':
           final result = await widget.socialAuthService.signInWithGoogle();
-          success = result != null;
+          success = result.isAuthenticated;
+          pendingExternalAuth = result.isPendingExternalAuth;
+          cancelled = result.isCancelled;
           break;
         case 'apple':
           final result = await widget.socialAuthService.signInWithApple();
-          success = result != null;
+          success = result.isAuthenticated;
+          pendingExternalAuth = result.isPendingExternalAuth;
+          cancelled = result.isCancelled;
           break;
         case 'kakao':
-          await widget.socialAuthService.signInWithKakao();
-          success = true;
+          final result = await widget.socialAuthService.signInWithKakao();
+          success = result.isAuthenticated;
+          pendingExternalAuth = result.isPendingExternalAuth;
+          cancelled = result.isCancelled;
           break;
         case 'naver':
           final result = await widget.socialAuthService.signInWithNaver();
-          success = result != null;
+          success = result.isAuthenticated;
+          pendingExternalAuth = result.isPendingExternalAuth;
+          cancelled = result.isCancelled;
           break;
       }
 
@@ -104,6 +114,15 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
             ),
           );
         }
+      } else if (pendingExternalAuth && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('브라우저에서 인증을 완료해 주세요. 완료되면 앱으로 돌아옵니다.'),
+            duration: Duration(seconds: 4),
+          ),
+        );
+      } else if (cancelled) {
+        Logger.info('Social account linking cancelled: $provider');
       }
     } catch (e) {
       Logger.error('Failed to link social account provider: $provider', e);

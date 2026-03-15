@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/utils/logger.dart';
 import '../../oauth_in_app_browser_coordinator.dart';
 import '../base/base_social_auth_provider.dart';
+import '../base/social_auth_attempt_result.dart';
 
 class KakaoAuthProvider extends BaseSocialAuthProvider {
   KakaoAuthProvider(super.supabase, super.profileCache);
@@ -14,7 +15,7 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
   String get providerName => 'kakao';
 
   @override
-  Future<AuthResponse?> signIn() async {
+  Future<SocialAuthAttemptResult> signIn() async {
     try {
       Logger.info('=== KAKAO SIGN-IN STARTED ===');
       Logger.info(
@@ -25,13 +26,15 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
         final result = await _signInWithKakaoNative();
         Logger.info(
             'Native Kakao result: ${result != null ? 'Success' : 'Null/OAuth flow'}');
-        return result;
+        if (result?.user != null) {
+          return SocialAuthAttemptResult.authenticated(result!);
+        }
+        return const SocialAuthAttemptResult.cancelled();
       } else {
         Logger.info('Using Kakao OAuth for web platform');
-        final result = await _signInWithKakaoOAuth();
-        Logger.info(
-            'OAuth Kakao result: ${result != null ? 'Success' : 'Null/OAuth flow'}');
-        return result;
+        await _signInWithKakaoOAuth();
+        Logger.info('OAuth Kakao result: Pending external auth');
+        return const SocialAuthAttemptResult.pendingExternalAuth();
       }
     } catch (error) {
       Logger.warning(

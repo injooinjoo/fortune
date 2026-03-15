@@ -185,6 +185,21 @@ void main() async {
   final providerOverrides = await initializeProviders();
   debugPrint('🚀 [STARTUP] Provider overrides initialized');
 
+  if (!kIsWeb) {
+    try {
+      debugPrint(
+          '🔗 [STARTUP] Initializing Deep Link Service before runApp...');
+      await DeepLinkService().initialize();
+      debugPrint(
+          '🔗 [STARTUP] Deep Link Service initialized successfully before runApp');
+      Logger.info('Deep Link Service initialized before runApp');
+    } catch (e) {
+      debugPrint('⚠️ [STARTUP] Deep Link Service initialization failed: $e');
+      Logger.warning(
+          'Deep Link Service initialization failed before runApp: $e');
+    }
+  }
+
   runApp(
     ProviderScope(
       overrides: providerOverrides,
@@ -316,19 +331,6 @@ Future<void> _runDeferredInitializations({
           '⚠️ [POST_STARTUP] Firebase unavailable, skipping FCM Service initialization');
       Logger.warning(
           'FCM Service initialization skipped: Firebase unavailable');
-    }
-
-    try {
-      debugPrint('🔗 [POST_STARTUP] Initializing Deep Link Service...');
-      await DeepLinkService().initialize();
-      debugPrint(
-          '🔗 [POST_STARTUP] Deep Link Service initialized successfully');
-      Logger.info('Deep Link Service initialized successfully');
-    } catch (e) {
-      debugPrint(
-          '⚠️ [POST_STARTUP] Deep Link Service initialization failed: $e');
-      Logger.warning(
-          'Deep Link Service initialization failed (optional feature): $e');
     }
   }
 }

@@ -1,17 +1,18 @@
-This is an ENTERTAINMENT app that provides AI-generated personalized lifestyle insights and guidance.
+ENTERTAINMENT APP
 
-Test Account:
-- Email: injoo1222@naver.com
-- Password: Dlswn@123
+Primary review path:
+1. Launch the app.
+2. Sign in with the review test account.
+   - Email: test@zpzg.com
+   - Password: TestPassword123!
+3. All premium features are already unlocked on this review account.
+4. Review the main experiences: Face AI, Daily Insights, and Personality Analysis.
 
-The app requires user authentication to access personalized content.
-All features are available with the test account.
+Optional authentication validation:
+- Sign in with Apple is also available on iPhone and iPad.
 
-Key Features to Test:
-1. Face AI - AI-based face analysis for entertainment
-2. Daily Insights - Personalized daily messages
-3. Personality Analysis - MBTI and personality assessments
+Policy links:
+- Terms of Use (EULA): https://zpzg.co.kr/terms
+- Privacy Policy: https://zpzg.co.kr/privacy
 
-Note: Some features require in-app purchases, but the test account has access to all premium features for review purposes.
-
-IMPORTANT: All content is AI-generated for entertainment purposes only.
+All content is AI-generated for entertainment purposes only.

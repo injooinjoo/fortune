@@ -8,30 +8,45 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/utils/logger.dart';
 import '../../oauth_in_app_browser_coordinator.dart';
 import '../base/base_social_auth_provider.dart';
+import '../base/social_auth_attempt_result.dart';
 
 class AppleAuthProvider extends BaseSocialAuthProvider {
-  AppleAuthProvider(super.supabase, super.profileCache);
+  AppleAuthProvider(
+    super.supabase,
+    super.profileCache, {
+    bool? isWebOverride,
+    bool? isIOSOverride,
+    Future<AuthResponse?> Function()? nativeSignInOverride,
+    Future<SocialAuthAttemptResult> Function()? oauthSignInOverride,
+  })  : _isWebOverride = isWebOverride,
+        _isIOSOverride = isIOSOverride,
+        _nativeSignInOverride = nativeSignInOverride,
+        _oauthSignInOverride = oauthSignInOverride;
 
   /// iPad Error 1000 재시도 횟수 추적
   int _error1000RetryCount = 0;
   static const int _maxError1000Retries = 1;
+  final bool? _isWebOverride;
+  final bool? _isIOSOverride;
+  final Future<AuthResponse?> Function()? _nativeSignInOverride;
+  final Future<SocialAuthAttemptResult> Function()? _oauthSignInOverride;
 
   @override
   String get providerName => 'apple';
 
   @override
-  Future<AuthResponse?> signIn() async {
+  Future<SocialAuthAttemptResult> signIn() async {
     // 새 로그인 시도 시 재시도 카운터 리셋
     _error1000RetryCount = 0;
 
     try {
       Logger.info('Starting Apple Sign-In process');
 
-      if (!kIsWeb && Platform.isIOS) {
+      if (_shouldUseNativeAppleSignIn) {
         Logger.info('Using native Apple Sign-In for iOS');
         final nativeResponse = await _signInWithAppleNative();
-        if (nativeResponse?.user != null && nativeResponse?.session != null) {
-          return nativeResponse;
+        if (nativeResponse?.user != null) {
+          return SocialAuthAttemptResult.authenticated(nativeResponse!);
         }
 
         Logger.warning(
@@ -42,13 +57,31 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
         return await _signInWithAppleOAuth();
       }
     } catch (error) {
+      if (_isCancellationError(error)) {
+        Logger.info('[AppleAuthProvider] Apple 로그인 취소 감지');
+        return const SocialAuthAttemptResult.cancelled();
+      }
       Logger.warning(
           '[AppleAuthProvider] Apple 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
       rethrow;
     }
   }
 
+  bool get _shouldUseNativeAppleSignIn {
+    if (_isWebOverride == true) {
+      return false;
+    }
+    if (_isIOSOverride != null) {
+      return _isIOSOverride;
+    }
+    return !kIsWeb && Platform.isIOS;
+  }
+
   Future<AuthResponse?> _signInWithAppleNative() async {
+    if (_nativeSignInOverride != null) {
+      return _nativeSignInOverride();
+    }
+
     try {
       Logger.info('Starting native Apple Sign-In process...');
       Logger.info('Platform: ${Platform.operatingSystem}');
@@ -180,7 +213,11 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
     return null;
   }
 
-  Future<AuthResponse?> _signInWithAppleOAuth() async {
+  Future<SocialAuthAttemptResult> _signInWithAppleOAuth() async {
+    if (_oauthSignInOverride != null) {
+      return _oauthSignInOverride();
+    }
+
     try {
       Logger.info('[AppleAuthProvider] OAuth fallback 시작');
       final flowId =
@@ -212,7 +249,7 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
         ),
       );
       Logger.securityCheckpoint('Apple OAuth sign in initiated');
-      return null;
+      return const SocialAuthAttemptResult.pendingExternalAuth();
     } catch (error) {
       OAuthInAppBrowserCoordinator.markOAuthFinished(reason: 'exception');
       // OAuth 에러는 주로 Apple Developer Console/Supabase 설정 문제
@@ -222,5 +259,12 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
           '→ Supabase Dashboard에서 Apple Provider 설정 확인 필요');
       rethrow;
     }
+  }
+
+  bool _isCancellationError(Object error) {
+    final errorString = error.toString().toLowerCase();
+    return errorString.contains('사용자가 apple 로그인을 취소했습니다') ||
+        errorString.contains('cancel') ||
+        errorString.contains('cancelled');
   }
 }
