@@ -41,6 +41,7 @@ import '../../../fortune/presentation/providers/saju_provider.dart';
 import 'active_chat_provider.dart';
 import 'character_provider.dart';
 import 'character_fortune_adapter.dart';
+import '../utils/character_guest_name_guard.dart';
 import '../utils/character_tone_policy.dart';
 import '../utils/character_tone_rollout.dart';
 import '../utils/character_voice_profile_registry.dart';
@@ -2480,9 +2481,14 @@ $enrichedContext
 ''';
 
       final toneStylePrompt = _buildToneStyleGuidePrompt(toneProfile).trim();
+      final unknownUserNameGuard = buildUnknownUserNameGuard(
+        characterName: _character.name,
+        knownUserName: _getUserProfileMap()?['name'] as String?,
+      );
       final enhancedPrompt = [
         _character.systemPrompt,
         fortuneSystemInstruction,
+        if (unknownUserNameGuard.isNotEmpty) unknownUserNameGuard,
         if (toneStylePrompt.isNotEmpty) toneStylePrompt,
       ].join('\n\n');
 
@@ -2698,9 +2704,14 @@ $enrichedContext
 ''';
 
       final toneStylePrompt = _buildToneStyleGuidePrompt(toneProfile).trim();
+      final unknownUserNameGuard = buildUnknownUserNameGuard(
+        characterName: _character.name,
+        knownUserName: _getUserProfileMap()?['name'] as String?,
+      );
       final enhancedPrompt = [
         _character.systemPrompt,
         fortuneSystemInstruction,
+        if (unknownUserNameGuard.isNotEmpty) unknownUserNameGuard,
         if (toneStylePrompt.isNotEmpty) toneStylePrompt,
       ].join('\n\n');
 

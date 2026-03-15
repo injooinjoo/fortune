@@ -187,12 +187,16 @@ class FortuneOptimizationService {
     required Map<String, dynamic> resultData,
   }) async {
     try {
-      await _cohortService.saveToPool(
+      final saved = await _cohortService.saveToPool(
         fortuneType: fortuneType,
         input: inputConditions,
         result: resultData,
       );
-      debugPrint('  ✅ Cohort Pool 저장 완료');
+      if (saved) {
+        debugPrint('  ✅ Cohort Pool 저장 완료');
+      } else {
+        debugPrint('  ⚠️ Cohort Pool 저장 실패 (무시)');
+      }
     } catch (e) {
       debugPrint('  ⚠️ Cohort Pool 저장 실패 (무시): $e');
     }

@@ -359,6 +359,12 @@ function buildFullSystemPrompt(
     parts.push(
       "\n⚠️ 위 정보는 자연스러운 대화 흐름에서만 활용하세요. 매번 언급하거나 강제로 넣지 마세요.",
     );
+  } else {
+    parts.push("\n\n[USER INFO - 호칭 안전 규칙]");
+    parts.push("- 사용자 이름 미확인");
+    parts.push("  → 사용자 이름이나 별명을 추측하지 마세요.");
+    parts.push("  → 캐릭터 자신의 이름을 사용자 이름처럼 사용하지 마세요.");
+    parts.push("  → 이름이 꼭 필요하면 \"회원님\" 같은 중립 호칭을 쓰거나, 호칭을 생략하고 바로 본론으로 답하세요.");
   }
 
   return parts.join("\n");

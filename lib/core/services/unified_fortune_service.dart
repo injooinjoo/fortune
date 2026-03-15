@@ -24,6 +24,7 @@ class UnifiedFortuneService {
   final TokenApiService? _tokenService;
   late final FortuneOptimizationService _optimizationService;
   late final GeneratorFactory _generatorFactory;
+  final StorageService _storageService;
 
   // 최적화 시스템 활성화 플래그 (기본값: true)
   final bool enableOptimization;
@@ -36,13 +37,15 @@ class UnifiedFortuneService {
     TokenApiService? tokenService,
     this.enableOptimization = true, // 최적화 기본 활성화
     this.enableTokenValidation = true, // 토큰 검증 기본 활성화
-  }) : _tokenService = tokenService {
-    _optimizationService = FortuneOptimizationService(supabase: _supabase);
-    _generatorFactory = GeneratorFactory(_supabase);
+    FortuneOptimizationService? optimizationService,
+    GeneratorFactory? generatorFactory,
+    StorageService? storageService,
+  })  : _tokenService = tokenService,
+        _storageService = storageService ?? StorageService() {
+    _optimizationService =
+        optimizationService ?? FortuneOptimizationService(supabase: _supabase);
+    _generatorFactory = generatorFactory ?? GeneratorFactory(_supabase);
   }
-
-  // StorageService 인스턴스 (Guest ID용)
-  final StorageService _storageService = StorageService();
 
   /// 사용자 ID 조회 (로그인 사용자 또는 게스트 ID)
   ///
@@ -108,7 +111,12 @@ class UnifiedFortuneService {
       }
 
       // ===== 최적화 시스템 사용 (조건 객체가 있고 활성화된 경우) =====
+      if (isGuestUser && enableOptimization && conditions != null) {
+        Logger.info('[$fortuneType] ⏭️ 게스트 사용자 - 최적화/DB 캐시 경로 건너뜀');
+      }
+
       if (enableOptimization &&
+          !isGuestUser &&
           conditions != null &&
           dataSource == FortuneDataSource.api) {
         Logger.info('[$fortuneType] 🚀 최적화 시스템 사용');
