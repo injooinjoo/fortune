@@ -65,7 +65,7 @@ Representative retained examples:
 - `screen_card__chat__home__curiosity_default`
 - `screen_card__chat__survey__fortune_step`
 - `screen_card__chat__result__fortune_complete`
-- `screen_card__chat__profile_sheet__default`
+- `screen_card__account__profile__default`
 - `screen_card__premium__insight__default`
 - `screen_card__account__deletion__auth_gated`
 

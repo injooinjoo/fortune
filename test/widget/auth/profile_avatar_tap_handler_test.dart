@@ -141,7 +141,7 @@ void main() {
     expect(profileSheetOpened, isFalse);
   });
 
-  testWidgets('authenticated profile icon keeps opening profile sheet',
+  testWidgets('authenticated profile icon opens authenticated destination',
       (tester) async {
     var profileSheetOpened = false;
     final service = _FakeSocialAuthService(

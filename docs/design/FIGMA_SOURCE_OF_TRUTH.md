@@ -13,8 +13,8 @@ This file remains the only official Figma source of truth for current-state Fort
 ## Coverage Snapshot
 
 - Managed surfaces: `18`
-- Live captures: `14`
-- Placeholder specs: `4`
+- Live captures: `15`
+- Placeholder specs: `3`
 
 ## Runtime Scope
 
@@ -32,6 +32,7 @@ Runtime routes represented by the official catalog:
 - `/onboarding`
 - `/onboarding/toss-style`
 - `/chat`
+- `/profile`
 - `/premium`
 - `/character/:id`
 - `/privacy-policy`
@@ -50,7 +51,13 @@ Internal `/chat` states represented as catalog surfaces:
 - 채팅 설문 진행 상태
 - 채팅 결과 상태
 - 첫 진입 캐릭터 온보딩
-- 채팅 계정 시트
+
+Current runtime routes without their own dedicated current Figma card:
+
+- `/profile/edit`
+- `/profile/saju-summary`
+- `/profile/relationships`
+- `/profile/notifications`
 
 ## Canonical Current Page Roots
 

@@ -7,7 +7,6 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/navigation/fortune_chat_route.dart';
 import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
-import '../../../chat/presentation/widgets/profile_bottom_sheet.dart';
 import '../../data/services/character_localizer.dart';
 import '../../domain/models/ai_character.dart';
 import '../../domain/models/character_chat_message.dart';
@@ -249,13 +248,7 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
                 ref: ref,
                 currentUser: Supabase.instance.client.auth.currentUser,
                 openProfileSheet: () async {
-                  await showModalBottomSheet<void>(
-                    context: context,
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
-                    barrierColor: DSColors.overlay,
-                    builder: (_) => const ProfileBottomSheet(),
-                  );
+                  context.push('/profile');
                 },
               );
             },

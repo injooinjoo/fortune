@@ -89,6 +89,7 @@ Representative retained examples:
 - `chat__survey__fortune_step` -> `screen_card__chat__survey__fortune_step`
 - `chat__result__fortune_complete` -> `screen_card__chat__result__fortune_complete`
 - `chat__onboarding__character_intro` -> `screen_card__chat__onboarding__character_intro`
+- `account__profile__default` -> `screen_card__account__profile__default`
 - `premium__insight__default` -> `screen_card__premium__insight__default`
 - `account__deletion__auth_gated` -> `screen_card__account__deletion__auth_gated`
 
@@ -101,7 +102,7 @@ Governance page `89:2` overview cards:
 
 - `Single Figma Source of Truth` -> `overview_card__official_file`
 - `Hybrid Screen Catalog` -> `overview_card__capture_modes`
-- `10 live / 8 placeholder` -> `overview_card__current_coverage`
+- `15 live / 3 placeholder` -> `overview_card__current_coverage`
 - `iPhone 15 Pro Only` -> `overview_card__device_standard`
 - `Retained Routes and In-Chat States` -> `overview_card__routing_notes`
 - `Auth, First-Run, and Runtime Gates` -> `overview_card__runtime_blockers`

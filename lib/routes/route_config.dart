@@ -5,7 +5,12 @@ import 'package:go_router/go_router.dart';
 import '../screens/onboarding/onboarding_page.dart';
 import '../features/policy/presentation/pages/privacy_policy_page.dart';
 import '../features/policy/presentation/pages/terms_of_service_page.dart';
+import '../features/notification/presentation/pages/notification_settings_page.dart';
 import '../screens/profile/account_deletion_page.dart';
+import '../screens/profile/profile_edit_page.dart';
+import '../screens/profile/profile_relationships_page.dart';
+import '../screens/profile/profile_screen.dart';
+import '../screens/profile/saju_summary_page.dart';
 import '../screens/premium/premium_screen.dart';
 
 // Retained product surfaces
@@ -71,6 +76,53 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           state,
           const AccountDeletionPage(),
         ),
+      ),
+      GoRoute(
+        path: '/profile',
+        name: 'profile',
+        pageBuilder: (context, state) => PageTransitions.slideTransition(
+          context,
+          state,
+          const ProfileScreen(),
+        ),
+        routes: [
+          GoRoute(
+            path: 'edit',
+            name: 'profile-edit',
+            pageBuilder: (context, state) => PageTransitions.slideTransition(
+              context,
+              state,
+              const ProfileEditPage(),
+            ),
+          ),
+          GoRoute(
+            path: 'saju-summary',
+            name: 'profile-saju-summary',
+            pageBuilder: (context, state) => PageTransitions.slideTransition(
+              context,
+              state,
+              const SajuSummaryPage(),
+            ),
+          ),
+          GoRoute(
+            path: 'relationships',
+            name: 'profile-relationships',
+            pageBuilder: (context, state) => PageTransitions.slideTransition(
+              context,
+              state,
+              const ProfileRelationshipsPage(),
+            ),
+          ),
+          GoRoute(
+            path: 'notifications',
+            name: 'profile-notifications',
+            pageBuilder: (context, state) => PageTransitions.slideTransition(
+              context,
+              state,
+              const NotificationSettingsPage(),
+            ),
+          ),
+        ],
       ),
       ...characterRoutes,
       GoRoute(

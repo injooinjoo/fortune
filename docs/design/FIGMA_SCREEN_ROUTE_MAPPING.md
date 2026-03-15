@@ -64,12 +64,12 @@ The latest official chat refresh currently lives on appended page `95:2` (`20 Ch
 | `chat__result__fortune_complete` | Curiosity Result Complete | `internal_state` | `#/chat?catalogState=curiosity-result&fortuneType=daily` | Completed result UI inside `CharacterChatPanel` using embedded result widgets | `lib/core/navigation/fortune_chat_route.dart`, `lib/features/character/presentation/utils/chat_catalog_preview.dart`, `lib/features/character/presentation/pages/character_chat_panel.dart`, `lib/features/character/presentation/widgets/embedded_fortune_component.dart`, `lib/features/chat/presentation/widgets/chat_saju_result_card.dart` | `live` | Deterministic seeded result payload rendered through the preview-only `/chat` contract |
 | `character__profile__luts` | Character Profile | `route` | `#/character/luts` | `CharacterProfilePage` | `lib/routes/character_routes.dart`, `lib/features/character/presentation/pages/character_profile_page.dart` | `live` | Route requires `:id`; optional `state.extra` can hydrate character data |
 | `chat__onboarding__character_intro` | Character Chat Onboarding | `internal_state` | `#/chat` | `CharacterOnboardingPage` returned early from `SwipeHomeShell` | `lib/features/character/presentation/pages/swipe_home_shell.dart`, `lib/features/character/presentation/pages/character_onboarding_page.dart`, `lib/services/storage_service.dart` | `live` | First-run storage-gated onboarding state inside `/chat` |
-| `chat__profile_sheet__default` | Chat Account Sheet | `internal_state` | bottom sheet on `/chat` | `ProfileBottomSheet` | `lib/features/chat/presentation/widgets/profile_bottom_sheet.dart` | `placeholder` | Sheet state, not its own route |
 
 ### 80 Admin / Policy / Utility
 
 | Figma card id | Visible title | Runtime kind | Runtime entry | Actual Flutter surface | Primary source files | Catalog status | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+| `account__profile__default` | Account Profile | `route` | `#/profile` | `ProfileScreen` | `lib/routes/route_config.dart`, `lib/screens/profile/profile_screen.dart`, `lib/screens/profile/profile_edit_page.dart`, `lib/screens/profile/profile_relationships_page.dart`, `lib/screens/profile/providers/character_relationships_provider.dart`, `lib/screens/profile/saju_summary_page.dart` | `live` | Logged-in profile/settings hub with legal links folded into the page instead of a chat bottom sheet |
 | `premium__insight__default` | Premium Insight | `route` | `#/premium` | `PremiumScreen` | `lib/routes/route_config.dart`, `lib/screens/premium/premium_screen.dart`, `lib/features/character/presentation/utils/fortune_chat_navigation.dart` | `live` | Dedicated premium entry route with current live capture |
 | `policy__privacy__default` | Privacy Policy | `route` | `#/privacy-policy` | `PrivacyPolicyPage` | `lib/routes/route_config.dart`, `lib/features/policy/presentation/pages/privacy_policy_page.dart` | `live` | Dedicated policy page |
 | `policy__terms__default` | Terms Of Service | `route` | `#/terms-of-service` | `TermsOfServicePage` | `lib/routes/route_config.dart`, `lib/features/policy/presentation/pages/terms_of_service_page.dart` | `live` | Dedicated policy page |
@@ -81,6 +81,10 @@ The latest official chat refresh currently lives on appended page `95:2` (`20 Ch
 | --- | --- | --- | --- |
 | `/` | `lib/routes/routes/auth_routes.dart` | intentionally not a screen card | Redirect-only route to `/chat` |
 | `/home` | `lib/routes/route_config.dart` | intentionally not a screen card | Redirect-only route to `/chat` |
+| `/profile/edit` | `lib/routes/route_config.dart`, `lib/screens/profile/profile_edit_page.dart` | currently folded into `account__profile__default` | Subroute is live in runtime but not yet captured as its own official current-state screen card |
+| `/profile/saju-summary` | `lib/routes/route_config.dart`, `lib/screens/profile/saju_summary_page.dart` | currently folded into `account__profile__default` | Subroute is live in runtime but not yet captured as its own official current-state screen card |
+| `/profile/relationships` | `lib/routes/route_config.dart`, `lib/screens/profile/profile_relationships_page.dart` | currently folded into `account__profile__default` | Subroute is live in runtime but not yet captured as its own official current-state screen card |
+| `/profile/notifications` | `lib/routes/route_config.dart`, `lib/features/notification/presentation/pages/notification_settings_page.dart` | currently folded into `account__profile__default` | Nested profile setting link reuses the existing notification settings screen without a dedicated new card yet |
 
 ## Historical Root Ranges Removed From The Official File
 

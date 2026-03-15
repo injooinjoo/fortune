@@ -24,8 +24,8 @@
 | Figma page | Total | Live | Placeholder |
 | --- | ---: | ---: | ---: |
 | `10 Entry / Auth / Onboarding` | 5 | 3 | 2 |
-| `20 Chat Home / Character` | 9 | 8 | 1 |
-| `80 Admin / Policy / Utility` | 4 | 3 | 1 |
+| `20 Chat Home / Character` | 8 | 8 | 0 |
+| `80 Admin / Policy / Utility` | 5 | 4 | 1 |
 
 Additional official pages:
 
@@ -38,7 +38,7 @@ Additional official pages:
 | Triage | Count |
 | --- | ---: |
 | `capture_next_auth` | 1 |
-| `capture_next_runtime` | 2 |
+| `capture_next_runtime` | 1 |
 | `capture_next_state_extra` | 1 |
 
 ## Screen Catalog
@@ -61,10 +61,10 @@ Additional official pages:
 - `chat__result__fortune_complete` | `#/chat?catalogState=curiosity-result&fortuneType=daily` | `live`
 - `character__profile__luts` | `#/character/luts` | `live`
 - `chat__onboarding__character_intro` | `#/chat` | `live`
-- `chat__profile_sheet__default` | bottom-sheet runtime state | `placeholder`
 
 ### 80 Admin / Policy / Utility
 
+- `account__profile__default` | `#/profile` | `live`
 - `premium__insight__default` | `#/premium` | `live`
 - `policy__privacy__default` | `#/privacy-policy` | `live`
 - `policy__terms__default` | `#/terms-of-service` | `live`
@@ -103,9 +103,12 @@ Additional official pages:
 
 ### Account, Premium, and Policy Controls
 
-- `lib/features/chat/presentation/widgets/profile_bottom_sheet.dart`
+- `lib/screens/profile/profile_screen.dart`
+- `lib/screens/profile/profile_edit_page.dart`
+- `lib/screens/profile/providers/character_relationships_provider.dart`
 - `lib/screens/premium/premium_screen.dart`
 - `lib/screens/profile/account_deletion_page.dart`
+- `lib/presentation/widgets/social_accounts_section.dart`
 - `lib/shared/components/settings_list_tile.dart`
 
 ### Design System Core

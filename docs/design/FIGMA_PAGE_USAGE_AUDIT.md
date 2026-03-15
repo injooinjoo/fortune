@@ -21,8 +21,8 @@ Repo evidence:
 | --- | --- | --- | --- |
 | `89:2` | `00 Cover & Governance` | `governance_only` | Catalog governance only |
 | `90:2` | `10 Entry / Auth / Onboarding` | `active_runtime` | `/`, `/splash`, `/signup`, `/auth/callback`, `/onboarding`, `/onboarding/toss-style` |
-| `91:2` | `20 Chat Home / Character` | `active_runtime` | `/chat`, `/character/:id`, plus internal `/chat` states for 일반 채팅, 호기심, survey, result, onboarding, and account sheet |
-| `92:2` | `80 Admin / Policy / Utility` | `active_runtime` | `/premium`, `/privacy-policy`, `/terms-of-service`, `/account-deletion` |
+| `91:2` | `20 Chat Home / Character` | `active_runtime` | `/chat`, `/character/:id`, plus internal `/chat` states for 일반 채팅, 호기심, survey, result, and onboarding |
+| `92:2` | `80 Admin / Policy / Utility` | `active_runtime` | `/profile`, `/premium`, `/privacy-policy`, `/terms-of-service`, `/account-deletion` |
 | `93:2` | `90 Components` | `governance_only` | Retained component inventory only |
 | `94:2` | `99 Archive` | `archive_only` | Removed product families and historical capture notes |
 | `95:2` | `20 Chat Home / Character (refresh append)` | `active_append` | Latest official append containing live captures for General Chat Home, Curiosity Home, Curiosity Survey Step, and Curiosity Result Complete |
@@ -50,4 +50,4 @@ The official design catalog should now be interpreted as a reduced product:
 - keep `89:2` through `94:2` as the canonical governance range
 - treat `95:2` as the latest live-refresh chat append until the `20 Chat Home / Character` page is consolidated back into the retained range
 - keep `89:2`, `93:2`, and `94:2` for governance, components, and archive
-- treat any lingering references to removed tabs or direct `/fortune`, `/trend`, `/history`, `/profile`, `/more`, or `/subscription` flows as stale artifacts
+- treat any lingering references to removed tabs or direct `/fortune`, `/trend`, `/history`, `/more`, or `/subscription` flows as stale artifacts
