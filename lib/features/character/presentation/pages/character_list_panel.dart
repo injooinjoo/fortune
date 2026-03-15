@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/l10n_extension.dart';
@@ -56,7 +55,22 @@ class CharacterListPanel extends ConsumerStatefulWidget {
 
 class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
   static const double _topChromeRevealOffset = 12;
+  final ScrollController _listScrollController = ScrollController();
   bool _showTopChrome = true;
+  double _lastScrollOffset = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _listScrollController.addListener(_handleListScroll);
+  }
+
+  @override
+  void dispose() {
+    _listScrollController.removeListener(_handleListScroll);
+    _listScrollController.dispose();
+    super.dispose();
+  }
 
   void _setTopChromeVisibility(bool visible) {
     if (_showTopChrome == visible || !mounted) {
@@ -68,35 +82,27 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
     });
   }
 
-  bool _handleScrollNotification(ScrollNotification notification) {
-    if (notification.metrics.axis != Axis.vertical) {
-      return false;
+  void _handleListScroll() {
+    if (!_listScrollController.hasClients) {
+      return;
     }
 
-    if (notification.metrics.pixels <= 0) {
+    final offset = _listScrollController.offset;
+    final delta = offset - _lastScrollOffset;
+
+    if (offset <= 0) {
+      _lastScrollOffset = 0;
       _setTopChromeVisibility(true);
-      return false;
+      return;
     }
 
-    if (notification is UserScrollNotification) {
-      switch (notification.direction) {
-        case ScrollDirection.forward:
-          _setTopChromeVisibility(true);
-          break;
-        case ScrollDirection.reverse:
-          if (notification.metrics.pixels > _topChromeRevealOffset) {
-            _setTopChromeVisibility(false);
-          }
-          break;
-        case ScrollDirection.idle:
-          break;
-      }
-    } else if (notification is ScrollUpdateNotification &&
-        notification.metrics.pixels <= _topChromeRevealOffset) {
+    if (delta > 0 && offset > _topChromeRevealOffset) {
+      _setTopChromeVisibility(false);
+    } else if (delta < 0) {
       _setTopChromeVisibility(true);
     }
 
-    return false;
+    _lastScrollOffset = offset;
   }
 
   @override
@@ -169,27 +175,25 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
               ),
               // 캐릭터 목록
               Expanded(
-                child: NotificationListener<ScrollNotification>(
-                  onNotification: _handleScrollNotification,
-                  child: ListView.builder(
-                    itemCount: characters.length,
-                    itemBuilder: (context, index) {
-                      final character = characters[index];
-                      return _CharacterListItem(
-                        character: character,
-                        previewChatState: widget.catalogPreview != null
-                            ? catalogPreviewListState(
-                                preview: widget.catalogPreview!,
-                                character: character,
-                                index: index,
-                              )
-                            : null,
-                        onTap: isCatalogPreview
-                            ? () {}
-                            : () => widget.onCharacterSelected(character),
-                      );
-                    },
-                  ),
+                child: ListView.builder(
+                  controller: _listScrollController,
+                  itemCount: characters.length,
+                  itemBuilder: (context, index) {
+                    final character = characters[index];
+                    return _CharacterListItem(
+                      character: character,
+                      previewChatState: widget.catalogPreview != null
+                          ? catalogPreviewListState(
+                              preview: widget.catalogPreview!,
+                              character: character,
+                              index: index,
+                            )
+                          : null,
+                      onTap: isCatalogPreview
+                          ? () {}
+                          : () => widget.onCharacterSelected(character),
+                    );
+                  },
                 ),
               ),
             ],
