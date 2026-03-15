@@ -21179,7 +21179,8 @@
       "path": "lib/core/models/cached_fortune_result.dart",
       "referenced_by": [
         "lib/core/services/fortune_optimization_service.dart",
-        "lib/core/services/unified_fortune_service.dart"
+        "lib/core/services/unified_fortune_service.dart",
+        "test/unit/services/unified_fortune_service_guest_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -21230,7 +21231,8 @@
         "lib/core/services/unified_fortune_service.dart",
         "lib/data/dream_interpretations_data.dart",
         "lib/features/character/presentation/providers/character_fortune_adapter.dart",
-        "test/unit/features/character/presentation/providers/character_fortune_adapter_test.dart"
+        "test/unit/features/character/presentation/providers/character_fortune_adapter_test.dart",
+        "test/unit/services/unified_fortune_service_guest_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -21719,7 +21721,8 @@
       "path": "lib/core/services/fortune_optimization_service.dart",
       "referenced_by": [
         "docs/data/FORTUNE_OPTIMIZATION_GUIDE.md",
-        "lib/core/services/unified_fortune_service.dart"
+        "lib/core/services/unified_fortune_service.dart",
+        "test/unit/services/unified_fortune_service_guest_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -21747,7 +21750,8 @@
       "notes": [],
       "path": "lib/core/services/generator_factory.dart",
       "referenced_by": [
-        "lib/core/services/unified_fortune_service.dart"
+        "lib/core/services/unified_fortune_service.dart",
+        "test/unit/services/unified_fortune_service_guest_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -21905,7 +21909,8 @@
       "path": "lib/core/services/unified_fortune_service.dart",
       "referenced_by": [
         "docs/development/FORTUNE_STANDARDIZATION_GUIDE.md",
-        "lib/features/character/presentation/providers/character_chat_provider.dart"
+        "lib/features/character/presentation/providers/character_chat_provider.dart",
+        "test/unit/services/unified_fortune_service_guest_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23673,6 +23678,21 @@
       "dirty": false,
       "kind": "dart",
       "notes": [],
+      "path": "lib/features/character/presentation/utils/character_guest_name_guard.dart",
+      "referenced_by": [
+        "lib/features/character/presentation/providers/character_chat_provider.dart",
+        "test/unit/features/character/presentation/utils/character_guest_name_guard_test.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
       "path": "lib/features/character/presentation/utils/character_tone_policy.dart",
       "referenced_by": [
         "lib/features/character/presentation/providers/character_chat_provider.dart",
@@ -24463,7 +24483,8 @@
         "lib/features/fortune/domain/models/conditions/dream_fortune_conditions.dart",
         "lib/features/fortune/domain/models/conditions/exercise_fortune_conditions.dart",
         "lib/features/fortune/domain/models/conditions/health_fortune_conditions.dart",
-        "lib/features/fortune/domain/models/conditions/love_fortune_conditions.dart"
+        "lib/features/fortune/domain/models/conditions/love_fortune_conditions.dart",
+        "test/unit/services/unified_fortune_service_guest_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -31035,6 +31056,7 @@
         "test/unit/services/auth/apple_auth_provider_test.dart",
         "test/unit/services/auth/auth_service_test.dart",
         "test/unit/services/auth/social_auth_service_test.dart",
+        "test/unit/services/unified_fortune_service_guest_test.dart",
         "test/widget/auth/social_auth_pending_state_test.dart"
       ],
       "runtime_reachable": false,
@@ -31190,6 +31212,20 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "test/unit/features/character/presentation/utils/character_guest_name_guard_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "test/unit/features/character/presentation/utils/character_tone_policy_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -31331,6 +31367,20 @@
         "no_inbound_refs"
       ],
       "path": "test/unit/services/deep_link_service_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "test/unit/services/unified_fortune_service_guest_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
       "test_only": true,
@@ -31636,24 +31686,24 @@
       "assets": 1231,
       "docs": 89,
       "integration_test": 8,
-      "lib": 394,
+      "lib": 395,
       "scripts": 70,
       "supabase": 204,
-      "test": 46
+      "test": 48
     },
     "counts_by_candidate_action": {
-      "keep": 679,
+      "keep": 680,
       "keep_generated": 28,
       "manual_review": 979,
       "phase1_remove_candidate": 14,
-      "phase2_review_candidate": 336,
+      "phase2_review_candidate": 338,
       "phase3_feature_cleanup": 6
     },
     "counts_by_usage_status": {
       "doc_only": 97,
       "generated_excluded": 28,
-      "runtime_used": 679,
-      "test_only": 55,
+      "runtime_used": 680,
+      "test_only": 57,
       "tooling_only": 184,
       "unreferenced": 999
     },
@@ -31808,8 +31858,8 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 313,
-    "lib_dart_total": 391,
+    "lib_dart_runtime_reachable": 314,
+    "lib_dart_total": 392,
     "lib_dart_zero_incoming": 28,
     "missing_function_refs": [
       "--all",
@@ -31916,7 +31966,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2042,
+    "total_files": 2045,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
