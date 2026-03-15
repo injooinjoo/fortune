@@ -21268,7 +21268,8 @@
         "lib/features/fortune/domain/entities/fortune_category.dart",
         "lib/presentation/providers/recommendation_provider.dart",
         "test/features/character/presentation/utils/chat_catalog_preview_test.dart",
-        "test/unit/core/navigation/fortune_chat_route_test.dart"
+        "test/unit/core/navigation/fortune_chat_route_test.dart",
+        "test/widget/character/character_list_panel_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23489,7 +23490,8 @@
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
-        "lib/features/character/presentation/pages/swipe_home_shell.dart"
+        "lib/features/character/presentation/pages/swipe_home_shell.dart",
+        "test/widget/character/character_list_panel_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -31334,6 +31336,20 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "test/widget/character/character_list_panel_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
       "notes": [],
       "path": "test/widget/fortune/biorhythm_test.dart",
       "referenced_by": [
@@ -31534,21 +31550,21 @@
       "lib": 393,
       "scripts": 70,
       "supabase": 204,
-      "test": 41
+      "test": 42
     },
     "counts_by_candidate_action": {
       "keep": 678,
       "keep_generated": 28,
       "manual_review": 979,
       "phase1_remove_candidate": 15,
-      "phase2_review_candidate": 330,
+      "phase2_review_candidate": 331,
       "phase3_feature_cleanup": 6
     },
     "counts_by_usage_status": {
       "doc_only": 97,
       "generated_excluded": 28,
       "runtime_used": 678,
-      "test_only": 49,
+      "test_only": 50,
       "tooling_only": 184,
       "unreferenced": 1000
     },
@@ -31811,7 +31827,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2036,
+    "total_files": 2037,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
