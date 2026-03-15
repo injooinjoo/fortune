@@ -11,11 +11,20 @@ class ChatScrollConstants {
   /// 레이아웃 계산 대기 시간
   static const Duration layoutDelay = Duration(milliseconds: 150);
 
+  /// 후속 레이아웃 변화 반영 대기 시간
+  static const Duration settleDelay = Duration(milliseconds: 80);
+
   /// 디바운스 딜레이
   static const Duration debounceDelay = Duration(milliseconds: 50);
 
   /// 스크롤 애니메이션 커브
   static const Curve scrollCurve = Curves.easeOutCubic;
+
+  /// 마지막 위치 보정 재시도 횟수
+  static const int maxBottomScrollAttempts = 6;
+
+  /// 하단 도달 판정 오차
+  static const double bottomTolerance = 12;
 }
 
 /// 채팅 스크롤 서비스
@@ -28,6 +37,8 @@ class ChatScrollService {
 
   /// 디바운스 타이머
   Timer? _debounceTimer;
+
+  int _bottomScrollRequestId = 0;
 
   /// mounted 상태 체크 콜백
   final bool Function() isMounted;
@@ -46,43 +57,92 @@ class ChatScrollService {
   ///
   /// 디바운싱 적용으로 연속 호출 시 마지막 것만 실행
   void scrollToBottom() {
-    _debounceTimer?.cancel();
-    _debounceTimer = Timer(ChatScrollConstants.debounceDelay, () {
-      _performScrollToBottom();
-    });
-  }
-
-  void _performScrollToBottom() {
-    if (!isMounted() || !scrollController.hasClients) return;
-
-    Future.delayed(ChatScrollConstants.layoutDelay, () {
-      if (!isMounted() || !scrollController.hasClients) return;
-
-      scrollController.animateTo(
-        scrollController.position.maxScrollExtent,
-        duration: ChatScrollConstants.scrollDuration,
-        curve: ChatScrollConstants.scrollCurve,
-      );
-    });
+    _scheduleBottomScroll(animated: true);
   }
 
   /// 최하단으로 즉시 스크롤 (애니메이션 없음, 초기 진입용)
   ///
   /// 채팅방 진입 시 사용. 애니메이션 없이 즉시 맨 아래로 이동.
   void scrollToBottomInstant() {
+    _scheduleBottomScroll(animated: false);
+  }
+
+  void _scheduleBottomScroll({required bool animated}) {
     _debounceTimer?.cancel();
+    final requestId = ++_bottomScrollRequestId;
     _debounceTimer = Timer(ChatScrollConstants.debounceDelay, () {
-      _performScrollToBottomInstant();
+      unawaited(
+        _performBottomScroll(
+          animated: animated,
+          requestId: requestId,
+        ),
+      );
     });
   }
 
-  void _performScrollToBottomInstant() {
-    if (!isMounted() || !scrollController.hasClients) return;
+  Future<void> _performBottomScroll({
+    required bool animated,
+    required int requestId,
+  }) async {
+    var previousMaxScrollExtent = -1.0;
 
-    Future.delayed(ChatScrollConstants.layoutDelay, () {
-      if (!isMounted() || !scrollController.hasClients) return;
-      scrollController.jumpTo(scrollController.position.maxScrollExtent);
-    });
+    for (var attempt = 0;
+        attempt < ChatScrollConstants.maxBottomScrollAttempts;
+        attempt++) {
+      final delay = attempt == 0
+          ? ChatScrollConstants.layoutDelay
+          : ChatScrollConstants.settleDelay;
+      await Future<void>.delayed(delay);
+
+      if (!_isActiveRequest(requestId)) {
+        return;
+      }
+
+      final position = scrollController.position;
+      if (!position.hasContentDimensions) {
+        continue;
+      }
+
+      final maxScrollExtent = position.maxScrollExtent;
+      final distanceToBottom = maxScrollExtent - position.pixels;
+      final needsScroll =
+          distanceToBottom.abs() > ChatScrollConstants.bottomTolerance;
+
+      if (needsScroll) {
+        if (animated && attempt == 0) {
+          try {
+            await scrollController.animateTo(
+              maxScrollExtent,
+              duration: ChatScrollConstants.scrollDuration,
+              curve: ChatScrollConstants.scrollCurve,
+            );
+          } catch (_) {
+            return;
+          }
+        } else {
+          scrollController.jumpTo(maxScrollExtent);
+        }
+      }
+
+      final updatedDistance = scrollController.position.maxScrollExtent -
+          scrollController.position.pixels;
+      final extentChanged =
+          (scrollController.position.maxScrollExtent - previousMaxScrollExtent)
+                  .abs() >
+              ChatScrollConstants.bottomTolerance;
+      previousMaxScrollExtent = scrollController.position.maxScrollExtent;
+
+      if (!extentChanged &&
+          updatedDistance.abs() <= ChatScrollConstants.bottomTolerance) {
+        return;
+      }
+    }
+  }
+
+  bool _isActiveRequest(int requestId) {
+    return isMounted() &&
+        scrollController.hasClients &&
+        requestId == _bottomScrollRequestId;
   }
 
   /// 결과 카드 헤더로 스크롤
@@ -118,7 +178,7 @@ class ChatScrollService {
         curve: ChatScrollConstants.scrollCurve,
       ).catchError((error) {
         debugPrint('⚠️ [ChatScrollService] scrollToCardTop failed: $error');
-        _performScrollToBottom();
+        _scheduleBottomScroll(animated: true);
       });
     });
   }
