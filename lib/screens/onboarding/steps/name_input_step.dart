@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../services/social_auth_service.dart';
-import '../../../services/social_auth/base/social_auth_attempt_result.dart';
 import '../../../presentation/widgets/social_login_bottom_sheet.dart';
 import '../../../core/providers/user_settings_provider.dart';
 
@@ -68,69 +67,12 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
   }
 
   Future<void> _showSocialLoginBottomSheet(BuildContext context) async {
-    await SocialLoginBottomSheet.show(
+    await SocialLoginBottomSheet.showForAuthentication(
       context,
-      onGoogleLogin: () => _handleSocialLogin(
-        provider: 'google',
-        loginAction: () =>
-            _socialAuthService.signInWithGoogle(context: context),
-      ),
-      onAppleLogin: () => _handleSocialLogin(
-        provider: 'apple',
-        loginAction: _socialAuthService.signInWithApple,
-      ),
-      onKakaoLogin: () async {},
-      onNaverLogin: () async {},
       ref: ref,
+      socialAuthService: _socialAuthService,
+      onAuthenticated: () => context.go('/chat'),
     );
-  }
-
-  Future<void> _handleSocialLogin({
-    required String provider,
-    required Future<SocialAuthAttemptResult> Function() loginAction,
-  }) async {
-    if (!mounted) return;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$provider 로그인 시도 중...'),
-        duration: const Duration(seconds: 1),
-      ),
-    );
-
-    try {
-      final result = await loginAction();
-
-      if (!mounted) return;
-      if (result.isAuthenticated) {
-        context.go('/chat');
-        return;
-      }
-
-      if (result.isPendingExternalAuth) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('브라우저에서 인증을 완료해 주세요. 완료되면 앱으로 돌아옵니다.'),
-            duration: Duration(seconds: 4),
-          ),
-        );
-      }
-    } catch (error) {
-      if (!mounted) return;
-      final errorMessage = error.toString();
-      if (errorMessage.toLowerCase().contains('cancel')) {
-        return;
-      }
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('$provider 로그인 실패: $errorMessage'),
-          backgroundColor: context.colors.error,
-          duration: const Duration(seconds: 5),
-        ),
-      );
-    }
   }
 
   @override

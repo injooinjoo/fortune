@@ -3,14 +3,47 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/design_system/design_system.dart';
 import '../../core/services/fortune_haptic_service.dart';
+import '../../services/social_auth/base/social_auth_attempt_result.dart';
+import '../../services/social_auth_service.dart';
 
 typedef SocialLoginAction = Future<void> Function();
 
 /// 재사용 가능한 소셜 로그인 BottomSheet
 /// Landing Page, Onboarding 등 여러 곳에서 사용 가능
 class SocialLoginBottomSheet {
+  static Future<void> showForAuthentication(
+    BuildContext context, {
+    required WidgetRef ref,
+    SocialAuthService? socialAuthService,
+    VoidCallback? onAuthenticated,
+  }) async {
+    final authService =
+        socialAuthService ?? SocialAuthService(Supabase.instance.client);
+
+    await show(
+      context,
+      onGoogleLogin: () => _handleSocialLogin(
+        context: context,
+        providerLabel: 'Google',
+        loginAction: () => authService.signInWithGoogle(context: context),
+        onAuthenticated: onAuthenticated,
+      ),
+      onAppleLogin: () => _handleSocialLogin(
+        context: context,
+        providerLabel: 'Apple',
+        loginAction: authService.signInWithApple,
+        onAuthenticated: onAuthenticated,
+      ),
+      onKakaoLogin: () async {},
+      onNaverLogin: () async {},
+      ref: ref,
+    );
+  }
+
   /// BottomSheet를 표시하고 사용자의 선택을 반환
   static Future<void> show(
     BuildContext context, {
@@ -131,6 +164,65 @@ class SocialLoginBottomSheet {
         );
       },
     );
+  }
+
+  static Future<void> _handleSocialLogin({
+    required BuildContext context,
+    required String providerLabel,
+    required Future<SocialAuthAttemptResult> Function() loginAction,
+    VoidCallback? onAuthenticated,
+  }) async {
+    if (!context.mounted) return;
+
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text('$providerLabel 로그인 시도 중...'),
+        duration: const Duration(seconds: 1),
+      ),
+    );
+
+    try {
+      final result = await loginAction();
+
+      if (!context.mounted) return;
+      messenger.hideCurrentSnackBar();
+
+      if (result.isAuthenticated) {
+        if (onAuthenticated != null) {
+          onAuthenticated();
+        } else {
+          context.go('/chat');
+        }
+        return;
+      }
+
+      if (result.isPendingExternalAuth) {
+        messenger.showSnackBar(
+          const SnackBar(
+            content: Text('브라우저에서 인증을 완료해 주세요. 완료되면 앱으로 돌아옵니다.'),
+            duration: Duration(seconds: 4),
+          ),
+        );
+      }
+    } catch (error) {
+      if (!context.mounted) return;
+
+      final errorMessage = error.toString();
+      if (errorMessage.toLowerCase().contains('cancel')) {
+        messenger.hideCurrentSnackBar();
+        return;
+      }
+
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('$providerLabel 로그인 실패: $errorMessage'),
+          backgroundColor: context.colors.error,
+          duration: const Duration(seconds: 5),
+        ),
+      );
+    }
   }
 
   /// 소셜 로그인 버튼 빌더

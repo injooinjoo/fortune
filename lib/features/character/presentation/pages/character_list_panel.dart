@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/extensions/l10n_extension.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/navigation/fortune_chat_route.dart';
@@ -13,6 +14,7 @@ import '../../domain/models/character_chat_message.dart';
 import '../../domain/models/character_chat_state.dart';
 import '../utils/character_accent_palette.dart';
 import '../utils/chat_catalog_preview.dart';
+import '../utils/profile_avatar_tap_handler.dart';
 import '../providers/character_chat_provider.dart';
 import '../providers/character_provider.dart';
 import '../widgets/wave_typing_indicator.dart';
@@ -240,14 +242,21 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
           const SizedBox(width: 4),
           // 프로필 이미지 (설정으로 이동)
           GestureDetector(
-            onTap: () {
+            onTap: () async {
               HapticUtils.lightImpact();
-              showModalBottomSheet<void>(
+              await handleProfileAvatarTap(
                 context: context,
-                isScrollControlled: true,
-                backgroundColor: Colors.transparent,
-                barrierColor: DSColors.overlay,
-                builder: (_) => const ProfileBottomSheet(),
+                ref: ref,
+                currentUser: Supabase.instance.client.auth.currentUser,
+                openProfileSheet: () async {
+                  await showModalBottomSheet<void>(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    barrierColor: DSColors.overlay,
+                    builder: (_) => const ProfileBottomSheet(),
+                  );
+                },
               );
             },
             child: CircleAvatar(
