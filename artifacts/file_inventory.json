@@ -20182,7 +20182,9 @@
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/models/user_profile.dart",
         "lib/presentation/providers/user_profile_notifier.dart",
-        "lib/screens/onboarding/onboarding_page.dart"
+        "lib/screens/onboarding/onboarding_page.dart",
+        "lib/screens/profile/profile_edit_page.dart",
+        "lib/screens/profile/profile_screen.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -20197,6 +20199,7 @@
       "path": "lib/core/cache/cache_service.dart",
       "referenced_by": [
         "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
+        "lib/screens/profile/profile_screen.dart",
         "lib/services/account_deletion_service.dart"
       ],
       "runtime_reachable": true,
@@ -20830,6 +20833,10 @@
         "lib/screens/onboarding/steps/name_input_step.dart",
         "lib/screens/premium/premium_screen.dart",
         "lib/screens/profile/account_deletion_page.dart",
+        "lib/screens/profile/profile_edit_page.dart",
+        "lib/screens/profile/profile_relationships_page.dart",
+        "lib/screens/profile/profile_screen.dart",
+        "lib/screens/profile/saju_summary_page.dart",
         "lib/screens/splash_screen.dart",
         "lib/shared/components/app_header.dart",
         "lib/shared/components/cards/fortune_cards.dart",
@@ -21940,15 +21947,13 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
+      "notes": [],
       "path": "lib/core/theme/app_dimensions.dart",
       "referenced_by": [
         "lib/presentation/widgets/common/custom_card.dart",
         "lib/presentation/widgets/social_accounts_section.dart"
       ],
-      "runtime_reachable": false,
+      "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -23186,7 +23191,8 @@
       "referenced_by": [
         "lib/features/character/presentation/pages/character_profile_page.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "lib/features/character/presentation/providers/character_provider.dart"
+        "lib/features/character/presentation/providers/character_provider.dart",
+        "test/unit/screens/profile/character_relationships_provider_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23354,7 +23360,8 @@
         "lib/features/character/presentation/utils/chat_catalog_preview.dart",
         "lib/features/character/presentation/widgets/character_choice_widget.dart",
         "lib/features/character/presentation/widgets/character_message_bubble.dart",
-        "lib/routes/character_routes.dart"
+        "lib/routes/character_routes.dart",
+        "lib/screens/profile/providers/character_relationships_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23389,7 +23396,9 @@
         "lib/features/character/domain/models/character_chat_state.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/character/presentation/utils/character_tone_policy.dart",
-        "test/unit/features/character/presentation/utils/character_tone_policy_test.dart"
+        "lib/screens/profile/providers/character_relationships_provider.dart",
+        "test/unit/features/character/presentation/utils/character_tone_policy_test.dart",
+        "test/unit/screens/profile/character_relationships_provider_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23418,7 +23427,8 @@
         "test/unit/features/character/data/services/character_proactive_media_service_test.dart",
         "test/unit/features/character/domain/models/character_chat_message_test.dart",
         "test/unit/features/character/presentation/providers/character_chat_provider_test.dart",
-        "test/unit/features/character/presentation/utils/character_tone_policy_test.dart"
+        "test/unit/features/character/presentation/utils/character_tone_policy_test.dart",
+        "test/unit/screens/profile/character_relationships_provider_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23435,7 +23445,9 @@
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "lib/features/character/presentation/utils/chat_catalog_preview.dart"
+        "lib/features/character/presentation/utils/chat_catalog_preview.dart",
+        "lib/screens/profile/providers/character_relationships_provider.dart",
+        "test/unit/screens/profile/character_relationships_provider_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23585,6 +23597,7 @@
         "lib/features/character/presentation/pages/character_profile_page.dart",
         "lib/features/character/presentation/providers/sorted_characters_provider.dart",
         "lib/presentation/providers/auth_provider.dart",
+        "lib/screens/profile/providers/character_relationships_provider.dart",
         "test/unit/features/character/presentation/providers/character_chat_provider_test.dart"
       ],
       "runtime_reachable": true,
@@ -23636,7 +23649,8 @@
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/character/presentation/providers/sorted_characters_provider.dart",
-        "lib/features/character/presentation/utils/chat_catalog_preview.dart"
+        "lib/features/character/presentation/utils/chat_catalog_preview.dart",
+        "lib/screens/profile/providers/character_relationships_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23968,19 +23982,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
-      "path": "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
-      "referenced_by": [
-        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
-        "lib/features/character/presentation/pages/character_list_panel.dart"
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
-      "runtime_reachable": true,
+      "path": "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -24771,7 +24785,9 @@
       "notes": [],
       "path": "lib/features/fortune/presentation/providers/saju_provider.dart",
       "referenced_by": [
-        "lib/features/character/presentation/providers/character_chat_provider.dart"
+        "lib/features/character/presentation/providers/character_chat_provider.dart",
+        "lib/screens/profile/profile_screen.dart",
+        "lib/screens/profile/saju_summary_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -25045,19 +25061,18 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase3_feature_cleanup",
+      "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
+      "notes": [],
       "path": "lib/features/notification/presentation/pages/notification_settings_page.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
+      "referenced_by": [
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
+        "lib/routes/route_config.dart"
+      ],
+      "runtime_reachable": true,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "runtime_used"
     },
     {
       "area": "lib",
@@ -25368,7 +25383,10 @@
       "referenced_by": [
         "lib/data/models/user_profile.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "lib/screens/onboarding/onboarding_page.dart"
+        "lib/screens/onboarding/onboarding_page.dart",
+        "lib/screens/profile/profile_edit_page.dart",
+        "lib/screens/profile/profile_screen.dart",
+        "lib/screens/profile/saju_summary_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -25527,7 +25545,10 @@
         "lib/presentation/providers/social_auth_provider.dart",
         "lib/presentation/providers/today_fortune_provider.dart",
         "lib/presentation/providers/token_provider.dart",
-        "lib/presentation/providers/user_profile_notifier.dart"
+        "lib/presentation/providers/user_profile_notifier.dart",
+        "lib/screens/profile/profile_edit_page.dart",
+        "lib/screens/profile/profile_screen.dart",
+        "lib/screens/profile/saju_summary_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -25737,35 +25758,33 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
+      "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
+      "notes": [],
       "path": "lib/presentation/widgets/profile_image_picker.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
+      "referenced_by": [
+        "lib/screens/profile/profile_edit_page.dart"
+      ],
+      "runtime_reachable": true,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "runtime_used"
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
+      "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
+      "notes": [],
       "path": "lib/presentation/widgets/social_accounts_section.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "lib/screens/profile/profile_screen.dart",
         "test/widget/auth/social_auth_pending_state_test.dart"
       ],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
     },
     {
       "area": "lib",
@@ -25962,6 +25981,86 @@
       "path": "lib/screens/profile/account_deletion_page.dart",
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
+        "lib/routes/route_config.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
+      "path": "lib/screens/profile/profile_edit_page.dart",
+      "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
+        "lib/routes/route_config.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
+      "path": "lib/screens/profile/profile_relationships_page.dart",
+      "referenced_by": [
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
+        "lib/routes/route_config.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
+      "path": "lib/screens/profile/profile_screen.dart",
+      "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
+        "lib/routes/route_config.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
+      "path": "lib/screens/profile/providers/character_relationships_provider.dart",
+      "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
+        "lib/screens/profile/profile_relationships_page.dart",
+        "lib/screens/profile/profile_screen.dart",
+        "test/unit/screens/profile/character_relationships_provider_test.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
+      "path": "lib/screens/profile/saju_summary_page.dart",
+      "referenced_by": [
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/routes/route_config.dart"
       ],
@@ -26437,14 +26536,13 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
+      "notes": [],
       "path": "lib/services/supabase_storage_service.dart",
       "referenced_by": [
-        "lib/presentation/widgets/profile_image_picker.dart"
+        "lib/presentation/widgets/profile_image_picker.dart",
+        "lib/screens/profile/profile_edit_page.dart"
       ],
-      "runtime_reachable": false,
+      "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -26714,7 +26812,8 @@
       "path": "lib/utils/date_utils.dart",
       "referenced_by": [
         "lib/presentation/providers/user_profile_notifier.dart",
-        "lib/screens/onboarding/onboarding_page.dart"
+        "lib/screens/onboarding/onboarding_page.dart",
+        "lib/screens/profile/profile_edit_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -31346,6 +31445,20 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "test/unit/screens/profile/character_relationships_provider_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "test/unit/services/auth/apple_auth_provider_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -31722,26 +31835,26 @@
       "assets": 1231,
       "docs": 89,
       "integration_test": 8,
-      "lib": 396,
+      "lib": 401,
       "scripts": 70,
       "supabase": 204,
-      "test": 49
+      "test": 50
     },
     "counts_by_candidate_action": {
-      "keep": 681,
+      "keep": 688,
       "keep_generated": 28,
       "manual_review": 979,
       "phase1_remove_candidate": 14,
       "phase2_review_candidate": 339,
-      "phase3_feature_cleanup": 6
+      "phase3_feature_cleanup": 5
     },
     "counts_by_usage_status": {
       "doc_only": 97,
       "generated_excluded": 28,
-      "runtime_used": 681,
+      "runtime_used": 688,
       "test_only": 58,
       "tooling_only": 184,
-      "unreferenced": 999
+      "unreferenced": 998
     },
     "declared_asset_dirs_without_runtime_refs": [
       "assets/animations",
@@ -31894,9 +32007,9 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 315,
-    "lib_dart_total": 393,
-    "lib_dart_zero_incoming": 28,
+    "lib_dart_runtime_reachable": 324,
+    "lib_dart_total": 398,
+    "lib_dart_zero_incoming": 27,
     "missing_function_refs": [
       "--all",
       "account-deletion",
@@ -32002,7 +32115,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2047,
+    "total_files": 2053,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
