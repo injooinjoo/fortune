@@ -23397,6 +23397,7 @@
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/character/presentation/utils/character_tone_policy.dart",
         "lib/screens/profile/providers/character_relationships_provider.dart",
+        "test/unit/features/character/presentation/providers/character_chat_provider_test.dart",
         "test/unit/features/character/presentation/utils/character_tone_policy_test.dart",
         "test/unit/screens/profile/character_relationships_provider_test.dart"
       ],
