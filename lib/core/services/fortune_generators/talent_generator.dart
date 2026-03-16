@@ -74,7 +74,7 @@ class TalentGenerator {
       // Edge Function 호출
       final response = await supabase.functions.invoke(
         'fortune-talent',
-        body: utf8.encode(jsonEncode(requestBody)),
+        body: jsonEncode(requestBody),
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
         },

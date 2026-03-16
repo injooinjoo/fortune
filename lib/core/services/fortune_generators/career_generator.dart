@@ -73,6 +73,8 @@ class CareerGenerator {
         'fortune_type': careerType.replaceAll('-', '_'),
         'current_role': currentRole,
         'goal': goal,
+        if (goal.isNotEmpty) 'careerGoal': goal,
+        if (goal.isNotEmpty) 'career_goal': goal,
         'time_horizon': timeHorizon,
         'career_path': inputConditions['career_path'],
         'selected_skills': inputConditions['selected_skills'],
@@ -109,7 +111,7 @@ class CareerGenerator {
       // Edge Function 호출
       final response = await supabase.functions.invoke(
         'fortune-career',
-        body: utf8.encode(jsonEncode(requestBody)),
+        body: jsonEncode(requestBody),
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
         },
@@ -154,6 +156,12 @@ class CareerGenerator {
     final summary = data['summary'] as String? ?? '';
     final score = data['score'] as int?;
 
+    final currentRole =
+        inputConditions['current_role'] ?? inputConditions['currentRole'];
+    final goal = inputConditions['goal'] ?? inputConditions['careerGoal'];
+    final timeHorizon =
+        inputConditions['time_horizon'] ?? inputConditions['timeHorizon'];
+
     return FortuneResult(
       type: careerType,
       title: _getCareerTitle(careerType),
@@ -161,17 +169,17 @@ class CareerGenerator {
         'message': summary,
         'score': score,
         'career_info': {
-          'current_role': inputConditions['current_role'],
-          'goal': inputConditions['goal'],
-          'time_horizon': inputConditions['time_horizon'],
+          'current_role': currentRole,
+          'goal': goal,
+          'time_horizon': timeHorizon,
         },
       },
       data: {
         'content': content,
         'fortune_data': fortuneData,
-        'current_role': inputConditions['current_role'],
-        'goal': inputConditions['goal'],
-        'time_horizon': inputConditions['time_horizon'],
+        'current_role': currentRole,
+        'goal': goal,
+        'time_horizon': timeHorizon,
         'career_path': inputConditions['career_path'],
         'selected_skills': inputConditions['selected_skills'],
       },

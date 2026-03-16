@@ -117,7 +117,7 @@ class ExLoverGenerator {
       // Edge Function 호출
       final response = await supabase.functions.invoke(
         'fortune-ex-lover',
-        body: utf8.encode(jsonEncode(requestBody)),
+        body: jsonEncode(requestBody),
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
         },

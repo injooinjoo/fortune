@@ -78,8 +78,8 @@ class CompatibilityGenerator {
 
       Logger.info('[CompatibilityGenerator] 📡 API 호출 중...');
 
-      // ✅ UTF-8 인코딩을 위해 JSON 문자열로 변환
-      final jsonBody = utf8.encode(jsonEncode(requestBody));
+      // ✅ JSON 문자열을 그대로 전송해 Edge Function req.json()과 맞춘다.
+      final jsonBody = jsonEncode(requestBody);
 
       // Edge Function 호출
       final response = await supabase.functions.invoke(
