@@ -512,10 +512,10 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
     // 마지막 메시지가 캐릭터인지 확인
     final isLastMessageFromCharacter = chatState.messages.isNotEmpty &&
         chatState.messages.last.type == CharacterChatMessageType.character;
-    // 읽지 않은 메시지 (빨간 점)
-    final hasUnread = unreadCount > 0 && isLastMessageFromCharacter;
-    // 내 차례 (읽었든 안읽었든, 캐릭터가 마지막이면 표시)
-    final isMyTurn = hasConversation && isLastMessageFromCharacter;
+    // 읽지 않은 메시지가 있으면 내 차례 대신 숫자 배지를 우선 표시한다.
+    final hasUnread = unreadCount > 0;
+    final isMyTurn =
+        hasConversation && isLastMessageFromCharacter && !hasUnread;
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -665,25 +665,6 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                     const Center(child: MiniTypingIndicator()),
                               ),
                             ),
-                          // 읽지 않은 메시지 빨간 점
-                          if (hasUnread && !isTyping)
-                            Positioned(
-                              right: 0,
-                              top: 0,
-                              child: Container(
-                                width: 10,
-                                height: 10,
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Theme.of(context)
-                                        .scaffoldBackgroundColor,
-                                    width: 1.5,
-                                  ),
-                                ),
-                              ),
-                            ),
                         ],
                       ),
                     ),
@@ -821,24 +802,28 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                   .withValues(alpha: 0.45),
                             ),
                           ),
-                        if (isMyTurn) ...[
+                        if (hasUnread) ...[
+                          const SizedBox(height: 6),
+                          DSBadge(
+                            count: unreadCount,
+                            color: DSBadgeColor.error,
+                            style: DSBadgeStyle.pill,
+                          ),
+                        ] else if (isMyTurn) ...[
                           const SizedBox(height: 6),
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .primary
-                                  .withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(10),
+                              color: context.colors.backgroundSecondary,
+                              borderRadius:
+                                  BorderRadius.circular(context.radius.full),
                             ),
                             child: Text(
                               context.l10n.yourTurn,
-                              style: TextStyle(
-                                fontSize: 11,
+                              style: context.typography.labelSmall.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: Theme.of(context).colorScheme.primary,
+                                color: context.colors.textPrimary,
                               ),
                             ),
                           ),
