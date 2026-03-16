@@ -123,12 +123,15 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
     )
 
-    const { birthDate, name, isPremium } = await req.json()
+    const { birthDate, name, isPremium, targetDate } = await req.json()
 
     // 생년월일에서 총 일수 계산
     const birth = new Date(birthDate)
-    const today = new Date()
-    const totalDays = Math.floor((today.getTime() - birth.getTime()) / (1000 * 60 * 60 * 24))
+    const requestedDate = targetDate ? new Date(targetDate) : new Date()
+    const analysisDate = Number.isNaN(requestedDate.getTime())
+      ? new Date()
+      : requestedDate
+    const totalDays = Math.floor((analysisDate.getTime() - birth.getTime()) / (1000 * 60 * 60 * 24))
 
     // 바이오리듬 계산 (23일, 28일, 33일 주기)
     const physicalValue = Math.sin(2 * Math.PI * totalDays / 23) * 100
@@ -260,7 +263,8 @@ ${Array.from({ length: 7 }, (_, i) => {
   const p = Math.sin(2 * Math.PI * day / 23) * 100
   const e = Math.sin(2 * Math.PI * day / 28) * 100
   const intel = Math.sin(2 * Math.PI * day / 33) * 100
-  const dayName = new Date(Date.now() + i * 24 * 60 * 60 * 1000).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric', weekday: 'short' })
+  const forecastDate = new Date(analysisDate.getTime() + i * 24 * 60 * 60 * 1000)
+  const dayName = forecastDate.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric', weekday: 'short' })
   return `- ${dayName}: 신체(${p.toFixed(0)}), 감정(${e.toFixed(0)}), 지적(${intel.toFixed(0)})`
 }).join('\n')}
 
@@ -340,12 +344,16 @@ ${Array.from({ length: 7 }, (_, i) => {
     )
 
   } catch (error) {
+    const errorMessage = error instanceof Error
+      ? error.message
+      : '바이오리듬 분석 중 오류가 발생했습니다'
+    const errorStack = error instanceof Error ? error.stack : undefined
     console.error('❌ Biorhythm Error:', error)
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message || '바이오리듬 분석 중 오류가 발생했습니다',
-        details: error.stack
+        error: errorMessage,
+        details: errorStack
       }),
       {
         status: 500,

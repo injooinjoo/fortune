@@ -452,10 +452,13 @@ class GeneratorFactory {
     return null;
   }
 
-  Future<FortuneResult> _generateBiorhythm(Map<String, dynamic> input) async {
+  Future<FortuneResult> _generateBiorhythm(
+    Map<String, dynamic> input,
+  ) async {
+    final payload = _normalizeBiorhythmPayload(input);
     final response = await _supabase.functions.invoke(
       'fortune-biorhythm',
-      body: input,
+      body: payload,
     );
 
     if (response.data == null) {
@@ -468,13 +471,64 @@ class GeneratorFactory {
     }
 
     final fortune = data['data'] as Map<String, dynamic>;
+    final summary = _normalizeBiorhythmSummary(fortune);
     return FortuneResult(
       type: 'biorhythm',
       title: fortune['title'] as String? ?? '바이오리듬',
-      summary: fortune['summary'] as Map<String, dynamic>? ?? {},
+      summary: summary,
       data: fortune,
       createdAt: DateTime.now(),
     );
+  }
+
+  Map<String, dynamic> _normalizeBiorhythmPayload(Map<String, dynamic> input) {
+    final payload = Map<String, dynamic>.from(input);
+    final targetDate = _extractNormalizedDateString(
+      payload['targetDate'] ?? payload['target_date'],
+    );
+
+    if (targetDate != null) {
+      payload['targetDate'] = targetDate;
+      payload['target_date'] = targetDate;
+    }
+
+    return payload;
+  }
+
+  Map<String, dynamic> _normalizeBiorhythmSummary(
+    Map<String, dynamic> fortune,
+  ) {
+    final summary = _asStringKeyedMap(fortune['summary']);
+    if (summary.isNotEmpty) {
+      return summary;
+    }
+
+    final message = _firstNonEmptyString([
+      fortune['summary'],
+      fortune['status_message'],
+      fortune['content'],
+      fortune['advice'],
+      fortune['title'],
+    ]);
+
+    return message == null ? const {} : {'message': message};
+  }
+
+  String? _extractNormalizedDateString(dynamic rawValue) {
+    final rawMap = _asStringKeyedMap(rawValue);
+    if (rawMap.isNotEmpty) {
+      final selectedDate = _firstNonEmptyString([
+        rawMap['selectedDate'],
+        rawMap['selected_date'],
+        rawMap['date'],
+      ]);
+      if (selectedDate != null) {
+        return selectedDate.split('T').first;
+      }
+    }
+
+    final dateString = _readOptionalString(rawValue);
+    return dateString?.split('T').first;
   }
 
   Future<FortuneResult> _generateMatchInsight(

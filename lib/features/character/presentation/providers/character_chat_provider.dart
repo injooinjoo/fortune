@@ -3133,6 +3133,28 @@ $enrichedContext
       return normalizedAnswers;
     }
 
+    // ─── biorhythm: 설문 날짜 객체 → API 날짜 문자열 매핑 ───
+    if (apiFortuneType == 'biorhythm') {
+      final targetDate =
+          normalizedAnswers['targetDate'] ?? normalizedAnswers['target_date'];
+      String? normalizedTargetDate;
+
+      if (targetDate is Map) {
+        final selectedDate = _stringValue(targetDate['selectedDate']);
+        final rawDate = _stringValue(targetDate['date']);
+        normalizedTargetDate = selectedDate ?? rawDate?.split('T').first;
+      } else {
+        normalizedTargetDate = _stringValue(targetDate)?.split('T').first;
+      }
+
+      if (normalizedTargetDate != null) {
+        normalizedAnswers['targetDate'] = normalizedTargetDate;
+        normalizedAnswers['target_date'] = normalizedTargetDate;
+      }
+
+      return normalizedAnswers;
+    }
+
     // ─── dream: 설문 필드 → API 필드 매핑 ───
     if (apiFortuneType == 'dream') {
       final dreamContent = _stringValue(normalizedAnswers['dream']) ??
