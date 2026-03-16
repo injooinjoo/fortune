@@ -80,7 +80,8 @@ void main() {
       expect(inactiveState.unreadCount, 1);
     });
 
-    test('startFreshFortuneSession replaces timeline and preserves affinity',
+    test(
+        'startFreshFortuneSession archives previous timeline and preserves affinity',
         () {
       final container = ProviderContainer();
       addTearDown(container.dispose);
@@ -108,10 +109,14 @@ void main() {
 
       final state = container.read(characterChatProvider('luts'));
       expect(state.messages, hasLength(2));
+      expect(state.archivedMessages, hasLength(2));
+      expect(state.archivedMessages.first.text, '이전 캐릭터 메시지');
+      expect(state.archivedMessages.last.text, '이전 사용자 메시지');
       expect(state.messages.first.text, '좋아요. 오늘 흐름을 빠르게 정리해볼게요.');
       expect(state.messages.last.text, '오늘 하루 흐름이 궁금해요.');
       expect(state.messages.last.type, CharacterChatMessageType.user);
       expect(state.messages.last.id, anchorId);
+      expect(state.persistedMessages, hasLength(4));
       expect(state.affinity.lovePoints, 320);
       expect(state.affinity.phase, AffinityPhase.friend);
     });

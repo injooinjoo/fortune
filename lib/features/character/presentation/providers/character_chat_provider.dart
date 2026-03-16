@@ -1319,13 +1319,20 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   void _replaceConversationTimeline(
     List<CharacterChatMessage> messages, {
     required bool isProcessing,
+    bool archiveExistingMessages = false,
   }) {
     _isUserDrafting = false;
     _cancelReadIdleIcebreaker();
     cancelFollowUp();
 
+    final archivedMessages =
+        archiveExistingMessages && state.messages.isNotEmpty
+            ? [...state.archivedMessages, ...state.messages]
+            : state.archivedMessages;
+
     state = state.copyWith(
       messages: messages,
+      archivedMessages: archivedMessages,
       isTyping: false,
       isProcessing: isProcessing,
       isCharacterTyping: false,
@@ -1355,6 +1362,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     _replaceConversationTimeline(
       [intro, user],
       isProcessing: true,
+      archiveExistingMessages: !_isFreshConversationForManualStart(),
     );
 
     return user.id;
@@ -1374,6 +1382,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     _replaceConversationTimeline(
       [opening, user],
       isProcessing: true,
+      archiveExistingMessages: state.messages.isNotEmpty,
     );
 
     return user.id;
@@ -1886,16 +1895,17 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
   /// DB 동기화 큐에 메시지 추가 (debounced)
   void _queueForSync() {
-    if (state.messages.isEmpty) return;
+    final persistedMessages = state.persistedMessages;
+    if (persistedMessages.isEmpty) return;
 
     // ⚡ 로컬 저장 (debounced 3초) - 스트리밍 중 매번 저장하지 않음
-    _localService.saveConversationDebounced(_characterId, state.messages);
+    _localService.saveConversationDebounced(_characterId, persistedMessages);
 
     // 서버 동기화 (debounced 3초)
     ChatSyncService.instance.queueForSync(
       chatId: _characterId,
       chatType: 'character',
-      messages: state.messages.map((m) => m.toJson()).toList(),
+      messages: persistedMessages.map((m) => m.toJson()).toList(),
     );
   }
 
@@ -4000,6 +4010,7 @@ $enrichedContext
         // DB에서 불러온 대화가 있으면 사용
         state = state.copyWith(
           messages: messages,
+          archivedMessages: const [],
           isLoading: false,
           isInitialized: true,
         );
@@ -4018,6 +4029,7 @@ $enrichedContext
             _buildFirstMeetOpening(), _characterId);
         state = state.copyWith(
           messages: [firstMessage],
+          archivedMessages: const [],
           isLoading: false,
           isInitialized: true,
         );
@@ -4028,6 +4040,7 @@ $enrichedContext
           _buildFirstMeetOpening(), _characterId);
       state = state.copyWith(
         messages: [firstMessage],
+        archivedMessages: const [],
         isLoading: false,
         isInitialized: true,
       );
@@ -4043,9 +4056,10 @@ $enrichedContext
     await _localService.flushPendingConversations();
 
     // 메시지가 없으면 저장 안 함
-    if (state.messages.isEmpty) return true;
+    final persistedMessages = state.persistedMessages;
+    if (persistedMessages.isEmpty) return true;
 
-    return await _service.saveConversation(_characterId, state.messages);
+    return await _service.saveConversation(_characterId, persistedMessages);
   }
 
   /// 선택지 메시지 추가

@@ -5,6 +5,7 @@ import 'character_affinity.dart';
 class CharacterChatState {
   final String characterId;
   final List<CharacterChatMessage> messages;
+  final List<CharacterChatMessage> archivedMessages;
   final bool isTyping;
   final bool isProcessing;
   final bool isLoading;
@@ -17,6 +18,7 @@ class CharacterChatState {
   const CharacterChatState({
     required this.characterId,
     this.messages = const [],
+    this.archivedMessages = const [],
     this.isTyping = false,
     this.isProcessing = false,
     this.isLoading = false,
@@ -38,6 +40,14 @@ class CharacterChatState {
   /// 대화 존재 여부
   bool get hasConversation => messages.isNotEmpty;
 
+  /// 저장/동기화용 전체 대화 목록
+  List<CharacterChatMessage> get persistedMessages {
+    if (archivedMessages.isEmpty) {
+      return messages;
+    }
+    return [...archivedMessages, ...messages];
+  }
+
   /// 마지막 메시지 미리보기 (최대 30자)
   String get lastMessagePreview {
     if (messages.isEmpty) return '새 대화';
@@ -55,6 +65,7 @@ class CharacterChatState {
   CharacterChatState copyWith({
     String? characterId,
     List<CharacterChatMessage>? messages,
+    List<CharacterChatMessage>? archivedMessages,
     bool? isTyping,
     bool? isProcessing,
     bool? isLoading,
@@ -67,6 +78,7 @@ class CharacterChatState {
     return CharacterChatState(
       characterId: characterId ?? this.characterId,
       messages: messages ?? this.messages,
+      archivedMessages: archivedMessages ?? this.archivedMessages,
       isTyping: isTyping ?? this.isTyping,
       isProcessing: isProcessing ?? this.isProcessing,
       isLoading: isLoading ?? this.isLoading,

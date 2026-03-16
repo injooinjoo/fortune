@@ -75,6 +75,9 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
   static const Duration _sessionStartAnchorHoldDuration =
       Duration(milliseconds: 1400);
+  static const Duration _archivedHistoryRevealDuration =
+      Duration(milliseconds: 650);
+  static const double _archivedHistoryTriggerOffset = 36;
 
   /// Notifier 참조 캐시 (dispose 후 ref 사용 불가 문제 해결)
   CharacterChatNotifier? _cachedNotifier;
@@ -83,6 +86,8 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   String? _sessionStartAnchorMessageId;
   Timer? _sessionStartAnchorReleaseTimer;
   bool _isSessionStartAutoScrollPausedByUser = false;
+  bool _isArchivedHistoryVisible = false;
+  bool _isArchivedHistoryLoading = false;
 
   /// 통합 스크롤 서비스 (ChatScrollService 사용)
   late final ChatScrollService _scrollService;
@@ -289,19 +294,63 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     );
   }
 
-  bool _handleChatScrollNotification(ScrollNotification notification) {
-    if (!_hasActiveSessionStartAnchor || notification.depth != 0) {
-      return false;
-    }
-
-    final isUserDrivenScroll = notification is ScrollStartNotification &&
+  bool _isUserDrivenScroll(ScrollNotification notification) {
+    return notification is ScrollStartNotification &&
             notification.dragDetails != null ||
         notification is ScrollUpdateNotification &&
             notification.dragDetails != null ||
         notification is OverscrollNotification &&
             notification.dragDetails != null;
+  }
 
-    if (isUserDrivenScroll) {
+  List<CharacterChatMessage> _messagesForDisplay(CharacterChatState chatState) {
+    if (!_isArchivedHistoryVisible || chatState.archivedMessages.isEmpty) {
+      return chatState.messages;
+    }
+    return [...chatState.archivedMessages, ...chatState.messages];
+  }
+
+  Future<void> _revealArchivedHistory() async {
+    if (_isArchivedHistoryLoading || _isArchivedHistoryVisible) {
+      return;
+    }
+
+    setState(() {
+      _isArchivedHistoryLoading = true;
+    });
+
+    await Future<void>.delayed(_archivedHistoryRevealDuration);
+    if (!mounted) return;
+
+    setState(() {
+      _isArchivedHistoryLoading = false;
+      _isArchivedHistoryVisible = true;
+    });
+  }
+
+  bool _handleChatScrollNotification(
+    ScrollNotification notification,
+    CharacterChatState chatState,
+  ) {
+    if (notification.depth != 0) {
+      return false;
+    }
+
+    final isUserDrivenScroll = _isUserDrivenScroll(notification);
+    final isNearTop =
+        notification.metrics.pixels <= _archivedHistoryTriggerOffset;
+    final hasHiddenArchivedHistory =
+        chatState.archivedMessages.isNotEmpty && !_isArchivedHistoryVisible;
+
+    if (isUserDrivenScroll &&
+        isNearTop &&
+        hasHiddenArchivedHistory &&
+        !_isArchivedHistoryLoading) {
+      _pauseSessionStartAutoScrollForUserScroll();
+      unawaited(_revealArchivedHistory());
+    }
+
+    if (_hasActiveSessionStartAnchor && isUserDrivenScroll) {
       _pauseSessionStartAutoScrollForUserScroll();
     }
 
@@ -691,7 +740,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   }
 
   /// 운세 전문가 칩 바 (전문 분야 운세 칩들)
-  Widget _buildFortuneChipBar(dynamic chatState) {
+  Widget _buildFortuneChipBar(CharacterChatState chatState) {
     final colors = context.colors;
 
     return Container(
@@ -786,6 +835,12 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       introMessage: introMessage,
       requestMessage: requestMessage,
     );
+    if (mounted) {
+      setState(() {
+        _isArchivedHistoryLoading = false;
+        _isArchivedHistoryVisible = false;
+      });
+    }
     _beginSessionStartAnchor(anchorMessageId);
 
     // fortuneType을 FortuneSurveyType으로 매핑
@@ -1000,19 +1055,39 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     _scrollToBottom();
   }
 
-  Widget _buildChatList(dynamic chatState) {
+  Widget _buildChatList(CharacterChatState chatState) {
+    final visibleMessages = _messagesForDisplay(chatState);
+    final leadingLoaderCount = _isArchivedHistoryLoading ? 1 : 0;
+
     return NotificationListener<ScrollNotification>(
-      onNotification: _handleChatScrollNotification,
+      onNotification: (notification) =>
+          _handleChatScrollNotification(notification, chatState),
       child: ListView.builder(
         controller: _scrollController,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        itemCount: chatState.messages.length + (chatState.isTyping ? 1 : 0),
+        itemCount: visibleMessages.length +
+            leadingLoaderCount +
+            (chatState.isTyping ? 1 : 0),
         itemBuilder: (context, index) {
-          if (index == chatState.messages.length && chatState.isTyping) {
+          if (_isArchivedHistoryLoading && index == 0) {
+            return const Padding(
+              padding: EdgeInsets.symmetric(vertical: 12),
+              child: Center(
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
+            );
+          }
+
+          final messageIndex = index - leadingLoaderCount;
+          if (messageIndex == visibleMessages.length && chatState.isTyping) {
             return _buildTypingIndicator();
           }
 
-          final message = chatState.messages[index] as CharacterChatMessage;
+          final message = visibleMessages[messageIndex];
 
           // 선택지 메시지인 경우
           if (message.isChoice && message.choiceSet != null) {
