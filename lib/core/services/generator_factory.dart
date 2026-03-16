@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/fortune_result.dart';
+import '../fortune/fortune_type_registry.dart';
 
 // Generator imports
 import 'fortune_generators/tarot_generator.dart';
@@ -925,20 +926,36 @@ class GeneratorFactory {
     String fortuneType,
     Map<String, dynamic> input,
   ) async {
+    final functionName = _resolveFunctionName(fortuneType, input);
+    if (functionName == null) {
+      throw Exception('지원되지 않는 Edge Function 타입: $fortuneType');
+    }
+
     final response = await _supabase.functions.invoke(
-      'generate-fortune',
-      body: {
-        'fortune_type': fortuneType,
-        'input_conditions': input,
-      },
+      functionName,
+      body: input,
     );
 
     if (response.data == null) {
-      throw Exception('Default API 응답 없음');
+      throw Exception('$functionName API 응답 없음');
     }
 
-    Logger.info('[GeneratorFactory] ✅ Default API: $fortuneType');
-    return FortuneResult.fromJson(response.data);
+    final responseData = _asStringKeyedMap(response.data);
+    if (responseData.isEmpty) {
+      throw Exception('$functionName API 응답 형식 오류');
+    }
+
+    if (responseData['success'] == false) {
+      throw Exception(
+        responseData['error'] ??
+            responseData['message'] ??
+            '$functionName API 실패',
+      );
+    }
+
+    Logger.info(
+        '[GeneratorFactory] ✅ Resolved API: $fortuneType -> $functionName');
+    return _buildGenericFortuneResult(fortuneType, responseData);
   }
 
   Map<String, dynamic> _asStringKeyedMap(dynamic value) {
@@ -1041,6 +1058,121 @@ class GeneratorFactory {
       default:
         return favoriteTeam;
     }
+  }
+
+  String? _resolveFunctionName(
+    String fortuneType,
+    Map<String, dynamic> input,
+  ) {
+    final canonicalType = _canonicalFortuneType(fortuneType);
+    final endpoint = FortuneTypeRegistry.endpointOf(
+      canonicalType,
+      answers: input,
+    );
+    if (endpoint == null || endpoint.isEmpty) {
+      return null;
+    }
+    return endpoint.replaceFirst(RegExp(r'^/'), '');
+  }
+
+  String _canonicalFortuneType(String fortuneType) {
+    switch (fortuneType) {
+      case 'ootd':
+      case 'ootd_evaluation':
+        return 'ootd-evaluation';
+      case 'daily_calendar':
+        return 'daily-calendar';
+      case 'new_year':
+        return 'new-year';
+      case 'traditional_saju':
+        return 'traditional-saju';
+      case 'face_reading':
+        return 'face-reading';
+      case 'personality_dna':
+        return 'personality-dna';
+      case 'blind_date':
+        return 'blind-date';
+      case 'ex_lover':
+        return 'ex-lover';
+      case 'avoid_people':
+        return 'avoid-people';
+      case 'lucky_items':
+        return 'lucky-items';
+      case 'match_insight':
+        return 'match-insight';
+      case 'game_enhance':
+        return 'game-enhance';
+      case 'past_life':
+        return 'past-life';
+      case 'pet_compatibility':
+        return 'pet-compatibility';
+      case 'fortune_celebrity':
+        return 'celebrity';
+      default:
+        return fortuneType.replaceAll('_', '-');
+    }
+  }
+
+  FortuneResult _buildGenericFortuneResult(
+    String fortuneType,
+    Map<String, dynamic> responseData,
+  ) {
+    final canonicalType = _canonicalFortuneType(fortuneType);
+    final wrappedData = _asStringKeyedMap(responseData['data']);
+    final wrappedFortune = _asStringKeyedMap(responseData['fortune']);
+    final fortune = wrappedData.isNotEmpty
+        ? wrappedData
+        : wrappedFortune.isNotEmpty
+            ? wrappedFortune
+            : responseData;
+
+    final summaryText = _readOptionalString(fortune['summary']) ??
+        _readOptionalString(fortune['content']) ??
+        _readOptionalString(fortune['overallComment']) ??
+        _readOptionalString(fortune['mainMessage']) ??
+        _readOptionalString(fortune['status_message']) ??
+        _readOptionalString(fortune['greeting']) ??
+        _readOptionalString(fortune['shortDescription']) ??
+        _readOptionalString(responseData['message']);
+    final timestampRaw = _readOptionalString(fortune['timestamp']) ??
+        _readOptionalString(fortune['createdAt']) ??
+        _readOptionalString(fortune['created_at']);
+    final score = _readOptionalInt(fortune['score']) ??
+        _readOptionalInt(fortune['overallScore']) ??
+        _readOptionalInt(fortune['overall_score']) ??
+        _readOptionalInt(fortune['compatibilityScore']);
+    final percentileData = _readPercentilePayload(fortune);
+
+    return FortuneResult(
+      id: fortune['id'] as String?,
+      type: canonicalType,
+      title: _readOptionalString(fortune['title']) ??
+          _defaultTitleFor(canonicalType),
+      summary: summaryText == null ? {} : {'message': summaryText},
+      data: fortune,
+      score: score,
+      createdAt: timestampRaw != null ? DateTime.tryParse(timestampRaw) : null,
+      percentile: percentileData.percentile,
+      totalTodayViewers: percentileData.totalTodayViewers,
+      isPercentileValid: percentileData.isPercentileValid,
+    );
+  }
+
+  String _defaultTitleFor(String fortuneType) {
+    const titles = {
+      'ootd-evaluation': 'OOTD 평가',
+      'pet-compatibility': '반려동물 궁합',
+      'talisman': '부적',
+      'tarot': '타로 리딩',
+      'dream': '꿈 분석',
+      'biorhythm': '바이오리듬',
+      'celebrity': '유명인 궁합',
+      'yearly-encounter': '올해의 인연',
+      'naming': '작명',
+      'wealth': '재물운',
+      'past-life': '전생 운세',
+    };
+    return titles[fortuneType] ?? '운세 결과';
   }
 }
 

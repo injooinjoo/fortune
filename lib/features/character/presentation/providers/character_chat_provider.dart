@@ -3136,33 +3136,102 @@ $enrichedContext
       return MovingFortuneInputMapper.normalize(normalizedAnswers);
     }
 
-    // ─── face-reading: 이미지 처리 ───
-    if (apiFortuneType != 'face-reading') {
+    // ─── talisman: 설문 필드 → API 필드 매핑 ───
+    if (apiFortuneType == 'talisman') {
+      final category = _stringValue(normalizedAnswers['purpose']);
+      if (category != null) {
+        normalizedAnswers['category'] = category;
+      }
       return normalizedAnswers;
     }
 
-    final photoData = normalizedAnswers['photo'];
-    String? imagePath;
+    // ─── pet-compatibility: 설문 필드 → API 필드 매핑 ───
+    if (apiFortuneType == 'pet-compatibility') {
+      final pet = _asMapValue(normalizedAnswers['pet']);
+      if (pet != null) {
+        final petName = _stringValue(pet['name']);
+        final petSpecies =
+            _stringValue(pet['species']) ?? _stringValue(pet['type']);
+        final petGender = _stringValue(pet['gender']);
+        final petBreed = _stringValue(pet['breed']);
+        final petPersonality = _stringValue(pet['personality']);
+        final petBirthDate = _stringValue(pet['birthDate']);
+        final petAge = pet['age'];
 
-    if (photoData is Map<String, dynamic>) {
-      imagePath = photoData['imagePath'] as String?;
-    } else if (photoData is Map) {
-      final rawPath = photoData['imagePath'];
-      if (rawPath is String) {
-        imagePath = rawPath;
+        if (petName != null) {
+          normalizedAnswers['pet_name'] = petName;
+        }
+        if (petSpecies != null) {
+          normalizedAnswers['pet_species'] = petSpecies;
+        }
+        if (petGender != null) {
+          normalizedAnswers['pet_gender'] = petGender;
+        }
+        if (petBreed != null) {
+          normalizedAnswers['pet_breed'] = petBreed;
+        }
+        if (petPersonality != null) {
+          normalizedAnswers['pet_personality'] = petPersonality;
+        }
+        if (petBirthDate != null) {
+          normalizedAnswers['pet_birth_date'] = petBirthDate;
+        }
+        if (petAge != null) {
+          normalizedAnswers['pet_age'] = petAge;
+        }
       }
+      return normalizedAnswers;
     }
 
+    // ─── face-reading / ootd: 이미지 처리 ───
+    if (apiFortuneType != 'face-reading' && apiFortuneType != 'ootd') {
+      return normalizedAnswers;
+    }
+
+    final imageBase64 = await _encodeSurveyPhotoField(
+      normalizedAnswers,
+      missingImageMessage: apiFortuneType == 'ootd'
+          ? 'OOTD 평가용 사진이 없어요. 사진을 다시 올려주세요.'
+          : 'Face AI 분석용 사진이 없어요. 사진을 다시 올려주세요.',
+      missingFileMessage: '선택한 사진 파일을 찾을 수 없어요. 다시 업로드해주세요.',
+      logLabel: apiFortuneType,
+    );
+
+    normalizedAnswers
+      ..remove('photo')
+      ..remove('imagePath');
+
+    if (apiFortuneType == 'ootd') {
+      normalizedAnswers
+        ..['imageBase64'] = imageBase64
+        ..['tpo'] = _stringValue(normalizedAnswers['tpo']) ?? 'casual';
+      return normalizedAnswers;
+    }
+
+    normalizedAnswers['image'] = imageBase64;
+    return normalizedAnswers;
+  }
+
+  Future<String> _encodeSurveyPhotoField(
+    Map<String, dynamic> answers, {
+    required String missingImageMessage,
+    required String missingFileMessage,
+    required String logLabel,
+  }) async {
+    final photoData = _asMapValue(answers['photo']);
+    final imagePath = _stringValue(photoData?['imagePath']) ??
+        _stringValue(answers['imagePath']);
+
     if (imagePath == null || imagePath.isEmpty) {
-      throw Exception('Face AI 분석용 사진이 없어요. 사진을 다시 올려주세요.');
+      throw Exception(missingImageMessage);
     }
 
     final imageFile = File(imagePath);
     if (!await imageFile.exists()) {
-      Logger.warning('[CharacterChat] Face-reading image file missing', {
-        'fortuneType': apiFortuneType,
+      Logger.warning('[CharacterChat] Survey image file missing', {
+        'fortuneType': logLabel,
       });
-      throw Exception('선택한 사진 파일을 찾을 수 없어요. 다시 업로드해주세요.');
+      throw Exception(missingFileMessage);
     }
 
     try {
@@ -3170,20 +3239,13 @@ $enrichedContext
       if (imageBytes.isEmpty) {
         throw Exception('사진 파일이 비어 있어요. 다른 사진으로 다시 시도해주세요.');
       }
-
-      normalizedAnswers
-        ..remove('photo')
-        ..remove('imagePath')
-        ..['image'] = base64Encode(imageBytes);
+      return base64Encode(imageBytes);
     } on Exception {
       rethrow;
     } catch (error) {
-      Logger.error(
-          '[CharacterChat] Face-reading image conversion failed', error);
+      Logger.error('[CharacterChat] Survey image conversion failed', error);
       throw Exception('사진 처리 중 오류가 발생했어요. 다시 업로드해주세요.');
     }
-
-    return normalizedAnswers;
   }
 
   Future<String> _resolveFortuneUserId() async {
