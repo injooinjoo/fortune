@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -67,11 +68,17 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   final ScrollController _scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();
   final ImagePicker _imagePicker = ImagePicker();
+  final Map<String, GlobalKey> _messageAnchorKeys = {};
+
+  static const Duration _sessionStartAnchorHoldDuration =
+      Duration(milliseconds: 1400);
 
   /// Notifier 참조 캐시 (dispose 후 ref 사용 불가 문제 해결)
   CharacterChatNotifier? _cachedNotifier;
   bool _didRedirectToProfile = false;
   String? _consumedAutoStartSignature;
+  String? _sessionStartAnchorMessageId;
+  Timer? _sessionStartAnchorReleaseTimer;
 
   /// 통합 스크롤 서비스 (ChatScrollService 사용)
   late final ChatScrollService _scrollService;
@@ -181,6 +188,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     _scrollController.dispose();
     _focusNode.dispose();
     _scrollService.dispose();
+    _sessionStartAnchorReleaseTimer?.cancel();
     super.dispose();
   }
 
@@ -214,12 +222,70 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
   /// 최하단으로 스크롤 (애니메이션)
   void _scrollToBottom() {
+    if (_hasActiveSessionStartAnchor) {
+      _scrollToSessionStartAnchor();
+      return;
+    }
     _scrollService.scrollToBottom();
   }
 
   /// 채팅방 진입 시 즉시 맨 아래로 스크롤 (애니메이션 없이)
   void _scrollToBottomInstant() {
     _scrollService.scrollToBottomInstant();
+  }
+
+  bool get _hasActiveSessionStartAnchor => _sessionStartAnchorMessageId != null;
+
+  GlobalKey _messageAnchorKeyFor(String messageId) {
+    return _messageAnchorKeys.putIfAbsent(
+      messageId,
+      () => GlobalKey(debugLabel: 'chat-anchor-$messageId'),
+    );
+  }
+
+  void _beginSessionStartAnchor(String messageId) {
+    _sessionStartAnchorReleaseTimer?.cancel();
+    _sessionStartAnchorMessageId = messageId;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _sessionStartAnchorMessageId != messageId) {
+        return;
+      }
+      _scrollToSessionStartAnchor();
+    });
+
+    _sessionStartAnchorReleaseTimer = Timer(
+      _sessionStartAnchorHoldDuration,
+      _clearSessionStartAnchor,
+    );
+  }
+
+  void _clearSessionStartAnchor() {
+    _sessionStartAnchorReleaseTimer?.cancel();
+    _sessionStartAnchorReleaseTimer = null;
+    _sessionStartAnchorMessageId = null;
+  }
+
+  void _scrollToSessionStartAnchor() {
+    final anchorId = _sessionStartAnchorMessageId;
+    if (anchorId == null) return;
+
+    final anchorContext = _messageAnchorKeys[anchorId]?.currentContext;
+    if (anchorContext == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || _sessionStartAnchorMessageId != anchorId) {
+          return;
+        }
+
+        final retryContext = _messageAnchorKeys[anchorId]?.currentContext;
+        if (retryContext != null) {
+          _scrollService.scrollToMessageTop(messageContext: retryContext);
+        }
+      });
+      return;
+    }
+
+    _scrollService.scrollToMessageTop(messageContext: anchorContext);
   }
 
   String? _buildAutoStartSignature(CharacterChatPanel panel) {
@@ -307,6 +373,11 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           final prevCount = previous?.messages.length ?? 0;
           final nextCount = next.messages.length;
           final typingStarted = next.isTyping && !(previous?.isTyping ?? false);
+          if (_hasActiveSessionStartAnchor &&
+              (nextCount != prevCount || typingStarted)) {
+            _scrollToSessionStartAnchor();
+            return;
+          }
           if (nextCount > prevCount || typingStarted) {
             _scrollToBottom();
           }
@@ -638,7 +709,11 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   /// 운세 칩 탭 핸들러 - 설문이 있으면 설문 시작, 없으면 바로 요청
   Future<void> _handleFortuneChipTap(
       String fortuneType, String displayName) async {
-    await _startFortuneFlow(fortuneType, displayName);
+    await _startFortuneFlow(
+      fortuneType,
+      displayName,
+      resetSurvey: true,
+    );
   }
 
   Future<void> _startFortuneFlow(
@@ -657,19 +732,22 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           .cancelSurvey();
     }
 
+    final chatNotifier =
+        ref.read(characterChatProvider(widget.character.id).notifier);
+    final introMessage = context.l10n.fortuneIntroMessage(displayName);
+    final requestMessage = context.l10n.tellMeAbout(displayName);
+    final anchorMessageId = chatNotifier.startFreshFortuneSession(
+      introMessage: introMessage,
+      requestMessage: requestMessage,
+    );
+    _beginSessionStartAnchor(anchorMessageId);
+
     // fortuneType을 FortuneSurveyType으로 매핑
     final surveyType = _mapFortuneTypeToSurveyType(fortuneType);
     final config = surveyType != null ? surveyConfigs[surveyType] : null;
 
     // 설문이 있고 단계가 있으면 설문 시작
     if (surveyType != null && config != null && config.steps.isNotEmpty) {
-      // 캐릭터 메시지로 설문 시작 안내
-      final chatNotifier =
-          ref.read(characterChatProvider(widget.character.id).notifier);
-      chatNotifier.addCharacterMessage(
-        context.l10n.fortuneIntroMessage(displayName),
-      );
-
       // 설문 시작
       ref
           .read(characterChatSurveyProvider(widget.character.id).notifier)
@@ -691,8 +769,6 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       // 설문 없이 바로 요청
       // 🆕 사주 타입이면 비주얼 카드로 사주 결과 즉시 보여줌
       if (fortuneType == 'traditional-saju') {
-        final chatNotifier =
-            ref.read(characterChatProvider(widget.character.id).notifier);
         final sajuData = await chatNotifier.getSajuRawData();
         if (!mounted) return;
         if (sajuData != null && sajuData.isNotEmpty) {
@@ -702,12 +778,14 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       }
 
       if (!mounted) return;
-      final requestMessage = context.l10n.tellMeAbout(displayName);
       ref
           .read(characterChatProvider(widget.character.id).notifier)
-          .sendFortuneRequest(fortuneType, requestMessage);
+          .sendFortuneRequest(
+            fortuneType,
+            requestMessage,
+            userMessageAlreadyAdded: true,
+          );
     }
-    _scrollToBottom();
   }
 
   /// fortuneType 문자열을 FortuneSurveyType으로 매핑
@@ -768,6 +846,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   }
 
   void _handleSurveyAnswer(dynamic answer) {
+    _clearSessionStartAnchor();
     final surveyNotifier =
         ref.read(characterChatSurveyProvider(widget.character.id).notifier);
     final chatNotifier =
@@ -889,30 +968,37 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
         // 선택지 메시지인 경우
         if (message.isChoice && message.choiceSet != null) {
-          return CharacterChoiceWidget(
-            choiceSet: message.choiceSet!,
-            character: widget.character,
-            onChoiceSelected: (choice) => _handleChoiceSelection(choice),
-            onTimeout: () {
-              // 타임아웃 시 기본 선택지 선택
-              if (message.choiceSet!.defaultChoiceIndex != null) {
-                final defaultChoice = message
-                    .choiceSet!.choices[message.choiceSet!.defaultChoiceIndex!];
-                _handleChoiceSelection(defaultChoice);
-              }
-            },
+          return KeyedSubtree(
+            key: _messageAnchorKeyFor(message.id),
+            child: CharacterChoiceWidget(
+              choiceSet: message.choiceSet!,
+              character: widget.character,
+              onChoiceSelected: (choice) => _handleChoiceSelection(choice),
+              onTimeout: () {
+                // 타임아웃 시 기본 선택지 선택
+                if (message.choiceSet!.defaultChoiceIndex != null) {
+                  final defaultChoice = message.choiceSet!
+                      .choices[message.choiceSet!.defaultChoiceIndex!];
+                  _handleChoiceSelection(defaultChoice);
+                }
+              },
+            ),
           );
         }
 
-        return CharacterMessageBubble(
-          message: message,
-          character: widget.character,
+        return KeyedSubtree(
+          key: _messageAnchorKeyFor(message.id),
+          child: CharacterMessageBubble(
+            message: message,
+            character: widget.character,
+          ),
         );
       },
     );
   }
 
   void _handleChoiceSelection(CharacterChoice choice) {
+    _clearSessionStartAnchor();
     ref
         .read(characterChatProvider(widget.character.id).notifier)
         .handleChoiceSelection(choice);
@@ -1331,6 +1417,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
   /// 이미지 메시지 처리 (채팅에 이미지 전송)
   void _handleImageMessage(File imageFile) {
+    _clearSessionStartAnchor();
     // 사용자 메시지로 이미지 경로 추가 (UI에서 이미지로 표시)
     ref
         .read(characterChatProvider(widget.character.id).notifier)
@@ -1380,10 +1467,21 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
               },
               onSubmit: (text) {
                 if (text.isNotEmpty) {
-                  ref
-                      .read(characterChatProvider(widget.character.id).notifier)
-                      .sendMessage(text);
-                  _scrollToBottom();
+                  final notifier = ref.read(
+                      characterChatProvider(widget.character.id).notifier);
+                  final anchorMessageId =
+                      notifier.startFreshUserSessionIfNeeded(text);
+                  if (anchorMessageId != null) {
+                    _beginSessionStartAnchor(anchorMessageId);
+                  }
+                  notifier.sendMessage(
+                    text,
+                    userMessageAlreadyAdded: anchorMessageId != null,
+                  );
+                  if (anchorMessageId == null) {
+                    _clearSessionStartAnchor();
+                    _scrollToBottom();
+                  }
                 }
               },
             ),

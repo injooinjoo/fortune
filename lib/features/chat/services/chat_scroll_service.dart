@@ -38,7 +38,7 @@ class ChatScrollService {
   /// 디바운스 타이머
   Timer? _debounceTimer;
 
-  int _bottomScrollRequestId = 0;
+  int _scrollRequestId = 0;
 
   /// mounted 상태 체크 콜백
   final bool Function() isMounted;
@@ -67,9 +67,29 @@ class ChatScrollService {
     _scheduleBottomScroll(animated: false);
   }
 
+  /// 특정 메시지 상단으로 스크롤
+  ///
+  /// 세션 시작 메시지가 채팅 상단부에 보이도록 유지할 때 사용합니다.
+  void scrollToMessageTop({
+    required BuildContext messageContext,
+    double alignment = 0.14,
+  }) {
+    _debounceTimer?.cancel();
+    final requestId = ++_scrollRequestId;
+    _debounceTimer = Timer(ChatScrollConstants.debounceDelay, () {
+      unawaited(
+        _performMessageTopScroll(
+          messageContext: messageContext,
+          alignment: alignment,
+          requestId: requestId,
+        ),
+      );
+    });
+  }
+
   void _scheduleBottomScroll({required bool animated}) {
     _debounceTimer?.cancel();
-    final requestId = ++_bottomScrollRequestId;
+    final requestId = ++_scrollRequestId;
     _debounceTimer = Timer(ChatScrollConstants.debounceDelay, () {
       unawaited(
         _performBottomScroll(
@@ -139,10 +159,41 @@ class ChatScrollService {
     }
   }
 
+  Future<void> _performMessageTopScroll({
+    required BuildContext messageContext,
+    required double alignment,
+    required int requestId,
+  }) async {
+    for (var attempt = 0;
+        attempt < ChatScrollConstants.maxBottomScrollAttempts;
+        attempt++) {
+      final delay = attempt == 0
+          ? ChatScrollConstants.layoutDelay
+          : ChatScrollConstants.settleDelay;
+      await Future<void>.delayed(delay);
+
+      if (!_isActiveRequest(requestId) || !messageContext.mounted) {
+        return;
+      }
+
+      try {
+        await Scrollable.ensureVisible(
+          messageContext,
+          alignment: alignment,
+          duration:
+              attempt == 0 ? ChatScrollConstants.scrollDuration : Duration.zero,
+          curve: ChatScrollConstants.scrollCurve,
+        );
+      } catch (_) {
+        return;
+      }
+    }
+  }
+
   bool _isActiveRequest(int requestId) {
     return isMounted() &&
         scrollController.hasClients &&
-        requestId == _bottomScrollRequestId;
+        requestId == _scrollRequestId;
   }
 
   /// 결과 카드 헤더로 스크롤

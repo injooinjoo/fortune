@@ -51,6 +51,30 @@ void main() {
         );
       },
     );
+
+    testWidgets(
+      'scrollToMessageTop keeps the anchor near top after content above grows',
+      (tester) async {
+        final key = GlobalKey<_TestAnchorScrollHarnessState>();
+
+        await tester.pumpWidget(_TestAnchorScrollHarness(key: key));
+
+        key.currentState!.scrollAnchorToTop();
+
+        await tester.pump(const Duration(milliseconds: 220));
+        key.currentState!.expandHeader();
+        await tester.pump();
+        await _pumpScrollFrames(tester, frameCount: 16);
+
+        final listTop =
+            tester.getTopLeft(find.byType(SingleChildScrollView)).dy;
+        final anchorRenderBox = key.currentState!.anchorKey.currentContext!
+            .findRenderObject() as RenderBox;
+        final anchorTop = anchorRenderBox.localToGlobal(Offset.zero).dy;
+
+        expect(anchorTop - listTop, closeTo(320 * 0.14, 24));
+      },
+    );
   });
 }
 
@@ -120,6 +144,87 @@ class _TestChatScrollHarnessState extends State<_TestChatScrollHarness> {
                   color: Colors.grey.shade300,
                 );
               },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TestAnchorScrollHarness extends StatefulWidget {
+  const _TestAnchorScrollHarness({super.key});
+
+  @override
+  State<_TestAnchorScrollHarness> createState() =>
+      _TestAnchorScrollHarnessState();
+}
+
+class _TestAnchorScrollHarnessState extends State<_TestAnchorScrollHarness> {
+  final ScrollController controller = ScrollController();
+  final GlobalKey anchorKey = GlobalKey();
+  late final ChatScrollService service = ChatScrollService(
+    scrollController: controller,
+    isMounted: () => mounted,
+  );
+
+  bool _expandedHeader = false;
+
+  @override
+  void dispose() {
+    service.dispose();
+    controller.dispose();
+    super.dispose();
+  }
+
+  void scrollAnchorToTop() {
+    final context = anchorKey.currentContext;
+    if (context != null) {
+      service.scrollToMessageTop(messageContext: context);
+    }
+  }
+
+  void expandHeader() {
+    setState(() {
+      _expandedHeader = true;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: Align(
+          alignment: Alignment.topCenter,
+          child: SizedBox(
+            height: 320,
+            child: SingleChildScrollView(
+              controller: controller,
+              child: Column(
+                children: List.generate(20, (index) {
+                  if (index == 0) {
+                    return Container(
+                      height: _expandedHeader ? 240 : 64,
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 6,
+                      ),
+                      color: Colors.blueGrey.shade100,
+                    );
+                  }
+
+                  final isAnchor = index == 8;
+                  return Container(
+                    key: isAnchor ? anchorKey : null,
+                    height: 72,
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    color: isAnchor
+                        ? Colors.orange.shade200
+                        : Colors.grey.shade300,
+                  );
+                }),
+              ),
             ),
           ),
         ),

@@ -1023,6 +1023,13 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     return '안녕하세요, $name예요. 만나서 반가워요.';
   }
 
+  CharacterChatMessage _buildFirstMeetOpeningMessage() {
+    return CharacterChatMessage.character(
+      _buildFirstMeetOpening(),
+      _characterId,
+    );
+  }
+
   bool _isFirstMeetThread([List<CharacterChatMessage>? messages]) {
     final source = messages ?? state.messages;
     CharacterChatMessage? firstCharacterMessage;
@@ -1053,6 +1060,15 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     return _isFirstMeetThread(source) &&
         _isFirstMeetPhase(state.affinity.phase) &&
         _assistantTurnCount(source) < 4;
+  }
+
+  bool _isFreshConversationForManualStart() {
+    if (state.messages.isEmpty) return true;
+    if (state.messages.length != 1) return false;
+
+    final firstMessage = state.messages.first;
+    return firstMessage.type == CharacterChatMessageType.character &&
+        firstMessage.text == _buildFirstMeetOpening();
   }
 
   bool _isCurrentChatActive() {
@@ -1294,6 +1310,69 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
     // DB 동기화 큐에 추가 (debounced)
     _queueForSync();
+  }
+
+  void _replaceConversationTimeline(
+    List<CharacterChatMessage> messages, {
+    required bool isProcessing,
+  }) {
+    _isUserDrafting = false;
+    _cancelReadIdleIcebreaker();
+    cancelFollowUp();
+
+    state = state.copyWith(
+      messages: messages,
+      isTyping: false,
+      isProcessing: isProcessing,
+      isCharacterTyping: false,
+      unreadCount: _isCurrentChatActive() ? 0 : state.unreadCount,
+      isInitialized: true,
+      error: null,
+    );
+
+    if (_isCurrentChatActive()) {
+      _localService.saveLastReadTimestamp(_characterId);
+    }
+
+    _queueForSync();
+  }
+
+  String startFreshFortuneSession({
+    required String introMessage,
+    required String requestMessage,
+  }) {
+    final intro = CharacterChatMessage.character(
+      introMessage,
+      _characterId,
+      origin: MessageOrigin.aiReply,
+    );
+    final user = CharacterChatMessage.user(requestMessage);
+
+    _replaceConversationTimeline(
+      [intro, user],
+      isProcessing: true,
+    );
+
+    return user.id;
+  }
+
+  String? startFreshUserSessionIfNeeded(String text) {
+    final normalized = text.trim();
+    if (normalized.isEmpty || !_isFreshConversationForManualStart()) {
+      return null;
+    }
+
+    final opening = state.messages.isNotEmpty
+        ? state.messages.first
+        : _buildFirstMeetOpeningMessage();
+    final user = CharacterChatMessage.user(normalized);
+
+    _replaceConversationTimeline(
+      [opening, user],
+      isProcessing: true,
+    );
+
+    return user.id;
   }
 
   /// 사용자 이미지 메시지 전송 (OOTD, 관상 등)
@@ -2190,7 +2269,10 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   }
 
   /// 메시지 전송 (API 호출 포함) - 인스타그램 DM 스타일 딜레이 적용
-  Future<void> sendMessage(String text) {
+  Future<void> sendMessage(
+    String text, {
+    bool userMessageAlreadyAdded = false,
+  }) {
     final normalized = text.trim();
     if (normalized.isEmpty) return Future.value();
 
@@ -2198,7 +2280,9 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     final hasUnlimitedAccess = _ref.read(hasUnlimitedTokensProvider);
 
     // 유저 메시지를 즉시 UI에 반영 (큐 대기 없이)
-    addUserMessage(normalized);
+    if (!userMessageAlreadyAdded) {
+      addUserMessage(normalized);
+    }
 
     _sendQueue = _sendQueue.then((_) async {
       try {
@@ -2336,7 +2420,10 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   /// 운세 상담 요청 (운세 전문가 캐릭터용)
   /// 실제 운세 API를 호출하여 상세한 운세 데이터를 가져온 후, 캐릭터가 전달
   Future<void> sendFortuneRequest(
-      String fortuneType, String requestMessage) async {
+    String fortuneType,
+    String requestMessage, {
+    bool userMessageAlreadyAdded = false,
+  }) async {
     // 🪙 토큰 소비 체크 (4토큰/메시지)
     final hasUnlimitedAccess = _ref.read(hasUnlimitedTokensProvider);
     if (!hasUnlimitedAccess) {
@@ -2354,7 +2441,9 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     }
 
     // 1단계: 유저 메시지 추가
-    addUserMessage(requestMessage);
+    if (!userMessageAlreadyAdded) {
+      addUserMessage(requestMessage);
+    }
 
     // 2단계: 읽음 딜레이
     await _waitForReadDelayIfNeeded();
@@ -2547,8 +2636,9 @@ $enrichedContext
   Future<void> sendFortuneRequestWithAnswers(
     String fortuneType,
     String requestMessage,
-    Map<String, dynamic> surveyAnswers,
-  ) async {
+    Map<String, dynamic> surveyAnswers, {
+    bool userMessageAlreadyAdded = false,
+  }) async {
     // 토큰 소비 체크 (4토큰/메시지)
     final hasUnlimitedAccess = _ref.read(hasUnlimitedTokensProvider);
     if (!hasUnlimitedAccess) {
@@ -2566,7 +2656,9 @@ $enrichedContext
     }
 
     // 1단계: 유저 메시지 추가
-    addUserMessage(requestMessage);
+    if (!userMessageAlreadyAdded) {
+      addUserMessage(requestMessage);
+    }
 
     // 2단계: 읽음 딜레이
     await _waitForReadDelayIfNeeded();
