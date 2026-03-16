@@ -50,6 +50,8 @@ interface YearlyEncounterResponse {
   success: boolean;
   data?: {
     imageUrl: string;
+    imageGenerationSkipped?: boolean;
+    imageGenerationReason?: string;
     appearanceHashtags: string[];
     // 첫만남 장소
     encounterSpotTitle: string;
@@ -72,6 +74,34 @@ interface YearlyEncounterResponse {
 interface TelemetryContext {
   userId: string;
   requestId: string;
+}
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error
+    ? error.message
+    : String(error ?? "Unknown error");
+}
+
+function classifyImageFallbackReason(error: unknown): string {
+  const message = getErrorMessage(error);
+
+  if (message.includes("LLM_ALLOW_HIGH_COST_MODELS")) {
+    return "high_cost_model_blocked";
+  }
+
+  if (message.includes("Upload failed")) {
+    return "storage_upload_failed";
+  }
+
+  if (message.includes("Gemini API failed")) {
+    return "image_api_failed";
+  }
+
+  if (message.includes("No image data")) {
+    return "image_missing";
+  }
+
+  return "image_generation_failed";
 }
 
 // ============================================================================
@@ -938,11 +968,45 @@ serve(async (req) => {
 
     console.log("📝 Image prompt length:", imagePrompt.length);
 
-    // 2. Generate image with Gemini 2.5 Flash Image (with retry logic)
-    const imageBase64 = await generateImageWithRetry(imagePrompt, telemetry, 3);
+    // 2. Generate image. If image generation is blocked, continue with text-only result.
+    let imageUrl = "";
+    let imageGenerationSkipped = false;
+    let imageGenerationReason: string | undefined;
 
-    // 3. Upload to Supabase Storage
-    const imageUrl = await uploadToSupabase(imageBase64, request.userId);
+    try {
+      const imageBase64 = await generateImageWithRetry(
+        imagePrompt,
+        telemetry,
+        3,
+      );
+      imageUrl = await uploadToSupabase(imageBase64, request.userId);
+    } catch (imageError) {
+      imageGenerationSkipped = true;
+      imageGenerationReason = classifyImageFallbackReason(imageError);
+
+      console.warn(
+        "⚠️ [YearlyEncounter] Image generation skipped, continuing with text-only result",
+        {
+          requestId,
+          userId: request.userId,
+          reason: imageGenerationReason,
+          message: getErrorMessage(imageError),
+        },
+      );
+
+      await UsageLogger.logError(
+        "yearly-encounter",
+        "gemini",
+        GEMINI_IMAGE_MODEL_NAME,
+        getErrorMessage(imageError),
+        request.userId,
+        {
+          phase: "image_fallback",
+          requestId,
+          reason: imageGenerationReason,
+        },
+      );
+    }
 
     // 4. Generate appearance hashtags using LLM
     const appearanceHashtags = await generateAppearanceHashtags(
@@ -961,6 +1025,8 @@ serve(async (req) => {
     // 6. Build result
     const resultData: YearlyEncounterResponse["data"] = {
       imageUrl,
+      ...(imageGenerationSkipped ? { imageGenerationSkipped: true } : {}),
+      ...(imageGenerationReason != null ? { imageGenerationReason } : {}),
       appearanceHashtags,
       encounterSpotTitle: encounterSpot.title,
       encounterSpotStory: encounterSpot.story,
