@@ -36,7 +36,10 @@ import '../../../chat/presentation/widgets/survey/ootd_photo_input.dart';
 import '../../../chat/presentation/widgets/survey/chat_image_input.dart';
 import '../../../chat/presentation/widgets/survey/chat_match_selector.dart';
 import '../../../../core/services/unified_calendar_service.dart';
+import '../../../../data/models/secondary_profile.dart';
+import '../../../../presentation/providers/secondary_profiles_provider.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
+import '../utils/chat_survey_profile_utils.dart';
 
 /// 1:1 캐릭터 롤플레이 채팅 패널
 class CharacterChatPanel extends ConsumerStatefulWidget {
@@ -1165,6 +1168,10 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           onSelect: _handleSurveyAnswer,
         );
 
+      case SurveyInputType.profile:
+      case SurveyInputType.familyProfile:
+        return _buildStoredProfileSelector(step.inputType);
+
       case SurveyInputType.multiSelect:
         return _buildMultiSelectChips(options);
 
@@ -1247,6 +1254,198 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         }
         return _buildTextInput(step);
     }
+  }
+
+  Widget _buildStoredProfileSelector(SurveyInputType inputType) {
+    final profilesAsync = ref.watch(secondaryProfilesProvider);
+    final surveyState =
+        ref.watch(characterChatSurveyProvider(widget.character.id));
+    final selectedMember =
+        surveyState.activeProgress?.answers['member']?.toString();
+
+    return profilesAsync.when(
+      loading: () => _buildSurveyInfoBox(
+        message: '저장된 프로필을 불러오는 중이에요...',
+        showLoader: true,
+      ),
+      error: (error, _) => _buildSurveyInfoBox(
+        message: '저장된 프로필을 불러오지 못했어요.',
+        actionLabel: '다시 불러오기',
+        onAction: () {
+          ref.read(secondaryProfilesProvider.notifier).refresh();
+        },
+      ),
+      data: (profiles) {
+        final filteredProfiles = _filterStoredProfiles(
+          profiles,
+          inputType: inputType,
+          selectedMember: selectedMember,
+        );
+
+        if (filteredProfiles.isEmpty) {
+          final emptyMessage = inputType == SurveyInputType.familyProfile
+              ? '선택한 가족 관계에 맞는 저장 프로필이 없어요.'
+              : '선택할 수 있는 저장 프로필이 없어요.';
+          return _buildSurveyInfoBox(
+            message: emptyMessage,
+            actionLabel: '새로고침',
+            onAction: () {
+              ref.read(secondaryProfilesProvider.notifier).refresh();
+            },
+          );
+        }
+
+        final options = filteredProfiles
+            .map(
+              (profile) => SurveyOption(
+                id: profile.id,
+                label: _buildStoredProfileOptionLabel(profile, inputType),
+                emoji: _buildStoredProfileEmoji(profile, inputType),
+              ),
+            )
+            .toList(growable: false);
+        final profileById = {
+          for (final profile in filteredProfiles) profile.id: profile,
+        };
+
+        return ChatSurveyChips(
+          options: options,
+          onSelect: (option) {
+            final profile = profileById[option.id];
+            if (profile == null) return;
+
+            _handleSurveyAnswer(
+              buildStoredProfileSurveyAnswer(
+                profile: profile,
+                displayText: _buildStoredProfileDisplayText(
+                  profile,
+                  inputType,
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  List<SecondaryProfile> _filterStoredProfiles(
+    List<SecondaryProfile> profiles, {
+    required SurveyInputType inputType,
+    String? selectedMember,
+  }) {
+    if (inputType != SurveyInputType.familyProfile) {
+      return profiles;
+    }
+
+    return profiles.where((profile) {
+      if (profile.relationship != 'family') {
+        return false;
+      }
+      if (selectedMember == null || selectedMember.isEmpty) {
+        return true;
+      }
+      return profile.familyRelation == selectedMember;
+    }).toList(growable: false);
+  }
+
+  String _buildStoredProfileOptionLabel(
+    SecondaryProfile profile,
+    SurveyInputType inputType,
+  ) {
+    if (inputType == SurveyInputType.familyProfile &&
+        profile.familyRelation != null &&
+        profile.familyRelationText.isNotEmpty) {
+      return '${profile.name} · ${profile.familyRelationText}';
+    }
+
+    if (profile.relationship != null) {
+      return '${profile.name} · ${profile.relationshipText}';
+    }
+
+    return profile.name;
+  }
+
+  String _buildStoredProfileDisplayText(
+    SecondaryProfile profile,
+    SurveyInputType inputType,
+  ) {
+    final label = _buildStoredProfileOptionLabel(profile, inputType);
+    final emoji = _buildStoredProfileEmoji(profile, inputType);
+    return '$emoji $label';
+  }
+
+  String _buildStoredProfileEmoji(
+    SecondaryProfile profile,
+    SurveyInputType inputType,
+  ) {
+    if (inputType == SurveyInputType.familyProfile) {
+      return '👨‍👩‍👧‍👦';
+    }
+
+    switch (profile.relationship) {
+      case 'lover':
+        return '💕';
+      case 'family':
+        return '👨‍👩‍👧‍👦';
+      case 'friend':
+        return '👥';
+      default:
+        return '📋';
+    }
+  }
+
+  Widget _buildSurveyInfoBox({
+    required String message,
+    String? actionLabel,
+    VoidCallback? onAction,
+    bool showLoader = false,
+  }) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final accentPalette = _accentPalette(context);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.lg),
+        border: Border.all(
+          color: colors.textPrimary.withValues(alpha: 0.08),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (showLoader) ...[
+            SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation(accentPalette.accent),
+              ),
+            ),
+            const SizedBox(height: DSSpacing.sm),
+          ],
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: typography.bodyMedium.copyWith(
+              color: colors.textSecondary,
+            ),
+          ),
+          if (actionLabel != null && onAction != null) ...[
+            const SizedBox(height: DSSpacing.xs),
+            TextButton(
+              onPressed: onAction,
+              child: Text(actionLabel),
+            ),
+          ],
+        ],
+      ),
+    );
   }
 
   /// 다중 선택 칩 위젯

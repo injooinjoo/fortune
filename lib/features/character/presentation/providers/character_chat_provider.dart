@@ -42,6 +42,7 @@ import 'active_chat_provider.dart';
 import 'character_provider.dart';
 import 'character_fortune_adapter.dart';
 import '../utils/character_guest_name_guard.dart';
+import '../utils/chat_survey_profile_utils.dart';
 import '../utils/character_tone_policy.dart';
 import '../utils/character_tone_rollout.dart';
 import '../utils/character_voice_profile_registry.dart';
@@ -702,7 +703,10 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         _addSurveyLine(lines, answers, 'idealLooks', '👀 이상형 외모');
         break;
       case 'compatibility':
-        _addSurveyLine(lines, answers, 'partnerName', '👤 상대방');
+        final partnerName = compatibilityPartnerNameFromAnswers(answers);
+        if (partnerName != null && partnerName.isNotEmpty) {
+          lines.add('👤 상대방: $partnerName');
+        }
         _addSurveyLine(lines, answers, 'relationship', '🤝 관계');
         break;
       case 'blind-date':
@@ -2911,7 +2915,9 @@ $enrichedContext
     String apiFortuneType,
     Map<String, dynamic> answers,
   ) async {
-    final normalizedAnswers = Map<String, dynamic>.from(answers);
+    final normalizedAnswers = apiFortuneType == 'compatibility'
+        ? normalizeCompatibilitySurveyAnswers(answers)
+        : Map<String, dynamic>.from(answers);
 
     // ─── naming: 설문 필드 → API 필드 매핑 ───
     if (apiFortuneType == 'naming') {
