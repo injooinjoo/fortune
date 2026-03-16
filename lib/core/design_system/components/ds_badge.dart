@@ -167,7 +167,7 @@ class DSBadge extends StatelessWidget {
         child: Text(
           displayText,
           style: typography.labelSmall.copyWith(
-            color: DSColors.ctaForeground,
+            color: colors.ctaForeground,
             fontWeight: FontWeight.w600,
             fontSize: 10,
             height: 1,

@@ -9,6 +9,8 @@ void main() {
   Widget buildSubject() {
     return ProviderScope(
       child: MaterialApp(
+        theme: DSTheme.light(),
+        darkTheme: DSTheme.dark(),
         home: CharacterListPanel(
           catalogPreview: const ChatCatalogPreview(
             state: ChatCatalogPreviewState.curiosityHome,
@@ -48,9 +50,14 @@ void main() {
     await tester.pumpWidget(buildSubject());
     await tester.pump(const Duration(milliseconds: 300));
 
-    final unreadBadge = tester.widget<DSBadge>(find.byType(DSBadge).first);
+    final unreadBadgeFinder = find.byType(DSBadge).first;
+    final unreadBadge = tester.widget<DSBadge>(unreadBadgeFinder);
+    final badgeText = tester.widget<Text>(
+      find.descendant(of: unreadBadgeFinder, matching: find.text('1')).first,
+    );
 
     expect(unreadBadge.count, 1);
+    expect(badgeText.style?.color, DSColors.ctaForegroundDark);
     expect(find.text('내 차례'), findsOneWidget);
   });
 }
