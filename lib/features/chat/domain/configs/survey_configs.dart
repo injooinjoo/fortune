@@ -1233,7 +1233,7 @@ const exLoverSurveyConfig = FortuneSurveyConfig(
       id: 'detailedStory',
       question: '좀 더 자세히 얘기해줄 수 있어? 🎤\n상담사처럼 들을게',
       inputType: SurveyInputType.voice,
-      isRequired: false,
+      isRequired: true,
     ),
     // Step 7: 현재 상태 (multiSelect)
     SurveyStep(

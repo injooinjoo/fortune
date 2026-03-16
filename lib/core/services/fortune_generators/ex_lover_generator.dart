@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/fortune_result.dart';
+import '../../utils/ex_lover_input_mapper.dart';
 import '../../utils/logger.dart';
 
 /// 헤어진 애인 Generator - API 기반 운세 생성
@@ -11,6 +12,8 @@ class ExLoverGenerator {
     Map<String, dynamic> inputConditions,
     SupabaseClient supabase,
   ) async {
+    final normalizedConditions = ExLoverInputMapper.normalize(inputConditions);
+
     // userId와 name 가져오기
     final user = supabase.auth.currentUser;
     final userProfile = user != null
@@ -24,7 +27,7 @@ class ExLoverGenerator {
     final userId = user?.id ?? 'anonymous';
     final userName = userProfile?['name'] as String? ??
         user?.userMetadata?['name'] as String? ??
-        inputConditions['name'] as String? ??
+        normalizedConditions['name'] as String? ??
         'Guest';
 
     // 📤 API 요청 준비
@@ -34,39 +37,51 @@ class ExLoverGenerator {
     Logger.info('[ExLoverGenerator]   💔 name: $userName');
 
     // ✅ Flutter 입력 필드명 → Edge Function 필드명 매핑
-    final timeSinceBreakup = inputConditions['time_since_breakup'] ??
-        inputConditions['breakupTime'] ??
+    final timeSinceBreakup = normalizedConditions['time_since_breakup'] ??
+        normalizedConditions['breakupTime'] ??
         '';
-    final exName =
-        inputConditions['ex_name'] ?? inputConditions['exPartnerName'] ?? '';
-    final exMbti =
-        inputConditions['ex_mbti'] ?? inputConditions['exPartnerMbti'] ?? '';
-    final exBirthDate = inputConditions['ex_birth_date'] ??
-        inputConditions['exPartnerBirthYear'] ??
+    final exName = normalizedConditions['ex_name'] ??
+        normalizedConditions['exPartnerName'] ??
         '';
-    final breakupDetail = inputConditions['breakup_detail'] ??
-        inputConditions['detailedStory'] ??
+    final exMbti = normalizedConditions['ex_mbti'] ??
+        normalizedConditions['exPartnerMbti'] ??
         '';
-    final contactStatus = inputConditions['contact_status'] ??
-        inputConditions['contactStatus'] ??
+    final exBirthDate = normalizedConditions['ex_birth_date'] ??
+        normalizedConditions['exPartnerBirthYear'] ??
         '';
-    final breakupInitiator = inputConditions['breakup_initiator'] ??
-        inputConditions['breakupInitiator'] ??
+    final breakupDetail = normalizedConditions['breakup_detail'] ??
+        normalizedConditions['detailedStory'] ??
         '';
-    final coreReason = inputConditions['breakup_reason'] ??
-        inputConditions['coreReason'] ??
+    final contactStatus = normalizedConditions['contact_status'] ??
+        normalizedConditions['contactStatus'] ??
         '';
-    final relationshipDepth = inputConditions['relationshipDepth'] ?? '';
-    final primaryGoal = inputConditions['primaryGoal'] ?? 'healing';
+    final breakupInitiator = normalizedConditions['breakup_initiator'] ??
+        normalizedConditions['breakupInitiator'] ??
+        '';
+    final coreReason = normalizedConditions['breakup_reason'] ??
+        normalizedConditions['coreReason'] ??
+        '';
+    final relationshipDepth = normalizedConditions['relationshipDepth'] ?? '';
+    final primaryGoal = normalizedConditions['primaryGoal'] ?? 'healing';
     final currentState =
-        inputConditions['currentState'] as List<dynamic>? ?? [];
-    final goalSpecific =
-        inputConditions['goalSpecific'] as Map<String, dynamic>?;
+        normalizedConditions['currentState'] as List<dynamic>? ?? [];
+    final rawGoalSpecific = normalizedConditions['goalSpecific'];
+    final goalSpecific = rawGoalSpecific is Map<String, dynamic>
+        ? rawGoalSpecific
+        : rawGoalSpecific is Map
+            ? rawGoalSpecific.map(
+                (key, value) => MapEntry(key.toString(), value),
+              )
+            : null;
 
     Logger.info(
         '[ExLoverGenerator]   📅 time_since_breakup: $timeSinceBreakup');
     Logger.info('[ExLoverGenerator]   💭 breakup_detail: $breakupDetail');
     Logger.info('[ExLoverGenerator]   🎯 primaryGoal: $primaryGoal');
+
+    if (breakupDetail.toString().trim().isEmpty) {
+      throw Exception('상세 이야기를 입력해주세요.');
+    }
 
     try {
       final requestBody = {
@@ -87,14 +102,14 @@ class ExLoverGenerator {
         'contact_status': contactStatus,
         'goalSpecific': goalSpecific,
         // 관계 정보 (하위 호환성)
-        'relationship_duration': inputConditions['relationship_duration'],
+        'relationship_duration': normalizedConditions['relationship_duration'],
         // 감정 정보 (하위 호환성)
-        'current_emotion': inputConditions['current_emotion'],
-        'main_curiosity': inputConditions['main_curiosity'],
+        'current_emotion': normalizedConditions['current_emotion'],
+        'main_curiosity': normalizedConditions['main_curiosity'],
         // 추가 정보
-        'chat_history': inputConditions['chat_history'],
+        'chat_history': normalizedConditions['chat_history'],
         // 프리미엄 상태
-        'isPremium': inputConditions['isPremium'] ?? false,
+        'isPremium': normalizedConditions['isPremium'] ?? false,
       };
 
       Logger.info('[ExLoverGenerator] 📡 API 호출 중...');
@@ -124,7 +139,7 @@ class ExLoverGenerator {
 
       // 🔄 파싱
       Logger.info('[ExLoverGenerator] 🔄 응답 데이터 파싱 중...');
-      final result = _convertToFortuneResult(data, inputConditions);
+      final result = _convertToFortuneResult(data, normalizedConditions);
 
       Logger.info('[ExLoverGenerator] ✅ 파싱 완료');
       Logger.info('[ExLoverGenerator]   📝 Title: ${result.title}');

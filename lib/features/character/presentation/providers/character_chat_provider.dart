@@ -30,6 +30,7 @@ import '../../../../services/app_icon_badge_service.dart';
 import '../../../../services/storage_service.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/utils/logger.dart';
+import '../../../../core/utils/ex_lover_input_mapper.dart';
 import '../../../../core/utils/moving_fortune_input_mapper.dart';
 import '../../../../constants/fortune_constants.dart';
 import '../../../../models/user_profile.dart';
@@ -3123,6 +3124,11 @@ $enrichedContext
       }
 
       return normalizedAnswers;
+    }
+
+    // ─── ex-lover: 설문 필드 → API 필드 매핑 ───
+    if (apiFortuneType == 'ex-lover') {
+      return ExLoverInputMapper.normalize(normalizedAnswers);
     }
 
     // ─── moving: 설문 필드 → API 필드 매핑 ───
