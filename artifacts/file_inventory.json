@@ -22365,6 +22365,22 @@
     },
     {
       "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
+      "path": "lib/core/utils/ex_lover_input_mapper.dart",
+      "referenced_by": [
+        "lib/core/services/fortune_generators/ex_lover_generator.dart",
+        "lib/features/character/presentation/providers/character_chat_provider.dart",
+        "test/unit/core/utils/ex_lover_input_mapper_test.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
       "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
@@ -31283,6 +31299,20 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "test/unit/core/utils/ex_lover_input_mapper_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "test/unit/core/utils/moving_fortune_input_mapper_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -31869,24 +31899,24 @@
       "assets": 1231,
       "docs": 89,
       "integration_test": 8,
-      "lib": 402,
+      "lib": 403,
       "scripts": 70,
       "supabase": 204,
-      "test": 51
+      "test": 52
     },
     "counts_by_candidate_action": {
-      "keep": 689,
+      "keep": 690,
       "keep_generated": 28,
       "manual_review": 979,
       "phase1_remove_candidate": 14,
-      "phase2_review_candidate": 340,
+      "phase2_review_candidate": 341,
       "phase3_feature_cleanup": 5
     },
     "counts_by_usage_status": {
       "doc_only": 97,
       "generated_excluded": 28,
-      "runtime_used": 689,
-      "test_only": 59,
+      "runtime_used": 690,
+      "test_only": 60,
       "tooling_only": 184,
       "unreferenced": 998
     },
@@ -32041,8 +32071,8 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 326,
-    "lib_dart_total": 399,
+    "lib_dart_runtime_reachable": 327,
+    "lib_dart_total": 400,
     "lib_dart_zero_incoming": 27,
     "missing_function_refs": [
       "--all",
@@ -32149,7 +32179,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2055,
+    "total_files": 2057,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
