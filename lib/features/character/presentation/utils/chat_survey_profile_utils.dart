@@ -3,7 +3,13 @@ import '../../../../data/models/secondary_profile.dart';
 Map<String, dynamic> buildStoredProfileSurveyAnswer({
   required SecondaryProfile profile,
   required String displayText,
+  String? selectedFamilyMember,
 }) {
+  final familyRelation =
+      selectedFamilyMember == 'spouse' && profile.matchesFamilyMember('spouse')
+          ? 'spouse'
+          : profile.familyRelation;
+
   return {
     'profileId': profile.id,
     'name': profile.name,
@@ -11,7 +17,7 @@ Map<String, dynamic> buildStoredProfileSurveyAnswer({
     'birthTime': profile.birthTime,
     'gender': profile.gender,
     'relationship': profile.relationship,
-    'familyRelation': profile.familyRelation,
+    'familyRelation': familyRelation,
     'displayText': displayText,
   };
 }

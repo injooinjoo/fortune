@@ -1373,7 +1373,11 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
             .map(
               (profile) => SurveyOption(
                 id: profile.id,
-                label: _buildStoredProfileOptionLabel(profile, inputType),
+                label: _buildStoredProfileOptionLabel(
+                  profile,
+                  inputType,
+                  selectedMember,
+                ),
                 emoji: _buildStoredProfileEmoji(profile, inputType),
               ),
             )
@@ -1394,7 +1398,9 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                 displayText: _buildStoredProfileDisplayText(
                   profile,
                   inputType,
+                  selectedMember: selectedMember,
                 ),
+                selectedFamilyMember: selectedMember,
               ),
             );
           },
@@ -1412,25 +1418,28 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       return profiles;
     }
 
+    if (selectedMember == null || selectedMember.isEmpty) {
+      return profiles
+          .where(
+            (profile) =>
+                profile.relationship == 'family' ||
+                profile.relationship == 'lover',
+          )
+          .toList(growable: false);
+    }
+
     return profiles.where((profile) {
-      if (profile.relationship != 'family') {
-        return false;
-      }
-      if (selectedMember == null || selectedMember.isEmpty) {
-        return true;
-      }
-      return profile.familyRelation == selectedMember;
+      return profile.matchesFamilyMember(selectedMember);
     }).toList(growable: false);
   }
 
   String _buildStoredProfileOptionLabel(
     SecondaryProfile profile,
     SurveyInputType inputType,
+    String? selectedMember,
   ) {
-    if (inputType == SurveyInputType.familyProfile &&
-        profile.familyRelation != null &&
-        profile.familyRelationText.isNotEmpty) {
-      return '${profile.name} · ${profile.familyRelationText}';
+    if (inputType == SurveyInputType.familyProfile) {
+      return '${profile.name} · ${profile.familySurveyRelationText(selectedMember: selectedMember)}';
     }
 
     if (profile.relationship != null) {
@@ -1441,10 +1450,13 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   }
 
   String _buildStoredProfileDisplayText(
-    SecondaryProfile profile,
-    SurveyInputType inputType,
-  ) {
-    final label = _buildStoredProfileOptionLabel(profile, inputType);
+      SecondaryProfile profile, SurveyInputType inputType,
+      {String? selectedMember}) {
+    final label = _buildStoredProfileOptionLabel(
+      profile,
+      inputType,
+      selectedMember,
+    );
     final emoji = _buildStoredProfileEmoji(profile, inputType);
     return '$emoji $label';
   }

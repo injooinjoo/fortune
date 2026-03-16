@@ -189,13 +189,11 @@ class SecondaryProfilesNotifier
   /// 가족 관계별 프로필 목록 조회
   ///
   /// [familyRelation] 가족 세부 관계 (parents/spouse/children/siblings)
-  /// relationship이 'family'이고 familyRelation이 일치하는 프로필만 반환
+  /// 배우자는 기존 lover 관계 프로필도 함께 허용
   List<SecondaryProfile> getFamilyProfiles(String familyRelation) {
     return state.whenOrNull(
           data: (profiles) => profiles
-              .where((p) =>
-                  p.relationship == 'family' &&
-                  p.familyRelation == familyRelation)
+              .where((p) => p.matchesFamilyMember(familyRelation))
               .toList(),
         ) ??
         [];

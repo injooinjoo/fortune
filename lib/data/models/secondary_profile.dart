@@ -162,6 +162,27 @@ class SecondaryProfile extends Equatable {
     }
   }
 
+  /// 가족 설문에서 선택한 구성원과 이 프로필이 매칭되는지 확인
+  bool matchesFamilyMember(String familyMember) {
+    if (familyMember == 'spouse') {
+      return relationship == 'lover' ||
+          (relationship == 'family' && familyRelation == 'spouse');
+    }
+
+    return relationship == 'family' && familyRelation == familyMember;
+  }
+
+  /// 가족 설문 컨텍스트에 맞는 관계 라벨
+  String familySurveyRelationText({String? selectedMember}) {
+    if (selectedMember == 'spouse' && matchesFamilyMember('spouse')) {
+      return '배우자';
+    }
+    if (familyRelationText.isNotEmpty) {
+      return familyRelationText;
+    }
+    return relationshipText;
+  }
+
   /// 이름 첫 글자 (아바타용)
   String get initial => name.isNotEmpty ? name.substring(0, 1) : '?';
 
