@@ -58,6 +58,9 @@ class CharacterFortuneAdapter {
   static String _extractContent(FortuneResult result) {
     final data = result.data;
     return _asString(data['content']) ??
+        _asString(data['overallReading']) ??
+        _asString(data['overall_reading']) ??
+        _asString(data['guidance']) ??
         _asString(data['mainMessage']) ??
         _asString(data['main_message']) ??
         _extractSummaryText(result) ??
@@ -79,7 +82,12 @@ class CharacterFortuneAdapter {
     final summary = result.summary;
     return _asString(summary['message']) ??
         _asString(summary['summary']) ??
+        _asString(summary['storyTitle']) ??
+        _asString(result.data['storyTitle']) ??
+        _asString(result.data['story_title']) ??
         _asString(result.data['summary']) ??
+        _asString(result.data['overallReading']) ??
+        _asString(result.data['overall_reading']) ??
         _asString(result.data['shortSummary']) ??
         _asString(result.data['short_summary']);
   }

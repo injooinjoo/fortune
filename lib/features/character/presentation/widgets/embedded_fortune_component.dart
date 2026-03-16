@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/tarot/tarot_card_catalog.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../shared/widgets/smart_image.dart';
 
@@ -169,6 +170,25 @@ class EmbeddedFortuneComponent extends StatelessWidget {
     final summary = _stringValue(componentData['overallInterpretation']) ??
         _stringValue(componentData['summary']) ??
         '카드가 전하는 흐름을 정리했어요.';
+    final deckName = _stringValue(componentData['deckName']);
+    final spreadDisplayName =
+        _stringValue(componentData['spreadDisplayName']) ??
+            _stringValue(componentData['spreadType']);
+    final storyTitle = _stringValue(componentData['storyTitle']);
+    final guidance = _stringValue(componentData['guidance']);
+    final adviceText = _stringValue(componentData['adviceText']);
+    final keyThemes = _stringList(componentData['keyThemes']);
+    final infoItems = <String>[
+      if (_stringValue(componentData['luckyElement']) != null)
+        '행운 요소 ${_stringValue(componentData['luckyElement'])!}',
+      if (_stringValue(componentData['timeFrame']) != null)
+        '유효 기간 ${_stringValue(componentData['timeFrame'])!}',
+    ];
+    final badges = <String>[
+      if (deckName != null) deckName,
+      if (spreadDisplayName != null) spreadDisplayName,
+      ...keyThemes,
+    ];
 
     return _buildCardShell(
       context,
@@ -178,17 +198,33 @@ class EmbeddedFortuneComponent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (badges.isNotEmpty) ...[
+            _buildTagWrap(context, badges),
+            const SizedBox(height: DSSpacing.sm),
+          ],
           if (_stringValue(componentData['question']) != null)
-            Text(
-              _stringValue(componentData['question'])!,
-              style: context.bodyMedium.copyWith(
-                fontWeight: FontWeight.w600,
+            _buildInsetBlock(
+              context,
+              child: Text(
+                _stringValue(componentData['question'])!,
+                style: context.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
+          if (storyTitle != null) ...[
+            const SizedBox(height: DSSpacing.sm),
+            Text(
+              storyTitle,
+              style: context.headingSmall.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
           if (cards.isNotEmpty) ...[
             const SizedBox(height: DSSpacing.md),
             SizedBox(
-              height: 160,
+              height: 176,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: cards.length,
@@ -196,13 +232,36 @@ class EmbeddedFortuneComponent extends StatelessWidget {
                     const SizedBox(width: DSSpacing.sm),
                 itemBuilder: (context, index) {
                   final card = cards[index];
-                  return _buildTarotCardItem(context, card);
+                  return _buildTarotCardItem(
+                    context,
+                    card,
+                    deckId: _stringValue(componentData['deckId']) ??
+                        _stringValue(componentData['deck']) ??
+                        'rider_waite',
+                    cardIndex: index,
+                  );
                 },
               ),
             ),
           ],
           const SizedBox(height: DSSpacing.md),
           Text(summary, style: context.bodyMedium),
+          if (guidance != null) ...[
+            const SizedBox(height: DSSpacing.md),
+            _buildSectionTitle(context, '핵심 가이드'),
+            const SizedBox(height: DSSpacing.xs),
+            Text(guidance, style: context.bodyMedium),
+          ],
+          if (adviceText != null) ...[
+            const SizedBox(height: DSSpacing.md),
+            _buildSectionTitle(context, '실천 조언'),
+            const SizedBox(height: DSSpacing.xs),
+            Text(adviceText, style: context.bodyMedium),
+          ],
+          if (infoItems.isNotEmpty) ...[
+            const SizedBox(height: DSSpacing.md),
+            _buildInfoWrap(context, infoItems),
+          ],
           if (interpretations.isNotEmpty) ...[
             const SizedBox(height: DSSpacing.md),
             _buildSectionTitle(context, '포지션 해석'),
@@ -487,7 +546,12 @@ class EmbeddedFortuneComponent extends StatelessWidget {
     );
   }
 
-  Widget _buildTarotCardItem(BuildContext context, Map<String, dynamic> card) {
+  Widget _buildTarotCardItem(
+    BuildContext context,
+    Map<String, dynamic> card, {
+    required String deckId,
+    required int cardIndex,
+  }) {
     final colors = context.colors;
     final imagePath =
         _stringValue(card['imagePath']) ?? _stringValue(card['image_path']);
@@ -496,57 +560,267 @@ class EmbeddedFortuneComponent extends StatelessWidget {
         _stringValue(card['cardName']) ??
         _stringValue(card['card_name']) ??
         '카드';
-    final position =
-        _stringValue(card['positionKey']) ?? _stringValue(card['position_key']);
+    final position = _stringValue(card['positionName']) ??
+        _stringValue(card['position_name']) ??
+        _stringValue(card['positionKey']) ??
+        _stringValue(card['position_key']);
     final isReversed =
         card['isReversed'] == true || card['is_reversed'] == true;
 
-    return SizedBox(
-      width: 92,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(DSRadius.lg),
-              child: imagePath != null && imagePath.isNotEmpty
-                  ? SmartImage(
-                      path: imagePath,
-                      width: 92,
-                      height: 120,
-                      fit: BoxFit.cover,
-                      errorWidget:
-                          _buildMediaFallback(context, Icons.style_outlined),
-                    )
-                  : _buildMediaFallback(context, Icons.style_outlined),
-            ),
-          ),
-          const SizedBox(height: DSSpacing.xs),
-          Text(
-            title,
-            style: context.labelMedium.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          if (position != null && position.isNotEmpty)
-            Text(
-              position.replaceAll('_', ' '),
-              style: context.labelSmall.copyWith(
-                color: colors.textSecondary,
+    return GestureDetector(
+      key: ValueKey('tarot-result-card-$cardIndex'),
+      onTap: () => _showTarotCardDetailSheet(
+        context,
+        card,
+        deckId: deckId,
+      ),
+      child: SizedBox(
+        width: 100,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(DSRadius.lg),
+                      child: imagePath != null && imagePath.isNotEmpty
+                          ? SmartImage(
+                              path: imagePath,
+                              width: 100,
+                              height: 132,
+                              fit: BoxFit.cover,
+                              errorWidget: _buildMediaFallback(
+                                  context, Icons.style_outlined),
+                            )
+                          : _buildMediaFallback(context, Icons.style_outlined),
+                    ),
+                  ),
+                  if (isReversed)
+                    Positioned(
+                      left: DSSpacing.xs,
+                      top: DSSpacing.xs,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: DSSpacing.xs,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colors.accent.withValues(alpha: 0.92),
+                          borderRadius: BorderRadius.circular(DSRadius.full),
+                        ),
+                        child: Text(
+                          '역방향',
+                          style: context.labelSmall.copyWith(
+                            color: colors.surface,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
-              maxLines: 1,
+            ),
+            const SizedBox(height: DSSpacing.xs),
+            Text(
+              title,
+              style: context.labelMedium.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-          if (isReversed)
+            if (position != null && position.isNotEmpty)
+              Text(
+                position,
+                style: context.labelSmall.copyWith(
+                  color: colors.textSecondary,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             Text(
-              '역방향',
+              '눌러서 상세 보기',
               style: context.labelSmall.copyWith(
                 color: colors.accent,
               ),
             ),
-        ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showTarotCardDetailSheet(
+    BuildContext context,
+    Map<String, dynamic> card, {
+    required String deckId,
+  }) {
+    final catalogEntry = TarotCardCatalog.fromCardMap(
+      card,
+      deckId: deckId,
+    );
+    final colors = context.colors;
+    final title = _stringValue(card['cardNameKr']) ??
+        _stringValue(card['card_name_kr']) ??
+        catalogEntry.cardNameKr;
+    final positionName = _stringValue(card['positionName']) ??
+        _stringValue(card['position_name']) ??
+        _stringValue(card['positionKey']) ??
+        _stringValue(card['position_key']);
+    final positionDesc = _stringValue(card['positionDesc']) ??
+        _stringValue(card['position_desc']);
+    final interpretation = _stringValue(card['interpretation']);
+    final isReversed =
+        card['isReversed'] == true || card['is_reversed'] == true;
+    final keywords = _stringList(card['keywords']).isNotEmpty
+        ? _stringList(card['keywords'])
+        : catalogEntry.keywords;
+    final imagePath = _stringValue(card['imagePath']) ??
+        _stringValue(card['image_path']) ??
+        catalogEntry.imagePath;
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: colors.surface,
+      showDragHandle: true,
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              DSSpacing.lg,
+              0,
+              DSSpacing.lg,
+              DSSpacing.lg,
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(DSRadius.xl),
+                    child: SmartImage(
+                      path: imagePath,
+                      width: double.infinity,
+                      height: 260,
+                      fit: BoxFit.cover,
+                      errorWidget: _buildMediaFallback(
+                        sheetContext,
+                        Icons.style_outlined,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: DSSpacing.md),
+                  Wrap(
+                    spacing: DSSpacing.xs,
+                    runSpacing: DSSpacing.xs,
+                    children: [
+                      _buildDetailPill(
+                        sheetContext,
+                        title,
+                      ),
+                      if (positionName != null)
+                        _buildDetailPill(sheetContext, positionName),
+                      _buildDetailPill(
+                        sheetContext,
+                        isReversed ? '역방향' : '정방향',
+                      ),
+                      _buildDetailPill(
+                        sheetContext,
+                        catalogEntry.arcana == 'major'
+                            ? '메이저 아르카나'
+                            : '${catalogEntry.suit} 슈트',
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: DSSpacing.md),
+                  Text(
+                    title,
+                    style: context.headingMedium.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: DSSpacing.xs),
+                  Text(
+                    catalogEntry.cardName,
+                    style: context.bodyMedium.copyWith(
+                      color: colors.textSecondary,
+                    ),
+                  ),
+                  if (positionDesc != null) ...[
+                    const SizedBox(height: DSSpacing.md),
+                    _buildSectionTitle(sheetContext, '이 위치가 말하는 것'),
+                    const SizedBox(height: DSSpacing.xs),
+                    Text(positionDesc, style: context.bodyMedium),
+                  ],
+                  if (interpretation != null) ...[
+                    const SizedBox(height: DSSpacing.md),
+                    _buildSectionTitle(sheetContext, '이번 리딩 해석'),
+                    const SizedBox(height: DSSpacing.xs),
+                    Text(interpretation, style: context.bodyMedium),
+                  ],
+                  const SizedBox(height: DSSpacing.md),
+                  _buildSectionTitle(sheetContext, '기본 의미'),
+                  const SizedBox(height: DSSpacing.xs),
+                  Text(
+                    isReversed
+                        ? catalogEntry.reversedMeaning
+                        : catalogEntry.uprightMeaning,
+                    style: context.bodyMedium,
+                  ),
+                  if (keywords.isNotEmpty) ...[
+                    const SizedBox(height: DSSpacing.md),
+                    _buildTagWrap(sheetContext, keywords),
+                  ],
+                  const SizedBox(height: DSSpacing.md),
+                  _buildSectionTitle(sheetContext, '카드가 가진 배경'),
+                  const SizedBox(height: DSSpacing.xs),
+                  Text(
+                    catalogEntry.loreSummary,
+                    style: context.bodyMedium,
+                  ),
+                  const SizedBox(height: DSSpacing.md),
+                  _buildSectionTitle(sheetContext, '이 카드의 조언'),
+                  const SizedBox(height: DSSpacing.xs),
+                  Text(catalogEntry.advice, style: context.bodyMedium),
+                  if (catalogEntry.reflectionQuestions.isNotEmpty) ...[
+                    const SizedBox(height: DSSpacing.md),
+                    _buildSectionTitle(sheetContext, '스스로에게 던질 질문'),
+                    const SizedBox(height: DSSpacing.xs),
+                    _buildTextLines(
+                      sheetContext,
+                      catalogEntry.reflectionQuestions,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDetailPill(BuildContext context, String label) {
+    final colors = context.colors;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.sm,
+        vertical: DSSpacing.xxs,
+      ),
+      decoration: BoxDecoration(
+        color: colors.backgroundSecondary,
+        borderRadius: BorderRadius.circular(DSRadius.full),
+      ),
+      child: Text(
+        label,
+        style: context.labelSmall.copyWith(
+          color: colors.textSecondary,
+          fontWeight: FontWeight.w700,
+        ),
       ),
     );
   }

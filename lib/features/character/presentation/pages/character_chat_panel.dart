@@ -35,8 +35,12 @@ import '../../../chat/presentation/widgets/survey/chat_face_reading_flow.dart';
 import '../../../chat/presentation/widgets/survey/ootd_photo_input.dart';
 import '../../../chat/presentation/widgets/survey/chat_image_input.dart';
 import '../../../chat/presentation/widgets/survey/chat_match_selector.dart';
+import '../../../chat/presentation/widgets/survey/chat_tarot_deck_picker.dart';
+import '../../../chat/presentation/widgets/survey/chat_tarot_draw_widget.dart';
 import '../../../../core/services/unified_calendar_service.dart';
+import '../../../../data/models/pet_profile.dart';
 import '../../../../data/models/secondary_profile.dart';
+import '../../../../presentation/providers/pet_profiles_provider.dart';
 import '../../../../presentation/providers/secondary_profiles_provider.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../utils/chat_survey_profile_utils.dart';
@@ -1242,9 +1246,17 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           onSelect: _handleSurveyAnswer,
         );
 
+      case SurveyInputType.tarotDeck:
+        return ChatTarotDeckPicker(
+          onSelect: _handleSurveyAnswer,
+        );
+
       case SurveyInputType.profile:
       case SurveyInputType.familyProfile:
         return _buildStoredProfileSelector(step.inputType);
+
+      case SurveyInputType.petProfile:
+        return _buildPetProfileSelector();
 
       case SurveyInputType.multiSelect:
         return _buildMultiSelectChips(options);
@@ -1316,6 +1328,19 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
               'displayText': '${game.homeTeam} vs ${game.awayTeam} ($league)',
             });
           },
+        );
+
+      case SurveyInputType.tarot:
+        final answers = ref
+                .read(characterChatSurveyProvider(widget.character.id))
+                .activeProgress
+                ?.answers ??
+            const <String, dynamic>{};
+        return ChatTarotDrawWidget(
+          deckId: answers['deckId']?.toString() ?? 'rider_waite',
+          purpose: answers['purpose']?.toString(),
+          questionText: answers['questionText']?.toString(),
+          onSubmit: _handleSurveyAnswer,
         );
 
       default:
@@ -1409,6 +1434,61 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     );
   }
 
+  Widget _buildPetProfileSelector() {
+    final petsAsync = ref.watch(petProfilesProvider);
+
+    return petsAsync.when(
+      loading: () => _buildSurveyInfoBox(
+        message: '저장된 반려동물을 불러오는 중이에요...',
+        showLoader: true,
+      ),
+      error: (error, _) => _buildSurveyInfoBox(
+        message: '저장된 반려동물을 불러오지 못했어요.',
+        actionLabel: '다시 불러오기',
+        onAction: () {
+          ref.read(petProfilesProvider.notifier).refresh();
+        },
+      ),
+      data: (pets) {
+        if (pets.isEmpty) {
+          return _buildSurveyInfoBox(
+            message: '선택할 수 있는 반려동물이 없어요.',
+            actionLabel: '새로고침',
+            onAction: () {
+              ref.read(petProfilesProvider.notifier).refresh();
+            },
+          );
+        }
+
+        final options = pets
+            .map(
+              (pet) => SurveyOption(
+                id: pet.id,
+                label: _buildPetProfileOptionLabel(pet),
+                emoji: '🐾',
+              ),
+            )
+            .toList(growable: false);
+        final petById = {for (final pet in pets) pet.id: pet};
+
+        return ChatSurveyChips(
+          options: options,
+          onSelect: (option) {
+            final pet = petById[option.id];
+            if (pet == null) return;
+
+            _handleSurveyAnswer(
+              buildPetProfileSurveyAnswer(
+                profile: pet,
+                displayText: _buildPetProfileDisplayText(pet),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   List<SecondaryProfile> _filterStoredProfiles(
     List<SecondaryProfile> profiles, {
     required SurveyInputType inputType,
@@ -1459,6 +1539,14 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     );
     final emoji = _buildStoredProfileEmoji(profile, inputType);
     return '$emoji $label';
+  }
+
+  String _buildPetProfileOptionLabel(PetProfile profile) {
+    return '${profile.name} · ${profile.detailLabel}';
+  }
+
+  String _buildPetProfileDisplayText(PetProfile profile) {
+    return '🐾 ${_buildPetProfileOptionLabel(profile)}';
   }
 
   String _buildStoredProfileEmoji(

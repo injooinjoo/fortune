@@ -47,6 +47,8 @@ import '../utils/chat_survey_profile_utils.dart';
 import '../utils/character_tone_policy.dart';
 import '../utils/character_tone_rollout.dart';
 import '../utils/character_voice_profile_registry.dart';
+import '../utils/tarot_chat_payload_utils.dart';
+import '../../../../core/constants/tarot_deck_metadata.dart';
 
 /// 캐릭터별 채팅 상태 Provider (family)
 final characterChatProvider = StateNotifierProvider.family<
@@ -662,6 +664,9 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   /// 설문 답변 ID를 한국어 라벨로 변환
   String _resolveAnswerLabel(dynamic value) {
     if (value is String) {
+      if (TarotDeckMetadata.availableDecks.containsKey(value)) {
+        return TarotDeckMetadata.getDeck(value).koreanName;
+      }
       return _answerLabels[value] ?? value;
     }
     if (value is List) {
@@ -765,7 +770,9 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         break;
       // ─── 루나 (special) ───
       case 'tarot':
+        _addSurveyLine(lines, answers, 'deckId', '🃏 선택 덱');
         _addSurveyLine(lines, answers, 'purpose', '🔮 상담 주제');
+        _addSurveyLine(lines, answers, 'questionText', '✍️ 질문');
         break;
       case 'dream':
         _addSurveyLine(lines, answers, 'dreamType', '💭 꿈 유형');
@@ -3173,6 +3180,11 @@ $enrichedContext
       return normalizedAnswers;
     }
 
+    // ─── tarot: 채팅 선택 payload → API 필드 매핑 ───
+    if (apiFortuneType == 'tarot') {
+      return TarotChatPayloadUtils.normalizeAnswers(normalizedAnswers);
+    }
+
     // ─── pet-compatibility: 설문 필드 → API 필드 매핑 ───
     if (apiFortuneType == 'pet-compatibility') {
       final pet = _asMapValue(normalizedAnswers['pet']);
@@ -3539,12 +3551,34 @@ $enrichedContext
       case 'tarot':
         payload.addAll({
           'question': _stringValue(rawPayload?['question']),
+          'deckId': _stringValue(rawPayload?['deckId']) ??
+              _stringValue(rawPayload?['deck_id']) ??
+              _stringValue(rawPayload?['deck']) ??
+              _stringValue(surveyAnswers['deckId']),
+          'deckName': _stringValue(rawPayload?['deckName']) ??
+              _stringValue(rawPayload?['deck_name']),
+          'spreadType': _stringValue(rawPayload?['spreadType']) ??
+              _stringValue(rawPayload?['spread_type']),
+          'spreadDisplayName': _stringValue(rawPayload?['spreadDisplayName']) ??
+              _stringValue(rawPayload?['spread_name']),
+          'storyTitle': _stringValue(rawPayload?['storyTitle']) ??
+              _stringValue(rawPayload?['story_title']),
           'cards': _mapListValue(rawPayload?['cards']),
           'positionInterpretations':
-              _asMapValue(rawPayload?['position_interpretations']),
+              _asMapValue(rawPayload?['positionInterpretations']) ??
+                  _asMapValue(rawPayload?['position_interpretations']),
           'overallInterpretation':
-              _stringValue(rawPayload?['overall_interpretation']) ??
+              _stringValue(rawPayload?['overallReading']) ??
+                  _stringValue(rawPayload?['overall_interpretation']) ??
                   fortune.content,
+          'guidance': _stringValue(rawPayload?['guidance']),
+          'adviceText': _stringValue(rawPayload?['advice']),
+          'keyThemes': _stringListValue(rawPayload?['keyThemes']) ??
+              _stringListValue(rawPayload?['key_themes']),
+          'luckyElement': _stringValue(rawPayload?['luckyElement']) ??
+              _stringValue(rawPayload?['lucky_element']),
+          'timeFrame': _stringValue(rawPayload?['timeFrame']) ??
+              _stringValue(rawPayload?['time_frame']),
         });
         break;
       case 'dream':
@@ -3626,6 +3660,10 @@ $enrichedContext
       if (fortune.period != null && fortune.period!.isNotEmpty) fortune.period!,
       if (_stringValue(summaryPayload?['spread_name']) != null)
         _stringValue(summaryPayload?['spread_name'])!,
+      if (_stringValue(rawPayload?['spreadDisplayName']) != null)
+        _stringValue(rawPayload?['spreadDisplayName'])!,
+      if (_stringValue(rawPayload?['deckName']) != null)
+        _stringValue(rawPayload?['deckName'])!,
       if (_stringValue(rawPayload?['face_type']) != null)
         _stringValue(rawPayload?['face_type'])!,
     };

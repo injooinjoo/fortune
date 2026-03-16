@@ -422,14 +422,25 @@ const tarotSurveyConfig = FortuneSurveyConfig(
   accentColor: DSColors.accentSecondary,
   steps: [
     SurveyStep(
+      id: 'deckId',
+      question: '오늘은 어떤 덱으로 리딩을 열어볼까요?',
+      inputType: SurveyInputType.tarotDeck,
+    ),
+    SurveyStep(
       id: 'purpose',
       question: '어떤 주제로 타로를 봐드릴까요?',
       inputType: SurveyInputType.chips,
       options: _tarotPurposeOptions,
     ),
     SurveyStep(
+      id: 'questionText',
+      question: '조금 더 구체적인 질문이 있으면 적어주세요. 없으면 건너뛰어도 괜찮아요.',
+      inputType: SurveyInputType.textWithSkip,
+      isRequired: false,
+    ),
+    SurveyStep(
       id: 'tarotSelection',
-      question: '오늘의 타로 덱은 라이더-웨이트입니다! 카드를 뽑아볼까요?',
+      question: '카드를 펼쳤어요. 마음이 가는 카드부터 골라볼까요?',
       inputType: SurveyInputType.tarot,
     ),
   ],

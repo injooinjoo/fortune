@@ -16,6 +16,7 @@ enum SurveyInputType {
   date, // 날짜 선택 (바이오리듬, 스포츠) - 기존 다이얼로그
   calendar, // 인라인 캘린더 (기간별 운세) - 채팅 내 캘린더 표시
   birthDateTime, // 생년월일+시간 롤링 피커 (사주용)
+  tarotDeck, // 타로 덱 선택
   tarot, // 타로 카드 선택 플로우
   faceReading, // AI 관상 분석 플로우
   ootdImage, // OOTD 사진 입력 (촬영 가이드 포함)
