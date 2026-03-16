@@ -22861,9 +22861,12 @@
       "notes": [],
       "path": "lib/data/models/secondary_profile.dart",
       "referenced_by": [
+        "lib/features/character/presentation/pages/character_chat_panel.dart",
+        "lib/features/character/presentation/utils/chat_survey_profile_utils.dart",
         "lib/presentation/providers/active_profile_provider.dart",
         "lib/presentation/providers/secondary_profiles_provider.dart",
-        "lib/presentation/providers/user_profile_notifier.dart"
+        "lib/presentation/providers/user_profile_notifier.dart",
+        "test/features/character/presentation/utils/chat_survey_profile_utils_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23764,6 +23767,22 @@
         "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
         "test/features/character/presentation/utils/chat_catalog_preview_test.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
+      "path": "lib/features/character/presentation/utils/chat_survey_profile_utils.dart",
+      "referenced_by": [
+        "lib/features/character/presentation/pages/character_chat_panel.dart",
+        "lib/features/character/presentation/providers/character_chat_provider.dart",
+        "test/features/character/presentation/utils/chat_survey_profile_utils_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -25575,14 +25594,13 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
+      "notes": [],
       "path": "lib/presentation/providers/secondary_profiles_provider.dart",
       "referenced_by": [
+        "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/presentation/providers/active_profile_provider.dart"
       ],
-      "runtime_reachable": false,
+      "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -31145,6 +31163,20 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "test/features/character/presentation/utils/chat_survey_profile_utils_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "test/font_scaling_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -31837,24 +31869,24 @@
       "assets": 1231,
       "docs": 89,
       "integration_test": 8,
-      "lib": 401,
+      "lib": 402,
       "scripts": 70,
       "supabase": 204,
-      "test": 50
+      "test": 51
     },
     "counts_by_candidate_action": {
-      "keep": 688,
+      "keep": 689,
       "keep_generated": 28,
       "manual_review": 979,
       "phase1_remove_candidate": 14,
-      "phase2_review_candidate": 339,
+      "phase2_review_candidate": 340,
       "phase3_feature_cleanup": 5
     },
     "counts_by_usage_status": {
       "doc_only": 97,
       "generated_excluded": 28,
-      "runtime_used": 688,
-      "test_only": 58,
+      "runtime_used": 689,
+      "test_only": 59,
       "tooling_only": 184,
       "unreferenced": 998
     },
@@ -32009,8 +32041,8 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 324,
-    "lib_dart_total": 398,
+    "lib_dart_runtime_reachable": 326,
+    "lib_dart_total": 399,
     "lib_dart_zero_incoming": 27,
     "missing_function_refs": [
       "--all",
@@ -32117,7 +32149,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2053,
+    "total_files": 2055,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
