@@ -488,6 +488,7 @@ class GeneratorFactory {
     final summaryText = _readOptionalString(responseData['summary']);
     final timestampRaw = _readOptionalString(responseData['timestamp']) ??
         _readOptionalString(responseData['created_at']);
+    final percentileData = _readPercentilePayload(responseData);
 
     return FortuneResult(
       id: responseData['id'] as String?,
@@ -496,10 +497,11 @@ class GeneratorFactory {
           '$homeTeam vs $awayTeam',
       summary: summaryText == null ? {} : {'message': summaryText},
       data: responseData,
-      score: (responseData['score'] as num?)?.toInt(),
+      score: _readOptionalInt(responseData['score']),
       createdAt: timestampRaw != null ? DateTime.tryParse(timestampRaw) : null,
-      percentile: (responseData['percentile'] as num?)?.toInt(),
-      isPercentileValid: responseData['percentile'] != null,
+      percentile: percentileData.percentile,
+      totalTodayViewers: percentileData.totalTodayViewers,
+      isPercentileValid: percentileData.isPercentileValid,
     );
   }
 
@@ -545,6 +547,7 @@ class GeneratorFactory {
         '강화운 분석 완료';
     final timestampRaw = readOptionalString(fortune['timestamp']) ??
         readOptionalString(fortune['created_at']);
+    final percentileData = _readPercentilePayload(fortune);
 
     return FortuneResult(
       id: fortune['id'] as String?,
@@ -552,10 +555,11 @@ class GeneratorFactory {
       title: readOptionalString(fortune['title']) ?? '강화의 기운',
       summary: {'message': summaryText},
       data: fortune,
-      score: (fortune['score'] as num?)?.toInt(),
+      score: _readOptionalInt(fortune['score']),
       createdAt: timestampRaw != null ? DateTime.tryParse(timestampRaw) : null,
-      percentile: (fortune['percentile'] as num?)?.toInt(),
-      isPercentileValid: fortune['percentile'] != null,
+      percentile: percentileData.percentile,
+      totalTodayViewers: percentileData.totalTodayViewers,
+      isPercentileValid: percentileData.isPercentileValid,
     );
   }
 
@@ -957,6 +961,55 @@ class GeneratorFactory {
     return text.isEmpty ? null : text;
   }
 
+  int? _readOptionalInt(dynamic value) {
+    if (value is num) {
+      return value.toInt();
+    }
+    final text = _readOptionalString(value);
+    return text == null ? null : int.tryParse(text);
+  }
+
+  bool? _readOptionalBool(dynamic value) {
+    if (value is bool) {
+      return value;
+    }
+    final text = _readOptionalString(value)?.toLowerCase();
+    switch (text) {
+      case 'true':
+        return true;
+      case 'false':
+        return false;
+      default:
+        return null;
+    }
+  }
+
+  _PercentilePayload _readPercentilePayload(Map<String, dynamic> payload) {
+    final nestedPercentile = _asStringKeyedMap(payload['percentile']);
+    final percentile = _readOptionalInt(
+      nestedPercentile['percentile'] ?? payload['percentile'],
+    );
+    final totalTodayViewers = _readOptionalInt(
+      nestedPercentile['totalTodayViewers'] ??
+          nestedPercentile['total_today_viewers'] ??
+          payload['totalTodayViewers'] ??
+          payload['total_today_viewers'],
+    );
+    final isPercentileValid = _readOptionalBool(
+          nestedPercentile['isPercentileValid'] ??
+              nestedPercentile['is_percentile_valid'] ??
+              payload['isPercentileValid'] ??
+              payload['is_percentile_valid'],
+        ) ??
+        percentile != null;
+
+    return _PercentilePayload(
+      percentile: percentile,
+      totalTodayViewers: totalTodayViewers,
+      isPercentileValid: isPercentileValid,
+    );
+  }
+
   String _readRequiredString(
     List<dynamic> candidates, {
     required String fieldName,
@@ -998,4 +1051,16 @@ enum GeneratorDataSource {
 
   /// 로컬 방식 (계산 또는 로컬 데이터)
   local,
+}
+
+class _PercentilePayload {
+  const _PercentilePayload({
+    required this.percentile,
+    required this.totalTodayViewers,
+    required this.isPercentileValid,
+  });
+
+  final int? percentile;
+  final int? totalTodayViewers;
+  final bool isPercentileValid;
 }
