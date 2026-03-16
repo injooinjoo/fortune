@@ -116,8 +116,11 @@ class GeneratorFactory {
 
       case 'exam':
       case 'lucky_exam':
-        return await ExamGenerator.generate(input, _supabase,
-            isPremium: isPremium);
+        return await ExamGenerator.generate(
+          input,
+          _supabase,
+          isPremium: isPremium,
+        );
 
       case 'health':
         return await HealthGenerator.generate(
@@ -196,6 +199,9 @@ class GeneratorFactory {
       case 'yearly-encounter':
       case 'yearly_encounter':
         return await _generateYearlyEncounter(input, isPremium);
+
+      case 'talisman':
+        return await _generateTalisman(input);
 
       // ==================== 기본 (레거시) ====================
       default:
@@ -351,9 +357,7 @@ class GeneratorFactory {
     );
   }
 
-  Future<FortuneResult> _generateFaceReading(
-    Map<String, dynamic> input,
-  ) async {
+  Future<FortuneResult> _generateFaceReading(Map<String, dynamic> input) async {
     final response = await _supabase.functions.invoke(
       'fortune-face-reading',
       body: input,
@@ -448,9 +452,7 @@ class GeneratorFactory {
     return null;
   }
 
-  Future<FortuneResult> _generateBiorhythm(
-    Map<String, dynamic> input,
-  ) async {
+  Future<FortuneResult> _generateBiorhythm(Map<String, dynamic> input) async {
     final response = await _supabase.functions.invoke(
       'fortune-biorhythm',
       body: input,
@@ -481,22 +483,23 @@ class GeneratorFactory {
     final user = _supabase.auth.currentUser;
     final match = _asStringKeyedMap(input['match']);
 
-    final sport = _readRequiredString(
-      [input['sport'], match['sport']],
-      fieldName: 'sport',
-    );
-    final homeTeam = _readRequiredString(
-      [input['homeTeam'], match['homeTeam']],
-      fieldName: 'homeTeam',
-    );
-    final awayTeam = _readRequiredString(
-      [input['awayTeam'], match['awayTeam']],
-      fieldName: 'awayTeam',
-    );
-    final gameDate = _readRequiredString(
-      [input['gameDate'], match['gameTime'], match['gameDate']],
-      fieldName: 'gameDate',
-    );
+    final sport = _readRequiredString([
+      input['sport'],
+      match['sport'],
+    ], fieldName: 'sport');
+    final homeTeam = _readRequiredString([
+      input['homeTeam'],
+      match['homeTeam'],
+    ], fieldName: 'homeTeam');
+    final awayTeam = _readRequiredString([
+      input['awayTeam'],
+      match['awayTeam'],
+    ], fieldName: 'awayTeam');
+    final gameDate = _readRequiredString([
+      input['gameDate'],
+      match['gameTime'],
+      match['gameDate'],
+    ], fieldName: 'gameDate');
     final league = _readOptionalString(input['league']) ??
         _readOptionalString(match['league']);
     final favoriteTeam = _resolveMatchInsightFavoriteTeam(
@@ -553,9 +556,7 @@ class GeneratorFactory {
     );
   }
 
-  Future<FortuneResult> _generateGameEnhance(
-    Map<String, dynamic> input,
-  ) async {
+  Future<FortuneResult> _generateGameEnhance(Map<String, dynamic> input) async {
     final user = _supabase.auth.currentUser;
     String? readOptionalString(dynamic value) {
       if (value == null) {
@@ -716,7 +717,8 @@ class GeneratorFactory {
     }
 
     throw Exception(
-        'Past Life API 응답 형식 오류: ${data['error'] ?? data.keys.join(',')}');
+      'Past Life API 응답 형식 오류: ${data['error'] ?? data.keys.join(',')}',
+    );
   }
 
   /// 재물운 생성 (fortune-wealth Edge Function 호출)
@@ -778,7 +780,8 @@ class GeneratorFactory {
     }
 
     throw Exception(
-        'Wealth API 응답 형식 오류: ${data['error'] ?? data.keys.join(',')}');
+      'Wealth API 응답 형식 오류: ${data['error'] ?? data.keys.join(',')}',
+    );
   }
 
   // _generateBabyNickname은 _generateNaming으로 통합됨
@@ -902,10 +905,7 @@ class GeneratorFactory {
       if (familyMemberData != null) 'familyMember': familyMemberData,
     };
 
-    final response = await _supabase.functions.invoke(
-      endpoint,
-      body: payload,
-    );
+    final response = await _supabase.functions.invoke(endpoint, body: payload);
 
     if (response.data == null) {
       throw Exception('Family Fortune API 응답 없음');
@@ -957,7 +957,7 @@ class GeneratorFactory {
         type: 'yearly-encounter',
         title: '올해의 인연',
         summary: {
-          'message': fortune['encounterSpotTitle'] as String? ?? '인연 분석 완료'
+          'message': fortune['encounterSpotTitle'] as String? ?? '인연 분석 완료',
         },
         data: fortune,
         score:
@@ -973,15 +973,18 @@ class GeneratorFactory {
     String fortuneType,
     Map<String, dynamic> input,
   ) async {
-    final functionName = _resolveFunctionName(fortuneType, input);
-    if (functionName == null) {
+    final functionNames = _resolveFunctionNames(fortuneType, input);
+    if (functionNames.isEmpty) {
       throw Exception('지원되지 않는 Edge Function 타입: $fortuneType');
     }
 
-    final response = await _supabase.functions.invoke(
-      functionName,
+    final invocation = await _invokeFunctionWithFallbacks(
+      fortuneType: fortuneType,
+      functionNames: functionNames,
       body: input,
     );
+    final functionName = invocation.functionName;
+    final response = invocation.response;
 
     if (response.data == null) {
       throw Exception('$functionName API 응답 없음');
@@ -1001,8 +1004,64 @@ class GeneratorFactory {
     }
 
     Logger.info(
-        '[GeneratorFactory] ✅ Resolved API: $fortuneType -> $functionName');
+      '[GeneratorFactory] ✅ Resolved API: $fortuneType -> $functionName',
+    );
     return _buildGenericFortuneResult(fortuneType, responseData);
+  }
+
+  Future<FortuneResult> _generateTalisman(Map<String, dynamic> input) async {
+    final payload = Map<String, dynamic>.from(input);
+    final userId = _readOptionalString(payload['userId']) ??
+        _supabase.auth.currentUser?.id;
+    final category = _readOptionalString(payload['category']) ??
+        _readOptionalString(payload['purpose']);
+
+    if (userId != null) {
+      payload['userId'] = userId;
+    }
+    if (category != null) {
+      payload['category'] = category;
+    }
+
+    return _generateDefault('talisman', payload);
+  }
+
+  Future<_FunctionInvocation> _invokeFunctionWithFallbacks({
+    required String fortuneType,
+    required List<String> functionNames,
+    required Map<String, dynamic> body,
+  }) async {
+    Object? lastError;
+
+    for (var index = 0; index < functionNames.length; index++) {
+      final functionName = functionNames[index];
+
+      try {
+        final response = await _supabase.functions.invoke(
+          functionName,
+          body: body,
+        );
+        return _FunctionInvocation(
+          functionName: functionName,
+          response: response,
+        );
+      } on FunctionException catch (error) {
+        lastError = error;
+        final hasFallback = index < functionNames.length - 1;
+        if (error.status == 404 && hasFallback) {
+          final fallbackName = functionNames[index + 1];
+          Logger.warning(
+            '[GeneratorFactory] ⚠️ Edge Function fallback: '
+            '$fortuneType $functionName -> $fallbackName',
+          );
+          continue;
+        }
+        rethrow;
+      }
+    }
+
+    throw lastError ??
+        Exception('Edge Function 호출 실패: ${functionNames.join(', ')}');
   }
 
   Map<String, dynamic> _asStringKeyedMap(dynamic value) {
@@ -1010,9 +1069,7 @@ class GeneratorFactory {
       return value;
     }
     if (value is Map) {
-      return value.map(
-        (key, mapValue) => MapEntry(key.toString(), mapValue),
-      );
+      return value.map((key, mapValue) => MapEntry(key.toString(), mapValue));
     }
     return const <String, dynamic>{};
   }
@@ -1107,7 +1164,7 @@ class GeneratorFactory {
     }
   }
 
-  String? _resolveFunctionName(
+  List<String> _resolveFunctionNames(
     String fortuneType,
     Map<String, dynamic> input,
   ) {
@@ -1117,9 +1174,28 @@ class GeneratorFactory {
       answers: input,
     );
     if (endpoint == null || endpoint.isEmpty) {
-      return null;
+      return const <String>[];
     }
-    return endpoint.replaceFirst(RegExp(r'^/'), '');
+
+    final primaryFunctionName = endpoint.replaceFirst(RegExp(r'^/'), '');
+    final functionNames = <String>[primaryFunctionName];
+
+    for (final legacyFunctionName in _legacyFunctionNamesFor(canonicalType)) {
+      if (!functionNames.contains(legacyFunctionName)) {
+        functionNames.add(legacyFunctionName);
+      }
+    }
+
+    return functionNames;
+  }
+
+  List<String> _legacyFunctionNamesFor(String canonicalType) {
+    switch (canonicalType) {
+      case 'talisman':
+        return const ['fortune-talisman'];
+      default:
+        return const <String>[];
+    }
   }
 
   String _canonicalFortuneType(String fortuneType) {
@@ -1242,4 +1318,14 @@ class _PercentilePayload {
   final int? percentile;
   final int? totalTodayViewers;
   final bool isPercentileValid;
+}
+
+class _FunctionInvocation {
+  const _FunctionInvocation({
+    required this.functionName,
+    required this.response,
+  });
+
+  final String functionName;
+  final FunctionResponse response;
 }
