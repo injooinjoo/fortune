@@ -229,13 +229,15 @@ export function extractDreamCohort(input: {
   birthDate?: string;
   dream_content?: string;
   dream?: string;
+  dreamCategory?: string;
+  emotion?: string;
 }): CohortData {
   const dreamContent = input.dream_content || input.dream || '';
   const birthYear = input.birthDate ? new Date(input.birthDate).getFullYear() : 2000;
 
   return {
-    dreamCategory: classifyDreamCategory(dreamContent),
-    emotion: classifyDreamEmotion(dreamContent),
+    dreamCategory: input.dreamCategory || classifyDreamCategory(dreamContent),
+    emotion: input.emotion || classifyDreamEmotion(dreamContent),
     zodiac: getZodiacName(birthYear),
   };
 }

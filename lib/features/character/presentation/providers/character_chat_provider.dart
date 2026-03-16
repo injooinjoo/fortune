@@ -3126,6 +3126,34 @@ $enrichedContext
       return normalizedAnswers;
     }
 
+    // ─── dream: 설문 필드 → API 필드 매핑 ───
+    if (apiFortuneType == 'dream') {
+      final dreamContent = _stringValue(normalizedAnswers['dream']) ??
+          _stringValue(normalizedAnswers['dream_content']) ??
+          _stringValue(normalizedAnswers['dreamContent']) ??
+          _stringValue(normalizedAnswers['dreamDescription']);
+      final dreamEmotion = _stringValue(normalizedAnswers['dreamEmotion']) ??
+          _stringValue(normalizedAnswers['dream_emotion']) ??
+          _stringValue(normalizedAnswers['emotion']);
+
+      normalizedAnswers
+        ..remove('dreamContent')
+        ..remove('dreamDescription')
+        ..remove('emotion');
+
+      if (dreamContent != null && dreamContent.isNotEmpty) {
+        normalizedAnswers['dream'] = dreamContent;
+        normalizedAnswers['dream_content'] = dreamContent;
+      }
+
+      if (dreamEmotion != null && dreamEmotion.isNotEmpty) {
+        normalizedAnswers['dreamEmotion'] = dreamEmotion;
+        normalizedAnswers['dream_emotion'] = dreamEmotion;
+      }
+
+      return normalizedAnswers;
+    }
+
     // ─── ex-lover: 설문 필드 → API 필드 매핑 ───
     if (apiFortuneType == 'ex-lover') {
       return ExLoverInputMapper.normalize(normalizedAnswers);

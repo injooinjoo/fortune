@@ -73,7 +73,13 @@ interface DreamAnalysis {
 
 // 요청 인터페이스
 interface DreamFortuneRequest {
-  dream: string
+  dream?: string
+  dream_content?: string
+  dreamContent?: string
+  dreamDescription?: string
+  dreamEmotion?: string
+  dream_emotion?: string
+  emotion?: string
   inputType?: 'text' | 'voice'
   date?: string
   isPremium?: boolean // ✅ 프리미엄 사용자 여부
@@ -355,11 +361,19 @@ serve(async (req) => {
     // 요청 데이터 파싱
     console.log('🔍 [Step 1] Parsing JSON...')
     const requestData: DreamFortuneRequest = JSON.parse(bodyText)
-    const { dream, inputType = 'text', date, isPremium = false } = requestData
+    const { inputType = 'text', date, isPremium = false } = requestData
+    const dream = requestData.dream?.trim() ||
+      requestData.dream_content?.trim() ||
+      requestData.dreamContent?.trim() ||
+      requestData.dreamDescription?.trim() ||
+      ''
+    const dreamEmotion = requestData.dreamEmotion ||
+      requestData.dream_emotion ||
+      requestData.emotion
 
-    console.log('🔍 [Step 1] Request received:', { dream: dream?.substring(0, 50), dreamLength: dream?.length, inputType, isPremium })
+    console.log('🔍 [Step 1] Request received:', { dream: dream.substring(0, 50), dreamLength: dream.length, inputType, isPremium })
 
-    if (!dream || dream.trim().length === 0) {
+    if (dream.length === 0) {
       throw new Error('꿈 내용을 입력해주세요.')
     }
 
@@ -377,7 +391,7 @@ serve(async (req) => {
     const cohortData = extractDreamCohort({
       dream,
       dreamCategory: dreamType,
-      emotion: (requestData as any).dreamEmotion || 'neutral',
+      emotion: dreamEmotion || 'neutral',
       birthDate: (requestData as any).birthDate || null,
     })
     const cohortHash = await generateCohortHash(cohortData)

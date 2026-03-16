@@ -377,9 +377,10 @@ class GeneratorFactory {
     Map<String, dynamic> input,
     bool isPremium,
   ) async {
+    final payload = _normalizeDreamPayload(input, isPremium);
     final response = await _supabase.functions.invoke(
       'fortune-dream',
-      body: input,
+      body: payload,
     );
 
     if (response.data == null) {
@@ -399,6 +400,52 @@ class GeneratorFactory {
       data: fortune,
       createdAt: DateTime.now(),
     );
+  }
+
+  Map<String, dynamic> _normalizeDreamPayload(
+    Map<String, dynamic> input,
+    bool isPremium,
+  ) {
+    final payload = Map<String, dynamic>.from(input);
+    final dreamContent = _firstNonEmptyString([
+      payload['dream'],
+      payload['dream_content'],
+      payload['dreamContent'],
+      payload['dreamDescription'],
+    ]);
+    final dreamEmotion = _firstNonEmptyString([
+      payload['dreamEmotion'],
+      payload['dream_emotion'],
+      payload['emotion'],
+    ]);
+
+    if (dreamContent != null) {
+      payload['dream'] = dreamContent;
+      payload['dream_content'] = dreamContent;
+    }
+
+    if (dreamEmotion != null) {
+      payload['dreamEmotion'] = dreamEmotion;
+      payload['dream_emotion'] = dreamEmotion;
+    }
+
+    payload['isPremium'] = isPremium;
+    return payload;
+  }
+
+  String? _firstNonEmptyString(List<dynamic> candidates) {
+    for (final candidate in candidates) {
+      if (candidate is! String) {
+        continue;
+      }
+
+      final normalized = candidate.trim();
+      if (normalized.isNotEmpty) {
+        return normalized;
+      }
+    }
+
+    return null;
   }
 
   Future<FortuneResult> _generateBiorhythm(
