@@ -21122,6 +21122,7 @@
       "notes": [],
       "path": "lib/core/fortune/fortune_type_registry.dart",
       "referenced_by": [
+        "lib/core/services/generator_factory.dart",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart"
       ],
