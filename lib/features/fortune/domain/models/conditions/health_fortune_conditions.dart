@@ -40,31 +40,125 @@ class HealthFortuneConditions extends FortuneConditions {
   /// inputConditions Map에서 HealthFortuneConditions 생성
   factory HealthFortuneConditions.fromInputData(Map<String, dynamic> data) {
     return HealthFortuneConditions(
-      healthConcern: data['healthConcern'] as String? ??
-          data['current_condition'] as String? ??
+      healthConcern: _readString([
+            data['healthConcern'],
+            data['current_condition'],
+            data['currentCondition'],
+          ]) ??
           '피로감',
-      symptoms: data['symptoms'] != null
-          ? List<String>.from(data['symptoms'] as List)
-          : data['concerned_body_parts'] != null
-              ? List<String>.from(data['concerned_body_parts'] as List)
-              : [],
-      sleepQuality:
-          data['sleepQuality'] as int? ?? data['sleep_quality'] as int? ?? 3,
-      exerciseFrequency: data['exerciseFrequency'] as int? ??
-          data['exercise_frequency'] as int? ??
+      symptoms: _readStringList([
+        data['symptoms'],
+        data['concerned_body_parts'],
+        data['concernedBodyParts'],
+        data['concern'],
+      ]),
+      sleepQuality: _readInt([
+            data['sleepQuality'],
+            data['sleep_quality'],
+          ]) ??
           3,
-      stressLevel:
-          data['stressLevel'] as int? ?? data['stress_level'] as int? ?? 3,
-      mealRegularity: data['mealRegularity'] as int? ??
-          data['meal_regularity'] as int? ??
+      exerciseFrequency: _readInt([
+            data['exerciseFrequency'],
+            data['exercise_frequency'],
+          ]) ??
           3,
-      hasChronicCondition: data['hasChronicCondition'] as bool? ??
-          data['has_chronic_condition'] as bool? ??
+      stressLevel: _readInt([
+            data['stressLevel'],
+            data['stress_level'],
+          ]) ??
+          3,
+      mealRegularity: _readInt([
+            data['mealRegularity'],
+            data['meal_regularity'],
+          ]) ??
+          3,
+      hasChronicCondition: _readBool([
+            data['hasChronicCondition'],
+            data['has_chronic_condition'],
+          ]) ??
           false,
-      chronicCondition: data['chronicCondition'] as String? ??
-          data['chronic_condition'] as String? ??
+      chronicCondition: _readString([
+            data['chronicCondition'],
+            data['chronic_condition'],
+          ]) ??
           '',
     );
+  }
+
+  static String? _readString(List<dynamic> candidates) {
+    for (final candidate in candidates) {
+      if (candidate is! String) {
+        continue;
+      }
+
+      final trimmed = candidate.trim();
+      if (trimmed.isNotEmpty) {
+        return trimmed;
+      }
+    }
+
+    return null;
+  }
+
+  static int? _readInt(List<dynamic> candidates) {
+    for (final candidate in candidates) {
+      if (candidate is int) {
+        return candidate;
+      }
+      if (candidate is num) {
+        return candidate.toInt();
+      }
+      if (candidate is String) {
+        final parsed = int.tryParse(candidate.trim());
+        if (parsed != null) {
+          return parsed;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  static bool? _readBool(List<dynamic> candidates) {
+    for (final candidate in candidates) {
+      if (candidate is bool) {
+        return candidate;
+      }
+      if (candidate is String) {
+        final normalized = candidate.trim().toLowerCase();
+        if (normalized == 'true') {
+          return true;
+        }
+        if (normalized == 'false') {
+          return false;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  static List<String> _readStringList(List<dynamic> candidates) {
+    for (final candidate in candidates) {
+      if (candidate is List) {
+        final values = candidate
+            .map((item) => item.toString().trim())
+            .where((item) => item.isNotEmpty)
+            .toList(growable: false);
+        if (values.isNotEmpty) {
+          return values;
+        }
+      }
+
+      if (candidate is String) {
+        final trimmed = candidate.trim();
+        if (trimmed.isNotEmpty) {
+          return [trimmed];
+        }
+      }
+    }
+
+    return const <String>[];
   }
 
   @override
