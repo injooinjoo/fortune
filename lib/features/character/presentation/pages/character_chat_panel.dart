@@ -77,10 +77,12 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   final ImagePicker _imagePicker = ImagePicker();
   final Map<String, GlobalKey> _messageAnchorKeys = {};
 
-  static const Duration _sessionStartAnchorHoldDuration =
-      Duration(milliseconds: 1400);
-  static const Duration _archivedHistoryRevealDuration =
-      Duration(milliseconds: 650);
+  static const Duration _sessionStartAnchorHoldDuration = Duration(
+    milliseconds: 1400,
+  );
+  static const Duration _archivedHistoryRevealDuration = Duration(
+    milliseconds: 650,
+  );
 
   /// Notifier 참조 캐시 (dispose 후 ref 사용 불가 문제 해결)
   CharacterChatNotifier? _cachedNotifier;
@@ -114,7 +116,8 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       final mbtiType = profile?.mbtiType;
 
       debugPrint(
-          '[Survey] mbtiConfirm - name: $name, mbtiType: $mbtiType, hasValue: ${profileAsync.hasValue}');
+        '[Survey] mbtiConfirm - name: $name, mbtiType: $mbtiType, hasValue: ${profileAsync.hasValue}',
+      );
 
       if (mbtiType != null && mbtiType.isNotEmpty) {
         return '$name님은 $mbtiType시네요! 맞으신가요? 🧠';
@@ -144,8 +147,9 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       ref.read(activeCharacterChatProvider.notifier).state =
           widget.character.id;
 
-      _cachedNotifier =
-          ref.read(characterChatProvider(widget.character.id).notifier);
+      _cachedNotifier = ref.read(
+        characterChatProvider(widget.character.id).notifier,
+      );
       await _cachedNotifier?.initConversation();
       _cachedNotifier?.clearUnreadCount(); // 채팅방 진입 시 읽음 처리
       // 채팅방 진입 시 맨 아래로 스크롤
@@ -585,19 +589,18 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                       children: [
                         Text(
                           widget.character.name,
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w600),
                         ),
                         Text(
                           widget.character.personality.length > 30
                               ? '${widget.character.personality.substring(0, 30)}...'
                               : widget.character.personality,
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.grey,
-                                  ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.copyWith(color: Colors.grey),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -638,8 +641,10 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       widget.onBack?.call();
-      context.push('/character/${widget.character.id}',
-          extra: widget.character);
+      context.push(
+        '/character/${widget.character.id}',
+        extra: widget.character,
+      );
     });
   }
 
@@ -760,9 +765,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         border: Border(
-          bottom: BorderSide(
-            color: colors.border.withValues(alpha: 0.8),
-          ),
+          bottom: BorderSide(color: colors.border.withValues(alpha: 0.8)),
         ),
       ),
       child: ListView.separated(
@@ -787,9 +790,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
               decoration: BoxDecoration(
                 color: colors.surface,
                 borderRadius: BorderRadius.circular(18),
-                border: Border.all(
-                  color: colors.border,
-                ),
+                border: Border.all(color: colors.border),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -814,12 +815,10 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
   /// 운세 칩 탭 핸들러 - 설문이 있으면 설문 시작, 없으면 바로 요청
   Future<void> _handleFortuneChipTap(
-      String fortuneType, String displayName) async {
-    await _startFortuneFlow(
-      fortuneType,
-      displayName,
-      resetSurvey: true,
-    );
+    String fortuneType,
+    String displayName,
+  ) async {
+    await _startFortuneFlow(fortuneType, displayName, resetSurvey: true);
   }
 
   Future<void> _startFortuneFlow(
@@ -838,8 +837,9 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           .cancelSurvey();
     }
 
-    final chatNotifier =
-        ref.read(characterChatProvider(widget.character.id).notifier);
+    final chatNotifier = ref.read(
+      characterChatProvider(widget.character.id).notifier,
+    );
     final introMessage = context.l10n.fortuneIntroMessage(displayName);
     final requestMessage = context.l10n.tellMeAbout(displayName);
     final anchorMessageId = chatNotifier.startFreshFortuneSession(
@@ -868,11 +868,13 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       // 첫 질문을 캐릭터 메시지로 표시
       Future.delayed(const Duration(milliseconds: 500), () {
         if (!mounted) return;
-        final surveyState =
-            ref.read(characterChatSurveyProvider(widget.character.id));
+        final surveyState = ref.read(
+          characterChatSurveyProvider(widget.character.id),
+        );
         if (surveyState.isActive && surveyState.activeProgress != null) {
-          final firstQuestion =
-              _getDynamicStepQuestion(surveyState.activeProgress!.currentStep);
+          final firstQuestion = _getDynamicStepQuestion(
+            surveyState.activeProgress!.currentStep,
+          );
           chatNotifier.addCharacterMessage(firstQuestion);
         }
         _scrollToBottom();
@@ -951,18 +953,17 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   /// 이미지 선택 처리 (소개팅 가이드 등)
   void _handleImageSelect(File image) {
     final displayText = '📷 사진이 선택되었어요';
-    _handleSurveyAnswer({
-      'imagePath': image.path,
-      'displayText': displayText,
-    });
+    _handleSurveyAnswer({'imagePath': image.path, 'displayText': displayText});
   }
 
   void _handleSurveyAnswer(dynamic answer) {
     _clearSessionStartAnchor();
-    final surveyNotifier =
-        ref.read(characterChatSurveyProvider(widget.character.id).notifier);
-    final chatNotifier =
-        ref.read(characterChatProvider(widget.character.id).notifier);
+    final surveyNotifier = ref.read(
+      characterChatSurveyProvider(widget.character.id).notifier,
+    );
+    final chatNotifier = ref.read(
+      characterChatProvider(widget.character.id).notifier,
+    );
 
     dynamic answerValue = answer;
 
@@ -999,16 +1000,18 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     // 다음 단계 확인
     Future.delayed(const Duration(milliseconds: 300), () {
       if (!mounted) return;
-      final surveyState =
-          ref.read(characterChatSurveyProvider(widget.character.id));
+      final surveyState = ref.read(
+        characterChatSurveyProvider(widget.character.id),
+      );
 
       if (surveyState.isCompleted) {
         // 설문 완료 - 운세 요청
         _handleSurveyComplete(surveyState);
       } else if (surveyState.isActive && surveyState.activeProgress != null) {
         // 다음 질문
-        final nextQuestion =
-            _getDynamicStepQuestion(surveyState.activeProgress!.currentStep);
+        final nextQuestion = _getDynamicStepQuestion(
+          surveyState.activeProgress!.currentStep,
+        );
         chatNotifier.addCharacterMessage(nextQuestion);
         _scrollToBottom();
       }
@@ -1017,18 +1020,19 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
   /// 관상 분석 플로우 완료 핸들러
   void _handleFaceReadingComplete(String imagePath) {
-    _handleSurveyAnswer({
-      'imagePath': imagePath,
-    });
+    _handleSurveyAnswer({'imagePath': imagePath});
   }
 
   /// 설문 완료 처리
   Future<void> _handleSurveyComplete(
-      CharacterChatSurveyState surveyState) async {
-    final chatNotifier =
-        ref.read(characterChatProvider(widget.character.id).notifier);
-    final surveyNotifier =
-        ref.read(characterChatSurveyProvider(widget.character.id).notifier);
+    CharacterChatSurveyState surveyState,
+  ) async {
+    final chatNotifier = ref.read(
+      characterChatProvider(widget.character.id).notifier,
+    );
+    final surveyNotifier = ref.read(
+      characterChatSurveyProvider(widget.character.id).notifier,
+    );
 
     // 완료 메시지
     chatNotifier.addCharacterMessage(context.l10n.analyzingMessage);
@@ -1042,7 +1046,8 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     if (fortuneType == 'traditional-saju') {
       final sajuData = await chatNotifier.getSajuRawData();
       debugPrint(
-          '[SajuCard] sajuData=${sajuData != null ? 'loaded (${sajuData.keys.toList()})' : 'null'}');
+        '[SajuCard] sajuData=${sajuData != null ? 'loaded (${sajuData.keys.toList()})' : 'null'}',
+      );
       if (sajuData != null && sajuData.isNotEmpty) {
         chatNotifier.addSajuResultMessage(sajuData);
         _scrollToBottom();
@@ -1188,7 +1193,9 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
       ),
@@ -1223,8 +1230,9 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                           },
                     child: Text(
                       context.l10n.skip,
-                      style:
-                          context.labelSmall.copyWith(color: Colors.grey[500]),
+                      style: context.labelSmall.copyWith(
+                        color: Colors.grey[500],
+                      ),
                     ),
                   ),
               ],
@@ -1241,10 +1249,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   Widget _buildSurveyInputWidget(SurveyStep step, List<SurveyOption> options) {
     switch (step.inputType) {
       case SurveyInputType.chips:
-        return ChatSurveyChips(
-          options: options,
-          onSelect: _handleSurveyAnswer,
-        );
+        return ChatSurveyChips(options: options, onSelect: _handleSurveyAnswer);
 
       case SurveyInputType.tarotDeck:
         return ChatTarotDeckPicker(
@@ -1293,9 +1298,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         return _buildCalendarInput(step);
 
       case SurveyInputType.faceReading:
-        return ChatFaceReadingFlow(
-          onComplete: _handleFaceReadingComplete,
-        );
+        return ChatFaceReadingFlow(onComplete: _handleFaceReadingComplete);
 
       case SurveyInputType.image:
         return ChatImageInput(
@@ -1304,16 +1307,12 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         );
 
       case SurveyInputType.ootdImage:
-        return OotdPhotoInput(
-          onImageSelected: _handleImageSelect,
-        );
+        return OotdPhotoInput(onImageSelected: _handleImageSelect);
 
       case SurveyInputType.matchSelection:
         // 이전 단계에서 선택한 종목 가져오기
         final surveyProgress = ref
-            .read(
-              characterChatSurveyProvider(widget.character.id),
-            )
+            .read(characterChatSurveyProvider(widget.character.id))
             .activeProgress;
         final selectedSport = surveyProgress?.answers['sport']?.toString();
         return ChatMatchSelector(
@@ -1357,8 +1356,9 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
   Widget _buildStoredProfileSelector(SurveyInputType inputType) {
     final profilesAsync = ref.watch(secondaryProfilesProvider);
-    final surveyState =
-        ref.watch(characterChatSurveyProvider(widget.character.id));
+    final surveyState = ref.watch(
+      characterChatSurveyProvider(widget.character.id),
+    );
     final selectedMember =
         surveyState.activeProgress?.answers['member']?.toString();
 
@@ -1530,8 +1530,10 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   }
 
   String _buildStoredProfileDisplayText(
-      SecondaryProfile profile, SurveyInputType inputType,
-      {String? selectedMember}) {
+    SecondaryProfile profile,
+    SurveyInputType inputType, {
+    String? selectedMember,
+  }) {
     final label = _buildStoredProfileOptionLabel(
       profile,
       inputType,
@@ -1585,9 +1587,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.lg),
-        border: Border.all(
-          color: colors.textPrimary.withValues(alpha: 0.08),
-        ),
+        border: Border.all(color: colors.textPrimary.withValues(alpha: 0.08)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -1606,16 +1606,11 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           Text(
             message,
             textAlign: TextAlign.center,
-            style: typography.bodyMedium.copyWith(
-              color: colors.textSecondary,
-            ),
+            style: typography.bodyMedium.copyWith(color: colors.textSecondary),
           ),
           if (actionLabel != null && onAction != null) ...[
             const SizedBox(height: DSSpacing.xs),
-            TextButton(
-              onPressed: onAction,
-              child: Text(actionLabel),
-            ),
+            TextButton(onPressed: onAction, child: Text(actionLabel)),
           ],
         ],
       ),
@@ -1693,7 +1688,8 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
             onPressed: () {
               ref
                   .read(
-                      characterChatSurveyProvider(widget.character.id).notifier)
+                    characterChatSurveyProvider(widget.character.id).notifier,
+                  )
                   .skipCurrentStep();
               _checkSurveyCompletion();
             },
@@ -1731,12 +1727,14 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
             'selectedDate':
                 '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}',
             'events': events
-                .map((e) => {
-                      'title': e.title,
-                      'startTime': e.startTime?.toIso8601String(),
-                      'isAllDay': e.isAllDay,
-                      'location': e.location,
-                    })
+                .map(
+                  (e) => {
+                    'title': e.title,
+                    'startTime': e.startTime?.toIso8601String(),
+                    'isAllDay': e.isAllDay,
+                    'location': e.location,
+                  },
+                )
                 .toList(),
             'eventCount': events.length,
           });
@@ -1749,17 +1747,20 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   void _checkSurveyCompletion() {
     Future.delayed(const Duration(milliseconds: 100), () {
       if (!mounted) return;
-      final surveyState =
-          ref.read(characterChatSurveyProvider(widget.character.id));
-      final chatNotifier =
-          ref.read(characterChatProvider(widget.character.id).notifier);
+      final surveyState = ref.read(
+        characterChatSurveyProvider(widget.character.id),
+      );
+      final chatNotifier = ref.read(
+        characterChatProvider(widget.character.id).notifier,
+      );
 
       if (surveyState.isCompleted) {
         _handleSurveyComplete(surveyState);
       } else if (surveyState.isActive && surveyState.activeProgress != null) {
         // 다음 질문 표시
-        final nextQuestion =
-            _getDynamicStepQuestion(surveyState.activeProgress!.currentStep);
+        final nextQuestion = _getDynamicStepQuestion(
+          surveyState.activeProgress!.currentStep,
+        );
         chatNotifier.addCharacterMessage(nextQuestion);
         _scrollToBottom();
       }
@@ -1791,8 +1792,10 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
               ),
             ),
             ListTile(
-              leading:
-                  Icon(Icons.camera_alt_outlined, color: colors.textPrimary),
+              leading: Icon(
+                Icons.camera_alt_outlined,
+                color: colors.textPrimary,
+              ),
               title: Text('카메라', style: context.bodyLarge),
               onTap: () {
                 Navigator.pop(context);
@@ -1800,8 +1803,10 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
               },
             ),
             ListTile(
-              leading:
-                  Icon(Icons.photo_library_outlined, color: colors.textPrimary),
+              leading: Icon(
+                Icons.photo_library_outlined,
+                color: colors.textPrimary,
+              ),
               title: Text('갤러리', style: context.bodyLarge),
               onTap: () {
                 Navigator.pop(context);
@@ -1849,7 +1854,9 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
       ),
@@ -1887,7 +1894,8 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
               onSubmit: (text) {
                 if (text.isNotEmpty) {
                   final notifier = ref.read(
-                      characterChatProvider(widget.character.id).notifier);
+                    characterChatProvider(widget.character.id).notifier,
+                  );
                   final anchorMessageId =
                       notifier.startFreshUserSessionIfNeeded(text);
                   if (anchorMessageId != null) {

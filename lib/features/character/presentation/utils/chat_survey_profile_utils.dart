@@ -1,3 +1,4 @@
+import '../../../../data/models/pet_profile.dart';
 import '../../../../data/models/secondary_profile.dart';
 
 Map<String, dynamic> buildStoredProfileSurveyAnswer({
@@ -18,6 +19,25 @@ Map<String, dynamic> buildStoredProfileSurveyAnswer({
     'gender': profile.gender,
     'relationship': profile.relationship,
     'familyRelation': familyRelation,
+    'displayText': displayText,
+  };
+}
+
+Map<String, dynamic> buildPetProfileSurveyAnswer({
+  required PetProfile profile,
+  required String displayText,
+}) {
+  return {
+    'profileId': profile.id,
+    'name': profile.name,
+    'species': profile.species,
+    'type': profile.species,
+    'age': profile.age,
+    'gender': profile.gender,
+    'breed': profile.breed,
+    'personality': profile.personality,
+    'healthNotes': profile.healthNotes,
+    'isNeutered': profile.isNeutered,
     'displayText': displayText,
   };
 }
@@ -72,9 +92,7 @@ Map<String, dynamic>? _asStringKeyedMap(dynamic value) {
     return value;
   }
   if (value is Map) {
-    return value.map(
-      (key, item) => MapEntry(key.toString(), item),
-    );
+    return value.map((key, item) => MapEntry(key.toString(), item));
   }
   return null;
 }
