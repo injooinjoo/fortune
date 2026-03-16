@@ -20849,6 +20849,7 @@
         "lib/shared/components/toast.dart",
         "lib/shared/glassmorphism/glass_container.dart",
         "lib/shared/widgets/smart_image.dart",
+        "test/widget/character/character_list_panel_test.dart",
         "test/widget/shared/fortune_cards_test.dart"
       ],
       "runtime_reachable": true,
