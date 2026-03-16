@@ -498,14 +498,16 @@ class GeneratorFactory {
   Map<String, dynamic> _normalizeBiorhythmSummary(
     Map<String, dynamic> fortune,
   ) {
-    final summary = _asStringKeyedMap(fortune['summary']);
+    final rawSummary = fortune['summary'];
+    final summary = _asStringKeyedMap(rawSummary);
     if (summary.isNotEmpty) {
       return summary;
     }
 
     final message = _firstNonEmptyString([
-      fortune['summary'],
+      rawSummary,
       fortune['status_message'],
+      fortune['greeting'],
       fortune['content'],
       fortune['advice'],
       fortune['title'],

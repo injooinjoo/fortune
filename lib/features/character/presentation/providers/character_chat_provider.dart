@@ -3139,7 +3139,11 @@ $enrichedContext
           normalizedAnswers['targetDate'] ?? normalizedAnswers['target_date'];
       String? normalizedTargetDate;
 
-      if (targetDate is Map) {
+      if (targetDate is Map<String, dynamic>) {
+        final selectedDate = _stringValue(targetDate['selectedDate']);
+        final rawDate = _stringValue(targetDate['date']);
+        normalizedTargetDate = selectedDate ?? rawDate?.split('T').first;
+      } else if (targetDate is Map) {
         final selectedDate = _stringValue(targetDate['selectedDate']);
         final rawDate = _stringValue(targetDate['date']);
         normalizedTargetDate = selectedDate ?? rawDate?.split('T').first;
@@ -3147,7 +3151,7 @@ $enrichedContext
         normalizedTargetDate = _stringValue(targetDate)?.split('T').first;
       }
 
-      if (normalizedTargetDate != null) {
+      if (normalizedTargetDate != null && normalizedTargetDate.isNotEmpty) {
         normalizedAnswers['targetDate'] = normalizedTargetDate;
         normalizedAnswers['target_date'] = normalizedTargetDate;
       }
