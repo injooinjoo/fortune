@@ -77,7 +77,6 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       Duration(milliseconds: 1400);
   static const Duration _archivedHistoryRevealDuration =
       Duration(milliseconds: 650);
-  static const double _archivedHistoryTriggerOffset = 36;
 
   /// Notifier 참조 캐시 (dispose 후 ref 사용 불가 문제 해결)
   CharacterChatNotifier? _cachedNotifier;
@@ -328,6 +327,26 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     });
   }
 
+  ScrollPhysics _chatScrollPhysics(BuildContext context) {
+    final platform = Theme.of(context).platform;
+    final parentPhysics =
+        platform == TargetPlatform.iOS || platform == TargetPlatform.macOS
+            ? const BouncingScrollPhysics()
+            : const ClampingScrollPhysics();
+    return AlwaysScrollableScrollPhysics(parent: parentPhysics);
+  }
+
+  Future<void> _handleArchivedHistoryRefresh(
+    CharacterChatState chatState,
+  ) async {
+    if (chatState.archivedMessages.isEmpty || _isArchivedHistoryVisible) {
+      return;
+    }
+
+    _pauseSessionStartAutoScrollForUserScroll();
+    await _revealArchivedHistory();
+  }
+
   bool _handleChatScrollNotification(
     ScrollNotification notification,
     CharacterChatState chatState,
@@ -337,18 +356,6 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     }
 
     final isUserDrivenScroll = _isUserDrivenScroll(notification);
-    final isNearTop =
-        notification.metrics.pixels <= _archivedHistoryTriggerOffset;
-    final hasHiddenArchivedHistory =
-        chatState.archivedMessages.isNotEmpty && !_isArchivedHistoryVisible;
-
-    if (isUserDrivenScroll &&
-        isNearTop &&
-        hasHiddenArchivedHistory &&
-        !_isArchivedHistoryLoading) {
-      _pauseSessionStartAutoScrollForUserScroll();
-      unawaited(_revealArchivedHistory());
-    }
 
     if (_hasActiveSessionStartAnchor && isUserDrivenScroll) {
       _pauseSessionStartAutoScrollForUserScroll();
@@ -1057,37 +1064,20 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
   Widget _buildChatList(CharacterChatState chatState) {
     final visibleMessages = _messagesForDisplay(chatState);
-    final leadingLoaderCount = _isArchivedHistoryLoading ? 1 : 0;
-
-    return NotificationListener<ScrollNotification>(
+    final listView = NotificationListener<ScrollNotification>(
       onNotification: (notification) =>
           _handleChatScrollNotification(notification, chatState),
       child: ListView.builder(
         controller: _scrollController,
+        physics: _chatScrollPhysics(context),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        itemCount: visibleMessages.length +
-            leadingLoaderCount +
-            (chatState.isTyping ? 1 : 0),
+        itemCount: visibleMessages.length + (chatState.isTyping ? 1 : 0),
         itemBuilder: (context, index) {
-          if (_isArchivedHistoryLoading && index == 0) {
-            return const Padding(
-              padding: EdgeInsets.symmetric(vertical: 12),
-              child: Center(
-                child: SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
-              ),
-            );
-          }
-
-          final messageIndex = index - leadingLoaderCount;
-          if (messageIndex == visibleMessages.length && chatState.isTyping) {
+          if (index == visibleMessages.length && chatState.isTyping) {
             return _buildTypingIndicator();
           }
 
-          final message = visibleMessages[messageIndex];
+          final message = visibleMessages[index];
 
           // 선택지 메시지인 경우
           if (message.isChoice && message.choiceSet != null) {
@@ -1118,6 +1108,15 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           );
         },
       ),
+    );
+
+    if (chatState.archivedMessages.isEmpty || _isArchivedHistoryVisible) {
+      return listView;
+    }
+
+    return RefreshIndicator.adaptive(
+      onRefresh: () => _handleArchivedHistoryRefresh(chatState),
+      child: listView,
     );
   }
 
