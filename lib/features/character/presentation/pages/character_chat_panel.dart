@@ -79,6 +79,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   String? _consumedAutoStartSignature;
   String? _sessionStartAnchorMessageId;
   Timer? _sessionStartAnchorReleaseTimer;
+  bool _isSessionStartAutoScrollPausedByUser = false;
 
   /// 통합 스크롤 서비스 (ChatScrollService 사용)
   late final ChatScrollService _scrollService;
@@ -226,6 +227,9 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       _scrollToSessionStartAnchor();
       return;
     }
+    if (_isSessionStartAutoScrollPausedByUser) {
+      return;
+    }
     _scrollService.scrollToBottom();
   }
 
@@ -245,6 +249,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
   void _beginSessionStartAnchor(String messageId) {
     _sessionStartAnchorReleaseTimer?.cancel();
+    _isSessionStartAutoScrollPausedByUser = false;
     _sessionStartAnchorMessageId = messageId;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -264,6 +269,40 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     _sessionStartAnchorReleaseTimer?.cancel();
     _sessionStartAnchorReleaseTimer = null;
     _sessionStartAnchorMessageId = null;
+    _isSessionStartAutoScrollPausedByUser = false;
+  }
+
+  void _pauseSessionStartAutoScrollForUserScroll() {
+    _scrollService.cancelPendingScroll();
+    _sessionStartAnchorReleaseTimer?.cancel();
+    _sessionStartAnchorMessageId = null;
+    _isSessionStartAutoScrollPausedByUser = true;
+    _sessionStartAnchorReleaseTimer = Timer(
+      _sessionStartAnchorHoldDuration,
+      () {
+        _sessionStartAnchorReleaseTimer = null;
+        _isSessionStartAutoScrollPausedByUser = false;
+      },
+    );
+  }
+
+  bool _handleChatScrollNotification(ScrollNotification notification) {
+    if (!_hasActiveSessionStartAnchor || notification.depth != 0) {
+      return false;
+    }
+
+    final isUserDrivenScroll = notification is ScrollStartNotification &&
+            notification.dragDetails != null ||
+        notification is ScrollUpdateNotification &&
+            notification.dragDetails != null ||
+        notification is OverscrollNotification &&
+            notification.dragDetails != null;
+
+    if (isUserDrivenScroll) {
+      _pauseSessionStartAutoScrollForUserScroll();
+    }
+
+    return false;
   }
 
   void _scrollToSessionStartAnchor() {
@@ -376,6 +415,10 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           if (_hasActiveSessionStartAnchor &&
               (nextCount != prevCount || typingStarted)) {
             _scrollToSessionStartAnchor();
+            return;
+          }
+          if (_isSessionStartAutoScrollPausedByUser &&
+              (nextCount != prevCount || typingStarted)) {
             return;
           }
           if (nextCount > prevCount || typingStarted) {
@@ -955,45 +998,48 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   }
 
   Widget _buildChatList(dynamic chatState) {
-    return ListView.builder(
-      controller: _scrollController,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      itemCount: chatState.messages.length + (chatState.isTyping ? 1 : 0),
-      itemBuilder: (context, index) {
-        if (index == chatState.messages.length && chatState.isTyping) {
-          return _buildTypingIndicator();
-        }
+    return NotificationListener<ScrollNotification>(
+      onNotification: _handleChatScrollNotification,
+      child: ListView.builder(
+        controller: _scrollController,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        itemCount: chatState.messages.length + (chatState.isTyping ? 1 : 0),
+        itemBuilder: (context, index) {
+          if (index == chatState.messages.length && chatState.isTyping) {
+            return _buildTypingIndicator();
+          }
 
-        final message = chatState.messages[index] as CharacterChatMessage;
+          final message = chatState.messages[index] as CharacterChatMessage;
 
-        // 선택지 메시지인 경우
-        if (message.isChoice && message.choiceSet != null) {
+          // 선택지 메시지인 경우
+          if (message.isChoice && message.choiceSet != null) {
+            return KeyedSubtree(
+              key: _messageAnchorKeyFor(message.id),
+              child: CharacterChoiceWidget(
+                choiceSet: message.choiceSet!,
+                character: widget.character,
+                onChoiceSelected: (choice) => _handleChoiceSelection(choice),
+                onTimeout: () {
+                  // 타임아웃 시 기본 선택지 선택
+                  if (message.choiceSet!.defaultChoiceIndex != null) {
+                    final defaultChoice = message.choiceSet!
+                        .choices[message.choiceSet!.defaultChoiceIndex!];
+                    _handleChoiceSelection(defaultChoice);
+                  }
+                },
+              ),
+            );
+          }
+
           return KeyedSubtree(
             key: _messageAnchorKeyFor(message.id),
-            child: CharacterChoiceWidget(
-              choiceSet: message.choiceSet!,
+            child: CharacterMessageBubble(
+              message: message,
               character: widget.character,
-              onChoiceSelected: (choice) => _handleChoiceSelection(choice),
-              onTimeout: () {
-                // 타임아웃 시 기본 선택지 선택
-                if (message.choiceSet!.defaultChoiceIndex != null) {
-                  final defaultChoice = message.choiceSet!
-                      .choices[message.choiceSet!.defaultChoiceIndex!];
-                  _handleChoiceSelection(defaultChoice);
-                }
-              },
             ),
           );
-        }
-
-        return KeyedSubtree(
-          key: _messageAnchorKeyFor(message.id),
-          child: CharacterMessageBubble(
-            message: message,
-            character: widget.character,
-          ),
-        );
-      },
+        },
+      ),
     );
   }
 

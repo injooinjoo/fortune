@@ -53,6 +53,14 @@ class ChatScrollService {
     _debounceTimer?.cancel();
   }
 
+  /// 진행 중인 자동 스크롤 요청을 취소합니다.
+  ///
+  /// 사용자가 직접 스크롤해 자동 위치 보정을 중단해야 할 때 사용합니다.
+  void cancelPendingScroll() {
+    _debounceTimer?.cancel();
+    _scrollRequestId++;
+  }
+
   /// 최하단으로 스크롤 (일반 메시지용)
   ///
   /// 디바운싱 적용으로 연속 호출 시 마지막 것만 실행

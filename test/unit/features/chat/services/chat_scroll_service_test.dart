@@ -75,6 +75,41 @@ void main() {
         expect(anchorTop - listTop, closeTo(320 * 0.14, 24));
       },
     );
+
+    testWidgets(
+      'manual upward scroll cancels session-start auto follow so content above stays reachable',
+      (tester) async {
+        final key = GlobalKey<_TestSessionStartAutoFollowHarnessState>();
+
+        await tester.pumpWidget(_TestSessionStartAutoFollowHarness(key: key));
+
+        key.currentState!.beginSessionStartAnchor();
+        await _pumpScrollFrames(tester, frameCount: 12);
+
+        final anchoredOffset = key.currentState!.controller.offset;
+        expect(anchoredOffset, greaterThan(0));
+
+        key.currentState!.simulateUserScrollUp();
+        await tester.pump();
+
+        final userScrolledOffset = key.currentState!.controller.offset;
+        expect(userScrolledOffset, lessThan(anchoredOffset - 40));
+        expect(key.currentState!.isAutoScrollPausedByUser, isTrue);
+
+        key.currentState!.addFollowUpAndTriggerAutoScroll();
+        await tester.pump();
+        await _pumpScrollFrames(tester, frameCount: 12);
+
+        expect(
+          key.currentState!.controller.offset,
+          closeTo(userScrolledOffset, 12),
+        );
+        expect(
+          tester.getTopLeft(find.byKey(const ValueKey('session-header'))).dy,
+          lessThan(110),
+        );
+      },
+    );
   });
 }
 
@@ -224,6 +259,178 @@ class _TestAnchorScrollHarnessState extends State<_TestAnchorScrollHarness> {
                         : Colors.grey.shade300,
                   );
                 }),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TestSessionStartAutoFollowHarness extends StatefulWidget {
+  const _TestSessionStartAutoFollowHarness({super.key});
+
+  @override
+  State<_TestSessionStartAutoFollowHarness> createState() =>
+      _TestSessionStartAutoFollowHarnessState();
+}
+
+class _TestSessionStartAutoFollowHarnessState
+    extends State<_TestSessionStartAutoFollowHarness> {
+  static const int _baseItemCount = 18;
+
+  final ScrollController controller = ScrollController();
+  final GlobalKey anchorKey = GlobalKey();
+  late final ChatScrollService service = ChatScrollService(
+    scrollController: controller,
+    isMounted: () => mounted,
+  );
+
+  bool _anchorActive = false;
+  bool _autoScrollPausedByUser = false;
+  bool _showFollowUp = false;
+
+  bool get isAutoScrollPausedByUser => _autoScrollPausedByUser;
+
+  @override
+  void dispose() {
+    service.dispose();
+    controller.dispose();
+    super.dispose();
+  }
+
+  void beginSessionStartAnchor() {
+    _anchorActive = true;
+    _autoScrollPausedByUser = false;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _scrollToAnchor();
+    });
+  }
+
+  void addFollowUpAndTriggerAutoScroll() {
+    setState(() {
+      _showFollowUp = true;
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _scrollToBottom();
+    });
+  }
+
+  void simulateUserScrollUp() {
+    service.cancelPendingScroll();
+    _anchorActive = false;
+    _autoScrollPausedByUser = true;
+    final nextOffset = (controller.offset - 120).clamp(
+      0.0,
+      controller.position.maxScrollExtent,
+    );
+    controller.jumpTo(nextOffset);
+  }
+
+  void _scrollToAnchor() {
+    final context = anchorKey.currentContext;
+    if (context != null) {
+      service.scrollToMessageTop(messageContext: context);
+    }
+  }
+
+  void _scrollToBottom() {
+    if (_anchorActive) {
+      _scrollToAnchor();
+      return;
+    }
+    if (_autoScrollPausedByUser) {
+      return;
+    }
+    service.scrollToBottom();
+  }
+
+  bool _handleScrollNotification(ScrollNotification notification) {
+    if (!_anchorActive || notification.depth != 0) {
+      return false;
+    }
+
+    final isUserDrivenScroll = notification is ScrollStartNotification &&
+            notification.dragDetails != null ||
+        notification is ScrollUpdateNotification &&
+            notification.dragDetails != null ||
+        notification is OverscrollNotification &&
+            notification.dragDetails != null;
+
+    if (isUserDrivenScroll) {
+      _anchorActive = false;
+      _autoScrollPausedByUser = true;
+    }
+
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final itemCount = _baseItemCount + (_showFollowUp ? 1 : 0);
+
+    return MaterialApp(
+      home: Scaffold(
+        body: Align(
+          alignment: Alignment.topCenter,
+          child: SizedBox(
+            height: 320,
+            child: NotificationListener<ScrollNotification>(
+              onNotification: _handleScrollNotification,
+              child: SingleChildScrollView(
+                controller: controller,
+                child: Column(
+                  children: List.generate(itemCount, (index) {
+                    if (index == 0) {
+                      return Container(
+                        key: const ValueKey('session-header'),
+                        height: 96,
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 6,
+                        ),
+                        color: Colors.blueGrey.shade100,
+                      );
+                    }
+
+                    if (index == 7) {
+                      return Container(
+                        key: anchorKey,
+                        height: 72,
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 6,
+                        ),
+                        color: Colors.orange.shade200,
+                      );
+                    }
+
+                    if (_showFollowUp && index == itemCount - 1) {
+                      return Container(
+                        height: 120,
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 6,
+                        ),
+                        color: Colors.green.shade200,
+                      );
+                    }
+
+                    return Container(
+                      height: 72,
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 6,
+                      ),
+                      color: Colors.grey.shade300,
+                    );
+                  }),
+                ),
               ),
             ),
           ),
