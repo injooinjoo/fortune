@@ -45,6 +45,7 @@ import '../../../../presentation/providers/pet_profiles_provider.dart';
 import '../../../../presentation/providers/secondary_profiles_provider.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../../data/services/active_character_chat_registry.dart';
+import '../utils/character_chat_theme.dart';
 import '../utils/chat_survey_profile_utils.dart';
 
 /// 1:1 캐릭터 롤플레이 채팅 패널
@@ -98,6 +99,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   bool _isPetProfileManagementMode = false;
   String? _petProfileDeletingId;
   bool _isFortuneChipBarExpanded = false;
+  String? _activeThemeFortuneType;
 
   /// 통합 스크롤 서비스 (ChatScrollService 사용)
   late final ChatScrollService _scrollService;
@@ -111,10 +113,8 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
   bool get _isHaneulPremiumShell => widget.character.id == haneulCharacter.id;
 
-  String? _activeFortuneType(CharacterChatSurveyState surveyState) {
-    return surveyState.fortuneTypeString ??
-        widget.catalogPreview?.fortuneType ??
-        widget.initialFortuneType;
+  String? _activeFortuneType() {
+    return _activeThemeFortuneType ?? _entryThemeFortuneTypeFor(widget);
   }
 
   /// 동적 질문 생성 (mbtiConfirm 등 사용자 정보 포함 필요 시)
@@ -146,6 +146,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   @override
   void initState() {
     super.initState();
+    _activeThemeFortuneType = _entryThemeFortuneTypeFor(widget);
     WidgetsBinding.instance.addObserver(this);
     _scrollService = ChatScrollService(
       scrollController: _scrollController,
@@ -176,9 +177,16 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   void didUpdateWidget(covariant CharacterChatPanel oldWidget) {
     super.didUpdateWidget(oldWidget);
 
+    final previousEntryTheme = _entryThemeFortuneTypeFor(oldWidget);
+    final nextEntryTheme = _entryThemeFortuneTypeFor(widget);
+
     if (oldWidget.character.id != widget.character.id ||
         widget.character.specialties.length <= 2) {
       _isFortuneChipBarExpanded = false;
+      _activeThemeFortuneType = nextEntryTheme;
+    } else if (previousEntryTheme != nextEntryTheme &&
+        _activeThemeFortuneType == previousEntryTheme) {
+      _activeThemeFortuneType = nextEntryTheme;
     }
 
     if (widget.catalogPreview != null) {
@@ -453,6 +461,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     }
 
     _consumedAutoStartSignature = signature;
+    _setActiveThemeFortuneType(fortuneType);
     await _startFortuneFlow(
       fortuneType,
       _getSpecialtyLabel(context, fortuneType),
@@ -461,9 +470,42 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     );
   }
 
+  String? _entryThemeFortuneTypeFor(CharacterChatPanel panel) {
+    final rawType =
+        panel.catalogPreview?.fortuneType ?? panel.initialFortuneType;
+    if (rawType == null || rawType.isEmpty) {
+      return null;
+    }
+
+    if (!panel.character.isFortuneExpert ||
+        !panel.character.specialties.contains(rawType)) {
+      return null;
+    }
+
+    return rawType;
+  }
+
+  void _setActiveThemeFortuneType(String? fortuneType) {
+    final normalizedType = fortuneType != null &&
+            fortuneType.isNotEmpty &&
+            widget.character.specialties.contains(fortuneType)
+        ? fortuneType
+        : null;
+
+    if (_activeThemeFortuneType == normalizedType || !mounted) {
+      _activeThemeFortuneType = normalizedType;
+      return;
+    }
+
+    setState(() {
+      _activeThemeFortuneType = normalizedType;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final isCatalogPreview = widget.catalogPreview != null;
+    final usesChipThemes = widget.character.isFortuneExpert;
     final chatState = isCatalogPreview
         ? catalogPreviewChatState(
             preview: widget.catalogPreview!,
@@ -524,6 +566,40 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       );
     }
 
+    final themeSpec = usesChipThemes
+        ? resolveCharacterChatTheme(
+            brightness: Theme.of(context).brightness,
+            character: widget.character,
+            fortuneType: _activeFortuneType(),
+          )
+        : null;
+
+    final content = Column(
+      children: [
+        _buildHeader(context, usesThemedChrome: usesChipThemes),
+        if (!usesChipThemes) const Divider(height: 1),
+        if (widget.character.isFortuneExpert &&
+            widget.character.specialties.isNotEmpty)
+          _buildFortuneChipBar(chatState),
+        Expanded(
+          child: chatState.isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : chatState.hasConversation
+                  ? _buildChatList(chatState)
+                  : const Center(
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+        ),
+        if (surveyState.isActive) _buildSurveyInput(surveyState),
+        if (chatState.hasConversation && !surveyState.isActive)
+          _buildInputArea(chatState),
+      ],
+    );
+
     return PopScope(
       canPop: true,
       onPopInvokedWithResult: (didPop, result) async {
@@ -532,45 +608,50 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           await _saveConversation();
         }
       },
-      child: Container(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        child: SafeArea(
-          child: Column(
-            children: [
-              // 헤더
-              _buildHeader(context),
-              const Divider(height: 1),
-              // 운세 전문가 칩 바 (운세 전문가일 때만)
-              if (widget.character.isFortuneExpert &&
-                  widget.character.specialties.isNotEmpty)
-                _buildFortuneChipBar(chatState, surveyState),
-              // 채팅 영역
-              Expanded(
-                child: chatState.isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : chatState.hasConversation
-                        ? _buildChatList(chatState)
-                        : const Center(
-                            child: SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                          ),
-              ),
-              // 설문 UI (설문 진행 중일 때)
-              if (surveyState.isActive) _buildSurveyInput(surveyState),
-              // 입력 영역 (대화 시작 후에만, 설문 중이 아닐 때)
-              if (chatState.hasConversation && !surveyState.isActive)
-                _buildInputArea(chatState),
-            ],
-          ),
-        ),
-      ),
+      child: usesChipThemes && themeSpec != null
+          ? Stack(
+              fit: StackFit.expand,
+              children: [
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: AnimatedSwitcher(
+                      key: const ValueKey('character-chat-theme-switcher'),
+                      duration: DSAnimation.normal,
+                      switchInCurve: DSAnimation.emphasized,
+                      switchOutCurve: DSAnimation.primary,
+                      layoutBuilder: (currentChild, previousChildren) {
+                        return Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            ...previousChildren,
+                            if (currentChild != null) currentChild,
+                          ],
+                        );
+                      },
+                      transitionBuilder: (child, animation) {
+                        return FadeTransition(
+                          opacity: animation,
+                          child: child,
+                        );
+                      },
+                      child: _buildChatThemeBackground(themeSpec),
+                    ),
+                  ),
+                ),
+                SafeArea(child: content),
+              ],
+            )
+          : Container(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: SafeArea(child: content),
+            ),
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(
+    BuildContext context, {
+    bool usesThemedChrome = false,
+  }) {
     final accentPalette = _accentPalette(context);
     final colors = context.colors;
 
@@ -579,6 +660,18 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         horizontal: DSSpacing.sm,
         vertical: DSSpacing.sm,
       ),
+      decoration: usesThemedChrome
+          ? BoxDecoration(
+              color: colors.surface.withValues(
+                alpha: context.isDark ? 0.92 : 0.95,
+              ),
+              border: Border(
+                bottom: BorderSide(
+                  color: colors.border.withValues(alpha: 0.65),
+                ),
+              ),
+            )
+          : null,
       child: Row(
         children: [
           // 백버튼
@@ -648,6 +741,58 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           IconButton(
             icon: const Icon(Icons.more_vert),
             onPressed: () => _showCharacterProfile(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChatThemeBackground(CharacterChatThemeSpec themeSpec) {
+    final colors = context.colors;
+
+    return KeyedSubtree(
+      key: ValueKey('character-chat-theme-${themeSpec.themeKey}'),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: themeSpec.gradientBegin,
+                end: themeSpec.gradientEnd,
+                colors: themeSpec.gradientColors,
+              ),
+            ),
+          ),
+          if (themeSpec.textureAsset != null)
+            Opacity(
+              opacity: themeSpec.textureOpacity,
+              child: Image.asset(
+                themeSpec.textureAsset!,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => const SizedBox.expand(),
+              ),
+            ),
+          if (themeSpec.backgroundAsset != null)
+            Opacity(
+              opacity: themeSpec.imageOpacity,
+              child: Image.asset(
+                themeSpec.backgroundAsset!,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => const SizedBox.expand(),
+              ),
+            ),
+          if (themeSpec.accentTint != null)
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: themeSpec.accentTint,
+              ),
+            ),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color:
+                  colors.background.withValues(alpha: themeSpec.scrimOpacity),
+            ),
           ),
         ],
       ),
@@ -790,13 +935,10 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   }
 
   /// 운세 전문가 칩 바 (전문 분야 운세 칩들)
-  Widget _buildFortuneChipBar(
-    CharacterChatState chatState,
-    CharacterChatSurveyState surveyState,
-  ) {
+  Widget _buildFortuneChipBar(CharacterChatState chatState) {
     final colors = context.colors;
     final isHaneulChipBar = _isHaneulPremiumShell;
-    final activeFortuneType = _activeFortuneType(surveyState);
+    final activeFortuneType = _activeFortuneType();
     final shouldShowAccordionToggle = widget.character.specialties.length > 2;
     final collapsedHeight = isHaneulChipBar ? 38.0 : 36.0;
     final chipWidgets = widget.character.specialties.map((specialty) {
@@ -825,7 +967,9 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           DSSpacing.xs,
         ),
         decoration: BoxDecoration(
-          color: colors.surface,
+          color: colors.surface.withValues(
+            alpha: context.isDark ? 0.92 : 0.95,
+          ),
           border: Border(
             bottom: BorderSide(color: colors.border.withValues(alpha: 0.8)),
           ),
@@ -995,10 +1139,13 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     String fortuneType,
     String displayName,
   ) async {
-    if (_isFortuneChipBarExpanded && mounted) {
+    if (mounted) {
       setState(() {
+        _activeThemeFortuneType = fortuneType;
         _isFortuneChipBarExpanded = false;
       });
+    } else {
+      _activeThemeFortuneType = fortuneType;
     }
     await _startFortuneFlow(fortuneType, displayName, resetSurvey: true);
   }
@@ -1457,7 +1604,11 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         vertical: DSSpacing.sm + DSSpacing.xxs,
       ),
       decoration: BoxDecoration(
-        color: colors.background,
+        color: widget.character.isFortuneExpert
+            ? colors.surface.withValues(
+                alpha: context.isDark ? 0.92 : 0.95,
+              )
+            : colors.background,
         border: Border(
           top: BorderSide(
             color: colors.border.withValues(alpha: 0.55),
@@ -2360,7 +2511,11 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         DSSpacing.md,
       ),
       decoration: BoxDecoration(
-        color: colors.background,
+        color: widget.character.isFortuneExpert
+            ? colors.surface.withValues(
+                alpha: context.isDark ? 0.92 : 0.95,
+              )
+            : colors.background,
         border: Border(
           top: BorderSide(
             color: colors.border.withValues(alpha: 0.4),
