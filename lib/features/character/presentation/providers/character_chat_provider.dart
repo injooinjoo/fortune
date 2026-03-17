@@ -412,6 +412,13 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     // traditional-saju는 만세력 카드가 인트로 역할을 하므로 null 반환
     if (fortuneType == 'traditional-saju') return null;
 
+    if (isHaneulCardFirstFortuneFlow(
+      characterId: _characterId,
+      fortuneType: fortuneType,
+    )) {
+      return _buildHaneulCardFirstIntroMessage(fortuneType);
+    }
+
     try {
       final profileAsync = _ref.read(userProfileProvider);
       return profileAsync.maybeWhen(
@@ -454,6 +461,20 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       );
     } catch (_) {
       return null;
+    }
+  }
+
+  String _buildHaneulCardFirstIntroMessage(String fortuneType) {
+    switch (fortuneType) {
+      case 'new-year':
+        return '좋아요. 올해 흐름은 큰 방향만 먼저 깔끔하게 볼게요.';
+      case 'fortune-cookie':
+        return '좋아요. 오늘 메시지는 짧고 선명하게 꺼내볼게요.';
+      case 'daily-calendar':
+        return '좋아요. 오늘 일정 흐름만 빠르게 볼게요.';
+      case 'daily':
+      default:
+        return '좋아요. 오늘 흐름만 빠르게 볼게요.';
     }
   }
 

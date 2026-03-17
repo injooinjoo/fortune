@@ -19,6 +19,14 @@
 - `93:2` `90 Components`
 - `94:2` `99 Archive`
 
+Latest official premium chat append:
+
+- `180:2` `20 Chat Home / Character`
+
+Historical chat append retained in file:
+
+- `95:2` `20 Chat Home / Character`
+
 ## Coverage Summary
 
 | Figma page | Total | Live | Placeholder |

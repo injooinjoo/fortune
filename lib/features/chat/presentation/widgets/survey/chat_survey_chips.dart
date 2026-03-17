@@ -19,15 +19,11 @@ class ChatSurveyChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(
-        horizontal: DSSpacing.md,
-        vertical: DSSpacing.xs,
-      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.xs),
       child: Wrap(
-        spacing: DSSpacing.xs,
-        runSpacing: DSSpacing.xs,
+        spacing: DSSpacing.sm,
+        runSpacing: DSSpacing.sm,
         alignment: WrapAlignment.start,
         children: options.map((option) {
           final isSelected = selectedIds?.contains(option.id) ?? false;

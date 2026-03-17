@@ -51,12 +51,12 @@ void main() {
     expect(find.text('우선순위를 분명히 할수록 흐름이 더 또렷해져요.'), findsOneWidget);
     expect(find.text('집중'), findsOneWidget);
     expect(find.text('대화운'), findsOneWidget);
-    expect(find.text('정리'), findsOneWidget);
+    expect(find.text('정리'), findsNothing);
     expect(find.text('과몰입 주의'), findsNothing);
-    expect(find.text('• 가장 중요한 일부터 시작하세요.'), findsOneWidget);
-    expect(find.text('• 대화는 오전에 정리하세요.'), findsOneWidget);
+    expect(find.text('가장 중요한 일부터 시작하세요.'), findsOneWidget);
+    expect(find.text('대화는 오전에 정리하세요.'), findsOneWidget);
     expect(find.text('세 번째 추천은 숨겨져야 해요.'), findsNothing);
-    expect(find.text('• 즉흥적인 소비는 점검하세요.'), findsOneWidget);
+    expect(find.text('즉흥적인 소비는 점검하세요.'), findsOneWidget);
     expect(find.text('두 번째 경고는 보이면 안 돼요.'), findsNothing);
   });
 

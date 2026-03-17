@@ -274,9 +274,12 @@ const SCREENS = [
     status: 'live',
     note: 'Single-step survey UI shown inside the 호기심 chat flow.',
     sources: [
+      'lib/features/character/presentation/utils/chat_catalog_preview.dart',
       'lib/features/character/presentation/pages/character_chat_panel.dart',
       'lib/features/character/presentation/providers/character_chat_survey_provider.dart',
+      'lib/features/character/presentation/utils/chat_survey_profile_utils.dart',
       'lib/features/chat/domain/configs/survey_configs.dart',
+      'lib/features/chat/presentation/widgets/survey/chat_survey_chips.dart',
     ],
   },
   {
@@ -288,7 +291,9 @@ const SCREENS = [
     status: 'live',
     note: 'Completed insight result rendered back into the chat stream with embedded result components.',
     sources: [
+      'lib/features/character/presentation/utils/chat_catalog_preview.dart',
       'lib/features/character/presentation/pages/character_chat_panel.dart',
+      'lib/features/character/presentation/widgets/character_message_bubble.dart',
       'lib/features/character/presentation/widgets/embedded_fortune_component.dart',
       'lib/features/chat/presentation/widgets/chat_saju_result_card.dart',
     ],

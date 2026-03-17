@@ -68,8 +68,7 @@ class EmbeddedFortuneComponent extends StatelessWidget {
     final summary = _stringValue(componentData['summary']) ??
         _stringValue(componentData['content']) ??
         '결과를 정리했어요.';
-    final highlights =
-        _stringList(componentData['highlights']).take(3).toList();
+    final highlights = _stringList(componentData['highlights']).toList();
     final luckyItems = _displayEntries(componentData['luckyItems']);
     final recommendations = _stringList(componentData['recommendations']);
     final warnings = _stringList(componentData['warnings']);
@@ -86,7 +85,7 @@ class EmbeddedFortuneComponent extends StatelessWidget {
             return _buildCompactFortuneBody(
               context,
               summary: summary,
-              highlights: highlights,
+              highlights: highlights.take(2).toList(),
               recommendations: recommendations.take(2).toList(),
               warnings: warnings.take(1).toList(),
             );
@@ -94,7 +93,7 @@ class EmbeddedFortuneComponent extends StatelessWidget {
             return _buildNewYearFortuneBody(
               context,
               summary: summary,
-              highlights: highlights,
+              highlights: highlights.take(3).toList(),
               luckyItems: luckyItems,
               recommendations: recommendations,
               specialMessage: _stringValue(componentData['specialMessage']),
@@ -131,7 +130,7 @@ class EmbeddedFortuneComponent extends StatelessWidget {
           summary,
           style: context.bodyMedium.copyWith(
             fontWeight: FontWeight.w500,
-            height: 1.58,
+            height: 1.65,
           ),
         ),
         if (highlights.isNotEmpty) ...[
@@ -140,21 +139,27 @@ class EmbeddedFortuneComponent extends StatelessWidget {
         ],
         if (luckyItems.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          _buildSectionTitle(context, '행운 포인트'),
-          const SizedBox(height: DSSpacing.xs),
-          _buildInfoWrap(context, luckyItems),
+          _buildInfoSection(
+            context,
+            title: '행운 포인트',
+            child: _buildInfoWrap(context, luckyItems),
+          ),
         ],
         if (recommendations.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          _buildSectionTitle(context, '추천'),
-          const SizedBox(height: DSSpacing.xs),
-          _buildTextLines(context, recommendations),
+          _buildInfoSection(
+            context,
+            title: '추천',
+            child: _buildTextLines(context, recommendations),
+          ),
         ],
         if (warnings.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          _buildSectionTitle(context, '주의'),
-          const SizedBox(height: DSSpacing.xs),
-          _buildTextLines(context, warnings),
+          _buildInfoSection(
+            context,
+            title: '주의',
+            child: _buildTextLines(context, warnings),
+          ),
         ],
       ],
     );
@@ -177,7 +182,7 @@ class EmbeddedFortuneComponent extends StatelessWidget {
           style: context.bodyMedium.copyWith(
             color: colors.textPrimary,
             fontWeight: FontWeight.w500,
-            height: 1.6,
+            height: 1.68,
           ),
         ),
         if (highlights.isNotEmpty) ...[
@@ -186,15 +191,19 @@ class EmbeddedFortuneComponent extends StatelessWidget {
         ],
         if (recommendations.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.sm),
-          _buildSectionTitle(context, '추천'),
-          const SizedBox(height: DSSpacing.xxs),
-          _buildTextLines(context, recommendations),
+          _buildInfoSection(
+            context,
+            title: '추천',
+            child: _buildTextLines(context, recommendations),
+          ),
         ],
         if (warnings.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.sm),
-          _buildSectionTitle(context, '주의'),
-          const SizedBox(height: DSSpacing.xxs),
-          _buildTextLines(context, warnings),
+          _buildInfoSection(
+            context,
+            title: '주의',
+            child: _buildTextLines(context, warnings),
+          ),
         ],
       ],
     );
@@ -229,7 +238,7 @@ class EmbeddedFortuneComponent extends StatelessWidget {
           summary,
           style: context.bodyMedium.copyWith(
             fontWeight: FontWeight.w500,
-            height: 1.58,
+            height: 1.66,
           ),
         ),
         if (highlights.isNotEmpty) ...[
@@ -243,7 +252,8 @@ class EmbeddedFortuneComponent extends StatelessWidget {
             child: Text(
               specialMessage,
               style: context.bodySmall.copyWith(
-                fontWeight: FontWeight.w500,
+                color: context.colors.textSecondary,
+                fontWeight: FontWeight.w600,
                 height: 1.55,
               ),
             ),
@@ -375,6 +385,9 @@ class EmbeddedFortuneComponent extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.backgroundSecondary,
         borderRadius: BorderRadius.circular(DSRadius.lg),
+        border: Border.all(
+          color: colors.border.withValues(alpha: 0.35),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -439,32 +452,31 @@ class EmbeddedFortuneComponent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: DSSpacing.sm),
-              child: Text(
-                emoji,
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-            ),
-          ),
+          _buildTagWrap(context, [emoji]),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             message,
             style: context.bodyLarge.copyWith(
               fontWeight: FontWeight.w600,
+              height: 1.55,
             ),
           ),
           if (infoItems.isNotEmpty) ...[
-            const SizedBox(height: DSSpacing.md),
+            const SizedBox(height: DSSpacing.sm),
             _buildInfoWrap(context, infoItems),
           ],
           if (_stringValue(componentData['actionMission']) != null) ...[
-            const SizedBox(height: DSSpacing.md),
-            _buildSectionTitle(context, '오늘의 실천'),
-            const SizedBox(height: DSSpacing.xs),
-            Text(
-              _stringValue(componentData['actionMission'])!,
-              style: context.bodyMedium,
+            const SizedBox(height: DSSpacing.sm),
+            _buildInfoSection(
+              context,
+              title: '오늘의 실천',
+              child: Text(
+                _stringValue(componentData['actionMission'])!,
+                style: context.bodySmall.copyWith(
+                  fontWeight: FontWeight.w600,
+                  height: 1.55,
+                ),
+              ),
             ),
           ],
         ],
@@ -709,13 +721,18 @@ class EmbeddedFortuneComponent extends StatelessWidget {
         color: colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.xl),
         border: Border.all(
-          color: colors.border.withValues(alpha: 0.45),
+          color: colors.border.withValues(alpha: 0.55),
         ),
         boxShadow: [
           BoxShadow(
+            color: colors.textPrimary.withValues(alpha: 0.03),
+            blurRadius: 14,
+            offset: const Offset(0, 4),
+          ),
+          BoxShadow(
             color: colors.textPrimary.withValues(alpha: 0.05),
-            blurRadius: 18,
-            offset: const Offset(0, 6),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
           ),
         ],
       ),
@@ -729,6 +746,9 @@ class EmbeddedFortuneComponent extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: colors.backgroundSecondary,
                   borderRadius: BorderRadius.circular(DSRadius.lg),
+                  border: Border.all(
+                    color: colors.border.withValues(alpha: 0.4),
+                  ),
                 ),
                 child: Icon(icon, color: colors.textPrimary, size: 20),
               ),
@@ -750,18 +770,21 @@ class EmbeddedFortuneComponent extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: colors.backgroundSecondary,
                     borderRadius: BorderRadius.circular(DSRadius.full),
+                    border: Border.all(
+                      color: colors.border.withValues(alpha: 0.4),
+                    ),
                   ),
                   child: Text(
                     '$score점',
                     style: context.labelMedium.copyWith(
-                      color: colors.textSecondary,
+                      color: colors.textPrimary,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
             ],
           ),
-          const SizedBox(height: DSSpacing.sm),
+          const SizedBox(height: DSSpacing.md),
           child,
         ],
       ),
@@ -773,7 +796,7 @@ class EmbeddedFortuneComponent extends StatelessWidget {
     return Text(
       title,
       style: context.labelLarge.copyWith(
-        color: colors.textSecondary,
+        color: colors.textPrimary,
         fontWeight: FontWeight.w700,
       ),
     );
@@ -794,11 +817,15 @@ class EmbeddedFortuneComponent extends StatelessWidget {
               decoration: BoxDecoration(
                 color: colors.backgroundSecondary,
                 borderRadius: BorderRadius.circular(DSRadius.full),
+                border: Border.all(
+                  color: colors.border.withValues(alpha: 0.4),
+                ),
               ),
               child: Text(
                 item,
                 style: context.labelSmall.copyWith(
                   color: colors.textSecondary,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -822,10 +849,14 @@ class EmbeddedFortuneComponent extends StatelessWidget {
               decoration: BoxDecoration(
                 color: colors.backgroundSecondary,
                 borderRadius: BorderRadius.circular(DSRadius.lg),
+                border: Border.all(
+                  color: colors.border.withValues(alpha: 0.38),
+                ),
               ),
               child: Text(
                 item,
                 style: context.labelMedium.copyWith(
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -841,17 +872,62 @@ class EmbeddedFortuneComponent extends StatelessWidget {
       children: lines
           .map(
             (line) => Padding(
-              padding: const EdgeInsets.only(bottom: DSSpacing.xxs),
-              child: Text(
-                '• $line',
-                style: context.bodySmall.copyWith(
-                  fontWeight: FontWeight.w500,
-                  height: 1.55,
-                ),
+              padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 1),
+                    child: Text(
+                      '•',
+                      style: context.bodySmall.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: context.colors.textSecondary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: DSSpacing.xs),
+                  Expanded(
+                    child: Text(
+                      line,
+                      style: context.bodySmall.copyWith(
+                        fontWeight: FontWeight.w500,
+                        height: 1.58,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           )
           .toList(growable: false),
+    );
+  }
+
+  Widget _buildInfoSection(
+    BuildContext context, {
+    required String title,
+    required Widget child,
+  }) {
+    final colors = context.colors;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(DSSpacing.sm),
+      decoration: BoxDecoration(
+        color: colors.backgroundSecondary,
+        borderRadius: BorderRadius.circular(DSRadius.lg),
+        border: Border.all(
+          color: colors.border.withValues(alpha: 0.35),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionTitle(context, title),
+          const SizedBox(height: DSSpacing.xs),
+          child,
+        ],
+      ),
     );
   }
 
@@ -863,6 +939,9 @@ class EmbeddedFortuneComponent extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.backgroundSecondary,
         borderRadius: BorderRadius.circular(DSRadius.lg),
+        border: Border.all(
+          color: colors.border.withValues(alpha: 0.35),
+        ),
       ),
       child: child,
     );
@@ -1285,7 +1364,7 @@ class _EmbeddedExpandableSectionState
         color: colors.backgroundSecondary,
         borderRadius: BorderRadius.circular(DSRadius.lg),
         border: Border.all(
-          color: colors.border.withValues(alpha: 0.55),
+          color: colors.border.withValues(alpha: 0.42),
         ),
       ),
       child: Column(
@@ -1300,7 +1379,7 @@ class _EmbeddedExpandableSectionState
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(
-                horizontal: DSSpacing.sm,
+                horizontal: DSSpacing.sm + DSSpacing.xxs,
                 vertical: DSSpacing.sm,
               ),
               child: Row(
@@ -1309,6 +1388,7 @@ class _EmbeddedExpandableSectionState
                     child: Text(
                       widget.title,
                       style: context.labelLarge.copyWith(
+                        color: colors.textPrimary,
                         fontWeight: FontWeight.w700,
                       ),
                     ),

@@ -25,11 +25,12 @@ Repo evidence:
 | `92:2` | `80 Admin / Policy / Utility` | `active_runtime` | `/profile`, `/premium`, `/privacy-policy`, `/terms-of-service`, `/account-deletion` |
 | `93:2` | `90 Components` | `governance_only` | Retained component inventory only |
 | `94:2` | `99 Archive` | `archive_only` | Removed product families and historical capture notes |
-| `95:2` | `20 Chat Home / Character (refresh append)` | `active_append` | Latest official append containing live captures for General Chat Home, Curiosity Home, Curiosity Survey Step, and Curiosity Result Complete |
+| `95:2` | `20 Chat Home / Character (refresh append)` | `historical_append` | Earlier chat refresh append retained for history; superseded for Haneul survey/result by `180:2` |
+| `180:2` | `20 Chat Home / Character (premium append)` | `active_append` | Latest official append containing the premium Haneul Curiosity Survey Step and Curiosity Result Complete captures, plus the refreshed chat home states |
 
 ## Official File Status
 
-The official file keeps the retained canonical governance range `89:2` through `94:2` and currently also includes the intentional chat refresh append `95:2`.
+The official file keeps the retained canonical governance range `89:2` through `94:2` and currently also includes the intentional chat refresh append pages `95:2` and `180:2`.
 
 There is no current runtime route gap inside the official catalog. `/auth/callback` is now represented as `auth__callback__redirected` on `90:2`.
 
@@ -48,6 +49,7 @@ These ids may still appear in old screenshots, comments, or docs, but they are n
 The official design catalog should now be interpreted as a reduced product:
 
 - keep `89:2` through `94:2` as the canonical governance range
-- treat `95:2` as the latest live-refresh chat append until the `20 Chat Home / Character` page is consolidated back into the retained range
+- treat `180:2` as the latest live-refresh chat append until the `20 Chat Home / Character` page is consolidated back into the retained range
+- keep `95:2` as a historical append reference only
 - keep `89:2`, `93:2`, and `94:2` for governance, components, and archive
 - treat any lingering references to removed tabs or direct `/fortune`, `/trend`, `/history`, `/more`, or `/subscription` flows as stale artifacts

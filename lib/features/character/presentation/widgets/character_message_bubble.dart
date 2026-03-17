@@ -50,24 +50,12 @@ class CharacterMessageBubble extends StatelessWidget {
   Widget _buildUserBubble(BuildContext context) {
     final colors = context.colors;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           const SizedBox(width: 48), // 왼쪽 여백
-          // 읽음 표시 (메시지 왼쪽에 "1" 표시)
-          if (message.status == MessageStatus.sent)
-            Padding(
-              padding: const EdgeInsets.only(right: 6, bottom: 4),
-              child: Text(
-                '1',
-                style: context.labelSmall.copyWith(
-                  color: colors.textTertiary,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
           Flexible(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -101,20 +89,25 @@ class CharacterMessageBubble extends StatelessWidget {
                     (message.text != '📷 사진' && message.text.isNotEmpty))
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
+                      horizontal: DSSpacing.md,
+                      vertical: DSSpacing.sm + DSSpacing.xxs,
+                    ),
                     decoration: BoxDecoration(
                       color: colors.userBubble,
                       borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                        bottomLeft: Radius.circular(20),
-                        bottomRight: Radius.circular(4),
+                        topLeft: Radius.circular(DSRadius.xl),
+                        topRight: Radius.circular(DSRadius.xl),
+                        bottomLeft: Radius.circular(DSRadius.xl),
+                        bottomRight: Radius.circular(DSRadius.sm),
+                      ),
+                      border: Border.all(
+                        color: colors.border.withValues(alpha: 0.42),
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.08),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
+                          color: colors.textPrimary.withValues(alpha: 0.05),
+                          blurRadius: 14,
+                          offset: const Offset(0, 6),
                         ),
                       ],
                     ),
@@ -149,28 +142,7 @@ class CharacterMessageBubble extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (showAvatar) ...[
-              GestureDetector(
-                onTap: () {
-                  HapticUtils.lightImpact();
-                  context.push('/character/${character.id}', extra: character);
-                },
-                child: CircleAvatar(
-                  radius: 16,
-                  backgroundColor: accentPalette.accent,
-                  backgroundImage: character.avatarAsset.isNotEmpty
-                      ? AssetImage(character.avatarAsset)
-                      : null,
-                  child: character.avatarAsset.isEmpty
-                      ? Text(
-                          character.initial,
-                          style: context.labelMedium.copyWith(
-                            color: accentPalette.onAccent,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      : null,
-                ),
-              ),
+              _buildAvatar(context, accentPalette),
               const SizedBox(height: DSSpacing.xs),
             ],
             ChatSajuResultCard(
@@ -190,28 +162,7 @@ class CharacterMessageBubble extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (showAvatar) ...[
-              GestureDetector(
-                onTap: () {
-                  HapticUtils.lightImpact();
-                  context.push('/character/${character.id}', extra: character);
-                },
-                child: CircleAvatar(
-                  radius: 16,
-                  backgroundColor: accentPalette.accent,
-                  backgroundImage: character.avatarAsset.isNotEmpty
-                      ? AssetImage(character.avatarAsset)
-                      : null,
-                  child: character.avatarAsset.isEmpty
-                      ? Text(
-                          character.initial,
-                          style: context.labelMedium.copyWith(
-                            color: accentPalette.onAccent,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      : null,
-                ),
-              ),
+              _buildAvatar(context, accentPalette),
               const SizedBox(height: DSSpacing.xs),
             ],
             EmbeddedFortuneComponent(
@@ -224,36 +175,16 @@ class CharacterMessageBubble extends StatelessWidget {
     }
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: showAvatar ? 4 : 2),
+      padding: EdgeInsets.symmetric(
+          vertical: showAvatar ? DSSpacing.xs : DSSpacing.xxs),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (showAvatar)
-            GestureDetector(
-              onTap: () {
-                HapticUtils.lightImpact();
-                context.push('/character/${character.id}', extra: character);
-              },
-              child: CircleAvatar(
-                radius: 16,
-                backgroundColor: accentPalette.accent,
-                backgroundImage: character.avatarAsset.isNotEmpty
-                    ? AssetImage(character.avatarAsset)
-                    : null,
-                child: character.avatarAsset.isEmpty
-                    ? Text(
-                        character.initial,
-                        style: context.labelMedium.copyWith(
-                          color: accentPalette.onAccent,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )
-                    : null,
-              ),
-            )
+            _buildAvatar(context, accentPalette)
           else
-            const SizedBox(width: 32), // 아바타와 동일 크기 (radius 16 * 2)
-          const SizedBox(width: 12),
+            const SizedBox(width: 32),
+          const SizedBox(width: DSSpacing.sm + DSSpacing.xxs),
           Flexible(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -267,20 +198,27 @@ class CharacterMessageBubble extends StatelessWidget {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 10),
+                          horizontal: DSSpacing.md,
+                          vertical: DSSpacing.sm + DSSpacing.xxs,
+                        ),
                         decoration: BoxDecoration(
                           color: colors.surface,
                           borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(message.hasImage ? 20 : 4),
-                            topRight: const Radius.circular(20),
-                            bottomLeft: const Radius.circular(20),
-                            bottomRight: const Radius.circular(20),
+                            topLeft: Radius.circular(
+                              message.hasImage ? DSRadius.xl : DSRadius.sm,
+                            ),
+                            topRight: const Radius.circular(DSRadius.xl),
+                            bottomLeft: const Radius.circular(DSRadius.xl),
+                            bottomRight: const Radius.circular(DSRadius.xl),
+                          ),
+                          border: Border.all(
+                            color: colors.border.withValues(alpha: 0.45),
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.08),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
+                              color: colors.textPrimary.withValues(alpha: 0.05),
+                              blurRadius: 16,
+                              offset: const Offset(0, 6),
                             ),
                           ],
                         ),
@@ -291,7 +229,7 @@ class CharacterMessageBubble extends StatelessWidget {
                           message.affinityChange != 0)
                         Positioned(
                           top: -8,
-                          right: -4,
+                          right: -2,
                           child: AffinityChangeIndicator(
                             change: message.affinityChange!,
                           ),
@@ -303,6 +241,34 @@ class CharacterMessageBubble extends StatelessWidget {
           ),
           const SizedBox(width: 48), // 오른쪽 여백
         ],
+      ),
+    );
+  }
+
+  Widget _buildAvatar(
+    BuildContext context,
+    CharacterAccentPalette accentPalette,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        HapticUtils.lightImpact();
+        context.push('/character/${character.id}', extra: character);
+      },
+      child: CircleAvatar(
+        radius: 16,
+        backgroundColor: accentPalette.accent,
+        backgroundImage: character.avatarAsset.isNotEmpty
+            ? AssetImage(character.avatarAsset)
+            : null,
+        child: character.avatarAsset.isEmpty
+            ? Text(
+                character.initial,
+                style: context.labelMedium.copyWith(
+                  color: accentPalette.onAccent,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+            : null,
       ),
     );
   }
@@ -328,9 +294,9 @@ class CharacterMessageBubble extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.12),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
+            color: colors.textPrimary.withValues(alpha: 0.08),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
@@ -371,9 +337,9 @@ class CharacterMessageBubble extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.06),
-                blurRadius: 6,
-                offset: const Offset(0, 1),
+                color: colors.textPrimary.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
             ],
           ),

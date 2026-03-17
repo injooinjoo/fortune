@@ -106,6 +106,14 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     );
   }
 
+  bool get _isHaneulPremiumShell => widget.character.id == haneulCharacter.id;
+
+  String? _activeFortuneType(CharacterChatSurveyState surveyState) {
+    return surveyState.fortuneTypeString ??
+        widget.catalogPreview?.fortuneType ??
+        widget.initialFortuneType;
+  }
+
   /// 동적 질문 생성 (mbtiConfirm 등 사용자 정보 포함 필요 시)
   String _getDynamicStepQuestion(SurveyStep step) {
     // mbtiConfirm 스텝: 사용자 MBTI 타입을 포함한 질문 생성
@@ -516,7 +524,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
               // 운세 전문가 칩 바 (운세 전문가일 때만)
               if (widget.character.isFortuneExpert &&
                   widget.character.specialties.isNotEmpty)
-                _buildFortuneChipBar(chatState),
+                _buildFortuneChipBar(chatState, surveyState),
               // 채팅 영역
               Expanded(
                 child: chatState.isLoading
@@ -545,9 +553,13 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
   Widget _buildHeader(BuildContext context) {
     final accentPalette = _accentPalette(context);
+    final colors = context.colors;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.sm,
+        vertical: DSSpacing.sm,
+      ),
       child: Row(
         children: [
           // 백버튼
@@ -591,18 +603,19 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                       children: [
                         Text(
                           widget.character.name,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(fontWeight: FontWeight.w600),
+                          style: context.bodyLarge.copyWith(
+                            color: colors.textPrimary,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                         Text(
                           widget.character.personality.length > 30
                               ? '${widget.character.personality.substring(0, 30)}...'
                               : widget.character.personality,
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                          style: context.bodySmall.copyWith(
+                            color: colors.textSecondary,
+                            height: 1.35,
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -758,14 +771,18 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   }
 
   /// 운세 전문가 칩 바 (전문 분야 운세 칩들)
-  Widget _buildFortuneChipBar(CharacterChatState chatState) {
+  Widget _buildFortuneChipBar(
+    CharacterChatState chatState,
+    CharacterChatSurveyState surveyState,
+  ) {
     final colors = context.colors;
-    final isHaneulChipBar = widget.character.id == haneulCharacter.id;
+    final isHaneulChipBar = _isHaneulPremiumShell;
+    final activeFortuneType = _activeFortuneType(surveyState);
 
     return Container(
-      height: isHaneulChipBar ? 58 : 50,
+      height: isHaneulChipBar ? 62 : 50,
       padding: EdgeInsets.symmetric(
-        vertical: isHaneulChipBar ? DSSpacing.sm : DSSpacing.xs,
+        vertical: isHaneulChipBar ? DSSpacing.sm + DSSpacing.xxs : DSSpacing.xs,
       ),
       decoration: BoxDecoration(
         color: colors.surface,
@@ -790,6 +807,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
             return Center(
               child: DSChip(
                 label: '$chipEmoji $displayName',
+                selected: specialty == activeFortuneType,
                 style: DSChipStyle.outlined,
                 enableHaptic: false,
                 onTap: chatState.isProcessing
@@ -1057,12 +1075,16 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       characterChatSurveyProvider(widget.character.id).notifier,
     );
 
-    // 완료 메시지
-    chatNotifier.addCharacterMessage(context.l10n.analyzingMessage);
-
-    // 설문 데이터로 운세 요청
     final fortuneType = surveyState.fortuneTypeString ?? 'daily';
     final answers = surveyState.completedData ?? {};
+    final useCardFirstFlow = isHaneulCardFirstFortuneFlow(
+      characterId: widget.character.id,
+      fortuneType: fortuneType,
+    );
+
+    if (!useCardFirstFlow) {
+      chatNotifier.addCharacterMessage(context.l10n.analyzingMessage);
+    }
 
     // 🆕 사주 타입이면 비주얼 카드로 사주 결과 즉시 보여줌
     debugPrint('[SajuCard] fortuneType=$fortuneType, checking saju...');
@@ -1090,19 +1112,28 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
     ref
         .read(characterChatProvider(widget.character.id).notifier)
-        .sendFortuneRequestWithAnswers(fortuneType, requestMessage, answers);
+        .sendFortuneRequestWithAnswers(
+          fortuneType,
+          requestMessage,
+          answers,
+          userMessageAlreadyAdded: useCardFirstFlow,
+        );
     _scrollToBottom();
   }
 
   Widget _buildChatList(CharacterChatState chatState) {
     final visibleMessages = _messagesForDisplay(chatState);
+    final isHaneulShell = _isHaneulPremiumShell;
     final listView = NotificationListener<ScrollNotification>(
       onNotification: (notification) =>
           _handleChatScrollNotification(notification, chatState),
       child: ListView.builder(
         controller: _scrollController,
         physics: _chatScrollPhysics(context),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: EdgeInsets.symmetric(
+          horizontal: isHaneulShell ? 14 : 16,
+          vertical: isHaneulShell ? DSSpacing.sm : DSSpacing.xs,
+        ),
         itemCount: visibleMessages.length + (chatState.isTyping ? 1 : 0),
         itemBuilder: (context, index) {
           if (index == visibleMessages.length && chatState.isTyping) {
@@ -1136,6 +1167,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
             child: CharacterMessageBubble(
               message: message,
               character: widget.character,
+              showAvatar: _shouldShowAvatar(visibleMessages, index),
             ),
           );
         },
@@ -1163,13 +1195,17 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   Widget _buildTypingIndicator() {
     final accentPalette = _accentPalette(context);
     final colors = context.colors;
+    final isHaneulShell = _isHaneulPremiumShell;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: EdgeInsets.symmetric(
+        vertical: isHaneulShell ? DSSpacing.xs : DSSpacing.sm,
+      ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           CircleAvatar(
-            radius: 16,
+            radius: isHaneulShell ? 14 : 16,
             backgroundColor: accentPalette.accent,
             backgroundImage: widget.character.avatarAsset.isNotEmpty
                 ? AssetImage(widget.character.avatarAsset)
@@ -1183,12 +1219,25 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                   )
                 : null,
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: DSSpacing.sm),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(
+              horizontal: DSSpacing.md,
+              vertical: DSSpacing.sm + DSSpacing.xxs,
+            ),
             decoration: BoxDecoration(
-              color: colors.backgroundSecondary,
-              borderRadius: BorderRadius.circular(18),
+              color: colors.surface,
+              borderRadius: BorderRadius.circular(DSRadius.xl),
+              border: Border.all(
+                color: colors.border.withValues(alpha: 0.5),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: colors.textPrimary.withValues(alpha: 0.04),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+              ],
             ),
             child: WaveTypingIndicator(
               dotColor: colors.textTertiary,
@@ -1215,70 +1264,103 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         ? ref.read(characterChatSurveyProvider(widget.character.id).notifier)
         : null;
     final options = surveyNotifier?.getCurrentStepOptions() ?? step.options;
+    final stepBadge =
+        '${progress.currentStepIndex + 1}/${progress.config.totalSteps}';
 
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: DSSpacing.md,
-        vertical: DSSpacing.md,
+        vertical: DSSpacing.sm + DSSpacing.xxs,
       ),
       decoration: BoxDecoration(
-        color: colors.surface,
+        color: colors.background,
         border: Border(
           top: BorderSide(
             color: colors.border.withValues(alpha: 0.55),
           ),
         ),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // 진행률 표시
-          Padding(
-            padding: const EdgeInsets.only(bottom: DSSpacing.sm),
-            child: Row(
-              children: [
-                Text(
-                  '${progress.currentStepIndex + 1}/${progress.config.totalSteps}',
-                  style: context.labelSmall.copyWith(
-                    color: colors.textSecondary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(width: DSSpacing.sm),
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(DSRadius.full),
-                    child: LinearProgressIndicator(
-                      minHeight: 6,
-                      value: progress.progress,
-                      backgroundColor: colors.backgroundTertiary,
-                      valueColor: AlwaysStoppedAnimation(accentPalette.accent),
+      child: Container(
+        padding: const EdgeInsets.all(DSSpacing.sm + DSSpacing.xxs),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(DSRadius.xl),
+          border: Border.all(
+            color: colors.border.withValues(alpha: 0.45),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: colors.textPrimary.withValues(alpha: 0.04),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 진행률 표시
+            Padding(
+              padding: const EdgeInsets.only(bottom: DSSpacing.sm),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: DSSpacing.sm,
+                      vertical: DSSpacing.xxs,
                     ),
-                  ),
-                ),
-                // 스킵 버튼 (선택적 단계만)
-                if (!step.isRequired)
-                  TextButton(
-                    onPressed: surveyNotifier == null
-                        ? null
-                        : () {
-                            surveyNotifier.skipCurrentStep();
-                            _checkSurveyCompletion();
-                          },
+                    decoration: BoxDecoration(
+                      color: colors.backgroundSecondary,
+                      borderRadius: BorderRadius.circular(DSRadius.full),
+                      border: Border.all(
+                        color: colors.border.withValues(alpha: 0.5),
+                      ),
+                    ),
                     child: Text(
-                      context.l10n.skip,
+                      stepBadge,
                       style: context.labelSmall.copyWith(
-                        color: colors.textTertiary,
-                        fontWeight: FontWeight.w600,
+                        color: colors.textSecondary,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
-              ],
+                  const SizedBox(width: DSSpacing.sm),
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(DSRadius.full),
+                      child: LinearProgressIndicator(
+                        minHeight: 6,
+                        value: progress.progress,
+                        backgroundColor: colors.backgroundTertiary,
+                        valueColor:
+                            AlwaysStoppedAnimation(accentPalette.accent),
+                      ),
+                    ),
+                  ),
+                  // 스킵 버튼 (선택적 단계만)
+                  if (!step.isRequired)
+                    TextButton(
+                      onPressed: surveyNotifier == null
+                          ? null
+                          : () {
+                              surveyNotifier.skipCurrentStep();
+                              _checkSurveyCompletion();
+                            },
+                      child: Text(
+                        context.l10n.skip,
+                        style: context.labelSmall.copyWith(
+                          color: colors.textTertiary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ),
-          ),
-          // 입력 타입별 위젯
-          _buildSurveyInputWidget(step, options),
-        ],
+            // 입력 타입별 위젯
+            _buildSurveyInputWidget(step, options),
+          ],
+        ),
       ),
     );
   }
@@ -1857,7 +1939,6 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   /// 다중 선택 칩 위젯
   Widget _buildMultiSelectChips(List<SurveyOption> options) {
     final selectedIds = <String>{};
-    final accentPalette = _accentPalette(context);
 
     return StatefulBuilder(
       builder: (context, setState) {
@@ -1880,21 +1961,19 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
             ),
             const SizedBox(height: DSSpacing.sm),
             if (selectedIds.isNotEmpty)
-              ElevatedButton(
-                onPressed: () {
-                  final selectedOptions = options
-                      .where((option) => selectedIds.contains(option.id))
-                      .toList(growable: false);
-                  _handleSurveyAnswer(selectedOptions);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: accentPalette.accent,
-                  foregroundColor: accentPalette.onAccent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: DSButton.primary(
+                  text: context.l10n.selectionComplete,
+                  size: DSButtonSize.small,
+                  fullWidth: false,
+                  onPressed: () {
+                    final selectedOptions = options
+                        .where((option) => selectedIds.contains(option.id))
+                        .toList(growable: false);
+                    _handleSurveyAnswer(selectedOptions);
+                  },
                 ),
-                child: Text(context.l10n.selectionComplete),
               ),
           ],
         );
@@ -2090,12 +2169,19 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     final colors = context.colors;
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: DSSpacing.md,
-        vertical: DSSpacing.sm,
+      padding: const EdgeInsets.fromLTRB(
+        DSSpacing.md,
+        DSSpacing.sm,
+        DSSpacing.md,
+        DSSpacing.md,
       ),
       decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
+        color: colors.background,
+        border: Border(
+          top: BorderSide(
+            color: colors.border.withValues(alpha: 0.4),
+          ),
+        ),
       ),
       child: Row(
         children: [
@@ -2108,6 +2194,9 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
               decoration: BoxDecoration(
                 color: colors.surfaceSecondary,
                 shape: BoxShape.circle,
+                border: Border.all(
+                  color: colors.border.withValues(alpha: 0.45),
+                ),
               ),
               child: Icon(
                 Icons.photo_camera_outlined,
@@ -2153,5 +2242,15 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         ],
       ),
     );
+  }
+
+  bool _shouldShowAvatar(List<CharacterChatMessage> messages, int index) {
+    final current = messages[index];
+    if (current.type != CharacterChatMessageType.character) {
+      return true;
+    }
+
+    final next = index + 1 < messages.length ? messages[index + 1] : null;
+    return next?.type != CharacterChatMessageType.character;
   }
 }

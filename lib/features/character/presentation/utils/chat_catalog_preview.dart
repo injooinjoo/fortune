@@ -168,7 +168,7 @@ CharacterChatState catalogPreviewChatState({
         messages: [
           CharacterChatMessage(
             type: CharacterChatMessageType.character,
-            text: '좋아요. 오늘 흐름을 빠르게 정리해볼게요.',
+            text: '좋아요. 오늘 흐름만 빠르게 볼게요.',
             timestamp: _previewTimestamp(4),
             characterId: character.id,
             origin: MessageOrigin.aiReply,
@@ -182,7 +182,7 @@ CharacterChatState catalogPreviewChatState({
           ),
           CharacterChatMessage(
             type: CharacterChatMessageType.character,
-            text: '딱 한 가지부터 물어볼게요. 가장 신경 쓰이는 건 뭔가요?',
+            text: '가장 궁금한 흐름 하나만 골라주세요.',
             timestamp: _previewTimestamp(6),
             characterId: character.id,
             origin: MessageOrigin.aiReply,
@@ -196,7 +196,7 @@ CharacterChatState catalogPreviewChatState({
         messages: [
           CharacterChatMessage(
             type: CharacterChatMessageType.character,
-            text: '좋아요. 오늘 흐름을 빠르게 정리해볼게요.',
+            text: '좋아요. 오늘 흐름만 빠르게 볼게요.',
             timestamp: _previewTimestamp(4),
             characterId: character.id,
             origin: MessageOrigin.aiReply,
@@ -217,7 +217,7 @@ CharacterChatState catalogPreviewChatState({
           ),
           CharacterChatMessage(
             type: CharacterChatMessageType.character,
-            text: '오늘 흐름을 카드로 정리해봤어요.',
+            text: '',
             timestamp: _previewTimestamp(7),
             characterId: character.id,
             origin: MessageOrigin.aiReply,
@@ -225,13 +225,13 @@ CharacterChatState catalogPreviewChatState({
             componentData: const {
               'fortuneType': 'daily',
               'title': '오늘의 흐름',
-              'summary': '차분하게 우선순위를 정리할수록 작은 성과가 크게 이어지는 날이에요.',
+              'summary': '차분하게 우선순위를 정리할수록 작은 성과가 큰 차이로 이어지는 날이에요.',
               'score': 86,
-              'highlights': ['집중', '대화운', '정리'],
-              'luckyItems': ['따뜻한 커피', '메모 앱', '오전 10시'],
+              'highlights': ['집중', '정리'],
+              'luckyItems': ['따뜻한 커피', '메모 앱'],
               'recommendations': [
-                '아침에 가장 중요한 할 일을 세 가지만 적어보세요.',
-                '답장이 필요한 대화는 오후 전에 마무리해두는 편이 좋아요.',
+                '아침에는 가장 중요한 할 일 세 가지만 먼저 적어보세요.',
+                '답장이 필요한 대화는 오후 전에 마무리하는 편이 좋아요.',
               ],
               'warnings': [
                 '즉흥적인 소비나 일정 추가는 한 번 더 점검해보세요.',
