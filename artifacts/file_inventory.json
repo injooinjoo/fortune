@@ -23295,6 +23295,22 @@
       "dirty": false,
       "kind": "dart",
       "notes": [],
+      "path": "lib/features/character/data/services/active_character_chat_registry.dart",
+      "referenced_by": [
+        "lib/features/character/presentation/pages/character_chat_panel.dart",
+        "lib/presentation/providers/auth_provider.dart",
+        "lib/services/notification/fcm_service.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
       "path": "lib/features/character/data/services/character_affinity_service.dart",
       "referenced_by": [
         "lib/features/character/presentation/providers/character_chat_provider.dart",
@@ -26468,7 +26484,11 @@
       "path": "lib/services/notification/fcm_service.dart",
       "referenced_by": [
         "lib/features/notification/presentation/pages/notification_settings_page.dart",
-        "lib/main.dart"
+        "lib/main.dart",
+        "lib/presentation/providers/auth_provider.dart",
+        "lib/services/account_deletion_service.dart",
+        "lib/services/social_auth_service.dart",
+        "test/services/notification/fcm_service_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -28051,7 +28071,8 @@
         "supabase/functions/delete-account/index.ts",
         "supabase/functions/fortune-recommend/index.ts",
         "supabase/functions/free-chat/index.ts",
-        "supabase/functions/generate-character-proactive-image/index.ts"
+        "supabase/functions/generate-character-proactive-image/index.ts",
+        "supabase/functions/sync-notification-device/index.ts"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -28129,7 +28150,8 @@
         "supabase/functions/fortune-recommend/index.ts",
         "supabase/functions/free-chat/index.ts",
         "supabase/functions/generate-character-proactive-image/index.ts",
-        "supabase/functions/mbti-energy-tracker/index.ts"
+        "supabase/functions/mbti-energy-tracker/index.ts",
+        "supabase/functions/sync-notification-device/index.ts"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -29778,6 +29800,22 @@
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/data/services/token_api_service.dart",
         "lib/services/in_app_purchase_service.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "edge_function_source",
+      "notes": [
+        "edge_function_ref:sync-notification-device"
+      ],
+      "path": "supabase/functions/sync-notification-device/index.ts",
+      "referenced_by": [
+        "lib/services/notification/fcm_service.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -31556,6 +31594,20 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "test/services/notification/fcm_service_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "test/unit/core/navigation/fortune_chat_route_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -32268,24 +32320,24 @@
       "assets": 1231,
       "docs": 89,
       "integration_test": 8,
-      "lib": 411,
+      "lib": 412,
       "scripts": 70,
-      "supabase": 205,
-      "test": 66
+      "supabase": 206,
+      "test": 67
     },
     "counts_by_candidate_action": {
-      "keep": 700,
+      "keep": 702,
       "keep_generated": 28,
       "manual_review": 979,
       "phase1_remove_candidate": 14,
-      "phase2_review_candidate": 355,
+      "phase2_review_candidate": 356,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
       "doc_only": 97,
       "generated_excluded": 28,
-      "runtime_used": 700,
-      "test_only": 74,
+      "runtime_used": 702,
+      "test_only": 75,
       "tooling_only": 184,
       "unreferenced": 997
     },
@@ -32440,8 +32492,8 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 340,
-    "lib_dart_total": 408,
+    "lib_dart_runtime_reachable": 341,
+    "lib_dart_total": 409,
     "lib_dart_zero_incoming": 26,
     "missing_function_refs": [
       "--all",
@@ -32545,10 +32597,11 @@
       "soul-earn",
       "subscription-activate",
       "subscription-status",
+      "sync-notification-device",
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2080,
+    "total_files": 2083,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
