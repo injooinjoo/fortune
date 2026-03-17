@@ -20867,7 +20867,9 @@
         "lib/shared/components/toast.dart",
         "lib/shared/glassmorphism/glass_container.dart",
         "lib/shared/widgets/smart_image.dart",
+        "test/features/character/presentation/widgets/embedded_fortune_component_test.dart",
         "test/features/character/presentation/widgets/embedded_tarot_component_test.dart",
+        "test/features/chat/presentation/widgets/survey/chat_survey_chips_test.dart",
         "test/features/chat/presentation/widgets/survey/chat_tarot_deck_picker_test.dart",
         "test/features/chat/presentation/widgets/survey/chat_tarot_draw_widget_test.dart",
         "test/widget/character/character_list_panel_test.dart",
@@ -23964,6 +23966,7 @@
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/features/character/presentation/widgets/character_message_bubble.dart",
+        "test/features/character/presentation/widgets/embedded_fortune_component_test.dart",
         "test/features/character/presentation/widgets/embedded_tarot_component_test.dart"
       ],
       "runtime_reachable": true,
@@ -24045,6 +24048,7 @@
         "lib/features/chat/domain/configs/survey_configs.dart",
         "lib/features/chat/presentation/widgets/survey/chat_survey_chips.dart",
         "lib/features/chat/presentation/widgets/survey/chat_tarot_deck_picker.dart",
+        "test/features/chat/presentation/widgets/survey/chat_survey_chips_test.dart",
         "test/features/chat/presentation/widgets/survey/chat_tarot_deck_picker_test.dart"
       ],
       "runtime_reachable": true,
@@ -24196,7 +24200,8 @@
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
-        "lib/features/character/presentation/pages/character_chat_panel.dart"
+        "lib/features/character/presentation/pages/character_chat_panel.dart",
+        "test/features/chat/presentation/widgets/survey/chat_survey_chips_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -31368,7 +31373,35 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "test/features/character/presentation/widgets/embedded_fortune_component_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "test/features/character/presentation/widgets/embedded_tarot_component_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "test/features/chat/presentation/widgets/survey/chat_survey_chips_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
       "test_only": true,
@@ -32203,21 +32236,21 @@
       "lib": 410,
       "scripts": 70,
       "supabase": 205,
-      "test": 63
+      "test": 65
     },
     "counts_by_candidate_action": {
       "keep": 699,
       "keep_generated": 28,
       "manual_review": 979,
       "phase1_remove_candidate": 14,
-      "phase2_review_candidate": 352,
+      "phase2_review_candidate": 354,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
       "doc_only": 97,
       "generated_excluded": 28,
       "runtime_used": 699,
-      "test_only": 71,
+      "test_only": 73,
       "tooling_only": 184,
       "unreferenced": 997
     },
@@ -32480,7 +32513,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2076,
+    "total_files": 2078,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
