@@ -93,6 +93,8 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   bool _isSessionStartAutoScrollPausedByUser = false;
   bool _isArchivedHistoryVisible = false;
   bool _isArchivedHistoryLoading = false;
+  bool _isPetProfileManagementMode = false;
+  String? _petProfileDeletingId;
 
   /// 통합 스크롤 서비스 (ChatScrollService 사용)
   late final ChatScrollService _scrollService;
@@ -1460,6 +1462,8 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           );
         }
 
+        final colors = context.colors;
+        final typography = context.typography;
         final options = pets
             .map(
               (pet) => SurveyOption(
@@ -1471,22 +1475,219 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
             .toList(growable: false);
         final petById = {for (final pet in pets) pet.id: pet};
 
-        return ChatSurveyChips(
-          options: options,
-          onSelect: (option) {
-            final pet = petById[option.id];
-            if (pet == null) return;
-
-            _handleSurveyAnswer(
-              buildPetProfileSurveyAnswer(
-                profile: pet,
-                displayText: _buildPetProfileDisplayText(pet),
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                DSSpacing.md,
+                0,
+                DSSpacing.md,
+                DSSpacing.xs,
               ),
-            );
-          },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '저장된 반려동물 ${pets.length}마리',
+                          style: typography.labelSmall.copyWith(
+                            color: colors.textSecondary,
+                          ),
+                        ),
+                        if (_isPetProfileManagementMode) ...[
+                          const SizedBox(height: DSSpacing.xxs),
+                          Text(
+                            '삭제할 반려동물을 선택하면 바로 목록에서 제거돼요.',
+                            style: typography.bodySmall.copyWith(
+                              color: colors.textTertiary,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: _petProfileDeletingId != null
+                        ? null
+                        : () {
+                            setState(() {
+                              _isPetProfileManagementMode =
+                                  !_isPetProfileManagementMode;
+                            });
+                          },
+                    child: Text(_isPetProfileManagementMode ? '선택 모드' : '관리'),
+                  ),
+                ],
+              ),
+            ),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 180),
+              child: _isPetProfileManagementMode
+                  ? _buildPetProfileManagementList(pets)
+                  : ChatSurveyChips(
+                      options: options,
+                      onSelect: (option) {
+                        final pet = petById[option.id];
+                        if (pet == null) return;
+
+                        _handleSurveyAnswer(
+                          buildPetProfileSurveyAnswer(
+                            profile: pet,
+                            displayText: _buildPetProfileDisplayText(pet),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
         );
       },
     );
+  }
+
+  Widget _buildPetProfileManagementList(List<PetProfile> pets) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
+      child: Column(
+        key: const ValueKey('pet-profile-management-list'),
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (final pet in pets)
+            Padding(
+              padding: const EdgeInsets.only(bottom: DSSpacing.sm),
+              child: Container(
+                padding: const EdgeInsets.all(DSSpacing.md),
+                decoration: BoxDecoration(
+                  color: colors.surface,
+                  borderRadius: BorderRadius.circular(DSRadius.lg),
+                  border: Border.all(color: colors.border),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: colors.surfaceSecondary,
+                        borderRadius: BorderRadius.circular(DSRadius.md),
+                      ),
+                      child: Icon(
+                        Icons.pets_outlined,
+                        color: colors.textSecondary,
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: DSSpacing.md),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            pet.name,
+                            style: typography.bodyMedium.copyWith(
+                              color: colors.textPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: DSSpacing.xxs),
+                          Text(
+                            _buildPetProfileManagementCaption(pet),
+                            style: typography.bodySmall.copyWith(
+                              color: colors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: DSSpacing.sm),
+                    DSButton.destructive(
+                      text: '삭제',
+                      size: DSButtonSize.small,
+                      fullWidth: false,
+                      isLoading: _petProfileDeletingId == pet.id,
+                      onPressed: _petProfileDeletingId != null
+                          ? null
+                          : () => _deletePetProfile(pet),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  String _buildPetProfileManagementCaption(PetProfile profile) {
+    final parts = <String>[profile.detailLabel];
+
+    if (profile.age != null) {
+      parts.add('${profile.age}살');
+    }
+
+    final gender = profile.gender?.trim();
+    if (gender != null && gender.isNotEmpty) {
+      parts.add(gender);
+    }
+
+    return parts.join(' · ');
+  }
+
+  Future<void> _deletePetProfile(PetProfile profile) async {
+    final shouldDelete = await DSModal.confirm(
+      context: context,
+      title: '반려동물 삭제',
+      message: '${profile.name} 프로필을 삭제할까요?\n삭제 후에는 다시 복구할 수 없어요.',
+      confirmText: '삭제',
+      cancelText: '취소',
+      isDestructive: true,
+    );
+
+    if (shouldDelete != true || !mounted) {
+      return;
+    }
+
+    setState(() {
+      _petProfileDeletingId = profile.id;
+    });
+
+    try {
+      await ref.read(petProfilesProvider.notifier).deleteProfile(profile.id);
+
+      if (!mounted) {
+        return;
+      }
+
+      final remainingPets =
+          ref.read(petProfilesProvider).valueOrNull ?? const [];
+
+      setState(() {
+        _petProfileDeletingId = null;
+        if (remainingPets.isEmpty) {
+          _isPetProfileManagementMode = false;
+        }
+      });
+
+      DSToast.success(context, '${profile.name} 프로필을 삭제했어요.');
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _petProfileDeletingId = null;
+      });
+
+      DSToast.error(context, '반려동물 삭제에 실패했어요. 다시 시도해주세요.');
+    }
   }
 
   List<SecondaryProfile> _filterStoredProfiles(

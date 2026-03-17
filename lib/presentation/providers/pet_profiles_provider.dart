@@ -45,5 +45,23 @@ class PetProfilesNotifier extends StateNotifier<AsyncValue<List<PetProfile>>> {
     }
   }
 
+  Future<void> deleteProfile(String profileId) async {
+    try {
+      Logger.info('[PetProfiles] 반려동물 삭제 - $profileId');
+
+      await _supabase.from('pets').delete().eq('id', profileId);
+
+      state = state.whenData(
+        (profiles) =>
+            profiles.where((profile) => profile.id != profileId).toList(),
+      );
+
+      Logger.info('[PetProfiles] 반려동물 삭제 완료');
+    } catch (e) {
+      Logger.error('[PetProfiles] 삭제 실패: $e');
+      rethrow;
+    }
+  }
+
   Future<void> refresh() => _loadProfiles();
 }
