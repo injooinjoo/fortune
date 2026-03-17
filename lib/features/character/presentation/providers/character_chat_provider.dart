@@ -279,6 +279,9 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     if (isCurrentChatActive) {
       _localService.saveLastReadTimestamp(_characterId);
     }
+
+    _triggerNotificationIfNeeded(message.text);
+    _queueForSync();
   }
 
   /// 유저 프로필 정보를 API용 Map으로 변환
@@ -1674,13 +1677,18 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
     if (isCurrentChatActive) {
       _localService.saveLastReadTimestamp(_characterId);
+    } else {
+      _updateTotalUnreadBadge();
     }
 
     if (!suppressNotification) {
-      _triggerNotificationIfNeeded(
-        notificationText ??
-            (message.text.isNotEmpty ? message.text : '운세 결과가 도착했어요.'),
-      );
+      if (message.origin == MessageOrigin.followUp ||
+          message.origin == MessageOrigin.proactive) {
+        _triggerNotificationIfNeeded(
+          notificationText ??
+              (message.text.isNotEmpty ? message.text : '운세 결과가 도착했어요.'),
+        );
+      }
       _startFollowUpSchedule();
     }
 
@@ -2031,6 +2039,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         systemPrompt: enhancedSystemPrompt,
         messages: history,
         userMessage: '[사용자 응답 대기 중]',
+        shouldSendPush: false,
         modelPreference: _resolveModelPreference(),
         oocInstructions: _character.oocInstructions,
         emojiFrequency: _character.behaviorPattern.emojiFrequencyString,
@@ -2113,6 +2122,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         systemPrompt: enhancedPrompt,
         messages: history,
         userMessage: lastMessage.text,
+        shouldSendPush: false,
         modelPreference: _resolveModelPreference(),
         oocInstructions: _character.oocInstructions,
         emojiFrequency: _character.behaviorPattern.emojiFrequencyString,
@@ -2204,6 +2214,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     state = state.copyWith(unreadCount: 0);
     // 마지막으로 읽은 시간 저장 (앱 재시작 후에도 유지)
     _localService.saveLastReadTimestamp(_characterId);
+    _updateTotalUnreadBadge();
     _scheduleReadIdleIcebreakerForReadEvent();
   }
 
@@ -2417,6 +2428,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         systemPrompt: enhancedPrompt,
         messages: history,
         userMessage: text,
+        shouldSendPush: true,
         modelPreference: _resolveModelPreference(),
         oocInstructions: _character.oocInstructions,
         emojiFrequency: _character.behaviorPattern.emojiFrequencyString,
@@ -2647,6 +2659,7 @@ $enrichedContext
         systemPrompt: enhancedPrompt,
         messages: history,
         userMessage: fortuneUserMessage,
+        shouldSendPush: true,
         modelPreference: _resolveModelPreference(),
         oocInstructions: _character.oocInstructions,
         emojiFrequency: _character.behaviorPattern.emojiFrequencyString,
@@ -2879,6 +2892,7 @@ $enrichedContext
         systemPrompt: enhancedPrompt,
         messages: history,
         userMessage: fortuneUserMessage,
+        shouldSendPush: true,
         modelPreference: _resolveModelPreference(),
         oocInstructions: _character.oocInstructions,
         emojiFrequency: _character.behaviorPattern.emojiFrequencyString,
@@ -4658,6 +4672,7 @@ $enrichedContext
         systemPrompt: enhancedPrompt,
         messages: history,
         userMessage: '(사용자가 "${choice.text}"를 선택함)',
+        shouldSendPush: true,
         modelPreference: _resolveModelPreference(),
         oocInstructions: _character.oocInstructions,
         emojiFrequency: _character.behaviorPattern.emojiFrequencyString,

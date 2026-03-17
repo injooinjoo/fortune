@@ -7,9 +7,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/utils/logger.dart';
 import '../../core/network/api_client.dart';
 import '../../core/theme/theme_keys.dart';
+import '../../features/character/data/services/active_character_chat_registry.dart';
 
 // 백그라운드 메시지 핸들러 (반드시 톱레벨 함수여야 함)
 @pragma('vm:entry-point')
@@ -33,13 +35,15 @@ class NotificationSettings {
   final bool dailyFortune;
   final bool tokenAlert;
   final bool promotion;
+  final bool characterDm;
   final String? dailyFortuneTime; // HH:mm 형식
 
-  NotificationSettings(
+  const NotificationSettings(
       {this.enabled = true,
       this.dailyFortune = true,
       this.tokenAlert = true,
       this.promotion = true,
+      this.characterDm = true,
       this.dailyFortuneTime = '07:00'});
 
   Map<String, dynamic> toJson() => {
@@ -47,16 +51,36 @@ class NotificationSettings {
         'dailyFortune': dailyFortune,
         'tokenAlert': tokenAlert,
         'promotion': promotion,
-        'dailyFortuneTime': null
+        'characterDm': characterDm,
+        'dailyFortuneTime': dailyFortuneTime
       };
 
   factory NotificationSettings.fromJson(Map<String, dynamic> json) {
     return NotificationSettings(
-        enabled: json['enabled'],
-        dailyFortune: json['dailyFortune'],
-        tokenAlert: json['tokenAlert'],
-        promotion: json['promotion'],
+        enabled: json['enabled'] as bool? ?? true,
+        dailyFortune: json['dailyFortune'] as bool? ?? true,
+        tokenAlert: json['tokenAlert'] as bool? ?? true,
+        promotion: json['promotion'] as bool? ?? true,
+        characterDm: json['characterDm'] as bool? ?? true,
         dailyFortuneTime: json['dailyFortuneTime'] ?? '07:00');
+  }
+
+  NotificationSettings copyWith({
+    bool? enabled,
+    bool? dailyFortune,
+    bool? tokenAlert,
+    bool? promotion,
+    bool? characterDm,
+    String? dailyFortuneTime,
+  }) {
+    return NotificationSettings(
+      enabled: enabled ?? this.enabled,
+      dailyFortune: dailyFortune ?? this.dailyFortune,
+      tokenAlert: tokenAlert ?? this.tokenAlert,
+      promotion: promotion ?? this.promotion,
+      characterDm: characterDm ?? this.characterDm,
+      dailyFortuneTime: dailyFortuneTime ?? this.dailyFortuneTime,
+    );
   }
 }
 
@@ -80,7 +104,8 @@ class FCMService {
 
   String? _fcmToken;
   StreamController<RemoteMessage>? _messageStreamController;
-  NotificationSettings _settings = NotificationSettings();
+  NotificationSettings _settings = const NotificationSettings();
+  bool _isInitialized = false;
 
   // 알림 스트림
   Stream<RemoteMessage> get onMessage => _messageStreamController!.stream;
@@ -93,6 +118,11 @@ class FCMService {
 
   // 초기화
   Future<void> initialize() async {
+    if (_isInitialized) {
+      await syncCurrentDevice();
+      return;
+    }
+
     try {
       // Firebase 초기화
       // TODO: Firebase options not available
@@ -119,12 +149,16 @@ class FCMService {
       // 알림 설정 로드
       await _loadSettings();
 
+      // 로그인된 세션이 있으면 현재 디바이스를 Supabase push 대상과 정렬
+      await syncCurrentDevice();
+
       // 메시지 리스너 설정
       _setupMessageListeners();
 
       // 토픽 구독
       await _subscribeToTopics();
 
+      _isInitialized = true;
       Logger.info('FCM 서비스 초기화 완료');
     } catch (e) {
       Logger.error('FCM 초기화 실패', e);
@@ -227,43 +261,88 @@ class FCMService {
   Future<void> _getToken() async {
     try {
       _fcmToken = await fcm.getToken();
-      Logger.info('Supabase initialized successfully');
+      Logger.info('FCM 토큰 획득 완료');
 
-      if (_fcmToken != null) {
-        // 서버에 토큰 전송
-        await _sendTokenToServer(_fcmToken!);
-      }
-
-      // 토큰 갱신 리스너
       fcm.onTokenRefresh.listen((newToken) async {
-        Logger.info('Supabase initialized successfully');
         _fcmToken = newToken;
-        await _sendTokenToServer(newToken);
+        Logger.info('FCM 토큰 갱신 완료');
+        await syncCurrentDevice();
       });
     } catch (e) {
       Logger.error('FCM 토큰 획득 실패', e);
     }
   }
 
-  // 서버에 FCM 토큰 전송
-  Future<void> _sendTokenToServer(String token) async {
-    try {
-      await _apiClient.post('/user/fcm-token', data: {
-        'token': token,
-        'platform':
-            kIsWeb ? 'web' : (!kIsWeb && Platform.isIOS ? 'ios' : 'android'),
-        'deviceInfo': {
-          'os':
-              kIsWeb ? 'web' : (!kIsWeb ? Platform.operatingSystem : 'unknown'),
-          'version': kIsWeb
-              ? 'web'
-              : (!kIsWeb ? Platform.operatingSystemVersion : 'unknown')
-        }
-      });
+  String _currentPlatform() {
+    if (kIsWeb) {
+      return 'web';
+    }
+    if (!kIsWeb && Platform.isIOS) {
+      return 'ios';
+    }
+    return 'android';
+  }
 
-      Logger.info('FCM 토큰 서버 전송 완료');
+  Map<String, dynamic> _buildDeviceInfo() {
+    return {
+      'os': kIsWeb ? 'web' : Platform.operatingSystem,
+      'version': kIsWeb ? 'web' : Platform.operatingSystemVersion,
+    };
+  }
+
+  Future<void> syncCurrentDevice() async {
+    try {
+      if (_fcmToken == null || _fcmToken!.isEmpty) {
+        Logger.info('FCM 토큰이 없어 디바이스 동기화를 건너뜁니다');
+        return;
+      }
+
+      final supabase = Supabase.instance.client;
+      if (supabase.auth.currentSession == null) {
+        Logger.info('로그인 세션이 없어 디바이스 동기화를 건너뜁니다');
+        return;
+      }
+
+      await supabase.functions.invoke(
+        'sync-notification-device',
+        body: {
+          'token': _fcmToken,
+          'platform': _currentPlatform(),
+          'deviceInfo': _buildDeviceInfo(),
+          'preferences': _settings.toJson(),
+        },
+      );
+
+      Logger.info('FCM 디바이스 동기화 완료');
     } catch (e) {
-      Logger.error('FCM 토큰 서버 전송 실패', e);
+      Logger.error('FCM 디바이스 동기화 실패', e);
+    }
+  }
+
+  Future<void> deactivateCurrentDevice() async {
+    try {
+      if (_fcmToken == null || _fcmToken!.isEmpty) {
+        return;
+      }
+
+      final supabase = Supabase.instance.client;
+      if (supabase.auth.currentSession == null) {
+        return;
+      }
+
+      await supabase.functions.invoke(
+        'sync-notification-device',
+        body: {
+          'token': _fcmToken,
+          'platform': _currentPlatform(),
+          'deviceInfo': _buildDeviceInfo(),
+          'deactivateToken': true,
+        },
+      );
+
+      Logger.info('FCM 디바이스 비활성화 완료');
+    } catch (e) {
+      Logger.warning('FCM 디바이스 비활성화 실패: $e');
     }
   }
 
@@ -299,14 +378,26 @@ class FCMService {
   void _handleMessage(RemoteMessage message) {
     final notification = message.notification;
     final data = message.data;
+    final characterId =
+        data['character_id']?.toString() ?? data['characterId']?.toString();
+    final isActiveCharacterChat = data['type'] == 'character_dm' &&
+        ActiveCharacterChatRegistry.isActive(characterId);
 
-    if (notification != null) {
-      // 포그라운드에서 로컬 알림 표시
+    if (isActiveCharacterChat) {
+      Logger.info('활성 채팅방의 캐릭터 DM 알림은 포그라운드에서 억제합니다');
+      return;
+    }
+
+    final title = notification?.title ?? data['title']?.toString() ?? '';
+    final body = notification?.body ?? data['body']?.toString() ?? '';
+
+    if (title.isNotEmpty || body.isNotEmpty) {
       _showLocalNotification(
-          title: notification.title ?? '',
-          body: notification.body ?? '',
-          payload: jsonEncode(data),
-          channelId: data['channel'] ?? NotificationChannels.system);
+        title: title,
+        body: body,
+        payload: jsonEncode(data),
+        channelId: data['channel']?.toString() ?? NotificationChannels.system,
+      );
     }
   }
 
@@ -522,9 +613,8 @@ class FCMService {
       await prefs.setString(
           'notification_settings', jsonEncode(settings.toJson()));
 
-      // 서버에 전송
-      await _apiClient.put('/user/notification-settings',
-          data: settings.toJson());
+      // 로그인 세션이 있으면 Supabase source of truth에 즉시 반영
+      await syncCurrentDevice();
 
       // 토픽 재구독
       await _updateTopicSubscriptions();

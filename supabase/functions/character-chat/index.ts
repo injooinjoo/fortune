@@ -66,6 +66,7 @@ interface CharacterChatRequest {
   systemPrompt: string;
   messages: ChatMessage[];
   userMessage: string;
+  shouldSendPush?: boolean;
   modelPreference?: "default" | "grok-fast";
   userName?: string;
   userDescription?: string;
@@ -364,7 +365,9 @@ function buildFullSystemPrompt(
     parts.push("- 사용자 이름 미확인");
     parts.push("  → 사용자 이름이나 별명을 추측하지 마세요.");
     parts.push("  → 캐릭터 자신의 이름을 사용자 이름처럼 사용하지 마세요.");
-    parts.push("  → 이름이 꼭 필요하면 \"회원님\" 같은 중립 호칭을 쓰거나, 호칭을 생략하고 바로 본론으로 답하세요.");
+    parts.push(
+      '  → 이름이 꼭 필요하면 "회원님" 같은 중립 호칭을 쓰거나, 호칭을 생략하고 바로 본론으로 답하세요.',
+    );
   }
 
   return parts.join("\n");
@@ -1442,6 +1445,7 @@ serve(async (req: Request) => {
       characterName,
       characterTraits,
       clientTimestamp,
+      shouldSendPush = true,
       userProfile,
       affinityContext,
       conversationMode,
@@ -1698,7 +1702,7 @@ ${characterTraits}
     // 감정 추출 및 딜레이 계산
     const { emotionTag, delaySec } = extractEmotion(responseText);
 
-    if (userId && supabase) {
+    if (shouldSendPush && userId && supabase) {
       try {
         await sendCharacterDmPush({
           supabase,

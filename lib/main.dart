@@ -348,6 +348,8 @@ class MyApp extends ConsumerWidget {
     final locale = ref.watch(localeProvider);
 
     if (SupabaseConnectionService.isInitialized) {
+      ref.read(notificationDeviceSyncProvider);
+
       // 위젯 데이터 준비 프로바이더 활성화 (auth 상태 변경 시 자동 실행)
       ref.read(widgetDataPreparationProvider);
 

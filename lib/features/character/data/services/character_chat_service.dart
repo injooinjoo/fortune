@@ -79,6 +79,7 @@ class CharacterChatService {
     required String systemPrompt,
     required List<Map<String, dynamic>> messages,
     required String userMessage,
+    bool shouldSendPush = true,
     String? modelPreference, // default | grok-fast (luts 전용)
     String? userName,
     String? userDescription,
@@ -106,6 +107,7 @@ class CharacterChatService {
           'systemPrompt': systemPrompt,
           'messages': messages,
           'userMessage': userMessage,
+          'shouldSendPush': shouldSendPush,
           if (modelPreference != null) 'modelPreference': modelPreference,
           if (userName != null) 'userName': userName,
           if (userDescription != null) 'userDescription': userDescription,

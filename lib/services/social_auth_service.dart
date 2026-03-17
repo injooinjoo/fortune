@@ -5,6 +5,7 @@ import '../core/utils/logger.dart';
 import '../core/cache/profile_cache.dart';
 import 'storage_service.dart';
 import 'oauth_in_app_browser_coordinator.dart';
+import 'notification/fcm_service.dart';
 import 'social_auth/base/social_auth_attempt_result.dart';
 import 'social_auth/providers/google_auth_provider.dart';
 import 'social_auth/providers/apple_auth_provider.dart';
@@ -82,6 +83,11 @@ class SocialAuthService {
       }
 
       // Supabase logout
+      try {
+        await FCMService().deactivateCurrentDevice();
+      } catch (e) {
+        Logger.warning('[SocialAuthService] FCM 디바이스 비활성화 실패 (무시): $e');
+      }
       await _supabase.auth.signOut();
 
       // Clear profile cache

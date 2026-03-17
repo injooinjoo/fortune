@@ -43,6 +43,7 @@ import '../../../../data/models/secondary_profile.dart';
 import '../../../../presentation/providers/pet_profiles_provider.dart';
 import '../../../../presentation/providers/secondary_profiles_provider.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
+import '../../data/services/active_character_chat_registry.dart';
 import '../utils/chat_survey_profile_utils.dart';
 
 /// 1:1 캐릭터 롤플레이 채팅 패널
@@ -154,6 +155,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       if (widget.catalogPreview != null) return;
 
       // 🆕 현재 채팅방 진입 표시 (푸시 알림 억제용)
+      ActiveCharacterChatRegistry.setActiveCharacterId(widget.character.id);
       ref.read(activeCharacterChatProvider.notifier).state =
           widget.character.id;
 
@@ -197,7 +199,13 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     // Future.microtask로 지연하여 위젯 라이프사이클 충돌 방지
     final notifier = ref.read(activeCharacterChatProvider.notifier);
     Future.microtask(() {
-      notifier.state = null;
+      if (notifier.state == widget.character.id) {
+        notifier.state = null;
+      }
+      if (ActiveCharacterChatRegistry.activeCharacterId ==
+          widget.character.id) {
+        ActiveCharacterChatRegistry.setActiveCharacterId(null);
+      }
     });
     super.deactivate();
   }
@@ -207,6 +215,10 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     WidgetsBinding.instance.removeObserver(this);
     // 화면 이탈 시 저장 (캐시된 notifier 사용 - ref 사용 불가)
     if (widget.catalogPreview == null) {
+      if (ActiveCharacterChatRegistry.activeCharacterId ==
+          widget.character.id) {
+        ActiveCharacterChatRegistry.setActiveCharacterId(null);
+      }
       _cachedNotifier?.saveOnExit();
     }
     _textController.dispose();

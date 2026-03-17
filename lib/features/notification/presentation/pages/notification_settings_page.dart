@@ -155,13 +155,7 @@ class _NotificationSettingsPageState
             onChanged: (value) {
               HapticUtils.lightImpact();
               setState(() {
-                _settings = NotificationSettings(
-                  enabled: value,
-                  dailyFortune: _settings.dailyFortune,
-                  tokenAlert: _settings.tokenAlert,
-                  promotion: _settings.promotion,
-                  dailyFortuneTime: _settings.dailyFortuneTime,
-                );
+                _settings = _settings.copyWith(enabled: value);
               });
               _saveSettings();
             },
@@ -194,13 +188,7 @@ class _NotificationSettingsPageState
             value: _settings.dailyFortune,
             onChanged: (value) {
               setState(() {
-                _settings = NotificationSettings(
-                  enabled: _settings.enabled,
-                  dailyFortune: value,
-                  tokenAlert: _settings.tokenAlert,
-                  promotion: _settings.promotion,
-                  dailyFortuneTime: _settings.dailyFortuneTime,
-                );
+                _settings = _settings.copyWith(dailyFortune: value);
               });
               _saveSettings();
             },
@@ -209,17 +197,24 @@ class _NotificationSettingsPageState
             context,
             icon: Icons.toll,
             title: '토큰 알림',
-            subtitle: '토큰가 부족할 때 알려드립니다',
+            subtitle: '토큰이 부족할 때 알려드립니다',
             value: _settings.tokenAlert,
             onChanged: (value) {
               setState(() {
-                _settings = NotificationSettings(
-                  enabled: _settings.enabled,
-                  dailyFortune: _settings.dailyFortune,
-                  tokenAlert: value,
-                  promotion: _settings.promotion,
-                  dailyFortuneTime: _settings.dailyFortuneTime,
-                );
+                _settings = _settings.copyWith(tokenAlert: value);
+              });
+              _saveSettings();
+            },
+          ),
+          _buildCategoryItem(
+            context,
+            icon: Icons.mark_chat_unread_outlined,
+            title: '캐릭터 메시지',
+            subtitle: '캐릭터가 답장을 보내면 푸시로 알려드립니다',
+            value: _settings.characterDm,
+            onChanged: (value) {
+              setState(() {
+                _settings = _settings.copyWith(characterDm: value);
               });
               _saveSettings();
             },
@@ -232,13 +227,7 @@ class _NotificationSettingsPageState
             value: _settings.promotion,
             onChanged: (value) {
               setState(() {
-                _settings = NotificationSettings(
-                  enabled: _settings.enabled,
-                  dailyFortune: _settings.dailyFortune,
-                  tokenAlert: _settings.tokenAlert,
-                  promotion: value,
-                  dailyFortuneTime: _settings.dailyFortuneTime,
-                );
+                _settings = _settings.copyWith(promotion: value);
               });
               _saveSettings();
             },
@@ -456,11 +445,7 @@ class _NotificationSettingsPageState
       setState(() {
         if (isMorning) {
           _morningTime = picked;
-          _settings = NotificationSettings(
-            enabled: _settings.enabled,
-            dailyFortune: _settings.dailyFortune,
-            tokenAlert: _settings.tokenAlert,
-            promotion: _settings.promotion,
+          _settings = _settings.copyWith(
             dailyFortuneTime:
                 '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}',
           );

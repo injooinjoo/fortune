@@ -43,6 +43,7 @@ export function buildCharacterDmPayload(
 
   const payload: Record<string, string> = {
     type: params.type ?? "character_dm",
+    channel: "character_dm",
     character_id: params.characterId,
     characterId: params.characterId,
     title: params.characterName,

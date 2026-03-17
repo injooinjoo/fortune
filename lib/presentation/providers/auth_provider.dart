@@ -8,6 +8,8 @@ import '../../services/storage_service.dart';
 import '../../services/widget_service.dart';
 import '../../services/widget_data_service.dart';
 import '../../services/oauth_in_app_browser_coordinator.dart';
+import '../../services/notification/fcm_service.dart';
+import '../../features/character/data/services/active_character_chat_registry.dart';
 import '../../features/character/data/services/character_chat_service.dart';
 import '../../features/character/data/services/follow_up_scheduler.dart';
 import '../../features/character/presentation/providers/active_chat_provider.dart';
@@ -74,6 +76,20 @@ final authServiceProvider = Provider<AuthService>((ref) {
 /// 로그인 직후 대화 목록 일괄 복원 진행 상태
 final chatRestorationInProgressProvider = StateProvider<bool>((ref) => false);
 
+final notificationDeviceSyncProvider = Provider<void>((ref) {
+  ref.listen<AsyncValue<AuthState?>>(authStateProvider, (previous, next) {
+    next.whenData((authState) async {
+      if (authState == null) return;
+
+      if (authState.event == AuthChangeEvent.signedIn ||
+          authState.event == AuthChangeEvent.tokenRefreshed ||
+          authState.event == AuthChangeEvent.initialSession) {
+        await FCMService().syncCurrentDevice();
+      }
+    });
+  });
+});
+
 // Auth service class
 class AuthService {
   final SupabaseClient _client;
@@ -130,6 +146,11 @@ class AuthService {
 
   Future<void> signOut() async {
     try {
+      try {
+        await FCMService().deactivateCurrentDevice();
+      } catch (e) {
+        Logger.warning('[AuthService] FCM 디바이스 비활성화 실패 (무시): $e');
+      }
       await _client.auth.signOut();
       Logger.securityCheckpoint('User signed out');
     } catch (e) {
@@ -219,6 +240,7 @@ final chatRestorationProvider = Provider<void>((ref) {
       await UserScopeService.instance.refreshCurrentScope();
 
       if (authState.event == AuthChangeEvent.signedOut) {
+        ActiveCharacterChatRegistry.setActiveCharacterId(null);
         ref.read(chatRestorationInProgressProvider.notifier).state = false;
         // 로그아웃 시 캐릭터 세션 경계 강제
         FollowUpScheduler().cancelAll();

@@ -5,6 +5,7 @@ import '../core/services/debug_premium_service.dart';
 import '../core/services/performance_cache_service.dart';
 import '../core/utils/logger.dart';
 import '../core/utils/secure_storage.dart';
+import '../services/notification/fcm_service.dart';
 import '../services/storage_service.dart';
 
 class AccountDeletionService {
@@ -44,6 +45,11 @@ class AccountDeletionService {
       throw Exception('계정 삭제 요청 실패');
     }
 
+    try {
+      await FCMService().deactivateCurrentDevice();
+    } catch (e) {
+      Logger.warning('[AccountDeletion] FCM 디바이스 비활성화 실패 (무시): $e');
+    }
     await _supabase.auth.signOut();
     await _cleanupLocalData();
     Logger.info('[AccountDeletion] 완료');
