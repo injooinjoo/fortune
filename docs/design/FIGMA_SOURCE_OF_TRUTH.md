@@ -108,6 +108,9 @@ Canonical repo sources:
 - Auth routes: `lib/routes/routes/auth_routes.dart`
 - Character routes: `lib/routes/character_routes.dart`
 - Retained chat state: `lib/features/character/presentation/providers/character_chat_provider.dart`
+- Selection chip core: `lib/core/design_system/components/ds_chip.dart`
+- Chat survey selectors: `lib/features/chat/presentation/widgets/survey/chat_survey_chips.dart`
+- Chat calendar and match selectors: `lib/features/chat/presentation/widgets/survey/chat_inline_calendar.dart`, `lib/features/chat/presentation/widgets/survey/chat_match_selector.dart`
 - Capture manifest: `playwright/scripts/figma_capture_manifest.js`
 - Live capture runner: `playwright/scripts/capture_figma_screens.js`
 - Catalog HTML generator: `playwright/scripts/build_figma_catalog.js`

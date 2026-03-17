@@ -90,6 +90,8 @@ Additional official pages:
 - `lib/features/character/presentation/utils/chat_catalog_preview.dart`
 - `lib/features/character/presentation/pages/character_chat_panel.dart`
 - `lib/features/character/presentation/widgets/character_message_bubble.dart`
+- `lib/features/chat/presentation/widgets/survey/chat_inline_calendar.dart`
+- `lib/features/chat/presentation/widgets/survey/chat_match_selector.dart`
 - `lib/features/chat/presentation/widgets/survey/chat_survey_chips.dart`
 - `lib/features/chat/presentation/widgets/chat_saju_result_card.dart`
 - `lib/features/character/presentation/widgets/embedded_fortune_component.dart`
@@ -115,6 +117,7 @@ Additional official pages:
 
 - `lib/core/design_system/components/ds_card.dart`
 - `lib/core/design_system/components/ds_button.dart`
+- `lib/core/design_system/components/ds_chip.dart`
 - `lib/core/design_system/components/ds_text_field.dart`
 - `lib/core/widgets/unified_button.dart`
 
