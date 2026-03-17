@@ -57,7 +57,7 @@ class HaneulFortuneResultWidget extends StatelessWidget {
       score: _intValue(componentData['score']),
       icon: Icons.auto_awesome_rounded,
       eyebrow: _buildHeroEyebrow(
-        title: 'Moonlit Brief',
+        title: '오늘 브리프',
         value: highlightChips.isNotEmpty ? highlightChips.first : null,
       ),
       heroBody: Column(
@@ -206,7 +206,7 @@ class HaneulFortuneResultWidget extends StatelessWidget {
       score: _intValue(componentData['score']),
       icon: Icons.calendar_today_rounded,
       eyebrow: _buildHeroEyebrow(
-        title: dayTheme ?? 'Time Window',
+        title: dayTheme ?? '시간 흐름',
         value: eventCount > 0 ? '$eventCount개 일정 반영' : null,
       ),
       heroBody: Column(
@@ -331,7 +331,7 @@ class HaneulFortuneResultWidget extends StatelessWidget {
       score: _intValue(componentData['score']),
       icon: Icons.celebration_rounded,
       eyebrow: _buildHeroEyebrow(
-        title: 'Year Atlas',
+        title: '연간 포인트',
         value: _stringValue(goalFortune?['goalLabel']) ??
             _stringValue(goalFortune?['title']),
       ),
@@ -448,7 +448,7 @@ class HaneulFortuneResultWidget extends StatelessWidget {
       score: _intValue(componentData['score']),
       icon: Icons.cookie_rounded,
       eyebrow: _buildHeroEyebrow(
-        title: cookieType ?? 'Fortune Cookie',
+        title: _resolveFortuneCookieLabel(cookieType),
         value: _stringValue(componentData['luckyColor']),
       ),
       heroBody: TweenAnimationBuilder<double>(
@@ -1678,7 +1678,7 @@ class HaneulFortuneResultWidget extends StatelessWidget {
   }
 
   String _displayKey(String key) {
-    const labels = {
+    const exactLabels = {
       'number': '행운 숫자',
       'color': '행운 컬러',
       'colorHex': '컬러 코드',
@@ -1693,7 +1693,59 @@ class HaneulFortuneResultWidget extends StatelessWidget {
       'cautionMonths': '조심할 달',
       'actionItems': '실행 포인트',
     };
-    return labels[key] ?? key.replaceAll('_', ' ').replaceAll('-', ' ').trim();
+    final exactMatch = exactLabels[key];
+    if (exactMatch != null) {
+      return exactMatch;
+    }
+
+    const normalizedLabels = {
+      'lucky number': '행운 숫자',
+      'lucky color': '행운 컬러',
+      'color hex': '컬러 코드',
+      'lucky time': '행운 시간',
+      'lucky direction': '행운 방향',
+      'lucky item': '행운 아이템',
+      'lucky place': '행운 장소',
+      'goal label': '핵심 목표',
+      'deep analysis': '깊은 분석',
+      'best months': '좋은 달',
+      'caution months': '조심할 달',
+      'action items': '실행 포인트',
+    };
+    final normalizedKey = _normalizeDisplayKey(key);
+    return normalizedLabels[normalizedKey] ??
+        key.replaceAll('_', ' ').replaceAll('-', ' ').trim();
+  }
+
+  String _normalizeDisplayKey(String key) {
+    return key
+        .replaceAllMapped(
+          RegExp(r'([a-z0-9])([A-Z])'),
+          (match) => '${match.group(1)} ${match.group(2)}',
+        )
+        .replaceAll('_', ' ')
+        .replaceAll('-', ' ')
+        .trim()
+        .toLowerCase();
+  }
+
+  String _resolveFortuneCookieLabel(String? cookieType) {
+    if (cookieType == null || cookieType.trim().isEmpty) {
+      return '포춘쿠키';
+    }
+
+    const genericEnglishLabels = {
+      'fortune cookie',
+      'fortune-cookie',
+      'cookie',
+      'luck',
+    };
+    final normalizedType = _normalizeDisplayKey(cookieType);
+    if (genericEnglishLabels.contains(normalizedType)) {
+      return '포춘쿠키';
+    }
+
+    return cookieType;
   }
 
   String? _joinReadable(dynamic value) {

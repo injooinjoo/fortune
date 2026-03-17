@@ -268,4 +268,35 @@ void main() {
     expect(find.text('행운 숫자 3'), findsOneWidget);
     expect(find.text('오전에 미뤄둔 연락 하나만 먼저 보내보세요.'), findsOneWidget);
   });
+
+  testWidgets('fortune-cookie card localizes english fallback labels',
+      (tester) async {
+    await tester.pumpWidget(
+      _wrap(
+        const EmbeddedFortuneComponent(
+          embeddedWidgetType: 'fortune_cookie',
+          componentData: {
+            'title': '오늘의 메시지',
+            'score': 89,
+            'message': '보물은 생각보다 가까운 곳에 있어요.',
+            'cookieType': 'Fortune Cookie',
+            'luckyItems': {
+              'lucky number': '49',
+              'lucky color': '터콰이즈',
+              'lucky time': '오전 11시',
+            },
+          },
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('포춘쿠키'), findsOneWidget);
+    expect(find.text('행운 숫자 49'), findsOneWidget);
+    expect(find.text('행운 컬러 터콰이즈'), findsOneWidget);
+    expect(find.text('행운 시간 오전 11시'), findsOneWidget);
+    expect(find.text('Fortune Cookie'), findsNothing);
+    expect(find.text('lucky number 49'), findsNothing);
+  });
 }
