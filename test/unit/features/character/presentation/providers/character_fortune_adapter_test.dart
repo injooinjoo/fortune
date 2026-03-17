@@ -84,6 +84,53 @@ void main() {
       );
     });
 
+    test('unwraps legacy wrapped payloads from cache or old API envelopes', () {
+      final result = FortuneResult(
+        id: 'fortune-5',
+        type: 'daily',
+        title: '오늘의 운세',
+        summary: const {},
+        data: const {
+          'fortune': {
+            'content': '차분하게 우선순위를 정리할수록 성과가 이어지는 날이에요.',
+            'summary': '작은 정리가 큰 차이를 만드는 하루예요.',
+            'score': 86,
+            'categories': {
+              'work': {'score': 88},
+              'social': {'score': 82},
+            },
+            'advice': '오전에는 가장 중요한 일 하나를 먼저 끝내보세요.',
+            'caution': '즉흥적인 소비는 한 번 더 확인하세요.',
+          },
+          'storySegments': [],
+          'cached': true,
+          'tokensUsed': 0,
+        },
+      );
+
+      final fortune = CharacterFortuneAdapter.fromFortuneResult(
+        result: result,
+        userId: 'user-5',
+        fortuneType: 'daily',
+      );
+
+      expect(
+        fortune.content,
+        '차분하게 우선순위를 정리할수록 성과가 이어지는 날이에요.',
+      );
+      expect(fortune.summary, '작은 정리가 큰 차이를 만드는 하루예요.');
+      expect(fortune.overallScore, 86);
+      expect(fortune.warnings, ['즉흥적인 소비는 한 번 더 확인하세요.']);
+      expect(
+        fortune.metadata?['raw_payload'],
+        isA<Map<String, dynamic>>(),
+      );
+      expect(
+        (fortune.metadata?['raw_payload'] as Map<String, dynamic>)['content'],
+        '차분하게 우선순위를 정리할수록 성과가 이어지는 날이에요.',
+      );
+    });
+
     test('throws on invalid empty payload', () {
       final result = FortuneResult(
         id: 'fortune-3',

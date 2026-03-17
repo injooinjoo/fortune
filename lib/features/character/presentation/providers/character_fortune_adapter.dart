@@ -8,11 +8,11 @@ class CharacterFortuneAdapter {
     required String userId,
     required String fortuneType,
   }) {
-    if (result.data.isEmpty && result.summary.isEmpty) {
+    final data = _resolvePrimaryPayload(result.data);
+
+    if (data.isEmpty && result.summary.isEmpty) {
       throw const FormatException('Invalid fortune result payload');
     }
-
-    final data = result.data;
     final content = _extractContent(result);
 
     return Fortune(
@@ -21,7 +21,7 @@ class CharacterFortuneAdapter {
       type: fortuneType,
       content: content,
       createdAt: result.createdAt ?? DateTime.now(),
-      metadata: _buildMetadata(result),
+      metadata: _buildMetadata(result, data),
       category: _asString(data['category']),
       overallScore: _extractOverallScore(result),
       description: _asString(data['description']),
@@ -57,7 +57,7 @@ class CharacterFortuneAdapter {
   }
 
   static String _extractContent(FortuneResult result) {
-    final data = result.data;
+    final data = _resolvePrimaryPayload(result.data);
     return _asString(data['content']) ??
         _asString(data['overallReading']) ??
         _asString(data['overall_reading']) ??
@@ -72,34 +72,118 @@ class CharacterFortuneAdapter {
     final fromResult = result.score;
     if (fromResult != null) return fromResult;
 
-    final fromData = result.data['overallScore'] ??
-        result.data['score'] ??
-        result.data['overall_score'];
+    final data = _resolvePrimaryPayload(result.data);
+    final fromData =
+        data['overallScore'] ?? data['score'] ?? data['overall_score'];
     if (fromData is num) return fromData.toInt();
     return null;
   }
 
   static String? _extractSummaryText(FortuneResult result) {
+    final data = _resolvePrimaryPayload(result.data);
     final summary = result.summary;
     return _asString(summary['message']) ??
         _asString(summary['summary']) ??
         _asString(summary['storyTitle']) ??
-        _asString(result.data['storyTitle']) ??
-        _asString(result.data['story_title']) ??
-        _asString(result.data['summary']) ??
-        _asString(result.data['overallReading']) ??
-        _asString(result.data['overall_reading']) ??
-        _asString(result.data['shortSummary']) ??
-        _asString(result.data['short_summary']);
+        _asString(data['storyTitle']) ??
+        _asString(data['story_title']) ??
+        _asString(data['summary']) ??
+        _asString(data['overallReading']) ??
+        _asString(data['overall_reading']) ??
+        _asString(data['shortSummary']) ??
+        _asString(data['short_summary']);
   }
 
-  static Map<String, dynamic>? _buildMetadata(FortuneResult result) {
-    final metadata = _asMap(result.data['metadata']) ?? <String, dynamic>{};
+  static Map<String, dynamic>? _buildMetadata(
+    FortuneResult result,
+    Map<String, dynamic> normalizedData,
+  ) {
+    final metadata = _asMap(normalizedData['metadata']) ?? <String, dynamic>{};
     return {
       ...metadata,
       'summary': result.summary,
-      'raw_payload': result.data,
+      'raw_payload': normalizedData,
+      if (!identical(normalizedData, result.data))
+        'source_payload': result.data,
     };
+  }
+
+  static Map<String, dynamic> _resolvePrimaryPayload(
+      Map<String, dynamic> source) {
+    final candidates = <Map<String, dynamic>>[
+      source,
+      if (_asMap(source['fortune']) != null) _asMap(source['fortune'])!,
+      if (_asMap(source['data']) != null) _asMap(source['data'])!,
+      if (_asMap(source['fortune_data']) != null)
+        _asMap(source['fortune_data'])!,
+      if (_asMap(source['result']) != null) _asMap(source['result'])!,
+    ];
+
+    var best = source;
+    var bestScore = _payloadRichness(source);
+
+    for (final candidate in candidates.skip(1)) {
+      final score = _payloadRichness(candidate);
+      if (score > bestScore) {
+        best = candidate;
+        bestScore = score;
+      }
+    }
+
+    return best;
+  }
+
+  static int _payloadRichness(Map<String, dynamic> payload) {
+    var score = 0;
+
+    const primaryKeys = <String>[
+      'content',
+      'overallReading',
+      'overall_reading',
+      'mainMessage',
+      'main_message',
+      'greeting',
+      'description',
+      'advice',
+      'caution',
+      'warnings',
+      'recommendations',
+      'categories',
+      'luckyItems',
+      'lucky_items',
+      'timeSlots',
+      'time_slots',
+      'goalFortune',
+      'goal_fortune',
+      'monthlyHighlights',
+      'monthly_highlights',
+      'actionPlan',
+      'action_plan',
+    ];
+
+    for (final key in primaryKeys) {
+      final value = payload[key];
+      if (value is String && value.trim().isNotEmpty) {
+        score += 2;
+      } else if (value is List && value.isNotEmpty) {
+        score += 2;
+      } else if (value is Map && value.isNotEmpty) {
+        score += 2;
+      } else if (value != null) {
+        score += 1;
+      }
+    }
+
+    if (_asString(payload['summary']) != null) {
+      score += 1;
+    }
+    if (payload['score'] is num ||
+        payload['overallScore'] is num ||
+        payload['overall_score'] is num) {
+      score += 1;
+    }
+
+    return score;
   }
 
   static Map<String, dynamic>? _asMap(dynamic value) {

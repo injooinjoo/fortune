@@ -881,8 +881,16 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     final chatNotifier = ref.read(
       characterChatProvider(widget.character.id).notifier,
     );
-    final introMessage = context.l10n.fortuneIntroMessage(displayName);
-    final requestMessage = context.l10n.tellMeAbout(displayName);
+    final useCardFirstFlow = isHaneulCardFirstFortuneFlow(
+      characterId: widget.character.id,
+      fortuneType: fortuneType,
+    );
+    final introMessage = useCardFirstFlow
+        ? _haneulSessionIntroMessage(fortuneType)
+        : context.l10n.fortuneIntroMessage(displayName);
+    final requestMessage = useCardFirstFlow
+        ? _haneulSessionRequestMessage(fortuneType)
+        : context.l10n.tellMeAbout(displayName);
     final anchorMessageId = chatNotifier.startFreshFortuneSession(
       introMessage: introMessage,
       requestMessage: requestMessage,
@@ -939,6 +947,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
             fortuneType,
             requestMessage,
             userMessageAlreadyAdded: true,
+            skipIntroMessage: useCardFirstFlow,
           );
     }
   }
@@ -1117,8 +1126,42 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           requestMessage,
           answers,
           userMessageAlreadyAdded: useCardFirstFlow,
+          skipIntroMessage: useCardFirstFlow,
         );
     _scrollToBottom();
+  }
+
+  String _haneulSessionIntroMessage(String fortuneType) {
+    switch (fortuneType) {
+      case 'daily':
+        return '좋아요. 오늘 흐름만 빠르게 볼게요.';
+      case 'daily-calendar':
+        return '좋아요. 오늘 일정 흐름만 빠르게 볼게요.';
+      case 'new-year':
+        return '좋아요. 올해 흐름은 큰 방향만 먼저 깔끔하게 볼게요.';
+      case 'fortune-cookie':
+        return '좋아요. 오늘 메시지는 짧고 선명하게 꺼내볼게요.';
+      default:
+        return context.l10n.fortuneIntroMessage(
+          _getSpecialtyLabel(context, fortuneType),
+        );
+    }
+  }
+
+  String _haneulSessionRequestMessage(String fortuneType) {
+    switch (fortuneType) {
+      case 'daily':
+        return '오늘 흐름이 궁금해요.';
+      case 'daily-calendar':
+        return '오늘 일정 흐름이 궁금해요.';
+      case 'new-year':
+        return '올해 흐름이 궁금해요.';
+      case 'fortune-cookie':
+        return '오늘 메시지가 궁금해요.';
+      default:
+        return context.l10n
+            .tellMeAbout(_getSpecialtyLabel(context, fortuneType));
+    }
   }
 
   Widget _buildChatList(CharacterChatState chatState) {

@@ -225,23 +225,90 @@ class UnifiedFortuneService {
 
   /// CachedFortuneResult → FortuneResult 변환
   FortuneResult _convertCachedToFortuneResult(CachedFortuneResult cached) {
+    final normalizedData = _normalizeCachedResultData(cached.resultData);
+
     // Edge Function 응답 구조에 따라 필드명이 다를 수 있음
     // - score 또는 overallScore
     // - title이 없을 수 있음
-    final score =
-        cached.resultData['score'] ?? cached.resultData['overallScore'];
-    final title = cached.resultData['title'] as String? ??
+    final score = normalizedData['score'] ??
+        normalizedData['overallScore'] ??
+        normalizedData['overall_score'] ??
+        cached.resultData['score'] ??
+        cached.resultData['overallScore'];
+    final title = normalizedData['title'] as String? ??
+        cached.resultData['title'] as String? ??
         _getDefaultTitle(cached.fortuneType);
+    final summary = normalizedData['summary'] ?? cached.resultData['summary'];
 
     return FortuneResult.fromJson({
       'id': cached.id,
       'type': cached.fortuneType,
-      'data': cached.resultData,
+      'data': normalizedData,
       'score': score is num ? score.toInt() : null,
       'title': title,
-      'summary': cached.resultData['summary'],
+      'summary': summary,
       'created_at': cached.createdAt.toIso8601String(),
     });
+  }
+
+  Map<String, dynamic> _normalizeCachedResultData(Map<String, dynamic> source) {
+    if (_hasRichFortuneFields(source)) {
+      return source;
+    }
+
+    final candidates = <Map<String, dynamic>>[
+      if (source['fortune'] is Map)
+        Map<String, dynamic>.from(source['fortune'] as Map),
+      if (source['data'] is Map)
+        Map<String, dynamic>.from(source['data'] as Map),
+      if (source['fortune_data'] is Map)
+        Map<String, dynamic>.from(source['fortune_data'] as Map),
+      if (source['result'] is Map)
+        Map<String, dynamic>.from(source['result'] as Map),
+    ];
+
+    for (final candidate in candidates) {
+      if (_hasRichFortuneFields(candidate)) {
+        return candidate;
+      }
+    }
+
+    return source;
+  }
+
+  bool _hasRichFortuneFields(Map<String, dynamic> payload) {
+    const richKeys = <String>[
+      'content',
+      'overallReading',
+      'overall_reading',
+      'mainMessage',
+      'main_message',
+      'greeting',
+      'description',
+      'categories',
+      'timeSlots',
+      'time_slots',
+      'goalFortune',
+      'monthlyHighlights',
+      'actionPlan',
+      'luckyItems',
+      'lucky_items',
+    ];
+
+    for (final key in richKeys) {
+      final value = payload[key];
+      if (value is String && value.trim().isNotEmpty) {
+        return true;
+      }
+      if (value is List && value.isNotEmpty) {
+        return true;
+      }
+      if (value is Map && value.isNotEmpty) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /// 운세 타입별 기본 제목

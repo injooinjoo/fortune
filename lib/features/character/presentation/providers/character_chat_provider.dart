@@ -2482,6 +2482,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     String fortuneType,
     String requestMessage, {
     bool userMessageAlreadyAdded = false,
+    bool skipIntroMessage = false,
   }) async {
     // 🪙 토큰 소비 체크 (4토큰/메시지)
     final hasUnlimitedAccess = _ref.read(hasUnlimitedTokensProvider);
@@ -2511,7 +2512,8 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     markPendingUserMessagesAsRead();
 
     // 3.5단계: 신상정보 인트로 메시지 (운세 보기 전 사용자 정보 열거)
-    final introMessage = _buildFortuneIntroMessage(fortuneType);
+    final introMessage =
+        skipIntroMessage ? null : _buildFortuneIntroMessage(fortuneType);
     if (introMessage != null) {
       setTyping(true);
       await _waitForUiDelayIfNeeded(const Duration(milliseconds: 800));
@@ -2700,6 +2702,7 @@ $enrichedContext
     String requestMessage,
     Map<String, dynamic> surveyAnswers, {
     bool userMessageAlreadyAdded = false,
+    bool skipIntroMessage = false,
   }) async {
     // 토큰 소비 체크 (4토큰/메시지)
     final hasUnlimitedAccess = _ref.read(hasUnlimitedTokensProvider);
@@ -2729,10 +2732,12 @@ $enrichedContext
     markPendingUserMessagesAsRead();
 
     // 3.5단계: 신상정보 인트로 메시지 (운세 보기 전 사용자 정보 + 설문 답변 열거)
-    final introMessage = _buildFortuneIntroMessage(
-      fortuneType,
-      surveyAnswers: surveyAnswers,
-    );
+    final introMessage = skipIntroMessage
+        ? null
+        : _buildFortuneIntroMessage(
+            fortuneType,
+            surveyAnswers: surveyAnswers,
+          );
     if (introMessage != null) {
       setTyping(true);
       await _waitForUiDelayIfNeeded(const Duration(milliseconds: 800));
