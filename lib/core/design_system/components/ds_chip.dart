@@ -67,8 +67,9 @@ class DSChip extends StatelessWidget {
     Color? borderColor;
 
     if (selected) {
-      backgroundColor = colors.ctaBackground;
-      foregroundColor = colors.ctaForeground;
+      backgroundColor = colors.selectionBackground;
+      foregroundColor = colors.selectionForeground;
+      borderColor = colors.selectionBorder;
     } else {
       switch (style) {
         case DSChipStyle.filled:

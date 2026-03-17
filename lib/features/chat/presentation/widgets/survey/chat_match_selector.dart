@@ -631,16 +631,16 @@ class _ChatMatchSelectorState extends ConsumerState<ChatMatchSelector> {
         padding: const EdgeInsets.all(DSSpacing.sm),
         decoration: BoxDecoration(
           color: isSelected
-              ? colors.accent.withValues(alpha: 0.1)
+              ? colors.selectionBackground
               : isDark
                   ? colors.backgroundSecondary
                   : colors.surface,
           borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
             color: isSelected
-                ? colors.accent
+                ? colors.selectionBorder
                 : colors.textPrimary.withValues(alpha: 0.1),
-            width: isSelected ? 2 : 1,
+            width: 1,
           ),
         ),
         child: Row(
@@ -692,7 +692,7 @@ class _ChatMatchSelectorState extends ConsumerState<ChatMatchSelector> {
             if (isSelected)
               Icon(
                 Icons.check_circle,
-                color: colors.accent,
+                color: colors.selectionMutedForeground,
                 size: 22,
               )
             else

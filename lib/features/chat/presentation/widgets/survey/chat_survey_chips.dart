@@ -57,7 +57,6 @@ class _SurveyChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = context.isDark;
 
     return Material(
       color: Colors.transparent,
@@ -66,7 +65,7 @@ class _SurveyChip extends StatelessWidget {
           DSHaptics.light();
           onTap();
         },
-        borderRadius: BorderRadius.circular(DSRadius.lg),
+        borderRadius: BorderRadius.circular(DSRadius.full),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(
@@ -74,15 +73,11 @@ class _SurveyChip extends StatelessWidget {
             vertical: DSSpacing.xs,
           ),
           decoration: BoxDecoration(
-            color: isSelected
-                ? colors.textPrimary.withValues(alpha: 0.1)
-                : (isDark ? colors.backgroundSecondary : colors.surface),
-            borderRadius: BorderRadius.circular(DSRadius.lg),
+            color: isSelected ? colors.selectionBackground : colors.surface,
+            borderRadius: BorderRadius.circular(DSRadius.full),
             border: Border.all(
-              color: isSelected
-                  ? colors.textPrimary
-                  : colors.textPrimary.withValues(alpha: 0.2),
-              width: isSelected ? 1.5 : 1,
+              color: isSelected ? colors.selectionBorder : colors.border,
+              width: 1,
             ),
           ),
           child: Row(
@@ -95,7 +90,9 @@ class _SurveyChip extends StatelessWidget {
                 Icon(
                   option.icon,
                   size: 16,
-                  color: isSelected ? colors.textPrimary : colors.textSecondary,
+                  color: isSelected
+                      ? colors.selectionMutedForeground
+                      : colors.textSecondary,
                 ),
                 const SizedBox(width: DSSpacing.xs),
               ],
@@ -109,9 +106,9 @@ class _SurveyChip extends StatelessWidget {
               if (isSelected) ...[
                 const SizedBox(width: DSSpacing.xs),
                 Icon(
-                  Icons.check,
+                  Icons.check_rounded,
                   size: 14,
-                  color: colors.textPrimary,
+                  color: colors.selectionMutedForeground,
                 ),
               ],
             ],

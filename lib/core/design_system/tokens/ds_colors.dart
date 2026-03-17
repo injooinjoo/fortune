@@ -365,6 +365,13 @@ class DSColorScheme {
   Color get secondaryForeground =>
       isDark ? DSColors.secondaryForeground : DSColors.secondaryForegroundDark;
 
+  Color get selectionBackground =>
+      isDark ? DSColors.surfaceSecondary : DSColors.backgroundSecondaryDark;
+  Color get selectionBorder =>
+      isDark ? DSColors.borderFocus : DSColors.borderFocusDark;
+  Color get selectionForeground => textPrimary;
+  Color get selectionMutedForeground => textSecondary;
+
   Color get success => isDark ? DSColors.success : DSColors.successDark;
   Color get successBackground =>
       isDark ? DSColors.successBackground : DSColors.successBackgroundDark;

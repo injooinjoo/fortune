@@ -152,16 +152,20 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
         return ChoiceChip(
           label: Text(reason, style: context.labelSmall),
           selected: isSelected,
-          selectedColor: context.colors.accent.withValues(alpha: 0.1),
+          showCheckmark: false,
+          selectedColor: context.colors.selectionBackground,
           backgroundColor: context.colors.surface,
           labelStyle: context.labelSmall.copyWith(
-            color:
-                isSelected ? context.colors.accent : context.colors.textPrimary,
+            color: isSelected
+                ? context.colors.selectionForeground
+                : context.colors.textPrimary,
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(999),
             side: BorderSide(
-              color: isSelected ? context.colors.accent : context.colors.border,
+              color: isSelected
+                  ? context.colors.selectionBorder
+                  : context.colors.border,
             ),
           ),
           onSelected: (selected) {

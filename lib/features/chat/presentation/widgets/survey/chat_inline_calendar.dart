@@ -475,7 +475,7 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
     if (!isEnabled) {
       textColor = colors.textTertiary.withValues(alpha: 0.3);
     } else if (isSelected) {
-      textColor = Colors.white;
+      textColor = colors.selectionForeground;
     } else if (isToday) {
       textColor = colors.textPrimary;
     } else if (date.weekday == DateTime.sunday) {
@@ -492,14 +492,19 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
           color: isSelected
-              ? colors.textPrimary
+              ? colors.selectionBackground
               : isToday
                   ? colors.textPrimary.withValues(alpha: 0.1)
                   : Colors.transparent,
           borderRadius: BorderRadius.circular(DSRadius.md),
-          border: isToday && !isSelected
-              ? Border.all(color: colors.textPrimary, width: 1)
-              : null,
+          border: Border.all(
+            color: isSelected
+                ? colors.selectionBorder
+                : isToday
+                    ? colors.textPrimary
+                    : Colors.transparent,
+            width: 1,
+          ),
         ),
         child: Stack(
           alignment: Alignment.center,
@@ -521,9 +526,9 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
                   width: 14,
                   height: 14,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: colors.surface,
                     shape: BoxShape.circle,
-                    border: Border.all(color: colors.textPrimary, width: 1),
+                    border: Border.all(color: colors.selectionBorder, width: 1),
                   ),
                   child: Center(
                     child: Text(
@@ -531,7 +536,7 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
                       style: TextStyle(
                         fontSize: 8,
                         fontWeight: FontWeight.bold,
-                        color: colors.textPrimary,
+                        color: colors.selectionMutedForeground,
                       ),
                     ),
                   ),
@@ -553,10 +558,10 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
       return Container(
         padding: const EdgeInsets.all(DSSpacing.sm),
         decoration: BoxDecoration(
-          color: colors.textPrimary.withValues(alpha: 0.1),
+          color: colors.selectionBackground,
           borderRadius: BorderRadius.circular(DSRadius.md),
           border: Border.all(
-            color: colors.textPrimary.withValues(alpha: 0.3),
+            color: colors.selectionBorder,
           ),
         ),
         child: Column(
@@ -566,7 +571,7 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
               children: [
                 Icon(
                   Icons.date_range,
-                  color: colors.textPrimary,
+                  color: colors.selectionMutedForeground,
                   size: 18,
                 ),
                 const SizedBox(width: DSSpacing.xs),
@@ -590,7 +595,7 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: colors.textPrimary.withValues(alpha: 0.2),
+                    color: colors.surface,
                     borderRadius: BorderRadius.circular(DSRadius.sm),
                   ),
                   child: Text(
@@ -614,17 +619,17 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.sm),
       decoration: BoxDecoration(
-        color: colors.textPrimary.withValues(alpha: 0.1),
+        color: colors.selectionBackground,
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
-          color: colors.textPrimary.withValues(alpha: 0.3),
+          color: colors.selectionBorder,
         ),
       ),
       child: Row(
         children: [
           Icon(
             Icons.calendar_today,
-            color: colors.textSecondary,
+            color: colors.selectionMutedForeground,
             size: 18,
           ),
           const SizedBox(width: DSSpacing.xs),
@@ -836,20 +841,20 @@ class _ChatInlineCalendarState extends State<ChatInlineCalendar> {
         child: Container(
           padding: const EdgeInsets.all(DSSpacing.sm),
           decoration: BoxDecoration(
-            color: isSelected
-                ? colors.textPrimary.withValues(alpha: 0.1)
-                : colors.surface,
+            color: isSelected ? colors.selectionBackground : colors.surface,
             borderRadius: BorderRadius.circular(DSRadius.md),
             border: Border.all(
-              color: isSelected ? colors.textPrimary : colors.border,
-              width: isSelected ? 2 : 1,
+              color: isSelected ? colors.selectionBorder : colors.border,
+              width: 1,
             ),
           ),
           child: Row(
             children: [
               Icon(
                 isSelected ? Icons.check_circle : Icons.circle_outlined,
-                color: isSelected ? colors.textPrimary : colors.textTertiary,
+                color: isSelected
+                    ? colors.selectionMutedForeground
+                    : colors.textTertiary,
                 size: 20,
               ),
               const SizedBox(width: DSSpacing.sm),
@@ -1022,13 +1027,12 @@ class _QuickOptionChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final isDark = context.isDark;
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(DSRadius.lg),
+        borderRadius: BorderRadius.circular(DSRadius.full),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(
@@ -1036,15 +1040,11 @@ class _QuickOptionChip extends StatelessWidget {
             vertical: DSSpacing.xs,
           ),
           decoration: BoxDecoration(
-            color: isSelected
-                ? colors.textPrimary.withValues(alpha: 0.2)
-                : (isDark ? colors.backgroundSecondary : colors.surface),
-            borderRadius: BorderRadius.circular(DSRadius.lg),
+            color: isSelected ? colors.selectionBackground : colors.surface,
+            borderRadius: BorderRadius.circular(DSRadius.full),
             border: Border.all(
-              color: isSelected
-                  ? colors.textPrimary
-                  : colors.textPrimary.withValues(alpha: 0.2),
-              width: isSelected ? 1.5 : 1,
+              color: isSelected ? colors.selectionBorder : colors.border,
+              width: 1,
             ),
           ),
           child: Row(
@@ -1062,9 +1062,9 @@ class _QuickOptionChip extends StatelessWidget {
               if (isSelected) ...[
                 const SizedBox(width: DSSpacing.xs),
                 Icon(
-                  Icons.check,
+                  Icons.check_rounded,
                   size: 14,
-                  color: colors.textPrimary,
+                  color: colors.selectionMutedForeground,
                 ),
               ],
             ],
