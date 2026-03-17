@@ -20614,6 +20614,8 @@
       "notes": [],
       "path": "lib/core/design_system/components/ds_chip.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/core/design_system/design_system.dart"
       ],
       "runtime_reachable": true,
@@ -24160,6 +24162,8 @@
       "notes": [],
       "path": "lib/features/chat/presentation/widgets/survey/chat_inline_calendar.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart"
       ],
       "runtime_reachable": true,
@@ -24174,6 +24178,8 @@
       "notes": [],
       "path": "lib/features/chat/presentation/widgets/survey/chat_match_selector.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart"
       ],
       "runtime_reachable": true,
@@ -24189,6 +24195,7 @@
       "path": "lib/features/chat/presentation/widgets/survey/chat_survey_chips.dart",
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart"
       ],
       "runtime_reachable": true,
