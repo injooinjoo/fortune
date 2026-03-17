@@ -74,9 +74,9 @@ Repo-side current-state sync work must target this range only.
 
 ## Latest Single-Page Refresh Append
 
-The official file currently contains the premium Haneul chat refresh append created by `KAN-124`:
+The official file currently contains the rich mystical Haneul chat refresh append created by `KAN-127`:
 
-- `180:2` `20 Chat Home / Character`
+- `181:2` `20 Chat Home / Character`
 
 This page now holds the latest official live captures for:
 
@@ -85,17 +85,20 @@ This page now holds the latest official live captures for:
 - `chat__survey__fortune_step`
 - `chat__result__fortune_complete`
 
-Treat `180:2` as the freshest official chat-page payload until the retained canonical range is consolidated again.
+Treat `181:2` as the freshest official chat-page payload until the retained canonical range is consolidated again.
 
 Older chat append still present in the file:
 
+- `180:2` `20 Chat Home / Character`
 - `95:2` `20 Chat Home / Character`
 
-`95:2` remains as a historical refresh append, but it is superseded for the Haneul survey/result shell by `180:2`.
+`180:2` remains as the previous premium append, but it is superseded for the Haneul survey/result shell by `181:2`.
+
+`95:2` remains as an earlier historical refresh append and is also superseded by `181:2`.
 
 ## Official File Cleanliness
 
-The official file currently keeps the retained canonical governance range `89:2` through `94:2`, plus the intentional chat refresh append pages `95:2` and `180:2`.
+The official file currently keeps the retained canonical governance range `89:2` through `94:2`, plus the intentional chat refresh append pages `95:2`, `180:2`, and `181:2`.
 
 No removed legacy page roots remain alongside that retained range and the retained chat refresh append pages.
 
@@ -134,7 +137,7 @@ This workflow applies to retained runtime surfaces only.
 
 ## Rules
 
-1. Treat `89:2` through `94:2` as the canonical governance range, and explicitly document any newer single-page append such as `180:2` until it is consolidated.
+1. Treat `89:2` through `94:2` as the canonical governance range, and explicitly document any newer single-page append such as `181:2` until it is consolidated.
 2. Do not reintroduce removed page groups into the official file.
 3. Any route change must update:
    - `playwright/scripts/figma_capture_manifest.js`

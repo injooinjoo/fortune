@@ -21695,7 +21695,8 @@
       "notes": [],
       "path": "lib/core/services/fortune_generators/time_based_generator.dart",
       "referenced_by": [
-        "lib/core/services/generator_factory.dart"
+        "lib/core/services/generator_factory.dart",
+        "test/unit/core/services/fortune_generators/time_based_generator_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -28893,7 +28894,6 @@
       "referenced_by": [
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/fortune/fortune_type_registry.dart",
-        "lib/core/services/fortune_generators/time_based_generator.dart",
         "lib/services/widget_data_service.dart",
         "supabase/functions/fortune-daily/index.ts"
       ],
@@ -31549,6 +31549,20 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "test/unit/core/services/fortune_generators/time_based_generator_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "test/unit/core/utils/ex_lover_input_mapper_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -32236,21 +32250,21 @@
       "lib": 410,
       "scripts": 70,
       "supabase": 205,
-      "test": 65
+      "test": 66
     },
     "counts_by_candidate_action": {
       "keep": 699,
       "keep_generated": 28,
       "manual_review": 979,
       "phase1_remove_candidate": 14,
-      "phase2_review_candidate": 354,
+      "phase2_review_candidate": 355,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
       "doc_only": 97,
       "generated_excluded": 28,
       "runtime_used": 699,
-      "test_only": 73,
+      "test_only": 74,
       "tooling_only": 184,
       "unreferenced": 997
     },
@@ -32513,7 +32527,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2078,
+    "total_files": 2079,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/tarot/tarot_card_catalog.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../shared/widgets/smart_image.dart';
+import 'haneul_fortune_result_widget.dart';
 
 class EmbeddedFortuneComponent extends StatelessWidget {
   final String embeddedWidgetType;
@@ -64,6 +65,15 @@ class EmbeddedFortuneComponent extends StatelessWidget {
 
   Widget _buildFortuneResultCard(BuildContext context) {
     final fortuneType = _stringValue(componentData['fortuneType']);
+    if (fortuneType == 'daily' ||
+        fortuneType == 'daily-calendar' ||
+        fortuneType == 'new-year') {
+      return HaneulFortuneResultWidget(
+        fortuneType: fortuneType!,
+        componentData: componentData,
+      );
+    }
+
     final title = _stringValue(componentData['title']) ?? '운세 결과';
     final summary = _stringValue(componentData['summary']) ??
         _stringValue(componentData['content']) ??
@@ -431,56 +441,9 @@ class EmbeddedFortuneComponent extends StatelessWidget {
   }
 
   Widget _buildFortuneCookie(BuildContext context) {
-    final emoji = _stringValue(componentData['emoji']) ?? '🥠';
-    final message = _stringValue(componentData['message']) ??
-        _stringValue(componentData['summary']) ??
-        '오늘의 메시지를 준비했어요.';
-    final infoItems = <String>[
-      if (_stringValue(componentData['luckyNumber']) != null)
-        '행운 숫자 ${_stringValue(componentData['luckyNumber'])}',
-      if (_stringValue(componentData['luckyColor']) != null)
-        '행운 컬러 ${_stringValue(componentData['luckyColor'])}',
-      if (_stringValue(componentData['luckyTime']) != null)
-        '행운 시간 ${_stringValue(componentData['luckyTime'])}',
-    ];
-
-    return _buildCardShell(
-      context,
-      title: _stringValue(componentData['title']) ?? '오늘의 메시지',
-      score: _intValue(componentData['score']),
-      icon: Icons.cookie_outlined,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildTagWrap(context, [emoji]),
-          const SizedBox(height: DSSpacing.sm),
-          Text(
-            message,
-            style: context.bodyLarge.copyWith(
-              fontWeight: FontWeight.w600,
-              height: 1.55,
-            ),
-          ),
-          if (infoItems.isNotEmpty) ...[
-            const SizedBox(height: DSSpacing.sm),
-            _buildInfoWrap(context, infoItems),
-          ],
-          if (_stringValue(componentData['actionMission']) != null) ...[
-            const SizedBox(height: DSSpacing.sm),
-            _buildInfoSection(
-              context,
-              title: '오늘의 실천',
-              child: Text(
-                _stringValue(componentData['actionMission'])!,
-                style: context.bodySmall.copyWith(
-                  fontWeight: FontWeight.w600,
-                  height: 1.55,
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
+    return HaneulFortuneResultWidget(
+      fortuneType: 'fortune-cookie',
+      componentData: componentData,
     );
   }
 

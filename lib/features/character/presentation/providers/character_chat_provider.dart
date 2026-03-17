@@ -3601,11 +3601,13 @@ $enrichedContext
   ) {
     final rawPayload = _asMapValue(fortune.metadata?['raw_payload']);
     final summaryPayload = _asMapValue(fortune.metadata?['summary']);
+    final sourcePayload = _asMapValue(fortune.metadata?['source_payload']);
     final payload = _buildGenericFortunePayload(
       fortuneType,
       fortune,
       rawPayload: rawPayload,
       summaryPayload: summaryPayload,
+      sourcePayload: sourcePayload,
     );
 
     switch (fortuneType) {
@@ -3613,9 +3615,25 @@ $enrichedContext
       case 'daily-calendar':
         final timeSlots = _mapListValue(rawPayload?['timeSlots']);
         final legacyTimeSlots = _mapListValue(rawPayload?['time_slots']);
+        final personalActions = _mapListValue(rawPayload?['personalActions']);
+        final legacyPersonalActions =
+            _mapListValue(rawPayload?['personal_actions']);
+        final calendarAdvice = _mapListValue(rawPayload?['calendarAdvice']);
+        final legacyCalendarAdvice =
+            _mapListValue(rawPayload?['calendar_advice']);
+        final calendarEvents = _mapListValue(rawPayload?['calendarEvents']);
+        final legacyCalendarEvents =
+            _mapListValue(rawPayload?['calendar_events']);
         payload.addAll({
           'greeting': fortune.greeting ?? _stringValue(rawPayload?['greeting']),
+          'description': fortune.description ??
+              _stringValue(rawPayload?['description']) ??
+              _stringValue(rawPayload?['message']),
           'timeSlots': timeSlots.isNotEmpty ? timeSlots : legacyTimeSlots,
+          'timeSpecificFortunes': _buildEmbeddedTimeSpecificFortunes(
+            fortune,
+            rawPayload: rawPayload,
+          ),
           'bestTime': _asMapValue(rawPayload?['bestTime']) ??
               _asMapValue(rawPayload?['best_time']),
           'worstTime': _asMapValue(rawPayload?['worstTime']) ??
@@ -3626,6 +3644,29 @@ $enrichedContext
               _stringValue(rawPayload?['special_message']),
           'timeStrategy': _asMapValue(rawPayload?['timeStrategy']) ??
               _asMapValue(rawPayload?['time_strategy']),
+          'fortuneSummary': _asMapValue(rawPayload?['fortuneSummary']) ??
+              _asMapValue(rawPayload?['fortune_summary']),
+          'categories':
+              fortune.categories ?? _asMapValue(rawPayload?['categories']),
+          'personalActions': fortune.personalActions ??
+              (personalActions.isNotEmpty
+                  ? personalActions
+                  : legacyPersonalActions),
+          'godlife': _asMapValue(rawPayload?['godlife']),
+          'sajuInsight': fortune.sajuInsight ??
+              _asMapValue(rawPayload?['sajuInsight']) ??
+              _asMapValue(rawPayload?['saju_insight']),
+          'storySegments': _extractEmbeddedStorySegments(
+            rawPayload: rawPayload,
+            sourcePayload: sourcePayload,
+          ),
+          'calendarAdvice':
+              calendarAdvice.isNotEmpty ? calendarAdvice : legacyCalendarAdvice,
+          'calendarEvents':
+              calendarEvents.isNotEmpty ? calendarEvents : legacyCalendarEvents,
+          'specialTip': fortune.specialTip ??
+              _stringValue(rawPayload?['specialTip']) ??
+              _stringValue(rawPayload?['special_tip']),
         });
         break;
       case 'new-year':
@@ -3635,6 +3676,8 @@ $enrichedContext
             _mapListValue(rawPayload?['monthly_highlights']);
         payload.addAll({
           'greeting': fortune.greeting ?? _stringValue(rawPayload?['greeting']),
+          'description':
+              fortune.description ?? _stringValue(rawPayload?['description']),
           'goalFortune': _asMapValue(rawPayload?['goalFortune']) ??
               _asMapValue(rawPayload?['goal_fortune']),
           'monthlyHighlights': monthlyHighlights.isNotEmpty
@@ -3644,19 +3687,39 @@ $enrichedContext
               _asMapValue(rawPayload?['action_plan']),
           'specialMessage': _stringValue(rawPayload?['specialMessage']) ??
               _stringValue(rawPayload?['special_message']),
+          'sajuAnalysis': _asMapValue(rawPayload?['sajuAnalysis']) ??
+              _asMapValue(rawPayload?['saju_analysis']),
+          'storySegments': _extractEmbeddedStorySegments(
+            rawPayload: rawPayload,
+            sourcePayload: sourcePayload,
+          ),
         });
         break;
       case 'fortune-cookie':
+        final luckyItems = _buildEmbeddedLuckyItems(
+          fortune,
+          rawPayload: rawPayload,
+        );
         payload.addAll({
           'message': fortune.content,
-          'emoji': _stringValue(fortune.luckyItems?['emoji']) ??
+          'luckyItems': luckyItems,
+          'emoji': _stringValue(luckyItems['emoji']) ??
               _stringValue(rawPayload?['emoji']),
-          'luckyNumber': _stringValue(fortune.luckyItems?['lucky_number']) ??
+          'cookieType': _stringValue(rawPayload?['cookie_type']),
+          'luckyNumber': _stringValue(luckyItems['number']) ??
               _stringValue(rawPayload?['lucky_number']),
-          'luckyColor': _stringValue(fortune.luckyItems?['lucky_color']) ??
+          'luckyColor': _stringValue(luckyItems['color']) ??
               _stringValue(rawPayload?['lucky_color']),
-          'luckyTime':
-              fortune.specialTip ?? _stringValue(rawPayload?['lucky_time']),
+          'luckyColorHex': _stringValue(luckyItems['colorHex']) ??
+              _stringValue(rawPayload?['lucky_color_hex']),
+          'luckyTime': _stringValue(luckyItems['time']) ??
+              _stringValue(rawPayload?['lucky_time']),
+          'luckyDirection': _stringValue(luckyItems['direction']) ??
+              _stringValue(rawPayload?['lucky_direction']),
+          'luckyItem': _stringValue(luckyItems['item']) ??
+              _stringValue(rawPayload?['lucky_item']),
+          'luckyPlace': _stringValue(luckyItems['place']) ??
+              _stringValue(rawPayload?['lucky_place']),
           'actionMission': fortune.recommendations?.isNotEmpty == true
               ? fortune.recommendations!.first
               : _stringValue(rawPayload?['action_mission']),
@@ -3729,19 +3792,19 @@ $enrichedContext
     Fortune fortune, {
     Map<String, dynamic>? rawPayload,
     Map<String, dynamic>? summaryPayload,
+    Map<String, dynamic>? sourcePayload,
   }) {
-    final luckyItems = Map<String, dynamic>.from(
-      fortune.luckyItems ??
-          _asMapValue(rawPayload?['luckyItems']) ??
-          _asMapValue(rawPayload?['lucky_items']) ??
-          const <String, dynamic>{},
+    final luckyItems = _buildEmbeddedLuckyItems(
+      fortune,
+      rawPayload: rawPayload,
     );
     final recommendations = fortune.recommendations?.toList(growable: false) ??
         _stringListValue(rawPayload?['recommendations']) ??
         _stringListValue(rawPayload?['advice']);
     final warnings = fortune.warnings?.toList(growable: false) ??
         _stringListValue(rawPayload?['warnings']) ??
-        _stringListValue(rawPayload?['cautions']);
+        _stringListValue(rawPayload?['cautions']) ??
+        _stringListValue(rawPayload?['caution']);
 
     return {
       'fortuneType': fortuneType,
@@ -3754,9 +3817,19 @@ $enrichedContext
           fortune.content,
       'content': fortune.content,
       'greeting': fortune.greeting,
+      'description': fortune.description ??
+          _stringValue(rawPayload?['description']) ??
+          _stringValue(rawPayload?['message']),
       'luckyItems': luckyItems,
       'recommendations': recommendations,
       'warnings': warnings,
+      'specialTip': fortune.specialTip ??
+          _stringValue(rawPayload?['specialTip']) ??
+          _stringValue(rawPayload?['special_tip']),
+      'storySegments': _extractEmbeddedStorySegments(
+        rawPayload: rawPayload,
+        sourcePayload: sourcePayload,
+      ),
       'highlights': _buildEmbeddedHighlights(
         fortune,
         rawPayload: rawPayload,
@@ -3961,6 +4034,79 @@ $enrichedContext
 
     final stringValue = value.toString().trim();
     return stringValue.isEmpty ? null : stringValue;
+  }
+
+  Map<String, dynamic> _buildEmbeddedLuckyItems(
+    Fortune fortune, {
+    Map<String, dynamic>? rawPayload,
+  }) {
+    final luckyItems = <String, dynamic>{
+      ...?fortune.luckyItems,
+      ...?_asMapValue(rawPayload?['luckyItems']),
+      ...?_asMapValue(rawPayload?['lucky_items']),
+    };
+
+    void addIfPresent(String key, dynamic value) {
+      final resolved = _stringValue(value);
+      if (resolved != null) {
+        luckyItems[key] = resolved;
+      }
+    }
+
+    addIfPresent('number', rawPayload?['lucky_number']);
+    addIfPresent('color', rawPayload?['lucky_color']);
+    addIfPresent('colorHex', rawPayload?['lucky_color_hex']);
+    addIfPresent('time', rawPayload?['lucky_time']);
+    addIfPresent('direction', rawPayload?['lucky_direction']);
+    addIfPresent('item', rawPayload?['lucky_item']);
+    addIfPresent('place', rawPayload?['lucky_place']);
+    addIfPresent('emoji', rawPayload?['emoji']);
+
+    return luckyItems;
+  }
+
+  List<Map<String, dynamic>> _buildEmbeddedTimeSpecificFortunes(
+    Fortune fortune, {
+    Map<String, dynamic>? rawPayload,
+  }) {
+    if (fortune.timeSpecificFortunes != null &&
+        fortune.timeSpecificFortunes!.isNotEmpty) {
+      return fortune.timeSpecificFortunes!
+          .map(
+            (entry) => {
+              'time': entry.time,
+              'title': entry.title,
+              'score': entry.score,
+              'description': entry.description,
+              if (entry.recommendation != null)
+                'recommendation': entry.recommendation,
+            },
+          )
+          .toList(growable: false);
+    }
+
+    final rawEntries = _mapListValue(rawPayload?['timeSpecificFortunes']);
+    if (rawEntries.isNotEmpty) {
+      return rawEntries;
+    }
+    return _mapListValue(rawPayload?['time_specific_fortunes']);
+  }
+
+  List<Map<String, dynamic>> _extractEmbeddedStorySegments({
+    Map<String, dynamic>? rawPayload,
+    Map<String, dynamic>? sourcePayload,
+  }) {
+    final direct = _mapListValue(rawPayload?['storySegments']);
+    if (direct.isNotEmpty) {
+      return direct;
+    }
+
+    final wrapped = _mapListValue(sourcePayload?['storySegments']);
+    if (wrapped.isNotEmpty) {
+      return wrapped;
+    }
+
+    return const [];
   }
 
   /// 중첩된 Map/List를 읽기 쉬운 텍스트로 변환하는 헬퍼

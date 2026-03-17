@@ -28,8 +28,7 @@ class CharacterFortuneAdapter {
       scoreBreakdown: _asMap(data['scoreBreakdown']) ??
           _asMap(data['score_breakdown']) ??
           _asMap(data['scores']),
-      luckyItems:
-          _asMap(data['luckyItems']) ?? _asMap(data['lucky_items']) ?? {},
+      luckyItems: _extractLuckyItems(data),
       recommendations: _extractStringList(data, [
         'recommendations',
         'advice',
@@ -45,11 +44,26 @@ class CharacterFortuneAdapter {
       greeting: _asString(data['greeting']),
       hexagonScores:
           _asIntMap(data['hexagonScores']) ?? _asIntMap(data['hexagon_scores']),
+      timeSpecificFortunes: _extractTimeSpecificFortunes(data),
       fiveElements:
           _asMap(data['fiveElements']) ?? _asMap(data['five_elements']),
       specialTip:
           _asString(data['specialTip']) ?? _asString(data['special_tip']),
       period: _asString(data['period']),
+      meta: _asMap(data['meta']),
+      weatherSummary:
+          _asMap(data['weatherSummary']) ?? _asMap(data['weather_summary']),
+      overall: _asMap(data['overall']),
+      categories: _asMap(data['categories']),
+      sajuInsight: _asMap(data['sajuInsight']) ?? _asMap(data['saju_insight']),
+      personalActions: _extractMapList(data, [
+        'personalActions',
+        'personal_actions',
+      ]),
+      notification: _asMap(data['notification']),
+      shareCard: _asMap(data['shareCard']) ?? _asMap(data['share_card']),
+      uiBlocks: _extractStringList(data, ['uiBlocks', 'ui_blocks']),
+      explain: _asMap(data['explain']),
       percentile: result.percentile,
       totalTodayViewers: result.totalTodayViewers,
       isPercentileValid: result.isPercentileValid,
@@ -214,6 +228,116 @@ class CharacterFortuneAdapter {
     if (value == null) return null;
     if (value is String && value.trim().isEmpty) return null;
     return value.toString();
+  }
+
+  static Map<String, dynamic>? _extractLuckyItems(Map<String, dynamic> data) {
+    final explicit =
+        _asMap(data['luckyItems']) ?? _asMap(data['lucky_items']) ?? {};
+    final flattened = <String, dynamic>{
+      if (_asString(data['lucky_number']) != null)
+        'number': _asString(data['lucky_number']),
+      if (_asString(data['lucky_color']) != null)
+        'color': _asString(data['lucky_color']),
+      if (_asString(data['lucky_color_hex']) != null)
+        'colorHex': _asString(data['lucky_color_hex']),
+      if (_asString(data['lucky_time']) != null)
+        'time': _asString(data['lucky_time']),
+      if (_asString(data['lucky_direction']) != null)
+        'direction': _asString(data['lucky_direction']),
+      if (_asString(data['lucky_item']) != null)
+        'item': _asString(data['lucky_item']),
+      if (_asString(data['lucky_place']) != null)
+        'place': _asString(data['lucky_place']),
+      if (_asString(data['emoji']) != null) 'emoji': _asString(data['emoji']),
+    };
+
+    final merged = <String, dynamic>{
+      ...explicit,
+      ...flattened,
+    };
+    return merged.isEmpty ? null : merged;
+  }
+
+  static List<Map<String, dynamic>>? _extractMapList(
+    Map<String, dynamic> data,
+    List<String> keys,
+  ) {
+    for (final key in keys) {
+      final value = data[key];
+      if (value is! List) continue;
+
+      final converted = value
+          .map(_asMap)
+          .whereType<Map<String, dynamic>>()
+          .toList(growable: false);
+      if (converted.isNotEmpty) {
+        return converted;
+      }
+    }
+    return null;
+  }
+
+  static List<TimeSpecificFortune>? _extractTimeSpecificFortunes(
+    Map<String, dynamic> data,
+  ) {
+    final rawList = data['timeSpecificFortunes'] ??
+        data['time_specific_fortunes'] ??
+        data['timeSlots'] ??
+        data['time_slots'];
+    if (rawList is! List) return null;
+
+    final items = <TimeSpecificFortune>[];
+    for (final item in rawList) {
+      final map = _asMap(item);
+      if (map == null) continue;
+
+      final time = _asString(map['time']) ??
+          _asString(map['period']) ??
+          _asString(map['timeRange']) ??
+          _asString(map['time_range']);
+      final title = _asString(map['title']) ??
+          _asString(map['traditionalName']) ??
+          _asString(map['traditional_name']) ??
+          time;
+      final score = map['score'];
+      final description = _asString(map['description']) ??
+          _asString(map['reason']) ??
+          _joinStringList(map['activities']);
+
+      if (time == null ||
+          title == null ||
+          description == null ||
+          score is! num) {
+        continue;
+      }
+
+      items.add(
+        TimeSpecificFortune(
+          time: time,
+          title: title,
+          score: score.toInt(),
+          description: description,
+          recommendation: _asString(map['recommendation']) ??
+              _asString(map['caution']) ??
+              _asString(map['advice']) ??
+              _asString(map['luckyAction']) ??
+              _asString(map['lucky_action']),
+        ),
+      );
+    }
+
+    return items.isEmpty ? null : items;
+  }
+
+  static String? _joinStringList(dynamic value) {
+    if (value is! List) return null;
+    final items = value
+        .map(_asString)
+        .whereType<String>()
+        .where((item) => item.isNotEmpty)
+        .toList(growable: false);
+    if (items.isEmpty) return null;
+    return items.join(' · ');
   }
 
   static List<String>? _extractStringList(

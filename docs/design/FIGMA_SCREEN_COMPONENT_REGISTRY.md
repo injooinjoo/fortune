@@ -19,12 +19,13 @@
 - `93:2` `90 Components`
 - `94:2` `99 Archive`
 
-Latest official premium chat append:
+Latest official rich mystical chat append:
 
-- `180:2` `20 Chat Home / Character`
+- `181:2` `20 Chat Home / Character`
 
 Historical chat append retained in file:
 
+- `180:2` `20 Chat Home / Character`
 - `95:2` `20 Chat Home / Character`
 
 ## Coverage Summary
@@ -97,12 +98,14 @@ Additional official pages:
 
 - `lib/features/character/presentation/utils/chat_catalog_preview.dart`
 - `lib/features/character/presentation/pages/character_chat_panel.dart`
+- `lib/features/character/presentation/providers/character_fortune_adapter.dart`
 - `lib/features/character/presentation/widgets/character_message_bubble.dart`
 - `lib/features/chat/presentation/widgets/survey/chat_inline_calendar.dart`
 - `lib/features/chat/presentation/widgets/survey/chat_match_selector.dart`
 - `lib/features/chat/presentation/widgets/survey/chat_survey_chips.dart`
 - `lib/features/chat/presentation/widgets/chat_saju_result_card.dart`
 - `lib/features/character/presentation/widgets/embedded_fortune_component.dart`
+- `lib/features/character/presentation/widgets/haneul_fortune_result_widget.dart`
 - `lib/shared/components/section_header.dart`
 
 ### Insight and Fortune Cards
