@@ -37,6 +37,7 @@ class CharacterFortuneAdapter {
       warnings: _extractStringList(data, [
         'warnings',
         'cautions',
+        'caution',
       ]),
       summary: _extractSummaryText(result),
       additionalInfo:

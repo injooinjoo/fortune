@@ -59,6 +59,31 @@ void main() {
       expect(fortune.overallScore, 77);
     });
 
+    test('maps singular caution field into warnings', () {
+      final result = FortuneResult(
+        id: 'fortune-4',
+        type: 'daily',
+        title: '오늘의 운세',
+        summary: const {'message': '하루 흐름 요약'},
+        data: const {
+          'content': '실제 운세 본문',
+          'score': 83,
+          'caution': '충동적인 약속은 한 번 더 확인하세요.',
+        },
+      );
+
+      final fortune = CharacterFortuneAdapter.fromFortuneResult(
+        result: result,
+        userId: 'user-4',
+        fortuneType: 'daily',
+      );
+
+      expect(
+        fortune.warnings,
+        ['충동적인 약속은 한 번 더 확인하세요.'],
+      );
+    });
+
     test('throws on invalid empty payload', () {
       final result = FortuneResult(
         id: 'fortune-3',

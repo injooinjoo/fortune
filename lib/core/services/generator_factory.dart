@@ -80,7 +80,11 @@ class GeneratorFactory {
       case 'time_based':
       case 'daily':
       case 'daily_calendar':
-        return await TimeBasedGenerator.generate(input, _supabase);
+        return await TimeBasedGenerator.generate(
+          input,
+          _supabase,
+          fortuneType: fortuneType,
+        );
 
       case 'compatibility':
         return await CompatibilityGenerator.generate(input, _supabase);

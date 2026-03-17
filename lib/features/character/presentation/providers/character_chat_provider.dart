@@ -3740,7 +3740,7 @@ $enrichedContext
 
     return {
       'fortuneType': fortuneType,
-      'title': FortuneTypeNames.getName(fortuneType),
+      'title': _embeddedCardTitleFor(fortuneType),
       'score': fortune.overallScore,
       'summary': fortune.summary ??
           _stringValue(summaryPayload?['summary']) ??
@@ -3758,6 +3758,19 @@ $enrichedContext
         summaryPayload: summaryPayload,
       ),
     };
+  }
+
+  String _embeddedCardTitleFor(String fortuneType) {
+    switch (fortuneType) {
+      case 'daily':
+        return '오늘의 흐름';
+      case 'daily-calendar':
+        return '오늘 일정 흐름';
+      case 'new-year':
+        return '올해의 흐름';
+      default:
+        return FortuneTypeNames.getName(fortuneType);
+    }
   }
 
   List<String> _buildEmbeddedHighlights(

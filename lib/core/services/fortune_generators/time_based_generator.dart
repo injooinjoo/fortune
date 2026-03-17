@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/fortune_result.dart';
 import '../../utils/logger.dart';
@@ -9,18 +10,18 @@ import '../location_manager.dart';
 class TimeBasedGenerator {
   /// 일일운세 생성 (Edge Function 호출)
   static Future<FortuneResult> generate(
-    Map<String, dynamic> inputConditions,
-    SupabaseClient supabase,
-  ) async {
+      Map<String, dynamic> inputConditions, SupabaseClient supabase,
+      {String fortuneType = 'daily'}) async {
     final userId = supabase.auth.currentUser?.id ?? 'unknown';
+    final endpoint = _endpointFor(fortuneType);
+    final period = inputConditions['period'] ?? _defaultPeriodFor(fortuneType);
 
     // 📤 API 요청 준비
     Logger.info('[TimeBasedGenerator] 📤 API 요청 준비');
-    Logger.info('[TimeBasedGenerator]   🌐 Edge Function: fortune-daily');
+    Logger.info('[TimeBasedGenerator]   🌐 Edge Function: $endpoint');
     Logger.info('[TimeBasedGenerator]   👤 user_id: $userId');
     Logger.info('[TimeBasedGenerator]   📅 date: ${inputConditions['date']}');
-    Logger.info(
-        '[TimeBasedGenerator]   ⏰ period: ${inputConditions['period'] ?? 'daily'}');
+    Logger.info('[TimeBasedGenerator]   ⏰ period: $period');
     Logger.info(
         '[TimeBasedGenerator]   🎉 is_holiday: ${inputConditions['is_holiday'] ?? false}');
     Logger.info(
@@ -34,8 +35,9 @@ class TimeBasedGenerator {
       Logger.info('[TimeBasedGenerator] 📍 사용자 위치: $userLocation');
 
       final requestBody = {
+        ...inputConditions,
         'date': inputConditions['date'],
-        'period': inputConditions['period'] ?? 'daily',
+        'period': period,
         'is_holiday': inputConditions['is_holiday'] ?? false,
         'holiday_name': inputConditions['holiday_name'],
         'special_name': inputConditions['special_name'],
@@ -64,7 +66,7 @@ class TimeBasedGenerator {
 
       // Edge Function 호출
       final response = await supabase.functions.invoke(
-        'fortune-daily',
+        endpoint,
         body: jsonEncode(requestBody),
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
@@ -87,7 +89,11 @@ class TimeBasedGenerator {
 
       // 🔄 파싱
       Logger.info('[TimeBasedGenerator] 🔄 응답 데이터 파싱 중...');
-      final result = _convertToFortuneResult(data, inputConditions);
+      final result = convertApiResponseForTesting(
+        data,
+        inputConditions,
+        fortuneType: fortuneType,
+      );
 
       Logger.info('[TimeBasedGenerator] ✅ 파싱 완료');
       Logger.info('[TimeBasedGenerator]   📝 Title: ${result.title}');
@@ -100,19 +106,117 @@ class TimeBasedGenerator {
     }
   }
 
+  @visibleForTesting
+  static FortuneResult convertApiResponseForTesting(
+    Map<String, dynamic> apiData,
+    Map<String, dynamic> inputConditions, {
+    String fortuneType = 'daily',
+  }) {
+    return _convertToFortuneResult(
+      apiData,
+      inputConditions,
+      fortuneType: fortuneType,
+    );
+  }
+
   /// API 응답을 FortuneResult로 변환
   static FortuneResult _convertToFortuneResult(
     Map<String, dynamic> apiData,
-    Map<String, dynamic> inputConditions,
-  ) {
+    Map<String, dynamic> inputConditions, {
+    required String fortuneType,
+  }) {
+    final canonicalType = _canonicalFortuneType(fortuneType);
+    final fortune =
+        _asMap(apiData['fortune']) ?? _asMap(apiData['data']) ?? apiData;
+    final summaryText = _asString(fortune['summary']) ??
+        _asString(fortune['content']) ??
+        _asString(fortune['description']) ??
+        _asString(fortune['greeting']);
+
     return FortuneResult(
-      type: 'time_based',
-      title: apiData['title'] as String? ?? '일일운세',
-      summary: apiData['summary'] as Map<String, dynamic>? ?? {},
-      data: apiData['data'] as Map<String, dynamic>? ?? apiData,
-      score: (apiData['score'] as num?)?.toInt() ??
-          (apiData['overallScore'] as num?)?.toInt() ??
+      type: canonicalType,
+      title: _asString(fortune['title']) ?? _defaultTitleFor(canonicalType),
+      summary: summaryText == null ? {} : {'message': summaryText},
+      data: fortune,
+      score: _asInt(fortune['score']) ??
+          _asInt(fortune['overallScore']) ??
+          _asInt(fortune['overall_score']) ??
+          _asInt(apiData['score']) ??
+          _asInt(apiData['overallScore']) ??
           50,
+      createdAt: DateTime.now(),
     );
+  }
+
+  static String _endpointFor(String fortuneType) {
+    switch (_canonicalFortuneType(fortuneType)) {
+      case 'daily-calendar':
+      case 'time-based':
+        return 'fortune-time';
+      case 'daily':
+      default:
+        return 'fortune-daily';
+    }
+  }
+
+  static String _defaultPeriodFor(String fortuneType) {
+    switch (_canonicalFortuneType(fortuneType)) {
+      case 'daily-calendar':
+      case 'time-based':
+        return 'today';
+      case 'daily':
+      default:
+        return 'daily';
+    }
+  }
+
+  static String _canonicalFortuneType(String fortuneType) {
+    switch (fortuneType) {
+      case 'daily_calendar':
+        return 'daily-calendar';
+      case 'time_based':
+        return 'time-based';
+      default:
+        return fortuneType;
+    }
+  }
+
+  static String _defaultTitleFor(String fortuneType) {
+    switch (fortuneType) {
+      case 'daily-calendar':
+        return '오늘 일정 흐름';
+      case 'time-based':
+        return '시간 인사이트';
+      case 'daily':
+      default:
+        return '오늘의 운세';
+    }
+  }
+
+  static Map<String, dynamic>? _asMap(dynamic value) {
+    if (value is Map<String, dynamic>) {
+      return value;
+    }
+    if (value is Map) {
+      return value.map(
+        (key, mapValue) => MapEntry(key.toString(), mapValue),
+      );
+    }
+    return null;
+  }
+
+  static String? _asString(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+    final trimmed = value.toString().trim();
+    return trimmed.isEmpty ? null : trimmed;
+  }
+
+  static int? _asInt(dynamic value) {
+    if (value is num) {
+      return value.toInt();
+    }
+    return null;
   }
 }
