@@ -21780,7 +21780,9 @@
       "path": "lib/core/services/generator_factory.dart",
       "referenced_by": [
         "lib/core/services/unified_fortune_service.dart",
+        "test/unit/services/generator_factory_biorhythm_test.dart",
         "test/unit/services/generator_factory_dream_test.dart",
+        "test/unit/services/generator_factory_talisman_test.dart",
         "test/unit/services/unified_fortune_service_guest_test.dart"
       ],
       "runtime_reachable": true,
@@ -23744,6 +23746,21 @@
         "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/features/character/presentation/widgets/character_choice_widget.dart",
         "lib/features/character/presentation/widgets/character_message_bubble.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
+      "path": "lib/features/character/presentation/utils/character_chat_fortune_payload_utils.dart",
+      "referenced_by": [
+        "lib/features/character/presentation/providers/character_chat_provider.dart",
+        "test/unit/features/character/presentation/utils/character_chat_fortune_payload_utils_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -31604,6 +31621,20 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "test/unit/features/character/presentation/utils/character_chat_fortune_payload_utils_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "test/unit/features/character/presentation/utils/character_guest_name_guard_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -31800,7 +31831,35 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "test/unit/services/generator_factory_biorhythm_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "test/unit/services/generator_factory_dream_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "test/unit/services/generator_factory_talisman_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
       "test_only": true,
@@ -32134,24 +32193,24 @@
       "assets": 1231,
       "docs": 89,
       "integration_test": 8,
-      "lib": 409,
+      "lib": 410,
       "scripts": 70,
       "supabase": 205,
-      "test": 60
+      "test": 63
     },
     "counts_by_candidate_action": {
-      "keep": 698,
+      "keep": 699,
       "keep_generated": 28,
       "manual_review": 979,
       "phase1_remove_candidate": 14,
-      "phase2_review_candidate": 349,
+      "phase2_review_candidate": 352,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
       "doc_only": 97,
       "generated_excluded": 28,
-      "runtime_used": 698,
-      "test_only": 68,
+      "runtime_used": 699,
+      "test_only": 71,
       "tooling_only": 184,
       "unreferenced": 997
     },
@@ -32306,8 +32365,8 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 338,
-    "lib_dart_total": 406,
+    "lib_dart_runtime_reachable": 339,
+    "lib_dart_total": 407,
     "lib_dart_zero_incoming": 26,
     "missing_function_refs": [
       "--all",
@@ -32414,7 +32473,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2072,
+    "total_files": 2076,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
