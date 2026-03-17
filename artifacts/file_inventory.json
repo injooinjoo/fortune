@@ -21739,6 +21739,7 @@
       "notes": [],
       "path": "lib/core/services/fortune_haptic_service.dart",
       "referenced_by": [
+        "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/main.dart",
         "lib/presentation/widgets/social_login_bottom_sheet.dart",
         "lib/screens/onboarding/onboarding_page.dart"
