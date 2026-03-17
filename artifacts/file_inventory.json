@@ -20805,6 +20805,7 @@
         "lib/features/character/presentation/widgets/character_choice_widget.dart",
         "lib/features/character/presentation/widgets/character_message_bubble.dart",
         "lib/features/character/presentation/widgets/embedded_fortune_component.dart",
+        "lib/features/character/presentation/widgets/haneul_fortune_result_widget.dart",
         "lib/features/chat/domain/configs/survey_configs.dart",
         "lib/features/chat/domain/models/life_category.dart",
         "lib/features/chat/domain/models/recommendation_chip.dart",
@@ -23667,7 +23668,8 @@
         "lib/features/character/presentation/providers/sorted_characters_provider.dart",
         "lib/presentation/providers/auth_provider.dart",
         "lib/screens/profile/providers/character_relationships_provider.dart",
-        "test/unit/features/character/presentation/providers/character_chat_provider_test.dart"
+        "test/unit/features/character/presentation/providers/character_chat_provider_test.dart",
+        "test/widget/character/character_list_panel_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23698,6 +23700,8 @@
       "notes": [],
       "path": "lib/features/character/presentation/providers/character_fortune_adapter.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "test/unit/features/character/presentation/providers/character_fortune_adapter_test.dart"
       ],
@@ -23733,6 +23737,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/providers/sorted_characters_provider.dart",
       "referenced_by": [
+        "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/presentation/providers/auth_provider.dart"
       ],
       "runtime_reachable": true,
@@ -23969,6 +23974,22 @@
         "lib/features/character/presentation/widgets/character_message_bubble.dart",
         "test/features/character/presentation/widgets/embedded_fortune_component_test.dart",
         "test/features/character/presentation/widgets/embedded_tarot_component_test.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
+      "path": "lib/features/character/presentation/widgets/haneul_fortune_result_widget.dart",
+      "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
+        "lib/features/character/presentation/widgets/embedded_fortune_component.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -32247,13 +32268,13 @@
       "assets": 1231,
       "docs": 89,
       "integration_test": 8,
-      "lib": 410,
+      "lib": 411,
       "scripts": 70,
       "supabase": 205,
       "test": 66
     },
     "counts_by_candidate_action": {
-      "keep": 699,
+      "keep": 700,
       "keep_generated": 28,
       "manual_review": 979,
       "phase1_remove_candidate": 14,
@@ -32263,7 +32284,7 @@
     "counts_by_usage_status": {
       "doc_only": 97,
       "generated_excluded": 28,
-      "runtime_used": 699,
+      "runtime_used": 700,
       "test_only": 74,
       "tooling_only": 184,
       "unreferenced": 997
@@ -32419,8 +32440,8 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 339,
-    "lib_dart_total": 407,
+    "lib_dart_runtime_reachable": 340,
+    "lib_dart_total": 408,
     "lib_dart_zero_incoming": 26,
     "missing_function_refs": [
       "--all",
@@ -32527,7 +32548,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2079,
+    "total_files": 2080,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
