@@ -37,6 +37,7 @@ import '../../../chat/presentation/widgets/survey/chat_image_input.dart';
 import '../../../chat/presentation/widgets/survey/chat_match_selector.dart';
 import '../../../chat/presentation/widgets/survey/chat_tarot_deck_picker.dart';
 import '../../../chat/presentation/widgets/survey/chat_tarot_draw_widget.dart';
+import '../../../../core/services/fortune_haptic_service.dart';
 import '../../../../core/services/unified_calendar_service.dart';
 import '../../../../data/models/pet_profile.dart';
 import '../../../../data/models/secondary_profile.dart';
@@ -96,6 +97,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   bool _isArchivedHistoryLoading = false;
   bool _isPetProfileManagementMode = false;
   String? _petProfileDeletingId;
+  bool _isFortuneChipBarExpanded = false;
 
   /// 통합 스크롤 서비스 (ChatScrollService 사용)
   late final ChatScrollService _scrollService;
@@ -173,6 +175,11 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   @override
   void didUpdateWidget(covariant CharacterChatPanel oldWidget) {
     super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.character.id != widget.character.id ||
+        widget.character.specialties.length <= 2) {
+      _isFortuneChipBarExpanded = false;
+    }
 
     if (widget.catalogPreview != null) {
       return;
@@ -790,80 +797,197 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     final colors = context.colors;
     final isHaneulChipBar = _isHaneulPremiumShell;
     final activeFortuneType = _activeFortuneType(surveyState);
+    final shouldShowAccordionToggle = widget.character.specialties.length > 2;
+    final collapsedHeight = isHaneulChipBar ? 38.0 : 36.0;
+    final chipWidgets = widget.character.specialties.map((specialty) {
+      final displayName = _getSpecialtyLabel(context, specialty);
+      final surveyType = _mapFortuneTypeToSurveyType(specialty);
+      final chipEmoji =
+          surveyType != null ? (surveyConfigs[surveyType]?.emoji ?? '✨') : '✨';
 
-    return Container(
-      height: isHaneulChipBar ? 62 : 50,
-      padding: EdgeInsets.symmetric(
-        vertical: isHaneulChipBar ? DSSpacing.sm + DSSpacing.xxs : DSSpacing.xs,
-      ),
-      decoration: BoxDecoration(
-        color: colors.surface,
-        border: Border(
-          bottom: BorderSide(color: colors.border.withValues(alpha: 0.8)),
+      return _buildFortuneChip(
+        chatState: chatState,
+        specialty: specialty,
+        displayName: displayName,
+        chipEmoji: chipEmoji,
+        isSelected: specialty == activeFortuneType,
+      );
+    }).toList();
+
+    return AnimatedSize(
+      duration: DSAnimation.normal,
+      curve: DSAnimation.emphasized,
+      child: Container(
+        padding: EdgeInsets.fromLTRB(
+          16,
+          isHaneulChipBar ? DSSpacing.sm + DSSpacing.xxs : DSSpacing.xs,
+          16,
+          DSSpacing.xs,
+        ),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          border: Border(
+            bottom: BorderSide(color: colors.border.withValues(alpha: 0.8)),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AnimatedSwitcher(
+              duration: DSAnimation.normal,
+              switchInCurve: DSAnimation.emphasized,
+              switchOutCurve: DSAnimation.primary,
+              child: _isFortuneChipBarExpanded
+                  ? Container(
+                      key: const ValueKey('expanded-fortune-chip-bar'),
+                      width: double.infinity,
+                      alignment: Alignment.centerLeft,
+                      child: Wrap(
+                        spacing: DSSpacing.sm,
+                        runSpacing: DSSpacing.sm,
+                        children: chipWidgets,
+                      ),
+                    )
+                  : SizedBox(
+                      key: const ValueKey('collapsed-fortune-chip-bar'),
+                      height: collapsedHeight,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: chipWidgets.length,
+                        separatorBuilder: (_, __) =>
+                            const SizedBox(width: DSSpacing.sm),
+                        itemBuilder: (context, index) {
+                          final child = chipWidgets[index];
+                          return isHaneulChipBar ? Center(child: child) : child;
+                        },
+                      ),
+                    ),
+            ),
+            if (shouldShowAccordionToggle) ...[
+              const SizedBox(height: DSSpacing.xs),
+              Align(
+                alignment: Alignment.center,
+                child: Semantics(
+                  button: true,
+                  label: _isFortuneChipBarExpanded
+                      ? context.l10n.close
+                      : context.l10n.chipViewMore,
+                  child: ExcludeSemantics(
+                    child: TextButton.icon(
+                      onPressed: _toggleFortuneChipBarExpanded,
+                      style: TextButton.styleFrom(
+                        foregroundColor: colors.textSecondary,
+                        minimumSize: Size.zero,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: DSSpacing.sm,
+                          vertical: DSSpacing.xxs,
+                        ),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      icon: Icon(
+                        _isFortuneChipBarExpanded
+                            ? Icons.keyboard_arrow_up_rounded
+                            : Icons.keyboard_arrow_down_rounded,
+                        size: 18,
+                      ),
+                      label: Text(
+                        _isFortuneChipBarExpanded
+                            ? context.l10n.close
+                            : context.l10n.chipViewMore,
+                        style: context.labelMedium.copyWith(
+                          color: colors.textSecondary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ],
         ),
       ),
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: widget.character.specialties.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
-        itemBuilder: (context, index) {
-          final specialty = widget.character.specialties[index];
-          final displayName = _getSpecialtyLabel(context, specialty);
-          final surveyType = _mapFortuneTypeToSurveyType(specialty);
-          final chipEmoji = surveyType != null
-              ? (surveyConfigs[surveyType]?.emoji ?? '✨')
-              : '✨';
+    );
+  }
 
-          if (isHaneulChipBar) {
-            return Center(
-              child: DSChip(
-                label: '$chipEmoji $displayName',
-                selected: specialty == activeFortuneType,
-                style: DSChipStyle.outlined,
-                enableHaptic: false,
-                onTap: chatState.isProcessing
-                    ? null
-                    : () => _handleFortuneChipTap(specialty, displayName),
-              ),
-            );
-          }
+  Widget _buildFortuneChip({
+    required CharacterChatState chatState,
+    required String specialty,
+    required String displayName,
+    required String chipEmoji,
+    required bool isSelected,
+  }) {
+    final colors = context.colors;
+    final onTap = chatState.isProcessing
+        ? null
+        : () => _handleFortuneChipTap(specialty, displayName);
 
-          return GestureDetector(
-            onTap: chatState.isProcessing
-                ? null
-                : () => _handleFortuneChipTap(specialty, displayName),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-              decoration: BoxDecoration(
-                color: colors.surface,
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: colors.border),
+    if (_isHaneulPremiumShell) {
+      return DSChip(
+        label: '$chipEmoji $displayName',
+        selected: isSelected,
+        style: DSChipStyle.outlined,
+        enableHaptic: false,
+        onTap: onTap,
+      );
+    }
+
+    final backgroundColor =
+        isSelected ? colors.selectionBackground : colors.surface;
+    final foregroundColor =
+        isSelected ? colors.selectionForeground : colors.textPrimary;
+    final borderColor = isSelected ? colors.selectionBorder : colors.border;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(context.radius.full),
+        child: AnimatedContainer(
+          duration: DSAnimation.quick,
+          curve: DSAnimation.primary,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(context.radius.full),
+            border: Border.all(color: borderColor),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                chipEmoji,
+                style: context.labelMedium.copyWith(
+                  color: foregroundColor,
+                ),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    chipEmoji,
-                    style: context.labelMedium.copyWith(
-                      color: colors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    displayName,
-                    style: context.labelMedium.copyWith(
-                      color: colors.textPrimary,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+              const SizedBox(width: 4),
+              Text(
+                displayName,
+                style: context.labelMedium.copyWith(
+                  color: foregroundColor,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-          );
-        },
+            ],
+          ),
+        ),
       ),
     );
+  }
+
+  void _toggleFortuneChipBarExpanded() {
+    final nextExpanded = !_isFortuneChipBarExpanded;
+    setState(() {
+      _isFortuneChipBarExpanded = nextExpanded;
+    });
+
+    final haptic = ref.read(fortuneHapticServiceProvider);
+    if (nextExpanded) {
+      unawaited(haptic.sectionComplete());
+    } else {
+      unawaited(haptic.buttonTap());
+    }
   }
 
   /// 운세 칩 탭 핸들러 - 설문이 있으면 설문 시작, 없으면 바로 요청
@@ -871,6 +995,11 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     String fortuneType,
     String displayName,
   ) async {
+    if (_isFortuneChipBarExpanded && mounted) {
+      setState(() {
+        _isFortuneChipBarExpanded = false;
+      });
+    }
     await _startFortuneFlow(fortuneType, displayName, resetSurvey: true);
   }
 
