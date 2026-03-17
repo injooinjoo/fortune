@@ -209,4 +209,54 @@ void main() {
       expect(afterDelayFromProactive, afterProactive);
     });
   });
+
+  group('Haneul card-first fortune flow', () {
+    test('uses compact card-first flow for Haneul daily variants', () {
+      expect(
+        isHaneulCardFirstFortuneFlow(
+          characterId: 'fortune_haneul',
+          fortuneType: 'daily',
+        ),
+        isTrue,
+      );
+      expect(
+        isHaneulCardFirstFortuneFlow(
+          characterId: 'fortune_haneul',
+          fortuneType: 'daily-calendar',
+        ),
+        isTrue,
+      );
+      expect(
+        isHaneulCardFirstFortuneFlow(
+          characterId: 'fortune_haneul',
+          fortuneType: 'new-year',
+        ),
+        isTrue,
+      );
+      expect(
+        isHaneulCardFirstFortuneFlow(
+          characterId: 'fortune_haneul',
+          fortuneType: 'fortune-cookie',
+        ),
+        isTrue,
+      );
+    });
+
+    test('keeps legacy split flow outside the Haneul whitelist', () {
+      expect(
+        isHaneulCardFirstFortuneFlow(
+          characterId: 'fortune_haneul',
+          fortuneType: 'tarot',
+        ),
+        isFalse,
+      );
+      expect(
+        isHaneulCardFirstFortuneFlow(
+          characterId: 'fortune_love',
+          fortuneType: 'daily',
+        ),
+        isFalse,
+      );
+    });
+  });
 }

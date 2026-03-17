@@ -760,12 +760,15 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   /// 운세 전문가 칩 바 (전문 분야 운세 칩들)
   Widget _buildFortuneChipBar(CharacterChatState chatState) {
     final colors = context.colors;
+    final isHaneulChipBar = widget.character.id == haneulCharacter.id;
 
     return Container(
-      height: 50,
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      height: isHaneulChipBar ? 58 : 50,
+      padding: EdgeInsets.symmetric(
+        vertical: isHaneulChipBar ? DSSpacing.sm : DSSpacing.xs,
+      ),
       decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
+        color: colors.surface,
         border: Border(
           bottom: BorderSide(color: colors.border.withValues(alpha: 0.8)),
         ),
@@ -783,6 +786,19 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
               ? (surveyConfigs[surveyType]?.emoji ?? '✨')
               : '✨';
 
+          if (isHaneulChipBar) {
+            return Center(
+              child: DSChip(
+                label: '$chipEmoji $displayName',
+                style: DSChipStyle.outlined,
+                enableHaptic: false,
+                onTap: chatState.isProcessing
+                    ? null
+                    : () => _handleFortuneChipTap(specialty, displayName),
+              ),
+            );
+          }
+
           return GestureDetector(
             onTap: chatState.isProcessing
                 ? null
@@ -797,7 +813,12 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(chipEmoji, style: const TextStyle(fontSize: 14)),
+                  Text(
+                    chipEmoji,
+                    style: context.labelMedium.copyWith(
+                      color: colors.textPrimary,
+                    ),
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     displayName,
@@ -1141,6 +1162,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
   Widget _buildTypingIndicator() {
     final accentPalette = _accentPalette(context);
+    final colors = context.colors;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -1165,11 +1187,11 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.grey[200],
+              color: colors.backgroundSecondary,
               borderRadius: BorderRadius.circular(18),
             ),
             child: WaveTypingIndicator(
-              dotColor: Colors.grey[500],
+              dotColor: colors.textTertiary,
               dotSize: 8,
               bounceHeight: 4,
             ),
@@ -1188,6 +1210,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     final progress = surveyState.activeProgress!;
     final step = progress.currentStep;
     final accentPalette = _accentPalette(context);
+    final colors = context.colors;
     final surveyNotifier = widget.catalogPreview == null
         ? ref.read(characterChatSurveyProvider(widget.character.id).notifier)
         : null;
@@ -1196,10 +1219,15 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: DSSpacing.md,
-        vertical: DSSpacing.sm,
+        vertical: DSSpacing.md,
       ),
       decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
+        color: colors.surface,
+        border: Border(
+          top: BorderSide(
+            color: colors.border.withValues(alpha: 0.55),
+          ),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -1211,14 +1239,21 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
               children: [
                 Text(
                   '${progress.currentStepIndex + 1}/${progress.config.totalSteps}',
-                  style: context.labelSmall.copyWith(color: Colors.grey[600]),
+                  style: context.labelSmall.copyWith(
+                    color: colors.textSecondary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: DSSpacing.sm),
                 Expanded(
-                  child: LinearProgressIndicator(
-                    value: progress.progress,
-                    backgroundColor: Colors.grey[200],
-                    valueColor: AlwaysStoppedAnimation(accentPalette.accent),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(DSRadius.full),
+                    child: LinearProgressIndicator(
+                      minHeight: 6,
+                      value: progress.progress,
+                      backgroundColor: colors.backgroundTertiary,
+                      valueColor: AlwaysStoppedAnimation(accentPalette.accent),
+                    ),
                   ),
                 ),
                 // 스킵 버튼 (선택적 단계만)
@@ -1233,7 +1268,8 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                     child: Text(
                       context.l10n.skip,
                       style: context.labelSmall.copyWith(
-                        color: Colors.grey[500],
+                        color: colors.textTertiary,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),

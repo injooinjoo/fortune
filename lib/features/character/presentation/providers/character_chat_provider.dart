@@ -67,6 +67,21 @@ final characterUnifiedFortuneServiceProvider = Provider<UnifiedFortuneService>(
   ),
 );
 
+const Set<String> kHaneulCardFirstFortuneTypes = {
+  'daily',
+  'daily-calendar',
+  'new-year',
+  'fortune-cookie',
+};
+
+bool isHaneulCardFirstFortuneFlow({
+  required String characterId,
+  required String fortuneType,
+}) {
+  return characterId == haneulCharacter.id &&
+      kHaneulCardFirstFortuneTypes.contains(fortuneType);
+}
+
 /// 캐릭터 채팅 상태 관리자
 /// 모든 캐릭터 목록 (스토리 + 운세)
 final _allCharacters = [...defaultCharacters, ...fortuneCharacters];
@@ -2628,18 +2643,21 @@ $enrichedContext
 
       // 호감도 포인트 계산 (애니메이션용)
       final affinityPoints = response.affinityDelta.points;
+      final useCardFirstFlow = _shouldUseCardFirstFortuneFlow(fortuneType);
 
       _ackPendingUserMessagesBeforeCharacterReply();
       _addEmbeddedFortuneComponentIfNeeded(fortuneType, fortuneData, const {});
 
-      // 6단계: 캐릭터 응답을 멀티 버블로 분할 전달
-      // raw response를 먼저 분할 → 각 섹션에 tone 적용
-      // (tone 적용 시 enforceKakaoSingleBubble이 줄바꿈을 제거하므로)
-      await _addSplitFortuneMessages(
-        response.response,
-        affinityChange: affinityPoints,
-        toneProfile: toneProfile,
-      );
+      if (!useCardFirstFlow) {
+        // 6단계: 캐릭터 응답을 멀티 버블로 분할 전달
+        // raw response를 먼저 분할 → 각 섹션에 tone 적용
+        // (tone 적용 시 enforceKakaoSingleBubble이 줄바꿈을 제거하므로)
+        await _addSplitFortuneMessages(
+          response.response,
+          affinityChange: affinityPoints,
+          toneProfile: toneProfile,
+        );
+      }
 
       // 호감도 동적 업데이트 (AI 평가 기반)
       final interactionType = response.affinityDelta.isPositive
@@ -2854,6 +2872,7 @@ $enrichedContext
 
       // 호감도 포인트 계산 (애니메이션용)
       final affinityPoints = response.affinityDelta.points;
+      final useCardFirstFlow = _shouldUseCardFirstFortuneFlow(fortuneType);
 
       _ackPendingUserMessagesBeforeCharacterReply();
       _addEmbeddedFortuneComponentIfNeeded(
@@ -2862,13 +2881,15 @@ $enrichedContext
         surveyAnswers,
       );
 
-      // 6단계: 캐릭터 응답을 멀티 버블로 분할 전달
-      // raw response를 먼저 분할 → 각 섹션에 tone 적용
-      await _addSplitFortuneMessages(
-        response.response,
-        affinityChange: affinityPoints,
-        toneProfile: toneProfile,
-      );
+      if (!useCardFirstFlow) {
+        // 6단계: 캐릭터 응답을 멀티 버블로 분할 전달
+        // raw response를 먼저 분할 → 각 섹션에 tone 적용
+        await _addSplitFortuneMessages(
+          response.response,
+          affinityChange: affinityPoints,
+          toneProfile: toneProfile,
+        );
+      }
 
       // 호감도 동적 업데이트 (AI 평가 기반)
       final interactionType = response.affinityDelta.isPositive
@@ -3562,6 +3583,43 @@ $enrichedContext
     );
 
     switch (fortuneType) {
+      case 'daily':
+      case 'daily-calendar':
+        final timeSlots = _mapListValue(rawPayload?['timeSlots']);
+        final legacyTimeSlots = _mapListValue(rawPayload?['time_slots']);
+        payload.addAll({
+          'greeting': fortune.greeting ?? _stringValue(rawPayload?['greeting']),
+          'timeSlots': timeSlots.isNotEmpty ? timeSlots : legacyTimeSlots,
+          'bestTime': _asMapValue(rawPayload?['bestTime']) ??
+              _asMapValue(rawPayload?['best_time']),
+          'worstTime': _asMapValue(rawPayload?['worstTime']) ??
+              _asMapValue(rawPayload?['worst_time']),
+          'dayTheme': _stringValue(rawPayload?['dayTheme']) ??
+              _stringValue(rawPayload?['day_theme']),
+          'specialMessage': _stringValue(rawPayload?['specialMessage']) ??
+              _stringValue(rawPayload?['special_message']),
+          'timeStrategy': _asMapValue(rawPayload?['timeStrategy']) ??
+              _asMapValue(rawPayload?['time_strategy']),
+        });
+        break;
+      case 'new-year':
+        final monthlyHighlights =
+            _mapListValue(rawPayload?['monthlyHighlights']);
+        final legacyMonthlyHighlights =
+            _mapListValue(rawPayload?['monthly_highlights']);
+        payload.addAll({
+          'greeting': fortune.greeting ?? _stringValue(rawPayload?['greeting']),
+          'goalFortune': _asMapValue(rawPayload?['goalFortune']) ??
+              _asMapValue(rawPayload?['goal_fortune']),
+          'monthlyHighlights': monthlyHighlights.isNotEmpty
+              ? monthlyHighlights
+              : legacyMonthlyHighlights,
+          'actionPlan': _asMapValue(rawPayload?['actionPlan']) ??
+              _asMapValue(rawPayload?['action_plan']),
+          'specialMessage': _stringValue(rawPayload?['specialMessage']) ??
+              _stringValue(rawPayload?['special_message']),
+        });
+        break;
       case 'fortune-cookie':
         payload.addAll({
           'message': fortune.content,
@@ -3660,6 +3718,7 @@ $enrichedContext
         _stringListValue(rawPayload?['cautions']);
 
     return {
+      'fortuneType': fortuneType,
       'title': FortuneTypeNames.getName(fortuneType),
       'score': fortune.overallScore,
       'summary': fortune.summary ??
@@ -3668,6 +3727,7 @@ $enrichedContext
           _stringValue(summaryPayload?['main_message']) ??
           fortune.content,
       'content': fortune.content,
+      'greeting': fortune.greeting,
       'luckyItems': luckyItems,
       'recommendations': recommendations,
       'warnings': warnings,
@@ -3684,6 +3744,27 @@ $enrichedContext
     Map<String, dynamic>? rawPayload,
     Map<String, dynamic>? summaryPayload,
   }) {
+    if (fortune.type == 'daily') {
+      final categoryHighlights = _buildDailyCategoryHighlights(rawPayload);
+      if (categoryHighlights.isNotEmpty) {
+        return categoryHighlights;
+      }
+    }
+
+    if (fortune.type == 'daily-calendar') {
+      final timeHighlights = _buildTimeFortuneHighlights(rawPayload);
+      if (timeHighlights.isNotEmpty) {
+        return timeHighlights;
+      }
+    }
+
+    if (fortune.type == 'new-year') {
+      final newYearHighlights = _buildNewYearHighlights(rawPayload);
+      if (newYearHighlights.isNotEmpty) {
+        return newYearHighlights;
+      }
+    }
+
     final highlights = <String>{
       if (fortune.category != null && fortune.category!.isNotEmpty)
         fortune.category!,
@@ -3699,6 +3780,86 @@ $enrichedContext
     };
 
     return highlights.where((item) => item.trim().isNotEmpty).take(4).toList();
+  }
+
+  List<String> _buildDailyCategoryHighlights(Map<String, dynamic>? rawPayload) {
+    final categories = _asMapValue(rawPayload?['categories']);
+    if (categories == null || categories.isEmpty) {
+      return const [];
+    }
+
+    const labels = {
+      'love': '연애운',
+      'money': '재물운',
+      'work': '일과',
+      'study': '학업',
+      'health': '건강',
+      'social': '대화운',
+      'relationship': '관계운',
+    };
+
+    final scored = <MapEntry<String, int>>[];
+    for (final entry in categories.entries) {
+      if (entry.key == 'total') continue;
+      final value = _asMapValue(entry.value);
+      final score = value?['score'];
+      if (score is num) {
+        scored.add(MapEntry(entry.key, score.toInt()));
+      }
+    }
+
+    scored.sort((a, b) => b.value.compareTo(a.value));
+    return scored
+        .take(3)
+        .map((entry) => labels[entry.key] ?? entry.key)
+        .toList(growable: false);
+  }
+
+  List<String> _buildTimeFortuneHighlights(Map<String, dynamic>? rawPayload) {
+    final highlights = <String>[
+      if (_stringValue(rawPayload?['dayTheme']) != null)
+        _stringValue(rawPayload?['dayTheme'])!,
+    ];
+
+    final bestTime = _asMapValue(rawPayload?['bestTime']) ??
+        _asMapValue(rawPayload?['best_time']);
+    final bestTimeLabel =
+        _stringValue(bestTime?['period']) ?? _stringValue(bestTime?['name']);
+    if (bestTimeLabel != null) {
+      highlights.add('추천 $bestTimeLabel');
+    }
+
+    final luckyItems = _asMapValue(rawPayload?['luckyItems']) ??
+        _asMapValue(rawPayload?['lucky_items']);
+    final direction = _stringValue(luckyItems?['direction']);
+    if (direction != null) {
+      highlights.add(direction);
+    }
+
+    return highlights.take(3).toList(growable: false);
+  }
+
+  List<String> _buildNewYearHighlights(Map<String, dynamic>? rawPayload) {
+    final goalFortune = _asMapValue(rawPayload?['goalFortune']) ??
+        _asMapValue(rawPayload?['goal_fortune']);
+    final highlights = <String>[
+      if (_stringValue(goalFortune?['goalLabel']) != null)
+        _stringValue(goalFortune?['goalLabel'])!,
+    ];
+
+    final bestMonths = _stringListValue(goalFortune?['bestMonths']) ??
+        _stringListValue(goalFortune?['best_months']) ??
+        const <String>[];
+    highlights.addAll(bestMonths.take(2));
+
+    return highlights.take(3).toList(growable: false);
+  }
+
+  bool _shouldUseCardFirstFortuneFlow(String fortuneType) {
+    return isHaneulCardFirstFortuneFlow(
+      characterId: _characterId,
+      fortuneType: fortuneType,
+    );
   }
 
   String? _extractSurveyImagePath(Map<String, dynamic> surveyAnswers) {

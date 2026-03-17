@@ -223,6 +223,7 @@ CharacterChatState catalogPreviewChatState({
             origin: MessageOrigin.aiReply,
             embeddedWidgetType: 'fortune_result_card',
             componentData: const {
+              'fortuneType': 'daily',
               'title': '오늘의 흐름',
               'summary': '차분하게 우선순위를 정리할수록 작은 성과가 크게 이어지는 날이에요.',
               'score': 86,

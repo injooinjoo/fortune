@@ -31,89 +31,18 @@ class ChatSurveyChips extends StatelessWidget {
         alignment: WrapAlignment.start,
         children: options.map((option) {
           final isSelected = selectedIds?.contains(option.id) ?? false;
-          return _SurveyChip(
-            option: option,
-            isSelected: isSelected,
+          final label = option.emoji != null && option.emoji!.isNotEmpty
+              ? '${option.emoji!} ${option.label}'
+              : option.label;
+
+          return DSChip(
+            label: label,
+            icon: option.emoji == null ? option.icon : null,
+            selected: isSelected,
+            style: DSChipStyle.outlined,
             onTap: () => onSelect(option),
           );
         }).toList(),
-      ),
-    );
-  }
-}
-
-class _SurveyChip extends StatelessWidget {
-  final SurveyOption option;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _SurveyChip({
-    required this.option,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    final typography = context.typography;
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          DSHaptics.light();
-          onTap();
-        },
-        borderRadius: BorderRadius.circular(DSRadius.full),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(
-            horizontal: DSSpacing.sm,
-            vertical: DSSpacing.xs,
-          ),
-          decoration: BoxDecoration(
-            color: isSelected ? colors.selectionBackground : colors.surface,
-            borderRadius: BorderRadius.circular(DSRadius.full),
-            border: Border.all(
-              color: isSelected ? colors.selectionBorder : colors.border,
-              width: 1,
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (option.emoji != null) ...[
-                Text(option.emoji!, style: const TextStyle(fontSize: 16)),
-                const SizedBox(width: DSSpacing.xs),
-              ] else if (option.icon != null) ...[
-                Icon(
-                  option.icon,
-                  size: 16,
-                  color: isSelected
-                      ? colors.selectionMutedForeground
-                      : colors.textSecondary,
-                ),
-                const SizedBox(width: DSSpacing.xs),
-              ],
-              Text(
-                option.label,
-                style: typography.labelMedium.copyWith(
-                  color: colors.textPrimary,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                ),
-              ),
-              if (isSelected) ...[
-                const SizedBox(width: DSSpacing.xs),
-                Icon(
-                  Icons.check_rounded,
-                  size: 14,
-                  color: colors.selectionMutedForeground,
-                ),
-              ],
-            ],
-          ),
-        ),
       ),
     );
   }

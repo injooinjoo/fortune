@@ -47,6 +47,7 @@ void main() {
       expect(chatState.hasConversation, isTrue);
       expect(chatState.messages.last.hasEmbeddedWidget, isTrue);
       expect(chatState.messages.last.embeddedWidgetType, 'fortune_result_card');
+      expect(chatState.messages.last.componentData?['fortuneType'], 'daily');
     });
   });
 }

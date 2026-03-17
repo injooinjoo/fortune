@@ -63,11 +63,13 @@ class EmbeddedFortuneComponent extends StatelessWidget {
   }
 
   Widget _buildFortuneResultCard(BuildContext context) {
+    final fortuneType = _stringValue(componentData['fortuneType']);
     final title = _stringValue(componentData['title']) ?? '운세 결과';
     final summary = _stringValue(componentData['summary']) ??
         _stringValue(componentData['content']) ??
         '결과를 정리했어요.';
-    final highlights = _stringList(componentData['highlights']);
+    final highlights =
+        _stringList(componentData['highlights']).take(3).toList();
     final luckyItems = _displayEntries(componentData['luckyItems']);
     final recommendations = _stringList(componentData['recommendations']);
     final warnings = _stringList(componentData['warnings']);
@@ -76,32 +78,339 @@ class EmbeddedFortuneComponent extends StatelessWidget {
       context,
       title: title,
       score: _intValue(componentData['score']),
-      icon: Icons.auto_awesome_rounded,
+      icon: _iconForFortuneType(fortuneType),
+      child: () {
+        switch (fortuneType) {
+          case 'daily':
+          case 'daily-calendar':
+            return _buildCompactFortuneBody(
+              context,
+              summary: summary,
+              highlights: highlights,
+              recommendations: recommendations.take(2).toList(),
+              warnings: warnings.take(1).toList(),
+            );
+          case 'new-year':
+            return _buildNewYearFortuneBody(
+              context,
+              summary: summary,
+              highlights: highlights,
+              luckyItems: luckyItems,
+              recommendations: recommendations,
+              specialMessage: _stringValue(componentData['specialMessage']),
+              goalFortune: _asMap(componentData['goalFortune']),
+              actionPlan: _asMap(componentData['actionPlan']),
+              monthlyHighlights: _mapList(componentData['monthlyHighlights']),
+            );
+          default:
+            return _buildDefaultFortuneBody(
+              context,
+              summary: summary,
+              highlights: highlights,
+              luckyItems: luckyItems,
+              recommendations: recommendations,
+              warnings: warnings,
+            );
+        }
+      }(),
+    );
+  }
+
+  Widget _buildDefaultFortuneBody(
+    BuildContext context, {
+    required String summary,
+    required List<String> highlights,
+    required List<String> luckyItems,
+    required List<String> recommendations,
+    required List<String> warnings,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          summary,
+          style: context.bodyMedium.copyWith(
+            fontWeight: FontWeight.w500,
+            height: 1.58,
+          ),
+        ),
+        if (highlights.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.sm),
+          _buildTagWrap(context, highlights),
+        ],
+        if (luckyItems.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.md),
+          _buildSectionTitle(context, '행운 포인트'),
+          const SizedBox(height: DSSpacing.xs),
+          _buildInfoWrap(context, luckyItems),
+        ],
+        if (recommendations.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.md),
+          _buildSectionTitle(context, '추천'),
+          const SizedBox(height: DSSpacing.xs),
+          _buildTextLines(context, recommendations),
+        ],
+        if (warnings.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.md),
+          _buildSectionTitle(context, '주의'),
+          const SizedBox(height: DSSpacing.xs),
+          _buildTextLines(context, warnings),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildCompactFortuneBody(
+    BuildContext context, {
+    required String summary,
+    required List<String> highlights,
+    required List<String> recommendations,
+    required List<String> warnings,
+  }) {
+    final colors = context.colors;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          summary,
+          style: context.bodyMedium.copyWith(
+            color: colors.textPrimary,
+            fontWeight: FontWeight.w500,
+            height: 1.6,
+          ),
+        ),
+        if (highlights.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.sm),
+          _buildTagWrap(context, highlights),
+        ],
+        if (recommendations.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.sm),
+          _buildSectionTitle(context, '추천'),
+          const SizedBox(height: DSSpacing.xxs),
+          _buildTextLines(context, recommendations),
+        ],
+        if (warnings.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.sm),
+          _buildSectionTitle(context, '주의'),
+          const SizedBox(height: DSSpacing.xxs),
+          _buildTextLines(context, warnings),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildNewYearFortuneBody(
+    BuildContext context, {
+    required String summary,
+    required List<String> highlights,
+    required List<String> luckyItems,
+    required List<String> recommendations,
+    required String? specialMessage,
+    required Map<String, dynamic>? goalFortune,
+    required Map<String, dynamic>? actionPlan,
+    required List<Map<String, dynamic>> monthlyHighlights,
+  }) {
+    final goalTitle = _stringValue(goalFortune?['title']) ??
+        _stringValue(goalFortune?['goalLabel']) ??
+        '새해 목표 운세';
+    final goalPrediction = _stringValue(goalFortune?['prediction']);
+    final goalAnalysis = _stringValue(goalFortune?['deepAnalysis']);
+    final bestMonths = _stringList(goalFortune?['bestMonths']);
+    final actionItems = _stringList(goalFortune?['actionItems']);
+    final actionImmediate = _stringList(actionPlan?['immediate']);
+    final actionShortTerm = _stringList(actionPlan?['shortTerm']);
+    final actionLongTerm = _stringList(actionPlan?['longTerm']);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          summary,
+          style: context.bodyMedium.copyWith(
+            fontWeight: FontWeight.w500,
+            height: 1.58,
+          ),
+        ),
+        if (highlights.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.sm),
+          _buildTagWrap(context, highlights),
+        ],
+        if (specialMessage != null) ...[
+          const SizedBox(height: DSSpacing.sm),
+          _buildInsetBlock(
+            context,
+            child: Text(
+              specialMessage,
+              style: context.bodySmall.copyWith(
+                fontWeight: FontWeight.w500,
+                height: 1.55,
+              ),
+            ),
+          ),
+        ],
+        if (goalPrediction != null ||
+            goalAnalysis != null ||
+            bestMonths.isNotEmpty ||
+            actionItems.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.sm),
+          _EmbeddedExpandableSection(
+            title: goalTitle,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (goalPrediction != null) ...[
+                  Text(goalPrediction, style: context.bodySmall),
+                ],
+                if (goalAnalysis != null) ...[
+                  const SizedBox(height: DSSpacing.sm),
+                  Text(goalAnalysis, style: context.bodySmall),
+                ],
+                if (bestMonths.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.sm),
+                  _buildSectionTitle(context, '좋은 시기'),
+                  const SizedBox(height: DSSpacing.xxs),
+                  _buildTagWrap(context, bestMonths.take(3).toList()),
+                ],
+                if (actionItems.isNotEmpty) ...[
+                  const SizedBox(height: DSSpacing.sm),
+                  _buildSectionTitle(context, '실천 포인트'),
+                  const SizedBox(height: DSSpacing.xxs),
+                  _buildTextLines(context, actionItems.take(3).toList()),
+                ],
+              ],
+            ),
+          ),
+        ],
+        if (luckyItems.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.sm),
+          _EmbeddedExpandableSection(
+            title: '행운 요소',
+            child: _buildInfoWrap(context, luckyItems),
+          ),
+        ],
+        if (actionImmediate.isNotEmpty ||
+            actionShortTerm.isNotEmpty ||
+            actionLongTerm.isNotEmpty ||
+            recommendations.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.sm),
+          _EmbeddedExpandableSection(
+            title: '실천 계획',
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (actionImmediate.isNotEmpty)
+                  _buildPlanGroup(context, '바로 시작', actionImmediate),
+                if (actionShortTerm.isNotEmpty) ...[
+                  if (actionImmediate.isNotEmpty)
+                    const SizedBox(height: DSSpacing.sm),
+                  _buildPlanGroup(context, '1~3개월', actionShortTerm),
+                ],
+                if (actionLongTerm.isNotEmpty) ...[
+                  if (actionImmediate.isNotEmpty || actionShortTerm.isNotEmpty)
+                    const SizedBox(height: DSSpacing.sm),
+                  _buildPlanGroup(context, '6~12개월', actionLongTerm),
+                ],
+                if (recommendations.isNotEmpty) ...[
+                  if (actionImmediate.isNotEmpty ||
+                      actionShortTerm.isNotEmpty ||
+                      actionLongTerm.isNotEmpty)
+                    const SizedBox(height: DSSpacing.sm),
+                  _buildPlanGroup(
+                    context,
+                    '추천',
+                    recommendations.take(3).toList(),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+        if (monthlyHighlights.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.sm),
+          _EmbeddedExpandableSection(
+            title: '월별 하이라이트',
+            child: Column(
+              children: monthlyHighlights
+                  .map((entry) => _buildMonthlyHighlightTile(context, entry))
+                  .toList(growable: false),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildPlanGroup(
+    BuildContext context,
+    String title,
+    List<String> items,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle(context, title),
+        const SizedBox(height: DSSpacing.xxs),
+        _buildTextLines(context, items),
+      ],
+    );
+  }
+
+  Widget _buildMonthlyHighlightTile(
+    BuildContext context,
+    Map<String, dynamic> entry,
+  ) {
+    final colors = context.colors;
+    final month = _stringValue(entry['month']) ?? '월';
+    final theme = _stringValue(entry['theme']);
+    final advice = _stringValue(entry['advice']);
+    final recommendedAction = _stringValue(entry['recommendedAction']) ??
+        _stringValue(entry['recommended_action']);
+    final score = _intValue(entry['score']);
+
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: DSSpacing.xs),
+      padding: const EdgeInsets.all(DSSpacing.sm),
+      decoration: BoxDecoration(
+        color: colors.backgroundSecondary,
+        borderRadius: BorderRadius.circular(DSRadius.lg),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(summary, style: context.bodyMedium),
-          if (highlights.isNotEmpty) ...[
-            const SizedBox(height: DSSpacing.sm),
-            _buildTagWrap(context, highlights),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  theme != null ? '$month · $theme' : month,
+                  style: context.labelLarge.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              if (score != null)
+                Text(
+                  '$score점',
+                  style: context.labelSmall.copyWith(
+                    color: colors.textSecondary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+            ],
+          ),
+          if (advice != null) ...[
+            const SizedBox(height: DSSpacing.xxs),
+            Text(advice, style: context.bodySmall),
           ],
-          if (luckyItems.isNotEmpty) ...[
-            const SizedBox(height: DSSpacing.md),
-            _buildSectionTitle(context, '행운 포인트'),
-            const SizedBox(height: DSSpacing.xs),
-            _buildInfoWrap(context, luckyItems),
-          ],
-          if (recommendations.isNotEmpty) ...[
-            const SizedBox(height: DSSpacing.md),
-            _buildSectionTitle(context, '추천'),
-            const SizedBox(height: DSSpacing.xs),
-            _buildTextLines(context, recommendations),
-          ],
-          if (warnings.isNotEmpty) ...[
-            const SizedBox(height: DSSpacing.md),
-            _buildSectionTitle(context, '주의'),
-            const SizedBox(height: DSSpacing.xs),
-            _buildTextLines(context, warnings),
+          if (recommendedAction != null) ...[
+            const SizedBox(height: DSSpacing.xxs),
+            Text(
+              '추천 행동: $recommendedAction',
+              style: context.labelSmall.copyWith(
+                color: colors.textSecondary,
+              ),
+            ),
           ],
         ],
       ),
@@ -400,13 +709,13 @@ class EmbeddedFortuneComponent extends StatelessWidget {
         color: colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.xl),
         border: Border.all(
-          color: colors.border.withValues(alpha: 0.6),
+          color: colors.border.withValues(alpha: 0.45),
         ),
         boxShadow: [
           BoxShadow(
             color: colors.textPrimary.withValues(alpha: 0.05),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
@@ -421,7 +730,7 @@ class EmbeddedFortuneComponent extends StatelessWidget {
                   color: colors.backgroundSecondary,
                   borderRadius: BorderRadius.circular(DSRadius.lg),
                 ),
-                child: Icon(icon, color: colors.accent),
+                child: Icon(icon, color: colors.textPrimary, size: 20),
               ),
               const SizedBox(width: DSSpacing.sm),
               Expanded(
@@ -439,20 +748,20 @@ class EmbeddedFortuneComponent extends StatelessWidget {
                     vertical: DSSpacing.xs,
                   ),
                   decoration: BoxDecoration(
-                    color: colors.accent.withValues(alpha: 0.12),
+                    color: colors.backgroundSecondary,
                     borderRadius: BorderRadius.circular(DSRadius.full),
                   ),
                   child: Text(
                     '$score점',
                     style: context.labelMedium.copyWith(
-                      color: colors.accent,
+                      color: colors.textSecondary,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
             ],
           ),
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.sm),
           child,
         ],
       ),
@@ -460,9 +769,11 @@ class EmbeddedFortuneComponent extends StatelessWidget {
   }
 
   Widget _buildSectionTitle(BuildContext context, String title) {
+    final colors = context.colors;
     return Text(
       title,
       style: context.labelLarge.copyWith(
+        color: colors.textSecondary,
         fontWeight: FontWeight.w700,
       ),
     );
@@ -512,7 +823,12 @@ class EmbeddedFortuneComponent extends StatelessWidget {
                 color: colors.backgroundSecondary,
                 borderRadius: BorderRadius.circular(DSRadius.lg),
               ),
-              child: Text(item, style: context.labelMedium),
+              child: Text(
+                item,
+                style: context.labelMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           )
           .toList(growable: false),
@@ -526,7 +842,13 @@ class EmbeddedFortuneComponent extends StatelessWidget {
           .map(
             (line) => Padding(
               padding: const EdgeInsets.only(bottom: DSSpacing.xxs),
-              child: Text('• $line', style: context.bodyMedium),
+              child: Text(
+                '• $line',
+                style: context.bodySmall.copyWith(
+                  fontWeight: FontWeight.w500,
+                  height: 1.55,
+                ),
+              ),
             ),
           )
           .toList(growable: false),
@@ -836,6 +1158,10 @@ class EmbeddedFortuneComponent extends StatelessWidget {
   }
 
   List<String> _displayEntries(dynamic value) {
+    if (value is List) {
+      return _stringList(value);
+    }
+
     final map = _asMap(value);
     if (map == null || map.isEmpty) {
       return const [];
@@ -849,11 +1175,33 @@ class EmbeddedFortuneComponent extends StatelessWidget {
   }
 
   String _displayKey(String key) {
+    const labels = {
+      'color': '행운 색상',
+      'number': '행운 숫자',
+      'direction': '행운 방향',
+      'item': '행운 아이템',
+      'food': '행운 음식',
+      'time': '행운 시간',
+      'lucky number': '행운 숫자',
+      'lucky color': '행운 컬러',
+      'lucky time': '행운 시간',
+    };
     final cleaned = key.replaceAll('_', ' ').replaceAll('-', ' ').trim();
     if (cleaned.isEmpty) {
       return '';
     }
-    return cleaned;
+    return labels[cleaned] ?? cleaned;
+  }
+
+  IconData _iconForFortuneType(String? fortuneType) {
+    switch (fortuneType) {
+      case 'daily-calendar':
+        return Icons.calendar_today_outlined;
+      case 'new-year':
+        return Icons.celebration_outlined;
+      default:
+        return Icons.auto_awesome_rounded;
+    }
   }
 
   Map<String, dynamic>? _asMap(dynamic value) {
@@ -907,5 +1255,93 @@ class EmbeddedFortuneComponent extends StatelessWidget {
       return value.toInt();
     }
     return int.tryParse(value?.toString() ?? '');
+  }
+}
+
+class _EmbeddedExpandableSection extends StatefulWidget {
+  final String title;
+  final Widget child;
+
+  const _EmbeddedExpandableSection({
+    required this.title,
+    required this.child,
+  });
+
+  @override
+  State<_EmbeddedExpandableSection> createState() =>
+      _EmbeddedExpandableSectionState();
+}
+
+class _EmbeddedExpandableSectionState
+    extends State<_EmbeddedExpandableSection> {
+  bool _isExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: colors.backgroundSecondary,
+        borderRadius: BorderRadius.circular(DSRadius.lg),
+        border: Border.all(
+          color: colors.border.withValues(alpha: 0.55),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InkWell(
+            borderRadius: BorderRadius.circular(DSRadius.lg),
+            onTap: () {
+              setState(() {
+                _isExpanded = !_isExpanded;
+              });
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: DSSpacing.sm,
+                vertical: DSSpacing.sm,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.title,
+                      style: context.labelLarge.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    _isExpanded
+                        ? Icons.keyboard_arrow_up_rounded
+                        : Icons.keyboard_arrow_down_rounded,
+                    size: 18,
+                    color: colors.textSecondary,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          AnimatedCrossFade(
+            duration: const Duration(milliseconds: 180),
+            firstChild: const SizedBox.shrink(),
+            secondChild: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                DSSpacing.sm,
+                0,
+                DSSpacing.sm,
+                DSSpacing.sm,
+              ),
+              child: widget.child,
+            ),
+            crossFadeState: _isExpanded
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+          ),
+        ],
+      ),
+    );
   }
 }
