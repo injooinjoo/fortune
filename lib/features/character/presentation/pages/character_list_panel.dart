@@ -16,6 +16,7 @@ import '../utils/chat_catalog_preview.dart';
 import '../utils/profile_avatar_tap_handler.dart';
 import '../providers/character_chat_provider.dart';
 import '../providers/character_provider.dart';
+import '../providers/sorted_characters_provider.dart';
 import '../widgets/wave_typing_indicator.dart';
 
 /// 카테고리 영문 → 한글 라벨 변환
@@ -113,10 +114,14 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
         : null;
     final CharacterListTab currentTab =
         previewTab ?? ref.watch(characterListTabProvider);
-    final characters = currentTab == CharacterListTab.story
-        ? ref.watch(storyCharactersProvider)
-        : ref.watch(fortuneCharactersProvider);
     final isCatalogPreview = widget.catalogPreview != null;
+    final characters = isCatalogPreview
+        ? (currentTab == CharacterListTab.story
+            ? ref.watch(storyCharactersProvider)
+            : ref.watch(fortuneCharactersProvider))
+        : (currentTab == CharacterListTab.story
+            ? ref.watch(sortedStoryCharactersProvider)
+            : ref.watch(sortedFortuneCharactersProvider));
 
     return GestureDetector(
       onHorizontalDragEnd: widget.isOverlay
