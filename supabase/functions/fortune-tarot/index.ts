@@ -416,7 +416,12 @@ serve(async (req: Request) => {
     console.log('📥 받은 요청 body 키:', Object.keys(body))
 
     const tarotSelection = body.answers?.tarotSelection || body.tarotSelection || {}
-    const userId = body.userId
+    const userId =
+      body.userId ||
+      body.user_id ||
+      body.answers?.userId ||
+      body.answers?.user_id ||
+      'anonymous'
     const purpose = body.purpose || body.answers?.purpose
     const question = normalizeQuestion(
       body.question || tarotSelection.question || body.questionText || body.answers?.questionText,
@@ -432,9 +437,9 @@ serve(async (req: Request) => {
 
     console.log(`🃏 추출된 카드 인덱스: [${cardIndices.join(', ')}] (${cardIndices.length}장)`)
 
-    if (!userId || selectedCards.length === 0) {
+    if (selectedCards.length === 0) {
       return new Response(
-        JSON.stringify({ success: false, error: '필수 필드 누락: userId, selectedCards' }),
+        JSON.stringify({ success: false, error: '필수 필드 누락: selectedCards' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }

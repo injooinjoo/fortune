@@ -42,6 +42,7 @@ import '../../../fortune/presentation/providers/saju_provider.dart';
 import 'active_chat_provider.dart';
 import 'character_provider.dart';
 import 'character_fortune_adapter.dart';
+import '../utils/character_chat_fortune_payload_utils.dart';
 import '../utils/character_guest_name_guard.dart';
 import '../utils/chat_survey_profile_utils.dart';
 import '../utils/character_tone_policy.dart';
@@ -3457,19 +3458,22 @@ $enrichedContext
     final normalizedAnswers =
         await _normalizeSurveyAnswersForApi(apiFortuneType, answers);
 
-    // 사용자 프로필 정보 추가
-    final params = <String, dynamic>{
-      ...normalizedAnswers,
-      if (userProfile != null) ...userProfile,
-    };
+    // 유저 ID 가져오기 (비로그인은 guest_<uuid> 사용)
+    final userId = await _resolveFortuneUserId();
+    final params = buildCharacterChatFortuneParams(
+      normalizedAnswers: normalizedAnswers,
+      userProfile: userProfile,
+    );
+    final apiParams = buildCharacterChatFortuneApiParams(
+      normalizedAnswers: normalizedAnswers,
+      userProfile: userProfile,
+      userId: userId,
+    );
 
     Logger.info('[CharacterChat] Calling unified fortune route', {
       'fortuneType': apiFortuneType,
-      'hasParams': params.isNotEmpty,
+      'hasParams': apiParams.isNotEmpty,
     });
-
-    // 유저 ID 가져오기 (비로그인은 guest_<uuid> 사용)
-    final userId = await _resolveFortuneUserId();
 
     final conditions = CharacterChatFortuneConditions(
       fortuneType: apiFortuneType,
@@ -3480,7 +3484,7 @@ $enrichedContext
     final result = await unifiedService.getFortune(
       fortuneType: apiFortuneType,
       dataSource: FortuneDataSource.api,
-      inputConditions: params,
+      inputConditions: apiParams,
       conditions: conditions,
     );
 
