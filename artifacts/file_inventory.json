@@ -20189,6 +20189,7 @@
       "path": "lib/core/cache/cache_service.dart",
       "referenced_by": [
         "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
+        "lib/main.dart",
         "lib/screens/profile/profile_screen.dart",
         "lib/services/account_deletion_service.dart"
       ],
@@ -23312,7 +23313,9 @@
       "path": "lib/features/character/data/services/character_affinity_service.dart",
       "referenced_by": [
         "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "lib/main.dart"
+        "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
+        "lib/main.dart",
+        "lib/screens/profile/profile_screen.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23328,7 +23331,9 @@
       "referenced_by": [
         "lib/features/character/data/services/character_chat_service.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "lib/main.dart"
+        "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
+        "lib/main.dart",
+        "lib/screens/profile/profile_screen.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
