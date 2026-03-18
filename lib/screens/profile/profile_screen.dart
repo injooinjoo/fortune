@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../constants/fortune_constants.dart';
 import '../../core/cache/cache_service.dart';
 import '../../core/design_system/design_system.dart';
+import '../../features/character/data/services/character_affinity_service.dart';
+import '../../features/character/data/services/character_chat_local_service.dart';
 import '../../features/fortune/presentation/providers/saju_provider.dart';
 import '../../models/user_profile.dart';
 import '../../presentation/providers/providers.dart';
@@ -112,7 +114,7 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: DSSpacing.xl),
-            DSSectionHeader(title: '사주', uppercase: false),
+            const DSSectionHeader(title: '사주', uppercase: false),
             DSCard.elevated(
               padding: const EdgeInsets.all(DSSpacing.lg),
               onTap: () => context.push('/profile/saju-summary'),
@@ -122,14 +124,14 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: DSSpacing.xl),
-            DSSectionHeader(title: '스토리 캐릭터 관계도', uppercase: false),
+            const DSSectionHeader(title: '스토리 캐릭터 관계도', uppercase: false),
             DSCard.elevated(
               padding: const EdgeInsets.all(DSSpacing.lg),
               onTap: () => context.push('/profile/relationships'),
               child: _RelationshipsSummaryCard(stats: relationshipStats),
             ),
             const SizedBox(height: DSSpacing.xl),
-            DSSectionHeader(title: '설정', uppercase: false),
+            const DSSectionHeader(title: '설정', uppercase: false),
             DSCard.outlined(
               padding: const EdgeInsets.all(DSSpacing.lg),
               child: Column(
@@ -181,7 +183,7 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: DSSpacing.xl),
-            DSSectionHeader(title: '계정 연결', uppercase: false),
+            const DSSectionHeader(title: '계정 연결', uppercase: false),
             DSCard.outlined(
               padding: const EdgeInsets.all(DSSpacing.md),
               child: SocialAccountsSection(
@@ -202,7 +204,7 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: DSSpacing.xl),
-            DSSectionHeader(title: '서비스 및 약관', uppercase: false),
+            const DSSectionHeader(title: '서비스 및 약관', uppercase: false),
             DSCard.outlined(
               padding: EdgeInsets.zero,
               child: Column(
@@ -230,7 +232,7 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: DSSpacing.xl),
-            DSSectionHeader(title: '계정', uppercase: false),
+            const DSSectionHeader(title: '계정', uppercase: false),
             DSCard.outlined(
               padding: EdgeInsets.zero,
               child: Column(
@@ -279,7 +281,9 @@ class ProfileScreen extends ConsumerWidget {
     await storageService.clearActiveProfileOverride();
     await storageService.clearGuestMode();
     await storageService.clearGuestId();
-    CacheService().clearAllCache();
+    await CacheService().clearAllCache();
+    await CharacterChatLocalService().clearAllConversations();
+    await CharacterAffinityService().clearAllAffinities();
 
     if (!context.mounted) {
       return;
@@ -442,14 +446,14 @@ class _SajuSummaryPreview extends StatelessWidget {
     }
 
     if (profile?.birthDate == null) {
-      return _SummaryBlock(
+      return const _SummaryBlock(
         title: '사주를 아직 계산할 수 없어요',
         description: '생년월일과 태어난 시간을 입력하면 사주 요약을 볼 수 있어요.',
       );
     }
 
     if (state.sajuData == null) {
-      return _SummaryBlock(
+      return const _SummaryBlock(
         title: '사주 정보 준비됨',
         description: '등록된 생년월일을 바탕으로 사주 요약을 생성할 수 있어요.',
       );

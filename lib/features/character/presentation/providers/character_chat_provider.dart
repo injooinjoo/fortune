@@ -1437,7 +1437,12 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   }
 
   /// 사용자 이미지 메시지 전송 (OOTD, 관상 등)
-  void sendImageMessage(String imagePath, {String? caption}) {
+  Future<void> sendImageMessage(String imagePath, {String? caption}) async {
+    final canSend = await _consumeCharacterChatTokensIfNeeded();
+    if (!canSend) {
+      return;
+    }
+
     _isUserDrafting = false;
     _cancelReadIdleIcebreaker();
     final message =
@@ -1455,6 +1460,41 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
     // 이미지 분석 요청 (OOTD 등)
     _requestImageAnalysis(imagePath, caption);
+  }
+
+  bool _hasAuthenticatedCharacterSession() {
+    final auth = Supabase.instance.client.auth;
+    return auth.currentSession?.user != null || auth.currentUser != null;
+  }
+
+  Future<bool> _consumeCharacterChatTokensIfNeeded() async {
+    if (!_hasAuthenticatedCharacterSession()) {
+      state = state.copyWith(error: 'UNAUTHORIZED');
+      return false;
+    }
+
+    if (_ref.read(hasUnlimitedTokensProvider)) {
+      return true;
+    }
+
+    final tokenCost = SoulRates.getTokenCost('character-chat');
+    final tokenNotifier = _ref.read(tokenProvider.notifier);
+    final consumed = await tokenNotifier.consumeTokens(
+      fortuneType: 'character-chat',
+      amount: tokenCost,
+    );
+
+    if (!consumed) {
+      final tokenError = _ref.read(tokenProvider).error;
+      state = state.copyWith(
+        error: tokenError == 'UNAUTHORIZED'
+            ? 'UNAUTHORIZED'
+            : 'INSUFFICIENT_TOKENS',
+      );
+      return false;
+    }
+
+    return true;
   }
 
   /// 이미지 분석 요청 (캐릭터가 사진에 대해 응답)
@@ -2346,17 +2386,18 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     final normalized = text.trim();
     if (normalized.isEmpty) return Future.value();
 
-    // 🪙 토큰 소비 체크 (즉시 실행 - UI 차단 전에 확인)
-    final hasUnlimitedAccess = _ref.read(hasUnlimitedTokensProvider);
-
-    // 유저 메시지를 즉시 UI에 반영 (큐 대기 없이)
-    if (!userMessageAlreadyAdded) {
-      addUserMessage(normalized);
-    }
-
     _sendQueue = _sendQueue.then((_) async {
       try {
-        await _sendMessageInternal(normalized, hasUnlimitedAccess);
+        final canSend = await _consumeCharacterChatTokensIfNeeded();
+        if (!canSend) {
+          return;
+        }
+
+        if (!userMessageAlreadyAdded) {
+          addUserMessage(normalized);
+        }
+
+        await _sendMessageInternal(normalized);
       } catch (e) {
         Logger.error('[CharacterChat] send queue failed', e);
       }
@@ -2364,24 +2405,8 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     return _sendQueue;
   }
 
-  Future<void> _sendMessageInternal(
-      String text, bool hasUnlimitedAccess) async {
+  Future<void> _sendMessageInternal(String text) async {
     if (text.trim().isEmpty) return;
-
-    // 🪙 토큰 소비 체크 (4토큰/메시지)
-    if (!hasUnlimitedAccess) {
-      final tokenCost = SoulRates.getTokenCost('character-chat');
-      final tokenNotifier = _ref.read(tokenProvider.notifier);
-      final consumed = await tokenNotifier.consumeTokens(
-        fortuneType: 'character-chat',
-        amount: tokenCost,
-      );
-
-      if (!consumed) {
-        state = state.copyWith(error: 'INSUFFICIENT_TOKENS');
-        return;
-      }
-    }
 
     // 1단계: 유저 메시지는 이미 sendMessage()에서 추가됨
 
@@ -2496,20 +2521,9 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     bool userMessageAlreadyAdded = false,
     bool skipIntroMessage = false,
   }) async {
-    // 🪙 토큰 소비 체크 (4토큰/메시지)
-    final hasUnlimitedAccess = _ref.read(hasUnlimitedTokensProvider);
-    if (!hasUnlimitedAccess) {
-      final tokenCost = SoulRates.getTokenCost('character-chat');
-      final tokenNotifier = _ref.read(tokenProvider.notifier);
-      final consumed = await tokenNotifier.consumeTokens(
-        fortuneType: 'character-chat',
-        amount: tokenCost,
-      );
-
-      if (!consumed) {
-        state = state.copyWith(error: 'INSUFFICIENT_TOKENS');
-        return;
-      }
+    final canSend = await _consumeCharacterChatTokensIfNeeded();
+    if (!canSend) {
+      return;
     }
 
     // 1단계: 유저 메시지 추가
@@ -2717,20 +2731,9 @@ $enrichedContext
     bool userMessageAlreadyAdded = false,
     bool skipIntroMessage = false,
   }) async {
-    // 토큰 소비 체크 (4토큰/메시지)
-    final hasUnlimitedAccess = _ref.read(hasUnlimitedTokensProvider);
-    if (!hasUnlimitedAccess) {
-      final tokenCost = SoulRates.getTokenCost('character-chat');
-      final tokenNotifier = _ref.read(tokenProvider.notifier);
-      final consumed = await tokenNotifier.consumeTokens(
-        fortuneType: 'character-chat',
-        amount: tokenCost,
-      );
-
-      if (!consumed) {
-        state = state.copyWith(error: 'INSUFFICIENT_TOKENS');
-        return;
-      }
+    final canSend = await _consumeCharacterChatTokensIfNeeded();
+    if (!canSend) {
+      return;
     }
 
     // 1단계: 유저 메시지 추가
@@ -4599,20 +4602,9 @@ $enrichedContext
 
   /// 선택지 선택 처리 - 인스타그램 DM 스타일 딜레이 적용
   Future<void> handleChoiceSelection(CharacterChoice choice) async {
-    // 🪙 토큰 소비 체크 (4토큰/메시지)
-    final hasUnlimitedAccess = _ref.read(hasUnlimitedTokensProvider);
-    if (!hasUnlimitedAccess) {
-      final tokenCost = SoulRates.getTokenCost('character-chat');
-      final tokenNotifier = _ref.read(tokenProvider.notifier);
-      final consumed = await tokenNotifier.consumeTokens(
-        fortuneType: 'character-chat',
-        amount: tokenCost,
-      );
-
-      if (!consumed) {
-        state = state.copyWith(error: 'INSUFFICIENT_TOKENS');
-        return;
-      }
+    final canSend = await _consumeCharacterChatTokensIfNeeded();
+    if (!canSend) {
+      return;
     }
 
     // 선택지 메시지 제거 (마지막 메시지가 선택지인 경우)

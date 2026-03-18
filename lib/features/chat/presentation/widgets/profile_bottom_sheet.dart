@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/cache/cache_service.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../features/character/data/services/character_affinity_service.dart';
+import '../../../../features/character/data/services/character_chat_local_service.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../../../../services/storage_service.dart';
 
@@ -17,6 +19,8 @@ class ProfileBottomSheet extends ConsumerStatefulWidget {
 
 class _ProfileBottomSheetState extends ConsumerState<ProfileBottomSheet> {
   final _storageService = StorageService();
+  final _characterChatLocalService = CharacterChatLocalService();
+  final _characterAffinityService = CharacterAffinityService();
 
   Future<void> _handleLogout() async {
     await Supabase.instance.client.auth.signOut();
@@ -24,7 +28,9 @@ class _ProfileBottomSheetState extends ConsumerState<ProfileBottomSheet> {
     await _storageService.clearActiveProfileOverride();
     await _storageService.clearGuestMode();
     await _storageService.clearGuestId();
-    CacheService().clearAllCache();
+    await CacheService().clearAllCache();
+    await _characterChatLocalService.clearAllConversations();
+    await _characterAffinityService.clearAllAffinities();
 
     if (!mounted) return;
     context.go('/chat');

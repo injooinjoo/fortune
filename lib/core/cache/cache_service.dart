@@ -10,12 +10,15 @@ class CacheService {
 
   late Box<CachedFortune> _fortuneBox;
   late Box _settingsBox;
+  bool _initialized = false;
 
   static final CacheService _instance = CacheService._internal();
   factory CacheService() => _instance;
   CacheService._internal();
 
   Future<void> initialize() async {
+    if (_initialized) return;
+
     try {
       await Hive.initFlutter();
 
@@ -25,8 +28,13 @@ class CacheService {
       }
 
       // Open boxes
-      _fortuneBox = await Hive.openBox<CachedFortune>(_fortuneBoxName);
-      _settingsBox = await Hive.openBox(_settingsBoxName);
+      _fortuneBox = Hive.isBoxOpen(_fortuneBoxName)
+          ? Hive.box<CachedFortune>(_fortuneBoxName)
+          : await Hive.openBox<CachedFortune>(_fortuneBoxName);
+      _settingsBox = Hive.isBoxOpen(_settingsBoxName)
+          ? Hive.box(_settingsBoxName)
+          : await Hive.openBox(_settingsBoxName);
+      _initialized = true;
 
       // Clean expired cache on startup
       await _cleanExpiredCache();
@@ -35,6 +43,18 @@ class CacheService {
     } catch (e) {
       Logger.error('Failed to initialize cache service', e);
       rethrow;
+    }
+  }
+
+  Future<bool> _ensureInitialized() async {
+    if (_initialized) return true;
+
+    try {
+      await initialize();
+      return _initialized;
+    } catch (e) {
+      Logger.error('Failed to ensure cache service initialization', e);
+      return false;
     }
   }
 
@@ -224,6 +244,9 @@ class CacheService {
 
   Future<void> clearAllCache() async {
     try {
+      if (!await _ensureInitialized()) {
+        return;
+      }
       await _fortuneBox.clear();
       await _settingsBox.clear();
       Logger.info('Cleared all cache');

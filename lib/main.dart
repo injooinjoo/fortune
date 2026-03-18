@@ -36,6 +36,7 @@ import 'services/deep_link_service.dart';
 import 'presentation/providers/app_providers.dart';
 import 'features/character/data/services/character_chat_local_service.dart';
 import 'features/character/data/services/character_affinity_service.dart';
+import 'core/cache/cache_service.dart' as core_cache;
 
 void main() async {
   debugPrint('🚀 [STARTUP] App main() started');
@@ -82,6 +83,10 @@ void main() async {
     debugPrint('🚀 [STARTUP] Initializing Character Affinity Service...');
     await CharacterAffinityService.initialize();
     debugPrint('🚀 [STARTUP] Character Affinity Service initialized');
+
+    debugPrint('🚀 [STARTUP] Initializing Core Cache Service...');
+    await core_cache.CacheService().initialize();
+    debugPrint('🚀 [STARTUP] Core Cache Service initialized');
   } catch (e) {
     debugPrint('❌ [STARTUP] Hive initialization failed: $e');
     Logger.error('Hive initialization failed', e);
