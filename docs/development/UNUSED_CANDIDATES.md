@@ -40,12 +40,12 @@ Files that are only used by tests, tooling, or documentation and may be removabl
 
 | Path | Status | Refs | Notes |
 | --- | --- | --- | --- |
-| `assets/animations/.gitkeep` | `tooling_only` | 4 | pubspec_declared:assets/animations |
-| `assets/decorations/.gitkeep` | `tooling_only` | 4 | pubspec_declared:assets/decorations |
+| `assets/animations/.gitkeep` | `tooling_only` | 3 | pubspec_declared:assets/animations |
+| `assets/decorations/.gitkeep` | `tooling_only` | 3 | pubspec_declared:assets/decorations |
 | `assets/fonts/NotoSansKR/NotoSansKR-VariableFont_wght.ttf` | `tooling_only` | 1 | pubspec_declared:assets/fonts |
 | `assets/fonts/ZEN-SERIF-Regular.otf` | `tooling_only` | 1 | pubspec_declared:assets/fonts |
-| `assets/icons/traditional/.gitkeep` | `tooling_only` | 4 | pubspec_declared:assets/icons/traditional |
-| `assets/images/character/lunch/.gitkeep` | `tooling_only` | 4 | pubspec_declared:assets/images/character/lunch |
+| `assets/icons/traditional/.gitkeep` | `tooling_only` | 3 | pubspec_declared:assets/icons/traditional |
+| `assets/images/character/lunch/.gitkeep` | `tooling_only` | 3 | pubspec_declared:assets/images/character/lunch |
 | `assets/images/chat/backgrounds/bg_daily.webp` | `test_only` | 1 | pubspec_declared:assets/images/chat/backgrounds |
 | `docs/APP_ARCHITECTURE.md` | `doc_only` | 3 | - |
 | `docs/BUSINESS_OVERVIEW.md` | `doc_only` | 0 | no_inbound_refs |

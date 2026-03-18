@@ -10,7 +10,6 @@
       ],
       "path": "assets/animations/.gitkeep",
       "referenced_by": [
-        ".github/workflows/ci.yml",
         ".github/workflows/e2e-tests.yml",
         ".github/workflows/flutter-ci.yml",
         ".github/workflows/qa-monitoring.yml"
@@ -29,7 +28,6 @@
       ],
       "path": "assets/decorations/.gitkeep",
       "referenced_by": [
-        ".github/workflows/ci.yml",
         ".github/workflows/e2e-tests.yml",
         ".github/workflows/flutter-ci.yml",
         ".github/workflows/qa-monitoring.yml"
@@ -621,7 +619,6 @@
       ],
       "path": "assets/icons/traditional/.gitkeep",
       "referenced_by": [
-        ".github/workflows/ci.yml",
         ".github/workflows/e2e-tests.yml",
         ".github/workflows/flutter-ci.yml",
         ".github/workflows/qa-monitoring.yml"
@@ -4388,7 +4385,6 @@
       ],
       "path": "assets/images/character/lunch/.gitkeep",
       "referenced_by": [
-        ".github/workflows/ci.yml",
         ".github/workflows/e2e-tests.yml",
         ".github/workflows/flutter-ci.yml",
         ".github/workflows/qa-monitoring.yml"
@@ -20060,7 +20056,6 @@
       "notes": [],
       "path": "integration_test/app_test.dart",
       "referenced_by": [
-        ".github/workflows/flutter-ci.yml",
         "docs/testing/test-coverage-map.md",
         "integration_test/app_test.dart"
       ],
