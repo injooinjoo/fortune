@@ -26,6 +26,21 @@ Fortune 앱은 3단계 테스트 전략을 사용합니다:
 ./scripts/run_all_tests.sh --coverage   # 커버리지
 ```
 
+## 자동 테스트 (GitHub Actions)
+
+- `Flutter CI/CD`
+  - 대상: `main/master/develop` 대상 PR, 해당 브랜치 push, 수동 실행
+  - 범위: `dart format --set-exit-if-changed .`, `flutter analyze --no-fatal-infos --no-fatal-warnings`, `flutter test --coverage`
+- `E2E Tests`
+  - 대상: `main/master/develop` 대상 PR, 해당 브랜치 push, 수동 실행
+  - 기본 범위: Playwright smoke 게이트(`npm run test:smoke:ci`)
+  - 수동 확장: `workflow_dispatch`에서 `all`, `comprehensive` 선택 가능
+- `Repository Guards`
+  - 대상: `main/master/develop` 대상 PR, 해당 브랜치 push
+  - 범위: source inventory drift, Figma sync drift
+
+로컬 명령은 참고용이며 자동 게이트의 source of truth는 GitHub Actions workflow 설정입니다.
+
 ## 테스트 구조
 
 ```
@@ -49,3 +64,4 @@ integration_test/
 - Unit Test: Provider 상태, Service 로직 테스트
 - Widget Test: UI 컴포넌트 렌더링 및 인터랙션 테스트
 - Integration Test: 실제 디바이스에서 전체 플로우 테스트
+- Playwright Smoke: 인증 우회 후 핵심 채팅 표면 진입과 세션 유지 검증

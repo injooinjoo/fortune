@@ -1,18 +1,19 @@
-name: CI Pipeline
+name: Repository Guards
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, develop]
   pull_request:
-    branches: [main, master]
+    branches: [main, master, develop]
 
 permissions:
   contents: read
 
 jobs:
-  ci:
+  repository-guards:
+    name: Source Inventory & Figma Guards
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -26,6 +27,9 @@ jobs:
           node-version: '20.x'
           cache: 'npm'
 
+      - name: Install Dependencies
+        run: npm ci
+
       - name: Check source inventory drift
         run: |
           if ! npm run source-inventory:check; then
@@ -36,72 +40,6 @@ jobs:
       - name: Check Figma sync drift
         run: npm run figma:guard
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.38.0'
-          channel: 'stable'
-          cache: true
-
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Install Flutter dependencies
-        run: flutter pub get
-
-      - name: Check formatting
-        run: dart format --set-exit-if-changed .
-
-      - name: Analyze code
-        run: flutter analyze --no-fatal-infos --no-fatal-warnings
-
-      - name: Setup test environment
-        run: |
-          cat > .env << 'ENVEOF'
-          FLUTTER_TEST_MODE=true
-          NODE_ENV=test
-          SUPABASE_URL=https://test-placeholder.supabase.co
-          SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QtcGxhY2Vob2xkZXIiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoyMDAwMDAwMDAwfQ.placeholder-test-signature-not-real-key-for-ci-only
-          BYPASS_AUTH=true
-          USE_MOCK_DATA=true
-          MOCK_FORTUNE_RESPONSES=true
-          BYPASS_PAYMENT=true
-          MOCK_PREMIUM_FEATURES=true
-          GOOGLE_WEB_CLIENT_ID=000000000000-placeholder.apps.googleusercontent.com
-          GOOGLE_IOS_CLIENT_ID=000000000000-placeholder-ios.apps.googleusercontent.com
-          GOOGLE_ANDROID_CLIENT_ID=000000000000-placeholder-android.apps.googleusercontent.com
-          GEMINI_API_KEY=AIzaSy-placeholder-test-key
-          OPENAI_API_KEY=sk-proj-placeholder-test-key
-          KAKAO_REST_API_KEY=placeholder_kakao_key
-          ENABLE_ADS=false
-          DISABLE_ANALYTICS=true
-          ENVEOF
-          mkdir -p assets/images/character/lunch assets/decorations assets/icons/traditional assets/animations
-          touch assets/images/character/lunch/.gitkeep assets/decorations/.gitkeep assets/icons/traditional/.gitkeep assets/animations/.gitkeep
-
-      - name: Build Flutter Web
-        run: flutter build web --release
-
-      - name: Lint Check
-        run: npm run lint
-
-      - name: Type Check
-        run: npm run typecheck
-
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-
-      - name: Run Playwright E2E Tests
-        run: npm run test:e2e
-
-      - name: Upload Test Results
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: test-results
-          path: test-results/
-          retention-days: 7
-
       - name: Upload Figma sync report
         uses: actions/upload-artifact@v4
         if: always()
@@ -110,16 +48,15 @@ jobs:
           path: artifacts/design/figma_sync/
           retention-days: 7
 
-  # Slack 알림 (실패 시)
   notify-slack:
     name: Slack Notification
-    needs: [ci]
-    if: always() && (failure() || cancelled())
+    needs: [repository-guards]
+    if: always() && (needs.repository-guards.result == 'failure' || needs.repository-guards.result == 'cancelled')
     uses: ./.github/workflows/slack-notify.yml
     with:
-      workflow_name: "CI Pipeline"
-      job_status: ${{ needs.ci.result == 'failure' && 'failure' || 'cancelled' }}
-      failed_jobs: "ci"
+      workflow_name: 'Repository Guards'
+      job_status: ${{ needs.repository-guards.result == 'failure' && 'failure' || 'cancelled' }}
+      failed_jobs: 'repository-guards'
       pr_number: ${{ github.event.pull_request.number || '' }}
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -105,7 +105,15 @@ flutter build appbundle --dart-define-from-file=.env.production --release
 ```bash
 flutter analyze
 flutter test
+npm run test:smoke
 ```
+
+## 자동 테스트
+
+- GitHub Actions `Flutter CI/CD`가 `main/master/develop` 대상 PR과 push에서 `dart format --set-exit-if-changed .`, `flutter analyze --no-fatal-infos --no-fatal-warnings`, `flutter test --coverage`를 자동 실행합니다.
+- GitHub Actions `E2E Tests`가 같은 이벤트에서 Playwright smoke 게이트(`npm run test:smoke:ci`)를 자동 실행합니다.
+- 무거운 Playwright 시나리오는 `E2E Tests` workflow의 `workflow_dispatch`에서 `all` 또는 `comprehensive`로 수동 실행합니다.
+- `Repository Guards` workflow는 source inventory drift와 Figma sync drift를 별도로 검사합니다.
 
 ## 문서 가이드
 

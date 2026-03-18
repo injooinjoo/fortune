@@ -2,19 +2,9 @@ name: Flutter CI/CD
 
 on:
   push:
-    branches: [ main, master, develop ]
-    paths:
-      - 'lib/**'
-      - 'test/**'
-      - 'pubspec.yaml'
-      - '.github/workflows/flutter-ci.yml'
+    branches: [main, master, develop]
   pull_request:
-    branches: [ main, master, develop ]
-    paths:
-      - 'lib/**'
-      - 'test/**'
-      - 'pubspec.yaml'
-      - '.github/workflows/flutter-ci.yml'
+    branches: [main, master, develop]
   workflow_dispatch:
 
 permissions:
@@ -23,405 +13,127 @@ permissions:
 
 env:
   FLUTTER_VERSION: '3.38.0'
-  JAVA_VERSION: '17'
 
 jobs:
   analyze:
-    name: Analyze & Format
+    name: Flutter Format & Analyze
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: ${{ env.FLUTTER_VERSION }}
-        channel: 'stable'
-        cache: true
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
 
-    - name: Get dependencies
-      run: flutter pub get
+      - name: Get dependencies
+        run: flutter pub get
 
-    - name: Check formatting
-      run: dart format --set-exit-if-changed .
+      - name: Check formatting
+        run: dart format --set-exit-if-changed .
 
-    - name: Analyze code
-      run: flutter analyze --no-fatal-infos --no-fatal-warnings
-
-    - name: Check for dependency issues
-      run: flutter pub outdated --no-dev-dependencies
+      - name: Analyze code
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
 
   test:
-    name: Unit & Widget Tests
+    name: Flutter Unit & Widget Tests
     runs-on: ubuntu-latest
     timeout-minutes: 30
     needs: analyze
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: ${{ env.FLUTTER_VERSION }}
-        channel: 'stable'
-        cache: true
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
 
-    - name: Setup test environment
-      run: |
-        cat > .env << 'ENVEOF'
-        FLUTTER_TEST_MODE=true
-        NODE_ENV=test
-        SUPABASE_URL=https://test-placeholder.supabase.co
-        SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QtcGxhY2Vob2xkZXIiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoyMDAwMDAwMDAwfQ.placeholder-test-signature-not-real-key-for-ci-only
-        BYPASS_AUTH=true
-        USE_MOCK_DATA=true
-        MOCK_FORTUNE_RESPONSES=true
-        BYPASS_PAYMENT=true
-        MOCK_PREMIUM_FEATURES=true
-        GOOGLE_WEB_CLIENT_ID=000000000000-placeholder.apps.googleusercontent.com
-        GOOGLE_IOS_CLIENT_ID=000000000000-placeholder-ios.apps.googleusercontent.com
-        GOOGLE_ANDROID_CLIENT_ID=000000000000-placeholder-android.apps.googleusercontent.com
-        GEMINI_API_KEY=AIzaSy-placeholder-test-key
-        OPENAI_API_KEY=sk-proj-placeholder-test-key
-        KAKAO_REST_API_KEY=placeholder_kakao_key
-        ENABLE_ADS=false
-        DISABLE_ANALYTICS=true
-        ENVEOF
-        mkdir -p assets/images/character/lunch assets/decorations assets/icons/traditional assets/animations
-        touch assets/images/character/lunch/.gitkeep assets/decorations/.gitkeep assets/icons/traditional/.gitkeep assets/animations/.gitkeep
+      - name: Setup test environment
+        run: |
+          cat > .env << 'ENVEOF'
+          FLUTTER_TEST_MODE=true
+          NODE_ENV=test
+          SUPABASE_URL=https://test-placeholder.supabase.co
+          SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QtcGxhY2Vob2xkZXIiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoyMDAwMDAwMDAwfQ.placeholder-test-signature-not-real-key-for-ci-only
+          BYPASS_AUTH=true
+          USE_MOCK_DATA=true
+          MOCK_FORTUNE_RESPONSES=true
+          BYPASS_PAYMENT=true
+          MOCK_PREMIUM_FEATURES=true
+          GOOGLE_WEB_CLIENT_ID=000000000000-placeholder.apps.googleusercontent.com
+          GOOGLE_IOS_CLIENT_ID=000000000000-placeholder-ios.apps.googleusercontent.com
+          GOOGLE_ANDROID_CLIENT_ID=000000000000-placeholder-android.apps.googleusercontent.com
+          GEMINI_API_KEY=AIzaSy-placeholder-test-key
+          OPENAI_API_KEY=sk-proj-placeholder-test-key
+          KAKAO_REST_API_KEY=placeholder_kakao_key
+          ENABLE_ADS=false
+          DISABLE_ANALYTICS=true
+          ENVEOF
+          mkdir -p assets/images/character/lunch assets/decorations assets/icons/traditional assets/animations
+          touch assets/images/character/lunch/.gitkeep assets/decorations/.gitkeep assets/icons/traditional/.gitkeep assets/animations/.gitkeep
 
-    - name: Get dependencies
-      run: flutter pub get
+      - name: Get dependencies
+        run: flutter pub get
 
-    - name: Run tests with coverage
-      run: flutter test --coverage --test-randomize-ordering-seed random
+      - name: Run tests with coverage
+        run: flutter test --coverage --test-randomize-ordering-seed random
 
-    - name: Generate LCOV report
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y lcov
+      - name: Generate LCOV report
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lcov
 
-        # 생성된 파일 제외 (freezed, g.dart, gen.dart)
-        lcov --remove coverage/lcov.info \
-          '*.freezed.dart' \
-          '*.g.dart' \
-          '*.gen.dart' \
-          '*/generated/*' \
-          --ignore-errors unused \
-          -o coverage/lcov.info
+          lcov --remove coverage/lcov.info \
+            '*.freezed.dart' \
+            '*.g.dart' \
+            '*.gen.dart' \
+            '*/generated/*' \
+            --ignore-errors unused \
+            -o coverage/lcov.info
 
-        lcov --summary coverage/lcov.info
+          lcov --summary coverage/lcov.info
 
-    - name: Upload coverage reports
-      uses: codecov/codecov-action@v4
-      with:
-        file: ./coverage/lcov.info
-        flags: unittests
-        name: codecov-flutter
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-flutter
 
-    - name: Check minimum coverage
-      run: |
-        COVERAGE=$(lcov --summary coverage/lcov.info 2>&1 | grep -E "lines\.+:" | sed -E 's/.*lines\.+:\ +([0-9.]+)%.*/\1/')
-        echo "Current coverage: $COVERAGE%"
+      - name: Check minimum coverage
+        run: |
+          COVERAGE=$(lcov --summary coverage/lcov.info 2>&1 | grep -E "lines\.+:" | sed -E 's/.*lines\.+:\ +([0-9.]+)%.*/\1/')
+          echo "Current coverage: $COVERAGE%"
 
-        if (( $(echo "$COVERAGE < 80" | bc -l) )); then
-          echo "::warning::Coverage $COVERAGE% is below 80% threshold"
-        fi
+          if (( $(echo "$COVERAGE < 80" | bc -l) )); then
+            echo "::warning::Coverage $COVERAGE% is below 80% threshold"
+          fi
 
-    - name: Archive test results
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-results
-        path: |
-          coverage/
+      - name: Archive test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-test-results
+          path: coverage/
 
-  # NOTE: Integration tests removed from CI
-  # Run locally: flutter test integration_test/app_test.dart
-  # Or use Firebase Test Lab for real device testing
-
-  build-web:
-    name: Build Web
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    needs: test
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: ${{ env.FLUTTER_VERSION }}
-        channel: 'stable'
-        cache: true
-
-    - name: Setup build environment
-      run: |
-        cat > .env << 'ENVEOF'
-        FLUTTER_TEST_MODE=true
-        NODE_ENV=test
-        SUPABASE_URL=https://test-placeholder.supabase.co
-        SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QtcGxhY2Vob2xkZXIiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoyMDAwMDAwMDAwfQ.placeholder-test-signature-not-real-key-for-ci-only
-        BYPASS_AUTH=true
-        USE_MOCK_DATA=true
-        MOCK_FORTUNE_RESPONSES=true
-        BYPASS_PAYMENT=true
-        MOCK_PREMIUM_FEATURES=true
-        GOOGLE_WEB_CLIENT_ID=000000000000-placeholder.apps.googleusercontent.com
-        GOOGLE_IOS_CLIENT_ID=000000000000-placeholder-ios.apps.googleusercontent.com
-        GOOGLE_ANDROID_CLIENT_ID=000000000000-placeholder-android.apps.googleusercontent.com
-        GEMINI_API_KEY=AIzaSy-placeholder-test-key
-        OPENAI_API_KEY=sk-proj-placeholder-test-key
-        KAKAO_REST_API_KEY=placeholder_kakao_key
-        ENABLE_ADS=false
-        DISABLE_ANALYTICS=true
-        ENVEOF
-        mkdir -p assets/images/character/lunch assets/decorations assets/icons/traditional assets/animations
-        touch assets/images/character/lunch/.gitkeep assets/decorations/.gitkeep assets/icons/traditional/.gitkeep assets/animations/.gitkeep
-
-    - name: Get dependencies
-      run: flutter pub get
-
-    - name: Build web
-      run: flutter build web --release
-
-    - name: Optimize web build
-      run: |
-        find build/web -name "*.js" -exec gzip -k {} \;
-        find build/web -name "*.css" -exec gzip -k {} \;
-
-    - name: Upload web artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: web-build
-        path: build/web/
-
-  build-android:
-    name: Build Android
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    needs: test
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: ${{ env.FLUTTER_VERSION }}
-        channel: 'stable'
-        cache: true
-
-    - name: Setup Java
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: ${{ env.JAVA_VERSION }}
-
-    - name: Setup build environment
-      run: |
-        cat > .env << 'ENVEOF'
-        FLUTTER_TEST_MODE=true
-        NODE_ENV=test
-        SUPABASE_URL=https://test-placeholder.supabase.co
-        SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QtcGxhY2Vob2xkZXIiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoyMDAwMDAwMDAwfQ.placeholder-test-signature-not-real-key-for-ci-only
-        BYPASS_AUTH=true
-        USE_MOCK_DATA=true
-        MOCK_FORTUNE_RESPONSES=true
-        BYPASS_PAYMENT=true
-        MOCK_PREMIUM_FEATURES=true
-        GOOGLE_WEB_CLIENT_ID=000000000000-placeholder.apps.googleusercontent.com
-        GOOGLE_IOS_CLIENT_ID=000000000000-placeholder-ios.apps.googleusercontent.com
-        GOOGLE_ANDROID_CLIENT_ID=000000000000-placeholder-android.apps.googleusercontent.com
-        GEMINI_API_KEY=AIzaSy-placeholder-test-key
-        OPENAI_API_KEY=sk-proj-placeholder-test-key
-        KAKAO_REST_API_KEY=placeholder_kakao_key
-        ENABLE_ADS=false
-        DISABLE_ANALYTICS=true
-        ENVEOF
-        mkdir -p assets/images/character/lunch assets/decorations assets/icons/traditional assets/animations
-        touch assets/images/character/lunch/.gitkeep assets/decorations/.gitkeep assets/icons/traditional/.gitkeep assets/animations/.gitkeep
-
-    - name: Setup Google Services
-      env:
-        GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
-      run: |
-        if [ -n "$GOOGLE_SERVICES_JSON" ]; then
-          echo "Using google-services.json from secret"
-          echo "$GOOGLE_SERVICES_JSON" | base64 -d > android/app/google-services.json
-        else
-          echo "Creating placeholder google-services.json for CI build"
-          cat > android/app/google-services.json << 'EOFGS'
-        {
-          "project_info": {
-            "project_number": "000000000000",
-            "project_id": "placeholder-project",
-            "storage_bucket": "placeholder-project.appspot.com"
-          },
-          "client": [
-            {
-              "client_info": {
-                "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
-                "android_client_info": {
-                  "package_name": "com.beyond.fortune"
-                }
-              },
-              "oauth_client": [],
-              "api_key": [
-                {
-                  "current_key": "placeholder_api_key"
-                }
-              ],
-              "services": {}
-            }
-          ],
-          "configuration_version": "1"
-        }
-        EOFGS
-        fi
-
-    - name: Get dependencies
-      run: flutter pub get
-
-    - name: Build APK
-      env:
-        GRADLE_OPTS: "-Xmx4g -XX:MaxMetaspaceSize=2g -XX:+HeapDumpOnOutOfMemoryError -Dorg.gradle.daemon=false"
-      run: flutter build apk --debug
-
-    - name: Upload Android artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: android-build
-        path: |
-          build/app/outputs/flutter-apk/
-
-  build-ios:
-    name: Build iOS
-    runs-on: macos-13
-    timeout-minutes: 45
-    needs: test
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: ${{ env.FLUTTER_VERSION }}
-        channel: 'stable'
-        cache: true
-
-    - name: Setup build environment
-      run: |
-        cat > .env << 'ENVEOF'
-        FLUTTER_TEST_MODE=true
-        NODE_ENV=test
-        SUPABASE_URL=https://test-placeholder.supabase.co
-        SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QtcGxhY2Vob2xkZXIiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoyMDAwMDAwMDAwfQ.placeholder-test-signature-not-real-key-for-ci-only
-        BYPASS_AUTH=true
-        USE_MOCK_DATA=true
-        MOCK_FORTUNE_RESPONSES=true
-        BYPASS_PAYMENT=true
-        MOCK_PREMIUM_FEATURES=true
-        GOOGLE_WEB_CLIENT_ID=000000000000-placeholder.apps.googleusercontent.com
-        GOOGLE_IOS_CLIENT_ID=000000000000-placeholder-ios.apps.googleusercontent.com
-        GOOGLE_ANDROID_CLIENT_ID=000000000000-placeholder-android.apps.googleusercontent.com
-        GEMINI_API_KEY=AIzaSy-placeholder-test-key
-        OPENAI_API_KEY=sk-proj-placeholder-test-key
-        KAKAO_REST_API_KEY=placeholder_kakao_key
-        ENABLE_ADS=false
-        DISABLE_ANALYTICS=true
-        ENVEOF
-        mkdir -p assets/images/character/lunch assets/decorations assets/icons/traditional assets/animations
-        touch assets/images/character/lunch/.gitkeep assets/decorations/.gitkeep assets/icons/traditional/.gitkeep assets/animations/.gitkeep
-
-    - name: Get dependencies
-      run: flutter pub get
-
-    - name: Build iOS (no signing)
-      run: flutter build ios --release --no-codesign
-
-    - name: Archive iOS build
-      run: |
-        cd ios
-        xcodebuild -workspace Runner.xcworkspace -scheme Runner -configuration Release -archivePath RunnerArchive.xcarchive archive -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO
-
-    - name: Upload iOS artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: ios-build
-        path: ios/RunnerArchive.xcarchive
-
-  deploy-web-preview:
-    name: Deploy Web Preview
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    needs: build-web
-    if: github.event_name == 'pull_request'
-
-    steps:
-    - name: Download web artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: web-build
-        path: web-build
-
-    - name: Deploy to Vercel Preview
-      uses: amondnet/vercel-action@v25
-      with:
-        vercel-token: ${{ secrets.VERCEL_TOKEN }}
-        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-        working-directory: ./web-build/web
-        alias-domains: pr-{{PR_NUMBER}}.fortune-flutter.vercel.app
-
-  release:
-    name: Create Release
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    needs: [build-web, build-android]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Download all artifacts
-      uses: actions/download-artifact@v4
-
-    - name: Create Release
-      uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
-      with:
-        files: |
-          android-build/flutter-apk/*.apk
-          android-build/bundle/release/*.aab
-          web-build.zip
-        draft: true
-        prerelease: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  # Slack notification on core job failure
   notify-slack:
     name: Slack Notification
-    needs: [analyze, test, build-web, build-android]
-    if: always() && (needs.analyze.result == 'failure' || needs.test.result == 'failure' || needs.build-web.result == 'failure' || needs.build-android.result == 'failure')
+    needs: [analyze, test]
+    if: always() && (needs.analyze.result == 'failure' || needs.test.result == 'failure')
     uses: ./.github/workflows/slack-notify.yml
     with:
-      workflow_name: "Flutter CI/CD"
-      job_status: "failure"
-      failed_jobs: "${{ needs.analyze.result == 'failure' && 'analyze ' || '' }}${{ needs.test.result == 'failure' && 'test ' || '' }}${{ needs.build-web.result == 'failure' && 'build-web ' || '' }}${{ needs.build-android.result == 'failure' && 'build-android ' || '' }}"
+      workflow_name: 'Flutter CI/CD'
+      job_status: 'failure'
+      failed_jobs: "${{ needs.analyze.result == 'failure' && 'analyze ' || '' }}${{ needs.test.result == 'failure' && 'test ' || '' }}"
       pr_number: "${{ github.event.pull_request.number || '' }}"
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

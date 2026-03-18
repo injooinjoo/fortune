@@ -105,6 +105,7 @@ test-results/
 playwright-report/
 playwright.live.config.js
 /playwright/tests/*.spec.js
+!/playwright/tests/smoke.spec.js
 
 # Node modules (for Playwright)
 node_modules/
