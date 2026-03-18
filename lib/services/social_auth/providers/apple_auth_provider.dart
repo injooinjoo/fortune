@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:universal_io/io.dart';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -16,20 +17,26 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
     super.profileCache, {
     bool? isWebOverride,
     bool? isIOSOverride,
+    Future<bool> Function()? shouldUseNativeAppleSignInOverride,
     Future<AuthResponse?> Function()? nativeSignInOverride,
     Future<SocialAuthAttemptResult> Function()? oauthSignInOverride,
   })  : _isWebOverride = isWebOverride,
         _isIOSOverride = isIOSOverride,
+        _shouldUseNativeAppleSignInOverride =
+            shouldUseNativeAppleSignInOverride,
         _nativeSignInOverride = nativeSignInOverride,
-        _oauthSignInOverride = oauthSignInOverride;
+        _oauthSignInOverride = oauthSignInOverride,
+        _deviceInfo = DeviceInfoPlugin();
 
   /// iPad Error 1000 재시도 횟수 추적
   int _error1000RetryCount = 0;
   static const int _maxError1000Retries = 1;
   final bool? _isWebOverride;
   final bool? _isIOSOverride;
+  final Future<bool> Function()? _shouldUseNativeAppleSignInOverride;
   final Future<AuthResponse?> Function()? _nativeSignInOverride;
   final Future<SocialAuthAttemptResult> Function()? _oauthSignInOverride;
+  final DeviceInfoPlugin _deviceInfo;
 
   @override
   String get providerName => 'apple';
@@ -42,8 +49,10 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
     try {
       Logger.info('Starting Apple Sign-In process');
 
-      if (_shouldUseNativeAppleSignIn) {
-        Logger.info('Using native Apple Sign-In for iOS');
+      final shouldUseNativeAppleSignIn = await _shouldUseNativeAppleSignIn();
+
+      if (shouldUseNativeAppleSignIn) {
+        Logger.info('Using native Apple Sign-In for iPhone');
         final nativeResponse = await _signInWithAppleNative();
         if (nativeResponse?.user != null) {
           return SocialAuthAttemptResult.authenticated(nativeResponse!);
@@ -53,7 +62,7 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
             'Apple native sign-in did not return a valid session, fallback to OAuth flow');
         return await _signInWithAppleOAuth();
       } else {
-        Logger.info('Using OAuth for Apple Sign-In (web/Android)');
+        Logger.info('Using OAuth for Apple Sign-In (web/Android/iPad)');
         return await _signInWithAppleOAuth();
       }
     } catch (error) {
@@ -67,14 +76,42 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
     }
   }
 
-  bool get _shouldUseNativeAppleSignIn {
+  Future<bool> _shouldUseNativeAppleSignIn() async {
+    final shouldUseNativeAppleSignInOverride =
+        _shouldUseNativeAppleSignInOverride;
+    if (shouldUseNativeAppleSignInOverride != null) {
+      return shouldUseNativeAppleSignInOverride();
+    }
     if (_isWebOverride == true) {
       return false;
     }
-    if (_isIOSOverride != null) {
-      return _isIOSOverride;
+    if (_isIOSOverride == false) {
+      return false;
     }
-    return !kIsWeb && Platform.isIOS;
+
+    final isIOS = _isIOSOverride ?? (!kIsWeb && Platform.isIOS);
+    if (!isIOS) {
+      return false;
+    }
+
+    try {
+      final iosInfo = await _deviceInfo.iosInfo;
+      final localizedModel = iosInfo.localizedModel.toLowerCase();
+      final machine = iosInfo.utsname.machine.toLowerCase();
+      final isIPad =
+          localizedModel.contains('ipad') || machine.startsWith('ipad');
+
+      if (iosInfo.isiOSAppOnMac || isIPad) {
+        Logger.info(
+            '[AppleAuthProvider] Native Apple Sign-In 비활성화: ${iosInfo.localizedModel} (${iosInfo.utsname.machine})');
+        return false;
+      }
+    } catch (error) {
+      Logger.warning(
+          '[AppleAuthProvider] iOS 기기 판별 실패, native Apple Sign-In 유지: $error');
+    }
+
+    return true;
   }
 
   Future<AuthResponse?> _signInWithAppleNative() async {

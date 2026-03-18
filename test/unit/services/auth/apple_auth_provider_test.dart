@@ -15,6 +15,7 @@ void main() {
       MockSupabaseClient(),
       ProfileCache(),
       isIOSOverride: true,
+      shouldUseNativeAppleSignInOverride: () async => true,
       nativeSignInOverride: () async => null,
       oauthSignInOverride: () async =>
           const SocialAuthAttemptResult.pendingExternalAuth(),
@@ -22,6 +23,30 @@ void main() {
 
     final result = await provider.signIn();
 
+    expect(result.isPendingExternalAuth, isTrue);
+    expect(result.isAuthenticated, isFalse);
+  });
+
+  test('Apple skips native sign-in and starts OAuth on iPad-like devices',
+      () async {
+    var nativeSignInCalled = false;
+
+    final provider = AppleAuthProvider(
+      MockSupabaseClient(),
+      ProfileCache(),
+      isIOSOverride: true,
+      shouldUseNativeAppleSignInOverride: () async => false,
+      nativeSignInOverride: () async {
+        nativeSignInCalled = true;
+        return null;
+      },
+      oauthSignInOverride: () async =>
+          const SocialAuthAttemptResult.pendingExternalAuth(),
+    );
+
+    final result = await provider.signIn();
+
+    expect(nativeSignInCalled, isFalse);
     expect(result.isPendingExternalAuth, isTrue);
     expect(result.isAuthenticated, isFalse);
   });
