@@ -19211,9 +19211,7 @@
       "notes": [],
       "path": "docs/deployment/well-known/apple-app-site-association",
       "referenced_by": [
-        "docs/deployment/LAUNCH_READINESS_AUDIT_2026-02-14.md",
-        "docs/deployment/WELL_KNOWN_DEPLOYMENT_CHECKLIST.md",
-        "scripts/build_web_release.sh"
+        "docs/deployment/LAUNCH_READINESS_AUDIT_2026-02-14.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -19227,9 +19225,7 @@
       "notes": [],
       "path": "docs/deployment/well-known/assetlinks.json",
       "referenced_by": [
-        "docs/deployment/LAUNCH_READINESS_AUDIT_2026-02-14.md",
-        "docs/deployment/WELL_KNOWN_DEPLOYMENT_CHECKLIST.md",
-        "scripts/build_web_release.sh"
+        "docs/deployment/LAUNCH_READINESS_AUDIT_2026-02-14.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -19676,13 +19672,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
-      "notes": [],
-      "path": "docs/development/reports/2026-02-16_store_review_gate_blockers_verify.md",
-      "referenced_by": [
-        "docs/deployment/review/ANDROID_REVIEW_EVIDENCE.md",
-        "docs/deployment/review/IOS_REVIEW_EVIDENCE.md",
-        "docs/deployment/review/STORE_REVIEW_MASTER_CHECKLIST.md"
+      "notes": [
+        "no_inbound_refs"
       ],
+      "path": "docs/development/reports/2026-02-16_store_review_gate_blockers_verify.md",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
@@ -19709,7 +19703,6 @@
       "notes": [],
       "path": "docs/development/reports/2026-02-16_store_review_strategy_verify.md",
       "referenced_by": [
-        "docs/deployment/review/STORE_REVIEW_MASTER_CHECKLIST.md",
         "docs/development/reports/2026-02-16_store_review_strategy_verify.md"
       ],
       "runtime_reachable": false,
@@ -21826,7 +21819,6 @@
       "path": "lib/core/services/location_manager.dart",
       "referenced_by": [
         "docs/deployment/review/ANDROID_REVIEW_EVIDENCE.md",
-        "docs/deployment/review/IOS_REVIEW_EVIDENCE.md",
         "lib/core/services/fortune_generators/time_based_generator.dart",
         "lib/services/weather_service.dart"
       ],
@@ -26341,7 +26333,6 @@
       "notes": [],
       "path": "lib/services/analytics_service.dart",
       "referenced_by": [
-        "docs/deployment/review/ANDROID_REVIEW_EVIDENCE.md",
         "lib/core/utils/logger.dart"
       ],
       "runtime_reachable": true,
@@ -26779,6 +26770,8 @@
       "notes": [],
       "path": "lib/services/supabase_storage_service.dart",
       "referenced_by": [
+        "docs/deployment/review/ANDROID_REVIEW_EVIDENCE.md",
+        "docs/deployment/review/IOS_REVIEW_EVIDENCE.md",
         "lib/presentation/widgets/profile_image_picker.dart",
         "lib/screens/profile/profile_edit_page.dart"
       ],
@@ -27096,7 +27089,6 @@
       "path": "scripts/android_screenshots.sh",
       "referenced_by": [
         "docs/deployment/ANDROID_DEPLOYMENT_SUMMARY.md",
-        "docs/deployment/GOOGLE_PLAY_SUBMISSION_GUIDE.md",
         "docs/deployment/SCREENSHOT_GUIDE.md",
         "scripts/android_screenshots.sh"
       ],
@@ -27151,11 +27143,12 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "script_sh",
-      "notes": [
-        "no_inbound_refs"
-      ],
+      "notes": [],
       "path": "scripts/build_web_release.sh",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/deployment/WELL_KNOWN_DEPLOYMENT_CHECKLIST.md",
+        "docs/deployment/review/STORE_REVIEW_MASTER_CHECKLIST.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "tooling_only"
@@ -27735,7 +27728,6 @@
       "notes": [],
       "path": "scripts/ios_full_regression.sh",
       "referenced_by": [
-        "docs/deployment/review/STORE_REVIEW_MASTER_CHECKLIST.md",
         "docs/development/reports/2026-02-16_store_review_gate_blockers_verify.md",
         "docs/development/reports/2026-02-16_store_review_strategy_discovery.md",
         "docs/development/reports/2026-02-16_store_review_strategy_verify.md",
@@ -29723,8 +29715,6 @@
       ],
       "path": "supabase/functions/payment-verify-purchase/index.ts",
       "referenced_by": [
-        "docs/deployment/review/ANDROID_REVIEW_EVIDENCE.md",
-        "docs/deployment/review/STORE_REVIEW_MASTER_CHECKLIST.md",
         "docs/development/reports/2026-02-16_store_review_gate_blockers_verify.md",
         "docs/development/reports/2026-02-16_store_review_strategy_discovery.md",
         "docs/development/reports/2026-02-16_store_review_strategy_verify.md",

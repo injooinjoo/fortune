@@ -78,8 +78,8 @@ Files that are only used by tests, tooling, or documentation and may be removabl
 | `docs/deployment/review/P0_P1_PENDING_CLOSURE_ORDER.md` | `doc_only` | 0 | no_inbound_refs |
 | `docs/deployment/review/RELEASE_DECISION_LOG.md` | `doc_only` | 2 | - |
 | `docs/deployment/review/STORE_REVIEW_MASTER_CHECKLIST.md` | `doc_only` | 2 | - |
-| `docs/deployment/well-known/apple-app-site-association` | `doc_only` | 3 | - |
-| `docs/deployment/well-known/assetlinks.json` | `doc_only` | 3 | - |
+| `docs/deployment/well-known/apple-app-site-association` | `doc_only` | 1 | - |
+| `docs/deployment/well-known/assetlinks.json` | `doc_only` | 1 | - |
 
 ## Phase 3 Feature Cleanup Candidates
 
