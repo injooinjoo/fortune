@@ -429,7 +429,7 @@ const List<FortuneCategory> _defaultCategories = [
     icon: Icons.favorite_rounded,
     iconAsset: 'assets/icons/fortune/health.webp',
     gradientColors: [DSColors.success, DSColors.accentSecondary],
-    description: '오늘의 건강 상태 분석',
+    description: '오늘의 컨디션과 웰니스 루틴 가이드',
     category: 'health',
     isNew: true,
   ),

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/presentation/providers/token_provider.dart';
+import 'package:fortune/data/models/user_profile.dart';
 import 'package:fortune/domain/entities/token.dart';
+import 'package:fortune/presentation/providers/token_provider.dart';
 
 void main() {
   // Helper to create TokenBalance with required fields
@@ -22,6 +23,23 @@ void main() {
   }
 
   group('TokenState', () {
+    UserProfile createTestProfile({
+      bool premiumEnabled = false,
+      bool unlimitedTokens = false,
+    }) {
+      return UserProfile(
+        id: 'test-user-id',
+        name: 'Reviewer',
+        email: 'reviewer@zpzg.com',
+        onboardingCompleted: true,
+        isTestAccount: true,
+        testAccountFeatures: {
+          'premium_enabled': premiumEnabled,
+          'unlimited_tokens': unlimitedTokens,
+        },
+      );
+    }
+
     test('초기 상태가 올바르게 생성되어야 함', () {
       const state = TokenState();
 
@@ -61,9 +79,9 @@ void main() {
       expect(newState.balance!.totalTokens, 15);
     });
 
-    test('hasUnlimitedTokens는 contracted runtime에서 항상 true여야 함', () {
+    test('hasUnlimitedTokens는 잔액/테스트 계정 플래그를 기준으로 판단해야 함', () {
       const state1 = TokenState();
-      expect(state1.hasUnlimitedTokens, true);
+      expect(state1.hasUnlimitedTokens, false);
 
       final balance = createBalance(
         remainingTokens: 0,
@@ -73,9 +91,14 @@ void main() {
       );
       final state2 = state1.copyWith(balance: balance);
       expect(state2.hasUnlimitedTokens, true);
+
+      final state3 = state1.copyWith(
+        userProfile: createTestProfile(unlimitedTokens: true),
+      );
+      expect(state3.hasUnlimitedTokens, true);
     });
 
-    test('canConsumeTokens는 contracted runtime에서 항상 true여야 함', () {
+    test('canConsumeTokens는 실제 잔액 기준으로 판단해야 함', () {
       final balance = createBalance(
         remainingTokens: 5,
         usedTokens: 10,
@@ -87,9 +110,9 @@ void main() {
       expect(state.canConsumeTokens(1), true);
       expect(state.canConsumeTokens(5), true);
 
-      // 토큰 부족 여부와 관계없이 무제한 접근
-      expect(state.canConsumeTokens(6), true);
-      expect(state.canConsumeTokens(10), true);
+      // 토큰 부족
+      expect(state.canConsumeTokens(6), false);
+      expect(state.canConsumeTokens(10), false);
     });
 
     test('무제한 접근 시 항상 canConsumeTokens가 true여야 함', () {
@@ -117,9 +140,9 @@ void main() {
       expect(state.getTokensForFortuneType('unknown'), greaterThan(0));
     });
 
-    test('currentTokens getter는 contracted runtime에서 무제한 값을 반환해야 함', () {
+    test('currentTokens getter는 실제 잔액을 반환해야 함', () {
       const state1 = TokenState();
-      expect(state1.currentTokens, 999999);
+      expect(state1.currentTokens, 0);
 
       final balance = createBalance(
         remainingTokens: 25,
@@ -127,7 +150,29 @@ void main() {
         totalTokens: 35,
       );
       final state2 = state1.copyWith(balance: balance);
-      expect(state2.currentTokens, 999999);
+      expect(state2.currentTokens, 25);
+    });
+
+    test('hasActiveSubscription는 구독 상태 또는 테스트 계정 프리미엄 플래그를 반영해야 함', () {
+      final activeSubscription = UnlimitedSubscription(
+        id: 'sub_123',
+        userId: 'test-user-id',
+        startDate: DateTime.now().subtract(const Duration(days: 1)),
+        endDate: DateTime.now().add(const Duration(days: 29)),
+        status: 'active',
+        plan: 'premium',
+        price: 2500,
+        currency: 'KRW',
+      );
+
+      final stateWithSubscription =
+          const TokenState().copyWith(subscription: activeSubscription);
+      expect(stateWithSubscription.hasActiveSubscription, true);
+
+      final stateWithTestFlag = const TokenState().copyWith(
+        userProfile: createTestProfile(premiumEnabled: true),
+      );
+      expect(stateWithTestFlag.hasActiveSubscription, true);
     });
 
     test('isConsumingToken 상태가 올바르게 변경되어야 함', () {

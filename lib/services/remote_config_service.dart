@@ -107,10 +107,10 @@ class RemoteConfigService {
     await _remoteConfig.setDefaults({
       // 구독 관련,
       subscriptionPriceKey: 2500,
-      subscriptionTitleKey: '무제한 이용권',
-      subscriptionDescriptionKey: '한 달 동안 모든 운세 무제한 이용',
-      subscriptionFeaturesKey:
-          json.encode(['모든 운세 무제한 이용', '월간 토큰 50개', '우선 고객 지원', '프리미엄 기능 이용']),
+      subscriptionTitleKey: '프리미엄 멤버십',
+      subscriptionDescriptionKey: '매월 토큰이 충전되는 멤버십',
+      subscriptionFeaturesKey: json
+          .encode(['월간 토큰 50개 제공', '프리미엄 인사이트 이용', '토큰 보너스 혜택', '우선 고객 지원']),
       subscriptionBadgeKey: '추천',
 
       // 토큰 관련,
@@ -185,20 +185,20 @@ class RemoteConfigService {
 
   /// 구독 제목 가져오기
   String getSubscriptionTitle() {
-    if (!_isInitialized) return '무제한 이용권';
+    if (!_isInitialized) return '프리미엄 멤버십';
     return _remoteConfig.getString(subscriptionTitleKey);
   }
 
   /// 구독 설명 가져오기
   String getSubscriptionDescription() {
-    if (!_isInitialized) return '한 달 동안 모든 운세 무제한 이용';
+    if (!_isInitialized) return '매월 토큰이 충전되는 멤버십';
     return _remoteConfig.getString(subscriptionDescriptionKey);
   }
 
   /// 구독 기능 목록 가져오기
   List<String> getSubscriptionFeatures() {
     if (!_isInitialized) {
-      return ['모든 운세 무제한 이용', '월간 토큰 50개', '우선 고객 지원', '프리미엄 기능 이용'];
+      return ['월간 토큰 50개 제공', '프리미엄 인사이트 이용', '토큰 보너스 혜택', '우선 고객 지원'];
     }
 
     try {

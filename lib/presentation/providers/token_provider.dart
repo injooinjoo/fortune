@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/constants/soul_rates.dart';
+import '../../core/errors/exceptions.dart';
 import '../../core/utils/request_audit_tracker.dart';
 import '../../data/models/user_profile.dart';
 import '../../data/services/token_api_service.dart';
@@ -11,6 +12,8 @@ import 'providers.dart';
 // Token State (토큰 시스템)
 // 모든 운세가 토큰을 소비합니다. 구독 = 매월 토큰 자동 충전
 class TokenState {
+  static const Object _unset = Object();
+
   final TokenBalance? balance;
   final bool isLoading;
   final String? error;
@@ -34,45 +37,59 @@ class TokenState {
   });
 
   TokenState copyWith({
-    TokenBalance? balance,
+    Object? balance = _unset,
     bool? isLoading,
-    String? error,
+    Object? error = _unset,
     List<TokenPackage>? packages,
     List<TokenTransaction>? history,
-    UnlimitedSubscription? subscription,
+    Object? subscription = _unset,
     Map<String, int>? consumptionRates,
     bool? isConsumingToken,
-    UserProfile? userProfile,
+    Object? userProfile = _unset,
   }) {
     return TokenState(
-      balance: balance ?? this.balance,
+      balance:
+          identical(balance, _unset) ? this.balance : balance as TokenBalance?,
       isLoading: isLoading ?? this.isLoading,
-      error: error,
+      error: identical(error, _unset) ? this.error : error as String?,
       packages: packages ?? this.packages,
       history: history ?? this.history,
-      subscription: subscription ?? this.subscription,
+      subscription: identical(subscription, _unset)
+          ? this.subscription
+          : subscription as UnlimitedSubscription?,
       consumptionRates: consumptionRates ?? this.consumptionRates,
       isConsumingToken: isConsumingToken ?? this.isConsumingToken,
-      userProfile: userProfile ?? this.userProfile,
+      userProfile: identical(userProfile, _unset)
+          ? this.userProfile
+          : userProfile as UserProfile?,
     );
   }
 
-  bool get hasActiveSubscription => true;
+  bool get hasActiveSubscription =>
+      subscription?.isActive == true || userProfile?.isPremiumActive == true;
 
-  bool get hasUnlimitedTokens => true;
+  bool get hasUnlimitedTokens =>
+      balance?.hasUnlimitedAccess == true ||
+      userProfile?.hasUnlimitedTokens == true;
 
-  bool canConsumeTokens(int amount) => true;
-
-  int getTokensForFortuneType(String fortuneType) {
-    return SoulRates.getTokenCost(fortuneType);
+  bool canConsumeTokens(int amount) {
+    if (amount <= 0) return true;
+    if (hasUnlimitedTokens) return true;
+    return currentTokens >= amount;
   }
 
-  int get currentTokens => 999999;
+  int getTokensForFortuneType(String fortuneType) {
+    return consumptionRates[fortuneType] ?? SoulRates.getTokenCost(fortuneType);
+  }
 
-  int get totalBalance => balance?.remainingTokens ?? 999999;
+  int get currentTokens =>
+      balance?.remainingTokens ?? userProfile?.tokenBalance ?? 0;
+
+  int get totalBalance => currentTokens;
 }
 
 class TokenNotifier extends StateNotifier<TokenState> {
+  final TokenApiService _apiService;
   final Ref ref;
   bool _isAuthSyncInProgress = false;
   Future<void>? _loadTokenDataFuture;
@@ -82,7 +99,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
 
   static const Duration _tokenRefreshStaleThreshold = Duration(minutes: 5);
 
-  TokenNotifier(TokenApiService _, this.ref) : super(const TokenState()) {
+  TokenNotifier(this._apiService, this.ref) : super(const TokenState()) {
     _setupAuthStateListener();
     _initializeTokenData();
   }
@@ -129,7 +146,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
         _shouldReloadForTokenRefresh(user.id)) {
       await _runAuthSync(
         () => ensureLoaded(
-          force: state.balance == null || state.userProfile == null,
+          force: state.balance == null,
           trigger: 'auth.$eventName',
         ),
       );
@@ -148,16 +165,12 @@ class TokenNotifier extends StateNotifier<TokenState> {
 
   bool _shouldReloadForTokenRefresh(String userId) {
     return state.balance == null ||
-        state.userProfile == null ||
         _lastLoadedUserId != userId ||
         _isTokenStateStale();
   }
 
   bool _hasLoadedStateFor(String userId) {
-    return state.balance != null &&
-        state.userProfile != null &&
-        _lastLoadedUserId == userId &&
-        !_isTokenStateStale();
+    return _lastLoadedUserId == userId && !_isTokenStateStale();
   }
 
   bool _isTokenStateStale() {
@@ -181,7 +194,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
     bool force = false,
     String trigger = 'manual',
   }) async {
-    final currentUserId = _resolveCurrentUser()?.id ?? 'guest-unlimited';
+    final currentUserId = _resolveCurrentUser()?.id ?? 'guest';
 
     if (!force &&
         _loadTokenDataFuture == null &&
@@ -228,45 +241,63 @@ class TokenNotifier extends StateNotifier<TokenState> {
 
     try {
       final user = _resolveCurrentUser();
+      if (user == null) {
+        state = const TokenState();
+        _lastLoadedUserId = 'guest';
+        _lastLoadedAt = DateTime.now();
+        return;
+      }
+
       final userProfile =
           await ref.read(userProfileNotifierProvider.notifier).ensureLoaded(
                 force: force,
                 trigger: 'token.$trigger.profile',
               );
-      final userId = user?.id ?? 'guest-unlimited';
-      final balance = TokenBalance(
-        userId: userId,
-        totalTokens: 999999,
-        usedTokens: 0,
-        remainingTokens: 999999,
-        lastUpdated: DateTime.now(),
-        hasUnlimitedAccess: true,
-      );
-      final subscription = user == null
-          ? null
-          : UnlimitedSubscription(
-              id: 'free-unlimited',
-              userId: user.id,
-              startDate: DateTime.now(),
-              endDate: DateTime.now().add(const Duration(days: 3650)),
-              status: 'active',
-              plan: 'unlimited',
-              price: 0,
-              currency: 'KRW',
-            );
+
+      final results = await Future.wait<Object?>([
+        _apiService.getTokenBalance(userId: user.id),
+        _apiService.getSubscription(userId: user.id),
+        _apiService.getTokenConsumptionRates(),
+      ]);
+
+      final balance =
+          _applyTestAccountOverrides(results[0] as TokenBalance, userProfile);
+      final subscription = results[1] as UnlimitedSubscription?;
+      final consumptionRates = results[2] as Map<String, int>;
 
       state = state.copyWith(
         balance: balance,
         subscription: subscription,
-        consumptionRates: const {},
+        consumptionRates: consumptionRates,
         userProfile: userProfile,
         isLoading: false,
+        error: null,
       );
-      _lastLoadedUserId = userId;
+      _lastLoadedUserId = user.id;
       _lastLoadedAt = DateTime.now();
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      state = state.copyWith(
+        isLoading: false,
+        error: _extractErrorMessage(e),
+      );
     }
+  }
+
+  TokenBalance _applyTestAccountOverrides(
+    TokenBalance balance,
+    UserProfile? userProfile,
+  ) {
+    if (userProfile?.hasUnlimitedTokens == true) {
+      return balance.copyWith(hasUnlimitedAccess: true);
+    }
+    return balance;
+  }
+
+  String _extractErrorMessage(Object error) {
+    if (error is AppException) {
+      return error.code ?? error.message;
+    }
+    return error.toString();
   }
 
   Future<bool> consumeTokens({
@@ -275,29 +306,56 @@ class TokenNotifier extends StateNotifier<TokenState> {
     String? referenceId,
   }) async {
     final tokenCost = amount ?? SoulRates.getTokenCost(fortuneType);
-    final currentBalance = state.balance ??
-        TokenBalance(
-          userId: state.userProfile?.userId ?? 'guest-unlimited',
-          totalTokens: 999999,
-          usedTokens: 0,
-          remainingTokens: 999999,
-          lastUpdated: DateTime.now(),
-          hasUnlimitedAccess: true,
-        );
-    state = state.copyWith(
-      balance: currentBalance.copyWith(
-        totalTokens: 999999,
-        remainingTokens: 999999,
-        usedTokens: tokenCost > 0
-            ? currentBalance.usedTokens + tokenCost
-            : currentBalance.usedTokens,
-        lastUpdated: DateTime.now(),
-        hasUnlimitedAccess: true,
-      ),
-      isConsumingToken: false,
-      error: null,
-    );
-    return true;
+
+    if (state.balance == null && !state.isLoading) {
+      await ensureLoaded(force: true, trigger: 'consume.$fortuneType');
+    }
+
+    if (state.hasUnlimitedTokens) {
+      return true;
+    }
+
+    final user = _resolveCurrentUser();
+    if (user == null) {
+      state = state.copyWith(error: 'UNAUTHORIZED');
+      return false;
+    }
+
+    if (!state.canConsumeTokens(tokenCost)) {
+      state = state.copyWith(error: 'INSUFFICIENT_TOKENS');
+      return false;
+    }
+
+    state = state.copyWith(isConsumingToken: true, error: null);
+
+    try {
+      final updatedBalance = await _apiService.consumeTokens(
+        userId: user.id,
+        fortuneType: fortuneType,
+        amount: tokenCost,
+        referenceId: referenceId,
+      );
+
+      state = state.copyWith(
+        balance: _applyTestAccountOverrides(updatedBalance, state.userProfile),
+        isConsumingToken: false,
+        error: null,
+      );
+      _lastLoadedAt = DateTime.now();
+      return true;
+    } on InsufficientTokensException {
+      state = state.copyWith(
+        isConsumingToken: false,
+        error: 'INSUFFICIENT_TOKENS',
+      );
+      return false;
+    } catch (e) {
+      state = state.copyWith(
+        isConsumingToken: false,
+        error: _extractErrorMessage(e),
+      );
+      return false;
+    }
   }
 
   Future<bool> checkAndConsumeTokens(int amount, String fortuneType) async {
@@ -311,16 +369,53 @@ class TokenNotifier extends StateNotifier<TokenState> {
   }
 
   bool isPremiumFortune(String fortuneType) {
-    return true;
+    return SoulRates.isPremiumFortune(fortuneType);
   }
 
   Future<bool> claimDailyTokens() async {
-    state = state.copyWith(isLoading: false, error: null);
-    return true;
+    final user = _resolveCurrentUser();
+    if (user == null) {
+      state = state.copyWith(error: 'UNAUTHORIZED');
+      return false;
+    }
+
+    state = state.copyWith(isLoading: true, error: null);
+
+    try {
+      final updatedBalance =
+          await _apiService.claimDailyTokens(userId: user.id);
+      state = state.copyWith(
+        balance: _applyTestAccountOverrides(updatedBalance, state.userProfile),
+        isLoading: false,
+        error: null,
+      );
+      _lastLoadedAt = DateTime.now();
+      return true;
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: _extractErrorMessage(e),
+      );
+      return false;
+    }
   }
 
   Future<void> loadTokenPackages() async {
-    state = state.copyWith(packages: const [], error: null);
+    state = state.copyWith(isLoading: true, error: null);
+
+    try {
+      final packages = await _apiService.getTokenPackages();
+      state = state.copyWith(
+        packages: packages,
+        isLoading: false,
+        error: null,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: _extractErrorMessage(e),
+      );
+    }
   }
 
   Future<List<TokenTransaction>> loadTokenHistory({
@@ -352,32 +447,104 @@ class TokenNotifier extends StateNotifier<TokenState> {
       trigger: 'limit:${limit ?? 'default'}:offset:${offset ?? 0}',
       source: 'TokenNotifier',
     );
-    const history = <TokenTransaction>[];
-    state = state.copyWith(history: history, error: null);
-    return history;
+
+    final user = _resolveCurrentUser();
+    if (user == null) {
+      const history = <TokenTransaction>[];
+      state = state.copyWith(history: history, error: null);
+      return history;
+    }
+
+    try {
+      final history = await _apiService.getTokenHistory(
+        userId: user.id,
+        limit: limit,
+        offset: offset,
+      );
+      state = state.copyWith(history: history, error: null);
+      return history;
+    } catch (e) {
+      state = state.copyWith(error: _extractErrorMessage(e));
+      return const [];
+    }
   }
 
   Future<Map<String, dynamic>?> purchaseTokens({
     required String packageId,
     required String paymentMethodId,
   }) async {
-    state = state.copyWith(isLoading: false, error: null);
-    return {
-      'success': true,
-      'message': 'Token purchases are disabled because access is unlimited.',
-      'packageId': packageId,
-      'paymentMethodId': paymentMethodId,
-    };
+    final user = _resolveCurrentUser();
+    if (user == null) {
+      state = state.copyWith(error: 'UNAUTHORIZED');
+      return {
+        'success': false,
+        'message': '로그인이 필요합니다.',
+      };
+    }
+
+    state = state.copyWith(isLoading: true, error: null);
+
+    try {
+      final result = await _apiService.purchaseTokens(
+        packageId: packageId,
+        paymentMethodId: paymentMethodId,
+      );
+      await ensureLoaded(force: true, trigger: 'purchaseTokens');
+      state = state.copyWith(isLoading: false, error: null);
+      return result;
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: _extractErrorMessage(e),
+      );
+      return {
+        'success': false,
+        'message': _extractErrorMessage(e),
+      };
+    }
   }
 
   Future<Map<String, dynamic>> claimProfileCompletionBonus() async {
-    state = state.copyWith(isLoading: false, error: null);
-    return {
-      'success': true,
-      'bonusGranted': false,
-      'bonusAmount': 0,
-      'message': 'Unlimited access enabled',
-    };
+    final user = _resolveCurrentUser();
+    if (user == null) {
+      state = state.copyWith(error: 'UNAUTHORIZED');
+      return {
+        'success': false,
+        'bonusGranted': false,
+        'bonusAmount': 0,
+        'message': '로그인이 필요합니다.',
+      };
+    }
+
+    state = state.copyWith(isLoading: true, error: null);
+
+    try {
+      final result =
+          await _apiService.claimProfileCompletionBonus(userId: user.id);
+      final updatedBalance = result['balance'] as TokenBalance?;
+
+      state = state.copyWith(
+        balance: updatedBalance == null
+            ? state.balance
+            : _applyTestAccountOverrides(updatedBalance, state.userProfile),
+        isLoading: false,
+        error: null,
+      );
+      _lastLoadedAt = DateTime.now();
+      return result;
+    } catch (e) {
+      final errorMessage = _extractErrorMessage(e);
+      state = state.copyWith(
+        isLoading: false,
+        error: errorMessage,
+      );
+      return {
+        'success': false,
+        'bonusGranted': false,
+        'bonusAmount': 0,
+        'message': errorMessage,
+      };
+    }
   }
 
   Future<void> refreshBalance() async {

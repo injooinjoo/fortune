@@ -56,7 +56,6 @@ post_install do |installer|
       config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'PERMISSION_PHOTOS=1'
       config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'PERMISSION_LOCATION=1'
       config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'PERMISSION_NOTIFICATIONS=1'
-      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'PERMISSION_APP_TRACKING_TRANSPARENCY=1'
       config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'PERMISSION_CALENDARS=1'
 
       # Silence ALL warnings for third-party pods - MAXIMUM SUPPRESSION
@@ -74,12 +73,6 @@ post_install do |installer|
       if target.name.start_with?('Stripe')
         config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
         config.build_settings['CODE_SIGNING_REQUIRED'] = 'NO'
-      end
-
-      # Suppress google_mobile_ads warnings
-      if target.name == 'google_mobile_ads'
-        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
-        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'SILENCE_DEPRECATION=1'
       end
     end
     

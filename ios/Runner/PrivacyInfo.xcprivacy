@@ -6,14 +6,6 @@
 	<key>NSPrivacyTracking</key>
 	<false/>
 
-	<!-- 추적에 사용되는 인터넷 도메인 목록 -->
-	<key>NSPrivacyTrackingDomains</key>
-	<array>
-		<!-- Firebase Analytics -->
-		<string>app-measurement.com</string>
-		<string>firebase-settings.crashlytics.com</string>
-	</array>
-
 	<!-- 앱에서 사용하는 필수 사유 API 목록 -->
 	<key>NSPrivacyAccessedAPITypes</key>
 	<array>
@@ -93,20 +85,6 @@
 			<array>
 				<string>NSPrivacyCollectedDataTypePurposeAnalytics</string>
 				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
-			</array>
-		</dict>
-
-		<!-- 기타 진단 데이터 (Crashlytics 등) -->
-		<dict>
-			<key>NSPrivacyCollectedDataType</key>
-			<string>NSPrivacyCollectedDataTypeOtherDiagnosticData</string>
-			<key>NSPrivacyCollectedDataTypeLinked</key>
-			<false/>
-			<key>NSPrivacyCollectedDataTypeTracking</key>
-			<false/>
-			<key>NSPrivacyCollectedDataTypePurposes</key>
-			<array>
-				<string>NSPrivacyCollectedDataTypePurposeAnalytics</string>
 			</array>
 		</dict>
 

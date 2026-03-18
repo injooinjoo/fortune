@@ -5,8 +5,8 @@ Primary review path:
 2. Sign in with the review test account.
    - Email: test@zpzg.com
    - Password: TestPassword123!
-3. All premium features are already unlocked on this review account.
-4. Review the main experiences: Face AI, Daily Insights, and Personality Analysis.
+3. This review account is configured with test entitlements so the primary chat and insight flows can be reviewed without completing a purchase.
+4. Review the main experiences: Face AI, Daily Insights, Personality Analysis, and account deletion from Profile > Delete Account.
 
 Optional authentication validation:
 - Sign in with Apple is also available on iPhone and iPad.
@@ -15,4 +15,4 @@ Policy links:
 - Terms of Use (EULA): https://zpzg.co.kr/terms
 - Privacy Policy: https://zpzg.co.kr/privacy
 
-All content is AI-generated for entertainment purposes only.
+All content is AI-generated for entertainment and lifestyle reference only.

@@ -515,7 +515,7 @@ class UnifiedFortuneService {
     String fortuneType,
     int soulAmount,
   ) async {
-    Logger.info('[$fortuneType] ⏭️ 토큰 처리 비활성화: unlimited access enabled');
+    Logger.info('[$fortuneType] ⏭️ 토큰 처리 비활성화: 서버 통합 경로 사용');
   }
 
   /// JSONB 정규화 (키 정렬)

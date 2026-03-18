@@ -28,9 +28,6 @@
 # Keep TossPay classes
 -keep class com.tosspayments.** { *; }
 
-# Keep AdMob classes
--keep class com.google.android.gms.ads.** { *; }
-
 # Keep In-App Purchase / Billing classes
 -keep class com.android.vending.billing.** { *; }
 -keep class com.google.android.gms.internal.play_billing.** { *; }

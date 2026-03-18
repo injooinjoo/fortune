@@ -110,18 +110,22 @@ class HealthGenerator {
             '[HealthGenerator] 개인화 피드백: 개선 $improvements개, 주의 $concerns개');
       }
 
+      const wellnessDisclaimer =
+          '이 내용은 웰니스 참고용 안내예요. 증상이나 치료 판단이 필요하면 전문가와 상담해 주세요.';
+
       final result = FortuneResult(
         id: 'health-${DateTime.now().millisecondsSinceEpoch}',
         type: 'health',
-        title: '건강운세',
+        title: '건강/웰니스 가이드',
         summary: {
           'score': healthScore,
-          'message': overallHealth,
+          'message': '$overallHealth\n\n$wellnessDisclaimer',
           'emoji': healthScore >= 80
               ? '💚'
               : healthScore >= 60
                   ? '💛'
                   : '🧡',
+          'disclaimer': wellnessDisclaimer,
           // ✅ 오행 정보 요약 추가
           if (elementAdvice != null) ...{
             'lacking_element': elementAdvice['lacking_element'],

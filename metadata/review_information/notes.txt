@@ -1,14 +1,14 @@
 ENTERTAINMENT APP DECLARATION
 
-ZPZG is an entertainment and lifestyle app that provides AI-generated emotional support and lifestyle insight content.
+ZPZG is an entertainment and lifestyle app that provides AI-generated daily conversation and lifestyle insight content.
 
 PRIMARY REVIEW PATH
 1. Launch the app.
 2. Sign in with the review test account:
    - Email: test@zpzg.com
    - Password: TestPassword123!
-3. All premium features are already available on this review account.
-4. Explore the main experiences: Face AI, Daily Insights, and Personality Analysis.
+3. This review account is configured with test entitlements so the primary chat and insight flows can be reviewed without completing a purchase.
+4. Explore the main experiences: Face AI, Daily Insights, Personality Analysis, and account deletion from Profile > Delete Account.
 
 OPTIONAL AUTH VALIDATION
 - Sign in with Apple is also available on iPhone and iPad as an optional authentication method.
@@ -18,5 +18,5 @@ SUBSCRIPTION / POLICY LINKS
 - Privacy Policy: https://zpzg.co.kr/privacy
 
 IMPORTANT DISCLAIMER
-- All content is AI-generated for entertainment purposes only.
+- All content is AI-generated for entertainment and lifestyle reference only.
 - The app does not provide factual predictions, medical advice, legal advice, or financial advice.
