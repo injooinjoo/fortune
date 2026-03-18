@@ -3,34 +3,137 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>고객 지원</title>
+    <title>ZPZG 고객 지원</title>
     <style>
+      :root {
+        color-scheme: light;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
       body {
         margin: 0;
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-        font-family: Arial, Helvetica, sans-serif;
-        background: #f7fafc;
-        color: #1f2a44;
+        font-family: "Pretendard", "Apple SD Gothic Neo", "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(0, 145, 255, 0.11), transparent 24%),
+          linear-gradient(180deg, #f6fbff 0%, #eef4fa 100%);
+        color: #17212f;
       }
 
       main {
-        max-width: 680px;
-        width: min(90vw, 680px);
-        background: #fff;
-        border: 1px solid #dce6f2;
-        border-radius: 14px;
-        padding: 24px 24px 20px;
+        width: min(920px, calc(100vw - 32px));
+        margin: 32px auto;
+        padding: 28px;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.94);
+        border: 1px solid #d8e4f0;
+        box-shadow: 0 18px 48px rgba(13, 34, 57, 0.08);
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: clamp(1.8rem, 3vw, 2.5rem);
+      }
+
+      h2 {
+        margin: 0 0 12px;
+        font-size: 1.15rem;
+      }
+
+      p,
+      li {
+        line-height: 1.7;
+      }
+
+      section {
+        margin-top: 24px;
+        padding-top: 24px;
+        border-top: 1px solid #e5edf5;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 18px;
+      }
+
+      a {
+        color: #0f5fbe;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #edf5ff;
+        color: #31506f;
+        font-size: 0.9rem;
+        margin-bottom: 14px;
+      }
+
+      .muted {
+        color: #536273;
+      }
+
+      .links {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 28px;
+      }
+
+      .links a {
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid #d7e4f2;
+        background: #f7fbff;
+        color: #0f5fbe;
+        text-decoration: none;
       }
     </style>
   </head>
   <body>
     <main>
-      <h1>고객 지원</h1>
-      <p>현재 페이지는 앱 심사 체크를 위한 임시 공개 페이지입니다.</p>
-      <p>지원 요청은 앱 내 피드백/문의 채널로 이동 예정입니다.</p>
-      <p><a href="mailto:support@zpzg.co.kr">support@zpzg.co.kr</a>로 연락 바랍니다.</p>
+      <div class="eyebrow">Support</div>
+      <h1>ZPZG 고객 지원</h1>
+      <p class="muted">
+        앱 사용 중 문의, 결제 이슈, 계정 삭제 요청, 개인정보 관련 문의를 아래 경로로 접수할 수 있습니다.
+      </p>
+
+      <section>
+        <h2>1. 문의 채널</h2>
+        <ul>
+          <li>일반 지원: <a href="mailto:support@zpzg.co.kr">support@zpzg.co.kr</a></li>
+          <li>개인정보 문의: <a href="mailto:privacy@zpzg.co.kr">privacy@zpzg.co.kr</a></li>
+          <li>응답 목표: 영업일 기준 3일 이내 1차 회신</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>2. 계정 및 결제 안내</h2>
+        <ul>
+          <li>계정 삭제: 앱 내 설정 화면에서 직접 요청할 수 있습니다.</li>
+          <li>구독 관리와 환불은 App Store 또는 Google Play 정책을 우선 적용합니다.</li>
+          <li>문의 시 계정 이메일, 기기 모델, OS 버전, 문제 화면을 함께 보내주면 확인이 빨라집니다.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>3. 참고 링크</h2>
+        <ul>
+          <li><a href="/privacy">개인정보처리방침</a></li>
+          <li><a href="/terms">이용약관</a></li>
+          <li><a href="/.well-known/apple-app-site-association">Apple universal links file</a></li>
+          <li><a href="/.well-known/assetlinks.json">Android asset links file</a></li>
+        </ul>
+      </section>
+
+      <div class="links">
+        <a href="/privacy">개인정보처리방침</a>
+        <a href="/terms">이용약관</a>
+        <a href="/">홈</a>
+      </div>
     </main>
   </body>
 </html>

@@ -1,10 +1,14 @@
 # .well-known Deployment Checklist
 
 ## Files to deploy
-- `docs/deployment/well-known/apple-app-site-association`
-- `docs/deployment/well-known/assetlinks.json`
-- `web/.well-known/apple-app-site-association`
-- `web/.well-known/assetlinks.json`
+- Primary source for live domain:
+  - `public/.well-known/apple-app-site-association`
+  - `public/.well-known/assetlinks.json`
+- Firebase/web fallback copies:
+  - `web/.well-known/apple-app-site-association`
+  - `web/.well-known/assetlinks.json`
+  - `build/web/.well-known/apple-app-site-association`
+  - `build/web/.well-known/assetlinks.json`
 
 ## Required hosting rules
 - Serve **directly** at:
@@ -19,6 +23,37 @@
 - `assetlinks.json` currently contains the upload keystore fingerprint from local signing:
   - `E7:58:39:4F:F8:58:86:B4:E8:62:6C:85:A5:8D:DA:82:C6:CD:47:FE:C8:22:F4:7D:41:69:61:21:CB:9E:3E:EF`
 - If Google Play App Signing is enabled, replace this with the **App Signing certificate** SHA-256 from Play Console.
+
+## Current hosting reality
+- `zpzg.co.kr` and `www.zpzg.co.kr` are currently served by Vercel, not Firebase Hosting.
+- The linked Vercel project in this repo is `.vercel/project.json` -> `zpzg-landing`.
+- `vercel.json` now pins:
+  - `Content-Type: application/json; charset=utf-8` for both `.well-known` files
+  - clean rewrites for `/privacy`, `/terms`, `/support`
+
+## Preferred deployment path (Vercel)
+```bash
+# From repo root
+npx vercel build --prod
+npx vercel deploy --prebuilt --prod --yes
+```
+
+After deploy, verify:
+```bash
+./scripts/verify_deep_links.sh
+curl -sSIL https://zpzg.co.kr/privacy
+curl -sSIL https://zpzg.co.kr/terms
+curl -sSIL https://zpzg.co.kr/support.html
+```
+
+## Firebase fallback path
+- `firebase.json` mirrors the `.well-known` headers and clean-url rewrites.
+- `scripts/build_web_release.sh` now copies:
+  - `public/privacy.html`
+  - `public/terms.html`
+  - `public/support.html`
+  - `public/.well-known/*`
+  into `build/web/` after `flutter build web --release`.
 
 ## Vercel Dashboard exact action steps (production)
 1. Vercel 로그인 후 프로젝트 페이지로 이동한다.
@@ -55,6 +90,7 @@ Check:
 - No redirect response for both hosts.
 - Final response status is `200`.
 - `assetlinks.json` has real SHA-256 fingerprint (no placeholder).
+- `privacy`, `terms`, `support.html` also return `HTTP 200`.
 - No Vercel/hosting redirect from apex to www: configure your production domain so `zpzg.co.kr` serves the same files directly.
 
 ## Post-deploy auto checks (cron / daily)

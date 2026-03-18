@@ -1,107 +1,51 @@
-# Store Review Master Checklist (iOS/Android)
+# Store Review Master Checklist (iOS / Android)
 
-## 1. Purpose
-- Objective: Block policy, quality, metadata, payment, and permission issues before App Store / Play Store submission.
-- Release policy: **Submission allowed only when `P0=0` and `P1=0`**.
-- Scope:
-  - First launch
-  - KR + EN metadata
-  - Expanded device matrix (real devices + simulators/emulators)
+최종 업데이트: 2026-03-18
 
-## 2. Fixed Checklist Fields
-Every check item must include the following fields:
-- `check_id`
-- `severity(P0/P1/P2)`
-- `result(pass/fail/pending)`
-- `evidence(path|url|screenshot)`
-- `owner`
-- `due_date`
-- `status(open/in_progress/done/blocked)`
+## 1. Release Policy
+- Submission allowed only when all `P0` and `P1` items are closed.
+- Current Jira for deployment / public review hardening: `KAN-135`
 
-## 3. Severity Policy
-- `P0`: Immediate launch blocker. Submission prohibited.
-- `P1`: High risk blocker under this project policy. Submission prohibited.
-- `P2`: Medium/low risk. Can proceed with explicit follow-up.
+## 2. Source-of-Truth
+- Metadata source:
+  - `metadata/`
+  - `ios/fastlane/metadata/`
+  - `android/fastlane/metadata/android/`
+- Public review site source:
+  - `public/`
+- Live domain:
+  - `https://zpzg.co.kr`
+  - `https://www.zpzg.co.kr`
 
-## 4. Kickoff and Freeze
-| check_id | severity(P0/P1/P2) | check_item | result(pass/fail/pending) | evidence(path\|url\|screenshot) | owner | due_date | status |
-|---|---|---|---|---|---|---|---|
-| COM-KICK-001 | P0 | Jira issue created (`FORT` preferred, fallback `KAN`) | pass | `KAN-19` | release-owner | 2026-02-16 | done |
-| COM-KICK-002 | P0 | Review target commit SHA frozen | pass | `c3f9a953ea6295498605cb18211ac63185ecb582` in `/docs/deployment/review/RELEASE_DECISION_LOG.md` | release-owner | 2026-02-16 | done |
-| COM-KICK-003 | P0 | Block rule declared (`P0/P1 fail => no submit`) | pass | This document section 1/3 | release-owner | 2026-02-16 | done |
+## 3. Current Pass Items
+| check_id | severity | check_item | result | evidence | status |
+|---|---|---|---|---|---|
+| COM-KICK-001 | P0 | Jira issue created for final review hardening | pass | `KAN-135` | done |
+| COM-URL-001 | P0 | Privacy URL returns HTTP 200 | pass | `https://zpzg.co.kr/privacy` | done |
+| COM-URL-002 | P0 | Terms URL returns HTTP 200 | pass | `https://zpzg.co.kr/terms` | done |
+| COM-URL-003 | P0 | Support URL returns HTTP 200 | pass | `https://zpzg.co.kr/support.html`, `https://zpzg.co.kr/support` | done |
+| COM-URL-004 | P0 | AASA endpoint returns HTTP 200 on apex and www | pass | `https://zpzg.co.kr/.well-known/apple-app-site-association`, `https://www.zpzg.co.kr/.well-known/apple-app-site-association` | done |
+| COM-URL-005 | P0 | Asset Links endpoint returns HTTP 200 + JSON on apex and www | pass | `https://zpzg.co.kr/.well-known/assetlinks.json`, `https://www.zpzg.co.kr/.well-known/assetlinks.json` | done |
+| COM-URL-006 | P0 | AASA content type is normalized to `application/json` | pass | live curl verification on 2026-03-18 | done |
+| COM-AUTO-001 | P0 | `flutter analyze --no-fatal-infos` has no errors | pass | local verification on 2026-03-18 | done |
+| COM-AUTO-002 | P0 | `dart format --set-exit-if-changed .` passes | pass | local verification on 2026-03-18 | done |
+| COM-AUTO-003 | P0 | `flutter test` passes | pass | local verification on 2026-03-18 | done |
+| COM-AUTO-004 | P0 | `./scripts/build_web_release.sh` completes and emits public review assets into `build/web` | pass | local verification on 2026-03-18 | done |
+| COM-AUTO-005 | P0 | Source inventory regenerated after doc/static changes | pass | `artifacts/file_inventory.json` regeneration on 2026-03-18 | done |
 
-## 5. Source-of-Truth Matrix (KR+EN)
-Priority policy:
-- Priority 1: `/Users/jacobmac/Desktop/Dev/fortune/metadata/`
-- Priority 2: `/Users/jacobmac/Desktop/Dev/fortune/ios/fastlane/metadata/`
+## 4. Remaining Open Items
+| check_id | severity | check_item | result | evidence | status |
+|---|---|---|---|---|---|
+| COM-ASC-001 | P1 | App Store Connect App Privacy questionnaire entered and reviewed | pending | ASC UI | open |
+| COM-ASC-002 | P1 | App Store age rating / content questionnaire updated | pending | ASC UI | open |
+| COM-PLAY-001 | P1 | Google Play Data Safety form entered and reviewed | pending | Play Console UI | open |
+| COM-PLAY-002 | P1 | Google Play content rating / app content forms updated | pending | Play Console UI | open |
+| COM-IAP-001 | P0 | iOS/Android purchase success, cancellation, restore flows captured | pending | device recordings + logs | open |
+| COM-LINK-001 | P1 | Device-level universal links / app links verified before re-enabling capability | pending | real-device tests | open |
+| COM-SIGN-001 | P1 | Final Play App Signing SHA-256 checked against live `assetlinks.json` | pending | Play Console UI | open |
 
-| check_id | severity(P0/P1/P2) | check_item | result(pass/fail/pending) | evidence(path\|url\|screenshot) | owner | due_date | status |
-|---|---|---|---|---|---|---|---|
-| COM-SOT-001 | P0 | KR app name/subtitle/keywords parity (priority-1 vs priority-2) | pass | `metadata/ko/name.txt`, `metadata/ko/subtitle.txt`, `metadata/ko/keywords.txt`, `ios/fastlane/metadata/ko/name.txt`, `ios/fastlane/metadata/ko/subtitle.txt`, `ios/fastlane/metadata/ko/keywords.txt` | content-owner | 2026-02-16 | done |
-| COM-SOT-002 | P0 | EN app name/subtitle/keywords parity (priority-1 vs priority-2) | pass | `metadata/en-US/name.txt`, `metadata/en-US/subtitle.txt`, `metadata/en-US/keywords.txt`, `ios/fastlane/metadata/en-US/name.txt`, `ios/fastlane/metadata/en-US/subtitle.txt`, `ios/fastlane/metadata/en-US/keywords.txt` | content-owner | 2026-02-16 | done |
-| COM-SOT-003 | P0 | KR privacy/support URL present in both sources | pass | `metadata/ko/privacy_url.txt`, `metadata/ko/support_url.txt`, `ios/fastlane/metadata/ko/privacy_url.txt`, `ios/fastlane/metadata/ko/support_url.txt` | content-owner | 2026-02-16 | done |
-| COM-SOT-004 | P1 | EN support URL present in priority-2 source | pass | `ios/fastlane/metadata/en-US/support_url.txt` | content-owner | 2026-02-16 | done |
-| COM-SOT-005 | P0 | Review note + demo account evidence files exist | pass | `metadata/review_information/notes.txt`, `metadata/review_information/demo_user.txt`, `metadata/review_information/demo_password.txt`, `ios/fastlane/metadata/review_information/review_notes.txt`, `ios/fastlane/metadata/review_information/review_demo_user.txt`, `ios/fastlane/metadata/review_information/review_demo_password.txt` | release-owner | 2026-02-16 | done |
-| COM-SOT-006 | P0 | App Store Connect Privacy Policy field + App Description Terms link confirmed after metadata upload | pending | ASC screenshots after deliver upload | release-owner | TBD | open |
-
-## 6. URL Health Evidence
-Run and attach output:
-- `curl -sSIL https://zpzg.co.kr/privacy`
-- `curl -sSIL https://zpzg.co.kr/support.html`
-- `curl -sSIL https://zpzg.co.kr/.well-known/apple-app-site-association`
-- `curl -sSIL https://zpzg.co.kr/.well-known/assetlinks.json`
-
-| check_id | severity(P0/P1/P2) | check_item | result(pass/fail/pending) | evidence(path\|url\|screenshot) | owner | due_date | status |
-|---|---|---|---|---|---|---|---|
-| COM-URL-001 | P0 | Privacy URL returns HTTP 200 | pass | URL: `https://zpzg.co.kr/privacy` | web-owner | 2026-02-16 | done |
-| COM-URL-002 | P0 | Support URL returns HTTP 200 | pass | URL: `https://zpzg.co.kr/support.html` | web-owner | 2026-02-16 | done |
-| COM-URL-003 | P0 | AASA endpoint returns HTTP 200 on apex domain | pass | URL: `https://zpzg.co.kr/.well-known/apple-app-site-association` | web-owner | 2026-02-16 | done |
-| COM-URL-004 | P0 | Asset Links endpoint returns HTTP 200 and JSON | pass | URL: `https://zpzg.co.kr/.well-known/assetlinks.json` | web-owner | 2026-02-16 | done |
-| COM-URL-005 | P2 | AASA Content-Type normalized to `application/json` | pending | Current: `application/octet-stream` | web-owner | TBD | open |
-
-## 7. Automated Gates
-| check_id | severity(P0/P1/P2) | check_item | result(pass/fail/pending) | evidence(path\|url\|screenshot) | owner | due_date | status |
-|---|---|---|---|---|---|---|---|
-| COM-AUTO-001 | P0 | `flutter analyze` | pass | `docs/development/reports/2026-02-16_store_review_gate_blockers_verify.md` | eng-owner | 2026-02-16 | done |
-| COM-AUTO-002 | P0 | `dart format --set-exit-if-changed .` | pass | `docs/development/reports/2026-02-16_store_review_strategy_verify.md` | eng-owner | 2026-02-16 | done |
-| COM-AUTO-003 | P0 | `flutter test` | pass | `docs/development/reports/2026-02-16_store_review_strategy_verify.md` | eng-owner | 2026-02-16 | done |
-| COM-AUTO-004 | P0 | `bash ./scripts/ios_full_regression.sh` | pass | `docs/development/reports/2026-02-16_store_review_gate_blockers_verify.md` (integration `SKIP` on missing simulator runtime) | ios-owner | 2026-02-16 | done |
-| COM-AUTO-005 | P0 | `flutter build ios --release --no-codesign --dart-define-from-file=.env.production` | pass | `docs/development/reports/2026-02-16_store_review_gate_blockers_verify.md` | ios-owner | 2026-02-16 | done |
-| COM-AUTO-006 | P0 | `flutter build ipa --release --no-codesign --dart-define-from-file=.env.production` | pass | `docs/development/reports/2026-02-16_store_review_gate_blockers_verify.md` | ios-owner | 2026-02-16 | done |
-| COM-AUTO-007 | P0 | `flutter build appbundle --release --dart-define-from-file=.env.production` | pass | `docs/development/reports/2026-02-16_store_review_gate_blockers_verify.md` | android-owner | 2026-02-16 | done |
-| COM-AUTO-008 | P0 | `cd android && ./gradlew :app:lintRelease` | pass | `docs/development/reports/2026-02-16_store_review_gate_blockers_verify.md` | android-owner | 2026-02-16 | done |
-
-## 8. Manual Verification Matrix (Expanded)
-| check_id | severity(P0/P1/P2) | check_item | result(pass/fail/pending) | evidence(path\|url\|screenshot) | owner | due_date | status |
-|---|---|---|---|---|---|---|---|
-| COM-MAN-001 | P0 | iOS real device run (KR/EN) | pending | video + screenshots | qa-owner | TBD | open |
-| COM-MAN-002 | P0 | iOS simulator run: iPhone + iPad (KR/EN) | pending | simulator captures | qa-owner | TBD | open |
-| COM-MAN-003 | P0 | Android real device run (KR/EN) | pending | video + screenshots | qa-owner | TBD | open |
-| COM-MAN-004 | P0 | Android emulator run (API 35+, KR/EN) | pending | emulator captures | qa-owner | TBD | open |
-
-## 9. Required Test Cases
-| check_id | severity(P0/P1/P2) | check_item | result(pass/fail/pending) | evidence(path\|url\|screenshot) | owner | due_date | status |
-|---|---|---|---|---|---|---|---|
-| TC-IOS-001 | P0 | App install -> first launch -> onboarding complete | pending | iOS run recording | qa-owner | TBD | open |
-| TC-IOS-002 | P0 | Camera/photo permission timing and copy validation | pending | permission prompt captures | qa-owner | TBD | open |
-| TC-IOS-003 | P0 | IAP success -> token/subscription reflected | pending | purchase logs + UI capture | qa-owner | TBD | open |
-| TC-IOS-004 | P0 | IAP cancel/error handling and UI recovery | pending | cancel/error logs | qa-owner | TBD | open |
-| TC-IOS-005 | P0 | Restore purchases flow | pending | restore logs + UI capture | qa-owner | TBD | open |
-| TC-IOS-006 | P0 | Universal link opens app (not browser fallback) | pending | deep link video | qa-owner | TBD | open |
-| TC-AND-001 | P0 | AAB build/install/run | pending | build log + install capture | qa-owner | TBD | open |
-| TC-AND-002 | P0 | Runtime permission grant/deny/re-request | pending | permission flow captures | qa-owner | TBD | open |
-| TC-AND-003 | P1 | Purchase success/cancel/restore on Android | pending | billing + backend logs | qa-owner | TBD | open |
-| TC-AND-004 | P0 | App Links autoVerify + deep link open | pending | adb/app link evidence | qa-owner | TBD | open |
-| TC-COMMON-001 | P0 | KR/EN metadata parity | pending | matrix snapshot | content-owner | TBD | open |
-| TC-COMMON-002 | P0 | Privacy/Support URL HTTP 200 | pass | URL checks in section 6 | web-owner | 2026-02-16 | done |
-| TC-COMMON-003 | P0 | Analyze/test/release build all green | pass | `docs/development/reports/2026-02-16_store_review_gate_blockers_verify.md` | eng-owner | 2026-02-16 | done |
-
-## 10. Known Baseline Risks (Track Until Closed)
-| check_id | severity(P0/P1/P2) | check_item | result(pass/fail/pending) | evidence(path\|url\|screenshot) | owner | due_date | status |
-|---|---|---|---|---|---|---|---|
-| RISK-001 | P1 | Android server-side purchase validation is TODO | pass | `supabase/functions/payment-verify-purchase/index.ts` (Google Play OAuth + Android Publisher API verification implemented) | backend-owner | 2026-02-16 | done |
-| RISK-002 | P1 | EN support URL missing in fastlane metadata fallback source | pass | `ios/fastlane/metadata/en-US/support_url.txt` | content-owner | 2026-02-16 | done |
-
-## 11. Submit/Block Rule
-- **Block**: Any row with `severity=P0 or P1` and `result=fail` or `result=pending`.
-- **Submit**: Only when all `P0/P1` rows are `pass`, with evidence links filled.
+## 5. Block Rule
+- Block release when any row with severity `P0` or `P1` is still `pending`.
+- Current state:
+  - Public review URLs and `.well-known` deployment are live.
+  - Console-side declarations and manual purchase/device evidence are still required.

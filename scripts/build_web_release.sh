@@ -1,7 +1,7 @@
 #!/bin/bash
-# Flutter Web Release Build Script
+# Flutter web build + review asset sync for static hosting checks
 
-set -e
+set -euo pipefail
 
 echo "🌐 Flutter Web Release Build Starting..."
 
@@ -9,10 +9,10 @@ echo "🌐 Flutter Web Release Build Starting..."
 echo "🧹 Cleaning previous build..."
 flutter clean
 
-echo "📦 Syncing .well-known assets for universal/app links..."
+echo "📦 Syncing review assets for universal/app links..."
 mkdir -p web/.well-known
-cp docs/deployment/well-known/apple-app-site-association web/.well-known/apple-app-site-association
-cp docs/deployment/well-known/assetlinks.json web/.well-known/assetlinks.json
+cp public/.well-known/apple-app-site-association web/.well-known/apple-app-site-association
+cp public/.well-known/assetlinks.json web/.well-known/assetlinks.json
 
 # Get dependencies
 echo "📦 Getting dependencies..."
@@ -21,6 +21,14 @@ flutter pub get
 # Build for web
 echo "🔨 Building web release..."
 flutter build web --release
+
+echo "📄 Copying public review pages into build output..."
+mkdir -p build/web/.well-known
+cp public/privacy.html build/web/privacy.html
+cp public/terms.html build/web/terms.html
+cp public/support.html build/web/support.html
+cp public/.well-known/apple-app-site-association build/web/.well-known/apple-app-site-association
+cp public/.well-known/assetlinks.json build/web/.well-known/assetlinks.json
 
 echo "✅ Web build complete!"
 echo "📁 Output: build/web/"

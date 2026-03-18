@@ -1,226 +1,109 @@
-# 📱 App Store Connect 심사 제출 정보
+# App Store Connect Submission Info
 
-최종 업데이트: 2025년 1월 6일
+최종 업데이트: 2026-03-18
 
----
+## 1. 공개 URL
+- Privacy Policy: `https://zpzg.co.kr/privacy`
+- Terms of Use (EULA): `https://zpzg.co.kr/terms`
+- Support URL: `https://zpzg.co.kr/support.html`
 
-## 🔐 필수 입력 정보
+현재 저장소 기준 공개 자산 소스:
+- `public/privacy.html`
+- `public/terms.html`
+- `public/support.html`
+- `public/.well-known/apple-app-site-association`
 
-### 1️⃣ 저작권 정보 (Copyright Information)
+## 2. 앱 기본 정보
+- App Name: `ZPZG`
+- Category: `Lifestyle`
+- Copyright:
+  - `© 2026 ZPZG. All rights reserved.`
 
-**App Store Connect 입력값:**
-```
-© 2024 Beyond Fortune. All rights reserved.
-```
+## 3. App Privacy 입력 기준
 
-또는 간단하게:
-```
-2024 Beyond Fortune
-```
+### 수집하는 데이터
+- Contact Info
+  - Email Address
+  - 목적: Account Management, Customer Support
+  - Linked to User: Yes
+  - Used for Tracking: No
 
-**입력 위치:**
-- App Store Connect → 내 앱 → Fortune → 앱 정보 → 저작권
+- User Content
+  - Photos or Videos
+  - 목적: Face/photo based features only when user selects or captures media
+  - Linked to User: No
+  - Used for Tracking: No
 
----
+- Identifiers
+  - User ID
+  - 목적: Account Management, App Functionality
+  - Linked to User: Yes
+  - Used for Tracking: No
 
-### 2️⃣ 개인정보 처리방침 (Privacy Policy)
+- Purchases
+  - Purchase History
+  - 목적: Subscription and token entitlement validation
+  - Linked to User: Yes
+  - Used for Tracking: No
 
-#### 📄 개인정보 처리방침 URL
+- Location
+  - Coarse Location
+  - 목적: App Functionality
+  - Linked to User: No
+  - Used for Tracking: No
 
-**현재 상태**: 🚨 **아직 업로드 안 됨**
+- Usage Data
+  - Product Interaction
+  - 목적: Analytics, App Functionality
+  - Linked to User: No
+  - Used for Tracking: No
 
-**필요 작업:**
-1. Google Sites에 개인정보 처리방침 페이지 생성
-2. URL: `https://sites.google.com/view/fortune-privacy` (임시)
-3. 또는 자체 도메인: `https://zpzg.co.kr/privacy` (도메인 구매 시)
+### 추적 관련 답변
+- ATT prompt: 사용 안 함
+- IDFA: 사용 안 함
+- Third-party tracking domains: 없음
+- `NSPrivacyTracking`: `false`
 
-**임시 해결책:**
-- Google Sites 무료 계정으로 즉시 생성 가능
-- URL: https://sites.google.com/view/fortune-privacy-policy
-- 내용: `/docs/legal/PRIVACY_POLICY_CONTENT.md` 참고
+## 4. 권한 서술 기준
+- Camera: 사용자가 직접 얼굴 사진을 촬영할 때만 요청
+- Photos: 사용자가 직접 선택한 사진만 업로드
+- Microphone / Speech Recognition: 음성 입력 기능에서만 요청
+- Location When In Use: 날씨/지역 기반 인사이트에서만 요청
+- Calendar: 일정 저장 기능에서만 요청
 
-#### 🔗 개인정보 처리방침 작성 단계
+검토 기준 파일:
+- `ios/Runner/Info.plist`
+- `ios/Runner/PrivacyInfo.xcprivacy`
 
-**1단계: Google Sites 접속**
-- https://sites.google.com 방문
-- Google 계정으로 로그인
+## 5. 리뷰 노트 체크
+- 리뷰 계정 및 비밀번호는 아래 파일 기준으로 유지
+  - `metadata/review_information/demo_user.txt`
+  - `metadata/review_information/demo_password.txt`
+  - `ios/fastlane/metadata/review_information/review_demo_user.txt`
+  - `ios/fastlane/metadata/review_information/review_demo_password.txt`
+- 리뷰 노트는 아래 파일 기준
+  - `metadata/review_information/notes.txt`
+  - `ios/fastlane/metadata/review_information/review_notes.txt`
 
-**2단계: 새 사이트 생성**
-- "빈 사이트" 선택
-- 사이트 이름: "Fortune Privacy Policy"
+노트에 반드시 포함할 내용:
+- 앱은 오락/웰빙 참고용 서비스이며 진단·치료 대체가 아님
+- 토큰/구독 정책은 앱 내 결제 화면 기준
+- 계정 삭제는 앱 내 설정 화면에서 가능
+- Universal Links는 AASA live endpoint 검증 후에만 재활성화
 
-**3단계: 내용 복사**
-- `/docs/legal/PRIVACY_POLICY_CONTENT.md` 파일 열기
-- "## 1. 개인정보 처리방침 개요"부터 복사
-- Google Sites에 붙여넣기
+## 6. 제출 전 수동 확인
+- App Store Connect의 Privacy Policy URL 필드에 `https://zpzg.co.kr/privacy` 입력
+- App Privacy questionnaire를 `ios/Runner/PrivacyInfo.xcprivacy`와 일치시킴
+- Age Rating / Content Rights / Sign-In requirements 수동 확인
+- TestFlight 또는 archive validation에서 privacy manifest validation 확인
 
-**4단계: 서식 적용**
-- 제목 1: "Fortune 앱 개인정보 처리방침"
-- 제목 2: 각 섹션 제목 (##)
-- 제목 3: 하위 섹션 (###)
-- 표 서식 적용
+## 7. 이번 보수 제출에서 제거/비활성화한 항목
+- ATT usage description 제거
+- SKAdNetwork declarations 제거
+- Associated Domains entitlement 제거
+- 광고/추적 기반 심사 서술 제거
 
-**5단계: 게시**
-- 우측 상단 "게시" 클릭
-- 웹 주소 설정: `fortune-privacy-policy` 또는 원하는 이름
-- 최종 URL: `https://sites.google.com/view/fortune-privacy-policy`
-
-**6단계: App Store Connect에 URL 입력**
-- App Store Connect → 개인정보 보호 → 개인정보 처리방침 URL
-- 생성된 Google Sites URL 입력
-
----
-
-### 3️⃣ 개인정보 수집 항목 (App Privacy Details)
-
-App Store Connect에서 다음 정보를 입력해야 합니다:
-
-#### 📊 수집하는 데이터 유형
-
-**1. 연락처 정보**
-- ✅ 이메일 주소
-  - 목적: 계정 관리, 고객 지원
-  - 사용자와 연결: 예
-  - 추적 목적 사용: 아니오
-
-**2. 사용자 콘텐츠**
-- ✅ 사진 및 비디오 (선택사항)
-  - 목적: 프로필 사진
-  - 사용자와 연결: 예
-  - 추적 목적 사용: 아니오
-
-**3. 식별자**
-- ✅ 사용자 ID
-  - 목적: 계정 관리
-  - 사용자와 연결: 예
-  - 추적 목적 사용: 아니오
-
-- ✅ 기기 ID
-  - 목적: 앱 기능, 분석
-  - 사용자와 연결: 예
-  - 추적 목적 사용: 아니오
-
-- ✅ 광고 ID (IDFA)
-  - 목적: 광고, 분석
-  - 사용자와 연결: 예
-  - 추적 목적 사용: 예 (사용자 동의 필요)
-
-**4. 사용 데이터**
-- ✅ 제품 상호작용
-  - 목적: 앱 기능, 분석, 제품 개인화
-  - 사용자와 연결: 예
-  - 추적 목적 사용: 아니오
-
-- ✅ 광고 데이터
-  - 목적: 광고
-  - 사용자와 연결: 예
-  - 추적 목적 사용: 예
-
-**5. 진단**
-- ✅ 충돌 데이터
-  - 목적: 앱 기능
-  - 사용자와 연결: 아니오
-  - 추적 목적 사용: 아니오
-
-- ✅ 성능 데이터
-  - 목적: 앱 기능, 분석
-  - 사용자와 연결: 아니오
-  - 추적 목적 사용: 아니오
-
-**6. 기타 데이터**
-- ✅ 기타 사용자 콘텐츠
-  - 목적: 앱 기능 (운세 생성 입력)
-  - 사용자와 연결: 예
-  - 추적 목적 사용: 아니오
-  - 내용: 생년월일, 출생시간, 출생지역
-
----
-
-### 4️⃣ 데이터 수집 목적
-
-**앱 기능 (App Functionality)**
-- 사용자 인증 및 계정 관리
-- AI 기반 운세 생성
-- 서비스 제공 및 사용자 경험 개선
-
-**분석 (Analytics)**
-- 앱 사용 패턴 분석
-- 서비스 품질 개선
-- 성능 모니터링
-
-**광고 (Advertising)**
-- 맞춤형 광고 제공
-- 광고 효과 측정
-- 사용자 동의 후 진행
-
-**제품 개인화 (Product Personalization)**
-- 개인 맞춤형 운세 제공
-- 사용자 선호도 기반 콘텐츠 추천
-
----
-
-## 📝 App Store Connect 입력 체크리스트
-
-### ✅ 앱 정보 (App Information)
-- [ ] 앱 이름: Fortune
-- [ ] 부제목: AI 기반 개인 맞춤형 운세
-- [ ] 카테고리: 라이프스타일
-- [ ] 저작권: © 2024 Beyond Fortune. All rights reserved.
-
-### ✅ 스크린샷 (Screenshots)
-- [ ] iPhone 6.7" (1290×2796): 7개 업로드 완료
-- [ ] iPhone 6.5" (1242×2688): 7개 업로드 완료
-- [ ] iPad Pro 13" (2048×2732): 13개 업로드 완료
-
-### ✅ 앱 미리보기 및 스크린샷 설명
-- [ ] 한국어 설명 추가
-- [ ] 영어 설명 추가 (선택)
-
-### ✅ 개인정보 보호 (App Privacy)
-- [ ] 개인정보 처리방침 URL 입력
-- [ ] 데이터 수집 항목 입력 완료
-- [ ] 데이터 사용 목적 선택 완료
-- [ ] 추적 권한 설정 완료
-
-### ✅ 앱 심사 정보 (App Review Information)
-- [ ] 연락처 정보 입력
-- [ ] 데모 계정 정보 제공 (필요 시)
-- [ ] 심사 노트 작성 (선택)
-
-### ✅ 버전 정보 (Version Information)
-- [ ] 버전: 1.0.0
-- [ ] 빌드 번호: 2
-- [ ] 새로운 기능 설명 작성
-
----
-
-## 🚀 제출 전 최종 체크
-
-### 필수 완료 사항
-1. ✅ 스크린샷 업로드 (iPhone 2종, iPad 1종)
-2. ⏳ 개인정보 처리방침 페이지 생성 및 URL 입력
-3. ⏳ App Privacy 설정 완료
-4. ⏳ 저작권 정보 입력
-
-### 선택 사항
-- [ ] 프로모션 텍스트 작성
-- [ ] 앱 미리보기 동영상 업로드
-- [ ] 지역화(다국어) 콘텐츠 추가
-
----
-
-## 📞 문의 및 지원
-
-**개인정보 관련 문의:**
-- 이메일: privacy@zpzg.co.kr
-- 전화: +82-70-1234-5678
-
-**앱 지원:**
-- 이메일: support@zpzg.co.kr
-- 홈페이지: https://zpzg.co.kr (예정)
-
----
-
-**작성자**: Claude Code
-**작성일**: 2025년 1월 6일
-**문서 위치**: `/docs/deployment/APP_STORE_SUBMISSION_INFO.md`
+## 8. 남은 외부 콘솔 작업
+- App Store Connect App Privacy 실제 입력
+- App Review metadata 화면의 live URL 반영 확인
+- AASA live 200 확인 후 Universal Links 재활성화 여부 결정
