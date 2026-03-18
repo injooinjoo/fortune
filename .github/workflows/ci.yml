@@ -1,4 +1,4 @@
-name: Repository Guards
+name: CI Pipeline
 
 on:
   push:
@@ -54,7 +54,7 @@ jobs:
     if: always() && (needs.repository-guards.result == 'failure' || needs.repository-guards.result == 'cancelled')
     uses: ./.github/workflows/slack-notify.yml
     with:
-      workflow_name: 'Repository Guards'
+      workflow_name: 'CI Pipeline'
       job_status: ${{ needs.repository-guards.result == 'failure' && 'failure' || 'cancelled' }}
       failed_jobs: 'repository-guards'
       pr_number: ${{ github.event.pull_request.number || '' }}

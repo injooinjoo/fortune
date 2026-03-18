@@ -35,7 +35,7 @@ Fortune 앱은 3단계 테스트 전략을 사용합니다:
   - 대상: `main/master/develop` 대상 PR, 해당 브랜치 push, 수동 실행
   - 기본 범위: Playwright smoke 게이트(`npm run test:smoke:ci`)
   - 수동 확장: `workflow_dispatch`에서 `all`, `comprehensive` 선택 가능
-- `Repository Guards`
+- `CI Pipeline`
   - 대상: `main/master/develop` 대상 PR, 해당 브랜치 push
   - 범위: source inventory drift, Figma sync drift
 
