@@ -21117,7 +21117,8 @@
         "lib/data/services/fortune_api/fortune_api_service.dart",
         "lib/data/services/fortune_api/misc_fortune_api.dart",
         "lib/data/services/token_api_service.dart",
-        "lib/presentation/providers/fortune_provider.dart"
+        "lib/presentation/providers/fortune_provider.dart",
+        "lib/presentation/providers/token_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -22954,7 +22955,8 @@
       "referenced_by": [
         "lib/presentation/providers/auth_provider.dart",
         "lib/presentation/providers/token_provider.dart",
-        "lib/presentation/providers/user_profile_notifier.dart"
+        "lib/presentation/providers/user_profile_notifier.dart",
+        "test/unit/providers/token_provider_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
