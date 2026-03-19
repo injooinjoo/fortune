@@ -8,7 +8,6 @@ import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'l10n/app_localizations.dart';
@@ -266,7 +265,7 @@ Future<void> _runDeferredInitializations({
     debugPrint('🎭 [POST_STARTUP] Checking guest mode...');
     final prefs = await SharedPreferences.getInstance();
     final hasSession = supabaseReady
-        ? Supabase.instance.client.auth.currentSession != null
+        ? SupabaseConnectionService.tryGetCurrentSession() != null
         : false;
     await prefs.setBool('isGuestMode', !hasSession);
 

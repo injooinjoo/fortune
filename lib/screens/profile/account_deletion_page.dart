@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/design_system/design_system.dart';
+import '../../core/services/supabase_connection_service.dart';
 import '../../services/account_deletion_service.dart';
 import '../../shared/components/section_header.dart';
 import '../../shared/components/toast.dart';
@@ -31,7 +31,7 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
     '기타',
   ];
 
-  bool get _isSignedIn => Supabase.instance.client.auth.currentUser != null;
+  bool get _isSignedIn => SupabaseConnectionService.tryGetCurrentUser() != null;
 
   bool get _canSubmit {
     if (!_isSignedIn || _isProcessing) return false;

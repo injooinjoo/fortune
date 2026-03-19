@@ -37,6 +37,26 @@ class SupabaseConnectionService extends ResilientService {
   static bool get isInitialized => _isInitialized;
   static String? get lastError => _lastError;
 
+  static SupabaseClient? tryGetClient() {
+    if (!_isInitialized) {
+      return null;
+    }
+
+    try {
+      return Supabase.instance.client;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static User? tryGetCurrentUser() {
+    return tryGetClient()?.auth.currentUser;
+  }
+
+  static Session? tryGetCurrentSession() {
+    return tryGetClient()?.auth.currentSession;
+  }
+
   /// 강화된 Supabase 초기화
   static Future<bool> initialize({
     int maxRetries = 3,

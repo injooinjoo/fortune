@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/design_system/design_system.dart';
+import '../../../core/services/supabase_connection_service.dart';
 import '../../../services/social_auth_service.dart';
 import '../../../presentation/widgets/social_login_bottom_sheet.dart';
 import '../../../core/providers/user_settings_provider.dart';
@@ -33,15 +33,17 @@ class NameInputStep extends ConsumerStatefulWidget {
 class _NameInputStepState extends ConsumerState<NameInputStep> {
   late TextEditingController _nameController;
   final FocusNode _focusNode = FocusNode();
-  late final SocialAuthService _socialAuthService;
+  SocialAuthService? _socialAuthService;
   bool _isValid = false;
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.initialName);
-    _socialAuthService =
-        widget.socialAuthService ?? SocialAuthService(Supabase.instance.client);
+    final resolvedSocialAuthService = widget.socialAuthService;
+    final supabaseClient = SupabaseConnectionService.tryGetClient();
+    _socialAuthService = resolvedSocialAuthService ??
+        (supabaseClient != null ? SocialAuthService(supabaseClient) : null);
     _isValid = _nameController.text.isNotEmpty;
 
     _nameController.addListener(() {

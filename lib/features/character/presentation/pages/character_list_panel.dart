@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/extensions/l10n_extension.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/navigation/fortune_chat_route.dart';
+import '../../../../core/services/supabase_connection_service.dart';
 import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../../data/services/character_localizer.dart';
@@ -251,7 +251,7 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
               await handleProfileAvatarTap(
                 context: context,
                 ref: ref,
-                currentUser: Supabase.instance.client.auth.currentUser,
+                currentUser: SupabaseConnectionService.tryGetCurrentUser(),
                 openProfileSheet: () async {
                   context.push('/profile');
                 },

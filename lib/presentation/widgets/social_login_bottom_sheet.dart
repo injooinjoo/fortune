@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/design_system/design_system.dart';
+import '../../core/services/supabase_connection_service.dart';
 import '../../core/services/fortune_haptic_service.dart';
 import '../../services/social_auth/base/social_auth_attempt_result.dart';
 import '../../services/social_auth_service.dart';
@@ -22,7 +22,10 @@ class SocialLoginBottomSheet {
     VoidCallback? onAuthenticated,
   }) async {
     final authService =
-        socialAuthService ?? SocialAuthService(Supabase.instance.client);
+        socialAuthService ?? _createSocialAuthServiceOrNull(context);
+    if (authService == null) {
+      return;
+    }
 
     await show(
       context,
@@ -42,6 +45,24 @@ class SocialLoginBottomSheet {
       onNaverLogin: () async {},
       ref: ref,
     );
+  }
+
+  static SocialAuthService? _createSocialAuthServiceOrNull(
+    BuildContext context,
+  ) {
+    final client = SupabaseConnectionService.tryGetClient();
+    if (client != null) {
+      return SocialAuthService(client);
+    }
+
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    messenger?.showSnackBar(
+      const SnackBar(
+        content: Text('로그인을 준비하는 중입니다. 잠시 후 다시 시도해 주세요.'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+    return null;
   }
 
   /// BottomSheet를 표시하고 사용자의 선택을 반환

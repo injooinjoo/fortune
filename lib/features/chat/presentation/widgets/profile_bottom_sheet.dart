@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/cache/cache_service.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/services/supabase_connection_service.dart';
 import '../../../../features/character/data/services/character_affinity_service.dart';
 import '../../../../features/character/data/services/character_chat_local_service.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
@@ -23,7 +23,10 @@ class _ProfileBottomSheetState extends ConsumerState<ProfileBottomSheet> {
   final _characterAffinityService = CharacterAffinityService();
 
   Future<void> _handleLogout() async {
-    await Supabase.instance.client.auth.signOut();
+    final supabase = SupabaseConnectionService.tryGetClient();
+    if (supabase != null) {
+      await supabase.auth.signOut();
+    }
     await _storageService.clearUserProfile();
     await _storageService.clearActiveProfileOverride();
     await _storageService.clearGuestMode();
@@ -44,7 +47,7 @@ class _ProfileBottomSheetState extends ConsumerState<ProfileBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final user = Supabase.instance.client.auth.currentUser;
+    final user = SupabaseConnectionService.tryGetCurrentUser();
     final profile = ref.watch(userProfileNotifierProvider).valueOrNull;
     final displayName = profile?.name ?? user?.email ?? '게스트';
     final statusLabel = user == null ? '로그인되지 않음' : '로그인됨';

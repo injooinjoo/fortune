@@ -43,13 +43,13 @@ class _FakeSocialAuthService extends SocialAuthService {
 class _ProfileAvatarTapHarness extends ConsumerWidget {
   const _ProfileAvatarTapHarness({
     required this.currentUser,
-    required this.socialAuthService,
     required this.openProfileSheet,
+    this.socialAuthService,
     this.onAuthenticated,
   });
 
   final User? currentUser;
-  final SocialAuthService socialAuthService;
+  final SocialAuthService? socialAuthService;
   final Future<void> Function() openProfileSheet;
   final VoidCallback? onAuthenticated;
 
@@ -164,6 +164,25 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(profileSheetOpened, isTrue);
+    expect(find.text('Apple로 계속하기'), findsNothing);
+  });
+
+  testWidgets(
+      'guest profile icon shows pending message when Supabase client is unavailable',
+      (tester) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        child: _ProfileAvatarTapHarness(
+          currentUser: null,
+          openProfileSheet: () async {},
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('open-profile'));
+    await tester.pump();
+
+    expect(find.text('로그인을 준비하는 중입니다. 잠시 후 다시 시도해 주세요.'), findsOneWidget);
     expect(find.text('Apple로 계속하기'), findsNothing);
   });
 }
