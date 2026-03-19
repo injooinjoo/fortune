@@ -21887,7 +21887,12 @@
       "path": "lib/core/services/supabase_connection_service.dart",
       "referenced_by": [
         "integration_test/test_app.dart",
+        "lib/features/character/presentation/pages/character_list_panel.dart",
+        "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
         "lib/main.dart",
+        "lib/presentation/widgets/social_login_bottom_sheet.dart",
+        "lib/screens/onboarding/steps/name_input_step.dart",
+        "lib/screens/profile/account_deletion_page.dart",
         "lib/screens/splash_screen.dart",
         "lib/services/supabase_storage_service.dart"
       ],
@@ -31618,7 +31623,6 @@
       "referenced_by": [
         "test/unit/providers/auth/auth_provider_test.dart",
         "test/unit/providers/user/user_provider_test.dart",
-        "test/unit/services/auth/apple_auth_provider_test.dart",
         "test/unit/services/auth/auth_service_test.dart",
         "test/unit/services/auth/social_auth_service_test.dart",
         "test/unit/services/unified_fortune_service_guest_test.dart",
