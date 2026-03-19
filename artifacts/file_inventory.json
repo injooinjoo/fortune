@@ -4455,19 +4455,18 @@
     },
     {
       "area": "assets",
-      "candidate_action": "keep",
+      "candidate_action": "manual_review",
       "dirty": false,
       "kind": "asset_webp",
       "notes": [
+        "no_inbound_refs",
         "pubspec_declared:assets/images/chat/backgrounds"
       ],
       "path": "assets/images/chat/backgrounds/bg_chat_default.webp",
-      "referenced_by": [
-        "lib/features/character/presentation/utils/character_chat_theme.dart"
-      ],
-      "runtime_reachable": true,
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "assets",
@@ -18600,7 +18599,8 @@
       ],
       "path": "assets/images/zpzg_logo_dark.webp",
       "referenced_by": [
-        "lib/core/constants/asset_pack_config.dart"
+        "lib/core/constants/asset_pack_config.dart",
+        "lib/screens/splash_screen.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -18662,7 +18662,8 @@
       ],
       "path": "assets/textures/hanji_dark.webp",
       "referenced_by": [
-        "lib/core/design_system/components/hanji_background.dart"
+        "lib/core/design_system/components/hanji_background.dart",
+        "lib/features/character/presentation/utils/character_chat_theme.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -18678,7 +18679,8 @@
       ],
       "path": "assets/textures/hanji_light.webp",
       "referenced_by": [
-        "lib/core/design_system/components/hanji_background.dart"
+        "lib/core/design_system/components/hanji_background.dart",
+        "lib/features/character/presentation/utils/character_chat_theme.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23554,7 +23556,9 @@
         "lib/features/character/domain/models/character_chat_message.dart",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "lib/features/character/presentation/widgets/character_choice_widget.dart"
+        "lib/features/character/presentation/utils/pending_chat_auth_intent.dart",
+        "lib/features/character/presentation/widgets/character_choice_widget.dart",
+        "test/features/character/presentation/utils/pending_chat_auth_intent_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23919,6 +23923,22 @@
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/screens/premium/premium_screen.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
+      "path": "lib/features/character/presentation/utils/pending_chat_auth_intent.dart",
+      "referenced_by": [
+        "lib/features/character/presentation/pages/character_chat_panel.dart",
+        "lib/screens/auth/callback_page.dart",
+        "test/features/character/presentation/utils/pending_chat_auth_intent_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26022,6 +26042,7 @@
       "notes": [],
       "path": "lib/presentation/widgets/social_login_bottom_sheet.dart",
       "referenced_by": [
+        "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/utils/profile_avatar_tap_handler.dart",
         "lib/screens/onboarding/steps/name_input_step.dart",
         "test/widget/auth/social_login_bottom_sheet_test.dart"
@@ -26742,6 +26763,7 @@
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/core/services/unified_fortune_service.dart",
+        "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/pages/character_onboarding_page.dart",
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
@@ -31451,6 +31473,20 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "test/features/character/presentation/utils/pending_chat_auth_intent_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "test/features/character/presentation/utils/tarot_chat_payload_utils_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -32367,26 +32403,26 @@
       "assets": 1231,
       "docs": 89,
       "integration_test": 8,
-      "lib": 413,
+      "lib": 414,
       "scripts": 70,
       "supabase": 206,
-      "test": 69
+      "test": 70
     },
     "counts_by_candidate_action": {
       "keep": 704,
       "keep_generated": 28,
-      "manual_review": 977,
+      "manual_review": 978,
       "phase1_remove_candidate": 14,
-      "phase2_review_candidate": 359,
+      "phase2_review_candidate": 360,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
       "doc_only": 97,
       "generated_excluded": 28,
       "runtime_used": 704,
-      "test_only": 78,
+      "test_only": 79,
       "tooling_only": 184,
-      "unreferenced": 995
+      "unreferenced": 996
     },
     "declared_asset_dirs_without_runtime_refs": [
       "assets/animations",
@@ -32397,6 +32433,7 @@
       "assets/images/character/_base",
       "assets/images/character/gallery",
       "assets/images/character/lunch",
+      "assets/images/chat/backgrounds",
       "assets/images/face_reading",
       "assets/images/fortune",
       "assets/images/fortune/avoid-people",
@@ -32538,8 +32575,8 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 342,
-    "lib_dart_total": 410,
+    "lib_dart_runtime_reachable": 343,
+    "lib_dart_total": 411,
     "lib_dart_zero_incoming": 26,
     "missing_function_refs": [
       "--all",
@@ -32647,7 +32684,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2086,
+    "total_files": 2088,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
