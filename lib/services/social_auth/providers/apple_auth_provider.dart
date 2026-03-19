@@ -257,6 +257,9 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
 
     try {
       Logger.info('[AppleAuthProvider] OAuth fallback 시작');
+      SocialAuthConfigGuard.ensureOAuthConfigurationIsValid(
+        providerName: providerName,
+      );
       final flowId =
           OAuthInAppBrowserCoordinator.markOAuthStarted(providerName);
 

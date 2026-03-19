@@ -311,6 +311,9 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
   Future<AuthResponse?> _signInWithKakaoOAuth() async {
     try {
       Logger.info('Using Kakao OAuth sign in');
+      SocialAuthConfigGuard.ensureOAuthConfigurationIsValid(
+        providerName: providerName,
+      );
       final flowId =
           OAuthInAppBrowserCoordinator.markOAuthStarted(providerName);
 

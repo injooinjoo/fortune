@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../core/config/environment.dart';
 import '../../../core/utils/logger.dart';
 import '../../../core/cache/profile_cache.dart';
 import 'social_auth_attempt_result.dart';
@@ -19,6 +20,24 @@ abstract class BaseSocialAuthProvider {
   /// Optional: Handle provider-specific disconnect logic
   Future<void> disconnect() async {
     Logger.info('$providerName disconnect handled by Supabase');
+  }
+}
+
+class SocialAuthConfigGuard {
+  static void ensureOAuthConfigurationIsValid({
+    required String providerName,
+  }) {
+    final configIssue = Environment.describeSupabaseConfigurationIssue();
+    if (configIssue == null) {
+      return;
+    }
+
+    Logger.warning(
+      '[SocialAuthConfigGuard] $providerName OAuth 차단: $configIssue',
+    );
+    throw Exception(
+      '앱의 소셜 로그인 설정이 올바르지 않습니다. $configIssue 실제 Supabase 설정으로 다시 실행해 주세요.',
+    );
   }
 }
 

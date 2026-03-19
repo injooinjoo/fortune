@@ -22,15 +22,13 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
           '🟡 [GoogleAuthProvider] signIn() started with Supabase OAuth');
       Logger.info('=== GOOGLE OAUTH SUPABASE PROCESS STARTED ===');
 
+      SocialAuthConfigGuard.ensureOAuthConfigurationIsValid(
+        providerName: providerName,
+      );
       final supabaseUrl = Environment.supabaseUrl;
+      final previewLength = supabaseUrl.length < 30 ? supabaseUrl.length : 30;
       Logger.info(
-          'Using Supabase URL for OAuth: ${supabaseUrl.substring(0, 30)}...');
-
-      if (supabaseUrl.contains('your-project')) {
-        Logger.warning(
-            '[GoogleAuthProvider] Supabase URL 설정 오류 (선택적 기능, 설정 확인 필요): Supabase URL이 제대로 설정되지 않음');
-        throw Exception('Supabase URL is not properly configured');
-      }
+          'Using Supabase URL for OAuth: ${supabaseUrl.substring(0, previewLength)}...');
 
       debugPrint(
           '🟡 [GoogleAuthProvider] Starting Supabase OAuth for Google...');

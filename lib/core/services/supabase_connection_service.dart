@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../config/environment.dart';
 import '../utils/logger.dart';
 import 'resilient_service.dart';
 
@@ -101,11 +101,15 @@ class SupabaseConnectionService extends ResilientService {
   /// 환경변수에서 Supabase 인증정보 로드
   Future<Map<String, String>?> _loadCredentials() async {
     return await safeExecuteWithNull(() async {
-      final url = dotenv.dotenv.env['SUPABASE_URL'];
-      final anonKey = dotenv.dotenv.env['SUPABASE_ANON_KEY'];
+      final url = Environment.supabaseUrl;
+      final anonKey = Environment.supabaseAnonKey;
 
-      if (url == null || anonKey == null || url.isEmpty || anonKey.isEmpty) {
-        throw Exception('SUPABASE_URL 또는 SUPABASE_ANON_KEY가 설정되지 않음');
+      final configIssue = Environment.describeSupabaseConfigurationIssue(
+        supabaseUrl: url,
+        supabaseAnonKey: anonKey,
+      );
+      if (configIssue != null) {
+        throw Exception(configIssue);
       }
 
       // URL 형식 검증

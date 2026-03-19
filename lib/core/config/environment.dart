@@ -17,7 +17,11 @@ class Environment {
       return production;
     }
     try {
-      return dotenv.env['ENVIRONMENT'] ?? development;
+      return _readEnvValue(
+        'ENVIRONMENT',
+        dotenvValue: dotenv.env['ENVIRONMENT'],
+        fallback: development,
+      );
     } catch (e) {
       return development;
     }
@@ -27,78 +31,154 @@ class Environment {
   static String get apiBaseUrl {
     switch (current) {
       case production:
-        return dotenv.env['PROD_API_BASE_URL'] ?? '$supabaseUrl/functions/v1';
+        return _readEnvValue(
+          'PROD_API_BASE_URL',
+          dotenvValue: dotenv.env['PROD_API_BASE_URL'],
+          fallback: '$supabaseUrl/functions/v1',
+        );
       case staging:
-        return dotenv.env['STAGING_API_BASE_URL'] ??
-            '$supabaseUrl/functions/v1';
+        return _readEnvValue(
+          'STAGING_API_BASE_URL',
+          dotenvValue: dotenv.env['STAGING_API_BASE_URL'],
+          fallback: '$supabaseUrl/functions/v1',
+        );
       default:
-        return dotenv.env['API_BASE_URL'] ?? '$supabaseUrl/functions/v1';
+        return _readEnvValue(
+          'API_BASE_URL',
+          dotenvValue: dotenv.env['API_BASE_URL'],
+          fallback: '$supabaseUrl/functions/v1',
+        );
     }
   }
 
   // Supabase 설정
-  static String get supabaseUrl => dotenv.env['SUPABASE_URL'] ?? '';
-  static String get supabaseAnonKey => dotenv.env['SUPABASE_ANON_KEY'] ?? '';
+  static String get supabaseUrl => _readEnvValue(
+        'SUPABASE_URL',
+        dotenvValue: dotenv.env['SUPABASE_URL'],
+      );
+  static String get supabaseAnonKey => _readEnvValue(
+        'SUPABASE_ANON_KEY',
+        dotenvValue: dotenv.env['SUPABASE_ANON_KEY'],
+      );
 
   // App Domain 설정 (공유 링크, 딥링크용)
-  static String get appDomain => dotenv.env['APP_DOMAIN'] ?? 'zpzg.co.kr';
+  static String get appDomain => _readEnvValue(
+        'APP_DOMAIN',
+        dotenvValue: dotenv.env['APP_DOMAIN'],
+        fallback: 'zpzg.co.kr',
+      );
   static String get appBaseUrl => 'https://$appDomain';
   static String get defaultShareImageUrl =>
       '$appBaseUrl/images/default_share.png';
 
   // 결제 설정
-  static String get stripePublishableKey =>
-      dotenv.env['STRIPE_PUBLISHABLE_KEY'] ?? '';
+  static String get stripePublishableKey => _readEnvValue(
+        'STRIPE_PUBLISHABLE_KEY',
+        dotenvValue: dotenv.env['STRIPE_PUBLISHABLE_KEY'],
+      );
 
   // 분석 도구 설정
-  static String get sentryDsn => dotenv.env['SENTRY_DSN'] ?? '';
-  static String get mixpanelToken => dotenv.env['MIXPANEL_TOKEN'] ?? '';
+  static String get sentryDsn => _readEnvValue(
+        'SENTRY_DSN',
+        dotenvValue: dotenv.env['SENTRY_DSN'],
+      );
+  static String get mixpanelToken => _readEnvValue(
+        'MIXPANEL_TOKEN',
+        dotenvValue: dotenv.env['MIXPANEL_TOKEN'],
+      );
 
   // 보안 설정
-  static String get encryptionKey => dotenv.env['ENCRYPTION_KEY'] ?? '';
-  static String get jwtSecret => dotenv.env['JWT_SECRET'] ?? '';
+  static String get encryptionKey => _readEnvValue(
+        'ENCRYPTION_KEY',
+        dotenvValue: dotenv.env['ENCRYPTION_KEY'],
+      );
+  static String get jwtSecret => _readEnvValue(
+        'JWT_SECRET',
+        dotenvValue: dotenv.env['JWT_SECRET'],
+      );
 
   // AI API 설정
-  static String get openAiApiKey => dotenv.env['OPENAI_API_KEY'] ?? '';
+  static String get openAiApiKey => _readEnvValue(
+        'OPENAI_API_KEY',
+        dotenvValue: dotenv.env['OPENAI_API_KEY'],
+      );
 
   // 내부 API 키
-  static String get internalApiKey => dotenv.env['INTERNAL_API_KEY'] ?? '';
+  static String get internalApiKey => _readEnvValue(
+        'INTERNAL_API_KEY',
+        dotenvValue: dotenv.env['INTERNAL_API_KEY'],
+      );
 
   // Google OAuth 설정
-  static String get googleWebClientId =>
-      dotenv.env['GOOGLE_WEB_CLIENT_ID'] ?? '';
-  static String get googleIosClientId =>
-      dotenv.env['GOOGLE_IOS_CLIENT_ID'] ?? '';
-  static String get googleAndroidClientId =>
-      dotenv.env['GOOGLE_ANDROID_CLIENT_ID'] ?? '';
+  static String get googleWebClientId => _readEnvValue(
+        'GOOGLE_WEB_CLIENT_ID',
+        dotenvValue: dotenv.env['GOOGLE_WEB_CLIENT_ID'],
+      );
+  static String get googleIosClientId => _readEnvValue(
+        'GOOGLE_IOS_CLIENT_ID',
+        dotenvValue: dotenv.env['GOOGLE_IOS_CLIENT_ID'],
+      );
+  static String get googleAndroidClientId => _readEnvValue(
+        'GOOGLE_ANDROID_CLIENT_ID',
+        dotenvValue: dotenv.env['GOOGLE_ANDROID_CLIENT_ID'],
+      );
 
   // Social Login 설정
-  static String get kakaoAppKey => dotenv.env['KAKAO_APP_KEY'] ?? '';
-  static String get naverClientId => dotenv.env['NAVER_CLIENT_ID'] ?? '';
-  static String get naverClientSecret =>
-      dotenv.env['NAVER_CLIENT_SECRET'] ?? '';
+  static String get kakaoAppKey => _readEnvValue(
+        'KAKAO_APP_KEY',
+        dotenvValue: dotenv.env['KAKAO_APP_KEY'],
+      );
+  static String get naverClientId => _readEnvValue(
+        'NAVER_CLIENT_ID',
+        dotenvValue: dotenv.env['NAVER_CLIENT_ID'],
+      );
+  static String get naverClientSecret => _readEnvValue(
+        'NAVER_CLIENT_SECRET',
+        dotenvValue: dotenv.env['NAVER_CLIENT_SECRET'],
+      );
 
   // Kakao API 설정
-  static String get kakaoRestApiKey => dotenv.env['KAKAO_REST_API_KEY'] ?? '';
+  static String get kakaoRestApiKey => _readEnvValue(
+        'KAKAO_REST_API_KEY',
+        dotenvValue: dotenv.env['KAKAO_REST_API_KEY'],
+      );
 
   // 테스트 계정 도메인 (쉼표로 구분)
   static List<String> get testEmailDomains {
-    final domains = dotenv.env['TEST_EMAIL_DOMAINS'] ?? '@test.zpzg.com';
+    final domains = _readEnvValue(
+      'TEST_EMAIL_DOMAINS',
+      dotenvValue: dotenv.env['TEST_EMAIL_DOMAINS'],
+      fallback: '@test.zpzg.com',
+    );
     return domains.split(',').map((d) => d.trim().toLowerCase()).toList();
   }
 
   // 기능 플래그
   static bool get enableAnalytics =>
-      dotenv.env['ENABLE_ANALYTICS']?.toLowerCase() == 'true';
+      _readEnvValue(
+        'ENABLE_ANALYTICS',
+        dotenvValue: dotenv.env['ENABLE_ANALYTICS'],
+      ).toLowerCase() ==
+      'true';
   static bool get enableCrashReporting =>
-      dotenv.env['ENABLE_CRASH_REPORTING']?.toLowerCase() == 'true';
+      _readEnvValue(
+        'ENABLE_CRASH_REPORTING',
+        dotenvValue: dotenv.env['ENABLE_CRASH_REPORTING'],
+      ).toLowerCase() ==
+      'true';
   static bool get enablePayment =>
-      dotenv.env['ENABLE_PAYMENT']?.toLowerCase() == 'true';
+      _readEnvValue(
+        'ENABLE_PAYMENT',
+        dotenvValue: dotenv.env['ENABLE_PAYMENT'],
+      ).toLowerCase() ==
+      'true';
 
   // 환경 체크
   static bool get isProduction => current == production;
   static bool get isDevelopment => current == development;
   static bool get isStaging => current == staging;
+  static bool get hasValidSupabaseConfiguration =>
+      describeSupabaseConfigurationIssue() == null;
 
   // 환경 변수 초기화
   static Future<void> initialize() async {
@@ -107,9 +187,6 @@ class Environment {
     } catch (e) {
       // 웹 환경에서 .env 파일을 찾을 수 없을 때의 대체 처리
       if (kIsWeb) {
-        // CRITICAL: .env file not found in web environment
-        // Environment variables MUST be set via build configuration
-        // DO NOT hardcode API keys here for security reasons
         throw Exception('Environment file not found. '
             'Please configure environment variables via build configuration. '
             'Never hardcode API keys in source code.');
@@ -122,15 +199,11 @@ class Environment {
 
   // 필수 환경 변수 검증
   static void _validateRequiredVariables() {
-    final requiredVars = ['SUPABASE_URL', 'SUPABASE_ANON_KEY'];
-
-    for (final varName in requiredVars) {
-      if (dotenv.env[varName] == null || dotenv.env[varName]!.isEmpty) {
-        throw Exception('Required environment variable $varName is not set');
-      }
+    final supabaseConfigIssue = describeSupabaseConfigurationIssue();
+    if (supabaseConfigIssue != null) {
+      throw Exception(supabaseConfigIssue);
     }
 
-    // Production 환경에서 추가 검증
     if (current == production) {
       final productionVars = [
         'PROD_API_BASE_URL',
@@ -142,23 +215,151 @@ class Environment {
       ];
 
       for (final varName in productionVars) {
-        if (dotenv.env[varName] == null || dotenv.env[varName]!.isEmpty) {
+        if (_readEnvValue(varName, dotenvValue: dotenv.env[varName]).isEmpty) {
           throw Exception(
               'Production environment variable $varName is not set');
         }
       }
 
-      // API URL 형식 검증
-      final prodApiUrl = dotenv.env['PROD_API_BASE_URL']!;
+      final prodApiUrl = _readEnvValue(
+        'PROD_API_BASE_URL',
+        dotenvValue: dotenv.env['PROD_API_BASE_URL'],
+      );
       if (!prodApiUrl.startsWith('https://')) {
         throw Exception('Production API URL must use HTTPS');
       }
 
-      // 키 길이 검증
-      final encryptionKey = dotenv.env['ENCRYPTION_KEY']!;
+      final encryptionKey = _readEnvValue(
+        'ENCRYPTION_KEY',
+        dotenvValue: dotenv.env['ENCRYPTION_KEY'],
+      );
       if (encryptionKey.length < 32) {
         throw Exception('Encryption key must be at least 32 characters');
       }
+    }
+  }
+
+  static String? describeSupabaseConfigurationIssue({
+    String? supabaseUrl,
+    String? supabaseAnonKey,
+  }) {
+    final resolvedUrl = (supabaseUrl ?? Environment.supabaseUrl).trim();
+    if (resolvedUrl.isEmpty) {
+      return 'SUPABASE_URL이 설정되지 않았습니다.';
+    }
+
+    final uri = Uri.tryParse(resolvedUrl);
+    if (uri == null || !uri.isAbsolute) {
+      return 'SUPABASE_URL 형식이 올바르지 않습니다.';
+    }
+
+    if (isPlaceholderValue(resolvedUrl)) {
+      return 'SUPABASE_URL이 placeholder 값입니다.';
+    }
+
+    final resolvedAnonKey =
+        (supabaseAnonKey ?? Environment.supabaseAnonKey).trim();
+    if (resolvedAnonKey.isEmpty) {
+      return 'SUPABASE_ANON_KEY가 설정되지 않았습니다.';
+    }
+
+    if (isPlaceholderValue(resolvedAnonKey)) {
+      return 'SUPABASE_ANON_KEY가 placeholder 값입니다.';
+    }
+
+    if (resolvedAnonKey.length < 100) {
+      return 'SUPABASE_ANON_KEY 형식이 올바르지 않습니다.';
+    }
+
+    return null;
+  }
+
+  static bool isPlaceholderValue(String value) {
+    final normalized = value.trim().toLowerCase();
+    if (normalized.isEmpty) {
+      return false;
+    }
+
+    return normalized.contains('placeholder') ||
+        normalized.contains('your-project') ||
+        normalized.contains('your-dev-project') ||
+        normalized.contains('your-prod-project') ||
+        normalized.contains('not-real-key') ||
+        normalized.contains('not-real') ||
+        normalized.contains('example');
+  }
+
+  static String _readEnvValue(
+    String key, {
+    required String? dotenvValue,
+    String fallback = '',
+  }) {
+    final defineValue = _dartDefineValue(key);
+    if (defineValue.isNotEmpty) {
+      return defineValue;
+    }
+
+    if (dotenvValue != null && dotenvValue.isNotEmpty) {
+      return dotenvValue;
+    }
+
+    return fallback;
+  }
+
+  static String _dartDefineValue(String key) {
+    switch (key) {
+      case 'ENVIRONMENT':
+        return const String.fromEnvironment('ENVIRONMENT');
+      case 'API_BASE_URL':
+        return const String.fromEnvironment('API_BASE_URL');
+      case 'STAGING_API_BASE_URL':
+        return const String.fromEnvironment('STAGING_API_BASE_URL');
+      case 'PROD_API_BASE_URL':
+        return const String.fromEnvironment('PROD_API_BASE_URL');
+      case 'SUPABASE_URL':
+        return const String.fromEnvironment('SUPABASE_URL');
+      case 'SUPABASE_ANON_KEY':
+        return const String.fromEnvironment('SUPABASE_ANON_KEY');
+      case 'APP_DOMAIN':
+        return const String.fromEnvironment('APP_DOMAIN');
+      case 'STRIPE_PUBLISHABLE_KEY':
+        return const String.fromEnvironment('STRIPE_PUBLISHABLE_KEY');
+      case 'SENTRY_DSN':
+        return const String.fromEnvironment('SENTRY_DSN');
+      case 'MIXPANEL_TOKEN':
+        return const String.fromEnvironment('MIXPANEL_TOKEN');
+      case 'ENCRYPTION_KEY':
+        return const String.fromEnvironment('ENCRYPTION_KEY');
+      case 'JWT_SECRET':
+        return const String.fromEnvironment('JWT_SECRET');
+      case 'OPENAI_API_KEY':
+        return const String.fromEnvironment('OPENAI_API_KEY');
+      case 'INTERNAL_API_KEY':
+        return const String.fromEnvironment('INTERNAL_API_KEY');
+      case 'GOOGLE_WEB_CLIENT_ID':
+        return const String.fromEnvironment('GOOGLE_WEB_CLIENT_ID');
+      case 'GOOGLE_IOS_CLIENT_ID':
+        return const String.fromEnvironment('GOOGLE_IOS_CLIENT_ID');
+      case 'GOOGLE_ANDROID_CLIENT_ID':
+        return const String.fromEnvironment('GOOGLE_ANDROID_CLIENT_ID');
+      case 'KAKAO_APP_KEY':
+        return const String.fromEnvironment('KAKAO_APP_KEY');
+      case 'NAVER_CLIENT_ID':
+        return const String.fromEnvironment('NAVER_CLIENT_ID');
+      case 'NAVER_CLIENT_SECRET':
+        return const String.fromEnvironment('NAVER_CLIENT_SECRET');
+      case 'KAKAO_REST_API_KEY':
+        return const String.fromEnvironment('KAKAO_REST_API_KEY');
+      case 'TEST_EMAIL_DOMAINS':
+        return const String.fromEnvironment('TEST_EMAIL_DOMAINS');
+      case 'ENABLE_ANALYTICS':
+        return const String.fromEnvironment('ENABLE_ANALYTICS');
+      case 'ENABLE_CRASH_REPORTING':
+        return const String.fromEnvironment('ENABLE_CRASH_REPORTING');
+      case 'ENABLE_PAYMENT':
+        return const String.fromEnvironment('ENABLE_PAYMENT');
+      default:
+        return '';
     }
   }
 
@@ -167,10 +368,18 @@ class Environment {
     if (kDebugMode) {
       debugPrint('=== Environment Configuration ===');
       debugPrint('Environment: Production');
-      debugPrint('API URL: ${apiBaseUrl.substring(0, 20)}...');
-      debugPrint('Supabase URL: ${supabaseUrl.substring(0, 20)}...');
+      debugPrint('API URL: ${_preview(apiBaseUrl)}');
+      debugPrint('Supabase URL: ${_preview(supabaseUrl)}');
       debugPrint('Analytics enabled: $enableAnalytics');
       debugPrint('================================');
     }
+  }
+
+  static String _preview(String value) {
+    if (value.isEmpty) {
+      return '(empty)';
+    }
+    final end = value.length < 20 ? value.length : 20;
+    return '${value.substring(0, end)}...';
   }
 }
