@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import '../../core/config/environment.dart';
 import '../../widgets/icons/fortune_compass_icon.dart';
 import '../../services/storage_service.dart';
+import '../../features/character/presentation/utils/pending_chat_auth_intent.dart';
 import '../../core/utils/url_cleaner_stub.dart'
     if (dart.library.html) '../../core/utils/url_cleaner_web.dart';
 import '../../core/design_system/design_system.dart';
@@ -97,15 +98,34 @@ class _CallbackPageState extends State<CallbackPage> {
         // Continue even if sync fails - will check local storage
       }
 
-      // Chat-First: 모든 경우 /chat으로 이동 (온보딩은 채팅 내에서 처리)
+      final route = await _resolvePostAuthRoute();
       if (mounted) {
-        context.go('/chat');
+        context.go(route);
       }
     } catch (e) {
       debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
       // Chat-First: 에러 시에도 /chat으로 이동
       if (mounted) context.go('/chat');
     }
+  }
+
+  Future<String> _resolvePostAuthRoute() async {
+    final pendingIntentJson = await _storageService.getPendingChatAuthIntent();
+    if (pendingIntentJson == null) {
+      return '/chat';
+    }
+
+    final pendingIntent = PendingChatAuthIntent.fromJson(pendingIntentJson);
+    if (pendingIntent.isExpired) {
+      await _storageService.clearPendingChatAuthIntent();
+      return '/chat';
+    }
+
+    if (pendingIntent.characterId.isEmpty) {
+      return '/chat';
+    }
+
+    return pendingIntent.buildResumeRoute();
   }
 
   Uri _resolveCallbackUri() {

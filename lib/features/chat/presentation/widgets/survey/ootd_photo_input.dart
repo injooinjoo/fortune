@@ -9,11 +9,17 @@ import '../../../../../core/design_system/design_system.dart';
 class OotdPhotoInput extends StatefulWidget {
   final void Function(File image) onImageSelected;
   final String? hintText;
+  final Future<bool> Function(ImageSource source)? onBeforePickImage;
+  final ImageSource? initialPickSource;
+  final VoidCallback? onInitialPickHandled;
 
   const OotdPhotoInput({
     super.key,
     required this.onImageSelected,
     this.hintText,
+    this.onBeforePickImage,
+    this.initialPickSource,
+    this.onInitialPickHandled,
   });
 
   @override
@@ -24,9 +30,29 @@ class _OotdPhotoInputState extends State<OotdPhotoInput> {
   final ImagePicker _picker = ImagePicker();
   File? _selectedImage;
   bool _isLoading = false;
+  bool _didConsumeInitialPick = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _maybeConsumeInitialPick();
+  }
+
+  @override
+  void didUpdateWidget(covariant OotdPhotoInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialPickSource != widget.initialPickSource) {
+      _maybeConsumeInitialPick();
+    }
+  }
 
   Future<void> _pickFromCamera() async {
     DSHaptics.light();
+    final allowed = await widget.onBeforePickImage?.call(ImageSource.camera);
+    if (allowed == false) {
+      return;
+    }
+
     setState(() => _isLoading = true);
 
     try {
@@ -52,6 +78,11 @@ class _OotdPhotoInputState extends State<OotdPhotoInput> {
 
   Future<void> _pickFromGallery() async {
     DSHaptics.light();
+    final allowed = await widget.onBeforePickImage?.call(ImageSource.gallery);
+    if (allowed == false) {
+      return;
+    }
+
     setState(() => _isLoading = true);
 
     try {
@@ -72,6 +103,27 @@ class _OotdPhotoInputState extends State<OotdPhotoInput> {
     } finally {
       setState(() => _isLoading = false);
     }
+  }
+
+  void _maybeConsumeInitialPick() {
+    final source = widget.initialPickSource;
+    if (_didConsumeInitialPick || source == null) {
+      return;
+    }
+
+    _didConsumeInitialPick = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+
+      widget.onInitialPickHandled?.call();
+      if (source == ImageSource.camera) {
+        _pickFromCamera();
+        return;
+      }
+      _pickFromGallery();
+    });
   }
 
   @override

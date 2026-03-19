@@ -45,9 +45,12 @@ import '../../../../data/models/secondary_profile.dart';
 import '../../../../presentation/providers/pet_profiles_provider.dart';
 import '../../../../presentation/providers/secondary_profiles_provider.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
+import '../../../../presentation/widgets/social_login_bottom_sheet.dart';
+import '../../../../services/storage_service.dart';
 import '../../data/services/active_character_chat_registry.dart';
 import '../utils/character_chat_theme.dart';
 import '../utils/chat_survey_profile_utils.dart';
+import '../utils/pending_chat_auth_intent.dart';
 
 /// 1:1 캐릭터 롤플레이 채팅 패널
 class CharacterChatPanel extends ConsumerStatefulWidget {
@@ -79,9 +82,12 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   final ScrollController _scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();
   final ImagePicker _imagePicker = ImagePicker();
+  final StorageService _storageService = StorageService();
   final Map<String, GlobalKey> _messageAnchorKeys = {};
   StreamSubscription<AuthState>? _authStateSubscription;
   bool _isAuthenticated = false;
+  bool _isShowingAuthSheet = false;
+  bool _isReplayingPendingAuthIntent = false;
 
   static const Duration _sessionStartAnchorHoldDuration = Duration(
     milliseconds: 1400,
@@ -103,6 +109,8 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   String? _petProfileDeletingId;
   bool _isFortuneChipBarExpanded = false;
   String? _activeThemeFortuneType;
+  PendingChatImagePickerTarget? _pendingSurveyImageTarget;
+  ImageSource? _pendingSurveyImageSource;
 
   /// 통합 스크롤 서비스 (ChatScrollService 사용)
   late final ChatScrollService _scrollService;
@@ -174,6 +182,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       // 채팅방 진입 시 맨 아래로 스크롤
       _scrollToBottomInstant();
       await _maybeStartInitialFortuneFlow();
+      await _resumePendingAuthIntentIfNeeded();
     });
   }
 
@@ -185,7 +194,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     final nextEntryTheme = _entryThemeFortuneTypeFor(widget);
 
     if (oldWidget.character.id != widget.character.id ||
-        widget.character.specialties.length <= 2) {
+        widget.character.specialties.length <= 3) {
       _isFortuneChipBarExpanded = false;
       _activeThemeFortuneType = nextEntryTheme;
     } else if (previousEntryTheme != nextEntryTheme &&
@@ -508,7 +517,16 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   }
 
   bool _hasAuthenticatedSession() {
-    return _isAuthenticated;
+    if (_isAuthenticated) {
+      return true;
+    }
+
+    try {
+      final auth = Supabase.instance.client.auth;
+      return auth.currentSession?.user != null || auth.currentUser != null;
+    } catch (_) {
+      return false;
+    }
   }
 
   void _initializeAuthStateListener() {
@@ -517,6 +535,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       _isAuthenticated =
           auth.currentSession?.user != null || auth.currentUser != null;
       _authStateSubscription = auth.onAuthStateChange.listen((authState) {
+        final wasAuthenticated = _isAuthenticated;
         final nextAuthenticated =
             authState.session?.user != null || auth.currentUser != null;
         if (!mounted || _isAuthenticated == nextAuthenticated) {
@@ -527,36 +546,190 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         setState(() {
           _isAuthenticated = nextAuthenticated;
         });
+
+        if (!wasAuthenticated && nextAuthenticated) {
+          unawaited(_resumePendingAuthIntentIfNeeded());
+        }
       });
     } catch (_) {
       _isAuthenticated = false;
     }
   }
 
-  bool _ensureAuthenticatedInteraction() {
+  Future<void> _presentAuthenticationSheet() async {
+    if (!mounted || _isShowingAuthSheet) {
+      return;
+    }
+
+    _isShowingAuthSheet = true;
+    try {
+      await SocialLoginBottomSheet.showForAuthentication(
+        context,
+        ref: ref,
+        onAuthenticated: () {
+          unawaited(_resumePendingAuthIntentIfNeeded());
+        },
+      );
+    } finally {
+      _isShowingAuthSheet = false;
+    }
+  }
+
+  Future<bool> _ensureAuthenticatedForIntent(
+    PendingChatAuthIntent intent,
+  ) async {
     if (widget.catalogPreview != null || _hasAuthenticatedSession()) {
       return true;
     }
 
-    if (!mounted) {
-      return false;
+    await _storageService.savePendingChatAuthIntent(intent.toJson());
+    await _presentAuthenticationSheet();
+    return false;
+  }
+
+  Future<void> _resumePendingAuthIntentIfNeeded() async {
+    if (!mounted ||
+        !_hasAuthenticatedSession() ||
+        _isReplayingPendingAuthIntent) {
+      return;
     }
 
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        const SnackBar(
-          content: Text('로그인 후 캐릭터와 대화할 수 있어요.'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    return false;
+    final rawIntent = await _storageService.getPendingChatAuthIntent();
+    if (rawIntent == null) {
+      return;
+    }
+
+    final pendingIntent = PendingChatAuthIntent.fromJson(rawIntent);
+    if (pendingIntent.isExpired || pendingIntent.characterId.isEmpty) {
+      await _storageService.clearPendingChatAuthIntent();
+      return;
+    }
+
+    if (pendingIntent.characterId != widget.character.id) {
+      return;
+    }
+
+    _isReplayingPendingAuthIntent = true;
+    try {
+      switch (pendingIntent.type) {
+        case PendingChatAuthIntentType.textMessage:
+          await _storageService.clearPendingChatAuthIntent();
+          _sendTextMessage(pendingIntent.text ?? '');
+          break;
+        case PendingChatAuthIntentType.choiceSelection:
+          await _storageService.clearPendingChatAuthIntent();
+          final choice = pendingIntent.choice;
+          if (choice != null) {
+            _submitChoiceSelection(choice);
+          }
+          break;
+        case PendingChatAuthIntentType.fortuneRequest:
+          final fortuneType = pendingIntent.fortuneType;
+          await _storageService.clearPendingChatAuthIntent();
+          if (fortuneType != null && fortuneType.isNotEmpty) {
+            if (!mounted) {
+              break;
+            }
+            await _startFortuneFlow(
+              fortuneType,
+              _getSpecialtyLabel(context, fortuneType),
+              triggerHaptic: false,
+              resetSurvey: true,
+            );
+          }
+          break;
+        case PendingChatAuthIntentType.surveySubmission:
+          final fortuneType = pendingIntent.fortuneType;
+          final answers = pendingIntent.surveyAnswers;
+          await _storageService.clearPendingChatAuthIntent();
+          if (fortuneType != null &&
+              fortuneType.isNotEmpty &&
+              answers != null) {
+            await _submitSurveyRequestAfterAuth(
+              fortuneType: fortuneType,
+              answers: answers,
+            );
+          }
+          break;
+        case PendingChatAuthIntentType.openImagePicker:
+          final target = pendingIntent.imagePickerTarget;
+          if (target == null) {
+            await _storageService.clearPendingChatAuthIntent();
+            break;
+          }
+
+          if (target == PendingChatImagePickerTarget.composerSheet) {
+            await _storageService.clearPendingChatAuthIntent();
+            if (!mounted) {
+              break;
+            }
+            await _showImagePickerSheet(skipAuthGate: true);
+            break;
+          }
+
+          if (!mounted) {
+            break;
+          }
+
+          setState(() {
+            _pendingSurveyImageTarget = target;
+            _pendingSurveyImageSource = pendingIntent.imageSource;
+          });
+          break;
+      }
+    } finally {
+      _isReplayingPendingAuthIntent = false;
+    }
+  }
+
+  ImageSource? _pendingImageSourceFor(
+    PendingChatImagePickerTarget target,
+  ) {
+    if (_pendingSurveyImageTarget != target) {
+      return null;
+    }
+    return _pendingSurveyImageSource;
+  }
+
+  Future<void> _clearPendingSurveyImageIntent() async {
+    if (mounted) {
+      setState(() {
+        _pendingSurveyImageTarget = null;
+        _pendingSurveyImageSource = null;
+      });
+    } else {
+      _pendingSurveyImageTarget = null;
+      _pendingSurveyImageSource = null;
+    }
+
+    await _storageService.clearPendingChatAuthIntent();
+  }
+
+  Future<bool> _ensureAuthenticatedForSurveyImagePick(
+    PendingChatImagePickerTarget target,
+    ImageSource source,
+  ) async {
+    return _ensureAuthenticatedForIntent(
+      PendingChatAuthIntent.openImagePicker(
+        characterId: widget.character.id,
+        fortuneType: _activeFortuneType(),
+        target: target,
+        imageSource: source,
+      ),
+    );
+  }
+
+  Future<void> _handleUnauthorizedError() async {
+    if (widget.catalogPreview != null || _hasAuthenticatedSession()) {
+      return;
+    }
+
+    await _presentAuthenticationSheet();
   }
 
   @override
   Widget build(BuildContext context) {
     final isCatalogPreview = widget.catalogPreview != null;
-    final isAuthenticated = isCatalogPreview || _isAuthenticated;
     final usesChipThemes = widget.character.isFortuneExpert;
     final chatState = isCatalogPreview
         ? catalogPreviewChatState(
@@ -578,19 +751,28 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         characterChatProvider(widget.character.id),
         (previous, next) {
           if (next.error != null && next.error != previous?.error) {
+            if (next.error == 'UNAUTHORIZED') {
+              unawaited(_handleUnauthorizedError());
+              Future.delayed(const Duration(milliseconds: 100), () {
+                ref
+                    .read(characterChatProvider(widget.character.id).notifier)
+                    .clearError();
+              });
+              return;
+            }
+
             final errorMessage = switch (next.error) {
-              'UNAUTHORIZED' => '로그인 후 캐릭터와 대화할 수 있어요.',
               'INSUFFICIENT_TOKENS' => '토큰이 부족해요.',
               _ => context.l10n.errorOccurredRetry,
             };
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(errorMessage),
-                backgroundColor: Colors.red[400],
+                backgroundColor: context.colors.error,
                 behavior: SnackBarBehavior.floating,
                 action: SnackBarAction(
                   label: context.l10n.confirm,
-                  textColor: Colors.white,
+                  textColor: context.colors.ctaForeground,
                   onPressed: () {},
                 ),
               ),
@@ -637,10 +819,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         if (!usesChipThemes) const Divider(height: 1),
         if (widget.character.isFortuneExpert &&
             widget.character.specialties.isNotEmpty)
-          _buildFortuneChipBar(
-            chatState,
-            isAuthenticated: isAuthenticated,
-          ),
+          _buildFortuneChipBar(chatState),
         Expanded(
           child: chatState.isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -654,14 +833,9 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                       ),
                     ),
         ),
-        if (surveyState.isActive && isAuthenticated)
-          _buildSurveyInput(surveyState),
-        if (surveyState.isActive && !isAuthenticated) _buildLockedSurveyInput(),
+        if (surveyState.isActive) _buildSurveyInput(surveyState),
         if (chatState.hasConversation && !surveyState.isActive)
-          _buildInputArea(
-            chatState,
-            isAuthenticated: isAuthenticated,
-          ),
+          _buildInputArea(),
       ],
     );
 
@@ -1000,14 +1174,11 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   }
 
   /// 운세 전문가 칩 바 (전문 분야 운세 칩들)
-  Widget _buildFortuneChipBar(
-    CharacterChatState chatState, {
-    required bool isAuthenticated,
-  }) {
+  Widget _buildFortuneChipBar(CharacterChatState chatState) {
     final colors = context.colors;
     final isHaneulChipBar = _isHaneulPremiumShell;
     final activeFortuneType = _activeFortuneType();
-    final shouldShowAccordionToggle = widget.character.specialties.length > 2;
+    final shouldShowAccordionToggle = widget.character.specialties.length > 3;
     final collapsedHeight = isHaneulChipBar ? 38.0 : 36.0;
     final chipWidgets = widget.character.specialties.map((specialty) {
       final displayName = _getSpecialtyLabel(context, specialty);
@@ -1021,7 +1192,6 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         displayName: displayName,
         chipEmoji: chipEmoji,
         isSelected: specialty == activeFortuneType,
-        isAuthenticated: isAuthenticated,
       );
     }).toList();
 
@@ -1129,10 +1299,9 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     required String displayName,
     required String chipEmoji,
     required bool isSelected,
-    required bool isAuthenticated,
   }) {
     final colors = context.colors;
-    final onTap = chatState.isProcessing || !isAuthenticated
+    final onTap = chatState.isProcessing
         ? null
         : () => _handleFortuneChipTap(specialty, displayName);
 
@@ -1220,16 +1389,43 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     await _startFortuneFlow(fortuneType, displayName, resetSurvey: true);
   }
 
+  void _sendTextMessage(String text) {
+    final normalized = text.trim();
+    if (normalized.isEmpty) {
+      return;
+    }
+
+    final notifier = ref.read(
+      characterChatProvider(widget.character.id).notifier,
+    );
+    final anchorMessageId = notifier.startFreshUserSessionIfNeeded(normalized);
+    if (anchorMessageId != null) {
+      _beginSessionStartAnchor(anchorMessageId);
+    }
+    notifier.sendMessage(
+      normalized,
+      userMessageAlreadyAdded: anchorMessageId != null,
+    );
+    if (anchorMessageId == null) {
+      _clearSessionStartAnchor();
+      _scrollToBottom();
+    }
+  }
+
+  void _submitChoiceSelection(CharacterChoice choice) {
+    _clearSessionStartAnchor();
+    ref
+        .read(characterChatProvider(widget.character.id).notifier)
+        .handleChoiceSelection(choice);
+    _scrollToBottom();
+  }
+
   Future<void> _startFortuneFlow(
     String fortuneType,
     String displayName, {
     bool triggerHaptic = true,
     bool resetSurvey = false,
   }) async {
-    if (!_ensureAuthenticatedInteraction()) {
-      return;
-    }
-
     if (triggerHaptic) {
       HapticUtils.lightImpact();
     }
@@ -1253,6 +1449,22 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     final requestMessage = useCardFirstFlow
         ? _haneulSessionRequestMessage(fortuneType)
         : context.l10n.tellMeAbout(displayName);
+
+    final surveyType = _mapFortuneTypeToSurveyType(fortuneType);
+    final config = surveyType != null ? surveyConfigs[surveyType] : null;
+    final hasSurvey =
+        surveyType != null && config != null && config.steps.isNotEmpty;
+
+    if (!hasSurvey &&
+        !await _ensureAuthenticatedForIntent(
+          PendingChatAuthIntent.fortuneRequest(
+            characterId: widget.character.id,
+            fortuneType: fortuneType,
+          ),
+        )) {
+      return;
+    }
+
     final anchorMessageId = chatNotifier.startFreshFortuneSession(
       introMessage: introMessage,
       requestMessage: requestMessage,
@@ -1265,12 +1477,8 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     }
     _beginSessionStartAnchor(anchorMessageId);
 
-    // fortuneType을 FortuneSurveyType으로 매핑
-    final surveyType = _mapFortuneTypeToSurveyType(fortuneType);
-    final config = surveyType != null ? surveyConfigs[surveyType] : null;
-
     // 설문이 있고 단계가 있으면 설문 시작
-    if (surveyType != null && config != null && config.steps.isNotEmpty) {
+    if (hasSurvey) {
       // 설문 시작
       ref
           .read(characterChatSurveyProvider(widget.character.id).notifier)
@@ -1369,10 +1577,6 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   }
 
   void _handleSurveyAnswer(dynamic answer) {
-    if (!_ensureAuthenticatedInteraction()) {
-      return;
-    }
-
     _clearSessionStartAnchor();
     final surveyNotifier = ref.read(
       characterChatSurveyProvider(widget.character.id).notifier,
@@ -1443,19 +1647,34 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   Future<void> _handleSurveyComplete(
     CharacterChatSurveyState surveyState,
   ) async {
-    if (!_ensureAuthenticatedInteraction()) {
+    final fortuneType = surveyState.fortuneTypeString ?? 'daily';
+    final answers = surveyState.completedData ?? {};
+    if (!await _ensureAuthenticatedForIntent(
+      PendingChatAuthIntent.surveySubmission(
+        characterId: widget.character.id,
+        fortuneType: fortuneType,
+        surveyAnswers: answers,
+      ),
+    )) {
       return;
     }
 
+    await _submitSurveyRequestAfterAuth(
+      fortuneType: fortuneType,
+      answers: answers,
+    );
+  }
+
+  Future<void> _submitSurveyRequestAfterAuth({
+    required String fortuneType,
+    required Map<String, dynamic> answers,
+  }) async {
     final chatNotifier = ref.read(
       characterChatProvider(widget.character.id).notifier,
     );
     final surveyNotifier = ref.read(
       characterChatSurveyProvider(widget.character.id).notifier,
     );
-
-    final fortuneType = surveyState.fortuneTypeString ?? 'daily';
-    final answers = surveyState.completedData ?? {};
     final useCardFirstFlow = isHaneulCardFirstFortuneFlow(
       characterId: widget.character.id,
       fortuneType: fortuneType,
@@ -1597,16 +1816,17 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     );
   }
 
-  void _handleChoiceSelection(CharacterChoice choice) {
-    if (!_ensureAuthenticatedInteraction()) {
+  Future<void> _handleChoiceSelection(CharacterChoice choice) async {
+    if (!await _ensureAuthenticatedForIntent(
+      PendingChatAuthIntent.choiceSelection(
+        characterId: widget.character.id,
+        choice: choice,
+      ),
+    )) {
       return;
     }
 
-    _clearSessionStartAnchor();
-    ref
-        .read(characterChatProvider(widget.character.id).notifier)
-        .handleChoiceSelection(choice);
-    _scrollToBottom();
+    _submitChoiceSelection(choice);
   }
 
   Widget _buildTypingIndicator() {
@@ -1839,16 +2059,50 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         return _buildCalendarInput(step);
 
       case SurveyInputType.faceReading:
-        return ChatFaceReadingFlow(onComplete: _handleFaceReadingComplete);
+        return ChatFaceReadingFlow(
+          onComplete: _handleFaceReadingComplete,
+          onBeforePickImage: (source) => _ensureAuthenticatedForSurveyImagePick(
+            PendingChatImagePickerTarget.surveyFaceReading,
+            source,
+          ),
+          initialPickSource: _pendingImageSourceFor(
+            PendingChatImagePickerTarget.surveyFaceReading,
+          ),
+          onInitialPickHandled: () {
+            unawaited(_clearPendingSurveyImageIntent());
+          },
+        );
 
       case SurveyInputType.image:
         return ChatImageInput(
           onImageSelected: _handleImageSelect,
           hintText: '사진을 선택하거나 촬영하세요',
+          onBeforePickImage: (source) => _ensureAuthenticatedForSurveyImagePick(
+            PendingChatImagePickerTarget.surveyImage,
+            source,
+          ),
+          initialPickSource: _pendingImageSourceFor(
+            PendingChatImagePickerTarget.surveyImage,
+          ),
+          onInitialPickHandled: () {
+            unawaited(_clearPendingSurveyImageIntent());
+          },
         );
 
       case SurveyInputType.ootdImage:
-        return OotdPhotoInput(onImageSelected: _handleImageSelect);
+        return OotdPhotoInput(
+          onImageSelected: _handleImageSelect,
+          onBeforePickImage: (source) => _ensureAuthenticatedForSurveyImagePick(
+            PendingChatImagePickerTarget.surveyOotd,
+            source,
+          ),
+          initialPickSource: _pendingImageSourceFor(
+            PendingChatImagePickerTarget.surveyOotd,
+          ),
+          onInitialPickHandled: () {
+            unawaited(_clearPendingSurveyImageIntent());
+          },
+        );
 
       case SurveyInputType.matchSelection:
         // 이전 단계에서 선택한 종목 가져오기
@@ -2505,8 +2759,19 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   }
 
   /// 사진 선택 바텀시트 표시
-  void _showImagePickerSheet() {
-    if (!_ensureAuthenticatedInteraction()) {
+  Future<void> _showImagePickerSheet({bool skipAuthGate = false}) async {
+    if (!skipAuthGate &&
+        !await _ensureAuthenticatedForIntent(
+          PendingChatAuthIntent.openImagePicker(
+            characterId: widget.character.id,
+            fortuneType: _activeFortuneType(),
+            target: PendingChatImagePickerTarget.composerSheet,
+          ),
+        )) {
+      return;
+    }
+
+    if (!mounted) {
       return;
     }
 
@@ -2582,10 +2847,6 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
   /// 이미지 메시지 처리 (채팅에 이미지 전송)
   void _handleImageMessage(File imageFile) {
-    if (!_ensureAuthenticatedInteraction()) {
-      return;
-    }
-
     _clearSessionStartAnchor();
     // 사용자 메시지로 이미지 경로 추가 (UI에서 이미지로 표시)
     ref
@@ -2594,10 +2855,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     _scrollToBottom();
   }
 
-  Widget _buildInputArea(
-    dynamic chatState, {
-    required bool isAuthenticated,
-  }) {
+  Widget _buildInputArea() {
     final colors = context.colors;
 
     return Container(
@@ -2622,41 +2880,27 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (!isAuthenticated)
-            Padding(
-              padding: const EdgeInsets.only(bottom: DSSpacing.xs),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  '로그인 후 캐릭터와 대화할 수 있어요.',
-                  style: context.bodySmall.copyWith(
-                    color: colors.textSecondary,
-                  ),
-                ),
-              ),
-            ),
           Row(
             children: [
               // 사진 첨부 버튼
               GestureDetector(
-                onTap: isAuthenticated ? _showImagePickerSheet : null,
-                child: Opacity(
-                  opacity: isAuthenticated ? 1 : 0.45,
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: colors.surfaceSecondary,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: colors.border.withValues(alpha: 0.45),
-                      ),
+                onTap: () {
+                  unawaited(_showImagePickerSheet());
+                },
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: colors.surfaceSecondary,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: colors.border.withValues(alpha: 0.45),
                     ),
-                    child: Icon(
-                      Icons.photo_camera_outlined,
-                      color: colors.textSecondary,
-                      size: 22,
-                    ),
+                  ),
+                  child: Icon(
+                    Icons.photo_camera_outlined,
+                    color: colors.textSecondary,
+                    size: 22,
                   ),
                 ),
               ),
@@ -2665,75 +2909,36 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
               Expanded(
                 child: UnifiedVoiceTextField(
                   controller: _textController,
-                  hintText: isAuthenticated
-                      ? context.l10n.enterMessage
-                      : '로그인 후 대화를 이어갈 수 있어요.',
-                  enabled: isAuthenticated,
-                  onTextChanged: isAuthenticated
-                      ? (text) {
-                          ref
-                              .read(
-                                characterChatProvider(widget.character.id)
-                                    .notifier,
-                              )
-                              .onUserDraftChanged(text);
-                        }
-                      : null,
-                  onSubmit: (text) {
-                    if (text.isNotEmpty) {
-                      if (!_ensureAuthenticatedInteraction()) {
-                        return;
-                      }
-
-                      final notifier = ref.read(
-                        characterChatProvider(widget.character.id).notifier,
-                      );
-                      final anchorMessageId =
-                          notifier.startFreshUserSessionIfNeeded(text);
-                      if (anchorMessageId != null) {
-                        _beginSessionStartAnchor(anchorMessageId);
-                      }
-                      notifier.sendMessage(
-                        text,
-                        userMessageAlreadyAdded: anchorMessageId != null,
-                      );
-                      if (anchorMessageId == null) {
-                        _clearSessionStartAnchor();
-                        _scrollToBottom();
-                      }
+                  hintText: context.l10n.enterMessage,
+                  enabled: true,
+                  onTextChanged: (text) {
+                    ref
+                        .read(
+                          characterChatProvider(widget.character.id).notifier,
+                        )
+                        .onUserDraftChanged(text);
+                  },
+                  onSubmit: (text) async {
+                    if (text.isEmpty) {
+                      return;
                     }
+
+                    if (!await _ensureAuthenticatedForIntent(
+                      PendingChatAuthIntent.textMessage(
+                        characterId: widget.character.id,
+                        text: text,
+                      ),
+                    )) {
+                      return;
+                    }
+
+                    _sendTextMessage(text);
                   },
                 ),
               ),
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildLockedSurveyInput() {
-    final colors = context.colors;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: DSSpacing.md,
-        vertical: DSSpacing.sm + DSSpacing.xxs,
-      ),
-      decoration: BoxDecoration(
-        color: widget.character.isFortuneExpert
-            ? colors.surface.withValues(
-                alpha: context.isDark ? 0.92 : 0.95,
-              )
-            : colors.background,
-        border: Border(
-          top: BorderSide(
-            color: colors.border.withValues(alpha: 0.55),
-          ),
-        ),
-      ),
-      child: _buildSurveyInfoBox(
-        message: '로그인 후 설문을 이어서 진행할 수 있어요.',
       ),
     );
   }

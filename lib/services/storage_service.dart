@@ -20,6 +20,7 @@ class StorageService {
       'active_secondary_profile_id';
   static const String _characterOnboardingKey =
       'character_onboarding_completed';
+  static const String _pendingChatAuthIntentKey = 'pending_chat_auth_intent';
 
   static const _uuid = Uuid();
 
@@ -286,6 +287,40 @@ class StorageService {
   Future<void> clearGuestMode() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_guestModeKey);
+  }
+
+  Future<Map<String, dynamic>?> getPendingChatAuthIntent() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_pendingChatAuthIntentKey);
+    if (raw == null || raw.isEmpty) {
+      return null;
+    }
+
+    try {
+      final decoded = json.decode(raw);
+      if (decoded is Map<String, dynamic>) {
+        return Map<String, dynamic>.from(decoded);
+      }
+      if (decoded is Map) {
+        return decoded.map(
+          (key, value) => MapEntry(key.toString(), value),
+        );
+      }
+    } catch (_) {
+      await prefs.remove(_pendingChatAuthIntentKey);
+    }
+
+    return null;
+  }
+
+  Future<void> savePendingChatAuthIntent(Map<String, dynamic> payload) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_pendingChatAuthIntentKey, json.encode(payload));
+  }
+
+  Future<void> clearPendingChatAuthIntent() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_pendingChatAuthIntentKey);
   }
 
   /// 게스트 ID 조회 또는 생성
