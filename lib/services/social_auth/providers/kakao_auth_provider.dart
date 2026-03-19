@@ -20,6 +20,10 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
       Logger.info('=== KAKAO SIGN-IN STARTED ===');
       Logger.info(
           'Platform: ${kIsWeb ? 'Web' : (Platform.isIOS ? 'iOS' : 'Android')}');
+      SocialAuthConfigGuard.ensureOAuthConfigurationIsValid(
+        providerName: providerName,
+        supabase: supabase,
+      );
 
       if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
         Logger.info('Using native Kakao SDK for mobile platform');
@@ -311,9 +315,6 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
   Future<AuthResponse?> _signInWithKakaoOAuth() async {
     try {
       Logger.info('Using Kakao OAuth sign in');
-      SocialAuthConfigGuard.ensureOAuthConfigurationIsValid(
-        providerName: providerName,
-      );
       final flowId =
           OAuthInAppBrowserCoordinator.markOAuthStarted(providerName);
 

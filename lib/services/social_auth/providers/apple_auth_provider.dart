@@ -48,6 +48,10 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
 
     try {
       Logger.info('Starting Apple Sign-In process');
+      SocialAuthConfigGuard.ensureOAuthConfigurationIsValid(
+        providerName: providerName,
+        supabase: supabase,
+      );
 
       final shouldUseNativeAppleSignIn = await _shouldUseNativeAppleSignIn();
 
@@ -259,6 +263,7 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
       Logger.info('[AppleAuthProvider] OAuth fallback 시작');
       SocialAuthConfigGuard.ensureOAuthConfigurationIsValid(
         providerName: providerName,
+        supabase: supabase,
       );
       final flowId =
           OAuthInAppBrowserCoordinator.markOAuthStarted(providerName);

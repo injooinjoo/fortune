@@ -26,18 +26,31 @@ abstract class BaseSocialAuthProvider {
 class SocialAuthConfigGuard {
   static void ensureOAuthConfigurationIsValid({
     required String providerName,
+    required SupabaseClient supabase,
   }) {
-    final configIssue = Environment.describeSupabaseConfigurationIssue();
-    if (configIssue == null) {
-      return;
+    final envConfigIssue = Environment.describeSupabaseConfigurationIssue();
+    if (envConfigIssue != null) {
+      Logger.warning(
+        '[SocialAuthConfigGuard] $providerName OAuth 차단: $envConfigIssue',
+      );
+      throw Exception(
+        '앱의 소셜 로그인 설정이 올바르지 않습니다. $envConfigIssue 실제 Supabase 설정으로 다시 실행해 주세요.',
+      );
     }
 
-    Logger.warning(
-      '[SocialAuthConfigGuard] $providerName OAuth 차단: $configIssue',
+    final clientConfigIssue =
+        Environment.describeSupabaseClientConfigurationIssue(
+      supabase: supabase,
+      expectedSupabaseUrl: Environment.supabaseUrl,
     );
-    throw Exception(
-      '앱의 소셜 로그인 설정이 올바르지 않습니다. $configIssue 실제 Supabase 설정으로 다시 실행해 주세요.',
-    );
+    if (clientConfigIssue != null) {
+      Logger.warning(
+        '[SocialAuthConfigGuard] $providerName OAuth 차단: $clientConfigIssue',
+      );
+      throw Exception(
+        '현재 로그인 client 설정이 잘못되었습니다. $clientConfigIssue 앱을 완전히 종료한 뒤 다시 실행해 주세요.',
+      );
+    }
   }
 }
 

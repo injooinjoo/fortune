@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// 환경 설정 관리 클래스
 /// 보안: 모든 API 키와 민감한 정보는 환경 변수로 관리
@@ -54,11 +55,11 @@ class Environment {
   // Supabase 설정
   static String get supabaseUrl => _readEnvValue(
         'SUPABASE_URL',
-        dotenvValue: dotenv.env['SUPABASE_URL'],
+        dotenvValue: _dotenvValue('SUPABASE_URL'),
       );
   static String get supabaseAnonKey => _readEnvValue(
         'SUPABASE_ANON_KEY',
-        dotenvValue: dotenv.env['SUPABASE_ANON_KEY'],
+        dotenvValue: _dotenvValue('SUPABASE_ANON_KEY'),
       );
 
   // App Domain 설정 (공유 링크, 딥링크용)
@@ -274,6 +275,60 @@ class Environment {
     return null;
   }
 
+  static String? describeSupabaseClientConfigurationIssue({
+    required SupabaseClient supabase,
+    String? expectedSupabaseUrl,
+  }) {
+    final actualClientUrl = normalizeSupabaseBaseUrl(supabase.rest.url);
+    if (actualClientUrl == null) {
+      return '현재 Supabase client URL 형식이 올바르지 않습니다.';
+    }
+
+    if (isPlaceholderValue(actualClientUrl)) {
+      return '현재 Supabase client가 placeholder 값으로 초기화되었습니다.';
+    }
+
+    final expectedClientUrl = normalizeSupabaseBaseUrl(
+      expectedSupabaseUrl ?? Environment.supabaseUrl,
+    );
+
+    if (expectedClientUrl != null && actualClientUrl != expectedClientUrl) {
+      return '현재 Supabase client가 ENV 설정과 다른 URL로 초기화되었습니다.';
+    }
+
+    return null;
+  }
+
+  static String? normalizeSupabaseBaseUrl(String value) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) {
+      return null;
+    }
+
+    final uri = Uri.tryParse(trimmed);
+    if (uri == null || !uri.isAbsolute) {
+      return null;
+    }
+
+    final normalizedPath = uri.path.replaceFirst(
+      RegExp(r'/(rest|auth|storage|functions)/v1/?$'),
+      '',
+    );
+
+    final normalizedUri = uri.replace(
+      path: normalizedPath,
+      query: null,
+      fragment: null,
+    );
+
+    final result = normalizedUri.toString();
+    if (result.endsWith('/')) {
+      return result.substring(0, result.length - 1);
+    }
+
+    return result;
+  }
+
   static bool isPlaceholderValue(String value) {
     final normalized = value.trim().toLowerCase();
     if (normalized.isEmpty) {
@@ -287,6 +342,14 @@ class Environment {
         normalized.contains('not-real-key') ||
         normalized.contains('not-real') ||
         normalized.contains('example');
+  }
+
+  static String? _dotenvValue(String key) {
+    if (!dotenv.isInitialized) {
+      return null;
+    }
+
+    return dotenv.env[key];
   }
 
   static String _readEnvValue(

@@ -1,18 +1,29 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fortune/core/cache/profile_cache.dart';
 import 'package:fortune/services/social_auth/base/social_auth_attempt_result.dart';
 import 'package:fortune/services/social_auth/providers/apple_auth_provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../mocks/mock_auth_services.dart';
+final _testAnonKey = List.filled(120, 'a').join();
+
+SupabaseClient _createTestSupabaseClient(String url) {
+  return SupabaseClient(url, _testAnonKey);
+}
 
 void main() {
   setUpAll(() {
-    registerAuthFallbackValues();
+    dotenv.testLoad(
+      mergeWith: {
+        'SUPABASE_URL': 'https://real-project.supabase.co',
+        'SUPABASE_ANON_KEY': _testAnonKey,
+      },
+    );
   });
 
   test('Apple native fallback returns pending external auth on iOS', () async {
     final provider = AppleAuthProvider(
-      MockSupabaseClient(),
+      _createTestSupabaseClient('https://real-project.supabase.co'),
       ProfileCache(),
       isIOSOverride: true,
       shouldUseNativeAppleSignInOverride: () async => true,
@@ -32,7 +43,7 @@ void main() {
     var nativeSignInCalled = false;
 
     final provider = AppleAuthProvider(
-      MockSupabaseClient(),
+      _createTestSupabaseClient('https://real-project.supabase.co'),
       ProfileCache(),
       isIOSOverride: true,
       shouldUseNativeAppleSignInOverride: () async => false,
@@ -49,5 +60,32 @@ void main() {
     expect(nativeSignInCalled, isFalse);
     expect(result.isPendingExternalAuth, isTrue);
     expect(result.isAuthenticated, isFalse);
+  });
+
+  test('Apple sign-in blocks placeholder Supabase clients before auth',
+      () async {
+    final supabase =
+        _createTestSupabaseClient('https://test-placeholder.supabase.co');
+
+    final provider = AppleAuthProvider(
+      supabase,
+      ProfileCache(),
+      isIOSOverride: true,
+      shouldUseNativeAppleSignInOverride: () async => true,
+      nativeSignInOverride: () async {
+        fail('native Apple sign-in should not start with a placeholder client');
+      },
+    );
+
+    await expectLater(
+      provider.signIn(),
+      throwsA(
+        predicate(
+          (error) => error
+              .toString()
+              .contains('현재 Supabase client가 placeholder 값으로 초기화되었습니다.'),
+        ),
+      ),
+    );
   });
 }

@@ -17,6 +17,10 @@ class NaverAuthProvider extends BaseSocialAuthProvider {
   Future<SocialAuthAttemptResult> signIn() async {
     try {
       Logger.info('Starting Naver Sign-In process (Native)');
+      SocialAuthConfigGuard.ensureOAuthConfigurationIsValid(
+        providerName: providerName,
+        supabase: supabase,
+      );
 
       final initResult =
           await _naverChannel.invokeMethod('initializeNaver').timeout(

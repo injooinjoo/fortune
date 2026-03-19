@@ -1,6 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:fortune/core/config/environment.dart';
+
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+final _testAnonKey = List.filled(120, 'a').join();
+
+SupabaseClient _createTestSupabaseClient(String url) {
+  return SupabaseClient(url, _testAnonKey);
+}
 
 void main() {
   group('Environment.describeSupabaseConfigurationIssue', () {
@@ -32,6 +39,32 @@ void main() {
       );
 
       expect(issue, isNull);
+    });
+  });
+
+  group('Environment.describeSupabaseClientConfigurationIssue', () {
+    test('reports placeholder live client urls', () {
+      final supabase =
+          _createTestSupabaseClient('https://test-placeholder.supabase.co');
+
+      final issue = Environment.describeSupabaseClientConfigurationIssue(
+        supabase: supabase,
+        expectedSupabaseUrl: 'https://real-project.supabase.co',
+      );
+
+      expect(issue, '현재 Supabase client가 placeholder 값으로 초기화되었습니다.');
+    });
+
+    test('reports live client and env url mismatches', () {
+      final supabase =
+          _createTestSupabaseClient('https://stale-project.supabase.co');
+
+      final issue = Environment.describeSupabaseClientConfigurationIssue(
+        supabase: supabase,
+        expectedSupabaseUrl: 'https://real-project.supabase.co',
+      );
+
+      expect(issue, '현재 Supabase client가 ENV 설정과 다른 URL로 초기화되었습니다.');
     });
   });
 }

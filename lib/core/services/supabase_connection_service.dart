@@ -55,15 +55,29 @@ class SupabaseConnectionService extends ResilientService {
     required Duration timeout,
     required Duration retryDelay,
   }) async {
-    if (_isInitialized && _isConnected) {
-      Logger.info('Supabase already initialized and connected');
-      return true;
-    }
-
     return await safeExecuteWithBool(() async {
       final credentials = await _loadCredentials();
       if (credentials == null) {
         throw Exception('Supabase 환경변수 설정이 필요합니다');
+      }
+
+      if (_isInitialized && _isConnected) {
+        final expectedSupabaseUrl = credentials['url'];
+        if (expectedSupabaseUrl == null) {
+          throw Exception('Supabase URL 설정을 다시 확인해 주세요.');
+        }
+        final existingClientIssue = _describeExistingClientIssue(
+          expectedSupabaseUrl: expectedSupabaseUrl,
+        );
+        if (existingClientIssue == null) {
+          Logger.info('Supabase already initialized and connected');
+          return;
+        }
+
+        Logger.warning(
+          'Supabase client mismatch detected, disposing stale client: $existingClientIssue',
+        );
+        await _disposeExistingClient();
       }
 
       for (int attempt = 1; attempt <= maxRetries; attempt++) {
@@ -96,6 +110,32 @@ class SupabaseConnectionService extends ResilientService {
         }
       }
     }, 'Supabase 연결 초기화', '연결 실패, 오프라인 모드 사용');
+  }
+
+  String? _describeExistingClientIssue({
+    required String expectedSupabaseUrl,
+  }) {
+    try {
+      final client = Supabase.instance.client;
+      return Environment.describeSupabaseClientConfigurationIssue(
+        supabase: client,
+        expectedSupabaseUrl: expectedSupabaseUrl,
+      );
+    } catch (error) {
+      return '기존 Supabase client 상태를 확인할 수 없습니다: $error';
+    }
+  }
+
+  Future<void> _disposeExistingClient() async {
+    try {
+      await Supabase.instance.dispose();
+    } catch (error) {
+      Logger.warning('기존 Supabase client dispose 실패: $error');
+    } finally {
+      _isInitialized = false;
+      _isConnected = false;
+      _connectionStateController.add(false);
+    }
   }
 
   /// 환경변수에서 Supabase 인증정보 로드

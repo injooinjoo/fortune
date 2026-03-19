@@ -19,6 +19,7 @@ class FacebookAuthProvider extends BaseSocialAuthProvider {
       Logger.info('Starting Facebook Sign-In process with Supabase OAuth');
       SocialAuthConfigGuard.ensureOAuthConfigurationIsValid(
         providerName: providerName,
+        supabase: supabase,
       );
       final flowId =
           OAuthInAppBrowserCoordinator.markOAuthStarted(providerName);

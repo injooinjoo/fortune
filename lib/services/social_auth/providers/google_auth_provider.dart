@@ -24,6 +24,7 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
 
       SocialAuthConfigGuard.ensureOAuthConfigurationIsValid(
         providerName: providerName,
+        supabase: supabase,
       );
       final supabaseUrl = Environment.supabaseUrl;
       final previewLength = supabaseUrl.length < 30 ? supabaseUrl.length : 30;
