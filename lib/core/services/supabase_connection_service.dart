@@ -57,6 +57,28 @@ class SupabaseConnectionService extends ResilientService {
     return tryGetClient()?.auth.currentSession;
   }
 
+  static Future<SupabaseClient?> ensureClientReady({
+    int maxRetries = 2,
+    Duration timeout = const Duration(seconds: 5),
+    Duration retryDelay = const Duration(seconds: 1),
+  }) async {
+    final existingClient = tryGetClient();
+    if (existingClient != null) {
+      return existingClient;
+    }
+
+    final success = await initialize(
+      maxRetries: maxRetries,
+      timeout: timeout,
+      retryDelay: retryDelay,
+    );
+    if (!success) {
+      return null;
+    }
+
+    return tryGetClient();
+  }
+
   /// 강화된 Supabase 초기화
   static Future<bool> initialize({
     int maxRetries = 3,

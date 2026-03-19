@@ -168,7 +168,7 @@ void main() {
   });
 
   testWidgets(
-      'guest profile icon shows pending message when Supabase client is unavailable',
+      'guest profile icon shows retry message when Supabase client is unavailable',
       (tester) async {
     await tester.pumpWidget(
       ProviderScope(
@@ -180,9 +180,10 @@ void main() {
     );
 
     await tester.tap(find.text('open-profile'));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
-    expect(find.text('로그인을 준비하는 중입니다. 잠시 후 다시 시도해 주세요.'), findsOneWidget);
+    expect(find.text('로그인을 시작할 수 없습니다. 네트워크 상태를 확인한 뒤 다시 시도해 주세요.'),
+        findsOneWidget);
     expect(find.text('Apple로 계속하기'), findsNothing);
   });
 }

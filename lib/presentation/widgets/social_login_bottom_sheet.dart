@@ -22,8 +22,8 @@ class SocialLoginBottomSheet {
     VoidCallback? onAuthenticated,
   }) async {
     final authService =
-        socialAuthService ?? _createSocialAuthServiceOrNull(context);
-    if (authService == null) {
+        socialAuthService ?? await _createSocialAuthServiceOrNull(context);
+    if (!context.mounted || authService == null) {
       return;
     }
 
@@ -47,19 +47,22 @@ class SocialLoginBottomSheet {
     );
   }
 
-  static SocialAuthService? _createSocialAuthServiceOrNull(
+  static Future<SocialAuthService?> _createSocialAuthServiceOrNull(
     BuildContext context,
-  ) {
-    final client = SupabaseConnectionService.tryGetClient();
+  ) async {
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    final client = await SupabaseConnectionService.ensureClientReady();
     if (client != null) {
       return SocialAuthService(client);
     }
 
-    final messenger = ScaffoldMessenger.maybeOf(context);
+    if (!context.mounted) {
+      return null;
+    }
     messenger?.showSnackBar(
       const SnackBar(
-        content: Text('로그인을 준비하는 중입니다. 잠시 후 다시 시도해 주세요.'),
-        duration: Duration(seconds: 2),
+        content: Text('로그인을 시작할 수 없습니다. 네트워크 상태를 확인한 뒤 다시 시도해 주세요.'),
+        duration: Duration(seconds: 3),
       ),
     );
     return null;
