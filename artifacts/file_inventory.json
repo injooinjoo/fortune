@@ -20260,12 +20260,15 @@
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/network/api_client.dart",
         "lib/core/services/debug_premium_service.dart",
+        "lib/core/services/supabase_connection_service.dart",
         "lib/core/utils/logger.dart",
         "lib/data/services/fortune_api_service_edge_functions.dart",
         "lib/screens/auth/callback_page.dart",
         "lib/services/analytics_service.dart",
         "lib/services/kakao_share_service.dart",
-        "lib/services/social_auth/providers/google_auth_provider.dart"
+        "lib/services/social_auth/base/base_social_auth_provider.dart",
+        "lib/services/social_auth/providers/google_auth_provider.dart",
+        "test/core/config/environment_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -31417,6 +31420,20 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "test/core/config/environment_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "test/core/constants/tarot_card_catalog_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -32406,21 +32423,21 @@
       "lib": 414,
       "scripts": 70,
       "supabase": 206,
-      "test": 70
+      "test": 71
     },
     "counts_by_candidate_action": {
       "keep": 704,
       "keep_generated": 28,
       "manual_review": 978,
       "phase1_remove_candidate": 14,
-      "phase2_review_candidate": 360,
+      "phase2_review_candidate": 361,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
       "doc_only": 97,
       "generated_excluded": 28,
       "runtime_used": 704,
-      "test_only": 79,
+      "test_only": 80,
       "tooling_only": 184,
       "unreferenced": 996
     },
@@ -32684,7 +32701,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2088,
+    "total_files": 2089,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
