@@ -201,33 +201,114 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final typography = context.typography;
+    final logoAsset = context.isDark
+        ? 'assets/images/zpzg_logo_dark.webp'
+        : 'assets/images/zpzg_logo_light.webp';
 
     return Scaffold(
       backgroundColor: colors.background,
-      body: Center(
-        child: TweenAnimationBuilder<double>(
-          tween: Tween<double>(begin: 0.0, end: 1.0),
-          duration: const Duration(milliseconds: 1500),
-          curve: Curves.easeInCubic,
-          builder: (context, value, child) {
-            return Opacity(
-              opacity: value,
-              child: Transform.scale(
-                scale: 0.95 + (0.05 * value),
-                child: child,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  colors.background,
+                  colors.backgroundSecondary,
+                ],
               ),
-            );
-          },
-          child: Text(
-            '知',
-            style: TextStyle(
-              fontSize: 120,
-              fontWeight: FontWeight.w300,
-              color: colors.textPrimary,
-              height: 1.0,
             ),
           ),
-        ),
+          Positioned(
+            top: -88,
+            right: -64,
+            child: Container(
+              width: 220,
+              height: 220,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: colors.surface.withValues(alpha: 0.6),
+              ),
+            ),
+          ),
+          Positioned(
+            left: -52,
+            bottom: -44,
+            child: Container(
+              width: 180,
+              height: 180,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: colors.surfaceSecondary.withValues(alpha: 0.36),
+              ),
+            ),
+          ),
+          Center(
+            child: TweenAnimationBuilder<double>(
+              tween: Tween<double>(begin: 0.0, end: 1.0),
+              duration: const Duration(milliseconds: 1500),
+              curve: Curves.easeInOutCubic,
+              builder: (context, value, child) {
+                return Opacity(
+                  opacity: value,
+                  child: Transform.scale(
+                    scale: 0.96 + (0.04 * value),
+                    child: child,
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(context.radius.xxl),
+                      child: Image.asset(
+                        logoAsset,
+                        width: 108,
+                        height: 108,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      '대화로 시작하는 자기 발견',
+                      style: typography.headingMedium.copyWith(
+                        color: colors.textPrimary,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '질감은 남기고, 화면은 더 또렷하게 정리했습니다.',
+                      style: typography.bodyMedium.copyWith(
+                        color: colors.textSecondary,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 40,
+            child: Text(
+              'Launching ZPZG',
+              style: typography.labelLarge.copyWith(
+                color: colors.textTertiary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
       ),
     );
   }

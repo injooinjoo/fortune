@@ -9,7 +9,7 @@ final themeModeProvider =
 });
 
 class ThemeModeNotifier extends StateNotifier<ThemeMode> {
-  ThemeModeNotifier() : super(ThemeMode.light) {
+  ThemeModeNotifier() : super(ThemeMode.system) {
     _loadThemePreference();
   }
 
@@ -35,8 +35,8 @@ class ThemeModeNotifier extends StateNotifier<ThemeMode> {
             break;
         }
       } else {
-        // If no saved preference, default to light theme (Claude-style neutral)
-        state = ThemeMode.light;
+        // Default to the device appearance for the first launch.
+        state = ThemeMode.system;
       }
 
       // Force a rebuild after loading to ensure correct theme is applied

@@ -18,7 +18,7 @@ void main() {
         spec.backgroundAsset,
         'assets/images/chat/backgrounds/bg_daily.webp',
       );
-      expect(spec.textureAsset, isNull);
+      expect(spec.textureAsset, kCharacterChatDarkTextureAsset);
       expect(spec.themeKey, '${haneulCharacter.id}:daily');
     });
 
@@ -31,7 +31,7 @@ void main() {
 
       expect(spec.fortuneType, 'new-year');
       expect(spec.backgroundAsset, isNull);
-      expect(spec.textureAsset, kCharacterChatDefaultTextureAsset);
+      expect(spec.textureAsset, kCharacterChatLightTextureAsset);
       expect(spec.gradientColors, hasLength(2));
       expect(spec.gradientColors.first, isNot(spec.gradientColors.last));
       expect(spec.scrimOpacity, greaterThan(0));
@@ -47,7 +47,7 @@ void main() {
 
       expect(spec.fortuneType, kCharacterChatDefaultThemeType);
       expect(spec.backgroundAsset, isNull);
-      expect(spec.textureAsset, kCharacterChatDefaultTextureAsset);
+      expect(spec.textureAsset, kCharacterChatDarkTextureAsset);
       expect(spec.themeKey, '${haneulCharacter.id}:default');
     });
   });

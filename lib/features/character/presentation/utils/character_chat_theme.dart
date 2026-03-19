@@ -5,8 +5,9 @@ import '../../../../core/fortune/fortune_type_registry.dart';
 import '../../domain/models/ai_character.dart';
 
 const String kCharacterChatDefaultThemeType = 'default';
-const String kCharacterChatDefaultTextureAsset =
-    'assets/images/chat/backgrounds/bg_chat_default.webp';
+const String kCharacterChatLightTextureAsset =
+    'assets/textures/hanji_light.webp';
+const String kCharacterChatDarkTextureAsset = 'assets/textures/hanji_dark.webp';
 
 @immutable
 class CharacterChatThemeSpec {
@@ -639,25 +640,25 @@ CharacterChatThemeSpec _defaultTheme({
   return CharacterChatThemeSpec(
     themeKey: '${character.id}:$kCharacterChatDefaultThemeType',
     fortuneType: kCharacterChatDefaultThemeType,
-    textureAsset: kCharacterChatDefaultTextureAsset,
+    textureAsset: _textureAssetForPalette(palette),
     gradientColors: [
       _gradientColor(
-        _mix(accent, palette.surface, 0.42),
+        _mix(palette.surface, accent, palette.isDark ? 0.08 : 0.05),
         palette: palette,
-        strength: 0.26,
+        strength: 0.08,
       ),
       _gradientColor(
-        _mix(palette.background, accent, 0.18),
+        _mix(palette.background, palette.surface, palette.isDark ? 0.2 : 0.12),
         palette: palette,
-        strength: 0.1,
+        strength: 0.02,
       ),
     ],
     accentTint: _overlayTint(
-      _mix(accent, palette.accentSecondary, 0.18),
-      opacity: palette.isDark ? 0.1 : 0.08,
+      _mix(accent, palette.accentSecondary, 0.1),
+      opacity: palette.isDark ? 0.05 : 0.03,
     ),
-    textureOpacity: palette.isDark ? 0.14 : 0.08,
-    scrimOpacity: palette.isDark ? 0.2 : 0.08,
+    textureOpacity: palette.isDark ? 0.16 : 0.1,
+    scrimOpacity: palette.isDark ? 0.12 : 0.05,
   );
 }
 
@@ -674,24 +675,26 @@ CharacterChatThemeSpec _assetTheme({
     themeKey: '${character.id}:$fortuneType',
     fortuneType: fortuneType,
     backgroundAsset: _assetPath(assetName),
+    textureAsset: _textureAssetForPalette(palette),
     gradientColors: [
       _gradientColor(
-        _mix(tonedTint, palette.background, 0.24),
+        _mix(palette.surface, tonedTint, palette.isDark ? 0.1 : 0.06),
         palette: palette,
-        strength: 0.18,
+        strength: 0.06,
       ),
       _gradientColor(
-        _mix(palette.surface, tonedTint, 0.16),
+        _mix(palette.background, palette.surface, palette.isDark ? 0.18 : 0.1),
         palette: palette,
-        strength: 0.08,
+        strength: 0.02,
       ),
     ],
     accentTint: _overlayTint(
       tonedTint,
-      opacity: palette.isDark ? 0.14 : 0.1,
+      opacity: palette.isDark ? 0.07 : 0.04,
     ),
-    imageOpacity: palette.isDark ? 0.72 : 0.88,
-    scrimOpacity: palette.isDark ? 0.28 : 0.14,
+    imageOpacity: palette.isDark ? 0.2 : 0.12,
+    textureOpacity: palette.isDark ? 0.16 : 0.1,
+    scrimOpacity: palette.isDark ? 0.16 : 0.06,
   );
 }
 
@@ -706,22 +709,34 @@ CharacterChatThemeSpec _fallbackTheme({
   return CharacterChatThemeSpec(
     themeKey: '${character.id}:$fortuneType',
     fortuneType: fortuneType,
-    textureAsset: kCharacterChatDefaultTextureAsset,
+    textureAsset: _textureAssetForPalette(palette),
     gradientColors: [
-      _gradientColor(start, palette: palette, strength: 0.18),
-      _gradientColor(end, palette: palette, strength: 0.12),
+      _gradientColor(
+        _mix(palette.surface, start, palette.isDark ? 0.1 : 0.06),
+        palette: palette,
+        strength: 0.06,
+      ),
+      _gradientColor(
+        _mix(palette.background, end, palette.isDark ? 0.08 : 0.05),
+        palette: palette,
+        strength: 0.02,
+      ),
     ],
     accentTint: _overlayTint(
       tint,
-      opacity: palette.isDark ? 0.12 : 0.08,
+      opacity: palette.isDark ? 0.06 : 0.04,
     ),
-    textureOpacity: palette.isDark ? 0.18 : 0.12,
-    scrimOpacity: palette.isDark ? 0.16 : 0.06,
+    textureOpacity: palette.isDark ? 0.16 : 0.1,
+    scrimOpacity: palette.isDark ? 0.14 : 0.06,
   );
 }
 
 String _assetPath(String fileName) =>
     'assets/images/chat/backgrounds/$fileName';
+
+String _textureAssetForPalette(_ThemePalette palette) => palette.isDark
+    ? kCharacterChatDarkTextureAsset
+    : kCharacterChatLightTextureAsset;
 
 Color _gradientColor(
   Color color, {

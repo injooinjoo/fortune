@@ -73,132 +73,180 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+
     return Scaffold(
+      backgroundColor: colors.background,
       appBar: AppBar(
+        backgroundColor: colors.background,
+        foregroundColor: colors.textPrimary,
         leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => context.go('/chat')),
+          icon: Icon(Icons.arrow_back_ios, color: colors.textPrimary),
+          onPressed: () => context.go('/chat'),
+        ),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text('회원가입',
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineLarge
-                      ?.copyWith(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              Text('Fortune과 함께 운명을 만나보세요',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge
-                      ?.copyWith(color: context.colors.textSecondary)),
-              const SizedBox(height: 32),
-              FormBuilder(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    FormBuilderTextField(
-                        name: 'name',
-                        decoration: const InputDecoration(
-                            labelText: '이름',
-                            prefixIcon: Icon(Icons.person_outline)),
-                        validator: FormBuilderValidators.compose([
-                          FormBuilderValidators.required(
-                              errorText: '이름을 입력해주세요'),
-                          FormBuilderValidators.minLength(2,
-                              errorText: '이름은 2자 이상이어야 합니다')
-                        ])),
-                    const SizedBox(height: 16),
-                    FormBuilderTextField(
-                        name: 'email',
-                        decoration: const InputDecoration(
-                            labelText: '이메일',
-                            prefixIcon: Icon(Icons.email_outlined)),
-                        keyboardType: TextInputType.emailAddress,
-                        validator: FormBuilderValidators.compose([
-                          FormBuilderValidators.required(
-                              errorText: '이메일을 입력해주세요'),
-                          FormBuilderValidators.email(
-                              errorText: '올바른 이메일 형식이 아닙니다')
-                        ])),
-                    const SizedBox(height: 16),
-                    FormBuilderTextField(
-                        name: 'password',
-                        decoration: InputDecoration(
-                            labelText: '비밀번호',
-                            prefixIcon: const Icon(Icons.lock_outline),
-                            suffixIcon: IconButton(
-                                icon: Icon(_obscurePassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 520),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '회원가입',
+                      style: typography.headingLarge.copyWith(
+                        color: colors.textPrimary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '계정을 만들면 대화를 이어서 저장하고, 나만의 흐름으로 정리할 수 있어요.',
+                      style: typography.bodyMedium.copyWith(
+                        color: colors.textSecondary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: colors.surface,
+                      borderRadius: BorderRadius.circular(context.radius.xl),
+                      border: Border.all(
+                        color: colors.border.withValues(alpha: 0.72),
+                      ),
+                    ),
+                    child: FormBuilder(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          FormBuilderTextField(
+                            name: 'name',
+                            decoration: const InputDecoration(
+                              labelText: '이름',
+                              prefixIcon: Icon(Icons.person_outline),
+                            ),
+                            validator: FormBuilderValidators.compose([
+                              FormBuilderValidators.required(
+                                errorText: '이름을 입력해주세요',
+                              ),
+                              FormBuilderValidators.minLength(
+                                2,
+                                errorText: '이름은 2자 이상이어야 합니다',
+                              ),
+                            ]),
+                          ),
+                          const SizedBox(height: 16),
+                          FormBuilderTextField(
+                            name: 'email',
+                            decoration: const InputDecoration(
+                              labelText: '이메일',
+                              prefixIcon: Icon(Icons.email_outlined),
+                            ),
+                            keyboardType: TextInputType.emailAddress,
+                            validator: FormBuilderValidators.compose([
+                              FormBuilderValidators.required(
+                                errorText: '이메일을 입력해주세요',
+                              ),
+                              FormBuilderValidators.email(
+                                errorText: '올바른 이메일 형식이 아닙니다',
+                              ),
+                            ]),
+                          ),
+                          const SizedBox(height: 16),
+                          FormBuilderTextField(
+                            name: 'password',
+                            decoration: InputDecoration(
+                              labelText: '비밀번호',
+                              prefixIcon: const Icon(Icons.lock_outline),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscurePassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                ),
                                 onPressed: () {
                                   setState(() {
                                     _obscurePassword = !_obscurePassword;
                                   });
-                                })),
-                        obscureText: _obscurePassword,
-                        validator: FormBuilderValidators.compose([
-                          FormBuilderValidators.required(
-                              errorText: '비밀번호를 입력해주세요'),
-                          FormBuilderValidators.minLength(6,
-                              errorText: '비밀번호는 6자 이상이어야 합니다')
-                        ])),
-                    const SizedBox(height: 16),
-                    FormBuilderTextField(
-                        name: 'confirmPassword',
-                        decoration: InputDecoration(
-                            labelText: '비밀번호 확인',
-                            prefixIcon: const Icon(Icons.lock_outline),
-                            suffixIcon: IconButton(
-                                icon: Icon(_obscureConfirmPassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility),
+                                },
+                              ),
+                            ),
+                            obscureText: _obscurePassword,
+                            validator: FormBuilderValidators.compose([
+                              FormBuilderValidators.required(
+                                errorText: '비밀번호를 입력해주세요',
+                              ),
+                              FormBuilderValidators.minLength(
+                                6,
+                                errorText: '비밀번호는 6자 이상이어야 합니다',
+                              ),
+                            ]),
+                          ),
+                          const SizedBox(height: 16),
+                          FormBuilderTextField(
+                            name: 'confirmPassword',
+                            decoration: InputDecoration(
+                              labelText: '비밀번호 확인',
+                              prefixIcon: const Icon(Icons.lock_outline),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscureConfirmPassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                ),
                                 onPressed: () {
                                   setState(() {
                                     _obscureConfirmPassword =
                                         !_obscureConfirmPassword;
                                   });
-                                })),
-                        obscureText: _obscureConfirmPassword,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return '비밀번호를 다시 입력해주세요';
-                          }
-                          if (value !=
-                              _formKey
-                                  .currentState?.fields['password']?.value) {
-                            return '비밀번호가 일치하지 않습니다';
-                          }
-                          return null;
-                        }),
-                    const SizedBox(height: 24),
-                    SizedBox(
-                      height: 48.0,
-                      child: ElevatedButton(
-                          onPressed: _isLoading ? null : _handleSignup,
-                          child: _isLoading
-                              ? SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                          context.colors.ctaForeground)))
-                              : const Text('회원가입')),
+                                },
+                              ),
+                            ),
+                            obscureText: _obscureConfirmPassword,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return '비밀번호를 다시 입력해주세요';
+                              }
+                              if (value !=
+                                  _formKey.currentState?.fields['password']
+                                      ?.value) {
+                                return '비밀번호가 일치하지 않습니다';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 24),
+                          DSButton.primary(
+                            text: '회원가입',
+                            onPressed: _isLoading ? null : _handleSignup,
+                            isLoading: _isLoading,
+                          ),
+                          const SizedBox(height: 16),
+                          TextButton(
+                            onPressed: () => context.go('/chat'),
+                            child: Text(
+                              '이미 계정이 있다면 채팅에서 바로 이어가기',
+                              style: typography.labelLarge.copyWith(
+                                color: colors.textSecondary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 16),
-                    TextButton(
-                      onPressed: () => context.go('/chat'),
-                      child: const Text('이미 계정이 있으신가요? 채팅으로'),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

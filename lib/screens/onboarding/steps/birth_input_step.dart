@@ -364,296 +364,292 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
             padding: EdgeInsets.only(
               left: 24,
               right: 24,
-              top: MediaQuery.of(context).size.height * 0.15,
+              top: MediaQuery.of(context).size.height * 0.11,
               bottom: 24,
             ),
-            child: Column(
-              children: [
-                Text(
-                  '생년월일을 알려주세요',
-                  style: typography.headingSmall
-                      .copyWith(color: colors.textSecondary),
-                ).animate().fadeIn(duration: 500.ms),
-
-                const SizedBox(height: 8),
-
-                Text(
-                  '당신만의 인사이트를 준비하기 위해 필요해요',
-                  style: typography.bodySmall.copyWith(
-                    color: colors.textTertiary,
-                    letterSpacing: 0.3,
-                  ),
-                  textAlign: TextAlign.center,
-                ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
-
-                const SizedBox(height: 48),
-
-                // Date Input - Progressive reveal
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    // Year
-                    SizedBox(
-                      width: 90,
-                      child: TextField(
-                        controller: _yearController,
-                        focusNode: _yearFocus,
-                        keyboardType: TextInputType.number,
-                        textAlign: TextAlign.center,
-                        style: inputStyle,
-                        cursorColor: colors.textSecondary,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(4),
-                        ],
-                        decoration: InputDecoration(
-                          hintText: 'YYYY',
-                          hintStyle: hintStyle,
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          filled: false,
-                          contentPadding: EdgeInsets.zero,
-                          isDense: true,
-                        ),
-                      ),
-                    ),
-                    Text('년', style: labelStyle),
-
-                    // Month - fade in after year (그룹화된 애니메이션)
-                    if (_showMonth)
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const SizedBox(width: 16),
-                          SizedBox(
-                            width: 50,
-                            child: TextField(
-                              controller: _monthController,
-                              focusNode: _monthFocus,
-                              keyboardType: TextInputType.number,
-                              textAlign: TextAlign.center,
-                              style: inputStyle,
-                              cursorColor: colors.textSecondary,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                LengthLimitingTextInputFormatter(2),
-                              ],
-                              decoration: InputDecoration(
-                                hintText: 'MM',
-                                hintStyle: hintStyle,
-                                border: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                filled: false,
-                                contentPadding: EdgeInsets.zero,
-                                isDense: true,
-                              ),
-                            ),
-                          ),
-                          Text('월', style: labelStyle),
-                        ],
-                      ).animate().fadeIn(duration: 300.ms),
-
-                    // Day - fade in after month (그룹화된 애니메이션)
-                    if (_showDay)
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const SizedBox(width: 16),
-                          SizedBox(
-                            width: 50,
-                            child: TextField(
-                              controller: _dayController,
-                              focusNode: _dayFocus,
-                              keyboardType: TextInputType.number,
-                              textAlign: TextAlign.center,
-                              style: inputStyle,
-                              cursorColor: colors.textSecondary,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                LengthLimitingTextInputFormatter(2),
-                              ],
-                              decoration: InputDecoration(
-                                hintText: 'DD',
-                                hintStyle: hintStyle,
-                                border: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                filled: false,
-                                contentPadding: EdgeInsets.zero,
-                                isDense: true,
-                              ),
-                            ),
-                          ),
-                          Text('일', style: labelStyle),
-                        ],
-                      ).animate().fadeIn(duration: 300.ms),
-                  ],
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+              decoration: BoxDecoration(
+                color: colors.surface,
+                borderRadius: BorderRadius.circular(context.radius.xxl),
+                border: Border.all(
+                  color: colors.border.withValues(alpha: 0.72),
                 ),
-
-                // Time Input - fade in after date complete
-                if (_showTime) ...[
-                  const SizedBox(height: 48),
+              ),
+              child: Column(
+                children: [
                   Text(
-                    '태어난 시간을 알려주세요',
+                    '생년월일을 알려주세요',
                     style: typography.headingSmall
                         .copyWith(color: colors.textSecondary),
-                  ).animate().fadeIn(duration: 400.ms),
-                  const SizedBox(height: 24),
+                  ).animate().fadeIn(duration: 500.ms),
+
+                  const SizedBox(height: 8),
+
+                  Text(
+                    '당신만의 인사이트를 준비하기 위해 필요해요',
+                    style: typography.bodySmall.copyWith(
+                      color: colors.textTertiary,
+                      letterSpacing: 0.3,
+                    ),
+                    textAlign: TextAlign.center,
+                  ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
+
+                  const SizedBox(height: 48),
+
+                  // Date Input - Progressive reveal
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.baseline,
                     textBaseline: TextBaseline.alphabetic,
                     children: [
-                      // 시간 입력
+                      // Year
                       SizedBox(
-                        width: 50,
+                        width: 90,
                         child: TextField(
-                          controller: _timeController,
-                          focusNode: _timeFocus,
+                          controller: _yearController,
+                          focusNode: _yearFocus,
                           keyboardType: TextInputType.number,
                           textAlign: TextAlign.center,
                           style: inputStyle,
                           cursorColor: colors.textSecondary,
-                          enabled: !_isTimeUnknown,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(2),
+                            LengthLimitingTextInputFormatter(4),
                           ],
                           decoration: InputDecoration(
-                            hintText: '00',
-                            hintStyle: hintStyle.copyWith(
-                              color: _isTimeUnknown
-                                  ? colors.border
-                                  : colors.textTertiary,
-                            ),
+                            hintText: 'YYYY',
+                            hintStyle: hintStyle,
                             border: InputBorder.none,
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
                             filled: false,
                             contentPadding: EdgeInsets.zero,
                             isDense: true,
                           ),
                         ),
                       ),
-                      Text('시', style: labelStyle),
+                      Text('년', style: labelStyle),
 
-                      // ✅ 분 입력 추가
-                      const SizedBox(width: 16),
-                      SizedBox(
-                        width: 50,
-                        child: TextField(
-                          controller: _minuteController,
-                          focusNode: _minuteFocus,
-                          keyboardType: TextInputType.number,
-                          textAlign: TextAlign.center,
-                          style: inputStyle,
-                          cursorColor: colors.textSecondary,
-                          enabled: !_isTimeUnknown,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(2),
-                          ],
-                          decoration: InputDecoration(
-                            hintText: '00',
-                            hintStyle: hintStyle.copyWith(
-                              color: _isTimeUnknown
-                                  ? colors.border
-                                  : colors.textTertiary,
+                      // Month - fade in after year (그룹화된 애니메이션)
+                      if (_showMonth)
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(width: 16),
+                            SizedBox(
+                              width: 50,
+                              child: TextField(
+                                controller: _monthController,
+                                focusNode: _monthFocus,
+                                keyboardType: TextInputType.number,
+                                textAlign: TextAlign.center,
+                                style: inputStyle,
+                                cursorColor: colors.textSecondary,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(2),
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: 'MM',
+                                  hintStyle: hintStyle,
+                                  border: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  filled: false,
+                                  contentPadding: EdgeInsets.zero,
+                                  isDense: true,
+                                ),
+                              ),
                             ),
-                            border: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            filled: false,
-                            contentPadding: EdgeInsets.zero,
-                            isDense: true,
+                            Text('월', style: labelStyle),
+                          ],
+                        ).animate().fadeIn(duration: 300.ms),
+
+                      // Day - fade in after month (그룹화된 애니메이션)
+                      if (_showDay)
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(width: 16),
+                            SizedBox(
+                              width: 50,
+                              child: TextField(
+                                controller: _dayController,
+                                focusNode: _dayFocus,
+                                keyboardType: TextInputType.number,
+                                textAlign: TextAlign.center,
+                                style: inputStyle,
+                                cursorColor: colors.textSecondary,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(2),
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: 'DD',
+                                  hintStyle: hintStyle,
+                                  border: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  filled: false,
+                                  contentPadding: EdgeInsets.zero,
+                                  isDense: true,
+                                ),
+                              ),
+                            ),
+                            Text('일', style: labelStyle),
+                          ],
+                        ).animate().fadeIn(duration: 300.ms),
+                    ],
+                  ),
+
+                  // Time Input - fade in after date complete
+                  if (_showTime) ...[
+                    const SizedBox(height: 48),
+                    Text(
+                      '태어난 시간을 알려주세요',
+                      style: typography.headingSmall
+                          .copyWith(color: colors.textSecondary),
+                    ).animate().fadeIn(duration: 400.ms),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: [
+                        // 시간 입력
+                        SizedBox(
+                          width: 50,
+                          child: TextField(
+                            controller: _timeController,
+                            focusNode: _timeFocus,
+                            keyboardType: TextInputType.number,
+                            textAlign: TextAlign.center,
+                            style: inputStyle,
+                            cursorColor: colors.textSecondary,
+                            enabled: !_isTimeUnknown,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(2),
+                            ],
+                            decoration: InputDecoration(
+                              hintText: '00',
+                              hintStyle: hintStyle.copyWith(
+                                color: _isTimeUnknown
+                                    ? colors.border
+                                    : colors.textTertiary,
+                              ),
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              filled: false,
+                              contentPadding: EdgeInsets.zero,
+                              isDense: true,
+                            ),
                           ),
                         ),
-                      ),
-                      Text('분', style: labelStyle),
-                    ],
-                  ).animate().fadeIn(duration: 400.ms),
-                  const SizedBox(height: 20),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _isTimeUnknown = !_isTimeUnknown;
-                        if (_isTimeUnknown) {
-                          _timeController.clear();
-                          _minuteController.clear(); // ✅ 분 컨트롤러도 초기화
-                          _isTimeValid = true;
-                          FocusScope.of(context).unfocus();
-                          widget.onBirthTimeChanged
-                              ?.call(const TimeOfDay(hour: 12, minute: 0));
-                        } else {
-                          _isTimeValid = false;
-                          _timeFocus.requestFocus();
-                        }
-                      });
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 20,
-                          height: 20,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
+                        Text('시', style: labelStyle),
+
+                        // ✅ 분 입력 추가
+                        const SizedBox(width: 16),
+                        SizedBox(
+                          width: 50,
+                          child: TextField(
+                            controller: _minuteController,
+                            focusNode: _minuteFocus,
+                            keyboardType: TextInputType.number,
+                            textAlign: TextAlign.center,
+                            style: inputStyle,
+                            cursorColor: colors.textSecondary,
+                            enabled: !_isTimeUnknown,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(2),
+                            ],
+                            decoration: InputDecoration(
+                              hintText: '00',
+                              hintStyle: hintStyle.copyWith(
+                                color: _isTimeUnknown
+                                    ? colors.border
+                                    : colors.textTertiary,
+                              ),
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              filled: false,
+                              contentPadding: EdgeInsets.zero,
+                              isDense: true,
+                            ),
+                          ),
+                        ),
+                        Text('분', style: labelStyle),
+                      ],
+                    ).animate().fadeIn(duration: 400.ms),
+                    const SizedBox(height: 20),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _isTimeUnknown = !_isTimeUnknown;
+                          if (_isTimeUnknown) {
+                            _timeController.clear();
+                            _minuteController.clear(); // ✅ 분 컨트롤러도 초기화
+                            _isTimeValid = true;
+                            FocusScope.of(context).unfocus();
+                            widget.onBirthTimeChanged
+                                ?.call(const TimeOfDay(hour: 12, minute: 0));
+                          } else {
+                            _isTimeValid = false;
+                            _timeFocus.requestFocus();
+                          }
+                        });
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 20,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: _isTimeUnknown
+                                    ? colors.accent
+                                    : colors.textSecondary,
+                                width: 2,
+                              ),
                               color: _isTimeUnknown
                                   ? colors.accent
-                                  : colors.textSecondary,
-                              width: 2,
+                                  : colors.background.withValues(alpha: 0),
                             ),
-                            color: _isTimeUnknown
-                                ? colors.accent
-                                : Colors.transparent,
+                            child: _isTimeUnknown
+                                ? Icon(
+                                    Icons.check,
+                                    size: 14,
+                                    color: colors.ctaForeground,
+                                  )
+                                : null,
                           ),
-                          child: _isTimeUnknown
-                              ? const Icon(Icons.check,
-                                  size: 14, color: Colors.white)
-                              : null,
-                        ),
-                        const SizedBox(width: 8),
-                        Text('모르겠어요',
-                            style: typography.bodyMedium
-                                .copyWith(color: colors.textSecondary)),
-                      ],
-                    ),
-                  ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
-                ],
+                          const SizedBox(width: 8),
+                          Text('모르겠어요',
+                              style: typography.bodyMedium
+                                  .copyWith(color: colors.textSecondary)),
+                        ],
+                      ),
+                    ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
+                  ],
 
-                const SizedBox(height: 56),
+                  const SizedBox(height: 56),
 
-                // Next Button
-                if (_isDateValid && (_isTimeValid || _isTimeUnknown))
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56,
-                    child: ElevatedButton(
+                  // Next Button
+                  if (_isDateValid && (_isTimeValid || _isTimeUnknown))
+                    DSButton.primary(
+                      text: '나를 알아가기 시작',
                       onPressed: widget.onNext,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: colors.ctaBackground,
-                        foregroundColor: colors.ctaForeground,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(DSRadius.md)),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        '나를 알아가기 시작',
-                        style: typography.labelLarge.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: colors.ctaForeground,
-                        ),
-                      ),
-                    ),
-                  ).animate().fadeIn(duration: 300.ms),
-              ],
+                    ).animate().fadeIn(duration: 300.ms),
+                ],
+              ),
             ),
           ),
         ),

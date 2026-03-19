@@ -62,7 +62,7 @@ class SocialLoginBottomSheet {
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: context.colors.surface.withValues(alpha: 0),
       barrierColor: DSColorScheme(Theme.of(context).brightness).overlay,
       builder: (bottomSheetContext) {
         debugPrint(
@@ -78,6 +78,7 @@ class SocialLoginBottomSheet {
         return StatefulBuilder(
           builder: (context, setSheetState) {
             final colors = context.colors;
+            final typography = context.typography;
             final isButtonDisabled = isProcessing || isTapLocked;
 
             Future<void> handleSocialTap(
@@ -99,61 +100,73 @@ class SocialLoginBottomSheet {
 
             return Container(
               decoration: BoxDecoration(
-                color: colors.surface,
+                color: colors.surface.withValues(alpha: 0.98),
                 borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(25),
-                  topRight: Radius.circular(25),
+                  topLeft: Radius.circular(32),
+                  topRight: Radius.circular(32),
+                ),
+                border: Border(
+                  top: BorderSide(
+                    color: colors.border.withValues(alpha: 0.7),
+                  ),
                 ),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Drag handle
                   Container(
-                    margin: const EdgeInsets.only(top: 12),
-                    width: 40,
+                    margin: const EdgeInsets.only(top: 14),
+                    width: 44,
                     height: 4,
                     decoration: BoxDecoration(
                       color: colors.border,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-
-                  // Content - 버튼만
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 24),
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Google Login
+                        Text(
+                          '로그인하고 대화를 이어가세요',
+                          style: typography.headingSmall.copyWith(
+                            color: colors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          '지금까지의 흐름을 저장하고, 더 자연스럽게 이어서 사용할 수 있어요.',
+                          style: typography.bodyMedium.copyWith(
+                            color: colors.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
                         _buildSocialButton(
-                            context: context,
-                            onPressed: isButtonDisabled
-                                ? null
-                                : () =>
-                                    handleSocialTap(onGoogleLogin, 'google'),
-                            type: 'google',
-                            colors: colors,
-                            isLoading: activeLoadingProvider == 'google'),
-
-                        // Apple Login - iOS/Web only (Android OAuth 미지원)
+                          context: context,
+                          onPressed: isButtonDisabled
+                              ? null
+                              : () => handleSocialTap(onGoogleLogin, 'google'),
+                          type: 'google',
+                          colors: colors,
+                          isLoading: activeLoadingProvider == 'google',
+                        ),
                         if (!Platform.isAndroid) ...[
                           const SizedBox(height: 12),
                           _buildSocialButton(
-                              context: context,
-                              onPressed: isButtonDisabled
-                                  ? null
-                                  : () =>
-                                      handleSocialTap(onAppleLogin, 'apple'),
-                              type: 'apple',
-                              colors: colors,
-                              isLoading: activeLoadingProvider == 'apple'),
+                            context: context,
+                            onPressed: isButtonDisabled
+                                ? null
+                                : () => handleSocialTap(onAppleLogin, 'apple'),
+                            type: 'apple',
+                            colors: colors,
+                            isLoading: activeLoadingProvider == 'apple',
+                          ),
                         ],
-
-                        // Safe area bottom padding
                         SizedBox(
-                            height: MediaQuery.of(context).padding.bottom + 8),
+                          height: MediaQuery.of(context).padding.bottom + 8,
+                        ),
                       ],
                     ),
                   ),
@@ -290,10 +303,10 @@ class SocialLoginBottomSheet {
       onTap: onPressed,
       child: Container(
         width: double.infinity,
-        height: 52,
+        height: 56,
         decoration: BoxDecoration(
           color: isApple ? colors.ctaBackground : backgroundColor,
-          borderRadius: BorderRadius.circular(26),
+          borderRadius: BorderRadius.circular(18),
           border: isApple ? null : Border.all(color: borderColor, width: 1),
         ),
         child: isLoading
@@ -314,7 +327,7 @@ class SocialLoginBottomSheet {
                   Text(
                     '${type == 'apple' ? 'Apple' : type == 'google' ? 'Google' : type == 'kakao' ? '카카오' : '네이버'} 계정 연결 중...',
                     style: context.labelLarge.copyWith(
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w700,
                       color:
                           isApple ? colors.ctaForeground : colors.textPrimary,
                     ),
@@ -330,7 +343,7 @@ class SocialLoginBottomSheet {
                   Text(
                     text,
                     style: context.labelLarge.copyWith(
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w700,
                       color:
                           isApple ? colors.ctaForeground : colors.textPrimary,
                     ),

@@ -67,81 +67,155 @@ class _CharacterOnboardingPageState
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final isDark = context.isDark;
+    final typography = context.typography;
 
     return Scaffold(
       backgroundColor: colors.background,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Skip button
-            Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: TextButton(
-                  onPressed: _completeOnboarding,
+      body: Stack(
+        children: [
+          Positioned(
+            top: -72,
+            right: -40,
+            child: Container(
+              width: 180,
+              height: 180,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: colors.surface.withValues(alpha: 0.56),
+              ),
+            ),
+          ),
+          SafeArea(
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: TextButton(
+                      onPressed: _completeOnboarding,
+                      child: Text(
+                        '건너뛰기',
+                        style: typography.labelLarge.copyWith(
+                          color: colors.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Text(
-                    '건너뛰기',
-                    style: context.typography.bodyMedium.copyWith(
+                    '대화를 더 자연스럽게 시작하는 방법',
+                    style: typography.headingMedium.copyWith(
+                      color: colors.textPrimary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Text(
+                    '처음엔 간단하게 둘러보고, 마음에 드는 흐름부터 시작하면 됩니다.',
+                    style: typography.bodyMedium.copyWith(
                       color: colors.textSecondary,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
-              ),
-            ),
-
-            // Page content
-            Expanded(
-              child: PageView.builder(
-                controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() => _currentPage = index);
-                },
-                itemCount: _slides.length,
-                itemBuilder: (context, index) {
-                  final slide = _slides[index];
-                  return _buildSlide(context, slide, isDark, colors);
-                },
-              ),
-            ),
-
-            // Page indicator
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  _slides.length,
-                  (index) => _buildIndicator(index, colors),
-                ),
-              ),
-            ),
-
-            // Button
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-              child: SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: _nextPage,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isDark ? Colors.white : Colors.black,
-                    foregroundColor: isDark ? Colors.black : Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 0,
+                const SizedBox(height: 12),
+                Expanded(
+                  child: PageView.builder(
+                    controller: _pageController,
+                    onPageChanged: (index) {
+                      setState(() => _currentPage = index);
+                    },
+                    itemCount: _slides.length,
+                    itemBuilder: (context, index) {
+                      final slide = _slides[index];
+                      return _buildSlide(context, slide, colors);
+                    },
                   ),
-                  child: Text(
-                    _currentPage == _slides.length - 1 ? '시작하기' : '다음',
-                    style: context.typography.bodyLarge.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.black : Colors.white,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                      _slides.length,
+                      (index) => _buildIndicator(index, colors),
                     ),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                  child: DSButton.primary(
+                    text: _currentPage == _slides.length - 1 ? '시작하기' : '다음',
+                    onPressed: _nextPage,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSlide(
+    BuildContext context,
+    _OnboardingSlide slide,
+    DSColorScheme colors,
+  ) {
+    final typography = context.typography;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 36),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(context.radius.xxl),
+          border: Border.all(
+            color: colors.border.withValues(alpha: 0.68),
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 112,
+              height: 112,
+              decoration: BoxDecoration(
+                color: colors.backgroundSecondary,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: colors.border.withValues(alpha: 0.8),
+                ),
+              ),
+              child: Icon(
+                slide.icon,
+                size: 48,
+                color: colors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 32),
+            Text(
+              slide.title,
+              textAlign: TextAlign.center,
+              style: typography.headingMedium.copyWith(
+                color: colors.textPrimary,
+                height: 1.3,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              slide.description,
+              textAlign: TextAlign.center,
+              style: typography.bodyLarge.copyWith(
+                color: colors.textSecondary,
+                height: 1.6,
               ),
             ),
           ],
@@ -150,61 +224,7 @@ class _CharacterOnboardingPageState
     );
   }
 
-  Widget _buildSlide(
-    BuildContext context,
-    _OnboardingSlide slide,
-    bool isDark,
-    dynamic colors,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Icon
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.1)
-                  : Colors.black.withValues(alpha: 0.05),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              slide.icon,
-              size: 56,
-              color: colors.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 48),
-
-          // Title
-          Text(
-            slide.title,
-            textAlign: TextAlign.center,
-            style: context.typography.headingMedium.copyWith(
-              color: colors.textPrimary,
-              height: 1.3,
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // Description
-          Text(
-            slide.description,
-            textAlign: TextAlign.center,
-            style: context.typography.bodyLarge.copyWith(
-              color: colors.textSecondary,
-              height: 1.5,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildIndicator(int index, dynamic colors) {
+  Widget _buildIndicator(int index, DSColorScheme colors) {
     final isActive = index == _currentPage;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
@@ -212,7 +232,7 @@ class _CharacterOnboardingPageState
       width: isActive ? 24 : 8,
       height: 8,
       decoration: BoxDecoration(
-        color: isActive ? colors.textPrimary : colors.textTertiary,
+        color: isActive ? colors.ctaBackground : colors.border,
         borderRadius: BorderRadius.circular(4),
       ),
     );

@@ -93,78 +93,93 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
         child: SafeArea(
           child: Stack(
             children: [
-              // Main content - TextField in center
               Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // 자기발견 컨셉 강조 메시지
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 32.0),
-                      child: Text(
-                        '나를 더 깊이 알아가는 여정',
-                        style: typography.bodyMedium.copyWith(
-                          color: colors.textSecondary,
-                          letterSpacing: 0.5,
-                        ),
-                        textAlign: TextAlign.center,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Container(
+                    width: double.infinity,
+                    constraints: const BoxConstraints(maxWidth: 520),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 28,
+                      vertical: 32,
+                    ),
+                    decoration: BoxDecoration(
+                      color: colors.surface,
+                      borderRadius: BorderRadius.circular(context.radius.xxl),
+                      border: Border.all(
+                        color: colors.border.withValues(alpha: 0.72),
                       ),
                     ),
-                    // TextField for name input - 테두리 완전 제거, 배경 투명
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                      child: TextField(
-                        controller: _nameController,
-                        focusNode: _focusNode,
-                        style: typography.headingMedium.copyWith(
-                          fontWeight: FontWeight.w500,
-                          color: colors.textPrimary,
-                        ),
-                        textAlign: TextAlign.center,
-                        autofocus: true,
-                        keyboardType: TextInputType.name,
-                        textInputAction: TextInputAction.done,
-                        cursorColor: colors.accent,
-                        showCursor: true,
-                        enableInteractiveSelection: true,
-                        onTap: () {
-                          debugPrint('TextField 탭됨!');
-                          _focusNode.requestFocus();
-                          SystemChannels.textInput
-                              .invokeMethod('TextInput.show');
-                        },
-                        onSubmitted: (_) {
-                          if (_isValid) {
-                            widget.onNext();
-                          }
-                        },
-                        decoration: InputDecoration(
-                          hintText: '이름을 알려주세요',
-                          hintStyle: typography.headingMedium.copyWith(
-                            fontWeight: FontWeight.w400,
-                            color: colors.textTertiary,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '무엇이라고 불러드릴까요?',
+                          style: typography.headingMedium.copyWith(
+                            color: colors.textPrimary,
                           ),
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                          focusedErrorBorder: InputBorder.none,
-                          contentPadding: EdgeInsets.zero,
-                          fillColor: Colors.transparent,
-                          filled: true,
+                          textAlign: TextAlign.center,
                         ),
-                        textCapitalization: TextCapitalization.words,
-                        inputFormatters: [
-                          LengthLimitingTextInputFormatter(50),
-                        ],
-                      ),
+                        const SizedBox(height: 12),
+                        Text(
+                          '이름을 먼저 정리해두면 이후 대화와 추천 흐름이 더 자연스럽게 이어집니다.',
+                          style: typography.bodyMedium.copyWith(
+                            color: colors.textSecondary,
+                            height: 1.5,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 28),
+                        TextField(
+                          controller: _nameController,
+                          focusNode: _focusNode,
+                          style: typography.headingMedium.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: colors.textPrimary,
+                          ),
+                          textAlign: TextAlign.center,
+                          autofocus: true,
+                          keyboardType: TextInputType.name,
+                          textInputAction: TextInputAction.done,
+                          cursorColor: colors.accent,
+                          showCursor: true,
+                          enableInteractiveSelection: true,
+                          onTap: () {
+                            debugPrint('TextField 탭됨!');
+                            _focusNode.requestFocus();
+                            SystemChannels.textInput
+                                .invokeMethod('TextInput.show');
+                          },
+                          onSubmitted: (_) {
+                            if (_isValid) {
+                              widget.onNext();
+                            }
+                          },
+                          decoration: InputDecoration(
+                            hintText: '이름을 알려주세요',
+                            hintStyle: typography.headingMedium.copyWith(
+                              fontWeight: FontWeight.w500,
+                              color: colors.textTertiary,
+                            ),
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            focusedErrorBorder: InputBorder.none,
+                            contentPadding: EdgeInsets.zero,
+                            filled: false,
+                          ),
+                          textCapitalization: TextCapitalization.words,
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(50),
+                          ],
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-
-              // Next button - Show above keyboard when text is entered
               AnimatedPositioned(
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
@@ -176,35 +191,12 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
                 child: AnimatedOpacity(
                   duration: const Duration(milliseconds: 300),
                   opacity: _isValid ? 1.0 : 0.0,
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 58,
-                    child: ElevatedButton(
-                      onPressed: _isValid ? widget.onNext : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            _isValid ? colors.ctaBackground : colors.border,
-                        foregroundColor: colors.ctaForeground,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(DSRadius.lg),
-                        ),
-                        elevation: 0,
-                        textStyle: typography.headingSmall
-                            .copyWith(fontWeight: FontWeight.w700),
-                      ),
-                      child: Text(
-                        '다음',
-                        style: typography.headingSmall.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: colors.ctaForeground,
-                        ),
-                      ),
-                    ),
+                  child: DSButton.primary(
+                    text: '다음',
+                    onPressed: _isValid ? widget.onNext : null,
                   ),
                 ),
               ),
-
-              // Bottom links - Only show when keyboard is NOT visible AND no text input
               if (!isKeyboardVisible && !_isValid)
                 Positioned(
                   bottom: 32.0,
@@ -213,7 +205,6 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Skip button for social login users
                       if (widget.allowSkip && widget.onSkip != null)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 16.0),
@@ -221,19 +212,18 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
                             onTap: widget.onSkip,
                             child: Text(
                               '건너뛰기',
-                              style: typography.bodyMedium.copyWith(
+                              style: typography.labelLarge.copyWith(
                                 color: colors.textSecondary,
                               ),
                             ),
                           ),
                         ),
-                      // "계정이 있어요" link
                       Center(
                         child: GestureDetector(
                           onTap: () => _showSocialLoginBottomSheet(context),
                           child: Text(
                             '계정이 있어요',
-                            style: typography.bodySmall.copyWith(
+                            style: typography.labelLarge.copyWith(
                               color: colors.textSecondary,
                               decoration: TextDecoration.underline,
                               decorationColor: colors.textSecondary,
