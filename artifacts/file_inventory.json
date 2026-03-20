@@ -20852,7 +20852,6 @@
         "lib/screens/onboarding/onboarding_page.dart",
         "lib/screens/onboarding/steps/birth_input_step.dart",
         "lib/screens/onboarding/steps/name_input_step.dart",
-        "lib/screens/premium/premium_screen.dart",
         "lib/screens/profile/account_deletion_page.dart",
         "lib/screens/profile/profile_edit_page.dart",
         "lib/screens/profile/profile_relationships_page.dart",
@@ -20924,7 +20923,8 @@
         "lib/core/design_system/design_system.dart",
         "lib/main.dart",
         "test/widget/auth/profile_avatar_tap_handler_test.dart",
-        "test/widget/auth/social_auth_pending_state_test.dart"
+        "test/widget/auth/social_auth_pending_state_test.dart",
+        "test/widget/onboarding/name_input_step_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23943,18 +23943,20 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
       "path": "lib/features/character/presentation/utils/fortune_chat_navigation.dart",
       "referenced_by": [
-        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
-        "lib/screens/premium/premium_screen.dart"
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -26230,23 +26232,8 @@
       "path": "lib/screens/onboarding/steps/name_input_step.dart",
       "referenced_by": [
         "lib/screens/onboarding/onboarding_page.dart",
-        "test/widget/auth/social_auth_pending_state_test.dart"
-      ],
-      "runtime_reachable": true,
-      "test_only": false,
-      "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "keep",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [],
-      "path": "lib/screens/premium/premium_screen.dart",
-      "referenced_by": [
-        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
-        "lib/routes/route_config.dart"
+        "test/widget/auth/social_auth_pending_state_test.dart",
+        "test/widget/onboarding/name_input_step_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26807,11 +26794,13 @@
         "lib/presentation/providers/user_statistics_provider.dart",
         "lib/screens/auth/callback_page.dart",
         "lib/screens/onboarding/onboarding_page.dart",
+        "lib/screens/onboarding/steps/name_input_step.dart",
         "lib/screens/splash_screen.dart",
         "lib/services/account_deletion_service.dart",
         "lib/services/social_auth_service.dart",
         "lib/services/user_statistics_service.dart",
-        "test/mocks/mock_auth_services.dart"
+        "test/mocks/mock_auth_services.dart",
+        "test/widget/onboarding/name_input_step_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -27067,7 +27056,6 @@
       "path": "lib/shared/glassmorphism/glass_container.dart",
       "referenced_by": [
         "lib/presentation/widgets/social_accounts_section.dart",
-        "lib/screens/premium/premium_screen.dart",
         "lib/shared/components/app_header.dart",
         "lib/shared/components/korean_date_picker.dart"
       ],
@@ -32438,6 +32426,20 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "test/widget/onboarding/name_input_step_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "test/widget/onboarding/onboarding_page_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -32478,24 +32480,24 @@
       "assets": 1231,
       "docs": 89,
       "integration_test": 8,
-      "lib": 415,
+      "lib": 414,
       "scripts": 70,
       "supabase": 206,
-      "test": 73
+      "test": 74
     },
     "counts_by_candidate_action": {
-      "keep": 705,
+      "keep": 703,
       "keep_generated": 28,
       "manual_review": 978,
       "phase1_remove_candidate": 14,
-      "phase2_review_candidate": 363,
+      "phase2_review_candidate": 365,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
-      "doc_only": 97,
+      "doc_only": 98,
       "generated_excluded": 28,
-      "runtime_used": 705,
-      "test_only": 82,
+      "runtime_used": 703,
+      "test_only": 83,
       "tooling_only": 184,
       "unreferenced": 996
     },
@@ -32650,9 +32652,9 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 344,
-    "lib_dart_total": 412,
-    "lib_dart_zero_incoming": 26,
+    "lib_dart_runtime_reachable": 342,
+    "lib_dart_total": 411,
+    "lib_dart_zero_incoming": 27,
     "missing_function_refs": [
       "--all",
       "account-deletion",
