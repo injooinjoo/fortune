@@ -18599,8 +18599,7 @@
       ],
       "path": "assets/images/zpzg_logo_dark.webp",
       "referenced_by": [
-        "lib/core/constants/asset_pack_config.dart",
-        "lib/screens/splash_screen.dart"
+        "lib/core/constants/asset_pack_config.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -18616,7 +18615,8 @@
       ],
       "path": "assets/images/zpzg_logo_light.webp",
       "referenced_by": [
-        "lib/core/constants/asset_pack_config.dart"
+        "lib/core/constants/asset_pack_config.dart",
+        "lib/screens/splash_screen.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
