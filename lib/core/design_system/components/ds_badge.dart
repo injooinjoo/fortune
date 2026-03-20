@@ -119,11 +119,20 @@ class DSBadge extends StatelessWidget {
     }
   }
 
+  Color _getForegroundColor(Color backgroundColor) {
+    final estimatedBrightness =
+        ThemeData.estimateBrightnessForColor(backgroundColor);
+    return estimatedBrightness == Brightness.dark
+        ? DSColors.textPrimary
+        : DSColors.textPrimaryDark;
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
     final backgroundColor = _getBackgroundColor(colors);
+    final foregroundColor = _getForegroundColor(backgroundColor);
 
     // Dot style
     if (style == DSBadgeStyle.dot) {
@@ -167,7 +176,7 @@ class DSBadge extends StatelessWidget {
         child: Text(
           displayText,
           style: typography.labelSmall.copyWith(
-            color: colors.ctaForeground,
+            color: foregroundColor,
             fontWeight: FontWeight.w600,
             fontSize: 10,
             height: 1,
