@@ -25331,6 +25331,7 @@
       "notes": [],
       "path": "lib/features/notification/presentation/pages/notification_settings_page.dart",
       "referenced_by": [
+        "docs/deployment/review/IOS_REVIEW_EVIDENCE.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/routes/route_config.dart"
       ],
@@ -25514,6 +25515,7 @@
       "referenced_by": [
         "docs/deployment/APPLE_CAPABILITIES_SETUP.md",
         "docs/deployment/DEPLOYMENT_COMPLETE_GUIDE.md",
+        "docs/deployment/review/IOS_REVIEW_EVIDENCE.md",
         "integration_test/landing_test.dart",
         "scripts/source_inventory.py"
       ],
@@ -26553,6 +26555,7 @@
       "notes": [],
       "path": "lib/services/notification/fcm_service.dart",
       "referenced_by": [
+        "docs/deployment/review/IOS_REVIEW_EVIDENCE.md",
         "lib/features/notification/presentation/pages/notification_settings_page.dart",
         "lib/main.dart",
         "lib/presentation/providers/auth_provider.dart",
