@@ -21011,6 +21011,7 @@
         "lib/main.dart",
         "test/widget/auth/profile_avatar_tap_handler_test.dart",
         "test/widget/auth/social_auth_pending_state_test.dart",
+        "test/widget/core/widgets/unified_voice_text_field_test.dart",
         "test/widget/onboarding/name_input_step_test.dart"
       ],
       "runtime_reachable": true,
@@ -22898,7 +22899,8 @@
       "notes": [],
       "path": "lib/core/widgets/unified_voice_text_field.dart",
       "referenced_by": [
-        "lib/features/character/presentation/pages/character_chat_panel.dart"
+        "lib/features/character/presentation/pages/character_chat_panel.dart",
+        "test/widget/core/widgets/unified_voice_text_field_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26660,7 +26662,8 @@
         "lib/services/social_auth/providers/facebook_auth_provider.dart",
         "lib/services/social_auth/providers/google_auth_provider.dart",
         "lib/services/social_auth/providers/kakao_auth_provider.dart",
-        "lib/services/social_auth_service.dart"
+        "lib/services/social_auth_service.dart",
+        "test/unit/services/oauth_in_app_browser_coordinator_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26862,7 +26865,8 @@
       "referenced_by": [
         "docs/deployment/review/ANDROID_REVIEW_EVIDENCE.md",
         "docs/deployment/review/IOS_REVIEW_EVIDENCE.md",
-        "lib/core/widgets/unified_voice_text_field.dart"
+        "lib/core/widgets/unified_voice_text_field.dart",
+        "test/widget/core/widgets/unified_voice_text_field_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -31756,6 +31760,7 @@
         "test/unit/services/auth/auth_service_test.dart",
         "test/unit/services/auth/google_auth_provider_test.dart",
         "test/unit/services/auth/social_auth_service_test.dart",
+        "test/unit/services/oauth_in_app_browser_coordinator_test.dart",
         "test/unit/services/unified_fortune_service_guest_test.dart",
         "test/widget/auth/profile_avatar_tap_handler_test.dart",
         "test/widget/auth/social_auth_pending_state_test.dart"
@@ -32263,6 +32268,20 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "test/unit/services/oauth_in_app_browser_coordinator_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "test/unit/services/unified_fortune_service_guest_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -32390,6 +32409,20 @@
         "no_inbound_refs"
       ],
       "path": "test/widget/character/character_list_panel_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "test/widget/core/widgets/unified_voice_text_field_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
       "test_only": true,
@@ -32614,21 +32647,21 @@
       "lib": 414,
       "scripts": 70,
       "supabase": 206,
-      "test": 75
+      "test": 77
     },
     "counts_by_candidate_action": {
       "keep": 704,
       "keep_generated": 28,
       "manual_review": 978,
       "phase1_remove_candidate": 12,
-      "phase2_review_candidate": 372,
+      "phase2_review_candidate": 374,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
       "doc_only": 104,
       "generated_excluded": 28,
       "runtime_used": 704,
-      "test_only": 84,
+      "test_only": 86,
       "tooling_only": 184,
       "unreferenced": 994
     },
@@ -32892,7 +32925,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2098,
+    "total_files": 2100,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
