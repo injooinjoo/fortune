@@ -49,6 +49,9 @@ class UnifiedVoiceTextField extends StatefulWidget {
   /// 전송 버튼 표시 여부 (기본 true)
   final bool showSendButton;
 
+  /// 테스트 또는 외부 제어를 위한 음성 인식 서비스 주입점
+  final SpeechRecognitionService? speechService;
+
   /// 웨이브폼 바 개수 (기본 50)
   final int waveformBarCount;
 
@@ -65,6 +68,7 @@ class UnifiedVoiceTextField extends StatefulWidget {
     this.controller,
     this.enabled = true,
     this.showSendButton = true,
+    this.speechService,
     this.waveformBarCount = 50,
     this.stopButtonColor,
   });
@@ -76,7 +80,8 @@ class UnifiedVoiceTextField extends StatefulWidget {
 class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
     with SingleTickerProviderStateMixin {
   late TextEditingController _textController;
-  final SpeechRecognitionService _speechService = SpeechRecognitionService();
+  late final SpeechRecognitionService _speechService;
+  late final bool _ownsSpeechService;
   final FocusNode _focusNode = FocusNode(); // 키보드 유지용
 
   VoiceInputState _state = VoiceInputState.idle;
@@ -89,6 +94,8 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
   void initState() {
     super.initState();
     _textController = widget.controller ?? TextEditingController();
+    _ownsSpeechService = widget.speechService == null;
+    _speechService = widget.speechService ?? SpeechRecognitionService();
 
     // 텍스트 변화 감지
     _textController.addListener(_onTextChanged);
@@ -127,7 +134,9 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
     _textController.removeListener(_onTextChanged);
     _speechService.isListeningNotifier.removeListener(_onListeningStateChanged);
     _loadingController.dispose();
-    _speechService.dispose();
+    if (_ownsSpeechService) {
+      _speechService.dispose();
+    }
     _focusNode.dispose();
     super.dispose();
   }
@@ -262,42 +271,32 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
 
   /// 권한 요청 다이얼로그
   Future<void> _showPermissionDialog(MicrophonePermissionStatus status) async {
-    final isDark = context.isDark;
+    final colors = context.colors;
+    final typography = context.typography;
 
     await showDialog<void>(
       context: context,
+      barrierDismissible: false,
       builder: (context) => AlertDialog(
-        backgroundColor: context.colors.surface,
+        backgroundColor: colors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
-            Icon(Icons.mic, color: context.colors.textPrimary),
+            Icon(Icons.mic, color: colors.textPrimary),
             const SizedBox(width: 8),
             Text(
               '마이크 권한 필요',
-              style: TextStyle(
-                color: context.colors.textPrimary,
-                fontWeight: FontWeight.w600,
+              style: typography.headingSmall.copyWith(
+                color: colors.textPrimary,
               ),
             ),
           ],
         ),
         content: Text(
           '음성 입력을 사용하려면 마이크 권한이 필요합니다.',
-          style: TextStyle(
-            color: isDark ? Colors.grey[300] : Colors.grey[700],
-          ),
+          style: typography.bodyMedium.copyWith(color: colors.textSecondary),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              '취소',
-              style: TextStyle(
-                color: isDark ? Colors.grey[400] : Colors.grey[600],
-              ),
-            ),
-          ),
           ElevatedButton(
             onPressed: () async {
               final scaffoldMessenger = ScaffoldMessenger.of(context);
@@ -326,8 +325,8 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: context.colors.ctaBackground,
-              foregroundColor: context.colors.ctaForeground,
+              backgroundColor: colors.ctaBackground,
+              foregroundColor: colors.ctaForeground,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -335,7 +334,7 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
             child: Text(
               status == MicrophonePermissionStatus.permanentlyDenied
                   ? '설정으로 이동'
-                  : '권한 허용하기',
+                  : '계속',
             ),
           ),
         ],

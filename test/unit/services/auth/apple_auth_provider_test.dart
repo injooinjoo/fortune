@@ -38,6 +38,71 @@ void main() {
     expect(result.isAuthenticated, isFalse);
   });
 
+  test('Apple retries OAuth fallback once after launch failure', () async {
+    var oauthCallCount = 0;
+
+    final provider = AppleAuthProvider(
+      _createTestSupabaseClient('https://real-project.supabase.co'),
+      ProfileCache(),
+      isIOSOverride: true,
+      shouldUseNativeAppleSignInOverride: () async => true,
+      nativeSignInOverride: () async => null,
+      oauthRetryDelay: Duration.zero,
+      oauthSignInOverride: () async {
+        oauthCallCount++;
+        if (oauthCallCount == 1) {
+          throw Exception('Safari cannot open page');
+        }
+        return const SocialAuthAttemptResult.pendingExternalAuth();
+      },
+    );
+
+    final result = await provider.signIn();
+
+    expect(result.isPendingExternalAuth, isTrue);
+    expect(oauthCallCount, 2);
+  });
+
+  test('Apple treats OAuth cancellation as a cancelled login attempt',
+      () async {
+    var oauthCallCount = 0;
+
+    final provider = AppleAuthProvider(
+      _createTestSupabaseClient('https://real-project.supabase.co'),
+      ProfileCache(),
+      isIOSOverride: true,
+      shouldUseNativeAppleSignInOverride: () async => true,
+      nativeSignInOverride: () async => null,
+      oauthRetryDelay: Duration.zero,
+      oauthSignInOverride: () async {
+        oauthCallCount++;
+        throw Exception('사용자가 Apple 로그인을 취소했습니다.');
+      },
+    );
+
+    final result = await provider.signIn();
+
+    expect(result.isCancelled, isTrue);
+    expect(oauthCallCount, 1);
+  });
+
+  test('Apple treats native cancellation as a cancelled login attempt',
+      () async {
+    final provider = AppleAuthProvider(
+      _createTestSupabaseClient('https://real-project.supabase.co'),
+      ProfileCache(),
+      isIOSOverride: true,
+      shouldUseNativeAppleSignInOverride: () async => true,
+      nativeSignInOverride: () async {
+        throw Exception('사용자가 Apple 로그인을 취소했습니다.');
+      },
+    );
+
+    final result = await provider.signIn();
+
+    expect(result.isCancelled, isTrue);
+  });
+
   test('Apple skips native sign-in and starts OAuth on iPad-like devices',
       () async {
     var nativeSignInCalled = false;

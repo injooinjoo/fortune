@@ -99,8 +99,8 @@ class OAuthInAppBrowserCoordinator {
     SupabaseClient supabase, {
     required String provider,
     required Object error,
-    int maxAttempts = 8,
-    Duration interval = const Duration(milliseconds: 350),
+    int maxAttempts = 12,
+    Duration interval = const Duration(milliseconds: 500),
     bool? isIOSOverride,
   }) async {
     if (!_isRecoverableLaunchError(error, isIOSOverride: isIOSOverride)) {
@@ -134,8 +134,18 @@ class OAuthInAppBrowserCoordinator {
     }
 
     final errorString = error.toString().toLowerCase();
-    return errorString.contains('error while launching') &&
-        errorString.contains('/auth/v1/authorize');
+    // 기존 패턴: url_launcher 에러
+    if (errorString.contains('error while launching') &&
+        errorString.contains('/auth/v1/authorize')) {
+      return true;
+    }
+    // iOS 26+ 확장 패턴: 브라우저 실행 관련 에러 전반
+    if (errorString.contains('error while launching') ||
+        errorString.contains('cannot open page') ||
+        (errorString.contains('safari') && errorString.contains('error'))) {
+      return true;
+    }
+    return false;
   }
 
   static Future<Session?> _waitForSession(
