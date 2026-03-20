@@ -205,7 +205,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final radius = context.radius;
 
     return Scaffold(
-      backgroundColor: DSColors.background,
+      backgroundColor: DSColors.backgroundDark,
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -237,25 +237,27 @@ class _SplashScreenState extends State<SplashScreen> {
                           Container(
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                              color: DSColors.surface.withValues(alpha: 0.92),
+                              color:
+                                  DSColors.surfaceDark.withValues(alpha: 0.96),
                               borderRadius:
                                   BorderRadius.circular(radius.xxl + 4),
                               border: Border.all(
-                                color: DSColors.border.withValues(alpha: 0.85),
+                                color:
+                                    DSColors.borderDark.withValues(alpha: 0.92),
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: DSColors.background
-                                      .withValues(alpha: 0.36),
-                                  blurRadius: 36,
-                                  offset: const Offset(0, 20),
+                                  color: DSColors.textPrimaryDark
+                                      .withValues(alpha: 0.08),
+                                  blurRadius: 28,
+                                  offset: const Offset(0, 16),
                                 ),
                               ],
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(radius.xxl),
                               child: Image.asset(
-                                'assets/images/zpzg_logo_dark.webp',
+                                'assets/images/zpzg_logo_light.webp',
                                 width: 104,
                                 height: 104,
                                 fit: BoxFit.cover,
@@ -266,7 +268,7 @@ class _SplashScreenState extends State<SplashScreen> {
                           Text(
                             '대화로 시작하는 자기 발견',
                             style: typography.headingMedium.copyWith(
-                              color: DSColors.textPrimary,
+                              color: DSColors.textPrimaryDark,
                               height: 1.18,
                             ),
                             textAlign: TextAlign.center,
@@ -275,7 +277,7 @@ class _SplashScreenState extends State<SplashScreen> {
                           Text(
                             '질감은 남기고, 화면은 더 또렷하게 정리했습니다.',
                             style: typography.bodyMedium.copyWith(
-                              color: DSColors.textSecondary,
+                              color: DSColors.textSecondaryDark,
                               height: 1.55,
                             ),
                             textAlign: TextAlign.center,
@@ -290,7 +292,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     child: Text(
                       'Launching ZPZG',
                       style: typography.labelLarge.copyWith(
-                        color: DSColors.textTertiary,
+                        color: DSColors.textTertiaryDark,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -319,8 +321,8 @@ class _SplashBackdrop extends StatelessWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                DSColors.background,
-                DSColors.backgroundSecondary,
+                DSColors.backgroundDark,
+                DSColors.backgroundSecondaryDark,
               ],
             ),
           ),
@@ -329,15 +331,15 @@ class _SplashBackdrop extends StatelessWidget {
           alignment: Alignment.topRight,
           offset: Offset(84, -96),
           size: 256,
-          color: DSColors.surface,
-          opacity: 0.44,
+          color: DSColors.surfaceSecondaryDark,
+          opacity: 0.72,
         ),
         _SplashOrb(
           alignment: Alignment.bottomLeft,
           offset: Offset(-82, 84),
           size: 220,
-          color: DSColors.surfaceSecondary,
-          opacity: 0.18,
+          color: DSColors.borderDark,
+          opacity: 0.56,
         ),
       ],
     );

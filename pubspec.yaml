@@ -458,15 +458,15 @@ flutter_launcher_icons:
 # Splash Screen Configuration
 flutter_native_splash:
   color: "#F7F3E9" # 미색 (Misaek) 한지 배경
-  color_dark: "#1C1C1C" # 흑색 (Heuk) 다크 모드 배경
+  color_dark: "#F7F3E9" # 다크 모드도 라이트 스플래시와 동일하게 유지
   # 이미지 없음 - LaunchScreen.storyboard에서 '知' 텍스트 레이블 사용
 
   # Android 12+ specific
   android_12:
     color: "#F7F3E9"
-    color_dark: "#1C1C1C"
+    color_dark: "#F7F3E9"
     icon_background_color: "#F7F3E9"
-    icon_background_color_dark: "#1C1C1C"
+    icon_background_color_dark: "#F7F3E9"
 
   # Platform specific options
   android: true
