@@ -340,6 +340,19 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
       Logger.securityCheckpoint('Kakao OAuth sign in initiated');
       return null;
     } catch (error) {
+      final recoveredResponse = await OAuthInAppBrowserCoordinator
+          .recoverAuthResponseAfterLaunchError(
+        supabase,
+        provider: providerName,
+        error: error,
+      );
+      if (recoveredResponse != null) {
+        Logger.info(
+          '[KakaoAuthProvider] OAuth launch exception ignored after session recovery',
+        );
+        return recoveredResponse;
+      }
+
       OAuthInAppBrowserCoordinator.markOAuthFinished(reason: 'exception');
       Logger.warning(
           '[KakaoAuthProvider] Kakao OAuth 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');

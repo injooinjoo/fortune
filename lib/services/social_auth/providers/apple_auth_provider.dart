@@ -296,6 +296,19 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
       Logger.securityCheckpoint('Apple OAuth sign in initiated');
       return const SocialAuthAttemptResult.pendingExternalAuth();
     } catch (error) {
+      final recoveredResponse = await OAuthInAppBrowserCoordinator
+          .recoverAuthResponseAfterLaunchError(
+        supabase,
+        provider: providerName,
+        error: error,
+      );
+      if (recoveredResponse != null) {
+        Logger.info(
+          '[AppleAuthProvider] OAuth launch exception ignored after session recovery',
+        );
+        return SocialAuthAttemptResult.authenticated(recoveredResponse);
+      }
+
       OAuthInAppBrowserCoordinator.markOAuthFinished(reason: 'exception');
       // OAuth 에러는 주로 Apple Developer Console/Supabase 설정 문제
       // "Invalid client id or web redirect url" → Service ID/Return URL 설정 확인 필요

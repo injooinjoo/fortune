@@ -95,8 +95,73 @@ class OAuthInAppBrowserCoordinator {
         '[OAuthBrowser] Session polling timeout reached ($maxAttempts attempts)');
   }
 
-  static Future<void> _closeInAppBrowserIfNeeded() async {
-    if (kIsWeb || !Platform.isIOS) return;
+  static Future<AuthResponse?> recoverAuthResponseAfterLaunchError(
+    SupabaseClient supabase, {
+    required String provider,
+    required Object error,
+    int maxAttempts = 8,
+    Duration interval = const Duration(milliseconds: 350),
+    bool? isIOSOverride,
+  }) async {
+    if (!_isRecoverableLaunchError(error, isIOSOverride: isIOSOverride)) {
+      return null;
+    }
+
+    final session = await _waitForSession(
+      supabase,
+      maxAttempts: maxAttempts,
+      interval: interval,
+    );
+    if (session?.user == null) {
+      return null;
+    }
+
+    Logger.info(
+      '[OAuthBrowser] Auth session detected after launch exception (provider: $provider), treating OAuth launch as successful',
+    );
+    await _closeInAppBrowserIfNeeded(isIOSOverride: isIOSOverride);
+    markOAuthFinished(reason: 'launch_exception_session_restored');
+    return AuthResponse(session: session);
+  }
+
+  static bool _isRecoverableLaunchError(
+    Object error, {
+    bool? isIOSOverride,
+  }) {
+    final isIOS = isIOSOverride ?? (!kIsWeb && Platform.isIOS);
+    if (kIsWeb || !isIOS) {
+      return false;
+    }
+
+    final errorString = error.toString().toLowerCase();
+    return errorString.contains('error while launching') &&
+        errorString.contains('/auth/v1/authorize');
+  }
+
+  static Future<Session?> _waitForSession(
+    SupabaseClient supabase, {
+    required int maxAttempts,
+    required Duration interval,
+  }) async {
+    for (var attempt = 0; attempt < maxAttempts; attempt++) {
+      final session = supabase.auth.currentSession;
+      if (session?.user != null) {
+        return session;
+      }
+
+      if (attempt == maxAttempts - 1) {
+        return null;
+      }
+
+      await Future<void>.delayed(interval);
+    }
+
+    return null;
+  }
+
+  static Future<void> _closeInAppBrowserIfNeeded({bool? isIOSOverride}) async {
+    final isIOS = isIOSOverride ?? (!kIsWeb && Platform.isIOS);
+    if (kIsWeb || !isIOS) return;
 
     try {
       final supportsClose =

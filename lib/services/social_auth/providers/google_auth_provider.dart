@@ -10,7 +10,22 @@ import '../base/base_social_auth_provider.dart';
 import '../base/social_auth_attempt_result.dart';
 
 class GoogleAuthProvider extends BaseSocialAuthProvider {
-  GoogleAuthProvider(super.supabase, super.profileCache);
+  GoogleAuthProvider(
+    super.supabase,
+    super.profileCache, {
+    Future<bool> Function()? signInWithOAuthOverride,
+    Future<AuthResponse?> Function(Object error)?
+        recoverAuthResponseAfterLaunchErrorOverride,
+    bool? isIOSOverride,
+  })  : _signInWithOAuthOverride = signInWithOAuthOverride,
+        _recoverAuthResponseAfterLaunchErrorOverride =
+            recoverAuthResponseAfterLaunchErrorOverride,
+        _isIOSOverride = isIOSOverride;
+
+  final Future<bool> Function()? _signInWithOAuthOverride;
+  final Future<AuthResponse?> Function(Object error)?
+      _recoverAuthResponseAfterLaunchErrorOverride;
+  final bool? _isIOSOverride;
 
   @override
   String get providerName => 'google';
@@ -39,12 +54,14 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
       final flowId =
           OAuthInAppBrowserCoordinator.markOAuthStarted(providerName);
 
-      final response = await supabase.auth.signInWithOAuth(
-        OAuthProvider.google,
-        redirectTo: redirectTo,
-        // Keep OAuth inside the app UX on iOS (SFSafariViewController).
-        authScreenLaunchMode: LaunchMode.inAppBrowserView,
-      );
+      final response = await (_signInWithOAuthOverride != null
+          ? _signInWithOAuthOverride()
+          : supabase.auth.signInWithOAuth(
+              OAuthProvider.google,
+              redirectTo: redirectTo,
+              // Keep OAuth inside the app UX on iOS (SFSafariViewController).
+              authScreenLaunchMode: LaunchMode.inAppBrowserView,
+            ));
 
       if (!response) {
         OAuthInAppBrowserCoordinator.markOAuthFinished(reason: 'launch_failed');
@@ -67,6 +84,21 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
 
       return const SocialAuthAttemptResult.pendingExternalAuth();
     } catch (error) {
+      final recoveredResponse =
+          await (_recoverAuthResponseAfterLaunchErrorOverride?.call(error) ??
+              OAuthInAppBrowserCoordinator.recoverAuthResponseAfterLaunchError(
+                supabase,
+                provider: providerName,
+                error: error,
+                isIOSOverride: _isIOSOverride,
+              ));
+      if (recoveredResponse != null) {
+        Logger.info(
+          '[GoogleAuthProvider] OAuth launch exception ignored after session recovery',
+        );
+        return SocialAuthAttemptResult.authenticated(recoveredResponse);
+      }
+
       OAuthInAppBrowserCoordinator.markOAuthFinished(reason: 'exception');
       Logger.warning(
           '[GoogleAuthProvider] Google OAuth 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
