@@ -20552,6 +20552,8 @@
       "notes": [],
       "path": "lib/core/design_system/components/ds_badge.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/core/design_system/design_system.dart"
       ],
       "runtime_reachable": true,
