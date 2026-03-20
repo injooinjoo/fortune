@@ -22,7 +22,7 @@
 | check_id | severity | check_item | result | evidence | status |
 |---|---|---|---|---|---|
 | IOS-PRIV-001 | P0 | Privacy manifest is syntactically valid and `NSPrivacyTracking=false` | pass | `ios/Runner/PrivacyInfo.xcprivacy` | done |
-| IOS-PRIV-002 | P1 | `NSPrivacyCollectedDataTypes` is mirrored in App Store Connect App Privacy answers | pending | `ios/Runner/PrivacyInfo.xcprivacy`, App Store Connect questionnaire | open |
+| IOS-PRIV-002 | P1 | `NSPrivacyCollectedDataTypes` is mirrored in App Store Connect App Privacy answers | pass | `ios/Runner/PrivacyInfo.xcprivacy`, App Store Connect App Privacy UI verified via Playwright on 2026-03-20 | done |
 | IOS-PRIV-003 | P0 | Tracking domains are not declared for this release | pass | `ios/Runner/PrivacyInfo.xcprivacy` | done |
 
 ## 4. Review Metadata and Public URLs
@@ -31,8 +31,8 @@
 | IOS-META-001 | P0 | Review notes frame the app as entertainment/wellbeing and explain review flow | pass | `metadata/review_information/notes.txt`, `ios/fastlane/metadata/review_information/review_notes.txt`, `ios/fastlane/Deliverfile` | done |
 | IOS-META-002 | P0 | Demo credentials exist in both metadata sources | pass | `metadata/review_information/demo_user.txt`, `metadata/review_information/demo_password.txt`, `ios/fastlane/metadata/review_information/review_demo_user.txt`, `ios/fastlane/metadata/review_information/review_demo_password.txt` | done |
 | IOS-META-003 | P0 | Privacy / Terms / Support URLs are publicly reachable | pass | `https://zpzg.co.kr/privacy`, `https://zpzg.co.kr/terms`, `https://zpzg.co.kr/support.html` | done |
-| IOS-META-004 | P1 | ASC privacy policy field and support metadata are entered on the submitted version | pending | App Store Connect UI | open |
-| IOS-META-005 | P1 | Age rating and content questionnaire are updated in App Store Connect | pending | App Store Connect UI | open |
+| IOS-META-004 | P1 | ASC privacy policy field and support metadata are entered on the submitted version | pass | App Store Connect inflight version + App Privacy UI verified via Playwright on 2026-03-20 | done |
+| IOS-META-005 | P1 | Age rating and content questionnaire are updated in App Store Connect | pass | App Store Connect App Information UI verified via Playwright on 2026-03-20 | done |
 
 ## 5. Purchase and Account Flows
 | check_id | severity | check_item | result | evidence | status |
@@ -60,4 +60,4 @@
 ## 8. Remaining Manual Evidence
 - Real-device permission timing captures
 - Purchase / restore / cancellation recordings
-- App Store Connect screenshots for App Privacy, support URL, and age rating
+- Device-level universal link recording before re-enabling capability

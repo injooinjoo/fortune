@@ -33,12 +33,12 @@
 | COM-AUTO-004 | P0 | `./scripts/build_web_release.sh` completes and emits public review assets into `build/web` | pass | local verification on 2026-03-18 | done |
 | COM-AUTO-005 | P0 | Source inventory regenerated after doc/static changes | pass | `artifacts/file_inventory.json` regeneration on 2026-03-20 | done |
 | COM-AUTO-006 | P0 | `flutter build ios --release --no-codesign` passes after iOS review hardening | pass | local verification on 2026-03-20 | done |
+| COM-ASC-001 | P1 | App Store Connect App Privacy questionnaire entered and reviewed | pass | ASC App Privacy UI verified via Playwright on 2026-03-20 | done |
+| COM-ASC-002 | P1 | App Store age rating / content questionnaire updated | pass | ASC App Information UI verified via Playwright on 2026-03-20 | done |
 
 ## 4. Remaining Open Items
 | check_id | severity | check_item | result | evidence | status |
 |---|---|---|---|---|---|
-| COM-ASC-001 | P1 | App Store Connect App Privacy questionnaire entered and reviewed | pending | ASC UI | open |
-| COM-ASC-002 | P1 | App Store age rating / content questionnaire updated | pending | ASC UI | open |
 | COM-PLAY-001 | P1 | Google Play Data Safety form entered and reviewed | pending | Play Console UI | open |
 | COM-PLAY-002 | P1 | Google Play content rating / app content forms updated | pending | Play Console UI | open |
 | COM-IAP-001 | P0 | iOS/Android purchase success, cancellation, restore flows captured | pending | device recordings + logs | open |
@@ -50,4 +50,5 @@
 - Current state:
   - ATT removal, when-in-use location scope, and contextual push-permission flow are aligned in the iOS binary and review notes as of 2026-03-20.
   - Public review URLs and `.well-known` deployment are live.
-  - Console-side declarations and manual purchase/device evidence are still required.
+  - App Store Connect privacy metadata, support/privacy URLs, age rating, and review notes were verified on 2026-03-20.
+  - Google Play console declarations and manual purchase/device evidence are still required.

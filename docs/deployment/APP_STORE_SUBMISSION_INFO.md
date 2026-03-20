@@ -90,13 +90,13 @@
 - 앱은 오락/웰빙 참고용 서비스이며 진단·치료 대체가 아님
 - 토큰/구독 정책은 앱 내 결제 화면 기준
 - 계정 삭제는 앱 내 설정 화면에서 가능
-- 푸시 알림 권한은 설정 화면에서만 요청
+- 푸시 알림 권한은 설정 화면 또는 테스트 알림 액션에서만 요청
 - Universal Links는 AASA live endpoint 검증 후에만 재활성화
 
 ## 6. 제출 전 수동 확인
-- App Store Connect의 Privacy Policy URL 필드에 `https://zpzg.co.kr/privacy` 입력
-- App Privacy questionnaire를 `ios/Runner/PrivacyInfo.xcprivacy`와 일치시킴
-- Age Rating / Content Rights / Sign-In requirements 수동 확인
+- App Store Connect의 Privacy Policy URL, Support URL, App Privacy questionnaire, Age Rating는 inflight version에서 2026-03-20 기준 확인 완료
+- App Review notes는 `ios/fastlane/metadata/review_information/review_notes.txt` 기준으로 2026-03-20 기준 ASC에 저장 완료
+- Content Rights / Sign-In requirements는 제출 직전 최종 확인
 - TestFlight 또는 archive validation에서 privacy manifest validation 확인
 
 ## 7. 이번 보수 제출에서 제거/비활성화한 항목
@@ -106,7 +106,7 @@
 - Associated Domains entitlement 제거
 - 광고/추적 기반 심사 서술 제거
 
-## 8. 남은 외부 콘솔 작업
-- App Store Connect App Privacy 실제 입력
-- App Review metadata 화면의 live URL 반영 확인
+## 8. 남은 외부 콘솔/실기기 작업
+- Content Rights / Sign-In requirements 제출 직전 최종 확인
+- 실기기 IAP 성공/취소/복원 및 권한 노출 타이밍 증빙 확보
 - AASA live 200 확인 후 Universal Links 재활성화 여부 결정
