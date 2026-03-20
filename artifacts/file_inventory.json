@@ -20223,7 +20223,8 @@
       "referenced_by": [
         "lib/services/social_auth/base/base_social_auth_provider.dart",
         "lib/services/social_auth_service.dart",
-        "test/unit/services/auth/apple_auth_provider_test.dart"
+        "test/unit/services/auth/apple_auth_provider_test.dart",
+        "test/unit/services/auth/google_auth_provider_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26695,7 +26696,8 @@
       "notes": [],
       "path": "lib/services/social_auth/providers/google_auth_provider.dart",
       "referenced_by": [
-        "lib/services/social_auth_service.dart"
+        "lib/services/social_auth_service.dart",
+        "test/unit/services/auth/google_auth_provider_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -31644,6 +31646,7 @@
         "test/unit/providers/auth/auth_provider_test.dart",
         "test/unit/providers/user/user_provider_test.dart",
         "test/unit/services/auth/auth_service_test.dart",
+        "test/unit/services/auth/google_auth_provider_test.dart",
         "test/unit/services/auth/social_auth_service_test.dart",
         "test/unit/services/unified_fortune_service_guest_test.dart",
         "test/widget/auth/profile_avatar_tap_handler_test.dart",
@@ -32042,6 +32045,20 @@
       "referenced_by": [
         "docs/testing/test-coverage-map.md"
       ],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "test/unit/services/auth/google_auth_provider_test.dart",
+      "referenced_by": [],
       "runtime_reachable": false,
       "test_only": true,
       "usage_status": "test_only"
@@ -32461,21 +32478,21 @@
       "lib": 415,
       "scripts": 70,
       "supabase": 206,
-      "test": 72
+      "test": 73
     },
     "counts_by_candidate_action": {
       "keep": 705,
       "keep_generated": 28,
       "manual_review": 978,
       "phase1_remove_candidate": 14,
-      "phase2_review_candidate": 362,
+      "phase2_review_candidate": 363,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
       "doc_only": 97,
       "generated_excluded": 28,
       "runtime_used": 705,
-      "test_only": 81,
+      "test_only": 82,
       "tooling_only": 184,
       "unreferenced": 996
     },
@@ -32739,7 +32756,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2091,
+    "total_files": 2092,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"

@@ -1,11 +1,11 @@
 # iOS Review Evidence (App Store)
 
-최종 업데이트: 2026-03-18
+최종 업데이트: 2026-03-20
 
 ## 1. Scope
 - Platform: iOS
 - Goal: conservative submission hardening for App Review
-- Jira: `KAN-135`
+- Jira: `KAN-153`
 
 ## 2. Permission and Runtime Mapping
 | check_id | severity | check_item | result | evidence | status |
@@ -16,6 +16,7 @@
 | IOS-PERM-004 | P1 | Location permission is minimized to when-in-use only | pass | `ios/Runner/Info.plist` (`NSLocationWhenInUseUsageDescription`) | done |
 | IOS-PERM-005 | P1 | Calendar permission flow and review narrative are manually verified | pending | `ios/Runner/Info.plist`, `lib/core/services/device_calendar_service.dart` | open |
 | IOS-PERM-006 | P0 | ATT / tracking prompt removed from this release | pass | `ios/Runner/Info.plist`, `ios/Runner/PrivacyInfo.xcprivacy` | done |
+| IOS-PERM-007 | P1 | Push notification permission is not requested at launch and is only requested from settings or test-notification actions | pass | `lib/main.dart`, `lib/services/notification/fcm_service.dart`, `lib/features/notification/presentation/pages/notification_settings_page.dart`, `ios/fastlane/metadata/review_information/review_notes.txt` | done |
 
 ## 3. Privacy Manifest and App Privacy
 | check_id | severity | check_item | result | evidence | status |
@@ -27,7 +28,7 @@
 ## 4. Review Metadata and Public URLs
 | check_id | severity | check_item | result | evidence | status |
 |---|---|---|---|---|---|
-| IOS-META-001 | P0 | Review notes frame the app as entertainment/wellbeing and explain review flow | pass | `metadata/review_information/notes.txt`, `ios/fastlane/metadata/review_information/review_notes.txt` | done |
+| IOS-META-001 | P0 | Review notes frame the app as entertainment/wellbeing and explain review flow | pass | `metadata/review_information/notes.txt`, `ios/fastlane/metadata/review_information/review_notes.txt`, `ios/fastlane/Deliverfile` | done |
 | IOS-META-002 | P0 | Demo credentials exist in both metadata sources | pass | `metadata/review_information/demo_user.txt`, `metadata/review_information/demo_password.txt`, `ios/fastlane/metadata/review_information/review_demo_user.txt`, `ios/fastlane/metadata/review_information/review_demo_password.txt` | done |
 | IOS-META-003 | P0 | Privacy / Terms / Support URLs are publicly reachable | pass | `https://zpzg.co.kr/privacy`, `https://zpzg.co.kr/terms`, `https://zpzg.co.kr/support.html` | done |
 | IOS-META-004 | P1 | ASC privacy policy field and support metadata are entered on the submitted version | pending | App Store Connect UI | open |
@@ -51,10 +52,10 @@
 ## 7. Build and Verification
 | check_id | severity | check_item | result | evidence | status |
 |---|---|---|---|---|---|
-| IOS-BUILD-001 | P0 | `flutter analyze --no-fatal-infos` has no errors | pass | local verification on 2026-03-18 | done |
-| IOS-BUILD-002 | P0 | `dart format --set-exit-if-changed .` passes | pass | local verification on 2026-03-18 | done |
-| IOS-BUILD-003 | P0 | `flutter test` passes | pass | local verification on 2026-03-18 | done |
-| IOS-BUILD-004 | P0 | `flutter build ios --release --no-codesign` remains verified from KAN-134 hardening pass | pass | local verification on 2026-03-18 during KAN-134 | done |
+| IOS-BUILD-001 | P0 | `flutter analyze --no-fatal-infos` has no errors | pass | local verification on 2026-03-20 | done |
+| IOS-BUILD-002 | P0 | Touched Dart files in KAN-153 are formatted | pass | targeted `dart format --set-exit-if-changed` verification on 2026-03-20 | done |
+| IOS-BUILD-003 | P0 | `flutter test` passes | pass | local verification on 2026-03-20 | done |
+| IOS-BUILD-004 | P0 | `flutter build ios --release --no-codesign` passes after permission hardening | pass | local verification on 2026-03-20 | done |
 
 ## 8. Remaining Manual Evidence
 - Real-device permission timing captures

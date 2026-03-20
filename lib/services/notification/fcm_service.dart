@@ -117,8 +117,11 @@ class FCMService {
   NotificationSettings get settings => _settings;
 
   // 초기화
-  Future<void> initialize() async {
+  Future<void> initialize({bool requestPermissions = false}) async {
     if (_isInitialized) {
+      if (requestPermissions) {
+        await requestPermissionsIfNeeded();
+      }
       await syncCurrentDevice();
       return;
     }
@@ -140,8 +143,9 @@ class FCMService {
       // 로컬 알림 초기화
       await _initializeLocalNotifications();
 
-      // 알림 권한 요청
-      await _requestPermission();
+      if (requestPermissions) {
+        await requestPermissionsIfNeeded();
+      }
 
       // FCM 토큰 획득
       await _getToken();
@@ -173,9 +177,9 @@ class FCMService {
 
     // iOS 초기화 설정
     final iosSettings = const DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
       // onDidReceiveLocalNotification is deprecated
       // iOS 9 이하에서 포그라운드 알림 처리
     );
@@ -235,7 +239,18 @@ class FCMService {
   }
 
   // 권한 요청
-  Future<void> _requestPermission() async {
+  Future<bool> requestPermissionsIfNeeded() async {
+    if (!kIsWeb && Platform.isIOS) {
+      final iosPlugin =
+          _localNotifications.resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>();
+      await iosPlugin?.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+    }
+
     final settings = await fcm.requestPermission(
         alert: true,
         announcement: false,
@@ -249,12 +264,16 @@ class FCMService {
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       Logger.info('사용자가 알림을 허용했습니다');
-    } else if (settings.authorizationStatus ==
-        AuthorizationStatus.provisional) {
-      Logger.info('사용자가 임시 알림을 허용했습니다');
-    } else {
-      Logger.info('사용자가 알림을 거부했습니다');
+      return true;
     }
+
+    if (settings.authorizationStatus == AuthorizationStatus.provisional) {
+      Logger.info('사용자가 임시 알림을 허용했습니다');
+      return true;
+    }
+
+    Logger.info('사용자가 알림을 거부했습니다');
+    return false;
   }
 
   // FCM 토큰 획득

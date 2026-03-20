@@ -13,6 +13,9 @@ PRIMARY REVIEW PATH
 OPTIONAL AUTH VALIDATION
 - Sign in with Apple is also available on iPhone and iPad as an optional authentication method.
 
+OPTIONAL NOTIFICATION VALIDATION
+- Push notifications are optional for review and are requested only from Profile > Notification Settings or the in-app test notification action.
+
 SUBSCRIPTION / POLICY LINKS
 - Terms of Use (EULA): https://zpzg.co.kr/terms
 - Privacy Policy: https://zpzg.co.kr/privacy

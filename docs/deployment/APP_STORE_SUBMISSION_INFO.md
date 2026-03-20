@@ -1,6 +1,6 @@
 # App Store Connect Submission Info
 
-최종 업데이트: 2026-03-18
+최종 업데이트: 2026-03-20
 
 ## 1. 공개 URL
 - Privacy Policy: `https://zpzg.co.kr/privacy`
@@ -70,6 +70,7 @@
 - Microphone / Speech Recognition: 음성 입력 기능에서만 요청
 - Location When In Use: 날씨/지역 기반 인사이트에서만 요청
 - Calendar: 일정 저장 기능에서만 요청
+- Push Notifications: 앱 시작 시 자동 요청하지 않고 `Profile > Notification Settings` 또는 테스트 알림 액션에서만 요청
 
 검토 기준 파일:
 - `ios/Runner/Info.plist`
@@ -89,6 +90,7 @@
 - 앱은 오락/웰빙 참고용 서비스이며 진단·치료 대체가 아님
 - 토큰/구독 정책은 앱 내 결제 화면 기준
 - 계정 삭제는 앱 내 설정 화면에서 가능
+- 푸시 알림 권한은 설정 화면에서만 요청
 - Universal Links는 AASA live endpoint 검증 후에만 재활성화
 
 ## 6. 제출 전 수동 확인
@@ -99,6 +101,7 @@
 
 ## 7. 이번 보수 제출에서 제거/비활성화한 항목
 - ATT usage description 제거
+- 앱 시작 직후 푸시 알림 자동 요청 제거
 - SKAdNetwork declarations 제거
 - Associated Domains entitlement 제거
 - 광고/추적 기반 심사 서술 제거

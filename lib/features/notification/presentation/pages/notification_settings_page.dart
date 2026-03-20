@@ -152,12 +152,28 @@ class _NotificationSettingsPageState
           ),
           DSToggle(
             value: _settings.enabled,
-            onChanged: (value) {
+            onChanged: (value) async {
               HapticUtils.lightImpact();
+              var nextEnabled = value;
+
+              if (value) {
+                final granted = await _fcmService.requestPermissionsIfNeeded();
+                if (!context.mounted) return;
+                if (!granted) {
+                  nextEnabled = false;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('알림 권한이 허용되지 않았습니다. 설정 앱에서 변경할 수 있어요.'),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
+              }
+
               setState(() {
-                _settings = _settings.copyWith(enabled: value);
+                _settings = _settings.copyWith(enabled: nextEnabled);
               });
-              _saveSettings();
+              await _saveSettings();
             },
           ),
         ],
@@ -504,6 +520,11 @@ class _NotificationSettingsPageState
     HapticUtils.lightImpact();
 
     try {
+      final granted = await _fcmService.requestPermissionsIfNeeded();
+      if (!granted) {
+        throw Exception('notification_permission_denied');
+      }
+
       await _fcmService.sendTestNotification();
 
       HapticUtils.success();

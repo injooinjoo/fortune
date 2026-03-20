@@ -340,7 +340,7 @@ Future<void> _runDeferredInitializations({
     if (firebaseReady) {
       try {
         debugPrint('🔔 [POST_STARTUP] Initializing FCM Service...');
-        await FCMService().initialize();
+        await FCMService().initialize(requestPermissions: false);
         debugPrint('🔔 [POST_STARTUP] FCM Service initialized successfully');
         Logger.info('FCM Service initialized successfully');
       } catch (e) {
