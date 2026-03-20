@@ -10,7 +10,7 @@ import '../../core/services/fortune_haptic_service.dart';
 import '../../services/social_auth/base/social_auth_attempt_result.dart';
 import '../../services/social_auth_service.dart';
 
-typedef SocialLoginAction = Future<void> Function();
+typedef SocialLoginAction = Future<bool> Function();
 
 /// 재사용 가능한 소셜 로그인 BottomSheet
 /// Landing Page, Onboarding 등 여러 곳에서 사용 가능
@@ -41,8 +41,8 @@ class SocialLoginBottomSheet {
         loginAction: authService.signInWithApple,
         onAuthenticated: onAuthenticated,
       ),
-      onKakaoLogin: () async {},
-      onNaverLogin: () async {},
+      onKakaoLogin: () async => false,
+      onNaverLogin: () async => false,
       ref: ref,
     );
   }
@@ -113,13 +113,35 @@ class SocialLoginBottomSheet {
                 activeLoadingProvider = provider;
               });
 
-              // 잠시 로딩 상태 표시 후 닫기 (사용자 피드백)
-              await Future<void>.delayed(const Duration(milliseconds: 300));
-              if (bottomSheetContext.mounted) {
-                Navigator.of(bottomSheetContext).pop();
+              // Keep the sheet mounted until OAuth launch finishes so iOS can
+              // present the in-app browser from a stable Flutter controller.
+              await Future<void>.delayed(const Duration(milliseconds: 120));
+
+              try {
+                final shouldCloseSheet = await action();
+                if (!bottomSheetContext.mounted) {
+                  return;
+                }
+
+                if (shouldCloseSheet) {
+                  Navigator.of(bottomSheetContext).pop();
+                  return;
+                }
+
+                setSheetState(() {
+                  isTapLocked = false;
+                  activeLoadingProvider = null;
+                });
+              } catch (_) {
+                if (!bottomSheetContext.mounted) {
+                  return;
+                }
+
+                setSheetState(() {
+                  isTapLocked = false;
+                  activeLoadingProvider = null;
+                });
               }
-              await Future<void>.delayed(const Duration(milliseconds: 80));
-              await action();
             }
 
             return Container(
@@ -203,13 +225,13 @@ class SocialLoginBottomSheet {
     );
   }
 
-  static Future<void> _handleSocialLogin({
+  static Future<bool> _handleSocialLogin({
     required BuildContext context,
     required String providerLabel,
     required Future<SocialAuthAttemptResult> Function() loginAction,
     VoidCallback? onAuthenticated,
   }) async {
-    if (!context.mounted) return;
+    if (!context.mounted) return false;
 
     final messenger = ScaffoldMessenger.of(context);
     messenger.showSnackBar(
@@ -222,7 +244,7 @@ class SocialLoginBottomSheet {
     try {
       final result = await loginAction();
 
-      if (!context.mounted) return;
+      if (!context.mounted) return false;
       messenger.hideCurrentSnackBar();
 
       if (result.isAuthenticated) {
@@ -231,7 +253,7 @@ class SocialLoginBottomSheet {
         } else {
           context.go('/chat');
         }
-        return;
+        return true;
       }
 
       if (result.isPendingExternalAuth) {
@@ -241,14 +263,17 @@ class SocialLoginBottomSheet {
             duration: Duration(seconds: 4),
           ),
         );
+        return true;
       }
+
+      return false;
     } catch (error) {
-      if (!context.mounted) return;
+      if (!context.mounted) return false;
 
       final errorMessage = error.toString();
       if (errorMessage.toLowerCase().contains('cancel')) {
         messenger.hideCurrentSnackBar();
-        return;
+        return false;
       }
 
       messenger.hideCurrentSnackBar();
@@ -259,6 +284,7 @@ class SocialLoginBottomSheet {
           duration: const Duration(seconds: 5),
         ),
       );
+      return false;
     }
   }
 

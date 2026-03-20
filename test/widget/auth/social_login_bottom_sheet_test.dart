@@ -43,10 +43,11 @@ void main() {
                     context,
                     onGoogleLogin: () async {
                       googleLoginCallCount++;
+                      return true;
                     },
-                    onAppleLogin: () async {},
-                    onKakaoLogin: () async {},
-                    onNaverLogin: () async {},
+                    onAppleLogin: () async => false,
+                    onKakaoLogin: () async => false,
+                    onNaverLogin: () async => false,
                   );
                 },
                 child: const Text('open-sheet'),
@@ -69,5 +70,55 @@ void main() {
 
     expect(googleLoginCallCount, 1);
     expect(find.text('Google로 계속하기'), findsNothing);
+  });
+
+  testWidgets('Google button keeps sheet open when login fails',
+      (tester) async {
+    var googleLoginCallCount = 0;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (context) {
+              return TextButton(
+                onPressed: () {
+                  SocialLoginBottomSheet.show(
+                    context,
+                    onGoogleLogin: () async {
+                      googleLoginCallCount++;
+                      return false;
+                    },
+                    onAppleLogin: () async => false,
+                    onKakaoLogin: () async => false,
+                    onNaverLogin: () async => false,
+                  );
+                },
+                child: const Text('open-sheet'),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('open-sheet'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Google로 계속하기'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.pumpAndSettle();
+
+    expect(googleLoginCallCount, 1);
+    expect(find.text('Google로 계속하기'), findsOneWidget);
+
+    await tester.tap(find.text('Google로 계속하기'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.pumpAndSettle();
+
+    expect(googleLoginCallCount, 2);
+    expect(find.text('Google로 계속하기'), findsOneWidget);
   });
 }
