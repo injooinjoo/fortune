@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -5,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/design_system/design_system.dart';
 import '../../../core/services/supabase_connection_service.dart';
 import '../../../services/social_auth_service.dart';
+import '../../../services/storage_service.dart';
 import '../../../presentation/widgets/social_login_bottom_sheet.dart';
 import '../../../core/providers/user_settings_provider.dart';
 
@@ -33,8 +36,11 @@ class NameInputStep extends ConsumerStatefulWidget {
 class _NameInputStepState extends ConsumerState<NameInputStep> {
   late TextEditingController _nameController;
   final FocusNode _focusNode = FocusNode();
+  final StorageService _storageService = StorageService();
   SocialAuthService? _socialAuthService;
   bool _isValid = false;
+  bool _termsAccepted = false;
+  bool _privacyAccepted = false;
 
   @override
   void initState() {
@@ -53,6 +59,8 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
       widget.onNameChanged(_nameController.text.trim());
     });
 
+    unawaited(_hydrateSavedConsents());
+
     // 키보드 활성화 - 단일 접근으로 최적화
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && _focusNode.canRequestFocus) {
@@ -66,6 +74,99 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
     _nameController.dispose();
     _focusNode.dispose();
     super.dispose();
+  }
+
+  bool get _canProceed => _isValid && _termsAccepted && _privacyAccepted;
+  bool get _canSkip =>
+      widget.allowSkip &&
+      widget.onSkip != null &&
+      _termsAccepted &&
+      _privacyAccepted;
+
+  Future<void> _hydrateSavedConsents() async {
+    final termsAccepted = await _storageService.hasAcceptedTerms();
+    final privacyAccepted = await _storageService.hasAcceptedPrivacyPolicy();
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _termsAccepted = termsAccepted;
+      _privacyAccepted = privacyAccepted;
+    });
+  }
+
+  Future<void> _persistConsentsAndContinue() async {
+    if (!_canProceed) {
+      return;
+    }
+
+    await _storageService.setRequiredPoliciesAccepted();
+    if (!mounted) {
+      return;
+    }
+    widget.onNext();
+  }
+
+  Future<void> _persistConsentsAndSkip() async {
+    if (!_canSkip || widget.onSkip == null) {
+      return;
+    }
+
+    await _storageService.setRequiredPoliciesAccepted();
+    if (!mounted) {
+      return;
+    }
+    widget.onSkip!();
+  }
+
+  Widget _buildConsentRow({
+    required bool isChecked,
+    required ValueChanged<bool?> onChanged,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    final typography = ref.watch(typographyThemeProvider);
+    final colors = context.colors;
+    return Row(
+      children: [
+        SizedBox(
+          width: 24,
+          height: 24,
+          child: Checkbox(
+            value: isChecked,
+            onChanged: onChanged,
+            activeColor: colors.accent,
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            visualDensity: VisualDensity.compact,
+          ),
+        ),
+        const SizedBox(width: 8),
+        GestureDetector(
+          onTap: onTap,
+          child: Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: label,
+                  style: typography.labelMedium.copyWith(
+                    color: colors.accent,
+                    decoration: TextDecoration.underline,
+                    decorationColor: colors.accent,
+                  ),
+                ),
+                TextSpan(
+                  text: ' 동의 (필수)',
+                  style: typography.labelMedium.copyWith(
+                    color: colors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Future<void> _showSocialLoginBottomSheet(BuildContext context) async {
@@ -153,9 +254,7 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
                                 .invokeMethod('TextInput.show');
                           },
                           onSubmitted: (_) {
-                            if (_isValid) {
-                              widget.onNext();
-                            }
+                            _persistConsentsAndContinue();
                           },
                           decoration: InputDecoration(
                             hintText: '이름을 알려주세요',
@@ -177,6 +276,24 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
                             LengthLimitingTextInputFormatter(50),
                           ],
                         ),
+                        const SizedBox(height: 20),
+                        Divider(color: colors.border.withValues(alpha: 0.5)),
+                        const SizedBox(height: 12),
+                        _buildConsentRow(
+                          isChecked: _termsAccepted,
+                          onChanged: (v) =>
+                              setState(() => _termsAccepted = v ?? false),
+                          label: '이용약관',
+                          onTap: () => context.push('/terms-of-service'),
+                        ),
+                        const SizedBox(height: 8),
+                        _buildConsentRow(
+                          isChecked: _privacyAccepted,
+                          onChanged: (v) =>
+                              setState(() => _privacyAccepted = v ?? false),
+                          label: '개인정보처리방침',
+                          onTap: () => context.push('/privacy-policy'),
+                        ),
                       ],
                     ),
                   ),
@@ -185,21 +302,25 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
               AnimatedPositioned(
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
-                bottom: _isValid
+                bottom: _canProceed
                     ? (isKeyboardVisible ? keyboardHeight + 16 : 32)
                     : -100,
                 left: 24,
                 right: 24,
                 child: AnimatedOpacity(
                   duration: const Duration(milliseconds: 300),
-                  opacity: _isValid ? 1.0 : 0.0,
+                  opacity: _canProceed ? 1.0 : 0.0,
                   child: DSButton.primary(
                     text: '다음',
-                    onPressed: _isValid ? widget.onNext : null,
+                    onPressed: _canProceed
+                        ? () {
+                            _persistConsentsAndContinue();
+                          }
+                        : null,
                   ),
                 ),
               ),
-              if (!isKeyboardVisible && !_isValid)
+              if (!isKeyboardVisible && !_canProceed)
                 Positioned(
                   bottom: 32.0,
                   left: 0,
@@ -211,11 +332,17 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 16.0),
                           child: GestureDetector(
-                            onTap: widget.onSkip,
+                            onTap: _canSkip
+                                ? () {
+                                    _persistConsentsAndSkip();
+                                  }
+                                : null,
                             child: Text(
                               '건너뛰기',
                               style: typography.labelLarge.copyWith(
-                                color: colors.textSecondary,
+                                color: _canSkip
+                                    ? colors.textSecondary
+                                    : colors.textTertiary,
                               ),
                             ),
                           ),

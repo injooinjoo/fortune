@@ -145,11 +145,16 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
       debugPrint(
           '📱 [Onboarding] Current name: $_name, hasRealName: $hasRealName');
 
-      // Only skip name step if user already has a real name
+      // 약관 동의 여부 확인 - 미동의 시 Step 1 강제 표시 (Guideline 5.1.1)
+      final policiesAccepted =
+          await _storageService.hasAcceptedRequiredPolicies();
+
+      // Only skip name step if user already has a real name and accepted both
+      // required policies. Missing consent is handled in partial onboarding.
       // For social login users without real name: show name step with skip option
-      if (hasRealName && mounted) {
-        debugPrint('📱 [Onboarding] Name already exists: $_name');
-        debugPrint('📱 [Onboarding] Skipping to birth date step');
+      if (hasRealName && policiesAccepted && mounted) {
+        debugPrint(
+            '📱 [Onboarding] Name exists + required policies accepted, skipping to birth date');
 
         // Wait for widget to build, then skip to birth date step
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -160,6 +165,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
             _pageController.jumpToPage(1);
           }
         });
+      } else if (hasRealName && !policiesAccepted) {
+        debugPrint(
+            '📱 [Onboarding] Name exists but required policies NOT accepted → showing consent step');
       }
     } catch (e) {
       debugPrint('Error initializing user: $e');

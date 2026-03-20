@@ -11,7 +11,6 @@ import '../screens/profile/profile_edit_page.dart';
 import '../screens/profile/profile_relationships_page.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/profile/saju_summary_page.dart';
-import '../screens/premium/premium_screen.dart';
 
 // Retained product surfaces
 import '../features/character/presentation/pages/swipe_home_shell.dart';
@@ -58,15 +57,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/home',
         name: 'home',
         redirect: (context, state) => '/chat',
-      ),
-      GoRoute(
-        path: '/premium',
-        name: 'premium',
-        pageBuilder: (context, state) => PageTransitions.slideTransition(
-          context,
-          state,
-          const PremiumScreen(),
-        ),
       ),
       GoRoute(
         path: '/account-deletion',

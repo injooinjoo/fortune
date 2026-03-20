@@ -210,12 +210,6 @@ class ProfileScreen extends ConsumerWidget {
               child: Column(
                 children: [
                   _ActionListTile(
-                    icon: Icons.workspace_premium_outlined,
-                    title: '프리미엄 인사이트',
-                    subtitle: '구독과 인사이트 혜택을 확인해요.',
-                    onTap: () => context.push('/premium'),
-                  ),
-                  _ActionListTile(
                     icon: Icons.privacy_tip_outlined,
                     title: '개인정보처리방침',
                     subtitle: '개인정보 수집과 보관 방침을 확인해요.',

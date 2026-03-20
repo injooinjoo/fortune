@@ -50,7 +50,7 @@ class ChatScrollService {
 
   /// 리소스 정리
   void dispose() {
-    _debounceTimer?.cancel();
+    cancelPendingScroll();
   }
 
   /// 진행 중인 자동 스크롤 요청을 취소합니다.
@@ -72,7 +72,12 @@ class ChatScrollService {
   ///
   /// 채팅방 진입 시 사용. 애니메이션 없이 즉시 맨 아래로 이동.
   void scrollToBottomInstant() {
-    _scheduleBottomScroll(animated: false);
+    _debounceTimer?.cancel();
+    final requestId = ++_scrollRequestId;
+    _performBottomScrollInstant(
+      requestId: requestId,
+      attempt: 0,
+    );
   }
 
   /// 특정 메시지 상단으로 스크롤
@@ -165,6 +170,37 @@ class ChatScrollService {
         return;
       }
     }
+  }
+
+  void _performBottomScrollInstant({
+    required int requestId,
+    required int attempt,
+  }) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_isActiveRequest(requestId)) {
+        return;
+      }
+
+      final position = scrollController.position;
+      if (position.hasContentDimensions) {
+        final maxScrollExtent = position.maxScrollExtent;
+        final distanceToBottom = maxScrollExtent - position.pixels;
+        if (distanceToBottom.abs() > ChatScrollConstants.bottomTolerance) {
+          scrollController.jumpTo(maxScrollExtent);
+        }
+      }
+
+      if (attempt + 1 >= ChatScrollConstants.maxBottomScrollAttempts ||
+          !_isActiveRequest(requestId)) {
+        return;
+      }
+
+      WidgetsBinding.instance.scheduleFrame();
+      _performBottomScrollInstant(
+        requestId: requestId,
+        attempt: attempt + 1,
+      );
+    });
   }
 
   Future<void> _performMessageTopScroll({

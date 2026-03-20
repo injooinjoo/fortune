@@ -1466,7 +1466,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       return;
     }
 
-    final anchorMessageId = chatNotifier.startFreshFortuneSession(
+    chatNotifier.startFreshFortuneSession(
       introMessage: introMessage,
       requestMessage: requestMessage,
     );
@@ -1476,7 +1476,11 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         _isArchivedHistoryVisible = false;
       });
     }
-    _beginSessionStartAnchor(anchorMessageId);
+    // 운세 칩 플로우에서는 세션 앵커를 사용하지 않고 즉시 맨 아래로 스크롤합니다.
+    // 앵커를 사용하면 메시지 수가 적을 때 오버스크롤이 발생하여 RefreshIndicator가
+    // 트리거되고 archived 메시지가 노출되는 Bug #4가 발생합니다.
+    _clearSessionStartAnchor();
+    _scrollToBottomInstant();
 
     // 설문이 있고 단계가 있으면 설문 시작
     if (hasSurvey) {
@@ -1497,7 +1501,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           );
           chatNotifier.addCharacterMessage(firstQuestion);
         }
-        _scrollToBottom();
+        _scrollToBottomInstant();
       });
     } else {
       // 설문 없이 바로 요청
@@ -1657,6 +1661,10 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         surveyAnswers: answers,
       ),
     )) {
+      // Auth failed — reset processing state so chips remain tappable
+      ref
+          .read(characterChatProvider(widget.character.id).notifier)
+          .setProcessing(false);
       return;
     }
 

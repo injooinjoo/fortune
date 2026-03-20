@@ -287,7 +287,9 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   /// 유저 프로필 정보를 API용 Map으로 변환
   Map<String, dynamic>? _getUserProfileMap() {
     try {
-      final profileAsync = _ref.read(userProfileProvider);
+      // userProfileNotifierProvider는 StateNotifier로 항상 최신 데이터 보유
+      // userProfileProvider(FutureProvider)는 loading 상태일 때 null 반환하는 race condition 존재
+      final profileAsync = _ref.read(userProfileNotifierProvider);
       return profileAsync.maybeWhen(
         data: (profile) {
           if (profile == null) return null;
@@ -3129,6 +3131,9 @@ $enrichedContext
         normalizedAnswers['currentRole'] = '$fieldLabel $positionLabel'.trim();
       }
 
+      // 설문 없이 호출된 경우(AI 채팅 중 직접 호출 등) 기본값 설정
+      normalizedAnswers['currentRole'] ??= '직장인';
+
       // concern → primaryConcern (Edge Function 기대 필드)
       if (concern != null) {
         normalizedAnswers['primaryConcern'] = concern;
@@ -3310,6 +3315,17 @@ $enrichedContext
         if (petAge != null) {
           normalizedAnswers['pet_age'] = petAge;
         }
+      }
+      return normalizedAnswers;
+    }
+
+    // ─── mbti: 설문 필드 → API 필드 매핑 ───
+    if (apiFortuneType == 'mbti') {
+      // mbtiType (설문 답변 키) → mbti (API 필드 키) 매핑
+      // user가 "아니요, 다시 선택할게요" 선택 시 mbtiType에 새 MBTI 저장됨
+      if (normalizedAnswers.containsKey('mbtiType') &&
+          !normalizedAnswers.containsKey('mbti')) {
+        normalizedAnswers['mbti'] = normalizedAnswers.remove('mbtiType');
       }
       return normalizedAnswers;
     }

@@ -21,6 +21,8 @@ class StorageService {
   static const String _characterOnboardingKey =
       'character_onboarding_completed';
   static const String _pendingChatAuthIntentKey = 'pending_chat_auth_intent';
+  static const String _termsAcceptedKey = 'terms_accepted_v1';
+  static const String _privacyPolicyAcceptedKey = 'privacy_policy_accepted_v1';
 
   static const _uuid = Uuid();
 
@@ -287,6 +289,41 @@ class StorageService {
   Future<void> clearGuestMode() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_guestModeKey);
+  }
+
+  // 약관 동의 상태 (App Store Guideline 5.1.1)
+  Future<bool> hasAcceptedTerms() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_termsAcceptedKey) ?? false;
+  }
+
+  Future<bool> hasAcceptedPrivacyPolicy() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_privacyPolicyAcceptedKey) ?? false;
+  }
+
+  Future<bool> hasAcceptedRequiredPolicies() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hasAcceptedTerms = prefs.getBool(_termsAcceptedKey) ?? false;
+    final hasAcceptedPrivacy =
+        prefs.getBool(_privacyPolicyAcceptedKey) ?? false;
+    return hasAcceptedTerms && hasAcceptedPrivacy;
+  }
+
+  Future<void> setTermsAccepted() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_termsAcceptedKey, true);
+  }
+
+  Future<void> setPrivacyPolicyAccepted() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_privacyPolicyAcceptedKey, true);
+  }
+
+  Future<void> setRequiredPoliciesAccepted() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_termsAcceptedKey, true);
+    await prefs.setBool(_privacyPolicyAcceptedKey, true);
   }
 
   Future<Map<String, dynamic>?> getPendingChatAuthIntent() async {

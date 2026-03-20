@@ -92,7 +92,9 @@ Map<String, dynamic>? _asStringKeyedMap(dynamic value) {
     return value;
   }
   if (value is Map) {
-    return value.map((key, item) => MapEntry(key.toString(), item));
+    return value.map(
+      (key, item) => MapEntry(key.toString(), item),
+    );
   }
   return null;
 }
