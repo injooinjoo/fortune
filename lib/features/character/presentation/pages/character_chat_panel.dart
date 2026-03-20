@@ -21,6 +21,7 @@ import '../providers/character_chat_survey_provider.dart';
 import '../providers/active_chat_provider.dart';
 import '../utils/character_accent_palette.dart';
 import '../utils/chat_catalog_preview.dart';
+import '../utils/character_chat_surface_style.dart';
 import '../widgets/character_message_bubble.dart';
 import '../widgets/character_choice_widget.dart';
 import '../widgets/wave_typing_indicator.dart';
@@ -1858,23 +1859,11 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           ),
           const SizedBox(width: DSSpacing.sm),
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: DSSpacing.md,
-              vertical: DSSpacing.sm + DSSpacing.xxs,
-            ),
-            decoration: BoxDecoration(
-              color: colors.surface,
-              borderRadius: BorderRadius.circular(DSRadius.xl),
-              border: Border.all(
-                color: colors.border.withValues(alpha: 0.5),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: colors.textPrimary.withValues(alpha: 0.04),
-                  blurRadius: 16,
-                  offset: const Offset(0, 6),
-                ),
-              ],
+            padding: CharacterChatSurfaceStyle.bubblePadding,
+            decoration: CharacterChatSurfaceStyle.floatingSurfaceDecoration(
+              context,
+              backgroundColor: colors.surface,
+              borderAlpha: 0.5,
             ),
             child: WaveTypingIndicator(
               dotColor: colors.textTertiary,
@@ -1922,20 +1911,10 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         ),
       ),
       child: Container(
-        padding: const EdgeInsets.all(DSSpacing.sm + DSSpacing.xxs),
-        decoration: BoxDecoration(
-          color: colors.surface,
-          borderRadius: BorderRadius.circular(DSRadius.xl),
-          border: Border.all(
-            color: colors.border.withValues(alpha: 0.45),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: colors.textPrimary.withValues(alpha: 0.04),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
+        padding: CharacterChatSurfaceStyle.floatingSurfacePadding,
+        decoration: CharacterChatSurfaceStyle.floatingSurfaceDecoration(
+          context,
+          backgroundColor: colors.surface,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

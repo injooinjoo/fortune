@@ -9,6 +9,7 @@ import '../../../chat/presentation/widgets/chat_saju_result_card.dart';
 import '../../domain/models/ai_character.dart';
 import '../../domain/models/character_chat_message.dart';
 import '../utils/character_accent_palette.dart';
+import '../utils/character_chat_surface_style.dart';
 import 'affinity_change_indicator.dart';
 import 'embedded_fortune_component.dart';
 
@@ -55,7 +56,7 @@ class CharacterMessageBubble extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          const SizedBox(width: 48), // 왼쪽 여백
+          const SizedBox(width: CharacterChatSurfaceStyle.messageSideInset),
           Flexible(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -65,7 +66,8 @@ class CharacterMessageBubble extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 4),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius:
+                          CharacterChatSurfaceStyle.mediaBorderRadius(),
                       child: Image.file(
                         File(message.imageAsset!),
                         width: 200,
@@ -76,7 +78,8 @@ class CharacterMessageBubble extends StatelessWidget {
                           height: 200,
                           decoration: BoxDecoration(
                             color: colors.surfaceSecondary,
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius:
+                                CharacterChatSurfaceStyle.mediaBorderRadius(),
                           ),
                           child:
                               const Icon(Icons.image_not_supported, size: 40),
@@ -88,28 +91,13 @@ class CharacterMessageBubble extends StatelessWidget {
                 if (!message.hasImage ||
                     (message.text != '📷 사진' && message.text.isNotEmpty))
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: DSSpacing.md,
-                      vertical: DSSpacing.sm + DSSpacing.xxs,
-                    ),
-                    decoration: BoxDecoration(
-                      color: colors.userBubble,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(DSRadius.xl),
-                        topRight: Radius.circular(DSRadius.xl),
-                        bottomLeft: Radius.circular(DSRadius.xl),
-                        bottomRight: Radius.circular(DSRadius.sm),
-                      ),
-                      border: Border.all(
-                        color: colors.border.withValues(alpha: 0.42),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: colors.textPrimary.withValues(alpha: 0.05),
-                          blurRadius: 14,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
+                    padding: CharacterChatSurfaceStyle.bubblePadding,
+                    decoration: CharacterChatSurfaceStyle.bubbleDecoration(
+                      context,
+                      backgroundColor: colors.userBubble,
+                      borderRadius:
+                          CharacterChatSurfaceStyle.outgoingBubbleRadius(),
+                      borderAlpha: 0.42,
                     ),
                     child: Text(
                       message.text,
@@ -184,7 +172,7 @@ class CharacterMessageBubble extends StatelessWidget {
             _buildAvatar(context, accentPalette)
           else
             const SizedBox(width: 32),
-          const SizedBox(width: DSSpacing.sm + DSSpacing.xxs),
+          const SizedBox(width: CharacterChatSurfaceStyle.avatarGap),
           Flexible(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,30 +185,15 @@ class CharacterMessageBubble extends StatelessWidget {
                     clipBehavior: Clip.none,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: DSSpacing.md,
-                          vertical: DSSpacing.sm + DSSpacing.xxs,
-                        ),
-                        decoration: BoxDecoration(
-                          color: colors.surface,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(
-                              message.hasImage ? DSRadius.xl : DSRadius.sm,
-                            ),
-                            topRight: const Radius.circular(DSRadius.xl),
-                            bottomLeft: const Radius.circular(DSRadius.xl),
-                            bottomRight: const Radius.circular(DSRadius.xl),
+                        padding: CharacterChatSurfaceStyle.bubblePadding,
+                        decoration: CharacterChatSurfaceStyle.bubbleDecoration(
+                          context,
+                          backgroundColor: colors.surface,
+                          borderRadius:
+                              CharacterChatSurfaceStyle.incomingBubbleRadius(
+                            hasLeadingMedia: message.hasImage,
                           ),
-                          border: Border.all(
-                            color: colors.border.withValues(alpha: 0.45),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: colors.textPrimary.withValues(alpha: 0.05),
-                              blurRadius: 16,
-                              offset: const Offset(0, 6),
-                            ),
-                          ],
+                          borderAlpha: 0.45,
                         ),
                         child: _buildFormattedText(context, message.text),
                       ),
@@ -239,7 +212,7 @@ class CharacterMessageBubble extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: 48), // 오른쪽 여백
+          const SizedBox(width: CharacterChatSurfaceStyle.messageSideInset),
         ],
       ),
     );
@@ -291,17 +264,15 @@ class CharacterMessageBubble extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 6),
       constraints: const BoxConstraints(maxWidth: 220),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: colors.textPrimary.withValues(alpha: 0.08),
-            blurRadius: 14,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        borderRadius: CharacterChatSurfaceStyle.mediaBorderRadius(),
+        boxShadow: CharacterChatSurfaceStyle.shadow(
+          context,
+          alpha: 0.08,
+          blurRadius: 14,
+        ),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: CharacterChatSurfaceStyle.mediaBorderRadius(),
         child: SmartImage(
           path: imagePath,
           width: 220,
@@ -334,14 +305,12 @@ class CharacterMessageBubble extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
             color: colors.backgroundSecondary,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: colors.textPrimary.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            borderRadius: CharacterChatSurfaceStyle.mediaBorderRadius(),
+            boxShadow: CharacterChatSurfaceStyle.shadow(
+              context,
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
           ),
           child: Text(
             message.text,
