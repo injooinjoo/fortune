@@ -457,6 +457,7 @@ const COMPONENT_CARDS = [
     sources: [
       'lib/core/design_system/components/ds_card.dart',
       'lib/core/design_system/components/ds_button.dart',
+      'lib/core/design_system/components/ds_badge.dart',
       'lib/core/design_system/components/ds_chip.dart',
       'lib/core/design_system/components/ds_text_field.dart',
       'lib/core/widgets/unified_button.dart',
