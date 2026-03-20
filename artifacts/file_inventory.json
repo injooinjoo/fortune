@@ -25680,7 +25680,8 @@
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
         "lib/main.dart",
         "lib/presentation/providers/fortune_provider.dart",
-        "lib/presentation/providers/providers.dart"
+        "lib/presentation/providers/providers.dart",
+        "test/unit/providers/auth/chat_restoration_policy_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -31936,6 +31937,20 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "test/unit/providers/auth/chat_restoration_policy_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
       "notes": [],
       "path": "test/unit/providers/fortune_provider_test.dart",
       "referenced_by": [
@@ -32430,21 +32445,21 @@
       "lib": 414,
       "scripts": 70,
       "supabase": 206,
-      "test": 71
+      "test": 72
     },
     "counts_by_candidate_action": {
       "keep": 704,
       "keep_generated": 28,
       "manual_review": 978,
       "phase1_remove_candidate": 14,
-      "phase2_review_candidate": 361,
+      "phase2_review_candidate": 362,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
       "doc_only": 97,
       "generated_excluded": 28,
       "runtime_used": 704,
-      "test_only": 80,
+      "test_only": 81,
       "tooling_only": 184,
       "unreferenced": 996
     },
@@ -32708,7 +32723,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2089,
+    "total_files": 2090,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"

@@ -76,6 +76,10 @@ final authServiceProvider = Provider<AuthService>((ref) {
 /// 로그인 직후 대화 목록 일괄 복원 진행 상태
 final chatRestorationInProgressProvider = StateProvider<bool>((ref) => false);
 
+bool shouldBlockChatRestorationOverlay(AuthChangeEvent event) {
+  return event == AuthChangeEvent.initialSession;
+}
+
 final notificationDeviceSyncProvider = Provider<void>((ref) {
   ref.listen<AsyncValue<AuthState?>>(authStateProvider, (previous, next) {
     next.whenData((authState) async {
@@ -257,8 +261,15 @@ final chatRestorationProvider = Provider<void>((ref) {
       // 로그인/세션 복구 시에만 대화 복원
       if (authState.event == AuthChangeEvent.signedIn ||
           authState.event == AuthChangeEvent.initialSession) {
-        ref.read(chatRestorationInProgressProvider.notifier).state = true;
+        final shouldBlockRestoration =
+            shouldBlockChatRestorationOverlay(authState.event);
+        ref.read(chatRestorationInProgressProvider.notifier).state =
+            shouldBlockRestoration;
         try {
+          if (!shouldBlockRestoration) {
+            Logger.info('[ChatRestoration] 백그라운드 복원으로 전환');
+          }
+
           // 게스트 큐 owner를 현재 로그인 owner로 승격 후 동기화
           await ChatSyncService.instance.migrateGuestData(userId);
 
