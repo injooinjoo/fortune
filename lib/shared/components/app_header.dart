@@ -122,6 +122,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                 children: [
                   if (showBackButton)
                     IconButton(
+                        tooltip: '뒤로 가기',
                         icon: Icon(Icons.arrow_back_ios_rounded,
                             color: foregroundColor ?? colors.textPrimary),
                         onPressed: () => _handleBack(context)),
@@ -147,11 +148,13 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                   ],
                   if (showShareButton)
                     IconButton(
+                        tooltip: '공유하기',
                         icon: Icon(Icons.share_rounded,
                             color: foregroundColor ?? colors.textPrimary),
                         onPressed: () => _handleShare(context)),
                   if (showCloseButton)
                     IconButton(
+                        tooltip: '닫기',
                         icon: Icon(Icons.close,
                             color: foregroundColor ?? colors.textPrimary),
                         onPressed: () {

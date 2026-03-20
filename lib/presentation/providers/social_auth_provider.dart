@@ -1,5 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../features/character/data/services/character_affinity_service.dart';
+import '../../features/character/data/services/character_chat_local_service.dart';
+import '../../services/session_cleanup_service.dart';
 import '../../services/social_auth_service.dart';
 import '../../services/social_auth/base/social_auth_attempt_result.dart';
 import '../../core/utils/logger.dart';
@@ -9,6 +12,15 @@ import 'providers.dart';
 final socialAuthServiceProvider = Provider<SocialAuthService>((ref) {
   final supabase = ref.watch(supabaseClientProvider);
   return SocialAuthService(supabase);
+});
+
+final sessionCleanupServiceProvider = Provider<SessionCleanupService>((ref) {
+  return SessionCleanupService(
+    socialAuthService: ref.watch(socialAuthServiceProvider),
+    storageService: ref.watch(storageServiceProvider),
+    characterChatLocalService: CharacterChatLocalService(),
+    characterAffinityService: CharacterAffinityService(),
+  );
 });
 
 // Social Auth State

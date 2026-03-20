@@ -3,10 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../constants/fortune_constants.dart';
-import '../../core/cache/cache_service.dart';
 import '../../core/design_system/design_system.dart';
-import '../../features/character/data/services/character_affinity_service.dart';
-import '../../features/character/data/services/character_chat_local_service.dart';
 import '../../features/fortune/presentation/providers/saju_provider.dart';
 import '../../models/user_profile.dart';
 import '../../presentation/providers/providers.dart';
@@ -38,6 +35,7 @@ class ProfileScreen extends ConsumerWidget {
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
+          tooltip: '뒤로 가기',
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
@@ -269,15 +267,7 @@ class ProfileScreen extends ConsumerWidget {
       return;
     }
 
-    await ref.read(socialAuthServiceProvider).signOut();
-    final storageService = ref.read(storageServiceProvider);
-    await storageService.clearUserProfile();
-    await storageService.clearActiveProfileOverride();
-    await storageService.clearGuestMode();
-    await storageService.clearGuestId();
-    await CacheService().clearAllCache();
-    await CharacterChatLocalService().clearAllConversations();
-    await CharacterAffinityService().clearAllAffinities();
+    await ref.read(sessionCleanupServiceProvider).signOutAndClearSession();
 
     if (!context.mounted) {
       return;
@@ -299,6 +289,7 @@ class _ProfileAuthRequiredView extends StatelessWidget {
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
+          tooltip: '뒤로 가기',
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () => Navigator.of(context).maybePop(),
         ),

@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/cache/cache_service.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/services/supabase_connection_service.dart';
-import '../../../../features/character/data/services/character_affinity_service.dart';
-import '../../../../features/character/data/services/character_chat_local_service.dart';
-import '../../../../presentation/providers/user_profile_notifier.dart';
-import '../../../../services/storage_service.dart';
+import '../../../../presentation/providers/providers.dart';
 
 /// Chat-first minimal account/legal sheet.
 class ProfileBottomSheet extends ConsumerStatefulWidget {
@@ -18,22 +14,8 @@ class ProfileBottomSheet extends ConsumerStatefulWidget {
 }
 
 class _ProfileBottomSheetState extends ConsumerState<ProfileBottomSheet> {
-  final _storageService = StorageService();
-  final _characterChatLocalService = CharacterChatLocalService();
-  final _characterAffinityService = CharacterAffinityService();
-
   Future<void> _handleLogout() async {
-    final supabase = SupabaseConnectionService.tryGetClient();
-    if (supabase != null) {
-      await supabase.auth.signOut();
-    }
-    await _storageService.clearUserProfile();
-    await _storageService.clearActiveProfileOverride();
-    await _storageService.clearGuestMode();
-    await _storageService.clearGuestId();
-    await CacheService().clearAllCache();
-    await _characterChatLocalService.clearAllConversations();
-    await _characterAffinityService.clearAllAffinities();
+    await ref.read(sessionCleanupServiceProvider).signOutAndClearSession();
 
     if (!mounted) return;
     context.go('/chat');
