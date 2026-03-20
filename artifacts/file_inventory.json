@@ -18756,6 +18756,8 @@
       "referenced_by": [
         "README.md",
         "docs/README.md",
+        "docs/development/reports/2026-03-21_release_risk_audit_discovery.md",
+        "docs/development/reports/2026-03-21_release_risk_register.md",
         "docs/getting-started/PROJECT_OVERVIEW.md"
       ],
       "runtime_reachable": false,
@@ -19180,7 +19182,8 @@
       "path": "docs/deployment/review/RELEASE_DECISION_LOG.md",
       "referenced_by": [
         "docs/development/reports/2026-02-16_store_review_strategy_discovery.md",
-        "docs/development/reports/2026-02-16_store_review_strategy_verify.md"
+        "docs/development/reports/2026-02-16_store_review_strategy_verify.md",
+        "docs/development/reports/2026-03-21_release_risk_audit_discovery.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -19387,6 +19390,7 @@
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "docs/design/README.md",
+        "docs/development/reports/2026-03-21_release_risk_audit_verify.md",
         "scripts/design/figma_sync_guard.js"
       ],
       "runtime_reachable": false,
@@ -19687,7 +19691,8 @@
       "notes": [],
       "path": "docs/development/reports/2026-02-16_store_review_strategy_discovery.md",
       "referenced_by": [
-        "docs/development/reports/2026-02-16_store_review_strategy_verify.md"
+        "docs/development/reports/2026-02-16_store_review_strategy_verify.md",
+        "docs/development/reports/2026-03-21_release_risk_audit_discovery.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -19701,7 +19706,83 @@
       "notes": [],
       "path": "docs/development/reports/2026-02-16_store_review_strategy_verify.md",
       "referenced_by": [
-        "docs/development/reports/2026-02-16_store_review_strategy_verify.md"
+        "docs/development/reports/2026-02-16_store_review_strategy_verify.md",
+        "docs/development/reports/2026-03-21_release_risk_audit_discovery.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
+      "path": "docs/development/reports/2026-03-21_release_execution_roadmap.md",
+      "referenced_by": [
+        "docs/development/reports/2026-03-21_release_risk_audit_discovery.md",
+        "docs/development/reports/2026-03-21_release_risk_audit_verify.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
+      "path": "docs/development/reports/2026-03-21_release_improvement_proposal.md",
+      "referenced_by": [
+        "docs/development/reports/2026-03-21_release_risk_audit_discovery.md",
+        "docs/development/reports/2026-03-21_release_risk_audit_verify.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
+      "path": "docs/development/reports/2026-03-21_release_risk_audit_discovery.md",
+      "referenced_by": [
+        "docs/development/reports/2026-03-21_release_risk_audit_discovery.md",
+        "docs/development/reports/2026-03-21_release_risk_audit_verify.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
+      "path": "docs/development/reports/2026-03-21_release_risk_audit_verify.md",
+      "referenced_by": [
+        "docs/development/reports/2026-03-21_release_risk_audit_discovery.md",
+        "docs/development/reports/2026-03-21_release_risk_audit_verify.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
+      "notes": [],
+      "path": "docs/development/reports/2026-03-21_release_risk_register.md",
+      "referenced_by": [
+        "docs/development/reports/2026-03-21_release_risk_audit_discovery.md",
+        "docs/development/reports/2026-03-21_release_risk_audit_verify.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -19715,7 +19796,8 @@
       "notes": [],
       "path": "docs/development/templates/DISCOVERY_REPORT_TEMPLATE.md",
       "referenced_by": [
-        "docs/development/reports/2026-02-16_store_review_strategy_discovery.md"
+        "docs/development/reports/2026-02-16_store_review_strategy_discovery.md",
+        "docs/development/reports/2026-03-21_release_risk_audit_discovery.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -19803,6 +19885,8 @@
         "docs/APP_ARCHITECTURE.md",
         "docs/README.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
+        "docs/development/reports/2026-03-21_release_risk_audit_discovery.md",
+        "docs/development/reports/2026-03-21_release_risk_register.md",
         "docs/figma-style-guide.md",
         "docs/getting-started/PROJECT_OVERVIEW.md"
       ],
@@ -20190,10 +20274,9 @@
       "notes": [],
       "path": "lib/core/cache/cache_service.dart",
       "referenced_by": [
-        "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
         "lib/main.dart",
-        "lib/screens/profile/profile_screen.dart",
-        "lib/services/account_deletion_service.dart"
+        "lib/services/account_deletion_service.dart",
+        "lib/services/session_cleanup_service.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -21301,6 +21384,8 @@
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
+        "docs/development/reports/2026-03-21_release_risk_audit_discovery.md",
+        "docs/development/reports/2026-03-21_release_risk_register.md",
         "docs/getting-started/APP_SURFACES_AND_ROUTES.md",
         "lib/core/constants/fortune_type_names.dart",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
@@ -22537,6 +22622,7 @@
         "lib/services/notification/fcm_service.dart",
         "lib/services/oauth_in_app_browser_coordinator.dart",
         "lib/services/remote_config_service.dart",
+        "lib/services/session_cleanup_service.dart",
         "lib/services/social_auth/base/base_social_auth_provider.dart",
         "lib/services/social_auth/providers/apple_auth_provider.dart",
         "lib/services/social_auth/providers/facebook_auth_provider.dart",
@@ -23328,9 +23414,9 @@
       "path": "lib/features/character/data/services/character_affinity_service.dart",
       "referenced_by": [
         "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
         "lib/main.dart",
-        "lib/screens/profile/profile_screen.dart"
+        "lib/presentation/providers/social_auth_provider.dart",
+        "lib/services/session_cleanup_service.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23346,9 +23432,9 @@
       "referenced_by": [
         "lib/features/character/data/services/character_chat_service.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
         "lib/main.dart",
-        "lib/screens/profile/profile_screen.dart"
+        "lib/presentation/providers/social_auth_provider.dart",
+        "lib/services/session_cleanup_service.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23601,6 +23687,7 @@
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
+        "docs/development/reports/2026-03-21_release_risk_register.md",
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
         "test/widget/character/character_chat_panel_theme_test.dart"
       ],
@@ -23650,6 +23737,7 @@
       "path": "lib/features/character/presentation/pages/character_profile_page.dart",
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
+        "docs/development/reports/2026-03-21_release_risk_register.md",
         "lib/routes/character_routes.dart"
       ],
       "runtime_reachable": true,
@@ -23700,6 +23788,8 @@
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
+        "docs/development/reports/2026-03-21_release_risk_audit_discovery.md",
+        "docs/development/reports/2026-03-21_release_risk_register.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/features/character/presentation/pages/character_profile_page.dart",
@@ -24211,19 +24301,20 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "dart",
       "notes": [
-        "no_inbound_refs",
         "runtime_unreachable",
         "zero_incoming_dart"
       ],
       "path": "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/development/reports/2026-03-21_release_risk_audit_verify.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -24293,6 +24384,7 @@
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
+        "docs/development/reports/2026-03-21_release_risk_register.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart"
       ],
       "runtime_reachable": true,
@@ -24368,6 +24460,7 @@
       "notes": [],
       "path": "lib/features/chat/presentation/widgets/survey/ootd_photo_input.dart",
       "referenced_by": [
+        "docs/development/reports/2026-03-21_release_risk_register.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart"
       ],
       "runtime_reachable": true,
@@ -25129,6 +25222,7 @@
       "notes": [],
       "path": "lib/features/fortune/presentation/widgets/saju/saju_concept_card.dart",
       "referenced_by": [
+        "docs/development/reports/2026-03-21_release_risk_register.md",
         "lib/features/fortune/presentation/widgets/saju/saju_hapchung_widget.dart",
         "lib/features/fortune/presentation/widgets/saju/saju_jijanggan_widget.dart",
         "lib/features/fortune/presentation/widgets/saju/saju_pillar_table_pro.dart",
@@ -25205,6 +25299,7 @@
       "notes": [],
       "path": "lib/features/fortune/presentation/widgets/saju/saju_strength_gauge.dart",
       "referenced_by": [
+        "docs/development/reports/2026-03-21_release_risk_register.md",
         "lib/features/fortune/presentation/widgets/saju/saju_widgets.dart"
       ],
       "runtime_reachable": true,
@@ -25819,9 +25914,11 @@
       "notes": [],
       "path": "lib/presentation/providers/providers.dart",
       "referenced_by": [
+        "docs/development/reports/2026-03-21_release_risk_register.md",
         "lib/data/services/fortune_api/fortune_api_service.dart",
         "lib/data/services/fortune_api_service_edge_functions.dart",
         "lib/data/services/token_api_service.dart",
+        "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
         "lib/presentation/providers/active_profile_provider.dart",
         "lib/presentation/providers/fortune_gauge_provider.dart",
         "lib/presentation/providers/recommendation_provider.dart",
@@ -25874,6 +25971,7 @@
       "notes": [],
       "path": "lib/presentation/providers/social_auth_provider.dart",
       "referenced_by": [
+        "docs/development/reports/2026-03-21_release_risk_audit_verify.md",
         "lib/presentation/providers/providers.dart"
       ],
       "runtime_reachable": true,
@@ -25949,6 +26047,7 @@
       "notes": [],
       "path": "lib/presentation/providers/token_provider.dart",
       "referenced_by": [
+        "docs/development/reports/2026-03-21_release_risk_register.md",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/presentation/providers/providers.dart",
         "lib/screens/onboarding/onboarding_page.dart",
@@ -25969,7 +26068,6 @@
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
         "lib/presentation/providers/providers.dart"
       ],
       "runtime_reachable": true,
@@ -26003,22 +26101,6 @@
       "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
-    },
-    {
-      "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/presentation/widgets/common/app_header.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -26132,6 +26214,8 @@
         "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
+        "docs/development/reports/2026-03-21_release_risk_audit_discovery.md",
+        "docs/development/reports/2026-03-21_release_risk_register.md",
         "docs/getting-started/APP_SURFACES_AND_ROUTES.md",
         "docs/getting-started/PROJECT_OVERVIEW.md",
         "integration_test/test_app.dart",
@@ -26265,6 +26349,7 @@
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
+        "docs/development/reports/2026-03-21_release_risk_audit_verify.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -26296,6 +26381,7 @@
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
+        "docs/development/reports/2026-03-21_release_risk_audit_verify.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -26329,6 +26415,7 @@
       "path": "lib/screens/profile/saju_summary_page.dart",
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
+        "docs/development/reports/2026-03-21_release_risk_audit_verify.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -26436,6 +26523,8 @@
       "notes": [],
       "path": "lib/services/deep_link_service.dart",
       "referenced_by": [
+        "docs/development/reports/2026-03-21_release_risk_audit_discovery.md",
+        "docs/development/reports/2026-03-21_release_risk_register.md",
         "docs/getting-started/APP_SURFACES_AND_ROUTES.md",
         "lib/main.dart",
         "test/unit/services/deep_link_service_test.dart"
@@ -26611,6 +26700,22 @@
       "dirty": false,
       "kind": "dart",
       "notes": [],
+      "path": "lib/services/session_cleanup_service.dart",
+      "referenced_by": [
+        "docs/development/reports/2026-03-21_release_risk_audit_verify.md",
+        "lib/presentation/providers/social_auth_provider.dart",
+        "test/unit/services/auth/session_cleanup_service_test.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
       "path": "lib/services/social_auth/base/base_social_auth_provider.dart",
       "referenced_by": [
         "lib/services/social_auth/providers/apple_auth_provider.dart",
@@ -26735,6 +26840,7 @@
         "lib/presentation/widgets/social_accounts_section.dart",
         "lib/presentation/widgets/social_login_bottom_sheet.dart",
         "lib/screens/onboarding/steps/name_input_step.dart",
+        "lib/services/session_cleanup_service.dart",
         "test/widget/auth/profile_avatar_tap_handler_test.dart",
         "test/widget/auth/social_auth_pending_state_test.dart"
       ],
@@ -26787,7 +26893,6 @@
         "lib/features/character/presentation/pages/character_onboarding_page.dart",
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
         "lib/presentation/providers/auth_provider.dart",
         "lib/presentation/providers/fortune_gauge_provider.dart",
         "lib/presentation/providers/providers.dart",
@@ -26797,6 +26902,7 @@
         "lib/screens/onboarding/steps/name_input_step.dart",
         "lib/screens/splash_screen.dart",
         "lib/services/account_deletion_service.dart",
+        "lib/services/session_cleanup_service.dart",
         "lib/services/social_auth_service.dart",
         "lib/services/user_statistics_service.dart",
         "test/mocks/mock_auth_services.dart",
@@ -26908,6 +27014,7 @@
       "path": "lib/shared/components/app_header.dart",
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/development/reports/2026-03-21_release_risk_audit_verify.md",
         "lib/presentation/providers/font_size_provider.dart"
       ],
       "runtime_reachable": true,
@@ -29158,6 +29265,7 @@
       ],
       "path": "supabase/functions/fortune-family-health/index.ts",
       "referenced_by": [
+        "docs/development/reports/2026-03-21_release_risk_register.md",
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/services/generator_factory.dart"
       ],
@@ -29293,6 +29401,7 @@
       "path": "supabase/functions/fortune-love/index.ts",
       "referenced_by": [
         "docs/data/LLM_PROVIDER_MIGRATION.md",
+        "docs/development/reports/2026-03-21_release_risk_register.md",
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/fortune/fortune_type_registry.dart",
         "lib/core/services/fortune_generators/love_generator.dart",
@@ -29330,6 +29439,7 @@
       ],
       "path": "supabase/functions/fortune-match-insight/index.ts",
       "referenced_by": [
+        "docs/development/reports/2026-03-21_release_risk_register.md",
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/fortune/fortune_type_registry.dart"
       ],
@@ -29443,6 +29553,7 @@
       "path": "supabase/functions/fortune-past-life/index.ts",
       "referenced_by": [
         "docs/development/GEMINI_COST_INCIDENT_RUNBOOK.md",
+        "docs/development/reports/2026-03-21_release_risk_register.md",
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/fortune/fortune_type_registry.dart"
       ],
@@ -29604,6 +29715,7 @@
       "referenced_by": [
         "docs/development/GEMINI_COST_INCIDENT_RUNBOOK.md",
         "docs/development/gcp-api-usage-monitoring.md",
+        "docs/development/reports/2026-03-21_release_risk_register.md",
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/fortune/fortune_type_registry.dart"
       ],
@@ -31709,11 +31821,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "test_dart",
-      "notes": [
-        "no_inbound_refs"
-      ],
+      "notes": [],
       "path": "test/unit/core/navigation/fortune_chat_route_test.dart",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/development/reports/2026-03-21_release_risk_register.md"
+      ],
       "runtime_reachable": false,
       "test_only": true,
       "usage_status": "test_only"
@@ -32060,6 +32172,20 @@
       "dirty": false,
       "kind": "test_dart",
       "notes": [],
+      "path": "test/unit/services/auth/session_cleanup_service_test.dart",
+      "referenced_by": [
+        "docs/development/reports/2026-03-21_release_risk_audit_verify.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [],
       "path": "test/unit/services/auth/social_auth_service_test.dart",
       "referenced_by": [
         "docs/testing/test-coverage-map.md"
@@ -32073,11 +32199,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "test_dart",
-      "notes": [
-        "no_inbound_refs"
-      ],
+      "notes": [],
       "path": "test/unit/services/deep_link_service_test.dart",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/development/reports/2026-03-21_release_risk_register.md"
+      ],
       "runtime_reachable": false,
       "test_only": true,
       "usage_status": "test_only"
@@ -32478,28 +32604,28 @@
   "meta": {
     "counts_by_area": {
       "assets": 1231,
-      "docs": 89,
+      "docs": 94,
       "integration_test": 8,
       "lib": 414,
       "scripts": 70,
       "supabase": 206,
-      "test": 74
+      "test": 75
     },
     "counts_by_candidate_action": {
-      "keep": 703,
+      "keep": 704,
       "keep_generated": 28,
       "manual_review": 978,
-      "phase1_remove_candidate": 14,
-      "phase2_review_candidate": 365,
+      "phase1_remove_candidate": 12,
+      "phase2_review_candidate": 372,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
-      "doc_only": 98,
+      "doc_only": 104,
       "generated_excluded": 28,
-      "runtime_used": 703,
-      "test_only": 83,
+      "runtime_used": 704,
+      "test_only": 84,
       "tooling_only": 184,
-      "unreferenced": 996
+      "unreferenced": 994
     },
     "declared_asset_dirs_without_runtime_refs": [
       "assets/animations",
@@ -32652,9 +32778,9 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 342,
+    "lib_dart_runtime_reachable": 343,
     "lib_dart_total": 411,
-    "lib_dart_zero_incoming": 27,
+    "lib_dart_zero_incoming": 26,
     "missing_function_refs": [
       "--all",
       "account-deletion",
@@ -32761,7 +32887,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2092,
+    "total_files": 2098,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
