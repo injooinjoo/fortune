@@ -193,6 +193,23 @@ class Environment {
     return developmentEnvFile;
   }
 
+  static bool shouldFallbackToDefaultEnv({
+    required String loadedEnvFile,
+    String? supabaseUrl,
+    String? supabaseAnonKey,
+  }) {
+    if (loadedEnvFile != developmentEnvFile) {
+      return false;
+    }
+
+    return describeSupabaseConfigurationIssue(
+          supabaseUrl: supabaseUrl ?? _dotenvValue('SUPABASE_URL') ?? '',
+          supabaseAnonKey:
+              supabaseAnonKey ?? _dotenvValue('SUPABASE_ANON_KEY') ?? '',
+        ) !=
+        null;
+  }
+
   // 환경 변수 초기화
   static Future<void> initialize({
     bool isTestMode = false,

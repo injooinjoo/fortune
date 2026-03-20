@@ -42,6 +42,42 @@ void main() {
     });
   });
 
+  group('Environment.shouldFallbackToDefaultEnv', () {
+    test('falls back when development env is still placeholder', () {
+      expect(
+        Environment.shouldFallbackToDefaultEnv(
+          loadedEnvFile: Environment.developmentEnvFile,
+          supabaseUrl: 'https://your-dev-project.supabase.co',
+          supabaseAnonKey: 'your-dev-anon-key',
+        ),
+        isTrue,
+      );
+    });
+
+    test('does not fall back when development env is valid', () {
+      expect(
+        Environment.shouldFallbackToDefaultEnv(
+          loadedEnvFile: Environment.developmentEnvFile,
+          supabaseUrl: 'https://real-project.supabase.co',
+          supabaseAnonKey: _testAnonKey,
+        ),
+        isFalse,
+      );
+    });
+
+    test('does not fall back for the default env file', () {
+      expect(
+        Environment.shouldFallbackToDefaultEnv(
+          loadedEnvFile: Environment.defaultEnvFile,
+          supabaseUrl: 'https://test-placeholder.supabase.co',
+          supabaseAnonKey:
+              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder-test-signature-not-real-key-for-ci-only-12345678901234567890',
+        ),
+        isFalse,
+      );
+    });
+  });
+
   group('Environment.describeSupabaseConfigurationIssue', () {
     test('reports placeholder URL values', () {
       final issue = Environment.describeSupabaseConfigurationIssue(

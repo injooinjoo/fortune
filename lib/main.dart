@@ -58,8 +58,20 @@ void main() async {
       TestAuthService.enableTestLogging();
     } else {
       await dotenv.dotenv.load(fileName: envFile);
+      if (Environment.shouldFallbackToDefaultEnv(loadedEnvFile: envFile)) {
+        debugPrint(
+          '⚠️ [STARTUP] $envFile has placeholder Supabase config, falling back to ${Environment.defaultEnvFile}',
+        );
+        await dotenv.dotenv.load(fileName: Environment.defaultEnvFile);
+      }
     }
-    debugPrint('🚀 [STARTUP] Environment variables loaded from $envFile');
+    final resolvedEnvFile = !isTestMode &&
+            Environment.shouldFallbackToDefaultEnv(loadedEnvFile: envFile)
+        ? Environment.defaultEnvFile
+        : envFile;
+    debugPrint(
+      '🚀 [STARTUP] Environment variables loaded from $resolvedEnvFile',
+    );
   } catch (e) {
     debugPrint('Warning: Could not load .env file: $e');
   }

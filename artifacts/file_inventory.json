@@ -20263,6 +20263,7 @@
         "lib/core/services/supabase_connection_service.dart",
         "lib/core/utils/logger.dart",
         "lib/data/services/fortune_api_service_edge_functions.dart",
+        "lib/main.dart",
         "lib/screens/auth/callback_page.dart",
         "lib/services/analytics_service.dart",
         "lib/services/kakao_share_service.dart",
