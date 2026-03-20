@@ -59,7 +59,9 @@
 
 ## 5. Planned Changes
 - Files to edit:
-  - None.
+  1. `artifacts/file_inventory.json` (if repository guard regeneration is required)
+  2. `docs/development/FILE_INVENTORY.md` (if repository guard regeneration is required)
+  3. `docs/development/UNUSED_CANDIDATES.md` (if repository guard regeneration is required)
 - Files to create:
   1. `docs/development/reports/2026-03-21_release_risk_audit_discovery.md`
   2. `docs/development/reports/2026-03-21_release_risk_register.md`

@@ -44,7 +44,7 @@
   - Command: `npm run source-inventory:check`
   - Result: **PASS**
   - Notes:
-    - Completed successfully after the new report files were added.
+    - Completed successfully after regenerating repository inventory outputs.
 - Figma/design guard:
   - Command: `npm run figma:guard`
   - Result: **FAIL (blocked by unrelated dirty worktree)**
@@ -67,12 +67,16 @@
 3. `docs/development/reports/2026-03-21_release_improvement_proposal.md` - professional remediation proposal grouped by subsystem.
 4. `docs/development/reports/2026-03-21_release_execution_roadmap.md` - immediate / next sprint / structural execution roadmap.
 5. `docs/development/reports/2026-03-21_release_risk_audit_verify.md` - verification record for this task.
+6. `docs/development/FILE_INVENTORY.md` - regenerated source inventory summary required by CI pipeline.
+7. `docs/development/UNUSED_CANDIDATES.md` - regenerated unused-candidate inventory required by CI pipeline.
+8. `artifacts/file_inventory.json` - regenerated machine-readable inventory required by CI pipeline.
 
 ## 5. Risks and Follow-ups
 - Known risks:
   - `flutter analyze` is still non-clean on the existing repo baseline.
   - `figma:guard` is currently red because unrelated UI changes were already present in the working tree.
   - The repo remains in a dirty state outside this task.
+  - The first push failed `CI Pipeline` because source inventory outputs had not yet been regenerated; this was remediated locally by running `python3 scripts/source_inventory.py generate`.
 - Deferred items:
   - No runtime fixes were applied in this task.
   - The roadmap items from `2026-03-21_release_execution_roadmap.md` remain to be implemented.

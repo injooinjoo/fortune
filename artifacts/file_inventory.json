@@ -19477,6 +19477,8 @@
       ],
       "path": "docs/development/FILE_INVENTORY.md",
       "referenced_by": [
+        "docs/development/reports/2026-03-21_release_risk_audit_discovery.md",
+        "docs/development/reports/2026-03-21_release_risk_audit_verify.md",
         "scripts/source_inventory.py"
       ],
       "runtime_reachable": false,
@@ -19607,6 +19609,8 @@
       ],
       "path": "docs/development/UNUSED_CANDIDATES.md",
       "referenced_by": [
+        "docs/development/reports/2026-03-21_release_risk_audit_discovery.md",
+        "docs/development/reports/2026-03-21_release_risk_audit_verify.md",
         "scripts/source_inventory.py"
       ],
       "runtime_reachable": false,
@@ -28124,6 +28128,7 @@
       "notes": [],
       "path": "scripts/source_inventory.py",
       "referenced_by": [
+        "docs/development/reports/2026-03-21_release_risk_audit_verify.md",
         "scripts/source_inventory.py"
       ],
       "runtime_reachable": false,
