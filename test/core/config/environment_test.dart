@@ -10,6 +10,38 @@ SupabaseClient _createTestSupabaseClient(String url) {
 }
 
 void main() {
+  group('Environment.resolveRuntimeEnvFile', () {
+    test('uses .env for test mode', () {
+      expect(
+        Environment.resolveRuntimeEnvFile(
+          isTestMode: true,
+          isReleaseMode: false,
+        ),
+        Environment.defaultEnvFile,
+      );
+    });
+
+    test('uses .env.development for debug runtime', () {
+      expect(
+        Environment.resolveRuntimeEnvFile(
+          isTestMode: false,
+          isReleaseMode: false,
+        ),
+        Environment.developmentEnvFile,
+      );
+    });
+
+    test('uses .env for release runtime', () {
+      expect(
+        Environment.resolveRuntimeEnvFile(
+          isTestMode: false,
+          isReleaseMode: true,
+        ),
+        Environment.defaultEnvFile,
+      );
+    });
+  });
+
   group('Environment.describeSupabaseConfigurationIssue', () {
     test('reports placeholder URL values', () {
       final issue = Environment.describeSupabaseConfigurationIssue(

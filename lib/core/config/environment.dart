@@ -5,7 +5,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 /// 환경 설정 관리 클래스
 /// 보안: 모든 API 키와 민감한 정보는 환경 변수로 관리
 class Environment {
-  static const String _envFile = '.env';
+  static const String defaultEnvFile = '.env';
+  static const String developmentEnvFile = '.env.development';
 
   // 환경 타입
   static const String development = 'development';
@@ -181,10 +182,29 @@ class Environment {
   static bool get hasValidSupabaseConfiguration =>
       describeSupabaseConfigurationIssue() == null;
 
+  static String resolveRuntimeEnvFile({
+    required bool isTestMode,
+    bool isReleaseMode = kReleaseMode,
+  }) {
+    if (isTestMode || isReleaseMode) {
+      return defaultEnvFile;
+    }
+
+    return developmentEnvFile;
+  }
+
   // 환경 변수 초기화
-  static Future<void> initialize() async {
+  static Future<void> initialize({
+    bool isTestMode = false,
+    bool isReleaseMode = kReleaseMode,
+  }) async {
     try {
-      await dotenv.load(fileName: _envFile);
+      await dotenv.load(
+        fileName: resolveRuntimeEnvFile(
+          isTestMode: isTestMode,
+          isReleaseMode: isReleaseMode,
+        ),
+      );
     } catch (e) {
       // 웹 환경에서 .env 파일을 찾을 수 없을 때의 대체 처리
       if (kIsWeb) {

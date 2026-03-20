@@ -12,6 +12,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'l10n/app_localizations.dart';
 
+import 'core/config/environment.dart';
 import 'core/utils/logger.dart';
 import 'firebase_options_secure.dart';
 import 'routes/route_config.dart';
@@ -45,15 +46,20 @@ void main() async {
   try {
     // Load environment variables - check for test environment first
     debugPrint('🚀 [STARTUP] Loading environment variables...');
-    if (TestAuthService.isTestMode()) {
+    final isTestMode = TestAuthService.isTestMode();
+    final envFile = Environment.resolveRuntimeEnvFile(
+      isTestMode: isTestMode,
+      isReleaseMode: kReleaseMode,
+    );
+    if (isTestMode) {
       debugPrint('🔧 [TEST] Running in test mode...');
       // CI copies test env values into .env; always load .env
-      await dotenv.dotenv.load(fileName: '.env');
+      await dotenv.dotenv.load(fileName: envFile);
       TestAuthService.enableTestLogging();
     } else {
-      await dotenv.dotenv.load(fileName: '.env');
+      await dotenv.dotenv.load(fileName: envFile);
     }
-    debugPrint('🚀 [STARTUP] Environment variables loaded');
+    debugPrint('🚀 [STARTUP] Environment variables loaded from $envFile');
   } catch (e) {
     debugPrint('Warning: Could not load .env file: $e');
   }
