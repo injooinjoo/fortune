@@ -247,14 +247,14 @@ class FortuneDosDontsCard extends StatelessWidget {
           color: colors.border.withValues(alpha: 0.35),
         ),
       ),
-      child: IntrinsicHeight(
-        child: Row(
+      child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (dosList.isNotEmpty)
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       '✅ DO',
@@ -279,6 +279,7 @@ class FortuneDosDontsCard extends StatelessWidget {
             if (dosList.isNotEmpty && dontsList.isNotEmpty)
               Container(
                 width: 1,
+                height: 60,
                 margin: const EdgeInsets.symmetric(horizontal: DSSpacing.sm),
                 color: colors.border.withValues(alpha: 0.35),
               ),
@@ -286,6 +287,7 @@ class FortuneDosDontsCard extends StatelessWidget {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       '❌ DON\'T',
@@ -312,7 +314,6 @@ class FortuneDosDontsCard extends StatelessWidget {
                 ),
               ),
           ],
-        ),
       ),
     );
   }
