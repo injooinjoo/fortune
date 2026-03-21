@@ -16,6 +16,15 @@ class _AppleSignInCancelledException implements Exception {
   String toString() => '사용자가 Apple 로그인을 취소했습니다.';
 }
 
+class _AppleSignInFailedException implements Exception {
+  _AppleSignInFailedException(this.message);
+
+  final String message;
+
+  @override
+  String toString() => message;
+}
+
 class AppleAuthProvider extends BaseSocialAuthProvider {
   AppleAuthProvider(
     super.supabase,
@@ -25,6 +34,7 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
     Future<bool> Function()? shouldUseNativeAppleSignInOverride,
     Future<AuthResponse?> Function()? nativeSignInOverride,
     Future<SocialAuthAttemptResult> Function()? oauthSignInOverride,
+    Duration nativeRetryDelay = const Duration(seconds: 1),
     Duration oauthRetryDelay = const Duration(seconds: 2),
   })  : _isWebOverride = isWebOverride,
         _isIOSOverride = isIOSOverride,
@@ -32,6 +42,7 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
             shouldUseNativeAppleSignInOverride,
         _nativeSignInOverride = nativeSignInOverride,
         _oauthSignInOverride = oauthSignInOverride,
+        _nativeRetryDelay = nativeRetryDelay,
         _oauthRetryDelay = oauthRetryDelay,
         _deviceInfo = DeviceInfoPlugin();
 
@@ -43,6 +54,7 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
   final Future<bool> Function()? _shouldUseNativeAppleSignInOverride;
   final Future<AuthResponse?> Function()? _nativeSignInOverride;
   final Future<SocialAuthAttemptResult> Function()? _oauthSignInOverride;
+  final Duration _nativeRetryDelay;
   final Duration _oauthRetryDelay;
   final DeviceInfoPlugin _deviceInfo;
 
@@ -64,31 +76,10 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
       final shouldUseNativeAppleSignIn = await _shouldUseNativeAppleSignIn();
 
       if (shouldUseNativeAppleSignIn) {
-        Logger.info('Using native Apple Sign-In for iPhone');
-        final nativeResponse = await _signInWithAppleNative();
-        if (nativeResponse?.user != null) {
-          return SocialAuthAttemptResult.authenticated(nativeResponse!);
-        }
-
-        Logger.warning(
-            'Apple native sign-in did not return a valid session, fallback to OAuth flow');
-        try {
-          return await _signInWithAppleOAuth();
-        } catch (oauthError) {
-          if (_isCancellationError(oauthError)) rethrow;
-
-          // OAuth도 실패 시 2초 대기 후 1회 재시도
-          final retryDelayLabel = _oauthRetryDelay.inMilliseconds % 1000 == 0
-              ? '${_oauthRetryDelay.inSeconds}초'
-              : '${_oauthRetryDelay.inMilliseconds}ms';
-          Logger.warning(
-              '[AppleAuthProvider] OAuth fallback 실패, $retryDelayLabel 후 재시도: $oauthError');
-          await Future<void>.delayed(_oauthRetryDelay);
-          return await _signInWithAppleOAuth();
-        }
+        return await _signInWithAppleNativePreferred();
       } else {
         Logger.info('Using OAuth for Apple Sign-In (web/Android/iPad)');
-        return await _signInWithAppleOAuth();
+        return await _signInWithAppleOAuthWithRetry();
       }
     } catch (error) {
       if (_isCancellationError(error)) {
@@ -98,6 +89,67 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
       Logger.warning(
           '[AppleAuthProvider] Apple 로그인 실패 (선택적 기능, 다른 로그인 방법 사용 권장): $error');
       rethrow;
+    }
+  }
+
+  Future<SocialAuthAttemptResult> _signInWithAppleNativePreferred() async {
+    Logger.info('Using native Apple Sign-In for iPhone');
+
+    Object? lastError;
+
+    for (var attempt = 1; attempt <= 2; attempt++) {
+      try {
+        final nativeResponse = await _signInWithAppleNative();
+        if (nativeResponse?.user != null) {
+          return SocialAuthAttemptResult.authenticated(nativeResponse!);
+        }
+
+        lastError = _AppleSignInFailedException(
+          'Apple 로그인 세션을 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.',
+        );
+      } catch (error) {
+        if (_isCancellationError(error)) {
+          rethrow;
+        }
+        lastError = error;
+      }
+
+      if (attempt == 2) {
+        break;
+      }
+
+      final retryDelayLabel = _nativeRetryDelay.inMilliseconds % 1000 == 0
+          ? '${_nativeRetryDelay.inSeconds}초'
+          : '${_nativeRetryDelay.inMilliseconds}ms';
+      Logger.warning(
+        '[AppleAuthProvider] Native Apple 로그인 재시도 준비 ($attempt/2, 대기: $retryDelayLabel)',
+      );
+      await Future<void>.delayed(_nativeRetryDelay);
+    }
+
+    Logger.warning(
+      '[AppleAuthProvider] iPhone에서 web OAuth fallback 차단, native Apple 로그인 실패 유지: $lastError',
+    );
+    throw _AppleSignInFailedException(
+      'Apple 로그인을 완료하지 못했습니다. 잠시 후 다시 시도해 주세요.',
+    );
+  }
+
+  Future<SocialAuthAttemptResult> _signInWithAppleOAuthWithRetry() async {
+    try {
+      return await _signInWithAppleOAuth();
+    } catch (oauthError) {
+      if (_isCancellationError(oauthError)) {
+        rethrow;
+      }
+
+      final retryDelayLabel = _oauthRetryDelay.inMilliseconds % 1000 == 0
+          ? '${_oauthRetryDelay.inSeconds}초'
+          : '${_oauthRetryDelay.inMilliseconds}ms';
+      Logger.warning(
+          '[AppleAuthProvider] OAuth fallback 실패, $retryDelayLabel 후 재시도: $oauthError');
+      await Future<void>.delayed(_oauthRetryDelay);
+      return await _signInWithAppleOAuth();
     }
   }
 
@@ -180,19 +232,9 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
         throw Exception('Failed to obtain Apple ID token');
       }
 
-      // 30초 타임아웃으로 네트워크 지연 대응 (iOS 26 프라이버시 릴레이/IPv6/NAT64 환경 고려)
-      final response = await supabase.auth
-          .signInWithIdToken(
-        provider: OAuthProvider.apple,
+      final response = await _exchangeAppleIdTokenForSession(
         idToken: idToken,
-        nonce: rawNonce,
-      )
-          .timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          Logger.warning('[AppleAuthProvider] signInWithIdToken 타임아웃 (30초)');
-          throw TimeoutException('Apple 인증 서버 응답 지연. 잠시 후 다시 시도해 주세요.');
-        },
+        rawNonce: rawNonce,
       );
 
       Logger.securityCheckpoint('Apple: ${response.user?.id}');
@@ -219,24 +261,78 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
       return await _handleAppleError(e);
     } catch (error) {
       Logger.warning(
-          '[AppleAuthProvider] Native Apple 로그인 실패 (${error.runtimeType}), OAuth fallback 시도: $error');
+          '[AppleAuthProvider] Native Apple 로그인 실패 (${error.runtimeType}), 상위 레이어에서 복구 여부 결정: $error');
 
       // 사용자 취소인 경우에만 rethrow (타입 기반 감지로 iOS 26 호환성 확보)
       if (error is _AppleSignInCancelledException) {
         rethrow;
       }
 
-      // 그 외 모든 에러 → null 반환 → signIn()에서 OAuth fallback 트리거
+      // 그 외 모든 에러 → null 반환 → signIn() 상위 레이어에서 재시도/후속 처리 결정
       Logger.info(
-          '[AppleAuthProvider] OAuth fallback 활성화 (에러 타입: ${error.runtimeType})');
+          '[AppleAuthProvider] Native 후속 처리 위임 (에러 타입: ${error.runtimeType})');
       return null;
     }
+  }
+
+  Future<AuthResponse> _exchangeAppleIdTokenForSession({
+    required String idToken,
+    required String rawNonce,
+  }) async {
+    Object? lastError;
+
+    for (var attempt = 1; attempt <= 2; attempt++) {
+      try {
+        // 30초 타임아웃으로 네트워크 지연 대응 (iOS 26 프라이버시 릴레이/IPv6/NAT64 환경 고려)
+        return await supabase.auth
+            .signInWithIdToken(
+          provider: OAuthProvider.apple,
+          idToken: idToken,
+          nonce: rawNonce,
+        )
+            .timeout(
+          const Duration(seconds: 30),
+          onTimeout: () {
+            Logger.warning('[AppleAuthProvider] signInWithIdToken 타임아웃 (30초)');
+            throw TimeoutException('Apple 인증 서버 응답 지연. 잠시 후 다시 시도해 주세요.');
+          },
+        );
+      } catch (error) {
+        lastError = error;
+        if (!_isRecoverableNativeSessionError(error) || attempt == 2) {
+          rethrow;
+        }
+
+        Logger.warning(
+          '[AppleAuthProvider] signInWithIdToken 재시도 ($attempt/2): $error',
+        );
+        await Future<void>.delayed(const Duration(seconds: 1));
+      }
+    }
+
+    throw lastError ??
+        _AppleSignInFailedException(
+          'Apple 로그인을 완료하지 못했습니다. 잠시 후 다시 시도해 주세요.',
+        );
+  }
+
+  bool _isRecoverableNativeSessionError(Object error) {
+    if (error is TimeoutException) {
+      return true;
+    }
+
+    final errorString = error.toString().toLowerCase();
+    return errorString.contains('network') ||
+        errorString.contains('socket') ||
+        errorString.contains('timed out') ||
+        errorString.contains('timeout') ||
+        errorString.contains('temporarily unavailable');
   }
 
   /// Apple Sign-In 에러 처리
   /// - canceled: 사용자 취소 → 예외 throw (로그인 중단)
   /// - Error 1000: iPad 환경 → 1회 재시도 후 OAuth fallback
-  /// - 기타 에러: null 반환 (OAuth fallback 트리거)
+  /// - 기타 에러: null 반환 (상위 레이어가 후속 처리 결정)
   Future<AuthResponse?> _handleAppleError(
       SignInWithAppleAuthorizationException e) async {
     if (e.code == AuthorizationErrorCode.canceled) {
@@ -273,11 +369,11 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
       Logger.info('[AppleAuthProvider] Error 1000 재시도 한도 초과, OAuth로 전환');
     }
 
-    // 나머지 모든 에러는 OAuth fallback 트리거
+    // 나머지 모든 에러는 상위 레이어가 후속 처리 결정
     Logger.warning(
-        '[AppleAuthProvider] Native Apple Sign-In 실패, OAuth fallback 시도: ${e.code} - ${e.message}');
+        '[AppleAuthProvider] Native Apple Sign-In 실패, 상위 레이어에서 후속 처리 결정: ${e.code} - ${e.message}');
 
-    // null 반환 → signIn()에서 OAuth fallback 실행
+    // null 반환 → signIn() 상위 레이어에서 재시도/후속 처리 실행
     return null;
   }
 

@@ -5,6 +5,8 @@ import 'package:fortune/services/social_auth/base/social_auth_attempt_result.dar
 import 'package:fortune/services/social_auth/providers/apple_auth_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../mocks/mock_auth_services.dart';
+
 final _testAnonKey = List.filled(120, 'a').join();
 
 SupabaseClient _createTestSupabaseClient(String url) {
@@ -21,24 +23,43 @@ void main() {
     );
   });
 
-  test('Apple native fallback returns pending external auth on iOS', () async {
+  test('Apple retries native sign-in on iPhone before succeeding', () async {
+    var nativeCallCount = 0;
+    var oauthCallCount = 0;
+    final user = AuthTestData.createAppleUser();
+    final session = AuthTestData.createMockSession(user: user);
+    final authResponse =
+        AuthTestData.createMockAuthResponse(session: session, user: user);
+
     final provider = AppleAuthProvider(
       _createTestSupabaseClient('https://real-project.supabase.co'),
       ProfileCache(),
       isIOSOverride: true,
       shouldUseNativeAppleSignInOverride: () async => true,
-      nativeSignInOverride: () async => null,
-      oauthSignInOverride: () async =>
-          const SocialAuthAttemptResult.pendingExternalAuth(),
+      nativeRetryDelay: Duration.zero,
+      nativeSignInOverride: () async {
+        nativeCallCount++;
+        if (nativeCallCount == 1) {
+          return null;
+        }
+        return authResponse;
+      },
+      oauthSignInOverride: () async {
+        oauthCallCount++;
+        return const SocialAuthAttemptResult.pendingExternalAuth();
+      },
     );
 
     final result = await provider.signIn();
 
-    expect(result.isPendingExternalAuth, isTrue);
-    expect(result.isAuthenticated, isFalse);
+    expect(result.isAuthenticated, isTrue);
+    expect(nativeCallCount, 2);
+    expect(oauthCallCount, 0);
   });
 
-  test('Apple retries OAuth fallback once after launch failure', () async {
+  test('Apple does not fall back to OAuth when iPhone native sign-in fails',
+      () async {
+    var nativeCallCount = 0;
     var oauthCallCount = 0;
 
     final provider = AppleAuthProvider(
@@ -46,7 +67,42 @@ void main() {
       ProfileCache(),
       isIOSOverride: true,
       shouldUseNativeAppleSignInOverride: () async => true,
-      nativeSignInOverride: () async => null,
+      nativeRetryDelay: Duration.zero,
+      nativeSignInOverride: () async {
+        nativeCallCount++;
+        return null;
+      },
+      oauthSignInOverride: () async {
+        oauthCallCount++;
+        return const SocialAuthAttemptResult.pendingExternalAuth();
+      },
+    );
+
+    await expectLater(
+      provider.signIn(),
+      throwsA(
+        predicate(
+          (error) => error
+              .toString()
+              .contains('Apple 로그인을 완료하지 못했습니다. 잠시 후 다시 시도해 주세요.'),
+        ),
+      ),
+    );
+
+    expect(nativeCallCount, 2);
+    expect(oauthCallCount, 0);
+  });
+
+  test(
+      'Apple retries OAuth fallback once on non-native devices after launch failure',
+      () async {
+    var oauthCallCount = 0;
+
+    final provider = AppleAuthProvider(
+      _createTestSupabaseClient('https://real-project.supabase.co'),
+      ProfileCache(),
+      isIOSOverride: true,
+      shouldUseNativeAppleSignInOverride: () async => false,
       oauthRetryDelay: Duration.zero,
       oauthSignInOverride: () async {
         oauthCallCount++;
@@ -63,7 +119,8 @@ void main() {
     expect(oauthCallCount, 2);
   });
 
-  test('Apple treats OAuth cancellation as a cancelled login attempt',
+  test(
+      'Apple treats OAuth cancellation as a cancelled login attempt on OAuth flow',
       () async {
     var oauthCallCount = 0;
 
@@ -71,8 +128,7 @@ void main() {
       _createTestSupabaseClient('https://real-project.supabase.co'),
       ProfileCache(),
       isIOSOverride: true,
-      shouldUseNativeAppleSignInOverride: () async => true,
-      nativeSignInOverride: () async => null,
+      shouldUseNativeAppleSignInOverride: () async => false,
       oauthRetryDelay: Duration.zero,
       oauthSignInOverride: () async {
         oauthCallCount++;
