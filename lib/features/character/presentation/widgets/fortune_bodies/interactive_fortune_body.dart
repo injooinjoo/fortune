@@ -52,22 +52,18 @@ class InteractiveFortuneBody extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         FortuneEmojiHeader(emoji: '👗', text: summary),
-
         if (styleType != null) ...[
           const SizedBox(height: DSSpacing.sm),
           Center(child: FortuneTagPillWrap(tags: ['👔 $styleType'])),
         ],
-
         if (highlights.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.sm),
           Center(child: FortuneTagPillWrap(tags: highlights)),
         ],
-
         if (colorAdvice != null) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneTipCard(emoji: '🎨', text: colorAdvice),
         ],
-
         if (styleTips.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneSectionCard(
@@ -76,17 +72,14 @@ class InteractiveFortuneBody extends StatelessWidget {
             child: FortuneBulletList(items: styleTips, bullet: '👗'),
           ),
         ],
-
         if (specialTip != null) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneTipCard(emoji: '💡', text: specialTip),
         ],
-
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneLuckyItemGrid(items: luckyItems),
         ],
-
         if (recommendations.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneSectionCard(
@@ -95,7 +88,6 @@ class InteractiveFortuneBody extends StatelessWidget {
             child: FortuneBulletList(items: recommendations, bullet: '💫'),
           ),
         ],
-
         if (warnings.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneSectionCard(

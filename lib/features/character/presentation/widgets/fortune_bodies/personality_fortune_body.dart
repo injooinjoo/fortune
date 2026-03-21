@@ -172,11 +172,9 @@ class PersonalityFortuneBody extends StatelessWidget {
           if (scoreA != null || scoreB != null) ...[
             const SizedBox(height: DSSpacing.sm),
             if (scoreA != null)
-              FortuneProgressBar(
-                  label: dim.keyA, score: scoreA, emoji: '🔵'),
+              FortuneProgressBar(label: dim.keyA, score: scoreA, emoji: '🔵'),
             if (scoreB != null)
-              FortuneProgressBar(
-                  label: dim.keyB, score: scoreB, emoji: '🟣'),
+              FortuneProgressBar(label: dim.keyB, score: scoreB, emoji: '🟣'),
           ],
           // Fortune text
           if (fortuneA != null || fortuneB != null) ...[
@@ -193,12 +191,12 @@ class PersonalityFortuneBody extends StatelessWidget {
             const SizedBox(height: DSSpacing.xs),
             if (tipA != null)
               Text('💡 ${dim.keyA}: $tipA',
-                  style: context.labelSmall.copyWith(
-                      color: colors.textSecondary, height: 1.4)),
+                  style: context.labelSmall
+                      .copyWith(color: colors.textSecondary, height: 1.4)),
             if (tipB != null)
               Text('💡 ${dim.keyB}: $tipB',
-                  style: context.labelSmall.copyWith(
-                      color: colors.textSecondary, height: 1.4)),
+                  style: context.labelSmall
+                      .copyWith(color: colors.textSecondary, height: 1.4)),
           ],
         ],
       ),
@@ -210,11 +208,10 @@ class PersonalityFortuneBody extends StatelessWidget {
     return Column(
       children: [
         Text(key,
-            style: context.headingSmall
-                .copyWith(fontWeight: FontWeight.w800)),
+            style: context.headingSmall.copyWith(fontWeight: FontWeight.w800)),
         Text(label,
-            style: context.labelSmall.copyWith(
-                color: context.colors.textSecondary)),
+            style: context.labelSmall
+                .copyWith(color: context.colors.textSecondary)),
       ],
     );
   }
@@ -229,22 +226,24 @@ class PersonalityFortuneBody extends StatelessWidget {
         fortuneAsMap(componentData['current_status']);
     final weeklyForecast = fortuneAsMap(componentData['weeklyForecast']) ??
         fortuneAsMap(componentData['weekly_forecast']);
-    final importantDates =
-        fortuneMapList(componentData['importantDates']) +
-            fortuneMapList(componentData['important_dates']);
-    final lifestyleAdvice =
-        fortuneAsMap(componentData['lifestyleAdvice']) ??
-            fortuneAsMap(componentData['lifestyle_advice']);
+    final importantDates = fortuneMapList(componentData['importantDates']) +
+        fortuneMapList(componentData['important_dates']);
+    final lifestyleAdvice = fortuneAsMap(componentData['lifestyleAdvice']) ??
+        fortuneAsMap(componentData['lifestyle_advice']);
     final healthTips = fortuneAsMap(componentData['healthTips']) ??
         fortuneAsMap(componentData['health_tips']);
     final luckyItems = fortuneAsMap(componentData['luckyItems']);
     final recommendations = fortuneStrList(componentData['recommendations']);
     final warnings = fortuneStrList(componentData['warnings']);
 
-    final physical = fortuneInt(status?['physical_rate'] ?? status?['physicalRate']);
-    final emotional = fortuneInt(status?['emotional_rate'] ?? status?['emotionalRate']);
-    final intellectual = fortuneInt(status?['intellectual_rate'] ?? status?['intellectualRate']);
-    final assessment = fortuneStr(status?['overall_assessment'] ?? status?['overallAssessment']);
+    final physical =
+        fortuneInt(status?['physical_rate'] ?? status?['physicalRate']);
+    final emotional =
+        fortuneInt(status?['emotional_rate'] ?? status?['emotionalRate']);
+    final intellectual =
+        fortuneInt(status?['intellectual_rate'] ?? status?['intellectualRate']);
+    final assessment = fortuneStr(
+        status?['overall_assessment'] ?? status?['overallAssessment']);
     final bestTime = fortuneStr(status?['best_time'] ?? status?['bestTime']);
 
     return Column(
@@ -261,8 +260,7 @@ class PersonalityFortuneBody extends StatelessWidget {
             child: Column(
               children: [
                 if (physical != null)
-                  FortuneProgressBar(
-                      label: '신체', score: physical, emoji: '💪'),
+                  FortuneProgressBar(label: '신체', score: physical, emoji: '💪'),
                 if (emotional != null)
                   FortuneProgressBar(
                       label: '감정', score: emotional, emoji: '💜'),
@@ -353,7 +351,8 @@ class PersonalityFortuneBody extends StatelessWidget {
     final bestDay = fortuneStr(forecast['best_day'] ?? forecast['bestDay']);
     final worstDay = fortuneStr(forecast['worst_day'] ?? forecast['worstDay']);
     final overview = fortuneStr(forecast['overview']);
-    final advice = fortuneStr(forecast['weekly_advice'] ?? forecast['weeklyAdvice']);
+    final advice =
+        fortuneStr(forecast['weekly_advice'] ?? forecast['weeklyAdvice']);
 
     return FortuneSectionCard(
       emoji: '📅',
@@ -367,8 +366,7 @@ class PersonalityFortuneBody extends StatelessWidget {
             FortuneMetricRow(emoji: '🔴', label: '주의할 날', value: worstDay),
           if (overview != null) ...[
             const SizedBox(height: DSSpacing.xs),
-            Text(overview,
-                style: context.bodySmall.copyWith(height: 1.6)),
+            Text(overview, style: context.bodySmall.copyWith(height: 1.6)),
           ],
           if (advice != null) ...[
             const SizedBox(height: DSSpacing.sm),
@@ -383,9 +381,12 @@ class PersonalityFortuneBody extends StatelessWidget {
       BuildContext context, Map<String, dynamic> advice) {
     final items = <String>[];
     final sleep = fortuneStr(advice['sleep_pattern'] ?? advice['sleepPattern']);
-    final exercise = fortuneStr(advice['exercise_timing'] ?? advice['exerciseTiming']);
-    final nutrition = fortuneStr(advice['nutrition_tip'] ?? advice['nutritionTip']);
-    final stress = fortuneStr(advice['stress_management'] ?? advice['stressManagement']);
+    final exercise =
+        fortuneStr(advice['exercise_timing'] ?? advice['exerciseTiming']);
+    final nutrition =
+        fortuneStr(advice['nutrition_tip'] ?? advice['nutritionTip']);
+    final stress =
+        fortuneStr(advice['stress_management'] ?? advice['stressManagement']);
     if (sleep != null) items.add('😴 수면: $sleep');
     if (exercise != null) items.add('🏃 운동: $exercise');
     if (nutrition != null) items.add('🥗 영양: $nutrition');
@@ -399,10 +400,10 @@ class PersonalityFortuneBody extends StatelessWidget {
     );
   }
 
-  Widget _buildHealthTips(
-      BuildContext context, Map<String, dynamic> tips) {
+  Widget _buildHealthTips(BuildContext context, Map<String, dynamic> tips) {
     final items = <String>[];
-    final physical = fortuneStr(tips['physical_health'] ?? tips['physicalHealth']);
+    final physical =
+        fortuneStr(tips['physical_health'] ?? tips['physicalHealth']);
     final mental = fortuneStr(tips['mental_health'] ?? tips['mentalHealth']);
     final boost = fortuneStr(tips['energy_boost'] ?? tips['energyBoost']);
     final warning = fortuneStr(tips['warning_signs'] ?? tips['warningSign']);
@@ -423,7 +424,8 @@ class PersonalityFortuneBody extends StatelessWidget {
 
   Widget _buildGenericBody(BuildContext context, {required String emoji}) {
     final summary = fortuneStr(componentData['summary']) ??
-        fortuneStr(componentData['content']) ?? '결과를 분석했어요.';
+        fortuneStr(componentData['content']) ??
+        '결과를 분석했어요.';
     final highlights = fortuneStrList(componentData['highlights']);
     final luckyItems = fortuneAsMap(componentData['luckyItems']);
     final recommendations = fortuneStrList(componentData['recommendations']);

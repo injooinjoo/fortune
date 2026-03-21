@@ -76,8 +76,7 @@ class WealthFortuneBody extends StatelessWidget {
         ],
 
         // Investment insights
-        if (investmentInsights != null &&
-            investmentInsights.isNotEmpty) ...[
+        if (investmentInsights != null && investmentInsights.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           _buildInvestmentGrid(context, investmentInsights),
         ],
@@ -204,8 +203,7 @@ class WealthFortuneBody extends StatelessWidget {
           if (incomeEnergy != null)
             FortuneMetricRow(emoji: '📈', label: '수입 에너지', value: incomeEnergy),
           if (incomeDetail != null)
-            Text(incomeDetail,
-                style: context.bodySmall.copyWith(height: 1.6)),
+            Text(incomeDetail, style: context.bodySmall.copyWith(height: 1.6)),
           if (expenseWarning != null) ...[
             const SizedBox(height: DSSpacing.xs),
             FortuneTipCard(emoji: '💳', text: expenseWarning),
@@ -263,8 +261,7 @@ class WealthFortuneBody extends StatelessWidget {
             decoration: BoxDecoration(
               color: colors.surface,
               borderRadius: BorderRadius.circular(DSRadius.md),
-              border: Border.all(
-                  color: colors.border.withValues(alpha: 0.25)),
+              border: Border.all(color: colors.border.withValues(alpha: 0.25)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -284,8 +281,8 @@ class WealthFortuneBody extends StatelessWidget {
                 ],
                 if (analysis != null)
                   Text(analysis,
-                      style: context.labelSmall.copyWith(
-                          color: colors.textSecondary, height: 1.4),
+                      style: context.labelSmall
+                          .copyWith(color: colors.textSecondary, height: 1.4),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis),
               ],
@@ -331,15 +328,12 @@ class WealthFortuneBody extends StatelessWidget {
         '행운 아이템을 분석했어요.';
     final category = fortuneStr(componentData['selectedCategoryLabel']) ??
         fortuneStr(componentData['selectedCategory']);
-    final itemsByCategory =
-        fortuneAsMap(componentData['itemsByCategory']) ??
-            fortuneAsMap(componentData['items_by_category']);
-    final elementsAnalysis =
-        fortuneAsMap(componentData['elementsAnalysis']) ??
-            fortuneAsMap(componentData['elements_analysis']);
-    final todayPrediction =
-        fortuneStr(componentData['todayPrediction']) ??
-            fortuneStr(componentData['today_prediction']);
+    final itemsByCategory = fortuneAsMap(componentData['itemsByCategory']) ??
+        fortuneAsMap(componentData['items_by_category']);
+    final elementsAnalysis = fortuneAsMap(componentData['elementsAnalysis']) ??
+        fortuneAsMap(componentData['elements_analysis']);
+    final todayPrediction = fortuneStr(componentData['todayPrediction']) ??
+        fortuneStr(componentData['today_prediction']);
     final actions = fortuneStrList(componentData['actions']);
     final luckyItems = fortuneAsMap(componentData['luckyItems']);
     final recommendations = fortuneStrList(componentData['recommendations']);
@@ -349,33 +343,27 @@ class WealthFortuneBody extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         FortuneEmojiHeader(emoji: '🍀', text: summary),
-
         if (category != null) ...[
           const SizedBox(height: DSSpacing.sm),
           Center(child: FortuneTagPillWrap(tags: ['📂 $category'])),
         ],
-
         if (itemsByCategory != null && itemsByCategory.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           _buildCategoryItems(context, itemsByCategory),
         ],
-
         if (elementsAnalysis != null) ...[
           const SizedBox(height: DSSpacing.md),
           _buildElementsAnalysis(context, elementsAnalysis),
         ],
-
         if (todayPrediction != null) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneQuoteBlock(
               emoji: '🔮', title: '오늘의 예측', text: todayPrediction),
         ],
-
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneLuckyItemGrid(items: luckyItems),
         ],
-
         if (actions.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneSectionCard(
@@ -384,7 +372,6 @@ class WealthFortuneBody extends StatelessWidget {
             child: FortuneBulletList(items: actions, bullet: '🍀'),
           ),
         ],
-
         if (recommendations.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneSectionCard(
@@ -393,7 +380,6 @@ class WealthFortuneBody extends StatelessWidget {
             child: FortuneBulletList(items: recommendations, bullet: '💫'),
           ),
         ],
-
         if (warnings.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneSectionCard(
@@ -407,8 +393,7 @@ class WealthFortuneBody extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryItems(
-      BuildContext context, Map<String, dynamic> items) {
+  Widget _buildCategoryItems(BuildContext context, Map<String, dynamic> items) {
     final colors = context.colors;
     // Flatten all category items into a display list
     final allItems = <Widget>[];
@@ -421,7 +406,8 @@ class WealthFortuneBody extends StatelessWidget {
           final benefit = fortuneStr(map['benefit']) ??
               fortuneStr(map['reason']) ??
               fortuneStr(map['meaning']) ??
-              fortuneStr(map['usage']) ?? '';
+              fortuneStr(map['usage']) ??
+              '';
           allItems.add(
             Container(
               width: double.infinity,
@@ -484,8 +470,7 @@ class WealthFortuneBody extends StatelessWidget {
             FortuneMetricRow(emoji: '⚡', label: '현재 에너지', value: energy),
           if (compatColors.isNotEmpty) ...[
             const SizedBox(height: DSSpacing.xs),
-            FortuneTagPillWrap(
-                tags: compatColors.map((c) => '🎨 $c').toList()),
+            FortuneTagPillWrap(tags: compatColors.map((c) => '🎨 $c').toList()),
           ],
           if (tip != null) ...[
             const SizedBox(height: DSSpacing.sm),
@@ -511,17 +496,14 @@ class WealthFortuneBody extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         FortuneEmojiHeader(emoji: '🎰', text: summary),
-
         if (highlights.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.sm),
           Center(child: FortuneTagPillWrap(tags: highlights)),
         ],
-
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneLuckyItemGrid(items: luckyItems),
         ],
-
         if (recommendations.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneSectionCard(
@@ -530,7 +512,6 @@ class WealthFortuneBody extends StatelessWidget {
             child: FortuneBulletList(items: recommendations, bullet: '🎰'),
           ),
         ],
-
         if (warnings.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneSectionCard(

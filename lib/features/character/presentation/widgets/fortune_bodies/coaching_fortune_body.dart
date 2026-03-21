@@ -53,7 +53,6 @@ class CoachingFortuneBody extends StatelessWidget {
           const SizedBox(height: DSSpacing.sm),
           Center(child: FortuneTagPillWrap(tags: highlights)),
         ],
-
         if (insights.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneSectionCard(
@@ -62,7 +61,6 @@ class CoachingFortuneBody extends StatelessWidget {
             child: FortuneBulletList(items: insights, bullet: '🔍'),
           ),
         ],
-
         if (actionItems.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneSectionCard(
@@ -71,17 +69,14 @@ class CoachingFortuneBody extends StatelessWidget {
             child: FortuneBulletList(items: actionItems, bullet: '✅'),
           ),
         ],
-
         if (specialTip != null) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneTipCard(emoji: '💡', text: specialTip),
         ],
-
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneLuckyItemGrid(items: luckyItems),
         ],
-
         if (recommendations.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneSectionCard(
@@ -90,7 +85,6 @@ class CoachingFortuneBody extends StatelessWidget {
             child: FortuneBulletList(items: recommendations, bullet: '✨'),
           ),
         ],
-
         if (warnings.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneSectionCard(

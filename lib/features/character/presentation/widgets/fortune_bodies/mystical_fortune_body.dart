@@ -103,23 +103,19 @@ class MysticalFortuneBody extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (bestDir != null)
-                  FortuneMetricRow(
-                      emoji: '✅', label: '길방', value: bestDir),
+                  FortuneMetricRow(emoji: '✅', label: '길방', value: bestDir),
                 if (worstDir != null)
-                  FortuneMetricRow(
-                      emoji: '❌', label: '흉방', value: worstDir),
+                  FortuneMetricRow(emoji: '❌', label: '흉방', value: worstDir),
                 if (bestDirections.isNotEmpty) ...[
                   const SizedBox(height: DSSpacing.xs),
                   FortuneTagPillWrap(
-                    tags:
-                        bestDirections.map((d) => '✅ $d').toList(),
+                    tags: bestDirections.map((d) => '✅ $d').toList(),
                   ),
                 ],
                 if (avoidDirections.isNotEmpty) ...[
                   const SizedBox(height: DSSpacing.xs),
                   FortuneTagPillWrap(
-                    tags:
-                        avoidDirections.map((d) => '❌ $d').toList(),
+                    tags: avoidDirections.map((d) => '❌ $d').toList(),
                   ),
                 ],
                 if (dirAdvice != null) ...[

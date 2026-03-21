@@ -105,6 +105,16 @@ Additional official pages:
 - `lib/features/chat/presentation/widgets/survey/chat_survey_chips.dart`
 - `lib/features/chat/presentation/widgets/chat_saju_result_card.dart`
 - `lib/features/character/presentation/widgets/embedded_fortune_component.dart`
+- `lib/features/character/presentation/widgets/fortune_bodies/_fortune_body_shared.dart`
+- `lib/features/character/presentation/widgets/fortune_bodies/career_fortune_body.dart`
+- `lib/features/character/presentation/widgets/fortune_bodies/coaching_fortune_body.dart`
+- `lib/features/character/presentation/widgets/fortune_bodies/family_fortune_body.dart`
+- `lib/features/character/presentation/widgets/fortune_bodies/health_fortune_body.dart`
+- `lib/features/character/presentation/widgets/fortune_bodies/interactive_fortune_body.dart`
+- `lib/features/character/presentation/widgets/fortune_bodies/mystical_fortune_body.dart`
+- `lib/features/character/presentation/widgets/fortune_bodies/personality_fortune_body.dart`
+- `lib/features/character/presentation/widgets/fortune_bodies/relationship_fortune_body.dart`
+- `lib/features/character/presentation/widgets/fortune_bodies/wealth_fortune_body.dart`
 - `lib/features/character/presentation/widgets/haneul_fortune_result_widget.dart`
 - `lib/shared/components/section_header.dart`
 

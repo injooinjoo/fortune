@@ -4010,24 +4010,22 @@ $enrichedContext
               _stringValue(rawPayload?['today_trap']),
           'luckyColor': _stringValue(rawPayload?['luckyColor']) ??
               _stringValue(rawPayload?['lucky_color']),
-          'luckyNumber': rawPayload?['luckyNumber'] ??
-              rawPayload?['lucky_number'],
+          'luckyNumber':
+              rawPayload?['luckyNumber'] ?? rawPayload?['lucky_number'],
         });
         break;
       case 'biorhythm':
         payload.addAll({
           'currentStatus': _asMapValue(rawPayload?['currentStatus']) ??
               _asMapValue(rawPayload?['current_status']),
-          'weeklyForecast': _mapListValue(rawPayload?['weeklyForecast'])
-                  .isNotEmpty
-              ? _mapListValue(rawPayload?['weeklyForecast'])
-              : _mapListValue(rawPayload?['weekly_forecast']),
-          'importantDates':
-              _stringListValue(rawPayload?['importantDates']) ??
-                  _stringListValue(rawPayload?['important_dates']),
-          'lifestyleAdvice':
-              _stringListValue(rawPayload?['lifestyleAdvice']) ??
-                  _stringListValue(rawPayload?['lifestyle_advice']),
+          'weeklyForecast':
+              _mapListValue(rawPayload?['weeklyForecast']).isNotEmpty
+                  ? _mapListValue(rawPayload?['weeklyForecast'])
+                  : _mapListValue(rawPayload?['weekly_forecast']),
+          'importantDates': _stringListValue(rawPayload?['importantDates']) ??
+              _stringListValue(rawPayload?['important_dates']),
+          'lifestyleAdvice': _stringListValue(rawPayload?['lifestyleAdvice']) ??
+              _stringListValue(rawPayload?['lifestyle_advice']),
           'healthTips': _stringListValue(rawPayload?['healthTips']) ??
               _stringListValue(rawPayload?['health_tips']),
         });
@@ -4064,26 +4062,21 @@ $enrichedContext
           'activityRecommendation':
               _asMapValue(rawPayload?['activityRecommendation']) ??
                   _asMapValue(rawPayload?['activity_recommendation']),
-          'luckyItemsForPet':
-              _asMapValue(rawPayload?['luckyItemsForPet']) ??
-                  _asMapValue(rawPayload?['lucky_items_for_pet']),
+          'luckyItemsForPet': _asMapValue(rawPayload?['luckyItemsForPet']) ??
+              _asMapValue(rawPayload?['lucky_items_for_pet']),
         });
         break;
       // ─── P8: 풍수/이사 ───
       case 'moving':
         payload.addAll({
-          'fengshuiAnalysis':
-              _asMapValue(rawPayload?['fengshuiAnalysis']) ??
-                  _asMapValue(rawPayload?['fengshui_analysis']),
-          'directionAnalysis':
-              _asMapValue(rawPayload?['directionAnalysis']) ??
-                  _asMapValue(rawPayload?['direction_analysis']),
-          'bestDirections':
-              _stringListValue(rawPayload?['bestDirections']) ??
-                  _stringListValue(rawPayload?['best_directions']),
-          'avoidDirections':
-              _stringListValue(rawPayload?['avoidDirections']) ??
-                  _stringListValue(rawPayload?['avoid_directions']),
+          'fengshuiAnalysis': _asMapValue(rawPayload?['fengshuiAnalysis']) ??
+              _asMapValue(rawPayload?['fengshui_analysis']),
+          'directionAnalysis': _asMapValue(rawPayload?['directionAnalysis']) ??
+              _asMapValue(rawPayload?['direction_analysis']),
+          'bestDirections': _stringListValue(rawPayload?['bestDirections']) ??
+              _stringListValue(rawPayload?['best_directions']),
+          'avoidDirections': _stringListValue(rawPayload?['avoidDirections']) ??
+              _stringListValue(rawPayload?['avoid_directions']),
         });
         break;
     }

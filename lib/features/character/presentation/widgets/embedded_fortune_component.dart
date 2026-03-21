@@ -83,11 +83,26 @@ class EmbeddedFortuneComponent extends StatelessWidget {
   static const _wealthTypes = {'wealth', 'lucky-items', 'lotto'};
   static const _careerTypes = {'career', 'talent', 'exam'};
   static const _personalityTypes = {'mbti', 'biorhythm', 'personality-dna'};
-  static const _healthTypes = {'health', 'exercise', 'match-insight', 'breathing'};
+  static const _healthTypes = {
+    'health',
+    'exercise',
+    'match-insight',
+    'breathing'
+  };
   static const _familyTypes = {'family', 'pet-compatibility', 'naming'};
-  static const _interactiveTypes = {'game-enhance', 'wish', 'celebrity', 'ootd-evaluation'};
+  static const _interactiveTypes = {
+    'game-enhance',
+    'wish',
+    'celebrity',
+    'ootd-evaluation'
+  };
   static const _mysticalTypes = {'talisman', 'past-life', 'moving'};
-  static const _coachingTypes = {'coaching', 'decision', 'daily-review', 'weekly-review'};
+  static const _coachingTypes = {
+    'coaching',
+    'decision',
+    'daily-review',
+    'weekly-review'
+  };
 
   Widget _buildFortuneResultCard(BuildContext context) {
     final fortuneType = _stringValue(componentData['fortuneType']);

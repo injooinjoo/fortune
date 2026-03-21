@@ -53,17 +53,14 @@ class CareerFortuneBody extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         FortuneEmojiHeader(emoji: '💼', text: summary),
-
         if (phase != null) ...[
           const SizedBox(height: DSSpacing.sm),
           Center(child: FortuneTagPillWrap(tags: ['📍 $phase'])),
         ],
-
         if (highlights.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.sm),
           Center(child: FortuneTagPillWrap(tags: highlights)),
         ],
-
         if (roles.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneSectionCard(
@@ -72,17 +69,14 @@ class CareerFortuneBody extends StatelessWidget {
             child: FortuneTagPillWrap(tags: roles),
           ),
         ],
-
         if (strengths.isNotEmpty || challenges.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneDosDontsCard(dosList: strengths, dontsList: challenges),
         ],
-
         if (weeklyOutlook != null) ...[
           const SizedBox(height: DSSpacing.md),
           _buildWeeklyOutlook(context, weeklyOutlook),
         ],
-
         if (careerTips.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneSectionCard(
@@ -91,12 +85,10 @@ class CareerFortuneBody extends StatelessWidget {
             child: FortuneBulletList(items: careerTips, bullet: '💼'),
           ),
         ],
-
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneLuckyItemGrid(items: luckyItems),
         ],
-
         if (recommendations.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneSectionCard(
@@ -105,7 +97,6 @@ class CareerFortuneBody extends StatelessWidget {
             child: FortuneBulletList(items: recommendations, bullet: '💫'),
           ),
         ],
-
         if (warnings.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
           FortuneSectionCard(
@@ -168,8 +159,7 @@ class CareerFortuneBody extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        FortuneEmojiHeader(
-            emoji: '📝', text: statusMessage ?? summary),
+        FortuneEmojiHeader(emoji: '📝', text: statusMessage ?? summary),
 
         if (passGrade != null) ...[
           const SizedBox(height: DSSpacing.sm),
@@ -266,8 +256,7 @@ class CareerFortuneBody extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (intuition != null) ...[
-            FortuneProgressBar(
-                label: '직감력', score: intuition, emoji: '🎯'),
+            FortuneProgressBar(label: '직감력', score: intuition, emoji: '🎯'),
             if (intuitionDesc != null)
               Text(intuitionDesc,
                   style: context.labelSmall.copyWith(
@@ -275,8 +264,7 @@ class CareerFortuneBody extends StatelessWidget {
           ],
           if (defense != null) ...[
             const SizedBox(height: DSSpacing.xs),
-            FortuneProgressBar(
-                label: '멘탈', score: defense, emoji: '🛡️'),
+            FortuneProgressBar(label: '멘탈', score: defense, emoji: '🛡️'),
             if (defenseDesc != null)
               Text(defenseDesc,
                   style: context.labelSmall.copyWith(
@@ -322,15 +310,13 @@ class CareerFortuneBody extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                FortuneMetricRow(
-                    emoji: '📖', label: subject, value: focusText),
+                FortuneMetricRow(emoji: '📖', label: subject, value: focusText),
                 if (tip != null)
                   Padding(
                     padding: const EdgeInsets.only(left: 24),
                     child: Text('💡 $tip',
                         style: context.labelSmall.copyWith(
-                            color: context.colors.textSecondary,
-                            height: 1.4)),
+                            color: context.colors.textSecondary, height: 1.4)),
                   ),
               ],
             ),
@@ -355,15 +341,13 @@ class CareerFortuneBody extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                FortuneMetricRow(
-                    emoji: '📍', label: phase, value: action),
+                FortuneMetricRow(emoji: '📍', label: phase, value: action),
                 if (caution != null)
                   Padding(
                     padding: const EdgeInsets.only(left: 24),
                     child: Text('⚠️ $caution',
                         style: context.labelSmall.copyWith(
-                            color: context.colors.textSecondary,
-                            height: 1.4)),
+                            color: context.colors.textSecondary, height: 1.4)),
                   ),
               ],
             ),
@@ -404,8 +388,7 @@ class CareerFortuneBody extends StatelessWidget {
     );
   }
 
-  Widget _buildSpiritAnimal(
-      BuildContext context, Map<String, dynamic> animal) {
+  Widget _buildSpiritAnimal(BuildContext context, Map<String, dynamic> animal) {
     final name = fortuneStr(animal['animal']) ?? '수호 동물';
     final message = fortuneStr(animal['message']) ?? '';
     final direction = fortuneStr(animal['direction']);
@@ -414,7 +397,8 @@ class CareerFortuneBody extends StatelessWidget {
     return FortuneQuoteBlock(
       emoji: '🐾',
       title: '수호 동물: $name',
-      text: '$message${direction != null ? "\n🧭 $direction" : ""}${dirTip != null ? " · $dirTip" : ""}',
+      text:
+          '$message${direction != null ? "\n🧭 $direction" : ""}${dirTip != null ? " · $dirTip" : ""}',
     );
   }
 

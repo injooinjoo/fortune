@@ -34,9 +34,8 @@ class FamilyFortuneBody extends StatelessWidget {
     final summary = fortuneStr(componentData['summary']) ??
         fortuneStr(componentData['content']) ??
         '반려동물 궁합을 분석했어요.';
-    final overallCompat =
-        fortuneStr(componentData['overallCompatibility']) ??
-            fortuneStr(componentData['overall_compatibility']);
+    final overallCompat = fortuneStr(componentData['overallCompatibility']) ??
+        fortuneStr(componentData['overall_compatibility']);
     final dailyFortune = fortuneStr(componentData['dailyFortune']) ??
         fortuneStr(componentData['daily_fortune']);
     final petsVoice = fortuneAsMap(componentData['petsVoice']) ??
@@ -51,9 +50,8 @@ class FamilyFortuneBody extends StatelessWidget {
     final activityRecommendation =
         fortuneAsMap(componentData['activityRecommendation']) ??
             fortuneAsMap(componentData['activity_recommendation']);
-    final luckyItemsForPet =
-        fortuneAsMap(componentData['luckyItemsForPet']) ??
-            fortuneAsMap(componentData['lucky_items_for_pet']);
+    final luckyItemsForPet = fortuneAsMap(componentData['luckyItemsForPet']) ??
+        fortuneAsMap(componentData['lucky_items_for_pet']);
     final luckyItems = fortuneAsMap(componentData['luckyItems']);
     final highlights = fortuneStrList(componentData['highlights']);
     final recommendations = fortuneStrList(componentData['recommendations']);
@@ -152,14 +150,11 @@ class FamilyFortuneBody extends StatelessWidget {
             child: Column(
               children: [
                 if (morning != null)
-                  FortuneMetricRow(
-                      emoji: '🌅', label: '아침', value: morning),
+                  FortuneMetricRow(emoji: '🌅', label: '아침', value: morning),
                 if (afternoon != null)
-                  FortuneMetricRow(
-                      emoji: '☀️', label: '오후', value: afternoon),
+                  FortuneMetricRow(emoji: '☀️', label: '오후', value: afternoon),
                 if (evening != null)
-                  FortuneMetricRow(
-                      emoji: '🌙', label: '저녁', value: evening),
+                  FortuneMetricRow(emoji: '🌙', label: '저녁', value: evening),
               ],
             ),
           ),

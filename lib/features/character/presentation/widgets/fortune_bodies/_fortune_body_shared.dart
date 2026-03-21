@@ -248,72 +248,70 @@ class FortuneDosDontsCard extends StatelessWidget {
         ),
       ),
       child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (dosList.isNotEmpty)
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      '✅ DO',
-                      style: context.labelLarge.copyWith(
-                        fontWeight: FontWeight.w800,
-                      ),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (dosList.isNotEmpty)
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '✅ DO',
+                    style: context.labelLarge.copyWith(
+                      fontWeight: FontWeight.w800,
                     ),
-                    const SizedBox(height: DSSpacing.xs),
-                    ...dosList.take(3).map(
-                          (item) => Padding(
-                            padding:
-                                const EdgeInsets.only(bottom: DSSpacing.xxs),
-                            child: Text(
-                              '• $item',
-                              style: context.bodySmall.copyWith(height: 1.55),
+                  ),
+                  const SizedBox(height: DSSpacing.xs),
+                  ...dosList.take(3).map(
+                        (item) => Padding(
+                          padding: const EdgeInsets.only(bottom: DSSpacing.xxs),
+                          child: Text(
+                            '• $item',
+                            style: context.bodySmall.copyWith(height: 1.55),
+                          ),
+                        ),
+                      ),
+                ],
+              ),
+            ),
+          if (dosList.isNotEmpty && dontsList.isNotEmpty)
+            Container(
+              width: 1,
+              height: 60,
+              margin: const EdgeInsets.symmetric(horizontal: DSSpacing.sm),
+              color: colors.border.withValues(alpha: 0.35),
+            ),
+          if (dontsList.isNotEmpty)
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '❌ DON\'T',
+                    style: context.labelLarge.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: colors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: DSSpacing.xs),
+                  ...dontsList.take(3).map(
+                        (item) => Padding(
+                          padding: const EdgeInsets.only(bottom: DSSpacing.xxs),
+                          child: Text(
+                            '• $item',
+                            style: context.bodySmall.copyWith(
+                              color: colors.textSecondary,
+                              height: 1.55,
                             ),
                           ),
                         ),
-                  ],
-                ),
-              ),
-            if (dosList.isNotEmpty && dontsList.isNotEmpty)
-              Container(
-                width: 1,
-                height: 60,
-                margin: const EdgeInsets.symmetric(horizontal: DSSpacing.sm),
-                color: colors.border.withValues(alpha: 0.35),
-              ),
-            if (dontsList.isNotEmpty)
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      '❌ DON\'T',
-                      style: context.labelLarge.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: colors.textSecondary,
                       ),
-                    ),
-                    const SizedBox(height: DSSpacing.xs),
-                    ...dontsList.take(3).map(
-                          (item) => Padding(
-                            padding:
-                                const EdgeInsets.only(bottom: DSSpacing.xxs),
-                            child: Text(
-                              '• $item',
-                              style: context.bodySmall.copyWith(
-                                color: colors.textSecondary,
-                                height: 1.55,
-                              ),
-                            ),
-                          ),
-                        ),
-                  ],
-                ),
+                ],
               ),
-          ],
+            ),
+        ],
       ),
     );
   }
