@@ -176,3 +176,6 @@ scripts/*.local.sh
 # Python credential files
 *_secrets.py
 .vercel
+
+# Test output screenshots
+output/
