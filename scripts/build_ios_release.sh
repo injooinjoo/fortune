@@ -99,7 +99,7 @@ else
 fi
 
 # Step 5: iOS 빌드 설정 확인
-echo -e "\n${YELLOW}[5/7] iOS 빌드 설정 확인 중...${NC}"
+echo -e "\n${YELLOW}[5/8] iOS 빌드 설정 확인 중...${NC}"
 
 # Bundle ID 확인
 BUNDLE_ID=$(grep -A 1 "PRODUCT_BUNDLE_IDENTIFIER" ios/Runner.xcodeproj/project.pbxproj | grep "com.beyond.fortune" | head -1 | awk '{print $3}' | tr -d ';')
@@ -112,16 +112,36 @@ echo -e "${GREEN}✓ Team ID: $TEAM_ID${NC}"
 # 앱 버전 확인
 APP_VERSION=$(grep "version:" pubspec.yaml | awk '{print $2}')
 echo -e "${GREEN}✓ App Version: $APP_VERSION${NC}"
+APP_BUILD_NAME="${APP_VERSION%%+*}"
+APP_BUILD_NUMBER="${APP_VERSION##*+}"
 
-# Step 6: iOS 릴리즈 빌드
-echo -e "\n${YELLOW}[6/7] iOS 릴리즈 빌드 시작...${NC}"
+# Generated.xcconfig 동기화 확인
+GENERATED_BUILD_NAME=$(grep '^FLUTTER_BUILD_NAME=' ios/Flutter/Generated.xcconfig | cut -d'=' -f2- || true)
+GENERATED_BUILD_NUMBER=$(grep '^FLUTTER_BUILD_NUMBER=' ios/Flutter/Generated.xcconfig | cut -d'=' -f2- || true)
+echo -e "${GREEN}✓ Generated.xcconfig: ${GENERATED_BUILD_NAME}+${GENERATED_BUILD_NUMBER}${NC}"
+
+# Step 6: App Store Connect build number preflight
+echo -e "\n${YELLOW}[6/8] App Store Connect build 번호 확인 중...${NC}"
+if [ "${SKIP_ASC_BUILD_CHECK:-0}" = "1" ]; then
+    echo -e "${YELLOW}⚠ SKIP_ASC_BUILD_CHECK=1 설정으로 App Store Connect build 번호 확인을 건너뜁니다.${NC}"
+else
+    ./scripts/check_app_store_build_number.sh
+    echo -e "${GREEN}✓ App Store Connect build 번호 확인 완료${NC}"
+fi
+
+# Step 7: iOS 릴리즈 빌드
+echo -e "\n${YELLOW}[7/8] iOS 릴리즈 빌드 시작...${NC}"
 echo -e "${BLUE}이 단계는 5-10분 정도 소요될 수 있습니다.${NC}"
 
 # 빌드 시작 시간 기록
 BUILD_START=$(date +%s)
 
 # IPA 빌드 (App Store 배포용)
-if flutter build ipa --release; then
+if flutter build ipa \
+    --release \
+    --build-name="$APP_BUILD_NAME" \
+    --build-number="$APP_BUILD_NUMBER" \
+    --export-options-plist=ios/ExportOptions.plist; then
     BUILD_END=$(date +%s)
     BUILD_TIME=$((BUILD_END - BUILD_START))
     echo -e "${GREEN}✓ iOS 릴리즈 빌드 성공! (소요 시간: ${BUILD_TIME}초)${NC}"
@@ -130,17 +150,17 @@ else
     exit 1
 fi
 
-# Step 7: 빌드 결과 확인
-echo -e "\n${YELLOW}[7/7] 빌드 결과 확인 중...${NC}"
+# Step 8: 빌드 결과 확인
+echo -e "\n${YELLOW}[8/8] 빌드 결과 확인 중...${NC}"
 
-# IPA 파일 확인
-if [ -f "build/ios/ipa/fortune.ipa" ]; then
-    IPA_SIZE=$(du -h "build/ios/ipa/fortune.ipa" | awk '{print $1}')
-    echo -e "${GREEN}✓ IPA 파일 생성 완료: build/ios/ipa/fortune.ipa (${IPA_SIZE})${NC}"
-else
+IPA_FILE=$(find build/ios/ipa -maxdepth 1 -name "*.ipa" -print | head -1 || true)
+if [ -z "$IPA_FILE" ] || [ ! -f "$IPA_FILE" ]; then
     echo -e "${RED}✗ IPA 파일을 찾을 수 없습니다!${NC}"
     exit 1
 fi
+
+IPA_SIZE=$(du -h "$IPA_FILE" | awk '{print $1}')
+echo -e "${GREEN}✓ IPA 파일 생성 완료: ${IPA_FILE} (${IPA_SIZE})${NC}"
 
 # Archive 파일 확인
 if [ -d "build/ios/archive/Runner.xcarchive" ]; then
@@ -149,6 +169,10 @@ if [ -d "build/ios/archive/Runner.xcarchive" ]; then
 else
     echo -e "${YELLOW}⚠ Archive 파일을 찾을 수 없습니다.${NC}"
 fi
+
+echo "Verifying release artifact metadata..."
+IPA_PATH="$IPA_FILE" EXPORT_OPTIONS_PLIST_PATH="ios/ExportOptions.plist" ./scripts/verify_ios_release_artifact.sh
+echo -e "${GREEN}✓ 빌드 산출물 버전 검증 완료${NC}"
 
 # 최종 결과
 echo -e "\n${GREEN}╔══════════════════════════════════════╗${NC}"
@@ -159,7 +183,7 @@ echo -e "\n${BLUE}다음 단계:${NC}"
 echo -e "1. ${YELLOW}IPA 파일 업로드${NC}"
 echo -e "   - Apple Transporter 앱 사용 (권장)"
 echo -e "   - 또는 Xcode Organizer 사용"
-echo -e "   - 파일 위치: build/ios/ipa/fortune.ipa"
+echo -e "   - 파일 위치: ${IPA_FILE}"
 echo -e ""
 echo -e "2. ${YELLOW}App Store Connect 설정${NC}"
 echo -e "   - https://appstoreconnect.apple.com"

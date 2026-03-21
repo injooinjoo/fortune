@@ -107,7 +107,10 @@ flutter build ipa --release
 flutter build ipa --release
 
 # 빌드 결과 확인
-ls -lh build/ios/ipa/fortune.ipa
+find build/ios/ipa -maxdepth 1 -name "*.ipa"
+
+# 업로드 전 실제 IPA/xcarchive 버전 검증
+./scripts/verify_ios_release_artifact.sh
 ```
 
 ### 테스트
@@ -234,6 +237,22 @@ flutter build ipa --release
 # Apple Transporter 재시도
 # 또는 Xcode Organizer 사용
 ```
+
+### 버전 충돌 / 중복 빌드 번호
+```bash
+# App Store Connect 에서 아직 사용되지 않은 build number 인지 먼저 확인
+./scripts/check_app_store_build_number.sh
+
+# source/pubspec 과 실제 iOS 산출물 버전이 같은지 확인
+flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
+./scripts/verify_ios_release_artifact.sh
+```
+
+- `./scripts/check_app_store_build_number.sh` 가 실패하면 `pubspec.yaml` 의 `+<build>` 값을 올린 뒤 다시 실행
+- `Generated.xcconfig` 또는 `flutter_export_environment.sh` 가 오래된 값이면 먼저 `flutter build ios` 또는 `flutter build ipa`
+- `ios/ExportOptions.plist` 와 `build/ios/ipa/ExportOptions.plist` 는 `manageAppVersionAndBuildNumber=false` 여야 함
+- `build/ios/ipa/*.ipa` 가 오래된 값이면 새로 `flutter build ipa --release --export-options-plist=ios/ExportOptions.plist`
+- 검증 스크립트가 실패한 산출물은 App Store Connect에 업로드하지 않음
 
 ---
 
