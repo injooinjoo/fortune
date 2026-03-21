@@ -27542,6 +27542,21 @@
       "dirty": false,
       "kind": "script_sh",
       "notes": [],
+      "path": "scripts/check_app_store_build_number.sh",
+      "referenced_by": [
+        "docs/deployment/IOS_LAUNCH_QUICKSTART.md",
+        "scripts/build_ios_release.sh"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "scripts",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "script_sh",
+      "notes": [],
       "path": "scripts/check_code_consistency.sh",
       "referenced_by": [
         "docs/development/CODE_CONSISTENCY_GUARD.md",
@@ -28389,6 +28404,21 @@
       "referenced_by": [
         "docs/deployment/LAUNCH_READINESS_AUDIT_2026-02-14.md",
         "docs/deployment/WELL_KNOWN_DEPLOYMENT_CHECKLIST.md"
+      ],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "scripts",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "script_sh",
+      "notes": [],
+      "path": "scripts/verify_ios_release_artifact.sh",
+      "referenced_by": [
+        "docs/deployment/IOS_LAUNCH_QUICKSTART.md",
+        "scripts/build_ios_release.sh"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -32815,7 +32845,7 @@
       "docs": 94,
       "integration_test": 8,
       "lib": 424,
-      "scripts": 70,
+      "scripts": 72,
       "supabase": 206,
       "test": 77
     },
@@ -32824,7 +32854,7 @@
       "keep_generated": 28,
       "manual_review": 978,
       "phase1_remove_candidate": 12,
-      "phase2_review_candidate": 374,
+      "phase2_review_candidate": 376,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
@@ -32832,7 +32862,7 @@
       "generated_excluded": 28,
       "runtime_used": 714,
       "test_only": 86,
-      "tooling_only": 184,
+      "tooling_only": 186,
       "unreferenced": 994
     },
     "declared_asset_dirs_without_runtime_refs": [
@@ -33095,7 +33125,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2110,
+    "total_files": 2112,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
