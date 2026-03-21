@@ -3815,6 +3815,277 @@ $enrichedContext
           }.take(4).toList(growable: false),
         });
         break;
+      case 'love':
+        payload.addAll({
+          'greeting': fortune.greeting ?? _stringValue(rawPayload?['greeting']),
+          'description':
+              fortune.description ?? _stringValue(rawPayload?['description']),
+          // love-specific rich data
+          'loveProfile': _asMapValue(rawPayload?['loveProfile']) ??
+              _asMapValue(rawPayload?['love_profile']),
+          'detailedAnalysis': _asMapValue(rawPayload?['detailedAnalysis']) ??
+              _asMapValue(rawPayload?['detailed_analysis']),
+          'todaysAdvice': _asMapValue(rawPayload?['todaysAdvice']) ??
+              _asMapValue(rawPayload?['todays_advice']),
+          'predictions': _asMapValue(rawPayload?['predictions']),
+        });
+        break;
+      case 'blind-date':
+        payload.addAll({
+          'greeting': fortune.greeting ?? _stringValue(rawPayload?['greeting']),
+          'description':
+              fortune.description ?? _stringValue(rawPayload?['description']),
+          'successRate':
+              rawPayload?['successRate'] ?? rawPayload?['success_rate'],
+          'myAttractiveness': rawPayload?['myAttractiveness'],
+          'theirAttractiveness': rawPayload?['theirAttractiveness'],
+          'visualCompatibility': rawPayload?['visualCompatibility'],
+          'myStyle': _stringValue(rawPayload?['myStyle']),
+          'myPersonality': _stringValue(rawPayload?['myPersonality']),
+          'firstImpression': _stringValue(rawPayload?['firstImpression']) ??
+              _stringValue(rawPayload?['first_impression']),
+          'recommendedDateStyle':
+              _stringValue(rawPayload?['recommendedDateStyle']) ??
+                  _stringValue(rawPayload?['recommended_date_style']),
+          'interestLevel': rawPayload?['interestLevel'],
+          'conversationStyle': _stringValue(rawPayload?['conversationStyle']),
+          'improvementTips': _stringListValue(rawPayload?['improvementTips']),
+          'nextTopicSuggestions':
+              _stringListValue(rawPayload?['nextTopicSuggestions']),
+          'redFlags': _stringListValue(rawPayload?['redFlags']),
+          'firstImpressionTips':
+              _stringListValue(rawPayload?['firstImpressionTips']) ??
+                  _stringListValue(rawPayload?['first_impression_tips']),
+          'conversationTopics':
+              _asMapValue(rawPayload?['conversationTopics']) ??
+                  _asMapValue(rawPayload?['conversation_topics']),
+          'outfitAdvice': _asMapValue(rawPayload?['outfitAdvice']) ??
+              _asMapValue(rawPayload?['outfit_advice']),
+          'dosList': _stringListValue(rawPayload?['dosList']) ??
+              _stringListValue(rawPayload?['dos_list']),
+          'dontsList': _stringListValue(rawPayload?['dontsList']) ??
+              _stringListValue(rawPayload?['donts_list']),
+        });
+        break;
+      case 'ex-lover':
+        payload.addAll({
+          'greeting': fortune.greeting ?? _stringValue(rawPayload?['greeting']),
+          'description':
+              fortune.description ?? _stringValue(rawPayload?['description']),
+          'reunionPossibility': rawPayload?['reunion_possibility'] ??
+              rawPayload?['reunionPossibility'],
+          'primaryGoal': _stringValue(rawPayload?['primaryGoal']) ??
+              _stringValue(rawPayload?['primary_goal']),
+          'timeline': _stringValue(rawPayload?['timeline']),
+        });
+        break;
+      case 'avoid-people':
+        payload.addAll({
+          'greeting': fortune.greeting ?? _stringValue(rawPayload?['greeting']),
+          'description':
+              fortune.description ?? _stringValue(rawPayload?['description']),
+          'cautionPeople': _mapListValue(rawPayload?['cautionPeople']),
+          'timeStrategy': _asMapValue(rawPayload?['timeStrategy']) ??
+              _asMapValue(rawPayload?['time_strategy']),
+          'cautionObjects': _stringListValue(rawPayload?['cautionObjects']),
+          'cautionColors': _stringListValue(rawPayload?['cautionColors']),
+          'cautionNumbers': _stringListValue(rawPayload?['cautionNumbers']),
+        });
+        break;
+      case 'compatibility':
+        payload.addAll({
+          'greeting': fortune.greeting ?? _stringValue(rawPayload?['greeting']),
+          'description':
+              fortune.description ?? _stringValue(rawPayload?['description']),
+          'overallCompatibility': rawPayload?['overall_compatibility'] ??
+              rawPayload?['overallCompatibility'],
+          'personalityMatch': rawPayload?['personality_match'] ??
+              rawPayload?['personalityMatch'],
+          'loveMatch': rawPayload?['love_match'] ?? rawPayload?['loveMatch'],
+          'marriageMatch':
+              rawPayload?['marriage_match'] ?? rawPayload?['marriageMatch'],
+          'communicationMatch': rawPayload?['communication_match'] ??
+              rawPayload?['communicationMatch'],
+          'strengths': _stringListValue(rawPayload?['strengths']),
+          'cautions': _stringListValue(rawPayload?['cautions']),
+          'compatibilityKeyword':
+              _stringValue(rawPayload?['compatibility_keyword']) ??
+                  _stringValue(rawPayload?['compatibilityKeyword']),
+          'loveStyle': _stringValue(rawPayload?['love_style']) ??
+              _stringValue(rawPayload?['loveStyle']),
+          'person1': _asMapValue(rawPayload?['person1']),
+          'person2': _asMapValue(rawPayload?['person2']),
+          'zodiacAnimal': _asMapValue(rawPayload?['zodiac_animal']) ??
+              _asMapValue(rawPayload?['zodiacAnimal']),
+          'starSign': _asMapValue(rawPayload?['star_sign']) ??
+              _asMapValue(rawPayload?['starSign']),
+          'nameCompatibility': rawPayload?['name_compatibility'] ??
+              rawPayload?['nameCompatibility'],
+          'destinyNumber': _asMapValue(rawPayload?['destiny_number']) ??
+              _asMapValue(rawPayload?['destinyNumber']),
+          'detailedAdvice': _stringValue(rawPayload?['detailed_advice']) ??
+              _stringValue(rawPayload?['detailedAdvice']),
+        });
+        break;
+      // ─── P2: 재물/행운 ───
+      case 'wealth':
+        payload.addAll({
+          'wealthPotential': _stringValue(rawPayload?['wealthPotential']) ??
+              _stringValue(rawPayload?['wealth_potential']),
+          'elementAnalysis': _asMapValue(rawPayload?['elementAnalysis']) ??
+              _asMapValue(rawPayload?['element_analysis']),
+          'goalAdvice': _asMapValue(rawPayload?['goalAdvice']) ??
+              _asMapValue(rawPayload?['goal_advice']),
+          'cashflowInsight': _asMapValue(rawPayload?['cashflowInsight']) ??
+              _asMapValue(rawPayload?['cashflow_insight']),
+          'investmentInsights':
+              _asMapValue(rawPayload?['investmentInsights']) ??
+                  _asMapValue(rawPayload?['investment_insights']),
+          'monthlyFlow': _mapListValue(rawPayload?['monthlyFlow']).isNotEmpty
+              ? _mapListValue(rawPayload?['monthlyFlow'])
+              : _mapListValue(rawPayload?['monthly_flow']),
+          'actionItems': _stringListValue(rawPayload?['actionItems']) ??
+              _stringListValue(rawPayload?['action_items']),
+          'luckyElements': _asMapValue(rawPayload?['luckyElements']) ??
+              _asMapValue(rawPayload?['lucky_elements']),
+        });
+        break;
+      case 'lucky-items':
+        payload.addAll({
+          'selectedCategory': _stringValue(rawPayload?['selectedCategory']) ??
+              _stringValue(rawPayload?['selected_category']),
+          'itemsByCategory': _asMapValue(rawPayload?['itemsByCategory']) ??
+              _asMapValue(rawPayload?['items_by_category']),
+          'elementsAnalysis': _asMapValue(rawPayload?['elementsAnalysis']) ??
+              _asMapValue(rawPayload?['elements_analysis']),
+        });
+        break;
+      // ─── P3: 직업/성취 ───
+      case 'career':
+        payload.addAll({
+          'careerAnalysis': _asMapValue(rawPayload?['careerAnalysis']) ??
+              _asMapValue(rawPayload?['career_analysis']),
+          'careertips': _stringListValue(rawPayload?['careertips']),
+          'careerTips': _stringListValue(rawPayload?['careerTips']) ??
+              _stringListValue(rawPayload?['career_tips']),
+          'weeklyOutlook': _asMapValue(rawPayload?['weeklyOutlook']) ??
+              _asMapValue(rawPayload?['weekly_outlook']),
+        });
+        break;
+      case 'exam':
+        payload.addAll({
+          'passGrade': _stringValue(rawPayload?['passGrade']) ??
+              _stringValue(rawPayload?['pass_grade']),
+          'statusMessage': _stringValue(rawPayload?['statusMessage']) ??
+              _stringValue(rawPayload?['status_message']),
+          'examStats': _asMapValue(rawPayload?['examStats']) ??
+              _asMapValue(rawPayload?['exam_stats']),
+          'csatFocus': _mapListValue(rawPayload?['csatFocus']).isNotEmpty
+              ? _mapListValue(rawPayload?['csatFocus'])
+              : _mapListValue(rawPayload?['csat_focus']),
+          'csatRoadmap': _mapListValue(rawPayload?['csatRoadmap']).isNotEmpty
+              ? _mapListValue(rawPayload?['csatRoadmap'])
+              : _mapListValue(rawPayload?['csat_roadmap']),
+          'csatRoutine': _stringListValue(rawPayload?['csatRoutine']) ??
+              _stringListValue(rawPayload?['csat_routine']),
+          'todayStrategy': _asMapValue(rawPayload?['todayStrategy']) ??
+              _asMapValue(rawPayload?['today_strategy']),
+          'spiritAnimal': _asMapValue(rawPayload?['spiritAnimal']) ??
+              _asMapValue(rawPayload?['spirit_animal']),
+          'hashtags': _stringListValue(rawPayload?['hashtags']),
+        });
+        break;
+      // ─── P4: 성격/자아 ───
+      case 'mbti':
+        payload.addAll({
+          'E': _asMapValue(rawPayload?['E']),
+          'I': _asMapValue(rawPayload?['I']),
+          'N': _asMapValue(rawPayload?['N']),
+          'S': _asMapValue(rawPayload?['S']),
+          'T': _asMapValue(rawPayload?['T']),
+          'F': _asMapValue(rawPayload?['F']),
+          'J': _asMapValue(rawPayload?['J']),
+          'P': _asMapValue(rawPayload?['P']),
+          'todayTrap': _stringValue(rawPayload?['todayTrap']) ??
+              _stringValue(rawPayload?['today_trap']),
+          'luckyColor': _stringValue(rawPayload?['luckyColor']) ??
+              _stringValue(rawPayload?['lucky_color']),
+          'luckyNumber': rawPayload?['luckyNumber'] ??
+              rawPayload?['lucky_number'],
+        });
+        break;
+      case 'biorhythm':
+        payload.addAll({
+          'currentStatus': _asMapValue(rawPayload?['currentStatus']) ??
+              _asMapValue(rawPayload?['current_status']),
+          'weeklyForecast': _mapListValue(rawPayload?['weeklyForecast'])
+                  .isNotEmpty
+              ? _mapListValue(rawPayload?['weeklyForecast'])
+              : _mapListValue(rawPayload?['weekly_forecast']),
+          'importantDates':
+              _stringListValue(rawPayload?['importantDates']) ??
+                  _stringListValue(rawPayload?['important_dates']),
+          'lifestyleAdvice':
+              _stringListValue(rawPayload?['lifestyleAdvice']) ??
+                  _stringListValue(rawPayload?['lifestyle_advice']),
+          'healthTips': _stringListValue(rawPayload?['healthTips']) ??
+              _stringListValue(rawPayload?['health_tips']),
+        });
+        break;
+      // ─── P5: 건강 ───
+      case 'health':
+        payload.addAll({
+          'healthAnalysis': _asMapValue(rawPayload?['healthAnalysis']) ??
+              _asMapValue(rawPayload?['health_analysis']),
+          'healthRecommendations':
+              _asMapValue(rawPayload?['healthRecommendations']) ??
+                  _asMapValue(rawPayload?['health_recommendations']),
+          'warningSigns': _stringListValue(rawPayload?['warningSigns']) ??
+              _stringListValue(rawPayload?['warning_signs']),
+        });
+        break;
+      // ─── P6: 가족/반려동물 ───
+      case 'pet-compatibility':
+        payload.addAll({
+          'overallCompatibility':
+              _stringValue(rawPayload?['overallCompatibility']) ??
+                  _stringValue(rawPayload?['overall_compatibility']),
+          'dailyFortune': _stringValue(rawPayload?['dailyFortune']) ??
+              _stringValue(rawPayload?['daily_fortune']),
+          'petsVoice': _asMapValue(rawPayload?['petsVoice']) ??
+              _asMapValue(rawPayload?['pets_voice']),
+          'bondingMission': _asMapValue(rawPayload?['bondingMission']) ??
+              _asMapValue(rawPayload?['bonding_mission']),
+          'activities': _stringListValue(rawPayload?['activities']),
+          'healthInsight': _stringValue(rawPayload?['healthInsight']) ??
+              _stringValue(rawPayload?['health_insight']),
+          'emotionalCare': _stringValue(rawPayload?['emotionalCare']) ??
+              _stringValue(rawPayload?['emotional_care']),
+          'activityRecommendation':
+              _asMapValue(rawPayload?['activityRecommendation']) ??
+                  _asMapValue(rawPayload?['activity_recommendation']),
+          'luckyItemsForPet':
+              _asMapValue(rawPayload?['luckyItemsForPet']) ??
+                  _asMapValue(rawPayload?['lucky_items_for_pet']),
+        });
+        break;
+      // ─── P8: 풍수/이사 ───
+      case 'moving':
+        payload.addAll({
+          'fengshuiAnalysis':
+              _asMapValue(rawPayload?['fengshuiAnalysis']) ??
+                  _asMapValue(rawPayload?['fengshui_analysis']),
+          'directionAnalysis':
+              _asMapValue(rawPayload?['directionAnalysis']) ??
+                  _asMapValue(rawPayload?['direction_analysis']),
+          'bestDirections':
+              _stringListValue(rawPayload?['bestDirections']) ??
+                  _stringListValue(rawPayload?['best_directions']),
+          'avoidDirections':
+              _stringListValue(rawPayload?['avoidDirections']) ??
+                  _stringListValue(rawPayload?['avoid_directions']),
+        });
+        break;
     }
 
     return payload;

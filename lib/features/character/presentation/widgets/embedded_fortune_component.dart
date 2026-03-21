@@ -3,6 +3,15 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/tarot/tarot_card_catalog.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../shared/widgets/smart_image.dart';
+import 'fortune_bodies/career_fortune_body.dart';
+import 'fortune_bodies/coaching_fortune_body.dart';
+import 'fortune_bodies/family_fortune_body.dart';
+import 'fortune_bodies/health_fortune_body.dart';
+import 'fortune_bodies/interactive_fortune_body.dart';
+import 'fortune_bodies/mystical_fortune_body.dart';
+import 'fortune_bodies/personality_fortune_body.dart';
+import 'fortune_bodies/relationship_fortune_body.dart';
+import 'fortune_bodies/wealth_fortune_body.dart';
 import 'haneul_fortune_result_widget.dart';
 
 class EmbeddedFortuneComponent extends StatelessWidget {
@@ -63,6 +72,23 @@ class EmbeddedFortuneComponent extends StatelessWidget {
     }
   }
 
+  static const _relationshipTypes = {
+    'love',
+    'compatibility',
+    'blind-date',
+    'ex-lover',
+    'avoid-people',
+  };
+
+  static const _wealthTypes = {'wealth', 'lucky-items', 'lotto'};
+  static const _careerTypes = {'career', 'talent', 'exam'};
+  static const _personalityTypes = {'mbti', 'biorhythm', 'personality-dna'};
+  static const _healthTypes = {'health', 'exercise', 'match-insight', 'breathing'};
+  static const _familyTypes = {'family', 'pet-compatibility', 'naming'};
+  static const _interactiveTypes = {'game-enhance', 'wish', 'celebrity', 'ootd-evaluation'};
+  static const _mysticalTypes = {'talisman', 'past-life', 'moving'};
+  static const _coachingTypes = {'coaching', 'decision', 'daily-review', 'weekly-review'};
+
   Widget _buildFortuneResultCard(BuildContext context) {
     final fortuneType = _stringValue(componentData['fortuneType']);
     if (fortuneType == 'daily' ||
@@ -72,6 +98,60 @@ class EmbeddedFortuneComponent extends StatelessWidget {
         fortuneType: fortuneType!,
         componentData: componentData,
       );
+    }
+
+    // Route fortune types to specialized body widgets
+    if (fortuneType != null) {
+      Widget? body;
+      IconData? icon;
+
+      if (_relationshipTypes.contains(fortuneType)) {
+        body = RelationshipFortuneBody(
+            fortuneType: fortuneType, componentData: componentData);
+        icon = _iconForRelationship(fortuneType);
+      } else if (_wealthTypes.contains(fortuneType)) {
+        body = WealthFortuneBody(
+            fortuneType: fortuneType, componentData: componentData);
+        icon = _iconForWealth(fortuneType);
+      } else if (_careerTypes.contains(fortuneType)) {
+        body = CareerFortuneBody(
+            fortuneType: fortuneType, componentData: componentData);
+        icon = _iconForCareer(fortuneType);
+      } else if (_personalityTypes.contains(fortuneType)) {
+        body = PersonalityFortuneBody(
+            fortuneType: fortuneType, componentData: componentData);
+        icon = _iconForPersonality(fortuneType);
+      } else if (_healthTypes.contains(fortuneType)) {
+        body = HealthFortuneBody(
+            fortuneType: fortuneType, componentData: componentData);
+        icon = _iconForHealth(fortuneType);
+      } else if (_familyTypes.contains(fortuneType)) {
+        body = FamilyFortuneBody(
+            fortuneType: fortuneType, componentData: componentData);
+        icon = _iconForFamily(fortuneType);
+      } else if (_interactiveTypes.contains(fortuneType)) {
+        body = InteractiveFortuneBody(
+            fortuneType: fortuneType, componentData: componentData);
+        icon = _iconForInteractive(fortuneType);
+      } else if (_mysticalTypes.contains(fortuneType)) {
+        body = MysticalFortuneBody(
+            fortuneType: fortuneType, componentData: componentData);
+        icon = _iconForMystical(fortuneType);
+      } else if (_coachingTypes.contains(fortuneType)) {
+        body = CoachingFortuneBody(
+            fortuneType: fortuneType, componentData: componentData);
+        icon = _iconForCoaching(fortuneType);
+      }
+
+      if (body != null) {
+        return _buildCardShell(
+          context,
+          title: _stringValue(componentData['title']) ?? '운세 결과',
+          score: _intValue(componentData['score']),
+          icon: icon ?? _iconForFortuneType(fortuneType),
+          child: body,
+        );
+      }
     }
 
     final title = _stringValue(componentData['title']) ?? '운세 결과';
@@ -1233,6 +1313,133 @@ class EmbeddedFortuneComponent extends StatelessWidget {
       return '';
     }
     return labels[cleaned] ?? cleaned;
+  }
+
+  IconData _iconForRelationship(String fortuneType) {
+    switch (fortuneType) {
+      case 'love':
+        return Icons.favorite_outline_rounded;
+      case 'compatibility':
+        return Icons.people_outline_rounded;
+      case 'blind-date':
+        return Icons.coffee_outlined;
+      case 'ex-lover':
+        return Icons.replay_rounded;
+      case 'avoid-people':
+        return Icons.shield_outlined;
+      default:
+        return Icons.favorite_outline_rounded;
+    }
+  }
+
+  IconData _iconForWealth(String fortuneType) {
+    switch (fortuneType) {
+      case 'wealth':
+        return Icons.account_balance_wallet_outlined;
+      case 'lucky-items':
+        return Icons.star_outline_rounded;
+      case 'lotto':
+        return Icons.casino_outlined;
+      default:
+        return Icons.monetization_on_outlined;
+    }
+  }
+
+  IconData _iconForCareer(String fortuneType) {
+    switch (fortuneType) {
+      case 'career':
+        return Icons.work_outline_rounded;
+      case 'talent':
+        return Icons.lightbulb_outline_rounded;
+      case 'exam':
+        return Icons.school_outlined;
+      default:
+        return Icons.work_outline_rounded;
+    }
+  }
+
+  IconData _iconForPersonality(String fortuneType) {
+    switch (fortuneType) {
+      case 'mbti':
+        return Icons.psychology_outlined;
+      case 'biorhythm':
+        return Icons.show_chart_rounded;
+      case 'personality-dna':
+        return Icons.fingerprint_outlined;
+      default:
+        return Icons.psychology_outlined;
+    }
+  }
+
+  IconData _iconForHealth(String fortuneType) {
+    switch (fortuneType) {
+      case 'health':
+        return Icons.health_and_safety_outlined;
+      case 'exercise':
+        return Icons.fitness_center_outlined;
+      case 'match-insight':
+        return Icons.sports_soccer_outlined;
+      case 'breathing':
+        return Icons.air_outlined;
+      default:
+        return Icons.health_and_safety_outlined;
+    }
+  }
+
+  IconData _iconForFamily(String fortuneType) {
+    switch (fortuneType) {
+      case 'family':
+        return Icons.family_restroom_outlined;
+      case 'pet-compatibility':
+        return Icons.pets_outlined;
+      case 'naming':
+        return Icons.edit_outlined;
+      default:
+        return Icons.family_restroom_outlined;
+    }
+  }
+
+  IconData _iconForInteractive(String fortuneType) {
+    switch (fortuneType) {
+      case 'game-enhance':
+        return Icons.sports_esports_outlined;
+      case 'wish':
+        return Icons.auto_awesome_outlined;
+      case 'celebrity':
+        return Icons.star_outline_rounded;
+      case 'ootd-evaluation':
+        return Icons.checkroom_outlined;
+      default:
+        return Icons.auto_awesome_outlined;
+    }
+  }
+
+  IconData _iconForMystical(String fortuneType) {
+    switch (fortuneType) {
+      case 'talisman':
+        return Icons.shield_outlined;
+      case 'past-life':
+        return Icons.history_outlined;
+      case 'moving':
+        return Icons.home_outlined;
+      default:
+        return Icons.auto_awesome_outlined;
+    }
+  }
+
+  IconData _iconForCoaching(String fortuneType) {
+    switch (fortuneType) {
+      case 'coaching':
+        return Icons.track_changes_outlined;
+      case 'decision':
+        return Icons.compare_arrows_outlined;
+      case 'daily-review':
+        return Icons.today_outlined;
+      case 'weekly-review':
+        return Icons.date_range_outlined;
+      default:
+        return Icons.track_changes_outlined;
+    }
   }
 
   IconData _iconForFortuneType(String? fortuneType) {

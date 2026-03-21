@@ -396,6 +396,7 @@ class CharacterMessageBubble extends StatelessWidget {
     }
 
     return RichText(
+      softWrap: true,
       text: TextSpan(
         style: TextStyle(color: colors.textPrimary),
         children: parts,
