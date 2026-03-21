@@ -24164,6 +24164,7 @@
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/features/character/presentation/widgets/character_message_bubble.dart",
         "test/features/character/presentation/widgets/embedded_fortune_component_test.dart",
         "test/features/character/presentation/widgets/embedded_tarot_component_test.dart"
@@ -24180,6 +24181,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/widgets/fortune_bodies/_fortune_body_shared.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/character/presentation/widgets/fortune_bodies/career_fortune_body.dart",
         "lib/features/character/presentation/widgets/fortune_bodies/coaching_fortune_body.dart",
         "lib/features/character/presentation/widgets/fortune_bodies/family_fortune_body.dart",
@@ -24202,6 +24204,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/widgets/fortune_bodies/career_fortune_body.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/character/presentation/widgets/embedded_fortune_component.dart"
       ],
       "runtime_reachable": true,
@@ -24216,6 +24219,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/widgets/fortune_bodies/coaching_fortune_body.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/character/presentation/widgets/embedded_fortune_component.dart"
       ],
       "runtime_reachable": true,
@@ -24230,6 +24234,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/widgets/fortune_bodies/family_fortune_body.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/character/presentation/widgets/embedded_fortune_component.dart"
       ],
       "runtime_reachable": true,
@@ -24244,6 +24249,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/widgets/fortune_bodies/health_fortune_body.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/character/presentation/widgets/embedded_fortune_component.dart"
       ],
       "runtime_reachable": true,
@@ -24258,6 +24264,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/widgets/fortune_bodies/interactive_fortune_body.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/character/presentation/widgets/embedded_fortune_component.dart"
       ],
       "runtime_reachable": true,
@@ -24272,6 +24279,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/widgets/fortune_bodies/mystical_fortune_body.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/character/presentation/widgets/embedded_fortune_component.dart"
       ],
       "runtime_reachable": true,
@@ -24286,6 +24294,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/widgets/fortune_bodies/personality_fortune_body.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/character/presentation/widgets/embedded_fortune_component.dart"
       ],
       "runtime_reachable": true,
@@ -24300,6 +24309,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/widgets/fortune_bodies/relationship_fortune_body.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/character/presentation/widgets/embedded_fortune_component.dart"
       ],
       "runtime_reachable": true,
@@ -24314,6 +24324,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/widgets/fortune_bodies/wealth_fortune_body.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/character/presentation/widgets/embedded_fortune_component.dart"
       ],
       "runtime_reachable": true,
