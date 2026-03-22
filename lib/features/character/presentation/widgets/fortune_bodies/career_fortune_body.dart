@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/design_system/design_system.dart';
 import '_fortune_body_shared.dart';
+import '_fortune_visual_components.dart';
 
 /// Body widget for career/achievement fortune types:
 /// career, talent, exam
@@ -49,6 +50,7 @@ class CareerFortuneBody extends StatelessWidget {
     final roles = fortuneStrList(careerAnalysis?['potentialRoles']);
     final phase = fortuneStr(careerAnalysis?['currentPhase']);
 
+    var si = 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -63,47 +65,68 @@ class CareerFortuneBody extends StatelessWidget {
         ],
         if (roles.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '🎯',
-            title: '잠재 역할',
-            child: FortuneTagPillWrap(tags: roles),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '🎯',
+              title: '잠재 역할',
+              child: FortuneTagPillWrap(tags: roles),
+            ),
           ),
         ],
         if (strengths.isNotEmpty || challenges.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneDosDontsCard(dosList: strengths, dontsList: challenges),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneDosDontsCard(dosList: strengths, dontsList: challenges),
+          ),
         ],
         if (weeklyOutlook != null) ...[
           const SizedBox(height: DSSpacing.md),
-          _buildWeeklyOutlook(context, weeklyOutlook),
+          FortuneStaggeredSection(
+            index: si++,
+            child: _buildWeeklyOutlook(context, weeklyOutlook),
+          ),
         ],
         if (careerTips.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '💡',
-            title: '커리어 팁',
-            child: FortuneBulletList(items: careerTips, bullet: '💼'),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '💡',
+              title: '커리어 팁',
+              child: FortuneBulletList(items: careerTips, bullet: '💼'),
+            ),
           ),
         ],
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneLuckyItemGrid(items: luckyItems),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneLuckyItemGrid(items: luckyItems),
+          ),
         ],
         if (recommendations.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '✅',
-            title: '추천',
-            child: FortuneBulletList(items: recommendations, bullet: '💫'),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '✅',
+              title: '추천',
+              child: FortuneBulletList(items: recommendations, bullet: '💫'),
+            ),
           ),
         ],
         if (warnings.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '⚠️',
-            title: '주의',
-            child: FortuneBulletList(
-                items: warnings, bullet: '⚠️', isWarning: true),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '⚠️',
+              title: '주의',
+              child: FortuneBulletList(
+                  items: warnings, bullet: '⚠️', isWarning: true),
+            ),
           ),
         ],
       ],
@@ -156,6 +179,7 @@ class CareerFortuneBody extends StatelessWidget {
     final recommendations = fortuneStrList(componentData['recommendations']);
     final warnings = fortuneStrList(componentData['warnings']);
 
+    var si = 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -169,41 +193,59 @@ class CareerFortuneBody extends StatelessWidget {
         // Exam stats
         if (examStats != null) ...[
           const SizedBox(height: DSSpacing.md),
-          _buildExamStats(context, examStats),
+          FortuneStaggeredSection(
+            index: si++,
+            child: _buildExamStats(context, examStats),
+          ),
         ],
 
         // CSAT focus subjects
         if (csatFocus.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          _buildCsatFocus(context, csatFocus),
+          FortuneStaggeredSection(
+            index: si++,
+            child: _buildCsatFocus(context, csatFocus),
+          ),
         ],
 
         // Roadmap
         if (csatRoadmap.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          _buildCsatRoadmap(context, csatRoadmap),
+          FortuneStaggeredSection(
+            index: si++,
+            child: _buildCsatRoadmap(context, csatRoadmap),
+          ),
         ],
 
         // Today strategy
         if (todayStrategy != null) ...[
           const SizedBox(height: DSSpacing.md),
-          _buildTodayStrategy(context, todayStrategy),
+          FortuneStaggeredSection(
+            index: si++,
+            child: _buildTodayStrategy(context, todayStrategy),
+          ),
         ],
 
         // Routine
         if (csatRoutine.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '📋',
-            title: '추천 루틴',
-            child: FortuneBulletList(items: csatRoutine, bullet: '✏️'),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '📋',
+              title: '추천 루틴',
+              child: FortuneBulletList(items: csatRoutine, bullet: '✏️'),
+            ),
           ),
         ],
 
         // Spirit animal
         if (spiritAnimal != null) ...[
           const SizedBox(height: DSSpacing.md),
-          _buildSpiritAnimal(context, spiritAnimal),
+          FortuneStaggeredSection(
+            index: si++,
+            child: _buildSpiritAnimal(context, spiritAnimal),
+          ),
         ],
 
         // Hashtags
@@ -216,25 +258,34 @@ class CareerFortuneBody extends StatelessWidget {
 
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneLuckyItemGrid(items: luckyItems),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneLuckyItemGrid(items: luckyItems),
+          ),
         ],
 
         if (recommendations.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '💡',
-            title: '추천',
-            child: FortuneBulletList(items: recommendations, bullet: '📝'),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '💡',
+              title: '추천',
+              child: FortuneBulletList(items: recommendations, bullet: '📝'),
+            ),
           ),
         ],
 
         if (warnings.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '⚠️',
-            title: '주의',
-            child: FortuneBulletList(
-                items: warnings, bullet: '⚠️', isWarning: true),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '⚠️',
+              title: '주의',
+              child: FortuneBulletList(
+                  items: warnings, bullet: '⚠️', isWarning: true),
+            ),
           ),
         ],
       ],
@@ -256,7 +307,7 @@ class CareerFortuneBody extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (intuition != null) ...[
-            FortuneProgressBar(label: '직감력', score: intuition, emoji: '🎯'),
+            FortuneAnimatedProgressBar(label: '직감력', score: intuition, emoji: '🎯', staggerIndex: 0),
             if (intuitionDesc != null)
               Text(intuitionDesc,
                   style: context.labelSmall.copyWith(
@@ -264,7 +315,7 @@ class CareerFortuneBody extends StatelessWidget {
           ],
           if (defense != null) ...[
             const SizedBox(height: DSSpacing.xs),
-            FortuneProgressBar(label: '멘탈', score: defense, emoji: '🛡️'),
+            FortuneAnimatedProgressBar(label: '멘탈', score: defense, emoji: '🛡️', staggerIndex: 1),
             if (defenseDesc != null)
               Text(defenseDesc,
                   style: context.labelSmall.copyWith(
@@ -414,6 +465,7 @@ class CareerFortuneBody extends StatelessWidget {
     final warnings = fortuneStrList(componentData['warnings']);
     final specialTip = fortuneStr(componentData['specialTip']);
 
+    var si = 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -424,27 +476,39 @@ class CareerFortuneBody extends StatelessWidget {
         ],
         if (specialTip != null) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneTipCard(emoji: '💡', text: specialTip),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneTipCard(emoji: '💡', text: specialTip),
+          ),
         ],
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneLuckyItemGrid(items: luckyItems),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneLuckyItemGrid(items: luckyItems),
+          ),
         ],
         if (recommendations.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '💫',
-            title: '추천',
-            child: FortuneBulletList(items: recommendations, bullet: '✨'),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '💫',
+              title: '추천',
+              child: FortuneBulletList(items: recommendations, bullet: '✨'),
+            ),
           ),
         ],
         if (warnings.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '⚠️',
-            title: '주의',
-            child: FortuneBulletList(
-                items: warnings, bullet: '⚠️', isWarning: true),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '⚠️',
+              title: '주의',
+              child: FortuneBulletList(
+                  items: warnings, bullet: '⚠️', isWarning: true),
+            ),
           ),
         ],
       ],

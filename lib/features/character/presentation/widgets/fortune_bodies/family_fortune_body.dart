@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/design_system/design_system.dart';
 import '_fortune_body_shared.dart';
+import '_fortune_visual_components.dart';
 
 /// Body widget for family/pet fortune types:
 /// family, pet-compatibility, naming
@@ -73,6 +74,7 @@ class FamilyFortuneBody extends StatelessWidget {
     final afternoon = fortuneStr(activityRecommendation?['afternoon']);
     final evening = fortuneStr(activityRecommendation?['evening']);
 
+    var si = 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -90,53 +92,62 @@ class FamilyFortuneBody extends StatelessWidget {
 
         if (dailyFortune != null) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneTipCard(emoji: '🌟', text: dailyFortune),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneTipCard(emoji: '🌟', text: dailyFortune),
+          ),
         ],
 
         // Pet's heartfelt letter — special QuoteBlock
         if (letter != null) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneQuoteBlock(
-            emoji: '💌',
-            title: '반려동물의 편지',
-            text: letter,
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneQuoteBlock(
+              emoji: '💌',
+              title: '반려동물의 편지',
+              text: letter,
+            ),
           ),
         ],
 
         // Bonding mission
         if (missionTitle != null) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '🎯',
-            title: '오늘의 미션',
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        missionTitle,
-                        style: context.bodyMedium.copyWith(
-                          fontWeight: FontWeight.w600,
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '🎯',
+              title: '오늘의 미션',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          missionTitle,
+                          style: context.bodyMedium.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                    ),
-                    if (missionDifficulty != null)
-                      FortuneTagPillWrap(tags: ['⭐ $missionDifficulty']),
-                  ],
-                ),
-                if (missionDesc != null) ...[
-                  const SizedBox(height: DSSpacing.xs),
-                  Text(
-                    missionDesc,
-                    style: context.bodySmall.copyWith(
-                      color: context.colors.textSecondary,
-                      height: 1.5,
-                    ),
+                      if (missionDifficulty != null)
+                        FortuneTagPillWrap(tags: ['⭐ $missionDifficulty']),
+                    ],
                   ),
+                  if (missionDesc != null) ...[
+                    const SizedBox(height: DSSpacing.xs),
+                    Text(
+                      missionDesc,
+                      style: context.bodySmall.copyWith(
+                        color: context.colors.textSecondary,
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ],
@@ -144,63 +155,84 @@ class FamilyFortuneBody extends StatelessWidget {
         // Activity recommendations by time
         if (morning != null || afternoon != null || evening != null) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '🕐',
-            title: '시간대별 활동',
-            child: Column(
-              children: [
-                if (morning != null)
-                  FortuneMetricRow(emoji: '🌅', label: '아침', value: morning),
-                if (afternoon != null)
-                  FortuneMetricRow(emoji: '☀️', label: '오후', value: afternoon),
-                if (evening != null)
-                  FortuneMetricRow(emoji: '🌙', label: '저녁', value: evening),
-              ],
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '🕐',
+              title: '시간대별 활동',
+              child: Column(
+                children: [
+                  if (morning != null)
+                    FortuneMetricRow(emoji: '🌅', label: '아침', value: morning),
+                  if (afternoon != null)
+                    FortuneMetricRow(emoji: '☀️', label: '오후', value: afternoon),
+                  if (evening != null)
+                    FortuneMetricRow(emoji: '🌙', label: '저녁', value: evening),
+                ],
+              ),
             ),
           ),
         ],
 
         if (activities.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '🎾',
-            title: '추천 활동',
-            child: FortuneBulletList(items: activities, bullet: '🐕'),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '🎾',
+              title: '추천 활동',
+              child: FortuneBulletList(items: activities, bullet: '🐕'),
+            ),
           ),
         ],
 
         if (healthInsight != null) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneTipCard(emoji: '🏥', text: healthInsight),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneTipCard(emoji: '🏥', text: healthInsight),
+          ),
         ],
 
         if (emotionalCare != null) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneTipCard(emoji: '💝', text: emotionalCare),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneTipCard(emoji: '💝', text: emotionalCare),
+          ),
         ],
 
         if ((luckyItemsForPet ?? luckyItems) != null &&
             (luckyItemsForPet ?? luckyItems)!.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneLuckyItemGrid(items: luckyItemsForPet ?? luckyItems!),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneLuckyItemGrid(items: luckyItemsForPet ?? luckyItems!),
+          ),
         ],
 
         if (recommendations.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '💫',
-            title: '추천',
-            child: FortuneBulletList(items: recommendations, bullet: '🐾'),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '💫',
+              title: '추천',
+              child: FortuneBulletList(items: recommendations, bullet: '🐾'),
+            ),
           ),
         ],
 
         if (warnings.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '⚠️',
-            title: '주의',
-            child: FortuneBulletList(
-                items: warnings, bullet: '⚠️', isWarning: true),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '⚠️',
+              title: '주의',
+              child: FortuneBulletList(
+                  items: warnings, bullet: '⚠️', isWarning: true),
+            ),
           ),
         ],
       ],
@@ -219,6 +251,7 @@ class FamilyFortuneBody extends StatelessWidget {
     final warnings = fortuneStrList(componentData['warnings']);
     final specialTip = fortuneStr(componentData['specialTip']);
 
+    var si = 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -229,27 +262,39 @@ class FamilyFortuneBody extends StatelessWidget {
         ],
         if (specialTip != null) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneTipCard(emoji: '💡', text: specialTip),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneTipCard(emoji: '💡', text: specialTip),
+          ),
         ],
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneLuckyItemGrid(items: luckyItems),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneLuckyItemGrid(items: luckyItems),
+          ),
         ],
         if (recommendations.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '💫',
-            title: '추천',
-            child: FortuneBulletList(items: recommendations, bullet: '✨'),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '💫',
+              title: '추천',
+              child: FortuneBulletList(items: recommendations, bullet: '✨'),
+            ),
           ),
         ],
         if (warnings.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '⚠️',
-            title: '주의',
-            child: FortuneBulletList(
-                items: warnings, bullet: '⚠️', isWarning: true),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '⚠️',
+              title: '주의',
+              child: FortuneBulletList(
+                  items: warnings, bullet: '⚠️', isWarning: true),
+            ),
           ),
         ],
       ],

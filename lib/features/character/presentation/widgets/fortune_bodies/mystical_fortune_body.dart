@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/design_system/design_system.dart';
 import '_fortune_body_shared.dart';
+import '_fortune_visual_components.dart';
 
 /// Body widget for mystical/spiritual fortune types:
 /// talisman, past-life, moving
@@ -61,6 +62,7 @@ class MysticalFortuneBody extends StatelessWidget {
     final worstDir = fortuneStr(directionAnalysis?['worst']);
     final dirAdvice = fortuneStr(directionAnalysis?['advice']);
 
+    var si = 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -74,18 +76,21 @@ class MysticalFortuneBody extends StatelessWidget {
         // Fengshui overview
         if (overallEnergy != null || elementBalance != null) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '🌊',
-            title: '풍수 분석',
-            child: Column(
-              children: [
-                if (overallEnergy != null)
-                  FortuneMetricRow(
-                      emoji: '🔮', label: '전체 기운', value: overallEnergy),
-                if (elementBalance != null)
-                  FortuneMetricRow(
-                      emoji: '☯️', label: '오행 균형', value: elementBalance),
-              ],
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '🌊',
+              title: '풍수 분석',
+              child: Column(
+                children: [
+                  if (overallEnergy != null)
+                    FortuneMetricRow(
+                        emoji: '🔮', label: '전체 기운', value: overallEnergy),
+                  if (elementBalance != null)
+                    FortuneMetricRow(
+                        emoji: '☯️', label: '오행 균형', value: elementBalance),
+                ],
+              ),
             ),
           ),
         ],
@@ -96,63 +101,78 @@ class MysticalFortuneBody extends StatelessWidget {
             bestDirections.isNotEmpty ||
             avoidDirections.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '🧭',
-            title: '방향 분석',
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (bestDir != null)
-                  FortuneMetricRow(emoji: '✅', label: '길방', value: bestDir),
-                if (worstDir != null)
-                  FortuneMetricRow(emoji: '❌', label: '흉방', value: worstDir),
-                if (bestDirections.isNotEmpty) ...[
-                  const SizedBox(height: DSSpacing.xs),
-                  FortuneTagPillWrap(
-                    tags: bestDirections.map((d) => '✅ $d').toList(),
-                  ),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '🧭',
+              title: '방향 분석',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (bestDir != null)
+                    FortuneMetricRow(emoji: '✅', label: '길방', value: bestDir),
+                  if (worstDir != null)
+                    FortuneMetricRow(emoji: '❌', label: '흉방', value: worstDir),
+                  if (bestDirections.isNotEmpty) ...[
+                    const SizedBox(height: DSSpacing.xs),
+                    FortuneTagPillWrap(
+                      tags: bestDirections.map((d) => '✅ $d').toList(),
+                    ),
+                  ],
+                  if (avoidDirections.isNotEmpty) ...[
+                    const SizedBox(height: DSSpacing.xs),
+                    FortuneTagPillWrap(
+                      tags: avoidDirections.map((d) => '❌ $d').toList(),
+                    ),
+                  ],
+                  if (dirAdvice != null) ...[
+                    const SizedBox(height: DSSpacing.sm),
+                    FortuneTipCard(emoji: '💡', text: dirAdvice),
+                  ],
                 ],
-                if (avoidDirections.isNotEmpty) ...[
-                  const SizedBox(height: DSSpacing.xs),
-                  FortuneTagPillWrap(
-                    tags: avoidDirections.map((d) => '❌ $d').toList(),
-                  ),
-                ],
-                if (dirAdvice != null) ...[
-                  const SizedBox(height: DSSpacing.sm),
-                  FortuneTipCard(emoji: '💡', text: dirAdvice),
-                ],
-              ],
+              ),
             ),
           ),
         ],
 
         if (specialTip != null) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneTipCard(emoji: '💡', text: specialTip),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneTipCard(emoji: '💡', text: specialTip),
+          ),
         ],
 
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneLuckyItemGrid(items: luckyItems),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneLuckyItemGrid(items: luckyItems),
+          ),
         ],
 
         if (recommendations.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '✅',
-            title: '추천',
-            child: FortuneBulletList(items: recommendations, bullet: '🏡'),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '✅',
+              title: '추천',
+              child: FortuneBulletList(items: recommendations, bullet: '🏡'),
+            ),
           ),
         ],
 
         if (warnings.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '⚠️',
-            title: '주의',
-            child: FortuneBulletList(
-                items: warnings, bullet: '⚠️', isWarning: true),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '⚠️',
+              title: '주의',
+              child: FortuneBulletList(
+                  items: warnings, bullet: '⚠️', isWarning: true),
+            ),
           ),
         ],
       ],
@@ -171,6 +191,7 @@ class MysticalFortuneBody extends StatelessWidget {
     final warnings = fortuneStrList(componentData['warnings']);
     final specialTip = fortuneStr(componentData['specialTip']);
 
+    var si = 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -181,27 +202,39 @@ class MysticalFortuneBody extends StatelessWidget {
         ],
         if (specialTip != null) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneTipCard(emoji: '💡', text: specialTip),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneTipCard(emoji: '💡', text: specialTip),
+          ),
         ],
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneLuckyItemGrid(items: luckyItems),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneLuckyItemGrid(items: luckyItems),
+          ),
         ],
         if (recommendations.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '💫',
-            title: '추천',
-            child: FortuneBulletList(items: recommendations, bullet: '✨'),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '💫',
+              title: '추천',
+              child: FortuneBulletList(items: recommendations, bullet: '✨'),
+            ),
           ),
         ],
         if (warnings.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '⚠️',
-            title: '주의',
-            child: FortuneBulletList(
-                items: warnings, bullet: '⚠️', isWarning: true),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '⚠️',
+              title: '주의',
+              child: FortuneBulletList(
+                  items: warnings, bullet: '⚠️', isWarning: true),
+            ),
           ),
         ],
       ],

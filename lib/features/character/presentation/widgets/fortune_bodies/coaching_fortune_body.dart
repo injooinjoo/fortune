@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/design_system/design_system.dart';
 import '_fortune_body_shared.dart';
+import '_fortune_visual_components.dart';
 
 /// Body widget for coaching/review fortune types:
 /// coaching, decision, daily-review, weekly-review
@@ -45,6 +46,7 @@ class CoachingFortuneBody extends StatelessWidget {
     final actionItems = fortuneStrList(componentData['actionItems']);
     final insights = fortuneStrList(componentData['insights']);
 
+    var si = 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -55,43 +57,61 @@ class CoachingFortuneBody extends StatelessWidget {
         ],
         if (insights.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '💡',
-            title: '인사이트',
-            child: FortuneBulletList(items: insights, bullet: '🔍'),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '💡',
+              title: '인사이트',
+              child: FortuneBulletList(items: insights, bullet: '🔍'),
+            ),
           ),
         ],
         if (actionItems.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '📝',
-            title: '실천 항목',
-            child: FortuneBulletList(items: actionItems, bullet: '✅'),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '📝',
+              title: '실천 항목',
+              child: FortuneBulletList(items: actionItems, bullet: '✅'),
+            ),
           ),
         ],
         if (specialTip != null) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneTipCard(emoji: '💡', text: specialTip),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneTipCard(emoji: '💡', text: specialTip),
+          ),
         ],
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneLuckyItemGrid(items: luckyItems),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneLuckyItemGrid(items: luckyItems),
+          ),
         ],
         if (recommendations.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '💫',
-            title: '추천',
-            child: FortuneBulletList(items: recommendations, bullet: '✨'),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '💫',
+              title: '추천',
+              child: FortuneBulletList(items: recommendations, bullet: '✨'),
+            ),
           ),
         ],
         if (warnings.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '⚠️',
-            title: '주의',
-            child: FortuneBulletList(
-                items: warnings, bullet: '⚠️', isWarning: true),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '⚠️',
+              title: '주의',
+              child: FortuneBulletList(
+                  items: warnings, bullet: '⚠️', isWarning: true),
+            ),
           ),
         ],
       ],

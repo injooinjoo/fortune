@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../../../core/design_system/design_system.dart';
+import 'fortune_bodies/_fortune_visual_components.dart';
 
 class HaneulFortuneResultWidget extends StatelessWidget {
   final String fortuneType;
@@ -35,6 +37,7 @@ class HaneulFortuneResultWidget extends StatelessWidget {
     final omen = _stringValue(componentData['specialMessage']) ??
         _stringValue(componentData['description']) ??
         _stringValue(componentData['greeting']);
+    final score = _intValue(componentData['score']);
     final categories = _asMap(componentData['categories']) ?? const {};
     final rhythm = _normalizeTimeEntries(
       componentData['timeSpecificFortunes'] ?? componentData['timeSlots'],
@@ -51,10 +54,12 @@ class HaneulFortuneResultWidget extends StatelessWidget {
     final fortuneSummary = _asMap(componentData['fortuneSummary']);
     final sajuInsight = _asMap(componentData['sajuInsight']);
 
+    var sectionIndex = 0;
+
     return _buildMysticalShell(
       context,
       title: _stringValue(componentData['title']) ?? '오늘의 흐름',
-      score: _intValue(componentData['score']),
+      score: score,
       icon: Icons.auto_awesome_rounded,
       eyebrow: _buildHeroEyebrow(
         title: '오늘 브리프',
@@ -63,6 +68,18 @@ class HaneulFortuneResultWidget extends StatelessWidget {
       heroBody: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // — Animated score ring (hero visual) —
+          if (score != null) ...[
+            Center(
+              child: FortuneAnimatedScoreRing(
+                score: score,
+                size: 108,
+                strokeWidth: 10,
+                label: '오늘 운세',
+              ),
+            ),
+            const SizedBox(height: DSSpacing.md),
+          ],
           if (omen != null) ...[
             _buildOmenPill(context, omen),
             const SizedBox(height: DSSpacing.sm),
@@ -75,106 +92,155 @@ class HaneulFortuneResultWidget extends StatelessWidget {
               height: 1.62,
             ),
           ),
+          // — Highlight chips —
+          if (highlightChips.length > 1) ...[
+            const SizedBox(height: DSSpacing.sm),
+            Wrap(
+              spacing: DSSpacing.xs,
+              runSpacing: DSSpacing.xs,
+              children: highlightChips.map((chip) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: DSSpacing.sm,
+                    vertical: DSSpacing.xxs,
+                  ),
+                  decoration: BoxDecoration(
+                    color: context.colors.accent.withValues(alpha: 0.10),
+                    borderRadius: BorderRadius.circular(DSRadius.full),
+                  ),
+                  child: Text(
+                    chip,
+                    style: context.labelSmall.copyWith(
+                      color: context.colors.textPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                );
+              }).toList(growable: false),
+            ),
+          ],
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (rhythm.isNotEmpty) ...[
-            _buildSectionFrame(
-              context,
-              title: '오늘의 리듬',
-              icon: Icons.schedule_rounded,
-              child: _buildRhythmTimeline(context, rhythm.take(3).toList()),
+            FortuneStaggeredSection(
+              index: sectionIndex++,
+              child: _buildSectionFrame(
+                context,
+                title: '오늘의 리듬',
+                icon: Icons.schedule_rounded,
+                child:
+                    _buildAnimatedRhythmTimeline(context, rhythm.take(3).toList()),
+              ),
             ),
             const SizedBox(height: DSSpacing.md),
           ],
           if (categories.isNotEmpty) ...[
-            _buildSectionFrame(
-              context,
-              title: '분야별 운세',
-              icon: Icons.grid_view_rounded,
-              child: _buildCategoryGrid(context, categories),
+            FortuneStaggeredSection(
+              index: sectionIndex++,
+              child: _buildSectionFrame(
+                context,
+                title: '분야별 운세',
+                icon: Icons.grid_view_rounded,
+                child: _buildAnimatedCategoryGrid(context, categories),
+              ),
             ),
             const SizedBox(height: DSSpacing.md),
           ],
           if (luckyItems.isNotEmpty) ...[
-            _buildSectionFrame(
-              context,
-              title: '행운 포인트',
-              icon: Icons.stars_rounded,
-              child: _buildLuckyStrip(context, luckyItems),
+            FortuneStaggeredSection(
+              index: sectionIndex++,
+              child: _buildSectionFrame(
+                context,
+                title: '행운 포인트',
+                icon: Icons.stars_rounded,
+                child: _buildLuckyInfoGrid(context, luckyItems),
+              ),
             ),
             const SizedBox(height: DSSpacing.md),
           ],
           if (personalActions.isNotEmpty) ...[
-            _buildSectionFrame(
-              context,
-              title: '오늘의 액션',
-              icon: Icons.bolt_rounded,
-              child:
-                  _buildActionList(context, personalActions.take(4).toList()),
+            FortuneStaggeredSection(
+              index: sectionIndex++,
+              child: _buildSectionFrame(
+                context,
+                title: '오늘의 액션',
+                icon: Icons.bolt_rounded,
+                child: _buildAnimatedActionList(
+                    context, personalActions.take(4).toList()),
+              ),
             ),
             const SizedBox(height: DSSpacing.md),
           ],
           if (godlife != null && godlife.isNotEmpty) ...[
-            _buildSectionFrame(
-              context,
-              title: '갓생 부스트',
-              icon: Icons.wb_twilight_rounded,
-              child: _buildGodlifeSection(context, godlife),
+            FortuneStaggeredSection(
+              index: sectionIndex++,
+              child: _buildSectionFrame(
+                context,
+                title: '갓생 부스트',
+                icon: Icons.wb_twilight_rounded,
+                child: _buildGodlifeSection(context, godlife),
+              ),
             ),
             const SizedBox(height: DSSpacing.md),
           ],
           if (warnings.isNotEmpty) ...[
-            _buildSectionFrame(
-              context,
-              title: '조심할 포인트',
-              icon: Icons.shield_moon_rounded,
-              child: _buildBulletList(context, warnings.take(2).toList()),
+            FortuneStaggeredSection(
+              index: sectionIndex++,
+              child: _buildSectionFrame(
+                context,
+                title: '조심할 포인트',
+                icon: Icons.shield_moon_rounded,
+                child: _buildWarningCards(context, warnings.take(2).toList()),
+              ),
             ),
             const SizedBox(height: DSSpacing.md),
           ],
           if (storySegments.isNotEmpty ||
               (fortuneSummary != null && fortuneSummary.isNotEmpty) ||
               (sajuInsight != null && sajuInsight.isNotEmpty)) ...[
-            _HaneulExpandableSection(
-              title: '더 읽기',
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (fortuneSummary != null && fortuneSummary.isNotEmpty)
-                    _buildSummaryStories(context, fortuneSummary),
-                  if (sajuInsight != null && sajuInsight.isNotEmpty) ...[
+            FortuneStaggeredSection(
+              index: sectionIndex++,
+              child: _HaneulExpandableSection(
+                title: '더 읽기',
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     if (fortuneSummary != null && fortuneSummary.isNotEmpty)
-                      const SizedBox(height: DSSpacing.sm),
-                    _buildSectionCaption(context, '사주 인사이트'),
-                    const SizedBox(height: DSSpacing.xs),
-                    _buildBulletList(
-                      context,
-                      _formattedMapLines(sajuInsight),
-                    ),
-                  ],
-                  if (storySegments.isNotEmpty) ...[
-                    if (fortuneSummary != null && fortuneSummary.isNotEmpty ||
-                        sajuInsight != null && sajuInsight.isNotEmpty)
-                      const SizedBox(height: DSSpacing.sm),
-                    _buildSectionCaption(context, '스토리'),
-                    const SizedBox(height: DSSpacing.xs),
-                    ...storySegments.map(
-                      (paragraph) => Padding(
-                        padding: const EdgeInsets.only(bottom: DSSpacing.sm),
-                        child: Text(
-                          paragraph,
-                          style: context.bodySmall.copyWith(
-                            color: context.colors.textPrimary,
-                            height: 1.65,
+                      _buildSummaryStories(context, fortuneSummary),
+                    if (sajuInsight != null && sajuInsight.isNotEmpty) ...[
+                      if (fortuneSummary != null && fortuneSummary.isNotEmpty)
+                        const SizedBox(height: DSSpacing.sm),
+                      _buildSectionCaption(context, '사주 인사이트'),
+                      const SizedBox(height: DSSpacing.xs),
+                      _buildBulletList(
+                        context,
+                        _formattedMapLines(sajuInsight),
+                      ),
+                    ],
+                    if (storySegments.isNotEmpty) ...[
+                      if (fortuneSummary != null && fortuneSummary.isNotEmpty ||
+                          sajuInsight != null && sajuInsight.isNotEmpty)
+                        const SizedBox(height: DSSpacing.sm),
+                      _buildSectionCaption(context, '스토리'),
+                      const SizedBox(height: DSSpacing.xs),
+                      ...storySegments.map(
+                        (paragraph) => Padding(
+                          padding: const EdgeInsets.only(bottom: DSSpacing.sm),
+                          child: Text(
+                            paragraph,
+                            style: context.bodySmall.copyWith(
+                              color: context.colors.textPrimary,
+                              height: 1.65,
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ],
@@ -230,81 +296,100 @@ class HaneulFortuneResultWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (bestTime != null || worstTime != null) ...[
-            _buildSectionFrame(
-              context,
-              title: '좋은 시간 / 조심할 시간',
-              icon: Icons.timelapse_rounded,
-              child: Row(
-                children: [
-                  if (bestTime != null)
-                    Expanded(
-                      child: _buildDualTimeTile(
-                        context,
-                        title: '좋은 시간',
-                        tone: context.colors.accent,
-                        label: _stringValue(bestTime['period']) ??
-                            _stringValue(bestTime['name']) ??
-                            '시간대 확인',
-                        description: _stringValue(bestTime['reason']) ?? '',
+            FortuneStaggeredSection(
+              index: 0,
+              child: _buildSectionFrame(
+                context,
+                title: '좋은 시간 / 조심할 시간',
+                icon: Icons.timelapse_rounded,
+                child: Row(
+                  children: [
+                    if (bestTime != null)
+                      Expanded(
+                        child: _buildDualTimeTile(
+                          context,
+                          title: '좋은 시간',
+                          tone: context.colors.accent,
+                          label: _stringValue(bestTime['period']) ??
+                              _stringValue(bestTime['name']) ??
+                              '시간대 확인',
+                          description:
+                              _stringValue(bestTime['reason']) ?? '',
+                        ),
                       ),
-                    ),
-                  if (bestTime != null && worstTime != null)
-                    const SizedBox(width: DSSpacing.sm),
-                  if (worstTime != null)
-                    Expanded(
-                      child: _buildDualTimeTile(
-                        context,
-                        title: '조심할 시간',
-                        tone: context.colors.warning,
-                        label: _stringValue(worstTime['period']) ??
-                            _stringValue(worstTime['name']) ??
-                            '시간대 확인',
-                        description: _stringValue(worstTime['reason']) ?? '',
+                    if (bestTime != null && worstTime != null)
+                      const SizedBox(width: DSSpacing.sm),
+                    if (worstTime != null)
+                      Expanded(
+                        child: _buildDualTimeTile(
+                          context,
+                          title: '조심할 시간',
+                          tone: context.colors.warning,
+                          label: _stringValue(worstTime['period']) ??
+                              _stringValue(worstTime['name']) ??
+                              '시간대 확인',
+                          description:
+                              _stringValue(worstTime['reason']) ?? '',
+                        ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: DSSpacing.md),
           ],
           if (rhythm.isNotEmpty) ...[
-            _buildSectionFrame(
-              context,
-              title: '시간대별 흐름',
-              icon: Icons.view_timeline_rounded,
-              child: _buildRhythmTimeline(context, rhythm.take(4).toList()),
+            FortuneStaggeredSection(
+              index: 1,
+              child: _buildSectionFrame(
+                context,
+                title: '시간대별 흐름',
+                icon: Icons.view_timeline_rounded,
+                child: _buildAnimatedRhythmTimeline(
+                    context, rhythm.take(4).toList()),
+              ),
             ),
             const SizedBox(height: DSSpacing.md),
           ],
           if (calendarAdvice.isNotEmpty) ...[
-            _buildSectionFrame(
-              context,
-              title: '일정 인사이트',
-              icon: Icons.event_note_rounded,
-              child: Column(
-                children: calendarAdvice
-                    .take(3)
-                    .map((entry) => _buildAdviceTile(context, entry))
-                    .toList(growable: false),
+            FortuneStaggeredSection(
+              index: 2,
+              child: _buildSectionFrame(
+                context,
+                title: '일정 인사이트',
+                icon: Icons.event_note_rounded,
+                child: Column(
+                  children: calendarAdvice
+                      .take(3)
+                      .map((entry) => _buildAdviceTile(context, entry))
+                      .toList(growable: false),
+                ),
               ),
             ),
             const SizedBox(height: DSSpacing.md),
           ],
           if (luckyItems.isNotEmpty) ...[
-            _buildSectionFrame(
-              context,
-              title: '행운 포인트',
-              icon: Icons.auto_awesome_rounded,
-              child: _buildLuckyStrip(context, luckyItems),
+            FortuneStaggeredSection(
+              index: 3,
+              child: _buildSectionFrame(
+                context,
+                title: '행운 포인트',
+                icon: Icons.auto_awesome_rounded,
+                child: _buildLuckyInfoGrid(context, luckyItems),
+              ),
             ),
             const SizedBox(height: DSSpacing.md),
           ],
           if (warnings.isNotEmpty) ...[
-            _buildSectionFrame(
-              context,
-              title: '체크 포인트',
-              icon: Icons.shield_moon_rounded,
-              child: _buildBulletList(context, warnings.take(2).toList()),
+            FortuneStaggeredSection(
+              index: 4,
+              child: _buildSectionFrame(
+                context,
+                title: '체크 포인트',
+                icon: Icons.shield_moon_rounded,
+                child: _buildWarningCards(
+                    context, warnings.take(2).toList()),
+              ),
             ),
           ],
         ],
@@ -367,42 +452,58 @@ class HaneulFortuneResultWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (goalFortune != null && goalFortune.isNotEmpty) ...[
-            _HaneulExpandableSection(
-              title: '올해 핵심 목표',
-              initiallyExpanded: true,
-              child: _buildGoalFortune(context, goalFortune),
+            FortuneStaggeredSection(
+              index: 0,
+              child: _HaneulExpandableSection(
+                title: '올해 핵심 목표',
+                initiallyExpanded: true,
+                child: _buildGoalFortune(context, goalFortune),
+              ),
             ),
             const SizedBox(height: DSSpacing.md),
           ],
           if (sajuAnalysis != null && sajuAnalysis.isNotEmpty) ...[
-            _HaneulExpandableSection(
-              title: '사주 흐름',
-              child: _buildMapSection(context, sajuAnalysis),
+            FortuneStaggeredSection(
+              index: 1,
+              child: _HaneulExpandableSection(
+                title: '사주 흐름',
+                child: _buildMapSection(context, sajuAnalysis),
+              ),
             ),
             const SizedBox(height: DSSpacing.md),
           ],
           if (monthlyHighlights.isNotEmpty) ...[
-            _HaneulExpandableSection(
-              title: '월별 하이라이트',
-              child: Column(
-                children: monthlyHighlights
-                    .map((entry) => _buildMonthlyHighlightTile(context, entry))
-                    .toList(growable: false),
+            FortuneStaggeredSection(
+              index: 2,
+              child: _HaneulExpandableSection(
+                title: '월별 하이라이트',
+                child: Column(
+                  children: monthlyHighlights
+                      .map((entry) =>
+                          _buildMonthlyHighlightTile(context, entry))
+                      .toList(growable: false),
+                ),
               ),
             ),
             const SizedBox(height: DSSpacing.md),
           ],
           if (luckyItems.isNotEmpty) ...[
-            _HaneulExpandableSection(
-              title: '행운 요소',
-              child: _buildLuckyStrip(context, luckyItems),
+            FortuneStaggeredSection(
+              index: 3,
+              child: _HaneulExpandableSection(
+                title: '행운 요소',
+                child: _buildLuckyInfoGrid(context, luckyItems),
+              ),
             ),
             const SizedBox(height: DSSpacing.md),
           ],
           if (actionPlan != null && actionPlan.isNotEmpty) ...[
-            _HaneulExpandableSection(
-              title: '실천 계획',
-              child: _buildActionPlan(context, actionPlan),
+            FortuneStaggeredSection(
+              index: 4,
+              child: _HaneulExpandableSection(
+                title: '실천 계획',
+                child: _buildActionPlan(context, actionPlan),
+              ),
             ),
             const SizedBox(height: DSSpacing.md),
           ],
@@ -1138,6 +1239,367 @@ class HaneulFortuneResultWidget extends StatelessWidget {
         ],
       ],
     );
+  }
+
+  // ─── Enhanced animated helpers for Phase 1 (daily) ───
+
+  Widget _buildAnimatedRhythmTimeline(
+    BuildContext context,
+    List<Map<String, dynamic>> entries,
+  ) {
+    final colors = context.colors;
+    return Column(
+      children: entries.asMap().entries.map((indexed) {
+        final i = indexed.key;
+        final entry = indexed.value;
+        final score = _intValue(entry['score']) ?? 50;
+        final statusColor = score >= 70
+            ? colors.success
+            : score >= 40
+                ? colors.warning
+                : colors.error;
+        final isLast = i == entries.length - 1;
+
+        return Animate(
+          effects: [
+            FadeEffect(
+              duration: DSAnimation.normal,
+              delay: DSAnimation.contentStagger * (i + 1),
+              curve: DSAnimation.claude,
+            ),
+            SlideEffect(
+              begin: const Offset(0, 0.04),
+              end: Offset.zero,
+              duration: DSAnimation.normal,
+              delay: DSAnimation.contentStagger * (i + 1),
+              curve: DSAnimation.claude,
+            ),
+          ],
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Timeline rail: dot + vertical line
+                SizedBox(
+                  width: 24,
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 14),
+                      Container(
+                        width: 12,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          color: statusColor,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: statusColor.withValues(alpha: 0.3),
+                              blurRadius: 6,
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (!isLast)
+                        Expanded(
+                          child: Container(
+                            width: 2,
+                            margin:
+                                const EdgeInsets.symmetric(vertical: DSSpacing.xxs),
+                            color: colors.border.withValues(alpha: 0.3),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: DSSpacing.xs),
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: DSSpacing.sm),
+                    padding: const EdgeInsets.all(DSSpacing.sm),
+                    decoration: BoxDecoration(
+                      color: Color.alphaBlend(
+                        statusColor.withValues(alpha: 0.05),
+                        colors.surface,
+                      ),
+                      borderRadius: BorderRadius.circular(DSRadius.lg),
+                      border: Border.all(
+                        color: statusColor.withValues(alpha: 0.18),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              _stringValue(entry['label']) ??
+                                  _stringValue(entry['time']) ??
+                                  '시간대',
+                              style: context.labelLarge.copyWith(
+                                color: colors.textPrimary,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const Spacer(),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: DSSpacing.xs,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: statusColor.withValues(alpha: 0.12),
+                                borderRadius:
+                                    BorderRadius.circular(DSRadius.full),
+                              ),
+                              child: Text(
+                                '$score점',
+                                style: context.labelSmall.copyWith(
+                                  color: statusColor,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (_stringValue(entry['subtitle']) != null) ...[
+                          const SizedBox(height: DSSpacing.xxs),
+                          Text(
+                            _stringValue(entry['subtitle'])!,
+                            style: context.labelSmall.copyWith(
+                              color: colors.textSecondary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                        if (_stringValue(entry['body']) != null) ...[
+                          const SizedBox(height: DSSpacing.xs),
+                          Text(
+                            _stringValue(entry['body'])!,
+                            style: context.bodySmall.copyWith(
+                              color: colors.textPrimary,
+                              height: 1.58,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(growable: false),
+    );
+  }
+
+  Widget _buildAnimatedCategoryGrid(
+    BuildContext context,
+    Map<String, dynamic> categories,
+  ) {
+    final entries = categories.entries
+        .where((entry) => entry.key != 'total')
+        .map(
+          (entry) => {
+            'title': _categoryLabel(entry.key),
+            'emoji': _categoryEmoji(entry.key),
+            'score': _intValue(_asMap(entry.value)?['score']) ?? 0,
+            'body': _stringValue(_asMap(entry.value)?['message']) ??
+                _stringValue(_asMap(entry.value)?['description']) ??
+                _stringValue(_asMap(entry.value)?['summary']) ??
+                _stringValue(_asMap(entry.value)?['advice']),
+          },
+        )
+        .take(5)
+        .toList(growable: false);
+
+    return Column(
+      children: entries.asMap().entries.map((indexed) {
+        final i = indexed.key;
+        final entry = indexed.value;
+        final score = entry['score'] as int;
+
+        return FortuneAnimatedProgressBar(
+          label:
+              '${entry['emoji']}  ${entry['title']}',
+          score: score,
+          staggerIndex: i,
+        );
+      }).toList(growable: false),
+    );
+  }
+
+  Widget _buildLuckyInfoGrid(
+    BuildContext context,
+    Map<String, dynamic> luckyItems,
+  ) {
+    final items = <FortuneInfoGraphItem>[];
+    final iconMap = {
+      'color': Icons.palette_rounded,
+      'number': Icons.tag_rounded,
+      'direction': Icons.explore_rounded,
+      'item': Icons.diamond_rounded,
+      'time': Icons.schedule_rounded,
+      'food': Icons.restaurant_rounded,
+      'drink': Icons.local_cafe_rounded,
+      'place': Icons.place_rounded,
+      'music': Icons.music_note_rounded,
+      'animal': Icons.pets_rounded,
+      'flower': Icons.local_florist_rounded,
+    };
+    final labelMap = {
+      'color': '행운 색상',
+      'number': '행운 번호',
+      'direction': '행운 방향',
+      'item': '행운 아이템',
+      'time': '행운 시간',
+      'food': '행운 음식',
+      'drink': '행운 음료',
+      'place': '행운 장소',
+      'music': '행운 음악',
+      'animal': '행운 동물',
+      'flower': '행운 꽃',
+    };
+
+    for (final entry in luckyItems.entries) {
+      final value = _stringValue(entry.value);
+      if (value == null || value.isEmpty) continue;
+      final key = entry.key.toLowerCase();
+      items.add(FortuneInfoGraphItem(
+        iconData: iconMap[key] ?? Icons.auto_awesome_rounded,
+        label: labelMap[key] ?? entry.key,
+        value: value,
+      ));
+    }
+
+    if (items.isEmpty) return const SizedBox.shrink();
+    return FortuneInfoGraphGrid(items: items);
+  }
+
+  Widget _buildAnimatedActionList(BuildContext context, List<String> items) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: items.asMap().entries.map((indexed) {
+        final i = indexed.key;
+        final item = indexed.value;
+        return Animate(
+          effects: [
+            FadeEffect(
+              duration: DSAnimation.normal,
+              delay: DSAnimation.stagger * (i + 1),
+              curve: DSAnimation.claude,
+            ),
+            SlideEffect(
+              begin: const Offset(0.03, 0),
+              end: Offset.zero,
+              duration: DSAnimation.normal,
+              delay: DSAnimation.stagger * (i + 1),
+              curve: DSAnimation.claude,
+            ),
+          ],
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 22,
+                  height: 22,
+                  decoration: BoxDecoration(
+                    color: context.colors.accent.withValues(alpha: 0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    '${i + 1}',
+                    style: context.labelSmall.copyWith(
+                      color: context.colors.accent,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 10,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: DSSpacing.xs),
+                Expanded(
+                  child: Text(
+                    item,
+                    style: context.bodySmall.copyWith(
+                      color: context.colors.textPrimary,
+                      fontWeight: FontWeight.w600,
+                      height: 1.58,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(growable: false),
+    );
+  }
+
+  Widget _buildWarningCards(BuildContext context, List<String> items) {
+    final colors = context.colors;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: items.map((item) {
+        return Container(
+          width: double.infinity,
+          margin: const EdgeInsets.only(bottom: DSSpacing.xs),
+          padding: const EdgeInsets.all(DSSpacing.sm),
+          decoration: BoxDecoration(
+            color: Color.alphaBlend(
+              colors.warning.withValues(alpha: 0.06),
+              colors.surface,
+            ),
+            borderRadius: BorderRadius.circular(DSRadius.lg),
+            border: Border.all(
+              color: colors.warning.withValues(alpha: 0.18),
+            ),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                Icons.info_outline_rounded,
+                size: 16,
+                color: colors.warning,
+              ),
+              const SizedBox(width: DSSpacing.xs),
+              Expanded(
+                child: Text(
+                  item,
+                  style: context.bodySmall.copyWith(
+                    color: colors.textPrimary,
+                    height: 1.58,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(growable: false),
+    );
+  }
+
+  String _categoryEmoji(String key) {
+    const map = {
+      'love': '💝',
+      'money': '💰',
+      'wealth': '💰',
+      'finance': '💰',
+      'health': '🌿',
+      'work': '💼',
+      'career': '💼',
+      'study': '📚',
+      'relationship': '🤝',
+      'social': '👥',
+      'family': '👨‍👩‍👧‍👦',
+      'luck': '🍀',
+      'overall': '✨',
+      'total': '✨',
+    };
+    return map[key.toLowerCase()] ?? '✨';
   }
 
   Widget _buildSummaryStories(

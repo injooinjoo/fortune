@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/design_system/design_system.dart';
 import '_fortune_body_shared.dart';
+import '_fortune_visual_components.dart';
 
 /// Body widget for health/wellness fortune types:
 /// health, exercise, match-insight, breathing
@@ -72,6 +73,7 @@ class HealthFortuneBody extends StatelessWidget {
     final stressRec = fortuneStrList(recommendations?['stressManagement']) +
         fortuneStrList(recommendations?['stress_management']);
 
+    var si = 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -93,26 +95,29 @@ class HealthFortuneBody extends StatelessWidget {
             energy != null ||
             sleep != null) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '📊',
-            title: '컨디션 지표',
-            child: Column(
-              children: [
-                if (physical != null)
-                  FortuneProgressBar(label: '체력', score: physical, emoji: '💪'),
-                if (mental != null) ...[
-                  const SizedBox(height: DSSpacing.xs),
-                  FortuneProgressBar(label: '정신력', score: mental, emoji: '🧠'),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '📊',
+              title: '컨디션 지표',
+              child: Column(
+                children: [
+                  if (physical != null)
+                    FortuneAnimatedProgressBar(label: '체력', score: physical, emoji: '💪', staggerIndex: 0),
+                  if (mental != null) ...[
+                    const SizedBox(height: DSSpacing.xs),
+                    FortuneAnimatedProgressBar(label: '정신력', score: mental, emoji: '🧠', staggerIndex: 1),
+                  ],
+                  if (energy != null) ...[
+                    const SizedBox(height: DSSpacing.xs),
+                    FortuneAnimatedProgressBar(label: '에너지', score: energy, emoji: '⚡', staggerIndex: 2),
+                  ],
+                  if (sleep != null) ...[
+                    const SizedBox(height: DSSpacing.xs),
+                    FortuneAnimatedProgressBar(label: '수면', score: sleep, emoji: '😴', staggerIndex: 3),
+                  ],
                 ],
-                if (energy != null) ...[
-                  const SizedBox(height: DSSpacing.xs),
-                  FortuneProgressBar(label: '에너지', score: energy, emoji: '⚡'),
-                ],
-                if (sleep != null) ...[
-                  const SizedBox(height: DSSpacing.xs),
-                  FortuneProgressBar(label: '수면', score: sleep, emoji: '😴'),
-                ],
-              ],
+              ),
             ),
           ),
         ],
@@ -120,65 +125,89 @@ class HealthFortuneBody extends StatelessWidget {
         // Exercise recommendations
         if (exerciseRec.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '🏃',
-            title: '움직임 제안',
-            child: FortuneBulletList(items: exerciseRec, bullet: '💪'),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '🏃',
+              title: '움직임 제안',
+              child: FortuneBulletList(items: exerciseRec, bullet: '💪'),
+            ),
           ),
         ],
 
         // Diet recommendations
         if (dietRec.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '🥗',
-            title: '생활 습관 팁',
-            child: FortuneBulletList(items: dietRec, bullet: '🍎'),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '🥗',
+              title: '생활 습관 팁',
+              child: FortuneBulletList(items: dietRec, bullet: '🍎'),
+            ),
           ),
         ],
 
         // Rest recommendations
         if (restRec.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '😴',
-            title: '회복 팁',
-            child: FortuneBulletList(items: restRec, bullet: '🌙'),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '😴',
+              title: '회복 팁',
+              child: FortuneBulletList(items: restRec, bullet: '🌙'),
+            ),
           ),
         ],
 
         // Stress management
         if (stressRec.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '🧘',
-            title: '마음 돌봄',
-            child: FortuneBulletList(items: stressRec, bullet: '🌿'),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '🧘',
+              title: '마음 돌봄',
+              child: FortuneBulletList(items: stressRec, bullet: '🌿'),
+            ),
           ),
         ],
 
         if (specialTip != null) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneTipCard(emoji: '💡', text: specialTip),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneTipCard(emoji: '💡', text: specialTip),
+          ),
         ],
 
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneLuckyItemGrid(items: luckyItems),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneLuckyItemGrid(items: luckyItems),
+          ),
         ],
 
         if (warningsList.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '⚠️',
-            title: '컨디션 참고',
-            child: FortuneBulletList(
-                items: warningsList, bullet: '⚠️', isWarning: true),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '⚠️',
+              title: '컨디션 참고',
+              child: FortuneBulletList(
+                  items: warningsList, bullet: '⚠️', isWarning: true),
+            ),
           ),
         ],
 
         // Health disclaimer (Apple 1.4.1)
-        const FortuneHealthDisclaimer(),
+        FortuneStaggeredSection(
+          index: si++,
+          child: const FortuneHealthDisclaimer(),
+        ),
       ],
     );
   }
@@ -195,6 +224,7 @@ class HealthFortuneBody extends StatelessWidget {
     final warnings = fortuneStrList(componentData['warnings']);
     final specialTip = fortuneStr(componentData['specialTip']);
 
+    var si = 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -205,27 +235,39 @@ class HealthFortuneBody extends StatelessWidget {
         ],
         if (specialTip != null) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneTipCard(emoji: '💡', text: specialTip),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneTipCard(emoji: '💡', text: specialTip),
+          ),
         ],
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneLuckyItemGrid(items: luckyItems),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneLuckyItemGrid(items: luckyItems),
+          ),
         ],
         if (recommendations.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '✅',
-            title: '추천',
-            child: FortuneBulletList(items: recommendations, bullet: '💫'),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '✅',
+              title: '추천',
+              child: FortuneBulletList(items: recommendations, bullet: '💫'),
+            ),
           ),
         ],
         if (warnings.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.md),
-          FortuneSectionCard(
-            emoji: '⚠️',
-            title: '주의',
-            child: FortuneBulletList(
-                items: warnings, bullet: '⚠️', isWarning: true),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '⚠️',
+              title: '주의',
+              child: FortuneBulletList(
+                  items: warnings, bullet: '⚠️', isWarning: true),
+            ),
           ),
         ],
       ],
