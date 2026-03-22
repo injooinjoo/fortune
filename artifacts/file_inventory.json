@@ -19025,6 +19025,7 @@
       "notes": [],
       "path": "docs/deployment/APP_STORE_SUBMISSION_INFO.md",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/development/reports/2026-02-16_store_review_strategy_discovery.md"
       ],
       "runtime_reachable": false,
@@ -19149,9 +19150,24 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_markdown",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "doc_only"
+    },
+    {
+      "area": "docs",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "doc_markdown",
       "notes": [],
       "path": "docs/deployment/review/IOS_REVIEW_EVIDENCE.md",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/development/reports/2026-02-16_store_review_strategy_discovery.md",
         "docs/development/reports/2026-02-16_store_review_strategy_verify.md"
       ],
@@ -19181,6 +19197,7 @@
       "notes": [],
       "path": "docs/deployment/review/RELEASE_DECISION_LOG.md",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/development/reports/2026-02-16_store_review_strategy_discovery.md",
         "docs/development/reports/2026-02-16_store_review_strategy_verify.md",
         "docs/development/reports/2026-03-21_release_risk_audit_discovery.md"
@@ -19197,6 +19214,7 @@
       "notes": [],
       "path": "docs/deployment/review/STORE_REVIEW_MASTER_CHECKLIST.md",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/development/reports/2026-02-16_store_review_strategy_discovery.md",
         "docs/development/reports/2026-02-16_store_review_strategy_verify.md"
       ],
@@ -19888,6 +19906,7 @@
         "README.md",
         "docs/APP_ARCHITECTURE.md",
         "docs/README.md",
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "docs/development/reports/2026-03-21_release_risk_audit_discovery.md",
         "docs/development/reports/2026-03-21_release_risk_register.md",
@@ -19907,7 +19926,8 @@
       "path": "docs/getting-started/PROJECT_OVERVIEW.md",
       "referenced_by": [
         "README.md",
-        "docs/README.md"
+        "docs/README.md",
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -20467,6 +20487,7 @@
       ],
       "path": "lib/core/constants/in_app_products.dart",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "lib/services/in_app_purchase_service.dart"
       ],
       "runtime_reachable": false,
@@ -22042,6 +22063,7 @@
       "notes": [],
       "path": "lib/core/services/unified_calendar_service.dart",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/chat/presentation/widgets/survey/chat_inline_calendar.dart"
       ],
@@ -23389,6 +23411,7 @@
       "notes": [],
       "path": "lib/features/character/data/fortune_characters.dart",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/getting-started/APP_SURFACES_AND_ROUTES.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/pages/character_profile_page.dart",
@@ -23701,6 +23724,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/pages/character_chat_panel.dart",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "docs/development/reports/2026-03-21_release_risk_register.md",
@@ -24249,6 +24273,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/widgets/fortune_bodies/health_fortune_body.dart",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/character/presentation/widgets/embedded_fortune_component.dart"
       ],
@@ -24513,6 +24538,7 @@
       "notes": [],
       "path": "lib/features/chat/presentation/widgets/survey/chat_face_reading_flow.dart",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart"
       ],
       "runtime_reachable": true,
@@ -25361,19 +25387,20 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "dart",
       "notes": [
-        "no_inbound_refs",
         "runtime_unreachable",
         "zero_incoming_dart"
       ],
       "path": "lib/features/fortune/presentation/widgets/face_reading/celebrity_match_carousel.dart",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -25603,6 +25630,7 @@
       "notes": [],
       "path": "lib/features/notification/presentation/pages/notification_settings_page.dart",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/deployment/review/IOS_REVIEW_EVIDENCE.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/routes/route_config.dart"
@@ -25619,6 +25647,7 @@
       "notes": [],
       "path": "lib/features/policy/presentation/pages/privacy_policy_page.dart",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/routes/route_config.dart"
       ],
@@ -25634,6 +25663,7 @@
       "notes": [],
       "path": "lib/features/policy/presentation/pages/terms_of_service_page.dart",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/routes/route_config.dart"
       ],
@@ -25787,6 +25817,7 @@
       "referenced_by": [
         "docs/deployment/APPLE_CAPABILITIES_SETUP.md",
         "docs/deployment/DEPLOYMENT_COMPLETE_GUIDE.md",
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/deployment/review/IOS_REVIEW_EVIDENCE.md",
         "integration_test/landing_test.dart",
         "scripts/source_inventory.py"
@@ -25968,6 +25999,7 @@
       "notes": [],
       "path": "lib/presentation/providers/auth_provider.dart",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
         "lib/main.dart",
         "lib/presentation/providers/fortune_provider.dart",
@@ -26316,6 +26348,7 @@
       "notes": [],
       "path": "lib/presentation/widgets/social_accounts_section.dart",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/screens/profile/profile_screen.dart",
         "test/widget/auth/social_auth_pending_state_test.dart"
@@ -26332,6 +26365,7 @@
       "notes": [],
       "path": "lib/presentation/widgets/social_login_bottom_sheet.dart",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/utils/profile_avatar_tap_handler.dart",
         "lib/screens/onboarding/steps/name_input_step.dart",
@@ -26386,6 +26420,7 @@
       "referenced_by": [
         "docs/APP_ARCHITECTURE.md",
         "docs/README.md",
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/design/FIGMA_PAGE_USAGE_AUDIT.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
@@ -26506,6 +26541,7 @@
       "notes": [],
       "path": "lib/screens/profile/account_deletion_page.dart",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/routes/route_config.dart"
@@ -26554,6 +26590,7 @@
       "notes": [],
       "path": "lib/screens/profile/profile_screen.dart",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "docs/development/reports/2026-03-21_release_risk_audit_verify.md",
@@ -26605,6 +26642,7 @@
       "notes": [],
       "path": "lib/screens/splash_screen.dart",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/routes/routes/auth_routes.dart"
       ],
@@ -26620,6 +26658,7 @@
       "notes": [],
       "path": "lib/services/account_deletion_service.dart",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "lib/screens/profile/account_deletion_page.dart"
       ],
       "runtime_reachable": true,
@@ -26724,19 +26763,20 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase3_feature_cleanup",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "dart",
       "notes": [
-        "no_inbound_refs",
         "runtime_unreachable",
         "zero_incoming_dart"
       ],
       "path": "lib/services/health_data_service.dart",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -26749,7 +26789,8 @@
       ],
       "path": "lib/services/in_app_purchase_service.dart",
       "referenced_by": [
-        "docs/deployment/review/ANDROID_REVIEW_EVIDENCE.md"
+        "docs/deployment/review/ANDROID_REVIEW_EVIDENCE.md",
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md"
       ],
       "runtime_reachable": false,
       "test_only": false,
@@ -26791,6 +26832,7 @@
       "notes": [],
       "path": "lib/services/native_platform_service.dart",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "lib/services/widget_data_service.dart",
         "lib/services/widget_service.dart"
       ],
@@ -26806,6 +26848,7 @@
       "notes": [],
       "path": "lib/services/notification/fcm_service.dart",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/deployment/review/IOS_REVIEW_EVIDENCE.md",
         "lib/features/notification/presentation/pages/notification_settings_page.dart",
         "lib/main.dart",
@@ -26826,6 +26869,7 @@
       "notes": [],
       "path": "lib/services/oauth_in_app_browser_coordinator.dart",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "lib/presentation/providers/auth_provider.dart",
         "lib/services/social_auth/providers/apple_auth_provider.dart",
         "lib/services/social_auth/providers/facebook_auth_provider.dart",
@@ -26938,6 +26982,7 @@
       "notes": [],
       "path": "lib/services/social_auth/providers/apple_auth_provider.dart",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "lib/services/social_auth_service.dart",
         "test/unit/services/auth/apple_auth_provider_test.dart"
       ],
@@ -27063,6 +27108,7 @@
       "notes": [],
       "path": "lib/services/storage_service.dart",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/core/services/unified_fortune_service.dart",
@@ -27175,6 +27221,7 @@
       "notes": [],
       "path": "lib/services/widget_service.dart",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/native/NATIVE_FEATURES_GUIDE.md",
         "lib/presentation/providers/auth_provider.dart"
       ],
@@ -28615,6 +28662,7 @@
       "notes": [],
       "path": "supabase/functions/_shared/llm/factory.ts",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "supabase/functions/_shared/character_memory.ts",
         "supabase/functions/analyze-wish/index.ts",
         "supabase/functions/calculate-saju/index.ts",
@@ -29089,6 +29137,7 @@
       ],
       "path": "supabase/functions/character-chat/index.ts",
       "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "lib/features/character/data/services/character_chat_service.dart"
       ],
       "runtime_reachable": true,
@@ -29532,18 +29581,19 @@
     },
     {
       "area": "supabase",
-      "candidate_action": "manual_review",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "edge_function_source",
       "notes": [
-        "edge_function_unreferenced:fortune-health-document",
-        "no_inbound_refs"
+        "edge_function_unreferenced:fortune-health-document"
       ],
       "path": "supabase/functions/fortune-health-document/index.ts",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "doc_only"
     },
     {
       "area": "supabase",
@@ -29556,6 +29606,7 @@
       "path": "supabase/functions/fortune-health/index.ts",
       "referenced_by": [
         "docs/data/LLM_PROVIDER_MIGRATION.md",
+        "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "lib/core/constants/edge_functions_endpoints.dart",
         "lib/core/fortune/fortune_type_registry.dart",
         "lib/core/services/fortune_generators/health_generator.dart",
@@ -32842,7 +32893,7 @@
   "meta": {
     "counts_by_area": {
       "assets": 1231,
-      "docs": 94,
+      "docs": 95,
       "integration_test": 8,
       "lib": 424,
       "scripts": 72,
@@ -32852,18 +32903,18 @@
     "counts_by_candidate_action": {
       "keep": 714,
       "keep_generated": 28,
-      "manual_review": 978,
-      "phase1_remove_candidate": 12,
-      "phase2_review_candidate": 376,
-      "phase3_feature_cleanup": 4
+      "manual_review": 977,
+      "phase1_remove_candidate": 11,
+      "phase2_review_candidate": 380,
+      "phase3_feature_cleanup": 3
     },
     "counts_by_usage_status": {
-      "doc_only": 104,
+      "doc_only": 108,
       "generated_excluded": 28,
       "runtime_used": 714,
       "test_only": 86,
       "tooling_only": 186,
-      "unreferenced": 994
+      "unreferenced": 991
     },
     "declared_asset_dirs_without_runtime_refs": [
       "assets/animations",
@@ -33125,7 +33176,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2112,
+    "total_files": 2113,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
