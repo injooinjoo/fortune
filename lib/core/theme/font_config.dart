@@ -58,26 +58,26 @@ class FontConfig {
   static const double heading4 = 18.0;
 
   // Body Sizes (Body Text)
-  static const double bodyLarge = 16.0;
-  static const double bodyMedium = 14.0;
-  static const double bodySmall = 13.0;
+  static const double bodyLarge = 17.0;
+  static const double bodyMedium = 15.0;
+  static const double bodySmall = 14.0;
 
   // Label Sizes (Labels, Captions)
-  static const double labelLarge = 13.0;
-  static const double labelMedium = 12.0;
-  static const double labelSmall = 11.0;
-  static const double labelTiny = 10.0;
+  static const double labelLarge = 14.0;
+  static const double labelMedium = 13.0;
+  static const double labelSmall = 12.0;
+  static const double labelTiny = 11.0;
 
   // Caption/Badge Sizes (Very Small Text)
-  static const double captionLarge = 11.0;
-  static const double captionSmall = 10.0;
-  static const double badgeText = 9.0;
+  static const double captionLarge = 12.0;
+  static const double captionSmall = 11.0;
+  static const double badgeText = 10.0;
 
   // Button Sizes (Button Text)
-  static const double buttonLarge = 16.0;
-  static const double buttonMedium = 15.0;
-  static const double buttonSmall = 14.0;
-  static const double buttonTiny = 13.0;
+  static const double buttonLarge = 17.0;
+  static const double buttonMedium = 16.0;
+  static const double buttonSmall = 15.0;
+  static const double buttonTiny = 14.0;
 
   // Number Sizes (Numbers Only)
   static const double numberXLarge = 36.0;

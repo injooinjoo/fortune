@@ -953,12 +953,39 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          widget.character.name,
-                          style: context.bodyLarge.copyWith(
-                            color: colors.textPrimary,
-                            fontWeight: FontWeight.w700,
-                          ),
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                widget.character.name,
+                                style: context.bodyLarge.copyWith(
+                                  color: colors.textPrimary,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 5,
+                                vertical: 1,
+                              ),
+                              decoration: BoxDecoration(
+                                color: colors.accentSecondary
+                                    .withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                'AI',
+                                style: context.labelSmall.copyWith(
+                                  color: colors.textSecondary,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 9,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         Text(
                           widget.character.personality.length > 30

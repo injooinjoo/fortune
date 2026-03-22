@@ -36,23 +36,24 @@ class FontSizeSystem {
 
   /// Body Sizes (본문 텍스트)
   /// 일반 텍스트, 설명 등에 사용
-  static const double bodyLarge = 16.0; // 큰 본문
-  static const double bodyMedium = 14.0; // 기본 본문
-  static const double bodySmall = 13.0; // 작은 본문
+  /// 채팅앱 기준 (카카오/라인/ChatGPT: 15-16pt)
+  static const double bodyLarge = 17.0; // 큰 본문
+  static const double bodyMedium = 15.0; // 기본 본문
+  static const double bodySmall = 14.0; // 작은 본문
 
   /// Label Sizes (라벨, 캡션)
   /// 버튼 라벨, 입력 필드 힌트, 캡션 등에 사용
-  static const double labelLarge = 13.0; // 큰 라벨
-  static const double labelMedium = 12.0; // 기본 라벨
-  static const double labelSmall = 11.0; // 작은 라벨
-  static const double labelTiny = 10.0; // 매우 작은 라벨 (배지, NEW 표시 등)
+  static const double labelLarge = 14.0; // 큰 라벨
+  static const double labelMedium = 13.0; // 기본 라벨
+  static const double labelSmall = 12.0; // 작은 라벨
+  static const double labelTiny = 11.0; // 매우 작은 라벨 (배지, NEW 표시 등)
 
   /// Button Sizes (버튼 텍스트)
   /// 버튼 내부 텍스트에 사용
-  static const double buttonLarge = 16.0; // 큰 버튼
-  static const double buttonMedium = 15.0; // 기본 버튼
-  static const double buttonSmall = 14.0; // 작은 버튼
-  static const double buttonTiny = 13.0; // 매우 작은 버튼
+  static const double buttonLarge = 17.0; // 큰 버튼
+  static const double buttonMedium = 16.0; // 기본 버튼
+  static const double buttonSmall = 15.0; // 작은 버튼
+  static const double buttonTiny = 14.0; // 매우 작은 버튼
 
   /// Number Sizes (숫자 전용)
   /// 금액, 점수 등 숫자 표시에 사용 (TossFace 폰트)

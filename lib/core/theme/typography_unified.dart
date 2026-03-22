@@ -175,27 +175,27 @@ class TypographyUnified {
   static TextStyle get bodyLarge => TextStyle(
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.bodyLargeScaled,
-        height: 1.58,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0,
+        height: 1.6,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0.1,
       );
 
   /// Body Medium - Default body text
   static TextStyle get bodyMedium => TextStyle(
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.bodyMediumScaled,
-        height: 1.56,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0,
+        height: 1.6,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0.1,
       );
 
   /// Body Small - Small body text
   static TextStyle get bodySmall => TextStyle(
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.bodySmallScaled,
-        height: 1.5,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0,
+        height: 1.55,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0.1,
       );
 
   // ==========================================
@@ -207,8 +207,8 @@ class TypographyUnified {
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.labelLargeScaled,
         height: 1.45,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0.05,
       );
 
   /// Label Medium - Default label
@@ -216,26 +216,26 @@ class TypographyUnified {
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.labelMediumScaled,
         height: 1.4,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0.05,
       );
 
   /// Label Small - Small label
   static TextStyle get labelSmall => TextStyle(
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.labelSmallScaled,
-        height: 1.35,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0,
+        height: 1.38,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0.05,
       );
 
   /// Label Tiny - Very small label
   static TextStyle get labelTiny => TextStyle(
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.labelTinyScaled,
-        height: 1.32,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0,
+        height: 1.35,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0.05,
       );
 
   // ==========================================

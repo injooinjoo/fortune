@@ -59,7 +59,7 @@ class SupabaseConnectionService extends ResilientService {
 
   static Future<SupabaseClient?> ensureClientReady({
     int maxRetries = 2,
-    Duration timeout = const Duration(seconds: 5),
+    Duration timeout = const Duration(seconds: 10),
     Duration retryDelay = const Duration(seconds: 1),
   }) async {
     final existingClient = tryGetClient();

@@ -150,8 +150,8 @@ void main() async {
   try {
     debugPrint('🚀 [STARTUP] Initializing Supabase...');
     final success = await SupabaseConnectionService.initialize(
-      maxRetries: 2,
-      timeout: const Duration(seconds: 5),
+      maxRetries: 3,
+      timeout: const Duration(seconds: 15),
       retryDelay: const Duration(seconds: 2),
     );
 

@@ -67,8 +67,8 @@ class DSColors {
   /// Secondary text - brighter gray for stronger dark-mode readability
   static const Color textSecondary = Color(0xFFC7C7CC);
 
-  /// Tertiary text - raised contrast while keeping hierarchy
-  static const Color textTertiary = Color(0xFFB0B0B5);
+  /// Tertiary text - raised contrast for better readability
+  static const Color textTertiary = Color(0xFFBCBCC1);
 
   /// Disabled text - Mid gray
   static const Color textDisabled = Color(0xFF48484A);

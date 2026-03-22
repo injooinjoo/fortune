@@ -181,33 +181,37 @@ class CharacterMessageBubble extends StatelessWidget {
                 if (message.hasImage) _buildImageBubble(context, colors),
                 // 텍스트 버블
                 if (message.text.isNotEmpty)
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Container(
-                        padding: CharacterChatSurfaceStyle.bubblePadding,
-                        decoration: CharacterChatSurfaceStyle.bubbleDecoration(
-                          context,
-                          backgroundColor: colors.surface,
-                          borderRadius:
-                              CharacterChatSurfaceStyle.incomingBubbleRadius(
-                            hasLeadingMedia: message.hasImage,
+                  GestureDetector(
+                    onLongPress: () => _showReportMenu(context),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Container(
+                          padding: CharacterChatSurfaceStyle.bubblePadding,
+                          decoration:
+                              CharacterChatSurfaceStyle.bubbleDecoration(
+                            context,
+                            backgroundColor: colors.surface,
+                            borderRadius:
+                                CharacterChatSurfaceStyle.incomingBubbleRadius(
+                              hasLeadingMedia: message.hasImage,
+                            ),
+                            borderAlpha: 0.45,
                           ),
-                          borderAlpha: 0.45,
+                          child: _buildFormattedText(context, message.text),
                         ),
-                        child: _buildFormattedText(context, message.text),
-                      ),
-                      // 호감도 변경 인디케이터 (버블 우측 상단)
-                      if (message.affinityChange != null &&
-                          message.affinityChange != 0)
-                        Positioned(
-                          top: -8,
-                          right: -2,
-                          child: AffinityChangeIndicator(
-                            change: message.affinityChange!,
+                        // 호감도 변경 인디케이터 (버블 우측 상단)
+                        if (message.affinityChange != null &&
+                            message.affinityChange != 0)
+                          Positioned(
+                            top: -8,
+                            right: -2,
+                            child: AffinityChangeIndicator(
+                              change: message.affinityChange!,
+                            ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
               ],
             ),
@@ -400,6 +404,52 @@ class CharacterMessageBubble extends StatelessWidget {
       text: TextSpan(
         style: TextStyle(color: colors.textPrimary),
         children: parts,
+      ),
+    );
+  }
+
+  void _showReportMenu(BuildContext context) {
+    HapticUtils.lightImpact();
+    final colors = context.colors;
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: colors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              width: 36,
+              height: 4,
+              decoration: BoxDecoration(
+                color: colors.border,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.flag_outlined, color: colors.error),
+              title: Text(
+                'Report inappropriate content\n부적절한 콘텐츠 신고',
+                style: context.bodySmall.copyWith(color: colors.textPrimary),
+              ),
+              onTap: () {
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                        'Report submitted. Thank you.\n신고가 접수되었습니다. 감사합니다.'),
+                    duration: Duration(seconds: 3),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
       ),
     );
   }

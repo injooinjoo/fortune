@@ -65,7 +65,7 @@ class SocialLoginBottomSheet {
         messenger.hideCurrentSnackBar();
         messenger.showSnackBar(
           const SnackBar(
-            content: Text('로그인을 준비 중입니다...'),
+            content: Text('Preparing login... / 로그인을 준비 중입니다...'),
             duration: Duration(seconds: 30),
           ),
         );
@@ -88,7 +88,9 @@ class SocialLoginBottomSheet {
     }
     messenger?.showSnackBar(
       const SnackBar(
-        content: Text('로그인을 준비하지 못했습니다. 잠시 후 다시 시도해 주세요.'),
+        content:
+            Text('Unable to connect. Please check your network and try again.\n'
+                '연결할 수 없습니다. 네트워크 상태를 확인하고 다시 시도해 주세요.'),
         duration: Duration(seconds: 4),
       ),
     );
@@ -263,7 +265,7 @@ class SocialLoginBottomSheet {
     final messenger = ScaffoldMessenger.of(context);
     messenger.showSnackBar(
       SnackBar(
-        content: Text('$providerLabel 로그인 시도 중...'),
+        content: Text('Signing in with $providerLabel...'),
         duration: const Duration(seconds: 1),
       ),
     );
@@ -286,7 +288,9 @@ class SocialLoginBottomSheet {
       if (result.isPendingExternalAuth) {
         messenger.showSnackBar(
           const SnackBar(
-            content: Text('브라우저에서 인증을 완료해 주세요. 완료되면 앱으로 돌아옵니다.'),
+            content: Text(
+                'Please complete authentication in your browser. The app will resume automatically.\n'
+                '브라우저에서 인증을 완료해 주세요. 완료되면 앱으로 돌아옵니다.'),
             duration: Duration(seconds: 4),
           ),
         );
@@ -306,7 +310,7 @@ class SocialLoginBottomSheet {
       messenger.hideCurrentSnackBar();
       messenger.showSnackBar(
         SnackBar(
-          content: Text('$providerLabel 로그인 실패: $errorMessage'),
+          content: Text('$providerLabel login failed / 로그인 실패'),
           backgroundColor: context.colors.error,
           duration: const Duration(seconds: 5),
         ),

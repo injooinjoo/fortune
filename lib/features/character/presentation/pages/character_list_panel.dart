@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -60,15 +62,36 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
   final ScrollController _listScrollController = ScrollController();
   bool _showTopChrome = true;
   double _lastScrollOffset = 0;
+  bool _isOffline = false;
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
 
   @override
   void initState() {
     super.initState();
     _listScrollController.addListener(_handleListScroll);
+    _initConnectivity();
+  }
+
+  Future<void> _initConnectivity() async {
+    final result = await Connectivity().checkConnectivity();
+    if (mounted) {
+      setState(() {
+        _isOffline = result.every((r) => r == ConnectivityResult.none);
+      });
+    }
+    _connectivitySubscription =
+        Connectivity().onConnectivityChanged.listen((results) {
+      if (mounted) {
+        setState(() {
+          _isOffline = results.every((r) => r == ConnectivityResult.none);
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
+    _connectivitySubscription?.cancel();
     _listScrollController.removeListener(_handleListScroll);
     _listScrollController.dispose();
     super.dispose();
@@ -180,6 +203,29 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
                   ),
                 ),
               ),
+              // 오프라인 배너
+              if (_isOffline)
+                Container(
+                  width: double.infinity,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  color: colors.error.withValues(alpha: 0.12),
+                  child: Row(
+                    children: [
+                      Icon(Icons.wifi_off_rounded,
+                          size: 16, color: colors.error),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'You are offline. Some features may be limited.\n'
+                          '오프라인 상태입니다. 일부 기능이 제한될 수 있습니다.',
+                          style: context.typography.labelSmall
+                              .copyWith(color: colors.error),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               // 캐릭터 목록
               Expanded(
                 child: ListView.builder(
@@ -746,7 +792,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                     ? chatState.lastMessagePreview
                                     : CharacterLocalizer.getShortDescription(
                                         context, widget.character.id)),
-                            style: typography.bodySmall.copyWith(
+                            style: typography.bodyMedium.copyWith(
                               fontWeight: isTyping || hasUnread
                                   ? FontWeight.w500
                                   : FontWeight.w400,
@@ -986,7 +1032,7 @@ class _NewMessageSheet extends ConsumerWidget {
                     ),
                     subtitle: Text(
                       summary,
-                      style: context.typography.bodySmall.copyWith(
+                      style: context.typography.bodyMedium.copyWith(
                         color: context.colors.textSecondary,
                       ),
                       maxLines: 1,

@@ -1,6 +1,8 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../constants/fortune_constants.dart';
 import '../../core/design_system/design_system.dart';
@@ -8,6 +10,7 @@ import '../../features/fortune/presentation/providers/saju_provider.dart';
 import '../../models/user_profile.dart';
 import '../../presentation/providers/providers.dart';
 import '../../presentation/widgets/social_accounts_section.dart';
+import '../../services/in_app_purchase_service.dart';
 import 'providers/character_relationships_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -224,33 +227,109 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: DSSpacing.xl),
-            const DSSectionHeader(title: '계정', uppercase: false),
+            const DSSectionHeader(title: '구매 관리', uppercase: false),
             DSCard.outlined(
               padding: EdgeInsets.zero,
               child: Column(
                 children: [
                   _ActionListTile(
-                    icon: Icons.person_remove_outlined,
-                    title: '회원 탈퇴',
-                    subtitle: '계정과 관련된 데이터를 삭제해요.',
-                    isDestructive: true,
-                    onTap: () => context.push('/account-deletion'),
+                    icon: Icons.restore_rounded,
+                    title: '구매 복원 / Restore Purchases',
+                    subtitle: '이전 구매 항목을 복원합니다.',
+                    onTap: () => _handleRestorePurchases(context),
                   ),
-                  _ActionListTile(
-                    icon: Icons.logout,
-                    title: '로그아웃',
-                    subtitle: '현재 로그인된 계정을 해제해요.',
-                    isDestructive: true,
-                    onTap: () => _handleLogout(context, ref),
-                    isLast: true,
-                  ),
+                  if (Platform.isIOS)
+                    _ActionListTile(
+                      icon: Icons.manage_accounts_outlined,
+                      title: '구독 관리 / Manage Subscriptions',
+                      subtitle: 'Apple 구독을 관리합니다.',
+                      onTap: () => _openSubscriptionManagement(),
+                      isLast: true,
+                    ),
+                  if (!Platform.isIOS)
+                    _ActionListTile(
+                      icon: Icons.manage_accounts_outlined,
+                      title: '구독 관리 / Manage Subscriptions',
+                      subtitle: 'Google Play 구독을 관리합니다.',
+                      onTap: () => _openSubscriptionManagement(),
+                      isLast: true,
+                    ),
                 ],
+              ),
+            ),
+            const SizedBox(height: DSSpacing.xl),
+            Center(
+              child: TextButton(
+                onPressed: () => _handleLogout(context, ref),
+                child: Text(
+                  '로그아웃',
+                  style: context.bodySmall.copyWith(
+                    color: context.colors.textTertiary,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: DSSpacing.sm),
+            Center(
+              child: GestureDetector(
+                onTap: () => context.push('/account-deletion'),
+                child: Text(
+                  '회원 탈퇴',
+                  style: context.labelSmall.copyWith(
+                    color: context.colors.textTertiary.withValues(alpha: 0.5),
+                    decoration: TextDecoration.underline,
+                    decorationColor:
+                        context.colors.textTertiary.withValues(alpha: 0.5),
+                  ),
+                ),
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _handleRestorePurchases(BuildContext context) async {
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(
+      const SnackBar(
+        content: Text('Restoring purchases... / 구매 복원 중...'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+    try {
+      await InAppPurchaseService().restorePurchases();
+      if (!context.mounted) return;
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text('Purchases restored. / 구매가 복원되었습니다.'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
+        SnackBar(
+          content: const Text('Failed to restore purchases. Please try again.\n'
+              '구매 복원에 실패했습니다. 다시 시도해 주세요.'),
+          duration: const Duration(seconds: 3),
+          backgroundColor: context.colors.error,
+        ),
+      );
+    }
+  }
+
+  Future<void> _openSubscriptionManagement() async {
+    final Uri url;
+    if (Platform.isIOS) {
+      url = Uri.parse('https://apps.apple.com/account/subscriptions');
+    } else {
+      url = Uri.parse('https://play.google.com/store/account/subscriptions');
+    }
+    await launchUrl(url, mode: LaunchMode.externalApplication);
   }
 
   Future<void> _handleLogout(BuildContext context, WidgetRef ref) async {
@@ -629,7 +708,6 @@ class _ActionListTile extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.onTap,
-    this.isDestructive = false,
     this.isLast = false,
   });
 
@@ -637,13 +715,11 @@ class _ActionListTile extends StatelessWidget {
   final String title;
   final String subtitle;
   final VoidCallback onTap;
-  final bool isDestructive;
   final bool isLast;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final foreground = isDestructive ? colors.error : colors.textPrimary;
 
     return InkWell(
       onTap: onTap,
@@ -656,7 +732,7 @@ class _ActionListTile extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(icon, color: foreground),
+                Icon(icon, color: colors.textPrimary),
                 const SizedBox(width: DSSpacing.md),
                 Expanded(
                   child: Column(
@@ -664,15 +740,15 @@ class _ActionListTile extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: context.bodyLarge.copyWith(color: foreground),
+                        style: context.bodyLarge.copyWith(
+                          color: colors.textPrimary,
+                        ),
                       ),
                       const SizedBox(height: DSSpacing.xxs),
                       Text(
                         subtitle,
                         style: context.bodySmall.copyWith(
-                          color: isDestructive
-                              ? colors.error.withValues(alpha: 0.75)
-                              : colors.textSecondary,
+                          color: colors.textSecondary,
                         ),
                       ),
                     ],
