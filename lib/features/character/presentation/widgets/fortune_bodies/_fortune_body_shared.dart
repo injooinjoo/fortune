@@ -684,6 +684,50 @@ List<Map<String, dynamic>> fortuneMapList(dynamic value) {
       .toList(growable: false);
 }
 
+/// Entertainment disclaimer shown at the bottom of fortune results (Apple 1.1.6)
+class FortuneEntertainmentDisclaimer extends StatelessWidget {
+  const FortuneEntertainmentDisclaimer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    return Padding(
+      padding: const EdgeInsets.only(top: DSSpacing.md),
+      child: Text(
+        'For entertainment purposes only. Results are AI-generated and should not be taken as factual advice.\n'
+        '본 결과는 엔터테인먼트 목적으로 제공되며, AI가 생성한 콘텐츠입니다. 실제 조언으로 받아들이지 마세요.',
+        style: context.labelSmall.copyWith(
+          color: colors.textTertiary,
+          height: 1.5,
+        ),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+}
+
+/// Health disclaimer shown at the bottom of health fortune results (Apple 1.4.1)
+class FortuneHealthDisclaimer extends StatelessWidget {
+  const FortuneHealthDisclaimer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    return Padding(
+      padding: const EdgeInsets.only(top: DSSpacing.md),
+      child: Text(
+        'This wellness content is for entertainment and lifestyle reference only. It is not medical advice or a diagnosis.\n'
+        '이 웰니스 콘텐츠는 엔터테인먼트 및 생활 참고용이며, 의학적 조언이나 진단이 아닙니다. 건강 문제는 전문가와 상담하세요.',
+        style: context.labelSmall.copyWith(
+          color: colors.textTertiary,
+          height: 1.5,
+        ),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+}
+
 Map<String, dynamic>? fortuneAsMap(dynamic value) {
   if (value is Map<String, dynamic>) return value;
   if (value is Map) {

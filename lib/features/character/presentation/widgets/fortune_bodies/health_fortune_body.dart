@@ -36,7 +36,7 @@ class HealthFortuneBody extends StatelessWidget {
   Widget _buildHealthBody(BuildContext context) {
     final summary = fortuneStr(componentData['summary']) ??
         fortuneStr(componentData['content']) ??
-        '건강운을 분석했어요.';
+        '웰니스 체크를 정리했어요.';
     final healthAnalysis = fortuneAsMap(componentData['healthAnalysis']) ??
         fortuneAsMap(componentData['health_analysis']);
     final recommendations =
@@ -75,7 +75,7 @@ class HealthFortuneBody extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        FortuneEmojiHeader(emoji: '🏥', text: summary),
+        FortuneEmojiHeader(emoji: '🌿', text: summary),
 
         if (overallStatus != null) ...[
           const SizedBox(height: DSSpacing.sm),
@@ -95,7 +95,7 @@ class HealthFortuneBody extends StatelessWidget {
           const SizedBox(height: DSSpacing.md),
           FortuneSectionCard(
             emoji: '📊',
-            title: '건강 지표',
+            title: '컨디션 지표',
             child: Column(
               children: [
                 if (physical != null)
@@ -122,7 +122,7 @@ class HealthFortuneBody extends StatelessWidget {
           const SizedBox(height: DSSpacing.md),
           FortuneSectionCard(
             emoji: '🏃',
-            title: '운동 추천',
+            title: '움직임 제안',
             child: FortuneBulletList(items: exerciseRec, bullet: '💪'),
           ),
         ],
@@ -132,7 +132,7 @@ class HealthFortuneBody extends StatelessWidget {
           const SizedBox(height: DSSpacing.md),
           FortuneSectionCard(
             emoji: '🥗',
-            title: '식단 추천',
+            title: '생활 습관 팁',
             child: FortuneBulletList(items: dietRec, bullet: '🍎'),
           ),
         ],
@@ -142,7 +142,7 @@ class HealthFortuneBody extends StatelessWidget {
           const SizedBox(height: DSSpacing.md),
           FortuneSectionCard(
             emoji: '😴',
-            title: '휴식 팁',
+            title: '회복 팁',
             child: FortuneBulletList(items: restRec, bullet: '🌙'),
           ),
         ],
@@ -152,7 +152,7 @@ class HealthFortuneBody extends StatelessWidget {
           const SizedBox(height: DSSpacing.md),
           FortuneSectionCard(
             emoji: '🧘',
-            title: '스트레스 관리',
+            title: '마음 돌봄',
             child: FortuneBulletList(items: stressRec, bullet: '🌿'),
           ),
         ],
@@ -171,11 +171,14 @@ class HealthFortuneBody extends StatelessWidget {
           const SizedBox(height: DSSpacing.md),
           FortuneSectionCard(
             emoji: '⚠️',
-            title: '주의 신호',
+            title: '컨디션 참고',
             child: FortuneBulletList(
                 items: warningsList, bullet: '⚠️', isWarning: true),
           ),
         ],
+
+        // Health disclaimer (Apple 1.4.1)
+        const FortuneHealthDisclaimer(),
       ],
     );
   }

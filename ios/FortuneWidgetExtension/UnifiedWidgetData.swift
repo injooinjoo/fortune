@@ -273,7 +273,7 @@ class UnifiedWidgetDataManager {
             "money": "오늘의 금전운 확인 💰",
             "work": "오늘의 직장운 확인 💼",
             "study": "오늘의 학업운 확인 📚",
-            "health": "오늘의 건강운 확인 🏃"
+            "health": "오늘의 웰니스 체크 확인 🌿"
         ]
         return categoryMessages[category] ?? "오늘의 운세 확인 ✨"
     }

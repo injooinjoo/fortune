@@ -92,10 +92,10 @@ final recommendedFortunesProvider =
         userProfile.zodiacAnimal!.isNotEmpty) {
       recommendations.add(RecommendedFortune(
           id: 'zodiac-animal',
-          title: '띠 운세',
-          description: '${userProfile.zodiacAnimal}띠의 이달 운세',
+          title: '띠 인사이트',
+          description: '${userProfile.zodiacAnimal}띠 흐름 가이드',
           route: buildFortuneChatRoute(
-            'daily-calendar',
+            'daily',
             entrySource: 'recommendation',
           ),
           reason: '${userProfile.zodiacAnimal}띠 맞춤',
@@ -106,10 +106,10 @@ final recommendedFortunesProvider =
     if (userProfile.zodiacSign != null && userProfile.zodiacSign!.isNotEmpty) {
       recommendations.add(RecommendedFortune(
           id: 'zodiac',
-          title: '별자리 월간 운세',
-          description: '${userProfile.zodiacSign}의 흐름',
+          title: '별자리 인사이트',
+          description: '${userProfile.zodiacSign} 흐름 가이드',
           route: buildFortuneChatRoute(
-            'daily-calendar',
+            'daily',
             entrySource: 'recommendation',
           ),
           reason: '${userProfile.zodiacSign} 맞춤',

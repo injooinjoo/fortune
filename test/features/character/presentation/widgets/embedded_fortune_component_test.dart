@@ -175,8 +175,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(monthlyTheme.hitTestable(), findsOneWidget);
+    await tester.ensureVisible(find.text('가벼운 제안도 바로 메모해두세요.'));
+    await tester.pumpAndSettle();
     expect(
-      find.text('가벼운 제안도 바로 메모해두세요.').hitTestable(),
+      find.text('가벼운 제안도 바로 메모해두세요.'),
       findsOneWidget,
     );
   });

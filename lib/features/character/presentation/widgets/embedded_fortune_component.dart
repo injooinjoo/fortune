@@ -12,6 +12,7 @@ import 'fortune_bodies/mystical_fortune_body.dart';
 import 'fortune_bodies/personality_fortune_body.dart';
 import 'fortune_bodies/relationship_fortune_body.dart';
 import 'fortune_bodies/wealth_fortune_body.dart';
+import 'fortune_bodies/_fortune_body_shared.dart';
 import 'haneul_fortune_result_widget.dart';
 
 class EmbeddedFortuneComponent extends StatelessWidget {
@@ -844,6 +845,7 @@ class EmbeddedFortuneComponent extends StatelessWidget {
           ),
           const SizedBox(height: DSSpacing.md),
           child,
+          const FortuneEntertainmentDisclaimer(),
         ],
       ),
     );
@@ -1389,7 +1391,7 @@ class EmbeddedFortuneComponent extends StatelessWidget {
   IconData _iconForHealth(String fortuneType) {
     switch (fortuneType) {
       case 'health':
-        return Icons.health_and_safety_outlined;
+        return Icons.spa_outlined;
       case 'exercise':
         return Icons.fitness_center_outlined;
       case 'match-insight':
@@ -1397,7 +1399,7 @@ class EmbeddedFortuneComponent extends StatelessWidget {
       case 'breathing':
         return Icons.air_outlined;
       default:
-        return Icons.health_and_safety_outlined;
+        return Icons.spa_outlined;
     }
   }
 

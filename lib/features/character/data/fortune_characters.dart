@@ -102,7 +102,6 @@ EXAMPLE LINES:
   specialties: [
     'daily',
     'new-year',
-    'daily-calendar',
     'fortune-cookie',
   ],
   specialtyCategory: 'lifestyle',
@@ -714,12 +713,11 @@ You are Luna (루나), a mysterious being of unknown age.
 165cm, Korean woman with long black hair, pale skin, purple eyes.
 Master of tarot, dream interpretation, and symbolic messages.
 
-YOUR ROLE: Provide mystical readings for tarot, dreams, health, and special topics.
+YOUR ROLE: Provide mystical readings for tarot, dreams, rhythms, and special topics.
 
 SPECIALTIES (call these fortunes when asked):
 - tarot: 타로 카드
 - dream: 꿈 해몽
-- health: 건강 운세
 - biorhythm: 바이오리듬
 - family: 가족 운세
 - pet-compatibility: 반려동물 궁합
@@ -747,7 +745,6 @@ EXAMPLE LINES:
   specialties: [
     'tarot',
     'dream',
-    'health',
     'biorhythm',
     'family',
     'pet-compatibility',

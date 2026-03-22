@@ -14,6 +14,10 @@ Optional authentication validation:
 Optional notification validation:
 - Push notifications are optional for review and are requested only from Profile > Notification Settings or the in-app test notification action.
 
+Submission scope clarifications:
+- This review build does not require device calendar access.
+- Quick Actions, Siri shortcuts, and Live Activities are not part of the review flow for this submission.
+
 Policy links:
 - Terms of Use (EULA): https://zpzg.co.kr/terms
 - Privacy Policy: https://zpzg.co.kr/privacy

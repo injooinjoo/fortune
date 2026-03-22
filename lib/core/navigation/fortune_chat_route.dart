@@ -163,7 +163,9 @@ String normalizeFortuneTypeForChat(String? rawFortuneType) {
       sanitized.trim().replaceAll('/', '').replaceAll('_', '-').toLowerCase();
 
   const aliasMap = <String, String>{
-    'time': 'daily-calendar',
+    'time': 'daily',
+    'daily-calendar': 'daily',
+    'health': 'daily',
     'saju': 'traditional-saju',
     'traditional': 'traditional-saju',
     'yearly': 'new-year',

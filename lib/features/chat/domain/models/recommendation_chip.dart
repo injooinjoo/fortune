@@ -107,13 +107,6 @@ const List<RecommendationChip> defaultChips = [
     color: DSColors.accentSecondary,
   ),
   RecommendationChip(
-    id: 'daily-calendar',
-    label: '일진 달력',
-    fortuneType: 'daily-calendar',
-    icon: Icons.calendar_month_outlined,
-    color: DSColors.accentSecondary,
-  ),
-  RecommendationChip(
     id: 'new-year',
     label: '신년 운세',
     fortuneType: 'new-year',
@@ -265,13 +258,6 @@ const List<RecommendationChip> defaultChips = [
   ),
 
   // ============ 건강/스포츠 ============
-  RecommendationChip(
-    id: 'health',
-    label: '건강 운세',
-    fortuneType: 'health',
-    icon: Icons.health_and_safety_outlined,
-    color: DSColors.accentSecondary,
-  ),
   RecommendationChip(
     id: 'exercise',
     label: '운동 운세',

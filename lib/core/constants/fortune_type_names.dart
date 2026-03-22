@@ -10,7 +10,7 @@ class FortuneTypeNames {
     'daily': '오늘의 메시지',
     'today': '오늘의 운세',
     'tomorrow': '내일의 인사이트',
-    'daily-calendar': '날짜별 인사이트',
+    'daily-calendar': '일정 흐름',
     'weekly': '주간 인사이트',
     'monthly': '월간 인사이트',
 
@@ -69,7 +69,7 @@ class FortuneTypeNames {
     'lucky-lottery': '로또 번호 생성',
 
     // Health & Life (건강/라이프)
-    'health': '건강 체크',
+    'health': '웰니스 체크',
     'moving': '이사 가이드',
     'moving-date': '이사 날짜 추천',
     'moving-unified': '이사 플래너',
@@ -200,7 +200,7 @@ class FortuneTypeNames {
     ].contains(fortuneType)) {
       return '재물/투자';
     } else if (['health', 'moving', 'moving-date'].contains(fortuneType)) {
-      return '건강/라이프';
+      return '웰니스/라이프';
     } else if ([
       'pet',
       'pet-dog',

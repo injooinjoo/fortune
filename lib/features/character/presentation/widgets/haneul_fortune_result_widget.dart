@@ -1661,7 +1661,7 @@ class HaneulFortuneResultWidget extends StatelessWidget {
       'money': '재물운',
       'work': '일과운',
       'study': '학업운',
-      'health': '건강운',
+      'health': '웰니스',
       'social': '대화운',
       'relationship': '관계운',
     };

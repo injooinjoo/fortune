@@ -414,8 +414,8 @@ class PersonalityFortuneBody extends StatelessWidget {
     if (items.isEmpty) return const SizedBox.shrink();
 
     return FortuneSectionCard(
-      emoji: '🏥',
-      title: '건강 팁',
+      emoji: '🌿',
+      title: '생활 습관 팁',
       child: FortuneBulletList(items: items, bullet: ''),
     );
   }

@@ -1,6 +1,5 @@
 import Flutter
 import UIKit
-import BackgroundTasks
 // Naver Login SDK is provided via SPM. Guard import so the app still builds
 // even if the package hasn't been added to the project yet.
 #if canImport(NaverThirdPartyLogin)
@@ -9,9 +8,6 @@ import NaverThirdPartyLogin
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
-  // Background Task Identifiers
-  static let widgetRefreshTaskId = "com.beyond.fortune.refresh"
-  static let widgetProcessingTaskId = "com.beyond.fortune.processing"
   // Shared FlutterEngine for Scene lifecycle support (iOS 13+)
   lazy var flutterEngine: FlutterEngine = {
     let engine = FlutterEngine(name: "main engine")
@@ -36,207 +32,12 @@ import NaverThirdPartyLogin
     setupNaverLogin()
     #endif
     
-    // Register native platform plugin for widget and Live Activity support
+    // Register native platform plugin for widget support
     if let registrar = self.registrar(forPlugin: "NativePlatformPlugin") {
       NativePlatformPlugin.register(with: registrar)
     }
 
-    // Register background tasks for widget refresh
-    registerBackgroundTasks()
-
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
-  }
-
-  // MARK: - Background Tasks for Widget Refresh
-
-  private func registerBackgroundTasks() {
-    // Register app refresh task (short-running, for quick updates)
-    BGTaskScheduler.shared.register(
-      forTaskWithIdentifier: AppDelegate.widgetRefreshTaskId,
-      using: nil
-    ) { [weak self] task in
-      self?.handleWidgetRefresh(task: task as! BGAppRefreshTask)
-    }
-
-    // Register processing task (long-running, for data fetch)
-    BGTaskScheduler.shared.register(
-      forTaskWithIdentifier: AppDelegate.widgetProcessingTaskId,
-      using: nil
-    ) { [weak self] task in
-      self?.handleWidgetProcessing(task: task as! BGProcessingTask)
-    }
-
-    print("✅ [BGTask] Widget background tasks registered")
-  }
-
-  private func handleWidgetRefresh(task: BGAppRefreshTask) {
-    print("🔄 [BGTask] Widget refresh started")
-
-    // Schedule next refresh
-    scheduleWidgetRefresh()
-
-    // Create a task request to process widget data
-    let queue = OperationQueue()
-    queue.maxConcurrentOperationCount = 1
-
-    let operation = BlockOperation {
-      // Notify Flutter to refresh widget data
-      self.notifyFlutterForWidgetRefresh()
-    }
-
-    task.expirationHandler = {
-      queue.cancelAllOperations()
-      print("⚠️ [BGTask] Widget refresh expired")
-    }
-
-    operation.completionBlock = {
-      task.setTaskCompleted(success: !operation.isCancelled)
-      print("✅ [BGTask] Widget refresh completed")
-    }
-
-    queue.addOperation(operation)
-  }
-
-  private func handleWidgetProcessing(task: BGProcessingTask) {
-    print("🔄 [BGTask] Widget processing started")
-
-    // Schedule next processing task
-    scheduleWidgetProcessing()
-
-    let queue = OperationQueue()
-    queue.maxConcurrentOperationCount = 1
-
-    let operation = BlockOperation {
-      // Fetch and save widget data
-      self.fetchAndSaveWidgetData()
-    }
-
-    task.expirationHandler = {
-      queue.cancelAllOperations()
-      print("⚠️ [BGTask] Widget processing expired")
-    }
-
-    operation.completionBlock = {
-      task.setTaskCompleted(success: !operation.isCancelled)
-      print("✅ [BGTask] Widget processing completed")
-    }
-
-    queue.addOperation(operation)
-  }
-
-  /// Schedule widget refresh task (short-running)
-  func scheduleWidgetRefresh() {
-    let request = BGAppRefreshTaskRequest(identifier: AppDelegate.widgetRefreshTaskId)
-    // Schedule for early morning (between 1-6 AM)
-    request.earliestBeginDate = getNextEarlyMorningDate()
-
-    do {
-      try BGTaskScheduler.shared.submit(request)
-      print("✅ [BGTask] Widget refresh scheduled for: \(request.earliestBeginDate?.description ?? "nil")")
-    } catch {
-      print("❌ [BGTask] Failed to schedule widget refresh: \(error)")
-    }
-  }
-
-  /// Schedule widget processing task (long-running)
-  func scheduleWidgetProcessing() {
-    let request = BGProcessingTaskRequest(identifier: AppDelegate.widgetProcessingTaskId)
-    request.requiresNetworkConnectivity = true
-    request.requiresExternalPower = false
-    // Schedule for early morning (between 1-6 AM)
-    request.earliestBeginDate = getNextEarlyMorningDate()
-
-    do {
-      try BGTaskScheduler.shared.submit(request)
-      print("✅ [BGTask] Widget processing scheduled for: \(request.earliestBeginDate?.description ?? "nil")")
-    } catch {
-      print("❌ [BGTask] Failed to schedule widget processing: \(error)")
-    }
-  }
-
-  /// Get next early morning date (1-6 AM)
-  private func getNextEarlyMorningDate() -> Date {
-    var calendar = Calendar.current
-    calendar.timeZone = TimeZone(identifier: "Asia/Seoul") ?? .current
-
-    var components = calendar.dateComponents([.year, .month, .day], from: Date())
-    components.hour = 3 // Target 3 AM
-    components.minute = 0
-    components.second = 0
-
-    guard var targetDate = calendar.date(from: components) else {
-      // Fallback: 1 hour from now
-      return Date().addingTimeInterval(3600)
-    }
-
-    // If we're past 3 AM today, schedule for tomorrow
-    if targetDate <= Date() {
-      targetDate = calendar.date(byAdding: .day, value: 1, to: targetDate) ?? targetDate
-    }
-
-    return targetDate
-  }
-
-  /// Notify Flutter to refresh widget data
-  private func notifyFlutterForWidgetRefresh() {
-    DispatchQueue.main.async { [weak self] in
-      guard let self = self else { return }
-
-      let channel = FlutterMethodChannel(
-        name: "com.beyond.fortune/widget_refresh",
-        binaryMessenger: self.flutterEngine.binaryMessenger
-      )
-
-      channel.invokeMethod("refreshWidgetData", arguments: nil) { result in
-        if let error = result as? FlutterError {
-          print("❌ [BGTask] Flutter widget refresh failed: \(error.message ?? "Unknown")")
-        } else {
-          print("✅ [BGTask] Flutter widget refresh completed")
-        }
-      }
-    }
-  }
-
-  /// Fetch widget data directly (fallback when Flutter is not available)
-  private func fetchAndSaveWidgetData() {
-    // Read saved widget data from App Group storage
-    // This is a fallback - main data fetch happens via Flutter
-    let appGroupId = "group.com.beyond.fortune"
-    guard let userDefaults = UserDefaults(suiteName: appGroupId) else {
-      print("❌ [BGTask] Failed to access App Group")
-      return
-    }
-
-    // Check if data is already valid for today
-    let validDate = userDefaults.string(forKey: "valid_date") ?? ""
-    let todayStr = formatTodayString()
-
-    if validDate == todayStr {
-      print("ℹ️ [BGTask] Widget data already valid for today")
-      // Reload widgets to ensure they show latest data
-      reloadAllWidgets()
-      return
-    }
-
-    // Data needs refresh - notify Flutter if possible
-    notifyFlutterForWidgetRefresh()
-  }
-
-  private func formatTodayString() -> String {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy-MM-dd"
-    formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
-    return formatter.string(from: Date())
-  }
-
-  private func reloadAllWidgets() {
-    if #available(iOS 14.0, *) {
-      DispatchQueue.main.async {
-        // Import WidgetKit is needed in the widget extension
-        // For now, use method channel to trigger reload from Flutter
-        print("ℹ️ [BGTask] Requesting widget reload via Flutter")
-      }
-    }
   }
   
   // Handle OAuth callback URLs

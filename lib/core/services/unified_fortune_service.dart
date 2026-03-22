@@ -320,7 +320,7 @@ class UnifiedFortuneService {
       'mbti': 'MBTI 분석',
       'love': '연애 분석',
       'career': '직장 분석',
-      'health': '건강 체크',
+      'health': '웰니스 체크',
       'exercise': '오늘의 운동',
       'investment': '투자 인사이트',
       'exam': '시험 가이드',

@@ -109,6 +109,16 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       CharacterProactiveMediaService();
   final StorageService _storageService = StorageService();
 
+  String _reviewSafeFortuneType(String fortuneType) {
+    switch (fortuneType) {
+      case 'health':
+      case 'daily-calendar':
+        return 'daily';
+      default:
+        return fortuneType;
+    }
+  }
+
   /// 현재 캐릭터 정보 캐시
   AiCharacter? _cachedCharacter;
   Timer? _readIdleIcebreakerTimer;
@@ -377,7 +387,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     'work': '직장/비즈니스', 'money': '금전 거래',
     // 새해 목표
     'success': '성공/성취', 'wealth': '부자되기',
-    'health': '건강/운동', 'travel': '여행/경험', 'peace': '마음의 평화',
+    'health': '웰니스/운동', 'travel': '여행/경험', 'peace': '마음의 평화',
     // 재능 관련
     'solo': '혼자 집중해서', 'team': '팀과 협업하며',
     'logical': '논리적으로 분석', 'intuitive': '직관적으로 판단',
@@ -565,7 +575,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       case 'dream':
         return '$d의 꿈을 해석해볼게요~ 🌙';
       case 'health':
-        return '$d의 건강운을 살펴볼게요~ 🏥';
+        return '$d의 웰니스 체크를 도와드릴게요~ 🌿';
       case 'biorhythm':
         return '$d의 바이오리듬을 분석해볼게요~ 📊';
       case 'family':
@@ -821,7 +831,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         _addSurveyLine(lines, answers, 'dreamContent', '📝 꿈 내용');
         break;
       case 'health':
-        _addSurveyLine(lines, answers, 'concern', '🏥 건강 고민');
+        _addSurveyLine(lines, answers, 'concern', '🌿 컨디션 고민');
         break;
       case 'biorhythm':
         _addSurveyLine(lines, answers, 'concern', '📊 궁금한 점');
@@ -975,7 +985,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       case 'dream':
         return '꿈의 의미를 해석해볼게요~ 🌙';
       case 'health':
-        return '건강운을 꼼꼼히 살펴볼게요! 🏥';
+        return '웰니스 체크를 함께 정리해볼게요! 🌿';
       case 'biorhythm':
         return '바이오리듬 분석 시작! 📊';
       case 'family':
@@ -2523,6 +2533,7 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     bool userMessageAlreadyAdded = false,
     bool skipIntroMessage = false,
   }) async {
+    final effectiveFortuneType = _reviewSafeFortuneType(fortuneType);
     final canSend = await _consumeCharacterChatTokensIfNeeded();
     if (!canSend) {
       return;
@@ -2540,8 +2551,9 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     markPendingUserMessagesAsRead();
 
     // 3.5단계: 신상정보 인트로 메시지 (운세 보기 전 사용자 정보 열거)
-    final introMessage =
-        skipIntroMessage ? null : _buildFortuneIntroMessage(fortuneType);
+    final introMessage = skipIntroMessage
+        ? null
+        : _buildFortuneIntroMessage(effectiveFortuneType);
     if (introMessage != null) {
       setTyping(true);
       await _waitForUiDelayIfNeeded(const Duration(milliseconds: 800));
@@ -2556,13 +2568,14 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     try {
       final toneProfile = _buildToneProfile(currentUserMessage: requestMessage);
       // 🆕 실제 운세 API 호출하여 상세 데이터 가져오기
-      final fortuneData = await _fetchFortuneData(fortuneType, {});
+      final fortuneData = await _fetchFortuneData(effectiveFortuneType, {});
       final fortuneDataContext = _formatFortuneDataForContext(fortuneData);
 
       // 🆕 사주 타입이면 pillar 표를 맨 앞에 추가
       String enrichedContext = fortuneDataContext;
-      Logger.info('[SajuTable] sendFortuneRequest fortuneType=$fortuneType');
-      if (fortuneType == 'traditional-saju') {
+      Logger.info(
+          '[SajuTable] sendFortuneRequest fortuneType=$effectiveFortuneType');
+      if (effectiveFortuneType == 'traditional-saju') {
         // sajuProvider에 데이터가 없으면 먼저 로드
         if (_ref.read(sajuProvider).sajuData == null) {
           Logger.info('[SajuTable] sajuData null → ensureLoaded() 호출');
@@ -2617,7 +2630,7 @@ $emojiInstruction
 ''';
 
       // 🆕 사주 타입 전용 시스템 지시문
-      if (fortuneType == 'traditional-saju') {
+      if (effectiveFortuneType == 'traditional-saju') {
         fortuneSystemInstruction += '''
 사주팔자 명식 표가 포함되어 있습니다. 반드시 이 표를 먼저 보여주고,
 각 주(柱)의 천간/지지/오행 의미를 해석해주세요.
@@ -2626,7 +2639,7 @@ $emojiInstruction
       }
 
       // 🆕 새해 운세 전용 시스템 지시문
-      if (fortuneType == 'new-year') {
+      if (effectiveFortuneType == 'new-year') {
         fortuneSystemInstruction += '''
 
 [새해 운세 응답 구조]
@@ -2695,10 +2708,15 @@ $enrichedContext
 
       // 호감도 포인트 계산 (애니메이션용)
       final affinityPoints = response.affinityDelta.points;
-      final useCardFirstFlow = _shouldUseCardFirstFortuneFlow(fortuneType);
+      final useCardFirstFlow =
+          _shouldUseCardFirstFortuneFlow(effectiveFortuneType);
 
       _ackPendingUserMessagesBeforeCharacterReply();
-      _addEmbeddedFortuneComponentIfNeeded(fortuneType, fortuneData, const {});
+      _addEmbeddedFortuneComponentIfNeeded(
+        effectiveFortuneType,
+        fortuneData,
+        const {},
+      );
 
       if (!useCardFirstFlow) {
         // 6단계: 캐릭터 응답을 멀티 버블로 분할 전달
@@ -2733,6 +2751,7 @@ $enrichedContext
     bool userMessageAlreadyAdded = false,
     bool skipIntroMessage = false,
   }) async {
+    final effectiveFortuneType = _reviewSafeFortuneType(fortuneType);
     final canSend = await _consumeCharacterChatTokensIfNeeded();
     if (!canSend) {
       return;
@@ -2753,7 +2772,7 @@ $enrichedContext
     final introMessage = skipIntroMessage
         ? null
         : _buildFortuneIntroMessage(
-            fortuneType,
+            effectiveFortuneType,
             surveyAnswers: surveyAnswers,
           );
     if (introMessage != null) {
@@ -2770,14 +2789,17 @@ $enrichedContext
     try {
       final toneProfile = _buildToneProfile(currentUserMessage: requestMessage);
       // 🆕 실제 운세 API 호출하여 상세 데이터 가져오기 (설문 답변 포함)
-      final fortuneData = await _fetchFortuneData(fortuneType, surveyAnswers);
+      final fortuneData = await _fetchFortuneData(
+        effectiveFortuneType,
+        surveyAnswers,
+      );
       final fortuneDataContext = _formatFortuneDataForContext(fortuneData);
 
       // 🆕 사주 타입이면 pillar 표를 맨 앞에 추가
       String enrichedContext = fortuneDataContext;
       Logger.info(
-          '[SajuTable] sendFortuneRequestWithAnswers fortuneType=$fortuneType');
-      if (fortuneType == 'traditional-saju') {
+          '[SajuTable] sendFortuneRequestWithAnswers fortuneType=$effectiveFortuneType');
+      if (effectiveFortuneType == 'traditional-saju') {
         // sajuProvider에 데이터가 없으면 먼저 로드
         if (_ref.read(sajuProvider).sajuData == null) {
           Logger.info(
@@ -2845,7 +2867,7 @@ $emojiInstruction
       }
 
       // 🆕 새해 운세 전용 시스템 지시문
-      if (fortuneType == 'new-year') {
+      if (effectiveFortuneType == 'new-year') {
         fortuneSystemInstruction += '''
 
 [새해 운세 응답 구조]
@@ -2917,11 +2939,12 @@ $enrichedContext
 
       // 호감도 포인트 계산 (애니메이션용)
       final affinityPoints = response.affinityDelta.points;
-      final useCardFirstFlow = _shouldUseCardFirstFortuneFlow(fortuneType);
+      final useCardFirstFlow =
+          _shouldUseCardFirstFortuneFlow(effectiveFortuneType);
 
       _ackPendingUserMessagesBeforeCharacterReply();
       _addEmbeddedFortuneComponentIfNeeded(
-        fortuneType,
+        effectiveFortuneType,
         fortuneData,
         surveyAnswers,
       );
@@ -4202,7 +4225,7 @@ $enrichedContext
       'money': '재물운',
       'work': '일과',
       'study': '학업',
-      'health': '건강',
+      'health': '웰니스',
       'social': '대화운',
       'relationship': '관계운',
     };
@@ -4729,7 +4752,7 @@ $enrichedContext
           'owner_bond': '주인과의 유대감',
           'activity_recommendation': '활동 추천',
           'care_tips': '케어 팁',
-          'health_check': '건강 체크',
+          'health_check': '웰니스 체크',
           'weather_advice': '날씨 조언',
           'special_message': '특별 메시지',
           'pet_info': '반려동물 정보',

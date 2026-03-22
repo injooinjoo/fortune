@@ -1,8 +1,6 @@
 import Flutter
 import UIKit
-import ActivityKit
 import WidgetKit
-import Intents
 import Vision
 import CoreImage
 
@@ -35,26 +33,6 @@ public class NativePlatformPlugin: NSObject, FlutterPlugin {
             scheduleNotification(call: call, result: result)
         case "cancelNotification":
             cancelNotification(call: call, result: result)
-        case "updateDynamicIsland":
-            if #available(iOS 16.2, *) {
-                updateDynamicIsland(call: call, result: result)
-            } else {
-                result(FlutterError(code: "UNAVAILABLE", message: "iOS 16.2+ required", details: nil))
-            }
-        case "startLiveActivity":
-            if #available(iOS 16.2, *) {
-                startLiveActivity(call: call, result: result)
-            } else {
-                result(FlutterError(code: "UNAVAILABLE", message: "iOS 16.2+ required", details: nil))
-            }
-        case "endLiveActivity":
-            if #available(iOS 16.2, *) {
-                endLiveActivity(call: call, result: result)
-            } else {
-                result(FlutterError(code: "UNAVAILABLE", message: "iOS 16.2+ required", details: nil))
-            }
-        case "addSiriShortcut":
-            addSiriShortcut(call: call, result: result)
         case "startScreenshotDetection":
             startScreenshotDetection(result: result)
         case "stopScreenshotDetection":
@@ -150,104 +128,6 @@ public class NativePlatformPlugin: NSObject, FlutterPlugin {
         
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [id])
         result("Notification cancelled")
-    }
-    
-    @available(iOS 16.2, *)
-    private func updateDynamicIsland(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        guard let args = call.arguments as? [String: Any],
-              let activityId = args["activityId"] as? String,
-              let content = args["content"] as? [String: Any] else {
-            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments", details: nil))
-            return
-        }
-        
-        // Update Live Activity content
-        Task {
-            do {
-                // Find the activity and update it
-                for activity in Activity<FortuneActivityAttributes>.activities {
-                    if activity.id == activityId {
-                        let updatedState = FortuneActivityAttributes.ContentState(fortuneData: content)
-                        await activity.update(using: updatedState)
-                        result("Dynamic Island updated")
-                        return
-                    }
-                }
-                result(FlutterError(code: "ACTIVITY_NOT_FOUND", message: "Activity not found", details: nil))
-            } catch {
-                result(FlutterError(code: "UPDATE_ERROR", message: error.localizedDescription, details: nil))
-            }
-        }
-    }
-    
-    @available(iOS 16.2, *)
-    private func startLiveActivity(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        guard let args = call.arguments as? [String: Any],
-              let attributes = args["attributes"] as? [String: Any],
-              let contentState = args["contentState"] as? [String: Any] else {
-            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments", details: nil))
-            return
-        }
-        
-        Task {
-            do {
-                let fortuneAttributes = FortuneActivityAttributes(fortuneType: attributes["fortuneType"] as? String ?? "daily")
-                let initialState = FortuneActivityAttributes.ContentState(fortuneData: contentState)
-                
-                let activity = try Activity.request(
-                    attributes: fortuneAttributes,
-                    contentState: initialState,
-                    pushType: .token
-                )
-                
-                result(activity.id)
-            } catch {
-                result(FlutterError(code: "START_ERROR", message: error.localizedDescription, details: nil))
-            }
-        }
-    }
-    
-    @available(iOS 16.2, *)
-    private func endLiveActivity(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        guard let args = call.arguments as? [String: Any],
-              let activityId = args["activityId"] as? String else {
-            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments", details: nil))
-            return
-        }
-        
-        Task {
-            for activity in Activity<FortuneActivityAttributes>.activities {
-                if activity.id == activityId {
-                    await activity.end(dismissalPolicy: .immediate)
-                    result("Live Activity ended")
-                    return
-                }
-            }
-            result(FlutterError(code: "ACTIVITY_NOT_FOUND", message: "Activity not found", details: nil))
-        }
-    }
-    
-    private func addSiriShortcut(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        guard let args = call.arguments as? [String: Any],
-              let shortcutId = args["shortcutId"] as? String,
-              let title = args["title"] as? String,
-              let phrase = args["phrase"] as? String,
-              let userInfo = args["userInfo"] as? [String: Any] else {
-            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments", details: nil))
-            return
-        }
-        
-        // Create and donate Siri shortcut
-        let activity = NSUserActivity(activityType: "com.fortune.fortune.\(shortcutId)")
-        activity.title = title
-        activity.userInfo = userInfo
-        activity.isEligibleForSearch = true
-        activity.isEligibleForPrediction = true
-        activity.persistentIdentifier = NSUserActivityPersistentIdentifier(shortcutId)
-        activity.suggestedInvocationPhrase = phrase
-        
-        activity.becomeCurrent()
-        result("Siri shortcut added")
     }
     
     private func startScreenshotDetection(result: @escaping FlutterResult) {
@@ -423,23 +303,4 @@ extension NativePlatformPlugin: FlutterStreamHandler {
         self.eventSink = nil
         return nil
     }
-}
-
-// MARK: - Live Activity Attributes
-@available(iOS 16.2, *)
-struct FortuneActivityAttributes: ActivityAttributes {
-    public struct ContentState: Codable, Hashable {
-        var fortuneDataJson: String  // JSON string for Hashable compliance
-
-        init(fortuneData: [String: Any]) {
-            if let jsonData = try? JSONSerialization.data(withJSONObject: fortuneData),
-               let jsonString = String(data: jsonData, encoding: .utf8) {
-                self.fortuneDataJson = jsonString
-            } else {
-                self.fortuneDataJson = "{}"
-            }
-        }
-    }
-
-    var fortuneType: String
 }

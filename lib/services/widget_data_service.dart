@@ -23,7 +23,7 @@ class WidgetDataService {
     'money': '금전운',
     'work': '직장운',
     'study': '학업운',
-    'health': '건강운',
+    'health': '웰니스',
   };
 
   static const Map<String, String> _categoryIcons = {
@@ -31,7 +31,7 @@ class WidgetDataService {
     'money': '💰',
     'work': '💼',
     'study': '📚',
-    'health': '💪',
+    'health': '🌿',
   };
 
   // 시간대 매핑
@@ -620,8 +620,8 @@ class WidgetDataService {
         '시험 운을 확인해보세요 ✏️',
       ],
       'health': [
-        '오늘의 건강운 확인 💪',
-        '활력 넘치는 하루가 될까요? 🏃',
+        '오늘의 웰니스 체크 확인 🌿',
+        '리듬이 가벼운 하루가 될까요? 🌤️',
         '컨디션을 확인해보세요 ❤️',
       ],
     };

@@ -128,87 +128,8 @@ class NativePlatformService extends ResilientService {
     return _eventChannel.receiveBroadcastStream();
   }
 
-  /// iOS specific methods
-  static final iOS ios = iOS._();
-
   /// Android specific methods
   static final Android android = Android._();
-}
-
-class iOS extends ResilientService {
-  iOS._();
-
-  @override
-  String get serviceName => 'NativePlatformService.iOS';
-
-  /// Update Dynamic Island content
-  Future<void> updateDynamicIsland({
-    required String activityId,
-    required Map<String, dynamic> content,
-  }) async {
-    await safeExecuteWithCondition(NativePlatformService._isIOS, () async {
-      await NativePlatformService.iosChannel
-          .invokeMethod('updateDynamicIsland', {
-        'activityId': activityId,
-        'content': content,
-      });
-    }, null, '다이내믹 아일랜드 업데이트', 'iOS 플랫폼 필요', '다이내믹 아일랜드 기능 비활성화');
-  }
-
-  /// Start a Live Activity
-  Future<String?> startLiveActivity(
-      {required Map<String, dynamic> attributes,
-      required Map<String, dynamic> contentState}) async {
-    if (const String.fromEnvironment('PLATFORM') != 'ios') return null;
-
-    try {
-      final activityId = await NativePlatformService.iosChannel
-          .invokeMethod<String>('startLiveActivity',
-              {'attributes': attributes, 'contentState': contentState});
-      Logger.info('Native platform initialized successfully');
-      return activityId;
-    } on PlatformException catch (e) {
-      Logger.warning(
-          '[NativePlatformService] 라이브 액티비티 시작 실패 (선택적 기능, iOS 16.1+ 전용): $e');
-      return null;
-    }
-  }
-
-  /// End a Live Activity
-  Future<void> endLiveActivity(String activityId) async {
-    if (const String.fromEnvironment('PLATFORM') != 'ios') return;
-
-    try {
-      await NativePlatformService.iosChannel
-          .invokeMethod('endLiveActivity', {'activityId': activityId});
-      Logger.info('Native platform initialized successfully');
-    } on PlatformException catch (e) {
-      Logger.warning(
-          '[NativePlatformService] 라이브 액티비티 종료 실패 (선택적 기능, iOS 16.1+ 전용): $e');
-    }
-  }
-
-  /// Add Siri shortcut
-  Future<void> addSiriShortcut(
-      {required String shortcutId,
-      required String title,
-      required String phrase,
-      required Map<String, dynamic> userInfo}) async {
-    if (const String.fromEnvironment('PLATFORM') != 'ios') return;
-
-    try {
-      await NativePlatformService.iosChannel.invokeMethod('addSiriShortcut', {
-        'shortcutId': shortcutId,
-        'title': title,
-        'phrase': phrase,
-        'userInfo': userInfo
-      });
-      Logger.info('Native platform initialized successfully');
-    } on PlatformException catch (e) {
-      Logger.warning(
-          '[NativePlatformService] Siri 단축어 추가 실패 (선택적 기능, iOS 전용): $e');
-    }
-  }
 }
 
 /// Android specific methods

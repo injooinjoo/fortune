@@ -19,13 +19,14 @@ Use the same fixed fields for decision-gate checks:
 ## 3. Decision Gate Checklist
 | check_id | severity(P0/P1/P2) | check_item | result(pass/fail/pending) | evidence(path\|url\|screenshot) | owner | due_date | status |
 |---|---|---|---|---|---|---|---|
-| DEC-001 | P0 | Frozen commit SHA captured for this candidate | pass | `c3f9a953ea6295498605cb18211ac63185ecb582` | release-owner | 2026-02-16 | done |
-| DEC-002 | P0 | Master checklist P0 items all pass | fail | `/docs/deployment/review/STORE_REVIEW_MASTER_CHECKLIST.md` (`COM-IAP-001` pending) | release-owner | 2026-03-20 | blocked |
-| DEC-003 | P1 | Master checklist P1 items all pass | fail | Open P1 items remain in iOS/Android evidence (`IOS-PERM-005`, `IOS-LINK-003`, `AND-PERM-002`, `AND-DATA-002~003` 등) | release-owner | 2026-03-20 | open |
-| DEC-004 | P0 | iOS evidence checklist has no open P0/P1 | fail | `/docs/deployment/review/IOS_REVIEW_EVIDENCE.md` (`IOS-IAP-001~003`, `IOS-PERM-005`, `IOS-LINK-003` pending) | ios-owner | 2026-03-20 | open |
-| DEC-005 | P0 | Android evidence checklist has no open P0/P1 | fail | `/docs/deployment/review/ANDROID_REVIEW_EVIDENCE.md` (`AND-IAP-001`, `AND-LINK-004`, `AND-STAB-003`, `TC-AND-*` pending) | android-owner | TBD | open |
-| DEC-006 | P0 | Manual scenario evidence uploaded for required test cases | pending | QA artifact index | qa-owner | TBD | open |
-| DEC-007 | P0 | Risk approver explicitly signs off decision | pending | approver name + timestamp | release-manager | TBD | open |
+| DEC-001 | P0 | Frozen commit SHA captured for current KAN-166 candidate | pending | final `KAN-166` commit SHA will be frozen at push time | release-owner | 2026-03-22 | in_progress |
+| DEC-002 | P0 | Apple master checklist P0 items all pass for re-submission | fail | `/docs/deployment/review/STORE_REVIEW_MASTER_CHECKLIST.md` (`APPLE-RUNTIME-001`, `APPLE-IAP-002` pending manual evidence) | release-owner | 2026-03-22 | blocked |
+| DEC-003 | P1 | Apple master checklist P1 items all pass for re-submission | fail | `/docs/deployment/review/STORE_REVIEW_MASTER_CHECKLIST.md` (`APPLE-RUNTIME-002`, `APPLE-RUNTIME-003` pending manual evidence) | release-owner | 2026-03-22 | open |
+| DEC-004 | P0 | iOS evidence checklist has no open P0/P1 | fail | `/docs/deployment/review/IOS_REVIEW_EVIDENCE.md` (`IOS-RUNTIME-002`, `IOS-IAP-001~003`, `IOS-RUNTIME-003~004` pending manual evidence) | ios-owner | 2026-03-22 | open |
+| DEC-005 | P0 | Android / Play release checklist has no open P0/P1 | fail | `/docs/deployment/review/STORE_REVIEW_MASTER_CHECKLIST.md` (`PLAY-001~003` pending) | android-owner | TBD | open |
+| DEC-006 | P0 | Local verification for current hardening batch passed | pass | `flutter analyze --no-fatal-infos`, `dart format --set-exit-if-changed .`, `flutter test`, `flutter build ios --release --no-codesign` on 2026-03-22 | engineering | 2026-03-22 | done |
+| DEC-007 | P0 | Manual scenario evidence uploaded for required Apple review cases | pending | iPhone clean install / IAP / iPad / NAT64 recordings and logs | qa-owner | TBD | open |
+| DEC-008 | P0 | Risk approver explicitly signs off final store submission decision | pending | approver name + timestamp | release-manager | TBD | open |
 
 ## 4. Decision Entry Template
 Copy this section for each release candidate.
@@ -87,5 +88,20 @@ Copy this section for each release candidate.
 - unresolved_check_ids: `COM-IAP-001`, `COM-LINK-001`, `COM-PLAY-001`, `COM-PLAY-002`, `IOS-IAP-001`, `IOS-IAP-002`, `IOS-IAP-003`, `IOS-PERM-005`, `IOS-LINK-003`
 - decision: `NO-GO`
 - reason_summary: `App Store Connect privacy/support/age-rating metadata and review notes are now aligned, but real-device IAP evidence, calendar/universal-link validation, and Google Play console declarations remain open.`
+- risk_approver: `TBD`
+- approved_at: `TBD`
+
+### Entry 2026-03-22-KAN-166
+- release_candidate: `apple-review-hardening-followup`
+- jira_issue: `KAN-166`
+- frozen_commit_sha: `pending final KAN-166 commit`
+- created_at: `2026-03-22`
+- evaluator: `Codex`
+- p0_open_count: `>=3`
+- p1_open_count: `>=2`
+- unresolved_issue_keys: `KAN-166`
+- unresolved_check_ids: `APPLE-RUNTIME-001`, `APPLE-IAP-002`, `APPLE-RUNTIME-002`, `APPLE-RUNTIME-003`, `PLAY-001`, `PLAY-002`, `PLAY-003`
+- decision: `NO-GO`
+- reason_summary: `Apple code/policy/metadata blockers are closed, but App Review re-submission still requires real-device evidence for the 2026-03-21 rejection path, IAP success/cancel/restore, iPad review path, and optional NAT64/IPv6 validation. Cross-platform release also remains blocked by Play console tasks.`
 - risk_approver: `TBD`
 - approved_at: `TBD`

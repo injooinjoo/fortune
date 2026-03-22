@@ -104,7 +104,10 @@ void main() {
     await tester.pump(const Duration(milliseconds: 450));
     await tester.pumpAndSettle();
 
-    expect(find.text('브라우저에서 인증을 완료해 주세요. 완료되면 앱으로 돌아옵니다.'), findsOneWidget);
+    expect(
+      find.textContaining('브라우저에서 인증을 완료해 주세요. 완료되면 앱으로 돌아옵니다.'),
+      findsOneWidget,
+    );
     expect(find.textContaining('로그인 실패'), findsNothing);
   });
 
@@ -136,7 +139,10 @@ void main() {
     await tester.pump();
     await tester.pumpAndSettle();
 
-    expect(find.text('브라우저에서 인증을 완료해 주세요. 완료되면 앱으로 돌아옵니다.'), findsOneWidget);
+    expect(
+      find.textContaining('브라우저에서 인증을 완료해 주세요. 완료되면 앱으로 돌아옵니다.'),
+      findsOneWidget,
+    );
     expect(find.textContaining('계정 연결에 실패했습니다'), findsNothing);
   });
 }

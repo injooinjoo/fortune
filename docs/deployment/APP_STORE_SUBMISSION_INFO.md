@@ -69,7 +69,7 @@
 - Photos: 사용자가 직접 선택한 사진만 업로드
 - Microphone / Speech Recognition: 음성 입력 기능에서만 요청
 - Location When In Use: 날씨/지역 기반 인사이트에서만 요청
-- Calendar: 일정 저장 기능에서만 요청
+- Calendar: 이번 iOS 제출 범위에서는 사용하지 않음
 - Push Notifications: 앱 시작 시 자동 요청하지 않고 `Profile > Notification Settings` 또는 테스트 알림 액션에서만 요청
 
 검토 기준 파일:
@@ -91,6 +91,7 @@
 - 토큰/구독 정책은 앱 내 결제 화면 기준
 - 계정 삭제는 앱 내 설정 화면에서 가능
 - 푸시 알림 권한은 설정 화면 또는 테스트 알림 액션에서만 요청
+- 이번 제출 빌드는 기기 캘린더 접근, Quick Actions, Siri Shortcut, Live Activity를 심사 경로에 포함하지 않음
 - Universal Links는 AASA live endpoint 검증 후에만 재활성화
 
 ## 6. 제출 전 수동 확인
@@ -104,6 +105,8 @@
 - 앱 시작 직후 푸시 알림 자동 요청 제거
 - SKAdNetwork declarations 제거
 - Associated Domains entitlement 제거
+- 기기 캘린더 접근 및 관련 Info.plist 권한 제거
+- Quick Actions / NSUserActivityTypes / BGTask 기반 위젯 갱신 제거
 - 광고/추적 기반 심사 서술 제거
 
 ## 8. 남은 외부 콘솔/실기기 작업
