@@ -84,6 +84,28 @@ def read_ipa_info(path: str):
         return info.get("CFBundleShortVersionString"), info.get("CFBundleVersion")
 
 
+def read_embedded_bundle_infos(path: str):
+    bundle_infos = []
+    with zipfile.ZipFile(path) as zf:
+        for name in zf.namelist():
+            if not name.startswith("Payload/Runner.app/") or not name.endswith("Info.plist"):
+                continue
+            if name == "Payload/Runner.app/Info.plist":
+                continue
+            if ".appex/" not in name and "/Watch/" not in name:
+                continue
+
+            info = plistlib.loads(zf.read(name))
+            bundle_infos.append(
+                (
+                    name,
+                    info.get("CFBundleShortVersionString"),
+                    info.get("CFBundleVersion"),
+                )
+            )
+    return bundle_infos
+
+
 def read_archive_info(path: str):
     info_path = os.path.join(path, "Info.plist")
     if not os.path.exists(info_path):
@@ -128,6 +150,16 @@ print(f"  IPA: {ipa_path}")
 print(f"    short={ipa_short} build={ipa_build}")
 if ipa_short != expected_short_version or ipa_build != expected_build_number:
     fail("IPA version/build does not match pubspec. Do not upload this artifact.")
+
+embedded_bundle_infos = read_embedded_bundle_infos(ipa_path)
+for bundle_path, bundle_short, bundle_build in embedded_bundle_infos:
+    print(f"  Embedded bundle: {bundle_path}")
+    print(f"    short={bundle_short} build={bundle_build}")
+    if bundle_short != expected_short_version or bundle_build != expected_build_number:
+        fail(
+            "Embedded app extension/watch bundle version/build does not match pubspec. "
+            f"Offending bundle: {bundle_path}"
+        )
 
 archive_short, archive_build = read_archive_info(archive_path)
 if archive_short or archive_build:
