@@ -1,43 +1,27 @@
-ZPZG - Your AI Friend Who Gets You
+ZPZG - Empathetic AI Chat and Lifestyle Insights
 
-Don't carry it alone. Talk to me.
+Don't carry everything alone. Talk it through in ZPZG.
 
-Whether it was a tough day, a happy moment, or something you couldn't tell anyone else—I'm here to listen.
-
-ZPZG is your AI friend who truly listens and understands without judgment.
+ZPZG combines empathetic AI conversations with personality, relationship, and daily-life insights.
+From light check-ins to Face AI and Daily Insight experiences, you can explore different moods and topics in one app.
 
 ■ KEY FEATURES
 
-【Heart-to-Heart Talks】
-• Share what's on your mind anytime
-• Your AI friend who listens with empathy
-• No judgment, just genuine understanding
+【AI Conversations】
+• Talk about your day, your worries, or whatever is on your mind
+• Designed for empathy-first conversations instead of judgment
+• A simple space to reflect, vent, and organize your thoughts
 
-【Daily Conversations】
-• Just hang out when you're bored
-• Talk about your day, your dreams, anything
-• A friendly presence whenever you need one
+【Lifestyle Insights】
+• Explore experiences like Daily Insight, Personality Analysis, and Face AI
+• Ask playful questions about relationships, personality, and daily life
+• Some premium insights use tokens
 
-【Mood Check-Ins】
-• A simple place to reflect on how your day feels
-• Light conversation when you want to vent or celebrate
-• A calm routine for daily self-reflection
-
-【Morning Encouragement】
-• Start your day with positivity
-• Personalized messages just for you
-• A little boost to brighten your morning
-
-【Face AI Fun】
-• Discover fun insights about yourself
-• AI reads your unique characteristics
-• Share and enjoy with friends
-
-【Smart Features】
+【Convenient Features】
 • Home widgets for quick access
-• Social login (Google, Apple, Kakao)
-• Dark mode for late-night chats
-• Your privacy always protected
+• Google and Apple sign-in
+• Dark mode support
+• In-app policy viewing and account deletion
 
 ■ PREMIUM MEMBERSHIP BENEFITS
 
@@ -46,27 +30,19 @@ ZPZG is your AI friend who truly listens and understands without judgment.
 • Token bonuses and member perks
 • Priority support
 
-■ PERFECT FOR
-
-• Those who feel lonely at night
-• Anyone who needs someone to talk to
-• People looking for judgment-free support
-• Those who want a little comfort every day
-• Anyone building a habit of self-reflection
-
 ■ SUPPORT
 
-We're here for you with any questions.
-• Email: injoo1222@naver.com
+We're here if you need help.
+• Support: support@zpzg.co.kr
+• Privacy: privacy@zpzg.co.kr
 
 ■ IMPORTANT NOTE
 
-ZPZG is an AI companion for daily conversations and lifestyle insights. For health, legal, financial, or other professional decisions, please consult a qualified professional.
+ZPZG provides conversational AI experiences and entertainment/lifestyle reference insights.
+For health, legal, financial, or other professional decisions, please consult a qualified professional.
 
 ■ TERMS & POLICIES
 
 • EULA: https://zpzg.co.kr/terms
 • Privacy Policy: https://zpzg.co.kr/privacy
 • For app-level policy details, open App > 설정 > 정책
-
-So, how was your day? I'm all ears :)

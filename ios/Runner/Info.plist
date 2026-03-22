@@ -91,23 +91,19 @@
 		<key>NSApplicationGroupIdentifier</key>
 		<string>group.com.beyond.fortune</string>
 		<key>NSCalendarsFullAccessUsageDescription</key>
-		<string>일정을 분석하여 맞춤형 인사이트를 제공하고, 중요한 날짜를 저장하기 위해 캘린더 접근 권한이 필요합니다.</string>
+		<string>Calendar access is needed to analyze your schedule and save important dates for personalized insights. 일정을 분석하여 맞춤형 인사이트를 제공하고, 중요한 날짜를 저장하기 위해 캘린더 접근 권한이 필요합니다.</string>
 		<key>NSCalendarsUsageDescription</key>
-		<string>중요한 날짜를 캘린더에 저장하기 위해 접근 권한이 필요합니다.</string>
+		<string>Calendar access is needed to save important dates. 중요한 날짜를 캘린더에 저장하기 위해 접근 권한이 필요합니다.</string>
 		<key>NSCameraUsageDescription</key>
-		<string>사용자가 직접 촬영한 얼굴 사진을 분석하기 위해 카메라 접근 권한이 필요합니다.</string>
+		<string>Camera access is needed to take a photo for face analysis. 사용자가 직접 촬영한 얼굴 사진을 분석하기 위해 카메라 접근 권한이 필요합니다.</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>앱 사용 중 현재 위치 기반 날씨 정보를 제공하기 위해 위치 접근 권한이 필요합니다.</string>
+		<string>Location access is needed to provide weather-based insights while using the app. 앱 사용 중 현재 위치 기반 날씨 정보를 제공하기 위해 위치 접근 권한이 필요합니다.</string>
 		<key>NSMicrophoneUsageDescription</key>
-		<string>음성으로 내용을 입력하기 위해 마이크 접근 권한이 필요합니다.</string>
+		<string>Microphone access is needed for voice input. 음성으로 내용을 입력하기 위해 마이크 접근 권한이 필요합니다.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
-		<string>사용자가 선택한 얼굴 사진을 분석하기 위해 사진 보관함 접근 권한이 필요합니다.</string>
+		<string>Photo library access is needed to select a photo for face analysis. 사용자가 선택한 얼굴 사진을 분석하기 위해 사진 보관함 접근 권한이 필요합니다.</string>
 		<key>NSSpeechRecognitionUsageDescription</key>
-		<string>음성을 텍스트로 변환하여 입력을 편리하게 하기 위해 음성 인식 권한이 필요합니다.</string>
-		<key>NSSupportsLiveActivities</key>
-		<true/>
-		<key>NSSupportsLiveActivitiesFrequentUpdates</key>
-		<true/>
+		<string>Speech recognition is needed to convert voice to text for easier input. 음성을 텍스트로 변환하여 입력을 편리하게 하기 위해 음성 인식 권한이 필요합니다.</string>
 		<key>NSUserActivityTypes</key>
 		<array>
 			<string>com.fortune.fortune.dailyInsight</string>
@@ -117,7 +113,6 @@
 		<key>NSWidgetExtensionBundleIdentifiers</key>
 		<array>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneWidget</string>
-			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneLiveActivity</string>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneOverallWidget</string>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneCategoryWidget</string>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneTimeSlotWidget</string>
