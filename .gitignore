@@ -179,3 +179,4 @@ scripts/*.local.sh
 
 # Test output screenshots
 output/
+skills-lock.json
