@@ -240,13 +240,9 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
       child: Row(
         children: [
           // Provider icon
-          Container(
+          SizedBox(
             width: AppDimensions.buttonHeightSmall,
             height: AppDimensions.buttonHeightSmall,
-            decoration: BoxDecoration(
-              color: providerInfo.color.withValues(alpha: 0.1),
-              borderRadius: AppDimensions.borderRadiusSmall,
-            ),
             child: Center(
               child: _buildProviderIcon(providerInfo),
             ),
