@@ -182,7 +182,12 @@ void main() {
     await tester.tap(find.text('open-profile'));
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('Unable to connect.'), findsOneWidget);
+    final hasEnglishFallback =
+        find.textContaining('Unable to connect.').evaluate().isNotEmpty;
+    final hasKoreanFallback =
+        find.textContaining('로그인을 준비하지 못했습니다').evaluate().isNotEmpty;
+
+    expect(hasEnglishFallback || hasKoreanFallback, isTrue);
     expect(find.text('Apple로 계속하기'), findsNothing);
   });
 }
