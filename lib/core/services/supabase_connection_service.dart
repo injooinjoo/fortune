@@ -79,6 +79,32 @@ class SupabaseConnectionService extends ResilientService {
     return tryGetClient();
   }
 
+  static Future<SupabaseClient?> ensureClientReadyForInteractiveAuth() async {
+    final warmedUpClient = await ensureClientReady(
+      maxRetries: 3,
+      timeout: const Duration(seconds: 8),
+      retryDelay: const Duration(seconds: 2),
+    );
+    if (warmedUpClient != null) {
+      return warmedUpClient;
+    }
+
+    Logger.warning(
+      'Supabase interactive auth warm-up failed, escalating to manual reconnect',
+    );
+
+    final reconnected = await reconnect(
+      maxRetries: 3,
+      timeout: const Duration(seconds: 20),
+      retryDelay: const Duration(seconds: 2),
+    );
+    if (!reconnected) {
+      return null;
+    }
+
+    return tryGetClient();
+  }
+
   /// 강화된 Supabase 초기화
   static Future<bool> initialize({
     int maxRetries = 3,
@@ -326,24 +352,51 @@ class SupabaseConnectionService extends ResilientService {
   }
 
   /// 수동 재연결
-  static Future<bool> reconnect() async {
-    return _instance._reconnectInternal();
+  static Future<bool> reconnect({
+    int maxRetries = 3,
+    Duration timeout = const Duration(seconds: 20),
+    Duration retryDelay = const Duration(seconds: 2),
+  }) async {
+    return _instance._reconnectInternal(
+      maxRetries: maxRetries,
+      timeout: timeout,
+      retryDelay: retryDelay,
+    );
   }
 
-  Future<bool> _reconnectInternal() async {
-    return await safeExecuteWithBool(() async {
+  Future<bool> _reconnectInternal({
+    required int maxRetries,
+    required Duration timeout,
+    required Duration retryDelay,
+  }) async {
+    try {
       Logger.info('Supabase 수동 재연결 시도...');
 
       _isConnected = false;
+      _nextRetryAllowedAt = null;
       _connectionStateController.add(false);
 
-      await initialize(
-        maxRetries: 3,
-        timeout: const Duration(seconds: 20),
+      final success = await initialize(
+        maxRetries: maxRetries,
+        timeout: timeout,
+        retryDelay: retryDelay,
       );
+      if (!success) {
+        Logger.warning('Supabase 수동 재연결 실패');
+        return false;
+      }
 
-      // 성공 여부만 반환하고 void 함수이므로 return 없음
-    }, 'Supabase 수동 재연결', '재연결 실패');
+      final client = tryGetClient();
+      if (client == null) {
+        Logger.warning('Supabase 수동 재연결 후 client unavailable');
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      Logger.warning('Supabase 수동 재연결 실패 (선택적 기능, 재연결 실패): $error');
+      return false;
+    }
   }
 
   /// 연결 상태 정보 조회

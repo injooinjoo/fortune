@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
@@ -51,7 +52,33 @@ class SocialLoginBottomSheet {
     BuildContext context,
   ) async {
     final messenger = ScaffoldMessenger.maybeOf(context);
-    final client = await SupabaseConnectionService.ensureClientReady();
+    Timer? loadingTimer;
+    var loadingShown = false;
+
+    if (messenger != null) {
+      loadingTimer = Timer(const Duration(milliseconds: 400), () {
+        if (!context.mounted) {
+          return;
+        }
+
+        loadingShown = true;
+        messenger.hideCurrentSnackBar();
+        messenger.showSnackBar(
+          const SnackBar(
+            content: Text('로그인을 준비 중입니다...'),
+            duration: Duration(seconds: 30),
+          ),
+        );
+      });
+    }
+
+    final client =
+        await SupabaseConnectionService.ensureClientReadyForInteractiveAuth();
+    loadingTimer?.cancel();
+    if (loadingShown && context.mounted) {
+      messenger?.hideCurrentSnackBar();
+    }
+
     if (client != null) {
       return SocialAuthService(client);
     }
@@ -61,8 +88,8 @@ class SocialLoginBottomSheet {
     }
     messenger?.showSnackBar(
       const SnackBar(
-        content: Text('로그인을 시작할 수 없습니다. 네트워크 상태를 확인한 뒤 다시 시도해 주세요.'),
-        duration: Duration(seconds: 3),
+        content: Text('로그인을 준비하지 못했습니다. 잠시 후 다시 시도해 주세요.'),
+        duration: Duration(seconds: 4),
       ),
     );
     return null;

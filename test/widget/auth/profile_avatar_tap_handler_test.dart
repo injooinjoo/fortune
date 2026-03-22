@@ -182,8 +182,7 @@ void main() {
     await tester.tap(find.text('open-profile'));
     await tester.pumpAndSettle();
 
-    expect(find.text('로그인을 시작할 수 없습니다. 네트워크 상태를 확인한 뒤 다시 시도해 주세요.'),
-        findsOneWidget);
+    expect(find.text('로그인을 준비하지 못했습니다. 잠시 후 다시 시도해 주세요.'), findsOneWidget);
     expect(find.text('Apple로 계속하기'), findsNothing);
   });
 }
