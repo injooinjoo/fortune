@@ -110,6 +110,48 @@ void main() {
     });
   });
 
+  group('Environment.resolveConfiguredValue', () {
+    test('falls back to dotenv when Supabase anon define is invalid', () {
+      final resolved = Environment.resolveConfiguredValue(
+        'SUPABASE_ANON_KEY',
+        defineValue: 'your-prod-anon-key',
+        dotenvValue: _testAnonKey,
+      );
+
+      expect(resolved, _testAnonKey);
+    });
+
+    test('falls back to dotenv when Supabase URL define is invalid', () {
+      final resolved = Environment.resolveConfiguredValue(
+        'SUPABASE_URL',
+        defineValue: 'https://your-prod-project.supabase.co',
+        dotenvValue: 'https://real-project.supabase.co',
+      );
+
+      expect(resolved, 'https://real-project.supabase.co');
+    });
+
+    test('keeps valid define values ahead of dotenv', () {
+      final resolved = Environment.resolveConfiguredValue(
+        'SUPABASE_URL',
+        defineValue: 'https://release-project.supabase.co',
+        dotenvValue: 'https://real-project.supabase.co',
+      );
+
+      expect(resolved, 'https://release-project.supabase.co');
+    });
+
+    test('falls back to dotenv when a non-URL runtime key is placeholder', () {
+      final resolved = Environment.resolveConfiguredValue(
+        'GOOGLE_WEB_CLIENT_ID',
+        defineValue: 'placeholder-google-web-client-id',
+        dotenvValue: 'real-google-client-id.apps.googleusercontent.com',
+      );
+
+      expect(resolved, 'real-google-client-id.apps.googleusercontent.com');
+    });
+  });
+
   group('Environment.describeSupabaseClientConfigurationIssue', () {
     test('reports placeholder live client urls', () {
       final supabase =

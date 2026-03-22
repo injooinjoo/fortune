@@ -128,15 +128,17 @@ flutter run --dart-define-from-file=.env.development
 ```
 
 ### 프로덕션 빌드
+릴리스 앱은 기본적으로 `.env`를 읽습니다. 배포 전에 `.env`가 실제 프로덕션 값인지 확인하세요. 별도 env 파일을 `--dart-define-from-file`로 넣을 때는 placeholder가 아닌 검증된 값만 사용해야 합니다.
+
 ```bash
 # iOS
-flutter build ios --dart-define-from-file=.env.production --release
+flutter build ios --release
 
 # Android
-flutter build appbundle --dart-define-from-file=.env.production --release
+flutter build appbundle --release
 
 # Web
-flutter build web --dart-define-from-file=.env.production --release
+flutter build web --release
 ```
 
 ## 🧪 테스트 설정

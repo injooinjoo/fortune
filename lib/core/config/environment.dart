@@ -395,8 +395,26 @@ class Environment {
     String fallback = '',
   }) {
     final defineValue = _dartDefineValue(key);
+    return resolveConfiguredValue(
+      key,
+      defineValue: defineValue,
+      dotenvValue: dotenvValue,
+      fallback: fallback,
+    );
+  }
+
+  static String resolveConfiguredValue(
+    String key, {
+    required String defineValue,
+    required String? dotenvValue,
+    String fallback = '',
+  }) {
     if (defineValue.isNotEmpty) {
-      return defineValue;
+      if (_isValidOverrideValue(key, defineValue) ||
+          dotenvValue == null ||
+          dotenvValue.isEmpty) {
+        return defineValue;
+      }
     }
 
     if (dotenvValue != null && dotenvValue.isNotEmpty) {
@@ -404,6 +422,34 @@ class Environment {
     }
 
     return fallback;
+  }
+
+  static bool _isValidOverrideValue(String key, String value) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty || isPlaceholderValue(trimmed)) {
+      return false;
+    }
+
+    switch (key) {
+      case 'SUPABASE_URL':
+      case 'API_BASE_URL':
+      case 'STAGING_API_BASE_URL':
+      case 'PROD_API_BASE_URL':
+        return _isValidAbsoluteUrl(trimmed);
+      case 'SUPABASE_ANON_KEY':
+        return _isValidSupabaseAnonKey(trimmed);
+      default:
+        return true;
+    }
+  }
+
+  static bool _isValidAbsoluteUrl(String value) {
+    final uri = Uri.tryParse(value);
+    return uri != null && uri.isAbsolute;
+  }
+
+  static bool _isValidSupabaseAnonKey(String value) {
+    return value.length >= 100;
   }
 
   static String _dartDefineValue(String key) {

@@ -95,9 +95,11 @@ flutter run --dart-define-from-file=.env.development
 ```
 
 ### 빌드
+릴리스 런타임은 기본적으로 번들된 `.env`를 읽습니다. 제출 빌드 전 `.env`에 실제 프로덕션 값이 들어 있는지 확인하세요. `--dart-define-from-file`는 검증된 릴리스 env 파일이 있을 때만 사용해야 합니다.
+
 ```bash
-flutter build ios --dart-define-from-file=.env.production --release
-flutter build appbundle --dart-define-from-file=.env.production --release
+flutter build ios --release
+flutter build appbundle --release
 ```
 
 ## 검증
