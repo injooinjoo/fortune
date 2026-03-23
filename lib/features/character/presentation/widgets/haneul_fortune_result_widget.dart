@@ -1464,7 +1464,7 @@ class HaneulFortuneResultWidget extends StatelessWidget {
       final key = entry.key.toLowerCase();
       items.add(FortuneInfoGraphItem(
         iconData: iconMap[key] ?? Icons.auto_awesome_rounded,
-        label: labelMap[key] ?? entry.key,
+        label: labelMap[key] ?? FortuneKeyLocalizer.labelFor(entry.key),
         value: value,
       ));
     }

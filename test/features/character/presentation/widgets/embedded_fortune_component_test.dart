@@ -148,8 +148,9 @@ void main() {
               'compatibilityReason': '화 기운이 강해서 추진력은 좋지만 과열은 주의해야 해요.',
             },
             'luckyItems': {
-              'color': '아이보리',
+              'lucky color': '아이보리',
               'number': '3',
+              'lucky place': '창가 자리',
             },
             'actionPlan': {
               'immediate': ['이번 주 안에 우선순위를 다시 적어보세요.'],
@@ -201,6 +202,15 @@ void main() {
     expect(find.textContaining('보완 팁:'), findsOneWidget);
     expect(find.text('yearElement: 화'), findsNothing);
     expect(find.textContaining('compatibilityReason:'), findsNothing);
+
+    await tester.ensureVisible(find.text('행운 요소'));
+    await tester.tap(find.text('행운 요소'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('행운 색상'), findsOneWidget);
+    expect(find.text('행운 장소'), findsOneWidget);
+    expect(find.text('lucky color'), findsNothing);
+    expect(find.text('lucky place'), findsNothing);
   });
 
   testWidgets('daily-calendar card renders time sections and calendar advice',
