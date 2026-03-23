@@ -172,7 +172,8 @@ class WealthFortuneBody extends StatelessWidget {
           if (wealth != null)
             FortuneMetricRow(emoji: '💎', label: '재물 기운', value: wealth),
           if (compat != null)
-            FortuneAnimatedProgressBar(label: '조화도', score: compat, emoji: '☯️'),
+            FortuneAnimatedProgressBar(
+                label: '조화도', score: compat, emoji: '☯️'),
           if (insight != null) ...[
             const SizedBox(height: DSSpacing.xs),
             Text(

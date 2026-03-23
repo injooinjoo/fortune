@@ -495,8 +495,7 @@ class RelationshipFortuneBody extends StatelessWidget {
               emoji: '📊',
               title: '궁합 상세',
               child: Column(
-                children: matchScores.entries
-                    .indexed
+                children: matchScores.entries.indexed
                     .map((indexed) => FortuneAnimatedProgressBar(
                           label: indexed.$2.key,
                           score: indexed.$2.value,
@@ -513,8 +512,7 @@ class RelationshipFortuneBody extends StatelessWidget {
           const SizedBox(height: DSSpacing.md),
           FortuneStaggeredSection(
             index: si++,
-            child: FortuneDosDontsCard(
-                dosList: strengths, dontsList: cautions),
+            child: FortuneDosDontsCard(dosList: strengths, dontsList: cautions),
           ),
         ],
 
@@ -875,8 +873,8 @@ class RelationshipFortuneBody extends StatelessWidget {
           const SizedBox(height: DSSpacing.md),
           FortuneStaggeredSection(
             index: si++,
-            child: FortuneTipCard(
-                emoji: '🎬', text: '추천 데이트: $recommendedStyle'),
+            child:
+                FortuneTipCard(emoji: '🎬', text: '추천 데이트: $recommendedStyle'),
           ),
         ],
 
@@ -885,8 +883,7 @@ class RelationshipFortuneBody extends StatelessWidget {
           const SizedBox(height: DSSpacing.md),
           FortuneStaggeredSection(
             index: si++,
-            child: FortuneDosDontsCard(
-                dosList: dosList, dontsList: dontsList),
+            child: FortuneDosDontsCard(dosList: dosList, dontsList: dontsList),
           ),
         ],
 

@@ -46,10 +46,10 @@ class _FortuneAnimatedScoreRingState extends State<FortuneAnimatedScoreRing>
       vsync: this,
     );
     final clamped = widget.score.clamp(0, 100);
-    _progressAnim = Tween<double>(begin: 0, end: clamped / 100)
-        .animate(CurvedAnimation(parent: _controller, curve: DSAnimation.claude));
-    _countAnim = IntTween(begin: 0, end: clamped)
-        .animate(CurvedAnimation(parent: _controller, curve: DSAnimation.claude));
+    _progressAnim = Tween<double>(begin: 0, end: clamped / 100).animate(
+        CurvedAnimation(parent: _controller, curve: DSAnimation.claude));
+    _countAnim = IntTween(begin: 0, end: clamped).animate(
+        CurvedAnimation(parent: _controller, curve: DSAnimation.claude));
     _controller.forward();
   }
 
@@ -58,10 +58,10 @@ class _FortuneAnimatedScoreRingState extends State<FortuneAnimatedScoreRing>
     super.didUpdateWidget(oldWidget);
     if (oldWidget.score != widget.score) {
       final clamped = widget.score.clamp(0, 100);
-      _progressAnim = Tween<double>(begin: 0, end: clamped / 100)
-          .animate(CurvedAnimation(parent: _controller, curve: DSAnimation.claude));
-      _countAnim = IntTween(begin: 0, end: clamped)
-          .animate(CurvedAnimation(parent: _controller, curve: DSAnimation.claude));
+      _progressAnim = Tween<double>(begin: 0, end: clamped / 100).animate(
+          CurvedAnimation(parent: _controller, curve: DSAnimation.claude));
+      _countAnim = IntTween(begin: 0, end: clamped).animate(
+          CurvedAnimation(parent: _controller, curve: DSAnimation.claude));
       _controller
         ..reset()
         ..forward();
@@ -206,14 +206,16 @@ class FortuneStaggeredSection extends StatelessWidget {
         .fadeIn(
           duration: DSAnimation.normal,
           curve: DSAnimation.claude,
-          delay: Duration(milliseconds: index * DSAnimation.contentStagger.inMilliseconds),
+          delay: Duration(
+              milliseconds: index * DSAnimation.contentStagger.inMilliseconds),
         )
         .slideY(
           begin: 0.03,
           end: 0,
           duration: DSAnimation.normal,
           curve: DSAnimation.claude,
-          delay: Duration(milliseconds: index * DSAnimation.contentStagger.inMilliseconds),
+          delay: Duration(
+              milliseconds: index * DSAnimation.contentStagger.inMilliseconds),
         );
   }
 }
@@ -291,9 +293,7 @@ class FortuneAnimatedProgressBar extends StatelessWidget {
                         color: barColor,
                         borderRadius: BorderRadius.circular(4),
                       ),
-                    )
-                        .animate()
-                        .custom(
+                    ).animate().custom(
                           duration: DSAnimation.resultReveal,
                           curve: DSAnimation.claude,
                           delay: delay,
@@ -368,7 +368,8 @@ class FortuneInfoGraphGrid extends StatelessWidget {
                     if (item.iconData != null)
                       Icon(item.iconData, size: 15, color: accentColor)
                     else
-                      Text(item.icon ?? '', style: const TextStyle(fontSize: 15)),
+                      Text(item.icon ?? '',
+                          style: const TextStyle(fontSize: 15)),
                     const SizedBox(width: DSSpacing.xxs),
                     Expanded(
                       child: Text(
@@ -726,9 +727,8 @@ class FortuneHeroGradient extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final moodColor = score != null
-        ? _moodColor(context, score!)
-        : colors.accent;
+    final moodColor =
+        score != null ? _moodColor(context, score!) : colors.accent;
 
     return Container(
       width: double.infinity,

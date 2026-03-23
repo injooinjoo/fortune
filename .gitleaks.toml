@@ -11,11 +11,19 @@ paths = [
     '''(^|/)fortune_flutter/flutter_build_log\.txt$''',
     '''(^|/)node_modules/''',
     '''(^|/)supabase/\.temp/''',
+    '''(^|/)docs/getting-started/''',
+    '''(^|/)docs/testing/''',
 ]
 regexes = [
     '''process\.env\.[A-Z0-9_]+''',
     '''Deno\.env\.get\(['"][A-Z0-9_]+['"]\)''',
     '''(?i)(placeholder|not-real|redacted|for-ci-only)''',
+    '''com\.beyond\.fortune\.tokens\d+''',
+    '''token_bonus_rate|token_packages|popular_token_package|daily_free_tokens|referral_bonus_tokens|new_user_bonus_tokens''',
+    '''/api/(user|payment|admin)/token''',
+]
+commits = [
+    "ab66de62b3babf31717fe8914e346b85b6871843",
 ]
 
 [[rules]]

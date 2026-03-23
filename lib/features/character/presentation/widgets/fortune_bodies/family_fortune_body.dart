@@ -165,7 +165,8 @@ class FamilyFortuneBody extends StatelessWidget {
                   if (morning != null)
                     FortuneMetricRow(emoji: '🌅', label: '아침', value: morning),
                   if (afternoon != null)
-                    FortuneMetricRow(emoji: '☀️', label: '오후', value: afternoon),
+                    FortuneMetricRow(
+                        emoji: '☀️', label: '오후', value: afternoon),
                   if (evening != null)
                     FortuneMetricRow(emoji: '🌙', label: '저녁', value: evening),
                 ],

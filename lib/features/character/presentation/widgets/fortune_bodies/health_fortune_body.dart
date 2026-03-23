@@ -103,18 +103,34 @@ class HealthFortuneBody extends StatelessWidget {
               child: Column(
                 children: [
                   if (physical != null)
-                    FortuneAnimatedProgressBar(label: '체력', score: physical, emoji: '💪', staggerIndex: 0),
+                    FortuneAnimatedProgressBar(
+                        label: '체력',
+                        score: physical,
+                        emoji: '💪',
+                        staggerIndex: 0),
                   if (mental != null) ...[
                     const SizedBox(height: DSSpacing.xs),
-                    FortuneAnimatedProgressBar(label: '정신력', score: mental, emoji: '🧠', staggerIndex: 1),
+                    FortuneAnimatedProgressBar(
+                        label: '정신력',
+                        score: mental,
+                        emoji: '🧠',
+                        staggerIndex: 1),
                   ],
                   if (energy != null) ...[
                     const SizedBox(height: DSSpacing.xs),
-                    FortuneAnimatedProgressBar(label: '에너지', score: energy, emoji: '⚡', staggerIndex: 2),
+                    FortuneAnimatedProgressBar(
+                        label: '에너지',
+                        score: energy,
+                        emoji: '⚡',
+                        staggerIndex: 2),
                   ],
                   if (sleep != null) ...[
                     const SizedBox(height: DSSpacing.xs),
-                    FortuneAnimatedProgressBar(label: '수면', score: sleep, emoji: '😴', staggerIndex: 3),
+                    FortuneAnimatedProgressBar(
+                        label: '수면',
+                        score: sleep,
+                        emoji: '😴',
+                        staggerIndex: 3),
                   ],
                 ],
               ),

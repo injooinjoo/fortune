@@ -78,7 +78,8 @@ class CareerFortuneBody extends StatelessWidget {
           const SizedBox(height: DSSpacing.md),
           FortuneStaggeredSection(
             index: si++,
-            child: FortuneDosDontsCard(dosList: strengths, dontsList: challenges),
+            child:
+                FortuneDosDontsCard(dosList: strengths, dontsList: challenges),
           ),
         ],
         if (weeklyOutlook != null) ...[
@@ -307,7 +308,8 @@ class CareerFortuneBody extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (intuition != null) ...[
-            FortuneAnimatedProgressBar(label: '직감력', score: intuition, emoji: '🎯', staggerIndex: 0),
+            FortuneAnimatedProgressBar(
+                label: '직감력', score: intuition, emoji: '🎯', staggerIndex: 0),
             if (intuitionDesc != null)
               Text(intuitionDesc,
                   style: context.labelSmall.copyWith(
@@ -315,7 +317,8 @@ class CareerFortuneBody extends StatelessWidget {
           ],
           if (defense != null) ...[
             const SizedBox(height: DSSpacing.xs),
-            FortuneAnimatedProgressBar(label: '멘탈', score: defense, emoji: '🛡️', staggerIndex: 1),
+            FortuneAnimatedProgressBar(
+                label: '멘탈', score: defense, emoji: '🛡️', staggerIndex: 1),
             if (defenseDesc != null)
               Text(defenseDesc,
                   style: context.labelSmall.copyWith(

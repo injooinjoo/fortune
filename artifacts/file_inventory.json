@@ -20499,9 +20499,7 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
+      "notes": [],
       "path": "lib/core/constants/in_app_products.dart",
       "referenced_by": [
         "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
@@ -20509,7 +20507,7 @@
         "docs/deployment/review/STORE_REVIEW_MASTER_CHECKLIST.md",
         "lib/services/in_app_purchase_service.dart"
       ],
-      "runtime_reachable": false,
+      "runtime_reachable": true,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -20935,6 +20933,7 @@
         "lib/features/character/presentation/widgets/character_message_bubble.dart",
         "lib/features/character/presentation/widgets/embedded_fortune_component.dart",
         "lib/features/character/presentation/widgets/fortune_bodies/_fortune_body_shared.dart",
+        "lib/features/character/presentation/widgets/fortune_bodies/_fortune_visual_components.dart",
         "lib/features/character/presentation/widgets/fortune_bodies/career_fortune_body.dart",
         "lib/features/character/presentation/widgets/fortune_bodies/coaching_fortune_body.dart",
         "lib/features/character/presentation/widgets/fortune_bodies/family_fortune_body.dart",
@@ -24250,6 +24249,29 @@
       "dirty": false,
       "kind": "dart",
       "notes": [],
+      "path": "lib/features/character/presentation/widgets/fortune_bodies/_fortune_visual_components.dart",
+      "referenced_by": [
+        "lib/features/character/presentation/widgets/fortune_bodies/career_fortune_body.dart",
+        "lib/features/character/presentation/widgets/fortune_bodies/coaching_fortune_body.dart",
+        "lib/features/character/presentation/widgets/fortune_bodies/family_fortune_body.dart",
+        "lib/features/character/presentation/widgets/fortune_bodies/health_fortune_body.dart",
+        "lib/features/character/presentation/widgets/fortune_bodies/interactive_fortune_body.dart",
+        "lib/features/character/presentation/widgets/fortune_bodies/mystical_fortune_body.dart",
+        "lib/features/character/presentation/widgets/fortune_bodies/personality_fortune_body.dart",
+        "lib/features/character/presentation/widgets/fortune_bodies/relationship_fortune_body.dart",
+        "lib/features/character/presentation/widgets/fortune_bodies/wealth_fortune_body.dart",
+        "lib/features/character/presentation/widgets/haneul_fortune_result_widget.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
       "path": "lib/features/character/presentation/widgets/fortune_bodies/career_fortune_body.dart",
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
@@ -26805,20 +26827,18 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
+      "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
+      "notes": [],
       "path": "lib/services/in_app_purchase_service.dart",
       "referenced_by": [
-        "docs/deployment/review/ANDROID_REVIEW_EVIDENCE.md"
+        "docs/deployment/review/ANDROID_REVIEW_EVIDENCE.md",
+        "lib/screens/profile/profile_screen.dart"
       ],
-      "runtime_reachable": false,
+      "runtime_reachable": true,
       "test_only": false,
-      "usage_status": "doc_only"
+      "usage_status": "runtime_used"
     },
     {
       "area": "lib",
@@ -32913,23 +32933,23 @@
       "assets": 1231,
       "docs": 96,
       "integration_test": 8,
-      "lib": 424,
+      "lib": 425,
       "scripts": 72,
       "supabase": 206,
       "test": 77
     },
     "counts_by_candidate_action": {
-      "keep": 714,
+      "keep": 716,
       "keep_generated": 28,
       "manual_review": 978,
       "phase1_remove_candidate": 12,
-      "phase2_review_candidate": 378,
+      "phase2_review_candidate": 377,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
-      "doc_only": 106,
+      "doc_only": 105,
       "generated_excluded": 28,
-      "runtime_used": 714,
+      "runtime_used": 716,
       "test_only": 86,
       "tooling_only": 186,
       "unreferenced": 994
@@ -33085,9 +33105,9 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 353,
-    "lib_dart_total": 421,
-    "lib_dart_zero_incoming": 26,
+    "lib_dart_runtime_reachable": 356,
+    "lib_dart_total": 422,
+    "lib_dart_zero_incoming": 25,
     "missing_function_refs": [
       "--all",
       "account-deletion",
@@ -33194,7 +33214,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2114,
+    "total_files": 2115,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"

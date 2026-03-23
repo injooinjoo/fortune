@@ -286,13 +286,22 @@ class PersonalityFortuneBody extends StatelessWidget {
                 children: [
                   if (physical != null)
                     FortuneAnimatedProgressBar(
-                        label: '신체', score: physical, emoji: '💪', staggerIndex: 0),
+                        label: '신체',
+                        score: physical,
+                        emoji: '💪',
+                        staggerIndex: 0),
                   if (emotional != null)
                     FortuneAnimatedProgressBar(
-                        label: '감정', score: emotional, emoji: '💜', staggerIndex: 1),
+                        label: '감정',
+                        score: emotional,
+                        emoji: '💜',
+                        staggerIndex: 1),
                   if (intellectual != null)
                     FortuneAnimatedProgressBar(
-                        label: '지성', score: intellectual, emoji: '🧠', staggerIndex: 2),
+                        label: '지성',
+                        score: intellectual,
+                        emoji: '🧠',
+                        staggerIndex: 2),
                 ],
               ),
             ),

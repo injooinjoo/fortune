@@ -131,8 +131,8 @@ class HaneulFortuneResultWidget extends StatelessWidget {
                 context,
                 title: '오늘의 리듬',
                 icon: Icons.schedule_rounded,
-                child:
-                    _buildAnimatedRhythmTimeline(context, rhythm.take(3).toList()),
+                child: _buildAnimatedRhythmTimeline(
+                    context, rhythm.take(3).toList()),
               ),
             ),
             const SizedBox(height: DSSpacing.md),
@@ -313,8 +313,7 @@ class HaneulFortuneResultWidget extends StatelessWidget {
                           label: _stringValue(bestTime['period']) ??
                               _stringValue(bestTime['name']) ??
                               '시간대 확인',
-                          description:
-                              _stringValue(bestTime['reason']) ?? '',
+                          description: _stringValue(bestTime['reason']) ?? '',
                         ),
                       ),
                     if (bestTime != null && worstTime != null)
@@ -328,8 +327,7 @@ class HaneulFortuneResultWidget extends StatelessWidget {
                           label: _stringValue(worstTime['period']) ??
                               _stringValue(worstTime['name']) ??
                               '시간대 확인',
-                          description:
-                              _stringValue(worstTime['reason']) ?? '',
+                          description: _stringValue(worstTime['reason']) ?? '',
                         ),
                       ),
                   ],
@@ -387,8 +385,7 @@ class HaneulFortuneResultWidget extends StatelessWidget {
                 context,
                 title: '체크 포인트',
                 icon: Icons.shield_moon_rounded,
-                child: _buildWarningCards(
-                    context, warnings.take(2).toList()),
+                child: _buildWarningCards(context, warnings.take(2).toList()),
               ),
             ),
           ],
@@ -479,8 +476,8 @@ class HaneulFortuneResultWidget extends StatelessWidget {
                 title: '월별 하이라이트',
                 child: Column(
                   children: monthlyHighlights
-                      .map((entry) =>
-                          _buildMonthlyHighlightTile(context, entry))
+                      .map(
+                          (entry) => _buildMonthlyHighlightTile(context, entry))
                       .toList(growable: false),
                 ),
               ),
@@ -1303,8 +1300,8 @@ class HaneulFortuneResultWidget extends StatelessWidget {
                         Expanded(
                           child: Container(
                             width: 2,
-                            margin:
-                                const EdgeInsets.symmetric(vertical: DSSpacing.xxs),
+                            margin: const EdgeInsets.symmetric(
+                                vertical: DSSpacing.xxs),
                             color: colors.border.withValues(alpha: 0.3),
                           ),
                         ),
@@ -1420,8 +1417,7 @@ class HaneulFortuneResultWidget extends StatelessWidget {
         final score = entry['score'] as int;
 
         return FortuneAnimatedProgressBar(
-          label:
-              '${entry['emoji']}  ${entry['title']}',
+          label: '${entry['emoji']}  ${entry['title']}',
           score: score,
           staggerIndex: i,
         );
