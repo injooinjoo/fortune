@@ -387,13 +387,12 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     });
   }
 
-  ScrollPhysics _chatScrollPhysics(BuildContext context) {
-    final platform = Theme.of(context).platform;
-    final parentPhysics =
-        platform == TargetPlatform.iOS || platform == TargetPlatform.macOS
-            ? const BouncingScrollPhysics()
-            : const ClampingScrollPhysics();
-    return AlwaysScrollableScrollPhysics(parent: parentPhysics);
+  ScrollPhysics _chatScrollPhysics() {
+    // Chat timelines need to stay anchored at the latest message instead of
+    // rebounding upward at the lower edge.
+    return const AlwaysScrollableScrollPhysics(
+      parent: ClampingScrollPhysics(),
+    );
   }
 
   Future<void> _handleArchivedHistoryRefresh(
@@ -1797,7 +1796,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
           _handleChatScrollNotification(notification, chatState),
       child: ListView.builder(
         controller: _scrollController,
-        physics: _chatScrollPhysics(context),
+        physics: _chatScrollPhysics(),
         padding: EdgeInsets.symmetric(
           horizontal: isHaneulShell ? 14 : 16,
           vertical: isHaneulShell ? DSSpacing.sm : DSSpacing.xs,
