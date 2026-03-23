@@ -24115,6 +24115,25 @@
       "dirty": false,
       "kind": "dart",
       "notes": [],
+      "path": "lib/features/character/presentation/utils/fortune_key_localizer.dart",
+      "referenced_by": [
+        "lib/features/character/presentation/providers/character_chat_provider.dart",
+        "lib/features/character/presentation/widgets/embedded_fortune_component.dart",
+        "lib/features/character/presentation/widgets/fortune_bodies/_fortune_body_shared.dart",
+        "lib/features/character/presentation/widgets/fortune_bodies/wealth_fortune_body.dart",
+        "lib/features/character/presentation/widgets/haneul_fortune_result_widget.dart",
+        "test/unit/features/character/presentation/utils/fortune_key_localizer_test.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
       "path": "lib/features/character/presentation/utils/pending_chat_auth_intent.dart",
       "referenced_by": [
         "lib/features/character/presentation/pages/character_chat_panel.dart",
@@ -32305,6 +32324,20 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "test/unit/features/character/presentation/utils/fortune_key_localizer_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "test/unit/features/chat/services/chat_scroll_service_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -32933,24 +32966,24 @@
       "assets": 1231,
       "docs": 96,
       "integration_test": 8,
-      "lib": 425,
+      "lib": 426,
       "scripts": 72,
       "supabase": 206,
-      "test": 77
+      "test": 78
     },
     "counts_by_candidate_action": {
-      "keep": 716,
+      "keep": 717,
       "keep_generated": 28,
       "manual_review": 978,
       "phase1_remove_candidate": 12,
-      "phase2_review_candidate": 377,
+      "phase2_review_candidate": 378,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
       "doc_only": 105,
       "generated_excluded": 28,
-      "runtime_used": 716,
-      "test_only": 86,
+      "runtime_used": 717,
+      "test_only": 87,
       "tooling_only": 186,
       "unreferenced": 994
     },
@@ -33105,8 +33138,8 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 356,
-    "lib_dart_total": 422,
+    "lib_dart_runtime_reachable": 357,
+    "lib_dart_total": 423,
     "lib_dart_zero_incoming": 25,
     "missing_function_refs": [
       "--all",
@@ -33214,7 +33247,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2115,
+    "total_files": 2117,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
