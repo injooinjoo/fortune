@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/tarot/tarot_card_catalog.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../shared/widgets/smart_image.dart';
+import '../utils/fortune_key_localizer.dart';
 import 'fortune_bodies/career_fortune_body.dart';
 import 'fortune_bodies/coaching_fortune_body.dart';
 import 'fortune_bodies/family_fortune_body.dart';
@@ -1314,22 +1315,7 @@ class EmbeddedFortuneComponent extends StatelessWidget {
   }
 
   String _displayKey(String key) {
-    const labels = {
-      'color': '행운 색상',
-      'number': '행운 숫자',
-      'direction': '행운 방향',
-      'item': '행운 아이템',
-      'food': '행운 음식',
-      'time': '행운 시간',
-      'lucky number': '행운 숫자',
-      'lucky color': '행운 컬러',
-      'lucky time': '행운 시간',
-    };
-    final cleaned = key.replaceAll('_', ' ').replaceAll('-', ' ').trim();
-    if (cleaned.isEmpty) {
-      return '';
-    }
-    return labels[cleaned] ?? cleaned;
+    return FortuneKeyLocalizer.labelFor(key);
   }
 
   IconData _iconForRelationship(String fortuneType) {

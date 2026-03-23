@@ -138,6 +138,15 @@ void main() {
               'bestMonths': ['3월', '8월'],
               'actionItems': ['한 가지 목표에만 집중하세요.'],
             },
+            'sajuAnalysis': {
+              'yearElement': '화',
+              'compatibility': '보통',
+              'strengthenTips': ['물을 자주 마시세요.', '충분히 쉬세요.'],
+              'balanceElements': ['수', '금'],
+              'dominantElement': '토',
+              'elementalAdvice': '올해는 침착하게 속도를 조절하는 편이 좋아요.',
+              'compatibilityReason': '화 기운이 강해서 추진력은 좋지만 과열은 주의해야 해요.',
+            },
             'luckyItems': {
               'color': '아이보리',
               'number': '3',
@@ -171,6 +180,7 @@ void main() {
     );
     expect(monthlyTheme.hitTestable(), findsNothing);
 
+    await tester.ensureVisible(find.text('월별 하이라이트'));
     await tester.tap(find.text('월별 하이라이트'));
     await tester.pumpAndSettle();
 
@@ -181,6 +191,16 @@ void main() {
       find.text('가벼운 제안도 바로 메모해두세요.'),
       findsOneWidget,
     );
+
+    await tester.ensureVisible(find.text('사주 흐름'));
+    await tester.tap(find.text('사주 흐름'));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('연간 오행: 화'), findsOneWidget);
+    expect(find.textContaining('궁합 해설:'), findsOneWidget);
+    expect(find.textContaining('보완 팁:'), findsOneWidget);
+    expect(find.text('yearElement: 화'), findsNothing);
+    expect(find.textContaining('compatibilityReason:'), findsNothing);
   });
 
   testWidgets('daily-calendar card renders time sections and calendar advice',
@@ -296,7 +316,7 @@ void main() {
 
     expect(find.text('포춘쿠키'), findsOneWidget);
     expect(find.text('행운 숫자 49'), findsOneWidget);
-    expect(find.text('행운 컬러 터콰이즈'), findsOneWidget);
+    expect(find.text('행운 색상 터콰이즈'), findsOneWidget);
     expect(find.text('행운 시간 오전 11시'), findsOneWidget);
     expect(find.text('Fortune Cookie'), findsNothing);
     expect(find.text('lucky number 49'), findsNothing);

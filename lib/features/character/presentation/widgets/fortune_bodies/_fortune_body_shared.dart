@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/design_system/design_system.dart';
+import '../../utils/fortune_key_localizer.dart';
 
 // ═══════════════════════════════════════════════════════════════════
 // Shared visual components for fortune body widgets
@@ -384,7 +385,8 @@ class FortuneLuckyItemGrid extends StatelessWidget {
             runSpacing: DSSpacing.sm,
             children: entries.map((e) {
               final emoji = _emojiMap[e.key] ?? '🌟';
-              final label = _labelMap[e.key] ?? e.key;
+              final label =
+                  _labelMap[e.key] ?? FortuneKeyLocalizer.labelFor(e.key);
               return _LuckyChip(
                 emoji: emoji,
                 label: label,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/design_system/design_system.dart';
+import '../../utils/fortune_key_localizer.dart';
 import '_fortune_body_shared.dart';
 import '_fortune_visual_components.dart';
 
@@ -283,7 +284,7 @@ class WealthFortuneBody extends StatelessWidget {
           final score = fortuneInt(data['score']);
           final analysis = fortuneStr(data['analysis']);
           final emoji = emojiMap[e.key] ?? '💰';
-          final label = labelMap[e.key] ?? e.key;
+          final label = labelMap[e.key] ?? FortuneKeyLocalizer.labelFor(e.key);
 
           return Container(
             width: (MediaQuery.of(context).size.width - 120) / 2,

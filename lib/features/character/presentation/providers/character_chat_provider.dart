@@ -45,6 +45,7 @@ import 'character_fortune_adapter.dart';
 import '../utils/character_chat_fortune_payload_utils.dart';
 import '../utils/character_guest_name_guard.dart';
 import '../utils/chat_survey_profile_utils.dart';
+import '../utils/fortune_key_localizer.dart';
 import '../utils/character_tone_policy.dart';
 import '../utils/character_tone_rollout.dart';
 import '../utils/character_voice_profile_registry.dart';
@@ -4243,7 +4244,8 @@ $enrichedContext
     scored.sort((a, b) => b.value.compareTo(a.value));
     return scored
         .take(3)
-        .map((entry) => labels[entry.key] ?? entry.key)
+        .map((entry) =>
+            labels[entry.key] ?? FortuneKeyLocalizer.labelFor(entry.key))
         .toList(growable: false);
   }
 
@@ -4451,7 +4453,8 @@ $enrichedContext
           final parts = <String>[];
           for (final entry in item.entries) {
             if (entry.value != null && entry.value.toString().isNotEmpty) {
-              parts.add('${entry.key}: ${entry.value}');
+              parts.add(
+                  '${FortuneKeyLocalizer.labelFor(entry.key)}: ${entry.value}');
             }
           }
           if (parts.isNotEmpty) {
@@ -4472,12 +4475,13 @@ $enrichedContext
         final formatted =
             _formatValueForContext(entry.value, indent: indent + 1);
         if (formatted.isEmpty) continue;
+        final label = FortuneKeyLocalizer.labelFor(entry.key);
 
         if (entry.value is Map || entry.value is List) {
-          buffer.writeln('$prefix- ${entry.key}:');
+          buffer.writeln('$prefix- $label:');
           buffer.writeln(formatted);
         } else {
-          buffer.writeln('$prefix- ${entry.key}: $formatted');
+          buffer.writeln('$prefix- $label: $formatted');
         }
       }
       return buffer.toString().trimRight();
@@ -4679,119 +4683,8 @@ $enrichedContext
       if (metadataToFormat.isNotEmpty) {
         buffer.writeln('📖 운세 상세 분석:');
 
-        // 알려진 키에 대해 한국어 라벨 매핑
-        const labelMap = {
-          // MBTI
-          'dimensions': '성격 차원 분석',
-          'todayTrap': '오늘의 함정',
-          'mbtiDescription': 'MBTI 설명',
-          'cognitiveStrengths': '인지적 강점',
-          'challenges': '도전 과제',
-          // Wealth
-          'wealthPotential': '재물 잠재력',
-          'elementAnalysis': '오행 재물 분석',
-          'goalAdvice': '목표 달성 전략',
-          'cashflowInsight': '현금 흐름 인사이트',
-          'concernResolution': '고민 해결',
-          'investmentInsights': '투자 인사이트',
-          'luckyElements': '행운 요소',
-          'monthlyFlow': '월별 흐름',
-          'actionItems': '실천 항목',
-          // Avoid-people
-          'cautionPeople': '경계 인물',
-          'cautionObjects': '경계 사물',
-          'cautionColors': '경계 색상',
-          'cautionNumbers': '경계 숫자',
-          'cautionAnimals': '경계 동물',
-          'cautionPlaces': '경계 장소',
-          'cautionTimes': '경계 시간',
-          'cautionDirections': '경계 방향',
-          'timeStrategy': '시간대 전략',
-          // Time
-          'timeSlots': '시간대별 분석',
-          'cautionActivities': '경계 활동',
-          'traditionalElements': '전통 요소',
-          'bestTime': '최고 시간',
-          'worstTime': '주의 시간',
-          // Biorhythm
-          'physical': '신체 리듬',
-          'emotional': '감정 리듬',
-          'intellectual': '지성 리듬',
-          'today_recommendation': '오늘의 추천',
-          'weekly_forecast': '주간 예보',
-          'important_dates': '중요 날짜',
-          'weekly_activities': '주간 활동',
-          'personal_analysis': '개인 분석',
-          'lifestyle_advice': '라이프스타일 조언',
-          'health_tips': '건강 팁',
-          // Naming
-          'recommendedNames': '추천 이름',
-          'ohaengAnalysis': '오행 분석',
-          'namingTips': '작명 팁',
-          // Ex-lover
-          'hardTruth': '냉정한 진실',
-          'theirPerspective': '상대방의 시선',
-          'strategicAdvice': '전략적 조언',
-          'emotionalPrescription': '감정 처방전',
-          'reunion_possibility': '재회 가능성',
-          'reunionAssessment': '재회 분석',
-          'reunionCap': '재회 상한',
-          'contact_status': '연락 상태',
-          'relationshipDepth': '관계 깊이',
-          'currentState': '현재 상태',
-          'comfort_message': '위로 메시지',
-          'closingMessage': '마무리 메시지',
-          'openingMessage': '시작 메시지',
-          'breakupAnalysis': '이별 분석',
-          'emotionalJourney': '감정 여정',
-          'actionPlan': '실천 계획',
-          // Pet
-          'pets_voice': '반려동물 속마음',
-          'bonding_mission': '유대감 미션',
-          'daily_condition': '오늘의 컨디션',
-          'owner_bond': '주인과의 유대감',
-          'activity_recommendation': '활동 추천',
-          'care_tips': '케어 팁',
-          'health_check': '웰니스 체크',
-          'weather_advice': '날씨 조언',
-          'special_message': '특별 메시지',
-          'pet_info': '반려동물 정보',
-          'today_story': '오늘의 이야기',
-          'breed_specific': '품종별 특성',
-          'health_insight': '건강 인사이트',
-          'emotional_care': '감정 케어',
-          'special_tips': '특별 팁',
-          'lucky_items': '행운 아이템',
-          'pet_content': '반려동물 콘텐츠',
-          'pet_summary': '반려동물 요약',
-          // Love
-          'loveProfile': '연애 프로필',
-          'detailedAnalysis': '상세 분석',
-          'todaysAdvice': '오늘의 조언',
-          'predictions': '예측',
-          // Compatibility
-          'overall_compatibility': '전체 궁합',
-          'personality_match': '성격 궁합',
-          'loveMatch': '연애 궁합',
-          'marriageMatch': '결혼 궁합',
-          'communicationMatch': '소통 궁합',
-          'strengths': '강점',
-          'cautions': '주의점',
-          'detailed_advice': '상세 조언',
-          'zodiac_animal': '띠',
-          'star_sign': '별자리',
-          'destiny_number': '운명의 숫자',
-          'age_difference': '나이 차이',
-          'loveStyle': '연애 스타일',
-          // General
-          'overallScore': '전체 점수',
-          'luckyColor': '행운의 색상',
-          'luckyNumber': '행운의 숫자',
-          'energyLevel': '에너지 레벨',
-        };
-
         for (final entry in metadataToFormat.entries) {
-          final label = labelMap[entry.key] ?? entry.key;
+          final label = FortuneKeyLocalizer.labelFor(entry.key);
           final formatted = _formatValueForContext(entry.value);
           if (formatted.isEmpty) continue;
 

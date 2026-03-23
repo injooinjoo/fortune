@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../../../core/design_system/design_system.dart';
+import '../utils/fortune_key_localizer.dart';
 import 'fortune_bodies/_fortune_visual_components.dart';
 
 class HaneulFortuneResultWidget extends StatelessWidget {
@@ -2136,55 +2137,7 @@ class HaneulFortuneResultWidget extends StatelessWidget {
   }
 
   String _displayKey(String key) {
-    const exactLabels = {
-      'number': '행운 숫자',
-      'color': '행운 컬러',
-      'colorHex': '컬러 코드',
-      'time': '행운 시간',
-      'direction': '행운 방향',
-      'item': '행운 아이템',
-      'place': '행운 장소',
-      'emoji': '시그널',
-      'goalLabel': '핵심 목표',
-      'deepAnalysis': '깊은 분석',
-      'bestMonths': '좋은 달',
-      'cautionMonths': '조심할 달',
-      'actionItems': '실행 포인트',
-    };
-    final exactMatch = exactLabels[key];
-    if (exactMatch != null) {
-      return exactMatch;
-    }
-
-    const normalizedLabels = {
-      'lucky number': '행운 숫자',
-      'lucky color': '행운 컬러',
-      'color hex': '컬러 코드',
-      'lucky time': '행운 시간',
-      'lucky direction': '행운 방향',
-      'lucky item': '행운 아이템',
-      'lucky place': '행운 장소',
-      'goal label': '핵심 목표',
-      'deep analysis': '깊은 분석',
-      'best months': '좋은 달',
-      'caution months': '조심할 달',
-      'action items': '실행 포인트',
-    };
-    final normalizedKey = _normalizeDisplayKey(key);
-    return normalizedLabels[normalizedKey] ??
-        key.replaceAll('_', ' ').replaceAll('-', ' ').trim();
-  }
-
-  String _normalizeDisplayKey(String key) {
-    return key
-        .replaceAllMapped(
-          RegExp(r'([a-z0-9])([A-Z])'),
-          (match) => '${match.group(1)} ${match.group(2)}',
-        )
-        .replaceAll('_', ' ')
-        .replaceAll('-', ' ')
-        .trim()
-        .toLowerCase();
+    return FortuneKeyLocalizer.labelFor(key);
   }
 
   String _resolveFortuneCookieLabel(String? cookieType) {
@@ -2198,7 +2151,7 @@ class HaneulFortuneResultWidget extends StatelessWidget {
       'cookie',
       'luck',
     };
-    final normalizedType = _normalizeDisplayKey(cookieType);
+    final normalizedType = FortuneKeyLocalizer.normalize(cookieType);
     if (genericEnglishLabels.contains(normalizedType)) {
       return '포춘쿠키';
     }
