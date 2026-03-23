@@ -942,6 +942,22 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
     }).toList();
   }
 
+  String _buildResultSummary({
+    required int myCount,
+    required int recommendedCount,
+  }) {
+    final totalCount = myCount + recommendedCount;
+    if (_query.trim().isNotEmpty) {
+      return '검색 결과 $totalCount명';
+    }
+
+    if (myCount > 0) {
+      return '내가 만든 친구 $myCount명 · 추천 친구 $recommendedCount명';
+    }
+
+    return '추천 친구 $recommendedCount명';
+  }
+
   @override
   Widget build(BuildContext context) {
     final myCharacters = _filterCharacters(
@@ -952,6 +968,12 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
       context,
       ref.watch(recommendedStoryCharactersProvider),
     );
+    final resultSummary = _buildResultSummary(
+      myCount: myCharacters.length,
+      recommendedCount: recommendedCharacters.length,
+    );
+    final hasResults =
+        myCharacters.isNotEmpty || recommendedCharacters.isNotEmpty;
 
     return DraggableScrollableSheet(
       initialChildSize: 0.9,
@@ -981,22 +1003,37 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
+              child: Column(
                 children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Icon(
-                      Icons.arrow_back_ios_new,
-                      size: 20,
-                      color: context.colors.textPrimary,
-                    ),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Icon(
+                          Icons.arrow_back_ios_new,
+                          size: 20,
+                          color: context.colors.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Text(
+                        '새로운 친구',
+                        style: context.typography.headingSmall.copyWith(
+                          color: context.colors.textPrimary,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 16),
-                  Text(
-                    '새로운 친구',
-                    style: context.typography.headingSmall.copyWith(
-                      color: context.colors.textPrimary,
+                  const SizedBox(height: 8),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '추천 친구를 바로 고르거나, 취향에 맞는 친구를 직접 만들 수 있어요.',
+                      style: context.typography.bodyMedium.copyWith(
+                        color: context.colors.textSecondary,
+                        height: 1.45,
+                      ),
                     ),
                   ),
                 ],
@@ -1030,74 +1067,34 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
                 ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  resultSummary,
+                  style: context.typography.labelMedium.copyWith(
+                    color: context.colors.textSecondary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
             Expanded(
               child: ListView(
                 controller: scrollController,
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                 children: [
-                  InkWell(
+                  _NewFriendActionCard(
                     onTap: () =>
                         Navigator.pop(context, _newFriendCreationAction),
-                    borderRadius: BorderRadius.circular(context.radius.xl),
-                    child: Ink(
-                      padding: const EdgeInsets.all(18),
-                      decoration: BoxDecoration(
-                        color: context.colors.backgroundSecondary,
-                        borderRadius: BorderRadius.circular(context.radius.xl),
-                        border: Border.all(
-                          color: context.colors.border.withValues(alpha: 0.82),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 48,
-                            height: 48,
-                            decoration: BoxDecoration(
-                              color: context.colors.ctaBackground,
-                              borderRadius:
-                                  BorderRadius.circular(context.radius.full),
-                            ),
-                            child: Icon(
-                              Icons.add,
-                              color: context.colors.ctaForeground,
-                            ),
-                          ),
-                          const SizedBox(width: 14),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '친구 새로 만들기',
-                                  style:
-                                      context.typography.headingSmall.copyWith(
-                                    color: context.colors.textPrimary,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  '이름, 성격, 분위기를 정해서 새로운 대화를 시작하세요',
-                                  style: context.typography.bodyMedium.copyWith(
-                                    color: context.colors.textSecondary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            size: 16,
-                            color: context.colors.textSecondary,
-                          ),
-                        ],
-                      ),
-                    ),
                   ),
                   if (myCharacters.isNotEmpty) ...[
                     const SizedBox(height: 24),
-                    const _SheetSectionTitle(title: '내가 만든 친구'),
+                    _SheetSectionTitle(
+                      title: '내가 만든 친구',
+                      count: myCharacters.length,
+                    ),
                     const SizedBox(height: 8),
                     ...myCharacters.map(
                       (character) =>
@@ -1105,20 +1102,13 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
                     ),
                   ],
                   const SizedBox(height: 24),
-                  const _SheetSectionTitle(title: '추천 친구'),
+                  _SheetSectionTitle(
+                    title: '추천 친구',
+                    count: recommendedCharacters.length,
+                  ),
                   const SizedBox(height: 8),
-                  if (recommendedCharacters.isEmpty && myCharacters.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 32),
-                      child: Center(
-                        child: Text(
-                          '검색 결과가 없어요',
-                          style: context.typography.bodyMedium.copyWith(
-                            color: context.colors.textSecondary,
-                          ),
-                        ),
-                      ),
-                    )
+                  if (!hasResults)
+                    const _NewMessageEmptyState()
                   else
                     ...recommendedCharacters.map(
                       (character) =>
@@ -1135,20 +1125,221 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
 }
 
 class _SheetSectionTitle extends StatelessWidget {
-  const _SheetSectionTitle({required this.title});
+  const _SheetSectionTitle({
+    required this.title,
+    this.count,
+  });
 
   final String title;
+  final int? count;
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Text(
-        title,
-        style: context.typography.labelLarge.copyWith(
-          color: context.colors.textSecondary,
-          fontWeight: FontWeight.w700,
+    return Row(
+      children: [
+        Text(
+          title,
+          style: context.typography.labelLarge.copyWith(
+            color: context.colors.textSecondary,
+            fontWeight: FontWeight.w700,
+          ),
         ),
+        if (count != null) ...[
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            decoration: BoxDecoration(
+              color: context.colors.backgroundSecondary,
+              borderRadius: BorderRadius.circular(context.radius.full),
+            ),
+            child: Text(
+              '$count',
+              style: context.typography.labelSmall.copyWith(
+                color: context.colors.textSecondary,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _NewFriendActionCard extends StatelessWidget {
+  const _NewFriendActionCard({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(context.radius.xl),
+      child: Ink(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              context.colors.ctaBackground.withValues(alpha: 0.16),
+              context.colors.backgroundSecondary,
+            ],
+          ),
+          borderRadius: BorderRadius.circular(context.radius.xl),
+          border: Border.all(
+            color: context.colors.ctaBackground.withValues(alpha: 0.24),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: context.colors.ctaBackground.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(context.radius.full),
+              ),
+              child: Text(
+                '직접 만들기',
+                style: context.typography.labelSmall.copyWith(
+                  color: context.colors.ctaBackground,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            const SizedBox(height: 14),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: context.colors.ctaBackground,
+                    borderRadius: BorderRadius.circular(context.radius.full),
+                  ),
+                  child: Icon(
+                    Icons.add,
+                    color: context.colors.ctaForeground,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '친구 새로 만들기',
+                        style: context.typography.headingSmall.copyWith(
+                          color: context.colors.textPrimary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '이름, 성격, 분위기, 관계를 정해서 원하는 흐름의 대화를 바로 시작하세요.',
+                        style: context.typography.bodyMedium.copyWith(
+                          color: context.colors.textSecondary,
+                          height: 1.45,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                  color: context.colors.textSecondary,
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            const Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                _NewFriendActionChip(label: '이름'),
+                _NewFriendActionChip(label: '관계'),
+                _NewFriendActionChip(label: '성격'),
+                _NewFriendActionChip(label: '관심사'),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NewFriendActionChip extends StatelessWidget {
+  const _NewFriendActionChip({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: context.colors.surface.withValues(alpha: 0.82),
+        borderRadius: BorderRadius.circular(context.radius.full),
+        border: Border.all(
+          color: context.colors.border.withValues(alpha: 0.8),
+        ),
+      ),
+      child: Text(
+        label,
+        style: context.typography.labelSmall.copyWith(
+          color: context.colors.textSecondary,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}
+
+class _NewMessageEmptyState extends StatelessWidget {
+  const _NewMessageEmptyState();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
+      decoration: BoxDecoration(
+        color: context.colors.backgroundSecondary,
+        borderRadius: BorderRadius.circular(context.radius.xl),
+        border: Border.all(
+          color: context.colors.border.withValues(alpha: 0.72),
+        ),
+      ),
+      child: Column(
+        children: [
+          Icon(
+            Icons.search_off_rounded,
+            size: 28,
+            color: context.colors.textSecondary,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            '검색 결과가 없어요',
+            style: context.typography.labelLarge.copyWith(
+              color: context.colors.textPrimary,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            '다른 키워드로 다시 찾아보거나, 위에서 새 친구를 직접 만들어보세요.',
+            textAlign: TextAlign.center,
+            style: context.typography.bodyMedium.copyWith(
+              color: context.colors.textSecondary,
+              height: 1.45,
+            ),
+          ),
+        ],
       ),
     );
   }

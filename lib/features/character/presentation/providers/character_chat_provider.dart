@@ -1067,6 +1067,16 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   }
 
   String _buildFirstMeetOpening() {
+    final friendConversationSeed = _character.friendConversationSeed;
+    if (friendConversationSeed != null) {
+      final profileMap = _getUserProfileMap();
+      final knownUserName = profileMap?['name'] as String?;
+      return friendConversationSeed.buildFirstMeetOpening(
+        _character.name,
+        userName: knownUserName,
+      );
+    }
+
     if (_isTonePolicyEnabledCharacter) {
       const toneProfile = CharacterToneProfile.neutral;
       return _applyTemplateTone(

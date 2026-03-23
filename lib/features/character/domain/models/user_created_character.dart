@@ -128,6 +128,17 @@ class UserCreatedCharacter {
   }
 
   AiCharacter toAiCharacter() {
+    final friendConversationSeed = FriendConversationSeed(
+      relationshipKey: relationship.name,
+      relationshipLabel: relationshipLabel,
+      scenario: scenario,
+      memoryNote: memoryNote,
+      timeModeKey: timeMode.name,
+      styleLabel: styleLabel,
+      personalityTags: personalityTags,
+      interestTags: interestTags,
+    );
+
     final tags = <String>{
       relationshipLabel,
       ...personalityTags,
@@ -139,16 +150,6 @@ class UserCreatedCharacter {
       ...personalityTags.take(2),
       ...interestTags.take(1),
     ];
-
-    final firstMessage = switch (relationship) {
-      UserCreatedCharacterRelationship.friend =>
-        '안녕하세요, $name예요. 오늘은 어떤 이야기부터 나눠볼까요?',
-      UserCreatedCharacterRelationship.crush =>
-        '왔네요. 괜히 기다리고 있었어요. 오늘은 무슨 얘기부터 해볼까요?',
-      UserCreatedCharacterRelationship.partner =>
-        '기다리고 있었어요. 오늘 하루 어땠는지 천천히 들려줘요.',
-      UserCreatedCharacterRelationship.colleague => '반가워요. 잠깐 쉬어가듯 편하게 이야기해봐요.',
-    };
 
     final worldview = [
       '관계 설정: $scenario',
@@ -198,11 +199,12 @@ $memoryNote
       shortDescription: shortDescriptionParts.join(' · '),
       worldview: worldview,
       personality: personality,
-      firstMessage: firstMessage,
+      firstMessage: friendConversationSeed.buildFirstMeetOpening(name),
       systemPrompt: systemPrompt,
       tags: tags,
       creatorComment: '직접 만든 친구',
       accentColor: _accentColorForStyle(stylePreset),
+      friendConversationSeed: friendConversationSeed,
       characterType: CharacterType.story,
       behaviorPattern: BehaviorPattern.defaultPattern,
     );
