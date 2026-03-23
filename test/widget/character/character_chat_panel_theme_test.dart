@@ -69,6 +69,10 @@ void main() {
       find.byKey(const ValueKey('character-chat-theme-switcher')),
       findsOneWidget,
     );
+
+    cancelFollowUp(container);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(seconds: 2));
   });
 
   testWidgets('tapping a chip switches the background immediately and keeps it',
@@ -172,7 +176,7 @@ void main() {
     await tester.pump();
 
     await tester.pumpWidget(const SizedBox.shrink());
-    await tester.pump();
+    await tester.pump(const Duration(seconds: 2));
     await pumpPreview();
 
     expect(

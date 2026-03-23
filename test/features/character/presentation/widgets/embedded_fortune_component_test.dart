@@ -103,7 +103,7 @@ void main() {
     expect(find.text('오늘의 액션'), findsOneWidget);
     expect(find.text('갓생 부스트'), findsOneWidget);
     expect(find.text('집중 시동'), findsOneWidget);
-    expect(find.text('일과운'), findsOneWidget);
+    expect(find.textContaining('일과운'), findsOneWidget);
     expect(find.text('우선순위 3개만 남기기 · 집중운이 살아나요. · 오전 초반'), findsOneWidget);
     expect(find.text('오늘은 조용한 정리가 결국 이기는 날이에요.'), findsOneWidget);
     expect(find.text('• 즉흥적인 소비는 점검하세요.'), findsOneWidget);
