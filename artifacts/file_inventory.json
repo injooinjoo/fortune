@@ -24117,6 +24117,8 @@
       "notes": [],
       "path": "lib/features/character/presentation/utils/fortune_key_localizer.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/character/presentation/widgets/embedded_fortune_component.dart",
         "lib/features/character/presentation/widgets/fortune_bodies/_fortune_body_shared.dart",
