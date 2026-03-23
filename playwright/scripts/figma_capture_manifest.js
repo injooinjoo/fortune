@@ -294,6 +294,7 @@ const SCREENS = [
       'lib/features/character/presentation/utils/chat_catalog_preview.dart',
       'lib/features/character/presentation/pages/character_chat_panel.dart',
       'lib/features/character/presentation/providers/character_fortune_adapter.dart',
+      'lib/features/character/presentation/utils/fortune_key_localizer.dart',
       'lib/features/character/presentation/widgets/character_message_bubble.dart',
       'lib/features/character/presentation/widgets/embedded_fortune_component.dart',
       'lib/features/character/presentation/widgets/fortune_bodies/_fortune_body_shared.dart',
@@ -432,6 +433,7 @@ const COMPONENT_CARDS = [
     sources: [
       'lib/features/character/presentation/pages/character_chat_panel.dart',
       'lib/features/character/presentation/providers/character_fortune_adapter.dart',
+      'lib/features/character/presentation/utils/fortune_key_localizer.dart',
       'lib/features/character/presentation/widgets/character_message_bubble.dart',
       'lib/features/chat/presentation/widgets/survey/chat_inline_calendar.dart',
       'lib/features/chat/presentation/widgets/survey/chat_match_selector.dart',

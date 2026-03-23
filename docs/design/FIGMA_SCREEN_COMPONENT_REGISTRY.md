@@ -99,6 +99,7 @@ Additional official pages:
 - `lib/features/character/presentation/utils/chat_catalog_preview.dart`
 - `lib/features/character/presentation/pages/character_chat_panel.dart`
 - `lib/features/character/presentation/providers/character_fortune_adapter.dart`
+- `lib/features/character/presentation/utils/fortune_key_localizer.dart`
 - `lib/features/character/presentation/widgets/character_message_bubble.dart`
 - `lib/features/chat/presentation/widgets/survey/chat_inline_calendar.dart`
 - `lib/features/chat/presentation/widgets/survey/chat_match_selector.dart`
