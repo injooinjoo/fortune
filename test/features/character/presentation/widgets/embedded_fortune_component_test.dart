@@ -106,7 +106,7 @@ void main() {
     expect(find.textContaining('일과운'), findsOneWidget);
     expect(find.text('우선순위 3개만 남기기 · 집중운이 살아나요. · 오전 초반'), findsOneWidget);
     expect(find.text('오늘은 조용한 정리가 결국 이기는 날이에요.'), findsOneWidget);
-    expect(find.text('• 즉흥적인 소비는 점검하세요.'), findsOneWidget);
+    expect(find.text('즉흥적인 소비는 점검하세요.'), findsOneWidget);
 
     final storyText = find.text('작은 메모 하나가 전체 흐름을 바꿔줄 수 있어요.');
     expect(storyText.hitTestable(), findsNothing);

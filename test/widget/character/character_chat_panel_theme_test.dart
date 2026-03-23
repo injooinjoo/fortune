@@ -189,5 +189,9 @@ void main() {
       ),
       findsNothing,
     );
+
+    cancelFollowUp(container);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(seconds: 2));
   });
 }
