@@ -23625,7 +23625,8 @@
         "lib/features/character/presentation/widgets/character_choice_widget.dart",
         "lib/features/character/presentation/widgets/character_message_bubble.dart",
         "lib/routes/character_routes.dart",
-        "lib/screens/profile/providers/character_relationships_provider.dart"
+        "lib/screens/profile/providers/character_relationships_provider.dart",
+        "test/unit/features/character/domain/models/friend_conversation_seed_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -32319,6 +32320,20 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "test/unit/features/character/domain/models/friend_conversation_seed_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "test/unit/features/character/presentation/providers/character_chat_provider_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -33034,21 +33049,21 @@
       "lib": 430,
       "scripts": 72,
       "supabase": 206,
-      "test": 78
+      "test": 79
     },
     "counts_by_candidate_action": {
       "keep": 721,
       "keep_generated": 28,
       "manual_review": 978,
       "phase1_remove_candidate": 12,
-      "phase2_review_candidate": 378,
+      "phase2_review_candidate": 379,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
       "doc_only": 105,
       "generated_excluded": 28,
       "runtime_used": 721,
-      "test_only": 87,
+      "test_only": 88,
       "tooling_only": 186,
       "unreferenced": 994
     },
@@ -33312,7 +33327,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2121,
+    "total_files": 2122,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
