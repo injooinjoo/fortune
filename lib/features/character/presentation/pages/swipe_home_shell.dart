@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,6 +7,7 @@ import '../../../../core/extensions/l10n_extension.dart';
 import '../../../../core/navigation/fortune_chat_route.dart';
 import '../../../../core/utils/logger.dart';
 import '../providers/character_provider.dart';
+import '../providers/user_created_character_provider.dart';
 import '../../data/fortune_characters.dart';
 import '../../domain/models/ai_character.dart';
 import '../utils/chat_catalog_preview.dart';
@@ -65,7 +68,7 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
     super.didChangeDependencies();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        _handleOpenCharacterFromRoute();
+        unawaited(_handleOpenCharacterFromRoute());
       }
     });
   }
@@ -110,7 +113,7 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
     });
   }
 
-  void _handleOpenCharacterFromRoute() {
+  Future<void> _handleOpenCharacterFromRoute() async {
     if (_catalogPreviewFromRoute() != null) {
       return;
     }
@@ -125,7 +128,7 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
       return;
     }
 
-    final character = _resolveLaunchCharacter(launchRequest);
+    final character = await _resolveLaunchCharacter(launchRequest);
     if (character == null) {
       setState(() {
         _pendingLaunchRequest = null;
@@ -153,10 +156,18 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
     }
   }
 
-  AiCharacter? _resolveLaunchCharacter(FortuneChatLaunchRequest request) {
+  Future<AiCharacter?> _resolveLaunchCharacter(
+    FortuneChatLaunchRequest request,
+  ) async {
     final explicitCharacterId = request.characterId;
     if (explicitCharacterId != null && explicitCharacterId.isNotEmpty) {
-      final character = ref.read(characterByIdProvider(explicitCharacterId));
+      var character = ref.read(characterByIdProvider(explicitCharacterId));
+      if (character != null) {
+        return character;
+      }
+
+      await ref.read(userCreatedCharactersProvider.notifier).ensureLoaded();
+      character = ref.read(characterByIdProvider(explicitCharacterId));
       if (character != null) {
         return character;
       }

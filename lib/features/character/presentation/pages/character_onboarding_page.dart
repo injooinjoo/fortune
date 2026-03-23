@@ -37,8 +37,8 @@ class _CharacterOnboardingPageState
     ),
     _OnboardingSlide(
       icon: Icons.edit_outlined,
-      title: '새 친구를 만나고 싶다면\n상단의 새 메시지를 눌러보세요',
-      description: '다양한 친구들이 기다리고 있어요.\n새로운 대화를 시작해보세요.',
+      title: '새 친구를 만나고 싶다면\n상단의 새로운 친구를 눌러보세요',
+      description: '추천 친구를 고르거나 직접 만들어서\n새로운 대화를 시작해보세요.',
     ),
   ];
 

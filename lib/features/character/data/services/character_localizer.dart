@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import '../../../../core/extensions/l10n_extension.dart';
+import '../../domain/models/ai_character.dart';
 import '../../domain/models/character_affinity.dart';
 
 /// 캐릭터 콘텐츠 로컬라이징 서비스
@@ -8,6 +9,45 @@ import '../../domain/models/character_affinity.dart';
 /// 이 서비스를 통해 캐릭터 ID를 기반으로 로컬라이즈된 텍스트를 제공합니다.
 class CharacterLocalizer {
   const CharacterLocalizer._();
+
+  static String resolveName(BuildContext context, AiCharacter character) {
+    final localized = getName(context, character.id);
+    return localized == character.id ? character.name : localized;
+  }
+
+  static String resolveShortDescription(
+    BuildContext context,
+    AiCharacter character,
+  ) {
+    final localized = getShortDescription(context, character.id);
+    return localized.isNotEmpty ? localized : character.shortDescription;
+  }
+
+  static String resolveWorldview(BuildContext context, AiCharacter character) {
+    final localized = getWorldview(context, character.id);
+    return localized.isNotEmpty ? localized : character.worldview;
+  }
+
+  static String resolvePersonality(
+    BuildContext context,
+    AiCharacter character,
+  ) {
+    final localized = getPersonality(context, character.id);
+    return localized.isNotEmpty ? localized : character.personality;
+  }
+
+  static String resolveCreatorComment(
+    BuildContext context,
+    AiCharacter character,
+  ) {
+    final localized = getCreatorComment(context, character.id);
+    return localized.isNotEmpty ? localized : character.creatorComment;
+  }
+
+  static List<String> resolveTags(BuildContext context, AiCharacter character) {
+    final localized = getTags(context, character.id);
+    return localized.isNotEmpty ? localized : character.tags;
+  }
 
   // ========== 캐릭터 콘텐츠 ==========
 

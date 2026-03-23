@@ -17,7 +17,6 @@ import '../../data/services/character_message_notification_service.dart';
 import '../../data/services/character_proactive_context_service.dart';
 import '../../data/services/character_proactive_media_service.dart';
 import '../../data/services/follow_up_scheduler.dart';
-import '../../data/default_characters.dart';
 import '../../data/fortune_characters.dart';
 import '../../../../core/constants/fortune_type_names.dart';
 import '../../../../core/fortune/fortune_type_registry.dart';
@@ -82,10 +81,6 @@ bool isHaneulCardFirstFortuneFlow({
   return characterId == haneulCharacter.id &&
       kHaneulCardFirstFortuneTypes.contains(fortuneType);
 }
-
-/// 캐릭터 채팅 상태 관리자
-/// 모든 캐릭터 목록 (스토리 + 운세)
-final _allCharacters = [...defaultCharacters, ...fortuneCharacters];
 
 class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   static const String _firstMeetConversationMode = 'first_meet_v1';
@@ -173,9 +168,10 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
   /// 캐릭터 정보 가져오기 (캐시)
   AiCharacter get _character {
-    _cachedCharacter ??= _allCharacters.firstWhere(
-      (c) => c.id == _characterId,
-    );
+    _cachedCharacter ??= _ref.read(characterByIdProvider(_characterId));
+    if (_cachedCharacter == null) {
+      throw StateError('Character not found: $_characterId');
+    }
     return _cachedCharacter!;
   }
 
@@ -1988,7 +1984,8 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
   /// 앱 아이콘 배지 숫자 업데이트 (전체 캐릭터 unread 합산)
   void _updateTotalUnreadBadge() {
     int total = 0;
-    for (final char in _allCharacters) {
+    final characters = _ref.read(charactersProvider);
+    for (final char in characters) {
       try {
         final chatState = _ref.read(characterChatProvider(char.id));
         total += chatState.unreadCount;

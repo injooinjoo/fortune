@@ -9,13 +9,8 @@ import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../../../shared/widgets/smart_image.dart';
 import '../../data/services/character_localizer.dart';
 import '../../domain/models/ai_character.dart';
-import '../../data/default_characters.dart';
-import '../../data/fortune_characters.dart';
 import '../providers/character_chat_provider.dart';
 import '../providers/character_provider.dart';
-
-/// 모든 캐릭터 목록 (스토리 + 운세)
-final _allCharacters = [...defaultCharacters, ...fortuneCharacters];
 
 /// 인스타그램 스타일 캐릭터 프로필 페이지
 class CharacterProfilePage extends ConsumerStatefulWidget {
@@ -44,12 +39,10 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
 
-    // extra로 전달받은 캐릭터 또는 ID로 찾기 (스토리 + 운세 캐릭터 모두 검색)
+    final characters = ref.read(charactersProvider);
     _character = widget.character ??
-        _allCharacters.firstWhere(
-          (c) => c.id == widget.characterId,
-          orElse: () => _allCharacters.first,
-        );
+        ref.read(characterByIdProvider(widget.characterId)) ??
+        characters.first;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -91,6 +84,12 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
 
   @override
   Widget build(BuildContext context) {
+    final resolvedCharacter = widget.character ??
+        ref.watch(characterByIdProvider(widget.characterId));
+    if (resolvedCharacter != null) {
+      _character = resolvedCharacter;
+    }
+
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colors = context.colors;
     final bgColor = colors.background;
@@ -108,7 +107,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          CharacterLocalizer.getName(context, _character.id),
+          CharacterLocalizer.resolveName(context, _character),
           style: context.heading4.copyWith(fontWeight: FontWeight.bold),
         ),
         centerTitle: false,
@@ -135,7 +134,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        CharacterLocalizer.getName(context, _character.id),
+                        CharacterLocalizer.resolveName(context, _character),
                         style: context.heading4
                             .copyWith(fontWeight: FontWeight.bold),
                       ),
@@ -147,10 +146,10 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
                       child: Wrap(
                         spacing: 6,
                         runSpacing: 4,
-                        children:
-                            CharacterLocalizer.getTags(context, _character.id)
-                                .take(5)
-                                .map((tag) {
+                        children: CharacterLocalizer.resolveTags(
+                          context,
+                          _character,
+                        ).take(5).map((tag) {
                           return Text(
                             '#$tag',
                             style: context.bodySmall.copyWith(
@@ -166,8 +165,10 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        CharacterLocalizer.getShortDescription(
-                            context, _character.id),
+                        CharacterLocalizer.resolveShortDescription(
+                          context,
+                          _character,
+                        ),
                         style: context.bodyMedium.copyWith(
                           color: isDark ? Colors.grey[400] : Colors.grey[600],
                         ),
@@ -474,7 +475,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
           icon: Icons.auto_stories,
           title: context.l10n.worldview,
           content:
-              CharacterLocalizer.getWorldview(context, _character.id).trim(),
+              CharacterLocalizer.resolveWorldview(context, _character).trim(),
           bgColor: sectionBgColor,
         ),
         const SizedBox(height: 12),
@@ -484,7 +485,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
           icon: Icons.person,
           title: context.l10n.characterLabel,
           content:
-              CharacterLocalizer.getPersonality(context, _character.id).trim(),
+              CharacterLocalizer.resolvePersonality(context, _character).trim(),
           bgColor: sectionBgColor,
         ),
         // NPC 프로필
@@ -497,7 +498,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
         // 제작자 코멘트
         Center(
           child: Text(
-            '"${CharacterLocalizer.getCreatorComment(context, _character.id)}"',
+            '"${CharacterLocalizer.resolveCreatorComment(context, _character)}"',
             style: context.bodySmall.copyWith(
               fontStyle: FontStyle.italic,
               color: Colors.grey[500],
@@ -676,7 +677,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
         title: Text(context.l10n.resetConversation),
         content: Text(
           context.l10n.resetConversationConfirm(
-              CharacterLocalizer.getName(context, _character.id)),
+              CharacterLocalizer.resolveName(context, _character)),
         ),
         actions: [
           TextButton(
@@ -694,7 +695,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage>
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(context.l10n.conversationResetSuccess(
-                      CharacterLocalizer.getName(context, _character.id))),
+                      CharacterLocalizer.resolveName(context, _character))),
                   behavior: SnackBarBehavior.floating,
                 ),
               );

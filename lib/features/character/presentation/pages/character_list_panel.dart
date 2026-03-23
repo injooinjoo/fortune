@@ -19,7 +19,10 @@ import '../utils/profile_avatar_tap_handler.dart';
 import '../providers/character_chat_provider.dart';
 import '../providers/character_provider.dart';
 import '../providers/sorted_characters_provider.dart';
+import '../providers/user_created_character_provider.dart';
 import '../widgets/wave_typing_indicator.dart';
+
+const String _newFriendCreationAction = 'new_friend_creation';
 
 /// 카테고리 영문 → 한글 라벨 변환
 String _specialtyCategoryLabel(String category) {
@@ -325,18 +328,26 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
   }
 
   Future<void> _showNewMessageSheet(BuildContext context) async {
-    final selectedCharacter = await showModalBottomSheet<AiCharacter>(
+    final result = await showModalBottomSheet<Object?>(
       context: context,
       isScrollControlled: true,
       backgroundColor: context.colors.surface.withValues(alpha: 0),
       builder: (ctx) => const _NewMessageSheet(),
     );
 
-    if (!context.mounted || selectedCharacter == null) {
+    if (!context.mounted || result == null) {
       return;
     }
 
-    widget.onCharacterSelected(selectedCharacter);
+    if (result is AiCharacter) {
+      widget.onCharacterSelected(result);
+      return;
+    }
+
+    if (result == _newFriendCreationAction) {
+      ref.read(friendCreationDraftProvider.notifier).reset();
+      context.push('/friends/new/basic');
+    }
   }
 }
 
@@ -479,7 +490,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
       builder: (ctx) => AlertDialog(
         title: Text(context.l10n.leaveConversation),
         content: Text(context.l10n.leaveConversationConfirm(
-            CharacterLocalizer.getName(context, widget.character.id))),
+            CharacterLocalizer.resolveName(context, widget.character))),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -508,7 +519,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(context.l10n.notificationOffMessage(
-            CharacterLocalizer.getName(context, widget.character.id))),
+            CharacterLocalizer.resolveName(context, widget.character))),
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 2),
       ),
@@ -551,7 +562,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
     final hasConversation = chatState.hasConversation;
     final isTyping = chatState.isCharacterTyping;
     final unreadCount = chatState.unreadCount;
-    final tagsText = CharacterLocalizer.getTags(context, widget.character.id)
+    final tagsText = CharacterLocalizer.resolveTags(context, widget.character)
         .take(3)
         .map((t) => '#$t')
         .join(' ');
@@ -730,8 +741,10 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                             children: [
                               Flexible(
                                 child: Text(
-                                  CharacterLocalizer.getName(
-                                      context, widget.character.id),
+                                  CharacterLocalizer.resolveName(
+                                    context,
+                                    widget.character,
+                                  ),
                                   style: typography.bodyLarge.copyWith(
                                     fontWeight: hasUnread
                                         ? FontWeight.bold
@@ -790,8 +803,11 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                 ? context.l10n.typing
                                 : (hasConversation
                                     ? chatState.lastMessagePreview
-                                    : CharacterLocalizer.getShortDescription(
-                                        context, widget.character.id)),
+                                    : CharacterLocalizer
+                                        .resolveShortDescription(
+                                        context,
+                                        widget.character,
+                                      )),
                             style: typography.bodyMedium.copyWith(
                               fontWeight: isTyping || hasUnread
                                   ? FontWeight.w500
@@ -881,21 +897,61 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
   }
 }
 
-/// 새 대화 시작 바텀시트 (인스타그램 New message 스타일)
-class _NewMessageSheet extends ConsumerWidget {
+/// 새로운 친구 시작 바텀시트
+class _NewMessageSheet extends ConsumerStatefulWidget {
   const _NewMessageSheet();
 
-  String _buildRecommendedSummary(BuildContext context, String characterId) {
-    final tags = CharacterLocalizer.getTags(context, characterId).take(3);
+  @override
+  ConsumerState<_NewMessageSheet> createState() => _NewMessageSheetState();
+}
+
+class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
+  final TextEditingController _searchController = TextEditingController();
+  String _query = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  String _buildRecommendedSummary(BuildContext context, AiCharacter character) {
+    final tags = CharacterLocalizer.resolveTags(context, character).take(3);
     if (tags.isNotEmpty) {
       return tags.join(' · ');
     }
-    return CharacterLocalizer.getShortDescription(context, characterId);
+    return CharacterLocalizer.resolveShortDescription(context, character);
+  }
+
+  List<AiCharacter> _filterCharacters(
+    BuildContext context,
+    List<AiCharacter> characters,
+  ) {
+    final query = _query.trim().toLowerCase();
+    if (query.isEmpty) {
+      return characters;
+    }
+
+    return characters.where((character) {
+      final name = CharacterLocalizer.resolveName(context, character);
+      final summary = _buildRecommendedSummary(context, character);
+      final haystack =
+          '$name ${character.name} $summary ${character.tags.join(' ')}'
+              .toLowerCase();
+      return haystack.contains(query);
+    }).toList();
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final characters = ref.watch(charactersProvider);
+  Widget build(BuildContext context) {
+    final myCharacters = _filterCharacters(
+      context,
+      ref.watch(userCreatedAiCharactersProvider),
+    );
+    final recommendedCharacters = _filterCharacters(
+      context,
+      ref.watch(recommendedStoryCharactersProvider),
+    );
 
     return DraggableScrollableSheet(
       initialChildSize: 0.9,
@@ -938,7 +994,7 @@ class _NewMessageSheet extends ConsumerWidget {
                   ),
                   const SizedBox(width: 16),
                   Text(
-                    context.l10n.newMessage,
+                    '새로운 친구',
                     style: context.typography.headingSmall.copyWith(
                       color: context.colors.textPrimary,
                     ),
@@ -948,104 +1004,214 @@ class _NewMessageSheet extends ConsumerWidget {
             ),
             const Divider(height: 1),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                children: [
-                  Text(
-                    context.l10n.recipient,
-                    style: context.typography.labelLarge.copyWith(
-                      color: context.colors.textSecondary,
-                    ),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+              child: TextField(
+                controller: _searchController,
+                onChanged: (value) => setState(() => _query = value),
+                decoration: InputDecoration(
+                  hintText: '친구 검색',
+                  hintStyle: context.typography.bodyMedium.copyWith(
+                    color: context.colors.textTertiary,
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: context.l10n.search,
-                        hintStyle: context.typography.labelLarge.copyWith(
-                          color: context.colors.textTertiary,
-                        ),
-                        border: InputBorder.none,
-                        isDense: true,
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(height: 1),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  context.l10n.recommended,
-                  style: context.typography.labelLarge.copyWith(
+                  prefixIcon: Icon(
+                    Icons.search,
                     color: context.colors.textSecondary,
-                    fontWeight: FontWeight.w700,
+                  ),
+                  filled: true,
+                  fillColor: context.colors.backgroundSecondary,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(context.radius.full),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
                   ),
                 ),
               ),
             ),
             Expanded(
-              child: ListView.builder(
+              child: ListView(
                 controller: scrollController,
-                padding: const EdgeInsets.only(bottom: 8),
-                itemCount: characters.length,
-                itemBuilder: (context, index) {
-                  final character = characters[index];
-                  final summary =
-                      _buildRecommendedSummary(context, character.id);
-                  final accentPalette = CharacterAccentPalette.from(
-                    source: character.accentColor,
-                    brightness: Theme.of(context).brightness,
-                  );
-                  return ListTile(
-                    dense: true,
-                    visualDensity: const VisualDensity(vertical: -1.8),
-                    minVerticalPadding: 0,
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-                    leading: CircleAvatar(
-                      radius: 24,
-                      backgroundColor: accentPalette.accent,
-                      backgroundImage: character.avatarAsset.isNotEmpty
-                          ? AssetImage(character.avatarAsset)
-                          : null,
-                      child: character.avatarAsset.isEmpty
-                          ? Text(
-                              character.initial,
-                              style: context.typography.labelLarge.copyWith(
-                                color: accentPalette.onAccent,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )
-                          : null,
-                    ),
-                    title: Text(
-                      CharacterLocalizer.getName(context, character.id),
-                      style: context.typography.bodyLarge.copyWith(
-                        color: context.colors.textPrimary,
-                        fontWeight: FontWeight.w600,
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                children: [
+                  InkWell(
+                    onTap: () =>
+                        Navigator.pop(context, _newFriendCreationAction),
+                    borderRadius: BorderRadius.circular(context.radius.xl),
+                    child: Ink(
+                      padding: const EdgeInsets.all(18),
+                      decoration: BoxDecoration(
+                        color: context.colors.backgroundSecondary,
+                        borderRadius: BorderRadius.circular(context.radius.xl),
+                        border: Border.all(
+                          color: context.colors.border.withValues(alpha: 0.82),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              color: context.colors.ctaBackground,
+                              borderRadius:
+                                  BorderRadius.circular(context.radius.full),
+                            ),
+                            child: Icon(
+                              Icons.add,
+                              color: context.colors.ctaForeground,
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '친구 새로 만들기',
+                                  style:
+                                      context.typography.headingSmall.copyWith(
+                                    color: context.colors.textPrimary,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '이름, 성격, 분위기를 정해서 새로운 대화를 시작하세요',
+                                  style: context.typography.bodyMedium.copyWith(
+                                    color: context.colors.textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                            color: context.colors.textSecondary,
+                          ),
+                        ],
                       ),
                     ),
-                    subtitle: Text(
-                      summary,
-                      style: context.typography.bodyMedium.copyWith(
-                        color: context.colors.textSecondary,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                  ),
+                  if (myCharacters.isNotEmpty) ...[
+                    const SizedBox(height: 24),
+                    const _SheetSectionTitle(title: '내가 만든 친구'),
+                    const SizedBox(height: 8),
+                    ...myCharacters.map(
+                      (character) =>
+                          _NewMessageCharacterTile(character: character),
                     ),
-                    onTap: () => Navigator.pop(context, character),
-                  );
-                },
+                  ],
+                  const SizedBox(height: 24),
+                  const _SheetSectionTitle(title: '추천 친구'),
+                  const SizedBox(height: 8),
+                  if (recommendedCharacters.isEmpty && myCharacters.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 32),
+                      child: Center(
+                        child: Text(
+                          '검색 결과가 없어요',
+                          style: context.typography.bodyMedium.copyWith(
+                            color: context.colors.textSecondary,
+                          ),
+                        ),
+                      ),
+                    )
+                  else
+                    ...recommendedCharacters.map(
+                      (character) =>
+                          _NewMessageCharacterTile(character: character),
+                    ),
+                ],
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _SheetSectionTitle extends StatelessWidget {
+  const _SheetSectionTitle({required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        title,
+        style: context.typography.labelLarge.copyWith(
+          color: context.colors.textSecondary,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+}
+
+class _NewMessageCharacterTile extends StatelessWidget {
+  const _NewMessageCharacterTile({required this.character});
+
+  final AiCharacter character;
+
+  String _buildSummary(BuildContext context) {
+    final tags = CharacterLocalizer.resolveTags(context, character).take(3);
+    if (tags.isNotEmpty) {
+      return tags.join(' · ');
+    }
+    return CharacterLocalizer.resolveShortDescription(context, character);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final summary = _buildSummary(context);
+    final accentPalette = CharacterAccentPalette.from(
+      source: character.accentColor,
+      brightness: Theme.of(context).brightness,
+    );
+
+    return ListTile(
+      dense: true,
+      visualDensity: const VisualDensity(vertical: -1.8),
+      minVerticalPadding: 0,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 2),
+      leading: CircleAvatar(
+        radius: 24,
+        backgroundColor: accentPalette.accent,
+        backgroundImage: character.avatarAsset.isNotEmpty
+            ? AssetImage(character.avatarAsset)
+            : null,
+        child: character.avatarAsset.isEmpty
+            ? Text(
+                character.initial,
+                style: context.typography.labelLarge.copyWith(
+                  color: accentPalette.onAccent,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+            : null,
+      ),
+      title: Text(
+        CharacterLocalizer.resolveName(context, character),
+        style: context.typography.bodyLarge.copyWith(
+          color: context.colors.textPrimary,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      subtitle: Text(
+        summary,
+        style: context.typography.bodyMedium.copyWith(
+          color: context.colors.textSecondary,
+        ),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      onTap: () => Navigator.pop(context, character),
     );
   }
 }

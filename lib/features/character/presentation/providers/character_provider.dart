@@ -3,17 +3,27 @@ import '../../data/default_characters.dart';
 import '../../data/fortune_characters.dart';
 import '../../domain/models/ai_character.dart';
 import '../../../../features/chat/domain/models/recommendation_chip.dart';
+import 'user_created_character_provider.dart';
 
 /// 전체 캐릭터 목록 Provider (스토리 + 운세)
 final charactersProvider = Provider<List<AiCharacter>>((ref) {
-  return [...defaultCharacters, ...fortuneCharacters];
+  final storyCharacters = ref.watch(storyCharactersProvider);
+  final fortuneExperts = ref.watch(fortuneCharactersProvider);
+  return [...storyCharacters, ...fortuneExperts];
 });
 
-/// 스토리 캐릭터만 (로맨스/스토리)
-final storyCharactersProvider = Provider<List<AiCharacter>>((ref) {
+/// 추천 스토리 캐릭터만
+final recommendedStoryCharactersProvider = Provider<List<AiCharacter>>((ref) {
   return defaultCharacters
       .where((c) => c.characterType == CharacterType.story)
       .toList();
+});
+
+/// 스토리 캐릭터만 (내가 만든 친구 + 추천 캐릭터)
+final storyCharactersProvider = Provider<List<AiCharacter>>((ref) {
+  final customCharacters = ref.watch(userCreatedAiCharactersProvider);
+  final recommendedCharacters = ref.watch(recommendedStoryCharactersProvider);
+  return [...customCharacters, ...recommendedCharacters];
 });
 
 /// 운세 전문가 캐릭터만
