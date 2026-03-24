@@ -101,6 +101,8 @@ Additional official pages:
 - `lib/features/character/presentation/providers/character_fortune_adapter.dart`
 - `lib/features/character/presentation/utils/fortune_key_localizer.dart`
 - `lib/features/character/presentation/widgets/character_message_bubble.dart`
+- `lib/features/chat/presentation/widgets/survey/chat_face_reading_flow.dart`
+- `lib/features/chat/presentation/widgets/survey/chat_image_input.dart`
 - `lib/features/chat/presentation/widgets/survey/chat_inline_calendar.dart`
 - `lib/features/chat/presentation/widgets/survey/chat_match_selector.dart`
 - `lib/features/chat/presentation/widgets/survey/chat_survey_chips.dart`

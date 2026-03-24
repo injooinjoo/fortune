@@ -120,6 +120,7 @@ Canonical repo sources:
 - Design-system badges: `lib/core/design_system/components/ds_badge.dart`
 - Selection chip core: `lib/core/design_system/components/ds_chip.dart`
 - Chat survey selectors: `lib/features/chat/presentation/widgets/survey/chat_survey_chips.dart`
+- Chat survey image actions: `lib/features/chat/presentation/widgets/survey/chat_face_reading_flow.dart`, `lib/features/chat/presentation/widgets/survey/chat_image_input.dart`
 - Chat calendar and match selectors: `lib/features/chat/presentation/widgets/survey/chat_inline_calendar.dart`, `lib/features/chat/presentation/widgets/survey/chat_match_selector.dart`
 - Curiosity result composition: `lib/features/character/presentation/widgets/embedded_fortune_component.dart`, `lib/features/character/presentation/utils/fortune_key_localizer.dart`, plus `lib/features/character/presentation/widgets/fortune_bodies/*.dart`
 - Capture manifest: `playwright/scripts/figma_capture_manifest.js`
