@@ -26702,7 +26702,9 @@
       "notes": [],
       "path": "lib/screens/onboarding/onboarding_page.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/routes/route_config.dart",
         "lib/routes/routes/auth_routes.dart"
       ],
@@ -26718,6 +26720,8 @@
       "notes": [],
       "path": "lib/screens/onboarding/steps/birth_input_step.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/screens/onboarding/onboarding_page.dart"
       ],
       "runtime_reachable": true,
@@ -26732,6 +26736,8 @@
       "notes": [],
       "path": "lib/screens/onboarding/steps/name_input_step.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/screens/onboarding/onboarding_page.dart",
         "test/widget/auth/social_auth_pending_state_test.dart",
         "test/widget/onboarding/name_input_step_test.dart"
