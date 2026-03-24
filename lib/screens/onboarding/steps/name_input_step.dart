@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/design_system/design_system.dart';
+import '../../../core/theme/typography_theme.dart';
 import '../../../core/services/supabase_connection_service.dart';
 import '../../../services/social_auth_service.dart';
 import '../../../services/storage_service.dart';
@@ -61,7 +62,6 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
 
     unawaited(_hydrateSavedConsents());
 
-    // 키보드 활성화 - 단일 접근으로 최적화
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && _focusNode.canRequestFocus) {
         _focusNode.requestFocus();
@@ -86,9 +86,7 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
   Future<void> _hydrateSavedConsents() async {
     final termsAccepted = await _storageService.hasAcceptedTerms();
     final privacyAccepted = await _storageService.hasAcceptedPrivacyPolicy();
-    if (!mounted) {
-      return;
-    }
+    if (!mounted) return;
 
     setState(() {
       _termsAccepted = termsAccepted;
@@ -97,76 +95,17 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
   }
 
   Future<void> _persistConsentsAndContinue() async {
-    if (!_canProceed) {
-      return;
-    }
-
+    if (!_canProceed) return;
     await _storageService.setRequiredPoliciesAccepted();
-    if (!mounted) {
-      return;
-    }
+    if (!mounted) return;
     widget.onNext();
   }
 
   Future<void> _persistConsentsAndSkip() async {
-    if (!_canSkip || widget.onSkip == null) {
-      return;
-    }
-
+    if (!_canSkip || widget.onSkip == null) return;
     await _storageService.setRequiredPoliciesAccepted();
-    if (!mounted) {
-      return;
-    }
+    if (!mounted) return;
     widget.onSkip!();
-  }
-
-  Widget _buildConsentRow({
-    required bool isChecked,
-    required ValueChanged<bool?> onChanged,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    final typography = ref.watch(typographyThemeProvider);
-    final colors = context.colors;
-    return Row(
-      children: [
-        SizedBox(
-          width: 24,
-          height: 24,
-          child: Checkbox(
-            value: isChecked,
-            onChanged: onChanged,
-            activeColor: colors.accent,
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            visualDensity: VisualDensity.compact,
-          ),
-        ),
-        const SizedBox(width: 8),
-        GestureDetector(
-          onTap: onTap,
-          child: Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(
-                  text: label,
-                  style: typography.labelMedium.copyWith(
-                    color: colors.accent,
-                    decoration: TextDecoration.underline,
-                    decorationColor: colors.accent,
-                  ),
-                ),
-                TextSpan(
-                  text: ' 동의 (필수)',
-                  style: typography.labelMedium.copyWith(
-                    color: colors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
   }
 
   Future<void> _showSocialLoginBottomSheet(BuildContext context) async {
@@ -189,183 +128,245 @@ class _NameInputStepState extends ConsumerState<NameInputStep> {
       backgroundColor: colors.background,
       resizeToAvoidBottomInset: false,
       body: GestureDetector(
-        onTap: () {
-          // 배경 터치 시 키보드 내리기
-          FocusScope.of(context).unfocus();
-        },
-        child: SafeArea(
-          child: Stack(
-            children: [
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Container(
-                    width: double.infinity,
-                    constraints: const BoxConstraints(maxWidth: 520),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 28,
-                      vertical: 32,
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Stack(
+          children: [
+            // Main content
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 48),
+
+                  // Title
+                  Text(
+                    '무엇이라고\n불러드릴까요?',
+                    style: typography.headingLarge.copyWith(
+                      color: colors.textPrimary,
+                      height: 1.3,
+                      letterSpacing: -0.5,
                     ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    '이름을 먼저 알려주시면 대화가 더 자연스러워져요',
+                    style: typography.bodyMedium.copyWith(
+                      color: colors.textTertiary,
+                      height: 1.5,
+                    ),
+                  ),
+
+                  const SizedBox(height: 48),
+
+                  // Name input field
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
                     decoration: BoxDecoration(
-                      color: colors.surface,
-                      borderRadius: BorderRadius.circular(context.radius.xxl),
+                      color: colors.backgroundSecondary,
+                      borderRadius: BorderRadius.circular(context.radius.md),
                       border: Border.all(
-                        color: colors.border.withValues(alpha: 0.72),
+                        color: _focusNode.hasFocus
+                            ? colors.textPrimary.withValues(alpha: 0.2)
+                            : colors.border.withValues(alpha: 0.5),
                       ),
                     ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          '무엇이라고 불러드릴까요?',
-                          style: typography.headingMedium.copyWith(
-                            color: colors.textPrimary,
-                          ),
-                          textAlign: TextAlign.center,
+                    child: TextField(
+                      controller: _nameController,
+                      focusNode: _focusNode,
+                      style: typography.headingSmall.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: colors.textPrimary,
+                      ),
+                      autofocus: true,
+                      keyboardType: TextInputType.name,
+                      textInputAction: TextInputAction.done,
+                      cursorColor: colors.textPrimary,
+                      onTap: () {
+                        _focusNode.requestFocus();
+                        SystemChannels.textInput.invokeMethod('TextInput.show');
+                      },
+                      onSubmitted: (_) => _persistConsentsAndContinue(),
+                      decoration: InputDecoration(
+                        hintText: '이름을 입력해주세요',
+                        hintStyle: typography.headingSmall.copyWith(
+                          fontWeight: FontWeight.w500,
+                          color: colors.textTertiary.withValues(alpha: 0.5),
                         ),
-                        const SizedBox(height: 12),
-                        Text(
-                          '이름을 먼저 정리해두면 이후 대화와 추천 흐름이 더 자연스럽게 이어집니다.',
-                          style: typography.bodyMedium.copyWith(
-                            color: colors.textSecondary,
-                            height: 1.5,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 28),
-                        TextField(
-                          controller: _nameController,
-                          focusNode: _focusNode,
-                          style: typography.headingMedium.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: colors.textPrimary,
-                          ),
-                          textAlign: TextAlign.center,
-                          autofocus: true,
-                          keyboardType: TextInputType.name,
-                          textInputAction: TextInputAction.done,
-                          cursorColor: colors.accent,
-                          showCursor: true,
-                          enableInteractiveSelection: true,
-                          onTap: () {
-                            debugPrint('TextField 탭됨!');
-                            _focusNode.requestFocus();
-                            SystemChannels.textInput
-                                .invokeMethod('TextInput.show');
-                          },
-                          onSubmitted: (_) {
-                            _persistConsentsAndContinue();
-                          },
-                          decoration: InputDecoration(
-                            hintText: '이름을 알려주세요',
-                            hintStyle: typography.headingMedium.copyWith(
-                              fontWeight: FontWeight.w500,
-                              color: colors.textTertiary,
-                            ),
-                            border: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            focusedErrorBorder: InputBorder.none,
-                            contentPadding: EdgeInsets.zero,
-                            filled: false,
-                          ),
-                          textCapitalization: TextCapitalization.words,
-                          inputFormatters: [
-                            LengthLimitingTextInputFormatter(50),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        Divider(color: colors.border.withValues(alpha: 0.5)),
-                        const SizedBox(height: 12),
-                        _buildConsentRow(
-                          isChecked: _termsAccepted,
-                          onChanged: (v) =>
-                              setState(() => _termsAccepted = v ?? false),
-                          label: '이용약관',
-                          onTap: () => context.push('/terms-of-service'),
-                        ),
-                        const SizedBox(height: 8),
-                        _buildConsentRow(
-                          isChecked: _privacyAccepted,
-                          onChanged: (v) =>
-                              setState(() => _privacyAccepted = v ?? false),
-                          label: '개인정보처리방침',
-                          onTap: () => context.push('/privacy-policy'),
-                        ),
+                        border: InputBorder.none,
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      textCapitalization: TextCapitalization.words,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(50),
                       ],
                     ),
                   ),
-                ),
-              ),
-              AnimatedPositioned(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-                bottom: _canProceed
-                    ? (isKeyboardVisible ? keyboardHeight + 16 : 32)
-                    : -100,
-                left: 24,
-                right: 24,
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 300),
-                  opacity: _canProceed ? 1.0 : 0.0,
-                  child: DSButton.primary(
-                    text: '다음',
-                    onPressed: _canProceed
-                        ? () {
-                            _persistConsentsAndContinue();
-                          }
-                        : null,
+
+                  const SizedBox(height: 28),
+
+                  // Consent checkboxes
+                  _ConsentRow(
+                    isChecked: _termsAccepted,
+                    onChanged: (v) =>
+                        setState(() => _termsAccepted = v ?? false),
+                    label: '이용약관',
+                    onTap: () => context.push('/terms-of-service'),
+                    colors: colors,
+                    typography: typography,
                   ),
+                  const SizedBox(height: 12),
+                  _ConsentRow(
+                    isChecked: _privacyAccepted,
+                    onChanged: (v) =>
+                        setState(() => _privacyAccepted = v ?? false),
+                    label: '개인정보처리방침',
+                    onTap: () => context.push('/privacy-policy'),
+                    colors: colors,
+                    typography: typography,
+                  ),
+                ],
+              ),
+            ),
+
+            // CTA button (animated)
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              bottom: _canProceed
+                  ? (isKeyboardVisible ? keyboardHeight + 16 : 32)
+                  : -80,
+              left: 24,
+              right: 24,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 300),
+                opacity: _canProceed ? 1.0 : 0.0,
+                child: DSButton.primary(
+                  text: '다음',
+                  onPressed:
+                      _canProceed ? () => _persistConsentsAndContinue() : null,
                 ),
               ),
-              if (!isKeyboardVisible && !_canProceed)
-                Positioned(
-                  bottom: 32.0,
-                  left: 0,
-                  right: 0,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (widget.allowSkip && widget.onSkip != null)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0),
-                          child: GestureDetector(
-                            onTap: _canSkip
-                                ? () {
-                                    _persistConsentsAndSkip();
-                                  }
-                                : null,
-                            child: Text(
-                              '건너뛰기',
-                              style: typography.labelLarge.copyWith(
-                                color: _canSkip
-                                    ? colors.textSecondary
-                                    : colors.textTertiary,
-                              ),
-                            ),
-                          ),
-                        ),
-                      Center(
+            ),
+
+            // Bottom links (visible when CTA is hidden)
+            if (!isKeyboardVisible && !_canProceed)
+              Positioned(
+                bottom: 32.0,
+                left: 0,
+                right: 0,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (widget.allowSkip && widget.onSkip != null)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
                         child: GestureDetector(
-                          onTap: () => _showSocialLoginBottomSheet(context),
+                          onTap:
+                              _canSkip ? () => _persistConsentsAndSkip() : null,
                           child: Text(
-                            '계정이 있어요',
+                            '건너뛰기',
                             style: typography.labelLarge.copyWith(
-                              color: colors.textSecondary,
-                              decoration: TextDecoration.underline,
-                              decorationColor: colors.textSecondary,
+                              color: _canSkip
+                                  ? colors.textSecondary
+                                  : colors.textTertiary,
                             ),
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    Center(
+                      child: GestureDetector(
+                        onTap: () => _showSocialLoginBottomSheet(context),
+                        child: Text(
+                          '계정이 있어요',
+                          style: typography.labelLarge.copyWith(
+                            color: colors.textSecondary,
+                            decoration: TextDecoration.underline,
+                            decorationColor: colors.textSecondary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-            ],
-          ),
+              ),
+          ],
         ),
+      ),
+    );
+  }
+}
+
+class _ConsentRow extends StatelessWidget {
+  final bool isChecked;
+  final ValueChanged<bool?> onChanged;
+  final String label;
+  final VoidCallback onTap;
+  final DSColorScheme colors;
+  final TypographyTheme typography;
+
+  const _ConsentRow({
+    required this.isChecked,
+    required this.onChanged,
+    required this.label,
+    required this.onTap,
+    required this.colors,
+    required this.typography,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => onChanged(!isChecked),
+      child: Row(
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: 22,
+            height: 22,
+            decoration: BoxDecoration(
+              color: isChecked ? colors.textPrimary : colors.background,
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(
+                color: isChecked ? colors.textPrimary : colors.border,
+                width: 1.5,
+              ),
+            ),
+            child: isChecked
+                ? Icon(
+                    Icons.check,
+                    size: 14,
+                    color: colors.ctaForeground,
+                  )
+                : null,
+          ),
+          const SizedBox(width: 12),
+          GestureDetector(
+            onTap: onTap,
+            child: Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: label,
+                    style: typography.labelMedium.copyWith(
+                      color: colors.accent,
+                      decoration: TextDecoration.underline,
+                      decorationColor: colors.accent,
+                    ),
+                  ),
+                  TextSpan(
+                    text: ' 동의 (필수)',
+                    style: typography.labelMedium.copyWith(
+                      color: colors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
