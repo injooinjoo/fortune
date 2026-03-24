@@ -27619,6 +27619,48 @@
       "dirty": false,
       "kind": "dart",
       "notes": [],
+      "path": "lib/shared/widgets/smart_image_local_file.dart",
+      "referenced_by": [
+        "lib/shared/widgets/smart_image.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
+      "path": "lib/shared/widgets/smart_image_local_file_io.dart",
+      "referenced_by": [
+        "lib/shared/widgets/smart_image_local_file.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
+      "path": "lib/shared/widgets/smart_image_local_file_web.dart",
+      "referenced_by": [
+        "lib/shared/widgets/smart_image_local_file.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
       "path": "lib/utils/date_utils.dart",
       "referenced_by": [
         "lib/presentation/providers/user_profile_notifier.dart",
@@ -33176,13 +33218,13 @@
       "assets": 1231,
       "docs": 96,
       "integration_test": 8,
-      "lib": 433,
+      "lib": 436,
       "scripts": 72,
       "supabase": 207,
       "test": 82
     },
     "counts_by_candidate_action": {
-      "keep": 724,
+      "keep": 727,
       "keep_generated": 28,
       "manual_review": 978,
       "phase1_remove_candidate": 12,
@@ -33192,7 +33234,7 @@
     "counts_by_usage_status": {
       "doc_only": 105,
       "generated_excluded": 28,
-      "runtime_used": 724,
+      "runtime_used": 727,
       "test_only": 91,
       "tooling_only": 187,
       "unreferenced": 994
@@ -33348,8 +33390,8 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 364,
-    "lib_dart_total": 430,
+    "lib_dart_runtime_reachable": 367,
+    "lib_dart_total": 433,
     "lib_dart_zero_incoming": 25,
     "missing_function_refs": [
       "--all",
@@ -33457,7 +33499,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2129,
+    "total_files": 2132,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"

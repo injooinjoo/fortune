@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -8,6 +6,7 @@ import 'package:shimmer/shimmer.dart';
 import '../../core/design_system/design_system.dart';
 import '../../core/services/asset_delivery_service.dart';
 import '../../core/models/asset_pack.dart';
+import 'smart_image_local_file.dart' as smart_image_local_file;
 
 /// 스마트 이미지 위젯
 /// URL/로컬/번들 경로에서 SVG와 래스터 이미지를 모두 처리
@@ -290,8 +289,8 @@ class _SmartImageState extends State<SmartImage> {
             SvgErrorWidgetBuilder? errorBuilder,
             ColorFilter? colorFilter,
           }) =>
-              SvgPicture.file(
-            File(path),
+              smart_image_local_file.buildLocalSvgPicture(
+            path: path,
             width: widget.width,
             height: widget.height,
             fit: widget.fit,
@@ -302,8 +301,8 @@ class _SmartImageState extends State<SmartImage> {
         );
       }
 
-      return Image.file(
-        File(path),
+      return smart_image_local_file.buildLocalRasterImage(
+        path: path,
         width: widget.width,
         height: widget.height,
         fit: widget.fit,
