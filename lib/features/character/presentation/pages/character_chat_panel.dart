@@ -25,6 +25,8 @@ import '../utils/character_chat_surface_style.dart';
 import '../widgets/character_message_bubble.dart';
 import '../widgets/character_choice_widget.dart';
 import '../widgets/wave_typing_indicator.dart';
+import '../widgets/pet_profile_create_sheet.dart';
+import '../widgets/secondary_profile_create_sheet.dart';
 import '../../../chat/services/chat_scroll_service.dart';
 // 설문 관련 imports
 import '../../../chat/domain/models/fortune_survey_config.dart';
@@ -61,6 +63,7 @@ class CharacterChatPanel extends ConsumerStatefulWidget {
   final bool autoStartFortune;
   final String? entrySource;
   final ChatCatalogPreview? catalogPreview;
+  final bool debugSkipRegistrationAuthGate;
 
   const CharacterChatPanel({
     super.key,
@@ -70,6 +73,7 @@ class CharacterChatPanel extends ConsumerStatefulWidget {
     this.autoStartFortune = false,
     this.entrySource,
     this.catalogPreview,
+    this.debugSkipRegistrationAuthGate = false,
   });
 
   @override
@@ -578,11 +582,22 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   Future<bool> _ensureAuthenticatedForIntent(
     PendingChatAuthIntent intent,
   ) async {
-    if (widget.catalogPreview != null || _hasAuthenticatedSession()) {
+    if (widget.debugSkipRegistrationAuthGate ||
+        widget.catalogPreview != null ||
+        _hasAuthenticatedSession()) {
       return true;
     }
 
     await _storageService.savePendingChatAuthIntent(intent.toJson());
+    await _presentAuthenticationSheet();
+    return false;
+  }
+
+  Future<bool> _ensureAuthenticatedForProfileRegistration() async {
+    if (widget.debugSkipRegistrationAuthGate || _hasAuthenticatedSession()) {
+      return true;
+    }
+
     await _presentAuthenticationSheet();
     return false;
   }
@@ -2195,9 +2210,14 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
               : '선택할 수 있는 저장 프로필이 없어요.';
           return _buildSurveyInfoBox(
             message: emptyMessage,
-            actionLabel: '새로고침',
+            actionLabel: '등록하기',
             onAction: () {
-              ref.read(secondaryProfilesProvider.notifier).refresh();
+              unawaited(
+                _showSecondaryProfileCreateSheet(
+                  inputType: inputType,
+                  selectedMember: selectedMember,
+                ),
+              );
             },
           );
         }
@@ -2261,9 +2281,9 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         if (pets.isEmpty) {
           return _buildSurveyInfoBox(
             message: '선택할 수 있는 반려동물이 없어요.',
-            actionLabel: '새로고침',
+            actionLabel: '등록하기',
             onAction: () {
-              ref.read(petProfilesProvider.notifier).refresh();
+              unawaited(_showPetProfileCreateSheet());
             },
           );
         }
@@ -2518,6 +2538,66 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     return profiles.where((profile) {
       return profile.matchesFamilyMember(selectedMember);
     }).toList(growable: false);
+  }
+
+  Future<void> _showPetProfileCreateSheet() async {
+    if (!await _ensureAuthenticatedForProfileRegistration()) {
+      return;
+    }
+
+    if (!mounted) {
+      return;
+    }
+
+    final createdProfile = await PetProfileCreateSheet.show(context);
+    if (!mounted || createdProfile == null) {
+      return;
+    }
+
+    setState(() {
+      _isPetProfileManagementMode = false;
+    });
+
+    _handleSurveyAnswer(
+      buildPetProfileSurveyAnswer(
+        profile: createdProfile,
+        displayText: _buildPetProfileDisplayText(createdProfile),
+      ),
+    );
+  }
+
+  Future<void> _showSecondaryProfileCreateSheet({
+    required SurveyInputType inputType,
+    String? selectedMember,
+  }) async {
+    if (!await _ensureAuthenticatedForProfileRegistration()) {
+      return;
+    }
+
+    if (!mounted) {
+      return;
+    }
+
+    final createdProfile = await SecondaryProfileCreateSheet.show(
+      context,
+      selectedFamilyMember:
+          inputType == SurveyInputType.familyProfile ? selectedMember : null,
+    );
+    if (!mounted || createdProfile == null) {
+      return;
+    }
+
+    _handleSurveyAnswer(
+      buildStoredProfileSurveyAnswer(
+        profile: createdProfile,
+        displayText: _buildStoredProfileDisplayText(
+          createdProfile,
+          inputType,
+          selectedMember: selectedMember,
+        ),
+        selectedFamilyMember: selectedMember,
+      ),
+    );
   }
 
   String _buildStoredProfileOptionLabel(

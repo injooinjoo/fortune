@@ -11,11 +11,16 @@ final petProfilesProvider =
 );
 
 class PetProfilesNotifier extends StateNotifier<AsyncValue<List<PetProfile>>> {
-  PetProfilesNotifier() : super(const AsyncValue.loading()) {
-    _loadProfiles();
+  PetProfilesNotifier({
+    bool loadOnInit = true,
+    AsyncValue<List<PetProfile>>? initialState,
+  }) : super(initialState ?? const AsyncValue.loading()) {
+    if (loadOnInit) {
+      _loadProfiles();
+    }
   }
 
-  final _supabase = Supabase.instance.client;
+  SupabaseClient get _supabase => Supabase.instance.client;
 
   Future<void> _loadProfiles() async {
     try {
@@ -59,6 +64,40 @@ class PetProfilesNotifier extends StateNotifier<AsyncValue<List<PetProfile>>> {
       Logger.info('[PetProfiles] 반려동물 삭제 완료');
     } catch (e) {
       Logger.error('[PetProfiles] 삭제 실패: $e');
+      rethrow;
+    }
+  }
+
+  Future<PetProfile> addProfile({
+    required String name,
+    required String species,
+  }) async {
+    try {
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId == null) {
+        throw Exception('로그인이 필요합니다');
+      }
+
+      Logger.info('[PetProfiles] 반려동물 추가 - $name');
+
+      final response = await _supabase
+          .from('pets')
+          .insert({
+            'user_id': userId,
+            'name': name,
+            'species': species,
+          })
+          .select()
+          .single();
+
+      final newProfile = PetProfile.fromJson(response);
+      final currentProfiles = state.valueOrNull ?? const <PetProfile>[];
+      state = AsyncValue.data([...currentProfiles, newProfile]);
+
+      Logger.info('[PetProfiles] 반려동물 추가 완료 - ${newProfile.id}');
+      return newProfile;
+    } catch (e) {
+      Logger.error('[PetProfiles] 추가 실패: $e');
       rethrow;
     }
   }

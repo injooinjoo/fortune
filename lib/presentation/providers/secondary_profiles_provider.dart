@@ -15,11 +15,16 @@ final secondaryProfilesProvider = StateNotifierProvider<
 /// 서브 프로필 목록 상태 관리 클래스
 class SecondaryProfilesNotifier
     extends StateNotifier<AsyncValue<List<SecondaryProfile>>> {
-  SecondaryProfilesNotifier() : super(const AsyncValue.loading()) {
-    _loadProfiles();
+  SecondaryProfilesNotifier({
+    bool loadOnInit = true,
+    AsyncValue<List<SecondaryProfile>>? initialState,
+  }) : super(initialState ?? const AsyncValue.loading()) {
+    if (loadOnInit) {
+      _loadProfiles();
+    }
   }
 
-  final _supabase = Supabase.instance.client;
+  SupabaseClient get _supabase => Supabase.instance.client;
 
   /// 프로필 목록 로드
   Future<void> _loadProfiles() async {
