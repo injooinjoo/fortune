@@ -92,6 +92,9 @@ Additional official pages:
 
 - `lib/features/character/presentation/pages/swipe_home_shell.dart`
 - `lib/features/character/presentation/pages/character_onboarding_page.dart`
+- `lib/screens/onboarding/onboarding_page.dart`
+- `lib/screens/onboarding/steps/name_input_step.dart`
+- `lib/screens/onboarding/steps/birth_input_step.dart`
 - `lib/services/storage_service.dart`
 
 ### Conversation, Survey, and Result Blocks

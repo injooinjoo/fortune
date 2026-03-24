@@ -115,6 +115,7 @@ Canonical repo sources:
 
 - Router: `lib/routes/route_config.dart`
 - Auth routes: `lib/routes/routes/auth_routes.dart`
+- Onboarding flow: `lib/screens/onboarding/onboarding_page.dart`, `lib/screens/onboarding/steps/name_input_step.dart`, `lib/screens/onboarding/steps/birth_input_step.dart`
 - Character routes: `lib/routes/character_routes.dart`
 - Retained chat state: `lib/features/character/presentation/providers/character_chat_provider.dart`
 - Design-system badges: `lib/core/design_system/components/ds_badge.dart`

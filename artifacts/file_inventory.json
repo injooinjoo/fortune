@@ -22515,7 +22515,8 @@
       "notes": [],
       "path": "lib/core/theme/typography_theme.dart",
       "referenced_by": [
-        "lib/core/providers/user_settings_provider.dart"
+        "lib/core/providers/user_settings_provider.dart",
+        "lib/screens/onboarding/steps/name_input_step.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,

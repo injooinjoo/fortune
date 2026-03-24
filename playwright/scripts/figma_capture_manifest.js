@@ -197,6 +197,8 @@ const SCREENS = [
     sources: [
       'lib/routes/routes/auth_routes.dart',
       'lib/screens/onboarding/onboarding_page.dart',
+      'lib/screens/onboarding/steps/name_input_step.dart',
+      'lib/screens/onboarding/steps/birth_input_step.dart',
     ],
   },
   {
@@ -209,6 +211,8 @@ const SCREENS = [
     sources: [
       'lib/routes/route_config.dart',
       'lib/screens/onboarding/onboarding_page.dart',
+      'lib/screens/onboarding/steps/name_input_step.dart',
+      'lib/screens/onboarding/steps/birth_input_step.dart',
     ],
   },
   {
