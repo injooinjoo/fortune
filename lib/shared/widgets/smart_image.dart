@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -9,7 +10,7 @@ import '../../core/services/asset_delivery_service.dart';
 import '../../core/models/asset_pack.dart';
 
 /// 스마트 이미지 위젯
-/// URL이면 CachedNetworkImage, 로컬 경로면 Image.asset 사용
+/// URL/로컬/번들 경로에서 SVG와 래스터 이미지를 모두 처리
 /// OTA 업데이트를 위한 CDN 이미지 지원
 /// On-Demand 자산 팩 다운로드 지원
 class SmartImage extends StatefulWidget {
@@ -183,6 +184,40 @@ class _SmartImageState extends State<SmartImage> {
     });
   }
 
+  bool _isSvgPath(String path) => path.toLowerCase().endsWith('.svg');
+
+  ColorFilter? _svgColorFilter() {
+    final color = widget.color;
+    if (color == null) return null;
+    return ColorFilter.mode(
+      color,
+      widget.colorBlendMode ?? BlendMode.srcIn,
+    );
+  }
+
+  Widget _buildSvgPicture({
+    required String path,
+    required SvgPicture Function({
+      WidgetBuilder? placeholderBuilder,
+      SvgErrorWidgetBuilder? errorBuilder,
+      ColorFilter? colorFilter,
+    }) builder,
+  }) {
+    return builder(
+      colorFilter: _svgColorFilter(),
+      placeholderBuilder: (context) =>
+          widget.placeholder ??
+          (widget.progressive
+              ? _buildShimmerPlaceholder()
+              : _buildPlaceholder()),
+      errorBuilder: (context, error, stackTrace) {
+        debugPrint('🖼️ [SmartImage] ❌ SVG 로드 실패: $path');
+        debugPrint('🖼️ [SmartImage] Error: $error');
+        return widget.errorWidget ?? _buildErrorWidget();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // 로딩 중
@@ -204,6 +239,26 @@ class _SmartImageState extends State<SmartImage> {
 
     // 네트워크 이미지
     if (path.startsWith('http://') || path.startsWith('https://')) {
+      if (_isSvgPath(path)) {
+        return _buildSvgPicture(
+          path: path,
+          builder: ({
+            WidgetBuilder? placeholderBuilder,
+            SvgErrorWidgetBuilder? errorBuilder,
+            ColorFilter? colorFilter,
+          }) =>
+              SvgPicture.network(
+            path,
+            width: widget.width,
+            height: widget.height,
+            fit: widget.fit,
+            colorFilter: colorFilter,
+            placeholderBuilder: placeholderBuilder,
+            errorBuilder: errorBuilder,
+          ),
+        );
+      }
+
       return CachedNetworkImage(
         imageUrl: path,
         width: widget.width,
@@ -227,6 +282,26 @@ class _SmartImageState extends State<SmartImage> {
 
     // 로컬 파일 (캐시된 On-Demand 자산)
     if (path.startsWith('/')) {
+      if (_isSvgPath(path)) {
+        return _buildSvgPicture(
+          path: path,
+          builder: ({
+            WidgetBuilder? placeholderBuilder,
+            SvgErrorWidgetBuilder? errorBuilder,
+            ColorFilter? colorFilter,
+          }) =>
+              SvgPicture.file(
+            File(path),
+            width: widget.width,
+            height: widget.height,
+            fit: widget.fit,
+            colorFilter: colorFilter,
+            placeholderBuilder: placeholderBuilder,
+            errorBuilder: errorBuilder,
+          ),
+        );
+      }
+
       return Image.file(
         File(path),
         width: widget.width,
@@ -244,6 +319,26 @@ class _SmartImageState extends State<SmartImage> {
     }
 
     // 로컬 에셋 이미지
+    if (_isSvgPath(path)) {
+      return _buildSvgPicture(
+        path: path,
+        builder: ({
+          WidgetBuilder? placeholderBuilder,
+          SvgErrorWidgetBuilder? errorBuilder,
+          ColorFilter? colorFilter,
+        }) =>
+            SvgPicture.asset(
+          path,
+          width: widget.width,
+          height: widget.height,
+          fit: widget.fit,
+          colorFilter: colorFilter,
+          placeholderBuilder: placeholderBuilder,
+          errorBuilder: errorBuilder,
+        ),
+      );
+    }
+
     return Image.asset(
       path,
       width: widget.width,
