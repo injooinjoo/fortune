@@ -403,7 +403,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     }
 
     _pauseSessionStartAutoScrollForUserScroll();
-    await _revealArchivedHistory();
+    await _scrollService.preserveViewportAfterPrepend(_revealArchivedHistory);
   }
 
   bool _handleChatScrollNotification(

@@ -77,6 +77,31 @@ void main() {
     );
 
     testWidgets(
+      'preserveViewportAfterPrepend keeps the current message in place',
+      (tester) async {
+        final key = GlobalKey<_TestPrependViewportHarnessState>();
+
+        await tester.pumpWidget(_TestPrependViewportHarness(key: key));
+
+        key.currentState!.jumpToOffset(260);
+        await tester.pump();
+
+        const markerKey = ValueKey('message-5');
+        final beforeTop = tester.getTopLeft(find.byKey(markerKey)).dy;
+
+        final future = key.currentState!.prependHistoryKeepingViewport();
+        await tester.pump();
+        await _pumpScrollFrames(tester, frameCount: 10);
+        await future;
+
+        final afterTop = tester.getTopLeft(find.byKey(markerKey)).dy;
+
+        expect(afterTop, closeTo(beforeTop, 12));
+        expect(key.currentState!.controller.offset, greaterThan(260));
+      },
+    );
+
+    testWidgets(
       'manual upward scroll cancels session-start auto follow so content above stays reachable',
       (tester) async {
         final key = GlobalKey<_TestSessionStartAutoFollowHarnessState>();
@@ -260,6 +285,81 @@ class _TestAnchorScrollHarnessState extends State<_TestAnchorScrollHarness> {
                   );
                 }),
               ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TestPrependViewportHarness extends StatefulWidget {
+  const _TestPrependViewportHarness({super.key});
+
+  @override
+  State<_TestPrependViewportHarness> createState() =>
+      _TestPrependViewportHarnessState();
+}
+
+class _TestPrependViewportHarnessState
+    extends State<_TestPrependViewportHarness> {
+  final ScrollController controller = ScrollController();
+  late final ChatScrollService service = ChatScrollService(
+    scrollController: controller,
+    isMounted: () => mounted,
+  );
+
+  int _prependedBatchCount = 0;
+
+  @override
+  void dispose() {
+    service.dispose();
+    controller.dispose();
+    super.dispose();
+  }
+
+  void jumpToOffset(double offset) {
+    controller.jumpTo(offset);
+  }
+
+  Future<void> prependHistoryKeepingViewport() {
+    return service.preserveViewportAfterPrepend(() async {
+      setState(() {
+        _prependedBatchCount = 1;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final prependedMessages =
+        List.generate(4 * _prependedBatchCount, (index) => -(index + 1));
+    final messageIds = <int>[
+      ...prependedMessages,
+      ...List.generate(20, (index) => index),
+    ];
+
+    return MaterialApp(
+      home: Scaffold(
+        body: Align(
+          alignment: Alignment.topCenter,
+          child: SizedBox(
+            height: 320,
+            child: ListView.builder(
+              controller: controller,
+              itemCount: messageIds.length,
+              itemBuilder: (context, index) {
+                final messageId = messageIds[index];
+                return Container(
+                  key: ValueKey('message-$messageId'),
+                  height: 72,
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  color: messageId < 0
+                      ? Colors.blueGrey.shade100
+                      : Colors.grey.shade300,
+                );
+              },
             ),
           ),
         ),

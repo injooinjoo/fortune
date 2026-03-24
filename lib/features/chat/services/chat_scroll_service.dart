@@ -100,6 +100,73 @@ class ChatScrollService {
     });
   }
 
+  /// 리스트 상단에 항목이 추가되어도 사용자가 보던 메시지 위치를 유지합니다.
+  Future<void> preserveViewportAfterPrepend(
+    Future<void> Function() prependOperation,
+  ) async {
+    _debounceTimer?.cancel();
+    final requestId = ++_scrollRequestId;
+
+    final initialPosition =
+        scrollController.hasClients ? scrollController.position : null;
+    final initialPixels = initialPosition == null
+        ? 0.0
+        : initialPosition.pixels
+            .clamp(
+              initialPosition.minScrollExtent,
+              initialPosition.maxScrollExtent,
+            )
+            .toDouble();
+    final initialMaxScrollExtent = initialPosition?.hasContentDimensions == true
+        ? initialPosition!.maxScrollExtent
+        : 0.0;
+
+    await prependOperation();
+
+    var previousTargetOffset = -1.0;
+
+    for (var attempt = 0;
+        attempt < ChatScrollConstants.maxBottomScrollAttempts;
+        attempt++) {
+      final delay = attempt == 0
+          ? ChatScrollConstants.layoutDelay
+          : ChatScrollConstants.settleDelay;
+      await Future<void>.delayed(delay);
+
+      if (!_isActiveRequest(requestId)) {
+        return;
+      }
+
+      final position = scrollController.position;
+      if (!position.hasContentDimensions) {
+        continue;
+      }
+
+      final prependedExtent = position.maxScrollExtent - initialMaxScrollExtent;
+      final targetOffset = (initialPixels + prependedExtent)
+          .clamp(
+            position.minScrollExtent,
+            position.maxScrollExtent,
+          )
+          .toDouble();
+
+      if ((position.pixels - targetOffset).abs() >
+          ChatScrollConstants.bottomTolerance) {
+        scrollController.jumpTo(targetOffset);
+      }
+
+      final isTargetStable = (targetOffset - previousTargetOffset).abs() <=
+          ChatScrollConstants.bottomTolerance;
+      previousTargetOffset = targetOffset;
+
+      if (isTargetStable &&
+          (scrollController.position.pixels - targetOffset).abs() <=
+              ChatScrollConstants.bottomTolerance) {
+        return;
+      }
+    }
+  }
+
   void _scheduleBottomScroll({required bool animated}) {
     _debounceTimer?.cancel();
     final requestId = ++_scrollRequestId;
