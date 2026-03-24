@@ -464,7 +464,7 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                             ),
                             Text('월', style: labelStyle),
                           ],
-                        ).animate().fadeIn(duration: 300.ms),
+                        ),
 
                       // Day - fade in after month (그룹화된 애니메이션)
                       if (_showDay)
@@ -499,7 +499,7 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                             ),
                             Text('일', style: labelStyle),
                           ],
-                        ).animate().fadeIn(duration: 300.ms),
+                        ),
                     ],
                   ),
 
