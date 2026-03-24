@@ -20945,6 +20945,8 @@
         "lib/features/character/presentation/widgets/fortune_bodies/relationship_fortune_body.dart",
         "lib/features/character/presentation/widgets/fortune_bodies/wealth_fortune_body.dart",
         "lib/features/character/presentation/widgets/haneul_fortune_result_widget.dart",
+        "lib/features/character/presentation/widgets/pet_profile_create_sheet.dart",
+        "lib/features/character/presentation/widgets/secondary_profile_create_sheet.dart",
         "lib/features/chat/domain/configs/survey_configs.dart",
         "lib/features/chat/domain/models/life_category.dart",
         "lib/features/chat/domain/models/recommendation_chip.dart",
@@ -21008,9 +21010,11 @@
         "lib/shared/widgets/smart_image.dart",
         "test/features/character/presentation/widgets/embedded_fortune_component_test.dart",
         "test/features/character/presentation/widgets/embedded_tarot_component_test.dart",
+        "test/features/character/presentation/widgets/profile_create_sheets_test.dart",
         "test/features/chat/presentation/widgets/survey/chat_survey_chips_test.dart",
         "test/features/chat/presentation/widgets/survey/chat_tarot_deck_picker_test.dart",
         "test/features/chat/presentation/widgets/survey/chat_tarot_draw_widget_test.dart",
+        "test/widget/character/character_chat_panel_registration_test.dart",
         "test/widget/character/character_chat_panel_theme_test.dart",
         "test/widget/character/character_list_panel_test.dart",
         "test/widget/shared/fortune_cards_test.dart"
@@ -23066,8 +23070,11 @@
         "docs/data/DATABASE_GUIDE.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/utils/chat_survey_profile_utils.dart",
+        "lib/features/character/presentation/widgets/pet_profile_create_sheet.dart",
         "lib/presentation/providers/pet_profiles_provider.dart",
-        "test/features/character/presentation/utils/chat_survey_profile_utils_test.dart"
+        "test/features/character/presentation/utils/chat_survey_profile_utils_test.dart",
+        "test/features/character/presentation/widgets/profile_create_sheets_test.dart",
+        "test/widget/character/character_chat_panel_registration_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23083,11 +23090,14 @@
       "referenced_by": [
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/utils/chat_survey_profile_utils.dart",
+        "lib/features/character/presentation/widgets/secondary_profile_create_sheet.dart",
         "lib/presentation/providers/active_profile_provider.dart",
         "lib/presentation/providers/secondary_profiles_provider.dart",
         "lib/presentation/providers/user_profile_notifier.dart",
         "test/features/character/presentation/utils/chat_survey_profile_utils_test.dart",
-        "test/unit/data/models/secondary_profile_test.dart"
+        "test/features/character/presentation/widgets/profile_create_sheets_test.dart",
+        "test/unit/data/models/secondary_profile_test.dart",
+        "test/widget/character/character_chat_panel_registration_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23440,6 +23450,7 @@
         "lib/features/character/presentation/utils/fortune_chat_navigation.dart",
         "test/features/character/presentation/utils/character_chat_theme_test.dart",
         "test/features/character/presentation/utils/chat_catalog_preview_test.dart",
+        "test/widget/character/character_chat_panel_registration_test.dart",
         "test/widget/character/character_chat_panel_theme_test.dart"
       ],
       "runtime_reachable": true,
@@ -23782,6 +23793,7 @@
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "docs/development/reports/2026-03-21_release_risk_register.md",
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
+        "test/widget/character/character_chat_panel_registration_test.dart",
         "test/widget/character/character_chat_panel_theme_test.dart"
       ],
       "runtime_reachable": true,
@@ -23905,6 +23917,7 @@
         "lib/presentation/providers/auth_provider.dart",
         "lib/screens/profile/providers/character_relationships_provider.dart",
         "test/unit/features/character/presentation/providers/character_chat_provider_test.dart",
+        "test/widget/character/character_chat_panel_registration_test.dart",
         "test/widget/character/character_chat_panel_theme_test.dart",
         "test/widget/character/character_list_panel_test.dart"
       ],
@@ -23923,7 +23936,8 @@
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/utils/chat_catalog_preview.dart",
-        "lib/presentation/providers/auth_provider.dart"
+        "lib/presentation/providers/auth_provider.dart",
+        "test/widget/character/character_chat_panel_registration_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24509,6 +24523,36 @@
       "dirty": false,
       "kind": "dart",
       "notes": [],
+      "path": "lib/features/character/presentation/widgets/pet_profile_create_sheet.dart",
+      "referenced_by": [
+        "lib/features/character/presentation/pages/character_chat_panel.dart",
+        "test/features/character/presentation/widgets/profile_create_sheets_test.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
+      "path": "lib/features/character/presentation/widgets/secondary_profile_create_sheet.dart",
+      "referenced_by": [
+        "lib/features/character/presentation/pages/character_chat_panel.dart",
+        "test/features/character/presentation/widgets/profile_create_sheets_test.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
       "path": "lib/features/character/presentation/widgets/wave_typing_indicator.dart",
       "referenced_by": [
         "lib/features/character/presentation/pages/character_chat_panel.dart",
@@ -24579,7 +24623,8 @@
         "lib/features/chat/presentation/widgets/survey/chat_survey_chips.dart",
         "lib/features/chat/presentation/widgets/survey/chat_tarot_deck_picker.dart",
         "test/features/chat/presentation/widgets/survey/chat_survey_chips_test.dart",
-        "test/features/chat/presentation/widgets/survey/chat_tarot_deck_picker_test.dart"
+        "test/features/chat/presentation/widgets/survey/chat_tarot_deck_picker_test.dart",
+        "test/widget/character/character_chat_panel_registration_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26240,7 +26285,10 @@
       "notes": [],
       "path": "lib/presentation/providers/pet_profiles_provider.dart",
       "referenced_by": [
-        "lib/features/character/presentation/pages/character_chat_panel.dart"
+        "lib/features/character/presentation/pages/character_chat_panel.dart",
+        "lib/features/character/presentation/widgets/pet_profile_create_sheet.dart",
+        "test/features/character/presentation/widgets/profile_create_sheets_test.dart",
+        "test/widget/character/character_chat_panel_registration_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26297,7 +26345,10 @@
       "path": "lib/presentation/providers/secondary_profiles_provider.dart",
       "referenced_by": [
         "lib/features/character/presentation/pages/character_chat_panel.dart",
-        "lib/presentation/providers/active_profile_provider.dart"
+        "lib/features/character/presentation/widgets/secondary_profile_create_sheet.dart",
+        "lib/presentation/providers/active_profile_provider.dart",
+        "test/features/character/presentation/widgets/profile_create_sheets_test.dart",
+        "test/widget/character/character_chat_panel_registration_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -32058,6 +32109,20 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "test/features/character/presentation/widgets/profile_create_sheets_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "test/features/chat/presentation/widgets/survey/chat_survey_chips_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -32796,6 +32861,20 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "test/widget/character/character_chat_panel_registration_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "test/widget/character/character_chat_panel_theme_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -33046,24 +33125,24 @@
       "assets": 1231,
       "docs": 96,
       "integration_test": 8,
-      "lib": 430,
+      "lib": 432,
       "scripts": 72,
       "supabase": 206,
-      "test": 79
+      "test": 81
     },
     "counts_by_candidate_action": {
-      "keep": 721,
+      "keep": 723,
       "keep_generated": 28,
       "manual_review": 978,
       "phase1_remove_candidate": 12,
-      "phase2_review_candidate": 379,
+      "phase2_review_candidate": 381,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
       "doc_only": 105,
       "generated_excluded": 28,
-      "runtime_used": 721,
-      "test_only": 88,
+      "runtime_used": 723,
+      "test_only": 90,
       "tooling_only": 186,
       "unreferenced": 994
     },
@@ -33218,8 +33297,8 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 361,
-    "lib_dart_total": 427,
+    "lib_dart_runtime_reachable": 363,
+    "lib_dart_total": 429,
     "lib_dart_zero_incoming": 25,
     "missing_function_refs": [
       "--all",
@@ -33327,7 +33406,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2122,
+    "total_files": 2126,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
