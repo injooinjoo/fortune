@@ -27621,6 +27621,8 @@
       "notes": [],
       "path": "lib/shared/widgets/smart_image_local_file.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/shared/widgets/smart_image.dart"
       ],
       "runtime_reachable": true,
@@ -27635,6 +27637,8 @@
       "notes": [],
       "path": "lib/shared/widgets/smart_image_local_file_io.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/shared/widgets/smart_image_local_file.dart"
       ],
       "runtime_reachable": true,
@@ -27649,6 +27653,8 @@
       "notes": [],
       "path": "lib/shared/widgets/smart_image_local_file_web.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/shared/widgets/smart_image_local_file.dart"
       ],
       "runtime_reachable": true,
