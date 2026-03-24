@@ -203,6 +203,18 @@ class _ImageOptionChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
+    final chipForeground = Color.lerp(
+      colors.textPrimary,
+      colors.accentTertiary,
+      context.isDark ? 0.48 : 0.72,
+    )!;
+    final chipBackground = Color.alphaBlend(
+      colors.accentTertiary.withValues(alpha: context.isDark ? 0.16 : 0.10),
+      colors.surface,
+    );
+    final chipBorder =
+        chipForeground.withValues(alpha: context.isDark ? 0.38 : 0.26);
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -214,10 +226,10 @@ class _ImageOptionChip extends StatelessWidget {
             vertical: DSSpacing.xs,
           ),
           decoration: BoxDecoration(
-            color: colors.textPrimary.withValues(alpha: 0.1),
+            color: chipBackground,
             borderRadius: BorderRadius.circular(DSRadius.lg),
             border: Border.all(
-              color: colors.textPrimary.withValues(alpha: 0.3),
+              color: chipBorder,
             ),
           ),
           child: Row(
@@ -229,21 +241,21 @@ class _ImageOptionChip extends StatelessWidget {
                   height: 16,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: colors.textSecondary,
+                    color: chipForeground,
                   ),
                 )
               else
                 Icon(
                   icon,
                   size: 16,
-                  color: colors.textSecondary,
+                  color: chipForeground,
                 ),
               const SizedBox(width: DSSpacing.xs),
               Text(
                 label,
                 style: typography.labelMedium.copyWith(
-                  color: colors.textPrimary,
-                  fontWeight: FontWeight.w500,
+                  color: chipForeground,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
