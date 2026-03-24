@@ -86,5 +86,52 @@ void main() {
         expect(result.data['imageUrl'], 'https://example.com/talisman.png');
       },
     );
+
+    test(
+      'accepts wrapped talisman fallback response when image generation is skipped',
+      () async {
+        when(
+          () => functionsClient.invoke(
+            'generate-talisman',
+            body: any(named: 'body'),
+          ),
+        ).thenAnswer(
+          (_) async => FunctionResponse(
+            status: 200,
+            data: {
+              'success': true,
+              'data': {
+                'id': 'talisman-fallback-1',
+                'category': 'disaster_removal',
+                'shortDescription': '삼재와 액운을 막아주는 설명형 부적이에요.',
+                'summary': '삼재와 액운을 막아주는 설명형 부적이에요.',
+                'content': '삼재와 액운을 막아주는 설명형 부적이에요.',
+                'imageGenerationSkipped': true,
+                'imageGenerationReason': 'high_cost_model_blocked',
+                'warnings': ['현재 이미지 생성이 제한되어 설명형 부적으로 전환되었어요.'],
+              },
+            },
+          ),
+        );
+
+        final result = await generatorFactory.generate(
+          fortuneType: 'talisman',
+          inputConditions: const {
+            'userId': 'user-1',
+            'purpose': 'disaster_removal',
+          },
+          dataSource: GeneratorDataSource.api,
+        );
+
+        expect(result.id, 'talisman-fallback-1');
+        expect(result.title, '부적');
+        expect(result.summary['message'], '삼재와 액운을 막아주는 설명형 부적이에요.');
+        expect(result.data['imageGenerationSkipped'], isTrue);
+        expect(
+          result.data['imageGenerationReason'],
+          'high_cost_model_blocked',
+        );
+      },
+    );
   });
 }

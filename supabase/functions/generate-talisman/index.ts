@@ -28,6 +28,24 @@ interface TalismanPromptConfig {
   shortDescription: string; // 100자 내외 효능 + 사용법
 }
 
+interface TalismanResponseData {
+  id: string;
+  imageUrl: string;
+  category: string;
+  categoryName: string;
+  shortDescription: string;
+  characters: string[];
+  content: string;
+  summary: string;
+  recommendations: string[];
+  warnings?: string[];
+  imageGenerationSkipped?: boolean;
+  imageGenerationReason?: string;
+  reusedFromPool?: boolean;
+  sourceImageId?: string;
+  timestamp: string;
+}
+
 // 카테고리별 전문적 부적 설정
 const CATEGORY_CONFIGS: Record<string, TalismanPromptConfig> = {
   disease_prevention: {
@@ -192,6 +210,162 @@ async function generateImageWithGemini(prompt: string): Promise<string> {
   return result.imageBase64;
 }
 
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error
+    ? error.message
+    : String(error ?? "Unknown error");
+}
+
+function classifyImageFallbackReason(error: unknown): string {
+  const message = getErrorMessage(error);
+
+  if (message.includes("LLM_ALLOW_HIGH_COST_MODELS")) {
+    return "high_cost_model_blocked";
+  }
+
+  if (message.includes("Upload failed")) {
+    return "storage_upload_failed";
+  }
+
+  if (message.includes("No image data")) {
+    return "image_missing";
+  }
+
+  if (message.includes("Gemini")) {
+    return "image_api_failed";
+  }
+
+  return "image_generation_failed";
+}
+
+function buildTalismanRecommendations(
+  config: TalismanPromptConfig,
+): string[] {
+  return [
+    config.shortDescription,
+    "중요한 일정 전에는 부적의 의미를 한 번 떠올리며 마음을 정돈해 보세요.",
+  ];
+}
+
+function buildTalismanResponseData(
+  params: {
+    id: string;
+    imageUrl: string;
+    category: string;
+    config: TalismanPromptConfig;
+    characters: string[];
+    warnings?: string[];
+    imageGenerationSkipped?: boolean;
+    imageGenerationReason?: string;
+    reusedFromPool?: boolean;
+    sourceImageId?: string;
+  },
+): TalismanResponseData {
+  const summary = params.config.shortDescription;
+
+  return {
+    id: params.id,
+    imageUrl: params.imageUrl,
+    category: params.category,
+    categoryName: params.config.purposeKr,
+    shortDescription: params.config.shortDescription,
+    characters: params.characters,
+    content: summary,
+    summary,
+    recommendations: buildTalismanRecommendations(params.config),
+    ...(params.warnings != null && params.warnings.length > 0
+      ? { warnings: params.warnings }
+      : {}),
+    ...(params.imageGenerationSkipped != null
+      ? { imageGenerationSkipped: params.imageGenerationSkipped }
+      : {}),
+    ...(params.imageGenerationReason != null
+      ? { imageGenerationReason: params.imageGenerationReason }
+      : {}),
+    ...(params.reusedFromPool != null
+      ? { reusedFromPool: params.reusedFromPool }
+      : {}),
+    ...(params.sourceImageId != null
+      ? { sourceImageId: params.sourceImageId }
+      : {}),
+    timestamp: new Date().toISOString(),
+  };
+}
+
+function buildSuccessResponse(data: TalismanResponseData): Response {
+  return new Response(
+    JSON.stringify({
+      success: true,
+      data,
+      ...data,
+    }),
+    {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    },
+  );
+}
+
+async function getRandomTalismanFromPool(
+  category: string,
+): Promise<{ id: string; imageUrl: string; characters: string[] } | null> {
+  console.log("♻️ Checking talisman public pool...");
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+  try {
+    const { data, error } = await supabase
+      .from("talisman_images")
+      .select("id, image_url, characters")
+      .eq("category", category)
+      .eq("is_public", true)
+      .limit(20);
+
+    if (error) {
+      console.warn("⚠️ Failed to read talisman pool:", error.message);
+      return null;
+    }
+
+    if (!Array.isArray(data) || data.length === 0) {
+      console.log("✗ No talisman pool entries");
+      return null;
+    }
+
+    const selected = data[Math.floor(Math.random() * data.length)] as Record<
+      string,
+      unknown
+    >;
+    const imageUrl = typeof selected.image_url === "string"
+      ? selected.image_url
+      : "";
+
+    if (!imageUrl) {
+      console.warn("⚠️ Talisman pool entry missing image_url");
+      return null;
+    }
+
+    const characters = Array.isArray(selected.characters)
+      ? selected.characters.filter((value): value is string =>
+        typeof value === "string" && value.trim().length > 0
+      )
+      : [];
+
+    const id = typeof selected.id === "string"
+      ? selected.id
+      : `talisman-pool-${Date.now()}`;
+
+    console.log("✅ Reusing talisman from pool:", id);
+
+    return {
+      id,
+      imageUrl,
+      characters,
+    };
+  } catch (error) {
+    console.warn("⚠️ Exception while checking talisman pool:", error);
+    return null;
+  }
+}
+
 async function uploadToSupabase(
   imageBase64: string,
   userId: string,
@@ -293,38 +467,83 @@ serve(async (req) => {
     // Build prompt
     const prompt = buildTalismanPrompt(config);
 
-    // Generate image with Gemini
-    const imageBase64 = await generateImageWithGemini(prompt);
+    try {
+      // Generate image with Gemini
+      const imageBase64 = await generateImageWithGemini(prompt);
 
-    // Upload to storage
-    const imageUrl = await uploadToSupabase(imageBase64, userId, category);
+      // Upload to storage
+      const imageUrl = await uploadToSupabase(imageBase64, userId, category);
 
-    // Save to database and get ID
-    const recordId = await saveTalismanRecord(
-      userId,
-      category,
-      imageUrl,
-      prompt,
-      usedCharacters,
-    );
-
-    console.log("🎉 Talisman generation complete!");
-
-    return new Response(
-      JSON.stringify({
-        success: true,
-        id: recordId,
-        imageUrl,
+      // Save to database and get ID
+      const recordId = await saveTalismanRecord(
+        userId,
         category,
-        categoryName: config.purposeKr,
-        shortDescription: config.shortDescription,
-        characters: usedCharacters,
-      }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
+        imageUrl,
+        prompt,
+        usedCharacters,
+      );
+
+      console.log("🎉 Talisman generation complete!");
+
+      return buildSuccessResponse(
+        buildTalismanResponseData({
+          id: recordId,
+          imageUrl,
+          category,
+          config,
+          characters: usedCharacters,
+        }),
+      );
+    } catch (imageError) {
+      const fallbackReason = classifyImageFallbackReason(imageError);
+      console.warn(
+        "⚠️ Talisman image generation skipped, attempting fallback",
+        {
+          userId,
+          category,
+          reason: fallbackReason,
+          message: getErrorMessage(imageError),
+        },
+      );
+
+      const pooledTalisman = await getRandomTalismanFromPool(category);
+      if (pooledTalisman != null) {
+        return buildSuccessResponse(
+          buildTalismanResponseData({
+            id: `talisman-fallback-${Date.now()}`,
+            imageUrl: pooledTalisman.imageUrl,
+            category,
+            config,
+            characters: pooledTalisman.characters.length > 0
+              ? pooledTalisman.characters
+              : usedCharacters,
+            warnings: [
+              "현재 이미지 생성이 제한되어 공용 부적 이미지를 대신 제공해요.",
+            ],
+            imageGenerationSkipped: true,
+            imageGenerationReason: fallbackReason,
+            reusedFromPool: true,
+            sourceImageId: pooledTalisman.id,
+          }),
+        );
+      }
+
+      return buildSuccessResponse(
+        buildTalismanResponseData({
+          id: `talisman-textonly-${Date.now()}`,
+          imageUrl: "",
+          category,
+          config,
+          characters: usedCharacters,
+          warnings: [
+            "현재 이미지 생성이 제한되어 설명형 부적으로 전환되었어요.",
+          ],
+          imageGenerationSkipped: true,
+          imageGenerationReason: fallbackReason,
+          reusedFromPool: false,
+        }),
+      );
+    }
   } catch (error) {
     console.error("❌ Error generating talisman:", error);
 
