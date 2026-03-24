@@ -109,6 +109,9 @@ Additional official pages:
 - `lib/features/chat/presentation/widgets/chat_saju_result_card.dart`
 - `lib/features/character/presentation/widgets/embedded_fortune_component.dart`
 - `lib/shared/widgets/smart_image.dart`
+- `lib/shared/widgets/smart_image_local_file.dart`
+- `lib/shared/widgets/smart_image_local_file_io.dart`
+- `lib/shared/widgets/smart_image_local_file_web.dart`
 - `lib/features/character/presentation/widgets/fortune_bodies/_fortune_body_shared.dart`
 - `lib/features/character/presentation/widgets/fortune_bodies/career_fortune_body.dart`
 - `lib/features/character/presentation/widgets/fortune_bodies/coaching_fortune_body.dart`
