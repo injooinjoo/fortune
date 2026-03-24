@@ -20563,6 +20563,22 @@
       "dirty": false,
       "kind": "dart",
       "notes": [],
+      "path": "lib/core/constants/talisman_constants.dart",
+      "referenced_by": [
+        "lib/features/character/presentation/providers/character_chat_provider.dart",
+        "lib/features/character/presentation/providers/character_chat_survey_provider.dart",
+        "lib/features/chat/domain/configs/survey_configs.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
       "path": "lib/core/constants/tarot/tarot_card_catalog.dart",
       "referenced_by": [
         "lib/features/character/presentation/widgets/embedded_fortune_component.dart",
@@ -23937,6 +23953,7 @@
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/utils/chat_catalog_preview.dart",
         "lib/presentation/providers/auth_provider.dart",
+        "test/unit/features/character/presentation/providers/character_chat_survey_provider_test.dart",
         "test/widget/character/character_chat_panel_registration_test.dart"
       ],
       "runtime_reachable": true,
@@ -24624,6 +24641,7 @@
         "lib/features/chat/presentation/widgets/survey/chat_tarot_deck_picker.dart",
         "test/features/chat/presentation/widgets/survey/chat_survey_chips_test.dart",
         "test/features/chat/presentation/widgets/survey/chat_tarot_deck_picker_test.dart",
+        "test/unit/features/character/presentation/providers/character_chat_survey_provider_test.dart",
         "test/widget/character/character_chat_panel_registration_test.dart"
       ],
       "runtime_reachable": true,
@@ -28912,8 +28930,7 @@
         "supabase/functions/_shared/llm/usage-logger.ts",
         "supabase/functions/fortune-past-life/index.ts",
         "supabase/functions/fortune-yearly-encounter/index.ts",
-        "supabase/functions/free-chat/index.ts",
-        "supabase/functions/generate-talisman/index.ts"
+        "supabase/functions/free-chat/index.ts"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -28941,8 +28958,7 @@
       "notes": [],
       "path": "supabase/functions/_shared/llm/providers/gemini.ts",
       "referenced_by": [
-        "supabase/functions/_shared/llm/factory.ts",
-        "supabase/functions/generate-talisman/index.ts"
+        "supabase/functions/_shared/llm/factory.ts"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -28970,7 +28986,8 @@
       "notes": [],
       "path": "supabase/functions/_shared/llm/providers/openai.ts",
       "referenced_by": [
-        "supabase/functions/_shared/llm/factory.ts"
+        "supabase/functions/_shared/llm/factory.ts",
+        "supabase/functions/generate-talisman/index.ts"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -31947,6 +31964,20 @@
       "notes": [
         "no_inbound_refs"
       ],
+      "path": "supabase/migrations/20260324000001_create_talisman_catalog_assets.sql",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "supabase",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "supabase_migration",
+      "notes": [
+        "no_inbound_refs"
+      ],
       "path": "supabase/migrations/add_is_lunar_column.sql",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -32406,6 +32437,20 @@
         "no_inbound_refs"
       ],
       "path": "test/unit/features/character/presentation/providers/character_chat_provider_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "test/unit/features/character/presentation/providers/character_chat_survey_provider_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
       "test_only": true,
@@ -33131,25 +33176,25 @@
       "assets": 1231,
       "docs": 96,
       "integration_test": 8,
-      "lib": 432,
+      "lib": 433,
       "scripts": 72,
-      "supabase": 206,
-      "test": 81
+      "supabase": 207,
+      "test": 82
     },
     "counts_by_candidate_action": {
-      "keep": 723,
+      "keep": 724,
       "keep_generated": 28,
       "manual_review": 978,
       "phase1_remove_candidate": 12,
-      "phase2_review_candidate": 381,
+      "phase2_review_candidate": 383,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
       "doc_only": 105,
       "generated_excluded": 28,
-      "runtime_used": 723,
-      "test_only": 90,
-      "tooling_only": 186,
+      "runtime_used": 724,
+      "test_only": 91,
+      "tooling_only": 187,
       "unreferenced": 994
     },
     "declared_asset_dirs_without_runtime_refs": [
@@ -33303,8 +33348,8 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 363,
-    "lib_dart_total": 429,
+    "lib_dart_runtime_reachable": 364,
+    "lib_dart_total": 430,
     "lib_dart_zero_incoming": 25,
     "missing_function_refs": [
       "--all",
@@ -33412,7 +33457,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2126,
+    "total_files": 2129,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
