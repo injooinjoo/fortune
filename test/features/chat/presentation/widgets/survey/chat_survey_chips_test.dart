@@ -46,4 +46,46 @@ void main() {
 
     expect(selectedOption?.id, 'relationship');
   });
+
+  testWidgets('disabled survey chips are visible but do not emit selection',
+      (tester) async {
+    SurveyOption? selectedOption;
+
+    await tester.pumpWidget(
+      _wrap(
+        ChatSurveyChips(
+          options: const [
+            SurveyOption(
+              id: 'prebuilt',
+              label: '랜덤 부적 (준비중)',
+              emoji: '🎴',
+              isDisabled: true,
+            ),
+            SurveyOption(
+              id: 'premium_ai',
+              label: '맞춤 생성 부적 (10토큰)',
+              emoji: '🖼️',
+            ),
+          ],
+          onSelect: (option) {
+            selectedOption = option;
+          },
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('🎴 랜덤 부적 (준비중)'), findsOneWidget);
+
+    await tester.tap(find.text('🎴 랜덤 부적 (준비중)'));
+    await tester.pumpAndSettle();
+
+    expect(selectedOption, isNull);
+
+    await tester.tap(find.text('🖼️ 맞춤 생성 부적 (10토큰)'));
+    await tester.pumpAndSettle();
+
+    expect(selectedOption?.id, 'premium_ai');
+  });
 }

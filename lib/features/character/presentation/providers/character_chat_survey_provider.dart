@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/constants/talisman_constants.dart';
 import '../../../chat/domain/models/fortune_survey_config.dart';
 import '../../../chat/domain/configs/survey_configs.dart';
 
@@ -9,6 +10,7 @@ class CharacterChatSurveyState {
   final Map<String, dynamic>? completedData;
   final FortuneSurveyType? completedType;
   final String? fortuneTypeString; // API 호출용 원본 타입 문자열
+  final bool talismanCatalogAvailable;
 
   const CharacterChatSurveyState({
     this.activeProgress,
@@ -16,6 +18,7 @@ class CharacterChatSurveyState {
     this.completedData,
     this.completedType,
     this.fortuneTypeString,
+    this.talismanCatalogAvailable = true,
   });
 
   bool get isActive => activeProgress != null && !isCompleted;
@@ -26,6 +29,7 @@ class CharacterChatSurveyState {
     Map<String, dynamic>? completedData,
     FortuneSurveyType? completedType,
     String? fortuneTypeString,
+    bool? talismanCatalogAvailable,
     bool clearProgress = false,
   }) {
     return CharacterChatSurveyState(
@@ -35,6 +39,8 @@ class CharacterChatSurveyState {
       completedData: completedData ?? this.completedData,
       completedType: completedType ?? this.completedType,
       fortuneTypeString: fortuneTypeString ?? this.fortuneTypeString,
+      talismanCatalogAvailable:
+          talismanCatalogAvailable ?? this.talismanCatalogAvailable,
     );
   }
 }
@@ -51,6 +57,7 @@ class CharacterChatSurveyNotifier
     FortuneSurveyType type, {
     String? fortuneTypeStr,
     Map<String, dynamic>? initialAnswers,
+    bool talismanCatalogAvailable = true,
   }) {
     final config = surveyConfigs[type];
     if (config == null) return;
@@ -66,6 +73,7 @@ class CharacterChatSurveyNotifier
     state = CharacterChatSurveyState(
       activeProgress: progress,
       fortuneTypeString: fortuneTypeStr,
+      talismanCatalogAvailable: talismanCatalogAvailable,
     );
   }
 
@@ -164,6 +172,24 @@ class CharacterChatSurveyNotifier
 
     final progress = state.activeProgress!;
     final currentStep = progress.currentStep;
+
+    if (progress.config.fortuneType == FortuneSurveyType.talisman &&
+        currentStep.id == 'generationMode') {
+      return currentStep.options.map((option) {
+        if (option.id != TalismanGenerationMode.prebuilt ||
+            state.talismanCatalogAvailable) {
+          return option;
+        }
+
+        return SurveyOption(
+          id: option.id,
+          label: '랜덤 부적 (준비중)',
+          icon: option.icon,
+          emoji: option.emoji,
+          isDisabled: true,
+        );
+      }).toList();
+    }
 
     // 동적 옵션인 경우 (dependsOn이 있는 경우)
     if (currentStep.dependsOn != null) {

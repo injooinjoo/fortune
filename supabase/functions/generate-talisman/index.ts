@@ -1,19 +1,25 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { GeminiProvider } from "../_shared/llm/providers/gemini.ts";
-import {
-  GEMINI_IMAGE_MODEL,
-  GEMINI_SAFE_TEXT_MODEL,
-} from "../_shared/llm/models.ts";
+import { OpenAIProvider } from "../_shared/llm/providers/openai.ts";
 
-const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY")!;
+const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY") ?? "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+const TALISMAN_IMAGE_MODEL = "gpt-image-1-mini";
+const TALISMAN_STORAGE_BUCKET = "talisman-images";
+const DEFAULT_TALISMAN_SCORE = 88;
+
+type TalismanGenerationMode = "prebuilt" | "premium_ai";
+type TalismanImageSource = "catalog" | "generated" | "none";
 
 interface TalismanRequest {
   userId: string;
   category: string;
-  characters?: string[]; // 선택적 - 없으면 카테고리 기본값 사용
+  characters?: string[];
+  generationMode?: TalismanGenerationMode | string;
+  purpose?: string;
+  situation?: string;
 }
 
 interface TalismanPromptConfig {
@@ -25,10 +31,20 @@ interface TalismanPromptConfig {
   geometricPattern: string;
   specialElements: string;
   defaultCharacters: string[];
-  shortDescription: string; // 100자 내외 효능 + 사용법
+  shortDescription: string;
+}
+
+interface CatalogAsset {
+  id: string;
+  imageUrl: string;
+  title: string;
 }
 
 interface TalismanResponseData {
+  fortuneType: "talisman";
+  title: string;
+  score: number;
+  advice: string;
   id: string;
   imageUrl: string;
   category: string;
@@ -38,6 +54,11 @@ interface TalismanResponseData {
   content: string;
   summary: string;
   recommendations: string[];
+  generationMode: TalismanGenerationMode;
+  imageSource: TalismanImageSource;
+  catalogAssetId?: string;
+  imageGenerationFailed?: boolean;
+  imageGenerationFailureReason?: string;
   warnings?: string[];
   imageGenerationSkipped?: boolean;
   imageGenerationReason?: string;
@@ -46,7 +67,6 @@ interface TalismanResponseData {
   timestamp: string;
 }
 
-// 카테고리별 전문적 부적 설정
 const CATEGORY_CONFIGS: Record<string, TalismanPromptConfig> = {
   disease_prevention: {
     purpose: "disease prevention and healing (질병 퇴치)",
@@ -153,12 +173,14 @@ const CATEGORY_CONFIGS: Record<string, TalismanPromptConfig> = {
   },
 };
 
-/**
- * 전문적인 한국 전통 부적 프롬프트 생성
- * 파자(破字) 스타일 - 한문처럼 보이지만 한문이 아닌 신비로운 문양
- */
+function normalizeGenerationMode(
+  value: unknown,
+): TalismanGenerationMode {
+  return value === "prebuilt" ? "prebuilt" : "premium_ai";
+}
+
 function buildTalismanPrompt(config: TalismanPromptConfig): string {
-  return `A traditional Korean bujeok (부적) talisman, vertical portrait orientation (9:16 aspect ratio),
+  return `A traditional Korean bujeok (부적) talisman, vertical portrait orientation (2:3 aspect ratio),
 hand-painted on aged yellow hanji paper (rice paper) with cinnabar vermillion red ink.
 
 The talisman features:
@@ -193,18 +215,30 @@ DO NOT include: modern fonts, digital text, readable Chinese characters,
 Arabic numerals, gradients, shadows, glossy effects, western calligraphy.`;
 }
 
-async function generateImageWithGemini(prompt: string): Promise<string> {
-  console.log("🎨 Generating talisman with Gemini...");
+async function generateImageWithOpenAI(
+  prompt: string,
+): Promise<string> {
+  if (!OPENAI_API_KEY) {
+    throw new Error("OPENAI_API_KEY is missing");
+  }
 
-  const provider = new GeminiProvider({
-    apiKey: GEMINI_API_KEY,
-    model: GEMINI_SAFE_TEXT_MODEL,
+  console.log("🎨 Generating talisman with OpenAI...");
+
+  const provider = new OpenAIProvider({
+    apiKey: OPENAI_API_KEY,
+    model: TALISMAN_IMAGE_MODEL,
     featureName: "generate-talisman",
   });
 
-  const result = await provider.generateImage!(prompt);
+  const result = await provider.generateImage!(prompt, {
+    model: TALISMAN_IMAGE_MODEL,
+    size: "1024x1536",
+    quality: "medium",
+  });
 
-  console.log("✅ Image generated successfully");
+  console.log(
+    `✅ Image generated successfully (${result.provider}/${result.model})`,
+  );
   console.log(`⏱️ Generation time: ${result.latency}ms`);
 
   return result.imageBase64;
@@ -223,6 +257,10 @@ function classifyImageFallbackReason(error: unknown): string {
     return "high_cost_model_blocked";
   }
 
+  if (message.includes("OPENAI_API_KEY")) {
+    return "openai_api_key_missing";
+  }
+
   if (message.includes("Upload failed")) {
     return "storage_upload_failed";
   }
@@ -231,7 +269,7 @@ function classifyImageFallbackReason(error: unknown): string {
     return "image_missing";
   }
 
-  if (message.includes("Gemini")) {
+  if (message.includes("OpenAI") || message.includes("gpt-image")) {
     return "image_api_failed";
   }
 
@@ -254,7 +292,12 @@ function buildTalismanResponseData(
     category: string;
     config: TalismanPromptConfig;
     characters: string[];
+    generationMode: TalismanGenerationMode;
+    imageSource: TalismanImageSource;
+    catalogAssetId?: string;
     warnings?: string[];
+    imageGenerationFailed?: boolean;
+    imageGenerationFailureReason?: string;
     imageGenerationSkipped?: boolean;
     imageGenerationReason?: string;
     reusedFromPool?: boolean;
@@ -264,6 +307,10 @@ function buildTalismanResponseData(
   const summary = params.config.shortDescription;
 
   return {
+    fortuneType: "talisman",
+    title: "부적",
+    score: DEFAULT_TALISMAN_SCORE,
+    advice: params.config.shortDescription,
     id: params.id,
     imageUrl: params.imageUrl,
     category: params.category,
@@ -273,8 +320,19 @@ function buildTalismanResponseData(
     content: summary,
     summary,
     recommendations: buildTalismanRecommendations(params.config),
+    generationMode: params.generationMode,
+    imageSource: params.imageSource,
+    ...(params.catalogAssetId != null
+      ? { catalogAssetId: params.catalogAssetId }
+      : {}),
     ...(params.warnings != null && params.warnings.length > 0
       ? { warnings: params.warnings }
+      : {}),
+    ...(params.imageGenerationFailed != null
+      ? { imageGenerationFailed: params.imageGenerationFailed }
+      : {}),
+    ...(params.imageGenerationFailureReason != null
+      ? { imageGenerationFailureReason: params.imageGenerationFailureReason }
       : {}),
     ...(params.imageGenerationSkipped != null
       ? { imageGenerationSkipped: params.imageGenerationSkipped }
@@ -306,27 +364,25 @@ function buildSuccessResponse(data: TalismanResponseData): Response {
   );
 }
 
-async function getRandomTalismanFromPool(
-  category: string,
-): Promise<{ id: string; imageUrl: string; characters: string[] } | null> {
-  console.log("♻️ Checking talisman public pool...");
+async function getRandomCatalogTalisman(): Promise<CatalogAsset | null> {
+  console.log("🎴 Checking talisman catalog assets...");
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
   try {
     const { data, error } = await supabase
-      .from("talisman_images")
-      .select("id, image_url, characters")
-      .eq("category", category)
-      .eq("is_public", true)
-      .limit(20);
+      .from("talisman_catalog_assets")
+      .select("id, image_url, title")
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true })
+      .limit(100);
 
     if (error) {
-      console.warn("⚠️ Failed to read talisman pool:", error.message);
+      console.warn("⚠️ Failed to read talisman catalog:", error.message);
       return null;
     }
 
     if (!Array.isArray(data) || data.length === 0) {
-      console.log("✗ No talisman pool entries");
+      console.log("✗ No active talisman catalog assets");
       return null;
     }
 
@@ -339,29 +395,26 @@ async function getRandomTalismanFromPool(
       : "";
 
     if (!imageUrl) {
-      console.warn("⚠️ Talisman pool entry missing image_url");
+      console.warn("⚠️ Talisman catalog entry missing image_url");
       return null;
     }
 
-    const characters = Array.isArray(selected.characters)
-      ? selected.characters.filter((value): value is string =>
-        typeof value === "string" && value.trim().length > 0
-      )
-      : [];
-
     const id = typeof selected.id === "string"
       ? selected.id
-      : `talisman-pool-${Date.now()}`;
+      : `talisman-catalog-${Date.now()}`;
+    const title = typeof selected.title === "string"
+      ? selected.title
+      : "랜덤 부적";
 
-    console.log("✅ Reusing talisman from pool:", id);
+    console.log("✅ Reusing talisman catalog asset:", id);
 
     return {
       id,
       imageUrl,
-      characters,
+      title,
     };
   } catch (error) {
-    console.warn("⚠️ Exception while checking talisman pool:", error);
+    console.warn("⚠️ Exception while checking talisman catalog:", error);
     return null;
   }
 }
@@ -374,17 +427,15 @@ async function uploadToSupabase(
   console.log("📤 Uploading to Supabase Storage...");
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-
-  // Convert base64 to blob
   const imageBuffer = Uint8Array.from(
     atob(imageBase64),
     (c) => c.charCodeAt(0),
   );
 
-  const fileName = `${userId}/${category}_${Date.now()}.png`;
+  const fileName = `${userId}/generated/${category}_${Date.now()}.png`;
 
-  const { data, error } = await supabase.storage
-    .from("talisman-images")
+  const { error } = await supabase.storage
+    .from(TALISMAN_STORAGE_BUCKET)
     .upload(fileName, imageBuffer, {
       contentType: "image/png",
       upsert: false,
@@ -396,14 +447,14 @@ async function uploadToSupabase(
   }
 
   const { data: publicUrlData } = supabase.storage
-    .from("talisman-images")
+    .from(TALISMAN_STORAGE_BUCKET)
     .getPublicUrl(fileName);
 
   console.log("✅ Upload successful:", publicUrlData.publicUrl);
   return publicUrlData.publicUrl;
 }
 
-async function saveTalismanRecord(
+async function saveGeneratedTalismanRecord(
   userId: string,
   category: string,
   imageUrl: string,
@@ -422,8 +473,8 @@ async function saveTalismanRecord(
       image_url: imageUrl,
       prompt_used: prompt,
       characters,
-      is_public: true, // 공용 풀에 포함
-      model_used: GEMINI_IMAGE_MODEL,
+      is_public: false,
+      model_used: TALISMAN_IMAGE_MODEL,
       created_at: new Date().toISOString(),
     })
     .select("id")
@@ -440,11 +491,21 @@ async function saveTalismanRecord(
 
 serve(async (req) => {
   try {
-    const { userId, category, characters }: TalismanRequest = await req.json();
+    const {
+      userId,
+      category,
+      characters,
+      generationMode: rawGenerationMode,
+    }: TalismanRequest = await req.json();
 
-    console.log("🔮 Talisman generation request:", { userId, category });
+    const generationMode = normalizeGenerationMode(rawGenerationMode);
 
-    // Validate inputs
+    console.log("🔮 Talisman generation request:", {
+      userId,
+      category,
+      generationMode,
+    });
+
     if (!userId || !category) {
       return new Response(
         JSON.stringify({ error: "Missing required fields: userId, category" }),
@@ -452,7 +513,6 @@ serve(async (req) => {
       );
     }
 
-    // Get category config
     const config = CATEGORY_CONFIGS[category];
     if (!config) {
       return new Response(
@@ -461,21 +521,51 @@ serve(async (req) => {
       );
     }
 
-    // 문자는 사용하지 않음 (파자 스타일로 자동 생성)
     const usedCharacters = characters || config.defaultCharacters;
-
-    // Build prompt
     const prompt = buildTalismanPrompt(config);
 
+    if (generationMode === "prebuilt") {
+      const catalogTalisman = await getRandomCatalogTalisman();
+      if (catalogTalisman != null) {
+        return buildSuccessResponse(
+          buildTalismanResponseData({
+            id: catalogTalisman.id,
+            imageUrl: catalogTalisman.imageUrl,
+            category,
+            config,
+            characters: usedCharacters,
+            generationMode,
+            imageSource: "catalog",
+            catalogAssetId: catalogTalisman.id,
+          }),
+        );
+      }
+
+      return buildSuccessResponse(
+        buildTalismanResponseData({
+          id: `talisman-catalog-empty-${Date.now()}`,
+          imageUrl: "",
+          category,
+          config,
+          characters: usedCharacters,
+          generationMode,
+          imageSource: "none",
+          imageGenerationFailed: true,
+          imageGenerationFailureReason: "catalog_empty",
+          warnings: [
+            "현재 미리 준비된 부적이 아직 준비되지 않아 설명형 부적으로 안내해드려요.",
+          ],
+          imageGenerationSkipped: true,
+          imageGenerationReason: "catalog_empty",
+          reusedFromPool: false,
+        }),
+      );
+    }
+
     try {
-      // Generate image with Gemini
-      const imageBase64 = await generateImageWithGemini(prompt);
-
-      // Upload to storage
+      const imageBase64 = await generateImageWithOpenAI(prompt);
       const imageUrl = await uploadToSupabase(imageBase64, userId, category);
-
-      // Save to database and get ID
-      const recordId = await saveTalismanRecord(
+      const recordId = await saveGeneratedTalismanRecord(
         userId,
         category,
         imageUrl,
@@ -492,12 +582,14 @@ serve(async (req) => {
           category,
           config,
           characters: usedCharacters,
+          generationMode,
+          imageSource: "generated",
         }),
       );
     } catch (imageError) {
       const fallbackReason = classifyImageFallbackReason(imageError);
       console.warn(
-        "⚠️ Talisman image generation skipped, attempting fallback",
+        "⚠️ Talisman image generation skipped, attempting catalog fallback",
         {
           userId,
           category,
@@ -506,24 +598,27 @@ serve(async (req) => {
         },
       );
 
-      const pooledTalisman = await getRandomTalismanFromPool(category);
-      if (pooledTalisman != null) {
+      const catalogTalisman = await getRandomCatalogTalisman();
+      if (catalogTalisman != null) {
         return buildSuccessResponse(
           buildTalismanResponseData({
             id: `talisman-fallback-${Date.now()}`,
-            imageUrl: pooledTalisman.imageUrl,
+            imageUrl: catalogTalisman.imageUrl,
             category,
             config,
-            characters: pooledTalisman.characters.length > 0
-              ? pooledTalisman.characters
-              : usedCharacters,
+            characters: usedCharacters,
+            generationMode,
+            imageSource: "catalog",
+            catalogAssetId: catalogTalisman.id,
             warnings: [
-              "현재 이미지 생성이 제한되어 공용 부적 이미지를 대신 제공해요.",
+              "현재 맞춤 이미지 생성이 제한되어 준비된 부적으로 전환했어요.",
             ],
+            imageGenerationFailed: true,
+            imageGenerationFailureReason: fallbackReason,
             imageGenerationSkipped: true,
             imageGenerationReason: fallbackReason,
             reusedFromPool: true,
-            sourceImageId: pooledTalisman.id,
+            sourceImageId: catalogTalisman.id,
           }),
         );
       }
@@ -535,9 +630,13 @@ serve(async (req) => {
           category,
           config,
           characters: usedCharacters,
+          generationMode,
+          imageSource: "none",
           warnings: [
-            "현재 이미지 생성이 제한되어 설명형 부적으로 전환되었어요.",
+            "현재 맞춤 이미지 생성이 제한되어 설명형 부적으로 전환되었어요.",
           ],
+          imageGenerationFailed: true,
+          imageGenerationFailureReason: fallbackReason,
           imageGenerationSkipped: true,
           imageGenerationReason: fallbackReason,
           reusedFromPool: false,

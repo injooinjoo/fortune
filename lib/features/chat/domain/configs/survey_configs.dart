@@ -1,4 +1,5 @@
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/constants/talisman_constants.dart';
 import '../models/fortune_survey_config.dart';
 
 /// 인사이트별 설문 설정 정의
@@ -765,6 +766,19 @@ const _talismanSituationOptions = [
   SurveyOption(id: 'none', label: '딱히 없어', emoji: '✨'),
 ];
 
+const _talismanGenerationModeOptions = [
+  SurveyOption(
+    id: TalismanGenerationMode.prebuilt,
+    label: '랜덤 부적 (2토큰)',
+    emoji: '🎴',
+  ),
+  SurveyOption(
+    id: TalismanGenerationMode.premiumAi,
+    label: '맞춤 생성 부적 (10토큰)',
+    emoji: '🖼️',
+  ),
+];
+
 /// Talisman 설문 설정
 const talismanSurveyConfig = FortuneSurveyConfig(
   fortuneType: FortuneSurveyType.talisman,
@@ -773,6 +787,12 @@ const talismanSurveyConfig = FortuneSurveyConfig(
   emoji: '🧧',
   accentColor: DSColors.accentSecondary,
   steps: [
+    SurveyStep(
+      id: 'generationMode',
+      question: '어떤 방식으로 부적을 받을까요? ✨',
+      inputType: SurveyInputType.chips,
+      options: _talismanGenerationModeOptions,
+    ),
     SurveyStep(
       id: 'purpose',
       question: '어떤 부적이 필요하세요? 🧧',

@@ -31,12 +31,21 @@ class ChatSurveyChips extends StatelessWidget {
               ? '${option.emoji!} ${option.label}'
               : option.label;
 
-          return DSChip(
+          final chip = DSChip(
             label: label,
             icon: option.emoji == null ? option.icon : null,
-            selected: isSelected,
+            selected: option.isDisabled ? false : isSelected,
             style: DSChipStyle.outlined,
-            onTap: () => onSelect(option),
+            onTap: option.isDisabled ? null : () => onSelect(option),
+          );
+
+          if (!option.isDisabled) {
+            return chip;
+          }
+
+          return Opacity(
+            opacity: 0.45,
+            child: chip,
           );
         }).toList(),
       ),

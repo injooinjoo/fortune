@@ -70,6 +70,7 @@ void main() {
           fortuneType: 'talisman',
           inputConditions: const {
             'userId': 'user-1',
+            'generationMode': 'prebuilt',
             'purpose': 'love_relationship',
             'situation': 'exam',
           },
@@ -77,8 +78,10 @@ void main() {
         );
 
         expect(primaryBody?['userId'], 'user-1');
+        expect(primaryBody?['generationMode'], 'prebuilt');
         expect(primaryBody?['category'], 'love_relationship');
         expect(fallbackBody?['userId'], 'user-1');
+        expect(fallbackBody?['generationMode'], 'prebuilt');
         expect(fallbackBody?['category'], 'love_relationship');
         expect(result.id, 'legacy-talisman-id');
         expect(result.title, '부적');
@@ -103,10 +106,15 @@ void main() {
               'data': {
                 'id': 'talisman-fallback-1',
                 'category': 'disaster_removal',
+                'generationMode': 'premium_ai',
+                'imageSource': 'catalog',
+                'catalogAssetId': 'catalog-1',
                 'shortDescription': '삼재와 액운을 막아주는 설명형 부적이에요.',
                 'summary': '삼재와 액운을 막아주는 설명형 부적이에요.',
                 'content': '삼재와 액운을 막아주는 설명형 부적이에요.',
                 'imageGenerationSkipped': true,
+                'imageGenerationFailed': true,
+                'imageGenerationFailureReason': 'high_cost_model_blocked',
                 'imageGenerationReason': 'high_cost_model_blocked',
                 'warnings': ['현재 이미지 생성이 제한되어 설명형 부적으로 전환되었어요.'],
               },
@@ -118,6 +126,7 @@ void main() {
           fortuneType: 'talisman',
           inputConditions: const {
             'userId': 'user-1',
+            'generationMode': 'premium_ai',
             'purpose': 'disaster_removal',
           },
           dataSource: GeneratorDataSource.api,
@@ -127,6 +136,10 @@ void main() {
         expect(result.title, '부적');
         expect(result.summary['message'], '삼재와 액운을 막아주는 설명형 부적이에요.');
         expect(result.data['imageGenerationSkipped'], isTrue);
+        expect(result.data['imageGenerationFailed'], isTrue);
+        expect(result.data['generationMode'], 'premium_ai');
+        expect(result.data['imageSource'], 'catalog');
+        expect(result.data['catalogAssetId'], 'catalog-1');
         expect(
           result.data['imageGenerationReason'],
           'high_cost_model_blocked',

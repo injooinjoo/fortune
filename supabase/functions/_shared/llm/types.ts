@@ -42,8 +42,14 @@ export interface GenerateOptions {
 
 // 이미지 생성 옵션
 export interface ImageGenerateOptions {
-  size?: "1024x1024" | "1024x1792" | "1792x1024"; // DALL-E 3 지원 크기
-  quality?: "standard" | "hd";
+  model?: string;
+  size?:
+    | "1024x1024"
+    | "1024x1536"
+    | "1536x1024"
+    | "1024x1792"
+    | "1792x1024";
+  quality?: "low" | "medium" | "high" | "standard" | "hd";
   style?: "vivid" | "natural";
 }
 

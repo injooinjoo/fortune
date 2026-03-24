@@ -319,6 +319,61 @@ function getAllowedGeminiModels(): Set<string> {
   return allowlist;
 }
 
+function getAllowedOpenAiImageModels(): Set<string> {
+  const configured = parseCsvEnv("OPENAI_IMAGE_MODEL_ALLOWLIST");
+  if (configured.size > 0) {
+    return configured;
+  }
+
+  return new Set([
+    "dall-e-3",
+    "gpt-image-1-mini",
+    "gpt-image-1",
+  ]);
+}
+
+function isKnownOpenAiImageModel(model: string): boolean {
+  const normalized = model.trim().toLowerCase();
+  return normalized === "dall-e-3" || normalized === "gpt-image-1-mini" ||
+    normalized === "gpt-image-1";
+}
+
+function isHighCostOpenAiImageModel(model: string): boolean {
+  return model.trim().toLowerCase() === "gpt-image-1";
+}
+
+function validateOpenAiImageModel(
+  model: string,
+): { code: GuardThresholdCode; message: string } | null {
+  const normalized = model.trim().toLowerCase();
+  const allowlist = getAllowedOpenAiImageModels();
+
+  if (!allowlist.has(normalized) && !isKnownOpenAiImageModel(normalized)) {
+    return {
+      code: "model_not_allowlisted",
+      message: `OpenAI image model is not in the allowed catalog: ${model}`,
+    };
+  }
+
+  if (!allowlist.has(normalized)) {
+    return {
+      code: "model_not_allowlisted",
+      message:
+        `OpenAI image model is not in OPENAI_IMAGE_MODEL_ALLOWLIST: ${model}`,
+    };
+  }
+
+  if (isHighCostOpenAiImageModel(normalized) && !isHighCostModelsAllowed()) {
+    return {
+      code: "high_cost_model_blocked",
+      message:
+        `High-cost OpenAI image model requires LLM_ALLOW_HIGH_COST_MODELS=true: ${model}`,
+    };
+  }
+
+  return null;
+}
+
 function getGeminiLimits(): GeminiGuardLimits {
   return {
     dailyRequestLimit: getPositiveIntegerEnv("GEMINI_DAILY_REQUEST_LIMIT"),
@@ -1322,6 +1377,19 @@ export async function assertLlmRequestAllowed(
       `${params.provider} provider is not in LLM_ENABLED_PROVIDERS`;
     await logBlockedRequest(params, "provider_not_allowlisted", message);
     throw new LlmSafetyError("provider_not_allowlisted", message);
+  }
+
+  if (params.provider === "openai" && params.mode === "image") {
+    const modelValidation = validateOpenAiImageModel(params.model);
+    if (modelValidation) {
+      await logBlockedRequest(
+        params,
+        modelValidation.code,
+        modelValidation.message,
+      );
+      throw new LlmSafetyError(modelValidation.code, modelValidation.message);
+    }
+    return;
   }
 
   if (params.provider !== "gemini") {

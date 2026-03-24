@@ -1525,10 +1525,20 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
     // 설문이 있고 단계가 있으면 설문 시작
     if (hasSurvey) {
+      final surveyNotifier = ref.read(
+        characterChatSurveyProvider(widget.character.id).notifier,
+      );
+      var talismanCatalogAvailable = true;
+      if (surveyType == FortuneSurveyType.talisman) {
+        talismanCatalogAvailable = await _hasActiveTalismanCatalogAssets();
+      }
+
       // 설문 시작
-      ref
-          .read(characterChatSurveyProvider(widget.character.id).notifier)
-          .startSurvey(surveyType, fortuneTypeStr: fortuneType);
+      surveyNotifier.startSurvey(
+        surveyType,
+        fortuneTypeStr: fortuneType,
+        talismanCatalogAvailable: talismanCatalogAvailable,
+      );
 
       // 첫 질문을 캐릭터 메시지로 표시
       Future.delayed(const Duration(milliseconds: 500), () {
@@ -1565,6 +1575,22 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
             userMessageAlreadyAdded: true,
             skipIntroMessage: useCardFirstFlow,
           );
+    }
+  }
+
+  Future<bool> _hasActiveTalismanCatalogAssets() async {
+    try {
+      final data = await Supabase.instance.client
+          .from('talisman_catalog_assets')
+          .select('id')
+          .eq('is_active', true)
+          .limit(1);
+      return data.isNotEmpty;
+    } catch (error) {
+      debugPrint(
+        '[TalismanCatalog] failed to check active catalog assets: $error',
+      );
+      return false;
     }
   }
 

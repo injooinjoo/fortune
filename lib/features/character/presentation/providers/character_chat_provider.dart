@@ -19,6 +19,7 @@ import '../../data/services/character_proactive_media_service.dart';
 import '../../data/services/follow_up_scheduler.dart';
 import '../../data/fortune_characters.dart';
 import '../../../../core/constants/fortune_type_names.dart';
+import '../../../../core/constants/talisman_constants.dart';
 import '../../../../core/fortune/fortune_type_registry.dart';
 import '../../../../core/services/chat_sync_service.dart';
 import '../../../../presentation/providers/token_provider.dart';
@@ -409,6 +410,9 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     'cute': '귀여운', 'strong': '강인한',
     // 캘린더
     'sync': '캘린더 연동', 'skip': '건너뛰기',
+    // 부적 생성 방식
+    'prebuilt': '랜덤 부적',
+    'premium_ai': '맞춤 생성 부적',
     // 공통
     'yes': '네', 'no': '아니요',
     'profile': '프로필에서 선택', 'new': '직접 입력',
@@ -841,7 +845,9 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         _addSurveyLine(lines, answers, 'petName', '💝 이름');
         break;
       case 'talisman':
+        _addSurveyLine(lines, answers, 'generationMode', '✨ 부적 방식');
         _addSurveyLine(lines, answers, 'purpose', '🧧 부적 목적');
+        _addSurveyLine(lines, answers, 'situation', '⚠️ 상황');
         break;
       case 'wish':
         _addSurveyLine(lines, answers, 'wish', '⭐ 소원');
@@ -1500,6 +1506,45 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
     final tokenNotifier = _ref.read(tokenProvider.notifier);
     final consumed = await tokenNotifier.consumeTokens(
       fortuneType: 'character-chat',
+      amount: tokenCost,
+    );
+
+    if (!consumed) {
+      final tokenError = _ref.read(tokenProvider).error;
+      state = state.copyWith(
+        error: tokenError == 'UNAUTHORIZED'
+            ? 'UNAUTHORIZED'
+            : 'INSUFFICIENT_TOKENS',
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  Future<bool> _consumeFortuneRequestTokensIfNeeded(
+    String fortuneType,
+    Map<String, dynamic> surveyAnswers,
+  ) async {
+    if (!_hasAuthenticatedCharacterSession()) {
+      state = state.copyWith(error: 'UNAUTHORIZED');
+      return false;
+    }
+
+    if (_ref.read(hasUnlimitedTokensProvider)) {
+      return true;
+    }
+
+    final tokenType = fortuneType == 'talisman' ? 'talisman' : 'character-chat';
+    final tokenCost = fortuneType == 'talisman'
+        ? TalismanTierCosts.forGenerationMode(
+            _stringValue(surveyAnswers['generationMode']),
+          )
+        : SoulRates.getTokenCost('character-chat');
+
+    final tokenNotifier = _ref.read(tokenProvider.notifier);
+    final consumed = await tokenNotifier.consumeTokens(
+      fortuneType: tokenType,
       amount: tokenCost,
     );
 
@@ -2760,7 +2805,10 @@ $enrichedContext
     bool skipIntroMessage = false,
   }) async {
     final effectiveFortuneType = _reviewSafeFortuneType(fortuneType);
-    final canSend = await _consumeCharacterChatTokensIfNeeded();
+    final canSend = await _consumeFortuneRequestTokensIfNeeded(
+      effectiveFortuneType,
+      surveyAnswers,
+    );
     if (!canSend) {
       return;
     }

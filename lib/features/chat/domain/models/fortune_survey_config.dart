@@ -33,12 +33,14 @@ class SurveyOption {
   final String label;
   final IconData? icon;
   final String? emoji;
+  final bool isDisabled;
 
   const SurveyOption({
     required this.id,
     required this.label,
     this.icon,
     this.emoji,
+    this.isDisabled = false,
   });
 }
 
