@@ -122,7 +122,7 @@ Canonical repo sources:
 - Chat survey selectors: `lib/features/chat/presentation/widgets/survey/chat_survey_chips.dart`
 - Chat survey image actions: `lib/features/chat/presentation/widgets/survey/chat_face_reading_flow.dart`, `lib/features/chat/presentation/widgets/survey/chat_image_input.dart`
 - Chat calendar and match selectors: `lib/features/chat/presentation/widgets/survey/chat_inline_calendar.dart`, `lib/features/chat/presentation/widgets/survey/chat_match_selector.dart`
-- Curiosity result composition: `lib/features/character/presentation/widgets/embedded_fortune_component.dart`, `lib/features/character/presentation/utils/fortune_key_localizer.dart`, plus `lib/features/character/presentation/widgets/fortune_bodies/*.dart`
+- Curiosity result composition: `lib/features/character/presentation/widgets/embedded_fortune_component.dart`, `lib/features/character/presentation/utils/fortune_key_localizer.dart`, `lib/shared/widgets/smart_image.dart`, plus `lib/features/character/presentation/widgets/fortune_bodies/*.dart`
 - Capture manifest: `playwright/scripts/figma_capture_manifest.js`
 - Live capture runner: `playwright/scripts/capture_figma_screens.js`
 - Catalog HTML generator: `playwright/scripts/build_figma_catalog.js`
