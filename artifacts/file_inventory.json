@@ -21988,6 +21988,7 @@
       "referenced_by": [
         "docs/deployment/review/ANDROID_REVIEW_EVIDENCE.md",
         "lib/core/services/fortune_generators/time_based_generator.dart",
+        "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/services/weather_service.dart"
       ],
       "runtime_reachable": true,
@@ -23443,6 +23444,7 @@
       "notes": [],
       "path": "lib/features/character/data/default_characters.dart",
       "referenced_by": [
+        "lib/features/character/data/services/character_proactive_media_service.dart",
         "lib/features/character/presentation/providers/character_provider.dart",
         "test/unit/screens/profile/character_relationships_provider_test.dart"
       ],
@@ -27402,7 +27404,8 @@
       "notes": [],
       "path": "lib/services/weather_service.dart",
       "referenced_by": [
-        "lib/data/services/fortune_api_service_edge_functions.dart"
+        "lib/data/services/fortune_api_service_edge_functions.dart",
+        "lib/features/character/presentation/providers/character_chat_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
