@@ -49,7 +49,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(nextCalled, isFalse);
 
-    await tester.tap(find.byType(Checkbox).at(0));
+    await tester.tap(find.byType(AnimatedContainer).at(0));
     await tester.pumpAndSettle();
 
     await tester.tap(find.byType(TextField));
@@ -58,7 +58,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(nextCalled, isFalse);
 
-    await tester.tap(find.byType(Checkbox).at(1));
+    await tester.tap(find.byType(AnimatedContainer).at(1));
     await tester.pumpAndSettle();
 
     await tester.tap(find.byType(TextField));
@@ -82,9 +82,9 @@ void main() {
 
     await tester.enterText(find.byType(TextField), '홍길동');
     await tester.pumpAndSettle();
-    await tester.tap(find.byType(Checkbox).at(0));
+    await tester.tap(find.byType(AnimatedContainer).at(0));
     await tester.pumpAndSettle();
-    await tester.tap(find.byType(Checkbox).at(1));
+    await tester.tap(find.byType(AnimatedContainer).at(1));
     await tester.pumpAndSettle();
 
     tester.testTextInput.hide();
@@ -115,9 +115,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(skipCalled, isFalse);
 
-    await tester.tap(find.byType(Checkbox).at(0));
+    await tester.tap(find.byType(AnimatedContainer).at(0));
     await tester.pumpAndSettle();
-    await tester.tap(find.byType(Checkbox).at(1));
+    await tester.tap(find.byType(AnimatedContainer).at(1));
     await tester.pumpAndSettle();
 
     tester.testTextInput.hide();
