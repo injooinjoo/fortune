@@ -28,8 +28,12 @@ enum MessageOrigin {
 
 /// 미디어 카테고리
 enum CharacterMediaCategory {
+  selfie,
   meal,
+  cafe,
+  commute,
   workout,
+  night,
 }
 
 /// 캐릭터 채팅 메시지 모델
@@ -308,7 +312,7 @@ class CharacterChatMessage {
       mediaCategory: json['mediaCategory'] != null
           ? CharacterMediaCategory.values.firstWhere(
               (e) => e.name == json['mediaCategory'],
-              orElse: () => CharacterMediaCategory.meal,
+              orElse: () => CharacterMediaCategory.selfie,
             )
           : null,
       sajuData: _castMap(json['sajuData']),

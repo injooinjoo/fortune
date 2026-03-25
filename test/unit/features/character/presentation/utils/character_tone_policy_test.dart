@@ -102,6 +102,43 @@ void main() {
       expect(guarded.toLowerCase().contains('as an ai'), isFalse);
       expect(guarded, isNotEmpty);
     });
+
+    test('짧은 답장에는 continuity bridge를 자동으로 붙인다', () {
+      const profile = CharacterToneProfile(
+        language: CharacterLanguage.ko,
+        speechLevel: CharacterSpeechLevel.formal,
+        nicknameAllowed: false,
+        turnIntent: CharacterTurnIntent.shortReply,
+        nameKnown: true,
+      );
+
+      final guarded = CharacterTonePolicy.applyGeneratedTone(
+        '좋아요',
+        profile,
+        voiceProfile: voice,
+      );
+
+      expect(guarded, contains('요즘'));
+      expect('?'.allMatches(guarded).length, lessThanOrEqualTo(1));
+    });
+
+    test('사용자 질문에는 추가 질문 없이 첫 문장 직답을 유지한다', () {
+      const profile = CharacterToneProfile(
+        language: CharacterLanguage.ko,
+        speechLevel: CharacterSpeechLevel.formal,
+        nicknameAllowed: false,
+        turnIntent: CharacterTurnIntent.question,
+      );
+
+      final guarded = CharacterTonePolicy.applyGeneratedTone(
+        '지금은 집이에요.',
+        profile,
+        voiceProfile: voice,
+      );
+
+      expect(guarded, '지금은 집이에요.');
+      expect('?'.allMatches(guarded), isEmpty);
+    });
   });
 
   group('CharacterTonePolicy relationship stage guide', () {
@@ -137,6 +174,24 @@ void main() {
       );
 
       expect(prompt.contains('4단계: 연인 단계'), isTrue);
+    });
+
+    test('스타일 가드에 store-safe 성인 경계가 포함된다', () {
+      const profile = CharacterToneProfile(
+        language: CharacterLanguage.ko,
+        speechLevel: CharacterSpeechLevel.formal,
+        nicknameAllowed: false,
+        turnIntent: CharacterTurnIntent.sharing,
+      );
+
+      final prompt = CharacterTonePolicy.buildStyleGuidePrompt(
+        profile,
+        voiceProfile: voice,
+        affinityPhase: AffinityPhase.friend,
+      );
+
+      expect(prompt.contains('explicit sexual roleplay'), isTrue);
+      expect(prompt.contains('안전한 일상 대화 범위'), isTrue);
     });
   });
 

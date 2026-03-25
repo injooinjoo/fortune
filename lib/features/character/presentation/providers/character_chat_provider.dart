@@ -22,6 +22,7 @@ import '../../../../core/constants/fortune_type_names.dart';
 import '../../../../core/constants/talisman_constants.dart';
 import '../../../../core/fortune/fortune_type_registry.dart';
 import '../../../../core/services/chat_sync_service.dart';
+import '../../../../core/services/location_manager.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../../../../core/constants/soul_rates.dart';
@@ -35,6 +36,7 @@ import '../../../../core/utils/moving_fortune_input_mapper.dart';
 import '../../../../constants/fortune_constants.dart';
 import '../../../../models/user_profile.dart';
 import '../../../../services/remote_config_service.dart';
+import '../../../../services/weather_service.dart';
 import '../../../../core/services/fortune_generators/fortune_cookie_generator.dart';
 import '../../../fortune/domain/models/conditions/character_chat_fortune_conditions.dart';
 import '../../../fortune/domain/services/lotto_number_generator.dart';
@@ -81,6 +83,16 @@ bool isHaneulCardFirstFortuneFlow({
 }) {
   return characterId == haneulCharacter.id &&
       kHaneulCardFirstFortuneTypes.contains(fortuneType);
+}
+
+class _CharacterProactiveEnvironmentHints {
+  final String? weatherHint;
+  final String? locationHint;
+
+  const _CharacterProactiveEnvironmentHints({
+    this.weatherHint,
+    this.locationHint,
+  });
 }
 
 class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
@@ -178,6 +190,9 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
 
   bool get _isLutsCharacter => _characterId == 'luts';
 
+  bool get _canAttachProactiveFollowUpImage =>
+      _isTonePolicyEnabledCharacter && !_character.isFortuneExpert;
+
   bool get _skipSimulatedReplyDelay => _character.isFortuneExpert;
 
   Future<void> _waitForReadDelayIfNeeded() async {
@@ -221,11 +236,12 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
       origin: MessageOrigin.followUp,
     );
 
-    if (!_isLutsCharacter) {
+    if (!_canAttachProactiveFollowUpImage) {
       return baseMessage;
     }
 
     final remoteConfig = _ref.read(remoteConfigProvider);
+    // 기존 remote config 키를 전체 스토리 캐릭터용 kill switch/max-per-day로 재사용합니다.
     if (!remoteConfig.isCharacterLutsProactiveImageEnabled()) {
       return baseMessage;
     }
@@ -248,11 +264,15 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         return baseMessage;
       }
 
+      final environmentHints = await _buildProactiveEnvironmentHints();
       final media = await _proactiveMediaService.resolveFollowUpMedia(
         characterId: _characterId,
         category: contextDecision.category,
         contextText: contextDecision.contextText,
         styleHint: contextDecision.styleHint,
+        timeSlot: contextDecision.timeSlot,
+        weatherHint: environmentHints.weatherHint,
+        locationHint: environmentHints.locationHint,
       );
       if (media == null) {
         return baseMessage;
@@ -271,6 +291,46 @@ class CharacterChatNotifier extends StateNotifier<CharacterChatState> {
         {'characterId': _characterId, 'error': error.toString()},
       );
       return baseMessage;
+    }
+  }
+
+  Future<_CharacterProactiveEnvironmentHints>
+      _buildProactiveEnvironmentHints() async {
+    try {
+      final cachedLocation =
+          await LocationManager.instance.getLastSavedLocation();
+      if (cachedLocation == null || !cachedLocation.isFromGPS) {
+        return const _CharacterProactiveEnvironmentHints();
+      }
+
+      final locationHint = cachedLocation.fullName.trim().isNotEmpty
+          ? cachedLocation.fullName.trim()
+          : cachedLocation.cityName.trim();
+
+      String? weatherHint;
+      final hasPermission =
+          await LocationManager.instance.hasLocationPermission();
+      if (hasPermission) {
+        final weather = await WeatherService.getCurrentWeather();
+        final description = weather.description.trim();
+        final cityName = weather.cityName.trim();
+        final hint = [
+          if (cityName.isNotEmpty) cityName,
+          if (description.isNotEmpty) description
+        ].join(' ').trim();
+        weatherHint = hint.isEmpty ? null : hint;
+      }
+
+      return _CharacterProactiveEnvironmentHints(
+        weatherHint: weatherHint,
+        locationHint: locationHint.isEmpty ? null : locationHint,
+      );
+    } catch (error) {
+      Logger.warning(
+        '[CharacterChat] Failed to resolve proactive environment hints.',
+        {'characterId': _characterId, 'error': error.toString()},
+      );
+      return const _CharacterProactiveEnvironmentHints();
     }
   }
 

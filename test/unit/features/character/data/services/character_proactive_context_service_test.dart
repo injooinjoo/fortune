@@ -6,7 +6,7 @@ void main() {
   group('CharacterProactiveContextService', () {
     final service = CharacterProactiveContextService();
 
-    test('meal context requires keyword and meal time', () {
+    test('점심 시간의 식사 키워드는 meal로 분류한다', () {
       final result = service.resolve(
         messages: [
           CharacterChatMessage.user('점심 뭐 먹을지 고민 중이에요'),
@@ -16,9 +16,10 @@ void main() {
 
       expect(result, isNotNull);
       expect(result!.category, CharacterMediaCategory.meal);
+      expect(result.timeSlot, 'lunch');
     });
 
-    test('workout context requires keyword and workout time', () {
+    test('저녁 운동 키워드는 workout으로 분류한다', () {
       final result = service.resolve(
         messages: [
           CharacterChatMessage.user('오늘 헬스장 가서 운동 마쳤어요'),
@@ -30,26 +31,43 @@ void main() {
       expect(result!.category, CharacterMediaCategory.workout);
     });
 
-    test('keyword alone without matching time does not trigger', () {
+    test('출근 키워드와 아침 시간대는 commute로 분류한다', () {
       final result = service.resolve(
         messages: [
-          CharacterChatMessage.user('점심은 먹었는데 아직 안 자요'),
+          CharacterChatMessage.user('아침부터 지하철이 너무 붐벼요'),
         ],
-        now: DateTime(2026, 2, 17, 2, 5),
+        now: DateTime(2026, 2, 17, 8, 5),
       );
 
-      expect(result, isNull);
+      expect(result, isNotNull);
+      expect(result!.category, CharacterMediaCategory.commute);
+      expect(result.timeSlot, 'morning');
     });
 
-    test('matching time alone without keyword does not trigger', () {
+    test('늦은 밤에는 관련 키워드가 있으면 night로 분류한다', () {
+      final result = service.resolve(
+        messages: [
+          CharacterChatMessage.user('오늘은 늦게까지 안 자고 있었어요'),
+        ],
+        now: DateTime(2026, 2, 17, 23, 30),
+      );
+
+      expect(result, isNotNull);
+      expect(result!.category, CharacterMediaCategory.night);
+      expect(result.timeSlot, 'night');
+    });
+
+    test('키워드가 없어도 최근 맥락이 있으면 time-only fallback으로 동작한다', () {
       final result = service.resolve(
         messages: [
           CharacterChatMessage.user('오늘 일정이 많네요'),
         ],
-        now: DateTime(2026, 2, 17, 12, 30),
+        now: DateTime(2026, 2, 17, 15, 30),
       );
 
-      expect(result, isNull);
+      expect(result, isNotNull);
+      expect(result!.category, CharacterMediaCategory.cafe);
+      expect(result.timeSlot, 'afternoon');
     });
   });
 }

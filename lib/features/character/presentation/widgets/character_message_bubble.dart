@@ -260,9 +260,15 @@ class CharacterMessageBubble extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    final fallbackIcon = message.mediaCategory == CharacterMediaCategory.workout
-        ? Icons.fitness_center
-        : Icons.restaurant;
+    final fallbackIcon = switch (message.mediaCategory) {
+      CharacterMediaCategory.selfie => Icons.photo_camera_front,
+      CharacterMediaCategory.meal => Icons.restaurant,
+      CharacterMediaCategory.cafe => Icons.local_cafe,
+      CharacterMediaCategory.commute => Icons.directions_transit,
+      CharacterMediaCategory.workout => Icons.fitness_center,
+      CharacterMediaCategory.night => Icons.nights_stay,
+      null => Icons.image,
+    };
 
     return Container(
       margin: const EdgeInsets.only(bottom: 6),

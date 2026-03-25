@@ -4,11 +4,13 @@ import '../../domain/models/character_chat_message.dart';
 class CharacterProactiveContextDecision {
   final CharacterMediaCategory category;
   final String contextText;
+  final String timeSlot;
   final String? styleHint;
 
   const CharacterProactiveContextDecision({
     required this.category,
     required this.contextText,
+    required this.timeSlot,
     this.styleHint,
   });
 }
@@ -37,6 +39,35 @@ class CharacterProactiveContextService {
     '食事',
   ];
 
+  static const List<String> _cafeKeywords = [
+    '카페',
+    '커피',
+    '디저트',
+    '브런치',
+    'tea',
+    'coffee',
+    'cafe',
+    'latte',
+    'dessert',
+    '티타임',
+  ];
+
+  static const List<String> _commuteKeywords = [
+    '출근',
+    '퇴근',
+    '통근',
+    '지하철',
+    '버스',
+    '회사 가',
+    '집 가',
+    '이동 중',
+    'commute',
+    'subway',
+    'bus',
+    'train',
+    'office',
+  ];
+
   static const List<String> _workoutKeywords = [
     '운동',
     '헬스',
@@ -58,6 +89,19 @@ class CharacterProactiveContextService {
     'ジム',
   ];
 
+  static const List<String> _nightKeywords = [
+    '밤',
+    '야경',
+    '늦었',
+    '잠',
+    '새벽',
+    '잠이 안',
+    'night',
+    'late',
+    'midnight',
+    'insomnia',
+  ];
+
   CharacterProactiveContextDecision? resolve({
     required List<CharacterChatMessage> messages,
     DateTime? now,
@@ -76,52 +120,69 @@ class CharacterProactiveContextService {
       return null;
     }
 
+    final timeSlot = _resolveTimeSlot(referenceTime);
     final mealScore = _scoreByKeywords(recentUserTexts, _mealKeywords);
+    final cafeScore = _scoreByKeywords(recentUserTexts, _cafeKeywords);
+    final commuteScore = _scoreByKeywords(recentUserTexts, _commuteKeywords);
     final workoutScore = _scoreByKeywords(recentUserTexts, _workoutKeywords);
-
-    final isMealMatch = mealScore > 0 && _isMealTime(referenceTime);
-    final isWorkoutMatch = workoutScore > 0 && _isWorkoutTime(referenceTime);
-
-    if (!isMealMatch && !isWorkoutMatch) {
-      return null;
-    }
+    final nightScore = _scoreByKeywords(recentUserTexts, _nightKeywords);
 
     final selectedCategory = _selectCategory(
-      isMealMatch: isMealMatch,
-      isWorkoutMatch: isWorkoutMatch,
+      timeSlot: timeSlot,
       mealScore: mealScore,
+      cafeScore: cafeScore,
+      commuteScore: commuteScore,
       workoutScore: workoutScore,
+      nightScore: nightScore,
     );
 
-    final keywords = selectedCategory == CharacterMediaCategory.meal
-        ? _mealKeywords
-        : _workoutKeywords;
+    final keywords = _keywordsFor(selectedCategory);
     final matchedContext = _selectContextText(recentUserTexts, keywords);
 
     return CharacterProactiveContextDecision(
       category: selectedCategory,
       contextText: matchedContext,
-      styleHint: _defaultStyleHint(selectedCategory),
+      timeSlot: timeSlot,
+      styleHint: _defaultStyleHint(
+        selectedCategory,
+        timeSlot: timeSlot,
+      ),
     );
   }
 
   CharacterMediaCategory _selectCategory({
-    required bool isMealMatch,
-    required bool isWorkoutMatch,
+    required String timeSlot,
     required int mealScore,
+    required int cafeScore,
+    required int commuteScore,
     required int workoutScore,
+    required int nightScore,
   }) {
-    if (isMealMatch && !isWorkoutMatch) {
+    if (mealScore > 0 && _isMealTimeSlot(timeSlot)) {
       return CharacterMediaCategory.meal;
     }
-    if (!isMealMatch && isWorkoutMatch) {
+    if (workoutScore > 0 && _isWorkoutTimeSlot(timeSlot)) {
       return CharacterMediaCategory.workout;
     }
-
-    if (workoutScore > mealScore) {
-      return CharacterMediaCategory.workout;
+    if (commuteScore > 0 && _isCommuteTimeSlot(timeSlot)) {
+      return CharacterMediaCategory.commute;
     }
-    return CharacterMediaCategory.meal;
+    if (cafeScore > 0 && !_isLateNightTimeSlot(timeSlot)) {
+      return CharacterMediaCategory.cafe;
+    }
+    if (nightScore > 0 || _isLateNightTimeSlot(timeSlot)) {
+      return CharacterMediaCategory.night;
+    }
+    if (_isCommuteTimeSlot(timeSlot)) {
+      return CharacterMediaCategory.commute;
+    }
+    if (timeSlot == 'afternoon') {
+      return CharacterMediaCategory.cafe;
+    }
+    if (_isMealTimeSlot(timeSlot)) {
+      return CharacterMediaCategory.meal;
+    }
+    return CharacterMediaCategory.selfie;
   }
 
   int _scoreByKeywords(List<String> texts, List<String> keywords) {
@@ -138,6 +199,10 @@ class CharacterProactiveContextService {
   }
 
   String _selectContextText(List<String> recentTexts, List<String> keywords) {
+    if (keywords.isEmpty) {
+      return recentTexts.first;
+    }
+
     for (final text in recentTexts) {
       final lowered = text.toLowerCase();
       final hasKeyword = keywords.any(
@@ -151,24 +216,75 @@ class CharacterProactiveContextService {
     return recentTexts.first;
   }
 
-  bool _isMealTime(DateTime now) {
-    final hour = now.hour;
-    final isLunch = hour >= 11 && hour < 15;
-    final isDinner = hour >= 18 && hour < 21;
-    return isLunch || isDinner;
-  }
-
-  bool _isWorkoutTime(DateTime now) {
-    final hour = now.hour;
-    final isMorningWorkout = hour >= 6 && hour < 10;
-    final isEveningWorkout = hour >= 17 && hour < 23;
-    return isMorningWorkout || isEveningWorkout;
-  }
-
-  String _defaultStyleHint(CharacterMediaCategory category) {
-    if (category == CharacterMediaCategory.meal) {
-      return 'natural phone photo of today\'s meal, cozy candid mood';
+  List<String> _keywordsFor(CharacterMediaCategory category) {
+    switch (category) {
+      case CharacterMediaCategory.meal:
+        return _mealKeywords;
+      case CharacterMediaCategory.cafe:
+        return _cafeKeywords;
+      case CharacterMediaCategory.commute:
+        return _commuteKeywords;
+      case CharacterMediaCategory.workout:
+        return _workoutKeywords;
+      case CharacterMediaCategory.night:
+        return _nightKeywords;
+      case CharacterMediaCategory.selfie:
+        return const <String>[];
     }
-    return 'post-workout phone selfie, candid gym vibe, natural lighting';
+  }
+
+  String _resolveTimeSlot(DateTime now) {
+    final hour = now.hour;
+
+    if (hour >= 6 && hour < 10) {
+      return 'morning';
+    }
+    if (hour >= 11 && hour < 14) {
+      return 'lunch';
+    }
+    if (hour >= 14 && hour < 17) {
+      return 'afternoon';
+    }
+    if (hour >= 17 && hour < 21) {
+      return 'evening';
+    }
+    if (hour >= 21 || hour < 2) {
+      return 'night';
+    }
+    return 'late_night';
+  }
+
+  bool _isMealTimeSlot(String timeSlot) =>
+      timeSlot == 'lunch' || timeSlot == 'evening';
+
+  bool _isWorkoutTimeSlot(String timeSlot) =>
+      timeSlot == 'morning' || timeSlot == 'evening';
+
+  bool _isCommuteTimeSlot(String timeSlot) =>
+      timeSlot == 'morning' || timeSlot == 'evening';
+
+  bool _isLateNightTimeSlot(String timeSlot) =>
+      timeSlot == 'night' || timeSlot == 'late_night';
+
+  String _defaultStyleHint(
+    CharacterMediaCategory category, {
+    required String timeSlot,
+  }) {
+    switch (category) {
+      case CharacterMediaCategory.selfie:
+        return timeSlot == 'night' || timeSlot == 'late_night'
+            ? 'natural phone selfie at home, cozy late-night mood, candid daily life'
+            : 'natural phone selfie, candid daily life, realistic lighting';
+      case CharacterMediaCategory.meal:
+        return 'natural phone photo of today\'s meal, cozy candid mood';
+      case CharacterMediaCategory.cafe:
+        return 'natural phone photo in a quiet cafe, coffee or dessert on the table, candid daily life';
+      case CharacterMediaCategory.commute:
+        return 'natural smartphone snapshot while commuting, city transit vibe, candid everyday scene';
+      case CharacterMediaCategory.workout:
+        return 'post-workout phone selfie, candid gym vibe, natural lighting';
+      case CharacterMediaCategory.night:
+        return 'natural phone photo of a calm night outing or city lights, candid everyday mood';
+    }
   }
 }

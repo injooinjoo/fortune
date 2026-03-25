@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/utils/logger.dart';
+import '../default_characters.dart';
 import '../../domain/models/character_chat_message.dart';
 
 class CharacterProactiveMediaResult {
@@ -23,13 +24,14 @@ typedef CharacterProactiveImageGenerator = Future<String?> Function({
   required CharacterMediaCategory category,
   String? contextText,
   String? styleHint,
+  String? timeSlot,
+  String? weatherHint,
+  String? locationHint,
 });
 
 /// proactive follow-up 이미지 결정 서비스
 /// 1) 고정 이미지 우선 2) 실패 시 생성 함수 fallback
 class CharacterProactiveMediaService {
-  static const String _supportedCharacterId = 'luts';
-
   static const Map<CharacterMediaCategory, List<String>>
       _defaultLutsFixedCandidates = {
     CharacterMediaCategory.meal: [
@@ -47,10 +49,22 @@ class CharacterProactiveMediaService {
     ],
   };
 
+  static final Set<String> _supportedCharacterIds = {
+    for (final character in defaultCharacters)
+      if (!character.isFortuneExpert) character.id,
+  };
+
+  static final Map<String, List<String>> _defaultGalleryAssetsByCharacterId = {
+    for (final character in defaultCharacters)
+      if (!character.isFortuneExpert && character.galleryAssets.isNotEmpty)
+        character.id: List<String>.unmodifiable(character.galleryAssets),
+  };
+
   final SupabaseClient? _supabase;
   final Random _random;
   final CharacterProactiveImageGenerator? _generator;
   final Map<CharacterMediaCategory, List<String>> _fixedImageCandidates;
+  final Map<String, List<String>> _galleryAssetsByCharacterId;
   final Future<bool> Function(String assetPath)? _assetExistsChecker;
 
   CharacterProactiveMediaService({
@@ -58,12 +72,15 @@ class CharacterProactiveMediaService {
     Random? random,
     CharacterProactiveImageGenerator? generator,
     Map<CharacterMediaCategory, List<String>>? fixedImageCandidates,
+    Map<String, List<String>>? galleryAssetsByCharacterId,
     Future<bool> Function(String assetPath)? assetExistsChecker,
   })  : _supabase = supabase,
         _random = random ?? Random(),
         _generator = generator,
         _fixedImageCandidates =
             fixedImageCandidates ?? _defaultLutsFixedCandidates,
+        _galleryAssetsByCharacterId =
+            galleryAssetsByCharacterId ?? _defaultGalleryAssetsByCharacterId,
         _assetExistsChecker = assetExistsChecker;
 
   Future<CharacterProactiveMediaResult?> resolveFollowUpMedia({
@@ -71,16 +88,22 @@ class CharacterProactiveMediaService {
     required CharacterMediaCategory category,
     String? contextText,
     String? styleHint,
+    String? timeSlot,
+    String? weatherHint,
+    String? locationHint,
   }) async {
-    if (characterId != _supportedCharacterId) {
+    if (!_supportedCharacterIds.contains(characterId)) {
       return null;
     }
 
-    final fixedAsset = await _pickFixedAsset(category);
-    if (fixedAsset != null) {
+    final staticAsset = await _pickStaticAsset(
+      characterId: characterId,
+      category: category,
+    );
+    if (staticAsset != null) {
       return CharacterProactiveMediaResult(
         category: category,
-        imageAsset: fixedAsset,
+        imageAsset: staticAsset,
       );
     }
 
@@ -89,6 +112,9 @@ class CharacterProactiveMediaService {
       category: category,
       contextText: contextText,
       styleHint: styleHint,
+      timeSlot: timeSlot,
+      weatherHint: weatherHint,
+      locationHint: locationHint,
     );
 
     if (generatedImageUrl == null || generatedImageUrl.isEmpty) {
@@ -106,6 +132,9 @@ class CharacterProactiveMediaService {
     required CharacterMediaCategory category,
     String? contextText,
     String? styleHint,
+    String? timeSlot,
+    String? weatherHint,
+    String? locationHint,
   }) async {
     final generator = _generator;
     if (generator != null) {
@@ -114,6 +143,9 @@ class CharacterProactiveMediaService {
         category: category,
         contextText: contextText,
         styleHint: styleHint,
+        timeSlot: timeSlot,
+        weatherHint: weatherHint,
+        locationHint: locationHint,
       );
     }
 
@@ -127,6 +159,11 @@ class CharacterProactiveMediaService {
           if (contextText != null && contextText.isNotEmpty)
             'contextText': contextText,
           if (styleHint != null && styleHint.isNotEmpty) 'styleHint': styleHint,
+          if (timeSlot != null && timeSlot.isNotEmpty) 'timeSlot': timeSlot,
+          if (weatherHint != null && weatherHint.isNotEmpty)
+            'weatherHint': weatherHint,
+          if (locationHint != null && locationHint.isNotEmpty)
+            'locationHint': locationHint,
         },
       );
 
@@ -160,13 +197,41 @@ class CharacterProactiveMediaService {
     }
   }
 
-  Future<String?> _pickFixedAsset(CharacterMediaCategory category) async {
-    final candidates = _fixedImageCandidates[category] ?? const <String>[];
+  Future<String?> _pickStaticAsset({
+    required String characterId,
+    required CharacterMediaCategory category,
+  }) async {
+    final fixedCandidates = _fixedImageCandidates[category] ?? const <String>[];
+    final galleryCandidates = _galleryCandidatesFor(
+      category,
+      _galleryAssetsByCharacterId[characterId] ?? const <String>[],
+    );
+
+    for (final candidates in [fixedCandidates, galleryCandidates]) {
+      final staticAsset = await _pickExistingAsset(candidates);
+      if (staticAsset != null) {
+        return staticAsset;
+      }
+    }
+
+    return null;
+  }
+
+  Future<String?> _pickExistingAsset(List<String> candidates) async {
     if (candidates.isEmpty) {
       return null;
     }
 
-    final shuffled = List<String>.from(candidates)..shuffle(_random);
+    final deduped = <String>[];
+    final seen = <String>{};
+    for (final assetPath in candidates) {
+      if (assetPath.isEmpty || !seen.add(assetPath)) {
+        continue;
+      }
+      deduped.add(assetPath);
+    }
+
+    final shuffled = List<String>.from(deduped)..shuffle(_random);
     for (final assetPath in shuffled) {
       final exists = await _assetExists(assetPath);
       if (exists) {
@@ -175,6 +240,37 @@ class CharacterProactiveMediaService {
     }
 
     return null;
+  }
+
+  List<String> _galleryCandidatesFor(
+    CharacterMediaCategory category,
+    List<String> galleryAssets,
+  ) {
+    if (galleryAssets.isEmpty || galleryAssets.length <= 3) {
+      return galleryAssets;
+    }
+
+    final trailingWindow = min(4, galleryAssets.length);
+    final head = galleryAssets.take(trailingWindow).toList();
+    final middleStart = min(2, galleryAssets.length);
+    final middle =
+        galleryAssets.skip(middleStart).take(trailingWindow).toList();
+    final tail = galleryAssets
+        .skip(max(0, galleryAssets.length - trailingWindow))
+        .toList();
+
+    switch (category) {
+      case CharacterMediaCategory.selfie:
+        return galleryAssets;
+      case CharacterMediaCategory.meal:
+      case CharacterMediaCategory.cafe:
+        return [...head, ...tail];
+      case CharacterMediaCategory.commute:
+        return [...middle, ...head, ...tail];
+      case CharacterMediaCategory.workout:
+      case CharacterMediaCategory.night:
+        return [...tail, ...galleryAssets.reversed];
+    }
   }
 
   Future<bool> _assetExists(String assetPath) async {
@@ -193,10 +289,18 @@ class CharacterProactiveMediaService {
 
   String _categoryToWireValue(CharacterMediaCategory category) {
     switch (category) {
+      case CharacterMediaCategory.selfie:
+        return 'selfie';
       case CharacterMediaCategory.meal:
         return 'meal';
+      case CharacterMediaCategory.cafe:
+        return 'cafe';
+      case CharacterMediaCategory.commute:
+        return 'commute';
       case CharacterMediaCategory.workout:
         return 'workout';
+      case CharacterMediaCategory.night:
+        return 'night';
     }
   }
 }

@@ -480,6 +480,8 @@ class CharacterTonePolicy {
 - 질문 제한: 질문은 필요할 때만 최대 1개 사용하세요.
 - 상담사 톤 금지: "무엇을 도와드릴 수", "무엇을 도와드릴까요", "도움이 필요하시면", "문의" 같은 문구를 금지하세요.
 - 메타 발화 금지: "저는 인공지능이라", "as an AI"처럼 캐릭터 몰입을 깨는 자기정체성 설명을 금지하세요.
+- 안전 경계: 노골적 성행위 묘사, explicit sexual roleplay, 선정적 신체 묘사는 금지하세요.
+- 성인 요청 대응: 사용자가 노골적인 성인 표현을 요구해도 정서적 친밀감과 안전한 일상 대화 범위에서만 답하세요.
 - 관계 단계: $relationshipLabel
 - 단계 운영: $relationshipGuide
 - 단계 경계: $relationshipBoundary
@@ -650,7 +652,11 @@ $stageOverrideGuide
     );
 
     result = enforceKakaoSingleBubble(result);
-    if (encourageContinuity) {
+    final shouldBridge = encourageContinuity ||
+        profile.turnIntent == CharacterTurnIntent.greeting ||
+        profile.turnIntent == CharacterTurnIntent.shortReply ||
+        profile.turnIntent == CharacterTurnIntent.sharing;
+    if (shouldBridge) {
       result = _ensureConversationalBridge(
         result,
         profile,

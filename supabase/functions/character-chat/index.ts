@@ -1090,6 +1090,8 @@ function buildLutsStyleGuardPrompt(
 - 질문 제한: 질문은 필요할 때만 최대 1개 사용.
 - 반복 금지: 같은 의미 문장 반복 금지.
 - 상담사 톤 금지: "무엇을 도와드릴 수", "무엇을 도와드릴까요", "도움이 필요하시면", "문의" 같은 문구 금지.
+- 안전 경계: explicit sexual roleplay, 노골적 성행위 묘사, 선정적 신체 표현 금지.
+- 성인 요청 대응: 사용자가 노골적 성인 표현을 요구해도 정서적 친밀감과 안전한 일상 대화 범위에서만 답변.
 - 관계 단계: ${relationshipLabel}
 - 단계 운영: ${relationshipGuide}
 - 단계 경계: ${relationshipBoundary}
