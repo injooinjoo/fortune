@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/design_system/design_system.dart';
 import '../../core/services/supabase_connection_service.dart';
+import '../../core/widgets/paper_runtime_chrome.dart';
+import '../../core/widgets/paper_runtime_surface_kit.dart';
 import '../../services/account_deletion_service.dart';
 import '../../shared/components/section_header.dart';
 import '../../shared/components/toast.dart';
@@ -181,23 +183,8 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.colors.backgroundSecondary,
-      appBar: AppBar(
-        backgroundColor: context.colors.surface,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: Text(
-          '회원 탈퇴',
-          style: context.heading2.copyWith(color: context.colors.textPrimary),
-        ),
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: context.colors.textPrimary,
-          ),
-          onPressed: () => context.pop(),
-        ),
-      ),
+      backgroundColor: context.colors.background,
+      appBar: const PaperRuntimeAppBar(title: '계정 삭제'),
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(
@@ -208,17 +195,53 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                '정말 떠나시나요?',
+                style: context.heading2.copyWith(
+                  color: context.colors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: DSSpacing.sm),
+              Text(
+                '계정을 삭제하면 아래 데이터가 영구 삭제됩니다. 이 작업은 되돌릴 수 없습니다.',
+                style: context.bodyMedium.copyWith(
+                  color: context.colors.textSecondary,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: DSSpacing.lg),
+              PaperRuntimePanel(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildBullet('모든 대화 기록'),
+                    _buildBullet('운세 및 인사이트 결과'),
+                    _buildBullet('프로필 및 사주 정보'),
+                    _buildBullet('보유 토큰 및 구매 내역'),
+                  ],
+                ),
+              ),
+              const SizedBox(height: DSSpacing.xl),
+              PaperRuntimeButton(
+                label: '계정 영구 삭제',
+                onPressed: _canSubmit ? _handleDeletion : _handleDeletion,
+                variant: PaperRuntimeButtonVariant.danger,
+                isLoading: _isProcessing,
+              ),
+              const SizedBox(height: DSSpacing.sm),
+              PaperRuntimeButton(
+                label: '취소',
+                onPressed: () => context.pop(),
+                variant: PaperRuntimeButtonVariant.ghost,
+              ),
+              const SizedBox(height: DSSpacing.xl),
               _buildWarningBox(),
               const SizedBox(height: DSSpacing.lg),
-              const SectionHeader(title: '탈퇴 시 삭제되는 정보'),
-              _buildBullet('프로필 정보, 운세 기록, 맞춤 설정 등 서비스 이용 데이터'),
-              _buildBullet('연결된 소셜 계정 정보 및 기기 내 저장 데이터'),
-              const SizedBox(height: DSSpacing.md),
+              const SectionHeader(title: '탈퇴 전 확인'),
               const SectionHeader(title: '법령에 따른 보관'),
               _buildBullet('결제 정보: 전자상거래법에 따라 5년 보관'),
               _buildBullet('서비스 이용 기록: 통신비밀보호법에 따라 3개월 보관'),
               const SizedBox(height: DSSpacing.md),
-              const SectionHeader(title: '탈퇴 전 확인'),
               _buildConfirmItem(
                 value: _ackDataLoss,
                 onChanged: (value) => setState(() => _ackDataLoss = value),
@@ -305,12 +328,6 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
                     ),
                   ),
                 ),
-              DSButton.destructive(
-                text: '회원 탈퇴',
-                onPressed: _canSubmit ? _handleDeletion : null,
-                size: DSButtonSize.large,
-                isLoading: _isProcessing,
-              ),
               SizedBox(height: MediaQuery.of(context).padding.bottom + 12),
             ],
           ),

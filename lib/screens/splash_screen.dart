@@ -254,7 +254,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                   SizedBox(height: spacing.sm),
                   Text(
-                    '질문하고, 듣고, 당신만의 흐름을 발견하세요.',
+                    '나만의 인사이트를 발견해보세요',
                     style: typography.bodyMedium.copyWith(
                       color: colors.textSecondary,
                       height: 1.5,
@@ -267,12 +267,15 @@ class _SplashScreenState extends State<SplashScreen> {
             const Spacer(flex: 4),
             Padding(
               padding: EdgeInsets.only(bottom: spacing.lg),
-              child: Container(
-                width: 84,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: colors.textPrimary.withValues(alpha: 0.9),
-                  borderRadius: BorderRadius.circular(DSRadius.full),
+              child: SizedBox(
+                width: 22,
+                height: 22,
+                child: CircularProgressIndicator(
+                  strokeWidth: 1.6,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    colors.textPrimary.withValues(alpha: 0.88),
+                  ),
+                  backgroundColor: colors.border.withValues(alpha: 0.32),
                 ),
               ),
             ),

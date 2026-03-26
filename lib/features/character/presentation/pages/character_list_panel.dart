@@ -309,12 +309,11 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
     final userProfile = ref.watch(userProfileNotifierProvider).valueOrNull;
     final profileImageUrl = userProfile?.profileImageUrl;
     final colors = context.colors;
-    final typography = context.typography;
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
+      padding: const EdgeInsets.fromLTRB(16, 18, 16, 12),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (widget.isOverlay)
             IconButton(
@@ -325,41 +324,35 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
             ),
           if (widget.isOverlay) const SizedBox(width: 12),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const PaperRuntimePill(
-                  label: 'Chat-first',
-                  icon: Icons.auto_awesome,
-                ),
-                const SizedBox(height: DSSpacing.sm),
-                Text(
-                  'Fortune',
-                  style: typography.headingLarge.copyWith(
-                    color: colors.textPrimary,
-                    height: 1.0,
-                    letterSpacing: -0.6,
-                  ),
-                ),
-                const SizedBox(height: DSSpacing.xs),
-                Text(
-                  '지금 열어볼 흐름을 골라보세요',
-                  style: typography.bodySmall.copyWith(
-                    color: colors.textSecondary,
-                  ),
-                ),
-              ],
+            child: Text(
+              '메시지',
+              style: context.headingLarge.copyWith(
+                color: colors.textPrimary,
+                height: 1.0,
+                letterSpacing: -0.6,
+              ),
             ),
           ),
-          IconButton(
-            icon: Icon(
-              Icons.edit_outlined,
-              size: 24,
-              color: colors.textPrimary,
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: colors.backgroundSecondary.withValues(alpha: 0.9),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: colors.border.withValues(alpha: 0.68),
+              ),
             ),
-            onPressed: () => _showNewMessageSheet(context),
+            child: IconButton(
+              icon: Icon(
+                Icons.edit_outlined,
+                size: 20,
+                color: colors.textPrimary,
+              ),
+              onPressed: () => _showNewMessageSheet(context),
+            ),
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: 8),
           // 프로필 이미지 (설정으로 이동)
           GestureDetector(
             onTap: () async {
@@ -373,13 +366,22 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
                 },
               );
             },
-            child: CircleAvatar(
-              radius: 16,
-              backgroundColor: colors.backgroundSecondary,
-              backgroundImage:
-                  profileImageUrl != null && profileImageUrl.isNotEmpty
-                      ? NetworkImage(profileImageUrl)
-                      : null,
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: colors.backgroundSecondary.withValues(alpha: 0.9),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: colors.border.withValues(alpha: 0.68),
+                ),
+                image: profileImageUrl != null && profileImageUrl.isNotEmpty
+                    ? DecorationImage(
+                        image: NetworkImage(profileImageUrl),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
+              ),
               child: profileImageUrl == null || profileImageUrl.isEmpty
                   ? Icon(
                       Icons.person,

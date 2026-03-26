@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/design_system/design_system.dart';
+import '../../core/widgets/paper_runtime_chrome.dart';
+import '../../core/widgets/paper_runtime_surface_kit.dart';
 import '../../features/fortune/presentation/providers/saju_provider.dart';
 import '../../models/user_profile.dart';
 import '../../presentation/providers/providers.dart';
@@ -29,89 +31,46 @@ class _SajuSummaryPageState extends ConsumerState<SajuSummaryPage> {
   Widget build(BuildContext context) {
     final state = ref.watch(sajuProvider);
     final profile = ref.watch(userProfileNotifierProvider).valueOrNull;
-    final colors = context.colors;
 
     return Scaffold(
-      backgroundColor: colors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () => Navigator.of(context).maybePop(),
-        ),
-        title: Text(
-          '내 사주 요약',
-          style: context.heading3.copyWith(color: colors.textPrimary),
+      backgroundColor: context.colors.background,
+      appBar: const PaperRuntimeAppBar(title: '사주 요약'),
+      body: PaperRuntimeBackground(
+        showRings: false,
+        applySafeArea: false,
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(
+            DSSpacing.pageHorizontal,
+            DSSpacing.md,
+            DSSpacing.pageHorizontal,
+            DSSpacing.xxl,
+          ),
+          children: [
+            if (state.isLoading && state.sajuData == null)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: DSSpacing.xxl),
+                child: Center(child: CircularProgressIndicator()),
+              )
+            else if (state.sajuData == null)
+              _EmptySajuState(profile: profile)
+            else
+              _SajuSummaryContent(
+                profile: profile,
+                sajuData: state.sajuData!,
+                onRefresh: () async {
+                  if (profile?.birthDate == null) {
+                    return;
+                  }
+                  await ref.read(sajuProvider.notifier).calculateAndSaveSaju(
+                        birthDate: profile!.birthDate!,
+                        birthTime: profile.birthTime,
+                        isLunar: profile.isLunarBirthdate ?? false,
+                      );
+                },
+              ),
+          ],
         ),
       ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(
-          DSSpacing.pageHorizontal,
-          DSSpacing.md,
-          DSSpacing.pageHorizontal,
-          DSSpacing.xxl,
-        ),
-        children: [
-          DSCard.elevated(
-            padding: const EdgeInsets.all(DSSpacing.lg),
-            child: _BirthInfoSummary(profile: profile),
-          ),
-          const SizedBox(height: DSSpacing.xl),
-          if (state.isLoading && state.sajuData == null)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: DSSpacing.xxl),
-              child: Center(child: CircularProgressIndicator()),
-            )
-          else if (state.sajuData == null)
-            _EmptySajuState(profile: profile)
-          else
-            _SajuContent(
-              sajuData: state.sajuData!,
-              onRefresh: () async {
-                if (profile?.birthDate == null) {
-                  return;
-                }
-                await ref.read(sajuProvider.notifier).calculateAndSaveSaju(
-                      birthDate: profile!.birthDate!,
-                      birthTime: profile.birthTime,
-                      isLunar: profile.isLunarBirthdate ?? false,
-                    );
-              },
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _BirthInfoSummary extends StatelessWidget {
-  const _BirthInfoSummary({required this.profile});
-
-  final UserProfile? profile;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '기준 정보',
-          style: context.heading4.copyWith(
-            color: context.colors.textPrimary,
-          ),
-        ),
-        const SizedBox(height: DSSpacing.sm),
-        Text(
-          profile?.birthDate == null
-              ? '생년월일과 태어난 시간을 입력하면 사주를 계산할 수 있어요.'
-              : '${_formatBirth(profile!.birthDate!)} · ${profile!.birthTime ?? '시간 미입력'}',
-          style: context.bodyMedium.copyWith(
-            color: context.colors.textSecondary,
-          ),
-        ),
-      ],
     );
   }
 }
@@ -125,8 +84,7 @@ class _EmptySajuState extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final canCalculate = profile?.birthDate != null;
 
-    return DSCard.outlined(
-      padding: const EdgeInsets.all(DSSpacing.lg),
+    return PaperRuntimePanel(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -143,11 +101,12 @@ class _EmptySajuState extends ConsumerWidget {
                 : '생년월일과 태어난 시간을 등록하면 사주 요약이 표시됩니다.',
             style: context.bodyMedium.copyWith(
               color: context.colors.textSecondary,
+              height: 1.5,
             ),
           ),
-          const SizedBox(height: DSSpacing.lg),
-          DSButton.primary(
-            text: canCalculate ? '사주 생성하기' : '내 정보 수정하기',
+          const SizedBox(height: DSSpacing.xl),
+          PaperRuntimeButton(
+            label: canCalculate ? '사주 생성하기' : '내 정보 수정하기',
             onPressed: () async {
               if (!canCalculate) {
                 context.push('/profile/edit');
@@ -167,118 +126,247 @@ class _EmptySajuState extends ConsumerWidget {
   }
 }
 
-class _SajuContent extends StatelessWidget {
-  const _SajuContent({
+class _SajuSummaryContent extends StatelessWidget {
+  final UserProfile? profile;
+  final Map<String, dynamic> sajuData;
+  final Future<void> Function() onRefresh;
+
+  const _SajuSummaryContent({
+    required this.profile,
     required this.sajuData,
     required this.onRefresh,
   });
-
-  final Map<String, dynamic> sajuData;
-  final Future<void> Function() onRefresh;
 
   @override
   Widget build(BuildContext context) {
     final elements = Map<String, dynamic>.from(
       sajuData['elements'] as Map<String, dynamic>? ?? const {},
     );
-    final interpretation = sajuData['interpretation'] as String? ?? '';
     final personality = sajuData['personalityAnalysis'] as String? ?? '';
+    final interpretation = sajuData['interpretation'] as String? ?? '';
     final career = sajuData['careerGuidance'] as String? ?? '';
     final relationship = sajuData['relationshipAdvice'] as String? ?? '';
-    final dayPillar = _pillarLabel(
-      sajuData['day'] as Map<String, dynamic>?,
-    );
+
+    final pillars = [
+      ('년주', sajuData['year'] as Map<String, dynamic>?),
+      ('월주', sajuData['month'] as Map<String, dynamic>?),
+      ('일주', sajuData['day'] as Map<String, dynamic>?),
+      ('시주', sajuData['hour'] as Map<String, dynamic>?),
+    ];
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        DSCard.elevated(
-          padding: const EdgeInsets.all(DSSpacing.lg),
+        PaperRuntimePanel(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '사주 팔자',
+                    style: context.heading4.copyWith(
+                      color: context.colors.textPrimary,
+                    ),
+                  ),
+                  const Spacer(),
+                  Flexible(
+                    child: Text(
+                      _formatBirthMoment(profile),
+                      style: context.bodySmall.copyWith(
+                        color: context.colors.textSecondary,
+                      ),
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: DSSpacing.md),
+              Row(
+                children: [
+                  for (final (label, pillar) in pillars) ...[
+                    Expanded(
+                      child: _PillarTile(
+                        label: label,
+                        value: _pillarLabel(pillar),
+                      ),
+                    ),
+                    if (label != '시주') const SizedBox(width: DSSpacing.sm),
+                  ],
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: DSSpacing.xl),
+        Text(
+          '오행 분석',
+          style: context.heading4.copyWith(
+            color: context.colors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: DSSpacing.md),
+        Row(
+          children: [
+            for (final item in _elementItems(elements)) ...[
+              Expanded(
+                child: Container(
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: item.color,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                ),
+              ),
+              if (item.key != '수') const SizedBox(width: DSSpacing.sm),
+            ],
+          ],
+        ),
+        const SizedBox(height: DSSpacing.sm),
+        Wrap(
+          spacing: DSSpacing.md,
+          runSpacing: DSSpacing.xs,
+          children: [
+            for (final item in _elementItems(elements))
+              _ElementLegend(
+                color: item.color,
+                label: '${item.key}(${item.label})',
+              ),
+          ],
+        ),
+        const SizedBox(height: DSSpacing.xl),
+        PaperRuntimePanel(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '핵심 요약',
+                '성격 특성',
                 style: context.heading4.copyWith(
                   color: context.colors.textPrimary,
                 ),
               ),
               const SizedBox(height: DSSpacing.sm),
               Text(
-                '일주 $dayPillar · 강한 오행 ${sajuData['dominantElement'] ?? '미확인'} · '
-                '보완 오행 ${sajuData['lackingElement'] ?? '미확인'}',
+                personality.isEmpty ? '아직 계산된 설명이 없어요.' : personality,
                 style: context.bodyMedium.copyWith(
                   color: context.colors.textSecondary,
+                  height: 1.6,
                 ),
-              ),
-              if (interpretation.isNotEmpty) ...[
-                const SizedBox(height: DSSpacing.md),
-                Text(
-                  interpretation,
-                  style: context.bodyMedium.copyWith(
-                    color: context.colors.textPrimary,
-                  ),
-                ),
-              ],
-              const SizedBox(height: DSSpacing.lg),
-              DSButton.secondary(
-                text: '다시 계산하기',
-                onPressed: onRefresh,
               ),
             ],
           ),
         ),
+        if (interpretation.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.xl),
+          _TextPanel(title: '핵심 요약', value: interpretation),
+        ],
+        if (career.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.xl),
+          _TextPanel(title: '커리어 가이드', value: career),
+        ],
+        if (relationship.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.xl),
+          _TextPanel(title: '관계 조언', value: relationship),
+        ],
         const SizedBox(height: DSSpacing.xl),
-        DSSectionHeader(title: '오행 밸런스', uppercase: false),
-        DSCard.outlined(
-          padding: const EdgeInsets.all(DSSpacing.lg),
-          child: Column(
-            children: [
-              for (final element in ['목', '화', '토', '금', '수'])
-                Padding(
-                  padding: EdgeInsets.only(
-                    bottom: element == '수' ? 0 : DSSpacing.md,
-                  ),
-                  child: _ElementMeter(
-                    label: element,
-                    value: (elements[element] as num?)?.toInt() ?? 0,
-                  ),
-                ),
-            ],
-          ),
-        ),
-        const SizedBox(height: DSSpacing.xl),
-        _TextSection(
-          title: '성향 분석',
-          value: personality,
-        ),
-        const SizedBox(height: DSSpacing.xl),
-        _TextSection(
-          title: '커리어 가이드',
-          value: career,
-        ),
-        const SizedBox(height: DSSpacing.xl),
-        _TextSection(
-          title: '관계 조언',
-          value: relationship,
+        PaperRuntimeButton(
+          label: '다시 계산하기',
+          onPressed: onRefresh,
+          variant: PaperRuntimeButtonVariant.secondary,
         ),
       ],
     );
   }
 }
 
-class _TextSection extends StatelessWidget {
-  const _TextSection({
+class _PillarTile extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _PillarTile({
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.sm,
+        vertical: DSSpacing.md,
+      ),
+      decoration: BoxDecoration(
+        color: context.colors.backgroundSecondary.withValues(alpha: 0.72),
+        borderRadius: BorderRadius.circular(DSRadius.lg),
+      ),
+      child: Column(
+        children: [
+          Text(
+            label,
+            style: context.labelSmall.copyWith(
+              color: context.colors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: DSSpacing.xs),
+          Text(
+            value,
+            style: context.heading4.copyWith(
+              color: const Color(0xFFE8C697),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ElementLegend extends StatelessWidget {
+  final Color color;
+  final String label;
+
+  const _ElementLegend({
+    required this.color,
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(999),
+          ),
+        ),
+        const SizedBox(width: DSSpacing.xs),
+        Text(
+          label,
+          style: context.labelSmall.copyWith(
+            color: context.colors.textSecondary,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _TextPanel extends StatelessWidget {
+  final String title;
+  final String value;
+
+  const _TextPanel({
     required this.title,
     required this.value,
   });
 
-  final String title;
-  final String value;
-
   @override
   Widget build(BuildContext context) {
-    return DSCard.outlined(
-      padding: const EdgeInsets.all(DSSpacing.lg),
+    return PaperRuntimePanel(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -290,9 +378,10 @@ class _TextSection extends StatelessWidget {
           ),
           const SizedBox(height: DSSpacing.sm),
           Text(
-            value.isEmpty ? '아직 계산된 설명이 없어요.' : value,
+            value,
             style: context.bodyMedium.copyWith(
               color: context.colors.textSecondary,
+              height: 1.6,
             ),
           ),
         ],
@@ -301,53 +390,26 @@ class _TextSection extends StatelessWidget {
   }
 }
 
-class _ElementMeter extends StatelessWidget {
-  const _ElementMeter({
-    required this.label,
-    required this.value,
-  });
-
+class _ElementItem {
+  final String key;
   final String label;
-  final int value;
+  final Color color;
 
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    final normalized = (value / 4).clamp(0.0, 1.0);
+  const _ElementItem({
+    required this.key,
+    required this.label,
+    required this.color,
+  });
+}
 
-    return Row(
-      children: [
-        SizedBox(
-          width: 28,
-          child: Text(
-            label,
-            style: context.bodyMedium.copyWith(
-              color: colors.textPrimary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-        const SizedBox(width: DSSpacing.md),
-        Expanded(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(DSRadius.full),
-            child: LinearProgressIndicator(
-              minHeight: 10,
-              value: normalized,
-              backgroundColor: colors.backgroundSecondary,
-            ),
-          ),
-        ),
-        const SizedBox(width: DSSpacing.md),
-        Text(
-          '$value',
-          style: context.bodyMedium.copyWith(
-            color: colors.textSecondary,
-          ),
-        ),
-      ],
-    );
-  }
+List<_ElementItem> _elementItems(Map<String, dynamic> elements) {
+  return const [
+    _ElementItem(key: '화', label: '火', color: Color(0xFFFF6A6A)),
+    _ElementItem(key: '목', label: '木', color: Color(0xFF57D3CB)),
+    _ElementItem(key: '토', label: '土', color: Color(0xFFFFDF6A)),
+    _ElementItem(key: '금', label: '金', color: Color(0xFFE6E6E6)),
+    _ElementItem(key: '수', label: '水', color: Color(0xFF97B4FF)),
+  ];
 }
 
 String _pillarLabel(Map<String, dynamic>? pillar) {
@@ -361,8 +423,13 @@ String _pillarLabel(Map<String, dynamic>? pillar) {
   return label.isEmpty ? '미확인' : label;
 }
 
-String _formatBirth(DateTime date) {
-  final month = date.month.toString().padLeft(2, '0');
-  final day = date.day.toString().padLeft(2, '0');
-  return '${date.year}.$month.$day';
+String _formatBirthMoment(UserProfile? profile) {
+  if (profile?.birthDate == null) {
+    return '출생 정보 없음';
+  }
+
+  final date = profile!.birthDate!;
+  final time =
+      profile.birthTime?.isNotEmpty == true ? profile.birthTime! : '00:00';
+  return '${date.year}년 ${date.month}월 ${date.day}일 $time';
 }

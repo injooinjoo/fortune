@@ -7,6 +7,7 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/extensions/l10n_extension.dart';
 import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../../../core/widgets/paper_runtime_chrome.dart';
+import '../../../../core/widgets/paper_runtime_surface_kit.dart';
 import '../../../../shared/widgets/smart_image.dart';
 import '../../data/services/character_localizer.dart';
 import '../../domain/models/ai_character.dart';
@@ -99,25 +100,12 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
 
     return Scaffold(
       backgroundColor: colors.background,
-      appBar: AppBar(
-        backgroundColor: colors.background,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () => Navigator.of(context).pop(),
+      appBar: PaperRuntimeAppBar(
+        title: CharacterLocalizer.resolveName(context, _character),
+        trailing: IconButton(
+          icon: const Icon(Icons.more_vert),
+          onPressed: () => _showMoreOptions(context),
         ),
-        title: Text(
-          CharacterLocalizer.resolveName(context, _character),
-          style: context.heading4.copyWith(fontWeight: FontWeight.bold),
-        ),
-        centerTitle: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_horiz),
-            onPressed: () => _showMoreOptions(context),
-          ),
-        ],
       ),
       body: PaperRuntimeBackground(
         applySafeArea: false,
@@ -125,98 +113,91 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
         child: ListView(
           children: [
-            Align(
-              alignment: Alignment.center,
-              child: Column(
-                children: [
-                  if (_character.avatarAsset.isNotEmpty)
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundColor: _character.accentColor,
-                      child: ClipOval(
-                        child: SmartImage(
-                          path: _character.avatarAsset,
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    )
-                  else
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundColor: _character.accentColor,
-                      child: Text(
-                        _character.initial,
-                        style: context.heading2.copyWith(
-                          color: avatarTextColor,
-                          fontWeight: FontWeight.bold,
-                        ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (_character.avatarAsset.isNotEmpty)
+                  CircleAvatar(
+                    radius: 36,
+                    backgroundColor: _character.accentColor,
+                    child: ClipOval(
+                      child: SmartImage(
+                        path: _character.avatarAsset,
+                        width: 72,
+                        height: 72,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                  const SizedBox(height: DSSpacing.md),
-                  PaperRuntimePill(
-                    label: _character.isFortuneExpert ? '운세 전문가' : '스토리 캐릭터',
-                  ),
-                  const SizedBox(height: DSSpacing.md),
-                  Text(
-                    CharacterLocalizer.resolveName(context, _character),
-                    style: context.headingLarge.copyWith(
-                      color: colors.textPrimary,
-                      height: 1.04,
-                      letterSpacing: -0.6,
+                  )
+                else
+                  CircleAvatar(
+                    radius: 36,
+                    backgroundColor: _character.accentColor,
+                    child: Text(
+                      _character.initial,
+                      style: context.heading2.copyWith(
+                        color: avatarTextColor,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: DSSpacing.sm),
-                  Text(
-                    CharacterLocalizer.resolveShortDescription(
-                        context, _character),
-                    style: context.bodyMedium.copyWith(
-                      color: colors.textSecondary,
-                      height: 1.55,
-                    ),
-                    textAlign: TextAlign.center,
+                const SizedBox(width: DSSpacing.lg),
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: _buildStatColumn(
+                          context,
+                          count: '$messageCount',
+                          label: context.l10n.conversation,
+                        ),
+                      ),
+                      Expanded(
+                        child: _buildStatColumn(
+                          context,
+                          count: '${affinity.lovePercent}%',
+                          label: context.l10n.affinity,
+                        ),
+                      ),
+                      Expanded(
+                        child: _buildStatColumn(
+                          context,
+                          count: CharacterLocalizer.getAffinityPhaseName(
+                            context,
+                            affinity.phase,
+                          ),
+                          label: context.l10n.relationship,
+                          isText: true,
+                        ),
+                      ),
+                    ],
                   ),
-                  if (tags.isNotEmpty) ...[
-                    const SizedBox(height: DSSpacing.md),
-                    Wrap(
-                      spacing: DSSpacing.sm,
-                      runSpacing: DSSpacing.sm,
-                      alignment: WrapAlignment.center,
-                      children: tags
-                          .map((tag) => PaperRuntimePill(label: '#$tag'))
-                          .toList(growable: false),
-                    ),
-                  ],
-                ],
-              ),
+                ),
+              ],
             ),
             const SizedBox(height: DSSpacing.xl),
-            PaperRuntimePanel(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildStatColumn(
-                    context,
-                    count: '$messageCount',
-                    label: context.l10n.conversation,
-                  ),
-                  _buildStatColumn(
-                    context,
-                    count: '${affinity.lovePercent}%',
-                    label: context.l10n.affinity,
-                  ),
-                  _buildStatColumn(
-                    context,
-                    count: CharacterLocalizer.getAffinityPhaseName(
-                      context,
-                      affinity.phase,
-                    ),
-                    label: context.l10n.relationship,
-                    isText: true,
-                  ),
-                ],
+            Text(
+              CharacterLocalizer.resolveName(context, _character),
+              style: context.heading3.copyWith(
+                color: colors.textPrimary,
+              ),
+            ),
+            if (tags.isNotEmpty) ...[
+              const SizedBox(height: DSSpacing.xs),
+              Text(
+                tags.map((tag) => '#$tag').join(' '),
+                style: context.bodySmall.copyWith(
+                  color: colors.textSecondary,
+                ),
+              ),
+            ],
+            const SizedBox(height: DSSpacing.sm),
+            Text(
+              CharacterLocalizer.resolveShortDescription(context, _character),
+              style: context.bodyMedium.copyWith(
+                color: colors.textPrimary,
+                height: 1.5,
               ),
             ),
             const SizedBox(height: DSSpacing.lg),
@@ -293,13 +274,6 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
 
   /// 메시지 보내기 버튼
   Widget _buildMessageButton(BuildContext context) {
-    final buttonBackground = _messageButtonBackground(_character.accentColor);
-    final buttonForeground = _bestReadableForeground(
-      background: buttonBackground,
-      primary: DSColors.textPrimary,
-      secondary: DSColors.textPrimaryDark,
-    );
-
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
@@ -320,8 +294,8 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
           style: context.bodyLarge.copyWith(fontWeight: FontWeight.w700),
         ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: buttonBackground,
-          foregroundColor: buttonForeground,
+          backgroundColor: context.colors.textPrimary,
+          foregroundColor: context.colors.background,
           elevation: 0,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
@@ -330,36 +304,6 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
         ),
       ),
     );
-  }
-
-  Color _messageButtonBackground(Color accent) {
-    const minContrast = 4.5;
-    const darkBase = DSColors.textPrimaryDark;
-
-    if (_contrastRatio(accent, DSColors.textPrimary) >= minContrast) {
-      return accent;
-    }
-
-    Color best = accent;
-    double bestContrast = _contrastRatio(accent, DSColors.textPrimary);
-
-    for (int i = 1; i <= 8; i++) {
-      final alpha = (i * 0.08).clamp(0.08, 0.64);
-      final candidate =
-          Color.alphaBlend(darkBase.withValues(alpha: alpha), accent);
-      final contrast = _contrastRatio(candidate, DSColors.textPrimary);
-
-      if (contrast > bestContrast) {
-        best = candidate;
-        bestContrast = contrast;
-      }
-
-      if (contrast >= minContrast) {
-        return candidate;
-      }
-    }
-
-    return best;
   }
 
   Color _bestReadableForeground({

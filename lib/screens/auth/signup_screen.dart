@@ -18,8 +18,8 @@ class SignupScreen extends StatefulWidget {
     this.onAuthenticated,
     this.onBrowseAsGuest,
     this.showBrowseAction = true,
-    this.title = '대화를 바로 시작해볼까요?',
-    this.description = '로그인하면 흐름을 저장하고, 개인화된 인사이트를 더 자연스럽게 이어갈 수 있어요.',
+    this.title = '먼저 둘러보고,\n필요할 때 이어가세요',
+    this.description = '로그인하면 저장과 개인화가 바로 이어지고,\n지금은 둘러보기로 가볍게 시작할 수 있어요.',
     this.eyebrow,
   });
 
@@ -55,8 +55,7 @@ class _SignupScreenState extends State<SignupScreen> {
           children: [
             const SizedBox(height: DSSpacing.xl),
             PaperRuntimePill(
-              label: widget.eyebrow ?? '빠른 시작',
-              icon: Icons.auto_awesome,
+              label: widget.eyebrow ?? 'FIRST RUN / SOFT GATE',
             ),
             SizedBox(height: spacing.lg),
             TweenAnimationBuilder<double>(
@@ -98,10 +97,9 @@ class _SignupScreenState extends State<SignupScreen> {
             Align(
               alignment: Alignment.bottomCenter,
               child: SocialAuthEntryPanel(
-                eyebrow: null,
-                title: widget.title,
-                description: widget.description,
-                showHeader: false,
+                title: '계정을 연결하면',
+                description: '',
+                showHeader: true,
                 showBrowseAction: widget.showBrowseAction,
                 onBrowseAsGuest: _startAsGuest,
                 onAuthenticated:

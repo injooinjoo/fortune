@@ -534,15 +534,19 @@ class _SocialAuthEntryPanelState extends ConsumerState<SocialAuthEntryPanel> {
                 letterSpacing: -0.5,
               ),
             ),
-            const SizedBox(height: DSSpacing.sm),
-            Text(
-              widget.description,
-              style: typography.bodyMedium.copyWith(
-                color: colors.textSecondary,
-                height: 1.6,
+            if (widget.description.isNotEmpty) ...[
+              const SizedBox(height: DSSpacing.sm),
+              Text(
+                widget.description,
+                style: typography.bodyMedium.copyWith(
+                  color: colors.textSecondary,
+                  height: 1.6,
+                ),
               ),
-            ),
-            const SizedBox(height: DSSpacing.lg),
+              const SizedBox(height: DSSpacing.lg),
+            ] else ...[
+              const SizedBox(height: DSSpacing.md),
+            ],
           ],
           if (!Platform.isAndroid) ...[
             SocialLoginBottomSheet._buildSocialButton(

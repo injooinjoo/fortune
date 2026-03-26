@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:fortune/core/design_system/design_system.dart';
+import 'package:fortune/core/widgets/paper_runtime_surface_kit.dart';
 
 class PrivacyPolicyPage extends ConsumerStatefulWidget {
   const PrivacyPolicyPage({super.key});
@@ -15,29 +15,17 @@ class _PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.colors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: false,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: context.colors.textPrimary),
-          onPressed: () => context.pop(),
-        ),
-        title: Text(
-          '개인정보처리방침',
-          style: context.heading3.copyWith(
-            color: context.colors.textPrimary,
-          ),
-        ),
-      ),
+      appBar: const PaperRuntimeAppBar(title: '개인정보처리방침'),
       body: SingleChildScrollView(
-        padding:
-            const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+        padding: const EdgeInsets.fromLTRB(
+          DSSpacing.pageHorizontal,
+          DSSpacing.lg,
+          DSSpacing.pageHorizontal,
+          DSSpacing.xxl,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: DSSpacing.md),
             _buildSection(
               '1. 수집하는 정보',
               'ZPZG 앱은 다음 정보를 수집할 수 있습니다:\n\n'
@@ -83,35 +71,6 @@ class _PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
               '개인정보 관련 문의: privacy@zpzg.co.kr\n'
                   '일반 지원 문의: support@zpzg.co.kr',
             ),
-            const SizedBox(height: DSSpacing.lg),
-            Container(
-              padding: const EdgeInsets.all(DSSpacing.md),
-              decoration: BoxDecoration(
-                color: DSColors.accentDark.withValues(alpha: 0.05),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: DSColors.accentDark.withValues(alpha: 0.1),
-                  width: 1,
-                ),
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.calendar_today,
-                    size: 18,
-                    color: DSColors.accentDark,
-                  ),
-                  const SizedBox(width: DSSpacing.sm),
-                  Text(
-                    '시행일: 2026년 3월 22일',
-                    style: context.labelSmall.copyWith(
-                      color: context.colors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: DSSpacing.xxl),
           ],
         ),
       ),
@@ -120,7 +79,7 @@ class _PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
 
   Widget _buildSection(String title, String content) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: DSSpacing.lg),
+      padding: const EdgeInsets.only(bottom: DSSpacing.xl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -128,13 +87,15 @@ class _PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
             title,
             style: context.bodyLarge.copyWith(
               color: context.colors.textPrimary,
+              fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             content,
-            style: context.labelSmall.copyWith(
+            style: context.bodyMedium.copyWith(
               color: context.colors.textSecondary,
+              height: 1.6,
             ),
           ),
         ],

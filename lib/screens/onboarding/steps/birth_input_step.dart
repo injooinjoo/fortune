@@ -30,7 +30,8 @@ class BirthInputStep extends ConsumerStatefulWidget {
     required this.onBack,
     this.showBackButton = true,
     this.title = '언제 태어나셨어요?',
-    this.description = '더 정확한 인사이트를 위해 알려주세요',
+    this.description =
+        '사주와 인사이트 정확도를 높이기 위해 생년월일을 먼저 받아요. 시간을 모르면 낮 12시 기준으로 이어집니다.',
     this.ctaLabel = '다음',
     this.requireDisplayName = false,
     this.initialDisplayName = '',
@@ -551,7 +552,7 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                                 ),
                                 const SizedBox(width: DSSpacing.sm),
                                 Text(
-                                  '시간을 모르겠어요',
+                                  '태어난 시간을 모르겠어요',
                                   style: typography.bodyMedium.copyWith(
                                     color: colors.textSecondary,
                                   ),

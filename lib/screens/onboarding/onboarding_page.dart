@@ -639,7 +639,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                   initialTime: _birthTime,
                   showBackButton: widget.onCompleted == null,
                   title: '언제 태어나셨어요?',
-                  description: '사주와 인사이트 정확도를 높이기 위해 필요해요.',
+                  description:
+                      '사주와 인사이트 정확도를 높이기 위해 생년월일을 먼저 받아요. 시간을 모르면 낮 12시 기준으로 이어집니다.',
                   ctaLabel: '관심사 고르기',
                   requireDisplayName: _requireDisplayName,
                   initialDisplayName: _name,

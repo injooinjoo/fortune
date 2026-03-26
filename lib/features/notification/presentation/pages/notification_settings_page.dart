@@ -4,6 +4,7 @@ import '../../../../services/notification/fcm_service.dart';
 import '../../../../core/utils/logger.dart';
 import '../../../../core/utils/haptic_utils.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/widgets/paper_runtime_surface_kit.dart';
 
 class NotificationSettingsPage extends ConsumerStatefulWidget {
   const NotificationSettingsPage({super.key});
@@ -42,50 +43,176 @@ class _NotificationSettingsPageState
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final typography = context.typography;
 
     return Scaffold(
-      backgroundColor: colors.backgroundSecondary,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: false,
-        iconTheme: IconThemeData(
-          color: colors.textPrimary,
-        ),
-        title: Text(
-          '알림 설정',
-          style: typography.headingMedium.copyWith(
-            color: colors.textPrimary,
-          ),
-        ),
-      ),
+      backgroundColor: colors.background,
+      appBar: const PaperRuntimeAppBar(title: '알림 설정'),
       body: SingleChildScrollView(
         child: Padding(
-          padding:
-              const EdgeInsets.symmetric(horizontal: DSSpacing.pageHorizontal),
+          padding: const EdgeInsets.fromLTRB(
+            DSSpacing.pageHorizontal,
+            DSSpacing.md,
+            DSSpacing.pageHorizontal,
+            DSSpacing.xxl,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: DSSpacing.md),
-
-              _buildMasterSwitch(context),
-              const SizedBox(height: DSSpacing.xl),
-
-              // Notification Categories
-              _buildSectionTitle(context, '알림 카테고리'),
-              const SizedBox(height: DSSpacing.md),
-              _buildNotificationCategories(context),
-              const SizedBox(height: DSSpacing.xl),
-
-              // Notification Schedule
-              _buildSectionTitle(context, '알림 시간'),
-              const SizedBox(height: DSSpacing.md),
-              _buildNotificationSchedule(context),
-              const SizedBox(height: DSSpacing.xxl),
-
+              _buildCategoryItem(
+                context,
+                title: '일일 운세 알림',
+                subtitle: '매일 아침 오늘의 운세를 알려드려요',
+                value: _settings.enabled && _settings.dailyFortune,
+                onChanged: (value) async {
+                  final messenger = ScaffoldMessenger.of(context);
+                  if (value && !_settings.enabled) {
+                    final granted =
+                        await _fcmService.requestPermissionsIfNeeded();
+                    if (!mounted) return;
+                    if (!granted) {
+                      messenger.showSnackBar(
+                        const SnackBar(
+                          content: Text('알림 권한이 허용되지 않았습니다. 설정 앱에서 변경할 수 있어요.'),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                      return;
+                    }
+                    setState(() {
+                      _settings = _settings.copyWith(
+                        enabled: true,
+                        dailyFortune: value,
+                      );
+                    });
+                  } else {
+                    setState(() {
+                      _settings = _settings.copyWith(dailyFortune: value);
+                    });
+                  }
+                  await _saveSettings();
+                },
+                showDivider: true,
+              ),
+              _buildCategoryItem(
+                context,
+                title: '캐릭터 메시지',
+                subtitle: '캐릭터가 새 메시지를 보냈을 때',
+                value: _settings.enabled && _settings.characterDm,
+                onChanged: (value) async {
+                  final messenger = ScaffoldMessenger.of(context);
+                  if (value && !_settings.enabled) {
+                    final granted =
+                        await _fcmService.requestPermissionsIfNeeded();
+                    if (!mounted) return;
+                    if (!granted) {
+                      messenger.showSnackBar(
+                        const SnackBar(
+                          content: Text('알림 권한이 허용되지 않았습니다. 설정 앱에서 변경할 수 있어요.'),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                      return;
+                    }
+                    setState(() {
+                      _settings = _settings.copyWith(
+                        enabled: true,
+                        characterDm: value,
+                      );
+                    });
+                  } else {
+                    setState(() {
+                      _settings = _settings.copyWith(characterDm: value);
+                    });
+                  }
+                  await _saveSettings();
+                },
+                showDivider: true,
+              ),
+              _buildCategoryItem(
+                context,
+                title: '이벤트 및 프로모션',
+                subtitle: '특별 이벤트와 할인 정보',
+                value: _settings.enabled && _settings.promotion,
+                onChanged: (value) async {
+                  final messenger = ScaffoldMessenger.of(context);
+                  if (value && !_settings.enabled) {
+                    final granted =
+                        await _fcmService.requestPermissionsIfNeeded();
+                    if (!mounted) return;
+                    if (!granted) {
+                      messenger.showSnackBar(
+                        const SnackBar(
+                          content: Text('알림 권한이 허용되지 않았습니다. 설정 앱에서 변경할 수 있어요.'),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                      return;
+                    }
+                    setState(() {
+                      _settings = _settings.copyWith(
+                        enabled: true,
+                        promotion: value,
+                      );
+                    });
+                  } else {
+                    setState(() {
+                      _settings = _settings.copyWith(promotion: value);
+                    });
+                  }
+                  await _saveSettings();
+                },
+                showDivider: true,
+              ),
+              _buildCategoryItem(
+                context,
+                title: '토큰 알림',
+                subtitle: '토큰이 부족할 때 알려드려요',
+                value: _settings.enabled && _settings.tokenAlert,
+                onChanged: (value) async {
+                  final messenger = ScaffoldMessenger.of(context);
+                  if (value && !_settings.enabled) {
+                    final granted =
+                        await _fcmService.requestPermissionsIfNeeded();
+                    if (!mounted) return;
+                    if (!granted) {
+                      messenger.showSnackBar(
+                        const SnackBar(
+                          content: Text('알림 권한이 허용되지 않았습니다. 설정 앱에서 변경할 수 있어요.'),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                      return;
+                    }
+                    setState(() {
+                      _settings = _settings.copyWith(
+                        enabled: true,
+                        tokenAlert: value,
+                      );
+                    });
+                  } else {
+                    setState(() {
+                      _settings = _settings.copyWith(tokenAlert: value);
+                    });
+                  }
+                  await _saveSettings();
+                },
+              ),
+              const SizedBox(height: DSSpacing.lg),
+              Divider(
+                height: 1,
+                thickness: 1,
+                color: colors.border.withValues(alpha: 0.72),
+              ),
+              const SizedBox(height: DSSpacing.sm),
+              PaperRuntimeMenuTile(
+                title: '아침 알림 시간',
+                subtitle: '매일 ${_morningTime.format(context)}',
+                onTap: _settings.enabled && _settings.dailyFortune
+                    ? () => _selectTime(true)
+                    : null,
+              ),
+              const SizedBox(height: DSSpacing.lg),
               _buildTestNotificationButton(context),
-              const SizedBox(height: DSSpacing.xl),
             ],
           ),
         ),
@@ -93,290 +220,21 @@ class _NotificationSettingsPageState
     );
   }
 
-  Widget _buildSectionTitle(BuildContext context, String title) {
-    final colors = context.colors;
-    final typography = context.typography;
-
-    return Text(
-      title,
-      style: typography.labelSmall.copyWith(
-        color: colors.textSecondary,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0.5,
-      ),
-    );
-  }
-
-  Widget _buildMasterSwitch(BuildContext context) {
-    final colors = context.colors;
-    final typography = context.typography;
-
-    return Container(
-      padding: const EdgeInsets.all(DSSpacing.md),
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(DSRadius.md),
-        border: Border.all(
-          color: colors.divider,
-          width: 1,
-        ),
-        boxShadow: context.shadows.sm,
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.notifications_outlined,
-            color: colors.accent,
-            size: 22,
-          ),
-          const SizedBox(width: DSSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '알림 허용',
-                  style: typography.bodySmall.copyWith(
-                    color: colors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '모든 알림을 켜거나 끕니다',
-                  style: typography.labelSmall.copyWith(
-                    color: colors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          DSToggle(
-            value: _settings.enabled,
-            onChanged: (value) async {
-              HapticUtils.lightImpact();
-              var nextEnabled = value;
-
-              if (value) {
-                final granted = await _fcmService.requestPermissionsIfNeeded();
-                if (!context.mounted) return;
-                if (!granted) {
-                  nextEnabled = false;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('알림 권한이 허용되지 않았습니다. 설정 앱에서 변경할 수 있어요.'),
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
-                }
-              }
-
-              setState(() {
-                _settings = _settings.copyWith(enabled: nextEnabled);
-              });
-              await _saveSettings();
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNotificationCategories(BuildContext context) {
-    final colors = context.colors;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(DSRadius.md),
-        border: Border.all(
-          color: colors.divider,
-          width: 1,
-        ),
-        boxShadow: context.shadows.sm,
-      ),
-      child: Column(
-        children: [
-          _buildCategoryItem(
-            context,
-            icon: Icons.sunny,
-            title: '일일 운세',
-            subtitle: '매일 아침 오늘의 운세를 알려드립니다',
-            value: _settings.dailyFortune,
-            onChanged: (value) {
-              setState(() {
-                _settings = _settings.copyWith(dailyFortune: value);
-              });
-              _saveSettings();
-            },
-          ),
-          _buildCategoryItem(
-            context,
-            icon: Icons.toll,
-            title: '토큰 알림',
-            subtitle: '토큰이 부족할 때 알려드립니다',
-            value: _settings.tokenAlert,
-            onChanged: (value) {
-              setState(() {
-                _settings = _settings.copyWith(tokenAlert: value);
-              });
-              _saveSettings();
-            },
-          ),
-          _buildCategoryItem(
-            context,
-            icon: Icons.mark_chat_unread_outlined,
-            title: '캐릭터 메시지',
-            subtitle: '캐릭터가 답장을 보내면 푸시로 알려드립니다',
-            value: _settings.characterDm,
-            onChanged: (value) {
-              setState(() {
-                _settings = _settings.copyWith(characterDm: value);
-              });
-              _saveSettings();
-            },
-          ),
-          _buildCategoryItem(
-            context,
-            icon: Icons.local_offer,
-            title: '이벤트 및 프로모션',
-            subtitle: '특별 이벤트와 할인 소식을 받아보세요',
-            value: _settings.promotion,
-            onChanged: (value) {
-              setState(() {
-                _settings = _settings.copyWith(promotion: value);
-              });
-              _saveSettings();
-            },
-            isLast: true,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNotificationSchedule(BuildContext context) {
-    final colors = context.colors;
-    final typography = context.typography;
-
-    return Container(
-      padding: const EdgeInsets.all(DSSpacing.md),
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(DSRadius.md),
-        border: Border.all(
-          color: colors.divider,
-          width: 1,
-        ),
-        boxShadow: context.shadows.sm,
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.wb_sunny,
-            color: colors.accent,
-            size: 22,
-          ),
-          const SizedBox(width: DSSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '아침 알림 시간',
-                  style: typography.bodySmall.copyWith(
-                    color: colors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '매일 ${_morningTime.format(context)}',
-                  style: typography.labelSmall.copyWith(
-                    color: colors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          TextButton(
-            onPressed: _settings.enabled && _settings.dailyFortune
-                ? () => _selectTime(true)
-                : null,
-            style: TextButton.styleFrom(
-              foregroundColor: colors.accent,
-            ),
-            child: Text(
-              '변경',
-              style: typography.labelSmall.copyWith(
-                color: _settings.enabled && _settings.dailyFortune
-                    ? colors.accent
-                    : colors.textSecondary,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildCategoryItem(
     BuildContext context, {
-    required IconData icon,
     required String title,
     required String subtitle,
     required bool value,
     required ValueChanged<bool> onChanged,
     bool isLast = false,
+    bool showDivider = false,
   }) {
-    final colors = context.colors;
-    final typography = context.typography;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: DSSpacing.pageHorizontal,
-        vertical: DSSpacing.md,
-      ),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: isLast ? Colors.transparent : colors.divider,
-            width: 0.5,
-          ),
-        ),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            size: 22,
-            color: colors.textSecondary,
-          ),
-          const SizedBox(width: DSSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: typography.bodySmall.copyWith(
-                    color: colors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: typography.labelSmall.copyWith(
-                    color: colors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          DSToggle(
-            value: value && _settings.enabled,
-            onChanged: _settings.enabled ? onChanged : null,
-          ),
-        ],
-      ),
+    return PaperRuntimeToggleTile(
+      title: title,
+      subtitle: subtitle,
+      value: value,
+      onChanged: onChanged,
+      showDivider: showDivider || !isLast,
     );
   }
 
