@@ -281,14 +281,6 @@ class SocialLoginBottomSheet {
       }
 
       if (result.isPendingExternalAuth) {
-        messenger.showSnackBar(
-          const SnackBar(
-            content: Text(
-                'Please complete authentication in your browser. The app will resume automatically.\n'
-                '브라우저에서 인증을 완료해 주세요. 완료되면 앱으로 돌아옵니다.'),
-            duration: Duration(seconds: 4),
-          ),
-        );
         return true;
       }
 

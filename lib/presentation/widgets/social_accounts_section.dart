@@ -114,13 +114,9 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
             ),
           );
         }
-      } else if (pendingExternalAuth && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('브라우저에서 인증을 완료해 주세요. 완료되면 앱으로 돌아옵니다.'),
-            duration: Duration(seconds: 4),
-          ),
-        );
+      } else if (pendingExternalAuth) {
+        Logger.info(
+            'Social account linking handed off to external auth: $provider');
       } else if (cancelled) {
         Logger.info('Social account linking cancelled: $provider');
       }

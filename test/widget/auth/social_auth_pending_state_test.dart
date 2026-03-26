@@ -69,7 +69,7 @@ void main() {
   });
 
   testWidgets(
-      'SocialAuthEntryPanel keeps pending Apple OAuth as non-error state',
+      'SocialAuthEntryPanel keeps pending Apple OAuth silent and non-error',
       (tester) async {
     final service = _FakeSocialAuthService(
       appleResult: const SocialAuthAttemptResult.pendingExternalAuth(),
@@ -102,12 +102,12 @@ void main() {
 
     expect(
       find.textContaining('브라우저에서 인증을 완료해 주세요. 완료되면 앱으로 돌아옵니다.'),
-      findsOneWidget,
+      findsNothing,
     );
     expect(find.textContaining('로그인 실패'), findsNothing);
   });
 
-  testWidgets('SocialAccountsSection shows pending message for Apple OAuth',
+  testWidgets('SocialAccountsSection keeps pending Apple OAuth silent',
       (tester) async {
     final service = _FakeSocialAuthService(
       appleResult: const SocialAuthAttemptResult.pendingExternalAuth(),
@@ -137,7 +137,7 @@ void main() {
 
     expect(
       find.textContaining('브라우저에서 인증을 완료해 주세요. 완료되면 앱으로 돌아옵니다.'),
-      findsOneWidget,
+      findsNothing,
     );
     expect(find.textContaining('계정 연결에 실패했습니다'), findsNothing);
   });
