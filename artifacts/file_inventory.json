@@ -18616,6 +18616,7 @@
       "path": "assets/images/zpzg_logo_light.webp",
       "referenced_by": [
         "lib/core/constants/asset_pack_config.dart",
+        "lib/screens/auth/signup_screen.dart",
         "lib/screens/splash_screen.dart"
       ],
       "runtime_reachable": true,
@@ -20944,6 +20945,7 @@
         "lib/features/character/presentation/pages/character_onboarding_page.dart",
         "lib/features/character/presentation/pages/character_profile_page.dart",
         "lib/features/character/presentation/pages/friend_creation_pages.dart",
+        "lib/features/character/presentation/pages/swipe_home_shell.dart",
         "lib/features/character/presentation/utils/character_chat_surface_style.dart",
         "lib/features/character/presentation/utils/character_chat_theme.dart",
         "lib/features/character/presentation/widgets/character_choice_widget.dart",
@@ -21007,6 +21009,8 @@
         "lib/screens/onboarding/onboarding_page.dart",
         "lib/screens/onboarding/steps/birth_input_step.dart",
         "lib/screens/onboarding/steps/name_input_step.dart",
+        "lib/screens/onboarding/widgets/interest_selection_step.dart",
+        "lib/screens/onboarding/widgets/personalized_handoff_step.dart",
         "lib/screens/profile/account_deletion_page.dart",
         "lib/screens/profile/profile_edit_page.dart",
         "lib/screens/profile/profile_relationships_page.dart",
@@ -22058,6 +22062,7 @@
         "docs/deployment/review/KAN_OPEN_ISSUES_EVIDENCE_MATRIX_2026-03-22.md",
         "integration_test/test_app.dart",
         "lib/features/character/presentation/pages/character_list_panel.dart",
+        "lib/features/character/presentation/pages/swipe_home_shell.dart",
         "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
         "lib/main.dart",
         "lib/presentation/widgets/social_login_bottom_sheet.dart",
@@ -23839,19 +23844,21 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
       "path": "lib/features/character/presentation/pages/character_onboarding_page.dart",
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
-        "lib/features/character/presentation/pages/swipe_home_shell.dart"
+        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -23995,6 +24002,7 @@
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/character/presentation/providers/sorted_characters_provider.dart",
         "lib/features/character/presentation/utils/chat_catalog_preview.dart",
+        "lib/features/character/presentation/utils/onboarding_interest_catalog.dart",
         "lib/screens/profile/providers/character_relationships_provider.dart"
       ],
       "runtime_reachable": true,
@@ -24224,6 +24232,23 @@
         "lib/features/character/presentation/widgets/fortune_bodies/wealth_fortune_body.dart",
         "lib/features/character/presentation/widgets/haneul_fortune_result_widget.dart",
         "test/unit/features/character/presentation/utils/fortune_key_localizer_test.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
+      "path": "lib/features/character/presentation/utils/onboarding_interest_catalog.dart",
+      "referenced_by": [
+        "lib/features/character/presentation/pages/character_list_panel.dart",
+        "lib/screens/onboarding/onboarding_page.dart",
+        "lib/screens/onboarding/widgets/interest_selection_step.dart",
+        "lib/screens/onboarding/widgets/personalized_handoff_step.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26152,6 +26177,21 @@
       "dirty": false,
       "kind": "dart",
       "notes": [],
+      "path": "lib/models/unified_onboarding_progress.dart",
+      "referenced_by": [
+        "lib/screens/onboarding/onboarding_page.dart",
+        "lib/services/storage_service.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
       "path": "lib/models/user_profile.dart",
       "referenced_by": [
         "lib/data/models/user_profile.dart",
@@ -26485,7 +26525,8 @@
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "lib/presentation/providers/providers.dart"
+        "lib/presentation/providers/providers.dart",
+        "lib/screens/onboarding/onboarding_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26578,6 +26619,7 @@
         "docs/deployment/review/KAN_OPEN_ISSUES_EVIDENCE_MATRIX_2026-03-22.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/utils/profile_avatar_tap_handler.dart",
+        "lib/screens/auth/signup_screen.dart",
         "lib/screens/onboarding/steps/name_input_step.dart",
         "test/widget/auth/social_login_bottom_sheet_test.dart"
       ],
@@ -26691,7 +26733,9 @@
       "path": "lib/screens/auth/signup_screen.dart",
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
-        "lib/routes/routes/auth_routes.dart"
+        "lib/features/character/presentation/pages/swipe_home_shell.dart",
+        "lib/routes/routes/auth_routes.dart",
+        "lib/screens/onboarding/onboarding_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26708,6 +26752,7 @@
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
+        "lib/features/character/presentation/pages/swipe_home_shell.dart",
         "lib/routes/route_config.dart",
         "lib/routes/routes/auth_routes.dart"
       ],
@@ -26734,17 +26779,46 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/screens/onboarding/steps/name_input_step.dart",
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
-        "lib/screens/onboarding/onboarding_page.dart",
         "test/widget/auth/social_auth_pending_state_test.dart",
         "test/widget/onboarding/name_input_step_test.dart"
+      ],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
+      "path": "lib/screens/onboarding/widgets/interest_selection_step.dart",
+      "referenced_by": [
+        "lib/screens/onboarding/onboarding_page.dart"
+      ],
+      "runtime_reachable": true,
+      "test_only": false,
+      "usage_status": "runtime_used"
+    },
+    {
+      "area": "lib",
+      "candidate_action": "keep",
+      "dirty": false,
+      "kind": "dart",
+      "notes": [],
+      "path": "lib/screens/onboarding/widgets/personalized_handoff_step.dart",
+      "referenced_by": [
+        "lib/screens/onboarding/onboarding_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -27332,7 +27406,9 @@
         "lib/presentation/providers/fortune_gauge_provider.dart",
         "lib/presentation/providers/providers.dart",
         "lib/presentation/providers/user_statistics_provider.dart",
+        "lib/presentation/widgets/social_login_bottom_sheet.dart",
         "lib/screens/auth/callback_page.dart",
+        "lib/screens/auth/signup_screen.dart",
         "lib/screens/onboarding/onboarding_page.dart",
         "lib/screens/onboarding/steps/name_input_step.dart",
         "lib/screens/splash_screen.dart",
@@ -33250,24 +33326,24 @@
       "assets": 1231,
       "docs": 96,
       "integration_test": 8,
-      "lib": 436,
+      "lib": 440,
       "scripts": 72,
       "supabase": 207,
       "test": 83
     },
     "counts_by_candidate_action": {
-      "keep": 727,
+      "keep": 729,
       "keep_generated": 28,
       "manual_review": 978,
       "phase1_remove_candidate": 12,
-      "phase2_review_candidate": 384,
+      "phase2_review_candidate": 386,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
-      "doc_only": 105,
+      "doc_only": 106,
       "generated_excluded": 28,
-      "runtime_used": 727,
-      "test_only": 92,
+      "runtime_used": 729,
+      "test_only": 93,
       "tooling_only": 187,
       "unreferenced": 994
     },
@@ -33422,9 +33498,9 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 367,
-    "lib_dart_total": 433,
-    "lib_dart_zero_incoming": 25,
+    "lib_dart_runtime_reachable": 369,
+    "lib_dart_total": 437,
+    "lib_dart_zero_incoming": 26,
     "missing_function_refs": [
       "--all",
       "account-deletion",
@@ -33531,7 +33607,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2133,
+    "total_files": 2137,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
