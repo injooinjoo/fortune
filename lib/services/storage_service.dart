@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
+import '../models/unified_onboarding_progress.dart';
+
 class StorageService {
   static const String _userProfileKey = 'userProfile';
   static const String _activeProfileOverrideKey = 'activeProfileOverride';
@@ -20,6 +22,8 @@ class StorageService {
       'active_secondary_profile_id';
   static const String _characterOnboardingKey =
       'character_onboarding_completed';
+  static const String _unifiedOnboardingProgressKey =
+      'unified_onboarding_progress_v1';
   static const String _pendingChatAuthIntentKey = 'pending_chat_auth_intent';
   static const String _termsAcceptedKey = 'terms_accepted_v1';
   static const String _privacyPolicyAcceptedKey = 'privacy_policy_accepted_v1';
@@ -573,12 +577,77 @@ class StorageService {
   // Character onboarding management
   Future<bool> isCharacterOnboardingCompleted() async {
     final prefs = await SharedPreferences.getInstance();
+    final unified = await getUnifiedOnboardingProgress();
+    if (unified.firstRunHandoffSeen) {
+      return true;
+    }
     return prefs.getBool(_characterOnboardingKey) ?? false;
   }
 
   Future<void> setCharacterOnboardingCompleted() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_characterOnboardingKey, true);
+    await updateUnifiedOnboardingProgress(firstRunHandoffSeen: true);
     debugPrint('[StorageService] Character onboarding completed');
+  }
+
+  Future<UnifiedOnboardingProgress> getUnifiedOnboardingProgress() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_unifiedOnboardingProgressKey);
+    if (raw == null || raw.isEmpty) {
+      return UnifiedOnboardingProgress.empty;
+    }
+
+    try {
+      final decoded = json.decode(raw);
+      if (decoded is Map<String, dynamic>) {
+        return UnifiedOnboardingProgress.fromJson(decoded);
+      }
+      if (decoded is Map) {
+        return UnifiedOnboardingProgress.fromJson(
+          decoded.map((key, value) => MapEntry(key.toString(), value)),
+        );
+      }
+    } catch (error) {
+      debugPrint(
+          '[StorageService] Failed to decode unified onboarding progress: $error');
+      await prefs.remove(_unifiedOnboardingProgressKey);
+    }
+
+    return UnifiedOnboardingProgress.empty;
+  }
+
+  Future<void> saveUnifiedOnboardingProgress(
+    UnifiedOnboardingProgress progress,
+  ) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+      _unifiedOnboardingProgressKey,
+      json.encode(progress.toJson()),
+    );
+  }
+
+  Future<void> updateUnifiedOnboardingProgress({
+    bool? softGateCompleted,
+    bool? authCompleted,
+    bool? birthCompleted,
+    bool? interestCompleted,
+    bool? firstRunHandoffSeen,
+  }) async {
+    final current = await getUnifiedOnboardingProgress();
+    await saveUnifiedOnboardingProgress(
+      current.copyWith(
+        softGateCompleted: softGateCompleted,
+        authCompleted: authCompleted,
+        birthCompleted: birthCompleted,
+        interestCompleted: interestCompleted,
+        firstRunHandoffSeen: firstRunHandoffSeen,
+      ),
+    );
+  }
+
+  Future<void> clearUnifiedOnboardingProgress() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_unifiedOnboardingProgressKey);
   }
 }

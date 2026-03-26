@@ -15,6 +15,7 @@ import '../../domain/models/character_chat_message.dart';
 import '../../domain/models/character_chat_state.dart';
 import '../utils/character_accent_palette.dart';
 import '../utils/chat_catalog_preview.dart';
+import '../utils/onboarding_interest_catalog.dart';
 import '../utils/profile_avatar_tap_handler.dart';
 import '../providers/character_chat_provider.dart';
 import '../providers/character_provider.dart';
@@ -133,6 +134,28 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
     _lastScrollOffset = offset;
   }
 
+  Future<void> _handleStarterOptionTap(
+    OnboardingInterestOption option,
+  ) async {
+    HapticUtils.lightImpact();
+    _setTopChromeVisibility(true);
+    ref.read(characterListTabProvider.notifier).state = option.targetTab;
+
+    if (option.targetTab == CharacterListTab.story) {
+      return;
+    }
+
+    final targetCharacter = option.expertId != null
+        ? ref.read(characterByIdProvider(option.expertId!))
+        : (option.specialtyCategory != null
+            ? ref.read(categoryExpertProvider(option.specialtyCategory!))
+            : null);
+
+    if (targetCharacter != null) {
+      widget.onCharacterSelected(targetCharacter);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
@@ -149,6 +172,19 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
         : (currentTab == CharacterListTab.story
             ? ref.watch(sortedStoryCharactersProvider)
             : ref.watch(sortedFortuneCharactersProvider));
+    final userProfile = isCatalogPreview
+        ? null
+        : ref.watch(userProfileNotifierProvider).valueOrNull;
+    final starterOptions = isCatalogPreview
+        ? const <OnboardingInterestOption>[]
+        : selectedOnboardingInterestIds(
+            userProfile?.fortunePreferences?.categoryWeights,
+          )
+            .map((id) => onboardingInterestById[id])
+            .whereType<OnboardingInterestOption>()
+            .take(3)
+            .toList(growable: false);
+    final showsStarterSection = starterOptions.isNotEmpty;
 
     return GestureDetector(
       onHorizontalDragEnd: widget.isOverlay
@@ -233,16 +269,25 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
               Expanded(
                 child: ListView.builder(
                   controller: _listScrollController,
-                  itemCount: characters.length,
+                  itemCount: characters.length + (showsStarterSection ? 1 : 0),
                   itemBuilder: (context, index) {
-                    final character = characters[index];
+                    if (showsStarterSection && index == 0) {
+                      return _PersonalizedStarterSection(
+                        options: starterOptions,
+                        onOptionTap: _handleStarterOptionTap,
+                      );
+                    }
+
+                    final characterIndex =
+                        showsStarterSection ? index - 1 : index;
+                    final character = characters[characterIndex];
                     return _CharacterListItem(
                       character: character,
                       previewChatState: widget.catalogPreview != null
                           ? catalogPreviewListState(
                               preview: widget.catalogPreview!,
                               character: character,
-                              index: index,
+                              index: characterIndex,
                             )
                           : null,
                       onTap: isCatalogPreview
@@ -348,6 +393,149 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
       ref.read(friendCreationDraftProvider.notifier).reset();
       context.push('/friends/new/basic');
     }
+  }
+}
+
+class _PersonalizedStarterSection extends StatelessWidget {
+  final List<OnboardingInterestOption> options;
+  final ValueChanged<OnboardingInterestOption> onOptionTap;
+
+  const _PersonalizedStarterSection({
+    required this.options,
+    required this.onOptionTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(context.radius.xl),
+          border: Border.all(
+            color: colors.border.withValues(alpha: 0.72),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '맞춤 시작점',
+              style: typography.headingSmall.copyWith(
+                color: colors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              '방금 고른 관심사를 기준으로 바로 시작할 수 있는 흐름을 모아봤어요.',
+              style: typography.bodySmall.copyWith(
+                color: colors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: 14),
+            for (final option in options) ...[
+              _StarterOptionCard(
+                option: option,
+                onTap: () => onOptionTap(option),
+              ),
+              if (option != options.last) const SizedBox(height: 10),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _StarterOptionCard extends StatelessWidget {
+  final OnboardingInterestOption option;
+  final VoidCallback onTap;
+
+  const _StarterOptionCard({
+    required this.option,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+    final isStory = option.targetTab == CharacterListTab.story;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(context.radius.lg),
+        onTap: onTap,
+        child: Ink(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+          decoration: BoxDecoration(
+            color: colors.backgroundSecondary,
+            borderRadius: BorderRadius.circular(context.radius.lg),
+            border: Border.all(
+              color: colors.border.withValues(alpha: 0.68),
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: colors.surface,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isStory ? Icons.favorite_outline : Icons.auto_awesome,
+                  color: colors.textPrimary,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      option.label,
+                      style: typography.labelLarge.copyWith(
+                        color: colors.textPrimary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      option.subtitle,
+                      style: typography.bodySmall.copyWith(
+                        color: colors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                isStory ? '스토리' : '전문가',
+                style: typography.labelSmall.copyWith(
+                  color: colors.textSecondary,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 14,
+                color: colors.textSecondary,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 

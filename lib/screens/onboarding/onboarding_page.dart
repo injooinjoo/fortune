@@ -2,22 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../../constants/fortune_constants.dart';
-import '../../models/user_profile.dart';
-import '../../services/storage_service.dart';
-import '../../utils/date_utils.dart';
 import '../../core/design_system/design_system.dart';
 import '../../core/services/fortune_haptic_service.dart';
+import '../../models/unified_onboarding_progress.dart';
+import '../../models/user_profile.dart';
 import '../../presentation/providers/token_provider.dart';
-import 'steps/name_input_step.dart';
+import '../../presentation/providers/user_profile_notifier.dart';
+import '../../services/storage_service.dart';
+import '../../utils/date_utils.dart';
+import '../auth/signup_screen.dart';
 import 'steps/birth_input_step.dart';
+import 'widgets/interest_selection_step.dart';
+import 'widgets/personalized_handoff_step.dart';
+import '../../features/character/presentation/utils/onboarding_interest_catalog.dart';
 
 class OnboardingPage extends ConsumerStatefulWidget {
   final bool isPartialCompletion;
+  final VoidCallback? onCompleted;
+  final bool showGuestBrowseAction;
 
   const OnboardingPage({
     super.key,
     this.isPartialCompletion = false,
+    this.onCompleted,
+    this.showGuestBrowseAction = true,
   });
 
   @override
@@ -30,14 +40,19 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
 
   int _currentStep = 0;
   User? _currentUser;
-  bool _isSocialLogin = false;
+  UserProfile? _existingProfile;
 
-  // Form values
   String _name = '';
   DateTime? _birthDate;
   TimeOfDay? _birthTime;
+  List<String> _selectedInterestIds = const [];
 
+  bool _requireDisplayName = false;
   bool _isLoadingProfile = true;
+  bool _isCompletingHandoff = false;
+  bool _didScheduleAutoHandoff = false;
+
+  UnifiedOnboardingProgress _progress = UnifiedOnboardingProgress.empty;
 
   @override
   void initState() {
@@ -46,132 +61,127 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   }
 
   Future<void> _initializeUser() async {
+    if (mounted) {
+      setState(() {
+        _isLoadingProfile = true;
+        _didScheduleAutoHandoff = false;
+        _isCompletingHandoff = false;
+      });
+    }
+
     final session = Supabase.instance.client.auth.currentSession;
     _currentUser = session?.user;
+    _progress = await _storageService.getUnifiedOnboardingProgress();
 
-    // Load existing profile if available
+    if (_currentUser == null) {
+      if (mounted) {
+        setState(() {
+          _isLoadingProfile = false;
+        });
+      }
+      return;
+    }
+
+    Map<String, dynamic>? existingProfileJson;
+
     try {
-      // First try to get profile from database for authenticated users
-      Map<String, dynamic>? existingProfile;
+      try {
+        existingProfileJson = await Supabase.instance.client
+            .from('user_profiles')
+            .select()
+            .eq('id', _currentUser!.id)
+            .maybeSingle();
+      } catch (error) {
+        debugPrint('Error loading onboarding profile from database: $error');
+      }
 
-      if (_currentUser != null) {
-        try {
-          // DB에서 1회만 시도 (재시도 제거로 로딩 속도 개선)
-          final dbProfile = await Supabase.instance.client
-              .from('user_profiles')
-              .select()
-              .eq('id', _currentUser!.id)
-              .maybeSingle();
+      existingProfileJson ??= await _storageService.getUserProfile();
+      if (existingProfileJson != null) {
+        _existingProfile = UserProfile.fromJson(existingProfileJson);
+      }
 
-          if (dbProfile != null) {
-            existingProfile = dbProfile;
-          }
-        } catch (e) {
-          debugPrint('Error loading profile from database: $e');
+      final resolvedName = _resolveInitialName(existingProfileJson);
+      final resolvedBirthDate = _parseBirthDate(existingProfileJson);
+      final resolvedBirthTime = _parseBirthTime(existingProfileJson);
+      final resolvedInterestIds = _parseSelectedInterests(existingProfileJson);
+
+      final birthCompleted = resolvedBirthDate != null;
+      final interestCompleted = resolvedInterestIds.isNotEmpty;
+      final legacyCompleted =
+          (existingProfileJson?['onboarding_completed'] == true) ||
+              await _storageService.isCharacterOnboardingCompleted();
+
+      var targetStep = 0;
+      var nextProgress = _progress.copyWith(
+        authCompleted: true,
+        birthCompleted: birthCompleted,
+        interestCompleted: interestCompleted,
+      );
+
+      if (legacyCompleted) {
+        nextProgress = nextProgress.copyWith(
+          softGateCompleted: true,
+          authCompleted: true,
+          birthCompleted: true,
+          interestCompleted: true,
+          firstRunHandoffSeen: true,
+        );
+      } else if (birthCompleted && interestCompleted) {
+        targetStep = nextProgress.firstRunHandoffSeen ? 1 : 2;
+      } else if (birthCompleted) {
+        targetStep = 1;
+      }
+
+      await _storageService.saveUnifiedOnboardingProgress(nextProgress);
+
+      if (legacyCompleted) {
+        if (!mounted) {
+          return;
         }
-      }
 
-      // Fall back to local storage if no database profile
-      existingProfile ??= await _storageService.getUserProfile();
-
-      if (existingProfile != null) {
-        setState(() {
-          // Pre-fill name
-          // Kakao 사용자의 경우 email.split('@')[0]를 사용하지 않음
-          String defaultName = '';
-          if (_currentUser?.email != null &&
-              !_currentUser!.email!.contains('kakao_')) {
-            defaultName = _currentUser!.email!.split('@')[0];
-          }
-
-          _name = existingProfile!['name'] ??
-              _currentUser?.userMetadata?['full_name'] ??
-              _currentUser?.userMetadata?['name'] ??
-              defaultName;
-
-          // Pre-fill birth date if available
-          if (existingProfile['birth_date'] != null) {
-            try {
-              _birthDate = DateTime.parse(existingProfile['birth_date']);
-            } catch (e) {
-              debugPrint('Error parsing birth date: $e');
-            }
-          }
-
-          // Pre-fill birth time if available
-          if (existingProfile['birth_time'] != null) {
-            try {
-              final timeStr = existingProfile['birth_time'];
-              final parts = timeStr.split(':');
-              if (parts.length >= 2) {
-                _birthTime = TimeOfDay(
-                  hour: int.parse(parts[0]),
-                  minute: int.parse(parts[1]),
-                );
-              }
-            } catch (e) {
-              debugPrint('Error parsing birth time: $e');
-            }
-          }
-        });
-      } else if (_currentUser != null) {
-        // No existing profile, just use auth metadata
-        setState(() {
-          // Kakao 사용자의 경우 email.split('@')[0]를 사용하지 않음
-          String defaultName = '';
-          if (_currentUser?.email != null &&
-              !_currentUser!.email!.contains('kakao_')) {
-            defaultName = _currentUser!.email!.split('@')[0];
-          }
-
-          _name = _currentUser?.userMetadata?['full_name'] ??
-              _currentUser?.userMetadata?['name'] ??
-              defaultName;
-        });
-      }
-
-      // Check if user has a real name (not default/empty)
-      final provider = _currentUser?.appMetadata['provider'] as String?;
-      _isSocialLogin = provider == 'apple' || provider == 'google';
-
-      // List of default/placeholder names that should trigger name input step
-      final defaultNames = ['사용자', 'Apple 사용자', 'Google 사용자', 'user'];
-      final hasRealName = _name.isNotEmpty &&
-          !defaultNames.contains(_name) &&
-          !_name.startsWith('kakao_');
-
-      debugPrint(
-          '📱 [Onboarding] Provider: $provider, isSocialLogin: $_isSocialLogin');
-      debugPrint(
-          '📱 [Onboarding] Current name: $_name, hasRealName: $hasRealName');
-
-      // 약관 동의 여부 확인 - 미동의 시 Step 1 강제 표시 (Guideline 5.1.1)
-      final policiesAccepted =
-          await _storageService.hasAcceptedRequiredPolicies();
-
-      // Only skip name step if user already has a real name and accepted both
-      // required policies. Missing consent is handled in partial onboarding.
-      // For social login users without real name: show name step with skip option
-      if (hasRealName && policiesAccepted && mounted) {
-        debugPrint(
-            '📱 [Onboarding] Name exists + required policies accepted, skipping to birth date');
-
-        // Wait for widget to build, then skip to birth date step
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted && _currentStep == 0) {
-            setState(() {
-              _currentStep = 1;
-            });
-            _pageController.jumpToPage(1);
+          if (!mounted) {
+            return;
+          }
+
+          if (widget.onCompleted != null) {
+            widget.onCompleted!();
+            return;
+          }
+
+          context.go('/chat');
+        });
+        return;
+      }
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _name = resolvedName;
+        _birthDate = resolvedBirthDate;
+        _birthTime = resolvedBirthTime;
+        _selectedInterestIds = resolvedInterestIds;
+        _requireDisplayName = !_hasRealName(resolvedName);
+        _currentStep = targetStep;
+        _progress = nextProgress;
+        _isLoadingProfile = false;
+      });
+
+      if (targetStep > 0) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) {
+            return;
+          }
+          _pageController.jumpToPage(targetStep);
+          if (targetStep == 2) {
+            _scheduleHandoffCompletion();
           }
         });
-      } else if (hasRealName && !policiesAccepted) {
-        debugPrint(
-            '📱 [Onboarding] Name exists but required policies NOT accepted → showing consent step');
       }
-    } catch (e) {
-      debugPrint('Error initializing user: $e');
-    } finally {
+    } catch (error) {
+      debugPrint('Error initializing onboarding: $error');
       if (mounted) {
         setState(() {
           _isLoadingProfile = false;
@@ -180,52 +190,223 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     }
   }
 
-  void _nextStep() {
-    if (_currentStep == 0 && _name.isNotEmpty) {
-      setState(() {
-        _currentStep = 1;
-      });
-      // 페이지 전환 햅틱
-      ref.read(fortuneHapticServiceProvider).pageSnap();
-      _pageController.nextPage(
-          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-    } else if (_currentStep == 1 && _birthDate != null) {
-      // Allow submission even if birth time is not provided (default to 12:00)
-      _birthTime ??= const TimeOfDay(hour: 12, minute: 0);
-      // 온보딩 완료 햅틱
-      ref.read(fortuneHapticServiceProvider).sectionComplete();
-      _handleSubmit();
+  String _resolveInitialName(Map<String, dynamic>? existingProfileJson) {
+    final existingName = existingProfileJson?['name']?.toString().trim() ?? '';
+    if (_hasRealName(existingName)) {
+      return existingName;
+    }
+
+    final metadataName =
+        (_currentUser?.userMetadata?['full_name'] as String?)?.trim() ??
+            (_currentUser?.userMetadata?['name'] as String?)?.trim() ??
+            '';
+    if (_hasRealName(metadataName)) {
+      return metadataName;
+    }
+
+    final email = _currentUser?.email ?? '';
+    if (email.isNotEmpty && !email.contains('kakao_')) {
+      return email.split('@').first.trim();
+    }
+
+    return '';
+  }
+
+  DateTime? _parseBirthDate(Map<String, dynamic>? existingProfileJson) {
+    final raw = existingProfileJson?['birth_date'];
+    if (raw == null) {
+      return null;
+    }
+    try {
+      return DateTime.parse(raw.toString());
+    } catch (_) {
+      return null;
     }
   }
 
-  void _previousStep() {
-    if (_currentStep > 0) {
-      setState(() {
-        _currentStep--;
-      });
-      _pageController.previousPage(
-          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+  TimeOfDay? _parseBirthTime(Map<String, dynamic>? existingProfileJson) {
+    final raw = existingProfileJson?['birth_time']?.toString().trim();
+    if (raw == null || raw.isEmpty) {
+      return null;
     }
+
+    final parts = raw.split(':');
+    if (parts.length < 2) {
+      return null;
+    }
+
+    final hour = int.tryParse(parts[0]);
+    final minute = int.tryParse(parts[1]);
+    if (hour == null || minute == null) {
+      return null;
+    }
+
+    return TimeOfDay(hour: hour, minute: minute);
+  }
+
+  List<String> _parseSelectedInterests(
+      Map<String, dynamic>? existingProfileJson) {
+    final preferences = _asMap(existingProfileJson?['fortune_preferences']);
+    final categoryWeights = _asMap(preferences?['category_weights']);
+    if (categoryWeights == null) {
+      return const [];
+    }
+
+    final parsed = <String, double>{};
+    for (final entry in categoryWeights.entries) {
+      final numeric = entry.value;
+      if (numeric is num) {
+        parsed[entry.key] = numeric.toDouble();
+      }
+    }
+    return selectedOnboardingInterestIds(parsed);
+  }
+
+  Map<String, dynamic>? _asMap(dynamic raw) {
+    if (raw is Map<String, dynamic>) {
+      return raw;
+    }
+    if (raw is Map) {
+      return raw.map((key, value) => MapEntry(key.toString(), value));
+    }
+    return null;
+  }
+
+  bool _hasRealName(String value) {
+    final normalized = value.trim();
+    if (normalized.isEmpty) {
+      return false;
+    }
+
+    const placeholders = {
+      '사용자',
+      'Apple 사용자',
+      'Google 사용자',
+      'user',
+    };
+
+    return !placeholders.contains(normalized) &&
+        !normalized.startsWith('kakao_');
+  }
+
+  String _resolvedDisplayName() {
+    if (_name.trim().isNotEmpty) {
+      return _name.trim();
+    }
+
+    final metadataName =
+        (_currentUser?.userMetadata?['full_name'] as String?)?.trim() ??
+            (_currentUser?.userMetadata?['name'] as String?)?.trim() ??
+            '';
+    if (_hasRealName(metadataName)) {
+      return metadataName;
+    }
+
+    final email = _currentUser?.email ?? '';
+    if (email.isNotEmpty && !email.contains('kakao_')) {
+      return email.split('@').first.trim();
+    }
+
+    return '';
+  }
+
+  Future<void> _nextFromBirth() async {
+    if (_birthDate == null) {
+      return;
+    }
+
+    _birthTime ??= const TimeOfDay(hour: 12, minute: 0);
+    ref.read(fortuneHapticServiceProvider).pageSnap();
+    await _storageService.updateUnifiedOnboardingProgress(
+      authCompleted: _currentUser != null,
+      birthCompleted: true,
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _currentStep = 1;
+    });
+    await _pageController.animateToPage(
+      1,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  Future<void> _goBackToBirth() async {
+    setState(() {
+      _currentStep = 0;
+    });
+    await _pageController.animateToPage(
+      0,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  Future<void> _handleGuestBrowse() async {
+    await _storageService.setGuestMode(true);
+    await _storageService.updateUnifiedOnboardingProgress(
+      softGateCompleted: true,
+    );
+
+    if (widget.onCompleted != null) {
+      widget.onCompleted!();
+      return;
+    }
+
+    if (mounted) {
+      context.go('/chat');
+    }
+  }
+
+  void _scheduleHandoffCompletion() {
+    if (_didScheduleAutoHandoff) {
+      return;
+    }
+
+    _didScheduleAutoHandoff = true;
+    Future.delayed(const Duration(milliseconds: 1600), () {
+      if (!mounted) {
+        return;
+      }
+      _completeHandoff();
+    });
+  }
+
+  Future<void> _moveToHandoff() async {
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _currentStep = 2;
+    });
+
+    await _pageController.animateToPage(
+      2,
+      duration: const Duration(milliseconds: 320),
+      curve: Curves.easeInOut,
+    );
+    _scheduleHandoffCompletion();
   }
 
   /// 프로필 완성 보너스 청구 (백그라운드)
   void _claimProfileCompletionBonus() {
-    // unawaited - 백그라운드에서 실행
     Future(() async {
       try {
-        debugPrint('🎁 [백그라운드] 프로필 완성 보너스 청구 중...');
         final result = await ref
             .read(tokenProvider.notifier)
             .claimProfileCompletionBonus();
 
         if (result['bonusGranted'] == true) {
           debugPrint('🎁 프로필 완성 보너스 ${result['bonusAmount']}토큰 지급 완료!');
-        } else {
-          debugPrint('📌 프로필 완성 보너스: ${result['message']}');
         }
-      } catch (e) {
-        debugPrint('❌ 프로필 완성 보너스 청구 오류: $e');
-        // 실패해도 온보딩 진행에는 영향 없음
+      } catch (error) {
+        debugPrint('❌ 프로필 완성 보너스 청구 오류: $error');
       }
     });
   }
@@ -236,120 +417,169 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     required String birthDate,
     required String birthTime,
   }) {
-    // unawaited - 백그라운드에서 실행
     Future(() async {
       try {
-        debugPrint('🔮 [백그라운드] 사주 계산 API 호출 중...');
         final sajuResponse = await Supabase.instance.client.functions.invoke(
           'calculate-saju',
           body: {
             'birthDate': birthDate,
             'birthTime': birthTime,
             'isLunar': false,
-            'timezone': 'Asia/Seoul'
+            'timezone': 'Asia/Seoul',
           },
         ).timeout(
           const Duration(seconds: 45),
           onTimeout: () {
-            debugPrint('⏱️ [백그라운드] 사주 계산 시간 초과');
             throw Exception('사주 계산 시간 초과 (45초)');
           },
         );
 
-        debugPrint('✅ [백그라운드] 사주 계산 완료: ${sajuResponse.status}');
-        if (sajuResponse.status == 200) {
-          final sajuData = sajuResponse.data;
-          if (sajuData['success'] == true) {
-            debugPrint('✅ [백그라운드] 사주 데이터 저장 성공');
-            await Supabase.instance.client.from('user_profiles').update({
-              'saju_calculated': true,
-              'updated_at': DateTime.now().toIso8601String()
-            }).eq('id', userId);
-            debugPrint('✅ [백그라운드] 사주 계산 플래그 업데이트 완료');
-          } else {
-            debugPrint('⚠️ [백그라운드] 사주 계산 응답 오류: ${sajuData['error']}');
-          }
+        if (sajuResponse.status == 200 &&
+            sajuResponse.data['success'] == true) {
+          await Supabase.instance.client.from('user_profiles').update({
+            'saju_calculated': true,
+            'updated_at': DateTime.now().toIso8601String(),
+          }).eq('id', userId);
         }
-      } catch (e) {
-        debugPrint('⚠️ [백그라운드] 사주 계산 오류: $e');
-        // 실패해도 무시 - 나중에 재시도됨
+      } catch (error) {
+        debugPrint('⚠️ [백그라운드] 사주 계산 오류: $error');
       }
     });
   }
 
   Future<void> _handleSubmit() async {
+    if (_birthDate == null || _selectedInterestIds.length < 3) {
+      return;
+    }
+
     try {
-      // 프로필 데이터 준비
-      final birthTimeString = _birthTime != null
-          ? '${_birthTime!.hour.toString().padLeft(2, '0')}:${_birthTime!.minute.toString().padLeft(2, '0')}'
-          : '12:00';
-
-      final profile = UserProfile(
-          id: _currentUser?.id ?? '',
-          name: _name,
-          email: _currentUser?.email ?? '',
-          birthDate: _birthDate,
-          birthTime: birthTimeString,
-          mbti: null,
-          gender: Gender.other,
-          zodiacSign:
-              FortuneDateUtils.getZodiacSign(_birthDate!.toIso8601String()),
-          chineseZodiac:
-              FortuneDateUtils.getChineseZodiac(_birthDate!.toIso8601String()),
-          onboardingCompleted: true,
-          subscriptionStatus: SubscriptionStatus.free,
-          fortuneCount: 0,
-          premiumFortunesCount: 0,
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now());
-
-      // 로컬 스토리지에 저장
-      await _storageService.saveUserProfile(profile.toJson());
-
-      // 인증된 사용자의 경우 Supabase에도 저장 시도
-      if (_currentUser != null) {
-        try {
-          await Supabase.instance.client.from('user_profiles').upsert({
-            'id': _currentUser!.id,
-            'email': _currentUser!.email,
-            'name': _name,
-            'birth_date': _birthDate!.toIso8601String(),
-            'birth_time': birthTimeString,
-            'mbti': null,
-            'gender': Gender.other.value,
-            'onboarding_completed': true,
-            'zodiac_sign': profile.zodiacSign,
-            'chinese_zodiac': profile.chineseZodiac,
-            'updated_at': DateTime.now().toIso8601String()
-          });
-          debugPrint('Supabase에 프로필 동기화 완료');
-
-          // 프로필 완성 보너스 청구 (백그라운드)
-          _claimProfileCompletionBonus();
-
-          // 사주 계산은 백그라운드에서 처리 (UI 블로킹 제거)
-          _calculateSajuInBackground(
-            userId: _currentUser!.id,
-            birthDate: _birthDate!.toIso8601String().split('T')[0],
-            birthTime: birthTimeString,
+      final resolvedName = _resolvedDisplayName();
+      if (resolvedName.isEmpty) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('대화에서 부를 이름을 입력해주세요.'),
+              backgroundColor: context.colors.error,
+            ),
           );
-        } catch (e) {
-          debugPrint('Supabase 프로필 동기화 오류: $e');
-          // Supabase 실패해도 로컬 저장은 성공했으므로 계속 진행
         }
+        return;
       }
 
-      // 즉시 채팅으로 이동 (사주 계산 대기 없음)
-      if (mounted) {
-        context.go('/chat?firstTime=true');
+      final birthTimeString =
+          '${(_birthTime ?? const TimeOfDay(hour: 12, minute: 0)).hour.toString().padLeft(2, '0')}:${(_birthTime ?? const TimeOfDay(hour: 12, minute: 0)).minute.toString().padLeft(2, '0')}';
+
+      final existingPreferences =
+          _existingProfile?.fortunePreferences ?? const FortunePreferences();
+      final profile = (_existingProfile ??
+              UserProfile(
+                id: _currentUser?.id ?? '',
+                name: resolvedName,
+                email: _currentUser?.email ?? '',
+                onboardingCompleted: false,
+                subscriptionStatus: SubscriptionStatus.free,
+                createdAt: DateTime.now(),
+                updatedAt: DateTime.now(),
+              ))
+          .copyWith(
+        name: resolvedName,
+        email: _currentUser?.email ?? _existingProfile?.email ?? '',
+        birthDate: _birthDate,
+        birthTime: birthTimeString,
+        gender: _existingProfile?.gender ?? Gender.other,
+        zodiacSign: FortuneDateUtils.getZodiacSign(
+          _birthDate!.toIso8601String(),
+        ),
+        chineseZodiac: FortuneDateUtils.getChineseZodiac(
+          _birthDate!.toIso8601String(),
+        ),
+        onboardingCompleted: true,
+        subscriptionStatus:
+            _existingProfile?.subscriptionStatus ?? SubscriptionStatus.free,
+        createdAt: _existingProfile?.createdAt ?? DateTime.now(),
+        updatedAt: DateTime.now(),
+        primaryProvider: (_currentUser?.appMetadata['provider'] as String?) ??
+            _existingProfile?.primaryProvider,
+        linkedProviders: _existingProfile?.linkedProviders,
+        fortunePreferences: existingPreferences.copyWith(
+          categoryWeights: buildOnboardingInterestWeights(_selectedInterestIds),
+          showPersonalized: true,
+        ),
+      );
+
+      await _storageService.setRequiredPoliciesAccepted();
+      await _storageService.saveUserProfile(profile.toJson());
+      ref.read(userProfileNotifierProvider.notifier).applyProfile(profile);
+
+      if (_currentUser != null) {
+        await Supabase.instance.client.from('user_profiles').upsert({
+          'id': _currentUser!.id,
+          'email': _currentUser!.email,
+          'name': profile.name,
+          'birth_date': _birthDate!.toIso8601String(),
+          'birth_time': birthTimeString,
+          'gender': profile.gender.value,
+          'onboarding_completed': true,
+          'zodiac_sign': profile.zodiacSign,
+          'chinese_zodiac': profile.chineseZodiac,
+          'fortune_preferences': profile.fortunePreferences?.toJson(),
+          'primary_provider': profile.primaryProvider,
+          'linked_providers': profile.linkedProviders,
+          'updated_at': DateTime.now().toIso8601String(),
+        });
+
+        _claimProfileCompletionBonus();
+        _calculateSajuInBackground(
+          userId: _currentUser!.id,
+          birthDate: _birthDate!.toIso8601String().split('T')[0],
+          birthTime: birthTimeString,
+        );
       }
-    } catch (e) {
-      debugPrint('프로필 저장 오류: $e');
+
+      _existingProfile = profile;
+      await _storageService.updateUnifiedOnboardingProgress(
+        authCompleted: _currentUser != null,
+        birthCompleted: true,
+        interestCompleted: true,
+      );
+
+      ref.read(fortuneHapticServiceProvider).sectionComplete();
+      await _moveToHandoff();
+    } catch (error) {
+      debugPrint('프로필 저장 오류: $error');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
             content: const Text('프로필 저장 중 오류가 발생했습니다. 다시 시도해주세요.'),
-            backgroundColor: context.colors.error));
+            backgroundColor: context.colors.error,
+          ),
+        );
       }
+    }
+  }
+
+  Future<void> _completeHandoff() async {
+    if (_isCompletingHandoff) {
+      return;
+    }
+
+    _isCompletingHandoff = true;
+    await _storageService.updateUnifiedOnboardingProgress(
+      softGateCompleted: true,
+      authCompleted: _currentUser != null,
+      birthCompleted: _birthDate != null,
+      interestCompleted: _selectedInterestIds.isNotEmpty,
+      firstRunHandoffSeen: true,
+    );
+    await _storageService.setCharacterOnboardingCompleted();
+
+    if (widget.onCompleted != null) {
+      widget.onCompleted!();
+      return;
+    }
+
+    if (mounted) {
+      context.go('/chat?firstTime=true');
     }
   }
 
@@ -364,52 +594,90 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
       );
     }
 
+    if (_currentUser == null) {
+      return SignupScreen(
+        eyebrow: widget.isPartialCompletion ? '빠르게 이어가기' : '개인화 시작',
+        title: widget.isPartialCompletion
+            ? '흐름을 이어가기 전에\n계정을 연결해주세요'
+            : '대화를 바로 시작해볼까요?',
+        description: widget.isPartialCompletion
+            ? '로그인만 끝내면 생년월일과 관심사를 기준으로 화면을 더 자연스럽게 맞춰드릴게요.'
+            : '계정을 연결하면 저장과 개인화가 바로 이어지고, 원할 때는 둘러보기로 가볍게 시작할 수도 있어요.',
+        showBrowseAction: widget.showGuestBrowseAction,
+        onAuthenticated: _initializeUser,
+        onBrowseAsGuest:
+            widget.showGuestBrowseAction ? _handleGuestBrowse : null,
+      );
+    }
+
     return Scaffold(
       backgroundColor: context.colors.background,
-      body: PageView(
-        controller: _pageController,
-        physics: const NeverScrollableScrollPhysics(),
+      body: Column(
         children: [
-          // Step 1: Name
-          NameInputStep(
-            initialName: _name,
-            onNameChanged: (name) {
-              setState(() {
-                _name = name;
-              });
-            },
-            onNext: _nextStep,
-            allowSkip: _isSocialLogin,
-            onSkip: _isSocialLogin
-                ? () {
-                    // Set default name for social login users who skip
-                    if (_name.isEmpty) {
-                      final provider =
-                          _currentUser?.appMetadata['provider'] as String?;
-                      _name = _currentUser?.email?.split('@').first ??
-                          (provider == 'apple' ? 'Apple 사용자' : 'Google 사용자');
+          if (_currentStep < 2)
+            SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: _OnboardingProgress(
+                  currentStep: _currentStep.clamp(0, 1),
+                  totalSteps: 2,
+                ),
+              ),
+            ),
+          Expanded(
+            child: PageView(
+              controller: _pageController,
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                BirthInputStep(
+                  initialDate: _birthDate,
+                  initialTime: _birthTime,
+                  showBackButton: widget.onCompleted == null,
+                  title: '언제 태어나셨어요?',
+                  description: '사주와 인사이트 정확도를 높이기 위해 필요해요.',
+                  ctaLabel: '관심사 고르기',
+                  requireDisplayName: _requireDisplayName,
+                  initialDisplayName: _name,
+                  onDisplayNameChanged: (name) {
+                    setState(() {
+                      _name = name;
+                    });
+                  },
+                  onBirthDateChanged: (date) {
+                    setState(() {
+                      _birthDate = date;
+                    });
+                  },
+                  onBirthTimeChanged: (time) {
+                    setState(() {
+                      _birthTime = time;
+                    });
+                  },
+                  onNext: _nextFromBirth,
+                  onBack: () {
+                    if (context.canPop()) {
+                      context.pop();
+                    } else {
+                      context.go('/chat');
                     }
-                    _nextStep();
-                  }
-                : null,
-          ),
-
-          // Step 2: Birth Date & Time
-          BirthInputStep(
-            initialDate: _birthDate,
-            initialTime: _birthTime,
-            onBirthDateChanged: (date) {
-              setState(() {
-                _birthDate = date;
-              });
-            },
-            onBirthTimeChanged: (time) {
-              setState(() {
-                _birthTime = time;
-              });
-            },
-            onNext: _nextStep,
-            onBack: _previousStep,
+                  },
+                ),
+                InterestSelectionStep(
+                  initialSelectedIds: _selectedInterestIds,
+                  onSelectionChanged: (ids) {
+                    setState(() {
+                      _selectedInterestIds = ids;
+                    });
+                  },
+                  onNext: _handleSubmit,
+                  onBack: _goBackToBirth,
+                ),
+                PersonalizedHandoffStep(
+                  selectedInterestIds: _selectedInterestIds,
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -420,5 +688,40 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+}
+
+class _OnboardingProgress extends StatelessWidget {
+  final int currentStep;
+  final int totalSteps;
+
+  const _OnboardingProgress({
+    required this.currentStep,
+    required this.totalSteps,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(totalSteps, (index) {
+        final isActive = index == currentStep;
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          width: isActive ? 24 : 8,
+          height: 8,
+          decoration: BoxDecoration(
+            color: isActive
+                ? colors.textPrimary
+                : colors.border.withValues(alpha: 0.5),
+            borderRadius: BorderRadius.circular(4),
+          ),
+        );
+      }),
+    );
   }
 }

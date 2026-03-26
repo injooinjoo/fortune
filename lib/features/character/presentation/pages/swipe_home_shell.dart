@@ -3,9 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/design_system/design_system.dart';
 import '../../../../core/extensions/l10n_extension.dart';
 import '../../../../core/navigation/fortune_chat_route.dart';
 import '../../../../core/utils/logger.dart';
+import '../../../../core/services/supabase_connection_service.dart';
+import '../../../../screens/auth/signup_screen.dart';
+import '../../../../screens/onboarding/onboarding_page.dart';
 import '../providers/character_provider.dart';
 import '../providers/user_created_character_provider.dart';
 import '../../data/fortune_characters.dart';
@@ -13,7 +17,6 @@ import '../../domain/models/ai_character.dart';
 import '../utils/chat_catalog_preview.dart';
 import 'character_list_panel.dart';
 import 'character_chat_panel.dart';
-import 'character_onboarding_page.dart';
 import '../../../../services/storage_service.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 
@@ -24,6 +27,8 @@ import '../../../../presentation/providers/auth_provider.dart';
 /// TODO: 나중에 복원할 패널들 (임시 숨김)
 /// - 왼쪽: 운세 목록 (FortuneListPanel)
 /// - 가운데: 메인 채팅 (ChatHomePage)
+enum _ShellOnboardingGate { none, authEntry, profileFlow }
+
 class SwipeHomeShell extends ConsumerStatefulWidget {
   const SwipeHomeShell({super.key});
 
@@ -41,7 +46,8 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
   String? _failedRouteLaunchSignature;
 
   bool _showChatOverlay = false;
-  bool _showOnboarding = false;
+  bool _isCheckingOnboarding = true;
+  _ShellOnboardingGate _onboardingGate = _ShellOnboardingGate.none;
 
   @override
   void initState() {
@@ -74,14 +80,106 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
   }
 
   Future<void> _checkOnboarding() async {
-    final completed = await _storageService.isCharacterOnboardingCompleted();
-    if (!completed && mounted) {
-      setState(() => _showOnboarding = true);
+    if (mounted) {
+      setState(() {
+        _isCheckingOnboarding = true;
+      });
+    }
+
+    final progress = await _storageService.getUnifiedOnboardingProgress();
+    final currentUser = SupabaseConnectionService.tryGetCurrentUser();
+    final localProfile = await _storageService.getUserProfile();
+
+    final hasBirthData = _hasBirthData(localProfile);
+    final hasInterestSelection = _hasInterestSelection(localProfile);
+    final legacyCompleted =
+        await _storageService.isCharacterOnboardingCompleted() ||
+            localProfile?['onboarding_completed'] == true;
+
+    _ShellOnboardingGate nextGate = _ShellOnboardingGate.none;
+
+    if (legacyCompleted) {
+      await _storageService.saveUnifiedOnboardingProgress(
+        progress.copyWith(
+          softGateCompleted: true,
+          authCompleted: true,
+          birthCompleted: true,
+          interestCompleted: true,
+          firstRunHandoffSeen: true,
+        ),
+      );
+    } else if (currentUser == null) {
+      nextGate = progress.softGateCompleted
+          ? _ShellOnboardingGate.none
+          : _ShellOnboardingGate.authEntry;
+    } else {
+      final needsBirthStep = !progress.birthCompleted && !hasBirthData;
+      final needsInterestStep =
+          !progress.interestCompleted && !hasInterestSelection;
+      final needsHandoff = !progress.firstRunHandoffSeen;
+
+      await _storageService.saveUnifiedOnboardingProgress(
+        progress.copyWith(
+          authCompleted: true,
+          birthCompleted: progress.birthCompleted || hasBirthData,
+          interestCompleted: progress.interestCompleted || hasInterestSelection,
+        ),
+      );
+
+      if (needsBirthStep || needsInterestStep || needsHandoff) {
+        nextGate = _ShellOnboardingGate.profileFlow;
+      }
+    }
+
+    if (mounted) {
+      setState(() {
+        _onboardingGate = nextGate;
+        _isCheckingOnboarding = false;
+      });
+    }
+  }
+
+  bool _hasBirthData(Map<String, dynamic>? profileJson) {
+    final raw = profileJson?['birth_date'];
+    return raw != null && raw.toString().trim().isNotEmpty;
+  }
+
+  bool _hasInterestSelection(Map<String, dynamic>? profileJson) {
+    final preferences = _asMap(profileJson?['fortune_preferences']);
+    final weights = _asMap(preferences?['category_weights']);
+    return weights != null && weights.isNotEmpty;
+  }
+
+  Map<String, dynamic>? _asMap(dynamic raw) {
+    if (raw is Map<String, dynamic>) {
+      return raw;
+    }
+    if (raw is Map) {
+      return raw.map((key, value) => MapEntry(key.toString(), value));
+    }
+    return null;
+  }
+
+  Future<void> _handleGuestBrowse() async {
+    await _storageService.updateUnifiedOnboardingProgress(
+      softGateCompleted: true,
+    );
+
+    if (mounted) {
+      setState(() {
+        _onboardingGate = _ShellOnboardingGate.none;
+      });
     }
   }
 
   void _onOnboardingComplete() {
-    setState(() => _showOnboarding = false);
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _onboardingGate = _ShellOnboardingGate.none;
+    });
   }
 
   @override
@@ -238,10 +336,33 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
       });
     }
 
-    // 온보딩 표시
-    if (!isCatalogPreview && _showOnboarding) {
-      return CharacterOnboardingPage(
-        onComplete: _onOnboardingComplete,
+    if (!isCatalogPreview && _isCheckingOnboarding) {
+      return Scaffold(
+        backgroundColor: context.colors.background,
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (!isCatalogPreview &&
+        _onboardingGate == _ShellOnboardingGate.authEntry) {
+      return SignupScreen(
+        eyebrow: '먼저 둘러보기',
+        title: '대화를 둘러본 뒤,\n필요할 때 이어가세요',
+        description: '계정을 연결하면 저장과 개인화가 바로 이어지고, 지금은 둘러보기로 가볍게 시작할 수 있어요.',
+        onAuthenticated: () {
+          unawaited(_checkOnboarding());
+        },
+        onBrowseAsGuest: _handleGuestBrowse,
+      );
+    }
+
+    if (!isCatalogPreview &&
+        _onboardingGate == _ShellOnboardingGate.profileFlow) {
+      return OnboardingPage(
+        onCompleted: _onOnboardingComplete,
+        showGuestBrowseAction: false,
       );
     }
 

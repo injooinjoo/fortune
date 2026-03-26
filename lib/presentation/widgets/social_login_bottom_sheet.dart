@@ -10,6 +10,7 @@ import '../../core/services/supabase_connection_service.dart';
 import '../../core/services/fortune_haptic_service.dart';
 import '../../services/social_auth/base/social_auth_attempt_result.dart';
 import '../../services/social_auth_service.dart';
+import '../../services/storage_service.dart';
 
 typedef SocialLoginAction = Future<bool> Function();
 
@@ -432,6 +433,173 @@ class SocialLoginBottomSheet {
                 ],
               ),
       ),
+    );
+  }
+}
+
+class SocialAuthEntryPanel extends ConsumerStatefulWidget {
+  final String title;
+  final String description;
+  final String? eyebrow;
+  final VoidCallback? onAuthenticated;
+  final Future<void> Function()? onBrowseAsGuest;
+  final bool showBrowseAction;
+
+  const SocialAuthEntryPanel({
+    super.key,
+    required this.title,
+    required this.description,
+    this.eyebrow,
+    this.onAuthenticated,
+    this.onBrowseAsGuest,
+    this.showBrowseAction = true,
+  });
+
+  @override
+  ConsumerState<SocialAuthEntryPanel> createState() =>
+      _SocialAuthEntryPanelState();
+}
+
+class _SocialAuthEntryPanelState extends ConsumerState<SocialAuthEntryPanel> {
+  final StorageService _storageService = StorageService();
+
+  bool _isLoading = false;
+  String? _activeProvider;
+
+  Future<void> _handleProviderTap(String provider) async {
+    if (_isLoading) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _activeProvider = provider;
+    });
+
+    try {
+      await _storageService.setRequiredPoliciesAccepted();
+      if (!mounted) {
+        return;
+      }
+
+      final authService =
+          await SocialLoginBottomSheet._createSocialAuthServiceOrNull(context);
+      if (!mounted || authService == null) {
+        return;
+      }
+
+      switch (provider) {
+        case 'apple':
+          await SocialLoginBottomSheet._handleSocialLogin(
+            context: context,
+            providerLabel: 'Apple',
+            loginAction: authService.signInWithApple,
+            onAuthenticated: widget.onAuthenticated,
+          );
+          break;
+        case 'google':
+          await SocialLoginBottomSheet._handleSocialLogin(
+            context: context,
+            providerLabel: 'Google',
+            loginAction: () => authService.signInWithGoogle(context: context),
+            onAuthenticated: widget.onAuthenticated,
+          );
+          break;
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _activeProvider = null;
+        });
+      }
+    }
+  }
+
+  Future<void> _handleBrowseAsGuest() async {
+    await _storageService.setRequiredPoliciesAccepted();
+    await widget.onBrowseAsGuest?.call();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final typography = context.typography;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (widget.eyebrow != null && widget.eyebrow!.isNotEmpty) ...[
+          Text(
+            widget.eyebrow!,
+            style: typography.labelMedium.copyWith(
+              color: colors.textTertiary,
+            ),
+          ),
+          const SizedBox(height: 12),
+        ],
+        Text(
+          widget.title,
+          style: typography.headingLarge.copyWith(
+            color: colors.textPrimary,
+            height: 1.14,
+            letterSpacing: -0.6,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          widget.description,
+          style: typography.bodyMedium.copyWith(
+            color: colors.textSecondary,
+            height: 1.6,
+          ),
+        ),
+        const SizedBox(height: 28),
+        if (!Platform.isAndroid) ...[
+          SocialLoginBottomSheet._buildSocialButton(
+            context: context,
+            onPressed: _isLoading ? null : () => _handleProviderTap('apple'),
+            type: 'apple',
+            colors: colors,
+            isLoading: _activeProvider == 'apple',
+          ),
+          const SizedBox(height: 12),
+        ],
+        SocialLoginBottomSheet._buildSocialButton(
+          context: context,
+          onPressed: _isLoading ? null : () => _handleProviderTap('google'),
+          type: 'google',
+          colors: colors,
+          isLoading: _activeProvider == 'google',
+        ),
+        const SizedBox(height: 18),
+        Text(
+          '계속 진행하면 이용약관 및 개인정보처리방침에 동의한 것으로 간주됩니다.',
+          style: typography.bodySmall.copyWith(
+            color: colors.textTertiary,
+            height: 1.5,
+          ),
+        ),
+        if (widget.showBrowseAction) ...[
+          const SizedBox(height: 18),
+          Center(
+            child: GestureDetector(
+              onTap: _handleBrowseAsGuest,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Text(
+                  '둘러보기',
+                  style: typography.labelLarge.copyWith(
+                    color: colors.textSecondary,
+                    decoration: TextDecoration.underline,
+                    decorationColor: colors.textSecondary,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

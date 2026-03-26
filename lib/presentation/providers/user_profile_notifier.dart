@@ -168,6 +168,13 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
     await ensureLoaded(force: true, trigger: 'refresh');
   }
 
+  void applyProfile(UserProfile profile) {
+    _primaryProfile = profile;
+    if (_overrideProfile == null) {
+      state = AsyncValue.data(profile);
+    }
+  }
+
   UserProfile? get primaryProfile => _primaryProfile;
 
   void applySecondaryProfile(SecondaryProfile profile) {

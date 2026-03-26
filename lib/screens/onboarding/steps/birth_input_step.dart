@@ -11,6 +11,13 @@ class BirthInputStep extends ConsumerStatefulWidget {
   final Function(TimeOfDay)? onBirthTimeChanged;
   final VoidCallback onNext;
   final VoidCallback onBack;
+  final bool showBackButton;
+  final String title;
+  final String description;
+  final String ctaLabel;
+  final bool requireDisplayName;
+  final String initialDisplayName;
+  final ValueChanged<String>? onDisplayNameChanged;
 
   const BirthInputStep({
     super.key,
@@ -20,6 +27,13 @@ class BirthInputStep extends ConsumerStatefulWidget {
     this.onBirthTimeChanged,
     required this.onNext,
     required this.onBack,
+    this.showBackButton = true,
+    this.title = '언제 태어나셨어요?',
+    this.description = '더 정확한 인사이트를 위해 알려주세요',
+    this.ctaLabel = '다음',
+    this.requireDisplayName = false,
+    this.initialDisplayName = '',
+    this.onDisplayNameChanged,
   });
 
   @override
@@ -27,25 +41,25 @@ class BirthInputStep extends ConsumerStatefulWidget {
 }
 
 class _BirthInputStepState extends ConsumerState<BirthInputStep> {
+  final _displayNameController = TextEditingController();
   final _yearController = TextEditingController();
   final _monthController = TextEditingController();
   final _dayController = TextEditingController();
   final _timeController = TextEditingController();
-  final _minuteController = TextEditingController(); // ✅ 분 입력 컨트롤러
+  final _minuteController = TextEditingController();
 
   final _yearFocus = FocusNode();
   final _monthFocus = FocusNode();
   final _dayFocus = FocusNode();
   final _timeFocus = FocusNode();
-  final _minuteFocus = FocusNode(); // ✅ 분 입력 포커스
+  final _minuteFocus = FocusNode();
 
-  // For backspace detection
   // ignore: unused_field
   final String _prevYear = '';
   String _prevMonth = '';
   String _prevDay = '';
   String _prevTime = '';
-  String _prevMinute = ''; // ✅ 분 백스페이스 감지용
+  String _prevMinute = '';
 
   bool _showMonth = false;
   bool _showDay = false;
@@ -54,7 +68,6 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
   bool _isTimeValid = false;
   bool _isTimeUnknown = false;
 
-  // 캐싱된 스타일 (테마 변경 시만 업데이트)
   TextStyle? _inputStyle;
   TextStyle? _hintStyle;
   TextStyle? _labelStyle;
@@ -62,6 +75,13 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
   @override
   void initState() {
     super.initState();
+    _displayNameController.text = widget.initialDisplayName;
+    _displayNameController.addListener(() {
+      widget.onDisplayNameChanged?.call(_displayNameController.text.trim());
+      if (widget.requireDisplayName && mounted) {
+        setState(() {});
+      }
+    });
 
     if (widget.initialDate != null) {
       _yearController.text = widget.initialDate!.year.toString();
@@ -77,15 +97,13 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
     if (widget.initialTime != null) {
       _timeController.text = '${widget.initialTime!.hour}';
       _minuteController.text =
-          widget.initialTime!.minute.toString().padLeft(2, '0'); // ✅ 분 초기화
+          widget.initialTime!.minute.toString().padLeft(2, '0');
       _isTimeValid = true;
     }
 
     _yearController.addListener(() {
       final text = _yearController.text;
       _validateDate();
-
-      // Auto-advance to month ONLY when exactly 4 digits
       if (text.length == 4 && _yearFocus.hasFocus) {
         if (!_showMonth) setState(() => _showMonth = true);
         Future.microtask(() {
@@ -96,8 +114,6 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
 
     _monthController.addListener(() {
       final text = _monthController.text;
-
-      // Backspace when empty → go back to year AND delete last digit
       if (text.isEmpty && _prevMonth.isNotEmpty && _monthFocus.hasFocus) {
         Future.microtask(() {
           if (!mounted) return;
@@ -108,11 +124,8 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
           _yearFocus.requestFocus();
         });
       }
-
       _prevMonth = text;
       _validateDate();
-
-      // Auto-advance to day ONLY when exactly 2 digits
       if (text.length == 2 && _monthFocus.hasFocus) {
         if (!_showDay) setState(() => _showDay = true);
         Future.microtask(() {
@@ -123,8 +136,6 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
 
     _dayController.addListener(() {
       final text = _dayController.text;
-
-      // Backspace when empty → go back to month AND delete last digit
       if (text.isEmpty && _prevDay.isNotEmpty && _dayFocus.hasFocus) {
         Future.microtask(() {
           if (!mounted) return;
@@ -135,11 +146,8 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
           _monthFocus.requestFocus();
         });
       }
-
       _prevDay = text;
       _validateDate();
-
-      // Auto-advance to time ONLY when exactly 2 digits AND date is valid
       if (text.length == 2 && _dayFocus.hasFocus && _isDateValid) {
         if (!_showTime) setState(() => _showTime = true);
         Future.microtask(() {
@@ -168,8 +176,6 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
 
     _timeController.addListener(() {
       final text = _timeController.text;
-
-      // Backspace when empty → go back to day AND delete last digit
       if (text.isEmpty &&
           _prevTime.isNotEmpty &&
           !_isTimeUnknown &&
@@ -183,10 +189,7 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
           _dayFocus.requestFocus();
         });
       }
-
       _prevTime = text;
-
-      // ✅ 시간 2자리 입력 시 분으로 자동 이동
       if (text.length == 2 && _timeFocus.hasFocus) {
         final hour = int.tryParse(text) ?? 0;
         if (hour >= 0 && hour <= 23) {
@@ -195,15 +198,11 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
           });
         }
       }
-
       _onTimeChanged();
     });
 
-    // ✅ 분 입력 리스너 추가
     _minuteController.addListener(() {
       final text = _minuteController.text;
-
-      // Backspace when empty → go back to hour AND delete last digit
       if (text.isEmpty &&
           _prevMinute.isNotEmpty &&
           !_isTimeUnknown &&
@@ -217,12 +216,10 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
           _timeFocus.requestFocus();
         });
       }
-
       _prevMinute = text;
       _onTimeChanged();
     });
 
-    // ✅ 분 포커스 해제 시 패딩 추가 (예: "5" → "05")
     _minuteFocus.addListener(() {
       if (!_minuteFocus.hasFocus && _minuteController.text.isNotEmpty) {
         final minute = int.tryParse(_minuteController.text) ?? 0;
@@ -303,7 +300,6 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
 
     if (hourText.isNotEmpty) {
       final hour = int.tryParse(hourText) ?? 0;
-      // ✅ 분은 입력하지 않아도 0으로 처리 (선택적 입력)
       final minute =
           minuteText.isNotEmpty ? (int.tryParse(minuteText) ?? 0) : 0;
 
@@ -320,16 +316,17 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
 
   @override
   void dispose() {
+    _displayNameController.dispose();
     _yearController.dispose();
     _monthController.dispose();
     _dayController.dispose();
     _timeController.dispose();
-    _minuteController.dispose(); // ✅ 분 컨트롤러 정리
+    _minuteController.dispose();
     _yearFocus.dispose();
     _monthFocus.dispose();
     _dayFocus.dispose();
     _timeFocus.dispose();
-    _minuteFocus.dispose(); // ✅ 분 포커스 정리
+    _minuteFocus.dispose();
     super.dispose();
   }
 
@@ -338,7 +335,6 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
     final colors = context.colors;
     final typography = context.typography;
 
-    // 캐싱된 스타일 사용 (null인 경우 폴백)
     final inputStyle = _inputStyle ??
         typography.displaySmall.copyWith(
           color: colors.textPrimary,
@@ -355,87 +351,141 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
           fontWeight: FontWeight.w500,
         );
 
+    final hasDisplayName = _displayNameController.text.trim().isNotEmpty ||
+        !widget.requireDisplayName;
+    final showCTA =
+        _isDateValid && (_isTimeValid || _isTimeUnknown) && hasDisplayName;
+
     return Scaffold(
       backgroundColor: colors.background,
       resizeToAvoidBottomInset: true,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.only(
-              left: 24,
-              right: 24,
-              top: MediaQuery.of(context).size.height * 0.11,
-              bottom: 24,
-            ),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-              decoration: BoxDecoration(
-                color: colors.surface,
-                borderRadius: BorderRadius.circular(context.radius.xxl),
-                border: Border.all(
-                  color: colors.border.withValues(alpha: 0.72),
+        child: Column(
+          children: [
+            // Back button
+            if (widget.showBackButton)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8, top: 4),
+                  child: IconButton(
+                    onPressed: widget.onBack,
+                    icon: Icon(
+                      Icons.arrow_back_ios_new,
+                      color: colors.textSecondary,
+                      size: 20,
+                    ),
+                  ),
                 ),
               ),
-              child: Column(
-                children: [
-                  Text(
-                    '생년월일을 알려주세요',
-                    style: typography.headingSmall
-                        .copyWith(color: colors.textSecondary),
-                  ).animate().fadeIn(duration: 500.ms),
 
-                  const SizedBox(height: 8),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: widget.showBackButton ? 24 : 48),
 
-                  Text(
-                    '당신만의 인사이트를 준비하기 위해 필요해요',
-                    style: typography.bodySmall.copyWith(
-                      color: colors.textTertiary,
-                      letterSpacing: 0.3,
-                    ),
-                    textAlign: TextAlign.center,
-                  ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
-
-                  const SizedBox(height: 48),
-
-                  // Date Input - Progressive reveal
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: [
-                      // Year
-                      SizedBox(
-                        width: 90,
+                    if (widget.requireDisplayName) ...[
+                      Text(
+                        '대화에서 불릴 이름',
+                        style: typography.labelLarge.copyWith(
+                          color: colors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 18,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colors.surface,
+                          borderRadius:
+                              BorderRadius.circular(context.radius.xl),
+                          border: Border.all(
+                            color: colors.border.withValues(alpha: 0.72),
+                          ),
+                        ),
                         child: TextField(
-                          controller: _yearController,
-                          focusNode: _yearFocus,
-                          keyboardType: TextInputType.number,
-                          textAlign: TextAlign.center,
-                          style: inputStyle,
-                          cursorColor: colors.textSecondary,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(4),
-                          ],
+                          controller: _displayNameController,
+                          textCapitalization: TextCapitalization.words,
+                          cursorColor: colors.textPrimary,
+                          style: typography.headingSmall.copyWith(
+                            color: colors.textPrimary,
+                            fontWeight: FontWeight.w600,
+                          ),
                           decoration: InputDecoration(
-                            hintText: 'YYYY',
-                            hintStyle: hintStyle,
+                            hintText: '이름을 입력해주세요',
+                            hintStyle: typography.headingSmall.copyWith(
+                              color: colors.textTertiary.withValues(alpha: 0.6),
+                            ),
                             border: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            filled: false,
-                            contentPadding: EdgeInsets.zero,
-                            isDense: true,
                           ),
                         ),
                       ),
-                      Text('년', style: labelStyle),
+                      const SizedBox(height: 24),
+                    ],
 
-                      // Month - fade in after year (그룹화된 애니메이션)
-                      if (_showMonth)
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
+                    // Title
+                    Text(
+                      widget.title,
+                      style: typography.headingLarge.copyWith(
+                        color: colors.textPrimary,
+                        height: 1.3,
+                        letterSpacing: -0.5,
+                      ),
+                    ).animate().fadeIn(duration: 500.ms),
+                    const SizedBox(height: 12),
+                    Text(
+                      widget.description,
+                      style: typography.bodyMedium.copyWith(
+                        color: colors.textTertiary,
+                        height: 1.5,
+                      ),
+                    ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
+
+                    const SizedBox(height: 56),
+
+                    // Date Input - Progressive reveal
+                    Center(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          // Year
+                          SizedBox(
+                            width: 90,
+                            child: TextField(
+                              controller: _yearController,
+                              focusNode: _yearFocus,
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                              style: inputStyle,
+                              cursorColor: colors.textSecondary,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(4),
+                              ],
+                              decoration: InputDecoration(
+                                hintText: 'YYYY',
+                                hintStyle: hintStyle,
+                                border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                filled: false,
+                                contentPadding: EdgeInsets.zero,
+                                isDense: true,
+                              ),
+                            ),
+                          ),
+                          Text('년', style: labelStyle),
+
+                          // Month
+                          if (_showMonth) ...[
                             const SizedBox(width: 16),
                             SizedBox(
                               width: 50,
@@ -464,13 +514,9 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                             ),
                             Text('월', style: labelStyle),
                           ],
-                        ),
 
-                      // Day - fade in after month (그룹화된 애니메이션)
-                      if (_showDay)
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
+                          // Day
+                          if (_showDay) ...[
                             const SizedBox(width: 16),
                             SizedBox(
                               width: 50,
@@ -499,159 +545,167 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                             ),
                             Text('일', style: labelStyle),
                           ],
-                        ),
-                    ],
-                  ),
-
-                  // Time Input - fade in after date complete
-                  if (_showTime) ...[
-                    const SizedBox(height: 48),
-                    Text(
-                      '태어난 시간을 알려주세요',
-                      style: typography.headingSmall
-                          .copyWith(color: colors.textSecondary),
-                    ).animate().fadeIn(duration: 400.ms),
-                    const SizedBox(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      textBaseline: TextBaseline.alphabetic,
-                      children: [
-                        // 시간 입력
-                        SizedBox(
-                          width: 50,
-                          child: TextField(
-                            controller: _timeController,
-                            focusNode: _timeFocus,
-                            keyboardType: TextInputType.number,
-                            textAlign: TextAlign.center,
-                            style: inputStyle,
-                            cursorColor: colors.textSecondary,
-                            enabled: !_isTimeUnknown,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(2),
-                            ],
-                            decoration: InputDecoration(
-                              hintText: '00',
-                              hintStyle: hintStyle.copyWith(
-                                color: _isTimeUnknown
-                                    ? colors.border
-                                    : colors.textTertiary,
-                              ),
-                              border: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              disabledBorder: InputBorder.none,
-                              filled: false,
-                              contentPadding: EdgeInsets.zero,
-                              isDense: true,
-                            ),
-                          ),
-                        ),
-                        Text('시', style: labelStyle),
-
-                        // ✅ 분 입력 추가
-                        const SizedBox(width: 16),
-                        SizedBox(
-                          width: 50,
-                          child: TextField(
-                            controller: _minuteController,
-                            focusNode: _minuteFocus,
-                            keyboardType: TextInputType.number,
-                            textAlign: TextAlign.center,
-                            style: inputStyle,
-                            cursorColor: colors.textSecondary,
-                            enabled: !_isTimeUnknown,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(2),
-                            ],
-                            decoration: InputDecoration(
-                              hintText: '00',
-                              hintStyle: hintStyle.copyWith(
-                                color: _isTimeUnknown
-                                    ? colors.border
-                                    : colors.textTertiary,
-                              ),
-                              border: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              disabledBorder: InputBorder.none,
-                              filled: false,
-                              contentPadding: EdgeInsets.zero,
-                              isDense: true,
-                            ),
-                          ),
-                        ),
-                        Text('분', style: labelStyle),
-                      ],
-                    ).animate().fadeIn(duration: 400.ms),
-                    const SizedBox(height: 20),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _isTimeUnknown = !_isTimeUnknown;
-                          if (_isTimeUnknown) {
-                            _timeController.clear();
-                            _minuteController.clear(); // ✅ 분 컨트롤러도 초기화
-                            _isTimeValid = true;
-                            FocusScope.of(context).unfocus();
-                            widget.onBirthTimeChanged
-                                ?.call(const TimeOfDay(hour: 12, minute: 0));
-                          } else {
-                            _isTimeValid = false;
-                            _timeFocus.requestFocus();
-                          }
-                        });
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 20,
-                            height: 20,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: _isTimeUnknown
-                                    ? colors.accent
-                                    : colors.textSecondary,
-                                width: 2,
-                              ),
-                              color: _isTimeUnknown
-                                  ? colors.accent
-                                  : colors.background.withValues(alpha: 0),
-                            ),
-                            child: _isTimeUnknown
-                                ? Icon(
-                                    Icons.check,
-                                    size: 14,
-                                    color: colors.ctaForeground,
-                                  )
-                                : null,
-                          ),
-                          const SizedBox(width: 8),
-                          Text('모르겠어요',
-                              style: typography.bodyMedium
-                                  .copyWith(color: colors.textSecondary)),
                         ],
                       ),
-                    ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
+                    ),
+
+                    // Time Input
+                    if (_showTime) ...[
+                      const SizedBox(height: 56),
+                      Center(
+                        child: Text(
+                          '태어난 시간을 알려주세요',
+                          style: typography.bodyMedium
+                              .copyWith(color: colors.textSecondary),
+                        ),
+                      ).animate().fadeIn(duration: 400.ms),
+                      const SizedBox(height: 24),
+                      Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            SizedBox(
+                              width: 50,
+                              child: TextField(
+                                controller: _timeController,
+                                focusNode: _timeFocus,
+                                keyboardType: TextInputType.number,
+                                textAlign: TextAlign.center,
+                                style: inputStyle,
+                                cursorColor: colors.textSecondary,
+                                enabled: !_isTimeUnknown,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(2),
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: '00',
+                                  hintStyle: hintStyle.copyWith(
+                                    color: _isTimeUnknown
+                                        ? colors.border
+                                        : colors.textTertiary,
+                                  ),
+                                  border: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  disabledBorder: InputBorder.none,
+                                  filled: false,
+                                  contentPadding: EdgeInsets.zero,
+                                  isDense: true,
+                                ),
+                              ),
+                            ),
+                            Text('시', style: labelStyle),
+                            const SizedBox(width: 16),
+                            SizedBox(
+                              width: 50,
+                              child: TextField(
+                                controller: _minuteController,
+                                focusNode: _minuteFocus,
+                                keyboardType: TextInputType.number,
+                                textAlign: TextAlign.center,
+                                style: inputStyle,
+                                cursorColor: colors.textSecondary,
+                                enabled: !_isTimeUnknown,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(2),
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: '00',
+                                  hintStyle: hintStyle.copyWith(
+                                    color: _isTimeUnknown
+                                        ? colors.border
+                                        : colors.textTertiary,
+                                  ),
+                                  border: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  disabledBorder: InputBorder.none,
+                                  filled: false,
+                                  contentPadding: EdgeInsets.zero,
+                                  isDense: true,
+                                ),
+                              ),
+                            ),
+                            Text('분', style: labelStyle),
+                          ],
+                        ),
+                      ).animate().fadeIn(duration: 400.ms),
+                      const SizedBox(height: 24),
+                      Center(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _isTimeUnknown = !_isTimeUnknown;
+                              if (_isTimeUnknown) {
+                                _timeController.clear();
+                                _minuteController.clear();
+                                _isTimeValid = true;
+                                FocusScope.of(context).unfocus();
+                                widget.onBirthTimeChanged?.call(
+                                    const TimeOfDay(hour: 12, minute: 0));
+                              } else {
+                                _isTimeValid = false;
+                                _timeFocus.requestFocus();
+                              }
+                            });
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                width: 22,
+                                height: 22,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: _isTimeUnknown
+                                        ? colors.textPrimary
+                                        : colors.border,
+                                    width: 1.5,
+                                  ),
+                                  color: _isTimeUnknown
+                                      ? colors.textPrimary
+                                      : colors.background,
+                                ),
+                                child: _isTimeUnknown
+                                    ? Icon(
+                                        Icons.check,
+                                        size: 14,
+                                        color: colors.ctaForeground,
+                                      )
+                                    : null,
+                              ),
+                              const SizedBox(width: 8),
+                              Text('모르겠어요',
+                                  style: typography.bodyMedium
+                                      .copyWith(color: colors.textSecondary)),
+                            ],
+                          ),
+                        ),
+                      ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
+                    ],
+
+                    const SizedBox(height: 56),
+
+                    // CTA Button
+                    if (showCTA)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 32),
+                        child: DSButton.primary(
+                          text: widget.ctaLabel,
+                          onPressed: widget.onNext,
+                        ),
+                      ).animate().fadeIn(duration: 300.ms),
                   ],
-
-                  const SizedBox(height: 56),
-
-                  // Next Button
-                  if (_isDateValid && (_isTimeValid || _isTimeUnknown))
-                    DSButton.primary(
-                      text: '나를 알아가기 시작',
-                      onPressed: widget.onNext,
-                    ).animate().fadeIn(duration: 300.ms),
-                ],
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
