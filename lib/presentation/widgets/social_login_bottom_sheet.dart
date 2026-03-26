@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/design_system/design_system.dart';
 import '../../core/services/supabase_connection_service.dart';
 import '../../core/services/fortune_haptic_service.dart';
+import '../../core/widgets/paper_runtime_chrome.dart';
 import '../../services/social_auth/base/social_auth_attempt_result.dart';
 import '../../services/social_auth_service.dart';
 import '../../services/storage_service.dart';
@@ -119,13 +120,6 @@ class SocialLoginBottomSheet {
       backgroundColor: context.colors.surface.withValues(alpha: 0),
       barrierColor: DSColorScheme(Theme.of(context).brightness).overlay,
       builder: (bottomSheetContext) {
-        debugPrint(
-            '🌐 [BOTTOMSHEET] Theme brightness: ${Theme.of(bottomSheetContext).brightness}');
-        debugPrint(
-            '🌐 [BOTTOMSHEET] colorScheme.onSurface: ${Theme.of(bottomSheetContext).colorScheme.onSurface}');
-        debugPrint(
-            '🌐 [BOTTOMSHEET] textTheme.bodyLarge.color: ${Theme.of(bottomSheetContext).textTheme.bodyLarge?.color}');
-
         bool isTapLocked = false;
         String? activeLoadingProvider;
 
@@ -445,6 +439,7 @@ class SocialAuthEntryPanel extends ConsumerStatefulWidget {
   final Future<void> Function()? onBrowseAsGuest;
   final bool showBrowseAction;
   final SocialAuthService? socialAuthService;
+  final bool showHeader;
 
   const SocialAuthEntryPanel({
     super.key,
@@ -455,6 +450,7 @@ class SocialAuthEntryPanel extends ConsumerStatefulWidget {
     this.onBrowseAsGuest,
     this.showBrowseAction = true,
     this.socialAuthService,
+    this.showHeader = true,
   });
 
   @override
@@ -528,80 +524,83 @@ class _SocialAuthEntryPanelState extends ConsumerState<SocialAuthEntryPanel> {
     final colors = context.colors;
     final typography = context.typography;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (widget.eyebrow != null && widget.eyebrow!.isNotEmpty) ...[
-          Text(
-            widget.eyebrow!,
-            style: typography.labelMedium.copyWith(
-              color: colors.textTertiary,
+    return PaperRuntimePanel(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (widget.showHeader) ...[
+            if (widget.eyebrow != null && widget.eyebrow!.isNotEmpty) ...[
+              PaperRuntimePill(label: widget.eyebrow!),
+              const SizedBox(height: DSSpacing.md),
+            ],
+            Text(
+              widget.title,
+              style: typography.headingMedium.copyWith(
+                color: colors.textPrimary,
+                height: 1.14,
+                letterSpacing: -0.5,
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-        ],
-        Text(
-          widget.title,
-          style: typography.headingLarge.copyWith(
-            color: colors.textPrimary,
-            height: 1.14,
-            letterSpacing: -0.6,
-          ),
-        ),
-        const SizedBox(height: 12),
-        Text(
-          widget.description,
-          style: typography.bodyMedium.copyWith(
-            color: colors.textSecondary,
-            height: 1.6,
-          ),
-        ),
-        const SizedBox(height: 28),
-        if (!Platform.isAndroid) ...[
+            const SizedBox(height: DSSpacing.sm),
+            Text(
+              widget.description,
+              style: typography.bodyMedium.copyWith(
+                color: colors.textSecondary,
+                height: 1.6,
+              ),
+            ),
+            const SizedBox(height: DSSpacing.lg),
+          ],
+          if (!Platform.isAndroid) ...[
+            SocialLoginBottomSheet._buildSocialButton(
+              context: context,
+              onPressed: _isLoading ? null : () => _handleProviderTap('apple'),
+              type: 'apple',
+              colors: colors,
+              isLoading: _activeProvider == 'apple',
+            ),
+            const SizedBox(height: DSSpacing.sm),
+          ],
           SocialLoginBottomSheet._buildSocialButton(
             context: context,
-            onPressed: _isLoading ? null : () => _handleProviderTap('apple'),
-            type: 'apple',
+            onPressed: _isLoading ? null : () => _handleProviderTap('google'),
+            type: 'google',
             colors: colors,
-            isLoading: _activeProvider == 'apple',
+            isLoading: _activeProvider == 'google',
           ),
-          const SizedBox(height: 12),
-        ],
-        SocialLoginBottomSheet._buildSocialButton(
-          context: context,
-          onPressed: _isLoading ? null : () => _handleProviderTap('google'),
-          type: 'google',
-          colors: colors,
-          isLoading: _activeProvider == 'google',
-        ),
-        const SizedBox(height: 18),
-        Text(
-          '계속 진행하면 이용약관 및 개인정보처리방침에 동의한 것으로 간주됩니다.',
-          style: typography.bodySmall.copyWith(
-            color: colors.textTertiary,
-            height: 1.5,
-          ),
-        ),
-        if (widget.showBrowseAction) ...[
-          const SizedBox(height: 18),
+          const SizedBox(height: DSSpacing.md),
           Center(
-            child: GestureDetector(
-              onTap: _handleBrowseAsGuest,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Text(
-                  '둘러보기',
-                  style: typography.labelLarge.copyWith(
-                    color: colors.textSecondary,
-                    decoration: TextDecoration.underline,
-                    decorationColor: colors.textSecondary,
+            child: Text(
+              '계속 진행하면 이용약관 및 개인정보처리방침에 동의한 것으로 간주됩니다.',
+              style: typography.bodySmall.copyWith(
+                color: colors.textTertiary,
+                height: 1.5,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          if (widget.showBrowseAction) ...[
+            const SizedBox(height: DSSpacing.md),
+            Center(
+              child: GestureDetector(
+                onTap: _handleBrowseAsGuest,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
+                  child: Text(
+                    '둘러보기',
+                    style: typography.labelLarge.copyWith(
+                      color: colors.textSecondary,
+                      decoration: TextDecoration.underline,
+                      decorationColor: colors.textSecondary,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
+          ],
         ],
-      ],
+      ),
     );
   }
 }

@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../constants/fortune_constants.dart';
 import '../../core/design_system/design_system.dart';
 import '../../core/services/fortune_haptic_service.dart';
+import '../../core/widgets/paper_runtime_chrome.dart';
 import '../../models/unified_onboarding_progress.dart';
 import '../../models/user_profile.dart';
 import '../../presentation/providers/token_provider.dart';
@@ -588,8 +589,11 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     if (_isLoadingProfile) {
       return Scaffold(
         backgroundColor: context.colors.background,
-        body: const Center(
-          child: CircularProgressIndicator(),
+        body: const PaperRuntimeBackground(
+          ringAlignment: Alignment.center,
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
         ),
       );
     }
@@ -618,7 +622,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
             SafeArea(
               bottom: false,
               child: Padding(
-                padding: const EdgeInsets.only(top: 16),
+                padding: const EdgeInsets.only(top: DSSpacing.md),
                 child: _OnboardingProgress(
                   currentStep: _currentStep.clamp(0, 1),
                   totalSteps: 2,
@@ -711,8 +715,8 @@ class _OnboardingProgress extends StatelessWidget {
         return AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          width: isActive ? 24 : 8,
+          margin: const EdgeInsets.symmetric(horizontal: DSSpacing.xs),
+          width: isActive ? 28 : 10,
           height: 8,
           decoration: BoxDecoration(
             color: isActive

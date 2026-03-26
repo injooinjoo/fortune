@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../constants/fortune_constants.dart';
 import '../../core/design_system/design_system.dart';
+import '../../core/widgets/paper_runtime_chrome.dart';
 import '../../features/fortune/presentation/providers/saju_provider.dart';
 import '../../models/user_profile.dart';
 import '../../presentation/providers/providers.dart';
@@ -49,242 +50,246 @@ class ProfileScreen extends ConsumerWidget {
           ),
         ),
       ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await ref.read(userProfileNotifierProvider.notifier).refresh();
-          await ref
-              .read(sajuProvider.notifier)
-              .fetchUserSaju(force: true, trigger: 'profile.refresh');
-        },
-        child: ListView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(
-            DSSpacing.pageHorizontal,
-            DSSpacing.md,
-            DSSpacing.pageHorizontal,
-            DSSpacing.xxl,
-          ),
-          children: [
-            _AccountHeroCard(
-              profile: profile,
-              fallbackName: user.userMetadata?['name'] as String? ??
-                  user.userMetadata?['full_name'] as String? ??
-                  user.email ??
-                  '사용자',
-              fallbackEmail: user.email,
+      body: PaperRuntimeBackground(
+        applySafeArea: false,
+        ringAlignment: Alignment.topCenter,
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await ref.read(userProfileNotifierProvider.notifier).refresh();
+            await ref
+                .read(sajuProvider.notifier)
+                .fetchUserSaju(force: true, trigger: 'profile.refresh');
+          },
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(
+              DSSpacing.pageHorizontal,
+              DSSpacing.md,
+              DSSpacing.pageHorizontal,
+              DSSpacing.xxl,
             ),
-            const SizedBox(height: DSSpacing.xl),
-            DSSectionHeader(
-              title: '내 정보',
-              uppercase: false,
-              trailing: TextButton(
-                onPressed: () => context.push('/profile/edit'),
-                child: const Text('수정'),
-              ),
-            ),
-            DSCard.outlined(
-              padding: EdgeInsets.zero,
-              child: Column(
-                children: [
-                  _InfoTile(
-                    label: '생년월일',
-                    value: _formatBirthDate(profile?.birthDate),
-                  ),
-                  _InfoTile(
-                    label: '태어난 시간',
-                    value: profile?.birthTime ?? '미설정',
-                  ),
-                  _InfoTile(
-                    label: '성별',
-                    value: profile?.gender.label ?? '미설정',
-                  ),
-                  _InfoTile(
-                    label: 'MBTI',
-                    value: profile?.mbti ?? '미설정',
-                  ),
-                  _InfoTile(
-                    label: '혈액형',
-                    value: profile?.bloodType ?? '미설정',
-                  ),
-                  _InfoTile(
-                    label: '띠 / 별자리',
-                    value: _buildZodiacText(profile),
-                    isLast: true,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: DSSpacing.xl),
-            const DSSectionHeader(title: '사주', uppercase: false),
-            DSCard.elevated(
-              padding: const EdgeInsets.all(DSSpacing.lg),
-              onTap: () => context.push('/profile/saju-summary'),
-              child: _SajuSummaryPreview(
-                state: sajuState,
+            children: [
+              _AccountHeroCard(
                 profile: profile,
+                fallbackName: user.userMetadata?['name'] as String? ??
+                    user.userMetadata?['full_name'] as String? ??
+                    user.email ??
+                    '사용자',
+                fallbackEmail: user.email,
               ),
-            ),
-            const SizedBox(height: DSSpacing.xl),
-            const DSSectionHeader(title: '스토리 캐릭터 관계도', uppercase: false),
-            DSCard.elevated(
-              padding: const EdgeInsets.all(DSSpacing.lg),
-              onTap: () => context.push('/profile/relationships'),
-              child: _RelationshipsSummaryCard(stats: relationshipStats),
-            ),
-            const SizedBox(height: DSSpacing.xl),
-            const DSSectionHeader(title: '설정', uppercase: false),
-            DSCard.outlined(
-              padding: const EdgeInsets.all(DSSpacing.lg),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '테마 모드',
-                    style: context.bodyLarge.copyWith(
-                      color: context.colors.textPrimary,
-                      fontWeight: FontWeight.w600,
+              const SizedBox(height: DSSpacing.xl),
+              DSSectionHeader(
+                title: '내 정보',
+                uppercase: false,
+                trailing: TextButton(
+                  onPressed: () => context.push('/profile/edit'),
+                  child: const Text('수정'),
+                ),
+              ),
+              DSCard.outlined(
+                padding: EdgeInsets.zero,
+                child: Column(
+                  children: [
+                    _InfoTile(
+                      label: '생년월일',
+                      value: _formatBirthDate(profile?.birthDate),
                     ),
-                  ),
-                  const SizedBox(height: DSSpacing.xs),
-                  Text(
-                    '시스템, 라이트, 다크 모드를 전환할 수 있어요.',
+                    _InfoTile(
+                      label: '태어난 시간',
+                      value: profile?.birthTime ?? '미설정',
+                    ),
+                    _InfoTile(
+                      label: '성별',
+                      value: profile?.gender.label ?? '미설정',
+                    ),
+                    _InfoTile(
+                      label: 'MBTI',
+                      value: profile?.mbti ?? '미설정',
+                    ),
+                    _InfoTile(
+                      label: '혈액형',
+                      value: profile?.bloodType ?? '미설정',
+                    ),
+                    _InfoTile(
+                      label: '띠 / 별자리',
+                      value: _buildZodiacText(profile),
+                      isLast: true,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: DSSpacing.xl),
+              const DSSectionHeader(title: '사주', uppercase: false),
+              DSCard.elevated(
+                padding: const EdgeInsets.all(DSSpacing.lg),
+                onTap: () => context.push('/profile/saju-summary'),
+                child: _SajuSummaryPreview(
+                  state: sajuState,
+                  profile: profile,
+                ),
+              ),
+              const SizedBox(height: DSSpacing.xl),
+              const DSSectionHeader(title: '스토리 캐릭터 관계도', uppercase: false),
+              DSCard.elevated(
+                padding: const EdgeInsets.all(DSSpacing.lg),
+                onTap: () => context.push('/profile/relationships'),
+                child: _RelationshipsSummaryCard(stats: relationshipStats),
+              ),
+              const SizedBox(height: DSSpacing.xl),
+              const DSSectionHeader(title: '설정', uppercase: false),
+              DSCard.outlined(
+                padding: const EdgeInsets.all(DSSpacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '테마 모드',
+                      style: context.bodyLarge.copyWith(
+                        color: context.colors.textPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: DSSpacing.xs),
+                    Text(
+                      '시스템, 라이트, 다크 모드를 전환할 수 있어요.',
+                      style: context.bodySmall.copyWith(
+                        color: context.colors.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: DSSpacing.md),
+                    DSChoiceChips(
+                      options: const ['시스템', '라이트', '다크'],
+                      selected: switch (themeMode) {
+                        ThemeMode.system => 0,
+                        ThemeMode.light => 1,
+                        ThemeMode.dark => 2,
+                      },
+                      onSelected: (index) async {
+                        final nextMode = switch (index) {
+                          0 => ThemeMode.system,
+                          1 => ThemeMode.light,
+                          _ => ThemeMode.dark,
+                        };
+                        await ref
+                            .read(themeModeProvider.notifier)
+                            .setThemeMode(nextMode);
+                      },
+                    ),
+                    const SizedBox(height: DSSpacing.lg),
+                    const Divider(height: 1),
+                    const SizedBox(height: DSSpacing.md),
+                    _ActionRow(
+                      icon: Icons.notifications_outlined,
+                      title: '알림 설정',
+                      subtitle: '일일 운세와 알림 수신 시간을 관리해요.',
+                      onTap: () => context.push('/profile/notifications'),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: DSSpacing.xl),
+              const DSSectionHeader(title: '계정 연결', uppercase: false),
+              DSCard.outlined(
+                padding: const EdgeInsets.all(DSSpacing.md),
+                child: SocialAccountsSection(
+                  linkedProviders: profile?.linkedProviders,
+                  primaryProvider: profile?.primaryProvider ??
+                      user.appMetadata['provider'] as String?,
+                  onProvidersChanged: (providers) async {
+                    if (profile == null) {
+                      return;
+                    }
+                    await ref
+                        .read(userProfileNotifierProvider.notifier)
+                        .updateProfile(
+                          profile.copyWith(linkedProviders: providers),
+                        );
+                  },
+                  socialAuthService: ref.watch(socialAuthServiceProvider),
+                ),
+              ),
+              const SizedBox(height: DSSpacing.xl),
+              const DSSectionHeader(title: '서비스 및 약관', uppercase: false),
+              DSCard.outlined(
+                padding: EdgeInsets.zero,
+                child: Column(
+                  children: [
+                    _ActionListTile(
+                      icon: Icons.privacy_tip_outlined,
+                      title: '개인정보처리방침',
+                      subtitle: '개인정보 수집과 보관 방침을 확인해요.',
+                      onTap: () => context.push('/privacy-policy'),
+                    ),
+                    _ActionListTile(
+                      icon: Icons.description_outlined,
+                      title: '이용약관',
+                      subtitle: '서비스 이용 조건을 확인해요.',
+                      onTap: () => context.push('/terms-of-service'),
+                      isLast: true,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: DSSpacing.xl),
+              const DSSectionHeader(title: '구매 관리', uppercase: false),
+              DSCard.outlined(
+                padding: EdgeInsets.zero,
+                child: Column(
+                  children: [
+                    _ActionListTile(
+                      icon: Icons.restore_rounded,
+                      title: '구매 복원 / Restore Purchases',
+                      subtitle: '이전 구매 항목을 복원합니다.',
+                      onTap: () => _handleRestorePurchases(context),
+                    ),
+                    if (Platform.isIOS)
+                      _ActionListTile(
+                        icon: Icons.manage_accounts_outlined,
+                        title: '구독 관리 / Manage Subscriptions',
+                        subtitle: 'Apple 구독을 관리합니다.',
+                        onTap: () => _openSubscriptionManagement(),
+                        isLast: true,
+                      ),
+                    if (!Platform.isIOS)
+                      _ActionListTile(
+                        icon: Icons.manage_accounts_outlined,
+                        title: '구독 관리 / Manage Subscriptions',
+                        subtitle: 'Google Play 구독을 관리합니다.',
+                        onTap: () => _openSubscriptionManagement(),
+                        isLast: true,
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: DSSpacing.xl),
+              Center(
+                child: TextButton(
+                  onPressed: () => _handleLogout(context, ref),
+                  child: Text(
+                    '로그아웃',
                     style: context.bodySmall.copyWith(
-                      color: context.colors.textSecondary,
+                      color: context.colors.textTertiary,
                     ),
-                  ),
-                  const SizedBox(height: DSSpacing.md),
-                  DSChoiceChips(
-                    options: const ['시스템', '라이트', '다크'],
-                    selected: switch (themeMode) {
-                      ThemeMode.system => 0,
-                      ThemeMode.light => 1,
-                      ThemeMode.dark => 2,
-                    },
-                    onSelected: (index) async {
-                      final nextMode = switch (index) {
-                        0 => ThemeMode.system,
-                        1 => ThemeMode.light,
-                        _ => ThemeMode.dark,
-                      };
-                      await ref
-                          .read(themeModeProvider.notifier)
-                          .setThemeMode(nextMode);
-                    },
-                  ),
-                  const SizedBox(height: DSSpacing.lg),
-                  const Divider(height: 1),
-                  const SizedBox(height: DSSpacing.md),
-                  _ActionRow(
-                    icon: Icons.notifications_outlined,
-                    title: '알림 설정',
-                    subtitle: '일일 운세와 알림 수신 시간을 관리해요.',
-                    onTap: () => context.push('/profile/notifications'),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: DSSpacing.xl),
-            const DSSectionHeader(title: '계정 연결', uppercase: false),
-            DSCard.outlined(
-              padding: const EdgeInsets.all(DSSpacing.md),
-              child: SocialAccountsSection(
-                linkedProviders: profile?.linkedProviders,
-                primaryProvider: profile?.primaryProvider ??
-                    user.appMetadata['provider'] as String?,
-                onProvidersChanged: (providers) async {
-                  if (profile == null) {
-                    return;
-                  }
-                  await ref
-                      .read(userProfileNotifierProvider.notifier)
-                      .updateProfile(
-                        profile.copyWith(linkedProviders: providers),
-                      );
-                },
-                socialAuthService: ref.watch(socialAuthServiceProvider),
-              ),
-            ),
-            const SizedBox(height: DSSpacing.xl),
-            const DSSectionHeader(title: '서비스 및 약관', uppercase: false),
-            DSCard.outlined(
-              padding: EdgeInsets.zero,
-              child: Column(
-                children: [
-                  _ActionListTile(
-                    icon: Icons.privacy_tip_outlined,
-                    title: '개인정보처리방침',
-                    subtitle: '개인정보 수집과 보관 방침을 확인해요.',
-                    onTap: () => context.push('/privacy-policy'),
-                  ),
-                  _ActionListTile(
-                    icon: Icons.description_outlined,
-                    title: '이용약관',
-                    subtitle: '서비스 이용 조건을 확인해요.',
-                    onTap: () => context.push('/terms-of-service'),
-                    isLast: true,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: DSSpacing.xl),
-            const DSSectionHeader(title: '구매 관리', uppercase: false),
-            DSCard.outlined(
-              padding: EdgeInsets.zero,
-              child: Column(
-                children: [
-                  _ActionListTile(
-                    icon: Icons.restore_rounded,
-                    title: '구매 복원 / Restore Purchases',
-                    subtitle: '이전 구매 항목을 복원합니다.',
-                    onTap: () => _handleRestorePurchases(context),
-                  ),
-                  if (Platform.isIOS)
-                    _ActionListTile(
-                      icon: Icons.manage_accounts_outlined,
-                      title: '구독 관리 / Manage Subscriptions',
-                      subtitle: 'Apple 구독을 관리합니다.',
-                      onTap: () => _openSubscriptionManagement(),
-                      isLast: true,
-                    ),
-                  if (!Platform.isIOS)
-                    _ActionListTile(
-                      icon: Icons.manage_accounts_outlined,
-                      title: '구독 관리 / Manage Subscriptions',
-                      subtitle: 'Google Play 구독을 관리합니다.',
-                      onTap: () => _openSubscriptionManagement(),
-                      isLast: true,
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(height: DSSpacing.xl),
-            Center(
-              child: TextButton(
-                onPressed: () => _handleLogout(context, ref),
-                child: Text(
-                  '로그아웃',
-                  style: context.bodySmall.copyWith(
-                    color: context.colors.textTertiary,
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: DSSpacing.sm),
-            Center(
-              child: GestureDetector(
-                onTap: () => context.push('/account-deletion'),
-                child: Text(
-                  '회원 탈퇴',
-                  style: context.labelSmall.copyWith(
-                    color: context.colors.textTertiary.withValues(alpha: 0.5),
-                    decoration: TextDecoration.underline,
-                    decorationColor:
-                        context.colors.textTertiary.withValues(alpha: 0.5),
+              const SizedBox(height: DSSpacing.sm),
+              Center(
+                child: GestureDetector(
+                  onTap: () => context.push('/account-deletion'),
+                  child: Text(
+                    '회원 탈퇴',
+                    style: context.labelSmall.copyWith(
+                      color: context.colors.textTertiary.withValues(alpha: 0.5),
+                      decoration: TextDecoration.underline,
+                      decorationColor:
+                          context.colors.textTertiary.withValues(alpha: 0.5),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -373,31 +378,34 @@ class _ProfileAuthRequiredView extends StatelessWidget {
           onPressed: () => Navigator.of(context).maybePop(),
         ),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(DSSpacing.xl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.lock_outline,
-                size: 40,
-                color: context.colors.textSecondary,
-              ),
-              const SizedBox(height: DSSpacing.md),
-              Text(
-                '로그인 후 계정 정보를 확인할 수 있어요.',
-                style: context.bodyLarge.copyWith(
-                  color: context.colors.textPrimary,
+      body: PaperRuntimeBackground(
+        ringAlignment: Alignment.center,
+        padding: const EdgeInsets.all(DSSpacing.xl),
+        child: Center(
+          child: PaperRuntimePanel(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.lock_outline,
+                  size: 40,
+                  color: context.colors.textSecondary,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: DSSpacing.md),
-              DSButton.secondary(
-                text: '채팅으로 돌아가기',
-                onPressed: () => context.go('/chat'),
-              ),
-            ],
+                const SizedBox(height: DSSpacing.md),
+                Text(
+                  '로그인 후 계정 정보를 확인할 수 있어요.',
+                  style: context.bodyLarge.copyWith(
+                    color: context.colors.textPrimary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: DSSpacing.md),
+                DSButton.secondary(
+                  text: '채팅으로 돌아가기',
+                  onPressed: () => context.go('/chat'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -421,19 +429,16 @@ class _AccountHeroCard extends StatelessWidget {
     final colors = context.colors;
     final providerLabel = _providerLabel(profile?.primaryProvider);
 
-    return DSCard.gradient(
-      gradient: LinearGradient(
-        colors: [
-          colors.surface,
-          colors.backgroundSecondary,
-        ],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
+    return PaperRuntimePanel(
       padding: const EdgeInsets.all(DSSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const PaperRuntimePill(
+            label: 'Account overview',
+            icon: Icons.person_outline,
+          ),
+          const SizedBox(height: DSSpacing.md),
           Row(
             children: [
               _ProfileAvatar(imageUrl: profile?.profileImageUrl),

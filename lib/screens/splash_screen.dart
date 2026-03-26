@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../core/design_system/design_system.dart';
 import '../core/services/supabase_connection_service.dart';
+import '../core/widgets/paper_runtime_chrome.dart';
 import '../services/app_version_service.dart';
 import '../services/storage_service.dart';
 import '../presentation/widgets/app_update_dialog.dart';
@@ -200,189 +201,82 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final typography = context.typography;
     final spacing = context.spacing;
-    final radius = context.radius;
 
     return Scaffold(
-      backgroundColor: DSColors.backgroundDark,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          const _SplashBackdrop(),
-          SafeArea(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: spacing.xl),
+      backgroundColor: colors.background,
+      body: PaperRuntimeBackground(
+        ringAlignment: Alignment.center,
+        padding: EdgeInsets.symmetric(horizontal: spacing.xl),
+        child: Column(
+          children: [
+            const Spacer(flex: 5),
+            TweenAnimationBuilder<double>(
+              tween: Tween<double>(begin: 0.0, end: 1.0),
+              duration: const Duration(milliseconds: 1200),
+              curve: Curves.easeOutCubic,
+              builder: (context, value, child) {
+                return Opacity(
+                  opacity: value,
+                  child: Transform.translate(
+                    offset: Offset(0, 12 * (1 - value)),
+                    child: child,
+                  ),
+                );
+              },
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Spacer(flex: 8),
-                  TweenAnimationBuilder<double>(
-                    tween: Tween<double>(begin: 0.0, end: 1.0),
-                    duration: const Duration(milliseconds: 1500),
-                    curve: Curves.easeInOutCubic,
-                    builder: (context, value, child) {
-                      return Opacity(
-                        opacity: value,
-                        child: Transform.scale(
-                          scale: 0.97 + (0.03 * value),
-                          child: child,
-                        ),
-                      );
-                    },
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 420),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color:
-                                  DSColors.surfaceDark.withValues(alpha: 0.96),
-                              borderRadius:
-                                  BorderRadius.circular(radius.xxl + 4),
-                              border: Border.all(
-                                color:
-                                    DSColors.borderDark.withValues(alpha: 0.92),
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: DSColors.textPrimaryDark
-                                      .withValues(alpha: 0.08),
-                                  blurRadius: 28,
-                                  offset: const Offset(0, 16),
-                                ),
-                              ],
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(radius.xxl),
-                              child: Image.asset(
-                                'assets/images/zpzg_logo_light.webp',
-                                width: 104,
-                                height: 104,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: spacing.xl + spacing.xs),
-                          Text(
-                            '대화로 시작하는 자기 발견',
-                            style: typography.headingMedium.copyWith(
-                              color: DSColors.textPrimaryDark,
-                              height: 1.18,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(height: spacing.sm),
-                          Text(
-                            '질감은 남기고, 화면은 더 또렷하게 정리했습니다.',
-                            style: typography.bodyMedium.copyWith(
-                              color: DSColors.textSecondaryDark,
-                              height: 1.55,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
+                  PaperRuntimePanel(
+                    elevated: false,
+                    padding: const EdgeInsets.all(DSSpacing.sm),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(DSRadius.xl),
+                      child: Image.asset(
+                        'assets/images/zpzg_logo_light.webp',
+                        width: 88,
+                        height: 88,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
-                  const Spacer(flex: 6),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: spacing.md),
-                    child: Text(
-                      'Launching ZPZG',
-                      style: typography.labelLarge.copyWith(
-                        color: DSColors.textTertiaryDark,
-                      ),
-                      textAlign: TextAlign.center,
+                  SizedBox(height: spacing.xl),
+                  Text(
+                    '대화로 시작하는 자기 발견',
+                    style: typography.headingMedium.copyWith(
+                      color: colors.textPrimary,
+                      height: 1.16,
+                      letterSpacing: -0.3,
                     ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: spacing.sm),
+                  Text(
+                    '질문하고, 듣고, 당신만의 흐름을 발견하세요.',
+                    style: typography.bodyMedium.copyWith(
+                      color: colors.textSecondary,
+                      height: 1.5,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SplashBackdrop extends StatelessWidget {
-  const _SplashBackdrop();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Stack(
-      fit: StackFit.expand,
-      children: [
-        DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                DSColors.backgroundDark,
-                DSColors.backgroundSecondaryDark,
-              ],
-            ),
-          ),
-        ),
-        _SplashOrb(
-          alignment: Alignment.topRight,
-          offset: Offset(84, -96),
-          size: 256,
-          color: DSColors.surfaceSecondaryDark,
-          opacity: 0.72,
-        ),
-        _SplashOrb(
-          alignment: Alignment.bottomLeft,
-          offset: Offset(-82, 84),
-          size: 220,
-          color: DSColors.borderDark,
-          opacity: 0.56,
-        ),
-      ],
-    );
-  }
-}
-
-class _SplashOrb extends StatelessWidget {
-  const _SplashOrb({
-    required this.alignment,
-    required this.offset,
-    required this.size,
-    required this.color,
-    required this.opacity,
-  });
-
-  final Alignment alignment;
-  final Offset offset;
-  final double size;
-  final Color color;
-  final double opacity;
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: alignment,
-      child: Transform.translate(
-        offset: offset,
-        child: IgnorePointer(
-          child: Container(
-            width: size,
-            height: size,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: RadialGradient(
-                colors: [
-                  color.withValues(alpha: opacity),
-                  color.withValues(alpha: opacity * 0.42),
-                  color.withValues(alpha: 0),
-                ],
-                stops: const [0.0, 0.52, 1.0],
+            const Spacer(flex: 4),
+            Padding(
+              padding: EdgeInsets.only(bottom: spacing.lg),
+              child: Container(
+                width: 84,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: colors.textPrimary.withValues(alpha: 0.9),
+                  borderRadius: BorderRadius.circular(DSRadius.full),
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );

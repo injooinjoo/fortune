@@ -7,6 +7,7 @@ import '../../../../core/extensions/l10n_extension.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/navigation/fortune_chat_route.dart';
 import '../../../../core/services/supabase_connection_service.dart';
+import '../../../../core/widgets/paper_runtime_chrome.dart';
 import 'package:fortune/core/utils/haptic_utils.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../../data/services/character_localizer.dart';
@@ -311,8 +312,9 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
     final typography = context.typography;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (widget.isOverlay)
             IconButton(
@@ -322,13 +324,33 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
               constraints: const BoxConstraints(),
             ),
           if (widget.isOverlay) const SizedBox(width: 12),
-          Text(
-            context.l10n.messages,
-            style: typography.headingLarge.copyWith(
-              color: colors.textPrimary,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const PaperRuntimePill(
+                  label: 'Chat-first',
+                  icon: Icons.auto_awesome,
+                ),
+                const SizedBox(height: DSSpacing.sm),
+                Text(
+                  'Fortune',
+                  style: typography.headingLarge.copyWith(
+                    color: colors.textPrimary,
+                    height: 1.0,
+                    letterSpacing: -0.6,
+                  ),
+                ),
+                const SizedBox(height: DSSpacing.xs),
+                Text(
+                  '지금 열어볼 흐름을 골라보세요',
+                  style: typography.bodySmall.copyWith(
+                    color: colors.textSecondary,
+                  ),
+                ),
+              ],
             ),
           ),
-          const Spacer(),
           IconButton(
             icon: Icon(
               Icons.edit_outlined,
@@ -411,24 +433,26 @@ class _PersonalizedStarterSection extends StatelessWidget {
     final typography = context.typography;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: colors.surface,
-          borderRadius: BorderRadius.circular(context.radius.xl),
-          border: Border.all(
-            color: colors.border.withValues(alpha: 0.72),
-          ),
-        ),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      child: PaperRuntimePanel(
+        padding: const EdgeInsets.all(DSSpacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              '맞춤 시작점',
-              style: typography.headingSmall.copyWith(
-                color: colors.textPrimary,
-              ),
+            Row(
+              children: [
+                Text(
+                  '맞춤 시작점',
+                  style: typography.headingSmall.copyWith(
+                    color: colors.textPrimary,
+                  ),
+                ),
+                const Spacer(),
+                PaperRuntimePill(
+                  label: '${options.length}개 추천',
+                  emphasize: true,
+                ),
+              ],
             ),
             const SizedBox(height: 6),
             Text(
@@ -475,7 +499,7 @@ class _StarterOptionCard extends StatelessWidget {
         child: Ink(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
           decoration: BoxDecoration(
-            color: colors.backgroundSecondary,
+            color: colors.backgroundSecondary.withValues(alpha: 0.92),
             borderRadius: BorderRadius.circular(context.radius.lg),
             border: Border.all(
               color: colors.border.withValues(alpha: 0.68),
@@ -519,11 +543,8 @@ class _StarterOptionCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              Text(
-                isStory ? '스토리' : '전문가',
-                style: typography.labelSmall.copyWith(
-                  color: colors.textSecondary,
-                ),
+              PaperRuntimePill(
+                label: isStory ? '스토리' : '전문가',
               ),
               const SizedBox(width: 6),
               Icon(
@@ -554,7 +575,7 @@ class _CharacterTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
       child: Row(
         children: [
           _TabButton(
@@ -598,13 +619,17 @@ class _TabButton extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? colors.ctaBackground : colors.backgroundSecondary,
+          color: isSelected
+              ? colors.selectionBackground.withValues(alpha: 0.96)
+              : colors.backgroundSecondary.withValues(alpha: 0.9),
           borderRadius: BorderRadius.circular(context.radius.full),
-          border: isSelected
-              ? null
-              : Border.all(color: colors.border.withValues(alpha: 0.7)),
+          border: Border.all(
+            color: isSelected
+                ? colors.selectionBorder
+                : colors.border.withValues(alpha: 0.7),
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -612,14 +637,18 @@ class _TabButton extends StatelessWidget {
             Icon(
               icon,
               size: 16,
-              color: isSelected ? colors.ctaForeground : colors.textSecondary,
+              color: isSelected
+                  ? colors.selectionForeground
+                  : colors.textSecondary,
             ),
             const SizedBox(width: 6),
             Text(
               label,
               style: context.typography.labelLarge.copyWith(
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                color: isSelected ? colors.ctaForeground : colors.textSecondary,
+                color: isSelected
+                    ? colors.selectionForeground
+                    : colors.textSecondary,
               ),
             ),
           ],

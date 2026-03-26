@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/design_system/design_system.dart';
+import '../../core/widgets/paper_runtime_chrome.dart';
 import '../../presentation/widgets/social_login_bottom_sheet.dart';
 import '../../services/storage_service.dart';
 
@@ -42,66 +43,73 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final spacing = context.spacing;
+    final typography = context.typography;
 
     return Scaffold(
       backgroundColor: colors.background,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Spacer(flex: 2),
-              TweenAnimationBuilder<double>(
-                tween: Tween(begin: 0.0, end: 1.0),
-                duration: const Duration(milliseconds: 800),
-                curve: Curves.easeOutCubic,
-                builder: (context, value, child) {
-                  return Opacity(
-                    opacity: value,
-                    child: Transform.translate(
-                      offset: Offset(0, 18 * (1 - value)),
-                      child: child,
+      body: PaperRuntimeBackground(
+        ringAlignment: Alignment.topCenter,
+        padding: const EdgeInsets.symmetric(horizontal: DSSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: DSSpacing.xl),
+            PaperRuntimePill(
+              label: widget.eyebrow ?? '빠른 시작',
+              icon: Icons.auto_awesome,
+            ),
+            SizedBox(height: spacing.lg),
+            TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0.0, end: 1.0),
+              duration: const Duration(milliseconds: 800),
+              curve: Curves.easeOutCubic,
+              builder: (context, value, child) {
+                return Opacity(
+                  opacity: value,
+                  child: Transform.translate(
+                    offset: Offset(0, 18 * (1 - value)),
+                    child: child,
+                  ),
+                );
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.title,
+                    style: typography.headingLarge.copyWith(
+                      color: colors.textPrimary,
+                      height: 1.04,
+                      letterSpacing: -0.8,
                     ),
-                  );
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 84,
-                      height: 84,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(context.radius.xxl),
-                        color: colors.surface,
-                        border: Border.all(
-                          color: colors.border.withValues(alpha: 0.7),
-                        ),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(context.radius.xxl),
-                        child: Image.asset(
-                          'assets/images/zpzg_logo_light.webp',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                  ),
+                  SizedBox(height: spacing.md),
+                  Text(
+                    widget.description,
+                    style: typography.bodyMedium.copyWith(
+                      color: colors.textSecondary,
+                      height: 1.55,
                     ),
-                    SizedBox(height: spacing.xl),
-                    SocialAuthEntryPanel(
-                      eyebrow: widget.eyebrow,
-                      title: widget.title,
-                      description: widget.description,
-                      showBrowseAction: widget.showBrowseAction,
-                      onBrowseAsGuest: _startAsGuest,
-                      onAuthenticated:
-                          widget.onAuthenticated ?? () => context.go('/chat'),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              const Spacer(flex: 3),
-            ],
-          ),
+            ),
+            const Spacer(),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: SocialAuthEntryPanel(
+                eyebrow: null,
+                title: widget.title,
+                description: widget.description,
+                showHeader: false,
+                showBrowseAction: widget.showBrowseAction,
+                onBrowseAsGuest: _startAsGuest,
+                onAuthenticated:
+                    widget.onAuthenticated ?? () => context.go('/chat'),
+              ),
+            ),
+            const SizedBox(height: DSSpacing.lg),
+          ],
         ),
       ),
     );

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/design_system/design_system.dart';
+import '../../../core/widgets/paper_runtime_chrome.dart';
 
 class BirthInputStep extends ConsumerStatefulWidget {
   final DateTime? initialDate;
@@ -70,7 +71,6 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
 
   TextStyle? _inputStyle;
   TextStyle? _hintStyle;
-  TextStyle? _labelStyle;
 
   @override
   void initState() {
@@ -251,10 +251,6 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
       color: colors.textTertiary,
       fontWeight: FontWeight.w600,
     );
-    _labelStyle = typography.displaySmall.copyWith(
-      color: colors.textSecondary,
-      fontWeight: FontWeight.w500,
-    );
   }
 
   void _validateDate() {
@@ -345,12 +341,6 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
           color: colors.textTertiary,
           fontWeight: FontWeight.w600,
         );
-    final labelStyle = _labelStyle ??
-        typography.displaySmall.copyWith(
-          color: colors.textSecondary,
-          fontWeight: FontWeight.w500,
-        );
-
     final hasDisplayName = _displayNameController.text.trim().isNotEmpty ||
         !widget.requireDisplayName;
     final showCTA =
@@ -359,54 +349,42 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
     return Scaffold(
       backgroundColor: colors.background,
       resizeToAvoidBottomInset: true,
-      body: SafeArea(
+      body: PaperRuntimeBackground(
+        ringAlignment: Alignment.topCenter,
+        padding: const EdgeInsets.symmetric(horizontal: DSSpacing.lg),
         child: Column(
           children: [
-            // Back button
             if (widget.showBackButton)
               Align(
                 alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8, top: 4),
-                  child: IconButton(
-                    onPressed: widget.onBack,
-                    icon: Icon(
-                      Icons.arrow_back_ios_new,
-                      color: colors.textSecondary,
-                      size: 20,
-                    ),
+                child: IconButton(
+                  onPressed: widget.onBack,
+                  icon: Icon(
+                    Icons.arrow_back_ios_new,
+                    color: colors.textSecondary,
+                    size: 20,
                   ),
                 ),
-              ),
-
+              )
+            else
+              const SizedBox(height: DSSpacing.lg),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: const EdgeInsets.only(bottom: DSSpacing.lg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: widget.showBackButton ? 24 : 48),
-
                     if (widget.requireDisplayName) ...[
-                      Text(
-                        '대화에서 불릴 이름',
-                        style: typography.labelLarge.copyWith(
-                          color: colors.textSecondary,
-                        ),
+                      const PaperRuntimePill(
+                        label: '대화에서 사용할 이름',
+                        icon: Icons.person_outline,
                       ),
-                      const SizedBox(height: 10),
-                      Container(
+                      const SizedBox(height: DSSpacing.md),
+                      PaperRuntimePanel(
+                        elevated: false,
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 18,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: colors.surface,
-                          borderRadius:
-                              BorderRadius.circular(context.radius.xl),
-                          border: Border.all(
-                            color: colors.border.withValues(alpha: 0.72),
-                          ),
+                          horizontal: DSSpacing.md,
+                          vertical: DSSpacing.xs,
                         ),
                         child: TextField(
                           controller: _displayNameController,
@@ -419,295 +397,246 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                           decoration: InputDecoration(
                             hintText: '이름을 입력해주세요',
                             hintStyle: typography.headingSmall.copyWith(
-                              color: colors.textTertiary.withValues(alpha: 0.6),
+                              color:
+                                  colors.textTertiary.withValues(alpha: 0.72),
                             ),
                             border: InputBorder.none,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: DSSpacing.xl),
                     ],
-
-                    // Title
                     Text(
                       widget.title,
                       style: typography.headingLarge.copyWith(
                         color: colors.textPrimary,
-                        height: 1.3,
-                        letterSpacing: -0.5,
+                        height: 1.1,
+                        letterSpacing: -0.6,
                       ),
                     ).animate().fadeIn(duration: 500.ms),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: DSSpacing.sm),
                     Text(
                       widget.description,
                       style: typography.bodyMedium.copyWith(
-                        color: colors.textTertiary,
+                        color: colors.textSecondary,
                         height: 1.5,
                       ),
-                    ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
-
-                    const SizedBox(height: 56),
-
-                    // Date Input - Progressive reveal
-                    Center(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: [
-                          // Year
-                          SizedBox(
-                            width: 90,
-                            child: TextField(
-                              controller: _yearController,
-                              focusNode: _yearFocus,
-                              keyboardType: TextInputType.number,
-                              textAlign: TextAlign.center,
-                              style: inputStyle,
-                              cursorColor: colors.textSecondary,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                LengthLimitingTextInputFormatter(4),
-                              ],
-                              decoration: InputDecoration(
-                                hintText: 'YYYY',
-                                hintStyle: hintStyle,
-                                border: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                filled: false,
-                                contentPadding: EdgeInsets.zero,
-                                isDense: true,
-                              ),
-                            ),
-                          ),
-                          Text('년', style: labelStyle),
-
-                          // Month
-                          if (_showMonth) ...[
-                            const SizedBox(width: 16),
-                            SizedBox(
-                              width: 50,
-                              child: TextField(
-                                controller: _monthController,
-                                focusNode: _monthFocus,
-                                keyboardType: TextInputType.number,
-                                textAlign: TextAlign.center,
-                                style: inputStyle,
-                                cursorColor: colors.textSecondary,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly,
-                                  LengthLimitingTextInputFormatter(2),
-                                ],
-                                decoration: InputDecoration(
-                                  hintText: 'MM',
-                                  hintStyle: hintStyle,
-                                  border: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  filled: false,
-                                  contentPadding: EdgeInsets.zero,
-                                  isDense: true,
-                                ),
-                              ),
-                            ),
-                            Text('월', style: labelStyle),
-                          ],
-
-                          // Day
-                          if (_showDay) ...[
-                            const SizedBox(width: 16),
-                            SizedBox(
-                              width: 50,
-                              child: TextField(
-                                controller: _dayController,
-                                focusNode: _dayFocus,
-                                keyboardType: TextInputType.number,
-                                textAlign: TextAlign.center,
-                                style: inputStyle,
-                                cursorColor: colors.textSecondary,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly,
-                                  LengthLimitingTextInputFormatter(2),
-                                ],
-                                decoration: InputDecoration(
-                                  hintText: 'DD',
-                                  hintStyle: hintStyle,
-                                  border: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  filled: false,
-                                  contentPadding: EdgeInsets.zero,
-                                  isDense: true,
-                                ),
-                              ),
-                            ),
-                            Text('일', style: labelStyle),
-                          ],
-                        ],
-                      ),
+                    ).animate().fadeIn(delay: 120.ms, duration: 400.ms),
+                    const SizedBox(height: DSSpacing.xl),
+                    const PaperRuntimePill(
+                      label: '생년월일',
+                      icon: Icons.cake_outlined,
                     ),
-
-                    // Time Input
-                    if (_showTime) ...[
-                      const SizedBox(height: 56),
-                      Center(
-                        child: Text(
-                          '태어난 시간을 알려주세요',
-                          style: typography.bodyMedium
-                              .copyWith(color: colors.textSecondary),
-                        ),
-                      ).animate().fadeIn(duration: 400.ms),
-                      const SizedBox(height: 24),
-                      Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.baseline,
-                          textBaseline: TextBaseline.alphabetic,
-                          children: [
-                            SizedBox(
-                              width: 50,
-                              child: TextField(
-                                controller: _timeController,
-                                focusNode: _timeFocus,
-                                keyboardType: TextInputType.number,
-                                textAlign: TextAlign.center,
-                                style: inputStyle,
-                                cursorColor: colors.textSecondary,
-                                enabled: !_isTimeUnknown,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly,
-                                  LengthLimitingTextInputFormatter(2),
-                                ],
-                                decoration: InputDecoration(
-                                  hintText: '00',
-                                  hintStyle: hintStyle.copyWith(
-                                    color: _isTimeUnknown
-                                        ? colors.border
-                                        : colors.textTertiary,
-                                  ),
-                                  border: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  disabledBorder: InputBorder.none,
-                                  filled: false,
-                                  contentPadding: EdgeInsets.zero,
-                                  isDense: true,
-                                ),
-                              ),
-                            ),
-                            Text('시', style: labelStyle),
-                            const SizedBox(width: 16),
-                            SizedBox(
-                              width: 50,
-                              child: TextField(
-                                controller: _minuteController,
-                                focusNode: _minuteFocus,
-                                keyboardType: TextInputType.number,
-                                textAlign: TextAlign.center,
-                                style: inputStyle,
-                                cursorColor: colors.textSecondary,
-                                enabled: !_isTimeUnknown,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly,
-                                  LengthLimitingTextInputFormatter(2),
-                                ],
-                                decoration: InputDecoration(
-                                  hintText: '00',
-                                  hintStyle: hintStyle.copyWith(
-                                    color: _isTimeUnknown
-                                        ? colors.border
-                                        : colors.textTertiary,
-                                  ),
-                                  border: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  disabledBorder: InputBorder.none,
-                                  filled: false,
-                                  contentPadding: EdgeInsets.zero,
-                                  isDense: true,
-                                ),
-                              ),
-                            ),
-                            Text('분', style: labelStyle),
-                          ],
-                        ),
-                      ).animate().fadeIn(duration: 400.ms),
-                      const SizedBox(height: 24),
-                      Center(
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _isTimeUnknown = !_isTimeUnknown;
-                              if (_isTimeUnknown) {
-                                _timeController.clear();
-                                _minuteController.clear();
-                                _isTimeValid = true;
-                                FocusScope.of(context).unfocus();
-                                widget.onBirthTimeChanged?.call(
-                                    const TimeOfDay(hour: 12, minute: 0));
-                              } else {
-                                _isTimeValid = false;
-                                _timeFocus.requestFocus();
-                              }
-                            });
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              AnimatedContainer(
-                                duration: const Duration(milliseconds: 200),
-                                width: 22,
-                                height: 22,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  border: Border.all(
-                                    color: _isTimeUnknown
-                                        ? colors.textPrimary
-                                        : colors.border,
-                                    width: 1.5,
-                                  ),
-                                  color: _isTimeUnknown
-                                      ? colors.textPrimary
-                                      : colors.background,
-                                ),
-                                child: _isTimeUnknown
-                                    ? Icon(
-                                        Icons.check,
-                                        size: 14,
-                                        color: colors.ctaForeground,
-                                      )
-                                    : null,
-                              ),
-                              const SizedBox(width: 8),
-                              Text('모르겠어요',
-                                  style: typography.bodyMedium
-                                      .copyWith(color: colors.textSecondary)),
+                    const SizedBox(height: DSSpacing.md),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: _buildInputCard(
+                            controller: _yearController,
+                            focusNode: _yearFocus,
+                            hintText: '연도',
+                            inputStyle: inputStyle,
+                            hintStyle: hintStyle,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(4),
                             ],
                           ),
                         ),
-                      ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
-                    ],
-
-                    const SizedBox(height: 56),
-
-                    // CTA Button
-                    if (showCTA)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 32),
-                        child: DSButton.primary(
-                          text: widget.ctaLabel,
-                          onPressed: widget.onNext,
+                        const SizedBox(width: DSSpacing.sm),
+                        Expanded(
+                          child: _buildInputCard(
+                            controller: _monthController,
+                            focusNode: _monthFocus,
+                            hintText: '월',
+                            inputStyle: inputStyle,
+                            hintStyle: hintStyle,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(2),
+                            ],
+                          ),
                         ),
-                      ).animate().fadeIn(duration: 300.ms),
+                        const SizedBox(width: DSSpacing.sm),
+                        Expanded(
+                          child: _buildInputCard(
+                            controller: _dayController,
+                            focusNode: _dayFocus,
+                            hintText: '일',
+                            inputStyle: inputStyle,
+                            hintStyle: hintStyle,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(2),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: DSSpacing.xl),
+                    AnimatedOpacity(
+                      duration: const Duration(milliseconds: 220),
+                      opacity: _showTime ? 1 : 0.6,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          PaperRuntimePill(
+                            label: '태어난 시간',
+                            icon: Icons.schedule_outlined,
+                            emphasize: _isTimeUnknown,
+                          ),
+                          const SizedBox(height: DSSpacing.md),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildInputCard(
+                                  controller: _timeController,
+                                  focusNode: _timeFocus,
+                                  hintText: '시',
+                                  inputStyle: inputStyle,
+                                  hintStyle: hintStyle,
+                                  enabled: !_isTimeUnknown,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(2),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: DSSpacing.sm),
+                              Expanded(
+                                child: _buildInputCard(
+                                  controller: _minuteController,
+                                  focusNode: _minuteFocus,
+                                  hintText: '분',
+                                  inputStyle: inputStyle,
+                                  hintStyle: hintStyle,
+                                  enabled: !_isTimeUnknown,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(2),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: DSSpacing.md),
+                          GestureDetector(
+                            onTap: _toggleUnknownTime,
+                            child: Row(
+                              children: [
+                                AnimatedContainer(
+                                  duration: const Duration(milliseconds: 180),
+                                  width: 24,
+                                  height: 24,
+                                  decoration: BoxDecoration(
+                                    color: _isTimeUnknown
+                                        ? colors.textPrimary
+                                        : colors.surface,
+                                    borderRadius:
+                                        BorderRadius.circular(DSRadius.smd),
+                                    border: Border.all(
+                                      color: _isTimeUnknown
+                                          ? colors.textPrimary
+                                          : colors.border,
+                                    ),
+                                  ),
+                                  child: _isTimeUnknown
+                                      ? Icon(
+                                          Icons.check,
+                                          size: 14,
+                                          color: colors.ctaForeground,
+                                        )
+                                      : null,
+                                ),
+                                const SizedBox(width: DSSpacing.sm),
+                                Text(
+                                  '시간을 모르겠어요',
+                                  style: typography.bodyMedium.copyWith(
+                                    color: colors.textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: DSSpacing.md),
+              child: DSButton.primary(
+                text: widget.ctaLabel,
+                onPressed: showCTA ? widget.onNext : null,
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildInputCard({
+    required TextEditingController controller,
+    required FocusNode focusNode,
+    required String hintText,
+    required TextStyle inputStyle,
+    required TextStyle hintStyle,
+    required List<TextInputFormatter> inputFormatters,
+    bool enabled = true,
+  }) {
+    final colors = context.colors;
+
+    return PaperRuntimePanel(
+      elevated: false,
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
+      child: TextField(
+        controller: controller,
+        focusNode: focusNode,
+        keyboardType: TextInputType.number,
+        textAlign: TextAlign.center,
+        style: inputStyle,
+        cursorColor: colors.textPrimary,
+        enabled: enabled,
+        inputFormatters: inputFormatters,
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: hintStyle.copyWith(
+            color: enabled
+                ? hintStyle.color
+                : colors.textTertiary.withValues(alpha: 0.45),
+          ),
+          border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          disabledBorder: InputBorder.none,
+          filled: false,
+          contentPadding: EdgeInsets.zero,
+          isDense: true,
+        ),
+      ),
+    );
+  }
+
+  void _toggleUnknownTime() {
+    setState(() {
+      _isTimeUnknown = !_isTimeUnknown;
+      if (_isTimeUnknown) {
+        _timeController.clear();
+        _minuteController.clear();
+        _isTimeValid = true;
+        FocusScope.of(context).unfocus();
+        widget.onBirthTimeChanged?.call(const TimeOfDay(hour: 12, minute: 0));
+      } else {
+        _isTimeValid = false;
+        _timeFocus.requestFocus();
+      }
+    });
   }
 }

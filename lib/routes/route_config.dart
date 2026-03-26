@@ -6,6 +6,7 @@ import '../screens/onboarding/onboarding_page.dart';
 import '../features/policy/presentation/pages/privacy_policy_page.dart';
 import '../features/policy/presentation/pages/terms_of_service_page.dart';
 import '../features/notification/presentation/pages/notification_settings_page.dart';
+import '../screens/premium/premium_screen.dart';
 import '../screens/profile/account_deletion_page.dart';
 import '../screens/profile/profile_edit_page.dart';
 import '../screens/profile/profile_relationships_page.dart';
@@ -57,6 +58,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/home',
         name: 'home',
         redirect: (context, state) => '/chat',
+      ),
+      GoRoute(
+        path: '/premium',
+        name: 'premium',
+        pageBuilder: (context, state) => PageTransitions.slideTransition(
+          context,
+          state,
+          const PremiumScreen(),
+        ),
       ),
       GoRoute(
         path: '/account-deletion',
