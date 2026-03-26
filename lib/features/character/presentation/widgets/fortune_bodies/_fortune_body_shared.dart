@@ -59,12 +59,16 @@ class FortuneSectionCard extends StatelessWidget {
     final colors = context.colors;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(DSSpacing.md),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       decoration: BoxDecoration(
-        color: colors.backgroundSecondary,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [colors.backgroundSecondary, colors.surface],
+        ),
         borderRadius: BorderRadius.circular(DSRadius.lg),
         border: Border.all(
-          color: colors.border.withValues(alpha: 0.35),
+          color: colors.border.withValues(alpha: 0.15),
         ),
       ),
       child: Column(
@@ -72,19 +76,19 @@ class FortuneSectionCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(emoji, style: const TextStyle(fontSize: 16)),
-              const SizedBox(width: DSSpacing.xs),
+              Text(emoji, style: const TextStyle(fontSize: 22)),
+              const SizedBox(width: DSSpacing.sm),
               Expanded(
                 child: Text(
                   title,
-                  style: context.labelLarge.copyWith(
+                  style: context.bodyLarge.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: DSSpacing.sm),
+          const SizedBox(height: DSSpacing.md),
           child,
         ],
       ),
@@ -109,23 +113,24 @@ class FortuneMetricRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     return Padding(
-      padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+      padding: const EdgeInsets.only(bottom: DSSpacing.sm),
       child: Row(
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 14)),
-          const SizedBox(width: DSSpacing.xs),
+          Text(emoji, style: const TextStyle(fontSize: 18)),
+          const SizedBox(width: DSSpacing.sm),
           Text(
             label,
             style: context.labelMedium.copyWith(
               color: colors.textSecondary,
               fontWeight: FontWeight.w600,
+              letterSpacing: 0.2,
             ),
           ),
           const Spacer(),
           Flexible(
             child: Text(
               value,
-              style: context.bodySmall.copyWith(
+              style: context.bodyMedium.copyWith(
                 fontWeight: FontWeight.w600,
               ),
               textAlign: TextAlign.right,
@@ -149,25 +154,25 @@ class FortuneTagPillWrap extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     return Wrap(
-      spacing: DSSpacing.xs,
-      runSpacing: DSSpacing.xs,
+      spacing: DSSpacing.sm,
+      runSpacing: DSSpacing.sm,
       children: tags
           .map(
             (tag) => Container(
               padding: const EdgeInsets.symmetric(
-                horizontal: DSSpacing.sm,
-                vertical: DSSpacing.xxs + 1,
+                horizontal: DSSpacing.md - 4,
+                vertical: DSSpacing.xs + 2,
               ),
               decoration: BoxDecoration(
-                color: colors.backgroundSecondary,
+                color: colors.accentSecondary.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(DSRadius.full),
                 border: Border.all(
-                  color: colors.border.withValues(alpha: 0.4),
+                  color: colors.accentSecondary.withValues(alpha: 0.15),
                 ),
               ),
               child: Text(
                 tag,
-                style: context.labelSmall.copyWith(
+                style: context.labelMedium.copyWith(
                   color: colors.textSecondary,
                   fontWeight: FontWeight.w600,
                 ),
@@ -195,23 +200,47 @@ class FortuneTipCard extends StatelessWidget {
     final colors = context.colors;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(DSSpacing.md),
+      padding: const EdgeInsets.fromLTRB(
+        DSSpacing.lg + 2,
+        DSSpacing.md,
+        DSSpacing.md,
+        DSSpacing.md,
+      ),
       decoration: BoxDecoration(
-        color: colors.backgroundSecondary,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            colors.accentSecondary.withValues(alpha: 0.08),
+            colors.backgroundSecondary,
+          ],
+        ),
         borderRadius: BorderRadius.circular(DSRadius.lg),
-        border: Border.all(
-          color: colors.accentSecondary.withValues(alpha: 0.25),
+        border: Border(
+          left: BorderSide(
+            color: colors.accentSecondary.withValues(alpha: 0.4),
+            width: 3,
+          ),
+          top: BorderSide(
+            color: colors.accentSecondary.withValues(alpha: 0.12),
+          ),
+          right: BorderSide(
+            color: colors.accentSecondary.withValues(alpha: 0.12),
+          ),
+          bottom: BorderSide(
+            color: colors.accentSecondary.withValues(alpha: 0.12),
+          ),
         ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 16)),
-          const SizedBox(width: DSSpacing.sm),
+          Text(emoji, style: const TextStyle(fontSize: 20)),
+          const SizedBox(width: DSSpacing.sm + 4),
           Expanded(
             child: Text(
               text,
-              style: context.bodySmall.copyWith(
+              style: context.bodyMedium.copyWith(
                 fontWeight: FontWeight.w500,
                 height: 1.6,
                 color: colors.textPrimary,
@@ -240,79 +269,86 @@ class FortuneDosDontsCard extends StatelessWidget {
     final colors = context.colors;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(DSSpacing.md),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       decoration: BoxDecoration(
-        color: colors.backgroundSecondary,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [colors.backgroundSecondary, colors.surface],
+        ),
         borderRadius: BorderRadius.circular(DSRadius.lg),
         border: Border.all(
-          color: colors.border.withValues(alpha: 0.35),
+          color: colors.border.withValues(alpha: 0.15),
         ),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (dosList.isNotEmpty)
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '✅ DO',
-                    style: context.labelLarge.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  const SizedBox(height: DSSpacing.xs),
-                  ...dosList.take(3).map(
-                        (item) => Padding(
-                          padding: const EdgeInsets.only(bottom: DSSpacing.xxs),
-                          child: Text(
-                            '• $item',
-                            style: context.bodySmall.copyWith(height: 1.55),
-                          ),
-                        ),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (dosList.isNotEmpty)
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '✅ DO',
+                      style: context.bodyMedium.copyWith(
+                        fontWeight: FontWeight.w800,
                       ),
-                ],
-              ),
-            ),
-          if (dosList.isNotEmpty && dontsList.isNotEmpty)
-            Container(
-              width: 1,
-              height: 60,
-              margin: const EdgeInsets.symmetric(horizontal: DSSpacing.sm),
-              color: colors.border.withValues(alpha: 0.35),
-            ),
-          if (dontsList.isNotEmpty)
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '❌ DON\'T',
-                    style: context.labelLarge.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: colors.textSecondary,
                     ),
-                  ),
-                  const SizedBox(height: DSSpacing.xs),
-                  ...dontsList.take(3).map(
-                        (item) => Padding(
-                          padding: const EdgeInsets.only(bottom: DSSpacing.xxs),
-                          child: Text(
-                            '• $item',
-                            style: context.bodySmall.copyWith(
-                              color: colors.textSecondary,
-                              height: 1.55,
+                    const SizedBox(height: DSSpacing.sm),
+                    ...dosList.take(3).map(
+                          (item) => Padding(
+                            padding:
+                                const EdgeInsets.only(bottom: DSSpacing.xs),
+                            child: Text(
+                              '• $item',
+                              style: context.bodySmall.copyWith(height: 1.6),
                             ),
                           ),
                         ),
-                      ),
-                ],
+                  ],
+                ),
               ),
-            ),
-        ],
+            if (dosList.isNotEmpty && dontsList.isNotEmpty)
+              Container(
+                width: 1,
+                margin: const EdgeInsets.symmetric(horizontal: DSSpacing.sm),
+                color: colors.border.withValues(alpha: 0.2),
+              ),
+            if (dontsList.isNotEmpty)
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '❌ DON\'T',
+                      style: context.bodyMedium.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: colors.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: DSSpacing.sm),
+                    ...dontsList.take(3).map(
+                          (item) => Padding(
+                            padding:
+                                const EdgeInsets.only(bottom: DSSpacing.xs),
+                            child: Text(
+                              '• $item',
+                              style: context.bodySmall.copyWith(
+                                color: colors.textSecondary,
+                                height: 1.6,
+                              ),
+                            ),
+                          ),
+                        ),
+                  ],
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -362,12 +398,16 @@ class FortuneLuckyItemGrid extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(DSSpacing.md),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       decoration: BoxDecoration(
-        color: colors.backgroundSecondary,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [colors.backgroundSecondary, colors.surface],
+        ),
         borderRadius: BorderRadius.circular(DSRadius.lg),
         border: Border.all(
-          color: colors.border.withValues(alpha: 0.35),
+          color: colors.border.withValues(alpha: 0.15),
         ),
       ),
       child: Column(
@@ -375,11 +415,11 @@ class FortuneLuckyItemGrid extends StatelessWidget {
         children: [
           Text(
             '🍀 행운 포인트',
-            style: context.labelLarge.copyWith(
+            style: context.bodyLarge.copyWith(
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: DSSpacing.sm),
+          const SizedBox(height: DSSpacing.md),
           Wrap(
             spacing: DSSpacing.sm,
             runSpacing: DSSpacing.sm,
@@ -423,14 +463,14 @@ class FortuneProgressBar extends StatelessWidget {
       child: Row(
         children: [
           if (emoji != null) ...[
-            Text(emoji!, style: const TextStyle(fontSize: 13)),
-            const SizedBox(width: DSSpacing.xxs),
+            Text(emoji!, style: const TextStyle(fontSize: 16)),
+            const SizedBox(width: DSSpacing.xs),
           ],
           SizedBox(
-            width: 36,
+            width: 48,
             child: Text(
               label,
-              style: context.labelSmall.copyWith(
+              style: context.labelMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 color: colors.textSecondary,
               ),
@@ -439,10 +479,10 @@ class FortuneProgressBar extends StatelessWidget {
           const SizedBox(width: DSSpacing.xs),
           Expanded(
             child: Container(
-              height: 8,
+              height: 10,
               decoration: BoxDecoration(
                 color: colors.border.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(5),
               ),
               child: FractionallySizedBox(
                 alignment: Alignment.centerLeft,
@@ -450,7 +490,7 @@ class FortuneProgressBar extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     color: colors.accentSecondary,
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(5),
                   ),
                 ),
               ),
@@ -458,10 +498,10 @@ class FortuneProgressBar extends StatelessWidget {
           ),
           const SizedBox(width: DSSpacing.sm),
           SizedBox(
-            width: 32,
+            width: 36,
             child: Text(
               '$score%',
-              style: context.labelSmall.copyWith(
+              style: context.labelMedium.copyWith(
                 fontWeight: FontWeight.w700,
               ),
               textAlign: TextAlign.right,
@@ -492,57 +532,63 @@ class FortuneQuoteBlock extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: colors.backgroundSecondary,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [colors.backgroundSecondary, colors.surface],
+        ),
         borderRadius: BorderRadius.circular(DSRadius.lg),
-        border: Border.all(
-          color: colors.border.withValues(alpha: 0.35),
+        border: Border(
+          left: BorderSide(
+            color: colors.accentSecondary.withValues(alpha: 0.8),
+            width: 3,
+          ),
+          top: BorderSide(
+            color: colors.border.withValues(alpha: 0.15),
+          ),
+          right: BorderSide(
+            color: colors.border.withValues(alpha: 0.15),
+          ),
+          bottom: BorderSide(
+            color: colors.border.withValues(alpha: 0.15),
+          ),
         ),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            width: 4,
-            decoration: BoxDecoration(
-              color: colors.accentSecondary.withValues(alpha: 0.6),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(DSRadius.lg),
-                bottomLeft: Radius.circular(DSRadius.lg),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(DSSpacing.md),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(emoji, style: const TextStyle(fontSize: 14)),
-                      const SizedBox(width: DSSpacing.xs),
-                      Text(
-                        title,
-                        style: context.labelMedium.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: DSSpacing.xs),
-                  Text(
-                    text,
-                    style: context.bodySmall.copyWith(
-                      color: colors.textSecondary,
-                      height: 1.6,
-                      fontStyle: FontStyle.italic,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          DSSpacing.lg + 2,
+          DSSpacing.lg,
+          DSSpacing.lg,
+          DSSpacing.lg,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(emoji, style: const TextStyle(fontSize: 18)),
+                const SizedBox(width: DSSpacing.sm),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: context.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
-                ],
+                ),
+              ],
+            ),
+            const SizedBox(height: DSSpacing.sm),
+            Text(
+              text,
+              style: context.bodyMedium.copyWith(
+                color: colors.textSecondary,
+                height: 1.6,
+                fontStyle: FontStyle.italic,
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -569,21 +615,21 @@ class FortuneBulletList extends StatelessWidget {
       children: items
           .map(
             (item) => Padding(
-              padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+              padding: const EdgeInsets.only(bottom: DSSpacing.sm),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     bullet,
-                    style: context.bodySmall.copyWith(
+                    style: context.bodyMedium.copyWith(
                       color: isWarning ? colors.warning : colors.textSecondary,
                     ),
                   ),
-                  const SizedBox(width: DSSpacing.xs),
+                  const SizedBox(width: DSSpacing.sm),
                   Expanded(
                     child: Text(
                       item,
-                      style: context.bodySmall.copyWith(
+                      style: context.bodyMedium.copyWith(
                         fontWeight: FontWeight.w500,
                         height: 1.6,
                         color: isWarning
@@ -619,21 +665,21 @@ class _LuckyChip extends StatelessWidget {
     final colors = context.colors;
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: DSSpacing.sm,
-        vertical: DSSpacing.xs,
+        horizontal: DSSpacing.md - 4,
+        vertical: DSSpacing.sm,
       ),
       decoration: BoxDecoration(
-        color: colors.surface,
+        color: colors.accentSecondary.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
-          color: colors.border.withValues(alpha: 0.3),
+          color: colors.accentSecondary.withValues(alpha: 0.12),
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 13)),
-          const SizedBox(width: DSSpacing.xxs),
+          Text(emoji, style: const TextStyle(fontSize: 18)),
+          const SizedBox(width: DSSpacing.xs),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -642,7 +688,7 @@ class _LuckyChip extends StatelessWidget {
                 label,
                 style: context.labelSmall.copyWith(
                   color: colors.textSecondary,
-                  fontSize: 10,
+                  fontSize: 11,
                 ),
               ),
               Text(
