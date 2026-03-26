@@ -68,6 +68,13 @@ class SocialAuthService {
     try {
       OAuthInAppBrowserCoordinator.markOAuthFinished(reason: 'user_sign_out');
 
+      // Google logout
+      try {
+        await _googleProvider.disconnect();
+      } catch (e) {
+        Logger.warning('[SocialAuthService] Google 로그아웃 실패 (무시): $e');
+      }
+
       // Kakao logout
       try {
         await kakao.UserApi.instance.logout();
@@ -112,7 +119,7 @@ class SocialAuthService {
 
   // Disconnect provider-specific accounts
   Future<void> disconnectGoogle() async {
-    Logger.info('Google disconnect handled by Supabase');
+    await _googleProvider.disconnect();
   }
 
   Future<void> disconnectKakao() async {
