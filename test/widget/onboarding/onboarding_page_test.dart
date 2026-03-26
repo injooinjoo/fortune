@@ -7,13 +7,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
   group('OnboardingPage 테스트', () {
-    group('Step 1: 이름 입력', () {
-      testWidgets('이름 입력 화면이 표시되어야 함', (tester) async {
+    group('Step 1: 프로필 시작', () {
+      testWidgets('프로필 시작 화면이 표시되어야 함', (tester) async {
         await tester.pumpWidget(
           const ProviderScope(
             child: MaterialApp(
               home: Scaffold(
-                body: _MockNameInputStep(),
+                body: _MockProfileEntryStep(),
               ),
             ),
           ),
@@ -21,16 +21,16 @@ void main() {
 
         await tester.pumpAndSettle();
 
-        expect(find.text('이름을 입력해주세요'), findsOneWidget);
+        expect(find.text('닉네임을 입력해주세요'), findsOneWidget);
         expect(find.byType(TextField), findsOneWidget);
       });
 
-      testWidgets('이름 입력 시 다음 버튼 활성화', (tester) async {
+      testWidgets('닉네임 입력 시 다음 버튼 활성화', (tester) async {
         await tester.pumpWidget(
           const ProviderScope(
             child: MaterialApp(
               home: Scaffold(
-                body: _MockNameInputStep(),
+                body: _MockProfileEntryStep(),
               ),
             ),
           ),
@@ -47,14 +47,14 @@ void main() {
         expect(nextButton, findsOneWidget);
       });
 
-      testWidgets('빈 이름으로는 다음으로 진행 불가', (tester) async {
+      testWidgets('빈 닉네임으로는 다음으로 진행 불가', (tester) async {
         bool nextPressed = false;
 
         await tester.pumpWidget(
           ProviderScope(
             child: MaterialApp(
               home: Scaffold(
-                body: _MockNameInputStep(
+                body: _MockProfileEntryStep(
                   onNext: () => nextPressed = true,
                 ),
               ),
@@ -72,14 +72,14 @@ void main() {
         expect(nextPressed, isFalse);
       });
 
-      testWidgets('유효한 이름 입력 후 다음 진행', (tester) async {
+      testWidgets('유효한 닉네임 입력 후 다음 진행', (tester) async {
         bool nextPressed = false;
 
         await tester.pumpWidget(
           ProviderScope(
             child: MaterialApp(
               home: Scaffold(
-                body: _MockNameInputStep(
+                body: _MockProfileEntryStep(
                   onNext: () => nextPressed = true,
                 ),
               ),
@@ -224,12 +224,12 @@ void main() {
     });
 
     group('입력 검증', () {
-      testWidgets('이름 최소 길이 검증', (tester) async {
+      testWidgets('닉네임 최소 길이 검증', (tester) async {
         await tester.pumpWidget(
           const ProviderScope(
             child: MaterialApp(
               home: Scaffold(
-                body: _MockNameInputStep(),
+                body: _MockProfileEntryStep(),
               ),
             ),
           ),
@@ -258,7 +258,7 @@ void main() {
     });
 
     group('소셜 로그인 사용자 처리', () {
-      testWidgets('소셜 로그인으로 이름이 있으면 이름 스텝 건너뛰기', (tester) async {
+      testWidgets('소셜 로그인으로 이름이 있으면 닉네임 스텝 건너뛰기', (tester) async {
         // 이미 이름이 있는 사용자
         const prefilledName = 'Google User';
 
@@ -288,7 +288,7 @@ void main() {
             child: MaterialApp(
               theme: ThemeData.light(),
               home: const Scaffold(
-                body: _MockNameInputStep(),
+                body: _MockProfileEntryStep(),
               ),
             ),
           ),
@@ -305,7 +305,7 @@ void main() {
             child: MaterialApp(
               theme: ThemeData.dark(),
               home: const Scaffold(
-                body: _MockNameInputStep(),
+                body: _MockProfileEntryStep(),
               ),
             ),
           ),
@@ -323,15 +323,15 @@ void main() {
 // Mock Widgets
 // ============================================
 
-class _MockNameInputStep extends StatefulWidget {
+class _MockProfileEntryStep extends StatefulWidget {
   final VoidCallback? onNext;
-  const _MockNameInputStep({this.onNext});
+  const _MockProfileEntryStep({this.onNext});
 
   @override
-  State<_MockNameInputStep> createState() => _MockNameInputStepState();
+  State<_MockProfileEntryStep> createState() => _MockProfileEntryStepState();
 }
 
-class _MockNameInputStepState extends State<_MockNameInputStep> {
+class _MockProfileEntryStepState extends State<_MockProfileEntryStep> {
   late TextEditingController _controller;
 
   @override
@@ -360,11 +360,11 @@ class _MockNameInputStepState extends State<_MockNameInputStep> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '이름을 입력해주세요',
+            '닉네임을 입력해주세요',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          const Text('운세를 봐드릴게요'),
+          const Text('입력이 비어 있으면 다음 단계에서만 보완해요'),
           const SizedBox(height: 32),
           TextField(
             controller: _controller,
@@ -533,7 +533,7 @@ class _MockOnboardingFlowState extends State<_MockOnboardingFlow> {
             controller: _controller,
             physics: const NeverScrollableScrollPhysics(),
             children: [
-              _MockNameInputStep(onNext: _nextStep),
+              _MockProfileEntryStep(onNext: _nextStep),
               _MockBirthInputStep(
                 onBack: _previousStep,
                 onNext: () {},

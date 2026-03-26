@@ -444,6 +444,7 @@ class SocialAuthEntryPanel extends ConsumerStatefulWidget {
   final VoidCallback? onAuthenticated;
   final Future<void> Function()? onBrowseAsGuest;
   final bool showBrowseAction;
+  final SocialAuthService? socialAuthService;
 
   const SocialAuthEntryPanel({
     super.key,
@@ -453,6 +454,7 @@ class SocialAuthEntryPanel extends ConsumerStatefulWidget {
     this.onAuthenticated,
     this.onBrowseAsGuest,
     this.showBrowseAction = true,
+    this.socialAuthService,
   });
 
   @override
@@ -482,7 +484,7 @@ class _SocialAuthEntryPanelState extends ConsumerState<SocialAuthEntryPanel> {
         return;
       }
 
-      final authService =
+      final authService = widget.socialAuthService ??
           await SocialLoginBottomSheet._createSocialAuthServiceOrNull(context);
       if (!mounted || authService == null) {
         return;

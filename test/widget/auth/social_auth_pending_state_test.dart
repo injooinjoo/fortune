@@ -6,8 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fortune/core/design_system/theme/ds_theme.dart';
+import 'package:fortune/presentation/widgets/social_login_bottom_sheet.dart';
 import 'package:fortune/presentation/widgets/social_accounts_section.dart';
-import 'package:fortune/screens/onboarding/steps/name_input_step.dart';
 import 'package:fortune/services/social_auth/base/social_auth_attempt_result.dart';
 import 'package:fortune/services/social_auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -68,7 +68,8 @@ void main() {
         .setMockMessageHandler('flutter/assets', null);
   });
 
-  testWidgets('NameInputStep keeps pending Apple OAuth as non-error state',
+  testWidgets(
+      'SocialAuthEntryPanel keeps pending Apple OAuth as non-error state',
       (tester) async {
     final service = _FakeSocialAuthService(
       appleResult: const SocialAuthAttemptResult.pendingExternalAuth(),
@@ -79,10 +80,10 @@ void main() {
         child: MaterialApp(
           theme: DSTheme.light(),
           home: Scaffold(
-            body: NameInputStep(
-              initialName: '',
-              onNameChanged: (_) {},
-              onNext: () {},
+            body: SocialAuthEntryPanel(
+              title: '대화를 바로 시작해볼까요?',
+              description: '로그인하면 흐름을 저장하고, 개인화된 인사이트를 더 자연스럽게 이어갈 수 있어요.',
+              showBrowseAction: false,
               socialAuthService: service,
             ),
           ),
@@ -92,11 +93,6 @@ void main() {
 
     await tester.pumpAndSettle();
     tester.testTextInput.hide();
-    await tester.pumpAndSettle();
-
-    expect(find.text('계정이 있어요'), findsOneWidget);
-
-    await tester.tap(find.text('계정이 있어요'));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Apple로 계속하기'));

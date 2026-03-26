@@ -50,7 +50,7 @@ Internal `/chat` states represented as catalog surfaces:
 - 호기심 홈
 - 채팅 설문 진행 상태
 - 채팅 결과 상태
-- 첫 진입 캐릭터 온보딩
+- 첫 진입 통합 온보딩
 
 Current runtime routes without their own dedicated current Figma card:
 
@@ -115,7 +115,7 @@ Canonical repo sources:
 
 - Router: `lib/routes/route_config.dart`
 - Auth routes: `lib/routes/routes/auth_routes.dart`
-- Onboarding flow: `lib/screens/onboarding/onboarding_page.dart`, `lib/screens/onboarding/steps/name_input_step.dart`, `lib/screens/onboarding/steps/birth_input_step.dart`
+- Onboarding flow: `lib/features/character/presentation/pages/swipe_home_shell.dart`, `lib/screens/auth/signup_screen.dart`, `lib/presentation/widgets/social_login_bottom_sheet.dart`, `lib/screens/onboarding/onboarding_page.dart`, `lib/screens/onboarding/steps/birth_input_step.dart`, `lib/screens/onboarding/widgets/interest_selection_step.dart`, `lib/screens/onboarding/widgets/personalized_handoff_step.dart`
 - Character routes: `lib/routes/character_routes.dart`
 - Retained chat state: `lib/features/character/presentation/providers/character_chat_provider.dart`
 - Design-system badges: `lib/core/design_system/components/ds_badge.dart`

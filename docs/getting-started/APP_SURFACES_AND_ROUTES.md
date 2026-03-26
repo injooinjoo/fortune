@@ -63,7 +63,8 @@
 구성 요소:
 - `CharacterListPanel`: 캐릭터 목록과 내부 분류 전환
 - `CharacterChatPanel`: 대화 패널
-- `CharacterOnboardingPage`: 캐릭터 온보딩
+- `SignupScreen`: 게스트 첫 진입 시 soft gate auth entry
+- `OnboardingPage`: 인증 후 birth/interests/handoff 완료 전까지의 통합 온보딩
 
 ### 내부 경험 A: 일반 채팅
 

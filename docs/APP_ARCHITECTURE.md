@@ -69,10 +69,14 @@ current-state 제품 표면과 라우트의 source of truth는 아래 순서를 
 구성 요소:
 - `CharacterListPanel`: 캐릭터 목록과 내부 모드 전환
 - `CharacterChatPanel`: 실제 대화 패널
-- `CharacterOnboardingPage`: 캐릭터 온보딩
+- `SignupScreen`: 게스트 첫 진입 soft gate auth entry
+- `OnboardingPage`: 인증 후 birth/interests/handoff를 처리하는 통합 first-run flow
 
 동작 원리:
-- 사용자는 캐릭터 목록에서 일반 캐릭터 또는 전문가 캐릭터를 선택합니다.
+- 사용자는 첫 진입 시 `/chat` 내부 unified onboarding gate를 먼저 통과합니다.
+- 게스트는 `SignupScreen` soft gate에서 둘러보기를 선택하거나 인증을 시작할 수 있습니다.
+- 인증된 사용자는 `OnboardingPage`에서 birth, interest, handoff를 완료한 뒤 채팅 쉘로 진입합니다.
+- 이후 사용자는 캐릭터 목록에서 일반 캐릭터 또는 전문가 캐릭터를 선택합니다.
 - 일반 캐릭터를 선택하면 `일반 채팅` 경험으로 진입합니다.
 - 전문가 캐릭터를 선택하거나 `fortuneType` 쿼리로 진입하면 `호기심` 경험으로 진입합니다.
 - 결과는 별도 결과 페이지보다 채팅 안에서 메시지와 카드로 표시됩니다.

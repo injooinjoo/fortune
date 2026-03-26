@@ -91,10 +91,14 @@ Additional official pages:
 ### Character Entry and Onboarding
 
 - `lib/features/character/presentation/pages/swipe_home_shell.dart`
-- `lib/features/character/presentation/pages/character_onboarding_page.dart`
+- `lib/screens/auth/signup_screen.dart`
+- `lib/presentation/widgets/social_login_bottom_sheet.dart`
 - `lib/screens/onboarding/onboarding_page.dart`
-- `lib/screens/onboarding/steps/name_input_step.dart`
 - `lib/screens/onboarding/steps/birth_input_step.dart`
+- `lib/screens/onboarding/widgets/interest_selection_step.dart`
+- `lib/screens/onboarding/widgets/personalized_handoff_step.dart`
+- `lib/features/character/presentation/utils/onboarding_interest_catalog.dart`
+- `lib/models/unified_onboarding_progress.dart`
 - `lib/services/storage_service.dart`
 
 ### Conversation, Survey, and Result Blocks
