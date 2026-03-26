@@ -190,7 +190,9 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
             'profile_image': kakaoUser.kakaoAccount?.profile?.profileImageUrl,
             'email_confirmed_at': DateTime.now().toIso8601String(),
           },
-          emailRedirectTo: 'com.beyond.fortune://auth-callback',
+          emailRedirectTo: SocialAuthRedirectUrlResolver.resolveOAuthRedirectTo(
+            isWeb: false,
+          ),
         );
 
         if (signUpResponse.user != null) {
@@ -320,9 +322,8 @@ class KakaoAuthProvider extends BaseSocialAuthProvider {
 
       final response = await supabase.auth.signInWithOAuth(
         OAuthProvider.kakao,
-        redirectTo: kIsWeb
-            ? '${Uri.base.origin}/auth/callback'
-            : 'com.beyond.fortune://auth-callback',
+        redirectTo:
+            SocialAuthRedirectUrlResolver.resolveOAuthRedirectTo(isWeb: kIsWeb),
         authScreenLaunchMode: LaunchMode.inAppBrowserView,
       );
 

@@ -23,6 +23,26 @@ abstract class BaseSocialAuthProvider {
   }
 }
 
+class SocialAuthRedirectUrlResolver {
+  static const String mobileOAuthCallback =
+      'io.supabase.flutter://login-callback';
+
+  static String resolveOAuthRedirectTo({
+    required bool isWeb,
+    Uri? currentUri,
+  }) {
+    if (isWeb) {
+      final uri = currentUri ?? Uri.base;
+      if (uri.scheme == 'http' || uri.scheme == 'https') {
+        return '${uri.origin}/auth/callback';
+      }
+      return 'http://localhost/auth/callback';
+    }
+
+    return mobileOAuthCallback;
+  }
+}
+
 class SocialAuthConfigGuard {
   static void ensureOAuthConfigurationIsValid({
     required String providerName,

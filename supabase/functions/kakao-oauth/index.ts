@@ -151,7 +151,7 @@ serve(async (req) => {
         type: 'magiclink',
         email: kakaoUser.email,
         options: {
-          redirectTo: 'com.beyond.fortune://auth-callback'
+          redirectTo: 'io.supabase.flutter://login-callback'
         }
       })
 

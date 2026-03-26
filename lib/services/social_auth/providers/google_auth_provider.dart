@@ -222,15 +222,7 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
   }
 
   String _resolveRedirectTo() {
-    if (_isWeb) {
-      final baseUri = Uri.base;
-      if (baseUri.scheme == 'http' || baseUri.scheme == 'https') {
-        return '${baseUri.origin}/auth/callback';
-      }
-      return 'http://localhost/auth/callback';
-    }
-
-    return 'com.beyond.fortune://auth-callback';
+    return SocialAuthRedirectUrlResolver.resolveOAuthRedirectTo(isWeb: _isWeb);
   }
 
   String get _googleWebClientId =>

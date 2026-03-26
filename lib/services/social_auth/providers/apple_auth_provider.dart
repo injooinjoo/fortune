@@ -393,9 +393,8 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
 
       // Note: redirectTo는 Supabase가 인증 완료 후 앱으로 돌아올 때 사용
       // Apple OAuth 자체는 Supabase Dashboard에 설정된 Service ID와 Return URL을 사용
-      final redirectUrl = kIsWeb
-          ? '${Uri.base.origin}/auth/callback'
-          : 'com.beyond.fortune://auth-callback';
+      final redirectUrl =
+          SocialAuthRedirectUrlResolver.resolveOAuthRedirectTo(isWeb: kIsWeb);
 
       Logger.info('[AppleAuthProvider] OAuth redirect URL: $redirectUrl');
 

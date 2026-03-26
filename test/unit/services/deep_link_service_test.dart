@@ -16,6 +16,20 @@ void main() {
       expect(Uri.decodeComponent(encoded!), uri.toString());
     });
 
+    test('supabase login callback uri resolves to callback route', () {
+      final service = DeepLinkService();
+      final uri =
+          Uri.parse('io.supabase.flutter://login-callback#access_token=abc123');
+
+      final route = service.resolveRouteForUri(uri);
+      final resolvedUri = Uri.parse(route);
+      final encoded = resolvedUri.queryParameters['authCallbackUrl'];
+
+      expect(route.startsWith('/auth/callback?authCallbackUrl='), isTrue);
+      expect(encoded, isNotNull);
+      expect(Uri.decodeComponent(encoded!), uri.toString());
+    });
+
     test('screen deep link resolves to target route', () {
       final service = DeepLinkService();
       final uri = Uri.parse('com.beyond.fortune://deeplink?screen=chat');

@@ -26,9 +26,8 @@ class FacebookAuthProvider extends BaseSocialAuthProvider {
 
       final response = await supabase.auth.signInWithOAuth(
         OAuthProvider.facebook,
-        redirectTo: kIsWeb
-            ? '${Uri.base.origin}/auth/callback'
-            : 'com.beyond.fortune://auth-callback',
+        redirectTo:
+            SocialAuthRedirectUrlResolver.resolveOAuthRedirectTo(isWeb: kIsWeb),
         authScreenLaunchMode: LaunchMode.inAppBrowserView,
       );
 
