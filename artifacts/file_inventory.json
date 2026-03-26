@@ -20942,7 +20942,6 @@
         "lib/core/widgets/unified_voice_text_field.dart",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/pages/character_list_panel.dart",
-        "lib/features/character/presentation/pages/character_onboarding_page.dart",
         "lib/features/character/presentation/pages/character_profile_page.dart",
         "lib/features/character/presentation/pages/friend_creation_pages.dart",
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
@@ -21008,7 +21007,6 @@
         "lib/screens/auth/signup_screen.dart",
         "lib/screens/onboarding/onboarding_page.dart",
         "lib/screens/onboarding/steps/birth_input_step.dart",
-        "lib/screens/onboarding/steps/name_input_step.dart",
         "lib/screens/onboarding/widgets/interest_selection_step.dart",
         "lib/screens/onboarding/widgets/personalized_handoff_step.dart",
         "lib/screens/profile/account_deletion_page.dart",
@@ -21085,9 +21083,9 @@
         "lib/core/design_system/design_system.dart",
         "lib/main.dart",
         "test/widget/auth/profile_avatar_tap_handler_test.dart",
+        "test/widget/auth/social_auth_entry_panel_test.dart",
         "test/widget/auth/social_auth_pending_state_test.dart",
-        "test/widget/core/widgets/unified_voice_text_field_test.dart",
-        "test/widget/onboarding/name_input_step_test.dart"
+        "test/widget/core/widgets/unified_voice_text_field_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -21565,7 +21563,6 @@
         "lib/core/services/fortune_haptic_service.dart",
         "lib/core/services/meditation_sound_service.dart",
         "lib/main.dart",
-        "lib/screens/onboarding/steps/name_input_step.dart",
         "lib/shared/components/section_header.dart",
         "lib/shared/components/settings_list_tile.dart"
       ],
@@ -22066,7 +22063,6 @@
         "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
         "lib/main.dart",
         "lib/presentation/widgets/social_login_bottom_sheet.dart",
-        "lib/screens/onboarding/steps/name_input_step.dart",
         "lib/screens/profile/account_deletion_page.dart",
         "lib/screens/splash_screen.dart",
         "lib/services/supabase_storage_service.dart"
@@ -22522,8 +22518,7 @@
       "notes": [],
       "path": "lib/core/theme/typography_theme.dart",
       "referenced_by": [
-        "lib/core/providers/user_settings_provider.dart",
-        "lib/screens/onboarding/steps/name_input_step.dart"
+        "lib/core/providers/user_settings_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23844,24 +23839,6 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
-      "path": "lib/features/character/presentation/pages/character_onboarding_page.dart",
-      "referenced_by": [
-        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md"
-      ],
-      "runtime_reachable": false,
-      "test_only": false,
-      "usage_status": "doc_only"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
@@ -23900,6 +23877,7 @@
       "referenced_by": [
         "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "integration_test/app_test.dart",
         "lib/routes/route_config.dart"
       ],
@@ -24245,6 +24223,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/utils/onboarding_interest_catalog.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/screens/onboarding/onboarding_page.dart",
         "lib/screens/onboarding/widgets/interest_selection_step.dart",
@@ -26179,6 +26158,7 @@
       "notes": [],
       "path": "lib/models/unified_onboarding_progress.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "lib/screens/onboarding/onboarding_page.dart",
         "lib/services/storage_service.dart"
       ],
@@ -26617,10 +26597,13 @@
       "referenced_by": [
         "docs/deployment/review/IOS_REVIEW_EVIDENCE.md",
         "docs/deployment/review/KAN_OPEN_ISSUES_EVIDENCE_MATRIX_2026-03-22.md",
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/utils/profile_avatar_tap_handler.dart",
         "lib/screens/auth/signup_screen.dart",
-        "lib/screens/onboarding/steps/name_input_step.dart",
+        "test/widget/auth/social_auth_entry_panel_test.dart",
+        "test/widget/auth/social_auth_pending_state_test.dart",
         "test/widget/auth/social_login_bottom_sheet_test.dart"
       ],
       "runtime_reachable": true,
@@ -26732,7 +26715,9 @@
       "notes": [],
       "path": "lib/screens/auth/signup_screen.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
         "lib/routes/routes/auth_routes.dart",
         "lib/screens/onboarding/onboarding_page.dart"
@@ -26779,31 +26764,14 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "dart",
-      "notes": [
-        "runtime_unreachable"
-      ],
-      "path": "lib/screens/onboarding/steps/name_input_step.dart",
-      "referenced_by": [
-        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
-        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
-        "test/widget/auth/social_auth_pending_state_test.dart",
-        "test/widget/onboarding/name_input_step_test.dart"
-      ],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "lib",
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
       "notes": [],
       "path": "lib/screens/onboarding/widgets/interest_selection_step.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/screens/onboarding/onboarding_page.dart"
       ],
       "runtime_reachable": true,
@@ -26818,6 +26786,8 @@
       "notes": [],
       "path": "lib/screens/onboarding/widgets/personalized_handoff_step.dart",
       "referenced_by": [
+        "docs/design/FIGMA_SCREEN_COMPONENT_REGISTRY.md",
+        "docs/design/FIGMA_SOURCE_OF_TRUTH.md",
         "lib/screens/onboarding/onboarding_page.dart"
       ],
       "runtime_reachable": true,
@@ -27347,7 +27317,6 @@
         "lib/presentation/providers/social_auth_provider.dart",
         "lib/presentation/widgets/social_accounts_section.dart",
         "lib/presentation/widgets/social_login_bottom_sheet.dart",
-        "lib/screens/onboarding/steps/name_input_step.dart",
         "lib/services/session_cleanup_service.dart",
         "test/widget/auth/profile_avatar_tap_handler_test.dart",
         "test/widget/auth/social_auth_pending_state_test.dart"
@@ -27399,7 +27368,6 @@
         "docs/design/FIGMA_SCREEN_ROUTE_MAPPING.md",
         "lib/core/services/unified_fortune_service.dart",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
-        "lib/features/character/presentation/pages/character_onboarding_page.dart",
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/presentation/providers/auth_provider.dart",
@@ -27410,14 +27378,13 @@
         "lib/screens/auth/callback_page.dart",
         "lib/screens/auth/signup_screen.dart",
         "lib/screens/onboarding/onboarding_page.dart",
-        "lib/screens/onboarding/steps/name_input_step.dart",
         "lib/screens/splash_screen.dart",
         "lib/services/account_deletion_service.dart",
         "lib/services/session_cleanup_service.dart",
         "lib/services/social_auth_service.dart",
         "lib/services/user_statistics_service.dart",
         "test/mocks/mock_auth_services.dart",
-        "test/widget/onboarding/name_input_step_test.dart"
+        "test/widget/auth/social_auth_entry_panel_test.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -33017,6 +32984,20 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "test_dart",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "test/widget/auth/social_auth_entry_panel_test.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": true,
+      "usage_status": "test_only"
+    },
+    {
+      "area": "test",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "test_dart",
       "notes": [],
       "path": "test/widget/auth/social_auth_pending_state_test.dart",
       "referenced_by": [
@@ -33272,20 +33253,6 @@
       "notes": [
         "no_inbound_refs"
       ],
-      "path": "test/widget/onboarding/name_input_step_test.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
-      "test_only": true,
-      "usage_status": "test_only"
-    },
-    {
-      "area": "test",
-      "candidate_action": "phase2_review_candidate",
-      "dirty": false,
-      "kind": "test_dart",
-      "notes": [
-        "no_inbound_refs"
-      ],
       "path": "test/widget/onboarding/onboarding_page_test.dart",
       "referenced_by": [],
       "runtime_reachable": false,
@@ -33326,7 +33293,7 @@
       "assets": 1231,
       "docs": 96,
       "integration_test": 8,
-      "lib": 440,
+      "lib": 438,
       "scripts": 72,
       "supabase": 207,
       "test": 83
@@ -33336,14 +33303,14 @@
       "keep_generated": 28,
       "manual_review": 978,
       "phase1_remove_candidate": 12,
-      "phase2_review_candidate": 386,
+      "phase2_review_candidate": 384,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
-      "doc_only": 106,
+      "doc_only": 105,
       "generated_excluded": 28,
       "runtime_used": 729,
-      "test_only": 93,
+      "test_only": 92,
       "tooling_only": 187,
       "unreferenced": 994
     },
@@ -33499,8 +33466,8 @@
       "integration_test"
     ],
     "lib_dart_runtime_reachable": 369,
-    "lib_dart_total": 437,
-    "lib_dart_zero_incoming": 26,
+    "lib_dart_total": 435,
+    "lib_dart_zero_incoming": 25,
     "missing_function_refs": [
       "--all",
       "account-deletion",
@@ -33607,7 +33574,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2137,
+    "total_files": 2135,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
