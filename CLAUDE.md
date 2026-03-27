@@ -1,24 +1,27 @@
 # Fortune Flutter App - Claude Code 가이드
 
-> 최종 업데이트: 2026.03.14
+> 최종 업데이트: 2026.03.27
 
-## 자동 라우팅 (NEW)
+## 스프린트 워크플로우 (gstack 기반)
 
-사용자 요청을 분석하여 자동으로 적절한 Skill과 Agent를 활성화합니다.
+**모든 개발 작업은 `/sc:sprint`로 시작합니다.** Think → Plan → Build → Review → QA → Ship
 
-| 요청 패턴 | Skill | Agent | MCP |
-|-----------|-------|-------|-----|
-| 운세/궁합/타로/사주 추가 | `/sc:feature-fortune` | fortune-specialist | Supabase |
-| 채팅/추천 칩/메시지 | `/sc:feature-chat` | - | - |
-| UI/디자인/색상/레이아웃/Figma | `/sc:feature-ui` | - | Figma (기본), Playwright (QA) |
-| Edge Function/API | `/sc:backend-service` | - | Supabase |
-| 에러/버그/안됨/수정 | `/sc:troubleshoot` | - | Sequential |
-| 검증/품질/QA | `/sc:quality-check` | quality-guardian | - |
+### 핵심 철학
+- **Boil the Lake**: 끝까지 완수. 엣지 케이스, 에러 경로 모두 커버
+- **Search Before Building**: 만들기 전에 찾기. 기존 코드 재사용 최대화
+- **Bisect Commits**: 하나의 논리적 변경 = 하나의 커밋
 
-### Agent 협업
-- **feature-orchestrator**: 모든 요청의 진입점, 자동 라우팅
-- **fortune-specialist**: 인사이트 도메인 결정 (토큰, 입력 필드)
-- **quality-guardian**: 모든 코드 생성 후 품질 검증
+### 자동 라우팅
+
+| 요청 패턴 | 진입점 | BUILD 단계 스킬 | MCP |
+|-----------|--------|----------------|-----|
+| 모든 개발 작업 | `/sc:sprint` | 자동 선택 | 자동 선택 |
+| 운세/궁합/타로/사주 추가 | `/sc:sprint` | feature-fortune | Supabase |
+| 채팅/추천 칩/메시지 | `/sc:sprint` | feature-chat | - |
+| UI/디자인/색상/레이아웃/Figma | `/sc:sprint` | feature-ui | Figma, Playwright |
+| Edge Function/API | `/sc:sprint` | backend-service | Supabase |
+| 에러/버그/안됨/수정 | `/sc:sprint` | troubleshoot | Sequential |
+| 검증/품질만 | `/sc:quality-check` | - | - |
 
 **우선순위**: 사용자 명시적 요청 > 프로젝트 규칙 > 글로벌 SuperClaude
 
@@ -306,7 +309,7 @@ lib/features/chat/        # 채팅 진입점 (Chat-First)
 lib/features/fortune/     # 인사이트 기능 (Clean Architecture)
 supabase/functions/       # Edge Functions (LLMFactory)
 .claude/agents/           # 3개 Agent (feature-orchestrator, fortune-specialist, quality-guardian)
-.claude/skills/           # 6개 Skill (feature-fortune, feature-chat, feature-ui, backend-service, troubleshoot, quality-check)
+.claude/skills/           # 10개 Skill (sprint + Hard Block 3개 + 기능 5개 + quality-check)
 .claude/docs/             # 상세 문서 (01-21)
 ```
 
@@ -314,38 +317,24 @@ supabase/functions/       # Edge Functions (LLMFactory)
 
 ## Skill 사용법
 
-### /sc:feature-fortune
-새 인사이트 기능 전체 생성 (Edge Function + 모델 + 서비스 + 페이지 + 라우트)
+### /sc:sprint (통합 진입점)
+gstack 기반 스프린트. Think → Plan → Build → Review → QA → Ship
 ```
-/sc:feature-fortune 펫궁합
-```
-
-### /sc:feature-chat
-채팅 기능 추가/수정 (추천 칩, 메시지 변환기)
-```
-/sc:feature-chat 추천 칩에 펫궁합 추가
+/sc:sprint 펫궁합 기능 추가
+/sc:sprint 타로 결과 로딩 버그 수정
+/sc:sprint 홈 화면 리디자인
 ```
 
-### /sc:feature-ui
-UI만 변경 (Presentation 레이어만)
-```
-/sc:feature-ui 일일 인사이트 결과 카드 리디자인
-```
+### 개별 스킬 (sprint에서 자동 호출됨)
 
-### /sc:backend-service
-Edge Function만 생성/수정
-```
-/sc:backend-service 건강분석 API
-```
-
-### /sc:troubleshoot
-버그 분석 + 근본 원인 + 일괄 수정
-```
-/sc:troubleshoot 타로 결과가 안보임
-```
-
-### /sc:quality-check
-품질 검증 (아키텍처, 디자인 시스템, 앱스토어 규정)
-```
-/sc:quality-check
-```
+| Skill | 용도 | 직접 호출 |
+|-------|------|----------|
+| `/sc:feature-fortune` | 운세 기능 전체 생성 | 가능 |
+| `/sc:feature-chat` | 채팅 기능 추가/수정 | 가능 |
+| `/sc:feature-ui` | UI만 변경 | 가능 |
+| `/sc:backend-service` | Edge Function만 | 가능 |
+| `/sc:troubleshoot` | 버그 수정 | 가능 |
+| `/sc:quality-check` | 품질 검증 | 가능 |
+| `/sc:enforce-rca` | RCA 강제 (Hard Block) | 자동 |
+| `/sc:enforce-discovery` | Discovery 강제 (Hard Block) | 자동 |
+| `/sc:enforce-verify` | Verify 강제 (Hard Block) | 자동 |

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-/// ChatGPT-inspired monochrome color system
+/// Paper-aligned design system colors
 ///
-/// Design Philosophy: Clean, minimal, content-first
-/// "Pure white/black + zero color accent"
+/// Source of truth: Paper MCP "Fortune" design file
+/// Last synced: 2026-03-27
 ///
-/// Key Principles:
-/// - Pure white backgrounds (light mode)
-/// - Pure black backgrounds (dark mode)
-/// - Monochrome accent (black/white) - NO colored accent
-/// - Toggle: iOS green (#34C759)
-/// - Links/info: Blue (accentSecondary)
-/// - High contrast, no warm tints
+/// Design Philosophy: Deep navy-black base with cool-toned grays
+/// - Deep navy-black backgrounds (#0B0B10)
+/// - Cool white text (#F5F6FB)
+/// - Blue-gray secondary text (#9198AA)
+/// - Deep blue CTA (#2043D6)
+/// - Semi-transparent borders (white 8%)
+/// - Pastel interest chips
 ///
 /// Usage:
 /// ```dart
@@ -25,67 +25,76 @@ class DSColors {
   DSColors._();
 
   // ============================================
-  // DARK MODE COLORS (Primary/Default)
+  // DARK MODE COLORS (Primary/Default — Paper aligned)
   // ============================================
 
-  /// Primary accent color - Monochrome (ChatGPT style: white in dark, black in light)
-  static const Color accent = Color(0xFFFFFFFF);
+  /// Primary accent color — cool white (Paper: #F5F6FB)
+  static const Color accent = Color(0xFFF5F6FB);
 
   /// Accent hover/pressed state
-  static const Color accentHover = Color(0xFFE5E5EA);
+  static const Color accentHover = Color(0xFFD0D4E0);
 
-  /// Lighter accent for backgrounds
-  static const Color accentLight = Color(0xFF1C1C1E);
+  /// Lighter accent for backgrounds — subtle white 7% (Paper badge bg)
+  static const Color accentLight = Color(0x12FFFFFF);
 
-  /// Secondary accent - Soft blue for links/info
-  static const Color accentSecondary = Color(0xFF8FB0FF);
+  /// Secondary accent — sky blue for links/info (Paper: #8FB8FF)
+  static const Color accentSecondary = Color(0xFF8FB8FF);
 
   /// Secondary accent hover
-  static const Color accentSecondaryHover = Color(0xFF7AA0FF);
+  static const Color accentSecondaryHover = Color(0xFF7AA8FF);
 
-  /// Tertiary accent - Warm amber for highlights
+  /// Tertiary accent — warm amber for highlights
   static const Color accentTertiary = Color(0xFFE0A76B);
 
-  /// Page background - Pure black
-  static const Color background = Color(0xFF000000);
+  /// Page background — deep navy-black (Paper: #0B0B10)
+  static const Color background = Color(0xFF0B0B10);
 
-  /// Secondary background - Near black
+  /// Secondary background — dark surface (Paper: #1A1A1A)
   static const Color backgroundSecondary = Color(0xFF1A1A1A);
 
-  /// Tertiary background - Dark gray
-  static const Color backgroundTertiary = Color(0xFF212121);
+  /// Tertiary background — dark blue-gray (Paper: #151821)
+  static const Color backgroundTertiary = Color(0xFF151821);
 
-  /// Card/modal surface - Dark surface
+  /// Card/modal surface — dark surface (Paper: #1A1A1A)
   static const Color surface = Color(0xFF1A1A1A);
 
-  /// Nested surface - Slightly lighter
-  static const Color surfaceSecondary = Color(0xFF2C2C2E);
+  /// Nested surface — dark blue-gray (Paper: #23232B)
+  static const Color surfaceSecondary = Color(0xFF23232B);
 
-  /// Primary text - Pure white
-  static const Color textPrimary = Color(0xFFFFFFFF);
+  /// Elevated card surface — auth card background (Paper: #17171D)
+  static const Color surfaceElevated = Color(0xFF17171D);
 
-  /// Secondary text - brighter gray for stronger dark-mode readability
-  static const Color textSecondary = Color(0xFFC7C7CC);
+  /// Primary text — cool white (Paper: #F5F6FB)
+  static const Color textPrimary = Color(0xFFF5F6FB);
 
-  /// Tertiary text - raised contrast for better readability
-  static const Color textTertiary = Color(0xFFBCBCC1);
+  /// Secondary text — blue-gray (Paper: #9198AA)
+  static const Color textSecondary = Color(0xFF9198AA);
 
-  /// Disabled text - Mid gray
+  /// Tertiary text — lighter blue-gray (Paper: #9EA3B3)
+  static const Color textTertiary = Color(0xFF9EA3B3);
+
+  /// Disabled text — mid gray
   static const Color textDisabled = Color(0xFF48484A);
 
-  /// User message bubble
+  /// Subtitle text — light cool gray (Paper: #D0D4E0)
+  static const Color textSubtitle = Color(0xFFD0D4E0);
+
+  /// User message bubble (Paper: #2C2C2E)
   static const Color userBubble = Color(0xFF2C2C2E);
 
-  /// Subtle border
-  static const Color border = Color(0xFF2C2C2E);
+  /// Subtle border — semi-transparent white 8% (Paper: #FFFFFF14)
+  static const Color border = Color(0x14FFFFFF);
 
-  /// Focus border - Stronger gray (decoupled from accent)
+  /// Opaque border — for dividers needing solid color (Paper: #2C2C2E)
+  static const Color borderOpaque = Color(0xFF2C2C2E);
+
+  /// Focus border — stronger gray
   static const Color borderFocus = Color(0xFF48484A);
 
-  /// Divider line
+  /// Divider line (Paper: #2C2C2E)
   static const Color divider = Color(0xFF2C2C2E);
 
-  /// Toggle active state - iOS system green (decoupled from accent)
+  /// Toggle active state — iOS system green
   static const Color toggleActive = Color(0xFF34C759);
 
   /// Toggle inactive state
@@ -94,17 +103,45 @@ class DSColors {
   /// Toggle thumb
   static const Color toggleThumb = Color(0xFFFFFFFF);
 
-  /// CTA button background - White (dark mode)
-  static const Color ctaBackground = Color(0xFFFFFFFF);
+  /// CTA button background — deep blue (Paper: #2043D6)
+  static const Color ctaBackground = Color(0xFF2043D6);
 
-  /// CTA button text - Black (dark mode)
-  static const Color ctaForeground = Color(0xFF000000);
+  /// CTA button text — cool white (Paper: #F5F6FB)
+  static const Color ctaForeground = Color(0xFFF5F6FB);
 
-  /// Secondary button background
-  static const Color secondaryBackground = Color(0xFF2C2C2E);
+  /// Secondary button background (Paper: #23232B)
+  static const Color secondaryBackground = Color(0xFF23232B);
 
-  /// Secondary button text
-  static const Color secondaryForeground = Color(0xFFFFFFFF);
+  /// Secondary button text — cool white
+  static const Color secondaryForeground = Color(0xFFF5F6FB);
+
+  /// Apple auth button background (Paper: #F5F5F8)
+  static const Color authAppleBackground = Color(0xFFF5F5F8);
+
+  /// Google auth button background (Paper: #23232B)
+  static const Color authGoogleBackground = Color(0xFF23232B);
+
+  // ============================================
+  // INTEREST CHIP PASTEL COLORS (Paper)
+  // ============================================
+
+  /// Selected chip — blue pastel (Paper: #E7F1FF)
+  static const Color chipBlue = Color(0xFFE7F1FF);
+
+  /// Selected chip — green pastel (Paper: #C9FFDC)
+  static const Color chipGreen = Color(0xFFC9FFDC);
+
+  /// Selected chip — peach pastel (extrapolated)
+  static const Color chipPeach = Color(0xFFFFE8D6);
+
+  /// Selected chip — lavender pastel (extrapolated)
+  static const Color chipLavender = Color(0xFFE8E0FF);
+
+  /// Chip text on pastel — dark (Paper: #122031)
+  static const Color chipText = Color(0xFF122031);
+
+  /// Chip confirmation text — sky blue (Paper: #8FB8FF)
+  static const Color chipConfirmation = Color(0xFF8FB8FF);
 
   /// Success color
   static const Color success = Color(0xFF34C759);
@@ -134,11 +171,11 @@ class DSColors {
   static const Color overlay = Color(0x99000000);
 
   // ============================================
-  // LIGHT MODE COLORS
+  // LIGHT MODE COLORS (Paper-aligned inverse)
   // ============================================
 
-  /// Primary accent light - Monochrome (ChatGPT style: black in light mode)
-  static const Color accentDark = Color(0xFF000000);
+  /// Primary accent light — dark text
+  static const Color accentDark = Color(0xFF0B0B10);
 
   /// Accent hover light
   static const Color accentHoverDark = Color(0xFF3C3C43);
@@ -146,55 +183,64 @@ class DSColors {
   /// Accent light background
   static const Color accentLightDark = Color(0xFFF2F2F7);
 
-  /// Secondary accent light
-  static const Color accentSecondaryDark = Color(0xFF3B63D3);
+  /// Secondary accent light — deeper blue
+  static const Color accentSecondaryDark = Color(0xFF2043D6);
 
   /// Secondary accent hover light
-  static const Color accentSecondaryHoverDark = Color(0xFF2F55C4);
+  static const Color accentSecondaryHoverDark = Color(0xFF1A38B8);
 
   /// Tertiary accent light
   static const Color accentTertiaryDark = Color(0xFFC7702F);
 
-  /// Page background light - Pure white
+  /// Page background light — pure white
   static const Color backgroundDark = Color(0xFFFFFFFF);
 
-  /// Secondary background light - Light gray
+  /// Secondary background light
   static const Color backgroundSecondaryDark = Color(0xFFF7F7F8);
 
   /// Tertiary background light
-  static const Color backgroundTertiaryDark = Color(0xFFF0F0F0);
+  static const Color backgroundTertiaryDark = Color(0xFFF0F0F2);
 
-  /// Surface light - Pure white
+  /// Surface light
   static const Color surfaceDark = Color(0xFFFFFFFF);
 
-  /// Surface secondary light - Light gray
+  /// Surface secondary light
   static const Color surfaceSecondaryDark = Color(0xFFF7F7F8);
 
-  /// Primary text light - Pure black
-  static const Color textPrimaryDark = Color(0xFF000000);
+  /// Surface elevated light
+  static const Color surfaceElevatedDark = Color(0xFFFFFFFF);
 
-  /// Secondary text light - stronger contrast on white backgrounds
-  static const Color textSecondaryDark = Color(0xFF2C2C2E);
+  /// Primary text light
+  static const Color textPrimaryDark = Color(0xFF0B0B10);
 
-  /// Tertiary text light - strengthened for better small-text legibility
-  static const Color textTertiaryDark = Color(0xFF3C3C43);
+  /// Secondary text light — muted blue-gray
+  static const Color textSecondaryDark = Color(0xFF5C6272);
+
+  /// Tertiary text light
+  static const Color textTertiaryDark = Color(0xFF6E7585);
 
   /// Disabled text light
   static const Color textDisabledDark = Color(0xFFAEAEB2);
 
-  /// User message bubble light
-  static const Color userBubbleDark = Color(0xFFF7F7F8);
+  /// Subtitle text light
+  static const Color textSubtitleDark = Color(0xFF3C3C43);
 
-  /// Border light
+  /// User message bubble light
+  static const Color userBubbleDark = Color(0xFFF0F0F2);
+
+  /// Border light — subtle gray
   static const Color borderDark = Color(0xFFE5E5EA);
 
-  /// Focus border light - Medium gray (decoupled from accent)
+  /// Opaque border light
+  static const Color borderOpaqueDark = Color(0xFFE5E5EA);
+
+  /// Focus border light
   static const Color borderFocusDark = Color(0xFFC7C7CC);
 
   /// Divider light
   static const Color dividerDark = Color(0xFFE5E5EA);
 
-  /// Toggle active light - iOS system green (decoupled from accent)
+  /// Toggle active light
   static const Color toggleActiveDark = Color(0xFF34C759);
 
   /// Toggle inactive light
@@ -203,17 +249,31 @@ class DSColors {
   /// Toggle thumb light
   static const Color toggleThumbDark = Color(0xFFFFFFFF);
 
-  /// CTA background light - Black
-  static const Color ctaBackgroundDark = Color(0xFF000000);
+  /// CTA background light — deep blue (consistent with dark)
+  static const Color ctaBackgroundDark = Color(0xFF2043D6);
 
-  /// CTA foreground light - White
+  /// CTA foreground light — white
   static const Color ctaForegroundDark = Color(0xFFFFFFFF);
 
   /// Secondary button background light
-  static const Color secondaryBackgroundDark = Color(0xFFF7F7F8);
+  static const Color secondaryBackgroundDark = Color(0xFFF0F0F2);
 
   /// Secondary button foreground light
-  static const Color secondaryForegroundDark = Color(0xFF000000);
+  static const Color secondaryForegroundDark = Color(0xFF0B0B10);
+
+  /// Auth apple button light
+  static const Color authAppleBackgroundDark = Color(0xFF0B0B10);
+
+  /// Auth google button light
+  static const Color authGoogleBackgroundDark = Color(0xFFF0F0F2);
+
+  // Chip colors — same across modes (pastel on dark text)
+  static const Color chipBlueDark = Color(0xFFD6E4F7);
+  static const Color chipGreenDark = Color(0xFFB8EDCB);
+  static const Color chipPeachDark = Color(0xFFF0D9C4);
+  static const Color chipLavenderDark = Color(0xFFD8D0F0);
+  static const Color chipTextDark = Color(0xFF122031);
+  static const Color chipConfirmationDark = Color(0xFF2043D6);
 
   /// Success light
   static const Color successDark = Color(0xFF34C759);
@@ -331,6 +391,8 @@ class DSColorScheme {
   Color get surface => isDark ? DSColors.surface : DSColors.surfaceDark;
   Color get surfaceSecondary =>
       isDark ? DSColors.surfaceSecondary : DSColors.surfaceSecondaryDark;
+  Color get surfaceElevated =>
+      isDark ? DSColors.surfaceElevated : DSColors.surfaceElevatedDark;
 
   Color get textPrimary =>
       isDark ? DSColors.textPrimary : DSColors.textPrimaryDark;
@@ -340,11 +402,15 @@ class DSColorScheme {
       isDark ? DSColors.textTertiary : DSColors.textTertiaryDark;
   Color get textDisabled =>
       isDark ? DSColors.textDisabled : DSColors.textDisabledDark;
+  Color get textSubtitle =>
+      isDark ? DSColors.textSubtitle : DSColors.textSubtitleDark;
 
   Color get userBubble =>
       isDark ? DSColors.userBubble : DSColors.userBubbleDark;
 
   Color get border => isDark ? DSColors.border : DSColors.borderDark;
+  Color get borderOpaque =>
+      isDark ? DSColors.borderOpaque : DSColors.borderOpaqueDark;
   Color get borderFocus =>
       isDark ? DSColors.borderFocus : DSColors.borderFocusDark;
   Color get divider => isDark ? DSColors.divider : DSColors.dividerDark;
@@ -386,4 +452,20 @@ class DSColorScheme {
       isDark ? DSColors.infoBackground : DSColors.infoBackgroundDark;
 
   Color get overlay => isDark ? DSColors.overlay : DSColors.overlayDark;
+
+  // Auth button colors
+  Color get authAppleBackground =>
+      isDark ? DSColors.authAppleBackground : DSColors.authAppleBackgroundDark;
+  Color get authGoogleBackground =>
+      isDark ? DSColors.authGoogleBackground : DSColors.authGoogleBackgroundDark;
+
+  // Interest chip colors
+  Color get chipBlue => isDark ? DSColors.chipBlue : DSColors.chipBlueDark;
+  Color get chipGreen => isDark ? DSColors.chipGreen : DSColors.chipGreenDark;
+  Color get chipPeach => isDark ? DSColors.chipPeach : DSColors.chipPeachDark;
+  Color get chipLavender =>
+      isDark ? DSColors.chipLavender : DSColors.chipLavenderDark;
+  Color get chipText => isDark ? DSColors.chipText : DSColors.chipTextDark;
+  Color get chipConfirmation =>
+      isDark ? DSColors.chipConfirmation : DSColors.chipConfirmationDark;
 }

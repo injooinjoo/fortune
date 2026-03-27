@@ -596,9 +596,12 @@ class _DSButtonState extends State<DSButton>
     switch (widget.style) {
       case DSButtonStyle.primary:
         backgroundColor = isEnabled
-            ? (_isPressed ? colors.backgroundTertiary : colors.surfaceSecondary)
-            : colors.surfaceSecondary.withValues(alpha: 0.5);
-        foregroundColor = isEnabled ? colors.textPrimary : colors.textDisabled;
+            ? (_isPressed
+                ? colors.ctaBackground.withValues(alpha: 0.85)
+                : colors.ctaBackground)
+            : colors.ctaBackground.withValues(alpha: 0.4);
+        foregroundColor =
+            isEnabled ? colors.ctaForeground : colors.ctaForeground.withValues(alpha: 0.6);
         break;
 
       case DSButtonStyle.secondary:

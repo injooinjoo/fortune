@@ -75,8 +75,8 @@ class DSRadius {
   // SEMANTIC RADIUS
   // ============================================
 
-  /// Button radius (12px) - softer, more modern (increased from 8px)
-  static const double button = md;
+  /// Button radius (pill) - Paper-aligned full-round CTA style
+  static const double button = full;
 
   /// Input field radius (10px) - slightly softer (increased from 8px)
   static const double input = 10.0;

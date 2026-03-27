@@ -321,9 +321,17 @@ class SocialLoginBottomSheet {
     final backgroundColor = colors.backgroundSecondary;
     final borderColor = colors.border;
 
-    // Apple: solid CTA style (ChatGPT pattern)
+    // Apple: Apple HIG 기준 검정/흰색 (ctaBackground 사용 금지)
     // Google: bordered style (ChatGPT pattern)
     final isApple = type == 'apple';
+
+    // Apple 버튼은 Apple HIG 가이드라인 준수: 검정 배경 + 흰 텍스트
+    final appleButtonBg = colors.brightness == Brightness.dark
+        ? Colors.white
+        : Colors.black;
+    final appleButtonFg = colors.brightness == Brightness.dark
+        ? Colors.black
+        : Colors.white;
 
     switch (type) {
       case 'apple':
@@ -332,7 +340,7 @@ class SocialLoginBottomSheet {
           width: 24,
           height: 24,
           colorFilter: ColorFilter.mode(
-            colors.ctaForeground,
+            appleButtonFg,
             BlendMode.srcIn,
           ),
         );
@@ -373,8 +381,8 @@ class SocialLoginBottomSheet {
         width: double.infinity,
         height: 56,
         decoration: BoxDecoration(
-          color: isApple ? colors.ctaBackground : backgroundColor,
-          borderRadius: BorderRadius.circular(18),
+          color: isApple ? appleButtonBg : backgroundColor,
+          borderRadius: BorderRadius.circular(DSRadius.button),
           border: isApple ? null : Border.all(color: borderColor, width: 1),
         ),
         child: isLoading
@@ -388,7 +396,7 @@ class SocialLoginBottomSheet {
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                       color:
-                          isApple ? colors.ctaForeground : colors.textPrimary,
+                          isApple ? appleButtonFg : colors.textPrimary,
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -397,7 +405,7 @@ class SocialLoginBottomSheet {
                     style: context.labelLarge.copyWith(
                       fontWeight: FontWeight.w700,
                       color:
-                          isApple ? colors.ctaForeground : colors.textPrimary,
+                          isApple ? appleButtonFg : colors.textPrimary,
                     ),
                   ),
                 ],
@@ -413,7 +421,7 @@ class SocialLoginBottomSheet {
                     style: context.labelLarge.copyWith(
                       fontWeight: FontWeight.w700,
                       color:
-                          isApple ? colors.ctaForeground : colors.textPrimary,
+                          isApple ? appleButtonFg : colors.textPrimary,
                     ),
                   ),
                 ],

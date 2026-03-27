@@ -199,23 +199,63 @@ class FortuneStaggeredSection extends StatelessWidget {
     required this.child,
   });
 
+  static const _stagger = Duration(milliseconds: 100);
+
   @override
   Widget build(BuildContext context) {
+    final delay = Duration(milliseconds: index * _stagger.inMilliseconds);
     return child
         .animate()
         .fadeIn(
-          duration: DSAnimation.normal,
+          duration: DSAnimation.slow,
           curve: DSAnimation.claude,
-          delay: Duration(
-              milliseconds: index * DSAnimation.contentStagger.inMilliseconds),
+          delay: delay,
         )
         .slideY(
-          begin: 0.03,
+          begin: 0.06,
           end: 0,
-          duration: DSAnimation.normal,
+          duration: DSAnimation.slow,
           curve: DSAnimation.claude,
-          delay: Duration(
-              milliseconds: index * DSAnimation.contentStagger.inMilliseconds),
+          delay: delay,
+        )
+        .scale(
+          begin: const Offset(0.97, 0.97),
+          end: const Offset(1, 1),
+          duration: DSAnimation.slow,
+          curve: DSAnimation.claude,
+          delay: delay,
+        );
+  }
+}
+
+/// Micro-animation wrapper for individual items inside already-revealed cards
+class FortuneCardReveal extends StatelessWidget {
+  final int index;
+  final Widget child;
+
+  const FortuneCardReveal({
+    super.key,
+    required this.index,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final delay =
+        Duration(milliseconds: index * DSAnimation.listStagger.inMilliseconds);
+    return child
+        .animate()
+        .fadeIn(
+          duration: DSAnimation.quick,
+          curve: DSAnimation.claude,
+          delay: delay,
+        )
+        .slideY(
+          begin: 0.02,
+          end: 0,
+          duration: DSAnimation.quick,
+          curve: DSAnimation.claude,
+          delay: delay,
         );
   }
 }
@@ -265,10 +305,10 @@ class FortuneAnimatedProgressBar extends StatelessWidget {
             const SizedBox(width: DSSpacing.xxs),
           ],
           SizedBox(
-            width: 48,
+            width: 56,
             child: Text(
               label,
-              style: context.labelSmall.copyWith(
+              style: context.labelMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 color: colors.textSecondary,
               ),
@@ -278,20 +318,27 @@ class FortuneAnimatedProgressBar extends StatelessWidget {
           const SizedBox(width: DSSpacing.xs),
           Expanded(
             child: Container(
-              height: 8,
+              height: 10,
               decoration: BoxDecoration(
                 color: colors.border.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(5),
               ),
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   return Align(
                     alignment: Alignment.centerLeft,
                     child: Container(
-                      height: 8,
+                      height: 10,
                       decoration: BoxDecoration(
                         color: barColor,
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: BorderRadius.circular(5),
+                        boxShadow: [
+                          BoxShadow(
+                            color: barColor.withValues(alpha: 0.3),
+                            blurRadius: 6,
+                            offset: const Offset(0, 1),
+                          ),
+                        ],
                       ),
                     ).animate().custom(
                           duration: DSAnimation.resultReveal,
@@ -352,7 +399,7 @@ class FortuneInfoGraphGrid extends StatelessWidget {
           index: i,
           child: Container(
             width: (MediaQuery.of(context).size.width - 120) / 2,
-            padding: const EdgeInsets.all(DSSpacing.sm + 2),
+            padding: const EdgeInsets.all(DSSpacing.md),
             decoration: BoxDecoration(
               color: accentColor.withValues(alpha: 0.06),
               borderRadius: BorderRadius.circular(DSRadius.md),
@@ -366,28 +413,28 @@ class FortuneInfoGraphGrid extends StatelessWidget {
                 Row(
                   children: [
                     if (item.iconData != null)
-                      Icon(item.iconData, size: 15, color: accentColor)
+                      Icon(item.iconData, size: 16, color: accentColor)
                     else
                       Text(item.icon ?? '',
-                          style: const TextStyle(fontSize: 15)),
-                    const SizedBox(width: DSSpacing.xxs),
+                          style: const TextStyle(fontSize: 16)),
+                    const SizedBox(width: DSSpacing.xs),
                     Expanded(
                       child: Text(
                         item.label,
                         style: context.labelSmall.copyWith(
                           color: colors.textSecondary,
                           fontWeight: FontWeight.w600,
-                          fontSize: 10,
+                          fontSize: 11,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: DSSpacing.xxs + 1),
+                const SizedBox(height: DSSpacing.xs),
                 Text(
                   item.value,
-                  style: context.bodySmall.copyWith(
+                  style: context.bodyMedium.copyWith(
                     fontWeight: FontWeight.w700,
                     height: 1.35,
                   ),
@@ -732,7 +779,7 @@ class FortuneHeroGradient extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(DSSpacing.md),
+      padding: const EdgeInsets.all(DSSpacing.lg),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(DSRadius.lg),
         gradient: LinearGradient(
@@ -789,7 +836,7 @@ class FortuneHeroGradient extends StatelessWidget {
         .animate()
         .fadeIn(duration: DSAnimation.contentReveal, curve: DSAnimation.claude)
         .scale(
-          begin: const Offset(0.97, 0.97),
+          begin: const Offset(0.96, 0.96),
           end: const Offset(1, 1),
           duration: DSAnimation.contentReveal,
           curve: DSAnimation.claude,
@@ -820,7 +867,7 @@ class FortuneCategoryScoreGrid extends StatelessWidget {
           index: i + 2, // offset for hero animation
           child: Container(
             width: (MediaQuery.of(context).size.width - 120) / 2,
-            padding: const EdgeInsets.all(DSSpacing.sm + 2),
+            padding: const EdgeInsets.all(DSSpacing.md),
             decoration: BoxDecoration(
               color: statusColor.withValues(alpha: 0.06),
               borderRadius: BorderRadius.circular(DSRadius.md),

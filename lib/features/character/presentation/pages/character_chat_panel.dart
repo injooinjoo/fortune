@@ -1289,7 +1289,6 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                     ),
             ),
             if (shouldShowAccordionToggle) ...[
-              const SizedBox(height: DSSpacing.xs),
               Align(
                 alignment: Alignment.center,
                 child: Semantics(
@@ -1298,30 +1297,20 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                       ? context.l10n.close
                       : context.l10n.chipViewMore,
                   child: ExcludeSemantics(
-                    child: TextButton.icon(
-                      onPressed: _toggleFortuneChipBarExpanded,
-                      style: TextButton.styleFrom(
-                        foregroundColor: colors.textSecondary,
-                        minimumSize: Size.zero,
+                    child: GestureDetector(
+                      onTap: _toggleFortuneChipBarExpanded,
+                      behavior: HitTestBehavior.opaque,
+                      child: Padding(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: DSSpacing.sm,
-                          vertical: DSSpacing.xxs,
+                          horizontal: DSSpacing.md,
+                          vertical: 2,
                         ),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      icon: Icon(
-                        _isFortuneChipBarExpanded
-                            ? Icons.keyboard_arrow_up_rounded
-                            : Icons.keyboard_arrow_down_rounded,
-                        size: 18,
-                      ),
-                      label: Text(
-                        _isFortuneChipBarExpanded
-                            ? context.l10n.close
-                            : context.l10n.chipViewMore,
-                        style: context.labelMedium.copyWith(
+                        child: Icon(
+                          _isFortuneChipBarExpanded
+                              ? Icons.keyboard_arrow_up_rounded
+                              : Icons.keyboard_arrow_down_rounded,
+                          size: 16,
                           color: colors.textSecondary,
-                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
@@ -2980,9 +2969,9 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     return Container(
       padding: const EdgeInsets.fromLTRB(
         DSSpacing.md,
-        DSSpacing.sm,
+        DSSpacing.sm + 2,
         DSSpacing.md,
-        DSSpacing.md,
+        DSSpacing.sm + 2,
       ),
       decoration: BoxDecoration(
         color: widget.character.isFortuneExpert

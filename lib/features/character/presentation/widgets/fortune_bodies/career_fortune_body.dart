@@ -64,7 +64,7 @@ class CareerFortuneBody extends StatelessWidget {
           Center(child: FortuneTagPillWrap(tags: highlights)),
         ],
         if (roles.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -75,7 +75,7 @@ class CareerFortuneBody extends StatelessWidget {
           ),
         ],
         if (strengths.isNotEmpty || challenges.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child:
@@ -83,14 +83,14 @@ class CareerFortuneBody extends StatelessWidget {
           ),
         ],
         if (weeklyOutlook != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: _buildWeeklyOutlook(context, weeklyOutlook),
           ),
         ],
         if (careerTips.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -101,14 +101,14 @@ class CareerFortuneBody extends StatelessWidget {
           ),
         ],
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneLuckyItemGrid(items: luckyItems),
           ),
         ],
         if (recommendations.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -119,7 +119,7 @@ class CareerFortuneBody extends StatelessWidget {
           ),
         ],
         if (warnings.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -193,7 +193,7 @@ class CareerFortuneBody extends StatelessWidget {
 
         // Exam stats
         if (examStats != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: _buildExamStats(context, examStats),
@@ -202,7 +202,7 @@ class CareerFortuneBody extends StatelessWidget {
 
         // CSAT focus subjects
         if (csatFocus.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: _buildCsatFocus(context, csatFocus),
@@ -211,7 +211,7 @@ class CareerFortuneBody extends StatelessWidget {
 
         // Roadmap
         if (csatRoadmap.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: _buildCsatRoadmap(context, csatRoadmap),
@@ -220,7 +220,7 @@ class CareerFortuneBody extends StatelessWidget {
 
         // Today strategy
         if (todayStrategy != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: _buildTodayStrategy(context, todayStrategy),
@@ -229,7 +229,7 @@ class CareerFortuneBody extends StatelessWidget {
 
         // Routine
         if (csatRoutine.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -242,7 +242,7 @@ class CareerFortuneBody extends StatelessWidget {
 
         // Spirit animal
         if (spiritAnimal != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: _buildSpiritAnimal(context, spiritAnimal),
@@ -251,14 +251,14 @@ class CareerFortuneBody extends StatelessWidget {
 
         // Hashtags
         if (hashtags.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           Center(
               child: FortuneTagPillWrap(
                   tags: hashtags.map((h) => '#$h').toList())),
         ],
 
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneLuckyItemGrid(items: luckyItems),
@@ -266,7 +266,7 @@ class CareerFortuneBody extends StatelessWidget {
         ],
 
         if (recommendations.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -278,7 +278,7 @@ class CareerFortuneBody extends StatelessWidget {
         ],
 
         if (warnings.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -478,21 +478,21 @@ class CareerFortuneBody extends StatelessWidget {
           Center(child: FortuneTagPillWrap(tags: highlights)),
         ],
         if (specialTip != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneTipCard(emoji: '💡', text: specialTip),
           ),
         ],
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneLuckyItemGrid(items: luckyItems),
           ),
         ],
         if (recommendations.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -503,7 +503,7 @@ class CareerFortuneBody extends StatelessWidget {
           ),
         ],
         if (warnings.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(

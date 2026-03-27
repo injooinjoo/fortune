@@ -56,7 +56,7 @@ class CoachingFortuneBody extends StatelessWidget {
           Center(child: FortuneTagPillWrap(tags: highlights)),
         ],
         if (insights.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -67,7 +67,7 @@ class CoachingFortuneBody extends StatelessWidget {
           ),
         ],
         if (actionItems.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -78,21 +78,21 @@ class CoachingFortuneBody extends StatelessWidget {
           ),
         ],
         if (specialTip != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneTipCard(emoji: '💡', text: specialTip),
           ),
         ],
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneLuckyItemGrid(items: luckyItems),
           ),
         ],
         if (recommendations.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -103,7 +103,7 @@ class CoachingFortuneBody extends StatelessWidget {
           ),
         ],
         if (warnings.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(

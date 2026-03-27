@@ -27,9 +27,9 @@ class FontSizeSystem {
   static const double displayMedium = 34.0; // 큰 헤드라인
   static const double displaySmall = 28.0; // 중간 헤드라인
 
-  /// Heading Sizes (섹션 제목)
+  /// Heading Sizes (섹션 제목) — Paper aligned
   /// 페이지 제목, 섹션 헤더에 사용
-  static const double heading1 = 26.0; // 메인 페이지 제목
+  static const double heading1 = 28.0; // 메인 페이지 제목 (Paper: 28px)
   static const double heading2 = 22.0; // 섹션 제목
   static const double heading3 = 20.0; // 서브 섹션 제목
   static const double heading4 = 18.0; // 작은 섹션 제목

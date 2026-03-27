@@ -5,12 +5,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:fortune/core/design_system/tokens/ds_colors.dart';
 import 'package:fortune/core/design_system/theme/ds_extensions.dart';
 
-/// Unified typography system - Claude-inspired neutral theme
+/// Paper-aligned typography system
 ///
 /// Font Strategy:
-/// - Primary: NotoSansKR (clean, readable Korean sans-serif)
-/// - All text uses local NotoSansKR font files
+/// - Primary: NotoSansKR (Paper design file font)
+/// - Display/Heading: w800 (ExtraBold) with tight letter-spacing
+/// - Body: w400 (Regular) with comfortable line-height
 /// - Legacy calligraphy: NanumMyeongjo (for specific traditional content)
+///
+/// Last synced with Paper: 2026-03-27
 ///
 /// Usage:
 /// ```dart
@@ -100,70 +103,70 @@ class TypographyUnified {
   // DISPLAY STYLES (Large Headlines)
   // ==========================================
 
-  /// Display Large - Largest headline
+  /// Display Large — Paper: 40px/w800, ls:-1.5
   static TextStyle get displayLarge => TextStyle(
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.displayLargeScaled,
-        height: 1.22,
-        fontWeight: FontWeight.w700,
-        letterSpacing: -0.2,
+        height: 1.06,
+        fontWeight: FontWeight.w800,
+        letterSpacing: -1.5,
       );
 
-  /// Display Medium - Large headline
+  /// Display Medium — Paper: 34px/w800, ls:-1.0
   static TextStyle get displayMedium => TextStyle(
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.displayMediumScaled,
-        height: 1.24,
-        fontWeight: FontWeight.w700,
-        letterSpacing: -0.2,
+        height: 1.12,
+        fontWeight: FontWeight.w800,
+        letterSpacing: -1.0,
       );
 
-  /// Display Small - Medium headline
+  /// Display Small — Paper: 28px/w800, ls:-0.8
   static TextStyle get displaySmall => TextStyle(
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.displaySmallScaled,
         height: 1.28,
-        fontWeight: FontWeight.w700,
-        letterSpacing: -0.15,
+        fontWeight: FontWeight.w800,
+        letterSpacing: -0.8,
       );
 
   // ==========================================
   // HEADING STYLES (Section Titles)
   // ==========================================
 
-  /// Heading 1 - Main page title
+  /// Heading 1 — Paper: 28px/w800, ls:-0.8 ("메시지" title)
   static TextStyle get heading1 => TextStyle(
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.heading1Scaled,
-        height: 1.32,
-        fontWeight: FontWeight.w700,
-        letterSpacing: -0.1,
+        height: 1.21,
+        fontWeight: FontWeight.w800,
+        letterSpacing: -0.8,
       );
 
-  /// Heading 2 - Section title
+  /// Heading 2 — Paper: 22px/w800 (section title)
   static TextStyle get heading2 => TextStyle(
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.heading2Scaled,
-        height: 1.34,
-        fontWeight: FontWeight.w700,
-        letterSpacing: -0.05,
+        height: 1.22,
+        fontWeight: FontWeight.w800,
+        letterSpacing: -0.5,
       );
 
-  /// Heading 3 - Sub section title
+  /// Heading 3 — Paper: 20px/w500 ("프로필" title)
   static TextStyle get heading3 => TextStyle(
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.heading3Scaled,
-        height: 1.4,
-        fontWeight: FontWeight.w700,
+        height: 1.2,
+        fontWeight: FontWeight.w500,
         letterSpacing: 0,
       );
 
-  /// Heading 4 - Small section title
+  /// Heading 4 — Paper: 18px/w800 ("맞춤 시작점")
   static TextStyle get heading4 => TextStyle(
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.heading4Scaled,
-        height: 1.42,
-        fontWeight: FontWeight.w700,
+        height: 1.22,
+        fontWeight: FontWeight.w800,
         letterSpacing: 0,
       );
 
@@ -171,71 +174,71 @@ class TypographyUnified {
   // BODY STYLES (Body Text)
   // ==========================================
 
-  /// Body Large - Large body text
+  /// Body Large — Paper: 16px/w400, lh:158% (sub-body text)
   static TextStyle get bodyLarge => TextStyle(
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.bodyLargeScaled,
-        height: 1.6,
+        height: 1.58,
         fontWeight: FontWeight.w400,
-        letterSpacing: 0.1,
+        letterSpacing: 0,
       );
 
-  /// Body Medium - Default body text
+  /// Body Medium — Paper: 15px/w400, lh:155%
   static TextStyle get bodyMedium => TextStyle(
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.bodyMediumScaled,
-        height: 1.6,
+        height: 1.55,
         fontWeight: FontWeight.w400,
-        letterSpacing: 0.1,
+        letterSpacing: 0,
       );
 
-  /// Body Small - Small body text
+  /// Body Small — Paper: 14px/w400, lh:150% (chat messages)
   static TextStyle get bodySmall => TextStyle(
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.bodySmallScaled,
-        height: 1.55,
+        height: 1.50,
         fontWeight: FontWeight.w400,
-        letterSpacing: 0.1,
+        letterSpacing: 0,
       );
 
   // ==========================================
   // LABEL STYLES (Labels, Captions)
   // ==========================================
 
-  /// Label Large - Large label
+  /// Label Large — Paper: 14px/w700 (chip label, bold variant)
   static TextStyle get labelLarge => TextStyle(
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.labelLargeScaled,
-        height: 1.45,
-        fontWeight: FontWeight.w500,
-        letterSpacing: 0.05,
+        height: 1.28,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0,
       );
 
-  /// Label Medium - Default label
+  /// Label Medium — Paper: 13px/w400 (secondary text, descriptions)
   static TextStyle get labelMedium => TextStyle(
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.labelMediumScaled,
-        height: 1.4,
-        fontWeight: FontWeight.w500,
-        letterSpacing: 0.05,
+        height: 1.23,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0,
       );
 
-  /// Label Small - Small label
+  /// Label Small — Paper: 12px/w400
   static TextStyle get labelSmall => TextStyle(
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.labelSmallScaled,
-        height: 1.38,
-        fontWeight: FontWeight.w500,
-        letterSpacing: 0.05,
+        height: 1.33,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0,
       );
 
-  /// Label Tiny - Very small label
+  /// Label Tiny — 11px/w400
   static TextStyle get labelTiny => TextStyle(
         fontFamily: fontFamilyPrimary,
         fontSize: FontSizeSystem.labelTinyScaled,
         height: 1.35,
-        fontWeight: FontWeight.w500,
-        letterSpacing: 0.05,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0,
       );
 
   // ==========================================

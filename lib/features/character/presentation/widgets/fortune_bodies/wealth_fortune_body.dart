@@ -62,7 +62,7 @@ class WealthFortuneBody extends StatelessWidget {
 
         // Element analysis
         if (elementAnalysis != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: _buildElementCard(context, elementAnalysis),
@@ -71,7 +71,7 @@ class WealthFortuneBody extends StatelessWidget {
 
         // Goal advice
         if (goalAdvice != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: _buildGoalCard(context, goalAdvice),
@@ -80,7 +80,7 @@ class WealthFortuneBody extends StatelessWidget {
 
         // Cashflow insight
         if (cashflowInsight != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: _buildCashflowCard(context, cashflowInsight),
@@ -89,7 +89,7 @@ class WealthFortuneBody extends StatelessWidget {
 
         // Investment insights
         if (investmentInsights != null && investmentInsights.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: _buildInvestmentGrid(context, investmentInsights),
@@ -98,7 +98,7 @@ class WealthFortuneBody extends StatelessWidget {
 
         // Monthly flow
         if (monthlyFlow.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: _buildMonthlyFlow(context, monthlyFlow),
@@ -107,7 +107,7 @@ class WealthFortuneBody extends StatelessWidget {
 
         // Lucky items
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneLuckyItemGrid(items: luckyItems),
@@ -116,7 +116,7 @@ class WealthFortuneBody extends StatelessWidget {
 
         // Action items
         if (actionItems.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -128,7 +128,7 @@ class WealthFortuneBody extends StatelessWidget {
         ],
 
         if (recommendations.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -140,7 +140,7 @@ class WealthFortuneBody extends StatelessWidget {
         ],
 
         if (warnings.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -380,21 +380,21 @@ class WealthFortuneBody extends StatelessWidget {
           Center(child: FortuneTagPillWrap(tags: ['📂 $category'])),
         ],
         if (itemsByCategory != null && itemsByCategory.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: _buildCategoryItems(context, itemsByCategory),
           ),
         ],
         if (elementsAnalysis != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: _buildElementsAnalysis(context, elementsAnalysis),
           ),
         ],
         if (todayPrediction != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneQuoteBlock(
@@ -402,14 +402,14 @@ class WealthFortuneBody extends StatelessWidget {
           ),
         ],
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneLuckyItemGrid(items: luckyItems),
           ),
         ],
         if (actions.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -420,7 +420,7 @@ class WealthFortuneBody extends StatelessWidget {
           ),
         ],
         if (recommendations.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -431,7 +431,7 @@ class WealthFortuneBody extends StatelessWidget {
           ),
         ],
         if (warnings.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -555,14 +555,14 @@ class WealthFortuneBody extends StatelessWidget {
           Center(child: FortuneTagPillWrap(tags: highlights)),
         ],
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneLuckyItemGrid(items: luckyItems),
           ),
         ],
         if (recommendations.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -573,7 +573,7 @@ class WealthFortuneBody extends StatelessWidget {
           ),
         ],
         if (warnings.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(

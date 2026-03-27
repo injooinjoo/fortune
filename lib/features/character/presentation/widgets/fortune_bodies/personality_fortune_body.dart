@@ -60,7 +60,7 @@ class PersonalityFortuneBody extends StatelessWidget {
 
         // Dimension pairs
         if (dimensions.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           ...dimensions.map((d) => FortuneStaggeredSection(
                 index: si++,
                 child: Padding(
@@ -72,7 +72,7 @@ class PersonalityFortuneBody extends StatelessWidget {
 
         // Today's trap
         if (todayTrap != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneTipCard(emoji: '🚨', text: '오늘의 함정: $todayTrap'),
@@ -81,7 +81,7 @@ class PersonalityFortuneBody extends StatelessWidget {
 
         // Lucky info
         if (luckyColor != null || luckyNumber != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -102,7 +102,7 @@ class PersonalityFortuneBody extends StatelessWidget {
         ],
 
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneLuckyItemGrid(items: luckyItems),
@@ -110,7 +110,7 @@ class PersonalityFortuneBody extends StatelessWidget {
         ],
 
         if (recommendations.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -122,7 +122,7 @@ class PersonalityFortuneBody extends StatelessWidget {
         ],
 
         if (warnings.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -276,7 +276,7 @@ class PersonalityFortuneBody extends StatelessWidget {
 
         // Three rate bars
         if (physical != null || emotional != null || intellectual != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -309,7 +309,7 @@ class PersonalityFortuneBody extends StatelessWidget {
         ],
 
         if (bestTime != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneTipCard(emoji: '⏰', text: '최적의 시간: $bestTime'),
@@ -318,7 +318,7 @@ class PersonalityFortuneBody extends StatelessWidget {
 
         // Weekly forecast
         if (weeklyForecast != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: _buildWeeklyForecast(context, weeklyForecast),
@@ -327,7 +327,7 @@ class PersonalityFortuneBody extends StatelessWidget {
 
         // Important dates
         if (importantDates.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -354,7 +354,7 @@ class PersonalityFortuneBody extends StatelessWidget {
 
         // Lifestyle advice
         if (lifestyleAdvice != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: _buildLifestyleAdvice(context, lifestyleAdvice),
@@ -363,7 +363,7 @@ class PersonalityFortuneBody extends StatelessWidget {
 
         // Health tips
         if (healthTips != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: _buildHealthTips(context, healthTips),
@@ -371,7 +371,7 @@ class PersonalityFortuneBody extends StatelessWidget {
         ],
 
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneLuckyItemGrid(items: luckyItems),
@@ -379,7 +379,7 @@ class PersonalityFortuneBody extends StatelessWidget {
         ],
 
         if (recommendations.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -391,7 +391,7 @@ class PersonalityFortuneBody extends StatelessWidget {
         ],
 
         if (warnings.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -502,21 +502,21 @@ class PersonalityFortuneBody extends StatelessWidget {
           Center(child: FortuneTagPillWrap(tags: highlights)),
         ],
         if (specialTip != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneTipCard(emoji: '💡', text: specialTip),
           ),
         ],
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneLuckyItemGrid(items: luckyItems),
           ),
         ],
         if (recommendations.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -527,7 +527,7 @@ class PersonalityFortuneBody extends StatelessWidget {
           ),
         ],
         if (warnings.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(

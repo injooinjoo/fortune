@@ -77,7 +77,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // 🌸 Love Profile section
         if (loveProfile != null && loveProfile.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: sectionIndex++,
             child: _buildLoveProfileGrid(context, loveProfile),
@@ -86,7 +86,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // ✨ Charm Points
         if (charmPoints != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: sectionIndex++,
             child: _buildCharmPointsCard(context, charmPoints),
@@ -95,7 +95,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // 📈 Improvement Areas
         if (improvementAreas != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: sectionIndex++,
             child: _buildImprovementCard(context, improvementAreas),
@@ -104,7 +104,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // 💕 Compatibility Insights
         if (compatInsights != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: sectionIndex++,
             child: _buildCompatInsightsCard(context, compatInsights),
@@ -113,7 +113,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // 🎯 Today's Advice
         if (todaysAdvice != null && todaysAdvice.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: sectionIndex++,
             child: _buildTodaysAdviceCard(context, todaysAdvice),
@@ -122,7 +122,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Lucky items
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: sectionIndex++,
             child: FortuneLuckyItemGrid(items: luckyItems),
@@ -132,7 +132,7 @@ class RelationshipFortuneBody extends StatelessWidget {
         // 🔮 Predictions
         if (predictions != null) ...[
           if (fortuneStr(predictions['thisWeek']) != null) ...[
-            const SizedBox(height: DSSpacing.md),
+            const SizedBox(height: DSSpacing.lg),
             FortuneStaggeredSection(
               index: sectionIndex++,
               child: FortuneQuoteBlock(
@@ -143,7 +143,7 @@ class RelationshipFortuneBody extends StatelessWidget {
             ),
           ],
           if (fortuneStr(predictions['thisMonth']) != null) ...[
-            const SizedBox(height: DSSpacing.md),
+            const SizedBox(height: DSSpacing.lg),
             FortuneStaggeredSection(
               index: sectionIndex++,
               child: FortuneQuoteBlock(
@@ -157,7 +157,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Recommendations
         if (recommendations.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: sectionIndex++,
             child: FortuneSectionCard(
@@ -170,7 +170,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Warnings
         if (warnings.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: sectionIndex++,
             child: FortuneSectionCard(
@@ -478,7 +478,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Person comparison
         if (zodiacAnimal != null || starSign != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: _buildPersonComparison(
@@ -488,7 +488,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Match score bars
         if (matchScores.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -509,7 +509,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Strengths & Cautions
         if (strengths.isNotEmpty || cautions.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneDosDontsCard(dosList: strengths, dontsList: cautions),
@@ -518,7 +518,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Name compatibility & destiny number
         if (nameCompat != null || destinyNumber != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: _buildExtraMetrics(context, nameCompat, destinyNumber),
@@ -527,7 +527,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Lucky items
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneLuckyItemGrid(items: luckyItems),
@@ -536,7 +536,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Recommendations
         if (recommendations.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -588,7 +588,7 @@ class RelationshipFortuneBody extends StatelessWidget {
               _personBadge(context, '👤', name2),
             ],
           ),
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           // Zodiac comparison
           if (zodiac1.isNotEmpty || zodiac2.isNotEmpty) ...[
             Row(
@@ -785,7 +785,7 @@ class RelationshipFortuneBody extends StatelessWidget {
             theirAttractiveness != null ||
             visualCompat != null ||
             interestLevel != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -829,7 +829,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // First impression
         if (firstImpression != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneTipCard(emoji: '👋', text: firstImpression),
@@ -838,7 +838,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // First impression tips
         if (firstTips.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -851,7 +851,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Conversation strategy
         if (conversationTopics != null || nextTopics.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: _buildConversationSection(
@@ -861,7 +861,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Outfit advice
         if (outfitAdvice != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: _buildOutfitSection(context, outfitAdvice),
@@ -870,7 +870,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Recommended date style
         if (recommendedStyle != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child:
@@ -880,7 +880,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Do's and Don'ts
         if (dosList.isNotEmpty || dontsList.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneDosDontsCard(dosList: dosList, dontsList: dontsList),
@@ -889,7 +889,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Improvement tips
         if (improvementTips.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -902,7 +902,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Red flags
         if (redFlags.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -919,7 +919,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Lucky items
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneLuckyItemGrid(items: luckyItems),
@@ -928,7 +928,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Generic recommendations
         if (recommendations.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -941,7 +941,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Warnings
         if (warnings.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -1071,7 +1071,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Reunion possibility
         if (reunionPossibility != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -1089,7 +1089,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Primary goal
         if (primaryGoal != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -1108,7 +1108,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Timeline
         if (timeline != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -1127,7 +1127,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Advice
         if (advice != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneTipCard(emoji: '💡', text: advice),
@@ -1136,7 +1136,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Lucky items
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneLuckyItemGrid(items: luckyItems),
@@ -1145,7 +1145,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Recommendations
         if (recommendations.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -1158,7 +1158,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Warnings
         if (warnings.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -1211,7 +1211,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Caution people cards
         if (cautionPeople.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           ...cautionPeople.take(3).indexed.map(
                 (entry) => FortuneStaggeredSection(
                   index: si++,
@@ -1237,7 +1237,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Time strategy
         if (timeStrategy != null) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: _buildTimeStrategyCard(context, timeStrategy),
@@ -1246,7 +1246,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Lucky items
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneLuckyItemGrid(items: luckyItems),
@@ -1255,7 +1255,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Recommendations
         if (recommendations.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(
@@ -1268,7 +1268,7 @@ class RelationshipFortuneBody extends StatelessWidget {
 
         // Warnings
         if (warnings.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: si++,
             child: FortuneSectionCard(

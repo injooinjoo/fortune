@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/extensions/l10n_extension.dart';
+import '../constants/chip_category_map.dart';
 
 /// 추천 칩 모델
 class RecommendationChip {
@@ -19,6 +20,16 @@ class RecommendationChip {
     required this.icon,
     required this.color,
   });
+
+  /// Paper 디자인 기준 파스텔 배경색 (context 필요)
+  Color getPastelColor(BuildContext context) {
+    return getChipColorForFortuneType(context, fortuneType);
+  }
+
+  /// Paper 디자인 기준 칩 텍스트 색상 (파스텔 위 어두운 텍스트)
+  Color getChipTextColor(BuildContext context) {
+    return context.colors.chipText;
+  }
 
   /// l10n으로 변환된 칩 라벨 반환 (fallback: label 필드)
   String getLocalizedLabel(BuildContext context) {
