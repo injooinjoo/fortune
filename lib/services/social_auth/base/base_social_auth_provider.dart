@@ -107,7 +107,7 @@ class AuthProviderUtils {
         existingProfile = await supabase
             .from('user_profiles')
             .select(
-                'linked_providers, primary_provider, name, profile_image_url')
+                'email, linked_providers, primary_provider, name, profile_image_url')
             .eq('id', userId)
             .maybeSingle();
 
@@ -126,6 +126,7 @@ class AuthProviderUtils {
           profileCache,
           userId,
           existingProfile,
+          email,
           name,
           photoUrl,
           provider,
@@ -205,11 +206,19 @@ class AuthProviderUtils {
     ProfileCache profileCache,
     String userId,
     Map<String, dynamic> existingProfile,
+    String? email,
     String? name,
     String? photoUrl,
     String provider,
   ) async {
     final updates = <String, dynamic>{'updated_at': null};
+
+    if (email != null && email.isNotEmpty) {
+      final currentEmail = existingProfile['email'] as String?;
+      if (currentEmail != email) {
+        updates['email'] = email;
+      }
+    }
 
     // Update name if needed
     if (name != null && name.isNotEmpty) {

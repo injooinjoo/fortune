@@ -92,15 +92,26 @@ class SupabaseHelper {
           name: name,
           profileImageUrl: profileImageUrl);
     } else {
+      final updates = <String, dynamic>{};
+      final existingEmail = profile['email'] as String?;
+
+      if (email != null && email.isNotEmpty && existingEmail != email) {
+        updates['email'] = email;
+      }
+
       // 프로필이 있지만 소셜 로그인 이미지가 제공되었으면 업데이트
       final existingImageUrl = profile['profile_image_url'] as String?;
       if (profileImageUrl != null &&
           profileImageUrl.isNotEmpty &&
           existingImageUrl != profileImageUrl) {
-        Logger.info('Updating profile image from social login');
+        updates['profile_image_url'] = profileImageUrl;
+      }
+
+      if (updates.isNotEmpty) {
+        Logger.info('Syncing existing user profile fields from auth session');
         profile = await updateUserProfile(
               userId: userId,
-              updates: {'profile_image_url': profileImageUrl},
+              updates: updates,
             ) ??
             profile;
       }

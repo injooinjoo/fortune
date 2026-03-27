@@ -350,8 +350,9 @@ class _ProfileSummaryRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final displayName =
         profile?.name.isNotEmpty == true ? profile!.name : fallbackName;
-    final email =
-        profile?.email.isNotEmpty == true ? profile!.email : fallbackEmail;
+    final email = fallbackEmail.isNotEmpty
+        ? fallbackEmail
+        : (profile?.email.isNotEmpty == true ? profile!.email : '');
 
     return Material(
       color: Colors.transparent,
