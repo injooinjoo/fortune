@@ -22861,6 +22861,8 @@
         "docs/design/PAPER_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/features/character/presentation/pages/character_profile_page.dart",
+        "lib/features/policy/presentation/pages/privacy_policy_page.dart",
+        "lib/features/policy/presentation/pages/terms_of_service_page.dart",
         "lib/presentation/widgets/social_login_bottom_sheet.dart",
         "lib/screens/auth/signup_screen.dart",
         "lib/screens/onboarding/onboarding_page.dart",
