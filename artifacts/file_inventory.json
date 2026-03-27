@@ -20429,6 +20429,7 @@
         "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/deployment/review/IOS_REVIEW_EVIDENCE.md",
         "docs/deployment/review/STORE_REVIEW_MASTER_CHECKLIST.md",
+        "lib/screens/premium/premium_screen.dart",
         "lib/services/in_app_purchase_service.dart"
       ],
       "runtime_reachable": true,
@@ -26427,7 +26428,8 @@
         "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/presentation/providers/providers.dart",
-        "lib/screens/onboarding/onboarding_page.dart"
+        "lib/screens/onboarding/onboarding_page.dart",
+        "lib/screens/premium/premium_screen.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26964,6 +26966,7 @@
       "path": "lib/services/in_app_purchase_service.dart",
       "referenced_by": [
         "docs/deployment/review/ANDROID_REVIEW_EVIDENCE.md",
+        "lib/screens/premium/premium_screen.dart",
         "lib/screens/profile/profile_screen.dart"
       ],
       "runtime_reachable": true,
@@ -27486,19 +27489,17 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
+      "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
+      "notes": [],
       "path": "lib/shared/components/purchase_loading_overlay.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
+      "referenced_by": [
+        "lib/screens/premium/premium_screen.dart"
+      ],
+      "runtime_reachable": true,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "runtime_used"
     },
     {
       "area": "lib",
@@ -33019,20 +33020,20 @@
       "test": 83
     },
     "counts_by_candidate_action": {
-      "keep": 733,
+      "keep": 734,
       "keep_generated": 28,
       "manual_review": 978,
-      "phase1_remove_candidate": 14,
+      "phase1_remove_candidate": 13,
       "phase2_review_candidate": 363,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
       "doc_only": 97,
       "generated_excluded": 28,
-      "runtime_used": 733,
+      "runtime_used": 734,
       "test_only": 92,
       "tooling_only": 174,
-      "unreferenced": 996
+      "unreferenced": 995
     },
     "declared_asset_dirs_without_runtime_refs": [
       "assets/animations",
@@ -33185,9 +33186,9 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 373,
+    "lib_dart_runtime_reachable": 374,
     "lib_dart_total": 438,
-    "lib_dart_zero_incoming": 24,
+    "lib_dart_zero_incoming": 23,
     "missing_function_refs": [
       "--all",
       "account-deletion",
