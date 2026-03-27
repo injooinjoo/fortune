@@ -64,24 +64,11 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
 
       if (_supportsNativeGoogleSignIn) {
         Logger.info('[GoogleAuthProvider] Native Google Sign-In 시작');
-        try {
-          final response = await _signInWithGoogleNative();
-          return SocialAuthAttemptResult.authenticated(response);
-        } catch (error) {
-          if (_shouldFallbackToOAuth(error)) {
-            Logger.warning(
-              '[GoogleAuthProvider] Native Google Sign-In nonce mismatch 감지, Browser OAuth로 fallback합니다. '
-              'Supabase Dashboard > Authentication > Providers > Google에서 '
-              '"Skip nonce check" 설정도 확인해 주세요.',
-            );
-            await disconnect();
-            return await _signInWithGoogleOAuth();
-          }
-          rethrow;
-        }
+        final response = await _signInWithGoogleNative();
+        return SocialAuthAttemptResult.authenticated(response);
       }
 
-      Logger.info('[GoogleAuthProvider] Browser OAuth fallback 시작');
+      Logger.info('[GoogleAuthProvider] Browser OAuth 시작');
       return await _signInWithGoogleOAuth();
     } catch (error) {
       if (_isCancellationError(error)) {
@@ -118,7 +105,10 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
 
   bool get _isAndroid => !_isWeb && (_isAndroidOverride ?? Platform.isAndroid);
 
-  bool get _supportsNativeGoogleSignIn => _isIOS || _isAndroid;
+  // Supabase's current supported mobile Google flow is OAuth on iOS.
+  // The free `google_sign_in` iOS flow cannot provide a compatible custom nonce,
+  // which causes a second browser-based login after native prompt selection.
+  bool get _supportsNativeGoogleSignIn => _isAndroid;
 
   GoogleSignIn get _googleSignInClient {
     return _googleSignIn ??= GoogleSignIn(
@@ -274,24 +264,7 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
         normalized.contains('취소');
   }
 
-  bool _shouldFallbackToOAuth(Object error) {
-    if (!_isIOS) {
-      return false;
-    }
-
-    final normalized = error.toString().toLowerCase();
-    return normalized.contains('passed nonce') &&
-        normalized.contains('id_token') &&
-        normalized.contains('both exist or not');
-  }
-
   LaunchMode get _googleOAuthLaunchMode {
-    // iOS SFSafariViewController launch can block the Future from returning
-    // on some devices, leaving the login button stuck in loading state.
-    // External Safari returns immediately and still supports the app callback.
-    if (_isIOS) {
-      return LaunchMode.externalApplication;
-    }
     return LaunchMode.inAppBrowserView;
   }
 }

@@ -24,7 +24,7 @@ void main() {
     );
   });
 
-  test('Google uses native sign-in on iPhone and returns authenticated user',
+  test('Google uses native sign-in on Android and returns authenticated user',
       () async {
     final user = AuthTestData.createGoogleUser();
     final session = AuthTestData.createMockSession(user: user);
@@ -34,7 +34,7 @@ void main() {
     final provider = GoogleAuthProvider(
       _createTestSupabaseClient('https://real-project.supabase.co'),
       ProfileCache(),
-      isIOSOverride: true,
+      isAndroidOverride: true,
       nativeSignInOverride: () async => authResponse,
     );
 
@@ -44,18 +44,19 @@ void main() {
     expect(result.user?.id, 'google-user-id');
   });
 
-  test('Google does not fall back to browser OAuth on iPhone', () async {
-    final user = AuthTestData.createGoogleUser();
-    final session = AuthTestData.createMockSession(user: user);
-    final authResponse =
-        AuthTestData.createMockAuthResponse(session: session, user: user);
+  test('Google uses browser OAuth on iPhone instead of native sign-in',
+      () async {
+    var nativeCalled = false;
     var oauthCalled = false;
 
     final provider = GoogleAuthProvider(
       _createTestSupabaseClient('https://real-project.supabase.co'),
       ProfileCache(),
       isIOSOverride: true,
-      nativeSignInOverride: () async => authResponse,
+      nativeSignInOverride: () async {
+        nativeCalled = true;
+        throw UnimplementedError('iOS should not use native Google sign-in');
+      },
       signInWithOAuthOverride: (_) async {
         oauthCalled = true;
         return true;
@@ -64,8 +65,9 @@ void main() {
 
     final result = await provider.signIn();
 
-    expect(result.isAuthenticated, isTrue);
-    expect(oauthCalled, isFalse);
+    expect(result.isPendingExternalAuth, isTrue);
+    expect(nativeCalled, isFalse);
+    expect(oauthCalled, isTrue);
   });
 
   test('Google treats native cancellation as a cancelled login attempt',
@@ -73,7 +75,7 @@ void main() {
     final provider = GoogleAuthProvider(
       _createTestSupabaseClient('https://real-project.supabase.co'),
       ProfileCache(),
-      isIOSOverride: true,
+      isAndroidOverride: true,
       nativeSignInOverride: () async {
         throw PlatformException(
           code: GoogleSignIn.kSignInCanceledError,
@@ -85,34 +87,6 @@ void main() {
     final result = await provider.signIn();
 
     expect(result.isCancelled, isTrue);
-  });
-
-  test(
-      'Google falls back to browser OAuth on iOS when Supabase rejects native nonce mismatch',
-      () async {
-    var oauthCalled = false;
-
-    final provider = GoogleAuthProvider(
-      _createTestSupabaseClient('https://real-project.supabase.co'),
-      ProfileCache(),
-      isIOSOverride: true,
-      nativeSignInOverride: () async {
-        throw AuthApiException(
-          'Passed nonce and nonce in id_token should either both exist or not.',
-          statusCode: '400',
-        );
-      },
-      signInWithOAuthOverride: (launchMode) async {
-        expect(launchMode, LaunchMode.externalApplication);
-        oauthCalled = true;
-        return true;
-      },
-    );
-
-    final result = await provider.signIn();
-
-    expect(result.isPendingExternalAuth, isTrue);
-    expect(oauthCalled, isTrue);
   });
 
   test('Google launch exception is ignored when auth session is recovered',
