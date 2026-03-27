@@ -19847,6 +19847,7 @@
         "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
         "docs/deployment/review/KAN_OPEN_ISSUES_EVIDENCE_MATRIX_2026-03-22.md",
         "docs/design/PAPER_SCREEN_ROUTE_MAPPING.md",
+        "docs/design/PAPER_SYNC_CHANGELOG.md",
         "docs/design/README.md",
         "docs/development/reports/2026-03-21_release_risk_audit_discovery.md",
         "docs/development/reports/2026-03-21_release_risk_register.md",
@@ -22861,6 +22862,7 @@
         "docs/design/PAPER_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/features/character/presentation/pages/character_profile_page.dart",
+        "lib/features/notification/presentation/pages/notification_settings_page.dart",
         "lib/features/policy/presentation/pages/privacy_policy_page.dart",
         "lib/features/policy/presentation/pages/terms_of_service_page.dart",
         "lib/presentation/widgets/social_login_bottom_sheet.dart",
@@ -22872,6 +22874,7 @@
         "lib/screens/premium/premium_screen.dart",
         "lib/screens/profile/account_deletion_page.dart",
         "lib/screens/profile/profile_edit_page.dart",
+        "lib/screens/profile/profile_relationships_page.dart",
         "lib/screens/profile/profile_screen.dart",
         "lib/screens/profile/saju_summary_page.dart",
         "lib/screens/splash_screen.dart"
@@ -22896,6 +22899,7 @@
         "lib/screens/premium/premium_screen.dart",
         "lib/screens/profile/account_deletion_page.dart",
         "lib/screens/profile/profile_edit_page.dart",
+        "lib/screens/profile/profile_relationships_page.dart",
         "lib/screens/profile/profile_screen.dart",
         "lib/screens/profile/saju_summary_page.dart"
       ],
@@ -26754,6 +26758,7 @@
       "notes": [],
       "path": "lib/screens/profile/profile_relationships_page.dart",
       "referenced_by": [
+        "docs/design/PAPER_SCREEN_COMPONENT_REGISTRY.md",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
