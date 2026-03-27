@@ -87,6 +87,33 @@ void main() {
     expect(result.isCancelled, isTrue);
   });
 
+  test(
+      'Google falls back to browser OAuth on iOS when Supabase rejects native nonce mismatch',
+      () async {
+    var oauthCalled = false;
+
+    final provider = GoogleAuthProvider(
+      _createTestSupabaseClient('https://real-project.supabase.co'),
+      ProfileCache(),
+      isIOSOverride: true,
+      nativeSignInOverride: () async {
+        throw AuthApiException(
+          'Passed nonce and nonce in id_token should either both exist or not.',
+          statusCode: '400',
+        );
+      },
+      signInWithOAuthOverride: () async {
+        oauthCalled = true;
+        return true;
+      },
+    );
+
+    final result = await provider.signIn();
+
+    expect(result.isPendingExternalAuth, isTrue);
+    expect(oauthCalled, isTrue);
+  });
+
   test('Google launch exception is ignored when auth session is recovered',
       () async {
     final session = AuthTestData.createMockSession(

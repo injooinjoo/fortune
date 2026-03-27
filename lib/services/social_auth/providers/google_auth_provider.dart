@@ -64,8 +64,21 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
 
       if (_supportsNativeGoogleSignIn) {
         Logger.info('[GoogleAuthProvider] Native Google Sign-In 시작');
-        final response = await _signInWithGoogleNative();
-        return SocialAuthAttemptResult.authenticated(response);
+        try {
+          final response = await _signInWithGoogleNative();
+          return SocialAuthAttemptResult.authenticated(response);
+        } catch (error) {
+          if (_shouldFallbackToOAuth(error)) {
+            Logger.warning(
+              '[GoogleAuthProvider] Native Google Sign-In nonce mismatch 감지, Browser OAuth로 fallback합니다. '
+              'Supabase Dashboard > Authentication > Providers > Google에서 '
+              '"Skip nonce check" 설정도 확인해 주세요.',
+            );
+            await disconnect();
+            return await _signInWithGoogleOAuth();
+          }
+          rethrow;
+        }
       }
 
       Logger.info('[GoogleAuthProvider] Browser OAuth fallback 시작');
@@ -257,5 +270,16 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
     return normalized.contains('cancelled') ||
         normalized.contains('canceled') ||
         normalized.contains('취소');
+  }
+
+  bool _shouldFallbackToOAuth(Object error) {
+    if (!_isIOS) {
+      return false;
+    }
+
+    final normalized = error.toString().toLowerCase();
+    return normalized.contains('passed nonce') &&
+        normalized.contains('id_token') &&
+        normalized.contains('both exist or not');
   }
 }
