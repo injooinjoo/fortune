@@ -13,7 +13,7 @@
 | --- | ---: | --- |
 | `10 Entry / Auth / Onboarding` | 7 | entry gate, auth fallback, onboarding step states |
 | `20 Chat Home / Character` | 3 | chat shell, chat detail, character detail |
-| `80 Admin / Policy / Utility` | 8 | premium, profile, policy, account-management |
+| `80 Admin / Policy / Utility` | 9 | premium, profile, relationship, policy, account-management |
 | `Catalog / Governance` | 7 | inventory, governance, components, archive |
 
 ## Mobile Surface Inventory
@@ -44,6 +44,7 @@
 - `16 - Privacy Policy`
 - `17 - Terms of Service`
 - `18 - Account Deletion`
+- `19 - Relationships`
 
 ## Component Inventory
 
@@ -70,6 +71,7 @@
 - `lib/screens/profile/profile_edit_page.dart`
 - `lib/screens/profile/saju_summary_page.dart`
 - `lib/screens/profile/account_deletion_page.dart`
+- `lib/screens/profile/profile_relationships_page.dart`
 - `lib/features/notification/presentation/pages/notification_settings_page.dart`
 - `lib/features/policy/presentation/pages/privacy_policy_page.dart`
 - `lib/features/policy/presentation/pages/terms_of_service_page.dart`

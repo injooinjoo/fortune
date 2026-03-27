@@ -33,6 +33,11 @@
 | `/onboarding/toss-style` | 온보딩 변형 |
 | `/character/:id` | 캐릭터 상세/채팅 진입 보조 |
 | `/premium` | 프리미엄 |
+| `/profile` | 프로필 허브 |
+| `/profile/edit` | 프로필 편집 |
+| `/profile/saju-summary` | 사주 요약 |
+| `/profile/relationships` | 스토리 캐릭터 관계도 |
+| `/profile/notifications` | 알림 설정 |
 | `/privacy-policy` | 개인정보처리방침 |
 | `/terms-of-service` | 이용약관 |
 | `/account-deletion` | 회원 탈퇴 |
@@ -50,7 +55,6 @@
 
 - `/fortune`
 - `/trend`
-- `/profile`
 - `/interactive`
 - `/health-toss`
 - `/exercise`

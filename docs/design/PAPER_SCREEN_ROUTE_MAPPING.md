@@ -55,6 +55,7 @@ Canonical source inputs:
 | `E7-0` | `16 - Privacy Policy` | `route` | `#/privacy-policy` | `PrivacyPolicyPage` | Dedicated policy route |
 | `E8-0` | `17 - Terms of Service` | `route` | `#/terms-of-service` | `TermsOfServicePage` | Dedicated policy route |
 | `E9-0` | `18 - Account Deletion` | `route` | `#/account-deletion` | `AccountDeletionPage` | Auth-gated destructive flow |
+| `3TB-1` | `19 - Relationships` | `route` | `#/profile/relationships` | `ProfileRelationshipsPage` | Nested profile route for story-character relationship state |
 
 ## Runtime Routes Without A Dedicated Paper Artboard
 

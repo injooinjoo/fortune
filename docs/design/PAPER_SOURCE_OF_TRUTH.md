@@ -14,8 +14,8 @@ This file remains the only official Paper source of truth for current-state Fort
 
 ## Coverage Snapshot
 
-- Total artboards: `25`
-- Mobile surfaces: `18`
+- Total artboards: `26`
+- Mobile surfaces: `19`
 - Catalog/governance artboards: `7`
 - Font families: `Noto Sans KR`, `Nanum Myeongjo`
 
@@ -38,6 +38,7 @@ Runtime routes represented directly by Paper artboards:
 - `/profile`
 - `/profile/edit`
 - `/profile/saju-summary`
+- `/profile/relationships`
 - `/profile/notifications`
 - `/privacy-policy`
 - `/terms-of-service`
@@ -80,6 +81,7 @@ Canonical mobile surface artboards:
 - `16 - Privacy Policy`
 - `17 - Terms of Service`
 - `18 - Account Deletion`
+- `19 - Relationships`
 
 ## Rules
 
