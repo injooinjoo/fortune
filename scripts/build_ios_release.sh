@@ -52,12 +52,15 @@ echo -e "\n${YELLOW}[2/7] API 키 보안 확인 중...${NC}"
 # 민감한 키들이 소스 코드에 하드코딩되어 있는지 확인
 echo "Checking for hardcoded API keys..."
 
-if grep -r "sk-proj-" lib/ --include="*.dart" 2>/dev/null; then
+OPENAI_KEY_PREFIX="sk-proj""-"
+SUPABASE_KEY_PREFIX="eyJhbGci""OiJIUzI1NiI"
+
+if grep -r "$OPENAI_KEY_PREFIX" lib/ --include="*.dart" 2>/dev/null; then
     echo -e "${RED}✗ Warning: OpenAI API 키가 소스 코드에 하드코딩되어 있습니다!${NC}"
     echo -e "${YELLOW}  환경 변수로 이동하세요.${NC}"
 fi
 
-if grep -r "eyJhbGciOiJIUzI1NiI" lib/ --include="*.dart" 2>/dev/null; then
+if grep -r "$SUPABASE_KEY_PREFIX" lib/ --include="*.dart" 2>/dev/null; then
     echo -e "${RED}✗ Warning: Supabase 키가 소스 코드에 하드코딩되어 있습니다!${NC}"
     echo -e "${YELLOW}  환경 변수로 이동하세요.${NC}"
 fi

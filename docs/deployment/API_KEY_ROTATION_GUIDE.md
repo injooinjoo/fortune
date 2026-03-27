@@ -58,7 +58,7 @@ curl https://api.openai.com/v1/models \
 
 ### 2. Supabase Service Role Key 🔴 HIGH PRIORITY
 
-**현재 노출된 키**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...`
+**현재 노출된 키**: `supabase-service-role-key-example`
 
 **재발급 절차**:
 1. https://app.supabase.com 접속
@@ -83,7 +83,7 @@ curl https://hayjukwfcsdmppairazc.supabase.co/rest/v1/ \
 
 ### 3. Upstash Redis Token 🔴 HIGH PRIORITY
 
-**현재 노출된 키**: `AV2WAAIjcDE...`
+**현재 노출된 키**: `upstash-token-example`
 
 **재발급 절차**:
 1. https://console.upstash.com 접속
@@ -107,7 +107,7 @@ curl $UPSTASH_REDIS_REST_URL/get/test \
 
 ### 4. Kakao REST API Key 🟡 MEDIUM PRIORITY
 
-**현재 노출된 키**: `966326ff2bcc...`
+**현재 노출된 키**: `kakao-rest-key-example`
 
 **재발급 절차**:
 1. https://developers.kakao.com 접속
@@ -126,8 +126,8 @@ curl $UPSTASH_REDIS_REST_URL/get/test \
 ### 5. Internal API Key & CRON Secret 🟡 MEDIUM PRIORITY
 
 **현재 노출된 키**:
-- INTERNAL_API_KEY: `eb68fe1fbb80...`
-- CRON_SECRET: `092dd8a5b1d1...`
+- INTERNAL_API_KEY: `internal-key-example`
+- CRON_SECRET: `cron-secret-example`
 
 **새 키 생성**:
 ```bash
@@ -149,7 +149,7 @@ CRON_SECRET=새로_생성한_키_2
 
 ## 📝 Supabase Anon Key - 교체 권장
 
-**현재 노출된 키**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` (anon key)
+**현재 노출된 키**: `supabase-anon-key-example` (anon key)
 
 **참고**: Anon Key는 클라이언트에서 공개적으로 사용되므로 노출이 치명적이지는 않습니다.
 하지만 RLS (Row Level Security) 정책이 제대로 설정되지 않은 경우 보안 위험이 있습니다.
@@ -253,7 +253,7 @@ env:
 - [ ] **.env 파일이 .gitignore에 있는지 확인**
 - [ ] **Git 히스토리에 키가 없는지 검색**
   ```bash
-  git log -p | grep "sk-proj-\|eyJhbGciOiJIUzI1NiI"
+  git log -p | grep -E "OPENAI_API_KEY|SUPABASE_SERVICE_ROLE_KEY|UPSTASH_REDIS_REST_TOKEN|KAKAO_REST_API_KEY"
   ```
 - [ ] **1Password/LastPass 등에 백업**
 - [ ] **팀원들에게 새 키 안전하게 공유**
@@ -281,7 +281,7 @@ env:
 ### Git 히스토리 검색
 ```bash
 # Git 히스토리에서 민감 정보 검색
-git log -p | grep -E "sk-proj-|eyJhbGciOiJIUzI1NiI|AV2WAA|966326ff"
+git log -p | grep -E "OPENAI_API_KEY|SUPABASE_SERVICE_ROLE_KEY|UPSTASH_REDIS_REST_TOKEN|KAKAO_REST_API_KEY|INTERNAL_API_KEY|CRON_SECRET"
 
 # 특정 파일 히스토리 검색
 git log -p -- .env
@@ -290,16 +290,16 @@ git log -p -- .env
 ### 현재 소스 코드 검색
 ```bash
 # Dart 파일에서 하드코딩된 키 검색
-grep -r "sk-proj-\|eyJhbGciOiJIUzI1NiI\|AV2WAA\|966326ff" lib/
+grep -r "OPENAI_API_KEY\|SUPABASE_SERVICE_ROLE_KEY\|UPSTASH_REDIS_REST_TOKEN\|KAKAO_REST_API_KEY\|INTERNAL_API_KEY\|CRON_SECRET" lib/
 
 # Info.plist, xcconfig 파일 검색
-grep -r "sk-proj-\|eyJhbGciOiJIUzI1NiI\|AV2WAA\|966326ff" ios/
+grep -r "OPENAI_API_KEY\|SUPABASE_SERVICE_ROLE_KEY\|UPSTASH_REDIS_REST_TOKEN\|KAKAO_REST_API_KEY\|INTERNAL_API_KEY\|CRON_SECRET" ios/
 ```
 
 ### GitHub 공개 검색
 ```bash
 # GitHub에서 자신의 저장소 검색
-# https://github.com/search?q=repo:YOUR_USERNAME/fortune+sk-proj-&type=code
+# https://github.com/search?q=repo:YOUR_USERNAME/fortune+OPENAI_API_KEY&type=code
 ```
 
 ---

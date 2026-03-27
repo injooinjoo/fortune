@@ -91,7 +91,7 @@ TOSS_SECRET_KEY=test_sk_...
 
 ### OpenAI 설정
 ```env
-OPENAI_API_KEY=sk-proj-...
+OPENAI_API_KEY=<your-openai-api-key>
 ```
 
 ### Google Genkit AI 설정

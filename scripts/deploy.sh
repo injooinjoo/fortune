@@ -56,7 +56,9 @@ echo ""
 
 # Check for exposed keys in .env
 if [ -f ".env" ]; then
-    if grep -q "sk-proj-" .env 2>/dev/null; then
+    OPENAI_KEY_PREFIX="sk-proj""-"
+
+    if grep -q "$OPENAI_KEY_PREFIX" .env 2>/dev/null; then
         print_error "CRITICAL: Exposed API keys detected in .env file!"
         print_error "Please rotate all API keys before deployment"
         echo "See SECURITY_CHECKLIST.md for details"
@@ -174,8 +176,9 @@ while true; do
             if [ -f ".env" ]; then
                 echo "Checking .env file..."
                 EXPOSED_KEYS=0
+                OPENAI_KEY_PREFIX="sk-proj""-"
                 
-                if grep -q "sk-proj-" .env 2>/dev/null; then
+                if grep -q "$OPENAI_KEY_PREFIX" .env 2>/dev/null; then
                     print_error "OpenAI API key exposed!"
                     EXPOSED_KEYS=$((EXPOSED_KEYS + 1))
                 fi

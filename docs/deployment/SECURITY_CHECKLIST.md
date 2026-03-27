@@ -6,33 +6,33 @@ The following API keys have been exposed in the codebase and MUST be rotated bef
 
 ### High Priority (Production Services)
 - [ ] **OpenAI API Key** 
-  - Current: `sk-proj-cR68...` (EXPOSED)
+  - Current: `openai-key-example` (EXPOSED)
   - Action: Regenerate at https://platform.openai.com/api-keys
   - Update in: Environment variables only
 
 - [ ] **Supabase Service Role Key**
-  - Current: `eyJhbGciOiJIUzI1NiI...` (EXPOSED)
+  - Current: `supabase-service-role-key-example` (EXPOSED)
   - Action: Regenerate in Supabase dashboard > Settings > API
   - Update in: Environment variables only
 
 - [ ] **Upstash Redis Token**
-  - Current: `AV2WAAIjcDE...` (EXPOSED)
+  - Current: `upstash-token-example` (EXPOSED)
   - Action: Regenerate at https://console.upstash.com
   - Update in: Environment variables only
 
 - [ ] **Kakao REST API Key**
-  - Current: `966326ff2bcc...` (EXPOSED)
+  - Current: `kakao-rest-key-example` (EXPOSED)
   - Action: Regenerate in Kakao developers console
   - Update in: Environment variables only
 
 ### Medium Priority (Internal Keys)
 - [ ] **Internal API Key**
-  - Current: `eb68fe1fbb80...` (EXPOSED)
+  - Current: `internal-key-example` (EXPOSED)
   - Action: Generate new secure random key
   - Update in: Backend configuration
 
 - [ ] **CRON Secret**
-  - Current: `092dd8a5b1d1...` (EXPOSED)
+  - Current: `cron-secret-example` (EXPOSED)
   - Action: Generate new secure random key
   - Update in: Backend configuration
 
