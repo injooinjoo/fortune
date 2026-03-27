@@ -26,7 +26,9 @@ class ProfileRelationshipsPage extends ConsumerWidget {
           DSSpacing.xxl,
         ),
         child: ListView(
-          physics: const AlwaysScrollableScrollPhysics(),
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: ClampingScrollPhysics(),
+          ),
           children: [
             PaperRuntimePanel(
               child: Column(

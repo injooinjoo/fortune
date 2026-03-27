@@ -37,7 +37,9 @@ class ProfileScreen extends ConsumerWidget {
             await ref.read(userProfileNotifierProvider.notifier).refresh();
           },
           child: ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: ClampingScrollPhysics(),
+            ),
             padding: const EdgeInsets.fromLTRB(
               0,
               DSSpacing.sm,
