@@ -20985,7 +20985,8 @@
         "lib/core/design_system/components/hanji_background.dart",
         "lib/core/design_system/components/traditional/traditional_knot_indicator.dart",
         "lib/core/design_system/design_system.dart",
-        "lib/core/theme/typography_unified.dart"
+        "lib/core/theme/typography_unified.dart",
+        "lib/features/chat/domain/constants/chip_category_map.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24557,19 +24558,17 @@
     },
     {
       "area": "lib",
-      "candidate_action": "phase1_remove_candidate",
+      "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [
-        "no_inbound_refs",
-        "runtime_unreachable",
-        "zero_incoming_dart"
-      ],
+      "notes": [],
       "path": "lib/features/chat/domain/constants/chip_category_map.dart",
-      "referenced_by": [],
-      "runtime_reachable": false,
+      "referenced_by": [
+        "lib/features/chat/domain/models/recommendation_chip.dart"
+      ],
+      "runtime_reachable": true,
       "test_only": false,
-      "usage_status": "unreferenced"
+      "usage_status": "runtime_used"
     },
     {
       "area": "lib",
@@ -33020,20 +33019,20 @@
       "test": 83
     },
     "counts_by_candidate_action": {
-      "keep": 734,
+      "keep": 735,
       "keep_generated": 28,
       "manual_review": 978,
-      "phase1_remove_candidate": 13,
+      "phase1_remove_candidate": 12,
       "phase2_review_candidate": 363,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
       "doc_only": 97,
       "generated_excluded": 28,
-      "runtime_used": 734,
+      "runtime_used": 735,
       "test_only": 92,
       "tooling_only": 174,
-      "unreferenced": 995
+      "unreferenced": 994
     },
     "declared_asset_dirs_without_runtime_refs": [
       "assets/animations",
@@ -33186,9 +33185,9 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 374,
+    "lib_dart_runtime_reachable": 375,
     "lib_dart_total": 438,
-    "lib_dart_zero_incoming": 23,
+    "lib_dart_zero_incoming": 22,
     "missing_function_refs": [
       "--all",
       "account-deletion",
