@@ -29,7 +29,6 @@
 | OpenAI | [platform.openai.com](https://platform.openai.com/api-keys) | 90일 권장 |
 | Supabase | Supabase Dashboard > Settings > API | 90일 권장 |
 | Upstash Redis | [console.upstash.com](https://console.upstash.com) | 90일 권장 |
-| Figma | Figma 개인 설정 | 필요시 |
 | Kakao | Kakao Developer Console | 연간 |
 
 > **참고**: API 키 로테이션 상세 가이드는 [API_KEY_ROTATION_GUIDE.md](./API_KEY_ROTATION_GUIDE.md)를 참조하세요.

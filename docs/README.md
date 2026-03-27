@@ -34,7 +34,6 @@
 
 현재 구현의 source of truth는 아니지만, 과거안이나 목표안을 보존하는 문서입니다.
 
-- [figma-style-guide.md](figma-style-guide.md)
 - [../.claude/docs/18-chat-first-architecture.md](../.claude/docs/18-chat-first-architecture.md)
 - [../.claude/docs/17-face-reading-system.md](../.claude/docs/17-face-reading-system.md)
 
@@ -78,7 +77,7 @@
 ```text
 docs/
 ├── getting-started/      # current-state 개요와 환경 설정
-├── design/               # 디자인 시스템 및 Figma 운영
+├── design/               # 디자인 시스템 및 Paper 운영
 ├── data/                 # 데이터, Edge Function, LLM
 ├── native/               # 플랫폼 기능
 ├── testing/              # 테스트와 품질

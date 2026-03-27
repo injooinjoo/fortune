@@ -77,7 +77,7 @@ sips -g pixelWidth -g pixelHeight ios/Runner/Assets.xcassets/AppIcon.appiconset/
 - [IconKitchen](https://icon.kitchen/)
 
 **디자인 도구:**
-- Figma (템플릿 사용)
+- Paper (공식 디자인 SoT 참조)
 - Sketch
 - Adobe Illustrator
 - Canva
@@ -256,7 +256,7 @@ xcrun simctl io booted screenshot ~/Desktop/screenshot.png
 - [Previewed](https://previewed.app/)
 
 **디자인 도구:**
-- Figma (템플릿: App Store Screenshot Mockups)
+- Paper (레이아웃 기준), Canva (목업 템플릿)
 - Sketch
 - Adobe Photoshop
 - Canva (App Store Screenshot 템플릿)

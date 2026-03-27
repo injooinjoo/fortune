@@ -1,11 +1,5 @@
 {
   "mcpServers": {
-    "ClaudeTalkToFigma": {
-      "command": "node",
-      "args": [
-        "/Users/jacobmac/Desktop/Dev/figma-mcp/dist/talk_to_figma_mcp/server.js"
-      ]
-    },
     "shadcn": {
       "command": "npx",
       "args": ["-y", "mcp-remote", "https://www.shadcn.io/api/mcp"]
@@ -17,10 +11,6 @@
     "dcm": {
       "command": "dcm",
       "args": ["start-mcp-server", "--client=claude-code"]
-    },
-    "figma-flutter": {
-      "command": "npx",
-      "args": ["-y", "figma-flutter-mcp", "--figma-api-key=figd_bR2cafXDSpDf6bhXpQJ0eoRZGrCkRM0W60YOpbdF", "--stdio"]
     },
     "ios-simulator": {
       "command": "npx",

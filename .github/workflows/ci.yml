@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   repository-guards:
-    name: Source Inventory & Figma Guards
+    name: Source Inventory & Paper Guards
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -37,15 +37,15 @@ jobs:
             exit 1
           fi
 
-      - name: Check Figma sync drift
-        run: npm run figma:guard
+      - name: Check Paper design contract drift
+        run: npm run paper:guard
 
-      - name: Upload Figma sync report
+      - name: Upload Paper sync report
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: figma-sync-report
-          path: artifacts/design/figma_sync/
+          name: paper-sync-report
+          path: artifacts/design/paper_sync/
           retention-days: 7
 
   notify-slack:

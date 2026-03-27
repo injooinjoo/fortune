@@ -37,7 +37,7 @@ Fortune 앱은 3단계 테스트 전략을 사용합니다:
   - 수동 확장: `workflow_dispatch`에서 `all`, `comprehensive` 선택 가능
 - `CI Pipeline`
   - 대상: `main/master/develop` 대상 PR, 해당 브랜치 push
-  - 범위: source inventory drift, Figma sync drift
+  - 범위: source inventory drift, Paper 디자인 계약 drift
 
 로컬 명령은 참고용이며 자동 게이트의 source of truth는 GitHub Actions workflow 설정입니다.
 

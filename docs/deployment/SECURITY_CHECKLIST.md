@@ -20,11 +20,6 @@ The following API keys have been exposed in the codebase and MUST be rotated bef
   - Action: Regenerate at https://console.upstash.com
   - Update in: Environment variables only
 
-- [ ] **Figma Access Token**
-  - Current: `figd_bR2cafXD...` (EXPOSED)
-  - Action: Regenerate in Figma settings
-  - Update in: Environment variables only
-
 - [ ] **Kakao REST API Key**
   - Current: `966326ff2bcc...` (EXPOSED)
   - Action: Regenerate in Kakao developers console

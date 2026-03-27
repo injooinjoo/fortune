@@ -12,7 +12,6 @@
 # - OpenAI API 키
 # - Supabase Service Role 키
 # - Upstash Redis 토큰
-# - Figma Access Token
 # - Kakao REST API 키
 
 # .env 파일 업데이트

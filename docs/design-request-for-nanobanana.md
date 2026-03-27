@@ -146,7 +146,7 @@
 ### 납품 형식
 ```
 📁 colors/
-├── color-palette.fig (Figma 파일)
+├── color-palette.paper.pdf (Paper 보드 스냅샷)
 ├── color-tokens.json (개발용)
 └── color-guide.pdf (가이드 문서)
 ```
@@ -224,7 +224,7 @@
 ### 납품 형식
 ```
 📁 typography/
-├── typography-styles.fig (Figma 파일)
+├── typography-styles.paper.pdf (Paper 보드 스냅샷)
 ├── font-files/ (폰트 파일, 라이센스 확인)
 └── typography-guide.pdf
 ```
@@ -677,7 +677,7 @@ add            remove         check          info           warning
 ├── social/ (7개)
 ├── ui/ (12개)
 ├── status/ (4개)
-└── icons-all.fig (Figma 통합 파일)
+└── icons-all.paper.pdf (Paper 통합 보드)
 ```
 
 ---
@@ -1411,13 +1411,13 @@ add            remove         check          info           warning
 │   └── ...
 ├── fortune-heroes/
 │   └── ...
-└── illustrations-source.fig (원본 Figma)
+└── illustrations-source.paper.pdf (원본 Paper 보드)
 ```
 
 **파일 형식**:
 - PNG: @1x, @2x, @3x
 - SVG: 원본 벡터 (가능한 경우)
-- Figma: 소스 파일
+- Paper: 소스 보드
 
 ---
 
@@ -2165,7 +2165,7 @@ Fortune-Design-System/
 - 이메일: [이메일]
 
 ### 진행 상황 공유
-- Figma 링크 공유
+- Paper 링크 공유
 - 주간 진행 체크
 
 ### 일정
@@ -2464,7 +2464,7 @@ iOS @3x  = Android xxhdpi (3.0x)
 
 ---
 
-### 11.7 Figma 내보내기 설정 (권장)
+### 11.7 디자인 보드 내보내기 설정 (권장)
 
 #### 아이콘 내보내기
 ```

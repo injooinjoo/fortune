@@ -115,11 +115,12 @@ npm run test:smoke
 - GitHub Actions `Flutter CI/CD`가 `main/master/develop` 대상 PR과 push에서 `dart format --set-exit-if-changed .`, `flutter analyze --no-fatal-infos --no-fatal-warnings`, `flutter test --coverage`를 자동 실행합니다.
 - GitHub Actions `E2E Tests`가 같은 이벤트에서 Playwright smoke 게이트(`npm run test:smoke:ci`)를 자동 실행합니다.
 - 무거운 Playwright 시나리오는 `E2E Tests` workflow의 `workflow_dispatch`에서 `all` 또는 `comprehensive`로 수동 실행합니다.
-- GitHub Actions `CI Pipeline`은 source inventory drift와 Figma sync drift를 별도로 검사합니다.
+- GitHub Actions `CI Pipeline`은 source inventory drift와 Paper 디자인 계약 drift를 별도로 검사합니다.
 
 ## 문서 가이드
 
 - [현재 페이지/라우트 기준 문서](docs/getting-started/APP_SURFACES_AND_ROUTES.md)
+- [Paper 디자인 계약](docs/design/PAPER_SOURCE_OF_TRUTH.md)
 - [프로젝트 개요](docs/getting-started/PROJECT_OVERVIEW.md)
 - [아키텍처 문서](docs/APP_ARCHITECTURE.md)
 - [문서 인덱스](docs/README.md)

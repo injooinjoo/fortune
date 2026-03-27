@@ -2,7 +2,7 @@
 
 Fortune 앱 개발을 위한 MCP(Model Context Protocol) 서버 설정 가이드입니다.
 
-## 📊 현재 연결된 MCP 서버 (11개)
+## 📊 현재 연결된 MCP 서버 (10개)
 
 ### ✅ 완전 자동화 (설정 불필요, 6개)
 
@@ -13,13 +13,12 @@ Fortune 앱 개발을 위한 MCP(Model Context Protocol) 서버 설정 가이드
 5. **Memory** - 세션 간 컨텍스트 유지
 6. **Filesystem** - Fortune 프로젝트 파일 시스템 접근
 
-### 🔐 수동 설정 필요 (API 키 필요, 5개)
+### 🔐 수동 설정 필요 (API 키 필요, 4개)
 
 7. **JIRA** - 티켓 자동 생성/관리 (이미 설정 완료)
 8. **GitHub** - PR/Issue 자동화 (⚠️ 토큰 필요)
 9. **Firebase** - Analytics, A/B Testing, Remote Config
 10. **Slack** - 알림 및 팀 협업 (⚠️ 토큰 필요)
-11. **Figma** - 디자인 시스템 연동
 
 ---
 
@@ -293,11 +292,11 @@ tail -f ~/Library/Logs/Claude/mcp-*.log
 - ⚠️ 팀원과 토큰을 공유하지 마세요 (각자 생성)
 
 ### 성능
-- 너무 많은 MCP 서버 동시 사용 시 속도 저하 가능
-- 필요한 서버만 활성화 권장
-- 사용하지 않는 서버는 비활성화:
+  - 너무 많은 MCP 서버 동시 사용 시 속도 저하 가능
+  - 필요한 서버만 활성화 권장
+  - 사용하지 않는 서버는 비활성화:
   ```json
-  "disabled_servers": ["slack", "figma"]
+  "disabled_servers": ["slack", "firebase"]
   ```
 
 ---

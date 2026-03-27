@@ -105,25 +105,7 @@ curl $UPSTASH_REDIS_REST_URL/get/test \
 
 ---
 
-### 4. Figma Access Token 🟡 MEDIUM PRIORITY
-
-**현재 노출된 키**: `figd_bR2cafXD...`
-
-**재발급 절차**:
-1. https://www.figma.com/settings 접속
-2. "Personal access tokens" 섹션
-3. 기존 토큰 삭제
-4. "Create new token" 클릭
-5. 토큰 이름 입력 (예: "ZPZG Production")
-6. 새 토큰 복사 후 안전하게 저장
-7. `.env` 파일 업데이트:
-   ```env
-   FIGMA_ACCESS_TOKEN=새로_발급받은_토큰
-   ```
-
----
-
-### 5. Kakao REST API Key 🟡 MEDIUM PRIORITY
+### 4. Kakao REST API Key 🟡 MEDIUM PRIORITY
 
 **현재 노출된 키**: `966326ff2bcc...`
 
@@ -141,7 +123,7 @@ curl $UPSTASH_REDIS_REST_URL/get/test \
 
 ---
 
-### 6. Internal API Key & CRON Secret 🟡 MEDIUM PRIORITY
+### 5. Internal API Key & CRON Secret 🟡 MEDIUM PRIORITY
 
 **현재 노출된 키**:
 - INTERNAL_API_KEY: `eb68fe1fbb80...`
@@ -262,7 +244,6 @@ env:
 
 ### 권장 수행 (중요도 높음)
 
-- [ ] **Figma Access Token 재발급**
 - [ ] **Kakao REST API Key 재발급**
 - [ ] **Internal API Key 새로 생성**
 - [ ] **CRON Secret 새로 생성**
@@ -300,7 +281,7 @@ env:
 ### Git 히스토리 검색
 ```bash
 # Git 히스토리에서 민감 정보 검색
-git log -p | grep -E "sk-proj-|eyJhbGciOiJIUzI1NiI|AV2WAA|figd_|966326ff"
+git log -p | grep -E "sk-proj-|eyJhbGciOiJIUzI1NiI|AV2WAA|966326ff"
 
 # 특정 파일 히스토리 검색
 git log -p -- .env
@@ -309,10 +290,10 @@ git log -p -- .env
 ### 현재 소스 코드 검색
 ```bash
 # Dart 파일에서 하드코딩된 키 검색
-grep -r "sk-proj-\|eyJhbGciOiJIUzI1NiI\|AV2WAA\|figd_\|966326ff" lib/
+grep -r "sk-proj-\|eyJhbGciOiJIUzI1NiI\|AV2WAA\|966326ff" lib/
 
 # Info.plist, xcconfig 파일 검색
-grep -r "sk-proj-\|eyJhbGciOiJIUzI1NiI\|AV2WAA\|figd_\|966326ff" ios/
+grep -r "sk-proj-\|eyJhbGciOiJIUzI1NiI\|AV2WAA\|966326ff" ios/
 ```
 
 ### GitHub 공개 검색

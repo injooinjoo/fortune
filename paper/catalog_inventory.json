@@ -1,0 +1,233 @@
+{
+  "capturedAt": "2026-03-27",
+  "source": {
+    "tool": "mcp__paper__get_basic_info",
+    "fileName": "Fortune",
+    "pageName": "iPhone",
+    "pageId": "01K4GP58P8JRM8PGBP0586VKYV",
+    "rootNodeId": "root_node_01K4GP58P8JRM8PGBP0586VKYV",
+    "nodeCount": 1164,
+    "artboardCount": 25,
+    "fontFamilies": [
+      "Noto Sans KR",
+      "Nanum Myeongjo"
+    ]
+  },
+  "counts": {
+    "totalArtboards": 25,
+    "mobileSurfaceArtboards": 18,
+    "catalogArtboards": 7
+  },
+  "canonicalCatalogSections": [
+    "00 Cover & Governance",
+    "10 Entry / Auth / Onboarding",
+    "20 Chat Home / Character",
+    "80 Admin / Policy / Utility",
+    "90 Components",
+    "99 Archive"
+  ],
+  "mobileSurfaceArtboards": [
+    {
+      "id": "8A-0",
+      "name": "01 - Splash",
+      "width": 390,
+      "height": 844,
+      "left": "0px",
+      "top": "0px"
+    },
+    {
+      "id": "8B-0",
+      "name": "02 - Entry Hero / Soft Gate",
+      "width": 390,
+      "height": 844,
+      "left": "470px",
+      "top": "0px"
+    },
+    {
+      "id": "E3-0",
+      "name": "03 - Auth Fallback",
+      "width": 390,
+      "height": 844,
+      "left": "940px",
+      "top": "0px"
+    },
+    {
+      "id": "8C-0",
+      "name": "04 - Nickname Fallback",
+      "width": 390,
+      "height": 844,
+      "left": "1410px",
+      "top": "0px"
+    },
+    {
+      "id": "9P-0",
+      "name": "05 - Onboarding Birth",
+      "width": 390,
+      "height": 844,
+      "left": "1880px",
+      "top": "0px"
+    },
+    {
+      "id": "E4-0",
+      "name": "06 - Interest Select",
+      "width": 390,
+      "height": 844,
+      "left": "2350px",
+      "top": "0px"
+    },
+    {
+      "id": "E5-0",
+      "name": "07 - Personalized Handoff",
+      "width": 390,
+      "height": 844,
+      "left": "2820px",
+      "top": "0px"
+    },
+    {
+      "id": "9Q-0",
+      "name": "08 - Character List (First Run)",
+      "width": 390,
+      "height": 844,
+      "left": "0px",
+      "top": "960px"
+    },
+    {
+      "id": "9R-0",
+      "name": "09 - Character Chat",
+      "width": 390,
+      "height": 844,
+      "left": "470px",
+      "top": "960px"
+    },
+    {
+      "id": "E6-0",
+      "name": "10 - Character Profile",
+      "width": 390,
+      "height": 844,
+      "left": "940px",
+      "top": "960px"
+    },
+    {
+      "id": "9S-0",
+      "name": "11 - Premium",
+      "width": 390,
+      "height": 844,
+      "left": "1410px",
+      "top": "960px"
+    },
+    {
+      "id": "EA-0",
+      "name": "12 - Profile",
+      "width": 390,
+      "height": 844,
+      "left": "0px",
+      "top": "1920px"
+    },
+    {
+      "id": "EB-0",
+      "name": "13 - Profile Edit",
+      "width": 390,
+      "height": 844,
+      "left": "470px",
+      "top": "1920px"
+    },
+    {
+      "id": "EC-0",
+      "name": "14 - Saju Summary",
+      "width": 390,
+      "height": 844,
+      "left": "940px",
+      "top": "1920px"
+    },
+    {
+      "id": "ED-0",
+      "name": "15 - Notification Settings",
+      "width": 390,
+      "height": 844,
+      "left": "1410px",
+      "top": "1920px"
+    },
+    {
+      "id": "E7-0",
+      "name": "16 - Privacy Policy",
+      "width": 390,
+      "height": 844,
+      "left": "0px",
+      "top": "2880px"
+    },
+    {
+      "id": "E8-0",
+      "name": "17 - Terms of Service",
+      "width": 390,
+      "height": 844,
+      "left": "470px",
+      "top": "2880px"
+    },
+    {
+      "id": "E9-0",
+      "name": "18 - Account Deletion",
+      "width": 390,
+      "height": 844,
+      "left": "940px",
+      "top": "2880px"
+    }
+  ],
+  "catalogArtboards": [
+    {
+      "id": "M9-1",
+      "name": "Paper Catalog · M9 Surface Inventory",
+      "width": 1280,
+      "height": 3320,
+      "left": -1360,
+      "top": -18
+    },
+    {
+      "id": "10X-1",
+      "name": "Paper Catalog · 00 Cover & Governance",
+      "width": 1280,
+      "height": 1220,
+      "left": 1880,
+      "top": 960
+    },
+    {
+      "id": "10Y-1",
+      "name": "Paper Catalog · 10 Entry / Auth / Onboarding",
+      "width": 1280,
+      "height": 3550,
+      "left": 1880,
+      "top": 2242
+    },
+    {
+      "id": "10Z-1",
+      "name": "Paper Catalog · 20 Chat Home / Character",
+      "width": 1280,
+      "height": 3600,
+      "left": 3290,
+      "top": 0
+    },
+    {
+      "id": "110-1",
+      "name": "Paper Catalog · 80 Admin / Policy / Utility",
+      "width": 1280,
+      "height": 4500,
+      "left": 4650,
+      "top": 0
+    },
+    {
+      "id": "111-1",
+      "name": "Paper Catalog · 90 Components",
+      "width": 1280,
+      "height": 1520,
+      "left": 0,
+      "top": 3920
+    },
+    {
+      "id": "112-1",
+      "name": "Paper Catalog · 99 Archive",
+      "width": 1280,
+      "height": 980,
+      "left": -1360,
+      "top": 3478
+    }
+  ]
+}

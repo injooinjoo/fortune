@@ -827,7 +827,7 @@ chmod +x scripts/android_screenshots.sh
 각 스크린샷에 설명 텍스트를 추가하면 전환율이 높아집니다:
 
 **도구:**
-- Figma (무료)
+- Paper (레이아웃 기준)
 - Canva (무료)
 - Adobe Photoshop
 - Sketch (Mac)

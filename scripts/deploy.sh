@@ -180,11 +180,6 @@ while true; do
                     EXPOSED_KEYS=$((EXPOSED_KEYS + 1))
                 fi
                 
-                if grep -q "figd_" .env 2>/dev/null; then
-                    print_error "Figma token exposed!"
-                    EXPOSED_KEYS=$((EXPOSED_KEYS + 1))
-                fi
-                
                 if [ $EXPOSED_KEYS -eq 0 ]; then
                     print_success "No exposed keys found in .env"
                 else
