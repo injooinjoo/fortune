@@ -56,7 +56,7 @@ void main() {
       ProfileCache(),
       isIOSOverride: true,
       nativeSignInOverride: () async => authResponse,
-      signInWithOAuthOverride: () async {
+      signInWithOAuthOverride: (_) async {
         oauthCalled = true;
         return true;
       },
@@ -102,7 +102,8 @@ void main() {
           statusCode: '400',
         );
       },
-      signInWithOAuthOverride: () async {
+      signInWithOAuthOverride: (launchMode) async {
+        expect(launchMode, LaunchMode.externalApplication);
         oauthCalled = true;
         return true;
       },
@@ -124,7 +125,7 @@ void main() {
       _createTestSupabaseClient('https://real-project.supabase.co'),
       ProfileCache(),
       isWebOverride: true,
-      signInWithOAuthOverride: () async {
+      signInWithOAuthOverride: (_) async {
         throw PlatformException(
           code: 'Error',
           message:
@@ -149,7 +150,7 @@ void main() {
       _createTestSupabaseClient('https://real-project.supabase.co'),
       ProfileCache(),
       isWebOverride: true,
-      signInWithOAuthOverride: () async {
+      signInWithOAuthOverride: (_) async {
         throw PlatformException(
           code: 'Error',
           message:

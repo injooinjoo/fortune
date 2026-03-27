@@ -21,7 +21,7 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
     super.supabase,
     super.profileCache, {
     Future<AuthResponse> Function()? nativeSignInOverride,
-    Future<bool> Function()? signInWithOAuthOverride,
+    Future<bool> Function(LaunchMode launchMode)? signInWithOAuthOverride,
     Future<AuthResponse?> Function(Object error)?
         recoverAuthResponseAfterLaunchErrorOverride,
     bool? isWebOverride,
@@ -41,7 +41,7 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
       '676247567847-u13rae7nvi2ilcobf5shfdg5b1pkkvbu.apps.googleusercontent.com';
 
   final Future<AuthResponse> Function()? _nativeSignInOverride;
-  final Future<bool> Function()? _signInWithOAuthOverride;
+  final Future<bool> Function(LaunchMode launchMode)? _signInWithOAuthOverride;
   final Future<AuthResponse?> Function(Object error)?
       _recoverAuthResponseAfterLaunchErrorOverride;
   final bool? _isWebOverride;
@@ -186,16 +186,18 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
   Future<SocialAuthAttemptResult> _signInWithGoogleOAuth() async {
     try {
       final redirectTo = _resolveRedirectTo();
+      final launchMode = _googleOAuthLaunchMode;
       Logger.info('Google OAuth redirectTo: $redirectTo');
+      Logger.info('[GoogleAuthProvider] Google OAuth launchMode: $launchMode');
       final flowId =
           OAuthInAppBrowserCoordinator.markOAuthStarted(providerName);
 
       final response = await (_signInWithOAuthOverride != null
-          ? _signInWithOAuthOverride()
+          ? _signInWithOAuthOverride(launchMode)
           : supabase.auth.signInWithOAuth(
               OAuthProvider.google,
               redirectTo: redirectTo,
-              authScreenLaunchMode: LaunchMode.inAppBrowserView,
+              authScreenLaunchMode: launchMode,
             ));
 
       if (!response) {
@@ -281,5 +283,15 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
     return normalized.contains('passed nonce') &&
         normalized.contains('id_token') &&
         normalized.contains('both exist or not');
+  }
+
+  LaunchMode get _googleOAuthLaunchMode {
+    // iOS SFSafariViewController launch can block the Future from returning
+    // on some devices, leaving the login button stuck in loading state.
+    // External Safari returns immediately and still supports the app callback.
+    if (_isIOS) {
+      return LaunchMode.externalApplication;
+    }
+    return LaunchMode.inAppBrowserView;
   }
 }
