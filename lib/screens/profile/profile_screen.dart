@@ -419,11 +419,13 @@ class _ProfileAvatar extends StatelessWidget {
 
     return CircleAvatar(
       radius: 28,
-      backgroundColor: const Color(0xFF9DB4FF),
+      backgroundColor: context.colors.selectionBackground.withValues(
+        alpha: 0.92,
+      ),
       child: Text(
         initial,
         style: context.heading4.copyWith(
-          color: context.colors.background,
+          color: context.colors.selectionForeground,
           fontWeight: FontWeight.w700,
         ),
       ),

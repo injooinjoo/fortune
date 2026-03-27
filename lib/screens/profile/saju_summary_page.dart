@@ -142,7 +142,7 @@ class _SajuSummaryContent extends StatelessWidget {
     final elements = Map<String, dynamic>.from(
       sajuData['elements'] as Map<String, dynamic>? ?? const {},
     );
-    final elementItems = _elementItems(elements);
+    final elementItems = _elementItems(elements, context);
     final personality = sajuData['personalityAnalysis'] as String? ?? '';
     final interpretation = sajuData['interpretation'] as String? ?? '';
     final career = sajuData['careerGuidance'] as String? ?? '';
@@ -306,6 +306,8 @@ class _PillarTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: DSSpacing.sm,
@@ -327,7 +329,7 @@ class _PillarTile extends StatelessWidget {
           Text(
             value,
             style: context.heading4.copyWith(
-              color: SajuColors.earthLight,
+              color: isDark ? SajuColors.earthDark : SajuColors.earthLight,
             ),
           ),
         ],
@@ -419,7 +421,10 @@ class _ElementItem {
   });
 }
 
-List<_ElementItem> _elementItems(Map<String, dynamic> elements) {
+List<_ElementItem> _elementItems(
+  Map<String, dynamic> elements,
+  BuildContext context,
+) {
   const ordered = [
     ('화', '火'),
     ('목', '木'),
@@ -428,6 +433,7 @@ List<_ElementItem> _elementItems(Map<String, dynamic> elements) {
     ('수', '水'),
   ];
 
+  final isDark = Theme.of(context).brightness == Brightness.dark;
   final hasAnyValue = ordered.any(
     (item) => (elements[item.$1] as num?)?.toInt() != null,
   );
@@ -437,7 +443,7 @@ List<_ElementItem> _elementItems(Map<String, dynamic> elements) {
     return _ElementItem(
       key: item.$1,
       label: item.$2,
-      color: SajuColors.getWuxingColor(item.$1),
+      color: SajuColors.getWuxingColor(item.$1, isDark: isDark),
       flex: hasAnyValue ? (value == 0 ? 1 : value) : 1,
     );
   }).toList();
