@@ -25,6 +25,18 @@
 - Tier 2 (개발 키워드 트리거): `.claude/docs/01~06`, `.claude/docs/18`
 - Tier 3 (명시 요청 시): `.claude/docs/07~23`
 
+## 2.1. GStack 우선 규칙
+- 글로벌 gstack 설치 경로는 `~/.codex/skills/gstack`를 기준으로 본다.
+- gstack와 기능이 겹치는 스킬이 동시에 존재하면 gstack 스킬을 우선한다.
+- 기본 매핑:
+  - 브라우징/스크린샷/웹 QA: `gstack-browse`, `gstack-qa`, `gstack-qa-only`
+  - 리뷰/조사/계획/배포: 대응되는 `gstack-*` 스킬 우선
+- 예외:
+  - Figma 관련 작업은 `figma`, `figma-implement-design` 유지
+  - GitHub Actions/CI 디버깅은 `gh-fix-ci` 유지
+  - `.system` 스킬은 삭제/대체 대상이 아니다
+- gstack에 대응 스킬이 없는 경우에만 기존 스킬을 fallback으로 사용한다.
+
 ## 3. 자동 라우팅 규칙 (요청 분류)
 - 운세/궁합/타로/사주 기능 추가: `feature-fortune` 흐름
 - 채팅/추천칩/메시지: `feature-chat` 흐름
