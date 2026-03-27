@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fortune/core/design_system/design_system.dart';
+import 'package:fortune/core/widgets/paper_runtime_chrome.dart';
 import 'package:fortune/core/widgets/paper_runtime_surface_kit.dart';
 
 class PrivacyPolicyPage extends ConsumerStatefulWidget {
@@ -16,15 +17,16 @@ class _PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
     return Scaffold(
       backgroundColor: context.colors.background,
       appBar: const PaperRuntimeAppBar(title: '개인정보처리방침'),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(
-          DSSpacing.pageHorizontal,
-          DSSpacing.lg,
-          DSSpacing.pageHorizontal,
-          DSSpacing.xxl,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      body: PaperRuntimeBackground(
+        showRings: false,
+        applySafeArea: false,
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(
+            DSSpacing.pageHorizontal,
+            DSSpacing.md,
+            DSSpacing.pageHorizontal,
+            DSSpacing.xxl,
+          ),
           children: [
             _buildSection(
               '1. 수집하는 정보',

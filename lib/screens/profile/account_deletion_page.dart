@@ -52,7 +52,7 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
 
   Future<void> _handleDeletion() async {
     if (!_canSubmit) {
-      Toast.warning(context, '필수 확인 항목을 완료해 주세요.');
+      Toast.warning(context, '필수 확인 항목을 완료해 주세요. 하단 추가 정보를 펼쳐 확인할 수 있어요.');
       return;
     }
 
@@ -235,99 +235,111 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
                 variant: PaperRuntimeButtonVariant.ghost,
               ),
               const SizedBox(height: DSSpacing.xl),
-              _buildWarningBox(),
-              const SizedBox(height: DSSpacing.lg),
-              const SectionHeader(title: '탈퇴 전 확인'),
-              const SectionHeader(title: '법령에 따른 보관'),
-              _buildBullet('결제 정보: 전자상거래법에 따라 5년 보관'),
-              _buildBullet('서비스 이용 기록: 통신비밀보호법에 따라 3개월 보관'),
-              const SizedBox(height: DSSpacing.md),
-              _buildConfirmItem(
-                value: _ackDataLoss,
-                onChanged: (value) => setState(() => _ackDataLoss = value),
-                text: '삭제된 데이터는 복구할 수 없습니다.',
-              ),
-              _buildConfirmItem(
-                value: _ackRetention,
-                onChanged: (value) => setState(() => _ackRetention = value),
-                text: '법령에 따라 일부 기록은 일정 기간 보관됩니다.',
-              ),
-              _buildConfirmItem(
-                value: _ackSubscription,
-                onChanged: (value) => setState(() => _ackSubscription = value),
-                text: '탈퇴 시 계정에 연결된 이용 권한은 모두 종료됩니다.',
-              ),
-              const SizedBox(height: DSSpacing.md),
-              const SectionHeader(title: '탈퇴 사유 (선택)'),
-              _buildReasonChips(),
-              const SizedBox(height: DSSpacing.md),
-              const SectionHeader(title: '추가 의견 (선택)'),
-              TextField(
-                controller: _feedbackController,
-                maxLines: 4,
-                style: context.bodyMedium.copyWith(
-                  color: context.colors.textPrimary,
-                ),
-                decoration: InputDecoration(
-                  hintText: '의견을 남겨주시면 서비스 개선에 도움이 됩니다.',
-                  hintStyle: context.bodySmall.copyWith(
-                    color: context.colors.textTertiary,
-                  ),
-                  filled: true,
-                  fillColor: context.colors.surface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(DSRadius.md),
-                    borderSide: BorderSide(color: context.colors.border),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(DSRadius.md),
-                    borderSide: BorderSide(color: context.colors.border),
-                  ),
-                ),
-              ),
-              const SizedBox(height: DSSpacing.md),
-              const SectionHeader(title: '확인 문구 입력'),
-              TextField(
-                controller: _confirmController,
-                onChanged: (_) => setState(() {}),
-                style: context.bodyMedium.copyWith(
-                  color: context.colors.textPrimary,
-                ),
-                decoration: InputDecoration(
-                  hintText: '탈퇴를 입력해 주세요',
-                  hintStyle: context.bodySmall.copyWith(
-                    color: context.colors.textTertiary,
-                  ),
-                  filled: true,
-                  fillColor: context.colors.surface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(DSRadius.md),
-                    borderSide: BorderSide(color: context.colors.border),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(DSRadius.md),
-                    borderSide: BorderSide(color: context.colors.border),
-                  ),
-                ),
-              ),
-              const SizedBox(height: DSSpacing.xs),
-              Text(
-                '정확히 "탈퇴"를 입력해야 진행할 수 있습니다.',
-                style: context.labelSmall.copyWith(
-                  color: context.colors.textTertiary,
-                ),
-              ),
-              const SizedBox(height: DSSpacing.lg),
-              if (!_isSignedIn)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: DSSpacing.md),
-                  child: Text(
-                    '로그인 상태에서만 회원 탈퇴를 진행할 수 있습니다.',
-                    style: context.bodySmall.copyWith(
-                      color: context.colors.textSecondary,
+              PaperRuntimeExpandablePanel(
+                title: '탈퇴 전 확인 및 추가 정보',
+                subtitle: '법령 보관, 필수 확인 항목, 탈퇴 사유 입력',
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildWarningBox(),
+                    const SizedBox(height: DSSpacing.lg),
+                    const SectionHeader(title: '탈퇴 전 확인'),
+                    const SectionHeader(title: '법령에 따른 보관'),
+                    _buildBullet('결제 정보: 전자상거래법에 따라 5년 보관'),
+                    _buildBullet('서비스 이용 기록: 통신비밀보호법에 따라 3개월 보관'),
+                    const SizedBox(height: DSSpacing.md),
+                    _buildConfirmItem(
+                      value: _ackDataLoss,
+                      onChanged: (value) =>
+                          setState(() => _ackDataLoss = value),
+                      text: '삭제된 데이터는 복구할 수 없습니다.',
                     ),
-                  ),
+                    _buildConfirmItem(
+                      value: _ackRetention,
+                      onChanged: (value) =>
+                          setState(() => _ackRetention = value),
+                      text: '법령에 따라 일부 기록은 일정 기간 보관됩니다.',
+                    ),
+                    _buildConfirmItem(
+                      value: _ackSubscription,
+                      onChanged: (value) =>
+                          setState(() => _ackSubscription = value),
+                      text: '탈퇴 시 계정에 연결된 이용 권한은 모두 종료됩니다.',
+                    ),
+                    const SizedBox(height: DSSpacing.md),
+                    const SectionHeader(title: '탈퇴 사유 (선택)'),
+                    _buildReasonChips(),
+                    const SizedBox(height: DSSpacing.md),
+                    const SectionHeader(title: '추가 의견 (선택)'),
+                    TextField(
+                      controller: _feedbackController,
+                      maxLines: 4,
+                      style: context.bodyMedium.copyWith(
+                        color: context.colors.textPrimary,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: '의견을 남겨주시면 서비스 개선에 도움이 됩니다.',
+                        hintStyle: context.bodySmall.copyWith(
+                          color: context.colors.textTertiary,
+                        ),
+                        filled: true,
+                        fillColor: context.colors.surface,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(DSRadius.md),
+                          borderSide: BorderSide(color: context.colors.border),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(DSRadius.md),
+                          borderSide: BorderSide(color: context.colors.border),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: DSSpacing.md),
+                    const SectionHeader(title: '확인 문구 입력'),
+                    TextField(
+                      controller: _confirmController,
+                      onChanged: (_) => setState(() {}),
+                      style: context.bodyMedium.copyWith(
+                        color: context.colors.textPrimary,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: '탈퇴를 입력해 주세요',
+                        hintStyle: context.bodySmall.copyWith(
+                          color: context.colors.textTertiary,
+                        ),
+                        filled: true,
+                        fillColor: context.colors.surface,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(DSRadius.md),
+                          borderSide: BorderSide(color: context.colors.border),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(DSRadius.md),
+                          borderSide: BorderSide(color: context.colors.border),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: DSSpacing.xs),
+                    Text(
+                      '정확히 "탈퇴"를 입력해야 진행할 수 있습니다.',
+                      style: context.labelSmall.copyWith(
+                        color: context.colors.textTertiary,
+                      ),
+                    ),
+                    const SizedBox(height: DSSpacing.lg),
+                    if (!_isSignedIn)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: DSSpacing.md),
+                        child: Text(
+                          '로그인 상태에서만 회원 탈퇴를 진행할 수 있습니다.',
+                          style: context.bodySmall.copyWith(
+                            color: context.colors.textSecondary,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
+              ),
               SizedBox(height: MediaQuery.of(context).padding.bottom + 12),
             ],
           ),

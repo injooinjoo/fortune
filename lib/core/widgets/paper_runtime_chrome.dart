@@ -140,6 +140,67 @@ class PaperRuntimePanel extends StatelessWidget {
   }
 }
 
+class PaperRuntimeExpandablePanel extends StatelessWidget {
+  final String title;
+  final String? subtitle;
+  final Widget child;
+  final bool initiallyExpanded;
+
+  const PaperRuntimeExpandablePanel({
+    super.key,
+    required this.title,
+    required this.child,
+    this.subtitle,
+    this.initiallyExpanded = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+
+    return PaperRuntimePanel(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.lg,
+        vertical: DSSpacing.sm,
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(
+          dividerColor: Colors.transparent,
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+        ),
+        child: ExpansionTile(
+          initiallyExpanded: initiallyExpanded,
+          tilePadding: EdgeInsets.zero,
+          childrenPadding: const EdgeInsets.only(top: DSSpacing.md),
+          iconColor: colors.textSecondary,
+          collapsedIconColor: colors.textTertiary,
+          expandedCrossAxisAlignment: CrossAxisAlignment.start,
+          title: Text(
+            title,
+            style: context.heading4.copyWith(
+              color: colors.textPrimary,
+            ),
+          ),
+          subtitle: subtitle == null
+              ? null
+              : Padding(
+                  padding: const EdgeInsets.only(top: DSSpacing.xs),
+                  child: Text(
+                    subtitle!,
+                    style: context.bodySmall.copyWith(
+                      color: colors.textSecondary,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+          children: [child],
+        ),
+      ),
+    );
+  }
+}
+
 class PaperRuntimePill extends StatelessWidget {
   final String label;
   final IconData? icon;

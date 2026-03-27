@@ -241,197 +241,196 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : ListView(
-              padding: const EdgeInsets.fromLTRB(
-                DSSpacing.pageHorizontal,
-                DSSpacing.lg,
-                DSSpacing.pageHorizontal,
-                DSSpacing.xxl,
-              ),
-              children: [
-                Center(
-                  child: ProfileImagePicker(
-                    currentImageUrl: _profileImageUrl,
-                    isLoading: _isUploadingImage,
-                    onImageSelected: (image) {
-                      setState(() {
-                        _pendingImageFile = image;
-                      });
-                    },
-                  ),
+          : PaperRuntimeBackground(
+              showRings: false,
+              applySafeArea: false,
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(
+                  DSSpacing.pageHorizontal,
+                  DSSpacing.md,
+                  DSSpacing.pageHorizontal,
+                  DSSpacing.xxl,
                 ),
-                const SizedBox(height: DSSpacing.xl),
-                _FieldBlock(
-                  label: '이름',
-                  child: TextField(
-                    controller: _nameController,
-                    style: context.bodyLarge.copyWith(
-                      color: colors.textPrimary,
-                    ),
-                    decoration: paperRuntimeInputDecoration(
-                      context,
-                      hintText: '이름을 입력해 주세요',
+                children: [
+                  Center(
+                    child: ProfileImagePicker(
+                      currentImageUrl: _profileImageUrl,
+                      isLoading: _isUploadingImage,
+                      onImageSelected: (image) {
+                        setState(() {
+                          _pendingImageFile = image;
+                        });
+                      },
                     ),
                   ),
-                ),
-                const SizedBox(height: DSSpacing.lg),
-                _FieldBlock(
-                  label: '이메일',
-                  child: TextField(
-                    enabled: false,
-                    controller: TextEditingController(text: email),
-                    style: context.bodyLarge.copyWith(
-                      color: colors.textSecondary,
+                  const SizedBox(height: DSSpacing.xl),
+                  _FieldBlock(
+                    label: '이름',
+                    child: TextField(
+                      controller: _nameController,
+                      style: context.bodyLarge.copyWith(
+                        color: colors.textPrimary,
+                      ),
+                      decoration: paperRuntimeInputDecoration(
+                        context,
+                        hintText: '이름을 입력해 주세요',
+                      ),
                     ),
-                    decoration: paperRuntimeInputDecoration(
-                      context,
+                  ),
+                  const SizedBox(height: DSSpacing.lg),
+                  _FieldBlock(
+                    label: '이메일',
+                    child: TextField(
                       enabled: false,
+                      controller: TextEditingController(text: email),
+                      style: context.bodyLarge.copyWith(
+                        color: colors.textSecondary,
+                      ),
+                      decoration: paperRuntimeInputDecoration(
+                        context,
+                        enabled: false,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: DSSpacing.lg),
-                _FieldBlock(
-                  label: '생년월일',
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(DSRadius.xxl),
-                    onTap: _pickBirthDate,
-                    child: IgnorePointer(
-                      child: TextField(
-                        controller: TextEditingController(
-                          text: _birthDate == null
-                              ? ''
-                              : _formatDate(_birthDate!),
-                        ),
-                        style: context.bodyLarge.copyWith(
-                          color: colors.textPrimary,
-                        ),
-                        decoration: paperRuntimeInputDecoration(
-                          context,
-                          hintText: '생년월일을 선택해 주세요',
+                  const SizedBox(height: DSSpacing.lg),
+                  _FieldBlock(
+                    label: '생년월일',
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(DSRadius.xxl),
+                      onTap: _pickBirthDate,
+                      child: IgnorePointer(
+                        child: TextField(
+                          controller: TextEditingController(
+                            text: _birthDate == null
+                                ? ''
+                                : _formatDate(_birthDate!),
+                          ),
+                          style: context.bodyLarge.copyWith(
+                            color: colors.textPrimary,
+                          ),
+                          decoration: paperRuntimeInputDecoration(
+                            context,
+                            hintText: '생년월일을 선택해 주세요',
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(height: DSSpacing.lg),
-                _FieldBlock(
-                  label: '성별',
-                  child: Row(
-                    children: Gender.values.take(2).map((gender) {
-                      final selected = _gender == gender;
-                      return Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                            right: gender == Gender.male ? DSSpacing.sm : 0,
+                  const SizedBox(height: DSSpacing.lg),
+                  _FieldBlock(
+                    label: '성별',
+                    child: Row(
+                      children: Gender.values.take(2).map((gender) {
+                        final selected = _gender == gender;
+                        return Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              right: gender == Gender.male ? DSSpacing.sm : 0,
+                            ),
+                            child: PaperRuntimeButton(
+                              label: gender.label,
+                              onPressed: () {
+                                setState(() {
+                                  _gender = gender;
+                                });
+                              },
+                              expanded: true,
+                              variant: selected
+                                  ? PaperRuntimeButtonVariant.primary
+                                  : PaperRuntimeButtonVariant.secondary,
+                            ),
                           ),
-                          child: PaperRuntimeButton(
-                            label: gender.label,
-                            onPressed: () {
-                              setState(() {
-                                _gender = gender;
-                              });
-                            },
-                            expanded: true,
-                            variant: selected
-                                ? PaperRuntimeButtonVariant.primary
-                                : PaperRuntimeButtonVariant.secondary,
-                          ),
-                        ),
-                      );
-                    }).toList(),
+                        );
+                      }).toList(),
+                    ),
                   ),
-                ),
-                const SizedBox(height: DSSpacing.xl),
-                PaperRuntimePanel(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '추가 정보',
-                        style: context.heading4.copyWith(
-                          color: colors.textPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: DSSpacing.lg),
-                      _FieldBlock(
-                        label: '태어난 시간',
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(DSRadius.xxl),
-                          onTap: _pickBirthTime,
-                          child: IgnorePointer(
-                            child: TextField(
-                              controller: TextEditingController(
-                                text: _birthTime ?? '',
-                              ),
-                              style: context.bodyLarge.copyWith(
-                                color: colors.textPrimary,
-                              ),
-                              decoration: paperRuntimeInputDecoration(
-                                context,
-                                hintText: '시간을 선택해 주세요',
+                  const SizedBox(height: DSSpacing.xl),
+                  PaperRuntimeExpandablePanel(
+                    title: '추가 정보',
+                    subtitle: '태어난 시간, MBTI, 혈액형',
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _FieldBlock(
+                          label: '태어난 시간',
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(DSRadius.xxl),
+                            onTap: _pickBirthTime,
+                            child: IgnorePointer(
+                              child: TextField(
+                                controller: TextEditingController(
+                                  text: _birthTime ?? '',
+                                ),
+                                style: context.bodyLarge.copyWith(
+                                  color: colors.textPrimary,
+                                ),
+                                decoration: paperRuntimeInputDecoration(
+                                  context,
+                                  hintText: '시간을 선택해 주세요',
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: DSSpacing.lg),
-                      _FieldBlock(
-                        label: 'MBTI',
-                        child: DropdownButtonFormField<String>(
-                          initialValue: _mbti,
-                          items: mbtiTypes
-                              .map(
-                                (type) => DropdownMenuItem<String>(
-                                  value: type,
-                                  child: Text(type),
-                                ),
-                              )
-                              .toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _mbti = value;
-                            });
-                          },
-                          style: context.bodyLarge.copyWith(
-                            color: colors.textPrimary,
-                          ),
-                          decoration: paperRuntimeInputDecoration(
-                            context,
-                            hintText: '선택해 주세요',
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: DSSpacing.lg),
-                      _FieldBlock(
-                        label: '혈액형',
-                        child: DropdownButtonFormField<String>(
-                          initialValue: _bloodType,
-                          items: _bloodTypes
-                              .map(
-                                (type) => DropdownMenuItem<String>(
-                                  value: type,
-                                  child: Text(type),
-                                ),
-                              )
-                              .toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _bloodType = value;
-                            });
-                          },
-                          style: context.bodyLarge.copyWith(
-                            color: colors.textPrimary,
-                          ),
-                          decoration: paperRuntimeInputDecoration(
-                            context,
-                            hintText: '선택해 주세요',
+                        const SizedBox(height: DSSpacing.lg),
+                        _FieldBlock(
+                          label: 'MBTI',
+                          child: DropdownButtonFormField<String>(
+                            initialValue: _mbti,
+                            items: mbtiTypes
+                                .map(
+                                  (type) => DropdownMenuItem<String>(
+                                    value: type,
+                                    child: Text(type),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                _mbti = value;
+                              });
+                            },
+                            style: context.bodyLarge.copyWith(
+                              color: colors.textPrimary,
+                            ),
+                            decoration: paperRuntimeInputDecoration(
+                              context,
+                              hintText: '선택해 주세요',
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: DSSpacing.lg),
+                        _FieldBlock(
+                          label: '혈액형',
+                          child: DropdownButtonFormField<String>(
+                            initialValue: _bloodType,
+                            items: _bloodTypes
+                                .map(
+                                  (type) => DropdownMenuItem<String>(
+                                    value: type,
+                                    child: Text(type),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                _bloodType = value;
+                              });
+                            },
+                            style: context.bodyLarge.copyWith(
+                              color: colors.textPrimary,
+                            ),
+                            decoration: paperRuntimeInputDecoration(
+                              context,
+                              hintText: '선택해 주세요',
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
     );
   }

@@ -142,10 +142,14 @@ class _SajuSummaryContent extends StatelessWidget {
     final elements = Map<String, dynamic>.from(
       sajuData['elements'] as Map<String, dynamic>? ?? const {},
     );
+    final elementItems = _elementItems(elements);
     final personality = sajuData['personalityAnalysis'] as String? ?? '';
     final interpretation = sajuData['interpretation'] as String? ?? '';
     final career = sajuData['careerGuidance'] as String? ?? '';
     final relationship = sajuData['relationshipAdvice'] as String? ?? '';
+    final hasDetailedSections = interpretation.isNotEmpty ||
+        career.isNotEmpty ||
+        relationship.isNotEmpty;
 
     final pillars = [
       ('년주', sajuData['year'] as Map<String, dynamic>?),
@@ -209,8 +213,9 @@ class _SajuSummaryContent extends StatelessWidget {
         const SizedBox(height: DSSpacing.md),
         Row(
           children: [
-            for (final item in _elementItems(elements)) ...[
+            for (final item in elementItems) ...[
               Expanded(
+                flex: item.flex,
                 child: Container(
                   height: 8,
                   decoration: BoxDecoration(
@@ -228,7 +233,7 @@ class _SajuSummaryContent extends StatelessWidget {
           spacing: DSSpacing.md,
           runSpacing: DSSpacing.xs,
           children: [
-            for (final item in _elementItems(elements))
+            for (final item in elementItems)
               _ElementLegend(
                 color: item.color,
                 label: '${item.key}(${item.label})',
@@ -257,23 +262,33 @@ class _SajuSummaryContent extends StatelessWidget {
             ],
           ),
         ),
-        if (interpretation.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.xl),
-          _TextPanel(title: '핵심 요약', value: interpretation),
-        ],
-        if (career.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.xl),
-          _TextPanel(title: '커리어 가이드', value: career),
-        ],
-        if (relationship.isNotEmpty) ...[
-          const SizedBox(height: DSSpacing.xl),
-          _TextPanel(title: '관계 조언', value: relationship),
-        ],
         const SizedBox(height: DSSpacing.xl),
-        PaperRuntimeButton(
-          label: '다시 계산하기',
-          onPressed: onRefresh,
-          variant: PaperRuntimeButtonVariant.secondary,
+        PaperRuntimeExpandablePanel(
+          title: '상세 해석',
+          subtitle:
+              hasDetailedSections ? '핵심 요약, 커리어 가이드, 관계 조언' : '추가 해석과 다시 계산하기',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (interpretation.isNotEmpty) ...[
+                _TextPanel(title: '핵심 요약', value: interpretation),
+                const SizedBox(height: DSSpacing.lg),
+              ],
+              if (career.isNotEmpty) ...[
+                _TextPanel(title: '커리어 가이드', value: career),
+                const SizedBox(height: DSSpacing.lg),
+              ],
+              if (relationship.isNotEmpty) ...[
+                _TextPanel(title: '관계 조언', value: relationship),
+                const SizedBox(height: DSSpacing.lg),
+              ],
+              PaperRuntimeButton(
+                label: '다시 계산하기',
+                onPressed: onRefresh,
+                variant: PaperRuntimeButtonVariant.secondary,
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -312,7 +327,7 @@ class _PillarTile extends StatelessWidget {
           Text(
             value,
             style: context.heading4.copyWith(
-              color: const Color(0xFFE8C697),
+              color: SajuColors.earthLight,
             ),
           ),
         ],
@@ -394,22 +409,38 @@ class _ElementItem {
   final String key;
   final String label;
   final Color color;
+  final int flex;
 
   const _ElementItem({
     required this.key,
     required this.label,
     required this.color,
+    required this.flex,
   });
 }
 
 List<_ElementItem> _elementItems(Map<String, dynamic> elements) {
-  return const [
-    _ElementItem(key: '화', label: '火', color: Color(0xFFFF6A6A)),
-    _ElementItem(key: '목', label: '木', color: Color(0xFF57D3CB)),
-    _ElementItem(key: '토', label: '土', color: Color(0xFFFFDF6A)),
-    _ElementItem(key: '금', label: '金', color: Color(0xFFE6E6E6)),
-    _ElementItem(key: '수', label: '水', color: Color(0xFF97B4FF)),
+  const ordered = [
+    ('화', '火'),
+    ('목', '木'),
+    ('토', '土'),
+    ('금', '金'),
+    ('수', '水'),
   ];
+
+  final hasAnyValue = ordered.any(
+    (item) => (elements[item.$1] as num?)?.toInt() != null,
+  );
+
+  return ordered.map((item) {
+    final value = (elements[item.$1] as num?)?.toInt() ?? 0;
+    return _ElementItem(
+      key: item.$1,
+      label: item.$2,
+      color: SajuColors.getWuxingColor(item.$1),
+      flex: hasAnyValue ? (value == 0 ? 1 : value) : 1,
+    );
+  }).toList();
 }
 
 String _pillarLabel(Map<String, dynamic>? pillar) {

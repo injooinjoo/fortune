@@ -116,17 +116,12 @@ class ProfileScreen extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(
                   horizontal: DSSpacing.pageHorizontal,
                 ),
-                child: PaperRuntimePanel(
+                child: PaperRuntimeExpandablePanel(
+                  title: '추가 관리',
+                  subtitle: '테마 모드, 구매 복원, 구독 관리, 계정 연결',
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        '추가 관리',
-                        style: context.heading4.copyWith(
-                          color: context.colors.textPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: DSSpacing.md),
                       Wrap(
                         spacing: DSSpacing.sm,
                         runSpacing: DSSpacing.sm,

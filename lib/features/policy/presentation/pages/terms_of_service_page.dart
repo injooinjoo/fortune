@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/widgets/paper_runtime_chrome.dart';
 import '../../../../core/widgets/paper_runtime_surface_kit.dart';
 
 class TermsOfServicePage extends ConsumerStatefulWidget {
@@ -18,15 +19,16 @@ class _TermsOfServicePageState extends ConsumerState<TermsOfServicePage> {
     return Scaffold(
       backgroundColor: colors.background,
       appBar: const PaperRuntimeAppBar(title: '이용약관'),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(
-          DSSpacing.pageHorizontal,
-          DSSpacing.lg,
-          DSSpacing.pageHorizontal,
-          DSSpacing.xxl,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      body: PaperRuntimeBackground(
+        showRings: false,
+        applySafeArea: false,
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(
+            DSSpacing.pageHorizontal,
+            DSSpacing.md,
+            DSSpacing.pageHorizontal,
+            DSSpacing.xxl,
+          ),
           children: [
             _buildSection(
               context,
