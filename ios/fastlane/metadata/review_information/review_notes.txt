@@ -5,8 +5,17 @@ Primary review path:
 2. Sign in with the review test account.
    - Email: test@zpzg.com
    - Password: TestPassword123!
-3. This review account is configured with test entitlements so the primary chat and insight flows can be reviewed without completing a purchase.
-4. Review the main experiences: Face AI, Daily Insights, Personality Analysis, and account deletion from Profile > Delete Account.
+3. Review the main experiences: Face AI, Daily Insights, Personality Analysis, and account deletion from Profile > Delete Account.
+
+In-App Purchase review path:
+1. Launch the app and sign in with the review test account above.
+2. Tap the bottom-right Profile tab.
+3. Tap "구독 및 토큰 구매" (Profile > 구독 및 토큰 구매).
+4. On this screen you can find:
+   - Pro 구독
+   - Token packages, including "100 Tokens" / "토큰 100개" depending on the device locale
+5. Tap any purchase button to open the Apple sandbox purchase sheet.
+6. Restore path: Profile > 추가 관리 > 구매 복원.
 
 Optional authentication validation:
 - Sign in with Apple is also available on iPhone and iPad.

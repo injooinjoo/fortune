@@ -71,6 +71,11 @@ class ProfileScreen extends ConsumerWidget {
                 title: '알림 설정',
                 onTap: () => context.push('/profile/notifications'),
               ),
+              PaperRuntimeMenuTile(
+                title: '구독 및 토큰 구매',
+                subtitle: 'Pro 구독과 토큰 상품을 확인합니다',
+                onTap: () => context.push('/premium'),
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: DSSpacing.pageHorizontal,

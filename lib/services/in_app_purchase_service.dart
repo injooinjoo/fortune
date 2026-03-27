@@ -23,6 +23,7 @@ class InAppPurchaseService {
   StreamSubscription<List<PurchaseDetails>>? _subscription;
   List<ProductDetails> _products = [];
   bool _isAvailable = false;
+  bool _isInitialized = false;
   bool _purchasePending = false;
 
   // 중복 구매 처리 방지를 위한 처리된 구매 ID 추적
@@ -86,6 +87,11 @@ class InAppPurchaseService {
 
   // 초기화
   Future<void> initialize() async {
+    if (_isInitialized && _subscription != null) {
+      await loadProducts();
+      return;
+    }
+
     try {
       // 인앱 결제 가능 여부 확인
       _isAvailable = await _inAppPurchase.isAvailable();
@@ -114,6 +120,7 @@ class InAppPurchaseService {
         await iosPlatformAddition.setDelegate(InAppPurchaseStoreKitDelegate());
       }
 
+      _isInitialized = true;
       Logger.info('인앱 결제 서비스 초기화 완료');
     } catch (e) {
       Logger.error('인앱 결제 초기화 실패', e);
@@ -151,6 +158,10 @@ class InAppPurchaseService {
 
   // 구매 처리
   Future<bool> purchaseProduct(String productId) async {
+    if (!_isInitialized) {
+      await initialize();
+    }
+
     if (!_isAvailable) {
       throw Exception('인앱 결제를 사용할 수 없습니다.');
     }
@@ -383,6 +394,10 @@ class InAppPurchaseService {
 
   // 구매 복원
   Future<void> restorePurchases() async {
+    if (!_isInitialized) {
+      await initialize();
+    }
+
     try {
       // 복원 상태 초기화
       _isRestoring = true;
@@ -439,7 +454,9 @@ class InAppPurchaseService {
   // 소모성 상품인지 확인
   bool _isConsumable(String productId) {
     final productInfo = InAppProducts.productDetails[productId];
-    return productInfo != null && !productInfo.isSubscription;
+    return productInfo != null &&
+        !productInfo.isSubscription &&
+        !productInfo.isNonConsumable;
   }
 
   // 구독 상품인지 확인
@@ -576,6 +593,8 @@ class InAppPurchaseService {
   // 리소스 정리
   void dispose() {
     _subscription?.cancel();
+    _subscription = null;
+    _isInitialized = false;
   }
 }
 
