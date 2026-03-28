@@ -56,7 +56,6 @@ class _TermsOfServicePageState extends ConsumerState<TermsOfServicePage> {
 
   Widget _buildSection(BuildContext context, String title, String content) {
     final colors = context.colors;
-    final typography = context.typography;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: DSSpacing.xl),
@@ -65,7 +64,7 @@ class _TermsOfServicePageState extends ConsumerState<TermsOfServicePage> {
         children: [
           Text(
             title,
-            style: typography.bodyLarge.copyWith(
+            style: context.heading4.copyWith(
               color: colors.textPrimary,
               fontWeight: FontWeight.w700,
             ),
@@ -73,7 +72,7 @@ class _TermsOfServicePageState extends ConsumerState<TermsOfServicePage> {
           const SizedBox(height: DSSpacing.sm),
           Text(
             content,
-            style: typography.bodyMedium.copyWith(
+            style: context.bodyMedium.copyWith(
               color: colors.textSecondary,
               height: 1.6,
             ),

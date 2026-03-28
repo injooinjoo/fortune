@@ -831,10 +831,6 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     final content = Column(
       children: [
         _buildHeader(context, usesThemedChrome: usesChipThemes),
-        if (!usesChipThemes) const Divider(height: 1),
-        if (widget.character.isFortuneExpert &&
-            widget.character.specialties.isNotEmpty)
-          _buildFortuneChipBar(chatState),
         Expanded(
           child: chatState.isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -848,6 +844,10 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                       ),
                     ),
         ),
+        if (!surveyState.isActive &&
+            widget.character.isFortuneExpert &&
+            widget.character.specialties.isNotEmpty)
+          _buildFortuneChipBar(chatState),
         if (surveyState.isActive) _buildSurveyInput(surveyState),
         if (chatState.hasConversation && !surveyState.isActive)
           _buildInputArea(),
@@ -914,21 +914,20 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         horizontal: DSSpacing.sm,
         vertical: DSSpacing.sm,
       ),
-      decoration: usesThemedChrome
-          ? BoxDecoration(
-              color: colors.surface.withValues(
+      decoration: BoxDecoration(
+        color: usesThemedChrome
+            ? colors.surface.withValues(
                 alpha: context.isDark ? 0.92 : 0.95,
-              ),
-              border: Border(
-                bottom: BorderSide(
-                  color: colors.border.withValues(alpha: 0.65),
-                ),
-              ),
-            )
-          : null,
+              )
+            : colors.background,
+        border: Border(
+          bottom: BorderSide(
+            color: colors.border.withValues(alpha: 0.65),
+          ),
+        ),
+      ),
       child: Row(
         children: [
-          // 백버튼
           IconButton(
             icon: const Icon(Icons.arrow_back_ios_new, size: 20),
             onPressed: () {
@@ -939,7 +938,6 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
             constraints: const BoxConstraints(),
           ),
           const SizedBox(width: 4),
-          // 프로필 영역 (탭 가능)
           Expanded(
             child: GestureDetector(
               onTap: () => _showCharacterProfile(context),
@@ -964,55 +962,13 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Flexible(
-                              child: Text(
-                                widget.character.name,
-                                style: context.bodyLarge.copyWith(
-                                  color: colors.textPrimary,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 5,
-                                vertical: 1,
-                              ),
-                              decoration: BoxDecoration(
-                                color: colors.accentSecondary
-                                    .withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                'AI',
-                                style: context.labelSmall.copyWith(
-                                  color: colors.textSecondary,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 9,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          widget.character.personality.length > 30
-                              ? '${widget.character.personality.substring(0, 30)}...'
-                              : widget.character.personality,
-                          style: context.bodySmall.copyWith(
-                            color: colors.textSecondary,
-                            height: 1.35,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
+                    child: Text(
+                      widget.character.name,
+                      style: context.bodyLarge.copyWith(
+                        color: colors.textPrimary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -1221,7 +1177,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     final isHaneulChipBar = _isHaneulPremiumShell;
     final activeFortuneType = _activeFortuneType();
     final shouldShowAccordionToggle = widget.character.specialties.length > 3;
-    final collapsedHeight = isHaneulChipBar ? 38.0 : 36.0;
+    final collapsedHeight = 32.0;
     final chipWidgets = widget.character.specialties.map((specialty) {
       final displayName = _getSpecialtyLabel(context, specialty);
       final surveyType = _mapFortuneTypeToSurveyType(specialty);
@@ -1240,20 +1196,12 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     return AnimatedSize(
       duration: DSAnimation.normal,
       curve: DSAnimation.emphasized,
-      child: Container(
-        padding: EdgeInsets.fromLTRB(
-          16,
-          isHaneulChipBar ? DSSpacing.sm + DSSpacing.xxs : DSSpacing.xs,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
           16,
           DSSpacing.xs,
-        ),
-        decoration: BoxDecoration(
-          color: colors.surface.withValues(
-            alpha: context.isDark ? 0.92 : 0.95,
-          ),
-          border: Border(
-            bottom: BorderSide(color: colors.border.withValues(alpha: 0.8)),
-          ),
+          16,
+          DSSpacing.sm,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

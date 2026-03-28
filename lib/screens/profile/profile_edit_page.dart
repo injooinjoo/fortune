@@ -344,7 +344,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                       }).toList(),
                     ),
                   ),
-                  const SizedBox(height: DSSpacing.xl),
+                  const SizedBox(height: 80),
                   PaperRuntimeExpandablePanel(
                     title: '추가 정보',
                     subtitle: '태어난 시간, MBTI, 혈액형',
