@@ -2,7 +2,9 @@
 #include "Flutter/Debug.xcconfig"
 
 // Debug Configuration
-PRODUCT_BUNDLE_IDENTIFIER = com.beyond.fortune.debug
+// App Store Connect IAP sandbox requires the app's bundle ID to match the
+// explicit App ID used by the production catalog.
+PRODUCT_BUNDLE_IDENTIFIER = com.beyond.fortune
 PRODUCT_NAME = ZPZG Debug
 DEVELOPMENT_TEAM = YOUR_TEAM_ID
 

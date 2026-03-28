@@ -5,12 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../core/utils/logger.dart';
 import '../core/network/api_client.dart';
 import '../core/constants/in_app_products.dart';
 import '../shared/components/toast.dart';
 
 class InAppPurchaseService {
+  static const String _iosAppStoreBundleId = 'com.beyond.fortune';
   static final InAppPurchaseService _instance =
       InAppPurchaseService._internal();
   factory InAppPurchaseService() => _instance;
@@ -25,6 +27,7 @@ class InAppPurchaseService {
   bool _isAvailable = false;
   bool _isInitialized = false;
   bool _purchasePending = false;
+  String? _cachedBundleIdentifier;
 
   // 중복 구매 처리 방지를 위한 처리된 구매 ID 추적
   final Set<String> _processedPurchaseIds = {};
@@ -98,6 +101,18 @@ class InAppPurchaseService {
       if (!_isAvailable) {
         Logger.error('인앱 결제를 사용할 수 없습니다.');
         return;
+      }
+
+      if (!kIsWeb && Platform.isIOS) {
+        final bundleIdentifier = await _getBundleIdentifier();
+        Logger.info('iOS bundleIdentifier: $bundleIdentifier');
+        if (bundleIdentifier != null &&
+            bundleIdentifier != _iosAppStoreBundleId) {
+          Logger.warning(
+            '현재 iOS bundle identifier($bundleIdentifier)는 App Store IAP 앱($_iosAppStoreBundleId)과 다릅니다. '
+            'StoreKit 결제가 실패할 수 있습니다.',
+          );
+        }
       }
 
       // 구매 업데이트 리스너 설정
@@ -179,6 +194,8 @@ class InAppPurchaseService {
       throw Exception('상품을 찾을 수 없습니다: $productId');
     }
 
+    await _assertIosPurchaseSetup(productId);
+
     // 구매 파라미터 설정
     final PurchaseParam purchaseParam =
         PurchaseParam(productDetails: productDetails);
@@ -249,7 +266,7 @@ class InAppPurchaseService {
         break;
 
       case PurchaseStatus.error:
-        _handleError(purchaseDetails.error!);
+        _handleError(purchaseDetails);
         break;
 
       case PurchaseStatus.canceled:
@@ -263,6 +280,46 @@ class InAppPurchaseService {
     if (purchaseDetails.pendingCompletePurchase) {
       await _inAppPurchase.completePurchase(purchaseDetails);
     }
+  }
+
+  Future<String?> _getBundleIdentifier() async {
+    if (kIsWeb || !Platform.isIOS) {
+      return null;
+    }
+
+    if (_cachedBundleIdentifier != null) {
+      return _cachedBundleIdentifier;
+    }
+
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      _cachedBundleIdentifier = packageInfo.packageName;
+      return _cachedBundleIdentifier;
+    } catch (e) {
+      Logger.warning('iOS bundle identifier 조회 실패', e);
+      return null;
+    }
+  }
+
+  Future<void> _assertIosPurchaseSetup(String productId) async {
+    if (kIsWeb || !Platform.isIOS) {
+      return;
+    }
+
+    final bundleIdentifier = await _getBundleIdentifier();
+    if (bundleIdentifier == null ||
+        bundleIdentifier.isEmpty ||
+        bundleIdentifier == _iosAppStoreBundleId) {
+      return;
+    }
+
+    final productName =
+        InAppProducts.productDetails[productId]?.title ?? '인앱 상품';
+    throw Exception(
+      '$productName 구매는 현재 iOS 빌드($bundleIdentifier)에서 테스트할 수 없습니다. '
+      'App Store Connect 앱 번들($_iosAppStoreBundleId)과 동일한 빌드 또는 '
+      'StoreKit Configuration/TestFlight를 사용해주세요.',
+    );
   }
 
   // 상품 전달
@@ -477,17 +534,74 @@ class InAppPurchaseService {
     }
   }
 
-  void _handleError(IAPError error) {
+  void _handleError(PurchaseDetails purchaseDetails) {
+    final error = purchaseDetails.error;
+    if (error == null) {
+      Logger.error('구매 오류 정보가 비어 있습니다.');
+      _purchasePending = false;
+      final fallbackMessage = '구매 중 오류가 발생했습니다. 다시 시도해주세요.';
+      if (onPurchaseError != null) {
+        onPurchaseError!(fallbackMessage);
+      } else if (_context != null) {
+        Toast.show(_context!, message: fallbackMessage, type: ToastType.error);
+      }
+      return;
+    }
+
+    final storeKitContext = _extractIosStoreKitErrorContext(purchaseDetails);
     Logger.error('오류: ${error.code} - ${error.message}');
+    if (storeKitContext != null) {
+      Logger.error(
+        'StoreKit 오류 상세: code=${storeKitContext.code}, '
+        'domain=${storeKitContext.domain}, '
+        'description=${storeKitContext.localizedDescription}',
+      );
+      if (storeKitContext.userInfo != null &&
+          storeKitContext.userInfo!.isNotEmpty) {
+        Logger.error('StoreKit userInfo: ${storeKitContext.userInfo}');
+      }
+    } else if (error.details != null) {
+      Logger.error('오류 details: ${error.details}');
+    }
     _purchasePending = false;
 
     // Show error UI using callback or toast
-    final errorMessage = _getErrorMessage(error.code);
+    final errorMessage = _getErrorMessage(
+      error.code,
+      storeKitCode: storeKitContext?.code,
+      localizedDescription: storeKitContext?.localizedDescription,
+      bundleIdentifier: _cachedBundleIdentifier,
+    );
     if (onPurchaseError != null) {
       onPurchaseError!(errorMessage);
     } else if (_context != null) {
       Toast.show(_context!, message: errorMessage, type: ToastType.error);
     }
+  }
+
+  _IosStoreKitErrorContext? _extractIosStoreKitErrorContext(
+      PurchaseDetails purchaseDetails) {
+    if (kIsWeb ||
+        !Platform.isIOS ||
+        purchaseDetails is! AppStorePurchaseDetails) {
+      return null;
+    }
+
+    final nativeError = purchaseDetails.skPaymentTransaction.error;
+    if (nativeError == null) {
+      return null;
+    }
+
+    final localizedDescription =
+        nativeError.userInfo?['NSLocalizedDescription']?.toString() ??
+            nativeError.userInfo?['message']?.toString();
+
+    return _IosStoreKitErrorContext(
+      code: nativeError.code,
+      domain: nativeError.domain,
+      localizedDescription: localizedDescription,
+      userInfo: nativeError.userInfo,
+    );
   }
 
   void _showSuccessNotification(String productId) {
@@ -531,7 +645,44 @@ class InAppPurchaseService {
   }
 
   // Helper method to get user-friendly error messages
-  String _getErrorMessage(String errorCode) {
+  String _getErrorMessage(
+    String errorCode, {
+    int? storeKitCode,
+    String? localizedDescription,
+    String? bundleIdentifier,
+  }) {
+    if (storeKitCode != null) {
+      switch (storeKitCode) {
+        case 1:
+          return '현재 iOS 빌드 또는 App Store 계정 설정으로는 결제를 진행할 수 없습니다. '
+              'bundle ID와 샌드박스 계정을 확인해주세요.';
+        case 2:
+          return '구매가 취소되었습니다';
+        case 3:
+          return '결제 정보가 올바르지 않습니다';
+        case 4:
+          return '이 기기에서는 인앱 구매가 허용되지 않습니다';
+        case 5:
+          return '해당 상품을 구매할 수 없습니다';
+        case 7:
+          return '네트워크 연결을 확인해주세요';
+        case 15:
+        case 16:
+        case 17:
+        case 20:
+          return 'App Store 결제 화면을 띄우지 못했습니다. 앱을 다시 열고 다시 시도해주세요.';
+      }
+    }
+
+    if (!kIsWeb &&
+        Platform.isIOS &&
+        errorCode == 'purchase_error' &&
+        bundleIdentifier != null &&
+        bundleIdentifier != _iosAppStoreBundleId) {
+      return '현재 iOS 빌드($bundleIdentifier)에서는 App Store 인앱결제를 테스트할 수 없습니다. '
+          '$_iosAppStoreBundleId 번들 또는 StoreKit Configuration/TestFlight를 사용해주세요.';
+    }
+
     switch (errorCode) {
       // 사용자 취소
       case 'E_USER_CANCELLED':
@@ -578,6 +729,9 @@ class InAppPurchaseService {
 
       default:
         Logger.warning('알 수 없는 에러 코드: $errorCode');
+        if (localizedDescription != null && localizedDescription.isNotEmpty) {
+          return localizedDescription;
+        }
         return '구매 중 오류가 발생했습니다. 다시 시도해주세요';
     }
   }
@@ -596,6 +750,20 @@ class InAppPurchaseService {
     _subscription = null;
     _isInitialized = false;
   }
+}
+
+class _IosStoreKitErrorContext {
+  const _IosStoreKitErrorContext({
+    required this.code,
+    required this.domain,
+    required this.localizedDescription,
+    required this.userInfo,
+  });
+
+  final int code;
+  final String domain;
+  final String? localizedDescription;
+  final Map<String?, Object?>? userInfo;
 }
 
 // iOS StoreKit 델리게이트
