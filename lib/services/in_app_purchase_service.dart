@@ -556,6 +556,10 @@ class InAppPurchaseService {
         'domain=${storeKitContext.domain}, '
         'description=${storeKitContext.localizedDescription}',
       );
+      if (storeKitContext.errorChain.length > 1) {
+        Logger.error(
+            'StoreKit error chain: ${storeKitContext.errorChainSummary}');
+      }
       if (storeKitContext.userInfo != null &&
           storeKitContext.userInfo!.isNotEmpty) {
         Logger.error('StoreKit userInfo: ${storeKitContext.userInfo}');
@@ -568,8 +572,7 @@ class InAppPurchaseService {
     // Show error UI using callback or toast
     final errorMessage = _getErrorMessage(
       error.code,
-      storeKitCode: storeKitContext?.code,
-      localizedDescription: storeKitContext?.localizedDescription,
+      storeKitContext: storeKitContext,
       bundleIdentifier: _cachedBundleIdentifier,
     );
     if (onPurchaseError != null) {
@@ -593,14 +596,24 @@ class InAppPurchaseService {
     }
 
     final localizedDescription =
-        nativeError.userInfo?['NSLocalizedDescription']?.toString() ??
-            nativeError.userInfo?['message']?.toString();
+        _extractLocalizedDescription(nativeError.userInfo);
+    final errorChain = <_IosStoreKitErrorNode>[
+      _IosStoreKitErrorNode(
+        code: nativeError.code,
+        domain: nativeError.domain,
+        localizedDescription: localizedDescription,
+      ),
+      ..._extractUnderlyingStoreKitErrors(
+        nativeError.userInfo?['NSUnderlyingError'],
+      ),
+    ];
 
     return _IosStoreKitErrorContext(
       code: nativeError.code,
       domain: nativeError.domain,
       localizedDescription: localizedDescription,
       userInfo: nativeError.userInfo,
+      errorChain: errorChain,
     );
   }
 
@@ -647,11 +660,26 @@ class InAppPurchaseService {
   // Helper method to get user-friendly error messages
   String _getErrorMessage(
     String errorCode, {
-    int? storeKitCode,
-    String? localizedDescription,
+    _IosStoreKitErrorContext? storeKitContext,
     String? bundleIdentifier,
   }) {
-    if (storeKitCode != null) {
+    if (!kIsWeb &&
+        Platform.isIOS &&
+        errorCode == 'purchase_error' &&
+        bundleIdentifier != null &&
+        bundleIdentifier != _iosAppStoreBundleId) {
+      return '현재 iOS 빌드($bundleIdentifier)에서는 App Store 인앱결제를 테스트할 수 없습니다. '
+          '$_iosAppStoreBundleId 번들 또는 StoreKit Configuration/TestFlight를 사용해주세요.';
+    }
+
+    if (storeKitContext != null) {
+      if (_isSandboxAccountAuthenticationError(storeKitContext)) {
+        return 'App Store 샌드박스 계정 인증에 실패했습니다. '
+            '설정 > 개발자 > Sandbox Account에서 테스트 계정으로 다시 로그인한 뒤 다시 시도해주세요. '
+            'TestFlight 빌드라면 Media & Purchases도 로그아웃 후 다시 시도해주세요.';
+      }
+
+      final storeKitCode = storeKitContext.code;
       switch (storeKitCode) {
         case 1:
           return '현재 iOS 빌드 또는 App Store 계정 설정으로는 결제를 진행할 수 없습니다. '
@@ -672,15 +700,6 @@ class InAppPurchaseService {
         case 20:
           return 'App Store 결제 화면을 띄우지 못했습니다. 앱을 다시 열고 다시 시도해주세요.';
       }
-    }
-
-    if (!kIsWeb &&
-        Platform.isIOS &&
-        errorCode == 'purchase_error' &&
-        bundleIdentifier != null &&
-        bundleIdentifier != _iosAppStoreBundleId) {
-      return '현재 iOS 빌드($bundleIdentifier)에서는 App Store 인앱결제를 테스트할 수 없습니다. '
-          '$_iosAppStoreBundleId 번들 또는 StoreKit Configuration/TestFlight를 사용해주세요.';
     }
 
     switch (errorCode) {
@@ -729,11 +748,97 @@ class InAppPurchaseService {
 
       default:
         Logger.warning('알 수 없는 에러 코드: $errorCode');
-        if (localizedDescription != null && localizedDescription.isNotEmpty) {
+        final localizedDescription = storeKitContext?.bestLocalizedDescription;
+        if (localizedDescription != null &&
+            localizedDescription.isNotEmpty &&
+            localizedDescription != 'An unknown error occurred') {
           return localizedDescription;
         }
         return '구매 중 오류가 발생했습니다. 다시 시도해주세요';
     }
+  }
+
+  bool _isSandboxAccountAuthenticationError(
+    _IosStoreKitErrorContext context,
+  ) {
+    return context.containsError(domain: 'ASDErrorDomain', code: 530) ||
+        context.containsError(domain: 'AMSErrorDomain', code: 100);
+  }
+
+  List<_IosStoreKitErrorNode> _extractUnderlyingStoreKitErrors(
+    Object? rawError,
+  ) {
+    final errorMap = _normalizeStoreKitErrorMap(rawError);
+    if (errorMap == null) {
+      return const [];
+    }
+
+    final domain = errorMap['domain']?.toString();
+    final code = _tryParseInt(errorMap['code']);
+    final userInfo = _normalizeUserInfoMap(errorMap['userInfo']);
+    final localizedDescription = _extractLocalizedDescription(userInfo);
+
+    final currentError = domain != null && code != null
+        ? <_IosStoreKitErrorNode>[
+            _IosStoreKitErrorNode(
+              code: code,
+              domain: domain,
+              localizedDescription: localizedDescription,
+            ),
+          ]
+        : const <_IosStoreKitErrorNode>[];
+
+    return <_IosStoreKitErrorNode>[
+      ...currentError,
+      ..._extractUnderlyingStoreKitErrors(userInfo?['NSUnderlyingError']),
+    ];
+  }
+
+  Map<String, Object?>? _normalizeStoreKitErrorMap(Object? rawError) {
+    if (rawError is SKError) {
+      return <String, Object?>{
+        'code': rawError.code,
+        'domain': rawError.domain,
+        'userInfo': rawError.userInfo,
+      };
+    }
+    if (rawError is Map) {
+      return Map<String, Object?>.fromEntries(
+        rawError.entries.map(
+          (entry) => MapEntry(entry.key.toString(), entry.value),
+        ),
+      );
+    }
+    return null;
+  }
+
+  Map<String, Object?>? _normalizeUserInfoMap(Object? rawUserInfo) {
+    if (rawUserInfo is Map) {
+      return Map<String, Object?>.fromEntries(
+        rawUserInfo.entries.map(
+          (entry) => MapEntry(entry.key.toString(), entry.value),
+        ),
+      );
+    }
+    return null;
+  }
+
+  String? _extractLocalizedDescription(Map<dynamic, dynamic>? userInfo) {
+    return userInfo?['NSLocalizedDescription']?.toString() ??
+        userInfo?['message']?.toString();
+  }
+
+  int? _tryParseInt(Object? value) {
+    if (value is int) {
+      return value;
+    }
+    if (value is num) {
+      return value.toInt();
+    }
+    if (value is String) {
+      return int.tryParse(value);
+    }
+    return null;
   }
 
   void _onPurchaseDone() {
@@ -758,12 +863,48 @@ class _IosStoreKitErrorContext {
     required this.domain,
     required this.localizedDescription,
     required this.userInfo,
+    required this.errorChain,
   });
 
   final int code;
   final String domain;
   final String? localizedDescription;
   final Map<String?, Object?>? userInfo;
+  final List<_IosStoreKitErrorNode> errorChain;
+
+  bool containsError({required String domain, required int code}) {
+    return errorChain.any(
+      (error) => error.domain == domain && error.code == code,
+    );
+  }
+
+  String? get bestLocalizedDescription {
+    for (final error in errorChain.reversed) {
+      final description = error.localizedDescription;
+      if (description != null && description.isNotEmpty) {
+        return description;
+      }
+    }
+    return localizedDescription;
+  }
+
+  String get errorChainSummary {
+    return errorChain
+        .map((error) => '${error.domain}(${error.code})')
+        .join(' -> ');
+  }
+}
+
+class _IosStoreKitErrorNode {
+  const _IosStoreKitErrorNode({
+    required this.code,
+    required this.domain,
+    required this.localizedDescription,
+  });
+
+  final int code;
+  final String domain;
+  final String? localizedDescription;
 }
 
 // iOS StoreKit 델리게이트
