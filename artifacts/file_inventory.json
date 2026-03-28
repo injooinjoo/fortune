@@ -24141,17 +24141,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
-      "path": "lib/features/character/presentation/utils/fortune_chat_navigation.dart",
-      "referenced_by": [
-        "lib/screens/premium/premium_screen.dart"
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
-      "runtime_reachable": true,
+      "path": "lib/features/character/presentation/utils/fortune_chat_navigation.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -33019,20 +33021,20 @@
       "test": 83
     },
     "counts_by_candidate_action": {
-      "keep": 735,
+      "keep": 734,
       "keep_generated": 28,
       "manual_review": 978,
-      "phase1_remove_candidate": 12,
+      "phase1_remove_candidate": 13,
       "phase2_review_candidate": 363,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
       "doc_only": 97,
       "generated_excluded": 28,
-      "runtime_used": 735,
+      "runtime_used": 734,
       "test_only": 92,
       "tooling_only": 174,
-      "unreferenced": 994
+      "unreferenced": 995
     },
     "declared_asset_dirs_without_runtime_refs": [
       "assets/animations",
@@ -33185,9 +33187,9 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 375,
+    "lib_dart_runtime_reachable": 374,
     "lib_dart_total": 438,
-    "lib_dart_zero_incoming": 22,
+    "lib_dart_zero_incoming": 23,
     "missing_function_refs": [
       "--all",
       "account-deletion",
