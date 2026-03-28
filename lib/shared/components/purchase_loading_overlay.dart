@@ -4,7 +4,7 @@ import '../../core/design_system/design_system.dart';
 /// 결제 진행 중 로딩 오버레이
 ///
 /// 결제 중 화면을 가리고 사용자에게 안내 메시지를 표시합니다.
-/// - "화면을 닫지 마세요" 안내
+/// - 결제 진행 중 주의 안내
 /// - 진행 상태 메시지
 /// - 로딩 인디케이터
 class PurchaseLoadingOverlay extends StatelessWidget {
@@ -83,7 +83,7 @@ class PurchaseLoadingOverlay extends StatelessWidget {
                       ),
                       const SizedBox(width: DSSpacing.xs),
                       Text(
-                        '화면을 닫지 마세요',
+                        '앱을 닫거나 뒤로 나가지 마세요',
                         style: context.bodySmall.copyWith(
                           color: DSColors.warning,
                           fontWeight: FontWeight.w600,
@@ -97,7 +97,7 @@ class PurchaseLoadingOverlay extends StatelessWidget {
 
                 // 보조 안내
                 Text(
-                  '결제가 완료될 때까지 잠시 기다려주세요',
+                  '결제 창이 나타날 때까지 잠시만 기다려주세요',
                   style: context.labelSmall.copyWith(
                     color: colors.textSecondary,
                   ),
