@@ -456,8 +456,9 @@ class DSColorScheme {
   // Auth button colors
   Color get authAppleBackground =>
       isDark ? DSColors.authAppleBackground : DSColors.authAppleBackgroundDark;
-  Color get authGoogleBackground =>
-      isDark ? DSColors.authGoogleBackground : DSColors.authGoogleBackgroundDark;
+  Color get authGoogleBackground => isDark
+      ? DSColors.authGoogleBackground
+      : DSColors.authGoogleBackgroundDark;
 
   // Interest chip colors
   Color get chipBlue => isDark ? DSColors.chipBlue : DSColors.chipBlueDark;

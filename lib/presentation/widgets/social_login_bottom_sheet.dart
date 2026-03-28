@@ -326,12 +326,10 @@ class SocialLoginBottomSheet {
     final isApple = type == 'apple';
 
     // Apple 버튼은 Apple HIG 가이드라인 준수: 검정 배경 + 흰 텍스트
-    final appleButtonBg = colors.brightness == Brightness.dark
-        ? Colors.white
-        : Colors.black;
-    final appleButtonFg = colors.brightness == Brightness.dark
-        ? Colors.black
-        : Colors.white;
+    final appleButtonBg =
+        colors.brightness == Brightness.dark ? Colors.white : Colors.black;
+    final appleButtonFg =
+        colors.brightness == Brightness.dark ? Colors.black : Colors.white;
 
     switch (type) {
       case 'apple':
@@ -395,8 +393,7 @@ class SocialLoginBottomSheet {
                     height: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color:
-                          isApple ? appleButtonFg : colors.textPrimary,
+                      color: isApple ? appleButtonFg : colors.textPrimary,
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -404,8 +401,7 @@ class SocialLoginBottomSheet {
                     '${type == 'apple' ? 'Apple' : type == 'google' ? 'Google' : type == 'kakao' ? '카카오' : '네이버'} 계정 연결 중...',
                     style: context.labelLarge.copyWith(
                       fontWeight: FontWeight.w700,
-                      color:
-                          isApple ? appleButtonFg : colors.textPrimary,
+                      color: isApple ? appleButtonFg : colors.textPrimary,
                     ),
                   ),
                 ],
@@ -420,8 +416,7 @@ class SocialLoginBottomSheet {
                     text,
                     style: context.labelLarge.copyWith(
                       fontWeight: FontWeight.w700,
-                      color:
-                          isApple ? appleButtonFg : colors.textPrimary,
+                      color: isApple ? appleButtonFg : colors.textPrimary,
                     ),
                   ),
                 ],

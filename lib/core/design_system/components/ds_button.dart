@@ -600,8 +600,9 @@ class _DSButtonState extends State<DSButton>
                 ? colors.ctaBackground.withValues(alpha: 0.85)
                 : colors.ctaBackground)
             : colors.ctaBackground.withValues(alpha: 0.4);
-        foregroundColor =
-            isEnabled ? colors.ctaForeground : colors.ctaForeground.withValues(alpha: 0.6);
+        foregroundColor = isEnabled
+            ? colors.ctaForeground
+            : colors.ctaForeground.withValues(alpha: 0.6);
         break;
 
       case DSButtonStyle.secondary:
