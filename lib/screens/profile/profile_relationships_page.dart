@@ -18,6 +18,7 @@ class ProfileRelationshipsPage extends ConsumerWidget {
       backgroundColor: colors.background,
       appBar: const PaperRuntimeAppBar(title: '스토리 캐릭터 관계도'),
       body: PaperRuntimeBackground(
+        showRings: false,
         applySafeArea: false,
         padding: const EdgeInsets.fromLTRB(
           DSSpacing.pageHorizontal,
@@ -102,7 +103,8 @@ class ProfileRelationshipsPage extends ConsumerWidget {
     }
 
     return '${topEntry.character.name}님과 가장 가까워요. '
-        '${topEntry.phaseName} 단계, 호감도 ${topEntry.lovePercent}%입니다.';
+        '현재는 ${topEntry.phaseName} 단계이고, 최근 대화가 이어지면서 '
+        '호감도 ${topEntry.lovePercent}% 흐름이 유지되고 있어요.';
   }
 }
 

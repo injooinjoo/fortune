@@ -31,6 +31,7 @@ class ProfileScreen extends ConsumerWidget {
       backgroundColor: context.colors.background,
       appBar: const PaperRuntimeAppBar(title: '프로필'),
       body: PaperRuntimeBackground(
+        showRings: false,
         applySafeArea: false,
         child: RefreshIndicator(
           onRefresh: () async {
@@ -72,11 +73,6 @@ class ProfileScreen extends ConsumerWidget {
               PaperRuntimeMenuTile(
                 title: '알림 설정',
                 onTap: () => context.push('/profile/notifications'),
-              ),
-              PaperRuntimeMenuTile(
-                title: '구독 및 토큰 구매',
-                subtitle: 'Pro 구독과 토큰 상품을 확인합니다',
-                onTap: () => context.push('/premium'),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(
@@ -147,6 +143,13 @@ class ProfileScreen extends ConsumerWidget {
                             style: DSChipStyle.outlined,
                           ),
                         ],
+                      ),
+                      const SizedBox(height: DSSpacing.lg),
+                      PaperRuntimeMenuTile(
+                        title: '프리미엄 인사이트',
+                        subtitle: '구독 플랜 · 토큰 충전 · 프리미엄 콘텐츠',
+                        onTap: () => context.push('/premium'),
+                        showDivider: true,
                       ),
                       const SizedBox(height: DSSpacing.lg),
                       Text(

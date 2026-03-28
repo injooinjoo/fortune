@@ -91,7 +91,8 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
     final chatState = ref.watch(characterChatProvider(_character.id));
     final affinity = chatState.affinity;
     final messageCount = chatState.messages.length;
-    final tags = CharacterLocalizer.resolveTags(context, _character).take(4);
+    final tags =
+        CharacterLocalizer.resolveTags(context, _character).take(5).toList();
     final avatarTextColor = _bestReadableForeground(
       background: _character.accentColor,
       primary: DSColors.textPrimary,
@@ -108,9 +109,10 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
         ),
       ),
       body: PaperRuntimeBackground(
+        showRings: false,
         applySafeArea: false,
         ringAlignment: Alignment.topCenter,
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
         child: ListView(
           children: [
             Row(
@@ -176,10 +178,10 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
                 ),
               ],
             ),
-            const SizedBox(height: DSSpacing.xl),
+            const SizedBox(height: DSSpacing.lg),
             Text(
               CharacterLocalizer.resolveName(context, _character),
-              style: context.heading3.copyWith(
+              style: context.heading4.copyWith(
                 color: colors.textPrimary,
               ),
             ),
@@ -197,43 +199,60 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
               CharacterLocalizer.resolveShortDescription(context, _character),
               style: context.bodyMedium.copyWith(
                 color: colors.textPrimary,
-                height: 1.5,
+                height: 1.55,
               ),
             ),
             const SizedBox(height: DSSpacing.lg),
             _buildMessageButton(context),
-            const SizedBox(height: DSSpacing.lg),
-            _buildSection(
-              context: context,
-              icon: Icons.auto_stories,
-              title: context.l10n.worldview,
-              content: CharacterLocalizer.resolveWorldview(context, _character)
-                  .trim(),
+            const SizedBox(height: DSSpacing.xl),
+            _buildPhotoGrid(
+              context,
+              avatarTextColor: avatarTextColor,
             ),
-            const SizedBox(height: DSSpacing.md),
-            _buildSection(
-              context: context,
-              icon: Icons.person_outline,
-              title: context.l10n.characterLabel,
-              content:
-                  CharacterLocalizer.resolvePersonality(context, _character)
-                      .trim(),
-            ),
-            if (_character.npcProfiles != null &&
-                _character.npcProfiles!.isNotEmpty) ...[
-              const SizedBox(height: DSSpacing.md),
-              _buildNpcSection(context),
-            ],
-            const SizedBox(height: DSSpacing.md),
-            PaperRuntimePanel(
-              elevated: false,
-              child: Text(
-                '"${CharacterLocalizer.resolveCreatorComment(context, _character)}"',
-                style: context.bodySmall.copyWith(
-                  fontStyle: FontStyle.italic,
-                  color: colors.textSecondary,
-                ),
-                textAlign: TextAlign.center,
+            const SizedBox(height: DSSpacing.xl),
+            PaperRuntimeExpandablePanel(
+              title: '캐릭터 정보',
+              subtitle: '세계관, 성격, 관계 설정',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSection(
+                    context: context,
+                    icon: Icons.auto_stories,
+                    title: context.l10n.worldview,
+                    content: CharacterLocalizer.resolveWorldview(
+                      context,
+                      _character,
+                    ).trim(),
+                  ),
+                  const SizedBox(height: DSSpacing.md),
+                  _buildSection(
+                    context: context,
+                    icon: Icons.person_outline,
+                    title: context.l10n.characterLabel,
+                    content: CharacterLocalizer.resolvePersonality(
+                      context,
+                      _character,
+                    ).trim(),
+                  ),
+                  if (_character.npcProfiles != null &&
+                      _character.npcProfiles!.isNotEmpty) ...[
+                    const SizedBox(height: DSSpacing.md),
+                    _buildNpcSection(context),
+                  ],
+                  const SizedBox(height: DSSpacing.md),
+                  PaperRuntimePanel(
+                    elevated: false,
+                    child: Text(
+                      '"${CharacterLocalizer.resolveCreatorComment(context, _character)}"',
+                      style: context.bodySmall.copyWith(
+                        fontStyle: FontStyle.italic,
+                        color: colors.textSecondary,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -274,35 +293,102 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
 
   /// 메시지 보내기 버튼
   Widget _buildMessageButton(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton.icon(
-        onPressed: () {
-          HapticUtils.lightImpact();
-          ref
-              .read(characterChatProvider(_character.id).notifier)
-              .startConversation(_character.firstMessage);
-          // 캐릭터 선택 provider 설정 → SwipeHomeShell이 감지하여 채팅 패널 열기
-          ref.read(selectedCharacterProvider.notifier).state = _character;
-          ref.read(chatModeProvider.notifier).state = ChatMode.character;
-          // 프로필 페이지 닫기
-          Navigator.of(context).pop();
-        },
-        icon: const Icon(Icons.chat_bubble_outline, size: 18),
-        label: Text(
-          context.l10n.sendMessage,
-          style: context.bodyLarge.copyWith(fontWeight: FontWeight.w700),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: context.colors.textPrimary,
-          foregroundColor: context.colors.background,
-          elevation: 0,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(DSRadius.full),
+    final colors = context.colors;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(DSRadius.xxl),
+        onTap: _openChatFromProfile,
+        child: Container(
+          width: double.infinity,
+          height: 48,
+          decoration: BoxDecoration(
+            color: colors.textPrimary,
+            borderRadius: BorderRadius.circular(DSRadius.xxl),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.chat_bubble_outline,
+                size: 18,
+                color: colors.background,
+              ),
+              const SizedBox(width: DSSpacing.sm),
+              Text(
+                context.l10n.sendMessage,
+                style: context.bodyMedium.copyWith(
+                  color: colors.background,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
           ),
         ),
       ),
+    );
+  }
+
+  void _openChatFromProfile() {
+    HapticUtils.lightImpact();
+    ref
+        .read(characterChatProvider(_character.id).notifier)
+        .startConversation(_character.firstMessage);
+    ref.read(selectedCharacterProvider.notifier).state = _character;
+    ref.read(chatModeProvider.notifier).state = ChatMode.character;
+    Navigator.of(context).pop();
+  }
+
+  Widget _buildPhotoGrid(
+    BuildContext context, {
+    required Color avatarTextColor,
+  }) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisSpacing: 1,
+        crossAxisSpacing: 1,
+        childAspectRatio: 1,
+      ),
+      itemCount: 6,
+      itemBuilder: (context, index) {
+        final colors = context.colors;
+        final tileColor = Color.alphaBlend(
+          _character.accentColor.withValues(alpha: 0.08 + (index * 0.02)),
+          colors.surface,
+        );
+
+        if (index == 0 && _character.avatarAsset.isNotEmpty) {
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(DSRadius.sm),
+            child: SmartImage(
+              path: _character.avatarAsset,
+              fit: BoxFit.cover,
+            ),
+          );
+        }
+
+        return Container(
+          decoration: BoxDecoration(
+            color: index.isOdd ? tileColor : colors.surface,
+            borderRadius: BorderRadius.circular(DSRadius.sm),
+          ),
+          child: index == 0
+              ? Center(
+                  child: Text(
+                    _character.initial,
+                    style: context.heading2.copyWith(
+                      color: avatarTextColor,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                )
+              : null,
+        );
+      },
     );
   }
 

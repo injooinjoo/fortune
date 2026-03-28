@@ -49,6 +49,7 @@ class _NotificationSettingsPageState
       backgroundColor: colors.background,
       appBar: const PaperRuntimeAppBar(title: '알림 설정'),
       body: PaperRuntimeBackground(
+        showRings: false,
         applySafeArea: false,
         padding: const EdgeInsets.fromLTRB(
           DSSpacing.pageHorizontal,
