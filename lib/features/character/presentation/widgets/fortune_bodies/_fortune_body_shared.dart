@@ -184,6 +184,58 @@ class FortuneTagPillWrap extends StatelessWidget {
   }
 }
 
+class _FortuneAccentCardSurface extends StatelessWidget {
+  final Gradient gradient;
+  final Color accentColor;
+  final Color borderColor;
+  final EdgeInsetsGeometry padding;
+  final Widget child;
+
+  const _FortuneAccentCardSurface({
+    required this.gradient,
+    required this.accentColor,
+    required this.borderColor,
+    required this.padding,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(DSRadius.lg);
+
+    return SizedBox(
+      width: double.infinity,
+      child: ClipRRect(
+        borderRadius: radius,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: gradient,
+            borderRadius: radius,
+            border: Border.all(color: borderColor),
+          ),
+          child: Stack(
+            children: [
+              Positioned(
+                left: 0,
+                top: 0,
+                bottom: 0,
+                child: ColoredBox(
+                  color: accentColor,
+                  child: const SizedBox(width: 3),
+                ),
+              ),
+              Padding(
+                padding: padding,
+                child: child,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// Highlighted tip card with accent left border
 class FortuneTipCard extends StatelessWidget {
   final String emoji;
@@ -198,39 +250,22 @@ class FortuneTipCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    return Container(
-      width: double.infinity,
+    return _FortuneAccentCardSurface(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          colors.accentSecondary.withValues(alpha: 0.08),
+          colors.backgroundSecondary,
+        ],
+      ),
+      accentColor: colors.accentSecondary.withValues(alpha: 0.4),
+      borderColor: colors.accentSecondary.withValues(alpha: 0.12),
       padding: const EdgeInsets.fromLTRB(
         DSSpacing.lg + 2,
         DSSpacing.md,
         DSSpacing.md,
         DSSpacing.md,
-      ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            colors.accentSecondary.withValues(alpha: 0.08),
-            colors.backgroundSecondary,
-          ],
-        ),
-        borderRadius: BorderRadius.circular(DSRadius.lg),
-        border: Border(
-          left: BorderSide(
-            color: colors.accentSecondary.withValues(alpha: 0.4),
-            width: 3,
-          ),
-          top: BorderSide(
-            color: colors.accentSecondary.withValues(alpha: 0.12),
-          ),
-          right: BorderSide(
-            color: colors.accentSecondary.withValues(alpha: 0.12),
-          ),
-          bottom: BorderSide(
-            color: colors.accentSecondary.withValues(alpha: 0.12),
-          ),
-        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -529,66 +564,47 @@ class FortuneQuoteBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [colors.backgroundSecondary, colors.surface],
-        ),
-        borderRadius: BorderRadius.circular(DSRadius.lg),
-        border: Border(
-          left: BorderSide(
-            color: colors.accentSecondary.withValues(alpha: 0.8),
-            width: 3,
-          ),
-          top: BorderSide(
-            color: colors.border.withValues(alpha: 0.15),
-          ),
-          right: BorderSide(
-            color: colors.border.withValues(alpha: 0.15),
-          ),
-          bottom: BorderSide(
-            color: colors.border.withValues(alpha: 0.15),
-          ),
-        ),
+    return _FortuneAccentCardSurface(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [colors.backgroundSecondary, colors.surface],
       ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(
-          DSSpacing.lg + 2,
-          DSSpacing.lg,
-          DSSpacing.lg,
-          DSSpacing.lg,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(emoji, style: const TextStyle(fontSize: 18)),
-                const SizedBox(width: DSSpacing.sm),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: context.bodyMedium.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+      accentColor: colors.accentSecondary.withValues(alpha: 0.8),
+      borderColor: colors.border.withValues(alpha: 0.15),
+      padding: const EdgeInsets.fromLTRB(
+        DSSpacing.lg + 2,
+        DSSpacing.lg,
+        DSSpacing.lg,
+        DSSpacing.lg,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(emoji, style: const TextStyle(fontSize: 18)),
+              const SizedBox(width: DSSpacing.sm),
+              Expanded(
+                child: Text(
+                  title,
+                  style: context.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: DSSpacing.sm),
-            Text(
-              text,
-              style: context.bodyMedium.copyWith(
-                color: colors.textSecondary,
-                height: 1.6,
-                fontStyle: FontStyle.italic,
               ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          Text(
+            text,
+            style: context.bodyMedium.copyWith(
+              color: colors.textSecondary,
+              height: 1.6,
+              fontStyle: FontStyle.italic,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
