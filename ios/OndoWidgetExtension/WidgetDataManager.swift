@@ -28,8 +28,8 @@ class WidgetDataManager {
             sharedDefaults.set(Date(), forKey: lastUpdateKey)
             
             // Reload widgets
-            WidgetCenter.shared.reloadTimelines(ofKind: "FortuneWidget")
-            WidgetCenter.shared.reloadTimelines(ofKind: "LockScreenFortuneWidget")
+            WidgetCenter.shared.reloadTimelines(ofKind: "OndoWidget")
+            WidgetCenter.shared.reloadTimelines(ofKind: "OndoLockScreenWidget")
         } catch {
             print("Failed to save fortune data: \(error)")
         }
@@ -56,7 +56,7 @@ class WidgetDataManager {
             sharedDefaults.set(encoded, forKey: loveFortuneDataKey)
             
             // Reload love fortune widget
-            WidgetCenter.shared.reloadTimelines(ofKind: "LoveFortuneWidget")
+            WidgetCenter.shared.reloadTimelines(ofKind: "OndoLoveWidget")
         } catch {
             print("Failed to save love fortune data: \(error)")
         }
@@ -148,7 +148,7 @@ class WidgetDataManager {
 
     /// Reload favorites widget
     func reloadFavoritesWidget() {
-        WidgetCenter.shared.reloadTimelines(ofKind: "FavoritesFortuneWidget")
+        WidgetCenter.shared.reloadTimelines(ofKind: "OndoFavoritesWidget")
     }
 
     /// Roll to next favorite and trigger widget update

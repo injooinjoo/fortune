@@ -1,4 +1,4 @@
-# Fortune Project - Claude Automation Guide
+# Ondo Project - Claude Automation Guide
 
 ## Core Automation System
 

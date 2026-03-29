@@ -504,10 +504,10 @@ class WidgetDataService {
 
       if (defaultTargetPlatform == TargetPlatform.iOS) {
         // iOS 위젯들 업데이트
-        await HomeWidget.updateWidget(iOSName: 'FortuneOverallWidget');
-        await HomeWidget.updateWidget(iOSName: 'FortuneCategoryWidget');
-        await HomeWidget.updateWidget(iOSName: 'FortuneTimeSlotWidget');
-        await HomeWidget.updateWidget(iOSName: 'FortuneLottoWidget');
+        await HomeWidget.updateWidget(iOSName: 'OndoOverallWidget');
+        await HomeWidget.updateWidget(iOSName: 'OndoCategoryWidget');
+        await HomeWidget.updateWidget(iOSName: 'OndoTimeSlotWidget');
+        await HomeWidget.updateWidget(iOSName: 'OndoLottoWidget');
       } else if (defaultTargetPlatform == TargetPlatform.android) {
         // Android 위젯들 업데이트
         await HomeWidget.updateWidget(androidName: 'OverallAppWidget');

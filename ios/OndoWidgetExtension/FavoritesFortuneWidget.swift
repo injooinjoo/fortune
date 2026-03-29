@@ -848,8 +848,8 @@ struct BiorhythmBar: View {
 }
 
 // MARK: - Widget Configuration
-struct FavoritesFortuneWidget: Widget {
-    let kind: String = "FavoritesFortuneWidget"
+struct OndoFavoritesWidget: Widget {
+    let kind: String = "OndoFavoritesWidget"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: FavoritesFortuneProvider()) { entry in

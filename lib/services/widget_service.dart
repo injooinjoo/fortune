@@ -12,10 +12,10 @@ class WidgetService {
   static bool _backgroundHandlerRegistered = false;
 
   // 새 위젯 이름들
-  static const String overallWidgetName = 'FortuneOverallWidget';
-  static const String categoryWidgetName = 'FortuneCategoryWidget';
-  static const String timeSlotWidgetName = 'FortuneTimeSlotWidget';
-  static const String lottoWidgetName = 'FortuneLottoWidget';
+  static const String overallWidgetName = 'OndoOverallWidget';
+  static const String categoryWidgetName = 'OndoCategoryWidget';
+  static const String timeSlotWidgetName = 'OndoTimeSlotWidget';
+  static const String lottoWidgetName = 'OndoLottoWidget';
 
   // 백그라운드 새로고침용 Method Channel
   static const MethodChannel _backgroundChannel =
@@ -330,13 +330,13 @@ class WidgetService {
   /// iOS 위젯 이름을 Android 위젯 이름으로 변환
   static String _getAndroidWidgetName(String iosName) {
     switch (iosName) {
-      case 'FortuneOverallWidget':
+      case 'OndoOverallWidget':
         return 'OverallAppWidget';
-      case 'FortuneCategoryWidget':
+      case 'OndoCategoryWidget':
         return 'CategoryAppWidget';
-      case 'FortuneTimeSlotWidget':
+      case 'OndoTimeSlotWidget':
         return 'TimeSlotAppWidget';
-      case 'FortuneLottoWidget':
+      case 'OndoLottoWidget':
         return 'LottoAppWidget';
       default:
         return iosName;

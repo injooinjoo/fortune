@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide provides comprehensive instructions for implementing Apple Watch and Wear OS companion apps for the Fortune Flutter application, focusing on fortune-telling features optimized for wearable devices.
+This guide provides comprehensive instructions for implementing Apple Watch and Wear OS companion apps for the Ondo Flutter application, focusing on fortune-telling features optimized for wearable devices.
 
 ## Table of Contents
 
@@ -22,10 +22,10 @@ This guide provides comprehensive instructions for implementing Apple Watch and 
 
 1. In Xcode, select File → New → Target
 2. Choose watchOS → App
-3. Name: "Fortune Watch"
+3. Name: "Ondo Watch"
 4. Configure:
-   - Organization Identifier: com.fortune
-   - Bundle Identifier: com.fortune.watchapp
+   - Organization Identifier: com.beyond
+   - Bundle Identifier: com.beyond.ondo.watchapp
    - Include Complication: ✓
 
 #### Project Structure
@@ -1586,7 +1586,7 @@ extension FortuneScoreView {
 
 ## Conclusion
 
-This comprehensive guide provides the foundation for implementing robust watch companion apps for the Fortune Flutter application. Key considerations:
+This comprehensive guide provides the foundation for implementing robust watch companion apps for the Ondo Flutter application. Key considerations:
 
 1. **Performance**: Optimize for battery life and quick interactions
 2. **Design**: Follow platform-specific guidelines

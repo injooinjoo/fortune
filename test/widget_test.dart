@@ -1,4 +1,4 @@
-// Basic smoke test for the Fortune app
+// Basic smoke test for the Ondo app
 //
 // This test verifies the app can initialize and render without errors.
 

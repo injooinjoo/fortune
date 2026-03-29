@@ -3,7 +3,7 @@ import 'package:haptic_feedback/haptic_feedback.dart';
 import '../utils/haptic_utils.dart';
 import '../providers/user_settings_provider.dart';
 
-/// Fortune 앱 전용 햅틱 피드백 서비스
+/// 온도 앱 전용 햅틱 피드백 서비스
 ///
 /// 토스/듀오링고 스타일의 감성적인 햅틱 피드백을 제공합니다.
 ///

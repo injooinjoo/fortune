@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document outlines the architecture for implementing cross-platform widgets in the Fortune Flutter app, ensuring consistent functionality and design across iOS and Android platforms.
+This document outlines the architecture for implementing cross-platform widgets in the Ondo Flutter app, ensuring consistent functionality and design across iOS and Android platforms.
 
 ## Table of Contents
 
@@ -72,7 +72,7 @@ class FortuneWidgetData {
   // Platform-specific serialization
   Map<String, dynamic> toIOSFormat() => {
     ...toJson(),
-    'displayName': metadata['displayName'] ?? 'Fortune',
+    'displayName': metadata['displayName'] ?? 'Ondo',
     'widgetFamily': metadata['widgetFamily'] ?? 'medium',
   };
   
@@ -1014,7 +1014,7 @@ class WidgetDataSecurity {
 
 ## Conclusion
 
-This architecture provides a robust foundation for implementing cross-platform widgets in the Fortune Flutter app. Key benefits include:
+This architecture provides a robust foundation for implementing cross-platform widgets in the Ondo Flutter app. Key benefits include:
 
 1. **Unified Data Model**: Single source of truth for all platforms
 2. **Efficient Updates**: Smart scheduling and batching

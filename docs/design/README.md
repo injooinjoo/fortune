@@ -1,10 +1,10 @@
-# Fortune 디자인 운영 가이드
+# Ondo 디자인 운영 가이드
 
 ## 개요
 
 이 저장소의 공식 디자인 source of truth는 이제 **Paper**입니다.
 
-- 디자인 기준 파일: `Fortune`
+- 디자인 기준 파일: `Ondo`
 - 기준 페이지: `iPhone`
 - canonical inventory: `paper/catalog_inventory.json`
 - canonical tokens: `paper/design-tokens.json`

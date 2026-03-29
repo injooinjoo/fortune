@@ -1,6 +1,6 @@
 import SwiftUI
 
-// MARK: - Fortune Watch App
+// MARK: - Ondo Watch App
 
 @main
 struct OndoWatchApp: App {

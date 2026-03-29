@@ -187,7 +187,7 @@ flutter build apk --release
    - Choose default language: Korean (한국어)
 
 2. **App Details**:
-   - App name: `Fortune - AI 운세`
+   - App name: `온도 - 당신의 AI 친구`
    - Short description (80 characters):
      ```
      AI가 알려주는 나의 운세! 사주, 타로, 궁합까지
@@ -244,7 +244,7 @@ fastlane production  # Production release
 
 2. **Create App ID**:
    - Identifier: `com.beyond.ondo`
-   - Description: Fortune - AI Fortune Teller
+   - Description: Ondo - Your AI Friend
    - Capabilities: Enable as needed (Push Notifications, In-App Purchase, etc.)
 
 3. **Certificates and Profiles**:
@@ -297,13 +297,13 @@ fastlane release  # App Store
    - Go to [App Store Connect](https://appstoreconnect.apple.com)
    - My Apps → + → New App
    - Platform: iOS
-   - Name: Fortune - AI 운세
+   - Name: 온도 - 당신의 AI 친구
    - Primary Language: Korean
    - Bundle ID: com.beyond.ondo
    - SKU: fortune-ios
 
 2. **App Information**:
-   - Name: Fortune - AI 운세
+   - Name: 온도 - 당신의 AI 친구
    - Subtitle (30 chars): `AI가 알려주는 나의 운세`
    - Category: Primary - Lifestyle, Secondary - Entertainment
    - Content Rights: Does not contain third-party content
@@ -383,7 +383,7 @@ fastlane beta
 
 **Examples**:
 - Korean: `포춘 - AI 운세, 사주, 타로`
-- English: `Fortune - AI Fortune Teller`
+- English: `Ondo - Your AI Friend`
 
 #### Keywords
 
@@ -418,7 +418,7 @@ fortune,astrology,tarot,horoscope,daily fortune,zodiac,compatibility,love,wealth
 
 3. **Differentiation**:
    ```
-   💡 Fortune만의 특별함
+   💡 Ondo만의 특별함
    • 최첨단 AI 기술로 더욱 정확한 운세 제공
    • 개인 맞춤형 해석과 조언
    • 깔끔하고 세련된 디자인
@@ -788,6 +788,6 @@ cd android
 
 **Document Version**: 1.0
 **Last Updated**: January 2025
-**Maintained by**: Fortune Development Team
+**Maintained by**: Ondo Development Team
 
 For questions or issues, refer to project documentation or contact the development team.

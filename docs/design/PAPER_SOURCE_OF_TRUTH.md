@@ -1,8 +1,8 @@
-# Fortune Paper Source Of Truth
+# Ondo Paper Source Of Truth
 
 ## Official File
 
-- Paper file name: `Fortune`
+- Paper file name: `Ondo`
 - Paper page: `iPhone`
 - Paper page id: `01K4GP58P8JRM8PGBP0586VKYV`
 - Paper root node id: `root_node_01K4GP58P8JRM8PGBP0586VKYV`
@@ -10,7 +10,7 @@
 - Screen-to-route mapping: `docs/design/PAPER_SCREEN_ROUTE_MAPPING.md`
 - Screen/component registry: `docs/design/PAPER_SCREEN_COMPONENT_REGISTRY.md`
 
-This file remains the only official Paper source of truth for current-state Fortune surfaces.
+This file remains the only official Paper source of truth for current-state Ondo surfaces.
 
 ## Coverage Snapshot
 

@@ -13,7 +13,7 @@ static const String mbtiFortune = '/fortune-mbti';  // 404 에러 해결
 ## 🎯 단 한 번만 실행하면 됩니다
 
 ### Step 1: Supabase SQL Editor 접속
-https://supabase.com/dashboard → Fortune 프로젝트 → SQL Editor
+https://supabase.com/dashboard → 온도 프로젝트 → SQL Editor
 
 ### Step 2: 아래 SQL 전체 복사 후 실행
 

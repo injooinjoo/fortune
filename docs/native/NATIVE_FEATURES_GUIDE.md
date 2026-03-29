@@ -1,6 +1,6 @@
 # Native Features Implementation Guide
 
-A comprehensive, feature-organized guide for implementing native platform features in the Fortune Flutter app.
+A comprehensive, feature-organized guide for implementing native platform features in the Ondo Flutter app.
 
 ## Table of Contents
 
@@ -56,7 +56,7 @@ Flutter App (Dart)
 1. **Modular Architecture**: Separate native features into independent modules
 2. **Shared Business Logic**: Reuse Flutter logic through platform channels
 3. **Native Performance**: Use native implementations for UI-intensive features
-4. **Consistent Branding**: Maintain Fortune app identity across all platforms
+4. **Consistent Branding**: Maintain Ondo app identity across all platforms
 5. **Graceful Degradation**: Handle older OS versions and unavailable features
 
 ---
@@ -77,12 +77,12 @@ Provide quick access to fortune information directly from the device home screen
 **Implementation Structure**:
 
 ```swift
-// FortuneWidget.swift
+// OndoWidget.swift
 import WidgetKit
 import SwiftUI
 
-struct FortuneWidget: Widget {
-    let kind: String = "FortuneWidget"
+struct OndoWidget: Widget {
+    let kind: String = "OndoWidget"
 
     var body: some WidgetConfiguration {
         IntentConfiguration(
@@ -281,10 +281,10 @@ iOS-exclusive features for displaying fortune information on the lock screen.
 
 ```swift
 // Lock Screen Widget Configuration
-struct FortuneWidget: Widget {
+struct OndoWidget: Widget {
     var body: some WidgetConfiguration {
         IntentConfiguration(
-            kind: "FortuneWidget",
+            kind: "OndoWidget",
             intent: ConfigurationIntent.self,
             provider: FortuneWidgetProvider()
         ) { entry in
@@ -2065,13 +2065,13 @@ WorkManager.getInstance(context).enqueue(updateRequest)
 
 ## Summary
 
-This consolidated guide provides a complete reference for implementing native platform features in the Fortune Flutter app. Each section is organized by feature rather than platform, making it easy to find implementation details for both iOS and Android in one place.
+This consolidated guide provides a complete reference for implementing native platform features in the Ondo Flutter app. Each section is organized by feature rather than platform, making it easy to find implementation details for both iOS and Android in one place.
 
 ### Key Takeaways
 
 1. **Feature-First Approach**: Understand what you want to implement, then find the platform-specific details
 2. **Graceful Degradation**: Always handle unsupported platforms and older OS versions
-3. **Consistent Experience**: Maintain Fortune branding across all native features
+3. **Consistent Experience**: Maintain Ondo branding across all native features
 4. **Performance First**: Optimize for battery life and responsiveness
 5. **User Privacy**: Respect permissions and handle sensitive data carefully
 

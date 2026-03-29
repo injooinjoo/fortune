@@ -563,8 +563,8 @@ struct LottoBall: View {
 
 // MARK: - Widget Configurations
 
-struct FortuneOverallWidget: Widget {
-    let kind: String = "FortuneOverallWidget"
+struct OndoOverallWidget: Widget {
+    let kind: String = "OndoOverallWidget"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: OverallWidgetProvider()) { entry in
@@ -583,8 +583,8 @@ struct FortuneOverallWidget: Widget {
     }
 }
 
-struct FortuneCategoryWidget: Widget {
-    let kind: String = "FortuneCategoryWidget"
+struct OndoCategoryWidget: Widget {
+    let kind: String = "OndoCategoryWidget"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: CategoryWidgetProvider()) { entry in
@@ -603,8 +603,8 @@ struct FortuneCategoryWidget: Widget {
     }
 }
 
-struct FortuneTimeSlotWidget: Widget {
-    let kind: String = "FortuneTimeSlotWidget"
+struct OndoTimeSlotWidget: Widget {
+    let kind: String = "OndoTimeSlotWidget"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: TimeSlotWidgetProvider()) { entry in
@@ -623,8 +623,8 @@ struct FortuneTimeSlotWidget: Widget {
     }
 }
 
-struct FortuneLottoWidget: Widget {
-    let kind: String = "FortuneLottoWidget"
+struct OndoLottoWidget: Widget {
+    let kind: String = "OndoLottoWidget"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: LottoWidgetProvider()) { entry in

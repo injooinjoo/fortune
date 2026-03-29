@@ -2,7 +2,7 @@
 
 ## 1. Goal
 - Requested change:
-  - Produce a repository-backed full-stack release risk audit for the Fortune app.
+  - Produce a repository-backed full-stack release risk audit for the Ondo app.
 - Work type: Documentation / Audit / Release Readiness
 - Scope:
   - Flutter app, Supabase Edge Functions, documentation, and GitHub Actions.

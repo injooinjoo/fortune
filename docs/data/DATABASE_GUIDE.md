@@ -1,6 +1,6 @@
-# Fortune Flutter App - Comprehensive Database Guide
+# Ondo Flutter App - Comprehensive Database Guide
 
-This guide provides complete documentation for the Fortune Flutter App's Supabase database architecture, including all tables, schemas, RLS policies, indexes, and migration procedures.
+This guide provides complete documentation for the Ondo Flutter App's Supabase database architecture, including all tables, schemas, RLS policies, indexes, and migration procedures.
 
 **Last Updated**: 2025-09-30
 

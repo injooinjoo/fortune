@@ -3,7 +3,7 @@ import SwiftUI
 
 // MARK: - Dependency Container
 
-/// Dependency injection container for Fortune Watch app
+/// Dependency injection container for Ondo Watch app
 @MainActor
 final class Container: ObservableObject {
 

@@ -1,6 +1,6 @@
 # Apple Developer Capabilities 설정 가이드
 
-**프로젝트**: Fortune - AI 운세 앱
+**프로젝트**: 온도 - 당신의 AI 친구 앱
 **목적**: App ID Capabilities 활성화 및 Xcode 설정
 
 ---
@@ -19,7 +19,7 @@
 
 **Capabilities**는 앱이 iOS의 특정 기능을 사용할 수 있도록 허가하는 권한입니다.
 
-### Fortune 앱에 필요한 Capabilities
+### 온도 앱에 필요한 Capabilities
 
 ```yaml
 필수:
@@ -57,7 +57,7 @@
 1. **App IDs 필터 선택**
    - 왼쪽 드롭다운에서 "App IDs" 선택
 
-2. **Fortune 앱 찾기**
+2. **온도 앱 찾기**
    - 리스트에서 `com.beyond.ondo` 검색
    - 클릭하여 상세 페이지 열기
 
@@ -87,7 +87,7 @@
 2. ☑️ 체크 활성화
 3. 옵션 선택:
    - ☑️ **Enable as a primary App ID** (기본 앱 ID로 설정)
-   - Group 설정은 비워두기 (Fortune 앱만 사용)
+   - Group 설정은 비워두기 (온도 앱만 사용)
 
 **상태**:
 ```
@@ -283,7 +283,7 @@ In-App Purchase:
 **Signing (Release)** 섹션 확인:
 ```yaml
 Automatically manage signing: ☑️ (체크됨)
-Team: Beyond Fortune (5F7CN7Y54D)
+Team: Ondo (5F7CN7Y54D)
 Provisioning Profile: Xcode Managed Profile
 
 Status: ✓ No issues
@@ -376,7 +376,7 @@ flutter run --release -d 00008140-00120304260B001C
   Price: $4.99/month
 
   Description:
-    Fortune 프리미엄 구독
+    온도 프리미엄 구독
     - 광고 제거
     - 무제한 운세 생성
     - 프리미엄 타로 카드
@@ -422,7 +422,7 @@ flutter run --release -d 00008140-00120304260B001C
 
 ```bash
 # 위젯 추가:
-# 홈 화면 길게 누르기 > + 버튼 > Fortune 위젯 선택
+# 홈 화면 길게 누르기 > + 버튼 > Ondo 위젯 선택
 ```
 
 ---
@@ -542,11 +542,11 @@ open ios/Runner.xcworkspace
 
 # Xcode
 → + Capability > In-App Purchase
-→ + Capability > App Groups > ☑️ group.com.fortune.fortune
+→ + Capability > App Groups > ☑️ group.com.beyond.ondo
 → Command + B
 
 # App Store Connect (나중에)
-→ My Apps > Fortune > In-App Purchases
+→ My Apps > Ondo > In-App Purchases
 → 상품 등록
 ```
 
@@ -557,10 +557,10 @@ open ios/Runner.xcworkspace
 **문제가 계속되면:**
 - Apple Developer Support: https://developer.apple.com/support
 - Capabilities 가이드: https://developer.apple.com/documentation/xcode/capabilities
-- Fortune 개발팀: developer@zpzg.co.kr
+- 온도 개발팀: developer@zpzg.co.kr
 
 ---
 
 **작성일**: 2025년 10월
 **문서 버전**: 1.0
-**유지보수**: Fortune 개발팀
+**유지보수**: 온도 개발팀

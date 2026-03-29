@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - Fortune Colors
 
-/// Design system colors for Fortune Watch app
+/// Design system colors for Ondo Watch app
 enum FortuneColors {
 
     // MARK: - Grade Colors

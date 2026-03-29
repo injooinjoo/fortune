@@ -1,6 +1,6 @@
 # App Store & Google Play Launch Guide
 
-Complete guide for launching the Fortune app on both iOS App Store and Google Play Store.
+Complete guide for launching the Ondo app on both iOS App Store and Google Play Store.
 
 ---
 
@@ -51,7 +51,7 @@ Complete guide for launching the Fortune app on both iOS App Store and Google Pl
 #### Basic App Information
 ```yaml
 Platform: iOS
-Name: Fortune
+Name: Ondo
 Default Language: Korean
 Bundle ID: com.beyond.ondo
 SKU: fortune-ios-001
@@ -115,16 +115,16 @@ xcrun altool --upload-app --type ios \
 
 #### App Store Information
 ```yaml
-Name: Fortune
+Name: Ondo
 Subtitle: AI-Powered Personalized Horoscope
 
 Promotional Text: |
   Discover your personalized fortune with AI analysis every day!
 
 Description: |
-  🔮 Fortune - AI-Powered Personalized Horoscope Service
+  🔮 Ondo - AI-Powered Personalized Horoscope Service
 
-  Discover a new you every day with Fortune!
+  Discover a new you every day with Ondo!
 
   ✨ Key Features
 
@@ -154,7 +154,7 @@ Description: |
   • Dark mode support
   • Smooth animations
 
-  Discover your potential with Fortune!
+  Discover your potential with Ondo!
 
   📞 Customer Support
   • Email: support@zpzg.co.kr
@@ -257,7 +257,7 @@ Data Retention: Until user account deletion
 1. Create new group in **External Testers** section
 2. Fill out **Beta App Review** information:
    ```yaml
-   Beta App Name: Fortune Beta
+   Beta App Name: Ondo Beta
    Beta App Description: AI-powered fortune service beta test
    Feedback Email: beta@zpzg.co.kr
 
@@ -270,7 +270,7 @@ Data Retention: Until user account deletion
 
 #### Send Invitations to Testers
 - TestFlight invitation emails sent automatically
-- Testers install Fortune via TestFlight app
+- Testers install Ondo via TestFlight app
 - Collect feedback and fix bugs
 
 ### 7. Submit for App Store Review
@@ -278,10 +278,10 @@ Data Retention: Until user account deletion
 #### Version Information
 ```yaml
 Version: 1.0.0
-Copyright: © 2024 Beyond Fortune. All rights reserved.
+Copyright: © 2024 Ondo. All rights reserved.
 
 What's New in This Version: |
-  🎉 Official Fortune app launch!
+  🎉 Official Ondo app launch!
 
   ✨ Key Features:
   • AI-powered personalized fortune service
@@ -306,7 +306,7 @@ Demo Account (if needed):
   Password: Demo123!
 
 Review Notes: |
-  Fortune is an AI-powered personalized horoscope service.
+  Ondo is an AI-powered personalized horoscope service.
 
   Key Features:
   1. Personalized fortune based on birth information
@@ -378,7 +378,7 @@ Phased Release: Gradual rollout at specific percentage
 
 #### Basic App Information
 ```
-App Name: Fortune
+App Name: Ondo
 Default Language: Korean (South Korea)
 App or Game: App
 Free or Paid: Free
@@ -401,7 +401,7 @@ Free or Paid: Free
 4. **Version Name**: `1.0.0`
 5. **Release Notes**:
    ```
-   First version of Fortune app.
+   First version of Ondo app.
 
    Key Features:
    - AI-powered personalized fortune service
@@ -420,12 +420,12 @@ Free or Paid: Free
 
 #### Product Details
 ```yaml
-App Name: Fortune
+App Name: Ondo
 Short Description: AI-powered personalized horoscope - Daily insights for you!
 Full Description: |
-  🔮 Fortune - AI-Powered Personalized Horoscope Service
+  🔮 Ondo - AI-Powered Personalized Horoscope Service
 
-  Discover a new you every day with Fortune!
+  Discover a new you every day with Ondo!
 
   ✨ Key Features
 
@@ -450,7 +450,7 @@ Full Description: |
   • Quick social login
   • Secure data protection
 
-  Fortune helps you discover your potential every day!
+  Ondo helps you discover your potential every day!
 
   ⚠️ Disclaimer
   For entertainment and reference only. Make important decisions carefully.
@@ -557,7 +557,7 @@ Android Version: API 23 (Android 6.0) or higher
 3. Upload same AAB file
 4. Write **Release Notes**:
    ```
-   🎉 Official Fortune app launch!
+   🎉 Official Ondo app launch!
 
    ✨ Key Features:
    • AI-powered personalized fortune
@@ -605,7 +605,7 @@ Android Version: API 23 (Android 6.0) or higher
 
 #### App Name
 ```
-Fortune (포춘)
+온도
 ```
 
 #### Subtitle
@@ -620,9 +620,9 @@ AI가 분석하는 나만의 운세 - 매일 새로운 인사이트를 만나보
 
 #### Full Description
 ```
-🔮 Fortune - AI 기반 개인 맞춤형 운세 서비스
+🔮 온도 - AI 기반 개인 맞춤형 운세 서비스
 
-매일 새로운 나를 발견하는 특별한 경험, Fortune과 함께 시작하세요!
+매일 새로운 나를 발견하는 특별한 경험, 온도와 함께 시작하세요!
 
 ✨ 주요 기능
 
@@ -652,7 +652,7 @@ AI가 분석하는 나만의 운세 - 매일 새로운 인사이트를 만나보
 • 다크모드 지원으로 언제든 편안한 사용
 • 부드러운 애니메이션과 직관적인 네비게이션
 
-Fortune과 함께 매일 새로운 자신을 발견하고, 더 나은 선택을 위한 영감을 얻어보세요!
+온도와 함께 매일 새로운 자신을 발견하고, 더 나은 선택을 위한 영감을 얻어보세요!
 
 📞 고객지원
 문의사항이나 건의사항이 있으시면 언제든 연락해 주세요.
@@ -674,7 +674,7 @@ Fortune과 함께 매일 새로운 자신을 발견하고, 더 나은 선택을 
 
 #### App Name
 ```
-Fortune - AI Personalized Horoscope
+Ondo - AI Personalized Horoscope
 ```
 
 #### Subtitle (30 characters max)
@@ -689,9 +689,9 @@ Discover your personalized fortune with AI analysis! Traditional astrology meets
 
 #### Description (4000 characters max)
 ```
-🔮 Fortune - AI-Powered Personalized Horoscope Service
+🔮 Ondo - AI-Powered Personalized Horoscope Service
 
-Discover a new you every day with Fortune's unique blend of traditional wisdom and cutting-edge AI technology!
+Discover a new you every day with Ondo's unique blend of traditional wisdom and cutting-edge AI technology!
 
 ✨ Key Features
 
@@ -721,7 +721,7 @@ Discover a new you every day with Fortune's unique blend of traditional wisdom a
 • Dark mode support for comfortable viewing
 • Smooth animations and intuitive navigation
 
-Discover your true potential and gain inspiration for better choices with Fortune!
+Discover your true potential and gain inspiration for better choices with Ondo!
 
 📞 Customer Support
 For any questions or suggestions, please contact us:
@@ -1284,6 +1284,6 @@ Solution:
 
 **Last Updated**: 2024
 **Version**: 1.0.0
-**Author**: Fortune Development Team
+**Author**: Ondo Development Team
 
 For questions or updates to this guide, contact developer@zpzg.co.kr

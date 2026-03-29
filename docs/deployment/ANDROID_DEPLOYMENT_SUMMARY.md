@@ -80,7 +80,7 @@ build/app/outputs/bundle/release/app-release.aab
 #### B. 필수 입력 정보
 
 **앱 기본 정보:**
-- 앱 이름: `Fortune`
+- 앱 이름: `온도`
 - 카테고리: 라이프스타일
 - 언어: 한국어
 

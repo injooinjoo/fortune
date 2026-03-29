@@ -2,7 +2,7 @@
 
 ## 📋 개요
 
-`ResilientService`는 Fortune Flutter 앱의 모든 서비스에서 공통적으로 사용되는 "선택적 기능" 에러 처리 패턴을 표준화한 기본 클래스입니다.
+`ResilientService`는 Ondo Flutter 앱의 모든 서비스에서 공통적으로 사용되는 "선택적 기능" 에러 처리 패턴을 표준화한 기본 클래스입니다.
 
 ## 🎯 핵심 원칙
 
@@ -291,7 +291,7 @@ grep -r "Logger.warning.*선택적 기능" lib/services/
 
 ## 🎯 결론
 
-`ResilientService`를 통해 Fortune 앱의 모든 서비스에서 일관되고 안정적인 에러 처리를 구현할 수 있습니다. 이는 사용자 경험 개선과 코드 품질 향상에 크게 기여합니다.
+`ResilientService`를 통해 온도 앱의 모든 서비스에서 일관되고 안정적인 에러 처리를 구현할 수 있습니다. 이는 사용자 경험 개선과 코드 품질 향상에 크게 기여합니다.
 
 ---
 

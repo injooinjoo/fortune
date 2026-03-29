@@ -1,4 +1,4 @@
-# Fortune 에셋 테스트 가이드 (Asset Testing Guide)
+# Ondo 에셋 테스트 가이드 (Asset Testing Guide)
 
 이 문서는 Gemini 2.5 Flash를 통해 생성된 233개의 에셋들이 앱 내 어느 페이지와 상황에서 노출되는지 정리한 가이드입니다. 테스트 시 참조하여 각 데이터 조건에 맞게 이미지가 올바르게 로드되는지 확인하시기 바랍니다.
 

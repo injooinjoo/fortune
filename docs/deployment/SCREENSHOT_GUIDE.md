@@ -103,7 +103,7 @@ Settings → General → Language & Region → Korean
 #### STEP 4: 앱 실행
 
 ```bash
-# Fortune 앱 시뮬레이터에서 실행
+# 온도 앱 시뮬레이터에서 실행
 flutter run -d "iPhone 15 Pro Max"
 
 # 또는 릴리즈 모드로 (프로덕션 빌드)
@@ -450,7 +450,7 @@ Settings → Display → Dark theme (ON/OFF)
 #### STEP 4: 앱 실행
 
 ```bash
-# Fortune 앱 에뮬레이터에서 실행
+# 온도 앱 에뮬레이터에서 실행
 flutter run -d emulator-5554
 
 # 또는 릴리즈 모드로
@@ -1001,4 +1001,4 @@ chmod +x scripts/take_all_screenshots.sh
 
 **문서 버전**: 1.0
 **최종 업데이트**: 2025-01-15
-**작성자**: Fortune Development Team
+**작성자**: Ondo Development Team

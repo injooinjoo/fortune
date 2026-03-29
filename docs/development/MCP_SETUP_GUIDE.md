@@ -1,6 +1,6 @@
 # MCP 서버 설정 가이드
 
-Fortune 앱 개발을 위한 MCP(Model Context Protocol) 서버 설정 가이드입니다.
+온도 앱 개발을 위한 MCP(Model Context Protocol) 서버 설정 가이드입니다.
 
 ## 📊 현재 연결된 MCP 서버 (10개)
 
@@ -11,7 +11,7 @@ Fortune 앱 개발을 위한 MCP(Model Context Protocol) 서버 설정 가이드
 3. **Context7** - 라이브러리 공식 문서 검색
 4. **Sequential Thinking** - 복잡한 문제 다단계 분석
 5. **Memory** - 세션 간 컨텍스트 유지
-6. **Filesystem** - Fortune 프로젝트 파일 시스템 접근
+6. **Filesystem** - 온도 프로젝트 파일 시스템 접근
 
 ### 🔐 수동 설정 필요 (API 키 필요, 4개)
 
@@ -36,7 +36,7 @@ Fortune 앱 개발을 위한 MCP(Model Context Protocol) 서버 설정 가이드
 #### Step 1: GitHub Personal Access Token 생성
 1. GitHub 웹사이트 방문: https://github.com/settings/tokens
 2. "Generate new token (classic)" 클릭
-3. 이름: `Claude Code MCP - Fortune`
+3. 이름: `Claude Code MCP - Ondo`
 4. 권한 선택:
    - ✅ `repo` (전체 repository 접근)
    - ✅ `workflow` (GitHub Actions 관리)
@@ -89,7 +89,7 @@ code ~/Library/Application\ Support/Claude/claude_desktop_config.json
 1. https://api.slack.com/apps 방문
 2. "Create New App" 클릭
 3. "From scratch" 선택
-4. App 이름: `Fortune Bot`
+4. App 이름: `Ondo Bot`
 5. Workspace 선택
 
 #### Step 2: Bot Token 및 권한 설정
@@ -142,7 +142,7 @@ code ~/Library/Application\ Support/Claude/claude_desktop_config.json
 
 #### Step 1: Firebase Admin SDK 키 생성
 1. Firebase Console 방문: https://console.firebase.google.com
-2. 프로젝트 선택: `Fortune`
+2. 프로젝트 선택: `Ondo`
 3. 톱니바퀴 아이콘 → "프로젝트 설정"
 4. "서비스 계정" 탭
 5. "새 비공개 키 생성" 클릭
@@ -318,7 +318,7 @@ tail -f ~/Library/Logs/Claude/mcp-*.log
 
 ### Slack MCP 메시지 전송 실패
 - Bot Token 확인 (xoxb-로 시작)
-- 채널에 Bot 초대 확인: `/invite @Fortune Bot`
+- 채널에 Bot 초대 확인: `/invite @Ondo Bot`
 
 ---
 
@@ -326,7 +326,7 @@ tail -f ~/Library/Logs/Claude/mcp-*.log
 
 - [MCP 공식 문서](https://modelcontextprotocol.io)
 - [Claude Code MCP 가이드](https://docs.anthropic.com/claude/docs/model-context-protocol)
-- Fortune 프로젝트 문서: [CLAUDE.md](CLAUDE.md)
+- Ondo 프로젝트 문서: [CLAUDE.md](CLAUDE.md)
 
 ---
 

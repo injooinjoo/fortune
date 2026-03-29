@@ -16,7 +16,7 @@
 
 #### Firebase 프로젝트 접속
 1. [Firebase Console](https://console.firebase.google.com)에 접속
-2. Fortune 프로젝트 선택
+2. Ondo 프로젝트 선택
 
 #### Analytics 활성화 확인
 1. 좌측 메뉴에서 **Analytics** 클릭

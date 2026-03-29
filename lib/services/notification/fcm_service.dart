@@ -663,7 +663,7 @@ class FCMService {
   Future<void> sendTestNotification() async {
     await _showLocalNotification(
         title: '테스트 알림',
-        body: 'Fortune 앱의 테스트 알림입니다.',
+        body: '온도 앱의 테스트 알림입니다.',
         channelId: NotificationChannels.system);
   }
 

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document records the current card families used in the Fortune app and the shared component that should own each pattern.
+This document records the current card families used in the Ondo app and the shared component that should own each pattern.
 
 ## Shared Families
 

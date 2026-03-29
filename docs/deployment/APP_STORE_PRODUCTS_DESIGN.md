@@ -4,7 +4,7 @@
 
 | 항목 | 값 |
 |------|---|
-| 앱 이름 | Fortune |
+| 앱 이름 | Ondo |
 | Bundle ID | `com.beyond.ondo` |
 | 총 상품 수 | 6개 (구독 2개 + 소모성 4개) |
 | 작성일 | 2024년 |
@@ -17,7 +17,7 @@
 
 | 항목 | 값 |
 |------|---|
-| 그룹 이름 | Fortune Premium |
+| 그룹 이름 | Ondo Premium |
 | 그룹 참조 이름 | fortune_premium_group |
 
 ---
@@ -26,7 +26,7 @@
 
 | 항목 | 값 |
 |------|---|
-| **참조 이름** | Fortune Pro Subscription |
+| **참조 이름** | Ondo Pro Subscription |
 | **상품 ID** | `com.beyond.ondo.subscription.monthly` |
 | **유형** | 자동 갱신 구독 (Auto-Renewable Subscription) |
 | **구독 기간** | 1개월 |
@@ -60,7 +60,7 @@
 
 | 항목 | 값 |
 |------|---|
-| **참조 이름** | Fortune Max Subscription |
+| **참조 이름** | Ondo Max Subscription |
 | **상품 ID** | `com.beyond.ondo.subscription.max` |
 | **유형** | 자동 갱신 구독 (Auto-Renewable Subscription) |
 | **구독 기간** | 1개월 |
@@ -96,7 +96,7 @@
 
 | 항목 | 값 |
 |------|---|
-| **참조 이름** | Fortune Tokens 10 |
+| **참조 이름** | Ondo Tokens 10 |
 | **상품 ID** | `com.beyond.ondo.tokens10` |
 | **유형** | 소모성 (Consumable) |
 
@@ -128,7 +128,7 @@
 
 | 항목 | 값 |
 |------|---|
-| **참조 이름** | Fortune Tokens 50 |
+| **참조 이름** | Ondo Tokens 50 |
 | **상품 ID** | `com.beyond.ondo.tokens50` |
 | **유형** | 소모성 (Consumable) |
 
@@ -160,7 +160,7 @@
 
 | 항목 | 값 |
 |------|---|
-| **참조 이름** | Fortune Tokens 100 |
+| **참조 이름** | Ondo Tokens 100 |
 | **상품 ID** | `com.beyond.ondo.tokens100` |
 | **유형** | 소모성 (Consumable) |
 
@@ -192,7 +192,7 @@
 
 | 항목 | 값 |
 |------|---|
-| **참조 이름** | Fortune Tokens 200 |
+| **참조 이름** | Ondo Tokens 200 |
 | **상품 ID** | `com.beyond.ondo.tokens200` |
 | **유형** | 소모성 (Consumable) |
 
@@ -294,7 +294,7 @@ Demo Account (if needed):
 - [ ] 뱅킹 정보 입력
 
 ### 2단계: 구독 그룹 생성
-- [ ] "Fortune Premium" 구독 그룹 생성
+- [ ] "Ondo Premium" 구독 그룹 생성
 - [ ] 그룹 참조 이름: `fortune_premium_group`
 
 ### 3단계: 구독 상품 추가

@@ -2,31 +2,31 @@ import WidgetKit
 import SwiftUI
 
 @main
-struct FortuneWidgetBundle: WidgetBundle {
+struct OndoWidgetBundle: WidgetBundle {
     @WidgetBundleBuilder
     var body: some Widget {
         // New Unified Widgets (4 types based on fortune-daily data)
-        FortuneOverallWidget()     // Overall score and grade
-        FortuneCategoryWidget()    // Category-specific fortune (love/money/work/study/health)
-        FortuneTimeSlotWidget()    // Time-based fortune (morning/afternoon/evening)
-        FortuneLottoWidget()       // Lucky numbers (5 numbers)
+        OndoOverallWidget()        // Overall score and grade
+        OndoCategoryWidget()       // Category-specific fortune (love/money/work/study/health)
+        OndoTimeSlotWidget()       // Time-based fortune (morning/afternoon/evening)
+        OndoLottoWidget()          // Lucky numbers (5 numbers)
 
         // Legacy widgets (kept for backward compatibility)
-        FortuneWidget()            // Daily Fortune Widget
-        LoveFortuneWidget()        // Love Compatibility Widget
+        OndoWidget()               // Daily Fortune Widget
+        OndoLoveWidget()           // Love Compatibility Widget
 
         // Lock Screen Widget (iOS 16.1+)
         if #available(iOS 16.1, *) {
-            LockScreenFortuneWidget()
+            OndoLockScreenWidget()
         }
 
-        // Note: FavoritesFortuneWidget removed - replaced by new unified widgets
+        // Note: OndoFavoritesWidget removed - replaced by new unified widgets
     }
 }
 
 // MARK: - Daily Fortune Widget
-struct FortuneWidget: Widget {
-    let kind: String = "FortuneWidget"
+struct OndoWidget: Widget {
+    let kind: String = "OndoWidget"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: FortuneProvider()) { entry in
@@ -46,8 +46,8 @@ struct FortuneWidget: Widget {
 }
 
 // MARK: - Love Fortune Widget
-struct LoveFortuneWidget: Widget {
-    let kind: String = "LoveFortuneWidget"
+struct OndoLoveWidget: Widget {
+    let kind: String = "OndoLoveWidget"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: LoveFortuneProvider()) { entry in
@@ -68,8 +68,8 @@ struct LoveFortuneWidget: Widget {
 
 // MARK: - Lock Screen Widget
 @available(iOS 16.1, *)
-struct LockScreenFortuneWidget: Widget {
-    let kind: String = "LockScreenFortuneWidget"
+struct OndoLockScreenWidget: Widget {
+    let kind: String = "OndoLockScreenWidget"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: FortuneProvider()) { entry in

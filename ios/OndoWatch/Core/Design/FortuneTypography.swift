@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - Fortune Typography
 
-/// Typography styles for Fortune Watch app
+/// Typography styles for Ondo Watch app
 enum FortuneTypography {
 
     // MARK: - Title Styles

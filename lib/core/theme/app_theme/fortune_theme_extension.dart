@@ -12,7 +12,7 @@ import 'dialog_styles.dart';
 import 'data_visualization.dart';
 import 'social_sharing_styles.dart';
 
-/// Custom theme extension for Fortune app with TOSS design system
+/// Custom theme extension for the Ondo app with TOSS design system
 @immutable
 class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
   // 기존 Fortune 색상

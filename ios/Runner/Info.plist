@@ -105,11 +105,11 @@
 		<string>Speech recognition is needed to convert voice to text for easier input. 음성을 텍스트로 변환하여 입력을 편리하게 하기 위해 음성 인식 권한이 필요합니다.</string>
 		<key>NSWidgetExtensionBundleIdentifiers</key>
 		<array>
-			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneWidget</string>
-			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneOverallWidget</string>
-			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneCategoryWidget</string>
-			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneTimeSlotWidget</string>
-			<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneLottoWidget</string>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER).OndoWidget</string>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER).OndoOverallWidget</string>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER).OndoCategoryWidget</string>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER).OndoTimeSlotWidget</string>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER).OndoLottoWidget</string>
 		</array>
 		<key>NidAppName</key>
 		<string>온도</string>

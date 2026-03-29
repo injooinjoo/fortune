@@ -17,7 +17,7 @@ class _PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
     const primarySections = [
       (
         '1. 개인정보의 수집 및 이용 목적',
-        'Fortune 앱은 수집한 개인정보를 다음의 목적을 위해 이용합니다.\n'
+        '온도 앱은 수집한 개인정보를 다음의 목적을 위해 이용합니다.\n'
             '• 회원 가입 및 관리\n'
             '• 맞춤형 운세 결과 생성\n'
             '• 대화 분석 및 관계 인사이트 제공\n'
