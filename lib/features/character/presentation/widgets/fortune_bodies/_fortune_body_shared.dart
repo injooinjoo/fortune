@@ -59,13 +59,9 @@ class FortuneSectionCard extends StatelessWidget {
     final colors = context.colors;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(DSSpacing.lg),
+      padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [colors.backgroundSecondary, colors.surface],
-        ),
+        color: colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.lg),
         border: Border.all(
           color: colors.border.withValues(alpha: 0.15),
@@ -76,19 +72,19 @@ class FortuneSectionCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(emoji, style: const TextStyle(fontSize: 22)),
+              Text(emoji, style: const TextStyle(fontSize: 16)),
               const SizedBox(width: DSSpacing.sm),
               Expanded(
                 child: Text(
                   title,
-                  style: context.bodyLarge.copyWith(
-                    fontWeight: FontWeight.w700,
+                  style: context.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: DSSpacing.md),
+          const SizedBox(height: DSSpacing.sm),
           child,
         ],
       ),
@@ -113,25 +109,23 @@ class FortuneMetricRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     return Padding(
-      padding: const EdgeInsets.only(bottom: DSSpacing.sm),
+      padding: const EdgeInsets.only(bottom: DSSpacing.xs),
       child: Row(
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 18)),
-          const SizedBox(width: DSSpacing.sm),
+          Text(emoji, style: const TextStyle(fontSize: 14)),
+          const SizedBox(width: DSSpacing.xs),
           Text(
             label,
-            style: context.labelMedium.copyWith(
-              color: colors.textSecondary,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.2,
+            style: context.labelSmall.copyWith(
+              color: colors.textTertiary,
             ),
           ),
           const Spacer(),
           Flexible(
             child: Text(
               value,
-              style: context.bodyMedium.copyWith(
-                fontWeight: FontWeight.w600,
+              style: context.labelSmall.copyWith(
+                color: colors.textPrimary,
               ),
               textAlign: TextAlign.right,
               overflow: TextOverflow.ellipsis,
@@ -160,21 +154,20 @@ class FortuneTagPillWrap extends StatelessWidget {
           .map(
             (tag) => Container(
               padding: const EdgeInsets.symmetric(
-                horizontal: DSSpacing.md - 4,
-                vertical: DSSpacing.xs + 2,
+                horizontal: DSSpacing.sm,
+                vertical: DSSpacing.xs,
               ),
               decoration: BoxDecoration(
-                color: colors.accentSecondary.withValues(alpha: 0.08),
+                color: colors.border.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(DSRadius.full),
                 border: Border.all(
-                  color: colors.accentSecondary.withValues(alpha: 0.15),
+                  color: colors.border.withValues(alpha: 0.4),
                 ),
               ),
               child: Text(
                 tag,
-                style: context.labelMedium.copyWith(
+                style: context.labelSmall.copyWith(
                   color: colors.textSecondary,
-                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -184,59 +177,7 @@ class FortuneTagPillWrap extends StatelessWidget {
   }
 }
 
-class _FortuneAccentCardSurface extends StatelessWidget {
-  final Gradient gradient;
-  final Color accentColor;
-  final Color borderColor;
-  final EdgeInsetsGeometry padding;
-  final Widget child;
-
-  const _FortuneAccentCardSurface({
-    required this.gradient,
-    required this.accentColor,
-    required this.borderColor,
-    required this.padding,
-    required this.child,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(DSRadius.lg);
-
-    return SizedBox(
-      width: double.infinity,
-      child: ClipRRect(
-        borderRadius: radius,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: gradient,
-            borderRadius: radius,
-            border: Border.all(color: borderColor),
-          ),
-          child: Stack(
-            children: [
-              Positioned(
-                left: 0,
-                top: 0,
-                bottom: 0,
-                child: ColoredBox(
-                  color: accentColor,
-                  child: const SizedBox(width: 3),
-                ),
-              ),
-              Padding(
-                padding: padding,
-                child: child,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Highlighted tip card with accent left border
+/// Highlighted tip card with accent background
 class FortuneTipCard extends StatelessWidget {
   final String emoji;
   final String text;
@@ -250,35 +191,27 @@ class FortuneTipCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    return _FortuneAccentCardSurface(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          colors.accentSecondary.withValues(alpha: 0.08),
-          colors.backgroundSecondary,
-        ],
-      ),
-      accentColor: colors.accentSecondary.withValues(alpha: 0.4),
-      borderColor: colors.accentSecondary.withValues(alpha: 0.12),
-      padding: const EdgeInsets.fromLTRB(
-        DSSpacing.lg + 2,
-        DSSpacing.md,
-        DSSpacing.md,
-        DSSpacing.md,
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: colors.accent.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(
+          color: colors.accent.withValues(alpha: 0.27),
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 20)),
-          const SizedBox(width: DSSpacing.sm + 4),
+          Text(emoji, style: const TextStyle(fontSize: 14)),
+          const SizedBox(width: DSSpacing.sm),
           Expanded(
             child: Text(
               text,
-              style: context.bodyMedium.copyWith(
-                fontWeight: FontWeight.w500,
-                height: 1.6,
-                color: colors.textPrimary,
+              style: context.bodySmall.copyWith(
+                height: 1.5,
+                color: colors.textSecondary,
               ),
             ),
           ),
@@ -304,14 +237,10 @@ class FortuneDosDontsCard extends StatelessWidget {
     final colors = context.colors;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(DSSpacing.lg),
+      padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [colors.backgroundSecondary, colors.surface],
-        ),
-        borderRadius: BorderRadius.circular(DSRadius.lg),
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
           color: colors.border.withValues(alpha: 0.15),
         ),
@@ -433,14 +362,10 @@ class FortuneLuckyItemGrid extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(DSSpacing.lg),
+      padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [colors.backgroundSecondary, colors.surface],
-        ),
-        borderRadius: BorderRadius.circular(DSRadius.lg),
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
           color: colors.border.withValues(alpha: 0.15),
         ),
@@ -450,25 +375,37 @@ class FortuneLuckyItemGrid extends StatelessWidget {
         children: [
           Text(
             '🍀 행운 포인트',
-            style: context.bodyLarge.copyWith(
-              fontWeight: FontWeight.w700,
+            style: context.labelSmall.copyWith(
+              fontWeight: FontWeight.w600,
+              color: colors.accent,
             ),
           ),
-          const SizedBox(height: DSSpacing.md),
-          Wrap(
-            spacing: DSSpacing.sm,
-            runSpacing: DSSpacing.sm,
-            children: entries.map((e) {
-              final emoji = _emojiMap[e.key] ?? '🌟';
-              final label =
-                  _labelMap[e.key] ?? FortuneKeyLocalizer.labelFor(e.key);
-              return _LuckyChip(
-                emoji: emoji,
-                label: label,
-                value: e.value.toString(),
-              );
-            }).toList(growable: false),
-          ),
+          const SizedBox(height: DSSpacing.sm),
+          ...entries.map((e) {
+            final emoji = _emojiMap[e.key] ?? '🌟';
+            final label =
+                _labelMap[e.key] ?? FortuneKeyLocalizer.labelFor(e.key);
+            return Padding(
+              padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+              child: Row(
+                children: [
+                  Text(
+                    '$emoji $label',
+                    style: context.labelSmall.copyWith(
+                      color: colors.textTertiary,
+                    ),
+                  ),
+                  const Spacer(),
+                  Text(
+                    e.value.toString(),
+                    style: context.labelSmall.copyWith(
+                      color: colors.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
         ],
       ),
     );
@@ -502,42 +439,42 @@ class FortuneProgressBar extends StatelessWidget {
             const SizedBox(width: DSSpacing.xs),
           ],
           SizedBox(
-            width: 48,
+            width: 50,
             child: Text(
               label,
-              style: context.labelMedium.copyWith(
-                fontWeight: FontWeight.w600,
-                color: colors.textSecondary,
+              style: context.labelTiny.copyWith(
+                color: colors.textTertiary,
               ),
             ),
           ),
           const SizedBox(width: DSSpacing.xs),
           Expanded(
             child: Container(
-              height: 10,
+              height: 6,
               decoration: BoxDecoration(
-                color: colors.border.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(5),
+                color: colors.border.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(3),
               ),
               child: FractionallySizedBox(
                 alignment: Alignment.centerLeft,
                 widthFactor: fraction,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: colors.accentSecondary,
-                    borderRadius: BorderRadius.circular(5),
+                    color: colors.accent,
+                    borderRadius: BorderRadius.circular(3),
                   ),
                 ),
               ),
             ),
           ),
-          const SizedBox(width: DSSpacing.sm),
+          const SizedBox(width: DSSpacing.xs),
           SizedBox(
-            width: 36,
+            width: 20,
             child: Text(
-              '$score%',
-              style: context.labelMedium.copyWith(
-                fontWeight: FontWeight.w700,
+              '$score',
+              style: context.labelTiny.copyWith(
+                color: colors.accent,
+                fontSize: 10,
               ),
               textAlign: TextAlign.right,
             ),
@@ -564,32 +501,28 @@ class FortuneQuoteBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    return _FortuneAccentCardSurface(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [colors.backgroundSecondary, colors.surface],
-      ),
-      accentColor: colors.accentSecondary.withValues(alpha: 0.8),
-      borderColor: colors.border.withValues(alpha: 0.15),
-      padding: const EdgeInsets.fromLTRB(
-        DSSpacing.lg + 2,
-        DSSpacing.lg,
-        DSSpacing.lg,
-        DSSpacing.lg,
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(DSSpacing.md),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(
+          color: colors.border.withValues(alpha: 0.15),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Text(emoji, style: const TextStyle(fontSize: 18)),
+              Text(emoji, style: const TextStyle(fontSize: 16)),
               const SizedBox(width: DSSpacing.sm),
               Expanded(
                 child: Text(
                   title,
                   style: context.bodyMedium.copyWith(
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -598,10 +531,9 @@ class FortuneQuoteBlock extends StatelessWidget {
           const SizedBox(height: DSSpacing.sm),
           Text(
             text,
-            style: context.bodyMedium.copyWith(
+            style: context.bodySmall.copyWith(
               color: colors.textSecondary,
-              height: 1.6,
-              fontStyle: FontStyle.italic,
+              height: 1.5,
             ),
           ),
         ],
@@ -664,62 +596,6 @@ class FortuneBulletList extends StatelessWidget {
 }
 
 // ═══ Private Widgets ═══
-
-class _LuckyChip extends StatelessWidget {
-  final String emoji;
-  final String label;
-  final String value;
-
-  const _LuckyChip({
-    required this.emoji,
-    required this.label,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: DSSpacing.md - 4,
-        vertical: DSSpacing.sm,
-      ),
-      decoration: BoxDecoration(
-        color: colors.accentSecondary.withValues(alpha: 0.06),
-        borderRadius: BorderRadius.circular(DSRadius.md),
-        border: Border.all(
-          color: colors.accentSecondary.withValues(alpha: 0.12),
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(emoji, style: const TextStyle(fontSize: 18)),
-          const SizedBox(width: DSSpacing.xs),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                label,
-                style: context.labelSmall.copyWith(
-                  color: colors.textSecondary,
-                  fontSize: 11,
-                ),
-              ),
-              Text(
-                value,
-                style: context.labelSmall.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 // ═══ Helper Functions ═══
 

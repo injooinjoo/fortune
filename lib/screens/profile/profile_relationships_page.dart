@@ -46,7 +46,7 @@ class ProfileRelationshipsPage extends ConsumerWidget {
                     _summaryText(stats),
                     style: context.bodyMedium.copyWith(
                       color: colors.textSecondary,
-                      height: 1.55,
+                      height: 1.6,
                     ),
                   ),
                   const SizedBox(height: DSSpacing.lg),
@@ -140,6 +140,7 @@ class _RelationshipEntryCard extends StatelessWidget {
                         style: context.bodyLarge.copyWith(
                           color: colors.textPrimary,
                           fontWeight: FontWeight.w700,
+                          fontSize: 17,
                         ),
                       ),
                     ),
@@ -151,7 +152,7 @@ class _RelationshipEntryCard extends StatelessWidget {
                   entry.character.shortDescription,
                   style: context.bodySmall.copyWith(
                     color: colors.textSecondary,
-                    height: 1.45,
+                    height: 1.5,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -264,7 +265,7 @@ class _StatusChip extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: context.labelSmall.copyWith(
+        style: context.bodySmall.copyWith(
           color: hasUnread ? colors.toggleActive : colors.textSecondary,
           fontWeight: FontWeight.w700,
         ),
@@ -335,13 +336,13 @@ class _MetricChip extends StatelessWidget {
           children: [
             TextSpan(
               text: '$label ',
-              style: context.labelSmall.copyWith(
+              style: context.bodySmall.copyWith(
                 color: colors.textSecondary,
               ),
             ),
             TextSpan(
               text: value,
-              style: context.labelSmall.copyWith(
+              style: context.bodySmall.copyWith(
                 color: colors.textPrimary,
                 fontWeight: FontWeight.w700,
               ),

@@ -93,17 +93,23 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
 
   Widget _buildBullet(String text) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+      padding: const EdgeInsets.only(bottom: DSSpacing.sm),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('• ', style: context.bodySmall),
+          Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(
+              color: context.colors.error,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: DSSpacing.sm),
           Expanded(
             child: Text(
               text,
-              style: context.bodySmall.copyWith(
-                color: context.colors.textSecondary,
-                height: 1.4,
+              style: context.bodyMedium.copyWith(
+                color: context.colors.textPrimary,
               ),
             ),
           ),
@@ -207,6 +213,7 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
                           '정말 떠나시나요?',
                           style: context.heading2.copyWith(
                             color: context.colors.textPrimary,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                         const SizedBox(height: DSSpacing.sm),
@@ -214,7 +221,7 @@ class _AccountDeletionPageState extends State<AccountDeletionPage> {
                           '계정을 삭제하면 아래 데이터가 영구 삭제됩니다. 이 작업은 되돌릴 수 없습니다.',
                           style: context.bodyMedium.copyWith(
                             color: context.colors.textSecondary,
-                            height: 1.5,
+                            height: 1.6,
                           ),
                         ),
                         const SizedBox(height: DSSpacing.xl),

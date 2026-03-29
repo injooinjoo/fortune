@@ -203,11 +203,12 @@ class _SajuSummaryContent extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: DSSpacing.xl),
+        const SizedBox(height: DSSpacing.md),
         Text(
           '오행 분석',
-          style: context.heading4.copyWith(
+          style: context.bodyLarge.copyWith(
             color: context.colors.textPrimary,
+            fontWeight: FontWeight.w600,
           ),
         ),
         const SizedBox(height: DSSpacing.md),
@@ -240,15 +241,16 @@ class _SajuSummaryContent extends StatelessWidget {
               ),
           ],
         ),
-        const SizedBox(height: DSSpacing.xl),
+        const SizedBox(height: 20),
         PaperRuntimePanel(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 '성격 특성',
-                style: context.heading4.copyWith(
+                style: context.bodyLarge.copyWith(
                   color: context.colors.textPrimary,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: DSSpacing.sm),
@@ -309,13 +311,10 @@ class _PillarTile extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: DSSpacing.sm,
-        vertical: DSSpacing.md,
-      ),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       decoration: BoxDecoration(
-        color: context.colors.backgroundSecondary.withValues(alpha: 0.72),
-        borderRadius: BorderRadius.circular(DSRadius.lg),
+        color: context.colors.border,
+        borderRadius: BorderRadius.circular(DSRadius.smd),
       ),
       child: Column(
         children: [
@@ -328,7 +327,10 @@ class _PillarTile extends StatelessWidget {
           const SizedBox(height: DSSpacing.xs),
           Text(
             value,
-            style: context.heading4.copyWith(
+            style: TextStyle(
+              fontFamily: 'NanumMyeongjo',
+              fontSize: 20,
+              fontWeight: FontWeight.w400,
               color: isDark ? SajuColors.earthDark : SajuColors.earthLight,
             ),
           ),

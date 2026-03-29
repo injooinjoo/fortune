@@ -381,7 +381,7 @@ class _PersonalizedStarterSection extends StatelessWidget {
               children: [
                 Text(
                   '맞춤 시작점',
-                  style: typography.headingSmall.copyWith(
+                  style: context.heading4.copyWith(
                     color: colors.textPrimary,
                   ),
                 ),
@@ -465,15 +465,16 @@ class _StarterOptionCard extends StatelessWidget {
                   children: [
                     Text(
                       option.label,
-                      style: typography.labelLarge.copyWith(
+                      style: typography.bodyMedium.copyWith(
                         color: colors.textPrimary,
                         fontWeight: FontWeight.w700,
+                        fontSize: 15,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       option.subtitle,
-                      style: typography.bodySmall.copyWith(
+                      style: typography.labelSmall.copyWith(
                         color: colors.textSecondary,
                       ),
                     ),
@@ -514,19 +515,17 @@ class _CharacterTabBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(
-          DSSpacing.md, 4, DSSpacing.md, DSSpacing.sm),
+          DSSpacing.md, DSSpacing.xs, DSSpacing.md, DSSpacing.sm),
       child: Row(
         children: [
           _TabButton(
             label: context.l10n.story,
-            icon: Icons.favorite_outline,
             isSelected: currentTab == CharacterListTab.story,
             onTap: isLocked ? null : () => onTabChanged(CharacterListTab.story),
           ),
           const SizedBox(width: DSSpacing.xs),
           _TabButton(
             label: context.l10n.viewFortune,
-            icon: Icons.auto_awesome,
             isSelected: currentTab == CharacterListTab.fortune,
             onTap:
                 isLocked ? null : () => onTabChanged(CharacterListTab.fortune),
@@ -539,13 +538,11 @@ class _CharacterTabBar extends StatelessWidget {
 
 class _TabButton extends StatelessWidget {
   final String label;
-  final IconData icon;
   final bool isSelected;
   final VoidCallback? onTap;
 
   const _TabButton({
     required this.label,
-    required this.icon,
     required this.isSelected,
     required this.onTap,
   });
@@ -559,39 +556,26 @@ class _TabButton extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(
-            horizontal: DSSpacing.md, vertical: DSSpacing.xs + 2),
+            horizontal: DSSpacing.md, vertical: DSSpacing.xs),
         decoration: BoxDecoration(
           color: isSelected
-              ? colors.selectionBackground.withValues(alpha: 0.96)
-              : colors.backgroundSecondary.withValues(alpha: 0.9),
-          borderRadius: BorderRadius.circular(context.radius.full),
-          border: Border.all(
-            color: isSelected
-                ? colors.selectionBorder
-                : colors.border.withValues(alpha: 0.7),
-          ),
+              ? colors.textPrimary
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+          border: isSelected
+              ? null
+              : Border.all(
+                  color: colors.border.withValues(alpha: 0.68),
+                ),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              size: 16,
-              color: isSelected
-                  ? colors.selectionForeground
-                  : colors.textSecondary,
-            ),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: context.typography.labelLarge.copyWith(
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                color: isSelected
-                    ? colors.selectionForeground
-                    : colors.textSecondary,
-              ),
-            ),
-          ],
+        child: Text(
+          label,
+          style: context.typography.bodySmall.copyWith(
+            fontWeight: FontWeight.w700,
+            color: isSelected
+                ? colors.background
+                : colors.textSecondary,
+          ),
         ),
       ),
     );
@@ -832,7 +816,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                   ),
                 ),
                 padding: const EdgeInsets.symmetric(
-                    horizontal: DSSpacing.md, vertical: 6),
+                    horizontal: DSSpacing.md, vertical: 12),
                 child: Row(
                   children: [
                     // 아바타 (탭하면 프로필)
@@ -848,7 +832,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                         clipBehavior: Clip.none,
                         children: [
                           CircleAvatar(
-                            radius: 28,
+                            radius: 26,
                             backgroundColor: accentPalette.accent,
                             backgroundImage:
                                 widget.character.avatarAsset.isNotEmpty
@@ -887,13 +871,14 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                         ],
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    // 이름 + 태그 + 마지막 메시지
+                    const SizedBox(width: DSSpacing.md),
+                    // 이름 + 태그 + 마지막 메시지 (Paper 3줄 구조)
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          // 줄 1: 이름 + 타임스탬프
                           Row(
                             children: [
                               Flexible(
@@ -938,23 +923,92 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                   ),
                                 ),
                               ],
-                              if (tagsText.isNotEmpty) ...[
-                                const SizedBox(width: 6),
+                              const Spacer(),
+                              if (hasConversation &&
+                                  chatState.lastMessageTime != null)
+                                Text(
+                                  _formatTimestamp(chatState.lastMessageTime!),
+                                  style: typography.labelSmall.copyWith(
+                                    fontWeight: FontWeight.w400,
+                                    color: colors.textTertiary,
+                                  ),
+                                ),
+                              if (!hasConversation)
+                                Text(
+                                  context.l10n.newConversation,
+                                  style: typography.labelSmall.copyWith(
+                                    fontWeight: FontWeight.w400,
+                                    color: colors.textTertiary,
+                                  ),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          // 줄 2: 태그 + 배지
+                          Row(
+                            children: [
+                              if (tagsText.isNotEmpty)
                                 Expanded(
                                   child: Text(
                                     tagsText,
-                                    style: typography.labelMedium.copyWith(
-                                      fontWeight: FontWeight.w500,
-                                      color: colors.textTertiary,
+                                    style: typography.labelSmall.copyWith(
+                                      fontWeight: FontWeight.w400,
+                                      color: DSColors.ctaBackground,
                                     ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
+                                  ),
+                                )
+                              else
+                                const Spacer(),
+                              if (hasUnread) ...[
+                                const SizedBox(width: 8),
+                                DSBadge(
+                                  count: unreadCount,
+                                  color: DSBadgeColor.error,
+                                  style: DSBadgeStyle.pill,
+                                ),
+                              ] else if (isMyTurn) ...[
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF2A2A4A),
+                                    borderRadius: BorderRadius.circular(
+                                        DSRadius.md),
+                                  ),
+                                  child: Text(
+                                    context.l10n.yourTurn,
+                                    style: typography.bodyLarge.copyWith(
+                                      fontWeight: FontWeight.w400,
+                                      color: colors.textPrimary,
+                                    ),
+                                  ),
+                                ),
+                              ] else if (!hasConversation) ...[
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF1A2A1A),
+                                    borderRadius: BorderRadius.circular(
+                                        DSRadius.md),
+                                  ),
+                                  child: Text(
+                                    context.l10n.newConversation,
+                                    style: typography.bodyLarge.copyWith(
+                                      fontWeight: FontWeight.w400,
+                                      color: colors.textPrimary,
+                                    ),
                                   ),
                                 ),
                               ],
                             ],
                           ),
-                          const SizedBox(height: 2),
+                          const SizedBox(height: 4),
+                          // 줄 3: 메시지 미리보기
                           Text(
                             isTyping
                                 ? context.l10n.typing
@@ -965,7 +1019,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                         context,
                                         widget.character,
                                       )),
-                            style: typography.bodyMedium.copyWith(
+                            style: typography.bodySmall.copyWith(
                               fontWeight: isTyping || hasUnread
                                   ? FontWeight.w500
                                   : FontWeight.w400,
@@ -973,64 +1027,13 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                   ? accentPalette.accent
                                   : hasUnread
                                       ? colors.textPrimary
-                                      : colors.textSecondary,
+                                      : colors.textTertiary,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    // 타임스탬프 + 내 차례 표시
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (hasConversation &&
-                            chatState.lastMessageTime != null)
-                          Text(
-                            _formatTimestamp(chatState.lastMessageTime!),
-                            style: typography.labelSmall.copyWith(
-                              fontWeight: FontWeight.w400,
-                              color: colors.textTertiary,
-                            ),
-                          ),
-                        if (!hasConversation)
-                          Text(
-                            context.l10n.newConversation,
-                            style: typography.labelSmall.copyWith(
-                              fontWeight: FontWeight.w400,
-                              color: colors.textTertiary,
-                            ),
-                          ),
-                        if (hasUnread) ...[
-                          const SizedBox(height: 6),
-                          DSBadge(
-                            count: unreadCount,
-                            color: DSBadgeColor.error,
-                            style: DSBadgeStyle.pill,
-                          ),
-                        ] else if (isMyTurn) ...[
-                          const SizedBox(height: 6),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 3),
-                            decoration: BoxDecoration(
-                              color: context.colors.backgroundSecondary,
-                              borderRadius:
-                                  BorderRadius.circular(context.radius.full),
-                            ),
-                            child: Text(
-                              context.l10n.yourTurn,
-                              style: context.typography.labelSmall.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: context.colors.textPrimary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ],
                     ),
                   ],
                 ),
@@ -1214,9 +1217,9 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
                     color: context.colors.textSecondary,
                   ),
                   filled: true,
-                  fillColor: context.colors.backgroundSecondary,
+                  fillColor: context.colors.surface,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(context.radius.full),
+                    borderRadius: BorderRadius.circular(DSRadius.md),
                     borderSide: BorderSide.none,
                   ),
                   contentPadding: const EdgeInsets.symmetric(
@@ -1296,33 +1299,12 @@ class _SheetSectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(
-          title,
-          style: context.typography.labelLarge.copyWith(
-            color: context.colors.textSecondary,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        if (count != null) ...[
-          const SizedBox(width: DSSpacing.xs),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-            decoration: BoxDecoration(
-              color: context.colors.backgroundSecondary,
-              borderRadius: BorderRadius.circular(context.radius.full),
-            ),
-            child: Text(
-              '$count',
-              style: context.typography.labelSmall.copyWith(
-                color: context.colors.textSecondary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
-      ],
+    final label = count != null ? '$title $count' : title;
+    return Text(
+      label,
+      style: context.typography.bodyLarge.copyWith(
+        color: context.colors.textSecondary,
+      ),
     );
   }
 }
@@ -1336,37 +1318,26 @@ class _NewFriendActionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(context.radius.xl),
+      borderRadius: BorderRadius.circular(DSRadius.lg),
       child: Ink(
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.all(DSSpacing.md),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              context.colors.ctaBackground.withValues(alpha: 0.16),
-              context.colors.backgroundSecondary,
-            ],
-          ),
-          borderRadius: BorderRadius.circular(context.radius.xl),
-          border: Border.all(
-            color: context.colors.ctaBackground.withValues(alpha: 0.24),
-          ),
+          color: const Color(0xFF1A1A2A),
+          borderRadius: BorderRadius.circular(DSRadius.lg),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: context.colors.ctaBackground.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(context.radius.full),
+                color: const Color(0xFF2A2A4A),
+                borderRadius: BorderRadius.circular(DSRadius.md),
               ),
               child: Text(
                 '직접 만들기',
-                style: context.typography.labelSmall.copyWith(
-                  color: context.colors.ctaBackground,
-                  fontWeight: FontWeight.w700,
+                style: context.typography.bodyLarge.copyWith(
+                  color: context.colors.textPrimary,
                 ),
               ),
             ),
@@ -1375,15 +1346,16 @@ class _NewFriendActionCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: context.colors.ctaBackground,
-                    borderRadius: BorderRadius.circular(context.radius.full),
+                  width: 44,
+                  height: 44,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF2A2A3A),
+                    shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.add,
-                    color: context.colors.ctaForeground,
+                    size: 20,
+                    color: context.colors.accent,
                   ),
                 ),
                 const SizedBox(width: 14),
@@ -1393,27 +1365,20 @@ class _NewFriendActionCard extends StatelessWidget {
                     children: [
                       Text(
                         '친구 새로 만들기',
-                        style: context.typography.headingSmall.copyWith(
+                        style: context.typography.bodyLarge.copyWith(
                           color: context.colors.textPrimary,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         '이름, 성격, 분위기, 관계를 정해서 원하는 흐름의 대화를 바로 시작하세요.',
-                        style: context.typography.bodyMedium.copyWith(
-                          color: context.colors.textSecondary,
-                          height: 1.45,
+                        style: context.typography.labelSmall.copyWith(
+                          color: context.colors.textTertiary,
                         ),
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(width: 12),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16,
-                  color: context.colors.textSecondary,
                 ),
               ],
             ),
@@ -1443,19 +1408,15 @@ class _NewFriendActionChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: context.colors.surface.withValues(alpha: 0.82),
-        borderRadius: BorderRadius.circular(context.radius.full),
-        border: Border.all(
-          color: context.colors.border.withValues(alpha: 0.8),
-        ),
+        color: const Color(0xFF222222),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
         label,
-        style: context.typography.labelSmall.copyWith(
-          color: context.colors.textSecondary,
-          fontWeight: FontWeight.w600,
+        style: context.typography.bodyLarge.copyWith(
+          color: context.colors.textPrimary,
         ),
       ),
     );
@@ -1553,13 +1514,14 @@ class _NewMessageCharacterTile extends StatelessWidget {
         CharacterLocalizer.resolveName(context, character),
         style: context.typography.bodyLarge.copyWith(
           color: context.colors.textPrimary,
+          fontSize: 15,
           fontWeight: FontWeight.w600,
         ),
       ),
       subtitle: Text(
         summary,
-        style: context.typography.bodyMedium.copyWith(
-          color: context.colors.textSecondary,
+        style: context.typography.labelSmall.copyWith(
+          color: context.colors.textTertiary,
         ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,

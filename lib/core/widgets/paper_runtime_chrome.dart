@@ -222,19 +222,14 @@ class PaperRuntimePill extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: DSSpacing.md,
-        vertical: DSSpacing.sm,
+        horizontal: DSSpacing.sm,
+        vertical: DSSpacing.xs,
       ),
       decoration: BoxDecoration(
         color: emphasize
             ? colors.selectionBackground.withValues(alpha: 0.92)
-            : colors.backgroundSecondary.withValues(alpha: 0.92),
+            : colors.textPrimary.withValues(alpha: 0.07),
         borderRadius: BorderRadius.circular(DSRadius.full),
-        border: Border.all(
-          color: emphasize
-              ? colors.selectionBorder.withValues(alpha: 0.9)
-              : colors.border.withValues(alpha: 0.8),
-        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -250,10 +245,12 @@ class PaperRuntimePill extends StatelessWidget {
           ],
           Text(
             label,
-            style: context.labelMedium.copyWith(
-              color:
-                  emphasize ? colors.selectionForeground : colors.textSecondary,
-              fontWeight: FontWeight.w600,
+            style: context.labelSmall.copyWith(
+              color: emphasize
+                  ? colors.selectionForeground
+                  : const Color(0xFFB8BCC9),
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.2,
             ),
           ),
         ],

@@ -230,7 +230,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
           onPressed: _isLoading || _isSaving ? null : _saveProfile,
           child: Text(
             _isSaving ? '저장 중' : '저장',
-            style: context.bodyMedium.copyWith(
+            style: context.bodyLarge.copyWith(
               color: _isLoading || _isSaving
                   ? colors.textTertiary
                   : colors.textPrimary,
@@ -263,7 +263,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                       },
                     ),
                   ),
-                  const SizedBox(height: DSSpacing.xl),
+                  const SizedBox(height: DSSpacing.pageHorizontal),
                   _FieldBlock(
                     label: '이름',
                     child: TextField(
@@ -327,17 +327,42 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                             padding: EdgeInsets.only(
                               right: gender == Gender.male ? DSSpacing.sm : 0,
                             ),
-                            child: PaperRuntimeButton(
-                              label: gender.label,
-                              onPressed: () {
+                            child: GestureDetector(
+                              onTap: () {
                                 setState(() {
                                   _gender = gender;
                                 });
                               },
-                              expanded: true,
-                              variant: selected
-                                  ? PaperRuntimeButtonVariant.primary
-                                  : PaperRuntimeButtonVariant.secondary,
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 180),
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: DSSpacing.sm + 4),
+                                decoration: BoxDecoration(
+                                  color: selected
+                                      ? DSColors.ctaBackground
+                                      : colors.surface,
+                                  borderRadius:
+                                      BorderRadius.circular(DSRadius.full),
+                                  border: selected
+                                      ? null
+                                      : Border.all(
+                                          color: colors.border
+                                              .withValues(alpha: 0.8),
+                                        ),
+                                ),
+                                child: Text(
+                                  gender.label,
+                                  style: context.bodyMedium.copyWith(
+                                    fontWeight: selected
+                                        ? FontWeight.w600
+                                        : FontWeight.w500,
+                                    color: selected
+                                        ? colors.textPrimary
+                                        : colors.textSecondary,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         );

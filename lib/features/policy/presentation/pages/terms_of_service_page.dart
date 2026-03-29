@@ -66,7 +66,6 @@ class _TermsOfServicePageState extends ConsumerState<TermsOfServicePage> {
             title,
             style: context.heading4.copyWith(
               color: colors.textPrimary,
-              fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: DSSpacing.sm),

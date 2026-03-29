@@ -7,7 +7,7 @@ class CharacterChatSurfaceStyle {
 
   static const EdgeInsets bubblePadding = EdgeInsets.symmetric(
     horizontal: DSSpacing.md,
-    vertical: DSSpacing.sm + DSSpacing.xxs,
+    vertical: DSSpacing.sm,
   );
 
   static const EdgeInsets floatingSurfacePadding = EdgeInsets.all(
@@ -15,24 +15,26 @@ class CharacterChatSurfaceStyle {
   );
 
   static const double messageSideInset = 48;
+  static const double bubbleMaxWidth = 260;
   static const double avatarGap = DSSpacing.sm + DSSpacing.xxs;
   static const double mediaRadius = 16;
   static const double defaultShadowBlur = 16;
   static const Offset defaultShadowOffset = Offset(0, 6);
 
   static BorderRadius outgoingBubbleRadius() => const BorderRadius.only(
-        topLeft: Radius.circular(DSRadius.xl),
-        topRight: Radius.circular(DSRadius.xl),
-        bottomLeft: Radius.circular(DSRadius.xl),
-        bottomRight: Radius.circular(DSRadius.sm),
+        topLeft: Radius.circular(DSRadius.messageBubble),
+        topRight: Radius.circular(DSRadius.xs),
+        bottomLeft: Radius.circular(DSRadius.messageBubble),
+        bottomRight: Radius.circular(DSRadius.messageBubble),
       );
 
   static BorderRadius incomingBubbleRadius({required bool hasLeadingMedia}) =>
       BorderRadius.only(
-        topLeft: Radius.circular(hasLeadingMedia ? DSRadius.xl : DSRadius.sm),
-        topRight: const Radius.circular(DSRadius.xl),
-        bottomLeft: const Radius.circular(DSRadius.xl),
-        bottomRight: const Radius.circular(DSRadius.xl),
+        topLeft: Radius.circular(
+            hasLeadingMedia ? DSRadius.messageBubble : DSRadius.xs),
+        topRight: const Radius.circular(DSRadius.messageBubble),
+        bottomLeft: const Radius.circular(DSRadius.messageBubble),
+        bottomRight: const Radius.circular(DSRadius.messageBubble),
       );
 
   static BorderRadius floatingSurfaceRadius({

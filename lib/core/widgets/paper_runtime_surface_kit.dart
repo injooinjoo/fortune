@@ -113,7 +113,7 @@ class PaperRuntimeMenuTile extends StatelessWidget {
     this.destructive = false,
     this.padding = const EdgeInsets.symmetric(
       horizontal: DSSpacing.pageHorizontal,
-      vertical: DSSpacing.md,
+      vertical: 18,
     ),
   });
 
@@ -143,14 +143,15 @@ class PaperRuntimeMenuTile extends StatelessWidget {
                   title,
                   style: context.bodyLarge.copyWith(
                     color: titleColor,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 if (subtitle != null) ...[
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 6),
                   Text(
                     subtitle!,
-                    style: context.labelSmall.copyWith(
+                    style: context.bodyMedium.copyWith(
                       color: colors.textSecondary,
                     ),
                   ),

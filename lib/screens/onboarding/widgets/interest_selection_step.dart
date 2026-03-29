@@ -78,18 +78,17 @@ class _InterestSelectionStepState extends State<InterestSelectionStep> {
             ),
             const SizedBox(height: DSSpacing.md),
             Text(
-              '어떤 흐름부터 보고 싶나요?',
-              style: typography.headingLarge.copyWith(
+              '지금 더 보고 싶은 흐름을 골라주세요',
+              style: typography.displayMedium.copyWith(
                 color: colors.textPrimary,
-                height: 1.08,
-                letterSpacing: -0.6,
               ),
             ),
             const SizedBox(height: DSSpacing.sm),
             Text(
-              '세 가지 이상 고르면 첫 화면 추천과 시작 카드가 더 자연스럽게 맞춰집니다.',
+              '추천 정렬과 starter block에 반영되도록 3개 이상 선택합니다.',
               style: typography.bodyMedium.copyWith(
-                color: colors.textSecondary,
+                color: const Color(0xFF98A0B1),
+                fontSize: 15,
                 height: 1.55,
               ),
             ),

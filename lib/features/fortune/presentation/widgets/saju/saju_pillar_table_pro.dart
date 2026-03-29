@@ -69,29 +69,14 @@ class SajuPillarTablePro extends StatelessWidget {
   Widget _buildTitle(BuildContext context, bool isDark) {
     return Row(
       children: [
-        const Icon(
-          Icons.grid_view_rounded,
-          color: DSColors.accent,
-          size: 20,
-        ),
-        const SizedBox(width: DSSpacing.xs),
-        Row(
-          children: [
-            Text(
-              '사주명식',
-              style: context.heading2.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(width: DSSpacing.xs),
-            Text(
-              '四柱命式',
-              style: context.labelSmall.copyWith(
-                color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
+        const Text('📊', style: TextStyle(fontSize: 14)),
+        const SizedBox(width: DSSpacing.sm),
+        Text(
+          '사주 원국',
+          style: context.bodySmall.copyWith(
+            fontWeight: FontWeight.w600,
+            color: DSColors.accent,
+          ),
         ),
       ],
     );
@@ -174,30 +159,18 @@ class SajuPillarTablePro extends StatelessWidget {
                 ),
                 color: isDay ? DSColors.accent.withValues(alpha: 0.15) : null,
               ),
-              child: Column(
-                children: [
-                  Text(
-                    pillar['hanja']!,
-                    style: context.bodySmall.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: isDay
-                          ? DSColors.accent
-                          : (isDark
-                              ? DSColors.textTertiary
-                              : DSColors.textSecondary),
-                    ),
+              child: Center(
+                child: Text(
+                  isDay ? '${pillar['title']!}(나)' : pillar['title']!,
+                  style: context.labelSmall.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: isDay
+                        ? DSColors.accent
+                        : (isDark
+                            ? DSColors.textTertiary
+                            : DSColors.textSecondary),
                   ),
-                  Text(
-                    pillar['title']!,
-                    style: context.labelTiny.copyWith(
-                      color: isDay
-                          ? DSColors.accent
-                          : (isDark
-                              ? DSColors.textTertiary
-                              : DSColors.textSecondary),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           );
@@ -444,37 +417,22 @@ class SajuPillarTablePro extends StatelessWidget {
         // 한자 크게
         Text(
           hanja,
-          style: context.heading2.copyWith(
-            fontSize: isDay ? 28 : 24,
-            fontWeight: FontWeight.bold,
+          style: TextStyle(
+            fontFamily: 'Noto Serif KR',
+            fontSize: 28,
+            fontWeight: FontWeight.w400,
             color: isDay ? DSColors.accent : color,
           ),
           textAlign: TextAlign.center,
         ),
-        // 한글 작게
+        // 한글 + 오행 작게
         Text(
-          name,
+          '$name($element)',
           style: context.labelTiny.copyWith(
-            color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
-            fontWeight: FontWeight.w500,
+            color: color,
+            fontSize: 10,
           ),
           textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: DSSpacing.xxs),
-        // 오행 태그
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Text(
-            element,
-            style: context.labelTiny.copyWith(
-              fontWeight: FontWeight.w600,
-              color: color,
-            ),
-          ),
         ),
       ],
     );
@@ -507,37 +465,22 @@ class SajuPillarTablePro extends StatelessWidget {
             // 한자 크게
             Text(
               hanja,
-              style: context.heading2.copyWith(
-                fontSize: isDay ? 28 : 24,
-                fontWeight: FontWeight.bold,
+              style: TextStyle(
+                fontFamily: 'Noto Serif KR',
+                fontSize: 28,
+                fontWeight: FontWeight.w400,
                 color: isDay ? DSColors.accent : color,
               ),
               textAlign: TextAlign.center,
             ),
-            // 한글 + 띠 한줄로
+            // 한글 + 오행 + 띠
             Text(
-              '$name $animal',
+              '$name($element)$animal',
               style: context.labelTiny.copyWith(
-                color: isDark ? DSColors.textTertiary : DSColors.textSecondary,
-                fontWeight: FontWeight.w500,
+                color: color,
+                fontSize: 10,
               ),
               textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: DSSpacing.xxs),
-            // 오행 태그
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                element,
-                style: context.labelTiny.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: color,
-                ),
-              ),
             ),
           ],
         ),

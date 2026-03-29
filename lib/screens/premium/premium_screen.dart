@@ -369,49 +369,49 @@ class _PremiumHeroCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
 
-    return PaperRuntimePanel(
-      padding: const EdgeInsets.fromLTRB(
-        DSSpacing.xl,
-        DSSpacing.xxl,
-        DSSpacing.xl,
-        DSSpacing.xxl,
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        vertical: DSSpacing.xl,
+        horizontal: DSSpacing.pageHorizontal,
+      ),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.lg),
+        border: Border.all(
+          color: colors.border,
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Center(
-            child: Container(
+            child: SizedBox(
               width: 64,
               height: 64,
-              decoration: BoxDecoration(
-                color: colors.backgroundSecondary.withValues(alpha: 0.92),
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(
-                  color: colors.border.withValues(alpha: 0.72),
-                ),
-              ),
               child: Icon(
                 Icons.bookmark_border_rounded,
-                size: 34,
+                size: 48,
                 color: colors.textPrimary,
               ),
             ),
           ),
-          const SizedBox(height: DSSpacing.lg),
+          const SizedBox(height: DSSpacing.md),
           Center(
             child: Text(
               '프리미엄 사주',
-              style: context.heading4.copyWith(
+              style: context.bodyLarge.copyWith(
                 color: colors.textPrimary,
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
               ),
             ),
           ),
-          const SizedBox(height: DSSpacing.xs),
+          const SizedBox(height: DSSpacing.md),
           Center(
             child: Text(
               '만화로 보는 재미있는 사주 풀이',
-              style: context.bodySmall.copyWith(
+              style: context.bodyMedium.copyWith(
                 color: colors.textSecondary,
               ),
               textAlign: TextAlign.center,
@@ -444,11 +444,8 @@ class _PremiumFeatureRow extends StatelessWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: colors.surface,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: colors.border.withValues(alpha: 0.72),
-            ),
+            color: const Color(0xFF23232B),
+            borderRadius: BorderRadius.circular(DSRadius.md),
           ),
           child: Icon(
             icon,
@@ -465,7 +462,7 @@ class _PremiumFeatureRow extends StatelessWidget {
                 title,
                 style: context.bodyLarge.copyWith(
                   color: colors.textPrimary,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 2),

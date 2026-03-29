@@ -409,18 +409,17 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                     ],
                     Text(
                       widget.title,
-                      style: typography.headingLarge.copyWith(
+                      style: typography.displayMedium.copyWith(
                         color: colors.textPrimary,
-                        height: 1.1,
-                        letterSpacing: -0.6,
                       ),
                     ).animate().fadeIn(duration: 500.ms),
                     const SizedBox(height: DSSpacing.sm),
                     Text(
                       widget.description,
                       style: typography.bodyMedium.copyWith(
-                        color: colors.textSecondary,
-                        height: 1.5,
+                        color: const Color(0xFF98A0B1),
+                        fontSize: 15,
+                        height: 1.55,
                       ),
                     ).animate().fadeIn(delay: 120.ms, duration: 400.ms),
                     const SizedBox(height: DSSpacing.xl),
@@ -528,14 +527,14 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                               children: [
                                 AnimatedContainer(
                                   duration: const Duration(milliseconds: 180),
-                                  width: 24,
-                                  height: 24,
+                                  width: 22,
+                                  height: 22,
                                   decoration: BoxDecoration(
                                     color: _isTimeUnknown
                                         ? colors.textPrimary
                                         : colors.surface,
                                     borderRadius:
-                                        BorderRadius.circular(DSRadius.smd),
+                                        BorderRadius.circular(DSRadius.sm),
                                     border: Border.all(
                                       color: _isTimeUnknown
                                           ? colors.textPrimary
@@ -550,11 +549,13 @@ class _BirthInputStepState extends ConsumerState<BirthInputStep> {
                                         )
                                       : null,
                                 ),
-                                const SizedBox(width: DSSpacing.sm),
+                                const SizedBox(width: 10),
                                 Text(
                                   '태어난 시간을 모르겠어요',
                                   style: typography.bodyMedium.copyWith(
-                                    color: colors.textSecondary,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFFD2D7E2),
                                   ),
                                 ),
                               ],

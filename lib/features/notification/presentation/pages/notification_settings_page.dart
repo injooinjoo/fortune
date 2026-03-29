@@ -367,7 +367,7 @@ class _TimeChip extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: context.labelMedium.copyWith(
+        style: context.bodyMedium.copyWith(
           color: enabled ? colors.textPrimary : colors.textTertiary,
           fontWeight: FontWeight.w600,
         ),

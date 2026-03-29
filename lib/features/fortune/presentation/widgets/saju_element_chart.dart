@@ -64,34 +64,12 @@ class _SajuElementChartState extends State<SajuElementChart> {
               // 제목
               FadeTransition(
                 opacity: _titleAnimation,
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.donut_large_outlined,
-                      color: colors.accent,
-                      size: 20,
-                    ),
-                    const SizedBox(width: DSSpacing.xs),
-                    Text(
-                      '오행 균형',
-                      style: typography.headingSmall.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: colors.textPrimary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 4),
-
-              FadeTransition(
-                opacity: _titleAnimation,
                 child: Text(
-                  '천간지지의 오행 분포를 확인해보세요',
+                  '⚡ 오행 분포',
                   style: typography.bodySmall.copyWith(
-                    color: colors.textSecondary,
-                    fontSize: FontConfig.labelTiny,
+                    fontWeight: FontWeight.w600,
+                    color: colors.accent,
+                    fontSize: 12,
                   ),
                 ),
               ),
@@ -364,10 +342,13 @@ class _SajuElementChartState extends State<SajuElementChart> {
     return FadeTransition(
       opacity: _chartAnimation,
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(DSSpacing.md),
         decoration: BoxDecoration(
-          color: colors.surfaceSecondary.withValues(alpha: 0.3),
+          color: colors.surface,
           borderRadius: BorderRadius.circular(DSRadius.md),
+          border: Border.all(
+            color: colors.border.withValues(alpha: 0.15),
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

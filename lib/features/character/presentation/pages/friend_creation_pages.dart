@@ -393,27 +393,59 @@ class _FriendCreationCreatingPageState
       ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(
-                color: context.colors.ctaBackground,
+              Container(
+                width: 80,
+                height: 80,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF2A2640),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text(
+                    '✦',
+                    style: TextStyle(
+                      fontSize: 32,
+                      color: context.colors.accent,
+                    ),
+                  ),
+                ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: DSSpacing.lg),
               Text(
-                '친구를 준비하고 있어요',
-                style: context.typography.headingSmall.copyWith(
+                '친구를 만들고 있어요',
+                style: const TextStyle(
+                  fontFamily: 'NanumMyeongjo',
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                ).copyWith(
                   color: context.colors.textPrimary,
                 ),
+                textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: DSSpacing.md),
               Text(
-                '설정한 성격과 분위기를 바탕으로 대화를 시작할게요.',
+                '성격과 관계 배경을 바탕으로 대화를 준비하고 있어요. 잠시만 기다려주세요.',
                 style: context.typography.bodyMedium.copyWith(
                   color: context.colors.textSecondary,
+                  height: 1.6,
                 ),
                 textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: DSSpacing.lg),
+              SizedBox(
+                width: 260,
+                child: LinearProgressIndicator(
+                  minHeight: 4,
+                  borderRadius: BorderRadius.circular(2),
+                  backgroundColor: const Color(0xFF333333),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    context.colors.accent,
+                  ),
+                ),
               ),
             ],
           ),
@@ -465,20 +497,24 @@ class _FriendCreationScaffold extends StatelessWidget {
           children: [
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '$step / 4',
-                      style: context.typography.labelLarge.copyWith(
-                        color: context.colors.textSecondary,
+                      '$step/4',
+                      style: context.typography.bodySmall.copyWith(
+                        color: context.colors.accent,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       title,
-                      style: context.typography.headingLarge.copyWith(
+                      style: const TextStyle(
+                        fontFamily: 'NanumMyeongjo',
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                      ).copyWith(
                         color: context.colors.textPrimary,
                       ),
                     ),
@@ -489,7 +525,7 @@ class _FriendCreationScaffold extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
               child: Row(
                 children: [
                   if (secondaryText != null) ...[
@@ -535,16 +571,17 @@ class _SectionTitle extends StatelessWidget {
         children: [
           Text(
             title,
-            style: context.typography.headingSmall.copyWith(
+            style: context.typography.bodyLarge.copyWith(
               color: context.colors.textPrimary,
-              fontWeight: FontWeight.w700,
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
             ),
           ),
           if (subtitle != null) ...[
             const SizedBox(height: 4),
             Text(
               subtitle!,
-              style: context.typography.bodyMedium.copyWith(
+              style: context.typography.bodySmall.copyWith(
                 color: context.colors.textSecondary,
               ),
             ),
@@ -573,12 +610,12 @@ class _SelectableChip extends StatelessWidget {
       selected: selected,
       onSelected: (_) => onTap(),
       selectedColor: context.colors.ctaBackground,
-      backgroundColor: context.colors.backgroundSecondary,
-      labelStyle: context.typography.bodyMedium.copyWith(
+      backgroundColor: context.colors.surface,
+      labelStyle: context.typography.bodyLarge.copyWith(
         color: selected
             ? context.colors.ctaForeground
             : context.colors.textPrimary,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w500,
       ),
       side: BorderSide(
         color: selected
@@ -591,7 +628,7 @@ class _SelectableChip extends StatelessWidget {
       showCheckmark: false,
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       visualDensity: const VisualDensity(horizontal: -2, vertical: -2),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
     );
   }
 }
@@ -609,13 +646,10 @@ class _SummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.backgroundSecondary,
-        borderRadius: BorderRadius.circular(context.radius.xl),
-        border: Border.all(
-          color: context.colors.border.withValues(alpha: 0.78),
-        ),
+        color: context.colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.md),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -623,19 +657,19 @@ class _SummaryCard extends StatelessWidget {
           Text(
             title,
             style: context.typography.bodyLarge.copyWith(
-              color: context.colors.textPrimary,
-              fontWeight: FontWeight.w700,
+              color: context.colors.accent,
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: DSSpacing.sm),
           ...lines.map(
             (line) => Padding(
-              padding: const EdgeInsets.only(bottom: 6),
+              padding: const EdgeInsets.only(bottom: DSSpacing.sm),
               child: Text(
                 line,
-                style: context.typography.bodyMedium.copyWith(
+                style: context.typography.bodySmall.copyWith(
                   color: context.colors.textSecondary,
-                  height: 1.5,
                 ),
               ),
             ),

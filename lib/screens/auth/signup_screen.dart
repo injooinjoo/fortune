@@ -76,18 +76,16 @@ class _SignupScreenState extends State<SignupScreen> {
                 children: [
                   Text(
                     widget.title,
-                    style: typography.headingLarge.copyWith(
+                    style: typography.displayLarge.copyWith(
                       color: colors.textPrimary,
-                      height: 1.04,
-                      letterSpacing: -0.8,
                     ),
                   ),
                   SizedBox(height: spacing.md),
                   Text(
                     widget.description,
-                    style: typography.bodyMedium.copyWith(
+                    style: typography.bodyLarge.copyWith(
                       color: colors.textSecondary,
-                      height: 1.55,
+                      height: 1.58,
                     ),
                   ),
                 ],

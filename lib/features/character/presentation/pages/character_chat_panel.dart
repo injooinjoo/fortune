@@ -911,7 +911,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: DSSpacing.sm,
+        horizontal: DSSpacing.md,
         vertical: DSSpacing.sm,
       ),
       decoration: BoxDecoration(
@@ -937,7 +937,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
             padding: const EdgeInsets.all(8),
             constraints: const BoxConstraints(),
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: DSSpacing.sm),
           Expanded(
             child: GestureDetector(
               onTap: () => _showCharacterProfile(context),
@@ -945,7 +945,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
               child: Row(
                 children: [
                   CircleAvatar(
-                    radius: 18,
+                    radius: 16,
                     backgroundColor: accentPalette.accent,
                     backgroundImage: widget.character.avatarAsset.isNotEmpty
                         ? AssetImage(widget.character.avatarAsset)
@@ -953,20 +953,21 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                     child: widget.character.avatarAsset.isEmpty
                         ? Text(
                             widget.character.initial,
-                            style: context.bodySmall.copyWith(
+                            style: context.labelSmall.copyWith(
                               color: accentPalette.onAccent,
                               fontWeight: FontWeight.bold,
                             ),
                           )
                         : null,
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: DSSpacing.sm),
                   Expanded(
                     child: Text(
                       widget.character.name,
                       style: context.bodyLarge.copyWith(
                         color: colors.textPrimary,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 20,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),

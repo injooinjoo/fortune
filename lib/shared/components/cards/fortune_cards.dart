@@ -229,7 +229,7 @@ class FortuneFeatureCard extends StatelessWidget {
             description,
             style: context.bodySmall.copyWith(
               color: context.colors.textSecondary,
-              height: 1.45,
+              height: 1.5,
             ),
           ),
           if (highlights.isNotEmpty) ...[

@@ -331,11 +331,12 @@ class SocialLoginBottomSheet {
     // Google: bordered style (ChatGPT pattern)
     final isApple = type == 'apple';
 
-    // Apple 버튼은 Apple HIG 가이드라인 준수: 검정 배경 + 흰 텍스트
-    final appleButtonBg =
-        colors.brightness == Brightness.dark ? Colors.white : Colors.black;
+    // Apple 버튼은 Apple HIG 가이드라인 준수
+    final appleButtonBg = colors.brightness == Brightness.dark
+        ? const Color(0xFFF5F5F8)
+        : Colors.black;
     final appleButtonFg =
-        colors.brightness == Brightness.dark ? Colors.black : Colors.white;
+        colors.brightness == Brightness.dark ? const Color(0xFF121317) : Colors.white;
 
     switch (type) {
       case 'apple':
@@ -383,7 +384,7 @@ class SocialLoginBottomSheet {
       onTap: onPressed,
       child: Container(
         width: double.infinity,
-        height: 56,
+        height: 54,
         decoration: BoxDecoration(
           color: isApple ? appleButtonBg : backgroundColor,
           borderRadius: BorderRadius.circular(DSRadius.button),
@@ -405,7 +406,8 @@ class SocialLoginBottomSheet {
                   const SizedBox(width: DSSpacing.sm),
                   Text(
                     '${type == 'apple' ? 'Apple' : type == 'google' ? 'Google' : type == 'kakao' ? '카카오' : '네이버'} 계정 연결 중...',
-                    style: context.labelLarge.copyWith(
+                    style: context.bodyLarge.copyWith(
+                      fontSize: 17,
                       fontWeight: FontWeight.w700,
                       color: isApple ? appleButtonFg : colors.textPrimary,
                     ),
@@ -420,7 +422,8 @@ class SocialLoginBottomSheet {
                   const SizedBox(width: DSSpacing.sm),
                   Text(
                     text,
-                    style: context.labelLarge.copyWith(
+                    style: context.bodyLarge.copyWith(
+                      fontSize: 17,
                       fontWeight: FontWeight.w700,
                       color: isApple ? appleButtonFg : colors.textPrimary,
                     ),
@@ -527,6 +530,7 @@ class _SocialAuthEntryPanelState extends ConsumerState<SocialAuthEntryPanel> {
 
     return PaperRuntimePanel(
       width: double.infinity,
+      padding: const EdgeInsets.all(18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -537,10 +541,10 @@ class _SocialAuthEntryPanelState extends ConsumerState<SocialAuthEntryPanel> {
             ],
             Text(
               widget.title,
-              style: typography.headingMedium.copyWith(
-                color: colors.textPrimary,
-                height: 1.14,
-                letterSpacing: -0.5,
+              style: typography.bodySmall.copyWith(
+                color: const Color(0xFFD0D4E0),
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.5,
               ),
             ),
             if (widget.description.isNotEmpty) ...[
@@ -554,7 +558,7 @@ class _SocialAuthEntryPanelState extends ConsumerState<SocialAuthEntryPanel> {
               ),
               const SizedBox(height: DSSpacing.lg),
             ] else ...[
-              const SizedBox(height: DSSpacing.md),
+              const SizedBox(height: DSSpacing.sm),
             ],
           ],
           if (!Platform.isAndroid) ...[
@@ -575,14 +579,11 @@ class _SocialAuthEntryPanelState extends ConsumerState<SocialAuthEntryPanel> {
             isLoading: _activeProvider == 'google',
           ),
           const SizedBox(height: DSSpacing.md),
-          Center(
-            child: Text(
-              '계속 진행하면 이용약관 및 개인정보처리방침에 동의한 것으로 간주됩니다.',
-              style: typography.bodySmall.copyWith(
-                color: colors.textTertiary,
-                height: 1.5,
-              ),
-              textAlign: TextAlign.center,
+          Text(
+            '계속 진행하면 이용약관 및 개인정보처리방침에 동의한 것으로 간주됩니다.',
+            style: typography.bodySmall.copyWith(
+              color: const Color(0xFF7F8596),
+              height: 1.5,
             ),
           ),
           if (widget.showBrowseAction) ...[
@@ -594,10 +595,12 @@ class _SocialAuthEntryPanelState extends ConsumerState<SocialAuthEntryPanel> {
                   padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
                   child: Text(
                     '둘러보기',
-                    style: typography.labelLarge.copyWith(
-                      color: colors.textSecondary,
+                    style: typography.bodyMedium.copyWith(
+                      fontSize: 15,
+                      color: const Color(0xFFCFD3DE),
+                      fontWeight: FontWeight.w600,
                       decoration: TextDecoration.underline,
-                      decorationColor: colors.textSecondary,
+                      decorationColor: const Color(0xFFCFD3DE),
                     ),
                   ),
                 ),

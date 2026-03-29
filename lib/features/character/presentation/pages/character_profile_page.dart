@@ -181,8 +181,9 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
             const SizedBox(height: DSSpacing.lg),
             Text(
               CharacterLocalizer.resolveName(context, _character),
-              style: context.heading4.copyWith(
+              style: context.bodyLarge.copyWith(
                 color: colors.textPrimary,
+                fontWeight: FontWeight.w600,
               ),
             ),
             if (tags.isNotEmpty) ...[
@@ -190,7 +191,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
               Text(
                 tags.map((tag) => '#$tag').join(' '),
                 style: context.bodySmall.copyWith(
-                  color: colors.textSecondary,
+                  color: _character.accentColor,
                 ),
               ),
             ],
@@ -198,8 +199,8 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
             Text(
               CharacterLocalizer.resolveShortDescription(context, _character),
               style: context.bodyMedium.copyWith(
-                color: colors.textPrimary,
-                height: 1.55,
+                color: colors.textSecondary,
+                height: 1.5,
               ),
             ),
             const SizedBox(height: DSSpacing.lg),
@@ -274,7 +275,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
         Text(
           count,
           style: (isText ? context.bodySmall : context.heading4).copyWith(
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
             color: context.colors.textPrimary,
           ),
           textAlign: TextAlign.center,
@@ -282,7 +283,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
         const SizedBox(height: 4),
         Text(
           label,
-          style: context.labelMedium.copyWith(
+          style: context.labelSmall.copyWith(
             color: context.colors.textSecondary,
           ),
           textAlign: TextAlign.center,
@@ -320,7 +321,8 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
                 context.l10n.sendMessage,
                 style: context.bodyMedium.copyWith(
                   color: colors.background,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
                 ),
               ),
             ],

@@ -59,56 +59,61 @@ class CharacterMessageBubble extends StatelessWidget {
         children: [
           const SizedBox(width: CharacterChatSurfaceStyle.messageSideInset),
           Flexible(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                // 이미지 썸네일 (사진 메시지인 경우)
-                if (message.hasImage && message.imageAsset != null)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: ClipRRect(
-                      borderRadius:
-                          CharacterChatSurfaceStyle.mediaBorderRadius(),
-                      child: Image.file(
-                        File(message.imageAsset!),
-                        width: 200,
-                        height: 200,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: CharacterChatSurfaceStyle.bubbleMaxWidth,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  // 이미지 썸네일 (사진 메시지인 경우)
+                  if (message.hasImage && message.imageAsset != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: ClipRRect(
+                        borderRadius:
+                            CharacterChatSurfaceStyle.mediaBorderRadius(),
+                        child: Image.file(
+                          File(message.imageAsset!),
                           width: 200,
                           height: 200,
-                          decoration: BoxDecoration(
-                            color: colors.surfaceSecondary,
-                            borderRadius:
-                                CharacterChatSurfaceStyle.mediaBorderRadius(),
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Container(
+                            width: 200,
+                            height: 200,
+                            decoration: BoxDecoration(
+                              color: colors.surfaceSecondary,
+                              borderRadius:
+                                  CharacterChatSurfaceStyle.mediaBorderRadius(),
+                            ),
+                            child:
+                                const Icon(Icons.image_not_supported, size: 40),
                           ),
-                          child:
-                              const Icon(Icons.image_not_supported, size: 40),
                         ),
                       ),
                     ),
-                  ),
-                // 텍스트 버블 (이미지만 있고 텍스트가 📷 사진인 경우 숨김)
-                if (!message.hasImage ||
-                    (message.text != '📷 사진' && message.text.isNotEmpty))
-                  Container(
-                    padding: CharacterChatSurfaceStyle.bubblePadding,
-                    decoration: CharacterChatSurfaceStyle.bubbleDecoration(
-                      context,
-                      backgroundColor: colors.userBubble,
-                      borderRadius:
-                          CharacterChatSurfaceStyle.outgoingBubbleRadius(),
-                      borderAlpha: 0.42,
-                    ),
-                    child: Text(
-                      message.text,
-                      style: context.bodyMedium.copyWith(
-                        color: colors.textPrimary,
-                        height: 1.5,
+                  // 텍스트 버블 (이미지만 있고 텍스트가 📷 사진인 경우 숨김)
+                  if (!message.hasImage ||
+                      (message.text != '📷 사진' && message.text.isNotEmpty))
+                    Container(
+                      padding: CharacterChatSurfaceStyle.bubblePadding,
+                      decoration: CharacterChatSurfaceStyle.bubbleDecoration(
+                        context,
+                        backgroundColor: colors.userBubble,
+                        borderRadius:
+                            CharacterChatSurfaceStyle.outgoingBubbleRadius(),
+                        borderAlpha: 0.42,
+                      ),
+                      child: Text(
+                        message.text,
+                        style: context.bodyMedium.copyWith(
+                          color: colors.textPrimary,
+                          height: 1.5,
+                        ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
@@ -175,14 +180,18 @@ class CharacterMessageBubble extends StatelessWidget {
             const SizedBox(width: 32),
           const SizedBox(width: CharacterChatSurfaceStyle.avatarGap),
           Flexible(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 이미지가 있으면 먼저 표시 (점심 사진 등)
-                if (message.hasImage) _buildImageBubble(context, colors),
-                // 텍스트 버블
-                if (message.text.isNotEmpty)
-                  GestureDetector(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: CharacterChatSurfaceStyle.bubbleMaxWidth,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 이미지가 있으면 먼저 표시 (점심 사진 등)
+                  if (message.hasImage) _buildImageBubble(context, colors),
+                  // 텍스트 버블
+                  if (message.text.isNotEmpty)
+                    GestureDetector(
                     onLongPress: () => _showReportMenu(context),
                     child: Stack(
                       clipBehavior: Clip.none,
@@ -215,6 +224,7 @@ class CharacterMessageBubble extends StatelessWidget {
                     ),
                   ),
               ],
+            ),
             ),
           ),
           const SizedBox(width: CharacterChatSurfaceStyle.messageSideInset),
@@ -316,13 +326,8 @@ class CharacterMessageBubble extends StatelessWidget {
           padding: const EdgeInsets.symmetric(
               horizontal: DSSpacing.md, vertical: DSSpacing.xs),
           decoration: BoxDecoration(
-            color: colors.backgroundSecondary,
-            borderRadius: CharacterChatSurfaceStyle.mediaBorderRadius(),
-            boxShadow: CharacterChatSurfaceStyle.shadow(
-              context,
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
+            color: colors.surface,
+            borderRadius: BorderRadius.circular(DSRadius.md),
           ),
           child: Text(
             message.text,

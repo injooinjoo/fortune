@@ -386,7 +386,7 @@ class _ProfileSummaryRow extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       email,
-                      style: context.bodyMedium.copyWith(
+                      style: context.bodySmall.copyWith(
                         color: context.colors.textSecondary,
                       ),
                     ),
@@ -433,9 +433,10 @@ class _ProfileAvatar extends StatelessWidget {
       ),
       child: Text(
         initial,
-        style: context.heading4.copyWith(
+        style: context.heading3.copyWith(
           color: context.colors.selectionForeground,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w600,
+          fontSize: 22,
         ),
       ),
     );

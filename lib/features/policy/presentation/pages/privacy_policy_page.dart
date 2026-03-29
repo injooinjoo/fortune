@@ -97,7 +97,6 @@ class _PrivacyPolicyPageState extends ConsumerState<PrivacyPolicyPage> {
             title,
             style: context.heading4.copyWith(
               color: context.colors.textPrimary,
-              fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: DSSpacing.sm),
