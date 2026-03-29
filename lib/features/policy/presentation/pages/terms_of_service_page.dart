@@ -33,7 +33,7 @@ class _TermsOfServicePageState extends ConsumerState<TermsOfServicePage> {
             _buildSection(
               context,
               '제1조 (목적)',
-              '이 약관은 Fortune(이하 "회사")이 제공하는 운세 서비스(이하 "서비스")의 이용과 관련하여 회사와 이용자 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.',
+              '이 약관은 온도(이하 "회사")이 제공하는 운세 서비스(이하 "서비스")의 이용과 관련하여 회사와 이용자 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.',
             ),
             _buildSection(
               context,

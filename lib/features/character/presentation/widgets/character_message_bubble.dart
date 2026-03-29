@@ -310,10 +310,11 @@ class CharacterMessageBubble extends StatelessWidget {
   Widget _buildSystemBubble(BuildContext context) {
     final colors = context.colors;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: DSSpacing.xs),
       child: Center(
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(
+              horizontal: DSSpacing.md, vertical: DSSpacing.xs),
           decoration: BoxDecoration(
             color: colors.backgroundSecondary,
             borderRadius: CharacterChatSurfaceStyle.mediaBorderRadius(),
@@ -339,7 +340,8 @@ class CharacterMessageBubble extends StatelessWidget {
   Widget _buildNarrationBubble(BuildContext context) {
     final colors = context.colors;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 32),
+      padding: const EdgeInsets.symmetric(
+          vertical: DSSpacing.xs, horizontal: DSSpacing.xxl),
       child: Center(
         child: Text(
           message.text,
@@ -389,7 +391,7 @@ class CharacterMessageBubble extends StatelessWidget {
         listBulletPadding: const EdgeInsets.only(right: 4),
         listIndent: 16,
         // 문단 간격
-        blockSpacing: 8,
+        blockSpacing: DSSpacing.xs,
         // 인라인 코드
         code: baseStyle.copyWith(
           fontSize: 13,
@@ -398,9 +400,9 @@ class CharacterMessageBubble extends StatelessWidget {
         ),
         codeblockDecoration: BoxDecoration(
           color: colors.backgroundSecondary,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(DSRadius.sm),
         ),
-        codeblockPadding: const EdgeInsets.all(12),
+        codeblockPadding: const EdgeInsets.all(DSSpacing.sm),
         // 헤딩 (AI 응답에 가끔 포함)
         h1: context.bodyMedium.copyWith(
           fontWeight: FontWeight.w700,
@@ -440,14 +442,14 @@ class CharacterMessageBubble extends StatelessWidget {
       context: context,
       backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(DSRadius.card)),
       ),
       builder: (ctx) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              margin: const EdgeInsets.only(top: 12),
+              margin: const EdgeInsets.only(top: DSSpacing.sm),
               width: 36,
               height: 4,
               decoration: BoxDecoration(
@@ -472,7 +474,7 @@ class CharacterMessageBubble extends StatelessWidget {
                 );
               },
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: DSSpacing.xs),
           ],
         ),
       ),

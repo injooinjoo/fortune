@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ondo/core/design_system/design_system.dart';
-import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_dimensions.dart';
 import '../../shared/glassmorphism/glass_container.dart';
 import '../../services/social_auth_service.dart';
@@ -232,7 +231,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
     final isProcessing = _isLinking && _linkingProvider == provider;
 
     return GlassContainer(
-      padding: AppSpacing.paddingAll12,
+      padding: const EdgeInsets.all(DSSpacing.sm),
       child: Row(
         children: [
           // Provider icon
@@ -243,7 +242,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
               child: _buildProviderIcon(providerInfo),
             ),
           ),
-          const SizedBox(width: AppSpacing.spacing3),
+          const SizedBox(width: DSSpacing.sm),
 
           // Provider name and status
           Expanded(
@@ -257,7 +256,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
                   ),
                 ),
                 if (isLinked) ...[
-                  const SizedBox(height: AppSpacing.xxxSmall),
+                  const SizedBox(height: DSSpacing.xxs),
                   Row(
                     children: [
                       const Icon(
@@ -265,7 +264,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
                         size: 14,
                         color: DSColors.success,
                       ),
-                      const SizedBox(width: AppSpacing.spacing1),
+                      const SizedBox(width: DSSpacing.xxs),
                       Text(
                         isPrimary ? '기본 계정' : '연결됨',
                         style: theme.textTheme.bodySmall?.copyWith(
@@ -354,8 +353,8 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
           child: Center(
             child: Text(
               providerInfo.iconData as String,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Colors.white,
+              style: context.bodyLarge.copyWith(
+                    color: Colors.white, // 브랜드 아이콘 위 대비색
                     fontWeight: FontWeight.bold,
                   ),
             ),
@@ -377,14 +376,14 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: AppSpacing.spacing2),
+        const SizedBox(height: DSSpacing.xs),
         Text(
           '여러 소셜 계정을 연결하여 편리하게 로그인하세요.',
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
-        const SizedBox(height: AppSpacing.spacing4),
+        const SizedBox(height: DSSpacing.md),
         ...(_providers.keys
             .map((provider) => Padding(
                   padding: const EdgeInsets.only(bottom: DSSpacing.xs),

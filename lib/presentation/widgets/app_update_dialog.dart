@@ -113,10 +113,10 @@ class AppUpdateDialog extends StatelessWidget {
 
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(DSRadius.modal),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(DSSpacing.xl),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -136,16 +136,14 @@ class AppUpdateDialog extends StatelessWidget {
                 color: _isMaintenance ? colors.warning : colors.accent,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: DSSpacing.lg),
 
             // 제목
             Text(
               _title,
-              style: typography.headingMedium.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: typography.headingMedium,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: DSSpacing.sm),
 
             // 메시지
             Text(
@@ -159,13 +157,15 @@ class AppUpdateDialog extends StatelessWidget {
 
             // 버전 정보
             if (!_isMaintenance) ...[
-              const SizedBox(height: 16),
+              const SizedBox(height: DSSpacing.md),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: DSSpacing.sm,
+                  vertical: DSSpacing.xs,
+                ),
                 decoration: BoxDecoration(
                   color: colors.surface,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(DSRadius.sm),
                 ),
                 child: Text(
                   '현재 버전: ${versionInfo.currentVersion} → 최신: ${versionInfo.appSettings?.latestVersion ?? "-"}',
@@ -176,7 +176,7 @@ class AppUpdateDialog extends StatelessWidget {
               ),
             ],
 
-            const SizedBox(height: 24),
+            const SizedBox(height: DSSpacing.xl),
 
             // 버튼들
             if (_isMaintenance)
@@ -188,9 +188,10 @@ class AppUpdateDialog extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: colors.surface,
                     foregroundColor: colors.textPrimary,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: DSSpacing.buttonVertical),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(DSRadius.card),
                     ),
                   ),
                   child: const Text('앱 종료'),
@@ -198,35 +199,22 @@ class AppUpdateDialog extends StatelessWidget {
               )
             else ...[
               // 업데이트 버튼
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _openStore,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: colors.accent,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text(
-                    '업데이트하기',
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                ),
+              DSButton.primary(
+                text: '업데이트하기',
+                onPressed: _openStore,
               ),
 
               // 나중에 버튼 (선택적 업데이트만)
               if (!_isForceUpdate && onSkip != null) ...[
-                const SizedBox(height: 12),
+                const SizedBox(height: DSSpacing.sm),
                 SizedBox(
                   width: double.infinity,
                   child: TextButton(
                     onPressed: onSkip,
                     style: TextButton.styleFrom(
                       foregroundColor: colors.textSecondary,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: DSSpacing.buttonVertical),
                     ),
                     child: const Text('나중에'),
                   ),
@@ -235,14 +223,15 @@ class AppUpdateDialog extends StatelessWidget {
 
               // 강제 업데이트: 앱 종료 버튼
               if (_isForceUpdate) ...[
-                const SizedBox(height: 12),
+                const SizedBox(height: DSSpacing.sm),
                 SizedBox(
                   width: double.infinity,
                   child: TextButton(
                     onPressed: () => SystemNavigator.pop(),
                     style: TextButton.styleFrom(
                       foregroundColor: colors.textTertiary,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: DSSpacing.buttonVertical),
                     ),
                     child: const Text('앱 종료'),
                   ),

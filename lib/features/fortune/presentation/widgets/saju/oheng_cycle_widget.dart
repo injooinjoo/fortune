@@ -23,7 +23,7 @@ class OhengCycleWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? context.colors.backgroundSecondary : Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
           color: isDark ? DSColors.border : DSColors.borderDark,

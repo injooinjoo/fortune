@@ -172,8 +172,8 @@ class SocialLoginBottomSheet {
               decoration: BoxDecoration(
                 color: colors.surface.withValues(alpha: 0.98),
                 borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(32),
-                  topRight: Radius.circular(32),
+                  topLeft: Radius.circular(DSRadius.modal),
+                  topRight: Radius.circular(DSRadius.modal),
                 ),
                 border: Border(
                   top: BorderSide(
@@ -185,7 +185,7 @@ class SocialLoginBottomSheet {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    margin: const EdgeInsets.only(top: 14),
+                    margin: const EdgeInsets.only(top: DSSpacing.sm),
                     width: 44,
                     height: 4,
                     decoration: BoxDecoration(
@@ -194,7 +194,12 @@ class SocialLoginBottomSheet {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
+                    padding: const EdgeInsets.fromLTRB(
+                      DSSpacing.xl,
+                      DSSpacing.lg,
+                      DSSpacing.xl,
+                      DSSpacing.xl,
+                    ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,14 +210,14 @@ class SocialLoginBottomSheet {
                             color: colors.textPrimary,
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: DSSpacing.xs),
                         Text(
                           '지금까지의 흐름을 저장하고, 더 자연스럽게 이어서 사용할 수 있어요.',
                           style: typography.bodyMedium.copyWith(
                             color: colors.textSecondary,
                           ),
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: DSSpacing.lg),
                         _buildSocialButton(
                           context: context,
                           onPressed: isButtonDisabled
@@ -223,7 +228,7 @@ class SocialLoginBottomSheet {
                           isLoading: activeLoadingProvider == 'google',
                         ),
                         if (!Platform.isAndroid) ...[
-                          const SizedBox(height: 12),
+                          const SizedBox(height: DSSpacing.sm),
                           _buildSocialButton(
                             context: context,
                             onPressed: isButtonDisabled
@@ -235,7 +240,8 @@ class SocialLoginBottomSheet {
                           ),
                         ],
                         SizedBox(
-                          height: MediaQuery.of(context).padding.bottom + 8,
+                          height: MediaQuery.of(context).padding.bottom +
+                              DSSpacing.xs,
                         ),
                       ],
                     ),
@@ -396,7 +402,7 @@ class SocialLoginBottomSheet {
                       color: isApple ? appleButtonFg : colors.textPrimary,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: DSSpacing.sm),
                   Text(
                     '${type == 'apple' ? 'Apple' : type == 'google' ? 'Google' : type == 'kakao' ? '카카오' : '네이버'} 계정 연결 중...',
                     style: context.labelLarge.copyWith(
@@ -411,7 +417,7 @@ class SocialLoginBottomSheet {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   icon,
-                  const SizedBox(width: 12),
+                  const SizedBox(width: DSSpacing.sm),
                   Text(
                     text,
                     style: context.labelLarge.copyWith(

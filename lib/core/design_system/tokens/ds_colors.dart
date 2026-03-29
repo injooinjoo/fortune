@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 /// Paper-aligned design system colors
 ///
-/// Source of truth: Paper MCP "Fortune" design file
-/// Last synced: 2026-03-27
+/// Source of truth: Paper MCP "온도(Ondo)" design file
+/// Last synced: 2026-03-29
 ///
 /// Design Philosophy: Deep navy-black base with cool-toned grays
 /// - Deep navy-black backgrounds (#0B0B10)
 /// - Cool white text (#F5F6FB)
 /// - Blue-gray secondary text (#9198AA)
-/// - Deep blue CTA (#2043D6)
+/// - Purple CTA (#8B7BE8)
 /// - Semi-transparent borders (white 8%)
 /// - Pastel interest chips
 ///
@@ -103,8 +103,8 @@ class DSColors {
   /// Toggle thumb
   static const Color toggleThumb = Color(0xFFFFFFFF);
 
-  /// CTA button background — deep blue (Paper: #2043D6)
-  static const Color ctaBackground = Color(0xFF2043D6);
+  /// CTA button background — purple (Paper: #8B7BE8)
+  static const Color ctaBackground = Color(0xFF8B7BE8);
 
   /// CTA button text — cool white (Paper: #F5F6FB)
   static const Color ctaForeground = Color(0xFFF5F6FB);
@@ -249,8 +249,8 @@ class DSColors {
   /// Toggle thumb light
   static const Color toggleThumbDark = Color(0xFFFFFFFF);
 
-  /// CTA background light — deep blue (consistent with dark)
-  static const Color ctaBackgroundDark = Color(0xFF2043D6);
+  /// CTA background light — purple (consistent with dark)
+  static const Color ctaBackgroundDark = Color(0xFF8B7BE8);
 
   /// CTA foreground light — white
   static const Color ctaForegroundDark = Color(0xFFFFFFFF);

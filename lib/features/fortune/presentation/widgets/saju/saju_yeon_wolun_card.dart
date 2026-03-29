@@ -24,7 +24,7 @@ class SajuYeonWolunCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? context.colors.backgroundSecondary : Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
           color: isDark ? DSColors.border : DSColors.borderDark,
@@ -106,9 +106,7 @@ class SajuYeonWolunCard extends StatelessWidget {
           width: 56,
           padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
-            color: isDark
-                ? context.colors.surface.withValues(alpha: 0.1)
-                : Colors.grey.shade50,
+            color: context.colors.surfaceSecondary,
             borderRadius: BorderRadius.circular(DSRadius.sm),
             border: Border.all(
               color: isDark ? DSColors.border : DSColors.borderDark,

@@ -598,7 +598,7 @@ class _ProgressiveTimeInputState extends State<ProgressiveTimeInput> {
                     color: _isUnknown ? colors.accent : Colors.transparent,
                   ),
                   child: _isUnknown
-                      ? const Icon(Icons.check, size: 14, color: Colors.white)
+                      ? Icon(Icons.check, size: 14, color: colors.ctaForeground)
                       : null,
                 ),
                 const SizedBox(width: 8),

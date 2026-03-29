@@ -508,7 +508,7 @@ class SajuTwelveStagesWidget extends StatelessWidget {
                     width: itemWidth,
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: isDark ? DSColors.surface : Colors.grey.shade50,
+                      color: context.colors.surfaceSecondary,
                       borderRadius: BorderRadius.circular(DSRadius.sm),
                     ),
                     child: Row(

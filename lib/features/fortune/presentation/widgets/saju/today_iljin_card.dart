@@ -41,9 +41,7 @@ class TodayIljinCard extends StatelessWidget {
                 width: 56,
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 decoration: BoxDecoration(
-                  color: isDark
-                      ? context.colors.surface.withValues(alpha: 0.1)
-                      : Colors.grey.shade50,
+                  color: context.colors.surfaceSecondary,
                   borderRadius: BorderRadius.circular(DSRadius.sm),
                   border: Border.all(
                     color: isDark ? DSColors.border : DSColors.borderDark,

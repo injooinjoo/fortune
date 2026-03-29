@@ -101,8 +101,7 @@ class _CharacterChoiceWidgetState extends State<CharacterChoiceWidget>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? DSColors.surfaceDark : Colors.grey[100];
+    final bgColor = context.colors.surfaceSecondary;
     final accentPalette = CharacterAccentPalette.from(
       source: widget.character.accentColor,
       brightness: Theme.of(context).brightness,
@@ -128,8 +127,8 @@ class _CharacterChoiceWidgetState extends State<CharacterChoiceWidget>
             if (widget.choiceSet.situation != null) ...[
               Text(
                 widget.choiceSet.situation!,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[600],
+                style: context.bodySmall.copyWith(
+                      color: context.colors.textSecondary,
                       fontStyle: FontStyle.italic,
                     ),
                 textAlign: TextAlign.center,
@@ -173,7 +172,7 @@ class _CharacterChoiceWidgetState extends State<CharacterChoiceWidget>
         Icon(
           Icons.timer,
           size: 16,
-          color: isUrgent ? Colors.red : Colors.grey[500],
+          color: isUrgent ? Colors.red : context.colors.textTertiary,
         ),
         const SizedBox(width: 8),
         Expanded(
@@ -181,7 +180,7 @@ class _CharacterChoiceWidgetState extends State<CharacterChoiceWidget>
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: progress,
-              backgroundColor: Colors.grey[300],
+              backgroundColor: context.colors.surfaceSecondary,
               valueColor: AlwaysStoppedAnimation<Color>(
                 isUrgent ? Colors.red : accentPalette.accent,
               ),
@@ -194,7 +193,7 @@ class _CharacterChoiceWidgetState extends State<CharacterChoiceWidget>
           '$_remainingSeconds초',
           style: context.labelMedium.copyWith(
             fontWeight: FontWeight.w500,
-            color: isUrgent ? Colors.red : Colors.grey[500],
+            color: isUrgent ? Colors.red : context.colors.textTertiary,
           ),
         ),
       ],
@@ -217,8 +216,8 @@ class _CharacterChoiceWidgetState extends State<CharacterChoiceWidget>
         buttonColor = accentPalette.accent;
         textColor = accentPalette.onAccent;
       case ChoiceType.negative:
-        buttonColor = isDark ? DSColors.surfaceDark : Colors.grey[200]!;
-        textColor = isDark ? Colors.grey[400]! : Colors.grey[600]!;
+        buttonColor = context.colors.surfaceSecondary;
+        textColor = context.colors.textSecondary;
       case ChoiceType.bold:
         buttonColor = Colors.red[400]!;
         textColor = DSColors.accent;

@@ -489,7 +489,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
                   Expanded(
                     child: RichText(
                       text: TextSpan(
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        style: context.bodyMedium.copyWith(
                               color: context.colors.textSecondary,
                             ),
                         children: [

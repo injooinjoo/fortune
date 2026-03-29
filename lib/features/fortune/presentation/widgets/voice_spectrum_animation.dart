@@ -122,9 +122,8 @@ class _VoiceSpectrumAnimationState extends State<VoiceSpectrumAnimation>
       return const SizedBox.shrink();
     }
 
-    final isDark = context.isDark;
     // ChatGPT 스타일: 회색 웨이브폼
-    final barColor = isDark ? Colors.grey[400]! : Colors.grey[600]!;
+    final barColor = context.colors.textTertiary;
 
     return SizedBox(
       height: 32,

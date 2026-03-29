@@ -359,14 +359,14 @@ class _SmartImageState extends State<SmartImage> {
     return Container(
       width: widget.width,
       height: widget.height,
-      color: Colors.grey.shade200,
+      color: context.colors.surfaceSecondary,
       child: Center(
         child: SizedBox(
           width: (widget.width ?? 40) * 0.5,
           height: (widget.height ?? 40) * 0.5,
-          child: const CircularProgressIndicator(
+          child: CircularProgressIndicator(
             strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
+            valueColor: AlwaysStoppedAnimation<Color>(context.colors.textTertiary),
           ),
         ),
       ),
@@ -375,8 +375,8 @@ class _SmartImageState extends State<SmartImage> {
 
   Widget _buildShimmerPlaceholder() {
     return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
-      highlightColor: Colors.grey.shade100,
+      baseColor: context.colors.surfaceSecondary,
+      highlightColor: context.colors.surface,
       child: Container(
         width: widget.width,
         height: widget.height,
@@ -389,7 +389,7 @@ class _SmartImageState extends State<SmartImage> {
     return Container(
       width: widget.width,
       height: widget.height,
-      color: Colors.grey.shade200,
+      color: context.colors.surfaceSecondary,
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -401,7 +401,7 @@ class _SmartImageState extends State<SmartImage> {
                 value: _downloadProgress > 0 ? _downloadProgress : null,
                 strokeWidth: 3,
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  Theme.of(context).primaryColor,
+                  context.colors.textTertiary,
                 ),
               ),
             ),
@@ -409,9 +409,8 @@ class _SmartImageState extends State<SmartImage> {
               const SizedBox(height: 8),
               Text(
                 '${(_downloadProgress * 100).toInt()}%',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey.shade600,
+                style: context.labelSmall.copyWith(
+                  color: context.colors.textSecondary,
                 ),
               ),
             ],
@@ -425,11 +424,11 @@ class _SmartImageState extends State<SmartImage> {
     return Container(
       width: widget.width,
       height: widget.height,
-      color: Colors.grey.shade100,
+      color: context.colors.surfaceSecondary,
       child: Icon(
         Icons.image_not_supported_outlined,
         size: (widget.width ?? 40) * 0.5,
-        color: Colors.grey.shade400,
+        color: context.colors.textTertiary,
       ),
     );
   }

@@ -1,4 +1,3 @@
-import 'package:ondo/core/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -296,30 +295,27 @@ class _CallbackPageState extends State<CallbackPage> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final typography = context.typography;
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [colors.surface, colors.textPrimary, colors.surface])),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FortuneCompassIcon(
-                  size: 64, color: colors.textPrimary.withValues(alpha: 0.87)),
-              const SizedBox(height: AppSpacing.spacing6),
-              const CircularProgressIndicator(),
-              const SizedBox(height: AppSpacing.spacing4),
-              Text(
-                '로그인 처리 중...',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: colors.textSecondary,
-                    ),
+      backgroundColor: colors.background,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            FortuneCompassIcon(
+                size: 64, color: colors.textPrimary.withValues(alpha: 0.87)),
+            const SizedBox(height: DSSpacing.xl),
+            CircularProgressIndicator(
+              color: colors.textPrimary,
+            ),
+            const SizedBox(height: DSSpacing.lg),
+            Text(
+              '로그인 처리 중...',
+              style: typography.headingSmall.copyWith(
+                color: colors.textSecondary,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

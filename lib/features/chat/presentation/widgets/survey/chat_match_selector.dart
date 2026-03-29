@@ -719,7 +719,7 @@ class _ChatMatchSelectorState extends ConsumerState<ChatMatchSelector> {
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: colors.accent,
-          foregroundColor: Colors.white,
+          foregroundColor: colors.ctaForeground,
           padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(DSRadius.md),
@@ -729,7 +729,7 @@ class _ChatMatchSelectorState extends ConsumerState<ChatMatchSelector> {
           '이 경기로 선택',
           style: typography.labelLarge.copyWith(
             fontWeight: FontWeight.w600,
-            color: Colors.white,
+            color: colors.ctaForeground,
           ),
         ),
       ),

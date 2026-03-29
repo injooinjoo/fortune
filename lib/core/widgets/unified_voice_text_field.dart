@@ -507,14 +507,14 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
         width: 48,
         height: 48,
         decoration: BoxDecoration(
-          color: stopColor ?? (isDark ? Colors.grey[700] : Colors.grey[300]),
+          color: stopColor ?? context.colors.surfaceSecondary,
           shape: BoxShape.circle,
         ),
         child: Icon(
           Icons.stop,
           color: stopColor != null
-              ? Colors.white
-              : (isDark ? Colors.grey[300] : Colors.grey[700]),
+              ? context.colors.ctaForeground
+              : context.colors.textSecondary,
           size: 20,
         ),
       ),
@@ -533,14 +533,14 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
         decoration: BoxDecoration(
           color: isActive
               ? context.colors.ctaBackground
-              : (isDark ? Colors.grey[700] : Colors.grey[400]),
+              : context.colors.surfaceSecondary,
           shape: BoxShape.circle,
         ),
         child: Icon(
           Icons.arrow_upward,
           color: isActive
               ? context.colors.ctaForeground
-              : (isDark ? Colors.grey[500] : Colors.grey[600]),
+              : context.colors.textTertiary,
           size: 22,
         ),
       ),

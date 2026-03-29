@@ -352,12 +352,12 @@ class _OotdPhotoInputState extends State<OotdPhotoInput> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.check, size: 14, color: Colors.white),
+                Icon(Icons.check, size: 14, color: colors.ctaForeground),
                 const SizedBox(width: 4),
                 Text(
                   '사진 선택됨',
                   style: context.labelSmall.copyWith(
-                    color: Colors.white,
+                    color: colors.ctaForeground,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

@@ -93,7 +93,7 @@ class SettingsListTile extends ConsumerWidget {
                             child: Text(
                               'PRO',
                               style: typography.labelSmall.copyWith(
-                                color: Colors.white,
+                                color: colors.ctaForeground,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),

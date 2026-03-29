@@ -1,4 +1,3 @@
-import 'package:ondo/core/theme/app_spacing.dart';
 import 'package:ondo/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:ondo/core/design_system/design_system.dart';
@@ -32,8 +31,8 @@ class CustomCard extends StatelessWidget {
 
     return FortuneCardSurface(
       style: (elevation ?? 2) > 0 ? DSCardStyle.elevated : DSCardStyle.flat,
-      margin: margin ?? AppSpacing.paddingAll8,
-      padding: padding ?? AppSpacing.paddingAll16,
+      margin: margin ?? const EdgeInsets.all(DSSpacing.xs),
+      padding: padding ?? const EdgeInsets.all(DSSpacing.md),
       borderRadius: effectiveBorderRadius.topLeft.x,
       backgroundColor: backgroundColor ?? Theme.of(context).cardColor,
       onTap: onTap,

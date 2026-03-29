@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '../../../../core/design_system/design_system.dart';
 
 /// 물결 타이핑 인디케이터 (인스타그램 DM 스타일)
 /// 점 3개가 사인 곡선으로 위아래로 물결처럼 움직임
@@ -40,7 +41,7 @@ class _WaveTypingIndicatorState extends State<WaveTypingIndicator>
 
   @override
   Widget build(BuildContext context) {
-    final color = widget.dotColor ?? Colors.grey[500]!;
+    final color = widget.dotColor ?? context.colors.textTertiary;
 
     return AnimatedBuilder(
       animation: _controller,
@@ -110,7 +111,7 @@ class _MiniTypingIndicatorState extends State<MiniTypingIndicator>
 
   @override
   Widget build(BuildContext context) {
-    final color = widget.dotColor ?? Colors.grey[600]!;
+    final color = widget.dotColor ?? context.colors.textTertiary;
 
     return AnimatedBuilder(
       animation: _controller,

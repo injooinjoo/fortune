@@ -24,7 +24,7 @@ class SajuYongshinCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color: isDark ? context.colors.backgroundSecondary : Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
           color: isDark ? DSColors.border : DSColors.borderDark,
@@ -99,9 +99,7 @@ class SajuYongshinCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(DSSpacing.sm),
               decoration: BoxDecoration(
-                color: isDark
-                    ? context.colors.surface.withValues(alpha: 0.3)
-                    : Colors.grey.shade50,
+                color: context.colors.surfaceSecondary,
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Row(
@@ -141,7 +139,7 @@ class SajuYongshinCard extends StatelessWidget {
     final elementHanja = _elementToHanja(element);
     final wuxingColor = element.isNotEmpty
         ? SajuColors.getWuxingColor(element, isDark: isDark)
-        : Colors.grey;
+        : context.colors.textTertiary;
 
     return Container(
       padding: const EdgeInsets.all(DSSpacing.sm),

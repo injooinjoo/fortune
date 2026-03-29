@@ -181,14 +181,14 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
               if (_isOffline)
                 Container(
                   width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: DSSpacing.md, vertical: DSSpacing.xs + 2),
                   color: colors.error.withValues(alpha: 0.12),
                   child: Row(
                     children: [
                       Icon(Icons.wifi_off_rounded,
                           size: 16, color: colors.error),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: DSSpacing.xs),
                       Expanded(
                         child: Text(
                           'You are offline. Some features may be limited.\n'
@@ -245,7 +245,8 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
     final colors = context.colors;
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 18, 16, 12),
+      padding: const EdgeInsets.fromLTRB(
+          DSSpacing.md, DSSpacing.md + 2, DSSpacing.md, DSSpacing.sm),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -256,7 +257,7 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
             ),
-          if (widget.isOverlay) const SizedBox(width: 12),
+          if (widget.isOverlay) const SizedBox(width: DSSpacing.sm),
           Expanded(
             child: Text(
               '메시지',
@@ -286,7 +287,7 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
               onPressed: () => _showNewMessageSheet(context),
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: DSSpacing.xs),
           // 프로필 이미지 (설정으로 이동)
           GestureDetector(
             onTap: () async {
@@ -369,7 +370,8 @@ class _PersonalizedStarterSection extends StatelessWidget {
     final typography = context.typography;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
       child: PaperRuntimePanel(
         padding: const EdgeInsets.all(DSSpacing.lg),
         child: Column(
@@ -511,7 +513,8 @@ class _CharacterTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+      padding: const EdgeInsets.fromLTRB(
+          DSSpacing.md, 4, DSSpacing.md, DSSpacing.sm),
       child: Row(
         children: [
           _TabButton(
@@ -520,7 +523,7 @@ class _CharacterTabBar extends StatelessWidget {
             isSelected: currentTab == CharacterListTab.story,
             onTap: isLocked ? null : () => onTabChanged(CharacterListTab.story),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: DSSpacing.xs),
           _TabButton(
             label: context.l10n.viewFortune,
             icon: Icons.auto_awesome,
@@ -555,7 +558,8 @@ class _TabButton extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(
+            horizontal: DSSpacing.md, vertical: DSSpacing.xs + 2),
         decoration: BoxDecoration(
           color: isSelected
               ? colors.selectionBackground.withValues(alpha: 0.96)
@@ -827,8 +831,8 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                     ),
                   ),
                 ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: DSSpacing.md, vertical: 6),
                 child: Row(
                   children: [
                     // 아바타 (탭하면 프로필)
@@ -1147,7 +1151,7 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
         child: Column(
           children: [
             Container(
-              margin: const EdgeInsets.only(top: 8),
+              margin: const EdgeInsets.only(top: DSSpacing.xs),
               width: 40,
               height: 4,
               decoration: BoxDecoration(
@@ -1156,7 +1160,8 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
+              padding: const EdgeInsets.fromLTRB(
+                  DSSpacing.md, DSSpacing.sm, DSSpacing.md, DSSpacing.xs + 2),
               child: Column(
                 children: [
                   Row(
@@ -1169,7 +1174,7 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
                           color: context.colors.textPrimary,
                         ),
                       ),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: DSSpacing.md),
                       Text(
                         '새로운 친구',
                         style: context.typography.headingSmall.copyWith(
@@ -1178,7 +1183,7 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: DSSpacing.xs),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -1194,7 +1199,8 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
             ),
             const Divider(height: 1),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+              padding: const EdgeInsets.fromLTRB(
+                  DSSpacing.md, DSSpacing.sm, DSSpacing.md, DSSpacing.xs),
               child: TextField(
                 controller: _searchController,
                 onChanged: (value) => setState(() => _query = value),
@@ -1214,14 +1220,15 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
                     borderSide: BorderSide.none,
                   ),
                   contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
+                    horizontal: DSSpacing.md,
+                    vertical: DSSpacing.sm,
                   ),
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              padding: const EdgeInsets.fromLTRB(
+                  DSSpacing.md, 0, DSSpacing.md, DSSpacing.xs),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -1236,30 +1243,31 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
             Expanded(
               child: ListView(
                 controller: scrollController,
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                padding: const EdgeInsets.fromLTRB(
+                    DSSpacing.md, DSSpacing.xs, DSSpacing.md, DSSpacing.xl),
                 children: [
                   _NewFriendActionCard(
                     onTap: () =>
                         Navigator.pop(context, _newFriendCreationAction),
                   ),
                   if (myCharacters.isNotEmpty) ...[
-                    const SizedBox(height: 24),
+                    const SizedBox(height: DSSpacing.xl),
                     _SheetSectionTitle(
                       title: '내가 만든 친구',
                       count: myCharacters.length,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: DSSpacing.xs),
                     ...myCharacters.map(
                       (character) =>
                           _NewMessageCharacterTile(character: character),
                     ),
                   ],
-                  const SizedBox(height: 24),
+                  const SizedBox(height: DSSpacing.xl),
                   _SheetSectionTitle(
                     title: '추천 친구',
                     count: recommendedCharacters.length,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: DSSpacing.xs),
                   if (!hasResults)
                     const _NewMessageEmptyState()
                   else
@@ -1298,7 +1306,7 @@ class _SheetSectionTitle extends StatelessWidget {
           ),
         ),
         if (count != null) ...[
-          const SizedBox(width: 8),
+          const SizedBox(width: DSSpacing.xs),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             decoration: BoxDecoration(
@@ -1460,7 +1468,8 @@ class _NewMessageEmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
+      padding: const EdgeInsets.symmetric(
+          horizontal: DSSpacing.lg, vertical: DSSpacing.xl + 4),
       decoration: BoxDecoration(
         color: context.colors.backgroundSecondary,
         borderRadius: BorderRadius.circular(context.radius.xl),
@@ -1475,7 +1484,7 @@ class _NewMessageEmptyState extends StatelessWidget {
             size: 28,
             color: context.colors.textSecondary,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: DSSpacing.sm),
           Text(
             '검색 결과가 없어요',
             style: context.typography.labelLarge.copyWith(
