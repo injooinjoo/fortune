@@ -981,7 +981,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                     context.l10n.yourTurn,
                                     style: typography.bodyLarge.copyWith(
                                       fontWeight: FontWeight.w400,
-                                      color: colors.textPrimary,
+                                      color: const Color(0xFFF5F6FB),
                                     ),
                                   ),
                                 ),
@@ -999,7 +999,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                     context.l10n.newConversation,
                                     style: typography.bodyLarge.copyWith(
                                       fontWeight: FontWeight.w400,
-                                      color: colors.textPrimary,
+                                      color: const Color(0xFFF5F6FB),
                                     ),
                                   ),
                                 ),
@@ -1026,7 +1026,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                   ? accentPalette.accent
                                   : hasUnread
                                       ? colors.textPrimary
-                                      : colors.textTertiary,
+                                      : colors.textSecondary,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
