@@ -234,6 +234,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
     // This method will synthesize authentication information from the People API
     // if needed (or use the last identity seen from signInSilently).
     try {
+      // ignore: deprecated_member_use_from_same_package
       return _gisClient.signIn();
     } catch (reason) {
       throw PlatformException(

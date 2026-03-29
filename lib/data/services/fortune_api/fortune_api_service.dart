@@ -11,7 +11,7 @@ import '../../../core/config/feature_flags.dart';
 import '../../../domain/entities/fortune.dart';
 import '../../models/fortune_response_model.dart';
 import '../../../presentation/providers/providers.dart';
-import 'package:fortune/services/cache_service.dart';
+import 'package:ondo/services/cache_service.dart';
 import '../../../models/fortune_model.dart';
 import '../fortune_api_service_edge_functions.dart';
 import '../fortune_api_decision_service.dart';

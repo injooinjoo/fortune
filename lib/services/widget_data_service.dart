@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:fortune/core/utils/logger.dart';
-import 'package:fortune/domain/entities/fortune.dart';
-import 'package:fortune/models/shared_widget_data.dart';
-import 'package:fortune/services/native_platform_service.dart';
+import 'package:ondo/core/utils/logger.dart';
+import 'package:ondo/domain/entities/fortune.dart';
+import 'package:ondo/models/shared_widget_data.dart';
+import 'package:ondo/services/native_platform_service.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -14,7 +14,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 /// fortune-daily와 fortune-investment 데이터를 fetch하여 위젯용으로 변환/저장
 class WidgetDataService {
   static const String _sharedDataKey = 'unified_fortune_widget_data';
-  static const String _appGroupId = 'group.com.beyond.fortune';
+  static const String _appGroupId = 'group.com.beyond.ondo';
   static bool _isInitialized = false;
 
   // 카테고리 매핑
@@ -560,7 +560,7 @@ class WidgetDataService {
     try {
       if (defaultTargetPlatform == TargetPlatform.android) {
         final result =
-            await const MethodChannel('com.beyond.fortune/widget_refresh')
+            await const MethodChannel('com.beyond.ondo/widget_refresh')
                 .invokeMethod<Map<dynamic, dynamic>>('isWidgetInstalled');
         return result?['installed'] == true;
       } else if (defaultTargetPlatform == TargetPlatform.iOS) {

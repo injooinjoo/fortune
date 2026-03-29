@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/font_config.dart';
-import 'package:fortune/core/theme/font_size_system.dart';
+import 'package:ondo/core/theme/font_config.dart';
+import 'package:ondo/core/theme/font_size_system.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:fortune/core/design_system/tokens/ds_colors.dart';
-import 'package:fortune/core/design_system/theme/ds_extensions.dart';
+import 'package:ondo/core/design_system/tokens/ds_colors.dart';
+import 'package:ondo/core/design_system/theme/ds_extensions.dart';
 
 /// Paper-aligned typography system
 ///

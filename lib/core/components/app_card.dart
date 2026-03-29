@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/design_system/design_system.dart';
-import 'package:fortune/shared/components/cards/fortune_cards.dart';
+import 'package:ondo/core/design_system/design_system.dart';
+import 'package:ondo/shared/components/cards/fortune_cards.dart';
 
 /// @deprecated Use [DSCard] instead for consistent design system usage.
 /// ChatGPT 스타일 카드 컴포넌트

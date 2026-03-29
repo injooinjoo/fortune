@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:fortune/domain/entities/fortune.dart';
+import 'package:ondo/domain/entities/fortune.dart';
 
 @HiveType(typeId: 0)
 class CachedFortune extends HiveObject {

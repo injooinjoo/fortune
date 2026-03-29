@@ -68,7 +68,7 @@ Paper 기준 현재 canonical 구조는 아래 25개 artboard입니다.
 ### 1. 색상 사용
 
 ```dart
-import 'package:fortune/core/design_system/design_system.dart';
+import 'package:ondo/core/design_system/design_system.dart';
 
 // Context extensions (권장)
 Container(color: context.colors.surface)
@@ -91,7 +91,7 @@ Text('캡션', style: context.caption)
 ### 3. 카드 사용
 
 ```dart
-import 'package:fortune/core/design_system/design_system.dart';
+import 'package:ondo/core/design_system/design_system.dart';
 
 DSCard.elevated(
   child: YourContent(),

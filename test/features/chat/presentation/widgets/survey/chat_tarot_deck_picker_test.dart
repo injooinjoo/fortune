@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/core/design_system/design_system.dart';
-import 'package:fortune/features/chat/domain/models/fortune_survey_config.dart';
-import 'package:fortune/features/chat/presentation/widgets/survey/chat_tarot_deck_picker.dart';
-import 'package:fortune/presentation/providers/tarot_deck_provider.dart';
+import 'package:ondo/core/design_system/design_system.dart';
+import 'package:ondo/features/chat/domain/models/fortune_survey_config.dart';
+import 'package:ondo/features/chat/presentation/widgets/survey/chat_tarot_deck_picker.dart';
+import 'package:ondo/presentation/providers/tarot_deck_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

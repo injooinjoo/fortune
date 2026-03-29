@@ -1,4 +1,4 @@
-// Modern AI Chat Design System for ZPZG
+// Modern AI Chat Design System for Ondo
 //
 // Design Philosophy: Minimalist, neutral, content-focused
 // Inspired by Claude and ChatGPT interfaces.
@@ -9,7 +9,7 @@
 // ## Quick Start
 //
 // ```dart
-// import 'package:fortune/core/design_system/design_system.dart';
+// import 'package:ondo/core/design_system/design_system.dart';
 //
 // // Clean background (no texture)
 // Scaffold(backgroundColor: context.colors.background)

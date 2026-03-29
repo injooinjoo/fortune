@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/core/design_system/theme/ds_theme.dart';
-import 'package:fortune/core/widgets/unified_voice_text_field.dart';
-import 'package:fortune/services/speech_recognition_service.dart';
+import 'package:ondo/core/design_system/theme/ds_theme.dart';
+import 'package:ondo/core/widgets/unified_voice_text_field.dart';
+import 'package:ondo/services/speech_recognition_service.dart';
 
 class _FakeSpeechRecognitionService extends SpeechRecognitionService {
   _FakeSpeechRecognitionService({

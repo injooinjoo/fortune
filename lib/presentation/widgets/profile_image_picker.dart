@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:universal_io/io.dart';
-import 'package:fortune/core/design_system/design_system.dart';
+import 'package:ondo/core/design_system/design_system.dart';
 import '../../services/supabase_storage_service.dart';
 
 class ProfileImagePicker extends StatefulWidget {

@@ -1,4 +1,4 @@
-import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:ondo/core/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -88,13 +88,12 @@ class _CallbackPageState extends State<CallbackPage> {
             // Save to local storage
             await _storageService.saveUserProfile(profileData);
           } catch (insertError) {
-            debugPrint(
-                'Supabase initialized with URL: ${Environment.supabaseUrl}');
+            debugPrint('[CallbackPage] Profile insert failed: $insertError');
             // Continue to onboarding even if profile creation fails
           }
         }
       } catch (e) {
-        debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
+        debugPrint('[CallbackPage] Profile sync failed: $e');
         // Continue even if sync fails - will check local storage
       }
 
@@ -103,7 +102,7 @@ class _CallbackPageState extends State<CallbackPage> {
         context.go(route);
       }
     } catch (e) {
-      debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
+      debugPrint('[CallbackPage] Navigate error: $e');
       // Chat-First: 에러 시에도 /chat으로 이동
       if (mounted) context.go('/chat');
     }
@@ -239,7 +238,7 @@ class _CallbackPageState extends State<CallbackPage> {
       if (code != null && kIsWeb) {
         final cleanUrl = uri.toString().split('?')[0];
         cleanUrlInBrowser(cleanUrl);
-        debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
+        debugPrint('[CallbackPage] URL cleaned for web');
       }
 
       // Check current session before listening
@@ -287,8 +286,7 @@ class _CallbackPageState extends State<CallbackPage> {
       // Clean up
       debugPrint('=== END AUTH CALLBACK ===');
     } catch (e) {
-      debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
-      debugPrint('Supabase initialized with URL: ${Environment.supabaseUrl}');
+      debugPrint('[CallbackPage] Auth callback error: $e');
       if (mounted) {
         context.go('/?error=auth_failure&reason=exception');
       }

@@ -8,7 +8,7 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/navigation/fortune_chat_route.dart';
 import '../../../../core/services/supabase_connection_service.dart';
 import '../../../../core/widgets/paper_runtime_chrome.dart';
-import 'package:fortune/core/utils/haptic_utils.dart';
+import 'package:ondo/core/utils/haptic_utils.dart';
 import '../../../../presentation/providers/user_profile_notifier.dart';
 import '../../data/services/character_localizer.dart';
 import '../../domain/models/ai_character.dart';
@@ -63,17 +63,13 @@ class CharacterListPanel extends ConsumerStatefulWidget {
 }
 
 class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
-  static const double _topChromeRevealOffset = 12;
   final ScrollController _listScrollController = ScrollController();
-  bool _showTopChrome = true;
-  double _lastScrollOffset = 0;
   bool _isOffline = false;
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
 
   @override
   void initState() {
     super.initState();
-    _listScrollController.addListener(_handleListScroll);
     _initConnectivity();
   }
 
@@ -97,49 +93,14 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
   @override
   void dispose() {
     _connectivitySubscription?.cancel();
-    _listScrollController.removeListener(_handleListScroll);
     _listScrollController.dispose();
     super.dispose();
-  }
-
-  void _setTopChromeVisibility(bool visible) {
-    if (_showTopChrome == visible || !mounted) {
-      return;
-    }
-
-    setState(() {
-      _showTopChrome = visible;
-    });
-  }
-
-  void _handleListScroll() {
-    if (!_listScrollController.hasClients) {
-      return;
-    }
-
-    final offset = _listScrollController.offset;
-    final delta = offset - _lastScrollOffset;
-
-    if (offset <= 0) {
-      _lastScrollOffset = 0;
-      _setTopChromeVisibility(true);
-      return;
-    }
-
-    if (delta > 0 && offset > _topChromeRevealOffset) {
-      _setTopChromeVisibility(false);
-    } else if (delta < 0) {
-      _setTopChromeVisibility(true);
-    }
-
-    _lastScrollOffset = offset;
   }
 
   Future<void> _handleStarterOptionTap(
     OnboardingInterestOption option,
   ) async {
     HapticUtils.lightImpact();
-    _setTopChromeVisibility(true);
     ref.read(characterListTabProvider.notifier).state = option.targetTab;
 
     if (option.targetTab == CharacterListTab.story) {
@@ -202,47 +163,20 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
         child: SafeArea(
           child: Column(
             children: [
-              ClipRect(
-                child: AnimatedAlign(
-                  duration: DSAnimation.normal,
-                  curve: DSAnimation.emphasized,
-                  alignment: Alignment.topCenter,
-                  heightFactor: _showTopChrome ? 1 : 0,
-                  child: AnimatedOpacity(
-                    duration: DSAnimation.quick,
-                    curve: DSAnimation.primary,
-                    opacity: _showTopChrome ? 1 : 0,
-                    child: AnimatedSlide(
-                      duration: DSAnimation.normal,
-                      curve: DSAnimation.emphasized,
-                      offset:
-                          _showTopChrome ? Offset.zero : const Offset(0, -0.08),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // 헤더
-                          _buildHeader(context),
-                          // 탭 바
-                          _CharacterTabBar(
-                            currentTab: currentTab,
-                            isLocked: isCatalogPreview,
-                            onTabChanged: (tab) {
-                              if (isCatalogPreview) {
-                                return;
-                              }
-                              _setTopChromeVisibility(true);
-                              ref
-                                  .read(characterListTabProvider.notifier)
-                                  .state = tab;
-                            },
-                          ),
-                          const Divider(height: 1),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+              // 헤더
+              _buildHeader(context),
+              // 탭 바
+              _CharacterTabBar(
+                currentTab: currentTab,
+                isLocked: isCatalogPreview,
+                onTabChanged: (tab) {
+                  if (isCatalogPreview) {
+                    return;
+                  }
+                  ref.read(characterListTabProvider.notifier).state = tab;
+                },
               ),
+              const Divider(height: 1),
               // 오프라인 배너
               if (_isOffline)
                 Container(

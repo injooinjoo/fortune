@@ -12,7 +12,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:fortune/main.dart' as app;
+import 'package:ondo/main.dart' as app;
 
 /// 앱이 초기화될 때까지 pump를 반복 호출
 /// pumpAndSettle 대신 사용 (루핑 애니메이션 문제 해결)

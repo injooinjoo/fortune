@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/features/character/presentation/utils/fortune_key_localizer.dart';
+import 'package:ondo/features/character/presentation/utils/fortune_key_localizer.dart';
 
 void main() {
   group('FortuneKeyLocalizer', () {

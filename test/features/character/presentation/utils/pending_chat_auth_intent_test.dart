@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:fortune/features/character/domain/models/character_choice.dart';
-import 'package:fortune/features/character/presentation/utils/pending_chat_auth_intent.dart';
+import 'package:ondo/features/character/domain/models/character_choice.dart';
+import 'package:ondo/features/character/presentation/utils/pending_chat_auth_intent.dart';
 
 void main() {
   group('PendingChatAuthIntent', () {

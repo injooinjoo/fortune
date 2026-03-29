@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/core/design_system/theme/ds_theme.dart';
-import 'package:fortune/features/character/presentation/utils/profile_avatar_tap_handler.dart';
-import 'package:fortune/services/social_auth/base/social_auth_attempt_result.dart';
-import 'package:fortune/services/social_auth_service.dart';
+import 'package:ondo/core/design_system/theme/ds_theme.dart';
+import 'package:ondo/features/character/presentation/utils/profile_avatar_tap_handler.dart';
+import 'package:ondo/services/social_auth/base/social_auth_attempt_result.dart';
+import 'package:ondo/services/social_auth_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../mocks/mock_auth_services.dart';

@@ -183,8 +183,8 @@ class FortuneShareService {
     if (!success) {
       Logger.warning('카카오 SDK 공유 실패, 일반 공유로 폴백');
       final shareText = userName != null
-          ? '$userName님의 $title\n\n$content\n\n#인사이트 #ZPZG'
-          : '$title\n\n$content\n\n#인사이트 #ZPZG';
+          ? '$userName님의 $title\n\n$content\n\n#인사이트 #온도'
+          : '$title\n\n$content\n\n#인사이트 #온도';
 
       if (imageData != null) {
         final tempFile = await _saveImageToTemp(imageData);
@@ -215,7 +215,7 @@ class FortuneShareService {
 
     if (imageData == null) {
       await Share.share(
-        '$title\n\n$content\n\n#인사이트 #ZPZG',
+        '$title\n\n$content\n\n#인사이트 #온도',
         sharePositionOrigin: shareOrigin,
       );
       return;
@@ -244,7 +244,7 @@ class FortuneShareService {
         // Android: 직접 공유
         await Share.shareXFiles(
           [XFile(tempFile.path)],
-          text: '$title\n\n#인사이트 #ZPZG',
+          text: '$title\n\n#인사이트 #온도',
           sharePositionOrigin: shareOrigin,
         );
       }

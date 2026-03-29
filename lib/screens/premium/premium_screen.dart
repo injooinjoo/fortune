@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
 import '../../core/constants/in_app_products.dart';
@@ -318,6 +319,8 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
               ),
             ),
           ),
+          const SizedBox(height: DSSpacing.lg),
+          const _SubscriptionLegalFooter(),
           const SizedBox(height: DSSpacing.md),
         ],
       ),
@@ -781,6 +784,63 @@ class _LifetimeCard extends StatelessWidget {
               isLoading: isBusy,
               onPressed: isBusy ? null : onPressed,
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+//  Error Panel
+// ═══════════════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════════════
+//  Subscription Legal Footer — Apple-required auto-renewal disclosure
+// ═══════════════════════════════════════════════════════════════════════
+
+class _SubscriptionLegalFooter extends StatelessWidget {
+  const _SubscriptionLegalFooter();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final legalStyle = context.labelSmall.copyWith(
+      color: colors.textTertiary,
+      height: 1.5,
+    );
+    final linkStyle = legalStyle.copyWith(
+      decoration: TextDecoration.underline,
+    );
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.xs),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            '구독은 확인 시 iTunes 계정에 청구됩니다. '
+            '현재 구독 기간이 끝나기 최소 24시간 전에 자동 갱신을 해제하지 않으면 '
+            '구독이 자동으로 갱신됩니다. 갱신 요금은 현재 구독 기간이 끝나기 '
+            '24시간 이내에 청구됩니다. 구독은 구매 후 계정 설정에서 관리하거나 '
+            '취소할 수 있습니다. 환불은 Apple App Store 정책에 따라 처리됩니다.',
+            style: legalStyle,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: DSSpacing.sm),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () => context.push('/terms-of-service'),
+                child: Text('이용약관', style: linkStyle),
+              ),
+              Text('  |  ', style: legalStyle),
+              GestureDetector(
+                onTap: () => context.push('/privacy-policy'),
+                child: Text('개인정보처리방침', style: linkStyle),
+              ),
+            ],
           ),
         ],
       ),

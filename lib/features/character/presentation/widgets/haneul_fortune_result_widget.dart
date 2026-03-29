@@ -859,6 +859,7 @@ class HaneulFortuneResultWidget extends StatelessWidget {
     );
   }
 
+  // ignore: unused_element
   Widget _buildRhythmTimeline(
     BuildContext context,
     List<Map<String, dynamic>> entries,
@@ -954,6 +955,7 @@ class HaneulFortuneResultWidget extends StatelessWidget {
     );
   }
 
+  // ignore: unused_element
   Widget _buildCategoryGrid(
     BuildContext context,
     Map<String, dynamic> categories,
@@ -1036,6 +1038,7 @@ class HaneulFortuneResultWidget extends StatelessWidget {
     );
   }
 
+  // ignore: unused_element
   Widget _buildLuckyStrip(
       BuildContext context, Map<String, dynamic> luckyItems) {
     final entries = _luckyDisplayEntries(luckyItems);
@@ -1103,6 +1106,7 @@ class HaneulFortuneResultWidget extends StatelessWidget {
     );
   }
 
+  // ignore: unused_element
   Widget _buildActionList(BuildContext context, List<String> items) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

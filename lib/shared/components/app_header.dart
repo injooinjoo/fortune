@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:fortune/core/design_system/design_system.dart';
+import 'package:ondo/core/design_system/design_system.dart';
 import '../glassmorphism/glass_container.dart';
 
 enum FontSize { small, medium, large }

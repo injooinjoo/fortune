@@ -802,11 +802,11 @@ Extend the Fortune experience to wearable devices.
 #### Watch App Structure
 
 ```swift
-// FortuneWatchApp.swift
+// OndoWatchApp.swift
 import SwiftUI
 
 @main
-struct FortuneWatchApp: App {
+struct OndoWatchApp: App {
     @WKApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
     var body: some Scene {
@@ -822,7 +822,7 @@ struct FortuneWatchApp: App {
 
 // Main Watch View
 struct MainFortuneView: View {
-    @StateObject private var viewModel = FortuneWatchViewModel()
+    @StateObject private var viewModel = OndoWatchViewModel()
 
     var body: some View {
         ScrollView {
@@ -1886,13 +1886,13 @@ fortune/
 │       └── wearable_service.dart
 ├── ios/
 │   ├── Runner/
-│   ├── FortuneWidgetExtension/
+│   ├── OndoWidgetExtension/
 │   │   ├── FortuneWidget.swift
 │   │   ├── FortuneWidgetProvider.swift
 │   │   └── Views/
 │   ├── FortuneLiveActivity/
 │   │   └── FortuneLiveActivity.swift
-│   ├── FortuneWatchApp/
+│   ├── OndoWatchApp/
 │   │   ├── FortuneApp.swift
 │   │   └── Views/
 │   └── Shared/

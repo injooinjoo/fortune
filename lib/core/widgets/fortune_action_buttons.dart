@@ -3,8 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fortune/core/design_system/design_system.dart';
-import 'package:fortune/core/utils/haptic_utils.dart';
+import 'package:ondo/core/design_system/design_system.dart';
+import 'package:ondo/core/utils/haptic_utils.dart';
 import '../../presentation/providers/content_interaction_provider.dart';
 import '../../services/fortune_share_service.dart';
 

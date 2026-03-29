@@ -4,7 +4,7 @@ import '../../../core/constants/api_endpoints.dart';
 import '../../../core/utils/logger.dart';
 import '../../../domain/entities/fortune.dart';
 import '../../models/fortune_response_model.dart';
-import 'package:fortune/services/cache_service.dart';
+import 'package:ondo/services/cache_service.dart';
 import '../../../models/fortune_model.dart';
 
 class SajuFortuneApi {

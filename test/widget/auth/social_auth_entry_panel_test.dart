@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/core/design_system/theme/ds_theme.dart';
-import 'package:fortune/presentation/widgets/social_login_bottom_sheet.dart';
-import 'package:fortune/services/storage_service.dart';
+import 'package:ondo/core/design_system/theme/ds_theme.dart';
+import 'package:ondo/presentation/widgets/social_login_bottom_sheet.dart';
+import 'package:ondo/services/storage_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

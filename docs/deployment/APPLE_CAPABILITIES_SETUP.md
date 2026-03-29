@@ -58,7 +58,7 @@
    - 왼쪽 드롭다운에서 "App IDs" 선택
 
 2. **Fortune 앱 찾기**
-   - 리스트에서 `com.beyond.fortune` 검색
+   - 리스트에서 `com.beyond.ondo` 검색
    - 클릭하여 상세 페이지 열기
 
 ### Step 3: Capabilities 활성화
@@ -345,7 +345,7 @@ final credential = await SignInWithApple.getAppleIDCredential(...);
   <dict>
     <key>CFBundleURLSchemes</key>
     <array>
-      <string>com.beyond.fortune</string>
+      <string>com.beyond.ondo</string>
     </array>
   </dict>
 </array>
@@ -405,7 +405,7 @@ flutter run --release -d 00008140-00120304260B001C
 #### 이미 구현됨
 
 **현재 상태**:
-- `FortuneWidgetExtension` 타겟 생성됨
+- `OndoWidgetExtension` 타겟 생성됨
 - Widget Provider 구현됨
 
 **Info.plist 확인** (이미 설정됨):
@@ -515,7 +515,7 @@ Upload APNs Authentication Key or Certificate
 ```bash
 # 1. Apple Developer Portal
 https://developer.apple.com/account
-→ Identifiers > com.beyond.fortune
+→ Identifiers > com.beyond.ondo
 → Push Notifications ☑️
 → Sign in with Apple ☑️
 → Save

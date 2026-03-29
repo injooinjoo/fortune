@@ -383,7 +383,7 @@ class MyApp extends ConsumerWidget {
     FontSizeSystem.setScaleFactor(userSettings.fontScale);
 
     return MaterialApp.router(
-      title: 'ZPZG',
+      title: 'Ondo',
       theme: DSTheme.light(fontScale: userSettings.fontScale),
       darkTheme: DSTheme.dark(fontScale: userSettings.fontScale),
       themeMode: themeMode,

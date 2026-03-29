@@ -101,7 +101,7 @@ class SecureFirebaseOptions {
       projectId: dotenv.env['FIREBASE_PROJECT_ID'] ??
           _throwMissingKey('FIREBASE_PROJECT_ID'),
       storageBucket: '${dotenv.env['FIREBASE_PROJECT_ID']}.firebasestorage.app',
-      iosBundleId: 'com.beyond.fortune');
+      iosBundleId: 'com.beyond.ondo');
 
   static FirebaseOptions get macos => FirebaseOptions(
       apiKey: dotenv.env['FIREBASE_MACOS_API_KEY'] ??
@@ -113,7 +113,7 @@ class SecureFirebaseOptions {
       projectId: dotenv.env['FIREBASE_PROJECT_ID'] ??
           _throwMissingKey('FIREBASE_PROJECT_ID'),
       storageBucket: '${dotenv.env['FIREBASE_PROJECT_ID']}.firebasestorage.app',
-      iosBundleId: 'com.beyond.fortune');
+      iosBundleId: 'com.beyond.ondo');
 
   static String _throwMissingKey(String key) {
     throw Exception(

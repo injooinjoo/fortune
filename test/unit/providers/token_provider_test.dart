@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/data/models/user_profile.dart';
-import 'package:fortune/domain/entities/token.dart';
-import 'package:fortune/presentation/providers/token_provider.dart';
+import 'package:ondo/data/models/user_profile.dart';
+import 'package:ondo/domain/entities/token.dart';
+import 'package:ondo/presentation/providers/token_provider.dart';
 
 void main() {
   // Helper to create TokenBalance with required fields

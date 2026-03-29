@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/core/models/cached_fortune_result.dart';
-import 'package:fortune/core/models/fortune_result.dart';
-import 'package:fortune/core/services/fortune_optimization_service.dart';
-import 'package:fortune/core/services/generator_factory.dart';
-import 'package:fortune/core/services/unified_fortune_service.dart';
-import 'package:fortune/features/fortune/domain/models/fortune_conditions.dart';
+import 'package:ondo/core/models/cached_fortune_result.dart';
+import 'package:ondo/core/models/fortune_result.dart';
+import 'package:ondo/core/services/fortune_optimization_service.dart';
+import 'package:ondo/core/services/generator_factory.dart';
+import 'package:ondo/core/services/unified_fortune_service.dart';
+import 'package:ondo/features/fortune/domain/models/fortune_conditions.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../mocks/mock_auth_services.dart';

@@ -1,7 +1,7 @@
-import 'package:fortune/data/models/pet_profile.dart';
+import 'package:ondo/data/models/pet_profile.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/data/models/secondary_profile.dart';
-import 'package:fortune/features/character/presentation/utils/chat_survey_profile_utils.dart';
+import 'package:ondo/data/models/secondary_profile.dart';
+import 'package:ondo/features/character/presentation/utils/chat_survey_profile_utils.dart';
 
 void main() {
   final sampleProfile = SecondaryProfile(

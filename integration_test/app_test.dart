@@ -1,4 +1,4 @@
-// ZPZG - Integration Test (E2E)
+// Ondo - Integration Test (E2E)
 // 전체 앱 플로우를 테스트하는 E2E 테스트
 //
 // 실행 방법:
@@ -9,7 +9,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:fortune/features/character/presentation/pages/swipe_home_shell.dart';
+import 'package:ondo/features/character/presentation/pages/swipe_home_shell.dart';
 import 'test_app.dart';
 
 Future<void> startAppAndWait(

@@ -13,7 +13,7 @@
 // ## 사용 예시
 //
 // ```dart
-// import 'package:fortune/features/fortune/presentation/widgets/saju/saju_widgets.dart';
+// import 'package:ondo/features/fortune/presentation/widgets/saju/saju_widgets.dart';
 //
 // // 전문가용 4주 테이블
 // SajuPillarTablePro(

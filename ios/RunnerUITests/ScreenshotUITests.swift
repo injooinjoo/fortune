@@ -2,7 +2,7 @@
 //  ScreenshotUITests.swift
 //  RunnerUITests
 //
-//  ZPZG App Store Screenshots
+//  Ondo App Store Screenshots
 //  "운세" 제거된 새 스크린샷 촬영용
 //
 

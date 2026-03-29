@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:fortune/core/theme/typography_theme.dart';
+import 'package:ondo/core/theme/typography_theme.dart';
 
 /// 사용자 설정 상태
 class UserSettings {

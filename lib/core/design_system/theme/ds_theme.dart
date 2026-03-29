@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fortune/core/theme/font_size_system.dart';
-import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:ondo/core/theme/font_size_system.dart';
+import 'package:ondo/core/theme/typography_unified.dart';
 import '../tokens/ds_colors.dart';
 import '../tokens/ds_radius.dart';
 import '../tokens/ds_spacing.dart';

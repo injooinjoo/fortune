@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/core/theme/font_size_system.dart';
-import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:ondo/core/theme/font_size_system.dart';
+import 'package:ondo/core/theme/typography_unified.dart';
 
 void main() {
   group('FontSizeSystem Tests', () {

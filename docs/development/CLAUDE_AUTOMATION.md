@@ -178,7 +178,7 @@ flutter clean
 flutter pub get
 
 # 4. Uninstall from simulator
-xcrun simctl uninstall 1B54EF52-7E41-4040-A236-C169898F5527 com.beyond.fortune
+xcrun simctl uninstall 1B54EF52-7E41-4040-A236-C169898F5527 com.beyond.ondo
 
 # 5. Fresh install and run
 flutter run -d 1B54EF52-7E41-4040-A236-C169898F5527

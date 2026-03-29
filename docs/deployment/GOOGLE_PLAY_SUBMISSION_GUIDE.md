@@ -90,7 +90,7 @@ Manifest source:
 - Play App Signing 사용 시 Console의 App Signing certificate fingerprint와 다를 수 있으므로 반드시 최종 확인
 
 ## 6. 스토어 등록 정보 체크
-- App name: `ZPZG`
+- App name: `Ondo`
 - Category: `Lifestyle`
 - Short/full description은 토큰 소비 모델과 현재 기능 범위를 벗어나지 않게 유지
 - 의료·법률·재무 조언처럼 오해될 표현 금지

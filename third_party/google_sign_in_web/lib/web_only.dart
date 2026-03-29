@@ -2,12 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// This library exposes web-only methods of [GoogleSignInPlatform.instance].
-///
-/// The exported methods will assert that the [GoogleSignInPlatform.instance]
-/// is an instance of class [GoogleSignInPlugin] (the web implementation of
-/// `google_sign_in` provided by this package).
-library web_only;
+// This file exposes web-only methods of [GoogleSignInPlatform.instance].
+//
+// The exported methods assert that [GoogleSignInPlatform.instance] is an
+// instance of [GoogleSignInPlugin], the web implementation of
+// `google_sign_in` provided by this package.
 
 import 'package:flutter/widgets.dart' show Widget;
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart'

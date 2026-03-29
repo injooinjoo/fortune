@@ -9,7 +9,7 @@ class AppLocalizationsJa extends AppLocalizations {
   AppLocalizationsJa([String locale = 'ja']) : super(locale);
 
   @override
-  String get appTitle => 'ZPZG';
+  String get appTitle => 'Ondo';
 
   @override
   String get confirm => '確認';

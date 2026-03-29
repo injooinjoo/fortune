@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/data/models/secondary_profile.dart';
+import 'package:ondo/data/models/secondary_profile.dart';
 
 void main() {
   group('SecondaryProfile family survey matching', () {

@@ -13,15 +13,15 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:fortune/core/design_system/theme/ds_theme.dart';
-import 'package:fortune/core/theme/font_size_system.dart';
-import 'package:fortune/routes/route_config.dart';
-import 'package:fortune/presentation/providers/theme_provider.dart';
-import 'package:fortune/core/providers/user_settings_provider.dart';
-import 'package:fortune/core/providers/locale_provider.dart';
-import 'package:fortune/l10n/app_localizations.dart';
-import 'package:fortune/core/services/test_auth_service.dart';
-import 'package:fortune/core/services/supabase_connection_service.dart';
+import 'package:ondo/core/design_system/theme/ds_theme.dart';
+import 'package:ondo/core/theme/font_size_system.dart';
+import 'package:ondo/routes/route_config.dart';
+import 'package:ondo/presentation/providers/theme_provider.dart';
+import 'package:ondo/core/providers/user_settings_provider.dart';
+import 'package:ondo/core/providers/locale_provider.dart';
+import 'package:ondo/l10n/app_localizations.dart';
+import 'package:ondo/core/services/test_auth_service.dart';
+import 'package:ondo/core/services/supabase_connection_service.dart';
 
 /// 테스트용 앱 초기화 함수
 ///
@@ -112,7 +112,7 @@ class TestApp extends ConsumerWidget {
     FontSizeSystem.setScaleFactor(userSettings.fontScale);
 
     return MaterialApp.router(
-      title: 'Fortune Test',
+      title: 'Ondo Test',
       theme: DSTheme.light(fontScale: userSettings.fontScale),
       darkTheme: DSTheme.dark(fontScale: userSettings.fontScale),
       themeMode: themeMode,

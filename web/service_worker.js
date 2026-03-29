@@ -1,4 +1,4 @@
-// Service Worker for ZPZG
+// Service Worker for Ondo
 const CACHE_NAME = 'zpzg-web-v1';
 const DYNAMIC_CACHE = 'fortune-dynamic-v1';
 

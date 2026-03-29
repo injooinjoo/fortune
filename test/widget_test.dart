@@ -14,7 +14,7 @@ void main() {
         child: MaterialApp(
           home: Scaffold(
             body: Center(
-              child: Text('ZPZG'),
+              child: Text('온도'),
             ),
           ),
         ),
@@ -22,7 +22,7 @@ void main() {
     );
 
     // Verify app renders
-    expect(find.text('ZPZG'), findsOneWidget);
+    expect(find.text('온도'), findsOneWidget);
   });
 
   testWidgets('ProviderScope is accessible', (WidgetTester tester) async {

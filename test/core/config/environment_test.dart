@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/core/config/environment.dart';
+import 'package:ondo/core/config/environment.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 

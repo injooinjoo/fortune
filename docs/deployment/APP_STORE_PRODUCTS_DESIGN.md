@@ -5,7 +5,7 @@
 | 항목 | 값 |
 |------|---|
 | 앱 이름 | Fortune |
-| Bundle ID | `com.beyond.fortune` |
+| Bundle ID | `com.beyond.ondo` |
 | 총 상품 수 | 6개 (구독 2개 + 소모성 4개) |
 | 작성일 | 2024년 |
 
@@ -27,7 +27,7 @@
 | 항목 | 값 |
 |------|---|
 | **참조 이름** | Fortune Pro Subscription |
-| **상품 ID** | `com.beyond.fortune.subscription.monthly` |
+| **상품 ID** | `com.beyond.ondo.subscription.monthly` |
 | **유형** | 자동 갱신 구독 (Auto-Renewable Subscription) |
 | **구독 기간** | 1개월 |
 | **그룹 내 순서** | 1 (Level 1 - Pro) |
@@ -61,7 +61,7 @@
 | 항목 | 값 |
 |------|---|
 | **참조 이름** | Fortune Max Subscription |
-| **상품 ID** | `com.beyond.fortune.subscription.max` |
+| **상품 ID** | `com.beyond.ondo.subscription.max` |
 | **유형** | 자동 갱신 구독 (Auto-Renewable Subscription) |
 | **구독 기간** | 1개월 |
 | **그룹 내 순서** | 2 (Level 2 - Max) |
@@ -97,7 +97,7 @@
 | 항목 | 값 |
 |------|---|
 | **참조 이름** | Fortune Tokens 10 |
-| **상품 ID** | `com.beyond.fortune.tokens10` |
+| **상품 ID** | `com.beyond.ondo.tokens10` |
 | **유형** | 소모성 (Consumable) |
 
 #### 가격표
@@ -129,7 +129,7 @@
 | 항목 | 값 |
 |------|---|
 | **참조 이름** | Fortune Tokens 50 |
-| **상품 ID** | `com.beyond.fortune.tokens50` |
+| **상품 ID** | `com.beyond.ondo.tokens50` |
 | **유형** | 소모성 (Consumable) |
 
 #### 가격표
@@ -161,7 +161,7 @@
 | 항목 | 값 |
 |------|---|
 | **참조 이름** | Fortune Tokens 100 |
-| **상품 ID** | `com.beyond.fortune.tokens100` |
+| **상품 ID** | `com.beyond.ondo.tokens100` |
 | **유형** | 소모성 (Consumable) |
 
 #### 가격표
@@ -193,7 +193,7 @@
 | 항목 | 값 |
 |------|---|
 | **참조 이름** | Fortune Tokens 200 |
-| **상품 ID** | `com.beyond.fortune.tokens200` |
+| **상품 ID** | `com.beyond.ondo.tokens200` |
 | **유형** | 소모성 (Consumable) |
 
 #### 가격표
@@ -299,34 +299,34 @@ Demo Account (if needed):
 
 ### 3단계: 구독 상품 추가
 - [ ] Pro Subscription 추가
-  - [ ] 상품 ID: `com.beyond.fortune.subscription.monthly`
+  - [ ] 상품 ID: `com.beyond.ondo.subscription.monthly`
   - [ ] 가격 설정 (Tier 4 - ₩4,500)
   - [ ] 현지화 정보 입력 (한국어, 영어)
   - [ ] 스크린샷 업로드
 - [x] Max Subscription 추가
-  - [x] 상품 ID: `com.beyond.fortune.subscription.max`
+  - [x] 상품 ID: `com.beyond.ondo.subscription.max`
   - [x] 가격 설정 (Tier 13 - ₩12,900)
   - [x] 현지화 정보 입력 (한국어)
   - [ ] 스크린샷 업로드
 
 ### 4단계: 소모성 상품 추가
 - [ ] Tokens 10 추가
-  - [ ] 상품 ID: `com.beyond.fortune.tokens10`
+  - [ ] 상품 ID: `com.beyond.ondo.tokens10`
   - [ ] 유형: 소모성 (Consumable)
   - [ ] 가격 설정 (Tier 1)
   - [ ] 현지화 정보 입력
 - [ ] Tokens 50 추가
-  - [ ] 상품 ID: `com.beyond.fortune.tokens50`
+  - [ ] 상품 ID: `com.beyond.ondo.tokens50`
   - [ ] 유형: 소모성 (Consumable)
   - [ ] 가격 설정 (Tier 4)
   - [ ] 현지화 정보 입력
 - [ ] Tokens 100 추가
-  - [ ] 상품 ID: `com.beyond.fortune.tokens100`
+  - [ ] 상품 ID: `com.beyond.ondo.tokens100`
   - [ ] 유형: 소모성 (Consumable)
   - [ ] 가격 설정 (Tier 7)
   - [ ] 현지화 정보 입력
 - [ ] Tokens 200 추가
-  - [ ] 상품 ID: `com.beyond.fortune.tokens200`
+  - [ ] 상품 ID: `com.beyond.ondo.tokens200`
   - [ ] 유형: 소모성 (Consumable)
   - [ ] 가격 설정 (Tier 13)
   - [ ] 현지화 정보 입력

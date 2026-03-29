@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/presentation/providers/fortune_provider.dart';
-import 'package:fortune/domain/entities/fortune.dart';
+import 'package:ondo/presentation/providers/fortune_provider.dart';
+import 'package:ondo/domain/entities/fortune.dart';
 
 void main() {
   group('FortuneState', () {

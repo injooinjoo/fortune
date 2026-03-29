@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/services/notification/fcm_service.dart';
+import 'package:ondo/services/notification/fcm_service.dart';
 
 void main() {
   group('NotificationSettings', () {

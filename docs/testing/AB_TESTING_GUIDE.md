@@ -691,7 +691,7 @@ if (isTestAccount) {
 
 #### Android
 ```bash
-adb shell setprop debug.firebase.analytics.app com.beyond.fortune
+adb shell setprop debug.firebase.analytics.app com.beyond.ondo
 ```
 
 #### iOS

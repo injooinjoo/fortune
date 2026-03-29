@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fortune/data/services/fortune_api_service.dart';
-import 'package:fortune/domain/entities/fortune.dart';
-import 'package:fortune/presentation/providers/providers.dart';
+import 'package:ondo/data/services/fortune_api_service.dart';
+import 'package:ondo/domain/entities/fortune.dart';
+import 'package:ondo/presentation/providers/providers.dart';
 
 // Today Fortune State
 class TodayFortuneState {

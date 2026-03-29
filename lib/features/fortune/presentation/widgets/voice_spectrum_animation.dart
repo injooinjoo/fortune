@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:fortune/core/design_system/design_system.dart';
+import 'package:ondo/core/design_system/design_system.dart';
 
 /// ChatGPT 스타일 음성 웨이브폼 애니메이션
 /// 많은 얇은 바가 실시간 소리에 반응

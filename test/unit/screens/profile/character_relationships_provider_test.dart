@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/features/character/data/default_characters.dart';
-import 'package:fortune/features/character/domain/models/character_affinity.dart';
-import 'package:fortune/features/character/domain/models/character_chat_message.dart';
-import 'package:fortune/features/character/domain/models/character_chat_state.dart';
-import 'package:fortune/screens/profile/providers/character_relationships_provider.dart';
+import 'package:ondo/features/character/data/default_characters.dart';
+import 'package:ondo/features/character/domain/models/character_affinity.dart';
+import 'package:ondo/features/character/domain/models/character_chat_message.dart';
+import 'package:ondo/features/character/domain/models/character_chat_state.dart';
+import 'package:ondo/screens/profile/providers/character_relationships_provider.dart';
 
 void main() {
   test('buildProfileRelationshipStats summarizes and sorts story relationships',

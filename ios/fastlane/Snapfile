@@ -1,5 +1,5 @@
 # Snapfile - Fastlane Screenshot Configuration
-# ZPZG App Store Screenshots
+# Ondo App Store Screenshots
 
 # 디바이스 목록 (App Store 요구사항)
 devices([

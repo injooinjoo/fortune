@@ -14,10 +14,10 @@
 - `public/.well-known/apple-app-site-association`
 
 ## 2. 앱 기본 정보
-- App Name: `ZPZG`
+- App Name: `Ondo`
 - Category: `Lifestyle`
 - Copyright:
-  - `© 2026 ZPZG. All rights reserved.`
+  - `© 2026 Ondo. All rights reserved.`
 
 ## 3. App Privacy 입력 기준
 

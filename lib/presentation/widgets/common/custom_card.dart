@@ -1,8 +1,8 @@
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:ondo/core/theme/app_spacing.dart';
+import 'package:ondo/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
-import 'package:fortune/core/design_system/design_system.dart';
-import 'package:fortune/shared/components/cards/fortune_cards.dart';
+import 'package:ondo/core/design_system/design_system.dart';
+import 'package:ondo/shared/components/cards/fortune_cards.dart';
 
 class CustomCard extends StatelessWidget {
   final Widget child;

@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:fortune/core/cache/profile_cache.dart';
-import 'package:fortune/services/social_auth/base/social_auth_attempt_result.dart';
-import 'package:fortune/services/social_auth/providers/apple_auth_provider.dart';
+import 'package:ondo/core/cache/profile_cache.dart';
+import 'package:ondo/services/social_auth/base/social_auth_attempt_result.dart';
+import 'package:ondo/services/social_auth/providers/apple_auth_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../mocks/mock_auth_services.dart';

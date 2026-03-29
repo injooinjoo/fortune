@@ -1,11 +1,11 @@
 {
-    "name": "ZPZG",
-    "short_name": "ZPZG",
+    "name": "온도",
+    "short_name": "온도",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "공감형 AI 대화와 라이프스타일 인사이트 앱, 온도",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

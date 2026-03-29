@@ -1,10 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../shared/widgets/smart_image.dart';
-import 'package:fortune/core/utils/haptic_utils.dart';
+import 'package:ondo/core/utils/haptic_utils.dart';
 import '../../../chat/presentation/widgets/chat_saju_result_card.dart';
 import '../../domain/models/ai_character.dart';
 import '../../domain/models/character_chat_message.dart';
@@ -353,63 +354,81 @@ class CharacterMessageBubble extends StatelessWidget {
     );
   }
 
-  /// 포맷된 텍스트 (별표로 감싼 부분은 이탤릭) - GPT 스타일
+  /// 마크다운 포맷 텍스트 - **bold**, *italic*, 줄바꿈 자동 처리
   Widget _buildFormattedText(BuildContext context, String text) {
     final colors = context.colors;
-    // 별표로 감싼 부분을 이탤릭으로 표시
-    final parts = <InlineSpan>[];
-    final regex = RegExp(r'\*([^*]+)\*');
-    int lastEnd = 0;
+    final baseStyle = context.bodyMedium.copyWith(
+      color: colors.textPrimary,
+      height: 1.6,
+    );
 
-    for (final match in regex.allMatches(text)) {
-      // 일반 텍스트
-      if (match.start > lastEnd) {
-        parts.add(TextSpan(
-          text: text.substring(lastEnd, match.start),
-          style: context.bodyMedium.copyWith(
-            color: colors.textPrimary,
-            height: 1.5,
-          ),
-        ));
-      }
-      // 이탤릭 텍스트
-      parts.add(TextSpan(
-        text: match.group(1),
-        style: context.bodyMedium.copyWith(
+    return MarkdownBody(
+      data: text,
+      shrinkWrap: true,
+      softLineBreak: true,
+      selectable: true,
+      styleSheet: MarkdownStyleSheet(
+        // 본문
+        p: baseStyle,
+        pPadding: EdgeInsets.zero,
+        // 볼드
+        strong: baseStyle.copyWith(
+          fontWeight: FontWeight.w700,
+          color: colors.textPrimary,
+        ),
+        // 이탤릭
+        em: baseStyle.copyWith(
           fontStyle: FontStyle.italic,
           color: colors.textSecondary,
-          height: 1.5,
         ),
-      ));
-      lastEnd = match.end;
-    }
-
-    // 나머지 텍스트
-    if (lastEnd < text.length) {
-      parts.add(TextSpan(
-        text: text.substring(lastEnd),
-        style: context.bodyMedium.copyWith(
+        // 리스트
+        listBullet: baseStyle.copyWith(
+          color: colors.textTertiary,
+          fontSize: 12,
+        ),
+        listBulletPadding: const EdgeInsets.only(right: 4),
+        listIndent: 16,
+        // 문단 간격
+        blockSpacing: 8,
+        // 인라인 코드
+        code: baseStyle.copyWith(
+          fontSize: 13,
+          backgroundColor: colors.backgroundSecondary,
+          fontFamily: 'monospace',
+        ),
+        codeblockDecoration: BoxDecoration(
+          color: colors.backgroundSecondary,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        codeblockPadding: const EdgeInsets.all(12),
+        // 헤딩 (AI 응답에 가끔 포함)
+        h1: context.bodyMedium.copyWith(
+          fontWeight: FontWeight.w700,
+          fontSize: 17,
           color: colors.textPrimary,
-          height: 1.5,
+          height: 1.4,
         ),
-      ));
-    }
-
-    if (parts.isEmpty) {
-      return Text(
-        text,
-        style: context.bodyMedium.copyWith(
+        h2: context.bodyMedium.copyWith(
+          fontWeight: FontWeight.w700,
+          fontSize: 16,
           color: colors.textPrimary,
-          height: 1.5,
+          height: 1.4,
         ),
-      );
-    }
-
-    return RichText(
-      softWrap: true,
-      text: TextSpan(
-        style: TextStyle(color: colors.textPrimary),
-        children: parts,
+        h3: context.bodyMedium.copyWith(
+          fontWeight: FontWeight.w600,
+          fontSize: 15,
+          color: colors.textPrimary,
+          height: 1.4,
+        ),
+        // 구분선
+        horizontalRuleDecoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: colors.border.withValues(alpha: 0.3),
+              width: 0.5,
+            ),
+          ),
+        ),
       ),
     );
   }

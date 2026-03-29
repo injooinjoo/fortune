@@ -89,7 +89,7 @@ import NaverThirdPartyLogin
   private func setupNaverLogin() {
     // Use the shared FlutterEngine's binary messenger for Scene lifecycle support
     naverChannel = FlutterMethodChannel(
-      name: "com.beyond.fortune/naver_auth",
+      name: "com.beyond.ondo/naver_auth",
       binaryMessenger: flutterEngine.binaryMessenger
     )
     
@@ -129,7 +129,7 @@ import NaverThirdPartyLogin
     instance?.serviceUrlScheme = "naverQMEfy6U82j8nKG3HSE8y"
     instance?.consumerKey = "QMEfy6U82j8nKG3HSE8y"
     instance?.consumerSecret = "Hu5KdO9DxK"
-    instance?.appName = "ZPZG"
+    instance?.appName = "온도"
     
     // Check if already logged in
     if let accessToken = instance?.accessToken, !accessToken.isEmpty {

@@ -1,8 +1,8 @@
 // ignore_for_file: camel_case_types
 import 'package:universal_io/io.dart';
 import 'package:flutter/services.dart';
-import 'package:fortune/core/utils/logger.dart';
-import 'package:fortune/core/services/resilient_service.dart';
+import 'package:ondo/core/utils/logger.dart';
+import 'package:ondo/core/services/resilient_service.dart';
 
 /// Service for communicating with native platform features
 /// Handles iOS and Android platform-specific functionality

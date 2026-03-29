@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/core/navigation/fortune_chat_route.dart';
+import 'package:ondo/core/navigation/fortune_chat_route.dart';
 
 void main() {
   group('buildFortuneChatRoute', () {

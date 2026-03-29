@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/features/character/domain/models/character_affinity.dart';
-import 'package:fortune/features/character/domain/models/character_chat_message.dart';
-import 'package:fortune/features/character/presentation/utils/character_tone_policy.dart';
-import 'package:fortune/features/character/presentation/utils/character_voice_profile_registry.dart';
+import 'package:ondo/features/character/domain/models/character_affinity.dart';
+import 'package:ondo/features/character/domain/models/character_chat_message.dart';
+import 'package:ondo/features/character/presentation/utils/character_tone_policy.dart';
+import 'package:ondo/features/character/presentation/utils/character_voice_profile_registry.dart';
 
 void main() {
   final voice = CharacterVoiceProfileRegistry.profileFor('luts');

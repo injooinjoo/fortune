@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/services/oauth_in_app_browser_coordinator.dart';
+import 'package:ondo/services/oauth_in_app_browser_coordinator.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../mocks/mock_auth_services.dart';

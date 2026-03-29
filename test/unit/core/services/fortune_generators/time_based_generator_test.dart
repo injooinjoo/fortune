@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/core/services/fortune_generators/time_based_generator.dart';
+import 'package:ondo/core/services/fortune_generators/time_based_generator.dart';
 
 void main() {
   group('TimeBasedGenerator', () {

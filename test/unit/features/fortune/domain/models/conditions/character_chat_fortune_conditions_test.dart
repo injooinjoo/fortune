@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/features/fortune/domain/models/conditions/character_chat_fortune_conditions.dart';
+import 'package:ondo/features/fortune/domain/models/conditions/character_chat_fortune_conditions.dart';
 
 void main() {
   group('CharacterChatFortuneConditions', () {

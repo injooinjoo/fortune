@@ -62,7 +62,7 @@ flutter build ipa --release
 
 ### Apple Developer ✅
 - [ ] Apple Developer Program 가입
-- [ ] App ID 생성: `com.beyond.fortune`
+- [ ] App ID 생성: `com.beyond.ondo`
 - [ ] Distribution Certificate 생성
 - [ ] Provisioning Profile 생성
 

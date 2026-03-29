@@ -1,4 +1,4 @@
-# ZPZG Deployment Complete Guide
+# Ondo Deployment Complete Guide
 
 **Last Updated**: December 2025
 **Purpose**: Comprehensive deployment guide for Android and iOS app stores
@@ -243,7 +243,7 @@ fastlane production  # Production release
    - Individual or Organization account
 
 2. **Create App ID**:
-   - Identifier: `com.beyond.fortune`
+   - Identifier: `com.beyond.ondo`
    - Description: Fortune - AI Fortune Teller
    - Capabilities: Enable as needed (Push Notifications, In-App Purchase, etc.)
 
@@ -267,7 +267,7 @@ fastlane production  # Production release
    - Select Runner target
    - Go to Signing & Capabilities tab
    - Team: Select your Apple Developer team
-   - Bundle Identifier: `com.beyond.fortune`
+   - Bundle Identifier: `com.beyond.ondo`
    - Provisioning Profile: Select distribution profile
    - ☑ Automatically manage signing
 
@@ -299,7 +299,7 @@ fastlane release  # App Store
    - Platform: iOS
    - Name: Fortune - AI 운세
    - Primary Language: Korean
-   - Bundle ID: com.beyond.fortune
+   - Bundle ID: com.beyond.ondo
    - SKU: fortune-ios
 
 2. **App Information**:

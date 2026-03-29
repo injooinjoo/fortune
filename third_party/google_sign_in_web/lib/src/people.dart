@@ -16,7 +16,7 @@ const List<String> scopes = <String>[
 ];
 
 /// People API to return my profile info...
-const String MY_PROFILE = 'https://content-people.googleapis.com/v1/people/me'
+const String myProfile = 'https://content-people.googleapis.com/v1/people/me'
     '?sources=READ_SOURCE_TYPE_PROFILE'
     '&personFields=photos%2Cnames%2CemailAddresses';
 
@@ -27,7 +27,7 @@ Future<GoogleSignInUserData?> requestUserData(
 }) async {
   // Request my profile from the People API.
   final Map<String, Object?> person = await _doRequest(
-    MY_PROFILE,
+    myProfile,
     tokenResponse,
     overrideClient: overrideClient,
   );

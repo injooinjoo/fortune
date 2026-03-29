@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# ZPZG UITests 설정 스크립트
+# Ondo UITests 설정 스크립트
 # Xcode에서 수동으로 UITests 타겟을 추가해야 합니다.
 
 echo "============================================"
-echo "ZPZG 스크린샷 자동화 설정 가이드"
+echo "Ondo 스크린샷 자동화 설정 가이드"
 echo "============================================"
 echo ""
 echo "1. Xcode에서 Runner.xcworkspace 열기"

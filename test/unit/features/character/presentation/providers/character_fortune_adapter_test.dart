@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/core/models/fortune_result.dart';
-import 'package:fortune/features/character/presentation/providers/character_fortune_adapter.dart';
+import 'package:ondo/core/models/fortune_result.dart';
+import 'package:ondo/features/character/presentation/providers/character_fortune_adapter.dart';
 
 void main() {
   group('CharacterFortuneAdapter', () {

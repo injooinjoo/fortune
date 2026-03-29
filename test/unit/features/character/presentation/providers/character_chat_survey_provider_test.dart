@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/features/character/presentation/providers/character_chat_survey_provider.dart';
-import 'package:fortune/features/chat/domain/models/fortune_survey_config.dart';
+import 'package:ondo/features/character/presentation/providers/character_chat_survey_provider.dart';
+import 'package:ondo/features/chat/domain/models/fortune_survey_config.dart';
 
 void main() {
   group('CharacterChatSurveyNotifier talisman options', () {

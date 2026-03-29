@@ -2,8 +2,8 @@
 #include "Flutter/Release.xcconfig"
 
 // Production Configuration
-PRODUCT_BUNDLE_IDENTIFIER = com.beyond.fortune
-PRODUCT_NAME = ZPZG
+PRODUCT_BUNDLE_IDENTIFIER = com.beyond.ondo
+PRODUCT_NAME = Ondo
 DEVELOPMENT_TEAM = YOUR_TEAM_ID
 
 // Code Signing

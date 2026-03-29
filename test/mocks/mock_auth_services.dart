@@ -3,8 +3,8 @@
 
 import 'package:mocktail/mocktail.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:fortune/services/storage_service.dart';
-import 'package:fortune/services/social_auth/base/base_social_auth_provider.dart';
+import 'package:ondo/services/storage_service.dart';
+import 'package:ondo/services/social_auth/base/base_social_auth_provider.dart';
 
 // ============================================
 // Supabase Mocks

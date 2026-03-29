@@ -9,7 +9,7 @@
 ### 1. Celebrity 모델
 
 ```dart
-import 'package:fortune/data/models/celebrity.dart';
+import 'package:ondo/data/models/celebrity.dart';
 
 // 기본 Celebrity 객체 생성
 final celebrity = Celebrity(

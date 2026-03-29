@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/features/character/presentation/utils/character_guest_name_guard.dart';
+import 'package:ondo/features/character/presentation/utils/character_guest_name_guard.dart';
 
 void main() {
   group('buildUnknownUserNameGuard', () {

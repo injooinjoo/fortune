@@ -6,7 +6,7 @@ import '../base/base_social_auth_provider.dart';
 import '../base/social_auth_attempt_result.dart';
 
 class NaverAuthProvider extends BaseSocialAuthProvider {
-  static const _naverChannel = MethodChannel('com.beyond.fortune/naver_auth');
+  static const _naverChannel = MethodChannel('com.beyond.ondo/naver_auth');
 
   NaverAuthProvider(super.supabase, super.profileCache);
 

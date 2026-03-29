@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/extensions/l10n_extension.dart';
-import 'package:fortune/core/utils/haptic_utils.dart';
+import 'package:ondo/core/utils/haptic_utils.dart';
 import '../../../../core/widgets/paper_runtime_chrome.dart';
 import '../../../../core/widgets/paper_runtime_surface_kit.dart';
 import '../../../../shared/widgets/smart_image.dart';

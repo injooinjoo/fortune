@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/core/utils/moving_fortune_input_mapper.dart';
+import 'package:ondo/core/utils/moving_fortune_input_mapper.dart';
 
 void main() {
   group('MovingFortuneInputMapper', () {

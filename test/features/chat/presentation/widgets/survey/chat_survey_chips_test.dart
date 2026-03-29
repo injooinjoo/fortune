@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/core/design_system/design_system.dart';
-import 'package:fortune/features/chat/domain/models/fortune_survey_config.dart';
-import 'package:fortune/features/chat/presentation/widgets/survey/chat_survey_chips.dart';
+import 'package:ondo/core/design_system/design_system.dart';
+import 'package:ondo/features/chat/domain/models/fortune_survey_config.dart';
+import 'package:ondo/features/chat/presentation/widgets/survey/chat_survey_chips.dart';
 
 Widget _wrap(Widget child) {
   return MaterialApp(

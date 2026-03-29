@@ -42,7 +42,7 @@ if (picked != null) {
 
 #### ✅ 새로운 코드
 ```dart
-import 'package:fortune/core/widgets/unified_date_picker.dart';
+import 'package:ondo/core/widgets/unified_date_picker.dart';
 
 UnifiedDatePicker(
   mode: DatePickerMode.wheel,  // iOS 스타일 휠
@@ -65,7 +65,7 @@ UnifiedDatePicker(
 
 #### ❌ 기존 코드
 ```dart
-import 'package:fortune/shared/components/korean_date_picker.dart';
+import 'package:ondo/shared/components/korean_date_picker.dart';
 
 KoreanDatePicker(
   selectedDate: _birthDate,
@@ -81,7 +81,7 @@ KoreanDatePicker(
 
 #### ✅ 새로운 코드
 ```dart
-import 'package:fortune/core/widgets/unified_date_picker.dart';
+import 'package:ondo/core/widgets/unified_date_picker.dart';
 
 UnifiedDatePicker(
   mode: DatePickerMode.dropdown,  // 한국식 드롭다운
@@ -102,7 +102,7 @@ UnifiedDatePicker(
 
 #### ❌ 기존 코드
 ```dart
-import 'package:fortune/features/fortune/presentation/widgets/enhanced_date_picker.dart';
+import 'package:ondo/features/fortune/presentation/widgets/enhanced_date_picker.dart';
 
 EnhancedDatePicker(
   initialDate: _moveDate,
@@ -119,7 +119,7 @@ EnhancedDatePicker(
 
 #### ✅ 새로운 코드
 ```dart
-import 'package:fortune/core/widgets/unified_date_picker.dart';
+import 'package:ondo/core/widgets/unified_date_picker.dart';
 
 UnifiedDatePicker(
   mode: UnifiedDatePickerMode.calendar,  // 캘린더 뷰
@@ -160,7 +160,7 @@ showModalBottomSheet(
 
 #### ✅ 새로운 코드
 ```dart
-import 'package:fortune/core/widgets/unified_date_picker.dart';
+import 'package:ondo/core/widgets/unified_date_picker.dart';
 
 UnifiedDatePicker(
   mode: DatePickerMode.wheel,  // iOS 휠 (모달 자동 처리)
@@ -181,7 +181,7 @@ UnifiedDatePicker(
 
 #### ✅ 그대로 사용 가능!
 ```dart
-import 'package:fortune/core/widgets/fortune_input_widgets.dart';
+import 'package:ondo/core/widgets/fortune_input_widgets.dart';
 
 FortuneInputWidgets.buildDatePicker(
   context: context,
@@ -217,7 +217,7 @@ FortuneInputWidgets.buildDatePicker(
 
 각 파일 마이그레이션 시 확인:
 
-- [ ] `import 'package:fortune/core/widgets/unified_date_picker.dart';` 추가
+- [ ] `import 'package:ondo/core/widgets/unified_date_picker.dart';` 추가
 - [ ] 기존 날짜 선택기 코드를 `UnifiedDatePicker`로 교체
 - [ ] 적절한 `mode` 선택 (dropdown / calendar / wheel)
 - [ ] `selectedDate`와 `onDateChanged` 파라미터 연결
@@ -270,7 +270,7 @@ FortuneInputWidgets.buildDatePicker(
 `DatePickerUtils`를 통해 공통 기능 사용 가능:
 
 ```dart
-import 'package:fortune/core/widgets/unified_date_picker.dart';
+import 'package:ondo/core/widgets/unified_date_picker.dart';
 
 // 나이 계산
 final age = DatePickerUtils.calculateAge(birthDate);

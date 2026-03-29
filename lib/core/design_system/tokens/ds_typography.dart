@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fortune/core/theme/font_config.dart';
-import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:ondo/core/theme/font_config.dart';
+import 'package:ondo/core/theme/typography_unified.dart';
 import 'ds_colors.dart';
 
 /// Modern AI Chat typography system

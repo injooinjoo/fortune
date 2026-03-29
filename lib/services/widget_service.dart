@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:fortune/core/utils/logger.dart';
-import 'package:fortune/models/shared_widget_data.dart';
-import 'package:fortune/services/native_platform_service.dart';
-import 'package:fortune/services/widget_data_service.dart';
+import 'package:ondo/core/utils/logger.dart';
+import 'package:ondo/models/shared_widget_data.dart';
+import 'package:ondo/services/native_platform_service.dart';
+import 'package:ondo/services/widget_data_service.dart';
 import 'package:home_widget/home_widget.dart';
 
 /// Service for managing home screen widgets
@@ -19,7 +19,7 @@ class WidgetService {
 
   // 백그라운드 새로고침용 Method Channel
   static const MethodChannel _backgroundChannel =
-      MethodChannel('com.beyond.fortune/widget_refresh');
+      MethodChannel('com.beyond.ondo/widget_refresh');
 
   // 현재 사용자 ID 캐시 (백그라운드 새로고침 시 사용)
   static String? _cachedUserId;

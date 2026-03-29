@@ -8,7 +8,7 @@
 	</array>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.com.beyond.fortune</string>
+		<string>group.com.beyond.ondo</string>
 	</array>
 </dict>
 </plist>

@@ -1,7 +1,7 @@
 # Deliverfile for iOS App Store deployment
 
 # App Store Connect information
-app_identifier "com.beyond.fortune"
+app_identifier "com.beyond.ondo"
 username "ink595@g.harvard.edu"
 
 # Metadata and screenshots

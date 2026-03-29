@@ -1,8 +1,8 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/core/cache/profile_cache.dart';
-import 'package:fortune/services/social_auth/providers/google_auth_provider.dart';
+import 'package:ondo/core/cache/profile_cache.dart';
+import 'package:ondo/services/social_auth/providers/google_auth_provider.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

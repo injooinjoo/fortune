@@ -1,4 +1,4 @@
-# ZPZG Apple Guidelines Full Audit
+# Ondo Apple Guidelines Full Audit
 
 작성일: 2026-03-22  
 기준 버전: iOS 앱 심사 대상 `1.0.7`  
@@ -82,7 +82,7 @@
 - [ ] 2.1(a) 앱 완전성: 2026년 3월 21일 rejection path의 clean-install iPhone 재검증이 남아 있습니다. TODO: iPhone recording + logs 첨부.
 - [ ] 2.1(b) IAP 완전성: success / cancel / restore의 실기기 E2E 증빙이 남아 있습니다. TODO: `IOS-IAP-001~003` 종료.
 - [x] ~~2.2 베타 테스트 금지: 현재 description / review notes는 정식 사용자용 포지셔닝입니다.~~
-- [x] ~~2.3 메타데이터 정확성 전반: App Store description, public policy, in-app policy, release notes를 현재 ZPZG positioning으로 동기화했습니다.~~
+- [x] ~~2.3 메타데이터 정확성 전반: App Store description, public policy, in-app policy, release notes를 현재 Ondo positioning으로 동기화했습니다.~~
 - [x] ~~2.3.1 숨김/미문서화 기능 금지: current submission scope에서 calendar permission, quick actions, user activities, Live Activities, BGTask refresh, Siri shortcut 경로를 제거했습니다. 근거: `ios/Runner/Info.plist`, `ios/Runner/AppDelegate.swift`, `ios/Runner/NativePlatformPlugin.swift`, `lib/services/native_platform_service.dart`, `ios/fastlane/metadata/review_information/review_notes.txt`.~~
 - [ ] 수동 검증 필요 - 2.3.2 IAP 홍보 정확성: 실제 purchase screen 캡처와 metadata 문구 최종 대조는 실기기 패키지에 포함해야 합니다.
 - [ ] 수동 검증 필요 - 2.3.3 스크린샷 정확성: App Store Connect 제출 스크린샷 최신 여부 최종 확인 필요.
@@ -183,7 +183,7 @@
 - [ ] N/A - 5.4 VPN: 해당 기능이 없습니다.
 - [ ] N/A - 5.5 MDM: 해당 기능이 없습니다.
 - [x] ~~5.6.1 App Store 리뷰 요청: 강제/보상형 리뷰 유도 증거가 없습니다.~~
-- [x] ~~5.6.2 개발자 신원 정확성: public support, metadata, in-app policy가 모두 ZPZG 브랜드 기준으로 맞춰졌습니다.~~
+- [x] ~~5.6.2 개발자 신원 정확성: public support, metadata, in-app policy가 모두 Ondo 브랜드 기준으로 맞춰졌습니다.~~
 - [ ] N/A - 5.6.3 둘러보기 사기: 저장소 차원에서 판단 근거가 없습니다.
 - [x] ~~5.6.4 앱 품질: repo-side blocker는 정리되었고, 남은 위험은 실기기 evidence handoff뿐입니다.~~
 
@@ -208,7 +208,7 @@
 ## 7. 완료본 Checklist
 
 - [x] ~~토큰 만료 문구를 제거했다.~~
-- [x] ~~인앱 정책 페이지와 공개 정책 페이지를 최신 ZPZG 정책으로 동기화했다.~~
+- [x] ~~인앱 정책 페이지와 공개 정책 페이지를 최신 Ondo 정책으로 동기화했다.~~
 - [x] ~~제3자 AI 제공자 공개를 privacy policy에 반영했다.~~
 - [x] ~~건강/의료형 표면을 `웰니스 체크` 기준으로 축소했다.~~
 - [x] ~~건강/캘린더 direct entry와 추천 surface를 축소했다.~~

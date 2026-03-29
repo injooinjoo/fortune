@@ -2,7 +2,7 @@
   "@@locale": "ko",
 
   "@@_COMMON_UI": "=== 공통 UI ===",
-  "appTitle": "ZPZG",
+  "appTitle": "온도",
   "confirm": "확인",
   "cancel": "취소",
   "close": "닫기",

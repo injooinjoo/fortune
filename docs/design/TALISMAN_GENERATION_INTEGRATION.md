@@ -231,7 +231,7 @@ dependencies:
 
 ### 2. 서비스 사용법
 ```dart
-import 'package:fortune/core/services/talisman_generation_service.dart';
+import 'package:ondo/core/services/talisman_generation_service.dart';
 
 // 서비스 인스턴스 생성
 final talismanService = TalismanGenerationService();
@@ -279,7 +279,7 @@ Future<List<TalismanGenerationResult>> userTalismans(UserTalismansRef ref) async
 ```dart
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:fortune/core/services/talisman_generation_service.dart';
+import 'package:ondo/core/services/talisman_generation_service.dart';
 
 class TalismanGenerationPage extends HookConsumerWidget {
   @override
@@ -479,5 +479,5 @@ Error: duplicate key value violates unique constraint
 
 **작성일**: 2025-01-08
 **버전**: 1.0.0
-**작성자**: ZPZG Development Team
+**작성자**: Ondo Development Team
 **참고 문서**: `KOREAN_TALISMAN_DESIGN_GUIDE.md`

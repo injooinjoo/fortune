@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/features/character/data/services/character_proactive_context_service.dart';
-import 'package:fortune/features/character/domain/models/character_chat_message.dart';
+import 'package:ondo/features/character/data/services/character_proactive_context_service.dart';
+import 'package:ondo/features/character/domain/models/character_chat_message.dart';
 
 void main() {
   group('CharacterProactiveContextService', () {

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fortune/core/design_system/design_system.dart';
-import 'package:fortune/core/navigation/fortune_chat_route.dart';
-import 'package:fortune/features/character/presentation/providers/character_chat_provider.dart';
-import 'package:fortune/features/character/presentation/pages/character_list_panel.dart';
+import 'package:ondo/core/design_system/design_system.dart';
+import 'package:ondo/core/navigation/fortune_chat_route.dart';
+import 'package:ondo/features/character/presentation/providers/character_chat_provider.dart';
+import 'package:ondo/features/character/presentation/pages/character_list_panel.dart';
 
 void main() {
   const previewCatalog = ChatCatalogPreview(
@@ -66,7 +66,7 @@ void main() {
     expect(taeYoonTop, lessThan(lutsTop));
   });
 
-  testWidgets('scrolling the list hides and reveals the top chrome',
+  testWidgets('scrolling the list keeps the top chrome visible',
       (tester) async {
     await tester.pumpWidget(
       buildSubject(
@@ -75,23 +75,27 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 300));
 
-    AnimatedAlign chrome() => tester.widget<AnimatedAlign>(
-          find.byType(AnimatedAlign).first,
-        );
+    final titleFinder = find.text('메시지');
+    final composeButtonFinder = find.byIcon(Icons.edit_outlined);
 
-    expect(chrome().heightFactor, 1);
+    expect(titleFinder, findsOneWidget);
+    expect(composeButtonFinder, findsOneWidget);
 
     await tester.drag(find.byType(ListView), const Offset(0, -500));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
 
-    expect(chrome().heightFactor, 0);
+    expect(tester.takeException(), isNull);
+    expect(titleFinder, findsOneWidget);
+    expect(composeButtonFinder, findsOneWidget);
 
     await tester.drag(find.byType(ListView), const Offset(0, 300));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
 
-    expect(chrome().heightFactor, 1);
+    expect(tester.takeException(), isNull);
+    expect(titleFinder, findsOneWidget);
+    expect(composeButtonFinder, findsOneWidget);
   });
 
   testWidgets('shows unread count badge before your turn state',

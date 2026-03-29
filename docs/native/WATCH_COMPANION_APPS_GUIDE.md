@@ -31,8 +31,8 @@ This guide provides comprehensive instructions for implementing Apple Watch and 
 #### Project Structure
 
 ```
-FortuneWatch/
-├── FortuneWatchApp.swift
+OndoWatch/
+├── OndoWatchApp.swift
 ├── ContentView.swift
 ├── Models/
 │   ├── Fortune.swift
@@ -59,7 +59,7 @@ FortuneWatch/
 import SwiftUI
 
 @main
-struct FortuneWatchApp: App {
+struct OndoWatchApp: App {
     @StateObject private var connectivityService = ConnectivityService()
     @StateObject private var fortuneService = FortuneService()
     

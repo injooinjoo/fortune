@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/features/character/presentation/utils/tarot_chat_payload_utils.dart';
+import 'package:ondo/features/character/presentation/utils/tarot_chat_payload_utils.dart';
 
 void main() {
   test('normalizeAnswers flattens tarot selection and builds fallback question',

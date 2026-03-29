@@ -9,7 +9,7 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/fortune/fortune_type_registry.dart';
 import '../../../../core/extensions/l10n_extension.dart';
 import '../../../../core/navigation/fortune_chat_route.dart';
-import 'package:fortune/core/utils/haptic_utils.dart';
+import 'package:ondo/core/utils/haptic_utils.dart';
 import '../../../../core/widgets/unified_voice_text_field.dart';
 import '../../data/fortune_characters.dart';
 import '../../domain/models/ai_character.dart';

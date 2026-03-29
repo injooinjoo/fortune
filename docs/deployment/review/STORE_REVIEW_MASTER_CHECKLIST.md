@@ -26,7 +26,7 @@
 | APPLE-URL-002 | P0 | Terms URL returns HTTP 200 | pass | `https://zpzg.co.kr/terms` | done |
 | APPLE-URL-003 | P0 | Support URL returns HTTP 200 | pass | `https://zpzg.co.kr/support` | done |
 | APPLE-URL-004 | P0 | AASA endpoint returns HTTP 200 on apex and www | pass | `https://zpzg.co.kr/.well-known/apple-app-site-association`, `https://www.zpzg.co.kr/.well-known/apple-app-site-association` | done |
-| APPLE-POLICY-001 | P0 | Public policies, in-app policies, and App Store metadata are aligned to the ZPZG positioning | pass | `public/privacy.html`, `public/terms.html`, `lib/features/policy/presentation/pages/*.dart`, `ios/fastlane/metadata/*` | done |
+| APPLE-POLICY-001 | P0 | Public policies, in-app policies, and App Store metadata are aligned to the Ondo positioning | pass | `public/privacy.html`, `public/terms.html`, `lib/features/policy/presentation/pages/*.dart`, `ios/fastlane/metadata/*` | done |
 | APPLE-POLICY-002 | P0 | Third-party AI provider disclosure is included in privacy policy | pass | `public/privacy.html`, `lib/features/policy/presentation/pages/privacy_policy_page.dart` | done |
 | APPLE-IAP-001 | P0 | Token expiry wording has been removed from current copy | pass | `lib/core/constants/in_app_products.dart`, `public/terms.html`, `lib/features/policy/presentation/pages/terms_of_service_page.dart` | done |
 | APPLE-IOS-001 | P0 | Live Activity / Siri / Quick Action / calendar / BGTask overdeclarations were removed from the current iOS submission scope | pass | `ios/Runner/Info.plist`, `ios/Runner/AppDelegate.swift`, `ios/Runner/NativePlatformPlugin.swift`, `ios/fastlane/metadata/review_information/review_notes.txt` | done |

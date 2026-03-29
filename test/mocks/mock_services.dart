@@ -1,11 +1,11 @@
 import 'package:mocktail/mocktail.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:fortune/data/services/fortune_api_service.dart';
-import 'package:fortune/data/services/token_api_service.dart';
-import 'package:fortune/domain/entities/fortune.dart';
-import 'package:fortune/domain/entities/token.dart';
-import 'package:fortune/services/cache_service.dart';
+import 'package:ondo/data/services/fortune_api_service.dart';
+import 'package:ondo/data/services/token_api_service.dart';
+import 'package:ondo/domain/entities/fortune.dart';
+import 'package:ondo/domain/entities/token.dart';
+import 'package:ondo/services/cache_service.dart';
 
 // Mock Classes
 class MockFortuneApiService extends Mock implements FortuneApiService {}

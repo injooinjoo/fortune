@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../../core/design_system/design_system.dart';
-import 'package:fortune/core/utils/haptic_utils.dart';
+import 'package:ondo/core/utils/haptic_utils.dart';
 import '../../domain/models/character_choice.dart';
 import '../../domain/models/ai_character.dart';
 import '../utils/character_accent_palette.dart';

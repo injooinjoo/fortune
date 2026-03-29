@@ -1,4 +1,4 @@
-# ZPZG Documentation
+# Ondo Documentation
 
 문서를 읽을 때는 먼저 이 저장소가 `current-state`, `system reference`, `future-state/legacy` 문서를 함께 가지고 있다는 점을 전제로 봐야 합니다.
 

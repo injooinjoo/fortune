@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fortune/core/design_system/design_system.dart';
-import 'package:fortune/core/widgets/paper_runtime_chrome.dart';
-import 'package:fortune/core/widgets/paper_runtime_surface_kit.dart';
+import 'package:ondo/core/design_system/design_system.dart';
+import 'package:ondo/core/widgets/paper_runtime_chrome.dart';
+import 'package:ondo/core/widgets/paper_runtime_surface_kit.dart';
 
 class PrivacyPolicyPage extends ConsumerStatefulWidget {
   const PrivacyPolicyPage({super.key});

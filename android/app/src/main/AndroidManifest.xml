@@ -20,7 +20,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
-        android:label="ZPZG"
+        android:label="@string/app_name"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -70,7 +70,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-                    android:scheme="com.beyond.fortune"
+                    android:scheme="com.beyond.ondo"
                     android:host="auth-callback" />
             </intent-filter>
 
@@ -115,7 +115,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="com.beyond.fortune.ACTION_FAVORITES_ROLLING_UPDATE" />
+                <action android:name="com.beyond.ondo.ACTION_FAVORITES_ROLLING_UPDATE" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"

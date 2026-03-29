@@ -1,4 +1,4 @@
-import 'package:fortune/core/utils/haptic_utils.dart';
+import 'package:ondo/core/utils/haptic_utils.dart';
 
 /// Haptic feedback utilities
 ///

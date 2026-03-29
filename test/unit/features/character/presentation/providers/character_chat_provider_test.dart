@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fortune/features/character/domain/models/character_affinity.dart';
-import 'package:fortune/features/character/domain/models/character_chat_message.dart';
-import 'package:fortune/features/character/presentation/providers/active_chat_provider.dart';
-import 'package:fortune/features/character/presentation/providers/character_chat_provider.dart';
+import 'package:ondo/features/character/domain/models/character_affinity.dart';
+import 'package:ondo/features/character/domain/models/character_chat_message.dart';
+import 'package:ondo/features/character/presentation/providers/active_chat_provider.dart';
+import 'package:ondo/features/character/presentation/providers/character_chat_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

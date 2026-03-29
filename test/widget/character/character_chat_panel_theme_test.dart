@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/core/design_system/design_system.dart';
-import 'package:fortune/core/navigation/fortune_chat_route.dart';
-import 'package:fortune/features/character/data/fortune_characters.dart';
-import 'package:fortune/features/character/presentation/pages/character_chat_panel.dart';
-import 'package:fortune/features/character/presentation/providers/character_chat_provider.dart';
+import 'package:ondo/core/design_system/design_system.dart';
+import 'package:ondo/core/navigation/fortune_chat_route.dart';
+import 'package:ondo/features/character/data/fortune_characters.dart';
+import 'package:ondo/features/character/presentation/pages/character_chat_panel.dart';
+import 'package:ondo/features/character/presentation/providers/character_chat_provider.dart';
 
 void main() {
   Widget buildSubject(

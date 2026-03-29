@@ -1,4 +1,4 @@
-# Security Checklist - ZPZG Deployment
+# Security Checklist - Ondo Deployment
 
 ## 🔴 CRITICAL: Exposed API Keys to Rotate
 

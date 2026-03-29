@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/core/design_system/design_system.dart';
-import 'package:fortune/data/models/pet_profile.dart';
-import 'package:fortune/data/models/secondary_profile.dart';
-import 'package:fortune/features/character/presentation/widgets/pet_profile_create_sheet.dart';
-import 'package:fortune/features/character/presentation/widgets/secondary_profile_create_sheet.dart';
-import 'package:fortune/presentation/providers/pet_profiles_provider.dart';
-import 'package:fortune/presentation/providers/secondary_profiles_provider.dart';
+import 'package:ondo/core/design_system/design_system.dart';
+import 'package:ondo/data/models/pet_profile.dart';
+import 'package:ondo/data/models/secondary_profile.dart';
+import 'package:ondo/features/character/presentation/widgets/pet_profile_create_sheet.dart';
+import 'package:ondo/features/character/presentation/widgets/secondary_profile_create_sheet.dart';
+import 'package:ondo/presentation/providers/pet_profiles_provider.dart';
+import 'package:ondo/presentation/providers/secondary_profiles_provider.dart';
 
 class _TestPetProfilesNotifier extends PetProfilesNotifier {
   _TestPetProfilesNotifier({

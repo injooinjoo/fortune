@@ -1,7 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:fortune/core/cache/models/cached_fortune.dart';
-import 'package:fortune/domain/entities/fortune.dart';
-import 'package:fortune/core/utils/logger.dart';
+import 'package:ondo/core/cache/models/cached_fortune.dart';
+import 'package:ondo/domain/entities/fortune.dart';
+import 'package:ondo/core/utils/logger.dart';
 
 class CacheService {
   static const String _fortuneBoxName = 'fortunes';

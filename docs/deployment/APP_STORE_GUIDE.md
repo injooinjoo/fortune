@@ -27,7 +27,7 @@ Complete guide for launching the Fortune app on both iOS App Store and Google Pl
 - **Archive**: `build/ios/archive/Runner.xcarchive` (414.8MB)
 - **Status**: Build complete, ready for upload
 - **Team ID**: `5F7CN7Y54D`
-- **Bundle ID**: `com.beyond.fortune`
+- **Bundle ID**: `com.beyond.ondo`
 
 ---
 
@@ -53,7 +53,7 @@ Complete guide for launching the Fortune app on both iOS App Store and Google Pl
 Platform: iOS
 Name: Fortune
 Default Language: Korean
-Bundle ID: com.beyond.fortune
+Bundle ID: com.beyond.ondo
 SKU: fortune-ios-001
 User Access: Limited (development team only)
 ```

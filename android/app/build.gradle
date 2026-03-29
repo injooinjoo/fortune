@@ -13,7 +13,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.beyond.fortune"
+    namespace = "com.beyond.ondo"
     compileSdk = 36  // Updated for plugin compatibility
     ndkVersion = "28.2.13676358"  // Required by integration_test and speech_to_text
 
@@ -28,7 +28,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.beyond.fortune"
+        applicationId = "com.beyond.ondo"
         minSdkVersion = 26  // Required by health plugin
         targetSdk = 35  // Updated for Google Play Store API level 35 requirement (Nov 2024)
         versionCode = flutter.versionCode

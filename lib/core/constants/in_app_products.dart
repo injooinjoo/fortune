@@ -1,25 +1,25 @@
 // In-App Purchase Product IDs - 리뷰/서버 기준 카탈로그
 class InAppProducts {
   // Consumable Products (기본 토큰 패키지)
-  static const String tokens10 = 'com.beyond.fortune.tokens10';
-  static const String tokens50 = 'com.beyond.fortune.tokens50';
-  static const String tokens100 = 'com.beyond.fortune.tokens100';
-  static const String tokens200 = 'com.beyond.fortune.tokens200';
+  static const String tokens10 = 'com.beyond.ondo.tokens10';
+  static const String tokens50 = 'com.beyond.ondo.tokens50';
+  static const String tokens100 = 'com.beyond.ondo.tokens100';
+  static const String tokens200 = 'com.beyond.ondo.tokens200';
 
   // Alternate token products kept for compatibility while the catalog settles.
-  static const String points300 = 'com.beyond.fortune.points300';
-  static const String points600 = 'com.beyond.fortune.points600';
-  static const String points1200 = 'com.beyond.fortune.points1200';
-  static const String points3000 = 'com.beyond.fortune.points3000';
+  static const String points300 = 'com.beyond.ondo.points300';
+  static const String points600 = 'com.beyond.ondo.points600';
+  static const String points1200 = 'com.beyond.ondo.points1200';
+  static const String points3000 = 'com.beyond.ondo.points3000';
 
   // Subscription Products (Pro / Max)
   static const String proSubscription =
-      'com.beyond.fortune.subscription.monthly'; // Pro 월간 구독
-  static const String maxSubscription = 'com.beyond.fortune.subscription.max';
+      'com.beyond.ondo.subscription.monthly'; // Pro 월간 구독
+  static const String maxSubscription = 'com.beyond.ondo.subscription.max';
 
   // Non-Consumable Products (평생 소유)
   static const String premiumSajuLifetime =
-      'com.beyond.fortune.premium_saju_lifetime';
+      'com.beyond.ondo.premium_saju_lifetime';
 
   // Product Details
   static const Map<String, ProductInfo> productDetails = {
@@ -45,7 +45,7 @@ class InAppProducts {
     tokens100: ProductInfo(
       id: tokens100,
       title: '100 Tokens',
-      description: 'App Review에서 확인할 수 있는 대표 토큰 상품',
+      description: '다양한 운세와 깊이 있는 인사이트를 위한 알찬 패키지',
       price: 8000,
       points: 100,
       basePoints: 100,
@@ -131,12 +131,16 @@ class InAppProducts {
     ),
   };
 
-  // Get all consumable product IDs
+  // Active consumable product IDs (displayed in store UI)
   static List<String> get consumableIds => [
         tokens10,
         tokens50,
         tokens100,
         tokens200,
+      ];
+
+  // Legacy product IDs kept for server-side compatibility / restore
+  static List<String> get legacyConsumableIds => [
         points300,
         points600,
         points1200,
@@ -154,26 +158,31 @@ class InAppProducts {
         premiumSajuLifetime,
       ];
 
-  // Get all product IDs
+  // Get all product IDs (including legacy for store queries)
   static List<String> get allProductIds => [
         ...consumableIds,
+        ...legacyConsumableIds,
         ...subscriptionIds,
         ...nonConsumableIds,
       ];
 
   static int displayPriority(String productId) {
     const priorities = <String, int>{
+      // Subscriptions first
       proSubscription: 0,
       maxSubscription: 1,
-      tokens100: 2,
-      tokens50: 3,
-      tokens10: 4,
-      tokens200: 5,
-      points300: 6,
-      points600: 7,
-      points1200: 8,
-      points3000: 9,
-      premiumSajuLifetime: 10,
+      // Token packages: small → large
+      tokens10: 10,
+      tokens50: 11,
+      tokens100: 12,
+      tokens200: 13,
+      // Non-consumable
+      premiumSajuLifetime: 20,
+      // Legacy (hidden from UI but queryable)
+      points300: 90,
+      points600: 91,
+      points1200: 92,
+      points3000: 93,
     };
     return priorities[productId] ?? 999;
   }

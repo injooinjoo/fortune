@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/core/design_system/design_system.dart';
-import 'package:fortune/screens/onboarding/steps/birth_input_step.dart';
+import 'package:ondo/core/design_system/design_system.dart';
+import 'package:ondo/screens/onboarding/steps/birth_input_step.dart';
 
 void main() {
   Widget buildSubject({

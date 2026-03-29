@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune/features/character/domain/models/ai_character.dart';
+import 'package:ondo/features/character/domain/models/ai_character.dart';
 
 void main() {
   group('FriendConversationSeed', () {
