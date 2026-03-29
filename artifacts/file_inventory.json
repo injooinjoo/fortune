@@ -20249,17 +20249,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
-      "path": "lib/core/cache/models/cached_fortune.dart",
-      "referenced_by": [
-        "lib/core/cache/cache_service.dart"
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
-      "runtime_reachable": true,
+      "path": "lib/core/cache/models/cached_fortune.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -20270,9 +20272,7 @@
       "path": "lib/core/cache/profile_cache.dart",
       "referenced_by": [
         "lib/services/social_auth/base/base_social_auth_provider.dart",
-        "lib/services/social_auth_service.dart",
-        "test/unit/services/auth/apple_auth_provider_test.dart",
-        "test/unit/services/auth/google_auth_provider_test.dart"
+        "lib/services/social_auth_service.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -20317,8 +20317,7 @@
         "lib/services/analytics_service.dart",
         "lib/services/kakao_share_service.dart",
         "lib/services/social_auth/base/base_social_auth_provider.dart",
-        "lib/services/social_auth/providers/google_auth_provider.dart",
-        "test/core/config/environment_test.dart"
+        "lib/services/social_auth/providers/google_auth_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -20508,9 +20507,7 @@
       "referenced_by": [
         "lib/features/character/presentation/widgets/embedded_fortune_component.dart",
         "lib/features/chat/presentation/widgets/survey/chat_tarot_deck_picker.dart",
-        "lib/features/chat/presentation/widgets/survey/chat_tarot_draw_widget.dart",
-        "test/core/constants/tarot_card_catalog_test.dart",
-        "test/features/character/presentation/widgets/embedded_tarot_component_test.dart"
+        "lib/features/chat/presentation/widgets/survey/chat_tarot_draw_widget.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -20844,20 +20841,12 @@
       "notes": [],
       "path": "lib/core/design_system/design_system.dart",
       "referenced_by": [
-        "lib/core/components/app_card.dart",
-        "lib/core/constants/tarot/tarot_helper.dart",
-        "lib/core/constants/tarot_deck_metadata.dart",
         "lib/core/design_system/components/traditional/cloud_bubble.dart",
-        "lib/core/theme/app_dimensions.dart",
-        "lib/core/theme/app_spacing.dart",
-        "lib/core/theme/app_theme.dart",
         "lib/core/widgets/date_picker/numeric_date_input.dart",
         "lib/core/widgets/floating_dream_bubbles.dart",
-        "lib/core/widgets/fortune_action_buttons.dart",
         "lib/core/widgets/infographic/headers/saju_info_header.dart",
         "lib/core/widgets/paper_runtime_chrome.dart",
         "lib/core/widgets/paper_runtime_surface_kit.dart",
-        "lib/core/widgets/unified_button.dart",
         "lib/core/widgets/unified_voice_text_field.dart",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/pages/character_list_panel.dart",
@@ -20912,14 +20901,9 @@
         "lib/features/fortune/presentation/widgets/saju/saju_yongshin_card.dart",
         "lib/features/fortune/presentation/widgets/saju/today_iljin_card.dart",
         "lib/features/fortune/presentation/widgets/saju_element_chart.dart",
-        "lib/features/fortune/presentation/widgets/voice_spectrum_animation.dart",
         "lib/features/notification/presentation/pages/notification_settings_page.dart",
-        "lib/features/policy/presentation/pages/privacy_policy_page.dart",
         "lib/features/policy/presentation/pages/terms_of_service_page.dart",
         "lib/presentation/widgets/app_update_dialog.dart",
-        "lib/presentation/widgets/common/custom_card.dart",
-        "lib/presentation/widgets/profile_image_picker.dart",
-        "lib/presentation/widgets/social_accounts_section.dart",
         "lib/presentation/widgets/social_login_bottom_sheet.dart",
         "lib/presentation/widgets/social_share_bottom_sheet.dart",
         "lib/screens/auth/callback_page.dart",
@@ -20935,28 +20919,13 @@
         "lib/screens/profile/profile_screen.dart",
         "lib/screens/profile/saju_summary_page.dart",
         "lib/screens/splash_screen.dart",
-        "lib/shared/components/app_header.dart",
-        "lib/shared/components/cards/fortune_cards.dart",
         "lib/shared/components/korean_date_picker.dart",
         "lib/shared/components/loading_states.dart",
         "lib/shared/components/progressive_date_input.dart",
         "lib/shared/components/purchase_loading_overlay.dart",
-        "lib/shared/components/section_header.dart",
-        "lib/shared/components/settings_list_tile.dart",
         "lib/shared/components/toast.dart",
         "lib/shared/glassmorphism/glass_container.dart",
-        "lib/shared/widgets/smart_image.dart",
-        "test/features/character/presentation/widgets/embedded_fortune_component_test.dart",
-        "test/features/character/presentation/widgets/embedded_tarot_component_test.dart",
-        "test/features/character/presentation/widgets/profile_create_sheets_test.dart",
-        "test/features/chat/presentation/widgets/survey/chat_survey_chips_test.dart",
-        "test/features/chat/presentation/widgets/survey/chat_tarot_deck_picker_test.dart",
-        "test/features/chat/presentation/widgets/survey/chat_tarot_draw_widget_test.dart",
-        "test/widget/character/character_chat_panel_registration_test.dart",
-        "test/widget/character/character_chat_panel_theme_test.dart",
-        "test/widget/character/character_list_panel_test.dart",
-        "test/widget/onboarding/birth_input_step_test.dart",
-        "test/widget/shared/fortune_cards_test.dart"
+        "lib/shared/widgets/smart_image.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -20985,7 +20954,6 @@
         "lib/core/design_system/components/hanji_background.dart",
         "lib/core/design_system/components/traditional/traditional_knot_indicator.dart",
         "lib/core/design_system/design_system.dart",
-        "lib/core/theme/typography_unified.dart",
         "lib/features/chat/domain/constants/chip_category_map.dart"
       ],
       "runtime_reachable": true,
@@ -21000,13 +20968,8 @@
       "notes": [],
       "path": "lib/core/design_system/theme/ds_theme.dart",
       "referenced_by": [
-        "integration_test/test_app.dart",
         "lib/core/design_system/design_system.dart",
-        "lib/main.dart",
-        "test/widget/auth/profile_avatar_tap_handler_test.dart",
-        "test/widget/auth/social_auth_entry_panel_test.dart",
-        "test/widget/auth/social_auth_pending_state_test.dart",
-        "test/widget/core/widgets/unified_voice_text_field_test.dart"
+        "lib/main.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -21053,7 +21016,6 @@
         "lib/core/design_system/theme/ds_theme.dart",
         "lib/core/design_system/tokens/ds_shadows.dart",
         "lib/core/design_system/tokens/ds_typography.dart",
-        "lib/core/theme/typography_unified.dart",
         "lib/features/fortune/domain/entities/fortune_category.dart",
         "lib/services/fortune_share_service.dart"
       ],
@@ -21299,8 +21261,7 @@
       "path": "lib/core/models/cached_fortune_result.dart",
       "referenced_by": [
         "lib/core/services/fortune_optimization_service.dart",
-        "lib/core/services/unified_fortune_service.dart",
-        "test/unit/services/unified_fortune_service_guest_test.dart"
+        "lib/core/services/unified_fortune_service.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -21350,9 +21311,7 @@
         "lib/core/services/generator_factory.dart",
         "lib/core/services/unified_fortune_service.dart",
         "lib/data/dream_interpretations_data.dart",
-        "lib/features/character/presentation/providers/character_fortune_adapter.dart",
-        "test/unit/features/character/presentation/providers/character_fortune_adapter_test.dart",
-        "test/unit/services/unified_fortune_service_guest_test.dart"
+        "lib/features/character/presentation/providers/character_fortune_adapter.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -21393,11 +21352,7 @@
         "lib/features/character/presentation/utils/chat_catalog_preview.dart",
         "lib/features/character/presentation/utils/fortune_chat_navigation.dart",
         "lib/features/fortune/domain/entities/fortune_category.dart",
-        "lib/presentation/providers/recommendation_provider.dart",
-        "test/features/character/presentation/utils/chat_catalog_preview_test.dart",
-        "test/unit/core/navigation/fortune_chat_route_test.dart",
-        "test/widget/character/character_chat_panel_theme_test.dart",
-        "test/widget/character/character_list_panel_test.dart"
+        "lib/presentation/providers/recommendation_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -21463,7 +21418,6 @@
       "notes": [],
       "path": "lib/core/providers/locale_provider.dart",
       "referenced_by": [
-        "integration_test/test_app.dart",
         "lib/main.dart"
       ],
       "runtime_reachable": true,
@@ -21478,7 +21432,6 @@
       "notes": [],
       "path": "lib/core/providers/user_settings_provider.dart",
       "referenced_by": [
-        "integration_test/test_app.dart",
         "lib/core/services/fortune_haptic_service.dart",
         "lib/core/services/meditation_sound_service.dart",
         "lib/main.dart",
@@ -21784,8 +21737,7 @@
       "notes": [],
       "path": "lib/core/services/fortune_generators/time_based_generator.dart",
       "referenced_by": [
-        "lib/core/services/generator_factory.dart",
-        "test/unit/core/services/fortune_generators/time_based_generator_test.dart"
+        "lib/core/services/generator_factory.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -21845,8 +21797,7 @@
       "path": "lib/core/services/fortune_optimization_service.dart",
       "referenced_by": [
         "docs/data/FORTUNE_OPTIMIZATION_GUIDE.md",
-        "lib/core/services/unified_fortune_service.dart",
-        "test/unit/services/unified_fortune_service_guest_test.dart"
+        "lib/core/services/unified_fortune_service.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -21874,11 +21825,7 @@
       "notes": [],
       "path": "lib/core/services/generator_factory.dart",
       "referenced_by": [
-        "lib/core/services/unified_fortune_service.dart",
-        "test/unit/services/generator_factory_biorhythm_test.dart",
-        "test/unit/services/generator_factory_dream_test.dart",
-        "test/unit/services/generator_factory_talisman_test.dart",
-        "test/unit/services/unified_fortune_service_guest_test.dart"
+        "lib/core/services/unified_fortune_service.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -21958,7 +21905,6 @@
         "lib/services/app_icon_badge_service.dart",
         "lib/services/instagram_share_service.dart",
         "lib/services/kakao_share_service.dart",
-        "lib/services/native_platform_service.dart",
         "lib/services/sports_schedule_service.dart",
         "lib/services/supabase_storage_service.dart"
       ],
@@ -21976,7 +21922,6 @@
       "referenced_by": [
         "docs/deployment/review/IOS_REVIEW_EVIDENCE.md",
         "docs/deployment/review/KAN_OPEN_ISSUES_EVIDENCE_MATRIX_2026-03-22.md",
-        "integration_test/test_app.dart",
         "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
         "lib/features/chat/presentation/widgets/profile_bottom_sheet.dart",
@@ -22012,7 +21957,6 @@
       "notes": [],
       "path": "lib/core/services/test_auth_service.dart",
       "referenced_by": [
-        "integration_test/test_app.dart",
         "lib/main.dart"
       ],
       "runtime_reachable": true,
@@ -22043,8 +21987,7 @@
       "path": "lib/core/services/unified_fortune_service.dart",
       "referenced_by": [
         "docs/development/FORTUNE_STANDARDIZATION_GUIDE.md",
-        "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "test/unit/services/unified_fortune_service_guest_test.dart"
+        "lib/features/character/presentation/providers/character_chat_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -22076,7 +22019,6 @@
       "notes": [],
       "path": "lib/core/theme/app_dimensions.dart",
       "referenced_by": [
-        "lib/presentation/widgets/common/custom_card.dart",
         "lib/presentation/widgets/social_accounts_section.dart"
       ],
       "runtime_reachable": true,
@@ -22091,9 +22033,7 @@
       "notes": [],
       "path": "lib/core/theme/app_spacing.dart",
       "referenced_by": [
-        "lib/presentation/widgets/common/custom_card.dart",
-        "lib/presentation/widgets/social_accounts_section.dart",
-        "lib/screens/auth/callback_page.dart"
+        "lib/presentation/widgets/social_accounts_section.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -22385,9 +22325,7 @@
       "notes": [],
       "path": "lib/core/theme/font_config.dart",
       "referenced_by": [
-        "lib/core/design_system/tokens/ds_typography.dart",
         "lib/core/theme/typography_theme.dart",
-        "lib/core/theme/typography_unified.dart",
         "lib/features/fortune/presentation/widgets/saju/saju_concept_card.dart",
         "lib/features/fortune/presentation/widgets/saju_element_chart.dart"
       ],
@@ -22403,11 +22341,7 @@
       "notes": [],
       "path": "lib/core/theme/font_size_system.dart",
       "referenced_by": [
-        "integration_test/test_app.dart",
-        "lib/core/design_system/theme/ds_theme.dart",
-        "lib/core/theme/typography_unified.dart",
-        "lib/main.dart",
-        "test/font_scaling_test.dart"
+        "lib/main.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -22431,17 +22365,19 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase1_remove_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
-      "path": "lib/core/theme/typography_theme.dart",
-      "referenced_by": [
-        "lib/core/providers/user_settings_provider.dart"
+      "notes": [
+        "no_inbound_refs",
+        "runtime_unreachable",
+        "zero_incoming_dart"
       ],
-      "runtime_reachable": true,
+      "path": "lib/core/theme/typography_theme.dart",
+      "referenced_by": [],
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "unreferenced"
     },
     {
       "area": "lib",
@@ -22451,10 +22387,7 @@
       "notes": [],
       "path": "lib/core/theme/typography_unified.dart",
       "referenced_by": [
-        "lib/core/design_system/design_system.dart",
-        "lib/core/design_system/theme/ds_theme.dart",
-        "lib/core/design_system/tokens/ds_typography.dart",
-        "test/font_scaling_test.dart"
+        "lib/core/design_system/design_system.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -22497,8 +22430,7 @@
       "path": "lib/core/utils/ex_lover_input_mapper.dart",
       "referenced_by": [
         "lib/core/services/fortune_generators/ex_lover_generator.dart",
-        "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "test/unit/core/utils/ex_lover_input_mapper_test.dart"
+        "lib/features/character/presentation/providers/character_chat_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -22528,16 +22460,9 @@
       "notes": [],
       "path": "lib/core/utils/haptic_utils.dart",
       "referenced_by": [
-        "lib/core/design_system/utils/ds_haptics.dart",
         "lib/core/services/fortune_haptic_service.dart",
         "lib/core/theme/app_theme/haptic_patterns.dart",
-        "lib/core/widgets/fortune_action_buttons.dart",
         "lib/core/widgets/unified_voice_text_field.dart",
-        "lib/features/character/presentation/pages/character_chat_panel.dart",
-        "lib/features/character/presentation/pages/character_list_panel.dart",
-        "lib/features/character/presentation/pages/character_profile_page.dart",
-        "lib/features/character/presentation/widgets/character_choice_widget.dart",
-        "lib/features/character/presentation/widgets/character_message_bubble.dart",
         "lib/features/notification/presentation/pages/notification_settings_page.dart",
         "lib/presentation/widgets/social_share_bottom_sheet.dart"
       ],
@@ -22553,7 +22478,6 @@
       "notes": [],
       "path": "lib/core/utils/logger.dart",
       "referenced_by": [
-        "lib/core/cache/cache_service.dart",
         "lib/core/network/api_client.dart",
         "lib/core/services/chat_sync_service.dart",
         "lib/core/services/cohort_fortune_service.dart",
@@ -22618,7 +22542,6 @@
         "lib/services/in_app_purchase_service.dart",
         "lib/services/instagram_share_service.dart",
         "lib/services/kakao_share_service.dart",
-        "lib/services/native_platform_service.dart",
         "lib/services/notification/fcm_service.dart",
         "lib/services/oauth_in_app_browser_coordinator.dart",
         "lib/services/remote_config_service.dart",
@@ -22632,9 +22555,7 @@
         "lib/services/social_auth_service.dart",
         "lib/services/sports_schedule_service.dart",
         "lib/services/supabase_storage_service.dart",
-        "lib/services/user_statistics_service.dart",
-        "lib/services/widget_data_service.dart",
-        "lib/services/widget_service.dart"
+        "lib/services/user_statistics_service.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -22649,8 +22570,7 @@
       "path": "lib/core/utils/moving_fortune_input_mapper.dart",
       "referenced_by": [
         "lib/core/services/fortune_generators/moving_generator.dart",
-        "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "test/unit/core/utils/moving_fortune_input_mapper_test.dart"
+        "lib/features/character/presentation/providers/character_chat_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -22865,7 +22785,6 @@
         "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/features/character/presentation/pages/character_profile_page.dart",
         "lib/features/notification/presentation/pages/notification_settings_page.dart",
-        "lib/features/policy/presentation/pages/privacy_policy_page.dart",
         "lib/features/policy/presentation/pages/terms_of_service_page.dart",
         "lib/presentation/widgets/social_login_bottom_sheet.dart",
         "lib/screens/auth/signup_screen.dart",
@@ -22896,7 +22815,6 @@
         "docs/design/PAPER_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/character/presentation/pages/character_profile_page.dart",
         "lib/features/notification/presentation/pages/notification_settings_page.dart",
-        "lib/features/policy/presentation/pages/privacy_policy_page.dart",
         "lib/features/policy/presentation/pages/terms_of_service_page.dart",
         "lib/screens/premium/premium_screen.dart",
         "lib/screens/profile/account_deletion_page.dart",
@@ -22949,8 +22867,7 @@
       "notes": [],
       "path": "lib/core/widgets/unified_voice_text_field.dart",
       "referenced_by": [
-        "lib/features/character/presentation/pages/character_chat_panel.dart",
-        "test/widget/core/widgets/unified_voice_text_field_test.dart"
+        "lib/features/character/presentation/pages/character_chat_panel.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23064,10 +22981,7 @@
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/utils/chat_survey_profile_utils.dart",
         "lib/features/character/presentation/widgets/pet_profile_create_sheet.dart",
-        "lib/presentation/providers/pet_profiles_provider.dart",
-        "test/features/character/presentation/utils/chat_survey_profile_utils_test.dart",
-        "test/features/character/presentation/widgets/profile_create_sheets_test.dart",
-        "test/widget/character/character_chat_panel_registration_test.dart"
+        "lib/presentation/providers/pet_profiles_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23086,11 +23000,7 @@
         "lib/features/character/presentation/widgets/secondary_profile_create_sheet.dart",
         "lib/presentation/providers/active_profile_provider.dart",
         "lib/presentation/providers/secondary_profiles_provider.dart",
-        "lib/presentation/providers/user_profile_notifier.dart",
-        "test/features/character/presentation/utils/chat_survey_profile_utils_test.dart",
-        "test/features/character/presentation/widgets/profile_create_sheets_test.dart",
-        "test/unit/data/models/secondary_profile_test.dart",
-        "test/widget/character/character_chat_panel_registration_test.dart"
+        "lib/presentation/providers/user_profile_notifier.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23106,8 +23016,7 @@
       "referenced_by": [
         "lib/presentation/providers/auth_provider.dart",
         "lib/presentation/providers/token_provider.dart",
-        "lib/presentation/providers/user_profile_notifier.dart",
-        "test/unit/providers/token_provider_test.dart"
+        "lib/presentation/providers/user_profile_notifier.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23303,9 +23212,7 @@
       "path": "lib/data/services/fortune_api_service.dart",
       "referenced_by": [
         "lib/data/services/fortune_api_service_edge_functions.dart",
-        "lib/presentation/providers/fortune_provider.dart",
-        "lib/presentation/providers/today_fortune_provider.dart",
-        "test/mocks/mock_services.dart"
+        "lib/presentation/providers/fortune_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23335,8 +23242,7 @@
       "path": "lib/data/services/token_api_service.dart",
       "referenced_by": [
         "lib/core/services/unified_fortune_service.dart",
-        "lib/presentation/providers/token_provider.dart",
-        "test/mocks/mock_services.dart"
+        "lib/presentation/providers/token_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23350,8 +23256,6 @@
       "notes": [],
       "path": "lib/domain/entities/fortune.dart",
       "referenced_by": [
-        "lib/core/cache/cache_service.dart",
-        "lib/core/cache/models/cached_fortune.dart",
         "lib/data/models/fortune_response_model.dart",
         "lib/data/services/fortune_api/career_fortune_api.dart",
         "lib/data/services/fortune_api/daily_fortune_api.dart",
@@ -23367,11 +23271,7 @@
         "lib/features/character/presentation/providers/character_fortune_adapter.dart",
         "lib/models/fortune_model.dart",
         "lib/presentation/providers/fortune_provider.dart",
-        "lib/presentation/providers/providers.dart",
-        "lib/presentation/providers/today_fortune_provider.dart",
-        "lib/services/widget_data_service.dart",
-        "test/mocks/mock_services.dart",
-        "test/unit/providers/fortune_provider_test.dart"
+        "lib/presentation/providers/providers.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23388,9 +23288,7 @@
         "lib/data/datasources/token_remote_data_source.dart",
         "lib/data/services/token_api_service.dart",
         "lib/presentation/providers/providers.dart",
-        "lib/presentation/providers/token_provider.dart",
-        "test/mocks/mock_services.dart",
-        "test/unit/providers/token_provider_test.dart"
+        "lib/presentation/providers/token_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23419,8 +23317,7 @@
       "path": "lib/features/character/data/default_characters.dart",
       "referenced_by": [
         "lib/features/character/data/services/character_proactive_media_service.dart",
-        "lib/features/character/presentation/providers/character_provider.dart",
-        "test/unit/screens/profile/character_relationships_provider_test.dart"
+        "lib/features/character/presentation/providers/character_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23441,11 +23338,7 @@
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/character/presentation/providers/character_provider.dart",
         "lib/features/character/presentation/utils/chat_catalog_preview.dart",
-        "lib/features/character/presentation/utils/fortune_chat_navigation.dart",
-        "test/features/character/presentation/utils/character_chat_theme_test.dart",
-        "test/features/character/presentation/utils/chat_catalog_preview_test.dart",
-        "test/widget/character/character_chat_panel_registration_test.dart",
-        "test/widget/character/character_chat_panel_theme_test.dart"
+        "lib/features/character/presentation/utils/fortune_chat_navigation.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23554,8 +23447,7 @@
       "notes": [],
       "path": "lib/features/character/data/services/character_proactive_context_service.dart",
       "referenced_by": [
-        "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "test/unit/features/character/data/services/character_proactive_context_service_test.dart"
+        "lib/features/character/presentation/providers/character_chat_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23569,8 +23461,7 @@
       "notes": [],
       "path": "lib/features/character/data/services/character_proactive_media_service.dart",
       "referenced_by": [
-        "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "test/unit/features/character/data/services/character_proactive_media_service_test.dart"
+        "lib/features/character/presentation/providers/character_chat_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23630,8 +23521,7 @@
         "lib/features/character/presentation/widgets/character_choice_widget.dart",
         "lib/features/character/presentation/widgets/character_message_bubble.dart",
         "lib/routes/character_routes.dart",
-        "lib/screens/profile/providers/character_relationships_provider.dart",
-        "test/unit/features/character/domain/models/friend_conversation_seed_test.dart"
+        "lib/screens/profile/providers/character_relationships_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23667,10 +23557,7 @@
         "lib/features/character/domain/models/character_chat_state.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/character/presentation/utils/character_tone_policy.dart",
-        "lib/screens/profile/providers/character_relationships_provider.dart",
-        "test/unit/features/character/presentation/providers/character_chat_provider_test.dart",
-        "test/unit/features/character/presentation/utils/character_tone_policy_test.dart",
-        "test/unit/screens/profile/character_relationships_provider_test.dart"
+        "lib/screens/profile/providers/character_relationships_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23694,13 +23581,7 @@
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/character/presentation/utils/character_tone_policy.dart",
         "lib/features/character/presentation/utils/chat_catalog_preview.dart",
-        "lib/features/character/presentation/widgets/character_message_bubble.dart",
-        "test/unit/features/character/data/services/character_proactive_context_service_test.dart",
-        "test/unit/features/character/data/services/character_proactive_media_service_test.dart",
-        "test/unit/features/character/domain/models/character_chat_message_test.dart",
-        "test/unit/features/character/presentation/providers/character_chat_provider_test.dart",
-        "test/unit/features/character/presentation/utils/character_tone_policy_test.dart",
-        "test/unit/screens/profile/character_relationships_provider_test.dart"
+        "lib/features/character/presentation/widgets/character_message_bubble.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23718,8 +23599,7 @@
         "lib/features/character/presentation/pages/character_list_panel.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/character/presentation/utils/chat_catalog_preview.dart",
-        "lib/screens/profile/providers/character_relationships_provider.dart",
-        "test/unit/screens/profile/character_relationships_provider_test.dart"
+        "lib/screens/profile/providers/character_relationships_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23737,8 +23617,7 @@
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/character/presentation/utils/pending_chat_auth_intent.dart",
-        "lib/features/character/presentation/widgets/character_choice_widget.dart",
-        "test/features/character/presentation/utils/pending_chat_auth_intent_test.dart"
+        "lib/features/character/presentation/widgets/character_choice_widget.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23785,9 +23664,7 @@
         "docs/deployment/review/KAN_OPEN_ISSUES_EVIDENCE_MATRIX_2026-03-22.md",
         "docs/design/PAPER_SCREEN_COMPONENT_REGISTRY.md",
         "docs/development/reports/2026-03-21_release_risk_register.md",
-        "lib/features/character/presentation/pages/swipe_home_shell.dart",
-        "test/widget/character/character_chat_panel_registration_test.dart",
-        "test/widget/character/character_chat_panel_theme_test.dart"
+        "lib/features/character/presentation/pages/swipe_home_shell.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23802,8 +23679,7 @@
       "path": "lib/features/character/presentation/pages/character_list_panel.dart",
       "referenced_by": [
         "docs/design/PAPER_SCREEN_COMPONENT_REGISTRY.md",
-        "lib/features/character/presentation/pages/swipe_home_shell.dart",
-        "test/widget/character/character_list_panel_test.dart"
+        "lib/features/character/presentation/pages/swipe_home_shell.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23847,7 +23723,6 @@
       "path": "lib/features/character/presentation/pages/swipe_home_shell.dart",
       "referenced_by": [
         "docs/design/PAPER_SCREEN_COMPONENT_REGISTRY.md",
-        "integration_test/app_test.dart",
         "lib/routes/route_config.dart"
       ],
       "runtime_reachable": true,
@@ -23864,8 +23739,7 @@
       "referenced_by": [
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "lib/presentation/providers/auth_provider.dart",
-        "test/unit/features/character/presentation/providers/character_chat_provider_test.dart"
+        "lib/presentation/providers/auth_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23887,11 +23761,7 @@
         "lib/features/character/presentation/pages/character_profile_page.dart",
         "lib/features/character/presentation/providers/sorted_characters_provider.dart",
         "lib/presentation/providers/auth_provider.dart",
-        "lib/screens/profile/providers/character_relationships_provider.dart",
-        "test/unit/features/character/presentation/providers/character_chat_provider_test.dart",
-        "test/widget/character/character_chat_panel_registration_test.dart",
-        "test/widget/character/character_chat_panel_theme_test.dart",
-        "test/widget/character/character_list_panel_test.dart"
+        "lib/screens/profile/providers/character_relationships_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23907,9 +23777,7 @@
       "referenced_by": [
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/utils/chat_catalog_preview.dart",
-        "lib/presentation/providers/auth_provider.dart",
-        "test/unit/features/character/presentation/providers/character_chat_survey_provider_test.dart",
-        "test/widget/character/character_chat_panel_registration_test.dart"
+        "lib/presentation/providers/auth_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -23923,8 +23791,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/providers/character_fortune_adapter.dart",
       "referenced_by": [
-        "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "test/unit/features/character/presentation/providers/character_fortune_adapter_test.dart"
+        "lib/features/character/presentation/providers/character_chat_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24008,8 +23875,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/utils/character_chat_fortune_payload_utils.dart",
       "referenced_by": [
-        "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "test/unit/features/character/presentation/utils/character_chat_fortune_payload_utils_test.dart"
+        "lib/features/character/presentation/providers/character_chat_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24038,8 +23904,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/utils/character_chat_theme.dart",
       "referenced_by": [
-        "lib/features/character/presentation/pages/character_chat_panel.dart",
-        "test/features/character/presentation/utils/character_chat_theme_test.dart"
+        "lib/features/character/presentation/pages/character_chat_panel.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24053,8 +23918,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/utils/character_guest_name_guard.dart",
       "referenced_by": [
-        "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "test/unit/features/character/presentation/utils/character_guest_name_guard_test.dart"
+        "lib/features/character/presentation/providers/character_chat_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24068,8 +23932,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/utils/character_tone_policy.dart",
       "referenced_by": [
-        "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "test/unit/features/character/presentation/utils/character_tone_policy_test.dart"
+        "lib/features/character/presentation/providers/character_chat_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24099,8 +23962,7 @@
       "referenced_by": [
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/features/character/presentation/utils/character_tone_policy.dart",
-        "lib/features/character/presentation/utils/character_tone_rollout.dart",
-        "test/unit/features/character/presentation/utils/character_tone_policy_test.dart"
+        "lib/features/character/presentation/utils/character_tone_rollout.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24116,8 +23978,7 @@
       "referenced_by": [
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/pages/character_list_panel.dart",
-        "lib/features/character/presentation/pages/swipe_home_shell.dart",
-        "test/features/character/presentation/utils/chat_catalog_preview_test.dart"
+        "lib/features/character/presentation/pages/swipe_home_shell.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24132,8 +23993,7 @@
       "path": "lib/features/character/presentation/utils/chat_survey_profile_utils.dart",
       "referenced_by": [
         "lib/features/character/presentation/pages/character_chat_panel.dart",
-        "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "test/features/character/presentation/utils/chat_survey_profile_utils_test.dart"
+        "lib/features/character/presentation/providers/character_chat_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24167,8 +24027,7 @@
         "lib/features/character/presentation/widgets/embedded_fortune_component.dart",
         "lib/features/character/presentation/widgets/fortune_bodies/_fortune_body_shared.dart",
         "lib/features/character/presentation/widgets/fortune_bodies/wealth_fortune_body.dart",
-        "lib/features/character/presentation/widgets/haneul_fortune_result_widget.dart",
-        "test/unit/features/character/presentation/utils/fortune_key_localizer_test.dart"
+        "lib/features/character/presentation/widgets/haneul_fortune_result_widget.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24200,8 +24059,7 @@
       "path": "lib/features/character/presentation/utils/pending_chat_auth_intent.dart",
       "referenced_by": [
         "lib/features/character/presentation/pages/character_chat_panel.dart",
-        "lib/screens/auth/callback_page.dart",
-        "test/features/character/presentation/utils/pending_chat_auth_intent_test.dart"
+        "lib/screens/auth/callback_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24215,8 +24073,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/utils/profile_avatar_tap_handler.dart",
       "referenced_by": [
-        "lib/features/character/presentation/pages/character_list_panel.dart",
-        "test/widget/auth/profile_avatar_tap_handler_test.dart"
+        "lib/features/character/presentation/pages/character_list_panel.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24231,8 +24088,7 @@
       "path": "lib/features/character/presentation/utils/tarot_chat_payload_utils.dart",
       "referenced_by": [
         "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "lib/features/chat/presentation/widgets/survey/chat_tarot_draw_widget.dart",
-        "test/features/character/presentation/utils/tarot_chat_payload_utils_test.dart"
+        "lib/features/chat/presentation/widgets/survey/chat_tarot_draw_widget.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24288,9 +24144,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/widgets/embedded_fortune_component.dart",
       "referenced_by": [
-        "lib/features/character/presentation/widgets/character_message_bubble.dart",
-        "test/features/character/presentation/widgets/embedded_fortune_component_test.dart",
-        "test/features/character/presentation/widgets/embedded_tarot_component_test.dart"
+        "lib/features/character/presentation/widgets/character_message_bubble.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24492,8 +24346,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/widgets/pet_profile_create_sheet.dart",
       "referenced_by": [
-        "lib/features/character/presentation/pages/character_chat_panel.dart",
-        "test/features/character/presentation/widgets/profile_create_sheets_test.dart"
+        "lib/features/character/presentation/pages/character_chat_panel.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24507,8 +24360,7 @@
       "notes": [],
       "path": "lib/features/character/presentation/widgets/secondary_profile_create_sheet.dart",
       "referenced_by": [
-        "lib/features/character/presentation/pages/character_chat_panel.dart",
-        "test/features/character/presentation/widgets/profile_create_sheets_test.dart"
+        "lib/features/character/presentation/pages/character_chat_panel.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24585,11 +24437,7 @@
         "lib/features/character/presentation/utils/chat_catalog_preview.dart",
         "lib/features/chat/domain/configs/survey_configs.dart",
         "lib/features/chat/presentation/widgets/survey/chat_survey_chips.dart",
-        "lib/features/chat/presentation/widgets/survey/chat_tarot_deck_picker.dart",
-        "test/features/chat/presentation/widgets/survey/chat_survey_chips_test.dart",
-        "test/features/chat/presentation/widgets/survey/chat_tarot_deck_picker_test.dart",
-        "test/unit/features/character/presentation/providers/character_chat_survey_provider_test.dart",
-        "test/widget/character/character_chat_panel_registration_test.dart"
+        "lib/features/chat/presentation/widgets/survey/chat_tarot_deck_picker.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24737,8 +24585,7 @@
       "notes": [],
       "path": "lib/features/chat/presentation/widgets/survey/chat_survey_chips.dart",
       "referenced_by": [
-        "lib/features/character/presentation/pages/character_chat_panel.dart",
-        "test/features/chat/presentation/widgets/survey/chat_survey_chips_test.dart"
+        "lib/features/character/presentation/pages/character_chat_panel.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24766,8 +24613,7 @@
       "notes": [],
       "path": "lib/features/chat/presentation/widgets/survey/chat_tarot_deck_picker.dart",
       "referenced_by": [
-        "lib/features/character/presentation/pages/character_chat_panel.dart",
-        "test/features/chat/presentation/widgets/survey/chat_tarot_deck_picker_test.dart"
+        "lib/features/character/presentation/pages/character_chat_panel.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24781,8 +24627,7 @@
       "notes": [],
       "path": "lib/features/chat/presentation/widgets/survey/chat_tarot_draw_widget.dart",
       "referenced_by": [
-        "lib/features/character/presentation/pages/character_chat_panel.dart",
-        "test/features/chat/presentation/widgets/survey/chat_tarot_draw_widget_test.dart"
+        "lib/features/character/presentation/pages/character_chat_panel.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24811,8 +24656,7 @@
       "notes": [],
       "path": "lib/features/chat/services/chat_scroll_service.dart",
       "referenced_by": [
-        "lib/features/character/presentation/pages/character_chat_panel.dart",
-        "test/unit/features/chat/services/chat_scroll_service_test.dart"
+        "lib/features/character/presentation/pages/character_chat_panel.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -24974,8 +24818,7 @@
       "notes": [],
       "path": "lib/features/fortune/domain/models/conditions/character_chat_fortune_conditions.dart",
       "referenced_by": [
-        "lib/features/character/presentation/providers/character_chat_provider.dart",
-        "test/unit/features/fortune/domain/models/conditions/character_chat_fortune_conditions_test.dart"
+        "lib/features/character/presentation/providers/character_chat_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -25021,8 +24864,7 @@
       "path": "lib/features/fortune/domain/models/conditions/health_fortune_conditions.dart",
       "referenced_by": [
         "lib/core/services/fortune_generators/health_generator.dart",
-        "lib/core/services/generator_factory.dart",
-        "test/unit/features/fortune/domain/models/conditions/health_fortune_conditions_test.dart"
+        "lib/core/services/generator_factory.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -25207,8 +25049,7 @@
         "lib/features/fortune/domain/models/conditions/dream_fortune_conditions.dart",
         "lib/features/fortune/domain/models/conditions/exercise_fortune_conditions.dart",
         "lib/features/fortune/domain/models/conditions/health_fortune_conditions.dart",
-        "lib/features/fortune/domain/models/conditions/love_fortune_conditions.dart",
-        "test/unit/services/unified_fortune_service_guest_test.dart"
+        "lib/features/fortune/domain/models/conditions/love_fortune_conditions.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -25879,7 +25720,6 @@
       ],
       "path": "lib/l10n/app_localizations.dart",
       "referenced_by": [
-        "integration_test/test_app.dart",
         "lib/core/extensions/l10n_extension.dart",
         "lib/l10n/app_localizations_en.dart",
         "lib/l10n/app_localizations_ja.dart",
@@ -25951,7 +25791,6 @@
         "docs/deployment/APPLE_CAPABILITIES_SETUP.md",
         "docs/deployment/DEPLOYMENT_COMPLETE_GUIDE.md",
         "docs/deployment/review/IOS_REVIEW_EVIDENCE.md",
-        "integration_test/landing_test.dart",
         "scripts/source_inventory.py"
       ],
       "runtime_reachable": true,
@@ -26030,15 +25869,15 @@
       "candidate_action": "keep",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable"
+      ],
       "path": "lib/models/shared_widget_data.dart",
       "referenced_by": [
         "lib/models/shared_widget_data.freezed.dart",
-        "lib/models/shared_widget_data.g.dart",
-        "lib/services/widget_data_service.dart",
-        "lib/services/widget_service.dart"
+        "lib/models/shared_widget_data.g.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "runtime_used"
     },
@@ -26054,7 +25893,7 @@
       "referenced_by": [
         "lib/models/shared_widget_data.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "generated_excluded"
     },
@@ -26070,7 +25909,7 @@
       "referenced_by": [
         "lib/models/shared_widget_data.dart"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
       "usage_status": "generated_excluded"
     },
@@ -26150,8 +25989,7 @@
         "lib/features/character/presentation/pages/swipe_home_shell.dart",
         "lib/main.dart",
         "lib/presentation/providers/fortune_provider.dart",
-        "lib/presentation/providers/providers.dart",
-        "test/unit/providers/auth/chat_restoration_policy_test.dart"
+        "lib/presentation/providers/providers.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26225,8 +26063,7 @@
       "notes": [],
       "path": "lib/presentation/providers/fortune_provider.dart",
       "referenced_by": [
-        "lib/presentation/providers/providers.dart",
-        "test/unit/providers/fortune_provider_test.dart"
+        "lib/presentation/providers/providers.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26255,9 +26092,7 @@
       "path": "lib/presentation/providers/pet_profiles_provider.dart",
       "referenced_by": [
         "lib/features/character/presentation/pages/character_chat_panel.dart",
-        "lib/features/character/presentation/widgets/pet_profile_create_sheet.dart",
-        "test/features/character/presentation/widgets/profile_create_sheets_test.dart",
-        "test/widget/character/character_chat_panel_registration_test.dart"
+        "lib/features/character/presentation/widgets/pet_profile_create_sheet.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26280,7 +26115,6 @@
         "lib/presentation/providers/fortune_gauge_provider.dart",
         "lib/presentation/providers/recommendation_provider.dart",
         "lib/presentation/providers/social_auth_provider.dart",
-        "lib/presentation/providers/today_fortune_provider.dart",
         "lib/presentation/providers/token_provider.dart",
         "lib/presentation/providers/user_profile_notifier.dart",
         "lib/screens/profile/profile_edit_page.dart",
@@ -26315,9 +26149,7 @@
       "referenced_by": [
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/widgets/secondary_profile_create_sheet.dart",
-        "lib/presentation/providers/active_profile_provider.dart",
-        "test/features/character/presentation/widgets/profile_create_sheets_test.dart",
-        "test/widget/character/character_chat_panel_registration_test.dart"
+        "lib/presentation/providers/active_profile_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26362,8 +26194,7 @@
       "notes": [],
       "path": "lib/presentation/providers/tarot_deck_provider.dart",
       "referenced_by": [
-        "lib/features/chat/presentation/widgets/survey/chat_tarot_deck_picker.dart",
-        "test/features/chat/presentation/widgets/survey/chat_tarot_deck_picker_test.dart"
+        "lib/features/chat/presentation/widgets/survey/chat_tarot_deck_picker.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26377,7 +26208,6 @@
       "notes": [],
       "path": "lib/presentation/providers/theme_provider.dart",
       "referenced_by": [
-        "integration_test/test_app.dart",
         "lib/main.dart",
         "lib/presentation/providers/providers.dart"
       ],
@@ -26410,8 +26240,7 @@
         "docs/development/reports/2026-03-21_release_risk_register.md",
         "lib/features/character/presentation/providers/character_chat_provider.dart",
         "lib/presentation/providers/providers.dart",
-        "lib/screens/onboarding/onboarding_page.dart",
-        "test/unit/providers/token_provider_test.dart"
+        "lib/screens/onboarding/onboarding_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26503,8 +26332,7 @@
       "notes": [],
       "path": "lib/presentation/widgets/social_accounts_section.dart",
       "referenced_by": [
-        "lib/screens/profile/profile_screen.dart",
-        "test/widget/auth/social_auth_pending_state_test.dart"
+        "lib/screens/profile/profile_screen.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26523,10 +26351,7 @@
         "docs/design/PAPER_SCREEN_COMPONENT_REGISTRY.md",
         "lib/features/character/presentation/pages/character_chat_panel.dart",
         "lib/features/character/presentation/utils/profile_avatar_tap_handler.dart",
-        "lib/screens/auth/signup_screen.dart",
-        "test/widget/auth/social_auth_entry_panel_test.dart",
-        "test/widget/auth/social_auth_pending_state_test.dart",
-        "test/widget/auth/social_login_bottom_sheet_test.dart"
+        "lib/screens/auth/signup_screen.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26583,7 +26408,6 @@
         "docs/development/reports/2026-03-21_release_risk_register.md",
         "docs/getting-started/APP_SURFACES_AND_ROUTES.md",
         "docs/getting-started/PROJECT_OVERVIEW.md",
-        "integration_test/test_app.dart",
         "lib/main.dart",
         "scripts/pre-commit-screen-check.sh"
       ],
@@ -26669,8 +26493,7 @@
       "path": "lib/screens/onboarding/steps/birth_input_step.dart",
       "referenced_by": [
         "docs/design/PAPER_SCREEN_COMPONENT_REGISTRY.md",
-        "lib/screens/onboarding/onboarding_page.dart",
-        "test/widget/onboarding/birth_input_step_test.dart"
+        "lib/screens/onboarding/onboarding_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26794,8 +26617,7 @@
       "notes": [],
       "path": "lib/screens/profile/providers/character_relationships_provider.dart",
       "referenced_by": [
-        "lib/screens/profile/profile_relationships_page.dart",
-        "test/unit/screens/profile/character_relationships_provider_test.dart"
+        "lib/screens/profile/profile_relationships_page.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26898,13 +26720,7 @@
       "path": "lib/services/cache_service.dart",
       "referenced_by": [
         "docs/data/DATABASE_GUIDE.md",
-        "lib/data/services/fortune_api/daily_fortune_api.dart",
-        "lib/data/services/fortune_api/fortune_api_service.dart",
-        "lib/data/services/fortune_api/misc_fortune_api.dart",
-        "lib/data/services/fortune_api/relationship_fortune_api.dart",
-        "lib/data/services/fortune_api/saju_fortune_api.dart",
-        "lib/presentation/providers/fortune_provider.dart",
-        "test/mocks/mock_services.dart"
+        "lib/presentation/providers/fortune_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -26921,8 +26737,7 @@
         "docs/development/reports/2026-03-21_release_risk_audit_discovery.md",
         "docs/development/reports/2026-03-21_release_risk_register.md",
         "docs/getting-started/APP_SURFACES_AND_ROUTES.md",
-        "lib/main.dart",
-        "test/unit/services/deep_link_service_test.dart"
+        "lib/main.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -27004,20 +26819,21 @@
     },
     {
       "area": "lib",
-      "candidate_action": "keep",
+      "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "dart",
-      "notes": [],
+      "notes": [
+        "runtime_unreachable",
+        "zero_incoming_dart"
+      ],
       "path": "lib/services/native_platform_service.dart",
       "referenced_by": [
         "docs/deployment/review/APPLE_GUIDELINES_AUDIT_2026-03-22.md",
-        "docs/deployment/review/IOS_REVIEW_EVIDENCE.md",
-        "lib/services/widget_data_service.dart",
-        "lib/services/widget_service.dart"
+        "docs/deployment/review/IOS_REVIEW_EVIDENCE.md"
       ],
-      "runtime_reachable": true,
+      "runtime_reachable": false,
       "test_only": false,
-      "usage_status": "runtime_used"
+      "usage_status": "doc_only"
     },
     {
       "area": "lib",
@@ -27032,8 +26848,7 @@
         "lib/main.dart",
         "lib/presentation/providers/auth_provider.dart",
         "lib/services/account_deletion_service.dart",
-        "lib/services/social_auth_service.dart",
-        "test/services/notification/fcm_service_test.dart"
+        "lib/services/social_auth_service.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -27052,8 +26867,7 @@
         "lib/services/social_auth/providers/facebook_auth_provider.dart",
         "lib/services/social_auth/providers/google_auth_provider.dart",
         "lib/services/social_auth/providers/kakao_auth_provider.dart",
-        "lib/services/social_auth_service.dart",
-        "test/unit/services/oauth_in_app_browser_coordinator_test.dart"
+        "lib/services/social_auth_service.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -27101,8 +26915,7 @@
       "referenced_by": [
         "docs/deployment/review/KAN_OPEN_ISSUES_EVIDENCE_MATRIX_2026-03-22.md",
         "docs/development/reports/2026-03-21_release_risk_audit_verify.md",
-        "lib/presentation/providers/social_auth_provider.dart",
-        "test/unit/services/auth/session_cleanup_service_test.dart"
+        "lib/presentation/providers/social_auth_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -27121,8 +26934,7 @@
         "lib/services/social_auth/providers/facebook_auth_provider.dart",
         "lib/services/social_auth/providers/google_auth_provider.dart",
         "lib/services/social_auth/providers/kakao_auth_provider.dart",
-        "lib/services/social_auth/providers/naver_auth_provider.dart",
-        "test/mocks/mock_auth_services.dart"
+        "lib/services/social_auth/providers/naver_auth_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -27144,10 +26956,7 @@
         "lib/services/social_auth/providers/google_auth_provider.dart",
         "lib/services/social_auth/providers/kakao_auth_provider.dart",
         "lib/services/social_auth/providers/naver_auth_provider.dart",
-        "lib/services/social_auth_service.dart",
-        "test/unit/services/auth/apple_auth_provider_test.dart",
-        "test/widget/auth/profile_avatar_tap_handler_test.dart",
-        "test/widget/auth/social_auth_pending_state_test.dart"
+        "lib/services/social_auth_service.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -27161,8 +26970,7 @@
       "notes": [],
       "path": "lib/services/social_auth/providers/apple_auth_provider.dart",
       "referenced_by": [
-        "lib/services/social_auth_service.dart",
-        "test/unit/services/auth/apple_auth_provider_test.dart"
+        "lib/services/social_auth_service.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -27190,8 +26998,7 @@
       "notes": [],
       "path": "lib/services/social_auth/providers/google_auth_provider.dart",
       "referenced_by": [
-        "lib/services/social_auth_service.dart",
-        "test/unit/services/auth/google_auth_provider_test.dart"
+        "lib/services/social_auth_service.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -27238,9 +27045,7 @@
         "lib/presentation/providers/social_auth_provider.dart",
         "lib/presentation/widgets/social_accounts_section.dart",
         "lib/presentation/widgets/social_login_bottom_sheet.dart",
-        "lib/services/session_cleanup_service.dart",
-        "test/widget/auth/profile_avatar_tap_handler_test.dart",
-        "test/widget/auth/social_auth_pending_state_test.dart"
+        "lib/services/session_cleanup_service.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -27256,8 +27061,7 @@
       "referenced_by": [
         "docs/deployment/review/ANDROID_REVIEW_EVIDENCE.md",
         "docs/deployment/review/IOS_REVIEW_EVIDENCE.md",
-        "lib/core/widgets/unified_voice_text_field.dart",
-        "test/widget/core/widgets/unified_voice_text_field_test.dart"
+        "lib/core/widgets/unified_voice_text_field.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -27301,9 +27105,7 @@
         "lib/services/account_deletion_service.dart",
         "lib/services/session_cleanup_service.dart",
         "lib/services/social_auth_service.dart",
-        "lib/services/user_statistics_service.dart",
-        "test/mocks/mock_auth_services.dart",
-        "test/widget/auth/social_auth_entry_panel_test.dart"
+        "lib/services/user_statistics_service.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -27382,8 +27184,7 @@
       "path": "lib/services/widget_data_service.dart",
       "referenced_by": [
         "docs/deployment/review/IOS_REVIEW_EVIDENCE.md",
-        "lib/presentation/providers/auth_provider.dart",
-        "lib/services/widget_service.dart"
+        "lib/presentation/providers/auth_provider.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -27427,12 +27228,9 @@
       "notes": [],
       "path": "lib/shared/components/cards/fortune_cards.dart",
       "referenced_by": [
-        "lib/core/components/app_card.dart",
         "lib/features/chat/presentation/widgets/chat_saju_result_card.dart",
         "lib/features/chat_insight/presentation/widgets/insight_history_card.dart",
-        "lib/features/fortune/presentation/widgets/saju/today_iljin_card.dart",
-        "lib/presentation/widgets/common/custom_card.dart",
-        "test/widget/shared/fortune_cards_test.dart"
+        "lib/features/fortune/presentation/widgets/saju/today_iljin_card.dart"
       ],
       "runtime_reachable": true,
       "test_only": false,
@@ -28219,6 +28017,20 @@
         "no_inbound_refs"
       ],
       "path": "scripts/monitor_errors.sh",
+      "referenced_by": [],
+      "runtime_reachable": false,
+      "test_only": false,
+      "usage_status": "tooling_only"
+    },
+    {
+      "area": "scripts",
+      "candidate_action": "phase2_review_candidate",
+      "dirty": false,
+      "kind": "script_sh",
+      "notes": [
+        "no_inbound_refs"
+      ],
+      "path": "scripts/ondo_rename_audit.sh",
       "referenced_by": [],
       "runtime_reachable": false,
       "test_only": false,
@@ -33016,25 +32828,25 @@
       "docs": 91,
       "integration_test": 8,
       "lib": 441,
-      "scripts": 59,
+      "scripts": 60,
       "supabase": 207,
       "test": 83
     },
     "counts_by_candidate_action": {
-      "keep": 734,
+      "keep": 731,
       "keep_generated": 28,
       "manual_review": 978,
-      "phase1_remove_candidate": 13,
-      "phase2_review_candidate": 363,
+      "phase1_remove_candidate": 15,
+      "phase2_review_candidate": 365,
       "phase3_feature_cleanup": 4
     },
     "counts_by_usage_status": {
-      "doc_only": 97,
+      "doc_only": 98,
       "generated_excluded": 28,
-      "runtime_used": 734,
+      "runtime_used": 731,
       "test_only": 92,
-      "tooling_only": 174,
-      "unreferenced": 995
+      "tooling_only": 175,
+      "unreferenced": 997
     },
     "declared_asset_dirs_without_runtime_refs": [
       "assets/animations",
@@ -33187,9 +32999,9 @@
       "test",
       "integration_test"
     ],
-    "lib_dart_runtime_reachable": 374,
+    "lib_dart_runtime_reachable": 368,
     "lib_dart_total": 438,
-    "lib_dart_zero_incoming": 23,
+    "lib_dart_zero_incoming": 26,
     "missing_function_refs": [
       "--all",
       "account-deletion",
@@ -33296,7 +33108,7 @@
       "token-balance",
       "widget-cache"
     ],
-    "total_files": 2120,
+    "total_files": 2121,
     "undeclared_asset_top_levels": [],
     "unreferenced_function_dirs": [
       "fortune-health-document"
