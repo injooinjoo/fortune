@@ -110,7 +110,7 @@ void main() {
     );
 
     expect(unreadBadge.count, 1);
-    expect(badgeText.style?.color, DSColors.ctaForegroundDark);
+    expect(badgeText.style?.color, DSColors.textPrimary);
     expect(find.text('내 차례'), findsOneWidget);
   });
 }
