@@ -391,10 +391,17 @@ class InAppPurchaseService {
         verificationData['productId'] = purchaseDetails.productID;
         verificationData['orderId'] = purchaseDetails.purchaseID;
       } else if (!kIsWeb && Platform.isIOS) {
+        final receipt = purchaseDetails.verificationData.serverVerificationData;
+        if (receipt.trim().isEmpty) {
+          Logger.error(
+            '❌ iOS 영수증이 비어 있어 서버 검증을 진행하지 않습니다. '
+            'StoreKit 인증 상태와 샌드박스 계정을 확인해주세요.',
+          );
+          return false;
+        }
         // iOS 영수증 데이터
         verificationData['platform'] = 'ios';
-        verificationData['receipt'] =
-            purchaseDetails.verificationData.serverVerificationData;
+        verificationData['receipt'] = receipt;
         verificationData['productId'] = purchaseDetails.productID;
         verificationData['transactionId'] = purchaseDetails.purchaseID;
       }
@@ -564,8 +571,20 @@ class InAppPurchaseService {
           storeKitContext.userInfo!.isNotEmpty) {
         Logger.error('StoreKit userInfo: ${storeKitContext.userInfo}');
       }
+      if (_isSandboxAccountAuthenticationError(storeKitContext)) {
+        Logger.error(
+          'iOS 샌드박스 인증 실패로 결제가 트랜잭션 생성 전에 중단되었습니다. '
+          'Sandbox Account 또는 Media & Purchases 재로그인이 필요합니다.',
+        );
+      }
     } else if (error.details != null) {
       Logger.error('오류 details: ${error.details}');
+    }
+    if (_hasEmptyIosVerificationPayload(purchaseDetails)) {
+      Logger.error(
+        'iOS verification payload가 비어 있습니다. '
+        '이 케이스는 StoreKit이 영수증/트랜잭션을 만들기 전에 실패했음을 의미합니다.',
+      );
     }
     _purchasePending = false;
 
@@ -763,6 +782,15 @@ class InAppPurchaseService {
   ) {
     return context.containsError(domain: 'ASDErrorDomain', code: 530) ||
         context.containsError(domain: 'AMSErrorDomain', code: 100);
+  }
+
+  bool _hasEmptyIosVerificationPayload(PurchaseDetails purchaseDetails) {
+    if (kIsWeb || !Platform.isIOS) {
+      return false;
+    }
+
+    return purchaseDetails.verificationData.localVerificationData.isEmpty &&
+        purchaseDetails.verificationData.serverVerificationData.isEmpty;
   }
 
   List<_IosStoreKitErrorNode> _extractUnderlyingStoreKitErrors(
