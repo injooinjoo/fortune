@@ -1,6 +1,6 @@
 ENTERTAINMENT APP DECLARATION
 
-ZPZG is an entertainment and lifestyle app that provides AI-generated daily conversation and lifestyle insight content.
+Ondo is an entertainment and lifestyle app that provides AI-generated daily conversation and lifestyle insight content.
 
 PRIMARY REVIEW PATH
 1. Launch the app.

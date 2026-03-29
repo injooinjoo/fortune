@@ -5,8 +5,8 @@ Syncing files to device iPhone 16 Pro...
 [ERROR:flutter/shell/platform/darwin/ios/framework/Source/FlutterDartVMServicePublisher.mm(129)] Could not register as server for FlutterDartVMServicePublisher, permission denied. Check your 'Local Network' permissions for this app in the Privacy section of the system Settings.
 [ERROR:flutter/shell/platform/darwin/ios/framework/Source/FlutterDartVMServicePublisher.mm(129)] Could not register as server for FlutterDartVMServicePublisher, permission denied. Check your 'Local Network' permissions for this app in the Privacy section of the system Settings.
 flutter: supabase.supabase_flutter: INFO: ***** Supabase init completed *****
-flutter: [Fortune] \^[[34m[INFO]\^[[0m Analytics are disabled via feature <…>
-flutter: [Fortune] \^[[34m[INFO]\^[[0m Ads are disabled via feature <…>
+flutter: [Ondo] \^[[34m[INFO]\^[[0m Analytics are disabled via feature <…>
+flutter: [Ondo] \^[[34m[INFO]\^[[0m Ads are disabled via feature <…>
 flutter: GoRouter: INFO: Full paths for routes:
 flutter: ├─/ (LandingPage)
 flutter: ├─/splash (SplashScreen)

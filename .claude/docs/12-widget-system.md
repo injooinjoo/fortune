@@ -4,16 +4,16 @@
 
 ## 개요
 
-Fortune 앱의 홈 화면 위젯 시스템은 iOS (WidgetKit)와 Android (AppWidgetProvider)를 지원합니다.
+Ondo 앱의 홈 화면 위젯 시스템은 iOS (WidgetKit)와 Android (AppWidgetProvider)를 지원합니다.
 
 ### 위젯 종류
 
 | 위젯 | iOS | Android | 설명 |
 |------|-----|---------|------|
-| Daily Fortune | `FortuneWidget` | `FortuneDailyWidget` | 일일 운세 |
-| Love Fortune | `LoveFortuneWidget` | `FortuneLoveWidget` | 연애운 |
-| **Favorites** | `FavoritesFortuneWidget` | `FavoritesAppWidget` | 즐겨찾기 롤링 위젯 |
-| Lock Screen | `LockScreenFortuneWidget` | - | iOS 잠금화면 (iOS 16.1+) |
+| Daily Fortune | `OndoWidget` | `FortuneDailyWidget` | 일일 운세 |
+| Love Fortune | `OndoLoveWidget` | `FortuneLoveWidget` | 연애운 |
+| **Favorites** | `OndoFavoritesWidget` | `FavoritesAppWidget` | 즐겨찾기 롤링 위젯 |
+| Lock Screen | `OndoLockScreenWidget` | - | iOS 잠금화면 (iOS 16.1+) |
 
 ---
 
@@ -39,7 +39,7 @@ Fortune 앱의 홈 화면 위젯 시스템은 iOS (WidgetKit)와 Android (AppWid
 │          iOS           │              Android                    │
 ├────────────────────────┼────────────────────────────────────────┤
 │ App Group:             │ SharedPreferences:                      │
-│ group.com.beyond.fortune│ FlutterSharedPreferences               │
+│ group.com.beyond.ondo  │ FlutterSharedPreferences               │
 │                        │ (flutter. prefix)                       │
 ├────────────────────────┼────────────────────────────────────────┤
 │ UserDefaults           │ SharedPreferences                       │
@@ -153,7 +153,7 @@ lib/
 ### iOS
 
 ```
-ios/FortuneWidgetExtension/
+ios/OndoWidgetExtension/
 ├── FortuneWidget.swift              # 위젯 번들 정의
 ├── FortuneWidgetProvider.swift      # Daily/Love 위젯 프로바이더
 ├── FavoritesFortuneWidget.swift     # 즐겨찾기 위젯 (~890 LOC)
@@ -183,12 +183,12 @@ android/app/src/main/
 
 **entitlements 파일에 정의:**
 - `ios/Runner/Runner.entitlements`
-- `ios/FortuneWidgetExtension/FortuneWidgetExtension.entitlements`
+- `ios/OndoWidgetExtension/OndoWidgetExtension.entitlements`
 
 ```xml
 <key>com.apple.security.application-groups</key>
 <array>
-    <string>group.com.beyond.fortune</string>
+    <string>group.com.beyond.ondo</string>
 </array>
 ```
 
@@ -199,7 +199,7 @@ android/app/src/main/
 <receiver android:name=".FavoritesAppWidget" android:exported="true">
     <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-        <action android:name="com.beyond.fortune.ACTION_FAVORITES_ROLLING_UPDATE" />
+        <action android:name="com.beyond.ondo.ACTION_FAVORITES_ROLLING_UPDATE" />
     </intent-filter>
     <meta-data
         android:name="android.appwidget.provider"
@@ -271,7 +271,7 @@ simctl push booted [bundle-id] widgetkit-refresh
 # 또는 시뮬레이터에서 직접
 # 1. 홈 화면 길게 누르기
 # 2. + 버튼 탭
-# 3. Fortune 위젯 추가
+# 3. Ondo 위젯 추가
 ```
 
 ### Android 에뮬레이터
@@ -280,12 +280,12 @@ simctl push booted [bundle-id] widgetkit-refresh
 # 위젯 강제 업데이트
 adb shell am broadcast -a android.appwidget.action.APPWIDGET_UPDATE \
   --es appwidget_ids "1,2,3" \
-  -n com.beyond.fortune/.FavoritesAppWidget
+  -n com.beyond.ondo/.FavoritesAppWidget
 
 # 롤링 트리거
 adb shell am broadcast \
-  -a com.beyond.fortune.ACTION_FAVORITES_ROLLING_UPDATE \
-  -n com.beyond.fortune/.FavoritesAppWidget
+  -a com.beyond.ondo.ACTION_FAVORITES_ROLLING_UPDATE \
+  -n com.beyond.ondo/.FavoritesAppWidget
 ```
 
 ### Flutter 디버깅
@@ -307,7 +307,7 @@ await WidgetService.rollToNextFavorite();
 ### 위젯에 데이터가 표시되지 않음
 
 1. **App Group ID 확인**
-   - Flutter: `group.com.beyond.fortune`
+   - Flutter: `group.com.beyond.ondo`
    - iOS entitlements 동일한지 확인
    - iOS 위젯 코드에서 동일한 ID 사용하는지 확인
 
@@ -327,7 +327,7 @@ await WidgetService.rollToNextFavorite();
 
 ```swift
 // WidgetDataManager.swift에서 강제 새로고침
-WidgetCenter.shared.reloadTimelines(ofKind: "FavoritesFortuneWidget")
+WidgetCenter.shared.reloadTimelines(ofKind: "OndoFavoritesWidget")
 WidgetCenter.shared.reloadAllTimelines()
 ```
 
@@ -339,7 +339,7 @@ WidgetCenter.shared.reloadAllTimelines()
    ```
 
 2. **배터리 최적화 제외 확인**
-   - 설정 → 앱 → Fortune → 배터리 → 제한 없음
+   - 설정 → 앱 → Ondo → 배터리 → 제한 없음
 
 3. **로그 확인**
    ```bash

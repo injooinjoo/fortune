@@ -228,7 +228,7 @@ NC='\033[0m' # No Color
 echo -e "${BLUE}📸 iOS 스크린샷 촬영 시작${NC}"
 
 # 스크린샷 저장 폴더
-SCREENSHOT_DIR="$HOME/Desktop/Fortune_Screenshots/iOS"
+SCREENSHOT_DIR="$HOME/Desktop/Ondo_Screenshots/iOS"
 mkdir -p "$SCREENSHOT_DIR"
 
 # 시뮬레이터 디바이스 ID 찾기
@@ -425,7 +425,7 @@ emulator -avd Pixel_6_Pro_API_34 &
 3. Category: Phone
 4. 디바이스: Pixel 6 Pro 선택
 5. System Image: Android 12 (API 31) 다운로드 및 선택
-6. AVD Name: `Fortune_Screenshots_Pixel6Pro`
+6. AVD Name: `Ondo_Screenshots_Pixel6Pro`
 7. Graphics: Hardware - GLES 2.0
 8. "Finish" 클릭
 
@@ -580,7 +580,7 @@ NC='\033[0m' # No Color
 echo -e "${BLUE}📸 Android 스크린샷 촬영 시작${NC}"
 
 # 스크린샷 저장 폴더
-SCREENSHOT_DIR="$HOME/Desktop/Fortune_Screenshots/Android"
+SCREENSHOT_DIR="$HOME/Desktop/Ondo_Screenshots/Android"
 mkdir -p "$SCREENSHOT_DIR"
 
 # adb 연결 확인
@@ -938,8 +938,8 @@ fi
 echo -e "\n${GREEN}🎉 모든 스크린샷 촬영 완료!${NC}"
 echo ""
 echo "📂 저장 위치:"
-echo "  - iOS: ~/Desktop/Fortune_Screenshots/iOS/"
-echo "  - Android: ~/Desktop/Fortune_Screenshots/Android/"
+echo "  - iOS: ~/Desktop/Ondo_Screenshots/iOS/"
+echo "  - Android: ~/Desktop/Ondo_Screenshots/Android/"
 echo ""
 echo "다음 단계:"
 echo "  1. 스크린샷 품질 확인"

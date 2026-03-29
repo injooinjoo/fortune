@@ -1,5 +1,5 @@
 #!/bin/bash
-# Test execution script for ZPZG Flutter App
+# Test execution script for Ondo Flutter App
 # Usage: ./scripts/test.sh [flutter|playwright|all]
 
 set -e  # Exit on any error

@@ -1,8 +1,8 @@
-# ZPZG - Product Requirements Document
+# Ondo - Product Requirements Document
 
 ## 1. Product Overview
 
-**Product Name**: ZPZG - AI 운세 서비스
+**Product Name**: Ondo - AI 운세 서비스
 **Platform**: Flutter (iOS, Android, Web)
 **Target Users**: Korean-speaking users interested in fortune telling, saju, tarot, and personality analysis
 

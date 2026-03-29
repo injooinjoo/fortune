@@ -1,5 +1,5 @@
 {
-  "name": "fortune-flutter-tests",
+  "name": "ondo-flutter-tests",
   "version": "1.0.0",
   "description": "E2E testing for Ondo Flutter App",
   "scripts": {

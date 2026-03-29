@@ -1,6 +1,6 @@
 -- =====================================================
 -- Decision Receipts Table
--- ZPZG Decision Coach Pivot - Phase 1.1
+-- Ondo Decision Coach Pivot - Phase 1.1
 -- 결정 기록 및 팔로업 시스템
 -- =====================================================
 
@@ -264,7 +264,7 @@ GRANT EXECUTE ON FUNCTION get_decision_patterns TO authenticated;
 -- =====================================================
 -- Comments
 -- =====================================================
-COMMENT ON TABLE decision_receipts IS 'ZPZG Decision Coach - 사용자 결정 기록 및 팔로업 추적';
+COMMENT ON TABLE decision_receipts IS 'Ondo Decision Coach - 사용자 결정 기록 및 팔로업 추적';
 COMMENT ON COLUMN decision_receipts.decision_type IS '결정 카테고리: dating, career, money, wellness, lifestyle, relationship';
 COMMENT ON COLUMN decision_receipts.confidence_level IS '결정 확신도 1-5 (1=매우 불확실, 5=매우 확신)';
 COMMENT ON COLUMN decision_receipts.outcome_status IS '결과 상태: pending, positive, negative, neutral, mixed';

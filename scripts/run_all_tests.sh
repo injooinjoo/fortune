@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# ZPZG - 전체 테스트 실행 스크립트
+# Ondo - 전체 테스트 실행 스크립트
 # 사용법: ./scripts/run_all_tests.sh [options]
 # 옵션:
 #   --unit       Unit 테스트만 실행
@@ -26,7 +26,7 @@ INTEGRATION_RESULT=0
 CONSISTENCY_RESULT=0
 
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${BLUE}   ZPZG - 테스트 실행기${NC}"
+echo -e "${BLUE}   Ondo - 테스트 실행기${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 

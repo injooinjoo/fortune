@@ -1,4 +1,4 @@
-// Fortune 앱 다크모드 컨트라스트 및 가독성 검증 도구
+// Ondo 앱 다크모드 컨트라스트 및 가독성 검증 도구
 // WCAG 2.1 AA 기준 (4.5:1) 및 AAA 기준 (7:1) 준수 검증
 
 const fs = require('fs');
@@ -205,7 +205,7 @@ function generateReport() {
     const results = analyzeColorCombinations();
     const recommendations = recommendColors();
 
-    let report = `# Fortune 앱 다크모드 컨트라스트 분석 리포트\n\n`;
+    let report = `# Ondo 앱 다크모드 컨트라스트 분석 리포트\n\n`;
     report += `생성일시: ${new Date().toLocaleString('ko-KR')}\n\n`;
 
     // 요약

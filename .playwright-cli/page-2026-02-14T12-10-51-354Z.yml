@@ -139,7 +139,7 @@
               - text: "\"namespace\": \"android_app\","
             - generic [ref=e1549]:
               - generic [ref=e1550] [cursor=pointer]: "6"
-              - text: "\"package_name\": \"com.beyond.fortune\","
+              - text: "\"package_name\": \"com.beyond.ondo\","
             - generic [ref=e1552]:
               - generic [ref=e1553] [cursor=pointer]: "7"
               - text: "\"sha256_cert_fingerprints\": ["

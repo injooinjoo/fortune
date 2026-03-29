@@ -85,7 +85,7 @@ check() {
   fi
 
   if [ "${path}" = "/" ]; then
-    if ! rg -q "ZPZG" "${body_file}"; then
+    if ! rg -q "Ondo" "${body_file}"; then
       echo "WARN: / has no expected landing content marker."
     fi
   fi

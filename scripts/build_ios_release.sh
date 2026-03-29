@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # iOS 릴리즈 빌드 자동화 스크립트
-# ZPZG iOS App Store 배포용
+# Ondo iOS App Store 배포용
 
 set -e  # 에러 발생 시 즉시 중단
 
@@ -15,7 +15,7 @@ NC='\033[0m' # No Color
 # 로고
 echo -e "${BLUE}"
 echo "╔══════════════════════════════════════╗"
-echo "║      ZPZG iOS Release Build Script       ║"
+echo "║      Ondo iOS Release Build Script       ║"
 echo "║          App Store Deploy            ║"
 echo "╚══════════════════════════════════════╝"
 echo -e "${NC}"
@@ -105,7 +105,7 @@ fi
 echo -e "\n${YELLOW}[5/8] iOS 빌드 설정 확인 중...${NC}"
 
 # Bundle ID 확인
-BUNDLE_ID=$(grep -A 1 "PRODUCT_BUNDLE_IDENTIFIER" ios/Runner.xcodeproj/project.pbxproj | grep "com.beyond.fortune" | head -1 | awk '{print $3}' | tr -d ';')
+BUNDLE_ID=$(grep -A 1 "PRODUCT_BUNDLE_IDENTIFIER" ios/Runner.xcodeproj/project.pbxproj | grep "com.beyond.ondo" | head -1 | awk '{print $3}' | tr -d ';')
 echo -e "${GREEN}✓ Bundle ID: $BUNDLE_ID${NC}"
 
 # Team ID 확인

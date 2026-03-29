@@ -2,7 +2,7 @@
  * 결정 코치 (Decision Coach) Edge Function
  *
  * @description 사용자의 고민을 듣고 개인화된 선택지별 장단점 분석과 AI 추천을 제공합니다.
- * ZPZG Decision Coach Pivot - 개인화 지원 추가
+ * Ondo Decision Coach Pivot - 개인화 지원 추가
  *
  * @endpoint POST /fortune-decision
  *

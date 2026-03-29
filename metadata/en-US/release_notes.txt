@@ -7,4 +7,4 @@ v1.0.0 Official Release
 • Dark mode support
 • Performance and stability improvements
 
-Thank you for using ZPZG!
+Thank you for using Ondo!

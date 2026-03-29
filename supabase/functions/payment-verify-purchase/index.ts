@@ -430,14 +430,14 @@ async function verifyAppleReceipt(
 
 // 상품별 토큰 수량 매핑
 const PRODUCT_TOKENS: Record<string, number> = {
-  "com.beyond.fortune.tokens10": 10,
-  "com.beyond.fortune.tokens50": 50,
-  "com.beyond.fortune.tokens100": 100,
-  "com.beyond.fortune.tokens200": 200,
-  "com.beyond.fortune.points300": 350,
-  "com.beyond.fortune.points600": 700,
-  "com.beyond.fortune.points1200": 1650,
-  "com.beyond.fortune.points3000": 4400,
+  "com.beyond.ondo.tokens10": 10,
+  "com.beyond.ondo.tokens50": 50,
+  "com.beyond.ondo.tokens100": 100,
+  "com.beyond.ondo.tokens200": 200,
+  "com.beyond.ondo.points300": 350,
+  "com.beyond.ondo.points600": 700,
+  "com.beyond.ondo.points1200": 1650,
+  "com.beyond.ondo.points3000": 4400,
 };
 
 serve(async (req) => {
@@ -601,7 +601,7 @@ serve(async (req) => {
       }
 
       const targetPackageName = packageName ||
-        Deno.env.get("GOOGLE_PLAY_PACKAGE_NAME") || "com.beyond.fortune";
+        Deno.env.get("GOOGLE_PLAY_PACKAGE_NAME") || "com.beyond.ondo";
       const androidResult = await verifyGooglePlayPurchase(
         targetPackageName,
         productId,

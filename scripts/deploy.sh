@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# ZPZG Deployment Script
+# Ondo Deployment Script
 # This script helps deploy the app to both Android and iOS app stores
 
 set -e
 
 echo "=========================================="
-echo "ZPZG - Deployment Script"
+echo "Ondo - Deployment Script"
 echo "=========================================="
 echo ""
 

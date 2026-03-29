@@ -1,6 +1,6 @@
 -- =====================================================
 -- User Coach Preferences Table
--- ZPZG Decision Coach Pivot - Phase 1.1
+-- Ondo Decision Coach Pivot - Phase 1.1
 -- AI 코칭 개인화 설정
 -- =====================================================
 
@@ -298,7 +298,7 @@ GRANT EXECUTE ON FUNCTION generate_anonymous_id TO authenticated;
 -- =====================================================
 -- Comments
 -- =====================================================
-COMMENT ON TABLE user_coach_preferences IS 'ZPZG Decision Coach - AI 코칭 개인화 설정';
+COMMENT ON TABLE user_coach_preferences IS 'Ondo Decision Coach - AI 코칭 개인화 설정';
 COMMENT ON COLUMN user_coach_preferences.tone_preference IS 'AI 톤: friendly(친구), professional(컨설턴트), adaptive(자동)';
 COMMENT ON COLUMN user_coach_preferences.response_length IS '응답 길이: concise, balanced, detailed';
 COMMENT ON COLUMN user_coach_preferences.decision_style IS '결정 스타일: logic(논리), empathy(공감), balanced';

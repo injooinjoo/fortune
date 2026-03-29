@@ -1,6 +1,6 @@
 {
   "product": {
-    "name": "Fortune - AI 운세 서비스",
+    "name": "Ondo - AI 운세 서비스",
     "description": "Korean AI-powered fortune telling app with saju, tarot, MBTI, and compatibility analysis",
     "platform": "Flutter (iOS, Android, Web)",
     "base_url": "https://fortune2-463710.web.app"
@@ -224,7 +224,7 @@
     "viewport": {"width": 390, "height": 844},
     "test_account": {
       "email": "test@zpzg.com",
-      "password": "TestZPZGApp2025!@#SecurePassword"
+      "password": "TestOndoApp2025!@#SecurePassword"
     }
   }
 }

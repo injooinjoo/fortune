@@ -1185,7 +1185,7 @@ export async function openGeminiGuardCircuit(
   if (shouldAlert) {
     await sendLlmGuardAlert({
       severity: "critical",
-      title: "[Fortune] Gemini circuit opened",
+      title: "[Ondo] Gemini circuit opened",
       message,
       provider: "gemini",
       model: params.model,
@@ -1257,7 +1257,7 @@ export async function recordGeminiGuardWarning(
   if (shouldAlert) {
     await sendLlmGuardAlert({
       severity: "warning",
-      title: "[Fortune] Gemini usage approaching limit",
+      title: "[Ondo] Gemini usage approaching limit",
       message,
       provider: "gemini",
       featureName: warning.featureName || "monitor-llm-usage",
@@ -1303,7 +1303,7 @@ export async function markGeminiGuardHealthy(
   if (notifyOnRecovery) {
     await sendLlmGuardAlert({
       severity: "info",
-      title: "[Fortune] Gemini guard recovered",
+      title: "[Ondo] Gemini guard recovered",
       message: "Gemini traffic is back under the configured limits.",
       provider: "gemini",
       featureName: "monitor-llm-usage",

@@ -1,7 +1,7 @@
 // simple-test.spec.js - Direct URL testing
 const { test, expect } = require('@playwright/test');
 
-test.describe('ZPZG Direct Testing', () => {
+test.describe('Ondo Direct Testing', () => {
   test('should test app functionality without Flutter server', async ({ page }) => {
     console.log('🧪 [TEST] Starting direct app test');
 
@@ -103,10 +103,10 @@ test.describe('ZPZG Direct Testing', () => {
       <!DOCTYPE html>
       <html>
       <head>
-        <title>ZPZG Test Page</title>
+        <title>Ondo Test Page</title>
       </head>
       <body>
-        <h1>🔧 ZPZG Test Mode</h1>
+        <h1>🔧 Ondo Test Mode</h1>
         <p>테스트 모드로 실행 중입니다.</p>
         <button id="test-btn">운세 보기</button>
         <div id="result"></div>

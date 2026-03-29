@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Fortune Icon Processor
+Ondo Icon Processor
 - Trim transparent background
 - Resize to 44x44
 - Save to assets/icons/fortune/
@@ -97,7 +97,7 @@ def process_image(input_path, output_path, size=44):
 
 def main():
     print("=" * 50)
-    print("Fortune Icon Processor")
+    print("Ondo Icon Processor")
     print("=" * 50)
 
     # 출력 디렉토리 확인

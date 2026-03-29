@@ -314,8 +314,8 @@ def resolve_repo_path(base_path: str, target: str) -> str | None:
 
 def resolve_module_target(source: str, target: str, known_paths: set[str]) -> str | None:
     source_suffix = Path(source).suffix.lower()
-    if target.startswith('package:fortune/'):
-        candidate = target.replace('package:fortune/', 'lib/')
+    if target.startswith('package:ondo/'):
+        candidate = target.replace('package:ondo/', 'lib/')
         return candidate if candidate in known_paths else None
     if target.startswith('package:'):
         return None

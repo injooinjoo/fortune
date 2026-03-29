@@ -10,9 +10,9 @@
 | 등록기관 | 가비아 (Gabia) |
 | 웹 호스팅 | Vercel (zpzg-landing 프로젝트) |
 | API 도메인 | api.zpzg.co.kr → Supabase |
-| iOS Bundle ID | com.beyond.fortune |
+| iOS Bundle ID | com.beyond.ondo |
 | iOS Team ID | 5F7CN7Y54D |
-| Android Package | com.beyond.fortune |
+| Android Package | com.beyond.ondo |
 
 ---
 
@@ -125,7 +125,7 @@ curl -I https://zpzg.co.kr/.well-known/assetlinks.json
 
 1. https://developer.apple.com 로그인
 2. Certificates, Identifiers & Profiles
-3. Identifiers → com.beyond.fortune 선택
+3. Identifiers → com.beyond.ondo 선택
 4. Capabilities → Associated Domains 활성화 (체크)
 5. Save
 
@@ -137,13 +137,13 @@ curl -I https://zpzg.co.kr/.well-known/assetlinks.json
   "applinks": {
     "details": [
       {
-        "appIDs": ["5F7CN7Y54D.com.beyond.fortune"],
+        "appIDs": ["5F7CN7Y54D.com.beyond.ondo"],
         "components": [{ "/": "/*", "comment": "Match all paths" }]
       }
     ]
   },
   "webcredentials": {
-    "apps": ["5F7CN7Y54D.com.beyond.fortune"]
+    "apps": ["5F7CN7Y54D.com.beyond.ondo"]
   }
 }
 ```
@@ -152,7 +152,7 @@ curl -I https://zpzg.co.kr/.well-known/assetlinks.json
 
 1. 앱 삭제 후 재설치 (또는 새 빌드)
 2. Safari에서 `https://zpzg.co.kr/chat` 열기
-3. 링크 길게 누르기 → "ZPZG에서 열기" 옵션 확인
+3. 링크 길게 누르기 → "Ondo에서 열기" 옵션 확인
 4. 또는 메모장에 링크 붙여넣기 → 탭하여 앱 열림 확인
 
 ---
@@ -196,7 +196,7 @@ keytool -list -v -keystore /path/to/release.keystore -alias your-alias
   "relation": ["delegate_permission/common.handle_all_urls"],
   "target": {
     "namespace": "android_app",
-    "package_name": "com.beyond.fortune",
+    "package_name": "com.beyond.ondo",
     "sha256_cert_fingerprints": [
       "XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX"
     ]
@@ -221,7 +221,7 @@ keytool -list -v -keystore /path/to/release.keystore -alias your-alias
 adb shell am start -a android.intent.action.VIEW -d "https://zpzg.co.kr/chat"
 
 # 또는 앱 링크 설정 확인
-adb shell pm get-app-links com.beyond.fortune
+adb shell pm get-app-links com.beyond.ondo
 ```
 
 ---
@@ -326,10 +326,10 @@ Google Play Console에서 앱 링크 검증:
 1. https://developers.kakao.com 로그인
 2. 앱 선택 → 앱 설정 → 플랫폼
 3. **iOS**:
-   - 번들 ID: com.beyond.fortune
+   - 번들 ID: com.beyond.ondo
    - 앱스토어 ID: (앱스토어 ID)
 4. **Android**:
-   - 패키지명: com.beyond.fortune
+   - 패키지명: com.beyond.ondo
    - 마켓 URL: (플레이스토어 URL)
 5. **Web**:
    - 사이트 도메인: https://zpzg.co.kr 추가
@@ -401,7 +401,7 @@ Google Play Console에서 앱 링크 검증:
 
 3. **검증 상태 확인**
    ```bash
-   adb shell pm get-app-links com.beyond.fortune
+   adb shell pm get-app-links com.beyond.ondo
    ```
 
 ---

@@ -5,7 +5,7 @@ import '../../services/analytics_service.dart';
 /// 로깅 유틸리티 클래스
 /// 보안: 프로덕션 환경에서는 민감한 정보 로깅 방지
 class Logger {
-  static const String _prefix = '[Fortune]';
+  static const String _prefix = '[Ondo]';
 
   // ANSI 색상 코드 (디버그 모드에서만 사용)
   static const String _reset = '\x1B[0m';

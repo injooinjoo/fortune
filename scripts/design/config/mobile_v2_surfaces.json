@@ -1,5 +1,5 @@
 {
-  "appScheme": "com.beyond.fortune",
+  "appScheme": "com.beyond.ondo",
   "appHost": "deeplink",
   "targetDevice": {
     "name": "iPhone 15 Pro",
@@ -37,7 +37,7 @@
   ],
   "popupPatterns": [
     "Open in",
-    "Open in \"ZPZG\"",
-    "Open in “ZPZG”"
+    "Open in \"Ondo\"",
+    "Open in “Ondo”"
   ]
 }

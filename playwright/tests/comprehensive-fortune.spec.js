@@ -1,8 +1,8 @@
-// comprehensive-fortune.spec.js - 종합적인 ZPZG 앱 테스트
+// comprehensive-fortune.spec.js - 종합적인 Ondo 앱 테스트
 const { test, expect } = require('@playwright/test');
 const { AuthHelper } = require('../helpers/auth.helper');
 
-test.describe('종합 ZPZG 앱 기능 테스트', () => {
+test.describe('종합 Ondo 앱 기능 테스트', () => {
   let authHelper;
 
   test.beforeEach(async ({ page }) => {
@@ -21,7 +21,7 @@ test.describe('종합 ZPZG 앱 기능 테스트', () => {
     await page.waitForLoadState('networkidle', { timeout: 45000 });
     await page.waitForTimeout(5000); // Flutter 완전 초기화
 
-    // 페이지 제목 확인 (앱 이름: ZPZG 또는 Fortune)
+    // 페이지 제목 확인 (앱 이름: Ondo 또는 온도)
     const title = await page.title();
     console.log(`🔧 [TEST] 페이지 제목: "${title}"`);
     expect(title.length).toBeGreaterThan(0); // 제목이 존재하면 OK

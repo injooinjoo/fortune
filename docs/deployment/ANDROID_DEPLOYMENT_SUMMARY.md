@@ -49,7 +49,7 @@ flutter run
 7. 다크모드
 8. (선택) 추가 기능
 
-**저장 위치:** `~/Desktop/Fortune_Screenshots/Android/`
+**저장 위치:** `~/Desktop/Ondo_Screenshots/Android/`
 
 ---
 
@@ -88,7 +88,7 @@ build/app/outputs/bundle/release/app-release.aab
 - URL: `https://sites.google.com/view/fortune-policy`
 
 **스크린샷:**
-- 위치: `~/Desktop/Fortune_Screenshots/Android/`
+- 위치: `~/Desktop/Ondo_Screenshots/Android/`
 - 개수: 7-8개
 - 해상도: 1080×1920
 

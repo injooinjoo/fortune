@@ -1,5 +1,5 @@
 /**
- * ZPZG 이미지 에셋 대량 생성 스크립트
+ * Ondo 이미지 에셋 대량 생성 스크립트
  *
  * 사용법:
  * 1. .env에 API 키 설정
@@ -2454,7 +2454,7 @@ function parseArgs(): CLIOptions {
 
 function printHelp() {
   console.log(`
-🎨 ZPZG 이미지 에셋 생성 스크립트
+🎨 Ondo 이미지 에셋 생성 스크립트
 
 사용법:
   deno run --allow-net --allow-write --allow-read --allow-env scripts/generate_fortune_assets.ts [options]
@@ -2605,7 +2605,7 @@ async function main() {
   }
 
   // 헤더 출력
-  console.log("🎨 ZPZG 이미지 에셋 생성 시작");
+  console.log("🎨 Ondo 이미지 에셋 생성 시작");
   console.log("=".repeat(50));
   console.log(`📦 총 에셋 수: ${ASSETS.length}`);
   console.log(`🎯 생성 대상: ${assetsToProcess.length}개`);

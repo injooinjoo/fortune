@@ -14,10 +14,15 @@ patterns=(
   'FortuneWatch'
   'FortuneWidgetExtension'
   'Fortune 앱'
+  'Fortune Flutter App'
   'Fortune - AI'
   'Beyond Fortune'
   'Fortune 개발팀'
   'Launching Fortune'
+  '\[Fortune\]'
+  'Fortune_Screenshots'
+  'fortune-flutter-tests'
+  'Fortune Icon Processor'
   '\bFortuneWidgetBundle\b'
   '\bFortuneOverallWidget\b'
   '\bFortuneCategoryWidget\b'
@@ -35,8 +40,37 @@ patterns=(
 
 status=0
 
+search_targets=(
+  AGENTS.md
+  pubspec.yaml
+  package.json
+  package-lock.json
+  node_modules/.package-lock.json
+  CLAUDE.md
+  flutter_log.txt
+  .lcovrc
+  .claude/agents
+  .claude/docs
+  .claude/plans
+  .agents
+  artifacts/design/mobile/v2/live_inventory.json
+  lib
+  test
+  integration_test
+  testsprite_tests
+  playwright
+  ios
+  android
+  macos
+  web
+  public
+  docs
+  scripts
+  supabase
+)
+
 for pattern in "${patterns[@]}"; do
-  if rg -n --hidden --glob '!**/.git/**' -e "$pattern" pubspec.yaml lib test integration_test ios android macos web docs; then
+  if rg -n --hidden --glob '!**/.git/**' --glob '!scripts/ondo_rename_audit.sh' -e "$pattern" "${search_targets[@]}"; then
     echo
     echo "[ondo-rename-audit] forbidden pattern found: $pattern"
     status=1

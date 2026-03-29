@@ -60,7 +60,7 @@ lib/core/design_system/
 ### 색상 사용법
 
 ```dart
-import 'package:fortune/core/design_system/design_system.dart';
+import 'package:ondo/core/design_system/design_system.dart';
 
 // Context extension 사용 (권장)
 Container(
@@ -222,7 +222,7 @@ if (isDark) {
 - 수(水): Blue
 
 ```dart
-import 'package:fortune/core/design_system/design_system.dart';
+import 'package:ondo/core/design_system/design_system.dart';
 
 // 오행 색상 가져오기
 final color = SajuColors.getElementColor('목', context.isDark);

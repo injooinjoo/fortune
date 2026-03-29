@@ -13,7 +13,7 @@ NC='\033[0m' # No Color
 echo -e "${BLUE}📸 Android 스크린샷 촬영 시작${NC}"
 
 # 스크린샷 저장 폴더
-SCREENSHOT_DIR="$HOME/Desktop/Fortune_Screenshots/Android"
+SCREENSHOT_DIR="$HOME/Desktop/Ondo_Screenshots/Android"
 mkdir -p "$SCREENSHOT_DIR"
 
 # adb 연결 확인

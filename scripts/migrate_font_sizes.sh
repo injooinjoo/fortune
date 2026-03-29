@@ -23,11 +23,11 @@ echo "🔄 Migrating font sizes in: $FILE_PATH"
 cp "$FILE_PATH" "${FILE_PATH}.bak"
 
 # TypographyUnified import 추가 (없는 경우에만)
-if ! grep -q "import 'package:fortune/core/theme/typography_unified.dart'" "$FILE_PATH"; then
+if ! grep -q "import 'package:ondo/core/theme/typography_unified.dart'" "$FILE_PATH"; then
   # material.dart import 다음에 추가
   if grep -q "import 'package:flutter/material.dart'" "$FILE_PATH"; then
     sed -i '' "/import 'package:flutter\/material.dart'/a\\
-import 'package:fortune/core/theme/typography_unified.dart';
+import 'package:ondo/core/theme/typography_unified.dart';
 " "$FILE_PATH"
     echo "✅ Added TypographyUnified import"
   fi
