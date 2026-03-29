@@ -30,6 +30,7 @@ flutter_ios_podfile_setup
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
+  inhibit_all_warnings!
 
   # Naver SDK moved to SPM (naveridlogin-sdk-ios-spm). Remove CocoaPods version to avoid API mismatch.
   # pod 'naveridlogin-sdk-ios'
