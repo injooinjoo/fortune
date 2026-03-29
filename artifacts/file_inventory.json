@@ -19893,11 +19893,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "doc_html",
-      "notes": [
-        "no_inbound_refs"
-      ],
+      "notes": [],
       "path": "docs/index.html",
-      "referenced_by": [],
+      "referenced_by": [
+        "docs/design/PAPER_SYNC_CHANGELOG.md"
+      ],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "doc_only"
