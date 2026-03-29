@@ -727,8 +727,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
           widget.onTap();
         }
       },
-      child: SizedBox(
-        height: 84,
+      child: IntrinsicHeight(
         child: Stack(
           children: [
             // 액션 버튼들 (배경에 고정)
