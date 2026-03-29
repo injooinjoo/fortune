@@ -70,9 +70,9 @@ async def run_test():
         # --> Assertions to verify final state
         frame = page  # Use main page after test_mode redirect
         try:
-            await expect(frame.locator('text=This content does not exist in the Moving Fortune app').first).to_be_visible(timeout=1000)
+            await expect(frame.locator('text=This content does not exist in the moving fortune flow').first).to_be_visible(timeout=1000)
         except AssertionError:
-            raise AssertionError('Test plan execution failed: The full flow for Moving Fortune including address input, direction analysis, timing, and checklist verification did not complete successfully.')
+            raise AssertionError('Test plan execution failed: The full moving-fortune flow including address input, direction analysis, timing, and checklist verification did not complete successfully.')
         await asyncio.sleep(5)
     
     finally:

@@ -1,4 +1,4 @@
-# Fortune Flutter App - Claude Code 가이드
+# Ondo Flutter App - Claude Code 가이드
 
 > 최종 업데이트: 2026.03.27
 

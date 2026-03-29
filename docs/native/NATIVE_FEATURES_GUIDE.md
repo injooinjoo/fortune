@@ -407,7 +407,7 @@ struct FortuneLiveActivity: Widget {
                 Image(systemName: "sparkles")
                     .foregroundColor(.yellow)
                 VStack(alignment: .leading) {
-                    Text("Fortune Active")
+                    Text("Ondo Active")
                         .font(.caption)
                     Text("Score: \(context.state.fortuneScore)")
                         .font(.caption2)
@@ -427,7 +427,7 @@ struct FortuneLiveActivity: Widget {
                     FortuneScoreView(score: context.state.fortuneScore)
                 }
                 DynamicIslandExpandedRegion(.center) {
-                    Text("Fortune Active")
+                    Text("Ondo Active")
                         .font(.caption)
                 }
                 DynamicIslandExpandedRegion(.bottom) {
@@ -851,7 +851,7 @@ struct MainFortuneView: View {
             }
             .padding()
         }
-        .navigationTitle("Fortune")
+        .navigationTitle("Ondo")
     }
 }
 ```

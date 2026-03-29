@@ -55,7 +55,7 @@ async def run_test():
         try:
             await expect(frame.locator('text=운세 분석 결과').first).to_be_visible(timeout=30000)
         except AssertionError:
-            raise AssertionError("Test case failed: The test plan execution has failed at verifying the compatibility, conversation topics, dos and don'ts, and outfit recommendations in the Blind Date Fortune app flow.")
+            raise AssertionError("Test case failed: The test plan execution has failed while verifying the compatibility, conversation topics, dos and don'ts, and outfit recommendations in the blind-date fortune flow.")
         await asyncio.sleep(5)
     
     finally:

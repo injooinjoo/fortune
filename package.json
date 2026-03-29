@@ -1,7 +1,7 @@
 {
   "name": "fortune-flutter-tests",
   "version": "1.0.0",
-  "description": "E2E testing for Fortune Flutter App",
+  "description": "E2E testing for Ondo Flutter App",
   "scripts": {
     "source-inventory:generate": "python3 scripts/source_inventory.py generate",
     "source-inventory:check": "python3 scripts/source_inventory.py check",

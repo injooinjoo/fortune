@@ -148,7 +148,7 @@ struct FortuneView: View {
             }
             .padding(.vertical)
         }
-        .navigationTitle("Fortune")
+        .navigationTitle("Ondo")
     }
     
     private func refreshFortune() {
@@ -330,8 +330,8 @@ class ComplicationController: NSObject, CLKComplicationDataSource {
     func getComplicationDescriptors(handler: @escaping ([CLKComplicationDescriptor]) -> Void) {
         let descriptors = [
             CLKComplicationDescriptor(
-                identifier: "FortuneScore",
-                displayName: "Fortune Score",
+                identifier: "OndoScore",
+                displayName: "Ondo Score",
                 supportedFamilies: [
                     .circularSmall,
                     .modularSmall,

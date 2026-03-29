@@ -262,7 +262,7 @@ class WidgetCacheManager {
 **Expanded View**:
 ```
 ┌─────────────────────────┐
-│ Fortune Active      88  │
+│ Ondo Active         88  │
 │ Next update in 45 min   │
 └─────────────────────────┘
 ```

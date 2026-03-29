@@ -184,7 +184,7 @@ cleanup() {
 
 # Main execution
 main() {
-    log_info "🚀 Fortune Flutter App Test Runner"
+    log_info "🚀 Ondo Flutter App Test Runner"
     log_info "=================================="
 
     # Setup
