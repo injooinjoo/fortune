@@ -28229,11 +28229,11 @@
       "candidate_action": "phase2_review_candidate",
       "dirty": false,
       "kind": "script_sh",
-      "notes": [
-        "no_inbound_refs"
-      ],
+      "notes": [],
       "path": "scripts/ondo_rename_audit.sh",
-      "referenced_by": [],
+      "referenced_by": [
+        "scripts/ondo_rename_audit.sh"
+      ],
       "runtime_reachable": false,
       "test_only": false,
       "usage_status": "tooling_only"
