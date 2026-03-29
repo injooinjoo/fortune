@@ -74,6 +74,11 @@ class ProfileScreen extends ConsumerWidget {
                 title: '알림 설정',
                 onTap: () => context.push('/profile/notifications'),
               ),
+              PaperRuntimeMenuTile(
+                title: '구독 및 토큰',
+                subtitle: '구독 플랜 · 토큰 충전 · 프리미엄 콘텐츠',
+                onTap: () => context.push('/premium'),
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: DSSpacing.pageHorizontal,
@@ -143,13 +148,6 @@ class ProfileScreen extends ConsumerWidget {
                             style: DSChipStyle.outlined,
                           ),
                         ],
-                      ),
-                      const SizedBox(height: DSSpacing.lg),
-                      PaperRuntimeMenuTile(
-                        title: '프리미엄 인사이트',
-                        subtitle: '구독 플랜 · 토큰 충전 · 프리미엄 콘텐츠',
-                        onTap: () => context.push('/premium'),
-                        showDivider: true,
                       ),
                       const SizedBox(height: DSSpacing.lg),
                       Text(

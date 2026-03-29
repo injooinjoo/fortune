@@ -26,6 +26,8 @@ class PaperRuntimeBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final baseSize =
@@ -51,27 +53,28 @@ class PaperRuntimeBackground extends StatelessWidget {
                 ),
               ),
             ),
-            Align(
-              alignment: ringAlignment,
-              child: IgnorePointer(
-                child: Container(
-                  width: baseSize * 0.56,
-                  height: baseSize * 0.56,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        colors.textPrimary.withValues(alpha: 0.05),
-                        colors.textPrimary.withValues(alpha: 0.018),
-                        colors.textPrimary.withValues(alpha: 0),
-                      ],
-                      stops: const [0.0, 0.46, 1.0],
+            if (!isDark)
+              Align(
+                alignment: ringAlignment,
+                child: IgnorePointer(
+                  child: Container(
+                    width: baseSize * 0.56,
+                    height: baseSize * 0.56,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          colors.textPrimary.withValues(alpha: 0.05),
+                          colors.textPrimary.withValues(alpha: 0.018),
+                          colors.textPrimary.withValues(alpha: 0),
+                        ],
+                        stops: const [0.0, 0.46, 1.0],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            if (showRings)
+            if (showRings && !isDark)
               for (var index = 0; index < ringCount; index++)
                 Align(
                   alignment: ringAlignment,
