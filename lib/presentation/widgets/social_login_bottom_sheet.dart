@@ -241,8 +241,7 @@ class SocialLoginBottomSheet {
                           ),
                         ],
                         SizedBox(
-                          height:
-                              MediaQuery.of(context).padding.bottom +
+                          height: MediaQuery.of(context).padding.bottom +
                               DSSpacing.xs,
                         ),
                       ],
@@ -405,13 +404,7 @@ class SocialLoginBottomSheet {
                   ),
                   const SizedBox(width: DSSpacing.sm),
                   Text(
-                    '${type == 'apple'
-                        ? 'Apple'
-                        : type == 'google'
-                        ? 'Google'
-                        : type == 'kakao'
-                        ? '카카오'
-                        : '네이버'} 계정 연결 중...',
+                    '${type == 'apple' ? 'Apple' : type == 'google' ? 'Google' : type == 'kakao' ? '카카오' : '네이버'} 계정 연결 중...',
                     style: context.bodyLarge.copyWith(
                       fontSize: 17,
                       fontWeight: FontWeight.w700,
@@ -490,8 +483,7 @@ class _SocialAuthEntryPanelState extends ConsumerState<SocialAuthEntryPanel> {
         return;
       }
 
-      final authService =
-          widget.socialAuthService ??
+      final authService = widget.socialAuthService ??
           await SocialLoginBottomSheet._createSocialAuthServiceOrNull(context);
       if (!mounted || authService == null) {
         return;

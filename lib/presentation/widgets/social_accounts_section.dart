@@ -337,12 +337,11 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
         return Icon(
           providerInfo.iconData as IconData,
           size: AppDimensions.iconSizeMedium,
-          color:
-              providerInfo.iconType == SocialIconType.icon &&
+          color: providerInfo.iconType == SocialIconType.icon &&
                   providerInfo.name == 'Apple'
               ? (context.isDark
-                    ? DSColors.textPrimary
-                    : DSColors.textPrimaryDark)
+                  ? DSColors.textPrimary
+                  : DSColors.textPrimaryDark)
               : providerInfo.color,
         );
       case SocialIconType.text:

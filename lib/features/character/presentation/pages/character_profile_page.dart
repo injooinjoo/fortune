@@ -38,8 +38,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
   void initState() {
     super.initState();
     final characters = ref.read(charactersProvider);
-    _character =
-        widget.character ??
+    _character = widget.character ??
         ref.read(characterByIdProvider(widget.characterId)) ??
         characters.first;
 
@@ -80,8 +79,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final resolvedCharacter =
-        widget.character ??
+    final resolvedCharacter = widget.character ??
         ref.watch(characterByIdProvider(widget.characterId));
     if (resolvedCharacter != null) {
       _character = resolvedCharacter;

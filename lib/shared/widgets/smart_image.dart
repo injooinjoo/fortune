@@ -198,8 +198,7 @@ class _SmartImageState extends State<SmartImage> {
       WidgetBuilder? placeholderBuilder,
       SvgErrorWidgetBuilder? errorBuilder,
       ColorFilter? colorFilter,
-    })
-    builder,
+    }) builder,
   }) {
     return builder(
       colorFilter: _svgColorFilter(),
@@ -240,20 +239,20 @@ class _SmartImageState extends State<SmartImage> {
       if (_isSvgPath(path)) {
         return _buildSvgPicture(
           path: path,
-          builder:
-              ({
-                WidgetBuilder? placeholderBuilder,
-                SvgErrorWidgetBuilder? errorBuilder,
-                ColorFilter? colorFilter,
-              }) => SvgPicture.network(
-                path,
-                width: widget.width,
-                height: widget.height,
-                fit: widget.fit,
-                colorFilter: colorFilter,
-                placeholderBuilder: placeholderBuilder,
-                errorBuilder: errorBuilder,
-              ),
+          builder: ({
+            WidgetBuilder? placeholderBuilder,
+            SvgErrorWidgetBuilder? errorBuilder,
+            ColorFilter? colorFilter,
+          }) =>
+              SvgPicture.network(
+            path,
+            width: widget.width,
+            height: widget.height,
+            fit: widget.fit,
+            colorFilter: colorFilter,
+            placeholderBuilder: placeholderBuilder,
+            errorBuilder: errorBuilder,
+          ),
         );
       }
 
@@ -283,20 +282,20 @@ class _SmartImageState extends State<SmartImage> {
       if (_isSvgPath(path)) {
         return _buildSvgPicture(
           path: path,
-          builder:
-              ({
-                WidgetBuilder? placeholderBuilder,
-                SvgErrorWidgetBuilder? errorBuilder,
-                ColorFilter? colorFilter,
-              }) => smart_image_local_file.buildLocalSvgPicture(
-                path: path,
-                width: widget.width,
-                height: widget.height,
-                fit: widget.fit,
-                colorFilter: colorFilter,
-                placeholderBuilder: placeholderBuilder,
-                errorBuilder: errorBuilder,
-              ),
+          builder: ({
+            WidgetBuilder? placeholderBuilder,
+            SvgErrorWidgetBuilder? errorBuilder,
+            ColorFilter? colorFilter,
+          }) =>
+              smart_image_local_file.buildLocalSvgPicture(
+            path: path,
+            width: widget.width,
+            height: widget.height,
+            fit: widget.fit,
+            colorFilter: colorFilter,
+            placeholderBuilder: placeholderBuilder,
+            errorBuilder: errorBuilder,
+          ),
         );
       }
 
@@ -320,20 +319,20 @@ class _SmartImageState extends State<SmartImage> {
     if (_isSvgPath(path)) {
       return _buildSvgPicture(
         path: path,
-        builder:
-            ({
-              WidgetBuilder? placeholderBuilder,
-              SvgErrorWidgetBuilder? errorBuilder,
-              ColorFilter? colorFilter,
-            }) => SvgPicture.asset(
-              path,
-              width: widget.width,
-              height: widget.height,
-              fit: widget.fit,
-              colorFilter: colorFilter,
-              placeholderBuilder: placeholderBuilder,
-              errorBuilder: errorBuilder,
-            ),
+        builder: ({
+          WidgetBuilder? placeholderBuilder,
+          SvgErrorWidgetBuilder? errorBuilder,
+          ColorFilter? colorFilter,
+        }) =>
+            SvgPicture.asset(
+          path,
+          width: widget.width,
+          height: widget.height,
+          fit: widget.fit,
+          colorFilter: colorFilter,
+          placeholderBuilder: placeholderBuilder,
+          errorBuilder: errorBuilder,
+        ),
       );
     }
 

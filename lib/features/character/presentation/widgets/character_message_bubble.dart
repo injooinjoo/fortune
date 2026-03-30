@@ -201,13 +201,14 @@ class CharacterMessageBubble extends StatelessWidget {
                         children: [
                           Container(
                             padding: CharacterChatSurfaceStyle.bubblePadding,
-                            decoration: CharacterChatSurfaceStyle.bubbleDecoration(
+                            decoration:
+                                CharacterChatSurfaceStyle.bubbleDecoration(
                               context,
                               backgroundColor: colors.surface,
-                              borderRadius:
-                                  CharacterChatSurfaceStyle.incomingBubbleRadius(
-                                    hasLeadingMedia: message.hasImage,
-                                  ),
+                              borderRadius: CharacterChatSurfaceStyle
+                                  .incomingBubbleRadius(
+                                hasLeadingMedia: message.hasImage,
+                              ),
                               borderAlpha: 0.45,
                             ),
                             child: _buildFormattedText(context, message.text),
@@ -267,8 +268,8 @@ class CharacterMessageBubble extends StatelessWidget {
   Widget _buildImageBubble(BuildContext context, DSColorScheme colors) {
     final imagePath =
         (message.imageAsset != null && message.imageAsset!.isNotEmpty)
-        ? message.imageAsset!
-        : message.imageUrl;
+            ? message.imageAsset!
+            : message.imageUrl;
     if (imagePath == null || imagePath.isEmpty) {
       return const SizedBox.shrink();
     }

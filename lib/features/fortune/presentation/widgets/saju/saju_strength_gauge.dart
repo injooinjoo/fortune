@@ -317,8 +317,8 @@ class SajuStrengthGauge extends StatelessWidget {
     final color = ratio >= 0.7
         ? const Color(0xFF66BB6A)
         : ratio >= 0.4
-        ? const Color(0xFFF59E0B)
-        : const Color(0xFFEF4444);
+            ? const Color(0xFFF59E0B)
+            : const Color(0xFFEF4444);
 
     return Expanded(
       child: Container(
