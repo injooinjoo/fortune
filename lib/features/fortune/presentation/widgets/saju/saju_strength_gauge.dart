@@ -13,10 +13,7 @@ import '../../../domain/models/saju/strength_calculator.dart';
 class SajuStrengthGauge extends StatelessWidget {
   final Map<String, dynamic> sajuData;
 
-  const SajuStrengthGauge({
-    super.key,
-    required this.sajuData,
-  });
+  const SajuStrengthGauge({super.key, required this.sajuData});
 
   @override
   Widget build(BuildContext context) {
@@ -68,9 +65,7 @@ class SajuStrengthGauge extends StatelessWidget {
           decoration: BoxDecoration(
             color: result.color.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(DSRadius.sm),
-            border: Border.all(
-              color: result.color.withValues(alpha: 0.4),
-            ),
+            border: Border.all(color: result.color.withValues(alpha: 0.4)),
           ),
           child: Center(
             child: Text(
@@ -125,11 +120,7 @@ class SajuStrengthGauge extends StatelessWidget {
     );
   }
 
-  Widget _buildGauge(
-    BuildContext context,
-    StrengthResult result,
-    bool isDark,
-  ) {
+  Widget _buildGauge(BuildContext context, StrengthResult result, bool isDark) {
     return Column(
       children: [
         // 라벨 행
@@ -214,10 +205,7 @@ class SajuStrengthGauge extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(6),
-                        border: Border.all(
-                          color: result.color,
-                          width: 2.5,
-                        ),
+                        border: Border.all(color: result.color, width: 2.5),
                         boxShadow: [
                           BoxShadow(
                             color: result.color.withValues(alpha: 0.4),
@@ -329,8 +317,8 @@ class SajuStrengthGauge extends StatelessWidget {
     final color = ratio >= 0.7
         ? const Color(0xFF66BB6A)
         : ratio >= 0.4
-            ? const Color(0xFFF59E0B)
-            : const Color(0xFFEF4444);
+        ? const Color(0xFFF59E0B)
+        : const Color(0xFFEF4444);
 
     return Expanded(
       child: Container(
@@ -341,9 +329,7 @@ class SajuStrengthGauge extends StatelessWidget {
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(DSRadius.sm),
-          border: Border.all(
-            color: color.withValues(alpha: 0.3),
-          ),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Column(
           children: [
@@ -372,8 +358,7 @@ class SajuStrengthGauge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
-        color:
-            context.colors.surface,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.md),
         border: Border.all(
           color: context.isDark ? DSColors.border : DSColors.borderDark,
@@ -382,9 +367,7 @@ class SajuStrengthGauge extends StatelessWidget {
       child: Center(
         child: Text(
           '신강/신약 분석을 위한 데이터가 부족합니다.',
-          style: context.bodySmall.copyWith(
-            color: context.colors.textTertiary,
-          ),
+          style: context.bodySmall.copyWith(color: context.colors.textTertiary),
         ),
       ),
     );
@@ -417,13 +400,7 @@ class SajuStrengthGauge extends StatelessWidget {
   }
 
   String _getElementHanja(String element) {
-    const map = {
-      '목': '木',
-      '화': '火',
-      '토': '土',
-      '금': '金',
-      '수': '水',
-    };
+    const map = {'목': '木', '화': '火', '토': '土', '금': '金', '수': '水'};
     return map[element] ?? element;
   }
 }

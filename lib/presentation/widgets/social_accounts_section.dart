@@ -98,8 +98,9 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
       }
 
       if (success) {
-        final updatedProviders =
-            List<String>.from(widget.linkedProviders ?? []);
+        final updatedProviders = List<String>.from(
+          widget.linkedProviders ?? [],
+        );
         if (!updatedProviders.contains(provider)) {
           updatedProviders.add(provider);
         }
@@ -115,7 +116,8 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
         }
       } else if (pendingExternalAuth) {
         Logger.info(
-            'Social account linking handed off to external auth: $provider');
+          'Social account linking handed off to external auth: $provider',
+        );
       } else if (cancelled) {
         Logger.info('Social account linking cancelled: $provider');
       }
@@ -238,9 +240,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
           SizedBox(
             width: AppDimensions.buttonHeightSmall,
             height: AppDimensions.buttonHeightSmall,
-            child: Center(
-              child: _buildProviderIcon(providerInfo),
-            ),
+            child: Center(child: _buildProviderIcon(providerInfo)),
           ),
           const SizedBox(width: DSSpacing.sm),
 
@@ -287,8 +287,10 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
             )
           else if (isLinked && !isPrimary)
             IconButton(
-              icon:
-                  const Icon(Icons.link_off, size: AppDimensions.iconSizeSmall),
+              icon: const Icon(
+                Icons.link_off,
+                size: AppDimensions.iconSizeSmall,
+              ),
               onPressed: () => _unlinkProvider(provider),
               tooltip: '연결 해제',
             )
@@ -335,11 +337,12 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
         return Icon(
           providerInfo.iconData as IconData,
           size: AppDimensions.iconSizeMedium,
-          color: providerInfo.iconType == SocialIconType.icon &&
+          color:
+              providerInfo.iconType == SocialIconType.icon &&
                   providerInfo.name == 'Apple'
               ? (context.isDark
-                  ? DSColors.textPrimary
-                  : DSColors.textPrimaryDark)
+                    ? DSColors.textPrimary
+                    : DSColors.textPrimaryDark)
               : providerInfo.color,
         );
       case SocialIconType.text:
@@ -354,9 +357,9 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
             child: Text(
               providerInfo.iconData as String,
               style: context.bodyLarge.copyWith(
-                    color: Colors.white, // 브랜드 아이콘 위 대비색
-                    fontWeight: FontWeight.bold,
-                  ),
+                color: Colors.white, // 브랜드 아이콘 위 대비색
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         );
@@ -385,22 +388,19 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
         ),
         const SizedBox(height: DSSpacing.md),
         ...(_providers.keys
-            .map((provider) => Padding(
-                  padding: const EdgeInsets.only(bottom: DSSpacing.xs),
-                  child: _buildProviderButton(provider),
-                ))
+            .map(
+              (provider) => Padding(
+                padding: const EdgeInsets.only(bottom: DSSpacing.xs),
+                child: _buildProviderButton(provider),
+              ),
+            )
             .toList()),
       ],
     );
   }
 }
 
-enum SocialIconType {
-  network,
-  icon,
-  text,
-  asset,
-}
+enum SocialIconType { network, icon, text, asset }
 
 class SocialProviderInfo {
   final String name;

@@ -90,9 +90,10 @@ class SocialLoginBottomSheet {
     }
     messenger?.showSnackBar(
       const SnackBar(
-        content:
-            Text('Unable to connect. Please check your network and try again.\n'
-                '연결할 수 없습니다. 네트워크 상태를 확인하고 다시 시도해 주세요.'),
+        content: Text(
+          'Unable to connect. Please check your network and try again.\n'
+          '연결할 수 없습니다. 네트워크 상태를 확인하고 다시 시도해 주세요.',
+        ),
         duration: Duration(seconds: 4),
       ),
     );
@@ -130,7 +131,9 @@ class SocialLoginBottomSheet {
             final isButtonDisabled = isProcessing || isTapLocked;
 
             Future<void> handleSocialTap(
-                SocialLoginAction action, String provider) async {
+              SocialLoginAction action,
+              String provider,
+            ) async {
               if (isProcessing || isTapLocked) return;
               setSheetState(() {
                 isTapLocked = true;
@@ -176,9 +179,7 @@ class SocialLoginBottomSheet {
                   topRight: Radius.circular(DSRadius.modal),
                 ),
                 border: Border(
-                  top: BorderSide(
-                    color: colors.border.withValues(alpha: 0.7),
-                  ),
+                  top: BorderSide(color: colors.border.withValues(alpha: 0.7)),
                 ),
               ),
               child: Column(
@@ -240,7 +241,8 @@ class SocialLoginBottomSheet {
                           ),
                         ],
                         SizedBox(
-                          height: MediaQuery.of(context).padding.bottom +
+                          height:
+                              MediaQuery.of(context).padding.bottom +
                               DSSpacing.xs,
                         ),
                       ],
@@ -335,8 +337,9 @@ class SocialLoginBottomSheet {
     final appleButtonBg = colors.brightness == Brightness.dark
         ? const Color(0xFFF5F5F8)
         : Colors.black;
-    final appleButtonFg =
-        colors.brightness == Brightness.dark ? const Color(0xFF121317) : Colors.white;
+    final appleButtonFg = colors.brightness == Brightness.dark
+        ? const Color(0xFF121317)
+        : Colors.white;
 
     switch (type) {
       case 'apple':
@@ -344,10 +347,7 @@ class SocialLoginBottomSheet {
           'assets/images/social/apple.svg',
           width: 24,
           height: 24,
-          colorFilter: ColorFilter.mode(
-            appleButtonFg,
-            BlendMode.srcIn,
-          ),
+          colorFilter: ColorFilter.mode(appleButtonFg, BlendMode.srcIn),
         );
         text = 'Apple로 계속하기';
         break;
@@ -405,7 +405,13 @@ class SocialLoginBottomSheet {
                   ),
                   const SizedBox(width: DSSpacing.sm),
                   Text(
-                    '${type == 'apple' ? 'Apple' : type == 'google' ? 'Google' : type == 'kakao' ? '카카오' : '네이버'} 계정 연결 중...',
+                    '${type == 'apple'
+                        ? 'Apple'
+                        : type == 'google'
+                        ? 'Google'
+                        : type == 'kakao'
+                        ? '카카오'
+                        : '네이버'} 계정 연결 중...',
                     style: context.bodyLarge.copyWith(
                       fontSize: 17,
                       fontWeight: FontWeight.w700,
@@ -484,7 +490,8 @@ class _SocialAuthEntryPanelState extends ConsumerState<SocialAuthEntryPanel> {
         return;
       }
 
-      final authService = widget.socialAuthService ??
+      final authService =
+          widget.socialAuthService ??
           await SocialLoginBottomSheet._createSocialAuthServiceOrNull(context);
       if (!mounted || authService == null) {
         return;

@@ -80,8 +80,9 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
         _isOffline = result.every((r) => r == ConnectivityResult.none);
       });
     }
-    _connectivitySubscription =
-        Connectivity().onConnectivityChanged.listen((results) {
+    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((
+      results,
+    ) {
       if (mounted) {
         setState(() {
           _isOffline = results.every((r) => r == ConnectivityResult.none);
@@ -97,9 +98,7 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
     super.dispose();
   }
 
-  Future<void> _handleStarterOptionTap(
-    OnboardingInterestOption option,
-  ) async {
+  Future<void> _handleStarterOptionTap(OnboardingInterestOption option) async {
     HapticUtils.lightImpact();
     ref.read(characterListTabProvider.notifier).state = option.targetTab;
 
@@ -110,8 +109,8 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
     final targetCharacter = option.expertId != null
         ? ref.read(characterByIdProvider(option.expertId!))
         : (option.specialtyCategory != null
-            ? ref.read(categoryExpertProvider(option.specialtyCategory!))
-            : null);
+              ? ref.read(categoryExpertProvider(option.specialtyCategory!))
+              : null);
 
     if (targetCharacter != null) {
       widget.onCharacterSelected(targetCharacter);
@@ -129,23 +128,23 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
     final isCatalogPreview = widget.catalogPreview != null;
     final characters = isCatalogPreview
         ? (currentTab == CharacterListTab.story
-            ? ref.watch(storyCharactersProvider)
-            : ref.watch(fortuneCharactersProvider))
+              ? ref.watch(storyCharactersProvider)
+              : ref.watch(fortuneCharactersProvider))
         : (currentTab == CharacterListTab.story
-            ? ref.watch(sortedStoryCharactersProvider)
-            : ref.watch(sortedFortuneCharactersProvider));
+              ? ref.watch(sortedStoryCharactersProvider)
+              : ref.watch(sortedFortuneCharactersProvider));
     final userProfile = isCatalogPreview
         ? null
         : ref.watch(userProfileNotifierProvider).valueOrNull;
     final starterOptions = isCatalogPreview
         ? const <OnboardingInterestOption>[]
         : selectedOnboardingInterestIds(
-            userProfile?.fortunePreferences?.categoryWeights,
-          )
-            .map((id) => onboardingInterestById[id])
-            .whereType<OnboardingInterestOption>()
-            .take(3)
-            .toList(growable: false);
+                userProfile?.fortunePreferences?.categoryWeights,
+              )
+              .map((id) => onboardingInterestById[id])
+              .whereType<OnboardingInterestOption>()
+              .take(3)
+              .toList(growable: false);
     final showsStarterSection = starterOptions.isNotEmpty;
 
     return GestureDetector(
@@ -182,19 +181,25 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(
-                      horizontal: DSSpacing.md, vertical: DSSpacing.xs + 2),
+                    horizontal: DSSpacing.md,
+                    vertical: DSSpacing.xs + 2,
+                  ),
                   color: colors.error.withValues(alpha: 0.12),
                   child: Row(
                     children: [
-                      Icon(Icons.wifi_off_rounded,
-                          size: 16, color: colors.error),
+                      Icon(
+                        Icons.wifi_off_rounded,
+                        size: 16,
+                        color: colors.error,
+                      ),
                       const SizedBox(width: DSSpacing.xs),
                       Expanded(
                         child: Text(
                           'You are offline. Some features may be limited.\n'
                           '오프라인 상태입니다. 일부 기능이 제한될 수 있습니다.',
-                          style: context.typography.labelSmall
-                              .copyWith(color: colors.error),
+                          style: context.typography.labelSmall.copyWith(
+                            color: colors.error,
+                          ),
                         ),
                       ),
                     ],
@@ -213,8 +218,9 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
                       );
                     }
 
-                    final characterIndex =
-                        showsStarterSection ? index - 1 : index;
+                    final characterIndex = showsStarterSection
+                        ? index - 1
+                        : index;
                     final character = characters[characterIndex];
                     return _CharacterListItem(
                       character: character,
@@ -246,7 +252,11 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
 
     return Container(
       padding: const EdgeInsets.fromLTRB(
-          DSSpacing.md, DSSpacing.md + 2, DSSpacing.md, DSSpacing.sm),
+        DSSpacing.md,
+        DSSpacing.md + 2,
+        DSSpacing.md,
+        DSSpacing.sm,
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -274,9 +284,7 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
             decoration: BoxDecoration(
               color: colors.backgroundSecondary.withValues(alpha: 0.9),
               shape: BoxShape.circle,
-              border: Border.all(
-                color: colors.border.withValues(alpha: 0.68),
-              ),
+              border: Border.all(color: colors.border.withValues(alpha: 0.68)),
             ),
             child: IconButton(
               icon: Icon(
@@ -318,11 +326,7 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
                     : null,
               ),
               child: profileImageUrl == null || profileImageUrl.isEmpty
-                  ? Icon(
-                      Icons.person,
-                      size: 18,
-                      color: colors.textSecondary,
-                    )
+                  ? Icon(Icons.person, size: 18, color: colors.textSecondary)
                   : null,
             ),
           ),
@@ -371,7 +375,9 @@ class _PersonalizedStarterSection extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(
-          horizontal: DSSpacing.md, vertical: DSSpacing.sm),
+        horizontal: DSSpacing.md,
+        vertical: DSSpacing.sm,
+      ),
       child: PaperRuntimePanel(
         padding: const EdgeInsets.all(DSSpacing.lg),
         child: Column(
@@ -381,9 +387,7 @@ class _PersonalizedStarterSection extends StatelessWidget {
               children: [
                 Text(
                   '맞춤 시작점',
-                  style: context.heading4.copyWith(
-                    color: colors.textPrimary,
-                  ),
+                  style: context.heading4.copyWith(color: colors.textPrimary),
                 ),
                 const Spacer(),
                 PaperRuntimePill(
@@ -395,9 +399,7 @@ class _PersonalizedStarterSection extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               '방금 고른 관심사를 기준으로 바로 시작할 수 있는 흐름을 모아봤어요.',
-              style: typography.bodySmall.copyWith(
-                color: colors.textSecondary,
-              ),
+              style: typography.bodySmall.copyWith(color: colors.textSecondary),
             ),
             const SizedBox(height: 14),
             for (final option in options) ...[
@@ -418,10 +420,7 @@ class _StarterOptionCard extends StatelessWidget {
   final OnboardingInterestOption option;
   final VoidCallback onTap;
 
-  const _StarterOptionCard({
-    required this.option,
-    required this.onTap,
-  });
+  const _StarterOptionCard({required this.option, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -439,9 +438,7 @@ class _StarterOptionCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: colors.backgroundSecondary.withValues(alpha: 0.92),
             borderRadius: BorderRadius.circular(context.radius.lg),
-            border: Border.all(
-              color: colors.border.withValues(alpha: 0.68),
-            ),
+            border: Border.all(color: colors.border.withValues(alpha: 0.68)),
           ),
           child: Row(
             children: [
@@ -482,9 +479,7 @@ class _StarterOptionCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              PaperRuntimePill(
-                label: isStory ? '스토리' : '전문가',
-              ),
+              PaperRuntimePill(label: isStory ? '스토리' : '전문가'),
               const SizedBox(width: 6),
               Icon(
                 Icons.arrow_forward_ios,
@@ -515,7 +510,11 @@ class _CharacterTabBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(
-          DSSpacing.md, DSSpacing.xs, DSSpacing.md, DSSpacing.sm),
+        DSSpacing.md,
+        DSSpacing.xs,
+        DSSpacing.md,
+        DSSpacing.sm,
+      ),
       child: Row(
         children: [
           _TabButton(
@@ -527,8 +526,9 @@ class _CharacterTabBar extends StatelessWidget {
           _TabButton(
             label: context.l10n.viewFortune,
             isSelected: currentTab == CharacterListTab.fortune,
-            onTap:
-                isLocked ? null : () => onTabChanged(CharacterListTab.fortune),
+            onTap: isLocked
+                ? null
+                : () => onTabChanged(CharacterListTab.fortune),
           ),
         ],
       ),
@@ -556,25 +556,21 @@ class _TabButton extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(
-            horizontal: DSSpacing.md, vertical: DSSpacing.xs),
+          horizontal: DSSpacing.md,
+          vertical: DSSpacing.xs,
+        ),
         decoration: BoxDecoration(
-          color: isSelected
-              ? colors.textPrimary
-              : Colors.transparent,
+          color: isSelected ? colors.textPrimary : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
           border: isSelected
               ? null
-              : Border.all(
-                  color: colors.border.withValues(alpha: 0.68),
-                ),
+              : Border.all(color: colors.border.withValues(alpha: 0.68)),
         ),
         child: Text(
           label,
           style: context.typography.bodySmall.copyWith(
             fontWeight: FontWeight.w700,
-            color: isSelected
-                ? colors.background
-                : colors.textSecondary,
+            color: isSelected ? colors.background : colors.textSecondary,
           ),
         ),
       ),
@@ -630,8 +626,11 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(context.l10n.leaveConversation),
-        content: Text(context.l10n.leaveConversationConfirm(
-            CharacterLocalizer.resolveName(context, widget.character))),
+        content: Text(
+          context.l10n.leaveConversationConfirm(
+            CharacterLocalizer.resolveName(context, widget.character),
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -644,9 +643,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                   .read(characterChatProvider(widget.character.id).notifier)
                   .clearConversationData();
             },
-            style: TextButton.styleFrom(
-              foregroundColor: context.colors.error,
-            ),
+            style: TextButton.styleFrom(foregroundColor: context.colors.error),
             child: Text(context.l10n.leave),
           ),
         ],
@@ -659,8 +656,11 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
     HapticUtils.lightImpact();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(context.l10n.notificationOffMessage(
-            CharacterLocalizer.resolveName(context, widget.character))),
+        content: Text(
+          context.l10n.notificationOffMessage(
+            CharacterLocalizer.resolveName(context, widget.character),
+          ),
+        ),
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 2),
       ),
@@ -693,7 +693,8 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final CharacterChatState chatState = widget.previewChatState ??
+    final CharacterChatState chatState =
+        widget.previewChatState ??
         ref.watch(characterChatProvider(widget.character.id));
     final interactionsEnabled = widget.previewChatState == null;
     final accentPalette = CharacterAccentPalette.from(
@@ -703,13 +704,14 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
     final hasConversation = chatState.hasConversation;
     final isTyping = chatState.isCharacterTyping;
     final unreadCount = chatState.unreadCount;
-    final tagsText = CharacterLocalizer.resolveTags(context, widget.character)
-        .take(3)
-        .map((t) => '#$t')
-        .join(' ');
+    final tagsText = CharacterLocalizer.resolveTags(
+      context,
+      widget.character,
+    ).take(3).map((t) => '#$t').join(' ');
 
     // 마지막 메시지가 캐릭터인지 확인
-    final isLastMessageFromCharacter = chatState.messages.isNotEmpty &&
+    final isLastMessageFromCharacter =
+        chatState.messages.isNotEmpty &&
         chatState.messages.last.type == CharacterChatMessageType.character;
     // 읽지 않은 메시지가 있으면 내 차례 대신 숫자 배지를 우선 표시한다.
     final hasUnread = unreadCount > 0;
@@ -815,7 +817,9 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                   ),
                 ),
                 padding: const EdgeInsets.symmetric(
-                    horizontal: DSSpacing.md, vertical: 12),
+                  horizontal: DSSpacing.md,
+                  vertical: 12,
+                ),
                 child: Row(
                   children: [
                     // 아바타 (탭하면 프로필)
@@ -823,8 +827,10 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                       onTap: interactionsEnabled
                           ? () {
                               HapticUtils.lightImpact();
-                              context.push('/character/${widget.character.id}',
-                                  extra: widget.character);
+                              context.push(
+                                '/character/${widget.character.id}',
+                                extra: widget.character,
+                              );
                             }
                           : null,
                       child: Stack(
@@ -835,8 +841,8 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                             backgroundColor: accentPalette.accent,
                             backgroundImage:
                                 widget.character.avatarAsset.isNotEmpty
-                                    ? AssetImage(widget.character.avatarAsset)
-                                    : null,
+                                ? AssetImage(widget.character.avatarAsset)
+                                : null,
                             child: widget.character.avatarAsset.isEmpty
                                 ? Text(
                                     widget.character.initial,
@@ -863,8 +869,9 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                     width: 1,
                                   ),
                                 ),
-                                child:
-                                    const Center(child: MiniTypingIndicator()),
+                                child: const Center(
+                                  child: MiniTypingIndicator(),
+                                ),
                               ),
                             ),
                         ],
@@ -902,7 +909,9 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                 const SizedBox(width: 6),
                                 Container(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 6, vertical: 2),
+                                    horizontal: 6,
+                                    vertical: 2,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: colors.backgroundSecondary,
                                     borderRadius: BorderRadius.circular(4),
@@ -914,7 +923,8 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                   ),
                                   child: Text(
                                     _specialtyCategoryLabel(
-                                        widget.character.specialtyCategory!),
+                                      widget.character.specialtyCategory!,
+                                    ),
                                     style: typography.labelSmall.copyWith(
                                       fontWeight: FontWeight.w500,
                                       color: colors.textSecondary,
@@ -971,11 +981,14 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                 const SizedBox(width: 8),
                                 Container(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4),
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: const Color(0xFF2A2A4A),
                                     borderRadius: BorderRadius.circular(
-                                        DSRadius.md),
+                                      DSRadius.md,
+                                    ),
                                   ),
                                   child: Text(
                                     context.l10n.yourTurn,
@@ -989,11 +1002,14 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                 const SizedBox(width: 8),
                                 Container(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4),
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: const Color(0xFF1A2A1A),
                                     borderRadius: BorderRadius.circular(
-                                        DSRadius.md),
+                                      DSRadius.md,
+                                    ),
                                   ),
                                   child: Text(
                                     context.l10n.newConversation,
@@ -1012,12 +1028,11 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                             isTyping
                                 ? context.l10n.typing
                                 : (hasConversation
-                                    ? chatState.lastMessagePreview
-                                    : CharacterLocalizer
-                                        .resolveShortDescription(
-                                        context,
-                                        widget.character,
-                                      )),
+                                      ? chatState.lastMessagePreview
+                                      : CharacterLocalizer.resolveShortDescription(
+                                          context,
+                                          widget.character,
+                                        )),
                             style: typography.bodySmall.copyWith(
                               fontWeight: isTyping || hasUnread
                                   ? FontWeight.w500
@@ -1025,8 +1040,8 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                               color: isTyping
                                   ? accentPalette.accent
                                   : hasUnread
-                                      ? colors.textPrimary
-                                      : colors.textSecondary,
+                                  ? colors.textPrimary
+                                  : colors.textSecondary,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -1163,7 +1178,11 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                  DSSpacing.md, DSSpacing.sm, DSSpacing.md, DSSpacing.xs + 2),
+                DSSpacing.md,
+                DSSpacing.sm,
+                DSSpacing.md,
+                DSSpacing.xs + 2,
+              ),
               child: Column(
                 children: [
                   Row(
@@ -1202,7 +1221,11 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
             const Divider(height: 1),
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                  DSSpacing.md, DSSpacing.sm, DSSpacing.md, DSSpacing.xs),
+                DSSpacing.md,
+                DSSpacing.sm,
+                DSSpacing.md,
+                DSSpacing.xs,
+              ),
               child: TextField(
                 controller: _searchController,
                 onChanged: (value) => setState(() => _query = value),
@@ -1230,7 +1253,11 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                  DSSpacing.md, 0, DSSpacing.md, DSSpacing.xs),
+                DSSpacing.md,
+                0,
+                DSSpacing.md,
+                DSSpacing.xs,
+              ),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -1246,7 +1273,11 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
               child: ListView(
                 controller: scrollController,
                 padding: const EdgeInsets.fromLTRB(
-                    DSSpacing.md, DSSpacing.xs, DSSpacing.md, DSSpacing.xl),
+                  DSSpacing.md,
+                  DSSpacing.xs,
+                  DSSpacing.md,
+                  DSSpacing.xl,
+                ),
                 children: [
                   _NewFriendActionCard(
                     onTap: () =>
@@ -1288,10 +1319,7 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
 }
 
 class _SheetSectionTitle extends StatelessWidget {
-  const _SheetSectionTitle({
-    required this.title,
-    this.count,
-  });
+  const _SheetSectionTitle({required this.title, this.count});
 
   final String title;
   final int? count;
@@ -1429,7 +1457,9 @@ class _NewMessageEmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: DSSpacing.lg, vertical: DSSpacing.xl + 4),
+        horizontal: DSSpacing.lg,
+        vertical: DSSpacing.xl + 4,
+      ),
       decoration: BoxDecoration(
         color: context.colors.backgroundSecondary,
         borderRadius: BorderRadius.circular(context.radius.xl),

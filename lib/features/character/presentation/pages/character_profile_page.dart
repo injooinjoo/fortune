@@ -38,7 +38,8 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
   void initState() {
     super.initState();
     final characters = ref.read(charactersProvider);
-    _character = widget.character ??
+    _character =
+        widget.character ??
         ref.read(characterByIdProvider(widget.characterId)) ??
         characters.first;
 
@@ -69,9 +70,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
           when entrySource.isNotEmpty)
         'entrySource': entrySource,
     };
-    context.go(
-      Uri(path: '/chat', queryParameters: queryParameters).toString(),
-    );
+    context.go(Uri(path: '/chat', queryParameters: queryParameters).toString());
   }
 
   @override
@@ -81,7 +80,8 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final resolvedCharacter = widget.character ??
+    final resolvedCharacter =
+        widget.character ??
         ref.watch(characterByIdProvider(widget.characterId));
     if (resolvedCharacter != null) {
       _character = resolvedCharacter;
@@ -91,8 +91,10 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
     final chatState = ref.watch(characterChatProvider(_character.id));
     final affinity = chatState.affinity;
     final messageCount = chatState.messages.length;
-    final tags =
-        CharacterLocalizer.resolveTags(context, _character).take(5).toList();
+    final tags = CharacterLocalizer.resolveTags(
+      context,
+      _character,
+    ).take(5).toList();
     final avatarTextColor = _bestReadableForeground(
       background: _character.accentColor,
       primary: DSColors.textPrimary,
@@ -206,10 +208,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
             const SizedBox(height: DSSpacing.lg),
             _buildMessageButton(context),
             const SizedBox(height: DSSpacing.xl),
-            _buildPhotoGrid(
-              context,
-              avatarTextColor: avatarTextColor,
-            ),
+            _buildPhotoGrid(context, avatarTextColor: avatarTextColor),
             const SizedBox(height: DSSpacing.xl),
             PaperRuntimeExpandablePanel(
               title: '캐릭터 정보',
@@ -366,10 +365,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
         if (index == 0 && _character.avatarAsset.isNotEmpty) {
           return ClipRRect(
             borderRadius: BorderRadius.circular(DSRadius.sm),
-            child: SmartImage(
-              path: _character.avatarAsset,
-              fit: BoxFit.cover,
-            ),
+            child: SmartImage(path: _character.avatarAsset, fit: BoxFit.cover),
           );
         }
 
@@ -424,11 +420,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
         children: [
           Row(
             children: [
-              Icon(
-                icon,
-                size: 20,
-                color: _character.accentColor,
-              ),
+              Icon(icon, size: 20, color: _character.accentColor),
               const SizedBox(width: 8),
               Text(
                 title,
@@ -459,11 +451,7 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.group,
-                size: 20,
-                color: _character.accentColor,
-              ),
+              Icon(Icons.group, size: 20, color: _character.accentColor),
               const SizedBox(width: 8),
               Text(
                 context.l10n.characterList,
@@ -492,8 +480,8 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
                     child: RichText(
                       text: TextSpan(
                         style: context.bodyMedium.copyWith(
-                              color: context.colors.textSecondary,
-                            ),
+                          color: context.colors.textSecondary,
+                        ),
                         children: [
                           TextSpan(
                             text: '${entry.key}: ',
@@ -553,7 +541,8 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
         title: Text(context.l10n.resetConversation),
         content: Text(
           context.l10n.resetConversationConfirm(
-              CharacterLocalizer.resolveName(context, _character)),
+            CharacterLocalizer.resolveName(context, _character),
+          ),
         ),
         actions: [
           TextButton(
@@ -570,15 +559,16 @@ class _CharacterProfilePageState extends ConsumerState<CharacterProfilePage> {
               );
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(context.l10n.conversationResetSuccess(
-                      CharacterLocalizer.resolveName(context, _character))),
+                  content: Text(
+                    context.l10n.conversationResetSuccess(
+                      CharacterLocalizer.resolveName(context, _character),
+                    ),
+                  ),
                   behavior: SnackBarBehavior.floating,
                 ),
               );
             },
-            style: TextButton.styleFrom(
-              foregroundColor: context.colors.error,
-            ),
+            style: TextButton.styleFrom(foregroundColor: context.colors.error),
             child: Text(context.l10n.reset),
           ),
         ],

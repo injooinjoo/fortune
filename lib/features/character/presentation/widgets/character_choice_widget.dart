@@ -115,10 +115,7 @@ class _CharacterChoiceWidgetState extends State<CharacterChoiceWidget>
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: accentPalette.softBorder,
-            width: 1.5,
-          ),
+          border: Border.all(color: accentPalette.softBorder, width: 1.5),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -128,9 +125,9 @@ class _CharacterChoiceWidgetState extends State<CharacterChoiceWidget>
               Text(
                 widget.choiceSet.situation!,
                 style: context.bodySmall.copyWith(
-                      color: context.colors.textSecondary,
-                      fontStyle: FontStyle.italic,
-                    ),
+                  color: context.colors.textSecondary,
+                  fontStyle: FontStyle.italic,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
@@ -244,10 +241,7 @@ class _CharacterChoiceWidgetState extends State<CharacterChoiceWidget>
             child: Row(
               children: [
                 // 이모지
-                Text(
-                  choice.emoji,
-                  style: const TextStyle(fontSize: 18),
-                ),
+                Text(choice.emoji, style: const TextStyle(fontSize: 18)),
                 const SizedBox(width: 12),
                 // 텍스트
                 Expanded(

@@ -86,8 +86,10 @@ class CharacterMessageBubble extends StatelessWidget {
                               borderRadius:
                                   CharacterChatSurfaceStyle.mediaBorderRadius(),
                             ),
-                            child:
-                                const Icon(Icons.image_not_supported, size: 40),
+                            child: const Icon(
+                              Icons.image_not_supported,
+                              size: 40,
+                            ),
                           ),
                         ),
                       ),
@@ -170,7 +172,8 @@ class CharacterMessageBubble extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.symmetric(
-          vertical: showAvatar ? DSSpacing.xs : DSSpacing.xxs),
+        vertical: showAvatar ? DSSpacing.xs : DSSpacing.xxs,
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -192,39 +195,38 @@ class CharacterMessageBubble extends StatelessWidget {
                   // 텍스트 버블
                   if (message.text.isNotEmpty)
                     GestureDetector(
-                    onLongPress: () => _showReportMenu(context),
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        Container(
-                          padding: CharacterChatSurfaceStyle.bubblePadding,
-                          decoration:
-                              CharacterChatSurfaceStyle.bubbleDecoration(
-                            context,
-                            backgroundColor: colors.surface,
-                            borderRadius:
-                                CharacterChatSurfaceStyle.incomingBubbleRadius(
-                              hasLeadingMedia: message.hasImage,
+                      onLongPress: () => _showReportMenu(context),
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Container(
+                            padding: CharacterChatSurfaceStyle.bubblePadding,
+                            decoration: CharacterChatSurfaceStyle.bubbleDecoration(
+                              context,
+                              backgroundColor: colors.surface,
+                              borderRadius:
+                                  CharacterChatSurfaceStyle.incomingBubbleRadius(
+                                    hasLeadingMedia: message.hasImage,
+                                  ),
+                              borderAlpha: 0.45,
                             ),
-                            borderAlpha: 0.45,
+                            child: _buildFormattedText(context, message.text),
                           ),
-                          child: _buildFormattedText(context, message.text),
-                        ),
-                        // 호감도 변경 인디케이터 (버블 우측 상단)
-                        if (message.affinityChange != null &&
-                            message.affinityChange != 0)
-                          Positioned(
-                            top: -8,
-                            right: -2,
-                            child: AffinityChangeIndicator(
-                              change: message.affinityChange!,
+                          // 호감도 변경 인디케이터 (버블 우측 상단)
+                          if (message.affinityChange != null &&
+                              message.affinityChange != 0)
+                            Positioned(
+                              top: -8,
+                              right: -2,
+                              child: AffinityChangeIndicator(
+                                change: message.affinityChange!,
+                              ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-              ],
-            ),
+                ],
+              ),
             ),
           ),
           const SizedBox(width: CharacterChatSurfaceStyle.messageSideInset),
@@ -265,8 +267,8 @@ class CharacterMessageBubble extends StatelessWidget {
   Widget _buildImageBubble(BuildContext context, DSColorScheme colors) {
     final imagePath =
         (message.imageAsset != null && message.imageAsset!.isNotEmpty)
-            ? message.imageAsset!
-            : message.imageUrl;
+        ? message.imageAsset!
+        : message.imageUrl;
     if (imagePath == null || imagePath.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -304,11 +306,7 @@ class CharacterMessageBubble extends StatelessWidget {
             height: 150,
             color: colors.backgroundSecondary,
             child: Center(
-              child: Icon(
-                fallbackIcon,
-                size: 48,
-                color: colors.textTertiary,
-              ),
+              child: Icon(fallbackIcon, size: 48, color: colors.textTertiary),
             ),
           ),
         ),
@@ -324,16 +322,16 @@ class CharacterMessageBubble extends StatelessWidget {
       child: Center(
         child: Container(
           padding: const EdgeInsets.symmetric(
-              horizontal: DSSpacing.md, vertical: DSSpacing.xs),
+            horizontal: DSSpacing.md,
+            vertical: DSSpacing.xs,
+          ),
           decoration: BoxDecoration(
             color: colors.surface,
             borderRadius: BorderRadius.circular(DSRadius.md),
           ),
           child: Text(
             message.text,
-            style: context.bodySmall.copyWith(
-              color: colors.textSecondary,
-            ),
+            style: context.bodySmall.copyWith(color: colors.textSecondary),
             textAlign: TextAlign.center,
           ),
         ),
@@ -346,7 +344,9 @@ class CharacterMessageBubble extends StatelessWidget {
     final colors = context.colors;
     return Padding(
       padding: const EdgeInsets.symmetric(
-          vertical: DSSpacing.xs, horizontal: DSSpacing.xxl),
+        vertical: DSSpacing.xs,
+        horizontal: DSSpacing.xxl,
+      ),
       child: Center(
         child: Text(
           message.text,
@@ -447,7 +447,9 @@ class CharacterMessageBubble extends StatelessWidget {
       context: context,
       backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(DSRadius.card)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(DSRadius.card),
+        ),
       ),
       builder: (ctx) => SafeArea(
         child: Column(
@@ -473,7 +475,8 @@ class CharacterMessageBubble extends StatelessWidget {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text(
-                        'Report submitted. Thank you.\n신고가 접수되었습니다. 감사합니다.'),
+                      'Report submitted. Thank you.\n신고가 접수되었습니다. 감사합니다.',
+                    ),
                     duration: Duration(seconds: 3),
                   ),
                 );
