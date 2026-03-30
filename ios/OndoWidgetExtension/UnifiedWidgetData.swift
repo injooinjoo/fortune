@@ -143,7 +143,7 @@ struct UnifiedWidgetData: Codable {
 class UnifiedWidgetDataManager {
     static let shared = UnifiedWidgetDataManager()
 
-    private let appGroupIdentifier = "group.com.beyond.ondo"
+    private let appGroupIdentifier = "group.com.beyond.fortune"
     private let widgetDataKey = "flutter.unified_widget_data"
     private let selectedCategoryKey = "flutter.selected_category"
 

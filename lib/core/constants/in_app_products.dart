@@ -1,25 +1,25 @@
 // In-App Purchase Product IDs - 리뷰/서버 기준 카탈로그
 class InAppProducts {
   // Consumable Products (기본 토큰 패키지)
-  static const String tokens10 = 'com.beyond.ondo.tokens10';
-  static const String tokens50 = 'com.beyond.ondo.tokens50';
-  static const String tokens100 = 'com.beyond.ondo.tokens100';
-  static const String tokens200 = 'com.beyond.ondo.tokens200';
+  static const String tokens10 = 'com.beyond.fortune.tokens10';
+  static const String tokens50 = 'com.beyond.fortune.tokens50';
+  static const String tokens100 = 'com.beyond.fortune.tokens100';
+  static const String tokens200 = 'com.beyond.fortune.tokens200';
 
   // Alternate token products kept for compatibility while the catalog settles.
-  static const String points300 = 'com.beyond.ondo.points300';
-  static const String points600 = 'com.beyond.ondo.points600';
-  static const String points1200 = 'com.beyond.ondo.points1200';
-  static const String points3000 = 'com.beyond.ondo.points3000';
+  static const String points300 = 'com.beyond.fortune.points300';
+  static const String points600 = 'com.beyond.fortune.points600';
+  static const String points1200 = 'com.beyond.fortune.points1200';
+  static const String points3000 = 'com.beyond.fortune.points3000';
 
   // Subscription Products (Pro / Max)
   static const String proSubscription =
-      'com.beyond.ondo.subscription.monthly'; // Pro 월간 구독
-  static const String maxSubscription = 'com.beyond.ondo.subscription.max';
+      'com.beyond.fortune.subscription.monthly'; // Pro 월간 구독
+  static const String maxSubscription = 'com.beyond.fortune.subscription.max';
 
   // Non-Consumable Products (평생 소유)
   static const String premiumSajuLifetime =
-      'com.beyond.ondo.premium_saju_lifetime';
+      'com.beyond.fortune.premium_saju_lifetime';
 
   // Product Details
   static const Map<String, ProductInfo> productDetails = {

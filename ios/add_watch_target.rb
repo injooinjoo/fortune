@@ -23,7 +23,7 @@ watch_target = project.new_target(
 
 # Set bundle identifier
 watch_target.build_configurations.each do |config|
-  config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.beyond.ondo.watchapp'
+  config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.beyond.fortune.watchapp'
   config.build_settings['INFOPLIST_FILE'] = 'OndoWatch/Info.plist'
   config.build_settings['SWIFT_VERSION'] = '5.0'
   config.build_settings['ASSETCATALOG_COMPILER_APPICON_NAME'] = 'AppIcon'

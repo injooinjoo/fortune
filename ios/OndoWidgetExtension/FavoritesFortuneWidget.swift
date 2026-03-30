@@ -47,7 +47,7 @@ struct FavoritesFortuneEntry: TimelineEntry {
 
 // MARK: - Favorites Fortune Provider
 struct FavoritesFortuneProvider: TimelineProvider {
-    private let appGroupIdentifier = "group.com.beyond.ondo"
+    private let appGroupIdentifier = "group.com.beyond.fortune"
     private let favoritesKey = "fortune_favorites"
     private let rollingIndexKey = "widget_rolling_index"
     private let fortuneCachePrefix = "widget_fortune_cache_"

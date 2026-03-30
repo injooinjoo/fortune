@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 # Apple Developer 정보
 TEAM_ID = "5F7CN7Y54D"
-SERVICE_ID = "com.beyond.ondo.service"
+SERVICE_ID = "com.beyond.fortune.service"
 KEY_ID = "3A6YZN2YW8"
 
 # Private Key (다운로드한 .p8 파일 내용)

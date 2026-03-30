@@ -14,7 +14,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 /// fortune-daily와 fortune-investment 데이터를 fetch하여 위젯용으로 변환/저장
 class WidgetDataService {
   static const String _sharedDataKey = 'unified_fortune_widget_data';
-  static const String _appGroupId = 'group.com.beyond.ondo';
+  static const String _appGroupId = 'group.com.beyond.fortune';
   static bool _isInitialized = false;
 
   // 카테고리 매핑
@@ -560,7 +560,7 @@ class WidgetDataService {
     try {
       if (defaultTargetPlatform == TargetPlatform.android) {
         final result =
-            await const MethodChannel('com.beyond.ondo/widget_refresh')
+            await const MethodChannel('com.beyond.fortune/widget_refresh')
                 .invokeMethod<Map<dynamic, dynamic>>('isWidgetInstalled');
         return result?['installed'] == true;
       } else if (defaultTargetPlatform == TargetPlatform.iOS) {

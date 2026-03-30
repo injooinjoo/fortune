@@ -1,6 +1,6 @@
 # Appfile for iOS
 
-app_identifier("com.beyond.ondo")
+app_identifier("com.beyond.fortune")
 apple_id("ink595@g.harvard.edu")
 
 # Team ID

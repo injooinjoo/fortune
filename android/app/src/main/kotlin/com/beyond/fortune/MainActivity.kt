@@ -1,4 +1,4 @@
-package com.beyond.ondo
+package com.beyond.fortune
 
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
@@ -11,7 +11,7 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity: FlutterActivity() {
 
     companion object {
-        private const val WIDGET_REFRESH_CHANNEL = "com.beyond.ondo/widget_refresh"
+        private const val WIDGET_REFRESH_CHANNEL = "com.beyond.fortune/widget_refresh"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

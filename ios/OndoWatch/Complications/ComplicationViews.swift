@@ -62,7 +62,7 @@ struct FortuneComplicationEntry: TimelineEntry {
 // MARK: - Timeline Provider
 
 struct FortuneComplicationProvider: TimelineProvider {
-    private let appGroupId = "group.com.beyond.ondo"
+    private let appGroupId = "group.com.beyond.fortune"
 
     func placeholder(in context: Context) -> FortuneComplicationEntry {
         .placeholder

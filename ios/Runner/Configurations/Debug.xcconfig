@@ -4,7 +4,7 @@
 // Debug Configuration
 // App Store Connect IAP sandbox requires the app's bundle ID to match the
 // explicit App ID used by the production catalog.
-PRODUCT_BUNDLE_IDENTIFIER = com.beyond.ondo
+PRODUCT_BUNDLE_IDENTIFIER = com.beyond.fortune
 PRODUCT_NAME = Ondo Debug
 DEVELOPMENT_TEAM = YOUR_TEAM_ID
 

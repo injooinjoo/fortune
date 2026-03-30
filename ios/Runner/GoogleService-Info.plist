@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>676247567847-ls59jkffkc8mg99qtrj2n0fm0l3tvbo5.apps.googleusercontent.com</string>
+	<key>CLIENT_ID</key>
+	<string>676247567847-u13rae7nvi2ilcobf5shfdg5b1pkkvbu.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyB4hNK4MGrqEpqLuI4TWA5QhSaLchGeTnI</string>
+	<key>GCM_SENDER_ID</key>
+	<string>676247567847</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.beyond.fortune</string>
+	<key>PROJECT_ID</key>
+	<string>fortune2-463710</string>
+	<key>STORAGE_BUCKET</key>
+	<string>fortune2-463710.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:676247567847:ios:7044b11f5d8b0b25add142</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.676247567847-u13rae7nvi2ilcobf5shfdg5b1pkkvbu</string>
+	<key>SERVER_CLIENT_ID</key>
+	<string>676247567847-aim7omjjgnk8615sdsifppv41pm3o0m2.apps.googleusercontent.com</string>
+</dict>
+</plist>

@@ -4,7 +4,7 @@ import WidgetKit
 class WidgetDataManager {
     static let shared = WidgetDataManager()
 
-    private let appGroupIdentifier = "group.com.beyond.ondo"
+    private let appGroupIdentifier = "group.com.beyond.fortune"
     private let fortuneDataKey = "widget_fortune_daily"
     private let loveFortuneDataKey = "widget_fortune_love"
     private let lastUpdateKey = "widget_last_update"

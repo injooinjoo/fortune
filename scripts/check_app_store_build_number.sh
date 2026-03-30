@@ -6,7 +6,7 @@ ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT_DIR"
 
 PUBSPEC_PATH="${PUBSPEC_PATH:-pubspec.yaml}"
-BUNDLE_ID="${BUNDLE_ID:-com.beyond.ondo}"
+BUNDLE_ID="${BUNDLE_ID:-com.beyond.fortune}"
 FASTLANE_USER_EMAIL="${FASTLANE_USER_EMAIL:-${FASTLANE_USER:-ink595@g.harvard.edu}}"
 IOS_DIR="${IOS_DIR:-ios}"
 

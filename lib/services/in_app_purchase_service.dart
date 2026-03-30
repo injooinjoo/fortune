@@ -12,7 +12,7 @@ import '../core/constants/in_app_products.dart';
 import '../shared/components/toast.dart';
 
 class InAppPurchaseService {
-  static const String _iosAppStoreBundleId = 'com.beyond.ondo';
+  static const String _iosAppStoreBundleId = 'com.beyond.fortune';
   static final InAppPurchaseService _instance =
       InAppPurchaseService._internal();
   factory InAppPurchaseService() => _instance;

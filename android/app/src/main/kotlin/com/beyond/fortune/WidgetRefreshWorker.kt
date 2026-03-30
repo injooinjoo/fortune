@@ -1,4 +1,4 @@
-package com.beyond.ondo
+package com.beyond.fortune
 
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName

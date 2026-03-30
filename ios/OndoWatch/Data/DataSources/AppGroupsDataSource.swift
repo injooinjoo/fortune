@@ -8,7 +8,7 @@ final class AppGroupsDataSource {
 
     // MARK: - Constants
 
-    private let appGroupId = "group.com.beyond.ondo"
+    private let appGroupId = "group.com.beyond.fortune"
 
     // MARK: - UserDefaults Keys (Must match Flutter widget_data_service.dart)
 

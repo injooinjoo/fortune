@@ -5,7 +5,7 @@ void main() {
   group('DeepLinkService route recovery', () {
     test('auth callback uri resolves to callback route with encoded url', () {
       final service = DeepLinkService();
-      final uri = Uri.parse('com.beyond.ondo://auth-callback?code=abc123');
+      final uri = Uri.parse('com.beyond.fortune://auth-callback?code=abc123');
 
       final route = service.resolveRouteForUri(uri);
       final resolvedUri = Uri.parse(route);
@@ -32,7 +32,7 @@ void main() {
 
     test('screen deep link resolves to target route', () {
       final service = DeepLinkService();
-      final uri = Uri.parse('com.beyond.ondo://deeplink?screen=chat');
+      final uri = Uri.parse('com.beyond.fortune://deeplink?screen=chat');
 
       expect(service.resolveRouteForUri(uri), '/chat');
     });

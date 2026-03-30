@@ -15,7 +15,7 @@ final class BackgroundRefreshService {
 
     private enum Constants {
         static let refreshInterval: TimeInterval = 6 * 60 * 60 // 6 hours
-        static let backgroundTaskIdentifier = "com.beyond.ondo.watch.refresh"
+        static let backgroundTaskIdentifier = "com.beyond.fortune.watch.refresh"
     }
 
     // MARK: - Init

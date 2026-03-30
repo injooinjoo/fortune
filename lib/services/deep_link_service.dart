@@ -88,7 +88,7 @@ class DeepLinkService {
   }
 
   bool _isAuthCallbackUri(Uri uri) {
-    if (uri.scheme == 'com.beyond.ondo' && uri.host == 'auth-callback') {
+    if (uri.scheme == 'com.beyond.fortune' && uri.host == 'auth-callback') {
       return true;
     }
 

@@ -12,9 +12,9 @@ const SUBSCRIPTION_PRODUCTS: Record<
   string,
   { period: "monthly" | "yearly"; days: number }
 > = {
-  "com.beyond.ondo.subscription.monthly": { period: "monthly", days: 30 },
-  "com.beyond.ondo.subscription.yearly": { period: "yearly", days: 365 },
-  "com.beyond.ondo.subscription.max": { period: "monthly", days: 30 },
+  "com.beyond.fortune.subscription.monthly": { period: "monthly", days: 30 },
+  "com.beyond.fortune.subscription.yearly": { period: "yearly", days: 365 },
+  "com.beyond.fortune.subscription.max": { period: "monthly", days: 30 },
 };
 
 /**

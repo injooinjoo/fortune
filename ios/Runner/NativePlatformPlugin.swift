@@ -61,8 +61,8 @@ public class NativePlatformPlugin: NSObject, FlutterPlugin {
         }
         
         // Store widget data in App Group container
-        // AppGroupId는 Dart 코드(group.com.beyond.ondo)와 동일해야 함
-        if let sharedDefaults = UserDefaults(suiteName: "group.com.beyond.ondo") {
+        // AppGroupId는 Dart 코드(group.com.beyond.fortune)와 동일해야 함
+        if let sharedDefaults = UserDefaults(suiteName: "group.com.beyond.fortune") {
             sharedDefaults.set(data, forKey: "widget_\(widgetType)")
             sharedDefaults.synchronize()
             

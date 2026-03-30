@@ -37,17 +37,17 @@ After signing in (Option A or B above):
 4. The purchase screen displays three sections:
 
    [Section 1] 구독 플랜 (Subscriptions):
-     • "Pro 구독" — com.beyond.ondo.subscription.monthly (marked 추천)
-     • "Max 구독" — com.beyond.ondo.subscription.max
+     • "Pro 구독" — com.beyond.fortune.subscription.monthly (marked 추천)
+     • "Max 구독" — com.beyond.fortune.subscription.max
 
    [Section 2] 토큰 충전 (Token Packages):
-     • 10 Tokens — com.beyond.ondo.tokens10
-     • 50 Tokens — com.beyond.ondo.tokens50
-     • 100 Tokens — com.beyond.ondo.tokens100
-     • 200 Tokens — com.beyond.ondo.tokens200
+     • 10 Tokens — com.beyond.fortune.tokens10
+     • 50 Tokens — com.beyond.fortune.tokens50
+     • 100 Tokens — com.beyond.fortune.tokens100
+     • 200 Tokens — com.beyond.fortune.tokens200
 
    [Section 3] 프리미엄 콘텐츠 (Non-Consumable):
-     • 상세 사주명리서 — com.beyond.ondo.premium_saju_lifetime
+     • 상세 사주명리서 — com.beyond.fortune.premium_saju_lifetime
 
 5. Tap any "구독하기" or "구매하기" button to trigger the sandbox payment sheet.
 

@@ -3,7 +3,7 @@
     "details": [
       {
         "appIDs": [
-          "5F7CN7Y54D.com.beyond.ondo"
+          "5F7CN7Y54D.com.beyond.fortune"
         ],
         "components": [
           {
@@ -16,7 +16,7 @@
   },
   "webcredentials": {
     "apps": [
-      "5F7CN7Y54D.com.beyond.ondo"
+      "5F7CN7Y54D.com.beyond.fortune"
     ]
   }
 }

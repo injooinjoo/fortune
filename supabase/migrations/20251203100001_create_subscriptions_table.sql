@@ -13,7 +13,7 @@ CREATE TABLE subscriptions (
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
 
   -- 구독 정보
-  product_id TEXT NOT NULL,                       -- 'com.beyond.ondo.subscription.monthly' | 'com.beyond.ondo.subscription.yearly'
+  product_id TEXT NOT NULL,                       -- 'com.beyond.fortune.subscription.monthly' | 'com.beyond.fortune.subscription.yearly'
   platform TEXT NOT NULL,                          -- 'ios' | 'android' | 'web'
   purchase_id TEXT,                                -- 스토어 거래 ID (transactionId / orderId)
 

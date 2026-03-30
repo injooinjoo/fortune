@@ -105,7 +105,7 @@ fi
 echo -e "\n${YELLOW}[5/8] iOS 빌드 설정 확인 중...${NC}"
 
 # Bundle ID 확인
-BUNDLE_ID=$(grep -A 1 "PRODUCT_BUNDLE_IDENTIFIER" ios/Runner.xcodeproj/project.pbxproj | grep "com.beyond.ondo" | head -1 | awk '{print $3}' | tr -d ';')
+BUNDLE_ID=$(grep -A 1 "PRODUCT_BUNDLE_IDENTIFIER" ios/Runner.xcodeproj/project.pbxproj | grep "com.beyond.fortune" | head -1 | awk '{print $3}' | tr -d ';')
 echo -e "${GREEN}✓ Bundle ID: $BUNDLE_ID${NC}"
 
 # Team ID 확인

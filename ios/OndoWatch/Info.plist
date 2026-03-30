@@ -28,7 +28,7 @@
     <key>WKApplication</key>
     <true/>
     <key>WKCompanionAppBundleIdentifier</key>
-    <string>com.beyond.ondo</string>
+    <string>com.beyond.fortune</string>
     <key>WKWatchOnly</key>
     <false/>
 </dict>

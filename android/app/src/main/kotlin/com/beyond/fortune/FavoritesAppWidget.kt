@@ -1,4 +1,4 @@
-package com.beyond.ondo
+package com.beyond.fortune
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -34,7 +34,7 @@ class FavoritesAppWidget : AppWidgetProvider() {
         private const val KEY_FORTUNE_CACHE_PREFIX = "flutter.widget_fortune_cache_"
 
         // Action for rolling update
-        const val ACTION_ROLLING_UPDATE = "com.beyond.ondo.ACTION_FAVORITES_ROLLING_UPDATE"
+        const val ACTION_ROLLING_UPDATE = "com.beyond.fortune.ACTION_FAVORITES_ROLLING_UPDATE"
 
         // Rolling interval: 1 minute in milliseconds
         private const val ROLLING_INTERVAL_MS = 60 * 1000L

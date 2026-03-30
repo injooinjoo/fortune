@@ -19,7 +19,7 @@ class WidgetService {
 
   // 백그라운드 새로고침용 Method Channel
   static const MethodChannel _backgroundChannel =
-      MethodChannel('com.beyond.ondo/widget_refresh');
+      MethodChannel('com.beyond.fortune/widget_refresh');
 
   // 현재 사용자 ID 캐시 (백그라운드 새로고침 시 사용)
   static String? _cachedUserId;

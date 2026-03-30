@@ -6,7 +6,7 @@ import SwiftUI
 class WatchDataManager: ObservableObject {
     static let shared = WatchDataManager()
 
-    private let appGroupId = "group.com.beyond.ondo"
+    private let appGroupId = "group.com.beyond.fortune"
 
     private var sharedDefaults: UserDefaults? {
         UserDefaults(suiteName: appGroupId)

@@ -89,7 +89,7 @@ import NaverThirdPartyLogin
   private func setupNaverLogin() {
     // Use the shared FlutterEngine's binary messenger for Scene lifecycle support
     naverChannel = FlutterMethodChannel(
-      name: "com.beyond.ondo/naver_auth",
+      name: "com.beyond.fortune/naver_auth",
       binaryMessenger: flutterEngine.binaryMessenger
     )
     

@@ -18,7 +18,7 @@ platform :ios do
       export_method: "app-store",
       export_options: {
         provisioningProfiles: {
-          "com.beyond.ondo" => "Ondo App Store Distribution"
+          "com.beyond.fortune" => "Ondo App Store Distribution"
         }
       }
     )
@@ -85,7 +85,7 @@ platform :ios do
   lane :certificates do
     match(
       type: "appstore",
-      app_identifier: "com.beyond.ondo",
+      app_identifier: "com.beyond.fortune",
       readonly: true
     )
   end
@@ -94,7 +94,7 @@ platform :ios do
   lane :sync_dev_certificates do
     match(
       type: "development",
-      app_identifier: "com.beyond.ondo",
+      app_identifier: "com.beyond.fortune",
       readonly: false
     )
   end
