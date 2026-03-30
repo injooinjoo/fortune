@@ -191,9 +191,23 @@ class GoogleAuthProvider extends BaseSocialAuthProvider {
             ));
 
       if (!response) {
+        // Launch returned false but a session may already exist from a
+        // concurrent deep-link callback (common on iOS 26+). Check once
+        // before giving up.
+        final existingSession = supabase.auth.currentSession;
+        if (existingSession?.user != null) {
+          OAuthInAppBrowserCoordinator.markOAuthFinished(
+              reason: 'session_before_launch');
+          Logger.info(
+              '[GoogleAuthProvider] Session found despite launch returning false');
+          return SocialAuthAttemptResult.authenticated(
+            AuthResponse(session: existingSession),
+          );
+        }
+
         OAuthInAppBrowserCoordinator.markOAuthFinished(reason: 'launch_failed');
         Logger.warning('Google OAuth initiation failed');
-        throw Exception('Google OAuth sign in failed to start');
+        throw Exception('Google 로그인 화면을 열지 못했습니다. 잠시 후 다시 시도해 주세요.');
       }
 
       unawaited(

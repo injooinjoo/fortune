@@ -90,9 +90,11 @@ class OAuthInAppBrowserCoordinator {
       await Future<void>.delayed(interval);
     }
 
-    // 타임아웃 도달
+    // 타임아웃 도달 — 브라우저가 열린 채 남아있을 수 있으므로 닫기 시도
     Logger.warning(
-        '[OAuthBrowser] Session polling timeout reached ($maxAttempts attempts)');
+        '[OAuthBrowser] Session polling timeout reached ($maxAttempts attempts), closing browser');
+    await _closeInAppBrowserIfNeeded();
+    markOAuthFinished(reason: 'polling_timeout');
   }
 
   static Future<AuthResponse?> recoverAuthResponseAfterLaunchError(

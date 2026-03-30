@@ -128,11 +128,22 @@ class AppleAuthProvider extends BaseSocialAuthProvider {
     }
 
     Logger.warning(
-      '[AppleAuthProvider] iPhone에서 web OAuth fallback 차단, native Apple 로그인 실패 유지: $lastError',
+      '[AppleAuthProvider] Native Apple 로그인 2회 실패, OAuth fallback 시도: $lastError',
     );
-    throw _AppleSignInFailedException(
-      'Apple 로그인을 완료하지 못했습니다. 잠시 후 다시 시도해 주세요.',
-    );
+
+    try {
+      return await _signInWithAppleOAuthWithRetry();
+    } catch (oauthError) {
+      if (_isCancellationError(oauthError)) {
+        rethrow;
+      }
+      Logger.warning(
+        '[AppleAuthProvider] OAuth fallback도 실패: $oauthError',
+      );
+      throw _AppleSignInFailedException(
+        'Apple 로그인을 완료하지 못했습니다. 잠시 후 다시 시도해 주세요.',
+      );
+    }
   }
 
   Future<SocialAuthAttemptResult> _signInWithAppleOAuthWithRetry() async {
