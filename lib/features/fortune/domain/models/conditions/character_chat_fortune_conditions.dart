@@ -29,7 +29,7 @@ class CharacterChatFortuneConditions extends FortuneConditions {
 
   @override
   String generateHash() {
-    final normalized = _normalizedPayload();
+    final normalized = _normalizedHashPayload();
     return sha256Hash({
       'fortune_type': fortuneType,
       'payload': normalized,
@@ -58,6 +58,21 @@ class CharacterChatFortuneConditions extends FortuneConditions {
   @override
   Map<String, dynamic> buildAPIPayload() {
     return _normalizedPayload();
+  }
+
+  Map<String, dynamic> _normalizedHashPayload() {
+    final normalized = _normalizedPayload();
+
+    // MBTI는 Edge Function이 날짜 기준 전역 8차원 캐시를 이미 관리한다.
+    // 앱 레벨 해시는 재사용 판단에 필요한 최소 입력만 포함해 개인 캐시 적중률을 유지한다.
+    if (fortuneType == 'mbti') {
+      return _normalizeMap({
+        'mbti': normalized['mbti'],
+        if (normalized['category'] != null) 'category': normalized['category'],
+      });
+    }
+
+    return normalized;
   }
 
   Map<String, dynamic> _normalizedPayload() {

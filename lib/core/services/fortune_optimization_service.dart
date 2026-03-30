@@ -18,6 +18,12 @@ class FortuneOptimizationService {
   final SupabaseClient _supabase;
   late final CohortFortuneService _cohortService;
 
+  // Edge Function이 이미 전역 공유 캐시를 관리하는 타입은
+  // 클라이언트에서 cohort/db/random 재사용 레이어를 중복 적용하지 않는다.
+  static const Set<String> _edgeManagedSharedCacheTypes = {
+    'mbti',
+  };
+
   // 상수 (비용 최적화: KAN-XX)
   static const int dbPoolThreshold = 300; // DB 풀 최소 크기
   static const int cohortPoolThreshold =
@@ -27,6 +33,11 @@ class FortuneOptimizationService {
   FortuneOptimizationService({SupabaseClient? supabase})
       : _supabase = supabase ?? Supabase.instance.client {
     _cohortService = CohortFortuneService(supabase: _supabase);
+  }
+
+  @visibleForTesting
+  static bool usesEdgeManagedSharedCache(String fortuneType) {
+    return _edgeManagedSharedCacheTypes.contains(fortuneType);
   }
 
   /// 운세 조회 메인 메서드
@@ -63,41 +74,49 @@ class FortuneOptimizationService {
         return personalCache.copyWith(source: 'personal_cache');
       }
 
-      // 2️⃣ Cohort Pool 조회 (90% API 절감)
-      final cohortResult = await _checkCohortPool(
-        userId: userId,
-        fortuneType: fortuneType,
-        conditionsHash: conditionsHash,
-        conditions: conditions,
-        inputConditions: inputConditions ?? conditions.buildAPIPayload(),
-      );
-      if (cohortResult != null) {
-        Logger.debug('[FortuneOptimization] ✅ [2단계] Cohort Pool 히트 - 즉시 반환');
-        return cohortResult.copyWith(source: 'cohort_pool');
-      }
+      final usesEdgeManagedCache = usesEdgeManagedSharedCache(fortuneType);
+      if (usesEdgeManagedCache) {
+        Logger.info(
+          '[FortuneOptimization] $fortuneType uses edge-managed shared cache, '
+          'skip cohort/db/random reuse',
+        );
+      } else {
+        // 2️⃣ Cohort Pool 조회 (90% API 절감)
+        final cohortResult = await _checkCohortPool(
+          userId: userId,
+          fortuneType: fortuneType,
+          conditionsHash: conditionsHash,
+          conditions: conditions,
+          inputConditions: inputConditions ?? conditions.buildAPIPayload(),
+        );
+        if (cohortResult != null) {
+          Logger.debug('[FortuneOptimization] ✅ [2단계] Cohort Pool 히트 - 즉시 반환');
+          return cohortResult.copyWith(source: 'cohort_pool');
+        }
 
-      // 3️⃣ DB 풀 크기 확인
-      final dbPoolResult = await _checkDBPoolSize(
-        userId: userId,
-        fortuneType: fortuneType,
-        conditionsHash: conditionsHash,
-        conditions: conditions,
-      );
-      if (dbPoolResult != null) {
-        Logger.debug('[FortuneOptimization] ✅ [3단계] DB 풀 사용 - 랜덤 선택 완료');
-        return dbPoolResult.copyWith(source: 'db_pool');
-      }
+        // 3️⃣ DB 풀 크기 확인
+        final dbPoolResult = await _checkDBPoolSize(
+          userId: userId,
+          fortuneType: fortuneType,
+          conditionsHash: conditionsHash,
+          conditions: conditions,
+        );
+        if (dbPoolResult != null) {
+          Logger.debug('[FortuneOptimization] ✅ [3단계] DB 풀 사용 - 랜덤 선택 완료');
+          return dbPoolResult.copyWith(source: 'db_pool');
+        }
 
-      // 4️⃣ 30% 랜덤 선택
-      final randomResult = await _randomSelection(
-        userId: userId,
-        fortuneType: fortuneType,
-        conditionsHash: conditionsHash,
-        conditions: conditions,
-      );
-      if (randomResult != null) {
-        Logger.debug('[FortuneOptimization] ✅ [4단계] 랜덤 선택 - DB에서 가져옴');
-        return randomResult.copyWith(source: 'random_selection');
+        // 4️⃣ 30% 랜덤 선택
+        final randomResult = await _randomSelection(
+          userId: userId,
+          fortuneType: fortuneType,
+          conditionsHash: conditionsHash,
+          conditions: conditions,
+        );
+        if (randomResult != null) {
+          Logger.debug('[FortuneOptimization] ✅ [4단계] 랜덤 선택 - DB에서 가져옴');
+          return randomResult.copyWith(source: 'random_selection');
+        }
       }
 
       // 5️⃣ API 호출
@@ -110,14 +129,8 @@ class FortuneOptimizationService {
         onAPICall: onAPICall,
       );
 
-      // API 호출 후 Cohort Pool에 저장 (다음 사용자를 위해)
-      if (apiResult.apiCall) {
-        await _saveToCohortPool(
-          fortuneType: fortuneType,
-          inputConditions: inputConditions ?? conditions.buildAPIPayload(),
-          resultData: apiResult.resultData,
-        );
-      }
+      // cohort_fortune_pool 쓰기는 service_role 전용이라 서버/배치에서만 수행한다.
+      // 클라이언트는 읽기 전용으로 유지해 RLS 오류와 중복 최적화를 피한다.
 
       return apiResult;
     } catch (e, stackTrace) {
@@ -177,28 +190,6 @@ class FortuneOptimizationService {
     } catch (e) {
       debugPrint('  ⚠️ Cohort Pool 조회 실패: $e');
       return null; // 에러 시 다음 단계로 진행
-    }
-  }
-
-  /// Cohort Pool에 결과 저장 (API 호출 후)
-  Future<void> _saveToCohortPool({
-    required String fortuneType,
-    required Map<String, dynamic> inputConditions,
-    required Map<String, dynamic> resultData,
-  }) async {
-    try {
-      final saved = await _cohortService.saveToPool(
-        fortuneType: fortuneType,
-        input: inputConditions,
-        result: resultData,
-      );
-      if (saved) {
-        debugPrint('  ✅ Cohort Pool 저장 완료');
-      } else {
-        debugPrint('  ⚠️ Cohort Pool 저장 실패 (무시)');
-      }
-    } catch (e) {
-      debugPrint('  ⚠️ Cohort Pool 저장 실패 (무시): $e');
     }
   }
 

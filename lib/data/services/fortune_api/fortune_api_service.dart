@@ -308,7 +308,9 @@ class FortuneApiService {
       'dream',
       'face-reading',
       'ex-lover',
-      'blind-date'
+      'blind-date',
+      // MBTI는 Edge Function이 전역 캐시를 직접 관리한다.
+      'mbti',
     ];
     final shouldCallApi = alwaysCallApiTypes.contains(fortuneType)
         ? true

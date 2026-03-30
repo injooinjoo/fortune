@@ -61,6 +61,54 @@ void main() {
       expect(base.generateHash(), isNot(changed.generateHash()));
     });
 
+    test('mbti hash ignores unrelated profile fields', () {
+      final first = CharacterChatFortuneConditions(
+        fortuneType: 'mbti',
+        answers: const {'mbti': 'ENTJ'},
+        userProfileMergedParams: const {
+          'mbti': 'ENTJ',
+          'name': '김인주',
+          'birthDate': '1988-09-05',
+          'zodiacSign': '처녀자리',
+        },
+      );
+
+      final second = CharacterChatFortuneConditions(
+        fortuneType: 'mbti',
+        answers: const {'mbti': 'ENTJ'},
+        userProfileMergedParams: const {
+          'mbti': 'ENTJ',
+          'name': '다른이름',
+          'birthDate': '1991-01-01',
+          'zodiacSign': '염소자리',
+        },
+      );
+
+      expect(first.generateHash(), second.generateHash());
+    });
+
+    test('mbti hash changes when reusable input changes', () {
+      final first = CharacterChatFortuneConditions(
+        fortuneType: 'mbti',
+        answers: const {'mbti': 'ENTJ'},
+        userProfileMergedParams: const {
+          'mbti': 'ENTJ',
+          'category': 'overall',
+        },
+      );
+
+      final second = CharacterChatFortuneConditions(
+        fortuneType: 'mbti',
+        answers: const {'mbti': 'INFP'},
+        userProfileMergedParams: const {
+          'mbti': 'INFP',
+          'category': 'overall',
+        },
+      );
+
+      expect(first.generateHash(), isNot(second.generateHash()));
+    });
+
     test('image-like fields are hashed and raw content is removed', () {
       final rawImage = 'A' * 4096;
       final conditions = CharacterChatFortuneConditions(
