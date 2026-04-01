@@ -6,6 +6,8 @@ paths = [
     '''\.env\.example$''',
     '''\.env\..*\.example$''',
     '''firebase_options_secure\.dart$''',
+    '''(^|/)android/app/google-services\.json$''',
+    '''(^|/)ios/Runner/GoogleService-Info\.plist$''',
     '''secrets\.txt$''',
     '''(^|/)docs/development/reports/''',
     '''(^|/)fortune_flutter/flutter_build_log\.txt$''',

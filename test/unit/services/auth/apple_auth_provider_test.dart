@@ -57,8 +57,7 @@ void main() {
     expect(oauthCallCount, 0);
   });
 
-  test('Apple does not fall back to OAuth when iPhone native sign-in fails',
-      () async {
+  test('Apple falls back to OAuth when iPhone native sign-in fails', () async {
     var nativeCallCount = 0;
     var oauthCallCount = 0;
 
@@ -68,6 +67,7 @@ void main() {
       isIOSOverride: true,
       shouldUseNativeAppleSignInOverride: () async => true,
       nativeRetryDelay: Duration.zero,
+      oauthRetryDelay: Duration.zero,
       nativeSignInOverride: () async {
         nativeCallCount++;
         return null;
@@ -78,19 +78,11 @@ void main() {
       },
     );
 
-    await expectLater(
-      provider.signIn(),
-      throwsA(
-        predicate(
-          (error) => error
-              .toString()
-              .contains('Apple 로그인을 완료하지 못했습니다. 잠시 후 다시 시도해 주세요.'),
-        ),
-      ),
-    );
+    final result = await provider.signIn();
 
+    expect(result.isPendingExternalAuth, isTrue);
     expect(nativeCallCount, 2);
-    expect(oauthCallCount, 0);
+    expect(oauthCallCount, greaterThan(0));
   });
 
   test(
