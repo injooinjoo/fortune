@@ -37,22 +37,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneDidBecomeActive(_ scene: UIScene) {
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
-        _ = appDelegate?.applicationDidBecomeActive?(UIApplication.shared)
+        appDelegate?.applicationDidBecomeActive(UIApplication.shared)
     }
 
     func sceneWillResignActive(_ scene: UIScene) {
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
-        _ = appDelegate?.applicationWillResignActive?(UIApplication.shared)
+        appDelegate?.applicationWillResignActive(UIApplication.shared)
     }
 
     func sceneWillEnterForeground(_ scene: UIScene) {
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
-        _ = appDelegate?.applicationWillEnterForeground?(UIApplication.shared)
+        appDelegate?.applicationWillEnterForeground(UIApplication.shared)
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
-        _ = appDelegate?.applicationDidEnterBackground?(UIApplication.shared)
+        appDelegate?.applicationDidEnterBackground(UIApplication.shared)
     }
 
     // Handle URL opening via Scene lifecycle (iOS 13+)
