@@ -3,6 +3,7 @@ import Flutter
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
+    private weak var flutterViewController: FlutterViewController?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = scene as? UIWindowScene else { return }
@@ -15,9 +16,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // Create FlutterViewController with shared engine
         let flutterViewController = FlutterViewController(engine: flutterEngine, nibName: nil, bundle: nil)
+        self.flutterViewController = flutterViewController
 
         window?.rootViewController = flutterViewController
         window?.makeKeyAndVisible()
+
+        // Keep AppDelegate's window reference in sync so FlutterAppDelegate
+        // can propagate lifecycle changes to the engine reliably.
+        appDelegate.window = window
 
         // Handle any URLs that were passed during launch
         if let urlContext = connectionOptions.urlContexts.first {
@@ -30,19 +36,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {
-        // Called when the scene moves from inactive to active state
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        _ = appDelegate?.applicationDidBecomeActive?(UIApplication.shared)
     }
 
     func sceneWillResignActive(_ scene: UIScene) {
-        // Called when the scene moves from active to inactive state
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        _ = appDelegate?.applicationWillResignActive?(UIApplication.shared)
     }
 
     func sceneWillEnterForeground(_ scene: UIScene) {
-        // Called when the scene transitions from background to foreground
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        _ = appDelegate?.applicationWillEnterForeground?(UIApplication.shared)
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
-        // Called when the scene transitions from foreground to background
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        _ = appDelegate?.applicationDidEnterBackground?(UIApplication.shared)
     }
 
     // Handle URL opening via Scene lifecycle (iOS 13+)
