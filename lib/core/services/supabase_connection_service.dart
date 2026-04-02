@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/widgets.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../config/environment.dart';
 import '../utils/logger.dart';
@@ -26,6 +27,9 @@ class SupabaseConnectionService extends ResilientService {
   static DateTime? _lastConnectionAttempt;
   static int _consecutiveFailures = 0;
   static DateTime? _nextRetryAllowedAt;
+  static Timer? _healthMonitorTimer;
+  static bool _isHealthMonitoringStarted = false;
+  static bool _isReconnecting = false;
 
   /// 연결 상태 스트림
   static final StreamController<bool> _connectionStateController =
@@ -254,20 +258,34 @@ class SupabaseConnectionService extends ResilientService {
 
   /// 연결 상태 검증
   Future<void> _verifyConnection() async {
-    final client = Supabase.instance.client;
+    final client = tryGetClient();
+    if (client == null) {
+      throw Exception('Supabase client unavailable');
+    }
 
-    // 간단한 쿼리로 연결 상태 확인 - celebrities 테이블 접근 테스트 (실제로 존재하는 테이블)
-    await client
-        .from('celebrities')
-        .select('id')
-        .limit(0)
-        .timeout(const Duration(seconds: 5));
+    // 테이블/RLS 정책 영향을 받지 않도록 세션 갱신만 최소 검증으로 사용
+    if (client.auth.currentSession == null) {
+      return;
+    }
+
+    await client.auth.refreshSession().timeout(const Duration(seconds: 5));
   }
 
   /// 연결 상태 지속 모니터링
   Future<void> _startHealthMonitoring() async {
     await safeExecute(() async {
-      Timer.periodic(const Duration(minutes: 5), (timer) async {
+      if (_isHealthMonitoringStarted) {
+        return;
+      }
+
+      _isHealthMonitoringStarted = true;
+      _healthMonitorTimer?.cancel();
+      _healthMonitorTimer =
+          Timer.periodic(const Duration(minutes: 5), (timer) async {
+        if (!_shouldRunHealthCheck()) {
+          return;
+        }
+
         try {
           await _verifyConnection();
 
@@ -306,7 +324,7 @@ class SupabaseConnectionService extends ResilientService {
             }
 
             // 자동 재연결 시도 (backoff 적용)
-            _attemptReconnection();
+            await _attemptReconnection();
           }
         }
       });
@@ -316,6 +334,15 @@ class SupabaseConnectionService extends ResilientService {
   /// 자동 재연결 시도
   Future<void> _attemptReconnection() async {
     await safeExecute(() async {
+      if (_isReconnecting) {
+        return;
+      }
+
+      if (!_shouldRunHealthCheck()) {
+        Logger.info('앱 비활성 상태로 Supabase 자동 재연결을 보류합니다.');
+        return;
+      }
+
       // 재시도 대기 시간 체크
       if (_nextRetryAllowedAt != null &&
           DateTime.now().isBefore(_nextRetryAllowedAt!)) {
@@ -324,31 +351,47 @@ class SupabaseConnectionService extends ResilientService {
         return;
       }
 
-      // Exponential backoff 계산: 5초 * 2^(실패횟수-1)
-      final backoffSeconds =
-          5 * (1 << (_consecutiveFailures - 1).clamp(0, 5)); // 최대 160초
-      Logger.info('Supabase 자동 재연결 시도 중 (backoff: $backoffSeconds초)...');
+      _isReconnecting = true;
+      try {
+        // Exponential backoff 계산: 5초 * 2^(실패횟수-1)
+        final backoffSeconds =
+            5 * (1 << (_consecutiveFailures - 1).clamp(0, 5)); // 최대 160초
+        Logger.info('Supabase 자동 재연결 시도 중 (backoff: $backoffSeconds초)...');
 
-      final success = await initialize(
-        maxRetries: 2,
-        timeout: const Duration(seconds: 15),
-        retryDelay: Duration(seconds: backoffSeconds),
-      );
+        final success = await initialize(
+          maxRetries: 2,
+          timeout: const Duration(seconds: 15),
+          retryDelay: Duration(seconds: backoffSeconds),
+        );
 
-      if (success) {
-        // 성공 시 실제 네트워크 검증
-        try {
-          await _verifyConnection();
-          _consecutiveFailures = 0;
-          _nextRetryAllowedAt = null;
-          Logger.info('Supabase 자동 재연결 성공 (검증 완료)');
-        } catch (e) {
-          Logger.warning('재연결은 성공했으나 네트워크 검증 실패: $e');
+        if (success) {
+          // 성공 시 실제 네트워크 검증
+          try {
+            await _verifyConnection();
+            _consecutiveFailures = 0;
+            _nextRetryAllowedAt = null;
+            Logger.info('Supabase 자동 재연결 성공 (검증 완료)');
+          } catch (e) {
+            Logger.warning('재연결은 성공했으나 네트워크 검증 실패: $e');
+          }
+        } else {
+          Logger.warning('Supabase 자동 재연결 실패');
         }
-      } else {
-        Logger.warning('Supabase 자동 재연결 실패');
+      } finally {
+        _isReconnecting = false;
       }
     }, 'Supabase 자동 재연결', '재연결 실패');
+  }
+
+  bool _shouldRunHealthCheck() {
+    final lifecycleState = WidgetsBinding.instance.lifecycleState;
+    if (lifecycleState == null) {
+      return true;
+    }
+
+    return lifecycleState != AppLifecycleState.paused &&
+        lifecycleState != AppLifecycleState.detached &&
+        lifecycleState != AppLifecycleState.hidden;
   }
 
   /// 수동 재연결
@@ -414,6 +457,9 @@ class SupabaseConnectionService extends ResilientService {
 
   /// 리소스 정리
   static void dispose() {
+    _healthMonitorTimer?.cancel();
+    _healthMonitorTimer = null;
+    _isHealthMonitoringStarted = false;
     _connectionStateController.close();
   }
 }
