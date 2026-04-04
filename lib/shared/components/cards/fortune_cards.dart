@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:ondo/core/design_system/design_system.dart';
 
-enum FortuneCardTone { neutral, accent, success, warning, danger, premium }
+enum FortuneCardTone {
+  neutral,
+  accent,
+  success,
+  warning,
+  danger,
+  premium,
+}
 
 class FortuneCardSurface extends StatelessWidget {
   final Widget child;
@@ -44,8 +51,7 @@ class FortuneCardSurface extends StatelessWidget {
     final colors = context.colors;
     final toneColor = _toneColor(context, tone);
     final resolvedBorderColor = borderColor ?? toneColor;
-    final resolvedBackgroundColor =
-        backgroundColor ??
+    final resolvedBackgroundColor = backgroundColor ??
         (tinted
             ? toneColor.withValues(alpha: 0.08)
             : _defaultSurface(colors, style));
@@ -69,8 +75,7 @@ class FortuneCardSurface extends StatelessWidget {
             Container(
               height: accentHeight,
               decoration: BoxDecoration(
-                gradient:
-                    accentGradient ??
+                gradient: accentGradient ??
                     LinearGradient(
                       colors: [
                         accentColor ?? toneColor,
@@ -118,8 +123,7 @@ class FortuneCardBadge extends StatelessWidget {
     final toneColor = foregroundColor ?? _toneColor(context, tone);
 
     return Container(
-      padding:
-          padding ??
+      padding: padding ??
           const EdgeInsets.symmetric(
             horizontal: DSSpacing.sm,
             vertical: DSSpacing.xxs,
@@ -132,7 +136,11 @@ class FortuneCardBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 14, color: toneColor),
+            Icon(
+              icon,
+              size: 14,
+              color: toneColor,
+            ),
             const SizedBox(width: DSSpacing.xxs),
           ],
           Text(
@@ -212,7 +220,9 @@ class FortuneFeatureCard extends StatelessWidget {
           const SizedBox(height: DSSpacing.xs),
           Text(
             title,
-            style: context.heading4.copyWith(color: context.colors.textPrimary),
+            style: context.heading4.copyWith(
+              color: context.colors.textPrimary,
+            ),
           ),
           const SizedBox(height: DSSpacing.xs),
           Text(
@@ -228,7 +238,12 @@ class FortuneFeatureCard extends StatelessWidget {
               spacing: DSSpacing.xs,
               runSpacing: DSSpacing.xs,
               children: highlights
-                  .map((item) => FortuneCardBadge(label: item, tone: tone))
+                  .map(
+                    (item) => FortuneCardBadge(
+                      label: item,
+                      tone: tone,
+                    ),
+                  )
                   .toList(growable: false),
             ),
           ],
@@ -440,7 +455,10 @@ class FortuneResultFrame extends StatelessWidget {
       accentGradient: accentGradient,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [header, child],
+        children: [
+          header,
+          child,
+        ],
       ),
     );
   }
