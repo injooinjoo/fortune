@@ -554,8 +554,9 @@ class _StarterOptionCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       option.subtitle,
-                      style: typography.labelSmall.copyWith(
-                        color: colors.textSecondary,
+                      style: typography.labelMedium.copyWith(
+                        color: colors.textSubtitle,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -569,7 +570,7 @@ class _StarterOptionCard extends StatelessWidget {
               Icon(
                 Icons.arrow_forward_ios,
                 size: 14,
-                color: colors.textSecondary,
+                color: colors.textSubtitle,
               ),
             ],
           ),
@@ -650,9 +651,7 @@ class _TabButton extends StatelessWidget {
           label,
           style: context.typography.labelMedium.copyWith(
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-            color: isSelected
-                ? colors.background
-                : colors.textPrimary.withValues(alpha: 0.82),
+            color: isSelected ? colors.background : colors.textSubtitle,
           ),
         ),
       ),
@@ -791,7 +790,9 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
         hasConversation && isLastMessageFromCharacter && !hasUnread;
     final previewColor = isTyping
         ? accentPalette.accent
-        : colors.textPrimary.withValues(alpha: hasUnread ? 0.9 : 0.74);
+        : hasUnread
+            ? colors.textPrimary
+            : colors.textSubtitle;
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -971,9 +972,9 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                   chatState.lastMessageTime != null)
                                 Text(
                                   _formatTimestamp(chatState.lastMessageTime!),
-                                  style: typography.labelSmall.copyWith(
-                                    fontWeight: FontWeight.w500,
-                                    color: colors.textSecondary,
+                                  style: typography.labelMedium.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: colors.textSubtitle,
                                   ),
                                 ),
                             ],
@@ -998,6 +999,7 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                         ? FontWeight.w600
                                         : FontWeight.w500,
                                     color: previewColor,
+                                    height: 1.35,
                                   ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -1148,8 +1150,8 @@ class _StoryCirclesRow extends StatelessWidget {
                 Text(
                   '새 친구',
                   style: typography.labelMedium.copyWith(
-                    color: colors.textSecondary,
-                    fontWeight: FontWeight.w500,
+                    color: colors.textSubtitle,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
@@ -1451,8 +1453,9 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
                     child: Text(
                       '추천 친구를 바로 고르거나, 취향에 맞는 친구를 직접 만들 수 있어요.',
                       style: context.typography.bodyMedium.copyWith(
-                        color: context.colors.textSecondary,
+                        color: context.colors.textSubtitle,
                         height: 1.45,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -1469,7 +1472,8 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
                 decoration: InputDecoration(
                   hintText: '친구 검색',
                   hintStyle: context.typography.bodyMedium.copyWith(
-                    color: context.colors.textTertiary,
+                    color: context.colors.textSecondary,
+                    fontWeight: FontWeight.w500,
                   ),
                   prefixIcon: Icon(
                     Icons.search,
@@ -1496,7 +1500,7 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
                 child: Text(
                   resultSummary,
                   style: context.typography.labelMedium.copyWith(
-                    color: context.colors.textSecondary,
+                    color: context.colors.textSubtitle,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -1562,7 +1566,8 @@ class _SheetSectionTitle extends StatelessWidget {
     return Text(
       label,
       style: context.typography.bodyLarge.copyWith(
-        color: context.colors.textSecondary,
+        color: context.colors.textSubtitle,
+        fontWeight: FontWeight.w600,
       ),
     );
   }
@@ -1635,8 +1640,9 @@ class _NewFriendActionCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         '이름, 성격, 분위기, 관계를 정해서 원하는 흐름의 대화를 바로 시작하세요.',
-                        style: context.typography.labelSmall.copyWith(
-                          color: context.colors.textTertiary,
+                        style: context.typography.bodySmall.copyWith(
+                          color: context.colors.textSubtitle,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
@@ -1724,8 +1730,9 @@ class _NewMessageEmptyState extends StatelessWidget {
             '다른 키워드로 다시 찾아보거나, 위에서 새 친구를 직접 만들어보세요.',
             textAlign: TextAlign.center,
             style: context.typography.bodyMedium.copyWith(
-              color: context.colors.textSecondary,
+              color: context.colors.textSubtitle,
               height: 1.45,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -1786,8 +1793,9 @@ class _NewMessageCharacterTile extends StatelessWidget {
       ),
       subtitle: Text(
         summary,
-        style: context.typography.labelSmall.copyWith(
-          color: context.colors.textTertiary,
+        style: context.typography.labelMedium.copyWith(
+          color: context.colors.textSubtitle,
+          fontWeight: FontWeight.w500,
         ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,

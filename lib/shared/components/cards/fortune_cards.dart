@@ -292,22 +292,24 @@ class FortuneRecordCard extends StatelessWidget {
                 icon: badgeIcon,
                 tone: badgeTone,
                 backgroundColor: context.colors.backgroundTertiary,
-                foregroundColor: context.colors.textSecondary,
+                foregroundColor: context.colors.textSubtitle,
                 borderRadius: DSRadius.sm,
               ),
               const SizedBox(width: DSSpacing.sm),
               Text(
                 metaText,
-                style: context.bodySmall.copyWith(
-                  color: context.colors.textTertiary,
+                style: context.labelMedium.copyWith(
+                  color: context.colors.textSubtitle,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               const Spacer(),
               if (trailingText != null)
                 Text(
                   trailingText!,
-                  style: context.labelSmall.copyWith(
-                    color: context.colors.textTertiary,
+                  style: context.labelMedium.copyWith(
+                    color: context.colors.textSubtitle,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               if (trailingAction != null) ...[
@@ -321,7 +323,8 @@ class FortuneRecordCard extends StatelessWidget {
             Text(
               summary!,
               style: context.bodySmall.copyWith(
-                color: context.colors.textSecondary,
+                color: context.colors.textSubtitle,
+                fontWeight: FontWeight.w500,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
