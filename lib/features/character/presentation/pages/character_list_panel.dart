@@ -109,8 +109,8 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
     final targetCharacter = option.expertId != null
         ? ref.read(characterByIdProvider(option.expertId!))
         : (option.specialtyCategory != null
-            ? ref.read(categoryExpertProvider(option.specialtyCategory!))
-            : null);
+              ? ref.read(categoryExpertProvider(option.specialtyCategory!))
+              : null);
 
     if (targetCharacter != null) {
       widget.onCharacterSelected(targetCharacter);
@@ -128,23 +128,23 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
     final isCatalogPreview = widget.catalogPreview != null;
     final characters = isCatalogPreview
         ? (currentTab == CharacterListTab.story
-            ? ref.watch(storyCharactersProvider)
-            : ref.watch(fortuneCharactersProvider))
+              ? ref.watch(storyCharactersProvider)
+              : ref.watch(fortuneCharactersProvider))
         : (currentTab == CharacterListTab.story
-            ? ref.watch(sortedStoryCharactersProvider)
-            : ref.watch(sortedFortuneCharactersProvider));
+              ? ref.watch(sortedStoryCharactersProvider)
+              : ref.watch(sortedFortuneCharactersProvider));
     final userProfile = isCatalogPreview
         ? null
         : ref.watch(userProfileNotifierProvider).valueOrNull;
     final starterOptions = isCatalogPreview
         ? const <OnboardingInterestOption>[]
         : selectedOnboardingInterestIds(
-            userProfile?.fortunePreferences?.categoryWeights,
-          )
-            .map((id) => onboardingInterestById[id])
-            .whereType<OnboardingInterestOption>()
-            .take(3)
-            .toList(growable: false);
+                userProfile?.fortunePreferences?.categoryWeights,
+              )
+              .map((id) => onboardingInterestById[id])
+              .whereType<OnboardingInterestOption>()
+              .take(3)
+              .toList(growable: false);
     final showsStarterSection = starterOptions.isNotEmpty;
 
     return GestureDetector(
@@ -218,8 +218,9 @@ class _CharacterListPanelState extends ConsumerState<CharacterListPanel> {
                       );
                     }
 
-                    final characterIndex =
-                        showsStarterSection ? index - 1 : index;
+                    final characterIndex = showsStarterSection
+                        ? index - 1
+                        : index;
                     final character = characters[characterIndex];
                     return _CharacterListItem(
                       character: character,
@@ -470,8 +471,9 @@ class _StarterOptionCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       option.subtitle,
-                      style: typography.labelSmall.copyWith(
-                        color: colors.textSecondary,
+                      style: typography.labelMedium.copyWith(
+                        color: colors.textSubtitle,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -483,7 +485,7 @@ class _StarterOptionCard extends StatelessWidget {
               Icon(
                 Icons.arrow_forward_ios,
                 size: 14,
-                color: colors.textSecondary,
+                color: colors.textSubtitle,
               ),
             ],
           ),
@@ -525,8 +527,9 @@ class _CharacterTabBar extends StatelessWidget {
           _TabButton(
             label: context.l10n.viewFortune,
             isSelected: currentTab == CharacterListTab.fortune,
-            onTap:
-                isLocked ? null : () => onTabChanged(CharacterListTab.fortune),
+            onTap: isLocked
+                ? null
+                : () => onTabChanged(CharacterListTab.fortune),
           ),
         ],
       ),
@@ -568,7 +571,7 @@ class _TabButton extends StatelessWidget {
           label,
           style: context.typography.bodySmall.copyWith(
             fontWeight: FontWeight.w700,
-            color: isSelected ? colors.background : colors.textSecondary,
+            color: isSelected ? colors.background : colors.textSubtitle,
           ),
         ),
       ),
@@ -691,7 +694,8 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
   Widget build(BuildContext context) {
     final colors = context.colors;
     final typography = context.typography;
-    final CharacterChatState chatState = widget.previewChatState ??
+    final CharacterChatState chatState =
+        widget.previewChatState ??
         ref.watch(characterChatProvider(widget.character.id));
     final interactionsEnabled = widget.previewChatState == null;
     final accentPalette = CharacterAccentPalette.from(
@@ -707,7 +711,8 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
     ).take(3).map((t) => '#$t').join(' ');
 
     // 마지막 메시지가 캐릭터인지 확인
-    final isLastMessageFromCharacter = chatState.messages.isNotEmpty &&
+    final isLastMessageFromCharacter =
+        chatState.messages.isNotEmpty &&
         chatState.messages.last.type == CharacterChatMessageType.character;
     // 읽지 않은 메시지가 있으면 내 차례 대신 숫자 배지를 우선 표시한다.
     final hasUnread = unreadCount > 0;
@@ -837,8 +842,8 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                             backgroundColor: accentPalette.accent,
                             backgroundImage:
                                 widget.character.avatarAsset.isNotEmpty
-                                    ? AssetImage(widget.character.avatarAsset)
-                                    : null,
+                                ? AssetImage(widget.character.avatarAsset)
+                                : null,
                             child: widget.character.avatarAsset.isEmpty
                                 ? Text(
                                     widget.character.initial,
@@ -922,8 +927,8 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                       widget.character.specialtyCategory!,
                                     ),
                                     style: typography.labelSmall.copyWith(
-                                      fontWeight: FontWeight.w500,
-                                      color: colors.textSecondary,
+                                      fontWeight: FontWeight.w600,
+                                      color: colors.textSubtitle,
                                     ),
                                   ),
                                 ),
@@ -933,17 +938,17 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                                   chatState.lastMessageTime != null)
                                 Text(
                                   _formatTimestamp(chatState.lastMessageTime!),
-                                  style: typography.labelSmall.copyWith(
-                                    fontWeight: FontWeight.w400,
-                                    color: colors.textTertiary,
+                                  style: typography.labelMedium.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: colors.textSubtitle,
                                   ),
                                 ),
                               if (!hasConversation)
                                 Text(
                                   context.l10n.newConversation,
-                                  style: typography.labelSmall.copyWith(
-                                    fontWeight: FontWeight.w400,
-                                    color: colors.textTertiary,
+                                  style: typography.labelMedium.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: colors.textSubtitle,
                                   ),
                                 ),
                             ],
@@ -1024,21 +1029,21 @@ class _CharacterListItemState extends ConsumerState<_CharacterListItem>
                             isTyping
                                 ? context.l10n.typing
                                 : (hasConversation
-                                    ? chatState.lastMessagePreview
-                                    : CharacterLocalizer
-                                        .resolveShortDescription(
-                                        context,
-                                        widget.character,
-                                      )),
+                                      ? chatState.lastMessagePreview
+                                      : CharacterLocalizer.resolveShortDescription(
+                                          context,
+                                          widget.character,
+                                        )),
                             style: typography.bodySmall.copyWith(
                               fontWeight: isTyping || hasUnread
-                                  ? FontWeight.w500
-                                  : FontWeight.w400,
+                                  ? FontWeight.w600
+                                  : FontWeight.w500,
                               color: isTyping
                                   ? accentPalette.accent
                                   : hasUnread
-                                      ? colors.textPrimary
-                                      : colors.textSecondary,
+                                  ? colors.textPrimary
+                                  : colors.textSubtitle,
+                              height: 1.35,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -1207,8 +1212,9 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
                     child: Text(
                       '추천 친구를 바로 고르거나, 취향에 맞는 친구를 직접 만들 수 있어요.',
                       style: context.typography.bodyMedium.copyWith(
-                        color: context.colors.textSecondary,
+                        color: context.colors.textSubtitle,
                         height: 1.45,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -1229,7 +1235,8 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
                 decoration: InputDecoration(
                   hintText: '친구 검색',
                   hintStyle: context.typography.bodyMedium.copyWith(
-                    color: context.colors.textTertiary,
+                    color: context.colors.textSecondary,
+                    fontWeight: FontWeight.w500,
                   ),
                   prefixIcon: Icon(
                     Icons.search,
@@ -1260,7 +1267,7 @@ class _NewMessageSheetState extends ConsumerState<_NewMessageSheet> {
                 child: Text(
                   resultSummary,
                   style: context.typography.labelMedium.copyWith(
-                    color: context.colors.textSecondary,
+                    color: context.colors.textSubtitle,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -1327,7 +1334,8 @@ class _SheetSectionTitle extends StatelessWidget {
     return Text(
       label,
       style: context.typography.bodyLarge.copyWith(
-        color: context.colors.textSecondary,
+        color: context.colors.textSubtitle,
+        fontWeight: FontWeight.w600,
       ),
     );
   }
@@ -1397,8 +1405,9 @@ class _NewFriendActionCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         '이름, 성격, 분위기, 관계를 정해서 원하는 흐름의 대화를 바로 시작하세요.',
-                        style: context.typography.labelSmall.copyWith(
-                          color: context.colors.textTertiary,
+                        style: context.typography.bodySmall.copyWith(
+                          color: context.colors.textSubtitle,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
@@ -1484,8 +1493,9 @@ class _NewMessageEmptyState extends StatelessWidget {
             '다른 키워드로 다시 찾아보거나, 위에서 새 친구를 직접 만들어보세요.',
             textAlign: TextAlign.center,
             style: context.typography.bodyMedium.copyWith(
-              color: context.colors.textSecondary,
+              color: context.colors.textSubtitle,
               height: 1.45,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -1546,8 +1556,9 @@ class _NewMessageCharacterTile extends StatelessWidget {
       ),
       subtitle: Text(
         summary,
-        style: context.typography.labelSmall.copyWith(
-          color: context.colors.textTertiary,
+        style: context.typography.labelMedium.copyWith(
+          color: context.colors.textSubtitle,
+          fontWeight: FontWeight.w500,
         ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
