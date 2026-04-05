@@ -30,11 +30,8 @@ const onboardingSteps = [
 ] as const;
 
 export function OnboardingScreen() {
-  const { gate, onboardingProgress, completeOnboarding, session } =
-    useAppBootstrap();
+  const { onboardingProgress, completeOnboarding, session } = useAppBootstrap();
   const { state } = useMobileAppState();
-  const profile = state.profile;
-  const premium = state.premium;
 
   async function handleFinishOnboarding() {
     await completeOnboarding();
@@ -48,16 +45,15 @@ export function OnboardingScreen() {
       </AppText>
       <AppText variant="displaySmall">온보딩</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
-        RN에서는 첫 진입과 재진입이 같은 계약으로 처리됩니다. 현재 화면은 그 흐름을 보여주는 실제 셸입니다.
+        RN에서는 첫 진입과 재진입이 같은 계약으로 처리됩니다. 현재 화면은 그
+        흐름을 보여주는 실제 셸입니다.
       </AppText>
 
       <AccountSnapshotCard
-        description="저장된 상태는 한 카드로 합치고, onboarding 진행만 아래에서 따로 보여줍니다."
-        emptyCopy="저장된 프로필이 아직 없어서, onboarding 단계에서 채울 기본 정보만 노출합니다."
-        gate={gate}
+        description="앱 재실행 후에도 남아 있는 프로필과 premium 상태를 먼저 보여줍니다."
         onboardingProgress={onboardingProgress}
-        premium={premium}
-        profile={profile}
+        premium={state.premium}
+        profile={state.profile}
         sessionActive={Boolean(session)}
       />
 
@@ -90,10 +86,7 @@ export function OnboardingScreen() {
             style={{ backgroundColor: fortuneTheme.colors.surfaceSecondary }}
           >
             <AppText variant="labelLarge">{step.title}</AppText>
-            <AppText
-              variant="bodySmall"
-              color={fortuneTheme.colors.textSecondary}
-            >
+            <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
               {step.description}
             </AppText>
           </Card>
@@ -103,7 +96,8 @@ export function OnboardingScreen() {
       <Card>
         <AppText variant="heading4">다음 동작</AppText>
         <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
-          이 화면은 진입 흐름을 안내하고, 실제 완료 동작은 상위 bootstrap contract에서 처리합니다.
+          이 화면은 진입 흐름을 안내하고, 실제 완료 동작은 상위 bootstrap
+          contract에서 처리합니다.
         </AppText>
         <PrimaryButton onPress={() => void handleFinishOnboarding()}>
           온보딩 완료하고 Chat으로

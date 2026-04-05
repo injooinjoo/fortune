@@ -19,6 +19,17 @@ import {
   type MobileAppState,
 } from './mobile-app-state';
 
+const guestMobileAppStateStorageKey = `${mobileAppStateStorageKey}:guest`;
+const lastAuthenticatedUserIdStorageKey = 'fortune.last-auth-user-id.v1';
+
+function resolveMobileAppStateStorageKey(userId: string | null = null) {
+  if (!userId) {
+    return guestMobileAppStateStorageKey;
+  }
+
+  return `${mobileAppStateStorageKey}:${userId}`;
+}
+
 export async function getUnifiedOnboardingProgress(): Promise<UnifiedOnboardingProgress> {
   const raw = await SecureStore.getItemAsync(unifiedOnboardingProgressStorageKey);
 
@@ -88,8 +99,12 @@ export async function setPendingChatFortuneType(
   );
 }
 
-export async function getMobileAppState(): Promise<MobileAppState> {
-  const raw = await SecureStore.getItemAsync(mobileAppStateStorageKey);
+export async function getMobileAppState(
+  userId: string | null = null,
+): Promise<MobileAppState> {
+  const raw = await SecureStore.getItemAsync(
+    resolveMobileAppStateStorageKey(userId),
+  );
 
   if (!raw) {
     return emptyMobileAppState;
@@ -104,15 +119,37 @@ export async function getMobileAppState(): Promise<MobileAppState> {
   }
 }
 
-export async function saveMobileAppState(state: MobileAppState) {
-  await SecureStore.setItemAsync(mobileAppStateStorageKey, JSON.stringify(state));
+export async function saveMobileAppState(
+  state: MobileAppState,
+  userId: string | null = null,
+) {
+  await SecureStore.setItemAsync(
+    resolveMobileAppStateStorageKey(userId),
+    JSON.stringify(state),
+  );
   return state;
 }
 
-export async function patchMobileAppState(patch: Partial<MobileAppState>) {
-  const current = await getMobileAppState();
+export async function patchMobileAppState(
+  patch: Partial<MobileAppState>,
+  userId: string | null = null,
+) {
+  const current = await getMobileAppState(userId);
   const next = mergeMobileAppState(current, patch);
 
-  await saveMobileAppState(next);
+  await saveMobileAppState(next, userId);
   return next;
+}
+
+export async function clearMobileAppState(userId: string | null = null) {
+  await SecureStore.deleteItemAsync(resolveMobileAppStateStorageKey(userId));
+}
+
+export async function getLastAuthenticatedUserId() {
+  const value = await SecureStore.getItemAsync(lastAuthenticatedUserIdStorageKey);
+  return typeof value === 'string' && value.length > 0 ? value : null;
+}
+
+export async function saveLastAuthenticatedUserId(userId: string) {
+  await SecureStore.setItemAsync(lastAuthenticatedUserIdStorageKey, userId);
 }

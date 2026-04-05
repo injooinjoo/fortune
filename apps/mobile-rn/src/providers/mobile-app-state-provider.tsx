@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type PropsWithChildren,
 } from 'react';
@@ -17,8 +18,8 @@ import {
   emptyMobileAppState,
   mergeMobileAppState,
   type MobileAppState,
-  type NotificationPreferences,
   type MobileProfileState,
+  type NotificationPreferences,
 } from '../lib/mobile-app-state';
 import { getMobileAppState, saveMobileAppState } from '../lib/storage';
 import {
@@ -34,6 +35,7 @@ type MobileAppStateStatus = 'loading' | 'ready';
 interface MobileAppStateContextValue {
   state: MobileAppState;
   status: MobileAppStateStatus;
+  syncRemoteProfile: () => Promise<MobileAppState | null>;
   saveProfile: (profile: Partial<MobileProfileState>) => Promise<void>;
   saveNotifications: (
     notifications: Partial<NotificationPreferences>,
@@ -50,6 +52,7 @@ interface MobileAppStateContextValue {
 const MobileAppStateContext = createContext<MobileAppStateContextValue>({
   state: emptyMobileAppState,
   status: 'loading',
+  syncRemoteProfile: async () => null,
   saveProfile: async () => undefined,
   saveNotifications: async () => undefined,
   recordChatIntent: async () => undefined,
@@ -58,185 +61,259 @@ const MobileAppStateContext = createContext<MobileAppStateContextValue>({
 });
 
 export function MobileAppStateProvider({ children }: PropsWithChildren) {
-  const { onboardingProgress, session, updateOnboardingProgress } =
-    useAppBootstrap();
+  const {
+    onboardingProgress,
+    session,
+    status: bootstrapStatus,
+    updateOnboardingProgress,
+  } = useAppBootstrap();
   const [state, setState] = useState<MobileAppState>(emptyMobileAppState);
   const [status, setStatus] = useState<MobileAppStateStatus>('loading');
+  const activeUserId = session?.user.id ?? null;
+  const activeUserIdRef = useRef<string | null>(activeUserId);
+  const writeQueueRef = useRef<Promise<void>>(Promise.resolve());
 
   useEffect(() => {
-    let mounted = true;
+    activeUserIdRef.current = activeUserId;
+  }, [activeUserId]);
 
-    async function bootstrap() {
-      try {
-        const nextState = await getMobileAppState();
+  const runSerialized = useCallback(async <T,>(
+    operation: () => Promise<T>,
+  ): Promise<T> => {
+    const previousWrite = writeQueueRef.current;
+    let releaseQueue: () => void = () => undefined;
 
-        if (mounted) {
-          setState(nextState);
-        }
-      } catch (error) {
-        await captureError(error, { surface: 'mobile-app-state:init' });
-      } finally {
-        if (mounted) {
-          setStatus('ready');
-        }
-      }
-    }
-
-    void bootstrap();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  const persist = useCallback(async (nextState: MobileAppState) => {
-    await saveMobileAppState(nextState);
-    setState(nextState);
-  }, []);
-
-  const persistFromCurrent = useCallback(async (
-    recipe: (current: MobileAppState) => MobileAppState,
-  ) => {
-    const current = await getMobileAppState();
-    const nextState = recipe(current);
-    await persist(nextState);
-    return nextState;
-  }, [persist]);
-
-  const saveProfile = useCallback(async (profile: Partial<MobileProfileState>) => {
-    const nextState = await persistFromCurrent((current) =>
-      mergeMobileAppState(current, {
-        profile,
-      }),
-    );
-
-    if (nextState.profile.birthDate && !onboardingProgress.birthCompleted) {
-      updateOnboardingProgress({
-        birthCompleted: true,
-      }).catch((error) => {
-        captureError(error, {
-          surface: 'mobile-app-state:save-profile-gate',
-        }).catch(() => undefined);
-      });
-    }
-
-    if (!session) {
-      return;
-    }
-
-    const remoteUpdates: Record<string, unknown> = {
-      name: nextState.profile.displayName || null,
-      birth_date: nextState.profile.birthDate || null,
-      birth_time: nextState.profile.birthTime || null,
-      mbti: nextState.profile.mbti || null,
-      blood_type: nextState.profile.bloodType || null,
-      onboarding_completed:
-        Boolean(nextState.profile.birthDate) &&
-        Boolean(nextState.profile.birthTime),
-    };
-
-    updateRemoteUserProfile(session.user.id, remoteUpdates).catch((error) => {
-      captureError(error, { surface: 'mobile-app-state:save-profile-remote' }).catch(
-        () => undefined,
-      );
+    writeQueueRef.current = new Promise<void>((resolve) => {
+      releaseQueue = resolve;
     });
-  }, [
-    onboardingProgress.birthCompleted,
-    persistFromCurrent,
-    session,
-    updateOnboardingProgress,
-  ]);
+
+    await previousWrite;
+
+    try {
+      return await operation();
+    } finally {
+      releaseQueue();
+    }
+  }, []);
 
   useEffect(() => {
-    if (!session || status !== 'ready') {
+    if (bootstrapStatus !== 'ready') {
+      setStatus('loading');
       return;
     }
 
-    const currentSession = session;
     let cancelled = false;
+    const targetUserId = activeUserId;
 
-    async function syncRemoteProfile() {
+    activeUserIdRef.current = targetUserId;
+    setStatus('loading');
+
+    async function loadScopedState() {
       try {
-        const remoteProfile = await ensureRemoteUserProfile(currentSession);
+        const nextState = await runSerialized(() => getMobileAppState(targetUserId));
 
-        if (cancelled || !remoteProfile) {
-          return;
-        }
-
-        const nextState = await persistFromCurrent((current) =>
-          mergeMobileAppState(current, remoteProfileToPatch(remoteProfile)),
-        );
-
-        const onboardingPatch = remoteProfileToOnboardingPatch(remoteProfile);
-        const shouldUpdateOnboarding =
-          onboardingProgress.softGateCompleted !== onboardingPatch.softGateCompleted ||
-          onboardingProgress.authCompleted !== onboardingPatch.authCompleted ||
-          onboardingProgress.birthCompleted !== onboardingPatch.birthCompleted ||
-          onboardingProgress.interestCompleted !== onboardingPatch.interestCompleted ||
-          onboardingProgress.firstRunHandoffSeen !== onboardingPatch.firstRunHandoffSeen;
-
-        if (shouldUpdateOnboarding) {
-          await updateOnboardingProgress(onboardingPatch);
-        }
-
-        if (cancelled) {
+        if (cancelled || activeUserIdRef.current !== targetUserId) {
           return;
         }
 
         setState(nextState);
       } catch (error) {
-        await captureError(error, { surface: 'mobile-app-state:remote-sync' });
+        await captureError(error, { surface: 'mobile-app-state:init' });
+
+        if (!cancelled && activeUserIdRef.current === targetUserId) {
+          setState(emptyMobileAppState);
+        }
+      } finally {
+        if (!cancelled && activeUserIdRef.current === targetUserId) {
+          setStatus('ready');
+        }
       }
     }
 
-    void syncRemoteProfile();
+    void loadScopedState();
 
     return () => {
       cancelled = true;
     };
+  }, [activeUserId, bootstrapStatus, runSerialized]);
+
+  const persistFromCurrent = useCallback(
+    async (
+      recipe: (current: MobileAppState) => MobileAppState,
+      targetUserId: string | null = activeUserIdRef.current,
+    ) =>
+      runSerialized(async () => {
+        const current = await getMobileAppState(targetUserId);
+        const nextState = recipe(current);
+
+        await saveMobileAppState(nextState, targetUserId);
+
+        if (activeUserIdRef.current === targetUserId) {
+          setState(nextState);
+        }
+
+        return nextState;
+      }),
+    [runSerialized],
+  );
+
+  const saveProfile = useCallback(
+    async (profile: Partial<MobileProfileState>) => {
+      const nextState = await persistFromCurrent((current) =>
+        mergeMobileAppState(current, {
+          profile,
+        }),
+      );
+
+      if (nextState.profile.birthDate && !onboardingProgress.birthCompleted) {
+        updateOnboardingProgress({
+          birthCompleted: true,
+        }).catch((error) => {
+          captureError(error, {
+            surface: 'mobile-app-state:save-profile-gate',
+          }).catch(() => undefined);
+        });
+      }
+
+      if (!session) {
+        return;
+      }
+
+      const remoteUpdates: Record<string, unknown> = {};
+
+      if ('displayName' in profile) {
+        remoteUpdates.name = nextState.profile.displayName || null;
+      }
+
+      if ('birthDate' in profile) {
+        remoteUpdates.birth_date = nextState.profile.birthDate || null;
+      }
+
+      if ('birthTime' in profile) {
+        remoteUpdates.birth_time = nextState.profile.birthTime || null;
+      }
+
+      if ('mbti' in profile) {
+        remoteUpdates.mbti = nextState.profile.mbti || null;
+      }
+
+      if ('bloodType' in profile) {
+        remoteUpdates.blood_type = nextState.profile.bloodType || null;
+      }
+
+      if (Object.keys(remoteUpdates).length === 0) {
+        return;
+      }
+
+      updateRemoteUserProfile(session.user.id, remoteUpdates).catch((error) => {
+        captureError(error, {
+          surface: 'mobile-app-state:save-profile-remote',
+        }).catch(() => undefined);
+      });
+    },
+    [onboardingProgress.birthCompleted, persistFromCurrent, session, updateOnboardingProgress],
+  );
+
+  const syncRemoteProfile = useCallback(async (): Promise<MobileAppState | null> => {
+    if (!session || bootstrapStatus !== 'ready' || status !== 'ready') {
+      return null;
+    }
+
+    const targetUserId = session.user.id;
+    const remoteProfile = await ensureRemoteUserProfile(session);
+
+    if (!remoteProfile || activeUserIdRef.current !== targetUserId) {
+      return null;
+    }
+
+    const nextState = await persistFromCurrent(
+      (current) => mergeMobileAppState(current, remoteProfileToPatch(remoteProfile)),
+      targetUserId,
+    );
+    const onboardingPatch = remoteProfileToOnboardingPatch(remoteProfile);
+    const shouldUpdateOnboarding =
+      onboardingProgress.birthCompleted !== onboardingPatch.birthCompleted ||
+      onboardingProgress.interestCompleted !== onboardingPatch.interestCompleted;
+
+    if (shouldUpdateOnboarding) {
+      await updateOnboardingProgress(onboardingPatch);
+    }
+
+    return nextState;
   }, [
-    onboardingProgress.authCompleted,
+    bootstrapStatus,
     onboardingProgress.birthCompleted,
-    onboardingProgress.firstRunHandoffSeen,
     onboardingProgress.interestCompleted,
-    onboardingProgress.softGateCompleted,
     persistFromCurrent,
     session,
     status,
     updateOnboardingProgress,
   ]);
 
-  const saveNotifications = useCallback(async (
-    notifications: Partial<NotificationPreferences>,
-  ) => {
-    await persistFromCurrent((current) =>
-      mergeMobileAppState(current, {
-        notifications,
-      }),
-    );
-  }, [persistFromCurrent]);
+  useEffect(() => {
+    let cancelled = false;
 
-  const recordChatIntent = useCallback(async (payload: {
-    characterId?: string | null;
-    fortuneType?: FortuneTypeId | null;
-    incrementMessages?: boolean;
-  }) => {
-    await persistFromCurrent((current) =>
-      mergeMobileAppState(current, {
-        chat: {
-          selectedCharacterId:
-            payload.characterId ?? current.chat.selectedCharacterId,
-          lastFortuneType: payload.fortuneType ?? current.chat.lastFortuneType,
-          sentMessageCount:
-            current.chat.sentMessageCount + (payload.incrementMessages ? 1 : 0),
-        },
-      }),
-    );
-  }, [persistFromCurrent]);
+    if (!session || bootstrapStatus !== 'ready' || status !== 'ready') {
+      return () => {
+        cancelled = true;
+      };
+    }
 
-  const purchaseProduct = useCallback(async (productId: ProductId) => {
-    await persistFromCurrent((current) => applyProductPurchase(current, productId));
-  }, [persistFromCurrent]);
+    syncRemoteProfile().catch((error) => {
+      if (cancelled) {
+        return;
+      }
+
+      captureError(error, { surface: 'mobile-app-state:remote-sync' }).catch(
+        () => undefined,
+      );
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [bootstrapStatus, session, status, syncRemoteProfile]);
+
+  const saveNotifications = useCallback(
+    async (notifications: Partial<NotificationPreferences>) => {
+      await persistFromCurrent((current) =>
+        mergeMobileAppState(current, {
+          notifications,
+        }),
+      );
+    },
+    [persistFromCurrent],
+  );
+
+  const recordChatIntent = useCallback(
+    async (payload: {
+      characterId?: string | null;
+      fortuneType?: FortuneTypeId | null;
+      incrementMessages?: boolean;
+    }) => {
+      await persistFromCurrent((current) =>
+        mergeMobileAppState(current, {
+          chat: {
+            selectedCharacterId:
+              payload.characterId ?? current.chat.selectedCharacterId,
+            lastFortuneType: payload.fortuneType ?? current.chat.lastFortuneType,
+            sentMessageCount:
+              current.chat.sentMessageCount + (payload.incrementMessages ? 1 : 0),
+          },
+        }),
+      );
+    },
+    [persistFromCurrent],
+  );
+
+  const purchaseProduct = useCallback(
+    async (productId: ProductId) => {
+      await persistFromCurrent((current) =>
+        applyProductPurchase(current, productId),
+      );
+    },
+    [persistFromCurrent],
+  );
 
   const restorePurchases = useCallback(async () => {
     await persistFromCurrent((current) => applyPurchaseRestore(current));
@@ -246,13 +323,23 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
     () => ({
       state,
       status,
+      syncRemoteProfile,
       saveProfile,
       saveNotifications,
       recordChatIntent,
       purchaseProduct,
       restorePurchases,
     }),
-    [purchaseProduct, recordChatIntent, restorePurchases, saveNotifications, saveProfile, state, status],
+    [
+      purchaseProduct,
+      recordChatIntent,
+      restorePurchases,
+      saveNotifications,
+      saveProfile,
+      state,
+      status,
+      syncRemoteProfile,
+    ],
   );
 
   return (

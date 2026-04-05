@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import { View } from 'react-native';
 
+import { AccountSnapshotCard } from '../components/account-snapshot-card';
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
 import { Chip } from '../components/chip';
@@ -31,15 +32,6 @@ const authOptions = [
 export function SignupScreen() {
   const { gate, markGuestBrowse, onboardingProgress, session } = useAppBootstrap();
   const { state } = useMobileAppState();
-  const profile = state.profile;
-  const premium = state.premium;
-  const hasProfileHint = Boolean(
-    profile.displayName ||
-      profile.birthDate ||
-      profile.birthTime ||
-      profile.mbti ||
-      profile.bloodType,
-  );
 
   return (
     <Screen>
@@ -60,48 +52,14 @@ export function SignupScreen() {
         </View>
       </Card>
 
-      <Card>
-        <AppText variant="heading4">저장된 상태</AppText>
-        <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
-          앱 재실행 후에도 남아 있는 프로필과 premium 상태를 먼저 보여줍니다.
-        </AppText>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-          <Chip
-            label={session ? 'session:active' : 'session:guest'}
-            tone={session ? 'success' : 'neutral'}
-          />
-          <Chip label={`gate:${gate}`} />
-          <Chip label={`soft:${onboardingProgress.softGateCompleted ? 'done' : 'todo'}`} />
-          <Chip
-            label={`profile:${hasProfileHint ? 'saved' : 'empty'}`}
-            tone={hasProfileHint ? 'success' : 'neutral'}
-          />
-          <Chip
-            label={`plan:${premium.status}`}
-            tone={premium.status === 'inactive' ? 'neutral' : 'accent'}
-          />
-          <Chip label={`tokens:${premium.tokenBalance.toLocaleString('ko-KR')}`} />
-        </View>
-        {hasProfileHint ? (
-          <View style={{ gap: 8 }}>
-            <AppText variant="labelLarge">{profile.displayName || '저장된 이름 없음'}</AppText>
-            <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-              {[
-                profile.birthDate ? `생년월일 ${profile.birthDate}` : null,
-                profile.birthTime ? `시간 ${profile.birthTime}` : null,
-                profile.mbti ? `MBTI ${profile.mbti}` : null,
-                profile.bloodType ? `혈액형 ${profile.bloodType}` : null,
-              ]
-                .filter(Boolean)
-                .join(' · ')}
-            </AppText>
-          </View>
-        ) : (
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            아직 저장된 프로필이 없어서, 가입 후 온보딩에서 채워질 정보를 보여줄 수 있습니다.
-          </AppText>
-        )}
-      </Card>
+      <AccountSnapshotCard
+        description="앱 재실행 후에도 남아 있는 프로필과 premium 상태를 먼저 보여줍니다."
+        gate={gate}
+        onboardingProgress={onboardingProgress}
+        premium={state.premium}
+        profile={state.profile}
+        sessionActive={Boolean(session)}
+      />
 
       <Card>
         <AppText variant="heading4">소셜 로그인</AppText>

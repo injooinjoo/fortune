@@ -1,4 +1,12 @@
-import { createContext, useContext, useEffect, useMemo, useState, type PropsWithChildren } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type PropsWithChildren,
+} from 'react';
 
 import * as Linking from 'expo-linking';
 import { router, type Href } from 'expo-router';
@@ -15,8 +23,10 @@ import { trackEvent } from '../lib/analytics';
 import { captureError } from '../lib/error-reporting';
 import {
   getPendingChatFortuneType,
+  getLastAuthenticatedUserId,
   getUnifiedOnboardingProgress,
   patchUnifiedOnboardingProgress,
+  saveLastAuthenticatedUserId,
   saveUnifiedOnboardingProgress,
   setPendingChatFortuneType,
 } from '../lib/storage';
@@ -62,6 +72,7 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
   );
   const [pendingChatFortuneType, setPendingChatFortuneTypeState] =
     useState<FortuneTypeId | null>(null);
+  const lastAuthenticatedUserIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -98,15 +109,18 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
 
     async function bootstrap() {
       try {
-        const [storedProgress, queuedFortuneType] = await Promise.all([
+        const [storedProgress, queuedFortuneType, lastAuthenticatedUserId] =
+          await Promise.all([
           getUnifiedOnboardingProgress(),
           getPendingChatFortuneType(),
+          getLastAuthenticatedUserId(),
         ]);
 
         if (!mounted) {
           return;
         }
 
+        lastAuthenticatedUserIdRef.current = lastAuthenticatedUserId;
         setOnboardingProgress(storedProgress);
         setPendingChatFortuneTypeState(queuedFortuneType);
 
@@ -120,9 +134,29 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
           setSession(data.session);
 
           if (data.session) {
+            const needsAuthScopedReset =
+              lastAuthenticatedUserIdRef.current !== null &&
+              lastAuthenticatedUserIdRef.current !== data.session.user.id;
+
+            await saveLastAuthenticatedUserId(data.session.user.id);
+            lastAuthenticatedUserIdRef.current = data.session.user.id;
+            await syncProgress(
+              needsAuthScopedReset
+                ? {
+                    authCompleted: true,
+                    softGateCompleted: true,
+                    birthCompleted: false,
+                    interestCompleted: false,
+                    firstRunHandoffSeen: false,
+                  }
+                : {
+                    authCompleted: true,
+                    softGateCompleted: true,
+                  },
+            );
+          } else if (storedProgress.authCompleted) {
             await syncProgress({
-              authCompleted: true,
-              softGateCompleted: true,
+              authCompleted: false,
             });
           }
         }
@@ -150,9 +184,36 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
           }
 
           if (nextSession) {
+            const needsAuthScopedReset =
+              lastAuthenticatedUserIdRef.current !== null &&
+              lastAuthenticatedUserIdRef.current !== nextSession.user.id;
+
+            lastAuthenticatedUserIdRef.current = nextSession.user.id;
+            saveLastAuthenticatedUserId(nextSession.user.id)
+              .then(() =>
+                syncProgress(
+                  needsAuthScopedReset
+                    ? {
+                        authCompleted: true,
+                        softGateCompleted: true,
+                        birthCompleted: false,
+                        interestCompleted: false,
+                        firstRunHandoffSeen: false,
+                      }
+                    : {
+                        authCompleted: true,
+                        softGateCompleted: true,
+                      },
+                ),
+              )
+              .catch((error) => {
+                captureError(error, {
+                  surface: 'bootstrap:onAuthStateChange',
+                }).catch(() => undefined);
+              });
+          } else {
             syncProgress({
-              authCompleted: true,
-              softGateCompleted: true,
+              authCompleted: false,
             }).catch((error) => {
               captureError(error, {
                 surface: 'bootstrap:onAuthStateChange',
