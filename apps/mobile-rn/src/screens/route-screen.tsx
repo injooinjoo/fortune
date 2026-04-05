@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { appRoutesById, type AppRouteId } from '@fortune/product-contracts';
 
 import { AppText } from '../components/app-text';
@@ -8,8 +8,8 @@ import { PrimaryButton } from '../components/primary-button';
 import { Screen } from '../components/screen';
 import { fortuneTheme } from '../lib/theme';
 
-function previewPath(path: string) {
-  return path.replace(':id', 'fortune_haneul');
+function previewPath(path: string): Href {
+  return path.replace(':id', 'fortune_haneul') as Href;
 }
 
 export function RouteScreen({
