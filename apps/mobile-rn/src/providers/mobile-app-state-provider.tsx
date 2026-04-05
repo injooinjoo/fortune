@@ -21,6 +21,12 @@ import {
   type MobileProfileState,
 } from '../lib/mobile-app-state';
 import { getMobileAppState, saveMobileAppState } from '../lib/storage';
+import {
+  ensureRemoteUserProfile,
+  remoteProfileToOnboardingPatch,
+  remoteProfileToPatch,
+  updateRemoteUserProfile,
+} from '../lib/user-profile-remote';
 import { useAppBootstrap } from './app-bootstrap-provider';
 
 type MobileAppStateStatus = 'loading' | 'ready';
@@ -94,85 +100,108 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
     const current = await getMobileAppState();
     const nextState = recipe(current);
     await persist(nextState);
+    return nextState;
   }, [persist]);
 
   const saveProfile = useCallback(async (profile: Partial<MobileProfileState>) => {
-    await persistFromCurrent((current) =>
+    const nextState = await persistFromCurrent((current) =>
       mergeMobileAppState(current, {
         profile,
       }),
     );
-  }, [persistFromCurrent]);
+
+    if (nextState.profile.birthDate && !onboardingProgress.birthCompleted) {
+      updateOnboardingProgress({
+        birthCompleted: true,
+      }).catch((error) => {
+        captureError(error, {
+          surface: 'mobile-app-state:save-profile-gate',
+        }).catch(() => undefined);
+      });
+    }
+
+    if (!session) {
+      return;
+    }
+
+    const remoteUpdates: Record<string, unknown> = {
+      name: nextState.profile.displayName || null,
+      birth_date: nextState.profile.birthDate || null,
+      birth_time: nextState.profile.birthTime || null,
+      mbti: nextState.profile.mbti || null,
+      blood_type: nextState.profile.bloodType || null,
+      onboarding_completed:
+        Boolean(nextState.profile.birthDate) &&
+        Boolean(nextState.profile.birthTime),
+    };
+
+    updateRemoteUserProfile(session.user.id, remoteUpdates).catch((error) => {
+      captureError(error, { surface: 'mobile-app-state:save-profile-remote' }).catch(
+        () => undefined,
+      );
+    });
+  }, [
+    onboardingProgress.birthCompleted,
+    persistFromCurrent,
+    session,
+    updateOnboardingProgress,
+  ]);
 
   useEffect(() => {
     if (!session || status !== 'ready') {
       return;
     }
 
-    const metadata = (session.user.user_metadata ?? {}) as Record<string, unknown>;
+    const currentSession = session;
+    let cancelled = false;
 
-    const profileFromSession: Partial<MobileProfileState> = {
-      displayName:
-        state.profile.displayName ||
-        (typeof metadata.name === 'string' ? metadata.name : '') ||
-        (typeof metadata.full_name === 'string' ? metadata.full_name : '') ||
-        session.user.email ||
-        '',
-      birthDate:
-        state.profile.birthDate ||
-        (typeof metadata.birth_date === 'string' ? metadata.birth_date : ''),
-      birthTime:
-        state.profile.birthTime ||
-        (typeof metadata.birth_time === 'string' ? metadata.birth_time : ''),
-      mbti:
-        state.profile.mbti ||
-        (typeof metadata.mbti === 'string' ? metadata.mbti : ''),
-      bloodType:
-        state.profile.bloodType ||
-        (typeof metadata.blood_type === 'string' ? metadata.blood_type : ''),
-    };
+    async function syncRemoteProfile() {
+      try {
+        const remoteProfile = await ensureRemoteUserProfile(currentSession);
 
-    const hasDelta = Object.entries(profileFromSession).some(
-      ([key, value]) =>
-        typeof value === 'string' &&
-        value.length > 0 &&
-        state.profile[key as keyof MobileProfileState] !== value,
-    );
+        if (cancelled || !remoteProfile) {
+          return;
+        }
 
-    if (!hasDelta) {
-      if (
-        profileFromSession.birthDate &&
-        !onboardingProgress.birthCompleted
-      ) {
-        updateOnboardingProgress({ birthCompleted: true }).catch((error) => {
-          captureError(error, {
-            surface: 'mobile-app-state:session-hydration-gate',
-          }).catch(() => undefined);
-        });
+        const nextState = await persistFromCurrent((current) =>
+          mergeMobileAppState(current, remoteProfileToPatch(remoteProfile)),
+        );
+
+        const onboardingPatch = remoteProfileToOnboardingPatch(remoteProfile);
+        const shouldUpdateOnboarding =
+          onboardingProgress.softGateCompleted !== onboardingPatch.softGateCompleted ||
+          onboardingProgress.authCompleted !== onboardingPatch.authCompleted ||
+          onboardingProgress.birthCompleted !== onboardingPatch.birthCompleted ||
+          onboardingProgress.interestCompleted !== onboardingPatch.interestCompleted ||
+          onboardingProgress.firstRunHandoffSeen !== onboardingPatch.firstRunHandoffSeen;
+
+        if (shouldUpdateOnboarding) {
+          await updateOnboardingProgress(onboardingPatch);
+        }
+
+        if (cancelled) {
+          return;
+        }
+
+        setState(nextState);
+      } catch (error) {
+        await captureError(error, { surface: 'mobile-app-state:remote-sync' });
       }
-      return;
     }
 
-    saveProfile(profileFromSession).catch((error) => {
-      captureError(error, { surface: 'mobile-app-state:session-hydration' }).catch(
-        () => undefined,
-      );
-    });
-    if (
-      profileFromSession.birthDate &&
-      !onboardingProgress.birthCompleted
-    ) {
-      updateOnboardingProgress({ birthCompleted: true }).catch((error) => {
-        captureError(error, {
-          surface: 'mobile-app-state:session-hydration-gate',
-        }).catch(() => undefined);
-      });
-    }
+    void syncRemoteProfile();
+
+    return () => {
+      cancelled = true;
+    };
   }, [
+    onboardingProgress.authCompleted,
     onboardingProgress.birthCompleted,
-    saveProfile,
+    onboardingProgress.firstRunHandoffSeen,
+    onboardingProgress.interestCompleted,
+    onboardingProgress.softGateCompleted,
+    persistFromCurrent,
     session,
-    state.profile,
     status,
     updateOnboardingProgress,
   ]);
