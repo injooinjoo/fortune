@@ -20,6 +20,7 @@ import {
 } from '@fortune/product-contracts';
 
 import { trackEvent } from '../lib/analytics';
+import { exchangeAuthCodeFromUrl, isAuthCallbackUrl } from '../lib/auth-session';
 import { captureError } from '../lib/error-reporting';
 import {
   getPendingChatFortuneType,
@@ -111,10 +112,10 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
       try {
         const [storedProgress, queuedFortuneType, lastAuthenticatedUserId] =
           await Promise.all([
-          getUnifiedOnboardingProgress(),
-          getPendingChatFortuneType(),
-          getLastAuthenticatedUserId(),
-        ]);
+            getUnifiedOnboardingProgress(),
+            getPendingChatFortuneType(),
+            getLastAuthenticatedUserId(),
+          ]);
 
         if (!mounted) {
           return;
@@ -123,6 +124,16 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
         lastAuthenticatedUserIdRef.current = lastAuthenticatedUserId;
         setOnboardingProgress(storedProgress);
         setPendingChatFortuneTypeState(queuedFortuneType);
+
+        const initialUrl = await Linking.getInitialURL();
+
+        if (initialUrl && isAuthCallbackUrl(initialUrl)) {
+          await exchangeAuthCodeFromUrl(initialUrl).catch((error) => {
+            captureError(error, { surface: 'bootstrap:auth-code-exchange' }).catch(
+              () => undefined,
+            );
+          });
+        }
 
         if (supabase) {
           const { data } = await supabase.auth.getSession();
@@ -160,8 +171,6 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
             });
           }
         }
-
-        const initialUrl = await Linking.getInitialURL();
 
         if (initialUrl) {
           await handleDeepLink(initialUrl);
@@ -224,11 +233,24 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
       : null;
 
     const linkSubscription = Linking.addEventListener('url', (event) => {
-      handleDeepLink(event.url).catch((error) => {
-        captureError(error, { surface: 'bootstrap:deep-link' }).catch(
-          () => undefined,
-        );
-      });
+      const targetUrl = event.url;
+
+      const maybeExchange = isAuthCallbackUrl(targetUrl)
+        ? exchangeAuthCodeFromUrl(targetUrl).catch((error) => {
+            captureError(error, { surface: 'bootstrap:auth-code-exchange' }).catch(
+              () => undefined,
+            );
+            return null;
+          })
+        : Promise.resolve(null);
+
+      maybeExchange
+        .then(() => handleDeepLink(targetUrl))
+        .catch((error) => {
+          captureError(error, { surface: 'bootstrap:deep-link' }).catch(
+            () => undefined,
+          );
+        });
     });
 
     return () => {
