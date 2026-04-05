@@ -529,11 +529,8 @@ export function ChatScreen() {
             <PrimaryButton onPress={() => router.push('/premium')}>
               Premium surface
             </PrimaryButton>
-            <PrimaryButton
-              onPress={() => router.push('/fortune')}
-              tone="secondary"
-            >
-              Fortune catalog surface
+            <PrimaryButton onPress={() => router.push('/profile')} tone="secondary">
+              Profile surface
             </PrimaryButton>
           </Card>
         </>

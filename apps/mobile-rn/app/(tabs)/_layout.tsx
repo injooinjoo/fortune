@@ -25,12 +25,14 @@ export default function TabsLayout() {
         name="fortune"
         options={{
           title: '탐구',
+          href: null,
         }}
       />
       <Tabs.Screen
         name="trend"
         options={{
           title: '트렌드',
+          href: null,
         }}
       />
       <Tabs.Screen
