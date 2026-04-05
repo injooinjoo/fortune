@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { isAuthCallbackUrl, resolveDeepLink } from './deep-links';
+import {
+  isAuthCallbackUrl,
+  normalizeFortuneTypeForChat,
+  resolveDeepLink,
+} from './deep-links';
 
 describe('deep link contracts', () => {
   it('recognizes auth callbacks', () => {
@@ -18,5 +22,11 @@ describe('deep link contracts', () => {
 
     expect(resolution.route).toBe('/chat');
     expect(resolution.fortuneType).toBe('love');
+  });
+
+  it('normalizes legacy fortune aliases used by Flutter deep links', () => {
+    expect(normalizeFortuneTypeForChat('sports-game')).toBe('match-insight');
+    expect(normalizeFortuneTypeForChat('investment')).toBe('wealth');
+    expect(normalizeFortuneTypeForChat('unknown-type')).toBeNull();
   });
 });
