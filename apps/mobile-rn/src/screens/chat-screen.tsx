@@ -1,14 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import {
-  appRoutes,
   findFortuneExpert,
   fortuneCharacters,
-  fortuneTypeSpecs,
-  resolveFortuneEndpoint,
   type FortuneTypeId,
 } from '@fortune/product-contracts';
+import { Pressable, View } from 'react-native';
 
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
@@ -21,6 +19,7 @@ import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 
 export function ChatScreen() {
+  const params = useLocalSearchParams<{ characterId?: string }>();
   const {
     completeOnboarding,
     consumePendingChatFortuneType,
@@ -34,6 +33,9 @@ export function ChatScreen() {
     status,
   } = useAppBootstrap();
   const [activeFortuneType, setActiveFortuneType] = useState<FortuneTypeId | null>(
+    null,
+  );
+  const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(
     null,
   );
 
@@ -53,6 +55,29 @@ export function ChatScreen() {
   const highlightedExpert = activeFortuneType
     ? findFortuneExpert(activeFortuneType)
     : undefined;
+  const selectedCharacter = useMemo(() => {
+    const targetId = selectedCharacterId ?? params.characterId;
+
+    return (
+      fortuneCharacters.find((character) => character.id === targetId) ??
+      highlightedExpert ??
+      fortuneCharacters[0]
+    );
+  }, [highlightedExpert, params.characterId, selectedCharacterId]);
+
+  useEffect(() => {
+    if (params.characterId) {
+      setSelectedCharacterId(params.characterId);
+      return;
+    }
+
+    if (highlightedExpert) {
+      setSelectedCharacterId(highlightedExpert.id);
+      return;
+    }
+
+    setSelectedCharacterId((current) => current ?? fortuneCharacters[0]?.id ?? null);
+  }, [highlightedExpert?.id, params.characterId]);
 
   return (
     <Screen>
@@ -187,56 +212,154 @@ export function ChatScreen() {
 
       {status === 'ready' && gate === 'ready' ? (
         <>
-      <Card>
-        <AppText variant="heading4">Active Surface Inventory</AppText>
-        <AppText variant="bodyMedium">
-          RN 셸은 현재 활성 제품 표면 {appRoutes.length}개를 기준으로 생성되었습니다.
-        </AppText>
-        {appRoutes.slice(0, 8).map((route) => (
-          <Chip key={route.id} label={`${route.path} · ${route.group}`} />
-        ))}
-      </Card>
-
-      <Card>
-        <AppText variant="heading4">Fortune Experts</AppText>
-        {fortuneCharacters.map((character) => (
-          <Card
-            key={character.id}
-            style={{
-              backgroundColor: fortuneTheme.colors.surfaceSecondary,
-            }}
-          >
-            <AppText variant="labelLarge">{character.name}</AppText>
-            <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-              {character.shortDescription}
+          <Card>
+            <AppText variant="heading4">Chat Ready Shell</AppText>
+            <AppText variant="bodyMedium">
+              캐릭터 선택과 운세 launch intent를 한 화면에서 확인할 수 있도록 RN ready 상태를 실제 셸에 가깝게 재구성했습니다.
             </AppText>
-            <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
-              {character.specialties.join(', ')}
-            </AppText>
+            <Chip
+              label={`selected:${selectedCharacter.id}`}
+              tone="accent"
+            />
+            {activeFortuneType ? (
+              <Chip label={`launch:${activeFortuneType}`} tone="success" />
+            ) : (
+              <Chip label="launch:none" />
+            )}
           </Card>
-        ))}
-      </Card>
 
-      <Card>
-        <AppText variant="heading4">Endpoint Registry Preview</AppText>
-        {fortuneTypeSpecs.slice(0, 12).map((spec) => (
-          <AppText key={spec.id} variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {spec.id}
-            {' -> '}
-            {resolveFortuneEndpoint(spec.id) ?? 'local-only'}
-          </AppText>
-        ))}
-      </Card>
+          <Card>
+            <AppText variant="heading4">Character Roster</AppText>
+            <View
+              style={{
+                gap: fortuneTheme.spacing.sm,
+              }}
+            >
+              {fortuneCharacters.map((character) => {
+                const isSelected = selectedCharacter.id === character.id;
+                const isRecommended =
+                  activeFortuneType != null &&
+                  (character.specialties as readonly FortuneTypeId[]).includes(
+                    activeFortuneType,
+                  );
 
-      <Card>
-        <AppText variant="heading4">Next Surfaces</AppText>
-        <PrimaryButton onPress={() => router.push('/premium')}>
-          Premium surface
-        </PrimaryButton>
-        <PrimaryButton onPress={() => router.push('/profile')} tone="secondary">
-          Profile surface
-        </PrimaryButton>
-      </Card>
+                return (
+                  <Pressable
+                    key={character.id}
+                    accessibilityRole="button"
+                    onPress={() => setSelectedCharacterId(character.id)}
+                    style={({ pressed }) => ({
+                      opacity: pressed ? 0.85 : 1,
+                    })}
+                  >
+                    <Card
+                      style={{
+                        backgroundColor: isSelected
+                          ? fortuneTheme.colors.backgroundTertiary
+                          : fortuneTheme.colors.surfaceSecondary,
+                        borderColor: isSelected
+                          ? fortuneTheme.colors.accentSecondary
+                          : fortuneTheme.colors.border,
+                      }}
+                    >
+                      <View
+                        style={{
+                          alignItems: 'center',
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                        }}
+                      >
+                        <View style={{ flex: 1, gap: fortuneTheme.spacing.xs }}>
+                          <AppText variant="labelLarge">{character.name}</AppText>
+                          <AppText
+                            variant="bodySmall"
+                            color={fortuneTheme.colors.textSecondary}
+                          >
+                            {character.shortDescription}
+                          </AppText>
+                        </View>
+                        <View
+                          style={{
+                            alignItems: 'flex-end',
+                            gap: fortuneTheme.spacing.xs,
+                          }}
+                        >
+                          <Chip label={character.category} />
+                          {isRecommended ? (
+                            <Chip label="deep-link 추천" tone="success" />
+                          ) : null}
+                        </View>
+                      </View>
+                    </Card>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </Card>
+
+          <Card>
+            <AppText variant="heading4">Selected Character</AppText>
+            <AppText variant="displaySmall">{selectedCharacter.name}</AppText>
+            <AppText
+              variant="bodyMedium"
+              color={fortuneTheme.colors.textSecondary}
+            >
+              {selectedCharacter.shortDescription}
+            </AppText>
+            <View
+              style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                gap: fortuneTheme.spacing.xs,
+              }}
+            >
+              {selectedCharacter.specialties.map((specialty) => (
+                <Chip key={specialty} label={specialty} />
+              ))}
+            </View>
+            <AppText
+              variant="bodySmall"
+              color={fortuneTheme.colors.textTertiary}
+            >
+              {activeFortuneType &&
+              (
+                selectedCharacter.specialties as readonly FortuneTypeId[]
+              ).includes(activeFortuneType)
+                ? `${activeFortuneType} launch intent가 이 캐릭터로 직접 연결됩니다.`
+                : '선택한 캐릭터를 기준으로 다음 채팅 패널 구현을 이어갈 수 있습니다.'}
+            </AppText>
+            <PrimaryButton
+              onPress={() =>
+                router.push(`/character/${selectedCharacter.id}` as never)
+              }
+            >
+              캐릭터 프로필 보기
+            </PrimaryButton>
+            <PrimaryButton
+              onPress={() =>
+                router.push({
+                  pathname: '/profile',
+                  params: { source: selectedCharacter.id },
+                })
+              }
+              tone="secondary"
+            >
+              프로필 표면으로 이동
+            </PrimaryButton>
+          </Card>
+
+          <Card>
+            <AppText variant="heading4">Next Surfaces</AppText>
+            <PrimaryButton onPress={() => router.push('/premium')}>
+              Premium surface
+            </PrimaryButton>
+            <PrimaryButton
+              onPress={() => router.push('/fortune')}
+              tone="secondary"
+            >
+              Fortune catalog surface
+            </PrimaryButton>
+          </Card>
         </>
       ) : null}
     </Screen>
