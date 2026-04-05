@@ -11,6 +11,14 @@ import {
   type UnifiedOnboardingProgress,
 } from '@fortune/product-contracts';
 
+import {
+  emptyMobileAppState,
+  mergeMobileAppState,
+  mobileAppStateStorageKey,
+  normalizeMobileAppState,
+  type MobileAppState,
+} from './mobile-app-state';
+
 export async function getUnifiedOnboardingProgress(): Promise<UnifiedOnboardingProgress> {
   const raw = await SecureStore.getItemAsync(unifiedOnboardingProgressStorageKey);
 
@@ -78,4 +86,33 @@ export async function setPendingChatFortuneType(
     deepLinkConfig.pendingFortuneTypeStorageKey,
     fortuneType,
   );
+}
+
+export async function getMobileAppState(): Promise<MobileAppState> {
+  const raw = await SecureStore.getItemAsync(mobileAppStateStorageKey);
+
+  if (!raw) {
+    return emptyMobileAppState;
+  }
+
+  try {
+    return normalizeMobileAppState(
+      JSON.parse(raw) as Record<string, unknown>,
+    );
+  } catch {
+    return emptyMobileAppState;
+  }
+}
+
+export async function saveMobileAppState(state: MobileAppState) {
+  await SecureStore.setItemAsync(mobileAppStateStorageKey, JSON.stringify(state));
+  return state;
+}
+
+export async function patchMobileAppState(patch: Partial<MobileAppState>) {
+  const current = await getMobileAppState();
+  const next = mergeMobileAppState(current, patch);
+
+  await saveMobileAppState(next);
+  return next;
 }

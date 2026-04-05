@@ -7,23 +7,26 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { navigationTheme } from '../src/lib/theme';
 import { AppBootstrapProvider } from '../src/providers/app-bootstrap-provider';
+import { MobileAppStateProvider } from '../src/providers/mobile-app-state-provider';
 
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <ThemeProvider value={navigationTheme}>
         <AppBootstrapProvider>
-          <StatusBar style="light" />
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              contentStyle: {
-                backgroundColor: navigationTheme.colors.background,
-              },
-            }}
-          >
-            <Stack.Screen name="(tabs)" />
-          </Stack>
+          <MobileAppStateProvider>
+            <StatusBar style="light" />
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                contentStyle: {
+                  backgroundColor: navigationTheme.colors.background,
+                },
+              }}
+            >
+              <Stack.Screen name="(tabs)" />
+            </Stack>
+          </MobileAppStateProvider>
         </AppBootstrapProvider>
       </ThemeProvider>
     </SafeAreaProvider>

@@ -27,6 +27,7 @@ import {
 } from '../lib/chat-shell';
 import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
+import { useMobileAppState } from '../providers/mobile-app-state-provider';
 
 export function ChatScreen() {
   const params = useLocalSearchParams<{ characterId?: string }>();
@@ -42,6 +43,11 @@ export function ChatScreen() {
     session,
     status,
   } = useAppBootstrap();
+  const {
+    state: mobileAppState,
+    status: mobileAppStateStatus,
+    recordChatIntent,
+  } = useMobileAppState();
   const [activeFortuneType, setActiveFortuneType] = useState<FortuneTypeId | null>(
     null,
   );
@@ -82,14 +88,22 @@ export function ChatScreen() {
     ? findFortuneExpert(activeFortuneType)
     : undefined;
   const selectedCharacter = useMemo(() => {
-    const targetId = selectedCharacterId ?? params.characterId;
+    const targetId =
+      selectedCharacterId ??
+      params.characterId ??
+      mobileAppState.chat.selectedCharacterId;
 
     return (
       fortuneCharacters.find((character) => character.id === targetId) ??
       highlightedExpert ??
       fortuneCharacters[0]
     );
-  }, [highlightedExpert, params.characterId, selectedCharacterId]);
+  }, [
+    highlightedExpert,
+    mobileAppState.chat.selectedCharacterId,
+    params.characterId,
+    selectedCharacterId,
+  ]);
 
   useEffect(() => {
     if (params.characterId) {
@@ -106,6 +120,17 @@ export function ChatScreen() {
       (current) => current ?? fortuneCharacters[0]?.id ?? null,
     );
   }, [highlightedExpert?.id, params.characterId]);
+
+  useEffect(() => {
+    recordChatIntent({
+      characterId: selectedCharacter.id,
+      fortuneType: activeFortuneType,
+    }).catch((error) => {
+      captureError(error, { surface: 'chat:record-selection' }).catch(
+        () => undefined,
+      );
+    });
+  }, [activeFortuneType, recordChatIntent, selectedCharacter.id]);
 
   const selectedThread = messagesByCharacterId[selectedCharacter.id] ?? [];
   const suggestedActions = useMemo(
@@ -169,6 +194,15 @@ export function ChatScreen() {
         text: action.reply,
       },
     ]);
+    recordChatIntent({
+      characterId: selectedCharacter.id,
+      fortuneType,
+      incrementMessages: true,
+    }).catch((error) => {
+      captureError(error, { surface: 'chat:record-action' }).catch(
+        () => undefined,
+      );
+    });
   }
 
   function handleSendDraft() {
@@ -182,6 +216,15 @@ export function ChatScreen() {
       buildUserMessage(trimmed),
       buildDraftReply(selectedCharacter, trimmed),
     ]);
+    recordChatIntent({
+      characterId: selectedCharacter.id,
+      fortuneType: activeFortuneType,
+      incrementMessages: true,
+    }).catch((error) => {
+      captureError(error, { surface: 'chat:record-draft' }).catch(
+        () => undefined,
+      );
+    });
     setDraft('');
   }
 
@@ -198,6 +241,10 @@ export function ChatScreen() {
       <Card>
         <AppText variant="heading4">Bootstrap</AppText>
         <Chip label={`status:${status}`} tone="accent" />
+        <Chip
+          label={`app-state:${mobileAppStateStatus}`}
+          tone={mobileAppStateStatus === 'ready' ? 'success' : 'neutral'}
+        />
         <Chip label={hasSupabase ? 'supabase:on' : 'supabase:off'} />
         <Chip label={session ? 'session:authenticated' : 'session:guest'} tone={session ? 'success' : 'neutral'} />
         <Chip label={`gate:${gate}`} />
@@ -332,6 +379,13 @@ export function ChatScreen() {
             ) : (
               <Chip label="launch:none" />
             )}
+            <Chip
+              label={`tokens:${mobileAppState.premium.tokenBalance.toLocaleString('ko-KR')}`}
+            />
+            <Chip
+              label={`messages:${mobileAppState.chat.sentMessageCount}`}
+              tone="accent"
+            />
           </Card>
 
           <Card>
@@ -442,6 +496,14 @@ export function ChatScreen() {
                 ? `${activeFortuneType} launch intent가 이 캐릭터로 직접 연결됩니다.`
                 : '선택한 캐릭터를 기준으로 다음 채팅 패널 구현을 이어갈 수 있습니다.'}
             </AppText>
+            {mobileAppState.profile.displayName ? (
+              <AppText
+                variant="bodySmall"
+                color={fortuneTheme.colors.textSecondary}
+              >
+                {mobileAppState.profile.displayName} 님의 최근 채팅 기준으로 이 캐릭터를 계속 이어갑니다.
+              </AppText>
+            ) : null}
             <PrimaryButton
               onPress={() =>
                 router.push(`/character/${selectedCharacter.id}` as never)

@@ -33,6 +33,9 @@ interface BootstrapContextValue {
   pendingChatFortuneType: FortuneTypeId | null;
   markGuestBrowse: () => Promise<void>;
   markAuthComplete: () => Promise<void>;
+  updateOnboardingProgress: (
+    patch: Partial<UnifiedOnboardingProgress>,
+  ) => Promise<void>;
   completeOnboarding: () => Promise<void>;
   consumePendingChatFortuneType: () => Promise<FortuneTypeId | null>;
 }
@@ -46,6 +49,7 @@ const BootstrapContext = createContext<BootstrapContextValue>({
   pendingChatFortuneType: null,
   markGuestBrowse: async () => undefined,
   markAuthComplete: async () => undefined,
+  updateOnboardingProgress: async () => undefined,
   completeOnboarding: async () => undefined,
   consumePendingChatFortuneType: async () => null,
 });
@@ -200,6 +204,13 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
     setOnboardingProgress(next);
   }
 
+  async function updateOnboardingProgress(
+    patch: Partial<UnifiedOnboardingProgress>,
+  ) {
+    const next = await patchUnifiedOnboardingProgress(patch);
+    setOnboardingProgress(next);
+  }
+
   async function consumePendingChatFortuneType() {
     const current = pendingChatFortuneType;
 
@@ -224,10 +235,22 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
       pendingChatFortuneType,
       markGuestBrowse,
       markAuthComplete,
+      updateOnboardingProgress,
       completeOnboarding,
       consumePendingChatFortuneType,
     }),
-    [completeOnboarding, consumePendingChatFortuneType, gate, markAuthComplete, markGuestBrowse, onboardingProgress, pendingChatFortuneType, session, status],
+    [
+      completeOnboarding,
+      consumePendingChatFortuneType,
+      gate,
+      markAuthComplete,
+      markGuestBrowse,
+      onboardingProgress,
+      pendingChatFortuneType,
+      session,
+      status,
+      updateOnboardingProgress,
+    ],
   );
 
   return (
