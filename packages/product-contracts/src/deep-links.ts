@@ -1,4 +1,4 @@
-import type { FortuneTypeId } from './fortunes';
+import { fortuneTypesById, type FortuneTypeId } from './fortunes';
 
 export const deepLinkConfig = {
   scheme: 'com.beyond.fortune',
@@ -13,6 +13,21 @@ export interface DeepLinkResolution {
   fortuneType?: FortuneTypeId;
   authCallbackUrl?: string;
 }
+
+const fortuneTypeAliases: Record<string, FortuneTypeId> = {
+  time: 'daily',
+  'daily-calendar': 'daily',
+  health: 'daily',
+  saju: 'traditional-saju',
+  traditional: 'traditional-saju',
+  yearly: 'new-year',
+  investment: 'wealth',
+  'sports-game': 'match-insight',
+  'lucky-lottery': 'lotto',
+  pet: 'pet-compatibility',
+  'ex-lover-simple': 'ex-lover',
+  'baby-nickname': 'naming',
+};
 
 export function isAuthCallbackUrl(url: URL): boolean {
   if (
@@ -44,9 +59,9 @@ export function resolveDeepLink(target: string): DeepLinkResolution {
   }
 
   const screen = url.searchParams.get(deepLinkConfig.screenParam);
-  const fortuneType = url.searchParams.get(
-    deepLinkConfig.fortuneTypeParam,
-  ) as FortuneTypeId | null;
+  const fortuneType = normalizeFortuneTypeForChat(
+    url.searchParams.get(deepLinkConfig.fortuneTypeParam),
+  );
 
   if (screen === 'chat' && fortuneType) {
     return {
@@ -66,4 +81,19 @@ export function resolveDeepLink(target: string): DeepLinkResolution {
     route: '/chat',
     fortuneType: fortuneType ?? undefined,
   };
+}
+
+export function normalizeFortuneTypeForChat(
+  input: string | null | undefined,
+): FortuneTypeId | null {
+  if (!input) {
+    return null;
+  }
+
+  const normalizedInput = input.trim().toLowerCase();
+  const resolvedType = fortuneTypeAliases[normalizedInput] ?? normalizedInput;
+
+  return resolvedType in fortuneTypesById
+    ? (resolvedType as FortuneTypeId)
+    : null;
 }
