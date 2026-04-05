@@ -1,5 +1,5 @@
-import { RouteScreen } from '../src/screens/route-screen';
+import { AccountDeletionScreen } from '../src/screens/account-deletion-screen';
 
 export default function AccountDeletionRoute() {
-  return <RouteScreen routeId="account-deletion" />;
+  return <AccountDeletionScreen />;
 }

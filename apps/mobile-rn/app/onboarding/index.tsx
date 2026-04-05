@@ -1,5 +1,5 @@
-import { RouteScreen } from '../../src/screens/route-screen';
+import { OnboardingScreen } from '../../src/screens/onboarding-screen';
 
 export default function OnboardingRoute() {
-  return <RouteScreen routeId="onboarding" />;
+  return <OnboardingScreen />;
 }
