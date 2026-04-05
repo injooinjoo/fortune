@@ -1,5 +1,5 @@
-import { RouteScreen } from '../../../src/screens/route-screen';
+import { ProfileNotificationsScreen } from '../../../src/screens/profile-notifications-screen';
 
 export default function ProfileNotificationsRoute() {
-  return <RouteScreen routeId="profile-notifications" />;
+  return <ProfileNotificationsScreen />;
 }

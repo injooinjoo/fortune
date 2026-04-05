@@ -1,5 +1,5 @@
-import { RouteScreen } from '../../../src/screens/route-screen';
+import { ProfileSajuSummaryScreen } from '../../../src/screens/profile-saju-summary-screen';
 
 export default function ProfileSajuSummaryRoute() {
-  return <RouteScreen routeId="profile-saju-summary" />;
+  return <ProfileSajuSummaryScreen />;
 }

@@ -1,5 +1,5 @@
-import { RouteScreen } from '../../../src/screens/route-screen';
+import { ProfileRelationshipsScreen } from '../../../src/screens/profile-relationships-screen';
 
 export default function ProfileRelationshipsRoute() {
-  return <RouteScreen routeId="profile-relationships" />;
+  return <ProfileRelationshipsScreen />;
 }

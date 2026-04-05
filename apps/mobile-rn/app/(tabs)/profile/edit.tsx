@@ -1,5 +1,5 @@
-import { RouteScreen } from '../../../src/screens/route-screen';
+import { ProfileEditScreen } from '../../../src/screens/profile-edit-screen';
 
 export default function ProfileEditRoute() {
-  return <RouteScreen routeId="profile-edit" />;
+  return <ProfileEditScreen />;
 }
