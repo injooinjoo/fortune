@@ -7,6 +7,8 @@ import { Chip } from '../components/chip';
 import { PrimaryButton } from '../components/primary-button';
 import { Screen } from '../components/screen';
 import { fortuneTheme } from '../lib/theme';
+import { useAppBootstrap } from '../providers/app-bootstrap-provider';
+import { useMobileAppState } from '../providers/mobile-app-state-provider';
 
 const authOptions = [
   {
@@ -27,6 +29,18 @@ const authOptions = [
 ] as const;
 
 export function SignupScreen() {
+  const { gate, onboardingProgress, session } = useAppBootstrap();
+  const { state } = useMobileAppState();
+  const profile = state.profile;
+  const premium = state.premium;
+  const hasProfileHint = Boolean(
+    profile.displayName ||
+      profile.birthDate ||
+      profile.birthTime ||
+      profile.mbti ||
+      profile.bloodType,
+  );
+
   return (
     <Screen>
       <AppText variant="labelMedium" color={fortuneTheme.colors.accentSecondary}>
@@ -44,6 +58,49 @@ export function SignupScreen() {
           <Chip label="oauth callback" />
           <Chip label="profile unlock" />
         </View>
+      </Card>
+
+      <Card>
+        <AppText variant="heading4">저장된 상태</AppText>
+        <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+          앱 재실행 후에도 남아 있는 프로필과 premium 상태를 먼저 보여줍니다.
+        </AppText>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+          <Chip
+            label={session ? 'session:active' : 'session:guest'}
+            tone={session ? 'success' : 'neutral'}
+          />
+          <Chip label={`gate:${gate}`} />
+          <Chip label={`soft:${onboardingProgress.softGateCompleted ? 'done' : 'todo'}`} />
+          <Chip
+            label={`profile:${hasProfileHint ? 'saved' : 'empty'}`}
+            tone={hasProfileHint ? 'success' : 'neutral'}
+          />
+          <Chip
+            label={`plan:${premium.status}`}
+            tone={premium.status === 'inactive' ? 'neutral' : 'accent'}
+          />
+          <Chip label={`tokens:${premium.tokenBalance.toLocaleString('ko-KR')}`} />
+        </View>
+        {hasProfileHint ? (
+          <View style={{ gap: 8 }}>
+            <AppText variant="labelLarge">{profile.displayName || '저장된 이름 없음'}</AppText>
+            <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+              {[
+                profile.birthDate ? `생년월일 ${profile.birthDate}` : null,
+                profile.birthTime ? `시간 ${profile.birthTime}` : null,
+                profile.mbti ? `MBTI ${profile.mbti}` : null,
+                profile.bloodType ? `혈액형 ${profile.bloodType}` : null,
+              ]
+                .filter(Boolean)
+                .join(' · ')}
+            </AppText>
+          </View>
+        ) : (
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+            아직 저장된 프로필이 없어서, 가입 후 온보딩에서 채워질 정보를 보여줄 수 있습니다.
+          </AppText>
+        )}
       </Card>
 
       <Card>

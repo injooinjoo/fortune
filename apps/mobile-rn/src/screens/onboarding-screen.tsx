@@ -7,6 +7,7 @@ import { Chip } from '../components/chip';
 import { PrimaryButton } from '../components/primary-button';
 import { Screen } from '../components/screen';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
+import { useMobileAppState } from '../providers/mobile-app-state-provider';
 import { fortuneTheme } from '../lib/theme';
 
 const onboardingSteps = [
@@ -28,7 +29,22 @@ const onboardingSteps = [
 ] as const;
 
 export function OnboardingScreen() {
-  const { onboardingProgress } = useAppBootstrap();
+  const { onboardingProgress, completeOnboarding, session } = useAppBootstrap();
+  const { state } = useMobileAppState();
+  const profile = state.profile;
+  const premium = state.premium;
+  const hasProfileHint = Boolean(
+    profile.displayName ||
+      profile.birthDate ||
+      profile.birthTime ||
+      profile.mbti ||
+      profile.bloodType,
+  );
+
+  async function handleFinishOnboarding() {
+    await completeOnboarding();
+    router.replace('/chat');
+  }
 
   return (
     <Screen>
@@ -39,6 +55,42 @@ export function OnboardingScreen() {
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
         RN에서는 첫 진입과 재진입이 같은 계약으로 처리됩니다. 현재 화면은 그 흐름을 보여주는 실제 셸입니다.
       </AppText>
+
+      <Card>
+        <AppText variant="heading4">저장된 상태</AppText>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+          <Chip
+            label={session ? 'session:active' : 'session:guest'}
+            tone={session ? 'success' : 'neutral'}
+          />
+          <Chip
+            label={`profile:${hasProfileHint ? 'saved' : 'empty'}`}
+            tone={hasProfileHint ? 'success' : 'neutral'}
+          />
+          <Chip
+            label={`plan:${premium.status}`}
+            tone={premium.status === 'inactive' ? 'neutral' : 'accent'}
+          />
+          <Chip label={`tokens:${premium.tokenBalance.toLocaleString('ko-KR')}`} />
+        </View>
+        {hasProfileHint ? (
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+            {[
+              profile.displayName || null,
+              profile.birthDate ? `생년월일 ${profile.birthDate}` : null,
+              profile.birthTime ? `시간 ${profile.birthTime}` : null,
+              profile.mbti ? `MBTI ${profile.mbti}` : null,
+              profile.bloodType ? `혈액형 ${profile.bloodType}` : null,
+            ]
+              .filter(Boolean)
+              .join(' · ')}
+          </AppText>
+        ) : (
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+            저장된 프로필이 아직 없어서, onboarding 단계에서 채울 기본 정보만 노출합니다.
+          </AppText>
+        )}
+      </Card>
 
       <Card>
         <AppText variant="heading4">진행 상태</AppText>
@@ -84,7 +136,10 @@ export function OnboardingScreen() {
         <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
           이 화면은 진입 흐름을 안내하고, 실제 완료 동작은 상위 bootstrap contract에서 처리합니다.
         </AppText>
-        <PrimaryButton onPress={() => router.push('/signup')}>
+        <PrimaryButton onPress={handleFinishOnboarding}>
+          온보딩 완료하고 Chat으로
+        </PrimaryButton>
+        <PrimaryButton onPress={() => router.push('/signup')} tone="secondary">
           계정 만들기 / 로그인
         </PrimaryButton>
         <PrimaryButton onPress={() => router.replace('/chat')} tone="secondary">

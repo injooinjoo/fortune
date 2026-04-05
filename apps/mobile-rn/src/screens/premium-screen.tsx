@@ -18,6 +18,7 @@ import { PrimaryButton } from '../components/primary-button';
 import { Screen } from '../components/screen';
 import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
+import { useMobileAppState } from '../providers/mobile-app-state-provider';
 
 function formatPrice(price: number) {
   return `₩${price.toLocaleString('ko-KR')}`;
@@ -25,9 +26,13 @@ function formatPrice(price: number) {
 
 export function PremiumScreen() {
   const { session } = useAppBootstrap();
+  const { state, purchaseProduct, restorePurchases } = useMobileAppState();
   const [selectedProductId, setSelectedProductId] = useState<ProductId>(
     subscriptionProductIds[0],
   );
+  const [actionState, setActionState] = useState<
+    'idle' | 'purchasing' | 'restoring'
+  >('idle');
 
   const selectedProduct = productCatalog[selectedProductId];
   const subscriptions = subscriptionProductIds.map((id) => productCatalog[id]);
@@ -36,6 +41,43 @@ export function PremiumScreen() {
   );
   const lifetime = nonConsumableProductIds.map((id) => productCatalog[id]);
   const totalProducts = useMemo(() => allProductIds.length, []);
+  const activeProduct = state.premium.activeProductId
+    ? productCatalog[state.premium.activeProductId]
+    : null;
+  const activePlanLabel =
+    state.premium.status === 'subscription'
+      ? activeProduct?.title ?? '활성 구독 없음'
+      : state.premium.status === 'lifetime'
+        ? activeProduct?.title ?? '평생 소장 없음'
+        : '활성 플랜 없음';
+
+  async function handlePurchase() {
+    if (actionState !== 'idle') {
+      return;
+    }
+
+    setActionState('purchasing');
+
+    try {
+      await purchaseProduct(selectedProductId);
+    } finally {
+      setActionState('idle');
+    }
+  }
+
+  async function handleRestore() {
+    if (actionState !== 'idle') {
+      return;
+    }
+
+    setActionState('restoring');
+
+    try {
+      await restorePurchases();
+    } finally {
+      setActionState('idle');
+    }
+  }
 
   return (
     <Screen>
@@ -53,13 +95,32 @@ export function PremiumScreen() {
       <Card>
         <AppText variant="heading4">Premium Hero</AppText>
         <AppText variant="bodyMedium">
-          지금은 스토어 결제 플로우 전 단계까지 구현되어 있고, 어떤 카탈로그가 노출되는지 확인할 수 있습니다.
+          지금은 persisted premium 상태와 연결되어 있어, 구매와 복원이 실제 상태를 바꿉니다.
         </AppText>
         <Chip label={`catalog:${totalProducts} products`} tone="accent" />
         <Chip
           label={session ? 'account:authenticated' : 'account:guest'}
           tone={session ? 'success' : 'neutral'}
         />
+        <Chip label={`plan:${state.premium.status}`} />
+        <Chip label={`tokens:${state.premium.tokenBalance.toLocaleString('ko-KR')}`} />
+      </Card>
+
+      <Card>
+        <AppText variant="heading4">현재 상태</AppText>
+        <AppText variant="labelLarge">{activePlanLabel}</AppText>
+        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+          마지막 구매: {state.premium.lastPurchaseProductId ? productCatalog[state.premium.lastPurchaseProductId].title : '없음'}
+        </AppText>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+          <Chip label={`active:${activeProduct?.id ?? 'none'}`} tone="accent" />
+          <Chip
+            label={`restore:${state.premium.restoreCount.toLocaleString('ko-KR')}`}
+          />
+          <Chip
+            label={`balance:${state.premium.tokenBalance.toLocaleString('ko-KR')}`}
+          />
+        </View>
       </Card>
 
       <Card>
@@ -122,8 +183,19 @@ export function PremiumScreen() {
             }
           />
         </View>
-        <PrimaryButton tone={session ? 'primary' : 'secondary'}>
-          {session ? '구매 플로우 연결 준비' : '로그인 후 구매 가능'}
+        <PrimaryButton
+          onPress={actionState === 'idle' ? handlePurchase : undefined}
+          tone="primary"
+        >
+          {actionState === 'purchasing'
+            ? '구매 적용 중...'
+            : `${selectedProduct.title} 구매하기`}
+        </PrimaryButton>
+        <PrimaryButton
+          onPress={actionState === 'idle' ? handleRestore : undefined}
+          tone="secondary"
+        >
+          {actionState === 'restoring' ? '복원 적용 중...' : '구매 복원'}
         </PrimaryButton>
       </Card>
     </Screen>
