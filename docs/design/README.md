@@ -4,6 +4,8 @@
 
 이 저장소의 공식 디자인 source of truth는 이제 **Paper**입니다.
 
+루트 [`DESIGN.md`](../../DESIGN.md)는 AI 에이전트용 보조 디자인 계약입니다. 공식 기준을 대체하지 않고, Paper와 Flutter design system을 에이전트가 바로 읽기 쉬운 형태로 요약한 문서입니다.
+
 - 디자인 기준 파일: `Ondo`
 - 기준 페이지: `iPhone`
 - canonical inventory: `paper/catalog_inventory.json`
@@ -16,6 +18,7 @@ Flutter 런타임 UI는 기존 코드가 source of truth이고, Paper는 그 런
 
 | 문서 | 설명 |
 |------|------|
+| [../../DESIGN.md](../../DESIGN.md) | AI 에이전트가 직접 읽는 agent-facing 디자인 계약 |
 | [paper/README.md](../../paper/README.md) | Paper 운영 방식과 수동 동기화 절차 |
 | [paper/catalog_inventory.json](../../paper/catalog_inventory.json) | 현재 Paper 파일의 canonical artboard inventory |
 | [paper/design-tokens.json](../../paper/design-tokens.json) | Paper 기준 canonical design token export |
@@ -23,6 +26,7 @@ Flutter 런타임 UI는 기존 코드가 source of truth이고, Paper는 그 런
 | [PAPER_SCREEN_ROUTE_MAPPING.md](./PAPER_SCREEN_ROUTE_MAPPING.md) | Paper artboard와 Flutter route/state 매핑 |
 | [PAPER_SCREEN_COMPONENT_REGISTRY.md](./PAPER_SCREEN_COMPONENT_REGISTRY.md) | 화면/컴포넌트 인벤토리와 tracked source group |
 | [PAPER_SYNC_CHANGELOG.md](./PAPER_SYNC_CHANGELOG.md) | 코드 변경과 Paper 계약 동기화 이력 |
+| [DESIGN_MD_WORKFLOW.md](./DESIGN_MD_WORKFLOW.md) | `awesome-design-md` 기반 `DESIGN.md` 운영 방식 |
 | [CARD_COMPONENT_TAXONOMY.md](./CARD_COMPONENT_TAXONOMY.md) | 앱 카드 패턴과 shared component taxonomy |
 | [WIDGET_ARCHITECTURE_DESIGN.md](./WIDGET_ARCHITECTURE_DESIGN.md) | 위젯 아키텍처 |
 | [TALISMAN_GENERATION_INTEGRATION.md](./TALISMAN_GENERATION_INTEGRATION.md) | 부적 생성 통합 가이드 |
@@ -64,6 +68,12 @@ Paper 기준 현재 canonical 구조는 아래 25개 artboard입니다.
 ## 디자인 시스템 사용
 
 현재 앱의 공통 스타일 계약은 계속 Flutter design system 기준으로 유지합니다.
+
+AI 에이전트가 새 UI를 만들거나 기존 화면을 리디자인할 때는 다음 우선순위를 사용합니다.
+
+1. `paper/README.md` 와 `docs/design/PAPER_*`
+2. `lib/core/design_system/` 및 `lib/core/theme/`
+3. 루트 `DESIGN.md`
 
 ### 1. 색상 사용
 
