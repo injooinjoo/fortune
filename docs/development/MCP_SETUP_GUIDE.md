@@ -209,6 +209,73 @@ chmod 600 ~/.config/firebase/admin-sdk.json
 
 ---
 
+## 🎨 온디맨드 디자인 MCP: Pencil
+
+**언제 쓰나?**
+- `.pen` 파일 기반 디자인 자동화가 필요할 때
+- Codex/Claude에서 Pencil 디자인 툴을 직접 읽고 수정할 때
+- Paper 공식 SoT와 별개로 프로토타이핑 또는 headless 디자인 작업이 필요할 때
+
+**중요**
+- 최신 Pencil 공식 방식은 `.mcp.json`에 `mcpServers`를 수동 추가하는 방식이 아닙니다.
+- Pencil 데스크톱 앱 또는 IDE 확장을 실행하면 MCP 서버가 로컬에서 자동으로 노출됩니다.
+- 이 저장소의 공식 디자인 source of truth는 여전히 `Paper`이며, Pencil은 보조 워크플로우로만 사용합니다.
+
+### 빠른 시작
+
+1. CLI 확인
+```bash
+npm run pencil:version
+```
+
+2. 인증
+```bash
+npm run pencil:login
+```
+
+또는 CI/헤드리스 환경에서는 `PENCIL_CLI_KEY`를 사용합니다.
+
+3. Pencil 실행
+- 데스크톱 앱을 켜거나
+- VS Code/Cursor 확장에서 `.pen` 파일을 엽니다
+
+4. Codex/Claude에서 연결 확인
+- Codex: `/mcp` 실행 후 Pencil 도구가 보이는지 확인
+- CLI 상태 확인:
+
+```bash
+npm run pencil:status
+```
+
+5. 헤드리스 인터랙티브 셸
+```bash
+npm run pencil:interactive -- -o scratch.pen
+```
+
+기존 파일을 수정할 때:
+```bash
+npm run pencil:interactive -- -i existing.pen -o updated.pen
+```
+
+### 저장소 표준 명령
+
+- `npm run pencil:version`: Pencil CLI 버전 확인
+- `npm run pencil:login`: Pencil 계정 인증
+- `npm run pencil:status`: 인증 상태 확인
+- `npm run pencil:interactive -- -o scratch.pen`: headless MCP 도구 셸 시작
+
+### 운영 메모
+
+- Pencil CLI 패키지: `@pencil.dev/cli`
+- CLI는 별도 전역 설치 없이 `npx`로 실행합니다.
+- Pencil MCP가 안 보이면:
+  1. Pencil 앱/확장이 실제로 실행 중인지 확인
+  2. `npm run pencil:status`로 인증 상태 확인
+  3. Codex/IDE를 재시작하고 `/mcp`를 다시 확인
+- `.mcp.json`에는 Pencil 서버를 억지로 고정 등록하지 않습니다. 최신 공식 문서 기준 자동 연결 플로우가 기본입니다.
+
+---
+
 ## 🔍 MCP 서버 동작 확인
 
 ### Claude Code 재시작 후:
