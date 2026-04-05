@@ -270,7 +270,7 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
   async function markAuthComplete() {
     const next = await patchUnifiedOnboardingProgress({
       softGateCompleted: true,
-      authCompleted: true,
+      authCompleted: Boolean(session),
     });
     setOnboardingProgress(next);
   }
@@ -279,7 +279,7 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
     const next = await saveUnifiedOnboardingProgress({
       ...onboardingProgress,
       softGateCompleted: true,
-      authCompleted: true,
+      authCompleted: Boolean(session),
       birthCompleted: true,
       interestCompleted: true,
       firstRunHandoffSeen: true,

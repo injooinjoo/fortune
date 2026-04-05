@@ -158,7 +158,12 @@ export function ProfileNotificationsScreen() {
         </PrimaryButton>
         {!session ? (
           <PrimaryButton
-            onPress={() => router.push("/signup")}
+            onPress={() =>
+              router.push({
+                pathname: '/signup',
+                params: { returnTo: '/profile/notifications' },
+              })
+            }
             tone="secondary"
           >
             계정 연결

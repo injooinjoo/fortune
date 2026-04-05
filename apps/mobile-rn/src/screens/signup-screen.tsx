@@ -1,4 +1,6 @@
-import { router } from 'expo-router';
+import { useState } from 'react';
+
+import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { View } from 'react-native';
 
 import { AccountSnapshotCard } from '../components/account-snapshot-card';
@@ -7,31 +9,61 @@ import { Card } from '../components/card';
 import { Chip } from '../components/chip';
 import { PrimaryButton } from '../components/primary-button';
 import { Screen } from '../components/screen';
+import { captureError } from '../lib/error-reporting';
 import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 import { useMobileAppState } from '../providers/mobile-app-state-provider';
+import { useSocialAuth } from '../providers/social-auth-provider';
 
 const authOptions = [
   {
-    id: 'apple',
-    label: 'Apple로 계속하기',
-    note: 'iOS 환경에서 연결될 소셜 로그인 진입점',
-  },
-  {
     id: 'google',
     label: 'Google로 계속하기',
-    note: 'Android / web 계정 연결 진입점',
-  },
-  {
-    id: 'kakao',
-    label: 'Kakao로 계속하기',
-    note: '국내 계정 복귀 플로우 진입점',
+    note: '현재 reachable start flow에서 실제로 연결된 소셜 로그인 진입점',
   },
 ] as const;
 
+function readSearchParam(
+  value: string | string[] | undefined,
+): string | undefined {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function normalizeReturnTo(value: string | undefined) {
+  return value && value.startsWith('/') ? value : '/chat';
+}
+
 export function SignupScreen() {
+  const params = useLocalSearchParams<{ returnTo?: string | string[] }>();
+  const [activeProviderId, setActiveProviderId] = useState<string | null>(null);
+  const [authMessage, setAuthMessage] = useState<string | null>(null);
   const { gate, markGuestBrowse, onboardingProgress, session } = useAppBootstrap();
   const { state } = useMobileAppState();
+  const { startSocialAuth } = useSocialAuth();
+  const returnTo = normalizeReturnTo(readSearchParam(params.returnTo));
+
+  async function handleSocialAuthStart(providerId: 'apple' | 'google' | 'kakao') {
+    try {
+      setActiveProviderId(providerId);
+      setAuthMessage(null);
+
+      const result = await startSocialAuth(providerId, returnTo);
+
+      if (result.status === 'started') {
+        setAuthMessage(
+          `${authOptions.find((option) => option.id === providerId)?.label ?? providerId} 브라우저 인증을 시작했습니다. 완료 후 앱으로 돌아옵니다.`,
+        );
+        return;
+      }
+
+      setAuthMessage(result.errorMessage ?? '로그인을 시작하지 못했습니다.');
+    } catch (error) {
+      await captureError(error, { surface: 'signup:start-social-auth' });
+      setAuthMessage('소셜 로그인을 시작하지 못했습니다.');
+    } finally {
+      setActiveProviderId(null);
+    }
+  }
 
   return (
     <Screen>
@@ -40,7 +72,7 @@ export function SignupScreen() {
       </AppText>
       <AppText variant="displaySmall">가입 및 로그인</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
-        실제 공급자 연결은 다음 단계에서 붙고, 현재는 RN에서 올바른 진입 구조와 복귀 경로를 유지합니다.
+        실제 소셜 로그인 시작을 RN에서 열고, 복귀는 동일한 `/auth/callback` 계약으로 처리합니다.
       </AppText>
 
       <Card>
@@ -63,21 +95,34 @@ export function SignupScreen() {
 
       <Card>
         <AppText variant="heading4">소셜 로그인</AppText>
+        {authMessage ? (
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+            {authMessage}
+          </AppText>
+        ) : null}
         {authOptions.map((option) => (
-          <PrimaryButton
-            key={option.id}
-            onPress={() =>
-              router.push({
-                pathname: '/auth/callback',
-                params: {
-                  authCallbackUrl: `com.beyond.fortune://auth-callback?provider=${option.id}`,
-                },
-              })
-            }
-          >
-            {option.label}
-          </PrimaryButton>
+          <View key={option.id} style={{ gap: 8 }}>
+            <PrimaryButton
+              onPress={() => void handleSocialAuthStart(option.id)}
+            >
+              {activeProviderId === option.id
+                ? `${option.label} 준비 중...`
+                : option.label}
+            </PrimaryButton>
+            <AppText
+              variant="bodySmall"
+              color={fortuneTheme.colors.textTertiary}
+            >
+              {option.note}
+            </AppText>
+          </View>
         ))}
+        <AppText
+          variant="bodySmall"
+          color={fortuneTheme.colors.textTertiary}
+        >
+          Apple / Kakao 계정 연결은 이후 계정 관리 표면에서 붙입니다. 현재 reachable start flow는 Google 기준으로 먼저 고정합니다.
+        </AppText>
       </Card>
 
       <Card>
@@ -91,17 +136,28 @@ export function SignupScreen() {
         <PrimaryButton
           onPress={() => {
             markGuestBrowse()
-              .then(() => router.replace('/chat'))
-              .catch(() => router.replace('/chat'));
+              .then(() => router.replace(returnTo as Href))
+              .catch(() => router.replace(returnTo as Href));
           }}
         >
           게스트로 둘러보기
         </PrimaryButton>
-        <PrimaryButton onPress={() => router.push('/onboarding')} tone="secondary">
+        <PrimaryButton
+          onPress={() =>
+            router.push({
+              pathname: '/onboarding',
+              params: { returnTo },
+            })
+          }
+          tone="secondary"
+        >
           온보딩 계속하기
         </PrimaryButton>
-        <PrimaryButton onPress={() => router.replace('/chat')} tone="secondary">
-          Chat으로 돌아가기
+        <PrimaryButton
+          onPress={() => router.replace(returnTo as Href)}
+          tone="secondary"
+        >
+          {returnTo === '/chat' ? 'Chat으로 돌아가기' : '이전 화면으로 돌아가기'}
         </PrimaryButton>
       </Card>
     </Screen>

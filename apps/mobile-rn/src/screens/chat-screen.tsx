@@ -32,11 +32,9 @@ import { useMobileAppState } from '../providers/mobile-app-state-provider';
 export function ChatScreen() {
   const params = useLocalSearchParams<{ characterId?: string }>();
   const {
-    completeOnboarding,
     consumePendingChatFortuneType,
     gate,
     hasSupabase,
-    markAuthComplete,
     markGuestBrowse,
     onboardingProgress,
     pendingChatFortuneType,
@@ -283,18 +281,14 @@ export function ChatScreen() {
             게스트로 둘러보기
           </PrimaryButton>
           <PrimaryButton
-            onPress={() => {
-              markAuthComplete().catch((error) => {
-                captureError(error, { surface: 'chat:auth-complete' }).catch(
-                  () => undefined,
-                );
-              });
-            }}
+            onPress={() =>
+              router.push({
+                pathname: '/signup',
+                params: { returnTo: '/chat' },
+              })
+            }
             tone="secondary"
           >
-            인증 완료 상태로 전환
-          </PrimaryButton>
-          <PrimaryButton onPress={() => router.push('/signup')} tone="secondary">
             회원가입 표면 보기
           </PrimaryButton>
         </Card>
@@ -316,19 +310,7 @@ export function ChatScreen() {
             label={`handoff:${onboardingProgress.firstRunHandoffSeen ? 'done' : 'todo'}`}
           />
           <PrimaryButton
-            onPress={() => {
-              completeOnboarding().catch((error) => {
-                captureError(error, {
-                  surface: 'chat:complete-onboarding',
-                }).catch(() => undefined);
-              });
-            }}
-          >
-            온보딩 완료 처리
-          </PrimaryButton>
-          <PrimaryButton
             onPress={() => router.push('/onboarding')}
-            tone="secondary"
           >
             온보딩 표면 보기
           </PrimaryButton>

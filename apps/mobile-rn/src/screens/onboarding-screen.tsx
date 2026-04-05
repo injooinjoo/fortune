@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { View } from 'react-native';
 
 import { AccountSnapshotCard } from '../components/account-snapshot-card';
@@ -29,13 +29,25 @@ const onboardingSteps = [
   },
 ] as const;
 
+function readSearchParam(
+  value: string | string[] | undefined,
+): string | undefined {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function normalizeReturnTo(value: string | undefined) {
+  return value && value.startsWith('/') ? value : '/chat';
+}
+
 export function OnboardingScreen() {
+  const params = useLocalSearchParams<{ returnTo?: string | string[] }>();
   const { onboardingProgress, completeOnboarding, session } = useAppBootstrap();
   const { state } = useMobileAppState();
+  const returnTo = normalizeReturnTo(readSearchParam(params.returnTo));
 
   async function handleFinishOnboarding() {
     await completeOnboarding();
-    router.replace('/chat');
+    router.replace(returnTo as Href);
   }
 
   return (
@@ -100,13 +112,26 @@ export function OnboardingScreen() {
           contract에서 처리합니다.
         </AppText>
         <PrimaryButton onPress={() => void handleFinishOnboarding()}>
-          온보딩 완료하고 Chat으로
+          {session ? '온보딩 완료하고 계속하기' : '온보딩 저장하고 계속하기'}
         </PrimaryButton>
-        <PrimaryButton onPress={() => router.push('/signup')} tone="secondary">
-          계정 만들기 / 로그인
-        </PrimaryButton>
-        <PrimaryButton onPress={() => router.replace('/chat')} tone="secondary">
-          Chat으로 돌아가기
+        {!session ? (
+          <PrimaryButton
+            onPress={() =>
+              router.push({
+                pathname: '/signup',
+                params: { returnTo: '/onboarding' },
+              })
+            }
+            tone="secondary"
+          >
+            계정 만들기 / 로그인
+          </PrimaryButton>
+        ) : null}
+        <PrimaryButton
+          onPress={() => router.replace(returnTo as Href)}
+          tone="secondary"
+        >
+          {returnTo === '/chat' ? 'Chat으로 돌아가기' : '이전 화면으로 돌아가기'}
         </PrimaryButton>
       </Card>
     </Screen>

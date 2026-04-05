@@ -29,17 +29,40 @@ export interface SocialAuthStartResult {
   errorMessage?: string;
 }
 
-export function resolveSocialAuthRedirectTo() {
+function normalizeReturnTo(value: string | null | undefined) {
+  return value && value.startsWith('/') ? value : '/chat';
+}
+
+export function resolveSocialAuthRedirectTo(
+  provider: SocialAuthProviderId,
+  returnTo?: string,
+) {
+  const normalizedReturnTo = normalizeReturnTo(returnTo);
+
   if (Platform.OS === 'web') {
     const origin =
       typeof window !== 'undefined' && window.location.origin
         ? window.location.origin
         : appEnv.appDomain || 'http://localhost:19006';
 
-    return `${origin.replace(/\/$/, '')}/auth/callback`;
+    const redirectUrl = new URL(
+      `${origin.replace(/\/$/, '')}/auth/callback`,
+    );
+    redirectUrl.searchParams.set('provider', provider);
+    redirectUrl.searchParams.set('screen', 'chat');
+    redirectUrl.searchParams.set('returnTo', normalizedReturnTo);
+
+    return redirectUrl.toString();
   }
 
-  return `${deepLinkConfig.scheme}://${deepLinkConfig.authCallbackHost}`;
+  const redirectUrl = new URL(
+    `${deepLinkConfig.scheme}://${deepLinkConfig.authCallbackHost}`,
+  );
+  redirectUrl.searchParams.set('provider', provider);
+  redirectUrl.searchParams.set('screen', 'chat');
+  redirectUrl.searchParams.set('returnTo', normalizedReturnTo);
+
+  return redirectUrl.toString();
 }
 
 export function isSocialAuthSupported(provider: SocialAuthProviderId) {
@@ -49,8 +72,9 @@ export function isSocialAuthSupported(provider: SocialAuthProviderId) {
 
 export async function startSocialAuth(
   provider: SocialAuthProviderId,
+  returnTo?: string,
 ): Promise<SocialAuthStartResult> {
-  const redirectTo = resolveSocialAuthRedirectTo();
+  const redirectTo = resolveSocialAuthRedirectTo(provider, returnTo);
 
   if (!supabase) {
     return {

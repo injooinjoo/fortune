@@ -250,7 +250,14 @@ export function ProfileScreen() {
             로그인하면 원격 계정과 동기화할 수 있지만, 지금 보이는 프로필 상태는
             이 기기에 저장된 값입니다.
           </AppText>
-          <PrimaryButton onPress={() => router.push('/signup')}>
+          <PrimaryButton
+            onPress={() =>
+              router.push({
+                pathname: '/signup',
+                params: { returnTo: '/profile' },
+              })
+            }
+          >
             회원가입 / 로그인
           </PrimaryButton>
         </Card>

@@ -18,7 +18,10 @@ interface SocialAuthContextValue {
   supportedProviders: SocialAuthProviderId[];
   providerLabels: Record<SocialAuthProviderId, string>;
   isSupported: (provider: SocialAuthProviderId) => boolean;
-  startSocialAuth: (provider: SocialAuthProviderId) => Promise<SocialAuthStartResult>;
+  startSocialAuth: (
+    provider: SocialAuthProviderId,
+    returnTo?: string,
+  ) => Promise<SocialAuthStartResult>;
 }
 
 const SocialAuthContext = createContext<SocialAuthContextValue>({

@@ -184,7 +184,12 @@ export function ProfileEditScreen() {
         </PrimaryButton>
         {!session ? (
           <PrimaryButton
-            onPress={() => router.push("/signup")}
+            onPress={() =>
+              router.push({
+                pathname: '/signup',
+                params: { returnTo: '/profile/edit' },
+              })
+            }
             tone="secondary"
           >
             계정 연결
