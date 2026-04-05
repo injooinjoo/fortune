@@ -1,33 +1,34 @@
-import { useMemo } from "react";
+import { useMemo, useState } from 'react';
 
-import { router } from "expo-router";
-import { Pressable, View } from "react-native";
+import { router } from 'expo-router';
+import { Linking, Platform, Pressable, View } from 'react-native';
 
 import {
   fortuneCharacters,
   fortuneTypesById,
-} from "@fortune/product-contracts";
+} from '@fortune/product-contracts';
 
-import { AppText } from "../components/app-text";
-import { Card } from "../components/card";
-import { Chip } from "../components/chip";
-import { PrimaryButton } from "../components/primary-button";
-import { Screen } from "../components/screen";
-import { captureError } from "../lib/error-reporting";
-import { supabase } from "../lib/supabase";
-import { fortuneTheme } from "../lib/theme";
-import { useAppBootstrap } from "../providers/app-bootstrap-provider";
-import { useMobileAppState } from "../providers/mobile-app-state-provider";
+import { AppText } from '../components/app-text';
+import { Card } from '../components/card';
+import { Chip } from '../components/chip';
+import { PrimaryButton } from '../components/primary-button';
+import { Screen } from '../components/screen';
+import { captureError } from '../lib/error-reporting';
+import { supabase } from '../lib/supabase';
+import { fortuneTheme } from '../lib/theme';
+import { useAppBootstrap } from '../providers/app-bootstrap-provider';
+import { useMobileAppState } from '../providers/mobile-app-state-provider';
 
 export function ProfileScreen() {
+  const [isRestoring, setIsRestoring] = useState(false);
   const { onboardingProgress, session } = useAppBootstrap();
-  const { state } = useMobileAppState();
+  const { restorePurchases, state } = useMobileAppState();
   const savedName =
     state.profile.displayName.trim() ||
     (session?.user.user_metadata.name as string | undefined) ||
     (session?.user.user_metadata.full_name as string | undefined) ||
     session?.user.email ||
-    "게스트";
+    '게스트';
   const recentCharacter = useMemo(() => {
     if (!state.chat.selectedCharacterId) {
       return null;
@@ -51,10 +52,32 @@ export function ProfileScreen() {
   async function handleSignOut() {
     try {
       await supabase?.auth.signOut();
-      router.replace("/chat");
+      router.replace('/chat');
     } catch (error) {
-      await captureError(error, { surface: "profile:sign-out" });
+      await captureError(error, { surface: 'profile:sign-out' });
     }
+  }
+
+  async function handleRestorePurchases() {
+    try {
+      setIsRestoring(true);
+      await restorePurchases();
+    } catch (error) {
+      await captureError(error, { surface: 'profile:restore-purchases' });
+    } finally {
+      setIsRestoring(false);
+    }
+  }
+
+  async function handleOpenSubscriptionManagement() {
+    const url =
+      Platform.OS === 'ios'
+        ? 'https://apps.apple.com/account/subscriptions'
+        : 'https://play.google.com/store/account/subscriptions';
+
+    await Linking.openURL(url).catch((error) =>
+      captureError(error, { surface: 'profile:subscription-management' }),
+    );
   }
 
   return (
@@ -169,22 +192,22 @@ export function ProfileScreen() {
         <ProfileMenuRow
           label="프로필 수정"
           description="이름, 출생 정보, 이미지 표면"
-          onPress={() => router.push("/profile/edit")}
+          onPress={() => router.push('/profile/edit')}
         />
         <ProfileMenuRow
           label="사주 요약"
           description="사주 요약 및 기반 정보 확인"
-          onPress={() => router.push("/profile/saju-summary")}
+          onPress={() => router.push('/profile/saju-summary')}
         />
         <ProfileMenuRow
           label="인간관계"
           description="관계 프로필과 연결 관리"
-          onPress={() => router.push("/profile/relationships")}
+          onPress={() => router.push('/profile/relationships')}
         />
         <ProfileMenuRow
           label="알림 설정"
           description="푸시 및 딥링크 기본값"
-          onPress={() => router.push("/profile/notifications")}
+          onPress={() => router.push('/profile/notifications')}
         />
       </Card>
 
@@ -193,17 +216,27 @@ export function ProfileScreen() {
         <ProfileMenuRow
           label="구독 및 토큰"
           description="프리미엄 구독과 토큰 패키지"
-          onPress={() => router.push("/premium")}
+          onPress={() => router.push('/premium')}
+        />
+        <ProfileMenuRow
+          label={isRestoring ? '구매 복원 중...' : '구매 복원'}
+          description='이 기기의 프리미엄/토큰 상태를 다시 반영'
+          onPress={() => void handleRestorePurchases()}
+        />
+        <ProfileMenuRow
+          label='구독 관리'
+          description='스토어의 구독 관리 화면 열기'
+          onPress={() => void handleOpenSubscriptionManagement()}
         />
         <ProfileMenuRow
           label="개인정보처리방침"
           description="법률 및 정책 문서"
-          onPress={() => router.push("/privacy-policy")}
+          onPress={() => router.push('/privacy-policy')}
         />
         <ProfileMenuRow
           label="이용약관"
           description="서비스 이용 정책"
-          onPress={() => router.push("/terms-of-service")}
+          onPress={() => router.push('/terms-of-service')}
         />
       </Card>
 
@@ -217,7 +250,7 @@ export function ProfileScreen() {
             로그인하면 원격 계정과 동기화할 수 있지만, 지금 보이는 프로필 상태는
             이 기기에 저장된 값입니다.
           </AppText>
-          <PrimaryButton onPress={() => router.push("/signup")}>
+          <PrimaryButton onPress={() => router.push('/signup')}>
             회원가입 / 로그인
           </PrimaryButton>
         </Card>
@@ -228,7 +261,7 @@ export function ProfileScreen() {
         <PrimaryButton onPress={() => void handleSignOut()} tone="secondary">
           로그아웃
         </PrimaryButton>
-        <PrimaryButton onPress={() => router.push("/account-deletion")}>
+        <PrimaryButton onPress={() => router.push('/account-deletion')}>
           계정 삭제
         </PrimaryButton>
       </Card>

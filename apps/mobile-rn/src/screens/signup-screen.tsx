@@ -29,7 +29,7 @@ const authOptions = [
 ] as const;
 
 export function SignupScreen() {
-  const { gate, onboardingProgress, session } = useAppBootstrap();
+  const { gate, markGuestBrowse, onboardingProgress, session } = useAppBootstrap();
   const { state } = useMobileAppState();
   const profile = state.profile;
   const premium = state.premium;
@@ -130,6 +130,15 @@ export function SignupScreen() {
         <AppText variant="bodySmall" color={fortuneTheme.colors.textTertiary}>
           게스트로 먼저 둘러본 뒤 언제든 로그인으로 전환할 수 있습니다.
         </AppText>
+        <PrimaryButton
+          onPress={() => {
+            markGuestBrowse()
+              .then(() => router.replace('/chat'))
+              .catch(() => router.replace('/chat'));
+          }}
+        >
+          게스트로 둘러보기
+        </PrimaryButton>
         <PrimaryButton onPress={() => router.push('/onboarding')} tone="secondary">
           온보딩 계속하기
         </PrimaryButton>

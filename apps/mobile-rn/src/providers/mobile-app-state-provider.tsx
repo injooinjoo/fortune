@@ -21,6 +21,7 @@ import {
   type MobileProfileState,
 } from '../lib/mobile-app-state';
 import { getMobileAppState, saveMobileAppState } from '../lib/storage';
+import { useAppBootstrap } from './app-bootstrap-provider';
 
 type MobileAppStateStatus = 'loading' | 'ready';
 
@@ -51,6 +52,8 @@ const MobileAppStateContext = createContext<MobileAppStateContextValue>({
 });
 
 export function MobileAppStateProvider({ children }: PropsWithChildren) {
+  const { onboardingProgress, session, updateOnboardingProgress } =
+    useAppBootstrap();
   const [state, setState] = useState<MobileAppState>(emptyMobileAppState);
   const [status, setStatus] = useState<MobileAppStateStatus>('loading');
 
@@ -100,6 +103,79 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
       }),
     );
   }, [persistFromCurrent]);
+
+  useEffect(() => {
+    if (!session || status !== 'ready') {
+      return;
+    }
+
+    const metadata = (session.user.user_metadata ?? {}) as Record<string, unknown>;
+
+    const profileFromSession: Partial<MobileProfileState> = {
+      displayName:
+        state.profile.displayName ||
+        (typeof metadata.name === 'string' ? metadata.name : '') ||
+        (typeof metadata.full_name === 'string' ? metadata.full_name : '') ||
+        session.user.email ||
+        '',
+      birthDate:
+        state.profile.birthDate ||
+        (typeof metadata.birth_date === 'string' ? metadata.birth_date : ''),
+      birthTime:
+        state.profile.birthTime ||
+        (typeof metadata.birth_time === 'string' ? metadata.birth_time : ''),
+      mbti:
+        state.profile.mbti ||
+        (typeof metadata.mbti === 'string' ? metadata.mbti : ''),
+      bloodType:
+        state.profile.bloodType ||
+        (typeof metadata.blood_type === 'string' ? metadata.blood_type : ''),
+    };
+
+    const hasDelta = Object.entries(profileFromSession).some(
+      ([key, value]) =>
+        typeof value === 'string' &&
+        value.length > 0 &&
+        state.profile[key as keyof MobileProfileState] !== value,
+    );
+
+    if (!hasDelta) {
+      if (
+        profileFromSession.birthDate &&
+        !onboardingProgress.birthCompleted
+      ) {
+        updateOnboardingProgress({ birthCompleted: true }).catch((error) => {
+          captureError(error, {
+            surface: 'mobile-app-state:session-hydration-gate',
+          }).catch(() => undefined);
+        });
+      }
+      return;
+    }
+
+    saveProfile(profileFromSession).catch((error) => {
+      captureError(error, { surface: 'mobile-app-state:session-hydration' }).catch(
+        () => undefined,
+      );
+    });
+    if (
+      profileFromSession.birthDate &&
+      !onboardingProgress.birthCompleted
+    ) {
+      updateOnboardingProgress({ birthCompleted: true }).catch((error) => {
+        captureError(error, {
+          surface: 'mobile-app-state:session-hydration-gate',
+        }).catch(() => undefined);
+      });
+    }
+  }, [
+    onboardingProgress.birthCompleted,
+    saveProfile,
+    session,
+    state.profile,
+    status,
+    updateOnboardingProgress,
+  ]);
 
   const saveNotifications = useCallback(async (
     notifications: Partial<NotificationPreferences>,
