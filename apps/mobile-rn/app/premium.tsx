@@ -1,5 +1,5 @@
-import { RouteScreen } from '../src/screens/route-screen';
+import { PremiumScreen } from '../src/screens/premium-screen';
 
 export default function PremiumRoute() {
-  return <RouteScreen routeId="premium" />;
+  return <PremiumScreen />;
 }

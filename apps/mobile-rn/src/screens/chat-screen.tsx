@@ -3,10 +3,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import {
   findFortuneExpert,
+  type FortuneCharacterSpec,
   fortuneCharacters,
   type FortuneTypeId,
 } from '@fortune/product-contracts';
-import { Pressable, View } from 'react-native';
+import { Pressable, TextInput, View } from 'react-native';
 
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
@@ -15,6 +16,15 @@ import { PrimaryButton } from '../components/primary-button';
 import { Screen } from '../components/screen';
 import { captureError } from '../lib/error-reporting';
 import { appEnv } from '../lib/env';
+import {
+  buildDraftReply,
+  buildInitialThread,
+  buildLaunchMessages,
+  buildSuggestedActions,
+  buildUserMessage,
+  formatFortuneTypeLabel,
+  type ChatShellMessage,
+} from '../lib/chat-shell';
 import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 
@@ -35,8 +45,23 @@ export function ChatScreen() {
   const [activeFortuneType, setActiveFortuneType] = useState<FortuneTypeId | null>(
     null,
   );
+  const [draft, setDraft] = useState('');
+  const [launchOrigin, setLaunchOrigin] = useState<'deeplink' | 'user' | null>(
+    null,
+  );
+  const [lastAutoLaunchKey, setLastAutoLaunchKey] = useState<string | null>(null);
   const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(
     null,
+  );
+  const [messagesByCharacterId, setMessagesByCharacterId] = useState<
+    Record<string, ChatShellMessage[]>
+  >(() =>
+    Object.fromEntries(
+      fortuneCharacters.map((character) => [
+        character.id,
+        buildInitialThread(character),
+      ]),
+    ),
   );
 
   useEffect(() => {
@@ -45,6 +70,7 @@ export function ChatScreen() {
     }
 
     setActiveFortuneType(pendingChatFortuneType);
+    setLaunchOrigin('deeplink');
     consumePendingChatFortuneType().catch((error) => {
       captureError(error, { surface: 'chat:consume-pending-fortune' }).catch(
         () => undefined,
@@ -76,8 +102,88 @@ export function ChatScreen() {
       return;
     }
 
-    setSelectedCharacterId((current) => current ?? fortuneCharacters[0]?.id ?? null);
+    setSelectedCharacterId(
+      (current) => current ?? fortuneCharacters[0]?.id ?? null,
+    );
   }, [highlightedExpert?.id, params.characterId]);
+
+  const selectedThread = messagesByCharacterId[selectedCharacter.id] ?? [];
+  const suggestedActions = useMemo(
+    () => buildSuggestedActions(selectedCharacter),
+    [selectedCharacter],
+  );
+
+  useEffect(() => {
+    if (launchOrigin !== 'deeplink' || !activeFortuneType) {
+      return;
+    }
+
+    const targetCharacter = highlightedExpert ?? selectedCharacter;
+    const launchKey = `${targetCharacter.id}:${activeFortuneType}:deeplink`;
+
+    if (lastAutoLaunchKey === launchKey) {
+      return;
+    }
+
+    setSelectedCharacterId(targetCharacter.id);
+    appendMessages(
+      targetCharacter,
+      buildLaunchMessages(targetCharacter, activeFortuneType),
+    );
+    setLastAutoLaunchKey(launchKey);
+    setLaunchOrigin(null);
+  }, [
+    activeFortuneType,
+    highlightedExpert,
+    lastAutoLaunchKey,
+    launchOrigin,
+    selectedCharacter,
+  ]);
+
+  function appendMessages(
+    character: FortuneCharacterSpec,
+    nextMessages: ChatShellMessage[],
+  ) {
+    setMessagesByCharacterId((current) => ({
+      ...current,
+      [character.id]: [...(current[character.id] ?? []), ...nextMessages],
+    }));
+  }
+
+  function handleActionPress(fortuneType: FortuneTypeId) {
+    const action = buildSuggestedActions(selectedCharacter).find(
+      (candidate) => candidate.fortuneType === fortuneType,
+    );
+
+    if (!action) {
+      return;
+    }
+
+    setActiveFortuneType(fortuneType);
+    setLaunchOrigin('user');
+    appendMessages(selectedCharacter, [
+      buildUserMessage(action.prompt),
+      {
+        id: `assistant-action-${Date.now()}`,
+        sender: 'assistant',
+        text: action.reply,
+      },
+    ]);
+  }
+
+  function handleSendDraft() {
+    const trimmed = draft.trim();
+
+    if (!trimmed) {
+      return;
+    }
+
+    appendMessages(selectedCharacter, [
+      buildUserMessage(trimmed),
+      buildDraftReply(selectedCharacter, trimmed),
+    ]);
+    setDraft('');
+  }
 
   return (
     <Screen>
@@ -213,9 +319,9 @@ export function ChatScreen() {
       {status === 'ready' && gate === 'ready' ? (
         <>
           <Card>
-            <AppText variant="heading4">Chat Ready Shell</AppText>
+            <AppText variant="heading4">Chat Surface</AppText>
             <AppText variant="bodyMedium">
-              캐릭터 선택과 운세 launch intent를 한 화면에서 확인할 수 있도록 RN ready 상태를 실제 셸에 가깝게 재구성했습니다.
+              캐릭터 선택, suggested action, 메시지 스레드까지 한 화면에서 이어지는 RN chat shell 입니다.
             </AppText>
             <Chip
               label={`selected:${selectedCharacter.id}`}
@@ -314,7 +420,15 @@ export function ChatScreen() {
               }}
             >
               {selectedCharacter.specialties.map((specialty) => (
-                <Chip key={specialty} label={specialty} />
+                <Pressable
+                  key={specialty}
+                  accessibilityRole="button"
+                  onPress={() => handleActionPress(specialty)}
+                >
+                  <View>
+                    <Chip label={formatFortuneTypeLabel(specialty)} />
+                  </View>
+                </Pressable>
               ))}
             </View>
             <AppText
@@ -349,6 +463,68 @@ export function ChatScreen() {
           </Card>
 
           <Card>
+            <AppText variant="heading4">Suggested Actions</AppText>
+            <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+              Flutter 추천 칩 흐름처럼 선택된 캐릭터의 주력 운세를 빠르게 시작할 수 있습니다.
+            </AppText>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+              {suggestedActions.map((action) => (
+                <Pressable
+                  key={action.id}
+                  accessibilityRole="button"
+                  onPress={() => handleActionPress(action.fortuneType)}
+                  style={({ pressed }) => ({
+                    opacity: pressed ? 0.82 : 1,
+                  })}
+                >
+                  <View>
+                    <Chip
+                      label={action.label}
+                      tone={
+                        activeFortuneType === action.fortuneType
+                          ? 'accent'
+                          : 'neutral'
+                      }
+                    />
+                  </View>
+                </Pressable>
+              ))}
+            </View>
+          </Card>
+
+          <Card>
+            <AppText variant="heading4">Conversation Thread</AppText>
+            <View style={{ gap: fortuneTheme.spacing.sm }}>
+              {selectedThread.map((message) => (
+                <MessageBubble key={message.id} message={message} />
+              ))}
+            </View>
+          </Card>
+
+          <Card>
+            <AppText variant="heading4">Composer</AppText>
+            <TextInput
+              accessibilityLabel="chat composer"
+              multiline
+              onChangeText={setDraft}
+              placeholder={`${selectedCharacter.name}에게 질문을 입력하세요`}
+              placeholderTextColor={fortuneTheme.colors.textTertiary}
+              style={{
+                backgroundColor: fortuneTheme.colors.surfaceSecondary,
+                borderColor: fortuneTheme.colors.border,
+                borderRadius: fortuneTheme.radius.lg,
+                borderWidth: 1,
+                color: fortuneTheme.colors.textPrimary,
+                minHeight: 104,
+                padding: fortuneTheme.spacing.md,
+                textAlignVertical: 'top',
+              }}
+              value={draft}
+            />
+            <PrimaryButton onPress={handleSendDraft}>메시지 보내기</PrimaryButton>
+          </Card>
+
+          <Card>
             <AppText variant="heading4">Next Surfaces</AppText>
             <PrimaryButton onPress={() => router.push('/premium')}>
               Premium surface
@@ -363,5 +539,45 @@ export function ChatScreen() {
         </>
       ) : null}
     </Screen>
+  );
+}
+
+function MessageBubble({ message }: { message: ChatShellMessage }) {
+  const isAssistant = message.sender === 'assistant';
+  const isSystem = message.sender === 'system';
+
+  return (
+    <View
+      style={{
+        alignItems: isAssistant || isSystem ? 'flex-start' : 'flex-end',
+      }}
+    >
+      <View
+        style={{
+          backgroundColor: isSystem
+            ? fortuneTheme.colors.surfaceSecondary
+            : isAssistant
+              ? fortuneTheme.colors.backgroundTertiary
+              : fortuneTheme.colors.userBubble,
+          borderColor: fortuneTheme.colors.border,
+          borderRadius: fortuneTheme.radius.messageBubble,
+          borderWidth: 1,
+          maxWidth: '92%',
+          paddingHorizontal: fortuneTheme.spacing.md,
+          paddingVertical: fortuneTheme.spacing.sm,
+        }}
+      >
+        <AppText
+          variant="bodyMedium"
+          color={
+            isSystem
+              ? fortuneTheme.colors.textSecondary
+              : fortuneTheme.colors.textPrimary
+          }
+        >
+          {message.text}
+        </AppText>
+      </View>
+    </View>
   );
 }
