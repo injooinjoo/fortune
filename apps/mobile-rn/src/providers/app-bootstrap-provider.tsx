@@ -280,8 +280,6 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
       ...onboardingProgress,
       softGateCompleted: true,
       authCompleted: Boolean(session),
-      birthCompleted: true,
-      interestCompleted: true,
       firstRunHandoffSeen: true,
     });
     setOnboardingProgress(next);

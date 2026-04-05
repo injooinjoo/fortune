@@ -26,6 +26,10 @@ function normalizeReturnTo(value: string | null | undefined) {
 export function AuthCallbackScreen() {
   const params = useLocalSearchParams<{
     authCallbackUrl?: string | string[];
+    error?: string | string[];
+    error_description?: string | string[];
+    provider?: string | string[];
+    returnTo?: string | string[];
   }>();
   const {
     markAuthComplete,
@@ -39,13 +43,18 @@ export function AuthCallbackScreen() {
   const decodedCallbackUrl = authCallbackUrl
     ? decodeURIComponent(authCallbackUrl)
     : null;
+  const directReturnTo = normalizeReturnTo(readSearchParam(params.returnTo));
+  const directProvider = readSearchParam(params.provider) ?? null;
+  const directErrorMessage =
+    readSearchParam(params.error_description) ?? readSearchParam(params.error);
   const callbackMeta = useMemo(() => {
     if (!decodedCallbackUrl) {
       return {
-        errorMessage: null,
+        errorMessage: directErrorMessage,
         provider:
-          (session?.user.app_metadata.provider as string | undefined) ?? null,
-        returnTo: '/chat',
+          directProvider ??
+          ((session?.user.app_metadata.provider as string | undefined) ?? null),
+        returnTo: directReturnTo,
       };
     }
 
@@ -73,11 +82,18 @@ export function AuthCallbackScreen() {
         return {
           errorMessage: null,
           provider:
-            (session?.user.app_metadata.provider as string | undefined) ?? null,
-          returnTo: '/chat',
+            directProvider ??
+            ((session?.user.app_metadata.provider as string | undefined) ?? null),
+          returnTo: directReturnTo,
         };
       }
-    }, [decodedCallbackUrl, session?.user.app_metadata.provider]);
+    }, [
+      decodedCallbackUrl,
+      directErrorMessage,
+      directProvider,
+      directReturnTo,
+      session?.user.app_metadata.provider,
+    ]);
 
   useEffect(() => {
     if (

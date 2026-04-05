@@ -1,8 +1,8 @@
 import type { ExpoConfig } from 'expo/config';
 
 const config: ExpoConfig = {
-  name: 'Fortune',
-  slug: 'fortune-mobile-rn',
+  name: '온도',
+  slug: 'ondo-mobile-rn',
   version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/icon.png',
@@ -30,6 +30,7 @@ const config: ExpoConfig = {
   plugins: ['expo-router'],
   experiments: {
     typedRoutes: true,
+    autolinkingModuleResolution: true,
   },
   extra: {
     appEnv: process.env.EXPO_PUBLIC_APP_ENV ?? process.env.APP_ENV ?? 'development',

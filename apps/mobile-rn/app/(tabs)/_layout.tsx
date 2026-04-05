@@ -22,20 +22,6 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="fortune"
-        options={{
-          title: '탐구',
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="trend"
-        options={{
-          title: '트렌드',
-          href: null,
-        }}
-      />
-      <Tabs.Screen
         name="profile"
         options={{
           title: '프로필',

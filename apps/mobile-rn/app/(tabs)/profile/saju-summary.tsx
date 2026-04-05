@@ -1,5 +1,5 @@
-import { ProfileSajuSummaryScreen } from '../../../src/screens/profile-saju-summary-screen';
+import { Redirect } from 'expo-router';
 
 export default function ProfileSajuSummaryRoute() {
-  return <ProfileSajuSummaryScreen />;
+  return <Redirect href="/profile" />;
 }

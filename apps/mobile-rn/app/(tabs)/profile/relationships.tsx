@@ -1,5 +1,5 @@
-import { ProfileRelationshipsScreen } from '../../../src/screens/profile-relationships-screen';
+import { Redirect } from 'expo-router';
 
 export default function ProfileRelationshipsRoute() {
-  return <ProfileRelationshipsScreen />;
+  return <Redirect href="/profile" />;
 }

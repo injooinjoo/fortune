@@ -19,7 +19,7 @@ import {
   type MobileAppState,
 } from './mobile-app-state';
 
-const guestMobileAppStateStorageKey = `${mobileAppStateStorageKey}:guest`;
+const guestMobileAppStateStorageKey = `${mobileAppStateStorageKey}.guest`;
 const lastAuthenticatedUserIdStorageKey = 'fortune.last-auth-user-id.v1';
 
 function resolveMobileAppStateStorageKey(userId: string | null = null) {
@@ -27,7 +27,7 @@ function resolveMobileAppStateStorageKey(userId: string | null = null) {
     return guestMobileAppStateStorageKey;
   }
 
-  return `${mobileAppStateStorageKey}:${userId}`;
+  return `${mobileAppStateStorageKey}.${userId}`;
 }
 
 export async function getUnifiedOnboardingProgress(): Promise<UnifiedOnboardingProgress> {

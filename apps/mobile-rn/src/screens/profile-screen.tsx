@@ -108,6 +108,11 @@ export function ProfileScreen() {
           {state.profile.mbti || "MBTI 미저장"} ·{" "}
           {state.profile.bloodType || "혈액형 미저장"}
         </AppText>
+        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+          {state.profile.birthDate
+            ? '사주 해석에 필요한 출생 정보가 준비되어 있습니다.'
+            : '사주 해석 전에는 생년월일 저장이 먼저 필요합니다.'}
+        </AppText>
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
           <Chip
             label={`provider:${session?.user.app_metadata.provider ?? "guest"}`}
@@ -185,6 +190,22 @@ export function ProfileScreen() {
             }
           />
         </View>
+        {recentCharacter ? (
+          <PrimaryButton
+            onPress={() =>
+              router.push({
+                pathname: '/character/[id]',
+                params: { id: recentCharacter.id },
+              })
+            }
+            tone="secondary"
+          >
+            최근 캐릭터 프로필 보기
+          </PrimaryButton>
+        ) : null}
+        <PrimaryButton onPress={() => router.push('/chat')} tone="secondary">
+          Chat으로 이어가기
+        </PrimaryButton>
       </Card>
 
       <Card>
@@ -193,16 +214,6 @@ export function ProfileScreen() {
           label="프로필 수정"
           description="이름, 출생 정보, 이미지 표면"
           onPress={() => router.push('/profile/edit')}
-        />
-        <ProfileMenuRow
-          label="사주 요약"
-          description="사주 요약 및 기반 정보 확인"
-          onPress={() => router.push('/profile/saju-summary')}
-        />
-        <ProfileMenuRow
-          label="인간관계"
-          description="관계 프로필과 연결 관리"
-          onPress={() => router.push('/profile/relationships')}
         />
         <ProfileMenuRow
           label="알림 설정"
@@ -263,15 +274,17 @@ export function ProfileScreen() {
         </Card>
       ) : null}
 
-      <Card>
-        <AppText variant="heading4">계정</AppText>
-        <PrimaryButton onPress={() => void handleSignOut()} tone="secondary">
-          로그아웃
-        </PrimaryButton>
-        <PrimaryButton onPress={() => router.push('/account-deletion')}>
-          계정 삭제
-        </PrimaryButton>
-      </Card>
+      {session ? (
+        <Card>
+          <AppText variant="heading4">계정</AppText>
+          <PrimaryButton onPress={() => void handleSignOut()} tone="secondary">
+            로그아웃
+          </PrimaryButton>
+          <PrimaryButton onPress={() => router.push('/account-deletion')}>
+            계정 삭제
+          </PrimaryButton>
+        </Card>
+      ) : null}
     </Screen>
   );
 }

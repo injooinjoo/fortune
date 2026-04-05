@@ -119,17 +119,6 @@ export function ChatScreen() {
     );
   }, [highlightedExpert?.id, params.characterId]);
 
-  useEffect(() => {
-    recordChatIntent({
-      characterId: selectedCharacter.id,
-      fortuneType: activeFortuneType,
-    }).catch((error) => {
-      captureError(error, { surface: 'chat:record-selection' }).catch(
-        () => undefined,
-      );
-    });
-  }, [activeFortuneType, recordChatIntent, selectedCharacter.id]);
-
   const selectedThread = messagesByCharacterId[selectedCharacter.id] ?? [];
   const suggestedActions = useMemo(
     () => buildSuggestedActions(selectedCharacter),
@@ -231,7 +220,7 @@ export function ChatScreen() {
       <AppText variant="labelMedium" color={fortuneTheme.colors.accentSecondary}>
         /chat
       </AppText>
-      <AppText variant="displaySmall">Fortune React Native</AppText>
+      <AppText variant="displaySmall">온도</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
         Flutter의 chat-first 제품면을 RN에서 동일한 계약으로 재구성하는 기반입니다.
       </AppText>
@@ -389,7 +378,17 @@ export function ChatScreen() {
                   <Pressable
                     key={character.id}
                     accessibilityRole="button"
-                    onPress={() => setSelectedCharacterId(character.id)}
+                    onPress={() => {
+                      setSelectedCharacterId(character.id);
+                      recordChatIntent({
+                        characterId: character.id,
+                        fortuneType: activeFortuneType,
+                      }).catch((error) => {
+                        captureError(error, {
+                          surface: 'chat:record-explicit-selection',
+                        }).catch(() => undefined);
+                      });
+                    }}
                     style={({ pressed }) => ({
                       opacity: pressed ? 0.85 : 1,
                     })}
