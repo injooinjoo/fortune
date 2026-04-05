@@ -1,89 +1,69 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import { router } from 'expo-router';
-import { TextInput, View } from 'react-native';
+import { router } from "expo-router";
+import { TextInput, View } from "react-native";
 
-import { AppText } from '../components/app-text';
-import { Card } from '../components/card';
-import { Chip } from '../components/chip';
-import { PrimaryButton } from '../components/primary-button';
-import { Screen } from '../components/screen';
-import { captureError } from '../lib/error-reporting';
-import { fortuneTheme } from '../lib/theme';
-import { useAppBootstrap } from '../providers/app-bootstrap-provider';
+import { AppText } from "../components/app-text";
+import { Card } from "../components/card";
+import { Chip } from "../components/chip";
+import { PrimaryButton } from "../components/primary-button";
+import { Screen } from "../components/screen";
+import { captureError } from "../lib/error-reporting";
+import { fortuneTheme } from "../lib/theme";
+import { useAppBootstrap } from "../providers/app-bootstrap-provider";
+import { useMobileAppState } from "../providers/mobile-app-state-provider";
 
-const bloodTypes = ['A', 'B', 'O', 'AB'] as const;
+const bloodTypes = ["A", "B", "O", "AB"] as const;
 
 export function ProfileEditScreen() {
-  const { onboardingProgress, session } = useAppBootstrap();
-  const metadata = (session?.user.user_metadata ??
-    {}) as Record<string, unknown>;
-  const [displayName, setDisplayName] = useState(
-    (metadata.name as string | undefined) ??
-      (metadata.full_name as string | undefined) ??
-      session?.user.email ??
-      '',
-  );
-  const [birthDate, setBirthDate] = useState(
-    (metadata.birth_date as string | undefined) ?? '',
-  );
-  const [birthTime, setBirthTime] = useState(
-    (metadata.birth_time as string | undefined) ?? '',
-  );
-  const [mbti, setMbti] = useState((metadata.mbti as string | undefined) ?? '');
-  const [bloodType, setBloodType] = useState(
-    (metadata.blood_type as string | undefined) ?? '',
-  );
-  const [savedSnapshot, setSavedSnapshot] = useState<string | null>(null);
+  const { onboardingProgress, session, updateOnboardingProgress } =
+    useAppBootstrap();
+  const { state, saveProfile, status } = useMobileAppState();
+  const [displayName, setDisplayName] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [birthTime, setBirthTime] = useState("");
+  const [mbti, setMbti] = useState("");
+  const [bloodType, setBloodType] = useState("");
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    if (!session) {
-      setSavedSnapshot(null);
+    if (status !== "ready" || hydrated) {
+      return;
     }
-  }, [session]);
 
-  function handleSave() {
+    setDisplayName(state.profile.displayName.trim());
+    setBirthDate(state.profile.birthDate.trim());
+    setBirthTime(state.profile.birthTime.trim());
+    setMbti(state.profile.mbti.trim());
+    setBloodType(state.profile.bloodType.trim());
+    setHydrated(true);
+  }, [
+    hydrated,
+    state.profile.birthDate,
+    state.profile.birthTime,
+    state.profile.bloodType,
+    state.profile.displayName,
+    state.profile.mbti,
+    status,
+  ]);
+
+  async function handleSave() {
     try {
-      const nextSnapshot = JSON.stringify({
-        displayName,
-        birthDate,
-        birthTime,
-        mbti,
-        bloodType,
-      });
-      setSavedSnapshot(nextSnapshot);
-    } catch (error) {
-      void captureError(error, { surface: 'profile-edit:save' });
-    }
-  }
+      const nextProfile = {
+        displayName: displayName.trim(),
+        birthDate: birthDate.trim(),
+        birthTime: birthTime.trim(),
+        mbti: mbti.trim().toUpperCase(),
+        bloodType: bloodType.trim().toUpperCase(),
+      };
 
-  if (!session) {
-    return (
-      <Screen>
-        <AppText
-          variant="labelMedium"
-          color={fortuneTheme.colors.accentSecondary}
-        >
-          /profile/edit
-        </AppText>
-        <AppText variant="displaySmall">프로필 수정</AppText>
-        <Card>
-          <AppText variant="heading4">로그인이 필요합니다</AppText>
-          <AppText
-            variant="bodyMedium"
-            color={fortuneTheme.colors.textSecondary}
-          >
-            계정이 연결된 뒤에 프로필 편집을 저장할 수 있습니다.
-          </AppText>
-          <PrimaryButton onPress={() => router.push('/signup')}>
-            로그인 / 가입
-          </PrimaryButton>
-          <PrimaryButton onPress={() => router.back()} tone="secondary">
-            돌아가기
-          </PrimaryButton>
-        </Card>
-      </Screen>
-    );
+      await saveProfile(nextProfile);
+      await updateOnboardingProgress({
+        birthCompleted: nextProfile.birthDate.length > 0,
+      });
+    } catch (error) {
+      void captureError(error, { surface: "profile-edit:save" });
+    }
   }
 
   return (
@@ -96,16 +76,40 @@ export function ProfileEditScreen() {
       </AppText>
       <AppText variant="displaySmall">프로필 수정</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
-        RN shell 기준으로 편집 가능한 핵심 정보만 먼저 연결했습니다.
+        저장된 프로필을 불러와 수정하고, 생년월일이 있으면 온보딩 상태도 함께
+        갱신합니다.
       </AppText>
 
       <Card>
-        <AppText variant="heading4">상태</AppText>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-          <Chip label={`soft-gate:${onboardingProgress.softGateCompleted ? 'done' : 'todo'}`} />
-          <Chip label={`auth:${onboardingProgress.authCompleted ? 'done' : 'todo'}`} />
-          <Chip label={`birth:${onboardingProgress.birthCompleted ? 'done' : 'todo'}`} />
-          <Chip label={`interest:${onboardingProgress.interestCompleted ? 'done' : 'todo'}`} />
+        <AppText variant="heading4">저장된 값</AppText>
+        <AppText variant="labelLarge">
+          {state.profile.displayName || displayName || "이름 미저장"}
+        </AppText>
+        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+          {state.profile.birthDate || "생년월일 미저장"} ·{" "}
+          {state.profile.birthTime || "시간 미저장"}
+        </AppText>
+        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+          {state.profile.mbti || "MBTI 미저장"} ·{" "}
+          {state.profile.bloodType || "혈액형 미저장"}
+        </AppText>
+      </Card>
+
+      <Card>
+        <AppText variant="heading4">온보딩 상태</AppText>
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+          <Chip
+            label={`soft-gate:${onboardingProgress.softGateCompleted ? "done" : "todo"}`}
+          />
+          <Chip
+            label={`auth:${onboardingProgress.authCompleted ? "done" : "todo"}`}
+          />
+          <Chip
+            label={`birth:${onboardingProgress.birthCompleted ? "done" : "todo"}`}
+          />
+          <Chip
+            label={`interest:${onboardingProgress.interestCompleted ? "done" : "todo"}`}
+          />
         </View>
       </Card>
 
@@ -142,12 +146,12 @@ export function ProfileEditScreen() {
           onChangeText={setBloodType}
         />
 
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
           {bloodTypes.map((type) => (
             <PrimaryButton
               key={type}
               onPress={() => setBloodType(type)}
-              tone={bloodType === type ? 'primary' : 'secondary'}
+              tone={bloodType === type ? "primary" : "secondary"}
             >
               {type}
             </PrimaryButton>
@@ -158,24 +162,34 @@ export function ProfileEditScreen() {
       <Card>
         <AppText variant="heading4">미리보기</AppText>
         <AppText variant="labelLarge">
-          {displayName || '이름을 입력해 주세요'}
+          {displayName || "이름을 입력해 주세요"}
         </AppText>
         <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {birthDate || '생년월일 미입력'} · {birthTime || '시간 미입력'}
+          {birthDate || "생년월일 미입력"} · {birthTime || "시간 미입력"}
         </AppText>
         <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {mbti || 'MBTI 미입력'} · {bloodType || '혈액형 미입력'}
+          {mbti || "MBTI 미입력"} · {bloodType || "혈액형 미입력"}
         </AppText>
-        {savedSnapshot ? (
-          <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
-            저장 스냅샷: {savedSnapshot}
-          </AppText>
-        ) : null}
+        <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+          {state.profile.birthDate
+            ? "저장된 생년월일이 있어서 onboarding birthCompleted가 반영됩니다."
+            : "생년월일을 저장하면 onboarding birthCompleted가 갱신됩니다."}
+        </AppText>
       </Card>
 
       <Card>
         <AppText variant="heading4">동작</AppText>
-        <PrimaryButton onPress={handleSave}>임시 저장</PrimaryButton>
+        <PrimaryButton onPress={() => void handleSave()}>
+          임시 저장
+        </PrimaryButton>
+        {!session ? (
+          <PrimaryButton
+            onPress={() => router.push("/signup")}
+            tone="secondary"
+          >
+            계정 연결
+          </PrimaryButton>
+        ) : null}
         <PrimaryButton onPress={() => router.back()} tone="secondary">
           돌아가기
         </PrimaryButton>

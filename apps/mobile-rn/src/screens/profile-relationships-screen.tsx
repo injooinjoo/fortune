@@ -1,22 +1,33 @@
-import { router } from 'expo-router';
-import { Pressable, View } from 'react-native';
+import { router } from "expo-router";
+import { Pressable, View } from "react-native";
 
 import {
   findFortuneExpert,
   fortuneCharacters,
-} from '@fortune/product-contracts';
+  fortuneTypesById,
+} from "@fortune/product-contracts";
 
-import { AppText } from '../components/app-text';
-import { Card } from '../components/card';
-import { Chip } from '../components/chip';
-import { PrimaryButton } from '../components/primary-button';
-import { Screen } from '../components/screen';
-import { fortuneTheme } from '../lib/theme';
-import { useAppBootstrap } from '../providers/app-bootstrap-provider';
+import { AppText } from "../components/app-text";
+import { Card } from "../components/card";
+import { Chip } from "../components/chip";
+import { PrimaryButton } from "../components/primary-button";
+import { Screen } from "../components/screen";
+import { fortuneTheme } from "../lib/theme";
+import { useAppBootstrap } from "../providers/app-bootstrap-provider";
+import { useMobileAppState } from "../providers/mobile-app-state-provider";
 
 export function ProfileRelationshipsScreen() {
   const { session } = useAppBootstrap();
+  const { state } = useMobileAppState();
   const previewCharacters = fortuneCharacters.slice(0, 4);
+  const selectedCharacter = state.chat.selectedCharacterId
+    ? fortuneCharacters.find(
+        (character) => character.id === state.chat.selectedCharacterId,
+      )
+    : null;
+  const lastFortuneType = state.chat.lastFortuneType
+    ? fortuneTypesById[state.chat.lastFortuneType]
+    : null;
 
   return (
     <Screen>
@@ -28,17 +39,34 @@ export function ProfileRelationshipsScreen() {
       </AppText>
       <AppText variant="displaySmall">관계도</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
-        채팅 기반으로 캐릭터 관계를 이어가는 RN shell입니다.
+        저장된 최근 채팅 신호를 기준으로 관계 흐름을 이어갑니다.
       </AppText>
 
       <Card>
-        <AppText variant="heading4">관계 요약</AppText>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-          <Chip label={`character:${previewCharacters.length}`} tone="accent" />
-          <Chip label={`session:${session ? 'active' : 'guest'}`} />
+        <AppText variant="heading4">최근 채팅 신호</AppText>
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+          <Chip
+            label={
+              selectedCharacter
+                ? `character:${selectedCharacter.name}`
+                : "character:none"
+            }
+            tone={selectedCharacter ? "accent" : "neutral"}
+          />
+          <Chip
+            label={
+              state.chat.lastFortuneType
+                ? `fortune:${state.chat.lastFortuneType}`
+                : "fortune:none"
+            }
+          />
+          <Chip label={`messages:${state.chat.sentMessageCount}`} />
+          <Chip label={`session:${session ? "active" : "guest"}`} />
         </View>
         <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          활성 채팅을 쌓으면 여기에서 관계 흐름, 성향, 추천 캐릭터를 묶어 볼 수 있게 확장할 수 있습니다.
+          {state.chat.sentMessageCount > 0
+            ? "최근 선택과 메시지 카운트를 기준으로 추천 연결을 보여줍니다."
+            : "아직 최근 채팅이 없어서 추천 연결만 먼저 보여줍니다."}
         </AppText>
       </Card>
 
@@ -46,6 +74,7 @@ export function ProfileRelationshipsScreen() {
         <AppText variant="heading4">추천 연결</AppText>
         {previewCharacters.map((character) => {
           const expert = findFortuneExpert(character.specialties[0]);
+          const isSelected = selectedCharacter?.id === character.id;
 
           return (
             <Pressable
@@ -53,7 +82,7 @@ export function ProfileRelationshipsScreen() {
               accessibilityRole="button"
               onPress={() =>
                 router.push({
-                  pathname: '/character/[id]',
+                  pathname: "/character/[id]",
                   params: { id: character.id },
                 })
               }
@@ -63,6 +92,9 @@ export function ProfileRelationshipsScreen() {
             >
               <View
                 style={{
+                  backgroundColor: isSelected
+                    ? fortuneTheme.colors.surfaceSecondary
+                    : "transparent",
                   borderBottomColor: fortuneTheme.colors.border,
                   borderBottomWidth: 1,
                   gap: fortuneTheme.spacing.xs,
@@ -76,7 +108,9 @@ export function ProfileRelationshipsScreen() {
                 >
                   {character.shortDescription}
                 </AppText>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                <View
+                  style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}
+                >
                   <Chip label={character.category} />
                   {expert ? (
                     <Chip label={`기준:${expert.name}`} tone="success" />
@@ -90,7 +124,15 @@ export function ProfileRelationshipsScreen() {
 
       <Card>
         <AppText variant="heading4">관계 액션</AppText>
-        <PrimaryButton onPress={() => router.push('/chat')}>
+        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+          {lastFortuneType
+            ? `최근 운세 신호: ${lastFortuneType.labelKey}`
+            : "최근 운세 신호는 아직 없습니다."}
+        </AppText>
+        <PrimaryButton onPress={() => router.push("/profile/saju-summary")}>
+          사주 요약으로 이동
+        </PrimaryButton>
+        <PrimaryButton onPress={() => router.push("/chat")}>
           Chat 허브로 이동
         </PrimaryButton>
         <PrimaryButton onPress={() => router.back()} tone="secondary">
