@@ -5,13 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../constants/fortune_constants.dart';
 import '../../core/design_system/design_system.dart';
 import '../../core/widgets/paper_runtime_chrome.dart';
 import '../../core/widgets/paper_runtime_surface_kit.dart';
 import '../../models/user_profile.dart';
 import '../../presentation/providers/providers.dart';
-import '../../presentation/widgets/social_accounts_section.dart';
 import '../../services/in_app_purchase_service.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -48,20 +46,18 @@ class ProfileScreen extends ConsumerWidget {
               DSSpacing.xxl,
             ),
             children: [
-              _ProfileSummaryRow(
+              _ProfileSummaryCard(
                 profile: profile,
                 fallbackName: user.userMetadata?['name'] as String? ??
                     user.userMetadata?['full_name'] as String? ??
                     user.email ??
                     '사용자',
                 fallbackEmail: user.email ?? '',
-                onTap: () => context.push('/profile/edit'),
+                onEditTap: () => context.push('/profile/edit'),
               ),
-              Divider(
-                height: 1,
-                thickness: 1,
-                color: context.colors.border.withValues(alpha: 0.72),
-              ),
+              _ProfileStatChips(profile: profile),
+              const SizedBox(height: DSSpacing.md),
+              const _SectionLabel(title: '나의 온도'),
               PaperRuntimeMenuTile(
                 title: '사주 요약',
                 onTap: () => context.push('/profile/saju-summary'),
@@ -74,21 +70,22 @@ class ProfileScreen extends ConsumerWidget {
                 title: '알림 설정',
                 onTap: () => context.push('/profile/notifications'),
               ),
+              const SizedBox(height: DSSpacing.sm),
+              const _SectionLabel(title: '구독 관리'),
               PaperRuntimeMenuTile(
                 title: '구독 및 토큰',
-                subtitle: '구독 플랜 · 토큰 충전 · 프리미엄 콘텐츠',
                 onTap: () => context.push('/premium'),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: DSSpacing.pageHorizontal,
-                ),
-                child: Divider(
-                  height: 1,
-                  thickness: 1,
-                  color: context.colors.border.withValues(alpha: 0.72),
-                ),
+              PaperRuntimeMenuTile(
+                title: '구매 복원',
+                onTap: () => _handleRestorePurchases(context),
               ),
+              PaperRuntimeMenuTile(
+                title: '구독 관리',
+                onTap: _openSubscriptionManagement,
+              ),
+              const SizedBox(height: DSSpacing.sm),
+              const _SectionLabel(title: '정보'),
               PaperRuntimeMenuTile(
                 title: '개인정보처리방침',
                 onTap: () => context.push('/privacy-policy'),
@@ -97,16 +94,80 @@ class ProfileScreen extends ConsumerWidget {
                 title: '이용약관',
                 onTap: () => context.push('/terms-of-service'),
               ),
+              const SizedBox(height: DSSpacing.sm),
+              const _SectionLabel(title: '설정'),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: DSSpacing.pageHorizontal,
                 ),
-                child: Divider(
-                  height: 1,
-                  thickness: 1,
-                  color: context.colors.border.withValues(alpha: 0.72),
+                child: PaperRuntimePanel(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.dark_mode_outlined,
+                            size: 20,
+                            color: context.colors.textSecondary,
+                          ),
+                          const SizedBox(width: DSSpacing.sm),
+                          Expanded(
+                            child: Text(
+                              '테마 모드',
+                              style: context.typography.bodyMedium.copyWith(
+                                color: context.colors.textPrimary,
+                              ),
+                            ),
+                          ),
+                          DSChoiceChips(
+                            options: const ['시스템', '라이트', '다크'],
+                            selected: switch (themeMode) {
+                              ThemeMode.system => 0,
+                              ThemeMode.light => 1,
+                              ThemeMode.dark => 2,
+                            },
+                            onSelected: (index) async {
+                              final nextMode = switch (index) {
+                                0 => ThemeMode.system,
+                                1 => ThemeMode.light,
+                                _ => ThemeMode.dark,
+                              };
+                              await ref
+                                  .read(themeModeProvider.notifier)
+                                  .setThemeMode(nextMode);
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: DSSpacing.md),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.link,
+                            size: 20,
+                            color: context.colors.textSecondary,
+                          ),
+                          const SizedBox(width: DSSpacing.sm),
+                          Expanded(
+                            child: Text(
+                              '계정 연결',
+                              style: context.typography.bodyMedium.copyWith(
+                                color: context.colors.textPrimary,
+                              ),
+                            ),
+                          ),
+                          DSChip(
+                            label: _providerLabel(profile?.primaryProvider),
+                            style: DSChipStyle.outlined,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
+              const SizedBox(height: DSSpacing.lg),
               PaperRuntimeMenuTile(
                 title: '로그아웃',
                 destructive: true,
@@ -118,106 +179,6 @@ class ProfileScreen extends ConsumerWidget {
                 destructive: true,
                 showChevron: false,
                 onTap: () => context.push('/account-deletion'),
-              ),
-              const SizedBox(height: DSSpacing.xl),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: DSSpacing.pageHorizontal,
-                ),
-                child: PaperRuntimeExpandablePanel(
-                  title: '추가 관리',
-                  subtitle: '테마 모드, 구매 복원, 구독 관리, 계정 연결',
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Wrap(
-                        spacing: DSSpacing.sm,
-                        runSpacing: DSSpacing.sm,
-                        children: [
-                          DSChip(
-                            label: _providerLabel(profile?.primaryProvider),
-                            style: DSChipStyle.outlined,
-                          ),
-                          DSChip(
-                            label:
-                                _subscriptionLabel(profile?.subscriptionStatus),
-                            style: DSChipStyle.outlined,
-                          ),
-                          DSChip(
-                            label: '토큰 ${profile?.tokenBalance ?? 0}',
-                            style: DSChipStyle.outlined,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: DSSpacing.lg),
-                      Text(
-                        '테마 모드',
-                        style: context.bodyLarge.copyWith(
-                          color: context.colors.textPrimary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: DSSpacing.sm),
-                      DSChoiceChips(
-                        options: const ['시스템', '라이트', '다크'],
-                        selected: switch (themeMode) {
-                          ThemeMode.system => 0,
-                          ThemeMode.light => 1,
-                          ThemeMode.dark => 2,
-                        },
-                        onSelected: (index) async {
-                          final nextMode = switch (index) {
-                            0 => ThemeMode.system,
-                            1 => ThemeMode.light,
-                            _ => ThemeMode.dark,
-                          };
-                          await ref
-                              .read(themeModeProvider.notifier)
-                              .setThemeMode(nextMode);
-                        },
-                      ),
-                      const SizedBox(height: DSSpacing.lg),
-                      PaperRuntimeMenuTile(
-                        title: '구매 복원',
-                        subtitle: '이전 구매 항목을 복원합니다',
-                        onTap: () => _handleRestorePurchases(context),
-                        showDivider: true,
-                      ),
-                      PaperRuntimeMenuTile(
-                        title: '구독 관리',
-                        subtitle: Platform.isIOS
-                            ? 'Apple 구독을 관리합니다'
-                            : 'Google Play 구독을 관리합니다',
-                        onTap: _openSubscriptionManagement,
-                      ),
-                      const SizedBox(height: DSSpacing.lg),
-                      Text(
-                        '계정 연결',
-                        style: context.bodyLarge.copyWith(
-                          color: context.colors.textPrimary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: DSSpacing.sm),
-                      SocialAccountsSection(
-                        linkedProviders: profile?.linkedProviders,
-                        primaryProvider: profile?.primaryProvider ??
-                            user.appMetadata['provider'] as String?,
-                        onProvidersChanged: (providers) async {
-                          if (profile == null) {
-                            return;
-                          }
-                          await ref
-                              .read(userProfileNotifierProvider.notifier)
-                              .updateProfile(
-                                profile.copyWith(linkedProviders: providers),
-                              );
-                        },
-                        socialAuthService: ref.watch(socialAuthServiceProvider),
-                      ),
-                    ],
-                  ),
-                ),
               ),
             ],
           ),
@@ -336,17 +297,17 @@ class _ProfileAuthRequiredView extends StatelessWidget {
   }
 }
 
-class _ProfileSummaryRow extends StatelessWidget {
+class _ProfileSummaryCard extends StatelessWidget {
   final UserProfile? profile;
   final String fallbackName;
   final String fallbackEmail;
-  final VoidCallback onTap;
+  final VoidCallback onEditTap;
 
-  const _ProfileSummaryRow({
+  const _ProfileSummaryCard({
     required this.profile,
     required this.fallbackName,
     required this.fallbackEmail,
-    required this.onTap,
+    required this.onEditTap,
   });
 
   @override
@@ -357,48 +318,39 @@ class _ProfileSummaryRow extends StatelessWidget {
         ? fallbackEmail
         : (profile?.email.isNotEmpty == true ? profile!.email : '');
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: DSSpacing.pageHorizontal,
-            vertical: DSSpacing.lg,
-          ),
-          child: Row(
-            children: [
-              _ProfileAvatar(
-                imageUrl: profile?.profileImageUrl,
-                name: displayName,
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.pageHorizontal,
+        vertical: DSSpacing.lg,
+      ),
+      child: PaperRuntimePanel(
+        child: Column(
+          children: [
+            _ProfileAvatar(
+              imageUrl: profile?.profileImageUrl,
+              name: displayName,
+            ),
+            const SizedBox(height: DSSpacing.md),
+            Text(
+              displayName,
+              style: context.typography.headingSmall.copyWith(
+                color: context.colors.textPrimary,
               ),
-              const SizedBox(width: DSSpacing.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      displayName,
-                      style: context.heading4.copyWith(
-                        color: context.colors.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      email,
-                      style: context.bodySmall.copyWith(
-                        color: context.colors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
+            ),
+            const SizedBox(height: DSSpacing.xs),
+            Text(
+              email,
+              style: context.typography.bodySmall.copyWith(
+                color: context.colors.textSecondary,
               ),
-              Icon(
-                Icons.chevron_right,
-                color: context.colors.textTertiary,
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: DSSpacing.md),
+            PaperRuntimeButton(
+              label: '프로필 수정',
+              onPressed: onEditTap,
+              variant: PaperRuntimeButtonVariant.secondary,
+            ),
+          ],
         ),
       ),
     );
@@ -420,23 +372,131 @@ class _ProfileAvatar extends StatelessWidget {
 
     if (imageUrl != null && imageUrl!.isNotEmpty) {
       return CircleAvatar(
-        radius: 28,
+        radius: 36,
         backgroundColor: context.colors.surface,
         backgroundImage: NetworkImage(imageUrl!),
       );
     }
 
     return CircleAvatar(
-      radius: 28,
+      radius: 36,
       backgroundColor: context.colors.selectionBackground.withValues(
         alpha: 0.92,
       ),
       child: Text(
         initial,
-        style: context.heading3.copyWith(
+        style: context.typography.headingMedium.copyWith(
           color: context.colors.selectionForeground,
           fontWeight: FontWeight.w600,
-          fontSize: 22,
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileStatChips extends StatelessWidget {
+  final UserProfile? profile;
+
+  const _ProfileStatChips({required this.profile});
+
+  @override
+  Widget build(BuildContext context) {
+    final tokenBalance = profile?.tokenBalance ?? 0;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.pageHorizontal,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _StatChip(
+              value: profile?.chineseZodiac ?? '-',
+              label: '사주 원소',
+            ),
+          ),
+          const SizedBox(width: DSSpacing.sm),
+          Expanded(
+            child: _StatChip(
+              value: '${profile?.fortuneCount ?? 0}',
+              label: '인사이트',
+            ),
+          ),
+          const SizedBox(width: DSSpacing.sm),
+          Expanded(
+            child: _StatChip(
+              value: '$tokenBalance',
+              label: '토큰 잔액',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatChip extends StatelessWidget {
+  final String value;
+  final String label;
+
+  const _StatChip({
+    required this.value,
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        vertical: DSSpacing.sm,
+      ),
+      decoration: BoxDecoration(
+        color: context.colors.surface,
+        borderRadius: BorderRadius.circular(DSRadius.md),
+        border: Border.all(
+          color: context.colors.border,
+        ),
+      ),
+      child: Column(
+        children: [
+          Text(
+            value,
+            style: context.typography.headingSmall.copyWith(
+              color: context.colors.textPrimary,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: DSSpacing.xxs),
+          Text(
+            label,
+            style: context.typography.labelSmall.copyWith(
+              color: context.colors.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SectionLabel extends StatelessWidget {
+  final String title;
+
+  const _SectionLabel({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        DSSpacing.pageHorizontal,
+        DSSpacing.md,
+        DSSpacing.pageHorizontal,
+        DSSpacing.xs,
+      ),
+      child: Text(
+        title,
+        style: context.typography.labelSmall.copyWith(
+          color: context.colors.textTertiary,
         ),
       ),
     );
@@ -453,18 +513,5 @@ String _providerLabel(String? provider) {
       return 'Kakao 연결';
     default:
       return '이메일 계정';
-  }
-}
-
-String _subscriptionLabel(SubscriptionStatus? subscriptionStatus) {
-  switch (subscriptionStatus) {
-    case SubscriptionStatus.premium:
-      return '프리미엄';
-    case SubscriptionStatus.premiumPlus:
-      return '프리미엄 플러스';
-    case SubscriptionStatus.enterprise:
-      return '엔터프라이즈';
-    default:
-      return '무료 플랜';
   }
 }
