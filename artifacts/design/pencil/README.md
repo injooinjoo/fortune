@@ -28,14 +28,37 @@ This artifact package accompanies the active Pencil boards for the Fortune repo'
 - `exports/TBctN.png` — Chat and premium import board
 - `exports/nqs1k.png` — Profile surfaces import board
 - `exports/GDQx6.png` — Profile detail import board
-- `exports/VQyrC.png` — Account and policy import board
-- `exports/flNyX.png` — Extended chat and friends import board
+- Live-only in active Pencil editor:
+  - `VQyrC` — Account and policy import board
+  - `flNyX` — Extended chat and friends import board
+
+## KAN-268 Boards
+
+- `exports/40jKu.png` — Fortune result batch I import board
+- Live in the active Pencil editor:
+  - `40jKu` — `F01` through `F06` dark result pages
+  - Remaining Paper result ids confirmed for next batch:
+    - `5BF-1` — `F07` Career
+    - `5EM-1` — `F08` Relationship
+    - `5H4-1` — `F09` Health
+    - `5JA-1` — `F10` Coaching
+    - `5KK-1` — `F11` Family
+    - `5LS-1` — `F12` Mystical
+    - `5MP-1` — `F13` Interactive
+    - `5NH-1` — `F14` Personality
+    - `5R7-1` — `F15` Wealth
+    - `4XI-1` — `F16` Talent
+    - `510-1` — `F17` Exercise
+    - `53E-1` — `F18` Tarot
+    - `55X-1` — `F19` Game Enhance
+    - `58H-1` — `F20` OOTD
 
 Supporting reports:
 
 - `KAN-263_discovery_report.md`
 - `KAN-264_discovery_report.md`
 - `KAN-266_discovery_report.md`
+- `KAN-268_discovery_report.md`
 - `KAN-264_paper_to_pencil_qa_strategy.md`
 
 ## Source Inputs
@@ -59,3 +82,4 @@ Supporting reports:
 - Keep the governed Paper contract separate from the live extended Paper file during import.
 - Make each Paper-to-Pencil import batch reviewable with persisted PNG exports.
 - Keep the governed dark runtime set complete before moving into extended chat, friends, and light-mirror lanes.
+- Keep fortune result families grouped into reviewable batches with exact Paper ids preserved for follow-on work.
