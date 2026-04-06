@@ -1,10 +1,8 @@
-# Fortune Pencil Review Board
+# Fortune Pencil Review Boards
 
-Jira: `KAN-263`
+This artifact package accompanies the active Pencil boards for the Fortune repo's current route, schema, and Paper-to-Pencil import work.
 
-This artifact package accompanies the active Pencil board for the Fortune repo's current route and schema truth.
-
-## Boards
+## KAN-263 Boards
 
 1. `exports/Gw90a.png` — Overview and legend
 2. `exports/Ch1v9.png` — Runtime route map
@@ -12,6 +10,20 @@ This artifact package accompanies the active Pencil board for the Fortune repo's
 4. `exports/STRjy.png` — Schema flow
 5. `exports/XeglI.png` — Endpoint taxonomy
 6. `exports/KXK1V.png` — Review board
+
+## KAN-264 Boards
+
+- `exports/737fD.png` — Canonical runtime import board
+- `exports/z5idK.png` — Splash import
+- `exports/uYBc8.png` — Soft gate import
+- `exports/lCbrH.png` — Auth callback import
+- `exports/l9r0E.png` — Nickname fallback import
+
+Supporting reports:
+
+- `KAN-263_discovery_report.md`
+- `KAN-264_discovery_report.md`
+- `KAN-264_paper_to_pencil_qa_strategy.md`
 
 ## Source Inputs
 
@@ -31,3 +43,5 @@ This artifact package accompanies the active Pencil board for the Fortune repo's
 - Expose contract-only routes such as `/fortune` and `/trend`.
 - Show how fortune types, endpoint resolution, and normalization differ from a naive 1:1 mental model.
 - Give reviewers concrete decisions instead of passive documentation.
+- Keep the governed Paper contract separate from the live extended Paper file during import.
+- Make the first Paper-to-Pencil import batch reviewable with persisted PNG exports.
