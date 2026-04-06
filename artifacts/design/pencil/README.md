@@ -14,15 +14,28 @@ This artifact package accompanies the active Pencil boards for the Fortune repo'
 ## KAN-264 Boards
 
 - `exports/737fD.png` — Canonical runtime import board
+- `exports/pdJPQ.png` — Onboarding flow import board
+- `exports/TBctN.png` — Chat and premium import board
+- `exports/nqs1k.png` — Profile surfaces import board
 - `exports/z5idK.png` — Splash import
 - `exports/uYBc8.png` — Soft gate import
 - `exports/lCbrH.png` — Auth callback import
 - `exports/l9r0E.png` — Nickname fallback import
 
+## KAN-266 Boards
+
+- `exports/pdJPQ.png` — Onboarding flow import board
+- `exports/TBctN.png` — Chat and premium import board
+- `exports/nqs1k.png` — Profile surfaces import board
+- `exports/GDQx6.png` — Profile detail import board
+- `exports/VQyrC.png` — Account and policy import board
+- `exports/flNyX.png` — Extended chat and friends import board
+
 Supporting reports:
 
 - `KAN-263_discovery_report.md`
 - `KAN-264_discovery_report.md`
+- `KAN-266_discovery_report.md`
 - `KAN-264_paper_to_pencil_qa_strategy.md`
 
 ## Source Inputs
@@ -44,4 +57,5 @@ Supporting reports:
 - Show how fortune types, endpoint resolution, and normalization differ from a naive 1:1 mental model.
 - Give reviewers concrete decisions instead of passive documentation.
 - Keep the governed Paper contract separate from the live extended Paper file during import.
-- Make the first Paper-to-Pencil import batch reviewable with persisted PNG exports.
+- Make each Paper-to-Pencil import batch reviewable with persisted PNG exports.
+- Keep the governed dark runtime set complete before moving into extended chat, friends, and light-mirror lanes.
