@@ -2,6 +2,19 @@
 
 This artifact package accompanies the active Pencil boards for the Fortune repo's current route, schema, and Paper-to-Pencil import work.
 
+## Current Status
+
+- The current Pencil file is not a full Paper mirror.
+- What is covered now:
+  - governed dark runtime imports
+  - dark fortune result imports through `F20`
+  - light fortune result imports through `F20`
+- What is still missing:
+  - light-mirror runtime lanes
+  - `F21` through `F50`
+  - `D01`, `D02`, and the chat fortune card reference surface
+- Canonical gap inventory is tracked in `KAN-271_discovery_report.md`.
+
 ## KAN-263 Boards
 
 1. `exports/Gw90a.png` — Overview and legend
@@ -48,6 +61,19 @@ This artifact package accompanies the active Pencil boards for the Fortune repo'
   - `t3m5f` — `F11` Family, `F12` Mystical, `F13` Interactive, `F14` Personality
   - `3ArjO` — `F15` Wealth, `F16` Talent, `F17` Exercise, `F18` Tarot, `F19` Game Enhance, `F20` OOTD
 
+## KAN-271 Audit
+
+- `exports/NPZob.png` — coverage gap register board
+- `exports/p2GZ0.png` — fortune coverage audit board
+- `exports/YDnYY.png` — `F01` through `F06` light board
+- `exports/Cb3U7.png` — `F07` through `F10` light board
+- `exports/1sd5C.png` — `F11` through `F14` light board
+- `exports/VWy55.png` — `F15` through `F20` light board
+- `exports/gTmbS.png` — repaired `F20` OOTD review export
+- `exports/8j2pE.png` — repaired `F14` Personality review export
+- `KAN-271_discovery_report.md` — full Paper inventory vs current Pencil coverage audit
+- `KAN-271_rca_report.md` — root cause analysis for the false completeness claim
+
 Supporting reports:
 
 - `KAN-263_discovery_report.md`
@@ -55,7 +81,9 @@ Supporting reports:
 - `KAN-266_discovery_report.md`
 - `KAN-268_discovery_report.md`
 - `KAN-269_discovery_report.md`
+- `KAN-271_discovery_report.md`
 - `KAN-270_discovery_report.md`
+- `KAN-271_rca_report.md`
 - `KAN-264_paper_to_pencil_qa_strategy.md`
 
 ## Source Inputs
@@ -80,3 +108,4 @@ Supporting reports:
 - Make each Paper-to-Pencil import batch reviewable with persisted PNG exports.
 - Keep the governed dark runtime set complete before moving into extended chat, friends, and light-mirror lanes.
 - Keep fortune result families grouped into reviewable batches with exact Paper ids preserved through final completion.
+- Do not claim completion until the Paper inventory is fully mapped against live Pencil coverage.
