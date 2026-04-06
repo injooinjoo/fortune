@@ -55,6 +55,7 @@ Supporting reports:
 - `KAN-266_discovery_report.md`
 - `KAN-268_discovery_report.md`
 - `KAN-269_discovery_report.md`
+- `KAN-270_discovery_report.md`
 - `KAN-264_paper_to_pencil_qa_strategy.md`
 
 ## Source Inputs
