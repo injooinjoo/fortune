@@ -27,7 +27,7 @@ const config: ExpoConfig = {
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
   },
-  plugins: ['expo-router'],
+  plugins: ['expo-router', './plugins/with-ios-prebuilt-react-native'],
   experiments: {
     typedRoutes: true,
     autolinkingModuleResolution: true,
