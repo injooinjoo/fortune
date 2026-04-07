@@ -68,6 +68,35 @@ function HeaderDots() {
   );
 }
 
+function PagerDots() {
+  return (
+    <View
+      style={{
+        alignItems: 'center',
+        flexDirection: 'row',
+        gap: 12,
+        justifyContent: 'center',
+        paddingTop: fortuneTheme.spacing.xs,
+      }}
+    >
+      {Array.from({ length: 5 }).map((_, index) => (
+        <View
+          key={index}
+          style={{
+            backgroundColor:
+              index === 0
+                ? 'rgba(255,255,255,0.94)'
+                : fortuneTheme.colors.surfaceSecondary,
+            borderRadius: 999,
+            height: 10,
+            width: 10,
+          }}
+        />
+      ))}
+    </View>
+  );
+}
+
 function SegmentedPills({ fortuneMode }: { fortuneMode: boolean }) {
   return (
     <View style={{ flexDirection: 'row', gap: fortuneTheme.spacing.xs }}>
@@ -155,7 +184,11 @@ function CharacterListRow({
         <CharacterAvatar name={character.name} />
         <View style={{ flex: 1, gap: 2 }}>
           <AppText variant="labelLarge">{character.name}</AppText>
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+          <AppText
+            numberOfLines={1}
+            variant="bodySmall"
+            color={fortuneTheme.colors.textSecondary}
+          >
             {character.shortDescription}
           </AppText>
         </View>
@@ -478,6 +511,8 @@ export function ChatFirstRunSurface({
           ))}
         </View>
       </SurfaceSection>
+
+      <PagerDots />
     </View>
   );
 }
@@ -564,17 +599,17 @@ export function ActiveCharacterChatSurface({
       <View
         style={{
           alignItems: 'center',
-          gap: fortuneTheme.spacing.sm,
-          paddingTop: fortuneTheme.spacing.sm,
+          gap: fortuneTheme.spacing.xs,
+          paddingTop: 6,
         }}
       >
-        <CharacterAvatar name={character.name} size={78} />
+        <CharacterAvatar name={character.name} size={72} />
         <View style={{ alignItems: 'center', gap: 4 }}>
           <AppText variant="heading4">{character.name}</AppText>
           <AppText
             variant="bodySmall"
             color={fortuneTheme.colors.textSecondary}
-            style={{ textAlign: 'center' }}
+            style={{ maxWidth: 230, textAlign: 'center' }}
           >
             {character.shortDescription}
           </AppText>
@@ -584,8 +619,19 @@ export function ActiveCharacterChatSurface({
           onPress={onOpenProfile}
           style={({ pressed }) => ({ opacity: pressed ? 0.82 : 1 })}
         >
-          <View>
-            <Chip label="프로필 보기" />
+          <View
+            style={{
+              backgroundColor: fortuneTheme.colors.surfaceSecondary,
+              borderColor: fortuneTheme.colors.border,
+              borderRadius: 999,
+              borderWidth: 1,
+              paddingHorizontal: 12,
+              paddingVertical: 6,
+            }}
+          >
+            <AppText variant="caption" color={fortuneTheme.colors.textSecondary}>
+              프로필 보기
+            </AppText>
           </View>
         </Pressable>
       </View>
@@ -732,9 +778,30 @@ export function ActiveCharacterChatSurface({
               width: 32,
             }}
           >
-            <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary}>
-              ＋
-            </AppText>
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <View
+                style={{
+                  backgroundColor: fortuneTheme.colors.textSecondary,
+                  borderRadius: 999,
+                  height: 2,
+                  position: 'absolute',
+                  width: 11,
+                }}
+              />
+              <View
+                style={{
+                  backgroundColor: fortuneTheme.colors.textSecondary,
+                  borderRadius: 999,
+                  height: 11,
+                  width: 2,
+                }}
+              />
+            </View>
           </View>
           <View style={{ flex: 1 }}>
             <TextInput
@@ -769,16 +836,40 @@ export function ActiveCharacterChatSurface({
               paddingHorizontal: composerHasDraft ? 10 : 0,
             }}
           >
-            <AppText
-              variant="labelLarge"
-              color={
-                composerHasDraft
-                  ? fortuneTheme.colors.ctaForeground
-                  : fortuneTheme.colors.textSecondary
-              }
-            >
-              {composerHasDraft ? '보내기' : '◉'}
-            </AppText>
+            {composerHasDraft ? (
+              <AppText
+                variant="labelLarge"
+                color={fortuneTheme.colors.ctaForeground}
+              >
+                보내기
+              </AppText>
+            ) : (
+              <View
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <View
+                  style={{
+                    borderColor: fortuneTheme.colors.textSecondary,
+                    borderRadius: 999,
+                    borderWidth: 1.5,
+                    height: 11,
+                    width: 11,
+                  }}
+                />
+                <View
+                  style={{
+                    backgroundColor: fortuneTheme.colors.textSecondary,
+                    borderRadius: 999,
+                    height: 3,
+                    position: 'absolute',
+                    width: 3,
+                  }}
+                />
+              </View>
+            )}
           </Pressable>
         </View>
       </View>

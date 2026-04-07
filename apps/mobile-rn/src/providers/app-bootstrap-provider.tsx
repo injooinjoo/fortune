@@ -102,6 +102,21 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
       const debugGate = url.searchParams.get('debugChatGate');
       const debugCharacterId = url.searchParams.get('characterId');
 
+      if (debugGate === 'auth-entry') {
+        const nextProgress = await syncProgress({
+          softGateCompleted: false,
+          authCompleted: false,
+          birthCompleted: false,
+          interestCompleted: false,
+          firstRunHandoffSeen: false,
+        });
+
+        return {
+          nextProgress,
+          route: '/chat' as const,
+        };
+      }
+
       if (debugGate !== 'ready') {
         return null;
       }

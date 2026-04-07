@@ -62,16 +62,31 @@ export function formatFortuneTypeLabel(type: FortuneTypeId): string {
 export function buildInitialThread(
   character: FortuneCharacterSpec,
 ): ChatShellMessage[] {
+  const leadFortuneType = character.specialties[0];
+  const leadLabel = leadFortuneType
+    ? formatFortuneTypeLabel(leadFortuneType)
+    : '운세 흐름';
+
   return [
     {
-      id: createMessageId('system'),
-      sender: 'system',
-      text: `${character.name} 채팅방이 준비됐어요.`,
+      id: createMessageId('assistant'),
+      sender: 'assistant',
+      text: `안녕하세요! ${character.name}예요. 오늘은 어떤 흐름이 가장 궁금하세요?`,
+    },
+    {
+      id: createMessageId('user'),
+      sender: 'user',
+      text: '오늘 좀 피곤했어요. 지금 흐름부터 가볍게 보고 싶어요.',
     },
     {
       id: createMessageId('assistant'),
       sender: 'assistant',
-      text: `${character.shortDescription} 지금 궁금한 주제를 골라 주시면 바로 이어서 볼게요.`,
+      text: `${character.shortDescription} 우선 ${leadLabel} 쪽으로 몸과 마음의 결을 가볍게 읽어드릴게요.`,
+    },
+    {
+      id: createMessageId('assistant'),
+      sender: 'assistant',
+      text: '아래 주제 중에서 지금 바로 이어갈 흐름을 골라주시면 대화처럼 자연스럽게 풀어볼게요.',
     },
   ];
 }
@@ -94,20 +109,23 @@ export function buildLaunchMessages(
   character: FortuneCharacterSpec,
   fortuneType: FortuneTypeId,
 ): ChatShellMessage[] {
+  const fortuneLabel = formatFortuneTypeLabel(fortuneType);
+
   return [
     {
-      id: createMessageId('system'),
-      sender: 'system',
-      text: `딥링크 요청을 감지했어요. ${formatFortuneTypeLabel(
-        fortuneType,
-      )}를 ${character.name}에게 연결합니다.`,
+      id: createMessageId('assistant'),
+      sender: 'assistant',
+      text: `${fortuneLabel}부터 같이 볼까요? ${character.name}의 톤으로 흐름을 열어볼게요.`,
+    },
+    {
+      id: createMessageId('user'),
+      sender: 'user',
+      text: `${fortuneLabel} 먼저 부탁해요.`,
     },
     {
       id: createMessageId('assistant'),
       sender: 'assistant',
-      text: `${formatFortuneTypeLabel(
-        fortuneType,
-      )} 요청이 들어왔네요. 필요한 맥락을 짧게 알려주시면 바로 채팅 흐름으로 이어가겠습니다.`,
+      text: `${fortuneLabel}에 필요한 맥락은 제가 짧게 이어서 물어볼게요. 우선 지금 느끼는 분위기부터 함께 짚어봐요.`,
     },
   ];
 }
@@ -119,7 +137,7 @@ export function buildDraftReply(
   return {
     id: createMessageId('assistant'),
     sender: 'assistant',
-    text: `${character.name}: "${draft}"에 대한 실전형 응답은 다음 단계에서 서버 운세 결과와 연결되지만, RN 셸 기준으로는 이렇게 대화 흐름을 이어받을 수 있습니다.`,
+    text: `"${draft}"라고 느끼셨군요. ${character.name}의 시선으로 보면 지금은 감정의 결을 먼저 정리하고, 필요한 흐름만 바로 이어보는 편이 좋아 보여요.`,
   };
 }
 
