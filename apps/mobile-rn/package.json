@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@expo/vector-icons": "^15.1.1",
     "@fortune/design-tokens": "file:../../packages/design-tokens",
     "@fortune/product-contracts": "file:../../packages/product-contracts",
     "@supabase/supabase-js": "^2.86.2",
