@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.7+78
+version: 1.0.7+82
 
 environment:
   sdk: ">=3.5.3 <4.0.0"
@@ -139,6 +139,9 @@ dependencies:
 
   # Speech Recognition
   speech_to_text: ^7.0.0
+
+  # Text-to-Speech
+  flutter_tts: ^4.2.0
 
   # Audio
   audioplayers: ^6.1.0
@@ -442,32 +445,34 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/images/zpzg_logo.png"
-  adaptive_icon_background: "#F5F0E6" # 크림색 한지 배경
-  adaptive_icon_foreground: "assets/images/zpzg_logo.png"
+  image_path: "assets/images/ondo_app_icon.png"
+  remove_alpha_ios: true
+  adaptive_icon_background: "#111115"
+  adaptive_icon_foreground: "assets/images/ondo_icon_foreground.png"
   min_sdk_android: 21
   web:
     generate: true
-    image_path: "assets/images/zpzg_logo.png"
+    image_path: "assets/images/ondo_app_icon.png"
   windows:
     generate: true
-    image_path: "assets/images/zpzg_logo.png"
+    image_path: "assets/images/ondo_app_icon.png"
   macos:
     generate: true
-    image_path: "assets/images/zpzg_logo.png"
+    image_path: "assets/images/ondo_app_icon.png"
 
 # Splash Screen Configuration
 flutter_native_splash:
-  color: "#F7F3E9" # 미색 (Misaek) 한지 배경
-  color_dark: "#F7F3E9" # 다크 모드도 라이트 스플래시와 동일하게 유지
-  # 이미지 없음 - LaunchScreen.storyboard에서 '知' 텍스트 레이블 사용
+  color: "#0B0B10"
+  color_dark: "#0B0B10"
+  image: "assets/images/ondo_app_icon.png"
 
   # Android 12+ specific
   android_12:
-    color: "#F7F3E9"
-    color_dark: "#F7F3E9"
-    icon_background_color: "#F7F3E9"
-    icon_background_color_dark: "#F7F3E9"
+    color: "#0B0B10"
+    color_dark: "#0B0B10"
+    icon_background_color: "#111115"
+    icon_background_color_dark: "#111115"
+    image: "assets/images/ondo_app_icon.png"
 
   # Platform specific options
   android: true

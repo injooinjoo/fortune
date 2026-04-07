@@ -10,6 +10,7 @@
 ## 핵심 원칙
 
 - 현재 메인 진입점은 `/chat`입니다.
+- `GoRouter`의 `initialLocation`은 `/splash`이며, 정상 진입은 대부분 `/chat`으로 수렴합니다.
 - `호기심`은 별도 상위 route가 아니라 `/chat` 내부의 두 번째 경험 모드로 봅니다.
 - 내부 구현의 `story` / `fortune` 분류는 사용자-facing 문서에서 `일반 채팅` / `호기심`으로 번역합니다.
 - `CharacterProfilePage`는 메인 탭이 아니라 캐릭터 상세/진입 보조 페이지입니다.
@@ -32,6 +33,11 @@
 | `/onboarding` | 온보딩 |
 | `/onboarding/toss-style` | 온보딩 변형 |
 | `/character/:id` | 캐릭터 상세/채팅 진입 보조 |
+| `/friends/new/basic` | 친구 캐릭터 생성 1단계 |
+| `/friends/new/persona` | 친구 캐릭터 생성 2단계 |
+| `/friends/new/story` | 친구 캐릭터 생성 3단계 |
+| `/friends/new/review` | 친구 캐릭터 생성 검토 |
+| `/friends/new/creating` | 친구 캐릭터 생성 완료 처리 |
 | `/premium` | 프리미엄 |
 | `/profile` | 프로필 허브 |
 | `/profile/edit` | 프로필 편집 |
@@ -48,6 +54,45 @@
 |------|------|
 | `/` | `/chat`로 이동 |
 | `/home` | `/chat`로 이동 |
+
+## current-state route diagram
+
+```mermaid
+flowchart LR
+  App["App Start"] -->|"initialLocation"| Splash["/splash"]
+  Router["GoRouter routes"] --> Splash
+  Router --> Signup["/signup"]
+  Router --> Callback["/auth/callback"]
+  Router --> Onboarding["/onboarding"]
+  Router --> TossOnboarding["/onboarding/toss-style"]
+  Router --> Chat["/chat"]
+  Router --> Character["/character/:id"]
+  Router --> FriendBasic["/friends/new/basic"]
+  Router --> Premium["/premium"]
+  Router --> Profile["/profile"]
+  Router --> AccountDeletion["/account-deletion"]
+  Router --> Privacy["/privacy-policy"]
+  Router --> Terms["/terms-of-service"]
+
+  Root["/"] --> Chat["/chat"]
+  Home["/home"] --> Chat
+
+  Profile --> ProfileEdit["/profile/edit"]
+  Profile --> ProfileSaju["/profile/saju-summary"]
+  Profile --> ProfileRelationships["/profile/relationships"]
+  Profile --> ProfileNotifications["/profile/notifications"]
+
+  FriendBasic -->|"next"| FriendPersona["/friends/new/persona"]
+  FriendPersona -->|"next"| FriendStory["/friends/new/story"]
+  FriendStory -->|"next"| FriendReview["/friends/new/review"]
+  FriendReview -->|"next"| FriendCreating["/friends/new/creating"]
+```
+
+### 다이어그램 해석 규칙
+
+- `/profile/*`만 nested route이고, 나머지 보조 surface는 flat top-level route입니다.
+- `/friends/new/*`는 이름상 wizard이지만 `GoRoute` 중첩이 아니라 순차 이동하는 flat route 집합입니다.
+- `/`와 `/home`은 시각 surface가 없는 redirect-only route입니다.
 
 ### current-state 기준 비활성 상위 라우트
 
@@ -70,6 +115,27 @@
 - `SignupScreen`: 게스트 첫 진입 시 soft gate auth entry
 - `OnboardingPage`: 인증 후 birth/interests/handoff 완료 전까지의 통합 온보딩
 
+### `/chat` route-driven state diagram
+
+```mermaid
+flowchart TD
+  Chat["/chat"] --> Preview{"catalogState query 존재?"}
+  Preview -- "없음" --> RuntimeGate{"auth / onboarding gate"}
+  Preview -- "general-home" --> GeneralHome["일반 채팅 홈 미리보기"]
+  Preview -- "curiosity-home" --> CuriosityHome["호기심 홈 미리보기"]
+  Preview -- "curiosity-survey" --> CuriositySurvey["호기심 설문 오버레이"]
+  Preview -- "curiosity-result" --> CuriosityResult["호기심 결과 오버레이"]
+
+  RuntimeGate -- "guest first entry" --> SignupGate["SignupScreen soft gate"]
+  RuntimeGate -- "profile incomplete" --> OnboardingGate["OnboardingPage"]
+  RuntimeGate -- "ready" --> SwipeShell["SwipeHomeShell"]
+
+  SwipeShell --> CharacterList["CharacterListPanel"]
+  SwipeShell --> RouteLaunch{"openCharacterChat / characterId / fortuneType query"}
+  RouteLaunch -- "있음" --> ChatOverlay["CharacterChatPanel overlay open"]
+  RouteLaunch -- "없음" --> ListOnly["목록 중심 기본 상태"]
+```
+
 ### 내부 경험 A: 일반 채팅
 
 - 일반 캐릭터와의 관계형/세계관형 대화
@@ -87,6 +153,8 @@
 
 - `fortuneType`이 포함된 링크는 `/chat`으로 유도됩니다.
 - `FortuneChatLaunchRequest`가 쿼리 파라미터를 읽고, 해당 전문가 캐릭터를 찾아 호기심 경험으로 자동 진입시킵니다.
+- `catalogState` 쿼리는 `/chat`을 일반 홈, 호기심 홈, 설문, 결과 미리보기 상태로 분기시킵니다.
+- `openCharacterChat=true`, `characterId`, `fortuneType`, `autoStartFortune`, `entrySource`는 `/chat` 내부 오버레이 자동 진입에 사용됩니다.
 
 관련 코드:
 - `lib/core/navigation/fortune_chat_route.dart`

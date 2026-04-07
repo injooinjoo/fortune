@@ -54,3 +54,32 @@ catalog/governance artboard는 아래 구조를 따릅니다.
 - Paper는 수동 SoT입니다. 자동 push, remote capture, external design sync는 현재 운영 범위에 포함하지 않습니다.
 - redirect-only route (`/`, `/home`)는 Paper artboard를 만들지 않습니다.
 - transient runtime (`/auth/callback`)은 전용 Paper artboard 대신 문서로만 유지할 수 있습니다.
+
+## Pencil MCP 보조 워크플로우
+
+Paper가 이 저장소의 공식 디자인 source of truth인 점은 유지합니다. 다만 `.pen` 파일 기반 실험, 프로토타이핑, headless 디자인 자동화가 필요할 때는 Pencil MCP를 병행 사용할 수 있습니다.
+
+- Pencil은 보조 설계/자동화 도구이며 `paper/catalog_inventory.json` 또는 `docs/design/PAPER_*`를 대체하지 않습니다.
+- 최신 공식 플로우 기준 Pencil MCP 서버는 앱/IDE 확장 실행 시 자동으로 노출됩니다.
+- repo-level `.mcp.json`에 비공식 Pencil 서버 정의를 고정하지 않습니다.
+
+권장 확인 순서:
+
+```bash
+npm run pencil:version
+npm run pencil:status
+```
+
+헤드리스 셸 예시:
+
+```bash
+npm run pencil:interactive -- -o scratch.pen
+```
+
+기존 `.pen` 수정 예시:
+
+```bash
+npm run pencil:interactive -- -i existing.pen -o updated.pen
+```
+
+Pencil 관련 설치/인증/연결 확인 절차는 `docs/development/MCP_SETUP_GUIDE.md`를 기준으로 운영합니다.

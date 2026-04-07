@@ -7,6 +7,7 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/extensions/l10n_extension.dart';
 import '../../../../core/navigation/fortune_chat_route.dart';
 import '../../../../core/utils/logger.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/services/supabase_connection_service.dart';
 import '../../../../screens/auth/signup_screen.dart';
 import '../../../../screens/onboarding/onboarding_page.dart';
@@ -96,9 +97,25 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
         await _storageService.isCharacterOnboardingCompleted() ||
             localProfile?['onboarding_completed'] == true;
 
+    // force_onboarding 플래그: 테스트 계정은 매번 온보딩 표시
+    final forceOnboarding =
+        _shouldForceOnboarding(localProfile) ||
+        await _checkForceOnboardingFromDb(currentUser);
+
     _ShellOnboardingGate nextGate = _ShellOnboardingGate.none;
 
-    if (legacyCompleted) {
+    if (forceOnboarding && currentUser != null) {
+      // 로컬 온보딩 상태 초기화 후 온보딩 강제 표시
+      await _storageService.saveUnifiedOnboardingProgress(
+        progress.copyWith(
+          softGateCompleted: false,
+          birthCompleted: false,
+          interestCompleted: false,
+          firstRunHandoffSeen: false,
+        ),
+      );
+      nextGate = _ShellOnboardingGate.profileFlow;
+    } else if (legacyCompleted) {
       await _storageService.saveUnifiedOnboardingProgress(
         progress.copyWith(
           softGateCompleted: true,
@@ -136,6 +153,31 @@ class _SwipeHomeShellState extends ConsumerState<SwipeHomeShell>
         _onboardingGate = nextGate;
         _isCheckingOnboarding = false;
       });
+    }
+  }
+
+  bool _shouldForceOnboarding(Map<String, dynamic>? profileJson) {
+    if (profileJson == null) return false;
+    final isTest = profileJson['is_test_account'] == true;
+    if (!isTest) return false;
+    final features = _asMap(profileJson['test_account_features']);
+    return features?['force_onboarding'] == true;
+  }
+
+  Future<bool> _checkForceOnboardingFromDb(User? user) async {
+    if (user == null) return false;
+    try {
+      final row = await Supabase.instance.client
+          .from('user_profiles')
+          .select('is_test_account, test_account_features')
+          .eq('id', user.id)
+          .maybeSingle()
+          .timeout(const Duration(seconds: 2));
+      if (row == null || row['is_test_account'] != true) return false;
+      final features = _asMap(row['test_account_features']);
+      return features?['force_onboarding'] == true;
+    } catch (_) {
+      return false;
     }
   }
 

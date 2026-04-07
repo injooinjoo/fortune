@@ -1,0 +1,27 @@
+export const analyticsEventNames = [
+  'ab_test_conversion',
+  'ab_test_exposure',
+  'ab_test_metric',
+  'ad_click',
+  'ad_impression',
+  'ad_reward_earned',
+  'app_error',
+  'app_open',
+  'experiment_ended',
+  'experiment_started',
+  'fortune_card_ui_test',
+  'fortune_generation',
+  'login',
+  'onboarding_test',
+  'payment_ui_test',
+  'purchase',
+  'share',
+  'sign_up',
+  'token_consumed',
+  'token_pricing_test',
+  'tutorial_begin',
+  'tutorial_complete',
+  'user_engagement',
+] as const;
+
+export type AnalyticsEventName = (typeof analyticsEventNames)[number];

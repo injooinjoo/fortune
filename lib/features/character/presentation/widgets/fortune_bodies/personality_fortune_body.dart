@@ -24,6 +24,7 @@ class PersonalityFortuneBody extends StatelessWidget {
       case 'biorhythm':
         return _buildBiorhythmBody(context);
       case 'personality-dna':
+        return _buildPersonalityDnaBody(context);
       default:
         return _buildGenericBody(context, emoji: '🧬');
     }
@@ -480,7 +481,374 @@ class PersonalityFortuneBody extends StatelessWidget {
     );
   }
 
-  // ═══ Generic (personality-dna etc.) ═══
+  // ═══ Personality DNA (성격운) ═══
+
+  Widget _buildPersonalityDnaBody(BuildContext context) {
+    final colors = context.colors;
+
+    // Extract data
+    final summary = fortuneStr(componentData['summary']) ??
+        fortuneStr(componentData['content']) ??
+        '오늘의 성격운을 분석했어요.';
+    final personalityType = fortuneStr(componentData['personalityType']) ??
+        fortuneStr(componentData['personality_type']) ??
+        fortuneStr(componentData['mbtiType']) ??
+        fortuneStr(componentData['type']);
+    final personalityTitle = fortuneStr(componentData['personalityTitle']) ??
+        fortuneStr(componentData['personality_title']) ??
+        fortuneStr(componentData['typeTitle']);
+    final todayInsight = fortuneStr(componentData['todayInsight']) ??
+        fortuneStr(componentData['today_insight']) ??
+        fortuneStr(componentData['insight']);
+    final growthTip = fortuneStr(componentData['growthTip']) ??
+        fortuneStr(componentData['growth_tip']);
+
+    // Dimension spectrum (E/I, N/S, T/F, J/P)
+    final dimensionSpectrum =
+        fortuneAsMap(componentData['dimensionSpectrum']) ??
+            fortuneAsMap(componentData['dimension_spectrum']);
+
+    // Traits (4 trait cards)
+    final traits = fortuneMapList(componentData['traits']);
+
+    // Compatibility
+    final compatibility = fortuneAsMap(componentData['compatibility']) ??
+        fortuneAsMap(componentData['chemistryMatch']);
+    final bestMatch = fortuneAsMap(compatibility?['best']) ??
+        fortuneAsMap(compatibility?['bestMatch']);
+    final goodMatch = fortuneAsMap(compatibility?['good']) ??
+        fortuneAsMap(compatibility?['goodMatch']);
+
+    // Lucky items
+    final luckyItems = fortuneAsMap(componentData['luckyItems']);
+    final recommendations = fortuneStrList(componentData['recommendations']);
+    final warnings = fortuneStrList(componentData['warnings']);
+
+    // Spectrum dimension pairs
+    final spectrumPairs = <_SpectrumDimension>[];
+    _addSpectrumDimension(
+        spectrumPairs, dimensionSpectrum, 'E', 'I', '외향', '내향');
+    _addSpectrumDimension(
+        spectrumPairs, dimensionSpectrum, 'N', 'S', '직관', '감각');
+    _addSpectrumDimension(
+        spectrumPairs, dimensionSpectrum, 'T', 'F', '사고', '감정');
+    _addSpectrumDimension(
+        spectrumPairs, dimensionSpectrum, 'J', 'P', '판단', '인식');
+
+    final spectrumColors = [
+      colors.chipPeach,
+      colors.success,
+      colors.accentSecondary,
+      colors.info,
+    ];
+
+    var si = 0;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header
+        FortuneEmojiHeader(emoji: '✨', text: summary),
+
+        // Hero card: personality type + title
+        if (personalityType != null) ...[
+          const SizedBox(height: DSSpacing.lg),
+          FortuneStaggeredSection(
+            index: si++,
+            child: _buildPersonalityHeroCard(
+              context,
+              personalityType,
+              personalityTitle,
+            ),
+          ),
+        ],
+
+        // Dimension spectrum bars
+        if (spectrumPairs.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.lg),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '📊',
+              title: '차원 스펙트럼',
+              child: Column(
+                children: spectrumPairs.asMap().entries.map((entry) {
+                  final i = entry.key;
+                  final dim = entry.value;
+                  final barColor = i < spectrumColors.length
+                      ? spectrumColors[i]
+                      : colors.accent;
+                  return _buildSpectrumBar(context, dim, barColor, i);
+                }).toList(growable: false),
+              ),
+            ),
+          ),
+        ],
+
+        // Trait cards in 2x2 grid
+        if (traits.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.lg),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneInfoGraphGrid(
+              items: traits.take(4).map((t) {
+                final emoji = fortuneStr(t['emoji']) ?? '🧩';
+                final label =
+                    fortuneStr(t['name']) ?? fortuneStr(t['label']) ?? '';
+                final desc = fortuneStr(t['description']) ??
+                    fortuneStr(t['value']) ??
+                    '';
+                return FortuneInfoGraphItem(
+                  icon: emoji,
+                  label: label,
+                  value: desc,
+                );
+              }).toList(growable: false),
+            ),
+          ),
+        ],
+
+        // Today's insight
+        if (todayInsight != null) ...[
+          const SizedBox(height: DSSpacing.lg),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '💡',
+              title: '오늘의 인사이트',
+              child: Text(
+                todayInsight,
+                style: context.bodySmall.copyWith(height: 1.6),
+              ),
+            ),
+          ),
+        ],
+
+        // Compatibility cards
+        if (bestMatch != null || goodMatch != null) ...[
+          const SizedBox(height: DSSpacing.lg),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneComparisonCard(
+              leftTitle: fortuneStr(bestMatch?['type']) ?? '최고 궁합',
+              rightTitle: fortuneStr(goodMatch?['type']) ?? '좋은 궁합',
+              leftEmoji: '💕',
+              rightEmoji: '🤝',
+              leftItems: [
+                if (fortuneStr(bestMatch?['name']) != null)
+                  fortuneStr(bestMatch!['name'])!,
+                if (fortuneStr(bestMatch?['description']) != null)
+                  fortuneStr(bestMatch!['description'])!,
+                if (fortuneStr(bestMatch?['reason']) != null)
+                  fortuneStr(bestMatch!['reason'])!,
+              ],
+              rightItems: [
+                if (fortuneStr(goodMatch?['name']) != null)
+                  fortuneStr(goodMatch!['name'])!,
+                if (fortuneStr(goodMatch?['description']) != null)
+                  fortuneStr(goodMatch!['description'])!,
+                if (fortuneStr(goodMatch?['reason']) != null)
+                  fortuneStr(goodMatch!['reason'])!,
+              ],
+              leftColor: colors.success,
+              rightColor: colors.info,
+            ),
+          ),
+        ],
+
+        // Growth tip
+        if (growthTip != null) ...[
+          const SizedBox(height: DSSpacing.lg),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneTipCard(emoji: '🌱', text: growthTip),
+          ),
+        ],
+
+        // Lucky items
+        if (luckyItems != null && luckyItems.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.lg),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneLuckyItemGrid(items: luckyItems),
+          ),
+        ],
+
+        if (recommendations.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.lg),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '💫',
+              title: '추천',
+              child: FortuneBulletList(items: recommendations, bullet: '✨'),
+            ),
+          ),
+        ],
+
+        if (warnings.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.lg),
+          FortuneStaggeredSection(
+            index: si++,
+            child: FortuneSectionCard(
+              emoji: '⚠️',
+              title: '주의',
+              child: FortuneBulletList(
+                  items: warnings, bullet: '⚠️', isWarning: true),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  /// Hero card showing personality type (e.g. "ENFP") and title
+  Widget _buildPersonalityHeroCard(
+    BuildContext context,
+    String type,
+    String? title,
+  ) {
+    final colors = context.colors;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(DSSpacing.lg),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(DSRadius.lg),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            colors.success.withValues(alpha: context.isDark ? 0.18 : 0.10),
+            colors.surface,
+          ],
+        ),
+        border: Border.all(color: colors.success.withValues(alpha: 0.15)),
+      ),
+      child: Column(
+        children: [
+          Text(
+            type,
+            style: context.typography.displayLarge.copyWith(
+              fontWeight: FontWeight.w800,
+              color: colors.success,
+              height: 1.1,
+              letterSpacing: 2,
+            ),
+          ),
+          if (title != null) ...[
+            const SizedBox(height: DSSpacing.xs),
+            Text(
+              title,
+              style: context.bodyMedium.copyWith(
+                fontWeight: FontWeight.w600,
+                color: colors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  void _addSpectrumDimension(
+    List<_SpectrumDimension> list,
+    Map<String, dynamic>? spectrum,
+    String keyA,
+    String keyB,
+    String labelA,
+    String labelB,
+  ) {
+    if (spectrum == null) return;
+    final scoreA =
+        fortuneInt(spectrum[keyA]) ?? fortuneInt(spectrum[keyA.toLowerCase()]);
+    final scoreB =
+        fortuneInt(spectrum[keyB]) ?? fortuneInt(spectrum[keyB.toLowerCase()]);
+    if (scoreA != null || scoreB != null) {
+      list.add(_SpectrumDimension(
+        keyA: keyA,
+        keyB: keyB,
+        labelA: labelA,
+        labelB: labelB,
+        scoreA: scoreA ?? (scoreB != null ? 100 - scoreB : 50),
+        scoreB: scoreB ?? (scoreA != null ? 100 - scoreA : 50),
+      ));
+    }
+  }
+
+  Widget _buildSpectrumBar(
+    BuildContext context,
+    _SpectrumDimension dim,
+    Color barColor,
+    int staggerIndex,
+  ) {
+    final colors = context.colors;
+    final fractionA = (dim.scoreA / 100).clamp(0.0, 1.0);
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: DSSpacing.md),
+      child: Column(
+        children: [
+          // Labels row: A label (left) ... B label (right)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '${dim.keyA} ${dim.labelA} ${dim.scoreA}%',
+                style: context.labelSmall.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: barColor,
+                ),
+              ),
+              Text(
+                '${dim.scoreB}% ${dim.labelB} ${dim.keyB}',
+                style: context.labelSmall.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: colors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: DSSpacing.xxs),
+          // Dual bar
+          Container(
+            height: 10,
+            decoration: BoxDecoration(
+              color: colors.border.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        width: constraints.maxWidth * fractionA,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          color: barColor,
+                          borderRadius: BorderRadius.circular(5),
+                          boxShadow: [
+                            BoxShadow(
+                              color: barColor.withValues(alpha: 0.3),
+                              blurRadius: 4,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ═══ Generic ═══
 
   Widget _buildGenericBody(BuildContext context, {required String emoji}) {
     final summary = fortuneStr(componentData['summary']) ??
@@ -553,5 +921,18 @@ class _MbtiDimension {
     required this.labelB,
     required this.dataA,
     required this.dataB,
+  });
+}
+
+class _SpectrumDimension {
+  final String keyA, keyB, labelA, labelB;
+  final int scoreA, scoreB;
+  _SpectrumDimension({
+    required this.keyA,
+    required this.keyB,
+    required this.labelA,
+    required this.labelB,
+    required this.scoreA,
+    required this.scoreB,
   });
 }

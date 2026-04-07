@@ -14,6 +14,10 @@ class _FakeSpeechRecognitionService extends SpeechRecognitionService {
   final MicrophonePermissionStatus requestResult;
   int requestPermissionCallCount = 0;
   int openSettingsCallCount = 0;
+  int startListeningCallCount = 0;
+  int stopListeningCallCount = 0;
+  Function(String text)? _onResultCallback;
+  Function(String text)? _onPartialResultCallback;
 
   @override
   Future<MicrophonePermissionStatus> checkPermissionStatus() async {
@@ -41,10 +45,27 @@ class _FakeSpeechRecognitionService extends SpeechRecognitionService {
     Function(String text)? onPartialResult,
     Function()? onNoMatch,
     String locale = 'ko-KR',
-  }) async {}
+  }) async {
+    startListeningCallCount++;
+    _onResultCallback = onResult;
+    _onPartialResultCallback = onPartialResult;
+    isListeningNotifier.value = true;
+  }
 
   @override
-  Future<void> stopListening() async {}
+  Future<void> stopListening() async {
+    stopListeningCallCount++;
+    isListeningNotifier.value = false;
+  }
+
+  void emitPartialResult(String text) {
+    _onPartialResultCallback?.call(text);
+  }
+
+  void emitFinalResult(String text) {
+    _onResultCallback?.call(text);
+    isListeningNotifier.value = false;
+  }
 
   @override
   void dispose() {}
@@ -124,5 +145,49 @@ void main() {
 
     expect(speechService.openSettingsCallCount, 1);
     expect(speechService.requestPermissionCallCount, 0);
+  });
+
+  testWidgets('voice action button flows from mic to stop to send', (
+    tester,
+  ) async {
+    final speechService = _FakeSpeechRecognitionService(
+      permissionStatus: MicrophonePermissionStatus.granted,
+      requestResult: MicrophonePermissionStatus.granted,
+    );
+    String? submittedText;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: DSTheme.light(),
+        home: Scaffold(
+          body: UnifiedVoiceTextField(
+            onSubmit: (text) {
+              submittedText = text;
+            },
+            speechService: speechService,
+          ),
+        ),
+      ),
+    );
+
+    await tester.pump();
+
+    await tester.tap(find.byIcon(Icons.mic_none));
+    await tester.pump();
+
+    expect(speechService.startListeningCallCount, 1);
+    expect(find.byIcon(Icons.stop_rounded), findsOneWidget);
+
+    speechService.emitPartialResult('안녕하세요');
+    await tester.pump();
+
+    expect(find.byIcon(Icons.arrow_upward), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.arrow_upward));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 150));
+
+    expect(speechService.stopListeningCallCount, 1);
+    expect(submittedText, '안녕하세요');
   });
 }

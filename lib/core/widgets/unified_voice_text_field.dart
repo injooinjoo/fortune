@@ -64,7 +64,7 @@ class UnifiedVoiceTextField extends StatefulWidget {
     this.onTextChanged,
     this.onRecordingChanged,
     this.hintText = 'Ask anything',
-    this.transcribingText = 'Transcribing',
+    this.transcribingText = '정리 중',
     this.controller,
     this.enabled = true,
     this.showSendButton = true,
@@ -86,6 +86,7 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
 
   VoiceInputState _state = VoiceInputState.idle;
   bool _isSpeaking = false; // 실제 음성 인식 중인지 (partial result 수신)
+  bool _submitPendingAfterStop = false;
 
   // 로딩 애니메이션용
   late AnimationController _loadingController;
@@ -118,10 +119,15 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
           _state == VoiceInputState.transcribing) {
         final text = _textController.text.trim();
         // 텍스트가 있으면 hasText, 없으면 idle로 복구
-        if (text.isNotEmpty) {
-          setState(() => _state = VoiceInputState.hasText);
+        setState(() {
+          _state =
+              text.isNotEmpty ? VoiceInputState.hasText : VoiceInputState.idle;
+          _isSpeaking = false;
+        });
+
+        if (text.isEmpty) {
+          _submitPendingAfterStop = false;
         }
-        // 텍스트가 없으면 자동 재시작이 처리함 (idle로 가지 않음)
       }
     }
   }
@@ -175,6 +181,7 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
     setState(() {
       _state = VoiceInputState.recording;
       _isSpeaking = false;
+      _submitPendingAfterStop = false;
       _textController.clear();
     });
 
@@ -190,6 +197,7 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
       onResult: (text) {
         // Final result - 변환 완료
         if (text.isNotEmpty && mounted) {
+          final shouldSubmit = _submitPendingAfterStop;
           setState(() {
             _state = VoiceInputState.hasText;
             _isSpeaking = false;
@@ -200,6 +208,15 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
           });
           // 녹음 상태 콜백
           widget.onRecordingChanged?.call(false);
+
+          if (shouldSubmit) {
+            _submitPendingAfterStop = false;
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                _submit();
+              }
+            });
+          }
         }
       },
       onPartialResult: (text) {
@@ -236,8 +253,9 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
   }
 
   /// 정지 버튼 탭 - 녹음/변환 중지
-  Future<void> _stopRecording() async {
+  Future<void> _stopRecording({bool submitAfterStop = false}) async {
     HapticUtils.lightImpact();
+    _submitPendingAfterStop = submitAfterStop;
 
     await _speechService.stopListening();
 
@@ -246,10 +264,24 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
     final text = _textController.text.trim();
     setState(() {
       _state = text.isEmpty ? VoiceInputState.idle : VoiceInputState.hasText;
+      _isSpeaking = false;
     });
 
     // 녹음 상태 콜백
     widget.onRecordingChanged?.call(false);
+
+    if (submitAfterStop && text.isNotEmpty) {
+      await Future<void>.delayed(const Duration(milliseconds: 120));
+      if (!mounted || !_submitPendingAfterStop) {
+        return;
+      }
+
+      _submitPendingAfterStop = false;
+      _submit();
+      return;
+    }
+
+    _submitPendingAfterStop = false;
   }
 
   /// 전송 버튼 탭
@@ -351,46 +383,33 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // 왼쪽: 정지 버튼 (recording/transcribing 상태에서만)
-        if (isRecordingOrTranscribing) ...[
-          _buildStopButton(isDark),
-          const SizedBox(width: 8),
-        ],
-
         // 가운데: pill 모양 입력 영역 (떠다니는 느낌)
         Expanded(
-          child: Container(
+          child: AnimatedContainer(
+            duration: DSAnimation.fast,
             height: 48,
             decoration: BoxDecoration(
               color: context.colors.surfaceSecondary,
               borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: isRecordingOrTranscribing
+                    ? context.colors.ctaBackground.withValues(alpha: 0.18)
+                    : context.colors.border.withValues(alpha: 0.18),
+              ),
             ),
             child: Row(
               children: [
                 // 상태에 따른 콘텐츠
                 Expanded(child: _buildContent(isDark)),
-
-                // 마이크 버튼 (idle 상태에서만)
-                if (_state == VoiceInputState.idle)
-                  IconButton(
-                    icon: Icon(
-                      Icons.mic_none,
-                      color: context.colors.textPrimary,
-                      size: 24,
-                    ),
-                    onPressed: widget.enabled ? _startRecording : null,
-                  ),
               ],
             ),
           ),
         ),
 
-        // 오른쪽: 전송 버튼 (hasText 또는 recording/transcribing 상태에서)
-        if (widget.showSendButton &&
-            (_state == VoiceInputState.hasText ||
-                isRecordingOrTranscribing)) ...[
+        // 오른쪽: 액션 버튼 (mic / stop / send)
+        if (widget.showSendButton) ...[
           const SizedBox(width: 8),
-          _buildSendButton(isDark),
+          _buildActionButton(isDark),
         ],
       ],
     );
@@ -404,10 +423,8 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
         return _buildTextField(isDark);
 
       case VoiceInputState.recording:
-        return _buildRecordingContent(isDark);
-
       case VoiceInputState.transcribing:
-        return _buildTranscribingContent(isDark);
+        return _buildListeningContent(isDark);
     }
   }
 
@@ -446,50 +463,65 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
     );
   }
 
-  /// 녹음 중 콘텐츠 (웨이브폼)
-  Widget _buildRecordingContent(bool isDark) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: ValueListenableBuilder<double>(
-        valueListenable: _speechService.soundLevelNotifier,
-        builder: (context, soundLevel, child) {
-          return VoiceSpectrumAnimation(
-            isRecording: true,
-            barCount: widget.waveformBarCount,
-            soundLevel: soundLevel,
-            isSpeaking: _isSpeaking,
-          );
-        },
-      ),
-    );
-  }
-
-  /// 변환 중 콘텐츠 (로딩 스피너 + 텍스트)
-  Widget _buildTranscribingContent(bool isDark) {
+  /// 녹음/음성 인식 중 콘텐츠 (웨이브폼)
+  Widget _buildListeningContent(bool isDark) {
     final colors = context.colors;
     final typography = context.typography;
+    final statusText =
+        _state == VoiceInputState.recording ? '듣는 중' : widget.transcribingText;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.lg),
+      padding: const EdgeInsets.symmetric(horizontal: DSSpacing.md),
       child: Row(
         children: [
-          // 로딩 스피너 (점 깜빡임)
           AnimatedBuilder(
             animation: _loadingController,
             builder: (context, child) {
-              final opacity = 0.3 + (_loadingController.value * 0.7);
-              return Icon(
-                Icons.auto_awesome,
-                size: 16,
-                color: colors.textTertiary.withValues(alpha: opacity),
+              final opacity = 0.55 + (_loadingController.value * 0.45);
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: DSSpacing.sm,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: colors.ctaBackground.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: colors.ctaBackground.withValues(alpha: opacity),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      statusText,
+                      style: typography.labelMedium.copyWith(
+                        color: colors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
               );
             },
           ),
-          const SizedBox(width: DSSpacing.sm),
-          Text(
-            widget.transcribingText,
-            style: typography.bodyMedium.copyWith(
-              color: colors.textTertiary,
+          const SizedBox(width: DSSpacing.md),
+          Expanded(
+            child: ValueListenableBuilder<double>(
+              valueListenable: _speechService.soundLevelNotifier,
+              builder: (context, soundLevel, child) {
+                return VoiceSpectrumAnimation(
+                  isRecording: true,
+                  barCount: widget.waveformBarCount,
+                  soundLevel: soundLevel,
+                  isSpeaking: _isSpeaking,
+                );
+              },
             ),
           ),
         ],
@@ -497,36 +529,40 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
     );
   }
 
-  /// 정지 버튼 (왼쪽)
-  Widget _buildStopButton(bool isDark) {
-    final stopColor = widget.stopButtonColor;
+  /// 액션 버튼 (마이크 / 정지 / 전송)
+  Widget _buildActionButton(bool isDark) {
+    final hasText = _textController.text.trim().isNotEmpty;
+    final isRecordingOrTranscribing = _state == VoiceInputState.recording ||
+        _state == VoiceInputState.transcribing;
+
+    final IconData icon;
+    final VoidCallback? onTap;
+    final bool isActive;
+
+    if (isRecordingOrTranscribing && !hasText) {
+      icon = Icons.stop_rounded;
+      onTap = widget.enabled ? () => _stopRecording() : null;
+      isActive = true;
+    } else if (isRecordingOrTranscribing) {
+      icon = Icons.arrow_upward;
+      onTap = widget.enabled
+          ? () {
+              _stopRecording(submitAfterStop: true);
+            }
+          : null;
+      isActive = true;
+    } else if (_state == VoiceInputState.hasText) {
+      icon = Icons.arrow_upward;
+      onTap = widget.enabled ? _submit : null;
+      isActive = true;
+    } else {
+      icon = Icons.mic_none;
+      onTap = widget.enabled ? _startRecording : null;
+      isActive = false;
+    }
 
     return GestureDetector(
-      onTap: _stopRecording,
-      child: Container(
-        width: 48,
-        height: 48,
-        decoration: BoxDecoration(
-          color: stopColor ?? context.colors.surfaceSecondary,
-          shape: BoxShape.circle,
-        ),
-        child: Icon(
-          Icons.stop,
-          color: stopColor != null
-              ? context.colors.ctaForeground
-              : context.colors.textSecondary,
-          size: 20,
-        ),
-      ),
-    );
-  }
-
-  /// 전송 버튼 (오른쪽)
-  Widget _buildSendButton(bool isDark) {
-    final isActive = _state == VoiceInputState.hasText;
-
-    return GestureDetector(
-      onTap: isActive ? _submit : null,
+      onTap: onTap,
       child: Container(
         width: 48,
         height: 48,
@@ -537,7 +573,7 @@ class _UnifiedVoiceTextFieldState extends State<UnifiedVoiceTextField>
           shape: BoxShape.circle,
         ),
         child: Icon(
-          Icons.arrow_upward,
+          icon,
           color: isActive
               ? context.colors.ctaForeground
               : context.colors.textTertiary,

@@ -60,8 +60,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final taeYoonTop = tester.getTopLeft(find.text('정태윤').first).dy;
-    final lutsTop = tester.getTopLeft(find.text('러츠').first).dy;
+    final taeYoonTop = tester.getTopLeft(find.text('가장 최근 메시지')).dy;
+    final lutsTop = tester.getTopLeft(find.text('먼저 보낸 메시지')).dy;
 
     expect(taeYoonTop, lessThan(lutsTop));
   });
@@ -76,7 +76,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
 
     final titleFinder = find.text('메시지');
-    final composeButtonFinder = find.byIcon(Icons.edit_outlined);
+    final composeButtonFinder = find.byIcon(Icons.edit_note_outlined);
 
     expect(titleFinder, findsOneWidget);
     expect(composeButtonFinder, findsOneWidget);
@@ -98,7 +98,39 @@ void main() {
     expect(composeButtonFinder, findsOneWidget);
   });
 
-  testWidgets('shows unread count badge before your turn state',
+  testWidgets('applies stronger typography to unread conversation rows',
+      (tester) async {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    final taeYoonNotifier =
+        container.read(characterChatProvider('jung_tae_yoon').notifier);
+    addTearDown(taeYoonNotifier.cancelFollowUp);
+
+    taeYoonNotifier.addCharacterMessage(
+      '안 읽은 메시지입니다',
+      suppressNotification: true,
+      scheduleReadIdleIcebreaker: false,
+    );
+
+    await tester.pumpWidget(
+      buildSubject(
+        container: container,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final nameTexts = tester.widgetList<Text>(find.text('정태윤')).toList();
+    final previewText = tester.widget<Text>(find.text('안 읽은 메시지입니다'));
+
+    expect(
+      nameTexts.any((text) => text.style?.fontWeight == FontWeight.w800),
+      isTrue,
+    );
+    expect(previewText.style?.fontWeight, FontWeight.w600);
+  });
+
+  testWidgets('keeps your turn badge on stronger label typography',
       (tester) async {
     await tester.pumpWidget(
       buildSubject(
@@ -107,14 +139,11 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 300));
 
-    final unreadBadgeFinder = find.byType(DSBadge).first;
-    final unreadBadge = tester.widget<DSBadge>(unreadBadgeFinder);
-    final badgeText = tester.widget<Text>(
-      find.descendant(of: unreadBadgeFinder, matching: find.text('1')).first,
-    );
+    final badgeText = tester.widget<Text>(find.text('내 차례'));
 
-    expect(unreadBadge.count, 1);
-    expect(badgeText.style?.color, DSColors.textPrimary);
+    expect(badgeText.style?.fontSize, DSTypography.labelSmall.fontSize);
+    expect(badgeText.style?.fontWeight, FontWeight.w700);
+    expect(badgeText.style?.color, DSColors.ctaBackground);
     expect(find.text('내 차례'), findsOneWidget);
   });
 }

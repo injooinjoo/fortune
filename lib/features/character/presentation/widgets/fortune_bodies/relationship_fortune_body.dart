@@ -52,6 +52,30 @@ class RelationshipFortuneBody extends StatelessWidget {
     final luckyItems = fortuneAsMap(componentData['luckyItems']);
     final recommendations = fortuneStrList(componentData['recommendations']);
     final warnings = fortuneStrList(componentData['warnings']);
+    final dosList = fortuneStrList(componentData['dosList']) +
+        fortuneStrList(componentData['dos']);
+    final dontsList = fortuneStrList(componentData['dontsList']) +
+        fortuneStrList(componentData['donts']);
+
+    // Score hero data
+    final overallScore = fortuneInt(componentData['score']) ??
+        fortuneInt(componentData['overallScore']) ??
+        fortuneInt(componentData['loveScore']);
+    final scoreDescription = fortuneStr(componentData['scoreDescription']) ??
+        fortuneStr(componentData['scoreComment']);
+
+    // Sub-scores
+    final charmScore = fortuneInt(componentData['charmScore']) ??
+        fortuneInt(componentData['charm']);
+    final communicationScore =
+        fortuneInt(componentData['communicationScore']) ??
+            fortuneInt(componentData['communication']);
+    final passionScore = fortuneInt(componentData['passionScore']) ??
+        fortuneInt(componentData['passion']);
+
+    // Timeline entries
+    final timeline = fortuneMapList(componentData['timeline']) +
+        fortuneMapList(componentData['loveTimeline']);
 
     // Extract nested data
     final charmPoints = fortuneAsMap(detailedAnalysis?['charmPoints']);
@@ -60,6 +84,19 @@ class RelationshipFortuneBody extends StatelessWidget {
     final compatInsights =
         fortuneAsMap(detailedAnalysis?['compatibilityInsights']);
 
+    final colors = context.colors;
+    final romanticAccent = colors.accentTertiary;
+    final communicationAccent = colors.accentSecondary;
+    final passionAccent = colors.warning;
+    final hasPaperPrimaryContent = overallScore != null ||
+        charmScore != null ||
+        communicationScore != null ||
+        passionScore != null ||
+        dosList.isNotEmpty ||
+        dontsList.isNotEmpty ||
+        timeline.isNotEmpty ||
+        (luckyItems != null && luckyItems.isNotEmpty);
+    final showExpandedFallback = !hasPaperPrimaryContent;
     var sectionIndex = 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,8 +112,68 @@ class RelationshipFortuneBody extends StatelessWidget {
           Center(child: FortuneTagPillWrap(tags: highlights)),
         ],
 
-        // 🌸 Love Profile section
-        if (loveProfile != null && loveProfile.isNotEmpty) ...[
+        // Score hero card
+        if (overallScore != null) ...[
+          const SizedBox(height: DSSpacing.lg),
+          FortuneScoreHeroCard(
+            label: '오늘의 연애 에너지',
+            score: overallScore,
+            description: scoreDescription ?? '활발한 소통이 행운을 부르는 날',
+            accentColor: romanticAccent,
+          ),
+        ],
+
+        // 3 sub-score mini cards
+        if (charmScore != null ||
+            communicationScore != null ||
+            passionScore != null) ...[
+          const SizedBox(height: DSSpacing.md),
+          FortuneStaggeredSection(
+            index: sectionIndex++,
+            child: Row(
+              children: [
+                if (charmScore != null)
+                  Expanded(
+                    child: FortuneColoredMetricTile(
+                      emoji: '💕',
+                      label: '매력 지수',
+                      score: charmScore,
+                      backgroundColor: romanticAccent,
+                    ),
+                  ),
+                if (charmScore != null && communicationScore != null)
+                  const SizedBox(width: DSSpacing.sm),
+                if (communicationScore != null)
+                  Expanded(
+                    child: FortuneColoredMetricTile(
+                      emoji: '💬',
+                      label: '소통 지수',
+                      score: communicationScore,
+                      backgroundColor: communicationAccent,
+                    ),
+                  ),
+                if ((charmScore != null || communicationScore != null) &&
+                    passionScore != null)
+                  const SizedBox(width: DSSpacing.sm),
+                if (passionScore != null)
+                  Expanded(
+                    child: FortuneColoredMetricTile(
+                      emoji: '🔥',
+                      label: '열정 지수',
+                      score: passionScore,
+                      backgroundColor: passionAccent,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+
+        // Paper fidelity first: richer profile sections only render when the
+        // compact Paper stack is unavailable from the payload.
+        if (showExpandedFallback &&
+            loveProfile != null &&
+            loveProfile.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: sectionIndex++,
@@ -84,8 +181,7 @@ class RelationshipFortuneBody extends StatelessWidget {
           ),
         ],
 
-        // ✨ Charm Points
-        if (charmPoints != null) ...[
+        if (showExpandedFallback && charmPoints != null) ...[
           const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: sectionIndex++,
@@ -93,8 +189,7 @@ class RelationshipFortuneBody extends StatelessWidget {
           ),
         ],
 
-        // 📈 Improvement Areas
-        if (improvementAreas != null) ...[
+        if (showExpandedFallback && improvementAreas != null) ...[
           const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: sectionIndex++,
@@ -102,8 +197,7 @@ class RelationshipFortuneBody extends StatelessWidget {
           ),
         ],
 
-        // 💕 Compatibility Insights
-        if (compatInsights != null) ...[
+        if (showExpandedFallback && compatInsights != null) ...[
           const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: sectionIndex++,
@@ -111,8 +205,9 @@ class RelationshipFortuneBody extends StatelessWidget {
           ),
         ],
 
-        // 🎯 Today's Advice
-        if (todaysAdvice != null && todaysAdvice.isNotEmpty) ...[
+        if (showExpandedFallback &&
+            todaysAdvice != null &&
+            todaysAdvice.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: sectionIndex++,
@@ -120,7 +215,62 @@ class RelationshipFortuneBody extends StatelessWidget {
           ),
         ],
 
-        // Lucky items
+        // DO / DON'T comparison card
+        if (dosList.isNotEmpty || dontsList.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.lg),
+          FortuneStaggeredSection(
+            index: sectionIndex++,
+            child: FortuneComparisonCard(
+              leftTitle: '이렇게 하세요',
+              rightTitle: '이건 피하세요',
+              leftEmoji: '✅',
+              rightEmoji: '⚠️',
+              leftItems: dosList,
+              rightItems: dontsList,
+            ),
+          ),
+        ],
+
+        // 🎬 연애 타임라인
+        if (timeline.isNotEmpty) ...[
+          const SizedBox(height: DSSpacing.lg),
+          FortuneStaggeredSection(
+            index: sectionIndex++,
+            child: FortuneSectionCard(
+              emoji: '🎬',
+              title: '연애 타임라인',
+              child: FortuneTimelineStrip(
+                entries: timeline.map((entry) {
+                  final time = fortuneStr(entry['time']) ??
+                      fortuneStr(entry['period']) ??
+                      '';
+                  final label = fortuneStr(entry['label']) ??
+                      fortuneStr(entry['title']) ??
+                      fortuneStr(entry['content']) ??
+                      '';
+                  final desc = fortuneStr(entry['description']) ??
+                      fortuneStr(entry['detail']);
+                  final statusStr = fortuneStr(entry['status']);
+                  final status = statusStr == 'good'
+                      ? TimelineStatus.good
+                      : statusStr == 'caution'
+                          ? TimelineStatus.caution
+                          : statusStr == 'bad'
+                              ? TimelineStatus.bad
+                              : TimelineStatus.neutral;
+                  return FortuneTimelineEntry(
+                    time: time,
+                    label: label,
+                    status: status,
+                    description: desc,
+                  );
+                }).toList(growable: false),
+              ),
+            ),
+          ),
+        ],
+
+        // Lucky items as stacked metric rows
         if (luckyItems != null && luckyItems.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
@@ -130,7 +280,7 @@ class RelationshipFortuneBody extends StatelessWidget {
         ],
 
         // 🔮 Predictions
-        if (predictions != null) ...[
+        if (showExpandedFallback && predictions != null) ...[
           if (fortuneStr(predictions['thisWeek']) != null) ...[
             const SizedBox(height: DSSpacing.lg),
             FortuneStaggeredSection(
@@ -155,8 +305,10 @@ class RelationshipFortuneBody extends StatelessWidget {
           ],
         ],
 
-        // Recommendations
-        if (recommendations.isNotEmpty) ...[
+        // Recommendations (fallback if no DO/DON'T split)
+        if (dosList.isEmpty &&
+            dontsList.isEmpty &&
+            recommendations.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: sectionIndex++,
@@ -168,8 +320,8 @@ class RelationshipFortuneBody extends StatelessWidget {
           ),
         ],
 
-        // Warnings
-        if (warnings.isNotEmpty) ...[
+        // Warnings (fallback if no DON'T split)
+        if (dontsList.isEmpty && warnings.isNotEmpty) ...[
           const SizedBox(height: DSSpacing.lg),
           FortuneStaggeredSection(
             index: sectionIndex++,

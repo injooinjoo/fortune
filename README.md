@@ -119,8 +119,10 @@ npm run test:smoke
 
 ## 문서 가이드
 
+- [루트 DESIGN.md 에이전트 디자인 계약](DESIGN.md)
 - [현재 페이지/라우트 기준 문서](docs/getting-started/APP_SURFACES_AND_ROUTES.md)
 - [Paper 디자인 계약](docs/design/PAPER_SOURCE_OF_TRUTH.md)
+- [DESIGN.md 운영 가이드](docs/design/DESIGN_MD_WORKFLOW.md)
 - [프로젝트 개요](docs/getting-started/PROJECT_OVERVIEW.md)
 - [아키텍처 문서](docs/APP_ARCHITECTURE.md)
 - [문서 인덱스](docs/README.md)

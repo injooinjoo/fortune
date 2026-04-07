@@ -57,9 +57,9 @@ class FortuneSectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    const accentBarWidth = 4.0;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(DSSpacing.md),
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(DSRadius.lg),
@@ -67,25 +67,52 @@ class FortuneSectionCard extends StatelessWidget {
           color: colors.border.withValues(alpha: 0.15),
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          Row(
-            children: [
-              Text(emoji, style: const TextStyle(fontSize: 16)),
-              const SizedBox(width: DSSpacing.sm),
-              Expanded(
-                child: Text(
-                  title,
-                  style: context.bodyMedium.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+          Positioned(
+            left: 0,
+            top: 0,
+            bottom: 0,
+            child: Container(
+              width: accentBarWidth,
+              decoration: BoxDecoration(
+                color: colors.accent,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(DSRadius.lg),
+                  bottomLeft: Radius.circular(DSRadius.lg),
                 ),
               ),
-            ],
+            ),
           ),
-          const SizedBox(height: DSSpacing.sm),
-          child,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              accentBarWidth + DSSpacing.md,
+              DSSpacing.md,
+              DSSpacing.md,
+              DSSpacing.md,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(emoji, style: const TextStyle(fontSize: 16)),
+                    const SizedBox(width: DSSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: context.bodyMedium.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: DSSpacing.sm),
+                child,
+              ],
+            ),
+          ),
         ],
       ),
     );
