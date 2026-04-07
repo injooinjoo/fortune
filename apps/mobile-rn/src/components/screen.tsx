@@ -8,18 +8,22 @@ import { fortuneTheme } from '../lib/theme';
 interface ScreenProps extends PropsWithChildren {
   header?: ReactNode;
   footer?: ReactNode;
+  overlay?: ReactNode;
   keyboardAvoiding?: boolean;
   scrollViewRef?: RefObject<ScrollView | null>;
   onScrollContentSizeChange?: (width: number, height: number) => void;
+  contentBottomInset?: number;
 }
 
 export function Screen({
   children,
   header,
   footer,
+  overlay,
   keyboardAvoiding = false,
   scrollViewRef,
   onScrollContentSizeChange,
+  contentBottomInset = 0,
 }: ScreenProps) {
   const content = (
     <View style={{ flex: 1 }}>
@@ -41,9 +45,9 @@ export function Screen({
           paddingTop: header
             ? fortuneTheme.spacing.sm
             : fortuneTheme.spacing.pageVertical,
-          paddingBottom: footer
-            ? fortuneTheme.spacing.md
-            : fortuneTheme.spacing.pageVertical,
+          paddingBottom:
+            (footer ? fortuneTheme.spacing.md : fortuneTheme.spacing.pageVertical) +
+            contentBottomInset,
           gap: fortuneTheme.spacing.md,
         }}
         keyboardShouldPersistTaps="handled"
@@ -63,6 +67,19 @@ export function Screen({
           }}
         >
           {footer}
+        </View>
+      ) : null}
+      {overlay ? (
+        <View
+          pointerEvents="box-none"
+          style={{
+            bottom: fortuneTheme.spacing.pageVertical,
+            left: fortuneTheme.spacing.pageHorizontal,
+            position: 'absolute',
+            right: fortuneTheme.spacing.pageHorizontal,
+          }}
+        >
+          {overlay}
         </View>
       ) : null}
     </View>

@@ -959,6 +959,11 @@ export function ChatScreen() {
 
   return (
     <Screen
+      contentBottomInset={
+        gate === 'ready' && surfaceMode === 'list' && activeTab === 'story'
+          ? 88
+          : 0
+      }
       onScrollContentSizeChange={() => {
         if (gate === 'ready' && surfaceMode === 'chat') {
           scrollChatToBottom(true);
@@ -1009,10 +1014,11 @@ export function ChatScreen() {
               }}
             />
           )
-        ) : gate === 'ready' &&
-          surfaceMode === 'list' &&
-          activeTab === 'story' ? (
-          <View style={{ alignItems: 'flex-end' }}>
+        ) : undefined
+      }
+      overlay={
+        gate === 'ready' && surfaceMode === 'list' && activeTab === 'story' ? (
+          <View pointerEvents="box-none" style={{ alignItems: 'flex-end' }}>
             <FloatingCreateButton
               label="새 대화 시작"
               onPress={handleCreateFriend}
