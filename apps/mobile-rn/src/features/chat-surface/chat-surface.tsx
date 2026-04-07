@@ -135,6 +135,61 @@ function HeaderActionButton({
   );
 }
 
+function FloatingCreateButton({
+  label,
+  onPress,
+}: {
+  label: string;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      onPress={onPress}
+      style={({ pressed }) => ({
+        opacity: pressed ? 0.84 : 1,
+      })}
+    >
+      <View
+        style={{
+          alignItems: 'center',
+          alignSelf: 'flex-end',
+          backgroundColor: fortuneTheme.colors.backgroundTertiary,
+          borderColor: fortuneTheme.colors.accentTertiary,
+          borderRadius: 999,
+          borderWidth: 1,
+          height: 56,
+          justifyContent: 'center',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 10 },
+          shadowOpacity: 0.22,
+          shadowRadius: 18,
+          width: 56,
+        }}
+      >
+        <View
+          style={{
+            backgroundColor: fortuneTheme.colors.textPrimary,
+            borderRadius: 999,
+            height: 2.5,
+            position: 'absolute',
+            width: 16,
+          }}
+        />
+        <View
+          style={{
+            backgroundColor: fortuneTheme.colors.textPrimary,
+            borderRadius: 999,
+            height: 16,
+            width: 2.5,
+          }}
+        />
+      </View>
+    </Pressable>
+  );
+}
+
 function PagerDots() {
   return (
     <View
@@ -600,20 +655,11 @@ export function ChatFirstRunSurface({
           <AppText variant="displaySmall">메시지</AppText>
           <SegmentedPills activeTab={activeTab} onChangeTab={onChangeTab} />
         </View>
-        <View style={{ flexDirection: 'row', gap: fortuneTheme.spacing.xs }}>
-          {activeTab === 'story' ? (
-            <HeaderActionButton
-              kind="plus"
-              label="새 대화 시작"
-              onPress={onCreateFriend}
-            />
-          ) : null}
-          <HeaderActionButton
-            kind="profile"
-            label="프로필 열기"
-            onPress={onOpenProfile}
-          />
-        </View>
+        <HeaderActionButton
+          kind="profile"
+          label="프로필 열기"
+          onPress={onOpenProfile}
+        />
       </View>
 
       {activeTab === 'fortune' ? (
@@ -732,6 +778,12 @@ export function ChatFirstRunSurface({
       </Card>
 
       <PagerDots />
+
+      {activeTab === 'story' ? (
+        <View style={{ alignItems: 'flex-end', paddingTop: fortuneTheme.spacing.xs }}>
+          <FloatingCreateButton label="새 대화 시작" onPress={onCreateFriend} />
+        </View>
+      ) : null}
     </View>
   );
 }
