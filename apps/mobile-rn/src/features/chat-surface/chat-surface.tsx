@@ -135,7 +135,7 @@ function HeaderActionButton({
   );
 }
 
-function FloatingCreateButton({
+export function FloatingCreateButton({
   label,
   onPress,
 }: {
@@ -635,12 +635,8 @@ export function ChatFirstRunSurface({
     ...characters.filter((character) => character.id === selectedCharacterId),
     ...characters.filter((character) => character.id !== selectedCharacterId),
   ];
-  const visibleCharacters = orderedCharacters.slice(0, 4);
-  const listTitle = activeTab === 'story' ? '최근 대화' : '최근 상담';
-  const listDescription =
-    activeTab === 'story'
-      ? '바로 이어서 이야기할 수 있는 캐릭터 목록입니다.'
-      : '설문과 결과가 같은 채팅 안에서 이어지는 전문가 목록입니다.';
+  const visibleCharacters =
+    activeTab === 'story' ? orderedCharacters : orderedCharacters.slice(0, 4);
 
   return (
     <View style={{ gap: fortuneTheme.spacing.md }}>
@@ -732,58 +728,66 @@ export function ChatFirstRunSurface({
         </Card>
       ) : null}
 
-      <Card>
-        <View
-          style={{
-            alignItems: 'center',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            gap: fortuneTheme.spacing.sm,
-          }}
-        >
-          <View style={{ flex: 1, gap: 4 }}>
-            <AppText variant="heading4">{listTitle}</AppText>
-            <AppText
-              variant="bodySmall"
-              color={fortuneTheme.colors.textSecondary}
-            >
-              {listDescription}
-            </AppText>
-          </View>
-          <Chip
-            label={activeTab === 'story' ? '스토리' : '운세보기'}
-            tone={activeTab === 'story' ? 'accent' : 'success'}
-          />
-        </View>
+      {activeTab === 'story' ? (
         <View style={{ gap: fortuneTheme.spacing.sm }}>
-          {activeTab === 'fortune' && lastFortuneType ? (
-            <EntryActionRow
-              badge="최근 결과"
-              onPress={() => onOpenRecentResult(lastFortuneType)}
-              subtitle={`${formatFortuneTypeLabel(lastFortuneType)} 결과를 같은 채팅 안에서 다시 엽니다.`}
-              title={`${formatFortuneTypeLabel(lastFortuneType)} 이어보기`}
-              tone="accent"
-            />
-          ) : null}
           {visibleCharacters.map((character) => (
             <CharacterListRow
               key={character.id}
-              badge={character.kind === 'fortune' ? '전문가' : '스토리'}
+              badge="스토리"
               character={character}
               onPress={() => onSelectCharacter(character.id)}
               selected={character.id === selectedCharacterId}
             />
           ))}
         </View>
-      </Card>
+      ) : (
+        <>
+          <Card>
+            <View
+              style={{
+                alignItems: 'center',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                gap: fortuneTheme.spacing.sm,
+              }}
+            >
+              <View style={{ flex: 1, gap: 4 }}>
+                <AppText variant="heading4">최근 상담</AppText>
+                <AppText
+                  variant="bodySmall"
+                  color={fortuneTheme.colors.textSecondary}
+                >
+                  설문과 결과가 같은 채팅 안에서 이어지는 전문가 목록입니다.
+                </AppText>
+              </View>
+              <Chip label="운세보기" tone="success" />
+            </View>
+            <View style={{ gap: fortuneTheme.spacing.sm }}>
+              {lastFortuneType ? (
+                <EntryActionRow
+                  badge="최근 결과"
+                  onPress={() => onOpenRecentResult(lastFortuneType)}
+                  subtitle={`${formatFortuneTypeLabel(lastFortuneType)} 결과를 같은 채팅 안에서 다시 엽니다.`}
+                  title={`${formatFortuneTypeLabel(lastFortuneType)} 이어보기`}
+                  tone="accent"
+                />
+              ) : null}
+              {visibleCharacters.map((character) => (
+                <CharacterListRow
+                  key={character.id}
+                  badge="전문가"
+                  character={character}
+                  onPress={() => onSelectCharacter(character.id)}
+                  selected={character.id === selectedCharacterId}
+                />
+              ))}
+            </View>
+          </Card>
 
-      <PagerDots />
+          <PagerDots />
+        </>
+      )}
 
-      {activeTab === 'story' ? (
-        <View style={{ alignItems: 'flex-end', paddingTop: fortuneTheme.spacing.xs }}>
-          <FloatingCreateButton label="새 대화 시작" onPress={onCreateFriend} />
-        </View>
-      ) : null}
     </View>
   );
 }

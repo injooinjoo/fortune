@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { type FortuneTypeId } from '@fortune/product-contracts';
+import { View } from 'react-native';
 
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
@@ -13,6 +14,7 @@ import {
   ActiveSurveyFooter,
   ChatFirstRunSurface,
   ChatSoftGate,
+  FloatingCreateButton,
   ProfileFlowGateCard,
 } from '../features/chat-surface/chat-surface';
 import {
@@ -701,6 +703,15 @@ export function ChatScreen() {
               onSend={handleSendDraft}
             />
           )
+        ) : gate === 'ready' &&
+          surfaceMode === 'list' &&
+          activeTab === 'story' ? (
+          <View style={{ alignItems: 'flex-end' }}>
+            <FloatingCreateButton
+              label="새 대화 시작"
+              onPress={handleCreateFriend}
+            />
+          </View>
         ) : undefined
       }
       keyboardAvoiding={gate === 'ready' && surfaceMode === 'chat'}
