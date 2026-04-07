@@ -1,13 +1,23 @@
 import * as SecureStore from 'expo-secure-store';
 
+import { type Session } from '@supabase/supabase-js';
+
 import { type ChatCharacterSpec } from './chat-characters';
+import {
+  type ChatShellMessage,
+  type ChatShellTextMessage,
+} from './chat-shell';
 import { supabase } from './supabase';
-import { buildAssistantTextMessage, type ChatShellMessage } from './chat-shell';
 import {
   buildPilotStoryFallbackReply,
   buildPilotStoryInitialThread,
   buildStoryRomanceSystemPrompt,
+  clampSafeAffectionCap,
   getStoryRomanceProfile,
+  inferStoryAffectionStage,
+  isStoryAffectionStage,
+  normalizeStoryRomanceState,
+  type StoryAffectionStage,
   type StoryResponseGoal,
   type StoryRomanceState,
   type StorySceneIntent,
@@ -59,7 +69,32 @@ export interface StoryChatThreadSnapshot {
   sceneIntent: StorySceneIntent;
   responseGoal: StoryResponseGoal;
   safeAffectionCap: number;
+  followUpHint: string | null;
   updatedAt: string;
+}
+
+interface PersistedStoryMessage {
+  id: string;
+  type: 'user' | 'character' | 'system' | 'narration';
+  content: string;
+  timestamp: string;
+}
+
+interface PersistedStoryRuntimeState {
+  personaKey?: string;
+  romanceState?: unknown;
+  sceneIntent?: unknown;
+  responseGoal?: unknown;
+  safeAffectionCap?: unknown;
+  followUpHint?: unknown;
+}
+
+interface StoryConversationLoadResponse {
+  success?: boolean;
+  messages?: unknown;
+  lastMessageAt?: string | null;
+  runtimeState?: PersistedStoryRuntimeState | null;
+  error?: string;
 }
 
 const storyChatThreadStorageKeyPrefix =
@@ -72,13 +107,13 @@ function resolveStoryChatThreadStorageKey(
   return `${storyChatThreadStorageKeyPrefix}.${userId ?? 'guest'}.${characterId}`;
 }
 
-async function resolveCurrentUserId(): Promise<string | null> {
+async function resolveCurrentSession(): Promise<Session | null> {
   if (!supabase) {
     return null;
   }
 
   const { data } = await supabase.auth.getSession();
-  return data.session?.user.id ?? null;
+  return data.session ?? null;
 }
 
 function isTextMessage(message: ChatShellMessage) {
@@ -91,111 +126,190 @@ function normalizeChatShellMessage(raw: unknown): ChatShellMessage | null {
   }
 
   const candidate = raw as Record<string, unknown>;
-  const kind = candidate.kind;
 
-  if (kind === 'text') {
-    const sender = candidate.sender;
-    const text = candidate.text;
-
-    if (
-      (sender === 'assistant' || sender === 'user' || sender === 'system') &&
-      typeof text === 'string' &&
-      typeof candidate.id === 'string'
-    ) {
-      return {
-        id: candidate.id,
-        kind: 'text',
-        sender,
-        text,
-      };
-    }
-  }
-
-  return null;
-}
-
-function normalizeStoryRomanceState(
-  raw: unknown,
-): StoryRomanceState | null {
-  if (!raw || typeof raw !== 'object') {
-    return null;
-  }
-
-  const candidate = raw as Partial<StoryRomanceState>;
-
-  if (
-    candidate.attachmentSignal !== 'guarded' &&
-    candidate.attachmentSignal !== 'warming' &&
-    candidate.attachmentSignal !== 'open' &&
-    candidate.attachmentSignal !== 'deep'
-  ) {
+  if (candidate.kind !== 'text') {
     return null;
   }
 
   if (
-    candidate.emotionalTemperature !== 'cool' &&
-    candidate.emotionalTemperature !== 'soft' &&
-    candidate.emotionalTemperature !== 'warm' &&
-    candidate.emotionalTemperature !== 'intense'
+    typeof candidate.id !== 'string' ||
+    typeof candidate.text !== 'string' ||
+    (candidate.sender !== 'assistant' &&
+      candidate.sender !== 'user' &&
+      candidate.sender !== 'system')
   ) {
-    return null;
-  }
-
-  if (
-    candidate.pursuitBalance !== 'receding' &&
-    candidate.pursuitBalance !== 'balanced' &&
-    candidate.pursuitBalance !== 'leaning_in'
-  ) {
-    return null;
-  }
-
-  if (
-    candidate.vulnerabilityWindow !== 'narrow' &&
-    candidate.vulnerabilityWindow !== 'steady' &&
-    candidate.vulnerabilityWindow !== 'wide'
-  ) {
-    return null;
-  }
-
-  if (
-    candidate.boundarySensitivity !== 'high' &&
-    candidate.boundarySensitivity !== 'medium' &&
-    candidate.boundarySensitivity !== 'low'
-  ) {
-    return null;
-  }
-
-  if (
-    candidate.replyEnergy !== 'quiet' &&
-    candidate.replyEnergy !== 'measured' &&
-    candidate.replyEnergy !== 'steady' &&
-    candidate.replyEnergy !== 'bright'
-  ) {
-    return null;
-  }
-
-  if (
-    candidate.repairNeed !== 'stable' &&
-    candidate.repairNeed !== 'low' &&
-    candidate.repairNeed !== 'moderate' &&
-    candidate.repairNeed !== 'high'
-  ) {
-    return null;
-  }
-
-  if (typeof candidate.dailyHook !== 'string') {
     return null;
   }
 
   return {
-    attachmentSignal: candidate.attachmentSignal,
-    emotionalTemperature: candidate.emotionalTemperature,
-    pursuitBalance: candidate.pursuitBalance,
-    vulnerabilityWindow: candidate.vulnerabilityWindow,
-    boundarySensitivity: candidate.boundarySensitivity,
-    replyEnergy: candidate.replyEnergy,
-    repairNeed: candidate.repairNeed,
-    dailyHook: candidate.dailyHook,
+    id: candidate.id,
+    kind: 'text',
+    sender: candidate.sender,
+    text: candidate.text,
+  };
+}
+
+function createTimestampFromMessageId(messageId: string, fallback: string) {
+  const match = messageId.match(/-(\d{13})-/);
+  if (!match?.[1]) {
+    return fallback;
+  }
+
+  const timestamp = new Date(Number(match[1]));
+  return Number.isNaN(timestamp.getTime()) ? fallback : timestamp.toISOString();
+}
+
+function toPersistedStoryMessages(
+  messages: ChatShellMessage[],
+): PersistedStoryMessage[] {
+  return messages
+    .filter(isTextMessage)
+    .slice(-50)
+    .map((message) => ({
+      id: message.id,
+      type:
+        message.sender === 'assistant'
+          ? 'character'
+          : message.sender === 'system'
+            ? 'system'
+            : 'user',
+      content: message.text,
+      timestamp: createTimestampFromMessageId(message.id, new Date().toISOString()),
+    }));
+}
+
+function fromPersistedStoryMessages(
+  messages: unknown,
+): ChatShellMessage[] {
+  if (!Array.isArray(messages)) {
+    return [];
+  }
+
+  const normalizedMessages: Array<ChatShellTextMessage | null> = messages
+    .map((rawMessage): ChatShellTextMessage | null => {
+      if (!rawMessage || typeof rawMessage !== 'object') {
+        return null;
+      }
+
+      const candidate = rawMessage as Record<string, unknown>;
+      if (
+        typeof candidate.id !== 'string' ||
+        typeof candidate.content !== 'string' ||
+        (candidate.type !== 'user' &&
+          candidate.type !== 'character' &&
+          candidate.type !== 'system' &&
+          candidate.type !== 'narration')
+      ) {
+        return null;
+      }
+
+      return {
+        id: candidate.id,
+        kind: 'text' as const,
+        sender:
+          candidate.type === 'user'
+            ? 'user'
+            : candidate.type === 'system'
+              ? 'system'
+              : 'assistant',
+        text: candidate.content,
+      };
+    });
+
+  return normalizedMessages.filter(
+    (message): message is ChatShellTextMessage => message !== null,
+  );
+}
+
+function clampMetric(value: unknown, fallback: number) {
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    return fallback;
+  }
+
+  return Math.max(0, Math.min(100, Math.round(value)));
+}
+
+function normalizeAffectionStage(
+  value: unknown,
+  fallback: StoryAffectionStage,
+): StoryAffectionStage {
+  return isStoryAffectionStage(value) ? value : fallback;
+}
+
+function isSceneIntent(value: unknown): value is StorySceneIntent {
+  return (
+    value === 'opening' ||
+    value === 'check_in' ||
+    value === 'comfort' ||
+    value === 'flirt_softly' ||
+    value === 'repair' ||
+    value === 'reopen_memory'
+  );
+}
+
+function isResponseGoal(value: unknown): value is StoryResponseGoal {
+  return (
+    value === 'ground_the_moment' ||
+    value === 'nurture_curiosity' ||
+    value === 'repair_distance' ||
+    value === 'keep_soft_boundaries' ||
+    value === 'deepen_attachment'
+  );
+}
+
+function normalizeStoryRomanceStateValue(
+  raw: unknown,
+  fallback: StoryRomanceState,
+  safeAffectionCap: number,
+): StoryRomanceState {
+  if (!raw || typeof raw !== 'object') {
+    return fallback;
+  }
+
+  const candidate = raw as Partial<StoryRomanceState>;
+  const nextState = normalizeStoryRomanceState(
+    {
+      attachmentSignal: clampMetric(
+        candidate.attachmentSignal,
+        fallback.attachmentSignal,
+      ),
+      emotionalTemperature: clampMetric(
+        candidate.emotionalTemperature,
+        fallback.emotionalTemperature,
+      ),
+      pursuitBalance: clampMetric(candidate.pursuitBalance, fallback.pursuitBalance),
+      vulnerabilityWindow: clampMetric(
+        candidate.vulnerabilityWindow,
+        fallback.vulnerabilityWindow,
+      ),
+      boundarySensitivity: clampMetric(
+        candidate.boundarySensitivity,
+        fallback.boundarySensitivity,
+      ),
+      replyEnergy: clampMetric(candidate.replyEnergy, fallback.replyEnergy),
+      repairNeed: clampMetric(candidate.repairNeed, fallback.repairNeed),
+      dailyHook:
+        typeof candidate.dailyHook === 'string' && candidate.dailyHook.trim().length > 0
+          ? candidate.dailyHook.trim()
+          : fallback.dailyHook,
+      safeAffectionStage: normalizeAffectionStage(
+        candidate.safeAffectionStage,
+        fallback.safeAffectionStage,
+      ),
+    },
+    safeAffectionCap,
+  );
+
+  return {
+    ...nextState,
+    safeAffectionStage: normalizeAffectionStage(
+      candidate.safeAffectionStage,
+      inferStoryAffectionStage(
+        nextState.attachmentSignal,
+        nextState.emotionalTemperature,
+        safeAffectionCap,
+      ),
+    ),
   };
 }
 
@@ -209,71 +323,358 @@ function normalizeStoryRomanceStatePatch(
   const candidate = raw as Partial<StoryRomanceState>;
   const nextPatch: Partial<StoryRomanceState> = {};
 
-  if (
-    candidate.attachmentSignal === 'guarded' ||
-    candidate.attachmentSignal === 'warming' ||
-    candidate.attachmentSignal === 'open' ||
-    candidate.attachmentSignal === 'deep'
-  ) {
-    nextPatch.attachmentSignal = candidate.attachmentSignal;
+  if (typeof candidate.attachmentSignal === 'number') {
+    nextPatch.attachmentSignal = clampMetric(candidate.attachmentSignal, 0);
   }
-
-  if (
-    candidate.emotionalTemperature === 'cool' ||
-    candidate.emotionalTemperature === 'soft' ||
-    candidate.emotionalTemperature === 'warm' ||
-    candidate.emotionalTemperature === 'intense'
-  ) {
-    nextPatch.emotionalTemperature = candidate.emotionalTemperature;
+  if (typeof candidate.emotionalTemperature === 'number') {
+    nextPatch.emotionalTemperature = clampMetric(
+      candidate.emotionalTemperature,
+      0,
+    );
   }
-
-  if (
-    candidate.pursuitBalance === 'receding' ||
-    candidate.pursuitBalance === 'balanced' ||
-    candidate.pursuitBalance === 'leaning_in'
-  ) {
-    nextPatch.pursuitBalance = candidate.pursuitBalance;
+  if (typeof candidate.pursuitBalance === 'number') {
+    nextPatch.pursuitBalance = clampMetric(candidate.pursuitBalance, 0);
   }
-
-  if (
-    candidate.vulnerabilityWindow === 'narrow' ||
-    candidate.vulnerabilityWindow === 'steady' ||
-    candidate.vulnerabilityWindow === 'wide'
-  ) {
-    nextPatch.vulnerabilityWindow = candidate.vulnerabilityWindow;
+  if (typeof candidate.vulnerabilityWindow === 'number') {
+    nextPatch.vulnerabilityWindow = clampMetric(
+      candidate.vulnerabilityWindow,
+      0,
+    );
   }
-
-  if (
-    candidate.boundarySensitivity === 'high' ||
-    candidate.boundarySensitivity === 'medium' ||
-    candidate.boundarySensitivity === 'low'
-  ) {
-    nextPatch.boundarySensitivity = candidate.boundarySensitivity;
+  if (typeof candidate.boundarySensitivity === 'number') {
+    nextPatch.boundarySensitivity = clampMetric(
+      candidate.boundarySensitivity,
+      0,
+    );
   }
-
-  if (
-    candidate.replyEnergy === 'quiet' ||
-    candidate.replyEnergy === 'measured' ||
-    candidate.replyEnergy === 'steady' ||
-    candidate.replyEnergy === 'bright'
-  ) {
-    nextPatch.replyEnergy = candidate.replyEnergy;
+  if (typeof candidate.replyEnergy === 'number') {
+    nextPatch.replyEnergy = clampMetric(candidate.replyEnergy, 0);
   }
-
-  if (
-    candidate.repairNeed === 'stable' ||
-    candidate.repairNeed === 'low' ||
-    candidate.repairNeed === 'moderate' ||
-    candidate.repairNeed === 'high'
-  ) {
-    nextPatch.repairNeed = candidate.repairNeed;
+  if (typeof candidate.repairNeed === 'number') {
+    nextPatch.repairNeed = clampMetric(candidate.repairNeed, 0);
   }
-
-  if (typeof candidate.dailyHook === 'string') {
-    nextPatch.dailyHook = candidate.dailyHook;
+  if (typeof candidate.dailyHook === 'string' && candidate.dailyHook.trim().length > 0) {
+    nextPatch.dailyHook = candidate.dailyHook.trim();
+  }
+  if (isStoryAffectionStage(candidate.safeAffectionStage)) {
+    nextPatch.safeAffectionStage = candidate.safeAffectionStage;
   }
 
   return Object.keys(nextPatch).length > 0 ? nextPatch : null;
+}
+
+function normalizeRuntimeState(
+  characterId: string,
+  rawRuntimeState: unknown,
+  fallbackSnapshot: StoryChatThreadSnapshot,
+): Pick<
+  StoryChatThreadSnapshot,
+  'personaKey' | 'romanceState' | 'sceneIntent' | 'responseGoal' | 'safeAffectionCap' | 'followUpHint'
+> {
+  const profile = getStoryRomanceProfile(characterId);
+  if (!profile) {
+    return {
+      personaKey: fallbackSnapshot.personaKey,
+      romanceState: fallbackSnapshot.romanceState,
+      sceneIntent: fallbackSnapshot.sceneIntent,
+      responseGoal: fallbackSnapshot.responseGoal,
+      safeAffectionCap: fallbackSnapshot.safeAffectionCap,
+      followUpHint: fallbackSnapshot.followUpHint,
+    };
+  }
+
+  const candidate =
+    rawRuntimeState && typeof rawRuntimeState === 'object'
+      ? (rawRuntimeState as PersistedStoryRuntimeState)
+      : null;
+  const safeAffectionCap = clampSafeAffectionCap(
+    typeof candidate?.safeAffectionCap === 'number'
+      ? candidate.safeAffectionCap
+      : fallbackSnapshot.safeAffectionCap,
+  );
+
+  return {
+    personaKey:
+      typeof candidate?.personaKey === 'string' && candidate.personaKey.length > 0
+        ? candidate.personaKey
+        : fallbackSnapshot.personaKey || profile.personaKey,
+    romanceState: normalizeStoryRomanceStateValue(
+      candidate?.romanceState,
+      fallbackSnapshot.romanceState,
+      safeAffectionCap,
+    ),
+    sceneIntent: isSceneIntent(candidate?.sceneIntent)
+      ? candidate.sceneIntent
+      : fallbackSnapshot.sceneIntent,
+    responseGoal: isResponseGoal(candidate?.responseGoal)
+      ? candidate.responseGoal
+      : fallbackSnapshot.responseGoal,
+    safeAffectionCap,
+    followUpHint:
+      typeof candidate?.followUpHint === 'string' &&
+      candidate.followUpHint.trim().length > 0
+        ? candidate.followUpHint.trim()
+        : fallbackSnapshot.followUpHint,
+  };
+}
+
+function normalizeStoryChatResponse(raw: unknown): StoryChatResponse {
+  if (!raw || typeof raw !== 'object') {
+    throw new Error('Story chat response payload is empty.');
+  }
+
+  const candidate = raw as Record<string, unknown>;
+  const affinityDeltaCandidate =
+    candidate.affinityDelta && typeof candidate.affinityDelta === 'object'
+      ? (candidate.affinityDelta as Record<string, unknown>)
+      : null;
+  const metaCandidate =
+    candidate.meta && typeof candidate.meta === 'object'
+      ? (candidate.meta as Record<string, unknown>)
+      : null;
+  if (typeof candidate.response !== 'string' || candidate.response.trim().length === 0) {
+    throw new Error('Story chat response text is missing.');
+  }
+
+  return {
+    success: typeof candidate.success === 'boolean' ? candidate.success : true,
+    response: candidate.response,
+    emotionTag:
+      typeof candidate.emotionTag === 'string' ? candidate.emotionTag : undefined,
+    delaySec:
+      typeof candidate.delaySec === 'number' ? candidate.delaySec : undefined,
+    affinityDelta:
+      affinityDeltaCandidate &&
+      (typeof affinityDeltaCandidate.points === 'number' ||
+        typeof affinityDeltaCandidate.reason === 'string' ||
+        typeof affinityDeltaCandidate.quality === 'string')
+        ? {
+            points:
+              typeof affinityDeltaCandidate.points === 'number'
+                ? affinityDeltaCandidate.points
+                : 0,
+            reason:
+              typeof affinityDeltaCandidate.reason === 'string'
+                ? affinityDeltaCandidate.reason
+                : 'basic_chat',
+            quality:
+              typeof affinityDeltaCandidate.quality === 'string'
+                ? affinityDeltaCandidate.quality
+                : 'neutral',
+          }
+        : undefined,
+    romanceStatePatch:
+      normalizeStoryRomanceStatePatch(candidate.romanceStatePatch) ?? undefined,
+    followUpHint:
+      typeof candidate.followUpHint === 'string'
+        ? candidate.followUpHint.trim()
+        : undefined,
+    meta:
+      metaCandidate &&
+      (typeof metaCandidate.provider === 'string' ||
+        typeof metaCandidate.model === 'string' ||
+        typeof metaCandidate.latencyMs === 'number' ||
+        typeof metaCandidate.fallbackUsed === 'boolean')
+        ? {
+            provider:
+              typeof metaCandidate.provider === 'string'
+                ? metaCandidate.provider
+                : undefined,
+            model:
+              typeof metaCandidate.model === 'string'
+                ? metaCandidate.model
+                : undefined,
+            latencyMs:
+              typeof metaCandidate.latencyMs === 'number'
+                ? metaCandidate.latencyMs
+                : undefined,
+            fallbackUsed:
+              typeof metaCandidate.fallbackUsed === 'boolean'
+                ? metaCandidate.fallbackUsed
+                : undefined,
+          }
+        : undefined,
+    error: typeof candidate.error === 'string' ? candidate.error : undefined,
+  };
+}
+
+function normalizeStoryConversationLoadResponse(
+  raw: unknown,
+): StoryConversationLoadResponse {
+  if (!raw || typeof raw !== 'object') {
+    throw new Error('Story conversation payload is empty.');
+  }
+
+  return raw as StoryConversationLoadResponse;
+}
+
+async function loadLocalStoryThreadSnapshot(
+  characterId: string,
+): Promise<StoryChatThreadSnapshot | null> {
+  const profile = getStoryRomanceProfile(characterId);
+  if (!profile) {
+    return null;
+  }
+
+  const session = await resolveCurrentSession();
+  const storageKey = resolveStoryChatThreadStorageKey(
+    characterId,
+    session?.user.id ?? null,
+  );
+  const raw = await SecureStore.getItemAsync(storageKey);
+
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
+    const fallbackSnapshot = buildStoryThreadSnapshot({
+      id: characterId,
+    } as ChatCharacterSpec);
+
+    if (!fallbackSnapshot) {
+      return null;
+    }
+
+    const messages = Array.isArray(parsed.messages)
+      ? parsed.messages
+          .map((message) => normalizeChatShellMessage(message))
+          .filter((message): message is ChatShellMessage => message != null)
+      : [];
+
+    if (messages.length === 0) {
+      return null;
+    }
+
+    const runtimeState = normalizeRuntimeState(
+      characterId,
+      parsed.runtimeState ?? parsed,
+      fallbackSnapshot,
+    );
+
+    return {
+      characterId,
+      personaKey: runtimeState.personaKey,
+      messages,
+      romanceState: runtimeState.romanceState,
+      sceneIntent: runtimeState.sceneIntent,
+      responseGoal: runtimeState.responseGoal,
+      safeAffectionCap: runtimeState.safeAffectionCap,
+      followUpHint: runtimeState.followUpHint,
+      updatedAt:
+        typeof parsed.updatedAt === 'string'
+          ? parsed.updatedAt
+          : new Date().toISOString(),
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function saveLocalStoryThreadSnapshot(
+  snapshot: StoryChatThreadSnapshot,
+): Promise<void> {
+  const session = await resolveCurrentSession();
+  const storageKey = resolveStoryChatThreadStorageKey(
+    snapshot.characterId,
+    session?.user.id ?? null,
+  );
+
+  await SecureStore.setItemAsync(storageKey, JSON.stringify(snapshot));
+}
+
+async function loadRemoteStoryThreadSnapshot(
+  characterId: string,
+  fallbackSnapshot: StoryChatThreadSnapshot,
+): Promise<StoryChatThreadSnapshot | null> {
+  if (!supabase) {
+    return null;
+  }
+
+  const session = await resolveCurrentSession();
+  if (!session) {
+    return null;
+  }
+
+  const { data, error } = await supabase.functions.invoke(
+    'character-conversation-load',
+    {
+      body: { characterId },
+    },
+  );
+
+  if (error) {
+    throw error;
+  }
+
+  const payload = normalizeStoryConversationLoadResponse(data);
+  if (payload.success === false) {
+    throw new Error(payload.error ?? 'Failed to load story conversation.');
+  }
+
+  const messages = fromPersistedStoryMessages(payload.messages);
+  if (messages.length === 0) {
+    return null;
+  }
+
+  const runtimeState = normalizeRuntimeState(
+    characterId,
+    payload.runtimeState,
+    fallbackSnapshot,
+  );
+
+  return {
+    characterId,
+    personaKey: runtimeState.personaKey,
+    messages,
+    romanceState: runtimeState.romanceState,
+    sceneIntent: runtimeState.sceneIntent,
+    responseGoal: runtimeState.responseGoal,
+    safeAffectionCap: runtimeState.safeAffectionCap,
+    followUpHint: runtimeState.followUpHint,
+    updatedAt: payload.lastMessageAt ?? new Date().toISOString(),
+  };
+}
+
+async function saveRemoteStoryThreadSnapshot(
+  snapshot: StoryChatThreadSnapshot,
+): Promise<void> {
+  if (!supabase) {
+    return;
+  }
+
+  const session = await resolveCurrentSession();
+  if (!session) {
+    return;
+  }
+
+  const { data, error } = await supabase.functions.invoke(
+    'character-conversation-save',
+    {
+      body: {
+        characterId: snapshot.characterId,
+        messages: toPersistedStoryMessages(snapshot.messages),
+        runtimeState: {
+          personaKey: snapshot.personaKey,
+          romanceState: snapshot.romanceState,
+          sceneIntent: snapshot.sceneIntent,
+          responseGoal: snapshot.responseGoal,
+          safeAffectionCap: snapshot.safeAffectionCap,
+          followUpHint: snapshot.followUpHint,
+        },
+      },
+    },
+  );
+
+  if (error) {
+    throw error;
+  }
+
+  const payload = data as { success?: boolean; error?: string } | null;
+  if (payload?.success === false) {
+    throw new Error(payload.error ?? 'Failed to save story conversation.');
+  }
 }
 
 export function buildStoryThreadSnapshot(
@@ -293,6 +694,7 @@ export function buildStoryThreadSnapshot(
     sceneIntent: profile.sceneIntent,
     responseGoal: profile.responseGoal,
     safeAffectionCap: profile.safeAffectionCap,
+    followUpHint: profile.romanceState.dailyHook,
     updatedAt: new Date().toISOString(),
   };
 }
@@ -308,27 +710,31 @@ export function buildStoryChatRequest(
     return null;
   }
 
-  const messages = (thread?.messages ?? buildPilotStoryInitialThread(character))
-    .filter(isTextMessage)
-    .slice(-14)
-    .map((message) => ({
-      role: message.sender,
-      content: message.text,
-    }));
+  const sceneIntent = resolveSceneIntent(
+    userMessage,
+    thread?.sceneIntent ?? profile.sceneIntent,
+  );
+  const responseGoal = resolveResponseGoal(
+    userMessage,
+    thread?.responseGoal ?? profile.responseGoal,
+  );
 
   return {
     characterId: character.id,
     personaKey: profile.personaKey,
     systemPrompt: buildStoryRomanceSystemPrompt(character),
-    messages,
+    messages: (thread?.messages ?? buildPilotStoryInitialThread(character))
+      .filter(isTextMessage)
+      .slice(-14)
+      .map((message) => ({
+        role: message.sender,
+        content: message.text,
+      })),
     userMessage,
     romanceState: thread?.romanceState ?? profile.romanceState,
-    sceneIntent: resolveSceneIntent(userMessage, thread?.sceneIntent ?? profile.sceneIntent),
-    responseGoal: resolveResponseGoal(
-      userMessage,
-      thread?.responseGoal ?? profile.responseGoal,
-    ),
-    safeAffectionCap: profile.safeAffectionCap,
+    sceneIntent,
+    responseGoal,
+    safeAffectionCap: thread?.safeAffectionCap ?? profile.safeAffectionCap,
   };
 }
 
@@ -345,19 +751,15 @@ function resolveSceneIntent(
   if (/미안|사과|서운|상처|다퉜|화났/.test(normalized)) {
     return 'repair';
   }
-
   if (/좋아|설레|보고싶|궁금|더 알고/.test(normalized)) {
     return 'flirt_softly';
   }
-
   if (/괜찮|힘들|지쳐|위로|안아/.test(normalized)) {
     return 'comfort';
   }
-
   if (/다시|이어|reopen|계속/.test(normalized)) {
     return 'reopen_memory';
   }
-
   if (/안녕|처음|시작/.test(normalized)) {
     return 'opening';
   }
@@ -378,97 +780,17 @@ function resolveResponseGoal(
   if (/미안|사과|서운|상처|다퉜|화났/.test(normalized)) {
     return 'repair_distance';
   }
-
   if (/좋아|설레|보고싶|궁금|더 알고/.test(normalized)) {
     return 'deepen_attachment';
   }
-
   if (/괜찮|힘들|지쳐|위로|안아/.test(normalized)) {
     return 'ground_the_moment';
   }
-
   if (/다시|이어|reopen|계속/.test(normalized)) {
     return 'repair_distance';
   }
 
   return fallback;
-}
-
-function normalizeStoryChatResponse(raw: unknown): StoryChatResponse {
-  if (!raw || typeof raw !== 'object') {
-    throw new Error('Story chat response payload is empty.');
-  }
-
-  const candidate = raw as Record<string, unknown>;
-  const response = candidate.response;
-
-  if (typeof response !== 'string' || response.trim().length === 0) {
-    throw new Error('Story chat response text is missing.');
-  }
-
-  const affinityDelta = candidate.affinityDelta;
-  const romanceStatePatch = candidate.romanceStatePatch;
-  const affinityCandidate =
-    affinityDelta && typeof affinityDelta === 'object'
-      ? (affinityDelta as Record<string, unknown>)
-      : null;
-  const metaCandidate =
-    candidate.meta && typeof candidate.meta === 'object'
-      ? (candidate.meta as Record<string, unknown>)
-      : null;
-
-  return {
-    success: typeof candidate.success === 'boolean' ? candidate.success : true,
-    response,
-    emotionTag:
-      typeof candidate.emotionTag === 'string' ? candidate.emotionTag : undefined,
-    delaySec:
-      typeof candidate.delaySec === 'number' ? candidate.delaySec : undefined,
-    affinityDelta: affinityCandidate
-      ? {
-          points:
-            typeof affinityCandidate.points === 'number'
-              ? affinityCandidate.points
-              : 0,
-          reason:
-            typeof affinityCandidate.reason === 'string'
-              ? affinityCandidate.reason
-              : 'basic_chat',
-          quality:
-            typeof affinityCandidate.quality === 'string'
-              ? affinityCandidate.quality
-              : 'neutral',
-        }
-      : undefined,
-    romanceStatePatch:
-      normalizeStoryRomanceStatePatch(romanceStatePatch) ?? undefined,
-    followUpHint:
-      typeof candidate.followUpHint === 'string'
-        ? candidate.followUpHint
-        : undefined,
-    meta: metaCandidate
-      ? {
-          provider:
-            typeof metaCandidate.provider === 'string'
-              ? metaCandidate.provider
-              : undefined,
-          model:
-            typeof metaCandidate.model === 'string'
-              ? metaCandidate.model
-              : undefined,
-          latencyMs:
-            typeof metaCandidate.latencyMs === 'number'
-              ? metaCandidate.latencyMs
-              : undefined,
-          fallbackUsed:
-            typeof metaCandidate.fallbackUsed === 'boolean'
-              ? metaCandidate.fallbackUsed
-              : undefined,
-        }
-      : undefined,
-    error:
-      typeof candidate.error === 'string' ? candidate.error : undefined,
-  };
 }
 
 export function buildStoryFallbackAssistantMessage(
@@ -486,68 +808,38 @@ export async function loadStoryThreadSnapshot(
     return null;
   }
 
-  const userId = await resolveCurrentUserId();
-  const storageKey = resolveStoryChatThreadStorageKey(characterId, userId);
-  const raw = await SecureStore.getItemAsync(storageKey);
+  const initialSnapshot = buildStoryThreadSnapshot({ id: characterId } as ChatCharacterSpec);
+  const localSnapshot = await loadLocalStoryThreadSnapshot(characterId);
+  const fallbackSnapshot = localSnapshot ?? initialSnapshot;
 
-  if (!raw) {
+  if (!fallbackSnapshot) {
     return null;
   }
 
   try {
-    const parsed = JSON.parse(raw) as Record<string, unknown>;
-    const messages = Array.isArray(parsed.messages)
-      ? parsed.messages
-          .map((message) => normalizeChatShellMessage(message))
-          .filter((message): message is ChatShellMessage => message != null)
-      : [];
-    const romanceState = normalizeStoryRomanceState(parsed.romanceState);
-    const sceneIntent = parsed.sceneIntent;
-    const responseGoal = parsed.responseGoal;
-    const safeAffectionCap = parsed.safeAffectionCap;
-
-    if (!romanceState) {
-      return null;
-    }
-
-    if (
-      typeof sceneIntent !== 'string' ||
-      typeof responseGoal !== 'string' ||
-      typeof safeAffectionCap !== 'number'
-    ) {
-      return null;
-    }
-
-    if (messages.length === 0) {
-      return null;
-    }
-
-    return {
+    const remoteSnapshot = await loadRemoteStoryThreadSnapshot(
       characterId,
-      personaKey: typeof parsed.personaKey === 'string' ? parsed.personaKey : profile.personaKey,
-      messages,
-      romanceState,
-      sceneIntent: sceneIntent as StorySceneIntent,
-      responseGoal: responseGoal as StoryResponseGoal,
-      safeAffectionCap,
-      updatedAt:
-        typeof parsed.updatedAt === 'string' ? parsed.updatedAt : new Date().toISOString(),
-    };
-  } catch {
-    return null;
+      fallbackSnapshot,
+    );
+
+    if (remoteSnapshot) {
+      await saveLocalStoryThreadSnapshot(remoteSnapshot);
+      return remoteSnapshot;
+    }
+  } catch (error) {
+    if (!localSnapshot) {
+      throw error;
+    }
   }
+
+  return localSnapshot;
 }
 
 export async function saveStoryThreadSnapshot(
   snapshot: StoryChatThreadSnapshot,
 ): Promise<StoryChatThreadSnapshot> {
-  const userId = await resolveCurrentUserId();
-  const storageKey = resolveStoryChatThreadStorageKey(
-    snapshot.characterId,
-    userId,
-  );
-
-  await SecureStore.setItemAsync(storageKey, JSON.stringify(snapshot));
+  await saveLocalStoryThreadSnapshot(snapshot);
+  await saveRemoteStoryThreadSnapshot(snapshot);
   return snapshot;
 }
 
@@ -577,50 +869,19 @@ export async function invokeStoryChat(
   return normalizeStoryChatResponse(data);
 }
 
-export function buildNextStoryThreadSnapshot(
-  current: StoryChatThreadSnapshot | null,
-  character: ChatCharacterSpec,
-  nextMessages: ChatShellMessage[],
-  response: StoryChatResponse | null,
-  request?: StoryChatRequest | null,
-): StoryChatThreadSnapshot | null {
-  const profile = getStoryRomanceProfile(character.id);
-
-  if (!profile) {
-    return null;
-  }
-
-  const currentState = current?.romanceState ?? profile.romanceState;
-  const nextState = applyStoryRomancePatch(
-    currentState,
-    response?.romanceStatePatch ?? null,
-    response?.response ?? null,
-  );
-
-  return {
-    characterId: character.id,
-    personaKey: request?.personaKey ?? profile.personaKey,
-    messages: nextMessages,
-    romanceState: nextState,
-    sceneIntent: request?.sceneIntent ?? current?.sceneIntent ?? profile.sceneIntent,
-    responseGoal:
-      request?.responseGoal ?? current?.responseGoal ?? profile.responseGoal,
-    safeAffectionCap: request?.safeAffectionCap ?? profile.safeAffectionCap,
-    updatedAt: new Date().toISOString(),
-  };
-}
-
 function applyStoryRomancePatch(
   current: StoryRomanceState,
   patch: Partial<StoryRomanceState> | null,
   assistantText: string | null,
+  safeAffectionCap: number,
 ): StoryRomanceState {
-  const nextState: StoryRomanceState = {
+  const nextState = {
     ...current,
   };
 
   if (patch) {
-    nextState.attachmentSignal = patch.attachmentSignal ?? nextState.attachmentSignal;
+    nextState.attachmentSignal =
+      patch.attachmentSignal ?? nextState.attachmentSignal;
     nextState.emotionalTemperature =
       patch.emotionalTemperature ?? nextState.emotionalTemperature;
     nextState.pursuitBalance = patch.pursuitBalance ?? nextState.pursuitBalance;
@@ -631,35 +892,87 @@ function applyStoryRomancePatch(
     nextState.replyEnergy = patch.replyEnergy ?? nextState.replyEnergy;
     nextState.repairNeed = patch.repairNeed ?? nextState.repairNeed;
     nextState.dailyHook = patch.dailyHook ?? nextState.dailyHook;
+    nextState.safeAffectionStage = normalizeAffectionStage(
+      patch.safeAffectionStage,
+      nextState.safeAffectionStage,
+    );
   }
 
   if (!patch && assistantText) {
-    const normalized = assistantText.trim();
+    if (/미안|서운|걱정|기다|편해|괜찮/.test(assistantText)) {
+      nextState.emotionalTemperature = Math.min(
+        100,
+        nextState.emotionalTemperature + 6,
+      );
+    }
 
-    if (normalized.length > 0) {
-      if (normalized.length < 28 && nextState.replyEnergy === 'quiet') {
-        nextState.replyEnergy = 'measured';
-      }
+    if (/보고싶|좋아|궁금|더 알고|가까워/.test(assistantText)) {
+      nextState.attachmentSignal = Math.min(
+        100,
+        nextState.attachmentSignal + 6,
+      );
+    }
 
-      if (
-        /미안|서운|걱정|기다|편해|괜찮/.test(normalized) &&
-        nextState.emotionalTemperature === 'cool'
-      ) {
-        nextState.emotionalTemperature = 'soft';
-      }
-
-      if (
-        /보고싶|좋아|궁금|더 알고|가까워/.test(normalized) &&
-        nextState.attachmentSignal === 'guarded'
-      ) {
-        nextState.attachmentSignal = 'warming';
-      }
+    if (assistantText.trim().length < 42) {
+      nextState.replyEnergy = Math.max(28, nextState.replyEnergy - 2);
     }
   }
 
-  if (nextState.repairNeed === 'high' && assistantText && assistantText.length > 0) {
-    nextState.repairNeed = 'moderate';
+  if (assistantText && assistantText.trim().length > 0 && nextState.repairNeed > 0) {
+    nextState.repairNeed = Math.max(0, nextState.repairNeed - 6);
   }
 
-  return nextState;
+  const normalized = normalizeStoryRomanceState(nextState, safeAffectionCap);
+  return {
+    ...normalized,
+    safeAffectionStage: patch?.safeAffectionStage
+      ? normalizeAffectionStage(patch.safeAffectionStage, normalized.safeAffectionStage)
+      : inferStoryAffectionStage(
+          normalized.attachmentSignal,
+          normalized.emotionalTemperature,
+          safeAffectionCap,
+        ),
+  };
+}
+
+export function buildNextStoryThreadSnapshot(
+  current: StoryChatThreadSnapshot | null,
+  character: ChatCharacterSpec,
+  nextMessages: ChatShellMessage[],
+  response: StoryChatResponse | null,
+  request: StoryChatRequest | null,
+): StoryChatThreadSnapshot | null {
+  const profile = getStoryRomanceProfile(character.id);
+
+  if (!profile) {
+    return null;
+  }
+
+  const safeAffectionCap = clampSafeAffectionCap(
+    request?.safeAffectionCap ??
+      current?.safeAffectionCap ??
+      profile.safeAffectionCap,
+  );
+
+  return {
+    characterId: character.id,
+    personaKey: request?.personaKey ?? current?.personaKey ?? profile.personaKey,
+    messages: nextMessages,
+    romanceState: applyStoryRomancePatch(
+      current?.romanceState ?? request?.romanceState ?? profile.romanceState,
+      response?.romanceStatePatch ?? null,
+      response?.response ?? null,
+      safeAffectionCap,
+    ),
+    sceneIntent: request?.sceneIntent ?? current?.sceneIntent ?? profile.sceneIntent,
+    responseGoal:
+      request?.responseGoal ?? current?.responseGoal ?? profile.responseGoal,
+    safeAffectionCap,
+    followUpHint:
+      response?.followUpHint ??
+      current?.followUpHint ??
+      request?.romanceState.dailyHook ??
+      profile.romanceState.dailyHook,
+    updatedAt: new Date().toISOString(),
+  };
 }

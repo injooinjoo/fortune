@@ -18,7 +18,7 @@ import type {
   ChatShellMessage,
   ChatShellTextMessage,
 } from '../../lib/chat-shell';
-import { formatFortuneTypeLabel } from '../../lib/chat-shell';
+import { buildSuggestedActions, formatFortuneTypeLabel } from '../../lib/chat-shell';
 import { fortuneTheme } from '../../lib/theme';
 import { EmbeddedResultCard } from '../chat-results/embedded-result-card';
 import type { ChatSurveyStep } from '../chat-survey/types';
@@ -190,35 +190,6 @@ export function FloatingCreateButton({
   );
 }
 
-function PagerDots() {
-  return (
-    <View
-      style={{
-        alignItems: 'center',
-        flexDirection: 'row',
-        gap: 12,
-        justifyContent: 'center',
-        paddingTop: fortuneTheme.spacing.xs,
-      }}
-    >
-      {Array.from({ length: 5 }).map((_, index) => (
-        <View
-          key={index}
-          style={{
-            backgroundColor:
-              index === 0
-                ? 'rgba(255,255,255,0.94)'
-                : fortuneTheme.colors.surfaceSecondary,
-            borderRadius: 999,
-            height: 10,
-            width: 10,
-          }}
-        />
-      ))}
-    </View>
-  );
-}
-
 function SegmentedPills({
   activeTab,
   onChangeTab,
@@ -304,55 +275,91 @@ function CharacterListRow({
   character,
   badge,
   onPress,
+  onPickAction,
+  optionActions = [],
   selected = false,
 }: {
   character: ChatCharacterSpec;
   badge?: string;
   onPress: () => void;
+  onPickAction?: (fortuneType: FortuneTypeId) => void;
+  optionActions?: readonly ChatShellAction[];
   selected?: boolean;
 }) {
   return (
-    <Pressable
-      accessibilityRole="button"
-      onPress={onPress}
-      style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
+    <View
+      style={{
+        backgroundColor: selected
+          ? fortuneTheme.colors.backgroundTertiary
+          : fortuneTheme.colors.surfaceSecondary,
+        borderColor: selected
+          ? fortuneTheme.colors.accentTertiary
+          : fortuneTheme.colors.border,
+        borderRadius: fortuneTheme.radius.lg,
+        borderWidth: 1,
+        gap: optionActions.length > 0 ? fortuneTheme.spacing.sm : 0,
+        paddingHorizontal: fortuneTheme.spacing.md,
+        paddingVertical: fortuneTheme.spacing.sm,
+      }}
     >
-      <View
-        style={{
-          alignItems: 'center',
-          backgroundColor: selected
-            ? fortuneTheme.colors.backgroundTertiary
-            : fortuneTheme.colors.surfaceSecondary,
-          borderColor: selected
-            ? fortuneTheme.colors.accentTertiary
-            : fortuneTheme.colors.border,
-          borderRadius: fortuneTheme.radius.lg,
-          borderWidth: 1,
-          flexDirection: 'row',
-          gap: fortuneTheme.spacing.sm,
-          paddingHorizontal: fortuneTheme.spacing.md,
-          paddingVertical: fortuneTheme.spacing.sm,
-        }}
+      <Pressable
+        accessibilityRole="button"
+        onPress={onPress}
+        style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
       >
-        <CharacterAvatar name={character.name} />
-        <View style={{ flex: 1, gap: 2 }}>
-          <AppText variant="labelLarge">{character.name}</AppText>
-          <AppText
-            numberOfLines={1}
-            variant="bodySmall"
-            color={fortuneTheme.colors.textSecondary}
-          >
-            {character.shortDescription}
-          </AppText>
+        <View
+          style={{
+            alignItems: 'center',
+            flexDirection: 'row',
+            gap: fortuneTheme.spacing.sm,
+          }}
+        >
+          <CharacterAvatar name={character.name} />
+          <View style={{ flex: 1, gap: 2 }}>
+            <AppText variant="labelLarge">{character.name}</AppText>
+            <AppText
+              numberOfLines={optionActions.length > 0 ? 2 : 1}
+              variant="bodySmall"
+              color={fortuneTheme.colors.textSecondary}
+            >
+              {character.shortDescription}
+            </AppText>
+          </View>
+          {badge ? <Chip label={badge} tone="neutral" /> : null}
         </View>
-        {badge ? (
-          <Chip
-            label={badge}
-            tone={badge === '전문가' ? 'success' : 'neutral'}
-          />
-        ) : null}
-      </View>
-    </Pressable>
+      </Pressable>
+
+      {optionActions.length > 0 && onPickAction ? (
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            gap: 8,
+            paddingLeft: 56,
+          }}
+        >
+          {optionActions.map((action, index) => (
+            <Pressable
+              key={action.id}
+              accessibilityRole="button"
+              onPress={() => onPickAction(action.fortuneType)}
+              style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
+            >
+              <Chip
+                label={action.label}
+                tone={
+                  selected && index === 0
+                    ? 'accent'
+                    : index % 3 === 0
+                      ? 'success'
+                      : 'neutral'
+                }
+              />
+            </Pressable>
+          ))}
+        </View>
+      ) : null}
+    </View>
   );
 }
 
@@ -645,14 +652,14 @@ export function ChatSoftGate({
             />
             {onKakao ? (
               <SocialActionButton
-                label="Kakao로 계속하기"
+                label="카카오로 계속하기"
                 tone="dark"
                 onPress={onKakao}
               />
             ) : null}
             {onNaver ? (
               <SocialActionButton
-                label="Naver로 계속하기"
+                label="네이버로 계속하기"
                 tone="dark"
                 onPress={onNaver}
               />
@@ -687,47 +694,31 @@ export function ChatSoftGate({
 
 export function ChatFirstRunSurface({
   activeTab,
-  featuredCharacter,
-  actions,
   characters,
   lastFortuneType,
   selectedCharacterId,
   onChangeTab,
-  onCreateFriend,
   onOpenProfile,
   onOpenRecentResult,
   onSelectCharacter,
-  onPickAction,
+  onPickCharacterAction,
 }: {
   activeTab: ChatCharacterTab;
-  featuredCharacter: ChatCharacterSpec;
-  actions: ChatShellAction[];
   characters: readonly ChatCharacterSpec[];
   lastFortuneType: FortuneTypeId | null;
   selectedCharacterId: string | null;
   onChangeTab: (tab: ChatCharacterTab) => void;
-  onCreateFriend: () => void;
   onOpenProfile: () => void;
   onOpenRecentResult: (fortuneType: FortuneTypeId) => void;
   onSelectCharacter: (characterId: string) => void;
-  onPickAction: (fortuneType: FortuneTypeId) => void;
+  onPickCharacterAction: (characterId: string, fortuneType: FortuneTypeId) => void;
 }) {
-  const safeActions = Array.isArray(actions) ? actions : [];
   const safeCharacters = Array.isArray(characters) ? characters : [];
-  const spotlightCharacter = featuredCharacter ?? safeCharacters[0];
-  const primaryAction = safeActions[0];
-  const secondaryActions = safeActions.slice(1, 3);
-  const orderedActions = [
-    secondaryActions[0],
-    primaryAction,
-    secondaryActions[1],
-  ].filter(Boolean) as ChatShellAction[];
   const orderedCharacters = [
     ...safeCharacters.filter((character) => character.id === selectedCharacterId),
     ...safeCharacters.filter((character) => character.id !== selectedCharacterId),
   ];
-  const visibleCharacters =
-    activeTab === 'story' ? orderedCharacters : orderedCharacters.slice(0, 4);
+  const visibleCharacters = orderedCharacters;
 
   return (
     <View style={{ gap: fortuneTheme.spacing.md }}>
@@ -748,76 +739,6 @@ export function ChatFirstRunSurface({
           onPress={onOpenProfile}
         />
       </View>
-
-      {activeTab === 'fortune' ? (
-        <Card>
-          <View style={{ gap: fortuneTheme.spacing.xs }}>
-            <AppText variant="heading4">맞춤 시작점</AppText>
-            <AppText
-              variant="bodySmall"
-              color={fortuneTheme.colors.textSecondary}
-            >
-              {`${spotlightCharacter?.name ?? '상담사'} 기준 추천 흐름으로 같은 채팅 안에서 설문과 결과를 바로 이어갈 수 있습니다.`}
-            </AppText>
-          </View>
-          <View style={{ gap: fortuneTheme.spacing.sm }}>
-            {orderedActions.map((action, index) =>
-              index === 1 ? (
-                <Pressable
-                  key={action.id}
-                  accessibilityRole="button"
-                  onPress={() => onPickAction(action.fortuneType)}
-                  style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
-                >
-                  <View
-                    style={{
-                      backgroundColor: fortuneTheme.colors.backgroundTertiary,
-                      borderRadius: fortuneTheme.radius.lg,
-                      padding: fortuneTheme.spacing.md,
-                      gap: fortuneTheme.spacing.xs,
-                    }}
-                  >
-                    <AppText
-                      variant="labelLarge"
-                      color={fortuneTheme.colors.textTertiary}
-                    >
-                      오늘 함께 풀어갈 운세
-                    </AppText>
-                    <View
-                      style={{
-                        alignItems: 'center',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        gap: fortuneTheme.spacing.sm,
-                      }}
-                    >
-                      <View style={{ flex: 1, gap: 4 }}>
-                        <AppText variant="heading4">{action.label}</AppText>
-                        <AppText
-                          variant="bodySmall"
-                          color={fortuneTheme.colors.textSecondary}
-                        >
-                          {spotlightCharacter?.name ?? '상담사'}와 바로 이어서 볼 수 있어요.
-                        </AppText>
-                      </View>
-                      <Chip label="전문가" tone="success" />
-                    </View>
-                  </View>
-                </Pressable>
-              ) : (
-                <EntryActionRow
-                  key={action.id}
-                  title={action.label}
-                  subtitle={action.reply}
-                  badge="전문가"
-                  onPress={() => onPickAction(action.fortuneType)}
-                  tone="neutral"
-                />
-              ),
-            )}
-          </View>
-        </Card>
-      ) : null}
 
       {activeTab === 'story' ? (
         <View style={{ gap: fortuneTheme.spacing.sm }}>
@@ -866,16 +787,22 @@ export function ChatFirstRunSurface({
               {visibleCharacters.map((character) => (
                 <CharacterListRow
                   key={character.id}
-                  badge="전문가"
+                  badge={`${character.specialties.length}개 운세`}
                   character={character}
+                  onPickAction={(fortuneType) =>
+                    onPickCharacterAction(character.id, fortuneType)
+                  }
                   onPress={() => onSelectCharacter(character.id)}
+                  optionActions={
+                    isFortuneChatCharacter(character)
+                      ? buildSuggestedActions(character)
+                      : []
+                  }
                   selected={character.id === selectedCharacterId}
                 />
               ))}
             </View>
           </Card>
-
-          <PagerDots />
         </>
       )}
 

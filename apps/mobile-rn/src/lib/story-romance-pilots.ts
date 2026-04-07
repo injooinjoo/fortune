@@ -1,4 +1,8 @@
-import { buildAssistantTextMessage, buildUserMessage, type ChatShellMessage } from './chat-shell';
+import {
+  buildAssistantTextMessage,
+  buildUserMessage,
+  type ChatShellMessage,
+} from './chat-shell';
 import { type ChatCharacterSpec } from './chat-characters';
 
 export const storyRomancePilotCharacterIds = [
@@ -25,15 +29,18 @@ export type StoryResponseGoal =
   | 'keep_soft_boundaries'
   | 'deepen_attachment';
 
+export type StoryAffectionStage = 'gentle' | 'warm' | 'tender' | 'close';
+
 export interface StoryRomanceState {
-  attachmentSignal: 'guarded' | 'warming' | 'open' | 'deep';
-  emotionalTemperature: 'cool' | 'soft' | 'warm' | 'intense';
-  pursuitBalance: 'receding' | 'balanced' | 'leaning_in';
-  vulnerabilityWindow: 'narrow' | 'steady' | 'wide';
-  boundarySensitivity: 'high' | 'medium' | 'low';
-  replyEnergy: 'quiet' | 'measured' | 'steady' | 'bright';
-  repairNeed: 'stable' | 'low' | 'moderate' | 'high';
+  attachmentSignal: number;
+  emotionalTemperature: number;
+  pursuitBalance: number;
+  vulnerabilityWindow: number;
+  boundarySensitivity: number;
+  replyEnergy: number;
+  repairNeed: number;
   dailyHook: string;
+  safeAffectionStage: StoryAffectionStage;
 }
 
 export interface StoryRomanceProfile {
@@ -45,6 +52,75 @@ export interface StoryRomanceProfile {
   responseGoal: StoryResponseGoal;
   safeAffectionCap: number;
   fallbackLine: string;
+}
+
+function clampMetric(value: number) {
+  if (!Number.isFinite(value)) {
+    return 0;
+  }
+
+  return Math.max(0, Math.min(100, Math.round(value)));
+}
+
+export function clampSafeAffectionCap(value: number) {
+  if (!Number.isFinite(value)) {
+    return 1;
+  }
+
+  return Math.max(1, Math.min(4, Math.round(value)));
+}
+
+export function isStoryAffectionStage(
+  value: unknown,
+): value is StoryAffectionStage {
+  return (
+    value === 'gentle' ||
+    value === 'warm' ||
+    value === 'tender' ||
+    value === 'close'
+  );
+}
+
+export function inferStoryAffectionStage(
+  attachmentSignal: number,
+  emotionalTemperature: number,
+  safeAffectionCap: number,
+): StoryAffectionStage {
+  const score = Math.round((attachmentSignal + emotionalTemperature) / 2);
+  const stageIndex = score >= 72 ? 3 : score >= 56 ? 2 : score >= 36 ? 1 : 0;
+  const cappedIndex = Math.min(
+    stageIndex,
+    Math.max(0, clampSafeAffectionCap(safeAffectionCap) - 1),
+  );
+  const stages: StoryAffectionStage[] = ['gentle', 'warm', 'tender', 'close'];
+
+  return stages[cappedIndex] ?? 'gentle';
+}
+
+export function normalizeStoryRomanceState(
+  state: StoryRomanceState,
+  safeAffectionCap: number,
+): StoryRomanceState {
+  const nextAttachmentSignal = clampMetric(state.attachmentSignal);
+  const nextEmotionalTemperature = clampMetric(state.emotionalTemperature);
+
+  return {
+    attachmentSignal: nextAttachmentSignal,
+    emotionalTemperature: nextEmotionalTemperature,
+    pursuitBalance: clampMetric(state.pursuitBalance),
+    vulnerabilityWindow: clampMetric(state.vulnerabilityWindow),
+    boundarySensitivity: clampMetric(state.boundarySensitivity),
+    replyEnergy: clampMetric(state.replyEnergy),
+    repairNeed: clampMetric(state.repairNeed),
+    dailyHook: state.dailyHook.trim(),
+    safeAffectionStage: isStoryAffectionStage(state.safeAffectionStage)
+      ? state.safeAffectionStage
+      : inferStoryAffectionStage(
+          nextAttachmentSignal,
+          nextEmotionalTemperature,
+          safeAffectionCap,
+        ),
+  };
 }
 
 export const storyRomancePilotProfiles: Record<
@@ -66,19 +142,23 @@ export const storyRomancePilotProfiles: Record<
       '외부 서비스명, 원문 출처, Guest 같은 플레이스홀더는 절대 말하지 않는다.',
       '응답은 짧고 메신저처럼 자연스럽게 유지한다.',
     ].join('\n'),
-    romanceState: {
-      attachmentSignal: 'guarded',
-      emotionalTemperature: 'soft',
-      pursuitBalance: 'receding',
-      vulnerabilityWindow: 'narrow',
-      boundarySensitivity: 'high',
-      replyEnergy: 'measured',
-      repairNeed: 'high',
-      dailyHook: '조용한 안부와 복구의 한마디',
-    },
+    romanceState: normalizeStoryRomanceState(
+      {
+        attachmentSignal: 24,
+        emotionalTemperature: 24,
+        pursuitBalance: 38,
+        vulnerabilityWindow: 16,
+        boundarySensitivity: 74,
+        replyEnergy: 38,
+        repairNeed: 44,
+        dailyHook: '아직 정리 안 된 마음 있으면 그 부분부터 말해줘.',
+        safeAffectionStage: 'gentle',
+      },
+      3,
+    ),
     sceneIntent: 'repair',
     responseGoal: 'repair_distance',
-    safeAffectionCap: 2,
+    safeAffectionCap: 3,
     fallbackLine:
       '잠깐 결이 끊겼네. 네가 남긴 말은 놓치지 않았고, 다시 이어서 답할게.',
   },
@@ -97,19 +177,23 @@ export const storyRomancePilotProfiles: Record<
       '외부 서비스명, 원문 출처, Guest 같은 플레이스홀더는 절대 말하지 않는다.',
       '응답은 짧고 메신저처럼 자연스럽게 유지한다.',
     ].join('\n'),
-    romanceState: {
-      attachmentSignal: 'warming',
-      emotionalTemperature: 'warm',
-      pursuitBalance: 'leaning_in',
-      vulnerabilityWindow: 'steady',
-      boundarySensitivity: 'medium',
-      replyEnergy: 'bright',
-      repairNeed: 'moderate',
-      dailyHook: '호기심을 이어가는 다음 단서',
-    },
+    romanceState: normalizeStoryRomanceState(
+      {
+        attachmentSignal: 34,
+        emotionalTemperature: 42,
+        pursuitBalance: 57,
+        vulnerabilityWindow: 28,
+        boundarySensitivity: 58,
+        replyEnergy: 56,
+        repairNeed: 24,
+        dailyHook: '오늘 제일 기억에 남는 장면 하나만 골라줘.',
+        safeAffectionStage: 'warm',
+      },
+      4,
+    ),
     sceneIntent: 'check_in',
     responseGoal: 'nurture_curiosity',
-    safeAffectionCap: 3,
+    safeAffectionCap: 4,
     fallbackLine:
       '잠깐 멈칫했어. 네가 보낸 감정은 그대로 두고, 곧 이어서 다시 말해볼게.',
   },
@@ -128,19 +212,23 @@ export const storyRomancePilotProfiles: Record<
       '외부 서비스명, 원문 출처, Guest 같은 플레이스홀더는 절대 말하지 않는다.',
       '응답은 짧고 메신저처럼 자연스럽게 유지한다.',
     ].join('\n'),
-    romanceState: {
-      attachmentSignal: 'guarded',
-      emotionalTemperature: 'cool',
-      pursuitBalance: 'balanced',
-      vulnerabilityWindow: 'narrow',
-      boundarySensitivity: 'high',
-      replyEnergy: 'quiet',
-      repairNeed: 'low',
-      dailyHook: '짧은 안부와 사적인 여운',
-    },
+    romanceState: normalizeStoryRomanceState(
+      {
+        attachmentSignal: 22,
+        emotionalTemperature: 20,
+        pursuitBalance: 46,
+        vulnerabilityWindow: 14,
+        boundarySensitivity: 76,
+        replyEnergy: 34,
+        repairNeed: 18,
+        dailyHook: '괜찮으면 지금 기분만 짧게 알려줘.',
+        safeAffectionStage: 'gentle',
+      },
+      3,
+    ),
     sceneIntent: 'opening',
     responseGoal: 'keep_soft_boundaries',
-    safeAffectionCap: 2,
+    safeAffectionCap: 3,
     fallbackLine:
       '조금 늦었네. 네가 남긴 말은 읽고 있었고, 다시 천천히 이어갈게.',
   },
@@ -192,7 +280,7 @@ export function buildPilotStoryInitialThread(
     buildAssistantTextMessage(profile.openingLine),
     buildUserMessage('오늘은 조금 더 솔직하게 이야기해보고 싶어요.'),
     buildAssistantTextMessage(
-      `${character.name}의 분위기로 천천히 맞춰볼게요.`,
+      `${character.name}의 온도로 천천히 맞춰볼게요.`,
     ),
   ];
 }
@@ -206,4 +294,3 @@ export function buildPilotStoryFallbackReply(
     profile?.fallbackLine ?? '잠깐 결이 끊겼어. 다시 천천히 이어가자.',
   );
 }
-

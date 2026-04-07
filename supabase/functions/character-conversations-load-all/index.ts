@@ -27,6 +27,7 @@ interface ChatMessage {
 interface ConversationData {
   messages: ChatMessage[]
   lastMessageAt: string | null
+  runtimeState: Record<string, unknown> | null
 }
 
 interface LoadAllRequest {
@@ -92,7 +93,7 @@ serve(async (req: Request) => {
     // 대화 스레드 조회 (전체 또는 특정 캐릭터)
     let query = supabase
       .from('character_conversations')
-      .select('character_id, messages, last_message_at')
+      .select('character_id, messages, last_message_at, runtime_state')
       .eq('user_id', user.id)
 
     if (characterIds && characterIds.length > 0) {
@@ -119,7 +120,11 @@ serve(async (req: Request) => {
     for (const row of (data || [])) {
       conversations[row.character_id] = {
         messages: (row.messages || []) as ChatMessage[],
-        lastMessageAt: row.last_message_at || null
+        lastMessageAt: row.last_message_at || null,
+        runtimeState:
+          row.runtime_state && typeof row.runtime_state === 'object'
+            ? (row.runtime_state as Record<string, unknown>)
+            : null
       }
     }
 

@@ -97,6 +97,7 @@ export function ChatScreen() {
     markGuestBrowse,
     onboardingProgress,
     pendingChatFortuneType,
+    session,
     status,
   } = useAppBootstrap();
   const { state: mobileAppState, recordChatIntent } = useMobileAppState();
@@ -166,17 +167,7 @@ export function ChatScreen() {
   const [activeSurveysByCharacterId, setActiveSurveysByCharacterId] = useState<
     Record<string, ActiveChatSurvey | null>
   >({});
-  const didHydrateStoryThreadsRef = useRef(false);
-
-  const chatNativeFortuneCharacters = useMemo(
-    () =>
-      fortuneChatCharacters.filter((character) =>
-        buildSuggestedActions(character).some((action) =>
-          supportsChatNativeRuntime(action.fortuneType),
-        ),
-      ),
-    [],
-  );
+  const hydratedStoryThreadsKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!pendingChatFortuneType) {
@@ -195,11 +186,16 @@ export function ChatScreen() {
   }, [consumePendingChatFortuneType, pendingChatFortuneType]);
 
   useEffect(() => {
-    if (gate !== 'ready' || didHydrateStoryThreadsRef.current) {
+    if (gate !== 'ready') {
       return;
     }
 
-    didHydrateStoryThreadsRef.current = true;
+    const hydrationKey = session?.user.id ?? 'guest';
+    if (hydratedStoryThreadsKeyRef.current === hydrationKey) {
+      return;
+    }
+
+    hydratedStoryThreadsKeyRef.current = hydrationKey;
     let cancelled = false;
 
     async function hydrateStoryThreads() {
@@ -251,7 +247,7 @@ export function ChatScreen() {
     return () => {
       cancelled = true;
     };
-  }, [gate]);
+  }, [gate, session?.user.id]);
 
   const highlightedExpert = activeFortuneType
     ? fortuneChatCharacters.find((character) =>
@@ -263,7 +259,7 @@ export function ChatScreen() {
   const defaultCharacter =
     highlightedExpert ??
     (activeTab === 'fortune'
-      ? chatNativeFortuneCharacters[0] ?? fortuneChatCharacters[0]
+      ? fortuneChatCharacters[0]
       : tabCharacters[0]) ??
     storyChatCharacters[0] ??
     chatCharacters[0];
@@ -310,6 +306,8 @@ export function ChatScreen() {
   ]);
 
   const selectedThread = messagesByCharacterId[selectedCharacter.id] ?? [];
+  const selectedStorySnapshot =
+    storyThreadSnapshotsByCharacterId[selectedCharacter.id] ?? null;
   const selectedStoryIsTyping = storyTypingCharacterId === selectedCharacter.id;
   const storySendInFlight = storyTypingCharacterId !== null;
   const activeSurvey = activeSurveysByCharacterId[selectedCharacter.id] ?? null;
@@ -335,38 +333,11 @@ export function ChatScreen() {
   const selectedCharacterActions = useMemo(
     () =>
       isFortuneChatCharacter(selectedCharacter)
-        ? buildSuggestedActions(selectedCharacter).filter((action) =>
-            supportsChatNativeRuntime(action.fortuneType),
-          )
+        ? buildSuggestedActions(selectedCharacter)
         : [],
     [selectedCharacter],
   );
-  const firstRunActionPairs = useMemo(() => {
-    const seen = new Set<FortuneTypeId>();
-
-    return chatNativeFortuneCharacters
-      .flatMap((character) =>
-        buildSuggestedActions(character).map((action) => ({ action, character })),
-      )
-      .filter(({ action }) => supportsChatNativeRuntime(action.fortuneType))
-      .filter(({ action }) => {
-        if (seen.has(action.fortuneType)) {
-          return false;
-        }
-
-        seen.add(action.fortuneType);
-        return true;
-      })
-      .slice(0, 4);
-  }, [chatNativeFortuneCharacters]);
-  const firstRunActions = firstRunActionPairs.map(({ action }) => action);
   const firstRunCharacters = tabCharacters;
-  const firstRunFeaturedCharacter =
-    firstRunCharacters.find((character) => character.id === selectedCharacter.id) ??
-    (activeTab === 'fortune'
-      ? firstRunActionPairs[0]?.character
-      : firstRunCharacters[0]) ??
-    selectedCharacter;
 
   useEffect(() => {
     if (gate !== 'ready' || surfaceMode !== 'chat') {
@@ -540,8 +511,12 @@ export function ChatScreen() {
     });
   }
 
-  function handleActionPress(fortuneType: FortuneTypeId) {
-    const action = buildSuggestedActions(selectedCharacter).find(
+  function handleCharacterActionPress(
+    characterId: string,
+    fortuneType: FortuneTypeId,
+  ) {
+    const character = findChatCharacterById(characterId) ?? selectedCharacter;
+    const action = buildSuggestedActions(character).find(
       (candidate) => candidate.fortuneType === fortuneType,
     );
 
@@ -549,16 +524,18 @@ export function ChatScreen() {
       return;
     }
 
+    setSelectedCharacterId(character.id);
+    setActiveTab(character.kind);
     setActiveFortuneType(fortuneType);
     setLaunchOrigin('user');
     setSurfaceMode('chat');
     setComposerTrayOpen(false);
-    appendMessages(selectedCharacter, [
+    appendMessages(character, [
       buildUserMessage(action.prompt),
       buildAssistantTextMessage(action.reply),
     ]);
     recordChatIntent({
-      characterId: selectedCharacter.id,
+      characterId: character.id,
       fortuneType,
       incrementMessages: true,
     }).catch((error) => {
@@ -567,7 +544,19 @@ export function ChatScreen() {
       );
     });
 
-    beginFortuneRuntime(selectedCharacter, fortuneType);
+    const launched = beginFortuneRuntime(character, fortuneType);
+
+    if (!launched && !supportsChatNativeRuntime(fortuneType)) {
+      appendMessages(character, [
+        buildAssistantTextMessage(
+          `${formatFortuneTypeLabel(fortuneType)} 흐름은 같은 채팅 안에서 바로 이어질 수 있도록 준비 중이에요.`,
+        ),
+      ]);
+    }
+  }
+
+  function handleActionPress(fortuneType: FortuneTypeId) {
+    handleCharacterActionPress(selectedCharacter.id, fortuneType);
   }
 
   function handleCreateFriend() {
@@ -649,7 +638,7 @@ export function ChatScreen() {
         [character.id]: optimisticSnapshot,
       }));
 
-      await saveStoryThreadSnapshot(optimisticSnapshot).catch((error) => {
+      await saveStoryThreadSnapshot(optimisticSnapshot).catch((error: unknown) => {
         captureError(error, { surface: 'chat:story-pilot-save-optimistic' }).catch(
           () => undefined,
         );
@@ -660,7 +649,7 @@ export function ChatScreen() {
       characterId: character.id,
       fortuneType: activeFortuneType,
       incrementMessages: true,
-    }).catch((error) => {
+    }).catch((error: unknown) => {
       captureError(error, { surface: 'chat:story-pilot-record-intent' }).catch(
         () => undefined,
       );
@@ -690,7 +679,7 @@ export function ChatScreen() {
           [character.id]: nextSnapshot,
         }));
 
-        await saveStoryThreadSnapshot(nextSnapshot).catch((error) => {
+        await saveStoryThreadSnapshot(nextSnapshot).catch((error: unknown) => {
           captureError(error, { surface: 'chat:story-pilot-save-final' }).catch(
             () => undefined,
           );
@@ -722,7 +711,7 @@ export function ChatScreen() {
           [character.id]: nextSnapshot,
         }));
 
-        await saveStoryThreadSnapshot(nextSnapshot).catch((saveError) => {
+        await saveStoryThreadSnapshot(nextSnapshot).catch((saveError: unknown) => {
           captureError(saveError, {
             surface: 'chat:story-pilot-save-fallback',
           }).catch(() => undefined);
@@ -745,7 +734,10 @@ export function ChatScreen() {
         return;
       }
 
-      const followUpText = '이어서 이야기해볼래요.';
+      const followUpText =
+        selectedStorySnapshot?.followUpHint ??
+        selectedStorySnapshot?.romanceState.dailyHook ??
+        '이어서 이야기해볼래요.';
 
       if (
         selectedCharacter.kind === 'story' &&
@@ -1040,6 +1032,8 @@ export function ChatScreen() {
           onApple={() => void handleSocialAuthStart('apple')}
           onBrowse={() => void handleBrowse()}
           onGoogle={() => void handleSocialAuthStart('google')}
+          onKakao={() => void handleSocialAuthStart('kakao')}
+          onNaver={() => void handleSocialAuthStart('naver')}
         />
       ) : null}
 
@@ -1078,15 +1072,12 @@ export function ChatScreen() {
         ) : (
           <ChatFirstRunSurface
             activeTab={activeTab}
-            actions={firstRunActions}
             characters={firstRunCharacters}
-            featuredCharacter={firstRunFeaturedCharacter}
             lastFortuneType={mobileAppState.chat.lastFortuneType}
             onChangeTab={setActiveTab}
-            onCreateFriend={handleCreateFriend}
             onOpenProfile={() => router.push('/profile')}
             onOpenRecentResult={handleOpenRecentResult}
-            onPickAction={handleActionPress}
+            onPickCharacterAction={handleCharacterActionPress}
             onSelectCharacter={handleCharacterSelect}
             selectedCharacterId={selectedCharacter.id}
           />
