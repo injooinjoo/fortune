@@ -2,15 +2,17 @@ import type { PropsWithChildren, ReactNode } from 'react';
 
 import { Pressable, TextInput, View } from 'react-native';
 
-import type {
-  FortuneCharacterSpec,
-  FortuneTypeId,
-} from '@fortune/product-contracts';
+import type { FortuneTypeId } from '@fortune/product-contracts';
 
 import { AppText } from '../../components/app-text';
 import { Card } from '../../components/card';
 import { Chip } from '../../components/chip';
 import { PrimaryButton } from '../../components/primary-button';
+import {
+  isFortuneChatCharacter,
+  type ChatCharacterSpec,
+  type ChatCharacterTab,
+} from '../../lib/chat-characters';
 import type {
   ChatShellAction,
   ChatShellMessage,
@@ -98,15 +100,32 @@ function PagerDots() {
   );
 }
 
-function SegmentedPills({ fortuneMode }: { fortuneMode: boolean }) {
+function SegmentedPills({
+  activeTab,
+  onChangeTab,
+}: {
+  activeTab: ChatCharacterTab;
+  onChangeTab: (tab: ChatCharacterTab) => void;
+}) {
   return (
     <View style={{ flexDirection: 'row', gap: fortuneTheme.spacing.xs }}>
-      <View>
-        <Chip label="스토리" tone={fortuneMode ? 'neutral' : 'accent'} />
-      </View>
-      <View>
-        <Chip label="운세보기" tone={fortuneMode ? 'accent' : 'neutral'} />
-      </View>
+      <Pressable
+        accessibilityRole="button"
+        onPress={() => onChangeTab('story')}
+        style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
+      >
+        <Chip label="스토리" tone={activeTab === 'story' ? 'accent' : 'neutral'} />
+      </Pressable>
+      <Pressable
+        accessibilityRole="button"
+        onPress={() => onChangeTab('fortune')}
+        style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
+      >
+        <Chip
+          label="운세보기"
+          tone={activeTab === 'fortune' ? 'accent' : 'neutral'}
+        />
+      </Pressable>
     </View>
   );
 }
@@ -160,7 +179,7 @@ function CharacterListRow({
   character,
   onPress,
 }: {
-  character: FortuneCharacterSpec;
+  character: ChatCharacterSpec;
   onPress: () => void;
 }) {
   return (
@@ -408,21 +427,25 @@ export function ChatSoftGate({
 }
 
 export function ChatFirstRunSurface({
+  activeTab,
   featuredCharacter,
   actions,
   characters,
   lastFortuneType,
   selectedCharacterId,
+  onChangeTab,
   onCreateFriend,
   onOpenRecentResult,
   onSelectCharacter,
   onPickAction,
 }: {
-  featuredCharacter: FortuneCharacterSpec;
+  activeTab: ChatCharacterTab;
+  featuredCharacter: ChatCharacterSpec;
   actions: ChatShellAction[];
-  characters: readonly FortuneCharacterSpec[];
+  characters: readonly ChatCharacterSpec[];
   lastFortuneType: FortuneTypeId | null;
   selectedCharacterId: string | null;
+  onChangeTab: (tab: ChatCharacterTab) => void;
   onCreateFriend: () => void;
   onOpenRecentResult: (fortuneType: FortuneTypeId) => void;
   onSelectCharacter: (characterId: string) => void;
@@ -447,70 +470,73 @@ export function ChatFirstRunSurface({
       >
         <View style={{ gap: fortuneTheme.spacing.xs }}>
           <AppText variant="displaySmall">메시지</AppText>
-          <SegmentedPills fortuneMode={false} />
+          <SegmentedPills activeTab={activeTab} onChangeTab={onChangeTab} />
         </View>
         <HeaderDots />
       </View>
 
-      <SurfaceSection
-        title="맞춤 시작점"
-        description={`${featuredCharacter.name}의 추천 흐름을 기준으로 바로 대화를 시작할 수 있습니다.`}
-      >
-        {orderedActions.map((action, index) =>
-          index === 1 ? (
-            <Pressable
-              key={action.id}
-              accessibilityRole="button"
-              onPress={() => onPickAction(action.fortuneType)}
-              style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
-            >
-              <View
-                style={{
-                  backgroundColor: fortuneTheme.colors.backgroundTertiary,
-                  borderRadius: fortuneTheme.radius.lg,
-                  padding: fortuneTheme.spacing.md,
-                  gap: fortuneTheme.spacing.xs,
-                }}
+      {activeTab === 'fortune' ? (
+        <SurfaceSection
+          title="맞춤 시작점"
+          description={`${featuredCharacter.name}의 추천 흐름을 기준으로 바로 운세를 시작할 수 있습니다.`}
+        >
+          {orderedActions.map((action, index) =>
+            index === 1 ? (
+              <Pressable
+                key={action.id}
+                accessibilityRole="button"
+                onPress={() => onPickAction(action.fortuneType)}
+                style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
               >
-                <AppText variant="labelLarge" color={fortuneTheme.colors.textTertiary}>
-                  오늘 함께 풀어갈 대화
-                </AppText>
                 <View
                   style={{
-                    alignItems: 'center',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    gap: fortuneTheme.spacing.sm,
+                    backgroundColor: fortuneTheme.colors.backgroundTertiary,
+                    borderRadius: fortuneTheme.radius.lg,
+                    padding: fortuneTheme.spacing.md,
+                    gap: fortuneTheme.spacing.xs,
                   }}
                 >
-                  <View style={{ flex: 1, gap: 4 }}>
-                    <AppText variant="heading4">{action.label}</AppText>
-                    <AppText
-                      variant="bodySmall"
-                      color={fortuneTheme.colors.textSecondary}
-                    >
-                      {featuredCharacter.name}과 바로 이어서 볼 수 있어요.
-                    </AppText>
+                  <AppText variant="labelLarge" color={fortuneTheme.colors.textTertiary}>
+                    오늘 함께 풀어갈 운세
+                  </AppText>
+                  <View
+                    style={{
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      gap: fortuneTheme.spacing.sm,
+                    }}
+                  >
+                    <View style={{ flex: 1, gap: 4 }}>
+                      <AppText variant="heading4">{action.label}</AppText>
+                      <AppText
+                        variant="bodySmall"
+                        color={fortuneTheme.colors.textSecondary}
+                      >
+                        {featuredCharacter.name}과 바로 이어서 볼 수 있어요.
+                      </AppText>
+                    </View>
+                    <Chip label="전문가" tone="success" />
                   </View>
-                  <Chip label="전문가" tone="success" />
                 </View>
-              </View>
-            </Pressable>
-          ) : (
-            <EntryActionRow
-              key={action.id}
-              title={action.label}
-              subtitle={action.reply}
-              badge="스토리"
-              onPress={() => onPickAction(action.fortuneType)}
-              tone="neutral"
-            />
-          ),
-        )}
-      </SurfaceSection>
-
-      <SurfaceSection title="상담사">
-        <View style={{ gap: fortuneTheme.spacing.sm }}>
+              </Pressable>
+            ) : (
+              <EntryActionRow
+                key={action.id}
+                title={action.label}
+                subtitle={action.reply}
+                badge="운세"
+                onPress={() => onPickAction(action.fortuneType)}
+                tone="neutral"
+              />
+            ),
+          )}
+        </SurfaceSection>
+      ) : (
+        <SurfaceSection
+          title="대화 시작"
+          description="세계관 캐릭터와 바로 대화를 열거나, 새 친구 캐릭터를 만들어 이어갈 수 있습니다."
+        >
           <EntryActionRow
             badge="친구"
             onPress={onCreateFriend}
@@ -518,7 +544,19 @@ export function ChatFirstRunSurface({
             title="새 친구 만들기"
             tone="accent"
           />
-          {characters.slice(0, 2).map((character) => (
+        </SurfaceSection>
+      )}
+
+      <SurfaceSection
+        title={activeTab === 'story' ? '대화 캐릭터' : '운세 상담사'}
+        description={
+          activeTab === 'story'
+            ? '세계관 대화를 바로 시작할 캐릭터를 고르세요.'
+            : '결과 스택으로 이어지는 운세 전문가를 고르세요.'
+        }
+      >
+        <View style={{ gap: fortuneTheme.spacing.sm }}>
+          {characters.map((character) => (
             <CharacterListRow
               key={character.id}
               character={character}
@@ -528,11 +566,13 @@ export function ChatFirstRunSurface({
         </View>
       </SurfaceSection>
 
-      <RecentResultCard
-        lastFortuneType={lastFortuneType}
-        onOpen={onOpenRecentResult}
-        selectedCharacterId={selectedCharacterId}
-      />
+      {activeTab === 'fortune' ? (
+        <RecentResultCard
+          lastFortuneType={lastFortuneType}
+          onOpen={onOpenRecentResult}
+          selectedCharacterId={selectedCharacterId}
+        />
+      ) : null}
 
       <PagerDots />
     </View>
@@ -684,13 +724,14 @@ export function ActiveCharacterChatSurface({
   onOpenProfile,
   onPickAction,
 }: {
-  character: FortuneCharacterSpec;
+  character: ChatCharacterSpec;
   actions: ChatShellAction[];
   messages: ChatShellMessage[];
   onBack: () => void;
   onOpenProfile: () => void;
   onPickAction: (fortuneType: FortuneTypeId) => void;
 }) {
+  const isFortuneCharacter = isFortuneChatCharacter(character);
   const visibleMessages = messages.slice(-4);
   const promptActions = actions.slice(0, 4);
   const previewMessages = visibleMessages.some((message) => message.sender === 'user')
@@ -699,21 +740,27 @@ export function ActiveCharacterChatSurface({
         visibleMessages[0] ?? {
           id: `${character.id}-assistant-preview-1`,
           sender: 'assistant' as const,
-          text: `안녕하세요! 오늘 ${character.name}의 흐름으로 먼저 볼까요?`,
+          text: isFortuneCharacter
+            ? `안녕하세요! 오늘 ${character.name}의 흐름으로 먼저 볼까요?`
+            : `안녕하세요! ${character.name}과 오늘의 이야기를 먼저 열어볼까요?`,
         },
         {
           id: `${character.id}-user-preview`,
           sender: 'user' as const,
           text:
             promptActions[0]?.prompt ??
-            `오늘 ${character.name}에게 가장 먼저 물어보면 좋을 이야기가 있을까요?`,
+            (isFortuneCharacter
+              ? `오늘 ${character.name}에게 가장 먼저 물어보면 좋을 흐름이 있을까요?`
+              : `오늘 ${character.name}과 가장 먼저 꺼내면 좋을 이야기가 있을까요?`),
         },
         visibleMessages[1] ?? {
           id: `${character.id}-assistant-preview-2`,
           sender: 'assistant' as const,
           text:
             promptActions[0]?.reply ??
-            `${character.shortDescription} 흐름으로 먼저 풀어드릴게요.`,
+            (isFortuneCharacter
+              ? `${character.shortDescription} 흐름으로 먼저 풀어드릴게요.`
+              : `${character.shortDescription} 분위기로 먼저 대화를 이어가 볼게요.`),
         },
       ];
 
@@ -736,7 +783,9 @@ export function ActiveCharacterChatSurface({
         <View style={{ alignItems: 'center', flex: 1, gap: 2 }}>
           <AppText variant="labelLarge">{character.name}</AppText>
           <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
-            소울 운세 · 대화를 이어보세요
+            {isFortuneCharacter
+              ? '운세 상담사 · 대화를 이어보세요'
+              : '스토리 캐릭터 · 관계를 이어보세요'}
           </AppText>
         </View>
         <Pressable

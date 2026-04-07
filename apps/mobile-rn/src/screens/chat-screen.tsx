@@ -1,12 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { router, useLocalSearchParams, type Href } from 'expo-router';
-import {
-  findFortuneExpert,
-  type FortuneCharacterSpec,
-  fortuneCharacters,
-  type FortuneTypeId,
-} from '@fortune/product-contracts';
+import { type FortuneTypeId } from '@fortune/product-contracts';
 import { View } from 'react-native';
 
 import { AppText } from '../components/app-text';
@@ -30,6 +25,15 @@ import {
   type ChatShellAction,
   type ChatShellMessage,
 } from '../lib/chat-shell';
+import {
+  chatCharacters,
+  findChatCharacterById,
+  fortuneChatCharacters,
+  isFortuneChatCharacter,
+  storyChatCharacters,
+  type ChatCharacterSpec,
+  type ChatCharacterTab,
+} from '../lib/chat-characters';
 import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 import { useFriendCreation } from '../providers/friend-creation-provider';
@@ -47,6 +51,7 @@ function readSearchParam(
 export function ChatScreen() {
   const params = useLocalSearchParams<{ characterId?: string | string[] }>();
   const directCharacterId = readSearchParam(params.characterId);
+  const directCharacter = findChatCharacterById(directCharacterId);
   const {
     consumePendingChatFortuneType,
     gate,
@@ -69,6 +74,17 @@ export function ChatScreen() {
     null,
   );
   const [lastAutoLaunchKey, setLastAutoLaunchKey] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<ChatCharacterTab>(() => {
+    if (directCharacter) {
+      return directCharacter.kind;
+    }
+
+    const restoredCharacter = findChatCharacterById(
+      mobileAppState.chat.selectedCharacterId,
+    );
+
+    return restoredCharacter?.kind ?? 'story';
+  });
   const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(
     null,
   );
@@ -83,7 +99,7 @@ export function ChatScreen() {
     Record<string, ChatShellMessage[]>
   >(() =>
     Object.fromEntries(
-      fortuneCharacters.map((character) => [
+      chatCharacters.map((character) => [
         character.id,
         buildInitialThread(character),
       ]),
@@ -92,7 +108,7 @@ export function ChatScreen() {
 
   const routeableCharacters = useMemo(
     () =>
-      fortuneCharacters.filter((character) =>
+      fortuneChatCharacters.filter((character) =>
         buildSuggestedActions(character).some((action) =>
           Boolean(resolveResultKindFromFortuneType(action.fortuneType)),
         ),
@@ -106,6 +122,7 @@ export function ChatScreen() {
     }
 
     setActiveFortuneType(pendingChatFortuneType);
+    setActiveTab('fortune');
     setLaunchOrigin('deeplink');
     setSurfaceMode('chat');
     consumePendingChatFortuneType().catch((error) => {
@@ -116,9 +133,18 @@ export function ChatScreen() {
   }, [consumePendingChatFortuneType, pendingChatFortuneType]);
 
   const highlightedExpert = activeFortuneType
-    ? findFortuneExpert(activeFortuneType)
+    ? fortuneChatCharacters.find((character) =>
+        character.specialties.includes(activeFortuneType),
+      )
     : undefined;
-  const defaultCharacter = highlightedExpert ?? routeableCharacters[0] ?? fortuneCharacters[0];
+  const tabCharacters =
+    activeTab === 'story' ? storyChatCharacters : routeableCharacters;
+  const defaultCharacter =
+    highlightedExpert ??
+    tabCharacters[0] ??
+    routeableCharacters[0] ??
+    storyChatCharacters[0] ??
+    chatCharacters[0];
   const selectedCharacter = useMemo(() => {
     const targetId =
       selectedCharacterId ??
@@ -126,7 +152,7 @@ export function ChatScreen() {
       mobileAppState.chat.selectedCharacterId;
 
     return (
-      fortuneCharacters.find((character) => character.id === targetId) ??
+      findChatCharacterById(targetId) ??
       highlightedExpert ??
       defaultCharacter
     );
@@ -141,22 +167,32 @@ export function ChatScreen() {
   useEffect(() => {
     if (directCharacterId) {
       setSelectedCharacterId(directCharacterId);
+      setActiveTab(directCharacter?.kind ?? 'story');
       setSurfaceMode('chat');
       return;
     }
 
     if (highlightedExpert) {
       setSelectedCharacterId(highlightedExpert.id);
+      setActiveTab('fortune');
       setSurfaceMode('chat');
       return;
     }
 
     setSelectedCharacterId((current) => current ?? defaultCharacter?.id ?? null);
-  }, [defaultCharacter?.id, directCharacterId, highlightedExpert?.id]);
+  }, [
+    defaultCharacter?.id,
+    directCharacter?.kind,
+    directCharacterId,
+    highlightedExpert?.id,
+  ]);
 
   const selectedThread = messagesByCharacterId[selectedCharacter.id] ?? [];
   const selectedCharacterActions = useMemo(
-    () => buildSuggestedActions(selectedCharacter),
+    () =>
+      isFortuneChatCharacter(selectedCharacter)
+        ? buildSuggestedActions(selectedCharacter)
+        : [],
     [selectedCharacter],
   );
   const firstRunActionPairs = useMemo(() => {
@@ -178,8 +214,13 @@ export function ChatScreen() {
       .slice(0, 4);
   }, [routeableCharacters]);
   const firstRunActions = firstRunActionPairs.map(({ action }) => action);
+  const firstRunCharacters = tabCharacters;
   const firstRunFeaturedCharacter =
-    firstRunActionPairs[0]?.character ?? selectedCharacter;
+    firstRunCharacters.find((character) => character.id === selectedCharacter.id) ??
+    (activeTab === 'fortune'
+      ? firstRunActionPairs[0]?.character
+      : firstRunCharacters[0]) ??
+    selectedCharacter;
   useEffect(() => {
     if (launchOrigin !== 'deeplink' || !activeFortuneType) {
       return;
@@ -209,7 +250,7 @@ export function ChatScreen() {
   ]);
 
   function appendMessages(
-    character: FortuneCharacterSpec,
+    character: ChatCharacterSpec,
     nextMessages: ChatShellMessage[],
   ) {
     setMessagesByCharacterId((current) => ({
@@ -246,7 +287,10 @@ export function ChatScreen() {
   }
 
   function handleCharacterSelect(characterId: string) {
+    const character = findChatCharacterById(characterId);
+
     setSelectedCharacterId(characterId);
+    setActiveTab(character?.kind ?? 'story');
     setSurfaceMode('chat');
     recordChatIntent({
       characterId,
@@ -300,7 +344,14 @@ export function ChatScreen() {
   }
 
   function handleOpenRecentResult(fortuneType: FortuneTypeId) {
-    openResultRoute(fortuneType, 'recent-card', selectedCharacter.id);
+    const recentFortuneCharacterId =
+      fortuneChatCharacters.find((character) =>
+        character.specialties.includes(fortuneType),
+      )?.id ?? selectedCharacter.id;
+
+    setActiveTab('fortune');
+    setSelectedCharacterId(recentFortuneCharacterId);
+    openResultRoute(fortuneType, 'recent-card', recentFortuneCharacterId);
   }
 
   function handleSendDraft() {
@@ -414,11 +465,7 @@ export function ChatScreen() {
       {gate === 'ready' ? (
         surfaceMode === 'chat' ? (
           <ActiveCharacterChatSurface
-            actions={
-              selectedCharacterActions.length > 0
-                ? selectedCharacterActions
-                : firstRunActions
-            }
+            actions={selectedCharacterActions}
             character={selectedCharacter}
             messages={selectedThread}
             onBack={() => {
@@ -432,10 +479,12 @@ export function ChatScreen() {
           />
         ) : (
           <ChatFirstRunSurface
+            activeTab={activeTab}
             actions={firstRunActions}
-            characters={routeableCharacters}
+            characters={firstRunCharacters}
             featuredCharacter={firstRunFeaturedCharacter}
             lastFortuneType={mobileAppState.chat.lastFortuneType}
+            onChangeTab={setActiveTab}
             onCreateFriend={handleCreateFriend}
             onOpenRecentResult={handleOpenRecentResult}
             onPickAction={handleActionPress}

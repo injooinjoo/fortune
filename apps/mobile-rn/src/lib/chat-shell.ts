@@ -1,7 +1,6 @@
-import {
-  type FortuneCharacterSpec,
-  type FortuneTypeId,
-} from '@fortune/product-contracts';
+import { type FortuneTypeId } from '@fortune/product-contracts';
+
+import { type ChatCharacterSpec, isFortuneChatCharacter } from './chat-characters';
 
 export interface ChatShellMessage {
   id: string;
@@ -60,8 +59,28 @@ export function formatFortuneTypeLabel(type: FortuneTypeId): string {
 }
 
 export function buildInitialThread(
-  character: FortuneCharacterSpec,
+  character: ChatCharacterSpec,
 ): ChatShellMessage[] {
+  if (!isFortuneChatCharacter(character)) {
+    return [
+      {
+        id: createMessageId('assistant'),
+        sender: 'assistant',
+        text: `안녕하세요! ${character.name}예요. 오늘은 어떤 이야기부터 나눠볼까요?`,
+      },
+      {
+        id: createMessageId('user'),
+        sender: 'user',
+        text: '오늘 하루가 좀 길었어요. 가볍게 이야기부터 시작하고 싶어요.',
+      },
+      {
+        id: createMessageId('assistant'),
+        sender: 'assistant',
+        text: `${character.shortDescription} 흐름으로 먼저 편하게 대화를 이어가 볼게요.`,
+      },
+    ];
+  }
+
   const leadFortuneType = character.specialties[0];
   const leadLabel = leadFortuneType
     ? formatFortuneTypeLabel(leadFortuneType)
@@ -92,8 +111,12 @@ export function buildInitialThread(
 }
 
 export function buildSuggestedActions(
-  character: FortuneCharacterSpec,
+  character: ChatCharacterSpec,
 ): ChatShellAction[] {
+  if (!isFortuneChatCharacter(character)) {
+    return [];
+  }
+
   return character.specialties.slice(0, 4).map((fortuneType) => ({
     id: `${character.id}:${fortuneType}`,
     fortuneType,
@@ -106,7 +129,7 @@ export function buildSuggestedActions(
 }
 
 export function buildLaunchMessages(
-  character: FortuneCharacterSpec,
+  character: ChatCharacterSpec,
   fortuneType: FortuneTypeId,
 ): ChatShellMessage[] {
   const fortuneLabel = formatFortuneTypeLabel(fortuneType);
@@ -131,9 +154,17 @@ export function buildLaunchMessages(
 }
 
 export function buildDraftReply(
-  character: FortuneCharacterSpec,
+  character: ChatCharacterSpec,
   draft: string,
 ): ChatShellMessage {
+  if (!isFortuneChatCharacter(character)) {
+    return {
+      id: createMessageId('assistant'),
+      sender: 'assistant',
+      text: `"${draft}"라니, 그 이야기 더 듣고 싶어요. ${character.name}의 호흡으로 천천히 이어가 볼까요?`,
+    };
+  }
+
   return {
     id: createMessageId('assistant'),
     sender: 'assistant',

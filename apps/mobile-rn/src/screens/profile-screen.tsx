@@ -4,7 +4,6 @@ import { router } from 'expo-router';
 import { Linking, Platform, Pressable, View } from 'react-native';
 
 import {
-  fortuneCharacters,
   fortuneTypesById,
 } from '@fortune/product-contracts';
 
@@ -13,6 +12,7 @@ import { Card } from '../components/card';
 import { Chip } from '../components/chip';
 import { PrimaryButton } from '../components/primary-button';
 import { Screen } from '../components/screen';
+import { findChatCharacterById } from '../lib/chat-characters';
 import { captureError } from '../lib/error-reporting';
 import { supabase } from '../lib/supabase';
 import { fortuneTheme } from '../lib/theme';
@@ -34,11 +34,7 @@ export function ProfileScreen() {
       return null;
     }
 
-    return (
-      fortuneCharacters.find(
-        (character) => character.id === state.chat.selectedCharacterId,
-      ) ?? null
-    );
+    return findChatCharacterById(state.chat.selectedCharacterId);
   }, [state.chat.selectedCharacterId]);
   const lastFortuneType = state.chat.lastFortuneType
     ? fortuneTypesById[state.chat.lastFortuneType]

@@ -2,8 +2,6 @@ import { router } from "expo-router";
 import { Pressable, View } from "react-native";
 
 import {
-  findFortuneExpert,
-  fortuneCharacters,
   fortuneTypesById,
 } from "@fortune/product-contracts";
 
@@ -12,6 +10,7 @@ import { Card } from "../components/card";
 import { Chip } from "../components/chip";
 import { PrimaryButton } from "../components/primary-button";
 import { Screen } from "../components/screen";
+import { findChatCharacterById, storyChatCharacters } from "../lib/chat-characters";
 import { fortuneTheme } from "../lib/theme";
 import { useAppBootstrap } from "../providers/app-bootstrap-provider";
 import { useMobileAppState } from "../providers/mobile-app-state-provider";
@@ -19,12 +18,8 @@ import { useMobileAppState } from "../providers/mobile-app-state-provider";
 export function ProfileRelationshipsScreen() {
   const { session } = useAppBootstrap();
   const { state } = useMobileAppState();
-  const previewCharacters = fortuneCharacters.slice(0, 4);
-  const selectedCharacter = state.chat.selectedCharacterId
-    ? fortuneCharacters.find(
-        (character) => character.id === state.chat.selectedCharacterId,
-      )
-    : null;
+  const previewCharacters = storyChatCharacters.slice(0, 4);
+  const selectedCharacter = findChatCharacterById(state.chat.selectedCharacterId);
   const lastFortuneType = state.chat.lastFortuneType
     ? fortuneTypesById[state.chat.lastFortuneType]
     : null;
@@ -73,7 +68,6 @@ export function ProfileRelationshipsScreen() {
       <Card>
         <AppText variant="heading4">추천 연결</AppText>
         {previewCharacters.map((character) => {
-          const expert = findFortuneExpert(character.specialties[0]);
           const isSelected = selectedCharacter?.id === character.id;
 
           return (
@@ -111,10 +105,8 @@ export function ProfileRelationshipsScreen() {
                 <View
                   style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}
                 >
-                  <Chip label={character.category} />
-                  {expert ? (
-                    <Chip label={`기준:${expert.name}`} tone="success" />
-                  ) : null}
+                  <Chip label={character.category} tone="success" />
+                  <Chip label="story-chat" />
                 </View>
               </View>
             </Pressable>

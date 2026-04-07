@@ -1,18 +1,16 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { fortuneCharacters } from '@fortune/product-contracts';
 
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
 import { Chip } from '../components/chip';
 import { PrimaryButton } from '../components/primary-button';
 import { Screen } from '../components/screen';
+import { findChatCharacterById, isFortuneChatCharacter } from '../lib/chat-characters';
 import { fortuneTheme } from '../lib/theme';
 
 export function CharacterProfileScreen() {
   const params = useLocalSearchParams<{ id?: string }>();
-  const character = fortuneCharacters.find(
-    (candidate) => candidate.id === params.id,
-  );
+  const character = findChatCharacterById(params.id);
 
   return (
     <Screen>
@@ -31,17 +29,28 @@ export function CharacterProfileScreen() {
           </AppText>
 
           <Card>
-            <Chip label={`category:${character.category}`} tone="accent" />
-            <AppText variant="heading4">Specialties</AppText>
+            <Chip
+              label={`category:${character.category}`}
+              tone={isFortuneChatCharacter(character) ? 'accent' : 'success'}
+            />
+            <AppText variant="heading4">
+              {isFortuneChatCharacter(character) ? 'Specialties' : 'Character Mode'}
+            </AppText>
             <AppText
               variant="bodySmall"
               color={fortuneTheme.colors.textSecondary}
             >
-              이 캐릭터는 아래 운세 영역에서 RN chat shell의 추천 대상으로 연결됩니다.
+              {isFortuneChatCharacter(character)
+                ? '이 캐릭터는 아래 운세 영역에서 RN chat shell의 추천 대상으로 연결됩니다.'
+                : '이 캐릭터는 스토리 탭에서 세계관형 대화를 이어가는 일반 캐릭터입니다.'}
             </AppText>
-            {character.specialties.map((specialty) => (
-              <Chip key={specialty} label={specialty} />
-            ))}
+            {isFortuneChatCharacter(character) ? (
+              character.specialties.map((specialty) => (
+                <Chip key={specialty} label={specialty} />
+              ))
+            ) : (
+              <Chip label="story-chat" tone="success" />
+            )}
           </Card>
 
           <Card>
