@@ -395,6 +395,61 @@ function MessageBubble({ message }: { message: ChatShellTextMessage }) {
   );
 }
 
+function TypingIndicatorBubble({ character }: { character: ChatCharacterSpec }) {
+  return (
+    <View
+      style={{
+        alignItems: 'flex-start',
+        flexDirection: 'row',
+        gap: 8,
+      }}
+    >
+      <View
+        style={{
+          alignItems: 'center',
+          backgroundColor: fortuneTheme.colors.surfaceSecondary,
+          borderRadius: 12,
+          height: 24,
+          justifyContent: 'center',
+          marginTop: 6,
+          width: 24,
+        }}
+      >
+        <AppText variant="caption">{character.name.slice(0, 1)}</AppText>
+      </View>
+      <View
+        style={{
+          backgroundColor: fortuneTheme.colors.backgroundTertiary,
+          borderColor: fortuneTheme.colors.border,
+          borderRadius: fortuneTheme.radius.messageBubble,
+          borderWidth: 1,
+          maxWidth: '84%',
+          paddingHorizontal: 14,
+          paddingVertical: 10,
+        }}
+      >
+        <View style={{ flexDirection: 'row', gap: 4, marginBottom: 4 }}>
+          {Array.from({ length: 3 }).map((_, index) => (
+            <View
+              key={index}
+              style={{
+                backgroundColor: fortuneTheme.colors.textSecondary,
+                borderRadius: 999,
+                height: 6,
+                opacity: 0.7 - index * 0.15,
+                width: 6,
+              }}
+            />
+          ))}
+        </View>
+        <AppText variant="caption" color={fortuneTheme.colors.textSecondary}>
+          답장하는 중
+        </AppText>
+      </View>
+    </View>
+  );
+}
+
 function EmbeddedResultMessage({
   message,
 }: {
@@ -507,18 +562,22 @@ export function ChatSoftGate({
   onGoogle,
   onBrowse,
   authMessage,
+  onKakao,
+  onNaver,
 }: {
   onApple: () => void;
   onGoogle: () => void;
   onBrowse: () => void;
   authMessage?: string | null;
+  onKakao?: () => void;
+  onNaver?: () => void;
 }) {
   return (
     <View style={{ gap: fortuneTheme.spacing.lg }}>
       <View
         style={{
           borderRadius: 32,
-          minHeight: 420,
+          minHeight: 520,
           overflow: 'hidden',
           paddingTop: fortuneTheme.spacing.xl,
         }}
@@ -584,6 +643,20 @@ export function ChatSoftGate({
               tone="dark"
               onPress={onGoogle}
             />
+            {onKakao ? (
+              <SocialActionButton
+                label="Kakao로 계속하기"
+                tone="dark"
+                onPress={onKakao}
+              />
+            ) : null}
+            {onNaver ? (
+              <SocialActionButton
+                label="Naver로 계속하기"
+                tone="dark"
+                onPress={onNaver}
+              />
+            ) : null}
           </View>
           <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
             계속 진행하면 이용약관 및 개인정보처리방침에 동의한 것으로 간주됩니다.
@@ -819,6 +892,7 @@ export function ActiveChatComposer({
   onToggleTray,
   onPickAction,
   auxiliaryAction,
+  sendDisabled = false,
 }: {
   draft: string;
   onDraftChange: (value: string) => void;
@@ -831,6 +905,7 @@ export function ActiveChatComposer({
     label: string;
     onPress: () => void;
   };
+  sendDisabled?: boolean;
 }) {
   const composerHasDraft = draft.trim().length > 0;
   const safeQuickActions = Array.isArray(quickActions) ? quickActions : [];
@@ -985,25 +1060,34 @@ export function ActiveChatComposer({
             composerHasDraft ? 'send message' : 'run primary quick action'
           }
           accessibilityRole="button"
-          onPress={onSend}
+          accessibilityState={{ disabled: sendDisabled }}
+          disabled={sendDisabled}
+          onPress={sendDisabled ? undefined : onSend}
           style={{
             alignItems: 'center',
             backgroundColor: composerHasDraft
-              ? fortuneTheme.colors.ctaBackground
+              ? sendDisabled
+                ? fortuneTheme.colors.surfaceElevated
+                : fortuneTheme.colors.ctaBackground
               : fortuneTheme.colors.surfaceElevated,
             borderRadius: 16,
             height: 32,
             justifyContent: 'center',
             minWidth: 32,
             paddingHorizontal: composerHasDraft ? 10 : 0,
+            opacity: sendDisabled ? 0.72 : 1,
           }}
         >
           {composerHasDraft ? (
             <AppText
               variant="labelLarge"
-              color={fortuneTheme.colors.ctaForeground}
+              color={
+                sendDisabled
+                  ? fortuneTheme.colors.textSecondary
+                  : fortuneTheme.colors.ctaForeground
+              }
             >
-              보내기
+              {sendDisabled ? '응답 중' : '보내기'}
             </AppText>
           ) : (
             <View
@@ -1204,6 +1288,7 @@ export function ActiveCharacterChatSurface({
   messages,
   surveyEyebrow,
   surveyActive,
+  isTyping = false,
   onBack,
   onOpenProfile,
   onPickAction,
@@ -1214,6 +1299,7 @@ export function ActiveCharacterChatSurface({
   messages: ChatShellMessage[];
   surveyEyebrow?: string | null;
   surveyActive?: boolean;
+  isTyping?: boolean;
   onBack: () => void;
   onOpenProfile: () => void;
   onPickAction: (fortuneType: FortuneTypeId) => void;
@@ -1336,6 +1422,7 @@ export function ActiveCharacterChatSurface({
             message={message}
           />
         ))}
+        {isTyping ? <TypingIndicatorBubble character={character} /> : null}
       </View>
 
       {!surveyActive && promptActions.length > 0 ? (

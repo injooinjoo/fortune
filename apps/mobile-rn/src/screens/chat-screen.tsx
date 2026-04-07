@@ -51,6 +51,21 @@ import {
   type ChatCharacterSpec,
   type ChatCharacterTab,
 } from '../lib/chat-characters';
+import {
+  buildNextStoryThreadSnapshot,
+  buildStoryFallbackAssistantMessage,
+  buildStoryChatRequest,
+  buildStoryThreadSnapshot,
+  invokeStoryChat,
+  loadStoryThreadSnapshot,
+  saveStoryThreadSnapshot,
+  type StoryChatThreadSnapshot,
+} from '../lib/story-chat-runtime';
+import { isStoryRomancePilotCharacterId } from '../lib/story-romance-pilots';
+import {
+  socialAuthProviderLabelById,
+  type SocialAuthProviderId,
+} from '../lib/social-auth';
 import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 import { useFriendCreation } from '../providers/friend-creation-provider';
@@ -89,9 +104,8 @@ export function ChatScreen() {
   const { isSupported, startSocialAuth } = useSocialAuth();
   const [activeFortuneType, setActiveFortuneType] =
     useState<FortuneTypeId | null>(null);
-  const [activeProviderId, setActiveProviderId] = useState<
-    'apple' | 'google' | null
-  >(null);
+  const [activeProviderId, setActiveProviderId] =
+    useState<SocialAuthProviderId | null>(null);
   const [authMessage, setAuthMessage] = useState<string | null>(null);
   const [draft, setDraft] = useState('');
   const [surveyDraft, setSurveyDraft] = useState('');
@@ -127,15 +141,32 @@ export function ChatScreen() {
     Record<string, ChatShellMessage[]>
   >(() =>
     Object.fromEntries(
-      chatCharacters.map((character) => [
-        character.id,
-        buildInitialThread(character),
-      ]),
+      chatCharacters.map((character) => {
+        const storySnapshot = buildStoryThreadSnapshot(character);
+
+        return [
+          character.id,
+          storySnapshot?.messages ?? buildInitialThread(character),
+        ];
+      }),
     ),
   );
+  const [storyThreadSnapshotsByCharacterId, setStoryThreadSnapshotsByCharacterId] =
+    useState<Record<string, StoryChatThreadSnapshot | null>>(() =>
+      Object.fromEntries(
+        storyChatCharacters.map((character) => [
+          character.id,
+          buildStoryThreadSnapshot(character),
+        ]),
+      ),
+    );
+  const [storyTypingCharacterId, setStoryTypingCharacterId] = useState<
+    string | null
+  >(null);
   const [activeSurveysByCharacterId, setActiveSurveysByCharacterId] = useState<
     Record<string, ActiveChatSurvey | null>
   >({});
+  const didHydrateStoryThreadsRef = useRef(false);
 
   const chatNativeFortuneCharacters = useMemo(
     () =>
@@ -162,6 +193,65 @@ export function ChatScreen() {
       );
     });
   }, [consumePendingChatFortuneType, pendingChatFortuneType]);
+
+  useEffect(() => {
+    if (gate !== 'ready' || didHydrateStoryThreadsRef.current) {
+      return;
+    }
+
+    didHydrateStoryThreadsRef.current = true;
+    let cancelled = false;
+
+    async function hydrateStoryThreads() {
+      try {
+        const snapshots = await Promise.all(
+          storyChatCharacters
+            .filter((character) => isStoryRomancePilotCharacterId(character.id))
+            .map(async (character) => ({
+              characterId: character.id,
+              snapshot: await loadStoryThreadSnapshot(character.id),
+            })),
+        );
+
+        if (cancelled) {
+          return;
+        }
+
+        const nextMessages: Record<string, ChatShellMessage[]> = {};
+        const nextSnapshots: Record<string, StoryChatThreadSnapshot | null> = {};
+
+        for (const { characterId, snapshot } of snapshots) {
+          if (snapshot) {
+            nextMessages[characterId] = snapshot.messages;
+            nextSnapshots[characterId] = snapshot;
+          }
+        }
+
+        if (Object.keys(nextMessages).length === 0) {
+          return;
+        }
+
+        setMessagesByCharacterId((current) => ({
+          ...current,
+          ...nextMessages,
+        }));
+        setStoryThreadSnapshotsByCharacterId((current) => ({
+          ...current,
+          ...nextSnapshots,
+        }));
+      } catch (error) {
+        await captureError(error, { surface: 'chat:hydrate-story-threads' }).catch(
+          () => undefined,
+        );
+      }
+    }
+
+    void hydrateStoryThreads();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [gate]);
 
   const highlightedExpert = activeFortuneType
     ? fortuneChatCharacters.find((character) =>
@@ -220,6 +310,8 @@ export function ChatScreen() {
   ]);
 
   const selectedThread = messagesByCharacterId[selectedCharacter.id] ?? [];
+  const selectedStoryIsTyping = storyTypingCharacterId === selectedCharacter.id;
+  const storySendInFlight = storyTypingCharacterId !== null;
   const activeSurvey = activeSurveysByCharacterId[selectedCharacter.id] ?? null;
   const currentSurveyStep = activeSurvey
     ? getCurrentSurveyStep(activeSurvey)
@@ -504,6 +596,146 @@ export function ChatScreen() {
     );
   }
 
+  async function sendStoryPilotMessage(
+    character: ChatCharacterSpec,
+    text: string,
+  ) {
+    const trimmed = text.trim();
+
+    if (!trimmed) {
+      return;
+    }
+
+    const existingSnapshot =
+      storyThreadSnapshotsByCharacterId[character.id] ??
+      buildStoryThreadSnapshot(character);
+    const existingThread =
+      messagesByCharacterId[character.id] ??
+      existingSnapshot?.messages ??
+      buildInitialThread(character);
+    const optimisticThread = [
+      ...existingThread,
+      buildUserMessage(trimmed),
+    ];
+    const storyRequest = buildStoryChatRequest(
+      character,
+      trimmed,
+      existingSnapshot,
+    );
+
+    if (!storyRequest) {
+      return;
+    }
+
+    const optimisticSnapshot = buildNextStoryThreadSnapshot(
+      existingSnapshot,
+      character,
+      optimisticThread,
+      null,
+      storyRequest,
+    );
+
+    setMessagesByCharacterId((current) => ({
+      ...current,
+      [character.id]: optimisticThread,
+    }));
+    setStoryTypingCharacterId(character.id);
+    setComposerTrayOpen(false);
+    setSurfaceMode('chat');
+
+    if (optimisticSnapshot) {
+      setStoryThreadSnapshotsByCharacterId((current) => ({
+        ...current,
+        [character.id]: optimisticSnapshot,
+      }));
+
+      await saveStoryThreadSnapshot(optimisticSnapshot).catch((error) => {
+        captureError(error, { surface: 'chat:story-pilot-save-optimistic' }).catch(
+          () => undefined,
+        );
+      });
+    }
+
+    await recordChatIntent({
+      characterId: character.id,
+      fortuneType: activeFortuneType,
+      incrementMessages: true,
+    }).catch((error) => {
+      captureError(error, { surface: 'chat:story-pilot-record-intent' }).catch(
+        () => undefined,
+      );
+    });
+
+    try {
+      const response = await invokeStoryChat(character, trimmed, optimisticSnapshot);
+      const assistantText = response.response.trim();
+      const assistantMessage = buildAssistantTextMessage(assistantText);
+      const nextMessages = [...optimisticThread, assistantMessage];
+      const nextSnapshot = buildNextStoryThreadSnapshot(
+        optimisticSnapshot,
+        character,
+        nextMessages,
+        response,
+        storyRequest,
+      );
+
+      setMessagesByCharacterId((current) => ({
+        ...current,
+        [character.id]: nextMessages,
+      }));
+
+      if (nextSnapshot) {
+        setStoryThreadSnapshotsByCharacterId((current) => ({
+          ...current,
+          [character.id]: nextSnapshot,
+        }));
+
+        await saveStoryThreadSnapshot(nextSnapshot).catch((error) => {
+          captureError(error, { surface: 'chat:story-pilot-save-final' }).catch(
+            () => undefined,
+          );
+        });
+      }
+    } catch (error) {
+      await captureError(error, { surface: 'chat:story-pilot-send' }).catch(
+        () => undefined,
+      );
+
+      const fallbackMessage = buildStoryFallbackAssistantMessage(character);
+      const nextMessages = [...optimisticThread, fallbackMessage];
+      const nextSnapshot = buildNextStoryThreadSnapshot(
+        optimisticSnapshot,
+        character,
+        nextMessages,
+        null,
+        storyRequest,
+      );
+
+      setMessagesByCharacterId((current) => ({
+        ...current,
+        [character.id]: nextMessages,
+      }));
+
+      if (nextSnapshot) {
+        setStoryThreadSnapshotsByCharacterId((current) => ({
+          ...current,
+          [character.id]: nextSnapshot,
+        }));
+
+        await saveStoryThreadSnapshot(nextSnapshot).catch((saveError) => {
+          captureError(saveError, {
+            surface: 'chat:story-pilot-save-fallback',
+          }).catch(() => undefined);
+        });
+      }
+    } finally {
+      setStoryTypingCharacterId((current) =>
+        current === character.id ? null : current,
+      );
+      setDraft('');
+    }
+  }
+
   function handleSendDraft() {
     const trimmed = draft.trim();
 
@@ -514,6 +746,14 @@ export function ChatScreen() {
       }
 
       const followUpText = '이어서 이야기해볼래요.';
+
+      if (
+        selectedCharacter.kind === 'story' &&
+        isStoryRomancePilotCharacterId(selectedCharacter.id)
+      ) {
+        void sendStoryPilotMessage(selectedCharacter, followUpText);
+        return;
+      }
 
       appendMessages(selectedCharacter, [
         buildUserMessage(followUpText),
@@ -529,6 +769,14 @@ export function ChatScreen() {
           () => undefined,
         );
       });
+      return;
+    }
+
+    if (
+      selectedCharacter.kind === 'story' &&
+      isStoryRomancePilotCharacterId(selectedCharacter.id)
+    ) {
+      void sendStoryPilotMessage(selectedCharacter, trimmed);
       return;
     }
 
@@ -666,13 +914,15 @@ export function ChatScreen() {
     submitSurveyAnswer('skip', '건너뛰기');
   }
 
-  async function handleSocialAuthStart(providerId: 'apple' | 'google') {
+  async function handleSocialAuthStart(providerId: SocialAuthProviderId) {
     try {
       setActiveProviderId(providerId);
       setAuthMessage(null);
 
       if (!isSupported(providerId)) {
-        setAuthMessage(`${providerId === 'apple' ? 'Apple' : 'Google'} 로그인이 아직 준비되지 않았습니다.`);
+        setAuthMessage(
+          `${socialAuthProviderLabelById[providerId]} 로그인이 아직 준비되지 않았습니다.`,
+        );
         return;
       }
 
@@ -680,7 +930,7 @@ export function ChatScreen() {
 
       if (result.status === 'started') {
         setAuthMessage(
-          `${providerId === 'apple' ? 'Apple' : 'Google'} 로그인 브라우저 인증을 시작했습니다.`,
+          `${socialAuthProviderLabelById[providerId]} 로그인 브라우저 인증을 시작했습니다.`,
         );
         return;
       }
@@ -760,6 +1010,7 @@ export function ChatScreen() {
               onToggleTray={() => setComposerTrayOpen((current) => !current)}
               quickActions={selectedCharacterActions}
               trayOpen={composerTrayOpen}
+              sendDisabled={selectedCharacter.kind === 'story' && storySendInFlight}
               auxiliaryAction={{
                 label: '프로필 보기',
                 onPress: () => router.push(`/character/${selectedCharacter.id}` as Href),
@@ -783,7 +1034,7 @@ export function ChatScreen() {
         <ChatSoftGate
           authMessage={
             activeProviderId
-              ? `${activeProviderId === 'apple' ? 'Apple' : 'Google'} 연결을 준비 중입니다.`
+              ? `${socialAuthProviderLabelById[activeProviderId]} 연결을 준비 중입니다.`
               : authMessage
           }
           onApple={() => void handleSocialAuthStart('apple')}
@@ -806,6 +1057,7 @@ export function ChatScreen() {
           <ActiveCharacterChatSurface
             actions={selectedCharacterActions}
             character={selectedCharacter}
+            isTyping={selectedStoryIsTyping}
             messages={selectedThread}
             surveyActive={Boolean(currentSurveyStep)}
             surveyEyebrow={
