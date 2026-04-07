@@ -24,8 +24,8 @@ export const socialAuthProviderIds: SocialAuthProviderId[] = [
 ];
 
 export const socialAuthProviderLabelById: Record<SocialAuthProviderId, string> = {
-  apple: 'Apple',
-  google: 'Google',
+  apple: '애플',
+  google: '구글',
   kakao: '카카오',
   naver: '네이버',
 };
@@ -60,7 +60,7 @@ async function startAppleNativeAuth(
       provider,
       status: 'unsupported',
       redirectTo,
-      errorMessage: '이 기기에서는 Apple 로그인을 사용할 수 없습니다.',
+      errorMessage: '이 기기에서는 애플 로그인을 사용할 수 없습니다.',
     };
   }
 
@@ -81,7 +81,7 @@ async function startAppleNativeAuth(
         provider,
         status: 'failed',
         redirectTo,
-        errorMessage: 'Apple 인증 토큰을 확인하지 못했습니다.',
+        errorMessage: '애플 인증 토큰을 확인하지 못했습니다.',
       };
     }
 
@@ -116,7 +116,7 @@ async function startAppleNativeAuth(
         provider,
         status: 'failed',
         redirectTo,
-        errorMessage: 'Apple 로그인을 취소했습니다.',
+        errorMessage: '애플 로그인을 취소했습니다.',
       };
     }
 
@@ -125,7 +125,7 @@ async function startAppleNativeAuth(
       status: 'failed',
       redirectTo,
       errorMessage:
-        error instanceof Error ? error.message : 'Apple 로그인을 시작하지 못했습니다.',
+        error instanceof Error ? error.message : '애플 로그인을 시작하지 못했습니다.',
     };
   }
 }

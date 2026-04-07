@@ -2,7 +2,7 @@ import { SocialAuthPillButton } from './social-auth-pill-button';
 
 export function AppleAuthButton({
   disabled = false,
-  label = 'Apple 로그인',
+  label = '애플 로그인',
   onPress,
 }: {
   disabled?: boolean;

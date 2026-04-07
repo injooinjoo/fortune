@@ -29,13 +29,13 @@ const authOptions: readonly {
 }[] = [
   {
     id: 'apple',
-    label: 'Apple 로그인',
+    label: '애플 로그인',
     note: 'iPhone에서 가장 자연스럽게 인증하고 기록을 이어갑니다.',
   },
   {
     id: 'google',
-    label: 'Google로 로그인',
-    note: 'Google 계정으로 개인화와 구매 내역을 바로 연결합니다.',
+    label: '구글 로그인',
+    note: '구글 계정으로 개인화와 구매 내역을 바로 연결합니다.',
   },
   {
     id: 'kakao',
