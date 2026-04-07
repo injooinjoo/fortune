@@ -1,14 +1,18 @@
 import 'react-native-url-polyfill/auto';
 
-import * as SecureStore from 'expo-secure-store';
 import { createClient, processLock, type Session, type SupportedStorage } from '@supabase/supabase-js';
 
 import { appEnv } from './env';
+import {
+  deleteSecureItem,
+  getSecureItem,
+  setSecureItem,
+} from './secure-store-storage';
 
 const secureStoreAdapter: SupportedStorage = {
-  getItem: (key) => SecureStore.getItemAsync(key),
-  setItem: (key, value) => SecureStore.setItemAsync(key, value),
-  removeItem: (key) => SecureStore.deleteItemAsync(key),
+  getItem: (key) => getSecureItem(key),
+  setItem: (key, value) => setSecureItem(key, value),
+  removeItem: (key) => deleteSecureItem(key),
 };
 
 export const supabase = appEnv.isSupabaseConfigured

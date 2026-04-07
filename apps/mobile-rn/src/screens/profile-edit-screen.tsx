@@ -70,7 +70,7 @@ export function ProfileEditScreen() {
     <Screen header={<RouteBackHeader fallbackHref="/profile" />}>
       <AppText variant="displaySmall">프로필 수정</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
-        저장된 프로필을 불러와 수정하고, 생년월일이 있으면 온보딩 상태도 함께
+        저장된 프로필을 불러와 수정하고, 생년월일이 있으면 시작 준비 상태도 함께
         갱신합니다.
       </AppText>
 
@@ -90,7 +90,7 @@ export function ProfileEditScreen() {
       </Card>
 
       <Card>
-        <AppText variant="heading4">온보딩 상태</AppText>
+        <AppText variant="heading4">시작 준비 상태</AppText>
         <View style={{ gap: 8 }}>
           <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
             {onboardingProgress.softGateCompleted
@@ -174,8 +174,8 @@ export function ProfileEditScreen() {
         </AppText>
         <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
           {state.profile.birthDate
-            ? "저장된 생년월일이 있어서 온보딩 진행 상태도 함께 반영돼요."
-            : "생년월일을 저장하면 온보딩 진행 상태도 함께 갱신돼요."}
+            ? "저장된 생년월일이 있어서 시작 준비 상태도 함께 반영돼요."
+            : "생년월일을 저장하면 시작 준비 상태도 함께 갱신돼요."}
         </AppText>
       </Card>
 

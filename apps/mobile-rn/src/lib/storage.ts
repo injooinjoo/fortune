@@ -1,4 +1,3 @@
-import * as SecureStore from 'expo-secure-store';
 import {
   deepLinkConfig,
   emptyUnifiedOnboardingProgress,
@@ -18,6 +17,11 @@ import {
   normalizeMobileAppState,
   type MobileAppState,
 } from './mobile-app-state';
+import {
+  deleteSecureItem,
+  getSecureItem,
+  setSecureItem,
+} from './secure-store-storage';
 
 const guestMobileAppStateStorageKey = `${mobileAppStateStorageKey}.guest`;
 const lastAuthenticatedUserIdStorageKey = 'fortune.last-auth-user-id.v1';
@@ -31,7 +35,7 @@ function resolveMobileAppStateStorageKey(userId: string | null = null) {
 }
 
 export async function getUnifiedOnboardingProgress(): Promise<UnifiedOnboardingProgress> {
-  const raw = await SecureStore.getItemAsync(unifiedOnboardingProgressStorageKey);
+  const raw = await getSecureItem(unifiedOnboardingProgressStorageKey);
 
   if (!raw) {
     return emptyUnifiedOnboardingProgress;
@@ -49,7 +53,7 @@ export async function getUnifiedOnboardingProgress(): Promise<UnifiedOnboardingP
 export async function saveUnifiedOnboardingProgress(
   progress: UnifiedOnboardingProgress,
 ) {
-  await SecureStore.setItemAsync(
+  await setSecureItem(
     unifiedOnboardingProgressStorageKey,
     JSON.stringify(progress),
   );
@@ -69,11 +73,11 @@ export async function patchUnifiedOnboardingProgress(
 }
 
 export async function clearUnifiedOnboardingProgress() {
-  await SecureStore.deleteItemAsync(unifiedOnboardingProgressStorageKey);
+  await deleteSecureItem(unifiedOnboardingProgressStorageKey);
 }
 
 export async function getPendingChatFortuneType(): Promise<FortuneTypeId | null> {
-  const raw = await SecureStore.getItemAsync(
+  const raw = await getSecureItem(
     deepLinkConfig.pendingFortuneTypeStorageKey,
   );
   const normalized = normalizeFortuneTypeForChat(raw);
@@ -89,11 +93,11 @@ export async function setPendingChatFortuneType(
   fortuneType: FortuneTypeId | null,
 ) {
   if (!fortuneType) {
-    await SecureStore.deleteItemAsync(deepLinkConfig.pendingFortuneTypeStorageKey);
+    await deleteSecureItem(deepLinkConfig.pendingFortuneTypeStorageKey);
     return;
   }
 
-  await SecureStore.setItemAsync(
+  await setSecureItem(
     deepLinkConfig.pendingFortuneTypeStorageKey,
     fortuneType,
   );
@@ -102,7 +106,7 @@ export async function setPendingChatFortuneType(
 export async function getMobileAppState(
   userId: string | null = null,
 ): Promise<MobileAppState> {
-  const raw = await SecureStore.getItemAsync(
+  const raw = await getSecureItem(
     resolveMobileAppStateStorageKey(userId),
   );
 
@@ -123,7 +127,7 @@ export async function saveMobileAppState(
   state: MobileAppState,
   userId: string | null = null,
 ) {
-  await SecureStore.setItemAsync(
+  await setSecureItem(
     resolveMobileAppStateStorageKey(userId),
     JSON.stringify(state),
   );
@@ -142,14 +146,14 @@ export async function patchMobileAppState(
 }
 
 export async function clearMobileAppState(userId: string | null = null) {
-  await SecureStore.deleteItemAsync(resolveMobileAppStateStorageKey(userId));
+  await deleteSecureItem(resolveMobileAppStateStorageKey(userId));
 }
 
 export async function getLastAuthenticatedUserId() {
-  const value = await SecureStore.getItemAsync(lastAuthenticatedUserIdStorageKey);
+  const value = await getSecureItem(lastAuthenticatedUserIdStorageKey);
   return typeof value === 'string' && value.length > 0 ? value : null;
 }
 
 export async function saveLastAuthenticatedUserId(userId: string) {
-  await SecureStore.setItemAsync(lastAuthenticatedUserIdStorageKey, userId);
+  await setSecureItem(lastAuthenticatedUserIdStorageKey, userId);
 }

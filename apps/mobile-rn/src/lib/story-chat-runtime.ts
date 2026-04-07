@@ -1,5 +1,3 @@
-import * as SecureStore from 'expo-secure-store';
-
 import { type Session } from '@supabase/supabase-js';
 
 import { type ChatCharacterSpec } from './chat-characters';
@@ -7,6 +5,7 @@ import {
   type ChatShellMessage,
   type ChatShellTextMessage,
 } from './chat-shell';
+import { getSecureItem, setSecureItem } from './secure-store-storage';
 import { supabase } from './supabase';
 import {
   buildPilotStoryFallbackReply,
@@ -521,7 +520,7 @@ async function loadLocalStoryThreadSnapshot(
     characterId,
     session?.user.id ?? null,
   );
-  const raw = await SecureStore.getItemAsync(storageKey);
+  const raw = await getSecureItem(storageKey);
 
   if (!raw) {
     return null;
@@ -581,7 +580,7 @@ async function saveLocalStoryThreadSnapshot(
     session?.user.id ?? null,
   );
 
-  await SecureStore.setItemAsync(storageKey, JSON.stringify(snapshot));
+  await setSecureItem(storageKey, JSON.stringify(snapshot));
 }
 
 async function loadRemoteStoryThreadSnapshot(

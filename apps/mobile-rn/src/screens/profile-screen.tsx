@@ -165,8 +165,8 @@ export function ProfileScreen() {
           </AppText>
           <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
             {onboardingProgress.birthCompleted
-              ? '온보딩의 출생 단계는 완료됐어요.'
-              : '온보딩의 출생 단계는 아직 진행 중이에요.'}
+              ? '대화 준비용 출생 정보는 입력돼 있어요.'
+              : '대화 준비용 출생 정보는 아직 비어 있어요.'}
           </AppText>
         </View>
       </Card>

@@ -247,6 +247,7 @@ function isExpectedStoreUnavailableError(error: unknown) {
 
   return (
     isStoreNativeModuleError(error) ||
+    error.message.includes('Failed to initialize billing connection') ||
     error.message.includes('Billing is not prepared') ||
     error.message.includes('billing is not prepared') ||
     error.message.includes('StoreKit is not available') ||
@@ -296,6 +297,7 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
     Partial<Record<ProductId, StoreProductSnapshot>>
   >({});
   const processedPurchaseKeysRef = useRef<Set<string>>(new Set());
+  const queuedPurchasesRef = useRef<Map<string, Purchase>>(new Map());
   const writeQueueRef = useRef<Promise<void>>(Promise.resolve());
 
   useEffect(() => {
@@ -455,11 +457,13 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
         return;
       }
 
-      updateRemoteUserProfile(session.user.id, remoteUpdates).catch((error) => {
-        captureError(error, {
-          surface: 'mobile-app-state:save-profile-remote',
-        }).catch(() => undefined);
-      });
+      ensureRemoteUserProfile(session)
+        .then(() => updateRemoteUserProfile(session.user.id, remoteUpdates))
+        .catch((error) => {
+          captureError(error, {
+            surface: 'mobile-app-state:save-profile-remote',
+          }).catch(() => undefined);
+        });
     },
     [onboardingProgress.birthCompleted, persistFromCurrent, session, updateOnboardingProgress],
   );
@@ -604,6 +608,75 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
     }
   }, [isStoreRuntimeAvailable]);
 
+  const processQueuedPurchase = useCallback(
+    async (
+      purchase: Purchase,
+      currentSession: NonNullable<typeof sessionRef.current>,
+    ) => {
+      const productId = purchase.productId;
+
+      if (!isProductId(productId)) {
+        return;
+      }
+
+      const processingKey = getPurchaseProcessingKey(purchase);
+
+      if (processedPurchaseKeysRef.current.has(processingKey)) {
+        return;
+      }
+
+      processedPurchaseKeysRef.current.add(processingKey);
+      queuedPurchasesRef.current.delete(processingKey);
+      setIsPurchasePending(true);
+
+      try {
+        const receipt =
+          Platform.OS === 'ios' ? await getIosReceiptDataForVerification() : null;
+
+        if (Platform.OS === 'ios' && !receipt) {
+          throw new Error('iOS 영수증을 읽지 못해 구매를 확인할 수 없어요.');
+        }
+
+        const verification = await verifyRemotePurchase(currentSession, {
+          platform: getPurchasePlatform(),
+          productId,
+          purchaseToken: purchase.purchaseToken ?? null,
+          receipt,
+          transactionId: purchase.transactionId ?? purchase.id,
+        });
+
+        if (isSubscriptionProductId(productId)) {
+          await activateRemoteSubscription(currentSession, {
+            platform: getPurchasePlatform(),
+            productId,
+            purchaseId: verification.transactionId,
+          });
+        } else if (isNonConsumableProductId(productId)) {
+          await persistFromCurrent(
+            (current) => applyProductPurchase(current, productId),
+            currentSession.user.id,
+          );
+        }
+
+        await finishStoreTransaction({
+          purchase,
+          isConsumable: isConsumableProductId(productId),
+        });
+
+        await syncRemoteProfile();
+      } catch (error) {
+        processedPurchaseKeysRef.current.delete(processingKey);
+        await captureError(error, {
+          productId,
+          surface: 'mobile-app-state:purchase-updated',
+        });
+      } finally {
+        setIsPurchasePending(false);
+      }
+    },
+    [persistFromCurrent, syncRemoteProfile],
+  );
+
   useEffect(() => {
     if (!isStoreRuntimeAvailable) {
       setStoreStatus('error');
@@ -626,73 +699,21 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
 
         const processingKey = getPurchaseProcessingKey(purchase);
 
-        if (processedPurchaseKeysRef.current.has(processingKey)) {
+        if (
+          processedPurchaseKeysRef.current.has(processingKey) ||
+          queuedPurchasesRef.current.has(processingKey)
+        ) {
           return;
         }
-
-        processedPurchaseKeysRef.current.add(processingKey);
-        setIsPurchasePending(true);
 
         const currentSession = sessionRef.current;
 
         if (!currentSession) {
-          processedPurchaseKeysRef.current.delete(processingKey);
-          setIsPurchasePending(false);
-          void captureError(new Error('구매 처리 시 로그인 세션이 없습니다.'), {
-            productId,
-            surface: 'mobile-app-state:purchase-updated-without-session',
-          });
+          queuedPurchasesRef.current.set(processingKey, purchase);
           return;
         }
 
-        void (async () => {
-          try {
-            const receipt =
-              Platform.OS === 'ios'
-                ? await getIosReceiptDataForVerification()
-                : null;
-
-            if (Platform.OS === 'ios' && !receipt) {
-              throw new Error('iOS 영수증을 읽지 못해 구매를 확인할 수 없어요.');
-            }
-
-            const verification = await verifyRemotePurchase(currentSession, {
-              platform: getPurchasePlatform(),
-              productId,
-              purchaseToken: purchase.purchaseToken ?? null,
-              receipt,
-              transactionId: purchase.transactionId ?? purchase.id,
-            });
-
-            if (isSubscriptionProductId(productId)) {
-              await activateRemoteSubscription(currentSession, {
-                platform: getPurchasePlatform(),
-                productId,
-                purchaseId: verification.transactionId,
-              });
-            } else if (isNonConsumableProductId(productId)) {
-              await persistFromCurrent(
-                (current) => applyProductPurchase(current, productId),
-                currentSession.user.id,
-              );
-            }
-
-            await finishStoreTransaction({
-              purchase,
-              isConsumable: isConsumableProductId(productId),
-            });
-
-            await syncRemoteProfile();
-          } catch (error) {
-            processedPurchaseKeysRef.current.delete(processingKey);
-            await captureError(error, {
-              productId,
-              surface: 'mobile-app-state:purchase-updated',
-            });
-          } finally {
-            setIsPurchasePending(false);
-          }
-        })();
+        void processQueuedPurchase(purchase, currentSession);
       });
 
       purchaseErrorSubscription = purchaseErrorListener((error) => {
@@ -735,7 +756,17 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
         void endConnection().catch(() => undefined);
       }
     };
-  }, [isStoreRuntimeAvailable, persistFromCurrent, refreshStoreProducts, syncRemoteProfile]);
+  }, [isStoreRuntimeAvailable, processQueuedPurchase, refreshStoreProducts]);
+
+  useEffect(() => {
+    if (!session || queuedPurchasesRef.current.size === 0) {
+      return;
+    }
+
+    for (const purchase of queuedPurchasesRef.current.values()) {
+      void processQueuedPurchase(purchase, session);
+    }
+  }, [processQueuedPurchase, session]);
 
   const recordChatIntent = useCallback(
     async (payload: {

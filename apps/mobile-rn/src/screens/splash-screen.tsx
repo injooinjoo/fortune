@@ -1,4 +1,6 @@
-import { router } from 'expo-router';
+import { useEffect, useRef } from 'react';
+
+import { router, type Href } from 'expo-router';
 import { Image, View } from 'react-native';
 
 import { AppText } from '../components/app-text';
@@ -10,16 +12,39 @@ import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 
 export function SplashScreen() {
   const { gate, onboardingProgress, session, status } = useAppBootstrap();
+  const hasAutoNavigatedRef = useRef(false);
   const nextStepLabel =
     gate === 'auth-entry'
       ? '로그인 안내'
       : gate === 'profile-flow'
         ? '처음 설정'
         : '채팅';
+  const nextRoute: Href =
+    gate === 'auth-entry'
+      ? '/signup'
+      : gate === 'profile-flow'
+        ? '/onboarding'
+        : '/chat';
   const readinessMessage =
     status === 'ready'
       ? '준비가 거의 끝나서 곧 다음 화면으로 넘어가요.'
       : '저장된 정보와 연결 상태를 확인하고 있어요.';
+
+  useEffect(() => {
+    if (status !== 'ready' || hasAutoNavigatedRef.current) {
+      return;
+    }
+
+    hasAutoNavigatedRef.current = true;
+
+    const timeoutId = setTimeout(() => {
+      router.replace(nextRoute);
+    }, 450);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [nextRoute, status]);
 
   return (
     <Screen>

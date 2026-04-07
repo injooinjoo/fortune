@@ -1427,20 +1427,20 @@ export function ProfileFlowGateCard({
 
       <Card>
         <View style={{ gap: fortuneTheme.spacing.xs }}>
-          <AppText variant="heading4">온보딩 진행도</AppText>
+          <AppText variant="heading4">시작 준비 현황</AppText>
           <AppText
             variant="bodySmall"
             color={fortuneTheme.colors.textSecondary}
           >
-            남은 단계를 먼저 마무리해 주세요.
+            대화 전에 필요한 정보가 얼마나 준비됐는지 보여드려요.
           </AppText>
         </View>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-          <Chip label={`생년월일 ${birthCompleted ? '완료' : '필요'}`} tone={birthCompleted ? 'success' : 'neutral'} />
-          <Chip label={`관심사 ${interestCompleted ? '완료' : '필요'}`} tone={interestCompleted ? 'success' : 'neutral'} />
-          <Chip label={`첫 안내 ${firstRunHandoffSeen ? '완료' : '필요'}`} tone={firstRunHandoffSeen ? 'success' : 'neutral'} />
+          <Chip label={`생년월일 ${birthCompleted ? '입력됨' : '입력 필요'}`} tone={birthCompleted ? 'success' : 'neutral'} />
+          <Chip label={`관심사 ${interestCompleted ? '선택됨' : '선택 필요'}`} tone={interestCompleted ? 'success' : 'neutral'} />
+          <Chip label={`서비스 소개 ${firstRunHandoffSeen ? '확인함' : '확인 필요'}`} tone={firstRunHandoffSeen ? 'success' : 'neutral'} />
         </View>
-        <PrimaryButton onPress={onContinue}>온보딩 계속하기</PrimaryButton>
+        <PrimaryButton onPress={onContinue}>대화 준비 이어가기</PrimaryButton>
       </Card>
     </View>
   );

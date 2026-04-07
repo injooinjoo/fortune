@@ -1018,7 +1018,7 @@ export function ChatScreen() {
         <Card>
           <AppText variant="displaySmall">메시지를 준비하는 중</AppText>
           <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
-            세션, 온보딩 상태, 딥링크 의도를 읽고 있어요.
+            계정 상태와 준비된 정보를 확인한 뒤, 열어야 할 화면을 정하고 있어요.
           </AppText>
         </Card>
       </Screen>

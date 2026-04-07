@@ -191,7 +191,7 @@ export function SignupScreen() {
           }
           tone="secondary"
         >
-          온보딩 계속하기
+          정보 먼저 입력하기
         </PrimaryButton>
         <PrimaryButton
           onPress={() => router.replace(returnTo as Href)}
