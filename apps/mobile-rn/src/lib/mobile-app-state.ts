@@ -28,6 +28,8 @@ export interface PremiumState {
   lastPurchaseProductId: ProductId | null;
   tokenBalance: number;
   restoreCount: number;
+  subscriptionExpiresAt: string | null;
+  lastSyncedAt: string | null;
 }
 
 export interface ChatSurfaceState {
@@ -74,6 +76,8 @@ export const emptyMobileAppState: MobileAppState = {
     lastPurchaseProductId: null,
     tokenBalance: 0,
     restoreCount: 0,
+    subscriptionExpiresAt: null,
+    lastSyncedAt: null,
   },
   chat: {
     selectedCharacterId: null,
@@ -146,6 +150,8 @@ export function normalizeMobileAppState(raw: Record<string, unknown>): MobileApp
         : null,
       tokenBalance: asNumber(premium.tokenBalance, 0),
       restoreCount: asNumber(premium.restoreCount, 0),
+      subscriptionExpiresAt: asString(premium.subscriptionExpiresAt) || null,
+      lastSyncedAt: asString(premium.lastSyncedAt) || null,
     },
     chat: {
       selectedCharacterId: asString(chat.selectedCharacterId) || null,
@@ -205,9 +211,11 @@ export function applyProductPurchase(
   if (product.isSubscription) {
     nextPremium.status = 'subscription';
     nextPremium.activeProductId = product.id;
+    nextPremium.subscriptionExpiresAt = null;
   } else if ('isNonConsumable' in product && product.isNonConsumable) {
     nextPremium.status = 'lifetime';
     nextPremium.activeProductId = product.id;
+    nextPremium.subscriptionExpiresAt = null;
   }
 
   return mergeMobileAppState(current, {
@@ -227,9 +235,11 @@ export function applyPurchaseRestore(current: MobileAppState): MobileAppState {
     if (product.isSubscription) {
       nextPremium.status = 'subscription';
       nextPremium.activeProductId = product.id;
+      nextPremium.subscriptionExpiresAt = null;
     } else if ('isNonConsumable' in product && product.isNonConsumable) {
       nextPremium.status = 'lifetime';
       nextPremium.activeProductId = product.id;
+      nextPremium.subscriptionExpiresAt = null;
     }
   }
 
