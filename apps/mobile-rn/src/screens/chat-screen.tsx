@@ -18,7 +18,6 @@ import {
   ChatSoftGate,
   ProfileFlowGateCard,
 } from '../features/chat-surface/chat-surface';
-import { RecentResultCard } from '../features/fortune-results/recent-result-card';
 import { resolveResultKindFromFortuneType } from '../features/fortune-results/mapping';
 import { captureError } from '../lib/error-reporting';
 import {
@@ -154,10 +153,7 @@ export function ChatScreen() {
 
   const selectedThread = messagesByCharacterId[selectedCharacter.id] ?? [];
   const selectedCharacterActions = useMemo(
-    () =>
-      buildSuggestedActions(selectedCharacter).filter((action) =>
-        Boolean(resolveResultKindFromFortuneType(action.fortuneType)),
-      ),
+    () => buildSuggestedActions(selectedCharacter),
     [selectedCharacter],
   );
   const firstRunActionPairs = useMemo(() => {
@@ -181,20 +177,6 @@ export function ChatScreen() {
   const firstRunActions = firstRunActionPairs.map(({ action }) => action);
   const firstRunFeaturedCharacter =
     firstRunActionPairs[0]?.character ?? selectedCharacter;
-  const recentResultNode = (
-    <RecentResultCard
-      lastFortuneType={mobileAppState.chat.lastFortuneType}
-      onOpen={(fortuneType) =>
-        openResultRoute(
-          fortuneType,
-          'recent-card',
-          mobileAppState.chat.selectedCharacterId,
-        )
-      }
-      selectedCharacterId={mobileAppState.chat.selectedCharacterId}
-    />
-  );
-
   useEffect(() => {
     if (launchOrigin !== 'deeplink' || !activeFortuneType) {
       return;
@@ -424,17 +406,14 @@ export function ChatScreen() {
             }
             onPickAction={handleActionPress}
             onSend={handleSendDraft}
-            recentResultCard={recentResultNode}
           />
         ) : (
           <ChatFirstRunSurface
             actions={firstRunActions}
             characters={routeableCharacters}
             featuredCharacter={firstRunFeaturedCharacter}
-            onOpenPremium={() => router.push('/premium')}
             onPickAction={handleActionPress}
             onSelectCharacter={handleCharacterSelect}
-            recentResultCard={recentResultNode}
           />
         )
       ) : null}

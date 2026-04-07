@@ -21,6 +21,7 @@ import {
 
 import { trackEvent } from '../lib/analytics';
 import { exchangeAuthCodeFromUrl, isAuthCallbackUrl } from '../lib/auth-session';
+import { appEnv } from '../lib/env';
 import { captureError } from '../lib/error-reporting';
 import {
   getPendingChatFortuneType,
@@ -92,7 +93,45 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
       return next;
     }
 
+    async function applyDebugChatOverride(target: string) {
+      if (appEnv.environment !== 'development') {
+        return null;
+      }
+
+      const url = new URL(target);
+      const debugGate = url.searchParams.get('debugChatGate');
+      const debugCharacterId = url.searchParams.get('characterId');
+
+      if (debugGate !== 'ready') {
+        return null;
+      }
+
+      const nextProgress = await syncProgress({
+        softGateCompleted: true,
+        authCompleted: true,
+        birthCompleted: true,
+        interestCompleted: true,
+        firstRunHandoffSeen: true,
+      });
+
+      const route = debugCharacterId
+        ? (`/chat?characterId=${encodeURIComponent(debugCharacterId)}` as const)
+        : ('/chat' as const);
+
+      return {
+        nextProgress,
+        route,
+      };
+    }
+
     async function handleDeepLink(target: string) {
+      const debugOverride = await applyDebugChatOverride(target);
+
+      if (debugOverride) {
+        router.replace(debugOverride.route as Href);
+        return;
+      }
+
       const resolution = resolveDeepLink(target);
 
       if (resolution.fortuneType) {

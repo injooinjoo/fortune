@@ -18,6 +18,9 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="chat"
         options={{
+          tabBarStyle: {
+            display: 'none',
+          },
           title: '채팅',
         }}
       />
