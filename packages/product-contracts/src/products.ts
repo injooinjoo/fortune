@@ -66,8 +66,8 @@ export const productCatalog = {
   },
   'com.beyond.fortune.points300': {
     id: 'com.beyond.fortune.points300',
-    title: '기존 350 토큰',
-    description: '이전 결제 복원용 토큰 패키지',
+    title: '이전 구매 토큰 상품',
+    description: '이전 구매 복원용 상품',
     price: 3300,
     points: 350,
     basePoints: 300,
@@ -76,8 +76,8 @@ export const productCatalog = {
   },
   'com.beyond.fortune.points600': {
     id: 'com.beyond.fortune.points600',
-    title: '기존 700 토큰',
-    description: '이전 결제 복원용 토큰 패키지',
+    title: '이전 구매 토큰 상품',
+    description: '이전 구매 복원용 상품',
     price: 5500,
     points: 700,
     basePoints: 600,
@@ -86,8 +86,8 @@ export const productCatalog = {
   },
   'com.beyond.fortune.points1200': {
     id: 'com.beyond.fortune.points1200',
-    title: '기존 1,650 토큰',
-    description: '이전 결제 복원용 토큰 패키지',
+    title: '이전 구매 토큰 상품',
+    description: '이전 구매 복원용 상품',
     price: 11000,
     points: 1650,
     basePoints: 1500,
@@ -96,8 +96,8 @@ export const productCatalog = {
   },
   'com.beyond.fortune.points3000': {
     id: 'com.beyond.fortune.points3000',
-    title: '기존 4,400 토큰',
-    description: '이전 결제 복원용 토큰 패키지',
+    title: '이전 구매 토큰 상품',
+    description: '이전 구매 복원용 상품',
     price: 22000,
     points: 4400,
     basePoints: 4000,
@@ -106,7 +106,7 @@ export const productCatalog = {
   },
   'com.beyond.fortune.subscription.monthly': {
     id: 'com.beyond.fortune.subscription.monthly',
-    title: 'Pro 구독',
+    title: '프로 구독',
     description: '매월 토큰이 자동 충전되는 기본 구독 플랜',
     price: 4500,
     points: 30000,
@@ -115,7 +115,7 @@ export const productCatalog = {
   },
   'com.beyond.fortune.subscription.max': {
     id: 'com.beyond.fortune.subscription.max',
-    title: 'Max 구독',
+    title: '맥스 구독',
     description: '모든 기능을 넉넉하게 쓰는 고급 구독 플랜',
     price: 12900,
     points: 100000,
@@ -185,13 +185,10 @@ export function getProductDisplayTitle(productId: ProductId): string {
     case 'com.beyond.fortune.tokens200':
       return '토큰 200개';
     case 'com.beyond.fortune.points300':
-      return '레거시 토큰 350개';
     case 'com.beyond.fortune.points600':
-      return '레거시 토큰 700개';
     case 'com.beyond.fortune.points1200':
-      return '레거시 토큰 1,650개';
     case 'com.beyond.fortune.points3000':
-      return '레거시 토큰 4,400개';
+      return '이전 구매 토큰 상품';
     case 'com.beyond.fortune.subscription.monthly':
       return '프로 구독';
     case 'com.beyond.fortune.subscription.max':

@@ -2,10 +2,12 @@ import { useState } from 'react';
 
 import { router } from 'expo-router';
 import {
-  nonConsumableProductIds,
+  getProductDisplayTitle,
+  getSubscriptionPeriodLabel,
   productCatalog,
   storefrontConsumableProductIds,
-  subscriptionProductIds,
+  storefrontNonConsumableProductIds,
+  storefrontSubscriptionProductIds,
   type ProductId,
 } from '@fortune/product-contracts';
 import { Alert, Linking, Platform, Pressable, View } from 'react-native';
@@ -25,29 +27,84 @@ function formatPrice(price: number) {
   return `₩${price.toLocaleString('ko-KR')}`;
 }
 
+function formatIsoDate(value: string | null) {
+  if (!value) {
+    return null;
+  }
+
+  const parsed = new Date(value);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
+
+  return parsed.toLocaleDateString('ko-KR');
+}
+
+function formatIsoDateTime(value: string | null) {
+  if (!value) {
+    return null;
+  }
+
+  const parsed = new Date(value);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
+
+  return parsed.toLocaleString('ko-KR', {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
 export function PremiumScreen() {
   const { session } = useAppBootstrap();
   const { restorePurchases, state, syncRemoteProfile } = useMobileAppState();
   const [selectedProductId, setSelectedProductId] = useState<ProductId>(
-    subscriptionProductIds[0],
+    storefrontSubscriptionProductIds[0],
   );
   const [actionState, setActionState] = useState<
     'idle' | 'refreshing' | 'restoring' | 'managing'
   >('idle');
 
   const selectedProduct = productCatalog[selectedProductId];
-  const subscriptions = subscriptionProductIds.map((id) => productCatalog[id]);
+  const subscriptions = storefrontSubscriptionProductIds.map(
+    (id) => productCatalog[id],
+  );
   const tokens = storefrontConsumableProductIds.map((id) => productCatalog[id]);
-  const lifetime = nonConsumableProductIds.map((id) => productCatalog[id]);
+  const lifetime = storefrontNonConsumableProductIds.map(
+    (id) => productCatalog[id],
+  );
   const activeProduct = state.premium.activeProductId
     ? productCatalog[state.premium.activeProductId]
     : null;
   const activePlanLabel =
     state.premium.status === 'subscription'
-      ? activeProduct?.title ?? '활성 구독 없음'
+      ? activeProduct
+        ? getProductDisplayTitle(activeProduct.id)
+        : '활성 구독 없음'
       : state.premium.status === 'lifetime'
-        ? activeProduct?.title ?? '평생 소장 없음'
+        ? activeProduct
+          ? getProductDisplayTitle(activeProduct.id)
+          : '평생 소장 없음'
         : '활성 플랜 없음';
+  const lastPurchaseLabel = state.premium.lastPurchaseProductId
+    ? getProductDisplayTitle(state.premium.lastPurchaseProductId)
+    : null;
+  const subscriptionExpiryLabel = formatIsoDate(
+    state.premium.subscriptionExpiresAt,
+  );
+  const lastSyncedLabel = formatIsoDateTime(state.premium.lastSyncedAt);
+  const selectedProductTitle = getProductDisplayTitle(selectedProduct.id);
+  const selectedProductPeriodLabel = getSubscriptionPeriodLabel(selectedProduct.id);
+  const canManageSelectedSubscription =
+    session != null &&
+    selectedProduct.isSubscription &&
+    state.premium.activeProductId === selectedProduct.id;
 
   async function handleRefresh() {
     if (actionState !== 'idle') {
@@ -112,16 +169,10 @@ export function PremiumScreen() {
 
   function handleUnsupportedPurchase() {
     Alert.alert(
-      '직접 구매 지원 준비 중',
-      '현재 앱에서는 판매 중인 상품 목록을 확인할 수 있고, 실제 구독 상태 새로고침과 구매 복원, 스토어 구독 관리까지만 지원합니다.',
+      '새 결제는 준비 중입니다',
+      '이 화면에서는 현재 판매 중인 상품 비교와 구독 상태 확인, 이전 구매 복원을 먼저 지원합니다.',
     );
   }
-
-  const selectedProductActionLabel = selectedProduct.isSubscription
-    ? state.premium.activeProductId === selectedProduct.id
-      ? '구독 관리 열기'
-      : '스토어 구독 관리'
-    : '직접 구매 지원 준비 중';
 
   return (
     <Screen header={<RouteBackHeader fallbackHref="/profile" />}>
@@ -135,7 +186,7 @@ export function PremiumScreen() {
         <AppText variant="bodyMedium">
           {session
             ? '로그인된 계정에서 구독 상태와 토큰 잔액을 확인할 수 있어요.'
-            : '게스트 상태에서는 상품을 둘러볼 수 있고, 구독 상태 확인은 로그인 후 가능합니다.'}
+            : '게스트 상태에서는 판매 중인 상품 구성을 먼저 둘러볼 수 있어요.'}
         </AppText>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
           <Chip
@@ -156,7 +207,7 @@ export function PremiumScreen() {
             }
           />
           <Chip
-            label={state.premium.lastSyncedAt ? '동기화 완료' : '동기화 전'}
+            label={state.premium.lastSyncedAt ? '상태 확인됨' : '상태 확인 전'}
             tone={state.premium.lastSyncedAt ? 'success' : 'neutral'}
           />
         </View>
@@ -166,20 +217,17 @@ export function PremiumScreen() {
         <AppText variant="heading4">현재 상태</AppText>
         <AppText variant="labelLarge">{activePlanLabel}</AppText>
         <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          마지막 구매:{' '}
-          {state.premium.lastPurchaseProductId
-            ? productCatalog[state.premium.lastPurchaseProductId].title
-            : '없음'}
+          마지막 구매: {lastPurchaseLabel ?? '없음'}
         </AppText>
         <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {state.premium.subscriptionExpiresAt
-            ? `구독 만료일 ${state.premium.subscriptionExpiresAt.slice(0, 10)}`
-            : '현재 확인된 활성 구독이 없습니다.'}
+          {subscriptionExpiryLabel
+            ? `구독 만료일 ${subscriptionExpiryLabel}`
+            : '현재 확인된 활성 구독이 없어요.'}
         </AppText>
         <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {state.premium.lastSyncedAt
-            ? `마지막 동기화 ${state.premium.lastSyncedAt.slice(0, 16).replace('T', ' ')}`
-            : '아직 구독 상태를 확인하지 않았습니다.'}
+          {lastSyncedLabel
+            ? `마지막 확인 ${lastSyncedLabel}`
+            : '아직 구독 상태를 확인하지 않았어요.'}
         </AppText>
         <PrimaryButton
           onPress={actionState === 'idle' ? () => void handleRefresh() : undefined}
@@ -193,12 +241,15 @@ export function PremiumScreen() {
 
       <Card>
         <AppText variant="heading4">구독 플랜</AppText>
+        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+          App Store에 등록된 현재 판매 상품만 보여드려요.
+        </AppText>
         {subscriptions.map((product) => (
           <ProductOption
             key={product.id}
             isSelected={selectedProductId === product.id}
             onPress={() => setSelectedProductId(product.id)}
-            title={product.title}
+            title={getProductDisplayTitle(product.id)}
             subtitle={product.description}
             trailing={`월 ${formatPrice(product.price)}`}
             badge={
@@ -220,7 +271,7 @@ export function PremiumScreen() {
             key={product.id}
             isSelected={selectedProductId === product.id}
             onPress={() => setSelectedProductId(product.id)}
-            title={product.title}
+            title={getProductDisplayTitle(product.id)}
             subtitle={`${product.points.toLocaleString('ko-KR')} 토큰 · ${product.description}`}
             trailing={formatPrice(product.price)}
           />
@@ -234,7 +285,7 @@ export function PremiumScreen() {
             key={product.id}
             isSelected={selectedProductId === product.id}
             onPress={() => setSelectedProductId(product.id)}
-            title={product.title}
+            title={getProductDisplayTitle(product.id)}
             subtitle={product.description}
             trailing={formatPrice(product.price)}
           />
@@ -243,13 +294,13 @@ export function PremiumScreen() {
 
       <Card>
         <AppText variant="heading4">선택된 상품</AppText>
-        <AppText variant="labelLarge">{selectedProduct.title}</AppText>
+        <AppText variant="labelLarge">{selectedProductTitle}</AppText>
         <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
           {selectedProduct.description}
         </AppText>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
           <Chip
-            label={selectedProduct.isSubscription ? '정기 결제' : '한 번 결제'}
+            label={selectedProduct.isSubscription ? '구독 상품' : '단건 상품'}
             tone="accent"
           />
           <Chip label={`가격 ${formatPrice(selectedProduct.price)}`} />
@@ -258,36 +309,47 @@ export function PremiumScreen() {
               label={`토큰 ${selectedProduct.points.toLocaleString('ko-KR')}개 포함`}
             />
           ) : null}
-          <Chip
-            label={
-              selectedProduct.isSubscription
-                ? `갱신 주기 ${selectedProduct.subscriptionPeriod}`
-                : '평생 사용 가능'
-            }
-          />
+          <Chip label={selectedProductPeriodLabel ?? '평생 소장'} />
         </View>
-        <PrimaryButton
-          disabled={actionState !== 'idle'}
-          onPress={
-            !session
-              ? () =>
-                  router.push({
-                    pathname: '/signup',
-                    params: { returnTo: '/premium' },
-                  })
-              : selectedProduct.isSubscription
-                ? () => void handleOpenSubscriptionManagement()
-                : handleUnsupportedPurchase
-          }
-          tone="primary"
-        >
-          {actionState === 'managing'
-            ? '구독 관리 여는 중...'
-            : selectedProductActionLabel}
-        </PrimaryButton>
         <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          토큰과 평생 소장 상품은 판매 목록만 먼저 안내하고 있어요. 현재 앱에서는 구독 상태 확인, 구매 복원, 스토어 구독 관리만 지원합니다.
+          {!session
+            ? '로그인하면 내 구독 상태를 확인하고 이전 구매를 복원할 수 있어요.'
+            : canManageSelectedSubscription
+              ? '현재 이용 중인 구독은 스토어 구독 관리 화면에서 변경할 수 있어요.'
+              : '이 화면에서는 상품 비교와 상태 확인, 이전 구매 복원을 먼저 지원합니다.'}
         </AppText>
+        {!session ? (
+          <PrimaryButton
+            disabled={actionState !== 'idle'}
+            onPress={() =>
+              router.push({
+                pathname: '/signup',
+                params: { returnTo: '/premium' },
+              })
+            }
+            tone="primary"
+          >
+            로그인하고 계속하기
+          </PrimaryButton>
+        ) : canManageSelectedSubscription ? (
+          <PrimaryButton
+            disabled={actionState !== 'idle'}
+            onPress={() => void handleOpenSubscriptionManagement()}
+            tone="primary"
+          >
+            {actionState === 'managing'
+              ? '구독 관리 여는 중...'
+              : '구독 관리 열기'}
+          </PrimaryButton>
+        ) : (
+          <PrimaryButton
+            disabled={actionState !== 'idle'}
+            onPress={handleUnsupportedPurchase}
+            tone="secondary"
+          >
+            지원 범위 확인
+          </PrimaryButton>
+        )}
         <PrimaryButton
           onPress={actionState === 'idle' ? handleRestore : undefined}
           tone="secondary"
@@ -334,8 +396,9 @@ function ProductOption({
       >
         <View
           style={{
-            alignItems: 'center',
+            alignItems: 'flex-start',
             flexDirection: 'row',
+            gap: fortuneTheme.spacing.md,
             justifyContent: 'space-between',
           }}
         >
@@ -345,7 +408,14 @@ function ProductOption({
               {subtitle}
             </AppText>
           </View>
-          <View style={{ alignItems: 'flex-end', gap: fortuneTheme.spacing.xs }}>
+          <View
+            style={{
+              alignItems: 'flex-end',
+              flexShrink: 0,
+              gap: fortuneTheme.spacing.xs,
+              minWidth: 84,
+            }}
+          >
             <AppText variant="labelMedium">{trailing}</AppText>
             {badge ? <Chip label={badge} tone="success" /> : null}
           </View>

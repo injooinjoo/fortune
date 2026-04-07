@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 
 import { router } from 'expo-router';
 import { Linking, Platform, Pressable, View } from 'react-native';
-import { productCatalog } from '@fortune/product-contracts';
+import { getProductDisplayTitle } from '@fortune/product-contracts';
 
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
@@ -15,6 +15,40 @@ import { supabase } from '../lib/supabase';
 import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 import { useMobileAppState } from '../providers/mobile-app-state-provider';
+
+function formatIsoDate(value: string | null) {
+  if (!value) {
+    return null;
+  }
+
+  const parsed = new Date(value);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
+
+  return parsed.toLocaleDateString('ko-KR');
+}
+
+function formatIsoDateTime(value: string | null) {
+  if (!value) {
+    return null;
+  }
+
+  const parsed = new Date(value);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
+
+  return parsed.toLocaleString('ko-KR', {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
 
 export function ProfileScreen() {
   const [isRefreshingPremium, setIsRefreshingPremium] = useState(false);
@@ -38,8 +72,10 @@ export function ProfileScreen() {
     ? formatFortuneTypeLabel(state.chat.lastFortuneType)
     : null;
   const activeProductLabel = state.premium.activeProductId
-    ? productCatalog[state.premium.activeProductId].title
+    ? getProductDisplayTitle(state.premium.activeProductId)
     : null;
+  const premiumExpiryLabel = formatIsoDate(state.premium.subscriptionExpiresAt);
+  const premiumSyncedLabel = formatIsoDateTime(state.premium.lastSyncedAt);
   const hasRecentChatSignal = Boolean(
     state.chat.selectedCharacterId ||
     state.chat.lastFortuneType ||
@@ -154,13 +190,13 @@ export function ProfileScreen() {
               : '연결된 구독 상품은 아직 없어요.'}
           </AppText>
           <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {state.premium.subscriptionExpiresAt
-              ? `구독 만료일 ${state.premium.subscriptionExpiresAt.slice(0, 10)}`
+            {premiumExpiryLabel
+              ? `구독 만료일 ${premiumExpiryLabel}`
               : '활성 구독 만료 정보가 없어요.'}
           </AppText>
           <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {state.premium.lastSyncedAt
-              ? `마지막 확인 ${state.premium.lastSyncedAt.slice(0, 16).replace('T', ' ')}`
+            {premiumSyncedLabel
+              ? `마지막 확인 ${premiumSyncedLabel}`
               : '구독 상태는 아직 확인하지 않았어요.'}
           </AppText>
         </View>
