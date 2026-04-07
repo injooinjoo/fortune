@@ -13,6 +13,7 @@ export interface MobileProfileState {
   birthTime: string;
   mbti: string;
   bloodType: string;
+  interestIds: string[];
 }
 
 export interface NotificationPreferences {
@@ -64,6 +65,7 @@ export const emptyMobileAppState: MobileAppState = {
     birthTime: '',
     mbti: '',
     bloodType: '',
+    interestIds: [],
   },
   notifications: {
     push: true,
@@ -123,6 +125,11 @@ export function normalizeMobileAppState(raw: Record<string, unknown>): MobileApp
       birthTime: asString(profile.birthTime),
       mbti: asString(profile.mbti),
       bloodType: asString(profile.bloodType),
+      interestIds: Array.isArray(profile.interestIds)
+        ? profile.interestIds.filter(
+            (value): value is string => typeof value === 'string',
+          )
+        : [],
     },
     notifications: {
       push: asBoolean(notifications.push, emptyMobileAppState.notifications.push),

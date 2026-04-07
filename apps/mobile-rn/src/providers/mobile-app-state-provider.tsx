@@ -50,6 +50,7 @@ import {
   verifyRemotePurchase,
   type RemotePremiumSnapshot,
 } from '../lib/premium-remote';
+import { buildOnboardingInterestWeights } from '../lib/onboarding-interest-catalog';
 import { getMobileAppState, saveMobileAppState } from '../lib/storage';
 import {
   ensureRemoteUserProfile,
@@ -239,6 +240,20 @@ function isStoreNativeModuleError(error: unknown) {
   );
 }
 
+function isExpectedStoreUnavailableError(error: unknown) {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  return (
+    isStoreNativeModuleError(error) ||
+    error.message.includes('Billing is not prepared') ||
+    error.message.includes('billing is not prepared') ||
+    error.message.includes('StoreKit is not available') ||
+    error.message.includes('not available on simulator')
+  );
+}
+
 function getPurchasePlatform(): 'ios' | 'android' {
   return Platform.OS === 'ios' ? 'ios' : 'android';
 }
@@ -419,6 +434,23 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
         remoteUpdates.blood_type = nextState.profile.bloodType || null;
       }
 
+      if ('interestIds' in profile) {
+        remoteUpdates.fortune_preferences =
+          nextState.profile.interestIds.length > 0
+            ? {
+                category_weights: buildOnboardingInterestWeights(
+                  nextState.profile.interestIds,
+                ),
+                showPersonalized: true,
+              }
+            : {
+                category_weights: {},
+                showPersonalized: true,
+              };
+        remoteUpdates.onboarding_completed =
+          nextState.profile.interestIds.length > 0;
+      }
+
       if (Object.keys(remoteUpdates).length === 0) {
         return;
       }
@@ -560,15 +592,15 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
       setIsStoreRuntimeAvailable(true);
     } catch (error) {
       setStoreStatus('error');
-      if (isStoreNativeModuleError(error)) {
+      if (isExpectedStoreUnavailableError(error)) {
         setIsStoreRuntimeAvailable(false);
         setStoreError(STORE_UNAVAILABLE_MESSAGE);
       } else {
         setStoreError('스토어 상품 정보를 불러오지 못했어요.');
+        await captureError(error, {
+          surface: 'mobile-app-state:store-products',
+        });
       }
-      await captureError(error, {
-        surface: 'mobile-app-state:store-products',
-      });
     }
   }, [isStoreRuntimeAvailable]);
 
@@ -665,6 +697,13 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
 
       purchaseErrorSubscription = purchaseErrorListener((error) => {
         setIsPurchasePending(false);
+        if (isExpectedStoreUnavailableError(new Error(error.message))) {
+          setIsStoreRuntimeAvailable(false);
+          setStoreStatus('error');
+          setStoreError(STORE_UNAVAILABLE_MESSAGE);
+          return;
+        }
+
         void captureError(new Error(error.message), {
           productId: error.productId ?? undefined,
           surface: 'mobile-app-state:purchase-error',
@@ -677,13 +716,15 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
       setStoreStatus('error');
       setIsStoreRuntimeAvailable(false);
       setStoreError(
-        isStoreNativeModuleError(error)
+        isExpectedStoreUnavailableError(error)
           ? STORE_UNAVAILABLE_MESSAGE
           : '스토어 기능을 초기화하지 못했어요.',
       );
-      void captureError(error, {
-        surface: 'mobile-app-state:store-runtime-init',
-      });
+      if (!isExpectedStoreUnavailableError(error)) {
+        void captureError(error, {
+          surface: 'mobile-app-state:store-runtime-init',
+        });
+      }
     }
 
     return () => {
@@ -775,6 +816,13 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
         });
       } catch (error) {
         setIsPurchasePending(false);
+        if (isExpectedStoreUnavailableError(error)) {
+          setIsStoreRuntimeAvailable(false);
+          setStoreStatus('error');
+          setStoreError(STORE_UNAVAILABLE_MESSAGE);
+          throw new Error(STORE_UNAVAILABLE_MESSAGE);
+        }
+
         await captureError(error, {
           productId,
           surface: 'mobile-app-state:purchase-request',
@@ -839,6 +887,13 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
 
       await syncRemoteProfile();
     } catch (error) {
+      if (isExpectedStoreUnavailableError(error)) {
+        setIsStoreRuntimeAvailable(false);
+        setStoreStatus('error');
+        setStoreError(STORE_UNAVAILABLE_MESSAGE);
+        throw new Error(STORE_UNAVAILABLE_MESSAGE);
+      }
+
       await captureError(error, {
         surface: 'mobile-app-state:restore-purchases',
       });

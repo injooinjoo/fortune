@@ -1,4 +1,5 @@
 import { router } from 'expo-router';
+import { Image, View } from 'react-native';
 
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
@@ -22,15 +23,41 @@ export function SplashScreen() {
 
   return (
     <Screen>
-      <AppText variant="labelMedium" color={fortuneTheme.colors.accentSecondary}>
-        앱 시작
-      </AppText>
-      <AppText variant="displaySmall">불러오는 중</AppText>
-      <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
-        저장된 정보와 현재 상태를 확인한 뒤 가장 알맞은 화면으로 이어집니다.
-      </AppText>
+      <View
+        style={{
+          alignItems: 'center',
+          gap: fortuneTheme.spacing.md,
+          paddingTop: fortuneTheme.spacing.xl,
+        }}
+      >
+        <Image
+          source={require('../../assets/splash-icon.png')}
+          style={{
+            borderRadius: 36,
+            height: 164,
+            width: 164,
+          }}
+        />
+        <View style={{ alignItems: 'center', gap: fortuneTheme.spacing.xs }}>
+          <AppText
+            variant="labelMedium"
+            color={fortuneTheme.colors.accentSecondary}
+          >
+            앱 시작
+          </AppText>
+          <AppText variant="displaySmall">온도</AppText>
+          <AppText
+            variant="bodyLarge"
+            color={fortuneTheme.colors.textSecondary}
+            style={{ textAlign: 'center' }}
+          >
+            대화와 운세 흐름을 이어 붙이기 전에 현재 상태를 먼저 정리하고 있어요.
+          </AppText>
+        </View>
+      </View>
 
       <Card>
+        <AppText variant="heading4">시작 준비</AppText>
         <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
           {readinessMessage}
         </AppText>
@@ -44,8 +71,8 @@ export function SplashScreen() {
         </AppText>
         <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
           {onboardingProgress.birthCompleted
-            ? '기본 정보가 일부 준비되어 있어서 다음 단계가 더 빨라집니다.'
-            : '처음 설정이 필요한지 함께 확인하고 있어요.'}
+            ? '기본 정보가 준비되어 있어 다음 단계로 더 빠르게 이어질 수 있어요.'
+            : '출생 정보와 관심사가 필요한지 함께 확인하고 있어요.'}
         </AppText>
         {gate === 'auth-entry' ? (
           <PrimaryButton onPress={() => router.replace('/signup')}>

@@ -1,5 +1,6 @@
 import { type Session } from '@supabase/supabase-js';
 
+import { selectedOnboardingInterestIds } from './onboarding-interest-catalog';
 import { supabase } from './supabase';
 import { type MobileAppStatePatch } from './mobile-app-state';
 
@@ -12,6 +13,7 @@ interface RemoteUserProfileRow {
   mbti?: string | null;
   mbti_type?: string | null;
   blood_type?: string | null;
+  fortune_preferences?: Record<string, unknown> | null;
   token_balance?: number | null;
   onboarding_completed?: boolean | null;
   primary_provider?: string | null;
@@ -168,6 +170,10 @@ export function remoteProfileToPatch(
       birthTime: profile.birth_time ?? '',
       mbti: profile.mbti ?? profile.mbti_type ?? '',
       bloodType: profile.blood_type ?? '',
+      interestIds: selectedOnboardingInterestIds(
+        (profile.fortune_preferences as Record<string, unknown> | null)
+          ?.category_weights,
+      ),
     },
   };
 
@@ -183,7 +189,12 @@ export function remoteProfileToPatch(
 export function remoteProfileToOnboardingPatch(profile: RemoteUserProfileRow) {
   const hasBirthDate =
     typeof profile.birth_date === 'string' && profile.birth_date.length > 0;
-  const onboardingCompleted = profile.onboarding_completed === true;
+  const onboardingCompleted =
+    profile.onboarding_completed === true ||
+    selectedOnboardingInterestIds(
+      (profile.fortune_preferences as Record<string, unknown> | null)
+        ?.category_weights,
+    ).length > 0;
 
   return {
     birthCompleted: hasBirthDate,
