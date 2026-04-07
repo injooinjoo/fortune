@@ -278,8 +278,8 @@ export function ProfileScreen() {
       <Card>
         <AppText variant="heading4">구독 관리</AppText>
         <ProfileMenuRow
-          label="구독 및 토큰"
-          description="프리미엄 구독과 토큰 패키지"
+          label="구독 및 토큰 구매"
+          description="프로 구독, 맥스 구독, 토큰 10·50·100·200"
           onPress={() => router.push('/premium')}
         />
         <ProfileMenuRow

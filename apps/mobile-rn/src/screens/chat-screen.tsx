@@ -586,11 +586,15 @@ export function ChatScreen() {
     setSurfaceMode('chat');
     const character =
       findChatCharacterById(recentFortuneCharacterId) ?? selectedCharacter;
-    reopenFortuneResult(
+    const reopened = reopenFortuneResult(
       character,
       fortuneType,
       `${character.name}와 보던 ${formatFortuneTypeLabel(fortuneType)} 결과를 같은 대화 안에 다시 열어드릴게요.`,
     );
+
+    if (!reopened) {
+      handleCharacterActionPress(character.id, fortuneType);
+    }
   }
 
   async function sendStoryPilotMessage(

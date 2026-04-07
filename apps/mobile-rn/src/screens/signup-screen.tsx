@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { View } from 'react-native';
@@ -63,10 +63,25 @@ export function SignupScreen() {
   const [activeProviderId, setActiveProviderId] =
     useState<SocialAuthProviderId | null>(null);
   const [authMessage, setAuthMessage] = useState<string | null>(null);
-  const { markGuestBrowse } = useAppBootstrap();
+  const {
+    markGuestBrowse,
+    session,
+    status: bootstrapStatus,
+  } = useAppBootstrap();
   const { startSocialAuth } = useSocialAuth();
   const returnTo = normalizeReturnTo(readSearchParam(params.returnTo));
   const backDestinationLabel = resolveBackDestinationLabel(returnTo as Href);
+
+  useEffect(() => {
+    if (bootstrapStatus !== 'ready' || !session) {
+      return;
+    }
+
+    router.replace({
+      pathname: '/auth/callback',
+      params: { returnTo },
+    });
+  }, [bootstrapStatus, returnTo, session]);
 
   async function handleSocialAuthStart(providerId: SocialAuthProviderId) {
     try {

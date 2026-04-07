@@ -1,13 +1,17 @@
 import * as AppleAuthentication from 'expo-apple-authentication';
 import * as Crypto from 'expo-crypto';
 import * as Linking from 'expo-linking';
+import * as WebBrowser from 'expo-web-browser';
 import { type Provider } from '@supabase/supabase-js';
 import { Platform } from 'react-native';
 
 import { deepLinkConfig } from '@fortune/product-contracts';
 
+import { exchangeAuthCodeFromUrl } from './auth-session';
 import { appEnv } from './env';
 import { supabase } from './supabase';
+
+WebBrowser.maybeCompleteAuthSession();
 
 export type SocialAuthProviderId = 'apple' | 'google' | 'kakao' | 'naver';
 type SupabaseOAuthProviderId = Exclude<SocialAuthProviderId, 'naver'>;
@@ -153,6 +157,70 @@ function resolveNaverAuthorizationUrl(returnTo?: string) {
   return authorizationUrl.toString();
 }
 
+async function completeInAppAuthSession(
+  provider: SocialAuthProviderId,
+  authorizationUrl: string,
+  redirectTo: string,
+): Promise<SocialAuthStartResult> {
+  try {
+    const result = await WebBrowser.openAuthSessionAsync(
+      authorizationUrl,
+      redirectTo,
+    );
+
+    if (result.type === 'cancel' || result.type === 'dismiss') {
+      return {
+        provider,
+        status: 'failed',
+        redirectTo,
+        authorizationUrl,
+        errorMessage: `${socialAuthProviderLabelById[provider]} 로그인을 취소했습니다.`,
+      };
+    }
+
+    if (result.type !== 'success' || !result.url) {
+      return {
+        provider,
+        status: 'failed',
+        redirectTo,
+        authorizationUrl,
+        errorMessage:
+          result.type === 'locked'
+            ? '이미 다른 로그인 창이 열려 있습니다. 잠시 후 다시 시도해 주세요.'
+            : `${socialAuthProviderLabelById[provider]} 로그인 완료 신호를 받지 못했습니다.`,
+      };
+    }
+
+    const session = await exchangeAuthCodeFromUrl(result.url);
+
+    if (!session) {
+      return {
+        provider,
+        status: 'failed',
+        redirectTo,
+        authorizationUrl,
+        errorMessage: '로그인 세션을 확인하지 못했습니다. 다시 시도해 주세요.',
+      };
+    }
+
+    return {
+      provider,
+      status: 'started',
+      redirectTo,
+      authorizationUrl,
+    };
+  } catch (error) {
+    return {
+      provider,
+      status: 'failed',
+      redirectTo,
+      authorizationUrl,
+      errorMessage:
+        error instanceof Error ? error.message : '소셜 로그인을 시작하지 못했습니다.',
+    };
+  }
+}
+
 export function resolveSocialAuthRedirectTo(
   provider: SocialAuthProviderId,
   returnTo?: string,
@@ -231,14 +299,18 @@ export async function startSocialAuth(
     if (!isSupabaseOAuthProvider(provider)) {
       const authorizationUrl = resolveNaverAuthorizationUrl(returnTo);
 
-      await Linking.openURL(authorizationUrl);
+      if (Platform.OS === 'web') {
+        await Linking.openURL(authorizationUrl);
 
-      return {
-        provider,
-        status: 'started',
-        redirectTo,
-        authorizationUrl,
-      };
+        return {
+          provider,
+          status: 'started',
+          redirectTo,
+          authorizationUrl,
+        };
+      }
+
+      return completeInAppAuthSession(provider, authorizationUrl, redirectTo);
     }
 
     const response = await client.auth.signInWithOAuth({
@@ -267,14 +339,18 @@ export async function startSocialAuth(
       };
     }
 
-    await Linking.openURL(response.data.url);
+    if (Platform.OS === 'web') {
+      await Linking.openURL(response.data.url);
 
-    return {
-      provider,
-      status: 'started',
-      redirectTo,
-      authorizationUrl: response.data.url,
-    };
+      return {
+        provider,
+        status: 'started',
+        redirectTo,
+        authorizationUrl: response.data.url,
+      };
+    }
+
+    return completeInAppAuthSession(provider, response.data.url, redirectTo);
   } catch (error) {
     return {
       provider,

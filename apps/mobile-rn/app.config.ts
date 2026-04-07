@@ -115,6 +115,7 @@ const config: ExpoConfig = {
     'expo-router',
     'expo-iap',
     'expo-apple-authentication',
+    'expo-web-browser',
     './plugins/with-ios-prebuilt-react-native',
   ],
   experiments: {
