@@ -116,9 +116,6 @@ export function buildInitialThread(
   }
 
   const leadFortuneType = character.specialties[0];
-  const leadLabel = leadFortuneType
-    ? formatFortuneTypeLabel(leadFortuneType)
-    : '운세 흐름';
 
   return [
     {
@@ -137,7 +134,9 @@ export function buildInitialThread(
       id: createMessageId('assistant'),
       kind: 'text',
       sender: 'assistant',
-      text: `${character.shortDescription} 우선 ${leadLabel} 쪽으로 몸과 마음의 결을 가볍게 읽어드릴게요.`,
+      text: leadFortuneType
+        ? `${character.shortDescription} 우선 지금 궁금한 흐름부터 몸과 마음의 결을 가볍게 읽어드릴게요.`
+        : `${character.shortDescription} 우선 흐름부터 몸과 마음의 결을 가볍게 읽어드릴게요.`,
     },
     {
       id: createMessageId('assistant'),

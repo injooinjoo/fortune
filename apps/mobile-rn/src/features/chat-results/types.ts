@@ -5,6 +5,7 @@ import type { MetricTileData, ResultKind } from '../fortune-results/types';
 export type EmbeddedResultWidgetType = 'fortune_result_card';
 
 export interface EmbeddedResultProfileContext {
+  displayName?: string;
   birthDate?: string;
   birthTime?: string;
   mbti?: string;

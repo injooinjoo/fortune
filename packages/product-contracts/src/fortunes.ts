@@ -80,8 +80,7 @@ export const fortuneTypeSpecs = [
   {
     id: 'personality-dna',
     labelKey: 'fortunePersonalityDna',
-    endpoint: '/fortune-mbti',
-    apiType: 'mbti',
+    endpoint: '/personality-dna',
   },
   {
     id: 'blood-type',
@@ -180,20 +179,17 @@ export const fortuneTypeSpecs = [
   {
     id: 'zodiac-animal',
     labelKey: 'fortuneZodiacAnimal',
-    endpoint: '/fortune-daily',
-    apiType: 'daily',
+    endpoint: '/fortune-zodiac-animal',
   },
   {
     id: 'constellation',
     labelKey: 'fortuneConstellation',
-    endpoint: '/fortune-daily',
-    apiType: 'daily',
+    endpoint: '/fortune-constellation',
   },
   {
     id: 'birthstone',
     labelKey: 'fortuneBirthstone',
-    endpoint: '/fortune-daily',
-    apiType: 'daily',
+    endpoint: '/fortune-birthstone',
   },
   {
     id: 'fortune-cookie',

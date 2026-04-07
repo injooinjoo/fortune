@@ -26,6 +26,7 @@ import {
   startChatSurvey,
 } from '../features/chat-survey/registry';
 import type { ActiveChatSurvey } from '../features/chat-survey/types';
+import { fetchEmbeddedEdgeResultPayload } from '../features/chat-results/edge-runtime';
 import { resolveResultKindFromFortuneType } from '../features/fortune-results/mapping';
 import { captureError } from '../lib/error-reporting';
 import {
@@ -432,25 +433,17 @@ export function ChatScreen() {
       return true;
     }
 
-    const embeddedResult = buildEmbeddedResultMessage(
-      fortuneType,
-      buildResultContext(character),
-    );
-
-    if (!embeddedResult) {
+    if (!resolveResultKindFromFortuneType(fortuneType)) {
       return false;
     }
 
     setActiveSurvey(character.id, null);
-    appendMessages(character, [
-      buildAssistantTextMessage('좋아요. 결과를 같은 대화 안에 바로 붙여드릴게요.'),
-      embeddedResult,
-    ]);
+    void appendResolvedFortuneResult(character, fortuneType);
 
     return true;
   }
 
-  function completeSurvey(
+  async function completeSurvey(
     character: ChatCharacterSpec,
     completed: {
       fortuneType: FortuneTypeId;
@@ -458,12 +451,13 @@ export function ChatScreen() {
     },
   ) {
     const definition = getChatSurveyDefinition(completed.fortuneType);
-    const embeddedResult = buildEmbeddedResultMessage(
+    setActiveSurvey(character.id, null);
+
+    const embeddedResult = await resolveFortuneResultMessage(
       completed.fortuneType,
       buildResultContext(character, completed.answers),
+      'chat:complete-survey',
     );
-
-    setActiveSurvey(character.id, null);
 
     if (!embeddedResult) {
       return;
@@ -892,7 +886,7 @@ export function ChatScreen() {
         ]);
       }
     } else if (completed) {
-      completeSurvey(selectedCharacter, completed);
+      void completeSurvey(selectedCharacter, completed);
     }
 
     recordChatIntent({
@@ -917,6 +911,7 @@ export function ChatScreen() {
       answers,
       characterName: character.name,
       profile: {
+        displayName: mobileAppState.profile.displayName || undefined,
         birthDate: mobileAppState.profile.birthDate || undefined,
         birthTime: mobileAppState.profile.birthTime || undefined,
         mbti: mobileAppState.profile.mbti || undefined,
@@ -959,6 +954,50 @@ export function ChatScreen() {
 
       return [...current, value];
     });
+  }
+
+  async function appendResolvedFortuneResult(
+    character: ChatCharacterSpec,
+    fortuneType: FortuneTypeId,
+  ) {
+    const embeddedResult = await resolveFortuneResultMessage(
+      fortuneType,
+      buildResultContext(character),
+      'chat:begin-runtime',
+    );
+
+    if (!embeddedResult) {
+      return;
+    }
+
+    appendMessages(character, [
+      buildAssistantTextMessage('좋아요. 결과를 같은 대화 안에 바로 붙여드릴게요.'),
+      embeddedResult,
+    ]);
+  }
+
+  async function resolveFortuneResultMessage(
+    fortuneType: FortuneTypeId,
+    context: ReturnType<typeof buildResultContext>,
+    surface: string,
+  ) {
+    try {
+      const payload = await fetchEmbeddedEdgeResultPayload(
+        fortuneType,
+        context,
+        {
+          userId: session?.user.id ?? null,
+        },
+      );
+
+      if (payload) {
+        return buildEmbeddedResultMessageFromPayload(payload);
+      }
+    } catch (error) {
+      await captureError(error, { surface }).catch(() => undefined);
+    }
+
+    return buildEmbeddedResultMessage(fortuneType, context);
   }
 
   function handleSurveySubmitSelection() {

@@ -1,11 +1,14 @@
-import type { FortuneTypeId } from '@fortune/product-contracts';
+import type {
+  FortuneTypeId,
+  NormalizedFortuneResult,
+} from '@fortune/product-contracts';
 
 import {
   formatSurveyAnswerLabel,
   getChatSurveyDefinition,
 } from '../chat-survey/registry';
 import type { ChatSurveyStep } from '../chat-survey/types';
-import type { ResultKind } from '../fortune-results/types';
+import type { MetricTileData, ResultKind } from '../fortune-results/types';
 import { buildFallbackEmbeddedResultPayload } from './fixtures';
 import type {
   EmbeddedResultBuildContext,
@@ -23,24 +26,53 @@ const contextLabelByStepId: Partial<Record<string, string>> = {
   field: '분야',
   position: '포지션',
   concern: '고민',
+  partnerName: '상대 이름',
+  partnerBirth: '상대 생일',
+  relationship: '관계',
+  dateType: '만남 성격',
+  expectation: '기대 포인트',
+  meetingTime: '만나는 시간',
+  isFirstBlindDate: '첫 소개팅 여부',
+  primaryGoal: '바라는 방향',
+  breakupTime: '헤어진 시점',
+  relationshipDepth: '관계 깊이',
+  coreReason: '이별 이유',
+  currentState: '현재 상태',
   status: '관계 상태',
   datingStyle: '연애 스타일',
+  targetGender: '상대 성별',
+  userAge: '나이대',
+  idealMbti: '이상형 MBTI',
+  idealType: '이상형 이미지',
   currentCondition: '컨디션',
   stressLevel: '스트레스',
+  dreamContent: '꿈 장면',
+  emotion: '꿈 감정',
   member: '대상',
   curiosity: '궁금한 점',
   eraVibe: '시대감',
   feeling: '감각',
+  dueDateKnown: '예정일 여부',
+  dueDate: '예정일',
+  gender: '성별',
+  lastName: '성',
+  style: '느낌',
+  babyDream: '원하는 이미지',
   wishContent: '소원',
   mbti: 'MBTI',
   bloodType: '혈액형',
   zodiac: '별자리',
   goal: '목표',
+  generationMode: '부적 스타일',
+  situation: '상황',
   interests: '관심',
   interest: '관심 분야',
   workStyle: '작업 스타일',
   challenges: '어려운 점',
   intensity: '강도',
+  examType: '시험 종류',
+  examDate: '시험 날짜',
+  preparation: '준비 상태',
   purpose: '주제',
   questionText: '질문',
   tarotSelection: '선택 카드',
@@ -77,6 +109,64 @@ export function buildEmbeddedResultPayload(
       contextualAction ? [contextualAction] : [],
       fallback.recommendations,
     ),
+  };
+}
+
+export function buildEmbeddedResultPayloadFromNormalizedResult(
+  fortuneType: FortuneTypeId,
+  resultKind: ResultKind,
+  normalizedResult: NormalizedFortuneResult,
+  context: EmbeddedResultBuildContext = {},
+): EmbeddedResultPayload {
+  const fallback = buildFallbackEmbeddedResultPayload(fortuneType, resultKind);
+  const normalizedContext = normalizeSurveyContext(fortuneType, context);
+  const contextualAction = buildContextualAction(fortuneType, normalizedContext);
+  const payload = asRecord(normalizedResult.payload);
+  const summarySource =
+    normalizedResult.summary ??
+    normalizedResult.content ??
+    fallback.summary;
+
+  return {
+    ...fallback,
+    score: normalizedResult.score ?? applyContextualScore(fallback.score, fortuneType, context),
+    summary: buildContextualSummary(
+      fortuneType,
+      trimParagraph(summarySource, 220),
+      normalizedContext,
+    ),
+    contextTags:
+      normalizedContext.tags.length > 0 ? normalizedContext.tags : undefined,
+    metrics: mergeMetricTiles(
+      extractMetricTiles(fortuneType, payload),
+      fallback.metrics,
+    ),
+    highlights: mergeUnique(
+      extractHighlights(fortuneType, payload),
+      mergeUnique(
+        buildContextualHighlights(fortuneType, normalizedContext),
+        fallback.highlights,
+      ),
+    ),
+    recommendations: mergeUnique(
+      extractRecommendations(fortuneType, payload),
+      mergeUnique(
+        contextualAction ? [contextualAction] : [],
+        fallback.recommendations,
+      ),
+    ),
+    warnings: mergeUnique(
+      extractWarnings(fortuneType, payload),
+      fallback.warnings,
+    ),
+    luckyItems: mergeUnique(
+      extractLuckyItems(fortuneType, payload),
+      fallback.luckyItems,
+    ),
+    specialTip:
+      extractSpecialTip(fortuneType, payload) ??
+      normalizedResult.summary ??
+      fallback.specialTip,
   };
 }
 
@@ -468,4 +558,331 @@ function hashString(value: string) {
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
+}
+
+type UnknownRecord = Record<string, unknown>;
+
+function mergeMetricTiles(
+  preferred: MetricTileData[] | undefined,
+  fallback: MetricTileData[] | undefined,
+) {
+  const seen = new Set<string>();
+  const merged: MetricTileData[] = [];
+
+  for (const item of [...(preferred ?? []), ...(fallback ?? [])]) {
+    const key = `${item.label}:${item.value}:${item.note ?? ''}`.trim();
+
+    if (!key || seen.has(key)) {
+      continue;
+    }
+
+    seen.add(key);
+    merged.push(item);
+  }
+
+  return merged.length > 0 ? merged.slice(0, 4) : undefined;
+}
+
+function extractMetricTiles(
+  fortuneType: FortuneTypeId,
+  payload: UnknownRecord,
+): MetricTileData[] | undefined {
+  switch (fortuneType) {
+    case 'compatibility':
+      return mergeMetricTiles(
+        [
+          toMetricTile('궁합 점수', payload.overall_compatibility ?? payload.overall_score),
+          toMetricTile('궁합 등급', payload.compatibility_grade),
+        ].filter(Boolean) as MetricTileData[],
+        mapRecordToMetricTiles(asRecord(payload.personality_match)),
+      );
+    case 'blind-date':
+      return mergeMetricTiles(
+        [
+          toMetricTile('성공 확률', payload.successRate),
+          toMetricTile('분위기 점수', payload.score),
+        ].filter(Boolean) as MetricTileData[],
+        undefined,
+      );
+    case 'exam':
+      return mergeMetricTiles(
+        mapRecordToMetricTiles(asRecord(payload.examStats)),
+        [
+          toMetricTile('합격 감각', payload.passGrade),
+          toMetricTile('집중 흐름', payload.score),
+        ].filter(Boolean) as MetricTileData[],
+      );
+    case 'biorhythm':
+      return [
+        toMetricTile('신체 리듬', payload.physical),
+        toMetricTile('감정 리듬', payload.emotional),
+      ].filter(Boolean) as MetricTileData[];
+    case 'health':
+      return mergeMetricTiles(
+        mapRecordToMetricTiles(asRecord(payload.element_balance)),
+        [toMetricTile('건강 점수', payload.healthScore ?? payload.score)].filter(
+          Boolean,
+        ) as MetricTileData[],
+      );
+    case 'game-enhance':
+      return mergeMetricTiles(
+        [
+          toMetricTile('행운 등급', payload.lucky_grade),
+          toMetricTile('강화 점수', payload.score),
+        ].filter(Boolean) as MetricTileData[],
+        mapRecordToMetricTiles(asRecord(payload.enhance_stats)),
+      );
+    case 'ootd-evaluation':
+      return [
+        toMetricTile('전체 등급', payload.overallGrade),
+        toMetricTile('TPO 점수', payload.tpoScore),
+      ].filter(Boolean) as MetricTileData[];
+    case 'wealth':
+      return [
+        toMetricTile('재물 잠재력', payload.wealthPotential),
+        toMetricTile('전체 점수', payload.overallScore ?? payload.score),
+      ].filter(Boolean) as MetricTileData[];
+    default:
+      return mergeMetricTiles(
+        mapRecordToMetricTiles(asRecord(payload.fortuneScores)),
+        mapRecordToMetricTiles(
+          asRecord(
+            payload.examStats ??
+              payload.enhance_stats ??
+              payload.personality_match ??
+              payload.element_balance,
+          ),
+        ),
+      );
+  }
+}
+
+function extractHighlights(
+  fortuneType: FortuneTypeId,
+  payload: UnknownRecord,
+) {
+  switch (fortuneType) {
+    case 'compatibility':
+      return collectTextItems(
+        payload.personality_match,
+        payload.communication_match,
+        payload.love_match,
+      );
+    case 'blind-date':
+      return collectTextItems(payload.successPrediction, payload.conversationTopics);
+    case 'avoid-people':
+      return collectTextItems(payload.cautionPeople, payload.cautionObjects);
+    case 'yearly-encounter':
+      return collectTextItems(payload.appearanceHashtags, payload.encounterSpotTitle);
+    case 'talent':
+      return collectTextItems(payload.talentProfile, payload.strengthAreas);
+    case 'exercise':
+      return collectTextItems(payload.recommendedExercise, payload.weaknesses);
+    case 'tarot':
+      return collectTextItems(payload.cardInterpretations, payload.storyTitle);
+    case 'past-life':
+      return collectTextItems(payload.story, payload.chapters);
+    default:
+      return collectTextItems(
+        payload.highlights,
+        payload.keyPoints,
+        payload.sections,
+      );
+  }
+}
+
+function extractRecommendations(
+  fortuneType: FortuneTypeId,
+  payload: UnknownRecord,
+) {
+  switch (fortuneType) {
+    case 'exam':
+      return collectTextItems(payload.csatFocus, payload.csatChecklist, payload.dday_advice);
+    case 'naming':
+      return collectTextItems(payload.namingTips, payload.recommendedNames);
+    case 'lucky-items':
+      return collectTextItems(payload.fashion, payload.color);
+    case 'biorhythm':
+      return collectTextItems(payload.greeting, payload.status_message);
+    case 'dream':
+      return collectTextItems(payload.todayGuidance, payload.actionAdvice, payload.analysis);
+    case 'talisman':
+      return collectTextItems(payload.recommendations);
+    case 'family':
+      return collectTextItems(
+        payload.communicationAdvice,
+        payload.parentingAdvice,
+        payload.educationTips,
+        payload.relationshipGuide,
+        payload.recommendations,
+      );
+    default:
+      return collectTextItems(
+        payload.advice,
+        payload.recommendations,
+        payload.guidance,
+        payload.goalAdvice,
+        payload.seasonal_advice,
+        payload.todayRoutine,
+      );
+  }
+}
+
+function extractWarnings(
+  fortuneType: FortuneTypeId,
+  payload: UnknownRecord,
+) {
+  switch (fortuneType) {
+    case 'avoid-people':
+      return collectTextItems(
+        payload.cautionTimes,
+        payload.cautionActivities,
+        payload.cautionColors,
+        payload.cautionNumbers,
+      );
+    case 'health':
+      return collectTextItems(payload.weak_organs);
+    case 'blind-date':
+      return collectTextItems(payload.dontsList);
+    case 'yearly-encounter':
+      return collectTextItems(payload.fateSignalWarnings, payload.fateSignalRisk);
+    default:
+      return collectTextItems(payload.warnings, payload.cautions, payload.dontsList);
+  }
+}
+
+function extractLuckyItems(
+  fortuneType: FortuneTypeId,
+  payload: UnknownRecord,
+) {
+  switch (fortuneType) {
+    case 'daily':
+      return collectTextItems(payload.lucky_items, payload.lucky_numbers);
+    case 'lucky-items':
+      return collectTextItems(payload.color, payload.fashion, payload.numbers);
+    case 'yearly-encounter':
+      return collectTextItems(payload.encounterSpotTitle);
+    default:
+      return collectTextItems(payload.luckyItems, payload.lucky_items, payload.color);
+  }
+}
+
+function extractSpecialTip(
+  fortuneType: FortuneTypeId,
+  payload: UnknownRecord,
+) {
+  switch (fortuneType) {
+    case 'daily':
+      return firstText(payload.special_tip);
+    case 'exam':
+      return firstText(payload.statusMessage, payload.positive_message);
+    case 'yearly-encounter':
+      return firstText(payload.encounterSpotStory);
+    case 'decision':
+      return firstText(payload.recommendation);
+    default:
+      return firstText(
+        payload.specialTip,
+        payload.special_tip,
+        payload.main_message,
+        payload.mainMessage,
+        payload.greeting,
+      );
+  }
+}
+
+function collectTextItems(...values: unknown[]) {
+  return values
+    .flatMap((value) => toTextItems(value))
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, 5);
+}
+
+function toTextItems(value: unknown): string[] {
+  if (value == null) {
+    return [];
+  }
+
+  if (typeof value === 'string') {
+    return value.trim() ? [trimParagraph(value, 140)] : [];
+  }
+
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return [String(value)];
+  }
+
+  if (Array.isArray(value)) {
+    return value.flatMap((item) => toTextItems(item));
+  }
+
+  const record = asRecord(value);
+
+  if (record.title || record.content || record.description || record.text) {
+    return [
+      [firstText(record.title), firstText(record.content, record.description, record.text)]
+        .filter(Boolean)
+        .join(': '),
+    ].filter(Boolean) as string[];
+  }
+
+  return Object.values(record).flatMap((item) => toTextItems(item));
+}
+
+function mapRecordToMetricTiles(record: UnknownRecord): MetricTileData[] | undefined {
+  const entries = Object.entries(record)
+    .map(([key, value]) => toMetricTile(formatMetricLabel(key), value))
+    .filter(Boolean) as MetricTileData[];
+
+  return entries.length > 0 ? entries.slice(0, 4) : undefined;
+}
+
+function toMetricTile(label: string, value: unknown): MetricTileData | null {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return {
+      label,
+      value: value > 0 && value <= 100 ? `${Math.trunc(value)}%` : String(Math.trunc(value)),
+    };
+  }
+
+  if (typeof value === 'string' && value.trim()) {
+    return {
+      label,
+      value: trimValue(value.trim(), 18),
+    };
+  }
+
+  return null;
+}
+
+function formatMetricLabel(key: string) {
+  return key
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase())
+    .replace(/\bTpo\b/g, 'TPO');
+}
+
+function trimParagraph(value: string, limit: number) {
+  const normalized = value.replace(/\s+/g, ' ').trim();
+  return normalized.length > limit
+    ? `${normalized.slice(0, limit - 1)}…`
+    : normalized;
+}
+
+function firstText(...values: unknown[]) {
+  for (const value of values) {
+    if (typeof value === 'string' && value.trim()) {
+      return trimParagraph(value, 140);
+    }
+  }
+
+  return null;
+}
+
+function asRecord(value: unknown): UnknownRecord {
+  if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+    return value as UnknownRecord;
+  }
+
+  return {};
 }
