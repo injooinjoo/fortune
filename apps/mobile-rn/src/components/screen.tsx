@@ -1,4 +1,4 @@
-import type { PropsWithChildren, ReactNode } from 'react';
+import type { PropsWithChildren, ReactNode, RefObject } from 'react';
 
 import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,6 +9,8 @@ interface ScreenProps extends PropsWithChildren {
   header?: ReactNode;
   footer?: ReactNode;
   keyboardAvoiding?: boolean;
+  scrollViewRef?: RefObject<ScrollView | null>;
+  onScrollContentSizeChange?: (width: number, height: number) => void;
 }
 
 export function Screen({
@@ -16,6 +18,8 @@ export function Screen({
   header,
   footer,
   keyboardAvoiding = false,
+  scrollViewRef,
+  onScrollContentSizeChange,
 }: ScreenProps) {
   const content = (
     <View style={{ flex: 1 }}>
@@ -43,6 +47,8 @@ export function Screen({
           gap: fortuneTheme.spacing.md,
         }}
         keyboardShouldPersistTaps="handled"
+        onContentSizeChange={onScrollContentSizeChange}
+        ref={scrollViewRef}
         style={{ flex: 1 }}
       >
         <View style={{ gap: fortuneTheme.spacing.md }}>{children}</View>

@@ -415,16 +415,18 @@ function ChatThreadMessage({
   message: ChatShellMessage;
 }) {
   const isUser = message.sender === 'user';
+  const isEmbeddedResult = message.kind === 'embedded-result';
+  const showAssistantAvatar = !isUser && !isEmbeddedResult;
 
   return (
     <View
       style={{
         alignItems: isUser ? 'flex-end' : 'flex-start',
         flexDirection: isUser ? 'row-reverse' : 'row',
-        gap: 8,
+        gap: showAssistantAvatar ? 8 : 0,
       }}
     >
-      {isUser ? null : (
+      {showAssistantAvatar ? (
         <View
           style={{
             alignItems: 'center',
@@ -438,8 +440,14 @@ function ChatThreadMessage({
         >
           <AppText variant="caption">{character.name.slice(0, 1)}</AppText>
         </View>
-      )}
-      <View style={{ flex: isUser ? 0 : 1, maxWidth: isUser ? '84%' : '100%' }}>
+      ) : null}
+      <View
+        style={{
+          flex: isUser || isEmbeddedResult ? 0 : 1,
+          maxWidth: isUser ? '84%' : '100%',
+          width: isEmbeddedResult ? '100%' : undefined,
+        }}
+      >
         {message.kind === 'embedded-result' ? (
           <EmbeddedResultMessage message={message} />
         ) : (
@@ -796,12 +804,26 @@ export function ActiveChatComposer({
   draft,
   onDraftChange,
   onSend,
+  quickActions,
+  trayOpen,
+  onToggleTray,
+  onPickAction,
+  auxiliaryAction,
 }: {
   draft: string;
   onDraftChange: (value: string) => void;
   onSend: () => void;
+  quickActions: ChatShellAction[];
+  trayOpen: boolean;
+  onToggleTray: () => void;
+  onPickAction: (fortuneType: FortuneTypeId) => void;
+  auxiliaryAction?: {
+    label: string;
+    onPress: () => void;
+  };
 }) {
   const composerHasDraft = draft.trim().length > 0;
+  const trayActions = quickActions.slice(0, 12);
 
   return (
     <View
@@ -814,6 +836,70 @@ export function ActiveChatComposer({
         paddingVertical: 8,
       }}
     >
+      {trayOpen ? (
+        <View style={{ gap: 8, paddingBottom: 10 }}>
+          <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+            바로 이어갈 액션
+          </AppText>
+          <View
+            style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              gap: 8,
+            }}
+          >
+            {trayActions.map((action, actionIndex) => (
+              <Pressable
+                key={action.id}
+                accessibilityRole="button"
+                onPress={() => onPickAction(action.fortuneType)}
+                style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
+              >
+                <View
+                  style={{
+                    backgroundColor:
+                      actionIndex % 4 === 0
+                        ? 'rgba(232, 236, 255, 0.96)'
+                        : actionIndex % 4 === 1
+                          ? 'rgba(205, 244, 213, 0.96)'
+                          : actionIndex % 4 === 2
+                            ? 'rgba(255, 236, 213, 0.96)'
+                            : 'rgba(236, 221, 255, 0.96)',
+                    borderRadius: 999,
+                    paddingHorizontal: 14,
+                    paddingVertical: 8,
+                  }}
+                >
+                  <AppText
+                    variant="labelLarge"
+                    color={fortuneTheme.colors.background}
+                  >
+                    {action.label}
+                  </AppText>
+                </View>
+              </Pressable>
+            ))}
+            {!trayActions.length && auxiliaryAction ? (
+              <Pressable
+                accessibilityRole="button"
+                onPress={auxiliaryAction.onPress}
+                style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
+              >
+                <View
+                  style={{
+                    backgroundColor: fortuneTheme.colors.backgroundTertiary,
+                    borderRadius: 999,
+                    paddingHorizontal: 14,
+                    paddingVertical: 8,
+                  }}
+                >
+                  <AppText variant="labelLarge">{auxiliaryAction.label}</AppText>
+                </View>
+              </Pressable>
+            ) : null}
+          </View>
+        </View>
+      ) : null}
       <View
         style={{
           alignItems: 'center',
@@ -821,41 +907,50 @@ export function ActiveChatComposer({
           gap: fortuneTheme.spacing.sm,
         }}
       >
-        <View
-          style={{
-            alignItems: 'center',
-            backgroundColor: fortuneTheme.colors.surfaceElevated,
-            borderRadius: 16,
-            height: 32,
-            justifyContent: 'center',
-            width: 32,
-          }}
+        <Pressable
+          accessibilityLabel="composer plus actions"
+          accessibilityRole="button"
+          onPress={onToggleTray}
+          style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
         >
           <View
             style={{
               alignItems: 'center',
+              backgroundColor: trayOpen
+                ? fortuneTheme.colors.backgroundTertiary
+                : fortuneTheme.colors.surfaceElevated,
+              borderRadius: 16,
+              height: 32,
               justifyContent: 'center',
+              width: 32,
             }}
           >
             <View
               style={{
-                backgroundColor: fortuneTheme.colors.textSecondary,
-                borderRadius: 999,
-                height: 2,
-                position: 'absolute',
-                width: 11,
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
-            />
-            <View
-              style={{
-                backgroundColor: fortuneTheme.colors.textSecondary,
-                borderRadius: 999,
-                height: 11,
-                width: 2,
-              }}
-            />
+            >
+              <View
+                style={{
+                  backgroundColor: fortuneTheme.colors.textSecondary,
+                  borderRadius: 999,
+                  height: 2,
+                  position: 'absolute',
+                  width: 11,
+                }}
+              />
+              <View
+                style={{
+                  backgroundColor: fortuneTheme.colors.textSecondary,
+                  borderRadius: 999,
+                  height: 11,
+                  width: 2,
+                }}
+              />
+            </View>
           </View>
-        </View>
+        </Pressable>
         <View style={{ flex: 1 }}>
           <TextInput
             accessibilityLabel="chat composer"
@@ -875,6 +970,9 @@ export function ActiveChatComposer({
           />
         </View>
         <Pressable
+          accessibilityLabel={
+            composerHasDraft ? 'send message' : 'run primary quick action'
+          }
           accessibilityRole="button"
           onPress={onSend}
           style={{
@@ -1112,7 +1210,10 @@ export function ActiveCharacterChatSurface({
 }) {
   const isFortuneCharacter = isFortuneChatCharacter(character);
   const visibleMessages = messages;
-  const promptActions = actions.slice(0, 4);
+  const promptActions = actions;
+  const hasEmbeddedResult = visibleMessages.some(
+    (message) => message.kind === 'embedded-result',
+  );
   const previewMessages = visibleMessages.some((message) => message.sender === 'user')
     ? visibleMessages
     : [
@@ -1156,45 +1257,50 @@ export function ActiveCharacterChatSurface({
         />
       ) : null}
 
-      <View
-        style={{
-          alignItems: 'center',
-          gap: fortuneTheme.spacing.xs,
-          paddingTop: 6,
-        }}
-      >
-        <CharacterAvatar name={character.name} size={72} />
-        <View style={{ alignItems: 'center', gap: 4 }}>
-          <AppText variant="heading4">{character.name}</AppText>
-          <AppText
-            variant="bodySmall"
-            color={fortuneTheme.colors.textSecondary}
-            style={{ maxWidth: 230, textAlign: 'center' }}
-          >
-            {character.shortDescription}
-          </AppText>
-        </View>
-        <Pressable
-          accessibilityRole="button"
-          onPress={onOpenProfile}
-          style={({ pressed }) => ({ opacity: pressed ? 0.82 : 1 })}
+      {!hasEmbeddedResult ? (
+        <View
+          style={{
+            alignItems: 'center',
+            gap: fortuneTheme.spacing.xs,
+            paddingTop: 6,
+          }}
         >
-          <View
-            style={{
-              backgroundColor: fortuneTheme.colors.surfaceSecondary,
-              borderColor: fortuneTheme.colors.border,
-              borderRadius: 999,
-              borderWidth: 1,
-              paddingHorizontal: 12,
-              paddingVertical: 6,
-            }}
-          >
-            <AppText variant="caption" color={fortuneTheme.colors.textSecondary}>
-              프로필 보기
+          <CharacterAvatar name={character.name} size={72} />
+          <View style={{ alignItems: 'center', gap: 4 }}>
+            <AppText variant="heading4">{character.name}</AppText>
+            <AppText
+              variant="bodySmall"
+              color={fortuneTheme.colors.textSecondary}
+              style={{ maxWidth: 230, textAlign: 'center' }}
+            >
+              {character.shortDescription}
             </AppText>
           </View>
-        </Pressable>
-      </View>
+          <Pressable
+            accessibilityRole="button"
+            onPress={onOpenProfile}
+            style={({ pressed }) => ({ opacity: pressed ? 0.82 : 1 })}
+          >
+            <View
+              style={{
+                backgroundColor: fortuneTheme.colors.surfaceSecondary,
+                borderColor: fortuneTheme.colors.border,
+                borderRadius: 999,
+                borderWidth: 1,
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+              }}
+            >
+              <AppText
+                variant="caption"
+                color={fortuneTheme.colors.textSecondary}
+              >
+                프로필 보기
+              </AppText>
+            </View>
+          </Pressable>
+        </View>
+      ) : null}
 
       <View
         style={{
@@ -1225,7 +1331,7 @@ export function ActiveCharacterChatSurface({
         <View
           style={{
             gap: 8,
-            paddingLeft: 32,
+            paddingLeft: hasEmbeddedResult ? 0 : 32,
           }}
         >
           <View
@@ -1245,11 +1351,11 @@ export function ActiveCharacterChatSurface({
                 <View
                   style={{
                     backgroundColor:
-                      actionIndex === 0
+                      actionIndex % 4 === 0
                         ? 'rgba(232, 236, 255, 0.96)'
-                        : actionIndex === 1
+                        : actionIndex % 4 === 1
                           ? 'rgba(205, 244, 213, 0.96)'
-                          : actionIndex === 2
+                          : actionIndex % 4 === 2
                             ? 'rgba(255, 236, 213, 0.96)'
                             : 'rgba(236, 221, 255, 0.96)',
                     borderRadius: 999,

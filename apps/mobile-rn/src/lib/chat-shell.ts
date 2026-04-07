@@ -147,7 +147,7 @@ export function buildSuggestedActions(
     return [];
   }
 
-  return character.specialties.slice(0, 4).map((fortuneType) => ({
+  return character.specialties.map((fortuneType) => ({
     id: `${character.id}:${fortuneType}`,
     fortuneType,
     label: formatFortuneTypeLabel(fortuneType),

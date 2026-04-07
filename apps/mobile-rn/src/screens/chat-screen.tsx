@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { type FortuneTypeId } from '@fortune/product-contracts';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
@@ -100,6 +100,8 @@ export function ChatScreen() {
     null,
   );
   const [lastAutoLaunchKey, setLastAutoLaunchKey] = useState<string | null>(null);
+  const [composerTrayOpen, setComposerTrayOpen] = useState(false);
+  const chatScrollRef = useRef<ScrollView | null>(null);
   const [activeTab, setActiveTab] = useState<ChatCharacterTab>(() => {
     if (directCharacter) {
       return directCharacter.kind;
@@ -223,10 +225,20 @@ export function ChatScreen() {
     ? getCurrentSurveyStep(activeSurvey)
     : null;
 
+  function scrollChatToBottom(animated = true) {
+    requestAnimationFrame(() => {
+      chatScrollRef.current?.scrollToEnd({ animated });
+    });
+  }
+
   useEffect(() => {
     setSurveyDraft('');
     setSurveySelections([]);
   }, [selectedCharacter.id, currentSurveyStep?.step.id]);
+
+  useEffect(() => {
+    setComposerTrayOpen(false);
+  }, [selectedCharacter.id, currentSurveyStep?.step.id, surfaceMode]);
 
   const selectedCharacterActions = useMemo(
     () =>
@@ -263,6 +275,20 @@ export function ChatScreen() {
       ? firstRunActionPairs[0]?.character
       : firstRunCharacters[0]) ??
     selectedCharacter;
+
+  useEffect(() => {
+    if (gate !== 'ready' || surfaceMode !== 'chat') {
+      return;
+    }
+
+    scrollChatToBottom(selectedThread.length > 2);
+  }, [
+    gate,
+    surfaceMode,
+    selectedCharacter.id,
+    selectedThread.length,
+    currentSurveyStep?.step.id,
+  ]);
   useEffect(() => {
     if (launchOrigin !== 'deeplink' || !activeFortuneType) {
       return;
@@ -434,6 +460,7 @@ export function ChatScreen() {
     setActiveFortuneType(fortuneType);
     setLaunchOrigin('user');
     setSurfaceMode('chat');
+    setComposerTrayOpen(false);
     appendMessages(selectedCharacter, [
       buildUserMessage(action.prompt),
       buildAssistantTextMessage(action.reply),
@@ -481,6 +508,27 @@ export function ChatScreen() {
     const trimmed = draft.trim();
 
     if (!trimmed) {
+      if (selectedCharacterActions.length > 0) {
+        handleActionPress(selectedCharacterActions[0].fortuneType);
+        return;
+      }
+
+      const followUpText = '이어서 이야기해볼래요.';
+
+      appendMessages(selectedCharacter, [
+        buildUserMessage(followUpText),
+        buildDraftReply(selectedCharacter, followUpText),
+      ]);
+      setSurfaceMode('chat');
+      recordChatIntent({
+        characterId: selectedCharacter.id,
+        fortuneType: activeFortuneType,
+        incrementMessages: true,
+      }).catch((error) => {
+        captureError(error, { surface: 'chat:record-empty-draft-fallback' }).catch(
+          () => undefined,
+        );
+      });
       return;
     }
 
@@ -488,6 +536,7 @@ export function ChatScreen() {
       buildUserMessage(trimmed),
       buildDraftReply(selectedCharacter, trimmed),
     ]);
+    setComposerTrayOpen(false);
     setSurfaceMode('chat');
     recordChatIntent({
       characterId: selectedCharacter.id,
@@ -668,6 +717,12 @@ export function ChatScreen() {
 
   return (
     <Screen
+      onScrollContentSizeChange={() => {
+        if (gate === 'ready' && surfaceMode === 'chat') {
+          scrollChatToBottom(true);
+        }
+      }}
+      scrollViewRef={chatScrollRef}
       header={
         gate === 'ready' && surfaceMode === 'chat' ? (
           <ActiveCharacterChatHeader
@@ -700,7 +755,15 @@ export function ChatScreen() {
             <ActiveChatComposer
               draft={draft}
               onDraftChange={setDraft}
+              onPickAction={handleActionPress}
               onSend={handleSendDraft}
+              onToggleTray={() => setComposerTrayOpen((current) => !current)}
+              quickActions={selectedCharacterActions}
+              trayOpen={composerTrayOpen}
+              auxiliaryAction={{
+                label: '프로필 보기',
+                onPress: () => router.push(`/character/${selectedCharacter.id}` as Href),
+              }}
             />
           )
         ) : gate === 'ready' &&
