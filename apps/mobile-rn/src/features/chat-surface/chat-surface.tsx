@@ -266,7 +266,7 @@ function EmbeddedResultMessage({
 }) {
   return (
     <View style={{ width: '100%' }}>
-      <EmbeddedResultCard resultKind={message.resultKind} />
+      <EmbeddedResultCard message={message} />
     </View>
   );
 }

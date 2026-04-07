@@ -1,5 +1,7 @@
 import { type FortuneTypeId } from '@fortune/product-contracts';
 
+import { buildEmbeddedResultPayload } from '../features/chat-results/fixtures';
+import { type EmbeddedResultPayload } from '../features/chat-results/types';
 import { resolveResultKindFromFortuneType } from '../features/fortune-results/mapping';
 import { type ResultKind } from '../features/fortune-results/types';
 import { type ChatCharacterSpec, isFortuneChatCharacter } from './chat-characters';
@@ -15,9 +17,11 @@ export interface ChatShellEmbeddedResultMessage {
   id: string;
   kind: 'embedded-result';
   sender: 'assistant';
+  embeddedWidgetType: 'fortune_result_card';
   fortuneType: FortuneTypeId;
   resultKind: ResultKind;
   title: string;
+  payload: EmbeddedResultPayload;
 }
 
 export type ChatShellMessage =
@@ -240,9 +244,11 @@ export function buildEmbeddedResultMessage(
     id: createMessageId('result'),
     kind: 'embedded-result',
     sender: 'assistant',
+    embeddedWidgetType: 'fortune_result_card',
     fortuneType,
     resultKind,
     title: formatFortuneTypeLabel(fortuneType),
+    payload: buildEmbeddedResultPayload(fortuneType, resultKind),
   };
 }
 

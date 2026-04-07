@@ -51,6 +51,11 @@
   - same chat 안에서 결과 카드 바로 삽입
 - `/result/[resultKind]`는 debug/preview route로만 남긴다.
 
+## Continuation Slice
+- embedded result message는 더 이상 `resultKind`만 들고 있지 않고, compact chat card를 그릴 수 있는 payload를 함께 싣는 방향으로 확장한다.
+- `/chat` 안에서는 standalone result page를 그대로 재사용하지 않고, 공통 primitive 기반 compact card grammar로 먼저 렌더한다.
+- full page registry는 debug harness로 유지하되, production chat flow는 payload-first renderer로 수렴시킨다.
+
 ## Files To Change
 - `apps/mobile-rn/src/screens/chat-screen.tsx`
 - `apps/mobile-rn/src/features/chat-surface/chat-surface.tsx`
