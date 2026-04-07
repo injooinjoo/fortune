@@ -758,6 +758,7 @@ export function ChatScreen() {
             lastFortuneType={mobileAppState.chat.lastFortuneType}
             onChangeTab={setActiveTab}
             onCreateFriend={handleCreateFriend}
+            onOpenProfile={() => router.push('/profile')}
             onOpenRecentResult={handleOpenRecentResult}
             onPickAction={handleActionPress}
             onSelectCharacter={handleCharacterSelect}

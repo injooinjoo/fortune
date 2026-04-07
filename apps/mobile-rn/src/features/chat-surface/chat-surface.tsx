@@ -50,33 +50,12 @@ function CharacterAvatar({
   );
 }
 
-function HeaderDots() {
-  return (
-    <View style={{ flexDirection: 'row', gap: fortuneTheme.spacing.xs }}>
-      <View
-        style={{
-          backgroundColor: fortuneTheme.colors.surfaceSecondary,
-          borderRadius: 999,
-          height: 18,
-          width: 18,
-        }}
-      />
-      <View
-        style={{
-          backgroundColor: fortuneTheme.colors.surfaceSecondary,
-          borderRadius: 999,
-          height: 18,
-          width: 18,
-        }}
-      />
-    </View>
-  );
-}
-
 function HeaderActionButton({
+  kind,
   label,
   onPress,
 }: {
+  kind: 'plus' | 'profile';
   label: string;
   onPress: () => void;
 }) {
@@ -97,30 +76,61 @@ function HeaderActionButton({
         width: 36,
       })}
     >
-      <View
-        style={{
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
+      {kind === 'plus' ? (
         <View
           style={{
-            backgroundColor: fortuneTheme.colors.textPrimary,
-            borderRadius: 999,
-            height: 2,
-            position: 'absolute',
-            width: 12,
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
-        />
+        >
+          <View
+            style={{
+              backgroundColor: fortuneTheme.colors.textPrimary,
+              borderRadius: 999,
+              height: 2,
+              position: 'absolute',
+              width: 12,
+            }}
+          />
+          <View
+            style={{
+              backgroundColor: fortuneTheme.colors.textPrimary,
+              borderRadius: 999,
+              height: 12,
+              width: 2,
+            }}
+          />
+        </View>
+      ) : (
         <View
           style={{
-            backgroundColor: fortuneTheme.colors.textPrimary,
-            borderRadius: 999,
-            height: 12,
-            width: 2,
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
-        />
-      </View>
+        >
+          <View
+            style={{
+              borderColor: fortuneTheme.colors.textPrimary,
+              borderRadius: 999,
+              borderWidth: 1.5,
+              height: 10,
+              marginBottom: 1,
+              width: 10,
+            }}
+          />
+          <View
+            style={{
+              borderColor: fortuneTheme.colors.textPrimary,
+              borderRadius: 999,
+              borderWidth: 1.5,
+              borderTopWidth: 1.5,
+              height: 6,
+              marginTop: 1,
+              width: 16,
+            }}
+          />
+        </View>
+      )}
     </Pressable>
   );
 }
@@ -541,6 +551,7 @@ export function ChatFirstRunSurface({
   selectedCharacterId,
   onChangeTab,
   onCreateFriend,
+  onOpenProfile,
   onOpenRecentResult,
   onSelectCharacter,
   onPickAction,
@@ -553,6 +564,7 @@ export function ChatFirstRunSurface({
   selectedCharacterId: string | null;
   onChangeTab: (tab: ChatCharacterTab) => void;
   onCreateFriend: () => void;
+  onOpenProfile: () => void;
   onOpenRecentResult: (fortuneType: FortuneTypeId) => void;
   onSelectCharacter: (characterId: string) => void;
   onPickAction: (fortuneType: FortuneTypeId) => void;
@@ -588,11 +600,20 @@ export function ChatFirstRunSurface({
           <AppText variant="displaySmall">메시지</AppText>
           <SegmentedPills activeTab={activeTab} onChangeTab={onChangeTab} />
         </View>
-        {activeTab === 'story' ? (
-          <HeaderActionButton label="새 대화 시작" onPress={onCreateFriend} />
-        ) : (
-          <HeaderDots />
-        )}
+        <View style={{ flexDirection: 'row', gap: fortuneTheme.spacing.xs }}>
+          {activeTab === 'story' ? (
+            <HeaderActionButton
+              kind="plus"
+              label="새 대화 시작"
+              onPress={onCreateFriend}
+            />
+          ) : null}
+          <HeaderActionButton
+            kind="profile"
+            label="프로필 열기"
+            onPress={onOpenProfile}
+          />
+        </View>
       </View>
 
       {activeTab === 'fortune' ? (
