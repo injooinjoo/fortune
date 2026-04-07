@@ -1,7 +1,10 @@
 import { type FortuneTypeId } from '@fortune/product-contracts';
 
-import { buildEmbeddedResultPayload } from '../features/chat-results/fixtures';
-import { type EmbeddedResultPayload } from '../features/chat-results/types';
+import { buildEmbeddedResultPayload } from '../features/chat-results/adapter';
+import {
+  type EmbeddedResultBuildContext,
+  type EmbeddedResultPayload,
+} from '../features/chat-results/types';
 import { resolveResultKindFromFortuneType } from '../features/fortune-results/mapping';
 import { type ResultKind } from '../features/fortune-results/types';
 import { type ChatCharacterSpec, isFortuneChatCharacter } from './chat-characters';
@@ -233,6 +236,7 @@ export function buildSystemTextMessage(text: string): ChatShellMessage {
 
 export function buildEmbeddedResultMessage(
   fortuneType: FortuneTypeId,
+  context: EmbeddedResultBuildContext = {},
 ): ChatShellMessage | null {
   const resultKind = resolveResultKindFromFortuneType(fortuneType);
 
@@ -248,7 +252,22 @@ export function buildEmbeddedResultMessage(
     fortuneType,
     resultKind,
     title: formatFortuneTypeLabel(fortuneType),
-    payload: buildEmbeddedResultPayload(fortuneType, resultKind),
+    payload: buildEmbeddedResultPayload(fortuneType, resultKind, context),
+  };
+}
+
+export function buildEmbeddedResultMessageFromPayload(
+  payload: EmbeddedResultPayload,
+): ChatShellEmbeddedResultMessage {
+  return {
+    id: createMessageId('result'),
+    kind: 'embedded-result',
+    sender: 'assistant',
+    embeddedWidgetType: 'fortune_result_card',
+    fortuneType: payload.fortuneType,
+    resultKind: payload.resultKind,
+    title: formatFortuneTypeLabel(payload.fortuneType),
+    payload,
   };
 }
 

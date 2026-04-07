@@ -71,6 +71,12 @@ export function EmbeddedResultCard({
             {payload.summary}
           </AppText>
 
+          {payload.contextTags?.length ? (
+            <SectionCard title="입력된 맥락">
+              <KeywordPills keywords={payload.contextTags} />
+            </SectionCard>
+          ) : null}
+
           {payload.metrics?.length ? <MetricGrid items={payload.metrics} /> : null}
 
           {payload.highlights?.length ? (

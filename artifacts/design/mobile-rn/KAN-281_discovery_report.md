@@ -56,6 +56,17 @@
 - `/chat` 안에서는 standalone result page를 그대로 재사용하지 않고, 공통 primitive 기반 compact card grammar로 먼저 렌더한다.
 - full page registry는 debug harness로 유지하되, production chat flow는 payload-first renderer로 수렴시킨다.
 
+## Context Adapter Slice
+- Flutter `componentData`의 공통 최소키는 `fortuneType`, `title`, `score`, `summary`, `content`, `recommendations`, `warnings`, `specialTip`, `highlights`, `luckyItems`였다.
+- RN도 같은 최소키를 유지하되, 이번 패스에서는 실제 서버 payload를 바로 붙이지 않고 `survey answers + local profile context`로 summary/highlights/recommendations/score를 가변 생성하는 adapter를 둔다.
+- 재사용 결정:
+  - 유지: `apps/mobile-rn/src/features/chat-results/fixtures.ts`의 base seed
+  - 신규: `apps/mobile-rn/src/features/chat-results/adapter.ts`에서 context-aware payload 생성
+  - 수정: `apps/mobile-rn/src/lib/chat-shell.ts`, `apps/mobile-rn/src/screens/chat-screen.tsx`, `apps/mobile-rn/src/features/chat-results/embedded-result-card.tsx`
+- 중복 방지:
+  - full page `fortune-results/*`를 다시 chat 안에 mount하지 않는다.
+  - reopen은 새 payload를 무조건 재생성하지 않고, thread 안의 기존 embedded payload를 우선 재사용한다.
+
 ## Files To Change
 - `apps/mobile-rn/src/screens/chat-screen.tsx`
 - `apps/mobile-rn/src/features/chat-surface/chat-surface.tsx`

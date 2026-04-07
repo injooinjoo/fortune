@@ -113,6 +113,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
   bool _isPetProfileManagementMode = false;
   String? _petProfileDeletingId;
   bool _isFortuneChipBarExpanded = false;
+  bool _isComposerRecording = false;
   String? _activeThemeFortuneType;
   PendingChatImagePickerTarget? _pendingSurveyImageTarget;
   ImageSource? _pendingSurveyImageSource;
@@ -2854,6 +2855,34 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+              child: Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: colors.surfaceSecondary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.add_photo_alternate_outlined,
+                      color: colors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      '사진을 추가할 방법을 선택하세요',
+                      style: context.bodyLarge.copyWith(
+                        color: colors.textPrimary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             ListTile(
               leading: Icon(
                 Icons.camera_alt_outlined,
@@ -2939,25 +2968,30 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
         children: [
           Row(
             children: [
-              // 사진 첨부 버튼
-              GestureDetector(
-                onTap: () {
-                  unawaited(_showImagePickerSheet());
-                },
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: colors.surfaceSecondary,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: colors.border.withValues(alpha: 0.45),
+              AnimatedOpacity(
+                duration: DSAnimation.fast,
+                opacity: _isComposerRecording ? 0.45 : 1,
+                child: GestureDetector(
+                  onTap: _isComposerRecording
+                      ? null
+                      : () {
+                          unawaited(_showImagePickerSheet());
+                        },
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: colors.surfaceSecondary,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: colors.border.withValues(alpha: 0.45),
+                      ),
                     ),
-                  ),
-                  child: Icon(
-                    Icons.photo_camera_outlined,
-                    color: colors.textSecondary,
-                    size: 22,
+                    child: Icon(
+                      Icons.add,
+                      color: colors.textSecondary,
+                      size: 22,
+                    ),
                   ),
                 ),
               ),
@@ -2974,6 +3008,15 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                           characterChatProvider(widget.character.id).notifier,
                         )
                         .onUserDraftChanged(text);
+                  },
+                  onRecordingChanged: (isRecording) {
+                    if (!mounted || _isComposerRecording == isRecording) {
+                      return;
+                    }
+
+                    setState(() {
+                      _isComposerRecording = isRecording;
+                    });
                   },
                   onSubmit: (text) async {
                     if (text.isEmpty) {

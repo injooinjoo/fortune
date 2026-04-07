@@ -29,6 +29,7 @@ import { captureError } from '../lib/error-reporting';
 import {
   buildAssistantTextMessage,
   buildEmbeddedResultMessage,
+  buildEmbeddedResultMessageFromPayload,
   buildDraftReply,
   buildInitialThread,
   buildLaunchMessages,
@@ -36,6 +37,7 @@ import {
   buildUserMessage,
   formatFortuneTypeLabel,
   type ChatShellAction,
+  type ChatShellEmbeddedResultMessage,
   type ChatShellMessage,
 } from '../lib/chat-shell';
 import {
@@ -331,7 +333,10 @@ export function ChatScreen() {
       return true;
     }
 
-    const embeddedResult = buildEmbeddedResultMessage(fortuneType);
+    const embeddedResult = buildEmbeddedResultMessage(
+      fortuneType,
+      buildResultContext(character),
+    );
 
     if (!embeddedResult) {
       return false;
@@ -348,10 +353,16 @@ export function ChatScreen() {
 
   function completeSurvey(
     character: ChatCharacterSpec,
-    fortuneType: FortuneTypeId,
+    completed: {
+      fortuneType: FortuneTypeId;
+      answers: Record<string, unknown>;
+    },
   ) {
-    const definition = getChatSurveyDefinition(fortuneType);
-    const embeddedResult = buildEmbeddedResultMessage(fortuneType);
+    const definition = getChatSurveyDefinition(completed.fortuneType);
+    const embeddedResult = buildEmbeddedResultMessage(
+      completed.fortuneType,
+      buildResultContext(character, completed.answers),
+    );
 
     setActiveSurvey(character.id, null);
 
@@ -373,7 +384,13 @@ export function ChatScreen() {
     fortuneType: FortuneTypeId,
     prefixText: string,
   ) {
-    const embeddedResult = buildEmbeddedResultMessage(fortuneType);
+    const previousMessage = findMostRecentEmbeddedResult(character.id, fortuneType);
+    const embeddedResult = previousMessage
+      ? buildEmbeddedResultMessageFromPayload(previousMessage.payload)
+      : buildEmbeddedResultMessage(
+          fortuneType,
+          buildResultContext(character),
+        );
 
     if (!embeddedResult) {
       return false;
@@ -507,7 +524,7 @@ export function ChatScreen() {
         ]);
       }
     } else if (completed) {
-      completeSurvey(selectedCharacter, completed.fortuneType);
+      completeSurvey(selectedCharacter, completed);
     }
 
     recordChatIntent({
@@ -522,6 +539,42 @@ export function ChatScreen() {
 
     setSurveyDraft('');
     setSurveySelections([]);
+  }
+
+  function buildResultContext(
+    character: ChatCharacterSpec,
+    answers: Record<string, unknown> = {},
+  ) {
+    return {
+      answers,
+      characterName: character.name,
+      profile: {
+        birthDate: mobileAppState.profile.birthDate || undefined,
+        birthTime: mobileAppState.profile.birthTime || undefined,
+        mbti: mobileAppState.profile.mbti || undefined,
+        bloodType: mobileAppState.profile.bloodType || undefined,
+      },
+    };
+  }
+
+  function findMostRecentEmbeddedResult(
+    characterId: string,
+    fortuneType: FortuneTypeId,
+  ): ChatShellEmbeddedResultMessage | null {
+    const thread = messagesByCharacterId[characterId] ?? [];
+
+    for (let index = thread.length - 1; index >= 0; index -= 1) {
+      const message = thread[index];
+
+      if (
+        message?.kind === 'embedded-result' &&
+        message.fortuneType === fortuneType
+      ) {
+        return message;
+      }
+    }
+
+    return null;
   }
 
   function handleSurveyToggleSelection(value: string) {

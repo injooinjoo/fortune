@@ -4,7 +4,7 @@ import { resultMetadataByKind } from '../fortune-results/mapping';
 import type { MetricTileData, ResultKind } from '../fortune-results/types';
 import type { EmbeddedResultPayload } from './types';
 
-interface EmbeddedResultSeed {
+export interface EmbeddedResultSeed {
   score?: number;
   summary: string;
   metrics?: MetricTileData[];
@@ -15,7 +15,7 @@ interface EmbeddedResultSeed {
   specialTip?: string;
 }
 
-const payloadSeedByKind: Record<ResultKind, EmbeddedResultSeed> = {
+export const embeddedResultSeedByKind: Record<ResultKind, EmbeddedResultSeed> = {
   'traditional-saju': {
     score: 82,
     summary: '기본 사주 흐름은 안정적이고, 타이밍 선택이 전체 분위기를 크게 좌우하는 구간입니다.',
@@ -245,12 +245,12 @@ const payloadSeedByKind: Record<ResultKind, EmbeddedResultSeed> = {
   },
 };
 
-export function buildEmbeddedResultPayload(
+export function buildFallbackEmbeddedResultPayload(
   fortuneType: FortuneTypeId,
   resultKind: ResultKind,
 ): EmbeddedResultPayload {
   const metadata = resultMetadataByKind[resultKind];
-  const seed = payloadSeedByKind[resultKind];
+  const seed = embeddedResultSeedByKind[resultKind];
 
   return {
     widgetType: 'fortune_result_card',
