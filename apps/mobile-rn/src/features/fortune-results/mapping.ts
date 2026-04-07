@@ -10,6 +10,7 @@ export const fortuneTypeToResultKind: FortuneTypeToResultKind = {
   'traditional-saju': 'traditional-saju',
   'daily-calendar': 'daily-calendar',
   mbti: 'mbti',
+  'blood-type': 'blood-type',
   'zodiac-animal': 'zodiac-animal',
   constellation: 'constellation',
   career: 'career',

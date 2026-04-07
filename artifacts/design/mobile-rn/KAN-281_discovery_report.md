@@ -38,6 +38,9 @@
 - `chat-screen.tsx`가 아직 fortune action/deeplink/recent-result에서 `/result/*` push 중심이다.
 - survey registry는 존재하지만 실제 `/chat` footer/input flow에 연결되지 않았다.
 - embedded result message renderer는 존재하지만 런타임 fortune flow에서 거의 사용되지 않는다.
+- `운세보기` 탭이 전체 운세 상담사가 아니라, 현재 RN result runtime과 연결된 일부 상담사만 노출하는 구조였다.
+- `fortuneType -> resultKind` 매핑에서 `blood-type`가 빠져 있어서 F04 결과는 chat-native runtime에 연결되지 않았다.
+- `resultKinds`와 `fortune character specialties` 사이에 drift가 있어, 일부 결과는 컴포넌트가 있어도 상담사 액션으로 바로 노출되지 않는다.
 
 ## Safe First Patch
 - `/chat`에서 fortune action press 시:

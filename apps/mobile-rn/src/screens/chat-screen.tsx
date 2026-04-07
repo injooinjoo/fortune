@@ -61,6 +61,13 @@ function readSearchParam(
   return Array.isArray(value) ? value[0] : value;
 }
 
+function supportsChatNativeRuntime(fortuneType: FortuneTypeId) {
+  return (
+    getChatSurveyDefinition(fortuneType) !== null ||
+    resolveResultKindFromFortuneType(fortuneType) !== null
+  );
+}
+
 export function ChatScreen() {
   const params = useLocalSearchParams<{ characterId?: string | string[] }>();
   const directCharacterId = readSearchParam(params.characterId);
@@ -124,11 +131,11 @@ export function ChatScreen() {
     Record<string, ActiveChatSurvey | null>
   >({});
 
-  const routeableCharacters = useMemo(
+  const chatNativeFortuneCharacters = useMemo(
     () =>
       fortuneChatCharacters.filter((character) =>
         buildSuggestedActions(character).some((action) =>
-          Boolean(resolveResultKindFromFortuneType(action.fortuneType)),
+          supportsChatNativeRuntime(action.fortuneType),
         ),
       ),
     [],
@@ -156,11 +163,12 @@ export function ChatScreen() {
       )
     : undefined;
   const tabCharacters =
-    activeTab === 'story' ? storyChatCharacters : routeableCharacters;
+    activeTab === 'story' ? storyChatCharacters : fortuneChatCharacters;
   const defaultCharacter =
     highlightedExpert ??
-    tabCharacters[0] ??
-    routeableCharacters[0] ??
+    (activeTab === 'fortune'
+      ? chatNativeFortuneCharacters[0] ?? fortuneChatCharacters[0]
+      : tabCharacters[0]) ??
     storyChatCharacters[0] ??
     chatCharacters[0];
   const selectedCharacter = useMemo(() => {
@@ -219,18 +227,20 @@ export function ChatScreen() {
   const selectedCharacterActions = useMemo(
     () =>
       isFortuneChatCharacter(selectedCharacter)
-        ? buildSuggestedActions(selectedCharacter)
+        ? buildSuggestedActions(selectedCharacter).filter((action) =>
+            supportsChatNativeRuntime(action.fortuneType),
+          )
         : [],
     [selectedCharacter],
   );
   const firstRunActionPairs = useMemo(() => {
     const seen = new Set<FortuneTypeId>();
 
-    return routeableCharacters
+    return chatNativeFortuneCharacters
       .flatMap((character) =>
         buildSuggestedActions(character).map((action) => ({ action, character })),
       )
-      .filter(({ action }) => Boolean(resolveResultKindFromFortuneType(action.fortuneType)))
+      .filter(({ action }) => supportsChatNativeRuntime(action.fortuneType))
       .filter(({ action }) => {
         if (seen.has(action.fortuneType)) {
           return false;
@@ -240,7 +250,7 @@ export function ChatScreen() {
         return true;
       })
       .slice(0, 4);
-  }, [routeableCharacters]);
+  }, [chatNativeFortuneCharacters]);
   const firstRunActions = firstRunActionPairs.map(({ action }) => action);
   const firstRunCharacters = tabCharacters;
   const firstRunFeaturedCharacter =
