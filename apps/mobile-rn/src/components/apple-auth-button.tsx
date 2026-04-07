@@ -19,6 +19,7 @@ export function AppleAuthButton({
         disabled={disabled}
         label={label}
         onPress={onPress}
+        provider="apple"
       />
     );
   }

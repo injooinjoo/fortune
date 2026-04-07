@@ -30,22 +30,22 @@ const authOptions: readonly {
   {
     id: 'apple',
     label: 'Apple로 계속하기',
-    note: 'iPhone 사용자에게 가장 자연스러운 로그인 방법입니다.',
+    note: 'iPhone에서 가장 자연스럽게 인증하고 기록을 이어갑니다.',
   },
   {
     id: 'google',
     label: 'Google로 계속하기',
-    note: '가장 빠르게 시작할 수 있는 로그인 방법입니다.',
+    note: 'Google 계정으로 개인화와 구매 내역을 바로 연결합니다.',
   },
   {
     id: 'kakao',
     label: '카카오로 계속하기',
-    note: '카카오 계정으로 바로 이어서 사용할 수 있습니다.',
+    note: '카카오 계정으로 빠르게 시작하고 추천 흐름을 이어갑니다.',
   },
   {
     id: 'naver',
     label: '네이버로 계속하기',
-    note: '네이버 계정으로 로그인해 프로필을 연결합니다.',
+    note: '네이버 계정으로 프로필과 저장 기록을 연결합니다.',
   },
 ] as const;
 
@@ -116,15 +116,16 @@ export function SignupScreen() {
         />
       }
     >
-      <AppText variant="displaySmall">로그인 및 시작</AppText>
+      <AppText variant="displaySmall">계정을 연결하고 시작</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
-        원하는 계정으로 시작하면 이후에도 프로필과 구매 정보를 이어서 사용할 수 있어요.
+        원하는 계정으로 시작하면 분석 기록, 구매 내역, 추천 설정이 계속 이어집니다.
       </AppText>
 
       <Card>
-        <AppText variant="heading4">시작 방법</AppText>
+        <AppText variant="heading4">연결하고 바로 시작</AppText>
         <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
-          로그인하면 프로필, 구매 내역, 알림 설정이 기기에 연결돼요. 먼저 둘러본 뒤 나중에 로그인해도 됩니다.
+          한 번 로그인해 두면 결과 저장, 개인화, 결제 상태가 계정에 연결됩니다.
+          원하는 방법으로 바로 시작하세요.
         </AppText>
         {authMessage ? (
           <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
@@ -148,6 +149,7 @@ export function SignupScreen() {
                     : option.label
                 }
                 onPress={() => void handleSocialAuthStart(option.id)}
+                provider={option.id}
               />
             )}
             <AppText
@@ -162,14 +164,14 @@ export function SignupScreen() {
           variant="bodySmall"
           color={fortuneTheme.colors.textTertiary}
         >
-          Apple, Google, 카카오, 네이버 계정으로 바로 이어서 시작할 수 있습니다.
+          하나의 계정으로 기록, 추천, 구매 상태를 계속 이어갈 수 있습니다.
         </AppText>
       </Card>
 
       <Card>
-        <AppText variant="heading4">게스트로 먼저 보기</AppText>
+        <AppText variant="heading4">로그인 없이 먼저 보기</AppText>
         <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
-          계정 없이 먼저 둘러본 다음 언제든 로그인으로 전환할 수 있어요.
+          서비스 흐름을 먼저 확인한 뒤, 필요할 때 계정을 연결해도 됩니다.
         </AppText>
         <PrimaryButton
           onPress={() => {
@@ -178,7 +180,7 @@ export function SignupScreen() {
               .catch(() => router.replace(returnTo as Href));
           }}
         >
-          게스트로 둘러보기
+          로그인 없이 둘러보기
         </PrimaryButton>
         <PrimaryButton
           onPress={() =>

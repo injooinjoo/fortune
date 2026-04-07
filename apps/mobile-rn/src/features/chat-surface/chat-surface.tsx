@@ -576,15 +576,15 @@ export function ChatSoftGate({
 
         <View style={{ gap: fortuneTheme.spacing.sm, paddingHorizontal: 4 }}>
           <AppText variant="displayLarge" style={{ maxWidth: 280 }}>
-            먼저 둘러보고{'\n'}필요할 때 이어가세요
+            기록과 개인화를{'\n'}계속 이어가세요
           </AppText>
           <AppText
             variant="bodyLarge"
             color={fortuneTheme.colors.textSecondary}
             style={{ maxWidth: 290 }}
           >
-            로그인하면 저장과 개인화가 바로 이어지고, 지금은 둘러보기로 가볍게
-            시작할 수 있어요.
+            로그인하면 분석 기록, 맞춤 추천, 구매 내역이 계정에 안전하게
+            연결됩니다. 지금 둘러본 뒤 필요할 때 바로 이어서 시작할 수 있어요.
           </AppText>
         </View>
 
@@ -595,29 +595,32 @@ export function ChatSoftGate({
           }}
         >
           <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary}>
-            계정을 연결하면
+            계정을 연결하고 시작
           </AppText>
           <View style={{ gap: fortuneTheme.spacing.sm }}>
             <AppleAuthButton onPress={onApple} />
             <SocialAuthPillButton
               label="Google로 계속하기"
               onPress={onGoogle}
+              provider="google"
             />
             {onKakao ? (
               <SocialAuthPillButton
                 label="카카오로 계속하기"
                 onPress={onKakao}
+                provider="kakao"
               />
             ) : null}
             {onNaver ? (
               <SocialAuthPillButton
                 label="네이버로 계속하기"
                 onPress={onNaver}
+                provider="naver"
               />
             ) : null}
           </View>
           <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
-            계속 진행하면 이용약관 및 개인정보처리방침에 동의한 것으로 간주됩니다.
+            계속하면 이용약관과 개인정보처리방침에 동의하게 됩니다.
           </AppText>
           {authMessage ? (
             <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
@@ -634,7 +637,7 @@ export function ChatSoftGate({
               color={fortuneTheme.colors.textPrimary}
               style={{ textAlign: 'center' }}
             >
-              둘러보기
+              로그인 없이 둘러보기
             </AppText>
           </Pressable>
         </Card>
