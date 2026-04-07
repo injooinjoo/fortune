@@ -5,6 +5,7 @@ export type FortuneTypeId =
   | 'traditional-saju'
   | 'face-reading'
   | 'mbti'
+  | 'blood-type'
   | 'personality-dna'
   | 'love'
   | 'compatibility'
@@ -81,6 +82,11 @@ export const fortuneTypeSpecs = [
     labelKey: 'fortunePersonalityDna',
     endpoint: '/fortune-mbti',
     apiType: 'mbti',
+  },
+  {
+    id: 'blood-type',
+    labelKey: 'fortuneBloodType',
+    endpoint: '/fortune-blood-type',
   },
   { id: 'love', labelKey: 'fortuneLove', endpoint: '/fortune-love' },
   {

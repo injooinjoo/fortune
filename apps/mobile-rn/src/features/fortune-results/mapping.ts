@@ -1,0 +1,202 @@
+import type { FortuneTypeId } from '@fortune/product-contracts';
+
+import {
+  type FortuneTypeToResultKind,
+  type ResultKind,
+  type ResultMetadata,
+} from './types';
+
+export const fortuneTypeToResultKind: FortuneTypeToResultKind = {
+  'traditional-saju': 'traditional-saju',
+  'daily-calendar': 'daily-calendar',
+  mbti: 'mbti',
+  'zodiac-animal': 'zodiac-animal',
+  constellation: 'constellation',
+  career: 'career',
+  love: 'love',
+  health: 'health',
+  coaching: 'coaching',
+  family: 'family',
+  'past-life': 'past-life',
+  wish: 'wish',
+  'personality-dna': 'personality-dna',
+  wealth: 'wealth',
+  talent: 'talent',
+  exercise: 'exercise',
+  tarot: 'tarot',
+  'game-enhance': 'game-enhance',
+  'ootd-evaluation': 'ootd-evaluation',
+};
+
+export const resultMetadataByKind: Record<ResultKind, ResultMetadata> = {
+  'traditional-saju': {
+    resultKind: 'traditional-saju',
+    fortuneCode: 'F01',
+    paperNodeId: '459-1',
+    title: '전통 사주',
+    subtitle: '오행 균형과 사주 포인트를 한눈에 정리한 결과 화면',
+    eyebrow: 'Paper F01',
+  },
+  'daily-calendar': {
+    resultKind: 'daily-calendar',
+    fortuneCode: 'F02',
+    paperNodeId: '45A-1',
+    title: '만세력',
+    subtitle: '날짜 흐름과 계절, 나이 포인트를 압축한 달력형 결과',
+    eyebrow: 'Paper F02',
+  },
+  mbti: {
+    resultKind: 'mbti',
+    fortuneCode: 'F03',
+    paperNodeId: '45B-1',
+    title: 'MBTI 결과',
+    subtitle: '성향 축과 오늘의 행동 팁을 분리한 분석 화면',
+    eyebrow: 'Paper F03',
+  },
+  'blood-type': {
+    resultKind: 'blood-type',
+    fortuneCode: 'F04',
+    paperNodeId: '45C-1',
+    title: '혈액형 결과',
+    subtitle: '혈액형 성향과 궁합, 추천 포인트를 묶은 프로필형 결과',
+    eyebrow: 'Paper F04',
+  },
+  'zodiac-animal': {
+    resultKind: 'zodiac-animal',
+    fortuneCode: 'F05',
+    paperNodeId: '45D-1',
+    title: '띠 결과',
+    subtitle: '띠별 흐름과 궁합, 오늘의 타이밍을 담은 결과',
+    eyebrow: 'Paper F05',
+  },
+  constellation: {
+    resultKind: 'constellation',
+    fortuneCode: 'F06',
+    paperNodeId: '45E-1',
+    title: '별자리 결과',
+    subtitle: '별자리 성향과 오늘의 감정 흐름을 정리한 결과',
+    eyebrow: 'Paper F06',
+  },
+  career: {
+    resultKind: 'career',
+    fortuneCode: 'F07',
+    paperNodeId: '5BF-1',
+    title: '직업운',
+    subtitle: '커리어 흐름, 강점과 리스크, 실행 팁을 정리한 결과',
+    eyebrow: 'Paper F07',
+  },
+  love: {
+    resultKind: 'love',
+    fortuneCode: 'F08',
+    paperNodeId: '5EM-1',
+    title: '연애운',
+    subtitle: '연애 에너지, 타임라인, do/don’t를 담은 관계형 결과',
+    eyebrow: 'Paper F08',
+  },
+  health: {
+    resultKind: 'health',
+    fortuneCode: 'F09',
+    paperNodeId: '5H4-1',
+    title: '건강운',
+    subtitle: '건강 점수, 웰니스 플랜, 주의 포인트를 모은 결과',
+    eyebrow: 'Paper F09',
+  },
+  coaching: {
+    resultKind: 'coaching',
+    fortuneCode: 'F10',
+    paperNodeId: '5JA-1',
+    title: '코칭운',
+    subtitle: '실행 계획과 성장 지표를 중심으로 한 코칭 결과',
+    eyebrow: 'Paper F10',
+  },
+  family: {
+    resultKind: 'family',
+    fortuneCode: 'F11',
+    paperNodeId: '5KK-1',
+    title: '가족운',
+    subtitle: '가족 하모니 점수와 관계 팁을 담은 결과',
+    eyebrow: 'Paper F11',
+  },
+  'past-life': {
+    resultKind: 'past-life',
+    fortuneCode: 'F12',
+    paperNodeId: '5LS-1',
+    title: '신비운',
+    subtitle: '카드형 상징 해석과 메시지를 담은 mystical 결과',
+    eyebrow: 'Paper F12',
+  },
+  wish: {
+    resultKind: 'wish',
+    fortuneCode: 'F13',
+    paperNodeId: '5MP-1',
+    title: '인터랙티브',
+    subtitle: '성공 카드와 2x2 지표 블록을 중심으로 한 인터랙티브 결과',
+    eyebrow: 'Paper F13',
+  },
+  'personality-dna': {
+    resultKind: 'personality-dna',
+    fortuneCode: 'F14',
+    paperNodeId: '5NH-1',
+    title: '성격운',
+    subtitle: 'DNA 스펙트럼과 성장 조언을 담은 결과',
+    eyebrow: 'Paper F14',
+  },
+  wealth: {
+    resultKind: 'wealth',
+    fortuneCode: 'F15',
+    paperNodeId: '5R7-1',
+    title: '재물운',
+    subtitle: '금전 흐름, 조언, 주간 머니 흐름을 모은 결과',
+    eyebrow: 'Paper F15',
+  },
+  talent: {
+    resultKind: 'talent',
+    fortuneCode: 'F16',
+    paperNodeId: '4XI-1',
+    title: '숨은 재능',
+    subtitle: '재능 축 분석과 성장 로드맵을 담은 결과',
+    eyebrow: 'Paper F16',
+  },
+  exercise: {
+    resultKind: 'exercise',
+    fortuneCode: 'F17',
+    paperNodeId: '510-1',
+    title: '운동 운세',
+    subtitle: '추천 루틴, 주간 플랜, 컨디션 경고를 담은 결과',
+    eyebrow: 'Paper F17',
+  },
+  tarot: {
+    resultKind: 'tarot',
+    fortuneCode: 'F18',
+    paperNodeId: '53E-1',
+    title: '타로',
+    subtitle: '스프레드와 시간축 해석을 중심으로 한 결과',
+    eyebrow: 'Paper F18',
+  },
+  'game-enhance': {
+    resultKind: 'game-enhance',
+    fortuneCode: 'F19',
+    paperNodeId: '55X-1',
+    title: '게임 강화운',
+    subtitle: '강화 지표, 타이밍, 의식을 묶은 인터랙티브 결과',
+    eyebrow: 'Paper F19',
+  },
+  'ootd-evaluation': {
+    resultKind: 'ootd-evaluation',
+    fortuneCode: 'F20',
+    paperNodeId: '58H-1',
+    title: 'OOTD 코디',
+    subtitle: '스타일 점수와 추천 아이템을 담은 인터랙티브 결과',
+    eyebrow: 'Paper F20',
+  },
+};
+
+export function resolveResultKindFromFortuneType(
+  fortuneType: FortuneTypeId | null | undefined,
+): ResultKind | null {
+  if (!fortuneType) {
+    return null;
+  }
+
+  return fortuneTypeToResultKind[fortuneType] ?? null;
+}

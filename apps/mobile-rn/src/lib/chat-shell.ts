@@ -19,9 +19,15 @@ export interface ChatShellAction {
 
 const fortuneTypeLabels: Partial<Record<FortuneTypeId, string>> = {
   daily: '오늘 운세',
+  'daily-calendar': '만세력',
   'new-year': '신년 운세',
   'traditional-saju': '전통 사주',
   'face-reading': '관상',
+  mbti: 'MBTI 결과',
+  'blood-type': '혈액형 결과',
+  'zodiac-animal': '띠 결과',
+  constellation: '별자리 결과',
+  'personality-dna': '성격운',
   love: '연애 운세',
   compatibility: '궁합',
   'blind-date': '소개팅 운세',
@@ -29,6 +35,7 @@ const fortuneTypeLabels: Partial<Record<FortuneTypeId, string>> = {
   career: '커리어 운세',
   wealth: '재물 운세',
   talent: '재능 분석',
+  coaching: '코칭운',
   'lucky-items': '행운 아이템',
   lotto: '로또 운세',
   'match-insight': '경기 인사이트',
@@ -45,6 +52,7 @@ const fortuneTypeLabels: Partial<Record<FortuneTypeId, string>> = {
   biorhythm: '바이오리듬',
   wish: '소원 리딩',
   talisman: '부적',
+  'ootd-evaluation': 'OOTD 코디',
 };
 
 export function formatFortuneTypeLabel(type: FortuneTypeId): string {

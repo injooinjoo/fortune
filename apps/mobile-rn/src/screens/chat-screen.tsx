@@ -14,6 +14,8 @@ import { Card } from '../components/card';
 import { Chip } from '../components/chip';
 import { PrimaryButton } from '../components/primary-button';
 import { Screen } from '../components/screen';
+import { RecentResultCard } from '../features/fortune-results/recent-result-card';
+import { resolveResultKindFromFortuneType } from '../features/fortune-results/mapping';
 import { captureError } from '../lib/error-reporting';
 import { appEnv } from '../lib/env';
 import {
@@ -142,6 +144,7 @@ export function ChatScreen() {
       targetCharacter,
       buildLaunchMessages(targetCharacter, activeFortuneType),
     );
+    openResultRoute(activeFortuneType, 'deeplink', targetCharacter.id);
     setLastAutoLaunchKey(launchKey);
     setLaunchOrigin(null);
   }, [
@@ -160,6 +163,33 @@ export function ChatScreen() {
       ...current,
       [character.id]: [...(current[character.id] ?? []), ...nextMessages],
     }));
+  }
+
+  function openResultRoute(
+    fortuneType: FortuneTypeId | null | undefined,
+    source: 'chat-action' | 'deeplink' | 'recent-card',
+    characterId: string | null = selectedCharacter.id,
+  ) {
+    if (!fortuneType) {
+      return false;
+    }
+
+    const resultKind = resolveResultKindFromFortuneType(fortuneType);
+
+    if (!resultKind) {
+      return false;
+    }
+
+    router.push({
+      pathname: '/result/[resultKind]',
+      params: {
+        resultKind,
+        source,
+        ...(characterId ? { characterId } : {}),
+      },
+    });
+
+    return true;
   }
 
   function handleActionPress(fortuneType: FortuneTypeId) {
@@ -190,6 +220,8 @@ export function ChatScreen() {
         () => undefined,
       );
     });
+
+    openResultRoute(fortuneType, 'chat-action', selectedCharacter.id);
   }
 
   function handleSendDraft() {
@@ -329,6 +361,12 @@ export function ChatScreen() {
               >
                 전문가 프로필 열기
               </PrimaryButton>
+              <PrimaryButton
+                onPress={() => openResultRoute(activeFortuneType, 'deeplink', highlightedExpert.id)}
+                tone="secondary"
+              >
+                결과 화면 열기
+              </PrimaryButton>
             </>
           ) : null}
         </Card>
@@ -358,6 +396,18 @@ export function ChatScreen() {
               tone="accent"
             />
           </Card>
+
+          <RecentResultCard
+            lastFortuneType={mobileAppState.chat.lastFortuneType}
+            onOpen={(fortuneType) =>
+              openResultRoute(
+                fortuneType,
+                'recent-card',
+                mobileAppState.chat.selectedCharacterId,
+              )
+            }
+            selectedCharacterId={mobileAppState.chat.selectedCharacterId}
+          />
 
           <Card>
             <AppText variant="heading4">Character Roster</AppText>
