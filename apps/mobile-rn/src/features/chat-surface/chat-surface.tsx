@@ -606,7 +606,7 @@ export function ChatSoftGate({
             />
             {onKakao ? (
               <SocialAuthPillButton
-                label="카카오로 시작하기"
+                label="카카오 로그인"
                 onPress={onKakao}
                 provider="kakao"
               />

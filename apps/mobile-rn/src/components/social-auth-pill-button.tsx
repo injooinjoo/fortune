@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import {
   Image,
   Pressable,
@@ -15,26 +16,48 @@ export type SocialAuthPillProvider =
   | 'naver'
   | 'generic';
 
-const providerImageMeta: Partial<
-  Record<
-    SocialAuthPillProvider,
-    { source: ImageSourcePropType; imageHeight: number; mode: 'full-button' | 'icon' }
-  >
-> = {
+type ProviderVisual = {
+  backgroundColor: string;
+  iconHeight?: number;
+  iconSource?: ImageSourcePropType;
+  iconWidth?: number;
+  labelColor: string;
+  logoName?: keyof typeof Ionicons.glyphMap;
+};
+
+const BUTTON_HEIGHT = 52;
+const ICON_SLOT_WIDTH = 24;
+
+const providerVisuals: Record<SocialAuthPillProvider, ProviderVisual> = {
+  apple: {
+    backgroundColor: '#FFFFFF',
+    labelColor: '#111111',
+    logoName: 'logo-apple',
+  },
+  generic: {
+    backgroundColor: '#FFFFFF',
+    labelColor: '#111111',
+  },
   google: {
-    source: require('../../assets/social-auth/google-g-20dp.png'),
-    imageHeight: 20,
-    mode: 'icon',
+    backgroundColor: '#FFFFFF',
+    iconHeight: 20,
+    iconSource: require('../../assets/social-auth/google-g-20dp.png'),
+    iconWidth: 20,
+    labelColor: '#111111',
   },
   kakao: {
-    source: require('../../assets/social-auth/kakao-login-large-wide.png'),
-    imageHeight: 45,
-    mode: 'full-button',
+    backgroundColor: '#FEE500',
+    iconHeight: 18,
+    iconSource: require('../../assets/social-auth/kakao-symbol-32.png'),
+    iconWidth: 18,
+    labelColor: '#191919',
   },
   naver: {
-    source: require('../../assets/social-auth/naver-login-light-white-wide-h56.png'),
-    imageHeight: 48,
-    mode: 'full-button',
+    backgroundColor: '#03C75A',
+    iconHeight: 20,
+    iconSource: require('../../assets/social-auth/naver-icon-white-h56.png'),
+    iconWidth: 20,
+    labelColor: '#FFFFFF',
   },
 };
 
@@ -49,34 +72,7 @@ export function SocialAuthPillButton({
   onPress?: () => void;
   provider?: SocialAuthPillProvider;
 }) {
-  const providerImage = providerImageMeta[provider];
-
-  if (providerImage?.mode === 'full-button') {
-    return (
-      <Pressable
-        accessibilityLabel={label}
-        accessibilityRole="button"
-        disabled={disabled}
-        onPress={disabled || !onPress ? undefined : onPress}
-        style={({ pressed }) => ({
-          justifyContent: 'center',
-          minHeight: 52,
-          opacity: disabled ? 0.46 : pressed ? 0.84 : 1,
-          width: '100%',
-        })}
-      >
-        <Image
-          accessibilityIgnoresInvertColors
-          resizeMode="contain"
-          source={providerImage.source}
-          style={{
-            height: providerImage.imageHeight,
-            width: '100%',
-          }}
-        />
-      </Pressable>
-    );
-  }
+  const visual = providerVisuals[provider] ?? providerVisuals.generic;
 
   return (
     <Pressable
@@ -85,12 +81,12 @@ export function SocialAuthPillButton({
       disabled={disabled}
       onPress={disabled || !onPress ? undefined : onPress}
       style={({ pressed }) => ({
-        backgroundColor: fortuneTheme.colors.textPrimary,
+        backgroundColor: visual.backgroundColor,
         borderRadius: fortuneTheme.radius.full,
         justifyContent: 'center',
-        minHeight: 52,
+        minHeight: BUTTON_HEIGHT,
         opacity: disabled ? 0.46 : pressed ? 0.84 : 1,
-        paddingHorizontal: 14,
+        paddingHorizontal: 16,
         width: '100%',
       })}
     >
@@ -105,57 +101,38 @@ export function SocialAuthPillButton({
           style={{
             alignItems: 'center',
             justifyContent: 'center',
-            width: 24,
+            width: ICON_SLOT_WIDTH,
           }}
         >
-          {providerImage?.mode === 'icon' ? (
+          {visual.iconSource ? (
             <Image
               accessibilityIgnoresInvertColors
               resizeMode="contain"
-              source={providerImage.source}
+              source={visual.iconSource}
               style={{
-                height: providerImage.imageHeight,
-                width: providerImage.imageHeight,
+                height: visual.iconHeight,
+                width: visual.iconWidth,
               }}
             />
-          ) : provider === 'apple' ? (
-            <AppText
-              variant="labelSmall"
-              color={fortuneTheme.colors.background}
-              style={{ fontWeight: '800' }}
-            >
-              A
-            </AppText>
+          ) : visual.logoName ? (
+            <Ionicons color={visual.labelColor} name={visual.logoName} size={18} />
           ) : (
-            <View
-              style={{
-                alignItems: 'center',
-                borderRadius: fortuneTheme.radius.full,
-                height: 24,
-                justifyContent: 'center',
-                width: 24,
-              }}
-            >
-              <AppText
-                variant="labelSmall"
-                color={fortuneTheme.colors.background}
-                style={{ fontWeight: '800' }}
-              >
-                •
-              </AppText>
-            </View>
+            <View style={{ height: ICON_SLOT_WIDTH, width: ICON_SLOT_WIDTH }} />
           )}
         </View>
         <View style={{ flex: 1 }}>
           <AppText
             variant="labelLarge"
-            color={fortuneTheme.colors.background}
-            style={{ textAlign: 'center' }}
+            color={visual.labelColor}
+            style={{
+              fontWeight: '700',
+              textAlign: 'center',
+            }}
           >
             {label}
           </AppText>
         </View>
-        <View style={{ width: 24 }} />
+        <View style={{ width: ICON_SLOT_WIDTH }} />
       </View>
     </Pressable>
   );

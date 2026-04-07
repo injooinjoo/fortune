@@ -39,7 +39,7 @@ const authOptions: readonly {
   },
   {
     id: 'kakao',
-    label: '카카오로 시작하기',
+    label: '카카오 로그인',
     note: '카카오 계정으로 빠르게 시작하고 추천 흐름을 이어갑니다.',
   },
   {
