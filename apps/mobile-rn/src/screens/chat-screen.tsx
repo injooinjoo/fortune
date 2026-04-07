@@ -293,7 +293,10 @@ export function ChatScreen() {
 
   function handleCreateFriend() {
     resetDraft();
-    router.push('/friends/new/basic');
+    router.push({
+      pathname: '/friends/new/basic',
+      params: { reset: '1', returnTo: '/chat' },
+    });
   }
 
   function handleOpenRecentResult(fortuneType: FortuneTypeId) {

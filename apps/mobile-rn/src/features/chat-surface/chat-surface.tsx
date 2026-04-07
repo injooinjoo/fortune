@@ -514,7 +514,7 @@ export function ChatFirstRunSurface({
           <EntryActionRow
             badge="친구"
             onPress={onCreateFriend}
-            subtitle="문서 기준 4단계 플로우로 새 친구 캐릭터를 만들고 채팅으로 이어갑니다."
+            subtitle="문서 기준 5단계 플로우로 새 친구 캐릭터를 만들고 채팅으로 이어갑니다."
             title="새 친구 만들기"
             tone="accent"
           />

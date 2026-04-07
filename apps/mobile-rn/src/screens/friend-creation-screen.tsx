@@ -360,8 +360,17 @@ function reviewLines(draft: FriendCreationDraft) {
   };
 }
 
+function normalizeReturnTo(value: string | string[] | undefined) {
+  const nextValue = Array.isArray(value) ? value[0] : value;
+  return nextValue && nextValue.startsWith('/') ? nextValue : '/chat';
+}
+
 export function FriendCreationBasicScreen() {
-  const params = useLocalSearchParams<{ reset?: string | string[] }>();
+  const params = useLocalSearchParams<{
+    reset?: string | string[];
+    returnTo?: string | string[];
+  }>();
+  const returnTo = normalizeReturnTo(params.returnTo);
   const { draft, isBasicComplete, resetDraft, updateBasic } =
     useFriendCreation();
   const reset = Array.isArray(params.reset) ? params.reset[0] : params.reset;
@@ -377,12 +386,17 @@ export function FriendCreationBasicScreen() {
       description="이름, 성별, 관계를 먼저 정하면 이후 페르소나와 스토리 단계가 안정적으로 이어집니다."
       footer={
         <FooterRow
-          onPrimary={() => router.push('/friends/new/persona')}
+          onPrimary={() =>
+            router.push({
+              pathname: '/friends/new/persona',
+              params: { returnTo },
+            })
+          }
           primaryDisabled={!isBasicComplete}
           primaryLabel="다음"
         />
       }
-      onBack={() => router.replace('/chat')}
+      onBack={() => router.replace(returnTo as Href)}
       routePath="/friends/new/basic"
       step="1/4"
       title="기본 정보"
@@ -430,6 +444,8 @@ export function FriendCreationBasicScreen() {
 }
 
 export function FriendCreationPersonaScreen() {
+  const params = useLocalSearchParams<{ returnTo?: string | string[] }>();
+  const returnTo = normalizeReturnTo(params.returnTo);
   const { draft, isPersonaComplete, updatePersona } = useFriendCreation();
 
   useEffect(() => {
@@ -443,7 +459,12 @@ export function FriendCreationPersonaScreen() {
       description="대표 분위기와 성격, 관심사를 고르면 새 친구의 말투와 첫 인상이 정리됩니다."
       footer={
         <FooterRow
-          onPrimary={() => router.push('/friends/new/story')}
+          onPrimary={() =>
+            router.push({
+              pathname: '/friends/new/story',
+              params: { returnTo },
+            })
+          }
           onSecondary={() => router.back()}
           primaryDisabled={!isPersonaComplete}
           primaryLabel="다음"
@@ -509,6 +530,8 @@ export function FriendCreationPersonaScreen() {
 }
 
 export function FriendCreationStoryScreen() {
+  const params = useLocalSearchParams<{ returnTo?: string | string[] }>();
+  const returnTo = normalizeReturnTo(params.returnTo);
   const { draft, isStoryComplete, updateStory } = useFriendCreation();
 
   useEffect(() => {
@@ -536,7 +559,12 @@ export function FriendCreationStoryScreen() {
       description="어떤 배경에서 시작하는지 정하면 review 단계에서 대화 방향을 자연스럽게 확인할 수 있습니다."
       footer={
         <FooterRow
-          onPrimary={() => router.push('/friends/new/review')}
+          onPrimary={() =>
+            router.push({
+              pathname: '/friends/new/review',
+              params: { returnTo },
+            })
+          }
           onSecondary={() => router.back()}
           primaryDisabled={!isStoryComplete}
           primaryLabel="다음"
@@ -603,6 +631,8 @@ export function FriendCreationStoryScreen() {
 }
 
 export function FriendCreationReviewScreen() {
+  const params = useLocalSearchParams<{ returnTo?: string | string[] }>();
+  const returnTo = normalizeReturnTo(params.returnTo);
   const { draft, isBasicComplete, isPersonaComplete, isStoryComplete } =
     useFriendCreation();
   const lines = reviewLines(draft);
@@ -629,7 +659,12 @@ export function FriendCreationReviewScreen() {
       description="문서 기준으로 생성 전 확인 단계입니다. 기본 정보, 캐릭터 설정, 관계 설정을 한 번 더 검토하세요."
       footer={
         <FooterRow
-          onPrimary={() => router.push('/friends/new/creating')}
+          onPrimary={() =>
+            router.push({
+              pathname: '/friends/new/creating',
+              params: { returnTo },
+            })
+          }
           onSecondary={() => router.back()}
           primaryDisabled={!canProceed}
           primaryLabel="대화 시작하기"
@@ -658,13 +693,7 @@ export function FriendCreationCreatingScreen() {
   } = useFriendCreation();
   const params = useLocalSearchParams<{ returnTo?: string | string[] }>();
   const [isReady, setIsReady] = useState(false);
-  const returnToParam = Array.isArray(params.returnTo)
-    ? params.returnTo[0]
-    : params.returnTo;
-  const returnTo =
-    returnToParam && returnToParam.startsWith('/')
-      ? (returnToParam as Href)
-      : '/chat';
+  const returnTo = normalizeReturnTo(params.returnTo);
 
   useEffect(() => {
     if (!isBasicComplete || !isPersonaComplete || !isStoryComplete) {
@@ -685,7 +714,7 @@ export function FriendCreationCreatingScreen() {
 
   function handleFinish() {
     resetDraft();
-    router.replace(returnTo);
+    router.replace(returnTo as Href);
   }
 
   return (
