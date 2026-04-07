@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { type FortuneTypeId } from '@fortune/product-contracts';
-import { ScrollView, View } from 'react-native';
+import { Alert, ScrollView, View } from 'react-native';
 
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
@@ -575,6 +575,15 @@ export function ChatScreen() {
     });
   }
 
+  function handleOpenPhotoPicker() {
+    setComposerTrayOpen(false);
+    Alert.alert('사진 보내기', '사진 첨부 연결은 다음 단계에서 바로 붙이겠습니다.');
+  }
+
+  function handleStartVoiceInput() {
+    Alert.alert('목소리로 하기', '음성 입력 연결은 다음 단계에서 바로 붙이겠습니다.');
+  }
+
   function handleOpenRecentResult(fortuneType: FortuneTypeId) {
     const recentFortuneCharacterId =
       fortuneChatCharacters.find((character) =>
@@ -1073,8 +1082,10 @@ export function ChatScreen() {
             <ActiveChatComposer
               draft={draft}
               onDraftChange={setDraft}
+              onOpenPhotoPicker={handleOpenPhotoPicker}
               onPickAction={handleActionPress}
               onSend={handleSendDraft}
+              onStartVoiceInput={handleStartVoiceInput}
               onToggleTray={() => setComposerTrayOpen((current) => !current)}
               quickActions={selectedCharacterActions}
               trayOpen={composerTrayOpen}

@@ -1,6 +1,7 @@
 import type { PropsWithChildren, ReactNode } from 'react';
 
-import { Pressable, TextInput, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Image, Pressable, TextInput, View } from 'react-native';
 
 import type { FortuneTypeId } from '@fortune/product-contracts';
 
@@ -21,17 +22,22 @@ import type {
   ChatShellTextMessage,
 } from '../../lib/chat-shell';
 import { buildSuggestedActions, formatFortuneTypeLabel } from '../../lib/chat-shell';
+import { resolveChatCharacterAvatarSource } from '../../lib/chat-character-avatar';
 import { fortuneTheme } from '../../lib/theme';
 import { EmbeddedResultCard } from '../chat-results/embedded-result-card';
 import type { ChatSurveyStep } from '../chat-survey/types';
 
 function CharacterAvatar({
+  characterId,
   name,
   size = 48,
 }: {
+  characterId: string;
   name: string;
   size?: number;
 }) {
+  const avatarSource = resolveChatCharacterAvatarSource(characterId);
+
   return (
     <View
       style={{
@@ -42,12 +48,23 @@ function CharacterAvatar({
         borderWidth: 1,
         height: size,
         justifyContent: 'center',
+        overflow: 'hidden',
         width: size,
       }}
     >
-      <AppText variant={size >= 56 ? 'heading3' : 'labelLarge'}>
-        {name.slice(0, 1)}
-      </AppText>
+      {avatarSource ? (
+        <Image
+          source={avatarSource}
+          style={{
+            height: size,
+            width: size,
+          }}
+        />
+      ) : (
+        <AppText variant={size >= 56 ? 'heading3' : 'labelLarge'}>
+          {name.slice(0, 1)}
+        </AppText>
+      )}
     </View>
   );
 }
@@ -316,7 +333,7 @@ function CharacterListRow({
             gap: fortuneTheme.spacing.sm,
           }}
         >
-          <CharacterAvatar name={character.name} />
+          <CharacterAvatar characterId={character.id} name={character.name} />
           <View style={{ flex: 1, gap: 2 }}>
             <AppText variant="labelLarge">{character.name}</AppText>
             <AppText
@@ -413,18 +430,12 @@ function TypingIndicatorBubble({ character }: { character: ChatCharacterSpec }) 
         gap: 8,
       }}
     >
-      <View
-        style={{
-          alignItems: 'center',
-          backgroundColor: fortuneTheme.colors.surfaceSecondary,
-          borderRadius: 12,
-          height: 24,
-          justifyContent: 'center',
-          marginTop: 6,
-          width: 24,
-        }}
-      >
-        <AppText variant="caption">{character.name.slice(0, 1)}</AppText>
+      <View style={{ marginTop: 6 }}>
+        <CharacterAvatar
+          characterId={character.id}
+          name={character.name}
+          size={24}
+        />
       </View>
       <View
         style={{
@@ -491,18 +502,12 @@ function ChatThreadMessage({
       }}
     >
       {showAssistantAvatar ? (
-        <View
-          style={{
-            alignItems: 'center',
-            backgroundColor: fortuneTheme.colors.surfaceSecondary,
-            borderRadius: 12,
-            height: 24,
-            justifyContent: 'center',
-            marginTop: 6,
-            width: 24,
-          }}
-        >
-          <AppText variant="caption">{character.name.slice(0, 1)}</AppText>
+        <View style={{ marginTop: 6 }}>
+          <CharacterAvatar
+            characterId={character.id}
+            name={character.name}
+            size={24}
+          />
         </View>
       ) : null}
       <View
@@ -768,6 +773,8 @@ export function ActiveChatComposer({
   draft,
   onDraftChange,
   onSend,
+  onOpenPhotoPicker,
+  onStartVoiceInput,
   quickActions,
   trayOpen,
   onToggleTray,
@@ -778,6 +785,8 @@ export function ActiveChatComposer({
   draft: string;
   onDraftChange: (value: string) => void;
   onSend: () => void;
+  onOpenPhotoPicker: () => void;
+  onStartVoiceInput: () => void;
   quickActions: ChatShellAction[];
   trayOpen: boolean;
   onToggleTray: () => void;
@@ -806,7 +815,7 @@ export function ActiveChatComposer({
       {trayOpen ? (
         <View style={{ gap: 8, paddingBottom: 10 }}>
           <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
-            바로 이어갈 액션
+            사진 보내기 및 바로 이어갈 액션
           </AppText>
           <View
             style={{
@@ -815,6 +824,31 @@ export function ActiveChatComposer({
               gap: 8,
             }}
           >
+            <Pressable
+              accessibilityLabel="사진 보내기"
+              accessibilityRole="button"
+              onPress={onOpenPhotoPicker}
+              style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
+            >
+              <View
+                style={{
+                  alignItems: 'center',
+                  backgroundColor: fortuneTheme.colors.backgroundTertiary,
+                  borderRadius: 999,
+                  flexDirection: 'row',
+                  gap: 8,
+                  paddingHorizontal: 14,
+                  paddingVertical: 8,
+                }}
+              >
+                <Ionicons
+                  color={fortuneTheme.colors.textPrimary}
+                  name="image-outline"
+                  size={16}
+                />
+                <AppText variant="labelLarge">사진 보내기</AppText>
+              </View>
+            </Pressable>
             {trayActions.map((action, actionIndex) => (
               <Pressable
                 key={action.id}
@@ -938,12 +972,18 @@ export function ActiveChatComposer({
         </View>
         <Pressable
           accessibilityLabel={
-            composerHasDraft ? 'send message' : 'run primary quick action'
+            composerHasDraft ? 'send message' : 'start voice input'
           }
           accessibilityRole="button"
           accessibilityState={{ disabled: sendDisabled }}
           disabled={sendDisabled}
-          onPress={sendDisabled ? undefined : onSend}
+          onPress={
+            sendDisabled
+              ? undefined
+              : composerHasDraft
+                ? onSend
+                : onStartVoiceInput
+          }
           style={{
             alignItems: 'center',
             backgroundColor: composerHasDraft
@@ -971,31 +1011,11 @@ export function ActiveChatComposer({
               {sendDisabled ? '응답 중' : '보내기'}
             </AppText>
           ) : (
-            <View
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <View
-                style={{
-                  borderColor: fortuneTheme.colors.textSecondary,
-                  borderRadius: 999,
-                  borderWidth: 1.5,
-                  height: 11,
-                  width: 11,
-                }}
-              />
-              <View
-                style={{
-                  backgroundColor: fortuneTheme.colors.textSecondary,
-                  borderRadius: 999,
-                  height: 3,
-                  position: 'absolute',
-                  width: 3,
-                }}
-              />
-            </View>
+            <Ionicons
+              color={fortuneTheme.colors.textSecondary}
+              name="mic-outline"
+              size={18}
+            />
           )}
         </Pressable>
       </View>
@@ -1243,7 +1263,11 @@ export function ActiveCharacterChatSurface({
             paddingTop: 6,
           }}
         >
-          <CharacterAvatar name={character.name} size={72} />
+          <CharacterAvatar
+            characterId={character.id}
+            name={character.name}
+            size={72}
+          />
           <View style={{ alignItems: 'center', gap: 4 }}>
             <AppText variant="heading4">{character.name}</AppText>
             <AppText
@@ -1384,22 +1408,41 @@ export function ActiveCharacterChatHeader({
         onPress={onBack}
         style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
       >
-        <AppText variant="heading4">‹</AppText>
+        <Ionicons
+          color={fortuneTheme.colors.textPrimary}
+          name="chevron-back"
+          size={22}
+        />
       </Pressable>
-      <View style={{ alignItems: 'center', flex: 1, gap: 2 }}>
-        <AppText variant="labelLarge">{character.name}</AppText>
-        <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
-          {isFortuneCharacter
-            ? '운세 상담사 · 대화를 이어보세요'
-            : '스토리 캐릭터 · 관계를 이어보세요'}
-        </AppText>
+      <View
+        style={{
+          alignItems: 'center',
+          flex: 1,
+          flexDirection: 'row',
+          gap: 10,
+          justifyContent: 'center',
+        }}
+      >
+        <CharacterAvatar characterId={character.id} name={character.name} size={34} />
+        <View style={{ alignItems: 'center', gap: 2 }}>
+          <AppText variant="labelLarge">{character.name}</AppText>
+          <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+            {isFortuneCharacter
+              ? '운세 상담사 · 대화를 이어보세요'
+              : '스토리 캐릭터 · 관계를 이어보세요'}
+          </AppText>
+        </View>
       </View>
       <Pressable
         accessibilityRole="button"
         onPress={onOpenProfile}
         style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
       >
-        <AppText variant="heading4">ⓘ</AppText>
+        <Ionicons
+          color={fortuneTheme.colors.textPrimary}
+          name="information-circle-outline"
+          size={22}
+        />
       </Pressable>
     </View>
   );
