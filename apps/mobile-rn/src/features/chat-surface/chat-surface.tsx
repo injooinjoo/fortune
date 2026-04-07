@@ -9,6 +9,7 @@ import { AppText } from '../../components/app-text';
 import { Card } from '../../components/card';
 import { Chip } from '../../components/chip';
 import { PrimaryButton } from '../../components/primary-button';
+import { SocialAuthPillButton } from '../../components/social-auth-pill-button';
 import {
   isFortuneChatCharacter,
   type ChatCharacterSpec,
@@ -521,50 +522,6 @@ function ChatThreadMessage({
   );
 }
 
-function SocialActionButton({
-  label,
-  tone,
-  onPress,
-}: {
-  label: string;
-  tone: 'light' | 'dark';
-  onPress: () => void;
-}) {
-  return (
-    <Pressable
-      accessibilityRole="button"
-      onPress={onPress}
-      style={({ pressed }) => ({
-        backgroundColor:
-          tone === 'light'
-            ? fortuneTheme.colors.textPrimary
-            : fortuneTheme.colors.surfaceSecondary,
-        borderColor:
-          tone === 'light'
-            ? 'transparent'
-            : fortuneTheme.colors.borderOpaque,
-        borderRadius: fortuneTheme.radius.full,
-        borderWidth: 1,
-        opacity: pressed ? 0.84 : 1,
-        paddingHorizontal: 18,
-        paddingVertical: 15,
-      })}
-    >
-      <AppText
-        variant="labelLarge"
-        color={
-          tone === 'light'
-            ? fortuneTheme.colors.background
-            : fortuneTheme.colors.textPrimary
-        }
-        style={{ textAlign: 'center' }}
-      >
-        {label}
-      </AppText>
-    </Pressable>
-  );
-}
-
 export function ChatSoftGate({
   onApple,
   onGoogle,
@@ -642,22 +599,19 @@ export function ChatSoftGate({
           </AppText>
           <View style={{ gap: fortuneTheme.spacing.sm }}>
             <AppleAuthButton onPress={onApple} />
-            <SocialActionButton
+            <SocialAuthPillButton
               label="Google로 계속하기"
-              tone="dark"
               onPress={onGoogle}
             />
             {onKakao ? (
-              <SocialActionButton
+              <SocialAuthPillButton
                 label="카카오로 계속하기"
-                tone="dark"
                 onPress={onKakao}
               />
             ) : null}
             {onNaver ? (
-              <SocialActionButton
+              <SocialAuthPillButton
                 label="네이버로 계속하기"
-                tone="dark"
                 onPress={onNaver}
               />
             ) : null}

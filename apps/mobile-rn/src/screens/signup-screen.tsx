@@ -12,6 +12,7 @@ import {
   RouteBackHeader,
 } from '../components/route-back-header';
 import { Screen } from '../components/screen';
+import { SocialAuthPillButton } from '../components/social-auth-pill-button';
 import { captureError } from '../lib/error-reporting';
 import {
   socialAuthProviderLabelById,
@@ -139,13 +140,15 @@ export function SignupScreen() {
                 onPress={() => void handleSocialAuthStart(option.id)}
               />
             ) : (
-              <PrimaryButton
+              <SocialAuthPillButton
+                disabled={activeProviderId === option.id}
+                label={
+                  activeProviderId === option.id
+                    ? `${option.label} 준비 중...`
+                    : option.label
+                }
                 onPress={() => void handleSocialAuthStart(option.id)}
-              >
-                {activeProviderId === option.id
-                  ? `${option.label} 준비 중...`
-                  : option.label}
-              </PrimaryButton>
+              />
             )}
             <AppText
               variant="bodySmall"

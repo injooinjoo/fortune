@@ -2,7 +2,7 @@ import * as AppleAuthentication from 'expo-apple-authentication';
 import { Platform, View } from 'react-native';
 
 import { fortuneTheme } from '../lib/theme';
-import { PrimaryButton } from './primary-button';
+import { SocialAuthPillButton } from './social-auth-pill-button';
 
 export function AppleAuthButton({
   disabled = false,
@@ -15,9 +15,11 @@ export function AppleAuthButton({
 }) {
   if (Platform.OS !== 'ios') {
     return (
-      <PrimaryButton disabled={disabled} onPress={onPress}>
-        {label}
-      </PrimaryButton>
+      <SocialAuthPillButton
+        disabled={disabled}
+        label={label}
+        onPress={onPress}
+      />
     );
   }
 
