@@ -517,28 +517,158 @@ export function ChatFirstRunSurface({
   );
 }
 
-export function ActiveCharacterChatSurface({
-  character,
-  actions,
-  messages,
+export function ActiveChatComposer({
   draft,
-  onBack,
-  onOpenProfile,
-  onPickAction,
   onDraftChange,
   onSend,
 }: {
-  character: FortuneCharacterSpec;
-  actions: ChatShellAction[];
-  messages: ChatShellMessage[];
   draft: string;
-  onBack: () => void;
-  onOpenProfile: () => void;
-  onPickAction: (fortuneType: FortuneTypeId) => void;
   onDraftChange: (value: string) => void;
   onSend: () => void;
 }) {
   const composerHasDraft = draft.trim().length > 0;
+
+  return (
+    <View
+      style={{
+        backgroundColor: fortuneTheme.colors.surfaceSecondary,
+        borderColor: fortuneTheme.colors.border,
+        borderRadius: fortuneTheme.radius.inputArea,
+        borderWidth: 1,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+      }}
+    >
+      <View
+        style={{
+          alignItems: 'center',
+          flexDirection: 'row',
+          gap: fortuneTheme.spacing.sm,
+        }}
+      >
+        <View
+          style={{
+            alignItems: 'center',
+            backgroundColor: fortuneTheme.colors.surfaceElevated,
+            borderRadius: 16,
+            height: 32,
+            justifyContent: 'center',
+            width: 32,
+          }}
+        >
+          <View
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: fortuneTheme.colors.textSecondary,
+                borderRadius: 999,
+                height: 2,
+                position: 'absolute',
+                width: 11,
+              }}
+            />
+            <View
+              style={{
+                backgroundColor: fortuneTheme.colors.textSecondary,
+                borderRadius: 999,
+                height: 11,
+                width: 2,
+              }}
+            />
+          </View>
+        </View>
+        <View style={{ flex: 1 }}>
+          <TextInput
+            accessibilityLabel="chat composer"
+            multiline
+            onChangeText={onDraftChange}
+            placeholder="메시지..."
+            placeholderTextColor={fortuneTheme.colors.textTertiary}
+            style={{
+              color: fortuneTheme.colors.textPrimary,
+              maxHeight: 72,
+              minHeight: 28,
+              paddingHorizontal: 4,
+              paddingVertical: 6,
+              textAlignVertical: 'center',
+            }}
+            value={draft}
+          />
+        </View>
+        <Pressable
+          accessibilityRole="button"
+          onPress={onSend}
+          style={{
+            alignItems: 'center',
+            backgroundColor: composerHasDraft
+              ? fortuneTheme.colors.ctaBackground
+              : fortuneTheme.colors.surfaceElevated,
+            borderRadius: 16,
+            height: 32,
+            justifyContent: 'center',
+            minWidth: 32,
+            paddingHorizontal: composerHasDraft ? 10 : 0,
+          }}
+        >
+          {composerHasDraft ? (
+            <AppText
+              variant="labelLarge"
+              color={fortuneTheme.colors.ctaForeground}
+            >
+              보내기
+            </AppText>
+          ) : (
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <View
+                style={{
+                  borderColor: fortuneTheme.colors.textSecondary,
+                  borderRadius: 999,
+                  borderWidth: 1.5,
+                  height: 11,
+                  width: 11,
+                }}
+              />
+              <View
+                style={{
+                  backgroundColor: fortuneTheme.colors.textSecondary,
+                  borderRadius: 999,
+                  height: 3,
+                  position: 'absolute',
+                  width: 3,
+                }}
+              />
+            </View>
+          )}
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
+export function ActiveCharacterChatSurface({
+  character,
+  actions,
+  messages,
+  onBack,
+  onOpenProfile,
+  onPickAction,
+}: {
+  character: FortuneCharacterSpec;
+  actions: ChatShellAction[];
+  messages: ChatShellMessage[];
+  onBack: () => void;
+  onOpenProfile: () => void;
+  onPickAction: (fortuneType: FortuneTypeId) => void;
+}) {
   const visibleMessages = messages.slice(-4);
   const promptActions = actions.slice(0, 4);
   const previewMessages = visibleMessages.some((message) => message.sender === 'user')
@@ -751,128 +881,6 @@ export function ActiveCharacterChatSurface({
         ))}
       </View>
 
-      <View
-        style={{
-          backgroundColor: fortuneTheme.colors.surfaceSecondary,
-          borderColor: fortuneTheme.colors.border,
-          borderRadius: fortuneTheme.radius.inputArea,
-          borderWidth: 1,
-          paddingHorizontal: 12,
-          paddingVertical: 8,
-        }}
-      >
-        <View
-          style={{
-            alignItems: 'center',
-            flexDirection: 'row',
-            gap: fortuneTheme.spacing.sm,
-          }}
-        >
-          <View
-            style={{
-              alignItems: 'center',
-              backgroundColor: fortuneTheme.colors.surfaceElevated,
-              borderRadius: 16,
-              height: 32,
-              justifyContent: 'center',
-              width: 32,
-            }}
-          >
-            <View
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <View
-                style={{
-                  backgroundColor: fortuneTheme.colors.textSecondary,
-                  borderRadius: 999,
-                  height: 2,
-                  position: 'absolute',
-                  width: 11,
-                }}
-              />
-              <View
-                style={{
-                  backgroundColor: fortuneTheme.colors.textSecondary,
-                  borderRadius: 999,
-                  height: 11,
-                  width: 2,
-                }}
-              />
-            </View>
-          </View>
-          <View style={{ flex: 1 }}>
-            <TextInput
-              accessibilityLabel="chat composer"
-              multiline
-              onChangeText={onDraftChange}
-              placeholder="메시지..."
-              placeholderTextColor={fortuneTheme.colors.textTertiary}
-              style={{
-                color: fortuneTheme.colors.textPrimary,
-                maxHeight: 72,
-                minHeight: 28,
-                paddingHorizontal: 4,
-                paddingVertical: 6,
-                textAlignVertical: 'center',
-              }}
-              value={draft}
-            />
-          </View>
-          <Pressable
-            accessibilityRole="button"
-            onPress={onSend}
-            style={{
-              alignItems: 'center',
-              backgroundColor: composerHasDraft
-                ? fortuneTheme.colors.ctaBackground
-                : fortuneTheme.colors.surfaceElevated,
-              borderRadius: 16,
-              height: 32,
-              justifyContent: 'center',
-              minWidth: 32,
-              paddingHorizontal: composerHasDraft ? 10 : 0,
-            }}
-          >
-            {composerHasDraft ? (
-              <AppText
-                variant="labelLarge"
-                color={fortuneTheme.colors.ctaForeground}
-              >
-                보내기
-              </AppText>
-            ) : (
-              <View
-                style={{
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <View
-                  style={{
-                    borderColor: fortuneTheme.colors.textSecondary,
-                    borderRadius: 999,
-                    borderWidth: 1.5,
-                    height: 11,
-                    width: 11,
-                  }}
-                />
-                <View
-                  style={{
-                    backgroundColor: fortuneTheme.colors.textSecondary,
-                    borderRadius: 999,
-                    height: 3,
-                    position: 'absolute',
-                    width: 3,
-                  }}
-                />
-              </View>
-            )}
-          </Pressable>
-        </View>
-      </View>
     </View>
   );
 }

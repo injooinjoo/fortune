@@ -1,11 +1,51 @@
-import type { PropsWithChildren } from 'react';
+import type { PropsWithChildren, ReactNode } from 'react';
 
-import { ScrollView, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { fortuneTheme } from '../lib/theme';
 
-export function Screen({ children }: PropsWithChildren) {
+interface ScreenProps extends PropsWithChildren {
+  footer?: ReactNode;
+  keyboardAvoiding?: boolean;
+}
+
+export function Screen({
+  children,
+  footer,
+  keyboardAvoiding = false,
+}: ScreenProps) {
+  const content = (
+    <View style={{ flex: 1 }}>
+      <ScrollView
+        contentContainerStyle={{
+          paddingHorizontal: fortuneTheme.spacing.pageHorizontal,
+          paddingTop: fortuneTheme.spacing.pageVertical,
+          paddingBottom: footer
+            ? fortuneTheme.spacing.md
+            : fortuneTheme.spacing.pageVertical,
+          gap: fortuneTheme.spacing.md,
+        }}
+        keyboardShouldPersistTaps="handled"
+        style={{ flex: 1 }}
+      >
+        <View style={{ gap: fortuneTheme.spacing.md }}>{children}</View>
+      </ScrollView>
+      {footer ? (
+        <View
+          style={{
+            backgroundColor: fortuneTheme.colors.background,
+            paddingBottom: fortuneTheme.spacing.pageVertical,
+            paddingHorizontal: fortuneTheme.spacing.pageHorizontal,
+            paddingTop: fortuneTheme.spacing.sm,
+          }}
+        >
+          {footer}
+        </View>
+      ) : null}
+    </View>
+  );
+
   return (
     <SafeAreaView
       style={{
@@ -13,16 +53,16 @@ export function Screen({ children }: PropsWithChildren) {
         backgroundColor: fortuneTheme.colors.background,
       }}
     >
-      <ScrollView
-        contentContainerStyle={{
-          paddingHorizontal: fortuneTheme.spacing.pageHorizontal,
-          paddingVertical: fortuneTheme.spacing.pageVertical,
-          gap: fortuneTheme.spacing.md,
-        }}
-        style={{ flex: 1 }}
-      >
-        <View style={{ gap: fortuneTheme.spacing.md }}>{children}</View>
-      </ScrollView>
+      {keyboardAvoiding ? (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={{ flex: 1 }}
+        >
+          {content}
+        </KeyboardAvoidingView>
+      ) : (
+        content
+      )}
     </SafeAreaView>
   );
 }

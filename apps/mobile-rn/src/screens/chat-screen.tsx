@@ -13,6 +13,7 @@ import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
 import { Screen } from '../components/screen';
 import {
+  ActiveChatComposer,
   ActiveCharacterChatSurface,
   ChatFirstRunSurface,
   ChatSoftGate,
@@ -362,7 +363,18 @@ export function ChatScreen() {
   }
 
   return (
-    <Screen>
+    <Screen
+      footer={
+        gate === 'ready' && surfaceMode === 'chat' ? (
+          <ActiveChatComposer
+            draft={draft}
+            onDraftChange={setDraft}
+            onSend={handleSendDraft}
+          />
+        ) : undefined
+      }
+      keyboardAvoiding={gate === 'ready' && surfaceMode === 'chat'}
+    >
       {gate === 'auth-entry' ? (
         <ChatSoftGate
           authMessage={
@@ -394,18 +406,15 @@ export function ChatScreen() {
                 : firstRunActions
             }
             character={selectedCharacter}
-            draft={draft}
             messages={selectedThread}
             onBack={() => {
               setSurfaceMode('list');
               setActiveFortuneType(null);
             }}
-            onDraftChange={setDraft}
             onOpenProfile={() =>
               router.push(`/character/${selectedCharacter.id}` as Href)
             }
             onPickAction={handleActionPress}
-            onSend={handleSendDraft}
           />
         ) : (
           <ChatFirstRunSurface
