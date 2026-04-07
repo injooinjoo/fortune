@@ -6,21 +6,37 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { fortuneTheme } from '../lib/theme';
 
 interface ScreenProps extends PropsWithChildren {
+  header?: ReactNode;
   footer?: ReactNode;
   keyboardAvoiding?: boolean;
 }
 
 export function Screen({
   children,
+  header,
   footer,
   keyboardAvoiding = false,
 }: ScreenProps) {
   const content = (
     <View style={{ flex: 1 }}>
+      {header ? (
+        <View
+          style={{
+            backgroundColor: fortuneTheme.colors.background,
+            paddingHorizontal: fortuneTheme.spacing.pageHorizontal,
+            paddingTop: fortuneTheme.spacing.pageVertical,
+            paddingBottom: fortuneTheme.spacing.sm,
+          }}
+        >
+          {header}
+        </View>
+      ) : null}
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: fortuneTheme.spacing.pageHorizontal,
-          paddingTop: fortuneTheme.spacing.pageVertical,
+          paddingTop: header
+            ? fortuneTheme.spacing.sm
+            : fortuneTheme.spacing.pageVertical,
           paddingBottom: footer
             ? fortuneTheme.spacing.md
             : fortuneTheme.spacing.pageVertical,

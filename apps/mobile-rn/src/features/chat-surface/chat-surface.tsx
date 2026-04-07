@@ -723,6 +723,7 @@ export function ActiveCharacterChatSurface({
   onBack,
   onOpenProfile,
   onPickAction,
+  showHeader = true,
 }: {
   character: ChatCharacterSpec;
   actions: ChatShellAction[];
@@ -730,6 +731,7 @@ export function ActiveCharacterChatSurface({
   onBack: () => void;
   onOpenProfile: () => void;
   onPickAction: (fortuneType: FortuneTypeId) => void;
+  showHeader?: boolean;
 }) {
   const isFortuneCharacter = isFortuneChatCharacter(character);
   const visibleMessages = messages.slice(-4);
@@ -766,36 +768,13 @@ export function ActiveCharacterChatSurface({
 
   return (
     <View style={{ gap: fortuneTheme.spacing.md }}>
-      <View
-        style={{
-          alignItems: 'center',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-        }}
-      >
-        <Pressable
-          accessibilityRole="button"
-          onPress={onBack}
-          style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
-        >
-          <AppText variant="heading4">‹</AppText>
-        </Pressable>
-        <View style={{ alignItems: 'center', flex: 1, gap: 2 }}>
-          <AppText variant="labelLarge">{character.name}</AppText>
-          <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
-            {isFortuneCharacter
-              ? '운세 상담사 · 대화를 이어보세요'
-              : '스토리 캐릭터 · 관계를 이어보세요'}
-          </AppText>
-        </View>
-        <Pressable
-          accessibilityRole="button"
-          onPress={onOpenProfile}
-          style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
-        >
-          <AppText variant="heading4">ⓘ</AppText>
-        </Pressable>
-      </View>
+      {showHeader ? (
+        <ActiveCharacterChatHeader
+          character={character}
+          onBack={onBack}
+          onOpenProfile={onOpenProfile}
+        />
+      ) : null}
 
       <View
         style={{
@@ -952,6 +931,51 @@ export function ActiveCharacterChatSurface({
         ))}
       </View>
 
+    </View>
+  );
+}
+
+export function ActiveCharacterChatHeader({
+  character,
+  onBack,
+  onOpenProfile,
+}: {
+  character: ChatCharacterSpec;
+  onBack: () => void;
+  onOpenProfile: () => void;
+}) {
+  const isFortuneCharacter = isFortuneChatCharacter(character);
+
+  return (
+    <View
+      style={{
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+      }}
+    >
+      <Pressable
+        accessibilityRole="button"
+        onPress={onBack}
+        style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
+      >
+        <AppText variant="heading4">‹</AppText>
+      </Pressable>
+      <View style={{ alignItems: 'center', flex: 1, gap: 2 }}>
+        <AppText variant="labelLarge">{character.name}</AppText>
+        <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+          {isFortuneCharacter
+            ? '운세 상담사 · 대화를 이어보세요'
+            : '스토리 캐릭터 · 관계를 이어보세요'}
+        </AppText>
+      </View>
+      <Pressable
+        accessibilityRole="button"
+        onPress={onOpenProfile}
+        style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
+      >
+        <AppText variant="heading4">ⓘ</AppText>
+      </Pressable>
     </View>
   );
 }

@@ -9,6 +9,7 @@ import { Card } from '../components/card';
 import { Screen } from '../components/screen';
 import {
   ActiveChatComposer,
+  ActiveCharacterChatHeader,
   ActiveCharacterChatSurface,
   ChatFirstRunSurface,
   ChatSoftGate,
@@ -429,6 +430,20 @@ export function ChatScreen() {
 
   return (
     <Screen
+      header={
+        gate === 'ready' && surfaceMode === 'chat' ? (
+          <ActiveCharacterChatHeader
+            character={selectedCharacter}
+            onBack={() => {
+              setSurfaceMode('list');
+              setActiveFortuneType(null);
+            }}
+            onOpenProfile={() =>
+              router.push(`/character/${selectedCharacter.id}` as Href)
+            }
+          />
+        ) : undefined
+      }
       footer={
         gate === 'ready' && surfaceMode === 'chat' ? (
           <ActiveChatComposer
@@ -468,6 +483,7 @@ export function ChatScreen() {
             actions={selectedCharacterActions}
             character={selectedCharacter}
             messages={selectedThread}
+            showHeader={false}
             onBack={() => {
               setSurfaceMode('list');
               setActiveFortuneType(null);
