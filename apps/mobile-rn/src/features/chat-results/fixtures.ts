@@ -124,6 +124,11 @@ const displayMetadataByFortuneType: Partial<
     subtitle: '컨디션 리듬과 감정 파동을 정리한 결과',
     eyebrow: '오늘의 리듬 흐름',
   },
+  breathing: {
+    title: '명상 가이드',
+    subtitle: '호흡 리듬과 이완 포인트를 짧게 정리한 결과',
+    eyebrow: '지금의 호흡 흐름',
+  },
   'pet-compatibility': {
     title: '반려동물 궁합',
     subtitle: '반려동물과의 케미와 돌봄 포인트를 담은 결과',
@@ -133,6 +138,60 @@ const displayMetadataByFortuneType: Partial<
     title: '부적',
     subtitle: '마음을 붙잡는 상징과 보호 포인트를 담은 결과',
     eyebrow: '오늘의 보호 메시지',
+  },
+  'weekly-review': {
+    title: '주간 리뷰',
+    subtitle: '한 주의 패턴과 다음 주 전환 포인트를 정리한 결과',
+    eyebrow: '이번 주 정리 흐름',
+  },
+  'chat-insight': {
+    title: '카톡 대화 분석',
+    subtitle: '대화 리듬과 반응 포인트를 읽는 결과',
+    eyebrow: '이번 대화의 흐름',
+  },
+};
+
+const embeddedResultSeedByFortuneType: Partial<
+  Record<FortuneTypeId, EmbeddedResultSeed>
+> = {
+  breathing: {
+    score: 78,
+    summary:
+      '호흡 가이드는 몸을 밀어붙이기보다 긴장을 낮추는 리듬을 먼저 회복할 때 효과가 커집니다.',
+    metrics: [
+      { label: '호흡 안정도', value: '78', note: '내쉼을 길게 두기' },
+      { label: '이완 포인트', value: '어깨·턱', note: '짧은 체크 추천' },
+    ],
+    highlights: ['숨을 길게 뺄수록 몸 반응이 빠르게 안정되는 흐름입니다'],
+    recommendations: ['4초 들숨, 6초 날숨으로 세 번만 반복해보세요'],
+    warnings: ['한 번에 깊게 교정하려 하면 오히려 어지러울 수 있어요'],
+    luckyItems: ['조용한 3분', '미지근한 물'],
+  },
+  'weekly-review': {
+    score: 82,
+    summary:
+      '주간 리뷰는 성과보다 반복된 패턴을 읽을 때 다음 주 흐름이 더 선명해집니다.',
+    metrics: [
+      { label: '패턴 선명도', value: '82', note: '반복 포인트가 보임' },
+      { label: '회복 여지', value: '78', note: '한 가지 정리 필요' },
+    ],
+    highlights: ['이번 주 자주 흔들린 순간을 한 줄로 남기면 다음 주 결정이 빨라집니다'],
+    recommendations: ['잘된 일, 미뤄진 일, 놓친 신호를 각각 한 개만 적어보세요'],
+    warnings: ['주간 리뷰를 자기비판으로 바꾸면 다음 주 리듬이 무거워집니다'],
+    luckyItems: ['주간 체크리스트', '일요일 저녁 10분'],
+  },
+  'chat-insight': {
+    score: 81,
+    summary:
+      '대화 분석은 상대의 정답을 찾기보다 내가 반복한 신호를 읽을 때 다음 답장이 쉬워집니다.',
+    metrics: [
+      { label: '대화 온도', value: '81', note: '호감과 거리감 균형' },
+      { label: '반응 힌트', value: '76', note: '속도보다 톤이 중요' },
+    ],
+    highlights: ['짧은 답장보다 말끝의 뉘앙스가 더 중요한 신호로 읽힙니다'],
+    recommendations: ['확인 질문 하나와 감정 표현 한 줄을 분리해서 보내보세요'],
+    warnings: ['상대 반응을 한 번에 확정 해석하면 흐름을 오해할 수 있어요'],
+    luckyItems: ['보내기 전 1분 텀', '짧은 메모'],
   },
 };
 
@@ -467,7 +526,9 @@ export function buildFallbackEmbeddedResultPayload(
   resultKind: ResultKind,
 ): EmbeddedResultPayload {
   const metadata = resultMetadataByKind[resultKind];
-  const seed = embeddedResultSeedByKind[resultKind];
+  const seed =
+    embeddedResultSeedByFortuneType[fortuneType] ??
+    embeddedResultSeedByKind[resultKind];
   const displayMetadata = displayMetadataByFortuneType[fortuneType] ?? metadata;
 
   return {

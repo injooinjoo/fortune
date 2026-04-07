@@ -62,14 +62,18 @@ const fortuneTypeLabels: Partial<Record<FortuneTypeId, string>> = {
   coaching: '코칭운',
   decision: '의사결정',
   'daily-review': '일일 리뷰',
+  'weekly-review': '주간 리뷰',
+  'chat-insight': '카톡 대화 분석',
   exam: '시험운',
   'lucky-items': '행운 아이템',
   lotto: '로또 운세',
   'match-insight': '경기 인사이트',
   'game-enhance': '게임 컨디션',
   exercise: '운동 운세',
+  breathing: '명상 가이드',
   dream: '꿈 해몽',
   tarot: '타로',
+  'past-life': '전생 리딩',
   health: '건강 흐름',
   'pet-compatibility': '반려동물 궁합',
   family: '가족 운세',
@@ -83,6 +87,8 @@ const fortuneTypeLabels: Partial<Record<FortuneTypeId, string>> = {
   birthstone: '탄생석 가이드',
   'fortune-cookie': '포춘쿠키',
   'ootd-evaluation': 'OOTD 코디',
+  'view-all': '전체 보기',
+  'profile-creation': '프로필 만들기',
 };
 
 export function formatFortuneTypeLabel(type: FortuneTypeId): string {
