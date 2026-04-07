@@ -16,9 +16,12 @@ import {
 import type {
   ChatShellAction,
   ChatShellMessage,
+  ChatShellTextMessage,
 } from '../../lib/chat-shell';
 import { formatFortuneTypeLabel } from '../../lib/chat-shell';
 import { fortuneTheme } from '../../lib/theme';
+import { EmbeddedResultCard } from '../chat-results/embedded-result-card';
+import type { ChatSurveyStep } from '../chat-survey/types';
 import { RecentResultCard } from '../fortune-results/recent-result-card';
 
 function CharacterAvatar({
@@ -217,7 +220,7 @@ function CharacterListRow({
   );
 }
 
-function MessageBubble({ message }: { message: ChatShellMessage }) {
+function MessageBubble({ message }: { message: ChatShellTextMessage }) {
   const isAssistant = message.sender === 'assistant';
   const isSystem = message.sender === 'system';
 
@@ -251,6 +254,61 @@ function MessageBubble({ message }: { message: ChatShellMessage }) {
         >
           {message.text}
         </AppText>
+      </View>
+    </View>
+  );
+}
+
+function EmbeddedResultMessage({
+  message,
+}: {
+  message: Extract<ChatShellMessage, { kind: 'embedded-result' }>;
+}) {
+  return (
+    <View style={{ width: '100%' }}>
+      <EmbeddedResultCard resultKind={message.resultKind} />
+    </View>
+  );
+}
+
+function ChatThreadMessage({
+  character,
+  message,
+}: {
+  character: ChatCharacterSpec;
+  message: ChatShellMessage;
+}) {
+  const isUser = message.sender === 'user';
+
+  return (
+    <View
+      style={{
+        alignItems: isUser ? 'flex-end' : 'flex-start',
+        flexDirection: isUser ? 'row-reverse' : 'row',
+        gap: 8,
+      }}
+    >
+      {isUser ? null : (
+        <View
+          style={{
+            alignItems: 'center',
+            backgroundColor: fortuneTheme.colors.surfaceSecondary,
+            borderRadius: 12,
+            height: 24,
+            justifyContent: 'center',
+            marginTop: 6,
+            width: 24,
+          }}
+        >
+          <AppText variant="caption">{character.name.slice(0, 1)}</AppText>
+        </View>
+      )}
+      <View style={{ flex: isUser ? 0 : 1, maxWidth: isUser ? '84%' : '100%' }}>
+        {message.kind === 'embedded-result' ? (
+          <EmbeddedResultMessage message={message} />
+        ) : (
+          <MessageBubble message={message} />
+        )}
       </View>
     </View>
   );
@@ -552,7 +610,7 @@ export function ChatFirstRunSurface({
         description={
           activeTab === 'story'
             ? '세계관 대화를 바로 시작할 캐릭터를 고르세요.'
-            : '결과 스택으로 이어지는 운세 전문가를 고르세요.'
+            : '설문과 결과가 같은 채팅 안에서 이어지는 운세 전문가를 고르세요.'
         }
       >
         <View style={{ gap: fortuneTheme.spacing.sm }}>
@@ -716,10 +774,172 @@ export function ActiveChatComposer({
   );
 }
 
+function formatDateLabel(offset: number) {
+  const target = new Date();
+  target.setDate(target.getDate() + offset);
+
+  const month = target.getMonth() + 1;
+  const day = target.getDate();
+
+  if (offset === 0) {
+    return `오늘 ${month}/${day}`;
+  }
+
+  if (offset === 1) {
+    return `내일 ${month}/${day}`;
+  }
+
+  return `${month}/${day}`;
+}
+
+function buildDateAnswer(offset: number) {
+  const target = new Date();
+  target.setDate(target.getDate() + offset);
+
+  return `${target.getFullYear()}-${String(target.getMonth() + 1).padStart(2, '0')}-${String(
+    target.getDate(),
+  ).padStart(2, '0')}`;
+}
+
+export function ActiveSurveyFooter({
+  step,
+  draft,
+  selections,
+  onDraftChange,
+  onPickSingle,
+  onToggleSelection,
+  onSubmitSelection,
+  onSubmitText,
+  onSkip,
+}: {
+  step: ChatSurveyStep;
+  draft: string;
+  selections: readonly string[];
+  onDraftChange: (value: string) => void;
+  onPickSingle: (value: string) => void;
+  onToggleSelection: (value: string) => void;
+  onSubmitSelection: () => void;
+  onSubmitText: () => void;
+  onSkip: () => void;
+}) {
+  const canSubmitText = draft.trim().length > 0;
+  const canSubmitSelection = selections.length > 0;
+
+  if (step.inputKind === 'chips') {
+    return (
+      <View style={{ gap: fortuneTheme.spacing.sm }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+          {(step.options ?? []).map((option) => (
+            <Pressable
+              key={option.id}
+              accessibilityRole="button"
+              onPress={() => onPickSingle(option.id)}
+              style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
+            >
+              <Chip
+                label={option.emoji ? `${option.emoji} ${option.label}` : option.label}
+                tone="neutral"
+              />
+            </Pressable>
+          ))}
+        </View>
+      </View>
+    );
+  }
+
+  if (step.inputKind === 'date') {
+    return (
+      <View style={{ gap: fortuneTheme.spacing.sm }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+          {[0, 1, 2, 3, 4].map((offset) => (
+            <Pressable
+              key={offset}
+              accessibilityRole="button"
+              onPress={() => onPickSingle(buildDateAnswer(offset))}
+              style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
+            >
+              <Chip label={formatDateLabel(offset)} tone="neutral" />
+            </Pressable>
+          ))}
+        </View>
+      </View>
+    );
+  }
+
+  if (step.inputKind === 'multi-select' || step.inputKind === 'card-draw') {
+    return (
+      <View style={{ gap: fortuneTheme.spacing.sm }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+          {(step.options ?? []).map((option) => {
+            const selected = selections.includes(option.id);
+            return (
+              <Pressable
+                key={option.id}
+                accessibilityRole="button"
+                onPress={() => onToggleSelection(option.id)}
+                style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
+              >
+                <Chip
+                  label={option.emoji ? `${option.emoji} ${option.label}` : option.label}
+                  tone={selected ? 'accent' : 'neutral'}
+                />
+              </Pressable>
+            );
+          })}
+        </View>
+        <PrimaryButton disabled={!canSubmitSelection} onPress={onSubmitSelection}>
+          선택 완료
+        </PrimaryButton>
+      </View>
+    );
+  }
+
+  return (
+    <View style={{ gap: fortuneTheme.spacing.sm }}>
+      <View
+        style={{
+          backgroundColor: fortuneTheme.colors.surfaceSecondary,
+          borderColor: fortuneTheme.colors.border,
+          borderRadius: fortuneTheme.radius.inputArea,
+          borderWidth: 1,
+          paddingHorizontal: 12,
+          paddingVertical: 10,
+        }}
+      >
+        <TextInput
+          multiline
+          onChangeText={onDraftChange}
+          placeholder={step.placeholder ?? '답변을 적어주세요.'}
+          placeholderTextColor={fortuneTheme.colors.textTertiary}
+          style={{
+            color: fortuneTheme.colors.textPrimary,
+            minHeight: 36,
+            maxHeight: 120,
+            textAlignVertical: 'top',
+          }}
+          value={draft}
+        />
+      </View>
+      <View style={{ flexDirection: 'row', gap: fortuneTheme.spacing.sm }}>
+        {step.inputKind === 'text-with-skip' ? (
+          <PrimaryButton onPress={onSkip} tone="secondary">
+            건너뛰기
+          </PrimaryButton>
+        ) : null}
+        <PrimaryButton disabled={!canSubmitText} onPress={onSubmitText}>
+          답변 보내기
+        </PrimaryButton>
+      </View>
+    </View>
+  );
+}
+
 export function ActiveCharacterChatSurface({
   character,
   actions,
   messages,
+  surveyEyebrow,
+  surveyActive,
   onBack,
   onOpenProfile,
   onPickAction,
@@ -728,19 +948,22 @@ export function ActiveCharacterChatSurface({
   character: ChatCharacterSpec;
   actions: ChatShellAction[];
   messages: ChatShellMessage[];
+  surveyEyebrow?: string | null;
+  surveyActive?: boolean;
   onBack: () => void;
   onOpenProfile: () => void;
   onPickAction: (fortuneType: FortuneTypeId) => void;
   showHeader?: boolean;
 }) {
   const isFortuneCharacter = isFortuneChatCharacter(character);
-  const visibleMessages = messages.slice(-4);
+  const visibleMessages = messages;
   const promptActions = actions.slice(0, 4);
   const previewMessages = visibleMessages.some((message) => message.sender === 'user')
     ? visibleMessages
     : [
         visibleMessages[0] ?? {
           id: `${character.id}-assistant-preview-1`,
+          kind: 'text' as const,
           sender: 'assistant' as const,
           text: isFortuneCharacter
             ? `안녕하세요! 오늘 ${character.name}의 흐름으로 먼저 볼까요?`
@@ -748,6 +971,7 @@ export function ActiveCharacterChatSurface({
         },
         {
           id: `${character.id}-user-preview`,
+          kind: 'text' as const,
           sender: 'user' as const,
           text:
             promptActions[0]?.prompt ??
@@ -757,6 +981,7 @@ export function ActiveCharacterChatSurface({
         },
         visibleMessages[1] ?? {
           id: `${character.id}-assistant-preview-2`,
+          kind: 'text' as const,
           sender: 'assistant' as const,
           text:
             promptActions[0]?.reply ??
@@ -820,116 +1045,76 @@ export function ActiveCharacterChatSurface({
         style={{
           alignItems: 'center',
           paddingTop: 2,
+          gap: 4,
         }}
       >
         <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
           오늘 3:24
         </AppText>
+        {surveyActive && surveyEyebrow ? (
+          <Chip label={surveyEyebrow} tone="accent" />
+        ) : null}
       </View>
 
       <View style={{ gap: fortuneTheme.spacing.sm }}>
-        {previewMessages.map((message, index) => (
-          <View key={message.id} style={{ gap: fortuneTheme.spacing.sm }}>
-            <View
-              style={{
-                alignItems: message.sender === 'user' ? 'flex-end' : 'flex-start',
-                flexDirection: message.sender === 'user' ? 'row-reverse' : 'row',
-                gap: 8,
-              }}
-            >
-              {message.sender === 'user' ? null : (
-                <View
-                  style={{
-                    alignItems: 'center',
-                    backgroundColor: fortuneTheme.colors.surfaceSecondary,
-                    borderRadius: 12,
-                    height: 24,
-                    justifyContent: 'center',
-                    marginTop: 6,
-                    width: 24,
-                  }}
-                >
-                  <AppText variant="caption">{character.name.slice(0, 1)}</AppText>
-                </View>
-              )}
-              <MessageBubble message={message} />
-            </View>
-            {index === Math.min(2, previewMessages.length - 1) && promptActions.length > 0 ? (
-              <View
-                style={{
-                  gap: 8,
-                  paddingLeft: 32,
-                }}
+        {previewMessages.map((message) => (
+          <ChatThreadMessage
+            key={message.id}
+            character={character}
+            message={message}
+          />
+        ))}
+      </View>
+
+      {!surveyActive && promptActions.length > 0 ? (
+        <View
+          style={{
+            gap: 8,
+            paddingLeft: 32,
+          }}
+        >
+          <View
+            style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              gap: 8,
+            }}
+          >
+            {promptActions.map((action, actionIndex) => (
+              <Pressable
+                key={action.id}
+                accessibilityRole="button"
+                onPress={() => onPickAction(action.fortuneType)}
+                style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
               >
                 <View
                   style={{
-                    flexDirection: 'row',
-                    flexWrap: 'wrap',
-                    gap: 8,
+                    backgroundColor:
+                      actionIndex === 0
+                        ? 'rgba(232, 236, 255, 0.96)'
+                        : actionIndex === 1
+                          ? 'rgba(205, 244, 213, 0.96)'
+                          : actionIndex === 2
+                            ? 'rgba(255, 236, 213, 0.96)'
+                            : 'rgba(236, 221, 255, 0.96)',
+                    borderRadius: 999,
+                    paddingHorizontal: 14,
+                    paddingVertical: 8,
                   }}
                 >
-                  {promptActions.map((action, actionIndex) => (
-                    <Pressable
-                      key={action.id}
-                      accessibilityRole="button"
-                      onPress={() => onPickAction(action.fortuneType)}
-                      style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
-                    >
-                      <View
-                        style={{
-                          backgroundColor:
-                            actionIndex === 0
-                              ? 'rgba(232, 236, 255, 0.96)'
-                              : actionIndex === 1
-                                ? 'rgba(205, 244, 213, 0.96)'
-                                : actionIndex === 2
-                                  ? 'rgba(255, 236, 213, 0.96)'
-                                  : 'rgba(236, 221, 255, 0.96)',
-                          borderRadius: 999,
-                          paddingHorizontal: 14,
-                          paddingVertical: 8,
-                        }}
-                      >
-                        <AppText
-                          variant="bodySmall"
-                          color={fortuneTheme.colors.background}
-                          style={{ fontWeight: '600' }}
-                        >
-                          {action.label}
-                        </AppText>
-                      </View>
-                    </Pressable>
-                  ))}
-                </View>
-                <View style={{ alignItems: 'flex-end', paddingRight: 12, paddingTop: 2 }}>
-                  <View
-                    style={{
-                      alignItems: 'center',
-                      backgroundColor: fortuneTheme.colors.ctaBackground,
-                      borderRadius: 18,
-                      flexDirection: 'row',
-                      gap: 8,
-                      paddingHorizontal: 14,
-                      paddingVertical: 8,
-                    }}
+                  <AppText
+                    variant="bodySmall"
+                    color={fortuneTheme.colors.background}
+                    style={{ fontWeight: '600' }}
                   >
-                    <AppText
-                      variant="bodySmall"
-                      color={fortuneTheme.colors.ctaForeground}
-                      style={{ letterSpacing: 1 }}
-                    >
-                      〰〰〰
-                    </AppText>
-                    <AppText variant="caption" color={fortuneTheme.colors.ctaForeground}>
-                      0:08
-                    </AppText>
-                  </View>
+                    {action.label}
+                  </AppText>
                 </View>
-              </View>
-            ) : null}
+              </Pressable>
+            ))}
           </View>
-        ))}
-      </View>
+        </View>
+      ) : null}
 
     </View>
   );

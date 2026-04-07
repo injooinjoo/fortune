@@ -1,12 +1,28 @@
 import { type FortuneTypeId } from '@fortune/product-contracts';
 
+import { resolveResultKindFromFortuneType } from '../features/fortune-results/mapping';
+import { type ResultKind } from '../features/fortune-results/types';
 import { type ChatCharacterSpec, isFortuneChatCharacter } from './chat-characters';
 
-export interface ChatShellMessage {
+export interface ChatShellTextMessage {
   id: string;
+  kind: 'text';
   sender: 'assistant' | 'user' | 'system';
   text: string;
 }
+
+export interface ChatShellEmbeddedResultMessage {
+  id: string;
+  kind: 'embedded-result';
+  sender: 'assistant';
+  fortuneType: FortuneTypeId;
+  resultKind: ResultKind;
+  title: string;
+}
+
+export type ChatShellMessage =
+  | ChatShellTextMessage
+  | ChatShellEmbeddedResultMessage;
 
 export interface ChatShellAction {
   id: string;
@@ -65,16 +81,19 @@ export function buildInitialThread(
     return [
       {
         id: createMessageId('assistant'),
+        kind: 'text',
         sender: 'assistant',
         text: `안녕하세요! ${character.name}예요. 오늘은 어떤 이야기부터 나눠볼까요?`,
       },
       {
         id: createMessageId('user'),
+        kind: 'text',
         sender: 'user',
         text: '오늘 하루가 좀 길었어요. 가볍게 이야기부터 시작하고 싶어요.',
       },
       {
         id: createMessageId('assistant'),
+        kind: 'text',
         sender: 'assistant',
         text: `${character.shortDescription} 흐름으로 먼저 편하게 대화를 이어가 볼게요.`,
       },
@@ -89,21 +108,25 @@ export function buildInitialThread(
   return [
     {
       id: createMessageId('assistant'),
+      kind: 'text',
       sender: 'assistant',
       text: `안녕하세요! ${character.name}예요. 오늘은 어떤 흐름이 가장 궁금하세요?`,
     },
     {
       id: createMessageId('user'),
+      kind: 'text',
       sender: 'user',
       text: '오늘 좀 피곤했어요. 지금 흐름부터 가볍게 보고 싶어요.',
     },
     {
       id: createMessageId('assistant'),
+      kind: 'text',
       sender: 'assistant',
       text: `${character.shortDescription} 우선 ${leadLabel} 쪽으로 몸과 마음의 결을 가볍게 읽어드릴게요.`,
     },
     {
       id: createMessageId('assistant'),
+      kind: 'text',
       sender: 'assistant',
       text: '아래 주제 중에서 지금 바로 이어갈 흐름을 골라주시면 대화처럼 자연스럽게 풀어볼게요.',
     },
@@ -137,16 +160,19 @@ export function buildLaunchMessages(
   return [
     {
       id: createMessageId('assistant'),
+      kind: 'text',
       sender: 'assistant',
       text: `${fortuneLabel}부터 같이 볼까요? ${character.name}의 톤으로 흐름을 열어볼게요.`,
     },
     {
       id: createMessageId('user'),
+      kind: 'text',
       sender: 'user',
       text: `${fortuneLabel} 먼저 부탁해요.`,
     },
     {
       id: createMessageId('assistant'),
+      kind: 'text',
       sender: 'assistant',
       text: `${fortuneLabel}에 필요한 맥락은 제가 짧게 이어서 물어볼게요. 우선 지금 느끼는 분위기부터 함께 짚어봐요.`,
     },
@@ -160,6 +186,7 @@ export function buildDraftReply(
   if (!isFortuneChatCharacter(character)) {
     return {
       id: createMessageId('assistant'),
+      kind: 'text',
       sender: 'assistant',
       text: `"${draft}"라니, 그 이야기 더 듣고 싶어요. ${character.name}의 호흡으로 천천히 이어가 볼까요?`,
     };
@@ -167,6 +194,7 @@ export function buildDraftReply(
 
   return {
     id: createMessageId('assistant'),
+    kind: 'text',
     sender: 'assistant',
     text: `"${draft}"라고 느끼셨군요. ${character.name}의 시선으로 보면 지금은 감정의 결을 먼저 정리하고, 필요한 흐름만 바로 이어보는 편이 좋아 보여요.`,
   };
@@ -175,8 +203,46 @@ export function buildDraftReply(
 export function buildUserMessage(text: string): ChatShellMessage {
   return {
     id: createMessageId('user'),
+    kind: 'text',
     sender: 'user',
     text,
+  };
+}
+
+export function buildAssistantTextMessage(text: string): ChatShellMessage {
+  return {
+    id: createMessageId('assistant'),
+    kind: 'text',
+    sender: 'assistant',
+    text,
+  };
+}
+
+export function buildSystemTextMessage(text: string): ChatShellMessage {
+  return {
+    id: createMessageId('system'),
+    kind: 'text',
+    sender: 'system',
+    text,
+  };
+}
+
+export function buildEmbeddedResultMessage(
+  fortuneType: FortuneTypeId,
+): ChatShellMessage | null {
+  const resultKind = resolveResultKindFromFortuneType(fortuneType);
+
+  if (!resultKind) {
+    return null;
+  }
+
+  return {
+    id: createMessageId('result'),
+    kind: 'embedded-result',
+    sender: 'assistant',
+    fortuneType,
+    resultKind,
+    title: formatFortuneTypeLabel(fortuneType),
   };
 }
 

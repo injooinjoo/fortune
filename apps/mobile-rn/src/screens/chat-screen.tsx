@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { type FortuneTypeId } from '@fortune/product-contracts';
-import { View } from 'react-native';
 
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
@@ -11,18 +10,31 @@ import {
   ActiveChatComposer,
   ActiveCharacterChatHeader,
   ActiveCharacterChatSurface,
+  ActiveSurveyFooter,
   ChatFirstRunSurface,
   ChatSoftGate,
   ProfileFlowGateCard,
 } from '../features/chat-surface/chat-surface';
+import {
+  applySurveyAnswer,
+  formatSurveyAnswerLabel,
+  getChatSurveyDefinition,
+  getCurrentSurveyStep,
+  resolveSurveyQuestion,
+  startChatSurvey,
+} from '../features/chat-survey/registry';
+import type { ActiveChatSurvey } from '../features/chat-survey/types';
 import { resolveResultKindFromFortuneType } from '../features/fortune-results/mapping';
 import { captureError } from '../lib/error-reporting';
 import {
+  buildAssistantTextMessage,
+  buildEmbeddedResultMessage,
   buildDraftReply,
   buildInitialThread,
   buildLaunchMessages,
   buildSuggestedActions,
   buildUserMessage,
+  formatFortuneTypeLabel,
   type ChatShellAction,
   type ChatShellMessage,
 } from '../lib/chat-shell';
@@ -71,6 +83,8 @@ export function ChatScreen() {
   >(null);
   const [authMessage, setAuthMessage] = useState<string | null>(null);
   const [draft, setDraft] = useState('');
+  const [surveyDraft, setSurveyDraft] = useState('');
+  const [surveySelections, setSurveySelections] = useState<string[]>([]);
   const [launchOrigin, setLaunchOrigin] = useState<'deeplink' | 'user' | null>(
     null,
   );
@@ -106,6 +120,9 @@ export function ChatScreen() {
       ]),
     ),
   );
+  const [activeSurveysByCharacterId, setActiveSurveysByCharacterId] = useState<
+    Record<string, ActiveChatSurvey | null>
+  >({});
 
   const routeableCharacters = useMemo(
     () =>
@@ -189,6 +206,16 @@ export function ChatScreen() {
   ]);
 
   const selectedThread = messagesByCharacterId[selectedCharacter.id] ?? [];
+  const activeSurvey = activeSurveysByCharacterId[selectedCharacter.id] ?? null;
+  const currentSurveyStep = activeSurvey
+    ? getCurrentSurveyStep(activeSurvey)
+    : null;
+
+  useEffect(() => {
+    setSurveyDraft('');
+    setSurveySelections([]);
+  }, [selectedCharacter.id, currentSurveyStep?.step.id]);
+
   const selectedCharacterActions = useMemo(
     () =>
       isFortuneChatCharacter(selectedCharacter)
@@ -239,7 +266,7 @@ export function ChatScreen() {
       targetCharacter,
       buildLaunchMessages(targetCharacter, activeFortuneType),
     );
-    openResultRoute(activeFortuneType, 'deeplink', targetCharacter.id);
+    beginFortuneRuntime(targetCharacter, activeFortuneType);
     setLastAutoLaunchKey(launchKey);
     setLaunchOrigin(null);
   }, [
@@ -260,30 +287,93 @@ export function ChatScreen() {
     }));
   }
 
-  function openResultRoute(
-    fortuneType: FortuneTypeId | null | undefined,
-    source: 'chat-action' | 'deeplink' | 'recent-card',
-    characterId: string | null = selectedCharacter.id,
+  function setActiveSurvey(
+    characterId: string,
+    survey: ActiveChatSurvey | null,
   ) {
-    if (!fortuneType) {
+    setActiveSurveysByCharacterId((current) => ({
+      ...current,
+      [characterId]: survey,
+    }));
+    setSurveyDraft('');
+    setSurveySelections([]);
+  }
+
+  function beginFortuneRuntime(
+    character: ChatCharacterSpec,
+    fortuneType: FortuneTypeId,
+  ) {
+    const definition = getChatSurveyDefinition(fortuneType);
+
+    if (definition) {
+      const survey = startChatSurvey(definition);
+      const question =
+        resolveSurveyQuestion(survey, {
+          mbti: mobileAppState.profile.mbti || undefined,
+        }) ?? definition.steps[0]?.question;
+
+      setActiveSurvey(character.id, survey);
+
+      if (question) {
+        appendMessages(character, [buildAssistantTextMessage(question)]);
+      }
+
+      return true;
+    }
+
+    const embeddedResult = buildEmbeddedResultMessage(fortuneType);
+
+    if (!embeddedResult) {
       return false;
     }
 
-    const resultKind = resolveResultKindFromFortuneType(fortuneType);
+    setActiveSurvey(character.id, null);
+    appendMessages(character, [
+      buildAssistantTextMessage('좋아요. 결과를 같은 대화 안에 바로 붙여드릴게요.'),
+      embeddedResult,
+    ]);
 
-    if (!resultKind) {
+    return true;
+  }
+
+  function completeSurvey(
+    character: ChatCharacterSpec,
+    fortuneType: FortuneTypeId,
+  ) {
+    const definition = getChatSurveyDefinition(fortuneType);
+    const embeddedResult = buildEmbeddedResultMessage(fortuneType);
+
+    setActiveSurvey(character.id, null);
+
+    if (!embeddedResult) {
+      return;
+    }
+
+    appendMessages(character, [
+      buildAssistantTextMessage(
+        definition?.submitReply ??
+          '좋아요. 결과를 같은 채팅 안에서 바로 보여드릴게요.',
+      ),
+      embeddedResult,
+    ]);
+  }
+
+  function reopenFortuneResult(
+    character: ChatCharacterSpec,
+    fortuneType: FortuneTypeId,
+    prefixText: string,
+  ) {
+    const embeddedResult = buildEmbeddedResultMessage(fortuneType);
+
+    if (!embeddedResult) {
       return false;
     }
 
-    router.push({
-      pathname: '/result/[resultKind]',
-      params: {
-        resultKind,
-        source,
-        ...(characterId ? { characterId } : {}),
-      },
-    });
-
+    setActiveSurvey(character.id, null);
+    appendMessages(character, [
+      buildAssistantTextMessage(prefixText),
+      embeddedResult,
+    ]);
     return true;
   }
 
@@ -317,11 +407,7 @@ export function ChatScreen() {
     setSurfaceMode('chat');
     appendMessages(selectedCharacter, [
       buildUserMessage(action.prompt),
-      {
-        id: `assistant-action-${Date.now()}`,
-        sender: 'assistant',
-        text: action.reply,
-      },
+      buildAssistantTextMessage(action.reply),
     ]);
     recordChatIntent({
       characterId: selectedCharacter.id,
@@ -333,7 +419,7 @@ export function ChatScreen() {
       );
     });
 
-    openResultRoute(fortuneType, 'chat-action', selectedCharacter.id);
+    beginFortuneRuntime(selectedCharacter, fortuneType);
   }
 
   function handleCreateFriend() {
@@ -352,7 +438,14 @@ export function ChatScreen() {
 
     setActiveTab('fortune');
     setSelectedCharacterId(recentFortuneCharacterId);
-    openResultRoute(fortuneType, 'recent-card', recentFortuneCharacterId);
+    setSurfaceMode('chat');
+    const character =
+      findChatCharacterById(recentFortuneCharacterId) ?? selectedCharacter;
+    reopenFortuneResult(
+      character,
+      fortuneType,
+      `${character.name}와 보던 ${formatFortuneTypeLabel(fortuneType)} 결과를 같은 대화 안에 다시 열어드릴게요.`,
+    );
   }
 
   function handleSendDraft() {
@@ -377,6 +470,86 @@ export function ChatScreen() {
       );
     });
     setDraft('');
+  }
+
+  function submitSurveyAnswer(answer: unknown, displayLabel?: string) {
+    if (!activeSurvey || !currentSurveyStep) {
+      return;
+    }
+
+    const answerLabel =
+      displayLabel ??
+      formatSurveyAnswerLabel(currentSurveyStep.step, answer);
+
+    appendMessages(selectedCharacter, [buildUserMessage(answerLabel)]);
+
+    const { nextSurvey, completed } = applySurveyAnswer(activeSurvey, answer);
+
+    if (nextSurvey) {
+      setActiveSurvey(selectedCharacter.id, nextSurvey);
+      const nextQuestion = resolveSurveyQuestion(nextSurvey, {
+        mbti: mobileAppState.profile.mbti || undefined,
+      });
+
+      if (nextQuestion) {
+        appendMessages(selectedCharacter, [
+          buildAssistantTextMessage(nextQuestion),
+        ]);
+      }
+    } else if (completed) {
+      completeSurvey(selectedCharacter, completed.fortuneType);
+    }
+
+    recordChatIntent({
+      characterId: selectedCharacter.id,
+      fortuneType: activeSurvey.fortuneType,
+      incrementMessages: true,
+    }).catch((error) => {
+      captureError(error, { surface: 'chat:record-survey-answer' }).catch(
+        () => undefined,
+      );
+    });
+
+    setSurveyDraft('');
+    setSurveySelections([]);
+  }
+
+  function handleSurveyToggleSelection(value: string) {
+    const limit = currentSurveyStep?.step.maxSelections ?? Number.POSITIVE_INFINITY;
+
+    setSurveySelections((current) => {
+      if (current.includes(value)) {
+        return current.filter((item) => item !== value);
+      }
+
+      if (current.length >= limit) {
+        return [...current.slice(1), value];
+      }
+
+      return [...current, value];
+    });
+  }
+
+  function handleSurveySubmitSelection() {
+    if (!currentSurveyStep) {
+      return;
+    }
+
+    submitSurveyAnswer(surveySelections, formatSurveyAnswerLabel(currentSurveyStep.step, surveySelections));
+  }
+
+  function handleSurveySubmitText() {
+    const trimmed = surveyDraft.trim();
+
+    if (!trimmed) {
+      return;
+    }
+
+    submitSurveyAnswer(trimmed, trimmed);
+  }
+
+  function handleSurveySkip() {
+    submitSurveyAnswer('skip', '건너뛰기');
   }
 
   async function handleSocialAuthStart(providerId: 'apple' | 'google') {
@@ -446,11 +619,25 @@ export function ChatScreen() {
       }
       footer={
         gate === 'ready' && surfaceMode === 'chat' ? (
-          <ActiveChatComposer
-            draft={draft}
-            onDraftChange={setDraft}
-            onSend={handleSendDraft}
-          />
+          currentSurveyStep ? (
+            <ActiveSurveyFooter
+              draft={surveyDraft}
+              onDraftChange={setSurveyDraft}
+              onPickSingle={(value) => submitSurveyAnswer(value)}
+              onSkip={handleSurveySkip}
+              onSubmitSelection={handleSurveySubmitSelection}
+              onSubmitText={handleSurveySubmitText}
+              onToggleSelection={handleSurveyToggleSelection}
+              selections={surveySelections}
+              step={currentSurveyStep.step}
+            />
+          ) : (
+            <ActiveChatComposer
+              draft={draft}
+              onDraftChange={setDraft}
+              onSend={handleSendDraft}
+            />
+          )
         ) : undefined
       }
       keyboardAvoiding={gate === 'ready' && surfaceMode === 'chat'}
@@ -483,6 +670,12 @@ export function ChatScreen() {
             actions={selectedCharacterActions}
             character={selectedCharacter}
             messages={selectedThread}
+            surveyActive={Boolean(currentSurveyStep)}
+            surveyEyebrow={
+              currentSurveyStep
+                ? `${activeSurvey?.definition.title ?? '설문'} 진행 중`
+                : null
+            }
             showHeader={false}
             onBack={() => {
               setSurfaceMode('list');

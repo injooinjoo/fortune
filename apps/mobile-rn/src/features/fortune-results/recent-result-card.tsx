@@ -48,8 +48,8 @@ export function RecentResultCard({
       </AppText>
       <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
         {recentFortuneCharacter
-          ? `${recentFortuneCharacter.name}와 보던 결과를 다시 열 수 있습니다.`
-          : '직전 운세 결과를 결과 스택으로 다시 엽니다.'}
+          ? `${recentFortuneCharacter.name}와 보던 결과를 같은 채팅 안에서 다시 열 수 있습니다.`
+          : '직전 운세 결과를 같은 채팅 안에서 다시 엽니다.'}
       </AppText>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
         <Chip label={`result:${resultKind}`} tone="accent" />
@@ -62,7 +62,7 @@ export function RecentResultCard({
         />
       </View>
       <PrimaryButton onPress={() => onOpen(lastFortuneType)}>
-        최근 결과 열기
+        최근 결과 다시 보기
       </PrimaryButton>
     </Card>
   );
