@@ -591,9 +591,437 @@ const ootdSurvey: ChatSurveyDefinition = {
   ],
 };
 
+const compatibilitySurvey: ChatSurveyDefinition = {
+  fortuneType: 'compatibility',
+  title: '궁합',
+  introReply: '궁합 흐름으로 갈게요. 상대 정보를 먼저 맞춰볼게요.',
+  submitReply: '좋아요. 궁합 결과를 같은 채팅 안에 바로 보여드릴게요.',
+  steps: [
+    {
+      id: 'matchTarget',
+      question: '누구와의 궁합이 궁금하세요?',
+      inputKind: 'match-selector',
+    },
+    {
+      id: 'partnerBirth',
+      question: '상대방의 생년월일을 입력해주세요.',
+      inputKind: 'birth-datetime',
+    },
+    {
+      id: 'focus',
+      question: '어떤 궁합이 가장 궁금하세요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'overall', label: '전체 궁합' },
+        { id: 'love', label: '연애 궁합' },
+        { id: 'marriage', label: '결혼 궁합' },
+        { id: 'business', label: '사업 궁합' },
+      ],
+    },
+  ],
+};
+
+const blindDateSurvey: ChatSurveyDefinition = {
+  fortuneType: 'blind-date',
+  title: '소개팅 운세',
+  introReply: '소개팅 흐름으로 볼게요. 만남 맥락을 먼저 맞춰볼게요.',
+  submitReply: '좋아요. 소개팅 에너지와 포인트를 카드로 정리해드릴게요.',
+  steps: [
+    {
+      id: 'timing',
+      question: '소개팅은 언제인가요?',
+      inputKind: 'date',
+    },
+    {
+      id: 'feeling',
+      question: '지금 기분은 어떤가요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'excited', label: '기대돼요' },
+        { id: 'nervous', label: '긴장돼요' },
+        { id: 'neutral', label: '보통이에요' },
+        { id: 'reluctant', label: '별로예요' },
+      ],
+    },
+    {
+      id: 'goal',
+      question: '이번 만남에서 바라는 건?',
+      inputKind: 'chips',
+      options: [
+        { id: 'fun', label: '즐거운 대화' },
+        { id: 'chemistry', label: '케미 확인' },
+        { id: 'longterm', label: '진지한 관계' },
+        { id: 'friend', label: '친구도 괜찮아요' },
+      ],
+    },
+  ],
+};
+
+const exLoverSurvey: ChatSurveyDefinition = {
+  fortuneType: 'ex-lover',
+  title: '재회 운세',
+  introReply: '재회 흐름으로 열어볼게요. 지금 감정 상태를 먼저 맞춰볼게요.',
+  submitReply: '좋아요. 재회 에너지와 시그널을 카드로 정리해드릴게요.',
+  steps: [
+    {
+      id: 'emotionState',
+      question: '지금 감정 상태는?',
+      inputKind: 'chips',
+      options: [
+        { id: 'missing', label: '그리워요' },
+        { id: 'angry', label: '화나요' },
+        { id: 'confused', label: '혼란스러워요' },
+        { id: 'healed', label: '많이 나아졌어요' },
+        { id: 'hopeful', label: '다시 만나고 싶어요' },
+      ],
+    },
+    {
+      id: 'timeElapsed',
+      question: '헤어진 지 얼마나 됐나요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'recent', label: '한 달 이내' },
+        { id: 'months', label: '1~6개월' },
+        { id: 'halfyear', label: '6개월~1년' },
+        { id: 'years', label: '1년 이상' },
+      ],
+    },
+    {
+      id: 'contactStatus',
+      question: '연락은 하고 있나요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'none', label: '완전 끊김' },
+        { id: 'occasional', label: '가끔' },
+        { id: 'frequent', label: '자주' },
+      ],
+    },
+  ],
+};
+
+const dreamSurvey: ChatSurveyDefinition = {
+  fortuneType: 'dream',
+  title: '꿈해몽',
+  introReply: '꿈 해몽으로 열어볼게요. 꿈의 핵심 장면부터 맞춰볼게요.',
+  submitReply: '좋아요. 꿈의 상징과 메시지를 카드로 풀어드릴게요.',
+  steps: [
+    {
+      id: 'dreamContent',
+      question: '꿈에서 가장 기억나는 장면을 적어주세요.',
+      inputKind: 'text',
+      placeholder: '예: 하늘을 날아다녔어요. 바다에서 물고기를 잡았어요.',
+    },
+    {
+      id: 'emotion',
+      question: '꿈에서 느낀 감정은?',
+      inputKind: 'chips',
+      options: [
+        { id: 'happy', label: '기쁨/행복' },
+        { id: 'scared', label: '두려움' },
+        { id: 'confused', label: '혼란' },
+        { id: 'sad', label: '슬픔' },
+        { id: 'excited', label: '흥분/설렘' },
+      ],
+    },
+    {
+      id: 'category',
+      question: '어떤 해석이 궁금하세요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'money', label: '재물' },
+        { id: 'love', label: '연애' },
+        { id: 'warning', label: '경고' },
+        { id: 'message', label: '메시지' },
+      ],
+    },
+  ],
+};
+
+const faceReadingSurvey: ChatSurveyDefinition = {
+  fortuneType: 'face-reading',
+  title: '관상',
+  introReply: '관상 흐름으로 볼게요. 얼굴 사진을 먼저 올려주세요.',
+  submitReply: '좋아요. 관상 분석 결과를 카드로 정리해드릴게요.',
+  steps: [
+    {
+      id: 'faceImage',
+      question: '정면 얼굴 사진을 올려주세요.',
+      inputKind: 'image',
+      imageHint: '밝은 조명, 정면, 헤어가 이마를 가리지 않는 사진이 좋습니다.',
+    },
+    {
+      id: 'focus',
+      question: '어떤 관상 분석이 궁금하세요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'overall', label: '전체 관상' },
+        { id: 'career', label: '직업운' },
+        { id: 'love', label: '연애운' },
+        { id: 'wealth', label: '재물운' },
+      ],
+    },
+  ],
+};
+
+const lottoSurvey: ChatSurveyDefinition = {
+  fortuneType: 'lotto',
+  title: '로또 운세',
+  introReply: '행운의 번호 흐름으로 갈게요. 감을 먼저 맞춰볼게요.',
+  submitReply: '좋아요. 행운 번호와 에너지 분석을 카드로 정리해드릴게요.',
+  steps: [
+    {
+      id: 'luckyFeeling',
+      question: '요즘 운이 좋다고 느끼시나요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'very', label: '매우 좋아요' },
+        { id: 'somewhat', label: '보통이에요' },
+        { id: 'not-really', label: '별로예요' },
+        { id: 'bad', label: '안 좋아요' },
+      ],
+    },
+    {
+      id: 'preferredRange',
+      question: '선호하는 번호 영역이 있나요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'low', label: '1~15' },
+        { id: 'mid', label: '16~30' },
+        { id: 'high', label: '31~45' },
+        { id: 'random', label: '상관없어요' },
+      ],
+    },
+  ],
+};
+
+const luckyItemsSurvey: ChatSurveyDefinition = {
+  fortuneType: 'lucky-items',
+  title: '행운 아이템',
+  introReply: '오늘의 행운 아이템을 찾아볼게요. 상황을 먼저 맞춰볼게요.',
+  submitReply: '좋아요. 행운 아이템과 컬러를 카드로 정리해드릴게요.',
+  steps: [
+    {
+      id: 'situation',
+      question: '오늘 어떤 상황인가요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'work', label: '업무/회의' },
+        { id: 'date', label: '데이트' },
+        { id: 'exam', label: '시험/면접' },
+        { id: 'daily', label: '일상' },
+        { id: 'travel', label: '여행' },
+      ],
+    },
+    {
+      id: 'category',
+      question: '어떤 행운 아이템이 궁금하세요?',
+      inputKind: 'multi-select',
+      maxSelections: 2,
+      options: [
+        { id: 'color', label: '행운 컬러' },
+        { id: 'food', label: '행운 음식' },
+        { id: 'accessory', label: '행운 소품' },
+        { id: 'number', label: '행운 숫자' },
+        { id: 'direction', label: '행운 방위' },
+      ],
+    },
+  ],
+};
+
+const petCompatibilitySurvey: ChatSurveyDefinition = {
+  fortuneType: 'pet-compatibility',
+  title: '반려동물 궁합',
+  introReply: '반려동물 궁합으로 볼게요. 반려동물 정보를 먼저 맞춰볼게요.',
+  submitReply: '좋아요. 반려동물 궁합 결과를 카드로 정리해드릴게요.',
+  steps: [
+    {
+      id: 'petType',
+      question: '어떤 반려동물인가요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'dog', label: '🐕 강아지' },
+        { id: 'cat', label: '🐈 고양이' },
+        { id: 'bird', label: '🦜 새' },
+        { id: 'fish', label: '🐠 물고기' },
+        { id: 'other', label: '기타' },
+      ],
+    },
+    {
+      id: 'petName',
+      question: '반려동물 이름을 알려주세요.',
+      inputKind: 'text',
+      placeholder: '예: 뽀삐, 나비, 코코',
+    },
+    {
+      id: 'concern',
+      question: '어떤 궁합이 궁금하세요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'personality', label: '성격 궁합' },
+        { id: 'health', label: '건강 궁합' },
+        { id: 'bonding', label: '유대감' },
+        { id: 'training', label: '훈련 궁합' },
+      ],
+    },
+  ],
+};
+
+const movingSurvey: ChatSurveyDefinition = {
+  fortuneType: 'moving',
+  title: '이사 운세',
+  introReply: '이사 운세로 볼게요. 계획 중인 이사 맥락을 먼저 맞춰볼게요.',
+  submitReply: '좋아요. 이사 길일과 방위를 카드로 정리해드릴게요.',
+  steps: [
+    {
+      id: 'timing',
+      question: '이사 예정 시기는?',
+      inputKind: 'chips',
+      options: [
+        { id: 'soon', label: '1개월 이내' },
+        { id: 'quarter', label: '1~3개월' },
+        { id: 'half', label: '3~6개월' },
+        { id: 'later', label: '6개월 이후' },
+        { id: 'undecided', label: '미정' },
+      ],
+    },
+    {
+      id: 'direction',
+      question: '이사 방향이 정해졌나요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'east', label: '동쪽' },
+        { id: 'west', label: '서쪽' },
+        { id: 'south', label: '남쪽' },
+        { id: 'north', label: '북쪽' },
+        { id: 'undecided', label: '미정' },
+      ],
+    },
+  ],
+};
+
+const celebritySurvey: ChatSurveyDefinition = {
+  fortuneType: 'celebrity',
+  title: '연예인 궁합',
+  introReply: '연예인 궁합으로 볼게요. 좋아하는 연예인을 먼저 알려주세요.',
+  submitReply: '좋아요. 연예인과의 궁합을 카드로 정리해드릴게요.',
+  steps: [
+    {
+      id: 'celebrityName',
+      question: '궁합을 보고 싶은 연예인 이름을 적어주세요.',
+      inputKind: 'text',
+      placeholder: '예: 아이유, BTS 정국',
+    },
+    {
+      id: 'reason',
+      question: '어떤 궁합이 궁금하세요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'love', label: '연애 궁합' },
+        { id: 'personality', label: '성격 궁합' },
+        { id: 'friendship', label: '우정 궁합' },
+        { id: 'work', label: '업무 궁합' },
+      ],
+    },
+  ],
+};
+
+const namingSurvey: ChatSurveyDefinition = {
+  fortuneType: 'naming',
+  title: '작명',
+  introReply: '작명 흐름으로 갈게요. 용도와 선호를 먼저 맞춰볼게요.',
+  submitReply: '좋아요. 추천 이름과 의미를 카드로 정리해드릴게요.',
+  steps: [
+    {
+      id: 'purpose',
+      question: '어떤 용도의 이름인가요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'baby', label: '아기 이름' },
+        { id: 'pet', label: '반려동물' },
+        { id: 'business', label: '사업/브랜드' },
+        { id: 'nickname', label: '별명/닉네임' },
+      ],
+    },
+    {
+      id: 'preference',
+      question: '선호하는 느낌이 있으세요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'traditional', label: '전통적' },
+        { id: 'modern', label: '현대적' },
+        { id: 'unique', label: '독특한' },
+        { id: 'meaningful', label: '의미 깊은' },
+      ],
+    },
+    {
+      id: 'note',
+      question: '추가로 참고할 사항이 있으면 적어주세요.',
+      inputKind: 'text-with-skip',
+      placeholder: '예: 성이 김이고, 한자 이름을 원해요.',
+    },
+  ],
+};
+
+const biorhythmSurvey: ChatSurveyDefinition = {
+  fortuneType: 'biorhythm',
+  title: '바이오리듬',
+  introReply: '바이오리듬으로 볼게요. 생년월일만 확인하면 바로 분석해드릴게요.',
+  submitReply: '좋아요. 신체/감성/지성 리듬을 카드로 정리해드릴게요.',
+  steps: [
+    {
+      id: 'confirmBirth',
+      question: '등록된 생년월일로 분석할까요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'yes', label: '네, 바로 분석해주세요' },
+        { id: 'other', label: '다른 날짜로 보기' },
+      ],
+    },
+    {
+      id: 'targetDate',
+      question: '분석할 날짜를 선택해주세요.',
+      inputKind: 'date',
+      showWhen: { confirmBirth: 'other' },
+    },
+  ],
+};
+
+const dailySurvey: ChatSurveyDefinition = {
+  fortuneType: 'daily',
+  title: '오늘의 운세',
+  introReply: '오늘의 흐름으로 볼게요. 관심사만 짧게 맞춰볼게요.',
+  submitReply: '좋아요. 오늘의 에너지를 카드로 정리해드릴게요.',
+  steps: [
+    {
+      id: 'focus',
+      question: '오늘 가장 궁금한 영역은?',
+      inputKind: 'chips',
+      options: [
+        { id: 'overall', label: '전체 흐름' },
+        { id: 'love', label: '연애' },
+        { id: 'career', label: '일/커리어' },
+        { id: 'money', label: '재물' },
+        { id: 'health', label: '건강' },
+      ],
+    },
+    {
+      id: 'mood',
+      question: '지금 기분은 어떤가요?',
+      inputKind: 'chips',
+      options: [
+        { id: 'great', label: '좋아요' },
+        { id: 'normal', label: '보통' },
+        { id: 'down', label: '처져요' },
+        { id: 'anxious', label: '불안해요' },
+      ],
+    },
+  ],
+};
+
 const surveyDefinitions = [
   traditionalSurvey,
   dailyCalendarSurvey,
+  dailySurvey,
   mbtiSurvey,
   careerSurvey,
   loveSurvey,
@@ -607,6 +1035,18 @@ const surveyDefinitions = [
   exerciseSurvey,
   tarotSurvey,
   ootdSurvey,
+  compatibilitySurvey,
+  blindDateSurvey,
+  exLoverSurvey,
+  dreamSurvey,
+  faceReadingSurvey,
+  lottoSurvey,
+  luckyItemsSurvey,
+  petCompatibilitySurvey,
+  movingSurvey,
+  celebritySurvey,
+  namingSurvey,
+  biorhythmSurvey,
 ] as const satisfies readonly ChatSurveyDefinition[];
 
 export const surveyDefinitionByFortuneType = Object.fromEntries(

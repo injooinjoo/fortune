@@ -6,7 +6,12 @@ export type ChatSurveyInputKind =
   | 'text'
   | 'text-with-skip'
   | 'date'
-  | 'card-draw';
+  | 'card-draw'
+  | 'slider'
+  | 'birth-datetime'
+  | 'calendar'
+  | 'image'
+  | 'match-selector';
 
 export interface ChatSurveyOption {
   id: string;
@@ -23,6 +28,15 @@ export interface ChatSurveyStep {
   showWhen?: Partial<Record<string, string | readonly string[]>>;
   maxSelections?: number;
   placeholder?: string;
+  /** Slider min/max/step */
+  sliderMin?: number;
+  sliderMax?: number;
+  sliderStep?: number;
+  sliderUnit?: string;
+  /** Image input hint */
+  imageHint?: string;
+  /** Match selector: which profile types to show */
+  matchProfileTypes?: readonly ('pet' | 'secondary' | 'self')[];
 }
 
 export interface ChatSurveyDefinition {

@@ -15,6 +15,7 @@ import {
   ChatFirstRunSurface,
   ChatSoftGate,
   FloatingCreateButton,
+  FortuneChipBar,
   ProfileFlowGateCard,
 } from '../features/chat-surface/chat-surface';
 import {
@@ -28,6 +29,7 @@ import {
 import type { ActiveChatSurvey } from '../features/chat-survey/types';
 import { resolveResultKindFromFortuneType } from '../features/fortune-results/mapping';
 import { captureError } from '../lib/error-reporting';
+import { getFortuneResult, type FortuneRequestContext } from '../lib/fortune-service';
 import {
   buildAssistantTextMessage,
   buildEmbeddedResultMessage,
@@ -96,6 +98,8 @@ export function ChatScreen() {
   const [draft, setDraft] = useState('');
   const [surveyDraft, setSurveyDraft] = useState('');
   const [surveySelections, setSurveySelections] = useState<string[]>([]);
+  const [isChipBarExpanded, setIsChipBarExpanded] = useState(false);
+  const [pendingImage, setPendingImage] = useState<string | null>(null);
   const [launchOrigin, setLaunchOrigin] = useState<'deeplink' | 'user' | null>(
     null,
   );
@@ -361,24 +365,63 @@ export function ChatScreen() {
     },
   ) {
     const definition = getChatSurveyDefinition(completed.fortuneType);
-    const embeddedResult = buildEmbeddedResultMessage(
-      completed.fortuneType,
-      buildResultContext(character, completed.answers),
-    );
 
     setActiveSurvey(character.id, null);
-
-    if (!embeddedResult) {
-      return;
-    }
 
     appendMessages(character, [
       buildAssistantTextMessage(
         definition?.submitReply ??
           '좋아요. 결과를 같은 채팅 안에서 바로 보여드릴게요.',
       ),
-      embeddedResult,
+      buildAssistantTextMessage('결과를 준비하고 있어요...'),
     ]);
+
+    // Try API-backed fortune result first, fall back to fixture
+    const requestContext: FortuneRequestContext = {
+      birthDate: mobileAppState.profile.birthDate || undefined,
+      birthTime: mobileAppState.profile.birthTime || undefined,
+      mbti: mobileAppState.profile.mbti || undefined,
+      bloodType: mobileAppState.profile.bloodType || undefined,
+      answers: completed.answers,
+    };
+
+    getFortuneResult(completed.fortuneType, requestContext)
+      .then((apiResult) => {
+        // Build embedded result - use API data if available, fallback to fixture
+        const embeddedResult = buildEmbeddedResultMessage(
+          completed.fortuneType,
+          buildResultContext(character, {
+            ...completed.answers,
+            ...(apiResult.source !== 'fixture' ? apiResult.data : {}),
+          }),
+        );
+
+        if (embeddedResult) {
+          appendMessages(character, [embeddedResult]);
+        } else {
+          // Fallback to fixture-based result
+          const fixtureResult = buildEmbeddedResultMessage(
+            completed.fortuneType,
+            buildResultContext(character, completed.answers),
+          );
+          if (fixtureResult) {
+            appendMessages(character, [fixtureResult]);
+          }
+        }
+      })
+      .catch((error) => {
+        captureError(error, { surface: 'chat:fortune-api' }).catch(
+          () => undefined,
+        );
+        // Fallback to fixture
+        const embeddedResult = buildEmbeddedResultMessage(
+          completed.fortuneType,
+          buildResultContext(character, completed.answers),
+        );
+        if (embeddedResult) {
+          appendMessages(character, [embeddedResult]);
+        }
+      });
   }
 
   function reopenFortuneResult(
@@ -697,11 +740,33 @@ export function ChatScreen() {
               step={currentSurveyStep.step}
             />
           ) : (
-            <ActiveChatComposer
-              draft={draft}
-              onDraftChange={setDraft}
-              onSend={handleSendDraft}
-            />
+            <View style={{ gap: 8 }}>
+              {isFortuneChatCharacter(selectedCharacter) &&
+              selectedCharacter.specialties.length > 0 ? (
+                <FortuneChipBar
+                  specialties={selectedCharacter.specialties}
+                  activeFortuneType={activeFortuneType}
+                  expanded={isChipBarExpanded}
+                  onPickAction={handleActionPress}
+                  onToggleExpand={() => setIsChipBarExpanded((v) => !v)}
+                />
+              ) : null}
+              <ActiveChatComposer
+                draft={draft}
+                onDraftChange={setDraft}
+                onSend={handleSendDraft}
+                onImageSelected={(uri) => {
+                  setPendingImage(uri);
+                  appendMessages(selectedCharacter, [
+                    buildUserMessage(`[사진 첨부]`),
+                  ]);
+                  setPendingImage(null);
+                }}
+                onVoiceTranscript={(text) => {
+                  setDraft(text);
+                }}
+              />
+            </View>
           )
         ) : gate === 'ready' &&
           surfaceMode === 'list' &&

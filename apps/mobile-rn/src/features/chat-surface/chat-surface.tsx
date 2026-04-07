@@ -1,6 +1,8 @@
 import type { PropsWithChildren, ReactNode } from 'react';
 
-import { Pressable, TextInput, View } from 'react-native';
+import { useState } from 'react';
+
+import { ActionSheetIOS, Alert, Platform, Pressable, ScrollView, TextInput, View } from 'react-native';
 
 import type { FortuneTypeId } from '@fortune/product-contracts';
 
@@ -22,6 +24,13 @@ import { formatFortuneTypeLabel } from '../../lib/chat-shell';
 import { fortuneTheme } from '../../lib/theme';
 import { EmbeddedResultCard } from '../chat-results/embedded-result-card';
 import type { ChatSurveyStep } from '../chat-survey/types';
+import {
+  SurveyBirthDatetimePicker,
+  SurveyCalendarPicker,
+  SurveyImageInput,
+  SurveyMatchSelector,
+  SurveySlider,
+} from './survey-inputs';
 
 function CharacterAvatar({
   name,
@@ -406,6 +415,124 @@ function EmbeddedResultMessage({
     </View>
   );
 }
+
+// ─── Fortune Chip Bar (above composer) ───────────────────────────
+
+const chipColorPalette = [
+  fortuneTheme.colors.chipBlue,
+  fortuneTheme.colors.chipGreen,
+  fortuneTheme.colors.chipPeach,
+  fortuneTheme.colors.chipLavender,
+] as const;
+
+export function FortuneChipBar({
+  specialties,
+  activeFortuneType,
+  expanded,
+  onPickAction,
+  onToggleExpand,
+  disabled,
+}: {
+  specialties: readonly FortuneTypeId[];
+  activeFortuneType: FortuneTypeId | null;
+  expanded: boolean;
+  onPickAction: (fortuneType: FortuneTypeId) => void;
+  onToggleExpand: () => void;
+  disabled?: boolean;
+}) {
+  if (specialties.length === 0) {
+    return null;
+  }
+
+  const showToggle = specialties.length > 3;
+
+  const chips = specialties.map((specialty, index) => {
+    const label = formatFortuneTypeLabel(specialty);
+    const isSelected = specialty === activeFortuneType;
+    const chipBg = isSelected
+      ? chipColorPalette[index % chipColorPalette.length]
+      : fortuneTheme.colors.surfaceSecondary;
+    const chipFg = isSelected
+      ? fortuneTheme.colors.chipText
+      : fortuneTheme.colors.textSecondary;
+
+    return (
+      <Pressable
+        key={specialty}
+        accessibilityRole="button"
+        accessibilityLabel={label}
+        disabled={disabled}
+        onPress={() => onPickAction(specialty)}
+        style={({ pressed }) => ({
+          opacity: pressed ? 0.82 : disabled ? 0.5 : 1,
+        })}
+      >
+        <View
+          style={{
+            backgroundColor: chipBg,
+            borderColor: isSelected
+              ? 'transparent'
+              : fortuneTheme.colors.border,
+            borderRadius: fortuneTheme.radius.chip,
+            borderWidth: 1,
+            paddingHorizontal: 12,
+            paddingVertical: 7,
+          }}
+        >
+          <AppText
+            variant="labelSmall"
+            color={chipFg}
+            style={{ fontWeight: '600' }}
+          >
+            {label}
+          </AppText>
+        </View>
+      </Pressable>
+    );
+  });
+
+  return (
+    <View style={{ gap: 4 }}>
+      {expanded ? (
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            gap: 8,
+          }}
+        >
+          {chips}
+        </View>
+      ) : (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: 8 }}
+          style={{ maxHeight: 34 }}
+        >
+          {chips}
+        </ScrollView>
+      )}
+      {showToggle ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={expanded ? '접기' : '더보기'}
+          onPress={onToggleExpand}
+          style={{
+            alignItems: 'center',
+            paddingVertical: 2,
+          }}
+        >
+          <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
+            {expanded ? '▲' : '▼'}
+          </AppText>
+        </Pressable>
+      ) : null}
+    </View>
+  );
+}
+
+// ─── Chat Thread Message ─────────────────────────────────────────
 
 function ChatThreadMessage({
   character,
@@ -792,14 +919,194 @@ export function ChatFirstRunSurface({
   );
 }
 
+// ─── Image Picker Button (camera icon) ───────────────────────────
+
+function ImagePickerButton({
+  onImageSelected,
+}: {
+  onImageSelected: (uri: string) => void;
+}) {
+  function handlePress() {
+    const options = ['카메라', '갤러리', '취소'];
+
+    if (Platform.OS === 'ios') {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options,
+          cancelButtonIndex: 2,
+          title: '사진 선택',
+        },
+        (buttonIndex) => {
+          if (buttonIndex === 0) {
+            onImageSelected('camera://placeholder');
+          } else if (buttonIndex === 1) {
+            onImageSelected('gallery://placeholder');
+          }
+        },
+      );
+    } else {
+      Alert.alert('사진 선택', undefined, [
+        {
+          text: '카메라',
+          onPress: () => onImageSelected('camera://placeholder'),
+        },
+        {
+          text: '갤러리',
+          onPress: () => onImageSelected('gallery://placeholder'),
+        },
+        { text: '취소', style: 'cancel' },
+      ]);
+    }
+  }
+
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel="사진 첨부"
+      onPress={handlePress}
+      style={({ pressed }) => ({
+        alignItems: 'center',
+        backgroundColor: fortuneTheme.colors.surfaceElevated,
+        borderRadius: 16,
+        height: 32,
+        justifyContent: 'center',
+        opacity: pressed ? 0.82 : 1,
+        width: 32,
+      })}
+    >
+      {/* Camera icon (simplified) */}
+      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <View
+          style={{
+            borderColor: fortuneTheme.colors.textSecondary,
+            borderRadius: 3,
+            borderWidth: 1.5,
+            height: 10,
+            width: 14,
+          }}
+        />
+        <View
+          style={{
+            backgroundColor: fortuneTheme.colors.textSecondary,
+            borderRadius: 999,
+            height: 5,
+            position: 'absolute',
+            width: 5,
+          }}
+        />
+        <View
+          style={{
+            backgroundColor: fortuneTheme.colors.surfaceElevated,
+            borderRadius: 999,
+            height: 2,
+            left: 2,
+            position: 'absolute',
+            top: -1,
+            width: 4,
+          }}
+        />
+      </View>
+    </Pressable>
+  );
+}
+
+// ─── Voice Input Button (microphone icon) ────────────────────────
+
+function VoiceInputButton({
+  onVoiceTranscript,
+}: {
+  onVoiceTranscript: (text: string) => void;
+}) {
+  const [isRecording, setIsRecording] = useState(false);
+
+  function handlePress() {
+    if (isRecording) {
+      setIsRecording(false);
+      // Simulated transcription - will be connected to expo-av later
+      onVoiceTranscript('음성 메시지 텍스트');
+    } else {
+      setIsRecording(true);
+    }
+  }
+
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={isRecording ? '녹음 중지' : '음성 입력'}
+      onPress={handlePress}
+      style={({ pressed }) => ({
+        alignItems: 'center',
+        backgroundColor: isRecording
+          ? fortuneTheme.colors.error
+          : fortuneTheme.colors.surfaceElevated,
+        borderRadius: 16,
+        height: 32,
+        justifyContent: 'center',
+        opacity: pressed ? 0.82 : 1,
+        width: 32,
+      })}
+    >
+      {isRecording ? (
+        /* Stop icon */
+        <View
+          style={{
+            backgroundColor: fortuneTheme.colors.ctaForeground,
+            borderRadius: 2,
+            height: 10,
+            width: 10,
+          }}
+        />
+      ) : (
+        /* Microphone icon */
+        <View style={{ alignItems: 'center' }}>
+          <View
+            style={{
+              backgroundColor: fortuneTheme.colors.textSecondary,
+              borderRadius: 4,
+              height: 8,
+              width: 6,
+            }}
+          />
+          <View
+            style={{
+              borderColor: fortuneTheme.colors.textSecondary,
+              borderBottomLeftRadius: 6,
+              borderBottomRightRadius: 6,
+              borderLeftWidth: 1.5,
+              borderBottomWidth: 1.5,
+              borderRightWidth: 1.5,
+              height: 5,
+              marginTop: -1,
+              width: 10,
+            }}
+          />
+          <View
+            style={{
+              backgroundColor: fortuneTheme.colors.textSecondary,
+              height: 3,
+              width: 1.5,
+            }}
+          />
+        </View>
+      )}
+    </Pressable>
+  );
+}
+
+// ─── Active Chat Composer (text + image + voice) ─────────────────
+
 export function ActiveChatComposer({
   draft,
   onDraftChange,
   onSend,
+  onImageSelected,
+  onVoiceTranscript,
 }: {
   draft: string;
   onDraftChange: (value: string) => void;
   onSend: () => void;
+  onImageSelected?: (uri: string) => void;
+  onVoiceTranscript?: (text: string) => void;
 }) {
   const composerHasDraft = draft.trim().length > 0;
 
@@ -821,41 +1128,43 @@ export function ActiveChatComposer({
           gap: fortuneTheme.spacing.sm,
         }}
       >
-        <View
-          style={{
-            alignItems: 'center',
-            backgroundColor: fortuneTheme.colors.surfaceElevated,
-            borderRadius: 16,
-            height: 32,
-            justifyContent: 'center',
-            width: 32,
-          }}
-        >
+        {/* Image picker button (camera) */}
+        {onImageSelected ? (
+          <ImagePickerButton onImageSelected={onImageSelected} />
+        ) : (
           <View
             style={{
               alignItems: 'center',
+              backgroundColor: fortuneTheme.colors.surfaceElevated,
+              borderRadius: 16,
+              height: 32,
               justifyContent: 'center',
+              width: 32,
             }}
           >
-            <View
-              style={{
-                backgroundColor: fortuneTheme.colors.textSecondary,
-                borderRadius: 999,
-                height: 2,
-                position: 'absolute',
-                width: 11,
-              }}
-            />
-            <View
-              style={{
-                backgroundColor: fortuneTheme.colors.textSecondary,
-                borderRadius: 999,
-                height: 11,
-                width: 2,
-              }}
-            />
+            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+              <View
+                style={{
+                  backgroundColor: fortuneTheme.colors.textSecondary,
+                  borderRadius: 999,
+                  height: 2,
+                  position: 'absolute',
+                  width: 11,
+                }}
+              />
+              <View
+                style={{
+                  backgroundColor: fortuneTheme.colors.textSecondary,
+                  borderRadius: 999,
+                  height: 11,
+                  width: 2,
+                }}
+              />
+            </View>
           </View>
-        </View>
+        )}
+
+        {/* Text input */}
         <View style={{ flex: 1 }}>
           <TextInput
             accessibilityLabel="chat composer"
@@ -874,35 +1183,45 @@ export function ActiveChatComposer({
             value={draft}
           />
         </View>
-        <Pressable
-          accessibilityRole="button"
-          onPress={onSend}
-          style={{
-            alignItems: 'center',
-            backgroundColor: composerHasDraft
-              ? fortuneTheme.colors.ctaBackground
-              : fortuneTheme.colors.surfaceElevated,
-            borderRadius: 16,
-            height: 32,
-            justifyContent: 'center',
-            minWidth: 32,
-            paddingHorizontal: composerHasDraft ? 10 : 0,
-          }}
-        >
-          {composerHasDraft ? (
+
+        {/* Right button: Send when text, Voice when empty */}
+        {composerHasDraft ? (
+          <Pressable
+            accessibilityRole="button"
+            onPress={onSend}
+            style={{
+              alignItems: 'center',
+              backgroundColor: fortuneTheme.colors.ctaBackground,
+              borderRadius: 16,
+              height: 32,
+              justifyContent: 'center',
+              minWidth: 32,
+              paddingHorizontal: 10,
+            }}
+          >
             <AppText
               variant="labelLarge"
               color={fortuneTheme.colors.ctaForeground}
             >
               보내기
             </AppText>
-          ) : (
-            <View
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
+          </Pressable>
+        ) : onVoiceTranscript ? (
+          <VoiceInputButton onVoiceTranscript={onVoiceTranscript} />
+        ) : (
+          <Pressable
+            accessibilityRole="button"
+            onPress={onSend}
+            style={{
+              alignItems: 'center',
+              backgroundColor: fortuneTheme.colors.surfaceElevated,
+              borderRadius: 16,
+              height: 32,
+              justifyContent: 'center',
+              minWidth: 32,
+            }}
+          >
+            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
               <View
                 style={{
                   borderColor: fortuneTheme.colors.textSecondary,
@@ -922,8 +1241,8 @@ export function ActiveChatComposer({
                 }}
               />
             </View>
-          )}
-        </Pressable>
+          </Pressable>
+        )}
       </View>
     </View>
   );
@@ -1046,6 +1365,51 @@ export function ActiveSurveyFooter({
           선택 완료
         </PrimaryButton>
       </View>
+    );
+  }
+
+  if (step.inputKind === 'slider') {
+    return (
+      <SurveySlider
+        min={step.sliderMin}
+        max={step.sliderMax}
+        step={step.sliderStep}
+        unit={step.sliderUnit}
+        onSubmit={(value, label) => onPickSingle(String(value))}
+      />
+    );
+  }
+
+  if (step.inputKind === 'birth-datetime') {
+    return (
+      <SurveyBirthDatetimePicker
+        onSubmit={(value, label) => onPickSingle(value)}
+      />
+    );
+  }
+
+  if (step.inputKind === 'calendar') {
+    return (
+      <SurveyCalendarPicker
+        onSubmit={(value, label) => onPickSingle(value)}
+      />
+    );
+  }
+
+  if (step.inputKind === 'image') {
+    return (
+      <SurveyImageInput
+        hint={step.imageHint}
+        onSubmit={(value, label) => onPickSingle(value)}
+      />
+    );
+  }
+
+  if (step.inputKind === 'match-selector') {
+    return (
+      <SurveyMatchSelector
+        onSubmit={(value, label) => onPickSingle(value)}
+      />
     );
   }
 
