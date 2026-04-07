@@ -15,6 +15,127 @@ export interface EmbeddedResultSeed {
   specialTip?: string;
 }
 
+interface EmbeddedResultDisplayMetadata {
+  eyebrow: string;
+  subtitle: string;
+  title: string;
+}
+
+const displayMetadataByFortuneType: Partial<
+  Record<FortuneTypeId, EmbeddedResultDisplayMetadata>
+> = {
+  daily: {
+    title: '오늘 운세',
+    subtitle: '하루 에너지와 타이밍을 가볍게 읽는 결과',
+    eyebrow: '오늘의 하루 흐름',
+  },
+  'new-year': {
+    title: '신년 운세',
+    subtitle: '한 해의 기운과 전환 포인트를 정리한 결과',
+    eyebrow: '올해의 흐름 요약',
+  },
+  'fortune-cookie': {
+    title: '포춘쿠키',
+    subtitle: '짧고 선명한 행운 메시지를 꺼내보는 결과',
+    eyebrow: '오늘의 한마디',
+  },
+  'face-reading': {
+    title: '관상',
+    subtitle: '인상과 분위기에서 읽히는 포인트를 정리한 결과',
+    eyebrow: '오늘의 인상 흐름',
+  },
+  naming: {
+    title: '작명',
+    subtitle: '이름의 기운과 어감 포인트를 정리한 결과',
+    eyebrow: '오늘의 이름 흐름',
+  },
+  zodiac: {
+    title: '별자리 운세',
+    subtitle: '별자리 흐름과 감정 리듬을 정리한 결과',
+    eyebrow: '오늘의 별 흐름',
+  },
+  birthstone: {
+    title: '탄생석 가이드',
+    subtitle: '탄생석 분위기와 추천 포인트를 묶은 결과',
+    eyebrow: '오늘의 탄생석 힌트',
+  },
+  compatibility: {
+    title: '궁합',
+    subtitle: '두 사람의 리듬과 관계 포인트를 읽는 결과',
+    eyebrow: '오늘의 궁합 흐름',
+  },
+  'blind-date': {
+    title: '소개팅 운세',
+    subtitle: '첫인상과 대화 흐름, 만남 포인트를 담은 결과',
+    eyebrow: '오늘의 만남 흐름',
+  },
+  'ex-lover': {
+    title: '재회 운세',
+    subtitle: '관계 여운과 재접점 가능성을 읽는 결과',
+    eyebrow: '오늘의 재회 흐름',
+  },
+  'avoid-people': {
+    title: '피해야 할 인연',
+    subtitle: '거리 조절이 필요한 관계 신호를 정리한 결과',
+    eyebrow: '오늘의 관계 경계',
+  },
+  celebrity: {
+    title: '연예인 궁합',
+    subtitle: '캐릭터 취향과 관계 감각을 가볍게 읽는 결과',
+    eyebrow: '오늘의 케미 흐름',
+  },
+  'yearly-encounter': {
+    title: '올해의 인연운',
+    subtitle: '올해 만남과 관계 전개 리듬을 압축한 결과',
+    eyebrow: '올해의 인연 흐름',
+  },
+  exam: {
+    title: '시험운',
+    subtitle: '집중 타이밍과 준비 전략을 정리한 결과',
+    eyebrow: '오늘의 집중 흐름',
+  },
+  'lucky-items': {
+    title: '행운 아이템',
+    subtitle: '지금 잘 맞는 행운 포인트와 추천 아이템을 담은 결과',
+    eyebrow: '오늘의 행운 포인트',
+  },
+  lotto: {
+    title: '로또 운세',
+    subtitle: '운의 밀도와 가볍게 참고할 포인트를 담은 결과',
+    eyebrow: '오늘의 행운 흐름',
+  },
+  'match-insight': {
+    title: '경기 인사이트',
+    subtitle: '경기 흐름과 집중 타이밍을 읽는 결과',
+    eyebrow: '오늘의 경기 흐름',
+  },
+  moving: {
+    title: '이사 운세',
+    subtitle: '공간 이동과 자리 변화의 흐름을 읽는 결과',
+    eyebrow: '오늘의 공간 흐름',
+  },
+  dream: {
+    title: '꿈 해몽',
+    subtitle: '꿈 상징과 현재 감정의 연결을 정리한 결과',
+    eyebrow: '오늘의 꿈 메시지',
+  },
+  biorhythm: {
+    title: '바이오리듬',
+    subtitle: '컨디션 리듬과 감정 파동을 정리한 결과',
+    eyebrow: '오늘의 리듬 흐름',
+  },
+  'pet-compatibility': {
+    title: '반려동물 궁합',
+    subtitle: '반려동물과의 케미와 돌봄 포인트를 담은 결과',
+    eyebrow: '오늘의 반려 케미',
+  },
+  talisman: {
+    title: '부적',
+    subtitle: '마음을 붙잡는 상징과 보호 포인트를 담은 결과',
+    eyebrow: '오늘의 보호 메시지',
+  },
+};
+
 export const embeddedResultSeedByKind: Record<ResultKind, EmbeddedResultSeed> = {
   'traditional-saju': {
     score: 82,
@@ -251,14 +372,15 @@ export function buildFallbackEmbeddedResultPayload(
 ): EmbeddedResultPayload {
   const metadata = resultMetadataByKind[resultKind];
   const seed = embeddedResultSeedByKind[resultKind];
+  const displayMetadata = displayMetadataByFortuneType[fortuneType] ?? metadata;
 
   return {
     widgetType: 'fortune_result_card',
     fortuneType,
     resultKind,
-    eyebrow: metadata.eyebrow,
-    title: metadata.title,
-    subtitle: metadata.subtitle,
+    eyebrow: displayMetadata.eyebrow,
+    title: displayMetadata.title,
+    subtitle: displayMetadata.subtitle,
     summary: seed.summary,
     score: seed.score,
     metrics: seed.metrics,

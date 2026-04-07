@@ -54,10 +54,13 @@ const fortuneTypeLabels: Partial<Record<FortuneTypeId, string>> = {
   compatibility: '궁합',
   'blind-date': '소개팅 운세',
   'ex-lover': '재회 운세',
+  'avoid-people': '피해야 할 인연',
+  'yearly-encounter': '올해의 인연운',
   career: '커리어 운세',
   wealth: '재물 운세',
   talent: '재능 분석',
   coaching: '코칭운',
+  exam: '시험운',
   'lucky-items': '행운 아이템',
   lotto: '로또 운세',
   'match-insight': '경기 인사이트',
@@ -74,6 +77,9 @@ const fortuneTypeLabels: Partial<Record<FortuneTypeId, string>> = {
   biorhythm: '바이오리듬',
   wish: '소원 리딩',
   talisman: '부적',
+  zodiac: '별자리 운세',
+  birthstone: '탄생석 가이드',
+  'fortune-cookie': '포춘쿠키',
   'ootd-evaluation': 'OOTD 코디',
 };
 

@@ -613,8 +613,50 @@ export const surveyDefinitionByFortuneType = Object.fromEntries(
   surveyDefinitions.map((definition) => [definition.fortuneType, definition]),
 ) as Partial<Record<FortuneTypeId, ChatSurveyDefinition>>;
 
+const surveyDefinitionAliasByFortuneType: Partial<
+  Record<FortuneTypeId, FortuneTypeId>
+> = {
+  daily: 'daily-calendar',
+  'new-year': 'daily-calendar',
+  'fortune-cookie': 'daily-calendar',
+  'face-reading': 'traditional-saju',
+  naming: 'traditional-saju',
+  compatibility: 'love',
+  'blind-date': 'love',
+  'ex-lover': 'love',
+  'avoid-people': 'love',
+  celebrity: 'love',
+  'yearly-encounter': 'love',
+  exam: 'career',
+  'lucky-items': 'wealth',
+  lotto: 'wealth',
+  biorhythm: 'personality-dna',
+  'pet-compatibility': 'family',
+};
+
 export function getChatSurveyDefinition(fortuneType: FortuneTypeId) {
-  return surveyDefinitionByFortuneType[fortuneType] ?? null;
+  const directDefinition = surveyDefinitionByFortuneType[fortuneType];
+
+  if (directDefinition) {
+    return directDefinition;
+  }
+
+  const aliasedType = surveyDefinitionAliasByFortuneType[fortuneType];
+
+  if (!aliasedType) {
+    return null;
+  }
+
+  const aliasedDefinition = surveyDefinitionByFortuneType[aliasedType];
+
+  if (!aliasedDefinition) {
+    return null;
+  }
+
+  return {
+    ...aliasedDefinition,
+    fortuneType,
+  };
 }
 
 function shouldShowStep(
