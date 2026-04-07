@@ -22,7 +22,6 @@ import { formatFortuneTypeLabel } from '../../lib/chat-shell';
 import { fortuneTheme } from '../../lib/theme';
 import { EmbeddedResultCard } from '../chat-results/embedded-result-card';
 import type { ChatSurveyStep } from '../chat-survey/types';
-import { RecentResultCard } from '../fortune-results/recent-result-card';
 
 function CharacterAvatar({
   name,
@@ -139,12 +138,14 @@ function EntryActionRow({
   badge,
   onPress,
   tone = 'neutral',
+  selected = false,
 }: {
   title: string;
   subtitle: string;
   badge?: string;
   onPress: () => void;
   tone?: 'neutral' | 'accent' | 'success';
+  selected?: boolean;
 }) {
   return (
     <Pressable
@@ -155,8 +156,12 @@ function EntryActionRow({
       <View
         style={{
           alignItems: 'center',
-          backgroundColor: fortuneTheme.colors.surfaceSecondary,
-          borderColor: fortuneTheme.colors.border,
+          backgroundColor: selected
+            ? fortuneTheme.colors.backgroundTertiary
+            : fortuneTheme.colors.surfaceSecondary,
+          borderColor: selected
+            ? fortuneTheme.colors.accentTertiary
+            : fortuneTheme.colors.border,
           borderRadius: fortuneTheme.radius.lg,
           borderWidth: 1,
           flexDirection: 'row',
@@ -180,10 +185,14 @@ function EntryActionRow({
 
 function CharacterListRow({
   character,
+  badge,
   onPress,
+  selected = false,
 }: {
   character: ChatCharacterSpec;
+  badge?: string;
   onPress: () => void;
+  selected?: boolean;
 }) {
   return (
     <Pressable
@@ -194,8 +203,12 @@ function CharacterListRow({
       <View
         style={{
           alignItems: 'center',
-          backgroundColor: fortuneTheme.colors.surfaceSecondary,
-          borderColor: fortuneTheme.colors.border,
+          backgroundColor: selected
+            ? fortuneTheme.colors.backgroundTertiary
+            : fortuneTheme.colors.surfaceSecondary,
+          borderColor: selected
+            ? fortuneTheme.colors.accentTertiary
+            : fortuneTheme.colors.border,
           borderRadius: fortuneTheme.radius.lg,
           borderWidth: 1,
           flexDirection: 'row',
@@ -215,6 +228,12 @@ function CharacterListRow({
             {character.shortDescription}
           </AppText>
         </View>
+        {badge ? (
+          <Chip
+            label={badge}
+            tone={badge === '전문가' ? 'success' : 'neutral'}
+          />
+        ) : null}
       </View>
     </Pressable>
   );
@@ -311,29 +330,6 @@ function ChatThreadMessage({
         )}
       </View>
     </View>
-  );
-}
-
-function SurfaceSection({
-  title,
-  description,
-  children,
-}: PropsWithChildren<{
-  title: string;
-  description?: string;
-}>) {
-  return (
-    <Card>
-      <View style={{ gap: fortuneTheme.spacing.xs }}>
-        <AppText variant="heading4">{title}</AppText>
-        {description ? (
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {description}
-          </AppText>
-        ) : null}
-      </View>
-      <View style={{ gap: fortuneTheme.spacing.sm }}>{children}</View>
-    </Card>
   );
 }
 
@@ -516,6 +512,18 @@ export function ChatFirstRunSurface({
     primaryAction,
     secondaryActions[1],
   ].filter(Boolean) as ChatShellAction[];
+  const orderedCharacters = [
+    ...characters.filter((character) => character.id === selectedCharacterId),
+    ...characters.filter((character) => character.id !== selectedCharacterId),
+  ];
+  const visibleCharacters = orderedCharacters.slice(0, 4);
+  const highlightedStoryCharacters =
+    activeTab === 'story' ? orderedCharacters.slice(0, 2) : [];
+  const listTitle = activeTab === 'story' ? '최근 대화' : '최근 상담';
+  const listDescription =
+    activeTab === 'story'
+      ? '바로 이어서 이야기할 수 있는 캐릭터 목록입니다.'
+      : '설문과 결과가 같은 채팅 안에서 이어지는 전문가 목록입니다.';
 
   return (
     <View style={{ gap: fortuneTheme.spacing.md }}>
@@ -533,104 +541,147 @@ export function ChatFirstRunSurface({
         <HeaderDots />
       </View>
 
-      {activeTab === 'fortune' ? (
-        <SurfaceSection
-          title="맞춤 시작점"
-          description={`${featuredCharacter.name}의 추천 흐름을 기준으로 바로 운세를 시작할 수 있습니다.`}
-        >
-          {orderedActions.map((action, index) =>
-            index === 1 ? (
-              <Pressable
-                key={action.id}
-                accessibilityRole="button"
-                onPress={() => onPickAction(action.fortuneType)}
-                style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
-              >
-                <View
-                  style={{
-                    backgroundColor: fortuneTheme.colors.backgroundTertiary,
-                    borderRadius: fortuneTheme.radius.lg,
-                    padding: fortuneTheme.spacing.md,
-                    gap: fortuneTheme.spacing.xs,
-                  }}
+      <Card>
+        <View style={{ gap: fortuneTheme.spacing.xs }}>
+          <AppText variant="heading4">맞춤 시작점</AppText>
+          <AppText
+            variant="bodySmall"
+            color={fortuneTheme.colors.textSecondary}
+          >
+            {activeTab === 'story'
+              ? '대화를 바로 열거나, 새 친구를 만들어 메시지 목록에 추가할 수 있습니다.'
+              : `${featuredCharacter.name} 기준 추천 흐름으로 같은 채팅 안에서 설문과 결과를 바로 이어갈 수 있습니다.`}
+          </AppText>
+        </View>
+        <View style={{ gap: fortuneTheme.spacing.sm }}>
+          {activeTab === 'story' ? (
+            <>
+              <EntryActionRow
+                badge="친구"
+                onPress={onCreateFriend}
+                selected={false}
+                subtitle="문서 기준 5단계 플로우로 새 친구 캐릭터를 만들고 채팅으로 이어갑니다."
+                title="새 친구 만들기"
+                tone="accent"
+              />
+              {highlightedStoryCharacters.map((character, index) => (
+                <EntryActionRow
+                  key={character.id}
+                  badge="스토리"
+                  onPress={() => onSelectCharacter(character.id)}
+                  selected={character.id === selectedCharacterId}
+                  subtitle={character.shortDescription}
+                  title={
+                    index === 0
+                      ? `${character.name}와 바로 대화`
+                      : `${character.name} 이야기 열기`
+                  }
+                />
+              ))}
+            </>
+          ) : (
+            orderedActions.map((action, index) =>
+              index === 1 ? (
+                <Pressable
+                  key={action.id}
+                  accessibilityRole="button"
+                  onPress={() => onPickAction(action.fortuneType)}
+                  style={({ pressed }) => ({ opacity: pressed ? 0.84 : 1 })}
                 >
-                  <AppText variant="labelLarge" color={fortuneTheme.colors.textTertiary}>
-                    오늘 함께 풀어갈 운세
-                  </AppText>
                   <View
                     style={{
-                      alignItems: 'center',
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      gap: fortuneTheme.spacing.sm,
+                      backgroundColor: fortuneTheme.colors.backgroundTertiary,
+                      borderRadius: fortuneTheme.radius.lg,
+                      padding: fortuneTheme.spacing.md,
+                      gap: fortuneTheme.spacing.xs,
                     }}
                   >
-                    <View style={{ flex: 1, gap: 4 }}>
-                      <AppText variant="heading4">{action.label}</AppText>
-                      <AppText
-                        variant="bodySmall"
-                        color={fortuneTheme.colors.textSecondary}
-                      >
-                        {featuredCharacter.name}과 바로 이어서 볼 수 있어요.
-                      </AppText>
+                    <AppText
+                      variant="labelLarge"
+                      color={fortuneTheme.colors.textTertiary}
+                    >
+                      오늘 함께 풀어갈 운세
+                    </AppText>
+                    <View
+                      style={{
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        gap: fortuneTheme.spacing.sm,
+                      }}
+                    >
+                      <View style={{ flex: 1, gap: 4 }}>
+                        <AppText variant="heading4">{action.label}</AppText>
+                        <AppText
+                          variant="bodySmall"
+                          color={fortuneTheme.colors.textSecondary}
+                        >
+                          {featuredCharacter.name}과 바로 이어서 볼 수 있어요.
+                        </AppText>
+                      </View>
+                      <Chip label="전문가" tone="success" />
                     </View>
-                    <Chip label="전문가" tone="success" />
                   </View>
-                </View>
-              </Pressable>
-            ) : (
-              <EntryActionRow
-                key={action.id}
-                title={action.label}
-                subtitle={action.reply}
-                badge="운세"
-                onPress={() => onPickAction(action.fortuneType)}
-                tone="neutral"
-              />
-            ),
+                </Pressable>
+              ) : (
+                <EntryActionRow
+                  key={action.id}
+                  title={action.label}
+                  subtitle={action.reply}
+                  badge="전문가"
+                  onPress={() => onPickAction(action.fortuneType)}
+                  tone="neutral"
+                />
+              ),
+            )
           )}
-        </SurfaceSection>
-      ) : (
-        <SurfaceSection
-          title="대화 시작"
-          description="세계관 캐릭터와 바로 대화를 열거나, 새 친구 캐릭터를 만들어 이어갈 수 있습니다."
-        >
-          <EntryActionRow
-            badge="친구"
-            onPress={onCreateFriend}
-            subtitle="문서 기준 5단계 플로우로 새 친구 캐릭터를 만들고 채팅으로 이어갑니다."
-            title="새 친구 만들기"
-            tone="accent"
-          />
-        </SurfaceSection>
-      )}
+        </View>
+      </Card>
 
-      <SurfaceSection
-        title={activeTab === 'story' ? '대화 캐릭터' : '운세 상담사'}
-        description={
-          activeTab === 'story'
-            ? '세계관 대화를 바로 시작할 캐릭터를 고르세요.'
-            : '설문과 결과가 같은 채팅 안에서 이어지는 운세 전문가를 고르세요.'
-        }
-      >
+      <Card>
+        <View
+          style={{
+            alignItems: 'center',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            gap: fortuneTheme.spacing.sm,
+          }}
+        >
+          <View style={{ flex: 1, gap: 4 }}>
+            <AppText variant="heading4">{listTitle}</AppText>
+            <AppText
+              variant="bodySmall"
+              color={fortuneTheme.colors.textSecondary}
+            >
+              {listDescription}
+            </AppText>
+          </View>
+          <Chip
+            label={activeTab === 'story' ? '스토리' : '운세보기'}
+            tone={activeTab === 'story' ? 'accent' : 'success'}
+          />
+        </View>
         <View style={{ gap: fortuneTheme.spacing.sm }}>
-          {characters.map((character) => (
+          {activeTab === 'fortune' && lastFortuneType ? (
+            <EntryActionRow
+              badge="최근 결과"
+              onPress={() => onOpenRecentResult(lastFortuneType)}
+              subtitle={`${formatFortuneTypeLabel(lastFortuneType)} 결과를 같은 채팅 안에서 다시 엽니다.`}
+              title={`${formatFortuneTypeLabel(lastFortuneType)} 이어보기`}
+              tone="accent"
+            />
+          ) : null}
+          {visibleCharacters.map((character) => (
             <CharacterListRow
               key={character.id}
+              badge={character.kind === 'fortune' ? '전문가' : '스토리'}
               character={character}
               onPress={() => onSelectCharacter(character.id)}
+              selected={character.id === selectedCharacterId}
             />
           ))}
         </View>
-      </SurfaceSection>
-
-      {activeTab === 'fortune' ? (
-        <RecentResultCard
-          lastFortuneType={lastFortuneType}
-          onOpen={onOpenRecentResult}
-          selectedCharacterId={selectedCharacterId}
-        />
-      ) : null}
+      </Card>
 
       <PagerDots />
     </View>
@@ -1185,14 +1236,23 @@ export function ProfileFlowGateCard({
         </AppText>
       </View>
 
-      <SurfaceSection title="온보딩 진행도" description="남은 단계를 먼저 마무리해 주세요.">
+      <Card>
+        <View style={{ gap: fortuneTheme.spacing.xs }}>
+          <AppText variant="heading4">온보딩 진행도</AppText>
+          <AppText
+            variant="bodySmall"
+            color={fortuneTheme.colors.textSecondary}
+          >
+            남은 단계를 먼저 마무리해 주세요.
+          </AppText>
+        </View>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
           <Chip label={`생년월일 ${birthCompleted ? '완료' : '필요'}`} tone={birthCompleted ? 'success' : 'neutral'} />
           <Chip label={`관심사 ${interestCompleted ? '완료' : '필요'}`} tone={interestCompleted ? 'success' : 'neutral'} />
           <Chip label={`첫 안내 ${firstRunHandoffSeen ? '완료' : '필요'}`} tone={firstRunHandoffSeen ? 'success' : 'neutral'} />
         </View>
         <PrimaryButton onPress={onContinue}>온보딩 계속하기</PrimaryButton>
-      </SurfaceSection>
+      </Card>
     </View>
   );
 }
