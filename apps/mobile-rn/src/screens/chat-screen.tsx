@@ -1043,7 +1043,10 @@ export function ChatScreen() {
               setActiveFortuneType(null);
             }}
             onOpenProfile={() =>
-              router.push(`/character/${selectedCharacter.id}` as Href)
+              router.push({
+                pathname: '/character/[id]',
+                params: { id: selectedCharacter.id, returnTo: '/chat' },
+              })
             }
           />
         ) : undefined
@@ -1074,7 +1077,11 @@ export function ChatScreen() {
               sendDisabled={selectedCharacter.kind === 'story' && storySendInFlight}
               auxiliaryAction={{
                 label: '프로필 보기',
-                onPress: () => router.push(`/character/${selectedCharacter.id}` as Href),
+                onPress: () =>
+                  router.push({
+                    pathname: '/character/[id]',
+                    params: { id: selectedCharacter.id, returnTo: '/chat' },
+                  }),
               }}
             />
           )

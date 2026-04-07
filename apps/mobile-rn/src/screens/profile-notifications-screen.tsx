@@ -85,7 +85,7 @@ export function ProfileNotificationsScreen() {
 
   return (
     <Screen
-      header={<RouteBackHeader fallbackHref="/profile" label="알림 설정" />}
+      header={<RouteBackHeader fallbackHref="/profile" />}
     >
       <AppText variant="displaySmall">알림 설정</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>

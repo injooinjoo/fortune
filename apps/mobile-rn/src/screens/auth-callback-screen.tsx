@@ -4,7 +4,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
 import { PrimaryButton } from '../components/primary-button';
-import { RouteBackHeader } from '../components/route-back-header';
+import {
+  resolveBackDestinationLabel,
+  RouteBackHeader,
+} from '../components/route-back-header';
 import { Screen } from '../components/screen';
 import { captureError } from '../lib/error-reporting';
 import { fortuneTheme } from '../lib/theme';
@@ -123,13 +126,16 @@ export function AuthCallbackScreen() {
     session,
     syncRemoteProfile,
   ]);
+  const backDestinationLabel = resolveBackDestinationLabel(
+    callbackMeta.returnTo as Href,
+  );
 
   return (
     <Screen
       header={
         <RouteBackHeader
           fallbackHref={callbackMeta.returnTo as Href}
-          label="로그인 확인"
+          label={backDestinationLabel}
         />
       }
     >

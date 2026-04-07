@@ -1,20 +1,35 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, type Href } from 'expo-router';
 
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
 import { Chip } from '../components/chip';
 import { PrimaryButton } from '../components/primary-button';
-import { RouteBackHeader } from '../components/route-back-header';
+import {
+  resolveBackDestinationLabel,
+  RouteBackHeader,
+} from '../components/route-back-header';
 import { Screen } from '../components/screen';
 import { findChatCharacterById, isFortuneChatCharacter } from '../lib/chat-characters';
 import { fortuneTheme } from '../lib/theme';
 
 export function CharacterProfileScreen() {
-  const params = useLocalSearchParams<{ id?: string }>();
+  const params = useLocalSearchParams<{ id?: string; returnTo?: string | string[] }>();
   const character = findChatCharacterById(params.id);
+  const returnTo =
+    typeof params.returnTo === 'string' && params.returnTo.startsWith('/')
+      ? params.returnTo
+      : '/chat';
+  const backDestinationLabel = resolveBackDestinationLabel(returnTo as Href);
 
   return (
-    <Screen header={<RouteBackHeader fallbackHref="/chat" label="캐릭터 프로필" />}>
+    <Screen
+      header={
+        <RouteBackHeader
+          fallbackHref={returnTo as Href}
+          label={backDestinationLabel}
+        />
+      }
+    >
       {character ? (
         <>
           <AppText variant="displaySmall">{character.name}</AppText>

@@ -238,7 +238,7 @@ export function ProfileScreen() {
           onPress={() =>
             router.push({
               pathname: '/character/[id]',
-              params: { id: recentCharacter.id },
+              params: { id: recentCharacter.id, returnTo: '/profile' },
               })
             }
             tone="secondary"

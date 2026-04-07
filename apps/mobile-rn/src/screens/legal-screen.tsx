@@ -18,7 +18,7 @@ export function LegalScreen({
   sections: Array<{ title: string; body: string }>;
 }) {
   return (
-    <Screen header={<RouteBackHeader fallbackHref="/profile" label={title} />}>
+    <Screen header={<RouteBackHeader fallbackHref="/profile" />}>
       <AppText variant="displaySmall">{title}</AppText>
       <AppText variant="bodyLarge">{summary}</AppText>
 

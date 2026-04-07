@@ -20,7 +20,7 @@ export function ProfileSajuSummaryScreen() {
     : null;
 
   return (
-    <Screen header={<RouteBackHeader fallbackHref="/profile" label="사주 요약" />}>
+    <Screen header={<RouteBackHeader fallbackHref="/profile" />}>
       <AppText variant="displaySmall">사주 요약</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
         저장된 프로필과 출생 정보가 준비되었는지 바로 확인할 수 있어요.

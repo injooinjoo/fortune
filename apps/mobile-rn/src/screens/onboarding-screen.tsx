@@ -10,7 +10,10 @@ import { Pressable, TextInput, View } from 'react-native';
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
 import { PrimaryButton } from '../components/primary-button';
-import { RouteBackHeader } from '../components/route-back-header';
+import {
+  resolveBackDestinationLabel,
+  RouteBackHeader,
+} from '../components/route-back-header';
 import { Screen } from '../components/screen';
 import { appEnv } from '../lib/env';
 import { captureError } from '../lib/error-reporting';
@@ -89,6 +92,7 @@ export function OnboardingScreen() {
   } = useAppBootstrap();
   const { saveProfile, state, status } = useMobileAppState();
   const returnTo = normalizeReturnTo(readSearchParam(params.returnTo));
+  const backDestinationLabel = resolveBackDestinationLabel(returnTo as Href);
   const isDevelopment = appEnv.environment === 'development';
   const debugStep = isDevelopment
     ? normalizeDebugStep(readSearchParam(params.debugStep))
@@ -121,10 +125,12 @@ export function OnboardingScreen() {
     const nextInterestIds =
       debugInterests.length > 0 ? debugInterests : state.profile.interestIds;
 
+    const hasBirthProfile = nextBirthDate.trim().length > 0;
+    const hasInterestProfile = nextInterestIds.length >= 3;
     const derivedStep: OnboardingStepId =
       debugStep ??
-      (onboardingProgress.birthCompleted
-        ? onboardingProgress.interestCompleted
+      (hasBirthProfile
+        ? hasInterestProfile
           ? 'handoff'
           : 'interest'
         : 'birth');
@@ -156,6 +162,7 @@ export function OnboardingScreen() {
   );
   const isBirthStepValid = birthDate.trim().length > 0;
   const isInterestStepValid = selectedInterestIds.length >= 3;
+  const isHandoffReady = isBirthStepValid && isInterestStepValid;
 
   async function handleContinueFromBirth() {
     try {
@@ -179,7 +186,7 @@ export function OnboardingScreen() {
         interestIds: selectedInterestIds,
       });
       await updateOnboardingProgress({
-        interestCompleted: selectedInterestIds.length > 0,
+        interestCompleted: selectedInterestIds.length >= 3,
       });
       setActiveStepId('handoff');
     } catch (error) {
@@ -197,7 +204,7 @@ export function OnboardingScreen() {
       });
       await updateOnboardingProgress({
         birthCompleted: birthDate.trim().length > 0,
-        interestCompleted: selectedInterestIds.length > 0,
+        interestCompleted: selectedInterestIds.length >= 3,
       });
       await completeOnboarding();
       router.replace(returnTo as Href);
@@ -219,7 +226,7 @@ export function OnboardingScreen() {
       header={
         <RouteBackHeader
           fallbackHref={returnTo as Href}
-          label="처음 설정하기"
+          label={backDestinationLabel}
         />
       }
     >
@@ -410,7 +417,10 @@ export function OnboardingScreen() {
               })}
             </View>
           </Card>
-          <PrimaryButton onPress={() => void handleFinishOnboarding()}>
+          <PrimaryButton
+            disabled={!isHandoffReady}
+            onPress={() => void handleFinishOnboarding()}
+          >
             {session ? '설정 완료하고 계속하기' : '설정 저장하고 계속하기'}
           </PrimaryButton>
           {!session ? (

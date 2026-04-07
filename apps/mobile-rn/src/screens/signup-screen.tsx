@@ -6,18 +6,44 @@ import { View } from 'react-native';
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
 import { PrimaryButton } from '../components/primary-button';
-import { RouteBackHeader } from '../components/route-back-header';
+import {
+  resolveBackDestinationLabel,
+  RouteBackHeader,
+} from '../components/route-back-header';
 import { Screen } from '../components/screen';
 import { captureError } from '../lib/error-reporting';
+import {
+  socialAuthProviderLabelById,
+  type SocialAuthProviderId,
+} from '../lib/social-auth';
 import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 import { useSocialAuth } from '../providers/social-auth-provider';
 
-const authOptions = [
+const authOptions: readonly {
+  id: SocialAuthProviderId;
+  label: string;
+  note: string;
+}[] = [
+  {
+    id: 'apple',
+    label: 'Apple로 계속하기',
+    note: 'iPhone 사용자에게 가장 자연스러운 로그인 방법입니다.',
+  },
   {
     id: 'google',
     label: 'Google로 계속하기',
     note: '가장 빠르게 시작할 수 있는 로그인 방법입니다.',
+  },
+  {
+    id: 'kakao',
+    label: '카카오로 계속하기',
+    note: '카카오 계정으로 바로 이어서 사용할 수 있습니다.',
+  },
+  {
+    id: 'naver',
+    label: '네이버로 계속하기',
+    note: '네이버 계정으로 로그인해 프로필을 연결합니다.',
   },
 ] as const;
 
@@ -33,13 +59,15 @@ function normalizeReturnTo(value: string | undefined) {
 
 export function SignupScreen() {
   const params = useLocalSearchParams<{ returnTo?: string | string[] }>();
-  const [activeProviderId, setActiveProviderId] = useState<string | null>(null);
+  const [activeProviderId, setActiveProviderId] =
+    useState<SocialAuthProviderId | null>(null);
   const [authMessage, setAuthMessage] = useState<string | null>(null);
   const { markGuestBrowse } = useAppBootstrap();
   const { startSocialAuth } = useSocialAuth();
   const returnTo = normalizeReturnTo(readSearchParam(params.returnTo));
+  const backDestinationLabel = resolveBackDestinationLabel(returnTo as Href);
 
-  async function handleSocialAuthStart(providerId: 'apple' | 'google' | 'kakao') {
+  async function handleSocialAuthStart(providerId: SocialAuthProviderId) {
     try {
       setActiveProviderId(providerId);
       setAuthMessage(null);
@@ -48,7 +76,7 @@ export function SignupScreen() {
 
       if (result.status === 'started') {
         setAuthMessage(
-          `${authOptions.find((option) => option.id === providerId)?.label ?? providerId} 브라우저 인증을 시작했습니다. 완료 후 앱으로 돌아옵니다.`,
+          `${socialAuthProviderLabelById[providerId]} 브라우저 인증을 시작했습니다. 완료 후 앱으로 돌아옵니다.`,
         );
         return;
       }
@@ -67,7 +95,7 @@ export function SignupScreen() {
       header={
         <RouteBackHeader
           fallbackHref={returnTo as Href}
-          label="로그인 및 시작"
+          label={backDestinationLabel}
         />
       }
     >
@@ -107,7 +135,7 @@ export function SignupScreen() {
           variant="bodySmall"
           color={fortuneTheme.colors.textTertiary}
         >
-          지금은 Google로 시작할 수 있고, 필요한 계정은 나중에 추가할 수 있습니다.
+          Apple, Google, 카카오, 네이버 계정으로 바로 이어서 시작할 수 있습니다.
         </AppText>
       </Card>
 
