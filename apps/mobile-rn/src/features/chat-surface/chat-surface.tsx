@@ -73,6 +73,58 @@ function HeaderDots() {
   );
 }
 
+function HeaderActionButton({
+  label,
+  onPress,
+}: {
+  label: string;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      onPress={onPress}
+      style={({ pressed }) => ({
+        alignItems: 'center',
+        backgroundColor: fortuneTheme.colors.surfaceSecondary,
+        borderColor: fortuneTheme.colors.border,
+        borderRadius: 999,
+        borderWidth: 1,
+        height: 36,
+        justifyContent: 'center',
+        opacity: pressed ? 0.84 : 1,
+        width: 36,
+      })}
+    >
+      <View
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <View
+          style={{
+            backgroundColor: fortuneTheme.colors.textPrimary,
+            borderRadius: 999,
+            height: 2,
+            position: 'absolute',
+            width: 12,
+          }}
+        />
+        <View
+          style={{
+            backgroundColor: fortuneTheme.colors.textPrimary,
+            borderRadius: 999,
+            height: 12,
+            width: 2,
+          }}
+        />
+      </View>
+    </Pressable>
+  );
+}
+
 function PagerDots() {
   return (
     <View
@@ -517,8 +569,6 @@ export function ChatFirstRunSurface({
     ...characters.filter((character) => character.id !== selectedCharacterId),
   ];
   const visibleCharacters = orderedCharacters.slice(0, 4);
-  const highlightedStoryCharacters =
-    activeTab === 'story' ? orderedCharacters.slice(0, 2) : [];
   const listTitle = activeTab === 'story' ? '최근 대화' : '최근 상담';
   const listDescription =
     activeTab === 'story'
@@ -538,49 +588,26 @@ export function ChatFirstRunSurface({
           <AppText variant="displaySmall">메시지</AppText>
           <SegmentedPills activeTab={activeTab} onChangeTab={onChangeTab} />
         </View>
-        <HeaderDots />
+        {activeTab === 'story' ? (
+          <HeaderActionButton label="새 대화 시작" onPress={onCreateFriend} />
+        ) : (
+          <HeaderDots />
+        )}
       </View>
 
-      <Card>
-        <View style={{ gap: fortuneTheme.spacing.xs }}>
-          <AppText variant="heading4">맞춤 시작점</AppText>
-          <AppText
-            variant="bodySmall"
-            color={fortuneTheme.colors.textSecondary}
-          >
-            {activeTab === 'story'
-              ? '대화를 바로 열거나, 새 친구를 만들어 메시지 목록에 추가할 수 있습니다.'
-              : `${featuredCharacter.name} 기준 추천 흐름으로 같은 채팅 안에서 설문과 결과를 바로 이어갈 수 있습니다.`}
-          </AppText>
-        </View>
-        <View style={{ gap: fortuneTheme.spacing.sm }}>
-          {activeTab === 'story' ? (
-            <>
-              <EntryActionRow
-                badge="친구"
-                onPress={onCreateFriend}
-                selected={false}
-                subtitle="문서 기준 5단계 플로우로 새 친구 캐릭터를 만들고 채팅으로 이어갑니다."
-                title="새 친구 만들기"
-                tone="accent"
-              />
-              {highlightedStoryCharacters.map((character, index) => (
-                <EntryActionRow
-                  key={character.id}
-                  badge="스토리"
-                  onPress={() => onSelectCharacter(character.id)}
-                  selected={character.id === selectedCharacterId}
-                  subtitle={character.shortDescription}
-                  title={
-                    index === 0
-                      ? `${character.name}와 바로 대화`
-                      : `${character.name} 이야기 열기`
-                  }
-                />
-              ))}
-            </>
-          ) : (
-            orderedActions.map((action, index) =>
+      {activeTab === 'fortune' ? (
+        <Card>
+          <View style={{ gap: fortuneTheme.spacing.xs }}>
+            <AppText variant="heading4">맞춤 시작점</AppText>
+            <AppText
+              variant="bodySmall"
+              color={fortuneTheme.colors.textSecondary}
+            >
+              {`${featuredCharacter.name} 기준 추천 흐름으로 같은 채팅 안에서 설문과 결과를 바로 이어갈 수 있습니다.`}
+            </AppText>
+          </View>
+          <View style={{ gap: fortuneTheme.spacing.sm }}>
+            {orderedActions.map((action, index) =>
               index === 1 ? (
                 <Pressable
                   key={action.id}
@@ -633,10 +660,10 @@ export function ChatFirstRunSurface({
                   tone="neutral"
                 />
               ),
-            )
-          )}
-        </View>
-      </Card>
+            )}
+          </View>
+        </Card>
+      ) : null}
 
       <Card>
         <View
