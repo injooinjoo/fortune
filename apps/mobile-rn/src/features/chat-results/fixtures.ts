@@ -364,6 +364,102 @@ export const embeddedResultSeedByKind: Record<ResultKind, EmbeddedResultSeed> = 
     warnings: ['메인 포인트를 두 개 이상 쓰면 인상이 분산됩니다'],
     luckyItems: ['실버 액세서리', '딥 블랙'],
   },
+  exam: {
+    score: 86,
+    summary: '시험운은 벼락치기보다 실전 리듬 정리에서 차이가 크게 나는 날입니다.',
+    metrics: [
+      { label: '집중도', value: '91%', note: '짧은 몰입 강세' },
+      { label: '실전 감각', value: '84%', note: '익숙한 유형에 강함' },
+    ],
+    highlights: ['정답률보다 실수 줄이기가 더 큰 점수 차이를 만듭니다'],
+    recommendations: ['실수 노트를 한 장으로 압축하세요', '시험 당일 루틴을 오늘 미리 맞춰보세요'],
+    warnings: ['직전 새로운 풀이법 추가는 오히려 흔들릴 수 있어요'],
+    luckyItems: ['얇은 노트', '진한 블루 펜'],
+  },
+  compatibility: {
+    score: 87,
+    summary: '궁합운은 감정 강도보다 생활 리듬과 대화 결에서 높은 점수를 보이는 흐름입니다.',
+    metrics: [
+      { label: '성격 궁합', value: '88', note: '기본 결이 잘 맞음' },
+      { label: '소통 궁합', value: '90', note: '짧고 명확한 대화 강세' },
+    ],
+    highlights: ['서로 다른 템포를 조율하는 순간 관계 만족도가 크게 올라갑니다'],
+    recommendations: ['중요한 기대치는 말로 먼저 맞춰보세요'],
+    warnings: ['감정만 보고 결론을 서두르면 오해가 커질 수 있어요'],
+    luckyItems: ['저녁 산책', '차분한 향'],
+  },
+  'blind-date': {
+    score: 82,
+    summary: '소개팅운은 첫인상을 크게 밀기보다 편안한 호흡을 만드는 데서 점수가 올라갑니다.',
+    metrics: [
+      { label: '첫인상', value: '89', note: '차분한 자신감 강세' },
+      { label: '관심도', value: '78', note: '반응은 천천히 상승' },
+    ],
+    highlights: ['질문형 대화가 어색함을 빠르게 풀어줍니다'],
+    recommendations: ['관찰한 포인트를 짧게 말해보세요'],
+    warnings: ['스펙 확인처럼 들리는 질문을 초반에 몰아넣지 마세요'],
+    luckyItems: ['은은한 향', '로즈 베이지'],
+  },
+  'avoid-people': {
+    score: 79,
+    summary: '오늘은 사람보다 패턴을 경계하는 편이 에너지 보존에 더 효과적입니다.',
+    metrics: [
+      { label: '관계 경계', value: '79', note: '기준 유지 필요' },
+      { label: '에너지 보호', value: '85', note: '짧은 거리 두기 유리' },
+    ],
+    highlights: ['급한 친밀감과 압박형 부탁은 바로 거리를 두는 편이 좋습니다'],
+    recommendations: ['답을 바로 주지 말고 시간을 두고 정리하세요'],
+    warnings: ['피곤한 상태에선 경계선이 느슨해질 수 있어요'],
+    luckyItems: ['무음 시간', '심호흡 3번'],
+  },
+  'ex-lover': {
+    score: 71,
+    summary: '재회운은 감정 확인보다 관계 기준을 다시 세울수록 의미가 선명해지는 흐름입니다.',
+    metrics: [
+      { label: '재접점', value: '68', note: '가능성은 있으나 속도 조절 필요' },
+      { label: '감정 안정도', value: '74', note: '기대보다 기준 정리 우선' },
+    ],
+    highlights: ['다시 만나는 것보다 다시 만나도 괜찮은 관계인지가 더 중요합니다'],
+    recommendations: ['안부보다 현재 기준을 먼저 정리하세요'],
+    warnings: ['좋았던 기억만으로 현재를 덮어보면 반복될 수 있어요'],
+    luckyItems: ['짧은 메모', '느린 호흡'],
+  },
+  'yearly-encounter': {
+    score: 84,
+    summary: '올해의 인연운은 한 번의 강한 이벤트보다 반복되는 신호와 익숙한 공간에서 열릴 가능성이 큽니다.',
+    metrics: [
+      { label: '만남 운', value: '84', note: '일상 공간에서 강세' },
+      { label: '궁합 감도', value: '81', note: '리듬이 자연스럽게 맞음' },
+    ],
+    highlights: ['자꾸 눈에 들어오는 사람이나 장소를 흘려보내지 않는 편이 좋습니다'],
+    recommendations: ['익숙한 장소의 반복 신호를 기록해보세요'],
+    warnings: ['한 번에 확신하려 하면 오히려 흐름을 놓칠 수 있어요'],
+    luckyItems: ['우디 향', '라이트 브라운'],
+  },
+  decision: {
+    score: 83,
+    summary: '의사결정 운세는 정답 탐색보다 선택 기준을 줄이는 데서 빠르게 살아납니다.',
+    metrics: [
+      { label: '명확도', value: '86', note: '기준만 세우면 빠름' },
+      { label: '확신도', value: '79', note: '막판 흔들림 주의' },
+    ],
+    highlights: ['선택지를 두 개로 줄이는 순간 결정 속도가 좋아집니다'],
+    recommendations: ['포기 못할 기준 한 줄을 먼저 적어보세요'],
+    warnings: ['모든 가능성을 동시에 검토하려 하면 결론이 늦어집니다'],
+    luckyItems: ['체크리스트', '조용한 공간'],
+  },
+  'daily-review': {
+    score: 80,
+    summary: '일일 리뷰는 반성보다 정리에서 힘이 생기는 흐름입니다. 남길 것과 넘길 것을 분리하면 내일이 가벼워집니다.',
+    metrics: [
+      { label: '정리 밀도', value: '84', note: '핵심 한 건은 잘 남김' },
+      { label: '감정 회수', value: '76', note: '짧은 메모가 도움' },
+    ],
+    highlights: ['오늘 잘된 한 가지를 명확히 남기면 내일 리듬이 좋아집니다'],
+    recommendations: ['열린 일과 끝난 일을 따로 적어두세요'],
+    warnings: ['피곤한 상태에서 하루 전체를 평가하려 들면 감정이 과해질 수 있어요'],
+    luckyItems: ['짧은 리뷰 노트', '저녁 정리 시간'],
+  },
 };
 
 export function buildFallbackEmbeddedResultPayload(

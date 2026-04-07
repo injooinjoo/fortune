@@ -60,6 +60,8 @@ const fortuneTypeLabels: Partial<Record<FortuneTypeId, string>> = {
   wealth: '재물 운세',
   talent: '재능 분석',
   coaching: '코칭운',
+  decision: '의사결정',
+  'daily-review': '일일 리뷰',
   exam: '시험운',
   'lucky-items': '행운 아이템',
   lotto: '로또 운세',

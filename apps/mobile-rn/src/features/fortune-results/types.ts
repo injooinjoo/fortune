@@ -21,6 +21,14 @@ export const resultKinds = [
   'tarot',
   'game-enhance',
   'ootd-evaluation',
+  'exam',
+  'compatibility',
+  'blind-date',
+  'avoid-people',
+  'ex-lover',
+  'yearly-encounter',
+  'decision',
+  'daily-review',
 ] as const;
 
 export type ResultKind = (typeof resultKinds)[number];

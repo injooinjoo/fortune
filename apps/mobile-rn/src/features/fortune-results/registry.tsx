@@ -8,6 +8,7 @@ import { ResultBatchA } from './screens/batch-a';
 import { ResultBatchB } from './screens/batch-b';
 import { ResultBatchC } from './screens/batch-c';
 import { ResultBatchD } from './screens/batch-d';
+import { ResultBatchE } from './screens/batch-e';
 import { type ResultKind } from './types';
 
 const registry: Record<ResultKind, ComponentType> = {
@@ -31,6 +32,14 @@ const registry: Record<ResultKind, ComponentType> = {
   tarot: ResultBatchD.TarotResult,
   'game-enhance': ResultBatchD.GameEnhanceResult,
   'ootd-evaluation': ResultBatchD.OotdEvaluationResult,
+  exam: ResultBatchE.ExamResult,
+  compatibility: ResultBatchE.CompatibilityResult,
+  'blind-date': ResultBatchE.BlindDateResult,
+  'avoid-people': ResultBatchE.AvoidPeopleResult,
+  'ex-lover': ResultBatchE.ExLoverResult,
+  'yearly-encounter': ResultBatchE.YearlyEncounterResult,
+  decision: ResultBatchE.DecisionResult,
+  'daily-review': ResultBatchE.DailyReviewResult,
 };
 
 export function RenderFortuneResult({ resultKind }: { resultKind: ResultKind }) {
