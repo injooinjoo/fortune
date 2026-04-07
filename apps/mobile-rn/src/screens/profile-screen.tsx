@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 
 import { router } from 'expo-router';
 import { Linking, Platform, Pressable, View } from 'react-native';
+import { productCatalog } from '@fortune/product-contracts';
 
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
@@ -35,6 +36,9 @@ export function ProfileScreen() {
   }, [state.chat.selectedCharacterId]);
   const lastFortuneLabel = state.chat.lastFortuneType
     ? formatFortuneTypeLabel(state.chat.lastFortuneType)
+    : null;
+  const activeProductLabel = state.premium.activeProductId
+    ? productCatalog[state.premium.activeProductId].title
     : null;
   const hasRecentChatSignal = Boolean(
     state.chat.selectedCharacterId ||
@@ -145,8 +149,8 @@ export function ProfileScreen() {
             구매 복원은 {state.premium.restoreCount}번 반영됐어요.
           </AppText>
           <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {state.premium.activeProductId
-              ? `연결된 상품: ${state.premium.activeProductId}`
+            {activeProductLabel
+              ? `연결된 상품: ${activeProductLabel}`
               : '연결된 구독 상품은 아직 없어요.'}
           </AppText>
           <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
@@ -156,8 +160,8 @@ export function ProfileScreen() {
           </AppText>
           <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
             {state.premium.lastSyncedAt
-              ? `원격 동기화 ${state.premium.lastSyncedAt.slice(0, 16).replace('T', ' ')}`
-              : '원격 프리미엄 상태는 아직 읽지 않았어요.'}
+              ? `마지막 확인 ${state.premium.lastSyncedAt.slice(0, 16).replace('T', ' ')}`
+              : '구독 상태는 아직 확인하지 않았어요.'}
           </AppText>
         </View>
         <PrimaryButton

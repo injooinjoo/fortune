@@ -2,10 +2,9 @@ import { useState } from 'react';
 
 import { router } from 'expo-router';
 import {
-  consumableProductIds,
-  legacyConsumableProductIds,
   nonConsumableProductIds,
   productCatalog,
+  storefrontConsumableProductIds,
   subscriptionProductIds,
   type ProductId,
 } from '@fortune/product-contracts';
@@ -15,6 +14,7 @@ import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
 import { Chip } from '../components/chip';
 import { PrimaryButton } from '../components/primary-button';
+import { RouteBackHeader } from '../components/route-back-header';
 import { Screen } from '../components/screen';
 import { captureError } from '../lib/error-reporting';
 import { fortuneTheme } from '../lib/theme';
@@ -37,9 +37,7 @@ export function PremiumScreen() {
 
   const selectedProduct = productCatalog[selectedProductId];
   const subscriptions = subscriptionProductIds.map((id) => productCatalog[id]);
-  const tokens = [...consumableProductIds, ...legacyConsumableProductIds].map(
-    (id) => productCatalog[id],
-  );
+  const tokens = storefrontConsumableProductIds.map((id) => productCatalog[id]);
   const lifetime = nonConsumableProductIds.map((id) => productCatalog[id]);
   const activeProduct = state.premium.activeProductId
     ? productCatalog[state.premium.activeProductId]
@@ -114,8 +112,8 @@ export function PremiumScreen() {
 
   function handleUnsupportedPurchase() {
     Alert.alert(
-      '스토어 구매 엔진 준비 중',
-      'RN에서는 아직 실제 스토어 결제 엔진이 연결되지 않았습니다. 지금은 실제 구독 상태 새로고침, 구매 복원, 스토어 구독 관리까지만 지원합니다.',
+      '직접 구매 지원 준비 중',
+      '현재 앱에서는 판매 중인 상품 목록을 확인할 수 있고, 실제 구독 상태 새로고침과 구매 복원, 스토어 구독 관리까지만 지원합니다.',
     );
   }
 
@@ -123,21 +121,21 @@ export function PremiumScreen() {
     ? state.premium.activeProductId === selectedProduct.id
       ? '구독 관리 열기'
       : '스토어 구독 관리'
-    : '스토어 구매 엔진 준비 중';
+    : '직접 구매 지원 준비 중';
 
   return (
-    <Screen>
+    <Screen header={<RouteBackHeader fallbackHref="/profile" />}>
       <AppText variant="displaySmall">프리미엄</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
-        실제 상품 계약과 원격 구독 상태를 함께 보는 상업 표면입니다.
+        현재 판매 중인 상품과 구독 상태를 한곳에서 확인할 수 있어요.
       </AppText>
 
       <Card>
         <AppText variant="heading4">한눈에 보기</AppText>
         <AppText variant="bodyMedium">
           {session
-            ? '로그인된 계정에서 실제 구독 상태와 토큰 잔액을 동기화할 수 있어요.'
-            : '게스트 상태에서는 상품을 둘러볼 수 있고, 실제 상태 동기화는 로그인 후 가능합니다.'}
+            ? '로그인된 계정에서 구독 상태와 토큰 잔액을 확인할 수 있어요.'
+            : '게스트 상태에서는 상품을 둘러볼 수 있고, 구독 상태 확인은 로그인 후 가능합니다.'}
         </AppText>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
           <Chip
@@ -158,7 +156,7 @@ export function PremiumScreen() {
             }
           />
           <Chip
-            label={state.premium.lastSyncedAt ? '원격 동기화됨' : '로컬 상태만 있음'}
+            label={state.premium.lastSyncedAt ? '동기화 완료' : '동기화 전'}
             tone={state.premium.lastSyncedAt ? 'success' : 'neutral'}
           />
         </View>
@@ -176,12 +174,12 @@ export function PremiumScreen() {
         <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
           {state.premium.subscriptionExpiresAt
             ? `구독 만료일 ${state.premium.subscriptionExpiresAt.slice(0, 10)}`
-            : '현재 원격 활성 구독이 없습니다.'}
+            : '현재 확인된 활성 구독이 없습니다.'}
         </AppText>
         <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
           {state.premium.lastSyncedAt
             ? `마지막 동기화 ${state.premium.lastSyncedAt.slice(0, 16).replace('T', ' ')}`
-            : '원격 구독 상태를 아직 읽지 않았습니다.'}
+            : '아직 구독 상태를 확인하지 않았습니다.'}
         </AppText>
         <PrimaryButton
           onPress={actionState === 'idle' ? () => void handleRefresh() : undefined}
@@ -213,7 +211,10 @@ export function PremiumScreen() {
       </Card>
 
       <Card>
-        <AppText variant="heading4">토큰 패키지</AppText>
+        <AppText variant="heading4">토큰 충전</AppText>
+        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+          현재 스토어에서 판매 중인 토큰 상품만 보여드려요.
+        </AppText>
         {tokens.map((product) => (
           <ProductOption
             key={product.id}
@@ -285,7 +286,7 @@ export function PremiumScreen() {
             : selectedProductActionLabel}
         </PrimaryButton>
         <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          토큰/평생 소장 직접 구매는 RN 네이티브 결제 엔진 이식 후 연결됩니다. 현재는 실제 구독 상태 읽기, 구매 복원, 스토어 구독 관리까지만 지원합니다.
+          토큰과 평생 소장 상품은 판매 목록만 먼저 안내하고 있어요. 현재 앱에서는 구독 상태 확인, 구매 복원, 스토어 구독 관리만 지원합니다.
         </AppText>
         <PrimaryButton
           onPress={actionState === 'idle' ? handleRestore : undefined}
