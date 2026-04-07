@@ -67,8 +67,7 @@ class FortuneTypeRegistry {
     'personality-dna': FortuneTypeSpec(
       id: 'personality-dna',
       labelKey: 'fortunePersonalityDna',
-      endpoint: '/fortune-mbti',
-      apiType: 'mbti',
+      endpoint: '/personality-dna',
     ),
     'love': FortuneTypeSpec(
       id: 'love',
@@ -166,6 +165,26 @@ class FortuneTypeRegistry {
       labelKey: 'fortunePet',
       endpoint: '/fortune-pet-compatibility',
     ),
+    'family-health': FortuneTypeSpec(
+      id: 'family-health',
+      labelKey: 'fortuneFamily',
+      endpoint: '/fortune-family-health',
+    ),
+    'family-relationship': FortuneTypeSpec(
+      id: 'family-relationship',
+      labelKey: 'fortuneFamily',
+      endpoint: '/fortune-family-relationship',
+    ),
+    'family-children': FortuneTypeSpec(
+      id: 'family-children',
+      labelKey: 'fortuneFamily',
+      endpoint: '/fortune-family-children',
+    ),
+    'family-change': FortuneTypeSpec(
+      id: 'family-change',
+      labelKey: 'fortuneFamily',
+      endpoint: '/fortune-family-change',
+    ),
     'family': FortuneTypeSpec(
       id: 'family',
       labelKey: 'fortuneFamily',
@@ -216,24 +235,21 @@ class FortuneTypeRegistry {
       endpoint: '/generate-talisman',
     ),
 
-    // Character-only category entries (currently routed to daily)
+    // Character-only profile entries
     'zodiac': FortuneTypeSpec(
       id: 'zodiac',
       labelKey: 'fortuneZodiac',
-      endpoint: '/fortune-daily',
-      apiType: 'daily',
+      endpoint: '/fortune-constellation',
     ),
     'zodiac-animal': FortuneTypeSpec(
       id: 'zodiac-animal',
       labelKey: 'fortuneZodiacAnimal',
-      endpoint: '/fortune-daily',
-      apiType: 'daily',
+      endpoint: '/fortune-zodiac-animal',
     ),
     'constellation': FortuneTypeSpec(
       id: 'constellation',
       labelKey: 'fortuneConstellation',
-      endpoint: '/fortune-daily',
-      apiType: 'daily',
+      endpoint: '/fortune-constellation',
     ),
     'birthstone': FortuneTypeSpec(
       id: 'birthstone',
