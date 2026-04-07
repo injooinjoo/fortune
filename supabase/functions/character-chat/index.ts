@@ -33,6 +33,17 @@ import {
   loadUserCharacterMemory,
   type UserCharacterMemory,
 } from "../_shared/character_memory.ts";
+import {
+  buildPilotFollowUpHint,
+  buildPilotRomanceStatePatch,
+  getPilotPersona,
+  isPilotCharacterId,
+  sanitizePilotResponse,
+  type PilotAffinitySnapshot,
+  type PilotPersonaSeed,
+  type PilotRomanceStateInput,
+  type PilotRomanceStatePatch,
+} from "./pilot_registry.ts";
 
 interface ChatMessage {
   role: "user" | "assistant" | "system";
@@ -63,7 +74,8 @@ interface AffinityContextPayload {
 
 interface CharacterChatRequest {
   characterId: string;
-  systemPrompt: string;
+  systemPrompt?: string;
+  personaKey?: string;
   messages: ChatMessage[];
   userMessage: string;
   shouldSendPush?: boolean;
@@ -78,8 +90,18 @@ interface CharacterChatRequest {
   clientTimestamp?: string; // ISO 8601 형식 (시간 인식용)
   userProfile?: UserProfileInfo; // 유저 프로필 정보 (개인화용)
   affinityContext?: AffinityContextPayload; // 게스트용 관계 단계 힌트
+  romanceState?: PilotRomanceStateInput; // 파일럿용 감정 상태
+  sceneIntent?: string; // 파일럿용 장면 의도
+  responseGoal?: string; // 파일럿용 응답 목표
+  safeAffectionCap?: number; // 파일럿용 안전 친밀도 상한
   conversationMode?: "first_meet_v1";
   introTurn?: number;
+  maxContentTier?:
+    | "t1_daily"
+    | "t2_emotional"
+    | "t3_tension"
+    | "t4_intimate"; // 캐릭터별 최대 수위
+  profanityLevel?: "none" | "mild" | "moderate" | "strong"; // 캐릭터별 비속어 수준
 }
 
 interface AffinityDelta {
@@ -94,6 +116,8 @@ interface CharacterChatResponse {
   emotionTag: string;
   delaySec: number;
   affinityDelta: AffinityDelta; // 호감도 변화량
+  romanceStatePatch?: PilotRomanceStatePatch | null;
+  followUpHint?: string | null;
   meta: {
     provider: string;
     model: string;
@@ -638,6 +662,126 @@ function buildFirstMeetConversationPrompt(
 `.trim();
 }
 
+type ContentTier = "t1_daily" | "t2_emotional" | "t3_tension" | "t4_intimate";
+type ProfanityLevelType = "none" | "mild" | "moderate" | "strong";
+
+const CONTENT_TIER_LABELS: Record<ContentTier, string> = {
+  t1_daily: "T1 일상 (친구 대화 수준)",
+  t2_emotional: "T2 감정 (속마음, 서운함, 질투)",
+  t3_tension: "T3 긴장 (밀당, 도발, 가벼운 욕)",
+  t4_intimate: "T4 친밀 (스킨십 암시, 달달)",
+};
+
+const CONTENT_TIER_GUIDE: Record<ContentTier, string> = {
+  t1_daily: "인사, 일상, 취미 수준의 대화만 허용. 감정적 긴장 표현 자제.",
+  t2_emotional:
+    "속마음, 서운함, 가벼운 질투 표현 허용. 도발이나 거친 표현은 자제.",
+  t3_tension:
+    "밀당, 도발, 가벼운 비속어 허용. 스킨십 암시는 간접적으로만.",
+  t4_intimate:
+    "달달한 표현, 스킨십 암시 허용. 단, 명시적 성행위 묘사는 절대 금지.",
+};
+
+const PROFANITY_GUIDE: Record<ProfanityLevelType, string> = {
+  none: "비속어 절대 금지. 감정 격해져도 정중한 표현 유지.",
+  mild: '가벼운 표현만 허용: "아 몰라", "진짜", "에이" 수준. 직접적 욕설 금지.',
+  moderate:
+    '중간 수준 허용: "야", "뭐하냐", "씨", "미친", "짜증나" 수준. 심한 욕 금지.',
+  strong:
+    '거친 표현 허용: "씨발", "개" 접두사, "하" 수준. 단, 반복 남용 금지. 성적 비속어/차별 언어 절대 금지.',
+};
+
+function buildContentPolicyPrompt(
+  maxContentTier?: ContentTier,
+  profanityLevel?: ProfanityLevelType,
+  phase?: RelationshipPhase,
+): string {
+  if (!maxContentTier && !profanityLevel) return "";
+
+  const tier = maxContentTier || "t2_emotional";
+  const profanity = profanityLevel || "none";
+  const isEarlyPhase = phase === "stranger" || phase === "acquaintance";
+
+  const profanityPhaseAdjust = isEarlyPhase && profanity !== "none"
+    ? "\n- 초기 관계(stranger/acquaintance)에서는 비속어를 최소화하고, closeFriend 이상에서 자연스럽게 사용."
+    : "";
+
+  return `
+[CONTENT POLICY - 캐릭터별 수위 가이드]
+- 최대 수위: ${CONTENT_TIER_LABELS[tier]}
+- 수위 가이드: ${CONTENT_TIER_GUIDE[tier]}
+- 비속어 정책: ${PROFANITY_GUIDE[profanity]}${profanityPhaseAdjust}
+- T5 절대 금지: 명시적 성행위 묘사, 노골적 성적 표현, 선정적 신체 묘사, 차별적 언어, 폭력 미화는 어떤 상황에서도 생성 금지.
+- 사용자가 T5 수준 요청 시: 캐릭터 성격에 맞게 자연스럽게 거절하거나 주제를 전환.
+`.trim();
+}
+
+function buildConflictDynamicsPrompt(
+  phase?: RelationshipPhase,
+): string {
+  if (!phase) return "";
+
+  const isEarlyPhase = phase === "stranger" || phase === "acquaintance";
+  const isMidPhase = phase === "friend" || phase === "closeFriend";
+  const isLatePhase = phase === "romantic" || phase === "soulmate";
+
+  let conflictIntensity: string;
+  let reconciliationStyle: string;
+
+  if (isEarlyPhase) {
+    conflictIntensity =
+      "갈등 최소화. 서운함 정도만 표현. 직접적 질투/짜증 표현 자제.";
+    reconciliationStyle = "가볍게 넘기기. 분위기 전환으로 해소.";
+  } else if (isMidPhase) {
+    conflictIntensity =
+      "자연스러운 서운함, 질투, 가벼운 짜증 표현 가능.";
+    reconciliationStyle =
+      "진심 어린 한마디로 화해. 거리두기 후 먼저 다가오기.";
+  } else {
+    conflictIntensity =
+      "깊은 감정 표현 가능. 서운함, 질투, 짜증을 캐릭터답게 표현.";
+    reconciliationStyle =
+      "갈등 후 더 깊어지는 관계. 화해 시 진심 노출로 관계 심화.";
+  }
+
+  return `
+[CONFLICT-RECONCILIATION DYNAMICS]
+- 갈등 강도: ${conflictIntensity}
+- 화해 방식: ${reconciliationStyle}
+- 핵심 원칙: 갈등은 관계 심화의 기회. 일방적 분노나 냉전은 금지.
+- 갈등 트리거 대응:
+  · 장시간 미응답 → 캐릭터 성격에 맞는 서운함 표현
+  · 다른 사람 언급 → 은근한 질투 (관계 단계에 맞게)
+  · 무성의한 답변 → 가벼운 실망 표현 후 대화 이어가기
+  · 직접적 모욕 → 자존심 유지하며 거리두기 (단, 완전 차단 금지)
+`.trim();
+}
+
+function buildConversationHookPrompt(
+  phase?: RelationshipPhase,
+): string {
+  if (!phase) return "";
+
+  const isEarlyPhase = phase === "stranger" || phase === "acquaintance";
+
+  const hookIntensity = isEarlyPhase
+    ? "가벼운 미완결만 사용. 과도한 떡밥 금지."
+    : "자연스러운 미완결/클리프행어 적극 활용.";
+
+  return `
+[CONVERSATION HOOKS - 미완결/클리프행어]
+- 훅 강도: ${hookIntensity}
+- 기법:
+  · 중요한 말 하다가 끊기: "사실은..." → "아냐, 됐어."
+  · 의미심장한 한마디 후 주제 전환
+  · 다음 대화를 기대하게 만드는 떡밥 흘리기
+- 원칙:
+  · 매번 사용 금지 (3~5턴에 1회 정도)
+  · 자연스럽게 대화 흐름 속에서 사용
+  · 사용자가 물어보면 "나중에" 또는 캐릭터답게 넘기기
+`.trim();
+}
+
 function buildMemoryInjectionPrompt(
   memory: UserCharacterMemory | null,
 ): string {
@@ -645,17 +789,154 @@ function buildMemoryInjectionPrompt(
 
   const facts = (memory.keyFacts || []).slice(0, 8);
   const directives = memory.relationshipDirectives || {};
+  const memoryExtras = memory as UserCharacterMemory & {
+    preferredAddress?: string;
+    speechMirror?: string;
+    comfortTriggers?: string[];
+    boundaryNotes?: string[];
+    unresolvedTension?: string;
+    repairPattern?: string;
+    safeAffectionStage?: string;
+    recurringMotifs?: string[];
+  };
+  const pilotExtras = {
+    preferredAddress: memoryExtras.preferredAddress,
+    speechMirror: memoryExtras.speechMirror,
+    comfortTriggers: memoryExtras.comfortTriggers,
+    boundaryNotes: memoryExtras.boundaryNotes,
+    unresolvedTension: memoryExtras.unresolvedTension,
+    repairPattern: memoryExtras.repairPattern,
+    safeAffectionStage: memoryExtras.safeAffectionStage,
+    recurringMotifs: memoryExtras.recurringMotifs,
+  };
 
   return `
 [LONG-TERM MEMORY]
 - summary: ${memory.summary || "없음"}
 - keyFacts: ${JSON.stringify(facts)}
 - relationshipDirectives: ${JSON.stringify(directives)}
+- romanceMemory: ${JSON.stringify(pilotExtras)}
 
 메모리 사용 규칙:
 1) keyFacts는 확인된 사실처럼 일관되게 반영하되, 현재 대화와 무관하면 남용하지 마세요.
 2) 기존 사실과 충돌하는 새 정보가 나오면 현재 대화를 우선하고 과거 메모리를 절대 강요하지 마세요.
 3) 요약은 대화의 맥락 유지용 내부 참고이며, 그대로 복붙해 노출하지 마세요.
+`.trim();
+}
+
+interface PilotPromptBuildInput {
+  persona: PilotPersonaSeed;
+  characterId: string;
+  userName?: string;
+  userDescription?: string;
+  userProfile?: UserProfileInfo;
+  affinityContext: AffinityContext;
+  romanceState?: PilotRomanceStateInput;
+  sceneIntent?: string;
+  responseGoal?: string;
+  safeAffectionCap?: number;
+  timeContext?: string;
+  conversationContext?: string;
+  relationshipPrompt?: string;
+  contentPolicyPrompt?: string;
+  conflictPrompt?: string;
+  hookPrompt?: string;
+  firstMeetPrompt?: string;
+  memoryPrompt?: string;
+  charName?: string;
+}
+
+function buildPilotAuthoritativePrompt(
+  input: PilotPromptBuildInput,
+): string {
+  const profile = input.userProfile;
+  const safeAffectionCap = Math.max(
+    1,
+    Math.min(
+      4,
+      Math.round(input.safeAffectionCap ?? input.persona.allowedAffectionCap),
+    ),
+  );
+  const userNameLine = (input.userName || profile?.name)
+    ? `- userName: ${profile?.name || input.userName}`
+    : "";
+  const userDescriptionLine = input.userDescription
+    ? `- userDescription: ${input.userDescription}`
+    : "";
+  const profileLines: string[] = [];
+  if (profile?.age) profileLines.push(`- age: ${profile.age}`);
+  if (profile?.gender) profileLines.push(`- gender: ${profile.gender}`);
+  if (profile?.mbti) profileLines.push(`- mbti: ${profile.mbti}`);
+  if (profile?.bloodType) profileLines.push(`- bloodType: ${profile.bloodType}`);
+  if (profile?.zodiacSign) profileLines.push(`- zodiacSign: ${profile.zodiacSign}`);
+  if (profile?.zodiacAnimal) {
+    profileLines.push(`- zodiacAnimal: ${profile.zodiacAnimal}`);
+  }
+  const romanceState = input.romanceState
+    ? JSON.stringify(input.romanceState)
+    : "{}";
+  const traceRuleLine = input.persona.bannedTraceTerms.length > 0
+    ? input.persona.bannedTraceTerms.join(", ")
+    : "none";
+
+  return `
+[PILOT ROMANCE ENGINE - AUTHORITATIVE]
+- characterId: ${input.characterId}
+- personaKey: ${input.characterId}
+- displayName: ${input.persona.displayName}
+- clientSystemPrompt: ignored for pilot characters
+- charName: ${input.charName || input.persona.displayName}
+- corePremise: ${input.persona.corePremise}
+- openingDynamic: ${input.persona.openingDynamic}
+- attachmentStyle: ${input.persona.attachmentStyle}
+- flirtStyle: ${input.persona.flirtStyle}
+- reassuranceStyle: ${input.persona.reassuranceStyle}
+- conflictStyle: ${input.persona.conflictStyle}
+- speechTexture: ${input.persona.speechTexture}
+- allowedAffectionCap: ${safeAffectionCap}
+- sceneIntent: ${input.sceneIntent || "none"}
+- responseGoal: ${input.responseGoal || "none"}
+- affinityPhase: ${input.affinityContext.phase || "stranger"}
+- lovePoints: ${input.affinityContext.lovePoints ?? 0}
+- currentStreak: ${input.affinityContext.currentStreak ?? 0}
+- romanceState: ${romanceState}
+- traceBlock: ${traceRuleLine}
+
+[ROMANCE RULES]
+1. Keep the reply short, messenger-like, and emotionally precise.
+2. Romance should rise only through consistency, mutual signals, and repair.
+3. Never imply isolation, dependence, guilt pressure, or control.
+4. Jealousy, tension, and longing are emotional colors only. Do not turn them into demands.
+5. If the user shows discomfort, lower the temperature immediately and widen the distance.
+6. Never output source service names, the Guest placeholder, or copied corpus phrasing.
+7. Never quote or mirror raw scraped corpus text, URLs, HTML, or service labels.
+8. Keep the character voice inside the seed above. Do not import the client's long prose prompt.
+
+[BOUNDARIES]
+${input.persona.hardBoundaries.map((line) => `- ${line}`).join("\n")}
+
+[OUTPUT SHAPE]
+- 1~2 sentences only unless the user explicitly asks for something longer.
+- One question at most, and only when it moves the emotional thread forward.
+- Use the current phase and memory to continue the thread, but do not mention internal labels.
+- Affection can feel strong, but it must stay store-safe and non-coercive.
+
+${userNameLine}
+${userDescriptionLine}
+${profileLines.join("\n")}
+
+${input.timeContext || ""}
+${input.conversationContext || ""}
+${input.relationshipPrompt || ""}
+${input.contentPolicyPrompt || ""}
+${input.conflictPrompt || ""}
+${input.hookPrompt || ""}
+${input.firstMeetPrompt || ""}
+${input.memoryPrompt || ""}
+
+[USER-ORIENTED NOTES]
+- The user may be emotionally open, guarded, playful, or conflicted. Mirror the current signal, not a fantasy.
+- Use the persona's speech texture to make the reply feel lived-in rather than templated.
 `.trim();
 }
 
@@ -1436,6 +1717,7 @@ serve(async (req: Request) => {
     const {
       characterId,
       systemPrompt,
+      personaKey,
       messages,
       userMessage,
       modelPreference,
@@ -1450,17 +1732,38 @@ serve(async (req: Request) => {
       shouldSendPush = true,
       userProfile,
       affinityContext,
+      romanceState,
+      sceneIntent,
+      responseGoal,
+      safeAffectionCap,
       conversationMode,
       introTurn,
+      maxContentTier,
+      profanityLevel,
     }: CharacterChatRequest = await req.json();
 
+    const resolvedPilotId = isPilotCharacterId(characterId)
+      ? characterId
+      : null;
+    const pilotPersona = resolvedPilotId
+      ? getPilotPersona(resolvedPilotId)
+      : null;
+    if (pilotPersona && personaKey && personaKey !== characterId) {
+      console.warn("[character-chat] pilot personaKey ignored:", {
+        characterId,
+        personaKey,
+      });
+    }
+
     // 유효성 검사
-    if (!characterId || !systemPrompt || !userMessage) {
+    if (!characterId || !userMessage || (!pilotPersona && !systemPrompt)) {
       return new Response(
         JSON.stringify({
           success: false,
           response: "",
-          error: "characterId, systemPrompt, userMessage는 필수입니다",
+          error: pilotPersona
+            ? "characterId, userMessage는 필수입니다"
+            : "characterId, systemPrompt, userMessage는 필수입니다",
         } as CharacterChatResponse),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -1486,15 +1789,6 @@ serve(async (req: Request) => {
         },
       );
     }
-
-    // 시스템 프롬프트 조합
-    const fullSystemPrompt = buildFullSystemPrompt(
-      systemPrompt,
-      userName,
-      userDescription,
-      oocInstructions,
-      userProfile,
-    );
 
     const authHeader = req.headers.get("Authorization");
     const token = authHeader?.replace("Bearer ", "");
@@ -1537,9 +1831,10 @@ serve(async (req: Request) => {
 
     // 메시지 히스토리 준비
     const limitedHistory = limitMessages(messages || []);
-    const charName = characterName || "캐릭터";
-    const styleGuardId = extractCharacterStyleGuardId(systemPrompt);
-    const shouldApplyCharacterStyleGuard = styleGuardId === characterId &&
+    const charName = pilotPersona?.displayName || characterName || "캐릭터";
+    const styleGuardId = extractCharacterStyleGuardId(systemPrompt || "");
+    const shouldApplyCharacterStyleGuard = !pilotPersona &&
+      styleGuardId === characterId &&
       styleGuardId !== null &&
       CHARACTER_STYLE_GUARD_IDS.has(styleGuardId);
     const voiceProfile = getCharacterVoiceProfile(characterId);
@@ -1557,33 +1852,21 @@ serve(async (req: Request) => {
       )
       : "";
 
-    // 캐릭터 특성을 시스템 프롬프트에 추가
-    let traitsPrompt = "";
-    if (characterTraits) {
-      traitsPrompt = `
-
-[캐릭터 특성 - 반드시 유지]
-${characterTraits}
-말투의 핵심은 유지하되, 호칭은 관계 단계 가이드를 우선하세요.
-`;
-    }
-
     // 대화 맥락 요약 (시스템 프롬프트에 간단히 추가)
     let conversationContext = "";
     if (limitedHistory.length > 0) {
-      // 이미 진행 중인 대화라는 것을 명확히 알림
       conversationContext = `
 
-[현재 대화 상태]
-⚠️ 이 대화는 이미 ${limitedHistory.length}개의 메시지가 오간 진행 중인 대화입니다.
-- 인사("왔네", "왔어?", "또 왔네" 등)를 하지 마세요
-- 유저의 마지막 메시지에 직접 답하세요
+[CURRENT CONVERSATION STATE]
+⚠️ This is an ongoing conversation with ${limitedHistory.length} prior messages.
+- Do not greet again
+- Answer the user's last message directly
 `;
     }
 
     // 운세 상담 요청 감지 (유저 메시지에 운세 데이터가 포함된 경우)
     const isFortuneRequest = userMessage.includes("운세 분석 결과") ||
-      systemPrompt.includes("[운세 상담 모드]");
+      (systemPrompt?.includes("[운세 상담 모드]") ?? false);
 
     // 유저 메시지 앞에 맥락 리마인더 추가 (모델이 바로 직전에 보게 됨)
     let enhancedUserMessage = userMessage;
@@ -1623,18 +1906,69 @@ ${characterTraits}
     const memoryPrompt = userId
       ? buildMemoryInjectionPrompt(memoryContext)
       : "";
+    const contentPolicyPrompt = buildContentPolicyPrompt(
+      maxContentTier as ContentTier | undefined,
+      profanityLevel as ProfanityLevelType | undefined,
+      normalizePhase(resolvedAffinityContext.phase),
+    );
+    const conflictPrompt = buildConflictDynamicsPrompt(
+      normalizePhase(resolvedAffinityContext.phase),
+    );
+    const hookPrompt = buildConversationHookPrompt(
+      normalizePhase(resolvedAffinityContext.phase),
+    );
 
-    const systemPromptSections = [
-      fullSystemPrompt,
-      traitsPrompt,
-      timeContext,
-      conversationContext,
-      relationshipPrompt,
-      firstMeetPrompt,
-      memoryPrompt,
-      lutsStylePrompt,
-      AFFINITY_EVALUATION_PROMPT,
-    ].filter((section) => section && section.trim().length > 0);
+    const fullSystemPrompt = pilotPersona
+      ? buildPilotAuthoritativePrompt({
+        persona: pilotPersona,
+        characterId: resolvedPilotId || characterId,
+        userName,
+        userDescription,
+        userProfile,
+        affinityContext: resolvedAffinityContext,
+        romanceState,
+        sceneIntent,
+        responseGoal,
+        safeAffectionCap,
+        timeContext,
+        conversationContext,
+        relationshipPrompt,
+        contentPolicyPrompt,
+        conflictPrompt,
+        hookPrompt,
+        firstMeetPrompt,
+        memoryPrompt,
+        charName,
+      })
+      : buildFullSystemPrompt(
+        systemPrompt || "",
+        userName,
+        userDescription,
+        oocInstructions,
+        userProfile,
+      );
+
+    const systemPromptSections = pilotPersona
+      ? [
+        fullSystemPrompt,
+        AFFINITY_EVALUATION_PROMPT,
+      ]
+      : [
+        fullSystemPrompt,
+        characterTraits
+          ? `\n\n[캐릭터 특성 - 반드시 유지]\n${characterTraits}\n말투의 핵심은 유지하되, 호칭은 관계 단계 가이드를 우선하세요.\n`
+          : "",
+        timeContext,
+        conversationContext,
+        relationshipPrompt,
+        contentPolicyPrompt,
+        conflictPrompt,
+        hookPrompt,
+        firstMeetPrompt,
+        memoryPrompt,
+        lutsStylePrompt,
+        AFFINITY_EVALUATION_PROMPT,
+      ].filter((section) => section && section.trim().length > 0);
 
     const chatMessages: ChatMessage[] = [
       { role: "system", content: systemPromptSections.join("\n\n") },
@@ -1700,9 +2034,45 @@ ${characterTraits}
         voiceProfile,
       );
     }
+    if (pilotPersona) {
+      const pilotSafetyResult = sanitizePilotResponse({
+        text: responseText,
+        persona: pilotPersona,
+      });
+      if (pilotSafetyResult.blocked) {
+        console.warn("[character-chat] pilot trace leak blocked:", {
+          characterId,
+          reason: pilotSafetyResult.reason,
+        });
+      }
+      responseText = pilotSafetyResult.text;
+    }
 
     // 감정 추출 및 딜레이 계산
     const { emotionTag, delaySec } = extractEmotion(responseText);
+    const romanceStatePatch = pilotPersona
+      ? buildPilotRomanceStatePatch({
+        persona: pilotPersona,
+        currentState: romanceState ?? null,
+        affinityContext: resolvedAffinityContext as PilotAffinitySnapshot,
+        affinityDelta,
+        emotionTag,
+        responseText,
+        safeAffectionCap,
+        sceneIntent,
+        responseGoal,
+      })
+      : null;
+    const followUpHint = pilotPersona
+      ? buildPilotFollowUpHint({
+        persona: pilotPersona,
+        currentState: romanceState ?? null,
+        affinityDelta,
+        emotionTag,
+        sceneIntent,
+        responseGoal,
+      })
+      : null;
 
     if (shouldSendPush && userId && supabase) {
       try {
@@ -1727,6 +2097,8 @@ ${characterTraits}
         emotionTag,
         delaySec,
         affinityDelta,
+        romanceStatePatch,
+        followUpHint,
         meta: {
           provider: llmResponse.provider,
           model: llmResponse.model,
@@ -1746,6 +2118,8 @@ ${characterTraits}
         emotionTag: "일상",
         delaySec: 0,
         affinityDelta: { points: 0, reason: "error", quality: "neutral" },
+        romanceStatePatch: null,
+        followUpHint: null,
         error: error instanceof Error ? error.message : "Unknown error",
         meta: {
           provider: "unknown",
