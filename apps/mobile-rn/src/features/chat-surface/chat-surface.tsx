@@ -598,7 +598,7 @@ export function ChatSoftGate({
             계정을 연결하고 시작
           </AppText>
           <View style={{ gap: fortuneTheme.spacing.sm }}>
-            <AppleAuthButton label="Apple로 로그인" onPress={onApple} />
+            <AppleAuthButton label="Apple 로그인" onPress={onApple} />
             <SocialAuthPillButton
               label="Google로 로그인"
               onPress={onGoogle}
