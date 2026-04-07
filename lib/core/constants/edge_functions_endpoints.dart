@@ -37,6 +37,7 @@ class EdgeFunctionsEndpoints {
   static const String personalityDna = '/personality-dna';
   static const String constellationFortune = '/fortune-constellation';
   static const String zodiacAnimalFortune = '/fortune-zodiac-animal';
+  static const String birthstoneFortune = '/fortune-birthstone';
 
   // ============================================================
   // Token & Payment (아직 Edge Function 미생성 - 기존 API 사용)
@@ -95,6 +96,7 @@ class EdgeFunctionsEndpoints {
       '/fortune-family-relationship';
   static const String familyChildrenFortune = '/fortune-family-children';
   static const String familyChangeFortune = '/fortune-family-change';
+  static const String familyWealthFortune = '/fortune-family-wealth';
   static const String familyFortune = familyHealthFortune;
 
   // 행운 아이템
@@ -179,12 +181,14 @@ class EdgeFunctionsEndpoints {
       'family-relationship': familyRelationshipFortune,
       'family-children': familyChildrenFortune,
       'family-change': familyChangeFortune,
+      'family-wealth': familyWealthFortune,
       'pet-compatibility': petCompatibilityFortune,
 
       // 프로필 기반 별자리
       'zodiac': constellationFortune,
       'constellation': constellationFortune,
       'zodiac-animal': zodiacAnimalFortune,
+      'birthstone': birthstoneFortune,
 
       // 유틸/인터랙션
       'wish': analyzeWish,

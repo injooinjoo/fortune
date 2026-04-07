@@ -24,12 +24,14 @@ void main() {
             reason:
                 '${character.name} specialty "$specialty" must exist in the registry',
           );
-          expect(
-            FortuneTypeRegistry.endpointOf(specialty),
-            isNotNull,
-            reason:
-                '${character.name} specialty "$specialty" must resolve to an endpoint',
-          );
+          if (!FortuneTypeRegistry.isLocalOnly(specialty)) {
+            expect(
+              FortuneTypeRegistry.endpointOf(specialty),
+              isNotNull,
+              reason:
+                  '${character.name} specialty "$specialty" must resolve to an endpoint',
+            );
+          }
         }
       }
     });

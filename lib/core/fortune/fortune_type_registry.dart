@@ -240,6 +240,7 @@ class FortuneTypeRegistry {
       id: 'zodiac',
       labelKey: 'fortuneZodiac',
       endpoint: '/fortune-constellation',
+      apiType: 'constellation',
     ),
     'zodiac-animal': FortuneTypeSpec(
       id: 'zodiac-animal',
@@ -254,8 +255,7 @@ class FortuneTypeRegistry {
     'birthstone': FortuneTypeSpec(
       id: 'birthstone',
       labelKey: 'fortuneBirthstone',
-      endpoint: '/fortune-daily',
-      apiType: 'daily',
+      endpoint: '/fortune-birthstone',
     ),
 
     // Local-only interaction types
