@@ -29,7 +29,7 @@ const authOptions: readonly {
 }[] = [
   {
     id: 'apple',
-    label: 'Apple로 계속하기',
+    label: 'Apple로 로그인',
     note: 'iPhone에서 가장 자연스럽게 인증하고 기록을 이어갑니다.',
   },
   {

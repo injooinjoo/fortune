@@ -6,7 +6,7 @@ import { SocialAuthPillButton } from './social-auth-pill-button';
 
 export function AppleAuthButton({
   disabled = false,
-  label = 'Apple로 계속하기',
+  label = 'Apple로 로그인',
   onPress,
 }: {
   disabled?: boolean;
@@ -34,7 +34,7 @@ export function AppleAuthButton({
         accessibilityHint="Apple 계정으로 로그인합니다."
         accessibilityLabel={label}
         buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.WHITE}
-        buttonType={AppleAuthentication.AppleAuthenticationButtonType.CONTINUE}
+        buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
         cornerRadius={fortuneTheme.radius.full}
         onPress={disabled || !onPress ? () => undefined : onPress}
         style={{
