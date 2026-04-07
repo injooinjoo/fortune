@@ -1,5 +1,5 @@
-import { Redirect } from 'expo-router';
+import { SplashScreen } from '../src/screens/splash-screen';
 
 export default function SplashRoute() {
-  return <Redirect href="/chat" />;
+  return <SplashScreen />;
 }

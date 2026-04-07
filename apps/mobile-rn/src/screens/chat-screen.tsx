@@ -32,6 +32,7 @@ import {
 } from '../lib/chat-shell';
 import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
+import { useFriendCreation } from '../providers/friend-creation-provider';
 import { useMobileAppState } from '../providers/mobile-app-state-provider';
 import { useSocialAuth } from '../providers/social-auth-provider';
 
@@ -55,6 +56,7 @@ export function ChatScreen() {
     status,
   } = useAppBootstrap();
   const { state: mobileAppState, recordChatIntent } = useMobileAppState();
+  const { resetDraft } = useFriendCreation();
   const { isSupported, startSocialAuth } = useSocialAuth();
   const [activeFortuneType, setActiveFortuneType] =
     useState<FortuneTypeId | null>(null);
@@ -289,6 +291,15 @@ export function ChatScreen() {
     openResultRoute(fortuneType, 'chat-action', selectedCharacter.id);
   }
 
+  function handleCreateFriend() {
+    resetDraft();
+    router.push('/friends/new/basic');
+  }
+
+  function handleOpenRecentResult(fortuneType: FortuneTypeId) {
+    openResultRoute(fortuneType, 'recent-card', selectedCharacter.id);
+  }
+
   function handleSendDraft() {
     const trimmed = draft.trim();
 
@@ -421,8 +432,12 @@ export function ChatScreen() {
             actions={firstRunActions}
             characters={routeableCharacters}
             featuredCharacter={firstRunFeaturedCharacter}
+            lastFortuneType={mobileAppState.chat.lastFortuneType}
+            onCreateFriend={handleCreateFriend}
+            onOpenRecentResult={handleOpenRecentResult}
             onPickAction={handleActionPress}
             onSelectCharacter={handleCharacterSelect}
+            selectedCharacterId={selectedCharacter.id}
           />
         )
       ) : null}

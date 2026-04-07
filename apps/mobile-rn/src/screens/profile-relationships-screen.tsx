@@ -129,6 +129,16 @@ export function ProfileRelationshipsScreen() {
             ? `최근 운세 신호: ${lastFortuneType.labelKey}`
             : "최근 운세 신호는 아직 없습니다."}
         </AppText>
+        <PrimaryButton
+          onPress={() =>
+            router.push({
+              pathname: '/friends/new/basic',
+              params: { reset: '1', returnTo: '/profile/relationships' },
+            })
+          }
+        >
+          새 친구 만들기
+        </PrimaryButton>
         <PrimaryButton onPress={() => router.push("/profile/saju-summary")}>
           사주 요약으로 이동
         </PrimaryButton>

@@ -216,6 +216,16 @@ export function ProfileScreen() {
           onPress={() => router.push('/profile/edit')}
         />
         <ProfileMenuRow
+          label="사주 요약"
+          description="저장된 출생 정보와 최근 운세 신호를 요약해서 확인"
+          onPress={() => router.push('/profile/saju-summary')}
+        />
+        <ProfileMenuRow
+          label="인간관계"
+          description="최근 캐릭터와 운세 신호를 바탕으로 연결 흐름 이어가기"
+          onPress={() => router.push('/profile/relationships')}
+        />
+        <ProfileMenuRow
           label="알림 설정"
           description="푸시 및 딥링크 기본값"
           onPress={() => router.push('/profile/notifications')}

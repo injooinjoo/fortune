@@ -1,5 +1,5 @@
-import { Redirect } from 'expo-router';
+import { FriendCreationPersonaScreen } from '../../../src/screens/friend-creation-screen';
 
 export default function FriendPersonaRoute() {
-  return <Redirect href="/chat" />;
+  return <FriendCreationPersonaScreen />;
 }

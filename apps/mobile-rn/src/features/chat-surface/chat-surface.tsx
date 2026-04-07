@@ -17,6 +17,7 @@ import type {
 } from '../../lib/chat-shell';
 import { formatFortuneTypeLabel } from '../../lib/chat-shell';
 import { fortuneTheme } from '../../lib/theme';
+import { RecentResultCard } from '../fortune-results/recent-result-card';
 
 function CharacterAvatar({
   name,
@@ -410,12 +411,20 @@ export function ChatFirstRunSurface({
   featuredCharacter,
   actions,
   characters,
+  lastFortuneType,
+  selectedCharacterId,
+  onCreateFriend,
+  onOpenRecentResult,
   onSelectCharacter,
   onPickAction,
 }: {
   featuredCharacter: FortuneCharacterSpec;
   actions: ChatShellAction[];
   characters: readonly FortuneCharacterSpec[];
+  lastFortuneType: FortuneTypeId | null;
+  selectedCharacterId: string | null;
+  onCreateFriend: () => void;
+  onOpenRecentResult: (fortuneType: FortuneTypeId) => void;
   onSelectCharacter: (characterId: string) => void;
   onPickAction: (fortuneType: FortuneTypeId) => void;
 }) {
@@ -502,6 +511,13 @@ export function ChatFirstRunSurface({
 
       <SurfaceSection title="상담사">
         <View style={{ gap: fortuneTheme.spacing.sm }}>
+          <EntryActionRow
+            badge="친구"
+            onPress={onCreateFriend}
+            subtitle="문서 기준 4단계 플로우로 새 친구 캐릭터를 만들고 채팅으로 이어갑니다."
+            title="새 친구 만들기"
+            tone="accent"
+          />
           {characters.slice(0, 2).map((character) => (
             <CharacterListRow
               key={character.id}
@@ -511,6 +527,12 @@ export function ChatFirstRunSurface({
           ))}
         </View>
       </SurfaceSection>
+
+      <RecentResultCard
+        lastFortuneType={lastFortuneType}
+        onOpen={onOpenRecentResult}
+        selectedCharacterId={selectedCharacterId}
+      />
 
       <PagerDots />
     </View>
