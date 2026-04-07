@@ -600,20 +600,20 @@ export function ChatSoftGate({
           <View style={{ gap: fortuneTheme.spacing.sm }}>
             <AppleAuthButton onPress={onApple} />
             <SocialAuthPillButton
-              label="Google로 계속하기"
+              label="Google로 로그인"
               onPress={onGoogle}
               provider="google"
             />
             {onKakao ? (
               <SocialAuthPillButton
-                label="카카오로 계속하기"
+                label="카카오로 시작하기"
                 onPress={onKakao}
                 provider="kakao"
               />
             ) : null}
             {onNaver ? (
               <SocialAuthPillButton
-                label="네이버로 계속하기"
+                label="네이버 로그인"
                 onPress={onNaver}
                 provider="naver"
               />

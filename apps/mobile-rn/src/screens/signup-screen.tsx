@@ -34,17 +34,17 @@ const authOptions: readonly {
   },
   {
     id: 'google',
-    label: 'Google로 계속하기',
+    label: 'Google로 로그인',
     note: 'Google 계정으로 개인화와 구매 내역을 바로 연결합니다.',
   },
   {
     id: 'kakao',
-    label: '카카오로 계속하기',
+    label: '카카오로 시작하기',
     note: '카카오 계정으로 빠르게 시작하고 추천 흐름을 이어갑니다.',
   },
   {
     id: 'naver',
-    label: '네이버로 계속하기',
+    label: '네이버 로그인',
     note: '네이버 계정으로 프로필과 저장 기록을 연결합니다.',
   },
 ] as const;

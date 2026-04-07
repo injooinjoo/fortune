@@ -1,4 +1,9 @@
-import { Pressable, View } from 'react-native';
+import {
+  Image,
+  Pressable,
+  type ImageSourcePropType,
+  View,
+} from 'react-native';
 
 import { fortuneTheme } from '../lib/theme';
 import { AppText } from './app-text';
@@ -10,34 +15,26 @@ export type SocialAuthPillProvider =
   | 'naver'
   | 'generic';
 
-const providerBadgeMeta: Record<
-  SocialAuthPillProvider,
-  { background: string; foreground: string; mark: string }
+const providerImageMeta: Partial<
+  Record<
+    SocialAuthPillProvider,
+    { source: ImageSourcePropType; imageHeight: number; mode: 'full-button' | 'icon' }
+  >
 > = {
-  apple: {
-    background: fortuneTheme.colors.accentLight,
-    foreground: fortuneTheme.colors.textPrimary,
-    mark: 'A',
-  },
   google: {
-    background: fortuneTheme.colors.chipBlue,
-    foreground: fortuneTheme.colors.accentSecondary,
-    mark: 'G',
+    source: require('../../assets/social-auth/google-g-20dp.png'),
+    imageHeight: 20,
+    mode: 'icon',
   },
   kakao: {
-    background: fortuneTheme.colors.chipPeach,
-    foreground: fortuneTheme.colors.accentTertiary,
-    mark: 'K',
+    source: require('../../assets/social-auth/kakao-login-large-wide.png'),
+    imageHeight: 45,
+    mode: 'full-button',
   },
   naver: {
-    background: fortuneTheme.colors.chipGreen,
-    foreground: fortuneTheme.colors.success,
-    mark: 'N',
-  },
-  generic: {
-    background: fortuneTheme.colors.accentLight,
-    foreground: fortuneTheme.colors.textPrimary,
-    mark: '•',
+    source: require('../../assets/social-auth/naver-login-light-white-wide-h56.png'),
+    imageHeight: 48,
+    mode: 'full-button',
   },
 };
 
@@ -52,7 +49,34 @@ export function SocialAuthPillButton({
   onPress?: () => void;
   provider?: SocialAuthPillProvider;
 }) {
-  const badge = providerBadgeMeta[provider];
+  const providerImage = providerImageMeta[provider];
+
+  if (providerImage?.mode === 'full-button') {
+    return (
+      <Pressable
+        accessibilityLabel={label}
+        accessibilityRole="button"
+        disabled={disabled}
+        onPress={disabled || !onPress ? undefined : onPress}
+        style={({ pressed }) => ({
+          justifyContent: 'center',
+          minHeight: 52,
+          opacity: disabled ? 0.46 : pressed ? 0.84 : 1,
+          width: '100%',
+        })}
+      >
+        <Image
+          accessibilityIgnoresInvertColors
+          resizeMode="contain"
+          source={providerImage.source}
+          style={{
+            height: providerImage.imageHeight,
+            width: '100%',
+          }}
+        />
+      </Pressable>
+    );
+  }
 
   return (
     <Pressable
@@ -84,24 +108,43 @@ export function SocialAuthPillButton({
             width: 24,
           }}
         >
-          <View
-            style={{
-              alignItems: 'center',
-              backgroundColor: badge.background,
-              borderRadius: fortuneTheme.radius.full,
-              height: 24,
-              justifyContent: 'center',
-              width: 24,
-            }}
-          >
+          {providerImage?.mode === 'icon' ? (
+            <Image
+              accessibilityIgnoresInvertColors
+              resizeMode="contain"
+              source={providerImage.source}
+              style={{
+                height: providerImage.imageHeight,
+                width: providerImage.imageHeight,
+              }}
+            />
+          ) : provider === 'apple' ? (
             <AppText
               variant="labelSmall"
-              color={badge.foreground}
+              color={fortuneTheme.colors.background}
               style={{ fontWeight: '800' }}
             >
-              {badge.mark}
+              A
             </AppText>
-          </View>
+          ) : (
+            <View
+              style={{
+                alignItems: 'center',
+                borderRadius: fortuneTheme.radius.full,
+                height: 24,
+                justifyContent: 'center',
+                width: 24,
+              }}
+            >
+              <AppText
+                variant="labelSmall"
+                color={fortuneTheme.colors.background}
+                style={{ fontWeight: '800' }}
+              >
+                •
+              </AppText>
+            </View>
+          )}
         </View>
         <View style={{ flex: 1 }}>
           <AppText
