@@ -8,9 +8,10 @@ This artifact package accompanies the active Pencil boards for the Fortune repo'
 - What is covered now:
   - governed dark runtime imports
   - dark fortune result imports through `F20`
-  - light fortune result imports through `F20`
+  - latest dark `F01` through `F20` layout sweep is clean in `snapshot_layout(problemsOnly)`
 - What is still missing:
   - light-mirror runtime lanes
+  - light fortune mirrors
   - `F21` through `F50`
   - `D01`, `D02`, and the chat fortune card reference surface
 - Canonical gap inventory is tracked in `KAN-271_discovery_report.md`.

@@ -118,4 +118,5 @@
 
 ## Result
 
-- The Paper fortune result family is now fully represented in Pencil from `F01` through `F20`.
+- This batch completed the dark `F07` through `F20` import lane only.
+- It does not represent full Paper fortune coverage by itself.

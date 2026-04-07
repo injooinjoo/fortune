@@ -94,6 +94,17 @@ The active Pencil file does not currently contain the full Paper fortune catalog
 - Their current validation is structural, not exhaustive visual parity.
 - Existing exports show clone-first normalization across the fortune family, which is good enough for batch review but not sufficient to claim `full Paper coverage`.
 - `F14` Personality and `F20` OOTD received a first fidelity repair pass to remove obvious chip/text compression in the review exports, but the remaining family still needs page-by-page parity work.
+- A full `snapshot_layout(problemsOnly)` sweep across all imported dark result screens `F01` through `F20` is now clean after width and wrapping fixes on:
+  - `F07` Career
+  - `F10` Coaching
+  - `F12` Mystical
+  - `F14` Personality
+  - `F15` Wealth
+  - `F16` Talent
+  - `F17` Exercise
+  - `F18` Tarot
+  - `F19` Game Enhance
+  - `F20` OOTD
 - `F01` through `F20` light now exist as separate Pencil review boards, but they are still theme-converted review lanes, not final page-parity sign-off.
 
 ## Decision
