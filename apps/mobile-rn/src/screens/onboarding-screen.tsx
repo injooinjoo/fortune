@@ -215,7 +215,14 @@ export function OnboardingScreen() {
   }
 
   return (
-    <Screen header={<RouteBackHeader fallbackHref={returnTo as Href} />}>
+    <Screen
+      header={
+        <RouteBackHeader
+          fallbackHref={returnTo as Href}
+          label="처음 설정하기"
+        />
+      }
+    >
       <AppText variant="labelMedium" color={fortuneTheme.colors.accentSecondary}>
         시작 안내
       </AppText>

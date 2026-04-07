@@ -22,7 +22,7 @@ export function ProfileRelationshipsScreen() {
     : null;
 
   return (
-    <Screen header={<RouteBackHeader fallbackHref="/profile" />}>
+    <Screen header={<RouteBackHeader fallbackHref="/profile" label="관계도" />}>
       <AppText variant="displaySmall">관계도</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
         저장된 최근 채팅 신호를 기준으로 관계 흐름을 이어갑니다.

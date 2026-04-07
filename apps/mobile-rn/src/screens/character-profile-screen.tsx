@@ -14,11 +14,7 @@ export function CharacterProfileScreen() {
   const character = findChatCharacterById(params.id);
 
   return (
-    <Screen header={<RouteBackHeader fallbackHref="/chat" />}>
-      <AppText variant="labelMedium" color={fortuneTheme.colors.accentSecondary}>
-        캐릭터 프로필
-      </AppText>
-
+    <Screen header={<RouteBackHeader fallbackHref="/chat" label="캐릭터 프로필" />}>
       {character ? (
         <>
           <AppText variant="displaySmall">{character.name}</AppText>

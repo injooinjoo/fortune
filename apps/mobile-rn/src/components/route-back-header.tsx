@@ -7,12 +7,17 @@ import { AppText } from './app-text';
 interface RouteBackHeaderProps {
   fallbackHref?: Href;
   accessibilityLabel?: string;
+  label?: string;
 }
 
 export function RouteBackHeader({
   fallbackHref = '/chat',
-  accessibilityLabel = '뒤로 가기',
+  accessibilityLabel,
+  label,
 }: RouteBackHeaderProps) {
+  const resolvedAccessibilityLabel =
+    accessibilityLabel ?? (label ? `${label} 뒤로 가기` : '뒤로 가기');
+
   function handlePress() {
     if (router.canGoBack()) {
       router.back();
@@ -24,7 +29,7 @@ export function RouteBackHeader({
 
   return (
     <Pressable
-      accessibilityLabel={accessibilityLabel}
+      accessibilityLabel={resolvedAccessibilityLabel}
       accessibilityRole="button"
       hitSlop={8}
       onPress={handlePress}
@@ -46,6 +51,14 @@ export function RouteBackHeader({
         >
           ‹
         </AppText>
+        {label ? (
+          <AppText
+            variant="labelLarge"
+            color={fortuneTheme.colors.accentSecondary}
+          >
+            {label}
+          </AppText>
+        ) : null}
       </View>
     </Pressable>
   );

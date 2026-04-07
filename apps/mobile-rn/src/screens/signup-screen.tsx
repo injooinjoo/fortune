@@ -63,7 +63,14 @@ export function SignupScreen() {
   }
 
   return (
-    <Screen header={<RouteBackHeader fallbackHref={returnTo as Href} />}>
+    <Screen
+      header={
+        <RouteBackHeader
+          fallbackHref={returnTo as Href}
+          label="로그인 및 시작"
+        />
+      }
+    >
       <AppText variant="displaySmall">로그인 및 시작</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
         원하는 계정으로 시작하면 이후에도 프로필과 구매 정보를 이어서 사용할 수 있어요.

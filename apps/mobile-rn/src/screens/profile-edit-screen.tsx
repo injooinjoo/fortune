@@ -67,7 +67,7 @@ export function ProfileEditScreen() {
   }
 
   return (
-    <Screen header={<RouteBackHeader fallbackHref="/profile" />}>
+    <Screen header={<RouteBackHeader fallbackHref="/profile" label="프로필 수정" />}>
       <AppText variant="displaySmall">프로필 수정</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
         저장된 프로필을 불러와 수정하고, 생년월일이 있으면 온보딩 상태도 함께

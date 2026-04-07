@@ -125,10 +125,14 @@ export function AuthCallbackScreen() {
   ]);
 
   return (
-    <Screen header={<RouteBackHeader fallbackHref={callbackMeta.returnTo as Href} />}>
-      <AppText variant="labelMedium" color={fortuneTheme.colors.accentSecondary}>
-        로그인 확인
-      </AppText>
+    <Screen
+      header={
+        <RouteBackHeader
+          fallbackHref={callbackMeta.returnTo as Href}
+          label="로그인 확인"
+        />
+      }
+    >
       <AppText variant="displaySmall">잠시만 기다려 주세요</AppText>
       <Card>
         <AppText variant="bodyMedium">

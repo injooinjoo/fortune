@@ -84,7 +84,9 @@ export function ProfileNotificationsScreen() {
   }
 
   return (
-    <Screen header={<RouteBackHeader fallbackHref="/profile" />}>
+    <Screen
+      header={<RouteBackHeader fallbackHref="/profile" label="알림 설정" />}
+    >
       <AppText variant="displaySmall">알림 설정</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
         저장된 알림 기본값을 불러와 편집하고 다시 저장합니다.

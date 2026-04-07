@@ -222,7 +222,7 @@ export function PremiumScreen() {
   }
 
   return (
-    <Screen header={<RouteBackHeader fallbackHref="/profile" />}>
+    <Screen header={<RouteBackHeader fallbackHref="/profile" label="프리미엄" />}>
       <AppText variant="displaySmall">프리미엄</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
         현재 판매 중인 상품과 구독 상태를 한곳에서 확인할 수 있어요.
