@@ -30,6 +30,20 @@ interface SubscriptionActivationResponse {
   error?: string;
 }
 
+interface TokenConsumeBalancePayload {
+  remainingTokens?: number;
+  hasUnlimitedAccess?: boolean;
+}
+
+interface TokenConsumeResponse {
+  balance?: TokenConsumeBalancePayload;
+  code?: string;
+  message?: string;
+  required?: number;
+  available?: number;
+  error?: string;
+}
+
 export interface RemotePremiumSnapshot {
   activeSubscriptionProductId: ProductId | null;
   subscriptionExpiresAt: string | null;
@@ -53,6 +67,41 @@ export interface RemotePurchaseVerificationResult {
   tokensAdded: number;
   transactionId: string | null;
   valid: boolean;
+}
+
+export type RemoteTokenConsumeErrorCode =
+  | 'UNAUTHORIZED'
+  | 'INSUFFICIENT_TOKENS'
+  | 'UNKNOWN';
+
+export class RemoteTokenConsumeError extends Error {
+  readonly code: RemoteTokenConsumeErrorCode;
+  readonly required: number | null;
+  readonly available: number | null;
+
+  constructor(
+    code: RemoteTokenConsumeErrorCode,
+    message: string,
+    options?: {
+      required?: number | null;
+      available?: number | null;
+    },
+  ) {
+    super(message);
+    this.code = code;
+    this.required = options?.required ?? null;
+    this.available = options?.available ?? null;
+  }
+}
+
+export interface RemoteTokenConsumePayload {
+  fortuneType: string;
+  referenceId?: string | null;
+}
+
+export interface RemoteTokenConsumeResult {
+  balance: number | null;
+  isUnlimited: boolean;
 }
 
 export interface RemoteSubscriptionActivationPayload {
@@ -228,4 +277,71 @@ export async function activateRemoteSubscription(
   if (!result.success) {
     throw new Error(result.error ?? '구독 활성화에 실패했습니다.');
   }
+}
+
+export async function consumeRemoteTokens(
+  session: Session,
+  payload: RemoteTokenConsumePayload,
+): Promise<RemoteTokenConsumeResult> {
+  if (!appEnv.isSupabaseConfigured) {
+    throw new RemoteTokenConsumeError(
+      'UNKNOWN',
+      'Supabase 설정이 없어 토큰 차감을 진행할 수 없습니다.',
+    );
+  }
+
+  const response = await fetch(`${appEnv.supabaseUrl}/functions/v1/soul-consume`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${session.access_token}`,
+      apikey: appEnv.supabaseAnonKey,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      fortuneType: payload.fortuneType,
+      referenceId: payload.referenceId ?? null,
+    }),
+  });
+
+  const result = (await response.json()) as TokenConsumeResponse;
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new RemoteTokenConsumeError(
+        'UNAUTHORIZED',
+        result.error ?? '로그인이 필요합니다.',
+      );
+    }
+
+    if (result.code === 'INSUFFICIENT_TOKENS') {
+      throw new RemoteTokenConsumeError(
+        'INSUFFICIENT_TOKENS',
+        result.message ?? '토큰이 부족합니다.',
+        {
+          required:
+            typeof result.required === 'number' && Number.isFinite(result.required)
+              ? result.required
+              : null,
+          available:
+            typeof result.available === 'number' && Number.isFinite(result.available)
+              ? result.available
+              : null,
+        },
+      );
+    }
+
+    throw new RemoteTokenConsumeError(
+      'UNKNOWN',
+      result.error ?? result.message ?? `soul-consume:${response.status}`,
+    );
+  }
+
+  return {
+    balance:
+      typeof result.balance?.remainingTokens === 'number' &&
+      Number.isFinite(result.balance.remainingTokens)
+        ? result.balance.remainingTokens
+        : null,
+    isUnlimited: result.balance?.hasUnlimitedAccess === true,
+  };
 }

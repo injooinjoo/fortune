@@ -63,6 +63,10 @@ import {
 } from '../lib/story-chat-runtime';
 import { isStoryRomancePilotCharacterId } from '../lib/story-romance-pilots';
 import {
+  consumeRemoteTokens,
+  RemoteTokenConsumeError,
+} from '../lib/premium-remote';
+import {
   socialAuthProviderLabelById,
   type SocialAuthProviderId,
 } from '../lib/social-auth';
@@ -100,7 +104,11 @@ export function ChatScreen() {
     session,
     status,
   } = useAppBootstrap();
-  const { state: mobileAppState, recordChatIntent } = useMobileAppState();
+  const {
+    state: mobileAppState,
+    recordChatIntent,
+    syncRemoteProfile,
+  } = useMobileAppState();
   const { resetDraft } = useFriendCreation();
   const { isSupported, startSocialAuth } = useSocialAuth();
   const [activeFortuneType, setActiveFortuneType] =
@@ -623,6 +631,7 @@ export function ChatScreen() {
       null,
       storyRequest,
     );
+    let shouldClearDraft = true;
 
     setMessagesByCharacterId((current) => ({
       ...current,
@@ -632,30 +641,48 @@ export function ChatScreen() {
     setComposerTrayOpen(false);
     setSurfaceMode('chat');
 
-    if (optimisticSnapshot) {
-      setStoryThreadSnapshotsByCharacterId((current) => ({
-        ...current,
-        [character.id]: optimisticSnapshot,
-      }));
-
-      await saveStoryThreadSnapshot(optimisticSnapshot).catch((error: unknown) => {
-        captureError(error, { surface: 'chat:story-pilot-save-optimistic' }).catch(
-          () => undefined,
-        );
-      });
-    }
-
-    await recordChatIntent({
-      characterId: character.id,
-      fortuneType: activeFortuneType,
-      incrementMessages: true,
-    }).catch((error: unknown) => {
-      captureError(error, { surface: 'chat:story-pilot-record-intent' }).catch(
-        () => undefined,
-      );
-    });
-
     try {
+      if (!session) {
+        throw new RemoteTokenConsumeError(
+          'UNAUTHORIZED',
+          '로그인이 필요해요. 로그인 후 다시 이어서 보내주세요.',
+        );
+      }
+
+      await consumeRemoteTokens(session, {
+        fortuneType: 'character-chat',
+        referenceId: `story:${character.id}`,
+      });
+
+      syncRemoteProfile().catch((error: unknown) => {
+        captureError(error, {
+          surface: 'chat:story-pilot-sync-premium-after-consume',
+        }).catch(() => undefined);
+      });
+
+      if (optimisticSnapshot) {
+        setStoryThreadSnapshotsByCharacterId((current) => ({
+          ...current,
+          [character.id]: optimisticSnapshot,
+        }));
+
+        await saveStoryThreadSnapshot(optimisticSnapshot).catch((error: unknown) => {
+          captureError(error, {
+            surface: 'chat:story-pilot-save-optimistic',
+          }).catch(() => undefined);
+        });
+      }
+
+      await recordChatIntent({
+        characterId: character.id,
+        fortuneType: activeFortuneType,
+        incrementMessages: true,
+      }).catch((error: unknown) => {
+        captureError(error, {
+          surface: 'chat:story-pilot-record-intent',
+        }).catch(() => undefined);
+      });
+
       const response = await invokeStoryChat(character, trimmed, optimisticSnapshot);
       const assistantText = response.response.trim();
       const assistantMessage = buildAssistantTextMessage(assistantText);
@@ -686,6 +713,41 @@ export function ChatScreen() {
         });
       }
     } catch (error) {
+      if (error instanceof RemoteTokenConsumeError) {
+        shouldClearDraft = false;
+        setDraft(trimmed);
+        setMessagesByCharacterId((current) => ({
+          ...current,
+          [character.id]: existingThread,
+        }));
+        setStoryThreadSnapshotsByCharacterId((current) => ({
+          ...current,
+          [character.id]: existingSnapshot,
+        }));
+
+        await syncRemoteProfile().catch((syncError: unknown) => {
+          captureError(syncError, {
+            surface: 'chat:story-pilot-sync-premium-after-consume-error',
+          }).catch(() => undefined);
+        });
+
+        if (error.code === 'INSUFFICIENT_TOKENS') {
+          router.push('/premium');
+          return;
+        }
+
+        if (error.code === 'UNAUTHORIZED') {
+          setAuthMessage(error.message);
+          return;
+        }
+
+        await captureError(error, {
+          surface: 'chat:story-pilot-consume-tokens',
+        }).catch(() => undefined);
+
+        return;
+      }
+
       await captureError(error, { surface: 'chat:story-pilot-send' }).catch(
         () => undefined,
       );
@@ -721,7 +783,9 @@ export function ChatScreen() {
       setStoryTypingCharacterId((current) =>
         current === character.id ? null : current,
       );
-      setDraft('');
+      if (shouldClearDraft) {
+        setDraft('');
+      }
     }
   }
 
