@@ -94,6 +94,33 @@
 - Required flow:
   - `basic -> persona -> story -> review -> creating -> /chat`
 
+## Button -> Route Matrix
+
+| Surface | Button / CTA | Target |
+|---|---|---|
+| `/chat` first-run | `새 친구 만들기` | `/friends/new/basic` |
+| `/chat` first-run | character row | internal chat overlay state |
+| `/chat` first-run | result action card | `/result/[resultKind]` |
+| `/chat` active chat | `프로필 보기` | `/character/:id` |
+| `/chat` first-run | recent result reopen | `/result/[resultKind]` |
+| `/profile` | `프로필 수정` | `/profile/edit` |
+| `/profile` | `사주 요약` | `/profile/saju-summary` |
+| `/profile` | `인간관계` | `/profile/relationships` |
+| `/profile` | `알림 설정` | `/profile/notifications` |
+| `/profile` | `구독 및 토큰` | `/premium` |
+| `/profile` | `개인정보처리방침` | `/privacy-policy` |
+| `/profile` | `이용약관` | `/terms-of-service` |
+| `/profile` | `계정 삭제` | `/account-deletion` |
+| `/profile/relationships` | `새 친구 만들기` | `/friends/new/basic` |
+| `/friends/new/basic` | `다음` | `/friends/new/persona` |
+| `/friends/new/persona` | `이전` | `/friends/new/basic` |
+| `/friends/new/persona` | `다음` | `/friends/new/story` |
+| `/friends/new/story` | `이전` | `/friends/new/persona` |
+| `/friends/new/story` | `다음` | `/friends/new/review` |
+| `/friends/new/review` | `이전` | `/friends/new/story` |
+| `/friends/new/review` | `대화 시작하기` | `/friends/new/creating` |
+| `/friends/new/creating` | `채팅으로 이동` | `/chat` |
+
 ## Reuse Decision
 
 ### Reuse directly
