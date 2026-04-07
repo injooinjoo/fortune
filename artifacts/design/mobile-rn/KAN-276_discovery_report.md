@@ -89,3 +89,17 @@
 ## Jira
 
 - Issue: `KAN-276`
+
+## Runtime Verification Notes
+
+- Device: `iPhone 17` simulator (`9ED1D212-A3D3-43F1-9E36-2F1F54367878`)
+- Verified states in this pass:
+  - `ready-list`: `/Users/jacobmac/Desktop/Dev/fortune/artifacts/runtime/rn-iphone17-ready-list-v2.png`
+  - `active-chat`: `/Users/jacobmac/Desktop/Dev/fortune/artifacts/runtime/rn-iphone17-active-chat-v2.png`
+- Improvements confirmed in `v2`:
+  - `ready-list` now follows the Pencil left-panel order of `small card -> highlighted conversation card -> small card`
+  - counselor rows were reduced to two visible cards and restyled from plain rows to card-like entries
+  - `active-chat` no longer uses stacked section cards; it renders as a continuous conversation surface with inline quick-action chips and a compact composer
+- Remaining fidelity gaps:
+  - top summary/avatar block in `active-chat` is still roomier than the Pencil middle panel
+  - composer iconography is still placeholder-grade and should be replaced with proper glyphs/assets in the next pass
