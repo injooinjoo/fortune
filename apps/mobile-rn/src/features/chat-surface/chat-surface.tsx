@@ -156,7 +156,7 @@ export function FloatingCreateButton({
           alignItems: 'center',
           alignSelf: 'flex-end',
           backgroundColor: fortuneTheme.colors.backgroundTertiary,
-          borderColor: fortuneTheme.colors.accentTertiary,
+          borderColor: 'transparent',
           borderRadius: 999,
           borderWidth: 1,
           height: 56,
