@@ -27,6 +27,7 @@ export interface PremiumState {
   activeProductId: ProductId | null;
   lastPurchaseProductId: ProductId | null;
   tokenBalance: number;
+  isUnlimited: boolean;
   restoreCount: number;
   subscriptionExpiresAt: string | null;
   lastSyncedAt: string | null;
@@ -75,6 +76,7 @@ export const emptyMobileAppState: MobileAppState = {
     activeProductId: null,
     lastPurchaseProductId: null,
     tokenBalance: 0,
+    isUnlimited: false,
     restoreCount: 0,
     subscriptionExpiresAt: null,
     lastSyncedAt: null,
@@ -149,6 +151,7 @@ export function normalizeMobileAppState(raw: Record<string, unknown>): MobileApp
         ? premium.lastPurchaseProductId
         : null,
       tokenBalance: asNumber(premium.tokenBalance, 0),
+      isUnlimited: asBoolean(premium.isUnlimited, false),
       restoreCount: asNumber(premium.restoreCount, 0),
       subscriptionExpiresAt: asString(premium.subscriptionExpiresAt) || null,
       lastSyncedAt: asString(premium.lastSyncedAt) || null,

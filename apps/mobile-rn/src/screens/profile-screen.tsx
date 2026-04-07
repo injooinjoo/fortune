@@ -76,6 +76,9 @@ export function ProfileScreen() {
     : null;
   const premiumExpiryLabel = formatIsoDate(state.premium.subscriptionExpiresAt);
   const premiumSyncedLabel = formatIsoDateTime(state.premium.lastSyncedAt);
+  const tokenBalanceLabel = state.premium.isUnlimited
+    ? '무제한 이용'
+    : `${state.premium.tokenBalance.toLocaleString('ko-KR')} 토큰`;
   const hasRecentChatSignal = Boolean(
     state.chat.selectedCharacterId ||
     state.chat.lastFortuneType ||
@@ -170,9 +173,7 @@ export function ProfileScreen() {
 
       <Card>
         <AppText variant="heading4">프리미엄 / 토큰</AppText>
-        <AppText variant="labelLarge">
-          {state.premium.tokenBalance.toLocaleString("ko-KR")} 토큰
-        </AppText>
+        <AppText variant="labelLarge">{tokenBalanceLabel}</AppText>
         <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
           {state.premium.status === "subscription"
             ? "구독이 활성화되어 있어요."

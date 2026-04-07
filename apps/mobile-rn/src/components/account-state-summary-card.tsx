@@ -37,6 +37,9 @@ export function AccountStateSummaryCard({
       profile.mbti ||
       profile.bloodType,
   );
+  const tokenBalanceLabel = premium.isUnlimited
+    ? '보유 토큰 무제한'
+    : `보유 토큰 ${premium.tokenBalance.toLocaleString('ko-KR')}개`;
 
   return (
     <Card>
@@ -75,7 +78,7 @@ export function AccountStateSummaryCard({
               : '평생 이용 상태예요.'}
         </AppText>
         <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          보유 토큰 {premium.tokenBalance.toLocaleString('ko-KR')}개
+          {tokenBalanceLabel}
         </AppText>
       </View>
       {hasProfileHint ? (

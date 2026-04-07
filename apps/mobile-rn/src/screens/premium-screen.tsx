@@ -61,15 +61,33 @@ function formatIsoDateTime(value: string | null) {
   });
 }
 
+function formatTokenBalanceLabel(tokenBalance: number, isUnlimited: boolean) {
+  if (isUnlimited) {
+    return '보유 토큰 무제한';
+  }
+
+  return `보유 토큰 ${tokenBalance.toLocaleString('ko-KR')}개`;
+}
+
 export function PremiumScreen() {
   const { session } = useAppBootstrap();
-  const { restorePurchases, state, syncRemoteProfile } = useMobileAppState();
+  const {
+    isPurchasePending,
+    purchaseProduct,
+    refreshStoreProducts,
+    restorePurchases,
+    state,
+    storeError,
+    storePriceLabels,
+    storeStatus,
+    syncRemoteProfile,
+  } = useMobileAppState();
   const [selectedProductId, setSelectedProductId] = useState<ProductId>(
     storefrontSubscriptionProductIds[0],
   );
-  const [actionState, setActionState] = useState<
-    'idle' | 'refreshing' | 'restoring' | 'managing'
-  >('idle');
+  const [actionState, setActionState] = useState<'idle' | 'refreshing' | 'managing'>(
+    'idle',
+  );
 
   const selectedProduct = productCatalog[selectedProductId];
   const subscriptions = storefrontSubscriptionProductIds.map(
@@ -101,10 +119,27 @@ export function PremiumScreen() {
   const lastSyncedLabel = formatIsoDateTime(state.premium.lastSyncedAt);
   const selectedProductTitle = getProductDisplayTitle(selectedProduct.id);
   const selectedProductPeriodLabel = getSubscriptionPeriodLabel(selectedProduct.id);
+  const selectedProductPriceLabel =
+    storePriceLabels[selectedProduct.id] ?? formatPrice(selectedProduct.price);
+  const selectedProductDeliveryLabel = selectedProduct.isSubscription
+    ? selectedProductPeriodLabel ?? '매월 결제'
+    : selectedProduct.points > 0
+      ? '구매 즉시 지급'
+      : '평생 소장';
+  const tokenBalanceLabel = formatTokenBalanceLabel(
+    state.premium.tokenBalance,
+    state.premium.isUnlimited,
+  );
   const canManageSelectedSubscription =
     session != null &&
     selectedProduct.isSubscription &&
     state.premium.activeProductId === selectedProduct.id;
+  const canTriggerPurchase =
+    session != null &&
+    !canManageSelectedSubscription &&
+    actionState === 'idle' &&
+    !isPurchasePending &&
+    storeStatus === 'ready';
 
   async function handleRefresh() {
     if (actionState !== 'idle') {
@@ -114,7 +149,7 @@ export function PremiumScreen() {
     setActionState('refreshing');
 
     try {
-      await syncRemoteProfile();
+      await Promise.all([syncRemoteProfile(), refreshStoreProducts()]);
     } catch (error) {
       await captureError(error, { surface: 'premium:refresh' });
     } finally {
@@ -123,11 +158,9 @@ export function PremiumScreen() {
   }
 
   async function handleRestore() {
-    if (actionState !== 'idle') {
+    if (actionState !== 'idle' || isPurchasePending) {
       return;
     }
-
-    setActionState('restoring');
 
     try {
       await restorePurchases();
@@ -135,10 +168,10 @@ export function PremiumScreen() {
       await captureError(error, { surface: 'premium:restore' });
       Alert.alert(
         '구매 복원 실패',
-        '원격 구독 상태를 다시 읽는 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+        error instanceof Error
+          ? error.message
+          : '구매 복원 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.',
       );
-    } finally {
-      setActionState('idle');
     }
   }
 
@@ -167,11 +200,25 @@ export function PremiumScreen() {
     }
   }
 
-  function handleUnsupportedPurchase() {
-    Alert.alert(
-      '새 결제는 준비 중입니다',
-      '이 화면에서는 현재 판매 중인 상품 비교와 구독 상태 확인, 이전 구매 복원을 먼저 지원합니다.',
-    );
+  async function handlePurchase() {
+    if (!canTriggerPurchase) {
+      return;
+    }
+
+    try {
+      await purchaseProduct(selectedProduct.id);
+    } catch (error) {
+      await captureError(error, {
+        productId: selectedProduct.id,
+        surface: 'premium:purchase',
+      });
+      Alert.alert(
+        '구매 시작 실패',
+        error instanceof Error
+          ? error.message
+          : '구매를 시작하지 못했습니다. 잠시 후 다시 시도해 주세요.',
+      );
+    }
   }
 
   return (
@@ -194,7 +241,7 @@ export function PremiumScreen() {
             tone={session ? 'success' : 'neutral'}
           />
           <Chip
-            label={`보유 토큰 ${state.premium.tokenBalance.toLocaleString('ko-KR')}개`}
+            label={tokenBalanceLabel}
             tone="accent"
           />
           <Chip
@@ -209,6 +256,16 @@ export function PremiumScreen() {
           <Chip
             label={state.premium.lastSyncedAt ? '상태 확인됨' : '상태 확인 전'}
             tone={state.premium.lastSyncedAt ? 'success' : 'neutral'}
+          />
+          <Chip
+            label={
+              storeStatus === 'loading'
+                ? '스토어 확인 중'
+                : storeStatus === 'error'
+                  ? '스토어 확인 필요'
+                  : '스토어 연결됨'
+            }
+            tone={storeStatus === 'error' ? 'neutral' : 'success'}
           />
         </View>
       </Card>
@@ -242,7 +299,9 @@ export function PremiumScreen() {
       <Card>
         <AppText variant="heading4">구독 플랜</AppText>
         <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          App Store에 등록된 현재 판매 상품만 보여드려요.
+          {storeStatus === 'loading'
+            ? '스토어 상품 정보를 불러오는 중이에요.'
+            : storeError ?? 'App Store에 등록된 현재 판매 상품만 보여드려요.'}
         </AppText>
         {subscriptions.map((product) => (
           <ProductOption
@@ -251,7 +310,7 @@ export function PremiumScreen() {
             onPress={() => setSelectedProductId(product.id)}
             title={getProductDisplayTitle(product.id)}
             subtitle={product.description}
-            trailing={`월 ${formatPrice(product.price)}`}
+            trailing={`월 ${storePriceLabels[product.id] ?? formatPrice(product.price)}`}
             badge={
               product.id === 'com.beyond.fortune.subscription.max'
                 ? '추천'
@@ -273,7 +332,7 @@ export function PremiumScreen() {
             onPress={() => setSelectedProductId(product.id)}
             title={getProductDisplayTitle(product.id)}
             subtitle={`${product.points.toLocaleString('ko-KR')} 토큰 · ${product.description}`}
-            trailing={formatPrice(product.price)}
+            trailing={storePriceLabels[product.id] ?? formatPrice(product.price)}
           />
         ))}
       </Card>
@@ -287,7 +346,7 @@ export function PremiumScreen() {
             onPress={() => setSelectedProductId(product.id)}
             title={getProductDisplayTitle(product.id)}
             subtitle={product.description}
-            trailing={formatPrice(product.price)}
+            trailing={storePriceLabels[product.id] ?? formatPrice(product.price)}
           />
         ))}
       </Card>
@@ -303,24 +362,28 @@ export function PremiumScreen() {
             label={selectedProduct.isSubscription ? '구독 상품' : '단건 상품'}
             tone="accent"
           />
-          <Chip label={`가격 ${formatPrice(selectedProduct.price)}`} />
+          <Chip label={`가격 ${selectedProductPriceLabel}`} />
           {selectedProduct.points > 0 ? (
             <Chip
               label={`토큰 ${selectedProduct.points.toLocaleString('ko-KR')}개 포함`}
             />
           ) : null}
-          <Chip label={selectedProductPeriodLabel ?? '평생 소장'} />
+          <Chip label={selectedProductDeliveryLabel} />
         </View>
         <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
           {!session
             ? '로그인하면 내 구독 상태를 확인하고 이전 구매를 복원할 수 있어요.'
             : canManageSelectedSubscription
               ? '현재 이용 중인 구독은 스토어 구독 관리 화면에서 변경할 수 있어요.'
-              : '이 화면에서는 상품 비교와 상태 확인, 이전 구매 복원을 먼저 지원합니다.'}
+              : storeStatus === 'loading'
+                ? '스토어 준비가 끝나면 바로 구매를 진행할 수 있어요.'
+                : storeError
+                  ? storeError
+                  : '선택한 상품을 바로 결제하고 계정 상태에 반영할 수 있어요.'}
         </AppText>
         {!session ? (
           <PrimaryButton
-            disabled={actionState !== 'idle'}
+            disabled={actionState !== 'idle' || isPurchasePending}
             onPress={() =>
               router.push({
                 pathname: '/signup',
@@ -333,7 +396,7 @@ export function PremiumScreen() {
           </PrimaryButton>
         ) : canManageSelectedSubscription ? (
           <PrimaryButton
-            disabled={actionState !== 'idle'}
+            disabled={actionState !== 'idle' || isPurchasePending}
             onPress={() => void handleOpenSubscriptionManagement()}
             tone="primary"
           >
@@ -343,18 +406,24 @@ export function PremiumScreen() {
           </PrimaryButton>
         ) : (
           <PrimaryButton
-            disabled={actionState !== 'idle'}
-            onPress={handleUnsupportedPurchase}
-            tone="secondary"
+            disabled={!canTriggerPurchase}
+            onPress={() => void handlePurchase()}
+            tone="primary"
           >
-            지원 범위 확인
+            {isPurchasePending
+              ? '결제 진행 중...'
+              : selectedProduct.isSubscription
+                ? '구독 시작하기'
+                : selectedProduct.points > 0
+                  ? '토큰 충전하기'
+                  : '평생 소장 구매하기'}
           </PrimaryButton>
         )}
         <PrimaryButton
-          onPress={actionState === 'idle' ? handleRestore : undefined}
+          onPress={actionState === 'idle' && !isPurchasePending ? handleRestore : undefined}
           tone="secondary"
         >
-          {actionState === 'restoring' ? '복원 적용 중...' : '구매 복원'}
+          {isPurchasePending ? '구매 상태 확인 중...' : '구매 복원'}
         </PrimaryButton>
       </Card>
     </Screen>
