@@ -1,3 +1,5 @@
+import * as AppleAuthentication from 'expo-apple-authentication';
+import * as Crypto from 'expo-crypto';
 import * as Linking from 'expo-linking';
 import { type Provider } from '@supabase/supabase-js';
 import { Platform } from 'react-native';
@@ -7,18 +9,21 @@ import { deepLinkConfig } from '@fortune/product-contracts';
 import { appEnv } from './env';
 import { supabase } from './supabase';
 
-export type SocialAuthProviderId = 'apple' | 'google' | 'kakao';
+export type SocialAuthProviderId = 'apple' | 'google' | 'kakao' | 'naver';
+type SupabaseOAuthProviderId = Exclude<SocialAuthProviderId, 'naver'>;
 
 export const socialAuthProviderIds: SocialAuthProviderId[] = [
   'apple',
   'google',
   'kakao',
+  'naver',
 ];
 
 export const socialAuthProviderLabelById: Record<SocialAuthProviderId, string> = {
   apple: 'Apple',
   google: 'Google',
-  kakao: 'Kakao',
+  kakao: '카카오',
+  naver: '네이버',
 };
 
 export interface SocialAuthStartResult {
@@ -29,8 +34,123 @@ export interface SocialAuthStartResult {
   errorMessage?: string;
 }
 
+async function createAppleRawNonce() {
+  return Crypto.randomUUID().replace(/-/g, '') + Crypto.randomUUID().replace(/-/g, '');
+}
+
+async function createAppleHashedNonce(rawNonce: string) {
+  return Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, rawNonce, {
+    encoding: Crypto.CryptoEncoding.HEX,
+  });
+}
+
+async function startAppleNativeAuth(
+  client: NonNullable<typeof supabase>,
+  provider: SocialAuthProviderId,
+  redirectTo: string,
+): Promise<SocialAuthStartResult> {
+  const isAvailable = await AppleAuthentication.isAvailableAsync();
+
+  if (!isAvailable) {
+    return {
+      provider,
+      status: 'unsupported',
+      redirectTo,
+      errorMessage: '이 기기에서는 Apple 로그인을 사용할 수 없습니다.',
+    };
+  }
+
+  const rawNonce = await createAppleRawNonce();
+  const hashedNonce = await createAppleHashedNonce(rawNonce);
+
+  try {
+    const credential = await AppleAuthentication.signInAsync({
+      nonce: hashedNonce,
+      requestedScopes: [
+        AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+      ],
+    });
+
+    if (!credential.identityToken) {
+      return {
+        provider,
+        status: 'failed',
+        redirectTo,
+        errorMessage: 'Apple 인증 토큰을 확인하지 못했습니다.',
+      };
+    }
+
+    const response = await client.auth.signInWithIdToken({
+      nonce: rawNonce,
+      provider: 'apple',
+      token: credential.identityToken,
+    });
+
+    if (response.error) {
+      return {
+        provider,
+        status: 'failed',
+        redirectTo,
+        errorMessage: response.error.message,
+      };
+    }
+
+    return {
+      provider,
+      status: 'started',
+      redirectTo,
+    };
+  } catch (error) {
+    const errorCode =
+      typeof error === 'object' && error && 'code' in error
+        ? String(error.code)
+        : null;
+
+    if (errorCode === 'ERR_REQUEST_CANCELED') {
+      return {
+        provider,
+        status: 'failed',
+        redirectTo,
+        errorMessage: 'Apple 로그인을 취소했습니다.',
+      };
+    }
+
+    return {
+      provider,
+      status: 'failed',
+      redirectTo,
+      errorMessage:
+        error instanceof Error ? error.message : 'Apple 로그인을 시작하지 못했습니다.',
+    };
+  }
+}
+
 function normalizeReturnTo(value: string | null | undefined) {
   return value && value.startsWith('/') ? value : '/chat';
+}
+
+function isSupabaseOAuthProvider(
+  provider: SocialAuthProviderId,
+): provider is SupabaseOAuthProviderId {
+  return provider !== 'naver';
+}
+
+function resolveSupabaseFunctionsBaseUrl() {
+  return `${appEnv.supabaseUrl.replace(/\/$/, '')}/functions/v1`;
+}
+
+function resolveNaverAuthorizationUrl(returnTo?: string) {
+  const authorizationUrl = new URL(
+    `${resolveSupabaseFunctionsBaseUrl()}/naver-oauth`,
+  );
+  authorizationUrl.searchParams.set('mode', 'start');
+  authorizationUrl.searchParams.set(
+    'returnTo',
+    normalizeReturnTo(returnTo),
+  );
+
+  return authorizationUrl.toString();
 }
 
 export function resolveSocialAuthRedirectTo(
@@ -66,8 +186,15 @@ export function resolveSocialAuthRedirectTo(
 }
 
 export function isSocialAuthSupported(provider: SocialAuthProviderId) {
-  void provider;
-  return Boolean(supabase);
+  if (!supabase) {
+    return false;
+  }
+
+  if (provider === 'naver') {
+    return Platform.OS !== 'web';
+  }
+
+  return true;
 }
 
 export async function startSocialAuth(
@@ -95,7 +222,26 @@ export async function startSocialAuth(
   }
 
   try {
-    const response = await supabase.auth.signInWithOAuth({
+    const client = supabase;
+
+    if (provider === 'apple' && Platform.OS === 'ios') {
+      return startAppleNativeAuth(client, provider, redirectTo);
+    }
+
+    if (!isSupabaseOAuthProvider(provider)) {
+      const authorizationUrl = resolveNaverAuthorizationUrl(returnTo);
+
+      await Linking.openURL(authorizationUrl);
+
+      return {
+        provider,
+        status: 'started',
+        redirectTo,
+        authorizationUrl,
+      };
+    }
+
+    const response = await client.auth.signInWithOAuth({
       provider: provider as Provider,
       options: {
         redirectTo,

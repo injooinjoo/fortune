@@ -4,6 +4,7 @@ import { Pressable, TextInput, View } from 'react-native';
 
 import type { FortuneTypeId } from '@fortune/product-contracts';
 
+import { AppleAuthButton } from '../../components/apple-auth-button';
 import { AppText } from '../../components/app-text';
 import { Card } from '../../components/card';
 import { Chip } from '../../components/chip';
@@ -640,11 +641,7 @@ export function ChatSoftGate({
             계정을 연결하면
           </AppText>
           <View style={{ gap: fortuneTheme.spacing.sm }}>
-            <SocialActionButton
-              label="Apple로 계속하기"
-              tone="light"
-              onPress={onApple}
-            />
+            <AppleAuthButton onPress={onApple} />
             <SocialActionButton
               label="Google로 계속하기"
               tone="dark"

@@ -1,0 +1,5 @@
+[functions.kakao-oauth]
+verify_jwt = false
+
+[functions.naver-oauth]
+verify_jwt = false

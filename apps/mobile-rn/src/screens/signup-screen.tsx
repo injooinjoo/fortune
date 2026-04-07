@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { View } from 'react-native';
 
+import { AppleAuthButton } from '../components/apple-auth-button';
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
 import { PrimaryButton } from '../components/primary-button';
@@ -76,7 +77,7 @@ export function SignupScreen() {
 
       if (result.status === 'started') {
         setAuthMessage(
-          `${socialAuthProviderLabelById[providerId]} 브라우저 인증을 시작했습니다. 완료 후 앱으로 돌아옵니다.`,
+          `${socialAuthProviderLabelById[providerId]} 로그인을 진행하고 있습니다. 잠시만 기다려 주세요.`,
         );
         return;
       }
@@ -116,13 +117,21 @@ export function SignupScreen() {
         ) : null}
         {authOptions.map((option) => (
           <View key={option.id} style={{ gap: 8 }}>
-            <PrimaryButton
-              onPress={() => void handleSocialAuthStart(option.id)}
-            >
-              {activeProviderId === option.id
-                ? `${option.label} 준비 중...`
-                : option.label}
-            </PrimaryButton>
+            {option.id === 'apple' ? (
+              <AppleAuthButton
+                disabled={activeProviderId === option.id}
+                label={option.label}
+                onPress={() => void handleSocialAuthStart(option.id)}
+              />
+            ) : (
+              <PrimaryButton
+                onPress={() => void handleSocialAuthStart(option.id)}
+              >
+                {activeProviderId === option.id
+                  ? `${option.label} 준비 중...`
+                  : option.label}
+              </PrimaryButton>
+            )}
             <AppText
               variant="bodySmall"
               color={fortuneTheme.colors.textTertiary}

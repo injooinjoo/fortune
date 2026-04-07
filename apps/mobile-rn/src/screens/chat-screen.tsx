@@ -986,7 +986,7 @@ export function ChatScreen() {
 
       if (result.status === 'started') {
         setAuthMessage(
-          `${socialAuthProviderLabelById[providerId]} 로그인 브라우저 인증을 시작했습니다.`,
+          `${socialAuthProviderLabelById[providerId]} 로그인을 진행하고 있습니다. 잠시만 기다려 주세요.`,
         );
         return;
       }
