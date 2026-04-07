@@ -1,31 +1,27 @@
 import { router, useLocalSearchParams, type Href } from 'expo-router';
-import { View } from 'react-native';
 
-import { AccountSnapshotCard } from '../components/account-snapshot-card';
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
-import { Chip } from '../components/chip';
 import { PrimaryButton } from '../components/primary-button';
 import { Screen } from '../components/screen';
 import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
-import { useMobileAppState } from '../providers/mobile-app-state-provider';
 
 const onboardingSteps = [
   {
     id: 'birth',
     title: '생년월일 확인',
-    description: '사주와 기본 운세 라우팅의 기준이 되는 핵심 정보',
+    description: '맞춤 결과를 보여주기 위해 먼저 확인하는 정보예요.',
   },
   {
     id: 'interest',
     title: '관심사 선택',
-    description: 'chat-first 추천칩과 전문가 연결을 위한 취향 정보',
+    description: '더 잘 맞는 콘텐츠를 보여주기 위한 선택 항목이에요.',
   },
   {
     id: 'handoff',
     title: '첫 진입 안내',
-    description: '초기 진입 후 제품 탐색 흐름을 안정적으로 마무리',
+    description: '처음 이용할 때 어디로 이어지는지 알려드려요.',
   },
 ] as const;
 
@@ -42,7 +38,6 @@ function normalizeReturnTo(value: string | undefined) {
 export function OnboardingScreen() {
   const params = useLocalSearchParams<{ returnTo?: string | string[] }>();
   const { onboardingProgress, completeOnboarding, session } = useAppBootstrap();
-  const { state } = useMobileAppState();
   const returnTo = normalizeReturnTo(readSearchParam(params.returnTo));
 
   async function handleFinishOnboarding() {
@@ -53,45 +48,28 @@ export function OnboardingScreen() {
   return (
     <Screen>
       <AppText variant="labelMedium" color={fortuneTheme.colors.accentSecondary}>
-        /onboarding
+        시작 안내
       </AppText>
-      <AppText variant="displaySmall">온보딩</AppText>
+      <AppText variant="displaySmall">처음 설정하기</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
-        RN에서는 첫 진입과 재진입이 같은 계약으로 처리됩니다. 현재 화면은 그
-        흐름을 보여주는 실제 셸입니다.
+        처음 들어오면 몇 가지 정보만 확인하고 바로 이용을 시작할 수 있어요.
       </AppText>
-
-      <AccountSnapshotCard
-        description="앱 재실행 후에도 남아 있는 프로필과 premium 상태를 먼저 보여줍니다."
-        onboardingProgress={onboardingProgress}
-        premium={state.premium}
-        profile={state.profile}
-        sessionActive={Boolean(session)}
-      />
 
       <Card>
         <AppText variant="heading4">진행 상태</AppText>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-          <Chip
-            label={`soft:${onboardingProgress.softGateCompleted ? 'done' : 'todo'}`}
-          />
-          <Chip
-            label={`auth:${onboardingProgress.authCompleted ? 'done' : 'todo'}`}
-          />
-          <Chip
-            label={`birth:${onboardingProgress.birthCompleted ? 'done' : 'todo'}`}
-          />
-          <Chip
-            label={`interest:${onboardingProgress.interestCompleted ? 'done' : 'todo'}`}
-          />
-          <Chip
-            label={`handoff:${onboardingProgress.firstRunHandoffSeen ? 'done' : 'todo'}`}
-          />
-        </View>
+        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+          생년월일: {onboardingProgress.birthCompleted ? '확인 완료' : '아직 필요해요'}
+        </AppText>
+        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+          관심사: {onboardingProgress.interestCompleted ? '선택 완료' : '선택해 주세요'}
+        </AppText>
+        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+          첫 안내: {onboardingProgress.firstRunHandoffSeen ? '확인 완료' : '아직 안 봤어요'}
+        </AppText>
       </Card>
 
       <Card>
-        <AppText variant="heading4">온보딩 단계</AppText>
+        <AppText variant="heading4">확인할 항목</AppText>
         {onboardingSteps.map((step) => (
           <Card
             key={step.id}
@@ -108,11 +86,10 @@ export function OnboardingScreen() {
       <Card>
         <AppText variant="heading4">다음 동작</AppText>
         <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
-          이 화면은 진입 흐름을 안내하고, 실제 완료 동작은 상위 bootstrap
-          contract에서 처리합니다.
+          이 단계를 마치면 바로 채팅으로 이어지거나, 계정 연결을 계속할 수 있어요.
         </AppText>
         <PrimaryButton onPress={() => void handleFinishOnboarding()}>
-          {session ? '온보딩 완료하고 계속하기' : '온보딩 저장하고 계속하기'}
+          {session ? '설정 완료하고 계속하기' : '설정 저장하고 계속하기'}
         </PrimaryButton>
         {!session ? (
           <PrimaryButton
@@ -131,7 +108,7 @@ export function OnboardingScreen() {
           onPress={() => router.replace(returnTo as Href)}
           tone="secondary"
         >
-          {returnTo === '/chat' ? 'Chat으로 돌아가기' : '이전 화면으로 돌아가기'}
+          {returnTo === '/chat' ? '채팅으로 돌아가기' : '이전 화면으로 돌아가기'}
         </PrimaryButton>
       </Card>
     </Screen>

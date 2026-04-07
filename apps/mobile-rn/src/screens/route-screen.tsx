@@ -3,7 +3,6 @@ import { appRoutesById, type AppRouteId } from '@fortune/product-contracts';
 
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
-import { Chip } from '../components/chip';
 import { PrimaryButton } from '../components/primary-button';
 import { Screen } from '../components/screen';
 import { fortuneTheme } from '../lib/theme';
@@ -24,22 +23,21 @@ export function RouteScreen({
   return (
     <Screen>
       <AppText variant="labelMedium" color={fortuneTheme.colors.accentSecondary}>
-        {route.path}
+        안내 화면
       </AppText>
       <AppText variant="displaySmall">{route.title}</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
         {route.description}
       </AppText>
-      <ViewSpacer />
       <Card>
-        <Chip label={route.group} tone="accent" />
+        <AppText variant="heading4">이어지는 내용</AppText>
         {route.redirectTo ? (
           <AppText variant="bodyMedium">
-            공개 경로는 유지되며 RN에서도 {route.redirectTo} 로 리다이렉트됩니다.
+            이 화면은 다음 단계로 자연스럽게 이어집니다.
           </AppText>
         ) : (
           <AppText variant="bodyMedium">
-            이 화면은 RN parity 기반에서 해당 제품 표면을 수용할 자리입니다.
+            이 화면에서 해당 기능의 내용을 이어서 볼 수 있습니다.
           </AppText>
         )}
         {note ? (
@@ -49,12 +47,8 @@ export function RouteScreen({
         ) : null}
       </Card>
       <PrimaryButton onPress={() => router.push(previewPath('/chat'))}>
-        Chat 허브로 이동
+        채팅으로 이동
       </PrimaryButton>
     </Screen>
   );
-}
-
-function ViewSpacer() {
-  return <Card style={{ padding: 0, height: 1, backgroundColor: 'transparent', borderWidth: 0 }} />;
 }

@@ -15,7 +15,7 @@ export function CharacterProfileScreen() {
   return (
     <Screen>
       <AppText variant="labelMedium" color={fortuneTheme.colors.accentSecondary}>
-        /character/{params.id ?? 'unknown'}
+        캐릭터 프로필
       </AppText>
 
       {character ? (
@@ -30,31 +30,31 @@ export function CharacterProfileScreen() {
 
           <Card>
             <Chip
-              label={`category:${character.category}`}
+              label={isFortuneChatCharacter(character) ? '운세 캐릭터' : '스토리 캐릭터'}
               tone={isFortuneChatCharacter(character) ? 'accent' : 'success'}
             />
             <AppText variant="heading4">
-              {isFortuneChatCharacter(character) ? 'Specialties' : 'Character Mode'}
+              {isFortuneChatCharacter(character) ? '추천 포인트' : '대화 스타일'}
             </AppText>
             <AppText
               variant="bodySmall"
               color={fortuneTheme.colors.textSecondary}
             >
               {isFortuneChatCharacter(character)
-                ? '이 캐릭터는 아래 운세 영역에서 RN chat shell의 추천 대상으로 연결됩니다.'
-                : '이 캐릭터는 스토리 탭에서 세계관형 대화를 이어가는 일반 캐릭터입니다.'}
+                ? '이 캐릭터는 운세 추천에서 자주 노출되는 스타일이에요.'
+                : '이 캐릭터는 세계관 대화를 이어가기 좋은 스타일이에요.'}
             </AppText>
             {isFortuneChatCharacter(character) ? (
               character.specialties.map((specialty) => (
                 <Chip key={specialty} label={specialty} />
               ))
             ) : (
-              <Chip label="story-chat" tone="success" />
+              <Chip label="이야기 채팅" tone="success" />
             )}
           </Card>
 
           <Card>
-            <AppText variant="heading4">Actions</AppText>
+            <AppText variant="heading4">동작</AppText>
             <PrimaryButton
               onPress={() =>
                 router.push({
@@ -63,7 +63,7 @@ export function CharacterProfileScreen() {
                 })
               }
             >
-              이 캐릭터로 채팅 열기
+              이 캐릭터로 채팅하기
             </PrimaryButton>
             <PrimaryButton onPress={() => router.back()} tone="secondary">
               뒤로 가기
@@ -72,15 +72,15 @@ export function CharacterProfileScreen() {
         </>
       ) : (
         <Card>
-          <AppText variant="heading4">Character Missing</AppText>
+          <AppText variant="heading4">캐릭터를 찾을 수 없어요</AppText>
           <AppText
             variant="bodyMedium"
             color={fortuneTheme.colors.textSecondary}
           >
-            요청한 캐릭터를 RN contract registry에서 찾지 못했습니다.
+            요청한 캐릭터를 찾지 못했어요. 다른 캐릭터를 선택해 주세요.
           </AppText>
           <PrimaryButton onPress={() => router.replace('/chat')}>
-            Chat 허브로 돌아가기
+            채팅으로 돌아가기
           </PrimaryButton>
         </Card>
       )}

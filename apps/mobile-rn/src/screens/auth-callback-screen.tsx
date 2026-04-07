@@ -1,7 +1,6 @@
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 
-import { AccountSnapshotCard } from '../components/account-snapshot-card';
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
 import { PrimaryButton } from '../components/primary-button';
@@ -28,32 +27,26 @@ export function AuthCallbackScreen() {
     authCallbackUrl?: string | string[];
     error?: string | string[];
     error_description?: string | string[];
-    provider?: string | string[];
     returnTo?: string | string[];
   }>();
   const {
     markAuthComplete,
-    onboardingProgress,
     session,
     status: bootstrapStatus,
   } = useAppBootstrap();
-  const { state, status: appStateStatus, syncRemoteProfile } = useMobileAppState();
+  const { status: appStateStatus, syncRemoteProfile } = useMobileAppState();
   const [hasHandled, setHasHandled] = useState(false);
   const authCallbackUrl = readSearchParam(params.authCallbackUrl);
   const decodedCallbackUrl = authCallbackUrl
     ? decodeURIComponent(authCallbackUrl)
     : null;
   const directReturnTo = normalizeReturnTo(readSearchParam(params.returnTo));
-  const directProvider = readSearchParam(params.provider) ?? null;
   const directErrorMessage =
     readSearchParam(params.error_description) ?? readSearchParam(params.error);
   const callbackMeta = useMemo(() => {
     if (!decodedCallbackUrl) {
       return {
         errorMessage: directErrorMessage,
-        provider:
-          directProvider ??
-          ((session?.user.app_metadata.provider as string | undefined) ?? null),
         returnTo: directReturnTo,
       };
     }
@@ -64,36 +57,27 @@ export function AuthCallbackScreen() {
         url.hash.startsWith('#') ? url.hash.slice(1) : url.hash,
       );
 
-        return {
-          errorMessage:
-            url.searchParams.get('error_description') ??
-            hashParams.get('error_description') ??
-            url.searchParams.get('error') ??
-            hashParams.get('error'),
-          provider:
-            url.searchParams.get('provider') ??
-            hashParams.get('provider') ??
-            ((session?.user.app_metadata.provider as string | undefined) ?? null),
-          returnTo: normalizeReturnTo(
-            url.searchParams.get('returnTo') ?? hashParams.get('returnTo'),
-          ),
-        };
-      } catch {
-        return {
-          errorMessage: null,
-          provider:
-            directProvider ??
-            ((session?.user.app_metadata.provider as string | undefined) ?? null),
-          returnTo: directReturnTo,
-        };
-      }
-    }, [
-      decodedCallbackUrl,
-      directErrorMessage,
-      directProvider,
-      directReturnTo,
-      session?.user.app_metadata.provider,
-    ]);
+      return {
+        errorMessage:
+          url.searchParams.get('error_description') ??
+          hashParams.get('error_description') ??
+          url.searchParams.get('error') ??
+          hashParams.get('error'),
+        returnTo: normalizeReturnTo(
+          url.searchParams.get('returnTo') ?? hashParams.get('returnTo'),
+        ),
+      };
+    } catch {
+      return {
+        errorMessage: null,
+        returnTo: directReturnTo,
+      };
+    }
+  }, [
+    decodedCallbackUrl,
+    directErrorMessage,
+    directReturnTo,
+  ]);
 
   useEffect(() => {
     if (
@@ -142,61 +126,34 @@ export function AuthCallbackScreen() {
   return (
     <Screen>
       <AppText variant="labelMedium" color={fortuneTheme.colors.accentSecondary}>
-        /auth/callback
+        로그인 확인
       </AppText>
-      <AppText variant="displaySmall">Auth Callback</AppText>
-      <AccountSnapshotCard
-        description="OAuth 복귀 뒤 shared state에 계정/프로필 힌트를 반영합니다."
-        onboardingProgress={onboardingProgress}
-        premium={state.premium}
-        profile={state.profile}
-        sessionActive={Boolean(session)}
-        title="복귀 상태"
-      />
+      <AppText variant="displaySmall">잠시만 기다려 주세요</AppText>
       <Card>
         <AppText variant="bodyMedium">
-          Supabase OAuth 복귀 URL과 딥링크 의도를 RN에서 동일하게 해석합니다.
-        </AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textTertiary}>
-          callback state:{' '}
-          {callbackMeta.errorMessage
-            ? 'error'
-            : session
-              ? 'resolved'
-              : decodedCallbackUrl
-                ? 'waiting-session'
-                : 'waiting'}
-        </AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textTertiary}>
-          bootstrap: {bootstrapStatus} · app-state: {appStateStatus}
-        </AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textTertiary}>
-          source: {authCallbackUrl ?? 'none'}
-        </AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textTertiary}>
-          route: {callbackMeta.returnTo}
-        </AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textTertiary}>
-          session: {session ? 'active' : bootstrapStatus === 'ready' ? 'missing' : 'restoring'}
-        </AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textTertiary}>
-          provider: {callbackMeta.provider ?? 'unknown'}
+          로그인 정보를 확인하고 있어요. 잠시만 기다리면 이전 화면으로 돌아갑니다.
         </AppText>
         {callbackMeta.errorMessage ? (
           <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            error: {callbackMeta.errorMessage}
+            로그인 연결에 문제가 생겼어요. 다시 시도해 주세요.
           </AppText>
         ) : null}
         <PrimaryButton onPress={() => router.replace(callbackMeta.returnTo as Href)}>
-          이어서 이동
+          계속하기
         </PrimaryButton>
         <PrimaryButton
-          onPress={() => router.replace(callbackMeta.returnTo as Href)}
+          onPress={() =>
+            router.replace(
+              callbackMeta.errorMessage ? '/signup' : (callbackMeta.returnTo as Href),
+            )
+          }
           tone="secondary"
         >
-          {callbackMeta.returnTo === '/chat'
-            ? 'Chat으로 돌아가기'
-            : '이전 화면으로 돌아가기'}
+          {callbackMeta.errorMessage
+            ? '로그인 다시 시도하기'
+            : callbackMeta.returnTo === '/chat'
+              ? '채팅으로 돌아가기'
+              : '이전 화면으로 돌아가기'}
         </PrimaryButton>
       </Card>
     </Screen>
