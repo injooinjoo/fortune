@@ -6,6 +6,7 @@ import { Switch, View } from "react-native";
 import { AppText } from "../components/app-text";
 import { Card } from "../components/card";
 import { PrimaryButton } from "../components/primary-button";
+import { RouteBackHeader } from "../components/route-back-header";
 import { Screen } from "../components/screen";
 import { formatFortuneTypeLabel } from "../lib/chat-shell";
 import { fortuneTheme } from "../lib/theme";
@@ -83,7 +84,7 @@ export function ProfileNotificationsScreen() {
   }
 
   return (
-    <Screen>
+    <Screen header={<RouteBackHeader fallbackHref="/profile" />}>
       <AppText variant="displaySmall">알림 설정</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
         저장된 알림 기본값을 불러와 편집하고 다시 저장합니다.

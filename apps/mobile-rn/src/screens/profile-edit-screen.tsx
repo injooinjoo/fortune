@@ -6,6 +6,7 @@ import { TextInput, View } from "react-native";
 import { AppText } from "../components/app-text";
 import { Card } from "../components/card";
 import { PrimaryButton } from "../components/primary-button";
+import { RouteBackHeader } from "../components/route-back-header";
 import { Screen } from "../components/screen";
 import { captureError } from "../lib/error-reporting";
 import { fortuneTheme } from "../lib/theme";
@@ -66,7 +67,7 @@ export function ProfileEditScreen() {
   }
 
   return (
-    <Screen>
+    <Screen header={<RouteBackHeader fallbackHref="/profile" />}>
       <AppText variant="displaySmall">프로필 수정</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
         저장된 프로필을 불러와 수정하고, 생년월일이 있으면 온보딩 상태도 함께

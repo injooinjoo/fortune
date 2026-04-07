@@ -4,6 +4,7 @@ import { Pressable, View } from "react-native";
 import { AppText } from "../components/app-text";
 import { Card } from "../components/card";
 import { PrimaryButton } from "../components/primary-button";
+import { RouteBackHeader } from "../components/route-back-header";
 import { Screen } from "../components/screen";
 import { findChatCharacterById, storyChatCharacters } from "../lib/chat-characters";
 import { formatFortuneTypeLabel } from "../lib/chat-shell";
@@ -21,7 +22,7 @@ export function ProfileRelationshipsScreen() {
     : null;
 
   return (
-    <Screen>
+    <Screen header={<RouteBackHeader fallbackHref="/profile" />}>
       <AppText variant="displaySmall">관계도</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
         저장된 최근 채팅 신호를 기준으로 관계 흐름을 이어갑니다.

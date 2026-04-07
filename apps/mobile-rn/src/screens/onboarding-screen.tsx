@@ -3,6 +3,7 @@ import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
 import { PrimaryButton } from '../components/primary-button';
+import { RouteBackHeader } from '../components/route-back-header';
 import { Screen } from '../components/screen';
 import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
@@ -46,7 +47,7 @@ export function OnboardingScreen() {
   }
 
   return (
-    <Screen>
+    <Screen header={<RouteBackHeader fallbackHref={returnTo as Href} />}>
       <AppText variant="labelMedium" color={fortuneTheme.colors.accentSecondary}>
         시작 안내
       </AppText>

@@ -4,6 +4,7 @@ import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
 import { Chip } from '../components/chip';
 import { PrimaryButton } from '../components/primary-button';
+import { RouteBackHeader } from '../components/route-back-header';
 import { Screen } from '../components/screen';
 import { findChatCharacterById, isFortuneChatCharacter } from '../lib/chat-characters';
 import { fortuneTheme } from '../lib/theme';
@@ -13,7 +14,7 @@ export function CharacterProfileScreen() {
   const character = findChatCharacterById(params.id);
 
   return (
-    <Screen>
+    <Screen header={<RouteBackHeader fallbackHref="/chat" />}>
       <AppText variant="labelMedium" color={fortuneTheme.colors.accentSecondary}>
         캐릭터 프로필
       </AppText>

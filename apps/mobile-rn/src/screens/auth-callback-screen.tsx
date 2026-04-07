@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
 import { PrimaryButton } from '../components/primary-button';
+import { RouteBackHeader } from '../components/route-back-header';
 import { Screen } from '../components/screen';
 import { captureError } from '../lib/error-reporting';
 import { fortuneTheme } from '../lib/theme';
@@ -124,7 +125,7 @@ export function AuthCallbackScreen() {
   ]);
 
   return (
-    <Screen>
+    <Screen header={<RouteBackHeader fallbackHref={callbackMeta.returnTo as Href} />}>
       <AppText variant="labelMedium" color={fortuneTheme.colors.accentSecondary}>
         로그인 확인
       </AppText>

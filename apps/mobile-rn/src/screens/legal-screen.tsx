@@ -3,6 +3,7 @@ import { router } from 'expo-router';
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
 import { PrimaryButton } from '../components/primary-button';
+import { RouteBackHeader } from '../components/route-back-header';
 import { Screen } from '../components/screen';
 
 export function LegalScreen({
@@ -17,7 +18,7 @@ export function LegalScreen({
   sections: Array<{ title: string; body: string }>;
 }) {
   return (
-    <Screen>
+    <Screen header={<RouteBackHeader fallbackHref="/profile" />}>
       <AppText variant="displaySmall">{title}</AppText>
       <AppText variant="bodyLarge">{summary}</AppText>
 

@@ -6,6 +6,7 @@ import { View } from 'react-native';
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
 import { PrimaryButton } from '../components/primary-button';
+import { RouteBackHeader } from '../components/route-back-header';
 import { Screen } from '../components/screen';
 import { captureError } from '../lib/error-reporting';
 import { fortuneTheme } from '../lib/theme';
@@ -62,7 +63,7 @@ export function SignupScreen() {
   }
 
   return (
-    <Screen>
+    <Screen header={<RouteBackHeader fallbackHref={returnTo as Href} />}>
       <AppText variant="displaySmall">로그인 및 시작</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
         원하는 계정으로 시작하면 이후에도 프로필과 구매 정보를 이어서 사용할 수 있어요.

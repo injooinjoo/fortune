@@ -4,6 +4,7 @@ import { View } from "react-native";
 import { AppText } from "../components/app-text";
 import { Card } from "../components/card";
 import { PrimaryButton } from "../components/primary-button";
+import { RouteBackHeader } from "../components/route-back-header";
 import { Screen } from "../components/screen";
 import { formatFortuneTypeLabel } from "../lib/chat-shell";
 import { fortuneTheme } from "../lib/theme";
@@ -19,7 +20,7 @@ export function ProfileSajuSummaryScreen() {
     : null;
 
   return (
-    <Screen>
+    <Screen header={<RouteBackHeader fallbackHref="/profile" />}>
       <AppText variant="displaySmall">사주 요약</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
         저장된 프로필과 출생 정보가 준비되었는지 바로 확인할 수 있어요.

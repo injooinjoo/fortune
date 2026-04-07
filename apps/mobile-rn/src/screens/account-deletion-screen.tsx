@@ -3,6 +3,7 @@ import { router } from 'expo-router';
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
 import { PrimaryButton } from '../components/primary-button';
+import { RouteBackHeader } from '../components/route-back-header';
 import { Screen } from '../components/screen';
 import { fortuneTheme } from '../lib/theme';
 
@@ -14,7 +15,7 @@ const deletionReasons = [
 
 export function AccountDeletionScreen() {
   return (
-    <Screen>
+    <Screen header={<RouteBackHeader fallbackHref="/profile" />}>
       <AppText variant="displaySmall">계정 삭제</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
         계정 삭제는 복구가 어려운 작업이라서, 삭제 전에 꼭 확인해야 할 내용만 먼저 안내해 드려요.
