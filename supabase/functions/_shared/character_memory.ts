@@ -17,7 +17,7 @@ const MEMORY_TEMPLATE: PromptTemplate = {
 
 목표:
 1) 캐릭터 아이덴티티를 해치지 않도록 대화 핵심 사실을 압축
-2) 유저-캐릭터 관계 단계에 맞는 안전한 관계 지시 생성
+2) 유저-캐릭터 관계 단계에 맞는 안전한 연애/관계 지시 생성
 3) 사실과 추측을 구분하고, 검증되지 않은 추측은 배제
 
 출력 스키마(키 이름 고정):
@@ -26,7 +26,14 @@ const MEMORY_TEMPLATE: PromptTemplate = {
   "keyFacts": ["사실1", "사실2"],
   "relationshipDirectives": {
     "toneBoundary": "관계 단계 경계",
-    "preferredAddressing": "호칭/말투 가이드",
+    "preferredAddress": "호칭/호칭 톤",
+    "speechMirror": ["유저 말투를 어떻게 반영할지"],
+    "comfortTriggers": ["편안함이 올라오는 신호"],
+    "boundaryNotes": ["넘지 말아야 할 경계"],
+    "unresolvedTension": ["남아 있는 긴장이나 오해"],
+    "repairPattern": ["갈등 후 복구 방식"],
+    "safeAffectionStage": "guarded|warming|trusting|open|romantic",
+    "recurringMotifs": ["반복되는 애정 모티프"],
     "proactiveLevel": "low|medium|high",
     "notes": ["추가 지시"]
   }
@@ -36,6 +43,7 @@ const MEMORY_TEMPLATE: PromptTemplate = {
 - keyFacts는 최대 8개.
 - 개인정보/민감정보는 최소화.
 - 캐릭터 원본 말투를 바꾸라는 지시는 금지.
+- 원문 출처, 브랜드명, 태그, html 조각은 저장하지 말고 내부 요약만 남긴다.
 `.trim(),
   userPromptTemplate: `
 [characterId]
@@ -119,10 +127,35 @@ export interface AffinityContext {
   currentStreak: number;
 }
 
+type ProactiveLevel = "low" | "medium" | "high";
+
+type SafeAffectionStage =
+  | "guarded"
+  | "warming"
+  | "trusting"
+  | "open"
+  | "romantic";
+
+export interface RomanceMemoryDirectives {
+  toneBoundary?: string;
+  preferredAddress?: string;
+  preferredAddressing?: string;
+  speechMirror?: string[];
+  comfortTriggers?: string[];
+  boundaryNotes?: string[];
+  unresolvedTension?: string[];
+  repairPattern?: string[];
+  safeAffectionStage?: SafeAffectionStage | string;
+  recurringMotifs?: string[];
+  proactiveLevel?: ProactiveLevel;
+  notes?: string[];
+  [key: string]: unknown;
+}
+
 export interface UserCharacterMemory {
   summary: string;
   keyFacts: string[];
-  relationshipDirectives: Record<string, unknown>;
+  relationshipDirectives: RomanceMemoryDirectives;
   messageCountSnapshot: number;
   lastSummarizedAt: string | null;
 }
@@ -138,7 +171,7 @@ interface StoredMemoryRow {
 interface MemorySummaryResult {
   summary: string;
   keyFacts: string[];
-  relationshipDirectives: Record<string, unknown>;
+  relationshipDirectives: RomanceMemoryDirectives;
 }
 
 export interface RefreshCharacterMemoryParams {
@@ -188,18 +221,197 @@ function parseJsonContent(content: string): Record<string, unknown> {
 }
 
 function toStringArray(value: unknown): string[] {
-  if (!Array.isArray(value)) {
-    return [];
-  }
+  const source = Array.isArray(value)
+    ? value
+    : typeof value === "string"
+    ? [value]
+    : [];
 
-  return value
+  return source
     .filter((item) => typeof item === "string")
     .map((item) => item.trim())
     .filter((item) => item.length > 0);
 }
 
+function toLimitedStringArray(
+  value: unknown,
+  maxItems: number,
+): string[] {
+  const result: string[] = [];
+  const seen = new Set<string>();
+
+  for (const item of toStringArray(value)) {
+    if (seen.has(item)) {
+      continue;
+    }
+
+    seen.add(item);
+    result.push(item);
+
+    if (result.length >= maxItems) {
+      break;
+    }
+  }
+
+  return result;
+}
+
+function toOptionalString(value: unknown): string | undefined {
+  if (typeof value !== "string") {
+    return undefined;
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
+function normalizeProactiveLevel(value: unknown): ProactiveLevel | undefined {
+  const normalized = toOptionalString(value)?.toLowerCase();
+  if (
+    normalized === "low" || normalized === "medium" || normalized === "high"
+  ) {
+    return normalized;
+  }
+
+  return undefined;
+}
+
+function normalizeSafeAffectionStage(
+  value: unknown,
+  fallbackStage?: string,
+): SafeAffectionStage | undefined {
+  const rawStage = toOptionalString(value);
+  if (rawStage) {
+    const normalized = rawStage.toLowerCase().replace(/[\s_-]+/g, "");
+    if (
+      normalized === "guarded" || normalized === "warming" ||
+      normalized === "trusting" || normalized === "open" ||
+      normalized === "romantic"
+    ) {
+      return normalized as SafeAffectionStage;
+    }
+  }
+
+  if (!fallbackStage) {
+    return undefined;
+  }
+
+  const normalizedFallback = fallbackStage.toLowerCase().replace(/[\s_-]+/g, "");
+  if (
+    normalizedFallback === "stranger" || normalizedFallback === "unknown" ||
+    normalizedFallback === "guarded"
+  ) {
+    return "guarded";
+  }
+  if (
+    normalizedFallback === "acquaintance" ||
+    normalizedFallback === "beginner" ||
+    normalizedFallback === "warming"
+  ) {
+    return "warming";
+  }
+  if (
+    normalizedFallback === "friend" ||
+    normalizedFallback === "buddy" ||
+    normalizedFallback === "companion" ||
+    normalizedFallback === "trusting"
+  ) {
+    return "trusting";
+  }
+  if (
+    normalizedFallback === "close" ||
+    normalizedFallback === "closefriend" ||
+    normalizedFallback === "intimate" ||
+    normalizedFallback === "open"
+  ) {
+    return "open";
+  }
+  if (
+    normalizedFallback === "romantic" ||
+    normalizedFallback === "dating" ||
+    normalizedFallback === "partner" ||
+    normalizedFallback === "committed"
+  ) {
+    return "romantic";
+  }
+
+  return "guarded";
+}
+
+function deriveFallbackAffectionStage(phase: string): SafeAffectionStage {
+  const normalized = phase.toLowerCase().replace(/[\s_-]+/g, "");
+
+  if (normalized === "stranger" || normalized === "new" || normalized === "unknown") {
+    return "guarded";
+  }
+  if (normalized === "acquaintance" || normalized === "beginner") {
+    return "warming";
+  }
+  if (normalized === "friend" || normalized === "buddy" || normalized === "companion") {
+    return "trusting";
+  }
+  if (normalized === "closefriend" || normalized === "intimate" || normalized === "close") {
+    return "open";
+  }
+  if (normalized === "romantic" || normalized === "dating" || normalized === "partner") {
+    return "romantic";
+  }
+
+  return "guarded";
+}
+
+function normalizeRelationshipDirectives(
+  payload: Record<string, unknown>,
+  fallbackAffectionStage?: string,
+): RomanceMemoryDirectives {
+  const preferredAddress = toOptionalString(payload.preferredAddress) ??
+    toOptionalString(payload.preferredAddressing);
+  const toneBoundary = toOptionalString(payload.toneBoundary);
+  const speechMirror = toLimitedStringArray(payload.speechMirror, 6);
+  const comfortTriggers = toLimitedStringArray(payload.comfortTriggers, 6);
+  const boundaryNotes = toLimitedStringArray(payload.boundaryNotes, 6);
+  const unresolvedTension = toLimitedStringArray(
+    payload.unresolvedTension,
+    6,
+  );
+  const repairPattern = toLimitedStringArray(payload.repairPattern, 6);
+  const recurringMotifs = toLimitedStringArray(payload.recurringMotifs, 6);
+  const notes = toLimitedStringArray(payload.notes, 6);
+  const proactiveLevel = normalizeProactiveLevel(payload.proactiveLevel);
+  const safeAffectionStage = normalizeSafeAffectionStage(
+    payload.safeAffectionStage,
+    fallbackAffectionStage,
+  );
+
+  const directives: RomanceMemoryDirectives = {};
+
+  if (toneBoundary) directives.toneBoundary = toneBoundary;
+  if (preferredAddress) {
+    directives.preferredAddress = preferredAddress;
+    directives.preferredAddressing = preferredAddress;
+  }
+  if (speechMirror.length > 0) directives.speechMirror = speechMirror;
+  if (comfortTriggers.length > 0) directives.comfortTriggers = comfortTriggers;
+  if (boundaryNotes.length > 0) directives.boundaryNotes = boundaryNotes;
+  if (unresolvedTension.length > 0) {
+    directives.unresolvedTension = unresolvedTension;
+  }
+  if (repairPattern.length > 0) directives.repairPattern = repairPattern;
+  if (safeAffectionStage) directives.safeAffectionStage = safeAffectionStage;
+  if (recurringMotifs.length > 0) directives.recurringMotifs = recurringMotifs;
+  if (proactiveLevel) directives.proactiveLevel = proactiveLevel;
+  if (notes.length > 0) directives.notes = notes;
+
+  return directives;
+}
+
+function normalizeKeyFacts(value: unknown): string[] {
+  return toLimitedStringArray(value, 8);
+}
+
 function normalizeSummaryPayload(
   payload: Record<string, unknown>,
+  fallbackAffectionStage?: string,
 ): MemorySummaryResult {
   const summary = typeof payload.summary === "string"
     ? payload.summary.trim()
@@ -208,12 +420,19 @@ function normalizeSummaryPayload(
     throw new Error("Memory summary is empty");
   }
 
-  const keyFacts = toStringArray(payload.keyFacts).slice(0, 8);
+  const keyFacts = normalizeKeyFacts(payload.keyFacts);
 
   const relationshipDirectives = payload.relationshipDirectives &&
       typeof payload.relationshipDirectives === "object" &&
       !Array.isArray(payload.relationshipDirectives)
-    ? payload.relationshipDirectives as Record<string, unknown>
+    ? normalizeRelationshipDirectives(
+      payload.relationshipDirectives as Record<string, unknown>,
+      fallbackAffectionStage,
+    )
+    : fallbackAffectionStage
+    ? {
+      safeAffectionStage: deriveFallbackAffectionStage(fallbackAffectionStage),
+    }
     : {};
 
   return {
@@ -230,11 +449,13 @@ function mapMemoryRow(row: StoredMemoryRow | null): UserCharacterMemory | null {
 
   return {
     summary: row.summary?.trim() ?? "",
-    keyFacts: toStringArray(row.key_facts),
+    keyFacts: normalizeKeyFacts(row.key_facts),
     relationshipDirectives: row.relationship_directives &&
         typeof row.relationship_directives === "object" &&
         !Array.isArray(row.relationship_directives)
-      ? row.relationship_directives as Record<string, unknown>
+      ? normalizeRelationshipDirectives(
+        row.relationship_directives as Record<string, unknown>,
+      )
       : {},
     messageCountSnapshot: row.message_count_snapshot ?? 0,
     lastSummarizedAt: row.last_summarized_at,
@@ -410,7 +631,10 @@ async function summarizeMemory(params: {
   );
 
   const payload = parseJsonContent(response.content);
-  return normalizeSummaryPayload(payload);
+  return normalizeSummaryPayload(
+    payload,
+    deriveFallbackAffectionStage(params.affinity.phase),
+  );
 }
 
 export async function maybeRefreshCharacterMemory(
