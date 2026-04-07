@@ -24,7 +24,7 @@ function CareerResult() {
         emoji="💼"
         title={meta.title}
         description="이번 커리어 흐름은 확장보다 정렬이 먼저입니다. 잘 맞는 역할과 집중해야 할 기술을 먼저 고르면 속도가 붙습니다."
-        chips={['강점', '역할 정렬', meta.paperNodeId]}
+        chips={['강점', '역할 정렬', '집중 포인트']}
       />
 
       <SectionCard title="커리어 요약">
@@ -92,7 +92,7 @@ function LoveResult() {
         emoji="💗"
         title={meta.title}
         description="연애운은 밝지만, 감정보다 리듬을 맞추는 편이 더 중요합니다. 표현은 부드럽게, 기준은 분명하게 가야 합니다."
-        chips={['감정 온도', '관계 타이밍', meta.paperNodeId]}
+        chips={['감정 온도', '관계 타이밍', '표현 포인트']}
       />
 
       <SectionCard title="연애 에너지">
@@ -153,7 +153,7 @@ function HealthResult() {
         emoji="🌿"
         title={meta.title}
         description="큰 이상보다 미세한 피로가 누적되기 쉬운 날입니다. 오늘의 건강운은 컨디션 조절과 회복 루틴에 강하게 반응합니다."
-        chips={['웰니스', '회복 루틴', meta.paperNodeId]}
+        chips={['웰니스', '회복 루틴', '컨디션 조절']}
       />
 
       <SectionCard title="건강 점수">
@@ -202,7 +202,7 @@ function CoachingResult() {
         emoji="🎯"
         title={meta.title}
         description="이번 코칭운은 동기부여보다 실행 구조에 반응합니다. 해야 할 일을 작게 쪼갤수록 결과가 빨라집니다."
-        chips={['실행 계획', '작은 승리', meta.paperNodeId]}
+        chips={['실행 계획', '작은 승리', '오늘의 동력']}
       />
 
       <SectionCard title="코칭 점수">

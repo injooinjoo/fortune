@@ -20,13 +20,13 @@ export default function ResultRoute() {
           paperNodeId: 'n/a',
           title: '결과 라우트 오류',
           subtitle: '유효하지 않은 결과 화면 요청입니다.',
-          eyebrow: 'Result Route',
+          eyebrow: '결과 화면',
         }}
       >
         <Card>
           <AppText variant="heading4">결과 종류를 찾을 수 없습니다.</AppText>
           <AppText variant="bodySmall">
-            요청한 `resultKind`가 RN 결과 레지스트리에 등록되어 있지 않습니다.
+            요청한 결과 화면을 준비하지 못해 기본 결과 화면으로 안내합니다.
           </AppText>
         </Card>
       </FortuneResultLayout>

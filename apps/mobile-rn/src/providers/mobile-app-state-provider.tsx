@@ -9,18 +9,24 @@ import {
   type PropsWithChildren,
 } from 'react';
 
-import { type FortuneTypeId, type ProductId } from '@fortune/product-contracts';
+import {
+  productCatalog,
+  type FortuneTypeId,
+  type ProductId,
+} from '@fortune/product-contracts';
 
 import { captureError } from '../lib/error-reporting';
 import {
-  applyProductPurchase,
-  applyPurchaseRestore,
   emptyMobileAppState,
   mergeMobileAppState,
   type MobileAppState,
   type MobileProfileState,
   type NotificationPreferences,
 } from '../lib/mobile-app-state';
+import {
+  fetchRemotePremiumSnapshot,
+  type RemotePremiumSnapshot,
+} from '../lib/premium-remote';
 import { getMobileAppState, saveMobileAppState } from '../lib/storage';
 import {
   ensureRemoteUserProfile,
@@ -59,6 +65,52 @@ const MobileAppStateContext = createContext<MobileAppStateContextValue>({
   purchaseProduct: async () => undefined,
   restorePurchases: async () => undefined,
 });
+
+function mergeRemotePremiumIntoState(
+  current: MobileAppState,
+  snapshot: RemotePremiumSnapshot,
+) {
+  const currentActiveProduct = current.premium.activeProductId
+    ? productCatalog[current.premium.activeProductId]
+    : null;
+  const keepLifetime =
+    current.premium.status === 'lifetime' ||
+    (currentActiveProduct != null &&
+      'isNonConsumable' in currentActiveProduct &&
+      currentActiveProduct.isNonConsumable === true);
+  const nextPremium = {
+    ...current.premium,
+    lastSyncedAt: snapshot.syncedAt,
+    tokenBalance: snapshot.tokenBalance ?? current.premium.tokenBalance,
+  };
+
+  if (snapshot.activeSubscriptionProductId) {
+    nextPremium.status = 'subscription';
+    nextPremium.activeProductId = snapshot.activeSubscriptionProductId;
+    nextPremium.subscriptionExpiresAt = snapshot.subscriptionExpiresAt;
+    nextPremium.lastPurchaseProductId =
+      current.premium.lastPurchaseProductId ?? snapshot.activeSubscriptionProductId;
+  } else {
+    nextPremium.subscriptionExpiresAt = null;
+
+    if (
+      keepLifetime &&
+      currentActiveProduct != null &&
+      'isNonConsumable' in currentActiveProduct &&
+      currentActiveProduct.isNonConsumable
+    ) {
+      nextPremium.status = 'lifetime';
+      nextPremium.activeProductId = currentActiveProduct.id;
+    } else {
+      nextPremium.status = 'inactive';
+      nextPremium.activeProductId = null;
+    }
+  }
+
+  return mergeMobileAppState(current, {
+    premium: nextPremium,
+  });
+}
 
 export function MobileAppStateProvider({ children }: PropsWithChildren) {
   const {
@@ -220,14 +272,34 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
     }
 
     const targetUserId = session.user.id;
-    const remoteProfile = await ensureRemoteUserProfile(session);
+    const [remoteProfile, remotePremium] = await Promise.all([
+      ensureRemoteUserProfile(session),
+      fetchRemotePremiumSnapshot(session).catch((error) => {
+        captureError(error, {
+          surface: 'mobile-app-state:premium-sync',
+        }).catch(() => undefined);
+
+        return null;
+      }),
+    ]);
 
     if (!remoteProfile || activeUserIdRef.current !== targetUserId) {
       return null;
     }
 
     const nextState = await persistFromCurrent(
-      (current) => mergeMobileAppState(current, remoteProfileToPatch(remoteProfile)),
+      (current) => {
+        const profileState = mergeMobileAppState(
+          current,
+          remoteProfileToPatch(remoteProfile),
+        );
+
+        if (!remotePremium) {
+          return profileState;
+        }
+
+        return mergeRemotePremiumIntoState(profileState, remotePremium);
+      },
       targetUserId,
     );
     const onboardingPatch = remoteProfileToOnboardingPatch(remoteProfile);
@@ -307,17 +379,25 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
   );
 
   const purchaseProduct = useCallback(
-    async (productId: ProductId) => {
-      await persistFromCurrent((current) =>
-        applyProductPurchase(current, productId),
+    async (_productId: ProductId) => {
+      throw new Error(
+        'RN 스토어 구매 엔진은 아직 연결되지 않았습니다. 현재는 실제 구독 상태 조회와 복원, 구독 관리만 지원합니다.',
       );
     },
-    [persistFromCurrent],
+    [],
   );
 
   const restorePurchases = useCallback(async () => {
-    await persistFromCurrent((current) => applyPurchaseRestore(current));
-  }, [persistFromCurrent]);
+    await persistFromCurrent((current) =>
+      mergeMobileAppState(current, {
+        premium: {
+          restoreCount: current.premium.restoreCount + 1,
+        },
+      }),
+    );
+
+    await syncRemoteProfile();
+  }, [persistFromCurrent, syncRemoteProfile]);
 
   const value = useMemo(
     () => ({

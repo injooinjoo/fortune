@@ -6,7 +6,6 @@ import { formatFortuneTypeLabel } from '../lib/chat-shell';
 import { fortuneTheme } from '../lib/theme';
 import { AppText } from './app-text';
 import { Card } from './card';
-import { Chip } from './chip';
 
 interface RecentChatSignalCardProps {
   selectedCharacterId: string | null;
@@ -40,31 +39,21 @@ export function RecentChatSignalCard({
         {hasRecentChatSignal
           ? detailCopy ??
             (sentMessageCount > 0
-              ? `메시지 ${sentMessageCount}개 · ${
-                  lastFortuneType
-                    ? formatFortuneTypeLabel(lastFortuneType)
-                    : 'fortune 없음'
-                }`
-              : `최근 선택 캐릭터: ${recentCharacter?.name ?? selectedCharacterId}`)
+              ? `메시지 ${sentMessageCount}개를 보냈어요.`
+              : `최근 선택 캐릭터: ${recentCharacter?.name ?? '기록 없음'}`)
           : emptyCopy}
       </AppText>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-        <Chip
-          label={`messages:${sentMessageCount}`}
-          tone={sentMessageCount > 0 ? 'success' : 'neutral'}
-        />
-        <Chip
-          label={
-            lastFortuneType
-              ? `fortune:${formatFortuneTypeLabel(lastFortuneType)}`
-              : 'fortune:none'
-          }
-        />
-        <Chip
-          label={
-            recentCharacter ? `character:${recentCharacter.name}` : 'character:none'
-          }
-        />
+      <View style={{ gap: 8 }}>
+        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+          {sentMessageCount > 0 && lastFortuneType
+            ? `최근 운세 신호: ${formatFortuneTypeLabel(lastFortuneType)}`
+            : '최근 운세 신호가 아직 없어요.'}
+        </AppText>
+        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+          {recentCharacter
+            ? `최근 캐릭터: ${recentCharacter.name}`
+            : '최근 캐릭터 기록이 없어요.'}
+        </AppText>
       </View>
     </Card>
   );

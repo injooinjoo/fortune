@@ -3,23 +3,20 @@ import { useState } from 'react';
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { View } from 'react-native';
 
-import { AccountSnapshotCard } from '../components/account-snapshot-card';
 import { AppText } from '../components/app-text';
 import { Card } from '../components/card';
-import { Chip } from '../components/chip';
 import { PrimaryButton } from '../components/primary-button';
 import { Screen } from '../components/screen';
 import { captureError } from '../lib/error-reporting';
 import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
-import { useMobileAppState } from '../providers/mobile-app-state-provider';
 import { useSocialAuth } from '../providers/social-auth-provider';
 
 const authOptions = [
   {
     id: 'google',
     label: 'Google로 계속하기',
-    note: '현재 reachable start flow에서 실제로 연결된 소셜 로그인 진입점',
+    note: '가장 빠르게 시작할 수 있는 로그인 방법입니다.',
   },
 ] as const;
 
@@ -37,8 +34,7 @@ export function SignupScreen() {
   const params = useLocalSearchParams<{ returnTo?: string | string[] }>();
   const [activeProviderId, setActiveProviderId] = useState<string | null>(null);
   const [authMessage, setAuthMessage] = useState<string | null>(null);
-  const { gate, markGuestBrowse, onboardingProgress, session } = useAppBootstrap();
-  const { state } = useMobileAppState();
+  const { markGuestBrowse } = useAppBootstrap();
   const { startSocialAuth } = useSocialAuth();
   const returnTo = normalizeReturnTo(readSearchParam(params.returnTo));
 
@@ -67,34 +63,16 @@ export function SignupScreen() {
 
   return (
     <Screen>
-      <AppText variant="labelMedium" color={fortuneTheme.colors.accentSecondary}>
-        /signup
-      </AppText>
-      <AppText variant="displaySmall">가입 및 로그인</AppText>
+      <AppText variant="displaySmall">로그인 및 시작</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
-        실제 소셜 로그인 시작을 RN에서 열고, 복귀는 동일한 `/auth/callback` 계약으로 처리합니다.
+        원하는 계정으로 시작하면 이후에도 프로필과 구매 정보를 이어서 사용할 수 있어요.
       </AppText>
 
       <Card>
-        <AppText variant="heading4">계정 시작</AppText>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-          <Chip label="guest browse" tone="accent" />
-          <Chip label="oauth callback" />
-          <Chip label="profile unlock" />
-        </View>
-      </Card>
-
-      <AccountSnapshotCard
-        description="앱 재실행 후에도 남아 있는 프로필과 premium 상태를 먼저 보여줍니다."
-        gate={gate}
-        onboardingProgress={onboardingProgress}
-        premium={state.premium}
-        profile={state.profile}
-        sessionActive={Boolean(session)}
-      />
-
-      <Card>
-        <AppText variant="heading4">소셜 로그인</AppText>
+        <AppText variant="heading4">시작 방법</AppText>
+        <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
+          로그인하면 프로필, 구매 내역, 알림 설정이 기기에 연결돼요. 먼저 둘러본 뒤 나중에 로그인해도 됩니다.
+        </AppText>
         {authMessage ? (
           <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
             {authMessage}
@@ -121,17 +99,14 @@ export function SignupScreen() {
           variant="bodySmall"
           color={fortuneTheme.colors.textTertiary}
         >
-          Apple / Kakao 계정 연결은 이후 계정 관리 표면에서 붙입니다. 현재 reachable start flow는 Google 기준으로 먼저 고정합니다.
+          지금은 Google로 시작할 수 있고, 필요한 계정은 나중에 추가할 수 있습니다.
         </AppText>
       </Card>
 
       <Card>
-        <AppText variant="heading4">왜 필요한가요?</AppText>
+        <AppText variant="heading4">게스트로 먼저 보기</AppText>
         <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
-          로그인 후에는 프로필 수정, 관계 관리, 구매 복원, 알림 설정 등 계정 기반 표면이 활성화됩니다.
-        </AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textTertiary}>
-          게스트로 먼저 둘러본 뒤 언제든 로그인으로 전환할 수 있습니다.
+          계정 없이 먼저 둘러본 다음 언제든 로그인으로 전환할 수 있어요.
         </AppText>
         <PrimaryButton
           onPress={() => {
@@ -157,7 +132,7 @@ export function SignupScreen() {
           onPress={() => router.replace(returnTo as Href)}
           tone="secondary"
         >
-          {returnTo === '/chat' ? 'Chat으로 돌아가기' : '이전 화면으로 돌아가기'}
+          {returnTo === '/chat' ? '채팅으로 돌아가기' : '이전 화면으로 돌아가기'}
         </PrimaryButton>
       </Card>
     </Screen>

@@ -23,10 +23,10 @@ function TraditionalSajuResult() {
         emoji="☯️"
         title={meta.title}
         description="오행의 균형은 크게 흔들리지 않지만, 오늘은 강한 기운을 어디에 쓰는지가 더 중요합니다. 힘을 분산하지 말고 우선순위를 먼저 잡아야 합니다."
-        chips={['오행 균형', '사주 포인트', meta.paperNodeId]}
+        chips={['오행 균형', '사주 포인트', '핵심 흐름']}
       />
 
-      <SectionCard title="사주 기둥" description="Paper F01의 4분할 사주 블록을 RN용 카드 그리드로 정리했습니다.">
+      <SectionCard title="사주 기둥" description="네 개의 기둥을 나눠서 오늘의 흐름을 쉽게 읽을 수 있게 정리했어요.">
         <MetricGrid
           items={[
             { label: '년주', value: '갑인', note: '기본 기질과 시작점' },
@@ -82,7 +82,7 @@ function DailyCalendarResult() {
         emoji="🗓️"
         title={meta.title}
         description="날짜의 흐름은 차분하지만, 계절 에너지와 개인 리듬이 겹치는 순간에 운이 선명하게 보입니다. 큰 사건보다 타이밍 해석에 강한 화면입니다."
-        chips={['날짜 흐름', '계절 포인트', meta.paperNodeId]}
+        chips={['날짜 흐름', '계절 포인트', '리듬 읽기']}
       />
 
       <SectionCard title="핵심 날짜 카드">
@@ -96,7 +96,7 @@ function DailyCalendarResult() {
         />
       </SectionCard>
 
-      <SectionCard title="계절 해석" description="Paper F02의 seasonal row 구성을 카드 문장으로 유지합니다.">
+      <SectionCard title="계절 해석" description="계절과 날짜 흐름을 함께 읽어 오늘의 타이밍을 정리했어요.">
         <BulletList
           items={[
             '봄의 기운이 강해 새로운 시도에 유리하지만, 과속하면 마무리가 흐려질 수 있습니다.',
@@ -133,7 +133,7 @@ function MbtiResult() {
         emoji="🧠"
         title={meta.title}
         description="유형 자체보다 오늘 어떤 축이 먼저 드러나는지가 중요합니다. MBTI 결과를 행동 기준으로 번역한 화면입니다."
-        chips={['행동 축', '성향 해석', meta.paperNodeId]}
+        chips={['행동 축', '성향 해석', '오늘의 힌트']}
       />
 
       <SectionCard title="오늘의 MBTI 요약">
@@ -189,7 +189,7 @@ function BloodTypeResult() {
         emoji="🩸"
         title={meta.title}
         description="혈액형 성향은 오늘의 분위기와 만나면 더 현실적인 조언으로 바뀝니다. 프로필형 결과 구조를 RN으로 옮긴 화면입니다."
-        chips={['성향', '궁합', meta.paperNodeId]}
+        chips={['성향', '궁합', '오늘의 포인트']}
       />
 
       <SectionCard title="혈액형 정보">
@@ -247,7 +247,7 @@ function ZodiacAnimalResult() {
         emoji="🐉"
         title={meta.title}
         description="띠의 기본 기질과 오늘의 운세가 겹치며, 사람 관계와 타이밍 해석이 더 도드라지는 화면입니다."
-        chips={['띠별 흐름', '궁합', meta.paperNodeId]}
+        chips={['띠별 흐름', '궁합', '타이밍 읽기']}
       />
 
       <SectionCard title="오늘의 흐름">
@@ -287,7 +287,7 @@ function ConstellationResult() {
         emoji="⭐"
         title={meta.title}
         description="별자리 해석은 감정의 온도와 관계의 결을 읽는 데 강합니다. 오늘은 무드와 타이밍이 중요한 화면입니다."
-        chips={['별자리', '관계 무드', meta.paperNodeId]}
+        chips={['별자리', '관계 무드', '감정 리듬']}
       />
 
       <SectionCard title="별자리 포인트">

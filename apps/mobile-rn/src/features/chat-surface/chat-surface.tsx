@@ -551,7 +551,6 @@ export function ChatSoftGate({
         />
 
         <View style={{ gap: fortuneTheme.spacing.sm, paddingHorizontal: 4 }}>
-          <Chip label="FIRST RUN / SOFT GATE" />
           <AppText variant="displayLarge" style={{ maxWidth: 280 }}>
             먼저 둘러보고{'\n'}필요할 때 이어가세요
           </AppText>
@@ -575,8 +574,16 @@ export function ChatSoftGate({
             계정을 연결하면
           </AppText>
           <View style={{ gap: fortuneTheme.spacing.sm }}>
-            <SocialActionButton label="Continue with Apple" tone="light" onPress={onApple} />
-            <SocialActionButton label="Continue with Google" tone="dark" onPress={onGoogle} />
+            <SocialActionButton
+              label="Apple로 계속하기"
+              tone="light"
+              onPress={onApple}
+            />
+            <SocialActionButton
+              label="Google로 계속하기"
+              tone="dark"
+              onPress={onGoogle}
+            />
           </View>
           <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
             계속 진행하면 이용약관 및 개인정보처리방침에 동의한 것으로 간주됩니다.
@@ -632,16 +639,19 @@ export function ChatFirstRunSurface({
   onSelectCharacter: (characterId: string) => void;
   onPickAction: (fortuneType: FortuneTypeId) => void;
 }) {
-  const primaryAction = actions[0];
-  const secondaryActions = actions.slice(1, 3);
+  const safeActions = Array.isArray(actions) ? actions : [];
+  const safeCharacters = Array.isArray(characters) ? characters : [];
+  const spotlightCharacter = featuredCharacter ?? safeCharacters[0];
+  const primaryAction = safeActions[0];
+  const secondaryActions = safeActions.slice(1, 3);
   const orderedActions = [
     secondaryActions[0],
     primaryAction,
     secondaryActions[1],
   ].filter(Boolean) as ChatShellAction[];
   const orderedCharacters = [
-    ...characters.filter((character) => character.id === selectedCharacterId),
-    ...characters.filter((character) => character.id !== selectedCharacterId),
+    ...safeCharacters.filter((character) => character.id === selectedCharacterId),
+    ...safeCharacters.filter((character) => character.id !== selectedCharacterId),
   ];
   const visibleCharacters =
     activeTab === 'story' ? orderedCharacters : orderedCharacters.slice(0, 4);
@@ -674,7 +684,7 @@ export function ChatFirstRunSurface({
               variant="bodySmall"
               color={fortuneTheme.colors.textSecondary}
             >
-              {`${featuredCharacter.name} 기준 추천 흐름으로 같은 채팅 안에서 설문과 결과를 바로 이어갈 수 있습니다.`}
+              {`${spotlightCharacter?.name ?? '상담사'} 기준 추천 흐름으로 같은 채팅 안에서 설문과 결과를 바로 이어갈 수 있습니다.`}
             </AppText>
           </View>
           <View style={{ gap: fortuneTheme.spacing.sm }}>
@@ -714,7 +724,7 @@ export function ChatFirstRunSurface({
                           variant="bodySmall"
                           color={fortuneTheme.colors.textSecondary}
                         >
-                          {featuredCharacter.name}과 바로 이어서 볼 수 있어요.
+                          {spotlightCharacter?.name ?? '상담사'}와 바로 이어서 볼 수 있어요.
                         </AppText>
                       </View>
                       <Chip label="전문가" tone="success" />
@@ -823,7 +833,8 @@ export function ActiveChatComposer({
   };
 }) {
   const composerHasDraft = draft.trim().length > 0;
-  const trayActions = quickActions.slice(0, 12);
+  const safeQuickActions = Array.isArray(quickActions) ? quickActions : [];
+  const trayActions = safeQuickActions.slice(0, 12);
 
   return (
     <View

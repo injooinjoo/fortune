@@ -4,7 +4,7 @@ export default function NotFoundScreen() {
   return (
     <RouteScreen
       routeId="chat"
-      note="정의되지 않은 경로입니다. 현재 RN 셸은 /chat을 기준으로 수렴합니다."
+      note="요청한 화면을 찾지 못해 기본 채팅 화면으로 안내합니다."
     />
   );
 }

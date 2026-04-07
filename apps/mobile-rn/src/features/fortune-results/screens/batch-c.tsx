@@ -24,12 +24,12 @@ function FamilyResult() {
         emoji="👨‍👩‍👧‍👦"
         title={meta.title}
         description="가족 사이의 역할이 다시 정리되는 날이에요. 말보다 기준을 먼저 맞추면 편해집니다."
-        chips={['세대 균형', '관계 재정렬', meta.paperNodeId]}
+        chips={['세대 균형', '관계 재정렬', '대화 힌트']}
       />
 
       <SectionCard
         title="가족 궁합"
-        description="Paper F11의 핵심은 세 명의 관계 축을 따로 읽고, 마지막에 공통의 기준을 잡는 구조입니다."
+        description="가까운 가족 관계를 나눠 읽고, 마지막에 공통의 기준을 정리하는 구성입니다."
       >
         <StatRail
           items={[
@@ -89,12 +89,12 @@ function PastLifeResult() {
         emoji="🔮"
         title={meta.title}
         description="상징이 먼저 읽히고, 해석은 천천히 따라오는 날이에요. 기록을 남기면 메시지가 더 선명해집니다."
-        chips={['타로 스프레드', '상징 해석', meta.paperNodeId]}
+        chips={['타로 스프레드', '상징 해석', '메시지 읽기']}
       />
 
       <SectionCard
         title="타로 스프레드"
-        description="Paper F12는 3장의 흐름을 먼저 보여준 뒤, 각 카드의 서사를 이어 붙입니다."
+        description="세 장의 흐름을 먼저 보여준 뒤, 각 카드의 메시지를 이어 읽습니다."
       >
         <View
           style={{
@@ -177,10 +177,10 @@ function WishResult() {
         emoji="✨"
         title={meta.title}
         description="짧지만 확실한 성공 신호가 먼저 보이는 날이에요. 지금은 크게 바꾸기보다, 성공 확률이 높은 한 번을 잡는 게 좋습니다."
-        chips={['성공 카드', '2x2 지표', meta.paperNodeId]}
+        chips={['성공 카드', '실행 지표', '오늘의 기회']}
       />
 
-      <SectionCard title="성공 카드" description="Paper F13의 중심은 짧은 성공 메시지입니다.">
+      <SectionCard title="성공 카드" description="짧고 분명한 성공 메시지부터 먼저 읽는 구성입니다.">
         <Card
           style={{
             backgroundColor: fortuneTheme.colors.backgroundTertiary,
@@ -197,7 +197,7 @@ function WishResult() {
 
       <SectionCard
         title="강화 스탯"
-        description="2x2 stat tile 구조를 유지하면서 실행 난이도를 낮춘 구성입니다."
+        description="핵심 지표를 한눈에 보고 바로 실행으로 옮기기 쉽게 정리했어요."
       >
         <MetricGrid
           items={[
@@ -247,12 +247,12 @@ function PersonalityDnaResult() {
         emoji="🧬"
         title={meta.title}
         description="성향의 결이 더 선명해지는 날이에요. 유형보다 축을 읽어야 길이 보입니다."
-        chips={['DNA 헤더', 'dimension spectrum', meta.paperNodeId]}
+        chips={['성향 축', '관계 감도', '성장 포인트']}
       />
 
       <SectionCard
         title="성향 스펙트럼"
-        description="Paper F14는 4개의 축을 먼저 보여주고, 그 뒤에 trait card와 조언을 붙입니다."
+        description="네 개의 성향 축을 먼저 읽고, 이어서 성향 설명과 조언을 확인할 수 있어요."
       >
         <StatRail
           items={[
@@ -281,7 +281,7 @@ function PersonalityDnaResult() {
       </SectionCard>
 
       <SectionCard
-        title="2x2 trait cards"
+        title="성향 카드"
         description="성향을 네 개의 카드로 나눠서 한눈에 읽습니다."
       >
         <MetricGrid

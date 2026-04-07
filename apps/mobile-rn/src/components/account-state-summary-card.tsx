@@ -8,7 +8,6 @@ import type {
 import { fortuneTheme } from '../lib/theme';
 import { AppText } from './app-text';
 import { Card } from './card';
-import { Chip } from './chip';
 
 interface AccountStateSummaryCardProps {
   title?: string;
@@ -47,26 +46,37 @@ export function AccountStateSummaryCard({
           {description}
         </AppText>
       ) : null}
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-        <Chip
-          label={sessionActive ? 'session:active' : 'session:guest'}
-          tone={sessionActive ? 'success' : 'neutral'}
-        />
-        {gate ? <Chip label={`gate:${gate}`} /> : null}
-        {onboardingProgress ? (
-          <Chip
-            label={`soft:${onboardingProgress.softGateCompleted ? 'done' : 'todo'}`}
-          />
+      <View style={{ gap: 8 }}>
+        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+          {sessionActive ? '로그인한 상태로 보고 있어요.' : '게스트 상태로 보고 있어요.'}
+        </AppText>
+        {gate ? (
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+            {gate === 'ready'
+              ? '기본 확인 단계가 끝났어요.'
+              : '기본 확인 단계가 아직 진행 중이에요.'}
+          </AppText>
         ) : null}
-        <Chip
-          label={`profile:${hasProfileHint ? 'saved' : 'empty'}`}
-          tone={hasProfileHint ? 'success' : 'neutral'}
-        />
-        <Chip
-          label={`plan:${premium.status}`}
-          tone={premium.status === 'inactive' ? 'neutral' : 'accent'}
-        />
-        <Chip label={`tokens:${premium.tokenBalance.toLocaleString('ko-KR')}`} />
+        {onboardingProgress ? (
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+            {onboardingProgress.softGateCompleted
+              ? '첫 흐름 확인은 완료됐어요.'
+              : '첫 흐름 확인은 아직 진행 중이에요.'}
+          </AppText>
+        ) : null}
+        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+          {hasProfileHint ? '저장된 프로필 정보가 있어요.' : emptyCopy}
+        </AppText>
+        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+          {premium.status === 'inactive'
+            ? '구독 전 상태예요.'
+            : premium.status === 'subscription'
+              ? '구독이 활성화되어 있어요.'
+              : '평생 이용 상태예요.'}
+        </AppText>
+        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+          보유 토큰 {premium.tokenBalance.toLocaleString('ko-KR')}개
+        </AppText>
       </View>
       {hasProfileHint ? (
         <View style={{ gap: 8 }}>

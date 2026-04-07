@@ -4,7 +4,6 @@ import { AppText } from '../../components/app-text';
 import { Card } from '../../components/card';
 import { fortuneTheme } from '../../lib/theme';
 import type { ChatShellEmbeddedResultMessage } from '../../lib/chat-shell';
-import { resultMetadataByKind } from '../fortune-results/mapping';
 import {
   BulletList,
   InsetQuote,
@@ -18,8 +17,7 @@ export function EmbeddedResultCard({
 }: {
   message: ChatShellEmbeddedResultMessage;
 }) {
-  const { payload, resultKind } = message;
-  const metadata = resultMetadataByKind[resultKind];
+  const { payload } = message;
 
   return (
     <View style={{ width: '100%' }}>
@@ -105,9 +103,6 @@ export function EmbeddedResultCard({
 
           {payload.specialTip ? <InsetQuote text={payload.specialTip} /> : null}
 
-          <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
-            runtime: {metadata.fortuneCode} / {metadata.paperNodeId}
-          </AppText>
         </View>
       </Card>
     </View>

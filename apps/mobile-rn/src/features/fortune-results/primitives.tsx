@@ -49,11 +49,6 @@ export function FortuneResultLayout({
           <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
             {metadata.subtitle}
           </AppText>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-            <Chip label={metadata.fortuneCode} tone="accent" />
-            <Chip label={metadata.paperNodeId} />
-            <Chip label={metadata.resultKind} />
-          </View>
         </View>
       </View>
 
@@ -352,15 +347,15 @@ export function InsetQuote({ text }: { text: string }) {
 export function CTAFooter() {
   return (
     <Card>
-      <AppText variant="heading4">다음 동선</AppText>
+      <AppText variant="heading4">다음에 할 일</AppText>
       <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-        이 wave에서는 결과 화면을 canonical surface로 두고, 채팅은 결과 재진입 허브로 유지합니다.
+        결과를 확인한 뒤 채팅에서 이어서 질문하거나 프로필에서 저장 정보를 다시 살펴볼 수 있어요.
       </AppText>
       <PrimaryButton onPress={() => router.replace('/chat')}>
         채팅으로 돌아가기
       </PrimaryButton>
       <PrimaryButton onPress={() => router.replace('/profile')} tone="secondary">
-        프로필 표면 보기
+        프로필 보기
       </PrimaryButton>
     </Card>
   );

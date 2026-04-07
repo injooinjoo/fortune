@@ -5,7 +5,6 @@ import { TextInput, View } from "react-native";
 
 import { AppText } from "../components/app-text";
 import { Card } from "../components/card";
-import { Chip } from "../components/chip";
 import { PrimaryButton } from "../components/primary-button";
 import { Screen } from "../components/screen";
 import { captureError } from "../lib/error-reporting";
@@ -68,12 +67,6 @@ export function ProfileEditScreen() {
 
   return (
     <Screen>
-      <AppText
-        variant="labelMedium"
-        color={fortuneTheme.colors.accentSecondary}
-      >
-        /profile/edit
-      </AppText>
       <AppText variant="displaySmall">프로필 수정</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
         저장된 프로필을 불러와 수정하고, 생년월일이 있으면 온보딩 상태도 함께
@@ -97,19 +90,27 @@ export function ProfileEditScreen() {
 
       <Card>
         <AppText variant="heading4">온보딩 상태</AppText>
-        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-          <Chip
-            label={`soft-gate:${onboardingProgress.softGateCompleted ? "done" : "todo"}`}
-          />
-          <Chip
-            label={`auth:${onboardingProgress.authCompleted ? "done" : "todo"}`}
-          />
-          <Chip
-            label={`birth:${onboardingProgress.birthCompleted ? "done" : "todo"}`}
-          />
-          <Chip
-            label={`interest:${onboardingProgress.interestCompleted ? "done" : "todo"}`}
-          />
+        <View style={{ gap: 8 }}>
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+            {onboardingProgress.softGateCompleted
+              ? '첫 확인 단계가 끝났어요.'
+              : '첫 확인 단계가 아직 진행 중이에요.'}
+          </AppText>
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+            {onboardingProgress.authCompleted
+              ? '계정 연결이 완료됐어요.'
+              : '계정 연결은 아직 진행 중이에요.'}
+          </AppText>
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+            {onboardingProgress.birthCompleted
+              ? '출생 정보 단계가 완료됐어요.'
+              : '출생 정보 단계가 아직 진행 중이에요.'}
+          </AppText>
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+            {onboardingProgress.interestCompleted
+              ? '관심사 단계도 완료됐어요.'
+              : '관심사 단계는 아직 진행 중이에요.'}
+          </AppText>
         </View>
       </Card>
 
@@ -172,8 +173,8 @@ export function ProfileEditScreen() {
         </AppText>
         <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
           {state.profile.birthDate
-            ? "저장된 생년월일이 있어서 onboarding birthCompleted가 반영됩니다."
-            : "생년월일을 저장하면 onboarding birthCompleted가 갱신됩니다."}
+            ? "저장된 생년월일이 있어서 온보딩 진행 상태도 함께 반영돼요."
+            : "생년월일을 저장하면 온보딩 진행 상태도 함께 갱신돼요."}
         </AppText>
       </Card>
 

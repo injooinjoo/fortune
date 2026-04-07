@@ -5,9 +5,9 @@ import { Switch, View } from "react-native";
 
 import { AppText } from "../components/app-text";
 import { Card } from "../components/card";
-import { Chip } from "../components/chip";
 import { PrimaryButton } from "../components/primary-button";
 import { Screen } from "../components/screen";
+import { formatFortuneTypeLabel } from "../lib/chat-shell";
 import { fortuneTheme } from "../lib/theme";
 import { useAppBootstrap } from "../providers/app-bootstrap-provider";
 import { useMobileAppState } from "../providers/mobile-app-state-provider";
@@ -84,29 +84,22 @@ export function ProfileNotificationsScreen() {
 
   return (
     <Screen>
-      <AppText
-        variant="labelMedium"
-        color={fortuneTheme.colors.accentSecondary}
-      >
-        /profile/notifications
-      </AppText>
       <AppText variant="displaySmall">알림 설정</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
-        저장된 알림 기본값을 불러와 편집하고, shared state에 다시 저장합니다.
+        저장된 알림 기본값을 불러와 편집하고 다시 저장합니다.
       </AppText>
 
       <Card>
         <AppText variant="heading4">상태</AppText>
-        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-          <Chip label={`enabled:${enabledCount}`} tone="accent" />
-          <Chip
-            label={
-              pendingChatFortuneType
-                ? `pending:${pendingChatFortuneType}`
-                : "pending:none"
-            }
-            tone={pendingChatFortuneType ? "success" : "neutral"}
-          />
+        <View style={{ gap: 8 }}>
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+            활성화된 알림은 {enabledCount}개예요.
+          </AppText>
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+            {pendingChatFortuneType
+              ? `대기 중인 운세 신호: ${formatFortuneTypeLabel(pendingChatFortuneType)}`
+              : '대기 중인 운세 신호는 없어요.'}
+          </AppText>
         </View>
       </Card>
 
@@ -173,7 +166,7 @@ export function ProfileNotificationsScreen() {
           돌아가기
         </PrimaryButton>
         <PrimaryButton onPress={() => router.replace("/chat")} tone="secondary">
-          Chat 허브로 이동
+          채팅으로 이동
         </PrimaryButton>
       </Card>
     </Screen>

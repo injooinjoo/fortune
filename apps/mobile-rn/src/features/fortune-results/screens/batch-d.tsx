@@ -23,10 +23,10 @@ function WealthResult() {
         emoji="₩"
         title={meta.title}
         description="단기 수입보다 지출 정리와 수익 구조 정비가 먼저 보입니다. 작은 돈이 새지 않게 잡아두면 다음 전환점에서 체감이 커집니다."
-        chips={['지출 정리', '현금 흐름', meta.paperNodeId]}
+        chips={['지출 정리', '현금 흐름', '관리 포인트']}
       />
 
-      <SectionCard title="재물 점수" description="Paper F15의 첫 카드처럼 전체 흐름을 한 번에 요약합니다.">
+      <SectionCard title="재물 점수" description="전체 재물 흐름을 먼저 한눈에 요약해서 보여드려요.">
         <MetricGrid
           items={[
             { label: '재물 점수', value: '82', note: '안정 구간 유지' },
@@ -90,7 +90,7 @@ function TalentResult() {
         emoji="🧩"
         title={meta.title}
         description="번뜩이는 한 방보다 여러 축을 묶어 성과로 바꾸는 능력이 강합니다. 낱개 재능을 설명 가능하게 만들 때 효율이 커집니다."
-        chips={['문제분석', '표현력', meta.paperNodeId]}
+        chips={['문제분석', '표현력', '재능 포인트']}
       />
 
       <SectionCard title="6축 분석">
@@ -148,7 +148,7 @@ function ExerciseResult() {
         emoji="🏃"
         title={meta.title}
         description="이번 흐름은 짧고 자주 움직이는 방식이 맞습니다. 강도를 올리는 일보다 빈도를 만드는 데 더 잘 반응합니다."
-        chips={['가벼운 유산소', '회복', meta.paperNodeId]}
+        chips={['가벼운 유산소', '회복', '루틴 만들기']}
       />
 
       <SectionCard title="추천 루틴">
@@ -218,7 +218,7 @@ function TarotResult() {
         emoji="🃏"
         title={meta.title}
         description="질문을 구체화할수록 카드의 메시지가 선명해집니다. 감정 해석보다 상황 해석이 먼저 필요한 날입니다."
-        chips={['스프레드', '시간축', meta.paperNodeId]}
+        chips={['스프레드', '시간축', '질문 정리']}
       />
 
       <SectionCard title="스프레드">
@@ -272,7 +272,7 @@ function GameEnhanceResult() {
         emoji="🎮"
         title={meta.title}
         description="무작정 누르기보다 타이밍을 보는 쪽이 맞습니다. 강화 의식은 짧게, 판단은 냉정하게 가져가야 손실이 줄어듭니다."
-        chips={['타이밍', '의식', meta.paperNodeId]}
+        chips={['타이밍', '의식', '손실 조절']}
       />
 
       <SectionCard title="강화 스탯">
@@ -331,7 +331,7 @@ function OotdEvaluationResult() {
         emoji="👗"
         title={meta.title}
         description="전체 실루엣은 안정적이고, 포인트 하나만 더 살리면 인상이 훨씬 선명해집니다. 이번 결과는 TPO와 컬러 밸런스를 기준으로 보면 좋습니다."
-        chips={['TPO', '컬러 밸런스', meta.paperNodeId]}
+        chips={['TPO', '컬러 밸런스', '스타일 포인트']}
       />
 
       <SectionCard title="스타일 점수">
