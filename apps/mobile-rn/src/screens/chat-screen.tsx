@@ -731,15 +731,7 @@ export function ChatScreen() {
       Boolean(session),
     );
 
-    if (runtimeBlockReason) {
-      if (runtimeBlockReason === "login-required") {
-        routeToSignup({
-          pendingFortuneType: fortuneType,
-          returnTo: buildChatReturnTo(character.id),
-        });
-        return true;
-      }
-
+    if (runtimeBlockReason && runtimeBlockReason !== "login-required") {
       const blockMessage = buildFortuneRuntimeBlockMessage(
         fortuneType,
         runtimeBlockReason,
@@ -894,20 +886,6 @@ export function ChatScreen() {
     );
 
     if (!action) {
-      return;
-    }
-
-    const runtimeBlockReason = resolveFortuneRuntimeBlockReason(
-      fortuneType,
-      mobileAppState.profile,
-      Boolean(session),
-    );
-
-    if (runtimeBlockReason === "login-required") {
-      routeToSignup({
-        pendingFortuneType: fortuneType,
-        returnTo: buildChatReturnTo(character.id),
-      });
       return;
     }
 
