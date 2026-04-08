@@ -79,6 +79,7 @@ import {
   consumeRemoteTokens,
   RemoteTokenConsumeError,
 } from '../lib/premium-remote';
+import { setPendingChatFortuneType } from '../lib/storage';
 import {
   socialAuthProviderLabelById,
   type SocialAuthProviderId,
@@ -478,16 +479,43 @@ export function ChatScreen() {
     setSurveySelections([]);
   }
 
-  function routeToSignup() {
+  function buildChatReturnTo(characterId?: string) {
+    if (!characterId) {
+      return '/chat';
+    }
+
+    return `/chat?characterId=${encodeURIComponent(characterId)}`;
+  }
+
+  function routeToSignup(options: {
+    pendingFortuneType?: FortuneTypeId;
+    returnTo?: string;
+  } = {}) {
     setAuthMessage(null);
     setComposerTrayOpen(false);
-    router.push({
-      pathname: '/signup',
-      params: {
-        requireAuth: '1',
-        returnTo: '/chat',
-      },
-    });
+
+    const navigate = () => {
+      router.push({
+        pathname: '/signup',
+        params: {
+          requireAuth: '1',
+          returnTo: options.returnTo ?? '/chat',
+        },
+      });
+    };
+
+    if (!options.pendingFortuneType) {
+      navigate();
+      return;
+    }
+
+    void setPendingChatFortuneType(options.pendingFortuneType)
+      .catch((error) => {
+        captureError(error, {
+          surface: 'chat:queue-pending-fortune-before-signup',
+        }).catch(() => undefined);
+      })
+      .finally(navigate);
   }
 
   function beginFortuneRuntime(
@@ -502,7 +530,10 @@ export function ChatScreen() {
 
     if (runtimeBlockReason) {
       if (runtimeBlockReason === 'login-required') {
-        routeToSignup();
+        routeToSignup({
+          pendingFortuneType: fortuneType,
+          returnTo: buildChatReturnTo(character.id),
+        });
         return true;
       }
 
@@ -568,7 +599,10 @@ export function ChatScreen() {
 
     if (resolved.kind === 'text') {
       if (resolved.routeToSignup) {
-        routeToSignup();
+        routeToSignup({
+          pendingFortuneType: completed.fortuneType,
+          returnTo: buildChatReturnTo(character.id),
+        });
         return;
       }
 
@@ -636,6 +670,20 @@ export function ChatScreen() {
     );
 
     if (!action) {
+      return;
+    }
+
+    const runtimeBlockReason = resolveFortuneRuntimeBlockReason(
+      fortuneType,
+      mobileAppState.profile,
+      Boolean(session),
+    );
+
+    if (runtimeBlockReason === 'login-required') {
+      routeToSignup({
+        pendingFortuneType: fortuneType,
+        returnTo: buildChatReturnTo(character.id),
+      });
       return;
     }
 
@@ -935,7 +983,9 @@ export function ChatScreen() {
         }
 
         if (error.code === 'UNAUTHORIZED') {
-          routeToSignup();
+          routeToSignup({
+            returnTo: buildChatReturnTo(character.id),
+          });
           return;
         }
 
@@ -1163,7 +1213,10 @@ export function ChatScreen() {
 
     if (resolved.kind === 'text') {
       if (resolved.routeToSignup) {
-        routeToSignup();
+        routeToSignup({
+          pendingFortuneType: fortuneType,
+          returnTo: buildChatReturnTo(character.id),
+        });
         return;
       }
 
