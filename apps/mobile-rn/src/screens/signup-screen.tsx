@@ -1,18 +1,12 @@
 import { useEffect, useState } from 'react';
 
 import { router, useLocalSearchParams, type Href } from 'expo-router';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
-import { AppleAuthButton } from '../components/apple-auth-button';
+import { AuthSheetCard, AuthSheetModal } from '../components/auth-sheet';
 import { AppText } from '../components/app-text';
-import { Card } from '../components/card';
 import { PrimaryButton } from '../components/primary-button';
-import {
-  resolveBackDestinationLabel,
-  RouteBackHeader,
-} from '../components/route-back-header';
-import { Screen } from '../components/screen';
-import { SocialAuthPillButton } from '../components/social-auth-pill-button';
+import { resolveBackDestinationLabel } from '../components/route-back-header';
 import { captureError } from '../lib/error-reporting';
 import {
   socialAuthProviderLabelById,
@@ -21,28 +15,6 @@ import {
 import { fortuneTheme } from '../lib/theme';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 import { useSocialAuth } from '../providers/social-auth-provider';
-
-const authOptions: readonly {
-  id: SocialAuthProviderId;
-  label: string;
-}[] = [
-  {
-    id: 'apple',
-    label: '애플 로그인',
-  },
-  {
-    id: 'google',
-    label: '구글 로그인',
-  },
-  {
-    id: 'kakao',
-    label: '카카오 로그인',
-  },
-  {
-    id: 'naver',
-    label: '네이버 로그인',
-  },
-] as const;
 
 function readSearchParam(
   value: string | string[] | undefined,
@@ -72,6 +44,15 @@ export function SignupScreen() {
   const requireAuth = readSearchParam(params.requireAuth) === '1';
   const backDestinationHref = (requireAuth ? '/chat' : returnTo) as Href;
   const backDestinationLabel = resolveBackDestinationLabel(backDestinationHref);
+
+  function dismissSheet() {
+    if (router.canGoBack()) {
+      router.back();
+      return;
+    }
+
+    router.replace(backDestinationHref);
+  }
 
   useEffect(() => {
     if (bootstrapStatus !== 'ready' || !session) {
@@ -107,78 +88,67 @@ export function SignupScreen() {
     }
   }
 
-  return (
-    <Screen
-      header={
-        <RouteBackHeader
-          fallbackHref={backDestinationHref}
-          label={backDestinationLabel}
-        />
-      }
-    >
-      <AppText variant="displaySmall">로그인</AppText>
+  async function handleBrowse() {
+    await markGuestBrowse().catch(() => undefined);
+    dismissSheet();
+  }
 
-      <Card style={{ gap: fortuneTheme.spacing.sm }}>
-        {authMessage ? (
-          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-            {authMessage}
-          </AppText>
-        ) : null}
-        {authOptions.map((option) => (
-          <View key={option.id}>
-            {option.id === 'apple' ? (
-              <AppleAuthButton
-                disabled={activeProviderId === option.id}
-                label={option.label}
-                onPress={() => void handleSocialAuthStart(option.id)}
-              />
+  return (
+    <AuthSheetModal onDismiss={dismissSheet}>
+      <AuthSheetCard
+        activeProviderId={activeProviderId}
+        authMessage={authMessage}
+        footer={
+          <View style={{ gap: fortuneTheme.spacing.sm }}>
+            {!requireAuth ? (
+              <>
+                <PrimaryButton
+                  onPress={() =>
+                    router.push({
+                      pathname: '/onboarding',
+                      params: { returnTo },
+                    })
+                  }
+                  tone="secondary"
+                >
+                  정보 입력하고 시작
+                </PrimaryButton>
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={dismissSheet}
+                  style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
+                >
+                  <AppText
+                    variant="bodySmall"
+                    color={fortuneTheme.colors.textSecondary}
+                    style={{ textAlign: 'center' }}
+                  >
+                    {backDestinationLabel
+                      ? `${backDestinationLabel}로 돌아가기`
+                      : '이전 화면으로 돌아가기'}
+                  </AppText>
+                </Pressable>
+              </>
             ) : (
-              <SocialAuthPillButton
-                disabled={activeProviderId === option.id}
-                label={
-                  activeProviderId === option.id
-                    ? `${option.label} 준비 중...`
-                    : option.label
-                }
-                onPress={() => void handleSocialAuthStart(option.id)}
-                provider={option.id}
-              />
+              <AppText
+                variant="caption"
+                color={fortuneTheme.colors.textSecondary}
+                style={{ textAlign: 'center' }}
+              >
+                로그인 후 바로 이어서 진행됩니다.
+              </AppText>
             )}
           </View>
-        ))}
-      </Card>
-
-      {!requireAuth ? (
-        <Card style={{ gap: fortuneTheme.spacing.sm }}>
-          <AppText variant="heading4">둘러보기</AppText>
-          <PrimaryButton
-            onPress={() => {
-              markGuestBrowse()
-                .then(() => router.replace(returnTo as Href))
-                .catch(() => router.replace(returnTo as Href));
-            }}
-          >
-            둘러보기
-          </PrimaryButton>
-          <PrimaryButton
-            onPress={() =>
-              router.push({
-                pathname: '/onboarding',
-                params: { returnTo },
-              })
-            }
-            tone="secondary"
-          >
-            정보 입력
-          </PrimaryButton>
-          <PrimaryButton
-            onPress={() => router.replace(returnTo as Href)}
-            tone="secondary"
-          >
-            {returnTo === '/chat' ? '채팅으로' : '돌아가기'}
-          </PrimaryButton>
-        </Card>
-      ) : null}
-    </Screen>
+        }
+        onApple={() => void handleSocialAuthStart('apple')}
+        onBrowse={!requireAuth ? () => void handleBrowse() : undefined}
+        onDismiss={dismissSheet}
+        onGoogle={() => void handleSocialAuthStart('google')}
+        onKakao={() => void handleSocialAuthStart('kakao')}
+        onNaver={() => void handleSocialAuthStart('naver')}
+        subtitle="로그인하면 분석 기록, 맞춤 추천, 구매 내역이 계정에 연결되고 지금 보던 흐름에서 바로 이어집니다."
+        title="로그인으로 지금 대화를 이어가세요"
+      />
+    </AuthSheetModal>
   );
 }

@@ -1,16 +1,15 @@
 import type { PropsWithChildren, ReactNode } from 'react';
 
-import { Ionicons } from '@expo/vector-icons';
 import { Image, Pressable, TextInput, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 import type { FortuneTypeId } from '@fortune/product-contracts';
 
-import { AppleAuthButton } from '../../components/apple-auth-button';
+import { AuthSheetCard } from '../../components/auth-sheet';
 import { AppText } from '../../components/app-text';
 import { Card } from '../../components/card';
 import { Chip } from '../../components/chip';
 import { PrimaryButton } from '../../components/primary-button';
-import { SocialAuthPillButton } from '../../components/social-auth-pill-button';
 import {
   isFortuneChatCharacter,
   type ChatCharacterSpec,
@@ -535,6 +534,7 @@ function ChatThreadMessage({
 }
 
 export function ChatSoftGate({
+  activeProviderId,
   onApple,
   onGoogle,
   onBrowse,
@@ -542,6 +542,7 @@ export function ChatSoftGate({
   onKakao,
   onNaver,
 }: {
+  activeProviderId?: 'apple' | 'google' | 'kakao' | 'naver' | null;
   onApple: () => void;
   onGoogle: () => void;
   onBrowse: () => void;
@@ -550,109 +551,39 @@ export function ChatSoftGate({
   onNaver?: () => void;
 }) {
   return (
-    <View style={{ gap: fortuneTheme.spacing.lg }}>
+    <View
+      style={{
+        justifyContent: 'flex-end',
+        minHeight: 620,
+        paddingTop: fortuneTheme.spacing.xl,
+      }}
+    >
+      <AuthSheetCard
+        activeProviderId={activeProviderId}
+        authMessage={authMessage}
+        onApple={onApple}
+        onBrowse={onBrowse}
+        onGoogle={onGoogle}
+        onKakao={onKakao}
+        onNaver={onNaver}
+        subtitle="로그인하면 분석 기록, 맞춤 추천, 구매 내역이 계정에 연결되고 지금 보던 흐름에서 바로 이어집니다."
+        title="로그인으로 지금 대화를 이어가세요"
+      />
       <View
         style={{
-          borderRadius: 32,
-          minHeight: 520,
-          overflow: 'hidden',
-          paddingTop: fortuneTheme.spacing.xl,
+          alignSelf: 'center',
+          marginTop: fortuneTheme.spacing.md,
+          maxWidth: 320,
         }}
       >
-        <View
-          style={{
-            borderColor: fortuneTheme.colors.border,
-            borderRadius: 220,
-            borderWidth: 1,
-            height: 320,
-            left: -170,
-            opacity: 0.45,
-            position: 'absolute',
-            top: -20,
-            width: 320,
-          }}
-        />
-        <View
-          style={{
-            borderColor: fortuneTheme.colors.border,
-            borderRadius: 260,
-            borderWidth: 1,
-            height: 360,
-            opacity: 0.3,
-            position: 'absolute',
-            right: -150,
-            top: -70,
-            width: 360,
-          }}
-        />
-
-        <View style={{ gap: fortuneTheme.spacing.sm, paddingHorizontal: 4 }}>
-          <AppText variant="displayLarge" style={{ maxWidth: 280 }}>
-            기록과 개인화를{'\n'}계속 이어가세요
-          </AppText>
-          <AppText
-            variant="bodyLarge"
-            color={fortuneTheme.colors.textSecondary}
-            style={{ maxWidth: 290 }}
-          >
-            로그인하면 분석 기록, 맞춤 추천, 구매 내역이 계정에 안전하게
-            연결됩니다. 지금 둘러본 뒤 필요할 때 바로 이어서 시작할 수 있어요.
-          </AppText>
-        </View>
-
-        <Card
-          style={{
-            marginTop: 96,
-            paddingBottom: fortuneTheme.spacing.lg,
-          }}
+        <AppText
+          variant="caption"
+          color={fortuneTheme.colors.textTertiary}
+          style={{ textAlign: 'center' }}
         >
-          <AppText variant="labelLarge" color={fortuneTheme.colors.textSecondary}>
-            계정을 연결하고 시작
-          </AppText>
-          <View style={{ gap: fortuneTheme.spacing.sm }}>
-            <AppleAuthButton label="애플 로그인" onPress={onApple} />
-            <SocialAuthPillButton
-              label="구글 로그인"
-              onPress={onGoogle}
-              provider="google"
-            />
-            {onKakao ? (
-              <SocialAuthPillButton
-                label="카카오 로그인"
-                onPress={onKakao}
-                provider="kakao"
-              />
-            ) : null}
-            {onNaver ? (
-              <SocialAuthPillButton
-                label="네이버 로그인"
-                onPress={onNaver}
-                provider="naver"
-              />
-            ) : null}
-          </View>
-          <AppText variant="caption" color={fortuneTheme.colors.textTertiary}>
-            계속하면 이용약관과 개인정보처리방침에 동의하게 됩니다.
-          </AppText>
-          {authMessage ? (
-            <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-              {authMessage}
-            </AppText>
-          ) : null}
-          <Pressable
-            accessibilityRole="button"
-            onPress={onBrowse}
-            style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1, paddingTop: 4 })}
-          >
-            <AppText
-              variant="labelLarge"
-              color={fortuneTheme.colors.textPrimary}
-              style={{ textAlign: 'center' }}
-            >
-              로그인 없이 둘러보기
-            </AppText>
-          </Pressable>
-        </Card>
+          지금은 둘러보기만 하고, 필요할 때 같은 시트에서 다시 계정을 연결할 수
+          있어요.
+        </AppText>
       </View>
     </View>
   );

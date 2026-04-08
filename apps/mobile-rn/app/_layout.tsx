@@ -61,6 +61,16 @@ export default function RootLayout() {
                   }}
                 >
                   <Stack.Screen name="(tabs)" />
+                  <Stack.Screen
+                    name="signup"
+                    options={{
+                      animation: 'fade',
+                      contentStyle: {
+                        backgroundColor: 'transparent',
+                      },
+                      presentation: 'transparentModal',
+                    }}
+                  />
                   <Stack.Screen name="result/[resultKind]" />
                 </Stack>
               </SocialAuthProvider>

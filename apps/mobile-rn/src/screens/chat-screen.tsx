@@ -1790,6 +1790,7 @@ export function ChatScreen() {
     >
       {gate === "auth-entry" ? (
         <ChatSoftGate
+          activeProviderId={activeProviderId}
           authMessage={
             activeProviderId
               ? `${socialAuthProviderLabelById[activeProviderId]} 연결을 준비 중입니다.`
