@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { router, useLocalSearchParams, type Href } from 'expo-router';
+import { requireOptionalNativeModule } from 'expo-modules-core';
 import {
   fortuneTypesById,
   type FortuneTypeId,
@@ -111,7 +112,15 @@ function isImagePickerNativeModuleError(error: unknown) {
   );
 }
 
+function hasImagePickerNativeModule() {
+  return requireOptionalNativeModule('ExponentImagePicker') !== null;
+}
+
 async function loadImagePickerModule() {
+  if (!hasImagePickerNativeModule()) {
+    return null;
+  }
+
   if (!imagePickerModulePromise) {
     imagePickerModulePromise = import('expo-image-picker')
       .then((module) => module)
