@@ -274,6 +274,218 @@ function validateFortuneResponse(fortune: any): fortune is DailyFortuneResponse 
   return true;
 }
 
+function sanitizeFortuneText(text: string): string {
+  const withoutMarkdown = text
+    .replace(/\*\*(.*?)\*\*/gu, '$1')
+    .replace(/__(.*?)__/gu, '$1')
+    .replace(/`([^`]+)`/gu, '$1')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/gu, '$1')
+    .replace(/^\s{0,3}#{1,6}\s+/gmu, '')
+    .replace(/^\s*>\s?/gmu, '')
+    .replace(/^\s*\d+[.)]\s+/gmu, '')
+    .replace(/^\s*[-*•]+\s+/gmu, '')
+    .replace(/\r\n/gu, '\n');
+
+  const emojiPattern =
+    /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1FA00}-\u{1FAFF}]|[\u{2B50}]|[\u{2B55}]/gu;
+
+  return withoutMarkdown
+    .replace(emojiPattern, '')
+    .replace(/\b오늘의 바이브\b/gu, '종합 흐름')
+    .replace(/\b애정운 바이브\b/gu, '애정 흐름')
+    .replace(/\b금전운 바이브\b/gu, '금전 흐름')
+    .replace(/\b직장운 바이브\b/gu, '직장 흐름')
+    .replace(/\b학업운 바이브\b/gu, '학업 흐름')
+    .replace(/\b건강운 바이브\b/gu, '건강 흐름')
+    .replace(/\b갓생 치트키\b/gu, '실천 팁')
+    .replace(/\b오늘의 한마디\b/gu, '마무리 한마디')
+    .replace(/\b럭키비키\b/gu, '운이 좋은 흐름')
+    .replace(/\b갓생\b/gu, '하루')
+    .replace(/\b레전드 of 레전드\b/gu, '매우 좋은')
+    .replace(/\b레전드\b/gu, '좋은')
+    .replace(/\b무지성\b/gu, '망설임 없이')
+    .replace(/\b찐으로\b/gu, '정말')
+    .replace(/\b심쿵\b/gu, '설렘')
+    .replace(/\b순삭\b/gu, '빠르게')
+    .replace(/\b칼퇴\b/gu, '일정 마무리')
+    .replace(/\bMAX\b/gu, '높은')
+    .replace(/\bUP\b/gu, '상승')
+    .replace(/[“”"]/gu, '')
+    .replace(/[ \t]+\n/gu, '\n')
+    .replace(/\n{3,}/gu, '\n\n')
+    .replace(/[ \t]{2,}/gu, ' ')
+    .trim();
+}
+
+function sanitizeFortuneKeyword(text: string): string {
+  return sanitizeFortuneText(text).replace(/\n+/gu, ' ');
+}
+
+function sanitizeFortuneValue(value: unknown): unknown {
+  if (typeof value === 'string') {
+    return sanitizeFortuneText(value);
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((entry) => sanitizeFortuneValue(entry));
+  }
+
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([key, entry]) => [
+        key,
+        sanitizeFortuneValue(entry),
+      ]),
+    );
+  }
+
+  return value;
+}
+
+function sanitizeDailyFortuneOutput(
+  fortune: DailyFortuneResponse & Record<string, any>,
+) {
+  const sanitizedBase = sanitizeFortuneValue(
+    fortune,
+  ) as DailyFortuneResponse & Record<string, any>;
+  const sanitize = (value: unknown) =>
+    typeof value === 'string' ? sanitizeFortuneText(value) : value;
+
+  const sanitizeKeyword = (value: unknown) =>
+    typeof value === 'string' ? sanitizeFortuneKeyword(value) : value;
+
+  return {
+    ...sanitizedBase,
+    content: sanitize(sanitizedBase.content),
+    summary: sanitize(sanitizedBase.summary),
+    greeting: sanitize(sanitizedBase.greeting),
+    advice: sanitize(sanitizedBase.advice),
+    caution: sanitize(sanitizedBase.caution),
+    description: sanitize(sanitizedBase.description),
+    special_tip: sanitize(sanitizedBase.special_tip),
+    ai_insight: sanitize(sanitizedBase.ai_insight),
+    ai_tips: Array.isArray(sanitizedBase.ai_tips)
+      ? sanitizedBase.ai_tips
+          .map((item) => sanitize(item))
+          .filter((item): item is string => typeof item === 'string' && item.length > 0)
+      : [],
+    categories: {
+      ...sanitizedBase.categories,
+      total: {
+        ...sanitizedBase.categories.total,
+        advice: {
+          ...sanitizedBase.categories.total.advice,
+          idiom: sanitizeKeyword(sanitizedBase.categories.total.advice.idiom),
+          description: sanitize(sanitizedBase.categories.total.advice.description),
+        },
+      },
+      love: {
+        ...sanitizedBase.categories.love,
+        advice: sanitize(sanitizedBase.categories.love.advice),
+      },
+      money: {
+        ...sanitizedBase.categories.money,
+        advice: sanitize(sanitizedBase.categories.money.advice),
+      },
+      work: {
+        ...sanitizedBase.categories.work,
+        advice: sanitize(sanitizedBase.categories.work.advice),
+      },
+      study: {
+        ...sanitizedBase.categories.study,
+        advice: sanitize(sanitizedBase.categories.study.advice),
+      },
+      health: {
+        ...sanitizedBase.categories.health,
+        advice: sanitize(sanitizedBase.categories.health.advice),
+      },
+    },
+    lucky_items: {
+      ...sanitizedBase.lucky_items,
+      time: sanitizeKeyword(sanitizedBase.lucky_items.time),
+      color: sanitizeKeyword(sanitizedBase.lucky_items.color),
+      number: sanitizeKeyword(String(sanitizedBase.lucky_items.number)),
+      direction: sanitizeKeyword(sanitizedBase.lucky_items.direction),
+      food: sanitizeKeyword(sanitizedBase.lucky_items.food),
+      item: sanitizeKeyword(sanitizedBase.lucky_items.item),
+    },
+    lucky_numbers: Array.isArray(sanitizedBase.lucky_numbers)
+      ? sanitizedBase.lucky_numbers
+          .map((item) => sanitizeKeyword(String(item)))
+          .filter((item): item is string => item.length > 0)
+      : [],
+    fortuneSummary: {
+      byZodiacAnimal: {
+        ...sanitizedBase.fortuneSummary.byZodiacAnimal,
+        title: sanitize(sanitizedBase.fortuneSummary.byZodiacAnimal.title),
+        content: sanitize(sanitizedBase.fortuneSummary.byZodiacAnimal.content),
+      },
+      byZodiacSign: {
+        ...sanitizedBase.fortuneSummary.byZodiacSign,
+        title: sanitize(sanitizedBase.fortuneSummary.byZodiacSign.title),
+        content: sanitize(sanitizedBase.fortuneSummary.byZodiacSign.content),
+      },
+      byMBTI: {
+        ...sanitizedBase.fortuneSummary.byMBTI,
+        title: sanitize(sanitizedBase.fortuneSummary.byMBTI.title),
+        content: sanitize(sanitizedBase.fortuneSummary.byMBTI.content),
+      },
+    },
+    personalActions: Array.isArray(sanitizedBase.personalActions)
+      ? sanitizedBase.personalActions.map((action) => ({
+          ...action,
+          title: sanitize(action.title),
+          why: sanitize(action.why),
+        }))
+      : [],
+    sajuInsight: {
+      ...sanitizedBase.sajuInsight,
+      lucky_color: sanitizeKeyword(sanitizedBase.sajuInsight.lucky_color),
+      lucky_food: sanitizeKeyword(sanitizedBase.sajuInsight.lucky_food),
+      lucky_item: sanitizeKeyword(sanitizedBase.sajuInsight.lucky_item),
+      luck_direction: sanitizeKeyword(sanitizedBase.sajuInsight.luck_direction),
+      keyword: sanitizeKeyword(sanitizedBase.sajuInsight.keyword),
+    },
+    lucky_outfit: {
+      ...sanitizedBase.lucky_outfit,
+      title: sanitize(sanitizedBase.lucky_outfit.title),
+      description: sanitize(sanitizedBase.lucky_outfit.description),
+      items: Array.isArray(sanitizedBase.lucky_outfit.items)
+        ? sanitizedBase.lucky_outfit.items
+            .map((item) => sanitize(item))
+            .filter((item): item is string => typeof item === 'string' && item.length > 0)
+        : [],
+    },
+    celebrities_same_day: Array.isArray(sanitizedBase.celebrities_same_day)
+      ? sanitizedBase.celebrities_same_day.map((entry) => ({
+          ...entry,
+          name: sanitizeKeyword(entry.name),
+          description: sanitize(entry.description),
+        }))
+      : [],
+    celebrities_similar_saju: Array.isArray(sanitizedBase.celebrities_similar_saju)
+      ? sanitizedBase.celebrities_similar_saju.map((entry) => ({
+          ...entry,
+          name: sanitizeKeyword(entry.name),
+          description: sanitize(entry.description),
+        }))
+      : [],
+    age_fortune: {
+      ...sanitizedBase.age_fortune,
+      ageGroup: sanitizeKeyword(sanitizedBase.age_fortune.ageGroup),
+      title: sanitize(sanitizedBase.age_fortune.title),
+      description: sanitize(sanitizedBase.age_fortune.description),
+      zodiacAnimal: sanitizeKeyword(sanitizedBase.age_fortune.zodiacAnimal ?? ''),
+    },
+    daily_predictions: {
+      ...sanitizedBase.daily_predictions,
+      morning: sanitize(sanitizedBase.daily_predictions.morning),
+      afternoon: sanitize(sanitizedBase.daily_predictions.afternoon),
+      evening: sanitize(sanitizedBase.daily_predictions.evening),
+    },
+  };
+}
+
 // 영어 지역명을 한글로 변환하는 간단한 함수
 // GPT나 다른 서비스에서 더 정확한 변환을 할 수 있도록 기본 처리만 제공
 function processLocation(location: string): string {
@@ -399,9 +611,12 @@ serve(async (req) => {
             birthDate,
             age: birthDate ? new Date().getFullYear() - new Date(birthDate).getFullYear() : 20,
           });
+          const sanitizedCachedFortune = sanitizeDailyFortuneOutput(
+            personalizedFortune as DailyFortuneResponse & Record<string, any>,
+          );
 
           // 퍼센타일 계산 (캐시된 점수 사용)
-          const cachedScore = (personalizedFortune as any).overall_score || 75;
+          const cachedScore = (sanitizedCachedFortune as any).overall_score || 75;
           const percentileData = await calculatePercentile(
             supabaseClient,
             'daily',
@@ -411,7 +626,7 @@ serve(async (req) => {
           return new Response(
             JSON.stringify({
               fortune: {
-                ...personalizedFortune,
+                ...sanitizedCachedFortune,
                 percentile: percentileData.percentile,
                 totalTodayViewers: percentileData.totalTodayViewers,
                 isPercentileValid: percentileData.isPercentileValid,
@@ -701,56 +916,31 @@ serve(async (req) => {
 
         let prompt = '';
         if (category === 'total' && idiom) {
-          prompt = `오늘의 ${categoryName} 조언을 MZ 감성으로 작성해줘!
+          prompt = `오늘의 ${categoryName} 문안을 작성해줘.
 
-조건:
-- 참고 키워드: ${idiom} (딱딱하게 쓰지 말고 현대적으로 해석!)
-- 갓생 지수: ${categoryScore}점 🔥
-- 300~400자 정도로 핵심만!
+입력:
+- 참고 키워드: ${idiom}
+- 점수: ${categoryScore}점
 
-형식:
-💫 오늘의 바이브
-"${categoryScore >= 85 ? '오늘 뭘 해도 다 됨!' : categoryScore >= 70 ? '무난하게 잘 풀리는 날' : '천천히 가도 OK인 날'}" 이런 느낌으로 한 줄!
-
-🎯 갓생 치트키
-• 진짜 실행 가능한 꿀팁 3가지
-• 각각 왜 좋은지 한 줄씩 (근데 재밌게!)
-
-⚠️ 주의사항
-한 줄로 짧게! (근데 무섭지 않게)
-
-💬 오늘의 한마디
-응원 메시지 (친구가 말하듯이!)
-
-스타일:
-- MZ 말투 (~해봐요, 진짜 좋음!, 레전드!)
-- 이모지 많이! ✨🔥💪💯
-- 딱딱한 표현 절대 금지
-- 두바이 초콜릿처럼 달달하게!`;
+출력 규칙:
+- 자연스러운 한국어 문장형 텍스트만 작성
+- 3문장 이내
+- 1문장: 오늘의 전체 흐름
+- 2문장: 왜 그런 흐름인지 해석
+- 3문장: 바로 실천할 수 있는 조언
+- 과장하거나 자극적으로 쓰지 말 것`;
         } else {
-          prompt = `오늘의 ${categoryName} 조언을 MZ 감성으로 작성해줘!
+          prompt = `오늘의 ${categoryName} 문안을 작성해줘.
 
-조건:
-- 갓생 지수: ${categoryScore}점
-- 200~300자로 핵심만!
-- ${categoryName}에 맞는 실용적인 내용
+입력:
+- 점수: ${categoryScore}점
 
-형식:
-💫 ${categoryName} 바이브
-오늘의 흐름 2-3문장 (친구한테 말하듯이!)
-
-🎯 실천 꿀팁
-• 바로 할 수 있는 것 2-3가지
-• 왜 좋은지도 간단히!
-
-💬 한마디
-"${categoryScore >= 80 ? '오늘 진짜 기대해도 됨!' : '천천히 가도 괜찮아!'}" 느낌으로!
-
-스타일:
-- MZ 말투 사용 (갓생, 럭키, 레전드 등)
-- 이모지 적극 활용! ✨🔥💪
-- 재밌고 읽기 쉽게
-- ${categoryScore >= 80 ? '자신감 뿜뿜!' : categoryScore >= 65 ? '희망적으로!' : '위로하는 느낌!'}`;
+출력 규칙:
+- 자연스러운 한국어 문장형 텍스트만 작성
+- 2~3문장 이내
+- 첫 문장은 현재 흐름 설명
+- 마지막 문장은 바로 적용할 수 있는 조언
+- ${categoryName}에 맞는 실용적인 내용으로 작성`;
         }
 
         // ✅ LLM 모듈 사용 (DB 설정 기반 동적 모델 선택)
@@ -759,16 +949,21 @@ serve(async (req) => {
         const response = await llm.generate([
           {
             role: 'system',
-            content: `MZ 세대 감성의 친근한 인사이트 전문가야!
+            content: `당신은 모바일 운세 앱의 카피 에디터입니다.
 
-🔥 스타일 가이드:
-- 친구처럼 반말+존댓말 섞어서 (~해봐요, ~거예요, 진짜 좋음!)
-- "갓생", "럭키비키", "무지성", "레전드" 같은 MZ 표현 적극 활용
-- 이모지 적극 사용 (✨💫🔥💪😎🍀💯 등)
-- 짧고 임팩트 있게! 두바이 초콜릿처럼 달달하게!
-- 인사말/서두 없이 바로 본론
-- 딱딱한 사자성어나 고어 절대 금지!
-- 요즘 트렌드 (소금빵, 탕후루, NewJeans 등) 비유 활용 OK`
+작성 원칙:
+- 차분하고 자연스러운 한국어로 씁니다.
+- 상담하듯 부드럽지만 지나치게 감상적이지 않게 씁니다.
+- 문장은 짧고 또렷하게 유지합니다.
+- 사용자가 바로 이해하고 행동할 수 있게 씁니다.
+
+금지 사항:
+- 마크다운 기호 사용 금지 (**, #, -, >, 코드블록)
+- 이모지, 밈, 유행어, 인터넷체 사용 금지
+- 과장된 약속, 자극적 표현, 캐치프레이즈 금지
+- 따옴표로 감싼 슬로건 문장 금지
+
+출력은 설명 없이 문안만 작성합니다.`
           },
           {
             role: 'user',
@@ -800,15 +995,15 @@ serve(async (req) => {
       }
     };
 
-    // Fallback 조언 생성 (GPT API 실패 시) - MZ 스타일!
+    // Fallback 조언 생성 (GPT API 실패 시) - 차분한 기본 문안
     const generateFallbackAdvice = (category: string, categoryScore: number) => {
       const fallbackMessages: Record<string, string> = {
-        'total': '💫 오늘의 바이브\n무난하게 잘 풀리는 날이에요! 긍정 마인드로 시작하면 좋은 일들이 찾아올 거예요 ✨\n\n🎯 갓생 치트키\n• 아침에 좋아하는 음료 한 잔으로 기분 UP!\n• 할 일 리스트 3개만 적고 하나씩 클리어하기\n• 누군가에게 먼저 인사하면 좋은 기운이 옴!\n\n💬 오늘의 한마디\n"오늘도 럭키비키한 하루 보내세요!" 🍀',
-        'love': '💕 애정운 바이브\n마음이 따뜻해지는 날이에요! 솔직하게 감정 표현하면 좋은 반응 올 확률 높음 ✨\n\n🎯 실천 꿀팁\n• 좋아하는 사람한테 먼저 연락하기!\n• 작은 선물이나 칭찬으로 마음 전하기\n• 혼자라면? 셀프 데이트도 추천! 🎬\n\n💬 한마디\n"사랑은 용기 있는 자의 것!" 💪',
-        'money': '💰 금전운 바이브\n지갑 지키기 모드 ON! 계획적인 소비가 답이에요 📊\n\n🎯 실천 꿀팁\n• 충동구매 참기 (3일 뒤에도 생각나면 그때 사기!)\n• 작은 저축이라도 오늘 시작하기\n• 가계부 한 번 훑어보면 좋은 날!\n\n💬 한마디\n"돈은 모이면 기분이 좋아지는 마법 💫"',
-        'work': '💼 직장운 바이브\n집중력 MAX인 날! 핵심 업무 먼저 처리하면 순삭 예정 🔥\n\n🎯 실천 꿀팁\n• 중요한 일 오전에 끝내기\n• 동료한테 먼저 손 내밀면 협업 시너지 UP!\n• 점심시간에 잠깐 산책하면 오후 능률 상승\n\n💬 한마디\n"오늘의 고생이 내일의 칼퇴를 만든다!" 💪',
-        'study': '📚 학업운 바이브\n뇌가 말랑말랑한 날! 새로운 거 배우기 딱 좋음 ✨\n\n🎯 실천 꿀팁\n• 25분 집중 + 5분 휴식 (뽀모도로 기법!)\n• 어려운 건 유튜브로 쉽게 이해하기\n• 복습 10분이면 기억력 2배!\n\n💬 한마디\n"오늘 외운 건 시험에 나온다 (진심)" 💯',
-        'health': '💪 건강운 바이브\n몸이 먼저인 날! 무리하지 말고 쉬어가도 OK 🌿\n\n🎯 실천 꿀팁\n• 물 한 잔 더 마시기 (피부에도 좋음!)\n• 5분 스트레칭으로 뻣뻣한 몸 풀어주기\n• 일찍 자면 내일 컨디션 레전드!\n\n💬 한마디\n"건강해야 갓생 살 수 있다!" 🔥'
+        'total': '전반적으로 흐름이 안정적이고, 주도적으로 움직일수록 성과가 잘 붙는 날입니다. 아침에 우선순위를 정리해두면 하루 전체가 한결 매끄럽게 흘러갑니다.',
+        'love': '관계에서는 감정을 억누르기보다 차분하게 표현하는 편이 좋습니다. 짧더라도 분명한 말 한마디가 분위기를 부드럽게 만듭니다.',
+        'money': '금전운은 무난하지만 계획 없는 지출은 피하는 편이 좋습니다. 오늘은 필요한 항목을 먼저 정하고 소비를 좁혀가세요.',
+        'work': '일과 학업에서는 초반 집중력이 좋은 편입니다. 중요한 일 하나를 먼저 끝내 두면 이후 흐름이 훨씬 편해집니다.',
+        'study': '배움과 정리 모두 차분하게 이어가기 좋은 날입니다. 새로운 내용을 넓게 보기보다 이미 손댄 내용을 다시 정리해보세요.',
+        'health': '몸의 리듬은 무난하지만 피로가 쌓이면 집중이 쉽게 흔들릴 수 있습니다. 수분과 휴식 시간을 먼저 챙기는 것이 좋습니다.'
       };
       return fallbackMessages[category] || fallbackMessages['total'];
     };
@@ -897,12 +1092,10 @@ serve(async (req) => {
     }
 
     const generateLuckyFood = () => {
-      // 🔥 2025-2026 트렌드 간식/음식 (MZ 세대 핫 아이템)
       const foods = [
-        '두바이 초콜릿 🍫', '소금빵 🥐', '크룽지 🥐', '탕후루 🍡', '약과 쿠키 🍪',
-        '마라탕 🍜', '로제 떡볶이 🍝', '오트밀 라떼 ☕', '흑당 버블티 🧋', '크로플 🧇',
-        '바스크 치즈케이크 🧀', '딸기 케이크 🍰', '말차 라떼 🍵', '망고 빙수 🥭', '편의점 삼각김밥 🍙',
-        '에그드랍 샌드위치 🥪', '치킨 한 조각 🍗', '아이스 아메리카노 ☕', '감자튀김 🍟', '마카롱 🍬'
+        '따뜻한 차', '곡물빵', '과일', '샐러드', '요거트',
+        '샌드위치', '수프', '커피', '견과류', '죽',
+        '두부 요리', '생선구이', '계란 요리', '현미밥', '채소볶음'
       ];
       const foodSeed = combinedSeed + 29;
       const index = Math.floor(seededRandom(foodSeed) * foods.length);
@@ -947,121 +1140,113 @@ serve(async (req) => {
     }
 
     const generateLuckyItem = () => {
-      // 🔥 2025-2026 트렌드 아이템 (MZ 세대 핫 아이템)
       const items = [
-        '에어팟 맥스 🎧', '스탠리 텀블러 🥤', '다이소 인형 🧸', '산리오 키링 🔑', '무지 노트 📓',
-        '슬림 지갑 👛', '애플워치 밴드 ⌚', '스크런치 💜', '그립톡 📱', '미니 파우치 👜',
-        '캐릭터 양말 🧦', '헤어클립 💇', '립밤 💋', '포토카드 바인더 📸', '스티커 📝',
-        '캔들 🕯️', '디퓨저 🌸', '플레이리스트 메모 🎵', '보조배터리 🔋', '손거울 🪞'
+        '슬림 지갑', '메모 노트', '텀블러', '손수건', '볼펜',
+        '책갈피', '이어폰 케이스', '파우치', '손거울', '카드지갑',
+        '향수', '헤어클립', '보조배터리', '열쇠고리', '북마크'
       ];
       const itemSeed = combinedSeed + 47;
       const index = Math.floor(seededRandom(itemSeed) * items.length);
       return items[index];
     }
 
-    // 🔥 행운의 노래 생성 (2025-2026 히트곡)
+    // 오늘의 음악 추천
     const generateLuckyMusic = () => {
       const musics = [
-        { song: 'APT.', artist: '로제 & 브루노 마스', emoji: '🎵' },
-        { song: 'Supernova', artist: 'aespa', emoji: '✨' },
-        { song: 'SPOT!', artist: '지코 (feat. JENNIE)', emoji: '🔥' },
-        { song: 'Love wins all', artist: '아이유', emoji: '💜' },
-        { song: 'How Sweet', artist: 'NewJeans', emoji: '🍬' },
-        { song: 'Armageddon', artist: 'aespa', emoji: '🌍' },
-        { song: 'HEYA', artist: 'IVE', emoji: '👋' },
-        { song: 'Magnetic', artist: 'ILLIT', emoji: '🧲' },
-        { song: 'Chk Chk Boom', artist: 'Stray Kids', emoji: '💥' },
-        { song: 'SHEESH', artist: 'BABYMONSTER', emoji: '🔥' },
-        { song: 'Ditto', artist: 'NewJeans', emoji: '📞' },
-        { song: 'OMG', artist: 'NewJeans', emoji: '😱' },
-        { song: 'GODS', artist: 'NewJeans', emoji: '⚡' },
-        { song: 'EASY', artist: 'LE SSERAFIM', emoji: '💪' },
-        { song: 'Smart', artist: 'LE SSERAFIM', emoji: '🧠' },
-        { song: '소나기', artist: '이클립스', emoji: '🌧️' },
-        { song: 'Love Lee', artist: 'AKMU', emoji: '💕' },
-        { song: 'Seven', artist: '정국', emoji: '7️⃣' },
-        { song: 'Standing Next to You', artist: '정국', emoji: '🕺' },
-        { song: '퀸카', artist: '(여자)아이들', emoji: '👑' }
+        'APT. - 로제 & 브루노 마스',
+        'Supernova - aespa',
+        'SPOT! - 지코 (feat. JENNIE)',
+        'Love wins all - 아이유',
+        'How Sweet - NewJeans',
+        'Armageddon - aespa',
+        'HEYA - IVE',
+        'Magnetic - ILLIT',
+        'Chk Chk Boom - Stray Kids',
+        'SHEESH - BABYMONSTER',
+        'Ditto - NewJeans',
+        'OMG - NewJeans',
+        'GODS - NewJeans',
+        'EASY - LE SSERAFIM',
+        'Smart - LE SSERAFIM',
+        '소나기 - 이클립스',
+        'Love Lee - AKMU',
+        'Seven - 정국',
+        'Standing Next to You - 정국',
+        '퀸카 - (여자)아이들',
       ];
       const musicSeed = combinedSeed + 53;
       const index = Math.floor(seededRandom(musicSeed) * musics.length);
       return musics[index];
     }
 
-    // 🔥 갓생 한 줄 요약 생성 (MZ 스타일)
+    // 보조 요약 생성
     const generateGodlifeSummary = (score: number) => {
       if (score >= 90) {
         const summaries = [
-          '오늘 뭘 해도 다 됨 🔥 그냥 저질러!',
-          '인생 하이라이트 찍는 날 ✨ 사진 많이 찍어둬!',
-          '우주가 너 편임 🌟 원하는 거 다 이뤄져!',
-          '럭키비키 그 자체 🍀 복권 사도 됨',
-          '오늘은 주인공 무드 💫 자신감 MAX!'
+          '흐름이 강한 날이라 중요한 일은 앞부분에 배치하는 편이 좋습니다.',
+          '확신이 필요한 순간에 주저하지 않으면 성과를 만들기 좋은 날입니다.',
+          '전반적인 리듬이 안정적이어서 계획한 일을 밀도 있게 진행하기 좋습니다.',
+          '좋은 기회를 붙잡기 쉬운 날이니 우선순위가 높은 일부터 처리해보세요.',
+          '자신감이 살아나는 날이라 준비해둔 일을 실행으로 옮기기 좋습니다.',
         ];
         return summaries[Math.floor(seededRandom(combinedSeed * 61) * summaries.length)];
       } else if (score >= 80) {
         const summaries = [
-          '뭐든 부딪히면 💯 성공!',
-          '오늘은 액션이 답! 💪 실행력 MAX',
-          '예상치 못한 행운이 찾아옴 ✨',
-          '좋은 사람, 좋은 일만 생기는 날 💕',
-          '하고 싶은 거 하면 다 잘 풀림 🎯'
+          '전체 흐름이 무난하게 받쳐주니 중요한 일 한 가지를 정해 집중해보세요.',
+          '안정적인 날이라 서두르기보다 리듬을 지키는 편이 더 유리합니다.',
+          '대인 흐름과 실행력이 함께 살아나기 쉬워 협업 일정에 힘이 붙습니다.',
+          '작은 선택을 차분하게 정리하면 하루 전체가 한결 부드럽게 흘러갑니다.',
+          '준비된 일을 하나씩 마무리하기 좋은 날이라 완성도를 높이기 좋습니다.',
         ];
         return summaries[Math.floor(seededRandom(combinedSeed * 62) * summaries.length)];
       } else if (score >= 70) {
         const summaries = [
-          '꾸준히 하면 결과 나오는 날 📈',
-          '조금만 더 힘내면 좋은 일 생김! 💪',
-          '평온한 하루, 작은 행복 발견 🌸',
-          '무난하게 잘 흘러가는 하루 ☁️',
-          '오늘 뿌린 씨앗이 곧 열매 맺음 🌱'
+          '과한 확장보다 현재 리듬을 지키는 편이 결과를 안정적으로 만듭니다.',
+          '무난한 흐름 속에서 작은 정리와 점검이 힘을 발휘하는 날입니다.',
+          '큰 승부보다 이미 시작한 일을 차분히 이어가기 좋습니다.',
+          '속도를 높이기보다 흐름을 고르게 유지하는 쪽이 더 효율적입니다.',
+          '조용히 정리한 내용이 다음 일정의 기반이 되기 쉬운 날입니다.',
         ];
         return summaries[Math.floor(seededRandom(combinedSeed * 63) * summaries.length)];
       } else {
         const summaries = [
-          '오늘은 충전 Day 🔋 쉬어가도 괜찮아',
-          '급한 결정은 내일로 미루기 🧘',
-          '조용히 나만의 시간 갖기 좋은 날 🌙',
-          '작은 일에 집중하면 의외의 성과 💎',
-          '무리하지 말고 천천히 가도 OK 🐢'
+          '무리하게 밀어붙이기보다 속도를 낮추고 정리하는 편이 좋습니다.',
+          '결정을 서두르지 말고 기본적인 컨디션부터 안정시키는 것이 우선입니다.',
+          '작은 일부터 차례대로 정리하면 흐름을 다시 회복하기 수월합니다.',
+          '외부 변수보다 내 리듬을 먼저 챙기는 편이 결과를 안정시킵니다.',
+          '휴식과 재정비가 필요한 날이니 일정은 단순하게 가져가세요.',
         ];
         return summaries[Math.floor(seededRandom(combinedSeed * 64) * summaries.length)];
       }
     }
 
-    // 🔥 갓생 치트키 생성 (실천 가능한 짧은 조언)
-    const generateGodlifeCheatkeys = (score: number, userName: string) => {
+    // 실천 팁 생성
+    const generateGodlifeCheatkeys = (score: number) => {
       const highScoreKeys = [
-        { key: '고민은 짧게, 행동은 과감하게!', icon: '⚡' },
-        { key: '오늘 미룬 일 하나만 끝내기!', icon: '✅' },
-        { key: '하고 싶었던 말 지금 바로 하기!', icon: '💬' },
-        { key: '새로운 사람에게 먼저 인사하기!', icon: '👋' },
-        { key: '평소 안 가던 카페 도전하기!', icon: '☕' },
-        { key: '오늘 계획 하나 더 추가해도 OK!', icon: '📝' },
-        { key: '칭찬은 고래도 춤추게 한다! 누구든 칭찬하기', icon: '🐳' },
-        { key: '셀카 찍어서 저장해두기! (나중에 좋은 추억)', icon: '📸' }
+        { key: '중요한 일 하나를 오전 안에 끝내기', icon: '1' },
+        { key: '결정이 필요한 항목은 미루지 않고 처리하기', icon: '2' },
+        { key: '짧고 분명한 소통으로 흐름 끊기지 않기', icon: '3' },
+        { key: '새로운 제안이나 만남은 한 번 받아보기', icon: '4' },
+        { key: '기회가 보이면 준비한 안을 먼저 꺼내기', icon: '5' },
+        { key: '남은 일정은 핵심 순서대로 다시 정리하기', icon: '6' },
       ];
 
       const mediumScoreKeys = [
-        { key: '점심은 평소보다 맛있는 거로!', icon: '🍽️' },
-        { key: '잠깐이라도 햇살 맞으러 나가기!', icon: '☀️' },
-        { key: '좋아하는 노래 한 곡 풀볼륨으로!', icon: '🎵' },
-        { key: '물 한 잔 더 마시기!', icon: '💧' },
-        { key: '5분만 스트레칭하기!', icon: '🧘' },
-        { key: '좋았던 일 3가지 적어보기!', icon: '📝' },
-        { key: '알림 끄고 집중 시간 30분!', icon: '🔕' },
-        { key: '오늘 하루 나에게 "수고했다" 말해주기!', icon: '💪' }
+        { key: '해야 할 일 세 가지만 남기고 나머지는 미루기', icon: '1' },
+        { key: '오후 전후로 짧은 정리 시간을 확보하기', icon: '2' },
+        { key: '답이 필요한 연락은 한 번에 모아서 처리하기', icon: '3' },
+        { key: '물을 자주 마시고 중간 휴식을 챙기기', icon: '4' },
+        { key: '집중 시간 30분을 정해서 방해를 줄이기', icon: '5' },
+        { key: '하루를 마치기 전에 잘된 점 하나를 기록하기', icon: '6' },
       ];
 
       const lowScoreKeys = [
-        { key: '무리하지 말고 일단 쉬기!', icon: '😴' },
-        { key: '좋아하는 간식 하나 허락!', icon: '🍪' },
-        { key: '급한 결정은 내일로!', icon: '📅' },
-        { key: '따뜻한 음료로 마음 녹이기!', icon: '🍵' },
-        { key: '좋아하는 사람한테 연락하기!', icon: '📱' },
-        { key: '10분만 아무 생각 없이 멍때리기!', icon: '🌙' },
-        { key: '오늘 할 일 절반만 해도 100점!', icon: '💯' },
-        { key: '자기 전 좋았던 기억 하나 떠올리기!', icon: '✨' }
+        { key: '일정은 줄이고 꼭 필요한 일만 남기기', icon: '1' },
+        { key: '결정이 급하지 않다면 내일로 넘기기', icon: '2' },
+        { key: '따뜻한 음료나 가벼운 산책으로 긴장 풀기', icon: '3' },
+        { key: '휴대폰 알림을 줄이고 조용한 시간을 만들기', icon: '4' },
+        { key: '오늘 한 일 중 마무리된 것만 먼저 확인하기', icon: '5' },
+        { key: '잠들기 전에는 내일 첫 일정만 간단히 정하기', icon: '6' },
       ];
 
       const keys = score >= 80 ? highScoreKeys : score >= 65 ? mediumScoreKeys : lowScoreKeys;
@@ -1069,31 +1254,16 @@ serve(async (req) => {
       return shuffled.slice(0, 4);
     }
 
-    // 🔥 오늘의 부적 생성
+    // 보조 키워드 생성
     const generateLuckyTalisman = (score: number) => {
       if (score >= 85) {
-        const talismans = [
-          { name: '무지성 성공 부적', description: '생각하기 전에 일단 하면 됨!' },
-          { name: '럭키비키 부적', description: '오늘 하루 행운이 따라다님' },
-          { name: '인싸력 MAX 부적', description: '누구를 만나도 좋은 인상' },
-          { name: '칼퇴 보장권', description: '오늘 일은 순삭 예정' }
-        ];
+        const talismans = ['우선순위 메모', '집중 시간 확보', '명확한 한마디', '오전 실행력'];
         return talismans[Math.floor(seededRandom(combinedSeed * 81) * talismans.length)];
       } else if (score >= 70) {
-        const talismans = [
-          { name: '무난무난 안전 부적', description: '큰 탈 없이 하루가 지나감' },
-          { name: '소확행 부적', description: '작은 행복이 찾아오는 날' },
-          { name: '집중력 부스터', description: '할 일에 몰입할 수 있음' },
-          { name: '긍정 에너지 충전권', description: '좋은 기운이 가득' }
-        ];
+        const talismans = ['체크리스트', '리듬 유지', '정리 노트', '짧은 휴식'];
         return talismans[Math.floor(seededRandom(combinedSeed * 82) * talismans.length)];
       } else {
-        const talismans = [
-          { name: '방어력 UP 부적', description: '안 좋은 일 다 피해감' },
-          { name: '회복의 부적', description: '쉬면서 에너지 충전' },
-          { name: '인내의 부적', description: '참으면 좋은 일이 생김' },
-          { name: '내일의 희망 부적', description: '오늘은 준비 기간!' }
-        ];
+        const talismans = ['속도 조절', '휴식 확보', '간단한 일정', '컨디션 회복'];
         return talismans[Math.floor(seededRandom(combinedSeed * 83) * talismans.length)];
       }
     }
@@ -1110,7 +1280,7 @@ serve(async (req) => {
     // 갓생 관련 데이터 생성
     const luckyMusic = generateLuckyMusic();
     const godlifeSummary = generateGodlifeSummary(score);
-    const godlifeCheatkeys = generateGodlifeCheatkeys(score, name);
+    const godlifeCheatkeys = generateGodlifeCheatkeys(score);
     const luckyTalisman = generateLuckyTalisman(score);
 
     // 행운의 숫자 생성 (동적)
@@ -1342,15 +1512,15 @@ serve(async (req) => {
     // AI 인사이트 생성 (동적)
     const generateAIInsight = () => {
       if (score >= 90) {
-        return '오늘은 정말 특별한 날입니다! 모든 일이 순조롭게 풀릴 것이니 적극적으로 도전해보세요.'
+        return '전반적인 흐름이 강한 날입니다. 중요한 일은 미루지 말고 앞부분에 배치해보세요.'
       } else if (score >= 80) {
-        return `오늘은 특히 ${getHighestCategory(categories)} 방면에서 좋은 기운이 흐르고 있습니다. 이 기회를 놓치지 마세요.`
+        return `오늘은 ${getHighestCategory(categories)} 흐름이 상대적으로 두드러집니다. 이 분야의 중요한 일 하나를 먼저 처리하면 좋습니다.`
       } else if (score >= 70) {
-        return '안정적이고 평온한 하루가 될 것입니다. 꾸준히 노력한다면 좋은 결과를 얻을 수 있어요.'
+        return '전체적으로 안정적인 날입니다. 속도를 무리하게 높이기보다 현재 리듬을 유지하는 편이 좋습니다.'
       } else if (score >= 60) {
-        return '신중하게 행동한다면 무난한 하루를 보낼 수 있습니다. 급하지 않은 결정은 미뤄두세요.'
+        return '신중하게 움직이면 무난하게 보낼 수 있는 날입니다. 급하지 않은 결정은 한 템포 늦춰도 괜찮습니다.'
       } else {
-        return '조금 어려운 시기이지만 인내심을 갖고 차근차근 해나간다면 분명 좋은 결과가 있을 것입니다.'
+        return '컨디션과 리듬 관리가 더 중요한 날입니다. 작은 일부터 차례대로 정리하면서 흐름을 회복해보세요.'
       }
     }
 
@@ -1507,25 +1677,25 @@ serve(async (req) => {
     const generateDynamicSummary = () => {
       if (score >= 85) {
         const highScoreOptions = [
-          '자신감 넘치는 하루, 성공의 기회를 적극적으로 잡으세요',
-          '모든 일이 순조롭게 풀리는 날, 도전을 두려워하지 마세요',
-          '행운이 함께하는 특별한 하루가 될 것입니다'
+          '흐름이 강한 날이라 중요한 일을 앞당겨 처리하기 좋습니다.',
+          '준비해둔 일을 실행으로 옮기면 성과를 내기 쉬운 날입니다.',
+          '전반적인 리듬이 안정적이어서 밀도 있게 움직이기 좋습니다.',
         ]
         const index = Math.floor(seededRandom(combinedSeed * 8) * highScoreOptions.length)
         return highScoreOptions[index]
       } else if (score >= 70) {
         const mediumScoreOptions = [
-          '차분하고 안정적인 하루, 꾸준한 노력이 빛을 발할 때입니다',
-          '균형잡힌 하루가 될 것이니 무리하지 말고 자연스럽게 진행하세요',
-          '평온함 속에서 작은 행복을 찾을 수 있는 하루입니다'
+          '차분하고 안정적인 날이라 현재 리듬을 유지하는 편이 좋습니다.',
+          '무리하게 확장하기보다 이미 잡힌 일을 정리하기 좋은 날입니다.',
+          '속도를 높이기보다 균형을 맞추는 쪽이 효율적인 하루입니다.',
         ]
         const index = Math.floor(seededRandom(combinedSeed * 9) * mediumScoreOptions.length)
         return mediumScoreOptions[index]
       } else {
         const lowScoreOptions = [
-          '신중함이 필요한 하루, 서두르지 말고 차근차근 진행하세요',
-          '휴식과 재충전이 필요한 시기입니다',
-          '작은 일부터 차례대로 해결해나가는 지혜로운 하루가 되길'
+          '신중함이 필요한 날이니 속도를 줄이고 차례대로 정리하세요.',
+          '휴식과 재정비를 우선하면 하루 흐름이 한결 안정됩니다.',
+          '작은 일부터 하나씩 마무리하는 편이 부담을 줄여줍니다.',
         ]
         const index = Math.floor(seededRandom(combinedSeed * 10) * lowScoreOptions.length)
         return lowScoreOptions[index]
@@ -1616,15 +1786,15 @@ serve(async (req) => {
     // 동적 상세 설명 생성
     const generateDynamicDescription = () => {
       const timePatterns = [
-        { time: '오전', activity: '차분한 성찰과 계획 세우기', result: '좋은 성과를 얻을 수 있습니다' },
-        { time: '오전', activity: '중요한 업무에 집중하기', result: '집중력이 최고조에 달할 것입니다' },
-        { time: '오전', activity: '새로운 아이디어 구상하기', result: '창의적 영감을 받을 수 있습니다' }
+        { time: '오전', activity: '계획을 정리하고 우선순위를 세우기', result: '흐름을 안정적으로 잡을 수 있습니다' },
+        { time: '오전', activity: '집중이 필요한 일을 먼저 처리하기', result: '밀도 있는 결과를 만들기 좋습니다' },
+        { time: '오전', activity: '아이디어와 메모를 정리하기', result: '오후 일정이 한결 가벼워질 수 있습니다' }
       ]
       
       const afternoonPatterns = [
-        '오후로 갈수록 자신감이 높아지고, 리더십이 발휘될 시기입니다',
-        '오후에는 사람들과의 소통이 활발해지며, 좋은 소식을 들을 수 있습니다',
-        '오후 시간대에는 결단력이 필요한 상황이 생길 수 있으니 준비하세요'
+        '오후에는 소통과 조율이 조금 더 수월해질 수 있습니다',
+        '오후로 갈수록 실행보다 정리와 판단이 더 중요해질 수 있습니다',
+        '오후에는 갑작스러운 확장보다 이미 진행 중인 일을 다듬는 편이 좋습니다'
       ]
       
       const timeIndex = Math.floor(seededRandom(combinedSeed * 11) * timePatterns.length)
@@ -1633,7 +1803,7 @@ serve(async (req) => {
       const selectedTimePattern = timePatterns[timeIndex]
       const selectedAfternoonPattern = afternoonPatterns[afternoonIndex]
       
-      return `오늘 ${name}님께서는 ${selectedTimePattern.time}에 ${selectedTimePattern.activity}에 좋은 시간입니다. 특히, ${selectedTimePattern.result}. ${selectedAfternoonPattern}.`
+      return `오늘은 ${selectedTimePattern.time}에 ${selectedTimePattern.activity}를 하기 좋습니다. 이 시간대를 잘 쓰면 ${selectedTimePattern.result}. ${selectedAfternoonPattern}.`
     }
 
     // 운세 내용 생성 (동적)
@@ -1650,7 +1820,7 @@ serve(async (req) => {
       advice: dynamicAdvice,
       // 기존 필드 유지 (하위 호환성)
       overall_score: score,
-      greeting: `${name}님, 오늘은 ${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일 ${dayOfWeek}요일, ${processedLocation}의 맑고 활기찬 기운이 가득한 하루입니다.`,
+      greeting: `${name}님, 오늘은 ${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일 ${dayOfWeek}요일입니다. ${processedLocation} 기준으로 하루 흐름을 차분하게 정리해드릴게요.`,
       description: generateDynamicDescription(),
       lucky_items: {
         time: generateLuckyTime(),
@@ -1690,12 +1860,12 @@ serve(async (req) => {
       ai_tips: generateAITips(),
       share_count: generateShareCount(),
 
-      // 🔥 갓생 지수 스타일 콘텐츠 (MZ 트렌드)
+      // 보조 카드 콘텐츠
       godlife: {
-        summary: godlifeSummary, // "뭐든 부딪히면 💯 성공!" 스타일
-        cheatkeys: godlifeCheatkeys, // [{key: "...", icon: "⚡"}, ...]
-        talisman: luckyTalisman, // {name: "무지성 성공 부적", description: "..."}
-        lucky_music: luckyMusic // {song: "APT.", artist: "로제", emoji: "🎵"}
+        summary: godlifeSummary,
+        cheatkeys: godlifeCheatkeys,
+        talisman: luckyTalisman,
+        lucky_music: luckyMusic,
       }
     }
     
@@ -1840,12 +2010,16 @@ serve(async (req) => {
     console.log('🔍 Fortune.categories keys:', Object.keys(fortune.categories || {}));
     console.log('🔍 Fortune.categories.total:', JSON.stringify(fortune.categories?.total));
 
-    const validationResult = validateFortuneResponse(fortune);
+    const sanitizedFortune = sanitizeDailyFortuneOutput(
+      fortune as DailyFortuneResponse & Record<string, any>,
+    );
+
+    const validationResult = validateFortuneResponse(sanitizedFortune);
     console.log('🔍 Validation result:', validationResult);
 
     if (!validationResult) {
       console.error('❌ Fortune response validation failed');
-      console.error('Fortune object keys:', Object.keys(fortune));
+      console.error('Fortune object keys:', Object.keys(sanitizedFortune));
       console.error('Missing or invalid fields detected by validator');
       // 임시로 에러를 throw하지 않고 계속 진행
       // throw new Error('Generated fortune data is incomplete');
@@ -1863,14 +2037,14 @@ serve(async (req) => {
 
     // 퍼센타일 정보를 fortune에 추가
     const fortuneWithPercentile = {
-      ...fortune,
+      ...sanitizedFortune,
       percentile: percentileData.percentile,
       totalTodayViewers: percentileData.totalTodayViewers,
       isPercentileValid: percentileData.isPercentileValid
     }
 
     // ✅ 위젯용 캐시 저장 (백그라운드, 비동기 - 응답 지연 없음)
-    saveWidgetCache(supabaseClient, userId, fortune, categories).catch(err => {
+    saveWidgetCache(supabaseClient, userId, sanitizedFortune, sanitizedFortune.categories).catch(err => {
       console.warn('[widget-cache] 저장 실패 (무시):', err.message)
     })
 
@@ -1880,11 +2054,11 @@ serve(async (req) => {
       // 템플릿화: 개인 정보를 플레이스홀더로 대체
       const userName = name || '회원님';
       const fortuneTemplate = {
-        ...fortune,
+        ...sanitizedFortune,
         // 개인화 필드는 플레이스홀더로 대체
-        greeting: fortune.greeting?.replace(userName, '{{userName}}') || '',
-        content: fortune.content?.replace(userName, '{{userName}}') || '',
-        description: fortune.description?.replace(userName, '{{userName}}') || '',
+        greeting: sanitizedFortune.greeting?.replace(userName, '{{userName}}') || '',
+        content: sanitizedFortune.content?.replace(userName, '{{userName}}') || '',
+        description: sanitizedFortune.description?.replace(userName, '{{userName}}') || '',
       };
 
       saveToCohortPool(supabaseAdmin, 'daily', dailyCohortHash, dailyCohortData, fortuneTemplate).then(saved => {

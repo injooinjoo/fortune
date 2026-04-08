@@ -8,10 +8,15 @@ import {
   getChatSurveyDefinition,
 } from '../chat-survey/registry';
 import type { ChatSurveyStep } from '../chat-survey/types';
-import type { MetricTileData, ResultKind } from '../fortune-results/types';
+import type {
+  MetricTileData,
+  ResultKind,
+  TimelineEntry,
+} from '../fortune-results/types';
 import { buildFallbackEmbeddedResultPayload } from './fixtures';
 import type {
   EmbeddedResultBuildContext,
+  EmbeddedResultDetailSection,
   EmbeddedResultPayload,
 } from './types';
 
@@ -131,15 +136,18 @@ export function buildEmbeddedResultPayloadFromNormalizedResult(
   const extractedRecommendations = extractRecommendations(fortuneType, payload);
   const extractedWarnings = extractWarnings(fortuneType, payload);
   const extractedLuckyItems = extractLuckyItems(fortuneType, payload);
+  const extractedDetailSections = extractDetailSections(fortuneType, payload);
+  const extractedTimeline = extractTimelineEntries(fortuneType, payload);
+  const summary = formatSummaryForDisplay(
+    fortuneType,
+    summarySource,
+    normalizedContext,
+  );
 
   return {
     ...fallback,
     score: normalizedResult.score ?? applyContextualScore(fallback.score, fortuneType, context),
-    summary: buildContextualSummary(
-      fortuneType,
-      trimParagraph(summarySource, 220),
-      normalizedContext,
-    ),
+    summary,
     contextTags:
       normalizedContext.tags.length > 0 ? normalizedContext.tags : undefined,
     metrics: selectMetricTiles(
@@ -173,11 +181,26 @@ export function buildEmbeddedResultPayloadFromNormalizedResult(
       extractedLuckyItems,
       fallback.luckyItems,
     ),
+    timeline: extractedTimeline,
     specialTip:
       extractSpecialTip(fortuneType, payload) ??
       normalizedResult.summary ??
       fallback.specialTip,
+    detailSections: extractedDetailSections,
   };
+}
+
+function formatSummaryForDisplay(
+  fortuneType: FortuneTypeId,
+  summarySource: string,
+  context: NormalizedSurveyContext,
+) {
+  const baseSummary =
+    fortuneType === 'daily'
+      ? sanitizeDailyReadableText(summarySource)
+      : trimParagraph(summarySource, 220);
+
+  return buildContextualSummary(fortuneType, baseSummary, context);
 }
 
 function normalizeSurveyContext(
@@ -617,6 +640,35 @@ function selectTextItems(
   return mergeUnique(preferred, fallback);
 }
 
+function extractDetailSections(
+  fortuneType: FortuneTypeId,
+  payload: UnknownRecord,
+): EmbeddedResultDetailSection[] | undefined {
+  if (fortuneType !== 'daily') {
+    return undefined;
+  }
+
+  return extractDailyDetailSections(payload);
+}
+
+function extractTimelineEntries(
+  fortuneType: FortuneTypeId,
+  payload: UnknownRecord,
+): TimelineEntry[] | undefined {
+  if (fortuneType !== 'daily') {
+    return undefined;
+  }
+
+  const predictions = asRecord(payload.daily_predictions);
+  const entries = [
+    createTimelineEntry('오전', predictions.morning),
+    createTimelineEntry('오후', predictions.afternoon),
+    createTimelineEntry('저녁', predictions.evening),
+  ].filter(Boolean) as TimelineEntry[];
+
+  return entries.length > 0 ? entries : undefined;
+}
+
 function extractDailyMetricTiles(payload: UnknownRecord): MetricTileData[] | undefined {
   const categories = asRecord(payload.categories);
   const entries = [
@@ -640,10 +692,7 @@ function toDailyCategoryMetric(
     return null;
   }
 
-  const advice = asRecord(category.advice);
-  const note = firstText(advice.description, advice.idiom, category.advice);
-
-  return note ? { ...base, note: trimValue(note, 24) } : base;
+  return base;
 }
 
 function extractDailyActionItems(value: unknown) {
@@ -653,8 +702,8 @@ function extractDailyActionItems(value: unknown) {
 
   return value.flatMap((item) => {
     const action = asRecord(item);
-    const title = firstText(action.title);
-    const why = firstText(action.why);
+    const title = firstReadableText(action.title);
+    const why = firstReadableText(action.why);
     const content = [title, why].filter(Boolean).join(': ');
 
     return content ? [content] : [];
@@ -681,7 +730,7 @@ function extractDailyLowestCategoryAdvice(payload: UnknownRecord) {
       continue;
     }
 
-    const advice = firstText(asRecord(category.advice).description, category.advice);
+    const advice = extractDailyCategoryBody(candidate.value);
     if (!advice) {
       continue;
     }
@@ -692,6 +741,108 @@ function extractDailyLowestCategoryAdvice(payload: UnknownRecord) {
   }
 
   return lowest ? `${lowest.label} 흐름: ${lowest.advice}` : null;
+}
+
+function extractDailyDetailSections(
+  payload: UnknownRecord,
+): EmbeddedResultDetailSection[] | undefined {
+  const categories = asRecord(payload.categories);
+  const sections = [
+    createDailyDetailSection('종합 흐름', categories.total),
+    createDailyDetailSection('연애 흐름', categories.love),
+    createDailyDetailSection('재물 흐름', categories.money),
+    createDailyDetailSection('일과 학업', categories.work ?? categories.study),
+    createDailyDetailSection('건강 흐름', categories.health),
+  ].filter(Boolean) as EmbeddedResultDetailSection[];
+
+  return sections.length > 0 ? sections : undefined;
+}
+
+function createDailyDetailSection(
+  title: string,
+  categoryValue: unknown,
+): EmbeddedResultDetailSection | null {
+  const category = asRecord(categoryValue);
+  const body = extractDailyCategoryBody(categoryValue);
+
+  if (!body) {
+    return null;
+  }
+
+  const score = readScore(category.score) ?? undefined;
+
+  return {
+    title,
+    body,
+    score,
+  };
+}
+
+function createTimelineEntry(
+  title: string,
+  value: unknown,
+): TimelineEntry | null {
+  const body = firstDailyReadableText(value);
+
+  if (!body) {
+    return null;
+  }
+
+  return {
+    title,
+    body,
+  };
+}
+
+function extractDailyCategoryBody(categoryValue: unknown) {
+  const category = asRecord(categoryValue);
+  const advice = category.advice;
+
+  if (typeof advice === 'string') {
+    return summarizeDailyAdviceBlock(advice);
+  }
+
+  const adviceRecord = asRecord(advice);
+  return firstDailyReadableText(
+    adviceRecord.description,
+    adviceRecord.idiom,
+    advice,
+  );
+}
+
+function summarizeDailyAdviceBlock(value: string) {
+  const cleaned = sanitizeDailyReadableText(value);
+
+  if (!cleaned) {
+    return null;
+  }
+
+  const lines = cleaned
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .filter((line) => !isDailyHeadingLine(line));
+
+  const firstParagraph = lines.find((line) => !line.startsWith('- '));
+  if (firstParagraph) {
+    return firstParagraph;
+  }
+
+  return lines[0] ?? null;
+}
+
+function isDailyHeadingLine(line: string) {
+  return (
+    line === '종합 흐름' ||
+    line === '애정 흐름' ||
+    line === '금전 흐름' ||
+    line === '직장 흐름' ||
+    line === '학업 흐름' ||
+    line === '건강 흐름' ||
+    line === '실천 팁' ||
+    line === '주의할 점' ||
+    line === '마무리 한마디'
+  );
 }
 
 function readScore(value: unknown) {
@@ -791,9 +942,9 @@ function extractHighlights(
 ) {
   switch (fortuneType) {
     case 'daily':
-      return collectTextItems(
-        payload.ai_insight,
-        asRecord(asRecord(payload.categories).total).advice,
+      return collectReadableTextItems(
+        sanitizeDailyReadableText(readStringValue(payload.ai_insight)),
+        extractDailyCategoryBody(asRecord(payload.categories).total),
         asRecord(asRecord(payload.fortuneSummary).byZodiacAnimal).content,
       );
     case 'compatibility':
@@ -831,7 +982,7 @@ function extractRecommendations(
 ) {
   switch (fortuneType) {
     case 'daily':
-      return collectTextItems(
+      return collectReadableTextItems(
         extractDailyActionItems(payload.personalActions),
         payload.ai_tips,
         payload.advice,
@@ -874,8 +1025,8 @@ function extractWarnings(
 ) {
   switch (fortuneType) {
     case 'daily':
-      return collectTextItems(
-        payload.caution,
+      return collectReadableTextItems(
+        sanitizeDailyReadableText(readStringValue(payload.caution)),
         extractDailyLowestCategoryAdvice(payload),
       );
     case 'avoid-people':
@@ -902,7 +1053,7 @@ function extractLuckyItems(
 ) {
   switch (fortuneType) {
     case 'daily':
-      return collectTextItems(
+      return collectReadableKeywordItems(
         asRecord(payload.lucky_items).time,
         asRecord(payload.lucky_items).color,
         asRecord(payload.lucky_items).number,
@@ -925,7 +1076,7 @@ function extractSpecialTip(
 ) {
   switch (fortuneType) {
     case 'daily':
-      return firstText(payload.special_tip);
+      return firstDailyReadableText(payload.special_tip);
     case 'exam':
       return firstText(payload.statusMessage, payload.positive_message);
     case 'yearly-encounter':
@@ -951,13 +1102,29 @@ function collectTextItems(...values: unknown[]) {
     .slice(0, 5);
 }
 
+function collectReadableTextItems(...values: unknown[]) {
+  return values
+    .flatMap((value) => toReadableTextItems(value))
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, 5);
+}
+
+function collectReadableKeywordItems(...values: unknown[]) {
+  return values
+    .flatMap((value) => toReadableTextItems(value, { keyword: true }))
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, 8);
+}
+
 function toTextItems(value: unknown): string[] {
   if (value == null) {
     return [];
   }
 
   if (typeof value === 'string') {
-    return value.trim() ? [trimParagraph(value, 140)] : [];
+    return value.trim() ? [trimParagraph(value, 200)] : [];
   }
 
   if (typeof value === 'number' || typeof value === 'boolean') {
@@ -981,6 +1148,44 @@ function toTextItems(value: unknown): string[] {
   return Object.values(record).flatMap((item) => toTextItems(item));
 }
 
+function toReadableTextItems(
+  value: unknown,
+  options: { keyword?: boolean } = {},
+): string[] {
+  if (value == null) {
+    return [];
+  }
+
+  if (typeof value === 'string') {
+    const cleaned = options.keyword
+      ? sanitizeKeywordText(value)
+      : sanitizeReadableText(value);
+    return cleaned ? [cleaned] : [];
+  }
+
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return [String(value)];
+  }
+
+  if (Array.isArray(value)) {
+    return value.flatMap((item) => toReadableTextItems(item, options));
+  }
+
+  const record = asRecord(value);
+
+  if (record.title || record.content || record.description || record.text) {
+    const title = firstReadableText(record.title);
+    const body = firstReadableText(
+      record.content,
+      record.description,
+      record.text,
+    );
+    return [[title, body].filter(Boolean).join(': ')].filter(Boolean) as string[];
+  }
+
+  return Object.values(record).flatMap((item) => toReadableTextItems(item, options));
+}
+
 function mapRecordToMetricTiles(record: UnknownRecord): MetricTileData[] | undefined {
   const entries = Object.entries(record)
     .map(([key, value]) => toMetricTile(formatMetricLabel(key), value))
@@ -1000,7 +1205,7 @@ function toMetricTile(label: string, value: unknown): MetricTileData | null {
   if (typeof value === 'string' && value.trim()) {
     return {
       label,
-      value: trimValue(value.trim(), 18),
+      value: trimValue(value.trim(), 24),
     };
   }
 
@@ -1024,11 +1229,99 @@ function trimParagraph(value: string, limit: number) {
 function firstText(...values: unknown[]) {
   for (const value of values) {
     if (typeof value === 'string' && value.trim()) {
-      return trimParagraph(value, 140);
+      return trimParagraph(value, 200);
     }
   }
 
   return null;
+}
+
+function firstReadableText(...values: unknown[]) {
+  for (const value of values) {
+    if (typeof value === 'string' && value.trim()) {
+      return sanitizeReadableText(value);
+    }
+  }
+
+  return null;
+}
+
+function firstDailyReadableText(...values: unknown[]) {
+  for (const value of values) {
+    if (typeof value === 'string' && value.trim()) {
+      return sanitizeDailyReadableText(value);
+    }
+  }
+
+  return null;
+}
+
+function sanitizeReadableText(value: string) {
+  const withoutMarkdown = value
+    .replace(/\*\*(.*?)\*\*/gu, '$1')
+    .replace(/__(.*?)__/gu, '$1')
+    .replace(/`([^`]+)`/gu, '$1')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/gu, '$1')
+    .replace(/^\s{0,3}#{1,6}\s+/gmu, '')
+    .replace(/^\s*>\s?/gmu, '')
+    .replace(/^\s*\d+[.)]\s+/gmu, '')
+    .replace(/^\s*[-*•]+\s+/gmu, '')
+    .replace(/\r\n/gu, '\n');
+
+  const withoutEmoji = withoutMarkdown.replace(
+    /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1FA00}-\u{1FAFF}]|[\u{2B50}]|[\u{2B55}]/gu,
+    '',
+  );
+
+  return withoutEmoji
+    .replace(/[ \t]+\n/gu, '\n')
+    .replace(/\n{3,}/gu, '\n\n')
+    .replace(/[ \t]{2,}/gu, ' ')
+    .trim();
+}
+
+function sanitizeDailyReadableText(value: string | null | undefined) {
+  if (!value) {
+    return '';
+  }
+
+  const sanitized = sanitizeReadableText(value)
+    .replace(/\b오늘의 바이브\b/gu, '종합 흐름')
+    .replace(/\b애정운 바이브\b/gu, '애정 흐름')
+    .replace(/\b금전운 바이브\b/gu, '금전 흐름')
+    .replace(/\b직장운 바이브\b/gu, '직장 흐름')
+    .replace(/\b학업운 바이브\b/gu, '학업 흐름')
+    .replace(/\b건강운 바이브\b/gu, '건강 흐름')
+    .replace(/\b갓생 치트키\b/gu, '실천 팁')
+    .replace(/\b오늘의 한마디\b/gu, '마무리 한마디')
+    .replace(/\b럭키비키\b/gu, '운이 좋은 흐름')
+    .replace(/\b갓생\b/gu, '하루')
+    .replace(/\b레전드 of 레전드\b/gu, '매우 좋은')
+    .replace(/\b레전드\b/gu, '좋은')
+    .replace(/\b무지성\b/gu, '망설임 없이')
+    .replace(/\b찐으로\b/gu, '정말')
+    .replace(/\b심쿵\b/gu, '설렘')
+    .replace(/\b순삭\b/gu, '빠르게')
+    .replace(/\b칼퇴\b/gu, '일정 마무리')
+    .replace(/\bMAX\b/gu, '높은')
+    .replace(/\bUP\b/gu, '상승')
+    .replace(/[“”"]/gu, '')
+    .replace(/\(\s*진심\s*\)/gu, '')
+    .replace(/[!]{2,}/gu, '!')
+    .replace(/[?]{2,}/gu, '?');
+
+  return sanitized
+    .replace(/[ \t]+\n/gu, '\n')
+    .replace(/\n{3,}/gu, '\n\n')
+    .trim();
+}
+
+function sanitizeKeywordText(value: string) {
+  return sanitizeReadableText(value).replace(/\n+/gu, ' ');
+}
+
+function readStringValue(value: unknown) {
+  return typeof value === 'string' ? value : null;
 }
 
 function asRecord(value: unknown): UnknownRecord {
