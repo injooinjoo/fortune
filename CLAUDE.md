@@ -34,7 +34,7 @@ Anthropic "Harness Design for Long-Running Apps" 원칙 적용: 코드 작성자
     v
 [EVALUATOR] (Agent subagent, fresh context)
     ├─ contract.md + build-log.md 기반 평가
-    ├─ flutter analyze + 규칙 검증
+    ├─ stack-aware verify + 규칙 검증
     └─ eval-report.md 작성 (PASS/FAIL)
     │
     v
@@ -171,21 +171,23 @@ grep -rn "class.*Service" lib/
 | 트리거 | 모든 수정 작업 완료 시 |
 |--------|----------------------|
 | 차단 | 검증 미통과 시 "완료" 선언 불가 |
-| 해제 | flutter analyze 통과 + 사용자 테스트 확인 |
+| 해제 | RN 변경은 `npm run rn:verify`, Flutter 변경은 `flutter analyze` 통과 + 사용자 테스트 확인 |
 
 **필수 검증 순서**:
 ```bash
-1. flutter analyze          # 에러 0 필수
-2. dart run build_runner build  # freezed 사용 시
-3. dart format .            # 포맷 확인
+1. npm run rn:verify        # RN/TypeScript 변경 시
+2. flutter analyze          # Flutter/Dart 변경 시, 에러 0 필수
+3. dart run build_runner build  # Flutter freezed 사용 시
+4. dart format .            # Flutter/Dart 포맷 확인
 ```
 
 **필수 출력 (Verify 보고서)**:
 ```
 ✅ 검증 보고서
-├─ flutter analyze: ✅ 0 errors
+├─ rn:verify: ✅ 통과 (또는 N/A)
+├─ flutter analyze: ✅ 0 errors (또는 N/A)
 ├─ build_runner: ✅ 성공 (또는 N/A)
-├─ dart format: ✅ 통과
+├─ dart format: ✅ 통과 (또는 N/A)
 ├─ 수정된 파일:
 │   ├─ [파일1.dart]
 │   └─ [파일2.dart]
@@ -216,7 +218,7 @@ Generator (GENERATE 단계)
 
 Evaluator (EVALUATE 단계)
     ├─ 보고서 존재 + 실질성 검증
-    ├─ flutter analyze 실행
+    ├─ 변경 스택에 맞는 검증 실행 (`npm run rn:verify` 또는 Flutter 검증)
     ├─ 프로젝트 규칙 검증
     └─ FAIL이면 Generator 재실행
 

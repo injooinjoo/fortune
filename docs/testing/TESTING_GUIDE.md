@@ -2,7 +2,15 @@
 
 ## 개요
 
-온도 앱은 3단계 테스트 전략을 사용합니다:
+온도 앱은 RN 우선 검증 + 레거시 Flutter 검증 전략을 함께 사용합니다:
+
+| 종류 | 용도 | 실행 방법 |
+|------|------|-----------|
+| **RN Verify** | RN 앱/공용 TypeScript workspace 기본 검증 | `npm run rn:verify` |
+| **RN Verify + Smoke** | RN 기본 검증 + 웹 smoke 게이트 | `./scripts/verify_rn.sh --smoke` |
+| **Flutter Legacy** | 기존 Flutter surface 유지보수 검증 | `flutter analyze`, `flutter test`, `./scripts/run_all_tests.sh` |
+
+기존 Flutter 테스트 분류는 아래와 같습니다:
 
 | 종류 | 용도 | 위치 | 실행 방법 |
 |------|------|------|-----------|
@@ -14,11 +22,13 @@
 
 ### 전체 테스트 실행
 ```bash
-./scripts/run_all_tests.sh
+npm run rn:verify
 ```
 
 ### 개별 실행
 ```bash
+./scripts/verify_rn.sh --smoke        # RN 기본 검증 + Playwright smoke
+./scripts/verify_rn.sh --e2e          # RN 기본 검증 + Playwright E2E
 ./scripts/run_all_tests.sh --unit       # Unit만
 ./scripts/run_all_tests.sh --widget     # Widget만
 ./scripts/run_all_tests.sh --integration # E2E (디바이스 필요)
@@ -31,6 +41,9 @@
 - `Flutter CI/CD`
   - 대상: `main/master/develop` 대상 PR, 해당 브랜치 push, 수동 실행
   - 범위: `dart format --set-exit-if-changed .`, `flutter analyze --no-fatal-infos --no-fatal-warnings`, `flutter test --coverage`
+- 로컬 기본 검증
+  - RN/TypeScript 변경: `npm run rn:verify`
+  - Flutter/Dart 변경: `flutter analyze`, `dart format --set-exit-if-changed .`, `flutter test`
 - `E2E Tests`
   - 대상: `main/master/develop` 대상 PR, 해당 브랜치 push, 수동 실행
   - 기본 범위: Playwright smoke 게이트(`npm run test:smoke:ci`)

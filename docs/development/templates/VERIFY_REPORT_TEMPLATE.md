@@ -8,13 +8,16 @@
 - Affected area:
 
 ## 2. Static Validation
+- `npm run rn:verify` (if RN/TypeScript changed)
+  - Result:
+  - Notes:
 - `flutter analyze`
   - Result:
   - Notes:
 - `dart format --set-exit-if-changed .`
   - Result:
   - Notes:
-- `dart run build_runner build --delete-conflicting-outputs` (if applicable)
+- `dart run build_runner build --delete-conflicting-outputs` (if Flutter freezed/model generation changed)
   - Result:
   - Notes:
 
@@ -44,4 +47,3 @@
 
 ## 7. Completion Gate
 - User confirmation required before final completion declaration.
-

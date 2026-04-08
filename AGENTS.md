@@ -106,14 +106,16 @@
 
 ### Block 3: Verify (완료 선언 전 필수)
 - 차단 조건:
-  - `flutter analyze` 미실행 또는 에러 존재
-  - freezed 영향 작업에서 build_runner 미검증
+  - RN/TypeScript 변경 작업에서 `npm run rn:verify` 미실행 또는 실패
+  - Flutter/Dart 변경 작업에서 `flutter analyze` 미실행 또는 에러 존재
+  - Flutter freezed 영향 작업에서 build_runner 미검증
   - 사용자 테스트 확인 전 완료 선언
 - 기본 검증 순서:
-  1. `flutter analyze`
-  2. `dart run build_runner build --delete-conflicting-outputs` (필요시)
-  3. `dart format --set-exit-if-changed .`
-  4. 범위별 테스트/QA
+  1. RN/TypeScript 변경: `npm run rn:verify`
+  2. Flutter/Dart 변경: `flutter analyze`
+  3. Flutter freezed 영향 시: `dart run build_runner build --delete-conflicting-outputs`
+  4. Flutter/Dart 변경: `dart format --set-exit-if-changed .`
+  5. 범위별 테스트/QA
 - 템플릿:
   - `docs/development/templates/VERIFY_REPORT_TEMPLATE.md`
 
@@ -280,9 +282,8 @@
   - premium 관련 코드 변경
   - 라우팅 변경
 - 기본 테스트 스택:
-  - `flutter analyze`
-  - `dart format --set-exit-if-changed .`
-  - `flutter test` 또는 `./scripts/run_all_tests.sh ...`
+  - RN/TypeScript 기본: `npm run rn:verify`
+  - Flutter/Dart 기본: `flutter analyze`, `dart format --set-exit-if-changed .`, `flutter test` 또는 `./scripts/run_all_tests.sh ...`
   - 웹 E2E: `npm run test:e2e`
 - 자동 QA UX:
   - UI 변경 후 `localhost:3000`이 준비되어 있으면 자동 QA 실행 여부를 먼저 확인한다.
@@ -345,7 +346,7 @@
   - `git push` 실행
   - GitHub Actions의 해당 브랜치/커밋 Workflow 실행 상태 확인
   - 실패 시 원인 파악 후 수정 후 재실행
-- 위 항목은 기존 QA/검증( flutter analyze, test, QA ) 완료 후에도 필수로 수행한다.
+- 위 항목은 기존 QA/검증( `npm run rn:verify` 또는 `flutter analyze`/test, QA ) 완료 후에도 필수로 수행한다.
 
 ## 24. 참조 문서 맵
 - 핵심: `.claude/docs/01-core-rules.md`
@@ -368,9 +369,10 @@
   - 자산: `assets/`
 - 기본 명령:
   - setup: `flutter pub get`
-  - analyze: `flutter analyze`
-  - format: `dart format .`
-  - test: `flutter test` 또는 `./scripts/run_all_tests.sh ...`
+  - rn-verify: `npm run rn:verify`
+  - analyze (Flutter): `flutter analyze`
+  - format (Flutter): `dart format .`
+  - test (Flutter): `flutter test` 또는 `./scripts/run_all_tests.sh ...`
   - e2e: `npm run test:install && npm run test:e2e`
 - 코딩 스타일:
   - Effective Dart + `flutter_lints`

@@ -32,7 +32,8 @@
     "test:install": "playwright install",
     "test:codegen": "playwright codegen",
     "rn:typecheck": "npm run typecheck --workspace @fortune/product-contracts --workspace @fortune/design-tokens --workspace @fortune/mobile-rn",
-    "rn:test": "npm run test --workspace @fortune/product-contracts",
+    "rn:test": "npm run test --if-present --workspace @fortune/mobile-rn --workspace @fortune/product-contracts --workspace @fortune/design-tokens",
+    "rn:verify": "bash ./scripts/verify_rn.sh",
     "lighthouse": "lhci autorun",
     "serve:build": "npx serve build/web -l 3000 --single",
     "paper:guard": "node scripts/design/paper_sync_guard.js"
@@ -48,6 +49,7 @@
   "author": "Fortune Team",
   "license": "MIT",
   "dependencies": {
-    "@anthropic-ai/claude-agent-sdk": "^0.1.1"
+    "@anthropic-ai/claude-agent-sdk": "^0.1.1",
+    "expo-image-picker": "~17.0.10"
   }
 }
