@@ -25,27 +25,22 @@ import { useSocialAuth } from '../providers/social-auth-provider';
 const authOptions: readonly {
   id: SocialAuthProviderId;
   label: string;
-  note: string;
 }[] = [
   {
     id: 'apple',
     label: '애플 로그인',
-    note: 'iPhone에서 가장 자연스럽게 인증하고 기록을 이어갑니다.',
   },
   {
     id: 'google',
     label: '구글 로그인',
-    note: '구글 계정으로 개인화와 구매 내역을 바로 연결합니다.',
   },
   {
     id: 'kakao',
     label: '카카오 로그인',
-    note: '카카오 계정으로 빠르게 시작하고 추천 흐름을 이어갑니다.',
   },
   {
     id: 'naver',
     label: '네이버 로그인',
-    note: '네이버 계정으로 프로필과 저장 기록을 연결합니다.',
   },
 ] as const;
 
@@ -122,23 +117,15 @@ export function SignupScreen() {
       }
     >
       <AppText variant="displaySmall">계정을 연결하고 시작</AppText>
-      <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
-        원하는 계정으로 시작하면 분석 기록, 구매 내역, 추천 설정이 계속 이어집니다.
-      </AppText>
 
       <Card>
-        <AppText variant="heading4">연결하고 바로 시작</AppText>
-        <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
-          한 번 로그인해 두면 결과 저장, 개인화, 결제 상태가 계정에 연결됩니다.
-          원하는 방법으로 바로 시작하세요.
-        </AppText>
         {authMessage ? (
           <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
             {authMessage}
           </AppText>
         ) : null}
         {authOptions.map((option) => (
-          <View key={option.id} style={{ gap: 8 }}>
+          <View key={option.id}>
             {option.id === 'apple' ? (
               <AppleAuthButton
                 disabled={activeProviderId === option.id}
@@ -157,28 +144,13 @@ export function SignupScreen() {
                 provider={option.id}
               />
             )}
-            <AppText
-              variant="bodySmall"
-              color={fortuneTheme.colors.textTertiary}
-            >
-              {option.note}
-            </AppText>
           </View>
         ))}
-        <AppText
-          variant="bodySmall"
-          color={fortuneTheme.colors.textTertiary}
-        >
-          하나의 계정으로 기록, 추천, 구매 상태를 계속 이어갈 수 있습니다.
-        </AppText>
       </Card>
 
       {!requireAuth ? (
         <Card>
           <AppText variant="heading4">로그인 없이 먼저 보기</AppText>
-          <AppText variant="bodyMedium" color={fortuneTheme.colors.textSecondary}>
-            서비스 흐름을 먼저 확인한 뒤, 필요할 때 계정을 연결해도 됩니다.
-          </AppText>
           <PrimaryButton
             onPress={() => {
               markGuestBrowse()
