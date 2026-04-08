@@ -357,12 +357,61 @@ function sanitizeFortuneValue(value: unknown): unknown {
   return value;
 }
 
+function withFallbackTimeSpecificFortunes(
+  fortune: DailyFortuneResponse & Record<string, any>,
+) {
+  if (
+    Array.isArray(fortune.timeSpecificFortunes) &&
+    fortune.timeSpecificFortunes.length > 0
+  ) {
+    return fortune;
+  }
+
+  const categories = fortune.categories ?? ({} as Record<string, any>);
+  const totalScore = Number(categories.total?.score ?? fortune.score ?? 75);
+  const relationshipScore = Number(categories.love?.score ?? totalScore);
+  const healthScore = Number(categories.health?.score ?? totalScore);
+
+  const morningDescription =
+    totalScore >= 80
+      ? '오전에는 중요한 일부터 차분하게 시작하면 흐름을 잡기 좋습니다.'
+      : '오전에는 할 일을 가볍게 정리하면서 속도를 맞추는 편이 좋습니다.';
+  const afternoonDescription =
+    relationshipScore >= 75
+      ? '오후에는 소통과 협업이 비교적 부드럽게 이어질 수 있습니다.'
+      : '오후에는 소통을 짧고 분명하게 정리하는 편이 좋습니다.';
+  const eveningDescription =
+    healthScore >= 75
+      ? '저녁에는 정리와 휴식으로 하루를 마무리하기 좋습니다.'
+      : '저녁에는 일정을 줄이고 컨디션을 회복하는 쪽이 좋습니다.';
+
+  return {
+    ...fortune,
+    timeSpecificFortunes: [
+      {
+        time: '오전',
+        description: morningDescription,
+      },
+      {
+        time: '오후',
+        description: afternoonDescription,
+      },
+      {
+        time: '저녁',
+        description: eveningDescription,
+      },
+    ],
+  };
+}
+
 function sanitizeDailyFortuneOutput(
   fortune: DailyFortuneResponse & Record<string, any>,
 ) {
-  const sanitizedBase = sanitizeFortuneValue(
-    fortune,
-  ) as DailyFortuneResponse & Record<string, any>;
+  const sanitizedBase = withFallbackTimeSpecificFortunes(
+    sanitizeFortuneValue(
+      fortune,
+    ) as DailyFortuneResponse & Record<string, any>,
+  );
   const sanitize = (value: unknown) =>
     typeof value === 'string' ? sanitizeFortuneText(value) : value;
 
