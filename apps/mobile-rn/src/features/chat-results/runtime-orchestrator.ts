@@ -200,7 +200,7 @@ export async function resolveFortuneRuntimeOutcome(
       fortuneType: params.fortuneType,
       conditionsHash,
       conditionsData,
-      resultData: asRecord(edgeResult.normalizedResult.payload),
+      resultData: edgeResult.payload as unknown as UnknownRecord,
       source: deriveStoredSource(edgeResult.rawResult),
       apiCall: deriveApiCall(edgeResult.rawResult),
     });
@@ -334,7 +334,7 @@ function buildConditionsData(body: UnknownRecord) {
   delete normalized.userId;
   delete normalized.user_id;
 
-  return normalized;
+  return sanitizeConditionValue(normalized) as UnknownRecord;
 }
 
 function getReuseWindowHours(fortuneType: FortuneTypeId) {
@@ -391,6 +391,33 @@ function sortValue(value: unknown): unknown {
     }, {});
 }
 
+function sanitizeConditionValue(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map((item) => sanitizeConditionValue(item));
+  }
+
+  if (typeof value === 'string') {
+    return sanitizeLargeString(value);
+  }
+
+  if (!isPlainObject(value)) {
+    return value;
+  }
+
+  return Object.keys(value).reduce<Record<string, unknown>>((accumulator, key) => {
+    accumulator[key] = sanitizeConditionValue((value as UnknownRecord)[key]);
+    return accumulator;
+  }, {});
+}
+
+function sanitizeLargeString(value: string) {
+  if (value.length < 256) {
+    return value;
+  }
+
+  return `[sha256:${simpleHash(value)}|len:${value.length}]`;
+}
+
 function isPlainObject(value: unknown): value is UnknownRecord {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -404,4 +431,13 @@ function formatLocalDate(date: Date) {
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
+}
+
+function simpleHash(value: string) {
+  let hash = 0;
+  for (let index = 0; index < value.length; index += 1) {
+    hash = (hash * 31 + value.charCodeAt(index)) >>> 0;
+  }
+
+  return hash.toString(16).padStart(8, '0');
 }
