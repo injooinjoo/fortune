@@ -1,4 +1,10 @@
-import * as Calendar from 'expo-calendar';
+import { Platform } from 'react-native';
+
+import { requireOptionalNativeModule } from 'expo-modules-core';
+
+type CalendarModule = typeof import('expo-calendar');
+
+let calendarNativeModuleAvailable: boolean | null = null;
 
 export interface CalendarEventSummary {
   id: string;
@@ -63,13 +69,43 @@ function formatEventTime(value: string | Date | null, isAllDay: boolean) {
 }
 
 class CalendarService {
+  private calendarModulePromise: Promise<CalendarModule | null> | null = null;
+
+  private async loadCalendarModule() {
+    if (Platform.OS === 'web') {
+      return null;
+    }
+
+    if (calendarNativeModuleAvailable === null) {
+      calendarNativeModuleAvailable = Boolean(
+        requireOptionalNativeModule('ExpoCalendar'),
+      );
+    }
+
+    if (!calendarNativeModuleAvailable) {
+      return null;
+    }
+
+    if (this.calendarModulePromise) {
+      return this.calendarModulePromise;
+    }
+
+    this.calendarModulePromise = import('expo-calendar').catch(() => null);
+    return this.calendarModulePromise;
+  }
+
   async requestPermissions() {
-    const existing = await Calendar.getCalendarPermissionsAsync();
+    const calendar = await this.loadCalendarModule();
+    if (!calendar) {
+      return 'denied';
+    }
+
+    const existing = await calendar.getCalendarPermissionsAsync();
     if (existing.granted) {
       return existing.status;
     }
 
-    const requested = await Calendar.requestCalendarPermissionsAsync();
+    const requested = await calendar.requestCalendarPermissionsAsync();
     return requested.status;
   }
 
@@ -79,14 +115,19 @@ class CalendarService {
       return [] as CalendarEventSummary[];
     }
 
+    const calendar = await this.loadCalendarModule();
+    if (!calendar) {
+      return [] as CalendarEventSummary[];
+    }
+
     const targetDate = normalizeDate(date);
-    const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
+    const calendars = await calendar.getCalendarsAsync(calendar.EntityTypes.EVENT);
     const calendarIds = calendars.map((item) => item.id);
     if (calendarIds.length === 0) {
       return [] as CalendarEventSummary[];
     }
 
-    const events = await Calendar.getEventsAsync(
+    const events = await calendar.getEventsAsync(
       calendarIds,
       startOfDay(targetDate),
       endOfDay(targetDate),

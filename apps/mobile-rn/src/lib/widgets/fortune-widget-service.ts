@@ -1,13 +1,21 @@
 import { Platform } from 'react-native';
 
-import { type WidgetTimelineEntry } from 'expo-widgets';
+import { fortuneTheme } from '../theme';
 
-import {
-  fortuneHomeWidgetTheme,
-  getFortuneHomeWidget,
-  type FortuneHomeWidgetProps,
-  type FortuneWidgetTone,
-} from '../../widgets/fortune-home-widget';
+export type FortuneWidgetTone = 'positive' | 'balanced' | 'careful';
+
+export type FortuneHomeWidgetProps = {
+  headline: string;
+  summary: string;
+  scoreLabel: string;
+  badgeLabel: string;
+  updatedAtLabel: string;
+  tone: FortuneWidgetTone;
+  accentColor: string;
+  surfaceColor: string;
+  textColor: string;
+  secondaryTextColor: string;
+};
 
 export type FortuneWidgetSnapshotInput = {
   headline?: string | null;
@@ -24,6 +32,30 @@ export type FortuneWidgetSnapshotInput = {
 };
 
 export type FortuneWidgetSnapshot = FortuneHomeWidgetProps;
+
+type WidgetTimelineEntryLike<Props> = {
+  date: Date;
+  props: Props;
+};
+
+type FortuneHomeWidgetModule = {
+  getFortuneHomeWidget: () => {
+    updateSnapshot: (snapshot: FortuneWidgetSnapshot) => void;
+    updateTimeline: (
+      entries: Array<{ date: Date; props: FortuneWidgetSnapshot }>,
+    ) => void;
+    getTimeline: () => Promise<Array<WidgetTimelineEntryLike<FortuneWidgetSnapshot>>>;
+    reload: () => void;
+  } | null;
+};
+
+function loadFortuneHomeWidgetModule(): FortuneHomeWidgetModule | null {
+  try {
+    return require('../../widgets/fortune-home-widget') as FortuneHomeWidgetModule;
+  } catch {
+    return null;
+  }
+}
 
 function isSupportedWidgetPlatform() {
   return Platform.OS === 'ios';
@@ -141,7 +173,8 @@ export function getDefaultFortuneWidgetSnapshot(): FortuneWidgetSnapshot {
 }
 
 export function updateFortuneWidgetSnapshot(input: FortuneWidgetSnapshotInput = {}) {
-  const widget = getFortuneHomeWidget();
+  const widgetModule = loadFortuneHomeWidgetModule();
+  const widget = widgetModule?.getFortuneHomeWidget();
   if (!widget || !isSupportedWidgetPlatform()) {
     return false;
   }
@@ -151,9 +184,10 @@ export function updateFortuneWidgetSnapshot(input: FortuneWidgetSnapshotInput = 
 }
 
 export function scheduleFortuneWidgetTimeline(
-  entries: Array<WidgetTimelineEntry<FortuneWidgetSnapshotInput>>,
+  entries: Array<WidgetTimelineEntryLike<FortuneWidgetSnapshotInput>>,
 ) {
-  const widget = getFortuneHomeWidget();
+  const widgetModule = loadFortuneHomeWidgetModule();
+  const widget = widgetModule?.getFortuneHomeWidget();
   if (!widget || !isSupportedWidgetPlatform()) {
     return false;
   }
@@ -169,7 +203,8 @@ export function scheduleFortuneWidgetTimeline(
 }
 
 export async function readFortuneWidgetTimeline() {
-  const widget = getFortuneHomeWidget();
+  const widgetModule = loadFortuneHomeWidgetModule();
+  const widget = widgetModule?.getFortuneHomeWidget();
   if (!widget || !isSupportedWidgetPlatform()) {
     return [];
   }
@@ -178,7 +213,8 @@ export async function readFortuneWidgetTimeline() {
 }
 
 export function reloadFortuneWidget() {
-  const widget = getFortuneHomeWidget();
+  const widgetModule = loadFortuneHomeWidgetModule();
+  const widget = widgetModule?.getFortuneHomeWidget();
   if (!widget || !isSupportedWidgetPlatform()) {
     return false;
   }
@@ -186,3 +222,10 @@ export function reloadFortuneWidget() {
   widget.reload();
   return true;
 }
+
+export const fortuneHomeWidgetTheme = {
+  surfaceColor: fortuneTheme.colors.surface,
+  accentColor: fortuneTheme.colors.ctaBackground,
+  textColor: fortuneTheme.colors.textPrimary,
+  secondaryTextColor: fortuneTheme.colors.textSecondary,
+};

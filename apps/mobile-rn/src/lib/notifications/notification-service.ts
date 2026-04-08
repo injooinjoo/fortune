@@ -1,7 +1,7 @@
 import Constants from 'expo-constants';
-import * as Notifications from 'expo-notifications';
 import { requireOptionalNativeModule } from 'expo-modules-core';
 import { Platform } from 'react-native';
+import type { EventSubscription, PermissionStatus } from 'expo-notifications';
 
 import type { FortuneTypeId } from '@fortune/product-contracts';
 import type { NotificationPreferences } from '../mobile-app-state';
@@ -18,6 +18,21 @@ type OptionalExpoDeviceModule = {
   osName?: string | null;
   osVersion?: string | null;
 };
+
+type NotificationsModule = typeof import('expo-notifications');
+
+const requiredNotificationsNativeModules = [
+  'ExpoBadgeModule',
+  'ExpoNotificationCategoriesModule',
+  'ExpoNotificationChannelGroupManager',
+  'ExpoNotificationChannelManager',
+  'ExpoNotificationPermissionsModule',
+  'ExpoNotificationPresenter',
+  'ExpoNotificationScheduler',
+  'ExpoNotificationsEmitter',
+  'ExpoNotificationsHandlerModule',
+  'ExpoPushTokenManager',
+] as const;
 
 export type NotificationPermissionStatus =
   | 'undetermined'
@@ -38,14 +53,14 @@ export interface NotificationRegistrationSnapshot {
 }
 
 function normalizePermissionStatus(
-  status: Notifications.PermissionStatus,
+  status: PermissionStatus | string | undefined,
 ): NotificationPermissionStatus {
-  switch (status) {
-    case Notifications.PermissionStatus.GRANTED:
+  switch (String(status).toLowerCase()) {
+    case 'granted':
       return 'granted';
-    case Notifications.PermissionStatus.DENIED:
+    case 'denied':
       return 'denied';
-    case Notifications.PermissionStatus.UNDETERMINED:
+    case 'undetermined':
     default:
       return 'undetermined';
   }
@@ -60,6 +75,9 @@ function readProjectId() {
 }
 
 let cachedExpoDeviceModule: OptionalExpoDeviceModule | null | undefined;
+let notificationsModulePromise: Promise<NotificationsModule | null> | null = null;
+let notificationsNativeModulesAvailable: boolean | null = null;
+let hasConfiguredNotificationHandler = false;
 
 function getExpoDeviceModule() {
   if (cachedExpoDeviceModule !== undefined) {
@@ -69,6 +87,51 @@ function getExpoDeviceModule() {
   cachedExpoDeviceModule =
     requireOptionalNativeModule<OptionalExpoDeviceModule>('ExpoDevice');
   return cachedExpoDeviceModule;
+}
+
+function hasNotificationsNativeModules() {
+  if (Platform.OS === 'web') {
+    return false;
+  }
+
+  if (notificationsNativeModulesAvailable !== null) {
+    return notificationsNativeModulesAvailable;
+  }
+
+  notificationsNativeModulesAvailable = requiredNotificationsNativeModules.every(
+    (moduleName) => Boolean(requireOptionalNativeModule(moduleName)),
+  );
+  return notificationsNativeModulesAvailable;
+}
+
+async function loadNotificationsModule() {
+  if (!hasNotificationsNativeModules()) {
+    return null;
+  }
+
+  if (notificationsModulePromise) {
+    return notificationsModulePromise;
+  }
+
+  notificationsModulePromise = import('expo-notifications')
+    .then((module) => {
+      if (!hasConfiguredNotificationHandler) {
+        module.setNotificationHandler({
+          handleNotification: async () => ({
+            shouldPlaySound: true,
+            shouldSetBadge: false,
+            shouldShowBanner: true,
+            shouldShowList: true,
+          }),
+        });
+        hasConfiguredNotificationHandler = true;
+      }
+
+      return module;
+    })
+    .catch(() => null);
+
+  return notificationsModulePromise;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -97,15 +160,6 @@ function buildRoutePayloadData(routeData: NotificationRouteData) {
   };
 }
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
-
 class NotificationService {
   private initialized = false;
 
@@ -116,20 +170,25 @@ class NotificationService {
     lastSyncedAt: null,
   };
 
-  private responseSubscription: Notifications.EventSubscription | null = null;
+  private responseSubscription: EventSubscription | null = null;
 
-  private receivedSubscription: Notifications.EventSubscription | null = null;
+  private receivedSubscription: EventSubscription | null = null;
 
   async initialize(onRoute?: (data: NotificationRouteData) => void) {
+    const notifications = await loadNotificationsModule();
+    if (!notifications) {
+      return this.registration;
+    }
+
     await this.ensureAndroidChannel();
     await this.refreshRegistrationSnapshot();
 
-    const initialResponse = await Notifications.getLastNotificationResponseAsync().catch(
+    const initialResponse = await notifications.getLastNotificationResponseAsync().catch(
       () => null,
     );
     if (initialResponse) {
       onRoute?.(parseRouteData(initialResponse.notification.request.content.data));
-      await Notifications.clearLastNotificationResponseAsync?.().catch(
+      await notifications.clearLastNotificationResponseAsync?.().catch(
         () => undefined,
       );
     }
@@ -139,9 +198,9 @@ class NotificationService {
     }
 
     this.receivedSubscription =
-      Notifications.addNotificationReceivedListener(() => undefined);
+      notifications.addNotificationReceivedListener(() => undefined);
     this.responseSubscription =
-      Notifications.addNotificationResponseReceivedListener((response) => {
+      notifications.addNotificationResponseReceivedListener((response) => {
         onRoute?.(parseRouteData(response.notification.request.content.data));
       });
 
@@ -162,11 +221,16 @@ class NotificationService {
       return;
     }
 
-    await Notifications.setNotificationChannelAsync(androidChannelId, {
+    const notifications = await loadNotificationsModule();
+    if (!notifications) {
+      return;
+    }
+
+    await notifications.setNotificationChannelAsync(androidChannelId, {
       name: 'Fortune Alerts',
-      importance: Notifications.AndroidImportance.MAX,
+      importance: notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
-      lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+      lockscreenVisibility: notifications.AndroidNotificationVisibility.PUBLIC,
     });
   }
 
@@ -176,16 +240,24 @@ class NotificationService {
   }
 
   async requestPermissions() {
-    const current = await Notifications.getPermissionsAsync();
-    if (current.granted || current.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL) {
+    const notifications = await loadNotificationsModule();
+    if (!notifications) {
+      return this.registration.permissionStatus;
+    }
+
+    const current = await notifications.getPermissionsAsync();
+    if (
+      current.granted ||
+      current.ios?.status === notifications.IosAuthorizationStatus.PROVISIONAL
+    ) {
       this.registration.permissionStatus =
-        current.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
+        current.ios?.status === notifications.IosAuthorizationStatus.PROVISIONAL
           ? 'provisional'
           : normalizePermissionStatus(current.status);
       return this.registration.permissionStatus;
     }
 
-    const requested = await Notifications.requestPermissionsAsync({
+    const requested = await notifications.requestPermissionsAsync({
       ios: {
         allowAlert: true,
         allowBadge: false,
@@ -193,7 +265,7 @@ class NotificationService {
       },
     });
     this.registration.permissionStatus =
-      requested.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
+      requested.ios?.status === notifications.IosAuthorizationStatus.PROVISIONAL
         ? 'provisional'
         : normalizePermissionStatus(requested.status);
     return this.registration.permissionStatus;
@@ -216,20 +288,23 @@ class NotificationService {
       deviceModule?.isDevice ?? Platform.OS !== 'web';
 
     if (canAttemptPushRegistration) {
-      const nativeToken = await Notifications.getDevicePushTokenAsync().catch(
-        () => null,
-      );
-      if (nativeToken?.data) {
-        devicePushToken = nativeToken.data;
-      }
+      const notifications = await loadNotificationsModule();
+      if (notifications) {
+        const nativeToken = await notifications.getDevicePushTokenAsync().catch(
+          () => null,
+        );
+        if (nativeToken?.data) {
+          devicePushToken = nativeToken.data;
+        }
 
-      const projectId = readProjectId();
-      if (projectId) {
-        const expoToken = await Notifications.getExpoPushTokenAsync({
-          projectId,
-        }).catch(() => null);
-        if (expoToken?.data) {
-          expoPushToken = expoToken.data;
+        const projectId = readProjectId();
+        if (projectId) {
+          const expoToken = await notifications.getExpoPushTokenAsync({
+            projectId,
+          }).catch(() => null);
+          if (expoToken?.data) {
+            expoPushToken = expoToken.data;
+          }
         }
       }
     }
@@ -291,7 +366,12 @@ class NotificationService {
       pathname: '/chat',
     },
   ) {
-    await Notifications.cancelScheduledNotificationAsync(dailyReminderIdentifier).catch(
+    const notifications = await loadNotificationsModule();
+    if (!notifications) {
+      return null;
+    }
+
+    await notifications.cancelScheduledNotificationAsync(dailyReminderIdentifier).catch(
       () => undefined,
     );
 
@@ -312,7 +392,7 @@ class NotificationService {
       return null;
     }
 
-    return Notifications.scheduleNotificationAsync({
+    return notifications.scheduleNotificationAsync({
       identifier: dailyReminderIdentifier,
       content: {
         title: '오늘의 운세가 도착했어요',
@@ -321,7 +401,7 @@ class NotificationService {
         sound: true,
       },
       trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.DAILY,
+        type: notifications.SchedulableTriggerInputTypes.DAILY,
         hour,
         minute,
       },
@@ -332,7 +412,12 @@ class NotificationService {
     fortuneType: 'daily',
     pathname: '/chat',
   }) {
-    return Notifications.scheduleNotificationAsync({
+    const notifications = await loadNotificationsModule();
+    if (!notifications) {
+      return null;
+    }
+
+    return notifications.scheduleNotificationAsync({
       content: {
         title: '테스트 알림',
         body: '알림 설정과 딥링크 라우팅이 정상인지 확인합니다.',
@@ -340,16 +425,22 @@ class NotificationService {
         sound: true,
       },
       trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        type: notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
         seconds: 2,
       },
     });
   }
 
   private async refreshRegistrationSnapshot() {
-    const permissions = await Notifications.getPermissionsAsync();
+    const notifications = await loadNotificationsModule();
+    if (!notifications) {
+      this.registration.permissionStatus = 'undetermined';
+      return this.registration;
+    }
+
+    const permissions = await notifications.getPermissionsAsync();
     this.registration.permissionStatus =
-      permissions.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
+      permissions.ios?.status === notifications.IosAuthorizationStatus.PROVISIONAL
         ? 'provisional'
         : normalizePermissionStatus(permissions.status);
     return this.registration;
