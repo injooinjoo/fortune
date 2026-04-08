@@ -26,6 +26,11 @@ import { resolveChatCharacterAvatarSource } from '../../lib/chat-character-avata
 import { fortuneTheme } from '../../lib/theme';
 import { EmbeddedResultCard } from '../chat-results/embedded-result-card';
 import type { ChatSurveyStep } from '../chat-survey/types';
+import {
+  TarotCardDrawSurface,
+  TarotDeckPicker,
+  type TarotSelectionPayload,
+} from '../tarot';
 
 const assistantMessageMaxWidth = '84%';
 const userMessageMaxWidth = '92%';
@@ -1054,6 +1059,8 @@ function buildDateAnswer(offset: number) {
 
 export function ActiveSurveyFooter({
   step,
+  fortuneType,
+  surveyAnswers,
   draft,
   selections,
   onDraftChange,
@@ -1061,10 +1068,13 @@ export function ActiveSurveyFooter({
   onPickSingle,
   onToggleSelection,
   onSubmitSelection,
+  onSubmitTarotSelection,
   onSubmitText,
   onSkip,
 }: {
   step: ChatSurveyStep;
+  fortuneType?: FortuneTypeId | null;
+  surveyAnswers?: Record<string, unknown>;
   draft: string;
   selections: readonly string[];
   onDraftChange: (value: string) => void;
@@ -1072,11 +1082,38 @@ export function ActiveSurveyFooter({
   onPickSingle: (value: string) => void;
   onToggleSelection: (value: string) => void;
   onSubmitSelection: () => void;
+  onSubmitTarotSelection?: (payload: TarotSelectionPayload) => void;
   onSubmitText: () => void;
   onSkip: () => void;
 }) {
   const canSubmitText = draft.trim().length > 0;
   const canSubmitSelection = selections.length > 0;
+  const tarotDeckId =
+    typeof surveyAnswers?.deckId === 'string' && surveyAnswers.deckId.trim().length > 0
+      ? surveyAnswers.deckId
+      : 'rider_waite';
+  const tarotPurpose =
+    surveyAnswers?.purpose === 'guidance' ||
+    surveyAnswers?.purpose === 'love' ||
+    surveyAnswers?.purpose === 'career' ||
+    surveyAnswers?.purpose === 'decision'
+      ? surveyAnswers.purpose
+      : undefined;
+  const tarotQuestionText =
+    typeof surveyAnswers?.questionText === 'string'
+      ? surveyAnswers.questionText
+      : null;
+
+  if (fortuneType === 'tarot' && step.id === 'deckId') {
+    return (
+      <TarotDeckPicker
+        title="타로 덱 선택"
+        subtitle="질문의 결에 맞는 덱을 먼저 골라주세요."
+        value={tarotDeckId}
+        onChange={onPickSingle}
+      />
+    );
+  }
 
   if (step.inputKind === 'chips') {
     return (
@@ -1143,6 +1180,19 @@ export function ActiveSurveyFooter({
           <PrimaryButton onPress={onPickPhoto}>사진 고르기</PrimaryButton>
         </Card>
       </View>
+    );
+  }
+
+  if (fortuneType === 'tarot' && step.inputKind === 'card-draw') {
+    return (
+      <TarotCardDrawSurface
+        deckId={tarotDeckId}
+        purpose={tarotPurpose}
+        questionText={tarotQuestionText}
+        title="카드 뽑기"
+        subtitle={step.placeholder ?? '마음이 가는 카드를 한 장씩 확정하세요.'}
+        onComplete={(payload) => onSubmitTarotSelection?.(payload)}
+      />
     );
   }
 

@@ -18,9 +18,15 @@ export interface MobileProfileState {
 
 export interface NotificationPreferences {
   push: boolean;
-  chatReminders: boolean;
-  weeklyDigest: boolean;
+  dailyFortune: boolean;
+  tokenAlert: boolean;
+  characterDm: boolean;
   marketing: boolean;
+  dailyFortuneTime: string;
+  permissionStatus: 'undetermined' | 'denied' | 'granted' | 'provisional';
+  devicePushToken: string;
+  expoPushToken: string;
+  lastSyncedAt: string | null;
 }
 
 export interface PremiumState {
@@ -69,9 +75,15 @@ export const emptyMobileAppState: MobileAppState = {
   },
   notifications: {
     push: true,
-    chatReminders: true,
-    weeklyDigest: false,
+    dailyFortune: true,
+    tokenAlert: true,
+    characterDm: true,
     marketing: false,
+    dailyFortuneTime: '07:00',
+    permissionStatus: 'undetermined',
+    devicePushToken: '',
+    expoPushToken: '',
+    lastSyncedAt: null,
   },
   premium: {
     status: 'inactive',
@@ -133,18 +145,32 @@ export function normalizeMobileAppState(raw: Record<string, unknown>): MobileApp
     },
     notifications: {
       push: asBoolean(notifications.push, emptyMobileAppState.notifications.push),
-      chatReminders: asBoolean(
-        notifications.chatReminders,
-        emptyMobileAppState.notifications.chatReminders,
+      dailyFortune: asBoolean(
+        notifications.dailyFortune ?? notifications.weeklyDigest,
+        emptyMobileAppState.notifications.dailyFortune,
       ),
-      weeklyDigest: asBoolean(
-        notifications.weeklyDigest,
-        emptyMobileAppState.notifications.weeklyDigest,
+      tokenAlert: asBoolean(
+        notifications.tokenAlert,
+        emptyMobileAppState.notifications.tokenAlert,
+      ),
+      characterDm: asBoolean(
+        notifications.characterDm ?? notifications.chatReminders,
+        emptyMobileAppState.notifications.characterDm,
       ),
       marketing: asBoolean(
         notifications.marketing,
         emptyMobileAppState.notifications.marketing,
       ),
+      dailyFortuneTime: asString(notifications.dailyFortuneTime) || '07:00',
+      permissionStatus:
+        notifications.permissionStatus === 'granted' ||
+        notifications.permissionStatus === 'denied' ||
+        notifications.permissionStatus === 'provisional'
+          ? notifications.permissionStatus
+          : 'undetermined',
+      devicePushToken: asString(notifications.devicePushToken),
+      expoPushToken: asString(notifications.expoPushToken),
+      lastSyncedAt: asString(notifications.lastSyncedAt) || null,
     },
     premium: {
       status:

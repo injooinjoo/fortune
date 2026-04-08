@@ -38,7 +38,10 @@ import {
   resolveFortuneRuntimeBlockReason,
 } from '../features/chat-results/runtime-capabilities';
 import { resolveFortuneRuntimeOutcome } from '../features/chat-results/runtime-orchestrator';
+import type { EmbeddedResultPayload } from '../features/chat-results/types';
 import { resolveResultKindFromFortuneType } from '../features/fortune-results/mapping';
+import type { TarotSelectionPayload } from '../features/tarot';
+import { calendarService } from '../lib/calendar/calendar-service';
 import { captureError } from '../lib/error-reporting';
 import {
   buildAssistantTextMessage,
@@ -85,6 +88,7 @@ import {
   type SocialAuthProviderId,
 } from '../lib/social-auth';
 import { fortuneTheme } from '../lib/theme';
+import { updateFortuneWidgetSnapshot } from '../lib/widgets/fortune-widget-service';
 import { useAppBootstrap } from '../providers/app-bootstrap-provider';
 import { useFriendCreation } from '../providers/friend-creation-provider';
 import { useMobileAppState } from '../providers/mobile-app-state-provider';
@@ -159,6 +163,37 @@ type ResolvedFortuneMessage =
       routeToPremium?: boolean;
       routeToSignup?: boolean;
     };
+
+function buildCalendarEdgeEvents(
+  events: Array<{
+    title: string;
+    startDate: string | null;
+    endDate: string | null;
+    isAllDay: boolean;
+    location: string | null;
+    calendarTitle: string | null;
+  }>,
+) {
+  return events.slice(0, 3).map((event) => ({
+    title: event.title,
+    start_time: event.startDate,
+    end_time: event.endDate,
+    all_day: event.isAllDay,
+    location: event.location,
+    calendar_title: event.calendarTitle,
+  }));
+}
+
+function syncFortuneWidget(payload: EmbeddedResultPayload) {
+  updateFortuneWidgetSnapshot({
+    headline: payload.title,
+    summary: payload.summary,
+    score: payload.score ?? null,
+    badgeLabel: payload.eyebrow,
+    fortuneType: formatFortuneTypeLabel(payload.fortuneType),
+    updatedAt: new Date(),
+  });
+}
 
 export function ChatScreen() {
   const params = useLocalSearchParams<{ characterId?: string | string[] }>();
@@ -586,10 +621,26 @@ export function ChatScreen() {
   ) {
     const definition = getChatSurveyDefinition(completed.fortuneType);
     setActiveSurvey(character.id, null);
+    const enrichedAnswers = await enrichSurveyAnswers(
+      completed.fortuneType,
+      completed.answers,
+    );
+
+    if (
+      completed.fortuneType === 'daily-calendar' &&
+      completed.answers.calendarSync === 'sync' &&
+      enrichedAnswers.calendarSync === 'date-only'
+    ) {
+      appendMessages(character, [
+        buildAssistantTextMessage(
+          '캘린더 권한을 받지 못해서 이번에는 날짜 흐름 위주로 먼저 읽어드릴게요.',
+        ),
+      ]);
+    }
 
     const resolved = await resolveFortuneResultMessage(
       completed.fortuneType,
-      buildResultContext(character, completed.answers),
+      buildResultContext(character, enrichedAnswers),
       'chat:complete-survey',
     );
 
@@ -637,6 +688,7 @@ export function ChatScreen() {
     );
 
     setActiveSurvey(character.id, null);
+    syncFortuneWidget(embeddedResult.payload);
     appendMessages(character, [
       buildAssistantTextMessage(prefixText),
       embeddedResult,
@@ -1148,6 +1200,45 @@ export function ChatScreen() {
     character: ChatCharacterSpec,
     answers: Record<string, unknown> = {},
   ) {
+    const metadata = session?.user.user_metadata ?? {};
+    const rawGender =
+      metadata.gender ??
+      metadata.sex ??
+      metadata.gender_code ??
+      metadata.genderCode;
+    const normalizedGender =
+      typeof rawGender === 'string'
+        ? (() => {
+            const value = rawGender.trim().toLowerCase();
+
+            if (
+              value === 'male' ||
+              value === 'm' ||
+              value === 'man' ||
+              value === '남' ||
+              value === '남성'
+            ) {
+              return 'male';
+            }
+
+            if (
+              value === 'female' ||
+              value === 'f' ||
+              value === 'woman' ||
+              value === '여' ||
+              value === '여성'
+            ) {
+              return 'female';
+            }
+
+            if (value === 'other' || value === 'non-binary' || value === 'nonbinary') {
+              return 'other';
+            }
+
+            return undefined;
+          })()
+        : undefined;
+
     return {
       answers,
       characterName: character.name,
@@ -1155,10 +1246,71 @@ export function ChatScreen() {
         displayName: mobileAppState.profile.displayName || undefined,
         birthDate: mobileAppState.profile.birthDate || undefined,
         birthTime: mobileAppState.profile.birthTime || undefined,
+        gender: normalizedGender,
         mbti: mobileAppState.profile.mbti || undefined,
         bloodType: mobileAppState.profile.bloodType || undefined,
       },
     };
+  }
+
+  async function enrichSurveyAnswers(
+    fortuneType: FortuneTypeId,
+    answers: Record<string, unknown>,
+  ) {
+    if (fortuneType !== 'daily-calendar' || answers.calendarSync !== 'sync') {
+      return answers;
+    }
+
+    const targetDate =
+      typeof answers.targetDate === 'string' ? answers.targetDate : null;
+    if (!targetDate) {
+      return answers;
+    }
+
+    try {
+      const calendarContext = await calendarService.buildCalendarSyncContext(
+        targetDate,
+      );
+
+      if (!calendarContext) {
+        return {
+          ...answers,
+          calendarSync: 'date-only',
+          calendarSynced: false,
+          hasCalendarEvents: false,
+          calendarEvents: [],
+          calendarSummary: '캘린더 권한이 없어 날짜 흐름 중심으로 해석합니다.',
+          calendarDigest: 'permission-denied',
+        };
+      }
+
+      const calendarEvents = buildCalendarEdgeEvents(calendarContext.events);
+
+      return {
+        ...answers,
+        targetDate: calendarContext.targetDate,
+        calendarSynced: true,
+        hasCalendarEvents: calendarEvents.length > 0,
+        calendarEvents,
+        calendarSummary: calendarContext.summary,
+        calendarTags: calendarContext.tags,
+        calendarDigest:
+          calendarContext.tags.join(' | ') ||
+          `${calendarContext.targetDate}:${calendarContext.eventCount}`,
+      };
+    } catch (error) {
+      await captureError(error, {
+        surface: 'chat:enrich-calendar-survey',
+      }).catch(() => undefined);
+
+      return {
+        ...answers,
+        calendarSync: 'date-only',
+        calendarSynced: false,
+        hasCalendarEvents: false,
+        calendarEvents: [],
+      };
+    }
   }
 
   function findMostRecentEmbeddedResult(
@@ -1245,6 +1397,8 @@ export function ChatScreen() {
         return null;
       }
 
+      syncFortuneWidget(embeddedResult.payload);
+
       return {
         kind: 'result',
         message: embeddedResult,
@@ -1261,9 +1415,11 @@ export function ChatScreen() {
       });
 
       if (outcome.kind === 'success') {
+        const message = buildEmbeddedResultMessageFromPayload(outcome.payload);
+        syncFortuneWidget(message.payload);
         return {
           kind: 'result',
-          message: buildEmbeddedResultMessageFromPayload(outcome.payload),
+          message,
         };
       }
 
@@ -1296,6 +1452,10 @@ export function ChatScreen() {
     }
 
     submitSurveyAnswer(surveySelections, formatSurveyAnswerLabel(currentSurveyStep.step, surveySelections));
+  }
+
+  function handleTarotSelectionSubmit(payload: TarotSelectionPayload) {
+    submitSurveyAnswer(payload, payload.displayText);
   }
 
   function handleSurveySubmitText() {
@@ -1397,15 +1557,18 @@ export function ChatScreen() {
         gate === 'ready' && surfaceMode === 'chat' ? (
           currentSurveyStep ? (
             <ActiveSurveyFooter
+              fortuneType={activeSurvey?.fortuneType}
               draft={surveyDraft}
               onDraftChange={setSurveyDraft}
               onPickPhoto={handleSurveyPickPhoto}
               onPickSingle={(value) => submitSurveyAnswer(value)}
               onSkip={handleSurveySkip}
               onSubmitSelection={handleSurveySubmitSelection}
+              onSubmitTarotSelection={handleTarotSelectionSubmit}
               onSubmitText={handleSurveySubmitText}
               onToggleSelection={handleSurveyToggleSelection}
               selections={surveySelections}
+              surveyAnswers={activeSurvey?.answers}
               step={currentSurveyStep.step}
             />
           ) : (

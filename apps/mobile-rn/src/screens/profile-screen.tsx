@@ -108,7 +108,13 @@ export function ProfileScreen() {
   const tokenBalanceLabel = state.premium.isUnlimited
     ? '무제한'
     : `${state.premium.tokenBalance.toLocaleString('ko-KR')} 토큰`;
-  const notificationEnabledCount = Object.values(state.notifications).filter(Boolean).length;
+  const notificationEnabledCount = [
+    state.notifications.push,
+    state.notifications.dailyFortune,
+    state.notifications.tokenAlert,
+    state.notifications.characterDm,
+    state.notifications.marketing,
+  ].filter(Boolean).length;
   const birthSummary =
     state.profile.birthDate || state.profile.birthTime
       ? [

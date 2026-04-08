@@ -2,369 +2,334 @@ import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
-import type { Session } from '@supabase/supabase-js';
 
-import { supabase } from '../supabase';
+import type { FortuneTypeId } from '@fortune/product-contracts';
+import type { NotificationPreferences } from '../mobile-app-state';
+import { supabase, type SupabaseSession } from '../supabase';
 
-export const NotificationChannelIds = {
-  dailyFortune: 'daily_fortune',
-  tokenAlert: 'token_alert',
-  promotion: 'promotion',
-  system: 'system',
-  characterDm: 'character_dm',
-} as const;
+const androidChannelId = 'fortune-main';
+const dailyReminderIdentifier = 'fortune-daily-reminder';
 
-export type NotificationChannelId =
-  (typeof NotificationChannelIds)[keyof typeof NotificationChannelIds];
+export type NotificationPermissionStatus =
+  | 'undetermined'
+  | 'denied'
+  | 'granted'
+  | 'provisional';
 
-export interface NotificationPreferences {
-  push: boolean;
-  chatReminders: boolean;
-  weeklyDigest: boolean;
-  marketing: boolean;
-  dailyFortuneTime?: string;
+export interface NotificationRouteData {
+  fortuneType?: FortuneTypeId | null;
+  pathname?: string | null;
 }
 
-export interface NotificationPermissionSnapshot {
-  granted: boolean;
-  canAskAgain: boolean;
-  status: Notifications.PermissionStatus;
+export interface NotificationRegistrationSnapshot {
+  permissionStatus: NotificationPermissionStatus;
+  devicePushToken: string;
+  expoPushToken: string;
+  lastSyncedAt: string | null;
 }
 
-export interface NotificationTokenResult {
-  token: string | null;
-  projectId: string | null;
-  status: NotificationPermissionSnapshot;
+function normalizePermissionStatus(
+  status: Notifications.PermissionStatus,
+): NotificationPermissionStatus {
+  switch (status) {
+    case Notifications.PermissionStatus.GRANTED:
+      return 'granted';
+    case Notifications.PermissionStatus.DENIED:
+      return 'denied';
+    case Notifications.PermissionStatus.UNDETERMINED:
+    default:
+      return 'undetermined';
+  }
 }
 
-export interface NotificationListenerCallbacks {
-  onReceive?: (notification: Notifications.Notification) => void;
-  onResponse?: (response: Notifications.NotificationResponse) => void;
-  onError?: (error: unknown) => void;
+function readProjectId() {
+  return (
+    Constants.expoConfig?.extra?.eas?.projectId ??
+    Constants.easConfig?.projectId ??
+    null
+  );
 }
 
-export interface ScheduleDailyFortuneOptions {
-  title?: string;
-  body?: string;
-  channelId?: NotificationChannelId;
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-export interface ScheduleTestNotificationOptions {
-  title?: string;
-  body?: string;
-  seconds?: number;
-  channelId?: NotificationChannelId;
+function parseRouteData(data: unknown): NotificationRouteData {
+  if (!isRecord(data)) {
+    return {};
+  }
+
+  const fortuneType =
+    typeof data.fortuneType === 'string' ? (data.fortuneType as FortuneTypeId) : null;
+  const pathname = typeof data.pathname === 'string' ? data.pathname : null;
+
+  return {
+    fortuneType,
+    pathname,
+  };
 }
 
-export interface SyncPushTokenOptions {
-  session?: Session | null;
-  userId?: string | null;
-  deviceInfo?: Record<string, unknown>;
+function buildRoutePayloadData(routeData: NotificationRouteData) {
+  return {
+    ...(routeData.fortuneType ? { fortuneType: routeData.fortuneType } : {}),
+    ...(routeData.pathname ? { pathname: routeData.pathname } : {}),
+  };
 }
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
     shouldShowBanner: true,
     shouldShowList: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
   }),
 });
 
-function resolveExpoProjectId() {
-  const extra = Constants.expoConfig?.extra as
-    | Record<string, unknown>
-    | undefined;
-  const easConfig = extra?.eas as Record<string, unknown> | undefined;
-  const projectId = Constants.easConfig?.projectId ?? easConfig?.projectId;
+class NotificationService {
+  private initialized = false;
 
-  return typeof projectId === 'string' && projectId.length > 0
-    ? projectId
-    : null;
-}
+  private registration: NotificationRegistrationSnapshot = {
+    permissionStatus: 'undetermined',
+    devicePushToken: '',
+    expoPushToken: '',
+    lastSyncedAt: null,
+  };
 
-function parseDailyFortuneTime(time: string | undefined) {
-  const fallback = { hour: 7, minute: 0 };
+  private responseSubscription: Notifications.EventSubscription | null = null;
 
-  if (!time) {
-    return fallback;
+  private receivedSubscription: Notifications.EventSubscription | null = null;
+
+  async initialize(onRoute?: (data: NotificationRouteData) => void) {
+    await this.ensureAndroidChannel();
+    await this.refreshRegistrationSnapshot();
+
+    const initialResponse = await Notifications.getLastNotificationResponseAsync().catch(
+      () => null,
+    );
+    if (initialResponse) {
+      onRoute?.(parseRouteData(initialResponse.notification.request.content.data));
+      await Notifications.clearLastNotificationResponseAsync?.().catch(
+        () => undefined,
+      );
+    }
+
+    if (this.initialized) {
+      return this.registration;
+    }
+
+    this.receivedSubscription =
+      Notifications.addNotificationReceivedListener(() => undefined);
+    this.responseSubscription =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        onRoute?.(parseRouteData(response.notification.request.content.data));
+      });
+
+    this.initialized = true;
+    return this.registration;
   }
 
-  const match = /^(\d{1,2}):(\d{2})$/u.exec(time.trim());
-  if (!match) {
-    return fallback;
+  dispose() {
+    this.receivedSubscription?.remove();
+    this.responseSubscription?.remove();
+    this.receivedSubscription = null;
+    this.responseSubscription = null;
+    this.initialized = false;
   }
 
-  const hour = Number(match[1]);
-  const minute = Number(match[2]);
+  async ensureAndroidChannel() {
+    if (Platform.OS !== 'android') {
+      return;
+    }
 
-  if (
-    !Number.isInteger(hour) ||
-    !Number.isInteger(minute) ||
-    hour < 0 ||
-    hour > 23 ||
-    minute < 0 ||
-    minute > 59
+    await Notifications.setNotificationChannelAsync(androidChannelId, {
+      name: 'Fortune Alerts',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+    });
+  }
+
+  async getRegistrationSnapshot() {
+    await this.refreshRegistrationSnapshot();
+    return this.registration;
+  }
+
+  async requestPermissions() {
+    const current = await Notifications.getPermissionsAsync();
+    if (current.granted || current.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL) {
+      this.registration.permissionStatus =
+        current.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
+          ? 'provisional'
+          : normalizePermissionStatus(current.status);
+      return this.registration.permissionStatus;
+    }
+
+    const requested = await Notifications.requestPermissionsAsync({
+      ios: {
+        allowAlert: true,
+        allowBadge: false,
+        allowSound: true,
+      },
+    });
+    this.registration.permissionStatus =
+      requested.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
+        ? 'provisional'
+        : normalizePermissionStatus(requested.status);
+    return this.registration.permissionStatus;
+  }
+
+  async registerDevice(
+    session: SupabaseSession,
+    preferences: NotificationPreferences,
   ) {
-    return fallback;
+    const permissionStatus = await this.requestPermissions();
+    if (permissionStatus === 'denied') {
+      this.registration.permissionStatus = 'denied';
+      return this.registration;
+    }
+
+    let devicePushToken = this.registration.devicePushToken;
+    let expoPushToken = this.registration.expoPushToken;
+
+    if (Device.isDevice) {
+      const nativeToken = await Notifications.getDevicePushTokenAsync().catch(
+        () => null,
+      );
+      if (nativeToken?.data) {
+        devicePushToken = nativeToken.data;
+      }
+
+      const projectId = readProjectId();
+      if (projectId) {
+        const expoToken = await Notifications.getExpoPushTokenAsync({
+          projectId,
+        }).catch(() => null);
+        if (expoToken?.data) {
+          expoPushToken = expoToken.data;
+        }
+      }
+    }
+
+    const nextRegistration: NotificationRegistrationSnapshot = {
+      permissionStatus,
+      devicePushToken,
+      expoPushToken,
+      lastSyncedAt: this.registration.lastSyncedAt,
+    };
+
+    if (session && supabase && devicePushToken) {
+      await supabase.functions.invoke('sync-notification-device', {
+        body: {
+          token: devicePushToken,
+          platform: Platform.OS === 'ios' ? 'ios' : 'android',
+          deviceInfo: {
+            brand: Device.brand ?? null,
+            deviceName: Device.deviceName ?? null,
+            modelName: Device.modelName ?? null,
+            osName: Device.osName ?? null,
+            osVersion: Device.osVersion ?? null,
+          },
+          preferences: {
+            enabled: preferences.push,
+            dailyFortune: preferences.dailyFortune,
+            tokenAlert: preferences.tokenAlert,
+            promotion: preferences.marketing,
+            characterDm: preferences.characterDm,
+            dailyFortuneTime: preferences.dailyFortuneTime,
+          },
+        },
+      });
+      nextRegistration.lastSyncedAt = new Date().toISOString();
+    }
+
+    this.registration = nextRegistration;
+    return this.registration;
   }
 
-  return { hour, minute };
-}
+  async deactivateRemoteToken(session: SupabaseSession) {
+    if (!session || !supabase || !this.registration.devicePushToken) {
+      return;
+    }
 
-function buildDefaultNotificationContent(
-  title: string,
-  body: string,
-) {
-  return {
-    title,
-    body,
-    sound: 'default',
-  } satisfies Notifications.NotificationContentInput;
-}
-
-function buildDeviceInfo() {
-  return {
-    modelName: Device.modelName ?? null,
-    brand: Device.brand ?? null,
-    designName: Device.designName ?? null,
-    osName: Device.osName ?? Platform.OS,
-    osVersion:
-      Device.osVersion ?? (Platform.Version != null ? String(Platform.Version) : null),
-    manufacturer: Device.manufacturer ?? null,
-    isDevice: Device.isDevice,
-    platform: Platform.OS,
-  };
-}
-
-export async function ensureNotificationChannel(
-  channelId: NotificationChannelId,
-  name: string,
-  description: string,
-) {
-  if (Platform.OS !== 'android') {
-    return;
+    await supabase.functions.invoke('sync-notification-device', {
+      body: {
+        token: this.registration.devicePushToken,
+        platform: Platform.OS === 'ios' ? 'ios' : 'android',
+        deactivateToken: true,
+      },
+    });
   }
 
-  await Notifications.setNotificationChannelAsync(channelId, {
-    name,
-    description,
-    importance: Notifications.AndroidImportance.HIGH,
-    vibrationPattern: [0, 250, 250, 250],
-    lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
-    sound: 'default',
-  });
-}
-
-export async function initializeNotificationService() {
-  await ensureNotificationChannel(
-    NotificationChannelIds.dailyFortune,
-    '일일 운세',
-    '오늘의 운세와 리마인드 알림',
-  );
-  await ensureNotificationChannel(
-    NotificationChannelIds.tokenAlert,
-    '토큰 알림',
-    '토큰 부족 및 충전 알림',
-  );
-  await ensureNotificationChannel(
-    NotificationChannelIds.promotion,
-    '프로모션',
-    '이벤트와 캠페인 알림',
-  );
-  await ensureNotificationChannel(
-    NotificationChannelIds.system,
-    '시스템',
-    '앱 상태와 운영 공지',
-  );
-  await ensureNotificationChannel(
-    NotificationChannelIds.characterDm,
-    '캐릭터 메시지',
-    '캐릭터 대화 새 알림',
-  );
-}
-
-export async function getNotificationPermissions(): Promise<NotificationPermissionSnapshot> {
-  const current = await Notifications.getPermissionsAsync();
-
-  return {
-    granted: current.granted,
-    canAskAgain: current.canAskAgain,
-    status: current.status,
-  };
-}
-
-export async function requestNotificationPermissions(): Promise<NotificationPermissionSnapshot> {
-  const current = await getNotificationPermissions();
-  if (current.granted || !current.canAskAgain) {
-    return current;
-  }
-
-  const requested = await Notifications.requestPermissionsAsync({
-    ios: {
-      allowAlert: true,
-      allowBadge: true,
-      allowSound: true,
+  async scheduleDailyFortuneReminder(
+    preferences: NotificationPreferences,
+    routeData: NotificationRouteData = {
+      fortuneType: 'daily',
+      pathname: '/chat',
     },
-  });
+  ) {
+    await Notifications.cancelScheduledNotificationAsync(dailyReminderIdentifier).catch(
+      () => undefined,
+    );
 
-  return {
-    granted: requested.granted,
-    canAskAgain: requested.canAskAgain,
-    status: requested.status,
-  };
+    if (
+      !preferences.push ||
+      !preferences.dailyFortune ||
+      (this.registration.permissionStatus !== 'granted' &&
+        this.registration.permissionStatus !== 'provisional')
+    ) {
+      return null;
+    }
+
+    const [hourText, minuteText] = preferences.dailyFortuneTime.split(':');
+    const hour = Number(hourText);
+    const minute = Number(minuteText);
+
+    if (!Number.isFinite(hour) || !Number.isFinite(minute)) {
+      return null;
+    }
+
+    return Notifications.scheduleNotificationAsync({
+      identifier: dailyReminderIdentifier,
+      content: {
+        title: '오늘의 운세가 도착했어요',
+        body: '대화 안에서 바로 오늘 흐름을 확인해보세요.',
+        data: buildRoutePayloadData(routeData),
+        sound: true,
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.DAILY,
+        hour,
+        minute,
+      },
+    });
+  }
+
+  async scheduleTestNotification(routeData: NotificationRouteData = {
+    fortuneType: 'daily',
+    pathname: '/chat',
+  }) {
+    return Notifications.scheduleNotificationAsync({
+      content: {
+        title: '테스트 알림',
+        body: '알림 설정과 딥링크 라우팅이 정상인지 확인합니다.',
+        data: buildRoutePayloadData(routeData),
+        sound: true,
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        seconds: 2,
+      },
+    });
+  }
+
+  private async refreshRegistrationSnapshot() {
+    const permissions = await Notifications.getPermissionsAsync();
+    this.registration.permissionStatus =
+      permissions.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
+        ? 'provisional'
+        : normalizePermissionStatus(permissions.status);
+    return this.registration;
+  }
 }
 
-export async function getExpoPushToken(
-  options: { forceRefresh?: boolean } = {},
-): Promise<NotificationTokenResult> {
-  void options.forceRefresh;
-
-  const permissions = await requestNotificationPermissions();
-  const projectId = resolveExpoProjectId();
-
-  if (!permissions.granted) {
-    return { token: null, projectId, status: permissions };
-  }
-
-  if (!Device.isDevice) {
-    return { token: null, projectId, status: permissions };
-  }
-
-  if (!projectId) {
-    return { token: null, projectId, status: permissions };
-  }
-
-  const tokenResult = await Notifications.getExpoPushTokenAsync({
-    projectId,
-  });
-
-  return {
-    token: tokenResult.data ?? null,
-    projectId,
-    status: permissions,
-  };
-}
-
-export async function syncPushTokenToSupabase(
-  input: SyncPushTokenOptions = {},
-): Promise<boolean> {
-  const client = supabase;
-  if (!client) {
-    return false;
-  }
-
-  const tokenResult = await getExpoPushToken();
-  if (!tokenResult.token) {
-    return false;
-  }
-
-  const resolvedUserId =
-    input.userId?.trim() || input.session?.user.id?.trim() || null;
-  if (!resolvedUserId) {
-    return false;
-  }
-
-  const { error } = await client.from('fcm_tokens').upsert(
-    {
-      user_id: resolvedUserId,
-      token: tokenResult.token,
-      platform: Platform.OS,
-      device_info: input.deviceInfo ?? buildDeviceInfo(),
-      is_active: true,
-      updated_at: new Date().toISOString(),
-    },
-    {
-      onConflict: 'user_id,token',
-    },
-  );
-
-  return !error;
-}
-
-export async function scheduleDailyFortuneNotification(
-  preferences: NotificationPreferences,
-  options: ScheduleDailyFortuneOptions = {},
-) {
-  if (!preferences.push) {
-    return null;
-  }
-
-  const permissions = await requestNotificationPermissions();
-  if (!permissions.granted) {
-    return null;
-  }
-
-  const { hour, minute } = parseDailyFortuneTime(preferences.dailyFortuneTime);
-  return Notifications.scheduleNotificationAsync({
-    content: buildDefaultNotificationContent(
-      options.title ?? '오늘의 운세가 준비됐어요',
-      options.body ?? '하루 흐름을 확인하고 싶을 때 바로 열어보세요.',
-    ),
-    trigger: {
-      hour,
-      minute,
-      repeats: true,
-      channelId: options.channelId ?? NotificationChannelIds.dailyFortune,
-    },
-  });
-}
-
-export async function scheduleTestNotification(
-  options: ScheduleTestNotificationOptions = {},
-) {
-  const permissions = await requestNotificationPermissions();
-  if (!permissions.granted) {
-    return null;
-  }
-
-  const seconds = Math.max(1, Math.floor(options.seconds ?? 5));
-
-  return Notifications.scheduleNotificationAsync({
-    content: buildDefaultNotificationContent(
-      options.title ?? '테스트 알림',
-      options.body ?? '푸시 알림 연결이 정상입니다.',
-    ),
-    trigger: {
-      seconds,
-      channelId: options.channelId ?? NotificationChannelIds.system,
-    },
-  });
-}
-
-export async function cancelAllScheduledNotifications() {
-  await Notifications.cancelAllScheduledNotificationsAsync();
-}
-
-export function registerNotificationListeners(
-  callbacks: NotificationListenerCallbacks = {},
-) {
-  const received = Notifications.addNotificationReceivedListener((notification) => {
-    callbacks.onReceive?.(notification);
-  });
-
-  const response = Notifications.addNotificationResponseReceivedListener((value) => {
-    callbacks.onResponse?.(value);
-  });
-
-  const subscription = Notifications.addNotificationsDroppedListener?.(() => {
-    callbacks.onError?.(new Error('Notifications were dropped by the service'));
-  });
-
-  return () => {
-    received.remove();
-    response.remove();
-    subscription?.remove();
-  };
-}
-
-export function buildNotificationDeepLinkPayload(
-  target: string,
-  extras: Record<string, unknown> = {},
-) {
-  return {
-    target,
-    ...extras,
-  };
-}
+export const notificationService = new NotificationService();

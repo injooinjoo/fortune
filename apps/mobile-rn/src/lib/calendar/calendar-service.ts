@@ -1,301 +1,155 @@
-import { Platform } from 'react-native';
 import * as Calendar from 'expo-calendar';
 
-export interface CalendarPermissionSnapshot {
-  granted: boolean;
-  canAskAgain: boolean;
-  status: Calendar.PermissionStatus;
-}
-
-export interface CalendarSummary {
+export interface CalendarEventSummary {
   id: string;
   title: string;
-  calendarId: string;
-  calendarTitle: string | null;
-  startDate: string;
-  endDate: string;
+  startDate: string | null;
+  endDate: string | null;
+  isAllDay: boolean;
   location: string | null;
   notes: string | null;
-  allDay: boolean;
-  timeZone: string | null;
-  status: Calendar.EventStatus | null;
-  availability: Calendar.Availability | null;
-  durationMinutes: number;
-  isBusy: boolean;
+  calendarTitle: string | null;
 }
 
-export interface ScheduleContext {
+export interface CalendarSyncContext {
   targetDate: string;
-  timezone: string;
-  calendarCount: number;
   eventCount: number;
-  allDayCount: number;
-  busyEventCount: number;
-  totalBusyMinutes: number;
-  calendarTitles: string[];
-  events: CalendarSummary[];
-  hasAllDayEvent: boolean;
-  nextEventAt: string | null;
-  lastEventEndsAt: string | null;
+  summary: string;
+  tags: string[];
+  events: CalendarEventSummary[];
 }
 
-export interface CalendarEventRangeOptions {
-  calendarIds?: string[];
-  entityType?: Calendar.EntityTypes;
+function normalizeDate(date: string | Date) {
+  if (typeof date === 'string') {
+    return new Date(`${date}T00:00:00`);
+  }
+
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
-export interface CalendarDayQueryOptions extends CalendarEventRangeOptions {
-  includeAllCalendars?: boolean;
+function startOfDay(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
 }
 
-function toIsoString(value: Date | string) {
-  return value instanceof Date ? value.toISOString() : value;
+function endOfDay(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999);
 }
 
-function startOfLocalDay(date: Date) {
-  return new Date(
+function formatDateKey(date: Date) {
+  return [
     date.getFullYear(),
-    date.getMonth(),
-    date.getDate(),
-    0,
-    0,
-    0,
-    0,
-  );
+    String(date.getMonth() + 1).padStart(2, '0'),
+    String(date.getDate()).padStart(2, '0'),
+  ].join('-');
 }
 
-function endOfLocalDay(date: Date) {
-  return new Date(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate(),
-    23,
-    59,
-    59,
-    999,
-  );
-}
-
-function normalizeDate(input: Date | string) {
-  const date = input instanceof Date ? new Date(input.getTime()) : new Date(input);
-  return Number.isNaN(date.getTime()) ? null : date;
-}
-
-function getCalendarTitle(calendar: Calendar.Calendar | undefined) {
-  return calendar?.title?.trim() || calendar?.name?.trim() || null;
-}
-
-function isBusyAvailability(
-  availability: Calendar.Availability | null | undefined,
-) {
-  return availability === null
-    ? true
-    : availability === Calendar.Availability.BUSY ||
-        availability === Calendar.Availability.UNAVAILABLE;
-}
-
-function getEventDurationMinutes(startDate: Date, endDate: Date) {
-  const diff = endDate.getTime() - startDate.getTime();
-  if (!Number.isFinite(diff) || diff <= 0) {
-    return 0;
+function normalizeEventDateValue(value: string | Date | null | undefined) {
+  if (value instanceof Date) {
+    return value.toISOString();
   }
 
-  return Math.round(diff / 60000);
+  return typeof value === 'string' ? value : null;
 }
 
-function resolveCalendarEntityType(entityType?: Calendar.EntityTypes) {
-  return entityType ?? Calendar.EntityTypes.EVENT;
-}
-
-export async function getCalendarPermissions(): Promise<CalendarPermissionSnapshot> {
-  const permission = await Calendar.getCalendarPermissionsAsync();
-
-  return {
-    granted: permission.granted,
-    canAskAgain: permission.canAskAgain,
-    status: permission.status,
-  };
-}
-
-export async function requestCalendarPermissions(): Promise<CalendarPermissionSnapshot> {
-  const current = await getCalendarPermissions();
-  if (current.granted || !current.canAskAgain) {
-    return current;
+function formatEventTime(value: string | Date | null, isAllDay: boolean) {
+  if (!value || isAllDay) {
+    return isAllDay ? '하루 일정' : null;
   }
 
-  const requested = await Calendar.requestCalendarPermissionsAsync();
-
-  return {
-    granted: requested.granted,
-    canAskAgain: requested.canAskAgain,
-    status: requested.status,
-  };
+  const date = new Date(value);
+  return `${String(date.getHours()).padStart(2, '0')}:${String(
+    date.getMinutes(),
+  ).padStart(2, '0')}`;
 }
 
-export async function getDeviceCalendars(
-  entityType?: Calendar.EntityTypes,
-): Promise<Calendar.Calendar[]> {
-  return Calendar.getCalendarsAsync(resolveCalendarEntityType(entityType));
-}
-
-async function resolveCalendarTitleMap(
-  options: CalendarEventRangeOptions,
-  events: Calendar.Event[],
-) {
-  const calendarIds = options.calendarIds?.length
-    ? options.calendarIds
-    : Array.from(new Set(events.map((event) => event.calendarId)));
-
-  if (calendarIds.length === 0) {
-    return new Map<string, string | null>();
-  }
-
-  const calendars = await getDeviceCalendars(options.entityType);
-  const filteredCalendars = options.calendarIds?.length
-    ? calendars.filter((calendar) => calendarIds.includes(calendar.id))
-    : calendars;
-
-  return new Map(
-    filteredCalendars.map((calendar) => [calendar.id, getCalendarTitle(calendar)]),
-  );
-}
-
-export async function getDeviceCalendarEventsForRange(
-  startDate: Date,
-  endDate: Date,
-  options: CalendarEventRangeOptions = {},
-) {
-  const calendarIds = options.calendarIds;
-  if (!calendarIds || calendarIds.length === 0) {
-    const calendars = await getDeviceCalendars(options.entityType);
-    const ids = calendars.map((calendar) => calendar.id);
-    if (ids.length === 0) {
-      return [];
+class CalendarService {
+  async requestPermissions() {
+    const existing = await Calendar.getCalendarPermissionsAsync();
+    if (existing.granted) {
+      return existing.status;
     }
 
-    return Calendar.getEventsAsync(ids, startDate, endDate);
+    const requested = await Calendar.requestCalendarPermissionsAsync();
+    return requested.status;
   }
 
-  return Calendar.getEventsAsync(calendarIds, startDate, endDate);
-}
+  async getEventsForDate(date: string | Date) {
+    const permissionStatus = await this.requestPermissions();
+    if (permissionStatus !== 'granted') {
+      return [] as CalendarEventSummary[];
+    }
 
-export async function getDeviceCalendarEventsForDate(
-  date: Date,
-  options: CalendarDayQueryOptions = {},
-) {
-  const normalizedDate = normalizeDate(date);
-  if (!normalizedDate) {
-    return [];
+    const targetDate = normalizeDate(date);
+    const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
+    const calendarIds = calendars.map((item) => item.id);
+    if (calendarIds.length === 0) {
+      return [] as CalendarEventSummary[];
+    }
+
+    const events = await Calendar.getEventsAsync(
+      calendarIds,
+      startOfDay(targetDate),
+      endOfDay(targetDate),
+    );
+    const calendarTitleById = new Map(calendars.map((item) => [item.id, item.title]));
+
+    return events
+      .sort(
+        (left, right) =>
+          new Date(left.startDate).getTime() - new Date(right.startDate).getTime(),
+      )
+      .map((event) => ({
+        id: event.id,
+        title: event.title ?? '제목 없는 일정',
+        startDate: normalizeEventDateValue(event.startDate),
+        endDate: normalizeEventDateValue(event.endDate),
+        isAllDay: event.allDay ?? false,
+        location: event.location ?? null,
+        notes: event.notes ?? null,
+        calendarTitle: event.calendarId
+          ? calendarTitleById.get(event.calendarId) ?? null
+          : null,
+      }));
   }
 
-  return getDeviceCalendarEventsForRange(
-    startOfLocalDay(normalizedDate),
-    endOfLocalDay(normalizedDate),
-    options,
-  );
+  async buildCalendarSyncContext(date: string | Date): Promise<CalendarSyncContext | null> {
+    const permissionStatus = await this.requestPermissions();
+    if (permissionStatus !== 'granted') {
+      return null;
+    }
+
+    const targetDate = normalizeDate(date);
+    const events = await this.getEventsForDate(targetDate);
+    const summary =
+      events.length === 0
+        ? '일정이 없는 날이라 하루 리듬 자체에 더 집중해 해석합니다.'
+        : `${events.length}개의 일정이 있어요. 가장 밀도 높은 시간대를 함께 반영합니다.`;
+    const tags = events.slice(0, 3).map((event) => {
+      const time = formatEventTime(event.startDate, event.isAllDay);
+      return time ? `${time} ${event.title}` : event.title;
+    });
+
+    return {
+      targetDate: formatDateKey(targetDate),
+      eventCount: events.length,
+      summary,
+      tags,
+      events,
+    };
+  }
+
+  async getUpcomingDateOptions(days = 7) {
+    const today = startOfDay(new Date());
+    const entries = await Promise.all(
+      Array.from({ length: days }, (_, offset) => {
+        const targetDate = new Date(today);
+        targetDate.setDate(today.getDate() + offset);
+        return this.buildCalendarSyncContext(targetDate);
+      }),
+    );
+
+    return entries.filter((entry): entry is CalendarSyncContext => entry !== null);
+  }
 }
 
-export function summarizeCalendarEvent(
-  event: Calendar.Event,
-  calendarTitle?: string | null,
-): CalendarSummary {
-  const startDate = normalizeDate(event.startDate);
-  const endDate = normalizeDate(event.endDate);
-  const safeStartDate = startDate ?? new Date(event.startDate);
-  const safeEndDate = endDate ?? new Date(event.endDate);
-
-  return {
-    id: event.id,
-    title: event.title?.trim() || '일정',
-    calendarId: event.calendarId,
-    calendarTitle: calendarTitle ?? null,
-    startDate: toIsoString(safeStartDate),
-    endDate: toIsoString(safeEndDate),
-    location: event.location?.trim() || null,
-    notes: event.notes?.trim() || null,
-    allDay: event.allDay,
-    timeZone: event.timeZone?.trim() || null,
-    status: event.status ?? null,
-    availability: event.availability ?? null,
-    durationMinutes: getEventDurationMinutes(safeStartDate, safeEndDate),
-    isBusy: isBusyAvailability(event.availability),
-  };
-}
-
-export async function getEventSummariesForDate(
-  date: Date,
-  options: CalendarDayQueryOptions = {},
-): Promise<CalendarSummary[]> {
-  const events = await getDeviceCalendarEventsForDate(date, options);
-  const calendarTitleMap = await resolveCalendarTitleMap(options, events);
-
-  return events
-    .map((event) =>
-      summarizeCalendarEvent(event, calendarTitleMap.get(event.calendarId)),
-    )
-    .sort((left, right) => left.startDate.localeCompare(right.startDate));
-}
-
-export async function getEventSummariesForRange(
-  startDate: Date,
-  endDate: Date,
-  options: CalendarEventRangeOptions = {},
-): Promise<CalendarSummary[]> {
-  const events = await getDeviceCalendarEventsForRange(startDate, endDate, options);
-  const calendarTitleMap = await resolveCalendarTitleMap(options, events);
-
-  return events
-    .map((event) =>
-      summarizeCalendarEvent(event, calendarTitleMap.get(event.calendarId)),
-    )
-    .sort((left, right) => left.startDate.localeCompare(right.startDate));
-}
-
-export function extractScheduleContext(
-  events: CalendarSummary[],
-  targetDate: Date,
-): ScheduleContext {
-  const sortedEvents = [...events].sort((left, right) =>
-    left.startDate.localeCompare(right.startDate),
-  );
-  const uniqueCalendarIds = new Set(sortedEvents.map((event) => event.calendarId));
-  const calendarTitles = Array.from(
-    new Set(
-      sortedEvents
-        .map((event) => event.calendarTitle)
-        .filter((value): value is string => Boolean(value)),
-    ),
-  );
-
-  const busyEvents = sortedEvents.filter((event) => event.isBusy);
-  const allDayCount = sortedEvents.filter((event) => event.allDay).length;
-  const totalBusyMinutes = busyEvents.reduce(
-    (total, event) => total + event.durationMinutes,
-    0,
-  );
-  const nextEventAt = sortedEvents[0]?.startDate ?? null;
-  const lastEventEndsAt = sortedEvents.at(-1)?.endDate ?? null;
-
-  return {
-    targetDate: toIsoString(targetDate),
-    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || Platform.OS,
-    calendarCount: uniqueCalendarIds.size,
-    eventCount: sortedEvents.length,
-    allDayCount,
-    busyEventCount: busyEvents.length,
-    totalBusyMinutes,
-    calendarTitles,
-    events: sortedEvents,
-    hasAllDayEvent: allDayCount > 0,
-    nextEventAt,
-    lastEventEndsAt,
-  };
-}
-
-export async function buildScheduleContextForDate(
-  date: Date,
-  options: CalendarDayQueryOptions = {},
-): Promise<ScheduleContext> {
-  const events = await getEventSummariesForDate(date, options);
-  return extractScheduleContext(events, date);
-}
+export const calendarService = new CalendarService();

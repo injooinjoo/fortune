@@ -116,10 +116,35 @@ const config: ExpoConfig = {
     'expo-iap',
     'expo-apple-authentication',
     [
+      'expo-notifications',
+      {
+        defaultChannel: 'fortune-main',
+      },
+    ],
+    [
+      'expo-calendar',
+      {
+        calendarPermission: '운세와 일정을 함께 보려면 캘린더 접근 권한이 필요합니다.',
+      },
+    ],
+    [
       'expo-image-picker',
       {
         photosPermission:
           '관상과 OOTD 결과를 위해 사진 라이브러리 접근 권한이 필요합니다.',
+      },
+    ],
+    [
+      'expo-widgets',
+      {
+        widgets: [
+          {
+            name: 'FortuneHomeWidget',
+            displayName: '오늘의 운세',
+            description: '최근 운세 결과를 홈 화면에서 바로 확인합니다.',
+            supportedFamilies: ['systemSmall', 'systemMedium'],
+          },
+        ],
       },
     ],
     'expo-web-browser',

@@ -1,95 +1,182 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from 'react';
 
-import { router } from "expo-router";
-import { Switch, View } from "react-native";
+import { router } from 'expo-router';
+import { Switch, View } from 'react-native';
 
-import { AppText } from "../components/app-text";
-import { Card } from "../components/card";
-import { PrimaryButton } from "../components/primary-button";
-import { RouteBackHeader } from "../components/route-back-header";
-import { Screen } from "../components/screen";
-import { formatFortuneTypeLabel } from "../lib/chat-shell";
-import { fortuneTheme } from "../lib/theme";
-import { useAppBootstrap } from "../providers/app-bootstrap-provider";
-import { useMobileAppState } from "../providers/mobile-app-state-provider";
+import { AppText } from '../components/app-text';
+import { Card } from '../components/card';
+import { Chip } from '../components/chip';
+import { PrimaryButton } from '../components/primary-button';
+import { RouteBackHeader } from '../components/route-back-header';
+import { Screen } from '../components/screen';
+import { formatFortuneTypeLabel } from '../lib/chat-shell';
+import {
+  notificationService,
+  type NotificationRegistrationSnapshot,
+} from '../lib/notifications/notification-service';
+import type { NotificationPreferences } from '../lib/mobile-app-state';
+import { fortuneTheme } from '../lib/theme';
+import { useAppBootstrap } from '../providers/app-bootstrap-provider';
+import { useMobileAppState } from '../providers/mobile-app-state-provider';
 
 type NotificationPreferenceKey =
-  | "push"
-  | "chatReminders"
-  | "weeklyDigest"
-  | "marketing";
+  | 'push'
+  | 'dailyFortune'
+  | 'tokenAlert'
+  | 'characterDm'
+  | 'marketing';
+
+type NotificationPreferenceFormState = Pick<
+  NotificationPreferences,
+  NotificationPreferenceKey | 'dailyFortuneTime'
+>;
 
 const preferenceMeta: Record<
   NotificationPreferenceKey,
   { label: string; description: string }
 > = {
   push: {
-    label: "푸시 알림",
-    description: "새 메시지, 딥링크 복귀, 구독 상태 알림",
+    label: '푸시 알림',
+    description: '운세 결과, 딥링크 복귀, 앱 상태 알림의 전체 스위치입니다.',
   },
-  chatReminders: {
-    label: "채팅 리마인더",
-    description: "캐릭터 대화가 끊겼을 때 다시 들어오게 돕습니다.",
+  dailyFortune: {
+    label: '데일리 리마인더',
+    description: '매일 정해진 시간에 오늘의 흐름을 확인하라고 알려줍니다.',
   },
-  weeklyDigest: {
-    label: "주간 요약",
-    description: "한 주 동안 쌓인 핵심 인사이트를 요약합니다.",
+  tokenAlert: {
+    label: '토큰 알림',
+    description: '토큰 부족이나 구독 상태 변화를 먼저 알려줍니다.',
+  },
+  characterDm: {
+    label: '캐릭터 DM',
+    description: '캐릭터 대화 복귀와 후속 제안을 푸시로 이어줍니다.',
   },
   marketing: {
-    label: "프로모션 안내",
-    description: "상품과 이벤트 관련 안내를 표시합니다.",
+    label: '프로모션 안내',
+    description: '이벤트, 상품, 리텐션 캠페인 알림입니다.',
   },
 };
+
+const reminderTimes = ['07:00', '08:00', '12:00', '18:00', '21:00'] as const;
+
+function formatDateTime(value: string | null) {
+  if (!value) {
+    return '아직 서버에 동기화되지 않았어요.';
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return '아직 서버에 동기화되지 않았어요.';
+  }
+
+  return parsed.toLocaleString('ko-KR');
+}
 
 export function ProfileNotificationsScreen() {
   const { pendingChatFortuneType, session } = useAppBootstrap();
   const { state, saveNotifications, status } = useMobileAppState();
-  const [preferences, setPreferences] = useState<
-    Record<NotificationPreferenceKey, boolean>
-  >({
+  const [preferences, setPreferences] = useState<NotificationPreferenceFormState>({
     push: false,
-    chatReminders: false,
-    weeklyDigest: false,
+    dailyFortune: false,
+    tokenAlert: false,
+    characterDm: false,
     marketing: false,
+    dailyFortuneTime: '07:00',
   });
+  const [runtimeSnapshot, setRuntimeSnapshot] =
+    useState<NotificationRegistrationSnapshot | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [hydrated, setHydrated] = useState(false);
   const enabledCount = useMemo(
-    () => Object.values(preferences).filter(Boolean).length,
+    () =>
+      [
+        preferences.push,
+        preferences.dailyFortune,
+        preferences.tokenAlert,
+        preferences.characterDm,
+        preferences.marketing,
+      ].filter(Boolean).length,
     [preferences],
   );
 
   useEffect(() => {
-    if (status !== "ready" || hydrated) {
+    if (status !== 'ready' || hydrated) {
       return;
     }
 
     setPreferences({
       push: state.notifications.push,
-      chatReminders: state.notifications.chatReminders,
-      weeklyDigest: state.notifications.weeklyDigest,
+      dailyFortune: state.notifications.dailyFortune,
+      tokenAlert: state.notifications.tokenAlert,
+      characterDm: state.notifications.characterDm,
       marketing: state.notifications.marketing,
+      dailyFortuneTime: state.notifications.dailyFortuneTime,
     });
     setHydrated(true);
-  }, [
-    hydrated,
-    state.notifications.chatReminders,
-    state.notifications.marketing,
-    state.notifications.push,
-    state.notifications.weeklyDigest,
-    status,
-  ]);
+  }, [hydrated, state.notifications, status]);
+
+  useEffect(() => {
+    if (status !== 'ready') {
+      return;
+    }
+
+    let cancelled = false;
+
+    async function refreshRuntimeSnapshot() {
+      const snapshot = await notificationService
+        .getRegistrationSnapshot()
+        .catch(() => null);
+
+      if (!cancelled) {
+        setRuntimeSnapshot(snapshot);
+      }
+    }
+
+    void refreshRuntimeSnapshot();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [status]);
 
   async function handleSave() {
+    setStatusMessage('알림 설정을 저장하는 중이에요.');
     await saveNotifications(preferences);
+    const snapshot = await notificationService
+      .getRegistrationSnapshot()
+      .catch(() => null);
+    setRuntimeSnapshot(snapshot);
+    setStatusMessage('알림 설정을 저장했어요.');
+  }
+
+  async function handleRequestPermission() {
+    const permissionStatus = await notificationService
+      .requestPermissions()
+      .catch(() => 'denied');
+    const snapshot = await notificationService
+      .getRegistrationSnapshot()
+      .catch(() => null);
+    setRuntimeSnapshot(snapshot);
+    setStatusMessage(
+      permissionStatus === 'granted' || permissionStatus === 'provisional'
+        ? '알림 권한이 허용됐어요.'
+        : '알림 권한이 아직 허용되지 않았어요.',
+    );
+  }
+
+  async function handleScheduleTest() {
+    await notificationService.scheduleTestNotification({
+      fortuneType: pendingChatFortuneType ?? 'daily',
+      pathname: '/chat',
+    });
+    setStatusMessage('2초 뒤 테스트 알림을 예약했어요.');
   }
 
   return (
-    <Screen
-      header={<RouteBackHeader fallbackHref="/profile" />}
-    >
+    <Screen header={<RouteBackHeader fallbackHref="/profile" />}>
       <AppText variant="displaySmall">알림 설정</AppText>
       <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
-        저장된 알림 기본값을 불러와 편집하고 다시 저장합니다.
+        Flutter에서 쓰던 푸시/리마인더 흐름을 RN에서도 같은 구조로 다룹니다.
       </AppText>
 
       <Card>
@@ -99,58 +186,90 @@ export function ProfileNotificationsScreen() {
             활성화된 알림은 {enabledCount}개예요.
           </AppText>
           <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+            권한 상태: {runtimeSnapshot?.permissionStatus ?? state.notifications.permissionStatus}
+          </AppText>
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+            최근 동기화: {formatDateTime(state.notifications.lastSyncedAt)}
+          </AppText>
+          <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
             {pendingChatFortuneType
               ? `대기 중인 운세 신호: ${formatFortuneTypeLabel(pendingChatFortuneType)}`
               : '대기 중인 운세 신호는 없어요.'}
           </AppText>
+          {statusMessage ? (
+            <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
+              {statusMessage}
+            </AppText>
+          ) : null}
         </View>
       </Card>
 
       <Card>
         <AppText variant="heading4">저장된 기본값</AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          푸시 {state.notifications.push ? "켜짐" : "꺼짐"} · 채팅 리마인더{" "}
-          {state.notifications.chatReminders ? "켜짐" : "꺼짐"} · 주간 요약{" "}
-          {state.notifications.weeklyDigest ? "켜짐" : "꺼짐"} · 마케팅{" "}
-          {state.notifications.marketing ? "켜짐" : "꺼짐"}
-        </AppText>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+          <Chip label={`푸시 ${state.notifications.push ? '켜짐' : '꺼짐'}`} tone="neutral" />
+          <Chip
+            label={`리마인더 ${state.notifications.dailyFortune ? '켜짐' : '꺼짐'}`}
+            tone="neutral"
+          />
+          <Chip
+            label={`토큰 ${state.notifications.tokenAlert ? '켜짐' : '꺼짐'}`}
+            tone="neutral"
+          />
+          <Chip
+            label={`캐릭터 ${state.notifications.characterDm ? '켜짐' : '꺼짐'}`}
+            tone="neutral"
+          />
+          <Chip
+            label={`마케팅 ${state.notifications.marketing ? '켜짐' : '꺼짐'}`}
+            tone="neutral"
+          />
+        </View>
       </Card>
 
       <Card>
         <AppText variant="heading4">알림 기본값</AppText>
-        {(Object.keys(preferenceMeta) as NotificationPreferenceKey[]).map(
-          (key) => (
-            <NotificationRow
-              key={key}
-              description={preferenceMeta[key].description}
-              label={preferenceMeta[key].label}
-              value={preferences[key]}
-              onValueChange={(next) =>
-                setPreferences((current) => ({ ...current, [key]: next }))
-              }
-            />
-          ),
-        )}
+        {(Object.keys(preferenceMeta) as NotificationPreferenceKey[]).map((key) => (
+          <NotificationRow
+            key={key}
+            description={preferenceMeta[key].description}
+            label={preferenceMeta[key].label}
+            value={preferences[key]}
+            onValueChange={(next) =>
+              setPreferences((current) => ({ ...current, [key]: next }))
+            }
+          />
+        ))}
       </Card>
 
       <Card>
-        <AppText variant="heading4">미리보기</AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {preferences.push
-            ? "새 메시지와 딥링크는 표시됩니다."
-            : "푸시가 꺼져 있습니다."}
-        </AppText>
-        <AppText variant="bodySmall" color={fortuneTheme.colors.textSecondary}>
-          {preferences.chatReminders
-            ? "대화 리마인더가 활성화되었습니다."
-            : "대화 리마인더가 비활성화되었습니다."}
-        </AppText>
+        <AppText variant="heading4">리마인더 시간</AppText>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+          {reminderTimes.map((time) => (
+            <PrimaryButton
+              key={time}
+              onPress={() =>
+                setPreferences((current) => ({
+                  ...current,
+                  dailyFortuneTime: time,
+                }))
+              }
+              tone={preferences.dailyFortuneTime === time ? 'primary' : 'secondary'}
+            >
+              {time}
+            </PrimaryButton>
+          ))}
+        </View>
       </Card>
 
       <Card>
         <AppText variant="heading4">동작</AppText>
-        <PrimaryButton onPress={() => void handleSave()}>
-          저장하기
+        <PrimaryButton onPress={() => void handleSave()}>저장하기</PrimaryButton>
+        <PrimaryButton onPress={() => void handleRequestPermission()} tone="secondary">
+          권한 다시 요청
+        </PrimaryButton>
+        <PrimaryButton onPress={() => void handleScheduleTest()} tone="secondary">
+          테스트 알림 보내기
         </PrimaryButton>
         {!session ? (
           <PrimaryButton
@@ -167,9 +286,6 @@ export function ProfileNotificationsScreen() {
         ) : null}
         <PrimaryButton onPress={() => router.back()} tone="secondary">
           돌아가기
-        </PrimaryButton>
-        <PrimaryButton onPress={() => router.replace("/chat")} tone="secondary">
-          채팅으로 이동
         </PrimaryButton>
       </Card>
     </Screen>
@@ -207,7 +323,7 @@ function NotificationRow({
       </View>
       <Switch
         onValueChange={onValueChange}
-        thumbColor={value ? fortuneTheme.colors.ctaBackground : "#FFFFFF"}
+        thumbColor={value ? fortuneTheme.colors.ctaBackground : '#FFFFFF'}
         trackColor={{
           false: fortuneTheme.colors.borderOpaque,
           true: fortuneTheme.colors.accentSecondary,

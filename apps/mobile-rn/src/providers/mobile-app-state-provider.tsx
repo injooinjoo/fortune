@@ -51,6 +51,7 @@ import {
   type RemotePremiumSnapshot,
 } from '../lib/premium-remote';
 import { buildOnboardingInterestWeights } from '../lib/onboarding-interest-catalog';
+import { notificationService } from '../lib/notifications/notification-service';
 import { getMobileAppState, saveMobileAppState } from '../lib/storage';
 import {
   ensureRemoteUserProfile,
@@ -550,13 +551,68 @@ export function MobileAppStateProvider({ children }: PropsWithChildren) {
 
   const saveNotifications = useCallback(
     async (notifications: Partial<NotificationPreferences>) => {
+      const nextPreferences = mergeMobileAppState(state, {
+        notifications,
+      }).notifications;
+      let syncedPreferences = nextPreferences;
+
+      try {
+        if (nextPreferences.push) {
+          if (sessionRef.current) {
+            const registration = await notificationService.registerDevice(
+              sessionRef.current,
+              nextPreferences,
+            );
+
+            syncedPreferences = {
+              ...nextPreferences,
+              permissionStatus: registration.permissionStatus,
+              devicePushToken: registration.devicePushToken,
+              expoPushToken: registration.expoPushToken,
+              lastSyncedAt: registration.lastSyncedAt,
+            };
+          } else {
+            const permissionStatus =
+              await notificationService.requestPermissions();
+            const registration = await notificationService.getRegistrationSnapshot();
+
+            syncedPreferences = {
+              ...nextPreferences,
+              permissionStatus,
+              devicePushToken: registration.devicePushToken,
+              expoPushToken: registration.expoPushToken,
+              lastSyncedAt: registration.lastSyncedAt,
+            };
+          }
+        } else if (sessionRef.current) {
+          await notificationService.deactivateRemoteToken(sessionRef.current);
+        }
+
+        const registration = await notificationService.getRegistrationSnapshot();
+
+        syncedPreferences = {
+          ...syncedPreferences,
+          permissionStatus: registration.permissionStatus,
+          devicePushToken: registration.devicePushToken,
+          expoPushToken: registration.expoPushToken,
+          lastSyncedAt:
+            syncedPreferences.lastSyncedAt ?? registration.lastSyncedAt,
+        };
+
+        await notificationService.scheduleDailyFortuneReminder(syncedPreferences);
+      } catch (error) {
+        await captureError(error, {
+          surface: 'mobile-app-state:save-notifications',
+        }).catch(() => undefined);
+      }
+
       await persistFromCurrent((current) =>
         mergeMobileAppState(current, {
-          notifications,
+          notifications: syncedPreferences,
         }),
       );
     },
-    [persistFromCurrent],
+    [persistFromCurrent, state],
   );
 
   const refreshStoreProducts = useCallback(async () => {
