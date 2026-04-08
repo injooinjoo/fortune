@@ -506,7 +506,6 @@ export function ChatScreen() {
   const selectedStorySnapshot =
     storyThreadSnapshotsByCharacterId[selectedCharacter.id] ?? null;
   const selectedStoryIsTyping = storyTypingCharacterId === selectedCharacter.id;
-  const storySendInFlight = storyTypingCharacterId !== null;
   const activeSurvey = activeSurveysByCharacterId[selectedCharacter.id] ?? null;
   const currentSurveyStep = activeSurvey
     ? getCurrentSurveyStep(activeSurvey)
@@ -649,6 +648,65 @@ export function ChatScreen() {
         }).catch(() => undefined);
       })
       .finally(navigate);
+  }
+
+  async function ensureStoryPilotSendReady(character: ChatCharacterSpec) {
+    if (!session) {
+      routeToSignup({
+        returnTo: buildChatReturnTo(character.id),
+      });
+      return false;
+    }
+
+    const localPremiumState = mobileAppState.premium;
+    if (
+      localPremiumState.isUnlimited ||
+      (typeof localPremiumState.tokenBalance === "number" &&
+        localPremiumState.tokenBalance > 0)
+    ) {
+      return true;
+    }
+
+    const refreshedState = await syncRemoteProfile().catch((error: unknown) => {
+      captureError(error, {
+        surface: "chat:story-pilot-preflight-sync-premium",
+      }).catch(() => undefined);
+      return null;
+    });
+    const premiumState = refreshedState?.premium ?? localPremiumState;
+
+    if (
+      premiumState.isUnlimited ||
+      (typeof premiumState.tokenBalance === "number" &&
+        premiumState.tokenBalance > 0)
+    ) {
+      return true;
+    }
+
+    if (typeof premiumState.tokenBalance === "number") {
+      router.push("/premium");
+      return false;
+    }
+
+    return true;
+  }
+
+  async function handleStoryPilotSend(
+    character: ChatCharacterSpec,
+    text: string,
+  ) {
+    const trimmed = text.trim();
+
+    if (!trimmed) {
+      return;
+    }
+
+    const ready = await ensureStoryPilotSendReady(character);
+    if (!ready) {
+      return;
+    }
+
+    await sendStoryPilotMessage(character, trimmed);
   }
 
   function beginFortuneRuntime(
@@ -1217,7 +1275,7 @@ export function ChatScreen() {
         selectedCharacter.kind === "story" &&
         isStoryRomancePilotCharacterId(selectedCharacter.id)
       ) {
-        void sendStoryPilotMessage(selectedCharacter, followUpText);
+        void handleStoryPilotSend(selectedCharacter, followUpText);
         return;
       }
 
@@ -1242,7 +1300,7 @@ export function ChatScreen() {
       selectedCharacter.kind === "story" &&
       isStoryRomancePilotCharacterId(selectedCharacter.id)
     ) {
-      void sendStoryPilotMessage(selectedCharacter, trimmed);
+      void handleStoryPilotSend(selectedCharacter, trimmed);
       return;
     }
 
@@ -1704,7 +1762,7 @@ export function ChatScreen() {
               quickActions={selectedCharacterActions}
               trayOpen={composerTrayOpen}
               sendDisabled={
-                selectedCharacter.kind === "story" && storySendInFlight
+                selectedCharacter.kind === "story" && selectedStoryIsTyping
               }
               auxiliaryAction={{
                 label: "프로필 보기",
