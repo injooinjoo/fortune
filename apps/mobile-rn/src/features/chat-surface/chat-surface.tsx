@@ -27,6 +27,9 @@ import { fortuneTheme } from '../../lib/theme';
 import { EmbeddedResultCard } from '../chat-results/embedded-result-card';
 import type { ChatSurveyStep } from '../chat-survey/types';
 
+const assistantMessageMaxWidth = '84%';
+const userMessageMaxWidth = '92%';
+
 function CharacterAvatar({
   characterId,
   name,
@@ -389,34 +392,27 @@ function MessageBubble({ message }: { message: ChatShellTextMessage }) {
   return (
     <View
       style={{
-        alignItems: isAssistant || isSystem ? 'flex-start' : 'flex-end',
+        backgroundColor:
+          isAssistant || isSystem
+            ? fortuneTheme.colors.backgroundTertiary
+            : fortuneTheme.colors.surfaceSecondary,
+        borderColor: fortuneTheme.colors.border,
+        borderRadius: fortuneTheme.radius.messageBubble,
+        borderWidth: 1,
+        paddingHorizontal: 14,
+        paddingVertical: 10,
       }}
     >
-      <View
-        style={{
-          backgroundColor:
-            isAssistant || isSystem
-              ? fortuneTheme.colors.backgroundTertiary
-              : fortuneTheme.colors.surfaceSecondary,
-          borderColor: fortuneTheme.colors.border,
-          borderRadius: fortuneTheme.radius.messageBubble,
-          borderWidth: 1,
-          maxWidth: '84%',
-          paddingHorizontal: 14,
-          paddingVertical: 10,
-        }}
+      <AppText
+        variant="bodyMedium"
+        color={
+          isSystem
+            ? fortuneTheme.colors.textSecondary
+            : fortuneTheme.colors.textPrimary
+        }
       >
-        <AppText
-          variant="bodyMedium"
-          color={
-            isSystem
-              ? fortuneTheme.colors.textSecondary
-              : fortuneTheme.colors.textPrimary
-          }
-        >
-          {message.text}
-        </AppText>
-      </View>
+        {message.text}
+      </AppText>
     </View>
   );
 }
@@ -443,7 +439,7 @@ function TypingIndicatorBubble({ character }: { character: ChatCharacterSpec }) 
           borderColor: fortuneTheme.colors.border,
           borderRadius: fortuneTheme.radius.messageBubble,
           borderWidth: 1,
-          maxWidth: '84%',
+          maxWidth: assistantMessageMaxWidth,
           paddingHorizontal: 14,
           paddingVertical: 10,
         }}
@@ -513,7 +509,13 @@ function ChatThreadMessage({
       <View
         style={{
           flex: isUser || isEmbeddedResult ? 0 : 1,
-          maxWidth: isUser ? '84%' : '100%',
+          flexShrink: isUser ? 1 : 0,
+          maxWidth: isEmbeddedResult
+            ? '100%'
+            : isUser
+              ? userMessageMaxWidth
+              : assistantMessageMaxWidth,
+          minWidth: 0,
           width: isEmbeddedResult ? '100%' : undefined,
         }}
       >

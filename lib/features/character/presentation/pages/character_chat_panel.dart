@@ -128,6 +128,34 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     );
   }
 
+  static const Map<String, String> _specialtyCategoryLabels = {
+    'love': '연애/관계',
+    'career': '커리어/재물',
+    'zodiac': '별자리/띠',
+    'personality': '자기이해',
+    'lucky': '행운 아이템',
+    'sports': '운동/활동',
+    'special': '타로/무의식',
+    'lifestyle': '라이프스타일',
+  };
+
+  /// Header subtitle: "오늘 운세 · {specialty} 전문가" for fortune experts,
+  /// shortDescription for story characters.
+  String? get _headerSubtitle {
+    final character = widget.character;
+    if (character.isFortuneExpert) {
+      final categoryLabel =
+          _specialtyCategoryLabels[character.specialtyCategory] ??
+              character.specialtyCategory;
+      if (categoryLabel != null) {
+        return '오늘 운세 · $categoryLabel 전문가';
+      }
+      return '오늘 운세';
+    }
+    final desc = character.shortDescription;
+    return desc.isNotEmpty ? desc : null;
+  }
+
   bool get _isHaneulPremiumShell => widget.character.id == haneulCharacter.id;
 
   String? _activeFortuneType() {
@@ -610,7 +638,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     }
 
     if (_isShowingAuthSheet) {
-      return true;
+      return false;
     }
 
     await _presentAuthenticationSheet();
@@ -1019,14 +1047,27 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                   ),
                   const SizedBox(width: DSSpacing.sm),
                   Expanded(
-                    child: Text(
-                      widget.character.name,
-                      style: context.bodyLarge.copyWith(
-                        color: colors.textPrimary,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 20,
-                      ),
-                      overflow: TextOverflow.ellipsis,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          widget.character.name,
+                          style: context.bodyLarge.copyWith(
+                            color: colors.textPrimary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        if (_headerSubtitle != null)
+                          Text(
+                            _headerSubtitle!,
+                            style: context.typography.labelSmall.copyWith(
+                              color: colors.textSecondary,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                      ],
                     ),
                   ),
                 ],
@@ -1034,7 +1075,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.more_vert),
+            icon: const Icon(Icons.info_outline, size: 22),
             onPressed: () => _showCharacterProfile(context),
           ),
         ],
@@ -1231,8 +1272,6 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
 
   /// 운세 전문가 칩 바 (전문 분야 운세 칩들)
   Widget _buildFortuneChipBar(CharacterChatState chatState) {
-    final colors = context.colors;
-    final isHaneulChipBar = _isHaneulPremiumShell;
     final activeFortuneType = _activeFortuneType();
     final shouldShowAccordionToggle = widget.character.specialties.length > 3;
     final collapsedHeight = 32.0;
@@ -1288,8 +1327,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                         separatorBuilder: (_, __) =>
                             const SizedBox(width: DSSpacing.sm),
                         itemBuilder: (context, index) {
-                          final child = chipWidgets[index];
-                          return isHaneulChipBar ? Center(child: child) : child;
+                          return Center(child: chipWidgets[index]);
                         },
                       ),
                     ),
@@ -1316,7 +1354,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
                               ? Icons.keyboard_arrow_up_rounded
                               : Icons.keyboard_arrow_down_rounded,
                           size: 16,
-                          color: colors.textSecondary,
+                          color: context.colors.textSecondary,
                         ),
                       ),
                     ),
@@ -1337,62 +1375,16 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     required String chipEmoji,
     required bool isSelected,
   }) {
-    final colors = context.colors;
     final onTap = chatState.isProcessing
         ? null
         : () => _handleFortuneChipTap(specialty, displayName);
 
-    if (_isHaneulPremiumShell) {
-      return DSChip(
-        label: '$chipEmoji $displayName',
-        selected: isSelected,
-        style: DSChipStyle.outlined,
-        enableHaptic: false,
-        onTap: onTap,
-      );
-    }
-
-    final backgroundColor =
-        isSelected ? colors.selectionBackground : colors.surface;
-    final foregroundColor =
-        isSelected ? colors.selectionForeground : colors.textPrimary;
-    final borderColor = isSelected ? colors.selectionBorder : colors.border;
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(context.radius.full),
-        child: AnimatedContainer(
-          duration: DSAnimation.quick,
-          curve: DSAnimation.primary,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(context.radius.full),
-            border: Border.all(color: borderColor),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                chipEmoji,
-                style: context.labelMedium.copyWith(
-                  color: foregroundColor,
-                ),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                displayName,
-                style: context.labelMedium.copyWith(
-                  color: foregroundColor,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+    return DSChip(
+      label: '$chipEmoji $displayName',
+      selected: isSelected,
+      style: DSChipStyle.outlined,
+      enableHaptic: false,
+      onTap: onTap,
     );
   }
 
@@ -1505,6 +1497,10 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
       trigger: 'fortune-start.$fortuneType',
     );
     if (!launchAllowed) {
+      return;
+    }
+
+    if (!mounted) {
       return;
     }
 
@@ -1757,8 +1753,7 @@ class _CharacterChatPanelState extends ConsumerState<CharacterChatPanel>
     required String fortuneType,
     required Map<String, dynamic> answers,
   }) async {
-    final actionLabel =
-        fortuneType == 'talisman' ? '부적을 만들려면' : '운세 결과를 보려면';
+    final actionLabel = fortuneType == 'talisman' ? '부적을 만들려면' : '운세 결과를 보려면';
     final ready = await _ensureChatActionReady(
       actionLabel: actionLabel,
       requiredTokens: CharacterChatPreflightGuard.surveySubmissionTokenCost(
