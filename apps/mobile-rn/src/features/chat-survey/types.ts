@@ -6,6 +6,7 @@ export type ChatSurveyInputKind =
   | 'text'
   | 'text-with-skip'
   | 'date'
+  | 'photo'
   | 'card-draw';
 
 export interface ChatSurveyOption {
@@ -43,4 +44,13 @@ export interface ActiveChatSurvey {
 export interface CompletedChatSurvey {
   fortuneType: FortuneTypeId;
   answers: Record<string, unknown>;
+}
+
+export interface ChatSurveyPhotoAnswer {
+  base64: string;
+  fileName?: string | null;
+  height?: number;
+  mimeType?: string | null;
+  uri?: string;
+  width?: number;
 }

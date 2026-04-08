@@ -52,6 +52,21 @@ const traditionalSurvey: ChatSurveyDefinition = {
   ],
 };
 
+const faceReadingSurvey: ChatSurveyDefinition = {
+  fortuneType: 'face-reading',
+  title: '관상',
+  introReply: '관상 흐름으로 볼게요. 얼굴 사진 한 장만 보내주시면 바로 이어서 분석할게요.',
+  submitReply: '좋아요. 인상 흐름과 관상 포인트를 같은 대화 안에서 바로 보여드릴게요.',
+  steps: [
+    {
+      id: 'photo',
+      question: '얼굴이 잘 보이는 사진을 한 장 보내주세요.',
+      inputKind: 'photo',
+      placeholder: '정면에 가깝고 얼굴 윤곽이 잘 보이는 사진이 좋아요.',
+    },
+  ],
+};
+
 const dailyCalendarSurvey: ChatSurveyDefinition = {
   fortuneType: 'daily-calendar',
   title: '만세력',
@@ -1376,7 +1391,7 @@ const examSurvey: ChatSurveyDefinition = {
 const ootdSurvey: ChatSurveyDefinition = {
   fortuneType: 'ootd-evaluation',
   title: 'OOTD 코디',
-  introReply: 'OOTD 흐름으로 볼게요. 오늘의 상황과 룩 포인트를 먼저 맞춰볼게요.',
+  introReply: 'OOTD 흐름으로 볼게요. 오늘의 상황과 사진 한 장만 있으면 바로 읽을 수 있어요.',
   submitReply: '좋아요. 스타일 점수와 추천 아이템을 카드로 이어드릴게요.',
   steps: [
     {
@@ -1391,9 +1406,16 @@ const ootdSurvey: ChatSurveyDefinition = {
       ],
     },
     {
+      id: 'photo',
+      question: '오늘 룩 사진을 한 장 보내주세요.',
+      inputKind: 'photo',
+      placeholder: '전신 또는 상반신이 잘 보이는 사진이면 더 정확해요.',
+    },
+    {
       id: 'lookNote',
       question: '오늘 룩을 짧게 설명해주세요.',
-      inputKind: 'text',
+      inputKind: 'text-with-skip',
+      required: false,
       placeholder: '예: 블랙 자켓에 데님, 실버 포인트로 입었어요.',
     },
   ],
@@ -1401,6 +1423,7 @@ const ootdSurvey: ChatSurveyDefinition = {
 
 const surveyDefinitions = [
   traditionalSurvey,
+  faceReadingSurvey,
   dailyCalendarSurvey,
   newYearSurvey,
   mbtiSurvey,
@@ -1441,7 +1464,6 @@ export const surveyDefinitionByFortuneType = Object.fromEntries(
 const surveyDefinitionAliasByFortuneType: Partial<
   Record<FortuneTypeId, FortuneTypeId>
 > = {
-  'face-reading': 'traditional-saju',
   lotto: 'wealth',
 };
 
@@ -1600,6 +1622,10 @@ export function formatSurveyAnswerLabel(
 }
 
 function formatSingleAnswerLabel(step: ChatSurveyStep, answer: unknown) {
+  if (step.inputKind === 'photo') {
+    return '사진 1장 첨부';
+  }
+
   if (typeof answer !== 'string') {
     if (answer instanceof Date) {
       return answer.toISOString().slice(0, 10);

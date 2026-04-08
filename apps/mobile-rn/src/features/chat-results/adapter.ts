@@ -95,6 +95,7 @@ const contextLabelByStepId: Partial<Record<string, string>> = {
   tarotSelection: '선택 카드',
   tpo: '상황',
   lookNote: '룩 설명',
+  photo: '첨부 사진',
   bokchae: '복채',
   currentArea: '현재 지역',
   targetArea: '이사 지역',
@@ -266,6 +267,10 @@ function normalizeSurveyContext(
         continue;
       }
 
+      if (step.inputKind === 'photo') {
+        continue;
+      }
+
       tags.push(`${contextLabelForStep(step)}: ${displayValue}`);
     }
   }
@@ -434,6 +439,12 @@ function buildIntroSentence(
         labels.mbti ? `${labels.mbti} 성향과` : null,
         labels.bloodType ? `${labels.bloodType} 기질,` : null,
         labels.zodiac ? `${labels.zodiac} 흐름을 함께 묶어` : '강점 축을 중심으로',
+        '정리했습니다.',
+      ]);
+    case 'face-reading':
+      return joinSentence([
+        '첨부한 얼굴 사진을 기준으로',
+        '인상과 관상 포인트를 중심으로',
         '정리했습니다.',
       ]);
     case 'wealth':
@@ -684,6 +695,10 @@ function extractDetailSections(
         ['일상 매칭', payload.dailyMatching],
         ['궁합 힌트', payload.compatibility],
       ]);
+    case 'face-reading':
+      return extractFaceReadingDetailSections(payload);
+    case 'ootd-evaluation':
+      return extractOotdDetailSections(payload);
     case 'moving':
       return createRecordSections([
         ['방향 분석', payload.directionAnalysis],
@@ -1135,11 +1150,10 @@ function extractMetricTiles(
         ].filter(Boolean) as MetricTileData[],
         mapRecordToMetricTiles(asRecord(payload.enhance_stats)),
       );
+    case 'face-reading':
+      return extractFaceReadingMetricTiles(payload);
     case 'ootd-evaluation':
-      return [
-        toMetricTile('전체 등급', payload.overallGrade),
-        toMetricTile('TPO 점수', payload.tpoScore),
-      ].filter(Boolean) as MetricTileData[];
+      return extractOotdMetricTiles(payload);
     case 'wealth':
       return [
         toMetricTile('재물 잠재력', payload.wealthPotential),
@@ -1199,6 +1213,8 @@ function extractHighlights(
       );
     case 'personality-dna':
       return collectTextItems(payload.todayHighlight, payload.traits, payload.funStats);
+    case 'face-reading':
+      return extractFaceReadingHighlights(payload);
     case 'moving':
       return collectTextItems(
         payload.directionAnalysis,
@@ -1221,6 +1237,8 @@ function extractHighlights(
       );
     case 'decision':
       return collectTextItems(payload.confidenceFactors, payload.recommendation);
+    case 'ootd-evaluation':
+      return extractOotdHighlights(payload);
     default:
       return collectTextItems(
         payload.highlights,
@@ -1266,6 +1284,8 @@ function extractRecommendations(
         payload.todayAdvice,
         asRecord(payload.dailyFortune).recommendedActivity,
       );
+    case 'face-reading':
+      return extractFaceReadingRecommendations(payload);
     case 'moving':
       return collectTextItems(
         payload.recommendations,
@@ -1287,6 +1307,8 @@ function extractRecommendations(
       );
     case 'decision':
       return collectTextItems(payload.nextSteps, payload.recommendation);
+    case 'ootd-evaluation':
+      return extractOotdRecommendations(payload);
     default:
       return collectTextItems(
         payload.advice,
@@ -1326,6 +1348,8 @@ function extractWarnings(
       return collectTextItems(payload.todayTrap, payload.challenges);
     case 'personality-dna':
       return collectTextItems(asRecord(payload.dailyFortune).caution);
+    case 'face-reading':
+      return extractFaceReadingWarnings(payload);
     case 'moving':
       return collectTextItems(payload.warnings);
     case 'celebrity':
@@ -1341,6 +1365,8 @@ function extractWarnings(
         asRecord(payload.favoriteTeamAnalysis).concerns,
         asRecord(payload.opponentAnalysis).concerns,
       );
+    case 'ootd-evaluation':
+      return extractOotdWarnings(payload);
     default:
       return collectTextItems(payload.warnings, payload.cautions, payload.dontsList);
   }
@@ -1370,6 +1396,10 @@ function extractLuckyItems(
         asRecord(payload.dailyFortune).luckyNumber,
         asRecord(payload.dailyFortune).bestMatchToday,
       );
+    case 'face-reading':
+      return extractFaceReadingLuckyItems(payload);
+    case 'ootd-evaluation':
+      return extractOotdLuckyItems(payload);
     case 'celebrity':
       return collectTextItems(payload.lucky_factors);
     case 'pet-compatibility':
@@ -1399,6 +1429,8 @@ function extractSpecialTip(
       return firstText(payload.encounterSpotStory);
     case 'decision':
       return firstText(payload.recommendation);
+    case 'face-reading':
+      return extractFaceReadingSpecialTip(payload);
     case 'personality-dna':
       return firstText(payload.todayAdvice, payload.todayHighlight);
     case 'moving':
@@ -1412,6 +1444,8 @@ function extractSpecialTip(
       );
     case 'match-insight':
       return firstText(asRecord(payload.prediction).mvpCandidate);
+    case 'ootd-evaluation':
+      return extractOotdSpecialTip(payload);
     default:
       return firstText(
         payload.specialTip,
@@ -1447,13 +1481,439 @@ function collectReadableKeywordItems(...values: unknown[]) {
     .slice(0, 8);
 }
 
+function extractFaceReadingDetailSections(
+  payload: UnknownRecord,
+): EmbeddedResultDetailSection[] | undefined {
+  const details = asRecord(payload.details);
+  const sections = [
+    createTextSection(
+      '얼굴형과 첫인상',
+      joinReadableParts([
+        describeFaceReadingOverview(details),
+        firstReadableText(payload.content),
+        firstReadableText(details.overall_fortune),
+      ]),
+    ),
+    createTextSection(
+      '오관 핵심',
+      summarizeNamedItems(details.simplifiedOgwan),
+    ),
+    createTextSection(
+      '삼정 균형',
+      joinReadableParts([
+        firstReadableText(asRecord(details.samjeong_summary).description),
+        firstReadableText(asRecord(details.samjeong_summary).balance)
+          ? `균형: ${firstReadableText(asRecord(details.samjeong_summary).balance)}`
+          : null,
+      ]),
+    ),
+    createTextSection(
+      '십이궁 흐름',
+      summarizeNamedItems(details.simplifiedSibigung),
+    ),
+    createTextSection(
+      '명궁과 미간',
+      joinReadableParts([
+        summarizePreviewInsight('명궁', details.myeonggung_preview),
+        summarizePreviewInsight('미간', details.migan_preview),
+      ]),
+    ),
+  ].filter(Boolean) as EmbeddedResultDetailSection[];
+
+  return sections.length > 0 ? sections : undefined;
+}
+
+function extractOotdDetailSections(
+  payload: UnknownRecord,
+): EmbeddedResultDetailSection[] | undefined {
+  const details = asRecord(payload.details);
+  const categories = asRecord(details.categories);
+  const sections = [
+    createTextSection('TPO 해석', firstReadableText(details.tpoFeedback)),
+    createTextSection(
+      '셀럽 무드 참고',
+      firstReadableText(asRecord(details.celebrityMatch).reason),
+    ),
+  ];
+  const categorySections = [
+    ['색 조합', categories.colorHarmony],
+    ['실루엣', categories.silhouette],
+    ['스타일 일관성', categories.styleConsistency],
+    ['액세서리', categories.accessories],
+    ['TPO 핏', categories.tpoFit],
+    ['트렌드 감각', categories.trendScore],
+  ] as const;
+
+  const scoredSections = categorySections
+    .map(([title, value]) => createScoredFeedbackSection(title, value))
+    .filter(Boolean) as EmbeddedResultDetailSection[];
+
+  const merged = [...sections, ...scoredSections].filter(Boolean) as EmbeddedResultDetailSection[];
+
+  return merged.length > 0 ? merged : undefined;
+}
+
+function describeFaceReadingOverview(details: UnknownRecord) {
+  const faceType = firstReadableText(details.face_type);
+  const element = firstReadableText(details.face_type_element);
+
+  if (faceType && element) {
+    return `${faceType} 얼굴형, ${element} 기운으로 읽혔습니다.`;
+  }
+
+  if (faceType) {
+    return `${faceType} 얼굴형으로 읽혔습니다.`;
+  }
+
+  return element ? `${element} 기운이 두드러집니다.` : null;
+}
+
+function summarizePreviewInsight(title: string, value: unknown) {
+  const preview = asRecord(value);
+  const summary = firstReadableText(preview.summary, preview.description, preview.content);
+  const score = readScore(preview.score);
+
+  if (!summary) {
+    return null;
+  }
+
+  return score == null ? `${title}: ${summary}` : `${title} ${score}점: ${summary}`;
+}
+
+function summarizeNamedItems(
+  value: unknown,
+  limit = 3,
+) {
+  if (!Array.isArray(value)) {
+    return null;
+  }
+
+  const lines = value
+    .map((entry) => {
+      const record = asRecord(entry);
+      const name = firstReadableText(record.name, record.title, record.part, record.palace);
+      const summary = firstReadableText(
+        record.summary,
+        record.description,
+        record.feedback,
+        record.reason,
+      );
+
+      if (!name && !summary) {
+        return null;
+      }
+
+      if (!summary) {
+        return name;
+      }
+
+      return name ? `${name}: ${summary}` : summary;
+    })
+    .filter(Boolean)
+    .slice(0, limit) as string[];
+
+  return lines.length > 0 ? lines.join('\n') : null;
+}
+
+function extractFaceReadingMetricTiles(
+  payload: UnknownRecord,
+): MetricTileData[] | undefined {
+  const details = asRecord(payload.details);
+  const breakdown = asRecord(payload.scoreBreakdown);
+
+  return mergeMetricTiles(
+    [
+      toMetricTile('오관', breakdown.ogwan),
+      toMetricTile('삼정', breakdown.samjeong),
+      toMetricTile('십이궁', breakdown.sibigung),
+      toMetricTile(
+        '얼굴 컨디션',
+        asRecord(details.faceCondition_preview).overallConditionScore,
+      ),
+    ].filter(Boolean) as MetricTileData[],
+    [
+      toMetricTile('얼굴형', details.face_type),
+      toMetricTile('오행', details.face_type_element),
+    ].filter(Boolean) as MetricTileData[],
+  );
+}
+
+function extractOotdMetricTiles(
+  payload: UnknownRecord,
+): MetricTileData[] | undefined {
+  const details = asRecord(payload.details);
+  const categories = asRecord(details.categories);
+
+  return mergeMetricTiles(
+    [
+      toMetricTile('전체 등급', details.overallGrade),
+      toMetricTile('TPO 점수', details.tpoScore),
+      toScoredMetricTile('색 조합', categories.colorHarmony),
+      toScoredMetricTile('실루엣', categories.silhouette),
+    ].filter(Boolean) as MetricTileData[],
+    undefined,
+  );
+}
+
+function extractFaceReadingHighlights(
+  payload: UnknownRecord,
+) {
+  const details = asRecord(payload.details);
+  return collectReadableTextItems(
+    extractFaceReadingPriorityInsights(details.priorityInsights),
+    firstReadableText(asRecord(details.faceCondition_preview).conditionMessage),
+    firstReadableText(asRecord(details.emotionAnalysis_preview).emotionMessage),
+    summarizeSimilarCelebrities(details.similar_celebrities),
+  );
+}
+
+function extractOotdHighlights(
+  payload: UnknownRecord,
+) {
+  const details = asRecord(payload.details);
+  return collectReadableTextItems(
+    details.highlights,
+    details.styleKeywords,
+    firstReadableText(asRecord(details.celebrityMatch).reason),
+  );
+}
+
+function extractFaceReadingRecommendations(
+  payload: UnknownRecord,
+) {
+  const details = asRecord(payload.details);
+  return collectReadableTextItems(
+    payload.advice,
+    asRecord(details.improvements).daily,
+    asRecord(details.improvements).appearance,
+    firstReadableText(asRecord(details.watchData).dailyReminderMessage),
+    firstReadableText(asRecord(details.makeupStyleRecommendations).recommendedStyle),
+    firstReadableText(asRecord(details.makeupStyleRecommendations).hairStyleTip),
+    firstReadableText(asRecord(details.leadershipAnalysis).teamRoleRecommendation),
+    firstReadableText(asRecord(details.leadershipAnalysis).careerAdvice),
+  );
+}
+
+function extractOotdRecommendations(
+  payload: UnknownRecord,
+) {
+  const details = asRecord(payload.details);
+  return collectReadableTextItems(
+    details.softSuggestions,
+    formatRecommendedItems(details.recommendedItems),
+  );
+}
+
+function extractFaceReadingWarnings(
+  payload: UnknownRecord,
+) {
+  const details = asRecord(payload.details);
+  return collectReadableTextItems(
+    firstReadableText(asRecord(details.faceCondition_preview).conditionMessage),
+    firstReadableText(asRecord(details.emotionAnalysis_preview).emotionMessage),
+    asRecord(details.personality).growthAreas,
+    asRecord(details.myeonggung).weaknesses,
+    asRecord(details.migan).weaknesses,
+  );
+}
+
+function extractOotdWarnings(
+  payload: UnknownRecord,
+) {
+  const details = asRecord(payload.details);
+  const lowScoreFeedback = summarizeLowScoreFeedback(details.categories);
+
+  return collectReadableTextItems(lowScoreFeedback);
+}
+
+function extractFaceReadingLuckyItems(
+  payload: UnknownRecord,
+) {
+  const details = asRecord(payload.details);
+  const watchData = asRecord(asRecord(payload.details).watchData);
+  return collectReadableKeywordItems(
+    watchData.luckyColor,
+    watchData.luckyDirection,
+    watchData.luckyTimePeriods,
+    asRecord(details.improvements).luckyColors,
+    asRecord(details.improvements).luckyDirections,
+  );
+}
+
+function extractOotdLuckyItems(
+  payload: UnknownRecord,
+) {
+  const details = asRecord(payload.details);
+  return collectReadableKeywordItems(
+    details.styleKeywords,
+    extractRecommendedItemNames(details.recommendedItems),
+  );
+}
+
+function extractFaceReadingSpecialTip(
+  payload: UnknownRecord,
+) {
+  const details = asRecord(payload.details);
+  return firstText(
+    asRecord(details.watchData).dailyReminderMessage,
+    details.overall_fortune,
+    payload.advice,
+  );
+}
+
+function extractOotdSpecialTip(
+  payload: UnknownRecord,
+) {
+  const details = asRecord(payload.details);
+  return firstText(payload.advice, details.tpoFeedback, details.overallComment);
+}
+
+function extractFaceReadingPriorityInsights(
+  value: unknown,
+) {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .map((entry) => {
+      const record = asRecord(entry);
+      const title = firstReadableText(record.title);
+      const description = firstReadableText(record.description);
+      if (!title && !description) {
+        return null;
+      }
+      return [title, description].filter(Boolean).join(': ');
+    })
+    .filter(Boolean) as string[];
+}
+
+function summarizeSimilarCelebrities(value: unknown) {
+  if (!Array.isArray(value)) {
+    return null;
+  }
+
+  const names = value
+    .map((entry) => firstReadableText(asRecord(entry).name))
+    .filter(Boolean)
+    .slice(0, 3) as string[];
+
+  return names.length > 0 ? `닮은 분위기: ${names.join(', ')}` : null;
+}
+
+function extractRecommendedItemNames(value: unknown) {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .map((entry) => firstReadableText(asRecord(entry).item))
+    .filter(Boolean) as string[];
+}
+
+function formatRecommendedItems(value: unknown) {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .map((entry) => {
+      const record = asRecord(entry);
+      const category = firstReadableText(record.category);
+      const item = firstReadableText(record.item);
+      const reason = firstReadableText(record.reason);
+      const label = [category, item].filter(Boolean).join(' · ');
+
+      if (!label && !reason) {
+        return null;
+      }
+
+      return reason ? `${label}: ${reason}` : label;
+    })
+    .filter(Boolean) as string[];
+}
+
+function summarizeLowScoreFeedback(value: unknown) {
+  const categories = asRecord(value);
+  const entries = [
+    ['색 조합', categories.colorHarmony],
+    ['실루엣', categories.silhouette],
+    ['스타일 일관성', categories.styleConsistency],
+    ['액세서리', categories.accessories],
+    ['TPO 핏', categories.tpoFit],
+    ['트렌드 감각', categories.trendScore],
+  ] as const;
+
+  const candidates: Array<{ label: string; score: number; feedback: string }> = [];
+
+  for (const [label, entry] of entries) {
+      const record = asRecord(entry);
+      const score = readScore(record.score);
+      const feedback = firstReadableText(record.feedback);
+      if (score == null || !feedback) {
+        continue;
+      }
+
+      candidates.push({ label, score, feedback });
+  }
+
+  const lowest = candidates.sort((left, right) => left.score - right.score)[0];
+
+  return lowest
+    ? `${lowest.label} 보완 포인트 ${lowest.score}점: ${lowest.feedback}`
+    : null;
+}
+
+function createTextSection(
+  title: string,
+  body: string | null,
+  score?: number,
+): EmbeddedResultDetailSection | null {
+  if (!body) {
+    return null;
+  }
+
+  return {
+    title,
+    body,
+    score,
+  };
+}
+
+function createScoredFeedbackSection(
+  title: string,
+  value: unknown,
+): EmbeddedResultDetailSection | null {
+  const record = asRecord(value);
+  const feedback = firstReadableText(record.feedback, record.description);
+  const score = readScore(record.score) ?? undefined;
+
+  if (!feedback) {
+    return null;
+  }
+
+  return {
+    title,
+    body: feedback,
+    score,
+  };
+}
+
+function joinReadableParts(
+  parts: Array<string | null | undefined>,
+  separator = '\n',
+) {
+  const lines = parts.map((part) => part?.trim()).filter(Boolean) as string[];
+  return lines.length > 0 ? lines.join(separator) : null;
+}
+
 function toTextItems(value: unknown): string[] {
   if (value == null) {
     return [];
   }
 
   if (typeof value === 'string') {
-    return value.trim() ? [trimParagraph(value, 200)] : [];
+    return value.trim() ? [trimParagraph(value, 280)] : [];
   }
 
   if (typeof value === 'number' || typeof value === 'boolean') {
@@ -1521,6 +1981,25 @@ function mapRecordToMetricTiles(record: UnknownRecord): MetricTileData[] | undef
     .filter(Boolean) as MetricTileData[];
 
   return entries.length > 0 ? entries.slice(0, 4) : undefined;
+}
+
+function toScoredMetricTile(
+  label: string,
+  value: unknown,
+): MetricTileData | null {
+  const record = asRecord(value);
+  const score = readScore(record.score);
+  const feedback = firstReadableText(record.feedback, record.description);
+
+  if (score == null) {
+    return null;
+  }
+
+  return {
+    label,
+    value: `${score}%`,
+    note: feedback ? trimParagraph(feedback, 80) : undefined,
+  };
 }
 
 function toMetricTile(label: string, value: unknown): MetricTileData | null {

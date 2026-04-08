@@ -8,6 +8,7 @@ import {
   formatSurveyAnswerLabel,
   getChatSurveyDefinition,
 } from '../chat-survey/registry';
+import type { ChatSurveyPhotoAnswer } from '../chat-survey/types';
 import { resolveResultKindFromFortuneType } from '../fortune-results/mapping';
 import { supabase } from '../../lib/supabase';
 import {
@@ -123,6 +124,23 @@ function buildFortuneRequestBody(
     case 'new-year':
       copyLabeledValue(payload, labels.goal, 'goal');
       break;
+    case 'face-reading': {
+      const photo = readPhotoAnswer(answers.photo);
+      if (!photo?.base64) {
+        return null;
+      }
+      copyLabeledValue(payload, photo.base64, 'image', 'imageBase64');
+      copyLabeledValue(payload, 'upload', 'analysis_source');
+      copyLabeledValue(payload, deriveUserAgeGroup(profile.birthDate), 'userAgeGroup');
+      copyLabeledValue(
+        payload,
+        profile.displayName ?? context.characterName ?? '회원님',
+        'userName',
+        'user_name',
+      );
+      payload.useV2 = true;
+      break;
+    }
     case 'mbti':
       copyLabeledValue(
         payload,
@@ -251,8 +269,21 @@ function buildFortuneRequestBody(
       copyLabeledValue(payload, labels.bokchae, 'bokchae');
       break;
     case 'ootd-evaluation':
+      {
+        const photo = readPhotoAnswer(answers.photo);
+        if (!photo?.base64) {
+          return null;
+        }
+        copyLabeledValue(payload, photo.base64, 'imageBase64', 'image');
+      }
       copyLabeledValue(payload, labels.tpo, 'tpo');
       copyLabeledValue(payload, readString(answers.lookNote), 'lookNote', 'look_note');
+      copyLabeledValue(
+        payload,
+        profile.displayName ?? context.characterName ?? '회원님',
+        'userName',
+        'user_name',
+      );
       break;
     case 'personality-dna':
       copyLabeledValue(payload, labels.mbti, 'mbti');
@@ -497,6 +528,10 @@ function normalizeAnswerValue(value: unknown) {
     return null;
   }
 
+  if (readPhotoAnswer(value)) {
+    return null;
+  }
+
   if (Array.isArray(value)) {
     return value.length > 0 ? value : null;
   }
@@ -517,6 +552,34 @@ function requiresBirthDate(fortuneType: FortuneTypeId) {
     fortuneType === 'compatibility' ||
     fortuneType === 'mbti'
   );
+}
+
+function deriveUserAgeGroup(birthDate?: string | null) {
+  const yearText = birthDate?.split('-')[0];
+  if (!yearText) {
+    return null;
+  }
+
+  const year = Number(yearText);
+  if (!Number.isFinite(year)) {
+    return null;
+  }
+
+  const age = new Date().getFullYear() - year + 1;
+
+  if (age < 20) {
+    return '10s';
+  }
+
+  if (age < 30) {
+    return '20s';
+  }
+
+  if (age < 40) {
+    return '30s';
+  }
+
+  return '40s+';
 }
 
 function resolveFavoriteTeam(answers: Record<string, unknown>) {
@@ -546,6 +609,27 @@ function parseOptionsList(value: string | null) {
     .map((item) => item.trim())
     .filter(Boolean)
     .slice(0, 5);
+}
+
+function readPhotoAnswer(value: unknown): ChatSurveyPhotoAnswer | null {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    return null;
+  }
+
+  const record = value as Record<string, unknown>;
+  const base64 = readString(record.base64);
+  if (!base64) {
+    return null;
+  }
+
+  return {
+    base64,
+    fileName: readString(record.fileName),
+    height: typeof record.height === 'number' ? record.height : undefined,
+    mimeType: readString(record.mimeType),
+    uri: readString(record.uri) ?? undefined,
+    width: typeof record.width === 'number' ? record.width : undefined,
+  };
 }
 
 function resolveFamilyConcern(

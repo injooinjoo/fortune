@@ -29,9 +29,12 @@ Target: `apps/mobile-rn`
 
 ## Runtime Truthfulness
 
-- 사진이 필요한 운세는 사진 없이 fallback 카드로 대체하지 않는다
+- 사진이 필요한 운세는 survey-scoped photo input을 거쳐서만 edge 호출한다
 - 프로필 생년월일이 필요한 운세는 missing-profile 상태를 먼저 알린다
 - edge function이 없는 운세는 다른 운세 카드로 alias하지 않는다
+- `face-reading`과 `ootd-evaluation`은 공통 카드 시스템을 쓰되, `survey photo answer`가 없으면 edge 호출하지 않는다
+- 사진 기반 운세는 `generic composer attachment`가 아니라 `survey-scoped photo input`을 source of truth로 삼는다
+- 사진 기반 결과 카드는 사진 미리보기보다 edge가 반환한 분석 텍스트와 점수 시각화를 우선한다
 
 ## Batch Note
 

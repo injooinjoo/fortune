@@ -115,6 +115,13 @@ const config: ExpoConfig = {
     'expo-router',
     'expo-iap',
     'expo-apple-authentication',
+    [
+      'expo-image-picker',
+      {
+        photosPermission:
+          '관상과 OOTD 결과를 위해 사진 라이브러리 접근 권한이 필요합니다.',
+      },
+    ],
     'expo-web-browser',
     './plugins/with-ios-prebuilt-react-native',
   ],

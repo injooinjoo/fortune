@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { type FortuneTypeId } from '@fortune/product-contracts';
+import * as ImagePicker from 'expo-image-picker';
 import { Alert, ScrollView, View } from 'react-native';
 
 import { AppText } from '../components/app-text';
@@ -25,7 +26,10 @@ import {
   resolveSurveyQuestion,
   startChatSurvey,
 } from '../features/chat-survey/registry';
-import type { ActiveChatSurvey } from '../features/chat-survey/types';
+import type {
+  ActiveChatSurvey,
+  ChatSurveyPhotoAnswer,
+} from '../features/chat-survey/types';
 import { fetchEmbeddedEdgeResultPayload } from '../features/chat-results/edge-runtime';
 import {
   buildFortuneRuntimeBlockMessage,
@@ -593,7 +597,75 @@ export function ChatScreen() {
 
   function handleOpenPhotoPicker() {
     setComposerTrayOpen(false);
-    Alert.alert('사진 보내기', '사진 첨부 연결은 다음 단계에서 바로 붙이겠습니다.');
+
+    if (currentSurveyStep?.step.inputKind === 'photo') {
+      void handleSurveyPickPhoto();
+      return;
+    }
+
+    Alert.alert(
+      '사진 보내기',
+      '일반 채팅 첨부는 아직 준비 중이고, 관상/OOTD 설문 안에서는 바로 사용할 수 있어요.',
+    );
+  }
+
+  async function handleSurveyPickPhoto() {
+    if (!currentSurveyStep || currentSurveyStep.step.inputKind !== 'photo') {
+      return;
+    }
+
+    try {
+      const permission =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (!permission.granted) {
+        Alert.alert(
+          '사진 접근 권한 필요',
+          '관상과 OOTD 결과를 보려면 사진 접근 권한이 필요해요.',
+        );
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        base64: true,
+        mediaTypes: ['images'],
+        quality: 0.8,
+      });
+
+      if (result.canceled || !result.assets.length) {
+        return;
+      }
+
+      const asset = result.assets[0];
+
+      if (!asset.base64) {
+        Alert.alert(
+          '사진 읽기 실패',
+          '사진 데이터를 읽지 못했어요. 다른 사진으로 다시 시도해주세요.',
+        );
+        return;
+      }
+
+      const photoAnswer: ChatSurveyPhotoAnswer = {
+        base64: asset.base64,
+        fileName: asset.fileName ?? null,
+        height: asset.height,
+        mimeType: asset.mimeType ?? null,
+        uri: asset.uri,
+        width: asset.width,
+      };
+
+      submitSurveyAnswer(photoAnswer, '사진 1장 첨부');
+    } catch (error) {
+      await captureError(error, {
+        surface: 'chat:pick-survey-photo',
+      }).catch(() => undefined);
+      Alert.alert(
+        '사진 선택 실패',
+        '사진을 불러오지 못했어요. 잠시 후 다시 시도해주세요.',
+      );
+    }
   }
 
   function handleStartVoiceInput() {
@@ -1131,6 +1203,7 @@ export function ChatScreen() {
             <ActiveSurveyFooter
               draft={surveyDraft}
               onDraftChange={setSurveyDraft}
+              onPickPhoto={handleSurveyPickPhoto}
               onPickSingle={(value) => submitSurveyAnswer(value)}
               onSkip={handleSurveySkip}
               onSubmitSelection={handleSurveySubmitSelection}

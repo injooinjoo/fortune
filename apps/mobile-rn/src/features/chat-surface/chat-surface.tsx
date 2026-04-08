@@ -1057,6 +1057,7 @@ export function ActiveSurveyFooter({
   draft,
   selections,
   onDraftChange,
+  onPickPhoto,
   onPickSingle,
   onToggleSelection,
   onSubmitSelection,
@@ -1067,6 +1068,7 @@ export function ActiveSurveyFooter({
   draft: string;
   selections: readonly string[];
   onDraftChange: (value: string) => void;
+  onPickPhoto: () => void;
   onPickSingle: (value: string) => void;
   onToggleSelection: (value: string) => void;
   onSubmitSelection: () => void;
@@ -1113,6 +1115,33 @@ export function ActiveSurveyFooter({
             </Pressable>
           ))}
         </View>
+      </View>
+    );
+  }
+
+  if (step.inputKind === 'photo') {
+    return (
+      <View style={{ gap: fortuneTheme.spacing.sm }}>
+        <Card
+          style={{
+            backgroundColor: fortuneTheme.colors.surfaceSecondary,
+            borderColor: fortuneTheme.colors.border,
+            borderStyle: 'dashed',
+            borderWidth: 1,
+            gap: fortuneTheme.spacing.sm,
+          }}
+        >
+          <View style={{ gap: fortuneTheme.spacing.xs }}>
+            <AppText variant="labelLarge">사진 1장 첨부</AppText>
+            <AppText
+              variant="bodySmall"
+              color={fortuneTheme.colors.textSecondary}
+            >
+              {step.placeholder ?? '사진을 고르면 바로 다음 단계로 이어집니다.'}
+            </AppText>
+          </View>
+          <PrimaryButton onPress={onPickPhoto}>사진 고르기</PrimaryButton>
+        </Card>
       </View>
     );
   }
