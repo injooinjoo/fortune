@@ -2,6 +2,7 @@ import {
   normalizeFortuneResult,
   resolveFortuneEndpoint,
   type FortuneTypeId,
+  type NormalizedFortuneResult,
 } from '@fortune/product-contracts';
 
 import {
@@ -10,6 +11,7 @@ import {
 } from '../chat-survey/registry';
 import type { ChatSurveyPhotoAnswer } from '../chat-survey/types';
 import { resolveResultKindFromFortuneType } from '../fortune-results/mapping';
+import type { ResultKind } from '../fortune-results/types';
 import { supabase } from '../../lib/supabase';
 import {
   buildEmbeddedResultPayloadFromNormalizedResult,
@@ -22,17 +24,28 @@ import type {
 
 type UnknownRecord = Record<string, unknown>;
 
-export async function fetchEmbeddedEdgeResultPayload(
+export interface PreparedEmbeddedEdgeInvocation {
+  fortuneType: FortuneTypeId;
+  resultKind: ResultKind;
+  endpoint: string;
+  functionName: string;
+  body: UnknownRecord;
+}
+
+export interface EmbeddedEdgeResult {
+  invocation: PreparedEmbeddedEdgeInvocation;
+  rawResult: unknown;
+  normalizedResult: NormalizedFortuneResult;
+  payload: EmbeddedResultPayload;
+}
+
+export function prepareEmbeddedEdgeInvocation(
   fortuneType: FortuneTypeId,
   context: EmbeddedResultBuildContext = {},
   options: {
     userId?: string | null;
   } = {},
-): Promise<EmbeddedResultPayload | null> {
-  if (!supabase) {
-    return null;
-  }
-
+): PreparedEmbeddedEdgeInvocation | null {
   const resultKind = resolveResultKindFromFortuneType(fortuneType);
   if (!resultKind) {
     return null;
@@ -51,9 +64,44 @@ export async function fetchEmbeddedEdgeResultPayload(
     return null;
   }
 
-  const functionName = endpoint.replace(/^\//u, '');
-  const { data, error } = await supabase.functions.invoke(functionName, {
+  return {
+    fortuneType,
+    resultKind,
+    endpoint,
+    functionName: endpoint.replace(/^\//u, ''),
     body,
+  };
+}
+
+export async function fetchEmbeddedEdgeResultPayload(
+  fortuneType: FortuneTypeId,
+  context: EmbeddedResultBuildContext = {},
+  options: {
+    userId?: string | null;
+  } = {},
+): Promise<EmbeddedResultPayload | null> {
+  const result = await fetchEmbeddedEdgeResult(fortuneType, context, options);
+  return result?.payload ?? null;
+}
+
+export async function fetchEmbeddedEdgeResult(
+  fortuneType: FortuneTypeId,
+  context: EmbeddedResultBuildContext = {},
+  options: {
+    userId?: string | null;
+  } = {},
+): Promise<EmbeddedEdgeResult | null> {
+  if (!supabase) {
+    return null;
+  }
+
+  const invocation = prepareEmbeddedEdgeInvocation(fortuneType, context, options);
+  if (!invocation) {
+    return null;
+  }
+
+  const { data, error } = await supabase.functions.invoke(invocation.functionName, {
+    body: invocation.body,
   });
 
   if (error) {
@@ -61,12 +109,19 @@ export async function fetchEmbeddedEdgeResultPayload(
   }
 
   const normalized = normalizeFortuneResult(data, { fortuneType });
-  return buildEmbeddedResultPayloadFromNormalizedResult(
+  const payload = buildEmbeddedResultPayloadFromNormalizedResult(
     fortuneType,
-    resultKind,
+    invocation.resultKind,
     normalized,
     context,
   );
+
+  return {
+    invocation,
+    rawResult: data,
+    normalizedResult: normalized,
+    payload,
+  };
 }
 
 function buildFortuneRequestBody(

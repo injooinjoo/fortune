@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { router, useLocalSearchParams, type Href } from 'expo-router';
-import { type FortuneTypeId } from '@fortune/product-contracts';
+import {
+  fortuneTypesById,
+  type FortuneTypeId,
+} from '@fortune/product-contracts';
 import * as ImagePicker from 'expo-image-picker';
 import { Alert, ScrollView, View } from 'react-native';
 
@@ -30,11 +33,11 @@ import type {
   ActiveChatSurvey,
   ChatSurveyPhotoAnswer,
 } from '../features/chat-survey/types';
-import { fetchEmbeddedEdgeResultPayload } from '../features/chat-results/edge-runtime';
 import {
   buildFortuneRuntimeBlockMessage,
   resolveFortuneRuntimeBlockReason,
 } from '../features/chat-results/runtime-capabilities';
+import { resolveFortuneRuntimeOutcome } from '../features/chat-results/runtime-orchestrator';
 import { resolveResultKindFromFortuneType } from '../features/fortune-results/mapping';
 import { captureError } from '../lib/error-reporting';
 import {
@@ -99,6 +102,17 @@ function supportsChatNativeRuntime(fortuneType: FortuneTypeId) {
     resolveResultKindFromFortuneType(fortuneType) !== null
   );
 }
+
+type ResolvedFortuneMessage =
+  | {
+      kind: 'result';
+      message: ChatShellEmbeddedResultMessage;
+    }
+  | {
+      kind: 'text';
+      message: ChatShellMessage;
+      routeToPremium?: boolean;
+    };
 
 export function ChatScreen() {
   const params = useLocalSearchParams<{ characterId?: string | string[] }>();
@@ -426,6 +440,7 @@ export function ChatScreen() {
     const runtimeBlockReason = resolveFortuneRuntimeBlockReason(
       fortuneType,
       mobileAppState.profile,
+      Boolean(session),
     );
 
     if (runtimeBlockReason) {
@@ -479,13 +494,21 @@ export function ChatScreen() {
     const definition = getChatSurveyDefinition(completed.fortuneType);
     setActiveSurvey(character.id, null);
 
-    const embeddedResult = await resolveFortuneResultMessage(
+    const resolved = await resolveFortuneResultMessage(
       completed.fortuneType,
       buildResultContext(character, completed.answers),
       'chat:complete-survey',
     );
 
-    if (!embeddedResult) {
+    if (!resolved) {
+      return;
+    }
+
+    if (resolved.kind === 'text') {
+      appendMessages(character, [resolved.message]);
+      if (resolved.routeToPremium) {
+        router.push('/premium');
+      }
       return;
     }
 
@@ -494,7 +517,7 @@ export function ChatScreen() {
         definition?.submitReply ??
           '좋아요. 결과를 같은 채팅 안에서 바로 보여드릴게요.',
       ),
-      embeddedResult,
+      resolved.message,
     ]);
   }
 
@@ -504,16 +527,13 @@ export function ChatScreen() {
     prefixText: string,
   ) {
     const previousMessage = findMostRecentEmbeddedResult(character.id, fortuneType);
-    const embeddedResult = previousMessage
-      ? buildEmbeddedResultMessageFromPayload(previousMessage.payload)
-      : buildEmbeddedResultMessage(
-          fortuneType,
-          buildResultContext(character),
-        );
-
-    if (!embeddedResult) {
+    if (!previousMessage) {
       return false;
     }
+
+    const embeddedResult = buildEmbeddedResultMessageFromPayload(
+      previousMessage.payload,
+    );
 
     setActiveSurvey(character.id, null);
     appendMessages(character, [
@@ -1054,19 +1074,27 @@ export function ChatScreen() {
     character: ChatCharacterSpec,
     fortuneType: FortuneTypeId,
   ) {
-    const embeddedResult = await resolveFortuneResultMessage(
+    const resolved = await resolveFortuneResultMessage(
       fortuneType,
       buildResultContext(character),
       'chat:begin-runtime',
     );
 
-    if (!embeddedResult) {
+    if (!resolved) {
+      return;
+    }
+
+    if (resolved.kind === 'text') {
+      appendMessages(character, [resolved.message]);
+      if (resolved.routeToPremium) {
+        router.push('/premium');
+      }
       return;
     }
 
     appendMessages(character, [
       buildAssistantTextMessage('좋아요. 결과를 같은 대화 안에 바로 붙여드릴게요.'),
-      embeddedResult,
+      resolved.message,
     ]);
   }
 
@@ -1074,24 +1102,55 @@ export function ChatScreen() {
     fortuneType: FortuneTypeId,
     context: ReturnType<typeof buildResultContext>,
     surface: string,
-  ) {
-    try {
-      const payload = await fetchEmbeddedEdgeResultPayload(
-        fortuneType,
-        context,
-        {
-          userId: session?.user.id ?? null,
-        },
-      );
-
-      if (payload) {
-        return buildEmbeddedResultMessageFromPayload(payload);
+  ): Promise<ResolvedFortuneMessage | null> {
+    const spec = fortuneTypesById[fortuneType];
+    if (spec.isLocalOnly || !spec.endpoint) {
+      const embeddedResult = buildEmbeddedResultMessage(fortuneType, context);
+      if (!embeddedResult || embeddedResult.kind !== 'embedded-result') {
+        return null;
       }
-    } catch (error) {
-      await captureError(error, { surface }).catch(() => undefined);
+
+      return {
+        kind: 'result',
+        message: embeddedResult,
+      };
     }
 
-    return buildEmbeddedResultMessage(fortuneType, context);
+    try {
+      const outcome = await resolveFortuneRuntimeOutcome({
+        fortuneType,
+        context,
+        session,
+        premiumState: mobileAppState.premium,
+        syncRemoteProfile,
+      });
+
+      if (outcome.kind === 'success') {
+        return {
+          kind: 'result',
+          message: buildEmbeddedResultMessageFromPayload(outcome.payload),
+        };
+      }
+
+      if (outcome.kind === 'failed' && outcome.error) {
+        await captureError(outcome.error, { surface }).catch(() => undefined);
+      }
+
+      return {
+        kind: 'text',
+        message: buildAssistantTextMessage(outcome.message),
+        routeToPremium:
+          outcome.kind === 'blocked' && outcome.routeToPremium === true,
+      };
+    } catch (error) {
+      await captureError(error, { surface }).catch(() => undefined);
+      return {
+        kind: 'text',
+        message: buildAssistantTextMessage(
+          '실제 운세 결과를 불러오지 못했어요. 잠시 후 다시 시도해주세요.',
+        ),
+      };
+    }
   }
 
   function handleSurveySubmitSelection() {

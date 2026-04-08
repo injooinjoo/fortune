@@ -44,6 +44,11 @@ interface TokenConsumeResponse {
   error?: string;
 }
 
+interface TokenRefundResponse {
+  balance?: TokenConsumeBalancePayload;
+  error?: string;
+}
+
 export interface RemotePremiumSnapshot {
   activeSubscriptionProductId: ProductId | null;
   subscriptionExpiresAt: string | null;
@@ -102,6 +107,11 @@ export interface RemoteTokenConsumePayload {
 export interface RemoteTokenConsumeResult {
   balance: number | null;
   isUnlimited: boolean;
+}
+
+export interface RemoteTokenRefundPayload {
+  fortuneType: string;
+  reason?: string | null;
 }
 
 export interface RemoteSubscriptionActivationPayload {
@@ -333,6 +343,49 @@ export async function consumeRemoteTokens(
     throw new RemoteTokenConsumeError(
       'UNKNOWN',
       result.error ?? result.message ?? `soul-consume:${response.status}`,
+    );
+  }
+
+  return {
+    balance:
+      typeof result.balance?.remainingTokens === 'number' &&
+      Number.isFinite(result.balance.remainingTokens)
+        ? result.balance.remainingTokens
+        : null,
+    isUnlimited: result.balance?.hasUnlimitedAccess === true,
+  };
+}
+
+export async function refundRemoteTokens(
+  session: Session,
+  payload: RemoteTokenRefundPayload,
+): Promise<RemoteTokenConsumeResult> {
+  if (!appEnv.isSupabaseConfigured) {
+    throw new RemoteTokenConsumeError(
+      'UNKNOWN',
+      'Supabase 설정이 없어 토큰 환불을 진행할 수 없습니다.',
+    );
+  }
+
+  const response = await fetch(`${appEnv.supabaseUrl}/functions/v1/soul-refund`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${session.access_token}`,
+      apikey: appEnv.supabaseAnonKey,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      fortuneType: payload.fortuneType,
+      reason: payload.reason ?? null,
+    }),
+  });
+
+  const result = (await response.json()) as TokenRefundResponse;
+
+  if (!response.ok) {
+    throw new RemoteTokenConsumeError(
+      'UNKNOWN',
+      result.error ?? `soul-refund:${response.status}`,
     );
   }
 

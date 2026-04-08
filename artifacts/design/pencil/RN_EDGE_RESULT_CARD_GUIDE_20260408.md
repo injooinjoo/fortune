@@ -29,6 +29,9 @@ Target: `apps/mobile-rn`
 
 ## Runtime Truthfulness
 
+- edge-backed 운세는 `login -> persisted reuse -> token -> edge -> persist` 순서를 먼저 통과한다
+- 같은 요청이 재사용 조건에 맞으면 edge를 다시 호출하지 않고 DB의 직전 결과를 카드로 복원한다
+- edge 호출 실패 시 로컬 하드코딩 카드로 조용히 대체하지 않고 실패 안내를 보여준다
 - 사진이 필요한 운세는 survey-scoped photo input을 거쳐서만 edge 호출한다
 - 프로필 생년월일이 필요한 운세는 missing-profile 상태를 먼저 알린다
 - edge function이 없는 운세는 다른 운세 카드로 alias하지 않는다

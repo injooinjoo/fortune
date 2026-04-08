@@ -35,6 +35,13 @@ Target: `apps/mobile-rn`
 
 ## This Batch
 
+- Added a single RN preflight for all edge-backed fortunes:
+  1. 로그인 세션 확인
+  2. `fortune_results` 기반 개인 동일 요청 재사용 확인
+  3. 토큰 가용성 확인 및 차감
+  4. edge function 호출
+  5. 성공 결과를 `fortune_results`에 다시 저장
+  6. 실패 시 토큰 환불 + 가짜 fallback 카드 대신 안내 메시지 노출
 - Expanded RN survey definitions to cover `moving`, `celebrity`, `pet-compatibility`, `match-insight`, `decision`
 - Enriched request-body mapping for `health`, `personality-dna`, `wealth`, `talent`, `moving`, `celebrity`, `pet-compatibility`, `match-insight`, `decision`
 - Added survey-scoped photo input for `face-reading` and `ootd-evaluation`
@@ -47,3 +54,4 @@ Target: `apps/mobile-rn`
 
 - Generic composer photo attachment flow outside survey context
 - Decide whether `fortune-cookie`, `breathing`, `coaching`, `daily-review`, `weekly-review`, `chat-insight` stay local or get new edge functions
+- Expand persisted reuse policy from current default window to fortune-type-specific TTL rules if product wants finer granularity
