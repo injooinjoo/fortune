@@ -8,7 +8,7 @@ import {
   unifiedOnboardingProgressStorageKey,
   type FortuneTypeId,
   type UnifiedOnboardingProgress,
-} from '@fortune/product-contracts';
+} from "@fortune/product-contracts";
 
 import {
   emptyMobileAppState,
@@ -16,15 +16,22 @@ import {
   mobileAppStateStorageKey,
   normalizeMobileAppState,
   type MobileAppState,
-} from './mobile-app-state';
+} from "./mobile-app-state";
 import {
   deleteSecureItem,
   getSecureItem,
   setSecureItem,
-} from './secure-store-storage';
+} from "./secure-store-storage";
 
 const guestMobileAppStateStorageKey = `${mobileAppStateStorageKey}.guest`;
-const lastAuthenticatedUserIdStorageKey = 'fortune.last-auth-user-id.v1';
+const lastAuthenticatedUserIdStorageKey = "fortune.last-auth-user-id.v1";
+const pendingChatFortuneRequestStorageKey =
+  "fortune.pending-chat-fortune-request.v1";
+
+export interface PendingChatFortuneRequest {
+  fortuneType: FortuneTypeId;
+  answers?: Record<string, unknown>;
+}
 
 function resolveMobileAppStateStorageKey(userId: string | null = null) {
   if (!userId) {
@@ -77,9 +84,7 @@ export async function clearUnifiedOnboardingProgress() {
 }
 
 export async function getPendingChatFortuneType(): Promise<FortuneTypeId | null> {
-  const raw = await getSecureItem(
-    deepLinkConfig.pendingFortuneTypeStorageKey,
-  );
+  const raw = await getSecureItem(deepLinkConfig.pendingFortuneTypeStorageKey);
   const normalized = normalizeFortuneTypeForChat(raw);
 
   if (!normalized) {
@@ -97,27 +102,71 @@ export async function setPendingChatFortuneType(
     return;
   }
 
+  await setSecureItem(deepLinkConfig.pendingFortuneTypeStorageKey, fortuneType);
+}
+
+export async function getPendingChatFortuneRequest(): Promise<PendingChatFortuneRequest | null> {
+  const raw = await getSecureItem(pendingChatFortuneRequestStorageKey);
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as {
+      fortuneType?: unknown;
+      answers?: unknown;
+    };
+    const fortuneType = normalizeFortuneTypeForChat(
+      typeof parsed.fortuneType === "string" ? parsed.fortuneType : null,
+    );
+    if (!fortuneType || !(fortuneType in fortuneTypesById)) {
+      return null;
+    }
+
+    const answers =
+      parsed.answers &&
+      typeof parsed.answers === "object" &&
+      !Array.isArray(parsed.answers)
+        ? (parsed.answers as Record<string, unknown>)
+        : undefined;
+
+    return {
+      fortuneType,
+      answers,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export async function setPendingChatFortuneRequest(
+  request: PendingChatFortuneRequest | null,
+) {
+  if (!request) {
+    await deleteSecureItem(pendingChatFortuneRequestStorageKey);
+    return;
+  }
+
   await setSecureItem(
-    deepLinkConfig.pendingFortuneTypeStorageKey,
-    fortuneType,
+    pendingChatFortuneRequestStorageKey,
+    JSON.stringify({
+      fortuneType: request.fortuneType,
+      answers: request.answers ?? null,
+    }),
   );
 }
 
 export async function getMobileAppState(
   userId: string | null = null,
 ): Promise<MobileAppState> {
-  const raw = await getSecureItem(
-    resolveMobileAppStateStorageKey(userId),
-  );
+  const raw = await getSecureItem(resolveMobileAppStateStorageKey(userId));
 
   if (!raw) {
     return emptyMobileAppState;
   }
 
   try {
-    return normalizeMobileAppState(
-      JSON.parse(raw) as Record<string, unknown>,
-    );
+    return normalizeMobileAppState(JSON.parse(raw) as Record<string, unknown>);
   } catch {
     return emptyMobileAppState;
   }
@@ -151,7 +200,7 @@ export async function clearMobileAppState(userId: string | null = null) {
 
 export async function getLastAuthenticatedUserId() {
   const value = await getSecureItem(lastAuthenticatedUserIdStorageKey);
-  return typeof value === 'string' && value.length > 0 ? value : null;
+  return typeof value === "string" && value.length > 0 ? value : null;
 }
 
 export async function saveLastAuthenticatedUserId(userId: string) {

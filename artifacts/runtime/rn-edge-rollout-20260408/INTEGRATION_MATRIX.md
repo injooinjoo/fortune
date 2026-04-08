@@ -15,15 +15,18 @@ Target: `apps/mobile-rn`
 
 | Character | Fortune Types | Current Status |
 | --- | --- | --- |
-| 하늘 | `daily`, `daily-calendar`, `new-year` | `edge-ready` |
+| 하늘 | `daily` | `edge-ready` |
+| 하늘 | `daily-calendar`, `new-year` | `edge-ready (profile birthDate)` |
 | 하늘 | `fortune-cookie` | `local-only` |
-| 무현 도사 | `traditional-saju`, `blood-type`, `naming` | `edge-ready` |
+| 무현 도사 | `traditional-saju`, `blood-type` | `edge-ready` |
+| 무현 도사 | `naming` | `edge-ready (profile birthDate)` |
 | 무현 도사 | `face-reading` | `edge-ready (photo survey)` |
 | 스텔라 | `zodiac`, `zodiac-animal`, `constellation`, `birthstone` | `edge-ready (profile birthDate)` |
 | Dr. 마인드 | `mbti` | `edge-ready (profile birthDate)` |
 | Dr. 마인드 | `personality-dna`, `talent`, `past-life`, `decision` | `edge-ready` |
 | Dr. 마인드 | `coaching`, `daily-review`, `weekly-review`, `chat-insight` | `local-only` |
-| 로제 | `love`, `compatibility`, `blind-date`, `ex-lover`, `avoid-people`, `celebrity`, `yearly-encounter` | `edge-ready` |
+| 로제 | `love` | `edge-ready (profile birthDate)` |
+| 로제 | `compatibility`, `blind-date`, `ex-lover`, `avoid-people`, `celebrity`, `yearly-encounter` | `edge-ready` |
 | 제임스 김 | `career`, `wealth`, `exam` | `edge-ready` |
 | 럭키 | `lucky-items` | `edge-ready` |
 | 럭키 | `lotto` | `edge-unavailable` |
@@ -45,6 +48,10 @@ Target: `apps/mobile-rn`
 - Expanded RN survey definitions to cover `moving`, `celebrity`, `pet-compatibility`, `match-insight`, `decision`
 - Enriched request-body mapping for `health`, `personality-dna`, `wealth`, `talent`, `moving`, `celebrity`, `pet-compatibility`, `match-insight`, `decision`
 - Added survey-scoped photo input for `face-reading` and `ootd-evaluation`
+- Expanded request-body alignment for `daily-calendar`, `new-year`, `love`, `ex-lover`, `health`, `wealth`, `talent`, `exercise`
+- Preserved completed survey answers across signup/login so post-auth replay can resume with the same inputs
+- Stabilized personal-cache fingerprinting so display name changes do not invalidate identical-fortune reuse
+- Added refund reference tracking so token refunds can be tied back to the original consumption record
 - Wired `face-reading`: `photo -> image/imageBase64 + analysis_source=upload + userAgeGroup + useV2 -> /fortune-face-reading`
 - Wired `ootd-evaluation`: `photo + tpo (+ lookNote) -> imageBase64/image -> /fortune-ootd`
 - Kept truthfulness guards so `lotto` no longer pretends to be edge-backed
@@ -55,3 +62,4 @@ Target: `apps/mobile-rn`
 - Generic composer photo attachment flow outside survey context
 - Decide whether `fortune-cookie`, `breathing`, `coaching`, `daily-review`, `weekly-review`, `chat-insight` stay local or get new edge functions
 - Expand persisted reuse policy from current default window to fortune-type-specific TTL rules if product wants finer granularity
+- Audit `soul-refund` production deployment and verify refund idempotency against live token transaction rows

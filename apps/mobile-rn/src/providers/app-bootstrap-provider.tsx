@@ -6,10 +6,10 @@ import {
   useRef,
   useState,
   type PropsWithChildren,
-} from 'react';
+} from "react";
 
-import * as Linking from 'expo-linking';
-import { router, type Href } from 'expo-router';
+import * as Linking from "expo-linking";
+import { router, type Href } from "expo-router";
 import {
   emptyUnifiedOnboardingProgress,
   resolveChatOnboardingGate,
@@ -17,24 +17,30 @@ import {
   type ChatOnboardingGate,
   type FortuneTypeId,
   type UnifiedOnboardingProgress,
-} from '@fortune/product-contracts';
+} from "@fortune/product-contracts";
 
-import { trackEvent } from '../lib/analytics';
-import { exchangeAuthCodeFromUrl, isAuthCallbackUrl } from '../lib/auth-session';
-import { appEnv } from '../lib/env';
-import { captureError } from '../lib/error-reporting';
+import { trackEvent } from "../lib/analytics";
+import {
+  exchangeAuthCodeFromUrl,
+  isAuthCallbackUrl,
+} from "../lib/auth-session";
+import { appEnv } from "../lib/env";
+import { captureError } from "../lib/error-reporting";
 import {
   getPendingChatFortuneType,
+  getPendingChatFortuneRequest,
   getLastAuthenticatedUserId,
   getUnifiedOnboardingProgress,
+  type PendingChatFortuneRequest,
   patchUnifiedOnboardingProgress,
   saveLastAuthenticatedUserId,
   saveUnifiedOnboardingProgress,
+  setPendingChatFortuneRequest,
   setPendingChatFortuneType,
-} from '../lib/storage';
-import { supabase, type SupabaseSession } from '../lib/supabase';
+} from "../lib/storage";
+import { supabase, type SupabaseSession } from "../lib/supabase";
 
-type BootstrapStatus = 'loading' | 'ready';
+type BootstrapStatus = "loading" | "ready";
 
 interface BootstrapContextValue {
   status: BootstrapStatus;
@@ -43,6 +49,7 @@ interface BootstrapContextValue {
   gate: ChatOnboardingGate;
   onboardingProgress: UnifiedOnboardingProgress;
   pendingChatFortuneType: FortuneTypeId | null;
+  pendingChatFortuneRequest: PendingChatFortuneRequest | null;
   markGuestBrowse: () => Promise<void>;
   markAuthComplete: () => Promise<void>;
   updateOnboardingProgress: (
@@ -50,36 +57,40 @@ interface BootstrapContextValue {
   ) => Promise<void>;
   completeOnboarding: () => Promise<void>;
   consumePendingChatFortuneType: () => Promise<FortuneTypeId | null>;
+  consumePendingChatFortuneRequest: () => Promise<PendingChatFortuneRequest | null>;
 }
 
 const BootstrapContext = createContext<BootstrapContextValue>({
-  status: 'loading',
+  status: "loading",
   session: null,
   hasSupabase: false,
-  gate: 'auth-entry',
+  gate: "auth-entry",
   onboardingProgress: emptyUnifiedOnboardingProgress,
   pendingChatFortuneType: null,
+  pendingChatFortuneRequest: null,
   markGuestBrowse: async () => undefined,
   markAuthComplete: async () => undefined,
   updateOnboardingProgress: async () => undefined,
   completeOnboarding: async () => undefined,
   consumePendingChatFortuneType: async () => null,
+  consumePendingChatFortuneRequest: async () => null,
 });
 
 export function AppBootstrapProvider({ children }: PropsWithChildren) {
-  const [status, setStatus] = useState<BootstrapStatus>('loading');
+  const [status, setStatus] = useState<BootstrapStatus>("loading");
   const [session, setSession] = useState<SupabaseSession>(null);
-  const [onboardingProgress, setOnboardingProgress] = useState<UnifiedOnboardingProgress>(
-    emptyUnifiedOnboardingProgress,
-  );
+  const [onboardingProgress, setOnboardingProgress] =
+    useState<UnifiedOnboardingProgress>(emptyUnifiedOnboardingProgress);
   const [pendingChatFortuneType, setPendingChatFortuneTypeState] =
     useState<FortuneTypeId | null>(null);
+  const [pendingChatFortuneRequest, setPendingChatFortuneRequestState] =
+    useState<PendingChatFortuneRequest | null>(null);
   const lastAuthenticatedUserIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
 
-    trackEvent('app_open').catch(() => undefined);
+    trackEvent("app_open").catch(() => undefined);
 
     async function syncProgress(
       patch: Partial<UnifiedOnboardingProgress>,
@@ -94,15 +105,15 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
     }
 
     async function applyDebugChatOverride(target: string) {
-      if (appEnv.environment !== 'development') {
+      if (appEnv.environment !== "development") {
         return null;
       }
 
       const url = new URL(target);
-      const debugGate = url.searchParams.get('debugChatGate');
-      const debugCharacterId = url.searchParams.get('characterId');
+      const debugGate = url.searchParams.get("debugChatGate");
+      const debugCharacterId = url.searchParams.get("characterId");
 
-      if (debugGate === 'auth-entry') {
+      if (debugGate === "auth-entry") {
         const nextProgress = await syncProgress({
           softGateCompleted: false,
           authCompleted: false,
@@ -113,11 +124,11 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
 
         return {
           nextProgress,
-          route: '/chat' as const,
+          route: "/chat" as const,
         };
       }
 
-      if (debugGate !== 'ready') {
+      if (debugGate !== "ready") {
         return null;
       }
 
@@ -131,7 +142,7 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
 
       const route = debugCharacterId
         ? (`/chat?characterId=${encodeURIComponent(debugCharacterId)}` as const)
-        : ('/chat' as const);
+        : ("/chat" as const);
 
       return {
         nextProgress,
@@ -150,26 +161,37 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
       const resolution = resolveDeepLink(target);
 
       if (resolution.fortuneType) {
-        await setPendingChatFortuneType(resolution.fortuneType);
+        await Promise.all([
+          setPendingChatFortuneType(resolution.fortuneType),
+          setPendingChatFortuneRequest({ fortuneType: resolution.fortuneType }),
+        ]);
 
         if (mounted) {
           setPendingChatFortuneTypeState(resolution.fortuneType);
+          setPendingChatFortuneRequestState({
+            fortuneType: resolution.fortuneType,
+          });
         }
       }
 
-      if (resolution.route !== '/chat') {
+      if (resolution.route !== "/chat") {
         router.replace(resolution.route as Href);
       }
     }
 
     async function bootstrap() {
       try {
-        const [storedProgress, queuedFortuneType, lastAuthenticatedUserId] =
-          await Promise.all([
-            getUnifiedOnboardingProgress(),
-            getPendingChatFortuneType(),
-            getLastAuthenticatedUserId(),
-          ]);
+        const [
+          storedProgress,
+          queuedFortuneType,
+          queuedFortuneRequest,
+          lastAuthenticatedUserId,
+        ] = await Promise.all([
+          getUnifiedOnboardingProgress(),
+          getPendingChatFortuneType(),
+          getPendingChatFortuneRequest(),
+          getLastAuthenticatedUserId(),
+        ]);
 
         if (!mounted) {
           return;
@@ -177,15 +199,21 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
 
         lastAuthenticatedUserIdRef.current = lastAuthenticatedUserId;
         setOnboardingProgress(storedProgress);
-        setPendingChatFortuneTypeState(queuedFortuneType);
+        setPendingChatFortuneRequestState(
+          queuedFortuneRequest ??
+            (queuedFortuneType ? { fortuneType: queuedFortuneType } : null),
+        );
+        setPendingChatFortuneTypeState(
+          queuedFortuneRequest?.fortuneType ?? queuedFortuneType,
+        );
 
         const initialUrl = await Linking.getInitialURL();
 
         if (initialUrl && isAuthCallbackUrl(initialUrl)) {
           await exchangeAuthCodeFromUrl(initialUrl).catch((error) => {
-            captureError(error, { surface: 'bootstrap:auth-code-exchange' }).catch(
-              () => undefined,
-            );
+            captureError(error, {
+              surface: "bootstrap:auth-code-exchange",
+            }).catch(() => undefined);
           });
         }
 
@@ -230,10 +258,10 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
           await handleDeepLink(initialUrl);
         }
       } catch (error) {
-        await captureError(error, { surface: 'bootstrap:init' });
+        await captureError(error, { surface: "bootstrap:init" });
       } finally {
         if (mounted) {
-          setStatus('ready');
+          setStatus("ready");
         }
       }
     }
@@ -271,7 +299,7 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
               )
               .catch((error) => {
                 captureError(error, {
-                  surface: 'bootstrap:onAuthStateChange',
+                  surface: "bootstrap:onAuthStateChange",
                 }).catch(() => undefined);
               });
           } else {
@@ -279,21 +307,21 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
               authCompleted: false,
             }).catch((error) => {
               captureError(error, {
-                surface: 'bootstrap:onAuthStateChange',
+                surface: "bootstrap:onAuthStateChange",
               }).catch(() => undefined);
             });
           }
         }).data.subscription
       : null;
 
-    const linkSubscription = Linking.addEventListener('url', (event) => {
+    const linkSubscription = Linking.addEventListener("url", (event) => {
       const targetUrl = event.url;
 
       const maybeExchange = isAuthCallbackUrl(targetUrl)
         ? exchangeAuthCodeFromUrl(targetUrl).catch((error) => {
-            captureError(error, { surface: 'bootstrap:auth-code-exchange' }).catch(
-              () => undefined,
-            );
+            captureError(error, {
+              surface: "bootstrap:auth-code-exchange",
+            }).catch(() => undefined);
             return null;
           })
         : Promise.resolve(null);
@@ -301,7 +329,7 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
       maybeExchange
         .then(() => handleDeepLink(targetUrl))
         .catch((error) => {
-          captureError(error, { surface: 'bootstrap:deep-link' }).catch(
+          captureError(error, { surface: "bootstrap:deep-link" }).catch(
             () => undefined,
           );
         });
@@ -355,6 +383,19 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
     return current;
   }
 
+  async function consumePendingChatFortuneRequest() {
+    const current = pendingChatFortuneRequest;
+
+    await Promise.all([
+      setPendingChatFortuneType(null),
+      setPendingChatFortuneRequest(null),
+    ]);
+    setPendingChatFortuneTypeState(null);
+    setPendingChatFortuneRequestState(null);
+
+    return current;
+  }
+
   const gate = resolveChatOnboardingGate({
     hasAuthenticatedUser: Boolean(session),
     progress: onboardingProgress,
@@ -368,19 +409,23 @@ export function AppBootstrapProvider({ children }: PropsWithChildren) {
       gate,
       onboardingProgress,
       pendingChatFortuneType,
+      pendingChatFortuneRequest,
       markGuestBrowse,
       markAuthComplete,
       updateOnboardingProgress,
       completeOnboarding,
       consumePendingChatFortuneType,
+      consumePendingChatFortuneRequest,
     }),
     [
       completeOnboarding,
       consumePendingChatFortuneType,
+      consumePendingChatFortuneRequest,
       gate,
       markAuthComplete,
       markGuestBrowse,
       onboardingProgress,
+      pendingChatFortuneRequest,
       pendingChatFortuneType,
       session,
       status,

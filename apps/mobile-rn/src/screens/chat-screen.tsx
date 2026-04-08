@@ -1,16 +1,16 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from "react";
 
-import { router, useLocalSearchParams, type Href } from 'expo-router';
-import { requireOptionalNativeModule } from 'expo-modules-core';
+import { router, useLocalSearchParams, type Href } from "expo-router";
+import { requireOptionalNativeModule } from "expo-modules-core";
 import {
   fortuneTypesById,
   type FortuneTypeId,
-} from '@fortune/product-contracts';
-import { Alert, ScrollView, View } from 'react-native';
+} from "@fortune/product-contracts";
+import { Alert, ScrollView, View } from "react-native";
 
-import { AppText } from '../components/app-text';
-import { Card } from '../components/card';
-import { Screen } from '../components/screen';
+import { AppText } from "../components/app-text";
+import { Card } from "../components/card";
+import { Screen } from "../components/screen";
 import {
   ActiveChatComposer,
   ActiveCharacterChatHeader,
@@ -20,7 +20,7 @@ import {
   ChatSoftGate,
   FloatingCreateButton,
   ProfileFlowGateCard,
-} from '../features/chat-surface/chat-surface';
+} from "../features/chat-surface/chat-surface";
 import {
   applySurveyAnswer,
   formatSurveyAnswerLabel,
@@ -28,21 +28,21 @@ import {
   getCurrentSurveyStep,
   resolveSurveyQuestion,
   startChatSurvey,
-} from '../features/chat-survey/registry';
+} from "../features/chat-survey/registry";
 import type {
   ActiveChatSurvey,
   ChatSurveyPhotoAnswer,
-} from '../features/chat-survey/types';
+} from "../features/chat-survey/types";
 import {
   buildFortuneRuntimeBlockMessage,
   resolveFortuneRuntimeBlockReason,
-} from '../features/chat-results/runtime-capabilities';
-import { resolveFortuneRuntimeOutcome } from '../features/chat-results/runtime-orchestrator';
-import type { EmbeddedResultPayload } from '../features/chat-results/types';
-import { resolveResultKindFromFortuneType } from '../features/fortune-results/mapping';
-import type { TarotSelectionPayload } from '../features/tarot';
-import { calendarService } from '../lib/calendar/calendar-service';
-import { captureError } from '../lib/error-reporting';
+} from "../features/chat-results/runtime-capabilities";
+import { resolveFortuneRuntimeOutcome } from "../features/chat-results/runtime-orchestrator";
+import type { EmbeddedResultPayload } from "../features/chat-results/types";
+import { resolveResultKindFromFortuneType } from "../features/fortune-results/mapping";
+import type { TarotSelectionPayload } from "../features/tarot";
+import { calendarService } from "../lib/calendar/calendar-service";
+import { captureError } from "../lib/error-reporting";
 import {
   buildAssistantTextMessage,
   buildEmbeddedResultMessage,
@@ -57,7 +57,7 @@ import {
   type ChatShellEmbeddedResultMessage,
   type ChatShellMessage,
   type ChatShellTextMessage,
-} from '../lib/chat-shell';
+} from "../lib/chat-shell";
 import {
   chatCharacters,
   findChatCharacterById,
@@ -66,7 +66,7 @@ import {
   storyChatCharacters,
   type ChatCharacterSpec,
   type ChatCharacterTab,
-} from '../lib/chat-characters';
+} from "../lib/chat-characters";
 import {
   buildNextStoryThreadSnapshot,
   buildStoryFallbackAssistantMessage,
@@ -76,26 +76,29 @@ import {
   loadStoryThreadSnapshot,
   saveStoryThreadSnapshot,
   type StoryChatThreadSnapshot,
-} from '../lib/story-chat-runtime';
-import { isStoryRomancePilotCharacterId } from '../lib/story-romance-pilots';
+} from "../lib/story-chat-runtime";
+import { isStoryRomancePilotCharacterId } from "../lib/story-romance-pilots";
 import {
   consumeRemoteTokens,
   RemoteTokenConsumeError,
-} from '../lib/premium-remote';
-import { setPendingChatFortuneType } from '../lib/storage';
+} from "../lib/premium-remote";
+import {
+  setPendingChatFortuneRequest,
+  setPendingChatFortuneType,
+} from "../lib/storage";
 import {
   socialAuthProviderLabelById,
   type SocialAuthProviderId,
-} from '../lib/social-auth';
-import { fortuneTheme } from '../lib/theme';
-import { updateFortuneWidgetSnapshot } from '../lib/widgets/fortune-widget-service';
-import { useAppBootstrap } from '../providers/app-bootstrap-provider';
-import { useFriendCreation } from '../providers/friend-creation-provider';
-import { useMobileAppState } from '../providers/mobile-app-state-provider';
-import { useSocialAuth } from '../providers/social-auth-provider';
+} from "../lib/social-auth";
+import { fortuneTheme } from "../lib/theme";
+import { updateFortuneWidgetSnapshot } from "../lib/widgets/fortune-widget-service";
+import { useAppBootstrap } from "../providers/app-bootstrap-provider";
+import { useFriendCreation } from "../providers/friend-creation-provider";
+import { useMobileAppState } from "../providers/mobile-app-state-provider";
+import { useSocialAuth } from "../providers/social-auth-provider";
 
-type SurfaceMode = 'list' | 'chat';
-type ImagePickerModule = typeof import('expo-image-picker');
+type SurfaceMode = "list" | "chat";
+type ImagePickerModule = typeof import("expo-image-picker");
 
 let imagePickerModulePromise: Promise<ImagePickerModule | null> | null = null;
 
@@ -112,13 +115,13 @@ function isImagePickerNativeModuleError(error: unknown) {
 
   return (
     error.message.includes("Cannot find native module 'ExponentImagePicker'") ||
-    error.message.includes('ExponentImagePicker') ||
-    error.message.includes('expo-image-picker')
+    error.message.includes("ExponentImagePicker") ||
+    error.message.includes("expo-image-picker")
   );
 }
 
 function hasImagePickerNativeModule() {
-  return requireOptionalNativeModule('ExponentImagePicker') !== null;
+  return requireOptionalNativeModule("ExponentImagePicker") !== null;
 }
 
 async function loadImagePickerModule() {
@@ -127,7 +130,7 @@ async function loadImagePickerModule() {
   }
 
   if (!imagePickerModulePromise) {
-    imagePickerModulePromise = import('expo-image-picker')
+    imagePickerModulePromise = import("expo-image-picker")
       .then((module) => module)
       .catch(async (error) => {
         if (!isImagePickerNativeModuleError(error)) {
@@ -135,7 +138,7 @@ async function loadImagePickerModule() {
         }
 
         await captureError(error, {
-          surface: 'chat:load-image-picker',
+          surface: "chat:load-image-picker",
         }).catch(() => undefined);
 
         return null;
@@ -154,11 +157,11 @@ function supportsChatNativeRuntime(fortuneType: FortuneTypeId) {
 
 type ResolvedFortuneMessage =
   | {
-      kind: 'result';
+      kind: "result";
       message: ChatShellEmbeddedResultMessage;
     }
   | {
-      kind: 'text';
+      kind: "text";
       message: ChatShellTextMessage;
       routeToPremium?: boolean;
       routeToSignup?: boolean;
@@ -200,10 +203,12 @@ export function ChatScreen() {
   const directCharacterId = readSearchParam(params.characterId);
   const directCharacter = findChatCharacterById(directCharacterId);
   const {
+    consumePendingChatFortuneRequest,
     consumePendingChatFortuneType,
     gate,
     markGuestBrowse,
     onboardingProgress,
+    pendingChatFortuneRequest,
     pendingChatFortuneType,
     session,
     status,
@@ -220,13 +225,15 @@ export function ChatScreen() {
   const [activeProviderId, setActiveProviderId] =
     useState<SocialAuthProviderId | null>(null);
   const [authMessage, setAuthMessage] = useState<string | null>(null);
-  const [draft, setDraft] = useState('');
-  const [surveyDraft, setSurveyDraft] = useState('');
+  const [draft, setDraft] = useState("");
+  const [surveyDraft, setSurveyDraft] = useState("");
   const [surveySelections, setSurveySelections] = useState<string[]>([]);
-  const [launchOrigin, setLaunchOrigin] = useState<'deeplink' | 'user' | null>(
+  const [launchOrigin, setLaunchOrigin] = useState<"deeplink" | "user" | null>(
     null,
   );
-  const [lastAutoLaunchKey, setLastAutoLaunchKey] = useState<string | null>(null);
+  const [lastAutoLaunchKey, setLastAutoLaunchKey] = useState<string | null>(
+    null,
+  );
   const [composerTrayOpen, setComposerTrayOpen] = useState(false);
   const chatScrollRef = useRef<ScrollView | null>(null);
   const [activeTab, setActiveTab] = useState<ChatCharacterTab>(() => {
@@ -238,7 +245,7 @@ export function ChatScreen() {
       mobileAppState.chat.selectedCharacterId,
     );
 
-    return restoredCharacter?.kind ?? 'story';
+    return restoredCharacter?.kind ?? "story";
   });
   const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(
     null,
@@ -247,8 +254,8 @@ export function ChatScreen() {
     directCharacterId ||
     mobileAppState.chat.sentMessageCount > 0 ||
     mobileAppState.chat.selectedCharacterId
-      ? 'chat'
-      : 'list',
+      ? "chat"
+      : "list",
   );
   const [messagesByCharacterId, setMessagesByCharacterId] = useState<
     Record<string, ChatShellMessage[]>
@@ -264,15 +271,17 @@ export function ChatScreen() {
       }),
     ),
   );
-  const [storyThreadSnapshotsByCharacterId, setStoryThreadSnapshotsByCharacterId] =
-    useState<Record<string, StoryChatThreadSnapshot | null>>(() =>
-      Object.fromEntries(
-        storyChatCharacters.map((character) => [
-          character.id,
-          buildStoryThreadSnapshot(character),
-        ]),
-      ),
-    );
+  const [
+    storyThreadSnapshotsByCharacterId,
+    setStoryThreadSnapshotsByCharacterId,
+  ] = useState<Record<string, StoryChatThreadSnapshot | null>>(() =>
+    Object.fromEntries(
+      storyChatCharacters.map((character) => [
+        character.id,
+        buildStoryThreadSnapshot(character),
+      ]),
+    ),
+  );
   const [storyTypingCharacterId, setStoryTypingCharacterId] = useState<
     string | null
   >(null);
@@ -287,22 +296,38 @@ export function ChatScreen() {
     }
 
     setActiveFortuneType(pendingChatFortuneType);
-    setActiveTab('fortune');
-    setLaunchOrigin('deeplink');
-    setSurfaceMode('chat');
-    consumePendingChatFortuneType().catch((error) => {
-      captureError(error, { surface: 'chat:consume-pending-fortune' }).catch(
-        () => undefined,
-      );
-    });
-  }, [consumePendingChatFortuneType, pendingChatFortuneType]);
-
-  useEffect(() => {
-    if (gate !== 'ready') {
+    setActiveTab("fortune");
+    setLaunchOrigin("deeplink");
+    setSurfaceMode("chat");
+    const hasPendingAnswers =
+      pendingChatFortuneRequest?.answers &&
+      Object.keys(pendingChatFortuneRequest.answers).length > 0;
+    if (hasPendingAnswers) {
       return;
     }
 
-    const hydrationKey = session?.user.id ?? 'guest';
+    const consumePending = pendingChatFortuneRequest
+      ? consumePendingChatFortuneRequest
+      : consumePendingChatFortuneType;
+
+    consumePending().catch((error) => {
+      captureError(error, { surface: "chat:consume-pending-fortune" }).catch(
+        () => undefined,
+      );
+    });
+  }, [
+    consumePendingChatFortuneRequest,
+    consumePendingChatFortuneType,
+    pendingChatFortuneRequest,
+    pendingChatFortuneType,
+  ]);
+
+  useEffect(() => {
+    if (gate !== "ready") {
+      return;
+    }
+
+    const hydrationKey = session?.user.id ?? "guest";
     if (hydratedStoryThreadsKeyRef.current === hydrationKey) {
       return;
     }
@@ -326,7 +351,8 @@ export function ChatScreen() {
         }
 
         const nextMessages: Record<string, ChatShellMessage[]> = {};
-        const nextSnapshots: Record<string, StoryChatThreadSnapshot | null> = {};
+        const nextSnapshots: Record<string, StoryChatThreadSnapshot | null> =
+          {};
 
         for (const { characterId, snapshot } of snapshots) {
           if (snapshot) {
@@ -348,9 +374,9 @@ export function ChatScreen() {
           ...nextSnapshots,
         }));
       } catch (error) {
-        await captureError(error, { surface: 'chat:hydrate-story-threads' }).catch(
-          () => undefined,
-        );
+        await captureError(error, {
+          surface: "chat:hydrate-story-threads",
+        }).catch(() => undefined);
       }
     }
 
@@ -367,12 +393,10 @@ export function ChatScreen() {
       )
     : undefined;
   const tabCharacters =
-    activeTab === 'story' ? storyChatCharacters : fortuneChatCharacters;
+    activeTab === "story" ? storyChatCharacters : fortuneChatCharacters;
   const defaultCharacter =
     highlightedExpert ??
-    (activeTab === 'fortune'
-      ? fortuneChatCharacters[0]
-      : tabCharacters[0]) ??
+    (activeTab === "fortune" ? fortuneChatCharacters[0] : tabCharacters[0]) ??
     storyChatCharacters[0] ??
     chatCharacters[0];
   const selectedCharacter = useMemo(() => {
@@ -382,9 +406,7 @@ export function ChatScreen() {
       mobileAppState.chat.selectedCharacterId;
 
     return (
-      findChatCharacterById(targetId) ??
-      highlightedExpert ??
-      defaultCharacter
+      findChatCharacterById(targetId) ?? highlightedExpert ?? defaultCharacter
     );
   }, [
     defaultCharacter,
@@ -395,21 +417,84 @@ export function ChatScreen() {
   ]);
 
   useEffect(() => {
+    if (!pendingChatFortuneRequest?.answers) {
+      return;
+    }
+
+    if (Object.keys(pendingChatFortuneRequest.answers).length === 0) {
+      return;
+    }
+
+    let cancelled = false;
+
+    async function replayPendingFortuneRequest() {
+      const pendingRequest = await consumePendingChatFortuneRequest();
+      if (!pendingRequest || cancelled) {
+        return;
+      }
+
+      const resolved = await resolveFortuneResultMessage(
+        pendingRequest.fortuneType,
+        buildResultContext(selectedCharacter, pendingRequest.answers),
+        "chat:consume-pending-fortune-request",
+      );
+
+      if (!resolved || cancelled) {
+        return;
+      }
+
+      if (resolved.kind === "text") {
+        appendMessages(selectedCharacter, [resolved.message]);
+        if (resolved.routeToPremium) {
+          router.push("/premium");
+        }
+        return;
+      }
+
+      const definition = getChatSurveyDefinition(pendingRequest.fortuneType);
+
+      appendMessages(selectedCharacter, [
+        buildAssistantTextMessage(
+          definition?.submitReply ??
+            "좋아요. 방금 이어지던 결과를 같은 채팅 안에서 바로 복원해드릴게요.",
+        ),
+        resolved.message,
+      ]);
+    }
+
+    void replayPendingFortuneRequest().catch((error) => {
+      captureError(error, {
+        surface: "chat:replay-pending-fortune-request",
+      }).catch(() => undefined);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    consumePendingChatFortuneRequest,
+    pendingChatFortuneRequest,
+    selectedCharacter,
+  ]);
+
+  useEffect(() => {
     if (directCharacterId) {
       setSelectedCharacterId(directCharacterId);
-      setActiveTab(directCharacter?.kind ?? 'story');
-      setSurfaceMode('chat');
+      setActiveTab(directCharacter?.kind ?? "story");
+      setSurfaceMode("chat");
       return;
     }
 
     if (highlightedExpert) {
       setSelectedCharacterId(highlightedExpert.id);
-      setActiveTab('fortune');
-      setSurfaceMode('chat');
+      setActiveTab("fortune");
+      setSurfaceMode("chat");
       return;
     }
 
-    setSelectedCharacterId((current) => current ?? defaultCharacter?.id ?? null);
+    setSelectedCharacterId(
+      (current) => current ?? defaultCharacter?.id ?? null,
+    );
   }, [
     defaultCharacter?.id,
     directCharacter?.kind,
@@ -434,7 +519,7 @@ export function ChatScreen() {
   }
 
   useEffect(() => {
-    setSurveyDraft('');
+    setSurveyDraft("");
     setSurveySelections([]);
   }, [selectedCharacter.id, currentSurveyStep?.step.id]);
 
@@ -452,7 +537,7 @@ export function ChatScreen() {
   const firstRunCharacters = tabCharacters;
 
   useEffect(() => {
-    if (gate !== 'ready' || surfaceMode !== 'chat') {
+    if (gate !== "ready" || surfaceMode !== "chat") {
       return;
     }
 
@@ -465,7 +550,7 @@ export function ChatScreen() {
     currentSurveyStep?.step.id,
   ]);
   useEffect(() => {
-    if (launchOrigin !== 'deeplink' || !activeFortuneType) {
+    if (launchOrigin !== "deeplink" || !activeFortuneType) {
       return;
     }
 
@@ -510,31 +595,34 @@ export function ChatScreen() {
       ...current,
       [characterId]: survey,
     }));
-    setSurveyDraft('');
+    setSurveyDraft("");
     setSurveySelections([]);
   }
 
   function buildChatReturnTo(characterId?: string) {
     if (!characterId) {
-      return '/chat';
+      return "/chat";
     }
 
     return `/chat?characterId=${encodeURIComponent(characterId)}`;
   }
 
-  function routeToSignup(options: {
-    pendingFortuneType?: FortuneTypeId;
-    returnTo?: string;
-  } = {}) {
+  function routeToSignup(
+    options: {
+      pendingFortuneType?: FortuneTypeId;
+      pendingFortuneAnswers?: Record<string, unknown>;
+      returnTo?: string;
+    } = {},
+  ) {
     setAuthMessage(null);
     setComposerTrayOpen(false);
 
     const navigate = () => {
       router.push({
-        pathname: '/signup',
+        pathname: "/signup",
         params: {
-          requireAuth: '1',
-          returnTo: options.returnTo ?? '/chat',
+          requireAuth: "1",
+          returnTo: options.returnTo ?? "/chat",
         },
       });
     };
@@ -544,10 +632,20 @@ export function ChatScreen() {
       return;
     }
 
-    void setPendingChatFortuneType(options.pendingFortuneType)
+    void Promise.all([
+      setPendingChatFortuneType(options.pendingFortuneType),
+      setPendingChatFortuneRequest({
+        fortuneType: options.pendingFortuneType,
+        answers:
+          options.pendingFortuneAnswers &&
+          Object.keys(options.pendingFortuneAnswers).length > 0
+            ? options.pendingFortuneAnswers
+            : undefined,
+      }),
+    ])
       .catch((error) => {
         captureError(error, {
-          surface: 'chat:queue-pending-fortune-before-signup',
+          surface: "chat:queue-pending-fortune-before-signup",
         }).catch(() => undefined);
       })
       .finally(navigate);
@@ -564,7 +662,7 @@ export function ChatScreen() {
     );
 
     if (runtimeBlockReason) {
-      if (runtimeBlockReason === 'login-required') {
+      if (runtimeBlockReason === "login-required") {
         routeToSignup({
           pendingFortuneType: fortuneType,
           returnTo: buildChatReturnTo(character.id),
@@ -627,13 +725,13 @@ export function ChatScreen() {
     );
 
     if (
-      completed.fortuneType === 'daily-calendar' &&
-      completed.answers.calendarSync === 'sync' &&
-      enrichedAnswers.calendarSync === 'date-only'
+      completed.fortuneType === "daily-calendar" &&
+      completed.answers.calendarSync === "sync" &&
+      enrichedAnswers.calendarSync === "date-only"
     ) {
       appendMessages(character, [
         buildAssistantTextMessage(
-          '캘린더 권한을 받지 못해서 이번에는 날짜 흐름 위주로 먼저 읽어드릴게요.',
+          "캘린더 권한을 받지 못해서 이번에는 날짜 흐름 위주로 먼저 읽어드릴게요.",
         ),
       ]);
     }
@@ -641,17 +739,18 @@ export function ChatScreen() {
     const resolved = await resolveFortuneResultMessage(
       completed.fortuneType,
       buildResultContext(character, enrichedAnswers),
-      'chat:complete-survey',
+      "chat:complete-survey",
     );
 
     if (!resolved) {
       return;
     }
 
-    if (resolved.kind === 'text') {
+    if (resolved.kind === "text") {
       if (resolved.routeToSignup) {
         routeToSignup({
           pendingFortuneType: completed.fortuneType,
+          pendingFortuneAnswers: enrichedAnswers,
           returnTo: buildChatReturnTo(character.id),
         });
         return;
@@ -659,7 +758,7 @@ export function ChatScreen() {
 
       appendMessages(character, [resolved.message]);
       if (resolved.routeToPremium) {
-        router.push('/premium');
+        router.push("/premium");
       }
       return;
     }
@@ -667,7 +766,7 @@ export function ChatScreen() {
     appendMessages(character, [
       buildAssistantTextMessage(
         definition?.submitReply ??
-          '좋아요. 결과를 같은 채팅 안에서 바로 보여드릴게요.',
+          "좋아요. 결과를 같은 채팅 안에서 바로 보여드릴게요.",
       ),
       resolved.message,
     ]);
@@ -678,7 +777,10 @@ export function ChatScreen() {
     fortuneType: FortuneTypeId,
     prefixText: string,
   ) {
-    const previousMessage = findMostRecentEmbeddedResult(character.id, fortuneType);
+    const previousMessage = findMostRecentEmbeddedResult(
+      character.id,
+      fortuneType,
+    );
     if (!previousMessage) {
       return false;
     }
@@ -700,14 +802,14 @@ export function ChatScreen() {
     const character = findChatCharacterById(characterId);
 
     setSelectedCharacterId(characterId);
-    setActiveTab(character?.kind ?? 'story');
-    setSurfaceMode('chat');
+    setActiveTab(character?.kind ?? "story");
+    setSurfaceMode("chat");
     recordChatIntent({
       characterId,
       fortuneType: activeFortuneType,
     }).catch((error) => {
       captureError(error, {
-        surface: 'chat:record-explicit-selection',
+        surface: "chat:record-explicit-selection",
       }).catch(() => undefined);
     });
   }
@@ -731,7 +833,7 @@ export function ChatScreen() {
       Boolean(session),
     );
 
-    if (runtimeBlockReason === 'login-required') {
+    if (runtimeBlockReason === "login-required") {
       routeToSignup({
         pendingFortuneType: fortuneType,
         returnTo: buildChatReturnTo(character.id),
@@ -742,8 +844,8 @@ export function ChatScreen() {
     setSelectedCharacterId(character.id);
     setActiveTab(character.kind);
     setActiveFortuneType(fortuneType);
-    setLaunchOrigin('user');
-    setSurfaceMode('chat');
+    setLaunchOrigin("user");
+    setSurfaceMode("chat");
     setComposerTrayOpen(false);
     appendMessages(character, [
       buildUserMessage(action.prompt),
@@ -754,7 +856,7 @@ export function ChatScreen() {
       fortuneType,
       incrementMessages: true,
     }).catch((error) => {
-      captureError(error, { surface: 'chat:record-action' }).catch(
+      captureError(error, { surface: "chat:record-action" }).catch(
         () => undefined,
       );
     });
@@ -777,27 +879,27 @@ export function ChatScreen() {
   function handleCreateFriend() {
     resetDraft();
     router.push({
-      pathname: '/friends/new/basic',
-      params: { reset: '1', returnTo: '/chat' },
+      pathname: "/friends/new/basic",
+      params: { reset: "1", returnTo: "/chat" },
     });
   }
 
   function handleOpenPhotoPicker() {
     setComposerTrayOpen(false);
 
-    if (currentSurveyStep?.step.inputKind === 'photo') {
+    if (currentSurveyStep?.step.inputKind === "photo") {
       void handleSurveyPickPhoto();
       return;
     }
 
     Alert.alert(
-      '사진 보내기',
-      '일반 채팅 첨부는 아직 준비 중이고, 관상/OOTD 설문 안에서는 바로 사용할 수 있어요.',
+      "사진 보내기",
+      "일반 채팅 첨부는 아직 준비 중이고, 관상/OOTD 설문 안에서는 바로 사용할 수 있어요.",
     );
   }
 
   async function handleSurveyPickPhoto() {
-    if (!currentSurveyStep || currentSurveyStep.step.inputKind !== 'photo') {
+    if (!currentSurveyStep || currentSurveyStep.step.inputKind !== "photo") {
       return;
     }
 
@@ -806,8 +908,8 @@ export function ChatScreen() {
 
       if (!imagePicker) {
         Alert.alert(
-          '사진 선택 준비 중',
-          '현재 설치된 앱 빌드에는 사진 선택 기능이 아직 포함되지 않았어요. iOS dev client를 다시 빌드한 뒤 다시 시도해주세요.',
+          "사진 선택 준비 중",
+          "현재 설치된 앱 빌드에는 사진 선택 기능이 아직 포함되지 않았어요. iOS dev client를 다시 빌드한 뒤 다시 시도해주세요.",
         );
         return;
       }
@@ -817,8 +919,8 @@ export function ChatScreen() {
 
       if (!permission.granted) {
         Alert.alert(
-          '사진 접근 권한 필요',
-          '관상과 OOTD 결과를 보려면 사진 접근 권한이 필요해요.',
+          "사진 접근 권한 필요",
+          "관상과 OOTD 결과를 보려면 사진 접근 권한이 필요해요.",
         );
         return;
       }
@@ -826,7 +928,7 @@ export function ChatScreen() {
       const result = await imagePicker.launchImageLibraryAsync({
         allowsEditing: true,
         base64: true,
-        mediaTypes: ['images'],
+        mediaTypes: ["images"],
         quality: 0.8,
       });
 
@@ -838,8 +940,8 @@ export function ChatScreen() {
 
       if (!asset.base64) {
         Alert.alert(
-          '사진 읽기 실패',
-          '사진 데이터를 읽지 못했어요. 다른 사진으로 다시 시도해주세요.',
+          "사진 읽기 실패",
+          "사진 데이터를 읽지 못했어요. 다른 사진으로 다시 시도해주세요.",
         );
         return;
       }
@@ -853,20 +955,23 @@ export function ChatScreen() {
         width: asset.width,
       };
 
-      submitSurveyAnswer(photoAnswer, '사진 1장 첨부');
+      submitSurveyAnswer(photoAnswer, "사진 1장 첨부");
     } catch (error) {
       await captureError(error, {
-        surface: 'chat:pick-survey-photo',
+        surface: "chat:pick-survey-photo",
       }).catch(() => undefined);
       Alert.alert(
-        '사진 선택 실패',
-        '사진을 불러오지 못했어요. 잠시 후 다시 시도해주세요.',
+        "사진 선택 실패",
+        "사진을 불러오지 못했어요. 잠시 후 다시 시도해주세요.",
       );
     }
   }
 
   function handleStartVoiceInput() {
-    Alert.alert('목소리로 하기', '음성 입력 연결은 다음 단계에서 바로 붙이겠습니다.');
+    Alert.alert(
+      "목소리로 하기",
+      "음성 입력 연결은 다음 단계에서 바로 붙이겠습니다.",
+    );
   }
 
   function handleOpenRecentResult(fortuneType: FortuneTypeId) {
@@ -875,9 +980,9 @@ export function ChatScreen() {
         character.specialties.includes(fortuneType),
       )?.id ?? selectedCharacter.id;
 
-    setActiveTab('fortune');
+    setActiveTab("fortune");
     setSelectedCharacterId(recentFortuneCharacterId);
-    setSurfaceMode('chat');
+    setSurfaceMode("chat");
     const character =
       findChatCharacterById(recentFortuneCharacterId) ?? selectedCharacter;
     const reopened = reopenFortuneResult(
@@ -908,10 +1013,7 @@ export function ChatScreen() {
       messagesByCharacterId[character.id] ??
       existingSnapshot?.messages ??
       buildInitialThread(character);
-    const optimisticThread = [
-      ...existingThread,
-      buildUserMessage(trimmed),
-    ];
+    const optimisticThread = [...existingThread, buildUserMessage(trimmed)];
     const storyRequest = buildStoryChatRequest(
       character,
       trimmed,
@@ -937,24 +1039,24 @@ export function ChatScreen() {
     }));
     setStoryTypingCharacterId(character.id);
     setComposerTrayOpen(false);
-    setSurfaceMode('chat');
+    setSurfaceMode("chat");
 
     try {
       if (!session) {
         throw new RemoteTokenConsumeError(
-          'UNAUTHORIZED',
-          '로그인이 필요해요. 로그인 후 다시 이어서 보내주세요.',
+          "UNAUTHORIZED",
+          "로그인이 필요해요. 로그인 후 다시 이어서 보내주세요.",
         );
       }
 
       await consumeRemoteTokens(session, {
-        fortuneType: 'character-chat',
+        fortuneType: "character-chat",
         referenceId: `story:${character.id}`,
       });
 
       syncRemoteProfile().catch((error: unknown) => {
         captureError(error, {
-          surface: 'chat:story-pilot-sync-premium-after-consume',
+          surface: "chat:story-pilot-sync-premium-after-consume",
         }).catch(() => undefined);
       });
 
@@ -964,11 +1066,13 @@ export function ChatScreen() {
           [character.id]: optimisticSnapshot,
         }));
 
-        await saveStoryThreadSnapshot(optimisticSnapshot).catch((error: unknown) => {
-          captureError(error, {
-            surface: 'chat:story-pilot-save-optimistic',
-          }).catch(() => undefined);
-        });
+        await saveStoryThreadSnapshot(optimisticSnapshot).catch(
+          (error: unknown) => {
+            captureError(error, {
+              surface: "chat:story-pilot-save-optimistic",
+            }).catch(() => undefined);
+          },
+        );
       }
 
       await recordChatIntent({
@@ -977,11 +1081,15 @@ export function ChatScreen() {
         incrementMessages: true,
       }).catch((error: unknown) => {
         captureError(error, {
-          surface: 'chat:story-pilot-record-intent',
+          surface: "chat:story-pilot-record-intent",
         }).catch(() => undefined);
       });
 
-      const response = await invokeStoryChat(character, trimmed, optimisticSnapshot);
+      const response = await invokeStoryChat(
+        character,
+        trimmed,
+        optimisticSnapshot,
+      );
       const assistantText = response.response.trim();
       const assistantMessage = buildAssistantTextMessage(assistantText);
       const nextMessages = [...optimisticThread, assistantMessage];
@@ -1005,7 +1113,7 @@ export function ChatScreen() {
         }));
 
         await saveStoryThreadSnapshot(nextSnapshot).catch((error: unknown) => {
-          captureError(error, { surface: 'chat:story-pilot-save-final' }).catch(
+          captureError(error, { surface: "chat:story-pilot-save-final" }).catch(
             () => undefined,
           );
         });
@@ -1025,16 +1133,16 @@ export function ChatScreen() {
 
         await syncRemoteProfile().catch((syncError: unknown) => {
           captureError(syncError, {
-            surface: 'chat:story-pilot-sync-premium-after-consume-error',
+            surface: "chat:story-pilot-sync-premium-after-consume-error",
           }).catch(() => undefined);
         });
 
-        if (error.code === 'INSUFFICIENT_TOKENS') {
-          router.push('/premium');
+        if (error.code === "INSUFFICIENT_TOKENS") {
+          router.push("/premium");
           return;
         }
 
-        if (error.code === 'UNAUTHORIZED') {
+        if (error.code === "UNAUTHORIZED") {
           routeToSignup({
             returnTo: buildChatReturnTo(character.id),
           });
@@ -1042,13 +1150,13 @@ export function ChatScreen() {
         }
 
         await captureError(error, {
-          surface: 'chat:story-pilot-consume-tokens',
+          surface: "chat:story-pilot-consume-tokens",
         }).catch(() => undefined);
 
         return;
       }
 
-      await captureError(error, { surface: 'chat:story-pilot-send' }).catch(
+      await captureError(error, { surface: "chat:story-pilot-send" }).catch(
         () => undefined,
       );
 
@@ -1073,18 +1181,20 @@ export function ChatScreen() {
           [character.id]: nextSnapshot,
         }));
 
-        await saveStoryThreadSnapshot(nextSnapshot).catch((saveError: unknown) => {
-          captureError(saveError, {
-            surface: 'chat:story-pilot-save-fallback',
-          }).catch(() => undefined);
-        });
+        await saveStoryThreadSnapshot(nextSnapshot).catch(
+          (saveError: unknown) => {
+            captureError(saveError, {
+              surface: "chat:story-pilot-save-fallback",
+            }).catch(() => undefined);
+          },
+        );
       }
     } finally {
       setStoryTypingCharacterId((current) =>
         current === character.id ? null : current,
       );
       if (shouldClearDraft) {
-        setDraft('');
+        setDraft("");
       }
     }
   }
@@ -1101,10 +1211,10 @@ export function ChatScreen() {
       const followUpText =
         selectedStorySnapshot?.followUpHint ??
         selectedStorySnapshot?.romanceState.dailyHook ??
-        '이어서 이야기해볼래요.';
+        "이어서 이야기해볼래요.";
 
       if (
-        selectedCharacter.kind === 'story' &&
+        selectedCharacter.kind === "story" &&
         isStoryRomancePilotCharacterId(selectedCharacter.id)
       ) {
         void sendStoryPilotMessage(selectedCharacter, followUpText);
@@ -1115,21 +1225,21 @@ export function ChatScreen() {
         buildUserMessage(followUpText),
         buildDraftReply(selectedCharacter, followUpText),
       ]);
-      setSurfaceMode('chat');
+      setSurfaceMode("chat");
       recordChatIntent({
         characterId: selectedCharacter.id,
         fortuneType: activeFortuneType,
         incrementMessages: true,
       }).catch((error) => {
-        captureError(error, { surface: 'chat:record-empty-draft-fallback' }).catch(
-          () => undefined,
-        );
+        captureError(error, {
+          surface: "chat:record-empty-draft-fallback",
+        }).catch(() => undefined);
       });
       return;
     }
 
     if (
-      selectedCharacter.kind === 'story' &&
+      selectedCharacter.kind === "story" &&
       isStoryRomancePilotCharacterId(selectedCharacter.id)
     ) {
       void sendStoryPilotMessage(selectedCharacter, trimmed);
@@ -1141,17 +1251,17 @@ export function ChatScreen() {
       buildDraftReply(selectedCharacter, trimmed),
     ]);
     setComposerTrayOpen(false);
-    setSurfaceMode('chat');
+    setSurfaceMode("chat");
     recordChatIntent({
       characterId: selectedCharacter.id,
       fortuneType: activeFortuneType,
       incrementMessages: true,
     }).catch((error) => {
-      captureError(error, { surface: 'chat:record-draft' }).catch(
+      captureError(error, { surface: "chat:record-draft" }).catch(
         () => undefined,
       );
     });
-    setDraft('');
+    setDraft("");
   }
 
   function submitSurveyAnswer(answer: unknown, displayLabel?: string) {
@@ -1160,8 +1270,7 @@ export function ChatScreen() {
     }
 
     const answerLabel =
-      displayLabel ??
-      formatSurveyAnswerLabel(currentSurveyStep.step, answer);
+      displayLabel ?? formatSurveyAnswerLabel(currentSurveyStep.step, answer);
 
     appendMessages(selectedCharacter, [buildUserMessage(answerLabel)]);
 
@@ -1187,12 +1296,12 @@ export function ChatScreen() {
       fortuneType: activeSurvey.fortuneType,
       incrementMessages: true,
     }).catch((error) => {
-      captureError(error, { surface: 'chat:record-survey-answer' }).catch(
+      captureError(error, { surface: "chat:record-survey-answer" }).catch(
         () => undefined,
       );
     });
 
-    setSurveyDraft('');
+    setSurveyDraft("");
     setSurveySelections([]);
   }
 
@@ -1207,32 +1316,36 @@ export function ChatScreen() {
       metadata.gender_code ??
       metadata.genderCode;
     const normalizedGender =
-      typeof rawGender === 'string'
+      typeof rawGender === "string"
         ? (() => {
             const value = rawGender.trim().toLowerCase();
 
             if (
-              value === 'male' ||
-              value === 'm' ||
-              value === 'man' ||
-              value === '남' ||
-              value === '남성'
+              value === "male" ||
+              value === "m" ||
+              value === "man" ||
+              value === "남" ||
+              value === "남성"
             ) {
-              return 'male';
+              return "male";
             }
 
             if (
-              value === 'female' ||
-              value === 'f' ||
-              value === 'woman' ||
-              value === '여' ||
-              value === '여성'
+              value === "female" ||
+              value === "f" ||
+              value === "woman" ||
+              value === "여" ||
+              value === "여성"
             ) {
-              return 'female';
+              return "female";
             }
 
-            if (value === 'other' || value === 'non-binary' || value === 'nonbinary') {
-              return 'other';
+            if (
+              value === "other" ||
+              value === "non-binary" ||
+              value === "nonbinary"
+            ) {
+              return "other";
             }
 
             return undefined;
@@ -1257,30 +1370,29 @@ export function ChatScreen() {
     fortuneType: FortuneTypeId,
     answers: Record<string, unknown>,
   ) {
-    if (fortuneType !== 'daily-calendar' || answers.calendarSync !== 'sync') {
+    if (fortuneType !== "daily-calendar" || answers.calendarSync !== "sync") {
       return answers;
     }
 
     const targetDate =
-      typeof answers.targetDate === 'string' ? answers.targetDate : null;
+      typeof answers.targetDate === "string" ? answers.targetDate : null;
     if (!targetDate) {
       return answers;
     }
 
     try {
-      const calendarContext = await calendarService.buildCalendarSyncContext(
-        targetDate,
-      );
+      const calendarContext =
+        await calendarService.buildCalendarSyncContext(targetDate);
 
       if (!calendarContext) {
         return {
           ...answers,
-          calendarSync: 'date-only',
+          calendarSync: "date-only",
           calendarSynced: false,
           hasCalendarEvents: false,
           calendarEvents: [],
-          calendarSummary: '캘린더 권한이 없어 날짜 흐름 중심으로 해석합니다.',
-          calendarDigest: 'permission-denied',
+          calendarSummary: "캘린더 권한이 없어 날짜 흐름 중심으로 해석합니다.",
+          calendarDigest: "permission-denied",
         };
       }
 
@@ -1295,17 +1407,17 @@ export function ChatScreen() {
         calendarSummary: calendarContext.summary,
         calendarTags: calendarContext.tags,
         calendarDigest:
-          calendarContext.tags.join(' | ') ||
+          calendarContext.tags.join(" | ") ||
           `${calendarContext.targetDate}:${calendarContext.eventCount}`,
       };
     } catch (error) {
       await captureError(error, {
-        surface: 'chat:enrich-calendar-survey',
+        surface: "chat:enrich-calendar-survey",
       }).catch(() => undefined);
 
       return {
         ...answers,
-        calendarSync: 'date-only',
+        calendarSync: "date-only",
         calendarSynced: false,
         hasCalendarEvents: false,
         calendarEvents: [],
@@ -1323,7 +1435,7 @@ export function ChatScreen() {
       const message = thread[index];
 
       if (
-        message?.kind === 'embedded-result' &&
+        message?.kind === "embedded-result" &&
         message.fortuneType === fortuneType
       ) {
         return message;
@@ -1334,7 +1446,8 @@ export function ChatScreen() {
   }
 
   function handleSurveyToggleSelection(value: string) {
-    const limit = currentSurveyStep?.step.maxSelections ?? Number.POSITIVE_INFINITY;
+    const limit =
+      currentSurveyStep?.step.maxSelections ?? Number.POSITIVE_INFINITY;
 
     setSurveySelections((current) => {
       if (current.includes(value)) {
@@ -1356,14 +1469,14 @@ export function ChatScreen() {
     const resolved = await resolveFortuneResultMessage(
       fortuneType,
       buildResultContext(character),
-      'chat:begin-runtime',
+      "chat:begin-runtime",
     );
 
     if (!resolved) {
       return;
     }
 
-    if (resolved.kind === 'text') {
+    if (resolved.kind === "text") {
       if (resolved.routeToSignup) {
         routeToSignup({
           pendingFortuneType: fortuneType,
@@ -1374,13 +1487,15 @@ export function ChatScreen() {
 
       appendMessages(character, [resolved.message]);
       if (resolved.routeToPremium) {
-        router.push('/premium');
+        router.push("/premium");
       }
       return;
     }
 
     appendMessages(character, [
-      buildAssistantTextMessage('좋아요. 결과를 같은 대화 안에 바로 붙여드릴게요.'),
+      buildAssistantTextMessage(
+        "좋아요. 결과를 같은 대화 안에 바로 붙여드릴게요.",
+      ),
       resolved.message,
     ]);
   }
@@ -1393,14 +1508,14 @@ export function ChatScreen() {
     const spec = fortuneTypesById[fortuneType];
     if (spec.isLocalOnly || !spec.endpoint) {
       const embeddedResult = buildEmbeddedResultMessage(fortuneType, context);
-      if (!embeddedResult || embeddedResult.kind !== 'embedded-result') {
+      if (!embeddedResult || embeddedResult.kind !== "embedded-result") {
         return null;
       }
 
       syncFortuneWidget(embeddedResult.payload);
 
       return {
-        kind: 'result',
+        kind: "result",
         message: embeddedResult,
       };
     }
@@ -1414,33 +1529,33 @@ export function ChatScreen() {
         syncRemoteProfile,
       });
 
-      if (outcome.kind === 'success') {
+      if (outcome.kind === "success") {
         const message = buildEmbeddedResultMessageFromPayload(outcome.payload);
         syncFortuneWidget(message.payload);
         return {
-          kind: 'result',
+          kind: "result",
           message,
         };
       }
 
-      if (outcome.kind === 'failed' && outcome.error) {
+      if (outcome.kind === "failed" && outcome.error) {
         await captureError(outcome.error, { surface }).catch(() => undefined);
       }
 
       return {
-        kind: 'text',
+        kind: "text",
         message: buildAssistantTextMessage(outcome.message),
         routeToPremium:
-          outcome.kind === 'blocked' && outcome.routeToPremium === true,
+          outcome.kind === "blocked" && outcome.routeToPremium === true,
         routeToSignup:
-          outcome.kind === 'blocked' && outcome.reason === 'login-required',
+          outcome.kind === "blocked" && outcome.reason === "login-required",
       };
     } catch (error) {
       await captureError(error, { surface }).catch(() => undefined);
       return {
-        kind: 'text',
+        kind: "text",
         message: buildAssistantTextMessage(
-          '실제 운세 결과를 불러오지 못했어요. 잠시 후 다시 시도해주세요.',
+          "실제 운세 결과를 불러오지 못했어요. 잠시 후 다시 시도해주세요.",
         ),
       };
     }
@@ -1451,7 +1566,10 @@ export function ChatScreen() {
       return;
     }
 
-    submitSurveyAnswer(surveySelections, formatSurveyAnswerLabel(currentSurveyStep.step, surveySelections));
+    submitSurveyAnswer(
+      surveySelections,
+      formatSurveyAnswerLabel(currentSurveyStep.step, surveySelections),
+    );
   }
 
   function handleTarotSelectionSubmit(payload: TarotSelectionPayload) {
@@ -1469,7 +1587,7 @@ export function ChatScreen() {
   }
 
   function handleSurveySkip() {
-    submitSurveyAnswer('skip', '건너뛰기');
+    submitSurveyAnswer("skip", "건너뛰기");
   }
 
   async function handleSocialAuthStart(providerId: SocialAuthProviderId) {
@@ -1484,19 +1602,19 @@ export function ChatScreen() {
         return;
       }
 
-      const result = await startSocialAuth(providerId, '/chat');
+      const result = await startSocialAuth(providerId, "/chat");
 
-      if (result.status === 'started') {
+      if (result.status === "started") {
         setAuthMessage(
           `${socialAuthProviderLabelById[providerId]} 로그인을 진행하고 있습니다. 잠시만 기다려 주세요.`,
         );
         return;
       }
 
-      setAuthMessage(result.errorMessage ?? '로그인을 시작하지 못했습니다.');
+      setAuthMessage(result.errorMessage ?? "로그인을 시작하지 못했습니다.");
     } catch (error) {
-      await captureError(error, { surface: 'chat:start-social-auth' });
-      setAuthMessage('소셜 로그인을 시작하지 못했습니다.');
+      await captureError(error, { surface: "chat:start-social-auth" });
+      setAuthMessage("소셜 로그인을 시작하지 못했습니다.");
     } finally {
       setActiveProviderId(null);
     }
@@ -1506,16 +1624,19 @@ export function ChatScreen() {
     try {
       await markGuestBrowse();
     } catch (error) {
-      await captureError(error, { surface: 'chat:guest-browse' });
+      await captureError(error, { surface: "chat:guest-browse" });
     }
   }
 
-  if (status === 'loading') {
+  if (status === "loading") {
     return (
       <Screen>
         <Card>
           <AppText variant="displaySmall">메시지를 준비하는 중</AppText>
-          <AppText variant="bodyLarge" color={fortuneTheme.colors.textSecondary}>
+          <AppText
+            variant="bodyLarge"
+            color={fortuneTheme.colors.textSecondary}
+          >
             계정 상태와 준비된 정보를 확인한 뒤, 열어야 할 화면을 정하고 있어요.
           </AppText>
         </Card>
@@ -1526,35 +1647,35 @@ export function ChatScreen() {
   return (
     <Screen
       contentBottomInset={
-        gate === 'ready' && surfaceMode === 'list' && activeTab === 'story'
+        gate === "ready" && surfaceMode === "list" && activeTab === "story"
           ? 88
           : 0
       }
       onScrollContentSizeChange={() => {
-        if (gate === 'ready' && surfaceMode === 'chat') {
+        if (gate === "ready" && surfaceMode === "chat") {
           scrollChatToBottom(true);
         }
       }}
       scrollViewRef={chatScrollRef}
       header={
-        gate === 'ready' && surfaceMode === 'chat' ? (
+        gate === "ready" && surfaceMode === "chat" ? (
           <ActiveCharacterChatHeader
             character={selectedCharacter}
             onBack={() => {
-              setSurfaceMode('list');
+              setSurfaceMode("list");
               setActiveFortuneType(null);
             }}
             onOpenProfile={() =>
               router.push({
-                pathname: '/character/[id]',
-                params: { id: selectedCharacter.id, returnTo: '/chat' },
+                pathname: "/character/[id]",
+                params: { id: selectedCharacter.id, returnTo: "/chat" },
               })
             }
           />
         ) : undefined
       }
       footer={
-        gate === 'ready' && surfaceMode === 'chat' ? (
+        gate === "ready" && surfaceMode === "chat" ? (
           currentSurveyStep ? (
             <ActiveSurveyFooter
               fortuneType={activeSurvey?.fortuneType}
@@ -1582,13 +1703,15 @@ export function ChatScreen() {
               onToggleTray={() => setComposerTrayOpen((current) => !current)}
               quickActions={selectedCharacterActions}
               trayOpen={composerTrayOpen}
-              sendDisabled={selectedCharacter.kind === 'story' && storySendInFlight}
+              sendDisabled={
+                selectedCharacter.kind === "story" && storySendInFlight
+              }
               auxiliaryAction={{
-                label: '프로필 보기',
+                label: "프로필 보기",
                 onPress: () =>
                   router.push({
-                    pathname: '/character/[id]',
-                    params: { id: selectedCharacter.id, returnTo: '/chat' },
+                    pathname: "/character/[id]",
+                    params: { id: selectedCharacter.id, returnTo: "/chat" },
                   }),
               }}
             />
@@ -1596,8 +1719,8 @@ export function ChatScreen() {
         ) : undefined
       }
       overlay={
-        gate === 'ready' && surfaceMode === 'list' && activeTab === 'story' ? (
-          <View pointerEvents="box-none" style={{ alignItems: 'flex-end' }}>
+        gate === "ready" && surfaceMode === "list" && activeTab === "story" ? (
+          <View pointerEvents="box-none" style={{ alignItems: "flex-end" }}>
             <FloatingCreateButton
               label="새 대화 시작"
               onPress={handleCreateFriend}
@@ -1605,34 +1728,34 @@ export function ChatScreen() {
           </View>
         ) : undefined
       }
-      keyboardAvoiding={gate === 'ready' && surfaceMode === 'chat'}
+      keyboardAvoiding={gate === "ready" && surfaceMode === "chat"}
     >
-      {gate === 'auth-entry' ? (
+      {gate === "auth-entry" ? (
         <ChatSoftGate
           authMessage={
             activeProviderId
               ? `${socialAuthProviderLabelById[activeProviderId]} 연결을 준비 중입니다.`
               : authMessage
           }
-          onApple={() => void handleSocialAuthStart('apple')}
+          onApple={() => void handleSocialAuthStart("apple")}
           onBrowse={() => void handleBrowse()}
-          onGoogle={() => void handleSocialAuthStart('google')}
-          onKakao={() => void handleSocialAuthStart('kakao')}
-          onNaver={() => void handleSocialAuthStart('naver')}
+          onGoogle={() => void handleSocialAuthStart("google")}
+          onKakao={() => void handleSocialAuthStart("kakao")}
+          onNaver={() => void handleSocialAuthStart("naver")}
         />
       ) : null}
 
-      {gate === 'profile-flow' ? (
+      {gate === "profile-flow" ? (
         <ProfileFlowGateCard
           birthCompleted={onboardingProgress.birthCompleted}
           firstRunHandoffSeen={onboardingProgress.firstRunHandoffSeen}
           interestCompleted={onboardingProgress.interestCompleted}
-          onContinue={() => router.push('/onboarding')}
+          onContinue={() => router.push("/onboarding")}
         />
       ) : null}
 
-      {gate === 'ready' ? (
-        surfaceMode === 'chat' ? (
+      {gate === "ready" ? (
+        surfaceMode === "chat" ? (
           <ActiveCharacterChatSurface
             actions={selectedCharacterActions}
             character={selectedCharacter}
@@ -1641,12 +1764,12 @@ export function ChatScreen() {
             surveyActive={Boolean(currentSurveyStep)}
             surveyEyebrow={
               currentSurveyStep
-                ? `${activeSurvey?.definition.title ?? '설문'} 진행 중`
+                ? `${activeSurvey?.definition.title ?? "설문"} 진행 중`
                 : null
             }
             showHeader={false}
             onBack={() => {
-              setSurfaceMode('list');
+              setSurfaceMode("list");
               setActiveFortuneType(null);
             }}
             onOpenProfile={() =>
@@ -1660,7 +1783,7 @@ export function ChatScreen() {
             characters={firstRunCharacters}
             lastFortuneType={mobileAppState.chat.lastFortuneType}
             onChangeTab={setActiveTab}
-            onOpenProfile={() => router.push('/profile')}
+            onOpenProfile={() => router.push("/profile")}
             onOpenRecentResult={handleOpenRecentResult}
             onPickCharacterAction={handleCharacterActionPress}
             onSelectCharacter={handleCharacterSelect}

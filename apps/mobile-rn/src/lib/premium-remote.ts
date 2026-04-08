@@ -1,8 +1,8 @@
-import { productCatalog, type ProductId } from '@fortune/product-contracts';
-import { type Session } from '@supabase/supabase-js';
+import { productCatalog, type ProductId } from "@fortune/product-contracts";
+import { type Session } from "@supabase/supabase-js";
 
-import { appEnv } from './env';
-import { supabase } from './supabase';
+import { appEnv } from "./env";
+import { supabase } from "./supabase";
 
 interface RemoteSubscriptionRow {
   product_id: string;
@@ -58,7 +58,7 @@ export interface RemotePremiumSnapshot {
 }
 
 export interface RemotePurchaseVerificationPayload {
-  platform: 'ios' | 'android';
+  platform: "ios" | "android";
   productId: ProductId;
   purchaseToken?: string | null;
   receipt?: string | null;
@@ -75,9 +75,9 @@ export interface RemotePurchaseVerificationResult {
 }
 
 export type RemoteTokenConsumeErrorCode =
-  | 'UNAUTHORIZED'
-  | 'INSUFFICIENT_TOKENS'
-  | 'UNKNOWN';
+  | "UNAUTHORIZED"
+  | "INSUFFICIENT_TOKENS"
+  | "UNKNOWN";
 
 export class RemoteTokenConsumeError extends Error {
   readonly code: RemoteTokenConsumeErrorCode;
@@ -111,17 +111,18 @@ export interface RemoteTokenConsumeResult {
 
 export interface RemoteTokenRefundPayload {
   fortuneType: string;
+  referenceId?: string | null;
   reason?: string | null;
 }
 
 export interface RemoteSubscriptionActivationPayload {
-  platform: 'ios' | 'android';
+  platform: "ios" | "android";
   productId: ProductId;
   purchaseId?: string | null;
 }
 
 function isProductId(value: unknown): value is ProductId {
-  return typeof value === 'string' && value in productCatalog;
+  return typeof value === "string" && value in productCatalog;
 }
 
 async function callPremiumFunction<TResponse>(
@@ -132,11 +133,11 @@ async function callPremiumFunction<TResponse>(
   const response = await fetch(
     `${appEnv.supabaseUrl}/functions/v1/${functionName}`,
     {
-      method: 'POST',
+      method: "POST",
       headers: {
         Authorization: `Bearer ${session.access_token}`,
         apikey: appEnv.supabaseAnonKey,
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
     },
@@ -157,12 +158,12 @@ async function fetchActiveSubscription(session: Session) {
   }
 
   const { data, error } = await supabase
-    .from('subscriptions')
-    .select('product_id, expires_at')
-    .eq('user_id', session.user.id)
-    .eq('status', 'active')
-    .gt('expires_at', new Date().toISOString())
-    .order('expires_at', { ascending: false })
+    .from("subscriptions")
+    .select("product_id, expires_at")
+    .eq("user_id", session.user.id)
+    .eq("status", "active")
+    .gt("expires_at", new Date().toISOString())
+    .order("expires_at", { ascending: false })
     .limit(1)
     .maybeSingle<RemoteSubscriptionRow>();
 
@@ -185,14 +186,17 @@ async function fetchTokenBalance(session: Session) {
     return null;
   }
 
-  const response = await fetch(`${appEnv.supabaseUrl}/functions/v1/token-balance`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${session.access_token}`,
-      apikey: appEnv.supabaseAnonKey,
-      'Content-Type': 'application/json',
+  const response = await fetch(
+    `${appEnv.supabaseUrl}/functions/v1/token-balance`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+        apikey: appEnv.supabaseAnonKey,
+        "Content-Type": "application/json",
+      },
     },
-  });
+  );
 
   const payload = (await response.json()) as TokenBalanceResponse;
 
@@ -202,7 +206,7 @@ async function fetchTokenBalance(session: Session) {
 
   return {
     balance:
-      typeof payload.balance === 'number' && Number.isFinite(payload.balance)
+      typeof payload.balance === "number" && Number.isFinite(payload.balance)
         ? payload.balance
         : null,
     isUnlimited: payload.isUnlimited === true,
@@ -235,17 +239,17 @@ export async function verifyRemotePurchase(
   payload: RemotePurchaseVerificationPayload,
 ): Promise<RemotePurchaseVerificationResult> {
   if (!appEnv.isSupabaseConfigured) {
-    throw new Error('Supabase 설정이 없어 구매 검증을 진행할 수 없습니다.');
+    throw new Error("Supabase 설정이 없어 구매 검증을 진행할 수 없습니다.");
   }
 
   const result = await callPremiumFunction<PurchaseVerificationResponse>(
     session,
-    'payment-verify-purchase',
+    "payment-verify-purchase",
     { ...payload },
   );
 
   if (!result.valid) {
-    throw new Error(result.error ?? '구매 검증에 실패했습니다.');
+    throw new Error(result.error ?? "구매 검증에 실패했습니다.");
   }
 
   const verifiedProductId = isProductId(result.productId)
@@ -256,13 +260,15 @@ export async function verifyRemotePurchase(
     valid: true,
     productId: verifiedProductId,
     tokensAdded:
-      typeof result.tokensAdded === 'number' && Number.isFinite(result.tokensAdded)
+      typeof result.tokensAdded === "number" &&
+      Number.isFinite(result.tokensAdded)
         ? result.tokensAdded
         : 0,
     transactionId:
-      typeof result.transactionId === 'string' && result.transactionId.length > 0
+      typeof result.transactionId === "string" &&
+      result.transactionId.length > 0
         ? result.transactionId
-        : payload.transactionId ?? null,
+        : (payload.transactionId ?? null),
   };
 }
 
@@ -271,12 +277,12 @@ export async function activateRemoteSubscription(
   payload: RemoteSubscriptionActivationPayload,
 ): Promise<void> {
   if (!appEnv.isSupabaseConfigured) {
-    throw new Error('Supabase 설정이 없어 구독 활성화를 진행할 수 없습니다.');
+    throw new Error("Supabase 설정이 없어 구독 활성화를 진행할 수 없습니다.");
   }
 
   const result = await callPremiumFunction<SubscriptionActivationResponse>(
     session,
-    'subscription-activate',
+    "subscription-activate",
     {
       platform: payload.platform,
       productId: payload.productId,
@@ -285,7 +291,7 @@ export async function activateRemoteSubscription(
   );
 
   if (!result.success) {
-    throw new Error(result.error ?? '구독 활성화에 실패했습니다.');
+    throw new Error(result.error ?? "구독 활성화에 실패했습니다.");
   }
 }
 
@@ -295,45 +301,50 @@ export async function consumeRemoteTokens(
 ): Promise<RemoteTokenConsumeResult> {
   if (!appEnv.isSupabaseConfigured) {
     throw new RemoteTokenConsumeError(
-      'UNKNOWN',
-      'Supabase 설정이 없어 토큰 차감을 진행할 수 없습니다.',
+      "UNKNOWN",
+      "Supabase 설정이 없어 토큰 차감을 진행할 수 없습니다.",
     );
   }
 
-  const response = await fetch(`${appEnv.supabaseUrl}/functions/v1/soul-consume`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${session.access_token}`,
-      apikey: appEnv.supabaseAnonKey,
-      'Content-Type': 'application/json',
+  const response = await fetch(
+    `${appEnv.supabaseUrl}/functions/v1/soul-consume`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+        apikey: appEnv.supabaseAnonKey,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        fortuneType: payload.fortuneType,
+        referenceId: payload.referenceId ?? null,
+      }),
     },
-    body: JSON.stringify({
-      fortuneType: payload.fortuneType,
-      referenceId: payload.referenceId ?? null,
-    }),
-  });
+  );
 
   const result = (await response.json()) as TokenConsumeResponse;
 
   if (!response.ok) {
     if (response.status === 401) {
       throw new RemoteTokenConsumeError(
-        'UNAUTHORIZED',
-        result.error ?? '로그인이 필요합니다.',
+        "UNAUTHORIZED",
+        result.error ?? "로그인이 필요합니다.",
       );
     }
 
-    if (result.code === 'INSUFFICIENT_TOKENS') {
+    if (result.code === "INSUFFICIENT_TOKENS") {
       throw new RemoteTokenConsumeError(
-        'INSUFFICIENT_TOKENS',
-        result.message ?? '토큰이 부족합니다.',
+        "INSUFFICIENT_TOKENS",
+        result.message ?? "토큰이 부족합니다.",
         {
           required:
-            typeof result.required === 'number' && Number.isFinite(result.required)
+            typeof result.required === "number" &&
+            Number.isFinite(result.required)
               ? result.required
               : null,
           available:
-            typeof result.available === 'number' && Number.isFinite(result.available)
+            typeof result.available === "number" &&
+            Number.isFinite(result.available)
               ? result.available
               : null,
         },
@@ -341,14 +352,14 @@ export async function consumeRemoteTokens(
     }
 
     throw new RemoteTokenConsumeError(
-      'UNKNOWN',
+      "UNKNOWN",
       result.error ?? result.message ?? `soul-consume:${response.status}`,
     );
   }
 
   return {
     balance:
-      typeof result.balance?.remainingTokens === 'number' &&
+      typeof result.balance?.remainingTokens === "number" &&
       Number.isFinite(result.balance.remainingTokens)
         ? result.balance.remainingTokens
         : null,
@@ -362,36 +373,40 @@ export async function refundRemoteTokens(
 ): Promise<RemoteTokenConsumeResult> {
   if (!appEnv.isSupabaseConfigured) {
     throw new RemoteTokenConsumeError(
-      'UNKNOWN',
-      'Supabase 설정이 없어 토큰 환불을 진행할 수 없습니다.',
+      "UNKNOWN",
+      "Supabase 설정이 없어 토큰 환불을 진행할 수 없습니다.",
     );
   }
 
-  const response = await fetch(`${appEnv.supabaseUrl}/functions/v1/soul-refund`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${session.access_token}`,
-      apikey: appEnv.supabaseAnonKey,
-      'Content-Type': 'application/json',
+  const response = await fetch(
+    `${appEnv.supabaseUrl}/functions/v1/soul-refund`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+        apikey: appEnv.supabaseAnonKey,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        fortuneType: payload.fortuneType,
+        referenceId: payload.referenceId ?? null,
+        reason: payload.reason ?? null,
+      }),
     },
-    body: JSON.stringify({
-      fortuneType: payload.fortuneType,
-      reason: payload.reason ?? null,
-    }),
-  });
+  );
 
   const result = (await response.json()) as TokenRefundResponse;
 
   if (!response.ok) {
     throw new RemoteTokenConsumeError(
-      'UNKNOWN',
+      "UNKNOWN",
       result.error ?? `soul-refund:${response.status}`,
     );
   }
 
   return {
     balance:
-      typeof result.balance?.remainingTokens === 'number' &&
+      typeof result.balance?.remainingTokens === "number" &&
       Number.isFinite(result.balance.remainingTokens)
         ? result.balance.remainingTokens
         : null,

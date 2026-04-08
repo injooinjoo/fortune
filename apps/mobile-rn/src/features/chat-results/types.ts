@@ -1,17 +1,18 @@
-import type { FortuneTypeId } from '@fortune/product-contracts';
+import type { FortuneTypeId } from "@fortune/product-contracts";
 
 import type {
   MetricTileData,
   ResultKind,
   TimelineEntry,
-} from '../fortune-results/types';
+} from "../fortune-results/types";
 
-export type EmbeddedResultWidgetType = 'fortune_result_card';
+export type EmbeddedResultWidgetType = "fortune_result_card";
 
 export interface EmbeddedResultProfileContext {
   displayName?: string;
   birthDate?: string;
   birthTime?: string;
+  gender?: string;
   mbti?: string;
   bloodType?: string;
 }

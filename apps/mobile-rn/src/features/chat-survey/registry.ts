@@ -298,6 +298,34 @@ const exLoverSurvey: ChatSurveyDefinition = {
         { id: "moving-on", label: "정리 중임" },
       ],
     },
+    {
+      id: "breakupInitiator",
+      question: "이별을 먼저 꺼낸 쪽은 누구였나요?",
+      inputKind: "chips",
+      options: [
+        { id: "me", label: "내가 먼저 말했어요" },
+        { id: "them", label: "상대가 먼저 말했어요" },
+        { id: "mutual", label: "서로 합의했어요" },
+      ],
+    },
+    {
+      id: "contactStatus",
+      question: "지금 연락 흐름은 어떤가요?",
+      inputKind: "chips",
+      options: [
+        { id: "blocked", label: "완전히 끊겼어요" },
+        { id: "no-contact", label: "연락 안 해요" },
+        { id: "sometimes", label: "가끔 연락해요" },
+        { id: "often", label: "자주 연락해요" },
+      ],
+    },
+    {
+      id: "detailedStory",
+      question: "꼭 반영됐으면 하는 사연이 있나요?",
+      inputKind: "text-with-skip",
+      required: false,
+      placeholder: "예: 마지막 대화가 계속 마음에 남아요.",
+    },
   ],
 };
 
@@ -480,6 +508,32 @@ const loveSurvey: ChatSurveyDefinition = {
         { id: "romantic", label: "로맨틱" },
         { id: "practical", label: "현실적" },
         { id: "independent", label: "개인 시간 중요" },
+      ],
+    },
+    {
+      id: "idealLooks",
+      question: "이상형 분위기도 골라볼까요?",
+      inputKind: "multi-select",
+      required: false,
+      maxSelections: 2,
+      options: [
+        { id: "clean", label: "정갈하고 깔끔함" },
+        { id: "warm", label: "따뜻하고 부드러움" },
+        { id: "confident", label: "자신감 있고 또렷함" },
+        { id: "playful", label: "유쾌하고 장난기 있음" },
+      ],
+    },
+    {
+      id: "idealPersonality",
+      question: "가장 끌리는 성격을 골라주세요.",
+      inputKind: "multi-select",
+      required: false,
+      maxSelections: 2,
+      options: [
+        { id: "kind", label: "배려 깊음" },
+        { id: "honest", label: "솔직하고 담백함" },
+        { id: "stable", label: "안정감 있음" },
+        { id: "ambitious", label: "성장 의지가 강함" },
       ],
     },
   ],
@@ -1051,6 +1105,20 @@ const wealthSurvey: ChatSurveyDefinition = {
         { id: "high", label: "지금 바로 필요해요" },
       ],
     },
+    {
+      id: "interests",
+      question: "특히 신경 쓰는 재물 영역을 골라주세요.",
+      inputKind: "multi-select",
+      required: false,
+      maxSelections: 3,
+      options: [
+        { id: "saving", label: "저축/예금" },
+        { id: "stock", label: "주식" },
+        { id: "crypto", label: "가상자산" },
+        { id: "realestate", label: "부동산" },
+        { id: "business", label: "사업/사이드잡" },
+      ],
+    },
   ],
 };
 
@@ -1116,6 +1184,13 @@ const talentSurvey: ChatSurveyDefinition = {
         { id: "significant", label: "주 10시간 이상" },
         { id: "fulltime", label: "거의 풀타임 가능" },
       ],
+    },
+    {
+      id: "goal",
+      question: "재능을 어디까지 키우고 싶은지 적어주세요.",
+      inputKind: "text-with-skip",
+      required: false,
+      placeholder: "예: 실무에서 바로 쓰는 기획력을 만들고 싶어요.",
     },
     {
       id: "challenges",
@@ -1401,50 +1476,96 @@ const exerciseSurvey: ChatSurveyDefinition = {
         { id: "hard", label: "강하게" },
       ],
     },
+    {
+      id: "sportType",
+      question: "어떤 운동이 가장 끌리나요?",
+      inputKind: "chips",
+      options: [
+        { id: "gym", label: "헬스/웨이트" },
+        { id: "running", label: "러닝" },
+        { id: "yoga", label: "요가/필라테스" },
+        { id: "swimming", label: "수영" },
+      ],
+    },
+    {
+      id: "weeklyFrequency",
+      question: "일주일에 몇 번 정도 하고 싶으세요?",
+      inputKind: "chips",
+      options: [
+        { id: "2", label: "주 2회 정도" },
+        { id: "3", label: "주 3회 정도" },
+        { id: "4", label: "주 4회 정도" },
+        { id: "5", label: "주 5회 이상" },
+      ],
+    },
+    {
+      id: "preferredTime",
+      question: "운동은 보통 언제가 편한가요?",
+      inputKind: "chips",
+      options: [
+        { id: "morning", label: "아침" },
+        { id: "afternoon", label: "낮" },
+        { id: "evening", label: "저녁" },
+        { id: "night", label: "밤" },
+      ],
+    },
+    {
+      id: "injuryHistory",
+      question: "조심해야 할 부위가 있다면 골라주세요.",
+      inputKind: "multi-select",
+      required: false,
+      maxSelections: 2,
+      options: [
+        { id: "none", label: "특별히 없어요" },
+        { id: "knee", label: "무릎" },
+        { id: "shoulder", label: "어깨" },
+        { id: "back", label: "허리/등" },
+      ],
+    },
   ],
 };
 
 const tarotSurvey: ChatSurveyDefinition = {
-  fortuneType: 'tarot',
-  title: '타로',
+  fortuneType: "tarot",
+  title: "타로",
   introReply:
-    '타로 흐름으로 열게요. 덱과 질문을 맞춘 뒤 마음이 가는 카드를 펼쳐봅시다.',
-  submitReply: '좋아요. 펼친 카드 해석을 같은 채팅 안에 바로 정리해드릴게요.',
+    "타로 흐름으로 열게요. 덱과 질문을 맞춘 뒤 마음이 가는 카드를 펼쳐봅시다.",
+  submitReply: "좋아요. 펼친 카드 해석을 같은 채팅 안에 바로 정리해드릴게요.",
   steps: [
     {
-      id: 'deckId',
-      question: '어떤 덱으로 열까요?',
-      inputKind: 'chips',
+      id: "deckId",
+      question: "어떤 덱으로 열까요?",
+      inputKind: "chips",
       options: [
-        { id: 'rider_waite', label: '라이더-웨이트-스미스' },
-        { id: 'thoth', label: '토트 타로' },
-        { id: 'before_tarot', label: '비포 타로' },
-        { id: 'after_tarot', label: '애프터 타로' },
+        { id: "rider_waite", label: "라이더-웨이트-스미스" },
+        { id: "thoth", label: "토트 타로" },
+        { id: "before_tarot", label: "비포 타로" },
+        { id: "after_tarot", label: "애프터 타로" },
       ],
     },
     {
-      id: 'purpose',
-      question: '무슨 주제가 궁금하세요?',
-      inputKind: 'chips',
+      id: "purpose",
+      question: "무슨 주제가 궁금하세요?",
+      inputKind: "chips",
       options: [
-        { id: 'guidance', label: '조언/가이드' },
-        { id: 'love', label: '연애' },
-        { id: 'career', label: '커리어' },
-        { id: 'decision', label: '결정/선택' },
+        { id: "guidance", label: "조언/가이드" },
+        { id: "love", label: "연애" },
+        { id: "career", label: "커리어" },
+        { id: "decision", label: "결정/선택" },
       ],
     },
     {
-      id: 'questionText',
-      question: '조금 더 구체적인 질문이 있으면 적어주세요.',
-      inputKind: 'text-with-skip',
+      id: "questionText",
+      question: "조금 더 구체적인 질문이 있으면 적어주세요.",
+      inputKind: "text-with-skip",
       required: false,
-      placeholder: '예: 지금 밀고 있는 선택이 맞는지 궁금해요.',
+      placeholder: "예: 지금 밀고 있는 선택이 맞는지 궁금해요.",
     },
     {
-      id: 'tarotSelection',
-      question: '마음이 가는 카드를 펼쳐주세요.',
-      inputKind: 'card-draw',
-      placeholder: '카드를 한 장씩 확정하면 바로 리딩 준비로 넘어갑니다.',
+      id: "tarotSelection",
+      question: "마음이 가는 카드를 펼쳐주세요.",
+      inputKind: "card-draw",
+      placeholder: "카드를 한 장씩 확정하면 바로 리딩 준비로 넘어갑니다.",
     },
   ],
 };
@@ -1710,36 +1831,36 @@ export function applySurveyAnswer(
 
 export function formatSurveyAnswerLabel(step: ChatSurveyStep, answer: unknown) {
   if (Array.isArray(answer)) {
-    return answer.map((item) => formatSingleAnswerLabel(step, item)).join(', ');
+    return answer.map((item) => formatSingleAnswerLabel(step, item)).join(", ");
   }
 
   return formatSingleAnswerLabel(step, answer);
 }
 
 function formatSingleAnswerLabel(step: ChatSurveyStep, answer: unknown) {
-  if (step.inputKind === 'photo') {
-    return '사진 1장 첨부';
+  if (step.inputKind === "photo") {
+    return "사진 1장 첨부";
   }
 
   if (
     answer &&
-    typeof answer === 'object' &&
-    'displayText' in answer &&
-    typeof answer.displayText === 'string' &&
+    typeof answer === "object" &&
+    "displayText" in answer &&
+    typeof answer.displayText === "string" &&
     answer.displayText.trim().length > 0
   ) {
     return answer.displayText.trim();
   }
 
-  if (typeof answer !== 'string') {
+  if (typeof answer !== "string") {
     if (answer instanceof Date) {
       return answer.toISOString().slice(0, 10);
     }
 
-    return String(answer ?? '');
+    return String(answer ?? "");
   }
 
-  if (step.inputKind === 'date') {
+  if (step.inputKind === "date") {
     return answer;
   }
 

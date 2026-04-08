@@ -30,8 +30,11 @@ Target: `apps/mobile-rn`
 ## Runtime Truthfulness
 
 - edge-backed 운세는 `login -> persisted reuse -> token -> edge -> persist` 순서를 먼저 통과한다
+- 설문 완료 직후 로그인으로 빠진 경우에는 `fortuneType + answers`를 함께 보존하고, 로그인 뒤 같은 채팅 안으로 결과를 다시 복원한다
 - 같은 요청이 재사용 조건에 맞으면 edge를 다시 호출하지 않고 DB의 직전 결과를 카드로 복원한다
+- 개인 결과 재사용 fingerprint에서는 사용자 표시 이름만 바뀌어도 새 요청으로 오인하지 않도록 자기 이름 필드는 제외한다
 - edge 호출 실패 시 로컬 하드코딩 카드로 조용히 대체하지 않고 실패 안내를 보여준다
+- 토큰 환불은 가능하면 원래 소비 reference와 연결해서 중복 환불을 막는다
 - 사진이 필요한 운세는 survey-scoped photo input을 거쳐서만 edge 호출한다
 - 프로필 생년월일이 필요한 운세는 missing-profile 상태를 먼저 알린다
 - edge function이 없는 운세는 다른 운세 카드로 alias하지 않는다

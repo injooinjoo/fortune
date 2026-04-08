@@ -180,8 +180,36 @@ function buildFortuneRequestBody(
       break;
     }
     case "daily-calendar":
+      copyLabeledValue(
+        payload,
+        readString(answers.targetDate) ?? labels.targetDate,
+        "targetDate",
+        "target_date",
+        "date",
+      );
+      copyLabeledValue(payload, "today", "period");
+      payload.calendarSynced = answers.calendarSynced === true;
+      payload.hasCalendarEvents = answers.hasCalendarEvents === true;
+      if (Array.isArray(answers.calendarEvents)) {
+        payload.calendarEvents = answers.calendarEvents;
+      }
+      copyLabeledValue(
+        payload,
+        readString(answers.calendarSummary),
+        "calendarSummary",
+        "calendar_summary",
+      );
+      if (Array.isArray(answers.calendarTags)) {
+        payload.calendarTags = answers.calendarTags;
+      }
+      break;
     case "biorhythm":
-      copyLabeledValue(payload, labels.targetDate, "targetDate", "target_date");
+      copyLabeledValue(
+        payload,
+        readString(answers.targetDate) ?? labels.targetDate,
+        "targetDate",
+        "target_date",
+      );
       break;
     case "new-year":
       {
@@ -242,6 +270,45 @@ function buildFortuneRequestBody(
         );
       }
       break;
+    case "love": {
+      const age = deriveAge(profile.birthDate);
+      const relationshipStatus = resolveLoveRelationshipStatus(
+        readString(answers.status),
+      );
+      const datingStyles = resolveStringArray(answers.datingStyle);
+
+      if (age == null || !relationshipStatus || datingStyles.length === 0) {
+        return null;
+      }
+
+      payload.age = age;
+      copyLabeledValue(payload, profile.gender ?? "other", "gender");
+      copyLabeledValue(payload, relationshipStatus, "relationshipStatus");
+      payload.datingStyles = datingStyles;
+      payload.valueImportance = buildLoveValueImportance(
+        readString(answers.concern),
+      );
+      payload.preferredAgeRange = {
+        min: Math.max(19, age - 4),
+        max: age + 4,
+      };
+      payload.idealLooks = resolveStringArray(answers.idealLooks);
+      payload.preferredPersonality = resolveStringArray(
+        answers.idealPersonality,
+      );
+      payload.preferredMeetingPlaces = buildLoveMeetingPlaces(
+        readString(answers.concern),
+      );
+      copyLabeledValue(
+        payload,
+        resolveLoveRelationshipGoal(readString(answers.concern)),
+        "relationshipGoal",
+      );
+      payload.appearanceConfidence = 3;
+      payload.charmPoints = buildLoveCharmPoints(datingStyles, profile.mbti);
+      payload.lifestyle = buildLoveLifestyle(profile.mbti, profile.bloodType);
+      break;
+    }
     case "exam":
       copyLabeledValue(payload, labels.examType, "examType", "exam_type");
       copyLabeledValue(
@@ -303,28 +370,71 @@ function buildFortuneRequestBody(
       );
       break;
     case "ex-lover":
-      copyLabeledValue(
-        payload,
-        labels.primaryGoal,
-        "primaryGoal",
-        "primary_goal",
-      );
-      copyLabeledValue(
-        payload,
-        labels.breakupTime,
-        "breakupTime",
-        "breakup_time",
-      );
-      copyLabeledValue(
-        payload,
-        labels.relationshipDepth,
-        "relationshipDepth",
-        "relationship_depth",
-      );
-      copyLabeledValue(payload, labels.coreReason, "coreReason", "core_reason");
-      if (Array.isArray(answers.currentState)) {
-        payload.currentState = answers.currentState;
-        payload.current_state = answers.currentState;
+      {
+        const primaryGoal = resolveExLoverGoal(readString(answers.primaryGoal));
+        const timeSinceBreakup = resolveExLoverTimeSinceBreakup(
+          readString(answers.breakupTime),
+        );
+        const breakupInitiator = resolveBreakupInitiator(
+          readString(answers.breakupInitiator),
+        );
+        const relationshipDepth = resolveExLoverRelationshipDepth(
+          readString(answers.relationshipDepth),
+        );
+        const coreReason = resolveExLoverCoreReason(
+          readString(answers.coreReason),
+        );
+        const contactStatus = resolveExLoverContactStatus(
+          readString(answers.contactStatus),
+        );
+        const currentState = resolveExLoverCurrentState(answers.currentState);
+
+        if (
+          !primaryGoal ||
+          !timeSinceBreakup ||
+          !relationshipDepth ||
+          !coreReason ||
+          !contactStatus ||
+          currentState.length === 0
+        ) {
+          return null;
+        }
+
+        copyLabeledValue(payload, primaryGoal, "primaryGoal", "primary_goal");
+        copyLabeledValue(
+          payload,
+          timeSinceBreakup,
+          "time_since_breakup",
+          "breakupTime",
+          "breakup_time",
+        );
+        copyLabeledValue(
+          payload,
+          breakupInitiator ?? "mutual",
+          "breakup_initiator",
+          "breakupInitiator",
+        );
+        copyLabeledValue(
+          payload,
+          relationshipDepth,
+          "relationshipDepth",
+          "relationship_depth",
+        );
+        copyLabeledValue(payload, coreReason, "coreReason", "core_reason");
+        payload.currentState = currentState;
+        payload.current_state = currentState;
+        copyLabeledValue(
+          payload,
+          contactStatus,
+          "contact_status",
+          "contactStatus",
+        );
+        copyLabeledValue(
+          payload,
+          readString(answers.detailedStory),
+          "breakup_detail",
+          "breakupDetail",
+        );
       }
       break;
     case "avoid-people":
@@ -338,17 +448,20 @@ function buildFortuneRequestBody(
         if (!targetGender) {
           return null;
         }
-        copyLabeledValue(payload, targetGender, "targetGender", "target_gender");
+        copyLabeledValue(
+          payload,
+          targetGender,
+          "targetGender",
+          "target_gender",
+        );
       }
+      copyLabeledValue(payload, labels.userAge, "userAge", "user_age");
       copyLabeledValue(
         payload,
-        labels.userAge,
-        "userAge",
-        "user_age",
-      );
-      copyLabeledValue(
-        payload,
-        resolveYearlyEncounterIdealMbti(readString(answers.idealMbti), labels.idealMbti),
+        resolveYearlyEncounterIdealMbti(
+          readString(answers.idealMbti),
+          labels.idealMbti,
+        ),
         "idealMbti",
         "ideal_mbti",
       );
@@ -366,37 +479,47 @@ function buildFortuneRequestBody(
       );
       break;
     case "health":
-      copyLabeledValue(
-        payload,
-        labels.currentCondition,
-        "currentCondition",
-        "current_condition",
-      );
-      copyLabeledValue(payload, labels.concern, "concern");
-      copyLabeledValue(
-        payload,
-        labels.stressLevel,
-        "stressLevel",
-        "stress_level",
-      );
-      copyLabeledValue(
-        payload,
-        labels.sleepQuality,
-        "sleepQuality",
-        "sleep_quality",
-      );
-      copyLabeledValue(
-        payload,
-        labels.exerciseFrequency,
-        "exerciseFrequency",
-        "exercise_frequency",
-      );
-      copyLabeledValue(
-        payload,
-        labels.mealRegularity,
-        "mealRegularity",
-        "meal_regularity",
-      );
+      {
+        const currentCondition = resolveHealthCondition(
+          readString(answers.currentCondition),
+        );
+        if (!currentCondition) {
+          return null;
+        }
+
+        copyLabeledValue(
+          payload,
+          currentCondition,
+          "currentCondition",
+          "current_condition",
+        );
+        const concernedBodyParts = resolveHealthConcernedBodyParts(
+          readString(answers.concern),
+        );
+        if (concernedBodyParts.length > 0) {
+          payload.concerned_body_parts = concernedBodyParts;
+        }
+        const stressLevel = readIntegerValue(answers.stressLevel);
+        if (stressLevel != null) {
+          payload.stressLevel = stressLevel;
+          payload.stress_level = stressLevel;
+        }
+        const sleepQuality = readIntegerValue(answers.sleepQuality);
+        if (sleepQuality != null) {
+          payload.sleepQuality = sleepQuality;
+          payload.sleep_quality = sleepQuality;
+        }
+        const exerciseFrequency = readIntegerValue(answers.exerciseFrequency);
+        if (exerciseFrequency != null) {
+          payload.exerciseFrequency = exerciseFrequency;
+          payload.exercise_frequency = exerciseFrequency;
+        }
+        const mealRegularity = readIntegerValue(answers.mealRegularity);
+        if (mealRegularity != null) {
+          payload.mealRegularity = mealRegularity;
+          payload.meal_regularity = mealRegularity;
+        }
+      }
       break;
     case "family":
       {
@@ -436,16 +559,8 @@ function buildFortuneRequestBody(
       if (!profile.birthDate || !readString(answers.dueDate)) {
         return null;
       }
-      copyLabeledValue(
-        payload,
-        profile.birthDate,
-        "motherBirthDate",
-      );
-      copyLabeledValue(
-        payload,
-        profile.birthTime,
-        "motherBirthTime",
-      );
+      copyLabeledValue(payload, profile.birthDate, "motherBirthDate");
+      copyLabeledValue(payload, profile.birthTime, "motherBirthTime");
       copyLabeledValue(
         payload,
         readString(answers.dueDate),
@@ -456,11 +571,7 @@ function buildFortuneRequestBody(
         resolveNamingGender(readString(answers.gender)),
         "babyGender",
       );
-      copyLabeledValue(
-        payload,
-        readString(answers.lastName),
-        "familyName",
-      );
+      copyLabeledValue(payload, readString(answers.lastName), "familyName");
       copyLabeledValue(
         payload,
         resolveNamingStyle(readString(answers.style)),
@@ -501,16 +612,11 @@ function buildFortuneRequestBody(
         readString(tarotSelection?.question);
       const tarotSpreadType =
         readString(tarotSelection?.spreadType) ??
-        (tarotPurpose === 'love' ? 'relationship' : 'threeCard');
+        (tarotPurpose === "love" ? "relationship" : "threeCard");
 
       copyLabeledValue(payload, tarotDeckId, "deckId", "deck");
       copyLabeledValue(payload, tarotPurpose, "purpose");
-      copyLabeledValue(
-        payload,
-        tarotQuestion,
-        "questionText",
-        "question",
-      );
+      copyLabeledValue(payload, tarotQuestion, "questionText", "question");
       payload.spreadType = tarotSpreadType;
       const selectedCardIndices = resolveTarotCardIndices(
         answers.tarotSelection,
@@ -594,36 +700,92 @@ function buildFortuneRequestBody(
       copyLabeledValue(payload, labels.zodiacAnimal, "zodiacAnimal", "animal");
       break;
     case "wealth":
-      copyLabeledValue(payload, labels.goal, "goal");
-      copyLabeledValue(payload, labels.concern, "concern");
-      copyLabeledValue(payload, labels.income, "income");
-      copyLabeledValue(payload, labels.expense, "expense");
-      copyLabeledValue(payload, labels.risk, "risk");
-      copyLabeledValue(payload, labels.urgency, "urgency");
-      if (Array.isArray(answers.interests)) {
-        payload.interests = answers.interests;
+      {
+        const goal = resolveWealthGoal(readString(answers.goal));
+        const concern = resolveWealthConcern(readString(answers.concern));
+        const income = resolveWealthIncome(readString(answers.income));
+        const expense = resolveWealthExpense(readString(answers.expense));
+        const risk = resolveWealthRisk(readString(answers.risk));
+        const urgency = resolveWealthUrgency(readString(answers.urgency));
+
+        if (!goal || !concern || !income || !expense || !risk || !urgency) {
+          return null;
+        }
+
+        copyLabeledValue(payload, goal, "goal");
+        copyLabeledValue(payload, concern, "concern");
+        copyLabeledValue(payload, income, "income");
+        copyLabeledValue(payload, expense, "expense");
+        copyLabeledValue(payload, risk, "risk");
+        copyLabeledValue(payload, urgency, "urgency");
+        payload.interests = resolveWealthInterests(answers.interests, goal);
       }
       break;
     case "talent":
-      copyLabeledValue(payload, labels.workStyle, "workStyle", "work_style");
-      copyLabeledValue(
-        payload,
-        labels.problemSolving,
-        "problemSolving",
-        "problem_solving",
-      );
-      copyLabeledValue(payload, labels.experience, "experience");
-      copyLabeledValue(
-        payload,
-        labels.timeAvailable,
-        "timeAvailable",
-        "time_available",
-      );
-      if (Array.isArray(answers.interest)) {
-        payload.interest = answers.interest;
+      {
+        const interests = resolveStringArray(answers.interest);
+        const talentArea = resolveTalentArea(interests);
+        if (!talentArea) {
+          return null;
+        }
+
+        payload.talentArea = talentArea;
+        payload.currentSkills = resolveTalentCurrentSkills(interests);
+        copyLabeledValue(
+          payload,
+          readString(answers.goal) ?? buildTalentGoal(labels, interests),
+          "goals",
+        );
+        copyLabeledValue(payload, labels.experience, "experience");
+        copyLabeledValue(
+          payload,
+          labels.timeAvailable,
+          "timeAvailable",
+          "time_available",
+        );
+        payload.challenges = resolveStringArray(answers.challenges);
+        copyLabeledValue(payload, labels.workStyle, "workStyle", "work_style");
+        copyLabeledValue(
+          payload,
+          labels.problemSolving,
+          "problemSolving",
+          "problem_solving",
+        );
       }
-      if (Array.isArray(answers.challenges)) {
-        payload.challenges = answers.challenges;
+      break;
+    case "exercise":
+      {
+        const exerciseGoal = resolveExerciseGoal(readString(answers.goal));
+        const sportType = resolveExerciseSportType(
+          readString(answers.sportType),
+        );
+        const weeklyFrequency = readIntegerValue(answers.weeklyFrequency) ?? 3;
+        const preferredTime =
+          resolveExercisePreferredTime(readString(answers.preferredTime)) ??
+          "evening";
+
+        if (!exerciseGoal || !sportType) {
+          return null;
+        }
+
+        copyLabeledValue(payload, exerciseGoal, "exerciseGoal");
+        copyLabeledValue(payload, sportType, "sportType");
+        payload.weeklyFrequency = weeklyFrequency;
+        copyLabeledValue(
+          payload,
+          resolveExerciseExperienceLevel(
+            weeklyFrequency,
+            readString(answers.intensity),
+          ),
+          "experienceLevel",
+        );
+        payload.fitnessLevel = resolveExerciseFitnessLevel(
+          readString(answers.intensity),
+        );
+        payload.injuryHistory = resolveExerciseInjuryHistory(
+          answers.injuryHistory,
+        );
+        copyLabeledValue(payload, preferredTime, "preferredTime");
       }
       break;
     case "moving":
@@ -802,6 +964,7 @@ function applyProfileFields(
   );
   copyLabeledValue(payload, profile.birthDate, "birthDate", "birth_date");
   copyLabeledValue(payload, profile.birthTime, "birthTime", "birth_time");
+  copyLabeledValue(payload, profile.gender, "gender");
   copyLabeledValue(payload, profile.mbti, "mbti", "mbtiType");
   copyLabeledValue(payload, profile.bloodType, "bloodType", "blood_type");
 }
@@ -842,7 +1005,7 @@ function copyNumericValue(
 }
 
 function readRecord(value: unknown): Record<string, unknown> | null {
-  if (typeof value !== 'object' || value == null || Array.isArray(value)) {
+  if (typeof value !== "object" || value == null || Array.isArray(value)) {
     return null;
   }
 
@@ -871,6 +1034,10 @@ function normalizeAnswerValue(value: unknown) {
 
 function requiresBirthDate(fortuneType: FortuneTypeId) {
   return (
+    fortuneType === "daily-calendar" ||
+    fortuneType === "new-year" ||
+    fortuneType === "love" ||
+    fortuneType === "naming" ||
     fortuneType === "zodiac" ||
     fortuneType === "zodiac-animal" ||
     fortuneType === "constellation" ||
@@ -908,6 +1075,43 @@ function deriveUserAgeGroup(birthDate?: string | null) {
   return "40s+";
 }
 
+function deriveAge(birthDate?: string | null) {
+  const yearText = birthDate?.split("-")[0];
+  if (!yearText) {
+    return null;
+  }
+
+  const year = Number(yearText);
+  if (!Number.isFinite(year)) {
+    return null;
+  }
+
+  return new Date().getFullYear() - year + 1;
+}
+
+function readIntegerValue(value: unknown) {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return Math.trunc(value);
+  }
+
+  const text = readString(value);
+  if (!text) {
+    return null;
+  }
+
+  const parsed = Number(text);
+  return Number.isFinite(parsed) ? Math.trunc(parsed) : null;
+}
+
+function resolveStringArray(value: unknown) {
+  if (!Array.isArray(value)) {
+    const single = readString(value);
+    return single ? [single] : [];
+  }
+
+  return value.map((entry) => readString(entry)).filter(Boolean) as string[];
+}
+
 function resolveFavoriteTeam(answers: Record<string, unknown>) {
   const favoriteSide = readString(answers.favoriteSide);
   if (!favoriteSide) {
@@ -940,6 +1144,101 @@ function resolveNewYearGoal(rawGoal?: string | null) {
     default:
       return null;
   }
+}
+
+function resolveLoveRelationshipStatus(rawValue?: string | null) {
+  switch (rawValue) {
+    case "single":
+    case "dating":
+    case "crush":
+    case "complicated":
+      return rawValue;
+    default:
+      return null;
+  }
+}
+
+function buildLoveValueImportance(concern?: string | null) {
+  const base = {
+    외모: 3,
+    성격: 5,
+    경제력: 3,
+    가치관: 4,
+    유머감각: 3,
+  };
+
+  switch (concern) {
+    case "meeting":
+      return { ...base, 외모: 4, 유머감각: 4 };
+    case "confession":
+      return { ...base, 성격: 4, 가치관: 5 };
+    case "future":
+      return { ...base, 경제력: 4, 가치관: 5 };
+    default:
+      return base;
+  }
+}
+
+function buildLoveMeetingPlaces(concern?: string | null) {
+  switch (concern) {
+    case "meeting":
+      return ["카페", "전시", "지인 모임"];
+    case "confession":
+      return ["조용한 산책길", "야경 좋은 장소", "둘이 대화하기 좋은 카페"];
+    case "future":
+      return ["한적한 식당", "주말 드라이브", "오래 머물 수 있는 공간"];
+    default:
+      return ["카페", "공원", "취향이 맞는 장소"];
+  }
+}
+
+function resolveLoveRelationshipGoal(concern?: string | null) {
+  switch (concern) {
+    case "meeting":
+      return "new_connection";
+    case "confession":
+      return "clear_signal";
+    case "future":
+      return "long_term_stability";
+    default:
+      return "relationship_growth";
+  }
+}
+
+function buildLoveCharmPoints(datingStyles: string[], mbti?: string | null) {
+  const mapped = datingStyles
+    .map((style) => {
+      switch (style) {
+        case "active":
+          return "주도적으로 분위기를 만드는 힘";
+        case "romantic":
+          return "감정을 따뜻하게 표현하는 매력";
+        case "practical":
+          return "안정적으로 관계를 이끄는 감각";
+        case "independent":
+          return "건강한 거리감을 지키는 태도";
+        default:
+          return null;
+      }
+    })
+    .filter(Boolean) as string[];
+
+  if (mbti) {
+    mapped.push(`${mbti.toUpperCase()}다운 개성`);
+  }
+
+  return mapped.slice(0, 3);
+}
+
+function buildLoveLifestyle(mbti?: string | null, bloodType?: string | null) {
+  const traits = [
+    mbti ? `${mbti.toUpperCase()} 성향` : null,
+    bloodType ? `${bloodType.toUpperCase()} 기질` : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
+  return traits || "일상 리듬을 중시하는 편";
 }
 
 function buildTraditionalSajuQuestion(
@@ -1014,7 +1313,11 @@ function resolveTarotCardIndices(value: unknown) {
       }
 
       const record = readRecord(entry);
-      if (record && typeof record.index === 'number' && Number.isFinite(record.index)) {
+      if (
+        record &&
+        typeof record.index === "number" &&
+        Number.isFinite(record.index)
+      ) {
         return Math.trunc(record.index);
       }
 
@@ -1051,6 +1354,367 @@ function resolveYearlyEncounterIdealMbti(
   }
 
   return rawValue ?? labelValue ?? null;
+}
+
+function resolveExLoverGoal(rawValue?: string | null) {
+  switch (rawValue) {
+    case "reunion":
+      return "reunion_strategy";
+    case "closure":
+    case "healing":
+      return "healing";
+    case "clarity":
+      return "read_their_mind";
+    default:
+      return null;
+  }
+}
+
+function resolveExLoverTimeSinceBreakup(rawValue?: string | null) {
+  switch (rawValue) {
+    case "recent":
+      return "recent";
+    case "quarter":
+      return "short";
+    case "half-year":
+      return "medium";
+    case "long":
+      return "long";
+    default:
+      return null;
+  }
+}
+
+function resolveBreakupInitiator(rawValue?: string | null) {
+  if (rawValue === "me" || rawValue === "them" || rawValue === "mutual") {
+    return rawValue;
+  }
+
+  return null;
+}
+
+function resolveExLoverRelationshipDepth(rawValue?: string | null) {
+  switch (rawValue) {
+    case "light":
+      return "casual";
+    case "steady":
+      return "moderate";
+    case "deep":
+      return "deep";
+    case "unfinished":
+      return "very_deep";
+    default:
+      return null;
+  }
+}
+
+function resolveExLoverCoreReason(rawValue?: string | null) {
+  switch (rawValue) {
+    case "distance":
+      return "distance";
+    case "conflict":
+      return "communication";
+    case "values":
+      return "values";
+    case "fade":
+      return "feelings_changed";
+    default:
+      return null;
+  }
+}
+
+function resolveExLoverCurrentState(value: unknown) {
+  return resolveStringArray(value)
+    .map((entry) => {
+      switch (entry) {
+        case "still-miss":
+          return "miss_them";
+        case "curious":
+          return "checking_sns";
+        case "hurt":
+          return "crying";
+        case "moving-on":
+          return "moving_on";
+        default:
+          return null;
+      }
+    })
+    .filter(Boolean) as string[];
+}
+
+function resolveExLoverContactStatus(rawValue?: string | null) {
+  switch (rawValue) {
+    case "blocked":
+      return "blocked";
+    case "no-contact":
+      return "noContact";
+    case "sometimes":
+      return "sometimes";
+    case "often":
+      return "often";
+    default:
+      return null;
+  }
+}
+
+function resolveHealthCondition(rawValue?: string | null) {
+  switch (rawValue) {
+    case "great":
+      return "great";
+    case "normal":
+      return "normal";
+    case "tired":
+      return "tired";
+    case "drained":
+      return "exhausted";
+    default:
+      return null;
+  }
+}
+
+function resolveHealthConcernedBodyParts(rawValue?: string | null) {
+  switch (rawValue) {
+    case "sleep":
+      return ["head", "heart"];
+    case "stress":
+      return ["heart", "liver"];
+    case "diet":
+      return ["stomach", "spleen"];
+    case "fitness":
+      return ["muscle", "lung"];
+    default:
+      return [];
+  }
+}
+
+function resolveWealthGoal(rawValue?: string | null) {
+  switch (rawValue) {
+    case "save":
+      return "saving";
+    case "income":
+      return "income";
+    case "invest":
+      return "investment";
+    case "debt":
+      return "expense";
+    default:
+      return null;
+  }
+}
+
+function resolveWealthConcern(rawValue?: string | null) {
+  switch (rawValue) {
+    case "cashflow":
+      return "savings";
+    case "overspend":
+      return "spending";
+    case "risk":
+      return "loss";
+    case "timing":
+      return "returns";
+    default:
+      return null;
+  }
+}
+
+function resolveWealthIncome(rawValue?: string | null) {
+  switch (rawValue) {
+    case "stable":
+      return "stable";
+    case "growing":
+      return "increasing";
+    case "variable":
+      return "irregular";
+    case "tight":
+      return "decreasing";
+    default:
+      return null;
+  }
+}
+
+function resolveWealthExpense(rawValue?: string | null) {
+  switch (rawValue) {
+    case "controlled":
+      return "frugal";
+    case "rising":
+      return "variable";
+    case "impulsive":
+      return "spender";
+    case "heavy":
+      return "balanced";
+    default:
+      return null;
+  }
+}
+
+function resolveWealthRisk(rawValue?: string | null) {
+  switch (rawValue) {
+    case "low":
+      return "safe";
+    case "balanced":
+      return "balanced";
+    case "high":
+      return "aggressive";
+    default:
+      return null;
+  }
+}
+
+function resolveWealthUrgency(rawValue?: string | null) {
+  switch (rawValue) {
+    case "low":
+      return "longTerm";
+    case "mid":
+      return "thisYear";
+    case "high":
+      return "urgent";
+    default:
+      return null;
+  }
+}
+
+function resolveWealthInterests(value: unknown, goal: string) {
+  const interests = resolveStringArray(value).filter((entry) =>
+    ["saving", "stock", "crypto", "realestate", "business", "side"].includes(
+      entry,
+    ),
+  );
+
+  if (interests.length > 0) {
+    return interests;
+  }
+
+  switch (goal) {
+    case "investment":
+      return ["stock"];
+    case "income":
+      return ["business", "side"];
+    default:
+      return ["saving"];
+  }
+}
+
+function resolveTalentArea(interests: string[]) {
+  if (interests.includes("design")) {
+    return "예술";
+  }
+
+  if (interests.includes("analysis")) {
+    return "학문";
+  }
+
+  if (interests.includes("communication")) {
+    return "비즈니스";
+  }
+
+  if (interests.includes("writing")) {
+    return "학문";
+  }
+
+  return interests.length > 0 ? "기술" : null;
+}
+
+function resolveTalentCurrentSkills(interests: string[]) {
+  const mapped = interests.map((interest) => {
+    switch (interest) {
+      case "writing":
+        return "글쓰기";
+      case "design":
+        return "시각화";
+      case "analysis":
+        return "분석적 사고";
+      case "communication":
+        return "커뮤니케이션";
+      default:
+        return null;
+    }
+  });
+
+  return mapped.filter(Boolean) as string[];
+}
+
+function buildTalentGoal(labels: Record<string, string>, interests: string[]) {
+  const focus = labels.interest ?? interests.join(", ");
+  const workStyle = labels.workStyle ? `${labels.workStyle} 방식으로` : "";
+  return [focus ? `${focus} 역량을 키우고 싶어요.` : null, workStyle]
+    .filter(Boolean)
+    .join(" ");
+}
+
+function resolveExerciseGoal(rawValue?: string | null) {
+  switch (rawValue) {
+    case "health":
+      return "flexibility";
+    case "strength":
+      return "strength";
+    case "diet":
+      return "diet";
+    case "mood":
+      return "stress_relief";
+    default:
+      return null;
+  }
+}
+
+function resolveExerciseSportType(rawValue?: string | null) {
+  switch (rawValue) {
+    case "gym":
+    case "running":
+    case "yoga":
+    case "swimming":
+      return rawValue;
+    default:
+      return null;
+  }
+}
+
+function resolveExercisePreferredTime(rawValue?: string | null) {
+  switch (rawValue) {
+    case "morning":
+    case "afternoon":
+    case "evening":
+    case "night":
+      return rawValue;
+    default:
+      return null;
+  }
+}
+
+function resolveExerciseExperienceLevel(
+  weeklyFrequency: number,
+  intensity?: string | null,
+) {
+  if (weeklyFrequency >= 5 || intensity === "hard") {
+    return "advanced";
+  }
+
+  if (weeklyFrequency >= 4 || intensity === "medium") {
+    return "intermediate";
+  }
+
+  return "beginner";
+}
+
+function resolveExerciseFitnessLevel(intensity?: string | null) {
+  switch (intensity) {
+    case "light":
+      return 2;
+    case "medium":
+      return 3;
+    case "hard":
+      return 4;
+    default:
+      return 3;
+  }
+}
+
+function resolveExerciseInjuryHistory(value: unknown) {
+  const injuries = resolveStringArray(value);
+  if (injuries.includes("none")) {
+    return [];
+  }
+
+  return injuries;
 }
 
 function parseOptionsList(value: string | null) {
@@ -1244,7 +1908,11 @@ function buildWishUserProfile(profile: EmbeddedResultProfileContext) {
 }
 
 function resolveNamingGender(rawGender?: string | null) {
-  if (rawGender === "male" || rawGender === "female" || rawGender === "unknown") {
+  if (
+    rawGender === "male" ||
+    rawGender === "female" ||
+    rawGender === "unknown"
+  ) {
     return rawGender;
   }
 
